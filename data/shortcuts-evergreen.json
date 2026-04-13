@@ -1,0 +1,15 @@
+{
+  "shortcuts": [
+    {"id":"breaking-news","name":"Breaking News","icon":"zap","prompt":"What are the latest breaking news stories about {topic}? Provide a summary of the top 5 most recent developments."},
+    {"id":"global-news","name":"Global News","icon":"globe","prompt":"Provide a global perspective on {topic}. What are the major international developments and how do they differ across regions?"},
+    {"id":"ai-developments","name":"AI Developments","icon":"cpu","prompt":"What are the latest AI and technology developments related to {topic}? Focus on recent breakthroughs, tools, and applications."},
+    {"id":"economy-markets-investing","name":"Economy, Markets, Investing","icon":"trending-up","prompt":"Provide an overview of how {topic} relates to the current economy, financial markets, and investment landscape."},
+    {"id":"events-milestones","name":"Events and Milestones","icon":"calendar","prompt":"What are the most notable recent events and milestones related to {topic}? Include dates, significance, and context."},
+    {"id":"technological-advances","name":"Technological Advances","icon":"rocket","prompt":"What are the most significant recent technological advances related to {topic}? Cover innovations, breakthroughs, and emerging trends."},
+    {"id":"scientific-discoveries","name":"Scientific Discoveries","icon":"microscope","prompt":"Summarize the latest scientific discoveries and research findings related to {topic}. Include sources and implications."},
+    {"id":"politics-elections","name":"Politics and Elections","icon":"landmark","prompt":"What are the latest political developments and election-related news concerning {topic}? Provide balanced coverage of key events."},
+    {"id":"sports-updates","name":"Sports Updates","icon":"trophy","prompt":"Provide the latest sports news, scores, and updates related to {topic}. Include key matchups, standings, and notable performances."},
+    {"id":"environmental-updates","name":"Environmental Updates","icon":"leaf","prompt":"What are the latest environmental news and climate-related developments concerning {topic}? Include policy changes, research findings, and impact assessments."},
+    {"id":"health-medicine","name":"Health and Medicine Updates","icon":"heart","prompt":"Provide the latest health and medical news related to {topic}. Cover research advances, public health updates, and expert recommendations."}
+  ]
+}

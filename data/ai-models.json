@@ -1,0 +1,11 @@
+{
+  "models": [
+    {"id":"chatgpt","name":"ChatGPT","icon":"chatgpt","urlTemplate":"https://chatgpt.com/?q={prompt}","method":"url"},
+    {"id":"gemini","name":"Gemini","icon":"gemini","urlTemplate":"https://gemini.google.com/app?q={prompt}","method":"url"},
+    {"id":"perplexity","name":"Perplexity","icon":"perplexity","urlTemplate":"https://www.perplexity.ai/search?q={prompt}","method":"url"},
+    {"id":"copilot","name":"Bing Copilot","icon":"copilot","urlTemplate":"https://www.bing.com/chat?q={prompt}","method":"url"},
+    {"id":"google-ai","name":"Google AI Mode","icon":"google","urlTemplate":"https://www.google.com/search?udm=50&q={prompt}","method":"url"},
+    {"id":"claude","name":"Claude","icon":"claude","urlTemplate":"https://claude.ai","method":"clipboard"}
+  ],
+  "defaultModel": "chatgpt"
+}

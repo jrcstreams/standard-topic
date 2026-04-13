@@ -1,0 +1,56 @@
+/* === Reset & Base === */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --color-primary: #3d4f6f;
+  --color-primary-dark: #2d3748;
+  --color-primary-light: #5a6f8f;
+  --color-bg: #ffffff;
+  --color-bg-light: #f7f8fa;
+  --color-bg-muted: #f0f4f8;
+  --color-text: #2d3748;
+  --color-text-muted: #718096;
+  --color-text-light: #a0aec0;
+  --color-border: #e2e8f0;
+  --color-border-light: #f0f0f0;
+  --color-accent: #eef2ff;
+  --color-danger: #e53e3e;
+  --color-success: #38a169;
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --max-width: 900px;
+  --header-height: 60px;
+}
+
+body {
+  font-family: var(--font-family);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.6;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#content {
+  flex: 1;
+  max-width: var(--max-width);
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}

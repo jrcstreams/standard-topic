@@ -1,0 +1,12 @@
+{
+  "topics": [
+    {"slug":"home","name":"General","parent":null,"rssFeedId":"","excludeEvergreen":[],"relatedParents":[],"icon":"home"},
+    {"slug":"technology","name":"Technology","parent":null,"rssFeedId":"","excludeEvergreen":[],"relatedParents":["science"],"icon":"laptop"},
+    {"slug":"artificial-intelligence","name":"Artificial Intelligence","parent":"technology","rssFeedId":"","excludeEvergreen":[],"relatedParents":[],"icon":null},
+    {"slug":"cybersecurity","name":"Cybersecurity","parent":"technology","rssFeedId":"","excludeEvergreen":[],"relatedParents":[],"icon":null},
+    {"slug":"science","name":"Science","parent":null,"rssFeedId":"","excludeEvergreen":[],"relatedParents":["technology"],"icon":"flask"},
+    {"slug":"space-astronomy","name":"Space & Astronomy","parent":"science","rssFeedId":"","excludeEvergreen":[],"relatedParents":[],"icon":null},
+    {"slug":"business","name":"Business","parent":null,"rssFeedId":"","excludeEvergreen":[],"relatedParents":[],"icon":"briefcase"},
+    {"slug":"economy-markets","name":"Economy & Markets","parent":"business","rssFeedId":"","excludeEvergreen":[],"relatedParents":[],"icon":null}
+  ]
+}

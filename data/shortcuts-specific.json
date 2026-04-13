@@ -1,0 +1,6 @@
+{
+  "shortcuts": [
+    {"id":"stock-analysis","name":"Stock Analysis","icon":"bar-chart","topics":["economy-markets","business"],"prompt":"Provide a detailed stock market analysis related to {topic}, including key indicators, trends, and expert forecasts for the current period."},
+    {"id":"ai-tools-roundup","name":"AI Tools Roundup","icon":"tool","topics":["artificial-intelligence","technology"],"prompt":"What are the best current AI tools and platforms related to {topic}? Provide a roundup with descriptions, use cases, and comparisons."}
+  ]
+}
