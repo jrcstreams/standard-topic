@@ -20,7 +20,13 @@
   --color-accent: #eef2ff;
   --color-danger: #e53e3e;
   --color-success: #38a169;
-  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
   --max-width: 900px;
   --header-height: 60px;
 }
@@ -981,4 +987,60 @@ a:hover {
 
 .not-found h2 {
   margin-bottom: 0.5rem;
+}
+
+/* === Typography === */
+body {
+  font-weight: var(--font-weight-regular);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+}
+
+h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+}
+
+.header-title {
+  font-weight: var(--font-weight-bold);
+}
+
+.header-tagline {
+  font-weight: var(--font-weight-regular);
+}
+
+.header-prompt-btn,
+.footer-title,
+.section-header h2 {
+  font-weight: var(--font-weight-semibold);
+}
+
+.tab-pill,
+.shortcut-name,
+.related-name {
+  font-weight: var(--font-weight-medium);
+}
+
+.tab-pill.active {
+  font-weight: var(--font-weight-semibold);
+}
+
+.pg-btn,
+.prompt-modal-submit {
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.005em;
+}
+
+.pg-label,
+.prompt-modal-label,
+.search-result-header,
+.search-result-section-label,
+.shortcuts-section-label {
+  font-weight: var(--font-weight-semibold);
+}
+
+.pg-field-label {
+  font-weight: var(--font-weight-medium);
 }
