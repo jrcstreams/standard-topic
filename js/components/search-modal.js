@@ -6,19 +6,31 @@ import { navigate } from '../utils/router.js';
 let isOpen = false;
 let highlightIndex = -1;
 let currentResults = [];
+let docListenersAttached = false;
 
 export function renderSearchBar(container, route) {
+  // Reset state on every render
+  isOpen = false;
+  highlightIndex = -1;
+  currentResults = [];
+
   let label = 'Search any topic or choose from list';
+  let hasValue = false;
   if (route.type === 'topic') {
     const topic = getTopicBySlug(route.slug);
-    if (topic) label = topic.name;
+    if (topic) {
+      label = topic.name;
+      hasValue = true;
+    }
   } else if (route.type === 'custom') {
     label = route.term;
+    hasValue = true;
   }
 
   container.innerHTML = `
     <div class="search-bar-wrapper">
-      <button class="search-bar" id="search-bar-trigger">
+      <button class="search-bar ${hasValue ? 'has-value' : ''}" id="search-bar-trigger" type="button">
+        <span class="search-bar-icon">🔍</span>
         <span class="search-bar-label" id="search-bar-label">${escapeHTML(label)}</span>
         <span class="search-bar-chevron">▾</span>
       </button>
@@ -52,17 +64,26 @@ export function renderSearchBar(container, route) {
     handleKeyboard(e, results, input);
   });
 
-  document.addEventListener('click', (e) => {
-    if (isOpen && !modal.contains(e.target) && e.target !== trigger) {
-      closeModal(modal);
-    }
-  });
+  // Document-level listeners attached ONCE (not on every render)
+  if (!docListenersAttached) {
+    document.addEventListener('click', (e) => {
+      if (!isOpen) return;
+      const currentModal = document.getElementById('search-modal');
+      const currentTrigger = document.getElementById('search-bar-trigger');
+      if (!currentModal) return;
+      if (!currentModal.contains(e.target) && e.target !== currentTrigger && !currentTrigger?.contains(e.target)) {
+        closeModal(currentModal);
+      }
+    });
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && isOpen) {
-      closeModal(modal);
-    }
-  });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        const currentModal = document.getElementById('search-modal');
+        if (currentModal) closeModal(currentModal);
+      }
+    });
+    docListenersAttached = true;
+  }
 }
 
 function openModal(modal, input, results) {
@@ -76,7 +97,7 @@ function openModal(modal, input, results) {
 
 function closeModal(modal) {
   isOpen = false;
-  modal.style.display = 'none';
+  if (modal) modal.style.display = 'none';
 }
 
 function renderResults(container, query) {
@@ -112,7 +133,6 @@ function renderBrowseList(container) {
   container.innerHTML = html;
   currentResults = [];
 
-  // Attach click listeners
   container.querySelectorAll('[data-slug]').forEach(el => {
     el.addEventListener('click', () => {
       navigate(`#/topic/${el.dataset.slug}`);
@@ -124,7 +144,6 @@ function renderBrowseList(container) {
 function renderSearchResults(container, query) {
   let html = '';
 
-  // "Add as Custom Topic" always first
   html += `
     <div class="search-result-custom" id="search-custom-option" role="button" tabindex="0">
       <span class="search-custom-badge">+</span>
@@ -154,13 +173,11 @@ function renderSearchResults(container, query) {
 
   container.innerHTML = html;
 
-  // Attach click on custom option
   document.getElementById('search-custom-option')?.addEventListener('click', () => {
     navigate(`#/custom/${encodeURIComponent(query)}`);
     closeModal(document.getElementById('search-modal'));
   });
 
-  // Attach click on topic results
   container.querySelectorAll('.search-result-item[data-slug]').forEach(el => {
     el.addEventListener('click', () => {
       navigate(`#/topic/${el.dataset.slug}`);
