@@ -54,3 +54,140 @@ a:hover {
   margin: 0 auto;
   padding: 1.5rem 1rem;
 }
+
+/* === Header === */
+#site-header {
+  background: var(--color-primary);
+  color: white;
+}
+
+.header-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1rem;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.header-logo:hover {
+  text-decoration: none;
+}
+
+.header-logo-img {
+  width: 32px;
+  height: 32px;
+}
+
+.header-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.header-tagline {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.85rem;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-prompt-btn {
+  background: transparent;
+  color: white;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+
+.header-prompt-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: white;
+  text-decoration: none;
+}
+
+.header-prompt-btn.active {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: white;
+}
+
+.header-prompt-btn-short {
+  display: none;
+}
+
+/* === Footer === */
+#site-footer {
+  background: var(--color-primary-dark);
+  color: var(--color-text-light);
+  margin-top: auto;
+}
+
+.footer-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.footer-logo-img {
+  width: 24px;
+  height: 24px;
+}
+
+.footer-title {
+  font-weight: 600;
+  color: white;
+}
+
+.footer-nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footer-nav a {
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+}
+
+.footer-nav a:hover {
+  color: white;
+}
+
+/* === Mobile === */
+@media (max-width: 768px) {
+  .header-tagline {
+    display: none;
+  }
+
+  .header-prompt-btn-full {
+    display: none;
+  }
+
+  .header-prompt-btn-short {
+    display: inline;
+  }
+}
