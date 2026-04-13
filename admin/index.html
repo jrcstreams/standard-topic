@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Standard Topic — Admin</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #3d4f6f;
+      --border: #e2e8f0;
+      --bg-light: #f7f8fa;
+      --text: #2d3748;
+      --text-muted: #718096;
+      --danger: #e53e3e;
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: var(--text); padding: 1rem; max-width: 1000px; margin: 0 auto; }
+    h1 { font-size: 1.5rem; margin-bottom: 1rem; }
+    .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 1.5rem; }
+    .tab { padding: 0.6rem 1.25rem; font-size: 0.9rem; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; color: var(--text-muted); background: none; border-top: none; border-left: none; border-right: none; font-family: inherit; }
+    .tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .btn { padding: 0.4rem 0.75rem; border-radius: 4px; font-size: 0.85rem; cursor: pointer; border: 1px solid var(--border); font-family: inherit; }
+    .btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
+    .btn-danger { color: var(--danger); }
+    .btn-success { background: #38a169; color: white; border-color: #38a169; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { background: var(--bg-light); text-align: left; padding: 0.5rem 0.75rem; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+    td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #f0f0f0; }
+    .subtopic-row td:first-child { padding-left: 1.5rem; }
+    .form-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .form-modal { background: white; border-radius: 8px; padding: 1.5rem; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.3rem; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; border: 1px solid var(--border); border-radius: 4px; padding: 0.5rem; font-size: 0.85rem; font-family: inherit; }
+    .form-group textarea { min-height: 80px; resize: vertical; }
+    .form-actions { display: flex; gap: 0.5rem; justify-content: flex-end; }
+    .info-box { background: #fffbeb; border: 1px solid #f6e05e; border-radius: 6px; padding: 0.75rem; font-size: 0.8rem; color: #744210; margin-bottom: 1rem; line-height: 1.5; }
+    .import-export { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Standard Topic — Admin</h1>
+  <div class="info-box">
+    <strong>Local admin tool.</strong> Import your JSON data files, edit via forms, then export updated JSON. Replace the files in your project and push to GitHub.
+  </div>
+
+  <div class="import-export">
+    <label class="btn btn-primary" style="cursor:pointer;">
+      Import All JSON <input type="file" id="import-files" multiple accept=".json" style="display:none;">
+    </label>
+    <button class="btn btn-success" id="export-all">Export All JSON</button>
+  </div>
+
+  <div class="tabs" id="admin-tabs">
+    <button class="tab active" data-tab="topics">Topics</button>
+    <button class="tab" data-tab="evergreen">Evergreen Shortcuts</button>
+    <button class="tab" data-tab="specific">Topic Shortcuts</button>
+    <button class="tab" data-tab="models">AI Models</button>
+    <button class="tab" data-tab="promptgen">Prompt Generator</button>
+  </div>
+
+  <div class="tab-content active" id="tab-topics">
+    <div class="toolbar">
+      <h2 style="font-size:1.1rem;">Manage Topics</h2>
+      <button class="btn btn-primary" id="add-topic">+ Add Topic</button>
+    </div>
+    <table id="topics-table">
+      <thead><tr><th>Name</th><th>Slug</th><th>Parent</th><th>RSS Feed ID</th><th>Actions</th></tr></thead>
+      <tbody id="topics-tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="tab-content" id="tab-evergreen">
+    <div class="toolbar">
+      <h2 style="font-size:1.1rem;">Evergreen Shortcuts</h2>
+      <button class="btn btn-primary" id="add-evergreen">+ Add Shortcut</button>
+    </div>
+    <table id="evergreen-table">
+      <thead><tr><th>Name</th><th>ID</th><th>Icon</th><th>Actions</th></tr></thead>
+      <tbody id="evergreen-tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="tab-content" id="tab-specific">
+    <div class="toolbar">
+      <h2 style="font-size:1.1rem;">Topic-Specific Shortcuts</h2>
+      <button class="btn btn-primary" id="add-specific">+ Add Shortcut</button>
+    </div>
+    <table id="specific-table">
+      <thead><tr><th>Name</th><th>ID</th><th>Topics</th><th>Actions</th></tr></thead>
+      <tbody id="specific-tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="tab-content" id="tab-models">
+    <div class="toolbar">
+      <h2 style="font-size:1.1rem;">AI Models</h2>
+      <button class="btn btn-primary" id="add-model">+ Add Model</button>
+    </div>
+    <table id="models-table">
+      <thead><tr><th>Name</th><th>ID</th><th>Method</th><th>URL Template</th><th>Actions</th></tr></thead>
+      <tbody id="models-tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="tab-content" id="tab-promptgen">
+    <div class="toolbar">
+      <h2 style="font-size:1.1rem;">Prompt Generator Options</h2>
+    </div>
+    <p style="color:var(--text-muted); font-size:0.9rem;">Edit <code>data/prompt-generator.json</code> directly for field options and clause templates. This tab provides a JSON preview.</p>
+    <pre id="promptgen-preview" style="background:var(--bg-light); padding:1rem; border-radius:6px; font-size:0.8rem; overflow-x:auto; margin-top:1rem;"></pre>
+  </div>
+
+  <div id="form-container"></div>
+
+  <script>
+    // Admin page — self-contained client-side tool
+    let data = {
+      topics: { topics: [] },
+      evergreen: { shortcuts: [] },
+      specific: { shortcuts: [] },
+      models: { models: [], defaultModel: 'chatgpt' },
+      promptgen: {},
+    };
+
+    const fileMap = {
+      'topics.json': 'topics',
+      'shortcuts-evergreen.json': 'evergreen',
+      'shortcuts-specific.json': 'specific',
+      'ai-models.json': 'models',
+      'prompt-generator.json': 'promptgen',
+    };
+
+    // Tab switching
+    document.getElementById('admin-tabs').addEventListener('click', (e) => {
+      const tab = e.target.closest('.tab');
+      if (!tab) return;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    });
+
+    // Import
+    document.getElementById('import-files').addEventListener('change', async (e) => {
+      for (const file of e.target.files) {
+        const key = fileMap[file.name];
+        if (key) {
+          data[key] = JSON.parse(await file.text());
+        }
+      }
+      renderAll();
+    });
+
+    // Export
+    document.getElementById('export-all').addEventListener('click', () => {
+      downloadJSON('topics.json', data.topics);
+      downloadJSON('shortcuts-evergreen.json', data.evergreen);
+      downloadJSON('shortcuts-specific.json', data.specific);
+      downloadJSON('ai-models.json', data.models);
+      downloadJSON('prompt-generator.json', data.promptgen);
+    });
+
+    function downloadJSON(filename, obj) {
+      const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+    }
+
+    function renderAll() {
+      renderTopics();
+      renderEvergreen();
+      renderSpecific();
+      renderModels();
+      renderPromptGen();
+    }
+
+    // --- Topics ---
+    function renderTopics() {
+      const tbody = document.getElementById('topics-tbody');
+      const topics = data.topics.topics || [];
+      const parents = topics.filter(t => !t.parent && t.slug !== 'home');
+      let html = '';
+      // Home topic first
+      const home = topics.find(t => t.slug === 'home');
+      if (home) {
+        html += topicRow(home, false);
+      }
+      parents.forEach(p => {
+        html += topicRow(p, false);
+        topics.filter(t => t.parent === p.slug).forEach(sub => {
+          html += topicRow(sub, true);
+        });
+      });
+      tbody.innerHTML = html;
+      tbody.querySelectorAll('.edit-topic').forEach(btn => {
+        btn.addEventListener('click', () => editTopic(btn.dataset.slug));
+      });
+      tbody.querySelectorAll('.del-topic').forEach(btn => {
+        btn.addEventListener('click', () => deleteTopic(btn.dataset.slug));
+      });
+    }
+
+    function topicRow(t, isSub) {
+      return `<tr class="${isSub ? 'subtopic-row' : ''}">
+        <td>${isSub ? '↳ ' : ''}${t.name}</td>
+        <td style="color:var(--text-muted)">${t.slug}</td>
+        <td style="color:var(--text-muted)">${t.parent || '—'}</td>
+        <td style="color:var(--text-muted); font-family:monospace; font-size:0.8rem;">${t.rssFeedId || '—'}</td>
+        <td>
+          <button class="btn edit-topic" data-slug="${t.slug}" style="margin-right:0.25rem;">Edit</button>
+          ${t.slug !== 'home' ? `<button class="btn btn-danger del-topic" data-slug="${t.slug}">Del</button>` : ''}
+        </td>
+      </tr>`;
+    }
+
+    document.getElementById('add-topic').addEventListener('click', () => showTopicForm(null));
+
+    function editTopic(slug) {
+      const topic = data.topics.topics.find(t => t.slug === slug);
+      if (topic) showTopicForm(topic);
+    }
+
+    function deleteTopic(slug) {
+      if (!confirm('Delete topic "' + slug + '"?')) return;
+      data.topics.topics = data.topics.topics.filter(t => t.slug !== slug);
+      renderTopics();
+    }
+
+    function showTopicForm(topic) {
+      const isNew = !topic;
+      const parents = data.topics.topics.filter(t => !t.parent && t.slug !== 'home');
+      const parentOptions = parents.map(p => `<option value="${p.slug}" ${topic?.parent === p.slug ? 'selected' : ''}>${p.name}</option>`).join('');
+      const container = document.getElementById('form-container');
+      container.innerHTML = `
+        <div class="form-overlay" id="form-overlay">
+          <div class="form-modal">
+            <h3 style="margin-bottom:1rem;">${isNew ? 'Add' : 'Edit'} Topic</h3>
+            <div class="form-group"><label>Name</label><input id="f-name" value="${topic?.name || ''}"></div>
+            <div class="form-group"><label>Slug</label><input id="f-slug" value="${topic?.slug || ''}" ${!isNew ? 'readonly style="background:var(--bg-light)"' : ''}></div>
+            <div class="form-group"><label>Parent</label><select id="f-parent"><option value="">None (parent topic)</option>${parentOptions}</select></div>
+            <div class="form-group"><label>RSS Feed ID</label><input id="f-rss" value="${topic?.rssFeedId || ''}"></div>
+            <div class="form-group"><label>Related Parents (comma-separated slugs)</label><input id="f-related" value="${(topic?.relatedParents || []).join(', ')}"></div>
+            <div class="form-group"><label>Exclude Evergreen (comma-separated IDs)</label><input id="f-exclude" value="${(topic?.excludeEvergreen || []).join(', ')}"></div>
+            <div class="form-group"><label>Icon</label><input id="f-icon" value="${topic?.icon || ''}"></div>
+            <div class="form-actions">
+              <button class="btn" id="f-cancel">Cancel</button>
+              <button class="btn btn-primary" id="f-save">Save</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.getElementById('f-cancel').addEventListener('click', () => { container.innerHTML = ''; });
+      document.getElementById('form-overlay').addEventListener('click', (e) => { if (e.target === e.currentTarget) container.innerHTML = ''; });
+      document.getElementById('f-save').addEventListener('click', () => {
+        const entry = {
+          slug: document.getElementById('f-slug').value.trim(),
+          name: document.getElementById('f-name').value.trim(),
+          parent: document.getElementById('f-parent').value || null,
+          rssFeedId: document.getElementById('f-rss').value.trim(),
+          excludeEvergreen: document.getElementById('f-exclude').value.split(',').map(s => s.trim()).filter(Boolean),
+          relatedParents: document.getElementById('f-related').value.split(',').map(s => s.trim()).filter(Boolean),
+          icon: document.getElementById('f-icon').value.trim() || null,
+        };
+        if (!entry.slug || !entry.name) { alert('Name and slug are required.'); return; }
+        if (isNew) {
+          if (data.topics.topics.find(t => t.slug === entry.slug)) { alert('Slug already exists.'); return; }
+          data.topics.topics.push(entry);
+        } else {
+          const idx = data.topics.topics.findIndex(t => t.slug === entry.slug);
+          if (idx >= 0) data.topics.topics[idx] = entry;
+        }
+        container.innerHTML = '';
+        renderTopics();
+      });
+    }
+
+    // --- Evergreen Shortcuts ---
+    function renderEvergreen() {
+      const tbody = document.getElementById('evergreen-tbody');
+      const shortcuts = data.evergreen.shortcuts || [];
+      tbody.innerHTML = shortcuts.map(s => `<tr>
+        <td>${s.name}</td><td style="color:var(--text-muted)">${s.id}</td><td>${s.icon || '—'}</td>
+        <td>
+          <button class="btn edit-eg" data-id="${s.id}" style="margin-right:0.25rem;">Edit</button>
+          <button class="btn btn-danger del-eg" data-id="${s.id}">Del</button>
+        </td>
+      </tr>`).join('');
+      tbody.querySelectorAll('.edit-eg').forEach(btn => btn.addEventListener('click', () => editEvergreen(btn.dataset.id)));
+      tbody.querySelectorAll('.del-eg').forEach(btn => btn.addEventListener('click', () => { data.evergreen.shortcuts = data.evergreen.shortcuts.filter(s => s.id !== btn.dataset.id); renderEvergreen(); }));
+    }
+
+    document.getElementById('add-evergreen').addEventListener('click', () => showEvergreenForm(null));
+
+    function editEvergreen(id) {
+      const s = data.evergreen.shortcuts.find(s => s.id === id);
+      if (s) showEvergreenForm(s);
+    }
+
+    function showEvergreenForm(shortcut) {
+      const isNew = !shortcut;
+      const container = document.getElementById('form-container');
+      container.innerHTML = `
+        <div class="form-overlay" id="form-overlay">
+          <div class="form-modal">
+            <h3 style="margin-bottom:1rem;">${isNew ? 'Add' : 'Edit'} Evergreen Shortcut</h3>
+            <div class="form-group"><label>Name</label><input id="f-name" value="${shortcut?.name || ''}"></div>
+            <div class="form-group"><label>ID</label><input id="f-id" value="${shortcut?.id || ''}" ${!isNew ? 'readonly style="background:var(--bg-light)"' : ''}></div>
+            <div class="form-group"><label>Icon</label><input id="f-icon" value="${shortcut?.icon || ''}"></div>
+            <div class="form-group"><label>Prompt Template</label><textarea id="f-prompt">${shortcut?.prompt || ''}</textarea></div>
+            <div class="form-actions">
+              <button class="btn" id="f-cancel">Cancel</button>
+              <button class="btn btn-primary" id="f-save">Save</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.getElementById('f-cancel').addEventListener('click', () => { container.innerHTML = ''; });
+      document.getElementById('form-overlay').addEventListener('click', (e) => { if (e.target === e.currentTarget) container.innerHTML = ''; });
+      document.getElementById('f-save').addEventListener('click', () => {
+        const entry = { id: document.getElementById('f-id').value.trim(), name: document.getElementById('f-name').value.trim(), icon: document.getElementById('f-icon').value.trim(), prompt: document.getElementById('f-prompt').value };
+        if (!entry.id || !entry.name) { alert('Name and ID are required.'); return; }
+        if (isNew) { data.evergreen.shortcuts.push(entry); } else { const idx = data.evergreen.shortcuts.findIndex(s => s.id === entry.id); if (idx >= 0) data.evergreen.shortcuts[idx] = entry; }
+        container.innerHTML = ''; renderEvergreen();
+      });
+    }
+
+    // --- Specific Shortcuts ---
+    function renderSpecific() {
+      const tbody = document.getElementById('specific-tbody');
+      const shortcuts = data.specific.shortcuts || [];
+      tbody.innerHTML = shortcuts.map(s => `<tr>
+        <td>${s.name}</td><td style="color:var(--text-muted)">${s.id}</td><td style="color:var(--text-muted);font-size:0.8rem">${(s.topics||[]).join(', ')}</td>
+        <td>
+          <button class="btn edit-sp" data-id="${s.id}" style="margin-right:0.25rem;">Edit</button>
+          <button class="btn btn-danger del-sp" data-id="${s.id}">Del</button>
+        </td>
+      </tr>`).join('');
+      tbody.querySelectorAll('.edit-sp').forEach(btn => btn.addEventListener('click', () => editSpecific(btn.dataset.id)));
+      tbody.querySelectorAll('.del-sp').forEach(btn => btn.addEventListener('click', () => { data.specific.shortcuts = data.specific.shortcuts.filter(s => s.id !== btn.dataset.id); renderSpecific(); }));
+    }
+
+    document.getElementById('add-specific').addEventListener('click', () => showSpecificForm(null));
+
+    function editSpecific(id) {
+      const s = data.specific.shortcuts.find(s => s.id === id);
+      if (s) showSpecificForm(s);
+    }
+
+    function showSpecificForm(shortcut) {
+      const isNew = !shortcut;
+      const container = document.getElementById('form-container');
+      container.innerHTML = `
+        <div class="form-overlay" id="form-overlay">
+          <div class="form-modal">
+            <h3 style="margin-bottom:1rem;">${isNew ? 'Add' : 'Edit'} Topic-Specific Shortcut</h3>
+            <div class="form-group"><label>Name</label><input id="f-name" value="${shortcut?.name || ''}"></div>
+            <div class="form-group"><label>ID</label><input id="f-id" value="${shortcut?.id || ''}" ${!isNew ? 'readonly style="background:var(--bg-light)"' : ''}></div>
+            <div class="form-group"><label>Icon</label><input id="f-icon" value="${shortcut?.icon || ''}"></div>
+            <div class="form-group"><label>Topics (comma-separated slugs)</label><input id="f-topics" value="${(shortcut?.topics||[]).join(', ')}"></div>
+            <div class="form-group"><label>Prompt Template</label><textarea id="f-prompt">${shortcut?.prompt || ''}</textarea></div>
+            <div class="form-actions">
+              <button class="btn" id="f-cancel">Cancel</button>
+              <button class="btn btn-primary" id="f-save">Save</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.getElementById('f-cancel').addEventListener('click', () => { container.innerHTML = ''; });
+      document.getElementById('form-overlay').addEventListener('click', (e) => { if (e.target === e.currentTarget) container.innerHTML = ''; });
+      document.getElementById('f-save').addEventListener('click', () => {
+        const entry = { id: document.getElementById('f-id').value.trim(), name: document.getElementById('f-name').value.trim(), icon: document.getElementById('f-icon').value.trim(), topics: document.getElementById('f-topics').value.split(',').map(s=>s.trim()).filter(Boolean), prompt: document.getElementById('f-prompt').value };
+        if (!entry.id || !entry.name) { alert('Name and ID are required.'); return; }
+        if (isNew) { data.specific.shortcuts.push(entry); } else { const idx = data.specific.shortcuts.findIndex(s => s.id === entry.id); if (idx >= 0) data.specific.shortcuts[idx] = entry; }
+        container.innerHTML = ''; renderSpecific();
+      });
+    }
+
+    // --- Models ---
+    function renderModels() {
+      const tbody = document.getElementById('models-tbody');
+      const models = data.models.models || [];
+      tbody.innerHTML = models.map(m => `<tr>
+        <td>${m.name}</td><td style="color:var(--text-muted)">${m.id}</td><td>${m.method}</td><td style="color:var(--text-muted);font-size:0.8rem;max-width:200px;overflow:hidden;text-overflow:ellipsis">${m.urlTemplate}</td>
+        <td>
+          <button class="btn edit-model" data-id="${m.id}" style="margin-right:0.25rem;">Edit</button>
+          <button class="btn btn-danger del-model" data-id="${m.id}">Del</button>
+        </td>
+      </tr>`).join('');
+      tbody.querySelectorAll('.edit-model').forEach(btn => btn.addEventListener('click', () => editModel(btn.dataset.id)));
+      tbody.querySelectorAll('.del-model').forEach(btn => btn.addEventListener('click', () => { data.models.models = data.models.models.filter(m => m.id !== btn.dataset.id); renderModels(); }));
+    }
+
+    document.getElementById('add-model').addEventListener('click', () => showModelForm(null));
+
+    function editModel(id) {
+      const m = data.models.models.find(m => m.id === id);
+      if (m) showModelForm(m);
+    }
+
+    function showModelForm(model) {
+      const isNew = !model;
+      const container = document.getElementById('form-container');
+      container.innerHTML = `
+        <div class="form-overlay" id="form-overlay">
+          <div class="form-modal">
+            <h3 style="margin-bottom:1rem;">${isNew ? 'Add' : 'Edit'} AI Model</h3>
+            <div class="form-group"><label>Name</label><input id="f-name" value="${model?.name || ''}"></div>
+            <div class="form-group"><label>ID</label><input id="f-id" value="${model?.id || ''}" ${!isNew ? 'readonly style="background:var(--bg-light)"' : ''}></div>
+            <div class="form-group"><label>Icon</label><input id="f-icon" value="${model?.icon || ''}"></div>
+            <div class="form-group"><label>URL Template</label><input id="f-url" value="${model?.urlTemplate || ''}"></div>
+            <div class="form-group"><label>Method</label><select id="f-method"><option value="url" ${model?.method==='url'?'selected':''}>url</option><option value="clipboard" ${model?.method==='clipboard'?'selected':''}>clipboard</option></select></div>
+            <div class="form-actions">
+              <button class="btn" id="f-cancel">Cancel</button>
+              <button class="btn btn-primary" id="f-save">Save</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.getElementById('f-cancel').addEventListener('click', () => { container.innerHTML = ''; });
+      document.getElementById('form-overlay').addEventListener('click', (e) => { if (e.target === e.currentTarget) container.innerHTML = ''; });
+      document.getElementById('f-save').addEventListener('click', () => {
+        const entry = { id: document.getElementById('f-id').value.trim(), name: document.getElementById('f-name').value.trim(), icon: document.getElementById('f-icon').value.trim(), urlTemplate: document.getElementById('f-url').value, method: document.getElementById('f-method').value };
+        if (!entry.id || !entry.name) { alert('Name and ID are required.'); return; }
+        if (isNew) { data.models.models.push(entry); } else { const idx = data.models.models.findIndex(m => m.id === entry.id); if (idx >= 0) data.models.models[idx] = entry; }
+        container.innerHTML = ''; renderModels();
+      });
+    }
+
+    // --- Prompt Generator ---
+    function renderPromptGen() {
+      document.getElementById('promptgen-preview').textContent = JSON.stringify(data.promptgen, null, 2);
+    }
+
+    // Initial render
+    renderAll();
+  </script>
+</body>
+</html>
