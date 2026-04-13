@@ -4,6 +4,7 @@ import { renderHeader, updateHeaderActiveState } from './components/header.js';
 import { renderFooter } from './components/footer.js';
 import { renderTabs } from './components/tabs.js';
 import { renderNewsFeed } from './components/newsfeed.js';
+import { renderShortcuts } from './components/shortcuts.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadAllData();
@@ -43,8 +44,10 @@ function renderPage(route) {
     const topic = getTopicBySlug('home');
     if (route.tab === 'newsfeed') {
       renderNewsFeed(content, topic, true);
-    } else {
-      content.innerHTML = `<p>Tab: ${route.tab} (coming next)</p>`;
+    } else if (route.tab === 'shortcuts') {
+      renderShortcuts(content, { type: 'home', slug: 'home' });
+    } else if (route.tab === 'related') {
+      content.innerHTML = `<p>Featured Topics (coming next)</p>`;
     }
     return;
   }
@@ -62,14 +65,16 @@ function renderPage(route) {
     }
     if (route.tab === 'newsfeed') {
       renderNewsFeed(content, topic, false);
-    } else {
-      content.innerHTML = `<p>Tab: ${route.tab} (coming next)</p>`;
+    } else if (route.tab === 'shortcuts') {
+      renderShortcuts(content, route);
+    } else if (route.tab === 'related') {
+      content.innerHTML = `<p>Related Topics (coming next)</p>`;
     }
     return;
   }
 
   if (route.type === 'custom') {
-    content.innerHTML = `<p>Custom topic: ${route.term} (coming next)</p>`;
+    renderShortcuts(content, route);
     return;
   }
 
