@@ -8,6 +8,7 @@ import { renderShortcuts } from './components/shortcuts.js';
 import { renderSearchBar } from './components/search-modal.js';
 import { initPromptModal } from './components/prompt-modal.js';
 import { renderRelatedTopics } from './components/related-topics.js';
+import { renderPromptGenerator } from './components/prompt-generator.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadAllData();
@@ -84,7 +85,7 @@ function renderPage(route) {
   }
 
   if (route.type === 'prompt-generator') {
-    content.innerHTML = `<p>Prompt Generator (coming next)</p>`;
+    renderPromptGenerator(content);
     return;
   }
 
