@@ -1094,3 +1094,78 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   background: #fff5f5 !important;
   border-color: #fc8181 !important;
 }
+
+/* === Topic Hero === */
+.topic-hero {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.5rem 1.25rem;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: white;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(30, 45, 68, 0.15);
+}
+
+.topic-hero-icon {
+  font-size: 2.5rem;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.topic-hero-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.topic-hero-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: 0.2rem;
+}
+
+.topic-hero-title {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.topic-hero-subtitle {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 0.25rem;
+}
+
+.tab-content-area {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .topic-hero {
+    padding: 1.15rem 1rem;
+    gap: 1rem;
+  }
+
+  .topic-hero-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 2rem;
+  }
+
+  .topic-hero-title {
+    font-size: 1.35rem;
+  }
+}
