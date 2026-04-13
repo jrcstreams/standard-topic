@@ -5,6 +5,7 @@ import { renderFooter } from './components/footer.js';
 import { renderTabs } from './components/tabs.js';
 import { renderNewsFeed } from './components/newsfeed.js';
 import { renderShortcuts } from './components/shortcuts.js';
+import { renderSearchBar } from './components/search-modal.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadAllData();
@@ -26,9 +27,10 @@ function renderSubHeader(route) {
   subHeader.innerHTML = '<div class="sub-header-inner" id="sub-header-inner"></div>';
   const inner = document.getElementById('sub-header-inner');
 
-  const searchPlaceholder = document.createElement('div');
-  searchPlaceholder.id = 'search-bar-container';
-  inner.appendChild(searchPlaceholder);
+  const searchContainer = document.createElement('div');
+  searchContainer.id = 'search-bar-container';
+  inner.appendChild(searchContainer);
+  renderSearchBar(searchContainer, route);
 
   const tabsContainer = document.createElement('div');
   tabsContainer.id = 'tabs-container';
