@@ -257,3 +257,42 @@ a:hover {
     text-align: center;
   }
 }
+
+/* === Section Headers === */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.section-header h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.section-icon {
+  font-size: 1.25rem;
+}
+
+/* === News Feed === */
+.newsfeed-embed {
+  background: var(--color-primary-dark);
+  border-radius: 8px;
+  min-height: 400px;
+  overflow: hidden;
+}
+
+.newsfeed-placeholder {
+  background: var(--color-bg-light);
+  border-radius: 8px;
+  padding: 3rem;
+  text-align: center;
+  color: var(--color-text-muted);
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
