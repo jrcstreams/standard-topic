@@ -1082,3 +1082,15 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .search-bar-wrapper {
   flex: 0 0 320px;
 }
+
+/* === Prompt Generator extras === */
+.pg-summary-empty {
+  color: var(--color-text-light) !important;
+  font-style: italic;
+}
+
+.pg-summary-error {
+  color: var(--color-danger) !important;
+  background: #fff5f5 !important;
+  border-color: #fc8181 !important;
+}
