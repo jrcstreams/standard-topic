@@ -512,3 +512,184 @@ a:hover {
     max-height: 60vh;
   }
 }
+
+/* === Prompt Preview Modal === */
+.prompt-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.prompt-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.prompt-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.prompt-modal-header h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.prompt-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.prompt-modal-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.04em;
+}
+
+.prompt-modal-section {
+  margin-bottom: 1.25rem;
+}
+
+.prompt-modal-preview {
+  background: var(--color-bg-light);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.prompt-modal-copy-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.25rem;
+}
+
+.prompt-modal-copy-btn {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: border-color 0.2s;
+}
+
+.prompt-modal-copy-btn:hover {
+  border-color: var(--color-primary-light);
+}
+
+.prompt-modal-models {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.prompt-modal-model-btn {
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-family: var(--font-family);
+  color: var(--color-text-muted);
+  background: white;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.prompt-modal-model-btn:hover {
+  border-color: var(--color-primary-light);
+}
+
+.prompt-modal-model-btn.selected {
+  border: 2px solid var(--color-primary);
+  background: var(--color-accent);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.model-copy-tag {
+  font-size: 0.65rem;
+  color: var(--color-text-light);
+}
+
+.prompt-modal-warning {
+  background: #fffbeb;
+  border: 1px solid #f6e05e;
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.8rem;
+  color: #744210;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.prompt-modal-submit {
+  width: 100%;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-family);
+  margin-bottom: 0.75rem;
+  transition: background 0.2s;
+}
+
+.prompt-modal-submit:hover {
+  background: var(--color-primary-dark);
+}
+
+.prompt-modal-disclaimer {
+  font-size: 0.7rem;
+  color: var(--color-text-light);
+  text-align: center;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .prompt-modal {
+    max-width: 100%;
+    border-radius: 12px 12px 0 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .prompt-modal-models {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

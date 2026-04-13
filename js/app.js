@@ -6,9 +6,11 @@ import { renderTabs } from './components/tabs.js';
 import { renderNewsFeed } from './components/newsfeed.js';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderSearchBar } from './components/search-modal.js';
+import { initPromptModal } from './components/prompt-modal.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadAllData();
+  initPromptModal();
 
   renderHeader(document.getElementById('site-header'));
   renderFooter(document.getElementById('site-footer'));
