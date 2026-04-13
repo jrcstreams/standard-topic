@@ -6,9 +6,9 @@
 }
 
 :root {
-  --color-primary: #3d4f6f;
-  --color-primary-dark: #2d3748;
-  --color-primary-light: #5a6f8f;
+  --color-primary: #1e2d44;
+  --color-primary-dark: #0f1a2e;
+  --color-primary-light: #3a4a63;
   --color-bg: #ffffff;
   --color-bg-light: #f7f8fa;
   --color-bg-muted: #f0f4f8;
@@ -17,7 +17,7 @@
   --color-text-light: #a0aec0;
   --color-border: #e2e8f0;
   --color-border-light: #f0f0f0;
-  --color-accent: #eef2ff;
+  --color-accent: #e8ecf5;
   --color-danger: #e53e3e;
   --color-success: #38a169;
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
