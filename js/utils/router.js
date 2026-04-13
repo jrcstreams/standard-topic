@@ -33,6 +33,11 @@ function parseRoute(hash) {
     return { type: 'home', slug: 'home', tab: 'newsfeed' };
   }
 
+  // Homepage tabs: #/shortcuts, #/related
+  if (segments.length === 1 && (segments[0] === 'shortcuts' || segments[0] === 'related')) {
+    return { type: 'home', slug: 'home', tab: segments[0] };
+  }
+
   if (segments[0] === 'topic' && segments[1]) {
     const tab = segments[2] === 'shortcuts' ? 'shortcuts'
               : segments[2] === 'related' ? 'related'

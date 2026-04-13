@@ -3,12 +3,12 @@ import { loadAllData, getTopicBySlug } from './utils/data.js';
 import { renderHeader, updateHeaderActiveState } from './components/header.js';
 import { renderFooter } from './components/footer.js';
 import { renderTabs } from './components/tabs.js';
+import { renderSearchBar } from './components/search-modal.js';
 import { renderNewsFeed } from './components/newsfeed.js';
 import { renderShortcuts } from './components/shortcuts.js';
-import { renderSearchBar } from './components/search-modal.js';
-import { initPromptModal } from './components/prompt-modal.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
+import { initPromptModal } from './components/prompt-modal.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadAllData();
