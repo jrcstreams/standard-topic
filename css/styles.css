@@ -693,3 +693,75 @@ a:hover {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* === Related Topics === */
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.related-card {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg);
+  text-decoration: none;
+  color: var(--color-text);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.related-card:hover {
+  background: var(--color-bg-light);
+  border-color: var(--color-primary-light);
+  text-decoration: none;
+}
+
+.related-card.active-page {
+  background: var(--color-bg-light);
+  cursor: default;
+}
+
+.related-card.active-page:hover {
+  border-color: var(--color-border);
+}
+
+.related-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.related-name {
+  flex: 1;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.related-arrow {
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+}
+
+.related-active-label {
+  font-size: 0.7rem;
+  color: var(--color-text-light);
+  font-style: italic;
+}
+
+.related-empty {
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 2rem;
+}
+
+@media (max-width: 768px) {
+  .related-grid {
+    grid-template-columns: 1fr;
+  }
+}

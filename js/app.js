@@ -7,6 +7,7 @@ import { renderNewsFeed } from './components/newsfeed.js';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderSearchBar } from './components/search-modal.js';
 import { initPromptModal } from './components/prompt-modal.js';
+import { renderRelatedTopics } from './components/related-topics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadAllData();
@@ -51,7 +52,7 @@ function renderPage(route) {
     } else if (route.tab === 'shortcuts') {
       renderShortcuts(content, { type: 'home', slug: 'home' });
     } else if (route.tab === 'related') {
-      content.innerHTML = `<p>Featured Topics (coming next)</p>`;
+      renderRelatedTopics(content, { type: 'home', slug: 'home' });
     }
     return;
   }
@@ -72,7 +73,7 @@ function renderPage(route) {
     } else if (route.tab === 'shortcuts') {
       renderShortcuts(content, route);
     } else if (route.tab === 'related') {
-      content.innerHTML = `<p>Related Topics (coming next)</p>`;
+      renderRelatedTopics(content, route);
     }
     return;
   }
