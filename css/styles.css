@@ -941,3 +941,44 @@ a:hover {
     text-align: center;
   }
 }
+
+/* === About Page === */
+.about-page {
+  max-width: 700px;
+}
+
+.about-section {
+  margin-bottom: 1.5rem;
+}
+
+.about-section h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.about-section p {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--color-text);
+}
+
+.about-section ul {
+  padding-left: 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.8;
+}
+
+.about-section li {
+  margin-bottom: 0.25rem;
+}
+
+/* === Not Found === */
+.not-found {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.not-found h2 {
+  margin-bottom: 0.5rem;
+}
