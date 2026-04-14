@@ -1875,81 +1875,85 @@ body.sticky-always.has-subnav #content {
   margin-top: 0.15rem;
 }
 
-/* Clickable horizontal stepper — replaces the old progress bar */
+/* Clickable horizontal stepper — compact numbered markers, all 8
+   visible at once. Only the CURRENT step also shows its label so the
+   row never overflows. The label for other steps is a hover tooltip. */
 .wiz-stepper {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0;
-  padding: 0.25rem 0;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-}
-
-.wiz-stepper::-webkit-scrollbar {
-  height: 4px;
+  padding: 0.4rem 0.1rem 0.25rem;
+  width: 100%;
 }
 
 .wiz-step {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.4rem 0.55rem;
+  gap: 0.4rem;
+  padding: 0.25rem 0.3rem;
   background: transparent;
   border: none;
-  border-radius: 8px;
+  border-radius: 999px;
   cursor: pointer;
   font-family: var(--font-family);
-  font-size: 0.78rem;
   color: var(--color-text-muted);
   white-space: nowrap;
   flex-shrink: 0;
   transition: background 0.15s, color 0.15s;
 }
 
-.wiz-step:hover {
+.wiz-step:hover:not(.is-blocked) {
   background: var(--color-bg-light);
   color: var(--color-text);
 }
 
+.wiz-step.is-blocked {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 .wiz-step-marker {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background: var(--color-bg-muted);
   color: var(--color-text-muted);
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: var(--font-weight-bold);
   flex-shrink: 0;
   transition: background 0.15s, color 0.15s, box-shadow 0.15s;
 }
 
 .wiz-step-label {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-bold);
+  font-size: 0.82rem;
+  letter-spacing: -0.01em;
 }
 
 .wiz-step-sep {
-  display: inline-block;
-  width: 12px;
-  height: 1px;
+  flex: 1;
+  height: 2px;
   background: var(--color-border);
-  flex-shrink: 0;
+  margin: 0 0.15rem;
+  border-radius: 1px;
+  min-width: 6px;
+  max-width: 32px;
 }
 
 /* States */
 .wiz-step.is-current {
   color: var(--color-primary);
+  background: var(--color-accent);
+  padding-right: 0.7rem;
 }
 .wiz-step.is-current .wiz-step-marker {
   background: var(--color-primary);
   color: white;
-  box-shadow: 0 0 0 3px var(--color-accent);
-}
-.wiz-step.is-current .wiz-step-label {
-  font-weight: var(--font-weight-bold);
+  box-shadow: 0 0 0 3px white, 0 0 0 5px var(--color-primary);
 }
 
 .wiz-step.is-complete .wiz-step-marker {
@@ -1963,36 +1967,38 @@ body.sticky-always.has-subnav #content {
 .wiz-step.is-visited:not(.is-current):not(.is-complete) {
   color: var(--color-text);
 }
-
-.wiz-step.is-future {
-  opacity: 0.6;
+.wiz-step.is-visited:not(.is-current):not(.is-complete) .wiz-step-marker {
+  background: var(--color-bg-light);
+  color: var(--color-text);
+  border: 1.5px solid var(--color-border);
 }
 
-.wiz-step:disabled,
-.wiz-step.is-future:hover {
-  cursor: pointer;
+.wiz-step.is-future {
+  opacity: 0.55;
 }
 
 @media (max-width: 640px) {
-  .wiz-step-label {
-    display: none;
-  }
-
-  .wiz-step.is-current .wiz-step-label {
-    display: inline;
-  }
-
-  .wiz-step {
-    padding: 0.3rem 0.35rem;
+  .wiz-stepper {
+    padding: 0.3rem 0;
   }
 
   .wiz-step-marker {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
+    font-size: 0.7rem;
+  }
+
+  .wiz-step.is-current .wiz-step-label {
+    font-size: 0.74rem;
+  }
+
+  .wiz-step.is-current {
+    padding-right: 0.5rem;
   }
 
   .wiz-step-sep {
-    width: 8px;
+    min-width: 4px;
+    max-width: 16px;
   }
 }
 

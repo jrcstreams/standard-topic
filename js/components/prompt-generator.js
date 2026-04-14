@@ -168,21 +168,27 @@ function render() {
   const def = stepDefs[state.step];
   const totalSteps = stepDefs.length;
 
-  // Build the clickable stepper row
+  // Build the clickable stepper row — compact numbered markers,
+  // current step also shows its label.
+  const topicFilled = !!state.values.primaryTopic?.trim();
   const stepperHTML = stepDefs.map((s, i) => {
     const visited = state.visited.has(i);
     const isCurrent = i === state.step;
     const isComplete = isStepComplete(i);
+    // Block jumping past Topic until it's filled
+    const blocked = i > 0 && !topicFilled;
     const stateClass = isCurrent ? 'is-current'
       : isComplete ? 'is-complete'
       : visited ? 'is-visited'
       : 'is-future';
     return `
-      <button type="button" class="wiz-step ${stateClass}" data-step="${i}">
+      <button type="button" class="wiz-step ${stateClass} ${blocked ? 'is-blocked' : ''}"
+              data-step="${i}" title="${escapeAttr(s.label)}"
+              ${blocked ? 'aria-disabled="true"' : ''}>
         <span class="wiz-step-marker" aria-hidden="true">
           ${isComplete && !isCurrent ? '✓' : (i + 1)}
         </span>
-        <span class="wiz-step-label">${escapeHTML(s.label)}</span>
+        ${isCurrent ? `<span class="wiz-step-label">${escapeHTML(s.label)}</span>` : ''}
       </button>
     `;
   }).join('<span class="wiz-step-sep" aria-hidden="true"></span>');
@@ -331,7 +337,9 @@ function renderTopicStep(host) {
   });
 }
 
-// Topic picker overlay: full library + custom typing, callback-style
+// Topic picker overlay: full library + custom typing, callback-style.
+// The input is rendered ONCE and stays alive across keystrokes; only the
+// results body below is re-rendered as the user types.
 let topicPickerEl = null;
 function openTopicPicker(label, initialValue, onSelect) {
   if (!topicPickerEl) {
@@ -345,7 +353,6 @@ function openTopicPicker(label, initialValue, onSelect) {
     subtopics: all.filter(t => t.parent === parent.slug),
   }));
 
-  let query = initialValue || '';
   let highlightIdx = -1;
   let currentResults = [];
 
@@ -354,28 +361,37 @@ function openTopicPicker(label, initialValue, onSelect) {
     document.body.style.overflow = '';
   };
   const choose = (val) => {
-    if (val == null) val = query.trim();
-    if (!val) return;
-    onSelect(val);
+    const v = (val == null ? inputEl?.value : val);
+    const t = (v || '').trim();
+    if (!t) return;
+    onSelect(t);
     close();
   };
 
-  function rerender() {
+  // Build the shell ONCE — input + body container
+  topicPickerEl.innerHTML = `
+    <div class="wiz-topic-overlay-card">
+      <div class="wiz-topic-overlay-input-row">
+        <span class="wiz-topic-overlay-icon">🔍</span>
+        <input type="text" class="wiz-topic-overlay-input" id="wiz-topic-overlay-input"
+               placeholder="Search or type a topic"
+               autocomplete="off" spellcheck="false">
+        <button type="button" class="wiz-topic-overlay-close" id="wiz-topic-overlay-close" aria-label="Close">✕</button>
+      </div>
+      <div class="wiz-topic-overlay-body" id="wiz-topic-overlay-body"></div>
+    </div>
+  `;
+
+  const inputEl = topicPickerEl.querySelector('#wiz-topic-overlay-input');
+  const bodyEl = topicPickerEl.querySelector('#wiz-topic-overlay-body');
+  inputEl.value = initialValue || '';
+
+  function renderBody() {
+    const query = inputEl.value;
     const q = query.trim().toLowerCase();
-    let html = `
-      <div class="wiz-topic-overlay-card">
-        <div class="wiz-topic-overlay-input-row">
-          <span class="wiz-topic-overlay-icon">🔍</span>
-          <input type="text" class="wiz-topic-overlay-input" id="wiz-topic-overlay-input"
-                 placeholder="Search or type a topic"
-                 value="${escapeAttr(query)}" autocomplete="off" spellcheck="false">
-          <button type="button" class="wiz-topic-overlay-close" id="wiz-topic-overlay-close" aria-label="Close">✕</button>
-        </div>
-        <div class="wiz-topic-overlay-body">
-    `;
+    let html = '';
 
     if (q.length > 0) {
-      // Search mode: custom option + matching topics
       const matches = searchTopics(query);
       currentResults = [
         { type: 'custom', name: query.trim() },
@@ -399,7 +415,6 @@ function openTopicPicker(label, initialValue, onSelect) {
         });
       }
     } else {
-      // Browse mode: all parents + subtopics
       currentResults = [];
       groups.forEach(group => {
         html += `
@@ -416,67 +431,65 @@ function openTopicPicker(label, initialValue, onSelect) {
       });
     }
 
-    html += `</div></div>`;
-    topicPickerEl.innerHTML = html;
+    bodyEl.innerHTML = html;
 
-    const input = document.getElementById('wiz-topic-overlay-input');
-    input.focus();
-    input.setSelectionRange(input.value.length, input.value.length);
-
-    input.addEventListener('input', () => {
-      query = input.value;
-      highlightIdx = -1;
-      rerender();
-    });
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        if (highlightIdx >= 0 && currentResults[highlightIdx]) {
-          choose(currentResults[highlightIdx].name);
-        } else if (currentResults.length > 0) {
-          // First topic match if exists, else custom
-          const first = currentResults.find(r => r.type === 'topic') || currentResults[0];
-          choose(first.name);
-        } else if (query.trim()) {
-          choose(query.trim());
-        }
-      } else if (e.key === 'Escape') {
-        e.preventDefault();
-        close();
-      } else if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        highlightIdx = Math.min(highlightIdx + 1, currentResults.length - 1);
-        updateOverlayHighlight();
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        highlightIdx = Math.max(highlightIdx - 1, 0);
-        updateOverlayHighlight();
-      }
-    });
-
-    document.getElementById('wiz-topic-overlay-close').addEventListener('click', close);
-
-    topicPickerEl.querySelectorAll('.wiz-topic-overlay-chip').forEach(b => {
+    bodyEl.querySelectorAll('.wiz-topic-overlay-chip').forEach(b => {
       b.addEventListener('click', () => choose(b.dataset.name));
     });
-    topicPickerEl.querySelectorAll('.wiz-topic-overlay-result').forEach(r => {
+    bodyEl.querySelectorAll('.wiz-topic-overlay-result').forEach(r => {
       r.addEventListener('click', () => {
         const idx = parseInt(r.dataset.idx, 10);
         if (currentResults[idx]) choose(currentResults[idx].name);
       });
     });
+
+    updateOverlayHighlight();
   }
 
   function updateOverlayHighlight() {
-    topicPickerEl.querySelectorAll('.wiz-topic-overlay-result').forEach((el, i) => {
+    bodyEl.querySelectorAll('.wiz-topic-overlay-result').forEach((el, i) => {
       el.classList.toggle('highlighted', i === highlightIdx);
     });
   }
 
-  // Click outside the card closes
+  inputEl.addEventListener('input', () => {
+    highlightIdx = -1;
+    renderBody();
+  });
+
+  inputEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (highlightIdx >= 0 && currentResults[highlightIdx]) {
+        choose(currentResults[highlightIdx].name);
+      } else if (currentResults.length > 0) {
+        const first = currentResults.find(r => r.type === 'topic') || currentResults[0];
+        choose(first.name);
+      } else if (inputEl.value.trim()) {
+        choose(inputEl.value.trim());
+      }
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      close();
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      highlightIdx = Math.min(highlightIdx + 1, currentResults.length - 1);
+      updateOverlayHighlight();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      highlightIdx = Math.max(highlightIdx - 1, 0);
+      updateOverlayHighlight();
+    }
+  });
+
+  topicPickerEl.querySelector('#wiz-topic-overlay-close').addEventListener('click', close);
+
   topicPickerEl.style.display = 'flex';
   document.body.style.overflow = 'hidden';
-  rerender();
+  renderBody();
+  // Focus once on open; never re-focus (which kills cursor position)
+  inputEl.focus();
+  inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
 
   topicPickerEl.onclick = (e) => {
     if (e.target === topicPickerEl) close();
