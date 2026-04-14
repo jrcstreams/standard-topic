@@ -1,183 +1,212 @@
-// Topic search/browse modal
-// Supports multiple instances on the same page (hero + sticky header)
+// Search: full-screen overlay (SR2). A single global overlay lives in
+// document.body. `renderSearchBar` creates trigger buttons that all open
+// the same overlay. No second click needed — the overlay appears with
+// the input focused and results visible.
 
 import { getTopicsGroupedByParent, searchTopics } from '../utils/data.js';
 import { navigate } from '../utils/router.js';
 
-let globalListenersAttached = false;
+let overlayEl = null;
+let inputEl = null;
+let bodyEl = null;
+let currentResults = [];
+let highlightIndex = -1;
 
-export function renderSearchBar(container, route) {
+export function initSearchOverlay() {
+  if (overlayEl) return;
+
+  overlayEl = document.createElement('div');
+  overlayEl.className = 'search-overlay';
+  overlayEl.setAttribute('role', 'dialog');
+  overlayEl.setAttribute('aria-label', 'Search topics');
+  overlayEl.style.display = 'none';
+  overlayEl.innerHTML = `
+    <div class="search-overlay-card">
+      <div class="search-overlay-input-row">
+        <span class="search-overlay-icon" aria-hidden="true">🔍</span>
+        <input type="text" class="search-overlay-input"
+               placeholder="Search topics, or add a custom one"
+               autocomplete="off" spellcheck="false">
+        <span class="search-overlay-esc" aria-hidden="true">ESC</span>
+        <button class="search-overlay-close" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="search-overlay-body"></div>
+    </div>
+  `;
+  document.body.appendChild(overlayEl);
+
+  inputEl = overlayEl.querySelector('.search-overlay-input');
+  bodyEl = overlayEl.querySelector('.search-overlay-body');
+  const closeBtn = overlayEl.querySelector('.search-overlay-close');
+
+  inputEl.addEventListener('input', () => {
+    highlightIndex = -1;
+    renderBody(inputEl.value);
+  });
+
+  inputEl.addEventListener('keydown', handleKeyboard);
+
+  // Click outside the card closes
+  overlayEl.addEventListener('click', (e) => {
+    if (e.target === overlayEl) closeOverlay();
+  });
+
+  closeBtn.addEventListener('click', closeOverlay);
+
+  // Escape closes (only when overlay is open)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isOpen()) {
+      closeOverlay();
+    }
+  });
+}
+
+export function renderSearchBar(container) {
   container.innerHTML = `
     <div class="search-bar-wrapper">
       <button class="search-bar" type="button">
-        <span class="search-bar-icon">🔍</span>
+        <span class="search-bar-icon" aria-hidden="true">🔍</span>
         <span class="search-bar-label">Search any topic or choose from list</span>
       </button>
-      <div class="search-modal" style="display:none;">
-        <div class="search-modal-input-row">
-          <span class="search-modal-icon">🔍</span>
-          <input type="text" class="search-modal-input"
-                 placeholder="Search any topic or choose from list" autocomplete="off">
-        </div>
-        <div class="search-modal-results"></div>
-      </div>
     </div>
   `;
 
-  const wrapper = container.querySelector('.search-bar-wrapper');
-  const trigger = wrapper.querySelector('.search-bar');
-  const modal = wrapper.querySelector('.search-modal');
-  const input = wrapper.querySelector('.search-modal-input');
-  const results = wrapper.querySelector('.search-modal-results');
-
-  // Per-instance state via closure
-  const state = { isOpen: false, highlightIndex: -1, currentResults: [] };
-
+  const trigger = container.querySelector('.search-bar');
   trigger.addEventListener('click', (e) => {
     e.stopPropagation();
-    openModal(modal, input, results, state);
+    openOverlay();
   });
-
-  input.addEventListener('input', () => {
-    state.highlightIndex = -1;
-    renderResults(results, input.value, state);
-  });
-
-  input.addEventListener('keydown', (e) => {
-    handleKeyboard(e, results, input, state, modal);
-  });
-
-  attachGlobalListeners();
 }
 
-function openModal(modal, input, results, state) {
-  // Close any other open modals first
-  document.querySelectorAll('.search-modal').forEach(m => {
-    if (m !== modal && m.style.display === 'block') {
-      m.style.display = 'none';
-    }
-  });
-
-  state.isOpen = true;
-  state.highlightIndex = -1;
-  modal.style.display = 'block';
-  input.value = '';
-  input.focus();
-  renderResults(results, '', state);
+function isOpen() {
+  return overlayEl && overlayEl.style.display === 'flex';
 }
 
-function closeModal(modal, state) {
-  if (state) state.isOpen = false;
-  if (modal) modal.style.display = 'none';
+function openOverlay() {
+  if (!overlayEl) initSearchOverlay();
+  overlayEl.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  inputEl.value = '';
+  highlightIndex = -1;
+  renderBody('');
+  // Focus after a tick so the browser finishes layout/animation
+  setTimeout(() => inputEl.focus(), 30);
 }
 
-function renderResults(container, query, state) {
+function closeOverlay() {
+  if (!overlayEl) return;
+  overlayEl.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function renderBody(query) {
   const q = query.trim();
-  if (q.length === 0) {
-    renderBrowseList(container, state);
+  if (!q) {
+    renderBrowseGrid();
     return;
   }
-  renderSearchResults(container, q, state);
+  renderSearchResults(q);
 }
 
-function renderBrowseList(container, state) {
+function renderBrowseGrid() {
   const groups = getTopicsGroupedByParent();
   let html = '';
 
   groups.forEach(group => {
     html += `
-      <div class="search-result-header" data-slug="${group.parent.slug}" role="button" tabindex="0">
-        ${escapeHTML(group.parent.name)}
-      </div>
+      <div class="search-overlay-group">
+        <a href="#/topic/${group.parent.slug}" class="search-overlay-group-label" data-slug="${group.parent.slug}">
+          ${escapeHTML(group.parent.name)}
+        </a>
+        <div class="search-overlay-chips">
     `;
+    if (group.subtopics.length === 0) {
+      html += `<span class="search-overlay-group-empty">No subtopics — click the name above to browse ${escapeHTML(group.parent.name)}.</span>`;
+    }
     group.subtopics.forEach(sub => {
-      html += `
-        <div class="search-result-item" data-slug="${sub.slug}" role="button" tabindex="0">
-          ${escapeHTML(sub.name)}
-        </div>
-      `;
+      html += `<a href="#/topic/${sub.slug}" class="search-overlay-topic-chip" data-slug="${sub.slug}">${escapeHTML(sub.name)}</a>`;
     });
+    html += `</div></div>`;
   });
 
-  container.innerHTML = html;
-  state.currentResults = [];
+  bodyEl.innerHTML = html;
+  currentResults = [];
 
-  container.querySelectorAll('[data-slug]').forEach(el => {
-    el.addEventListener('click', () => {
-      const modal = container.closest('.search-modal');
+  bodyEl.querySelectorAll('[data-slug]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
       navigate(`#/topic/${el.dataset.slug}`);
-      closeModal(modal, state);
+      closeOverlay();
     });
   });
 }
 
-function renderSearchResults(container, query, state) {
-  let html = '';
-
-  html += `
-    <div class="search-result-custom" data-action="custom" role="button" tabindex="0">
+function renderSearchResults(query) {
+  let html = `
+    <div class="search-overlay-custom" data-action="custom" role="button" tabindex="0">
       <span class="search-custom-badge">+</span>
       Add "<strong>${escapeHTML(query)}</strong>" as Custom Topic
     </div>
   `;
 
   const matches = searchTopics(query);
-  state.currentResults = [
+  currentResults = [
     { type: 'custom', term: query },
     ...matches.map(m => ({ type: 'topic', slug: m.slug })),
   ];
 
   if (matches.length > 0) {
-    html += `<div class="search-result-section-label">Matching Topics</div>`;
+    html += `<div class="search-overlay-section-label">Matching Topics</div>`;
     matches.forEach(match => {
       const parentLabel = match.parentName
-        ? `<span class="search-result-parent">in ${escapeHTML(match.parentName)}</span>`
+        ? `<span class="search-overlay-result-parent">in ${escapeHTML(match.parentName)}</span>`
         : '';
       html += `
-        <div class="search-result-item" data-slug="${match.slug}" role="button" tabindex="0">
+        <div class="search-overlay-result" data-slug="${match.slug}" role="button" tabindex="0">
           ${highlightMatch(match.name, query)} ${parentLabel}
         </div>
       `;
     });
+  } else {
+    html += `<div class="search-overlay-empty">Press Enter to search for "<strong>${escapeHTML(query)}</strong>" as a custom topic.</div>`;
   }
 
-  container.innerHTML = html;
-  const modal = container.closest('.search-modal');
+  bodyEl.innerHTML = html;
 
-  container.querySelector('[data-action="custom"]')?.addEventListener('click', () => {
+  bodyEl.querySelector('[data-action="custom"]')?.addEventListener('click', () => {
     navigate(`#/custom/${encodeURIComponent(query)}`);
-    closeModal(modal, state);
+    closeOverlay();
   });
 
-  container.querySelectorAll('.search-result-item[data-slug]').forEach(el => {
+  bodyEl.querySelectorAll('[data-slug]').forEach(el => {
     el.addEventListener('click', () => {
       navigate(`#/topic/${el.dataset.slug}`);
-      closeModal(modal, state);
+      closeOverlay();
     });
   });
 
-  updateHighlight(container, state);
+  updateHighlight();
 }
 
-function handleKeyboard(e, results, input, state, modal) {
+function handleKeyboard(e) {
   if (e.key === 'ArrowDown') {
     e.preventDefault();
-    state.highlightIndex = Math.min(state.highlightIndex + 1, state.currentResults.length - 1);
-    updateHighlight(results, state);
+    highlightIndex = Math.min(highlightIndex + 1, currentResults.length - 1);
+    updateHighlight();
   } else if (e.key === 'ArrowUp') {
     e.preventDefault();
-    state.highlightIndex = Math.max(state.highlightIndex - 1, 0);
-    updateHighlight(results, state);
+    highlightIndex = Math.max(highlightIndex - 1, 0);
+    updateHighlight();
   } else if (e.key === 'Enter') {
-    const query = input.value.trim();
-    if (!query && state.highlightIndex < 0) return;
+    const query = inputEl.value.trim();
+    if (!query && highlightIndex < 0) return;
     e.preventDefault();
 
     let target;
-    if (state.highlightIndex >= 0 && state.currentResults[state.highlightIndex]) {
-      target = state.currentResults[state.highlightIndex];
+    if (highlightIndex >= 0 && currentResults[highlightIndex]) {
+      target = currentResults[highlightIndex];
     } else {
-      const firstTopicMatch = state.currentResults.find(r => r.type === 'topic');
+      const firstTopicMatch = currentResults.find(r => r.type === 'topic');
       target = firstTopicMatch || { type: 'custom', term: query };
     }
 
@@ -186,14 +215,14 @@ function handleKeyboard(e, results, input, state, modal) {
     } else {
       navigate(`#/topic/${target.slug}`);
     }
-    closeModal(modal, state);
+    closeOverlay();
   }
 }
 
-function updateHighlight(container, state) {
-  const items = container.querySelectorAll('.search-result-custom, .search-result-item[data-slug]');
+function updateHighlight() {
+  const items = bodyEl.querySelectorAll('.search-overlay-custom, .search-overlay-result');
   items.forEach((el, i) => {
-    el.classList.toggle('highlighted', i === state.highlightIndex);
+    el.classList.toggle('highlighted', i === highlightIndex);
   });
 }
 
@@ -204,31 +233,6 @@ function highlightMatch(name, query) {
   const match = name.slice(idx, idx + query.length);
   const after = name.slice(idx + query.length);
   return `${escapeHTML(before)}<strong>${escapeHTML(match)}</strong>${escapeHTML(after)}`;
-}
-
-function attachGlobalListeners() {
-  if (globalListenersAttached) return;
-  globalListenersAttached = true;
-
-  // Click outside any open modal closes it
-  document.addEventListener('click', (e) => {
-    document.querySelectorAll('.search-bar-wrapper').forEach(wrapper => {
-      const modal = wrapper.querySelector('.search-modal');
-      if (!modal || modal.style.display !== 'block') return;
-      const trigger = wrapper.querySelector('.search-bar');
-      if (!modal.contains(e.target) && !trigger?.contains(e.target)) {
-        modal.style.display = 'none';
-      }
-    });
-  });
-
-  // Escape closes all open modals
-  document.addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape') return;
-    document.querySelectorAll('.search-modal').forEach(modal => {
-      if (modal.style.display === 'block') modal.style.display = 'none';
-    });
-  });
 }
 
 function escapeHTML(str) {

@@ -1,7 +1,7 @@
 import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
 import { loadAllData, getTopicBySlug, getParentTopics } from './utils/data.js';
 import { renderFooter } from './components/footer.js';
-import { renderSearchBar } from './components/search-modal.js';
+import { renderSearchBar, initSearchOverlay } from './components/search-modal.js';
 import { renderNewsFeed } from './components/newsfeed.js';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
@@ -11,6 +11,7 @@ import { initPromptModal } from './components/prompt-modal.js';
 document.addEventListener('DOMContentLoaded', async () => {
   await loadAllData();
   initPromptModal();
+  initSearchOverlay();
 
   renderFooter(document.getElementById('site-footer'));
 
