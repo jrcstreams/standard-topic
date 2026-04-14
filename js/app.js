@@ -2,7 +2,6 @@ import { initRouter, onRoute } from './utils/router.js';
 import { loadAllData, getTopicBySlug } from './utils/data.js';
 import { renderHeader, updateHeaderActiveState } from './components/header.js';
 import { renderFooter } from './components/footer.js';
-import { renderTabs } from './components/tabs.js';
 import { renderSearchBar } from './components/search-modal.js';
 import { renderNewsFeed } from './components/newsfeed.js';
 import { renderShortcuts } from './components/shortcuts.js';
@@ -35,11 +34,6 @@ function renderSubHeader(route) {
   searchContainer.id = 'search-bar-container';
   inner.appendChild(searchContainer);
   renderSearchBar(searchContainer, route);
-
-  const tabsContainer = document.createElement('div');
-  tabsContainer.id = 'tabs-container';
-  inner.appendChild(tabsContainer);
-  renderTabs(tabsContainer, route);
 }
 
 function renderTopicHero(container, title, subtitle, iconEmoji) {
