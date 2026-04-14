@@ -9,7 +9,8 @@ export function renderHeader(container) {
       </a>
       <span class="header-tagline">News, Resources and AI Knowledge. On any topic.</span>
       <a href="#/prompt-generator" class="header-prompt-btn" id="header-prompt-btn">
-        Build Knowledge Prompt +
+        <span class="header-prompt-btn-icon" aria-hidden="true">+</span>
+        <span class="header-prompt-btn-text">Build Knowledge Prompt</span>
       </a>
     </div>
   `;

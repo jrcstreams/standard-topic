@@ -111,28 +111,52 @@ a:hover {
 }
 
 .header-prompt-btn {
-  background: transparent;
-  color: white;
-  border: 1.5px solid rgba(255, 255, 255, 0.6);
-  padding: 0.4rem 1rem;
+  display: inline-flex;
+  align-items: stretch;
+  background: white;
+  color: var(--color-primary);
   border-radius: 6px;
+  overflow: hidden;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   text-decoration: none;
   white-space: nowrap;
-  transition: background 0.2s, border-color 0.2s;
+  line-height: 1;
+  transition: box-shadow 0.15s, transform 0.05s;
   flex-shrink: 0;
 }
 
+.header-prompt-btn-icon {
+  background: var(--color-primary-dark);
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.7rem;
+  font-size: 1.1rem;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  min-width: 32px;
+}
+
+.header-prompt-btn-text {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.6rem 0.9rem;
+  line-height: 1;
+}
+
 .header-prompt-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   text-decoration: none;
 }
 
+.header-prompt-btn:active {
+  transform: translateY(1px);
+}
+
 .header-prompt-btn.active {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: white;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--color-primary-dark);
 }
 
 /* === Footer === */
