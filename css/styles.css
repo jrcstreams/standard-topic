@@ -100,17 +100,8 @@ a:hover {
   font-weight: 700;
 }
 
-.header-tagline {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.85rem;
-  flex: 1;
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .header-prompt-btn {
+  margin-left: auto;
   background: rgba(255, 255, 255, 0.15);
   color: white;
   border: none;
@@ -179,12 +170,6 @@ a:hover {
   color: white;
 }
 
-/* === Mobile === */
-@media (max-width: 768px) {
-  .header-tagline {
-    display: none;
-  }
-}
 
 /* === Sub-Header === */
 #sub-header {
@@ -198,7 +183,29 @@ a:hover {
 .sub-header-inner {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0.75rem 1rem;
+  padding: 1.1rem 1rem 1rem;
+  text-align: center;
+}
+
+.sub-header-tagline {
+  font-family: var(--font-family);
+  font-size: 0.92rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  margin: 0 0 0.75rem;
+  line-height: 1.35;
+}
+
+.sub-header-search {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .sub-header-tagline {
+    font-size: 0.82rem;
+    margin-bottom: 0.6rem;
+  }
 }
 
 /* === Tabs === */
@@ -233,7 +240,7 @@ a:hover {
 
 @media (max-width: 768px) {
   .sub-header-inner {
-    padding: 0.6rem 0.75rem;
+    padding: 0.85rem 0.9rem 0.8rem;
   }
 }
 
@@ -978,10 +985,6 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 
 .header-title {
   font-weight: var(--font-weight-bold);
-}
-
-.header-tagline {
-  font-weight: var(--font-weight-regular);
 }
 
 .header-prompt-btn,

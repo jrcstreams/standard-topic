@@ -7,7 +7,6 @@ export function renderHeader(container) {
         <img src="assets/logo.png" alt="Standard Topic" class="header-logo-img">
         <span class="header-title">Standard Topic</span>
       </a>
-      <span class="header-tagline">News, Resources and AI Knowledge. On any topic.</span>
       <a href="#/prompt-generator" class="header-prompt-btn" id="header-prompt-btn">
         Build Knowledge Prompt +
       </a>

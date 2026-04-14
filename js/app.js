@@ -27,12 +27,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 function renderSubHeader(route) {
   const subHeader = document.getElementById('sub-header');
-  subHeader.innerHTML = '<div class="sub-header-inner" id="sub-header-inner"></div>';
-  const inner = document.getElementById('sub-header-inner');
-
-  const searchContainer = document.createElement('div');
-  searchContainer.id = 'search-bar-container';
-  inner.appendChild(searchContainer);
+  subHeader.innerHTML = `
+    <div class="sub-header-inner" id="sub-header-inner">
+      <p class="sub-header-tagline">News, Resources and AI Knowledge. On any topic.</p>
+      <div class="sub-header-search" id="search-bar-container"></div>
+    </div>
+  `;
+  const searchContainer = document.getElementById('search-bar-container');
   renderSearchBar(searchContainer, route);
 }
 
