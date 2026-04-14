@@ -1,5 +1,5 @@
 import { initRouter, onRoute } from './utils/router.js';
-import { loadAllData, getTopicBySlug } from './utils/data.js';
+import { loadAllData, getTopicBySlug, getParentTopics } from './utils/data.js';
 import { renderHeader, updateHeaderActiveState } from './components/header.js';
 import { renderFooter } from './components/footer.js';
 import { renderSearchBar } from './components/search-modal.js';
@@ -27,10 +27,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 function renderSubHeader(route) {
   const subHeader = document.getElementById('sub-header');
+  const popularTopics = getParentTopics().slice(0, 5);
+  const chipsHTML = popularTopics.length > 0 ? `
+    <div class="sub-header-chips">
+      <span class="sub-header-chip-label">Popular</span>
+      ${popularTopics.map(t => `
+        <a href="#/topic/${t.slug}" class="sub-header-chip">${escapeHTML(t.name)}</a>
+      `).join('')}
+    </div>
+  ` : '';
+
   subHeader.innerHTML = `
     <div class="sub-header-inner" id="sub-header-inner">
       <p class="sub-header-tagline">News, Resources and AI Knowledge. On any topic.</p>
       <div class="sub-header-search" id="search-bar-container"></div>
+      ${chipsHTML}
     </div>
   `;
   const searchContainer = document.getElementById('search-bar-container');

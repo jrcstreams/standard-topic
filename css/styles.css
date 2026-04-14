@@ -201,10 +201,61 @@ a:hover {
   margin: 0 auto;
 }
 
+.sub-header-chips {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin: 0.7rem auto 0;
+  max-width: 560px;
+}
+
+.sub-header-chip-label {
+  font-size: 0.72rem;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: var(--font-weight-semibold);
+  margin-right: 0.15rem;
+}
+
+.sub-header-chip {
+  font-size: 0.78rem;
+  background: var(--color-bg-light);
+  color: var(--color-text);
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.sub-header-chip:hover {
+  background: var(--color-border);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
 @media (max-width: 768px) {
   .sub-header-tagline {
     font-size: 0.82rem;
     margin-bottom: 0.6rem;
+  }
+
+  .sub-header-chips {
+    gap: 0.3rem;
+    margin-top: 0.55rem;
+  }
+
+  .sub-header-chip,
+  .sub-header-chip-label {
+    font-size: 0.72rem;
+  }
+
+  .sub-header-chip {
+    padding: 0.2rem 0.6rem;
   }
 }
 
@@ -1023,16 +1074,16 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 
 /* === Enhanced Search Bar (prominent) === */
 .search-bar {
-  padding: 0.7rem 1rem;
+  padding: 0.85rem 1.1rem;
   font-size: 0.95rem;
   font-weight: var(--font-weight-medium);
-  gap: 0.65rem;
+  gap: 0.7rem;
   border-radius: 8px;
   width: 100%;
 }
 
 .search-bar-icon {
-  font-size: 1rem;
+  font-size: 1.1rem;
   flex-shrink: 0;
   color: var(--color-primary);
 }
