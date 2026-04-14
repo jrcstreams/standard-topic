@@ -59,17 +59,19 @@ export function renderShortcuts(container, route) {
     card.addEventListener('click', () => {
       const prompt = card.dataset.prompt;
       const name = card.dataset.name;
+      const icon = card.dataset.icon;
       window.dispatchEvent(new CustomEvent('open-prompt-modal', {
-        detail: { prompt, name },
+        detail: { prompt, name, icon },
       }));
     });
   });
 }
 
 function buildShortcutCard(shortcut, prompt) {
+  const icon = getIconEmoji(shortcut.icon);
   return `
-    <button class="shortcut-card" data-prompt="${escapeAttr(prompt)}" data-name="${escapeAttr(shortcut.name)}">
-      <span class="shortcut-icon">${getIconEmoji(shortcut.icon)}</span>
+    <button class="shortcut-card" data-prompt="${escapeAttr(prompt)}" data-name="${escapeAttr(shortcut.name)}" data-icon="${escapeAttr(icon)}">
+      <span class="shortcut-icon">${icon}</span>
       <span class="shortcut-name">${escapeHTML(shortcut.name)}</span>
     </button>
   `;
