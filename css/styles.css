@@ -2106,10 +2106,37 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .topic-banner-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  justify-content: flex-start;
+  gap: 1.25rem;
   flex-wrap: wrap;
-  row-gap: 0.75rem;
+  row-gap: 0.6rem;
+}
+
+/* TP3: subtle vertical divider between title group and tabs */
+.topic-banner-row .topic-banner-tabs {
+  position: relative;
+  padding-left: 1.25rem;
+}
+
+.topic-banner-row .topic-banner-tabs::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 22px;
+  background: var(--color-border);
+}
+
+/* Hide the divider when tabs wrap to a second line (mobile / narrow widths) */
+@media (max-width: 640px) {
+  .topic-banner-row .topic-banner-tabs {
+    padding-left: 0;
+  }
+  .topic-banner-row .topic-banner-tabs::before {
+    display: none;
+  }
 }
 
 .topic-banner-titlegroup {
