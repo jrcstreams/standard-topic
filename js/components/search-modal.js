@@ -1,6 +1,6 @@
 // Topic search/browse modal
 
-import { getTopicsGroupedByParent, searchTopics, getTopicBySlug } from '../utils/data.js';
+import { getTopicsGroupedByParent, searchTopics } from '../utils/data.js';
 import { navigate } from '../utils/router.js';
 
 let isOpen = false;
@@ -14,22 +14,13 @@ export function renderSearchBar(container, route) {
   highlightIndex = -1;
   currentResults = [];
 
-  let label = 'Search any topic or choose from list';
-  let hasValue = false;
-  if (route.type === 'topic') {
-    const topic = getTopicBySlug(route.slug);
-    if (topic) {
-      label = topic.name;
-      hasValue = true;
-    }
-  } else if (route.type === 'custom') {
-    label = route.term;
-    hasValue = true;
-  }
+  // Always show the default placeholder — the selected topic is already
+  // shown prominently in the page banner, so repeating it here is noise.
+  const label = 'Search any topic or choose from list';
 
   container.innerHTML = `
     <div class="search-bar-wrapper">
-      <button class="search-bar ${hasValue ? 'has-value' : ''}" id="search-bar-trigger" type="button">
+      <button class="search-bar" id="search-bar-trigger" type="button">
         <span class="search-bar-icon">🔍</span>
         <span class="search-bar-label" id="search-bar-label">${escapeHTML(label)}</span>
         <span class="search-bar-chevron">▾</span>
