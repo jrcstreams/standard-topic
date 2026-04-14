@@ -67,10 +67,9 @@ function renderHero(container, route) {
       <p class="hero-tagline">News, Resources and AI Knowledge. On any topic.</p>
       <div class="hero-search-wrap" id="search-bar-container"></div>
       ${chipsHTML}
-      <a href="#/prompt-generator" class="hero-build-btn">
-        <span class="hero-build-icon" aria-hidden="true">⚙</span>
-        <span>Build Your Own Knowledge Prompt</span>
-        <span class="hero-build-plus" aria-hidden="true">+</span>
+      <a href="#/prompt-generator" class="hero-build-link">
+        Or build your own knowledge prompt
+        <span class="hero-build-arrow" aria-hidden="true">→</span>
       </a>
     </div>
   `;
