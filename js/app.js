@@ -75,6 +75,8 @@ function renderLayout(route) {
   const heroEl = document.getElementById('hero');
   const isHome = route.type === 'home';
   const isMobile = window.matchMedia(MOBILE_QUERY).matches;
+  const wasOnHomeDesktop = document.body.classList.contains('home-mode')
+    && !document.body.classList.contains('sticky-always');
 
   // Clean up any prior scroll listener before switching modes
   if (heroScrollHandler) {
@@ -82,11 +84,15 @@ function renderLayout(route) {
     heroScrollHandler = null;
   }
 
-  // Reset everything
+  // Reset classes / sub-header on every render. We DON'T clear the hero
+  // when staying within home desktop — the hero content is identical
+  // across home tabs and re-rendering it causes layout shift / scroll
+  // clamp (which kicks the user out of the sticky-revealed state).
   siteHeader.className = 'is-sticky-hero';
   subHeader.className = '';
   subHeader.innerHTML = '';
-  if (heroEl) heroEl.innerHTML = '';
+  const stayingInHomeDesktop = isHome && !isMobile && wasOnHomeDesktop;
+  if (heroEl && !stayingInHomeDesktop) heroEl.innerHTML = '';
   document.body.classList.remove('sticky-always', 'has-subnav', 'home-mode');
 
   // Always render the main sticky bar
@@ -108,10 +114,11 @@ function renderLayout(route) {
       subHeader.classList.add('is-subnav');
       renderSubNav(subHeader, homeConfig);
     } else {
-      // Desktop home: hero in flow, subnav inline below hero (visible by default).
-      // Subnav sticks to top as user scrolls; main nav reveals at the same time
-      // and the subnav slides to sit just below it (top: 0 → top: 56px).
-      if (heroEl) renderHero(heroEl, route);
+      // Desktop home: hero in flow (only render if it's empty — switching
+      // home tabs leaves the hero alone so scroll position is preserved).
+      // Subnav sticks to top as user scrolls; main nav reveals at the same
+      // time and the subnav slides to sit just below it (top: 0 → top: 56px).
+      if (heroEl && !heroEl.children.length) renderHero(heroEl, route);
       subHeader.classList.add('is-home-subnav');
       renderSubNav(subHeader, homeConfig);
       setupHomeStickyReveal(siteHeader, subHeader);

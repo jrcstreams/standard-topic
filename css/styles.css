@@ -181,6 +181,14 @@ a:hover {
   display: none;
 }
 
+/* On home, ensure content can always be scrolled past the hero so that
+   tab-switching while in the sticky-revealed state stays revealed
+   (otherwise, a short tab's content would let the browser clamp the
+   scroll back down below the threshold). */
+body.home-mode #content {
+  min-height: 100vh;
+}
+
 /* Hidden on mobile — mobile home goes straight into sticky nav + subnav */
 @media (max-width: 640px) {
   #hero {
@@ -361,7 +369,6 @@ body.sticky-always.has-subnav #content {
   z-index: 99;
   background: var(--color-bg);
   border-bottom: 1px solid var(--color-border);
-  padding-top: 0.5rem;
 }
 
 /* === Home subnav (desktop) ===
@@ -374,7 +381,6 @@ body.sticky-always.has-subnav #content {
   z-index: 99;
   background: var(--color-bg);
   border-bottom: 1px solid var(--color-border);
-  padding-top: 0.5rem;
   transition: top 0.22s ease;
 }
 
@@ -386,8 +392,11 @@ body.sticky-always.has-subnav #content {
 #sub-header.is-home-subnav .topic-banner {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0.8rem 1rem 0.85rem;
+  padding: 0.85rem 1rem;
   border-bottom: none;
+  display: flex;
+  align-items: center;
+  min-height: 50px;
 }
 
 #sub-header.is-home-subnav .topic-banner-title {
@@ -413,8 +422,11 @@ body.sticky-always.has-subnav #content {
 #sub-header.is-subnav .topic-banner {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0.8rem 1rem 0.85rem;
+  padding: 0.85rem 1rem;
   border-bottom: none;
+  display: flex;
+  align-items: center;
+  min-height: 50px;
 }
 
 #sub-header.is-subnav .topic-banner-title {
@@ -440,11 +452,11 @@ body.sticky-always.has-subnav #content {
 @media (max-width: 640px) {
   #sub-header.is-subnav {
     top: 100px;
-    padding-top: 0.45rem;
   }
 
   #sub-header.is-subnav .topic-banner {
-    padding: 0.7rem 0.9rem 0.75rem;
+    padding: 0.75rem 0.9rem;
+    min-height: 46px;
   }
 
   #sub-header.is-subnav .topic-banner-title {
@@ -1441,6 +1453,350 @@ body.sticky-always.has-subnav #content {
   }
 }
 
+/* === All Topics view (homepage's "All Topics" tab) === */
+.all-topics-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.all-topics-group {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1.1rem;
+}
+
+.all-topics-group:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.all-topics-parent {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  text-decoration: none;
+  color: var(--color-text);
+  margin-bottom: 0.7rem;
+  transition: color 0.15s;
+}
+
+.all-topics-parent:hover {
+  text-decoration: none;
+  color: var(--color-primary);
+}
+
+.all-topics-parent-name {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.015em;
+}
+
+.all-topics-parent-meta {
+  font-size: 0.78rem;
+  color: var(--color-text-light);
+  font-weight: var(--font-weight-regular);
+}
+
+.all-topics-subgrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.45rem;
+}
+
+.all-topics-sub {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg);
+  text-decoration: none;
+  color: var(--color-text);
+  font-size: 0.85rem;
+  font-weight: var(--font-weight-medium);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.all-topics-sub:hover {
+  background: var(--color-bg-light);
+  border-color: var(--color-primary-light);
+  text-decoration: none;
+}
+
+.all-topics-note {
+  margin-top: 1.5rem;
+  padding: 1rem 1.15rem;
+  background: var(--color-bg-light);
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+  font-size: 0.92rem;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.all-topics-search-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: none;
+  border: none;
+  font-family: var(--font-family);
+  color: var(--color-primary);
+  font-weight: var(--font-weight-bold);
+  font-size: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(30, 45, 68, 0.3);
+  text-underline-offset: 3px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.all-topics-search-link:hover {
+  text-decoration-color: var(--color-primary);
+}
+
+@media (max-width: 640px) {
+  .all-topics-subgrid {
+    grid-template-columns: 1fr;
+  }
+
+  .all-topics-parent-name {
+    font-size: 1.05rem;
+  }
+}
+
+/* === Wizard topic picker (Primary/Secondary topic step) === */
+.wiz-topic-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-size: 0.92rem;
+  color: var(--color-text);
+  text-align: left;
+  transition: border-color 0.15s;
+}
+
+.wiz-topic-picker:hover {
+  border-color: var(--color-primary);
+}
+
+.wiz-topic-picker-icon {
+  color: var(--color-primary);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.wiz-topic-picker-value {
+  flex: 1;
+  font-weight: var(--font-weight-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wiz-topic-picker-placeholder {
+  color: var(--color-text-light);
+  font-weight: var(--font-weight-regular);
+}
+
+.wiz-topic-picker-chevron {
+  color: var(--color-text-light);
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.wiz-topic-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  background: rgba(15, 26, 46, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 8vh 1rem 1rem;
+  animation: search-overlay-in 0.1s ease-out;
+}
+
+.wiz-topic-overlay-card {
+  background: var(--color-bg);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 640px;
+  max-height: 75vh;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  animation: search-card-in 0.12s ease-out;
+}
+
+.wiz-topic-overlay-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.15rem;
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.wiz-topic-overlay-icon {
+  font-size: 1.15rem;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.wiz-topic-overlay-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1.05rem;
+  font-family: var(--font-family);
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
+  background: transparent;
+  min-width: 0;
+}
+
+.wiz-topic-overlay-close {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+}
+
+.wiz-topic-overlay-close:hover {
+  color: var(--color-text);
+}
+
+.wiz-topic-overlay-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 1.15rem 1.15rem;
+}
+
+.wiz-topic-overlay-group {
+  margin-bottom: 1rem;
+}
+
+.wiz-topic-overlay-group:last-child {
+  margin-bottom: 0;
+}
+
+.wiz-topic-overlay-group-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.45rem;
+}
+
+.wiz-topic-overlay-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.wiz-topic-overlay-chip {
+  padding: 0.32rem 0.75rem;
+  background: var(--color-bg-light);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-family: var(--font-family);
+  cursor: pointer;
+  color: var(--color-text);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.wiz-topic-overlay-chip:hover {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.wiz-topic-overlay-chip-parent {
+  font-weight: var(--font-weight-semibold);
+  background: white;
+  border-color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.wiz-topic-overlay-result {
+  padding: 0.6rem 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.92rem;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.wiz-topic-overlay-result:hover,
+.wiz-topic-overlay-result.highlighted {
+  background: var(--color-accent);
+}
+
+.wiz-topic-overlay-result-custom {
+  background: var(--color-accent);
+  margin-bottom: 0.5rem;
+}
+
+.wiz-topic-overlay-badge {
+  background: var(--color-primary);
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: var(--font-weight-bold);
+  flex-shrink: 0;
+}
+
+.wiz-topic-overlay-section-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.06em;
+  margin: 0.6rem 0 0.4rem;
+}
+
+.wiz-topic-overlay-result-parent {
+  color: var(--color-text-light);
+  font-size: 0.78rem;
+  margin-left: 0.4rem;
+}
+
+@media (max-width: 640px) {
+  .wiz-topic-overlay {
+    padding: 0;
+    align-items: stretch;
+  }
+  .wiz-topic-overlay-card {
+    max-width: none;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+}
+
 /* === Knowledge Prompt Generator — Wizard Mode === */
 .wiz {
   max-width: 720px;
@@ -1903,29 +2259,13 @@ body.sticky-always.has-subnav #content {
   overflow: hidden;
 }
 
-.wiz-preview summary {
-  padding: 0.65rem 0.9rem;
-  cursor: pointer;
-  font-size: 0.82rem;
+.wiz-preview-head {
+  padding: 0.55rem 0.9rem;
+  font-size: 0.7rem;
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-muted);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  list-style: none;
-}
-
-.wiz-preview summary::-webkit-details-marker {
-  display: none;
-}
-
-.wiz-preview-toggle {
-  transition: transform 0.15s;
-  color: var(--color-text-light);
-}
-
-.wiz-preview[open] .wiz-preview-toggle {
-  transform: rotate(180deg);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .wiz-preview-body {

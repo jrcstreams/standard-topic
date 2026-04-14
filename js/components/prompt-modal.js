@@ -125,7 +125,18 @@ function renderModalContent(prompt, shortcutName, shortcutIcon, models, selected
     if (!btn) return;
     selectedModelId = btn.dataset.modelId;
     setPreferredModelId(selectedModelId);
-    renderModalContent(prompt, shortcutName, shortcutIcon, models, selectedModelId);
+
+    // Surgical update — no full re-render, no flash of the modal
+    document.querySelectorAll('.prompt-modal-model-btn').forEach(b => {
+      b.classList.toggle('selected', b.dataset.modelId === selectedModelId);
+    });
+    const submitBtn = document.getElementById('prompt-modal-submit');
+    const newModel = getModelById(selectedModelId);
+    if (submitBtn && newModel) {
+      submitBtn.textContent = shouldCopyOnOpen(newModel)
+        ? `Copy & Open ${newModel.name} →`
+        : `Open ${newModel.name} →`;
+    }
   });
 
   document.getElementById('prompt-modal-submit').addEventListener('click', async () => {

@@ -8,7 +8,7 @@
 //                              user for an extra value substituted into
 //                              the option's clause via {key} placeholder
 
-import { getPromptGenData, getModels, getDefaultModelId, getModelById, getParentTopics } from '../utils/data.js';
+import { getPromptGenData, getModels, getDefaultModelId, getModelById, getParentTopics, getAllTopics, searchTopics } from '../utils/data.js';
 import { getPreferredModelId, setPreferredModelId, submitPrompt, isUrlTooLong, shouldCopyOnOpen } from '../utils/ai-models.js';
 
 const state = {
@@ -56,7 +56,11 @@ function buildStepDefinitions() {
       render: renderContentTypeStep },
     { id: 'contentGeneration', label: 'Approach', title: 'How should the AI approach this?',
       description: 'Optional. Pick one or more approaches the AI should take.',
-      render: (host) => populateChipGrid(host, 'contentGeneration') },
+      render: (host) => {
+        host.innerHTML = `<div data-field="contentGeneration"></div><div class="wiz-extras" data-extras-field="contentGeneration"></div>`;
+        populateChipGrid(host.querySelector('[data-field="contentGeneration"]'), 'contentGeneration');
+        renderExtraInputs(host.querySelector('[data-extras-field="contentGeneration"]'), 'contentGeneration');
+      } },
     { id: 'sourcesAndTime', label: 'Sources & Time', title: 'Where should the information come from?',
       description: 'Source types (multi-select), time period, and citation style.',
       render: renderSourcesAndTimeStep },
@@ -177,13 +181,12 @@ function render() {
       </div>
 
       ${!def.isFinal ? `
-      <details class="wiz-preview">
-        <summary>
+      <div class="wiz-preview">
+        <div class="wiz-preview-head">
           <span class="wiz-preview-label">Live Prompt Preview</span>
-          <span class="wiz-preview-toggle" aria-hidden="true">▾</span>
-        </summary>
+        </div>
         <div class="wiz-preview-body" id="wiz-preview-body"></div>
-      </details>` : ''}
+      </div>` : ''}
 
       <div class="wiz-foot">
         <button class="wiz-btn-back" id="wiz-back" type="button" ${state.step === 0 ? 'disabled' : ''}>← Back</button>
@@ -222,50 +225,198 @@ function advance() {
 // ---------- Step renderers ----------
 
 function renderTopicStep(host) {
-  const popular = getParentTopics().slice(0, 6);
   host.innerHTML = `
     <label class="wiz-label">Primary Topic <span class="wiz-required">*</span></label>
-    <input type="text" class="wiz-input" id="wiz-primary"
-           placeholder="e.g. Climate change, Quantum computing"
-           value="${escapeAttr(state.values.primaryTopic || '')}" autofocus>
-    ${popular.length > 0 ? `
-    <div class="wiz-popular-row">
-      <span class="wiz-popular-label">Or pick one:</span>
-      ${popular.map(t => `
-        <button class="wiz-pop-chip" type="button" data-name="${escapeAttr(t.name)}">${escapeHTML(t.name)}</button>
-      `).join('')}
-    </div>` : ''}
+    <button type="button" class="wiz-topic-picker" id="wiz-primary-picker">
+      <span class="wiz-topic-picker-icon">🔍</span>
+      <span class="wiz-topic-picker-value" id="wiz-primary-value">
+        ${state.values.primaryTopic
+          ? escapeHTML(state.values.primaryTopic)
+          : '<span class="wiz-topic-picker-placeholder">Click to choose a topic or type your own</span>'}
+      </span>
+      <span class="wiz-topic-picker-chevron" aria-hidden="true">▾</span>
+    </button>
+
     <label class="wiz-label" style="margin-top: 1.25rem;">Secondary Topic <span class="wiz-optional">(optional)</span></label>
-    <input type="text" class="wiz-input" id="wiz-secondary"
-           placeholder="Combine with another topic, e.g. Economics"
-           value="${escapeAttr(state.values.secondaryTopic || '')}">
+    <button type="button" class="wiz-topic-picker" id="wiz-secondary-picker">
+      <span class="wiz-topic-picker-icon">🔍</span>
+      <span class="wiz-topic-picker-value" id="wiz-secondary-value">
+        ${state.values.secondaryTopic
+          ? escapeHTML(state.values.secondaryTopic)
+          : '<span class="wiz-topic-picker-placeholder">Combine with another topic (optional)</span>'}
+      </span>
+      <span class="wiz-topic-picker-chevron" aria-hidden="true">▾</span>
+    </button>
   `;
 
-  const primary = host.querySelector('#wiz-primary');
-  const secondary = host.querySelector('#wiz-secondary');
-
-  primary.addEventListener('input', () => {
-    state.values.primaryTopic = primary.value;
-    updateNextEnabled();
-    updatePreview();
-  });
-  primary.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && state.values.primaryTopic?.trim()) advance();
-  });
-  secondary.addEventListener('input', () => {
-    state.values.secondaryTopic = secondary.value;
-    updatePreview();
-  });
-
-  host.querySelectorAll('.wiz-pop-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      const name = chip.dataset.name;
-      primary.value = name;
-      state.values.primaryTopic = name;
+  host.querySelector('#wiz-primary-picker').addEventListener('click', () => {
+    openTopicPicker('Primary Topic', state.values.primaryTopic, (value) => {
+      state.values.primaryTopic = value;
+      document.getElementById('wiz-primary-value').textContent = value;
       updateNextEnabled();
       updatePreview();
     });
   });
+
+  host.querySelector('#wiz-secondary-picker').addEventListener('click', () => {
+    openTopicPicker('Secondary Topic', state.values.secondaryTopic, (value) => {
+      state.values.secondaryTopic = value;
+      document.getElementById('wiz-secondary-value').textContent = value;
+      updatePreview();
+    });
+  });
+}
+
+// Topic picker overlay: full library + custom typing, callback-style
+let topicPickerEl = null;
+function openTopicPicker(label, initialValue, onSelect) {
+  if (!topicPickerEl) {
+    topicPickerEl = document.createElement('div');
+    topicPickerEl.className = 'wiz-topic-overlay';
+    document.body.appendChild(topicPickerEl);
+  }
+  const all = getAllTopics().filter(t => t.slug !== 'home');
+  const groups = getParentTopics().map(parent => ({
+    parent,
+    subtopics: all.filter(t => t.parent === parent.slug),
+  }));
+
+  let query = initialValue || '';
+  let highlightIdx = -1;
+  let currentResults = [];
+
+  const close = () => {
+    topicPickerEl.style.display = 'none';
+    document.body.style.overflow = '';
+  };
+  const choose = (val) => {
+    if (val == null) val = query.trim();
+    if (!val) return;
+    onSelect(val);
+    close();
+  };
+
+  function rerender() {
+    const q = query.trim().toLowerCase();
+    let html = `
+      <div class="wiz-topic-overlay-card">
+        <div class="wiz-topic-overlay-input-row">
+          <span class="wiz-topic-overlay-icon">🔍</span>
+          <input type="text" class="wiz-topic-overlay-input" id="wiz-topic-overlay-input"
+                 placeholder="Search or type a topic"
+                 value="${escapeAttr(query)}" autocomplete="off" spellcheck="false">
+          <button type="button" class="wiz-topic-overlay-close" id="wiz-topic-overlay-close" aria-label="Close">✕</button>
+        </div>
+        <div class="wiz-topic-overlay-body">
+    `;
+
+    if (q.length > 0) {
+      // Search mode: custom option + matching topics
+      const matches = searchTopics(query);
+      currentResults = [
+        { type: 'custom', name: query.trim() },
+        ...matches.map(m => ({ type: 'topic', name: m.name, parent: m.parentName })),
+      ];
+      html += `
+        <div class="wiz-topic-overlay-result wiz-topic-overlay-result-custom" data-idx="0">
+          <span class="wiz-topic-overlay-badge">+</span>
+          Use "<strong>${escapeHTML(query.trim())}</strong>" as a custom topic
+        </div>
+      `;
+      if (matches.length > 0) {
+        html += `<div class="wiz-topic-overlay-section-label">Library Matches</div>`;
+        matches.forEach((m, i) => {
+          html += `
+            <div class="wiz-topic-overlay-result" data-idx="${i + 1}">
+              <span>${escapeHTML(m.name)}</span>
+              ${m.parentName ? `<span class="wiz-topic-overlay-result-parent">in ${escapeHTML(m.parentName)}</span>` : ''}
+            </div>
+          `;
+        });
+      }
+    } else {
+      // Browse mode: all parents + subtopics
+      currentResults = [];
+      groups.forEach(group => {
+        html += `
+          <div class="wiz-topic-overlay-group">
+            <div class="wiz-topic-overlay-group-label">${escapeHTML(group.parent.name)}</div>
+            <div class="wiz-topic-overlay-chips">
+              <button type="button" class="wiz-topic-overlay-chip wiz-topic-overlay-chip-parent" data-name="${escapeAttr(group.parent.name)}">${escapeHTML(group.parent.name)}</button>
+              ${group.subtopics.map(s => `
+                <button type="button" class="wiz-topic-overlay-chip" data-name="${escapeAttr(s.name)}">${escapeHTML(s.name)}</button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    html += `</div></div>`;
+    topicPickerEl.innerHTML = html;
+
+    const input = document.getElementById('wiz-topic-overlay-input');
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
+
+    input.addEventListener('input', () => {
+      query = input.value;
+      highlightIdx = -1;
+      rerender();
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (highlightIdx >= 0 && currentResults[highlightIdx]) {
+          choose(currentResults[highlightIdx].name);
+        } else if (currentResults.length > 0) {
+          // First topic match if exists, else custom
+          const first = currentResults.find(r => r.type === 'topic') || currentResults[0];
+          choose(first.name);
+        } else if (query.trim()) {
+          choose(query.trim());
+        }
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        close();
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        highlightIdx = Math.min(highlightIdx + 1, currentResults.length - 1);
+        updateOverlayHighlight();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        highlightIdx = Math.max(highlightIdx - 1, 0);
+        updateOverlayHighlight();
+      }
+    });
+
+    document.getElementById('wiz-topic-overlay-close').addEventListener('click', close);
+
+    topicPickerEl.querySelectorAll('.wiz-topic-overlay-chip').forEach(b => {
+      b.addEventListener('click', () => choose(b.dataset.name));
+    });
+    topicPickerEl.querySelectorAll('.wiz-topic-overlay-result').forEach(r => {
+      r.addEventListener('click', () => {
+        const idx = parseInt(r.dataset.idx, 10);
+        if (currentResults[idx]) choose(currentResults[idx].name);
+      });
+    });
+  }
+
+  function updateOverlayHighlight() {
+    topicPickerEl.querySelectorAll('.wiz-topic-overlay-result').forEach((el, i) => {
+      el.classList.toggle('highlighted', i === highlightIdx);
+    });
+  }
+
+  // Click outside the card closes
+  topicPickerEl.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  rerender();
+
+  topicPickerEl.onclick = (e) => {
+    if (e.target === topicPickerEl) close();
+  };
 }
 
 function renderContentTypeStep(host) {
@@ -388,7 +539,12 @@ function renderReviewStep(host) {
     if (!btn) return;
     state.modelId = btn.dataset.modelId;
     setPreferredModelId(state.modelId);
-    render();
+    // Surgical update — don't re-render the whole step
+    host.querySelectorAll('.wiz-model-btn').forEach(b => {
+      b.classList.toggle('selected', b.dataset.modelId === state.modelId);
+    });
+    const submitBtn = host.querySelector('#wiz-submit');
+    if (submitBtn) submitBtn.textContent = getSubmitLabel();
   });
 
   host.querySelector('#wiz-submit').addEventListener('click', async () => {
