@@ -1,14 +1,21 @@
 // Knowledge Prompt Generator — guided wizard mode.
 // Multi-step flow with cards, chips, and a final review/submit screen.
-// Mobile-first: cards stack, footer nav buttons stay sticky.
+//
+// Supports per-field flags in prompt-generator.json:
+//   multiSelect: true   → users can select multiple values
+//   allowCustom: true   → users can add custom string values
+//   options[].requiresInput → when this option is selected, asks the
+//                              user for an extra value substituted into
+//                              the option's clause via {key} placeholder
 
 import { getPromptGenData, getModels, getDefaultModelId, getModelById, getParentTopics } from '../utils/data.js';
-import { getPreferredModelId, setPreferredModelId, submitPrompt, isUrlTooLong, supportsUrlPrompt, shouldCopyOnOpen } from '../utils/ai-models.js';
+import { getPreferredModelId, setPreferredModelId, submitPrompt, isUrlTooLong, shouldCopyOnOpen } from '../utils/ai-models.js';
 
-// Wizard state — reset on each render
 const state = {
   step: 0,
-  values: {},   // { primaryTopic, secondaryTopic, contentType, ... }
+  values: {},          // { fieldKey: 'value' (single) or ['v1','v2'] (multi) }
+  customValues: {},    // { fieldKey: { 'c<id>': 'custom string' } }
+  extraInputs: {},     // { 'requiresInputKey': 'value' } (e.g. compare_to)
   modelId: null,
   customizations: '',
 };
@@ -25,9 +32,10 @@ export function renderPromptGenerator(container) {
   modelsData = getModels();
   containerEl = container;
 
-  // Reset state on each fresh render of the page
   state.step = 0;
   state.values = {};
+  state.customValues = {};
+  state.extraInputs = {};
   state.modelId = getPreferredModelId(getDefaultModelId());
   state.customizations = '';
 
@@ -39,76 +47,105 @@ export function renderPromptGenerator(container) {
 
 function buildStepDefinitions() {
   return [
-    {
-      id: 'topic',
-      label: 'Topic',
-      title: 'What topic do you want to learn about?',
+    { id: 'topic', label: 'Topic', title: 'What topic do you want to learn about?',
       description: 'Pick a popular topic or type your own. You can also add a secondary topic to combine ideas.',
-      required: true,
-      render: renderTopicStep,
-      isComplete: () => !!state.values.primaryTopic?.trim(),
-    },
-    {
-      id: 'contentType',
-      label: 'Content Type',
-      title: 'What kind of content do you want?',
-      description: 'Pick the format of the answer the AI should produce.',
-      render: renderContentTypeStep,
-    },
-    {
-      id: 'contentGeneration',
-      label: 'Approach',
-      title: 'How should the AI approach this?',
-      description: 'Optional. Choose how the AI should treat the information — analysis, summary, comparison, etc.',
-      render: (host) => renderChipChoiceStep(host, 'contentGeneration'),
-    },
-    {
-      id: 'sourcesAndTime',
-      label: 'Sources & Time',
-      title: 'Where should the information come from?',
-      description: 'Choose source types, time period, and citation style.',
-      render: renderSourcesAndTimeStep,
-    },
-    {
-      id: 'formatAndLength',
-      label: 'Format & Length',
-      title: 'How should the answer be structured?',
+      required: true, render: renderTopicStep,
+      isComplete: () => !!state.values.primaryTopic?.trim() },
+    { id: 'contentType', label: 'Content Type', title: 'What kind of content do you want?',
+      description: 'Pick one or more — combine formats if you want, or add a custom one.',
+      render: renderContentTypeStep },
+    { id: 'contentGeneration', label: 'Approach', title: 'How should the AI approach this?',
+      description: 'Optional. Pick one or more approaches the AI should take.',
+      render: (host) => populateChipGrid(host, 'contentGeneration') },
+    { id: 'sourcesAndTime', label: 'Sources & Time', title: 'Where should the information come from?',
+      description: 'Source types (multi-select), time period, and citation style.',
+      render: renderSourcesAndTimeStep },
+    { id: 'formatAndLength', label: 'Format & Length', title: 'How should the answer be structured?',
       description: 'Pick a format and approximate length.',
-      render: renderFormatAndLengthStep,
-    },
-    {
-      id: 'audienceAndTone',
-      label: 'Audience & Tone',
-      title: 'Who is this for, and what voice?',
+      render: renderFormatAndLengthStep },
+    { id: 'audienceAndTone', label: 'Audience & Tone', title: 'Who is this for, and what voice?',
       description: 'Set the reading level and writing tone.',
-      render: renderAudienceAndToneStep,
-    },
-    {
-      id: 'geoAndCustom',
-      label: 'Region & Custom',
-      title: 'Anything else?',
-      description: 'Optional regional focus and any custom instructions you want to add.',
-      render: renderGeoAndCustomStep,
-    },
-    {
-      id: 'review',
-      label: 'Review & Submit',
-      title: 'Review your prompt and choose a model',
+      render: renderAudienceAndToneStep },
+    { id: 'geoAndCustom', label: 'Region & Custom', title: 'Anything else?',
+      description: 'Optional regional focus(es) and any custom instructions you want to add.',
+      render: renderGeoAndCustomStep },
+    { id: 'review', label: 'Review & Submit', title: 'Review your prompt and choose a model',
       description: 'Edit the model and submit when ready.',
-      isFinal: true,
-      render: renderReviewStep,
-    },
+      isFinal: true, render: renderReviewStep },
   ];
 }
 
 const cardIcons = {
-  'overview': '📋',
-  'research-summary': '📊',
-  'explainer': '💡',
-  'comparison': '🔍',
-  'timeline': '📅',
-  'case-study': '🔬',
+  'overview': '📋', 'research-summary': '📊', 'explainer': '💡',
+  'comparison': '🔍', 'timeline': '📅', 'case-study': '🔬',
 };
+
+// ---------- Helpers: field metadata + state ----------
+
+function getField(fieldKey) {
+  return pgData.fields.find(f => f.key === fieldKey);
+}
+function getOptionsFor(fieldKey) {
+  return getField(fieldKey)?.options || [];
+}
+function isFieldMulti(fieldKey) {
+  return !!getField(fieldKey)?.multiSelect;
+}
+function isFieldAllowCustom(fieldKey) {
+  return !!getField(fieldKey)?.allowCustom;
+}
+function getValuesArray(fieldKey) {
+  const v = state.values[fieldKey];
+  if (Array.isArray(v)) return v;
+  if (v) return [v];
+  return [];
+}
+function isValueSelected(fieldKey, value) {
+  return getValuesArray(fieldKey).includes(value);
+}
+function toggleValue(fieldKey, value) {
+  if (isFieldMulti(fieldKey)) {
+    const arr = [...getValuesArray(fieldKey)];
+    const idx = arr.indexOf(value);
+    if (idx >= 0) arr.splice(idx, 1);
+    else arr.push(value);
+    if (arr.length === 0) delete state.values[fieldKey];
+    else state.values[fieldKey] = arr;
+  } else {
+    if (state.values[fieldKey] === value) delete state.values[fieldKey];
+    else state.values[fieldKey] = value;
+  }
+}
+function addCustomValue(fieldKey, customStr) {
+  const text = (customStr || '').trim();
+  if (!text) return;
+  const id = `c${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`;
+  if (!state.customValues[fieldKey]) state.customValues[fieldKey] = {};
+  state.customValues[fieldKey][id] = text;
+  // Add to selection
+  if (isFieldMulti(fieldKey)) {
+    state.values[fieldKey] = [...getValuesArray(fieldKey), id];
+  } else {
+    state.values[fieldKey] = id;
+  }
+}
+function removeValue(fieldKey, value) {
+  // For multi: remove from array; for single: clear if matches
+  if (isFieldMulti(fieldKey)) {
+    const arr = getValuesArray(fieldKey).filter(v => v !== value);
+    if (arr.length === 0) delete state.values[fieldKey];
+    else state.values[fieldKey] = arr;
+  } else if (state.values[fieldKey] === value) {
+    delete state.values[fieldKey];
+  }
+  // If the value was a custom value, also remove from customValues
+  if (state.customValues[fieldKey] && value in state.customValues[fieldKey]) {
+    delete state.customValues[fieldKey][value];
+  }
+}
+function getCustomLabel(fieldKey, valueId) {
+  return state.customValues[fieldKey]?.[valueId];
+}
 
 // ---------- Top-level render ----------
 
@@ -232,87 +269,70 @@ function renderTopicStep(host) {
 }
 
 function renderContentTypeStep(host) {
-  const opts = getOptionsFor('contentType');
-  const current = state.values.contentType || '';
-  host.innerHTML = `
-    <div class="wiz-cards">
-      ${opts.map(opt => `
-        <button class="wiz-card ${opt.value === current ? 'selected' : ''}" type="button" data-value="${escapeAttr(opt.value)}">
-          <div class="wiz-card-icon">${cardIcons[opt.value] || '•'}</div>
-          <div class="wiz-card-label">${escapeHTML(opt.label)}</div>
-        </button>
-      `).join('')}
-    </div>
-  `;
-  host.querySelectorAll('.wiz-card').forEach(card => {
-    card.addEventListener('click', () => {
-      state.values.contentType = card.dataset.value;
-      host.querySelectorAll('.wiz-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      updatePreview();
-    });
-  });
-}
-
-function renderChipChoiceStep(host, fieldKey) {
-  populateChipGrid(host, fieldKey);
+  host.innerHTML = `<div class="wiz-cards-wrap"></div><div class="wiz-extras" data-extras-field="contentType"></div>`;
+  populateCardGrid(host.querySelector('.wiz-cards-wrap'), 'contentType');
+  renderExtraInputs(host.querySelector('.wiz-extras'), 'contentType');
 }
 
 function renderSourcesAndTimeStep(host) {
   host.innerHTML = `
     <div class="wiz-sub-section">
-      <label class="wiz-sub-label">Source Types</label>
-      <div class="wiz-chip-grid" id="wiz-sources"></div>
+      <label class="wiz-sub-label">Source Types <span class="wiz-optional">(pick one or more)</span></label>
+      <div data-field="sources"></div>
+      <div class="wiz-extras" data-extras-field="sources"></div>
     </div>
     <div class="wiz-sub-section">
       <label class="wiz-sub-label">Time Period</label>
-      <div class="wiz-chip-grid" id="wiz-recency"></div>
+      <div data-field="recency"></div>
+      <div class="wiz-extras" data-extras-field="recency"></div>
     </div>
     <div class="wiz-sub-section">
       <label class="wiz-sub-label">Citations</label>
-      <div class="wiz-chip-grid" id="wiz-citations"></div>
+      <div data-field="citations"></div>
     </div>
   `;
-  populateChipGrid(host.querySelector('#wiz-sources'), 'sources');
-  populateChipGrid(host.querySelector('#wiz-recency'), 'recency');
-  populateChipGrid(host.querySelector('#wiz-citations'), 'citations');
+  populateChipGrid(host.querySelector('[data-field="sources"]'), 'sources');
+  populateChipGrid(host.querySelector('[data-field="recency"]'), 'recency');
+  populateChipGrid(host.querySelector('[data-field="citations"]'), 'citations');
+  renderExtraInputs(host.querySelector('[data-extras-field="sources"]'), 'sources');
+  renderExtraInputs(host.querySelector('[data-extras-field="recency"]'), 'recency');
 }
 
 function renderFormatAndLengthStep(host) {
   host.innerHTML = `
     <div class="wiz-sub-section">
       <label class="wiz-sub-label">Output Format</label>
-      <div class="wiz-chip-grid" id="wiz-format"></div>
+      <div data-field="format"></div>
     </div>
     <div class="wiz-sub-section">
       <label class="wiz-sub-label">Length</label>
-      <div class="wiz-chip-grid" id="wiz-length"></div>
+      <div data-field="length"></div>
     </div>
   `;
-  populateChipGrid(host.querySelector('#wiz-format'), 'format');
-  populateChipGrid(host.querySelector('#wiz-length'), 'length');
+  populateChipGrid(host.querySelector('[data-field="format"]'), 'format');
+  populateChipGrid(host.querySelector('[data-field="length"]'), 'length');
 }
 
 function renderAudienceAndToneStep(host) {
   host.innerHTML = `
     <div class="wiz-sub-section">
       <label class="wiz-sub-label">Reading Level</label>
-      <div class="wiz-chip-grid" id="wiz-audience"></div>
+      <div data-field="audience"></div>
     </div>
     <div class="wiz-sub-section">
       <label class="wiz-sub-label">Writing Tone</label>
-      <div class="wiz-chip-grid" id="wiz-tone"></div>
+      <div data-field="tone"></div>
     </div>
   `;
-  populateChipGrid(host.querySelector('#wiz-audience'), 'audience');
-  populateChipGrid(host.querySelector('#wiz-tone'), 'tone');
+  populateChipGrid(host.querySelector('[data-field="audience"]'), 'audience');
+  populateChipGrid(host.querySelector('[data-field="tone"]'), 'tone');
 }
 
 function renderGeoAndCustomStep(host) {
   host.innerHTML = `
     <div class="wiz-sub-section">
-      <label class="wiz-sub-label">Geographic Focus</label>
-      <div class="wiz-chip-grid" id="wiz-geo"></div>
+      <label class="wiz-sub-label">Geographic Focus <span class="wiz-optional">(pick one or more)</span></label>
+      <div data-field="geographic"></div>
     </div>
     <div class="wiz-sub-section">
       <label class="wiz-sub-label">Custom Instructions <span class="wiz-optional">(optional)</span></label>
@@ -320,7 +340,7 @@ function renderGeoAndCustomStep(host) {
                 placeholder="Add any extra instructions, e.g. 'Include code examples' or 'Avoid jargon'">${escapeHTML(state.customizations || '')}</textarea>
     </div>
   `;
-  populateChipGrid(host.querySelector('#wiz-geo'), 'geographic');
+  populateChipGrid(host.querySelector('[data-field="geographic"]'), 'geographic');
   const ta = host.querySelector('#wiz-custom');
   ta.addEventListener('input', () => {
     state.customizations = ta.value;
@@ -380,46 +400,220 @@ function renderReviewStep(host) {
   host.querySelector('#wiz-restart').addEventListener('click', () => {
     state.step = 0;
     state.values = {};
+    state.customValues = {};
+    state.extraInputs = {};
     state.customizations = '';
     render();
     window.scrollTo(0, 0);
   });
 }
 
-// ---------- Helpers ----------
+// ---------- Card grid (Content Type step) ----------
 
-function getOptionsFor(fieldKey) {
-  const field = pgData.fields.find(f => f.key === fieldKey);
-  return field?.options || [];
+function populateCardGrid(host, fieldKey) {
+  const opts = getOptionsFor(fieldKey);
+  const customMap = state.customValues[fieldKey] || {};
+  const allowCustom = isFieldAllowCustom(fieldKey);
+
+  let html = `<div class="wiz-cards">`;
+  opts.forEach(opt => {
+    const selected = isValueSelected(fieldKey, opt.value);
+    html += `
+      <button class="wiz-card ${selected ? 'selected' : ''}" type="button" data-value="${escapeAttr(opt.value)}">
+        <div class="wiz-card-icon">${cardIcons[opt.value] || '•'}</div>
+        <div class="wiz-card-label">${escapeHTML(opt.label)}</div>
+      </button>
+    `;
+  });
+  // Custom card-style chips
+  Object.entries(customMap).forEach(([id, label]) => {
+    if (!isValueSelected(fieldKey, id)) return;
+    html += `
+      <div class="wiz-card selected wiz-card-custom" data-value="${escapeAttr(id)}">
+        <div class="wiz-card-icon">✏️</div>
+        <div class="wiz-card-label">${escapeHTML(label)}</div>
+        <button class="wiz-card-remove" type="button" data-remove="${escapeAttr(id)}" aria-label="Remove">×</button>
+      </div>
+    `;
+  });
+  if (allowCustom) {
+    html += `
+      <button class="wiz-card wiz-card-add" type="button" data-add-custom="true">
+        <div class="wiz-card-icon">＋</div>
+        <div class="wiz-card-label">Add custom</div>
+      </button>
+    `;
+  }
+  html += `</div>`;
+  host.innerHTML = html;
+
+  attachChipHandlers(host, fieldKey, '.wiz-card', '.wiz-card-add', '.wiz-card-remove');
 }
+
+// ---------- Chip grid (most fields) ----------
 
 function populateChipGrid(host, fieldKey) {
   const opts = getOptionsFor(fieldKey);
-  const current = state.values[fieldKey] || '';
-  host.innerHTML = opts.map(opt => `
-    <button class="wiz-chip ${opt.value === current ? 'selected' : ''}" type="button" data-value="${escapeAttr(opt.value)}">
-      ${escapeHTML(opt.label)}
-    </button>
+  const customMap = state.customValues[fieldKey] || {};
+  const allowCustom = isFieldAllowCustom(fieldKey);
+
+  let html = `<div class="wiz-chip-grid">`;
+  opts.forEach(opt => {
+    const selected = isValueSelected(fieldKey, opt.value);
+    html += `
+      <button class="wiz-chip ${selected ? 'selected' : ''}" type="button" data-value="${escapeAttr(opt.value)}">
+        ${escapeHTML(opt.label)}
+      </button>
+    `;
+  });
+  Object.entries(customMap).forEach(([id, label]) => {
+    if (!isValueSelected(fieldKey, id)) return;
+    html += `
+      <span class="wiz-chip selected wiz-chip-custom" data-value="${escapeAttr(id)}">
+        ${escapeHTML(label)}
+        <button class="wiz-chip-remove" type="button" data-remove="${escapeAttr(id)}" aria-label="Remove">×</button>
+      </span>
+    `;
+  });
+  if (allowCustom) {
+    html += `
+      <button class="wiz-chip wiz-chip-add" type="button" data-add-custom="true">
+        + Add custom
+      </button>
+    `;
+  }
+  html += `</div>`;
+  host.innerHTML = html;
+
+  attachChipHandlers(host, fieldKey, '.wiz-chip', '.wiz-chip-add', '.wiz-chip-remove');
+}
+
+// Shared click handlers for both card and chip grids
+function attachChipHandlers(host, fieldKey, itemSelector, addSelector, removeSelector) {
+  host.querySelectorAll(itemSelector).forEach(el => {
+    if (el.matches(addSelector)) return; // handled separately
+    el.addEventListener('click', (e) => {
+      // Don't toggle when clicking the remove button
+      if (e.target.closest(removeSelector)) return;
+      const value = el.dataset.value;
+      if (!value) return;
+      toggleValue(fieldKey, value);
+      // If this was a custom value being deselected, also remove it
+      if (!isValueSelected(fieldKey, value) && state.customValues[fieldKey]?.[value]) {
+        delete state.customValues[fieldKey][value];
+      }
+      rerenderField(fieldKey);
+    });
+  });
+  host.querySelectorAll(removeSelector).forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      removeValue(fieldKey, btn.dataset.remove);
+      rerenderField(fieldKey);
+    });
+  });
+  const addBtn = host.querySelector(addSelector);
+  if (addBtn) {
+    addBtn.addEventListener('click', () => openCustomInput(addBtn, fieldKey));
+  }
+}
+
+// Inline custom input that replaces the "+ Add custom" button
+function openCustomInput(triggerEl, fieldKey) {
+  const wrap = document.createElement('div');
+  wrap.className = 'wiz-custom-input-wrap';
+  wrap.innerHTML = `
+    <input type="text" class="wiz-custom-input" placeholder="Type and press Enter…" autofocus>
+    <button class="wiz-custom-add-btn" type="button">Add</button>
+    <button class="wiz-custom-cancel-btn" type="button" aria-label="Cancel">✕</button>
+  `;
+  triggerEl.parentNode.replaceChild(wrap, triggerEl);
+  const input = wrap.querySelector('.wiz-custom-input');
+  const addBtn = wrap.querySelector('.wiz-custom-add-btn');
+  const cancelBtn = wrap.querySelector('.wiz-custom-cancel-btn');
+
+  input.focus();
+
+  const submit = () => {
+    const text = input.value.trim();
+    if (text) {
+      addCustomValue(fieldKey, text);
+    }
+    rerenderField(fieldKey);
+  };
+  const cancel = () => {
+    rerenderField(fieldKey);
+  };
+
+  addBtn.addEventListener('click', submit);
+  cancelBtn.addEventListener('click', cancel);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); submit(); }
+    if (e.key === 'Escape') { e.preventDefault(); cancel(); }
+  });
+}
+
+// Rerender just the chip/card grid for one field, and its extras input area
+function rerenderField(fieldKey) {
+  if (fieldKey === 'contentType') {
+    const wrap = document.querySelector('.wiz-cards-wrap');
+    if (wrap) populateCardGrid(wrap, fieldKey);
+  } else {
+    const fieldRoot = document.querySelector(`[data-field="${fieldKey}"]`);
+    if (fieldRoot) populateChipGrid(fieldRoot, fieldKey);
+  }
+  // Re-render extras for fields that may have requiresInput
+  const extras = document.querySelector(`[data-extras-field="${fieldKey}"]`);
+  if (extras) renderExtraInputs(extras, fieldKey);
+
+  updatePreview();
+  updateNextEnabled();
+}
+
+// Render the extra input fields for any selected option that has requiresInput
+function renderExtraInputs(host, fieldKey) {
+  if (!host) return;
+  const selectedValues = getValuesArray(fieldKey);
+  const opts = getOptionsFor(fieldKey);
+  const needed = [];
+  selectedValues.forEach(v => {
+    const opt = opts.find(o => o.value === v);
+    if (opt?.requiresInput) needed.push({ option: opt, req: opt.requiresInput });
+  });
+  if (needed.length === 0) {
+    host.innerHTML = '';
+    return;
+  }
+  host.innerHTML = needed.map(({ option, req }) => `
+    <div class="wiz-extra-input">
+      <label class="wiz-extra-label">
+        ${escapeHTML(req.label)}
+        <span class="wiz-extra-context">— for "${escapeHTML(option.label)}"</span>
+        ${req.optional ? `<span class="wiz-optional">(optional)</span>` : ''}
+      </label>
+      <input type="text" class="wiz-input wiz-extra-field"
+             data-extra-key="${escapeAttr(req.key)}"
+             placeholder="${escapeAttr(req.placeholder || '')}"
+             value="${escapeAttr(state.extraInputs[req.key] || '')}">
+    </div>
   `).join('');
-  host.querySelectorAll('.wiz-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      state.values[fieldKey] = chip.dataset.value;
-      host.querySelectorAll('.wiz-chip').forEach(c => c.classList.remove('selected'));
-      chip.classList.add('selected');
+
+  host.querySelectorAll('.wiz-extra-field').forEach(input => {
+    input.addEventListener('input', () => {
+      state.extraInputs[input.dataset.extraKey] = input.value;
       updatePreview();
     });
   });
 }
 
+// ---------- Footer / preview ----------
+
 function updateNextEnabled() {
   const def = stepDefs[state.step];
   const nextBtn = document.getElementById('wiz-next');
   if (!nextBtn) return;
-  if (def.required && !def.isComplete?.()) {
-    nextBtn.setAttribute('disabled', '');
-  } else {
-    nextBtn.removeAttribute('disabled');
-  }
+  if (def.required && !def.isComplete?.()) nextBtn.setAttribute('disabled', '');
+  else nextBtn.removeAttribute('disabled');
 }
 
 function updatePreview() {
@@ -438,34 +632,56 @@ function getSubmitLabel() {
     : `Open ${m.name} →`;
 }
 
-// Mirror the assembly logic from the form version
+// ---------- Prompt assembly ----------
+
 function assemblePrompt() {
   const primaryTopic = (state.values.primaryTopic || '').trim();
   const secondaryTopic = (state.values.secondaryTopic || '').trim();
   if (!primaryTopic) return '';
 
-  const sub = (text) => text
-    .replace(/\{primary_topic\}/g, primaryTopic)
-    .replace(/\{secondary_topic\}/g, secondaryTopic || primaryTopic);
+  const sub = (text) => {
+    let out = text
+      .replace(/\{primary_topic\}/g, primaryTopic)
+      .replace(/\{secondary_topic\}/g, secondaryTopic || primaryTopic);
+    // Substitute any extra inputs (from requiresInput)
+    Object.entries(state.extraInputs).forEach(([k, v]) => {
+      const placeholder = v?.trim() || `[${k.replace(/_/g, ' ')}]`;
+      out = out.replace(new RegExp(`\\{${k}\\}`, 'g'), placeholder);
+    });
+    return out;
+  };
 
-  // Opener
-  const ctValue = state.values.contentType;
+  // ---- Build clauses for each field ----
+  const clausesForField = (fieldKey) => {
+    const values = getValuesArray(fieldKey);
+    if (values.length === 0) return [];
+    const opts = getOptionsFor(fieldKey);
+    return values.map(value => {
+      const opt = opts.find(o => o.value === value);
+      if (opt) {
+        return opt.clause ? sub(opt.clause) : null;
+      }
+      // Custom value
+      const customLabel = getCustomLabel(fieldKey, value);
+      if (customLabel) return generateCustomClause(fieldKey, customLabel);
+      return null;
+    }).filter(Boolean);
+  };
+
+  // Opener: from contentType (could be multiple)
+  const contentClauses = clausesForField('contentType');
   let opener;
-  if (ctValue) {
-    const opt = getOptionsFor('contentType').find(o => o.value === ctValue);
-    opener = opt?.clause ? sub(opt.clause) + '.' : sub(pgData.baseTemplate);
+  if (contentClauses.length > 0) {
+    opener = contentClauses.map(c => endWithPeriod(c)).join(' ');
   } else {
     opener = sub(pgData.baseTemplate);
   }
 
-  // Supporting clauses
+  // Supporting clauses from all other configured fields
   const supportingKeys = ['contentGeneration', 'sources', 'recency', 'citations', 'format', 'length', 'audience', 'tone', 'geographic'];
   const supporting = [];
   supportingKeys.forEach(key => {
-    const value = state.values[key];
-    if (!value) return;
-    const opt = getOptionsFor(key).find(o => o.value === value);
-    if (opt?.clause) supporting.push(sub(opt.clause) + '.');
+    clausesForField(key).forEach(c => supporting.push(endWithPeriod(c)));
   });
 
   const secondaryClause = (secondaryTopic && pgData.secondaryTopicClause)
@@ -482,6 +698,22 @@ function assemblePrompt() {
     parts.push(pgData.closingLine);
   }
   return parts.join('\n\n');
+}
+
+function endWithPeriod(s) {
+  if (!s) return s;
+  return /[.!?]$/.test(s.trim()) ? s : s + '.';
+}
+
+// Generic clause for custom values, varies by field
+function generateCustomClause(fieldKey, customStr) {
+  switch (fieldKey) {
+    case 'contentType': return `Provide ${customStr} on the topic`;
+    case 'contentGeneration': return `Approach this with ${customStr}`;
+    case 'sources': return `Draw from ${customStr}`;
+    case 'geographic': return `Focus on ${customStr}`;
+    default: return customStr;
+  }
 }
 
 // ---------- Utilities ----------

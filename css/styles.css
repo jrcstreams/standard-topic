@@ -1699,6 +1699,182 @@ body.sticky-always.has-subnav #content {
   color: white;
 }
 
+/* Custom value chip (selected by default, has remove button) */
+.wiz-chip.wiz-chip-custom {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-right: 0.4rem;
+}
+
+.wiz-chip-remove {
+  background: rgba(255, 255, 255, 0.18);
+  color: white;
+  border: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.wiz-chip-remove:hover {
+  background: rgba(255, 255, 255, 0.32);
+}
+
+/* "+ Add custom" chip — outlined, dashed */
+.wiz-chip-add {
+  border-style: dashed;
+  border-color: var(--color-primary-light);
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.wiz-chip-add:hover {
+  border-style: solid;
+  background: var(--color-accent);
+  color: var(--color-primary);
+}
+
+/* Custom card (for content type step) */
+.wiz-card.wiz-card-custom {
+  position: relative;
+}
+
+.wiz-card-remove {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(30, 45, 68, 0.1);
+  color: var(--color-primary);
+  border: none;
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.wiz-card-remove:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+.wiz-card.wiz-card-add {
+  border-style: dashed;
+  border-color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.wiz-card.wiz-card-add:hover {
+  border-style: solid;
+  background: var(--color-accent);
+}
+
+.wiz-card.wiz-card-add .wiz-card-icon,
+.wiz-card.wiz-card-add .wiz-card-label {
+  color: var(--color-primary);
+}
+
+/* Inline custom-input wrap (replaces the "+ Add custom" chip when clicked) */
+.wiz-custom-input-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 2px solid var(--color-primary);
+  background: white;
+  border-radius: 999px;
+  padding: 0.25rem 0.4rem 0.25rem 0.85rem;
+}
+
+.wiz-custom-input {
+  border: none;
+  outline: none;
+  font-family: var(--font-family);
+  font-size: 0.88rem;
+  background: transparent;
+  color: var(--color-text);
+  width: 180px;
+  min-width: 100px;
+  padding: 0;
+}
+
+.wiz-custom-add-btn {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-family);
+  cursor: pointer;
+}
+
+.wiz-custom-add-btn:hover {
+  background: var(--color-primary-dark);
+}
+
+.wiz-custom-cancel-btn {
+  background: none;
+  color: var(--color-text-muted);
+  border: none;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.wiz-custom-cancel-btn:hover {
+  color: var(--color-text);
+}
+
+/* Extra inputs (for requiresInput options like "Compare to what?") */
+.wiz-extras {
+  margin-top: 0.75rem;
+}
+
+.wiz-extra-input {
+  margin-bottom: 0.75rem;
+  padding: 0.7rem 0.85rem;
+  background: var(--color-accent);
+  border-radius: 8px;
+  border-left: 3px solid var(--color-primary);
+}
+
+.wiz-extra-input:last-child {
+  margin-bottom: 0;
+}
+
+.wiz-extra-label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--color-text);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: 0.4rem;
+}
+
+.wiz-extra-context {
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-regular);
+  font-size: 0.85em;
+}
+
+.wiz-extra-field {
+  font-size: 0.88rem !important;
+  padding: 0.5rem 0.75rem !important;
+}
+
 /* Sub-sections (steps that combine multiple choices) */
 .wiz-sub-section {
   margin-bottom: 1.25rem;
