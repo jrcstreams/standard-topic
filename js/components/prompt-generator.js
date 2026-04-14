@@ -18,6 +18,7 @@ const state = {
   extraInputs: {},     // { 'requiresInputKey': 'value' } (e.g. compare_to)
   modelId: null,
   customizations: '',
+  visited: new Set(), // Step indices the user has visited
 };
 
 let pgData = null;
@@ -38,6 +39,7 @@ export function renderPromptGenerator(container) {
   state.extraInputs = {};
   state.modelId = getPreferredModelId(getDefaultModelId());
   state.customizations = '';
+  state.visited = new Set([0]);
 
   stepDefs = buildStepDefinitions();
   render();
@@ -47,33 +49,41 @@ export function renderPromptGenerator(container) {
 
 function buildStepDefinitions() {
   return [
-    { id: 'topic', label: 'Topic', title: 'What topic do you want to learn about?',
+    { id: 'topic', label: 'Topic', icon: '🎯',
+      title: 'What topic do you want to learn about?',
       description: 'Pick a popular topic or type your own. You can also add a secondary topic to combine ideas.',
       required: true, render: renderTopicStep,
       isComplete: () => !!state.values.primaryTopic?.trim() },
-    { id: 'contentType', label: 'Content Type', title: 'What kind of content do you want?',
+    { id: 'contentType', label: 'Content Type', icon: '📋',
+      title: 'What kind of content do you want?',
       description: 'Pick one or more — combine formats if you want, or add a custom one.',
       render: renderContentTypeStep },
-    { id: 'contentGeneration', label: 'Approach', title: 'How should the AI approach this?',
+    { id: 'contentGeneration', label: 'Approach', icon: '🧠',
+      title: 'How should the AI approach this?',
       description: 'Optional. Pick one or more approaches the AI should take.',
       render: (host) => {
         host.innerHTML = `<div data-field="contentGeneration"></div><div class="wiz-extras" data-extras-field="contentGeneration"></div>`;
         populateChipGrid(host.querySelector('[data-field="contentGeneration"]'), 'contentGeneration');
         renderExtraInputs(host.querySelector('[data-extras-field="contentGeneration"]'), 'contentGeneration');
       } },
-    { id: 'sourcesAndTime', label: 'Sources & Time', title: 'Where should the information come from?',
+    { id: 'sourcesAndTime', label: 'Sources', icon: '📚',
+      title: 'Where should the information come from?',
       description: 'Source types (multi-select), time period, and citation style.',
       render: renderSourcesAndTimeStep },
-    { id: 'formatAndLength', label: 'Format & Length', title: 'How should the answer be structured?',
+    { id: 'formatAndLength', label: 'Format', icon: '📐',
+      title: 'How should the answer be structured?',
       description: 'Pick a format and approximate length.',
       render: renderFormatAndLengthStep },
-    { id: 'audienceAndTone', label: 'Audience & Tone', title: 'Who is this for, and what voice?',
+    { id: 'audienceAndTone', label: 'Audience', icon: '🎙',
+      title: 'Who is this for, and what voice?',
       description: 'Set the reading level and writing tone.',
       render: renderAudienceAndToneStep },
-    { id: 'geoAndCustom', label: 'Region & Custom', title: 'Anything else?',
+    { id: 'geoAndCustom', label: 'Region', icon: '🌍',
+      title: 'Anything else?',
       description: 'Optional regional focus(es) and any custom instructions you want to add.',
       render: renderGeoAndCustomStep },
-    { id: 'review', label: 'Review & Submit', title: 'Review your prompt and choose a model',
+    { id: 'review', label: 'Review', icon: '✓',
+      title: 'Review your prompt and choose a model',
       description: 'Edit the model and submit when ready.',
       isFinal: true, render: renderReviewStep },
   ];
@@ -154,24 +164,40 @@ function getCustomLabel(fieldKey, valueId) {
 // ---------- Top-level render ----------
 
 function render() {
+  state.visited.add(state.step);
   const def = stepDefs[state.step];
   const totalSteps = stepDefs.length;
-  const stepNumber = state.step + 1;
-  const progress = ((state.step + 1) / totalSteps) * 100;
+
+  // Build the clickable stepper row
+  const stepperHTML = stepDefs.map((s, i) => {
+    const visited = state.visited.has(i);
+    const isCurrent = i === state.step;
+    const isComplete = isStepComplete(i);
+    const stateClass = isCurrent ? 'is-current'
+      : isComplete ? 'is-complete'
+      : visited ? 'is-visited'
+      : 'is-future';
+    return `
+      <button type="button" class="wiz-step ${stateClass}" data-step="${i}">
+        <span class="wiz-step-marker" aria-hidden="true">
+          ${isComplete && !isCurrent ? '✓' : (i + 1)}
+        </span>
+        <span class="wiz-step-label">${escapeHTML(s.label)}</span>
+      </button>
+    `;
+  }).join('<span class="wiz-step-sep" aria-hidden="true"></span>');
 
   containerEl.innerHTML = `
     <div class="wiz">
       <div class="wiz-head">
         <div class="wiz-head-row">
-          <div class="wiz-head-icon" aria-hidden="true">⚙</div>
+          <div class="wiz-head-icon" aria-hidden="true">${escapeHTML(def.icon || '⚙')}</div>
           <div class="wiz-head-text">
             <div class="wiz-head-title">Build a Knowledge Prompt</div>
-            <div class="wiz-head-step">Step ${stepNumber} of ${totalSteps} · ${escapeHTML(def.label)}</div>
+            <div class="wiz-head-step">Step ${state.step + 1} of ${totalSteps} · ${escapeHTML(def.label)}</div>
           </div>
         </div>
-        <div class="wiz-progress" aria-hidden="true">
-          <div class="wiz-progress-bar" style="width: ${progress}%"></div>
-        </div>
+        <div class="wiz-stepper" id="wiz-stepper">${stepperHTML}</div>
       </div>
 
       <div class="wiz-body">
@@ -201,6 +227,44 @@ function render() {
   def.render(document.getElementById('wiz-step-content'));
   if (!def.isFinal) updatePreview();
   attachFooter(def);
+  attachStepper();
+}
+
+function attachStepper() {
+  document.querySelectorAll('#wiz-stepper .wiz-step').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.step, 10);
+      if (Number.isNaN(idx) || idx === state.step) return;
+      // Topic step required: only allow jumping forward past topic if filled
+      if (idx > 0 && !state.values.primaryTopic?.trim()) return;
+      state.step = idx;
+      render();
+      window.scrollTo(0, 0);
+    });
+  });
+}
+
+// A step is "complete" if the user has filled in something for it
+function isStepComplete(idx) {
+  const def = stepDefs[idx];
+  if (!def) return false;
+  if (def.isFinal) return false;
+  // Map step id → field key(s) it covers
+  const fieldsByStep = {
+    topic: ['primaryTopic'],
+    contentType: ['contentType'],
+    contentGeneration: ['contentGeneration'],
+    sourcesAndTime: ['sources', 'recency', 'citations'],
+    formatAndLength: ['format', 'length'],
+    audienceAndTone: ['audience', 'tone'],
+    geoAndCustom: ['geographic'],
+  };
+  const keys = fieldsByStep[def.id] || [];
+  return keys.some(k => {
+    const v = state.values[k];
+    if (Array.isArray(v)) return v.length > 0;
+    return !!(typeof v === 'string' ? v.trim() : v);
+  });
 }
 
 function attachFooter(def) {

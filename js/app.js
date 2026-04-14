@@ -28,18 +28,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!stayingInHome) {
       window.scrollTo(0, 0);
     } else {
-      // Re-rendering may have shrunk the document (new tab content might
-      // be shorter than what was there), causing the browser to clamp
-      // scrollY below the sticky-reveal threshold and dropping the user
-      // out of the sticky-revealed state. Force scroll back past the
-      // hero so the sticky stays revealed.
+      // When switching home tabs, if the user was already past the hero
+      // (sticky nav revealed), scroll to a known-good position where the
+      // new tab's content TOP sits just below the sticky nav band. This
+      // gives a clean "fresh section" presentation rather than landing
+      // partway through the new content.
       requestAnimationFrame(() => {
         const heroEl = document.getElementById('hero');
         const heroHeight = heroEl?.offsetHeight || 0;
         const threshold = Math.max(0, heroHeight - 56);
-        const wasAboveThreshold = previousScrollY > threshold;
-        if (wasAboveThreshold && window.scrollY <= threshold) {
-          window.scrollTo(0, threshold + 20);
+        if (previousScrollY > threshold) {
+          // heroHeight - 56 lands content's top right at the bottom edge
+          // of the sticky subnav (clean section start), and is the
+          // threshold for sticky reveal so the nav stays revealed.
+          window.scrollTo(0, threshold);
         }
       });
     }
@@ -186,12 +188,13 @@ function setupHomeStickyReveal(mainEl, subEl) {
   let threshold = computeThreshold();
 
   heroScrollHandler = () => {
-    const passed = window.scrollY > threshold;
+    // >= so that landing at exactly threshold (clean tab-switch position)
+    // also counts as revealed
+    const passed = window.scrollY >= threshold;
     mainEl.classList.toggle('is-revealed', passed);
     if (subEl) subEl.classList.toggle('with-mainnav', passed);
   };
   window.addEventListener('scroll', heroScrollHandler, { passive: true });
-  // Recompute threshold if hero size changes (resize, font load)
   window.addEventListener('resize', () => {
     threshold = computeThreshold();
   }, { passive: true });

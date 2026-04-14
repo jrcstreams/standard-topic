@@ -95,8 +95,9 @@ function renderAllTopicsHome(container) {
     html += `
       <div class="all-topics-group">
         <a href="#/topic/${group.parent.slug}" class="all-topics-parent">
+          <span class="all-topics-parent-accent" aria-hidden="true"></span>
           <span class="all-topics-parent-name">${escapeHTML(group.parent.name)}</span>
-          <span class="all-topics-parent-meta">${subs.length} ${subs.length === 1 ? 'subtopic' : 'subtopics'}</span>
+          <span class="all-topics-parent-arrow" aria-hidden="true">↗</span>
         </a>
         ${subs.length > 0 ? `
           <div class="all-topics-subgrid">
