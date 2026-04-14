@@ -171,12 +171,21 @@ a:hover {
 }
 
 
-/* === Sub-Header === */
-/* Homepage hero mode only: centered logo, title, tagline, search, chips, CTA */
-#sub-header.is-hero {
-  position: static;
-  border-bottom: 1px solid rgba(30, 45, 68, 0.08);
+/* === Hero (homepage only, desktop) === */
+#hero {
   background: linear-gradient(180deg, var(--color-bg-light) 0%, var(--color-bg) 100%);
+  border-bottom: 1px solid rgba(30, 45, 68, 0.08);
+}
+
+#hero:empty {
+  display: none;
+}
+
+/* Hidden on mobile — mobile home goes straight into sticky nav + subnav */
+@media (max-width: 640px) {
+  #hero {
+    display: none;
+  }
 }
 
 /* ====================================================================
@@ -353,6 +362,29 @@ body.sticky-always.has-subnav #content {
   background: var(--color-bg);
   border-bottom: 1px solid var(--color-border);
   padding-top: 0.5rem;
+}
+
+/* On home desktop, the subnav reveals on scroll alongside the main nav */
+#sub-header.is-subnav.is-reveal-on-scroll {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+#sub-header.is-subnav.is-reveal-on-scroll.is-revealed {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* On mobile, always visible regardless of reveal-on-scroll flag */
+@media (max-width: 640px) {
+  #sub-header.is-subnav.is-reveal-on-scroll {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
 }
 
 #sub-header.is-subnav .topic-banner {

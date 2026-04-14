@@ -1,4 +1,4 @@
-import { initRouter, onRoute } from './utils/router.js';
+import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
 import { loadAllData, getTopicBySlug, getParentTopics } from './utils/data.js';
 import { renderFooter } from './components/footer.js';
 import { renderSearchBar } from './components/search-modal.js';
@@ -23,6 +23,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   initRouter();
+
+  // Re-render layout if the viewport crosses the mobile breakpoint
+  // (home behaves differently on mobile vs desktop)
+  let lastMobile = window.matchMedia(MOBILE_QUERY).matches;
+  window.addEventListener('resize', () => {
+    const nowMobile = window.matchMedia(MOBILE_QUERY).matches;
+    if (nowMobile !== lastMobile) {
+      lastMobile = nowMobile;
+      const route = getCurrentRoute();
+      if (route) renderLayout(route);
+    }
+  }, { passive: true });
 });
 
 // Unified layout:
@@ -31,10 +43,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 //    Content area gets top padding (via body.sticky-always) so it isn't hidden.
 let heroScrollHandler = null;
 
+const MOBILE_QUERY = '(max-width: 640px)';
+
 function renderLayout(route) {
   const siteHeader = document.getElementById('site-header');
   const subHeader = document.getElementById('sub-header');
+  const heroEl = document.getElementById('hero');
   const isHome = route.type === 'home';
+  const isMobile = window.matchMedia(MOBILE_QUERY).matches;
 
   // Clean up any prior scroll listener before switching modes
   if (heroScrollHandler) {
@@ -42,20 +58,38 @@ function renderLayout(route) {
     heroScrollHandler = null;
   }
 
-  // Reset classes
+  // Reset everything
   siteHeader.className = 'is-sticky-hero';
   subHeader.className = '';
   subHeader.innerHTML = '';
-  document.body.classList.remove('sticky-always', 'has-subnav');
+  if (heroEl) heroEl.innerHTML = '';
+  document.body.classList.remove('sticky-always', 'has-subnav', 'home-mode');
 
-  // Always render the sticky hero bar
+  // Always render the main sticky bar
   renderStickyHeroBar(siteHeader, route);
 
   if (isHome) {
-    // Home: sticky hides until scroll; hero fills sub-header
-    subHeader.classList.add('is-hero');
-    renderHero(subHeader, route);
-    setupStickyReveal(siteHeader);
+    document.body.classList.add('home-mode');
+    const homeTabs = [
+      { id: 'newsfeed', label: 'News Feed', hash: '#/' },
+      { id: 'shortcuts', label: 'AI Shortcuts', hash: '#/shortcuts' },
+      { id: 'related', label: 'All Topics', hash: '#/related' },
+    ];
+    const homeConfig = { title: 'Home', tabs: homeTabs, activeTab: route.tab };
+
+    if (isMobile) {
+      // Mobile home: no hero, sticky main nav + home subnav always visible
+      document.body.classList.add('sticky-always', 'has-subnav');
+      siteHeader.classList.add('is-revealed');
+      subHeader.classList.add('is-subnav');
+      renderSubNav(subHeader, homeConfig);
+    } else {
+      // Desktop home: hero in #hero (static flow), main nav + subnav reveal together on scroll
+      if (heroEl) renderHero(heroEl, route);
+      subHeader.classList.add('is-subnav', 'is-reveal-on-scroll');
+      renderSubNav(subHeader, homeConfig);
+      setupStickyReveal(siteHeader, subHeader);
+    }
     return;
   }
 
@@ -67,29 +101,27 @@ function renderLayout(route) {
   if (route.type === 'topic' || route.type === 'custom') {
     document.body.classList.add('has-subnav');
     subHeader.classList.add('is-subnav');
-    renderTopicSubNav(subHeader, route);
+
+    if (route.type === 'topic') {
+      const topic = getTopicBySlug(route.slug);
+      if (!topic) return;
+      renderSubNav(subHeader, {
+        title: topic.name,
+        tabs: [
+          { id: 'newsfeed', label: 'News Feed', hash: `#/topic/${route.slug}` },
+          { id: 'shortcuts', label: 'AI Shortcuts', hash: `#/topic/${route.slug}/shortcuts` },
+          { id: 'related', label: 'Related Topics', hash: `#/topic/${route.slug}/related` },
+        ],
+        activeTab: route.tab,
+      });
+    } else {
+      renderSubNav(subHeader, { title: route.term, tabs: null });
+    }
   }
 }
 
-function renderTopicSubNav(container, route) {
-  let title;
-  let tabs = null;
-  let activeTab = route.tab;
-
-  if (route.type === 'topic') {
-    const topic = getTopicBySlug(route.slug);
-    if (!topic) return;
-    title = topic.name;
-    tabs = [
-      { id: 'newsfeed', label: 'News Feed', hash: `#/topic/${route.slug}` },
-      { id: 'shortcuts', label: 'AI Shortcuts', hash: `#/topic/${route.slug}/shortcuts` },
-      { id: 'related', label: 'Related Topics', hash: `#/topic/${route.slug}/related` },
-    ];
-  } else if (route.type === 'custom') {
-    title = route.term;
-    // Custom topics have no tabs — just show the title
-  }
-
+// Unified subnav renderer for both home and topic/custom pages
+function renderSubNav(container, { title, tabs, activeTab }) {
   const tabsHTML = tabs ? `
     <div class="topic-banner-tabs">
       ${tabs.map(t => `
@@ -113,14 +145,12 @@ function renderTopicSubNav(container, route) {
   `;
 }
 
-function setupStickyReveal(stickyEl) {
+function setupStickyReveal(mainEl, subEl) {
   const THRESHOLD = 180; // reveal after ~180px of scroll
   heroScrollHandler = () => {
-    if (window.scrollY > THRESHOLD) {
-      stickyEl.classList.add('is-revealed');
-    } else {
-      stickyEl.classList.remove('is-revealed');
-    }
+    const passed = window.scrollY > THRESHOLD;
+    mainEl.classList.toggle('is-revealed', passed);
+    if (subEl) subEl.classList.toggle('is-revealed', passed);
   };
   window.addEventListener('scroll', heroScrollHandler, { passive: true });
   heroScrollHandler(); // initial check
@@ -171,41 +201,6 @@ function renderHero(container, route) {
 }
 
 
-function renderTopicBanner(container, config) {
-  const { title, iconEmoji, showTabs, tabs, activeTab } = config;
-
-  const tabsHTML = showTabs && tabs ? `
-    <div class="topic-banner-tabs">
-      ${tabs.map(t => `
-        <a href="${t.hash}" class="tab-pill ${t.id === activeTab ? 'active' : ''}" data-tab="${t.id}">
-          ${t.label}
-        </a>
-      `).join('')}
-    </div>
-  ` : '';
-
-  const banner = document.createElement('div');
-  banner.className = 'topic-banner';
-  banner.innerHTML = `
-    <div class="topic-banner-row">
-      <div class="topic-banner-titlegroup">
-        <span class="topic-banner-accent" aria-hidden="true"></span>
-        <h1 class="topic-banner-title">${escapeHTML(title)}</h1>
-      </div>
-      ${tabsHTML}
-    </div>
-  `;
-  container.appendChild(banner);
-
-  // Tab click handlers (no full page reload)
-  banner.querySelectorAll('.tab-pill').forEach(pill => {
-    pill.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.location.hash = pill.getAttribute('href').replace(/^#/, '');
-    });
-  });
-}
-
 function escapeHTML(str) {
   const div = document.createElement('div');
   div.textContent = str;
@@ -218,28 +213,13 @@ function renderPage(route) {
 
   if (route.type === 'home') {
     const topic = getTopicBySlug('home');
-    const homeTabs = [
-      { id: 'newsfeed', label: 'News Feed', hash: '#/' },
-      { id: 'shortcuts', label: 'AI Shortcuts', hash: '#/shortcuts' },
-      { id: 'related', label: 'All Topics', hash: '#/related' },
-    ];
-    renderTopicBanner(content, {
-      title: 'Home',
-      showTabs: true,
-      tabs: homeTabs,
-      activeTab: route.tab,
-    });
-
-    const tabContent = document.createElement('div');
-    tabContent.className = 'tab-content-area';
-    content.appendChild(tabContent);
-
+    // The "Home" banner + tabs live in the subnav (rendered by renderLayout)
     if (route.tab === 'newsfeed') {
-      renderNewsFeed(tabContent, topic, true);
+      renderNewsFeed(content, topic, true);
     } else if (route.tab === 'shortcuts') {
-      renderShortcuts(tabContent, { type: 'home', slug: 'home' });
+      renderShortcuts(content, { type: 'home', slug: 'home' });
     } else if (route.tab === 'related') {
-      renderRelatedTopics(tabContent, { type: 'home', slug: 'home' });
+      renderRelatedTopics(content, { type: 'home', slug: 'home' });
     }
     return;
   }
