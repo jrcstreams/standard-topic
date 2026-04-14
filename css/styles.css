@@ -364,27 +364,50 @@ body.sticky-always.has-subnav #content {
   padding-top: 0.5rem;
 }
 
-/* On home desktop, the subnav reveals on scroll alongside the main nav */
-#sub-header.is-subnav.is-reveal-on-scroll {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-8px);
-  transition: opacity 0.22s ease, transform 0.22s ease;
+/* === Home subnav (desktop) ===
+   Lives in document flow below the hero so it's visible by default.
+   Becomes sticky once scrolled past, then transitions from top: 0 to
+   top: 56px when the main sticky nav reveals. */
+#sub-header.is-home-subnav {
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  padding-top: 0.5rem;
+  transition: top 0.22s ease;
 }
 
-#sub-header.is-subnav.is-reveal-on-scroll.is-revealed {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
+#sub-header.is-home-subnav.with-mainnav {
+  top: 56px;
 }
 
-/* On mobile, always visible regardless of reveal-on-scroll flag */
-@media (max-width: 640px) {
-  #sub-header.is-subnav.is-reveal-on-scroll {
-    opacity: 1;
-    pointer-events: auto;
-    transform: none;
-  }
+/* Apply the same inner topic-banner overrides as the fixed subnav */
+#sub-header.is-home-subnav .topic-banner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0.8rem 1rem 0.85rem;
+  border-bottom: none;
+}
+
+#sub-header.is-home-subnav .topic-banner-title {
+  font-size: 1.3rem;
+  line-height: 1.15;
+}
+
+#sub-header.is-home-subnav .topic-banner-accent {
+  height: 26px;
+  width: 3.5px;
+}
+
+#sub-header.is-home-subnav .topic-banner-tabs {
+  gap: 1.25rem;
+  align-items: center;
+}
+
+#sub-header.is-home-subnav .topic-banner-tabs .tab-pill {
+  font-size: 0.85rem;
+  padding: 0.4rem 0 0.4rem;
 }
 
 #sub-header.is-subnav .topic-banner {

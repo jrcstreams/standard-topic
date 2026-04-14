@@ -66,7 +66,7 @@ export function renderSearchBar(container) {
     <div class="search-bar-wrapper">
       <button class="search-bar" type="button">
         <span class="search-bar-icon" aria-hidden="true">🔍</span>
-        <span class="search-bar-label">Search any topic or choose from list</span>
+        <span class="search-bar-label">Search any topic</span>
       </button>
     </div>
   `;

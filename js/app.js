@@ -85,11 +85,13 @@ function renderLayout(route) {
       subHeader.classList.add('is-subnav');
       renderSubNav(subHeader, homeConfig);
     } else {
-      // Desktop home: hero in #hero (static flow), main nav + subnav reveal together on scroll
+      // Desktop home: hero in flow, subnav inline below hero (visible by default).
+      // Subnav sticks to top as user scrolls; main nav reveals at the same time
+      // and the subnav slides to sit just below it (top: 0 → top: 56px).
       if (heroEl) renderHero(heroEl, route);
-      subHeader.classList.add('is-subnav', 'is-reveal-on-scroll');
+      subHeader.classList.add('is-home-subnav');
       renderSubNav(subHeader, homeConfig);
-      setupStickyReveal(siteHeader, subHeader);
+      setupHomeStickyReveal(siteHeader, subHeader);
     }
     return;
   }
@@ -146,15 +148,24 @@ function renderSubNav(container, { title, tabs, activeTab }) {
   `;
 }
 
-function setupStickyReveal(mainEl, subEl) {
-  const THRESHOLD = 180; // reveal after ~180px of scroll
+// On home desktop, reveal main nav AND transition subnav (top: 0 → top: 56px)
+// at the same scroll point. Threshold = roughly when subnav reaches viewport top.
+function setupHomeStickyReveal(mainEl, subEl) {
+  const heroEl = document.getElementById('hero');
+  const computeThreshold = () => Math.max(0, (heroEl?.offsetHeight || 200) - 56);
+  let threshold = computeThreshold();
+
   heroScrollHandler = () => {
-    const passed = window.scrollY > THRESHOLD;
+    const passed = window.scrollY > threshold;
     mainEl.classList.toggle('is-revealed', passed);
-    if (subEl) subEl.classList.toggle('is-revealed', passed);
+    if (subEl) subEl.classList.toggle('with-mainnav', passed);
   };
   window.addEventListener('scroll', heroScrollHandler, { passive: true });
-  heroScrollHandler(); // initial check
+  // Recompute threshold if hero size changes (resize, font load)
+  window.addEventListener('resize', () => {
+    threshold = computeThreshold();
+  }, { passive: true });
+  heroScrollHandler();
 }
 
 function renderStickyHeroBar(container, route) {
