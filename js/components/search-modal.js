@@ -89,8 +89,8 @@ function openOverlay() {
   inputEl.value = '';
   highlightIndex = -1;
   renderBody('');
-  // Focus after a tick so the browser finishes layout/animation
-  setTimeout(() => inputEl.focus(), 30);
+  // Focus immediately — no setTimeout — so user can type without waiting
+  inputEl.focus();
 }
 
 function closeOverlay() {

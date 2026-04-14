@@ -1,7 +1,7 @@
 // Prompt preview + AI model selection modal
 
 import { getModels, getDefaultModelId, getModelById } from '../utils/data.js';
-import { getPreferredModelId, setPreferredModelId, submitPrompt, isUrlTooLong, buildPromptUrl } from '../utils/ai-models.js';
+import { getPreferredModelId, setPreferredModelId, submitPrompt, isUrlTooLong, supportsUrlPrompt, shouldCopyOnOpen } from '../utils/ai-models.js';
 
 let modalEl = null;
 
@@ -50,9 +50,9 @@ function renderModalContent(prompt, shortcutName, models, selectedModelId) {
   const selectedModel = getModelById(selectedModelId) || models[0];
   const tooLong = isUrlTooLong(selectedModel, prompt);
 
-  const submitLabel = selectedModel.method === 'clipboard'
+  const submitLabel = shouldCopyOnOpen(selectedModel)
     ? `Copy & Open ${selectedModel.name} →`
-    : `Open in ${selectedModel.name} →`;
+    : `Open ${selectedModel.name} →`;
 
   modalEl.innerHTML = `
     <div class="prompt-modal">
@@ -76,7 +76,7 @@ function renderModalContent(prompt, shortcutName, models, selectedModelId) {
           ${models.map(m => `
             <button class="prompt-modal-model-btn ${m.id === selectedModelId ? 'selected' : ''}"
                     data-model-id="${m.id}">
-              ${escapeHTML(m.name)}${m.method === 'clipboard' ? ' <span class="model-copy-tag">(copy)</span>' : ''}
+              ${escapeHTML(m.name)}${!supportsUrlPrompt(m) ? ' <span class="model-copy-tag">paste</span>' : ''}
             </button>
           `).join('')}
         </div>

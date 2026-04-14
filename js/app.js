@@ -15,12 +15,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   renderFooter(document.getElementById('site-footer'));
 
+  let previousRoute = null;
   onRoute((route) => {
     renderLayout(route);
     renderPage(route);
-    // Always reset scroll to top on route change — don't preserve scroll
-    // position from the previous page
-    window.scrollTo(0, 0);
+
+    // Scroll behavior: preserve scroll when switching tabs *within* the
+    // home page (so the user stays in the sticky-revealed state if they
+    // had scrolled down). Reset to top for any other navigation.
+    const stayingInHome = previousRoute?.type === 'home' && route.type === 'home';
+    if (!stayingInHome) {
+      window.scrollTo(0, 0);
+    }
+    previousRoute = route;
   });
 
   initRouter();

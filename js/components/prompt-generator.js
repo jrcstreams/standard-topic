@@ -3,7 +3,7 @@
 // Mobile-first: cards stack, footer nav buttons stay sticky.
 
 import { getPromptGenData, getModels, getDefaultModelId, getModelById, getParentTopics } from '../utils/data.js';
-import { getPreferredModelId, setPreferredModelId, submitPrompt, isUrlTooLong } from '../utils/ai-models.js';
+import { getPreferredModelId, setPreferredModelId, submitPrompt, isUrlTooLong, supportsUrlPrompt, shouldCopyOnOpen } from '../utils/ai-models.js';
 
 // Wizard state — reset on each render
 const state = {
@@ -343,7 +343,7 @@ function renderReviewStep(host) {
         <div class="wiz-model-grid" id="wiz-model-grid">
           ${modelsData.map(m => `
             <button class="wiz-model-btn ${m.id === state.modelId ? 'selected' : ''}" type="button" data-model-id="${m.id}">
-              ${escapeHTML(m.name)}${m.method === 'clipboard' ? ' <span class="wiz-model-tag">(copy)</span>' : ''}
+              ${escapeHTML(m.name)}${!supportsUrlPrompt(m) ? ' <span class="wiz-model-tag">paste</span>' : ''}
             </button>
           `).join('')}
         </div>
@@ -433,9 +433,9 @@ function updatePreview() {
 function getSubmitLabel() {
   const m = getModelById(state.modelId);
   if (!m) return 'Submit Prompt →';
-  return m.method === 'clipboard'
+  return shouldCopyOnOpen(m)
     ? `Copy & Open ${m.name} →`
-    : `Open in ${m.name} →`;
+    : `Open ${m.name} →`;
 }
 
 // Mirror the assembly logic from the form version

@@ -11,28 +11,42 @@ export function setPreferredModelId(modelId) {
   localStorage.setItem(STORAGE_KEY, modelId);
 }
 
+// True when the model's URL template contains a {prompt} placeholder
+// (meaning we can pre-fill the prompt via URL).
+export function supportsUrlPrompt(model) {
+  return !!model?.urlTemplate?.includes('{prompt}');
+}
+
+// True when the model is configured to copy the prompt to clipboard
+// before opening (default true unless explicitly disabled per-model).
+export function shouldCopyOnOpen(model) {
+  return model?.copyOnOpen !== false;
+}
+
 export function buildPromptUrl(model, prompt) {
+  if (!supportsUrlPrompt(model)) return model.urlTemplate;
   const encoded = encodeURIComponent(prompt);
-  const url = model.urlTemplate.replace('{prompt}', encoded);
-  return url;
+  return model.urlTemplate.replace('{prompt}', encoded);
 }
 
 export function isUrlTooLong(model, prompt) {
-  if (model.method === 'clipboard') return false;
+  if (!supportsUrlPrompt(model)) return false;
   const url = buildPromptUrl(model, prompt);
   return url.length > MAX_URL_LENGTH;
 }
 
+// Submit a prompt to a model.
+// Default behavior: copy the prompt to the clipboard, then open the model's
+// URL in a new tab (with prompt pre-filled if the URL template supports it).
+// If the model has copyOnOpen: false, the clipboard step is skipped.
 export async function submitPrompt(model, prompt) {
-  if (model.method === 'clipboard') {
-    await navigator.clipboard.writeText(prompt);
-    window.open(model.urlTemplate, '_blank');
-    return { method: 'clipboard', copied: true };
+  const copying = shouldCopyOnOpen(model);
+  if (copying) {
+    try { await navigator.clipboard.writeText(prompt); } catch (_) {}
   }
-
   const url = buildPromptUrl(model, prompt);
   window.open(url, '_blank');
-  return { method: 'url', url };
+  return { copied: copying, url, supportsUrlPrompt: supportsUrlPrompt(model) };
 }
 
 export function fillPromptTemplate(template, topicName) {

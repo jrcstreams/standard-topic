@@ -22,8 +22,17 @@ export function renderShortcuts(container, route) {
   const evergreen = isCustom
     ? getEvergreenShortcuts(null)
     : getEvergreenShortcuts(topic);
+  const specific = (!isCustom && route.slug !== 'home')
+    ? getSpecificShortcuts(route.slug)
+    : [];
+  // When BOTH evergreen and topic-specific shortcuts exist, show a label
+  // before the evergreen group so the two sections are clearly separated.
+  const showEvergreenLabel = evergreen.length > 0 && specific.length > 0;
 
   if (evergreen.length > 0) {
+    if (showEvergreenLabel) {
+      html += `<h3 class="shortcuts-section-label">Evergreen Shortcuts</h3>`;
+    }
     html += `<div class="shortcuts-grid">`;
     evergreen.forEach(shortcut => {
       const prompt = fillPromptTemplate(shortcut.prompt, topicName);
@@ -32,19 +41,16 @@ export function renderShortcuts(container, route) {
     html += `</div>`;
   }
 
-  if (!isCustom && route.slug !== 'home') {
-    const specific = getSpecificShortcuts(route.slug);
-    if (specific.length > 0) {
-      html += `
-        <h3 class="shortcuts-section-label">Topic-Specific Shortcuts</h3>
-        <div class="shortcuts-grid">
-      `;
-      specific.forEach(shortcut => {
-        const prompt = fillPromptTemplate(shortcut.prompt, topicName);
-        html += buildShortcutCard(shortcut, prompt);
-      });
-      html += `</div>`;
-    }
+  if (specific.length > 0) {
+    html += `
+      <h3 class="shortcuts-section-label">Topic-Specific Shortcuts</h3>
+      <div class="shortcuts-grid">
+    `;
+    specific.forEach(shortcut => {
+      const prompt = fillPromptTemplate(shortcut.prompt, topicName);
+      html += buildShortcutCard(shortcut, prompt);
+    });
+    html += `</div>`;
   }
 
   container.innerHTML = html;
