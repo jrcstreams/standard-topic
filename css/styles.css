@@ -204,14 +204,14 @@ a:hover {
 }
 
 /* When sticky is always visible (non-home pages), push content down so
-   it isn't hidden behind the fixed bar. */
+   it clears the fixed bar and gets visible breathing room beneath it. */
 body.sticky-always #content {
-  padding-top: 4rem;
+  padding-top: 5.5rem;
 }
 
 @media (max-width: 640px) {
   body.sticky-always #content {
-    padding-top: 6.5rem; /* taller because sticky is two rows on mobile */
+    padding-top: 8rem; /* sticky is two rows on mobile, keeps breathing room */
   }
 }
 
