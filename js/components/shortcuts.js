@@ -9,7 +9,7 @@ export function renderShortcuts(container, route) {
   const topic = isCustom ? null : getTopicBySlug(route.slug);
 
   const title = isCustom
-    ? `AI Shortcuts for <em>${escapeHTML(route.term)}</em>`
+    ? `AI Shortcuts for &ldquo;<em>${escapeHTML(route.term)}</em>&rdquo;`
     : 'AI Shortcuts';
 
   let html = `

@@ -78,12 +78,18 @@ function renderModalContent(prompt, shortcutName, shortcutIcon, models, selected
 
       <div class="prompt-modal-model-row">
         <span class="prompt-modal-label">AI Model</span>
-        <button class="prompt-modal-copy-link" id="prompt-modal-copy" type="button">📋 Copy only</button>
+        <button class="prompt-modal-copy-link" id="prompt-modal-copy" type="button">
+          <svg class="prompt-modal-copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span class="prompt-modal-copy-text">Copy Prompt Text</span>
+        </button>
       </div>
       <div class="prompt-modal-models" id="prompt-modal-models">
         ${models.map(m => `
           <button class="prompt-modal-model-btn ${m.id === selectedModelId ? 'selected' : ''}" type="button" data-model-id="${m.id}">
-            ${escapeHTML(m.name)}${!supportsUrlPrompt(m) ? ' <span class="model-copy-tag">paste</span>' : ''}
+            ${escapeHTML(m.name)}
           </button>
         `).join('')}
       </div>
@@ -107,10 +113,11 @@ function renderModalContent(prompt, shortcutName, shortcutIcon, models, selected
 
   document.getElementById('prompt-modal-copy').addEventListener('click', async () => {
     try { await navigator.clipboard.writeText(prompt); } catch (_) {}
-    const btn = document.getElementById('prompt-modal-copy');
-    const orig = btn.textContent;
-    btn.textContent = '✓ Copied!';
-    setTimeout(() => { btn.textContent = orig; }, 1800);
+    const textEl = document.querySelector('#prompt-modal-copy .prompt-modal-copy-text');
+    if (!textEl) return;
+    const orig = textEl.textContent;
+    textEl.textContent = '✓ Copied!';
+    setTimeout(() => { textEl.textContent = orig; }, 1800);
   });
 
   document.getElementById('prompt-modal-models').addEventListener('click', (e) => {

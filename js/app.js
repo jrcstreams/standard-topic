@@ -17,15 +17,31 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let previousRoute = null;
   onRoute((route) => {
+    // Capture scroll position BEFORE the layout re-render, so we can
+    // restore it (or push past the hero threshold) afterward.
+    const previousScrollY = window.scrollY;
+    const stayingInHome = previousRoute?.type === 'home' && route.type === 'home';
+
     renderLayout(route);
     renderPage(route);
 
-    // Scroll behavior: preserve scroll when switching tabs *within* the
-    // home page (so the user stays in the sticky-revealed state if they
-    // had scrolled down). Reset to top for any other navigation.
-    const stayingInHome = previousRoute?.type === 'home' && route.type === 'home';
     if (!stayingInHome) {
       window.scrollTo(0, 0);
+    } else {
+      // Re-rendering may have shrunk the document (new tab content might
+      // be shorter than what was there), causing the browser to clamp
+      // scrollY below the sticky-reveal threshold and dropping the user
+      // out of the sticky-revealed state. Force scroll back past the
+      // hero so the sticky stays revealed.
+      requestAnimationFrame(() => {
+        const heroEl = document.getElementById('hero');
+        const heroHeight = heroEl?.offsetHeight || 0;
+        const threshold = Math.max(0, heroHeight - 56);
+        const wasAboveThreshold = previousScrollY > threshold;
+        if (wasAboveThreshold && window.scrollY <= threshold) {
+          window.scrollTo(0, threshold + 20);
+        }
+      });
     }
     previousRoute = route;
   });

@@ -343,7 +343,7 @@ function renderReviewStep(host) {
         <div class="wiz-model-grid" id="wiz-model-grid">
           ${modelsData.map(m => `
             <button class="wiz-model-btn ${m.id === state.modelId ? 'selected' : ''}" type="button" data-model-id="${m.id}">
-              ${escapeHTML(m.name)}${!supportsUrlPrompt(m) ? ' <span class="wiz-model-tag">paste</span>' : ''}
+              ${escapeHTML(m.name)}
             </button>
           `).join('')}
         </div>
