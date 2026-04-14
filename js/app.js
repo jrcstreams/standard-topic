@@ -203,10 +203,13 @@ function renderHero(container, route) {
       <p class="hero-tagline">News, Resources and AI Knowledge. On any topic.</p>
       <div class="hero-search-wrap" id="search-bar-container"></div>
       ${chipsHTML}
-      <a href="#/prompt-generator" class="hero-build-link">
-        Or build your own knowledge prompt
-        <span class="hero-build-arrow" aria-hidden="true">→</span>
-      </a>
+      <p class="hero-build-callout">
+        Need something custom?
+        <a href="#/prompt-generator" class="hero-build-link">
+          Build your own prompt
+          <span class="hero-build-arrow" aria-hidden="true">→</span>
+        </a>
+      </p>
     </div>
   `;
   renderSearchBar(document.getElementById('search-bar-container'), route);

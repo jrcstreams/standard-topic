@@ -537,12 +537,14 @@ body.sticky-always.has-subnav #content {
   line-height: 1;
 }
 
+/* T2: bigger, bolder tagline */
 .hero-tagline {
-  font-size: 0.88rem;
-  color: var(--color-text-muted);
-  font-weight: var(--font-weight-medium);
-  margin: 0 0 0.85rem;
+  font-size: 1.05rem;
+  color: var(--color-text);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 0.95rem;
   line-height: 1.4;
+  letter-spacing: -0.01em;
 }
 
 .hero-search-wrap {
@@ -596,24 +598,29 @@ body.sticky-always.has-subnav #content {
   text-decoration: none;
 }
 
+/* B4: lead-in copy + bold navy underlined link */
+.hero-build-callout {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-regular);
+  margin: 0.85rem 0 0;
+  line-height: 1.5;
+}
+
 .hero-build-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  font-size: 0.76rem;
-  color: var(--color-text-muted);
-  font-weight: var(--font-weight-medium);
-  margin-top: 0.6rem;
-  padding: 0;
-  background: transparent;
-  border: none;
-  text-decoration: none;
-  transition: color 0.15s;
+  gap: 0.3rem;
+  color: var(--color-primary);
+  font-weight: var(--font-weight-bold);
+  text-decoration: underline;
+  text-decoration-color: rgba(30, 45, 68, 0.3);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.15s;
 }
 
 .hero-build-link:hover {
-  color: var(--color-primary);
-  text-decoration: none;
+  text-decoration-color: var(--color-primary);
 }
 
 .hero-build-link:hover .hero-build-arrow {
@@ -621,7 +628,6 @@ body.sticky-always.has-subnav #content {
 }
 
 .hero-build-arrow {
-  font-size: 0.9rem;
   line-height: 1;
   transition: transform 0.15s;
 }
@@ -664,9 +670,9 @@ body.sticky-always.has-subnav #content {
     padding: 0.2rem 0.65rem;
   }
 
-  .hero-build-link {
+  .hero-build-callout {
     font-size: 0.78rem;
-    margin-top: 1rem;
+    margin-top: 0.75rem;
   }
 
 }
