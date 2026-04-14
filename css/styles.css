@@ -374,11 +374,12 @@ body.sticky-always.has-subnav #content {
 
 #sub-header.is-subnav .topic-banner-tabs {
   gap: 1.25rem;
+  align-items: center;
 }
 
 #sub-header.is-subnav .topic-banner-tabs .tab-pill {
   font-size: 0.85rem;
-  padding: 0.3rem 0 0.4rem;
+  padding: 0.4rem 0 0.4rem;
 }
 
 @media (max-width: 640px) {
@@ -614,7 +615,7 @@ body.sticky-always.has-subnav #content {
 }
 
 .tab-pill {
-  padding: 0.35rem 0 0.5rem;
+  padding: 0.45rem 0 0.45rem;
   font-size: 0.9rem;
   font-weight: var(--font-weight-medium);
   color: var(--color-text-muted);
@@ -624,6 +625,9 @@ body.sticky-always.has-subnav #content {
   text-decoration: none;
   white-space: nowrap;
   transition: color 0.15s, border-color 0.15s;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
 }
 
 .tab-pill:hover {
@@ -647,15 +651,26 @@ body.sticky-always.has-subnav #content {
 }
 
 .section-header h2 {
-  font-size: 1.2rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-muted);
-  letter-spacing: 0.01em;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  letter-spacing: -0.015em;
+  line-height: 1;
 }
 
 .section-icon {
-  font-size: 1.15rem;
-  opacity: 0.75;
+  font-size: 1.2rem;
+  opacity: 0.85;
+}
+
+@media (max-width: 640px) {
+  .section-header h2 {
+    font-size: 1.02rem;
+  }
+  .section-icon {
+    font-size: 1rem;
+  }
 }
 
 /* === News Feed === */
@@ -777,6 +792,11 @@ body.sticky-always.has-subnav #content {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  /* Reset inherited properties so the modal reads correctly
+     regardless of where it's rendered (hero center-aligned, dark nav, etc.) */
+  text-align: left;
+  color: var(--color-text);
+  font-weight: var(--font-weight-regular);
 }
 
 .search-modal-input-row {
@@ -830,6 +850,7 @@ body.sticky-always.has-subnav #content {
   font-size: 0.85rem;
   cursor: pointer;
   border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-text);
 }
 
 .search-result-item:hover,
@@ -852,6 +873,7 @@ body.sticky-always.has-subnav #content {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  color: var(--color-text);
 }
 
 .search-result-custom:hover,
@@ -1101,12 +1123,28 @@ body.sticky-always.has-subnav #content {
 }
 
 .related-card.active-page {
-  background: var(--color-bg-light);
+  background: var(--color-accent);
+  border-color: var(--color-primary);
   cursor: default;
+  box-shadow: inset 3px 0 0 var(--color-primary);
 }
 
 .related-card.active-page:hover {
-  border-color: var(--color-border);
+  background: var(--color-accent);
+  border-color: var(--color-primary);
+}
+
+.related-card.active-page .related-name {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.related-card.active-page .related-dot {
+  background: var(--color-primary);
+}
+
+.related-card.active-page .related-arrow {
+  display: none;
 }
 
 .related-dot {
@@ -1129,9 +1167,15 @@ body.sticky-always.has-subnav #content {
 }
 
 .related-active-label {
-  font-size: 0.7rem;
-  color: var(--color-text-light);
-  font-style: italic;
+  font-size: 0.65rem;
+  color: white;
+  background: var(--color-primary);
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
 }
 
 .related-empty {

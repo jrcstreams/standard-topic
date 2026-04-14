@@ -17,6 +17,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   onRoute((route) => {
     renderLayout(route);
     renderPage(route);
+    // Always reset scroll to top on route change — don't preserve scroll
+    // position from the previous page
+    window.scrollTo(0, 0);
   });
 
   initRouter();
@@ -218,7 +221,7 @@ function renderPage(route) {
     const homeTabs = [
       { id: 'newsfeed', label: 'News Feed', hash: '#/' },
       { id: 'shortcuts', label: 'AI Shortcuts', hash: '#/shortcuts' },
-      { id: 'related', label: 'Featured Topics', hash: '#/related' },
+      { id: 'related', label: 'All Topics', hash: '#/related' },
     ];
     renderTopicBanner(content, {
       title: 'Home',
