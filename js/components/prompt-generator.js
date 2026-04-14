@@ -799,7 +799,6 @@ function assemblePrompt() {
     let out = text
       .replace(/\{primary_topic\}/g, primaryTopic)
       .replace(/\{secondary_topic\}/g, secondaryTopic || primaryTopic);
-    // Substitute any extra inputs (from requiresInput)
     Object.entries(state.extraInputs).forEach(([k, v]) => {
       const placeholder = v?.trim() || `[${k.replace(/_/g, ' ')}]`;
       out = out.replace(new RegExp(`\\{${k}\\}`, 'g'), placeholder);
@@ -807,53 +806,120 @@ function assemblePrompt() {
     return out;
   };
 
-  // ---- Build clauses for each field ----
+  // Helper: clauses for any single-select-style usage
   const clausesForField = (fieldKey) => {
     const values = getValuesArray(fieldKey);
     if (values.length === 0) return [];
     const opts = getOptionsFor(fieldKey);
     return values.map(value => {
       const opt = opts.find(o => o.value === value);
-      if (opt) {
-        return opt.clause ? sub(opt.clause) : null;
-      }
-      // Custom value
+      if (opt) return opt.clause ? sub(opt.clause) : null;
       const customLabel = getCustomLabel(fieldKey, value);
-      if (customLabel) return generateCustomClause(fieldKey, customLabel);
-      return null;
+      return customLabel ? generateCustomClause(fieldKey, customLabel) : null;
     }).filter(Boolean);
   };
 
-  // Opener: from contentType (could be multiple)
-  const contentClauses = clausesForField('contentType');
-  let opener;
-  if (contentClauses.length > 0) {
-    opener = contentClauses.map(c => endWithPeriod(c)).join(' ');
-  } else {
-    opener = sub(pgData.baseTemplate);
+  // ---- Section 1: Opener (from Content Type) ----
+  // Single value → use full clause as-is.
+  // Multiple values → bulleted list of labels (no redundancy).
+  const opener = buildOpener(primaryTopic, sub);
+
+  // ---- Sections 2+: Group supporting clauses by category for cleaner prose
+  const sections = [];
+
+  // Approach
+  const approach = clausesForField('contentGeneration');
+  if (approach.length > 0) sections.push(approach.map(endWithPeriod).join(' '));
+
+  // Sources / Time / Citations — combined paragraph
+  const sourceTimeCite = [
+    ...clausesForField('sources'),
+    ...clausesForField('recency'),
+    ...clausesForField('citations'),
+  ];
+  if (sourceTimeCite.length > 0) sections.push(sourceTimeCite.map(endWithPeriod).join(' '));
+
+  // Format & Length — combined
+  const formatLen = [
+    ...clausesForField('format'),
+    ...clausesForField('length'),
+  ];
+  if (formatLen.length > 0) sections.push(formatLen.map(endWithPeriod).join(' '));
+
+  // Audience & Tone — combined
+  const audTone = [
+    ...clausesForField('audience'),
+    ...clausesForField('tone'),
+  ];
+  if (audTone.length > 0) sections.push(audTone.map(endWithPeriod).join(' '));
+
+  // Geographic — multi-select friendly: combine into one sentence
+  const geoValues = getValuesArray('geographic');
+  if (geoValues.length === 1) {
+    const c = clausesForField('geographic')[0];
+    if (c) sections.push(endWithPeriod(c));
+  } else if (geoValues.length > 1) {
+    const labels = geoValues.map(v => {
+      const opt = getOptionsFor('geographic').find(o => o.value === v);
+      if (opt) return opt.label;
+      return getCustomLabel('geographic', v);
+    }).filter(Boolean);
+    sections.push(`Cover the following geographic perspectives: ${joinList(labels)}.`);
   }
 
-  // Supporting clauses from all other configured fields
-  const supportingKeys = ['contentGeneration', 'sources', 'recency', 'citations', 'format', 'length', 'audience', 'tone', 'geographic'];
-  const supporting = [];
-  supportingKeys.forEach(key => {
-    clausesForField(key).forEach(c => supporting.push(endWithPeriod(c)));
-  });
+  // Secondary topic clause
+  if (secondaryTopic && pgData.secondaryTopicClause) {
+    sections.push(sub(pgData.secondaryTopicClause));
+  }
 
-  const secondaryClause = (secondaryTopic && pgData.secondaryTopicClause)
-    ? sub(pgData.secondaryTopicClause) : null;
-
+  // Custom instructions (free text)
   const customText = (state.customizations || '').trim();
-  const customClause = customText ? `Additional instructions: ${customText}` : null;
+  if (customText) sections.push(`Additional instructions: ${customText}`);
 
   const parts = [opener];
-  if (supporting.length > 0) parts.push(supporting.join(' '));
-  if (secondaryClause) parts.push(secondaryClause);
-  if (customClause) parts.push(customClause);
-  if (supporting.length > 0 || secondaryClause || customClause) {
-    parts.push(pgData.closingLine);
-  }
+  parts.push(...sections);
+  if (sections.length > 0) parts.push(pgData.closingLine);
   return parts.join('\n\n');
+}
+
+// Build the opener paragraph from Content Type selections.
+// 1 selection → use the option's full clause (e.g., "Provide a comprehensive overview of X.")
+// 2+ selections → "Provide the following about X:" with bulleted labels (no redundancy)
+function buildOpener(primaryTopic, sub) {
+  const values = getValuesArray('contentType');
+  if (values.length === 0) return sub(pgData.baseTemplate);
+
+  if (values.length === 1) {
+    const v = values[0];
+    const opt = getOptionsFor('contentType').find(o => o.value === v);
+    if (opt?.clause) return endWithPeriod(sub(opt.clause));
+    const custom = getCustomLabel('contentType', v);
+    return custom ? `Provide ${custom} about ${primaryTopic}.` : sub(pgData.baseTemplate);
+  }
+
+  // Multiple — bullet list with short labels
+  const items = values.map(v => {
+    const opt = getOptionsFor('contentType').find(o => o.value === v);
+    if (opt) {
+      let label = opt.label;
+      if (opt.requiresInput) {
+        const extra = state.extraInputs[opt.requiresInput.key]?.trim();
+        if (extra) label += ` with ${extra}`;
+      }
+      return label;
+    }
+    return getCustomLabel('contentType', v);
+  }).filter(Boolean);
+
+  return `Provide the following about ${primaryTopic}:\n` + items.map(s => `• ${s}`).join('\n');
+}
+
+// "a, b, and c" / "a and b" / "a"
+function joinList(arr) {
+  if (arr.length === 0) return '';
+  if (arr.length === 1) return arr[0];
+  if (arr.length === 2) return `${arr[0]} and ${arr[1]}`;
+  return `${arr.slice(0, -1).join(', ')}, and ${arr[arr.length - 1]}`;
 }
 
 function endWithPeriod(s) {
