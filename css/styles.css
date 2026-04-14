@@ -2144,7 +2144,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   align-items: center;
   gap: 0.75rem;
   min-width: 0;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
 }
 
 .topic-banner-accent {
