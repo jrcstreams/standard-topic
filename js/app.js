@@ -1,6 +1,5 @@
 import { initRouter, onRoute } from './utils/router.js';
 import { loadAllData, getTopicBySlug, getParentTopics } from './utils/data.js';
-import { renderHeader, updateHeaderActiveState } from './components/header.js';
 import { renderFooter } from './components/footer.js';
 import { renderSearchBar } from './components/search-modal.js';
 import { renderNewsFeed } from './components/newsfeed.js';
@@ -17,16 +16,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   onRoute((route) => {
     renderLayout(route);
-    updateHeaderActiveState(route);
     renderPage(route);
   });
 
   initRouter();
 });
 
-// Hybrid layout:
-//  - Homepage: Google-style hero + scroll-triggered sticky bar
-//  - Every other page: navy navbar + compact sub-header with just the search bar
+// Unified layout:
+//  - Homepage: Google-style hero; sticky bar fades in after ~180px scroll
+//  - Every other page: same sticky bar visible from page load (no scroll trigger)
+//    Content area gets top padding (via body.sticky-always) so it isn't hidden.
 let heroScrollHandler = null;
 
 function renderLayout(route) {
@@ -40,20 +39,23 @@ function renderLayout(route) {
     heroScrollHandler = null;
   }
 
-  // Clean classes from both
-  siteHeader.className = '';
+  // Reset classes
+  siteHeader.className = 'is-sticky-hero';
   subHeader.className = '';
+  subHeader.innerHTML = '';
+
+  // Always render the sticky hero bar; on home it hides until scroll,
+  // on other pages it stays visible.
+  renderStickyHeroBar(siteHeader, route);
 
   if (isHome) {
-    siteHeader.classList.add('is-sticky-hero');
-    renderStickyHeroBar(siteHeader, route);
+    document.body.classList.remove('sticky-always');
     subHeader.classList.add('is-hero');
     renderHero(subHeader, route);
     setupStickyReveal(siteHeader);
   } else {
-    renderHeader(siteHeader);
-    subHeader.classList.add('is-compact');
-    renderCompactSubHeader(subHeader, route);
+    document.body.classList.add('sticky-always');
+    siteHeader.classList.add('is-revealed');
   }
 }
 
@@ -71,6 +73,7 @@ function setupStickyReveal(stickyEl) {
 }
 
 function renderStickyHeroBar(container, route) {
+  const isPromptGen = route.type === 'prompt-generator';
   container.innerHTML = `
     <div class="sticky-hero-inner">
       <a href="#/" class="sticky-brand">
@@ -78,7 +81,7 @@ function renderStickyHeroBar(container, route) {
         <span class="sticky-title">Standard Topic</span>
       </a>
       <div class="sticky-search" id="sticky-search-container"></div>
-      <a href="#/prompt-generator" class="sticky-cta">Build Prompt +</a>
+      <a href="#/prompt-generator" class="sticky-cta ${isPromptGen ? 'active' : ''}">Build Prompt +</a>
     </div>
   `;
   renderSearchBar(document.getElementById('sticky-search-container'), route);
@@ -113,14 +116,6 @@ function renderHero(container, route) {
   renderSearchBar(document.getElementById('search-bar-container'), route);
 }
 
-function renderCompactSubHeader(container, route) {
-  container.innerHTML = `
-    <div class="sub-header-inner">
-      <div class="sub-header-search" id="search-bar-container"></div>
-    </div>
-  `;
-  renderSearchBar(document.getElementById('search-bar-container'), route);
-}
 
 function renderTopicBanner(container, config) {
   const { title, iconEmoji, showTabs, tabs, activeTab } = config;
