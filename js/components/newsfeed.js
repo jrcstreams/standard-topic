@@ -1,7 +1,7 @@
 // News Feed component — renders RSS.app iframe embed
 
 export function renderNewsFeed(container, topic, isHome) {
-  const title = isHome ? 'General News Feed' : 'News Feed';
+  const title = isHome ? 'Main News Feed' : 'News Feed';
   const feedId = topic?.rssFeedId;
 
   if (!feedId) {

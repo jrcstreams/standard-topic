@@ -98,7 +98,7 @@ function renderPage(route) {
       { id: 'related', label: 'Featured Topics', hash: '#/related' },
     ];
     renderTopicBanner(content, {
-      title: 'General',
+      title: 'Home',
       iconEmoji: '🏠',
       showTabs: true,
       tabs: homeTabs,
