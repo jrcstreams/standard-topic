@@ -188,13 +188,28 @@ function handleKeyboard(e, results, input) {
     e.preventDefault();
     highlightIndex = Math.max(highlightIndex - 1, 0);
     updateHighlight(results);
-  } else if (e.key === 'Enter' && highlightIndex >= 0 && currentResults[highlightIndex]) {
+  } else if (e.key === 'Enter') {
+    // Priority:
+    //   1. If user navigated with arrows, use the highlighted result
+    //   2. Otherwise, if there's a top topic match, navigate to that
+    //   3. Otherwise, treat as custom topic search
+    const query = input.value.trim();
+    if (!query && highlightIndex < 0) return; // nothing to do on empty query
     e.preventDefault();
-    const selected = currentResults[highlightIndex];
-    if (selected.type === 'custom') {
-      navigate(`#/custom/${encodeURIComponent(selected.term)}`);
+
+    let target;
+    if (highlightIndex >= 0 && currentResults[highlightIndex]) {
+      target = currentResults[highlightIndex];
     } else {
-      navigate(`#/topic/${selected.slug}`);
+      // currentResults[0] is the "custom topic" option; [1] is the first topic match
+      const firstTopicMatch = currentResults.find(r => r.type === 'topic');
+      target = firstTopicMatch || { type: 'custom', term: query };
+    }
+
+    if (target.type === 'custom') {
+      navigate(`#/custom/${encodeURIComponent(target.term)}`);
+    } else {
+      navigate(`#/topic/${target.slug}`);
     }
     closeModal(document.getElementById('search-modal'));
   }
