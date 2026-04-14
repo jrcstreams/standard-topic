@@ -220,27 +220,27 @@ a:hover {
 }
 
 .tab-pill {
-  padding: 0.4rem 1rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--color-text);
-  background: var(--color-bg-light);
-  border: 1px solid var(--color-border);
+  padding: 0.35rem 0 0.5rem;
+  font-size: 0.9rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
   text-decoration: none;
-  transition: background 0.2s, color 0.2s;
   white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
 }
 
 .tab-pill:hover {
-  background: var(--color-bg-muted);
+  color: var(--color-text);
   text-decoration: none;
 }
 
 .tab-pill.active {
-  background: var(--color-primary);
-  color: white;
-  border-color: var(--color-primary);
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
 }
 
 @media (max-width: 768px) {
@@ -1136,13 +1136,14 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 
 .topic-banner-tabs {
   display: flex;
-  gap: 0.5rem;
+  gap: 1.5rem;
   flex-wrap: wrap;
   flex-shrink: 0;
+  align-items: flex-end;
 }
 
 .topic-banner-tabs .tab-pill {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
 }
 
 .tab-content-area {
