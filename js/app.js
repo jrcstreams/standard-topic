@@ -61,7 +61,7 @@ function renderHero(container, route) {
   container.innerHTML = `
     <div class="hero-inner">
       <a href="#/" class="hero-brand">
-        <img src="assets/logo.png" alt="Standard Topic" class="hero-brand-logo">
+        <img src="assets/logo-light.png" alt="Standard Topic" class="hero-brand-logo">
         <h1 class="hero-brand-title">Standard Topic</h1>
       </a>
       <p class="hero-tagline">News, Resources and AI Knowledge. On any topic.</p>
