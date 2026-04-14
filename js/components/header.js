@@ -4,7 +4,7 @@ export function renderHeader(container) {
   container.innerHTML = `
     <div class="header-inner">
       <a href="#/" class="header-logo">
-        <img src="assets/logo.svg" alt="Standard Topic" class="header-logo-img">
+        <img src="assets/logo.png" alt="Standard Topic" class="header-logo-img">
         <span class="header-title">Standard Topic</span>
       </a>
       <span class="header-tagline">News, Resources and AI Knowledge. On any topic.</span>
