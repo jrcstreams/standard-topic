@@ -13,39 +13,77 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadAllData();
   initPromptModal();
 
-  renderHeader(document.getElementById('site-header'));
   renderFooter(document.getElementById('site-footer'));
 
   onRoute((route) => {
+    renderLayout(route);
     updateHeaderActiveState(route);
-    renderSubHeader(route);
     renderPage(route);
   });
 
   initRouter();
 });
 
-function renderSubHeader(route) {
+// Hybrid layout:
+//  - Homepage: Google-style hero (no navbar), centered logo/title/tagline/search/chips/CTA
+//  - Every other page: navy navbar + compact sub-header with just the search bar
+function renderLayout(route) {
+  const siteHeader = document.getElementById('site-header');
   const subHeader = document.getElementById('sub-header');
+  const isHome = route.type === 'home';
+
+  if (isHome) {
+    siteHeader.innerHTML = '';
+    siteHeader.classList.add('is-hidden');
+    subHeader.classList.add('is-hero');
+    subHeader.classList.remove('is-compact');
+    renderHero(subHeader, route);
+  } else {
+    siteHeader.classList.remove('is-hidden');
+    renderHeader(siteHeader);
+    subHeader.classList.add('is-compact');
+    subHeader.classList.remove('is-hero');
+    renderCompactSubHeader(subHeader, route);
+  }
+}
+
+function renderHero(container, route) {
   const popularTopics = getParentTopics().slice(0, 5);
   const chipsHTML = popularTopics.length > 0 ? `
-    <div class="sub-header-chips">
-      <span class="sub-header-chip-label">Popular</span>
+    <div class="hero-chips">
+      <span class="hero-chip-label">Popular</span>
       ${popularTopics.map(t => `
-        <a href="#/topic/${t.slug}" class="sub-header-chip">${escapeHTML(t.name)}</a>
+        <a href="#/topic/${t.slug}" class="hero-chip">${escapeHTML(t.name)}</a>
       `).join('')}
     </div>
   ` : '';
 
-  subHeader.innerHTML = `
-    <div class="sub-header-inner" id="sub-header-inner">
-      <p class="sub-header-tagline">News, Resources and AI Knowledge. On any topic.</p>
-      <div class="sub-header-search" id="search-bar-container"></div>
+  container.innerHTML = `
+    <div class="hero-inner">
+      <a href="#/" class="hero-brand">
+        <img src="assets/logo.png" alt="Standard Topic" class="hero-brand-logo">
+        <h1 class="hero-brand-title">Standard Topic</h1>
+      </a>
+      <p class="hero-tagline">News, Resources and AI Knowledge. On any topic.</p>
+      <div class="hero-search-wrap" id="search-bar-container"></div>
       ${chipsHTML}
+      <a href="#/prompt-generator" class="hero-build-btn">
+        <span class="hero-build-icon" aria-hidden="true">⚙</span>
+        <span>Build Your Own Knowledge Prompt</span>
+        <span class="hero-build-plus" aria-hidden="true">+</span>
+      </a>
     </div>
   `;
-  const searchContainer = document.getElementById('search-bar-container');
-  renderSearchBar(searchContainer, route);
+  renderSearchBar(document.getElementById('search-bar-container'), route);
+}
+
+function renderCompactSubHeader(container, route) {
+  container.innerHTML = `
+    <div class="sub-header-inner">
+      <div class="sub-header-search" id="search-bar-container"></div>
+    </div>
+  `;
+  renderSearchBar(document.getElementById('search-bar-container'), route);
 }
 
 function renderTopicBanner(container, config) {

@@ -172,28 +172,19 @@ a:hover {
 
 
 /* === Sub-Header === */
-#sub-header {
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-bg);
+/* Compact sub-header (non-home pages): just the search bar, centered */
+#sub-header.is-compact {
   position: sticky;
   top: 0;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg);
   z-index: 90;
 }
 
 .sub-header-inner {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 1.1rem 1rem 1rem;
-  text-align: center;
-}
-
-.sub-header-tagline {
-  font-family: var(--font-family);
-  font-size: 0.92rem;
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-muted);
-  margin: 0 0 0.75rem;
-  line-height: 1.35;
+  padding: 0.85rem 1rem;
 }
 
 .sub-header-search {
@@ -201,17 +192,76 @@ a:hover {
   margin: 0 auto;
 }
 
-.sub-header-chips {
+/* Homepage hero mode: centered logo, title, tagline, search, chips, CTA */
+#sub-header.is-hero {
+  position: static;
+  border-bottom: 1px solid rgba(30, 45, 68, 0.08);
+  background: linear-gradient(180deg, var(--color-bg-light) 0%, var(--color-bg) 100%);
+}
+
+#site-header.is-hidden {
+  display: none;
+}
+
+.hero-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 2.5rem;
+  text-align: center;
+}
+
+.hero-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 0.85rem;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.hero-brand:hover {
+  text-decoration: none;
+}
+
+.hero-brand-logo {
+  width: 44px;
+  height: 44px;
+}
+
+.hero-brand-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.03em;
+  color: var(--color-primary);
+  margin: 0;
+  line-height: 1;
+}
+
+.hero-tagline {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
+  margin: 0 0 1.15rem;
+  line-height: 1.4;
+}
+
+.hero-search-wrap {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.hero-chips {
   display: flex;
   gap: 0.35rem;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  margin: 0.7rem auto 0;
+  margin: 0.8rem auto 0;
   max-width: 560px;
 }
 
-.sub-header-chip-label {
+.hero-chip-label {
   font-size: 0.72rem;
   color: var(--color-text-light);
   text-transform: uppercase;
@@ -220,42 +270,100 @@ a:hover {
   margin-right: 0.15rem;
 }
 
-.sub-header-chip {
+.hero-chip {
   font-size: 0.78rem;
-  background: var(--color-bg-light);
+  background: var(--color-bg);
   color: var(--color-text);
-  padding: 0.25rem 0.7rem;
+  padding: 0.25rem 0.75rem;
   border-radius: 999px;
   text-decoration: none;
   font-weight: var(--font-weight-medium);
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
   white-space: nowrap;
+  border: 1px solid var(--color-border);
 }
 
-.sub-header-chip:hover {
-  background: var(--color-border);
-  color: var(--color-primary);
+.hero-chip:hover {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
   text-decoration: none;
 }
 
+.hero-build-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+  margin-top: 1.25rem;
+  padding: 0.55rem 1.1rem;
+  background: transparent;
+  border: 1.5px solid var(--color-primary);
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.hero-build-btn:hover {
+  background: var(--color-primary);
+  color: white;
+  text-decoration: none;
+}
+
+.hero-build-icon,
+.hero-build-plus {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
 @media (max-width: 768px) {
-  .sub-header-tagline {
-    font-size: 0.82rem;
-    margin-bottom: 0.6rem;
+  .hero-inner {
+    padding: 2rem 1rem 1.75rem;
   }
 
-  .sub-header-chips {
+  .hero-brand {
+    gap: 0.55rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .hero-brand-logo {
+    width: 36px;
+    height: 36px;
+  }
+
+  .hero-brand-title {
+    font-size: 1.55rem;
+  }
+
+  .hero-tagline {
+    font-size: 0.88rem;
+    margin-bottom: 0.95rem;
+  }
+
+  .hero-chips {
     gap: 0.3rem;
-    margin-top: 0.55rem;
+    margin-top: 0.65rem;
   }
 
-  .sub-header-chip,
-  .sub-header-chip-label {
+  .hero-chip,
+  .hero-chip-label {
     font-size: 0.72rem;
   }
 
-  .sub-header-chip {
-    padding: 0.2rem 0.6rem;
+  .hero-chip {
+    padding: 0.2rem 0.65rem;
+  }
+
+  .hero-build-btn {
+    font-size: 0.82rem;
+    margin-top: 1rem;
+    padding: 0.5rem 0.95rem;
+  }
+
+  .sub-header-inner {
+    padding: 0.7rem 0.85rem;
   }
 }
 
