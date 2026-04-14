@@ -37,7 +37,7 @@ function renderSubHeader(route) {
 }
 
 function renderTopicBanner(container, config) {
-  const { title, subtitle, iconEmoji, showTabs, tabs, activeTab } = config;
+  const { title, iconEmoji, showTabs, tabs, activeTab } = config;
 
   const tabsHTML = showTabs && tabs ? `
     <div class="topic-banner-tabs">
@@ -54,10 +54,7 @@ function renderTopicBanner(container, config) {
   banner.innerHTML = `
     <div class="topic-banner-header">
       <div class="topic-banner-icon">${iconEmoji || '📚'}</div>
-      <div class="topic-banner-text">
-        ${subtitle ? `<div class="topic-banner-label">${escapeHTML(subtitle)}</div>` : ''}
-        <h1 class="topic-banner-title">${escapeHTML(title)}</h1>
-      </div>
+      <h1 class="topic-banner-title">${escapeHTML(title)}</h1>
     </div>
     ${tabsHTML}
   `;
@@ -100,7 +97,6 @@ function renderPage(route) {
     ];
     renderTopicBanner(content, {
       title: 'General',
-      subtitle: 'Home',
       iconEmoji: '🏠',
       showTabs: true,
       tabs: homeTabs,
@@ -133,8 +129,6 @@ function renderPage(route) {
       return;
     }
 
-    const parentTopic = topic.parent ? getTopicBySlug(topic.parent) : null;
-    const subtitle = parentTopic ? `In ${parentTopic.name}` : 'Topic';
     const topicTabs = [
       { id: 'newsfeed', label: 'News Feed', hash: `#/topic/${route.slug}` },
       { id: 'shortcuts', label: 'AI Shortcuts', hash: `#/topic/${route.slug}/shortcuts` },
@@ -142,7 +136,6 @@ function renderPage(route) {
     ];
     renderTopicBanner(content, {
       title: topic.name,
-      subtitle,
       iconEmoji: getIconEmoji(topic.icon),
       showTabs: true,
       tabs: topicTabs,
@@ -166,7 +159,6 @@ function renderPage(route) {
   if (route.type === 'custom') {
     renderTopicBanner(content, {
       title: route.term,
-      subtitle: 'Custom Topic',
       iconEmoji: '🔍',
       showTabs: false,
     });
