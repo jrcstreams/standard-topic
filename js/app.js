@@ -43,20 +43,71 @@ function renderLayout(route) {
   siteHeader.className = 'is-sticky-hero';
   subHeader.className = '';
   subHeader.innerHTML = '';
+  document.body.classList.remove('sticky-always', 'has-subnav');
 
-  // Always render the sticky hero bar; on home it hides until scroll,
-  // on other pages it stays visible.
+  // Always render the sticky hero bar
   renderStickyHeroBar(siteHeader, route);
 
   if (isHome) {
-    document.body.classList.remove('sticky-always');
+    // Home: sticky hides until scroll; hero fills sub-header
     subHeader.classList.add('is-hero');
     renderHero(subHeader, route);
     setupStickyReveal(siteHeader);
-  } else {
-    document.body.classList.add('sticky-always');
-    siteHeader.classList.add('is-revealed');
+    return;
   }
+
+  // Every other page: main sticky always visible
+  document.body.classList.add('sticky-always');
+  siteHeader.classList.add('is-revealed');
+
+  // Topic / custom pages also get a sub-nav below the main nav
+  if (route.type === 'topic' || route.type === 'custom') {
+    document.body.classList.add('has-subnav');
+    subHeader.classList.add('is-subnav');
+    renderTopicSubNav(subHeader, route);
+  }
+}
+
+function renderTopicSubNav(container, route) {
+  let title;
+  let tabs = null;
+  let activeTab = route.tab;
+
+  if (route.type === 'topic') {
+    const topic = getTopicBySlug(route.slug);
+    if (!topic) return;
+    title = topic.name;
+    tabs = [
+      { id: 'newsfeed', label: 'News Feed', hash: `#/topic/${route.slug}` },
+      { id: 'shortcuts', label: 'AI Shortcuts', hash: `#/topic/${route.slug}/shortcuts` },
+      { id: 'related', label: 'Related Topics', hash: `#/topic/${route.slug}/related` },
+    ];
+  } else if (route.type === 'custom') {
+    title = route.term;
+    // Custom topics have no tabs — just show the title
+  }
+
+  const tabsHTML = tabs ? `
+    <div class="topic-banner-tabs">
+      ${tabs.map(t => `
+        <a href="${t.hash}" class="tab-pill ${t.id === activeTab ? 'active' : ''}" data-tab="${t.id}">
+          ${t.label}
+        </a>
+      `).join('')}
+    </div>
+  ` : '';
+
+  container.innerHTML = `
+    <div class="topic-banner">
+      <div class="topic-banner-row">
+        <div class="topic-banner-titlegroup">
+          <span class="topic-banner-accent" aria-hidden="true"></span>
+          <h1 class="topic-banner-title">${escapeHTML(title)}</h1>
+        </div>
+        ${tabsHTML}
+      </div>
+    </div>
+  `;
 }
 
 function setupStickyReveal(stickyEl) {
@@ -77,7 +128,7 @@ function renderStickyHeroBar(container, route) {
   container.innerHTML = `
     <div class="sticky-hero-inner">
       <a href="#/" class="sticky-brand">
-        <img src="assets/logo-light.png" alt="Standard Topic" class="sticky-logo-img">
+        <img src="assets/logo-dark.png" alt="Standard Topic" class="sticky-logo-img">
         <span class="sticky-title">Standard Topic</span>
       </a>
       <div class="sticky-search" id="sticky-search-container"></div>
@@ -158,15 +209,6 @@ function escapeHTML(str) {
   return div.innerHTML;
 }
 
-function getIconEmoji(icon) {
-  const map = {
-    'laptop': '💻', 'flask': '🧪', 'briefcase': '💼', 'home': '🏠',
-    'zap': '⚡', 'globe': '🌍', 'cpu': '🤖', 'trending-up': '📈',
-    'calendar': '📅', 'rocket': '🚀', 'microscope': '🔬', 'landmark': '🏛️',
-  };
-  return map[icon] || '📚';
-}
-
 function renderPage(route) {
   const content = document.getElementById('content');
   content.innerHTML = '';
@@ -180,7 +222,6 @@ function renderPage(route) {
     ];
     renderTopicBanner(content, {
       title: 'Home',
-      iconEmoji: '🏠',
       showTabs: true,
       tabs: homeTabs,
       activeTab: route.tab,
@@ -212,43 +253,18 @@ function renderPage(route) {
       return;
     }
 
-    const topicTabs = [
-      { id: 'newsfeed', label: 'News Feed', hash: `#/topic/${route.slug}` },
-      { id: 'shortcuts', label: 'AI Shortcuts', hash: `#/topic/${route.slug}/shortcuts` },
-      { id: 'related', label: 'Related Topics', hash: `#/topic/${route.slug}/related` },
-    ];
-    renderTopicBanner(content, {
-      title: topic.name,
-      iconEmoji: getIconEmoji(topic.icon),
-      showTabs: true,
-      tabs: topicTabs,
-      activeTab: route.tab,
-    });
-
-    const tabContent = document.createElement('div');
-    tabContent.className = 'tab-content-area';
-    content.appendChild(tabContent);
-
     if (route.tab === 'newsfeed') {
-      renderNewsFeed(tabContent, topic, false);
+      renderNewsFeed(content, topic, false);
     } else if (route.tab === 'shortcuts') {
-      renderShortcuts(tabContent, route);
+      renderShortcuts(content, route);
     } else if (route.tab === 'related') {
-      renderRelatedTopics(tabContent, route);
+      renderRelatedTopics(content, route);
     }
     return;
   }
 
   if (route.type === 'custom') {
-    renderTopicBanner(content, {
-      title: route.term,
-      iconEmoji: '🔍',
-      showTabs: false,
-    });
-    const tabContent = document.createElement('div');
-    tabContent.className = 'tab-content-area';
-    content.appendChild(tabContent);
-    renderShortcuts(tabContent, route);
+    renderShortcuts(content, route);
     return;
   }
 
