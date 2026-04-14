@@ -23,7 +23,6 @@ export function renderSearchBar(container, route) {
       <button class="search-bar" id="search-bar-trigger" type="button">
         <span class="search-bar-icon">🔍</span>
         <span class="search-bar-label" id="search-bar-label">${escapeHTML(label)}</span>
-        <span class="search-bar-chevron">▾</span>
       </button>
       <div class="search-modal" id="search-modal" style="display:none;">
         <div class="search-modal-input-row">

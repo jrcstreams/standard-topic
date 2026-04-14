@@ -54,7 +54,7 @@ function renderTopicBanner(container, config) {
   banner.innerHTML = `
     <div class="topic-banner-row">
       <div class="topic-banner-titlegroup">
-        <span class="topic-banner-icon">${iconEmoji || '📚'}</span>
+        <span class="topic-banner-accent" aria-hidden="true"></span>
         <h1 class="topic-banner-title">${escapeHTML(title)}</h1>
       </div>
       ${tabsHTML}
