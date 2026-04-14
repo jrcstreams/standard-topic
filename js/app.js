@@ -25,26 +25,63 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // Hybrid layout:
-//  - Homepage: Google-style hero (no navbar), centered logo/title/tagline/search/chips/CTA
+//  - Homepage: Google-style hero + scroll-triggered sticky bar
 //  - Every other page: navy navbar + compact sub-header with just the search bar
+let heroScrollHandler = null;
+
 function renderLayout(route) {
   const siteHeader = document.getElementById('site-header');
   const subHeader = document.getElementById('sub-header');
   const isHome = route.type === 'home';
 
+  // Clean up any prior scroll listener before switching modes
+  if (heroScrollHandler) {
+    window.removeEventListener('scroll', heroScrollHandler);
+    heroScrollHandler = null;
+  }
+
+  // Clean classes from both
+  siteHeader.className = '';
+  subHeader.className = '';
+
   if (isHome) {
-    siteHeader.innerHTML = '';
-    siteHeader.classList.add('is-hidden');
+    siteHeader.classList.add('is-sticky-hero');
+    renderStickyHeroBar(siteHeader, route);
     subHeader.classList.add('is-hero');
-    subHeader.classList.remove('is-compact');
     renderHero(subHeader, route);
+    setupStickyReveal(siteHeader);
   } else {
-    siteHeader.classList.remove('is-hidden');
     renderHeader(siteHeader);
     subHeader.classList.add('is-compact');
-    subHeader.classList.remove('is-hero');
     renderCompactSubHeader(subHeader, route);
   }
+}
+
+function setupStickyReveal(stickyEl) {
+  const THRESHOLD = 180; // reveal after ~180px of scroll
+  heroScrollHandler = () => {
+    if (window.scrollY > THRESHOLD) {
+      stickyEl.classList.add('is-revealed');
+    } else {
+      stickyEl.classList.remove('is-revealed');
+    }
+  };
+  window.addEventListener('scroll', heroScrollHandler, { passive: true });
+  heroScrollHandler(); // initial check
+}
+
+function renderStickyHeroBar(container, route) {
+  container.innerHTML = `
+    <div class="sticky-hero-inner">
+      <a href="#/" class="sticky-brand">
+        <img src="assets/logo-light.png" alt="Standard Topic" class="sticky-logo-img">
+        <span class="sticky-title">Standard Topic</span>
+      </a>
+      <div class="sticky-search" id="sticky-search-container"></div>
+      <a href="#/prompt-generator" class="sticky-cta">Build Prompt +</a>
+    </div>
+  `;
+  renderSearchBar(document.getElementById('sticky-search-container'), route);
 }
 
 function renderHero(container, route) {

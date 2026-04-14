@@ -16,7 +16,9 @@
       "Bash(curl -s http://localhost:8000/data/ai-models.json)",
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(f'{len\\(d[\\\\\"models\\\\\"]\\)} AI models, default: {d[\\\\\"defaultModel\\\\\"]}'\\)\")",
       "Bash(git -C /Users/johnchoudhari/Desktop/standard-topic log --oneline)",
-      "Bash(ls /Users/johnchoudhari/Desktop/standard-topic/.superpowers/brainstorm/*/state/server-info)"
+      "Bash(ls /Users/johnchoudhari/Desktop/standard-topic/.superpowers/brainstorm/*/state/server-info)",
+      "Bash(ls /Users/johnchoudhari/Desktop/standard-topic/.superpowers/brainstorm/*/state/server-stopped)",
+      "Bash(cat /Users/johnchoudhari/Desktop/standard-topic/.superpowers/brainstorm/*/state/server-info)"
     ]
   }
 }
