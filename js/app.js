@@ -36,18 +36,40 @@ function renderSubHeader(route) {
   renderSearchBar(searchContainer, route);
 }
 
-function renderTopicHero(container, title, subtitle, iconEmoji) {
-  const hero = document.createElement('div');
-  hero.className = 'topic-hero';
-  hero.innerHTML = `
-    <div class="topic-hero-icon">${iconEmoji || '📚'}</div>
-    <div class="topic-hero-content">
-      <div class="topic-hero-label">Topic</div>
-      <h1 class="topic-hero-title">${escapeHTML(title)}</h1>
-      ${subtitle ? `<div class="topic-hero-subtitle">${escapeHTML(subtitle)}</div>` : ''}
+function renderTopicBanner(container, config) {
+  const { title, subtitle, iconEmoji, showTabs, tabs, activeTab } = config;
+
+  const tabsHTML = showTabs && tabs ? `
+    <div class="topic-banner-tabs">
+      ${tabs.map(t => `
+        <a href="${t.hash}" class="tab-pill ${t.id === activeTab ? 'active' : ''}" data-tab="${t.id}">
+          ${t.label}
+        </a>
+      `).join('')}
     </div>
+  ` : '';
+
+  const banner = document.createElement('div');
+  banner.className = 'topic-banner';
+  banner.innerHTML = `
+    <div class="topic-banner-header">
+      <div class="topic-banner-icon">${iconEmoji || '📚'}</div>
+      <div class="topic-banner-text">
+        ${subtitle ? `<div class="topic-banner-label">${escapeHTML(subtitle)}</div>` : ''}
+        <h1 class="topic-banner-title">${escapeHTML(title)}</h1>
+      </div>
+    </div>
+    ${tabsHTML}
   `;
-  container.appendChild(hero);
+  container.appendChild(banner);
+
+  // Tab click handlers (no full page reload)
+  banner.querySelectorAll('.tab-pill').forEach(pill => {
+    pill.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.location.hash = pill.getAttribute('href').replace(/^#/, '');
+    });
+  });
 }
 
 function escapeHTML(str) {
@@ -71,12 +93,30 @@ function renderPage(route) {
 
   if (route.type === 'home') {
     const topic = getTopicBySlug('home');
+    const homeTabs = [
+      { id: 'newsfeed', label: 'News Feed', hash: '#/' },
+      { id: 'shortcuts', label: 'AI Shortcuts', hash: '#/shortcuts' },
+      { id: 'related', label: 'Featured Topics', hash: '#/related' },
+    ];
+    renderTopicBanner(content, {
+      title: 'General',
+      subtitle: 'Home',
+      iconEmoji: '🏠',
+      showTabs: true,
+      tabs: homeTabs,
+      activeTab: route.tab,
+    });
+
+    const tabContent = document.createElement('div');
+    tabContent.className = 'tab-content-area';
+    content.appendChild(tabContent);
+
     if (route.tab === 'newsfeed') {
-      renderNewsFeed(content, topic, true);
+      renderNewsFeed(tabContent, topic, true);
     } else if (route.tab === 'shortcuts') {
-      renderShortcuts(content, { type: 'home', slug: 'home' });
+      renderShortcuts(tabContent, { type: 'home', slug: 'home' });
     } else if (route.tab === 'related') {
-      renderRelatedTopics(content, { type: 'home', slug: 'home' });
+      renderRelatedTopics(tabContent, { type: 'home', slug: 'home' });
     }
     return;
   }
@@ -94,8 +134,20 @@ function renderPage(route) {
     }
 
     const parentTopic = topic.parent ? getTopicBySlug(topic.parent) : null;
-    const subtitle = parentTopic ? `Subtopic of ${parentTopic.name}` : 'Topic';
-    renderTopicHero(content, topic.name, subtitle, getIconEmoji(topic.icon));
+    const subtitle = parentTopic ? `In ${parentTopic.name}` : 'Topic';
+    const topicTabs = [
+      { id: 'newsfeed', label: 'News Feed', hash: `#/topic/${route.slug}` },
+      { id: 'shortcuts', label: 'AI Shortcuts', hash: `#/topic/${route.slug}/shortcuts` },
+      { id: 'related', label: 'Related Topics', hash: `#/topic/${route.slug}/related` },
+    ];
+    renderTopicBanner(content, {
+      title: topic.name,
+      subtitle,
+      iconEmoji: getIconEmoji(topic.icon),
+      showTabs: true,
+      tabs: topicTabs,
+      activeTab: route.tab,
+    });
 
     const tabContent = document.createElement('div');
     tabContent.className = 'tab-content-area';
@@ -112,7 +164,12 @@ function renderPage(route) {
   }
 
   if (route.type === 'custom') {
-    renderTopicHero(content, route.term, 'Custom Topic Search', '🔍');
+    renderTopicBanner(content, {
+      title: route.term,
+      subtitle: 'Custom Topic',
+      iconEmoji: '🔍',
+      showTabs: false,
+    });
     const tabContent = document.createElement('div');
     tabContent.className = 'tab-content-area';
     content.appendChild(tabContent);
