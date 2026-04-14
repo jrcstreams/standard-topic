@@ -52,11 +52,13 @@ function renderTopicBanner(container, config) {
   const banner = document.createElement('div');
   banner.className = 'topic-banner';
   banner.innerHTML = `
-    <div class="topic-banner-header">
-      <div class="topic-banner-icon">${iconEmoji || '📚'}</div>
-      <h1 class="topic-banner-title">${escapeHTML(title)}</h1>
+    <div class="topic-banner-row">
+      <div class="topic-banner-titlegroup">
+        <span class="topic-banner-icon">${iconEmoji || '📚'}</span>
+        <h1 class="topic-banner-title">${escapeHTML(title)}</h1>
+      </div>
+      ${tabsHTML}
     </div>
-    ${tabsHTML}
   `;
   container.appendChild(banner);
 
