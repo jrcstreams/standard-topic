@@ -1,6 +1,6 @@
 {
   "topics": [
-    {"slug":"home","name":"General","parent":null,"rssFeedId":"tjHI3dxSZgMWgCy5","excludeEvergreen":[],"relatedParents":[],"icon":"home"},
+    {"slug":"home","name":"General","parent":null,"rssFeedId":"ttrh3slQ2XXabtSN","excludeEvergreen":[],"relatedParents":[],"icon":"home"},
     {"slug":"technology","name":"Technology","parent":null,"rssFeedId":"","excludeEvergreen":[],"relatedParents":["science"],"icon":"laptop"},
     {"slug":"artificial-intelligence","name":"Artificial Intelligence","parent":"technology","rssFeedId":"tmnVjOigyGLSO1A5","excludeEvergreen":[],"relatedParents":[],"icon":null},
     {"slug":"cybersecurity","name":"Cybersecurity","parent":"technology","rssFeedId":"","excludeEvergreen":[],"relatedParents":[],"icon":null},

@@ -765,11 +765,12 @@ body.sticky-always.has-subnav #content {
   border: 1px solid var(--color-border);
 }
 
-.newsfeed-iframe {
-  width: 100%;
-  height: 1600px;
-  border: 0;
+/* The rss.app widget injects its content directly into the page, so
+   its height naturally matches the feed content (no internal scroll).
+   Give the element a block-level display so width fills the container. */
+.newsfeed-embed rssapp-wall {
   display: block;
+  width: 100%;
 }
 
 .newsfeed-placeholder {
