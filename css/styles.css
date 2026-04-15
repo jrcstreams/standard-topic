@@ -765,12 +765,82 @@ body.sticky-always.has-subnav #content {
   border: 1px solid var(--color-border);
 }
 
-/* The rss.app widget injects its content directly into the page, so
-   its height naturally matches the feed content (no internal scroll).
-   Give the element a block-level display so width fills the container. */
 .newsfeed-embed rssapp-wall {
   display: block;
   width: 100%;
+}
+
+/* === Discover More (external search CTAs) === */
+.discover-more-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-muted);
+  margin-bottom: 0.55rem;
+}
+
+.discover-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 1.15rem;
+}
+
+/* On custom pages (no iframe below), give the grid a touch more room */
+.topic-layout.is-custom .discover-grid {
+  margin-bottom: 0;
+}
+
+.discover-link {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.88rem;
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.05s;
+}
+
+.discover-link:hover {
+  background: var(--color-accent);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.discover-link:active {
+  transform: translateY(1px);
+}
+
+.discover-link-icon {
+  font-size: 1.05rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.discover-link-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.discover-link-arrow {
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+  transition: color 0.15s, transform 0.15s;
+}
+
+.discover-link:hover .discover-link-arrow {
+  color: var(--color-primary);
+  transform: translate(2px, -2px);
 }
 
 .newsfeed-placeholder {
@@ -1492,14 +1562,12 @@ body.sticky-always.has-subnav #content {
   flex-direction: column;
   gap: 1rem;
   min-width: 0;
+  /* Only as tall as its content — otherwise the grid row would stretch
+     it to match the iframe, which would make "past sidebar" never trigger. */
+  align-self: start;
 }
-
-/* On mobile (single column), the sidebar sections come BEFORE the feed
-   visually by reordering with CSS grid order. */
-@media (max-width: 899px) {
-  .topic-main { order: 2; }
-  .topic-sidebar { order: 1; }
-}
+/* On mobile (single column), default source order applies:
+   News Feed → AI Shortcuts → Related Topics. No CSS reorder needed. */
 
 .layout-section {
   scroll-margin-top: 130px; /* offset for sticky header when scroll-jumping */

@@ -247,19 +247,21 @@ function cleanupTopicLayoutObservers() {
   document.body.classList.remove('past-sidebar');
 }
 
-function renderTopicLayout(container, { topic, route, isHome }) {
+function renderTopicLayout(container, { topic, route, isHome, isCustom = false, customTerm = '' }) {
   cleanupTopicLayoutObservers();
 
-  // Build layout shell — shortcuts section, related section, and feed
-  // all rendered together. Stacked on mobile, 2-col grid on desktop.
+  // Custom pages don't have a Related Topics section. Build layout
+  // shell accordingly.
+  const showRelated = !isCustom;
+
   container.innerHTML = `
-    <div class="topic-layout" id="topic-layout">
+    <div class="topic-layout ${isCustom ? 'is-custom' : ''}" id="topic-layout">
       <main class="topic-main" id="topic-main">
         <section class="layout-section" data-section="newsfeed" id="section-newsfeed"></section>
       </main>
       <aside class="topic-sidebar" id="topic-sidebar">
         <section class="layout-section sidebar-section" data-section="shortcuts" id="section-shortcuts"></section>
-        <section class="layout-section sidebar-section" data-section="related" id="section-related"></section>
+        ${showRelated ? `<section class="layout-section sidebar-section" data-section="related" id="section-related"></section>` : ''}
       </aside>
     </div>
   `;
@@ -269,37 +271,38 @@ function renderTopicLayout(container, { topic, route, isHome }) {
   const relatedSection = container.querySelector('#section-related');
   const sidebar = container.querySelector('#topic-sidebar');
 
-  renderNewsFeed(feedSection, topic, isHome);
-  renderShortcutsSidebar(shortcutsSection, route, isHome);
-  renderRelatedTopicsSidebar(relatedSection, route, isHome);
+  renderNewsFeed(feedSection, topic, isHome, { isCustom, customTerm });
+  renderShortcutsSidebar(shortcutsSection, route, isHome, isCustom, customTerm);
+  if (showRelated && relatedSection) {
+    renderRelatedTopicsSidebar(relatedSection, route, isHome);
+  }
 
   // Deep-link scroll — if the route specifies a tab, scroll to that section
   if (route.tab && route.tab !== 'newsfeed') {
-    const target = route.tab === 'shortcuts' ? shortcutsSection : relatedSection;
-    requestAnimationFrame(() => {
-      target?.scrollIntoView({ behavior: 'auto', block: 'start' });
-    });
+    const target = route.tab === 'shortcuts' ? shortcutsSection
+      : (route.tab === 'related' && relatedSection ? relatedSection : null);
+    if (target) {
+      requestAnimationFrame(() => {
+        target.scrollIntoView({ behavior: 'auto', block: 'start' });
+      });
+    }
   }
 
-  // Observe sidebar — when it scrolls completely out of view (above
-  // viewport), flip the layout to full-width feed. When it comes back
-  // into view, revert.
+  // Observe sidebar — flip layout to full-width when scrolled past
   setupSidebarFullwidthObserver(sidebar);
 
-  // Scroll-spy on sections — updates active tab in the subnav to match
-  // which section is currently in view.
-  setupScrollSpy([
+  // Scroll-spy on sections — updates active tab in the subnav
+  const spySections = [
     { el: feedSection, tab: 'newsfeed' },
     { el: shortcutsSection, tab: 'shortcuts' },
-    { el: relatedSection, tab: 'related' },
-  ]);
+  ];
+  if (showRelated && relatedSection) {
+    spySections.push({ el: relatedSection, tab: 'related' });
+  }
+  setupScrollSpy(spySections);
 
   // Click handlers on subnav tabs: scroll-jump instead of route change
-  attachSubnavScrollHandlers([
-    { tab: 'newsfeed', el: feedSection },
-    { tab: 'shortcuts', el: shortcutsSection },
-    { tab: 'related', el: relatedSection },
-  ]);
+  attachSubnavScrollHandlers(spySections);
 }
 
 function setupSidebarFullwidthObserver(sidebarEl) {
@@ -313,18 +316,20 @@ function setupSidebarFullwidthObserver(sidebarEl) {
   // doesn't work once we hide the sidebar (display: none removes it
   // from layout) so we use a scroll listener and measure while the
   // sidebar is still visible.
-  const STICKY_OFFSET = 160;
-  let sidebarBottomY = sidebarEl.offsetTop + sidebarEl.offsetHeight;
-  // Re-measure on resize / when layout class not fullwidth
+  const STICKY_OFFSET = 140;
+  let sidebarBottomY = 0;
   const measure = () => {
     if (!layout.classList.contains('is-fullwidth')) {
-      sidebarBottomY = sidebarEl.offsetTop + sidebarEl.offsetHeight;
+      const rect = sidebarEl.getBoundingClientRect();
+      sidebarBottomY = rect.bottom + window.scrollY;
     }
   };
+  measure();
   window.addEventListener('resize', measure, { passive: true });
-  // Also re-measure shortly after render (after fonts load, iframe loads)
-  setTimeout(measure, 200);
-  setTimeout(measure, 800);
+  // Re-measure after layout settles (fonts, iframe widget inject content)
+  setTimeout(measure, 150);
+  setTimeout(measure, 600);
+  setTimeout(measure, 1500);
 
   const onScroll = () => {
     const scrollPos = window.scrollY + STICKY_OFFSET;
@@ -380,12 +385,13 @@ function attachSubnavScrollHandlers(map) {
 
 // ---------- Sidebar renderers (compact vertical lists) ----------
 
-function renderShortcutsSidebar(container, route, isHome) {
-  const topic = isHome ? null : getTopicBySlug(route.slug);
-  const topicName = isHome ? 'General' : topic?.name || '';
+function renderShortcutsSidebar(container, route, isHome, isCustom = false, customTerm = '') {
+  const topic = (isHome || isCustom) ? null : getTopicBySlug(route.slug);
+  const topicName = isCustom ? customTerm : (isHome ? 'General' : topic?.name || '');
 
   const evergreen = getEvergreenShortcutsFor(topic);
-  const specific = isHome ? [] : getSpecificShortcutsFor(route.slug);
+  // No topic-specific shortcuts for home or custom searches
+  const specific = (isHome || isCustom) ? [] : getSpecificShortcutsFor(route.slug);
 
   let html = `
     <div class="sidebar-card shortcuts-sidebar">
@@ -543,7 +549,13 @@ function renderPage(route) {
   }
 
   if (route.type === 'custom') {
-    renderShortcuts(content, route);
+    renderTopicLayout(content, {
+      topic: null,
+      route,
+      isHome: false,
+      isCustom: true,
+      customTerm: route.term,
+    });
     return;
   }
 

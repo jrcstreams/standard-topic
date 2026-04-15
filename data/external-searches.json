@@ -1,0 +1,10 @@
+{
+  "searches": [
+    {"name":"Google News","icon":"🔎","urlTemplate":"https://news.google.com/search?q={query}"},
+    {"name":"Bing News","icon":"📰","urlTemplate":"https://www.bing.com/news/search?q={query}"},
+    {"name":"DuckDuckGo News","icon":"🦆","urlTemplate":"https://duckduckgo.com/?q={query}&iar=news&ia=news"},
+    {"name":"Reddit","icon":"💬","urlTemplate":"https://www.reddit.com/search/?q={query}&type=link"},
+    {"name":"YouTube","icon":"▶️","urlTemplate":"https://www.youtube.com/results?search_query={query}"},
+    {"name":"Wikipedia","icon":"📖","urlTemplate":"https://en.wikipedia.org/wiki/Special:Search?search={query}"}
+  ]
+}

@@ -5,20 +5,27 @@ let evergreenShortcuts = null;
 let specificShortcuts = null;
 let modelsData = null;
 let promptGenData = null;
+let externalSearchesData = null;
 
 export async function loadAllData() {
-  const [topics, evergreen, specific, models, promptGen] = await Promise.all([
+  const [topics, evergreen, specific, models, promptGen, externalSearches] = await Promise.all([
     fetchJSON('data/topics.json'),
     fetchJSON('data/shortcuts-evergreen.json'),
     fetchJSON('data/shortcuts-specific.json'),
     fetchJSON('data/ai-models.json'),
     fetchJSON('data/prompt-generator.json'),
+    fetchJSON('data/external-searches.json').catch(() => ({ searches: [] })),
   ]);
   topicsData = topics;
   evergreenShortcuts = evergreen;
   specificShortcuts = specific;
   modelsData = models;
   promptGenData = promptGen;
+  externalSearchesData = externalSearches;
+}
+
+export function getExternalSearches() {
+  return externalSearchesData?.searches || [];
 }
 
 async function fetchJSON(path) {
