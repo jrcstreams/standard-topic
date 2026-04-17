@@ -725,7 +725,9 @@ function openTopicPicker(label, initialSelected, onConfirm) {
   document.body.style.overflow = 'hidden';
   renderSelectedRow();
   renderBody();
-  inputEl.focus();
+  if (window.matchMedia('(min-width: 1024px)').matches) {
+    inputEl.focus();
+  }
 
   topicPickerEl.onclick = (e) => {
     if (e.target === topicPickerEl) done();

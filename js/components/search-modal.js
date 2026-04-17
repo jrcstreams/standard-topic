@@ -101,8 +101,10 @@ function openOverlay() {
   inputEl.value = '';
   highlightIndex = -1;
   renderBody('');
-  // Focus immediately — no setTimeout — so user can type without waiting
-  inputEl.focus();
+  // Only auto-focus on desktop — on mobile the keyboard covers content
+  if (window.matchMedia('(min-width: 1024px)').matches) {
+    inputEl.focus();
+  }
 }
 
 function closeOverlay() {
