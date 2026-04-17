@@ -3493,6 +3493,25 @@ body.sticky-always.has-subnav #content {
 /* Topic picker: search-modal-style with multi-select checkmarks */
 .wiz-topic-picker-card {
   max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.wiz-topic-picker-card .search-overlay-body {
+  flex: 1;
+  overflow-y: auto;
+}
+@media (max-width: 640px) {
+  .wiz-topic-picker-card {
+    max-width: none;
+    height: 100%;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+  .wiz-topic-overlay {
+    padding: 0;
+    align-items: stretch;
+  }
 }
 .wiz-topic-selected-row {
   display: flex;
@@ -3557,8 +3576,13 @@ body.sticky-always.has-subnav #content {
   align-items: center;
   justify-content: space-between;
   padding: 0.65rem 1rem;
+  padding-bottom: calc(0.65rem + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--color-border);
   background: var(--color-bg-light, #f6f7f9);
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  flex-shrink: 0;
 }
 .wiz-topic-picker-count {
   color: var(--color-text-muted);
