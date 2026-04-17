@@ -507,7 +507,7 @@ body.sticky-always.has-subnav #content {
   #sub-header.is-subnav .topic-banner-row,
   #sub-header.is-home-subnav .topic-banner-row {
     flex-wrap: wrap;
-    gap: 0.25rem 0.85rem;
+    gap: 0.45rem 0.85rem;
     align-items: center;
   }
   #sub-header.is-subnav .topic-banner-tabs,
