@@ -28,7 +28,10 @@
       "Bash(curl -s \"http://localhost:8000/rss-embed.html\")",
       "Bash(curl -sI \"http://localhost:8000/rss-embed.html\")",
       "Bash(curl -sI \"http://localhost:8000/rss-embed?id=test\")",
-      "Bash(ls /Users/johnchoudhari/Desktop/standard-topic/admin*)"
+      "Bash(ls /Users/johnchoudhari/Desktop/standard-topic/admin*)",
+      "Bash(git remote:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)"
     ]
   }
 }
