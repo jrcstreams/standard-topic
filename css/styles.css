@@ -3220,6 +3220,13 @@ body.sticky-always.has-subnav #content {
   padding: 0.2rem 0.3rem;
 }
 .wiz-topic-add-inline:hover { color: var(--color-primary); }
+
+/* No underline on topic rows in the prompt generator picker */
+.wiz-topic-picker-card .sidebar-shortcut:hover,
+.wiz-topic-picker-card .wiz-topic-row:hover,
+.wiz-topic-picker-card .wiz-topic-result:hover {
+  text-decoration: none !important;
+}
 .wiz-topic-add-inline:hover { text-decoration: underline; }
 
 /* Custom instructions textarea */
