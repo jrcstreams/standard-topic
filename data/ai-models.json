@@ -5,7 +5,7 @@
     {"id":"perplexity","name":"Perplexity","icon":"perplexity","urlTemplate":"https://www.perplexity.ai/search?q={prompt}","copyOnOpen":true},
     {"id":"copilot","name":"Bing Copilot","icon":"copilot","urlTemplate":"https://www.bing.com/chat?q={prompt}","copyOnOpen":true},
     {"id":"google-ai","name":"Google AI Mode","icon":"google","urlTemplate":"https://www.google.com/search?udm=50&q={prompt}","copyOnOpen":true},
-    {"id":"claude","name":"Claude","icon":"claude","urlTemplate":"https://claude.ai","copyOnOpen":true}
+    {"id":"claude","name":"Claude","icon":"claude","urlTemplate":"https://claude.ai/new?q={prompt}"}
   ],
   "defaultModel": "chatgpt"
 }
