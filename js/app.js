@@ -26,11 +26,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   onRoute((route) => {
     renderLayout(route);
     renderPage(route);
-    window.scrollTo(0, 0);
-    // Measure subnav height after layout settles so content padding-top
-    // matches the actual (possibly wrapped) subnav, avoiding over- or
-    // under-spacing between the fixed subnav and the body content.
-    requestAnimationFrame(() => requestAnimationFrame(setSubnavHeightVar));
+    // Scroll to top after render — use rAF to ensure DOM is settled
+    requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+      setSubnavHeightVar();
+    });
   });
 
   window.addEventListener('resize', setSubnavHeightVar, { passive: true });

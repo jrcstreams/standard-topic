@@ -101,6 +101,8 @@ function openOverlay() {
   inputEl.value = '';
   highlightIndex = -1;
   renderBody('');
+  // Reset scroll position inside the modal
+  bodyEl.scrollTop = 0;
   // Only auto-focus on non-touch devices — on mobile the keyboard covers content
   const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   if (!isTouch) {

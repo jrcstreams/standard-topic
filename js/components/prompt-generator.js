@@ -725,6 +725,8 @@ function openTopicPicker(label, initialSelected, onConfirm) {
   document.body.style.overflow = 'hidden';
   renderSelectedRow();
   renderBody();
+  // Reset scroll inside the body
+  bodyEl.scrollTop = 0;
   const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   if (!isTouch) {
     inputEl.focus();

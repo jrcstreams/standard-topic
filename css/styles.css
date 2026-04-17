@@ -1402,14 +1402,23 @@ body.sticky-always.has-subnav #content {
 }
 
 .search-overlay-close {
-  display: none;
-  background: none;
-  border: none;
-  font-size: 1.1rem;
-  color: var(--color-text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--color-bg-light, #f3f4f6);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  font-size: 1rem;
+  color: var(--color-text);
   cursor: pointer;
-  padding: 0.25rem 0.5rem;
   line-height: 1;
+  flex-shrink: 0;
+  transition: background 0.12s;
+}
+.search-overlay-close:hover {
+  background: var(--color-border);
 }
 
 .search-overlay-body {
@@ -2381,17 +2390,20 @@ body.sticky-always.has-subnav #content {
 }
 .related-modal-close {
   position: absolute;
-  top: 0.5rem;
-  right: 0.55rem;
-  width: 26px;
-  height: 26px;
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  color: var(--color-text-muted);
-  font-size: 0.85rem;
+  top: 0.65rem;
+  right: 0.75rem;
+  width: 30px;
+  height: 30px;
+  background: var(--color-bg-light, #f3f4f6);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  color: var(--color-text);
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s;
 }
 .related-modal-close:hover {
   background: var(--color-bg-light);
@@ -5043,16 +5055,19 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .discover-modal-close,
 .all-topics-modal-close {
   position: absolute;
-  top: 0.5rem;
-  right: 0.55rem;
-  width: 26px;
-  height: 26px;
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  color: var(--color-text-muted);
-  font-size: 0.85rem;
+  top: 0.65rem;
+  right: 0.75rem;
+  width: 30px;
+  height: 30px;
+  background: var(--color-bg-light, #f3f4f6);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  color: var(--color-text);
+  font-size: 0.9rem;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: background 0.15s, color 0.15s;
 }
 
