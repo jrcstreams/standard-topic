@@ -3223,11 +3223,14 @@ body.sticky-always.has-subnav #content {
 }
 .wiz-topic-add-inline:hover { color: var(--color-primary); }
 
-/* No underline on topic rows in the prompt generator picker */
+/* Clean topic rows in the prompt generator picker — no underlines or bottom borders */
 .wiz-topic-picker-card .sidebar-shortcut:hover,
 .wiz-topic-picker-card .wiz-topic-row:hover,
 .wiz-topic-picker-card .wiz-topic-result:hover {
   text-decoration: none !important;
+}
+.wiz-topic-picker-card .sidebar-shortcut {
+  border-bottom: none;
 }
 .wiz-topic-add-inline:hover { text-decoration: underline; }
 
