@@ -490,7 +490,7 @@ function attachTabPanelHandlers() {
 
 function renderShortcutsSidebar(container, route, isHome, isCustom = false, customTerm = '') {
   const topic = isHome ? getTopicBySlug('home') : (isCustom ? null : getTopicBySlug(route.slug));
-  const topicName = isCustom ? customTerm : (isHome ? 'General' : topic?.name || '');
+  const topicName = isCustom ? customTerm : (isHome ? '' : topic?.name || '');
 
   const evergreen = getEvergreenShortcutsFor(topic);
   const specific = isCustom ? [] : getSpecificShortcutsFor(isHome ? 'home' : route.slug);
