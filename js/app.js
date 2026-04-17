@@ -324,7 +324,7 @@ function renderStickyHeroBar(container, route) {
   const isPromptGen = route.type === 'prompt-generator';
   container.innerHTML = `
     <div class="sticky-hero-inner">
-      <a href="#/" class="sticky-brand">
+      <a href="#/" class="sticky-brand" id="sticky-brand-link">
         <img src="assets/logo-dark.png" alt="Standard Topic" class="sticky-logo-img">
         <span class="sticky-title">Standard Topic</span>
       </a>
@@ -339,6 +339,23 @@ function renderStickyHeroBar(container, route) {
     </div>
   `;
   renderSearchBar(document.getElementById('sticky-search-container'), route, { compact: true });
+
+  // Clicking logo/title always goes home with News Feed active —
+  // even if already on #/, force re-render so mobile tab resets.
+  container.querySelector('#sticky-brand-link')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (window.location.hash === '#/' || window.location.hash === '' || window.location.hash === '#') {
+      // Already on home — force re-render with newsfeed tab
+      document.body.classList.remove('active-tab-shortcuts', 'active-tab-related');
+      document.body.classList.add('active-tab-newsfeed');
+      document.querySelectorAll('#sub-header .tab-pill').forEach(p => {
+        p.classList.toggle('active', p.dataset.tab === 'newsfeed');
+      });
+      window.scrollTo(0, 0);
+    } else {
+      window.location.hash = '#/';
+    }
+  });
 }
 
 function renderHero(container, route) {
