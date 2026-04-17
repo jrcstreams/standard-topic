@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { overflow: hidden; background: transparent; }
+  rssapp-wall { display: block; width: 100% !important; }
+</style>
+</head>
+<body>
+<script src="https://widget.rss.app/v1/wall.js" async></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const feedId = params.get('id');
+  if (feedId) {
+    const el = document.createElement('rssapp-wall');
+    el.id = feedId;
+    document.body.appendChild(el);
+  }
+
+  // Report body height to parent on every change
+  let lastHeight = 0;
+  function reportHeight() {
+    const h = document.body.scrollHeight;
+    if (h !== lastHeight && h > 0) {
+      lastHeight = h;
+      window.parent.postMessage({ rssHeight: h }, '*');
+    }
+  }
+
+  new MutationObserver(reportHeight).observe(document.body, {
+    childList: true, subtree: true, attributes: true
+  });
+  new ResizeObserver(reportHeight).observe(document.body);
+  setInterval(reportHeight, 1000);
+</script>
+</body>
+</html>

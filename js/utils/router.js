@@ -46,7 +46,8 @@ function parseRoute(hash) {
   }
 
   if (segments[0] === 'custom' && segments[1]) {
-    return { type: 'custom', term: decodeURIComponent(segments[1]) };
+    const tab = segments[2] === 'shortcuts' ? 'shortcuts' : 'newsfeed';
+    return { type: 'custom', term: decodeURIComponent(segments[1]), tab };
   }
 
   if (segments[0] === 'prompt-generator') {

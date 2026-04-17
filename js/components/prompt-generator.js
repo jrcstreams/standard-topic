@@ -26,6 +26,25 @@ let modelsData = null;
 let stepDefs = [];
 let containerEl = null;
 
+// Exposed for the live-preview modal so it can pull the current prompt
+// at open time without depending on hidden DOM.
+export function getAssembledPrompt() {
+  return assemblePrompt();
+}
+
+// Defensive re-render of the subnav step pills — they can get blanked
+// out when the subnav container is re-rendered by unrelated code paths
+// (e.g., resize handlers, layout shifts). This runs periodically during
+// the wizard's lifetime to keep them in sync.
+let subnavResizeHandler = null;
+function ensureSubnavStepsPresent() {
+  const host = document.getElementById('prompt-gen-steps');
+  if (!host) return;
+  if (host.children.length === 0 && stepDefs.length > 0) {
+    renderStepsInSubnav();
+  }
+}
+
 // ---------- Public entry point ----------
 
 export function renderPromptGenerator(container) {
@@ -43,6 +62,19 @@ export function renderPromptGenerator(container) {
 
   stepDefs = buildStepDefinitions();
   render();
+
+  // Re-render step pills on resize — defends against the subnav being
+  // rewritten by unrelated code paths and the pills getting wiped when
+  // the viewport changes.
+  if (subnavResizeHandler) {
+    window.removeEventListener('resize', subnavResizeHandler);
+  }
+  subnavResizeHandler = () => {
+    // Always re-render — cheap, and guarantees fresh state after any
+    // layout shift or breakpoint crossing.
+    renderStepsInSubnav();
+  };
+  window.addEventListener('resize', subnavResizeHandler, { passive: true });
 }
 
 // ---------- Step definitions ----------
@@ -50,38 +82,18 @@ export function renderPromptGenerator(container) {
 function buildStepDefinitions() {
   return [
     { id: 'topic', label: 'Topic', icon: '🎯',
-      title: 'What topic do you want to learn about?',
-      description: 'Pick a popular topic or type your own. You can also add a secondary topic to combine ideas.',
+      title: 'What do you want to learn about?',
+      description: 'Choose one or more primary topics. Add secondary topics to blend ideas.',
       required: true, render: renderTopicStep,
-      isComplete: () => !!state.values.primaryTopic?.trim() },
-    { id: 'contentType', label: 'Content Type', icon: '📋',
+      isComplete: () => getPrimaryTopics().length > 0 },
+    { id: 'content', label: 'Content', icon: '📋',
       title: 'What kind of content do you want?',
-      description: 'Pick one or more — combine formats if you want, or add a custom one.',
-      render: renderContentTypeStep },
-    { id: 'contentGeneration', label: 'Approach', icon: '🧠',
-      title: 'How should the AI approach this?',
-      description: 'Optional. Pick one or more approaches the AI should take.',
-      render: (host) => {
-        host.innerHTML = `<div data-field="contentGeneration"></div><div class="wiz-extras" data-extras-field="contentGeneration"></div>`;
-        populateChipGrid(host.querySelector('[data-field="contentGeneration"]'), 'contentGeneration');
-        renderExtraInputs(host.querySelector('[data-extras-field="contentGeneration"]'), 'contentGeneration');
-      } },
-    { id: 'sourcesAndTime', label: 'Sources', icon: '📚',
-      title: 'Where should the information come from?',
-      description: 'Source types (multi-select), time period, and citation style.',
-      render: renderSourcesAndTimeStep },
-    { id: 'formatAndLength', label: 'Format', icon: '📐',
-      title: 'How should the answer be structured?',
-      description: 'Pick a format and approximate length.',
-      render: renderFormatAndLengthStep },
-    { id: 'audienceAndTone', label: 'Audience', icon: '🎙',
-      title: 'Who is this for, and what voice?',
-      description: 'Set the reading level and writing tone.',
-      render: renderAudienceAndToneStep },
-    { id: 'geoAndCustom', label: 'Region', icon: '🌍',
-      title: 'Anything else?',
-      description: 'Optional regional focus(es) and any custom instructions you want to add.',
-      render: renderGeoAndCustomStep },
+      description: 'Content type, approach, sources, recency, and citations — all in one place.',
+      render: renderContentStep },
+    { id: 'style', label: 'Style', icon: '🎨',
+      title: 'How should it be written?',
+      description: 'Format, length, audience, tone, region, and any custom instructions.',
+      render: renderStyleStep },
     { id: 'review', label: 'Review', icon: '✓',
       title: 'Review your prompt and choose a model',
       description: 'Edit the model and submit when ready.',
@@ -103,7 +115,7 @@ function getOptionsFor(fieldKey) {
   return getField(fieldKey)?.options || [];
 }
 function isFieldMulti(fieldKey) {
-  return !!getField(fieldKey)?.multiSelect;
+  return true;
 }
 function isFieldAllowCustom(fieldKey) {
   return !!getField(fieldKey)?.allowCustom;
@@ -161,93 +173,245 @@ function getCustomLabel(fieldKey, valueId) {
   return state.customValues[fieldKey]?.[valueId];
 }
 
-// ---------- Top-level render ----------
+// Add / remove the × button on a chip or card based on selection.
+function ensureRemoveX(el, value, selected) {
+  const isCard = el.classList.contains('wiz-card');
+  const cls = isCard ? 'wiz-card-remove' : 'wiz-chip-remove';
+  const existing = el.querySelector('.' + cls);
+  if (selected && !existing) {
+    const span = document.createElement('span');
+    span.className = cls;
+    span.setAttribute('data-remove', value);
+    span.setAttribute('aria-label', 'Remove');
+    span.textContent = '×';
+    el.appendChild(span);
+  } else if (!selected && existing) {
+    existing.remove();
+  }
+}
+
+// Debounced preview update — avoids reassembling the prompt on every keystroke.
+let previewTimer = null;
+function schedulePreview() {
+  if (previewTimer) cancelAnimationFrame(previewTimer);
+  previewTimer = requestAnimationFrame(() => {
+    previewTimer = null;
+    updatePreview();
+  });
+}
+
+// Primary/secondary topics are stored as arrays of plain strings.
+function getPrimaryTopics() {
+  const v = state.values.primaryTopic;
+  if (Array.isArray(v)) return v.filter(s => typeof s === 'string' && s.trim());
+  if (typeof v === 'string' && v.trim()) return [v.trim()];
+  return [];
+}
+function getSecondaryTopics() {
+  const v = state.values.secondaryTopic;
+  if (Array.isArray(v)) return v.filter(s => typeof s === 'string' && s.trim());
+  if (typeof v === 'string' && v.trim()) return [v.trim()];
+  return [];
+}
+function addTopic(key, value) {
+  const v = (value || '').trim();
+  if (!v) return;
+  const arr = key === 'primaryTopic' ? getPrimaryTopics() : getSecondaryTopics();
+  if (arr.includes(v)) return;
+  state.values[key] = [...arr, v];
+}
+function removeTopic(key, value) {
+  const arr = (key === 'primaryTopic' ? getPrimaryTopics() : getSecondaryTopics())
+    .filter(t => t !== value);
+  if (arr.length === 0) delete state.values[key];
+  else state.values[key] = arr;
+}
+
+// ---------- Top-level render (two-panel, single-page) ----------
 
 function render() {
-  state.visited.add(state.step);
-  const def = stepDefs[state.step];
-  const totalSteps = stepDefs.length;
+  const prompt = assemblePrompt();
+  const isEmpty = !prompt;
+  const models = getModels();
+  const primary = getPrimaryTopics();
+  const secondary = getSecondaryTopics();
 
-  // Build the clickable stepper row — compact numbered markers,
-  // current step also shows its label.
-  const topicFilled = !!state.values.primaryTopic?.trim();
-  const stepperHTML = stepDefs.map((s, i) => {
-    const visited = state.visited.has(i);
-    const isCurrent = i === state.step;
-    const isComplete = isStepComplete(i);
-    // Block jumping past Topic until it's filled
-    const blocked = i > 0 && !topicFilled;
-    const stateClass = isCurrent ? 'is-current'
-      : isComplete ? 'is-complete'
-      : visited ? 'is-visited'
-      : 'is-future';
-    return `
-      <button type="button" class="wiz-step ${stateClass} ${blocked ? 'is-blocked' : ''}"
-              data-step="${i}" title="${escapeAttr(s.label)}"
-              ${blocked ? 'aria-disabled="true"' : ''}>
-        <span class="wiz-step-marker" aria-hidden="true">
-          ${isComplete && !isCurrent ? '✓' : (i + 1)}
-        </span>
-        ${isCurrent ? `<span class="wiz-step-label">${escapeHTML(s.label)}</span>` : ''}
-      </button>
-    `;
-  }).join('<span class="wiz-step-sep" aria-hidden="true"></span>');
+  const topicChips = (items, key) => items.map(t => `
+    <span class="wiz-inline-chip" data-key="${key}" data-value="${escapeAttr(t)}">
+      ${escapeHTML(t)}
+      <button type="button" class="wiz-inline-chip-x" aria-label="Remove">×</button>
+    </span>
+  `).join('');
 
   containerEl.innerHTML = `
-    <div class="wiz">
-      <div class="wiz-head">
-        <div class="wiz-head-row">
-          <div class="wiz-head-icon" aria-hidden="true">${escapeHTML(def.icon || '⚙')}</div>
-          <div class="wiz-head-text">
-            <div class="wiz-head-title">Build a Knowledge Prompt</div>
-            <div class="wiz-head-step">Step ${state.step + 1} of ${totalSteps} · ${escapeHTML(def.label)}</div>
+    <div class="wiz-two-panel">
+      <div class="wiz-fields">
+        <div class="wiz-intro">
+          <p class="wiz-intro-text">Build a tailored AI prompt in seconds. Choose your topics, customize the content style and delivery, and watch your prompt come together in the live preview. When you're ready, pick your preferred AI model and submit.</p>
+        </div>
+
+        <div class="wiz-field-row wiz-topics-row">
+          <div class="wiz-field-half">
+            <label class="wiz-field-label">Primary Topic <span class="wiz-req">*</span></label>
+            <div class="wiz-topic-chips" id="wiz-primary-chips">
+              ${topicChips(primary, 'primaryTopic')}
+              <button type="button" class="wiz-topic-add-inline" id="wiz-primary-add">${primary.length ? '+ More' : '+ Add topic'}</button>
+            </div>
+          </div>
+          <div class="wiz-field-half">
+            <label class="wiz-field-label">Secondary Topic <span class="wiz-opt">(optional)</span></label>
+            <div class="wiz-topic-chips" id="wiz-secondary-chips">
+              ${topicChips(secondary, 'secondaryTopic')}
+              <button type="button" class="wiz-topic-add-inline" id="wiz-secondary-add">${secondary.length ? '+ More' : '+ Add topic'}</button>
+            </div>
           </div>
         </div>
-        <div class="wiz-stepper" id="wiz-stepper">${stepperHTML}</div>
-      </div>
 
-      <div class="wiz-body">
-        <h2 class="wiz-step-title">${escapeHTML(def.title)}</h2>
-        ${def.description ? `<p class="wiz-step-desc">${escapeHTML(def.description)}</p>` : ''}
-        <div class="wiz-step-content" id="wiz-step-content"></div>
-      </div>
-
-      ${!def.isFinal ? `
-      <div class="wiz-preview">
-        <div class="wiz-preview-head">
-          <span class="wiz-preview-label">Live Prompt Preview</span>
+        <div class="wiz-field-group">
+          <label class="wiz-field-label">Content Type</label>
+          <div data-field="contentType" id="wiz-field-contentType"></div>
+          <div class="wiz-extras" data-extras-field="contentType"></div>
         </div>
-        <div class="wiz-preview-body" id="wiz-preview-body"></div>
-      </div>` : ''}
 
-      <div class="wiz-foot">
-        <button class="wiz-btn-back" id="wiz-back" type="button" ${state.step === 0 ? 'disabled' : ''}>← Back</button>
-        <div class="wiz-foot-right">
-          ${!def.required && !def.isFinal ? `<button class="wiz-btn-skip" id="wiz-skip" type="button">Skip</button>` : ''}
-          ${!def.isFinal ? `<button class="wiz-btn-next" id="wiz-next" type="button" ${def.required && !def.isComplete?.() ? 'disabled' : ''}>Next →</button>` : ''}
+        <div class="wiz-field-group">
+          <label class="wiz-field-label">Approach <span class="wiz-opt">(optional)</span></label>
+          <div data-field="contentGeneration" id="wiz-field-contentGeneration"></div>
+          <div class="wiz-extras" data-extras-field="contentGeneration"></div>
+        </div>
+
+        <div class="wiz-field-row">
+          <div class="wiz-field-half">
+            <label class="wiz-field-label">Sources</label>
+            <div data-field="sources" id="wiz-field-sources"></div>
+            <div class="wiz-extras" data-extras-field="sources"></div>
+          </div>
+          <div class="wiz-field-half">
+            <label class="wiz-field-label">Time Period</label>
+            <div data-field="recency" id="wiz-field-recency"></div>
+            <div class="wiz-extras" data-extras-field="recency"></div>
+          </div>
+        </div>
+
+        <div class="wiz-field-row">
+          <div class="wiz-field-half">
+            <label class="wiz-field-label">Format</label>
+            <div data-field="format" id="wiz-field-format"></div>
+          </div>
+          <div class="wiz-field-half">
+            <label class="wiz-field-label">Length</label>
+            <div data-field="length" id="wiz-field-length"></div>
+          </div>
+        </div>
+
+        <div class="wiz-field-row">
+          <div class="wiz-field-half">
+            <label class="wiz-field-label">Reading Level</label>
+            <div data-field="audience" id="wiz-field-audience"></div>
+          </div>
+          <div class="wiz-field-half">
+            <label class="wiz-field-label">Tone</label>
+            <div data-field="tone" id="wiz-field-tone"></div>
+          </div>
+        </div>
+
+        <div class="wiz-field-row">
+          <div class="wiz-field-half">
+            <label class="wiz-field-label">Citations</label>
+            <div data-field="citations" id="wiz-field-citations"></div>
+          </div>
+          <div class="wiz-field-half">
+            <label class="wiz-field-label">Geographic Focus</label>
+            <div data-field="geographic" id="wiz-field-geographic"></div>
+          </div>
+        </div>
+
+        <div class="wiz-field-group">
+          <label class="wiz-field-label">Custom Instructions <span class="wiz-opt">(optional)</span></label>
+          <textarea class="wiz-custom-textarea" id="wiz-custom" placeholder="Add any extra instructions...">${escapeHTML(state.customizations || '')}</textarea>
         </div>
       </div>
+
+    </div>
+
+    <div class="wiz-action-bar">
+      <button type="button" class="wiz-action-btn" id="wiz-open-preview" ${isEmpty ? 'disabled' : ''}>
+        <span class="wiz-action-indicator ${isEmpty ? '' : 'has-content'}"></span>
+        <span>Preview Prompt and Submit</span>
+      </button>
+      <button type="button" class="wiz-action-restart" id="wiz-restart">Start Over</button>
     </div>
   `;
 
-  def.render(document.getElementById('wiz-step-content'));
-  if (!def.isFinal) updatePreview();
-  attachFooter(def);
-  attachStepper();
-}
+  // Populate chip grids for all fields
+  populateChipGrid(document.getElementById('wiz-field-contentType'), 'contentType');
+  populateChipGrid(document.getElementById('wiz-field-contentGeneration'), 'contentGeneration');
+  populateChipGrid(document.getElementById('wiz-field-sources'), 'sources');
+  populateChipGrid(document.getElementById('wiz-field-recency'), 'recency');
+  populateChipGrid(document.getElementById('wiz-field-format'), 'format');
+  populateChipGrid(document.getElementById('wiz-field-length'), 'length');
+  populateChipGrid(document.getElementById('wiz-field-audience'), 'audience');
+  populateChipGrid(document.getElementById('wiz-field-tone'), 'tone');
+  populateChipGrid(document.getElementById('wiz-field-citations'), 'citations');
+  populateChipGrid(document.getElementById('wiz-field-geographic'), 'geographic');
 
-function attachStepper() {
-  document.querySelectorAll('#wiz-stepper .wiz-step').forEach(btn => {
+  // Render extras for fields that have requiresInput
+  ['contentType', 'contentGeneration', 'sources', 'recency'].forEach(fk => {
+    const extras = document.querySelector(`[data-extras-field="${fk}"]`);
+    if (extras) renderExtraInputs(extras, fk);
+  });
+
+  // Topic chip remove handlers
+  containerEl.querySelectorAll('.wiz-inline-chip-x').forEach(btn => {
     btn.addEventListener('click', () => {
-      const idx = parseInt(btn.dataset.step, 10);
-      if (Number.isNaN(idx) || idx === state.step) return;
-      // Topic step required: only allow jumping forward past topic if filled
-      if (idx > 0 && !state.values.primaryTopic?.trim()) return;
-      state.step = idx;
+      const chip = btn.closest('.wiz-inline-chip');
+      removeTopic(chip.dataset.key, chip.dataset.value);
       render();
-      window.scrollTo(0, 0);
     });
   });
+
+  // Topic add buttons
+  document.getElementById('wiz-primary-add')?.addEventListener('click', () => {
+    openTopicPicker('Add Primary Topics', primary, (values) => {
+      state.values.primaryTopic = values;
+      if (values.length === 0) delete state.values.primaryTopic;
+      render();
+    });
+  });
+  document.getElementById('wiz-secondary-add')?.addEventListener('click', () => {
+    openTopicPicker('Add Secondary Topics', secondary, (values) => {
+      state.values.secondaryTopic = values;
+      if (values.length === 0) delete state.values.secondaryTopic;
+      render();
+    });
+  });
+
+  // Custom instructions
+  document.getElementById('wiz-custom')?.addEventListener('input', (e) => {
+    state.customizations = e.target.value;
+    schedulePreview();
+  });
+
+  // Open the unified preview+submit modal
+  document.getElementById('wiz-open-preview')?.addEventListener('click', () => {
+    openPromptSubmitModal();
+  });
+
+  // Restart
+  document.getElementById('wiz-restart')?.addEventListener('click', () => {
+    state.values = {};
+    state.customValues = {};
+    state.extraInputs = {};
+    state.customizations = '';
+    state.editedPrompt = null;
+    state.isEditingPrompt = false;
+    render();
+  });
+
+  updatePreview();
+}
+
+function renderStepsInSubnav() {
+  // No-op — single-page builder has no step nav
 }
 
 // A step is "complete" if the user has filled in something for it
@@ -255,22 +419,20 @@ function isStepComplete(idx) {
   const def = stepDefs[idx];
   if (!def) return false;
   if (def.isFinal) return false;
-  // Map step id → field key(s) it covers
   const fieldsByStep = {
     topic: ['primaryTopic'],
-    contentType: ['contentType'],
-    contentGeneration: ['contentGeneration'],
-    sourcesAndTime: ['sources', 'recency', 'citations'],
-    formatAndLength: ['format', 'length'],
-    audienceAndTone: ['audience', 'tone'],
-    geoAndCustom: ['geographic'],
+    content: ['contentType', 'contentGeneration', 'sources', 'recency', 'citations'],
+    style: ['format', 'length', 'audience', 'tone', 'geographic'],
   };
   const keys = fieldsByStep[def.id] || [];
-  return keys.some(k => {
+  const hasField = keys.some(k => {
     const v = state.values[k];
     if (Array.isArray(v)) return v.length > 0;
     return !!(typeof v === 'string' ? v.trim() : v);
   });
+  // Style stage also counts custom free-text instructions as progress
+  if (def.id === 'style' && !hasField && (state.customizations || '').trim()) return true;
+  return hasField;
 }
 
 function attachFooter(def) {
@@ -295,43 +457,59 @@ function advance() {
 // ---------- Step renderers ----------
 
 function renderTopicStep(host) {
-  host.innerHTML = `
-    <label class="wiz-label">Primary Topic <span class="wiz-required">*</span></label>
-    <button type="button" class="wiz-topic-picker" id="wiz-primary-picker">
-      <span class="wiz-topic-picker-icon">🔍</span>
-      <span class="wiz-topic-picker-value" id="wiz-primary-value">
-        ${state.values.primaryTopic
-          ? escapeHTML(state.values.primaryTopic)
-          : '<span class="wiz-topic-picker-placeholder">Click to choose a topic or type your own</span>'}
-      </span>
-      <span class="wiz-topic-picker-chevron" aria-hidden="true">▾</span>
-    </button>
+  const primary = getPrimaryTopics();
+  const secondary = getSecondaryTopics();
 
-    <label class="wiz-label" style="margin-top: 1.25rem;">Secondary Topic <span class="wiz-optional">(optional)</span></label>
-    <button type="button" class="wiz-topic-picker" id="wiz-secondary-picker">
-      <span class="wiz-topic-picker-icon">🔍</span>
-      <span class="wiz-topic-picker-value" id="wiz-secondary-value">
-        ${state.values.secondaryTopic
-          ? escapeHTML(state.values.secondaryTopic)
-          : '<span class="wiz-topic-picker-placeholder">Combine with another topic (optional)</span>'}
-      </span>
-      <span class="wiz-topic-picker-chevron" aria-hidden="true">▾</span>
-    </button>
+  const chipRow = (items, key) => items.map(t => `
+    <span class="wiz-topic-chip" data-key="${key}" data-value="${escapeAttr(t)}">
+      ${escapeHTML(t)}
+      <button type="button" class="wiz-topic-chip-remove" aria-label="Remove">×</button>
+    </span>
+  `).join('');
+
+  host.innerHTML = `
+    <label class="wiz-label">Primary Topic${primary.length > 1 ? 's' : ''} <span class="wiz-required">*</span></label>
+    <div class="wiz-topic-chips" id="wiz-primary-chips">
+      ${chipRow(primary, 'primaryTopic')}
+      <button type="button" class="wiz-topic-add" id="wiz-primary-add">
+        <span aria-hidden="true">＋</span> ${primary.length === 0 ? 'Add primary topic' : 'Add more'}
+      </button>
+    </div>
+
+    <label class="wiz-label" style="margin-top: 1.25rem;">Secondary Topic${secondary.length > 1 ? 's' : ''} <span class="wiz-optional">(optional)</span></label>
+    <div class="wiz-topic-chips" id="wiz-secondary-chips">
+      ${chipRow(secondary, 'secondaryTopic')}
+      <button type="button" class="wiz-topic-add" id="wiz-secondary-add">
+        <span aria-hidden="true">＋</span> ${secondary.length === 0 ? 'Add secondary topic' : 'Add more'}
+      </button>
+    </div>
   `;
 
-  host.querySelector('#wiz-primary-picker').addEventListener('click', () => {
-    openTopicPicker('Primary Topic', state.values.primaryTopic, (value) => {
-      state.values.primaryTopic = value;
-      document.getElementById('wiz-primary-value').textContent = value;
+  host.querySelectorAll('.wiz-topic-chip-remove').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const chip = btn.closest('.wiz-topic-chip');
+      removeTopic(chip.dataset.key, chip.dataset.value);
+      renderTopicStep(host);
       updateNextEnabled();
       updatePreview();
     });
   });
 
-  host.querySelector('#wiz-secondary-picker').addEventListener('click', () => {
-    openTopicPicker('Secondary Topic', state.values.secondaryTopic, (value) => {
-      state.values.secondaryTopic = value;
-      document.getElementById('wiz-secondary-value').textContent = value;
+  host.querySelector('#wiz-primary-add').addEventListener('click', () => {
+    openTopicPicker('Add Primary Topics', primary, (values) => {
+      state.values.primaryTopic = values;
+      if (values.length === 0) delete state.values.primaryTopic;
+      renderTopicStep(host);
+      updateNextEnabled();
+      updatePreview();
+    });
+  });
+
+  host.querySelector('#wiz-secondary-add').addEventListener('click', () => {
+    openTopicPicker('Add Secondary Topics', secondary, (values) => {
+      state.values.secondaryTopic = values;
+      if (values.length === 0) delete state.values.secondaryTopic;
+      renderTopicStep(host);
       updatePreview();
     });
   });
@@ -340,8 +518,12 @@ function renderTopicStep(host) {
 // Topic picker overlay: full library + custom typing, callback-style.
 // The input is rendered ONCE and stays alive across keystrokes; only the
 // results body below is re-rendered as the user types.
+// Multi-select topic picker overlay.
+// Accepts `initialSelected` (array of topic strings) and `onConfirm(values[])`
+// called once when the user clicks Done. Users can toggle library chips,
+// search, and type custom topics — building up a list of selections.
 let topicPickerEl = null;
-function openTopicPicker(label, initialValue, onSelect) {
+function openTopicPicker(label, initialSelected, onConfirm) {
   if (!topicPickerEl) {
     topicPickerEl = document.createElement('div');
     topicPickerEl.className = 'wiz-topic-overlay';
@@ -353,6 +535,8 @@ function openTopicPicker(label, initialValue, onSelect) {
     subtopics: all.filter(t => t.parent === parent.slug),
   }));
 
+  // Working selection — a copy of the initial list
+  const selected = new Set(Array.isArray(initialSelected) ? initialSelected : []);
   let highlightIdx = -1;
   let currentResults = [];
 
@@ -360,31 +544,67 @@ function openTopicPicker(label, initialValue, onSelect) {
     topicPickerEl.style.display = 'none';
     document.body.style.overflow = '';
   };
-  const choose = (val) => {
-    const v = (val == null ? inputEl?.value : val);
-    const t = (v || '').trim();
-    if (!t) return;
-    onSelect(t);
+  const done = () => {
+    onConfirm(Array.from(selected));
     close();
   };
+  const toggle = (val) => {
+    const t = (val || '').trim();
+    if (!t) return;
+    if (selected.has(t)) selected.delete(t);
+    else selected.add(t);
+    renderSelectedRow();
+    renderBody();
+  };
 
-  // Build the shell ONCE — input + body container
   topicPickerEl.innerHTML = `
-    <div class="wiz-topic-overlay-card">
-      <div class="wiz-topic-overlay-input-row">
-        <span class="wiz-topic-overlay-icon">🔍</span>
-        <input type="text" class="wiz-topic-overlay-input" id="wiz-topic-overlay-input"
-               placeholder="Search or type a topic"
+    <div class="search-overlay-card wiz-topic-picker-card">
+      <div class="search-overlay-input-row">
+        <svg class="search-bar-icon" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="search-overlay-input" id="wiz-topic-overlay-input"
+               placeholder="Search or type a custom topic"
                autocomplete="off" spellcheck="false">
-        <button type="button" class="wiz-topic-overlay-close" id="wiz-topic-overlay-close" aria-label="Close">✕</button>
+        <button class="search-overlay-close" type="button" id="wiz-topic-overlay-close" aria-label="Close">✕</button>
       </div>
-      <div class="wiz-topic-overlay-body" id="wiz-topic-overlay-body"></div>
+      <div class="wiz-topic-selected-row" id="wiz-topic-overlay-selected"></div>
+      <div class="search-overlay-body shortcuts-sidebar" id="wiz-topic-overlay-body"></div>
+      <div class="wiz-topic-picker-foot">
+        <span class="wiz-topic-picker-count" id="wiz-topic-overlay-count"></span>
+        <button type="button" class="wiz-topic-picker-done" id="wiz-topic-overlay-done">Done</button>
+      </div>
     </div>
   `;
 
   const inputEl = topicPickerEl.querySelector('#wiz-topic-overlay-input');
   const bodyEl = topicPickerEl.querySelector('#wiz-topic-overlay-body');
-  inputEl.value = initialValue || '';
+  const selectedRowEl = topicPickerEl.querySelector('#wiz-topic-overlay-selected');
+  const countEl = topicPickerEl.querySelector('#wiz-topic-overlay-count');
+
+  function renderSelectedRow() {
+    if (selected.size === 0) {
+      selectedRowEl.innerHTML = `<span class="wiz-topic-overlay-empty">No topics selected yet.</span>`;
+    } else {
+      selectedRowEl.innerHTML = Array.from(selected).map(t => `
+        <span class="wiz-topic-overlay-sel" data-value="${escapeAttr(t)}">
+          ${escapeHTML(t)}
+          <button type="button" class="wiz-topic-overlay-sel-remove" aria-label="Remove">×</button>
+        </span>
+      `).join('');
+      selectedRowEl.querySelectorAll('.wiz-topic-overlay-sel-remove').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const chip = btn.closest('.wiz-topic-overlay-sel');
+          toggle(chip.dataset.value);
+        });
+      });
+    }
+    countEl.textContent = `${selected.size} selected`;
+  }
+
+  function refreshChipStates() {
+    bodyEl.querySelectorAll('.wiz-topic-overlay-chip').forEach(b => {
+      b.classList.toggle('is-selected', selected.has(b.dataset.name));
+    });
+  }
 
   function renderBody() {
     const query = inputEl.value;
@@ -397,19 +617,21 @@ function openTopicPicker(label, initialValue, onSelect) {
         { type: 'custom', name: query.trim() },
         ...matches.map(m => ({ type: 'topic', name: m.name, parent: m.parentName })),
       ];
+      const customSel = selected.has(query.trim());
       html += `
-        <div class="wiz-topic-overlay-result wiz-topic-overlay-result-custom" data-idx="0">
-          <span class="wiz-topic-overlay-badge">+</span>
-          Use "<strong>${escapeHTML(query.trim())}</strong>" as a custom topic
+        <div class="search-overlay-custom wiz-topic-result" data-idx="0">
+          <span class="search-custom-badge">${customSel ? '✓' : '+'}</span>
+          ${customSel ? 'Added' : 'Add'} "<strong>${escapeHTML(query.trim())}</strong>"
         </div>
       `;
       if (matches.length > 0) {
-        html += `<div class="wiz-topic-overlay-section-label">Library Matches</div>`;
         matches.forEach((m, i) => {
+          const isSel = selected.has(m.name);
           html += `
-            <div class="wiz-topic-overlay-result" data-idx="${i + 1}">
-              <span>${escapeHTML(m.name)}</span>
-              ${m.parentName ? `<span class="wiz-topic-overlay-result-parent">in ${escapeHTML(m.parentName)}</span>` : ''}
+            <div class="sidebar-shortcut wiz-topic-result ${isSel ? 'is-selected' : ''}" data-idx="${i + 1}">
+              <span class="wiz-topic-check">${isSel ? '✓' : ''}</span>
+              <span class="sidebar-shortcut-name">${escapeHTML(m.name)}</span>
+              ${m.parentName ? `<span class="wiz-topic-parent-hint">in ${escapeHTML(m.parentName)}</span>` : ''}
             </div>
           `;
         });
@@ -417,14 +639,23 @@ function openTopicPicker(label, initialValue, onSelect) {
     } else {
       currentResults = [];
       groups.forEach(group => {
+        const parentSel = selected.has(group.parent.name);
         html += `
-          <div class="wiz-topic-overlay-group">
-            <div class="wiz-topic-overlay-group-label">${escapeHTML(group.parent.name)}</div>
-            <div class="wiz-topic-overlay-chips">
-              <button type="button" class="wiz-topic-overlay-chip wiz-topic-overlay-chip-parent" data-name="${escapeAttr(group.parent.name)}">${escapeHTML(group.parent.name)}</button>
-              ${group.subtopics.map(s => `
-                <button type="button" class="wiz-topic-overlay-chip" data-name="${escapeAttr(s.name)}">${escapeHTML(s.name)}</button>
-              `).join('')}
+          <div class="search-overlay-group">
+            <div class="sidebar-shortcut search-parent-row wiz-topic-row ${parentSel ? 'is-selected' : ''}" data-name="${escapeAttr(group.parent.name)}">
+              <span class="wiz-topic-check">${parentSel ? '✓' : ''}</span>
+              <span class="sidebar-shortcut-name">${escapeHTML(group.parent.name)}</span>
+            </div>
+            <div class="sidebar-shortcut-list search-subtopic-list">
+              ${group.subtopics.map(s => {
+                const sel = selected.has(s.name);
+                return `
+                  <div class="sidebar-shortcut search-subtopic-row wiz-topic-row ${sel ? 'is-selected' : ''}" data-name="${escapeAttr(s.name)}">
+                    <span class="wiz-topic-check">${sel ? '✓' : ''}</span>
+                    <span class="sidebar-shortcut-name">${escapeHTML(s.name)}</span>
+                  </div>
+                `;
+              }).join('')}
             </div>
           </div>
         `;
@@ -433,44 +664,49 @@ function openTopicPicker(label, initialValue, onSelect) {
 
     bodyEl.innerHTML = html;
 
-    bodyEl.querySelectorAll('.wiz-topic-overlay-chip').forEach(b => {
-      b.addEventListener('click', () => choose(b.dataset.name));
+    bodyEl.querySelectorAll('.wiz-topic-row').forEach(row => {
+      row.addEventListener('click', () => toggle(row.dataset.name));
     });
-    bodyEl.querySelectorAll('.wiz-topic-overlay-result').forEach(r => {
+    bodyEl.querySelectorAll('.wiz-topic-result').forEach(r => {
       r.addEventListener('click', () => {
         const idx = parseInt(r.dataset.idx, 10);
-        if (currentResults[idx]) choose(currentResults[idx].name);
+        if (currentResults[idx]) {
+          toggle(currentResults[idx].name);
+          if (idx === 0) { inputEl.value = ''; renderBody(); }
+          else renderBody();
+        }
       });
     });
-
-    updateOverlayHighlight();
   }
 
-  function updateOverlayHighlight() {
-    bodyEl.querySelectorAll('.wiz-topic-overlay-result').forEach((el, i) => {
-      el.classList.toggle('highlighted', i === highlightIdx);
-    });
-  }
-
+  // Debounce renderBody on input — rebuilding the full topic list on
+  // every keystroke was causing visible lag.
+  let inputTimer = null;
   inputEl.addEventListener('input', () => {
     highlightIdx = -1;
-    renderBody();
+    if (inputTimer) clearTimeout(inputTimer);
+    inputTimer = setTimeout(() => renderBody(), 120);
   });
 
   inputEl.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       if (highlightIdx >= 0 && currentResults[highlightIdx]) {
-        choose(currentResults[highlightIdx].name);
+        toggle(currentResults[highlightIdx].name);
+        inputEl.value = '';
+        renderBody();
       } else if (currentResults.length > 0) {
-        const first = currentResults.find(r => r.type === 'topic') || currentResults[0];
-        choose(first.name);
+        toggle(currentResults[0].name);
+        inputEl.value = '';
+        renderBody();
       } else if (inputEl.value.trim()) {
-        choose(inputEl.value.trim());
+        toggle(inputEl.value.trim());
+        inputEl.value = '';
+        renderBody();
       }
     } else if (e.key === 'Escape') {
       e.preventDefault();
-      close();
+      done();
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
       highlightIdx = Math.min(highlightIdx + 1, currentResults.length - 1);
@@ -482,28 +718,32 @@ function openTopicPicker(label, initialValue, onSelect) {
     }
   });
 
-  topicPickerEl.querySelector('#wiz-topic-overlay-close').addEventListener('click', close);
+  topicPickerEl.querySelector('#wiz-topic-overlay-close').addEventListener('click', done);
+  topicPickerEl.querySelector('#wiz-topic-overlay-done').addEventListener('click', done);
 
   topicPickerEl.style.display = 'flex';
   document.body.style.overflow = 'hidden';
+  renderSelectedRow();
   renderBody();
-  // Focus once on open; never re-focus (which kills cursor position)
   inputEl.focus();
-  inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
 
   topicPickerEl.onclick = (e) => {
-    if (e.target === topicPickerEl) close();
+    if (e.target === topicPickerEl) done();
   };
 }
 
-function renderContentTypeStep(host) {
-  host.innerHTML = `<div class="wiz-cards-wrap"></div><div class="wiz-extras" data-extras-field="contentType"></div>`;
-  populateCardGrid(host.querySelector('.wiz-cards-wrap'), 'contentType');
-  renderExtraInputs(host.querySelector('.wiz-extras'), 'contentType');
-}
-
-function renderSourcesAndTimeStep(host) {
+function renderContentStep(host) {
   host.innerHTML = `
+    <div class="wiz-sub-section">
+      <label class="wiz-sub-label">Content Type</label>
+      <div class="wiz-cards-wrap"></div>
+      <div class="wiz-extras" data-extras-field="contentType"></div>
+    </div>
+    <div class="wiz-sub-section">
+      <label class="wiz-sub-label">Approach <span class="wiz-optional">(optional)</span></label>
+      <div data-field="contentGeneration"></div>
+      <div class="wiz-extras" data-extras-field="contentGeneration"></div>
+    </div>
     <div class="wiz-sub-section">
       <label class="wiz-sub-label">Source Types <span class="wiz-optional">(pick one or more)</span></label>
       <div data-field="sources"></div>
@@ -519,14 +759,18 @@ function renderSourcesAndTimeStep(host) {
       <div data-field="citations"></div>
     </div>
   `;
+  populateCardGrid(host.querySelector('.wiz-cards-wrap'), 'contentType');
+  populateChipGrid(host.querySelector('[data-field="contentGeneration"]'), 'contentGeneration');
   populateChipGrid(host.querySelector('[data-field="sources"]'), 'sources');
   populateChipGrid(host.querySelector('[data-field="recency"]'), 'recency');
   populateChipGrid(host.querySelector('[data-field="citations"]'), 'citations');
+  renderExtraInputs(host.querySelector('[data-extras-field="contentType"]'), 'contentType');
+  renderExtraInputs(host.querySelector('[data-extras-field="contentGeneration"]'), 'contentGeneration');
   renderExtraInputs(host.querySelector('[data-extras-field="sources"]'), 'sources');
   renderExtraInputs(host.querySelector('[data-extras-field="recency"]'), 'recency');
 }
 
-function renderFormatAndLengthStep(host) {
+function renderStyleStep(host) {
   host.innerHTML = `
     <div class="wiz-sub-section">
       <label class="wiz-sub-label">Output Format</label>
@@ -536,13 +780,6 @@ function renderFormatAndLengthStep(host) {
       <label class="wiz-sub-label">Length</label>
       <div data-field="length"></div>
     </div>
-  `;
-  populateChipGrid(host.querySelector('[data-field="format"]'), 'format');
-  populateChipGrid(host.querySelector('[data-field="length"]'), 'length');
-}
-
-function renderAudienceAndToneStep(host) {
-  host.innerHTML = `
     <div class="wiz-sub-section">
       <label class="wiz-sub-label">Reading Level</label>
       <div data-field="audience"></div>
@@ -551,13 +788,6 @@ function renderAudienceAndToneStep(host) {
       <label class="wiz-sub-label">Writing Tone</label>
       <div data-field="tone"></div>
     </div>
-  `;
-  populateChipGrid(host.querySelector('[data-field="audience"]'), 'audience');
-  populateChipGrid(host.querySelector('[data-field="tone"]'), 'tone');
-}
-
-function renderGeoAndCustomStep(host) {
-  host.innerHTML = `
     <div class="wiz-sub-section">
       <label class="wiz-sub-label">Geographic Focus <span class="wiz-optional">(pick one or more)</span></label>
       <div data-field="geographic"></div>
@@ -568,23 +798,38 @@ function renderGeoAndCustomStep(host) {
                 placeholder="Add any extra instructions, e.g. 'Include code examples' or 'Avoid jargon'">${escapeHTML(state.customizations || '')}</textarea>
     </div>
   `;
+  populateChipGrid(host.querySelector('[data-field="format"]'), 'format');
+  populateChipGrid(host.querySelector('[data-field="length"]'), 'length');
+  populateChipGrid(host.querySelector('[data-field="audience"]'), 'audience');
+  populateChipGrid(host.querySelector('[data-field="tone"]'), 'tone');
   populateChipGrid(host.querySelector('[data-field="geographic"]'), 'geographic');
   const ta = host.querySelector('#wiz-custom');
   ta.addEventListener('input', () => {
     state.customizations = ta.value;
-    updatePreview();
+    schedulePreview();
   });
 }
 
 function renderReviewStep(host) {
-  const prompt = assemblePrompt();
+  const prompt = (state.editedPrompt ?? assemblePrompt());
   const tooLong = isUrlTooLong(getModelById(state.modelId) || modelsData[0], prompt);
+  const isEditing = state.isEditingPrompt === true;
   host.innerHTML = `
     <div class="wiz-review">
       <div class="wiz-review-section">
-        <label class="wiz-sub-label">Your Prompt</label>
-        <div class="wiz-prompt-box">${escapeHTML(prompt)}</div>
-        <button class="wiz-btn-secondary" id="wiz-copy-btn" type="button">📋 Copy Prompt</button>
+        <div class="wiz-review-head">
+          <label class="wiz-sub-label">Your Prompt</label>
+          <div class="wiz-review-actions">
+            <button class="wiz-btn-inline" id="wiz-copy-btn" type="button">📋 Copy</button>
+            <button class="wiz-btn-inline" id="wiz-edit-btn" type="button">${isEditing ? '✓ Done' : '✎ Edit'}</button>
+          </div>
+        </div>
+        ${isEditing
+          ? `<textarea class="wiz-prompt-edit" id="wiz-prompt-edit">${escapeHTML(prompt)}</textarea>`
+          : `<div class="wiz-prompt-box">${escapeHTML(prompt)}</div>`}
+        ${state.editedPrompt != null && !isEditing
+          ? `<button class="wiz-prompt-reset" id="wiz-prompt-reset" type="button">Reset to generated prompt</button>`
+          : ''}
       </div>
       <div class="wiz-review-section">
         <label class="wiz-sub-label">Choose AI Model</label>
@@ -604,12 +849,38 @@ function renderReviewStep(host) {
   `;
 
   host.querySelector('#wiz-copy-btn').addEventListener('click', async () => {
-    await navigator.clipboard.writeText(prompt);
+    const text = state.isEditingPrompt
+      ? host.querySelector('#wiz-prompt-edit').value
+      : prompt;
+    await navigator.clipboard.writeText(text);
     const btn = host.querySelector('#wiz-copy-btn');
     const orig = btn.textContent;
     btn.textContent = '✓ Copied!';
     setTimeout(() => { btn.textContent = orig; }, 2000);
   });
+
+  host.querySelector('#wiz-edit-btn').addEventListener('click', () => {
+    if (state.isEditingPrompt) {
+      // Save edits
+      const ta = host.querySelector('#wiz-prompt-edit');
+      state.editedPrompt = ta.value;
+      state.isEditingPrompt = false;
+    } else {
+      state.isEditingPrompt = true;
+    }
+    renderReviewStep(host);
+  });
+
+  host.querySelector('#wiz-prompt-reset')?.addEventListener('click', () => {
+    state.editedPrompt = null;
+    renderReviewStep(host);
+  });
+
+  if (isEditing) {
+    const ta = host.querySelector('#wiz-prompt-edit');
+    ta.focus();
+    ta.setSelectionRange(ta.value.length, ta.value.length);
+  }
 
   host.querySelector('#wiz-model-grid').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-model-id]');
@@ -627,7 +898,10 @@ function renderReviewStep(host) {
   host.querySelector('#wiz-submit').addEventListener('click', async () => {
     const model = getModelById(state.modelId);
     if (!model) return;
-    await submitPrompt(model, prompt);
+    const finalPrompt = state.isEditingPrompt
+      ? host.querySelector('#wiz-prompt-edit').value
+      : prompt;
+    await submitPrompt(model, finalPrompt);
   });
 
   host.querySelector('#wiz-restart').addEventListener('click', () => {
@@ -636,6 +910,8 @@ function renderReviewStep(host) {
     state.customValues = {};
     state.extraInputs = {};
     state.customizations = '';
+    state.editedPrompt = null;
+    state.isEditingPrompt = false;
     render();
     window.scrollTo(0, 0);
   });
@@ -655,6 +931,7 @@ function populateCardGrid(host, fieldKey) {
       <button class="wiz-card ${selected ? 'selected' : ''}" type="button" data-value="${escapeAttr(opt.value)}">
         <div class="wiz-card-icon">${cardIcons[opt.value] || '•'}</div>
         <div class="wiz-card-label">${escapeHTML(opt.label)}</div>
+        ${selected ? `<span class="wiz-card-remove" data-remove="${escapeAttr(opt.value)}" aria-label="Remove">×</span>` : ''}
       </button>
     `;
   });
@@ -696,6 +973,7 @@ function populateChipGrid(host, fieldKey) {
     html += `
       <button class="wiz-chip ${selected ? 'selected' : ''}" type="button" data-value="${escapeAttr(opt.value)}">
         ${escapeHTML(opt.label)}
+        ${selected ? `<span class="wiz-chip-remove" data-remove="${escapeAttr(opt.value)}" aria-label="Remove">×</span>` : ''}
       </button>
     `;
   });
@@ -721,34 +999,69 @@ function populateChipGrid(host, fieldKey) {
   attachChipHandlers(host, fieldKey, '.wiz-chip', '.wiz-chip-add', '.wiz-chip-remove');
 }
 
-// Shared click handlers for both card and chip grids
+// Shared click handlers — uses EVENT DELEGATION on the host so that
+// dynamically-added elements (notably the × remove button that appears
+// when an option becomes selected) work without re-attaching listeners
+// on every toggle.
+//
+// CRITICAL: attach only once per host. rerenderField() re-runs populate
+// which calls us again; without this guard, each rerender stacked
+// another listener and clicks fired N times, causing the "multi-select
+// forgets selections" bug.
 function attachChipHandlers(host, fieldKey, itemSelector, addSelector, removeSelector) {
-  host.querySelectorAll(itemSelector).forEach(el => {
-    if (el.matches(addSelector)) return; // handled separately
-    el.addEventListener('click', (e) => {
-      // Don't toggle when clicking the remove button
-      if (e.target.closest(removeSelector)) return;
-      const value = el.dataset.value;
-      if (!value) return;
-      toggleValue(fieldKey, value);
-      // If this was a custom value being deselected, also remove it
-      if (!isValueSelected(fieldKey, value) && state.customValues[fieldKey]?.[value]) {
-        delete state.customValues[fieldKey][value];
-      }
-      rerenderField(fieldKey);
-    });
-  });
-  host.querySelectorAll(removeSelector).forEach(btn => {
-    btn.addEventListener('click', (e) => {
+  if (host.dataset.handlersAttached === 'true') return;
+  host.dataset.handlersAttached = 'true';
+  const opts = getOptionsFor(fieldKey);
+
+  // Single delegated listener handles everything.
+  host.addEventListener('click', (e) => {
+    // Remove (×) click — highest priority, prevents chip toggle.
+    const removeBtn = e.target.closest(removeSelector);
+    if (removeBtn && host.contains(removeBtn)) {
       e.stopPropagation();
-      removeValue(fieldKey, btn.dataset.remove);
+      e.preventDefault();
+      removeValue(fieldKey, removeBtn.dataset.remove);
       rerenderField(fieldKey);
-    });
+      return;
+    }
+    // Add custom click
+    const addBtn = e.target.closest(addSelector);
+    if (addBtn && host.contains(addBtn)) {
+      e.preventDefault();
+      openCustomInput(addBtn, fieldKey);
+      return;
+    }
+    // Regular chip/card click
+    const item = e.target.closest(itemSelector);
+    if (!item || !host.contains(item)) return;
+    if (item.matches(addSelector)) return;
+    const value = item.dataset.value;
+    if (!value) return;
+
+    const wasSelected = isValueSelected(fieldKey, value);
+    toggleValue(fieldKey, value);
+    const isCustom = !!state.customValues[fieldKey]?.[value];
+    // Custom deselected → purge from customValues; requires full rerender
+    if (isCustom && !isValueSelected(fieldKey, value)) {
+      delete state.customValues[fieldKey][value];
+      rerenderField(fieldKey);
+      return;
+    }
+    const opt = opts.find(o => o.value === value);
+    if (opt?.requiresInput) {
+      item.classList.toggle('selected', !wasSelected);
+      ensureRemoveX(item, value, !wasSelected);
+      const extras = document.querySelector(`[data-extras-field="${fieldKey}"]`);
+      if (extras) renderExtraInputs(extras, fieldKey);
+      schedulePreview();
+      updateNextEnabled();
+      return;
+    }
+    item.classList.toggle('selected', !wasSelected);
+    ensureRemoveX(item, value, !wasSelected);
+    schedulePreview();
+    updateNextEnabled();
   });
-  const addBtn = host.querySelector(addSelector);
-  if (addBtn) {
-    addBtn.addEventListener('click', () => openCustomInput(addBtn, fieldKey));
-  }
 }
 
 // Inline custom input that replaces the "+ Add custom" button
@@ -834,7 +1147,7 @@ function renderExtraInputs(host, fieldKey) {
   host.querySelectorAll('.wiz-extra-field').forEach(input => {
     input.addEventListener('input', () => {
       state.extraInputs[input.dataset.extraKey] = input.value;
-      updatePreview();
+      schedulePreview();
     });
   });
 }
@@ -849,12 +1162,141 @@ function updateNextEnabled() {
   else nextBtn.removeAttribute('disabled');
 }
 
+// Unified preview + model selection + submit modal
+let submitModalEl = null;
+function openPromptSubmitModal() {
+  if (!submitModalEl) {
+    submitModalEl = document.createElement('div');
+    submitModalEl.className = 'wiz-submit-overlay';
+    document.body.appendChild(submitModalEl);
+  }
+
+  const prompt = (state.editedPrompt ?? assemblePrompt()).trim();
+  const models = getModels();
+  const isEmpty = !prompt;
+
+  submitModalEl.innerHTML = `
+    <div class="wiz-submit-card">
+      <button type="button" class="wiz-submit-close" id="wiz-submit-close" aria-label="Close">✕</button>
+
+      <div class="wiz-submit-section">
+        <div class="wiz-submit-prompt-head">
+          <h3 class="wiz-submit-label">Your Prompt</h3>
+          <div class="wiz-submit-prompt-actions">
+            <button type="button" class="wiz-submit-action-btn" id="wiz-submit-copy">Copy</button>
+            <button type="button" class="wiz-submit-action-btn" id="wiz-submit-edit">${state.isEditingPrompt ? 'Done Editing' : 'Edit Prompt'}</button>
+          </div>
+        </div>
+        ${state.isEditingPrompt
+          ? `<textarea class="wiz-submit-textarea" id="wiz-submit-textarea">${escapeHTML(prompt)}</textarea>`
+          : `<div class="wiz-submit-prompt-text">${isEmpty ? 'No prompt generated yet.' : escapeHTML(prompt)}</div>`
+        }
+        ${state.editedPrompt != null && !state.isEditingPrompt ? `<button class="wiz-submit-reset" id="wiz-submit-reset">Reset to generated prompt</button>` : ''}
+      </div>
+
+      <div class="wiz-submit-section">
+        <h3 class="wiz-submit-label">Choose AI Model</h3>
+        <div class="wiz-submit-models" id="wiz-submit-models">
+          ${models.map(m => `
+            <button class="wiz-submit-model ${m.id === state.modelId ? 'is-active' : ''}" type="button" data-model-id="${m.id}">
+              ${escapeHTML(m.name)}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+
+      <button class="wiz-submit-go" id="wiz-submit-go" type="button" ${isEmpty ? 'disabled' : ''}>${escapeHTML(getSubmitLabel())}</button>
+      <p class="wiz-submit-disclaimer">You will be redirected to a third-party AI platform.</p>
+    </div>
+  `;
+
+  submitModalEl.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+
+  const closeModal = () => {
+    submitModalEl.style.display = 'none';
+    document.body.style.overflow = '';
+  };
+
+  submitModalEl.querySelector('#wiz-submit-close').addEventListener('click', closeModal);
+  submitModalEl.addEventListener('click', (e) => { if (e.target === submitModalEl) closeModal(); });
+  document.addEventListener('keydown', function esc(e) {
+    if (e.key === 'Escape' && submitModalEl.style.display !== 'none') {
+      closeModal();
+      document.removeEventListener('keydown', esc);
+    }
+  });
+
+  // Copy
+  submitModalEl.querySelector('#wiz-submit-copy')?.addEventListener('click', async () => {
+    const text = state.isEditingPrompt
+      ? submitModalEl.querySelector('#wiz-submit-textarea')?.value
+      : (state.editedPrompt ?? prompt);
+    await navigator.clipboard.writeText(text);
+    const btn = submitModalEl.querySelector('#wiz-submit-copy');
+    btn.textContent = '✓ Copied';
+    setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+  });
+
+  // Edit toggle
+  submitModalEl.querySelector('#wiz-submit-edit')?.addEventListener('click', () => {
+    if (state.isEditingPrompt) {
+      state.editedPrompt = submitModalEl.querySelector('#wiz-submit-textarea')?.value ?? null;
+      state.isEditingPrompt = false;
+    } else {
+      state.isEditingPrompt = true;
+    }
+    openPromptSubmitModal(); // re-render modal
+  });
+
+  // Reset
+  submitModalEl.querySelector('#wiz-submit-reset')?.addEventListener('click', () => {
+    state.editedPrompt = null;
+    openPromptSubmitModal();
+  });
+
+  // Model selection
+  submitModalEl.querySelector('#wiz-submit-models')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-model-id]');
+    if (!btn) return;
+    state.modelId = btn.dataset.modelId;
+    setPreferredModelId(state.modelId);
+    submitModalEl.querySelectorAll('.wiz-submit-model').forEach(b => {
+      b.classList.toggle('is-active', b.dataset.modelId === state.modelId);
+    });
+    const goBtn = submitModalEl.querySelector('#wiz-submit-go');
+    if (goBtn) goBtn.textContent = getSubmitLabel();
+  });
+
+  // Submit
+  submitModalEl.querySelector('#wiz-submit-go')?.addEventListener('click', async () => {
+    const model = getModelById(state.modelId);
+    if (!model) return;
+    const finalPrompt = state.isEditingPrompt
+      ? submitModalEl.querySelector('#wiz-submit-textarea')?.value
+      : (state.editedPrompt ?? assemblePrompt());
+    await submitPrompt(model, finalPrompt.trim());
+    closeModal();
+  });
+}
+
 function updatePreview() {
+  if (state.isEditingPrompt) return;
   const body = document.getElementById('wiz-preview-body');
   if (!body) return;
-  const prompt = assemblePrompt();
-  body.textContent = prompt || 'Fill in a Primary Topic to see your prompt build here…';
-  body.classList.toggle('wiz-preview-empty', !prompt);
+  const prompt = (state.editedPrompt ?? assemblePrompt()).trim();
+  body.textContent = prompt || 'Add a topic to start building your prompt...';
+  body.classList.toggle('is-empty', !prompt);
+
+  // Update submit button state
+  const submitBtn = document.getElementById('wiz-submit');
+  if (submitBtn) {
+    submitBtn.disabled = !prompt;
+  }
+
+  // Update mobile preview indicator
+  const indicator = document.querySelector('.wiz-mobile-preview-indicator');
+  if (indicator) indicator.classList.toggle('has-content', !!prompt);
 }
 
 function getSubmitLabel() {
@@ -868,14 +1310,17 @@ function getSubmitLabel() {
 // ---------- Prompt assembly ----------
 
 function assemblePrompt() {
-  const primaryTopic = (state.values.primaryTopic || '').trim();
-  const secondaryTopic = (state.values.secondaryTopic || '').trim();
-  if (!primaryTopic) return '';
+  const primaryList = getPrimaryTopics();
+  const secondaryList = getSecondaryTopics();
+  if (primaryList.length === 0) return '';
+
+  const primaryPhrase = joinList(primaryList);
+  const secondaryPhrase = secondaryList.length ? joinList(secondaryList) : '';
 
   const sub = (text) => {
     let out = text
-      .replace(/\{primary_topic\}/g, primaryTopic)
-      .replace(/\{secondary_topic\}/g, secondaryTopic || primaryTopic);
+      .replace(/\{primary_topic\}/g, primaryPhrase)
+      .replace(/\{secondary_topic\}/g, secondaryPhrase || primaryPhrase);
     Object.entries(state.extraInputs).forEach(([k, v]) => {
       const placeholder = v?.trim() || `[${k.replace(/_/g, ' ')}]`;
       out = out.replace(new RegExp(`\\{${k}\\}`, 'g'), placeholder);
@@ -897,9 +1342,7 @@ function assemblePrompt() {
   };
 
   // ---- Section 1: Opener (from Content Type) ----
-  // Single value → use full clause as-is.
-  // Multiple values → bulleted list of labels (no redundancy).
-  const opener = buildOpener(primaryTopic, sub);
+  const opener = buildOpener(primaryPhrase, sub);
 
   // ---- Sections 2+: Group supporting clauses by category for cleaner prose
   const sections = [];
@@ -944,8 +1387,8 @@ function assemblePrompt() {
     sections.push(`Cover the following geographic perspectives: ${joinList(labels)}.`);
   }
 
-  // Secondary topic clause
-  if (secondaryTopic && pgData.secondaryTopicClause) {
+  // Secondary topic clause — "compare/relate to X and Y"
+  if (secondaryPhrase && pgData.secondaryTopicClause) {
     sections.push(sub(pgData.secondaryTopicClause));
   }
 
@@ -962,7 +1405,7 @@ function assemblePrompt() {
 // Build the opener paragraph from Content Type selections.
 // 1 selection → use the option's full clause (e.g., "Provide a comprehensive overview of X.")
 // 2+ selections → "Provide the following about X:" with bulleted labels (no redundancy)
-function buildOpener(primaryTopic, sub) {
+function buildOpener(primaryPhrase, sub) {
   const values = getValuesArray('contentType');
   if (values.length === 0) return sub(pgData.baseTemplate);
 
@@ -971,7 +1414,7 @@ function buildOpener(primaryTopic, sub) {
     const opt = getOptionsFor('contentType').find(o => o.value === v);
     if (opt?.clause) return endWithPeriod(sub(opt.clause));
     const custom = getCustomLabel('contentType', v);
-    return custom ? `Provide ${custom} about ${primaryTopic}.` : sub(pgData.baseTemplate);
+    return custom ? `Provide ${custom} about ${primaryPhrase}.` : sub(pgData.baseTemplate);
   }
 
   // Multiple — bullet list with short labels
@@ -988,7 +1431,7 @@ function buildOpener(primaryTopic, sub) {
     return getCustomLabel('contentType', v);
   }).filter(Boolean);
 
-  return `Provide the following about ${primaryTopic}:\n` + items.map(s => `• ${s}`).join('\n');
+  return `Provide the following about ${primaryPhrase}:\n` + items.map(s => `• ${s}`).join('\n');
 }
 
 // "a, b, and c" / "a and b" / "a"

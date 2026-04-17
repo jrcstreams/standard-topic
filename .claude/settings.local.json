@@ -18,7 +18,17 @@
       "Bash(git -C /Users/johnchoudhari/Desktop/standard-topic log --oneline)",
       "Bash(ls /Users/johnchoudhari/Desktop/standard-topic/.superpowers/brainstorm/*/state/server-info)",
       "Bash(ls /Users/johnchoudhari/Desktop/standard-topic/.superpowers/brainstorm/*/state/server-stopped)",
-      "Bash(cat /Users/johnchoudhari/Desktop/standard-topic/.superpowers/brainstorm/*/state/server-info)"
+      "Bash(cat /Users/johnchoudhari/Desktop/standard-topic/.superpowers/brainstorm/*/state/server-info)",
+      "Bash(node -e \"try { const m = require\\('./js/components/prompt-generator.js'\\); console.log\\('ok'\\); } catch\\(e\\) { console.log\\('ERR:', e.message\\); }\")",
+      "Bash(node:*)",
+      "Bash(curl -s \"https://widget.rss.app/v1/wall.js\")",
+      "Bash(curl -sI \"https://rss.app/embed/v1/wall/ttrh3slQ2XXabtSN\")",
+      "Bash(curl -s \"https://rss.app/embed/v1/wall/ttrh3slQ2XXabtSN\")",
+      "Bash(curl -s \"http://localhost:8000/rss-embed.html?id=ttrh3slQ2XXabtSN\")",
+      "Bash(curl -s \"http://localhost:8000/rss-embed.html\")",
+      "Bash(curl -sI \"http://localhost:8000/rss-embed.html\")",
+      "Bash(curl -sI \"http://localhost:8000/rss-embed?id=test\")",
+      "Bash(ls /Users/johnchoudhari/Desktop/standard-topic/admin*)"
     ]
   }
 }

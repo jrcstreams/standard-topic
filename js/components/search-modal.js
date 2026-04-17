@@ -25,11 +25,16 @@ export function initSearchOverlay() {
       <div class="search-overlay-input-row">
         <span class="search-overlay-icon" aria-hidden="true">🔍</span>
         <input type="text" class="search-overlay-input"
-               placeholder="Search topics, or add a custom one"
+               placeholder="Type to search, or choose a topic below"
                autocomplete="off" spellcheck="false">
         <span class="search-overlay-esc" aria-hidden="true">ESC</span>
         <button class="search-overlay-close" type="button" aria-label="Close">✕</button>
       </div>
+      <p class="search-overlay-hint">
+        Search any topic — if there's no match, press Enter or click
+        <em>Add as Custom Topic</em> to build a prompt-ready page around it.
+        Or browse the full catalog below.
+      </p>
       <div class="search-overlay-body"></div>
     </div>
   `;
@@ -61,12 +66,19 @@ export function initSearchOverlay() {
   });
 }
 
-export function renderSearchBar(container) {
+export function renderSearchBar(container, route, opts = {}) {
+  const { compact = false } = opts;
+  const cls = `search-bar${compact ? ' is-compact' : ''}`;
+  const fullLabel = 'Search topics';
+  const shortLabel = 'Search topics';
   container.innerHTML = `
     <div class="search-bar-wrapper">
-      <button class="search-bar" type="button">
-        <span class="search-bar-icon" aria-hidden="true">🔍</span>
-        <span class="search-bar-label">Search any topic</span>
+      <button class="${cls}" type="button" aria-label="${fullLabel}">
+        <svg class="search-bar-icon" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span class="search-bar-label">
+          <span class="search-bar-label-full">${fullLabel}</span>
+          <span class="search-bar-label-short">${shortLabel}</span>
+        </span>
       </button>
     </div>
   `;
@@ -101,36 +113,52 @@ function closeOverlay() {
 
 function renderBody(query) {
   const q = query.trim();
-  if (!q) {
-    renderBrowseGrid();
-    return;
-  }
-  renderSearchResults(q);
-}
-
-function renderBrowseGrid() {
-  const groups = getTopicsGroupedByParent();
   let html = '';
+  currentResults = [];
 
-  groups.forEach(group => {
+  if (q) {
+    // Search results section — "Add as Custom Topic" + matches
+    const matches = searchTopics(q);
+    currentResults = [
+      { type: 'custom', term: q },
+      ...matches.map(m => ({ type: 'topic', slug: m.slug })),
+    ];
+
     html += `
-      <div class="search-overlay-group">
-        <a href="#/topic/${group.parent.slug}" class="search-overlay-group-label" data-slug="${group.parent.slug}">
-          ${escapeHTML(group.parent.name)}
-        </a>
-        <div class="search-overlay-chips">
+      <div class="search-overlay-results-block">
+        <div class="search-overlay-section-label">Search results</div>
+        <div class="search-overlay-custom" data-action="custom" role="button" tabindex="0">
+          <span class="search-custom-badge">+</span>
+          Add "<strong>${escapeHTML(q)}</strong>" as Custom Topic
+        </div>
     `;
-    if (group.subtopics.length === 0) {
-      html += `<span class="search-overlay-group-empty">No subtopics — click the name above to browse ${escapeHTML(group.parent.name)}.</span>`;
+
+    if (matches.length > 0) {
+      matches.forEach(match => {
+        const parentLabel = match.parentName
+          ? `<span class="search-overlay-result-parent">in ${escapeHTML(match.parentName)}</span>`
+          : '';
+        html += `
+          <div class="search-overlay-result" data-slug="${match.slug}" role="button" tabindex="0">
+            ${highlightMatch(match.name, q)} ${parentLabel}
+          </div>
+        `;
+      });
+    } else {
+      html += `<div class="search-overlay-empty">No matching topics — add the custom topic above, or browse the full catalog below.</div>`;
     }
-    group.subtopics.forEach(sub => {
-      html += `<a href="#/topic/${sub.slug}" class="search-overlay-topic-chip" data-slug="${sub.slug}">${escapeHTML(sub.name)}</a>`;
-    });
-    html += `</div></div>`;
-  });
+    html += `</div>`;
+  }
+
+  // Full topic catalog — always rendered, below search results if present
+  html += renderBrowseHTML(q);
 
   bodyEl.innerHTML = html;
-  currentResults = [];
+
+  bodyEl.querySelector('[data-action="custom"]')?.addEventListener('click', () => {
+    navigate(`#/custom/${encodeURIComponent(q)}`);
+    closeOverlay();
+  });
 
   bodyEl.querySelectorAll('[data-slug]').forEach(el => {
     el.addEventListener('click', (e) => {
@@ -139,53 +167,42 @@ function renderBrowseGrid() {
       closeOverlay();
     });
   });
-}
-
-function renderSearchResults(query) {
-  let html = `
-    <div class="search-overlay-custom" data-action="custom" role="button" tabindex="0">
-      <span class="search-custom-badge">+</span>
-      Add "<strong>${escapeHTML(query)}</strong>" as Custom Topic
-    </div>
-  `;
-
-  const matches = searchTopics(query);
-  currentResults = [
-    { type: 'custom', term: query },
-    ...matches.map(m => ({ type: 'topic', slug: m.slug })),
-  ];
-
-  if (matches.length > 0) {
-    html += `<div class="search-overlay-section-label">Matching Topics</div>`;
-    matches.forEach(match => {
-      const parentLabel = match.parentName
-        ? `<span class="search-overlay-result-parent">in ${escapeHTML(match.parentName)}</span>`
-        : '';
-      html += `
-        <div class="search-overlay-result" data-slug="${match.slug}" role="button" tabindex="0">
-          ${highlightMatch(match.name, query)} ${parentLabel}
-        </div>
-      `;
-    });
-  } else {
-    html += `<div class="search-overlay-empty">Press Enter to search for "<strong>${escapeHTML(query)}</strong>" as a custom topic.</div>`;
-  }
-
-  bodyEl.innerHTML = html;
-
-  bodyEl.querySelector('[data-action="custom"]')?.addEventListener('click', () => {
-    navigate(`#/custom/${encodeURIComponent(query)}`);
-    closeOverlay();
-  });
-
-  bodyEl.querySelectorAll('[data-slug]').forEach(el => {
-    el.addEventListener('click', () => {
-      navigate(`#/topic/${el.dataset.slug}`);
-      closeOverlay();
-    });
-  });
 
   updateHighlight();
+}
+
+function renderBrowseHTML(activeQuery) {
+  const groups = getTopicsGroupedByParent();
+  let html = `<div class="search-overlay-browse shortcuts-sidebar">`;
+  if (activeQuery) {
+    html += `<div class="search-overlay-section-label">Browse all topics</div>`;
+  }
+  groups.forEach(group => {
+    html += `
+      <div class="search-overlay-group">
+        <a href="#/topic/${group.parent.slug}" class="sidebar-shortcut search-parent-row" data-slug="${group.parent.slug}">
+          <span class="search-parent-icon">📂</span>
+          <span class="sidebar-shortcut-name">${escapeHTML(group.parent.name)}</span>
+          <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
+        </a>
+        <div class="sidebar-shortcut-list search-subtopic-list">
+    `;
+    if (group.subtopics.length === 0) {
+      html += `<span class="search-overlay-group-empty">No subtopics — click ${escapeHTML(group.parent.name)} above to browse.</span>`;
+    }
+    group.subtopics.forEach(sub => {
+      html += `
+        <a href="#/topic/${sub.slug}" class="sidebar-shortcut search-subtopic-row" data-slug="${sub.slug}">
+          <span class="sidebar-shortcut-dot" aria-hidden="true"></span>
+          <span class="sidebar-shortcut-name">${escapeHTML(sub.name)}</span>
+          <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
+        </a>
+      `;
+    });
+    html += `</div></div>`;
+  });
+  html += `</div>`;
+  return html;
 }
 
 function handleKeyboard(e) {

@@ -8,48 +8,67 @@ import { getExternalSearches } from '../utils/data.js';
 
 export function renderNewsFeed(container, topic, isHome, opts = {}) {
   const { isCustom = false, customTerm = '' } = opts;
-  const title = isCustom ? 'News Results' : (isHome ? 'Main News Feed' : 'News Feed');
+  const title = isCustom ? 'Content Shortcuts' : 'News Feed';
   const query = isCustom ? customTerm : (topic?.name || '');
   const searches = getExternalSearches();
   const feedId = isCustom ? null : topic?.rssFeedId;
 
-  let html = `
-    <div class="section-header">
-      <span class="section-icon">📡</span>
-      <h2>${escapeHTML(title)}</h2>
-    </div>
-  `;
+  // Header: matches sidebar-card-header treatment. On topic/home
+  // pages, additional feeds collapse into a single pill that opens
+  // a modal listing the sources.
+  const feedDesc = isCustom
+    ? 'Quick links to search engines and platforms for this topic.'
+    : 'Live RSS feed with the latest stories.';
 
-  // External search CTAs — always shown. Labeled "Discover More" when
-  // an RSS iframe follows; standalone when it's the only thing (custom).
-  if (searches.length > 0 && query) {
-    if (!isCustom) {
-      html += `<div class="discover-more-label">Discover More:</div>`;
-    }
-    html += `<div class="discover-grid">`;
+  let inner = `
+    <div class="newsfeed-card-header">
+      <h3 class="newsfeed-card-title">${escapeHTML(title)}</h3>
+      <span class="sidebar-card-desc">${feedDesc}</span>
+  `;
+  if (!isCustom && !isHome && searches.length > 0 && query) {
+    inner += `
+      <button type="button" class="feeds-pill" id="open-discover-feeds">
+        <span class="feeds-pill-label">Additional Content Shortcuts</span>
+        <span class="feeds-pill-icon" aria-hidden="true">+</span>
+      </button>
+    `;
+  }
+  inner += `</div>`;
+
+  // On custom pages, the feed sources ARE the primary content — render
+  // as flat-list rows matching AI Shortcuts style exactly.
+  if (isCustom && searches.length > 0 && query) {
+    inner += `<div class="sidebar-shortcut-list">`;
     searches.forEach(s => {
       const url = s.urlTemplate.replace(/\{query\}/g, encodeURIComponent(query));
-      html += `
-        <a href="${url}" target="_blank" rel="noopener noreferrer" class="discover-link">
-          <span class="discover-link-icon" aria-hidden="true">${s.icon}</span>
-          <span class="discover-link-name">${escapeHTML(s.name)}</span>
-          <span class="discover-link-arrow" aria-hidden="true">↗</span>
+      inner += `
+        <a href="${url}" target="_blank" rel="noopener noreferrer" class="sidebar-shortcut">
+          <span class="sidebar-shortcut-icon" aria-hidden="true">${s.icon}</span>
+          <span class="sidebar-shortcut-name">${escapeHTML(s.name)}</span>
+          <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
         </a>
       `;
     });
-    html += `</div>`;
+    inner += `</div>`;
   }
 
-  // RSS iframe (only on real topic pages / home)
+  // RSS feed via same-origin proxy iframe. The proxy page loads the
+  // rssapp-wall widget at full content height and reports its body
+  // scrollHeight to us via postMessage. Width: 100% on the iframe
+  // element — inherently responsive, no JS needed.
   if (!isCustom) {
     if (feedId) {
-      html += `
+      inner += `
         <div class="newsfeed-embed">
-          <rssapp-wall id="${feedId}"></rssapp-wall>
+          <iframe src="rss-embed?id=${feedId}"
+                  class="newsfeed-iframe"
+                  id="rss-iframe-${feedId}"
+                  frameborder="0"
+                  scrolling="no"></iframe>
         </div>
       `;
     } else {
-      html += `
+      inner += `
         <div class="newsfeed-placeholder">
           <p>News feed coming soon for this topic.</p>
         </div>
@@ -57,7 +76,28 @@ export function renderNewsFeed(container, topic, isHome, opts = {}) {
     }
   }
 
-  container.innerHTML = html;
+  const cardClass = isCustom ? 'newsfeed-card sidebar-card shortcuts-sidebar' : 'newsfeed-card';
+  container.innerHTML = `<div class="${cardClass}">${inner}</div>`;
+
+  const feedsBtn = container.querySelector('#open-discover-feeds');
+  if (feedsBtn) {
+    feedsBtn.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('open-discover-modal', {
+        detail: { query, searches },
+      }));
+    });
+  }
+
+  // Same-origin proxy sends us rssHeight via postMessage. Set the
+  // iframe height to match so the card wraps the content exactly.
+  const rssIframe = container.querySelector('.newsfeed-iframe');
+  if (rssIframe && feedId && !isCustom) {
+    window.addEventListener('message', (e) => {
+      if (!e.data || !e.data.rssHeight) return;
+      if (e.source !== rssIframe.contentWindow) return;
+      rssIframe.style.height = e.data.rssHeight + 'px';
+    });
+  }
 }
 
 function escapeHTML(str) {

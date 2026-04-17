@@ -29,7 +29,7 @@ export function getExternalSearches() {
 }
 
 async function fetchJSON(path) {
-  const res = await fetch(path);
+  const res = await fetch(path + '?v=' + Date.now());
   return res.json();
 }
 
@@ -43,6 +43,10 @@ export function getTopicBySlug(slug) {
 
 export function getParentTopics() {
   return getAllTopics().filter(t => t.parent === null && t.slug !== 'home');
+}
+
+export function getFeaturedTopics() {
+  return getAllTopics().filter(t => t.parent === null && t.slug !== 'home' && t.featured === true);
 }
 
 export function getSubtopics(parentSlug) {

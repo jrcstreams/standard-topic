@@ -1,5 +1,5 @@
 import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
-import { loadAllData, getTopicBySlug, getParentTopics, getEvergreenShortcuts, getSpecificShortcuts, getRelatedTopics } from './utils/data.js';
+import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getEvergreenShortcuts, getSpecificShortcuts, getRelatedTopics, getTopicsGroupedByParent } from './utils/data.js';
 import { renderFooter } from './components/footer.js';
 import { renderSearchBar, initSearchOverlay } from './components/search-modal.js';
 import { renderNewsFeed } from './components/newsfeed.js';
@@ -7,10 +7,18 @@ import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
 import { initPromptModal } from './components/prompt-modal.js';
+import { initDiscoverModal } from './components/discover-modal.js';
+import { initAllTopicsModal } from './components/all-topics-modal.js';
+import { initRelatedTopicsModal } from './components/related-topics-modal.js';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadAllData();
   initPromptModal();
+  initDiscoverModal();
+  initAllTopicsModal();
+  initRelatedTopicsModal();
+  initPromptPreviewModal();
   initSearchOverlay();
 
   renderFooter(document.getElementById('site-footer'));
@@ -18,11 +26,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   onRoute((route) => {
     renderLayout(route);
     renderPage(route);
-    // Always reset scroll to top on route change. Home tab switching
-    // now uses scroll-jump (no hash change), so navigating between
-    // home tabs doesn't trigger this handler at all.
     window.scrollTo(0, 0);
+    // Measure subnav height after layout settles so content padding-top
+    // matches the actual (possibly wrapped) subnav, avoiding over- or
+    // under-spacing between the fixed subnav and the body content.
+    requestAnimationFrame(() => requestAnimationFrame(setSubnavHeightVar));
   });
+
+  window.addEventListener('resize', setSubnavHeightVar, { passive: true });
 
   initRouter();
 
@@ -46,6 +57,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 let heroScrollHandler = null;
 
 const MOBILE_QUERY = '(max-width: 640px)';
+
+let subnavResizeObs = null;
+function setSubnavHeightVar() {
+  const sub = document.getElementById('sub-header');
+  if (!sub) return;
+  const h = sub.offsetHeight;
+  if (h > 0) document.documentElement.style.setProperty('--subnav-height', `${h}px`);
+}
 
 function renderLayout(route) {
   const siteHeader = document.getElementById('site-header');
@@ -71,42 +90,91 @@ function renderLayout(route) {
   subHeader.innerHTML = '';
   const stayingInHomeDesktop = isHome && !isMobile && wasOnHomeDesktop;
   if (heroEl && !stayingInHomeDesktop) heroEl.innerHTML = '';
-  document.body.classList.remove('sticky-always', 'has-subnav', 'home-mode');
+  document.body.classList.remove('sticky-always', 'has-subnav', 'home-mode', 'show-subnav-tabs');
 
   // Always render the main sticky bar
   renderStickyHeroBar(siteHeader, route);
 
+  // All pages: main nav always fixed + visible.
+  document.body.classList.add('sticky-always');
+  siteHeader.classList.add('is-revealed');
+
   if (isHome) {
-    document.body.classList.add('home-mode');
+    document.body.classList.add('home-mode', 'has-subnav');
+    subHeader.classList.add('is-subnav');
+
+    // Desktop: subnav = title + inline topics. Mobile: tabular nav.
     const homeTabs = [
       { id: 'newsfeed', label: 'News Feed', hash: '#/' },
       { id: 'shortcuts', label: 'AI Shortcuts', hash: '#/shortcuts' },
-      { id: 'related', label: 'All Topics', hash: '#/related' },
+      { id: 'related', label: 'All Topics +', hash: '#/related' },
     ];
-    const homeConfig = { title: 'Home', tabs: homeTabs, activeTab: route.tab };
+    const allParents = getFeaturedTopics();
+    const topicsHTML = allParents.map(t =>
+      `<a href="#/topic/${t.slug}" class="subnav-topic-link">${escapeHTML(t.name)}</a>`
+    ).join('');
 
-    if (isMobile) {
-      // Mobile home: no hero, sticky main nav + home subnav always visible
-      document.body.classList.add('sticky-always', 'has-subnav');
-      siteHeader.classList.add('is-revealed');
-      subHeader.classList.add('is-subnav');
-      renderSubNav(subHeader, homeConfig);
-    } else {
-      // Desktop home: hero in flow (only render if it's empty — switching
-      // home tabs leaves the hero alone so scroll position is preserved).
-      // Subnav sticks to top as user scrolls; main nav reveals at the same
-      // time and the subnav slides to sit just below it (top: 0 → top: 56px).
-      if (heroEl && !heroEl.children.length) renderHero(heroEl, route);
-      subHeader.classList.add('is-home-subnav');
-      renderSubNav(subHeader, homeConfig);
-      setupHomeStickyReveal(siteHeader, subHeader);
-    }
+    subHeader.innerHTML = `
+      <div class="topic-banner">
+        <div class="topic-banner-row">
+          <div class="topic-banner-titlegroup">
+            <span class="topic-banner-accent" aria-hidden="true"></span>
+            <h1 class="topic-banner-title">Home</h1>
+          </div>
+          <div class="subnav-topics-inline">
+            <a href="#" class="subnav-action-link" id="subnav-all-topics">All Topics +</a>
+            <span class="subnav-topics-label">Featured:</span>
+            ${topicsHTML}
+          </div>
+          <div class="topic-banner-tabs topic-banner-tabs-mobile">
+            ${homeTabs.map(t => `
+              <a href="${t.hash}" class="tab-pill ${t.id === route.tab ? 'active' : ''}" data-tab="${t.id}">
+                ${t.label}
+              </a>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+
+    subHeader.querySelector('#subnav-all-topics')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      // Open the full search modal so users can browse + search all topics
+      const searchBar = document.querySelector('.search-bar');
+      if (searchBar) searchBar.click();
+    });
+
+    // Mobile "All Topics +" tab opens search modal
+    subHeader.querySelector('.tab-pill[data-tab="related"]')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const searchBar = document.querySelector('.search-bar');
+      if (searchBar) searchBar.click();
+    });
+
+    // Clear hero on desktop — no longer needed
+    if (heroEl) heroEl.innerHTML = '';
+
+    trimOverflowLinks();
     return;
   }
 
-  // Every other page: main sticky always visible
-  document.body.classList.add('sticky-always');
-  siteHeader.classList.add('is-revealed');
+  // Prompt generator: clean subnav with title only.
+  if (route.type === 'prompt-generator') {
+    document.body.classList.add('has-subnav');
+    subHeader.classList.add('is-subnav');
+    subHeader.innerHTML = `
+      <div class="topic-banner">
+        <div class="topic-banner-row">
+          <div class="topic-banner-titlegroup">
+            <span class="topic-banner-accent" aria-hidden="true"></span>
+            <h1 class="topic-banner-title">Build a Knowledge Prompt</h1>
+          </div>
+        </div>
+      </div>
+    `;
+    return;
+  }
 
   // Topic / custom pages also get a sub-nav below the main nav
   if (route.type === 'topic' || route.type === 'custom') {
@@ -116,17 +184,61 @@ function renderLayout(route) {
     if (route.type === 'topic') {
       const topic = getTopicBySlug(route.slug);
       if (!topic) return;
+      const related = getRelatedTopics(topic);
+      const tabs = [
+        { id: 'newsfeed', label: 'News Feed', hash: `#/topic/${route.slug}` },
+        { id: 'shortcuts', label: 'AI Shortcuts', hash: `#/topic/${route.slug}/shortcuts` },
+        { id: 'related', label: 'Related Topics', hash: `#/topic/${route.slug}/related` },
+      ];
+      const INLINE_CAP = 6;
+      const visibleRelated = related.slice(0, INLINE_CAP);
+      const relatedLinksHTML = visibleRelated.map(t =>
+        `<a href="#/topic/${t.slug}" class="subnav-topic-link">${escapeHTML(t.name)}</a>`
+      ).join('') + `<a href="#" class="subnav-more-link" id="subnav-more-related">More +</a>`;
+
+      subHeader.innerHTML = `
+        <div class="topic-banner">
+          <div class="topic-banner-row">
+            <div class="topic-banner-titlegroup">
+              <span class="topic-banner-accent" aria-hidden="true"></span>
+              <h1 class="topic-banner-title">${escapeHTML(topic.name)}</h1>
+            </div>
+            ${related.length > 0 ? `
+              <div class="subnav-topics-inline">
+                <span class="subnav-topics-label">Related:</span>
+                ${relatedLinksHTML}
+              </div>
+            ` : ''}
+            <div class="topic-banner-tabs topic-banner-tabs-mobile">
+              ${tabs.map(t => `
+                <a href="${t.hash}" class="tab-pill ${t.id === route.tab ? 'active' : ''}" data-tab="${t.id}">
+                  ${t.label}
+                </a>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+
+      subHeader.querySelector('#subnav-more-related')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent('open-related-topics-modal', {
+          detail: { topics: related, title: 'Related Topics' },
+        }));
+      });
+
+      trimOverflowLinks();
+    } else {
+      // Custom search: tabs for Content Shortcuts and AI Shortcuts.
+      const base = `#/custom/${encodeURIComponent(route.term)}`;
       renderSubNav(subHeader, {
-        title: topic.name,
+        title: route.term,
         tabs: [
-          { id: 'newsfeed', label: 'News Feed', hash: `#/topic/${route.slug}` },
-          { id: 'shortcuts', label: 'AI Shortcuts', hash: `#/topic/${route.slug}/shortcuts` },
-          { id: 'related', label: 'Related Topics', hash: `#/topic/${route.slug}/related` },
+          { id: 'shortcuts', label: 'AI Shortcuts', hash: `${base}/shortcuts` },
+          { id: 'newsfeed', label: 'Content Shortcuts', hash: base },
         ],
         activeTab: route.tab,
       });
-    } else {
-      renderSubNav(subHeader, { title: route.term, tabs: null });
     }
   }
 }
@@ -177,6 +289,37 @@ function setupHomeStickyReveal(mainEl, subEl) {
   heroScrollHandler();
 }
 
+// Hide subnav topic links that overflow the container. Runs on
+// render and on resize so topics drop cleanly instead of clipping.
+let trimResizeHandler = null;
+function trimOverflowLinks() {
+  const container = document.querySelector('.subnav-topics-inline');
+  if (!container) return;
+
+  const doTrim = () => {
+    const links = container.querySelectorAll('.subnav-topic-link');
+    const containerRight = container.getBoundingClientRect().right;
+
+    // First show all, then measure
+    links.forEach(l => l.style.display = '');
+
+    // Hide any link whose right edge exceeds the container
+    links.forEach(l => {
+      if (l.getBoundingClientRect().right > containerRight - 4) {
+        l.style.display = 'none';
+      }
+    });
+  };
+
+  // Run after layout settles
+  requestAnimationFrame(doTrim);
+
+  // Re-run on resize
+  if (trimResizeHandler) window.removeEventListener('resize', trimResizeHandler);
+  trimResizeHandler = () => requestAnimationFrame(doTrim);
+  window.addEventListener('resize', trimResizeHandler, { passive: true });
+}
+
 function renderStickyHeroBar(container, route) {
   const isPromptGen = route.type === 'prompt-generator';
   container.innerHTML = `
@@ -185,40 +328,33 @@ function renderStickyHeroBar(container, route) {
         <img src="assets/logo-dark.png" alt="Standard Topic" class="sticky-logo-img">
         <span class="sticky-title">Standard Topic</span>
       </a>
-      <div class="sticky-search" id="sticky-search-container"></div>
-      <a href="#/prompt-generator" class="sticky-cta ${isPromptGen ? 'active' : ''}">Build Prompt +</a>
+      <span class="sticky-tagline">News, Resources and AI Knowledge. On any topic.</span>
+      <div class="sticky-actions">
+        <div class="sticky-search" id="sticky-search-container"></div>
+        <a href="#/prompt-generator" class="sticky-cta ${isPromptGen ? 'active' : ''}">
+          <span class="sticky-cta-full">Build a prompt +</span>
+          <span class="sticky-cta-short">Build a prompt +</span>
+        </a>
+      </div>
     </div>
   `;
-  renderSearchBar(document.getElementById('sticky-search-container'), route);
+  renderSearchBar(document.getElementById('sticky-search-container'), route, { compact: true });
 }
 
 function renderHero(container, route) {
-  const popularTopics = getParentTopics().slice(0, 5);
-  const chipsHTML = popularTopics.length > 0 ? `
-    <div class="hero-chips">
-      <span class="hero-chip-label">Popular</span>
-      ${popularTopics.map(t => `
-        <a href="#/topic/${t.slug}" class="hero-chip">${escapeHTML(t.name)}</a>
-      `).join('')}
-    </div>
-  ` : '';
-
   container.innerHTML = `
-    <div class="hero-inner">
+    <div class="hero-inner hero-C">
       <a href="#/" class="hero-brand">
         <img src="assets/logo-light.png" alt="Standard Topic" class="hero-brand-logo">
         <h1 class="hero-brand-title">Standard Topic</h1>
       </a>
       <p class="hero-tagline">News, Resources and AI Knowledge. On any topic.</p>
-      <div class="hero-search-wrap" id="search-bar-container"></div>
-      ${chipsHTML}
-      <p class="hero-build-callout">
-        Need something custom?
+      <div class="hero-actions">
+        <div class="hero-search-wrap" id="search-bar-container"></div>
         <a href="#/prompt-generator" class="hero-build-link">
-          Build your own prompt
-          <span class="hero-build-arrow" aria-hidden="true">→</span>
+          Build a prompt +
         </a>
-      </p>
+      </div>
     </div>
   `;
   renderSearchBar(document.getElementById('search-bar-container'), route);
@@ -233,43 +369,51 @@ function escapeHTML(str) {
 
 // ---------- Two-column topic layout (L2 + L4 hybrid) ----------
 
-let topicLayoutObservers = { sidebarScroll: null, sections: null };
-
 function cleanupTopicLayoutObservers() {
-  if (topicLayoutObservers.sidebarScroll) {
-    window.removeEventListener('scroll', topicLayoutObservers.sidebarScroll);
-    topicLayoutObservers.sidebarScroll = null;
-  }
-  if (topicLayoutObservers.sections) {
-    topicLayoutObservers.sections.disconnect();
-    topicLayoutObservers.sections = null;
-  }
-  document.body.classList.remove('past-sidebar');
+  ['newsfeed', 'shortcuts', 'related'].forEach(t => {
+    document.body.classList.remove(`active-tab-${t}`);
+  });
 }
+
 
 function renderTopicLayout(container, { topic, route, isHome, isCustom = false, customTerm = '' }) {
   cleanupTopicLayoutObservers();
 
-  // Custom pages don't have a Related Topics section. Build layout
-  // shell accordingly.
+  // Custom pages: single-column stacked layout (News+Discover, then
+  // AI Shortcuts) — no sidebar, no Related Topics.
   const showRelated = !isCustom;
 
-  container.innerHTML = `
-    <div class="topic-layout ${isCustom ? 'is-custom' : ''}" id="topic-layout">
-      <main class="topic-main" id="topic-main">
-        <section class="layout-section" data-section="newsfeed" id="section-newsfeed"></section>
-      </main>
-      <aside class="topic-sidebar" id="topic-sidebar">
-        <section class="layout-section sidebar-section" data-section="shortcuts" id="section-shortcuts"></section>
-        ${showRelated ? `<section class="layout-section sidebar-section" data-section="related" id="section-related"></section>` : ''}
-      </aside>
-    </div>
-  `;
+  if (isCustom) {
+    // Custom: AI Shortcuts card on top, News Feed full-width below.
+    container.innerHTML = `
+      <div class="topic-layout is-split is-custom" id="topic-layout">
+        <section class="layout-section panel-shortcuts" data-tab-panel="shortcuts" id="section-shortcuts"></section>
+        <section class="layout-section panel-newsfeed" data-tab-panel="newsfeed" id="section-newsfeed"></section>
+      </div>
+    `;
+  } else if (isHome) {
+    // Homepage: AI Shortcuts full-width, News Feed below. Topics in subnav.
+    container.innerHTML = `
+      <div class="topic-layout" id="topic-layout">
+        <section class="layout-section" data-tab-panel="shortcuts" id="section-shortcuts"></section>
+        <section class="layout-section" data-tab-panel="newsfeed" id="section-newsfeed"></section>
+      </div>
+    `;
+  } else {
+    // Topic pages: AI Shortcuts full-width, News Feed below.
+    // Related topics in subnav on desktop; card panel on mobile tab nav.
+    container.innerHTML = `
+      <div class="topic-layout" id="topic-layout">
+        <section class="layout-section" data-tab-panel="shortcuts" id="section-shortcuts"></section>
+        <section class="layout-section is-mobile-only" data-tab-panel="related" id="section-related"></section>
+        <section class="layout-section" data-tab-panel="newsfeed" id="section-newsfeed"></section>
+      </div>
+    `;
+  }
 
   const feedSection = container.querySelector('#section-newsfeed');
   const shortcutsSection = container.querySelector('#section-shortcuts');
   const relatedSection = container.querySelector('#section-related');
-  const sidebar = container.querySelector('#topic-sidebar');
 
   renderNewsFeed(feedSection, topic, isHome, { isCustom, customTerm });
   renderShortcutsSidebar(shortcutsSection, route, isHome, isCustom, customTerm);
@@ -277,108 +421,67 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     renderRelatedTopicsSidebar(relatedSection, route, isHome);
   }
 
-  // Deep-link scroll — if the route specifies a tab, scroll to that section
-  if (route.tab && route.tab !== 'newsfeed') {
-    const target = route.tab === 'shortcuts' ? shortcutsSection
-      : (route.tab === 'related' && relatedSection ? relatedSection : null);
-    if (target) {
-      requestAnimationFrame(() => {
-        target.scrollIntoView({ behavior: 'auto', block: 'start' });
-      });
-    }
-  }
+  // Initial active tab (mobile panel visibility + subnav pill state)
+  const validTabs = ['newsfeed', 'shortcuts'];
+  if (showRelated && relatedSection) validTabs.push('related');
+  const initialTab = validTabs.includes(route.tab) ? route.tab : 'newsfeed';
+  setActiveTabPanel(initialTab);
 
-  // Observe sidebar — flip layout to full-width when scrolled past
-  setupSidebarFullwidthObserver(sidebar);
+  // Subnav tab clicks: mobile switches panels, desktop scroll-jumps
+  attachTabPanelHandlers();
 
-  // Scroll-spy on sections — updates active tab in the subnav
-  const spySections = [
-    { el: feedSection, tab: 'newsfeed' },
-    { el: shortcutsSection, tab: 'shortcuts' },
-  ];
-  if (showRelated && relatedSection) {
-    spySections.push({ el: relatedSection, tab: 'related' });
-  }
-  setupScrollSpy(spySections);
-
-  // Click handlers on subnav tabs: scroll-jump instead of route change
-  attachSubnavScrollHandlers(spySections);
 }
 
-function setupSidebarFullwidthObserver(sidebarEl) {
-  const layout = document.getElementById('topic-layout');
-  if (!sidebarEl || !layout) return;
-  if (!window.matchMedia('(min-width: 900px)').matches) return; // no-op on mobile
+const TAB_PANELS = ['newsfeed', 'shortcuts', 'related'];
 
-  // We track the sidebar's bottom edge in document coords. When the
-  // user scrolls such that the viewport top (plus sticky header) has
-  // passed that edge, flip the layout to fullwidth. IntersectionObserver
-  // doesn't work once we hide the sidebar (display: none removes it
-  // from layout) so we use a scroll listener and measure while the
-  // sidebar is still visible.
-  const STICKY_OFFSET = 140;
-  let sidebarBottomY = 0;
-  const measure = () => {
-    if (!layout.classList.contains('is-fullwidth')) {
-      const rect = sidebarEl.getBoundingClientRect();
-      sidebarBottomY = rect.bottom + window.scrollY;
-    }
-  };
-  measure();
-  window.addEventListener('resize', measure, { passive: true });
-  // Re-measure after layout settles (fonts, iframe widget inject content)
-  setTimeout(measure, 150);
-  setTimeout(measure, 600);
-  setTimeout(measure, 1500);
-
-  const onScroll = () => {
-    const scrollPos = window.scrollY + STICKY_OFFSET;
-    const pastSidebar = scrollPos > sidebarBottomY;
-    layout.classList.toggle('is-fullwidth', pastSidebar);
-    document.body.classList.toggle('past-sidebar', pastSidebar);
-  };
-  topicLayoutObservers.sidebarScroll = onScroll;
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
-}
-
-function setupScrollSpy(sections) {
-  const validSections = sections.filter(s => s.el);
-  if (!validSections.length) return;
-
-  topicLayoutObservers.sections = new IntersectionObserver(
-    (entries) => {
-      // Track the most-visible intersecting section
-      let best = null;
-      entries.forEach(e => {
-        if (!e.isIntersecting) return;
-        if (!best || e.intersectionRatio > best.ratio) {
-          const match = validSections.find(s => s.el === e.target);
-          if (match) best = { tab: match.tab, ratio: e.intersectionRatio };
-        }
-      });
-      if (best) setActiveSubnavTab(best.tab);
-    },
-    { rootMargin: '-140px 0px -55% 0px', threshold: [0, 0.25, 0.5, 0.75, 1] }
-  );
-  validSections.forEach(s => topicLayoutObservers.sections.observe(s.el));
-}
-
-function setActiveSubnavTab(tabId) {
+function setActiveTabPanel(tabId) {
+  TAB_PANELS.forEach(t => document.body.classList.remove(`active-tab-${t}`));
+  document.body.classList.add(`active-tab-${tabId}`);
   document.querySelectorAll('#sub-header .tab-pill').forEach(pill => {
     pill.classList.toggle('active', pill.dataset.tab === tabId);
   });
 }
 
-function attachSubnavScrollHandlers(map) {
+function attachTabPanelHandlers() {
   document.querySelectorAll('#sub-header .tab-pill').forEach(pill => {
     pill.addEventListener('click', (e) => {
       const tabId = pill.dataset.tab;
-      const target = map.find(m => m.tab === tabId);
-      if (!target?.el) return;
+      if (!tabId) return;
       e.preventDefault();
-      const y = target.el.getBoundingClientRect().top + window.scrollY - 140;
-      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+      e.stopPropagation();
+      const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+
+      if (isDesktop) {
+        // Desktop: scroll-jump to the section.
+        const target = document.getElementById(`section-${tabId}`);
+        if (target) {
+          const mainNav = document.getElementById('site-header');
+          const subnav = document.getElementById('sub-header');
+          const mainH = mainNav?.classList.contains('is-revealed') ? mainNav.offsetHeight : 0;
+          const subH = subnav?.offsetHeight || 0;
+          const stickyOffset = mainH + subH + 12;
+          const rawY = target.getBoundingClientRect().top + window.scrollY - stickyOffset;
+          const heroEl = document.getElementById('hero');
+          const heroThreshold = heroEl ? Math.max(0, heroEl.offsetHeight - 64) : 0;
+          const y = Math.max(rawY, heroThreshold);
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+        setActiveTabPanel(tabId);
+      } else {
+        setActiveTabPanel(tabId);
+        // On home, if the user is already in/past the sticky zone, clamp
+        // to the hero threshold so tapping a tab doesn't yank them back
+        // into the hero. Use >= with a small tolerance so the SECOND
+        // click (where currentY === threshold from the first click)
+        // doesn't snap to 0.
+        const heroEl = document.getElementById('hero');
+        const heroThreshold = heroEl ? Math.max(0, heroEl.offsetHeight - 64) : 0;
+        const currentY = window.scrollY;
+        const target = currentY + 4 >= heroThreshold && heroThreshold > 0
+          ? heroThreshold
+          : 0;
+        window.scrollTo({ top: target, behavior: 'auto' });
+      }
     });
   });
 }
@@ -386,49 +489,32 @@ function attachSubnavScrollHandlers(map) {
 // ---------- Sidebar renderers (compact vertical lists) ----------
 
 function renderShortcutsSidebar(container, route, isHome, isCustom = false, customTerm = '') {
-  const topic = (isHome || isCustom) ? null : getTopicBySlug(route.slug);
+  const topic = isHome ? getTopicBySlug('home') : (isCustom ? null : getTopicBySlug(route.slug));
   const topicName = isCustom ? customTerm : (isHome ? 'General' : topic?.name || '');
 
   const evergreen = getEvergreenShortcutsFor(topic);
-  // No topic-specific shortcuts for home or custom searches
-  const specific = (isHome || isCustom) ? [] : getSpecificShortcutsFor(route.slug);
+  const specific = isCustom ? [] : getSpecificShortcutsFor(isHome ? 'home' : route.slug);
+  const all = [...evergreen, ...specific];
 
   let html = `
     <div class="sidebar-card shortcuts-sidebar">
       <div class="sidebar-card-header">
-        <span class="sidebar-card-icon">⚡</span>
         <h3 class="sidebar-card-title">AI Shortcuts</h3>
+        <span class="sidebar-card-desc">Pre-built prompts you can send to any AI model in one click.</span>
       </div>
   `;
 
-  if (evergreen.length === 0 && specific.length === 0) {
+  if (all.length === 0) {
     html += `<p class="sidebar-empty">No shortcuts yet.</p>`;
   } else {
-    const needsGroupLabels = evergreen.length > 0 && specific.length > 0;
-    if (evergreen.length > 0) {
-      if (needsGroupLabels) {
-        html += `<div class="sidebar-group-label">Evergreen</div>`;
-      }
-      html += `<div class="sidebar-shortcut-list">`;
-      evergreen.forEach(s => {
-        html += shortcutItem(s, topicName);
-      });
-      html += `</div>`;
-    }
-    if (specific.length > 0) {
-      html += `<div class="sidebar-group-label">Topic-specific</div>`;
-      html += `<div class="sidebar-shortcut-list">`;
-      specific.forEach(s => {
-        html += shortcutItem(s, topicName);
-      });
-      html += `</div>`;
-    }
+    html += `<div class="sidebar-shortcut-list">
+      ${all.map(s => shortcutItem(s, topicName)).join('')}
+    </div>`;
   }
 
   html += `</div>`;
   container.innerHTML = html;
 
-  // Click handlers — dispatch open-prompt-modal event with the prompt
   container.querySelectorAll('.sidebar-shortcut').forEach(btn => {
     btn.addEventListener('click', () => {
       const prompt = btn.dataset.prompt;
@@ -451,6 +537,7 @@ function shortcutItem(shortcut, topicName) {
             data-icon="${escapeAttr(icon)}">
       <span class="sidebar-shortcut-icon">${icon}</span>
       <span class="sidebar-shortcut-name">${escapeHTML(shortcut.name)}</span>
+      <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
     </button>
   `;
 }
@@ -461,45 +548,111 @@ function getShortcutIconEmoji(icon) {
     'calendar': '📅', 'rocket': '🚀', 'microscope': '🔬', 'landmark': '🏛️',
     'trophy': '🏆', 'leaf': '🌿', 'heart': '❤️', 'bar-chart': '📊',
     'tool': '🔧', 'laptop': '💻', 'flask': '🧪', 'briefcase': '💼',
-    'home': '🏠',
+    'home': '🏠', 'newspaper': '📰', 'fire': '🔥', 'world': '🌎',
+    'sparkle': '✨', 'lightbulb': '💡', 'target': '🎯', 'compass': '🧭',
+    'book': '📚', 'mag-glass': '🔍', 'shield': '🛡️', 'money': '💰',
+    'handshake': '🤝', 'megaphone': '📣', 'star': '⭐', 'scales': '⚖️',
+    'film': '🎬', 'medal': '🏅', 'graduation': '🎓', 'chess': '♟️',
   };
   return map[icon] || '🔗';
 }
 
 function renderRelatedTopicsSidebar(container, route, isHome) {
-  const title = isHome ? 'Featured Topics' : 'Related Topics';
-  const icon = isHome ? '🌐' : '🔗';
-  const items = getRelatedTopicsFor(route, isHome);
+  if (isHome) {
+    // Home "Topics" card — flat-list matching AI Shortcuts style.
+    // 8 parent topics + "View All Topics +" CTA.
+    const featured = getFeaturedTopics();
 
-  let html = `
-    <div class="sidebar-card related-sidebar">
-      <div class="sidebar-card-header">
-        <span class="sidebar-card-icon">${icon}</span>
-        <h3 class="sidebar-card-title">${escapeHTML(title)}</h3>
-      </div>
-  `;
-
-  if (items.length === 0) {
-    html += `<p class="sidebar-empty">No related topics yet.</p>`;
-  } else {
-    html += `<div class="sidebar-topic-list">`;
-    items.slice(0, 8).forEach(t => {
+    let html = `
+      <div class="sidebar-card shortcuts-sidebar topics-card">
+        <div class="sidebar-card-header">
+          <h3 class="sidebar-card-title">Topics</h3>
+          <span class="sidebar-card-desc">Browse curated news feeds and AI tools by subject.</span>
+        </div>
+        <div class="sidebar-shortcut-list">
+    `;
+    featured.forEach(t => {
       html += `
-        <a href="#/topic/${t.slug}" class="sidebar-topic">
-          <span class="sidebar-topic-dot"></span>
-          <span class="sidebar-topic-name">${escapeHTML(t.name)}</span>
-          <span class="sidebar-topic-arrow" aria-hidden="true">↗</span>
+        <a href="#/topic/${t.slug}" class="sidebar-shortcut">
+          <span class="sidebar-shortcut-dot" aria-hidden="true"></span>
+          <span class="sidebar-shortcut-name">${escapeHTML(t.name)}</span>
+          <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
         </a>
       `;
     });
-    if (items.length > 8) {
-      html += `<div class="sidebar-more-note">+${items.length - 8} more — see all</div>`;
-    }
+    html += `</div>
+      <div class="topics-card-footer">
+        <a href="#" class="topics-card-footer-link" id="topics-view-all-cta">View All Topics +</a>
+      </div>
+    </div>`;
+    container.innerHTML = html;
+
+    container.querySelector('#topics-view-all-cta')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent('open-all-topics-modal'));
+    });
+    return;
+  }
+
+  // Topic pages: flat-list card matching AI Shortcuts style.
+  // Desktop (non-tabular): show 5 + "View More Related +" to expand.
+  // Mobile (tabular): show the full list (no hiding — this IS the
+  // dedicated Related Topics tab so the user expects everything).
+  const RELATED_CAP = 5;
+  const allItems = getRelatedTopicsFor(route, isHome);
+  const hasMore = allItems.length > RELATED_CAP;
+
+  let html = `
+    <div class="sidebar-card shortcuts-sidebar related-sidebar">
+      <div class="sidebar-card-header">
+        <h3 class="sidebar-card-title">Related Topics</h3>
+        <span class="sidebar-card-desc">Explore related subjects with their own feeds and shortcuts.</span>
+      </div>
+  `;
+  if (allItems.length === 0) {
+    html += `<p class="sidebar-empty">No related topics yet.</p>`;
+  } else {
+    html += `<div class="sidebar-shortcut-list" id="related-topic-list">`;
+    allItems.forEach((t, i) => {
+      const hiddenClass = (hasMore && i >= RELATED_CAP) ? 'is-overflow-related' : '';
+      html += `
+        <a href="#/topic/${t.slug}" class="sidebar-shortcut ${hiddenClass}">
+          <span class="sidebar-shortcut-dot" aria-hidden="true"></span>
+          <span class="sidebar-shortcut-name">${escapeHTML(t.name)}</span>
+          <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
+        </a>
+      `;
+    });
     html += `</div>`;
   }
 
+  // Footer links — inline row with both actions
+  html += `<div class="topics-card-footer">`;
+  if (hasMore) {
+    html += `<a href="#" class="topics-card-footer-link" id="view-more-related">More Related +</a>`;
+    html += `<a href="#" class="topics-card-footer-link" id="view-all-topics-cta">All Topics +</a>`;
+  } else {
+    html += `<a href="#" class="topics-card-footer-link" id="view-all-topics-cta">View All Topics +</a>`;
+  }
+  html += `</div>`;
+
   html += `</div>`;
   container.innerHTML = html;
+
+  // "More Related +" — open modal with full related list
+  container.querySelector('#view-more-related')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.dispatchEvent(new CustomEvent('open-related-topics-modal', {
+      detail: { topics: allItems, title: 'Related Topics' },
+    }));
+  });
+
+  // "View All Topics +"
+  container.querySelector('#view-all-topics-cta')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const searchBar = document.querySelector('.search-bar');
+    if (searchBar) searchBar.click();
+  });
 }
 
 // ---------- Data helpers (thin wrappers around data.js) ----------
