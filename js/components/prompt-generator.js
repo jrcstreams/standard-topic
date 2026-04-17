@@ -725,7 +725,8 @@ function openTopicPicker(label, initialSelected, onConfirm) {
   document.body.style.overflow = 'hidden';
   renderSelectedRow();
   renderBody();
-  if (window.matchMedia('(min-width: 1024px)').matches) {
+  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  if (!isTouch) {
     inputEl.focus();
   }
 

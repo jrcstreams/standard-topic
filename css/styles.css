@@ -608,9 +608,8 @@ body.sticky-always.has-subnav #content {
     font-weight: 400;
     color: var(--color-text-light);
   }
-  .feeds-pill-label-full { display: none; }
-  .feeds-pill-label-short { display: inline;
-  }
+  .feeds-pill-label-full { display: none !important; }
+  .feeds-pill-label-short { display: inline !important; }
   .sticky-search .search-bar-wrapper {
     padding: 0;
     max-width: none;
@@ -1102,8 +1101,6 @@ body.sticky-always.has-subnav #content {
   color: inherit;
   font-weight: inherit;
 }
-.feeds-pill-label-short { display: none; }
-.feeds-pill-label-full { display: inline; }
 
 
 .newsfeed-embed {

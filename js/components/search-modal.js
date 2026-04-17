@@ -101,8 +101,9 @@ function openOverlay() {
   inputEl.value = '';
   highlightIndex = -1;
   renderBody('');
-  // Only auto-focus on desktop — on mobile the keyboard covers content
-  if (window.matchMedia('(min-width: 1024px)').matches) {
+  // Only auto-focus on non-touch devices — on mobile the keyboard covers content
+  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  if (!isTouch) {
     inputEl.focus();
   }
 }
