@@ -604,14 +604,12 @@ body.sticky-always.has-subnav #content {
   }
 
   .feeds-pill {
-    font-size: 0.72rem;
-    font-weight: var(--font-weight-medium);
-    color: var(--color-primary);
-    margin-left: 0;
-    flex-basis: 100%;
-    justify-content: flex-start;
-    padding-top: 0.15rem;
+    font-size: 0.62rem;
+    font-weight: 400;
+    color: var(--color-text-light);
   }
+  .feeds-pill-label-full { display: none !important; }
+  .feeds-pill-label-short { display: inline !important; }
   .sticky-search .search-bar-wrapper {
     padding: 0;
     max-width: none;
@@ -4987,23 +4985,19 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   .discover-modal-card,
   .all-topics-modal-card {
     max-width: none;
-    max-height: 100vh;
-    height: 100vh;
-    border-radius: 0;
-    padding: 1rem;
+    max-height: 85vh;
+    border-radius: 10px 10px 0 0;
+    padding: 1.15rem;
     animation: none;
+    align-self: flex-end;
   }
   .discover-modal-overlay,
   .all-topics-modal-overlay {
+    align-items: flex-end;
     padding: 0;
   }
-  .discover-modal-card .sidebar-card-header {
-    border-bottom: none;
-    margin-bottom: 0.5rem;
-    padding-bottom: 0.4rem;
-  }
   .discover-modal-card .sidebar-card-title {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
   }
   .discover-modal-card .discover-modal-sub {
     font-size: 0.75rem;
