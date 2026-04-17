@@ -29,7 +29,7 @@ export function getExternalSearches() {
 }
 
 async function fetchJSON(path) {
-  const res = await fetch(path + '?v=' + Date.now());
+  const res = await fetch(path);
   return res.json();
 }
 
