@@ -28,7 +28,8 @@ export function renderNewsFeed(container, topic, isHome, opts = {}) {
   if (!isCustom && !isHome && searches.length > 0 && query) {
     inner += `
       <button type="button" class="feeds-pill" id="open-discover-feeds">
-        <span class="feeds-pill-label">Additional Content Shortcuts</span>
+        <span class="feeds-pill-label-full">Additional Content Shortcuts</span>
+        <span class="feeds-pill-label-short">More Shortcuts</span>
         <span class="feeds-pill-icon" aria-hidden="true">+</span>
       </button>
     `;
