@@ -1107,10 +1107,11 @@ body.sticky-always.has-subnav #content {
   background: var(--color-bg);
   border-radius: 3px;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
   margin-left: -1.35rem;
   margin-right: -1.35rem;
   width: calc(100% + 2.7rem);
+  max-width: 100vw;
 }
 
 .newsfeed-iframe {
@@ -1120,12 +1121,17 @@ body.sticky-always.has-subnav #content {
   border: none;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 1023px) {
   .newsfeed-embed {
     margin-left: -1.15rem;
     margin-right: -1.15rem;
     width: calc(100% + 2.3rem);
   }
+}
+
+/* Prevent horizontal overflow on any screen */
+#app {
+  overflow-x: hidden;
 }
 
 /* === Custom-search feed CTAs — full-width rows like shortcuts ==== */
