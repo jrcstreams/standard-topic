@@ -604,12 +604,14 @@ body.sticky-always.has-subnav #content {
   }
 
   .feeds-pill {
-    font-size: 0.62rem;
-    font-weight: 400;
-    color: var(--color-text-light);
+    font-size: 0.72rem;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-muted);
+    margin-left: 0;
+    flex-basis: 100%;
+    justify-content: flex-start;
+    padding-top: 0.15rem;
   }
-  .feeds-pill-label-full { display: none !important; }
-  .feeds-pill-label-short { display: inline !important; }
   .sticky-search .search-bar-wrapper {
     padding: 0;
     max-width: none;
