@@ -3168,7 +3168,7 @@ body.sticky-always.has-subnav #content {
   color: #2d3748;
   margin-bottom: 0.45rem;
 }
-.wiz-req { color: #e53e3e; font-weight: var(--font-weight-medium); }
+.wiz-req { color: #e53e3e; font-weight: var(--font-weight-medium); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em; }
 .wiz-opt { color: var(--color-text-light); font-weight: var(--font-weight-regular); font-size: 0.75rem; }
 
 /* Inline topic chips */
@@ -3213,12 +3213,13 @@ body.sticky-always.has-subnav #content {
 .wiz-topic-add-inline {
   background: none;
   border: none;
-  color: var(--color-primary);
-  font-size: 0.78rem;
-  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
   cursor: pointer;
   padding: 0.2rem 0.3rem;
 }
+.wiz-topic-add-inline:hover { color: var(--color-primary); }
 .wiz-topic-add-inline:hover { text-decoration: underline; }
 
 /* Custom instructions textarea */

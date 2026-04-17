@@ -252,17 +252,17 @@ function render() {
 
         <div class="wiz-field-row wiz-topics-row">
           <div class="wiz-field-half">
-            <label class="wiz-field-label">Primary Topic <span class="wiz-req">*</span></label>
+            <label class="wiz-field-label">Primary Topic(s) <span class="wiz-req">required</span></label>
             <div class="wiz-topic-chips" id="wiz-primary-chips">
               ${topicChips(primary, 'primaryTopic')}
-              <button type="button" class="wiz-topic-add-inline" id="wiz-primary-add">${primary.length ? '+ More' : '+ Add topic'}</button>
+              <button type="button" class="wiz-topic-add-inline" id="wiz-primary-add">${primary.length ? '+ Add more' : '+ Add topic'}</button>
             </div>
           </div>
           <div class="wiz-field-half">
-            <label class="wiz-field-label">Secondary Topic <span class="wiz-opt">(optional)</span></label>
+            <label class="wiz-field-label">Secondary Topic(s) <span class="wiz-opt">(optional)</span></label>
             <div class="wiz-topic-chips" id="wiz-secondary-chips">
               ${topicChips(secondary, 'secondaryTopic')}
-              <button type="button" class="wiz-topic-add-inline" id="wiz-secondary-add">${secondary.length ? '+ More' : '+ Add topic'}</button>
+              <button type="button" class="wiz-topic-add-inline" id="wiz-secondary-add">${secondary.length ? '+ Add more' : '+ Add topic'}</button>
             </div>
           </div>
         </div>

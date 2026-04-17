@@ -427,7 +427,7 @@ Appears when a user clicks any AI Shortcut or hits "Submit Prompt" on the Prompt
 **Access:** Opened directly from the local filesystem (`file://`) or local dev server. Not linked from the public site. The deployment process excludes the `admin/` folder.
 
 **Tabs:**
-- **Topics** — Add/edit/delete topics. Set parent, RSS feed ID, relatedParents, evergreen exclusions. Table view with hierarchy (subtopics indented with ↳).
+- **Topics** — Add/edit/delete topics. Set parent, RSS feed ID, relatedParents, evergreen exclusions. Table view with hierarchy (subtopics indented with ↳).http://localhost:8000/#/
 - **Evergreen Shortcuts** — Add/edit/delete shortcuts with name, icon, prompt template.
 - **Topic Shortcuts** — Add/edit/delete shortcuts, assign to topic slugs.
 - **AI Models** — Add/edit/remove models, edit URL templates and methods.
@@ -463,4 +463,4 @@ Appears when a user clicks any AI Shortcut or hits "Submit Prompt" on the Prompt
 - **Missing topic slug:** If a `#/topic/{slug}` route doesn't match any topic in `topics.json`, show a "Topic not found" message with a link back to home.
 - **Missing RSS feed ID:** If a topic has no `rssFeedId`, show a placeholder message in the News Feed tab: "News feed coming soon for this topic."
 - **Orphaned subtopics:** If a subtopic references a parent slug that doesn't exist, treat it as a parent topic (graceful degradation). Admin validation catches this before export.
-- **Empty related topics:** If a topic has no siblings, no parent, and no `relatedParents`, show "No related topics yet" in the Related Topics tab.
+- **Empty related topics:** If a topic has no siblings, no parent, and no `relatedParents`, show "No related topics yet" in the Related Topics tab.se
