@@ -103,12 +103,6 @@ function renderLayout(route) {
     document.body.classList.add('home-mode', 'has-subnav');
     subHeader.classList.add('is-subnav');
 
-    // Desktop: subnav = title + inline topics. Mobile: tabular nav.
-    const homeTabs = [
-      { id: 'newsfeed', label: 'News Feed', hash: '#/' },
-      { id: 'shortcuts', label: 'AI Shortcuts', hash: '#/shortcuts' },
-      { id: 'related', label: 'All Topics +', hash: '#/related' },
-    ];
     const allParents = getFeaturedTopics();
     const topicsHTML = allParents.map(t =>
       `<a href="#/topic/${t.slug}" class="subnav-topic-link">${escapeHTML(t.name)}</a>`
@@ -118,20 +112,12 @@ function renderLayout(route) {
       <div class="topic-banner">
         <div class="topic-banner-row">
           <div class="topic-banner-titlegroup">
-            <span class="topic-banner-accent" aria-hidden="true"></span>
             <h1 class="topic-banner-title">Home</h1>
           </div>
           <div class="subnav-topics-inline">
             <a href="#" class="subnav-action-link" id="subnav-all-topics">All Topics +</a>
             <span class="subnav-topics-label">Featured:</span>
             ${topicsHTML}
-          </div>
-          <div class="topic-banner-tabs topic-banner-tabs-mobile">
-            ${homeTabs.map(t => `
-              <a href="${t.hash}" class="tab-pill ${t.id === route.tab ? 'active' : ''}" data-tab="${t.id}">
-                ${t.label}
-              </a>
-            `).join('')}
           </div>
         </div>
       </div>
@@ -140,14 +126,6 @@ function renderLayout(route) {
     subHeader.querySelector('#subnav-all-topics')?.addEventListener('click', (e) => {
       e.preventDefault();
       // Open the full search modal so users can browse + search all topics
-      const searchBar = document.querySelector('.search-bar');
-      if (searchBar) searchBar.click();
-    });
-
-    // Mobile "All Topics +" tab opens search modal
-    subHeader.querySelector('.tab-pill[data-tab="related"]')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
       const searchBar = document.querySelector('.search-bar');
       if (searchBar) searchBar.click();
     });
@@ -167,7 +145,6 @@ function renderLayout(route) {
       <div class="topic-banner">
         <div class="topic-banner-row">
           <div class="topic-banner-titlegroup">
-            <span class="topic-banner-accent" aria-hidden="true"></span>
             <h1 class="topic-banner-title">Build a Knowledge Prompt</h1>
           </div>
         </div>
@@ -185,11 +162,6 @@ function renderLayout(route) {
       const topic = getTopicBySlug(route.slug);
       if (!topic) return;
       const related = getRelatedTopics(topic);
-      const tabs = [
-        { id: 'newsfeed', label: 'News Feed', hash: `#/topic/${route.slug}` },
-        { id: 'shortcuts', label: 'AI Shortcuts', hash: `#/topic/${route.slug}/shortcuts` },
-        { id: 'related', label: 'Related Topics', hash: `#/topic/${route.slug}/related` },
-      ];
       const INLINE_CAP = 6;
       const visibleRelated = related.slice(0, INLINE_CAP);
       const relatedLinksHTML = visibleRelated.map(t =>
@@ -200,69 +172,44 @@ function renderLayout(route) {
         <div class="topic-banner">
           <div class="topic-banner-row">
             <div class="topic-banner-titlegroup">
-              <span class="topic-banner-accent" aria-hidden="true"></span>
               <h1 class="topic-banner-title">${escapeHTML(topic.name)}</h1>
             </div>
+            ${related.length > 0 ? `<a href="#" class="subnav-related-btn" id="subnav-related-btn">Related Topics +</a>` : ''}
             ${related.length > 0 ? `
               <div class="subnav-topics-inline">
                 <span class="subnav-topics-label">Related:</span>
                 ${relatedLinksHTML}
               </div>
             ` : ''}
-            <div class="topic-banner-tabs topic-banner-tabs-mobile">
-              ${tabs.map(t => `
-                <a href="${t.hash}" class="tab-pill ${t.id === route.tab ? 'active' : ''}" data-tab="${t.id}">
-                  ${t.label}
-                </a>
-              `).join('')}
-            </div>
           </div>
         </div>
       `;
 
-      subHeader.querySelector('#subnav-more-related')?.addEventListener('click', (e) => {
+      const openRelatedModal = (e) => {
         e.preventDefault();
         window.dispatchEvent(new CustomEvent('open-related-topics-modal', {
           detail: { topics: related, title: 'Related Topics' },
         }));
-      });
+      };
+      subHeader.querySelector('#subnav-more-related')?.addEventListener('click', openRelatedModal);
+      subHeader.querySelector('#subnav-related-btn')?.addEventListener('click', openRelatedModal);
 
       trimOverflowLinks();
     } else {
-      // Custom search: tabs for Content Shortcuts and AI Shortcuts.
-      const base = `#/custom/${encodeURIComponent(route.term)}`;
-      renderSubNav(subHeader, {
-        title: route.term,
-        tabs: [
-          { id: 'shortcuts', label: 'AI Shortcuts', hash: `${base}/shortcuts` },
-          { id: 'newsfeed', label: 'Content Shortcuts', hash: base },
-        ],
-        activeTab: route.tab,
-      });
+      // Custom search: title-only subnav.
+      renderSubNav(subHeader, { title: route.term });
     }
   }
 }
 
 // Unified subnav renderer for both home and topic/custom pages
-function renderSubNav(container, { title, tabs, activeTab }) {
-  const tabsHTML = tabs ? `
-    <div class="topic-banner-tabs">
-      ${tabs.map(t => `
-        <a href="${t.hash}" class="tab-pill ${t.id === activeTab ? 'active' : ''}" data-tab="${t.id}">
-          ${t.label}
-        </a>
-      `).join('')}
-    </div>
-  ` : '';
-
+function renderSubNav(container, { title }) {
   container.innerHTML = `
     <div class="topic-banner">
       <div class="topic-banner-row">
         <div class="topic-banner-titlegroup">
-          <span class="topic-banner-accent" aria-hidden="true"></span>
           <h1 class="topic-banner-title">${escapeHTML(title)}</h1>
         </div>
-        ${tabsHTML}
       </div>
     </div>
   `;
@@ -412,18 +359,18 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // Homepage: AI Shortcuts full-width, News Feed below. Topics in subnav.
     container.innerHTML = `
       <div class="topic-layout" id="topic-layout">
-        <section class="layout-section" data-tab-panel="shortcuts" id="section-shortcuts"></section>
-        <section class="layout-section" data-tab-panel="newsfeed" id="section-newsfeed"></section>
+        <section class="layout-section" id="section-shortcuts"></section>
+        <section class="layout-section" id="section-newsfeed"></section>
       </div>
     `;
   } else {
     // Topic pages: AI Shortcuts full-width, News Feed below.
-    // Related topics in subnav on desktop; card panel on mobile tab nav.
+    // Related topics in subnav on desktop; Related Topics + button on mobile.
     container.innerHTML = `
       <div class="topic-layout" id="topic-layout">
-        <section class="layout-section" data-tab-panel="shortcuts" id="section-shortcuts"></section>
-        <section class="layout-section is-mobile-only" data-tab-panel="related" id="section-related"></section>
-        <section class="layout-section" data-tab-panel="newsfeed" id="section-newsfeed"></section>
+        <section class="layout-section" id="section-shortcuts"></section>
+        <section class="layout-section" id="section-related"></section>
+        <section class="layout-section" id="section-newsfeed"></section>
       </div>
     `;
   }
@@ -438,14 +385,13 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     renderRelatedTopicsSidebar(relatedSection, route, isHome);
   }
 
-  // Initial active tab (mobile panel visibility + subnav pill state)
-  const validTabs = ['newsfeed', 'shortcuts'];
-  if (showRelated && relatedSection) validTabs.push('related');
-  const initialTab = validTabs.includes(route.tab) ? route.tab : 'newsfeed';
-  setActiveTabPanel(initialTab);
-
-  // Subnav tab clicks: mobile switches panels, desktop scroll-jumps
-  attachTabPanelHandlers();
+  if (isCustom) {
+    // Custom pages retain tab panel switching
+    const validTabs = ['newsfeed', 'shortcuts'];
+    const initialTab = validTabs.includes(route.tab) ? route.tab : 'newsfeed';
+    setActiveTabPanel(initialTab);
+    attachTabPanelHandlers();
+  }
 
 }
 

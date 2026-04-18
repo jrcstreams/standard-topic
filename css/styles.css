@@ -430,8 +430,9 @@ body.sticky-always.has-subnav #content {
 }
 
 #sub-header.is-home-subnav .topic-banner-title {
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
 #sub-header.is-home-subnav .topic-banner-accent {
@@ -473,8 +474,9 @@ body.sticky-always.has-subnav #content {
 }
 
 #sub-header.is-subnav .topic-banner-title {
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
 #sub-header.is-subnav .topic-banner-accent {
@@ -567,12 +569,12 @@ body.sticky-always.has-subnav #content {
   }
 
   .sticky-logo-img {
-    width: 26px;
-    height: 26px;
+    width: 30px;
+    height: 30px;
   }
 
   .sticky-title {
-    font-size: 1.15rem;
+    font-size: 1.25rem;
   }
 
   .sticky-tagline {
@@ -1961,6 +1963,20 @@ body.sticky-always.has-subnav #content {
   color: var(--color-primary);
 }
 
+/* "Related Topics +" button — only visible below 1024px when inline topics collapse */
+.subnav-related-btn {
+  display: none;
+  margin-left: auto;
+  font-size: 0.82rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  text-decoration: none;
+  white-space: nowrap;
+}
+@media (max-width: 1023.98px) {
+  .subnav-related-btn { display: inline-block; }
+}
+
 /* Desktop: show inline topics, hide mobile tabs.
    Break to tabs at 1024px to prevent text overflow. */
 @media (min-width: 1024px) {
@@ -2048,19 +2064,19 @@ body.sticky-always.has-subnav #content {
   display: none;
 }
 
-/* Homepage AI Shortcuts: 3-column grid */
+/* AI Shortcuts grid: 3 cols desktop → 2 cols tablet → 1 col mobile */
 @media (min-width: 900px) {
   .shortcuts-sidebar .sidebar-shortcut-list {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 0 1rem;
   }
-  body.home-mode .shortcuts-sidebar .sidebar-shortcut-list {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-  }
-  body.home-mode .shortcuts-sidebar .sidebar-shortcut {
-    font-size: 0.82rem;
-    padding: 0.48rem 0.55rem;
+}
+@media (min-width: 641px) and (max-width: 899.98px) {
+  .shortcuts-sidebar .sidebar-shortcut-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 0.75rem;
   }
 }
 
@@ -2133,6 +2149,16 @@ body.sticky-always.has-subnav #content {
   padding: 0;
 }
 
+/* Section accent bars */
+.shortcuts-sidebar {
+  border-left: 3px solid var(--color-primary);
+  padding-left: 1rem;
+}
+.newsfeed-card {
+  border-left: 3px solid #d97706;
+  padding-left: 1rem;
+}
+
 .sidebar-card-header {
   display: flex;
   flex-wrap: wrap;
@@ -2199,7 +2225,7 @@ body.sticky-always.has-subnav #content {
   align-items: center;
   gap: 0.65rem;
   width: 100%;
-  padding: 0.55rem 0.65rem;
+  padding: 0.75rem 0.75rem;
   background: transparent;
   border: none;
   border-bottom: 1px solid var(--color-border);
