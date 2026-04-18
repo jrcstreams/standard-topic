@@ -501,8 +501,8 @@ body.sticky-always.has-subnav #content {
 }
 
 #sub-header.is-subnav .topic-banner-title {
-  font-size: 1.65rem;
-  line-height: 1.15;
+  font-size: 1.45rem;
+  line-height: 1.2;
   letter-spacing: -0.02em;
   font-weight: var(--font-weight-bold);
 }
@@ -558,7 +558,7 @@ body.sticky-always.has-subnav #content {
   }
 
   #sub-header.is-subnav .topic-banner-title {
-    font-size: 1.35rem;
+    font-size: 1.25rem;
     max-width: 60vw;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -3501,6 +3501,14 @@ body.sticky-always.has-subnav #content {
   background: var(--color-accent);
 }
 
+.wiz-field-picker-custom-row {
+  display: flex;
+  gap: 0.35rem;
+  padding: 0.55rem 1.15rem;
+  border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
 .wiz-custom-textarea {
   width: 100%;
   min-height: 70px;
@@ -3622,23 +3630,15 @@ body.sticky-always.has-subnav #content {
   animation: modalPop 0.18s ease-out;
 }
 .wiz-submit-close {
-  position: absolute;
-  top: 0.75rem;
-  right: 0.85rem;
-  width: 34px;
-  height: 34px;
-  background: var(--color-bg-light);
-  border: 1px solid var(--color-border);
-  border-radius: 50%;
-  color: var(--color-text);
-  font-size: 1rem;
+  width: 28px;
+  height: 28px;
+  padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  z-index: 10;
-  cursor: pointer;
+  font-size: 0.85rem;
 }
-.wiz-submit-close:hover { background: var(--color-bg-light); color: var(--color-text); }
+.wiz-submit-close:hover { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
 
 .wiz-submit-section {
   margin-bottom: 1.25rem;
@@ -3747,7 +3747,7 @@ body.sticky-always.has-subnav #content {
 .wiz-submit-go {
   flex: 1;
   padding: 0.7rem 0.75rem;
-  background: #4a6a8a;
+  background: #38a169;
   color: white;
   border: none;
   border-radius: 5px;
@@ -3756,21 +3756,21 @@ body.sticky-always.has-subnav #content {
   cursor: pointer;
   transition: background 0.12s;
 }
-.wiz-submit-go:hover { background: #3d5a75; }
+.wiz-submit-go:hover { background: #2f855a; }
 .wiz-submit-go:disabled { opacity: 0.4; cursor: not-allowed; }
 .wiz-submit-open-only {
   padding: 0.7rem 0.75rem;
   background: transparent;
-  color: #4a6a8a;
-  border: 1.5px solid #4a6a8a;
+  color: var(--color-text);
+  border: 1.5px solid var(--color-border);
   border-radius: 5px;
   font-size: 0.82rem;
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.12s;
+  transition: background 0.12s, border-color 0.12s;
 }
-.wiz-submit-open-only:hover { background: #f0f4f8; }
+.wiz-submit-open-only:hover { background: var(--color-bg-light); border-color: var(--color-text-light); }
 
 .wiz-submit-clipboard-hint {
   text-align: center;
@@ -3802,7 +3802,6 @@ body.sticky-always.has-subnav #content {
   .wiz-submit-buttons { flex-direction: column; }
   .wiz-submit-prompt-head { flex-wrap: wrap; gap: 0.4rem; }
   .wiz-submit-prompt-actions { margin-left: auto; }
-  .wiz-submit-close { top: 0.6rem; right: 0.6rem; }
 }
 
 /* Topic picker: search-modal-style with multi-select checkmarks */

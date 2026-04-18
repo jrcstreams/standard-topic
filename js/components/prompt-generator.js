@@ -267,16 +267,17 @@ function render() {
           </div>
         </div>
 
-        <div class="wiz-field-group">
-          <label class="wiz-field-label">Content Type</label>
-          <div data-field="contentType" id="wiz-field-contentType"></div>
-          <div class="wiz-extras" data-extras-field="contentType"></div>
-        </div>
-
-        <div class="wiz-field-group">
-          <label class="wiz-field-label">Approach <span class="wiz-opt">(optional)</span></label>
-          <div data-field="contentGeneration" id="wiz-field-contentGeneration"></div>
-          <div class="wiz-extras" data-extras-field="contentGeneration"></div>
+        <div class="wiz-field-row">
+          <div class="wiz-field-half">
+            <label class="wiz-field-label">Content Type</label>
+            <div data-field="contentType" id="wiz-field-contentType"></div>
+            <div class="wiz-extras" data-extras-field="contentType"></div>
+          </div>
+          <div class="wiz-field-half">
+            <label class="wiz-field-label">Approach <span class="wiz-opt">(optional)</span></label>
+            <div data-field="contentGeneration" id="wiz-field-contentGeneration"></div>
+            <div class="wiz-extras" data-extras-field="contentGeneration"></div>
+          </div>
         </div>
 
         <div class="wiz-field-row">
@@ -978,7 +979,7 @@ function populateCardGrid(host, fieldKey) {
   attachChipHandlers(host, fieldKey, '.wiz-card', '.wiz-card-add', '.wiz-card-remove');
 }
 
-// ---------- Select-style dropdown (most fields) ----------
+// ---------- Field picker (topic-picker style for all fields) ----------
 
 function populateChipGrid(host, fieldKey) {
   const opts = getOptionsFor(fieldKey);
@@ -986,102 +987,171 @@ function populateChipGrid(host, fieldKey) {
   const allowCustom = isFieldAllowCustom(fieldKey);
   const selected = getValuesArray(fieldKey);
 
-  // Build selected labels for display
+  // Build selected labels
   const selectedLabels = selected.map(v => {
     const opt = opts.find(o => o.value === v);
-    if (opt) return escapeHTML(opt.label);
-    if (customMap[v]) return escapeHTML(customMap[v]);
-    return escapeHTML(v);
+    if (opt) return opt.label;
+    if (customMap[v]) return customMap[v];
+    return v;
   });
 
-  const placeholder = selectedLabels.length === 0 ? 'Select...' : selectedLabels.join(', ');
-  const hasValue = selectedLabels.length > 0;
+  // Render chips + add button (same style as topic chips)
+  const chipsHTML = selectedLabels.map((label, i) => `
+    <span class="wiz-inline-chip" data-key="${escapeAttr(fieldKey)}" data-value="${escapeAttr(selected[i])}">
+      ${escapeHTML(label)}
+      <button type="button" class="wiz-inline-chip-x" aria-label="Remove">×</button>
+    </span>
+  `).join('');
 
-  let html = `
-    <div class="wiz-select-wrap" data-field-key="${escapeAttr(fieldKey)}">
-      <button type="button" class="wiz-select-trigger ${hasValue ? 'has-value' : ''}">
-        <span class="wiz-select-text">${placeholder}</span>
-        <span class="wiz-select-arrow">&#9662;</span>
-      </button>
-      <div class="wiz-select-dropdown" style="display:none">
+  host.innerHTML = `
+    <div class="wiz-topic-chips" id="wiz-field-chips-${fieldKey}">
+      ${chipsHTML}
+      <button type="button" class="wiz-topic-add-inline" id="wiz-field-add-${fieldKey}">${selectedLabels.length ? '+ Add more' : '+ Select'}</button>
+    </div>
   `;
-  opts.forEach(opt => {
-    const isSel = isValueSelected(fieldKey, opt.value);
-    html += `
-      <button type="button" class="wiz-select-option ${isSel ? 'is-selected' : ''}" data-value="${escapeAttr(opt.value)}">
-        <span class="wiz-select-check">${isSel ? '✓' : ''}</span>
-        <span>${escapeHTML(opt.label)}</span>
-      </button>
-    `;
-  });
-  Object.entries(customMap).forEach(([id, label]) => {
-    if (!isValueSelected(fieldKey, id)) return;
-    html += `
-      <button type="button" class="wiz-select-option is-selected" data-value="${escapeAttr(id)}">
-        <span class="wiz-select-check">✓</span>
-        <span>${escapeHTML(label)}</span>
-      </button>
-    `;
-  });
-  if (allowCustom) {
-    html += `
-      <div class="wiz-select-custom-row">
-        <input type="text" class="wiz-select-custom-input" placeholder="Add custom..." data-field-key="${escapeAttr(fieldKey)}">
-        <button type="button" class="wiz-select-custom-add">+</button>
-      </div>
-    `;
-  }
-  html += `</div></div>`;
-  host.innerHTML = html;
 
-  // Toggle dropdown
-  const wrap = host.querySelector('.wiz-select-wrap');
-  const trigger = host.querySelector('.wiz-select-trigger');
-  const dropdown = host.querySelector('.wiz-select-dropdown');
-
-  trigger.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const isOpen = dropdown.style.display !== 'none';
-    closeAllDropdowns();
-    if (!isOpen) dropdown.style.display = '';
-  });
-
-  // Option clicks
-  dropdown.querySelectorAll('.wiz-select-option').forEach(btn => {
+  // Remove chip handlers
+  host.querySelectorAll('.wiz-inline-chip-x').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      toggleValue(fieldKey, btn.dataset.value);
+      const chip = btn.closest('.wiz-inline-chip');
+      removeValue(chip.dataset.key, chip.dataset.value);
       populateChipGrid(host, fieldKey);
       updatePreview();
     });
   });
 
+  // Open picker on add button or container click
+  const openPicker = () => {
+    openFieldPicker(fieldKey, opts, customMap, allowCustom, () => {
+      populateChipGrid(host, fieldKey);
+      updatePreview();
+    });
+  };
+  host.querySelector(`#wiz-field-add-${fieldKey}`)?.addEventListener('click', openPicker);
+  host.querySelector(`#wiz-field-chips-${fieldKey}`)?.addEventListener('click', (e) => {
+    if (!e.target.closest('.wiz-inline-chip-x') && !e.target.closest('.wiz-topic-add-inline')) openPicker();
+  });
+}
+
+// Field picker overlay — same UX as topic picker
+let fieldPickerEl = null;
+function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
+  if (!fieldPickerEl) {
+    fieldPickerEl = document.createElement('div');
+    fieldPickerEl.className = 'wiz-topic-overlay';
+    document.body.appendChild(fieldPickerEl);
+  }
+
+  const field = getField(fieldKey);
+  const label = field?.label || fieldKey;
+
+  const close = () => {
+    fieldPickerEl.style.display = 'none';
+    document.body.style.overflow = '';
+    onDone();
+  };
+
+  const toggle = (value) => {
+    toggleValue(fieldKey, value);
+    renderPickerBody();
+    renderPickerSelected();
+  };
+
+  function renderPickerSelected() {
+    const selRow = fieldPickerEl.querySelector('#field-picker-selected');
+    const selected = getValuesArray(fieldKey);
+    if (selected.length === 0) {
+      selRow.innerHTML = `<span class="wiz-topic-overlay-empty">No selections yet.</span>`;
+    } else {
+      selRow.innerHTML = selected.map(v => {
+        const opt = opts.find(o => o.value === v);
+        const lbl = opt ? opt.label : (customMap[v] || v);
+        return `
+          <span class="wiz-topic-overlay-sel" data-value="${escapeAttr(v)}">
+            ${escapeHTML(lbl)}
+            <button type="button" class="wiz-topic-overlay-sel-remove" aria-label="Remove">×</button>
+          </span>
+        `;
+      }).join('');
+      selRow.querySelectorAll('.wiz-topic-overlay-sel-remove').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const chip = btn.closest('.wiz-topic-overlay-sel');
+          toggle(chip.dataset.value);
+        });
+      });
+    }
+    const countEl = fieldPickerEl.querySelector('#field-picker-count');
+    if (countEl) countEl.textContent = `${selected.length} selected`;
+  }
+
+  function renderPickerBody() {
+    const bodyEl = fieldPickerEl.querySelector('#field-picker-body');
+    let html = '';
+    opts.forEach(opt => {
+      const isSel = isValueSelected(fieldKey, opt.value);
+      html += `
+        <div class="sidebar-shortcut wiz-topic-row ${isSel ? 'is-selected' : ''}" data-name="${escapeAttr(opt.value)}">
+          <span class="wiz-topic-check">${isSel ? '✓' : ''}</span>
+          <span class="sidebar-shortcut-name">${escapeHTML(opt.label)}</span>
+        </div>
+      `;
+    });
+    bodyEl.innerHTML = html;
+    bodyEl.querySelectorAll('.wiz-topic-row').forEach(row => {
+      row.addEventListener('click', () => toggle(row.dataset.name));
+    });
+  }
+
+  fieldPickerEl.innerHTML = `
+    <div class="search-overlay-card wiz-topic-picker-card">
+      <div class="wiz-topic-picker-header">
+        <h3 class="wiz-topic-picker-title">${escapeHTML(label)}</h3>
+        <button class="search-overlay-close" type="button" id="field-picker-close" aria-label="Close">✕</button>
+      </div>
+      <div class="wiz-topic-selected-row" id="field-picker-selected"></div>
+      <div class="search-overlay-body shortcuts-sidebar" id="field-picker-body"></div>
+      ${allowCustom ? `
+        <div class="wiz-field-picker-custom-row">
+          <input type="text" class="wiz-select-custom-input" id="field-picker-custom-input" placeholder="Add custom value...">
+          <button type="button" class="wiz-select-custom-add" id="field-picker-custom-add">+</button>
+        </div>
+      ` : ''}
+      <div class="wiz-topic-picker-foot">
+        <span class="wiz-topic-picker-count" id="field-picker-count"></span>
+        <button type="button" class="wiz-topic-picker-done" id="field-picker-done">Done</button>
+      </div>
+    </div>
+  `;
+
+  fieldPickerEl.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  renderPickerSelected();
+  renderPickerBody();
+
+  fieldPickerEl.querySelector('#field-picker-close').addEventListener('click', close);
+  fieldPickerEl.querySelector('#field-picker-done').addEventListener('click', close);
+  fieldPickerEl.onclick = (e) => { if (e.target === fieldPickerEl) close(); };
+
   // Custom input
-  const customInput = dropdown.querySelector('.wiz-select-custom-input');
-  const customAddBtn = dropdown.querySelector('.wiz-select-custom-add');
-  if (customInput && customAddBtn) {
+  if (allowCustom) {
+    const customInput = fieldPickerEl.querySelector('#field-picker-custom-input');
+    const customAddBtn = fieldPickerEl.querySelector('#field-picker-custom-add');
     const addCustom = () => {
       const text = customInput.value.trim();
       if (text) {
         addCustomValue(fieldKey, text);
-        populateChipGrid(host, fieldKey);
-        updatePreview();
+        customInput.value = '';
+        renderPickerSelected();
+        renderPickerBody();
       }
     };
-    customAddBtn.addEventListener('click', (e) => { e.stopPropagation(); addCustom(); });
+    customAddBtn.addEventListener('click', addCustom);
     customInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); addCustom(); }
+      if (e.key === 'Enter') { e.preventDefault(); addCustom(); }
     });
-    customInput.addEventListener('click', (e) => e.stopPropagation());
   }
 }
-
-// Close all open select dropdowns
-function closeAllDropdowns() {
-  document.querySelectorAll('.wiz-select-dropdown').forEach(d => d.style.display = 'none');
-}
-// Close dropdowns on outside click
-document.addEventListener('click', () => closeAllDropdowns());
 
 // Shared click handlers — uses EVENT DELEGATION on the host so that
 // dynamically-added elements (notably the × remove button that appears
@@ -1261,14 +1331,13 @@ function openPromptSubmitModal() {
 
   submitModalEl.innerHTML = `
     <div class="wiz-submit-card">
-      <button type="button" class="wiz-submit-close" id="wiz-submit-close" aria-label="Close">✕</button>
-
       <div class="wiz-submit-section">
         <div class="wiz-submit-prompt-head">
           <h3 class="wiz-submit-label">Your Prompt</h3>
           <div class="wiz-submit-prompt-actions">
             <button type="button" class="wiz-submit-action-btn" id="wiz-submit-copy">Copy</button>
             <button type="button" class="wiz-submit-action-btn" id="wiz-submit-edit">${state.isEditingPrompt ? 'Done Editing' : 'Edit Prompt'}</button>
+            <button type="button" class="wiz-submit-action-btn wiz-submit-close" id="wiz-submit-close" aria-label="Close">✕</button>
           </div>
         </div>
         ${state.isEditingPrompt
