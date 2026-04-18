@@ -1071,8 +1071,18 @@ body.sticky-always.has-subnav #content {
   letter-spacing: -0.015em;
   margin: 0;
   padding-left: 0.65rem;
-  border-left: 3px solid #d97706;
-  border-radius: 2px 0 0 2px;
+  border-left: none;
+  position: relative;
+}
+.newsfeed-card-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  bottom: 0.15em;
+  width: 3px;
+  background: #d97706;
+  border-radius: 999px;
 }
 
 /* "Additional Content Feeds" action — quiet editorial link, not a
@@ -2188,8 +2198,18 @@ body.sticky-always.has-subnav #content {
   letter-spacing: -0.015em;
   margin: 0;
   padding-left: 0.65rem;
-  border-left: 3px solid #4a7cc9;
-  border-radius: 2px 0 0 2px;
+  border-left: none;
+  position: relative;
+}
+.sidebar-card-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  bottom: 0.15em;
+  width: 3px;
+  background: #4a7cc9;
+  border-radius: 999px;
 }
 
 
