@@ -1070,6 +1070,8 @@ body.sticky-always.has-subnav #content {
   flex-basis: 100%;
   letter-spacing: -0.015em;
   margin: 0;
+  padding-left: 0.65rem;
+  border-left: 3px solid #d97706;
 }
 
 /* "Additional Content Feeds" action — quiet editorial link, not a
@@ -2149,15 +2151,6 @@ body.sticky-always.has-subnav #content {
   padding: 0;
 }
 
-/* Section accent bars */
-.shortcuts-sidebar {
-  border-left: 3px solid var(--color-primary);
-  padding-left: 1rem;
-}
-.newsfeed-card {
-  border-left: 3px solid #d97706;
-  padding-left: 1rem;
-}
 
 .sidebar-card-header {
   display: flex;
@@ -2193,6 +2186,8 @@ body.sticky-always.has-subnav #content {
   flex-basis: 100%;
   letter-spacing: -0.015em;
   margin: 0;
+  padding-left: 0.65rem;
+  border-left: 3px solid var(--color-primary);
 }
 
 
