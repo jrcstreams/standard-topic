@@ -1072,6 +1072,7 @@ body.sticky-always.has-subnav #content {
   margin: 0;
   padding-left: 0.65rem;
   border-left: 3px solid #d97706;
+  border-radius: 2px 0 0 2px;
 }
 
 /* "Additional Content Feeds" action — quiet editorial link, not a
@@ -2157,7 +2158,7 @@ body.sticky-always.has-subnav #content {
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0.45rem 0.5rem;
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.55rem;
   padding-bottom: 0.65rem;
   border-bottom: 1.5px solid #d1d5db;
 }
@@ -2187,7 +2188,8 @@ body.sticky-always.has-subnav #content {
   letter-spacing: -0.015em;
   margin: 0;
   padding-left: 0.65rem;
-  border-left: 3px solid var(--color-primary);
+  border-left: 3px solid #4a7cc9;
+  border-radius: 2px 0 0 2px;
 }
 
 
