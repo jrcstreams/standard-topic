@@ -23,18 +23,13 @@ export function initSearchOverlay() {
   overlayEl.innerHTML = `
     <div class="search-overlay-card">
       <div class="search-overlay-input-row">
-        <span class="search-overlay-icon" aria-hidden="true">🔍</span>
+        <svg class="search-overlay-icon-svg" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" class="search-overlay-input"
                placeholder="Search topics..."
                autocomplete="off" spellcheck="false">
-        <span class="search-overlay-esc" aria-hidden="true">ESC</span>
+        <kbd class="search-overlay-esc">ESC</kbd>
         <button class="search-overlay-close" type="button" aria-label="Close">✕</button>
       </div>
-      <p class="search-overlay-hint">
-        Search any topic — if there's no match, press Enter or click
-        <em>Add as Custom Topic</em> to build a prompt-ready page around it.
-        Or browse the full catalog below.
-      </p>
       <div class="search-overlay-body"></div>
     </div>
   `;
@@ -129,29 +124,31 @@ function renderBody(query) {
       ...matches.map(m => ({ type: 'topic', slug: m.slug })),
     ];
 
-    html += `
-      <div class="search-overlay-results-block">
-        <div class="search-overlay-section-label">Search results</div>
-        <div class="search-overlay-custom" data-action="custom" role="button" tabindex="0">
-          <span class="search-custom-badge">+</span>
-          Add "<strong>${escapeHTML(q)}</strong>" as Custom Topic
-        </div>
-    `;
+    html += `<div class="search-overlay-results-block">`;
 
     if (matches.length > 0) {
       matches.forEach(match => {
         const parentLabel = match.parentName
-          ? `<span class="search-overlay-result-parent">in ${escapeHTML(match.parentName)}</span>`
+          ? `<span class="search-overlay-result-parent">${escapeHTML(match.parentName)}</span>`
           : '';
         html += `
           <div class="search-overlay-result" data-slug="${match.slug}" role="button" tabindex="0">
-            ${highlightMatch(match.name, q)} ${parentLabel}
+            <span class="search-overlay-result-name">${highlightMatch(match.name, q)}</span>
+            ${parentLabel}
+            <span class="search-overlay-result-arrow">›</span>
           </div>
         `;
       });
     } else {
-      html += `<div class="search-overlay-empty">No matching topics — add the custom topic above, or browse the full catalog below.</div>`;
+      html += `<div class="search-overlay-empty">No matching topics found.</div>`;
     }
+
+    html += `
+        <div class="search-overlay-custom" data-action="custom" role="button" tabindex="0">
+          <span class="search-custom-badge">+</span>
+          Search "<strong>${escapeHTML(q)}</strong>" as Custom Topic
+        </div>
+    `;
     html += `</div>`;
   }
 
