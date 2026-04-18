@@ -332,12 +332,15 @@ function render() {
       </div>
 
       <div class="wiz-action-bar">
-      <button type="button" class="wiz-action-btn ${isEmpty ? 'is-empty' : ''}" id="wiz-open-preview" ${isEmpty ? 'disabled' : ''}>
-        <span class="wiz-action-indicator ${isEmpty ? '' : 'has-content'}"></span>
-        <span>${isEmpty ? 'Add Topic(s) to build a prompt' : 'Preview Prompt and Submit'}</span>
-      </button>
-      <button type="button" class="wiz-action-restart" id="wiz-restart">Start Over</button>
+        <div class="wiz-action-bar-inner">
+          <button type="button" class="wiz-action-btn ${isEmpty ? 'is-empty' : ''}" id="wiz-open-preview" ${isEmpty ? 'disabled' : ''}>
+            <span class="wiz-action-indicator ${isEmpty ? '' : 'has-content'}"></span>
+            <span>${isEmpty ? 'Add Topic(s) to build a prompt' : 'Preview Prompt and Submit'}</span>
+          </button>
+          <button type="button" class="wiz-action-restart" id="wiz-restart">Start Over</button>
+        </div>
       </div>
+      <div class="wiz-action-bar-spacer"></div>
     </div>
   `;
 
@@ -975,44 +978,110 @@ function populateCardGrid(host, fieldKey) {
   attachChipHandlers(host, fieldKey, '.wiz-card', '.wiz-card-add', '.wiz-card-remove');
 }
 
-// ---------- Chip grid (most fields) ----------
+// ---------- Select-style dropdown (most fields) ----------
 
 function populateChipGrid(host, fieldKey) {
   const opts = getOptionsFor(fieldKey);
   const customMap = state.customValues[fieldKey] || {};
   const allowCustom = isFieldAllowCustom(fieldKey);
+  const selected = getValuesArray(fieldKey);
 
-  let html = `<div class="wiz-chip-grid">`;
+  // Build selected labels for display
+  const selectedLabels = selected.map(v => {
+    const opt = opts.find(o => o.value === v);
+    if (opt) return escapeHTML(opt.label);
+    if (customMap[v]) return escapeHTML(customMap[v]);
+    return escapeHTML(v);
+  });
+
+  const placeholder = selectedLabels.length === 0 ? 'Select...' : selectedLabels.join(', ');
+  const hasValue = selectedLabels.length > 0;
+
+  let html = `
+    <div class="wiz-select-wrap" data-field-key="${escapeAttr(fieldKey)}">
+      <button type="button" class="wiz-select-trigger ${hasValue ? 'has-value' : ''}">
+        <span class="wiz-select-text">${placeholder}</span>
+        <span class="wiz-select-arrow">&#9662;</span>
+      </button>
+      <div class="wiz-select-dropdown" style="display:none">
+  `;
   opts.forEach(opt => {
-    const selected = isValueSelected(fieldKey, opt.value);
+    const isSel = isValueSelected(fieldKey, opt.value);
     html += `
-      <button class="wiz-chip ${selected ? 'selected' : ''}" type="button" data-value="${escapeAttr(opt.value)}">
-        ${escapeHTML(opt.label)}
-        ${selected ? `<span class="wiz-chip-remove" data-remove="${escapeAttr(opt.value)}" aria-label="Remove">×</span>` : ''}
+      <button type="button" class="wiz-select-option ${isSel ? 'is-selected' : ''}" data-value="${escapeAttr(opt.value)}">
+        <span class="wiz-select-check">${isSel ? '✓' : ''}</span>
+        <span>${escapeHTML(opt.label)}</span>
       </button>
     `;
   });
   Object.entries(customMap).forEach(([id, label]) => {
     if (!isValueSelected(fieldKey, id)) return;
     html += `
-      <span class="wiz-chip selected wiz-chip-custom" data-value="${escapeAttr(id)}">
-        ${escapeHTML(label)}
-        <button class="wiz-chip-remove" type="button" data-remove="${escapeAttr(id)}" aria-label="Remove">×</button>
-      </span>
+      <button type="button" class="wiz-select-option is-selected" data-value="${escapeAttr(id)}">
+        <span class="wiz-select-check">✓</span>
+        <span>${escapeHTML(label)}</span>
+      </button>
     `;
   });
   if (allowCustom) {
     html += `
-      <button class="wiz-chip wiz-chip-add" type="button" data-add-custom="true">
-        + Add custom
-      </button>
+      <div class="wiz-select-custom-row">
+        <input type="text" class="wiz-select-custom-input" placeholder="Add custom..." data-field-key="${escapeAttr(fieldKey)}">
+        <button type="button" class="wiz-select-custom-add">+</button>
+      </div>
     `;
   }
-  html += `</div>`;
+  html += `</div></div>`;
   host.innerHTML = html;
 
-  attachChipHandlers(host, fieldKey, '.wiz-chip', '.wiz-chip-add', '.wiz-chip-remove');
+  // Toggle dropdown
+  const wrap = host.querySelector('.wiz-select-wrap');
+  const trigger = host.querySelector('.wiz-select-trigger');
+  const dropdown = host.querySelector('.wiz-select-dropdown');
+
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = dropdown.style.display !== 'none';
+    closeAllDropdowns();
+    if (!isOpen) dropdown.style.display = '';
+  });
+
+  // Option clicks
+  dropdown.querySelectorAll('.wiz-select-option').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleValue(fieldKey, btn.dataset.value);
+      populateChipGrid(host, fieldKey);
+      updatePreview();
+    });
+  });
+
+  // Custom input
+  const customInput = dropdown.querySelector('.wiz-select-custom-input');
+  const customAddBtn = dropdown.querySelector('.wiz-select-custom-add');
+  if (customInput && customAddBtn) {
+    const addCustom = () => {
+      const text = customInput.value.trim();
+      if (text) {
+        addCustomValue(fieldKey, text);
+        populateChipGrid(host, fieldKey);
+        updatePreview();
+      }
+    };
+    customAddBtn.addEventListener('click', (e) => { e.stopPropagation(); addCustom(); });
+    customInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); addCustom(); }
+    });
+    customInput.addEventListener('click', (e) => e.stopPropagation());
+  }
 }
+
+// Close all open select dropdowns
+function closeAllDropdowns() {
+  document.querySelectorAll('.wiz-select-dropdown').forEach(d => d.style.display = 'none');
+}
+// Close dropdowns on outside click
+document.addEventListener('click', () => closeAllDropdowns());
 
 // Shared click handlers — uses EVENT DELEGATION on the host so that
 // dynamically-added elements (notably the × remove button that appears

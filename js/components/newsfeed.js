@@ -18,7 +18,7 @@ export function renderNewsFeed(container, topic, isHome, opts = {}) {
   // a modal listing the sources.
   const feedDesc = isCustom
     ? 'Quick links to search engines and platforms for this topic.'
-    : (query ? `The latest news on ${query}.` : 'Live RSS feed with the latest stories.');
+    : (query ? `Latest news on ${query}.` : 'Latest news.');
 
   let inner = `
     <div class="newsfeed-card-header">

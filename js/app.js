@@ -115,7 +115,7 @@ function renderLayout(route) {
             <h1 class="topic-banner-title">Home</h1>
           </div>
           <div class="subnav-topics-inline home-subnav-topics">
-            <a href="#" class="subnav-action-link" id="subnav-all-topics">All Topics +</a>
+            <a href="#" class="subnav-action-link subnav-all-topics-link" id="subnav-all-topics">All Topics +</a>
             <span class="subnav-topics-label">Featured:</span>
             ${topicsHTML}
           </div>
@@ -470,7 +470,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     <div class="sidebar-card shortcuts-sidebar">
       <div class="sidebar-card-header">
         <h3 class="sidebar-card-title">AI Shortcuts</h3>
-        <span class="sidebar-card-desc">Quick access to AI knowledge covering ${topicName ? escapeHTML(topicName) : 'any topic'}, with the ability to choose between different AI models.</span>
+        <span class="sidebar-card-desc">Prompt shortcuts to quickly access AI knowledge across top models.</span>
       </div>
   `;
 
