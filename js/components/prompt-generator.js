@@ -1289,7 +1289,11 @@ function openPromptSubmitModal() {
         </div>
       </div>
 
-      <button class="wiz-submit-go" id="wiz-submit-go" type="button" ${isEmpty ? 'disabled' : ''}>${escapeHTML(getSubmitLabel())}</button>
+      <div class="wiz-submit-buttons">
+        <button class="wiz-submit-go" id="wiz-submit-go" type="button" ${isEmpty ? 'disabled' : ''}>${escapeHTML(getSubmitLabel())}</button>
+        <button class="wiz-submit-open-only" id="wiz-submit-open-only" type="button">${escapeHTML(getOpenOnlyLabel())}</button>
+      </div>
+      <p class="wiz-submit-clipboard-hint">If prompt doesn't load directly into model, paste text from clipboard.</p>
       <p class="wiz-submit-disclaimer">You will be redirected to a third-party AI platform.</p>
     </div>
   `;
@@ -1350,9 +1354,11 @@ function openPromptSubmitModal() {
     });
     const goBtn = submitModalEl.querySelector('#wiz-submit-go');
     if (goBtn) goBtn.textContent = getSubmitLabel();
+    const openBtn = submitModalEl.querySelector('#wiz-submit-open-only');
+    if (openBtn) openBtn.textContent = getOpenOnlyLabel();
   });
 
-  // Submit
+  // Submit (copy + open)
   submitModalEl.querySelector('#wiz-submit-go')?.addEventListener('click', async () => {
     const model = getModelById(state.modelId);
     if (!model) return;
@@ -1360,6 +1366,15 @@ function openPromptSubmitModal() {
       ? submitModalEl.querySelector('#wiz-submit-textarea')?.value
       : (state.editedPrompt ?? assemblePrompt());
     await submitPrompt(model, finalPrompt.trim());
+    closeModal();
+  });
+
+  // Open model only (no prompt)
+  submitModalEl.querySelector('#wiz-submit-open-only')?.addEventListener('click', () => {
+    const model = getModelById(state.modelId);
+    if (!model) return;
+    const url = model.urlTemplate.replace('{prompt}', '');
+    window.open(url, '_blank');
     closeModal();
   });
 }
@@ -1387,8 +1402,13 @@ function getSubmitLabel() {
   const m = getModelById(state.modelId);
   if (!m) return 'Submit Prompt →';
   return shouldCopyOnOpen(m)
-    ? `Copy & Open ${m.name} →`
-    : `Open ${m.name} →`;
+    ? `Copy prompt and open ${m.name}`
+    : `Open ${m.name}`;
+}
+function getOpenOnlyLabel() {
+  const m = getModelById(state.modelId);
+  if (!m) return 'Open Model Only';
+  return `Open ${m.name} only`;
 }
 
 // ---------- Prompt assembly ----------
