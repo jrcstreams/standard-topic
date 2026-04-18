@@ -25,7 +25,7 @@ export function initSearchOverlay() {
       <div class="search-overlay-input-row">
         <span class="search-overlay-icon" aria-hidden="true">🔍</span>
         <input type="text" class="search-overlay-input"
-               placeholder="Type to search, or choose a topic below"
+               placeholder="Search topics..."
                autocomplete="off" spellcheck="false">
         <span class="search-overlay-esc" aria-hidden="true">ESC</span>
         <button class="search-overlay-close" type="button" aria-label="Close">✕</button>

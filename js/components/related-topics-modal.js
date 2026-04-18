@@ -7,7 +7,7 @@ export function initRelatedTopicsModal() {
   document.body.appendChild(overlayEl);
 
   window.addEventListener('open-related-topics-modal', (e) => {
-    open(e.detail.topics, e.detail.title);
+    open(e.detail.topics, e.detail.title, e.detail.topicName);
   });
 
   overlayEl.addEventListener('click', (e) => {
@@ -19,7 +19,7 @@ export function initRelatedTopicsModal() {
   });
 }
 
-function open(topics, title) {
+function open(topics, title, topicName) {
   const rows = topics.map(t => `
     <a href="#/topic/${t.slug}" class="related-modal-row">
       <span class="related-modal-dot" aria-hidden="true"></span>
@@ -32,8 +32,8 @@ function open(topics, title) {
     <div class="related-modal-card" role="dialog" aria-label="${escapeHTML(title)}">
       <button type="button" class="related-modal-close" aria-label="Close">✕</button>
       <div class="related-modal-header">
-        <span class="related-modal-icon">🔗</span>
         <h3 class="related-modal-title">${escapeHTML(title)}</h3>
+        ${topicName ? `<span class="related-modal-topic-name">for ${escapeHTML(topicName)}</span>` : ''}
       </div>
       <div class="related-modal-body">${rows}</div>
       <div class="related-modal-footer">

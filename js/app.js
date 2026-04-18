@@ -114,7 +114,7 @@ function renderLayout(route) {
           <div class="topic-banner-titlegroup">
             <h1 class="topic-banner-title">Home</h1>
           </div>
-          <div class="subnav-topics-inline">
+          <div class="subnav-topics-inline home-subnav-topics">
             <a href="#" class="subnav-action-link" id="subnav-all-topics">All Topics +</a>
             <span class="subnav-topics-label">Featured:</span>
             ${topicsHTML}
@@ -188,7 +188,7 @@ function renderLayout(route) {
       const openRelatedModal = (e) => {
         e.preventDefault();
         window.dispatchEvent(new CustomEvent('open-related-topics-modal', {
-          detail: { topics: related, title: 'Related Topics' },
+          detail: { topics: related, title: 'Related Topics', topicName: topic.name },
         }));
       };
       subHeader.querySelector('#subnav-more-related')?.addEventListener('click', openRelatedModal);
@@ -202,12 +202,13 @@ function renderLayout(route) {
   }
 }
 
-// Unified subnav renderer for both home and topic/custom pages
+// Unified subnav renderer for custom search pages
 function renderSubNav(container, { title }) {
   container.innerHTML = `
     <div class="topic-banner">
       <div class="topic-banner-row">
         <div class="topic-banner-titlegroup">
+          <svg class="subnav-search-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <h1 class="topic-banner-title">${escapeHTML(title)}</h1>
         </div>
       </div>
@@ -245,17 +246,39 @@ function trimOverflowLinks() {
 
   const doTrim = () => {
     const links = container.querySelectorAll('.subnav-topic-link');
-    const containerRight = container.getBoundingClientRect().right;
+    const moreLink = container.querySelector('.subnav-more-link');
 
-    // First show all, then measure
+    // Always show container for measurement, then decide visibility after
+    container.style.display = '';
     links.forEach(l => l.style.display = '');
 
-    // Hide any link whose right edge exceeds the container
+    const containerRight = container.getBoundingClientRect().right;
+    // Reserve space for "More +" link
+    const moreWidth = moreLink ? moreLink.offsetWidth + 20 : 0;
+    const cutoff = containerRight - moreWidth;
+
+    // Hide any link whose right edge exceeds the available space
+    let visibleCount = 0;
     links.forEach(l => {
-      if (l.getBoundingClientRect().right > containerRight - 4) {
+      if (l.getBoundingClientRect().right > cutoff) {
         l.style.display = 'none';
+      } else {
+        visibleCount++;
       }
     });
+
+    // Show/hide the "Related Topics +" condensed button based on visible count.
+    // When fewer than 3 inline links fit, hide the inline row and show the button.
+    const relatedBtn = document.getElementById('subnav-related-btn');
+    if (relatedBtn) {
+      if (visibleCount < 3) {
+        container.style.display = 'none';
+        relatedBtn.style.display = 'inline-block';
+      } else {
+        container.style.display = '';
+        relatedBtn.style.display = 'none';
+      }
+    }
   };
 
   // Run after layout settles
@@ -278,7 +301,7 @@ function renderStickyHeroBar(container, route) {
       <span class="sticky-tagline">News, Resources and AI Knowledge. On any topic.</span>
       <div class="sticky-actions">
         <div class="sticky-search" id="sticky-search-container"></div>
-        <a href="#/prompt-generator" class="sticky-cta ${isPromptGen ? 'active' : ''}">
+        <a href="#/prompt-generator" class="sticky-cta">
           <span class="sticky-cta-full">Build a prompt +</span>
           <span class="sticky-cta-short">Build a prompt +</span>
         </a>
@@ -343,16 +366,12 @@ function cleanupTopicLayoutObservers() {
 function renderTopicLayout(container, { topic, route, isHome, isCustom = false, customTerm = '' }) {
   cleanupTopicLayoutObservers();
 
-  // Custom pages: single-column stacked layout (News+Discover, then
-  // AI Shortcuts) — no sidebar, no Related Topics.
-  const showRelated = !isCustom;
-
   if (isCustom) {
-    // Custom: AI Shortcuts card on top, News Feed full-width below.
+    // Custom: AI Shortcuts on top, Content Shortcuts below — no tabs.
     container.innerHTML = `
-      <div class="topic-layout is-split is-custom" id="topic-layout">
-        <section class="layout-section panel-shortcuts" data-tab-panel="shortcuts" id="section-shortcuts"></section>
-        <section class="layout-section panel-newsfeed" data-tab-panel="newsfeed" id="section-newsfeed"></section>
+      <div class="topic-layout is-custom" id="topic-layout">
+        <section class="layout-section" id="section-shortcuts"></section>
+        <section class="layout-section" id="section-newsfeed"></section>
       </div>
     `;
   } else if (isHome) {
@@ -365,11 +384,10 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     `;
   } else {
     // Topic pages: AI Shortcuts full-width, News Feed below.
-    // Related topics in subnav on desktop; Related Topics + button on mobile.
+    // Related topics only in subnav (not in body).
     container.innerHTML = `
       <div class="topic-layout" id="topic-layout">
         <section class="layout-section" id="section-shortcuts"></section>
-        <section class="layout-section" id="section-related"></section>
         <section class="layout-section" id="section-newsfeed"></section>
       </div>
     `;
@@ -377,21 +395,10 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
 
   const feedSection = container.querySelector('#section-newsfeed');
   const shortcutsSection = container.querySelector('#section-shortcuts');
-  const relatedSection = container.querySelector('#section-related');
 
   renderNewsFeed(feedSection, topic, isHome, { isCustom, customTerm });
   renderShortcutsSidebar(shortcutsSection, route, isHome, isCustom, customTerm);
-  if (showRelated && relatedSection) {
-    renderRelatedTopicsSidebar(relatedSection, route, isHome);
-  }
 
-  if (isCustom) {
-    // Custom pages retain tab panel switching
-    const validTabs = ['newsfeed', 'shortcuts'];
-    const initialTab = validTabs.includes(route.tab) ? route.tab : 'newsfeed';
-    setActiveTabPanel(initialTab);
-    attachTabPanelHandlers();
-  }
 
 }
 
@@ -463,7 +470,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     <div class="sidebar-card shortcuts-sidebar">
       <div class="sidebar-card-header">
         <h3 class="sidebar-card-title">AI Shortcuts</h3>
-        <span class="sidebar-card-desc">Pre-built prompts you can send to any AI model in one click.</span>
+        <span class="sidebar-card-desc">Quick access to AI knowledge covering ${topicName ? escapeHTML(topicName) : 'any topic'}, with the ability to choose between different AI models.</span>
       </div>
   `;
 
@@ -480,6 +487,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
 
   container.querySelectorAll('.sidebar-shortcut').forEach(btn => {
     btn.addEventListener('click', () => {
+      btn.blur();
       const prompt = btn.dataset.prompt;
       const name = btn.dataset.name;
       const icon = btn.dataset.icon;

@@ -247,7 +247,7 @@ function render() {
     <div class="wiz-two-panel">
       <div class="wiz-fields">
         <div class="wiz-intro">
-          <p class="wiz-intro-text">Build a tailored AI prompt in seconds. Choose your topics, customize the content style and delivery, and watch your prompt come together in the live preview. When you're ready, pick your preferred AI model and submit.</p>
+          <p class="wiz-intro-text">Choose topics, customize style and delivery, then preview and submit to your preferred AI model.</p>
         </div>
 
         <div class="wiz-field-row wiz-topics-row">
@@ -331,14 +331,13 @@ function render() {
         </div>
       </div>
 
-    </div>
-
-    <div class="wiz-action-bar">
-      <button type="button" class="wiz-action-btn" id="wiz-open-preview" ${isEmpty ? 'disabled' : ''}>
+      <div class="wiz-action-bar">
+      <button type="button" class="wiz-action-btn ${isEmpty ? 'is-empty' : ''}" id="wiz-open-preview" ${isEmpty ? 'disabled' : ''}>
         <span class="wiz-action-indicator ${isEmpty ? '' : 'has-content'}"></span>
-        <span>Preview Prompt and Submit</span>
+        <span>${isEmpty ? 'Add Topic(s) to build a prompt' : 'Preview Prompt and Submit'}</span>
       </button>
       <button type="button" class="wiz-action-restart" id="wiz-restart">Start Over</button>
+      </div>
     </div>
   `;
 
@@ -369,20 +368,28 @@ function render() {
     });
   });
 
-  // Topic add buttons
-  document.getElementById('wiz-primary-add')?.addEventListener('click', () => {
-    openTopicPicker('Add Primary Topics', primary, (values) => {
+  // Topic add — clicking anywhere in the chips container or the "+ Add" button opens picker
+  const openPrimary = () => {
+    openTopicPicker('Add Primary Topics', getPrimaryTopics(), (values) => {
       state.values.primaryTopic = values;
       if (values.length === 0) delete state.values.primaryTopic;
       render();
     });
-  });
-  document.getElementById('wiz-secondary-add')?.addEventListener('click', () => {
-    openTopicPicker('Add Secondary Topics', secondary, (values) => {
+  };
+  const openSecondary = () => {
+    openTopicPicker('Add Secondary Topics', getSecondaryTopics(), (values) => {
       state.values.secondaryTopic = values;
       if (values.length === 0) delete state.values.secondaryTopic;
       render();
     });
+  };
+  document.getElementById('wiz-primary-add')?.addEventListener('click', openPrimary);
+  document.getElementById('wiz-secondary-add')?.addEventListener('click', openSecondary);
+  document.getElementById('wiz-primary-chips')?.addEventListener('click', (e) => {
+    if (!e.target.closest('.wiz-inline-chip-x') && !e.target.closest('.wiz-topic-add-inline')) openPrimary();
+  });
+  document.getElementById('wiz-secondary-chips')?.addEventListener('click', (e) => {
+    if (!e.target.closest('.wiz-inline-chip-x') && !e.target.closest('.wiz-topic-add-inline')) openSecondary();
   });
 
   // Custom instructions
@@ -559,12 +566,15 @@ function openTopicPicker(label, initialSelected, onConfirm) {
 
   topicPickerEl.innerHTML = `
     <div class="search-overlay-card wiz-topic-picker-card">
+      <div class="wiz-topic-picker-header">
+        <h3 class="wiz-topic-picker-title">${escapeHTML(label)}</h3>
+        <button class="search-overlay-close" type="button" id="wiz-topic-overlay-close" aria-label="Close">✕</button>
+      </div>
       <div class="search-overlay-input-row">
         <svg class="search-bar-icon" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" class="search-overlay-input" id="wiz-topic-overlay-input"
                placeholder="Search or type a custom topic"
                autocomplete="off" spellcheck="false">
-        <button class="search-overlay-close" type="button" id="wiz-topic-overlay-close" aria-label="Close">✕</button>
       </div>
       <div class="wiz-topic-selected-row" id="wiz-topic-overlay-selected"></div>
       <div class="search-overlay-body shortcuts-sidebar" id="wiz-topic-overlay-body"></div>

@@ -36,10 +36,10 @@ function open(query, searches) {
   }).join('');
 
   overlayEl.innerHTML = `
-    <div class="discover-modal-card shortcuts-sidebar" role="dialog" aria-label="Additional Content Shortcuts">
+    <div class="discover-modal-card shortcuts-sidebar" role="dialog" aria-label="More Content Shortcuts">
       <button type="button" class="discover-modal-close" aria-label="Close">✕</button>
       <div class="sidebar-card-header">
-        <h3 class="sidebar-card-title">Additional Content Shortcuts</h3>
+        <h3 class="sidebar-card-title">More Content Shortcuts</h3>
       </div>
       <p class="discover-modal-sub">
         Explore <strong>${escapeHTML(query)}</strong> across the open web.

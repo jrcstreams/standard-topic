@@ -18,7 +18,7 @@ export function renderNewsFeed(container, topic, isHome, opts = {}) {
   // a modal listing the sources.
   const feedDesc = isCustom
     ? 'Quick links to search engines and platforms for this topic.'
-    : 'Live RSS feed with the latest stories.';
+    : (query ? `The latest news on ${query}.` : 'Live RSS feed with the latest stories.');
 
   let inner = `
     <div class="newsfeed-card-header">
@@ -28,8 +28,7 @@ export function renderNewsFeed(container, topic, isHome, opts = {}) {
   if (!isCustom && !isHome && searches.length > 0 && query) {
     inner += `
       <button type="button" class="feeds-pill" id="open-discover-feeds">
-        <span class="feeds-pill-label-full">Additional Content Shortcuts</span>
-        <span class="feeds-pill-label-short">More Shortcuts</span>
+        <span class="feeds-pill-label">More Content Shortcuts</span>
         <span class="feeds-pill-icon" aria-hidden="true">+</span>
       </button>
     `;
