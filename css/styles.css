@@ -5558,23 +5558,19 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 /* Shared: parent topic rows in modals + search */
 .all-topics-modal-parent.sidebar-shortcut,
 .search-parent-row.sidebar-shortcut {
-  background: var(--color-bg);
+  background: var(--color-bg-light, #f7f8fa);
   border-bottom: 1px solid var(--color-border);
-  border-top: 1px solid var(--color-border);
+  border-top: none;
   border-radius: 0;
   padding: 0.6rem 0.85rem;
-  margin-top: 0.35rem;
+  margin-top: 0;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 0.82rem;
   color: var(--color-primary);
   letter-spacing: 0.02em;
-  text-transform: uppercase;
+  text-transform: none;
   text-decoration: none !important;
-}
-.all-topics-modal-group:first-child .all-topics-modal-parent.sidebar-shortcut,
-.search-overlay-group:first-child .search-parent-row.sidebar-shortcut {
-  margin-top: 0;
 }
 .all-topics-modal-parent.sidebar-shortcut:hover,
 .search-parent-row.sidebar-shortcut:hover {
@@ -5609,18 +5605,18 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   text-decoration: none !important;
 }
 
-/* Bottom breathing room after each subtopic group before the next parent */
+/* Subtopic groups flow into next parent seamlessly */
 .all-topics-modal-subs,
 .search-subtopic-list {
-  margin-bottom: 0.35rem;
+  margin-bottom: 0;
   display: flex !important;
   flex-direction: column !important;
   grid-template-columns: none !important;
 }
-
-.search-subtopic-list:last-child,
-.all-topics-modal-subs:last-child {
-  margin-bottom: 0;
+/* Remove bottom border on last subtopic so it doesn't double with the next parent's top border */
+.search-subtopic-list .sidebar-shortcut:last-child,
+.all-topics-modal-subs .sidebar-shortcut:last-child {
+  border-bottom: none;
 }
 
 /* Subtle "View all topics" link in Featured Topics card */
