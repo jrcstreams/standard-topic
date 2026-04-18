@@ -25,41 +25,40 @@
       {"value":"industry","label":"Industry Reports","clause":"Use industry reports and market analysis"},
       {"value":"mixed","label":"Mixed Sources","clause":"Draw from a diverse mix of credible sources"}
     ]},
-    {"key":"recency","label":"Source Recency / Time Period","row":2,"options":[
+    {"key":"recency","label":"Source Recency / Time Period","row":2,"allowCustom":true,"options":[
       {"value":"last-week","label":"Last Week","clause":"Focus on information from the past week"},
       {"value":"last-month","label":"Last Month","clause":"Focus on information from the past month"},
       {"value":"last-quarter","label":"Last Quarter","clause":"Focus on information from the past three months"},
       {"value":"last-year","label":"Last Year","clause":"Focus on information from the past year"},
-      {"value":"historical","label":"Historical / All Time","clause":"Include historical context and long-term trends"},
-      {"value":"custom-range","label":"Custom Range","clause":"Focus on information from {time_range}","requiresInput":{"key":"time_range","label":"Time range","placeholder":"e.g. 2020-2024"}}
+      {"value":"historical","label":"Historical / All Time","clause":"Include historical context and long-term trends"}
     ]},
-    {"key":"citations","label":"Citations","row":2,"options":[
+    {"key":"citations","label":"Citations","row":2,"allowCustom":true,"options":[
       {"value":"inline","label":"Inline Citations","clause":"Include inline citations for all claims and data points"},
       {"value":"footnotes","label":"Footnotes","clause":"Provide footnotes with source references"},
       {"value":"bibliography","label":"Bibliography","clause":"Include a bibliography of all sources at the end"},
       {"value":"links","label":"Links Only","clause":"Provide direct links to sources where possible"},
       {"value":"none","label":"No Citations","clause":""}
     ]},
-    {"key":"format","label":"Response Format","row":3,"options":[
+    {"key":"format","label":"Response Format","row":3,"allowCustom":true,"options":[
       {"value":"paragraphs","label":"Paragraphs","clause":"Format the response in well-structured paragraphs"},
       {"value":"bullet-points","label":"Bullet Points","clause":"Format the response as organized bullet points"},
       {"value":"numbered-list","label":"Numbered List","clause":"Format the response as a numbered list"},
       {"value":"table","label":"Table Format","clause":"Present the information in a structured table format"},
       {"value":"q-and-a","label":"Q&A Format","clause":"Structure the response as a Q&A format"}
     ]},
-    {"key":"length","label":"Response Length / Depth","row":3,"options":[
+    {"key":"length","label":"Response Length / Depth","row":3,"allowCustom":true,"options":[
       {"value":"brief","label":"Brief (1-2 paragraphs)","clause":"Keep the response brief — 1 to 2 paragraphs"},
       {"value":"moderate","label":"Moderate","clause":"Provide a moderately detailed response"},
       {"value":"detailed","label":"Detailed","clause":"Provide a detailed, thorough response"},
       {"value":"comprehensive","label":"Comprehensive / In-Depth","clause":"Provide a comprehensive, in-depth response covering all relevant aspects"}
     ]},
-    {"key":"audience","label":"Expertise / Audience Level","row":3,"options":[
+    {"key":"audience","label":"Expertise / Audience Level","row":3,"allowCustom":true,"options":[
       {"value":"beginner","label":"Beginner","clause":"Write for a beginner audience with no prior knowledge assumed"},
       {"value":"intermediate","label":"Intermediate","clause":"Write for an audience with intermediate knowledge of the subject"},
       {"value":"expert","label":"Expert / Technical","clause":"Write for an expert audience comfortable with technical details"},
       {"value":"general","label":"General Public","clause":"Write for a general audience in accessible language"}
     ]},
-    {"key":"tone","label":"Tone / Style of Response","row":3,"options":[
+    {"key":"tone","label":"Tone / Style of Response","row":3,"allowCustom":true,"options":[
       {"value":"professional","label":"Professional","clause":"Use a professional tone throughout your response"},
       {"value":"conversational","label":"Conversational","clause":"Write in a conversational, approachable style"},
       {"value":"academic","label":"Academic","clause":"Use an academic, scholarly tone"},

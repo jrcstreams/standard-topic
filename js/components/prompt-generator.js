@@ -1626,6 +1626,12 @@ function generateCustomClause(fieldKey, customStr) {
     case 'contentType': return `Provide ${customStr} on the topic`;
     case 'contentGeneration': return `Approach this with ${customStr}`;
     case 'sources': return `Draw from ${customStr}`;
+    case 'recency': return `Focus on information from ${customStr}`;
+    case 'citations': return `Use ${customStr} citation style`;
+    case 'format': return `Format the response as ${customStr}`;
+    case 'length': return `Target a ${customStr} length response`;
+    case 'audience': return `Write for a ${customStr} audience`;
+    case 'tone': return `Use a ${customStr} tone`;
     case 'geographic': return `Focus on ${customStr}`;
     default: return customStr;
   }
