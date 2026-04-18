@@ -1078,9 +1078,9 @@ body.sticky-always.has-subnav #content {
   content: '';
   position: absolute;
   left: 0;
-  top: 0.15em;
-  bottom: 0.15em;
-  width: 3px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
   background: #d97706;
   border-radius: 999px;
 }
@@ -2205,9 +2205,9 @@ body.sticky-always.has-subnav #content {
   content: '';
   position: absolute;
   left: 0;
-  top: 0.15em;
-  bottom: 0.15em;
-  width: 3px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
   background: #4a7cc9;
   border-radius: 999px;
 }
