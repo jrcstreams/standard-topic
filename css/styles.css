@@ -2003,7 +2003,7 @@ body.sticky-always.has-subnav #content {
 /* "ALL TOPICS +" — matches FEATURED label style */
 .subnav-action-link {
   font-family: var(--font-display);
-  font-size: 0.78rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--color-text-muted);
   letter-spacing: -0.005em;
