@@ -1,12 +1,7 @@
-// Shortcut icon utility — renders SVG image if available, falls back to emoji.
-//
-// SVG files live in assets/shortcut-icons/{key}.svg (e.g. newspaper.svg).
-// On first load, we probe which SVGs exist and cache the results so
-// subsequent renders are synchronous.
+// Shortcut icon utility — always renders <img> for SVG, falls back to
+// emoji via onerror if the file doesn't exist. No async checks needed.
 
 const ICON_PATH = 'assets/shortcut-icons/';
-const checkedIcons = {};   // key → true (exists) | false (missing)
-const pendingChecks = {};  // key → Promise
 
 const EMOJI_MAP = {
   'zap': '⚡', 'globe': '🌍', 'cpu': '🤖', 'trending-up': '📈',
@@ -28,52 +23,17 @@ export function getIconEmoji(key) {
 }
 
 /**
- * Returns HTML for an icon — <img> if SVG exists, emoji <span> otherwise.
- * On first call for a given key, the SVG existence is unknown so we return
- * the emoji and kick off an async check. Once the check resolves, any
- * subsequent render of that key will use the SVG if it exists.
- *
- * Call `preloadIcons(keys)` at startup to warm the cache so the first
- * visible render already has the right answer.
+ * Returns HTML for an icon. Always renders an <img> pointing to the SVG.
+ * If the SVG doesn't exist, the onerror handler replaces it with the emoji.
  */
 export function renderIcon(key, cls = '') {
+  const emoji = getIconEmoji(key);
   const className = cls ? ` class="${cls}"` : '';
-  if (checkedIcons[key] === true) {
-    return `<img src="${ICON_PATH}${key}.svg" alt=""${className} width="20" height="20">`;
-  }
-  // Either not checked yet or confirmed missing — use emoji
-  if (!(key in checkedIcons)) {
-    // Fire-and-forget check so next render is correct
-    checkIcon(key);
-  }
-  return `<span${className}>${getIconEmoji(key)}</span>`;
+  const escapedEmoji = emoji.replace(/'/g, "\\'");
+  return `<img src="${ICON_PATH}${key}.svg" alt=""${className} width="20" height="20" onerror="this.outerHTML='<span${className}>${escapedEmoji}</span>'">`;
 }
 
 /**
- * Preload a list of icon keys — resolves when all checks are done.
- * Call this once at app startup with the full set of icon keys used
- * across all shortcuts so the first render is accurate.
+ * No-op for backwards compatibility — preloading is no longer needed.
  */
-export async function preloadIcons(keys) {
-  const unique = [...new Set(keys)];
-  await Promise.all(unique.map(checkIcon));
-}
-
-async function checkIcon(key) {
-  if (key in checkedIcons) return checkedIcons[key];
-  if (pendingChecks[key]) return pendingChecks[key];
-
-  pendingChecks[key] = fetch(`${ICON_PATH}${key}.svg`, { method: 'HEAD' })
-    .then(res => {
-      checkedIcons[key] = res.ok;
-      delete pendingChecks[key];
-      return res.ok;
-    })
-    .catch(() => {
-      checkedIcons[key] = false;
-      delete pendingChecks[key];
-      return false;
-    });
-
-  return pendingChecks[key];
-}
+export async function preloadIcons() {}
