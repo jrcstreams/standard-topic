@@ -1,5 +1,6 @@
 import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
-import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getEvergreenShortcuts, getSpecificShortcuts, getRelatedTopics, getTopicsGroupedByParent } from './utils/data.js';
+import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getEvergreenShortcuts, getSpecificShortcuts, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys } from './utils/data.js';
+import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { renderFooter } from './components/footer.js';
 import { renderSearchBar, initSearchOverlay } from './components/search-modal.js';
 import { renderNewsFeed } from './components/newsfeed.js';
@@ -14,6 +15,8 @@ import { initPromptPreviewModal } from './components/prompt-preview-modal.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadAllData();
+  // Preload shortcut icon SVGs (non-blocking — renders emoji until resolved)
+  preloadIcons(getAllShortcutIconKeys());
   initPromptModal();
   initDiscoverModal();
   initAllTopicsModal();
@@ -499,33 +502,19 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
 }
 
 function shortcutItem(shortcut, topicName) {
-  const icon = getShortcutIconEmoji(shortcut.icon);
+  const iconHTML = renderIcon(shortcut.icon, 'sidebar-shortcut-icon');
+  const iconEmoji = getIconEmoji(shortcut.icon);
   const prompt = shortcut.prompt.replace(/\{topic\}/g, topicName);
   return `
     <button class="sidebar-shortcut"
             data-prompt="${escapeAttr(prompt)}"
             data-name="${escapeAttr(shortcut.name)}"
-            data-icon="${escapeAttr(icon)}">
-      <span class="sidebar-shortcut-icon">${icon}</span>
+            data-icon="${escapeAttr(iconEmoji)}">
+      ${iconHTML}
       <span class="sidebar-shortcut-name">${escapeHTML(shortcut.name)}</span>
       <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
     </button>
   `;
-}
-
-function getShortcutIconEmoji(icon) {
-  const map = {
-    'zap': '⚡', 'globe': '🌍', 'cpu': '🤖', 'trending-up': '📈',
-    'calendar': '📅', 'rocket': '🚀', 'microscope': '🔬', 'landmark': '🏛️',
-    'trophy': '🏆', 'leaf': '🌿', 'heart': '❤️', 'bar-chart': '📊',
-    'tool': '🔧', 'laptop': '💻', 'flask': '🧪', 'briefcase': '💼',
-    'home': '🏠', 'newspaper': '📰', 'fire': '🔥', 'world': '🌎',
-    'sparkle': '✨', 'lightbulb': '💡', 'target': '🎯', 'compass': '🧭',
-    'book': '📚', 'mag-glass': '🔍', 'shield': '🛡️', 'money': '💰',
-    'handshake': '🤝', 'megaphone': '📣', 'star': '⭐', 'scales': '⚖️',
-    'film': '🎬', 'medal': '🏅', 'graduation': '🎓', 'chess': '♟️',
-  };
-  return map[icon] || '🔗';
 }
 
 function renderRelatedTopicsSidebar(container, route, isHome) {

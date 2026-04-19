@@ -2,6 +2,7 @@
 
 import { getEvergreenShortcuts, getSpecificShortcuts, getTopicBySlug } from '../utils/data.js';
 import { fillPromptTemplate } from '../utils/ai-models.js';
+import { renderIcon, getIconEmoji } from '../utils/icons.js';
 
 export function renderShortcuts(container, route) {
   const isCustom = route.type === 'custom';
@@ -68,24 +69,14 @@ export function renderShortcuts(container, route) {
 }
 
 function buildShortcutCard(shortcut, prompt) {
-  const icon = getIconEmoji(shortcut.icon);
+  const iconHTML = renderIcon(shortcut.icon, 'shortcut-icon');
+  const iconEmoji = getIconEmoji(shortcut.icon);
   return `
-    <button class="shortcut-card" data-prompt="${escapeAttr(prompt)}" data-name="${escapeAttr(shortcut.name)}" data-icon="${escapeAttr(icon)}">
-      <span class="shortcut-icon">${icon}</span>
+    <button class="shortcut-card" data-prompt="${escapeAttr(prompt)}" data-name="${escapeAttr(shortcut.name)}" data-icon="${escapeAttr(iconEmoji)}">
+      ${iconHTML}
       <span class="shortcut-name">${escapeHTML(shortcut.name)}</span>
     </button>
   `;
-}
-
-function getIconEmoji(icon) {
-  const map = {
-    'zap': '⚡', 'globe': '🌍', 'cpu': '🤖', 'trending-up': '📈',
-    'calendar': '📅', 'rocket': '🚀', 'microscope': '🔬', 'landmark': '🏛️',
-    'trophy': '🏆', 'leaf': '🌿', 'heart': '❤️', 'bar-chart': '📊',
-    'tool': '🔧', 'laptop': '💻', 'flask': '🧪', 'briefcase': '💼',
-    'home': '🏠',
-  };
-  return map[icon] || '🔗';
 }
 
 function escapeHTML(str) {

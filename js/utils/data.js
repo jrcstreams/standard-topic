@@ -97,6 +97,14 @@ export function getSpecificShortcuts(topicSlug) {
   return all.filter(s => s.topics.includes(topicSlug));
 }
 
+export function getAllShortcutIconKeys() {
+  const ev = evergreenShortcuts?.shortcuts || [];
+  const sp = specificShortcuts?.shortcuts || [];
+  const keys = new Set();
+  [...ev, ...sp].forEach(s => { if (s.icon) keys.add(s.icon); });
+  return [...keys];
+}
+
 export function getModels() {
   return modelsData?.models || [];
 }

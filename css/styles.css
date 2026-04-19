@@ -1272,6 +1272,16 @@ body.sticky-always.has-subnav #content {
 .shortcut-icon {
   font-size: 1rem;
   flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.shortcut-icon img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
 
 .shortcut-name {
@@ -2319,6 +2329,16 @@ body.sticky-always.has-subnav #content {
   font-size: 1rem;
   opacity: 0.85;
   flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.shortcuts-sidebar .sidebar-shortcut-icon img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
 .shortcuts-sidebar .sidebar-shortcut-name {
   flex: 1;
