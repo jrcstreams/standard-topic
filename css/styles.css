@@ -2307,7 +2307,7 @@ body.sticky-always.has-subnav #content {
   text-align: left;
   font-family: var(--font-family);
   font-size: 0.85rem;
-  color: var(--color-text);
+  color: #1e1e1e;
   text-decoration: none;
   cursor: pointer;
   transition: background 0.12s, color 0.12s;
