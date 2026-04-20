@@ -2,7 +2,6 @@
   "shortcuts": [
 
     {"id":"todays-top-stories","name":"Today's Top Stories","icon":"newspaper","topics":["home"],"prompt":"What are the biggest news stories happening today across all categories — world, business, politics, technology, sports, and entertainment? Summarize the top 10 developments."},
-    {"id":"breaking-news","name":"Breaking News","icon":"fire","topics":["home"],"prompt":"What are the most important breaking news stories right now? Cover developing situations, urgent updates, and just-announced developments across all sectors."},
     {"id":"markets-today","name":"Stock Market Update","icon":"trending-up","topics":["home"],"prompt":"How are the financial markets performing today? Cover the S&P 500, Dow, Nasdaq, international indices, notable movers, and what's driving the action."},
     {"id":"geopolitical-developments","name":"Geopolitical Developments","icon":"world","topics":["home"],"prompt":"What are the most significant geopolitical developments happening right now? Cover international relations, conflicts, diplomacy, trade tensions, and shifts in global power dynamics."},
     {"id":"tech-ai-update","name":"Tech & AI News","icon":"cpu","topics":["home"],"prompt":"What are the latest technology and AI developments making headlines? Cover product launches, breakthroughs, funding rounds, and industry shifts."},
