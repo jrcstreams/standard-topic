@@ -1078,8 +1078,8 @@ body.sticky-always.has-subnav #content {
   align-items: baseline;
   gap: 0.45rem 0.5rem;
   margin-bottom: 0.85rem;
-  padding-bottom: 0.65rem;
-  border-bottom: 1.5px solid #d1d5db;
+  padding-bottom: 0.55rem;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .newsfeed-card-icon {
@@ -2225,12 +2225,12 @@ body.sticky-always.has-subnav #content {
   align-items: baseline;
   gap: 0.45rem 0.5rem;
   margin-bottom: 0;
-  padding-bottom: 0.55rem;
+  padding-bottom: 0.65rem;
   border-bottom: 1px solid #e2e8f0;
 }
 
 .sidebar-card-desc {
-  margin: 0;
+  margin: 0.15rem 0 0;
   padding: 0;
   border: none;
   font-size: 0.8rem;
