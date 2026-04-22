@@ -18,11 +18,15 @@ export function renderNewsFeed(container, topic, isHome, opts = {}) {
   // a modal listing the sources.
   const feedDesc = isCustom
     ? 'Quick links to search engines and platforms for this topic.'
-    : (query ? `Latest news on ${query}.` : 'Latest news.');
+    : 'Latest news and developments.';
+
+  const topicPill = (!isCustom && !isHome && query)
+    ? `<span class="section-topic-pill">${escapeHTML(query)}</span>`
+    : '';
 
   let inner = `
     <div class="newsfeed-card-header">
-      <h3 class="newsfeed-card-title">${escapeHTML(title)}</h3>
+      <h3 class="newsfeed-card-title">${escapeHTML(title)} ${topicPill}</h3>
       <span class="sidebar-card-desc">${feedDesc}</span>
   `;
   if (!isCustom && !isHome && searches.length > 0 && query) {

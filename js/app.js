@@ -469,11 +469,15 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   const specific = isCustom ? [] : getSpecificShortcutsFor(isHome ? 'home' : route.slug);
   const all = [...evergreen, ...specific];
 
+  const topicPill = (!isHome && !isCustom && topicName)
+    ? `<span class="section-topic-pill">${escapeHTML(topicName)}</span>`
+    : '';
+
   let html = `
     <div class="sidebar-card shortcuts-sidebar">
       <div class="sidebar-card-header">
-        <h3 class="sidebar-card-title">AI Shortcuts</h3>
-        <span class="sidebar-card-desc">Prompt shortcuts to quickly access AI knowledge across top models.</span>
+        <h3 class="sidebar-card-title">AI Shortcuts ${topicPill}</h3>
+        <span class="sidebar-card-desc">Prompt shortcuts to quickly access AI knowledge.</span>
       </div>
   `;
 

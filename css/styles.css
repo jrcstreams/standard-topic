@@ -2229,6 +2229,25 @@ body.sticky-always.has-subnav #content {
   border-bottom: 1px solid #e2e8f0;
 }
 
+/* Topic pill next to section titles (topic pages only) */
+/* --- CONCEPT B: Soft filled pill --- */
+.section-topic-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #4a6a8a;
+  background: #eef2f7;
+  border: none;
+  border-radius: 999px;
+  padding: 0.22rem 0.65rem;
+  letter-spacing: 0.02em;
+  vertical-align: middle;
+  margin-left: 0.45rem;
+  position: relative;
+  top: -1px;
+}
+
 .sidebar-card-desc {
   margin: 0.35rem 0 0.1rem;
   padding: 0;
