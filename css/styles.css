@@ -1928,8 +1928,8 @@ body.sticky-always.has-subnav #content {
 /* Subnav inline topics (desktop) — sits on the title row */
 .subnav-topics-inline {
   display: flex;
-  align-items: center;
-  gap: 1.15rem;
+  align-items: stretch;
+  gap: 0.25rem;
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -1956,6 +1956,8 @@ body.sticky-always.has-subnav #content {
   color: var(--color-text-muted);
   letter-spacing: -0.005em;
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
 }
 
 .subnav-topic-link {
@@ -1967,9 +1969,9 @@ body.sticky-always.has-subnav #content {
   white-space: nowrap;
   letter-spacing: 0.01em;
   transition: background 0.12s, color 0.12s;
-  padding: 0.45rem 0.55rem;
-  border-radius: 4px;
-  margin: -0.45rem 0;
+  padding: 0 0.55rem;
+  display: inline-flex;
+  align-items: center;
 }
 @media (hover: hover) {
   .subnav-topic-link:hover {
@@ -2008,9 +2010,9 @@ body.sticky-always.has-subnav #content {
   flex-shrink: 0;
   letter-spacing: 0.02em;
   transition: color 0.12s, background 0.12s;
-  padding: 0.35rem 0.45rem;
-  border-radius: 4px;
-  margin: -0.35rem 0;
+  padding: 0 0.45rem;
+  display: inline-flex;
+  align-items: center;
 }
 @media (hover: hover) {
   .subnav-more-link:hover {
