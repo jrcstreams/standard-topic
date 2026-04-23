@@ -1,5 +1,5 @@
 import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
-import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getEvergreenShortcuts, getSpecificShortcuts, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys } from './utils/data.js';
+import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys } from './utils/data.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { renderFooter } from './components/footer.js';
 import { renderSearchBar, initSearchOverlay } from './components/search-modal.js';
@@ -465,9 +465,8 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   const topic = isHome ? getTopicBySlug('home') : (isCustom ? null : getTopicBySlug(route.slug));
   const topicName = isCustom ? customTerm : (isHome ? '' : topic?.name || '');
 
-  const evergreen = getEvergreenShortcutsFor(topic);
-  const specific = isCustom ? [] : getSpecificShortcutsFor(isHome ? 'home' : route.slug);
-  const all = [...evergreen, ...specific];
+  const topicSlug = isHome ? 'home' : (isCustom ? '_custom' : route.slug);
+  const all = getShortcutsForTopic(topicSlug);
 
   const topicPill = (!isHome && !isCustom && topicName)
     ? `<span class="section-topic-pill">${escapeHTML(topicName)}</span>`
@@ -621,12 +620,6 @@ function renderRelatedTopicsSidebar(container, route, isHome) {
 
 // ---------- Data helpers (thin wrappers around data.js) ----------
 
-function getEvergreenShortcutsFor(topic) {
-  return getEvergreenShortcuts(topic);
-}
-function getSpecificShortcutsFor(slug) {
-  return getSpecificShortcuts(slug);
-}
 function getRelatedTopicsFor(route, isHome) {
   if (isHome) return getParentTopics();
   const topic = getTopicBySlug(route.slug);

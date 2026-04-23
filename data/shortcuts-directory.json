@@ -1,0 +1,67 @@
+{
+  "shortcuts": [
+    {"id":"latest-news","name":"Latest News","icon":"newspaper","prompt":"What are the latest news stories about {topic}? Summarize the top 5 most recent developments with dates and key details."},
+    {"id":"overview","name":"Overview","icon":"compass","prompt":"Give me a clear, current overview of {topic}. What's happening, why it matters, and what the current landscape looks like."},
+    {"id":"recent-developments","name":"Recent Developments","icon":"calendar","prompt":"What are the most important recent developments in {topic}? Focus on the past 30 days. Include context and implications."},
+    {"id":"explain-simply","name":"Explain It Simply","icon":"lightbulb","prompt":"Explain {topic} in simple, everyday terms. Assume I know nothing. Cover what it is, why it matters, and what I should know."},
+    {"id":"why-it-matters","name":"Why It Matters","icon":"target","prompt":"Why does {topic} matter right now? Explain its significance, who it affects, and what's at stake."},
+    {"id":"what-to-watch","name":"What to Watch","icon":"mag-glass","prompt":"What should I be watching for next in {topic}? Cover upcoming events, expected announcements, and things likely to change soon."},
+    {"id":"key-facts-stats","name":"Key Facts & Stats","icon":"bar-chart","prompt":"What are the most important facts, figures, and statistics about {topic}? Provide current data with sources where possible."},
+    {"id":"history-background","name":"History & Background","icon":"book","prompt":"What is the history and background of {topic}? Cover origins, major milestones, and how it evolved to where it is today."},
+
+    {"id":"todays-top-stories","name":"Today's Top Stories","icon":"newspaper","prompt":"What are the biggest news stories happening today across all categories — world, business, politics, technology, sports, and entertainment? Summarize the top 10 developments."},
+    {"id":"markets-today","name":"Stock Market Update","icon":"trending-up","prompt":"How are the financial markets performing today? Cover the S&P 500, Dow, Nasdaq, international indices, notable movers, and what's driving the action."},
+    {"id":"geopolitical-developments","name":"Geopolitical Developments","icon":"world","prompt":"What are the most significant geopolitical developments happening right now? Cover international relations, conflicts, diplomacy, trade tensions, and shifts in global power dynamics."},
+    {"id":"tech-ai-update","name":"Tech & AI News","icon":"cpu","prompt":"What are the latest technology and AI developments making headlines? Cover product launches, breakthroughs, funding rounds, and industry shifts."},
+    {"id":"political-pulse","name":"Political Headlines","icon":"landmark","prompt":"What are the most important political headlines right now in the US and globally? Cover legislation, elections, diplomacy, and policy changes."},
+    {"id":"sports-roundup","name":"Sports Scores & Headlines","icon":"trophy","prompt":"Provide a sports roundup covering today's biggest games, scores, and headlines across the NFL, NBA, MLB, NHL, soccer, and other major leagues."},
+    {"id":"feel-good-stories","name":"Feel Good Stories","icon":"sparkle","prompt":"What are some uplifting, positive, or feel-good news stories from today or this week? Cover human interest, community achievements, and inspiring developments."},
+
+    {"id":"regional-conflicts","name":"Conflicts & Tensions","icon":"shield","prompt":"What are the current conflicts, tensions, or security issues affecting {topic}? Provide context, key actors, and recent developments."},
+    {"id":"trade-relations","name":"Trade & Economic Relations","icon":"handshake","prompt":"What are the latest trade agreements, disputes, or economic developments involving {topic}? Cover tariffs, partnerships, and economic indicators."},
+    {"id":"cultural-highlights","name":"Cultural Highlights","icon":"star","prompt":"What are the most notable cultural developments, events, or trends in {topic} right now? Cover arts, traditions, social movements, and lifestyle."},
+    {"id":"immigration-migration","name":"Immigration & Migration","icon":"globe","prompt":"What are the latest immigration and migration developments related to {topic}? Cover policy changes, population movements, and humanitarian aspects."},
+
+    {"id":"stock-market-analysis","name":"Stock Market Analysis","icon":"trending-up","prompt":"Provide a detailed stock market analysis related to {topic}. Cover key indices, sector performance, notable movers, and expert forecasts."},
+    {"id":"industry-report","name":"Industry Report","icon":"briefcase","prompt":"Generate an industry report for {topic}. Cover market size, growth trends, competitive landscape, challenges, and opportunities."},
+    {"id":"startup-vc","name":"Startup & VC Activity","icon":"rocket","prompt":"What are the latest startup funding rounds, acquisitions, and venture capital activity related to {topic}? Cover notable deals and emerging companies."},
+    {"id":"economic-indicators","name":"Economic Indicators","icon":"money","prompt":"What are the latest key economic indicators related to {topic}? Cover GDP, inflation, employment, consumer confidence, and central bank actions."},
+    {"id":"crypto-market-update","name":"Crypto Market Update","icon":"fire","prompt":"Provide a cryptocurrency market update related to {topic}. Cover price movements, regulatory developments, DeFi activity, and notable projects."},
+    {"id":"real-estate-trends","name":"Real Estate Trends","icon":"home","prompt":"What are the current real estate market trends for {topic}? Cover pricing, inventory, mortgage rates, commercial vs residential, and regional differences."},
+    {"id":"ma-deals","name":"Recent M&A Deals","icon":"handshake","prompt":"What are the most significant recent mergers, acquisitions, and corporate deals related to {topic}? Cover deal terms, strategic rationale, and market impact."},
+    {"id":"energy-markets","name":"Energy Markets","icon":"leaf","prompt":"What are the latest developments in energy markets related to {topic}? Cover oil, gas, renewables, pricing, and policy shifts."},
+
+    {"id":"policy-breakdown","name":"Policy Breakdown","icon":"scales","prompt":"Break down the most important recent policy developments in {topic}. Explain what changed, who it affects, and what comes next."},
+    {"id":"election-updates","name":"Election Updates","icon":"megaphone","prompt":"What are the latest election developments related to {topic}? Cover candidates, polling, campaign strategies, and key races."},
+    {"id":"legislative-tracker","name":"Legislative Tracker","icon":"landmark","prompt":"Track the most important pieces of legislation related to {topic}. Cover current status, key provisions, sponsors, and likelihood of passage."},
+    {"id":"public-opinion","name":"Public Opinion & Polls","icon":"chess","prompt":"What do recent polls and surveys reveal about public opinion on {topic}? Cover approval ratings, issue polling, and demographic breakdowns."},
+    {"id":"diplomacy-watch","name":"Diplomacy Watch","icon":"world","prompt":"What are the latest diplomatic developments related to {topic}? Cover negotiations, treaties, summits, and international relations shifts."},
+
+    {"id":"ai-tools-roundup","name":"AI Tools Roundup","icon":"cpu","prompt":"What are the best current AI tools and platforms related to {topic}? Provide a roundup with descriptions, use cases, pricing, and comparisons."},
+    {"id":"product-launches","name":"Product Launches & Reviews","icon":"laptop","prompt":"What are the most notable recent product launches or reviews related to {topic}? Cover specifications, pricing, reception, and comparisons to competitors."},
+    {"id":"dev-resources","name":"Developer Resources","icon":"tool","prompt":"What are the best current developer resources, frameworks, and tools for {topic}? Cover documentation, tutorials, libraries, and community recommendations."},
+    {"id":"security-threats","name":"Security Threats & Advisories","icon":"shield","prompt":"What are the latest security threats, vulnerabilities, and advisories related to {topic}? Cover CVEs, attack vectors, patches, and mitigation strategies."},
+    {"id":"tech-earnings","name":"Tech Company Earnings","icon":"money","prompt":"Summarize the latest tech company earnings reports related to {topic}. Cover revenue, growth metrics, guidance, and market reactions."},
+    {"id":"cloud-updates","name":"Cloud Platform Updates","icon":"rocket","prompt":"What are the latest platform updates, new services, or pricing changes from major cloud providers related to {topic}?"},
+    {"id":"privacy-regulations","name":"Privacy Regulations","icon":"scales","prompt":"What are the latest privacy and data protection regulations, enforcement actions, or compliance requirements related to {topic}?"},
+    {"id":"robotics-applications","name":"Robotics Applications","icon":"cpu","prompt":"What are the most interesting real-world applications and deployments of robotics related to {topic}? Cover industrial, medical, consumer, and research use cases."},
+    {"id":"blockchain-use-cases","name":"Blockchain Use Cases","icon":"tool","prompt":"What are the most compelling real-world blockchain use cases and projects related to {topic}? Go beyond crypto to cover supply chain, identity, governance, and enterprise applications."},
+
+    {"id":"reviews-ratings","name":"Reviews & Ratings","icon":"star","prompt":"What are the latest critical reviews and audience ratings for recent releases in {topic}? Cover what's worth watching and what to skip."},
+    {"id":"upcoming-releases","name":"Upcoming Releases","icon":"calendar","prompt":"What are the most anticipated upcoming releases in {topic}? Cover release dates, trailers, cast announcements, and early buzz."},
+    {"id":"celebrity-news","name":"Celebrity News","icon":"sparkle","prompt":"What are the latest celebrity news stories and headlines related to {topic}? Cover noteworthy moments, appearances, and social media activity."},
+    {"id":"awards-nominations","name":"Awards & Nominations","icon":"medal","prompt":"What are the latest award show results, nominations, and predictions related to {topic}? Cover Oscars, Emmys, Grammys, and other major ceremonies."},
+    {"id":"top-podcasts","name":"Top Podcasts","icon":"megaphone","prompt":"What are the top trending podcasts and must-listen episodes right now in {topic}? Cover charts, new launches, and standout interviews."},
+
+    {"id":"scores-standings","name":"Scores & Standings","icon":"trophy","prompt":"Provide the latest scores, standings, and results for {topic}. Cover recent games, league tables, and playoff positioning."},
+    {"id":"trade-transfer-news","name":"Trade & Transfer News","icon":"fire","prompt":"What are the latest trade rumors, confirmed transfers, and free agent signings in {topic}? Cover the biggest moves and their impact."},
+    {"id":"fantasy-insights","name":"Fantasy Sports Insights","icon":"chess","prompt":"Provide fantasy sports insights for {topic}. Cover waiver wire picks, start/sit recommendations, injury impacts, and sleeper picks for this week."},
+    {"id":"season-preview","name":"Season Preview","icon":"rocket","prompt":"Provide a season preview for {topic}. Cover preseason rankings, key matchups, breakout candidates, and championship predictions."},
+    {"id":"player-spotlight","name":"Player Spotlight","icon":"medal","prompt":"Spotlight the top performing players in {topic} right now. Cover stats, highlights, records, and MVP-caliber performances."},
+
+    {"id":"study-resources","name":"Study Resources","icon":"graduation","prompt":"What are the best current study resources, textbooks, and online courses for learning about {topic}? Include free and paid options with difficulty levels."},
+    {"id":"learning-tools","name":"Learning Tools & Apps","icon":"tool","prompt":"What are the best apps, tools, and platforms for learning {topic}? Cover interactive tools, practice exercises, and adaptive learning platforms."},
+    {"id":"research-papers","name":"Recent Research","icon":"flask","prompt":"What are the most notable recent research papers, findings, or academic developments in {topic}? Summarize key conclusions and their significance."},
+    {"id":"curriculum-updates","name":"Curriculum & Standards","icon":"briefcase","prompt":"What are the latest curriculum standards, educational policy changes, or teaching methodology updates related to {topic}?"}
+  ]
+}

@@ -1,24 +1,28 @@
 // Data loading and querying utilities
 
 let topicsData = null;
-let evergreenShortcuts = null;
-let specificShortcuts = null;
+let shortcutsDirectory = null;
+let shortcutsAssignments = null;
 let modelsData = null;
 let promptGenData = null;
 let externalSearchesData = null;
 
+// Legacy references kept for compatibility
+let evergreenShortcuts = null;
+let specificShortcuts = null;
+
 export async function loadAllData() {
-  const [topics, evergreen, specific, models, promptGen, externalSearches] = await Promise.all([
+  const [topics, directory, assignments, models, promptGen, externalSearches] = await Promise.all([
     fetchJSON('data/topics.json'),
-    fetchJSON('data/shortcuts-evergreen.json'),
-    fetchJSON('data/shortcuts-specific.json'),
+    fetchJSON('data/shortcuts-directory.json'),
+    fetchJSON('data/shortcuts-assignments.json'),
     fetchJSON('data/ai-models.json'),
     fetchJSON('data/prompt-generator.json'),
     fetchJSON('data/external-searches.json').catch(() => ({ searches: [] })),
   ]);
   topicsData = topics;
-  evergreenShortcuts = evergreen;
-  specificShortcuts = specific;
+  shortcutsDirectory = directory;
+  shortcutsAssignments = assignments;
   modelsData = models;
   promptGenData = promptGen;
   externalSearchesData = externalSearches;
@@ -86,32 +90,41 @@ export function getRelatedTopics(topic) {
   return related;
 }
 
-export function getEvergreenShortcuts(topic) {
-  const all = evergreenShortcuts?.shortcuts || [];
-  const excludeIds = topic?.excludeEvergreen || [];
-  return all.filter(s => !excludeIds.includes(s.id));
+/**
+ * Get shortcuts for a specific topic slug, in display order.
+ * Looks up the assignment list for the topic, resolves each ID from the directory.
+ */
+export function getShortcutsForTopic(topicSlug) {
+  const directory = shortcutsDirectory?.shortcuts || [];
+  const assignments = shortcutsAssignments?.assignments || {};
+  const ids = assignments[topicSlug] || assignments['_custom'] || [];
+  const dirMap = {};
+  directory.forEach(s => { dirMap[s.id] = s; });
+  return ids.map(id => dirMap[id]).filter(Boolean);
 }
 
-export function getSpecificShortcuts(topicSlug) {
-  const all = specificShortcuts?.shortcuts || [];
-  return all.filter(s => s.topics.includes(topicSlug));
+/**
+ * Get the full shortcuts directory (for admin panel).
+ */
+export function getShortcutsDirectory() {
+  return shortcutsDirectory?.shortcuts || [];
 }
 
-export function getShortcutSections() {
-  return evergreenShortcuts?.sections || {};
+/**
+ * Get the full assignments object (for admin panel).
+ */
+export function getShortcutsAssignments() {
+  return shortcutsAssignments?.assignments || {};
 }
 
-export function getShortcutSectionOrder() {
-  return evergreenShortcuts?.sectionOrder || ['news', 'reference', 'decision', 'watch', 'personal'];
-}
+// Legacy compatibility wrappers
+export function getEvergreenShortcuts() { return []; }
+export function getSpecificShortcuts() { return []; }
 
 export function getAllShortcutIconKeys() {
-  const ev = evergreenShortcuts?.shortcuts || [];
-  const sp = specificShortcuts?.shortcuts || [];
-  const sections = evergreenShortcuts?.sections || {};
+  const all = shortcutsDirectory?.shortcuts || [];
   const keys = new Set();
-  [...ev, ...sp].forEach(s => { if (s.icon) keys.add(s.icon); });
-  Object.values(sections).forEach(s => { if (s.icon) keys.add(s.icon); });
+  all.forEach(s => { if (s.icon) keys.add(s.icon); });
   return [...keys];
 }
 

@@ -1,0 +1,68 @@
+{
+  "assignments": {
+    "home": ["todays-top-stories","markets-today","geopolitical-developments","tech-ai-update","political-pulse","sports-roundup","feel-good-stories"],
+
+    "world": ["latest-news","overview","regional-conflicts","trade-relations","cultural-highlights","immigration-migration","recent-developments","what-to-watch"],
+    "us": ["latest-news","overview","regional-conflicts","trade-relations","cultural-highlights","immigration-migration","recent-developments","key-facts-stats"],
+    "europe": ["latest-news","overview","regional-conflicts","trade-relations","cultural-highlights","immigration-migration","recent-developments","what-to-watch"],
+    "latin-america": ["latest-news","overview","regional-conflicts","trade-relations","cultural-highlights","immigration-migration","recent-developments"],
+    "middle-east": ["latest-news","overview","regional-conflicts","trade-relations","cultural-highlights","immigration-migration","recent-developments","what-to-watch"],
+    "asia": ["latest-news","overview","regional-conflicts","trade-relations","cultural-highlights","immigration-migration","recent-developments"],
+    "china": ["latest-news","overview","regional-conflicts","trade-relations","cultural-highlights","recent-developments","key-facts-stats"],
+    "india": ["latest-news","overview","regional-conflicts","trade-relations","cultural-highlights","recent-developments","key-facts-stats"],
+    "australia-new-zealand": ["latest-news","overview","regional-conflicts","trade-relations","cultural-highlights","recent-developments"],
+
+    "business-and-finance": ["latest-news","overview","stock-market-analysis","industry-report","startup-vc","economic-indicators","recent-developments","key-facts-stats"],
+    "markets": ["latest-news","stock-market-analysis","economic-indicators","overview","recent-developments","what-to-watch","key-facts-stats"],
+    "economy": ["latest-news","overview","stock-market-analysis","economic-indicators","recent-developments","key-facts-stats","what-to-watch"],
+    "e-commerce": ["latest-news","overview","industry-report","startup-vc","recent-developments","key-facts-stats"],
+    "energy": ["latest-news","overview","energy-markets","industry-report","recent-developments","what-to-watch"],
+    "small-business": ["latest-news","overview","industry-report","startup-vc","recent-developments","explain-simply"],
+    "tech-business": ["latest-news","overview","industry-report","startup-vc","tech-earnings","recent-developments"],
+    "cryptocurrency": ["latest-news","overview","crypto-market-update","recent-developments","what-to-watch","key-facts-stats"],
+    "blockchain": ["latest-news","overview","crypto-market-update","blockchain-use-cases","recent-developments","explain-simply"],
+    "real-estate": ["latest-news","overview","real-estate-trends","recent-developments","key-facts-stats","what-to-watch"],
+    "mergers-and-acquisitions": ["latest-news","overview","ma-deals","recent-developments","key-facts-stats"],
+
+    "politics": ["latest-news","overview","policy-breakdown","election-updates","public-opinion","recent-developments","what-to-watch"],
+    "us-politics": ["latest-news","overview","policy-breakdown","election-updates","legislative-tracker","public-opinion","recent-developments","what-to-watch"],
+    "international-politics": ["latest-news","overview","policy-breakdown","diplomacy-watch","recent-developments","what-to-watch"],
+    "elections": ["latest-news","overview","election-updates","public-opinion","recent-developments","what-to-watch"],
+    "geopolitics": ["latest-news","overview","diplomacy-watch","public-opinion","recent-developments","what-to-watch"],
+    "law-and-regulation": ["latest-news","overview","policy-breakdown","legislative-tracker","recent-developments","key-facts-stats"],
+
+    "technology": ["latest-news","overview","product-launches","recent-developments","what-to-watch","key-facts-stats","explain-simply"],
+    "artificial-intelligence": ["latest-news","overview","ai-tools-roundup","recent-developments","what-to-watch","explain-simply","key-facts-stats"],
+    "emerging-technologies": ["latest-news","overview","ai-tools-roundup","recent-developments","what-to-watch","explain-simply"],
+    "consumer-electronics": ["latest-news","overview","product-launches","recent-developments","what-to-watch"],
+    "software": ["latest-news","overview","product-launches","dev-resources","recent-developments","what-to-watch"],
+    "cybersecurity": ["latest-news","overview","security-threats","recent-developments","what-to-watch","key-facts-stats"],
+    "privacy-and-data-protection": ["latest-news","overview","privacy-regulations","security-threats","recent-developments","what-to-watch"],
+    "cloud-computing": ["latest-news","overview","cloud-updates","dev-resources","recent-developments","what-to-watch"],
+    "information-technology": ["latest-news","overview","dev-resources","security-threats","cloud-updates","recent-developments"],
+    "programming-development": ["latest-news","overview","dev-resources","recent-developments","what-to-watch","explain-simply"],
+    "virtual-augmented-reality": ["latest-news","overview","product-launches","recent-developments","what-to-watch"],
+    "robotics": ["latest-news","overview","robotics-applications","recent-developments","what-to-watch","explain-simply"],
+
+    "entertainment": ["latest-news","overview","reviews-ratings","celebrity-news","awards-nominations","recent-developments"],
+    "tv-and-movies": ["latest-news","overview","reviews-ratings","upcoming-releases","awards-nominations","recent-developments"],
+    "podcasts": ["latest-news","overview","top-podcasts","reviews-ratings","recent-developments"],
+    "celebrities": ["latest-news","overview","celebrity-news","recent-developments"],
+
+    "sports": ["latest-news","overview","scores-standings","trade-transfer-news","season-preview","player-spotlight","recent-developments"],
+    "soccer": ["latest-news","overview","scores-standings","trade-transfer-news","season-preview","player-spotlight","recent-developments"],
+    "basketball": ["latest-news","overview","scores-standings","trade-transfer-news","fantasy-insights","season-preview","player-spotlight"],
+    "football": ["latest-news","overview","scores-standings","trade-transfer-news","fantasy-insights","season-preview","player-spotlight"],
+    "college-football": ["latest-news","overview","scores-standings","trade-transfer-news","fantasy-insights","season-preview","player-spotlight"],
+    "baseball": ["latest-news","overview","scores-standings","trade-transfer-news","fantasy-insights","season-preview","player-spotlight"],
+    "hockey": ["latest-news","overview","scores-standings","trade-transfer-news","fantasy-insights","season-preview","player-spotlight"],
+
+    "education-and-learning": ["latest-news","overview","study-resources","learning-tools","research-papers","curriculum-updates","recent-developments"],
+    "math": ["overview","study-resources","learning-tools","research-papers","explain-simply","history-background"],
+    "science-education": ["overview","study-resources","learning-tools","research-papers","curriculum-updates","explain-simply"],
+    "reading-and-writing": ["overview","study-resources","learning-tools","curriculum-updates","explain-simply"],
+    "history": ["overview","study-resources","learning-tools","history-background","key-facts-stats","explain-simply"],
+
+    "_custom": ["latest-news","overview","recent-developments","explain-simply","why-it-matters","what-to-watch","key-facts-stats","history-background"]
+  }
+}
