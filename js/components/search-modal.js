@@ -80,7 +80,7 @@ export function renderSearchBar(container, route, opts = {}) {
   container.innerHTML = `
     <div class="search-bar-wrapper">
       <button class="${cls}" type="button" aria-label="${fullLabel}">
-        <svg class="search-bar-icon" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <svg class="search-bar-icon" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="7.5"/><line x1="21" y1="21" x2="15.5" y2="15.5"/></svg>
         <span class="search-bar-label">
           <span class="search-bar-label-full">${fullLabel}</span>
           <span class="search-bar-label-short">${shortLabel}</span>

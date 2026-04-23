@@ -419,6 +419,30 @@ function render() {
   });
 
   updatePreview();
+
+  // Bump action bar up when footer scrolls into view
+  setupFooterDodge();
+}
+
+let footerDodgeHandler = null;
+function setupFooterDodge() {
+  if (footerDodgeHandler) window.removeEventListener('scroll', footerDodgeHandler);
+  const actionBar = document.querySelector('.wiz-action-bar');
+  const footer = document.getElementById('site-footer');
+  if (!actionBar || !footer) return;
+
+  footerDodgeHandler = () => {
+    const footerRect = footer.getBoundingClientRect();
+    const windowH = window.innerHeight;
+    if (footerRect.top < windowH) {
+      const overlap = windowH - footerRect.top;
+      actionBar.style.transform = 'translateY(-' + overlap + 'px)';
+    } else {
+      actionBar.style.transform = '';
+    }
+  };
+  window.addEventListener('scroll', footerDodgeHandler, { passive: true });
+  footerDodgeHandler();
 }
 
 function renderStepsInSubnav() {

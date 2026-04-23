@@ -401,6 +401,10 @@ body.sticky-always.has-subnav #content {
   text-decoration: none;
 }
 
+.sticky-cta-plus {
+  margin-left: 0.2rem;
+  opacity: 0.7;
+}
 .sticky-cta:active {
   background: rgba(255, 255, 255, 0.18);
   color: white;
@@ -555,6 +559,32 @@ body.sticky-always.has-subnav #content {
   #sub-header.is-subnav .topic-banner {
     padding: 0.7rem 0.9rem;
     min-height: 48px;
+  }
+  /* Match link hover area to smaller mobile banner padding */
+  .subnav-topic-link,
+  .subnav-topics-label {
+    padding-top: 0.7rem !important;
+    padding-bottom: 0.75rem !important;
+    margin-top: -0.7rem !important;
+    margin-bottom: -0.75rem !important;
+  }
+  .subnav-action-link {
+    padding-top: 0.7rem !important;
+    padding-bottom: 0.75rem !important;
+    margin-top: -0.7rem !important;
+    margin-bottom: -0.75rem !important;
+  }
+  .subnav-more-link {
+    padding-top: 0.7rem !important;
+    padding-bottom: 0.75rem !important;
+    margin-top: -0.7rem !important;
+    margin-bottom: -0.75rem !important;
+  }
+  .subnav-related-btn {
+    padding-top: 0.7rem !important;
+    padding-bottom: 0.75rem !important;
+    margin-top: -0.7rem !important;
+    margin-bottom: -0.75rem !important;
   }
 
   #sub-header.is-subnav .topic-banner-title {
@@ -1975,17 +2005,17 @@ body.sticky-always.has-subnav #content {
 .subnav-action-link {
   font-family: var(--font-display);
   font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--color-text-muted);
+  font-weight: 600;
+  color: #4a6a8a;
   letter-spacing: -0.005em;
   text-decoration: none;
   white-space: nowrap;
   flex-shrink: 0;
-  margin-right: 0.65rem;
-  padding: 1.5rem 0.65rem 1.35rem 0.4rem;
+  margin-right: 0;
+  padding: 1.5rem 0.6rem 1.35rem 0.4rem;
   margin-top: -1.5rem;
   margin-bottom: -1.35rem;
-  border-right: 1px solid var(--color-border);
+  border-right: none;
   transition: color 0.12s, background 0.12s;
   display: inline-flex;
   align-items: center;
@@ -3580,6 +3610,7 @@ body.sticky-always.has-subnav #content {
   align-items: center;
   gap: 1rem;
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+  transition: transform 0.15s ease-out;
 }
 .wiz-action-bar-inner {
   max-width: var(--max-width);
