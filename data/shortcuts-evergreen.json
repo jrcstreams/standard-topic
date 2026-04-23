@@ -1,20 +1,12 @@
 {
-  "sections": {
-    "news": {"label": "News", "icon": "newspaper", "description": "Recent developments, snapshots, what's happening now"},
-    "reference": {"label": "Reference", "icon": "book", "description": "Explanations, primers, comparisons, glossaries"},
-    "decision": {"label": "Decision", "icon": "compass", "description": "Recommendations, buying guides, planning help"},
-    "watch": {"label": "Watch", "icon": "mag-glass", "description": "Trackers, calendars, things to monitor going forward"},
-    "personal": {"label": "Personal", "icon": "target", "description": "Hands-on help with your own situation"}
-  },
-  "sectionOrder": ["news", "reference", "decision", "watch", "personal"],
   "shortcuts": [
-    {"id":"latest-news","name":"Latest News","section":"news","prompt":"What are the latest news stories about {topic}? Summarize the top 5 most recent developments with dates and key details."},
-    {"id":"recent-developments","name":"Recent Developments","section":"news","prompt":"What are the most important recent developments in {topic}? Focus on the past 30 days. Include context and implications."},
-    {"id":"overview","name":"Overview","section":"reference","prompt":"Give me a clear, current overview of {topic}. What's happening, why it matters, and what the current landscape looks like."},
-    {"id":"explain-simply","name":"Explain It Simply","section":"reference","prompt":"Explain {topic} in simple, everyday terms. Assume I know nothing. Cover what it is, why it matters, and what I should know."},
-    {"id":"key-facts-stats","name":"Key Facts & Stats","section":"reference","prompt":"What are the most important facts, figures, and statistics about {topic}? Provide current data with sources where possible."},
-    {"id":"history-background","name":"History & Background","section":"reference","prompt":"What is the history and background of {topic}? Cover origins, major milestones, and how it evolved to where it is today."},
-    {"id":"why-it-matters","name":"Why It Matters","section":"decision","prompt":"Why does {topic} matter right now? Explain its significance, who it affects, and what's at stake."},
-    {"id":"what-to-watch","name":"What to Watch","section":"watch","prompt":"What should I be watching for next in {topic}? Cover upcoming events, expected announcements, and things likely to change soon."}
+    {"id":"latest-news","name":"Latest News","icon":"newspaper","prompt":"What are the latest news stories about {topic}? Summarize the top 5 most recent developments with dates and key details."},
+    {"id":"overview","name":"Overview","icon":"compass","prompt":"Give me a clear, current overview of {topic}. What's happening, why it matters, and what the current landscape looks like."},
+    {"id":"recent-developments","name":"Recent Developments","icon":"calendar","prompt":"What are the most important recent developments in {topic}? Focus on the past 30 days. Include context and implications."},
+    {"id":"explain-simply","name":"Explain It Simply","icon":"lightbulb","prompt":"Explain {topic} in simple, everyday terms. Assume I know nothing. Cover what it is, why it matters, and what I should know."},
+    {"id":"why-it-matters","name":"Why It Matters","icon":"target","prompt":"Why does {topic} matter right now? Explain its significance, who it affects, and what's at stake."},
+    {"id":"what-to-watch","name":"What to Watch","icon":"mag-glass","prompt":"What should I be watching for next in {topic}? Cover upcoming events, expected announcements, and things likely to change soon."},
+    {"id":"key-facts-stats","name":"Key Facts & Stats","icon":"bar-chart","prompt":"What are the most important facts, figures, and statistics about {topic}? Provide current data with sources where possible."},
+    {"id":"history-background","name":"History & Background","icon":"book","prompt":"What is the history and background of {topic}? Cover origins, major milestones, and how it evolved to where it is today."}
   ]
 }
