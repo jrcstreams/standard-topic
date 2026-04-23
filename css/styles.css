@@ -440,7 +440,7 @@ body.sticky-always.has-subnav #content {
 
 #sub-header.is-home-subnav .topic-banner-row {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 1rem;
   flex: 1;
   min-width: 0;
@@ -489,7 +489,7 @@ body.sticky-always.has-subnav #content {
 
 #sub-header.is-subnav .topic-banner-row {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 1rem;
   flex: 1;
   min-width: 0;
@@ -1932,7 +1932,6 @@ body.sticky-always.has-subnav #content {
   gap: 0.25rem;
   flex: 1;
   min-width: 0;
-  overflow: hidden;
   white-space: nowrap;
   margin-left: 1rem;
   padding-left: 1rem;
@@ -2028,13 +2027,23 @@ body.sticky-always.has-subnav #content {
 /* "Related Topics +" button — shown/hidden dynamically by trimOverflowLinks
    based on how many inline topic links fit */
 .subnav-related-btn {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   margin-left: auto;
   font-size: 0.82rem;
   font-weight: var(--font-weight-semibold);
   color: var(--color-primary);
   text-decoration: none;
   white-space: nowrap;
+  padding: 0 0.55rem;
+  transition: background 0.12s;
+  border-radius: 4px;
+}
+@media (hover: hover) {
+  .subnav-related-btn:hover {
+    background: rgba(30, 45, 68, 0.06);
+    text-decoration: none;
+  }
 }
 
 /* Desktop: show inline topics, hide mobile tabs.
