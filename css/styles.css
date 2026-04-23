@@ -1430,18 +1430,7 @@ body.sticky-always.has-subnav #content {
   font-weight: var(--font-weight-regular);
 }
 
-.search-overlay-esc {
-  font-size: 0.6rem;
-  background: var(--color-bg-muted, #f0f4f8);
-  color: var(--color-text-muted);
-  padding: 3px 7px;
-  border-radius: 3px;
-  border: 1px solid var(--color-border);
-  font-family: var(--font-family);
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  flex-shrink: 0;
-}
+.search-overlay-esc { display: none; }
 
 .search-overlay-close {
   display: inline-flex;

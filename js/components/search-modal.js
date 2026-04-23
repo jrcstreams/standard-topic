@@ -1,7 +1,6 @@
-// Search: full-screen overlay (SR2). A single global overlay lives in
+// Search: full-screen overlay. A single global overlay lives in
 // document.body. `renderSearchBar` creates trigger buttons that all open
-// the same overlay. No second click needed — the overlay appears with
-// the input focused and results visible.
+// the same overlay.
 
 import { getTopicsGroupedByParent, searchTopics } from '../utils/data.js';
 import { navigate } from '../utils/router.js';
@@ -11,6 +10,7 @@ let inputEl = null;
 let bodyEl = null;
 let currentResults = [];
 let highlightIndex = -1;
+let cachedBrowseHTML = null;
 
 export function initSearchOverlay() {
   if (overlayEl) return;
@@ -27,7 +27,6 @@ export function initSearchOverlay() {
         <input type="text" class="search-overlay-input"
                placeholder="Search topics..."
                autocomplete="off" spellcheck="false">
-        <kbd class="search-overlay-esc">ESC</kbd>
         <button class="search-overlay-close" type="button" aria-label="Close">✕</button>
       </div>
       <div class="search-overlay-body"></div>
@@ -46,18 +45,30 @@ export function initSearchOverlay() {
 
   inputEl.addEventListener('keydown', handleKeyboard);
 
-  // Click outside the card closes
+  // Event delegation for all clicks in the body — no per-element listeners
+  bodyEl.addEventListener('click', (e) => {
+    const customBtn = e.target.closest('[data-action="custom"]');
+    if (customBtn) {
+      const q = inputEl.value.trim();
+      if (q) { navigate(`#/custom/${encodeURIComponent(q)}`); closeOverlay(); }
+      return;
+    }
+    const slugEl = e.target.closest('[data-slug]');
+    if (slugEl) {
+      e.preventDefault();
+      navigate(`#/topic/${slugEl.dataset.slug}`);
+      closeOverlay();
+    }
+  });
+
   overlayEl.addEventListener('click', (e) => {
     if (e.target === overlayEl) closeOverlay();
   });
 
   closeBtn.addEventListener('click', closeOverlay);
 
-  // Escape closes (only when overlay is open)
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && isOpen()) {
-      closeOverlay();
-    }
+    if (e.key === 'Escape' && isOpen()) closeOverlay();
   });
 }
 
@@ -96,13 +107,9 @@ function openOverlay() {
   inputEl.value = '';
   highlightIndex = -1;
   renderBody('');
-  // Reset scroll position inside the modal
   bodyEl.scrollTop = 0;
-  // Only auto-focus on non-touch devices — on mobile the keyboard covers content
   const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-  if (!isTouch) {
-    inputEl.focus();
-  }
+  if (!isTouch) inputEl.focus();
 }
 
 function closeOverlay() {
@@ -117,11 +124,10 @@ function renderBody(query) {
   currentResults = [];
 
   if (q) {
-    // Search results section — "Add as Custom Topic" + matches
     const matches = searchTopics(q);
     currentResults = [
-      { type: 'custom', term: q },
       ...matches.map(m => ({ type: 'topic', slug: m.slug })),
+      { type: 'custom', term: q },
     ];
 
     html += `<div class="search-overlay-results-block">`;
@@ -152,45 +158,29 @@ function renderBody(query) {
     html += `</div>`;
   }
 
-  // Full topic catalog — always rendered, below search results if present
-  html += renderBrowseHTML(q);
+  // Browse catalog — cached after first build
+  if (!cachedBrowseHTML) cachedBrowseHTML = renderBrowseHTML();
+  html += q ? `<div class="search-overlay-section-label">Browse all topics</div>` : '';
+  html += cachedBrowseHTML;
 
   bodyEl.innerHTML = html;
-
-  bodyEl.querySelector('[data-action="custom"]')?.addEventListener('click', () => {
-    navigate(`#/custom/${encodeURIComponent(q)}`);
-    closeOverlay();
-  });
-
-  bodyEl.querySelectorAll('[data-slug]').forEach(el => {
-    el.addEventListener('click', (e) => {
-      e.preventDefault();
-      navigate(`#/topic/${el.dataset.slug}`);
-      closeOverlay();
-    });
-  });
-
   updateHighlight();
 }
 
-function renderBrowseHTML(activeQuery) {
+function renderBrowseHTML() {
   const groups = getTopicsGroupedByParent();
   let html = `<div class="search-overlay-browse shortcuts-sidebar">`;
-  if (activeQuery) {
-    html += `<div class="search-overlay-section-label">Browse all topics</div>`;
-  }
   groups.forEach(group => {
     html += `
       <div class="search-overlay-group">
         <a href="#/topic/${group.parent.slug}" class="sidebar-shortcut search-parent-row" data-slug="${group.parent.slug}">
-          <span class="search-parent-icon">📂</span>
           <span class="sidebar-shortcut-name">${escapeHTML(group.parent.name)}</span>
           <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
         </a>
         <div class="sidebar-shortcut-list search-subtopic-list">
     `;
     if (group.subtopics.length === 0) {
-      html += `<span class="search-overlay-group-empty">No subtopics — click ${escapeHTML(group.parent.name)} above to browse.</span>`;
+      html += `<span class="search-overlay-group-empty">No subtopics.</span>`;
     }
     group.subtopics.forEach(sub => {
       html += `
