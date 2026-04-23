@@ -1957,6 +1957,8 @@ body.sticky-always.has-subnav #content {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
+  padding: 1.5rem 0.3rem 1.3rem;
+  margin: -1.5rem 0 -1.3rem;
 }
 
 .subnav-topic-link {
@@ -1968,7 +1970,8 @@ body.sticky-always.has-subnav #content {
   white-space: nowrap;
   letter-spacing: 0.01em;
   transition: background 0.12s, color 0.12s;
-  padding: 0 0.55rem;
+  padding: 1.5rem 0.6rem 1.3rem;
+  margin: -1.5rem 0 -1.3rem;
   display: inline-flex;
   align-items: center;
 }
@@ -1990,12 +1993,20 @@ body.sticky-always.has-subnav #content {
   white-space: nowrap;
   flex-shrink: 0;
   margin-right: 0.65rem;
-  padding-right: 0.65rem;
+  padding: 1.5rem 0.65rem 1.3rem 0.4rem;
+  margin-top: -1.5rem;
+  margin-bottom: -1.3rem;
   border-right: 1px solid var(--color-border);
-  transition: color 0.12s;
+  transition: color 0.12s, background 0.12s;
+  display: inline-flex;
+  align-items: center;
 }
-.subnav-action-link:hover {
-  color: var(--color-primary);
+@media (hover: hover) {
+  .subnav-action-link:hover {
+    color: var(--color-primary);
+    background: rgba(30, 45, 68, 0.06);
+    text-decoration: none;
+  }
 }
 
 /* "More +" — always visible at end, never clipped */
@@ -2009,7 +2020,8 @@ body.sticky-always.has-subnav #content {
   flex-shrink: 0;
   letter-spacing: 0.02em;
   transition: color 0.12s, background 0.12s;
-  padding: 0 0.45rem;
+  padding: 1.5rem 0.5rem 1.3rem;
+  margin: -1.5rem 0 -1.3rem;
   display: inline-flex;
   align-items: center;
 }
@@ -2035,9 +2047,10 @@ body.sticky-always.has-subnav #content {
   color: var(--color-primary);
   text-decoration: none;
   white-space: nowrap;
-  padding: 0 0.55rem;
+  padding: 1.5rem 0.6rem 1.3rem;
+  margin-top: -1.5rem;
+  margin-bottom: -1.3rem;
   transition: background 0.12s;
-  border-radius: 4px;
 }
 @media (hover: hover) {
   .subnav-related-btn:hover {
