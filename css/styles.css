@@ -1929,21 +1929,43 @@ body.sticky-always.has-subnav #content {
   white-space: nowrap;
   margin-left: 1rem;
   padding-left: 1rem;
-  border-left: 1px solid var(--color-border);
+  border-left: none;
+  position: relative;
+}
+.subnav-topics-inline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 1.5rem;
+  background: var(--color-border);
 }
 
-/* Separator between All Topics + and Featured — matches the title separator */
+/* Separator between All Topics + and Featured — homepage only */
 .home-subnav-topics .subnav-topics-label {
-  border-left: 1px solid var(--color-border);
-  margin-left: 0.35rem;
-  padding-left: 0.65rem;
+  position: relative;
+  margin-left: 0.4rem;
+  padding-left: 0.7rem;
+}
+.home-subnav-topics .subnav-topics-label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 1.5rem;
+  background: var(--color-border);
 }
 
 /* Homepage: drop "All Topics +" first when space gets tight */
 @media (max-width: 900px) {
   .subnav-all-topics-link { display: none; }
   .home-subnav-topics { border-left: none; margin-left: 0.5rem; padding-left: 0; }
-  .home-subnav-topics .subnav-topics-label { border-left: none; margin-left: 0; padding-left: 0.3rem; }
+  .home-subnav-topics .subnav-topics-label { margin-left: 0; padding-left: 0.3rem; }
+  .home-subnav-topics .subnav-topics-label::before { display: none; }
 }
 /* Homepage: hide entire featured topics row on mobile — Browse Topics covers this */
 @media (max-width: 640px) {
