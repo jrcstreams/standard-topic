@@ -3,400 +3,322 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Standard Topic — Admin Panel</title>
-  <link rel="icon" href="assets/logo-light.png" type="image/png">
-  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <title>Standard Topic — Admin</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', -apple-system, sans-serif; color: #2d3748; background: #f7f8fa; line-height: 1.5; }
-    .admin-header { background: #1e2d44; color: white; padding: 0.85rem 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
-    .admin-header h1 { font-size: 1.1rem; font-weight: 700; }
-    .admin-header a { color: rgba(255,255,255,0.6); font-size: 0.82rem; margin-left: auto; text-decoration: none; }
-    .admin-header a:hover { color: white; }
-    .admin-tabs { display: flex; gap: 0; background: white; border-bottom: 1px solid #e2e8f0; padding: 0 1.5rem; }
-    .admin-tab { padding: 0.75rem 1.25rem; font-size: 0.85rem; font-weight: 600; color: #718096; cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; font-family: inherit; }
-    .admin-tab.active { color: #1e2d44; border-bottom-color: #1e2d44; }
-    .admin-tab:hover { color: #1e2d44; }
-    .admin-body { max-width: 1100px; margin: 0 auto; padding: 1.5rem; }
-    .admin-panel { display: none; }
-    .admin-panel.active { display: block; }
-    .dir-toolbar { display: flex; gap: 0.5rem; margin-bottom: 1rem; align-items: center; flex-wrap: wrap; }
-    .dir-search { flex: 1; min-width: 200px; padding: 0.5rem 0.75rem; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 0.85rem; font-family: inherit; outline: none; }
-    .dir-search:focus { border-color: #1e2d44; }
-    .btn { padding: 0.45rem 0.85rem; border: 1px solid #e2e8f0; border-radius: 4px; background: white; font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: inherit; }
-    .btn:hover { border-color: #1e2d44; }
-    .btn-primary { background: #1e2d44; color: white; border-color: #1e2d44; }
+    :root { --primary: #1e2d44; --border: #e2e8f0; --bg-light: #f7f8fa; --text: #2d3748; --text-muted: #718096; --danger: #e53e3e; --success: #38a169; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: var(--text); padding: 1.25rem; max-width: 1100px; margin: 0 auto; }
+    h1 { font-size: 1.5rem; margin-bottom: 0.75rem; }
+    .info-box { background: #fffbeb; border: 1px solid #f6e05e; border-radius: 6px; padding: 0.75rem 1rem; font-size: 0.82rem; color: #744210; margin-bottom: 1rem; line-height: 1.5; }
+    .import-export { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .tab { padding: 0.6rem 1.1rem; font-size: 0.85rem; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; color: var(--text-muted); background: none; border-top: none; border-left: none; border-right: none; font-family: inherit; font-weight: 500; }
+    .tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
+    .toolbar h2 { font-size: 1.1rem; }
+    .btn { padding: 0.4rem 0.75rem; border-radius: 4px; font-size: 0.82rem; cursor: pointer; border: 1px solid var(--border); font-family: inherit; background: white; }
+    .btn:hover { border-color: var(--primary); }
+    .btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
     .btn-primary:hover { background: #0f1a2e; }
-    .btn-danger { color: #e53e3e; }
-    .btn-danger:hover { background: #fff5f5; border-color: #e53e3e; }
-    .btn-success { background: #38a169; color: white; border-color: #38a169; }
+    .btn-danger { color: var(--danger); }
+    .btn-danger:hover { background: #fff5f5; border-color: var(--danger); }
+    .btn-success { background: var(--success); color: white; border-color: var(--success); }
     .btn-success:hover { background: #2f855a; }
-    .dir-table { width: 100%; border-collapse: collapse; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-    .dir-table th { text-align: left; padding: 0.6rem 0.75rem; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: #718096; border-bottom: 1px solid #e2e8f0; background: #f7f8fa; }
-    .dir-table td { padding: 0.55rem 0.75rem; font-size: 0.84rem; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
-    .dir-table tr:hover td { background: #f7f8fa; }
-    .dir-id { font-family: monospace; font-size: 0.75rem; color: #718096; }
-    .dir-prompt { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #718096; font-size: 0.78rem; }
-    .dir-actions { display: flex; gap: 0.3rem; }
-    .dir-actions .btn { padding: 0.2rem 0.5rem; font-size: 0.72rem; }
-    .dir-count { font-size: 0.78rem; color: #718096; }
-    .assign-layout { display: grid; grid-template-columns: 280px 1fr; gap: 1.25rem; min-height: 500px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    th { background: var(--bg-light); text-align: left; padding: 0.5rem 0.75rem; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.03em; border-bottom: 1px solid var(--border); }
+    td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #f0f0f0; }
+    tr:hover td { background: #fafbfc; }
+    .mono { font-family: monospace; font-size: 0.78rem; color: var(--text-muted); }
+    .truncate { max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .subtopic-row td:first-child { padding-left: 1.5rem; }
+    .form-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .form-modal { background: white; border-radius: 8px; padding: 1.5rem; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+    .form-modal h3 { margin-bottom: 1rem; font-size: 1rem; }
+    .fg { margin-bottom: 0.85rem; }
+    .fg label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    .fg input, .fg select, .fg textarea { width: 100%; border: 1px solid var(--border); border-radius: 4px; padding: 0.45rem 0.6rem; font-size: 0.85rem; font-family: inherit; outline: none; }
+    .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--primary); }
+    .fg textarea { min-height: 80px; resize: vertical; }
+    .form-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem; }
+    /* Assignments */
+    .assign-layout { display: grid; grid-template-columns: 260px 1fr; gap: 1rem; }
     @media (max-width: 768px) { .assign-layout { grid-template-columns: 1fr; } }
-    .assign-topics { background: white; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow-y: auto; max-height: 70vh; }
-    .assign-topics-head { padding: 0.65rem 0.75rem; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: #718096; border-bottom: 1px solid #e2e8f0; background: #f7f8fa; font-weight: 700; position: sticky; top: 0; z-index: 1; }
-    .assign-topic-item { padding: 0.5rem 0.75rem; font-size: 0.84rem; cursor: pointer; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
-    .assign-topic-item:hover { background: #f7f8fa; }
-    .assign-topic-item.active { background: #eef2f7; color: #1e2d44; font-weight: 600; }
-    .assign-topic-count { font-size: 0.7rem; color: #a0aec0; background: #f0f0f0; padding: 0.1rem 0.4rem; border-radius: 99px; min-width: 20px; text-align: center; }
-    .assign-topic-item.active .assign-topic-count { background: #1e2d44; color: white; }
-    .assign-editor { background: white; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); padding: 1rem; }
-    .assign-editor-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; padding-bottom: 0.65rem; border-bottom: 1px solid #e2e8f0; }
-    .assign-editor-title { font-size: 1rem; font-weight: 700; }
-    .assign-list { min-height: 60px; margin-bottom: 1rem; }
-    .assign-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.6rem; border: 1px solid #e2e8f0; border-radius: 4px; margin-bottom: 0.3rem; background: white; cursor: grab; font-size: 0.84rem; }
+    .assign-sidebar { background: white; border: 1px solid var(--border); border-radius: 6px; overflow-y: auto; max-height: 65vh; }
+    .assign-sidebar-head { padding: 0.55rem 0.75rem; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); border-bottom: 1px solid var(--border); background: var(--bg-light); font-weight: 700; position: sticky; top: 0; z-index: 1; }
+    .assign-topic { padding: 0.45rem 0.75rem; font-size: 0.84rem; cursor: pointer; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+    .assign-topic:hover { background: var(--bg-light); }
+    .assign-topic.active { background: #eef2f7; font-weight: 600; }
+    .assign-count { font-size: 0.68rem; background: #eee; padding: 0.1rem 0.4rem; border-radius: 99px; color: var(--text-muted); min-width: 18px; text-align: center; }
+    .assign-topic.active .assign-count { background: var(--primary); color: white; }
+    .assign-main { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 1rem; }
+    .assign-main h3 { font-size: 1rem; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+    .assign-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.5rem; border: 1px solid var(--border); border-radius: 4px; margin-bottom: 0.25rem; font-size: 0.84rem; cursor: grab; background: white; }
     .assign-item:active { cursor: grabbing; }
-    .assign-item .drag-handle { color: #a0aec0; font-size: 0.75rem; cursor: grab; user-select: none; }
-    .assign-item-name { flex: 1; }
-    .assign-item-icon { font-size: 0.85rem; opacity: 0.7; }
-    .assign-remove { background: none; border: none; color: #e53e3e; cursor: pointer; font-size: 0.85rem; opacity: 0.5; padding: 0.15rem 0.35rem; border-radius: 3px; }
-    .assign-remove:hover { opacity: 1; background: #fff5f5; }
+    .assign-item .handle { color: #ccc; font-size: 0.7rem; user-select: none; }
+    .assign-item .name { flex: 1; }
+    .assign-item .remove { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 0.85rem; opacity: 0.5; padding: 0.1rem 0.3rem; }
+    .assign-item .remove:hover { opacity: 1; }
     .assign-dragging { opacity: 0.4; border-style: dashed; }
-    .assign-add-section { border-top: 1px solid #e2e8f0; padding-top: 0.75rem; }
-    .assign-add-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: #718096; font-weight: 700; margin-bottom: 0.4rem; }
-    .assign-available { display: flex; flex-wrap: wrap; gap: 0.3rem; max-height: 200px; overflow-y: auto; }
-    .assign-avail-btn { padding: 0.3rem 0.6rem; font-size: 0.78rem; border: 1px solid #e2e8f0; border-radius: 4px; background: white; cursor: pointer; font-family: inherit; color: #2d3748; }
-    .assign-avail-btn:hover { border-color: #38a169; background: #f0fff4; color: #38a169; }
-    .io-section { margin-bottom: 1.5rem; }
-    .io-section h3 { font-size: 0.95rem; margin-bottom: 0.5rem; }
-    .io-textarea { width: 100%; height: 200px; font-family: monospace; font-size: 0.8rem; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 4px; resize: vertical; }
-    .io-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
-    .modal-overlay { position: fixed; inset: 0; background: rgba(15,26,46,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-    .modal-card { background: white; border-radius: 8px; padding: 1.25rem; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-    .modal-card h3 { margin-bottom: 1rem; font-size: 1rem; }
-    .modal-field { margin-bottom: 0.75rem; }
-    .modal-field label { display: block; font-size: 0.78rem; font-weight: 600; color: #718096; margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.03em; }
-    .modal-field input, .modal-field textarea { width: 100%; padding: 0.45rem 0.65rem; border: 1px solid #e2e8f0; border-radius: 4px; font-family: inherit; font-size: 0.85rem; outline: none; }
-    .modal-field input:focus, .modal-field textarea:focus { border-color: #1e2d44; }
-    .modal-field textarea { height: 100px; resize: vertical; }
-    .modal-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem; }
-    .empty-msg { color: #a0aec0; font-size: 0.84rem; padding: 0.5rem; }
-    .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: #1e2d44; color: white; padding: 0.6rem 1rem; border-radius: 6px; font-size: 0.82rem; font-weight: 600; z-index: 2000; animation: toastIn 0.2s ease-out; }
-    @keyframes toastIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .assign-add { margin-top: 0.75rem; border-top: 1px solid var(--border); padding-top: 0.65rem; }
+    .assign-add-label { font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem; letter-spacing: 0.03em; }
+    .assign-btns { display: flex; flex-wrap: wrap; gap: 0.25rem; max-height: 180px; overflow-y: auto; }
+    .assign-btns button { padding: 0.25rem 0.55rem; font-size: 0.78rem; border: 1px solid var(--border); border-radius: 3px; background: white; cursor: pointer; font-family: inherit; }
+    .assign-btns button:hover { border-color: var(--success); background: #f0fff4; color: var(--success); }
+    .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--primary); color: white; padding: 0.55rem 1rem; border-radius: 6px; font-size: 0.82rem; font-weight: 600; z-index: 2000; }
   </style>
 </head>
 <body>
-  <div class="admin-header">
-    <h1>Standard Topic — Admin</h1>
-    <a href="index.html">← Back to Site</a>
+  <h1>Standard Topic — Admin</h1>
+  <div class="info-box"><strong>Local admin tool.</strong> Import your JSON data files, edit via forms, then export updated JSON. Replace the files in your project and push to GitHub.</div>
+  <div class="import-export">
+    <label class="btn btn-primary" style="cursor:pointer">Import All JSON <input type="file" id="import-files" multiple accept=".json" style="display:none"></label>
+    <button class="btn btn-success" id="export-all">Export All JSON</button>
   </div>
-  <div class="admin-tabs" id="admin-tabs">
-    <button class="admin-tab active" data-panel="directory">Shortcuts Directory</button>
-    <button class="admin-tab" data-panel="assignments">Topic Assignments</button>
-    <button class="admin-tab" data-panel="io">Import / Export</button>
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-tab="topics">Topics</button>
+    <button class="tab" data-tab="directory">Shortcuts Directory</button>
+    <button class="tab" data-tab="assignments">Topic Assignments</button>
+    <button class="tab" data-tab="models">AI Models</button>
+    <button class="tab" data-tab="promptgen">Prompt Generator</button>
   </div>
-  <div class="admin-body">
-    <div class="admin-panel active" id="panel-directory"></div>
-    <div class="admin-panel" id="panel-assignments"></div>
-    <div class="admin-panel" id="panel-io"></div>
-  </div>
+  <div class="tab-content active" id="tab-topics"><div class="toolbar"><h2>Manage Topics</h2><button class="btn btn-primary" id="add-topic">+ Add Topic</button></div><table><thead><tr><th>Name</th><th>Slug</th><th>Parent</th><th>RSS Feed ID</th><th>Actions</th></tr></thead><tbody id="topics-body"></tbody></table></div>
+  <div class="tab-content" id="tab-directory"><div class="toolbar"><h2>Shortcuts Directory</h2><button class="btn btn-primary" id="add-shortcut">+ Add Shortcut</button></div><table><thead><tr><th>Name</th><th>ID</th><th>Icon</th><th>Prompt</th><th>Actions</th></tr></thead><tbody id="dir-body"></tbody></table></div>
+  <div class="tab-content" id="tab-assignments"><div class="toolbar"><h2>Topic Assignments</h2></div><div class="assign-layout"><div class="assign-sidebar"><div class="assign-sidebar-head">Topics</div><div id="assign-topics"></div></div><div class="assign-main" id="assign-main"></div></div></div>
+  <div class="tab-content" id="tab-models"><div class="toolbar"><h2>AI Models</h2><button class="btn btn-primary" id="add-model">+ Add Model</button></div><table><thead><tr><th>Name</th><th>ID</th><th>Submission Method</th><th>URL Template</th><th>Actions</th></tr></thead><tbody id="models-body"></tbody></table></div>
+  <div class="tab-content" id="tab-promptgen"><div class="toolbar"><h2>Prompt Generator</h2></div><p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.75rem;">Edit prompt-generator.json directly. This tab shows a live JSON preview.</p><pre id="pg-preview" style="background:var(--bg-light);padding:1rem;border-radius:6px;font-size:0.78rem;overflow-x:auto;max-height:500px;overflow-y:auto;"></pre></div>
+  <div id="modal"></div>
 
   <script>
-    (async function() {
-      // Show loading state
-      document.querySelector('.admin-body').innerHTML = '<p style="padding:2rem;color:#718096;">Loading data...</p>';
+    var data = {
+      topics: { topics: [] },
+      directory: { shortcuts: [] },
+      assignments: { assignments: {} },
+      models: { models: [], defaultModel: 'chatgpt', submissionMethods: {} },
+      promptgen: {}
+    };
 
-      // Load data with cache busting
-      var cb = '?v=' + Date.now();
-      var directory, assignments, allTopics;
-      try {
-        var [dirRes, assignRes, topicsRes] = await Promise.all([
-          fetch('data/shortcuts-directory.json' + cb).then(function(r) { return r.json(); }),
-          fetch('data/shortcuts-assignments.json' + cb).then(function(r) { return r.json(); }),
-          fetch('data/topics.json' + cb).then(function(r) { return r.json(); }),
-        ]);
-        directory = dirRes.shortcuts || [];
-        assignments = assignRes.assignments || {};
-        allTopics = [];
-        allTopics.push({ slug: 'home', name: 'Homepage' });
-        (topicsRes.topics || []).forEach(function(parent) {
-          allTopics.push({ slug: parent.slug, name: parent.name });
-          (parent.subtopics || []).forEach(function(sub) {
-            allTopics.push({ slug: sub.slug, name: '\u00A0\u00A0' + sub.name });
-          });
-        });
-        allTopics.push({ slug: '_custom', name: 'Custom Search (default)' });
-      } catch (e) {
-        document.querySelector('.admin-body').innerHTML = '<p style="padding:2rem;color:#e53e3e;">Failed to load data: ' + e.message + '<br><br>Make sure you are accessing this page from the site root (e.g. standardtopic.com/admin.html)</p>';
-        return;
-      }
+    var fileMap = {
+      'topics.json': 'topics',
+      'shortcuts-directory.json': 'directory',
+      'shortcuts-assignments.json': 'assignments',
+      'ai-models.json': 'models',
+      'prompt-generator.json': 'promptgen'
+    };
 
-      // Restore panel containers after loading
-      document.querySelector('.admin-body').innerHTML =
-        '<div class="admin-panel active" id="panel-directory"></div>' +
-        '<div class="admin-panel" id="panel-assignments"></div>' +
-        '<div class="admin-panel" id="panel-io"></div>';
+    var selectedTopic = 'home';
 
-      var selectedTopic = 'home';
-
-      // Helpers
-      function esc(str) { var d = document.createElement('div'); d.textContent = str == null ? '' : str; return d.innerHTML; }
-      function escAttr(str) { return String(str == null ? '' : str).replace(/"/g, '&quot;'); }
-      function toast(msg) {
-        var t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
-        document.body.appendChild(t); setTimeout(function() { t.remove(); }, 2000);
-      }
-      function downloadJSON(filename, data) {
-        var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a'); a.href = url; a.download = filename; a.click();
-        URL.revokeObjectURL(url);
-      }
-
-      // Tab switching
-      document.getElementById('admin-tabs').addEventListener('click', function(e) {
-        var tab = e.target.closest('.admin-tab');
-        if (!tab) return;
-        document.querySelectorAll('.admin-tab').forEach(function(t) { t.classList.remove('active'); });
-        document.querySelectorAll('.admin-panel').forEach(function(p) { p.classList.remove('active'); });
-        tab.classList.add('active');
-        document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
-        if (tab.dataset.panel === 'io') renderIO();
-        if (tab.dataset.panel === 'assignments') renderAssignments();
+    function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+    function escA(s) { return String(s == null ? '' : s).replace(/"/g, '&quot;'); }
+    function toast(m) { var t = document.createElement('div'); t.className = 'toast'; t.textContent = m; document.body.appendChild(t); setTimeout(function() { t.remove(); }, 1800); }
+    function dlJSON(name, obj) { var b = new Blob([JSON.stringify(obj, null, 2)], {type:'application/json'}); var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; a.click(); }
+    function closeModal() { document.getElementById('modal').innerHTML = ''; }
+    function getAllTopicSlugs() {
+      var list = [{slug:'home',name:'Homepage'}];
+      (data.topics.topics || []).forEach(function(t) {
+        if (!t.parent && t.slug !== 'home') {
+          list.push({slug:t.slug, name:t.name});
+          (data.topics.topics || []).filter(function(s){return s.parent===t.slug;}).forEach(function(s){ list.push({slug:s.slug, name:'\u00A0\u00A0'+s.name}); });
+        }
       });
+      list.push({slug:'_custom',name:'Custom Search (default)'});
+      return list;
+    }
 
-      // ========== DIRECTORY ==========
-      function renderDirectory(filter) {
-        filter = filter || '';
-        var q = filter.toLowerCase();
-        var filtered = q ? directory.filter(function(s) { return s.name.toLowerCase().indexOf(q) >= 0 || s.id.toLowerCase().indexOf(q) >= 0; }) : directory;
-        var panel = document.getElementById('panel-directory');
-        panel.innerHTML =
-          '<div class="dir-toolbar">' +
-            '<input type="text" class="dir-search" placeholder="Search shortcuts..." value="' + escAttr(filter) + '" id="dir-search">' +
-            '<span class="dir-count">' + filtered.length + ' of ' + directory.length + ' shortcuts</span>' +
-            '<button class="btn btn-primary" id="dir-add-new">+ Add Shortcut</button>' +
-          '</div>' +
-          '<table class="dir-table"><thead><tr><th>Name</th><th>ID</th><th>Icon</th><th>Prompt</th><th>Actions</th></tr></thead><tbody>' +
-          filtered.map(function(s) {
-            return '<tr>' +
-              '<td><strong>' + esc(s.name) + '</strong></td>' +
-              '<td class="dir-id">' + esc(s.id) + '</td>' +
-              '<td>' + esc(s.icon) + '</td>' +
-              '<td class="dir-prompt" title="' + escAttr(s.prompt) + '">' + esc(s.prompt) + '</td>' +
-              '<td class="dir-actions">' +
-                '<button class="btn" data-action="edit" data-id="' + escAttr(s.id) + '">Edit</button>' +
-                '<button class="btn btn-danger" data-action="delete" data-id="' + escAttr(s.id) + '">Delete</button>' +
-              '</td></tr>';
-          }).join('') +
-          '</tbody></table>';
+    // Tabs
+    document.getElementById('tabs').addEventListener('click', function(e) {
+      var t = e.target.closest('.tab'); if (!t) return;
+      document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});
+      document.querySelectorAll('.tab-content').forEach(function(x){x.classList.remove('active');});
+      t.classList.add('active');
+      document.getElementById('tab-'+t.dataset.tab).classList.add('active');
+      if (t.dataset.tab === 'assignments') renderAssignments();
+    });
 
-        document.getElementById('dir-search').addEventListener('input', function(e) { renderDirectory(e.target.value); });
-        document.getElementById('dir-add-new').addEventListener('click', function() { openShortcutModal(); });
-        panel.addEventListener('click', function(e) {
-          var btn = e.target.closest('[data-action]');
-          if (!btn) return;
-          if (btn.dataset.action === 'edit') openShortcutModal(btn.dataset.id);
-          if (btn.dataset.action === 'delete') {
-            if (!confirm('Delete "' + btn.dataset.id + '"?')) return;
-            directory = directory.filter(function(s) { return s.id !== btn.dataset.id; });
-            Object.keys(assignments).forEach(function(k) {
-              assignments[k] = assignments[k].filter(function(id) { return id !== btn.dataset.id; });
-            });
-            renderDirectory(filter);
-            toast('Shortcut deleted');
-          }
-        });
+    // Import
+    document.getElementById('import-files').addEventListener('change', function(e) {
+      var files = e.target.files;
+      var promises = [];
+      for (var i = 0; i < files.length; i++) {
+        (function(file) {
+          promises.push(file.text().then(function(text) {
+            var key = fileMap[file.name];
+            if (key) { data[key] = JSON.parse(text); }
+          }));
+        })(files[i]);
       }
+      Promise.all(promises).then(function() { renderAll(); toast('Imported ' + files.length + ' files'); });
+    });
 
-      function openShortcutModal(editId) {
-        var existing = editId ? directory.find(function(s) { return s.id === editId; }) : null;
-        var overlay = document.createElement('div');
-        overlay.className = 'modal-overlay';
-        overlay.innerHTML =
-          '<div class="modal-card">' +
-            '<h3>' + (existing ? 'Edit Shortcut' : 'Add New Shortcut') + '</h3>' +
-            '<div class="modal-field"><label>ID (unique slug)</label><input type="text" id="m-id" value="' + escAttr(existing ? existing.id : '') + '"' + (existing ? ' readonly style="opacity:0.6"' : '') + '></div>' +
-            '<div class="modal-field"><label>Name</label><input type="text" id="m-name" value="' + escAttr(existing ? existing.name : '') + '"></div>' +
-            '<div class="modal-field"><label>Icon key</label><input type="text" id="m-icon" value="' + escAttr(existing ? existing.icon : '') + '" placeholder="e.g. newspaper, cpu, trophy"></div>' +
-            '<div class="modal-field"><label>Prompt (use {topic} for topic name)</label><textarea id="m-prompt">' + esc(existing ? existing.prompt : '') + '</textarea></div>' +
-            '<div class="modal-actions"><button class="btn" id="m-cancel">Cancel</button><button class="btn btn-primary" id="m-save">Save</button></div>' +
-          '</div>';
-        document.body.appendChild(overlay);
-        overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
-        overlay.querySelector('#m-cancel').addEventListener('click', function() { overlay.remove(); });
-        overlay.querySelector('#m-save').addEventListener('click', function() {
-          var id = overlay.querySelector('#m-id').value.trim();
-          var name = overlay.querySelector('#m-name').value.trim();
-          var icon = overlay.querySelector('#m-icon').value.trim();
-          var prompt = overlay.querySelector('#m-prompt').value.trim();
-          if (!id || !name || !prompt) { alert('ID, Name, and Prompt are required.'); return; }
-          if (existing) {
-            existing.name = name; existing.icon = icon; existing.prompt = prompt;
-          } else {
-            if (directory.find(function(s) { return s.id === id; })) { alert('ID already exists.'); return; }
-            directory.push({ id: id, name: name, icon: icon, prompt: prompt });
-          }
-          overlay.remove();
-          renderDirectory();
-          toast(existing ? 'Shortcut updated' : 'Shortcut added');
-        });
-      }
+    // Export
+    document.getElementById('export-all').addEventListener('click', function() {
+      dlJSON('topics.json', data.topics);
+      dlJSON('shortcuts-directory.json', data.directory);
+      dlJSON('shortcuts-assignments.json', data.assignments);
+      dlJSON('ai-models.json', data.models);
+      dlJSON('prompt-generator.json', data.promptgen);
+      toast('Exported all JSON');
+    });
 
-      // ========== ASSIGNMENTS ==========
-      function renderAssignments() {
-        var panel = document.getElementById('panel-assignments');
-        var currentIds = assignments[selectedTopic] || [];
-        var dirMap = {};
-        directory.forEach(function(s) { dirMap[s.id] = s; });
-        var currentShortcuts = currentIds.map(function(id) { return dirMap[id]; }).filter(Boolean);
-        var availableShortcuts = directory.filter(function(s) { return currentIds.indexOf(s.id) < 0; });
-        var topicLabel = (allTopics.find(function(t) { return t.slug === selectedTopic; }) || {}).name || selectedTopic;
+    function renderAll() { renderTopics(); renderDirectory(); renderAssignments(); renderModels(); renderPromptGen(); }
 
-        panel.innerHTML =
-          '<div class="assign-layout">' +
-            '<div class="assign-topics">' +
-              '<div class="assign-topics-head">Topics</div>' +
-              allTopics.map(function(t) {
-                var count = (assignments[t.slug] || []).length;
-                return '<div class="assign-topic-item' + (t.slug === selectedTopic ? ' active' : '') + '" data-slug="' + escAttr(t.slug) + '">' +
-                  '<span>' + esc(t.name) + '</span>' +
-                  '<span class="assign-topic-count">' + count + '</span></div>';
-              }).join('') +
-            '</div>' +
-            '<div class="assign-editor">' +
-              '<div class="assign-editor-head">' +
-                '<span class="assign-editor-title">' + esc(topicLabel.trim()) + '</span>' +
-                '<span class="dir-count">' + currentShortcuts.length + ' shortcuts</span>' +
-              '</div>' +
-              '<div class="assign-list" id="assign-list">' +
-                (currentShortcuts.length === 0 ? '<div class="empty-msg">No shortcuts assigned. Add from below.</div>' :
-                currentShortcuts.map(function(s, i) {
-                  return '<div class="assign-item" draggable="true" data-idx="' + i + '" data-id="' + escAttr(s.id) + '">' +
-                    '<span class="drag-handle">&#9776;</span>' +
-                    '<span class="assign-item-icon">' + esc(s.icon) + '</span>' +
-                    '<span class="assign-item-name">' + esc(s.name) + '</span>' +
-                    '<button class="assign-remove" data-remove="' + escAttr(s.id) + '" title="Remove">&times;</button></div>';
-                }).join('')) +
-              '</div>' +
-              '<div class="assign-add-section">' +
-                '<div class="assign-add-label">Add shortcut</div>' +
-                '<div class="assign-available">' +
-                  (availableShortcuts.length === 0 ? '<span class="empty-msg">All shortcuts assigned.</span>' :
-                  availableShortcuts.map(function(s) {
-                    return '<button class="assign-avail-btn" data-add="' + escAttr(s.id) + '">' + esc(s.name) + '</button>';
-                  }).join('')) +
-                '</div>' +
-              '</div>' +
-            '</div>' +
-          '</div>';
+    // ===== TOPICS =====
+    function renderTopics() {
+      var topics = data.topics.topics || [];
+      var parents = topics.filter(function(t){return !t.parent && t.slug!=='home';});
+      var html = '';
+      var home = topics.find(function(t){return t.slug==='home';});
+      if (home) html += topicRow(home, false);
+      parents.forEach(function(p) {
+        html += topicRow(p, false);
+        topics.filter(function(t){return t.parent===p.slug;}).forEach(function(s){ html += topicRow(s, true); });
+      });
+      var tbody = document.getElementById('topics-body');
+      tbody.innerHTML = html;
+      tbody.addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-action]'); if (!btn) return;
+        if (btn.dataset.action === 'edit') editTopic(btn.dataset.slug);
+        if (btn.dataset.action === 'delete') { if(confirm('Delete "'+btn.dataset.slug+'"?')){ data.topics.topics = data.topics.topics.filter(function(t){return t.slug!==btn.dataset.slug;}); renderTopics(); } }
+      });
+    }
+    function topicRow(t, sub) {
+      return '<tr class="'+(sub?'subtopic-row':'')+'"><td>'+(sub?'↳ ':'')+esc(t.name)+'</td><td class="mono">'+esc(t.slug)+'</td><td class="mono">'+esc(t.parent||'—')+'</td><td class="mono">'+esc(t.rssFeedId||'—')+'</td><td><button class="btn" data-action="edit" data-slug="'+escA(t.slug)+'">Edit</button> '+(t.slug!=='home'?'<button class="btn btn-danger" data-action="delete" data-slug="'+escA(t.slug)+'">Del</button>':'')+'</td></tr>';
+    }
+    document.getElementById('add-topic').addEventListener('click', function() { showTopicForm(null); });
+    function editTopic(slug) { var t = data.topics.topics.find(function(x){return x.slug===slug;}); if(t) showTopicForm(t); }
+    function showTopicForm(topic) {
+      var isNew = !topic;
+      var parents = data.topics.topics.filter(function(t){return !t.parent && t.slug!=='home';});
+      var opts = parents.map(function(p){return '<option value="'+escA(p.slug)+'" '+(topic&&topic.parent===p.slug?'selected':'')+'>'+esc(p.name)+'</option>';}).join('');
+      document.getElementById('modal').innerHTML = '<div class="form-overlay" id="overlay"><div class="form-modal"><h3>'+(isNew?'Add':'Edit')+' Topic</h3><div class="fg"><label>Name</label><input id="f-name" value="'+escA(topic?topic.name:'')+'"></div><div class="fg"><label>Slug</label><input id="f-slug" value="'+escA(topic?topic.slug:'')+'" '+(isNew?'':'readonly style="background:var(--bg-light)"')+'></div><div class="fg"><label>Parent</label><select id="f-parent"><option value="">None (parent)</option>'+opts+'</select></div><div class="fg"><label>RSS Feed ID</label><input id="f-rss" value="'+escA(topic?topic.rssFeedId:'')+'"></div><div class="fg"><label>Featured</label><select id="f-featured"><option value="false">No</option><option value="true" '+(topic&&topic.featured?'selected':'')+'>Yes</option></select></div><div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
+      document.getElementById('f-cancel').addEventListener('click', closeModal);
+      document.getElementById('overlay').addEventListener('click', function(e){if(e.target===e.currentTarget)closeModal();});
+      document.getElementById('f-save').addEventListener('click', function() {
+        var entry = { slug:document.getElementById('f-slug').value.trim(), name:document.getElementById('f-name').value.trim(), parent:document.getElementById('f-parent').value||undefined, rssFeedId:document.getElementById('f-rss').value.trim()||undefined, featured:document.getElementById('f-featured').value==='true'||undefined };
+        if(!entry.slug||!entry.name){alert('Required.');return;}
+        if(isNew){data.topics.topics.push(entry);}else{var i=data.topics.topics.findIndex(function(t){return t.slug===entry.slug;});if(i>=0)data.topics.topics[i]=Object.assign(data.topics.topics[i],entry);}
+        closeModal(); renderTopics(); toast('Saved');
+      });
+    }
 
-        // Topic selection
-        panel.querySelectorAll('.assign-topic-item').forEach(function(el) {
-          el.addEventListener('click', function() { selectedTopic = el.dataset.slug; renderAssignments(); });
-        });
+    // ===== DIRECTORY =====
+    function renderDirectory() {
+      var shortcuts = data.directory.shortcuts || [];
+      var tbody = document.getElementById('dir-body');
+      tbody.innerHTML = shortcuts.map(function(s) {
+        return '<tr><td><strong>'+esc(s.name)+'</strong></td><td class="mono">'+esc(s.id)+'</td><td>'+esc(s.icon)+'</td><td class="mono truncate" title="'+escA(s.prompt)+'">'+esc(s.prompt)+'</td><td><button class="btn" data-action="edit" data-id="'+escA(s.id)+'">Edit</button> <button class="btn btn-danger" data-action="delete" data-id="'+escA(s.id)+'">Del</button></td></tr>';
+      }).join('');
+      tbody.addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-action]'); if (!btn) return;
+        if (btn.dataset.action === 'edit') editShortcut(btn.dataset.id);
+        if (btn.dataset.action === 'delete') { if(confirm('Delete?')){ data.directory.shortcuts = data.directory.shortcuts.filter(function(s){return s.id!==btn.dataset.id;}); Object.keys(data.assignments.assignments||{}).forEach(function(k){data.assignments.assignments[k]=data.assignments.assignments[k].filter(function(id){return id!==btn.dataset.id;});}); renderDirectory(); toast('Deleted'); } }
+      });
+    }
+    document.getElementById('add-shortcut').addEventListener('click', function() { showShortcutForm(null); });
+    function editShortcut(id) { var s = data.directory.shortcuts.find(function(x){return x.id===id;}); if(s) showShortcutForm(s); }
+    function showShortcutForm(sc) {
+      var isNew = !sc;
+      document.getElementById('modal').innerHTML = '<div class="form-overlay" id="overlay"><div class="form-modal"><h3>'+(isNew?'Add':'Edit')+' Shortcut</h3><div class="fg"><label>ID</label><input id="f-id" value="'+escA(sc?sc.id:'')+'" '+(isNew?'':'readonly style="background:var(--bg-light)"')+'></div><div class="fg"><label>Name</label><input id="f-name" value="'+escA(sc?sc.name:'')+'"></div><div class="fg"><label>Icon key</label><input id="f-icon" value="'+escA(sc?sc.icon:'')+'"></div><div class="fg"><label>Prompt (use {topic})</label><textarea id="f-prompt">'+esc(sc?sc.prompt:'')+'</textarea></div><div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
+      document.getElementById('f-cancel').addEventListener('click', closeModal);
+      document.getElementById('overlay').addEventListener('click', function(e){if(e.target===e.currentTarget)closeModal();});
+      document.getElementById('f-save').addEventListener('click', function() {
+        var entry = {id:document.getElementById('f-id').value.trim(), name:document.getElementById('f-name').value.trim(), icon:document.getElementById('f-icon').value.trim(), prompt:document.getElementById('f-prompt').value};
+        if(!entry.id||!entry.name||!entry.prompt){alert('Required.');return;}
+        if(isNew){if(data.directory.shortcuts.find(function(s){return s.id===entry.id;})){alert('ID exists.');return;}data.directory.shortcuts.push(entry);}else{var i=data.directory.shortcuts.findIndex(function(s){return s.id===entry.id;});if(i>=0)data.directory.shortcuts[i]=entry;}
+        closeModal(); renderDirectory(); toast('Saved');
+      });
+    }
 
-        // Remove
-        panel.querySelectorAll('.assign-remove').forEach(function(btn) {
-          btn.addEventListener('click', function() {
-            assignments[selectedTopic] = (assignments[selectedTopic] || []).filter(function(id) { return id !== btn.dataset.remove; });
-            renderAssignments();
-            toast('Removed');
-          });
+    // ===== ASSIGNMENTS =====
+    function renderAssignments() {
+      var topics = getAllTopicSlugs();
+      var assigns = data.assignments.assignments || {};
+      document.getElementById('assign-topics').innerHTML = topics.map(function(t) {
+        var count = (assigns[t.slug]||[]).length;
+        return '<div class="assign-topic'+(t.slug===selectedTopic?' active':'')+'" data-slug="'+escA(t.slug)+'"><span>'+esc(t.name)+'</span><span class="assign-count">'+count+'</span></div>';
+      }).join('');
+      document.querySelectorAll('.assign-topic').forEach(function(el) {
+        el.addEventListener('click', function() { selectedTopic = el.dataset.slug; renderAssignments(); });
+      });
+      var ids = assigns[selectedTopic] || [];
+      var dirMap = {}; (data.directory.shortcuts||[]).forEach(function(s){dirMap[s.id]=s;});
+      var current = ids.map(function(id){return dirMap[id];}).filter(Boolean);
+      var available = (data.directory.shortcuts||[]).filter(function(s){return ids.indexOf(s.id)<0;});
+      var label = (topics.find(function(t){return t.slug===selectedTopic;})||{}).name||selectedTopic;
+      var main = document.getElementById('assign-main');
+      main.innerHTML = '<h3>'+esc(label.trim())+' <span style="font-size:0.78rem;color:var(--text-muted);font-weight:400;">'+current.length+' shortcuts</span></h3>' +
+        '<div id="assign-list">'+
+        (current.length===0?'<div style="color:var(--text-muted);font-size:0.84rem;padding:0.5rem;">No shortcuts. Add from below.</div>':
+        current.map(function(s,i){return '<div class="assign-item" draggable="true" data-idx="'+i+'" data-id="'+escA(s.id)+'"><span class="handle">&#9776;</span><span class="name">'+esc(s.name)+'</span><button class="remove" data-rm="'+escA(s.id)+'">&times;</button></div>';}).join(''))+
+        '</div>'+
+        '<div class="assign-add"><div class="assign-add-label">Add shortcut</div><div class="assign-btns" id="assign-avail">'+
+        (available.length===0?'<span style="color:var(--text-muted);font-size:0.82rem;">All assigned.</span>':
+        available.map(function(s){return '<button data-add="'+escA(s.id)+'">'+esc(s.name)+'</button>';}).join(''))+
+        '</div></div>';
+      // Remove
+      main.querySelectorAll('.remove').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          data.assignments.assignments[selectedTopic] = (data.assignments.assignments[selectedTopic]||[]).filter(function(id){return id!==btn.dataset.rm;});
+          renderAssignments(); toast('Removed');
         });
+      });
+      // Add
+      document.getElementById('assign-avail').querySelectorAll('button').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          if(!data.assignments.assignments[selectedTopic]) data.assignments.assignments[selectedTopic]=[];
+          data.assignments.assignments[selectedTopic].push(btn.dataset.add);
+          renderAssignments(); toast('Added');
+        });
+      });
+      // Drag reorder
+      var dragIdx = null;
+      document.getElementById('assign-list').querySelectorAll('.assign-item').forEach(function(item){
+        item.addEventListener('dragstart', function(e){ dragIdx=parseInt(item.dataset.idx); item.classList.add('assign-dragging'); e.dataTransfer.effectAllowed='move'; });
+        item.addEventListener('dragend', function(){ item.classList.remove('assign-dragging'); });
+        item.addEventListener('dragover', function(e){ e.preventDefault(); });
+        item.addEventListener('drop', function(e){
+          e.preventDefault(); var dropIdx=parseInt(item.dataset.idx);
+          if(dragIdx===null||dragIdx===dropIdx)return;
+          var arr=data.assignments.assignments[selectedTopic]||[];
+          var moved=arr.splice(dragIdx,1)[0]; arr.splice(dropIdx,0,moved);
+          data.assignments.assignments[selectedTopic]=arr;
+          renderAssignments(); toast('Reordered');
+        });
+      });
+    }
 
-        // Add
-        panel.querySelectorAll('.assign-avail-btn').forEach(function(btn) {
-          btn.addEventListener('click', function() {
-            if (!assignments[selectedTopic]) assignments[selectedTopic] = [];
-            assignments[selectedTopic].push(btn.dataset.add);
-            renderAssignments();
-            toast('Added');
-          });
-        });
+    // ===== MODELS =====
+    function renderModels() {
+      var models = data.models.models || [];
+      document.getElementById('models-body').innerHTML = models.map(function(m){
+        return '<tr><td><strong>'+esc(m.name)+'</strong></td><td class="mono">'+esc(m.id)+'</td><td>'+esc(m.submissionMethod||'direct')+'</td><td class="mono truncate">'+esc(m.urlTemplate)+'</td><td><button class="btn" data-action="edit" data-id="'+escA(m.id)+'">Edit</button> <button class="btn btn-danger" data-action="delete" data-id="'+escA(m.id)+'">Del</button></td></tr>';
+      }).join('');
+      document.getElementById('models-body').addEventListener('click', function(e){
+        var btn=e.target.closest('[data-action]'); if(!btn)return;
+        if(btn.dataset.action==='edit') editModel(btn.dataset.id);
+        if(btn.dataset.action==='delete'){if(confirm('Delete?')){data.models.models=data.models.models.filter(function(m){return m.id!==btn.dataset.id;});renderModels();toast('Deleted');}}
+      });
+    }
+    document.getElementById('add-model').addEventListener('click', function(){showModelForm(null);});
+    function editModel(id){var m=data.models.models.find(function(x){return x.id===id;});if(m)showModelForm(m);}
+    function showModelForm(model) {
+      var isNew=!model;
+      document.getElementById('modal').innerHTML='<div class="form-overlay" id="overlay"><div class="form-modal"><h3>'+(isNew?'Add':'Edit')+' Model</h3><div class="fg"><label>ID</label><input id="f-id" value="'+escA(model?model.id:'')+'" '+(isNew?'':'readonly style="background:var(--bg-light)"')+'></div><div class="fg"><label>Name</label><input id="f-name" value="'+escA(model?model.name:'')+'"></div><div class="fg"><label>Icon</label><input id="f-icon" value="'+escA(model?model.icon:'')+'"></div><div class="fg"><label>URL Template</label><input id="f-url" value="'+escA(model?model.urlTemplate:'')+'"></div><div class="fg"><label>Submission Method</label><select id="f-method"><option value="direct" '+(model&&model.submissionMethod==='direct'?'selected':'')+'>Direct</option><option value="populates" '+(model&&model.submissionMethod==='populates'?'selected':'')+'>Populates</option><option value="paste" '+(model&&model.submissionMethod==='paste'?'selected':'')+'>Paste</option></select></div><div class="fg"><label>Copy on Open</label><select id="f-copy"><option value="true" '+(model&&model.copyOnOpen!==false?'selected':'')+'>Yes</option><option value="false" '+(model&&model.copyOnOpen===false?'selected':'')+'>No</option></select></div><div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
+      document.getElementById('f-cancel').addEventListener('click',closeModal);
+      document.getElementById('overlay').addEventListener('click',function(e){if(e.target===e.currentTarget)closeModal();});
+      document.getElementById('f-save').addEventListener('click',function(){
+        var entry={id:document.getElementById('f-id').value.trim(),name:document.getElementById('f-name').value.trim(),icon:document.getElementById('f-icon').value.trim(),urlTemplate:document.getElementById('f-url').value,submissionMethod:document.getElementById('f-method').value,copyOnOpen:document.getElementById('f-copy').value==='true'};
+        if(!entry.id||!entry.name){alert('Required.');return;}
+        if(isNew){data.models.models.push(entry);}else{var i=data.models.models.findIndex(function(m){return m.id===entry.id;});if(i>=0)data.models.models[i]=entry;}
+        closeModal();renderModels();toast('Saved');
+      });
+    }
 
-        // Drag reorder
-        var dragIdx = null;
-        var list = document.getElementById('assign-list');
-        list.querySelectorAll('.assign-item').forEach(function(item) {
-          item.addEventListener('dragstart', function(e) {
-            dragIdx = parseInt(item.dataset.idx);
-            item.classList.add('assign-dragging');
-            e.dataTransfer.effectAllowed = 'move';
-          });
-          item.addEventListener('dragend', function() { item.classList.remove('assign-dragging'); });
-          item.addEventListener('dragover', function(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
-          item.addEventListener('drop', function(e) {
-            e.preventDefault();
-            var dropIdx = parseInt(item.dataset.idx);
-            if (dragIdx === null || dragIdx === dropIdx) return;
-            var arr = assignments[selectedTopic] || [];
-            var moved = arr.splice(dragIdx, 1)[0];
-            arr.splice(dropIdx, 0, moved);
-            assignments[selectedTopic] = arr;
-            renderAssignments();
-            toast('Reordered');
-          });
-        });
-      }
+    // ===== PROMPT GEN =====
+    function renderPromptGen() { document.getElementById('pg-preview').textContent = JSON.stringify(data.promptgen, null, 2); }
 
-      // ========== IMPORT / EXPORT ==========
-      function renderIO() {
-        var panel = document.getElementById('panel-io');
-        panel.innerHTML =
-          '<div class="io-section"><h3>Export Shortcuts Directory</h3>' +
-            '<textarea class="io-textarea" readonly id="io-dir-out">' + JSON.stringify({ shortcuts: directory }, null, 2) + '</textarea>' +
-            '<div class="io-actions"><button class="btn" id="io-dir-copy">Copy to Clipboard</button><button class="btn" id="io-dir-dl">Download JSON</button></div></div>' +
-          '<div class="io-section"><h3>Export Topic Assignments</h3>' +
-            '<textarea class="io-textarea" readonly id="io-assign-out">' + JSON.stringify({ assignments: assignments }, null, 2) + '</textarea>' +
-            '<div class="io-actions"><button class="btn" id="io-assign-copy">Copy to Clipboard</button><button class="btn" id="io-assign-dl">Download JSON</button></div></div>' +
-          '<div class="io-section"><h3>Import Shortcuts Directory</h3>' +
-            '<textarea class="io-textarea" id="io-dir-in" placeholder="Paste shortcuts-directory.json content here..."></textarea>' +
-            '<div class="io-actions"><button class="btn btn-success" id="io-dir-import">Import Directory</button></div></div>' +
-          '<div class="io-section"><h3>Import Topic Assignments</h3>' +
-            '<textarea class="io-textarea" id="io-assign-in" placeholder="Paste shortcuts-assignments.json content here..."></textarea>' +
-            '<div class="io-actions"><button class="btn btn-success" id="io-assign-import">Import Assignments</button></div></div>';
-
-        document.getElementById('io-dir-copy').addEventListener('click', function() {
-          navigator.clipboard.writeText(document.getElementById('io-dir-out').value).then(function() { toast('Directory copied'); });
-        });
-        document.getElementById('io-assign-copy').addEventListener('click', function() {
-          navigator.clipboard.writeText(document.getElementById('io-assign-out').value).then(function() { toast('Assignments copied'); });
-        });
-        document.getElementById('io-dir-dl').addEventListener('click', function() {
-          downloadJSON('shortcuts-directory.json', { shortcuts: directory });
-        });
-        document.getElementById('io-assign-dl').addEventListener('click', function() {
-          downloadJSON('shortcuts-assignments.json', { assignments: assignments });
-        });
-        document.getElementById('io-dir-import').addEventListener('click', function() {
-          try {
-            var data = JSON.parse(document.getElementById('io-dir-in').value);
-            if (!data.shortcuts || !Array.isArray(data.shortcuts)) throw new Error('Missing "shortcuts" array');
-            directory = data.shortcuts;
-            toast('Imported ' + directory.length + ' shortcuts');
-            renderDirectory();
-            renderIO();
-          } catch (e) { alert('Invalid JSON: ' + e.message); }
-        });
-        document.getElementById('io-assign-import').addEventListener('click', function() {
-          try {
-            var data = JSON.parse(document.getElementById('io-assign-in').value);
-            if (!data.assignments || typeof data.assignments !== 'object') throw new Error('Missing "assignments" object');
-            assignments = data.assignments;
-            toast('Imported assignments for ' + Object.keys(assignments).length + ' topics');
-            renderAssignments();
-            renderIO();
-          } catch (e) { alert('Invalid JSON: ' + e.message); }
-        });
-      }
-
-      // Initial render
-      renderDirectory();
-      renderAssignments();
-      renderIO();
-    })();
+    renderAll();
   </script>
 </body>
 </html>
