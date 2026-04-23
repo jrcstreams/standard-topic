@@ -1963,7 +1963,6 @@ body.sticky-always.has-subnav #content {
 /* Homepage: drop "All Topics +" first when space gets tight — keep separator */
 @media (max-width: 900px) {
   .subnav-all-topics-link { display: none; }
-  .home-subnav-topics { margin-left: 0.5rem; padding-left: 0; }
 }
 /* Homepage: hide entire featured topics row on mobile — Browse Topics covers this */
 @media (max-width: 640px) {
