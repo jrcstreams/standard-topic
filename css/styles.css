@@ -1953,6 +1953,18 @@ body.sticky-always.has-subnav #content {
   align-items: center;
   padding: 4rem 0.3rem;
   margin: -4rem 0;
+  margin-left: 0.15rem;
+  position: relative;
+}
+.subnav-topics-label::before {
+  content: '';
+  position: absolute;
+  left: -0.15rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 1.1rem;
+  background: var(--color-border);
 }
 
 .subnav-topic-link {
@@ -1980,7 +1992,7 @@ body.sticky-always.has-subnav #content {
 .subnav-action-link {
   font-family: var(--font-display);
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #4a6a8a;
   letter-spacing: -0.005em;
   text-decoration: none;
@@ -1990,7 +2002,8 @@ body.sticky-always.has-subnav #content {
   padding: 4rem 0.6rem 4rem 0.4rem;
   margin-top: -4rem;
   margin-bottom: -4rem;
-  border-right: 1px solid var(--color-border);
+  border-right: none;
+  margin-right: 0.15rem;
   transition: color 0.12s, background 0.12s;
   display: inline-flex;
   align-items: center;
