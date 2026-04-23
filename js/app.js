@@ -305,8 +305,8 @@ function renderStickyHeroBar(container, route) {
       <div class="sticky-actions">
         <div class="sticky-search" id="sticky-search-container"></div>
         <a href="#/prompt-generator" class="sticky-cta">
-          <span class="sticky-cta-full">Build a prompt +</span>
-          <span class="sticky-cta-short">Build a prompt +</span>
+          <span class="sticky-cta-full">Prompt Builder</span>
+          <span class="sticky-cta-short">Prompt Builder</span>
         </a>
       </div>
     </div>

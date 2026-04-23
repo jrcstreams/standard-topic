@@ -109,6 +109,10 @@ export function getModels() {
   return modelsData?.models || [];
 }
 
+export function getSubmissionMethods() {
+  return modelsData?.submissionMethods || {};
+}
+
 export function getDefaultModelId() {
   return modelsData?.defaultModel || 'chatgpt';
 }

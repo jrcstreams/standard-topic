@@ -64,8 +64,8 @@ export function initSearchOverlay() {
 export function renderSearchBar(container, route, opts = {}) {
   const { compact = false } = opts;
   const cls = `search-bar${compact ? ' is-compact' : ''}`;
-  const fullLabel = 'Browse topics';
-  const shortLabel = 'Browse topics';
+  const fullLabel = 'Topics';
+  const shortLabel = 'Topics';
   container.innerHTML = `
     <div class="search-bar-wrapper">
       <button class="${cls}" type="button" aria-label="${fullLabel}">

@@ -1,20 +1,13 @@
-// Prompt preview + AI model selection modal (M2 compact card design).
-// Opens when user clicks an AI Shortcut. Layout:
-//   [✕ close]
-//   [icon] Shortcut Name
-//   [prompt preview]
-//   AI Model              📋 Copy only
-//   [model grid]
-//   [Copy & Open ChatGPT →]
-//   disclaimer
+// Prompt preview + AI model selection modal.
+// Opens when user clicks an AI Shortcut. Redesigned to match the
+// prompt generator submission modal style with categorized models.
 
-import { getModels, getDefaultModelId, getModelById } from '../utils/data.js';
+import { getModels, getDefaultModelId, getModelById, getSubmissionMethods } from '../utils/data.js';
 import {
   getPreferredModelId,
   setPreferredModelId,
   submitPrompt,
   isUrlTooLong,
-  supportsUrlPrompt,
   shouldCopyOnOpen,
 } from '../utils/ai-models.js';
 
@@ -58,51 +51,84 @@ function closeModal() {
   document.body.style.overflow = '';
 }
 
+function getSubmitLabel(model) {
+  if (!model) return 'Submit Prompt';
+  return shouldCopyOnOpen(model)
+    ? `Copy prompt and open ${model.name}`
+    : `Open ${model.name}`;
+}
+
 function renderModalContent(prompt, shortcutName, shortcutIcon, models, selectedModelId) {
   const selectedModel = getModelById(selectedModelId) || models[0];
   const tooLong = isUrlTooLong(selectedModel, prompt);
-  const submitLabel = shouldCopyOnOpen(selectedModel)
-    ? `Copy & Open ${selectedModel.name} →`
-    : `Open ${selectedModel.name} →`;
+  const methods = getSubmissionMethods();
+  const methodOrder = ['direct', 'populates', 'paste'];
+
+  // Group models by submission method
+  const grouped = {};
+  methodOrder.forEach(m => { grouped[m] = []; });
+  models.forEach(m => {
+    const method = m.submissionMethod || 'direct';
+    if (!grouped[method]) grouped[method] = [];
+    grouped[method].push(m);
+  });
+
+  // Build model sections HTML
+  let modelSectionsHTML = '';
+  methodOrder.forEach(method => {
+    const group = grouped[method];
+    if (!group || group.length === 0) return;
+    const meta = methods[method] || {};
+    modelSectionsHTML += `
+      <div class="prompt-modal-method-section">
+        <div class="prompt-modal-method-label">${escapeHTML(meta.label || method)}</div>
+        <div class="prompt-modal-method-desc">${escapeHTML(meta.description || '')}</div>
+        <div class="prompt-modal-method-models">
+          ${group.map(m => `
+            <button class="prompt-modal-model-btn ${m.id === selectedModelId ? 'selected' : ''}" type="button" data-model-id="${m.id}">
+              ${escapeHTML(m.name)}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  });
 
   modalEl.innerHTML = `
     <div class="prompt-modal">
-      <button class="prompt-modal-close" id="prompt-modal-close" aria-label="Close">✕</button>
-
-      <div class="prompt-modal-shortcut">
-        ${shortcutIcon ? `<span class="prompt-modal-shortcut-icon" aria-hidden="true">${escapeHTML(shortcutIcon)}</span>` : ''}
-        <div class="prompt-modal-shortcut-name">${escapeHTML(shortcutName || 'Submit Prompt')}</div>
+      <div class="prompt-modal-header">
+        <div class="prompt-modal-shortcut">
+          ${shortcutIcon ? `<span class="prompt-modal-shortcut-icon" aria-hidden="true">${escapeHTML(shortcutIcon)}</span>` : ''}
+          <div class="prompt-modal-shortcut-name">${escapeHTML(shortcutName || 'Submit Prompt')}</div>
+        </div>
+        <div class="prompt-modal-header-actions">
+          <button class="prompt-modal-action-btn" id="prompt-modal-copy" type="button">Copy</button>
+          <button class="prompt-modal-action-btn prompt-modal-close-btn" id="prompt-modal-close" type="button" aria-label="Close">✕</button>
+        </div>
       </div>
 
       <div class="prompt-modal-preview">${escapeHTML(prompt)}</div>
 
-      <div class="prompt-modal-model-row">
-        <span class="prompt-modal-label">AI Model</span>
-        <button class="prompt-modal-copy-link" id="prompt-modal-copy" type="button">
-          <svg class="prompt-modal-copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-          </svg>
-          <span class="prompt-modal-copy-text">Copy Prompt Text</span>
-        </button>
-      </div>
-      <div class="prompt-modal-models" id="prompt-modal-models">
-        ${models.map(m => `
-          <button class="prompt-modal-model-btn ${m.id === selectedModelId ? 'selected' : ''}" type="button" data-model-id="${m.id}">
-            ${escapeHTML(m.name)}
-          </button>
-        `).join('')}
+      <div class="prompt-modal-models-section">
+        <span class="prompt-modal-label">Choose AI Model</span>
+        ${modelSectionsHTML}
       </div>
 
       ${tooLong ? `
         <div class="prompt-modal-warning">
-          This prompt may be too long to submit via URL. Use "Copy only" then paste manually after the page opens.
+          This prompt may be too long to submit via URL. Use "Copy" then paste manually after the page opens.
         </div>` : ''}
 
-      <button class="prompt-modal-submit" id="prompt-modal-submit" type="button">
-        ${escapeHTML(submitLabel)}
-      </button>
+      <div class="prompt-modal-buttons">
+        <button class="prompt-modal-submit" id="prompt-modal-submit" type="button">
+          ${escapeHTML(getSubmitLabel(selectedModel))}
+        </button>
+        <button class="prompt-modal-open-only" id="prompt-modal-open-only" type="button">
+          Open ${escapeHTML(selectedModel.name)} only
+        </button>
+      </div>
 
+      <p class="prompt-modal-clipboard-hint">If prompt doesn't load directly into model, paste text from clipboard.</p>
       <p class="prompt-modal-disclaimer">
         Standard Topic is not responsible for actions taken once you leave this site.
       </p>
@@ -113,36 +139,46 @@ function renderModalContent(prompt, shortcutName, shortcutIcon, models, selected
 
   document.getElementById('prompt-modal-copy').addEventListener('click', async () => {
     try { await navigator.clipboard.writeText(prompt); } catch (_) {}
-    const textEl = document.querySelector('#prompt-modal-copy .prompt-modal-copy-text');
-    if (!textEl) return;
-    const orig = textEl.textContent;
-    textEl.textContent = '✓ Copied!';
-    setTimeout(() => { textEl.textContent = orig; }, 1800);
+    const btn = document.getElementById('prompt-modal-copy');
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied';
+    setTimeout(() => { btn.textContent = orig; }, 1800);
   });
 
-  document.getElementById('prompt-modal-models').addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-model-id]');
-    if (!btn) return;
-    selectedModelId = btn.dataset.modelId;
-    setPreferredModelId(selectedModelId);
+  modalEl.querySelectorAll('.prompt-modal-method-models').forEach(section => {
+    section.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-model-id]');
+      if (!btn) return;
+      selectedModelId = btn.dataset.modelId;
+      setPreferredModelId(selectedModelId);
 
-    // Surgical update — no full re-render, no flash of the modal
-    document.querySelectorAll('.prompt-modal-model-btn').forEach(b => {
-      b.classList.toggle('selected', b.dataset.modelId === selectedModelId);
+      modalEl.querySelectorAll('.prompt-modal-model-btn').forEach(b => {
+        b.classList.toggle('selected', b.dataset.modelId === selectedModelId);
+      });
+      const newModel = getModelById(selectedModelId);
+      const submitBtn = document.getElementById('prompt-modal-submit');
+      if (submitBtn && newModel) {
+        submitBtn.textContent = getSubmitLabel(newModel);
+      }
+      const openBtn = document.getElementById('prompt-modal-open-only');
+      if (openBtn && newModel) {
+        openBtn.textContent = `Open ${newModel.name} only`;
+      }
     });
-    const submitBtn = document.getElementById('prompt-modal-submit');
-    const newModel = getModelById(selectedModelId);
-    if (submitBtn && newModel) {
-      submitBtn.textContent = shouldCopyOnOpen(newModel)
-        ? `Copy & Open ${newModel.name} →`
-        : `Open ${newModel.name} →`;
-    }
   });
 
   document.getElementById('prompt-modal-submit').addEventListener('click', async () => {
     const model = getModelById(selectedModelId);
     if (!model) return;
     await submitPrompt(model, prompt);
+    closeModal();
+  });
+
+  document.getElementById('prompt-modal-open-only').addEventListener('click', () => {
+    const model = getModelById(selectedModelId);
+    if (!model) return;
+    const url = model.urlTemplate.replace('{prompt}', '');
+    window.open(url, '_blank');
     closeModal();
   });
 }
