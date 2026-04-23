@@ -10,6 +10,7 @@ import {
   isUrlTooLong,
   shouldCopyOnOpen,
 } from '../utils/ai-models.js';
+import { renderIcon } from '../utils/icons.js';
 
 let modalEl = null;
 
@@ -21,7 +22,7 @@ export function initPromptModal() {
   document.body.appendChild(modalEl);
 
   window.addEventListener('open-prompt-modal', (e) => {
-    openModal(e.detail.prompt, e.detail.name, e.detail.icon);
+    openModal(e.detail.prompt, e.detail.name, e.detail.iconKey);
   });
 
   modalEl.addEventListener('click', (e) => {
@@ -35,13 +36,13 @@ export function initPromptModal() {
   });
 }
 
-function openModal(prompt, shortcutName, shortcutIcon) {
+function openModal(prompt, shortcutName, iconKey) {
   const models = getModels();
   const defaultId = getDefaultModelId();
   const preferredId = getPreferredModelId(defaultId);
   let selectedModelId = preferredId;
 
-  renderModalContent(prompt, shortcutName, shortcutIcon, models, selectedModelId);
+  renderModalContent(prompt, shortcutName, iconKey, models, selectedModelId);
   modalEl.style.display = 'flex';
   document.body.style.overflow = 'hidden';
 }
@@ -58,7 +59,7 @@ function getSubmitLabel(model) {
     : `Open ${model.name}`;
 }
 
-function renderModalContent(prompt, shortcutName, shortcutIcon, models, selectedModelId) {
+function renderModalContent(prompt, shortcutName, iconKey, models, selectedModelId) {
   const selectedModel = getModelById(selectedModelId) || models[0];
   const tooLong = isUrlTooLong(selectedModel, prompt);
   const methods = getSubmissionMethods();
@@ -98,7 +99,7 @@ function renderModalContent(prompt, shortcutName, shortcutIcon, models, selected
     <div class="prompt-modal">
       <div class="prompt-modal-header">
         <div class="prompt-modal-shortcut">
-          ${shortcutIcon ? `<span class="prompt-modal-shortcut-icon" aria-hidden="true">${escapeHTML(shortcutIcon)}</span>` : ''}
+          ${iconKey ? renderIcon(iconKey, 'prompt-modal-shortcut-icon') : ''}
           <div class="prompt-modal-shortcut-name">${escapeHTML(shortcutName || 'Submit Prompt')}</div>
         </div>
         <div class="prompt-modal-header-actions">

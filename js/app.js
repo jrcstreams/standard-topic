@@ -497,9 +497,9 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       btn.blur();
       const prompt = btn.dataset.prompt;
       const name = btn.dataset.name;
-      const icon = btn.dataset.icon;
+      const iconKey = btn.dataset.iconKey || '';
       window.dispatchEvent(new CustomEvent('open-prompt-modal', {
-        detail: { prompt, name, icon },
+        detail: { prompt, name, iconKey },
       }));
     });
   });
@@ -513,7 +513,7 @@ function shortcutItem(shortcut, topicName) {
     <button class="sidebar-shortcut"
             data-prompt="${escapeAttr(prompt)}"
             data-name="${escapeAttr(shortcut.name)}"
-            data-icon="${escapeAttr(iconEmoji)}">
+            data-icon-key="${escapeAttr(shortcut.icon)}">
       ${iconHTML}
       <span class="sidebar-shortcut-name">${escapeHTML(shortcut.name)}</span>
       <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
