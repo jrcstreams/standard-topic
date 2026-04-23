@@ -3136,6 +3136,10 @@ body.sticky-always.has-subnav #content {
   border-radius: 3px;
   font-size: 0.78rem;
   font-weight: var(--font-weight-medium);
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .wiz-topic-overlay-sel-remove {
   display: inline-flex;
@@ -3942,10 +3946,13 @@ body.sticky-always.has-subnav #content {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem 0.35rem;
-  padding: 0.65rem 1.15rem;
+  padding: 0.7rem 1rem;
   border-bottom: 1px solid var(--color-border);
   min-height: 40px;
+  max-height: 110px;
+  overflow-y: auto;
   align-items: center;
+  flex-shrink: 0;
 }
 .wiz-topic-selected-row:empty::after {
   content: 'No topics selected';
