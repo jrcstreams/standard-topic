@@ -1956,14 +1956,15 @@ body.sticky-always.has-subnav #content {
   margin-left: 0.15rem;
   position: relative;
 }
-.subnav-topics-label::before {
+/* Separator before Featured label — homepage only */
+.home-subnav-topics .subnav-topics-label::before {
   content: '';
   position: absolute;
   left: -0.15rem;
   top: 50%;
   transform: translateY(-50%);
   width: 1px;
-  height: 1.1rem;
+  height: 1.4rem;
   background: var(--color-border);
 }
 
@@ -1999,11 +2000,8 @@ body.sticky-always.has-subnav #content {
   white-space: nowrap;
   flex-shrink: 0;
   margin-right: 0;
-  padding: 4rem 0.6rem 4rem 0.4rem;
-  margin-top: -4rem;
-  margin-bottom: -4rem;
-  border-right: none;
-  margin-right: 0.15rem;
+  padding: 4rem 0.65rem;
+  margin: -4rem 0;
   transition: color 0.12s, background 0.12s;
   display: inline-flex;
   align-items: center;
@@ -2019,7 +2017,7 @@ body.sticky-always.has-subnav #content {
 /* "More +" — always visible at end, never clipped */
 .subnav-more-link {
   font-family: var(--font-display);
-  font-size: 0.72rem;
+  font-size: 0.85rem;
   font-weight: var(--font-weight-medium);
   color: var(--color-text-light);
   text-decoration: none;
