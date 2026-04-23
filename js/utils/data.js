@@ -97,11 +97,21 @@ export function getSpecificShortcuts(topicSlug) {
   return all.filter(s => s.topics.includes(topicSlug));
 }
 
+export function getShortcutSections() {
+  return evergreenShortcuts?.sections || {};
+}
+
+export function getShortcutSectionOrder() {
+  return evergreenShortcuts?.sectionOrder || ['news', 'reference', 'decision', 'watch', 'personal'];
+}
+
 export function getAllShortcutIconKeys() {
   const ev = evergreenShortcuts?.shortcuts || [];
   const sp = specificShortcuts?.shortcuts || [];
+  const sections = evergreenShortcuts?.sections || {};
   const keys = new Set();
   [...ev, ...sp].forEach(s => { if (s.icon) keys.add(s.icon); });
+  Object.values(sections).forEach(s => { if (s.icon) keys.add(s.icon); });
   return [...keys];
 }
 

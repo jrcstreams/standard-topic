@@ -1,5 +1,5 @@
 import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
-import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getEvergreenShortcuts, getSpecificShortcuts, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys } from './utils/data.js';
+import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getEvergreenShortcuts, getSpecificShortcuts, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getShortcutSections, getShortcutSectionOrder } from './utils/data.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { renderFooter } from './components/footer.js';
 import { renderSearchBar, initSearchOverlay } from './components/search-modal.js';
@@ -469,6 +469,9 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   const specific = isCustom ? [] : getSpecificShortcutsFor(isHome ? 'home' : route.slug);
   const all = [...evergreen, ...specific];
 
+  const sections = getShortcutSections();
+  const sectionOrder = getShortcutSectionOrder();
+
   const topicPill = (!isHome && !isCustom && topicName)
     ? `<span class="section-topic-pill">${escapeHTML(topicName)}</span>`
     : '';
@@ -484,9 +487,34 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   if (all.length === 0) {
     html += `<p class="sidebar-empty">No shortcuts yet.</p>`;
   } else {
-    html += `<div class="sidebar-shortcut-list">
-      ${all.map(s => shortcutItem(s, topicName)).join('')}
-    </div>`;
+    // Group shortcuts by section
+    const grouped = {};
+    all.forEach(s => {
+      const sec = s.section || 'news';
+      if (!grouped[sec]) grouped[sec] = [];
+      grouped[sec].push(s);
+    });
+
+    // Render sections in order, skip empty ones
+    html += `<div class="shortcuts-sections">`;
+    sectionOrder.forEach(secId => {
+      const items = grouped[secId];
+      if (!items || items.length === 0) return;
+      const meta = sections[secId] || { label: secId, icon: 'zap' };
+      const sectionIcon = renderIcon(meta.icon, 'shortcuts-section-icon');
+      html += `
+        <div class="shortcuts-section">
+          <div class="shortcuts-section-header">
+            ${sectionIcon}
+            <span class="shortcuts-section-label">${escapeHTML(meta.label)}</span>
+          </div>
+          <div class="shortcuts-section-list">
+            ${items.map(s => shortcutItem(s, topicName)).join('')}
+          </div>
+        </div>
+      `;
+    });
+    html += `</div>`;
   }
 
   html += `</div>`;
@@ -506,15 +534,12 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
 }
 
 function shortcutItem(shortcut, topicName) {
-  const iconHTML = renderIcon(shortcut.icon, 'sidebar-shortcut-icon');
-  const iconEmoji = getIconEmoji(shortcut.icon);
   const prompt = shortcut.prompt.replace(/\{topic\}/g, topicName);
   return `
     <button class="sidebar-shortcut"
             data-prompt="${escapeAttr(prompt)}"
             data-name="${escapeAttr(shortcut.name)}"
-            data-icon="${escapeAttr(iconEmoji)}">
-      ${iconHTML}
+            data-icon="">
       <span class="sidebar-shortcut-name">${escapeHTML(shortcut.name)}</span>
       <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
     </button>
