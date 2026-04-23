@@ -104,13 +104,17 @@
 
   <script>
     (async function() {
-      // Load data
-      let directory, assignments, allTopics;
+      // Show loading state
+      document.querySelector('.admin-body').innerHTML = '<p style="padding:2rem;color:#718096;">Loading data...</p>';
+
+      // Load data with cache busting
+      var cb = '?v=' + Date.now();
+      var directory, assignments, allTopics;
       try {
-        const [dirRes, assignRes, topicsRes] = await Promise.all([
-          fetch('data/shortcuts-directory.json').then(r => r.json()),
-          fetch('data/shortcuts-assignments.json').then(r => r.json()),
-          fetch('data/topics.json').then(r => r.json()),
+        var [dirRes, assignRes, topicsRes] = await Promise.all([
+          fetch('data/shortcuts-directory.json' + cb).then(function(r) { return r.json(); }),
+          fetch('data/shortcuts-assignments.json' + cb).then(function(r) { return r.json(); }),
+          fetch('data/topics.json' + cb).then(function(r) { return r.json(); }),
         ]);
         directory = dirRes.shortcuts || [];
         assignments = assignRes.assignments || {};
@@ -124,9 +128,15 @@
         });
         allTopics.push({ slug: '_custom', name: 'Custom Search (default)' });
       } catch (e) {
-        document.querySelector('.admin-body').innerHTML = '<p style="padding:2rem;color:#e53e3e;">Failed to load data: ' + e.message + '</p>';
+        document.querySelector('.admin-body').innerHTML = '<p style="padding:2rem;color:#e53e3e;">Failed to load data: ' + e.message + '<br><br>Make sure you are accessing this page from the site root (e.g. standardtopic.com/admin.html)</p>';
         return;
       }
+
+      // Restore panel containers after loading
+      document.querySelector('.admin-body').innerHTML =
+        '<div class="admin-panel active" id="panel-directory"></div>' +
+        '<div class="admin-panel" id="panel-assignments"></div>' +
+        '<div class="admin-panel" id="panel-io"></div>';
 
       var selectedTopic = 'home';
 
