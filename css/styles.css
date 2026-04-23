@@ -5123,33 +5123,123 @@ body.sticky-always.has-subnav #content {
 
 /* === About Page === */
 .about-page {
-  max-width: 700px;
+  max-width: 680px;
 }
-
-.about-section {
-  margin-bottom: 1.5rem;
+.about-hero {
+  margin-bottom: 2rem;
 }
-
-.about-section h3 {
-  font-size: 1rem;
-  font-weight: 700;
+.about-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #1e1e1e;
+  letter-spacing: -0.02em;
   margin-bottom: 0.5rem;
 }
-
+.about-lead {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+.about-section {
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.about-section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.about-section h3 {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e1e1e;
+  margin-bottom: 0.6rem;
+}
 .about-section p {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   line-height: 1.7;
   color: var(--color-text);
 }
-
 .about-section ul {
-  padding-left: 1.25rem;
-  font-size: 0.9rem;
-  line-height: 1.8;
+  padding-left: 1.15rem;
+  font-size: 0.88rem;
+  line-height: 1.75;
+  list-style: none;
 }
-
 .about-section li {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.35rem;
+  position: relative;
+  padding-left: 0.15rem;
+}
+.about-section li::before {
+  content: '';
+  position: absolute;
+  left: -1rem;
+  top: 0.6em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-text-light);
+}
+/* Creator */
+.about-creator-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+.about-creator-name {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e1e1e;
+  margin-bottom: 0.3rem;
+}
+.about-creator-bio {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--color-text);
+  margin-bottom: 0.55rem;
+}
+.about-creator-links {
+  display: flex;
+  gap: 1rem;
+}
+.about-creator-links a {
+  font-size: 0.84rem;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+.about-creator-links a:hover {
+  text-decoration: underline;
+}
+/* GitHub link */
+.about-github-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.65rem;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  font-size: 0.84rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: border-color 0.12s, background 0.12s;
+}
+.about-github-link:hover {
+  border-color: var(--color-text);
+  background: var(--color-bg-light);
+  text-decoration: none;
+}
+/* Disclaimer */
+.about-disclaimer p {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
 }
 
 /* === Not Found === */
