@@ -2,7 +2,7 @@
 // document.body. `renderSearchBar` creates trigger buttons that all open
 // the same overlay.
 
-import { getTopicsGroupedByParent, searchTopics } from '../utils/data.js';
+import { getTopicsGroupedByParent, getFeaturedTopics, searchTopics } from '../utils/data.js';
 import { navigate } from '../utils/router.js';
 
 let overlayEl = null;
@@ -10,7 +10,7 @@ let inputEl = null;
 let bodyEl = null;
 let currentResults = [];
 let highlightIndex = -1;
-let cachedBrowseHTML = null;
+let cachedBrowseHTML = null; // rebuilt on first open
 
 export function initSearchOverlay() {
   if (overlayEl) return;
@@ -169,7 +169,28 @@ function renderBody(query) {
 
 function renderBrowseHTML() {
   const groups = getTopicsGroupedByParent();
+  const featured = getFeaturedTopics();
   let html = `<div class="search-overlay-browse shortcuts-sidebar">`;
+
+  // Featured Topics section at the top
+  if (featured.length > 0) {
+    html += `
+      <div class="search-overlay-group">
+        <div class="search-featured-header">Featured Topics</div>
+        <div class="sidebar-shortcut-list search-subtopic-list">
+    `;
+    featured.forEach(t => {
+      html += `
+        <a href="#/topic/${t.slug}" class="sidebar-shortcut search-subtopic-row search-featured-item" data-slug="${t.slug}">
+          <span class="sidebar-shortcut-dot search-featured-dot" aria-hidden="true"></span>
+          <span class="sidebar-shortcut-name">${escapeHTML(t.name)}</span>
+          <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
+        </a>
+      `;
+    });
+    html += `</div></div>`;
+  }
+
   groups.forEach(group => {
     html += `
       <div class="search-overlay-group">

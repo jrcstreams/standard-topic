@@ -8,7 +8,7 @@
 //                              user for an extra value substituted into
 //                              the option's clause via {key} placeholder
 
-import { getPromptGenData, getModels, getDefaultModelId, getModelById, getParentTopics, getAllTopics, searchTopics } from '../utils/data.js';
+import { getPromptGenData, getModels, getDefaultModelId, getModelById, getParentTopics, getFeaturedTopics, getAllTopics, searchTopics } from '../utils/data.js';
 import { getPreferredModelId, setPreferredModelId, submitPrompt, isUrlTooLong, shouldCopyOnOpen } from '../utils/ai-models.js';
 
 const state = {
@@ -676,6 +676,25 @@ function openTopicPicker(label, initialSelected, onConfirm) {
       }
     } else {
       currentResults = [];
+
+      // Featured Topics section at the top
+      const featured = getFeaturedTopics();
+      if (featured.length > 0) {
+        html += `<div class="search-overlay-group">
+          <div class="search-featured-header">Featured Topics</div>
+          <div class="sidebar-shortcut-list search-subtopic-list">`;
+        featured.forEach(t => {
+          const sel = selected.has(t.name);
+          html += `
+            <div class="sidebar-shortcut search-subtopic-row wiz-topic-row search-featured-item ${sel ? 'is-selected' : ''}" data-name="${escapeAttr(t.name)}">
+              <span class="wiz-topic-check">${sel ? '✓' : ''}</span>
+              <span class="sidebar-shortcut-name">${escapeHTML(t.name)}</span>
+            </div>
+          `;
+        });
+        html += `</div></div>`;
+      }
+
       groups.forEach(group => {
         const parentSel = selected.has(group.parent.name);
         html += `

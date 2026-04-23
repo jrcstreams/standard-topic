@@ -1437,6 +1437,23 @@ body.sticky-always.has-subnav #content {
 
 .search-overlay-esc { display: none; }
 
+/* Featured Topics section header in browse/picker modals */
+.search-featured-header {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.55rem 0.85rem 0.4rem;
+  background: var(--color-bg-light, #f7f8fa);
+  border-bottom: 1px solid var(--color-border);
+}
+.search-featured-dot {
+  background: var(--color-primary) !important;
+  opacity: 0.6;
+}
+
 .search-overlay-close {
   display: inline-flex;
   align-items: center;
