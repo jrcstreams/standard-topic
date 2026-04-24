@@ -332,13 +332,6 @@ body.sticky-always.has-subnav #content {
   margin-left: auto;
 }
 
-.sticky-search {
-  flex: 0 0 auto;
-}
-.sticky-search .search-bar-wrapper {
-  width: auto;
-  flex: 0 0 auto;
-}
 /* Search bar inside dark nav — styled as search input.
    flex: 1 1 280px means it WANTS to be 280px but will shrink if needed. */
 .sticky-search { flex: 1 1 280px; min-width: 100px; max-width: 280px; }
@@ -402,19 +395,20 @@ body.sticky-always.has-subnav #content {
 }
 /* === Hamburger Menu === */
 .nav-hamburger {
-  display: none; /* shown via JS class */
-  width: 28px;
-  height: 28px;
-  padding: 5px 4px;
+  display: none; /* shown via CSS media query */
+  width: 24px;
+  height: 24px;
+  padding: 3px 2px;
   background: none;
   border: none;
   cursor: pointer;
   flex-direction: column;
   justify-content: center;
-  gap: 4.5px;
+  gap: 4px;
   flex-shrink: 0;
   opacity: 0.85;
   transition: opacity 0.12s;
+  margin-right: 0.15rem;
 }
 .nav-hamburger:hover { opacity: 1; }
 .nav-hamburger span {
@@ -844,11 +838,6 @@ body.hide-cta .sticky-cta { display: none !important; }
 
   .sticky-cta-full { display: none !important; }
   .sticky-cta-short { display: inline !important; }
-
-  .sticky-search {
-    flex: 0 0 auto;
-    min-width: 0;
-  }
 
   .feeds-pill {
     font-size: 0.62rem;
