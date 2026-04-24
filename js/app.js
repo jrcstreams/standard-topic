@@ -386,51 +386,61 @@ function renderStickyHeroBar(container, route) {
       </div>
     </div>
 
-    <div class="navmenu-overlay" id="navmenu-overlay"></div>
-    <div class="navmenu-panel" id="navmenu-panel">
-      <div class="navmenu-head">
-        <a href="#/" class="navmenu-brand">
-          <img src="assets/logo-light.png" alt="Standard Topic" class="navmenu-logo">
-          <span class="navmenu-title">Standard Topic</span>
-        </a>
-        <button class="navmenu-close" id="navmenu-close" aria-label="Close menu">✕</button>
-      </div>
-      <div class="navmenu-search" id="navmenu-search-container"></div>
-      <div class="navmenu-links">
-        <a href="#/prompt-generator" class="navmenu-link navmenu-link-prompt">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Prompt Builder
-        </a>
-        <a href="#/about" class="navmenu-link">About</a>
-        <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer" class="navmenu-link">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-          GitHub
-        </a>
-      </div>
-      <div class="navmenu-divider"></div>
-      <div class="navmenu-featured-label">Featured Topics</div>
-      <div class="navmenu-topics">${featuredLinksHTML}</div>
-      <button class="navmenu-all-topics" id="navmenu-all-topics">View All Topics</button>
-    </div>
   `;
   renderSearchBar(document.getElementById('sticky-search-container'), route, { compact: true });
+
+  // Nav menu panel — appended to body so it's not clipped by header overflow
+  let navOverlay = document.getElementById('navmenu-overlay');
+  let navPanel = document.getElementById('navmenu-panel');
+  if (!navOverlay) {
+    navOverlay = document.createElement('div');
+    navOverlay.className = 'navmenu-overlay';
+    navOverlay.id = 'navmenu-overlay';
+    document.body.appendChild(navOverlay);
+  }
+  if (!navPanel) {
+    navPanel = document.createElement('div');
+    navPanel.className = 'navmenu-panel';
+    navPanel.id = 'navmenu-panel';
+    document.body.appendChild(navPanel);
+  }
+  navPanel.innerHTML = `
+    <div class="navmenu-head">
+      <a href="#/" class="navmenu-brand" id="navmenu-brand-link">
+        <img src="assets/logo-light.png" alt="Standard Topic" class="navmenu-logo">
+        <span class="navmenu-title">Standard Topic</span>
+      </a>
+      <button class="navmenu-close" id="navmenu-close" aria-label="Close menu">✕</button>
+    </div>
+    <div class="navmenu-search" id="navmenu-search-container"></div>
+    <div class="navmenu-links">
+      <a href="#/prompt-generator" class="navmenu-link navmenu-link-prompt">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Prompt Builder
+      </a>
+      <a href="#/about" class="navmenu-link">About</a>
+      <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer" class="navmenu-link">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </a>
+    </div>
+    <div class="navmenu-divider"></div>
+    <div class="navmenu-featured-label">Featured Topics</div>
+    <div class="navmenu-topics">${featuredLinksHTML}</div>
+    <button class="navmenu-all-topics" id="navmenu-all-topics">View All Topics</button>
+  `;
   renderSearchBar(document.getElementById('navmenu-search-container'), route);
 
-  // Hamburger open/close
-  const hamburger = container.querySelector('#nav-hamburger');
-  const overlay = container.querySelector('#navmenu-overlay');
-  const panel = container.querySelector('#navmenu-panel');
-  const closeBtn = container.querySelector('#navmenu-close');
-  const openMenu = () => { panel.classList.add('is-open'); overlay.classList.add('is-open'); document.body.style.overflow = 'hidden'; };
-  const closeMenu = () => { panel.classList.remove('is-open'); overlay.classList.remove('is-open'); document.body.style.overflow = ''; };
-  hamburger.addEventListener('click', openMenu);
-  overlay.addEventListener('click', closeMenu);
-  closeBtn.addEventListener('click', closeMenu);
-  // Close menu on any link click inside
-  panel.querySelectorAll('a, .navmenu-all-topics').forEach(link => {
+  const closeMenu = () => { navPanel.classList.remove('is-open'); navOverlay.classList.remove('is-open'); document.body.style.overflow = ''; };
+  const openMenu = () => { navPanel.classList.add('is-open'); navOverlay.classList.add('is-open'); document.body.style.overflow = 'hidden'; };
+
+  container.querySelector('#nav-hamburger').addEventListener('click', openMenu);
+  navOverlay.addEventListener('click', closeMenu);
+  navPanel.querySelector('#navmenu-close').addEventListener('click', closeMenu);
+  navPanel.querySelectorAll('a, .navmenu-all-topics').forEach(link => {
     link.addEventListener('click', closeMenu);
   });
-  container.querySelector('#navmenu-all-topics')?.addEventListener('click', () => {
+  navPanel.querySelector('#navmenu-all-topics')?.addEventListener('click', () => {
     const searchBar = document.querySelector('.search-bar');
     if (searchBar) searchBar.click();
   });
