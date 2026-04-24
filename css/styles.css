@@ -344,7 +344,7 @@ body.sticky-always.has-subnav #content {
 }
 
 /* Search bar inside dark nav — styled as search input */
-.sticky-search { flex: 1; min-width: 0; }
+.sticky-search { flex: 0 0 auto; min-width: 0; }
 .sticky-search .search-bar {
   height: 34px;
   padding: 0 0.85rem;
@@ -358,7 +358,7 @@ body.sticky-always.has-subnav #content {
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  width: 100%;
+  width: 200px;
 }
 .sticky-search .search-bar-icon {
   color: var(--color-primary) !important;
@@ -431,10 +431,6 @@ body.sticky-always.has-subnav #content {
 body.show-hamburger .nav-hamburger { display: flex; }
 body.show-hamburger .sticky-logo-img { display: none; }
 body.hide-cta .sticky-cta { display: none !important; }
-body.hide-cta .sticky-search { flex: 1; }
-body.hide-cta .sticky-search .search-bar { width: 100% !important; }
-body.show-hamburger .sticky-actions { flex: 1; margin-left: 0.5rem; }
-body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
 
 /* Slide-out nav menu */
 .navmenu-overlay {
@@ -2219,11 +2215,16 @@ body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
   .sticky-logo-img { display: none !important; }
   .sticky-cta { display: none !important; }
   .home-subnav-topics { display: none !important; }
-  /* Search bar takes more space */
+  /* Search stays same width, right-aligned — shrinks naturally as space reduces */
+  .sticky-search .search-bar { width: 200px; }
+  .sticky-actions { margin-left: auto; }
+}
+
+/* Very small screens: search fills remaining space */
+@media (max-width: 480px) {
   .sticky-search { flex: 1 !important; }
-  .sticky-search .search-bar { width: 100% !important; min-width: 0 !important; }
+  .sticky-search .search-bar { width: 100% !important; }
   .sticky-actions { flex: 1; margin-left: 0.5rem; }
-  .sticky-hero-inner { padding-right: 1rem; }
 }
 
 .subnav-topics-label {
