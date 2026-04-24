@@ -344,6 +344,7 @@ body.sticky-always.has-subnav #content {
 }
 
 /* Search bar inside dark nav — styled as search input */
+.sticky-search { flex: 1; min-width: 0; }
 .sticky-search .search-bar {
   height: 34px;
   padding: 0 0.85rem;
@@ -357,7 +358,7 @@ body.sticky-always.has-subnav #content {
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  min-width: 190px;
+  width: 100%;
 }
 .sticky-search .search-bar-icon {
   color: var(--color-primary) !important;
