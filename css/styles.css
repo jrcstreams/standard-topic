@@ -403,20 +403,20 @@ body.sticky-always.has-subnav #content {
 /* === Hamburger Menu === */
 .nav-hamburger {
   display: none; /* shown via JS class */
-  width: 36px;
-  height: 36px;
-  padding: 8px 7px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
-  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  padding: 5px 4px;
+  background: none;
+  border: none;
   cursor: pointer;
   flex-direction: column;
   justify-content: center;
-  gap: 4px;
+  gap: 4.5px;
   flex-shrink: 0;
-  transition: background 0.12s;
+  opacity: 0.85;
+  transition: opacity 0.12s;
 }
-.nav-hamburger:hover { background: rgba(255, 255, 255, 0.18); }
+.nav-hamburger:hover { opacity: 1; }
 .nav-hamburger span {
   display: block;
   width: 100%;
@@ -465,6 +465,17 @@ body.hide-cta .sticky-cta { display: none !important; }
   padding: 1rem 1.25rem;
   border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
+}
+.navmenu-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+.navmenu-brand:hover { text-decoration: none; }
+.navmenu-logo {
+  width: 28px;
+  height: 28px;
 }
 .navmenu-title {
   font-family: var(--font-display);
@@ -805,11 +816,15 @@ body.hide-cta .sticky-cta { display: none !important; }
   }
   .sticky-search .search-bar {
     height: 32px !important;
-    font-size: 0.78rem !important;
-    padding: 0 0.7rem !important;
+    font-size: 0.82rem !important;
+    padding: 0 0.75rem !important;
     border-radius: 5px !important;
-    min-width: 130px !important;
+    min-width: 0 !important;
   }
+  /* When CTA is hidden, search bar takes remaining space */
+  body.hide-cta .sticky-search { flex: 1; }
+  body.hide-cta .sticky-search .search-bar { width: 100% !important; }
+  body.hide-cta .sticky-actions { flex: 1; }
 
   .sticky-cta-full { display: none !important; }
   .sticky-cta-short { display: inline !important; }
@@ -2162,7 +2177,16 @@ body.hide-cta .sticky-cta { display: none !important; }
 @media (max-width: 900px) {
   .subnav-all-topics-link { display: none; }
 }
-/* Homepage featured topics hidden dynamically by setupResponsiveNav() JS */
+/* Shrink featured topic text at medium widths to keep more visible */
+@media (max-width: 1100px) {
+  .subnav-topic-link { font-size: 0.8rem; padding-left: 0.45rem; padding-right: 0.45rem; }
+  .subnav-topics-label { font-size: 0.8rem; }
+}
+@media (max-width: 900px) {
+  .subnav-topic-link { font-size: 0.76rem; padding-left: 0.35rem; padding-right: 0.35rem; }
+  .subnav-topics-label { font-size: 0.76rem; }
+  .subnav-topics-inline { gap: 0.15rem; }
+}
 
 .subnav-topics-label {
   font-family: var(--font-display);

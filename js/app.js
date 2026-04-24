@@ -332,9 +332,12 @@ function setupResponsiveNav() {
       else l.style.display = 'none';
     });
 
-    // Phase 2: if < 5 visible, hide All Topics to reclaim space
+    // Phase 2: if < 5 visible, hide All Topics + to reclaim space
     if (visibleCount < 5 && allTopicsLink) {
       allTopicsLink.style.display = 'none';
+      // Also hide the Featured label separator when All Topics is gone
+      const featLabel = container.querySelector('.subnav-topics-label');
+      if (featLabel) { featLabel.style.borderLeft = 'none'; featLabel.style.marginLeft = '0'; featLabel.style.paddingLeft = '0.3rem'; }
       // Re-measure
       links.forEach(l => l.style.display = '');
       visibleCount = 0;
@@ -344,8 +347,8 @@ function setupResponsiveNav() {
       });
     }
 
-    // Phase 3: if still < 5, show hamburger and optionally hide featured/cta
-    if (visibleCount < 5) {
+    // Phase 3: if still < 4, show hamburger and hide featured/cta
+    if (visibleCount < 4) {
       document.body.classList.add('show-hamburger');
       container.style.display = 'none';
       document.body.classList.add('hide-cta');
@@ -386,7 +389,10 @@ function renderStickyHeroBar(container, route) {
     <div class="navmenu-overlay" id="navmenu-overlay"></div>
     <div class="navmenu-panel" id="navmenu-panel">
       <div class="navmenu-head">
-        <span class="navmenu-title">Menu</span>
+        <a href="#/" class="navmenu-brand">
+          <img src="assets/logo-light.png" alt="Standard Topic" class="navmenu-logo">
+          <span class="navmenu-title">Standard Topic</span>
+        </a>
         <button class="navmenu-close" id="navmenu-close" aria-label="Close menu">✕</button>
       </div>
       <div class="navmenu-search" id="navmenu-search-container"></div>
