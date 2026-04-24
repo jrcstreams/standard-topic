@@ -332,12 +332,12 @@ function setupResponsiveNav() {
       else l.style.display = 'none';
     });
 
-    // Phase 2: if < 5 visible, hide All Topics + to reclaim space
+    // Phase 2: if < 5 visible, hide All Topics + and Featured label to reclaim space
     if (visibleCount < 5 && allTopicsLink) {
       allTopicsLink.style.display = 'none';
-      // Also hide the Featured label separator when All Topics is gone
+      // Hide Featured label and its separator
       const featLabel = container.querySelector('.subnav-topics-label');
-      if (featLabel) { featLabel.style.borderLeft = 'none'; featLabel.style.marginLeft = '0'; featLabel.style.paddingLeft = '0.3rem'; }
+      if (featLabel) featLabel.style.display = 'none';
       // Re-measure
       links.forEach(l => l.style.display = '');
       visibleCount = 0;

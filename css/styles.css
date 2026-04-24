@@ -821,10 +821,16 @@ body.hide-cta .sticky-cta { display: none !important; }
     border-radius: 5px !important;
     min-width: 0 !important;
   }
-  /* When CTA is hidden, search bar takes remaining space */
-  body.hide-cta .sticky-search { flex: 1; }
+  /* When CTA is hidden, search bar grows wider but stays right-aligned */
+  body.hide-cta .sticky-search { flex: 1; max-width: 280px; }
   body.hide-cta .sticky-search .search-bar { width: 100% !important; }
-  body.hide-cta .sticky-actions { flex: 1; }
+  body.hide-cta .sticky-actions { margin-left: auto; }
+
+  /* When hamburger shows, search takes remaining space with padding */
+  body.show-hamburger .sticky-actions { flex: 1; margin-left: 0.5rem; }
+  body.show-hamburger .sticky-search { flex: 1; max-width: none; }
+  body.show-hamburger .sticky-search .search-bar { width: 100% !important; }
+  body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
 
   .sticky-cta-full { display: none !important; }
   .sticky-cta-short { display: inline !important; }
