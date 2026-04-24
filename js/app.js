@@ -302,42 +302,44 @@ function trimOverflowLinks() {
 
 // Responsive nav: manage hamburger visibility based on featured topic count
 let navResizeHandler = null;
+let navResizeTimer = null;
 function setupResponsiveNav() {
   if (navResizeHandler) window.removeEventListener('resize', navResizeHandler);
 
   const doCheck = () => {
     const container = document.querySelector('.home-subnav-topics');
     if (!container) {
-      // Non-home pages: show hamburger on smaller screens
       const width = window.innerWidth;
       document.body.classList.toggle('show-hamburger', width < 900);
       document.body.classList.toggle('hide-cta', width < 640);
       return;
     }
 
-    // Homepage: count visible featured topic links
     const allTopicsLink = container.querySelector('.subnav-all-topics-link');
+    const featLabel = container.querySelector('.subnav-topics-label');
     const links = container.querySelectorAll('.subnav-topic-link');
 
-    // Phase 1: show everything, measure
+    // Reset everything for measurement
     document.body.classList.remove('show-hamburger', 'hide-cta');
     container.style.display = '';
     if (allTopicsLink) allTopicsLink.style.display = '';
+    if (featLabel) { featLabel.style.display = ''; featLabel.style.borderLeft = ''; featLabel.style.marginLeft = ''; featLabel.style.paddingLeft = ''; }
     links.forEach(l => l.style.display = '');
 
     const containerRight = container.getBoundingClientRect().right;
+
+    // Count how many fit with everything showing
     let visibleCount = 0;
     links.forEach(l => {
       if (l.getBoundingClientRect().right <= containerRight - 4) visibleCount++;
       else l.style.display = 'none';
     });
 
-    // Phase 2: if < 5 visible, hide All Topics + and Featured label to reclaim space
+    // Phase 2: if < 5, drop All Topics + only (keep Featured label)
     if (visibleCount < 5 && allTopicsLink) {
       allTopicsLink.style.display = 'none';
-      // Hide Featured label and its separator
-      const featLabel = container.querySelector('.subnav-topics-label');
-      if (featLabel) featLabel.style.display = 'none';
+      // Remove Featured label's separator since All Topics is gone
+      if (featLabel) { featLabel.style.borderLeft = 'none'; featLabel.style.marginLeft = '0'; featLabel.style.paddingLeft = '0.3rem'; }
       // Re-measure
       links.forEach(l => l.style.display = '');
       visibleCount = 0;
@@ -347,15 +349,19 @@ function setupResponsiveNav() {
       });
     }
 
-    // Phase 3: if still < 4, show hamburger and hide featured/cta
-    if (visibleCount < 4) {
+    // Phase 3: if still < 3, show hamburger and hide subnav topics entirely
+    if (visibleCount < 3) {
       document.body.classList.add('show-hamburger');
       container.style.display = 'none';
       document.body.classList.add('hide-cta');
     }
   };
 
-  navResizeHandler = () => requestAnimationFrame(doCheck);
+  // Debounced resize — prevents rapid glitchy changes
+  navResizeHandler = () => {
+    if (navResizeTimer) clearTimeout(navResizeTimer);
+    navResizeTimer = setTimeout(doCheck, 80);
+  };
   window.addEventListener('resize', navResizeHandler, { passive: true });
   requestAnimationFrame(doCheck);
 }
@@ -415,12 +421,14 @@ function renderStickyHeroBar(container, route) {
     <div class="navmenu-search" id="navmenu-search-container"></div>
     <div class="navmenu-links">
       <a href="#/prompt-generator" class="navmenu-link navmenu-link-prompt">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Prompt Builder
       </a>
+    </div>
+    <div class="navmenu-links navmenu-links-secondary">
       <a href="#/about" class="navmenu-link">About</a>
       <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer" class="navmenu-link">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
         GitHub
       </a>
     </div>
