@@ -112,7 +112,7 @@ function renderModalContent(prompt, shortcutName, iconKey, models, selectedModel
       <div class="prompt-modal-method-title">${escapeHTML(meta.label || '')}</div>
       <div class="prompt-modal-method-info">${escapeHTML(meta.description || '')}</div>
       <ul class="prompt-modal-footer-list">
-        <li><a href="#" class="prompt-modal-open-link" id="prompt-modal-open-only">Open ${escapeHTML(model.name)} only</a></li>
+        <li><a href="#" class="prompt-modal-open-link" id="prompt-modal-open-only">🔗 Open ${escapeHTML(model.name)} only</a></li>
         <li>If prompt doesn't load directly into model, paste text from clipboard.</li>
         <li>Standard Topic is not responsible for actions taken once you leave this site.</li>
       </ul>

@@ -1934,17 +1934,12 @@ body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
 .prompt-modal-section {
   margin-bottom: 1rem;
 }
-.prompt-modal-section-label {
+.prompt-modal-section-label,
+.prompt-modal-label {
   font-size: 0.82rem;
   font-weight: 650;
   color: #1e1e1e;
   margin-bottom: 0.4rem;
-}
-.prompt-modal-label {
-  font-size: 0.78rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-muted);
-  margin-bottom: 0.45rem;
   display: block;
 }
 
@@ -1952,11 +1947,6 @@ body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
 .prompt-modal-submit-area {
   padding-top: 0.75rem;
   margin-top: 0.25rem;
-}
-.prompt-modal-submit {
-  width: auto;
-  display: inline-flex;
-  padding: 0.65rem 1.5rem;
 }
 .prompt-modal-method-title {
   font-size: 0.68rem;
@@ -2025,8 +2015,9 @@ body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
 }
 
 .prompt-modal-submit {
-  width: 100%;
-  padding: 0.7rem 0.75rem;
+  width: auto;
+  display: inline-flex;
+  padding: 0.65rem 1.5rem;
   background: #38a169;
   color: white;
   border: none;
