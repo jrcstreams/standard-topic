@@ -1935,53 +1935,57 @@ body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
   margin-bottom: 1rem;
 }
 .prompt-modal-section-label {
-  font-size: 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 650;
+  color: #1e1e1e;
+  margin-bottom: 0.4rem;
+}
+.prompt-modal-label {
+  font-size: 0.78rem;
   font-weight: var(--font-weight-semibold);
-  color: var(--color-text-light);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 0.35rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.45rem;
+  display: block;
 }
 
 /* Submit area — appears after model selection */
 .prompt-modal-submit-area {
-  border-top: 1px solid var(--color-border);
-  padding-top: 0.85rem;
+  padding-top: 0.75rem;
   margin-top: 0.25rem;
 }
+.prompt-modal-submit {
+  width: auto;
+  display: inline-flex;
+  padding: 0.65rem 1.5rem;
+}
 .prompt-modal-method-title {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: var(--font-weight-bold);
   color: var(--color-text);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin-top: 0.75rem;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.15rem;
 }
 .prompt-modal-method-info {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: var(--color-text-muted);
   line-height: 1.5;
 }
 .prompt-modal-footer-list {
-  list-style: none;
-  padding: 0;
+  list-style: disc;
+  padding-left: 1.1rem;
   margin: 0.65rem 0 0;
   font-size: 0.75rem;
   color: var(--color-text-light);
-  line-height: 1.5;
+  line-height: 1.6;
 }
 .prompt-modal-footer-list li {
-  position: relative;
-  padding-left: 0.85rem;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.15rem;
 }
-.prompt-modal-footer-list li::before {
-  content: '·';
-  position: absolute;
-  left: 0;
+.prompt-modal-footer-list li::marker {
   color: var(--color-text-light);
-  font-weight: 700;
+  font-size: 0.6rem;
 }
 .prompt-modal-open-link {
   color: var(--color-primary);
