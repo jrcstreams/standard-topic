@@ -109,10 +109,13 @@ function renderModalContent(prompt, shortcutName, iconKey, models, selectedModel
       <button class="prompt-modal-submit" id="prompt-modal-submit" type="button">
         ${escapeHTML(getSubmitLabel(model))}
       </button>
+      <div class="prompt-modal-method-title">${escapeHTML(meta.label || '')}</div>
       <div class="prompt-modal-method-info">${escapeHTML(meta.description || '')}</div>
-      <a href="#" class="prompt-modal-open-link" id="prompt-modal-open-only">Open ${escapeHTML(model.name)} only</a>
-      <p class="prompt-modal-clipboard-hint">If prompt doesn't load directly into model, paste text from clipboard.</p>
-      <p class="prompt-modal-disclaimer">Standard Topic is not responsible for actions taken once you leave this site.</p>
+      <ul class="prompt-modal-footer-list">
+        <li><a href="#" class="prompt-modal-open-link" id="prompt-modal-open-only">Open ${escapeHTML(model.name)} only</a></li>
+        <li>If prompt doesn't load directly into model, paste text from clipboard.</li>
+        <li>Standard Topic is not responsible for actions taken once you leave this site.</li>
+      </ul>
     `;
     area.querySelector('#prompt-modal-submit').addEventListener('click', async () => {
       await submitPrompt(model, prompt);

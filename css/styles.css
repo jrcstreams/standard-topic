@@ -1949,22 +1949,46 @@ body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
   padding-top: 0.85rem;
   margin-top: 0.25rem;
 }
-.prompt-modal-method-info {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-  line-height: 1.5;
-  margin-top: 0.65rem;
+.prompt-modal-method-title {
+  font-size: 0.72rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 0.75rem;
+  margin-bottom: 0.2rem;
 }
-.prompt-modal-open-link {
-  display: block;
-  text-align: center;
+.prompt-modal-method-info {
   font-size: 0.78rem;
   color: var(--color-text-muted);
-  margin-top: 0.5rem;
-  text-decoration: underline;
-  text-underline-offset: 2px;
+  line-height: 1.5;
 }
-.prompt-modal-open-link:hover { color: var(--color-primary); }
+.prompt-modal-footer-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.65rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+  line-height: 1.5;
+}
+.prompt-modal-footer-list li {
+  position: relative;
+  padding-left: 0.85rem;
+  margin-bottom: 0.3rem;
+}
+.prompt-modal-footer-list li::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: var(--color-text-light);
+  font-weight: 700;
+}
+.prompt-modal-open-link {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+}
+.prompt-modal-open-link:hover { text-decoration: underline; }
 .prompt-modal-model-btn {
   padding: 0.45rem 0.85rem;
   background: var(--color-bg);
@@ -2011,21 +2035,6 @@ body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
 }
 .prompt-modal-submit:hover { background: #2f855a; }
 
-.prompt-modal-clipboard-hint {
-  text-align: center;
-  font-size: 0.72rem;
-  color: var(--color-text-light);
-  margin: 0.5rem 0 0;
-  line-height: 1.4;
-  font-style: italic;
-}
-.prompt-modal-disclaimer {
-  font-size: 0.7rem;
-  color: var(--color-text-light);
-  text-align: center;
-  line-height: 1.45;
-  margin: 0.35rem 0 0;
-}
 
 @media (max-width: 640px) {
   .prompt-modal-overlay { align-items: center; padding: 0.75rem; }
