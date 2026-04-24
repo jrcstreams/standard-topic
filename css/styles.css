@@ -327,7 +327,8 @@ body.sticky-always.has-subnav #content {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  flex-shrink: 0;
+  flex: 1;
+  justify-content: flex-end;
   margin-left: auto;
 }
 
@@ -425,9 +426,14 @@ body.sticky-always.has-subnav #content {
   background: white;
   border-radius: 1px;
 }
+/* JS classes kept for non-home pages */
 body.show-hamburger .nav-hamburger { display: flex; }
 body.show-hamburger .sticky-logo-img { display: none; }
 body.hide-cta .sticky-cta { display: none !important; }
+body.hide-cta .sticky-search { flex: 1; }
+body.hide-cta .sticky-search .search-bar { width: 100% !important; }
+body.show-hamburger .sticky-actions { flex: 1; margin-left: 0.5rem; }
+body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
 
 /* Slide-out nav menu */
 .navmenu-overlay {
@@ -523,15 +529,14 @@ body.hide-cta .sticky-cta { display: none !important; }
 .navmenu-search .search-bar:hover { border-color: var(--color-primary); }
 .navmenu-search .search-bar-icon { color: #4a6a8a; }
 
-.navmenu-links {
+.navmenu-prompt-row {
+  padding: 0.65rem 1.25rem;
+}
+.navmenu-footer-links {
   display: flex;
   gap: 0.4rem;
-  padding: 0.65rem 1.25rem 0.35rem;
+  padding: 0.65rem 1.25rem;
   flex-wrap: wrap;
-}
-.navmenu-links-secondary {
-  padding-top: 0;
-  padding-bottom: 0.65rem;
 }
 .navmenu-link {
   display: inline-flex;
@@ -837,16 +842,6 @@ body.hide-cta .sticky-cta { display: none !important; }
     border-radius: 5px !important;
     min-width: 0 !important;
   }
-  /* When CTA is hidden, search bar grows wider but stays right-aligned */
-  body.hide-cta .sticky-search { flex: 1; max-width: 280px; }
-  body.hide-cta .sticky-search .search-bar { width: 100% !important; }
-  body.hide-cta .sticky-actions { margin-left: auto; }
-
-  /* When hamburger shows, search takes remaining space with padding */
-  body.show-hamburger .sticky-actions { flex: 1; margin-left: 0.5rem; }
-  body.show-hamburger .sticky-search { flex: 1; max-width: none; }
-  body.show-hamburger .sticky-search .search-bar { width: 100% !important; }
-  body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
 
   .sticky-cta-full { display: none !important; }
   .sticky-cta-short { display: inline !important; }
@@ -2167,7 +2162,6 @@ body.hide-cta .sticky-cta { display: none !important; }
   border-left: none;
   position: relative;
 }
-.subnav-topics-inline.no-separator::before { display: none; }
 .subnav-topics-inline::before {
   content: '';
   position: absolute;
@@ -2200,15 +2194,33 @@ body.hide-cta .sticky-cta { display: none !important; }
 @media (max-width: 900px) {
   .subnav-all-topics-link { display: none; }
 }
-/* Shrink featured topic text at medium widths to keep more visible */
-@media (max-width: 1100px) {
-  .subnav-topic-link { font-size: 0.8rem; padding-left: 0.45rem; padding-right: 0.45rem; }
+/* === Responsive nav breakpoints (CSS-only, no JS measurement) === */
+
+/* 1200px: shrink featured topics slightly */
+@media (max-width: 1200px) {
+  .subnav-topic-link { font-size: 0.8rem; }
   .subnav-topics-label { font-size: 0.8rem; }
 }
-@media (max-width: 900px) {
-  .subnav-topic-link { font-size: 0.76rem; padding-left: 0.35rem; padding-right: 0.35rem; }
-  .subnav-topics-label { font-size: 0.76rem; }
-  .subnav-topics-inline { gap: 0.15rem; }
+
+/* 1000px: drop All Topics +, hide its separator */
+@media (max-width: 1000px) {
+  .subnav-all-topics-link { display: none !important; }
+  .subnav-topics-inline.home-subnav-topics { padding-left: 0; }
+  .subnav-topics-inline.home-subnav-topics::before { display: none; }
+  .home-subnav-topics .subnav-topics-label { border-left: none; margin-left: 0; padding-left: 0.3rem; }
+}
+
+/* 800px: show hamburger, hide featured topics from subnav, hide CTA */
+@media (max-width: 800px) {
+  .nav-hamburger { display: flex !important; }
+  .sticky-logo-img { display: none !important; }
+  .sticky-cta { display: none !important; }
+  .home-subnav-topics { display: none !important; }
+  /* Search bar takes more space */
+  .sticky-search { flex: 1 !important; }
+  .sticky-search .search-bar { width: 100% !important; min-width: 0 !important; }
+  .sticky-actions { flex: 1; margin-left: 0.5rem; }
+  .sticky-hero-inner { padding-right: 1rem; }
 }
 
 .subnav-topics-label {
