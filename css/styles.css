@@ -396,9 +396,9 @@ body.sticky-always.has-subnav #content {
 /* === Hamburger Menu === */
 .nav-hamburger {
   display: none; /* shown via CSS media query */
-  width: 24px;
-  height: 24px;
-  padding: 3px 2px;
+  width: 22px;
+  height: 22px;
+  padding: 3px 1px;
   background: none;
   border: none;
   cursor: pointer;
@@ -408,7 +408,7 @@ body.sticky-always.has-subnav #content {
   flex-shrink: 0;
   opacity: 0.85;
   transition: opacity 0.12s;
-  margin-right: 0.15rem;
+  margin-right: -0.25rem;
 }
 .nav-hamburger:hover { opacity: 1; }
 .nav-hamburger span {
