@@ -761,27 +761,24 @@ body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
   }
 }
 
-@media (max-width: 640px) {
+/* When featured topics drop off (800px) — consistent compact subnav */
+@media (max-width: 800px) {
   #sub-header.is-subnav {
     top: 54px;
   }
 
   #sub-header.is-subnav .topic-banner {
-    padding: 0.7rem 0.9rem;
-    min-height: 48px;
+    padding: 0.85rem 1.1rem;
+    min-height: 54px;
   }
 
   #sub-header.is-subnav .topic-banner-title {
-    font-size: 1.25rem;
-    max-width: 60vw;
+    font-size: 1.3rem;
+    max-width: 65vw;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     flex-shrink: 1;
-  }
-
-  #sub-header.is-subnav .topic-banner-accent {
-    height: 22px;
   }
 }
 
