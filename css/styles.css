@@ -2201,6 +2201,8 @@ body.hide-cta .sticky-cta { display: none !important; }
   .sticky-cta { display: none !important; }
   .home-subnav-topics { display: none !important; }
   .sticky-actions { margin-left: auto; }
+  /* Align nav padding with content padding */
+  .sticky-hero-inner { padding: 0 1rem; }
 }
 
 .subnav-topics-label {
