@@ -322,8 +322,9 @@ function setupResponsiveNav() {
     // Reset everything for measurement
     document.body.classList.remove('show-hamburger', 'hide-cta');
     container.style.display = '';
+    container.classList.remove('no-separator');
     if (allTopicsLink) allTopicsLink.style.display = '';
-    if (featLabel) { featLabel.style.display = ''; featLabel.style.borderLeft = ''; featLabel.style.marginLeft = ''; featLabel.style.paddingLeft = ''; }
+    if (featLabel) featLabel.style.display = '';
     links.forEach(l => l.style.display = '');
 
     const containerRight = container.getBoundingClientRect().right;
@@ -338,8 +339,8 @@ function setupResponsiveNav() {
     // Phase 2: if < 5, drop All Topics + only (keep Featured label)
     if (visibleCount < 5 && allTopicsLink) {
       allTopicsLink.style.display = 'none';
-      // Remove Featured label's separator since All Topics is gone
-      if (featLabel) { featLabel.style.borderLeft = 'none'; featLabel.style.marginLeft = '0'; featLabel.style.paddingLeft = '0.3rem'; }
+      // Hide the container's ::before separator — keep only the Featured label one
+      container.classList.add('no-separator');
       // Re-measure
       links.forEach(l => l.style.display = '');
       visibleCount = 0;
