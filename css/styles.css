@@ -61,10 +61,10 @@ a:hover {
   padding: 1.5rem 2rem;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 800px) {
   #content {
-    padding-left: 1.1rem;
-    padding-right: 1.1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
 
@@ -757,10 +757,10 @@ body.hide-cta .sticky-cta { display: none !important; }
   }
 }
 
-/* Smaller screens: slightly reduce subnav padding */
+/* Smaller screens: align subnav padding with content */
 @media (max-width: 800px) {
   #sub-header.is-subnav .topic-banner {
-    padding: 1.1rem 1.1rem;
+    padding: 1.1rem 1rem;
     min-height: 58px;
   }
   #sub-header.is-subnav .topic-banner-title {
@@ -772,13 +772,13 @@ body.hide-cta .sticky-cta { display: none !important; }
   }
 }
 
-/* Smallest screens: compact subnav (homepage has no featured, title only) */
+/* Smallest screens: compact subnav */
 @media (max-width: 640px) {
   #sub-header.is-subnav {
     top: 54px;
   }
   #sub-header.is-subnav .topic-banner {
-    padding: 0.85rem 1.1rem;
+    padding: 0.85rem 1rem;
     min-height: 54px;
   }
   #sub-header.is-subnav .topic-banner-title {
