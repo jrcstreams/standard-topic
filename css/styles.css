@@ -358,7 +358,7 @@ body.sticky-always.has-subnav #content {
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  width: 200px;
+  width: 280px;
 }
 .sticky-search .search-bar-icon {
   color: var(--color-primary) !important;
@@ -2215,14 +2215,14 @@ body.hide-cta .sticky-cta { display: none !important; }
   .sticky-logo-img { display: none !important; }
   .sticky-cta { display: none !important; }
   .home-subnav-topics { display: none !important; }
-  /* Search stays same width, right-aligned — shrinks naturally as space reduces */
-  .sticky-search .search-bar { width: 200px; }
+  /* Search keeps its width, right-aligned */
+  .sticky-search .search-bar { width: 280px; }
   .sticky-actions { margin-left: auto; }
 }
 
-/* Very small screens: search fills remaining space */
-@media (max-width: 480px) {
-  .sticky-search { flex: 1 !important; }
+/* Small screens: search shrinks to fit alongside title */
+@media (max-width: 550px) {
+  .sticky-search { flex: 1 !important; min-width: 0 !important; }
   .sticky-search .search-bar { width: 100% !important; }
   .sticky-actions { flex: 1; margin-left: 0.5rem; }
 }
