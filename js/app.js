@@ -137,6 +137,7 @@ function renderLayout(route) {
     if (heroEl) heroEl.innerHTML = '';
 
     trimOverflowLinks();
+    setupResponsiveNav();
     return;
   }
 
@@ -198,10 +199,16 @@ function renderLayout(route) {
       subHeader.querySelector('#subnav-related-btn')?.addEventListener('click', openRelatedModal);
 
       trimOverflowLinks();
+      setupResponsiveNav();
     } else {
       // Custom search: title-only subnav.
       renderSubNav(subHeader, { title: route.term });
+      setupResponsiveNav();
     }
+  }
+  // Pages without subnav topics still need responsive nav
+  if (route.type === 'prompt-generator' || route.type === 'about') {
+    setupResponsiveNav();
   }
 }
 
@@ -293,10 +300,74 @@ function trimOverflowLinks() {
   window.addEventListener('resize', trimResizeHandler, { passive: true });
 }
 
+// Responsive nav: manage hamburger visibility based on featured topic count
+let navResizeHandler = null;
+function setupResponsiveNav() {
+  if (navResizeHandler) window.removeEventListener('resize', navResizeHandler);
+
+  const doCheck = () => {
+    const container = document.querySelector('.home-subnav-topics');
+    if (!container) {
+      // Non-home pages: show hamburger on smaller screens
+      const width = window.innerWidth;
+      document.body.classList.toggle('show-hamburger', width < 900);
+      document.body.classList.toggle('hide-cta', width < 640);
+      return;
+    }
+
+    // Homepage: count visible featured topic links
+    const allTopicsLink = container.querySelector('.subnav-all-topics-link');
+    const links = container.querySelectorAll('.subnav-topic-link');
+
+    // Phase 1: show everything, measure
+    document.body.classList.remove('show-hamburger', 'hide-cta');
+    container.style.display = '';
+    if (allTopicsLink) allTopicsLink.style.display = '';
+    links.forEach(l => l.style.display = '');
+
+    const containerRight = container.getBoundingClientRect().right;
+    let visibleCount = 0;
+    links.forEach(l => {
+      if (l.getBoundingClientRect().right <= containerRight - 4) visibleCount++;
+      else l.style.display = 'none';
+    });
+
+    // Phase 2: if < 5 visible, hide All Topics to reclaim space
+    if (visibleCount < 5 && allTopicsLink) {
+      allTopicsLink.style.display = 'none';
+      // Re-measure
+      links.forEach(l => l.style.display = '');
+      visibleCount = 0;
+      links.forEach(l => {
+        if (l.getBoundingClientRect().right <= containerRight - 4) visibleCount++;
+        else l.style.display = 'none';
+      });
+    }
+
+    // Phase 3: if still < 5, show hamburger and optionally hide featured/cta
+    if (visibleCount < 5) {
+      document.body.classList.add('show-hamburger');
+      container.style.display = 'none';
+      document.body.classList.add('hide-cta');
+    }
+  };
+
+  navResizeHandler = () => requestAnimationFrame(doCheck);
+  window.addEventListener('resize', navResizeHandler, { passive: true });
+  requestAnimationFrame(doCheck);
+}
+
 function renderStickyHeroBar(container, route) {
-  const isPromptGen = route.type === 'prompt-generator';
+  const featured = getFeaturedTopics();
+  const featuredLinksHTML = featured.map(t =>
+    `<a href="#/topic/${t.slug}" class="navmenu-topic-link">${escapeHTML(t.name)}</a>`
+  ).join('');
+
   container.innerHTML = `
     <div class="sticky-hero-inner">
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
       <a href="#/" class="sticky-brand" id="sticky-brand-link">
         <img src="assets/logo-dark.png" alt="Standard Topic" class="sticky-logo-img">
         <span class="sticky-title">Standard Topic</span>
@@ -304,15 +375,59 @@ function renderStickyHeroBar(container, route) {
       <span class="sticky-tagline">News, Resources and AI Knowledge. On any topic.</span>
       <div class="sticky-actions">
         <div class="sticky-search" id="sticky-search-container"></div>
-        <a href="#/prompt-generator" class="sticky-cta">
+        <a href="#/prompt-generator" class="sticky-cta" id="nav-cta">
           <span class="sticky-cta-full">Prompt Builder</span>
           <span class="sticky-cta-short">Prompt Builder</span>
           <svg class="sticky-cta-plus" aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </a>
       </div>
     </div>
+
+    <div class="navmenu-overlay" id="navmenu-overlay"></div>
+    <div class="navmenu-panel" id="navmenu-panel">
+      <div class="navmenu-head">
+        <span class="navmenu-title">Menu</span>
+        <button class="navmenu-close" id="navmenu-close" aria-label="Close menu">✕</button>
+      </div>
+      <div class="navmenu-search" id="navmenu-search-container"></div>
+      <div class="navmenu-links">
+        <a href="#/prompt-generator" class="navmenu-link navmenu-link-prompt">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Prompt Builder
+        </a>
+        <a href="#/about" class="navmenu-link">About</a>
+        <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer" class="navmenu-link">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+      <div class="navmenu-divider"></div>
+      <div class="navmenu-featured-label">Featured Topics</div>
+      <div class="navmenu-topics">${featuredLinksHTML}</div>
+      <button class="navmenu-all-topics" id="navmenu-all-topics">View All Topics</button>
+    </div>
   `;
   renderSearchBar(document.getElementById('sticky-search-container'), route, { compact: true });
+  renderSearchBar(document.getElementById('navmenu-search-container'), route);
+
+  // Hamburger open/close
+  const hamburger = container.querySelector('#nav-hamburger');
+  const overlay = container.querySelector('#navmenu-overlay');
+  const panel = container.querySelector('#navmenu-panel');
+  const closeBtn = container.querySelector('#navmenu-close');
+  const openMenu = () => { panel.classList.add('is-open'); overlay.classList.add('is-open'); document.body.style.overflow = 'hidden'; };
+  const closeMenu = () => { panel.classList.remove('is-open'); overlay.classList.remove('is-open'); document.body.style.overflow = ''; };
+  hamburger.addEventListener('click', openMenu);
+  overlay.addEventListener('click', closeMenu);
+  closeBtn.addEventListener('click', closeMenu);
+  // Close menu on any link click inside
+  panel.querySelectorAll('a, .navmenu-all-topics').forEach(link => {
+    link.addEventListener('click', closeMenu);
+  });
+  container.querySelector('#navmenu-all-topics')?.addEventListener('click', () => {
+    const searchBar = document.querySelector('.search-bar');
+    if (searchBar) searchBar.click();
+  });
 
   // Clicking logo/title always goes home with News Feed active —
   // even if already on #/, force re-render so mobile tab resets.
