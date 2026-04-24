@@ -339,12 +339,9 @@ body.sticky-always.has-subnav #content {
   width: auto;
   flex: 0 0 auto;
 }
-.sticky-search .search-bar {
-  width: auto;
-}
-
-/* Search bar inside dark nav — styled as search input */
-.sticky-search { flex: 0 0 auto; min-width: 0; }
+/* Search bar inside dark nav — styled as search input.
+   flex: 1 1 280px means it WANTS to be 280px but will shrink if needed. */
+.sticky-search { flex: 1 1 280px; min-width: 100px; max-width: 280px; }
 .sticky-search .search-bar {
   height: 34px;
   padding: 0 0.85rem;
@@ -358,7 +355,7 @@ body.sticky-always.has-subnav #content {
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  width: 280px;
+  width: 100%;
 }
 .sticky-search .search-bar-icon {
   color: var(--color-primary) !important;
@@ -843,7 +840,6 @@ body.hide-cta .sticky-cta { display: none !important; }
     font-size: 0.82rem !important;
     padding: 0 0.75rem !important;
     border-radius: 5px !important;
-    min-width: 0 !important;
   }
 
   .sticky-cta-full { display: none !important; }
@@ -2215,16 +2211,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   .sticky-logo-img { display: none !important; }
   .sticky-cta { display: none !important; }
   .home-subnav-topics { display: none !important; }
-  /* Search keeps its width, right-aligned */
-  .sticky-search .search-bar { width: 280px; }
   .sticky-actions { margin-left: auto; }
-}
-
-/* Small screens: search shrinks to fit alongside title */
-@media (max-width: 550px) {
-  .sticky-search { flex: 1 !important; min-width: 0 !important; }
-  .sticky-search .search-bar { width: 100% !important; }
-  .sticky-actions { flex: 1; margin-left: 0.5rem; }
 }
 
 .subnav-topics-label {
