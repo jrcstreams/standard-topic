@@ -2205,8 +2205,6 @@ body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
 /* 1000px: drop All Topics +, hide its separator */
 @media (max-width: 1000px) {
   .subnav-all-topics-link { display: none !important; }
-  .subnav-topics-inline.home-subnav-topics { padding-left: 0; }
-  .subnav-topics-inline.home-subnav-topics::before { display: none; }
   .home-subnav-topics .subnav-topics-label { border-left: none; margin-left: 0; padding-left: 0.3rem; }
   .home-subnav-topics .subnav-topics-label::before { display: none; }
 }
