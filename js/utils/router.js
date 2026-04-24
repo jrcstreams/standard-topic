@@ -58,6 +58,10 @@ function parseRoute(hash) {
     return { type: 'about' };
   }
 
+  if (segments[0] === 'terms') {
+    return { type: 'terms' };
+  }
+
   return { type: 'not-found', path };
 }
 
