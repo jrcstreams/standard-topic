@@ -64,7 +64,7 @@ export function renderNewsFeed(container, topic, isHome, opts = {}) {
     if (feedId) {
       inner += `
         <div class="newsfeed-embed">
-          <iframe src="rss-embed?id=${feedId}"
+          <iframe src="rss-embed.html?id=${feedId}"
                   class="newsfeed-iframe"
                   id="rss-iframe-${feedId}"
                   frameborder="0"
