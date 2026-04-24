@@ -63,8 +63,8 @@ a:hover {
 
 @media (max-width: 640px) {
   #content {
-    padding-left: 0.9rem;
-    padding-right: 0.9rem;
+    padding-left: 1.1rem;
+    padding-right: 1.1rem;
   }
 }
 
@@ -1575,7 +1575,7 @@ body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
   background: var(--color-bg);
   border-radius: 10px;
   width: 100%;
-  max-width: 480px;
+  max-width: 560px;
   max-height: 80vh;
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -1609,7 +1609,7 @@ body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
 
 .search-overlay-results-block {
   margin-bottom: 0.5rem;
-  padding-bottom: 0.5rem;
+  padding: 0 0.85rem 0.5rem;
   border-bottom: 1px solid var(--color-border);
 }
 .search-overlay-browse .search-overlay-section-label {
@@ -1653,12 +1653,12 @@ body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
 /* Featured Topics section header in browse/picker modals */
 .search-featured-header {
   font-family: var(--font-display);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   color: var(--color-primary);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 0.55rem 0.85rem 0.4rem;
+  letter-spacing: 0.05em;
+  padding: 0.6rem 1.15rem 0.45rem;
   background: var(--color-bg-light, #f7f8fa);
   border-bottom: 1px solid var(--color-border);
 }
@@ -1690,7 +1690,7 @@ body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
 .search-overlay-body {
   flex: 1;
   overflow-y: auto;
-  padding: 0.65rem 0.85rem 0.85rem;
+  padding: 0.5rem 0 0.5rem;
 }
 
 .search-overlay-group {
@@ -1923,30 +1923,48 @@ body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
   display: block;
 }
 
-/* Submission method categories */
-.prompt-modal-method-section {
-  margin-bottom: 0.75rem;
-}
-.prompt-modal-method-section:last-child { margin-bottom: 0; }
-.prompt-modal-method-label {
-  font-size: 0.7rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 0.2rem;
-}
-.prompt-modal-method-desc {
-  font-size: 0.72rem;
-  color: var(--color-text-light);
-  line-height: 1.4;
-  margin-bottom: 0.45rem;
-}
-.prompt-modal-method-models {
+/* Model grid — flat list */
+.prompt-modal-models {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
 }
+
+/* Section labels */
+.prompt-modal-section {
+  margin-bottom: 1rem;
+}
+.prompt-modal-section-label {
+  font-size: 0.7rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.35rem;
+}
+
+/* Submit area — appears after model selection */
+.prompt-modal-submit-area {
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.85rem;
+  margin-top: 0.25rem;
+}
+.prompt-modal-method-info {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin-top: 0.65rem;
+}
+.prompt-modal-open-link {
+  display: block;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin-top: 0.5rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prompt-modal-open-link:hover { color: var(--color-primary); }
 .prompt-modal-model-btn {
   padding: 0.45rem 0.85rem;
   background: var(--color-bg);
@@ -1978,14 +1996,8 @@ body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
   line-height: 1.5;
 }
 
-/* Action buttons */
-.prompt-modal-buttons {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.25rem;
-}
 .prompt-modal-submit {
-  flex: 1;
+  width: 100%;
   padding: 0.7rem 0.75rem;
   background: #38a169;
   color: white;
@@ -1998,20 +2010,6 @@ body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
   transition: background 0.12s;
 }
 .prompt-modal-submit:hover { background: #2f855a; }
-.prompt-modal-open-only {
-  padding: 0.7rem 0.75rem;
-  background: transparent;
-  color: var(--color-text);
-  border: 1.5px solid var(--color-border);
-  border-radius: 5px;
-  font-size: 0.82rem;
-  font-family: var(--font-family);
-  font-weight: var(--font-weight-medium);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.12s, border-color 0.12s;
-}
-.prompt-modal-open-only:hover { background: var(--color-bg-light); border-color: var(--color-text-light); }
 
 .prompt-modal-clipboard-hint {
   text-align: center;
@@ -2030,17 +2028,13 @@ body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
 }
 
 @media (max-width: 640px) {
-  .prompt-modal-overlay { align-items: flex-end; padding: 0; }
+  .prompt-modal-overlay { align-items: center; padding: 0.75rem; }
   .prompt-modal {
     max-width: 100%;
-    border-radius: 14px 14px 0 0;
+    max-height: 90vh;
+    border-radius: 10px;
     padding: 1.15rem;
-    animation: prompt-modal-card-in-mobile 0.18s ease-out;
   }
-  @keyframes prompt-modal-card-in-mobile {
-    from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); }
-  }
-  .prompt-modal-buttons { flex-direction: column; }
   .prompt-modal-header { flex-wrap: wrap; gap: 0.4rem; }
 }
 
@@ -5960,7 +5954,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   border-bottom: 1px solid var(--color-border);
   border-top: none;
   border-radius: 0;
-  padding: 0.6rem 0.85rem;
+  padding: 0.6rem 1.15rem;
   margin-top: 0;
   font-family: var(--font-display);
   font-weight: 700;
@@ -5997,8 +5991,9 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 /* Shared: subtopic rows in modals + search */
 .all-topics-modal-sub.sidebar-shortcut,
 .search-subtopic-row.sidebar-shortcut {
-  padding-left: 1.5rem;
-  font-size: 0.84rem;
+  padding-left: 2rem;
+  padding-right: 1.15rem;
+  font-size: 0.86rem;
   font-weight: var(--font-weight-medium);
   text-decoration: none !important;
 }

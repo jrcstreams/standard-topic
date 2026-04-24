@@ -60,40 +60,14 @@ function getSubmitLabel(model) {
 }
 
 function renderModalContent(prompt, shortcutName, iconKey, models, selectedModelId) {
-  const selectedModel = getModelById(selectedModelId) || models[0];
-  const tooLong = isUrlTooLong(selectedModel, prompt);
   const methods = getSubmissionMethods();
-  const methodOrder = ['direct', 'populates', 'paste'];
 
-  // Group models by submission method
-  const grouped = {};
-  methodOrder.forEach(m => { grouped[m] = []; });
-  models.forEach(m => {
-    const method = m.submissionMethod || 'direct';
-    if (!grouped[method]) grouped[method] = [];
-    grouped[method].push(m);
-  });
-
-  // Build model sections HTML
-  let modelSectionsHTML = '';
-  methodOrder.forEach(method => {
-    const group = grouped[method];
-    if (!group || group.length === 0) return;
-    const meta = methods[method] || {};
-    modelSectionsHTML += `
-      <div class="prompt-modal-method-section">
-        <div class="prompt-modal-method-label">${escapeHTML(meta.label || method)}</div>
-        <div class="prompt-modal-method-desc">${escapeHTML(meta.description || '')}</div>
-        <div class="prompt-modal-method-models">
-          ${group.map(m => `
-            <button class="prompt-modal-model-btn ${m.id === selectedModelId ? 'selected' : ''}" type="button" data-model-id="${m.id}">
-              ${escapeHTML(m.name)}
-            </button>
-          `).join('')}
-        </div>
-      </div>
-    `;
-  });
+  // All model buttons (flat, no categories initially)
+  const modelBtnsHTML = models.map(m => `
+    <button class="prompt-modal-model-btn ${m.id === selectedModelId ? 'selected' : ''}" type="button" data-model-id="${m.id}">
+      ${escapeHTML(m.name)}
+    </button>
+  `).join('');
 
   modalEl.innerHTML = `
     <div class="prompt-modal">
@@ -108,33 +82,49 @@ function renderModalContent(prompt, shortcutName, iconKey, models, selectedModel
         </div>
       </div>
 
-      <div class="prompt-modal-preview">${escapeHTML(prompt)}</div>
-
-      <div class="prompt-modal-models-section">
-        <span class="prompt-modal-label">Choose AI Model</span>
-        ${modelSectionsHTML}
+      <div class="prompt-modal-section">
+        <div class="prompt-modal-section-label">Prompt Preview</div>
+        <div class="prompt-modal-preview">${escapeHTML(prompt)}</div>
       </div>
 
-      ${tooLong ? `
-        <div class="prompt-modal-warning">
-          This prompt may be too long to submit via URL. Use "Copy" then paste manually after the page opens.
-        </div>` : ''}
-
-      <div class="prompt-modal-buttons">
-        <button class="prompt-modal-submit" id="prompt-modal-submit" type="button">
-          ${escapeHTML(getSubmitLabel(selectedModel))}
-        </button>
-        <button class="prompt-modal-open-only" id="prompt-modal-open-only" type="button">
-          Open ${escapeHTML(selectedModel.name)} only
-        </button>
+      <div class="prompt-modal-section">
+        <div class="prompt-modal-label">Choose AI Model</div>
+        <div class="prompt-modal-models" id="prompt-modal-models">
+          ${modelBtnsHTML}
+        </div>
       </div>
 
-      <p class="prompt-modal-clipboard-hint">If prompt doesn't load directly into model, paste text from clipboard.</p>
-      <p class="prompt-modal-disclaimer">
-        Standard Topic is not responsible for actions taken once you leave this site.
-      </p>
+      <div class="prompt-modal-submit-area" id="prompt-modal-submit-area" style="display:none"></div>
     </div>
   `;
+
+  function updateSubmitArea() {
+    const model = getModelById(selectedModelId);
+    if (!model) { document.getElementById('prompt-modal-submit-area').style.display = 'none'; return; }
+    const method = model.submissionMethod || 'direct';
+    const meta = methods[method] || {};
+    const area = document.getElementById('prompt-modal-submit-area');
+    area.style.display = '';
+    area.innerHTML = `
+      <button class="prompt-modal-submit" id="prompt-modal-submit" type="button">
+        ${escapeHTML(getSubmitLabel(model))}
+      </button>
+      <div class="prompt-modal-method-info">${escapeHTML(meta.description || '')}</div>
+      <a href="#" class="prompt-modal-open-link" id="prompt-modal-open-only">Open ${escapeHTML(model.name)} only</a>
+      <p class="prompt-modal-clipboard-hint">If prompt doesn't load directly into model, paste text from clipboard.</p>
+      <p class="prompt-modal-disclaimer">Standard Topic is not responsible for actions taken once you leave this site.</p>
+    `;
+    area.querySelector('#prompt-modal-submit').addEventListener('click', async () => {
+      await submitPrompt(model, prompt);
+      closeModal();
+    });
+    area.querySelector('#prompt-modal-open-only').addEventListener('click', (e) => {
+      e.preventDefault();
+      const url = model.urlTemplate.replace('{prompt}', '');
+      window.open(url, '_blank');
+      closeModal();
+    });
+  }
 
   document.getElementById('prompt-modal-close').addEventListener('click', closeModal);
 
@@ -146,42 +136,19 @@ function renderModalContent(prompt, shortcutName, iconKey, models, selectedModel
     setTimeout(() => { btn.textContent = orig; }, 1800);
   });
 
-  modalEl.querySelectorAll('.prompt-modal-method-models').forEach(section => {
-    section.addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-model-id]');
-      if (!btn) return;
-      selectedModelId = btn.dataset.modelId;
-      setPreferredModelId(selectedModelId);
-
-      modalEl.querySelectorAll('.prompt-modal-model-btn').forEach(b => {
-        b.classList.toggle('selected', b.dataset.modelId === selectedModelId);
-      });
-      const newModel = getModelById(selectedModelId);
-      const submitBtn = document.getElementById('prompt-modal-submit');
-      if (submitBtn && newModel) {
-        submitBtn.textContent = getSubmitLabel(newModel);
-      }
-      const openBtn = document.getElementById('prompt-modal-open-only');
-      if (openBtn && newModel) {
-        openBtn.textContent = `Open ${newModel.name} only`;
-      }
+  document.getElementById('prompt-modal-models').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-model-id]');
+    if (!btn) return;
+    selectedModelId = btn.dataset.modelId;
+    setPreferredModelId(selectedModelId);
+    modalEl.querySelectorAll('.prompt-modal-model-btn').forEach(b => {
+      b.classList.toggle('selected', b.dataset.modelId === selectedModelId);
     });
+    updateSubmitArea();
   });
 
-  document.getElementById('prompt-modal-submit').addEventListener('click', async () => {
-    const model = getModelById(selectedModelId);
-    if (!model) return;
-    await submitPrompt(model, prompt);
-    closeModal();
-  });
-
-  document.getElementById('prompt-modal-open-only').addEventListener('click', () => {
-    const model = getModelById(selectedModelId);
-    if (!model) return;
-    const url = model.urlTemplate.replace('{prompt}', '');
-    window.open(url, '_blank');
-    closeModal();
-  });
+  // Show submit area if a model is already selected
+  if (selectedModelId) updateSubmitArea();
 }
 
 function escapeHTML(str) {
