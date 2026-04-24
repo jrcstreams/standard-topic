@@ -2208,6 +2208,7 @@ body.show-hamburger .sticky-hero-inner { padding-right: 1rem; }
   .subnav-topics-inline.home-subnav-topics { padding-left: 0; }
   .subnav-topics-inline.home-subnav-topics::before { display: none; }
   .home-subnav-topics .subnav-topics-label { border-left: none; margin-left: 0; padding-left: 0.3rem; }
+  .home-subnav-topics .subnav-topics-label::before { display: none; }
 }
 
 /* 800px: show hamburger, hide featured topics from subnav, hide CTA */
