@@ -232,6 +232,11 @@ function removeTopic(key, value) {
 function render() {
   const prompt = assemblePrompt();
   const isEmpty = !prompt;
+  const isPristine = Object.keys(state.values || {}).length === 0
+    && !state.customizations
+    && Object.keys(state.customValues || {}).length === 0
+    && Object.keys(state.extraInputs || {}).length === 0
+    && !state.editedPrompt;
   const models = getModels();
   const primary = getPrimaryTopics();
   const secondary = getSecondaryTopics();
@@ -334,11 +339,10 @@ function render() {
 
       <div class="wiz-action-bar">
         <div class="wiz-action-bar-inner">
-          <button type="button" class="wiz-action-btn ${isEmpty ? 'is-empty' : ''}" id="wiz-open-preview" ${isEmpty ? 'disabled' : ''}>
-            <span class="wiz-action-indicator ${isEmpty ? '' : 'has-content'}"></span>
-            <span>${isEmpty ? 'Add Topic(s) to build a prompt' : 'Preview Prompt and Submit'}</span>
+          <button type="button" class="wiz-action-restart" id="wiz-restart" ${isPristine ? 'disabled' : ''}>Clear Prompt</button>
+          <button type="button" class="wiz-action-btn ${isEmpty ? 'is-empty' : 'is-ready'}" id="wiz-open-preview" ${isEmpty ? 'disabled' : ''}>
+            <span>${isEmpty ? 'Add Topic(s) to Submit' : 'Preview Prompt and Submit'}</span>
           </button>
-          <button type="button" class="wiz-action-restart" id="wiz-restart">Start Over</button>
         </div>
       </div>
       <div class="wiz-action-bar-spacer"></div>
