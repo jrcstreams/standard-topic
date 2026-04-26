@@ -114,6 +114,9 @@ function getField(fieldKey) {
 function getOptionsFor(fieldKey) {
   return getField(fieldKey)?.options || [];
 }
+function getFieldDescription(fieldKey) {
+  return getField(fieldKey)?.description || '';
+}
 function isFieldMulti(fieldKey) {
   return true;
 }
@@ -197,7 +200,30 @@ function schedulePreview() {
   previewTimer = requestAnimationFrame(() => {
     previewTimer = null;
     updatePreview();
+    updateActionBar();
   });
+}
+
+// Update the sticky action bar (Submit + Clear) to reflect current state.
+// Called on every state mutation so the buttons track reality without
+// requiring a full re-render.
+function updateActionBar() {
+  const submitBtn = document.getElementById('wiz-open-preview');
+  const clearBtn = document.getElementById('wiz-restart');
+  if (!submitBtn || !clearBtn) return;
+  const prompt = assemblePrompt();
+  const isEmpty = !prompt;
+  const isPristine = Object.keys(state.values || {}).length === 0
+    && !state.customizations
+    && Object.keys(state.customValues || {}).length === 0
+    && Object.keys(state.extraInputs || {}).length === 0
+    && !state.editedPrompt;
+  submitBtn.disabled = isEmpty;
+  submitBtn.classList.toggle('is-empty', isEmpty);
+  submitBtn.classList.toggle('is-ready', !isEmpty);
+  const labelEl = submitBtn.querySelector('span');
+  if (labelEl) labelEl.textContent = isEmpty ? 'Add Topic(s) to Submit' : 'Preview Prompt and Submit';
+  clearBtn.disabled = isPristine;
 }
 
 // Primary/secondary topics are stored as arrays of plain strings.
@@ -258,13 +284,15 @@ function render() {
         <div class="wiz-field-row wiz-topics-row">
           <div class="wiz-field-half">
             <label class="wiz-field-label">Primary Topic(s) <span class="wiz-req">required</span></label>
+            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('primaryTopic'))}</p>
             <div class="wiz-topic-chips" id="wiz-primary-chips">
               ${topicChips(primary, 'primaryTopic')}
               <button type="button" class="wiz-topic-add-inline" id="wiz-primary-add">${primary.length ? '+ Add more' : '+ Add topic'}</button>
             </div>
           </div>
           <div class="wiz-field-half">
-            <label class="wiz-field-label">Secondary Topic(s) <span class="wiz-opt">(optional)</span></label>
+            <label class="wiz-field-label">Secondary Topic(s)</label>
+            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('secondaryTopic'))}</p>
             <div class="wiz-topic-chips" id="wiz-secondary-chips">
               ${topicChips(secondary, 'secondaryTopic')}
               <button type="button" class="wiz-topic-add-inline" id="wiz-secondary-add">${secondary.length ? '+ Add more' : '+ Add topic'}</button>
@@ -273,26 +301,24 @@ function render() {
         </div>
 
         <div class="wiz-field-row">
-          <div class="wiz-field-half">
-            <label class="wiz-field-label">Content Type</label>
-            <div data-field="contentType" id="wiz-field-contentType"></div>
-            <div class="wiz-extras" data-extras-field="contentType"></div>
-          </div>
-          <div class="wiz-field-half">
-            <label class="wiz-field-label">Approach <span class="wiz-opt">(optional)</span></label>
-            <div data-field="contentGeneration" id="wiz-field-contentGeneration"></div>
-            <div class="wiz-extras" data-extras-field="contentGeneration"></div>
+          <div class="wiz-field-full">
+            <label class="wiz-field-label">Output Type</label>
+            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('outputType'))}</p>
+            <div data-field="outputType" id="wiz-field-outputType"></div>
+            <div class="wiz-extras" data-extras-field="outputType"></div>
           </div>
         </div>
 
         <div class="wiz-field-row">
           <div class="wiz-field-half">
             <label class="wiz-field-label">Sources</label>
+            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('sources'))}</p>
             <div data-field="sources" id="wiz-field-sources"></div>
             <div class="wiz-extras" data-extras-field="sources"></div>
           </div>
           <div class="wiz-field-half">
             <label class="wiz-field-label">Time Period</label>
+            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('recency'))}</p>
             <div data-field="recency" id="wiz-field-recency"></div>
             <div class="wiz-extras" data-extras-field="recency"></div>
           </div>
@@ -301,10 +327,12 @@ function render() {
         <div class="wiz-field-row">
           <div class="wiz-field-half">
             <label class="wiz-field-label">Format</label>
+            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('format'))}</p>
             <div data-field="format" id="wiz-field-format"></div>
           </div>
           <div class="wiz-field-half">
             <label class="wiz-field-label">Length</label>
+            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('length'))}</p>
             <div data-field="length" id="wiz-field-length"></div>
           </div>
         </div>
@@ -312,10 +340,12 @@ function render() {
         <div class="wiz-field-row">
           <div class="wiz-field-half">
             <label class="wiz-field-label">Reading Level</label>
+            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('audience'))}</p>
             <div data-field="audience" id="wiz-field-audience"></div>
           </div>
           <div class="wiz-field-half">
             <label class="wiz-field-label">Tone</label>
+            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('tone'))}</p>
             <div data-field="tone" id="wiz-field-tone"></div>
           </div>
         </div>
@@ -323,16 +353,19 @@ function render() {
         <div class="wiz-field-row">
           <div class="wiz-field-half">
             <label class="wiz-field-label">Citations</label>
+            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('citations'))}</p>
             <div data-field="citations" id="wiz-field-citations"></div>
           </div>
           <div class="wiz-field-half">
             <label class="wiz-field-label">Geographic Focus</label>
+            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('geographic'))}</p>
             <div data-field="geographic" id="wiz-field-geographic"></div>
           </div>
         </div>
 
         <div class="wiz-field-group">
-          <label class="wiz-field-label">Custom Instructions <span class="wiz-opt">(optional)</span></label>
+          <label class="wiz-field-label">Custom Instructions</label>
+          <p class="wiz-field-desc">Anything else — specific framing, exclusions, or extra detail.</p>
           <textarea class="wiz-custom-textarea" id="wiz-custom" placeholder="Add any extra instructions...">${escapeHTML(state.customizations || '')}</textarea>
         </div>
       </div>
@@ -350,8 +383,7 @@ function render() {
   `;
 
   // Populate chip grids for all fields
-  populateChipGrid(document.getElementById('wiz-field-contentType'), 'contentType');
-  populateChipGrid(document.getElementById('wiz-field-contentGeneration'), 'contentGeneration');
+  populateChipGrid(document.getElementById('wiz-field-outputType'), 'outputType');
   populateChipGrid(document.getElementById('wiz-field-sources'), 'sources');
   populateChipGrid(document.getElementById('wiz-field-recency'), 'recency');
   populateChipGrid(document.getElementById('wiz-field-format'), 'format');
@@ -362,7 +394,7 @@ function render() {
   populateChipGrid(document.getElementById('wiz-field-geographic'), 'geographic');
 
   // Render extras for fields that have requiresInput
-  ['contentType', 'contentGeneration', 'sources', 'recency'].forEach(fk => {
+  ['outputType', 'sources', 'recency'].forEach(fk => {
     const extras = document.querySelector(`[data-extras-field="${fk}"]`);
     if (extras) renderExtraInputs(extras, fk);
   });
@@ -610,8 +642,7 @@ function openTopicPicker(label, initialSelected, onConfirm) {
       </div>
       <div class="wiz-topic-selected-row" id="wiz-topic-overlay-selected"></div>
       <div class="search-overlay-body shortcuts-sidebar" id="wiz-topic-overlay-body"></div>
-      <div class="wiz-topic-picker-foot">
-        <span class="wiz-topic-picker-count" id="wiz-topic-overlay-count"></span>
+      <div class="wiz-topic-picker-foot wiz-topic-picker-foot-left">
         <button type="button" class="wiz-topic-picker-done" id="wiz-topic-overlay-done">Done</button>
       </div>
     </div>
@@ -620,7 +651,6 @@ function openTopicPicker(label, initialSelected, onConfirm) {
   const inputEl = topicPickerEl.querySelector('#wiz-topic-overlay-input');
   const bodyEl = topicPickerEl.querySelector('#wiz-topic-overlay-body');
   const selectedRowEl = topicPickerEl.querySelector('#wiz-topic-overlay-selected');
-  const countEl = topicPickerEl.querySelector('#wiz-topic-overlay-count');
 
   function renderSelectedRow() {
     if (selected.size === 0) {
@@ -639,7 +669,6 @@ function openTopicPicker(label, initialSelected, onConfirm) {
         });
       });
     }
-    countEl.textContent = `${selected.size} selected`;
   }
 
   function refreshChipStates() {
@@ -1065,6 +1094,7 @@ function populateChipGrid(host, fieldKey) {
       removeValue(chip.dataset.key, chip.dataset.value);
       populateChipGrid(host, fieldKey);
       updatePreview();
+      updateActionBar();
     });
   });
 
@@ -1073,6 +1103,7 @@ function populateChipGrid(host, fieldKey) {
     openFieldPicker(fieldKey, opts, customMap, allowCustom, () => {
       populateChipGrid(host, fieldKey);
       updatePreview();
+      updateActionBar();
     });
   };
   host.querySelector(`#wiz-field-add-${fieldKey}`)?.addEventListener('click', openPicker);
@@ -1081,7 +1112,9 @@ function populateChipGrid(host, fieldKey) {
   });
 }
 
-// Field picker overlay — same UX as topic picker
+// Field picker overlay — search input on top filters built-in options
+// and (when allowCustom) lets the user press Enter to add a custom value
+// that isn't already in the option list.
 let fieldPickerEl = null;
 function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
   if (!fieldPickerEl) {
@@ -1092,6 +1125,9 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
 
   const field = getField(fieldKey);
   const label = field?.label || fieldKey;
+  const description = field?.description || '';
+
+  let query = '';
 
   const close = () => {
     fieldPickerEl.style.display = 'none';
@@ -1105,15 +1141,46 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
     renderPickerSelected();
   };
 
+  const findExistingOptionByLabel = (text) => {
+    const t = text.trim().toLowerCase();
+    if (!t) return null;
+    const opt = opts.find(o => o.label.toLowerCase() === t || o.value.toLowerCase() === t);
+    if (opt) return { type: 'opt', value: opt.value };
+    const customMapNow = state.customValues[fieldKey] || {};
+    for (const [id, lbl] of Object.entries(customMapNow)) {
+      if (lbl.toLowerCase() === t) return { type: 'custom', value: id };
+    }
+    return null;
+  };
+
+  const addCustomFromInput = () => {
+    const text = (query || '').trim();
+    if (!text) return;
+    const existing = findExistingOptionByLabel(text);
+    if (existing) {
+      if (!isValueSelected(fieldKey, existing.value)) toggle(existing.value);
+    } else if (allowCustom) {
+      addCustomValue(fieldKey, text);
+      renderPickerBody();
+      renderPickerSelected();
+    } else {
+      return;
+    }
+    query = '';
+    const inputEl = fieldPickerEl.querySelector('#field-picker-input');
+    if (inputEl) inputEl.value = '';
+  };
+
   function renderPickerSelected() {
     const selRow = fieldPickerEl.querySelector('#field-picker-selected');
     const selected = getValuesArray(fieldKey);
+    const customMapNow = state.customValues[fieldKey] || {};
     if (selected.length === 0) {
-      selRow.innerHTML = `<span class="wiz-topic-overlay-empty">No selections yet.</span>`;
+      selRow.innerHTML = `<span class="wiz-topic-overlay-empty">Nothing selected yet.</span>`;
     } else {
       selRow.innerHTML = selected.map(v => {
         const opt = opts.find(o => o.value === v);
-        const lbl = opt ? opt.label : (customMap[v] || v);
+        const lbl = opt ? opt.label : (customMapNow[v] || v);
         return `
           <span class="wiz-topic-overlay-sel" data-value="${escapeAttr(v)}">
             ${escapeHTML(lbl)}
@@ -1128,14 +1195,32 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
         });
       });
     }
-    const countEl = fieldPickerEl.querySelector('#field-picker-count');
-    if (countEl) countEl.textContent = `${selected.length} selected`;
   }
 
   function renderPickerBody() {
     const bodyEl = fieldPickerEl.querySelector('#field-picker-body');
+    const q = (query || '').trim().toLowerCase();
+    const customMapNow = state.customValues[fieldKey] || {};
+    const filteredOpts = q ? opts.filter(o => o.label.toLowerCase().includes(q)) : opts.slice();
+    const customEntries = Object.entries(customMapNow)
+      .filter(([_, lbl]) => !q || lbl.toLowerCase().includes(q));
+
     let html = '';
-    opts.forEach(opt => {
+
+    // When typing and no exact match exists, offer "Add ..." at the top
+    if (q && allowCustom) {
+      const exact = findExistingOptionByLabel(query);
+      if (!exact) {
+        html += `
+          <div class="search-overlay-custom wiz-field-add-row" data-add-custom="1">
+            <span class="search-custom-badge">+</span>
+            Add "<strong>${escapeHTML(query.trim())}</strong>" as custom
+          </div>
+        `;
+      }
+    }
+
+    filteredOpts.forEach(opt => {
       const isSel = isValueSelected(fieldKey, opt.value);
       html += `
         <div class="sidebar-shortcut wiz-topic-row ${isSel ? 'is-selected' : ''}" data-name="${escapeAttr(opt.value)}">
@@ -1144,28 +1229,47 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
         </div>
       `;
     });
+
+    customEntries.forEach(([id, lbl]) => {
+      const isSel = isValueSelected(fieldKey, id);
+      html += `
+        <div class="sidebar-shortcut wiz-topic-row ${isSel ? 'is-selected' : ''}" data-name="${escapeAttr(id)}">
+          <span class="wiz-topic-check">${isSel ? '✓' : ''}</span>
+          <span class="sidebar-shortcut-name">${escapeHTML(lbl)} <span class="wiz-custom-badge-inline">custom</span></span>
+        </div>
+      `;
+    });
+
+    if (!html) {
+      html = `<div class="wiz-topic-overlay-empty" style="padding:1rem 0.25rem;">No matches.</div>`;
+    }
+
     bodyEl.innerHTML = html;
     bodyEl.querySelectorAll('.wiz-topic-row').forEach(row => {
       row.addEventListener('click', () => toggle(row.dataset.name));
     });
+    const addRow = bodyEl.querySelector('[data-add-custom="1"]');
+    if (addRow) addRow.addEventListener('click', addCustomFromInput);
   }
 
   fieldPickerEl.innerHTML = `
     <div class="search-overlay-card wiz-topic-picker-card">
       <div class="wiz-topic-picker-header">
-        <h3 class="wiz-topic-picker-title">${escapeHTML(label)}</h3>
+        <div class="wiz-topic-picker-title-block">
+          <h3 class="wiz-topic-picker-title">${escapeHTML(label)}</h3>
+          ${description ? `<p class="wiz-topic-picker-desc">${escapeHTML(description)}</p>` : ''}
+        </div>
         <button class="search-overlay-close" type="button" id="field-picker-close" aria-label="Close">✕</button>
+      </div>
+      <div class="search-overlay-input-row">
+        <svg class="search-bar-icon" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="search-overlay-input" id="field-picker-input"
+               placeholder="${allowCustom ? 'Search or type to add custom…' : 'Search options…'}"
+               autocomplete="off" spellcheck="false">
       </div>
       <div class="wiz-topic-selected-row" id="field-picker-selected"></div>
       <div class="search-overlay-body shortcuts-sidebar" id="field-picker-body"></div>
-      ${allowCustom ? `
-        <div class="wiz-field-picker-custom-row">
-          <input type="text" class="wiz-select-custom-input" id="field-picker-custom-input" placeholder="Add custom value...">
-          <button type="button" class="wiz-select-custom-add" id="field-picker-custom-add">+</button>
-        </div>
-      ` : ''}
-      <div class="wiz-topic-picker-foot">
-        <span class="wiz-topic-picker-count" id="field-picker-count"></span>
+      <div class="wiz-topic-picker-foot wiz-topic-picker-foot-left">
         <button type="button" class="wiz-topic-picker-done" id="field-picker-done">Done</button>
       </div>
     </div>
@@ -1180,24 +1284,23 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
   fieldPickerEl.querySelector('#field-picker-done').addEventListener('click', close);
   fieldPickerEl.onclick = (e) => { if (e.target === fieldPickerEl) close(); };
 
-  // Custom input
-  if (allowCustom) {
-    const customInput = fieldPickerEl.querySelector('#field-picker-custom-input');
-    const customAddBtn = fieldPickerEl.querySelector('#field-picker-custom-add');
-    const addCustom = () => {
-      const text = customInput.value.trim();
-      if (text) {
-        addCustomValue(fieldKey, text);
-        customInput.value = '';
-        renderPickerSelected();
-        renderPickerBody();
-      }
-    };
-    customAddBtn.addEventListener('click', addCustom);
-    customInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') { e.preventDefault(); addCustom(); }
-    });
-  }
+  const inputEl = fieldPickerEl.querySelector('#field-picker-input');
+  inputEl.focus();
+  let inputTimer = null;
+  inputEl.addEventListener('input', () => {
+    query = inputEl.value;
+    if (inputTimer) clearTimeout(inputTimer);
+    inputTimer = setTimeout(renderPickerBody, 80);
+  });
+  inputEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addCustomFromInput();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      close();
+    }
+  });
 }
 
 // Shared click handlers — uses EVENT DELEGATION on the host so that
@@ -1302,19 +1405,15 @@ function openCustomInput(triggerEl, fieldKey) {
 
 // Rerender just the chip/card grid for one field, and its extras input area
 function rerenderField(fieldKey) {
-  if (fieldKey === 'contentType') {
-    const wrap = document.querySelector('.wiz-cards-wrap');
-    if (wrap) populateCardGrid(wrap, fieldKey);
-  } else {
-    const fieldRoot = document.querySelector(`[data-field="${fieldKey}"]`);
-    if (fieldRoot) populateChipGrid(fieldRoot, fieldKey);
-  }
+  const fieldRoot = document.querySelector(`[data-field="${fieldKey}"]`);
+  if (fieldRoot) populateChipGrid(fieldRoot, fieldKey);
   // Re-render extras for fields that may have requiresInput
   const extras = document.querySelector(`[data-extras-field="${fieldKey}"]`);
   if (extras) renderExtraInputs(extras, fieldKey);
 
   updatePreview();
   updateNextEnabled();
+  updateActionBar();
 }
 
 // Render the extra input fields for any selected option that has requiresInput
@@ -1561,15 +1660,11 @@ function assemblePrompt() {
     }).filter(Boolean);
   };
 
-  // ---- Section 1: Opener (from Content Type) ----
+  // ---- Section 1: Opener (from Output Type) ----
   const opener = buildOpener(primaryPhrase, sub);
 
   // ---- Sections 2+: Group supporting clauses by category for cleaner prose
   const sections = [];
-
-  // Approach
-  const approach = clausesForField('contentGeneration');
-  if (approach.length > 0) sections.push(approach.map(endWithPeriod).join(' '));
 
   // Sources / Time / Citations — combined paragraph
   const sourceTimeCite = [
@@ -1622,24 +1717,24 @@ function assemblePrompt() {
   return parts.join('\n\n');
 }
 
-// Build the opener paragraph from Content Type selections.
+// Build the opener paragraph from Output Type selections.
 // 1 selection → use the option's full clause (e.g., "Provide a comprehensive overview of X.")
 // 2+ selections → "Provide the following about X:" with bulleted labels (no redundancy)
 function buildOpener(primaryPhrase, sub) {
-  const values = getValuesArray('contentType');
+  const values = getValuesArray('outputType');
   if (values.length === 0) return sub(pgData.baseTemplate);
 
   if (values.length === 1) {
     const v = values[0];
-    const opt = getOptionsFor('contentType').find(o => o.value === v);
+    const opt = getOptionsFor('outputType').find(o => o.value === v);
     if (opt?.clause) return endWithPeriod(sub(opt.clause));
-    const custom = getCustomLabel('contentType', v);
+    const custom = getCustomLabel('outputType', v);
     return custom ? `Provide ${custom} about ${primaryPhrase}.` : sub(pgData.baseTemplate);
   }
 
   // Multiple — bullet list with short labels
   const items = values.map(v => {
-    const opt = getOptionsFor('contentType').find(o => o.value === v);
+    const opt = getOptionsFor('outputType').find(o => o.value === v);
     if (opt) {
       let label = opt.label;
       if (opt.requiresInput) {
@@ -1648,7 +1743,7 @@ function buildOpener(primaryPhrase, sub) {
       }
       return label;
     }
-    return getCustomLabel('contentType', v);
+    return getCustomLabel('outputType', v);
   }).filter(Boolean);
 
   return `Provide the following about ${primaryPhrase}:\n` + items.map(s => `• ${s}`).join('\n');
@@ -1670,8 +1765,7 @@ function endWithPeriod(s) {
 // Generic clause for custom values, varies by field
 function generateCustomClause(fieldKey, customStr) {
   switch (fieldKey) {
-    case 'contentType': return `Provide ${customStr} on the topic`;
-    case 'contentGeneration': return `Approach this with ${customStr}`;
+    case 'outputType': return `Provide ${customStr} on the topic`;
     case 'sources': return `Draw from ${customStr}`;
     case 'recency': return `Focus on information from ${customStr}`;
     case 'citations': return `Use ${customStr} citation style`;

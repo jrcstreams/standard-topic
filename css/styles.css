@@ -3607,6 +3607,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   gap: 1.25rem;
 }
 .wiz-field-half { min-width: 0; }
+.wiz-field-full { min-width: 0; flex: 1 1 100%; }
 .wiz-field-group { }
 
 .wiz-field-label {
@@ -3614,7 +3615,14 @@ body.hide-cta .sticky-cta { display: none !important; }
   font-size: 0.92rem;
   font-weight: 650;
   color: #2d3748;
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.2rem;
+}
+.wiz-field-desc {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.35;
+  margin: 0 0 0.5rem 0;
 }
 .wiz-req {
   color: white;
@@ -3893,6 +3901,9 @@ body.hide-cta .sticky-cta { display: none !important; }
   transition: background 0.12s, opacity 0.12s;
   white-space: nowrap;
   min-height: 44px;
+  /* Fixed width so the bar doesn't trampoline as the label flips
+     between "Add Topic(s) to Submit" and "Preview Prompt and Submit" */
+  min-width: 280px;
 }
 /* Ready state: green */
 .wiz-action-btn.is-ready {
@@ -3943,7 +3954,7 @@ body.hide-cta .sticky-cta { display: none !important; }
 }
 
 @media (max-width: 640px) {
-  .wiz-action-btn { flex: 0 0 auto; padding: 0.65rem 1rem; font-size: 0.88rem; }
+  .wiz-action-btn { flex: 0 0 auto; padding: 0.65rem 1rem; font-size: 0.88rem; min-width: 240px; }
   .wiz-action-restart { padding: 0.6rem 0.85rem; font-size: 0.8rem; }
 }
 
@@ -4270,9 +4281,50 @@ body.hide-cta .sticky-cta { display: none !important; }
   z-index: 10;
   flex-shrink: 0;
 }
+.wiz-topic-picker-foot-left {
+  justify-content: flex-start;
+}
 .wiz-topic-picker-count {
   color: var(--color-text-muted);
   font-size: 0.8rem;
+}
+.wiz-topic-picker-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.wiz-topic-picker-desc {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-regular);
+  margin: 0;
+  line-height: 1.35;
+}
+.wiz-custom-badge-inline {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.05rem 0.4rem;
+  background: var(--color-accent);
+  color: var(--color-text-muted);
+  font-size: 0.65rem;
+  font-weight: var(--font-weight-medium);
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+}
+.wiz-field-add-row {
+  cursor: pointer;
+  border: 1px dashed var(--color-border);
+  border-radius: 5px;
+  padding: 0.55rem 0.7rem;
+  margin-bottom: 0.4rem;
+  background: var(--color-bg-light, #f6f7f9);
+  transition: border-color 0.12s, background 0.12s;
+}
+.wiz-field-add-row:hover {
+  border-color: var(--color-primary);
+  background: var(--color-accent);
 }
 .wiz-topic-picker-done {
   padding: 0.45rem 1.1rem;

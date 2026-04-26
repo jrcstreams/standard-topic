@@ -1,77 +1,92 @@
 {
   "fields": [
     {"key":"model","label":"Choose Model / Platform","type":"model-select","row":1},
-    {"key":"primaryTopic","label":"Primary Topic(s)","type":"text","placeholder":"Select here","row":1},
-    {"key":"secondaryTopic","label":"Secondary Topic(s)","type":"text","placeholder":"Select here","row":1},
-    {"key":"contentType","label":"Content Types / Knowledge","row":1,"multiSelect":true,"allowCustom":true,"options":[
-      {"value":"overview","label":"Overview","clause":"Provide a comprehensive overview of {primary_topic}"},
-      {"value":"research-summary","label":"Research Summary","clause":"Provide a detailed research summary about {primary_topic}"},
-      {"value":"explainer","label":"Explainer","clause":"Explain {primary_topic} in a clear, accessible way"},
-      {"value":"comparison","label":"Comparison","clause":"Compare and contrast {primary_topic} with {compare_to}","requiresInput":{"key":"compare_to","label":"Compare to what?","placeholder":"e.g. Renewable energy"}},
-      {"value":"timeline","label":"Timeline / History","clause":"Provide a chronological timeline of key developments in {primary_topic}"},
-      {"value":"case-study","label":"Case Study","clause":"Present a detailed case study analysis of {primary_topic}","requiresInput":{"key":"case_subject","label":"Specific case or example?","placeholder":"e.g. Tesla's EV strategy (optional)","optional":true}}
-    ]},
-    {"key":"contentGeneration","label":"Content Generation","row":2,"multiSelect":true,"allowCustom":true,"options":[
-      {"value":"summarize","label":"Summarize","clause":"Summarize the key points concisely"},
-      {"value":"analyze","label":"Analyze","clause":"Provide in-depth analysis with supporting evidence"},
-      {"value":"compare","label":"Compare","clause":"Compare different viewpoints and approaches"},
-      {"value":"explain","label":"Explain","clause":"Explain the concepts clearly with examples"},
-      {"value":"predict","label":"Predict / Forecast","clause":"Provide predictions and forecasts based on current trends"}
-    ]},
-    {"key":"sources","label":"Sources to Use","row":2,"multiSelect":true,"allowCustom":true,"options":[
-      {"value":"academic","label":"Academic Papers","clause":"Draw from academic papers and peer-reviewed research"},
-      {"value":"news","label":"News Sources","clause":"Reference recent news articles and journalism"},
-      {"value":"government","label":"Government / Official","clause":"Prioritize government reports and official data sources"},
-      {"value":"industry","label":"Industry Reports","clause":"Use industry reports and market analysis"},
-      {"value":"mixed","label":"Mixed Sources","clause":"Draw from a diverse mix of credible sources"}
-    ]},
-    {"key":"recency","label":"Source Recency / Time Period","row":2,"allowCustom":true,"options":[
-      {"value":"last-week","label":"Last Week","clause":"Focus on information from the past week"},
-      {"value":"last-month","label":"Last Month","clause":"Focus on information from the past month"},
-      {"value":"last-quarter","label":"Last Quarter","clause":"Focus on information from the past three months"},
-      {"value":"last-year","label":"Last Year","clause":"Focus on information from the past year"},
-      {"value":"historical","label":"Historical / All Time","clause":"Include historical context and long-term trends"}
-    ]},
-    {"key":"citations","label":"Citations","row":2,"allowCustom":true,"options":[
-      {"value":"inline","label":"Inline Citations","clause":"Include inline citations for all claims and data points"},
-      {"value":"footnotes","label":"Footnotes","clause":"Provide footnotes with source references"},
-      {"value":"bibliography","label":"Bibliography","clause":"Include a bibliography of all sources at the end"},
-      {"value":"links","label":"Links Only","clause":"Provide direct links to sources where possible"},
-      {"value":"none","label":"No Citations","clause":""}
-    ]},
-    {"key":"format","label":"Response Format","row":3,"allowCustom":true,"options":[
-      {"value":"paragraphs","label":"Paragraphs","clause":"Format the response in well-structured paragraphs"},
-      {"value":"bullet-points","label":"Bullet Points","clause":"Format the response as organized bullet points"},
-      {"value":"numbered-list","label":"Numbered List","clause":"Format the response as a numbered list"},
-      {"value":"table","label":"Table Format","clause":"Present the information in a structured table format"},
-      {"value":"q-and-a","label":"Q&A Format","clause":"Structure the response as a Q&A format"}
-    ]},
-    {"key":"length","label":"Response Length / Depth","row":3,"allowCustom":true,"options":[
-      {"value":"brief","label":"Brief (1-2 paragraphs)","clause":"Keep the response brief — 1 to 2 paragraphs"},
-      {"value":"moderate","label":"Moderate","clause":"Provide a moderately detailed response"},
-      {"value":"detailed","label":"Detailed","clause":"Provide a detailed, thorough response"},
-      {"value":"comprehensive","label":"Comprehensive / In-Depth","clause":"Provide a comprehensive, in-depth response covering all relevant aspects"}
-    ]},
-    {"key":"audience","label":"Expertise / Audience Level","row":3,"allowCustom":true,"options":[
-      {"value":"beginner","label":"Beginner","clause":"Write for a beginner audience with no prior knowledge assumed"},
-      {"value":"intermediate","label":"Intermediate","clause":"Write for an audience with intermediate knowledge of the subject"},
-      {"value":"expert","label":"Expert / Technical","clause":"Write for an expert audience comfortable with technical details"},
-      {"value":"general","label":"General Public","clause":"Write for a general audience in accessible language"}
-    ]},
-    {"key":"tone","label":"Tone / Style of Response","row":3,"allowCustom":true,"options":[
-      {"value":"professional","label":"Professional","clause":"Use a professional tone throughout your response"},
-      {"value":"conversational","label":"Conversational","clause":"Write in a conversational, approachable style"},
-      {"value":"academic","label":"Academic","clause":"Use an academic, scholarly tone"},
-      {"value":"journalistic","label":"Journalistic","clause":"Write in an objective, journalistic style"},
-      {"value":"neutral","label":"Neutral / Balanced","clause":"Maintain a strictly neutral and balanced perspective"}
-    ]},
-    {"key":"geographic","label":"Geographic Focus","row":4,"multiSelect":true,"allowCustom":true,"options":[
-      {"value":"us","label":"United States","clause":"Focus on the United States context and perspective"},
-      {"value":"europe","label":"Europe","clause":"Focus on the European context and perspective"},
-      {"value":"asia","label":"Asia","clause":"Focus on the Asian context and perspective"},
-      {"value":"global","label":"Global","clause":"Provide a global perspective covering multiple regions"},
-      {"value":"local","label":"Local / Regional","clause":"Focus on local and regional developments"}
-    ]}
+    {"key":"primaryTopic","label":"Primary Topic(s)","type":"text","placeholder":"Select here","row":1,
+      "description":"What this prompt should focus on."},
+    {"key":"secondaryTopic","label":"Secondary Topic(s)","type":"text","placeholder":"Select here","row":1,
+      "description":"Related topics to weave in for context."},
+    {"key":"outputType","label":"Output Type","row":1,"multiSelect":true,"allowCustom":true,
+      "description":"What kind of content you want — explainer, comparison, forecast, etc.",
+      "options":[
+        {"value":"overview","label":"Overview","clause":"Provide a comprehensive overview of {primary_topic}"},
+        {"value":"explainer","label":"Explainer","clause":"Explain {primary_topic} in a clear, accessible way"},
+        {"value":"research-summary","label":"Research Summary","clause":"Provide a detailed research summary about {primary_topic}"},
+        {"value":"comparison","label":"Comparison","clause":"Compare and contrast {primary_topic} with {compare_to}","requiresInput":{"key":"compare_to","label":"Compare to what?","placeholder":"e.g. Renewable energy"}},
+        {"value":"timeline","label":"Timeline / History","clause":"Provide a chronological timeline of key developments in {primary_topic}"},
+        {"value":"case-study","label":"Case Study","clause":"Present a detailed case study analysis of {primary_topic}","requiresInput":{"key":"case_subject","label":"Specific case or example?","placeholder":"e.g. Tesla's EV strategy (optional)","optional":true}},
+        {"value":"analysis","label":"Analysis","clause":"Provide an in-depth analytical breakdown with supporting evidence"},
+        {"value":"forecast","label":"Forecast / Prediction","clause":"Provide forecasts and predictions based on current trends"}
+      ]},
+    {"key":"sources","label":"Sources","row":2,"multiSelect":true,"allowCustom":true,
+      "description":"What kinds of references the response should rely on.",
+      "options":[
+        {"value":"academic","label":"Academic Papers","clause":"Draw from academic papers and peer-reviewed research"},
+        {"value":"news","label":"News Sources","clause":"Reference recent news articles and journalism"},
+        {"value":"government","label":"Government / Official","clause":"Prioritize government reports and official data sources"},
+        {"value":"industry","label":"Industry Reports","clause":"Use industry reports and market analysis"},
+        {"value":"mixed","label":"Mixed Sources","clause":"Draw from a diverse mix of credible sources"}
+      ]},
+    {"key":"recency","label":"Time Period","row":2,"multiSelect":true,"allowCustom":true,
+      "description":"The time window the response should cover.",
+      "options":[
+        {"value":"last-week","label":"Last Week","clause":"Focus on information from the past week"},
+        {"value":"last-month","label":"Last Month","clause":"Focus on information from the past month"},
+        {"value":"last-quarter","label":"Last Quarter","clause":"Focus on information from the past three months"},
+        {"value":"last-year","label":"Last Year","clause":"Focus on information from the past year"},
+        {"value":"historical","label":"Historical / All Time","clause":"Include historical context and long-term trends"}
+      ]},
+    {"key":"citations","label":"Citations","row":2,"multiSelect":true,"allowCustom":true,
+      "description":"How sources should be referenced in the output.",
+      "options":[
+        {"value":"inline","label":"Inline Citations","clause":"Include inline citations for all claims and data points"},
+        {"value":"footnotes","label":"Footnotes","clause":"Provide footnotes with source references"},
+        {"value":"bibliography","label":"Bibliography","clause":"Include a bibliography of all sources at the end"},
+        {"value":"links","label":"Links Only","clause":"Provide direct links to sources where possible"},
+        {"value":"none","label":"No Citations","clause":""}
+      ]},
+    {"key":"format","label":"Format","row":3,"multiSelect":true,"allowCustom":true,
+      "description":"How the response is laid out on the page.",
+      "options":[
+        {"value":"paragraphs","label":"Paragraphs","clause":"Format the response in well-structured paragraphs"},
+        {"value":"bullet-points","label":"Bullet Points","clause":"Format the response as organized bullet points"},
+        {"value":"numbered-list","label":"Numbered List","clause":"Format the response as a numbered list"},
+        {"value":"table","label":"Table Format","clause":"Present the information in a structured table format"},
+        {"value":"q-and-a","label":"Q&A Format","clause":"Structure the response as a Q&A format"}
+      ]},
+    {"key":"length","label":"Length","row":3,"multiSelect":true,"allowCustom":true,
+      "description":"How much depth and detail.",
+      "options":[
+        {"value":"brief","label":"Brief (1-2 paragraphs)","clause":"Keep the response brief — 1 to 2 paragraphs"},
+        {"value":"moderate","label":"Moderate","clause":"Provide a moderately detailed response"},
+        {"value":"detailed","label":"Detailed","clause":"Provide a detailed, thorough response"},
+        {"value":"comprehensive","label":"Comprehensive / In-Depth","clause":"Provide a comprehensive, in-depth response covering all relevant aspects"}
+      ]},
+    {"key":"audience","label":"Reading Level","row":3,"multiSelect":true,"allowCustom":true,
+      "description":"Who this is being written for.",
+      "options":[
+        {"value":"beginner","label":"Beginner","clause":"Write for a beginner audience with no prior knowledge assumed"},
+        {"value":"intermediate","label":"Intermediate","clause":"Write for an audience with intermediate knowledge of the subject"},
+        {"value":"expert","label":"Expert / Technical","clause":"Write for an expert audience comfortable with technical details"},
+        {"value":"general","label":"General Public","clause":"Write for a general audience in accessible language"}
+      ]},
+    {"key":"tone","label":"Tone","row":3,"multiSelect":true,"allowCustom":true,
+      "description":"The voice and style of the writing.",
+      "options":[
+        {"value":"professional","label":"Professional","clause":"Use a professional tone throughout your response"},
+        {"value":"conversational","label":"Conversational","clause":"Write in a conversational, approachable style"},
+        {"value":"academic","label":"Academic","clause":"Use an academic, scholarly tone"},
+        {"value":"journalistic","label":"Journalistic","clause":"Write in an objective, journalistic style"},
+        {"value":"neutral","label":"Neutral / Balanced","clause":"Maintain a strictly neutral and balanced perspective"}
+      ]},
+    {"key":"geographic","label":"Geographic Focus","row":4,"multiSelect":true,"allowCustom":true,
+      "description":"The regional lens for the response.",
+      "options":[
+        {"value":"us","label":"United States","clause":"Focus on the United States context and perspective"},
+        {"value":"europe","label":"Europe","clause":"Focus on the European context and perspective"},
+        {"value":"asia","label":"Asia","clause":"Focus on the Asian context and perspective"},
+        {"value":"global","label":"Global","clause":"Provide a global perspective covering multiple regions"},
+        {"value":"local","label":"Local / Regional","clause":"Focus on local and regional developments"}
+      ]}
   ],
   "baseTemplate": "Provide a comprehensive overview of {primary_topic}, covering key concepts, recent developments, and important context.",
   "secondaryTopicClause": "Also consider the intersection with {secondary_topic}.",
