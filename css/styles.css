@@ -3879,7 +3879,7 @@ body.hide-cta .sticky-cta { display: none !important; }
 }
 
 .wiz-action-btn {
-  flex: 0 1 460px;
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -3943,7 +3943,7 @@ body.hide-cta .sticky-cta { display: none !important; }
 }
 
 @media (max-width: 640px) {
-  .wiz-action-btn { flex: 1 1 auto; padding: 0.65rem 0.9rem; font-size: 0.9rem; }
+  .wiz-action-btn { flex: 0 0 auto; padding: 0.65rem 1rem; font-size: 0.88rem; }
   .wiz-action-restart { padding: 0.6rem 0.85rem; font-size: 0.8rem; }
 }
 
