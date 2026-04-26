@@ -3875,7 +3875,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   }
 }
 .wiz-action-bar-inner {
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .wiz-action-btn {

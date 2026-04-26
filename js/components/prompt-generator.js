@@ -339,10 +339,10 @@ function render() {
 
       <div class="wiz-action-bar">
         <div class="wiz-action-bar-inner">
-          <button type="button" class="wiz-action-restart" id="wiz-restart" ${isPristine ? 'disabled' : ''}>Clear Prompt</button>
           <button type="button" class="wiz-action-btn ${isEmpty ? 'is-empty' : 'is-ready'}" id="wiz-open-preview" ${isEmpty ? 'disabled' : ''}>
             <span>${isEmpty ? 'Add Topic(s) to Submit' : 'Preview Prompt and Submit'}</span>
           </button>
+          <button type="button" class="wiz-action-restart" id="wiz-restart" ${isPristine ? 'disabled' : ''}>Clear Prompt</button>
         </div>
       </div>
       <div class="wiz-action-bar-spacer"></div>
