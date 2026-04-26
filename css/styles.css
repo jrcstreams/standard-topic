@@ -3589,15 +3589,17 @@ body.hide-cta .sticky-cta { display: none !important; }
   gap: 1rem;
 }
 .wiz-intro {
-  margin: 0 0 0.25rem;
+  margin: 0 0 0.5rem;
   padding-bottom: 0;
   border-bottom: none;
 }
 .wiz-intro-text {
-  font-size: 0.85rem;
-  color: var(--color-text-muted);
-  line-height: 1.5;
+  font-size: 1rem;
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.55;
   margin: 0;
+  max-width: 720px;
 }
 
 /* Field layout */
@@ -4170,21 +4172,26 @@ body.hide-cta .sticky-cta { display: none !important; }
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  /* Card sizes to its content. Cap = 80vh so long lists scroll. */
+  max-height: 80vh;
 }
 .wiz-topic-picker-card .search-overlay-body {
-  flex: 1;
+  /* flex: 0 1 auto means body grows to its content but won't fill
+     remaining card space — so Done sits right below the options
+     when the list is short instead of stuck to viewport bottom. */
+  flex: 0 1 auto;
   overflow-y: auto;
+  min-height: 0;
 }
 @media (max-width: 640px) {
   .wiz-topic-picker-card {
     max-width: none;
-    height: 100%;
-    max-height: 100dvh;
-    border-radius: 0;
+    max-height: 90dvh;
+    border-radius: 12px 12px 0 0;
   }
   .wiz-topic-overlay {
     padding: 0;
-    align-items: stretch;
+    align-items: flex-end;
   }
 }
 .wiz-topic-picker-header {
