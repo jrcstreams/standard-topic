@@ -1,67 +1,601 @@
 {
   "topics": [
-    {"slug":"home","name":"General","parent":null,"rssFeedId":"tOD6KoNbJoS9eZVA","excludeEvergreen":["latest-news","overview","recent-developments","explain-simply","why-it-matters","what-to-watch","key-facts-stats","history-background"],"relatedParents":[],"icon":"home"},
-
-    {"slug":"business-and-finance","name":"Business and Finance","parent":null,"rssFeedId":"txotq3JiOTfaL1fH","excludeEvergreen":["controversies"],"relatedParents":["technology"],"icon":"briefcase","featured":true},
-    {"slug":"cryptocurrency","name":"Cryptocurrency","parent":"business-and-finance","rssFeedId":"tE81Cybd7zXkVyb2","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"e-commerce","name":"E-commerce","parent":"business-and-finance","rssFeedId":"twoPPMLBAasAf5qb","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"economy","name":"Economy","parent":"business-and-finance","rssFeedId":"tXfpaAPnaPcdd3be","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"energy","name":"Energy","parent":"business-and-finance","rssFeedId":"t4OZDLi3CofyDmla","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"mergers-and-acquisitions","name":"M&A","parent":"business-and-finance","rssFeedId":"t4acj9wS2YVvL05O","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"markets","name":"Markets","parent":"business-and-finance","rssFeedId":"tXfpaAPnaPcdd3be","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"real-estate","name":"Real Estate","parent":"business-and-finance","rssFeedId":"tavCAxofRF6vnAAi","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"small-business","name":"Small Business","parent":"business-and-finance","rssFeedId":"tckjhZxSS3Cf9a2b","excludeEvergreen":[],"relatedParents":[],"icon":null},
-
-    {"slug":"education-and-learning","name":"Education and Learning","parent":null,"rssFeedId":"tfOFCmJR2LDfJ42L","excludeEvergreen":["controversies"],"relatedParents":[],"icon":"flask","featured":true},
-    {"slug":"history","name":"History","parent":"education-and-learning","rssFeedId":"tHbpDz1OIS1xjGdw","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"math","name":"Math","parent":"education-and-learning","rssFeedId":"t19QfGbpRAKSOSpl","excludeEvergreen":["breaking-news","controversies","key-players"],"relatedParents":[],"icon":null},
-    {"slug":"reading-and-writing","name":"Reading and Writing","parent":"education-and-learning","rssFeedId":"t93U35XuDh9bTmFT","excludeEvergreen":["breaking-news","controversies","key-players"],"relatedParents":[],"icon":null},
-    {"slug":"science-education","name":"Science","parent":"education-and-learning","rssFeedId":"t8SWPzwFekjhuImH","excludeEvergreen":["controversies"],"relatedParents":[],"icon":null},
-
-    {"slug":"entertainment","name":"Entertainment","parent":null,"rssFeedId":"tAlXqgcINYfl1AkT","excludeEvergreen":["expert-analysis","impact-analysis"],"relatedParents":[],"icon":"heart","featured":true},
-    {"slug":"celebrities","name":"Celebrities","parent":"entertainment","rssFeedId":"tYPzo8D2sLIZj6G5","excludeEvergreen":["expert-analysis","impact-analysis","beginners-guide","deep-dive"],"relatedParents":[],"icon":null},
-    {"slug":"podcasts","name":"Podcasts","parent":"entertainment","rssFeedId":"tYOQ75Z3pkyamnd4","excludeEvergreen":["expert-analysis","impact-analysis","controversies"],"relatedParents":[],"icon":null},
-    {"slug":"tv-and-movies","name":"TV and Movies","parent":"entertainment","rssFeedId":"toQF4sMlNaTyuo8i","excludeEvergreen":["expert-analysis","impact-analysis"],"relatedParents":[],"icon":null},
-
-    {"slug":"politics","name":"Politics","parent":null,"rssFeedId":"t8wcjI9wkqvfDbLm","excludeEvergreen":[],"relatedParents":["world"],"icon":"landmark","featured":true},
-    {"slug":"elections","name":"Elections","parent":"politics","rssFeedId":"tEsKxD58lEm2dvI8","excludeEvergreen":["beginners-guide"],"relatedParents":[],"icon":null},
-    {"slug":"geopolitics","name":"Geopolitics","parent":"politics","rssFeedId":"tkAeboftKih5bRaw","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"international-politics","name":"International Politics","parent":"politics","rssFeedId":"tW88xstf1CjykGJy","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"law-and-regulation","name":"Law and Regulation Developments","parent":"politics","rssFeedId":"tmEX0dXuf6PmBQkT","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"political-science","name":"Political Science","parent":"politics","rssFeedId":"tlgrqNvbe31ZK7Dq","excludeEvergreen":["breaking-news"],"relatedParents":[],"icon":null},
-    {"slug":"us-politics","name":"US Politics","parent":"politics","rssFeedId":"tPbfgG8TH9e9a7tF","excludeEvergreen":[],"relatedParents":[],"icon":null},
-
-    {"slug":"sports","name":"Sports","parent":null,"rssFeedId":"txvJwYETwOfwX890","excludeEvergreen":["expert-analysis","controversies","beginners-guide"],"relatedParents":[],"icon":"trophy","featured":true},
-    {"slug":"baseball","name":"Baseball","parent":"sports","rssFeedId":"tuWPwSHWbzodZfM9","excludeEvergreen":["expert-analysis","controversies","beginners-guide"],"relatedParents":[],"icon":null},
-    {"slug":"basketball","name":"Basketball","parent":"sports","rssFeedId":"tZ8MmYeW5mbLq7kA","excludeEvergreen":["expert-analysis","controversies","beginners-guide"],"relatedParents":[],"icon":null},
-    {"slug":"college-football","name":"College Football","parent":"sports","rssFeedId":"tV4SIfiCWNN341NK","excludeEvergreen":["expert-analysis","controversies","beginners-guide"],"relatedParents":[],"icon":null},
-    {"slug":"football","name":"NFL Football","parent":"sports","rssFeedId":"tqanHLBGBzBzvY23","excludeEvergreen":["expert-analysis","controversies","beginners-guide"],"relatedParents":[],"icon":null},
-    {"slug":"hockey","name":"Hockey","parent":"sports","rssFeedId":"teJudZKMukkyv2xa","excludeEvergreen":["expert-analysis","controversies","beginners-guide"],"relatedParents":[],"icon":null},
-    {"slug":"soccer","name":"Soccer","parent":"sports","rssFeedId":"tBQsyO3eMTxGNuEE","excludeEvergreen":["expert-analysis","controversies","beginners-guide"],"relatedParents":[],"icon":null},
-
-    {"slug":"technology","name":"Technology","parent":null,"rssFeedId":"tNKkiZvieXCbAvLG","excludeEvergreen":[],"relatedParents":["business-and-finance"],"icon":"laptop","featured":true},
-    {"slug":"artificial-intelligence","name":"Artificial Intelligence","parent":"technology","rssFeedId":"tcFFClE2kyX9Ejje","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"blockchain","name":"Blockchain","parent":"technology","rssFeedId":"t6YhbiLnqmGyNQi2","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"cloud-computing","name":"Cloud Computing","parent":"technology","rssFeedId":"tx6lWPJ3UiC5eFhh","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"consumer-electronics","name":"Consumer Electronics","parent":"technology","rssFeedId":"tkwFVM0qMqqy9h7b","excludeEvergreen":["controversies","expert-analysis"],"relatedParents":[],"icon":null},
-    {"slug":"cybersecurity","name":"Cybersecurity","parent":"technology","rssFeedId":"tJHmkmrIL1Bzxote","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"emerging-technologies","name":"Emerging Technologies","parent":"technology","rssFeedId":"tVoRpjlj6bJy1obY","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"information-technology","name":"Information Technology","parent":"technology","rssFeedId":"t3AsWXydEEaXJl98","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"privacy-and-data-protection","name":"Privacy and Data Protection","parent":"technology","rssFeedId":"tMlysRSUGFJFDX0D","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"programming-development","name":"Programming / Development","parent":"technology","rssFeedId":"tXx86ZQTjZcG15FB","excludeEvergreen":["controversies","pros-and-cons"],"relatedParents":[],"icon":null},
-    {"slug":"robotics","name":"Robotics","parent":"technology","rssFeedId":"tiLiKkdWXc9GFAEr","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"software","name":"Software","parent":"technology","rssFeedId":"tPIuz0yPCaVu3lh5","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"tech-business","name":"Tech Business","parent":"technology","rssFeedId":"tpM2slTOu2vEqaRg","excludeEvergreen":["beginners-guide"],"relatedParents":[],"icon":null},
-    {"slug":"virtual-augmented-reality","name":"Virtual / Augmented Reality","parent":"technology","rssFeedId":"tfejtf1FFiGr2jvG","excludeEvergreen":[],"relatedParents":[],"icon":null},
-
-    {"slug":"world","name":"World","parent":null,"rssFeedId":"tOD6KoNbJoS9eZVA","excludeEvergreen":[],"relatedParents":["politics"],"icon":"globe","featured":true},
-    {"slug":"asia","name":"Asia","parent":"world","rssFeedId":"tFKgtAYAGCq7nEZX","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"australia-new-zealand","name":"Australia / New Zealand","parent":"world","rssFeedId":"taiQFS1AQ9qSxqq7","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"china","name":"China","parent":"world","rssFeedId":"tGssnAp43s0BsvRJ","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"europe","name":"Europe","parent":"world","rssFeedId":"tbScrg3ibvQ2yGes","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"india","name":"India","parent":"world","rssFeedId":"tCK8MrnAWzU1GlDP","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"latin-america","name":"Latin America","parent":"world","rssFeedId":"tzBHJeu18sl0Kz32","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"middle-east","name":"Middle East","parent":"world","rssFeedId":"tDN4sSPee8Yfqwto","excludeEvergreen":[],"relatedParents":[],"icon":null},
-    {"slug":"us","name":"US","parent":"world","rssFeedId":"typ8mYrAkVni4sqa","excludeEvergreen":[],"relatedParents":[],"icon":null}
+    {
+      "slug": "home",
+      "name": "General",
+      "parent": null,
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "latest-news",
+        "overview",
+        "recent-developments",
+        "explain-simply",
+        "why-it-matters",
+        "what-to-watch",
+        "key-facts-stats",
+        "history-background"
+      ],
+      "relatedParents": [],
+      "icon": "home"
+    },
+    {
+      "slug": "business-and-finance",
+      "name": "Business and Finance",
+      "parent": null,
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "controversies"
+      ],
+      "relatedParents": [
+        "technology"
+      ],
+      "icon": "briefcase",
+      "featured": true
+    },
+    {
+      "slug": "cryptocurrency",
+      "name": "Cryptocurrency",
+      "parent": "business-and-finance",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "e-commerce",
+      "name": "E-commerce",
+      "parent": "business-and-finance",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "economy",
+      "name": "Economy",
+      "parent": "business-and-finance",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "energy",
+      "name": "Energy",
+      "parent": "business-and-finance",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "mergers-and-acquisitions",
+      "name": "M&A",
+      "parent": "business-and-finance",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "markets",
+      "name": "Markets",
+      "parent": "business-and-finance",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "real-estate",
+      "name": "Real Estate",
+      "parent": "business-and-finance",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "small-business",
+      "name": "Small Business",
+      "parent": "business-and-finance",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "education-and-learning",
+      "name": "Education and Learning",
+      "parent": null,
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "controversies"
+      ],
+      "relatedParents": [],
+      "icon": "flask",
+      "featured": true
+    },
+    {
+      "slug": "history",
+      "name": "History",
+      "parent": "education-and-learning",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "math",
+      "name": "Math",
+      "parent": "education-and-learning",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "breaking-news",
+        "controversies",
+        "key-players"
+      ],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "reading-and-writing",
+      "name": "Reading and Writing",
+      "parent": "education-and-learning",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "breaking-news",
+        "controversies",
+        "key-players"
+      ],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "science-education",
+      "name": "Science",
+      "parent": "education-and-learning",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "controversies"
+      ],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "entertainment",
+      "name": "Entertainment",
+      "parent": null,
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "expert-analysis",
+        "impact-analysis"
+      ],
+      "relatedParents": [],
+      "icon": "heart",
+      "featured": true
+    },
+    {
+      "slug": "celebrities",
+      "name": "Celebrities",
+      "parent": "entertainment",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "expert-analysis",
+        "impact-analysis",
+        "beginners-guide",
+        "deep-dive"
+      ],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "podcasts",
+      "name": "Podcasts",
+      "parent": "entertainment",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "expert-analysis",
+        "impact-analysis",
+        "controversies"
+      ],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "tv-and-movies",
+      "name": "TV and Movies",
+      "parent": "entertainment",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "expert-analysis",
+        "impact-analysis"
+      ],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "politics",
+      "name": "Politics",
+      "parent": null,
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [
+        "world"
+      ],
+      "icon": "landmark",
+      "featured": true
+    },
+    {
+      "slug": "elections",
+      "name": "Elections",
+      "parent": "politics",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "beginners-guide"
+      ],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "geopolitics",
+      "name": "Geopolitics",
+      "parent": "politics",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "international-politics",
+      "name": "International Politics",
+      "parent": "politics",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "law-and-regulation",
+      "name": "Law and Regulation Developments",
+      "parent": "politics",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "political-science",
+      "name": "Political Science",
+      "parent": "politics",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "breaking-news"
+      ],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "us-politics",
+      "name": "US Politics",
+      "parent": "politics",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "sports",
+      "name": "Sports",
+      "parent": null,
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "expert-analysis",
+        "controversies",
+        "beginners-guide"
+      ],
+      "relatedParents": [],
+      "icon": "trophy",
+      "featured": true
+    },
+    {
+      "slug": "baseball",
+      "name": "Baseball",
+      "parent": "sports",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "expert-analysis",
+        "controversies",
+        "beginners-guide"
+      ],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "basketball",
+      "name": "Basketball",
+      "parent": "sports",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "expert-analysis",
+        "controversies",
+        "beginners-guide"
+      ],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "college-football",
+      "name": "College Football",
+      "parent": "sports",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "expert-analysis",
+        "controversies",
+        "beginners-guide"
+      ],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "football",
+      "name": "NFL Football",
+      "parent": "sports",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "expert-analysis",
+        "controversies",
+        "beginners-guide"
+      ],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "hockey",
+      "name": "Hockey",
+      "parent": "sports",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "expert-analysis",
+        "controversies",
+        "beginners-guide"
+      ],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "soccer",
+      "name": "Soccer",
+      "parent": "sports",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "expert-analysis",
+        "controversies",
+        "beginners-guide"
+      ],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "technology",
+      "name": "Technology",
+      "parent": null,
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [
+        "business-and-finance"
+      ],
+      "icon": "laptop",
+      "featured": true
+    },
+    {
+      "slug": "artificial-intelligence",
+      "name": "Artificial Intelligence",
+      "parent": "technology",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "blockchain",
+      "name": "Blockchain",
+      "parent": "technology",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "cloud-computing",
+      "name": "Cloud Computing",
+      "parent": "technology",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "consumer-electronics",
+      "name": "Consumer Electronics",
+      "parent": "technology",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "controversies",
+        "expert-analysis"
+      ],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "cybersecurity",
+      "name": "Cybersecurity",
+      "parent": "technology",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "emerging-technologies",
+      "name": "Emerging Technologies",
+      "parent": "technology",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "information-technology",
+      "name": "Information Technology",
+      "parent": "technology",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "privacy-and-data-protection",
+      "name": "Privacy and Data Protection",
+      "parent": "technology",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "programming-development",
+      "name": "Programming / Development",
+      "parent": "technology",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "controversies",
+        "pros-and-cons"
+      ],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "robotics",
+      "name": "Robotics",
+      "parent": "technology",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "software",
+      "name": "Software",
+      "parent": "technology",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "tech-business",
+      "name": "Tech Business",
+      "parent": "technology",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [
+        "beginners-guide"
+      ],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "virtual-augmented-reality",
+      "name": "Virtual / Augmented Reality",
+      "parent": "technology",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "world",
+      "name": "World",
+      "parent": null,
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [
+        "politics"
+      ],
+      "icon": "globe",
+      "featured": true
+    },
+    {
+      "slug": "asia",
+      "name": "Asia",
+      "parent": "world",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "australia-new-zealand",
+      "name": "Australia / New Zealand",
+      "parent": "world",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "china",
+      "name": "China",
+      "parent": "world",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "europe",
+      "name": "Europe",
+      "parent": "world",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "india",
+      "name": "India",
+      "parent": "world",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "latin-america",
+      "name": "Latin America",
+      "parent": "world",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "middle-east",
+      "name": "Middle East",
+      "parent": "world",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    },
+    {
+      "slug": "us",
+      "name": "US",
+      "parent": "world",
+      "rssFeedId": "teXwFdTo6pdFWqCV",
+      "excludeEvergreen": [],
+      "relatedParents": [],
+      "icon": null
+    }
   ]
 }
