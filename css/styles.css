@@ -2457,7 +2457,7 @@ html, body, #app {
   min-width: 0;
   white-space: nowrap;
   margin-left: 1rem;
-  padding-left: 0.5rem;
+  padding-left: 0;
   border-left: none;
   position: relative;
 }
@@ -2470,17 +2470,24 @@ html, body, #app {
   width: 1px;
   height: 1.5rem;
   background: var(--color-border);
+  transition: background 0.12s;
+  pointer-events: none;
+}
+/* Hide both row separators when the action-link is being hovered so
+   the hover rectangle reads as a single clean fill that meets the
+   surrounding separators flush. */
+.subnav-topics-inline:has(.subnav-action-link:hover)::before,
+.subnav-topics-inline:has(.subnav-action-link:hover) .subnav-topics-label::before {
+  background: transparent;
 }
 
-/* Home Featured label gets a small ::before divider sitting in its
-   own left padding, between "All Topics +" and "Featured:".
-   padding-left bumped to 1rem so the separator has visible breathing
-   room from "Featured:" — paired with action-link's matching 1rem
-   padding-right (below) so both sides of THIS specific separator
-   are symmetric and roomy. */
+/* Home Featured label gets a ::before divider sitting at its own
+   left edge, between "All Topics +" and "Featured:". padding-left
+   on the label and padding-right on the action link are matched
+   so both sides of this divider have the same breathing room. */
 .home-subnav-topics .subnav-topics-label {
   position: relative;
-  padding-left: 1rem;
+  padding-left: 0.85rem;
 }
 .home-subnav-topics .subnav-topics-label::before {
   content: '';
@@ -2491,12 +2498,15 @@ html, body, #app {
   width: 1px;
   height: 1.5rem;
   background: var(--color-border);
+  transition: background 0.12s;
+  pointer-events: none;
 }
-/* Mirror padding on the action link's right side so the separator
-   has identical breathing room on both sides. Left side stays at
-   the standard 0.5rem to match the row's leading separator. */
+/* Action link symmetric padding: 0.85rem on both sides so the
+   leading divider and the All-Topics ↔ Featured divider sit the
+   same distance from the "All Topics +" text. */
 .home-subnav-topics .subnav-action-link {
-  padding-right: 1rem;
+  padding: 4rem 0.85rem;
+  margin: -4rem 0;
 }
 
 /* Homepage: drop "All Topics +" first when space gets tight — keep separator */
