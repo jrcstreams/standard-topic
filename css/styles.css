@@ -1298,10 +1298,10 @@ body.hide-cta .sticky-cta { display: none !important; }
 
 .newsfeed-card-title {
   font-family: var(--font-family);
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   line-height: 1.2;
-  font-weight: 650;
-  color: #1e1e1e;
+  font-weight: 600;
+  color: #1e2d44;
   flex-basis: 100%;
   letter-spacing: -0.015em;
   margin: 0 0 0.3rem 0;
@@ -1453,10 +1453,15 @@ body.hide-cta .sticky-cta { display: none !important; }
 .shortcuts-multi-submit-wrap {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 0.5rem;
   margin-top: 0.85rem;
+}
+@media (max-width: 520px) {
+  .shortcuts-multi-submit { padding: 0.5rem 0.85rem; font-size: 0.78rem; }
+  .shortcuts-multi-submit-count { min-width: 18px; height: 18px; font-size: 0.7rem; padding: 0 0.35rem; }
+  .shortcuts-multi-clear { padding: 0.5rem 0.8rem; font-size: 0.78rem; }
 }
 /* Selector wins over .shortcuts-multi-submit-wrap { display: flex }
    so the [hidden] HTML attribute actually hides the button. */
@@ -1537,9 +1542,32 @@ body.hide-cta .sticky-cta { display: none !important; }
 .sidebar-card-header > * { min-width: 0; max-width: 100%; }
 .sidebar-card-header .sidebar-card-title { flex-basis: 100%; }
 /* Force the toggle onto its own line on narrow screens so it never
-   competes with the description for horizontal space. */
+   competes with the description for horizontal space. On mobile the
+   toggle adopts a more discreet treatment — lighter weight, smaller
+   switch, color matched to the subtext beneath the title — so it
+   reads as a small auxiliary control rather than a primary CTA. */
 @media (max-width: 720px) {
-  .sidebar-card-header .multi-toggle { flex-basis: 100%; justify-content: flex-end; margin-left: 0; }
+  .sidebar-card-header .multi-toggle {
+    flex-basis: 100%;
+    justify-content: flex-start;
+    margin-left: 0;
+    margin-top: 0.15rem;
+    font-size: 0.8rem;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-muted);
+    letter-spacing: -0.005em;
+  }
+  .sidebar-card-header .multi-toggle .multi-toggle-switch {
+    width: 26px;
+    height: 15px;
+  }
+  .sidebar-card-header .multi-toggle .multi-toggle-knob {
+    width: 11px;
+    height: 11px;
+  }
+  .sidebar-card-header .multi-toggle[aria-checked="true"] .multi-toggle-knob {
+    transform: translateX(11px);
+  }
 }
 
 /* Right-edge breathing room — keep the toggle and other in-card
@@ -2421,7 +2449,7 @@ html, body, #app {
 .subnav-topic-link {
   font-family: var(--font-display);
   font-size: 0.85rem;
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   color: var(--color-text);
   text-decoration: none;
   white-space: nowrap;
@@ -2719,8 +2747,9 @@ html, body, #app {
   margin: 0.35rem 0 0.1rem;
   padding: 0;
   border: none;
-  font-size: 0.8rem;
-  line-height: 1.2;
+  font-size: 0.88rem;
+  font-weight: var(--font-weight-medium);
+  line-height: 1.35;
   color: var(--color-text-muted);
   letter-spacing: -0.005em;
 }
@@ -2732,10 +2761,10 @@ html, body, #app {
 
 .sidebar-card-title {
   font-family: var(--font-family);
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   line-height: 1.2;
-  font-weight: 650;
-  color: #1e1e1e;
+  font-weight: 600;
+  color: #1e2d44;
   flex-basis: 100%;
   letter-spacing: -0.015em;
   margin: 0 0 0.3rem 0;

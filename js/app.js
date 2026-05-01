@@ -563,7 +563,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
           <button type="button" class="multi-toggle" id="multi-toggle" role="switch" aria-checked="false">
             <span class="multi-toggle-label">
               <span class="multi-toggle-label-full">Multi-Select AI Shortcuts</span>
-              <span class="multi-toggle-label-short">Multi-Select</span>
+              <span class="multi-toggle-label-short">Multiselect Shortcuts</span>
             </span>
             <span class="multi-toggle-switch" aria-hidden="true"><span class="multi-toggle-knob"></span></span>
           </button>
