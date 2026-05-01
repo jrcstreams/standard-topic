@@ -1464,10 +1464,30 @@ body.hide-cta .sticky-cta { display: none !important; }
   margin-top: 0.85rem;
   padding: 0;
 }
-@media (max-width: 520px) {
+/* Default: full labels visible, short labels hidden. */
+.multi-btn-label-short { display: none; }
+
+/* Mid-size phones / narrow tablets — shrink padding + font, full label */
+@media (max-width: 540px) {
   .shortcuts-multi-submit { padding: 0.5rem 0.85rem; font-size: 0.78rem; }
   .shortcuts-multi-submit-count { min-width: 18px; height: 18px; font-size: 0.7rem; padding: 0 0.35rem; }
   .shortcuts-multi-clear { padding: 0.5rem 0.8rem; font-size: 0.78rem; }
+}
+
+/* Smaller phones — swap to short labels ("Submit"/"Clear") so both
+   buttons stay on a single row instead of wrapping. */
+@media (max-width: 480px) {
+  .multi-btn-label-full { display: none; }
+  .multi-btn-label-short { display: inline; }
+  .shortcuts-multi-submit { padding: 0.5rem 0.9rem; font-size: 0.8rem; }
+  .shortcuts-multi-clear { padding: 0.5rem 0.85rem; font-size: 0.8rem; }
+}
+
+/* Very small phones — even tighter. */
+@media (max-width: 360px) {
+  .shortcuts-multi-submit { padding: 0.45rem 0.75rem; font-size: 0.78rem; }
+  .shortcuts-multi-clear { padding: 0.45rem 0.7rem; font-size: 0.78rem; }
+  .shortcuts-multi-submit-wrap { gap: 0.4rem; }
 }
 /* Selector wins over .shortcuts-multi-submit-wrap { display: flex }
    so the [hidden] HTML attribute actually hides the button. */

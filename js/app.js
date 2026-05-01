@@ -597,11 +597,15 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     html += `
       <div class="shortcuts-multi-submit-wrap" hidden>
         <button type="button" class="shortcuts-multi-submit" id="shortcuts-multi-submit">
-          <span class="shortcuts-multi-submit-label">Submit Selected Prompts</span>
+          <span class="shortcuts-multi-submit-label">
+            <span class="multi-btn-label-full">Submit Selected Prompts</span>
+            <span class="multi-btn-label-short">Submit</span>
+          </span>
           <span class="shortcuts-multi-submit-count" id="shortcuts-multi-submit-count">0</span>
         </button>
         <button type="button" class="shortcuts-multi-clear" id="shortcuts-multi-clear">
-          Clear Selected Prompts
+          <span class="multi-btn-label-full">Clear Selected Prompts</span>
+          <span class="multi-btn-label-short">Clear</span>
         </button>
       </div>
     `;
