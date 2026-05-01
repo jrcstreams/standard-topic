@@ -2386,11 +2386,15 @@ html, body, #app {
   background: var(--color-border);
 }
 
-/* Separator between All Topics + and Featured — homepage only */
+/* Separator between All Topics + and Featured — homepage only.
+   margin-left: 0 + padding-left: 0.9rem keeps the gap on either
+   side of the divider symmetric:
+     left  = action-link's right padding (0.65rem) + parent gap (0.25rem) = 0.9rem
+     right = label's padding-left (0.9rem) */
 .home-subnav-topics .subnav-topics-label {
   position: relative;
-  margin-left: 0.55rem;
-  padding-left: 0.85rem;
+  margin-left: 0;
+  padding-left: 0.9rem;
 }
 .home-subnav-topics .subnav-topics-label::before {
   content: '';
@@ -2437,7 +2441,7 @@ html, body, #app {
   font-family: var(--font-display);
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--color-text-muted);
+  color: var(--color-primary-light);
   letter-spacing: -0.005em;
   flex-shrink: 0;
   display: inline-flex;
@@ -2472,7 +2476,7 @@ html, body, #app {
   font-family: var(--font-display);
   font-size: 0.85rem;
   font-weight: 700;
-  color: #4a6a8a;
+  color: var(--color-primary-light);
   letter-spacing: -0.005em;
   text-decoration: none;
   white-space: nowrap;
