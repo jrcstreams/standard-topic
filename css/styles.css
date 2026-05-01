@@ -1367,19 +1367,19 @@ body.hide-cta .sticky-cta { display: none !important; }
   padding: 0;
   background: none;
   border: none;
-  color: var(--color-primary-light);
+  color: var(--color-text-light);
   font-family: var(--font-display);
-  font-size: 0.78rem;
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.02em;
+  font-size: 0.72rem;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   cursor: pointer;
   min-width: 0;
   max-width: 100%;
   transition: color 0.12s;
 }
-.multi-toggle:hover { color: var(--color-primary); }
-.multi-toggle[aria-checked="true"] { color: var(--color-primary); }
+.multi-toggle:hover { color: var(--color-text-muted); }
+.multi-toggle[aria-checked="true"] { color: var(--color-text-muted); }
 .multi-toggle-label {
   white-space: nowrap;
   overflow: hidden;
