@@ -1542,6 +1542,12 @@ body.hide-cta .sticky-cta { display: none !important; }
   .sidebar-card-header .multi-toggle { flex-basis: 100%; justify-content: flex-end; margin-left: 0; }
 }
 
+/* Right-edge breathing room — keep the toggle and other in-card
+   right-aligned controls visually clear of the viewport edge across
+   screen sizes. */
+.shortcuts-sidebar .multi-toggle { padding-right: 0.15rem; }
+.shortcuts-multi-submit-wrap { padding-right: 0.15rem; padding-left: 0.15rem; }
+
 
 .newsfeed-embed {
   background: var(--color-bg);
@@ -1570,8 +1576,9 @@ body.hide-cta .sticky-cta { display: none !important; }
 }
 
 /* Prevent horizontal overflow on any screen */
-#app {
-  overflow-x: hidden;
+html, body, #app {
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 /* === Custom-search feed CTAs — full-width rows like shortcuts ==== */
