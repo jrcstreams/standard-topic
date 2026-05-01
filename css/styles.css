@@ -1381,7 +1381,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   min-width: 0;
 }
 .multi-toggle-label-short { display: none; }
-@media (max-width: 520px) {
+@media (max-width: 720px) {
   .multi-toggle-label-full { display: none; }
   .multi-toggle-label-short { display: inline; }
 }
@@ -1455,6 +1455,11 @@ body.hide-cta .sticky-cta { display: none !important; }
   justify-content: center;
   margin-top: 0.85rem;
 }
+/* Selector wins over .shortcuts-multi-submit-wrap { display: flex }
+   so the [hidden] HTML attribute actually hides the button. */
+.shortcuts-multi-submit-wrap[hidden] {
+  display: none !important;
+}
 .shortcuts-multi-submit {
   display: inline-flex;
   align-items: center;
@@ -1495,12 +1500,13 @@ body.hide-cta .sticky-cta { display: none !important; }
 /* Section header — make sure flex children can shrink so the toggle
    doesn't push the card past the viewport on narrow screens. */
 .sidebar-card-header { min-width: 0; }
-.sidebar-card-header > * { min-width: 0; }
+.sidebar-card-header > * { min-width: 0; max-width: 100%; }
 .sidebar-card-header .sidebar-card-title { flex-basis: 100%; }
-
-/* Defense: prevent any single rogue element from forcing horizontal
-   page scroll on small screens. */
-html, body { overflow-x: hidden; }
+/* Force the toggle onto its own line on narrow screens so it never
+   competes with the description for horizontal space. */
+@media (max-width: 720px) {
+  .sidebar-card-header .multi-toggle { flex-basis: 100%; justify-content: flex-end; margin-left: 0; }
+}
 
 
 .newsfeed-embed {
