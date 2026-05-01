@@ -13,6 +13,7 @@ import {
 import { renderIcon } from '../utils/icons.js';
 
 let modalEl = null;
+let modalState = null;
 
 export function initPromptModal() {
   modalEl = document.createElement('div');
@@ -40,9 +41,16 @@ function openModal(prompt, shortcutName, iconKey) {
   const models = getModels();
   const defaultId = getDefaultModelId();
   const preferredId = getPreferredModelId(defaultId);
-  let selectedModelId = preferredId;
-
-  renderModalContent(prompt, shortcutName, iconKey, models, selectedModelId);
+  modalState = {
+    originalPrompt: prompt,
+    editedPrompt: null,
+    isEditing: false,
+    shortcutName,
+    iconKey,
+    selectedModelId: preferredId,
+    models,
+  };
+  renderModalContent();
   modalEl.style.display = 'flex';
   document.body.style.overflow = 'hidden';
 }
@@ -50,6 +58,11 @@ function openModal(prompt, shortcutName, iconKey) {
 function closeModal() {
   modalEl.style.display = 'none';
   document.body.style.overflow = '';
+  modalState = null;
+}
+
+function getCurrentPrompt() {
+  return modalState.editedPrompt ?? modalState.originalPrompt;
 }
 
 function getSubmitLabel(model) {
@@ -59,10 +72,11 @@ function getSubmitLabel(model) {
     : `Open ${model.name}`;
 }
 
-function renderModalContent(prompt, shortcutName, iconKey, models, selectedModelId) {
+function renderModalContent() {
+  const { shortcutName, iconKey, models, selectedModelId, isEditing } = modalState;
+  const prompt = getCurrentPrompt();
   const methods = getSubmissionMethods();
 
-  // All model buttons (flat, no categories initially)
   const modelBtnsHTML = models.map(m => `
     <button class="prompt-modal-model-btn ${m.id === selectedModelId ? 'selected' : ''}" type="button" data-model-id="${m.id}">
       ${escapeHTML(m.name)}
@@ -77,14 +91,24 @@ function renderModalContent(prompt, shortcutName, iconKey, models, selectedModel
           <div class="prompt-modal-shortcut-name">${escapeHTML(shortcutName || 'Submit Prompt')}</div>
         </div>
         <div class="prompt-modal-header-actions">
+          <button class="prompt-modal-action-btn" id="prompt-modal-edit" type="button">
+            ${isEditing ? 'Done' : 'Edit'}
+          </button>
           <button class="prompt-modal-action-btn" id="prompt-modal-copy" type="button">Copy</button>
           <button class="prompt-modal-action-btn prompt-modal-close-btn" id="prompt-modal-close" type="button" aria-label="Close">✕</button>
         </div>
       </div>
 
       <div class="prompt-modal-section">
-        <div class="prompt-modal-section-label">Prompt Preview</div>
-        <div class="prompt-modal-preview">${escapeHTML(prompt)}</div>
+        <div class="prompt-modal-section-label">
+          Prompt Preview
+          ${!isEditing ? '<span class="prompt-modal-edit-hint">click to edit</span>' : ''}
+          ${modalState.editedPrompt != null && !isEditing ? '<button type="button" class="prompt-modal-reset" id="prompt-modal-reset">Reset</button>' : ''}
+        </div>
+        ${isEditing
+          ? `<textarea class="prompt-modal-preview-edit" id="prompt-modal-preview-edit" autofocus>${escapeHTML(prompt)}</textarea>`
+          : `<div class="prompt-modal-preview" id="prompt-modal-preview" role="button" tabindex="0">${escapeHTML(prompt)}</div>`
+        }
       </div>
 
       <div class="prompt-modal-section">
@@ -98,60 +122,109 @@ function renderModalContent(prompt, shortcutName, iconKey, models, selectedModel
     </div>
   `;
 
-  function updateSubmitArea() {
-    const model = getModelById(selectedModelId);
-    if (!model) { document.getElementById('prompt-modal-submit-area').style.display = 'none'; return; }
-    const method = model.submissionMethod || 'direct';
-    const meta = methods[method] || {};
-    const area = document.getElementById('prompt-modal-submit-area');
-    area.style.display = '';
-    area.innerHTML = `
-      <button class="prompt-modal-submit" id="prompt-modal-submit" type="button">
-        ${escapeHTML(getSubmitLabel(model))}
-      </button>
-      <div class="prompt-modal-method-title">${escapeHTML(meta.label || '')}</div>
-      <div class="prompt-modal-method-info">${escapeHTML(meta.description || '')}</div>
-      <ul class="prompt-modal-footer-list">
-        <li><a href="#" class="prompt-modal-open-link" id="prompt-modal-open-only">🔗 Open ${escapeHTML(model.name)} only</a></li>
-        <li>If prompt doesn't load directly into model, paste text from clipboard.</li>
-        <li>Standard Topic is not responsible for actions taken once you leave this site.</li>
-      </ul>
-    `;
-    area.querySelector('#prompt-modal-submit').addEventListener('click', async () => {
-      await submitPrompt(model, prompt);
-      closeModal();
-    });
-    area.querySelector('#prompt-modal-open-only').addEventListener('click', (e) => {
-      e.preventDefault();
-      const url = model.urlTemplate.replace('{prompt}', '');
-      window.open(url, '_blank');
-      closeModal();
-    });
-  }
+  bindEvents();
+  if (selectedModelId) updateSubmitArea();
+}
 
+function bindEvents() {
   document.getElementById('prompt-modal-close').addEventListener('click', closeModal);
 
   document.getElementById('prompt-modal-copy').addEventListener('click', async () => {
-    try { await navigator.clipboard.writeText(prompt); } catch (_) {}
+    const text = modalState.isEditing
+      ? document.getElementById('prompt-modal-preview-edit')?.value ?? ''
+      : getCurrentPrompt();
+    try { await navigator.clipboard.writeText(text); } catch (_) {}
     const btn = document.getElementById('prompt-modal-copy');
-    const orig = btn.textContent;
     btn.textContent = '✓ Copied';
-    setTimeout(() => { btn.textContent = orig; }, 1800);
+    setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+  });
+
+  document.getElementById('prompt-modal-edit').addEventListener('click', enterEditOrSave);
+
+  // Click-to-edit on the preview itself
+  const preview = document.getElementById('prompt-modal-preview');
+  if (preview) {
+    preview.addEventListener('click', enterEdit);
+    preview.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); enterEdit(); }
+    });
+  }
+
+  document.getElementById('prompt-modal-reset')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    modalState.editedPrompt = null;
+    renderModalContent();
   });
 
   document.getElementById('prompt-modal-models').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-model-id]');
     if (!btn) return;
-    selectedModelId = btn.dataset.modelId;
-    setPreferredModelId(selectedModelId);
+    modalState.selectedModelId = btn.dataset.modelId;
+    setPreferredModelId(modalState.selectedModelId);
     modalEl.querySelectorAll('.prompt-modal-model-btn').forEach(b => {
-      b.classList.toggle('selected', b.dataset.modelId === selectedModelId);
+      b.classList.toggle('selected', b.dataset.modelId === modalState.selectedModelId);
     });
     updateSubmitArea();
   });
+}
 
-  // Show submit area if a model is already selected
-  if (selectedModelId) updateSubmitArea();
+function enterEdit() {
+  if (modalState.isEditing) return;
+  modalState.isEditing = true;
+  renderModalContent();
+}
+
+function enterEditOrSave() {
+  if (modalState.isEditing) {
+    const ta = document.getElementById('prompt-modal-preview-edit');
+    if (ta) {
+      const newVal = ta.value;
+      modalState.editedPrompt = (newVal === modalState.originalPrompt) ? null : newVal;
+    }
+    modalState.isEditing = false;
+  } else {
+    modalState.isEditing = true;
+  }
+  renderModalContent();
+}
+
+function updateSubmitArea() {
+  const { selectedModelId } = modalState;
+  const model = getModelById(selectedModelId);
+  const area = document.getElementById('prompt-modal-submit-area');
+  if (!area) return;
+  if (!model) { area.style.display = 'none'; return; }
+  const methods = getSubmissionMethods();
+  const method = model.submissionMethod || 'direct';
+  const meta = methods[method] || {};
+  area.style.display = '';
+  area.innerHTML = `
+    <button class="prompt-modal-submit" id="prompt-modal-submit" type="button">
+      ${escapeHTML(getSubmitLabel(model))}
+    </button>
+    <div class="prompt-modal-method-title">${escapeHTML(meta.label || '')}</div>
+    <div class="prompt-modal-method-info">${escapeHTML(meta.description || '')}</div>
+    <ul class="prompt-modal-footer-list">
+      <li><a href="#" class="prompt-modal-open-link" id="prompt-modal-open-only">🔗 Open ${escapeHTML(model.name)} only</a></li>
+      <li>If prompt doesn't load directly into model, paste text from clipboard.</li>
+      <li>Standard Topic is not responsible for actions taken once you leave this site.</li>
+    </ul>
+  `;
+  area.querySelector('#prompt-modal-submit').addEventListener('click', async () => {
+    // If user is editing, capture the latest text first
+    if (modalState.isEditing) {
+      const ta = document.getElementById('prompt-modal-preview-edit');
+      if (ta) modalState.editedPrompt = ta.value;
+    }
+    await submitPrompt(model, getCurrentPrompt());
+    closeModal();
+  });
+  area.querySelector('#prompt-modal-open-only').addEventListener('click', (e) => {
+    e.preventDefault();
+    const url = model.urlTemplate.replace('{prompt}', '');
+    window.open(url, '_blank');
+    closeModal();
+  });
 }
 
 function escapeHTML(str) {
