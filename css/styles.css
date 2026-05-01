@@ -1461,7 +1461,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   justify-content: flex-start;
   align-items: center;
   gap: 0.5rem;
-  margin-top: 0.85rem;
+  margin-top: 1.25rem;
   padding: 0;
 }
 /* Default: full labels visible, short labels hidden. */
