@@ -561,7 +561,10 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
         <span class="sidebar-card-desc">Prompt shortcuts to quickly access AI knowledge.</span>
         ${all.length > 0 ? `
           <button type="button" class="multi-toggle" id="multi-toggle" role="switch" aria-checked="false">
-            <span class="multi-toggle-label">Multi-Select AI Shortcuts</span>
+            <span class="multi-toggle-label">
+              <span class="multi-toggle-label-full">Multi-Select AI Shortcuts</span>
+              <span class="multi-toggle-label-short">Multi-Select</span>
+            </span>
             <span class="multi-toggle-switch" aria-hidden="true"><span class="multi-toggle-knob"></span></span>
           </button>
         ` : ''}
@@ -575,10 +578,12 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       ${all.map(s => shortcutItem(s, topicName)).join('')}
     </div>`;
     html += `
-      <button type="button" class="shortcuts-multi-submit" id="shortcuts-multi-submit" hidden>
-        <span class="shortcuts-multi-submit-label">Submit Selected Prompts</span>
-        <span class="shortcuts-multi-submit-count" id="shortcuts-multi-submit-count">0</span>
-      </button>
+      <div class="shortcuts-multi-submit-wrap" hidden>
+        <button type="button" class="shortcuts-multi-submit" id="shortcuts-multi-submit">
+          <span class="shortcuts-multi-submit-label">Submit Selected Prompts</span>
+          <span class="shortcuts-multi-submit-count" id="shortcuts-multi-submit-count">0</span>
+        </button>
+      </div>
     `;
   }
 
@@ -588,17 +593,23 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   const card = container.querySelector('.sidebar-card');
   const toggle = container.querySelector('#multi-toggle');
   const submitBtn = container.querySelector('#shortcuts-multi-submit');
+  const submitWrap = container.querySelector('.shortcuts-multi-submit-wrap');
   const countEl = container.querySelector('#shortcuts-multi-submit-count');
 
   const updateSubmit = () => {
-    if (!submitBtn) return;
-    const selected = container.querySelectorAll('.sidebar-shortcut.is-multi-selected');
-    if (selected.length > 0) {
-      submitBtn.hidden = false;
-      if (countEl) countEl.textContent = String(selected.length);
-    } else {
-      submitBtn.hidden = true;
+    if (!submitBtn || !submitWrap) return;
+    const multiOn = card.dataset.multi === '1';
+    if (!multiOn) {
+      submitWrap.hidden = true;
+      submitBtn.classList.remove('is-active');
+      if (countEl) countEl.textContent = '0';
+      return;
     }
+    submitWrap.hidden = false;
+    const selected = container.querySelectorAll('.sidebar-shortcut.is-multi-selected');
+    submitBtn.classList.toggle('is-active', selected.length > 0);
+    submitBtn.disabled = selected.length === 0;
+    if (countEl) countEl.textContent = String(selected.length);
   };
 
   toggle?.addEventListener('click', () => {
@@ -607,7 +618,6 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     card.classList.toggle('is-multi-select', on);
     toggle.setAttribute('aria-checked', on ? 'true' : 'false');
     if (!on) {
-      // Turning off — clear any selections
       container.querySelectorAll('.sidebar-shortcut.is-multi-selected')
         .forEach(b => b.classList.remove('is-multi-selected'));
     }
@@ -658,6 +668,7 @@ function shortcutItem(shortcut, topicName) {
             data-prompt="${escapeAttr(prompt)}"
             data-name="${escapeAttr(shortcut.name)}"
             data-icon-key="${escapeAttr(shortcut.icon)}">
+      <span class="sidebar-shortcut-multi-check" aria-hidden="true">✓</span>
       ${iconHTML}
       <span class="sidebar-shortcut-name">${escapeHTML(shortcut.name)}</span>
       <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
