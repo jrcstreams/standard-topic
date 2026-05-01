@@ -2473,9 +2473,14 @@ html, body, #app {
 }
 
 /* Home Featured label gets a small ::before divider sitting in its
-   own left padding, between "All Topics +" and "Featured:". */
+   own left padding, between "All Topics +" and "Featured:".
+   padding-left bumped to 1rem so the separator has visible breathing
+   room from "Featured:" — paired with action-link's matching 1rem
+   padding-right (below) so both sides of THIS specific separator
+   are symmetric and roomy. */
 .home-subnav-topics .subnav-topics-label {
   position: relative;
+  padding-left: 1rem;
 }
 .home-subnav-topics .subnav-topics-label::before {
   content: '';
@@ -2486,6 +2491,12 @@ html, body, #app {
   width: 1px;
   height: 1.5rem;
   background: var(--color-border);
+}
+/* Mirror padding on the action link's right side so the separator
+   has identical breathing room on both sides. Left side stays at
+   the standard 0.5rem to match the row's leading separator. */
+.home-subnav-topics .subnav-action-link {
+  padding-right: 1rem;
 }
 
 /* Homepage: drop "All Topics +" first when space gets tight — keep separator */
