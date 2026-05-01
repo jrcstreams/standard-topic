@@ -639,7 +639,7 @@ body.hide-cta .sticky-cta { display: none !important; }
 
 #sub-header.is-home-subnav .topic-banner-row {
   display: flex;
-  align-items: stretch;
+  align-items: center;
   gap: 1rem;
   flex: 1;
   min-width: 0;
@@ -689,7 +689,7 @@ body.hide-cta .sticky-cta { display: none !important; }
 
 #sub-header.is-subnav .topic-banner-row {
   display: flex;
-  align-items: stretch;
+  align-items: center;
   gap: 1rem;
   flex: 1;
   min-width: 0;
