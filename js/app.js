@@ -168,9 +168,10 @@ function renderLayout(route) {
       const related = getRelatedTopics(topic);
       const INLINE_CAP = 6;
       const visibleRelated = related.slice(0, INLINE_CAP);
+      const hasTruncated = related.length > visibleRelated.length;
       const relatedLinksHTML = visibleRelated.map(t =>
         `<a href="#/topic/${t.slug}" class="subnav-topic-link">${escapeHTML(t.name)}</a>`
-      ).join('') + `<a href="#" class="subnav-more-link" id="subnav-more-related">More +</a>`;
+      ).join('') + `<a href="#" class="subnav-more-link" id="subnav-more-related" data-needs-more="${hasTruncated ? '1' : '0'}">More +</a>`;
 
       subHeader.innerHTML = `
         <div class="topic-banner">
@@ -257,25 +258,41 @@ function trimOverflowLinks() {
   const doTrim = () => {
     const links = container.querySelectorAll('.subnav-topic-link');
     const moreLink = container.querySelector('.subnav-more-link');
+    // hasTruncated is true when the rendered list is already shorter than
+    // the full related topic list (i.e., INLINE_CAP capped it). When false,
+    // the modal would only show the same items already visible in the
+    // subnav, so More + is redundant if everything fits.
+    const hasTruncated = moreLink?.dataset.needsMore === '1';
 
     // Always show container for measurement, then decide visibility after
     container.style.display = '';
     links.forEach(l => l.style.display = '');
+    if (moreLink) moreLink.style.display = '';
 
     const containerRight = container.getBoundingClientRect().right;
-    // Reserve space for "More +" link
-    const moreWidth = moreLink ? moreLink.offsetWidth + 20 : 0;
+    // Reserve space for "More +" link only if it's actually going to render
+    const moreWidth = (moreLink && moreLink.offsetWidth > 0) ? moreLink.offsetWidth + 20 : 0;
     const cutoff = containerRight - moreWidth;
 
     // Hide any link whose right edge exceeds the available space
     let visibleCount = 0;
+    let hiddenCount = 0;
     links.forEach(l => {
       if (l.getBoundingClientRect().right > cutoff) {
         l.style.display = 'none';
+        hiddenCount++;
       } else {
         visibleCount++;
       }
     });
+
+    // Hide the "More +" link entirely when nothing was capped by INLINE_CAP
+    // AND nothing was hidden by overflow — i.e., every related topic is
+    // already on display in the row, so the modal would be redundant.
+    if (moreLink) {
+      const needsMore = hasTruncated || hiddenCount > 0;
+      moreLink.style.display = needsMore ? '' : 'none';
+    }
 
     // Show/hide the "Related Topics +" condensed button based on visible count.
     // When fewer than 3 inline links fit, hide the inline row and show the button.
