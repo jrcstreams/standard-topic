@@ -2424,11 +2424,11 @@ html, body, #app {
   }
 }
 
-/* Subnav inline topics (desktop) — sits on the title row.
-   No parent ::before separator anymore. Each first-level child
-   that needs a divider (action-link, Featured/Related label)
-   draws its own border-left. That keeps the separator OUTSIDE
-   any hover area instead of overlapping it. */
+/* Subnav inline topics — sits on the title row.
+   The single ::before separator before the first child sits in
+   the parent's left padding zone, well outside any element's
+   hover area. All inline children share consistent 0.5rem
+   horizontal padding. */
 .subnav-topics-inline {
   display: flex;
   align-items: stretch;
@@ -2437,15 +2437,36 @@ html, body, #app {
   min-width: 0;
   white-space: nowrap;
   margin-left: 1rem;
-  padding-left: 0;
+  padding-left: 0.5rem;
   border-left: none;
   position: relative;
 }
-.subnav-topics-inline::before { display: none; }
+.subnav-topics-inline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 1.5rem;
+  background: var(--color-border);
+}
 
-/* No more ::before separator on the home Featured label — the
-   border-left rule on .subnav-topics-label below handles it. */
-.home-subnav-topics .subnav-topics-label::before { display: none; }
+/* Home Featured label gets a small ::before divider sitting in its
+   own left padding, between "All Topics +" and "Featured:". */
+.home-subnav-topics .subnav-topics-label {
+  position: relative;
+}
+.home-subnav-topics .subnav-topics-label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 1.5rem;
+  background: var(--color-border);
+}
 
 /* Homepage: drop "All Topics +" first when space gets tight — keep separator */
 @media (max-width: 900px) {
@@ -2486,22 +2507,8 @@ html, body, #app {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  padding: 4rem 0.85rem 4rem 0.85rem;
-  margin: -4rem 0.6rem -4rem 0;
-  border-left: 1px solid var(--color-border);
-  position: relative;
-  /* Keep the divider visually short like the previous inline 1.5rem
-     vertical line, even though the element extends 4rem above/below. */
-  background-clip: padding-box;
-}
-/* Trim the divider's vertical extent to ~1.5rem regardless of the
-   4rem padding around it. */
-.subnav-topics-label {
-  background-image: linear-gradient(var(--color-border), var(--color-border));
-  background-repeat: no-repeat;
-  background-size: 1px 1.5rem;
-  background-position: left center;
-  border-left: none;
+  padding: 4rem 0.5rem;
+  margin: -4rem 0;
 }
 
 .subnav-topic-link {
@@ -2513,7 +2520,7 @@ html, body, #app {
   white-space: nowrap;
   letter-spacing: 0.01em;
   transition: background 0.12s, color 0.12s;
-  padding: 4rem 0.7rem;
+  padding: 4rem 0.5rem;
   margin: -4rem 0;
   display: inline-flex;
   align-items: center;
@@ -2525,10 +2532,9 @@ html, body, #app {
     text-decoration: none;
   }
 }
-/* "ALL TOPICS +" — matches FEATURED label style.
-   1px linear-gradient is used for the divider (instead of border-left
-   or ::before) so the divider stays a fixed 1.5rem tall and sits
-   OUTSIDE the action-link's clickable/hover area. */
+/* "ALL TOPICS +" — matches FEATURED label style. Symmetric 0.5rem
+   horizontal padding so visual gap on each side of the divider
+   between elements is identical. */
 .subnav-action-link {
   font-family: var(--font-display);
   font-size: 0.85rem;
@@ -2538,20 +2544,11 @@ html, body, #app {
   text-decoration: none;
   white-space: nowrap;
   flex-shrink: 0;
-  padding: 4rem 0.85rem;
+  padding: 4rem 0.5rem;
   margin: -4rem 0;
   transition: color 0.12s, background 0.12s;
   display: inline-flex;
   align-items: center;
-  background-image: linear-gradient(var(--color-border), var(--color-border));
-  background-repeat: no-repeat;
-  background-size: 1px 1.5rem;
-  background-position: left center;
-}
-/* On hover, the hover bg fully covers the action-link including the
-   divider area, so the hover rectangle reads as a single clean fill. */
-.subnav-action-link:hover {
-  background-image: none;
 }
 @media (hover: hover) {
   .subnav-action-link:hover {
