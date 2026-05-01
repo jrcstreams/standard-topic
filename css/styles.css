@@ -1304,8 +1304,8 @@ body.hide-cta .sticky-cta { display: none !important; }
   color: #1e2d44;
   flex-basis: 100%;
   letter-spacing: -0.015em;
-  margin: 0 0 0.3rem 0;
-  padding-left: 0.65rem;
+  margin: 0 0 0.15rem 0;
+  padding-left: 0.95rem;
   border-left: none;
   position: relative;
 }
@@ -1352,22 +1352,28 @@ body.hide-cta .sticky-cta { display: none !important; }
   font-weight: inherit;
 }
 
-/* === Multi-Select toggle (sits in section header where feeds-pill does) === */
+/* === Multi-Select toggle ===
+   Sits on its own row directly beneath the section subtext on all
+   screen sizes, left-aligned, styled as a small navy control so it
+   reads as an affordance rather than as a continuation of the subtext. */
 .multi-toggle {
-  margin-left: auto;
+  flex-basis: 100%;
+  margin-left: 0;
+  margin-top: 0.45rem;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: flex-start;
+  gap: 0.55rem;
   padding: 0;
   background: none;
   border: none;
-  color: var(--color-text-muted);
-  font-family: var(--font-family);
+  color: var(--color-primary-light);
+  font-family: var(--font-display);
   font-size: 0.78rem;
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: -0.005em;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
   cursor: pointer;
-  flex-shrink: 1;
   min-width: 0;
   max-width: 100%;
   transition: color 0.12s;
@@ -1380,11 +1386,10 @@ body.hide-cta .sticky-cta { display: none !important; }
   text-overflow: ellipsis;
   min-width: 0;
 }
-.multi-toggle-label-short { display: none; }
-@media (max-width: 720px) {
-  .multi-toggle-label-full { display: none; }
-  .multi-toggle-label-short { display: inline; }
-}
+/* Show the short "Multiselect Shortcuts" label at every size since
+   the toggle now lives under the subtext as its own discreet row. */
+.multi-toggle-label-full { display: none; }
+.multi-toggle-label-short { display: inline; }
 
 .multi-toggle-switch {
   width: 30px;
@@ -1457,6 +1462,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   align-items: center;
   gap: 0.5rem;
   margin-top: 0.85rem;
+  padding: 0;
 }
 @media (max-width: 520px) {
   .shortcuts-multi-submit { padding: 0.5rem 0.85rem; font-size: 0.78rem; }
@@ -1541,21 +1547,11 @@ body.hide-cta .sticky-cta { display: none !important; }
 .sidebar-card-header { min-width: 0; }
 .sidebar-card-header > * { min-width: 0; max-width: 100%; }
 .sidebar-card-header .sidebar-card-title { flex-basis: 100%; }
-/* Force the toggle onto its own line on narrow screens so it never
-   competes with the description for horizontal space. On mobile the
-   toggle adopts a more discreet treatment — lighter weight, smaller
-   switch, color matched to the subtext beneath the title — so it
-   reads as a small auxiliary control rather than a primary CTA. */
-@media (max-width: 720px) {
+/* Mobile: tighter switch sizing only — placement and styling already
+   match desktop (both render below the subtext, left-aligned). */
+@media (max-width: 640px) {
   .sidebar-card-header .multi-toggle {
-    flex-basis: 100%;
-    justify-content: flex-start;
-    margin-left: 0;
-    margin-top: 0.15rem;
-    font-size: 0.8rem;
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text-muted);
-    letter-spacing: -0.005em;
+    font-size: 0.74rem;
   }
   .sidebar-card-header .multi-toggle .multi-toggle-switch {
     width: 26px;
@@ -1569,12 +1565,6 @@ body.hide-cta .sticky-cta { display: none !important; }
     transform: translateX(11px);
   }
 }
-
-/* Right-edge breathing room — keep the toggle and other in-card
-   right-aligned controls visually clear of the viewport edge across
-   screen sizes. */
-.shortcuts-sidebar .multi-toggle { padding-right: 0.15rem; }
-.shortcuts-multi-submit-wrap { padding-right: 0.15rem; padding-left: 0.15rem; }
 
 
 .newsfeed-embed {
@@ -2454,7 +2444,7 @@ html, body, #app {
   font-family: var(--font-display);
   font-size: 0.85rem;
   font-weight: var(--font-weight-semibold);
-  color: var(--color-text);
+  color: #5a6f8a;
   text-decoration: none;
   white-space: nowrap;
   letter-spacing: 0.01em;
@@ -2748,7 +2738,7 @@ html, body, #app {
 }
 
 .sidebar-card-desc {
-  margin: 0.35rem 0 0.1rem;
+  margin: 0.1rem 0 0.1rem;
   padding: 0;
   border: none;
   font-size: 0.88rem;
@@ -2771,8 +2761,8 @@ html, body, #app {
   color: #1e2d44;
   flex-basis: 100%;
   letter-spacing: -0.015em;
-  margin: 0 0 0.3rem 0;
-  padding-left: 0.65rem;
+  margin: 0 0 0.15rem 0;
+  padding-left: 0.95rem;
   border-left: none;
   position: relative;
 }
