@@ -1452,7 +1452,10 @@ body.hide-cta .sticky-cta { display: none !important; }
 /* === Submit selected prompts button === */
 .shortcuts-multi-submit-wrap {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
   margin-top: 0.85rem;
 }
 /* Selector wins over .shortcuts-multi-submit-wrap { display: flex }
@@ -1495,6 +1498,37 @@ body.hide-cta .sticky-cta { display: none !important; }
   border-radius: 999px;
   font-size: 0.74rem;
   font-weight: var(--font-weight-bold);
+}
+
+/* Secondary "Clear Selected Prompts" button — outlined, sits next
+   to Submit. Disabled (greyed) when nothing is selected. */
+.shortcuts-multi-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1.1rem;
+  background: transparent;
+  color: var(--color-text);
+  border: 1.5px solid var(--color-border);
+  border-radius: 6px;
+  font-family: var(--font-family);
+  font-size: 0.84rem;
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.12s, color 0.12s, background 0.12s, opacity 0.12s;
+}
+.shortcuts-multi-clear:hover:not(:disabled) {
+  border-color: #dc2626;
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.06);
+}
+.shortcuts-multi-clear:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: var(--color-border-light);
+  color: var(--color-text-light);
+  background: transparent;
 }
 
 /* Section header — make sure flex children can shrink so the toggle

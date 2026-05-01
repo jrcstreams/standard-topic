@@ -583,6 +583,9 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
           <span class="shortcuts-multi-submit-label">Submit Selected Prompts</span>
           <span class="shortcuts-multi-submit-count" id="shortcuts-multi-submit-count">0</span>
         </button>
+        <button type="button" class="shortcuts-multi-clear" id="shortcuts-multi-clear">
+          Clear Selected Prompts
+        </button>
       </div>
     `;
   }
@@ -593,6 +596,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   const card = container.querySelector('.sidebar-card');
   const toggle = container.querySelector('#multi-toggle');
   const submitBtn = container.querySelector('#shortcuts-multi-submit');
+  const clearBtn = container.querySelector('#shortcuts-multi-clear');
   const submitWrap = container.querySelector('.shortcuts-multi-submit-wrap');
   const countEl = container.querySelector('#shortcuts-multi-submit-count');
 
@@ -602,13 +606,16 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     if (!multiOn) {
       submitWrap.hidden = true;
       submitBtn.classList.remove('is-active');
+      if (clearBtn) clearBtn.disabled = true;
       if (countEl) countEl.textContent = '0';
       return;
     }
     submitWrap.hidden = false;
     const selected = container.querySelectorAll('.sidebar-shortcut.is-multi-selected');
-    submitBtn.classList.toggle('is-active', selected.length > 0);
-    submitBtn.disabled = selected.length === 0;
+    const has = selected.length > 0;
+    submitBtn.classList.toggle('is-active', has);
+    submitBtn.disabled = !has;
+    if (clearBtn) clearBtn.disabled = !has;
     if (countEl) countEl.textContent = String(selected.length);
   };
 
@@ -640,6 +647,12 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
         detail: { prompt, name, iconKey },
       }));
     });
+  });
+
+  clearBtn?.addEventListener('click', () => {
+    container.querySelectorAll('.sidebar-shortcut.is-multi-selected')
+      .forEach(b => b.classList.remove('is-multi-selected'));
+    updateSubmit();
   });
 
   submitBtn?.addEventListener('click', () => {
