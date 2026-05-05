@@ -1623,13 +1623,22 @@ function renderSubmitPanel() {
       <section class="pm-submit-area">
         <div class="pm-actions">
           <button class="pm-submit" id="wiz-submit-go" type="button" ${isEmpty ? 'disabled' : ''}>${escapeHTML(getSubmitLabel())}</button>
-          ${model ? `<button class="pm-secondary" id="wiz-submit-open-only" type="button">Open ${escapeHTML(model.name)} only</button>` : ''}
         </div>
-        ${meta.description && model ? `<div class="pm-helper">${escapeHTML(meta.description.replace(/\{model\}/g, model.name))}</div>` : ''}
+        ${model ? `
+          <div class="pm-meta">
+            ${meta.description ? `<div class="pm-meta-line">
+              <span class="pm-meta-label">Model info:</span>
+              <a href="${model.urlTemplate.replace('{prompt}', '')}" target="_blank" rel="noopener noreferrer" class="pm-meta-link">${escapeHTML(model.name)}</a>
+              <span class="pm-meta-text">— ${escapeHTML(meta.description.replace(/\{model\}/g, model.name))}</span>
+            </div>` : ''}
+            <div class="pm-meta-line">
+              <span class="pm-meta-label">Disclaimer:</span>
+              <span class="pm-meta-text">You'll be redirected to a third-party AI platform. Standard Topic isn't responsible for actions taken once you leave this site.</span>
+            </div>
+          </div>
+        ` : ''}
       </section>
     </div>
-
-    <div class="pm-footnote">You'll be redirected to a third-party AI platform. Standard Topic isn't responsible for actions taken once you leave this site.</div>
   `;
 
   bindSubmitPanelEvents();
@@ -1700,13 +1709,6 @@ function bindSubmitPanelEvents() {
     closeSubmitModal();
   });
 
-  submitPanelEl.querySelector('#wiz-submit-open-only')?.addEventListener('click', () => {
-    const model = getModelById(state.modelId);
-    if (!model) return;
-    const url = model.urlTemplate.replace('{prompt}', '');
-    window.open(url, '_blank');
-    closeSubmitModal();
-  });
 }
 
 function updatePreview() {

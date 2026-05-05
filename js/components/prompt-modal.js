@@ -232,8 +232,6 @@ function renderPanelContent() {
 
       <section class="pm-submit-area" id="pm-submit-area" hidden></section>
     </div>
-
-    <div class="pm-footnote">Standard Topic isn't responsible for actions taken once you leave this site.</div>
   `;
 
   bindEvents();
@@ -319,12 +317,22 @@ function updateSubmitArea() {
   const meta = methods[method] || {};
   area.hidden = false;
   const helper = meta.description ? meta.description.replace(/\{model\}/g, model.name) : '';
+  const modelHomeUrl = model.urlTemplate.replace('{prompt}', '');
   area.innerHTML = `
     <div class="pm-actions">
       <button class="pm-submit" id="pm-submit" type="button">${escapeHTML(getSubmitLabel(model))}</button>
-      <button class="pm-secondary" id="pm-open-only" type="button">Open ${escapeHTML(model.name)} only</button>
     </div>
-    ${helper ? `<div class="pm-helper">${escapeHTML(helper)}</div>` : ''}
+    <div class="pm-meta">
+      ${helper ? `<div class="pm-meta-line">
+        <span class="pm-meta-label">Model info:</span>
+        <a href="${modelHomeUrl}" target="_blank" rel="noopener noreferrer" class="pm-meta-link">${escapeHTML(model.name)}</a>
+        <span class="pm-meta-text">— ${escapeHTML(helper)}</span>
+      </div>` : ''}
+      <div class="pm-meta-line">
+        <span class="pm-meta-label">Disclaimer:</span>
+        <span class="pm-meta-text">Standard Topic isn't responsible for actions taken once you leave this site.</span>
+      </div>
+    </div>
   `;
   area.querySelector('#pm-submit').addEventListener('click', async () => {
     if (modalState.isEditing) {
@@ -332,11 +340,6 @@ function updateSubmitArea() {
       if (ta) modalState.editedPrompt = ta.value;
     }
     await submitPrompt(model, getCurrentPrompt());
-    closeModal();
-  });
-  area.querySelector('#pm-open-only').addEventListener('click', () => {
-    const url = model.urlTemplate.replace('{prompt}', '');
-    window.open(url, '_blank');
     closeModal();
   });
 }
