@@ -318,12 +318,13 @@ function updateSubmitArea() {
   const method = model.submissionMethod || 'direct';
   const meta = methods[method] || {};
   area.hidden = false;
+  const helper = meta.description ? meta.description.replace(/\{model\}/g, model.name) : '';
   area.innerHTML = `
     <div class="pm-actions">
       <button class="pm-submit" id="pm-submit" type="button">${escapeHTML(getSubmitLabel(model))}</button>
       <button class="pm-secondary" id="pm-open-only" type="button">Open ${escapeHTML(model.name)} only</button>
     </div>
-    ${meta.description ? `<div class="pm-helper">${escapeHTML(meta.description)}</div>` : ''}
+    ${helper ? `<div class="pm-helper">${escapeHTML(helper)}</div>` : ''}
   `;
   area.querySelector('#pm-submit').addEventListener('click', async () => {
     if (modalState.isEditing) {

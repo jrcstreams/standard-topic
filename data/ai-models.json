@@ -11,15 +11,15 @@
   "submissionMethods": {
     "direct": {
       "label": "Direct prompt submission",
-      "description": "These model shortcuts should submit prompt directly."
+      "description": "Submitting prompts to {model} should submit the prompt directly."
     },
     "populates": {
       "label": "Prompt populates, user submits",
-      "description": "These model shortcuts should load the prompt, and the user will need to submit it."
+      "description": "Submitting prompts to {model} should load the prompt, and you'll need to submit it."
     },
     "paste": {
       "label": "No populated text, user pastes prompt",
-      "description": "These model shortcuts do not load the prompt, and the user will need to paste in the prompt text, which is automatically copied to their clipboard upon submitting here."
+      "description": "Submitting prompts to {model} does not load the prompt — it is copied to your clipboard so you can paste it in."
     }
   }
 }

@@ -2345,12 +2345,21 @@ html, body, #app {
   color: var(--color-primary);
 }
 .pm-model[aria-pressed="true"] {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: #fff;
+  background: #eef2f7;
+  border-color: #c8d2e0;
+  color: var(--color-primary);
   font-weight: var(--font-weight-semibold);
-  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.05),
-              0 4px 10px -4px rgba(30, 45, 68, 0.45);
+  box-shadow: inset 0 0 0 1px #c8d2e0;
+}
+.pm-model[aria-pressed="true"]::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  margin-right: 0.4rem;
+  flex-shrink: 0;
+  background-color: var(--color-primary);
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='2,6.5 5,9.5 10,3.5'/></svg>") no-repeat center / contain;
+          mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='2,6.5 5,9.5 10,3.5'/></svg>") no-repeat center / contain;
 }
 
 /* Submit area: primary + secondary action row */
@@ -2359,38 +2368,40 @@ html, body, #app {
   padding-top: 1rem;
   border-top: 1px solid #eef0f4;
 }
+/* Primary on its own row; secondary "Open only" sits beneath as a quiet
+   text link. Helper text gets its own breathing room below both. */
 .pm-actions {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.55rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
 }
 .pm-submit {
-  flex: 1 1 auto;
-  height: 36px;
-  padding: 0 0.95rem;
-  background: var(--color-primary);
+  align-self: flex-start;
+  height: 38px;
+  padding: 0 1rem;
+  background: #16a34a;
   color: #fff;
-  border: 1px solid var(--color-primary);
+  border: 1px solid #16a34a;
   border-radius: 6px;
   font-family: var(--font-family);
-  font-size: 0.84rem;
+  font-size: 0.86rem;
   font-weight: var(--font-weight-semibold);
   letter-spacing: -0.005em;
   cursor: pointer;
   transition: background 0.14s, border-color 0.14s, opacity 0.14s;
 }
-.pm-submit:hover { background: var(--color-primary-dark, #0f1a2e); border-color: var(--color-primary-dark, #0f1a2e); }
+.pm-submit:hover { background: #15803d; border-color: #15803d; }
 .pm-submit:disabled { opacity: 0.45; cursor: not-allowed; }
 .pm-secondary {
-  flex: 0 0 auto;
-  height: 36px;
-  padding: 0 0.85rem;
+  align-self: flex-start;
+  margin-left: -0.15rem;
+  padding: 0.15rem 0.15rem;
   background: transparent;
   color: var(--color-text-muted);
   border: none;
   font-family: var(--font-family);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   transition: color 0.14s;
@@ -2398,10 +2409,12 @@ html, body, #app {
 }
 .pm-secondary:hover { color: var(--color-primary); text-decoration: underline; }
 .pm-helper {
-  margin-top: 0.7rem;
-  font-size: 0.8rem;
-  line-height: 1.45;
-  color: var(--color-text-muted);
+  margin-top: 1.1rem;
+  padding-top: 0.7rem;
+  border-top: 1px dashed #e6e8ee;
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: var(--color-text-light);
 }
 
 /* Footnote — single tiny line at the very bottom */
@@ -2422,9 +2435,8 @@ html, body, #app {
   .pm-header { padding: 0.85rem 0.95rem 0.75rem; }
   .pm-body { padding: 0.85rem 0.95rem 0.4rem; }
   .pm-footnote { padding: 0.55rem 0.95rem 0.75rem; }
-  .pm-actions { flex-direction: column; align-items: stretch; }
-  .pm-submit, .pm-secondary { width: 100%; flex: 0 0 auto; }
-  .pm-secondary { text-align: center; }
+  .pm-actions { align-items: stretch; }
+  .pm-submit { align-self: stretch; }
   .pm-title-name { font-size: 0.95rem; }
 }
 

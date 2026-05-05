@@ -1625,7 +1625,7 @@ function renderSubmitPanel() {
           <button class="pm-submit" id="wiz-submit-go" type="button" ${isEmpty ? 'disabled' : ''}>${escapeHTML(getSubmitLabel())}</button>
           ${model ? `<button class="pm-secondary" id="wiz-submit-open-only" type="button">Open ${escapeHTML(model.name)} only</button>` : ''}
         </div>
-        ${meta.description ? `<div class="pm-helper">${escapeHTML(meta.description)}</div>` : ''}
+        ${meta.description && model ? `<div class="pm-helper">${escapeHTML(meta.description.replace(/\{model\}/g, model.name))}</div>` : ''}
       </section>
     </div>
 
