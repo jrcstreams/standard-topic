@@ -8,7 +8,7 @@
 //                              user for an extra value substituted into
 //                              the option's clause via {key} placeholder
 
-import { getPromptGenData, getModels, getDefaultModelId, getModelById, getParentTopics, getFeaturedTopics, getAllTopics, searchTopics } from '../utils/data.js';
+import { getPromptGenData, getModels, getDefaultModelId, getModelById, getParentTopics, getFeaturedTopics, getAllTopics, searchTopics, getSubmissionMethods } from '../utils/data.js';
 import { getPreferredModelId, setPreferredModelId, submitPrompt, isUrlTooLong, shouldCopyOnOpen } from '../utils/ai-models.js';
 
 const state = {
@@ -1462,135 +1462,252 @@ function updateNextEnabled() {
   else nextBtn.removeAttribute('disabled');
 }
 
-// Unified preview + model selection + submit modal
-let submitModalEl = null;
+// Unified preview + model selection + submit modal.
+// Uses the same .prompt-modal-overlay / .prompt-modal-panel chrome as
+// the AI Shortcuts modal for visual consistency. No anchor on this page,
+// so the panel centers itself in the viewport.
+let submitOverlayEl = null;
+let submitPanelEl = null;
+let submitPositionRaf = null;
+let submitPositionListenersBound = false;
+const SUBMIT_PANEL_PAD = 12;
+const SUBMIT_PANEL_MAX = 720;
+const SUBMIT_PANEL_MIN = 480;
+
 function openPromptSubmitModal() {
-  if (!submitModalEl) {
-    submitModalEl = document.createElement('div');
-    submitModalEl.className = 'wiz-submit-overlay';
-    document.body.appendChild(submitModalEl);
+  if (!submitOverlayEl) {
+    submitOverlayEl = document.createElement('div');
+    submitOverlayEl.className = 'prompt-modal-overlay';
+    submitOverlayEl.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(submitOverlayEl);
+
+    submitPanelEl = document.createElement('div');
+    submitPanelEl.className = 'prompt-modal-panel';
+    submitPanelEl.setAttribute('role', 'dialog');
+    submitPanelEl.setAttribute('aria-modal', 'true');
+    document.body.appendChild(submitPanelEl);
+
+    submitOverlayEl.addEventListener('click', (e) => {
+      if (e.target === submitOverlayEl) closeSubmitModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && submitOverlayEl.style.display === 'block') {
+        closeSubmitModal();
+      }
+    });
   }
 
+  renderSubmitPanel();
+  submitOverlayEl.style.display = 'block';
+  submitPanelEl.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+
+  positionSubmitPanel();
+  // eslint-disable-next-line no-unused-expressions
+  submitPanelEl.offsetWidth;
+  submitOverlayEl.classList.add('is-open');
+  submitPanelEl.classList.add('is-open');
+
+  if (!submitPositionListenersBound) {
+    submitPositionListenersBound = true;
+    window.addEventListener('resize', scheduleSubmitPosition, { passive: true });
+    window.addEventListener('scroll', scheduleSubmitPosition, { passive: true });
+  }
+}
+
+function closeSubmitModal() {
+  if (!submitOverlayEl) return;
+  submitOverlayEl.classList.remove('is-open');
+  submitPanelEl.classList.remove('is-open');
+  submitPanelEl.classList.add('is-closing');
+
+  const onEnd = () => {
+    submitPanelEl.removeEventListener('transitionend', onEnd);
+    submitOverlayEl.style.display = 'none';
+    submitPanelEl.style.display = 'none';
+    submitPanelEl.classList.remove('is-closing');
+    submitPanelEl.style.cssText = '';
+    document.body.style.overflow = '';
+  };
+  submitPanelEl.addEventListener('transitionend', onEnd);
+  setTimeout(onEnd, 280);
+
+  if (submitPositionListenersBound) {
+    submitPositionListenersBound = false;
+    window.removeEventListener('resize', scheduleSubmitPosition);
+    window.removeEventListener('scroll', scheduleSubmitPosition);
+    if (submitPositionRaf) cancelAnimationFrame(submitPositionRaf);
+    submitPositionRaf = null;
+  }
+}
+
+function scheduleSubmitPosition() {
+  if (submitPositionRaf) return;
+  submitPositionRaf = requestAnimationFrame(() => {
+    submitPositionRaf = null;
+    positionSubmitPanel();
+  });
+}
+
+function positionSubmitPanel() {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const w = Math.max(SUBMIT_PANEL_MIN, Math.min(SUBMIT_PANEL_MAX, vw - SUBMIT_PANEL_PAD * 2));
+  const left = Math.round((vw - w) / 2);
+  const top = Math.max(SUBMIT_PANEL_PAD, Math.round(vh * 0.06));
+  const maxH = vh - top - SUBMIT_PANEL_PAD;
+  submitPanelEl.style.left = `${left}px`;
+  submitPanelEl.style.top = `${top}px`;
+  submitPanelEl.style.width = `${w}px`;
+  submitPanelEl.style.maxHeight = `${maxH}px`;
+}
+
+function renderSubmitPanel() {
   const prompt = (state.editedPrompt ?? assemblePrompt()).trim();
   const models = getModels();
   const isEmpty = !prompt;
+  const isEdited = state.editedPrompt != null && !state.isEditingPrompt;
+  const model = getModelById(state.modelId);
+  const methods = model ? getSubmissionMethods?.() ?? {} : {};
+  const method = model?.submissionMethod || 'direct';
+  const meta = methods[method] || {};
 
-  submitModalEl.innerHTML = `
-    <div class="wiz-submit-card">
-      <div class="wiz-submit-section">
-        <div class="wiz-submit-prompt-head">
-          <h3 class="wiz-submit-label">Your Prompt</h3>
-          <div class="wiz-submit-prompt-actions">
-            <button type="button" class="wiz-submit-action-btn" id="wiz-submit-copy">Copy</button>
-            <button type="button" class="wiz-submit-action-btn" id="wiz-submit-edit">${state.isEditingPrompt ? 'Done Editing' : 'Edit Prompt'}</button>
-            <button type="button" class="wiz-submit-action-btn wiz-submit-close" id="wiz-submit-close" aria-label="Close">✕</button>
+  const modelBtnsHTML = models.map(m => `
+    <button class="pm-model" type="button" data-model-id="${m.id}" aria-pressed="${m.id === state.modelId ? 'true' : 'false'}">
+      <span class="pm-model-name">${escapeHTML(m.name)}</span>
+    </button>
+  `).join('');
+
+  submitPanelEl.innerHTML = `
+    <div class="pm-header">
+      <div class="pm-title">
+        <span class="pm-title-icon" aria-hidden="true">✦</span>
+        <div class="pm-title-text">
+          <div class="pm-eyebrow">Built Prompt</div>
+          <div class="pm-title-name">Preview &amp; Submit</div>
+        </div>
+      </div>
+      <button type="button" class="pm-close" id="wiz-submit-close" aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg>
+      </button>
+    </div>
+
+    <div class="pm-body">
+      <section class="pm-section">
+        <div class="pm-section-head">
+          <span class="pm-section-label">Prompt</span>
+          ${isEdited ? '<button type="button" class="pm-reset" id="wiz-submit-reset">Reset to generated</button>' : ''}
+        </div>
+        <div class="pm-preview-wrap ${state.isEditingPrompt ? 'is-editing' : ''}">
+          ${state.isEditingPrompt
+            ? `<textarea class="pm-textarea" id="wiz-submit-textarea">${escapeHTML(prompt)}</textarea>`
+            : `<div class="pm-preview ${isEmpty ? 'is-empty' : ''}" id="wiz-submit-preview" tabindex="0" role="button" aria-label="Click to edit prompt">${isEmpty ? 'Add a topic to start building your prompt…' : escapeHTML(prompt)}</div>`
+          }
+          <div class="pm-preview-actions">
+            <button type="button" class="pm-icon-btn" id="wiz-submit-copy" aria-label="Copy prompt" title="Copy">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="8" height="9" rx="1.2"/><path d="M9.5 3.5V2.5a1 1 0 0 0-1-1h-5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1"/></svg>
+            </button>
+            <button type="button" class="pm-icon-btn" id="wiz-submit-edit" aria-label="${state.isEditingPrompt ? 'Save' : 'Edit'} prompt" title="${state.isEditingPrompt ? 'Save' : 'Edit'}">
+              ${state.isEditingPrompt
+                ? `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5,7.5 5.5,10.5 11.5,4"/></svg>`
+                : `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2.2l2.3 2.3-7 7H2.5v-2.3l7-7z"/></svg>`
+              }
+            </button>
           </div>
         </div>
-        ${state.isEditingPrompt
-          ? `<textarea class="wiz-submit-textarea" id="wiz-submit-textarea">${escapeHTML(prompt)}</textarea>`
-          : `<div class="wiz-submit-prompt-text">${isEmpty ? 'No prompt generated yet.' : escapeHTML(prompt)}</div>`
-        }
-        ${state.editedPrompt != null && !state.isEditingPrompt ? `<button class="wiz-submit-reset" id="wiz-submit-reset">Reset to generated prompt</button>` : ''}
-      </div>
+      </section>
 
-      <div class="wiz-submit-section">
-        <h3 class="wiz-submit-label">Choose AI Model</h3>
-        <div class="wiz-submit-models" id="wiz-submit-models">
-          ${models.map(m => `
-            <button class="wiz-submit-model ${m.id === state.modelId ? 'is-active' : ''}" type="button" data-model-id="${m.id}">
-              ${escapeHTML(m.name)}
-            </button>
-          `).join('')}
+      <section class="pm-section">
+        <div class="pm-section-label">AI Model</div>
+        <div class="pm-models" id="wiz-submit-models">${modelBtnsHTML}</div>
+      </section>
+
+      <section class="pm-submit-area">
+        <div class="pm-actions">
+          <button class="pm-submit" id="wiz-submit-go" type="button" ${isEmpty ? 'disabled' : ''}>${escapeHTML(getSubmitLabel())}</button>
+          ${model ? `<button class="pm-secondary" id="wiz-submit-open-only" type="button">Open ${escapeHTML(model.name)} only</button>` : ''}
         </div>
-      </div>
-
-      <div class="wiz-submit-buttons">
-        <button class="wiz-submit-go" id="wiz-submit-go" type="button" ${isEmpty ? 'disabled' : ''}>${escapeHTML(getSubmitLabel())}</button>
-        <button class="wiz-submit-open-only" id="wiz-submit-open-only" type="button">${escapeHTML(getOpenOnlyLabel())}</button>
-      </div>
-      <p class="wiz-submit-clipboard-hint">If prompt doesn't load directly into model, paste text from clipboard.</p>
-      <p class="wiz-submit-disclaimer">You will be redirected to a third-party AI platform.</p>
+        ${meta.description ? `<div class="pm-helper">${escapeHTML(meta.description)}</div>` : ''}
+      </section>
     </div>
+
+    <div class="pm-footnote">You'll be redirected to a third-party AI platform. Standard Topic isn't responsible for actions taken once you leave this site.</div>
   `;
 
-  submitModalEl.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
+  bindSubmitPanelEvents();
+}
 
-  const closeModal = () => {
-    submitModalEl.style.display = 'none';
-    document.body.style.overflow = '';
-  };
+function bindSubmitPanelEvents() {
+  submitPanelEl.querySelector('#wiz-submit-close').addEventListener('click', closeSubmitModal);
 
-  submitModalEl.querySelector('#wiz-submit-close').addEventListener('click', closeModal);
-  submitModalEl.addEventListener('click', (e) => { if (e.target === submitModalEl) closeModal(); });
-  document.addEventListener('keydown', function esc(e) {
-    if (e.key === 'Escape' && submitModalEl.style.display !== 'none') {
-      closeModal();
-      document.removeEventListener('keydown', esc);
-    }
-  });
-
-  // Copy
-  submitModalEl.querySelector('#wiz-submit-copy')?.addEventListener('click', async () => {
+  submitPanelEl.querySelector('#wiz-submit-copy').addEventListener('click', async (e) => {
+    e.stopPropagation();
     const text = state.isEditingPrompt
-      ? submitModalEl.querySelector('#wiz-submit-textarea')?.value
-      : (state.editedPrompt ?? prompt);
-    await navigator.clipboard.writeText(text);
-    const btn = submitModalEl.querySelector('#wiz-submit-copy');
-    btn.textContent = '✓ Copied';
-    setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+      ? submitPanelEl.querySelector('#wiz-submit-textarea')?.value ?? ''
+      : (state.editedPrompt ?? assemblePrompt()).trim();
+    try { await navigator.clipboard.writeText(text); } catch (_) {}
+    const btn = e.currentTarget;
+    btn.classList.add('is-copied');
+    setTimeout(() => btn.classList.remove('is-copied'), 1200);
   });
 
-  // Edit toggle
-  submitModalEl.querySelector('#wiz-submit-edit')?.addEventListener('click', () => {
+  submitPanelEl.querySelector('#wiz-submit-edit').addEventListener('click', (e) => {
+    e.stopPropagation();
     if (state.isEditingPrompt) {
-      state.editedPrompt = submitModalEl.querySelector('#wiz-submit-textarea')?.value ?? null;
+      const ta = submitPanelEl.querySelector('#wiz-submit-textarea');
+      if (ta) state.editedPrompt = ta.value;
       state.isEditingPrompt = false;
     } else {
       state.isEditingPrompt = true;
     }
-    openPromptSubmitModal(); // re-render modal
+    renderSubmitPanel();
   });
 
-  // Reset
-  submitModalEl.querySelector('#wiz-submit-reset')?.addEventListener('click', () => {
+  const preview = submitPanelEl.querySelector('#wiz-submit-preview');
+  if (preview) {
+    preview.addEventListener('click', () => {
+      if (state.isEditingPrompt) return;
+      state.isEditingPrompt = true;
+      renderSubmitPanel();
+    });
+    preview.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        state.isEditingPrompt = true;
+        renderSubmitPanel();
+      }
+    });
+  }
+
+  submitPanelEl.querySelector('#wiz-submit-reset')?.addEventListener('click', () => {
     state.editedPrompt = null;
-    openPromptSubmitModal();
+    renderSubmitPanel();
   });
 
-  // Model selection
-  submitModalEl.querySelector('#wiz-submit-models')?.addEventListener('click', (e) => {
+  submitPanelEl.querySelector('#wiz-submit-models').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-model-id]');
     if (!btn) return;
     state.modelId = btn.dataset.modelId;
     setPreferredModelId(state.modelId);
-    submitModalEl.querySelectorAll('.wiz-submit-model').forEach(b => {
-      b.classList.toggle('is-active', b.dataset.modelId === state.modelId);
-    });
-    const goBtn = submitModalEl.querySelector('#wiz-submit-go');
-    if (goBtn) goBtn.textContent = getSubmitLabel();
-    const openBtn = submitModalEl.querySelector('#wiz-submit-open-only');
-    if (openBtn) openBtn.textContent = getOpenOnlyLabel();
+    renderSubmitPanel();
   });
 
-  // Submit (copy + open)
-  submitModalEl.querySelector('#wiz-submit-go')?.addEventListener('click', async () => {
+  submitPanelEl.querySelector('#wiz-submit-go')?.addEventListener('click', async () => {
     const model = getModelById(state.modelId);
     if (!model) return;
     const finalPrompt = state.isEditingPrompt
-      ? submitModalEl.querySelector('#wiz-submit-textarea')?.value
+      ? submitPanelEl.querySelector('#wiz-submit-textarea')?.value
       : (state.editedPrompt ?? assemblePrompt());
     await submitPrompt(model, finalPrompt.trim());
-    closeModal();
+    closeSubmitModal();
   });
 
-  // Open model only (no prompt)
-  submitModalEl.querySelector('#wiz-submit-open-only')?.addEventListener('click', () => {
+  submitPanelEl.querySelector('#wiz-submit-open-only')?.addEventListener('click', () => {
     const model = getModelById(state.modelId);
     if (!model) return;
     const url = model.urlTemplate.replace('{prompt}', '');
     window.open(url, '_blank');
-    closeModal();
+    closeSubmitModal();
   });
 }
 
