@@ -15,7 +15,8 @@ export function initDiscoverModal() {
   });
 
   overlayEl.addEventListener('click', (e) => {
-    if (e.target === overlayEl) close();
+    if (e.target === overlayEl) { close(); return; }
+    if (e.target.closest('.discover-modal-close')) { close(); }
   });
 
   document.addEventListener('keydown', (e) => {
@@ -49,7 +50,6 @@ function open(query, searches) {
     </div>
   `;
   overlayEl.style.display = 'flex';
-  overlayEl.querySelector('.discover-modal-close').addEventListener('click', close);
 }
 
 function close() {

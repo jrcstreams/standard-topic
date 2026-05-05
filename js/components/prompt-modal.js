@@ -1,37 +1,54 @@
 // Prompt preview + AI model selection modal.
-// Opens when user clicks an AI Shortcut. Redesigned to match the
-// prompt generator submission modal style with categorized models.
+//
+// The modal opens as an *anchored panel* over the AI Shortcuts card —
+// it positions itself at the card's top-left, matches its width, and
+// extends downward as needed. Falls back to centered if the anchor is
+// missing (e.g. multi-submit dispatched from a context without a card).
 
 import { getModels, getDefaultModelId, getModelById, getSubmissionMethods } from '../utils/data.js';
 import {
   getPreferredModelId,
   setPreferredModelId,
   submitPrompt,
-  isUrlTooLong,
   shouldCopyOnOpen,
 } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
 
-let modalEl = null;
+const ANCHOR_SELECTOR = '.shortcuts-sidebar[data-multi]';
+const MOBILE_BREAKPOINT = 640;
+const PANEL_VIEWPORT_PAD = 12; // px breathing room from viewport edges
+
+let overlayEl = null;   // backdrop (catches outside clicks, dims page)
+let panelEl = null;     // the actual panel; positioned over the anchor
 let modalState = null;
+let positionRaf = null;
+let positionListenersBound = false;
 
 export function initPromptModal() {
-  modalEl = document.createElement('div');
-  modalEl.className = 'prompt-modal-overlay';
-  modalEl.id = 'prompt-modal-overlay';
-  modalEl.style.display = 'none';
-  document.body.appendChild(modalEl);
+  overlayEl = document.createElement('div');
+  overlayEl.className = 'prompt-modal-overlay';
+  overlayEl.setAttribute('aria-hidden', 'true');
+  overlayEl.style.display = 'none';
+  document.body.appendChild(overlayEl);
+
+  panelEl = document.createElement('div');
+  panelEl.className = 'prompt-modal-panel';
+  panelEl.setAttribute('role', 'dialog');
+  panelEl.setAttribute('aria-modal', 'true');
+  panelEl.style.display = 'none';
+  document.body.appendChild(panelEl);
 
   window.addEventListener('open-prompt-modal', (e) => {
     openModal(e.detail.prompt, e.detail.name, e.detail.iconKey);
   });
 
-  modalEl.addEventListener('click', (e) => {
-    if (e.target === modalEl) closeModal();
+  // Click on backdrop closes; clicks inside the panel don't bubble here.
+  overlayEl.addEventListener('click', (e) => {
+    if (e.target === overlayEl) closeModal();
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modalEl.style.display !== 'none') {
+    if (e.key === 'Escape' && overlayEl.style.display !== 'none') {
       closeModal();
     }
   });
@@ -49,16 +66,102 @@ function openModal(prompt, shortcutName, iconKey) {
     iconKey,
     selectedModelId: preferredId,
     models,
+    isClosing: false,
   };
-  renderModalContent();
-  modalEl.style.display = 'flex';
+  renderPanelContent();
+
+  overlayEl.style.display = 'block';
+  panelEl.style.display = 'block';
   document.body.style.overflow = 'hidden';
+
+  // Initial position before paint, then animate in.
+  positionPanel();
+  // Force reflow so the initial scale state is committed before adding .is-open.
+  // eslint-disable-next-line no-unused-expressions
+  panelEl.offsetWidth;
+  overlayEl.classList.add('is-open');
+  panelEl.classList.add('is-open');
+
+  bindPositionListeners();
 }
 
 function closeModal() {
-  modalEl.style.display = 'none';
-  document.body.style.overflow = '';
-  modalState = null;
+  if (!modalState || modalState.isClosing) return;
+  modalState.isClosing = true;
+
+  unbindPositionListeners();
+
+  overlayEl.classList.remove('is-open');
+  panelEl.classList.remove('is-open');
+  panelEl.classList.add('is-closing');
+
+  const onEnd = () => {
+    panelEl.removeEventListener('transitionend', onEnd);
+    panelEl.style.display = 'none';
+    overlayEl.style.display = 'none';
+    panelEl.classList.remove('is-closing');
+    panelEl.style.cssText = '';
+    document.body.style.overflow = '';
+    modalState = null;
+  };
+  // Fallback in case transitionend is missed.
+  panelEl.addEventListener('transitionend', onEnd);
+  setTimeout(() => { if (modalState && modalState.isClosing) onEnd(); }, 280);
+}
+
+function bindPositionListeners() {
+  if (positionListenersBound) return;
+  positionListenersBound = true;
+  window.addEventListener('resize', schedulePosition, { passive: true });
+  window.addEventListener('scroll', schedulePosition, { passive: true });
+}
+function unbindPositionListeners() {
+  if (!positionListenersBound) return;
+  positionListenersBound = false;
+  window.removeEventListener('resize', schedulePosition);
+  window.removeEventListener('scroll', schedulePosition);
+  if (positionRaf) cancelAnimationFrame(positionRaf);
+  positionRaf = null;
+}
+function schedulePosition() {
+  if (positionRaf) return;
+  positionRaf = requestAnimationFrame(() => {
+    positionRaf = null;
+    positionPanel();
+  });
+}
+
+function positionPanel() {
+  const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
+  const anchor = document.querySelector(ANCHOR_SELECTOR);
+
+  if (isMobile || !anchor) {
+    // Mobile or missing anchor: centered, near-full-width sheet.
+    const w = Math.min(window.innerWidth - PANEL_VIEWPORT_PAD * 2, 560);
+    const left = Math.round((window.innerWidth - w) / 2);
+    const top = Math.max(PANEL_VIEWPORT_PAD, Math.round(window.innerHeight * 0.06));
+    const maxH = window.innerHeight - top - PANEL_VIEWPORT_PAD;
+    panelEl.style.left = `${left}px`;
+    panelEl.style.top = `${top}px`;
+    panelEl.style.width = `${w}px`;
+    panelEl.style.maxHeight = `${maxH}px`;
+    panelEl.dataset.anchored = 'false';
+    return;
+  }
+
+  const rect = anchor.getBoundingClientRect();
+  // Clamp so the panel stays fully on-screen if user has scrolled the
+  // shortcuts card partly out of view.
+  const top = Math.max(PANEL_VIEWPORT_PAD, Math.min(rect.top, window.innerHeight - 200));
+  const left = Math.max(PANEL_VIEWPORT_PAD, rect.left);
+  const width = Math.min(rect.width, window.innerWidth - PANEL_VIEWPORT_PAD * 2);
+  const maxH = window.innerHeight - top - PANEL_VIEWPORT_PAD;
+
+  panelEl.style.left = `${left}px`;
+  panelEl.style.top = `${top}px`;
+  panelEl.style.width = `${width}px`;
+  panelEl.style.maxHeight = `${maxH}px`;
+  panelEl.dataset.anchored = 'true';
 }
 
 function getCurrentPrompt() {
@@ -68,14 +171,13 @@ function getCurrentPrompt() {
 function getSubmitLabel(model) {
   if (!model) return 'Submit Prompt';
   return shouldCopyOnOpen(model)
-    ? `Copy prompt and open ${model.name}`
+    ? `Copy & Open ${model.name}`
     : `Open ${model.name}`;
 }
 
-function renderModalContent() {
+function renderPanelContent() {
   const { shortcutName, iconKey, models, selectedModelId, isEditing } = modalState;
   const prompt = getCurrentPrompt();
-  const methods = getSubmissionMethods();
 
   const modelBtnsHTML = models.map(m => `
     <button class="prompt-modal-model-btn ${m.id === selectedModelId ? 'selected' : ''}" type="button" data-model-id="${m.id}">
@@ -83,8 +185,8 @@ function renderModalContent() {
     </button>
   `).join('');
 
-  modalEl.innerHTML = `
-    <div class="prompt-modal">
+  panelEl.innerHTML = `
+    <div class="prompt-modal-panel-inner">
       <div class="prompt-modal-header">
         <div class="prompt-modal-shortcut">
           ${iconKey ? renderIcon(iconKey, 'prompt-modal-shortcut-icon') : ''}
@@ -99,26 +201,28 @@ function renderModalContent() {
         </div>
       </div>
 
-      <div class="prompt-modal-section">
-        <div class="prompt-modal-section-label">
-          Prompt Preview
-          ${!isEditing ? '<span class="prompt-modal-edit-hint">click to edit</span>' : ''}
-          ${modalState.editedPrompt != null && !isEditing ? '<button type="button" class="prompt-modal-reset" id="prompt-modal-reset">Reset</button>' : ''}
+      <div class="prompt-modal-body">
+        <div class="prompt-modal-section">
+          <div class="prompt-modal-section-label">
+            Prompt Preview
+            ${!isEditing ? '<span class="prompt-modal-edit-hint">click to edit</span>' : ''}
+            ${modalState.editedPrompt != null && !isEditing ? '<button type="button" class="prompt-modal-reset" id="prompt-modal-reset">Reset</button>' : ''}
+          </div>
+          ${isEditing
+            ? `<textarea class="prompt-modal-preview-edit" id="prompt-modal-preview-edit" autofocus>${escapeHTML(prompt)}</textarea>`
+            : `<div class="prompt-modal-preview" id="prompt-modal-preview" role="button" tabindex="0">${escapeHTML(prompt)}</div>`
+          }
         </div>
-        ${isEditing
-          ? `<textarea class="prompt-modal-preview-edit" id="prompt-modal-preview-edit" autofocus>${escapeHTML(prompt)}</textarea>`
-          : `<div class="prompt-modal-preview" id="prompt-modal-preview" role="button" tabindex="0">${escapeHTML(prompt)}</div>`
-        }
-      </div>
 
-      <div class="prompt-modal-section">
-        <div class="prompt-modal-label">Choose AI Model</div>
-        <div class="prompt-modal-models" id="prompt-modal-models">
-          ${modelBtnsHTML}
+        <div class="prompt-modal-section">
+          <div class="prompt-modal-label">Choose AI Model</div>
+          <div class="prompt-modal-models" id="prompt-modal-models">
+            ${modelBtnsHTML}
+          </div>
         </div>
-      </div>
 
-      <div class="prompt-modal-submit-area" id="prompt-modal-submit-area" style="display:none"></div>
+        <div class="prompt-modal-submit-area" id="prompt-modal-submit-area" style="display:none"></div>
+      </div>
     </div>
   `;
 
@@ -141,7 +245,6 @@ function bindEvents() {
 
   document.getElementById('prompt-modal-edit').addEventListener('click', enterEditOrSave);
 
-  // Click-to-edit on the preview itself
   const preview = document.getElementById('prompt-modal-preview');
   if (preview) {
     preview.addEventListener('click', enterEdit);
@@ -153,7 +256,7 @@ function bindEvents() {
   document.getElementById('prompt-modal-reset')?.addEventListener('click', (e) => {
     e.stopPropagation();
     modalState.editedPrompt = null;
-    renderModalContent();
+    renderPanelContent();
   });
 
   document.getElementById('prompt-modal-models').addEventListener('click', (e) => {
@@ -161,7 +264,7 @@ function bindEvents() {
     if (!btn) return;
     modalState.selectedModelId = btn.dataset.modelId;
     setPreferredModelId(modalState.selectedModelId);
-    modalEl.querySelectorAll('.prompt-modal-model-btn').forEach(b => {
+    panelEl.querySelectorAll('.prompt-modal-model-btn').forEach(b => {
       b.classList.toggle('selected', b.dataset.modelId === modalState.selectedModelId);
     });
     updateSubmitArea();
@@ -171,7 +274,7 @@ function bindEvents() {
 function enterEdit() {
   if (modalState.isEditing) return;
   modalState.isEditing = true;
-  renderModalContent();
+  renderPanelContent();
 }
 
 function enterEditOrSave() {
@@ -185,7 +288,7 @@ function enterEditOrSave() {
   } else {
     modalState.isEditing = true;
   }
-  renderModalContent();
+  renderPanelContent();
 }
 
 function updateSubmitArea() {
@@ -211,7 +314,6 @@ function updateSubmitArea() {
     </ul>
   `;
   area.querySelector('#prompt-modal-submit').addEventListener('click', async () => {
-    // If user is editing, capture the latest text first
     if (modalState.isEditing) {
       const ta = document.getElementById('prompt-modal-preview-edit');
       if (ta) modalState.editedPrompt = ta.value;

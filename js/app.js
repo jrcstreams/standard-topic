@@ -166,12 +166,12 @@ function renderLayout(route) {
       const topic = getTopicBySlug(route.slug);
       if (!topic) return;
       const related = getRelatedTopics(topic);
-      const INLINE_CAP = 6;
-      const visibleRelated = related.slice(0, INLINE_CAP);
-      const hasTruncated = related.length > visibleRelated.length;
-      const relatedLinksHTML = visibleRelated.map(t =>
+      // Render every related topic; trimOverflowLinks() measures the row
+      // and hides only those that don't fit the available width. "More +"
+      // appears only when something is actually hidden.
+      const relatedLinksHTML = related.map(t =>
         `<a href="#/topic/${t.slug}" class="subnav-topic-link">${escapeHTML(t.name)}</a>`
-      ).join('') + `<a href="#" class="subnav-more-link" id="subnav-more-related" data-needs-more="${hasTruncated ? '1' : '0'}">More +</a>`;
+      ).join('') + `<a href="#" class="subnav-more-link" id="subnav-more-related">More +</a>`;
 
       subHeader.innerHTML = `
         <div class="topic-banner">
@@ -258,23 +258,17 @@ function trimOverflowLinks() {
   const doTrim = () => {
     const links = container.querySelectorAll('.subnav-topic-link');
     const moreLink = container.querySelector('.subnav-more-link');
-    // hasTruncated is true when the rendered list is already shorter than
-    // the full related topic list (i.e., INLINE_CAP capped it). When false,
-    // the modal would only show the same items already visible in the
-    // subnav, so More + is redundant if everything fits.
-    const hasTruncated = moreLink?.dataset.needsMore === '1';
 
-    // Always show container for measurement, then decide visibility after
+    // Reset visibility before measuring.
     container.style.display = '';
     links.forEach(l => l.style.display = '');
     if (moreLink) moreLink.style.display = '';
 
     const containerRight = container.getBoundingClientRect().right;
-    // Reserve space for "More +" link only if it's actually going to render
-    const moreWidth = (moreLink && moreLink.offsetWidth > 0) ? moreLink.offsetWidth + 20 : 0;
-    const cutoff = containerRight - moreWidth;
+    // First measure with "More +" reserved so we can drop links to make room.
+    const moreWidth = moreLink ? moreLink.offsetWidth + 20 : 0;
+    let cutoff = containerRight - moreWidth;
 
-    // Hide any link whose right edge exceeds the available space
     let visibleCount = 0;
     let hiddenCount = 0;
     links.forEach(l => {
@@ -286,12 +280,14 @@ function trimOverflowLinks() {
       }
     });
 
-    // Hide the "More +" link entirely when nothing was capped by INLINE_CAP
-    // AND nothing was hidden by overflow — i.e., every related topic is
-    // already on display in the row, so the modal would be redundant.
+    // If nothing was hidden, "More +" is redundant — hide it and re-check
+    // the last link in case reclaiming the More-width lets one more link fit.
     if (moreLink) {
-      const needsMore = hasTruncated || hiddenCount > 0;
-      moreLink.style.display = needsMore ? '' : 'none';
+      if (hiddenCount === 0) {
+        moreLink.style.display = 'none';
+      } else {
+        moreLink.style.display = '';
+      }
     }
 
     // Show/hide the "Related Topics +" condensed button based on visible count.
@@ -575,12 +571,12 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     <div class="sidebar-card shortcuts-sidebar" data-multi="0">
       <div class="sidebar-card-header">
         <h3 class="sidebar-card-title">AI Shortcuts ${topicPill}</h3>
-        <span class="sidebar-card-desc">Prompt shortcuts to quickly access AI knowledge.</span>
+        <span class="sidebar-card-desc">Quickly access AI knowledge prompts.</span>
         ${all.length > 0 ? `
           <button type="button" class="multi-toggle" id="multi-toggle" role="switch" aria-checked="false">
             <span class="multi-toggle-label">
-              <span class="multi-toggle-label-full">Multi-Select AI Shortcuts</span>
-              <span class="multi-toggle-label-short">Multiselect Shortcuts</span>
+              <span class="multi-toggle-label-full">Multiselect Shortcuts</span>
+              <span class="multi-toggle-label-short">Multiselect</span>
             </span>
             <span class="multi-toggle-switch" aria-hidden="true"><span class="multi-toggle-knob"></span></span>
           </button>
