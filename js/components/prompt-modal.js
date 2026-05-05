@@ -319,6 +319,7 @@ function updateSubmitArea() {
   const helper = meta.description ? meta.description.replace(/\{model\}/g, model.name) : '';
   const modelHomeUrl = model.urlTemplate.replace('{prompt}', '');
   area.innerHTML = `
+    <div class="pm-section-label">Prompt Submission</div>
     <div class="pm-actions">
       <button class="pm-submit" id="pm-submit" type="button">${escapeHTML(getSubmitLabel(model))}</button>
     </div>

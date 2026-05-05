@@ -2405,12 +2405,9 @@ html, body, #app {
           mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='2,6.5 5,9.5 10,3.5'/></svg>") no-repeat center / contain;
 }
 
-/* Submit area: primary + secondary action row */
-.pm-submit-area {
-  margin-top: 1.1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #eef0f4;
-}
+/* Submit area — sits as a regular section; meta block below provides
+   the visual separator. */
+.pm-submit-area { margin-top: 0; }
 /* Primary on its own row; secondary "Open only" sits beneath as a quiet
    text link. Helper text gets its own breathing room below both. */
 .pm-actions {

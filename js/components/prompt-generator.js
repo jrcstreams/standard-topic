@@ -1621,6 +1621,7 @@ function renderSubmitPanel() {
       </section>
 
       <section class="pm-submit-area">
+        <div class="pm-section-label">Prompt Submission</div>
         <div class="pm-actions">
           <button class="pm-submit" id="wiz-submit-go" type="button" ${isEmpty ? 'disabled' : ''}>${escapeHTML(getSubmitLabel())}</button>
         </div>
