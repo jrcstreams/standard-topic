@@ -173,10 +173,8 @@ function getCurrentPrompt() {
 }
 
 function getSubmitLabel(model) {
-  if (!model) return 'Submit';
-  return shouldCopyOnOpen(model)
-    ? `Copy & Open ${model.name}`
-    : `Open ${model.name}`;
+  if (!model) return 'Send Prompt';
+  return `Send Prompt with ${model.name}`;
 }
 
 function renderPanelContent() {
@@ -194,10 +192,8 @@ function renderPanelContent() {
     <div class="pm-header">
       <div class="pm-title">
         ${iconKey ? renderIcon(iconKey, 'pm-title-icon') : ''}
-        <div class="pm-title-text">
-          <div class="pm-eyebrow">AI Shortcut</div>
-          <div class="pm-title-name">${escapeHTML(shortcutName || 'Submit Prompt')}</div>
-        </div>
+        <h3 class="pm-title-name">${escapeHTML(shortcutName || 'Submit Prompt')}</h3>
+        <span class="pm-title-tag">AI Shortcut</span>
       </div>
       <button type="button" class="pm-close" id="pm-close" aria-label="Close">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg>

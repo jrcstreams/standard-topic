@@ -1582,10 +1582,8 @@ function renderSubmitPanel() {
     <div class="pm-header">
       <div class="pm-title">
         <span class="pm-title-icon" aria-hidden="true">✦</span>
-        <div class="pm-title-text">
-          <div class="pm-eyebrow">Built Prompt</div>
-          <div class="pm-title-name">Preview &amp; Submit</div>
-        </div>
+        <h3 class="pm-title-name">Preview &amp; Submit</h3>
+        <span class="pm-title-tag">Built Prompt</span>
       </div>
       <button type="button" class="pm-close" id="wiz-submit-close" aria-label="Close">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg>
@@ -1732,10 +1730,8 @@ function updatePreview() {
 
 function getSubmitLabel() {
   const m = getModelById(state.modelId);
-  if (!m) return 'Submit Prompt →';
-  return shouldCopyOnOpen(m)
-    ? `Copy prompt and open ${m.name}`
-    : `Open ${m.name}`;
+  if (!m) return 'Send Prompt';
+  return `Send Prompt with ${m.name}`;
 }
 function getOpenOnlyLabel() {
   const m = getModelById(state.modelId);
