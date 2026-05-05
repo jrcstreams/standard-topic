@@ -317,7 +317,7 @@ function updateSubmitArea() {
   const meta = methods[method] || {};
   area.hidden = false;
   const helper = meta.description ? meta.description.replace(/\{model\}/g, model.name) : '';
-  const modelHomeUrl = model.urlTemplate.replace('{prompt}', '');
+  const modelHomeUrl = model.chatUrl || model.urlTemplate.replace('{prompt}', '');
   area.innerHTML = `
     <div class="pm-section-label">Prompt Submission</div>
     <div class="pm-actions">

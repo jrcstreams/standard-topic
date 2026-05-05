@@ -1629,7 +1629,7 @@ function renderSubmitPanel() {
           <div class="pm-meta">
             ${meta.description ? `<div class="pm-meta-line">
               <span class="pm-meta-label">Model info:</span>
-              <a href="${model.urlTemplate.replace('{prompt}', '')}" target="_blank" rel="noopener noreferrer" class="pm-meta-link">${escapeHTML(model.name)}</a>
+              <a href="${model.chatUrl || model.urlTemplate.replace('{prompt}', '')}" target="_blank" rel="noopener noreferrer" class="pm-meta-link">${escapeHTML(model.name)}</a>
               <span class="pm-meta-text">— ${escapeHTML(meta.description.replace(/\{model\}/g, model.name))}</span>
             </div>` : ''}
             <div class="pm-meta-line">

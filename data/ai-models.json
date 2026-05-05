@@ -1,11 +1,11 @@
 {
   "models": [
-    {"id":"chatgpt","name":"ChatGPT","icon":"chatgpt","urlTemplate":"https://chatgpt.com/?q={prompt}","copyOnOpen":true,"submissionMethod":"direct"},
-    {"id":"perplexity","name":"Perplexity","icon":"perplexity","urlTemplate":"https://www.perplexity.ai/search?q={prompt}","copyOnOpen":true,"submissionMethod":"direct"},
-    {"id":"google-ai","name":"Google AI Mode","icon":"google","urlTemplate":"https://www.google.com/search?udm=50&q={prompt}","copyOnOpen":true,"submissionMethod":"direct"},
-    {"id":"gemini","name":"Gemini","icon":"gemini","urlTemplate":"https://gemini.google.com/app?q={prompt}","copyOnOpen":true,"submissionMethod":"populates"},
-    {"id":"copilot","name":"Bing Copilot","icon":"copilot","urlTemplate":"https://www.bing.com/chat?q={prompt}","copyOnOpen":true,"submissionMethod":"populates"},
-    {"id":"claude","name":"Claude","icon":"claude","urlTemplate":"https://claude.ai/new?q={prompt}","submissionMethod":"paste"}
+    {"id":"chatgpt","name":"ChatGPT","icon":"chatgpt","urlTemplate":"https://chatgpt.com/?q={prompt}","chatUrl":"https://chatgpt.com/","copyOnOpen":true,"submissionMethod":"direct"},
+    {"id":"perplexity","name":"Perplexity","icon":"perplexity","urlTemplate":"https://www.perplexity.ai/search?q={prompt}","chatUrl":"https://www.perplexity.ai/","copyOnOpen":true,"submissionMethod":"direct"},
+    {"id":"google-ai","name":"Google AI Mode","icon":"google","urlTemplate":"https://www.google.com/search?udm=50&q={prompt}","chatUrl":"https://www.google.com/?udm=50","copyOnOpen":true,"submissionMethod":"direct"},
+    {"id":"gemini","name":"Gemini","icon":"gemini","urlTemplate":"https://gemini.google.com/app?q={prompt}","chatUrl":"https://gemini.google.com/app","copyOnOpen":true,"submissionMethod":"populates"},
+    {"id":"copilot","name":"Bing Copilot","icon":"copilot","urlTemplate":"https://www.bing.com/chat?q={prompt}","chatUrl":"https://copilot.microsoft.com/","copyOnOpen":true,"submissionMethod":"populates"},
+    {"id":"claude","name":"Claude","icon":"claude","urlTemplate":"https://claude.ai/new?q={prompt}","chatUrl":"https://claude.ai/new","submissionMethod":"paste"}
   ],
   "defaultModel": "chatgpt",
   "submissionMethods": {

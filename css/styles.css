@@ -2455,11 +2455,10 @@ html, body, #app {
   margin-right: 0.25rem;
 }
 .pm-meta-link {
-  font-weight: var(--font-weight-semibold);
   color: var(--color-primary);
-  text-decoration: none;
+  text-decoration: underline;
 }
-.pm-meta-link:hover { text-decoration: underline; }
+.pm-meta-link:hover { color: var(--color-primary-dark, #0f1a2e); }
 .pm-meta-text { color: var(--color-text-light); }
 
 /* Legacy class — no longer used */
