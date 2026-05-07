@@ -916,7 +916,7 @@ function renderPage(route) {
         <div class="about-hero">
           <h2 class="about-title">Terms &amp; Conditions</h2>
           <p class="about-lead">The rules of the road for using Standard Topic. Short, plain-English, and meant to be read.</p>
-          <p class="about-lead" style="font-size:0.9rem;opacity:0.7;">Last updated: April 24, 2026</p>
+          <p class="about-lead" style="font-size:0.9rem;opacity:0.7;">Last updated: May 6, 2026</p>
         </div>
 
         <div class="about-section">
@@ -938,17 +938,23 @@ function renderPage(route) {
 
         <div class="about-section">
           <h3>3. No Accounts, No Personal Data Collected</h3>
-          <p>The Site does not require an account. It does not ask for your name, email, or any personal information. It does not run analytics, tracking scripts, or advertising networks. It does not set tracking cookies.</p>
+          <p>The Site does not require an account. It does not ask for your name, email, or any personal information. It does not set advertising cookies and does not sell or share data with advertising networks.</p>
           <p>The Site's own servers do not receive your prompts, your searches, or your browsing activity. If GitHub (which hosts the Site) or any third-party service you interact with keeps its own logs, those are governed by their respective policies.</p>
         </div>
 
         <div class="about-section">
-          <h3>4. Local Browser Storage</h3>
+          <h3>4. Analytics</h3>
+          <p>The Site uses Google Analytics 4 to measure aggregate traffic and usage patterns &mdash; for example, how many people visit a topic page, how often AI Shortcuts are used, and which AI models are most commonly selected. This is used to improve the Site, not to identify you.</p>
+          <p>Analytics is configured with privacy-respecting defaults: IP addresses are anonymized before storage, Google Signals (cross-device user graphs) is disabled, and ad-personalization signals are disabled. The Site does not collect prompt text, search terms typed into the Prompt Builder, or any other personally identifying information through analytics. If you'd like to block analytics entirely, any standard tracker-blocker or privacy extension will do so; the Site continues to work normally without it.</p>
+        </div>
+
+        <div class="about-section">
+          <h3>5. Local Browser Storage</h3>
           <p>The Site uses your browser's <code>localStorage</code> to remember a small number of interface preferences &mdash; for example, which AI model you prefer to send prompts to. This data stays on your device and is never transmitted to Standard Topic or anyone else. You can clear it at any time via your browser settings.</p>
         </div>
 
         <div class="about-section">
-          <h3>5. Third-Party Services &amp; Links</h3>
+          <h3>6. Third-Party Services &amp; Links</h3>
           <p>The Site links to and embeds content from third parties, including but not limited to:</p>
           <ul>
             <li><strong>AI providers:</strong> OpenAI (ChatGPT), Anthropic (Claude), Google (Gemini), Perplexity, and others.</li>
@@ -961,7 +967,7 @@ function renderPage(route) {
         </div>
 
         <div class="about-section">
-          <h3>6. AI-Generated Content</h3>
+          <h3>7. AI-Generated Content</h3>
           <p>AI Shortcuts and the Prompt Builder produce text that is sent to a third-party AI model of your choice. The model's response is generated entirely by that third party. Standard Topic has no control over and accepts no responsibility for:</p>
           <ul>
             <li>the accuracy, completeness, or timeliness of any AI output;</li>
@@ -972,18 +978,18 @@ function renderPage(route) {
         </div>
 
         <div class="about-section">
-          <h3>7. News &amp; RSS Feeds</h3>
+          <h3>8. News &amp; RSS Feeds</h3>
           <p>News feed content is published by third-party outlets and surfaced on the Site via rss.app's embedded widget. Standard Topic does not write, edit, select, or endorse any individual article. Headlines, summaries, images, and links belong to the originating publishers. For copyright concerns or corrections about specific articles, contact the originating publisher directly.</p>
         </div>
 
         <div class="about-section">
-          <h3>8. Intellectual Property</h3>
+          <h3>9. Intellectual Property</h3>
           <p>The source code of Standard Topic is open source and published at <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer">github.com/jrcstreams/standard-topic</a>. Any reuse is subject to the license published in that repository.</p>
           <p>The "Standard Topic" name and logo, the site's written copy, and its original visual design are the property of the site's creator. All third-party names, logos, and marks referenced on the Site belong to their respective owners and are used for identification purposes only.</p>
         </div>
 
         <div class="about-section">
-          <h3>9. Acceptable Use</h3>
+          <h3>10. Acceptable Use</h3>
           <p>You agree to use the Site only for lawful, personal, informational purposes. You agree not to:</p>
           <ul>
             <li>use the Site to violate any law or the rights of others;</li>
@@ -994,32 +1000,32 @@ function renderPage(route) {
         </div>
 
         <div class="about-section">
-          <h3>10. Disclaimer of Warranties</h3>
+          <h3>11. Disclaimer of Warranties</h3>
           <p>The Site is provided on an "AS IS" and "AS AVAILABLE" basis, without warranties of any kind, whether express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, accuracy, or non-infringement. Standard Topic does not warrant that the Site will be uninterrupted, error-free, or secure, or that defects will be corrected.</p>
         </div>
 
         <div class="about-section">
-          <h3>11. Limitation of Liability</h3>
+          <h3>12. Limitation of Liability</h3>
           <p>To the fullest extent permitted by law, Standard Topic and its creator shall not be liable for any indirect, incidental, special, consequential, or punitive damages &mdash; or any loss of data, revenue, or profits &mdash; arising out of or in connection with your use of the Site, any third-party service accessed through the Site, or any content (including AI-generated output) obtained through the Site. Because the Site is free to use, any direct liability is limited to the amount you paid to access it, which is zero.</p>
         </div>
 
         <div class="about-section">
-          <h3>12. Changes to These Terms</h3>
+          <h3>13. Changes to These Terms</h3>
           <p>These terms may be updated from time to time. The "Last updated" date at the top of this page indicates when the current version took effect. Continued use of the Site after an update constitutes acceptance of the revised terms. Material changes will be reflected on this page; you are responsible for reviewing it periodically.</p>
         </div>
 
         <div class="about-section">
-          <h3>13. Termination</h3>
+          <h3>14. Termination</h3>
           <p>Because the Site does not require an account, "termination" simply means you stop using it. Standard Topic reserves the right to modify, suspend, or discontinue the Site (or any portion of it) at any time, without notice, for any reason.</p>
         </div>
 
         <div class="about-section">
-          <h3>14. Governing Law</h3>
+          <h3>15. Governing Law</h3>
           <p>These terms are governed by the laws applicable at the place of residence of the Site's creator, without regard to conflict-of-law principles. If any provision is found unenforceable, the remaining provisions remain in full effect.</p>
         </div>
 
         <div class="about-section">
-          <h3>15. Contact</h3>
+          <h3>16. Contact</h3>
           <p>Questions, bug reports, or concerns about these terms or the Site can be raised via the project's GitHub repository at <a href="https://github.com/jrcstreams/standard-topic/issues" target="_blank" rel="noopener noreferrer">github.com/jrcstreams/standard-topic/issues</a>.</p>
         </div>
       </div>
