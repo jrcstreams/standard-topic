@@ -10,6 +10,7 @@
 
 import { getPromptGenData, getModels, getDefaultModelId, getModelById, getParentTopics, getFeaturedTopics, getAllTopics, searchTopics, getSubmissionMethods } from '../utils/data.js';
 import { getPreferredModelId, setPreferredModelId, submitPrompt, isUrlTooLong, shouldCopyOnOpen } from '../utils/ai-models.js';
+import { track } from '../utils/analytics.js';
 
 const state = {
   step: 0,
@@ -1706,6 +1707,11 @@ function bindSubmitPanelEvents() {
     const finalPrompt = state.isEditingPrompt
       ? submitPanelEl.querySelector('#wiz-submit-textarea')?.value
       : (state.editedPrompt ?? assemblePrompt());
+    track('prompt_builder_submit', {
+      model: model.id,
+      edited: state.editedPrompt != null,
+      length: finalPrompt.trim().length,
+    });
     await submitPrompt(model, finalPrompt.trim());
     closeSubmitModal();
   });

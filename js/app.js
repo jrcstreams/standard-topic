@@ -12,6 +12,7 @@ import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
 import { initPromptPreviewModal } from './components/prompt-preview-modal.js';
+import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadAllData();
@@ -34,6 +35,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       window.scrollTo(0, 0);
       setSubnavHeightVar();
     });
+    // Fire GA4 page_view after the DOM has the right document.title.
+    trackPageView(window.location.hash || '#/', document.title);
   });
 
   window.addEventListener('resize', setSubnavHeightVar, { passive: true });
@@ -660,6 +663,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       const prompt = btn.dataset.prompt;
       const name = btn.dataset.name;
       const iconKey = btn.dataset.iconKey || '';
+      track('shortcut_click', { shortcut_name: name, route: window.location.hash || '#/' });
       window.dispatchEvent(new CustomEvent('open-prompt-modal', {
         detail: { prompt, name, iconKey },
       }));
@@ -683,6 +687,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     const intro = `Please respond to each of the following ${selected.length} prompts in order. Treat each as its own task and clearly label your answers.`;
     const finalPrompt = `${intro}\n\n${combined}`;
     const name = `${selected.length} Selected Shortcut${selected.length > 1 ? 's' : ''}`;
+    track('multi_shortcut_submit', { count: selected.length, route: window.location.hash || '#/' });
     window.dispatchEvent(new CustomEvent('open-prompt-modal', {
       detail: { prompt: finalPrompt, name, iconKey: '' },
     }));

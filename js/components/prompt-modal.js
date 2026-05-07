@@ -12,6 +12,7 @@ import {
   shouldCopyOnOpen,
 } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
+import { track } from '../utils/analytics.js';
 
 const ANCHOR_SELECTOR = '.shortcuts-sidebar[data-multi]';
 const MOBILE_BREAKPOINT = 640;
@@ -340,6 +341,11 @@ function updateSubmitArea() {
       const ta = panelEl.querySelector('#pm-textarea');
       if (ta) modalState.editedPrompt = ta.value;
     }
+    track('prompt_submit', {
+      model: model.id,
+      shortcut_name: modalState.shortcutName || '',
+      edited: modalState.editedPrompt != null,
+    });
     await submitPrompt(model, getCurrentPrompt());
     closeModal();
   });

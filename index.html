@@ -50,8 +50,25 @@
     <link rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Inter+Tight:wght@400;500;600;700;800&display=swap">
 
+    <!-- Google Analytics (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y2M7NL8RFE"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', 'G-Y2M7NL8RFE', {
+        anonymize_ip: true,
+        allow_google_signals: false,
+        allow_ad_personalization_signals: false,
+        // We fire page_view manually from the SPA router on every route
+        // change (including initial load), so disable the auto firing.
+        send_page_view: false
+      });
+    </script>
+
     <!-- Styles -->
-    <link rel="stylesheet" href="css/styles.css?v=20260505f">
+    <link rel="stylesheet" href="css/styles.css?v=20260506a">
 
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -89,7 +106,7 @@
       <footer id="site-footer"></footer>
     </div>
 
-    <script type="module" src="js/app.js?v=20260505b"></script>
+    <script type="module" src="js/app.js?v=20260506a"></script>
   </body>
 
 </html>
