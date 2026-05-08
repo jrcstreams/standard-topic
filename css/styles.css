@@ -699,7 +699,7 @@ body.hide-cta .sticky-cta { display: none !important; }
 #sub-header.is-subnav .topic-banner-row {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
   flex: 1;
   min-width: 0;
 }
@@ -2695,6 +2695,14 @@ html, body, #app {
 .home-subnav-topics .subnav-action-link {
   margin-left: auto; /* push it to the row's right edge */
   flex-shrink: 0;
+}
+
+/* The first chip after the separator gets extra left padding to
+   visually balance the bigger title↔separator gap (1.5rem). Other
+   chips keep the regular 1rem padding so their inter-chip rhythm is
+   unchanged. */
+.subnav-topics-inline > .subnav-topic-link:first-child {
+  padding-left: 1.5rem;
 }
 
 /* 800px: show hamburger, hide featured topics from subnav, hide CTA */
@@ -6460,12 +6468,12 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 
 /* === Subnav redesign: icon + underlined title + responsive hamburger ==== */
 
-/* Title group: hamburger (desktop only) + title-inner (icon + name + underline) */
+/* Title group: hamburger (desktop only) + title-inner (icon + name) */
 #sub-header.is-subnav .topic-banner-titlegroup,
 #sub-header.is-home-subnav .topic-banner-titlegroup {
   display: inline-flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 2rem;
   flex: 0 0 auto;
 }
 
@@ -6512,14 +6520,12 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 }
 .topic-banner-icon svg { width: 100%; height: 100%; display: block; }
 
-/* Page title — bumped to match the previous "section title" size for
-   stronger visual hierarchy in the subnav. */
 #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
 #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   font-weight: 700;
-  letter-spacing: -0.022em;
+  letter-spacing: -0.02em;
   color: var(--color-primary-dark, #0f1a2e);
   line-height: 1.1;
   white-space: nowrap;
