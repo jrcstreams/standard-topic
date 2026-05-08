@@ -3078,21 +3078,33 @@ html, body, #app {
   cursor: pointer;
   transition: background 0.12s, color 0.12s, border-color 0.12s;
 }
+/* Desktop / wider widths: interconnected rectangle grid. The container
+   has the outer rounded border; each cell draws only its right + bottom
+   borders so adjacent cells share grid lines instead of doubling them.
+   overflow:hidden clips any cell border that bleeds past the rounded
+   container edge. */
 @media (min-width: 641px) {
   .shortcuts-sidebar .sidebar-shortcut-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 0.5rem;
+    gap: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--color-bg);
   }
   .shortcuts-sidebar .sidebar-shortcut {
-    border: 1px solid var(--color-border);
-    border-radius: 7px;
-    background: var(--color-bg);
-    padding: 0.7rem 0.85rem;
+    border: none;
+    border-right: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    border-radius: 0;
+    background: transparent;
+    padding: 0.75rem 0.9rem;
+    margin: 0;
+    transition: background 0.12s, color 0.12s;
   }
   .shortcuts-sidebar .sidebar-shortcut:hover {
-    border-color: #c8d2e0;
-    background: #f8f9fb;
+    background: #f6f8fb;
   }
 }
 @media (hover: hover) {
@@ -6406,42 +6418,6 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   text-decoration-thickness: 2px;
 }
 
-
-/* === AI Shortcuts: "Multi-select is off" hint card ===================== */
-.shortcuts-multi-hint {
-  display: none; /* mobile hidden — see media query */
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 1rem;
-  padding: 0.8rem 1rem;
-  border: 1px dashed #c8d2e0;
-  border-radius: 8px;
-  background: #f7f9fc;
-  color: var(--color-text-muted);
-}
-.shortcuts-multi-hint-title {
-  font-family: var(--font-display);
-  font-size: 0.84rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-primary);
-  margin-bottom: 0.15rem;
-}
-.shortcuts-multi-hint-desc {
-  font-size: 0.78rem;
-  line-height: 1.4;
-  color: var(--color-text-muted);
-}
-.shortcuts-multi-hint-icon {
-  flex-shrink: 0;
-  color: #4a6a8a;
-  opacity: 0.7;
-}
-@media (min-width: 641px) {
-  .shortcuts-multi-hint { display: flex; }
-}
-/* Hide hint when multi-select is ON. */
-.shortcuts-sidebar[data-multi="1"] .shortcuts-multi-hint { display: none; }
 
 /* === Subnav redesign: icon + underlined title + responsive hamburger ==== */
 

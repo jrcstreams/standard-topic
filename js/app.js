@@ -634,16 +634,6 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       ${all.map(s => shortcutItem(s, topicName)).join('')}
     </div>`;
     html += `
-      <div class="shortcuts-multi-hint" id="shortcuts-multi-hint">
-        <div class="shortcuts-multi-hint-text">
-          <div class="shortcuts-multi-hint-title">Multi-select is off</div>
-          <div class="shortcuts-multi-hint-desc">Enable multi-select to choose and combine multiple shortcuts.</div>
-        </div>
-        <svg class="shortcuts-multi-hint-icon" aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>
-          <circle cx="12" cy="12" r="3"/>
-        </svg>
-      </div>
       <div class="shortcuts-multi-submit-wrap" hidden>
         <button type="button" class="shortcuts-multi-submit" id="shortcuts-multi-submit">
           <span class="shortcuts-multi-submit-label">
