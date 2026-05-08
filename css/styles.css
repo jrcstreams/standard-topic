@@ -1315,38 +1315,45 @@ body.hide-cta .sticky-cta { display: none !important; }
   border-radius: 999px;
 }
 
-/* "Additional Content Feeds" action — discreet uppercase link to the
-   right of the news feed subtext, matching the Multiselect toggle. */
+/* "More Content Shortcuts" action — matches the new Multi-select
+   toggle treatment (0.92rem normal case, medium weight, muted text). */
 .feeds-pill {
   margin-left: auto;
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0;
+  gap: 0.4rem;
+  padding: 0.2rem 0.1rem;
   background: none;
   border: none;
-  color: var(--color-text-light);
-  font-family: var(--font-display);
-  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  font-family: var(--font-family);
+  font-size: 0.92rem;
   font-weight: var(--font-weight-medium);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: -0.005em;
   cursor: pointer;
-  transition: color 0.12s;
+  transition: color 0.14s;
   flex-shrink: 0;
 }
 
 .feeds-pill:hover {
-  color: var(--color-text-muted);
-  opacity: 1;
+  color: var(--color-text);
   text-decoration: none;
 }
 
 .feeds-pill-icon {
-  font-size: 0.85rem;
+  font-size: 1rem;
   line-height: 1;
   color: inherit;
   font-weight: inherit;
+}
+
+/* Mobile: smaller / lighter to mirror the multi-toggle mobile style. */
+@media (max-width: 640px) {
+  .feeds-pill {
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+    gap: 0.3rem;
+  }
 }
 
 /* === Multi-Select toggle ===
@@ -1605,7 +1612,6 @@ body.hide-cta .sticky-cta { display: none !important; }
   .sidebar-card-header .multi-toggle[aria-checked="true"] .multi-toggle-knob {
     transform: translateX(11px);
   }
-  .feeds-pill { font-size: 0.7rem; }
 }
 /* Drop "Shortcuts" from the Multiselect label only at the smallest
    widths where the full label can't share a row with the subtext. */
@@ -3088,19 +3094,32 @@ html, body, #app {
     width: auto;
     min-width: 0;
     border: none;
+    border-top: 1px solid var(--color-border);
+    border-left: 1px solid var(--color-border);
     border-radius: 0;
     background: var(--color-bg);
     padding: 0.75rem 0.9rem;
     margin: 0;
-    box-shadow: 0 0 0 1px var(--color-border);
-    transition: background 0.12s, color 0.12s, box-shadow 0.12s;
-    position: relative;
+    transition: background 0.12s, color 0.12s;
   }
+  /* Hover changes only the fill — borders stay in default color so
+     adjacent cells never paint mismatched outlines along their shared
+     edge. */
   .shortcuts-sidebar .sidebar-shortcut:hover {
     background: #f6f8fb;
-    box-shadow: 0 0 0 1px #c8d2e0;
-    z-index: 1;
   }
+  /* Each cell draws only its top + left borders. Result:
+     - Outer top + outer left show because row-1 / col-1 cells draw
+       them by definition.
+     - Internal lines come from each cell's top (row separators) and
+       left (column separators).
+     - Empty cells in a partial last row provide no lines, so there
+       is nothing extending into empty space.
+     - Outer right + outer bottom are intentionally absent — the user
+       wants the empty side of a partial layout to read as empty.
+     The first cell in each row of the grid is col 1, so its left
+     border draws at the grid's left edge. The first row's cells'
+     top borders form the outer top edge. */
 }
 @media (min-width: 880px) {
   .shortcuts-sidebar .sidebar-shortcut-list {
