@@ -3072,20 +3072,21 @@ html, body, #app {
      cells' shadows occupy the same pixels and overlap into a single
      1px line — no doubled borders, no outer container frame, no
      "placeholder" lines extending into empty space. */
+/* Grid that steps from 2 → 3 → 4 columns based on viewport width.
+   Each row fills the container evenly; buttons in any row are equal
+   width. Partial last rows leave empty cells to the right (no
+   stretching) — empty space stays empty thanks to the per-cell
+   box-shadow that draws lines only around real cells. */
 @media (min-width: 641px) {
   .shortcuts-sidebar .sidebar-shortcut-list {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 0;
     margin-bottom: 0.4rem;
   }
-  /* Fixed 240px buttons, no grow/shrink. Column count is whatever
-     fits the container width — partial last rows leave empty space
-     to the right rather than stretching items. */
   .shortcuts-sidebar .sidebar-shortcut {
-    flex: 0 0 240px;
-    width: 240px;
+    width: auto;
+    min-width: 0;
     border: none;
     border-radius: 0;
     background: var(--color-bg);
@@ -3095,18 +3096,20 @@ html, body, #app {
     transition: background 0.12s, color 0.12s, box-shadow 0.12s;
     position: relative;
   }
-  /* Tight split panels can be narrower than 240px. Allow shrinking
-     in those cases so the button fits its column without overflow. */
-  @media (max-width: 760px) {
-    .shortcuts-sidebar .sidebar-shortcut {
-      flex: 1 1 200px;
-      width: auto;
-    }
-  }
   .shortcuts-sidebar .sidebar-shortcut:hover {
     background: #f6f8fb;
     box-shadow: 0 0 0 1px #c8d2e0;
     z-index: 1;
+  }
+}
+@media (min-width: 880px) {
+  .shortcuts-sidebar .sidebar-shortcut-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (min-width: 1140px) {
+  .shortcuts-sidebar .sidebar-shortcut-list {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 @media (hover: hover) {
