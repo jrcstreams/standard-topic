@@ -3080,9 +3080,12 @@ html, body, #app {
     gap: 0;
     margin-bottom: 0.4rem;
   }
+  /* Fixed 240px buttons, no grow/shrink. Column count is whatever
+     fits the container width — partial last rows leave empty space
+     to the right rather than stretching items. */
   .shortcuts-sidebar .sidebar-shortcut {
-    flex: 1 1 220px;
-    width: auto;
+    flex: 0 0 240px;
+    width: 240px;
     border: none;
     border-radius: 0;
     background: var(--color-bg);
@@ -3091,6 +3094,14 @@ html, body, #app {
     box-shadow: 0 0 0 1px var(--color-border);
     transition: background 0.12s, color 0.12s, box-shadow 0.12s;
     position: relative;
+  }
+  /* Tight split panels can be narrower than 240px. Allow shrinking
+     in those cases so the button fits its column without overflow. */
+  @media (max-width: 760px) {
+    .shortcuts-sidebar .sidebar-shortcut {
+      flex: 1 1 200px;
+      width: auto;
+    }
   }
   .shortcuts-sidebar .sidebar-shortcut:hover {
     background: #f6f8fb;
