@@ -312,7 +312,7 @@ body.sticky-always.has-subnav #content {
 
 .sticky-tagline {
   font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.32);
   font-weight: var(--font-weight-medium);
   white-space: nowrap;
   flex: 1;
@@ -2613,7 +2613,11 @@ html, body, #app {
   flex: 1;
   min-width: 0;
   white-space: nowrap;
-  margin-left: 1rem;
+  /* margin-left intentionally 0 — the topic-banner-row already
+     provides a 1rem flex gap between the title group and the
+     topics-inline. Doubling it here was making the left side of the
+     separator visibly wider than the right. */
+  margin-left: 0;
   padding-left: 0;
   border-left: none;
   position: relative;
@@ -2991,16 +2995,17 @@ html, body, #app {
 .section-topic-pill {
   display: inline-flex;
   align-items: center;
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   font-weight: 600;
-  color: #4a6a8a;
-  background: #eef2f7;
+  /* Sits between the underline blue (#4a7cc9) and the main-nav navy
+     (#0f1a2e) — darker than the previous #4a6a8a so the label feels
+     anchored to the title rather than fading out. */
+  color: #2c4467;
+  background: #e6ecf5;
   border: none;
   border-radius: 999px;
-  padding: 0.22rem 0.65rem;
+  padding: 0.24rem 0.7rem;
   letter-spacing: 0.02em;
-  /* Title is now a flex container with align-items: center, so the
-     pill aligns to the title's vertical center automatically. */
   margin-left: 0;
 }
 
@@ -3022,14 +3027,14 @@ html, body, #app {
 
 .sidebar-card-title {
   font-family: var(--font-family);
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   line-height: 1.2;
   font-weight: 600;
   color: #1e2d44;
   flex-basis: 100%;
   letter-spacing: -0.015em;
   margin: 0 0 0.15rem 0;
-  padding-left: 0.95rem;
+  padding-left: 0.85rem;
   border-left: none;
   position: relative;
   display: inline-flex;
@@ -6468,8 +6473,8 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 }
 
 .subnav-hamburger {
-  width: 22px;
-  height: 18px;
+  width: 26px;
+  height: 22px;
   padding: 0;
   background: none;
   border: none;
@@ -6477,46 +6482,47 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 4px;
+  gap: 5px;
   flex-shrink: 0;
-  opacity: 0.7;
+  opacity: 0.85;
   transition: opacity 0.14s;
 }
 .subnav-hamburger:hover { opacity: 1; }
 .subnav-hamburger span {
   display: block;
   width: 100%;
-  height: 2px;
-  background: var(--color-primary);
-  border-radius: 1px;
+  height: 2.5px;
+  background: var(--color-primary-dark, #0f1a2e);
+  border-radius: 2px;
 }
 
 /* The icon + title sit together as their own underlined group. */
 .topic-banner-titleinner {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.25rem 0 0.5rem;
-  border-bottom: 2px solid #4a6a8a;
+  gap: 0.6rem;
+  padding: 0.25rem 0 0.55rem;
+  /* Underline matches the AI Shortcuts section accent pill color. */
+  border-bottom: 2px solid #4a7cc9;
   min-width: 0;
 }
 .topic-banner-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
   color: var(--color-primary-dark, #0f1a2e);
 }
 .topic-banner-icon svg { width: 100%; height: 100%; display: block; }
 
-/* Page title — display font, slightly larger and tighter than the topic
-   chips so it reads as the dominant element of the row. */
+/* Page title — bumped to match the previous "section title" size for
+   stronger visual hierarchy in the subnav. */
 #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
 #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: 1.35rem;
   font-weight: 700;
   letter-spacing: -0.022em;
   color: var(--color-primary-dark, #0f1a2e);
@@ -6559,7 +6565,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   transform: translateY(-50%);
   width: 1px;
   height: 22px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.12);
 }
 @media (max-width: 640px) {
   .sticky-brand::after { display: none; }
