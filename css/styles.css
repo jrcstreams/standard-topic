@@ -1350,47 +1350,42 @@ body.hide-cta .sticky-cta { display: none !important; }
 }
 
 /* === Multi-Select toggle ===
-   Right-aligned on the same row as the section subtext. On tight
-   widths the row wraps naturally; the label drops "Shortcuts" only
-   at the smallest screen sizes. */
+   Right-aligned on the same row as the section subtext. Reads as a
+   real control — labelled, sized for tap targets — but stays quieter
+   than the section title. */
 .multi-toggle {
   margin-left: auto;
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.45rem;
-  padding: 0;
+  gap: 0.6rem;
+  padding: 0.2rem 0.1rem;
   background: none;
   border: none;
-  color: var(--color-text-light);
-  font-family: var(--font-display);
-  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  font-family: var(--font-family);
+  font-size: 0.92rem;
   font-weight: var(--font-weight-medium);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: -0.005em;
   cursor: pointer;
   min-width: 0;
   max-width: 100%;
   flex-shrink: 0;
-  transition: color 0.12s;
+  transition: color 0.14s;
 }
-.multi-toggle:hover { color: var(--color-text-muted); }
-.multi-toggle[aria-checked="true"] { color: var(--color-text-muted); }
+.multi-toggle:hover { color: var(--color-text); }
+.multi-toggle[aria-checked="true"] { color: var(--color-text); }
 .multi-toggle-label {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
 }
-/* Default: full "Multiselect Shortcuts" label. Drops to "Multiselect"
-   only when the row truly can't fit the longer label (see media query). */
-.multi-toggle-label-full { display: inline; }
-.multi-toggle-label-short { display: none; }
 
 .multi-toggle-switch {
-  width: 30px;
-  height: 18px;
-  background: var(--color-border);
+  width: 38px;
+  height: 22px;
+  background: #d8dde6;
   border-radius: 999px;
   position: relative;
   flex-shrink: 0;
@@ -1400,18 +1395,30 @@ body.hide-cta .sticky-cta { display: none !important; }
   position: absolute;
   top: 2px;
   left: 2px;
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   background: white;
   border-radius: 50%;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
   transition: transform 0.15s;
 }
 .multi-toggle[aria-checked="true"] .multi-toggle-switch {
   background: #16a34a;
 }
 .multi-toggle[aria-checked="true"] .multi-toggle-knob {
-  transform: translateX(12px);
+  transform: translateX(16px);
+}
+/* Mobile: smaller label + switch — matches the discreet treatment we
+   were using before but with the new "Multi-select" label. */
+@media (max-width: 640px) {
+  .multi-toggle {
+    font-size: 0.75rem;
+    gap: 0.45rem;
+    color: var(--color-text-light);
+  }
+  .multi-toggle-switch { width: 30px; height: 18px; }
+  .multi-toggle-knob { width: 14px; height: 14px; }
+  .multi-toggle[aria-checked="true"] .multi-toggle-knob { transform: translateX(12px); }
 }
 
 /* === Multi-select check bubble on each shortcut === */
@@ -3044,8 +3051,9 @@ html, body, #app {
   margin-bottom: 0.35rem;
 }
 
-/* AI Shortcuts — flat list rows with icon + name + chevron.
-   Hairline dividers between items, subtle hover highlight. */
+/* AI Shortcuts — list rows on mobile, card grid on wider widths.
+   Mobile uses hairline dividers; desktop uses bordered cards in a
+   multi-column auto-fit grid so they fill the row gracefully. */
 
 .shortcuts-sidebar .sidebar-shortcut-list {
   gap: 0;
@@ -3068,7 +3076,24 @@ html, body, #app {
   color: #1e1e1e;
   text-decoration: none;
   cursor: pointer;
-  transition: background 0.12s, color 0.12s;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+@media (min-width: 641px) {
+  .shortcuts-sidebar .sidebar-shortcut-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.5rem;
+  }
+  .shortcuts-sidebar .sidebar-shortcut {
+    border: 1px solid var(--color-border);
+    border-radius: 7px;
+    background: var(--color-bg);
+    padding: 0.7rem 0.85rem;
+  }
+  .shortcuts-sidebar .sidebar-shortcut:hover {
+    border-color: #c8d2e0;
+    background: #f8f9fb;
+  }
 }
 @media (hover: hover) {
   .shortcuts-sidebar .sidebar-shortcut:hover {
@@ -3136,16 +3161,8 @@ html, body, #app {
   }
 }
 
-/* In the wider desktop split layout, use a 2-column grid so long
-   lists don't stretch too far vertically. */
-@media (min-width: 900px) {
-  .topic-layout.is-split .panel-shortcuts .shortcuts-sidebar .sidebar-shortcut-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0 1rem;
-  }
-
-}
+/* The auto-fit grid above already adapts column count to width.
+   Inside the split layout we don't need an extra override anymore. */
 
 
 .sidebar-shortcut {
@@ -6389,6 +6406,42 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   text-decoration-thickness: 2px;
 }
 
+
+/* === AI Shortcuts: "Multi-select is off" hint card ===================== */
+.shortcuts-multi-hint {
+  display: none; /* mobile hidden — see media query */
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  border: 1px dashed #c8d2e0;
+  border-radius: 8px;
+  background: #f7f9fc;
+  color: var(--color-text-muted);
+}
+.shortcuts-multi-hint-title {
+  font-family: var(--font-display);
+  font-size: 0.84rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  margin-bottom: 0.15rem;
+}
+.shortcuts-multi-hint-desc {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+.shortcuts-multi-hint-icon {
+  flex-shrink: 0;
+  color: #4a6a8a;
+  opacity: 0.7;
+}
+@media (min-width: 641px) {
+  .shortcuts-multi-hint { display: flex; }
+}
+/* Hide hint when multi-select is ON. */
+.shortcuts-sidebar[data-multi="1"] .shortcuts-multi-hint { display: none; }
 
 /* === Subnav redesign: icon + underlined title + responsive hamburger ==== */
 
