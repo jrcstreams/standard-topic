@@ -2877,21 +2877,8 @@ html, body, #app {
   display: none;
 }
 
-/* AI Shortcuts grid: 3 cols desktop → 2 cols tablet → 1 col mobile */
-@media (min-width: 900px) {
-  .shortcuts-sidebar .sidebar-shortcut-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 0 1rem;
-  }
-}
-@media (min-width: 641px) and (max-width: 899.98px) {
-  .shortcuts-sidebar .sidebar-shortcut-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0 0.75rem;
-  }
-}
+/* (Old grid rules removed — flex-wrap rule below now handles all
+   column counts via auto-fit-style flex-basis.) */
 
 @media (max-width: 899.98px) {
   .home-topics-bar { display: none; }
@@ -3088,12 +3075,14 @@ html, body, #app {
 @media (min-width: 641px) {
   .shortcuts-sidebar .sidebar-shortcut-list {
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
     gap: 0;
     margin-bottom: 0.4rem;
   }
   .shortcuts-sidebar .sidebar-shortcut {
     flex: 1 1 220px;
+    width: auto;
     border: none;
     border-radius: 0;
     background: var(--color-bg);
