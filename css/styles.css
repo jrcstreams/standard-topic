@@ -2455,10 +2455,11 @@ html, body, #app {
   margin-right: 0.25rem;
 }
 .pm-meta-link {
-  color: var(--color-primary);
+  color: #2563eb;
+  font-weight: var(--font-weight-regular, 400);
   text-decoration: underline;
 }
-.pm-meta-link:hover { color: var(--color-primary-dark, #0f1a2e); }
+.pm-meta-link:hover { color: #1d4ed8; }
 .pm-meta-text { color: var(--color-text-light); }
 
 /* Legacy class — no longer used */
@@ -3101,7 +3102,7 @@ html, body, #app {
 }
 .shortcuts-sidebar .sidebar-shortcut-name {
   flex: 1;
-  font-weight: var(--font-weight-medium);
+  font-weight: 400;
   letter-spacing: -0.005em;
   white-space: nowrap;
   overflow: hidden;
@@ -6386,4 +6387,140 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .sidebar-view-all-topics:hover {
   color: var(--color-primary);
   text-decoration-thickness: 2px;
+}
+
+
+/* === Subnav redesign: icon + underlined title + responsive hamburger ==== */
+
+/* Title group: hamburger (desktop only) + title-inner (icon + name + underline) */
+#sub-header.is-subnav .topic-banner-titlegroup,
+#sub-header.is-home-subnav .topic-banner-titlegroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex: 0 0 auto;
+}
+
+.subnav-hamburger {
+  width: 22px;
+  height: 22px;
+  padding: 3px 1px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  flex-shrink: 0;
+  opacity: 0.6;
+  transition: opacity 0.14s;
+}
+.subnav-hamburger:hover { opacity: 1; }
+.subnav-hamburger span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--color-primary);
+  border-radius: 1px;
+}
+
+/* The icon + title sit together as their own underlined group. */
+.topic-banner-titleinner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid #4a6a8a;
+  min-width: 0;
+}
+.topic-banner-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--color-primary-dark, #0f1a2e);
+}
+.topic-banner-icon svg { width: 100%; height: 100%; display: block; }
+
+/* Override the legacy large title size for the new layout. The title is
+   smaller and uses the darker primary-dark for a stronger contrast vs.
+   the lighter topic chips beside it. */
+#sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
+#sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
+  font-family: var(--font-family);
+  font-size: 1rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.01em;
+  color: var(--color-primary-dark, #0f1a2e);
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+/* Responsive hamburger swap:
+   - Subnav hamburger visible above 800px (desktop / wider tablet)
+   - Main-nav hamburger visible at ≤800px (existing behavior unchanged)
+   The existing rule at line ~2668 already shows .nav-hamburger at
+   max-width: 800px; we just hide the subnav one there. */
+@media (max-width: 800px) {
+  .subnav-hamburger { display: none; }
+}
+@media (min-width: 801px) {
+  .nav-hamburger { display: none !important; }
+}
+
+/* Topic chips: lighter weight + slightly muted blue so the page title
+   stays the dominant element. */
+#sub-header .subnav-topic-link {
+  color: #4a6a8a;
+  font-weight: var(--font-weight-medium);
+}
+#sub-header .subnav-topic-link:hover { color: var(--color-primary-dark, #0f1a2e); }
+
+/* === Main nav: vertical separator between brand and tagline ============ */
+.sticky-brand {
+  position: relative;
+}
+.sticky-brand::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -0.85rem;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.2);
+}
+@media (max-width: 640px) {
+  .sticky-brand::after { display: none; }
+  .sticky-tagline { margin-left: 0; }
+}
+.sticky-tagline {
+  margin-left: 0.85rem;
+}
+
+/* === Search bar / Prompt Builder: softer matching radii ================= */
+.sticky-search .search-bar { border-radius: 8px; }
+.sticky-cta { border-radius: 8px; }
+
+/* === Drawer: wider + multi-column featured topics on desktop ============ */
+@media (min-width: 720px) {
+  .navmenu-panel {
+    width: min(560px, 70vw);
+    max-width: 560px;
+  }
+  .navmenu-topics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.15rem 0.75rem;
+    padding: 0 1rem;
+  }
+  .navmenu-footer-links { padding: 0.85rem 1.25rem 1.25rem; gap: 0.5rem; }
+  .navmenu-prompt-row { padding: 0.85rem 1.25rem 0.4rem; }
+  .navmenu-link-prompt { padding: 0.6rem 1.05rem; font-size: 0.9rem; }
 }

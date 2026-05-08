@@ -1,6 +1,7 @@
 import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
 import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys } from './utils/data.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
+import { topicIconSVG } from './utils/topic-icons.js';
 import { renderFooter } from './components/footer.js';
 import { renderSearchBar, initSearchOverlay } from './components/search-modal.js';
 import { renderNewsFeed } from './components/newsfeed.js';
@@ -105,6 +106,25 @@ function renderLayout(route) {
   document.body.classList.add('sticky-always');
   siteHeader.classList.add('is-revealed');
 
+  // Build the hamburger trigger that lives inside the subnav on desktop
+  // (CSS hides it on mobile, where the main nav hamburger takes over).
+  const subnavHamburger = `
+    <button class="subnav-hamburger" id="subnav-hamburger" aria-label="Open menu" type="button">
+      <span></span><span></span><span></span>
+    </button>
+  `;
+
+  // Title group: hamburger + icon + name with a blue underline accent.
+  const titleGroup = (iconKey, title) => `
+    <div class="topic-banner-titlegroup">
+      ${subnavHamburger}
+      <div class="topic-banner-titleinner">
+        ${topicIconSVG(iconKey, 'topic-banner-icon')}
+        <h1 class="topic-banner-title">${escapeHTML(title)}</h1>
+      </div>
+    </div>
+  `;
+
   if (isHome) {
     document.body.classList.add('home-mode', 'has-subnav');
     subHeader.classList.add('is-subnav');
@@ -117,12 +137,9 @@ function renderLayout(route) {
     subHeader.innerHTML = `
       <div class="topic-banner">
         <div class="topic-banner-row">
-          <div class="topic-banner-titlegroup">
-            <h1 class="topic-banner-title">Home</h1>
-          </div>
+          ${titleGroup('home', 'Home')}
           <div class="subnav-topics-inline home-subnav-topics">
             <a href="#" class="subnav-action-link subnav-all-topics-link" id="subnav-all-topics">All Topics +</a>
-            <span class="subnav-topics-label">Featured:</span>
             ${topicsHTML}
           </div>
         </div>
@@ -131,32 +148,30 @@ function renderLayout(route) {
 
     subHeader.querySelector('#subnav-all-topics')?.addEventListener('click', (e) => {
       e.preventDefault();
-      // Open the full search modal so users can browse + search all topics
       const searchBar = document.querySelector('.search-bar');
       if (searchBar) searchBar.click();
     });
 
-    // Clear hero on desktop — no longer needed
     if (heroEl) heroEl.innerHTML = '';
 
+    bindSubnavHamburger();
     trimOverflowLinks();
     setupResponsiveNav();
     return;
   }
 
-  // Prompt generator: clean subnav with title only.
+  // Prompt generator: title-only subnav.
   if (route.type === 'prompt-generator') {
     document.body.classList.add('has-subnav');
     subHeader.classList.add('is-subnav');
     subHeader.innerHTML = `
       <div class="topic-banner">
         <div class="topic-banner-row">
-          <div class="topic-banner-titlegroup">
-            <h1 class="topic-banner-title">Build a Knowledge Prompt</h1>
-          </div>
+          ${titleGroup('rocket', 'Build a Knowledge Prompt')}
         </div>
       </div>
     `;
+    bindSubnavHamburger();
     return;
   }
 
@@ -169,9 +184,6 @@ function renderLayout(route) {
       const topic = getTopicBySlug(route.slug);
       if (!topic) return;
       const related = getRelatedTopics(topic);
-      // Render every related topic; trimOverflowLinks() measures the row
-      // and hides only those that don't fit the available width. "More +"
-      // appears only when something is actually hidden.
       const relatedLinksHTML = related.map(t =>
         `<a href="#/topic/${t.slug}" class="subnav-topic-link">${escapeHTML(t.name)}</a>`
       ).join('') + `<a href="#" class="subnav-more-link" id="subnav-more-related">More +</a>`;
@@ -179,13 +191,10 @@ function renderLayout(route) {
       subHeader.innerHTML = `
         <div class="topic-banner">
           <div class="topic-banner-row">
-            <div class="topic-banner-titlegroup">
-              <h1 class="topic-banner-title">${escapeHTML(topic.name)}</h1>
-            </div>
+            ${titleGroup(topic.icon || 'globe', topic.name)}
             ${related.length > 0 ? `<a href="#" class="subnav-related-btn" id="subnav-related-btn">Related Topics +</a>` : ''}
             ${related.length > 0 ? `
               <div class="subnav-topics-inline">
-                <span class="subnav-topics-label">Related:</span>
                 ${relatedLinksHTML}
               </div>
             ` : ''}
@@ -202,28 +211,62 @@ function renderLayout(route) {
       subHeader.querySelector('#subnav-more-related')?.addEventListener('click', openRelatedModal);
       subHeader.querySelector('#subnav-related-btn')?.addEventListener('click', openRelatedModal);
 
+      bindSubnavHamburger();
       trimOverflowLinks();
       setupResponsiveNav();
     } else {
-      // Custom search: title-only subnav.
-      renderSubNav(subHeader, { title: route.term });
+      renderSubNav(subHeader, { title: route.term, iconKey: 'mag-glass' });
+      bindSubnavHamburger();
       setupResponsiveNav();
     }
   }
-  // Pages without subnav topics still need responsive nav
+
+  if (route.type === 'about' || route.type === 'terms') {
+    document.body.classList.add('has-subnav');
+    subHeader.classList.add('is-subnav');
+    const title = route.type === 'about' ? 'About' : 'Terms & Conditions';
+    subHeader.innerHTML = `
+      <div class="topic-banner">
+        <div class="topic-banner-row">
+          ${titleGroup('book', title)}
+        </div>
+      </div>
+    `;
+    bindSubnavHamburger();
+  }
+
   if (route.type === 'prompt-generator' || route.type === 'about' || route.type === 'terms') {
     setupResponsiveNav();
   }
 }
 
+// Wire up the subnav hamburger to open the same drawer as the main nav one.
+function bindSubnavHamburger() {
+  const btn = document.getElementById('subnav-hamburger');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const panel = document.getElementById('navmenu-panel');
+    const overlay = document.getElementById('navmenu-overlay');
+    if (!panel || !overlay) return;
+    panel.classList.add('is-open');
+    overlay.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  });
+}
+
 // Unified subnav renderer for custom search pages
-function renderSubNav(container, { title }) {
+function renderSubNav(container, { title, iconKey }) {
   container.innerHTML = `
     <div class="topic-banner">
       <div class="topic-banner-row">
         <div class="topic-banner-titlegroup">
-          <svg class="subnav-search-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <h1 class="topic-banner-title">${escapeHTML(title)}</h1>
+          <button class="subnav-hamburger" id="subnav-hamburger" aria-label="Open menu" type="button">
+            <span></span><span></span><span></span>
+          </button>
+          <div class="topic-banner-titleinner">
+            ${iconKey ? topicIconSVG(iconKey, 'topic-banner-icon') : ''}
+            <h1 class="topic-banner-title">${escapeHTML(title)}</h1>
+          </div>
         </div>
       </div>
     </div>
