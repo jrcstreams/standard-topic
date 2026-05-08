@@ -3078,33 +3078,35 @@ html, body, #app {
   cursor: pointer;
   transition: background 0.12s, color 0.12s, border-color 0.12s;
 }
-/* Desktop / wider widths: interconnected rectangle grid. The container
-   has the outer rounded border; each cell draws only its right + bottom
-   borders so adjacent cells share grid lines instead of doubling them.
-   overflow:hidden clips any cell border that bleeds past the rounded
-   container edge. */
+/* Desktop / wider widths: interconnected rectangles via flex-wrap.
+   - flex: 1 1 220px lets each cell shrink to ~220px min and grow to
+     fill its row, so the last row never has empty space.
+   - box-shadow draws a 1px outline outside each cell's box. Adjacent
+     cells' shadows occupy the same pixels and overlap into a single
+     1px line — no doubled borders, no outer container frame, no
+     "placeholder" lines extending into empty space. */
 @media (min-width: 641px) {
   .shortcuts-sidebar .sidebar-shortcut-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 0;
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    overflow: hidden;
-    background: var(--color-bg);
+    margin-bottom: 0.4rem;
   }
   .shortcuts-sidebar .sidebar-shortcut {
+    flex: 1 1 220px;
     border: none;
-    border-right: 1px solid var(--color-border);
-    border-bottom: 1px solid var(--color-border);
     border-radius: 0;
-    background: transparent;
+    background: var(--color-bg);
     padding: 0.75rem 0.9rem;
     margin: 0;
-    transition: background 0.12s, color 0.12s;
+    box-shadow: 0 0 0 1px var(--color-border);
+    transition: background 0.12s, color 0.12s, box-shadow 0.12s;
+    position: relative;
   }
   .shortcuts-sidebar .sidebar-shortcut:hover {
     background: #f6f8fb;
+    box-shadow: 0 0 0 1px #c8d2e0;
+    z-index: 1;
   }
 }
 @media (hover: hover) {
