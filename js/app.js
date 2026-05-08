@@ -139,8 +139,8 @@ function renderLayout(route) {
         <div class="topic-banner-row">
           ${titleGroup('home', 'Home')}
           <div class="subnav-topics-inline home-subnav-topics">
-            <a href="#" class="subnav-action-link subnav-all-topics-link" id="subnav-all-topics">All Topics +</a>
             ${topicsHTML}
+            <a href="#" class="subnav-action-link subnav-all-topics-link" id="subnav-all-topics">All Topics +</a>
           </div>
         </div>
       </div>
@@ -304,6 +304,9 @@ function trimOverflowLinks() {
   const doTrim = () => {
     const links = container.querySelectorAll('.subnav-topic-link');
     const moreLink = container.querySelector('.subnav-more-link');
+    // The home subnav has an "All Topics +" action link pinned to the
+    // right (margin-left:auto). Reserve its width like we do for More+.
+    const actionLink = container.querySelector('.subnav-action-link');
 
     // Reset visibility before measuring.
     container.style.display = '';
@@ -311,9 +314,11 @@ function trimOverflowLinks() {
     if (moreLink) moreLink.style.display = '';
 
     const containerRight = container.getBoundingClientRect().right;
-    // First measure with "More +" reserved so we can drop links to make room.
+    // First measure with "More +" / "All Topics +" reserved so we can
+    // drop links to make room.
     const moreWidth = moreLink ? moreLink.offsetWidth + 20 : 0;
-    let cutoff = containerRight - moreWidth;
+    const actionWidth = actionLink ? actionLink.offsetWidth + 20 : 0;
+    let cutoff = containerRight - moreWidth - actionWidth;
 
     let visibleCount = 0;
     let hiddenCount = 0;

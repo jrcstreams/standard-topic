@@ -2681,23 +2681,20 @@ html, body, #app {
   margin: -4rem 0;
 }
 
-/* Homepage: drop "All Topics +" first when space gets tight — keep separator */
-@media (max-width: 900px) {
-  .subnav-all-topics-link { display: none; }
-}
 /* === Responsive nav breakpoints (CSS-only, no JS measurement) === */
 
 /* 1200px: shrink featured topics slightly */
 @media (max-width: 1200px) {
   .subnav-topic-link { font-size: 0.8rem; }
-  .subnav-topics-label { font-size: 0.8rem; }
 }
 
-/* 1000px: drop All Topics +, hide its separator */
-@media (max-width: 1000px) {
-  .subnav-all-topics-link { display: none !important; }
-  .home-subnav-topics .subnav-topics-label { border-left: none; margin-left: 0; padding-left: 0.3rem; }
-  .home-subnav-topics .subnav-topics-label::before { display: none; }
+/* "All Topics +" stays visible on the home subnav at every desktop
+   width — it lives at the end of the row now (mirrors topic page's
+   "More +"). The trim function never hides .subnav-action-link, only
+   .subnav-topic-link items. */
+.home-subnav-topics .subnav-action-link {
+  margin-left: auto; /* push it to the row's right edge */
+  flex-shrink: 0;
 }
 
 /* 800px: show hamburger, hide featured topics from subnav, hide CTA */
@@ -2995,16 +2992,16 @@ html, body, #app {
 .section-topic-pill {
   display: inline-flex;
   align-items: center;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  /* Sits between the underline blue (#4a7cc9) and the main-nav navy
-     (#0f1a2e) — darker than the previous #4a6a8a so the label feels
-     anchored to the title rather than fading out. */
+  /* Sits between the AI Shortcuts accent blue (#4a7cc9) and the
+     main-nav navy (#0f1a2e) so the label feels anchored to the title
+     rather than fading out. */
   color: #2c4467;
   background: #e6ecf5;
   border: none;
   border-radius: 999px;
-  padding: 0.24rem 0.7rem;
+  padding: 0.28rem 0.78rem;
   letter-spacing: 0.02em;
   margin-left: 0;
 }
@@ -3027,14 +3024,14 @@ html, body, #app {
 
 .sidebar-card-title {
   font-family: var(--font-family);
-  font-size: 1.2rem;
+  font-size: 1.35rem;
   line-height: 1.2;
   font-weight: 600;
   color: #1e2d44;
   flex-basis: 100%;
   letter-spacing: -0.015em;
   margin: 0 0 0.15rem 0;
-  padding-left: 0.85rem;
+  padding-left: 0.95rem;
   border-left: none;
   position: relative;
   display: inline-flex;
@@ -6496,14 +6493,12 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   border-radius: 2px;
 }
 
-/* The icon + title sit together as their own underlined group. */
+/* The icon + title sit together as a tight group. */
 .topic-banner-titleinner {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.25rem 0 0.55rem;
-  /* Underline matches the AI Shortcuts section accent pill color. */
-  border-bottom: 2px solid #4a7cc9;
+  padding: 0;
   min-width: 0;
 }
 .topic-banner-icon {
