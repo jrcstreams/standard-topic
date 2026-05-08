@@ -683,11 +683,11 @@ body.hide-cta .sticky-cta { display: none !important; }
 #sub-header.is-subnav .topic-banner {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 1.85rem 2rem 1.55rem;
+  padding: 1.25rem 2rem 1.05rem;
   border-bottom: none;
   display: flex;
   align-items: center;
-  min-height: 84px;
+  min-height: 64px;
   overflow: hidden;
 }
 
@@ -2618,22 +2618,33 @@ html, body, #app {
   border-left: none;
   position: relative;
 }
-.subnav-topics-inline::before {
+.subnav-topics-inline::before,
+.subnav-topics-inline .subnav-action-link + .subnav-topic-link::before {
   content: '';
   position: absolute;
-  left: 0;
   top: 50%;
   transform: translateY(-50%);
   width: 1px;
   height: 1.5rem;
-  background: var(--color-border);
+  background: #b9c2d0;
   transition: background 0.12s;
   pointer-events: none;
 }
-/* Hide both row separators when the action-link is being hovered so
-   the hover rectangle reads as a single clean fill that meets the
+.subnav-topics-inline::before { left: 0; }
+/* Second separator sits between "All Topics +" and the first topic
+   chip. The chip itself is positioned (relative) so the absolute
+   ::before anchors to its left edge. */
+.subnav-topics-inline .subnav-action-link + .subnav-topic-link {
+  position: relative;
+}
+.subnav-topics-inline .subnav-action-link + .subnav-topic-link::before {
+  left: 0;
+}
+/* Hide row separators when the action-link is being hovered so the
+   hover rectangle reads as a single clean fill that meets the
    surrounding separators flush. */
 .subnav-topics-inline:has(.subnav-action-link:hover)::before,
+.subnav-topics-inline:has(.subnav-action-link:hover) .subnav-action-link + .subnav-topic-link::before,
 .subnav-topics-inline:has(.subnav-action-link:hover) .subnav-topics-label::before {
   background: transparent;
 }
@@ -3105,18 +3116,18 @@ html, body, #app {
     border: none;
     border-radius: 0;
     background: var(--color-bg);
-    padding: 0.75rem 0.9rem;
+    padding: 0.95rem 0.95rem;
     margin: 0;
-    /* Each cell paints a 1px outline outside its box. Outlines from
-       adjacent cells occupy the same pixels and overlap into a single
-       1px line, so every filled cell appears bordered on all four
-       sides without doubling. Empty cells (partial last rows) have
-       no outline — empty space stays empty. */
-    outline: 1px solid var(--color-border);
-    outline-offset: -1px;
+    /* box-shadow paints a 1px ring 1px outside the cell box. Adjacent
+       cells' shadows occupy the same pixels and overlap into a single
+       shared 1px line — every filled cell shows 4-sided borders, no
+       doubling. Empty cells (partial last rows) have no shadow,
+       leaving empty space truly empty. Hover does NOT change the
+       shadow color, so shared edges between hovered + non-hovered
+       neighbors stay one consistent line. */
+    box-shadow: 0 0 0 1px var(--color-border);
     transition: background 0.12s, color 0.12s;
   }
-  /* Hover changes only the fill — borders stay in default color. */
   .shortcuts-sidebar .sidebar-shortcut:hover {
     background: #f6f8fb;
   }
@@ -6450,7 +6461,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 #sub-header.is-home-subnav .topic-banner-titlegroup {
   display: inline-flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 1.05rem;
   flex: 0 0 auto;
 }
 
