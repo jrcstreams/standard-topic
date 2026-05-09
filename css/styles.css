@@ -3054,13 +3054,16 @@ html, body, #app {
 .quick-links-label {
   font-family: var(--font-family);
   font-size: 0.74rem;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-semibold);
   color: #4a5568;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   flex-shrink: 0;
   padding-right: 0.85rem;
   border-right: 1px solid #d5d9e1;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
 }
 /* Scroll wrapper hosts the edge-fade indicators. The actual scrolling
    happens on the inner .quick-links-list — fades are absolutely
@@ -3116,7 +3119,7 @@ html, body, #app {
   border-radius: 6px;
   font-family: var(--font-family);
   font-size: 0.83rem;
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   color: #6b7280;
   text-decoration: none;
   letter-spacing: 0;
