@@ -285,7 +285,6 @@ body.sticky-always.has-subnav #content {
 .sticky-brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
   color: white;
   text-decoration: none;
   flex-shrink: 0;
@@ -293,12 +292,6 @@ body.sticky-always.has-subnav #content {
 
 .sticky-brand:hover {
   text-decoration: none;
-}
-
-.sticky-logo-img {
-  width: 36px;
-  height: 36px;
-  display: block;
 }
 
 .sticky-title {
@@ -312,14 +305,16 @@ body.sticky-always.has-subnav #content {
 
 .sticky-tagline {
   font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.32);
+  color: rgba(255, 255, 255, 0.6);
   font-weight: var(--font-weight-medium);
   white-space: nowrap;
   flex: 1;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-top: 0.15rem;
+  line-height: 1.4;
+  display: inline-flex;
+  align-items: center;
 }
 
 /* Search + CTA always right-aligned as a group */
@@ -332,17 +327,17 @@ body.sticky-always.has-subnav #content {
   margin-left: auto;
 }
 
-/* Search bar — pill-shaped, with a subtle darker-navy fill so it's
-   visibly distinct from the surrounding header background. */
+/* Search bar — pill-shaped, with a soft white-tint fill so it lifts
+   visibly off the dark navy header instead of receding into it. */
 .sticky-search { flex: 1 1 280px; min-width: 100px; max-width: 320px; }
 .sticky-search .search-bar {
   height: 38px;
   padding: 0 1rem;
   font-size: 0.85rem;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(0, 0, 0, 0.32);
-  color: rgba(255, 255, 255, 0.62);
-  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.78);
+  border-radius: 8px;
   font-weight: var(--font-weight-regular);
   gap: 0.55rem;
   box-sizing: border-box;
@@ -352,18 +347,18 @@ body.sticky-always.has-subnav #content {
   transition: background 0.14s, border-color 0.14s, color 0.14s;
 }
 .sticky-search .search-bar-icon {
-  color: rgba(255, 255, 255, 0.65) !important;
+  color: rgba(255, 255, 255, 0.82) !important;
 }
 
 .sticky-search .search-bar:hover,
 .sticky-search .search-bar:focus-visible {
-  border-color: rgba(255, 255, 255, 0.22);
-  background: rgba(0, 0, 0, 0.42);
-  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.95);
 }
 .sticky-search .search-bar:hover .search-bar-icon,
 .sticky-search .search-bar:focus-visible .search-bar-icon {
-  color: rgba(255, 255, 255, 0.9) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
 }
 
 /* Prompt Builder CTA — quieter white pill: smaller font, semibold
@@ -374,7 +369,7 @@ body.sticky-always.has-subnav #content {
   background: rgba(255, 255, 255, 0.94);
   color: var(--color-primary-dark, #0f1a2e);
   border: 1px solid rgba(255, 255, 255, 0.94);
-  border-radius: 999px;
+  border-radius: 8px;
   font-size: 0.8rem;
   font-weight: var(--font-weight-semibold);
   letter-spacing: -0.005em;
@@ -402,9 +397,12 @@ body.sticky-always.has-subnav #content {
   opacity: 0.85;
   flex-shrink: 0;
 }
-/* === Hamburger Menu === */
+/* === Hamburger Menu ====================================================
+   The hamburger lives permanently in the main nav, immediately to the
+   left of the brand title. There is no subnav hamburger and no site
+   logo image — the menu trigger is the only "pre-title" element. */
 .nav-hamburger {
-  display: none; /* shown via CSS media query */
+  display: flex;
   width: 22px;
   height: 22px;
   padding: 3px 1px;
@@ -426,9 +424,6 @@ body.sticky-always.has-subnav #content {
   background: white;
   border-radius: 1px;
 }
-/* JS classes kept for non-home pages */
-body.show-hamburger .nav-hamburger { display: flex; }
-body.show-hamburger .sticky-logo-img { display: none; }
 body.hide-cta .sticky-cta { display: none !important; }
 
 /* Slide-out nav menu */
@@ -815,11 +810,6 @@ body.hide-cta .sticky-cta { display: none !important; }
     gap: 0.45rem;
   }
 
-  .sticky-logo-img {
-    width: 30px;
-    height: 30px;
-  }
-
   .sticky-title {
     font-size: 1.25rem;
   }
@@ -1156,9 +1146,19 @@ body.hide-cta .sticky-cta { display: none !important; }
 }
 
 
-/* Hide tagline below 1200px — prevents truncated partial text */
-@media (max-width: 1200px) {
+/* Drop the tagline at a wider breakpoint so the search bar isn't
+   forced to compete with it for horizontal space. Once the tagline
+   goes, also lift the search bar's 320px max-width cap (down to the
+   mobile breakpoint, where 220px takes over) so the search bar
+   stretches into the freed-up area instead of staying pinned narrow.
+   The brand separator hides alongside the tagline so a lone vertical
+   bar doesn't dangle. */
+@media (max-width: 1100px) {
   .sticky-tagline { display: none !important; }
+  .sticky-brand::after { display: none !important; }
+}
+@media (max-width: 1100px) and (min-width: 641px) {
+  .sticky-search { max-width: 560px; }
 }
 
 /* Mobile: hero-C reverts to centered stacked layout */
@@ -1302,7 +1302,7 @@ body.hide-cta .sticky-cta { display: none !important; }
 
 .newsfeed-card-title {
   font-family: var(--font-family);
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   line-height: 1.2;
   font-weight: 600;
   color: #1e2d44;
@@ -1312,6 +1312,9 @@ body.hide-cta .sticky-cta { display: none !important; }
   padding-left: 0.95rem;
   border-left: none;
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
 }
 .newsfeed-card-title::before {
   content: '';
@@ -1490,7 +1493,8 @@ body.hide-cta .sticky-cta { display: none !important; }
 @media (max-width: 540px) {
   .shortcuts-multi-submit { padding: 0.5rem 0.85rem; font-size: 0.78rem; }
   .shortcuts-multi-submit-count { min-width: 18px; height: 18px; font-size: 0.7rem; padding: 0 0.35rem; }
-  .shortcuts-multi-clear { padding: 0.5rem 0.8rem; font-size: 0.78rem; }
+  .shortcuts-multi-clear,
+  .shortcuts-multi-select-all { padding: 0.5rem 0.8rem; font-size: 0.78rem; }
 }
 
 /* Smaller phones — swap to short labels ("Submit"/"Clear") so both
@@ -1499,13 +1503,15 @@ body.hide-cta .sticky-cta { display: none !important; }
   .multi-btn-label-full { display: none; }
   .multi-btn-label-short { display: inline; }
   .shortcuts-multi-submit { padding: 0.5rem 0.9rem; font-size: 0.8rem; }
-  .shortcuts-multi-clear { padding: 0.5rem 0.85rem; font-size: 0.8rem; }
+  .shortcuts-multi-clear,
+  .shortcuts-multi-select-all { padding: 0.5rem 0.85rem; font-size: 0.8rem; }
 }
 
 /* Very small phones — even tighter. */
 @media (max-width: 360px) {
   .shortcuts-multi-submit { padding: 0.45rem 0.75rem; font-size: 0.78rem; }
-  .shortcuts-multi-clear { padding: 0.45rem 0.7rem; font-size: 0.78rem; }
+  .shortcuts-multi-clear,
+  .shortcuts-multi-select-all { padding: 0.45rem 0.7rem; font-size: 0.78rem; }
   .shortcuts-multi-submit-wrap { gap: 0.4rem; }
 }
 /* Selector wins over .shortcuts-multi-submit-wrap { display: flex }
@@ -1550,9 +1556,10 @@ body.hide-cta .sticky-cta { display: none !important; }
   font-weight: var(--font-weight-bold);
 }
 
-/* Secondary "Clear Selected Prompts" button — outlined, sits next
-   to Submit. Disabled (greyed) when nothing is selected. */
-.shortcuts-multi-clear {
+/* Secondary "Clear Selected Prompts" / "Select All" buttons — outlined,
+   sit next to Submit. Disabled (greyed) at appropriate times. */
+.shortcuts-multi-clear,
+.shortcuts-multi-select-all {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1573,7 +1580,13 @@ body.hide-cta .sticky-cta { display: none !important; }
   color: #dc2626;
   background: rgba(220, 38, 38, 0.06);
 }
-.shortcuts-multi-clear:disabled {
+.shortcuts-multi-select-all:hover:not(:disabled) {
+  border-color: var(--color-primary, #1e40af);
+  color: var(--color-primary, #1e40af);
+  background: rgba(30, 64, 175, 0.06);
+}
+.shortcuts-multi-clear:disabled,
+.shortcuts-multi-select-all:disabled {
   opacity: 0.4;
   cursor: not-allowed;
   border-color: var(--color-border-light);
@@ -2705,12 +2718,23 @@ html, body, #app {
   padding-left: 1.5rem;
 }
 
-/* 800px: show hamburger, hide featured topics from subnav, hide CTA */
+/* On mobile the topic-banner-row wraps: title group sits on row 1, the
+   topics-inline (chips + action link) drops to row 2 taking full width.
+   We keep the leading vertical separator (it always reads as the
+   divider between page title and topics, no matter which row each
+   ends up on) and just relax the first-chip left-padding bump so the
+   chip row aligns flush-left with the title group above when it does
+   wrap. */
+@media (max-width: 899.98px) {
+  .subnav-topics-inline > .subnav-topic-link:first-child { padding-left: 1rem; }
+}
+
+/* 800px: hide CTA. Featured topics in the home subnav are trimmed by
+   JS (trimOverflowLinks) — chips drop as space tightens while "All
+   Topics +" stays pinned, mirroring the topic-page behavior. The
+   hamburger is permanently visible in the main nav at all widths. */
 @media (max-width: 800px) {
-  .nav-hamburger { display: flex !important; }
-  .sticky-logo-img { display: none !important; }
   .sticky-cta { display: none !important; }
-  .home-subnav-topics { display: none !important; }
   .sticky-actions { margin-left: auto; }
   /* Align nav padding with content padding */
   .sticky-hero-inner { padding: 0 1rem; }
@@ -2776,7 +2800,9 @@ html, body, #app {
   }
 }
 
-/* "More +" — always visible at end, never clipped */
+/* "More +" — always visible at end, never clipped. Horizontal padding
+   matches the topic chips (1rem) so the gap between the last visible
+   chip and "More +" reads consistently with chip-to-chip spacing. */
 .subnav-more-link {
   font-family: var(--font-display);
   font-size: 0.85rem;
@@ -2787,7 +2813,7 @@ html, body, #app {
   flex-shrink: 0;
   letter-spacing: 0.02em;
   transition: color 0.12s, background 0.12s;
-  padding: 4rem 0.5rem;
+  padding: 4rem 1rem;
   margin: -4rem 0;
   display: inline-flex;
   align-items: center;
@@ -2924,7 +2950,7 @@ html, body, #app {
 .topic-layout {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.25rem;
+  gap: 2rem;
 }
 
 @media (min-width: 900px) {
@@ -2934,7 +2960,7 @@ html, body, #app {
     grid-template-areas:
       "shortcuts related"
       "newsfeed newsfeed";
-    gap: 1.25rem;
+    gap: 2rem 1.25rem;
     align-items: stretch;
   }
   .topic-layout.is-home-split .panel-shortcuts,
@@ -2977,6 +3003,202 @@ html, body, #app {
   margin-bottom: 0;
 }
 
+/* Content Shortcuts row — a thin sub-row of the subnav, sitting just
+   below the title/chips row and separated by a hairline. The label
+   "Content Shortcuts" anchors a horizontal list of brand-glyph links
+   (Google G, Reddit alien, YouTube play, X). Each glyph wears its
+   brand colour at rest; hover lifts the whole link to a soft brand-
+   tinted pill so the strip feels deliberate, not flat.
+
+   Mobile: the list horizontal-scrolls inside its own track to keep
+   all four reachable without wrapping (subnav rows stay one line). */
+.subnav-content-shortcuts {
+  border-top: 1px solid #e2e5ea;
+  background: #f9fafb;
+  /* Collapse anim: max-height drives the height transition (large
+     enough to never clip natural content), opacity dims the row, and
+     the border softens to nothing so the boundary doesn't visibly
+     shrink alongside the row. ResizeObserver keeps --subnav-height
+     in lockstep so body padding-top tracks the collapse smoothly. */
+  overflow: hidden;
+  max-height: 120px;
+  opacity: 1;
+  transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.18s ease,
+              border-top-color 0.22s ease;
+  will-change: max-height;
+}
+.subnav-content-shortcuts.is-collapsed {
+  max-height: 0;
+  opacity: 0;
+  border-top-color: transparent;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .subnav-content-shortcuts {
+    transition: none;
+  }
+}
+.subnav-content-shortcuts-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0.45rem 2rem;
+  display: flex;
+  align-items: center;
+}
+.quick-links {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0;
+  width: 100%;
+  min-width: 0;
+}
+.quick-links-label {
+  font-family: var(--font-family);
+  font-size: 0.74rem;
+  font-weight: var(--font-weight-bold);
+  color: #4a5568;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  padding-right: 0.85rem;
+  border-right: 1px solid #d5d9e1;
+}
+/* Scroll wrapper hosts the edge-fade indicators. The actual scrolling
+   happens on the inner .quick-links-list — fades are absolutely
+   positioned on the wrapper so they stay parked at the edges instead
+   of scrolling away with the content. */
+.quick-links-scrollwrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+.quick-links-scrollwrap::before,
+.quick-links-scrollwrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 28px;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+.quick-links-scrollwrap::before {
+  left: 0;
+  background: linear-gradient(to right, #f9fafb 35%, rgba(249, 250, 251, 0));
+}
+.quick-links-scrollwrap::after {
+  right: 0;
+  background: linear-gradient(to left, #f9fafb 35%, rgba(249, 250, 251, 0));
+}
+.quick-links-scrollwrap.has-overflow-left::before { opacity: 1; }
+.quick-links-scrollwrap.has-overflow-right::after { opacity: 1; }
+
+.quick-links-list {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.quick-links-list::-webkit-scrollbar { display: none; }
+
+.quick-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.28rem 0.65rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-family: var(--font-family);
+  font-size: 0.83rem;
+  font-weight: var(--font-weight-medium);
+  color: #6b7280;
+  text-decoration: none;
+  letter-spacing: 0;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color 0.14s, background 0.14s, border-color 0.14s, transform 0.08s;
+}
+.quick-link-glyph {
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--quick-link-color, var(--color-text-muted));
+  flex-shrink: 0;
+  transition: transform 0.18s ease;
+}
+.quick-link-glyph svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.quick-link[data-brand="google"]   { --quick-link-color: #4285F4; }
+.quick-link[data-brand="reddit"]   { --quick-link-color: #FF4500; }
+.quick-link[data-brand="youtube"]  { --quick-link-color: #FF0033; }
+.quick-link[data-brand="x"]        { --quick-link-color: #0a0a0a; }
+.quick-link:hover {
+  color: var(--quick-link-color, var(--color-primary));
+  background: color-mix(in srgb, var(--quick-link-color) 8%, transparent);
+  border-color: color-mix(in srgb, var(--quick-link-color) 18%, transparent);
+  text-decoration: none;
+}
+.quick-link:hover .quick-link-glyph {
+  transform: scale(1.12);
+}
+.quick-link:active {
+  transform: translateY(1px);
+}
+.quick-link-name {
+  line-height: 1;
+}
+
+@media (max-width: 800px) {
+  .subnav-content-shortcuts-inner { padding: 0.4rem 1rem; }
+  .quick-links { gap: 0.7rem; }
+  .quick-links-label { padding-right: 0.7rem; }
+  .quick-links-scrollwrap::before,
+  .quick-links-scrollwrap::after { width: 22px; }
+}
+@media (max-width: 640px) {
+  .subnav-content-shortcuts-inner { padding: 0.35rem 0.9rem; }
+  .quick-links { gap: 0.55rem; }
+  .quick-links-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    padding-right: 0.55rem;
+  }
+  .quick-link {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.76rem;
+    gap: 0.35rem;
+  }
+  .quick-link-glyph { width: 12px; height: 12px; }
+  .quick-links-list { gap: 0.25rem; }
+}
+@media (max-width: 480px) {
+  .subnav-content-shortcuts-inner { padding: 0.3rem 0.85rem; }
+  .quick-link {
+    padding: 0.18rem 0.45rem;
+    font-size: 0.73rem;
+  }
+  .quick-link-glyph { width: 11px; height: 11px; }
+}
+@media (max-width: 420px) {
+  .quick-links-label { display: none; }
+  .quick-links-scrollwrap::before,
+  .quick-links-scrollwrap::after { width: 18px; }
+}
+
 .sidebar-card {
   background: transparent;
   border: none;
@@ -2990,28 +3212,37 @@ html, body, #app {
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0.45rem 0.5rem;
-  margin-bottom: 0;
+  margin-bottom: 1.15rem;
   padding-bottom: 0.85rem;
   border-bottom: 1px solid #e2e8f0;
 }
+/* On mobile the shortcuts render as full-width list rows (each row has
+   its own border-bottom). Drop the header's margin-bottom so the
+   header's border-bottom abuts the first row — the same line then
+   reads as the top border of the first shortcut and the list flows in
+   smoothly without a visible gap. */
+@media (max-width: 640px) {
+  .shortcuts-sidebar .sidebar-card-header { margin-bottom: 0; }
+}
 
-/* Topic pill next to section titles (topic pages only) */
-/* --- CONCEPT B: Soft filled pill --- */
+/* Topic pill next to section titles (topic pages only) — soft grey
+   filled pill with a darker text color for subtle contrast. The pill
+   sits inside an inline-flex title with align-items: center, so its
+   box centers vertically against the title text. line-height: 1 keeps
+   the pill text glyph in the same vertical position as the box. */
 .section-topic-pill {
   display: inline-flex;
   align-items: center;
+  line-height: 1;
   font-size: 0.75rem;
   font-weight: 600;
-  /* Sits between the AI Shortcuts accent blue (#4a7cc9) and the
-     main-nav navy (#0f1a2e) so the label feels anchored to the title
-     rather than fading out. */
   color: #2c4467;
   background: #e6ecf5;
   border: none;
   border-radius: 999px;
-  padding: 0.28rem 0.78rem;
+  padding: 0.32rem 0.78rem;
   letter-spacing: 0.02em;
-  margin-left: 0;
+  margin-left: 0.15rem;
 }
 
 .sidebar-card-desc {
@@ -3032,7 +3263,7 @@ html, body, #app {
 
 .sidebar-card-title {
   font-family: var(--font-family);
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   line-height: 1.2;
   font-weight: 600;
   color: #1e2d44;
@@ -3044,7 +3275,7 @@ html, body, #app {
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.55rem;
 }
 .sidebar-card-title::before {
   content: '';
@@ -3121,23 +3352,23 @@ html, body, #app {
     grid-template-columns: repeat(2, 1fr);
     gap: 0;
     margin-bottom: 0.4rem;
+    /* Container draws the top + left outer edges. Cells draw their own
+       right + bottom. Each line is rendered exactly once — no doubling
+       at intersections, no T-junction artifacts. */
+    border-top: 1px solid var(--color-border);
+    border-left: 1px solid var(--color-border);
   }
   .shortcuts-sidebar .sidebar-shortcut {
     width: auto;
     min-width: 0;
     border: none;
+    border-right: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
     border-radius: 0;
     background: var(--color-bg);
     padding: 0.95rem 0.95rem;
     margin: 0;
-    /* box-shadow paints a 1px ring 1px outside the cell box. Adjacent
-       cells' shadows occupy the same pixels and overlap into a single
-       shared 1px line — every filled cell shows 4-sided borders, no
-       doubling. Empty cells (partial last rows) have no shadow,
-       leaving empty space truly empty. Hover does NOT change the
-       shadow color, so shared edges between hovered + non-hovered
-       neighbors stay one consistent line. */
-    box-shadow: 0 0 0 1px var(--color-border);
+    box-shadow: none;
     transition: background 0.12s, color 0.12s;
   }
   .shortcuts-sidebar .sidebar-shortcut:hover {
@@ -6466,39 +6697,15 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 }
 
 
-/* === Subnav redesign: icon + underlined title + responsive hamburger ==== */
+/* === Subnav redesign: icon + underlined title ========================= */
 
-/* Title group: hamburger (desktop only) + title-inner (icon + name) */
+/* Title group: title-inner (icon + name). The hamburger lives in the
+   main nav now, so the title group sits hard-left in the subnav row. */
 #sub-header.is-subnav .topic-banner-titlegroup,
 #sub-header.is-home-subnav .topic-banner-titlegroup {
   display: inline-flex;
   align-items: center;
-  gap: 2rem;
   flex: 0 0 auto;
-}
-
-.subnav-hamburger {
-  width: 26px;
-  height: 22px;
-  padding: 0;
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 5px;
-  flex-shrink: 0;
-  opacity: 0.85;
-  transition: opacity 0.14s;
-}
-.subnav-hamburger:hover { opacity: 1; }
-.subnav-hamburger span {
-  display: block;
-  width: 100%;
-  height: 2.5px;
-  background: var(--color-primary-dark, #0f1a2e);
-  border-radius: 2px;
 }
 
 /* The icon + title sit together as a tight group. */
@@ -6513,8 +6720,8 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 27px;
+  height: 27px;
   flex-shrink: 0;
   color: var(--color-primary-dark, #0f1a2e);
 }
@@ -6523,7 +6730,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
 #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: 1.32rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--color-primary-dark, #0f1a2e);
@@ -6534,23 +6741,11 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   margin: 0;
 }
 
-/* Responsive hamburger swap:
-   - Subnav hamburger visible above 800px (desktop / wider tablet)
-   - Main-nav hamburger visible at ≤800px (existing behavior unchanged)
-   The existing rule at line ~2668 already shows .nav-hamburger at
-   max-width: 800px; we just hide the subnav one there. */
-@media (max-width: 800px) {
-  .subnav-hamburger { display: none; }
-}
-@media (min-width: 801px) {
-  .nav-hamburger { display: none !important; }
-}
-
-/* Topic chips: lighter weight + slightly muted blue so the page title
-   stays the dominant element. */
+/* Topic chips: slightly muted blue so the page title stays the
+   dominant element, semibold weight for a confident chip presence. */
 #sub-header .subnav-topic-link {
   color: #4a6a8a;
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
 }
 #sub-header .subnav-topic-link:hover { color: var(--color-primary-dark, #0f1a2e); }
 
@@ -6562,33 +6757,55 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   content: '';
   position: absolute;
   top: 50%;
-  right: -0.85rem;
+  right: -1.15rem;
   transform: translateY(-50%);
   width: 1px;
   height: 22px;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.32);
 }
 @media (max-width: 640px) {
   .sticky-brand::after { display: none; }
   .sticky-tagline { margin-left: 0; }
 }
 .sticky-tagline {
-  margin-left: 0.85rem;
+  margin-left: 1.15rem;
 }
 
-/* === Drawer: wider + multi-column featured topics on desktop ============ */
+/* === Drawer: wider on desktop, with mobile-matched spacing ==============
+   Each piece of the drawer (search, prompt-builder row, topic rows, View
+   All Topics, footer links) keeps the same vertical rhythm and button
+   sizes as the single-column mobile layout. Featured topics flip to a
+   two-column grid only when the panel is wide enough to host them
+   comfortably — at intermediate widths it stays single-column. */
 @media (min-width: 720px) {
   .navmenu-panel {
     width: min(560px, 70vw);
     max-width: 560px;
   }
+  /* Match mobile breathing room across drawer sections. */
+  .navmenu-search { padding: 1rem 1.25rem; }
+  .navmenu-prompt-row { padding: 1rem 1.25rem 0.6rem; }
+  .navmenu-link-prompt { padding: 0.65rem 1.1rem; font-size: 0.9rem; }
+  .navmenu-featured-label { padding: 1.1rem 1.25rem 0.6rem; }
+  .navmenu-topic-link { padding: 0.7rem 0.75rem; font-size: 0.9rem; }
+  .navmenu-all-topics {
+    margin: 0.85rem 1.25rem 1.25rem;
+    padding: 0.75rem;
+    font-size: 0.88rem;
+  }
+  .navmenu-footer-links { padding: 0.85rem 1.25rem 1.25rem; gap: 0.5rem; }
+  .navmenu-link { padding: 0.55rem 0.9rem; font-size: 0.85rem; }
+}
+
+/* Two-column topic grid only when the panel itself has room for it.
+   At ≥520px panel width (≈900px viewport given width:min(560px,70vw)),
+   pair topics up; otherwise keep the relaxed single-column rhythm. */
+@media (min-width: 900px) {
   .navmenu-topics {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.15rem 0.75rem;
-    padding: 0 1rem;
+    column-gap: 0.5rem;
+    row-gap: 0;
+    padding: 0 0.5rem;
   }
-  .navmenu-footer-links { padding: 0.85rem 1.25rem 1.25rem; gap: 0.5rem; }
-  .navmenu-prompt-row { padding: 0.85rem 1.25rem 0.4rem; }
-  .navmenu-link-prompt { padding: 0.6rem 1.05rem; font-size: 0.9rem; }
 }

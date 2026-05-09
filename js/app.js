@@ -4,7 +4,7 @@ import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderFooter } from './components/footer.js';
 import { renderSearchBar, initSearchOverlay } from './components/search-modal.js';
-import { renderNewsFeed } from './components/newsfeed.js';
+import { renderNewsFeed, renderContentShortcuts } from './components/newsfeed.js';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
@@ -73,6 +73,72 @@ function setSubnavHeightVar() {
   if (h > 0) document.documentElement.style.setProperty('--subnav-height', `${h}px`);
 }
 
+// Observe the subnav for any size change (CSS transitions, content
+// reflow, viewport resize) and keep --subnav-height in lockstep so
+// the body's padding-top tracks smoothly when the Content Shortcuts
+// bar collapses/expands.
+function observeSubnavHeight() {
+  const sub = document.getElementById('sub-header');
+  if (!sub || typeof ResizeObserver === 'undefined') return;
+  if (subnavResizeObs) subnavResizeObs.disconnect();
+  subnavResizeObs = new ResizeObserver(() => setSubnavHeightVar());
+  subnavResizeObs.observe(sub);
+}
+
+// Scroll-driven hide/show for the Content Shortcuts bar inside the
+// subnav. Main nav and the title row stay sticky; the bar slides up
+// (collapses to height 0) on a meaningful scroll-down, slides back
+// when the user scrolls up. An accumulator + threshold keeps
+// inertial-scroll jitter and tiny nudges from flipping state.
+let csScrollHandler = null;
+function setupContentShortcutsScrollBehavior() {
+  const bar = document.querySelector('.subnav-content-shortcuts');
+  if (csScrollHandler) {
+    window.removeEventListener('scroll', csScrollHandler);
+    csScrollHandler = null;
+  }
+  if (!bar) return;
+
+  const SHOW_AT_TOP = 80;     // always show within this many px of top
+  const TOGGLE_THRESHOLD = 18; // px of accumulated direction-consistent scroll to flip
+
+  let lastY = window.scrollY;
+  let acc = 0;
+  let raf = null;
+
+  const tick = () => {
+    raf = null;
+    const y = Math.max(0, window.scrollY);
+    const delta = y - lastY;
+    lastY = y;
+
+    if (y < SHOW_AT_TOP) {
+      bar.classList.remove('is-collapsed');
+      acc = 0;
+      return;
+    }
+
+    // Direction change resets the accumulator so the user has to
+    // commit to a direction before we flip state.
+    if ((acc > 0 && delta < 0) || (acc < 0 && delta > 0)) acc = 0;
+    acc += delta;
+
+    if (acc > TOGGLE_THRESHOLD) {
+      bar.classList.add('is-collapsed');
+      acc = 0;
+    } else if (acc < -TOGGLE_THRESHOLD) {
+      bar.classList.remove('is-collapsed');
+      acc = 0;
+    }
+  };
+
+  csScrollHandler = () => {
+    if (raf) return;
+    raf = requestAnimationFrame(tick);
+  };
+  window.addEventListener('scroll', csScrollHandler, { passive: true });
+}
+
 function renderLayout(route) {
   const siteHeader = document.getElementById('site-header');
   const subHeader = document.getElementById('sub-header');
@@ -106,18 +172,11 @@ function renderLayout(route) {
   document.body.classList.add('sticky-always');
   siteHeader.classList.add('is-revealed');
 
-  // Build the hamburger trigger that lives inside the subnav on desktop
-  // (CSS hides it on mobile, where the main nav hamburger takes over).
-  const subnavHamburger = `
-    <button class="subnav-hamburger" id="subnav-hamburger" aria-label="Open menu" type="button">
-      <span></span><span></span><span></span>
-    </button>
-  `;
-
-  // Title group: hamburger + icon + name with a blue underline accent.
+  // Title group: icon + name. Hamburger now lives permanently in the
+  // main nav next to the brand, so the subnav title is free to sit
+  // hard-left without competing with a menu trigger.
   const titleGroup = (iconKey, title) => `
     <div class="topic-banner-titlegroup">
-      ${subnavHamburger}
       <div class="topic-banner-titleinner">
         ${topicIconSVG(iconKey, 'topic-banner-icon')}
         <h1 class="topic-banner-title">${escapeHTML(title)}</h1>
@@ -154,7 +213,6 @@ function renderLayout(route) {
 
     if (heroEl) heroEl.innerHTML = '';
 
-    bindSubnavHamburger();
     trimOverflowLinks();
     setupResponsiveNav();
     return;
@@ -171,7 +229,6 @@ function renderLayout(route) {
         </div>
       </div>
     `;
-    bindSubnavHamburger();
     return;
   }
 
@@ -200,6 +257,9 @@ function renderLayout(route) {
             ` : ''}
           </div>
         </div>
+        <div class="subnav-content-shortcuts">
+          <div class="subnav-content-shortcuts-inner" id="subnav-content-shortcuts-host"></div>
+        </div>
       `;
 
       const openRelatedModal = (e) => {
@@ -211,13 +271,20 @@ function renderLayout(route) {
       subHeader.querySelector('#subnav-more-related')?.addEventListener('click', openRelatedModal);
       subHeader.querySelector('#subnav-related-btn')?.addEventListener('click', openRelatedModal);
 
-      bindSubnavHamburger();
-      trimOverflowLinks();
+      const csHost = subHeader.querySelector('#subnav-content-shortcuts-host');
+      if (csHost) renderContentShortcuts(csHost, topic.name, { isCustom: false, isHome: false });
+
+      observeSubnavHeight();
+      setupContentShortcutsScrollBehavior();
+        trimOverflowLinks();
       setupResponsiveNav();
     } else {
       renderSubNav(subHeader, { title: route.term, iconKey: 'mag-glass' });
-      bindSubnavHamburger();
-      setupResponsiveNav();
+      const csHost = subHeader.querySelector('#subnav-content-shortcuts-host');
+      if (csHost) renderContentShortcuts(csHost, route.term, { isCustom: true, isHome: false });
+      observeSubnavHeight();
+      setupContentShortcutsScrollBehavior();
+        setupResponsiveNav();
     }
   }
 
@@ -232,26 +299,16 @@ function renderLayout(route) {
         </div>
       </div>
     `;
-    bindSubnavHamburger();
   }
 
   if (route.type === 'prompt-generator' || route.type === 'about' || route.type === 'terms') {
     setupResponsiveNav();
   }
-}
 
-// Wire up the subnav hamburger to open the same drawer as the main nav one.
-function bindSubnavHamburger() {
-  const btn = document.getElementById('subnav-hamburger');
-  if (!btn) return;
-  btn.addEventListener('click', () => {
-    const panel = document.getElementById('navmenu-panel');
-    const overlay = document.getElementById('navmenu-overlay');
-    if (!panel || !overlay) return;
-    panel.classList.add('is-open');
-    overlay.classList.add('is-open');
-    document.body.style.overflow = 'hidden';
-  });
+  // Routes without a Content Shortcuts bar still need the previous
+  // scroll handler removed, so revisit setup at the end of every
+  // render — the function self-cleans when the bar isn't present.
+  setupContentShortcutsScrollBehavior();
 }
 
 // Unified subnav renderer for custom search pages
@@ -260,15 +317,15 @@ function renderSubNav(container, { title, iconKey }) {
     <div class="topic-banner">
       <div class="topic-banner-row">
         <div class="topic-banner-titlegroup">
-          <button class="subnav-hamburger" id="subnav-hamburger" aria-label="Open menu" type="button">
-            <span></span><span></span><span></span>
-          </button>
           <div class="topic-banner-titleinner">
             ${iconKey ? topicIconSVG(iconKey, 'topic-banner-icon') : ''}
             <h1 class="topic-banner-title">${escapeHTML(title)}</h1>
           </div>
         </div>
       </div>
+    </div>
+    <div class="subnav-content-shortcuts">
+      <div class="subnav-content-shortcuts-inner" id="subnav-content-shortcuts-host"></div>
     </div>
   `;
 }
@@ -294,9 +351,12 @@ function setupHomeStickyReveal(mainEl, subEl) {
   heroScrollHandler();
 }
 
-// Hide subnav topic links that overflow the container. Runs on
-// render and on resize so topics drop cleanly instead of clipping.
+// Hide subnav topic links that overflow the container. Runs on render,
+// on container size changes, after fonts load, and on full page load so
+// the chip count converges on the same correct value regardless of when
+// layout happens to settle.
 let trimResizeHandler = null;
+let trimResizeObserver = null;
 function trimOverflowLinks() {
   const container = document.querySelector('.subnav-topics-inline');
   if (!container) return;
@@ -331,6 +391,12 @@ function trimOverflowLinks() {
       }
     });
 
+    // Topic subnav (More+ + Related Topics+ fallback): below the
+    // visibleCount=3 threshold we hide the inline row entirely and
+    // show the "Related Topics +" button (handled below). The home
+    // subnav has no such fallback — it just shows however many chips
+    // fit alongside "All Topics +".
+
     // If nothing was hidden, "More +" is redundant — hide it and re-check
     // the last link in case reclaiming the More-width lets one more link fit.
     if (moreLink) {
@@ -355,13 +421,35 @@ function trimOverflowLinks() {
     }
   };
 
-  // Run after layout settles
-  requestAnimationFrame(doTrim);
+  const scheduleTrim = () => requestAnimationFrame(doTrim);
 
-  // Re-run on resize
+  // Initial run after layout settles
+  scheduleTrim();
+
+  // Re-run when fonts finish loading (chip widths shift once Inter loads).
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(scheduleTrim);
+  }
+
+  // Re-run on full page load (covers any late-arriving stylesheet/asset
+  // that might shift container width).
+  if (document.readyState !== 'complete') {
+    window.addEventListener('load', scheduleTrim, { once: true });
+  }
+
+  // Re-run on viewport resize.
   if (trimResizeHandler) window.removeEventListener('resize', trimResizeHandler);
-  trimResizeHandler = () => requestAnimationFrame(doTrim);
+  trimResizeHandler = scheduleTrim;
   window.addEventListener('resize', trimResizeHandler, { passive: true });
+
+  // Re-run on actual container size changes — catches scrollbar appear/disappear,
+  // drawer toggles, font-swap reflows, anything that shifts the chip area's
+  // available width independent of viewport resize.
+  if (trimResizeObserver) trimResizeObserver.disconnect();
+  if (typeof ResizeObserver !== 'undefined') {
+    trimResizeObserver = new ResizeObserver(scheduleTrim);
+    trimResizeObserver.observe(container);
+  }
 }
 
 // Responsive nav: CSS handles breakpoints, JS just sets up the class
@@ -381,7 +469,6 @@ function renderStickyHeroBar(container, route) {
         <span></span><span></span><span></span>
       </button>
       <a href="#/" class="sticky-brand" id="sticky-brand-link">
-        <img src="assets/logo-dark.png" alt="Standard Topic" class="sticky-logo-img">
         <span class="sticky-title">Standard Topic</span>
       </a>
       <span class="sticky-tagline">News, Resources and AI Knowledge. On any topic.</span>
@@ -516,15 +603,15 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
   cleanupTopicLayoutObservers();
 
   if (isCustom) {
-    // Custom: AI Shortcuts on top, Content Shortcuts below — no tabs.
+    // Custom: just AI Shortcuts (with Quick Links embedded as the
+    // card's footer). No News Feed — no RSS for arbitrary search terms.
     container.innerHTML = `
       <div class="topic-layout is-custom" id="topic-layout">
         <section class="layout-section" id="section-shortcuts"></section>
-        <section class="layout-section" id="section-newsfeed"></section>
       </div>
     `;
   } else if (isHome) {
-    // Homepage: AI Shortcuts full-width, News Feed below. Topics in subnav.
+    // Homepage: AI Shortcuts + News Feed. Topics live in the subnav.
     container.innerHTML = `
       <div class="topic-layout" id="topic-layout">
         <section class="layout-section" id="section-shortcuts"></section>
@@ -532,8 +619,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       </div>
     `;
   } else {
-    // Topic pages: AI Shortcuts full-width, News Feed below.
-    // Related topics only in subnav (not in body).
+    // Topic pages: AI Shortcuts (with Quick Links footer) + News Feed.
     container.innerHTML = `
       <div class="topic-layout" id="topic-layout">
         <section class="layout-section" id="section-shortcuts"></section>
@@ -542,13 +628,13 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     `;
   }
 
-  const feedSection = container.querySelector('#section-newsfeed');
   const shortcutsSection = container.querySelector('#section-shortcuts');
+  const feedSection = container.querySelector('#section-newsfeed');
 
-  renderNewsFeed(feedSection, topic, isHome, { isCustom, customTerm });
   renderShortcutsSidebar(shortcutsSection, route, isHome, isCustom, customTerm);
-
-
+  if (feedSection) {
+    renderNewsFeed(feedSection, topic, isHome);
+  }
 }
 
 const TAB_PANELS = ['newsfeed', 'shortcuts', 'related'];
@@ -647,6 +733,10 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
           </span>
           <span class="shortcuts-multi-submit-count" id="shortcuts-multi-submit-count">0</span>
         </button>
+        <button type="button" class="shortcuts-multi-select-all" id="shortcuts-multi-select-all">
+          <span class="multi-btn-label-full">Select All</span>
+          <span class="multi-btn-label-short">Select All</span>
+        </button>
         <button type="button" class="shortcuts-multi-clear" id="shortcuts-multi-clear">
           <span class="multi-btn-label-full">Clear Selected Prompts</span>
           <span class="multi-btn-label-short">Clear Prompts</span>
@@ -662,6 +752,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   const toggle = container.querySelector('#multi-toggle');
   const submitBtn = container.querySelector('#shortcuts-multi-submit');
   const clearBtn = container.querySelector('#shortcuts-multi-clear');
+  const selectAllBtn = container.querySelector('#shortcuts-multi-select-all');
   const submitWrap = container.querySelector('.shortcuts-multi-submit-wrap');
   const countEl = container.querySelector('#shortcuts-multi-submit-count');
 
@@ -672,15 +763,19 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       submitWrap.hidden = true;
       submitBtn.classList.remove('is-active');
       if (clearBtn) clearBtn.disabled = true;
+      if (selectAllBtn) selectAllBtn.disabled = false;
       if (countEl) countEl.textContent = '0';
       return;
     }
     submitWrap.hidden = false;
+    const allShortcuts = container.querySelectorAll('.sidebar-shortcut');
     const selected = container.querySelectorAll('.sidebar-shortcut.is-multi-selected');
     const has = selected.length > 0;
+    const allSelected = allShortcuts.length > 0 && selected.length === allShortcuts.length;
     submitBtn.classList.toggle('is-active', has);
     submitBtn.disabled = !has;
     if (clearBtn) clearBtn.disabled = !has;
+    if (selectAllBtn) selectAllBtn.disabled = allSelected;
     if (countEl) countEl.textContent = String(selected.length);
   };
 
@@ -718,6 +813,12 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   clearBtn?.addEventListener('click', () => {
     container.querySelectorAll('.sidebar-shortcut.is-multi-selected')
       .forEach(b => b.classList.remove('is-multi-selected'));
+    updateSubmit();
+  });
+
+  selectAllBtn?.addEventListener('click', () => {
+    container.querySelectorAll('.sidebar-shortcut')
+      .forEach(b => b.classList.add('is-multi-selected'));
     updateSubmit();
   });
 
