@@ -1147,18 +1147,15 @@ body.hide-cta .sticky-cta { display: none !important; }
 
 
 /* Drop the tagline at a wider breakpoint so the search bar isn't
-   forced to compete with it for horizontal space. Once the tagline
-   goes, also lift the search bar's 320px max-width cap (down to the
-   mobile breakpoint, where 220px takes over) so the search bar
-   stretches into the freed-up area instead of staying pinned narrow.
+   forced to compete with it for horizontal space. Search bar keeps
+   its default 320px cap at every width above the mobile breakpoint
+   — the freed-up tagline space goes back to the layout's natural
+   flex distribution rather than being claimed by the search bar.
    The brand separator hides alongside the tagline so a lone vertical
    bar doesn't dangle. */
 @media (max-width: 1100px) {
   .sticky-tagline { display: none !important; }
   .sticky-brand::after { display: none !important; }
-}
-@media (max-width: 1100px) and (min-width: 641px) {
-  .sticky-search { max-width: 380px; }
 }
 
 /* Mobile: hero-C reverts to centered stacked layout */
