@@ -1428,13 +1428,13 @@ body.hide-cta .sticky-cta { display: none !important; }
    were using before but with the new "Multi-select" label. */
 @media (max-width: 640px) {
   .multi-toggle {
-    font-size: 0.75rem;
-    gap: 0.45rem;
-    color: var(--color-text-light);
+    font-size: 0.85rem;
+    gap: 0.5rem;
+    color: var(--color-text-muted);
   }
-  .multi-toggle-switch { width: 30px; height: 18px; }
-  .multi-toggle-knob { width: 14px; height: 14px; }
-  .multi-toggle[aria-checked="true"] .multi-toggle-knob { transform: translateX(12px); }
+  .multi-toggle-switch { width: 34px; height: 20px; }
+  .multi-toggle-knob { width: 16px; height: 16px; }
+  .multi-toggle[aria-checked="true"] .multi-toggle-knob { transform: translateX(14px); }
 }
 
 /* === Multi-select check bubble on each shortcut === */
@@ -1605,13 +1605,13 @@ body.hide-cta .sticky-cta { display: none !important; }
 /* Smaller switch on narrow screens. */
 @media (max-width: 640px) {
   .sidebar-card-header .multi-toggle {
-    font-size: 0.7rem;
-    gap: 0.35rem;
+    font-size: 0.85rem;
+    gap: 0.5rem;
     margin-left: 0;
     margin-right: auto;
     justify-content: flex-start;
     flex-basis: 100%;
-    margin-top: 0.35rem;
+    margin-top: 0.45rem;
   }
   .newsfeed-card-header .feeds-pill {
     margin-left: 0;
@@ -1621,15 +1621,15 @@ body.hide-cta .sticky-cta { display: none !important; }
     justify-content: flex-start;
   }
   .sidebar-card-header .multi-toggle .multi-toggle-switch {
-    width: 26px;
-    height: 15px;
+    width: 34px;
+    height: 20px;
   }
   .sidebar-card-header .multi-toggle .multi-toggle-knob {
-    width: 11px;
-    height: 11px;
+    width: 16px;
+    height: 16px;
   }
   .sidebar-card-header .multi-toggle[aria-checked="true"] .multi-toggle-knob {
-    transform: translateX(11px);
+    transform: translateX(14px);
   }
 }
 /* Drop "Shortcuts" from the Multiselect label only at the smallest
