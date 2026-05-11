@@ -24,7 +24,6 @@ export function renderContentShortcuts(container, query, opts = {}) {
     const brand = s.name.toLowerCase().split(' ')[0];
     html += `
       <a href="${url}" target="_blank" rel="noopener noreferrer" class="quick-link" data-brand="${escapeHTML(brand)}">
-        <span class="quick-link-dot" aria-hidden="true"></span>
         <span class="quick-link-name">${escapeHTML(s.name)}</span>
       </a>
     `;
