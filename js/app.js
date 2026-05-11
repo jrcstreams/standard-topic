@@ -404,11 +404,20 @@ function trimOverflowLinks() {
       }
     });
 
-    // Topic subnav (More+ + Related Topics+ fallback): below the
-    // visibleCount=3 threshold we hide the inline row entirely and
-    // show the "Related Topics +" button (handled below). The home
-    // subnav has no such fallback — it just shows however many chips
-    // fit alongside "All Topics +".
+    // Threshold rules:
+    // - Home subnav (action link, no More+): show ≥4 featured chips,
+    //   otherwise collapse them all and leave only "All Topics +".
+    //   No half-state — either you get 4+ chips or you get just the
+    //   action link, no in-between.
+    // - Topic subnav (More+ + Related Topics+ fallback): show ≥3
+    //   chips + More+, otherwise hide the inline row and show
+    //   "Related Topics +" (handled by the relatedBtn block below).
+    const isHomeRow = !!actionLink && !moreLink;
+    if (isHomeRow && links.length >= 4 && visibleCount < 4) {
+      links.forEach(l => l.style.display = 'none');
+      visibleCount = 0;
+      hiddenCount = links.length;
+    }
 
     // If nothing was hidden, "More +" is redundant — hide it and re-check
     // the last link in case reclaiming the More-width lets one more link fit.
