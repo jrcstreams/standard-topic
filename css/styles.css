@@ -766,7 +766,9 @@ body.hide-cta .sticky-cta { display: none !important; }
   }
 }
 
-/* Smallest screens: compact subnav */
+/* Smallest screens: compact subnav. Title font, icon size, and the
+   gap between them all step down together so the title group stays
+   proportionate to the shorter subnav band. */
 @media (max-width: 640px) {
   #sub-header.is-subnav {
     top: 54px;
@@ -776,16 +778,34 @@ body.hide-cta .sticky-cta { display: none !important; }
     min-height: 54px;
   }
   #sub-header.is-subnav .topic-banner-title {
-    font-size: 1.25rem;
+    font-size: 1.18rem;
     max-width: 60vw;
+  }
+  #sub-header.is-subnav .topic-banner-icon,
+  #sub-header.is-home-subnav .topic-banner-icon {
+    width: 23px;
+    height: 23px;
+  }
+  #sub-header.is-subnav .topic-banner-titleinner,
+  #sub-header.is-home-subnav .topic-banner-titleinner {
+    gap: 0.5rem;
   }
 }
 
 /* Extra-small screens: shrink title further for long names */
 @media (max-width: 400px) {
   #sub-header.is-subnav .topic-banner-title {
-    font-size: 1.2rem;
+    font-size: 1.12rem;
     max-width: 45vw;
+  }
+  #sub-header.is-subnav .topic-banner-icon,
+  #sub-header.is-home-subnav .topic-banner-icon {
+    width: 21px;
+    height: 21px;
+  }
+  #sub-header.is-subnav .topic-banner-titleinner,
+  #sub-header.is-home-subnav .topic-banner-titleinner {
+    gap: 0.45rem;
   }
 }
 
