@@ -3055,7 +3055,7 @@ html, body, #app {
   font-family: var(--font-display);
   font-size: 0.74rem;
   font-weight: var(--font-weight-bold);
-  color: var(--color-primary-dark, #0f1a2e);
+  color: #3d4a63;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   flex-shrink: 0;
@@ -3126,12 +3126,8 @@ html, body, #app {
   flex-shrink: 0;
   transition: color 0.14s;
 }
-.quick-link[data-brand="google"]   { --quick-link-color: #4285F4; }
-.quick-link[data-brand="reddit"]   { --quick-link-color: #FF4500; }
-.quick-link[data-brand="youtube"]  { --quick-link-color: #FF0033; }
-.quick-link[data-brand="x"]        { --quick-link-color: #0a0a0a; }
 .quick-link:hover {
-  color: var(--quick-link-color, var(--color-primary));
+  color: var(--color-primary-dark, #0f1a2e);
   text-decoration: none;
 }
 .quick-link-name {
