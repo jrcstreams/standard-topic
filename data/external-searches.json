@@ -2,7 +2,7 @@
   "searches": [
     {"name":"Google News","icon":"🔎","urlTemplate":"https://news.google.com/search?q={query}"},
     {"name":"Reddit","icon":"💬","urlTemplate":"https://www.reddit.com/search/?q={query}&type=link"},
-    {"name":"YouTube","icon":"▶️","urlTemplate":"https://www.youtube.com/results?search_query={query}"},
-    {"name":"X","icon":"𝕏","urlTemplate":"https://x.com/search?q={query}"}
+    {"name":"X (Twitter)","icon":"𝕏","urlTemplate":"https://x.com/search?q={query}"},
+    {"name":"YouTube","icon":"▶️","urlTemplate":"https://www.youtube.com/results?search_query={query}"}
   ]
 }

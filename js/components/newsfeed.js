@@ -17,7 +17,7 @@ export function renderContentShortcuts(container, query, opts = {}) {
   }
 
   let html = `<div class="quick-links" aria-label="Search ${escapeHTML(query)} on other platforms">`;
-  html += `<span class="quick-links-label">Content Shortcuts</span>`;
+  html += `<span class="quick-links-label">Quick Content</span>`;
   html += `<div class="quick-links-scrollwrap"><div class="quick-links-list">`;
   searches.forEach(s => {
     const url = s.urlTemplate.replace(/\{query\}/g, encodeURIComponent(query));
