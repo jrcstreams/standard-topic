@@ -405,18 +405,26 @@ function trimOverflowLinks() {
     });
 
     // Threshold rules:
-    // - Home subnav (action link, no More+): show ≥4 featured chips,
-    //   otherwise collapse them all and leave only "All Topics +".
-    //   No half-state — either you get 4+ chips or you get just the
-    //   action link, no in-between.
+    // - Home subnav (action link, no More+): show ≥4 featured chips
+    //   on the SAME row as the title group. Otherwise collapse to
+    //   just "All Topics +". Without the wrap check the row could
+    //   flip back to showing chips at narrower widths once the row
+    //   wraps to a new line (the wrapped chip row gets the full
+    //   parent width, so suddenly more fit again), producing a
+    //   show/hide/show/hide stagger as the viewport shrinks.
     // - Topic subnav (More+ + Related Topics+ fallback): show ≥3
     //   chips + More+, otherwise hide the inline row and show
     //   "Related Topics +" (handled by the relatedBtn block below).
     const isHomeRow = !!actionLink && !moreLink;
-    if (isHomeRow && links.length >= 4 && visibleCount < 4) {
-      links.forEach(l => l.style.display = 'none');
-      visibleCount = 0;
-      hiddenCount = links.length;
+    if (isHomeRow && links.length >= 4) {
+      const row = container.parentElement;
+      const titleGroup = row?.querySelector('.topic-banner-titlegroup');
+      const isWrapped = !!titleGroup && container.offsetTop > titleGroup.offsetTop + 4;
+      if (isWrapped || visibleCount < 4) {
+        links.forEach(l => l.style.display = 'none');
+        visibleCount = 0;
+        hiddenCount = links.length;
+      }
     }
 
     // If nothing was hidden, "More +" is redundant — hide it and re-check
@@ -441,6 +449,10 @@ function trimOverflowLinks() {
         relatedBtn.style.display = 'none';
       }
     }
+
+    // No visible chips left → hide the leading title↔chips separator.
+    // (CSS reads .is-empty to suppress .subnav-topics-inline::before.)
+    container.classList.toggle('is-empty', visibleCount === 0);
   };
 
   const scheduleTrim = () => requestAnimationFrame(doTrim);

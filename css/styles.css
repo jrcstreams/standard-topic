@@ -2645,6 +2645,11 @@ html, body, #app {
   pointer-events: none;
 }
 .subnav-topics-inline::before { left: 0; }
+/* When the trim function hides every chip (only the action link
+   remains), the title↔chips separator no longer separates anything
+   meaningful — suppress it so the title group doesn't look like it
+   has a stray vertical bar dangling next to it. */
+.subnav-topics-inline.is-empty::before { display: none; }
 /* Second separator sits between "All Topics +" and the first topic
    chip. The chip itself is positioned (relative) so the absolute
    ::before anchors to its left edge. */
@@ -2693,9 +2698,15 @@ html, body, #app {
 
 /* === Responsive nav breakpoints (CSS-only, no JS measurement) === */
 
-/* 1200px: shrink featured topics slightly */
+/* Shrink featured topic chips in two steps so more of them fit at
+   intermediate widths before the trim function has to start hiding
+   them. */
 @media (max-width: 1200px) {
   .subnav-topic-link { font-size: 0.8rem; }
+}
+@media (max-width: 1000px) {
+  .subnav-topic-link { font-size: 0.76rem; padding-left: 0.85rem; padding-right: 0.85rem; }
+  .subnav-topics-inline > .subnav-topic-link:first-child { padding-left: 1.3rem; }
 }
 
 /* "All Topics +" stays visible on the home subnav at every desktop
@@ -2715,16 +2726,10 @@ html, body, #app {
   padding-left: 1.5rem;
 }
 
-/* On mobile the topic-banner-row wraps: title group sits on row 1, the
-   topics-inline (chips + action link) drops to row 2 taking full width.
-   We keep the leading vertical separator (it always reads as the
-   divider between page title and topics, no matter which row each
-   ends up on) and just relax the first-chip left-padding bump so the
-   chip row aligns flush-left with the title group above when it does
-   wrap. */
-@media (max-width: 899.98px) {
-  .subnav-topics-inline > .subnav-topic-link:first-child { padding-left: 1rem; }
-}
+/* First-chip padding stays consistent at every width so the separator
+   never appears to "slide" closer to or further from the page title
+   between breakpoints. (Previously we shrank it at ≤899.98px to handle
+   the wrapped-row case, which created a visible jump.) */
 
 /* 800px: hide CTA. Featured topics in the home subnav are trimmed by
    JS (trimOverflowLinks) — chips drop as space tightens while "All
