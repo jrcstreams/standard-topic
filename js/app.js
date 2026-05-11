@@ -99,15 +99,28 @@ function setupContentShortcutsScrollBehavior() {
   }
   if (!bar) return;
 
+  // Always start visible. Browser scroll-restoration on refresh can
+  // fire a phantom "scroll down" event right after setup, so defer
+  // arming the handler for ~400ms — long enough for any restoration
+  // jump to land — and resync lastY at that point.
+  bar.classList.remove('is-collapsed');
+
   const SHOW_AT_TOP = 80;     // always show within this many px of top
   const TOGGLE_THRESHOLD = 18; // px of accumulated direction-consistent scroll to flip
 
   let lastY = window.scrollY;
   let acc = 0;
   let raf = null;
+  let armed = false;
+  setTimeout(() => {
+    armed = true;
+    lastY = window.scrollY;
+    acc = 0;
+  }, 400);
 
   const tick = () => {
     raf = null;
+    if (!armed) return;
     const y = Math.max(0, window.scrollY);
     const delta = y - lastY;
     lastY = y;
