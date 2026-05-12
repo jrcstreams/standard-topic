@@ -3392,25 +3392,24 @@ html, body, #app {
 }
 
 /* === BEGIN mobile-shortcut-borders (revertable) =====================
-   Single-column AI Shortcuts on mobile now wear the same full-rect
-   bordered look as the desktop grid. Container paints the outer
-   top/left/right; each cell paints its own bottom (which doubles as
-   the next cell's top edge — single 1px line, no overlap). Delete
-   this whole @media block to revert to the original hairline-only
-   rows.
+   Single-column AI Shortcuts on mobile wear the same full-rect look
+   as the desktop grid. The card header's existing border-bottom is
+   already in lockstep with `--color-border` and sits flush above the
+   list (margin-bottom:0 on mobile), so it doubles as the list's top
+   edge — no new border-top needed (a top border would stack with
+   the header's bottom border and read 2px thick). Container draws
+   the left/right outer edges; each cell's existing border-bottom
+   draws the horizontal divider between rows AND the closing bottom
+   of the rectangle for the last cell. Delete this @media block to
+   revert.
 =================================================================== */
 @media (max-width: 640px) {
   .shortcuts-sidebar .sidebar-shortcut-list {
-    border-top: 1px solid var(--color-border);
     border-left: 1px solid var(--color-border);
     border-right: 1px solid var(--color-border);
   }
   .shortcuts-sidebar .sidebar-shortcut {
     background: var(--color-bg);
-  }
-  .shortcuts-sidebar .sidebar-shortcut:last-child {
-    /* Last cell's bottom border doubles as the container's bottom
-       edge — keep it (already on every cell via the base rule). */
   }
 }
 /* === END mobile-shortcut-borders =================================== */
