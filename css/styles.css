@@ -1521,7 +1521,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   .multi-btn-label-full { display: none; }
   .multi-btn-label-short { display: inline; }
   .shortcuts-multi-submit { padding: 0.5rem 0.85rem; font-size: 0.78rem; }
-  .shortcuts-multi-submit-count { min-width: 18px; height: 18px; font-size: 0.7rem; padding: 0 0.35rem; }
+  .shortcuts-multi-submit-count { min-width: 16px; height: 16px; font-size: 0.68rem; padding: 0 0.3rem; }
   .shortcuts-multi-clear,
   .shortcuts-multi-select-all { padding: 0.5rem 0.8rem; font-size: 0.78rem; }
   .shortcuts-multi-submit-wrap { gap: 0.45rem; }
@@ -1555,11 +1555,15 @@ body.hide-cta .sticky-cta { display: none !important; }
   padding: 0.55rem 1.1rem;
   background: var(--color-text-light);
   color: white;
-  border: none;
+  /* Transparent 1.5px border keeps Submit's box-model parity with the
+     outlined Select All / Clear buttons so all three render at the
+     same total height. */
+  border: 1.5px solid transparent;
   border-radius: 6px;
   font-family: var(--font-family);
   font-size: 0.84rem;
   font-weight: var(--font-weight-bold);
+  line-height: 1.2;
   cursor: not-allowed;
   opacity: 0.8;
   transition: background 0.12s, opacity 0.12s;
@@ -1575,13 +1579,14 @@ body.hide-cta .sticky-cta { display: none !important; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 20px;
-  height: 20px;
+  min-width: 18px;
+  height: 18px;
   padding: 0 0.4rem;
   background: rgba(255, 255, 255, 0.22);
   border-radius: 999px;
   font-size: 0.74rem;
   font-weight: var(--font-weight-bold);
+  line-height: 1;
 }
 
 /* Secondary "Clear Selected Prompts" / "Select All" buttons — outlined,
@@ -1599,9 +1604,41 @@ body.hide-cta .sticky-cta { display: none !important; }
   font-family: var(--font-family);
   font-size: 0.84rem;
   font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
   cursor: pointer;
   white-space: nowrap;
   transition: border-color 0.12s, color 0.12s, background 0.12s, opacity 0.12s;
+}
+
+/* Lock all three multi-action buttons to the same min-height per
+   breakpoint. Submit's count badge can otherwise push that button
+   taller than the outlined siblings; this floor ensures the three
+   sit at a single shared height. */
+.shortcuts-multi-submit,
+.shortcuts-multi-clear,
+.shortcuts-multi-select-all {
+  min-height: 38px;
+}
+@media (max-width: 540px) {
+  .shortcuts-multi-submit,
+  .shortcuts-multi-clear,
+  .shortcuts-multi-select-all {
+    min-height: 34px;
+  }
+}
+@media (max-width: 420px) {
+  .shortcuts-multi-submit,
+  .shortcuts-multi-clear,
+  .shortcuts-multi-select-all {
+    min-height: 32px;
+  }
+}
+@media (max-width: 360px) {
+  .shortcuts-multi-submit,
+  .shortcuts-multi-clear,
+  .shortcuts-multi-select-all {
+    min-height: 30px;
+  }
 }
 .shortcuts-multi-clear:hover:not(:disabled) {
   border-color: #dc2626;
