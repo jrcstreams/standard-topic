@@ -1512,30 +1512,35 @@ body.hide-cta .sticky-cta { display: none !important; }
 /* Default: full labels visible, short labels hidden. */
 .multi-btn-label-short { display: none; }
 
-/* Mid-size phones / narrow tablets — shrink padding + font, full label */
+/* Phones (≤540px) — switch to short labels ("Submit Prompts" /
+   "Clear Prompts") AND shrink padding so all three buttons (Submit,
+   Select All, Clear) stay on a single row instead of wrapping. The
+   previous setup kept full labels down to 480px, which made the row
+   wrap at intermediate phone widths (481–540px). */
 @media (max-width: 540px) {
+  .multi-btn-label-full { display: none; }
+  .multi-btn-label-short { display: inline; }
   .shortcuts-multi-submit { padding: 0.5rem 0.85rem; font-size: 0.78rem; }
   .shortcuts-multi-submit-count { min-width: 18px; height: 18px; font-size: 0.7rem; padding: 0 0.35rem; }
   .shortcuts-multi-clear,
   .shortcuts-multi-select-all { padding: 0.5rem 0.8rem; font-size: 0.78rem; }
+  .shortcuts-multi-submit-wrap { gap: 0.45rem; }
 }
 
-/* Smaller phones — swap to short labels ("Submit"/"Clear") so both
-   buttons stay on a single row instead of wrapping. */
-@media (max-width: 480px) {
-  .multi-btn-label-full { display: none; }
-  .multi-btn-label-short { display: inline; }
-  .shortcuts-multi-submit { padding: 0.5rem 0.9rem; font-size: 0.8rem; }
+/* Smaller phones — same labels, slightly tighter spacing/font. */
+@media (max-width: 420px) {
+  .shortcuts-multi-submit { padding: 0.45rem 0.7rem; font-size: 0.74rem; }
   .shortcuts-multi-clear,
-  .shortcuts-multi-select-all { padding: 0.5rem 0.85rem; font-size: 0.8rem; }
+  .shortcuts-multi-select-all { padding: 0.45rem 0.65rem; font-size: 0.74rem; }
+  .shortcuts-multi-submit-wrap { gap: 0.35rem; }
 }
 
 /* Very small phones — even tighter. */
 @media (max-width: 360px) {
-  .shortcuts-multi-submit { padding: 0.45rem 0.75rem; font-size: 0.78rem; }
+  .shortcuts-multi-submit { padding: 0.4rem 0.6rem; font-size: 0.72rem; }
   .shortcuts-multi-clear,
-  .shortcuts-multi-select-all { padding: 0.45rem 0.7rem; font-size: 0.78rem; }
-  .shortcuts-multi-submit-wrap { gap: 0.4rem; }
+  .shortcuts-multi-select-all { padding: 0.4rem 0.55rem; font-size: 0.72rem; }
+  .shortcuts-multi-submit-wrap { gap: 0.3rem; }
 }
 /* Selector wins over .shortcuts-multi-submit-wrap { display: flex }
    so the [hidden] HTML attribute actually hides the button. */
