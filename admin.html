@@ -75,6 +75,8 @@
   <div class="import-export">
     <label class="btn btn-primary" style="cursor:pointer">Import All JSON <input type="file" id="import-files" multiple accept=".json" style="display:none"></label>
     <button class="btn btn-success" id="export-all">Export All JSON</button>
+    <button class="btn" id="jump-home" title="Jump to homepage AI-shortcut list">Edit Homepage Shortcuts →</button>
+    <button class="btn" id="jump-custom" title="Jump to custom search page AI-shortcut list">Edit Custom Search Shortcuts →</button>
   </div>
   <div class="tabs" id="tabs">
     <button class="tab active" data-tab="topics">Topics</button>
@@ -184,11 +186,66 @@
       tbody.onclick = function(e) {
         var btn = e.target.closest('[data-action]'); if (!btn) return;
         if (btn.dataset.action === 'edit') editTopic(btn.dataset.slug);
-        if (btn.dataset.action === 'delete') { if(confirm('Delete "'+btn.dataset.slug+'"?')){ data.topics.topics = data.topics.topics.filter(function(t){return t.slug!==btn.dataset.slug;}); renderTopics(); renderAssignments(); } }
+        else if (btn.dataset.action === 'delete') { if(confirm('Delete "'+btn.dataset.slug+'"?')){ data.topics.topics = data.topics.topics.filter(function(t){return t.slug!==btn.dataset.slug;}); renderTopics(); renderAssignments(); } }
+        else if (btn.dataset.action === 'up') { moveTopic(btn.dataset.slug, -1); }
+        else if (btn.dataset.action === 'down') { moveTopic(btn.dataset.slug, 1); }
       };
     }
     function topicRow(t, sub) {
-      return '<tr class="'+(sub?'subtopic-row':'')+'"><td>'+(sub?'↳ ':'')+esc(t.name)+'</td><td class="mono">'+esc(t.slug)+'</td><td class="mono">'+esc(t.parent||'—')+'</td><td class="mono">'+esc(t.rssFeedId||'—')+'</td><td class="mono">'+esc(t.icon||'—')+'</td><td>'+(t.featured?'★':'')+'</td><td><button class="btn" data-action="edit" data-slug="'+escA(t.slug)+'">Edit</button> '+(t.slug!=='home'?'<button class="btn btn-danger" data-action="delete" data-slug="'+escA(t.slug)+'">Del</button>':'')+'</td></tr>';
+      var up = t.slug==='home' ? '' : '<button class="btn" data-action="up" data-slug="'+escA(t.slug)+'" title="Move up">↑</button> ';
+      var down = t.slug==='home' ? '' : '<button class="btn" data-action="down" data-slug="'+escA(t.slug)+'" title="Move down">↓</button> ';
+      return '<tr class="'+(sub?'subtopic-row':'')+'"><td>'+(sub?'↳ ':'')+esc(t.name)+'</td><td class="mono">'+esc(t.slug)+'</td><td class="mono">'+esc(t.parent||'—')+'</td><td class="mono">'+esc(t.rssFeedId||'—')+'</td><td class="mono">'+esc(t.icon||'—')+'</td><td>'+(t.featured?'★':'')+'</td><td style="white-space:nowrap">'+up+down+'<button class="btn" data-action="edit" data-slug="'+escA(t.slug)+'">Edit</button> '+(t.slug!=='home'?'<button class="btn btn-danger" data-action="delete" data-slug="'+escA(t.slug)+'">Del</button>':'')+'</td></tr>';
+    }
+    // Reorder topics. Subtopics swap with the adjacent subtopic of the same parent.
+    // Parents move as a block: parent + its consecutive subs, swapped with the previous/next parent block.
+    function moveTopic(slug, dir) {
+      var arr = data.topics.topics;
+      var idx = arr.findIndex(function(t){return t.slug===slug;});
+      if (idx < 0) return;
+      var t = arr[idx];
+      if (t.slug === 'home') return;
+      if (t.parent) {
+        // Subtopic — find adjacent sibling in same parent group
+        var step = dir < 0 ? -1 : 1;
+        var i = idx + step;
+        while (i >= 0 && i < arr.length) {
+          if (arr[i].parent === t.parent) {
+            var moved = arr.splice(idx, 1)[0];
+            arr.splice(i, 0, moved);
+            renderTopics();
+            return;
+          }
+          // Stop scanning if we cross our parent's block boundary
+          if (arr[i].parent !== t.parent) break;
+          i += step;
+        }
+      } else {
+        // Parent — move block (self + consecutive subs)
+        var blockEnd = idx + 1;
+        while (blockEnd < arr.length && arr[blockEnd].parent === t.slug) blockEnd++;
+        var block = arr.splice(idx, blockEnd - idx);
+        if (dir < 0) {
+          // Find previous parent (skipping home)
+          var prevIdx = -1;
+          for (var j = idx - 1; j >= 0; j--) {
+            if (arr[j].slug === 'home') break;
+            if (!arr[j].parent) { prevIdx = j; break; }
+          }
+          if (prevIdx < 0) { // can't move; restore
+            for (var k = 0; k < block.length; k++) arr.splice(idx + k, 0, block[k]);
+            return;
+          }
+          for (var k = 0; k < block.length; k++) arr.splice(prevIdx + k, 0, block[k]);
+        } else {
+          // Find next parent's block end after the slice point (idx is now where next parent sits)
+          if (idx >= arr.length) { for (var k = 0; k < block.length; k++) arr.splice(idx + k, 0, block[k]); return; }
+          var nextParentSlug = arr[idx].slug;
+          var nextEnd = idx + 1;
+          while (nextEnd < arr.length && arr[nextEnd].parent === nextParentSlug) nextEnd++;
+          for (var k = 0; k < block.length; k++) arr.splice(nextEnd + k, 0, block[k]);
+        }
+        renderTopics();
+      }
     }
     document.getElementById('add-topic').addEventListener('click', function() { showTopicForm(null); });
     function editTopic(slug) { var t = data.topics.topics.find(function(x){return x.slug===slug;}); if(t) showTopicForm(t); }
@@ -232,13 +289,16 @@
     function renderDirectory() {
       var shortcuts = data.directory.shortcuts || [];
       var tbody = document.getElementById('dir-body');
-      tbody.innerHTML = shortcuts.map(function(s) {
-        return '<tr><td><strong>'+esc(s.name)+'</strong></td><td class="mono">'+esc(s.id)+'</td><td>'+esc(s.icon)+'</td><td class="mono truncate" title="'+escA(s.prompt)+'">'+esc(s.prompt)+'</td><td><button class="btn" data-action="edit" data-id="'+escA(s.id)+'">Edit</button> <button class="btn btn-danger" data-action="delete" data-id="'+escA(s.id)+'">Del</button></td></tr>';
+      tbody.innerHTML = shortcuts.map(function(s, i) {
+        return '<tr><td><strong>'+esc(s.name)+'</strong></td><td class="mono">'+esc(s.id)+'</td><td>'+esc(s.icon)+'</td><td class="mono truncate" title="'+escA(s.prompt)+'">'+esc(s.prompt)+'</td><td style="white-space:nowrap"><button class="btn" data-action="up" data-i="'+i+'" title="Move up">↑</button> <button class="btn" data-action="down" data-i="'+i+'" title="Move down">↓</button> <button class="btn" data-action="edit" data-id="'+escA(s.id)+'">Edit</button> <button class="btn btn-danger" data-action="delete" data-id="'+escA(s.id)+'">Del</button></td></tr>';
       }).join('');
       tbody.onclick = function(e) {
         var btn = e.target.closest('[data-action]'); if (!btn) return;
+        var arr = data.directory.shortcuts;
         if (btn.dataset.action === 'edit') editShortcut(btn.dataset.id);
-        if (btn.dataset.action === 'delete') { if(confirm('Delete?')){ data.directory.shortcuts = data.directory.shortcuts.filter(function(s){return s.id!==btn.dataset.id;}); Object.keys(data.assignments.assignments||{}).forEach(function(k){data.assignments.assignments[k]=data.assignments.assignments[k].filter(function(id){return id!==btn.dataset.id;});}); renderDirectory(); renderAssignments(); toast('Deleted'); } }
+        else if (btn.dataset.action === 'delete') { if(confirm('Delete?')){ data.directory.shortcuts = arr.filter(function(s){return s.id!==btn.dataset.id;}); Object.keys(data.assignments.assignments||{}).forEach(function(k){data.assignments.assignments[k]=data.assignments.assignments[k].filter(function(id){return id!==btn.dataset.id;});}); renderDirectory(); renderAssignments(); toast('Deleted'); } }
+        else if (btn.dataset.action === 'up') { var i=parseInt(btn.dataset.i,10); if(i>0){ var m=arr.splice(i,1)[0]; arr.splice(i-1,0,m); renderDirectory(); } }
+        else if (btn.dataset.action === 'down') { var i=parseInt(btn.dataset.i,10); if(i<arr.length-1){ var m=arr.splice(i,1)[0]; arr.splice(i+1,0,m); renderDirectory(); } }
       };
     }
     document.getElementById('add-shortcut').addEventListener('click', function() { showShortcutForm(null); });
@@ -317,13 +377,16 @@
     // ===== MODELS =====
     function renderModels() {
       var models = data.models.models || [];
-      document.getElementById('models-body').innerHTML = models.map(function(m){
-        return '<tr><td><strong>'+esc(m.name)+'</strong></td><td class="mono">'+esc(m.id)+'</td><td>'+esc(m.submissionMethod||'direct')+'</td><td class="mono truncate">'+esc(m.urlTemplate)+'</td><td><button class="btn" data-action="edit" data-id="'+escA(m.id)+'">Edit</button> <button class="btn btn-danger" data-action="delete" data-id="'+escA(m.id)+'">Del</button></td></tr>';
+      document.getElementById('models-body').innerHTML = models.map(function(m, i){
+        return '<tr><td><strong>'+esc(m.name)+'</strong></td><td class="mono">'+esc(m.id)+'</td><td>'+esc(m.submissionMethod||'direct')+'</td><td class="mono truncate">'+esc(m.urlTemplate)+'</td><td style="white-space:nowrap"><button class="btn" data-action="up" data-i="'+i+'" title="Move up">↑</button> <button class="btn" data-action="down" data-i="'+i+'" title="Move down">↓</button> <button class="btn" data-action="edit" data-id="'+escA(m.id)+'">Edit</button> <button class="btn btn-danger" data-action="delete" data-id="'+escA(m.id)+'">Del</button></td></tr>';
       }).join('');
       document.getElementById('models-body').onclick = function(e){
         var btn=e.target.closest('[data-action]'); if(!btn)return;
+        var arr = data.models.models;
         if(btn.dataset.action==='edit') editModel(btn.dataset.id);
-        if(btn.dataset.action==='delete'){if(confirm('Delete?')){data.models.models=data.models.models.filter(function(m){return m.id!==btn.dataset.id;});renderModels();toast('Deleted');}}
+        else if(btn.dataset.action==='delete'){if(confirm('Delete?')){data.models.models=arr.filter(function(m){return m.id!==btn.dataset.id;});renderModels();toast('Deleted');}}
+        else if (btn.dataset.action === 'up') { var i=parseInt(btn.dataset.i,10); if(i>0){ var m=arr.splice(i,1)[0]; arr.splice(i-1,0,m); renderModels(); } }
+        else if (btn.dataset.action === 'down') { var i=parseInt(btn.dataset.i,10); if(i<arr.length-1){ var m=arr.splice(i,1)[0]; arr.splice(i+1,0,m); renderModels(); } }
       };
     }
     document.getElementById('add-model').addEventListener('click', function(){showModelForm(null);});
@@ -380,6 +443,18 @@
 
     // ===== PROMPT GEN =====
     function renderPromptGen() { document.getElementById('pg-editor').value = JSON.stringify(data.promptgen, null, 2); }
+    function jumpToAssignments(slug) {
+      selectedTopic = slug;
+      document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});
+      document.querySelectorAll('.tab-content').forEach(function(x){x.classList.remove('active');});
+      document.querySelector('.tab[data-tab="assignments"]').classList.add('active');
+      document.getElementById('tab-assignments').classList.add('active');
+      renderAssignments();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    document.getElementById('jump-home').addEventListener('click', function() { jumpToAssignments('home'); });
+    document.getElementById('jump-custom').addEventListener('click', function() { jumpToAssignments('_custom'); });
+
     document.getElementById('pg-save').addEventListener('click', function() {
       var text = document.getElementById('pg-editor').value;
       try {
