@@ -597,5 +597,14 @@
       "relatedParents": [],
       "icon": null
     }
+  ],
+  "featuredOrder": [
+    "business-and-finance",
+    "education-and-learning",
+    "entertainment",
+    "politics",
+    "sports",
+    "technology",
+    "world"
   ]
 }

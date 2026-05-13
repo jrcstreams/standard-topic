@@ -50,7 +50,14 @@ export function getParentTopics() {
 }
 
 export function getFeaturedTopics() {
-  return getAllTopics().filter(t => t.parent === null && t.slug !== 'home' && t.featured === true);
+  const featured = getAllTopics().filter(t => t.parent === null && t.slug !== 'home' && t.featured === true);
+  const order = topicsData?.featuredOrder;
+  if (!Array.isArray(order) || order.length === 0) return featured;
+  const bySlug = new Map(featured.map(t => [t.slug, t]));
+  const ordered = order.map(slug => bySlug.get(slug)).filter(Boolean);
+  const seen = new Set(ordered.map(t => t.slug));
+  featured.forEach(t => { if (!seen.has(t.slug)) ordered.push(t); });
+  return ordered;
 }
 
 export function getSubtopics(parentSlug) {

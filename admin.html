@@ -86,7 +86,7 @@
     <button class="tab" data-tab="models">AI Models</button>
     <button class="tab" data-tab="promptgen">Prompt Generator</button>
   </div>
-  <div class="tab-content active" id="tab-topics"><div class="toolbar"><h2>Manage Topics</h2><button class="btn btn-primary" id="add-topic">+ Add Topic</button></div><table><thead><tr><th>Name</th><th>Slug</th><th>Parent</th><th>RSS Feed ID</th><th>Icon</th><th>Featured</th><th>Actions</th></tr></thead><tbody id="topics-body"></tbody></table></div>
+  <div class="tab-content active" id="tab-topics"><div class="toolbar"><h2>Manage Topics</h2><button class="btn btn-primary" id="add-topic">+ Add Topic</button></div><div id="featured-order-panel" style="background:var(--bg-light);border:1px solid var(--border);border-radius:6px;padding:0.85rem 1rem;margin-bottom:1rem;"></div><table><thead><tr><th>Name</th><th>Slug</th><th>Parent</th><th>RSS Feed ID</th><th>Icon</th><th>Featured</th><th>Actions</th></tr></thead><tbody id="topics-body"></tbody></table></div>
   <div class="tab-content" id="tab-directory"><div class="toolbar"><h2>Shortcuts Directory</h2><button class="btn btn-primary" id="add-shortcut">+ Add Shortcut</button></div><table><thead><tr><th>Name</th><th>ID</th><th>Icon</th><th>Prompt</th><th>Actions</th></tr></thead><tbody id="dir-body"></tbody></table></div>
   <div class="tab-content" id="tab-assignments"><div class="toolbar"><h2>Topic Assignments</h2></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Pick a topic on the left (incl. <strong>Homepage</strong> and <strong>Custom Search</strong>) to set which AI shortcuts appear on that page. Drag to reorder.</p><div class="assign-layout"><div class="assign-sidebar"><div class="assign-sidebar-head">Topics</div><div id="assign-topics"></div></div><div class="assign-main" id="assign-main"></div></div></div>
   <div class="tab-content" id="tab-searches"><div class="toolbar"><h2>Quick Content Shortcuts</h2><button class="btn btn-primary" id="add-search">+ Add Source</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">External search destinations shown in the Quick Content sub-nav row on topic and custom search pages. Use <code>{query}</code> in the URL where the topic name goes.</p><table><thead><tr><th>Name</th><th>Icon</th><th>URL Template</th><th>Actions</th></tr></thead><tbody id="searches-body"></tbody></table></div>
@@ -154,7 +154,7 @@
           }));
         })(files[i]);
       }
-      Promise.all(promises).then(function() { renderAll(); toast('Imported ' + files.length + ' files'); });
+      Promise.all(promises).then(function() { syncFeaturedOrder(); renderAll(); toast('Imported ' + files.length + ' files'); });
     });
 
     // Export
@@ -168,7 +168,64 @@
       toast('Exported all JSON');
     });
 
-    function renderAll() { renderTopics(); renderDirectory(); renderAssignments(); renderSearches(); renderModels(); renderPromptGen(); }
+    function renderAll() { renderTopics(); renderFeaturedOrder(); renderDirectory(); renderAssignments(); renderSearches(); renderModels(); renderPromptGen(); }
+
+    // Featured-topics order: an explicit slug array on topics.json that
+    // controls the order featured topics show in the home subnav, drawer
+    // menu, search modal, and prompt generator. Keeping it separate from
+    // the master topics array lets the all-topics catalogue stay in its
+    // own order.
+    function getFeaturedSlugsInOrder() {
+      var featured = (data.topics.topics || []).filter(function(t){return !t.parent && t.slug!=='home' && t.featured===true;}).map(function(t){return t.slug;});
+      var order = Array.isArray(data.topics.featuredOrder) ? data.topics.featuredOrder.slice() : null;
+      if (!order || order.length === 0) return featured;
+      var validSet = new Set(featured);
+      var seen = new Set();
+      var out = [];
+      order.forEach(function(s){ if (validSet.has(s) && !seen.has(s)) { out.push(s); seen.add(s); } });
+      featured.forEach(function(s){ if (!seen.has(s)) out.push(s); });
+      return out;
+    }
+    function syncFeaturedOrder() {
+      // Persist the resolved order back so featuredOrder always matches
+      // the set of featured topics. Clears the field when there are none.
+      var order = getFeaturedSlugsInOrder();
+      if (order.length === 0) { delete data.topics.featuredOrder; }
+      else { data.topics.featuredOrder = order; }
+    }
+    function renderFeaturedOrder() {
+      var panel = document.getElementById('featured-order-panel');
+      if (!panel) return;
+      var order = getFeaturedSlugsInOrder();
+      var bySlug = {}; (data.topics.topics||[]).forEach(function(t){ bySlug[t.slug] = t; });
+      var header = '<div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted);font-weight:700;margin-bottom:0.5rem;">Featured Topics Order <span style="text-transform:none;letter-spacing:0;color:var(--text-muted);font-weight:400;">(home subnav, drawer menu, search modal, prompt generator)</span></div>';
+      if (order.length === 0) {
+        panel.innerHTML = header + '<div style="color:var(--text-muted);font-size:0.84rem;">No featured topics yet. Edit any parent topic and set <strong>Featured: Yes</strong>.</div>';
+        return;
+      }
+      var rows = order.map(function(slug, i) {
+        var t = bySlug[slug];
+        var name = t ? t.name : slug;
+        return '<div data-slug="'+escA(slug)+'" style="display:flex;align-items:center;gap:0.5rem;padding:0.35rem 0.55rem;background:white;border:1px solid var(--border);border-radius:4px;margin-bottom:0.3rem;font-size:0.85rem;">'+
+          '<span style="color:var(--text-muted);font-size:0.78rem;min-width:1.3rem;">'+(i+1)+'.</span>'+
+          '<span style="flex:1;">'+esc(name)+' <span class="mono" style="font-size:0.72rem;color:var(--text-muted);">'+esc(slug)+'</span></span>'+
+          '<button class="btn" data-fo-action="up" data-slug="'+escA(slug)+'" title="Move up">↑</button>'+
+          '<button class="btn" data-fo-action="down" data-slug="'+escA(slug)+'" title="Move down">↓</button>'+
+        '</div>';
+      }).join('');
+      panel.innerHTML = header + rows;
+      panel.onclick = function(e) {
+        var btn = e.target.closest('[data-fo-action]'); if (!btn) return;
+        var slug = btn.dataset.slug;
+        var order = getFeaturedSlugsInOrder();
+        var i = order.indexOf(slug); if (i < 0) return;
+        if (btn.dataset.foAction === 'up' && i > 0) { var m = order.splice(i,1)[0]; order.splice(i-1,0,m); }
+        else if (btn.dataset.foAction === 'down' && i < order.length-1) { var m = order.splice(i,1)[0]; order.splice(i+1,0,m); }
+        else return;
+        data.topics.featuredOrder = order;
+        renderFeaturedOrder();
+      };
+    }
 
     // ===== TOPICS =====
     function renderTopics() {
@@ -186,7 +243,7 @@
       tbody.onclick = function(e) {
         var btn = e.target.closest('[data-action]'); if (!btn) return;
         if (btn.dataset.action === 'edit') editTopic(btn.dataset.slug);
-        else if (btn.dataset.action === 'delete') { if(confirm('Delete "'+btn.dataset.slug+'"?')){ data.topics.topics = data.topics.topics.filter(function(t){return t.slug!==btn.dataset.slug;}); renderTopics(); renderAssignments(); } }
+        else if (btn.dataset.action === 'delete') { if(confirm('Delete "'+btn.dataset.slug+'"?')){ data.topics.topics = data.topics.topics.filter(function(t){return t.slug!==btn.dataset.slug;}); syncFeaturedOrder(); renderTopics(); renderFeaturedOrder(); renderAssignments(); } }
         else if (btn.dataset.action === 'up') { moveTopic(btn.dataset.slug, -1); }
         else if (btn.dataset.action === 'down') { moveTopic(btn.dataset.slug, 1); }
       };
@@ -281,7 +338,13 @@
             ['parent','rssFeedId','icon','featured','relatedParents'].forEach(function(k){ if(entry[k]===undefined) delete data.topics.topics[i][k]; });
           }
         }
-        closeModal(); renderTopics(); renderAssignments(); toast('Saved');
+        // When a topic was just promoted to featured, append it to the
+        // explicit order list. When unfeatured/removed, drop it.
+        if (entry.featured && Array.isArray(data.topics.featuredOrder)) {
+          if (data.topics.featuredOrder.indexOf(entry.slug) < 0) data.topics.featuredOrder.push(entry.slug);
+        }
+        syncFeaturedOrder();
+        closeModal(); renderTopics(); renderFeaturedOrder(); renderAssignments(); toast('Saved');
       });
     }
 
