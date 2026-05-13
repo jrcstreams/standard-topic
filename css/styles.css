@@ -6861,15 +6861,3 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   .navmenu-link { padding: 0.55rem 0.9rem; font-size: 0.85rem; }
 }
 
-/* Two-column topic grid only when the panel itself has room for it.
-   At ≥520px panel width (≈900px viewport given width:min(560px,70vw)),
-   pair topics up; otherwise keep the relaxed single-column rhythm. */
-@media (min-width: 900px) {
-  .navmenu-topics {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 0.5rem;
-    row-gap: 0;
-    padding: 0 0.5rem;
-  }
-}
