@@ -71,7 +71,7 @@
 </head>
 <body>
   <h1>Standard Topic — Admin</h1>
-  <div class="info-box"><strong>Local admin tool.</strong> Import your JSON data files, edit via forms, then export updated JSON. Replace the files in your project and push to GitHub.</div>
+  <div class="info-box"><strong>Local admin tool.</strong> Click <strong>Import All JSON</strong> and select every <code>.json</code> file from <code>/data/</code> (topics, shortcuts-directory, shortcuts-assignments, external-searches, ai-models, prompt-generator). Edit through the tabs, then <strong>Export All JSON</strong> to download the updated files. Drop them back into <code>/data/</code> and push to GitHub. Allow multi-file downloads when prompted by your browser.</div>
   <div class="import-export">
     <label class="btn btn-primary" style="cursor:pointer">Import All JSON <input type="file" id="import-files" multiple accept=".json" style="display:none"></label>
     <button class="btn btn-success" id="export-all">Export All JSON</button>
@@ -80,14 +80,16 @@
     <button class="tab active" data-tab="topics">Topics</button>
     <button class="tab" data-tab="directory">Shortcuts Directory</button>
     <button class="tab" data-tab="assignments">Topic Assignments</button>
+    <button class="tab" data-tab="searches">Quick Content</button>
     <button class="tab" data-tab="models">AI Models</button>
     <button class="tab" data-tab="promptgen">Prompt Generator</button>
   </div>
-  <div class="tab-content active" id="tab-topics"><div class="toolbar"><h2>Manage Topics</h2><button class="btn btn-primary" id="add-topic">+ Add Topic</button></div><table><thead><tr><th>Name</th><th>Slug</th><th>Parent</th><th>RSS Feed ID</th><th>Actions</th></tr></thead><tbody id="topics-body"></tbody></table></div>
+  <div class="tab-content active" id="tab-topics"><div class="toolbar"><h2>Manage Topics</h2><button class="btn btn-primary" id="add-topic">+ Add Topic</button></div><table><thead><tr><th>Name</th><th>Slug</th><th>Parent</th><th>RSS Feed ID</th><th>Icon</th><th>Featured</th><th>Actions</th></tr></thead><tbody id="topics-body"></tbody></table></div>
   <div class="tab-content" id="tab-directory"><div class="toolbar"><h2>Shortcuts Directory</h2><button class="btn btn-primary" id="add-shortcut">+ Add Shortcut</button></div><table><thead><tr><th>Name</th><th>ID</th><th>Icon</th><th>Prompt</th><th>Actions</th></tr></thead><tbody id="dir-body"></tbody></table></div>
-  <div class="tab-content" id="tab-assignments"><div class="toolbar"><h2>Topic Assignments</h2></div><div class="assign-layout"><div class="assign-sidebar"><div class="assign-sidebar-head">Topics</div><div id="assign-topics"></div></div><div class="assign-main" id="assign-main"></div></div></div>
+  <div class="tab-content" id="tab-assignments"><div class="toolbar"><h2>Topic Assignments</h2></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Pick a topic on the left (incl. <strong>Homepage</strong> and <strong>Custom Search</strong>) to set which AI shortcuts appear on that page. Drag to reorder.</p><div class="assign-layout"><div class="assign-sidebar"><div class="assign-sidebar-head">Topics</div><div id="assign-topics"></div></div><div class="assign-main" id="assign-main"></div></div></div>
+  <div class="tab-content" id="tab-searches"><div class="toolbar"><h2>Quick Content Shortcuts</h2><button class="btn btn-primary" id="add-search">+ Add Source</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">External search destinations shown in the Quick Content sub-nav row on topic and custom search pages. Use <code>{query}</code> in the URL where the topic name goes.</p><table><thead><tr><th>Name</th><th>Icon</th><th>URL Template</th><th>Actions</th></tr></thead><tbody id="searches-body"></tbody></table></div>
   <div class="tab-content" id="tab-models"><div class="toolbar"><h2>AI Models</h2><button class="btn btn-primary" id="add-model">+ Add Model</button></div><table><thead><tr><th>Name</th><th>ID</th><th>Submission Method</th><th>URL Template</th><th>Actions</th></tr></thead><tbody id="models-body"></tbody></table></div>
-  <div class="tab-content" id="tab-promptgen"><div class="toolbar"><h2>Prompt Generator</h2></div><p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.75rem;">Edit prompt-generator.json directly. This tab shows a live JSON preview.</p><pre id="pg-preview" style="background:var(--bg-light);padding:1rem;border-radius:6px;font-size:0.78rem;overflow-x:auto;max-height:500px;overflow-y:auto;"></pre></div>
+  <div class="tab-content" id="tab-promptgen"><div class="toolbar"><h2>Prompt Generator</h2><button class="btn btn-success" id="pg-save">Apply JSON</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Edit <code>prompt-generator.json</code> directly. Click <strong>Apply JSON</strong> to validate and stage your changes, then use <strong>Export All JSON</strong> to download the updated file.</p><textarea id="pg-editor" style="width:100%;min-height:500px;background:var(--bg-light);padding:1rem;border-radius:6px;font-size:0.78rem;font-family:monospace;border:1px solid var(--border);resize:vertical;"></textarea></div>
   <div id="modal"></div>
 
   <script>
@@ -95,6 +97,7 @@
       topics: { topics: [] },
       directory: { shortcuts: [] },
       assignments: { assignments: {} },
+      searches: { searches: [] },
       models: { models: [], defaultModel: 'chatgpt', submissionMethods: {} },
       promptgen: {}
     };
@@ -103,6 +106,7 @@
       'topics.json': 'topics',
       'shortcuts-directory.json': 'directory',
       'shortcuts-assignments.json': 'assignments',
+      'external-searches.json': 'searches',
       'ai-models.json': 'models',
       'prompt-generator.json': 'promptgen'
     };
@@ -156,12 +160,13 @@
       dlJSON('topics.json', data.topics);
       dlJSON('shortcuts-directory.json', data.directory);
       dlJSON('shortcuts-assignments.json', data.assignments);
+      dlJSON('external-searches.json', data.searches);
       dlJSON('ai-models.json', data.models);
       dlJSON('prompt-generator.json', data.promptgen);
       toast('Exported all JSON');
     });
 
-    function renderAll() { renderTopics(); renderDirectory(); renderAssignments(); renderModels(); renderPromptGen(); }
+    function renderAll() { renderTopics(); renderDirectory(); renderAssignments(); renderSearches(); renderModels(); renderPromptGen(); }
 
     // ===== TOPICS =====
     function renderTopics() {
@@ -176,14 +181,14 @@
       });
       var tbody = document.getElementById('topics-body');
       tbody.innerHTML = html;
-      tbody.addEventListener('click', function(e) {
+      tbody.onclick = function(e) {
         var btn = e.target.closest('[data-action]'); if (!btn) return;
         if (btn.dataset.action === 'edit') editTopic(btn.dataset.slug);
-        if (btn.dataset.action === 'delete') { if(confirm('Delete "'+btn.dataset.slug+'"?')){ data.topics.topics = data.topics.topics.filter(function(t){return t.slug!==btn.dataset.slug;}); renderTopics(); } }
-      });
+        if (btn.dataset.action === 'delete') { if(confirm('Delete "'+btn.dataset.slug+'"?')){ data.topics.topics = data.topics.topics.filter(function(t){return t.slug!==btn.dataset.slug;}); renderTopics(); renderAssignments(); } }
+      };
     }
     function topicRow(t, sub) {
-      return '<tr class="'+(sub?'subtopic-row':'')+'"><td>'+(sub?'↳ ':'')+esc(t.name)+'</td><td class="mono">'+esc(t.slug)+'</td><td class="mono">'+esc(t.parent||'—')+'</td><td class="mono">'+esc(t.rssFeedId||'—')+'</td><td><button class="btn" data-action="edit" data-slug="'+escA(t.slug)+'">Edit</button> '+(t.slug!=='home'?'<button class="btn btn-danger" data-action="delete" data-slug="'+escA(t.slug)+'">Del</button>':'')+'</td></tr>';
+      return '<tr class="'+(sub?'subtopic-row':'')+'"><td>'+(sub?'↳ ':'')+esc(t.name)+'</td><td class="mono">'+esc(t.slug)+'</td><td class="mono">'+esc(t.parent||'—')+'</td><td class="mono">'+esc(t.rssFeedId||'—')+'</td><td class="mono">'+esc(t.icon||'—')+'</td><td>'+(t.featured?'★':'')+'</td><td><button class="btn" data-action="edit" data-slug="'+escA(t.slug)+'">Edit</button> '+(t.slug!=='home'?'<button class="btn btn-danger" data-action="delete" data-slug="'+escA(t.slug)+'">Del</button>':'')+'</td></tr>';
     }
     document.getElementById('add-topic').addEventListener('click', function() { showTopicForm(null); });
     function editTopic(slug) { var t = data.topics.topics.find(function(x){return x.slug===slug;}); if(t) showTopicForm(t); }
@@ -191,14 +196,35 @@
       var isNew = !topic;
       var parents = data.topics.topics.filter(function(t){return !t.parent && t.slug!=='home';});
       var opts = parents.map(function(p){return '<option value="'+escA(p.slug)+'" '+(topic&&topic.parent===p.slug?'selected':'')+'>'+esc(p.name)+'</option>';}).join('');
-      document.getElementById('modal').innerHTML = '<div class="form-overlay" id="overlay"><div class="form-modal"><h3>'+(isNew?'Add':'Edit')+' Topic</h3><div class="fg"><label>Name</label><input id="f-name" value="'+escA(topic?topic.name:'')+'"></div><div class="fg"><label>Slug</label><input id="f-slug" value="'+escA(topic?topic.slug:'')+'" '+(isNew?'':'readonly style="background:var(--bg-light)"')+'></div><div class="fg"><label>Parent</label><select id="f-parent"><option value="">None (parent)</option>'+opts+'</select></div><div class="fg"><label>RSS Feed ID</label><input id="f-rss" value="'+escA(topic?topic.rssFeedId:'')+'"></div><div class="fg"><label>Featured</label><select id="f-featured"><option value="false">No</option><option value="true" '+(topic&&topic.featured?'selected':'')+'>Yes</option></select></div><div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
+      var relatedVal = topic && Array.isArray(topic.relatedParents) ? topic.relatedParents.join(', ') : '';
+      document.getElementById('modal').innerHTML = '<div class="form-overlay" id="overlay"><div class="form-modal"><h3>'+(isNew?'Add':'Edit')+' Topic</h3><div class="fg"><label>Name</label><input id="f-name" value="'+escA(topic?topic.name:'')+'"></div><div class="fg"><label>Slug</label><input id="f-slug" value="'+escA(topic?topic.slug:'')+'" '+(isNew?'':'readonly style="background:var(--bg-light)"')+'></div><div class="fg"><label>Parent</label><select id="f-parent"><option value="">None (parent)</option>'+opts+'</select></div><div class="fg"><label>RSS Feed ID</label><input id="f-rss" value="'+escA(topic?topic.rssFeedId:'')+'"></div><div class="fg"><label>Icon key</label><input id="f-icon" value="'+escA(topic?topic.icon:'')+'" placeholder="e.g. home, globe, briefcase"></div><div class="fg"><label>Featured (shown in main-nav featured list)</label><select id="f-featured"><option value="false">No</option><option value="true" '+(topic&&topic.featured?'selected':'')+'>Yes</option></select></div><div class="fg"><label>Related Parents (comma-separated slugs)</label><input id="f-related" value="'+escA(relatedVal)+'" placeholder="e.g. technology, business-and-finance"></div><div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
       document.getElementById('f-cancel').addEventListener('click', closeModal);
       document.getElementById('overlay').addEventListener('click', function(e){if(e.target===e.currentTarget)closeModal();});
       document.getElementById('f-save').addEventListener('click', function() {
-        var entry = { slug:document.getElementById('f-slug').value.trim(), name:document.getElementById('f-name').value.trim(), parent:document.getElementById('f-parent').value||undefined, rssFeedId:document.getElementById('f-rss').value.trim()||undefined, featured:document.getElementById('f-featured').value==='true'||undefined };
-        if(!entry.slug||!entry.name){alert('Required.');return;}
-        if(isNew){data.topics.topics.push(entry);}else{var i=data.topics.topics.findIndex(function(t){return t.slug===entry.slug;});if(i>=0)data.topics.topics[i]=Object.assign(data.topics.topics[i],entry);}
-        closeModal(); renderTopics(); toast('Saved');
+        var related = document.getElementById('f-related').value.split(',').map(function(s){return s.trim();}).filter(Boolean);
+        var entry = {
+          slug: document.getElementById('f-slug').value.trim(),
+          name: document.getElementById('f-name').value.trim(),
+          parent: document.getElementById('f-parent').value || undefined,
+          rssFeedId: document.getElementById('f-rss').value.trim() || undefined,
+          icon: document.getElementById('f-icon').value.trim() || undefined,
+          featured: document.getElementById('f-featured').value === 'true' || undefined,
+          relatedParents: related.length ? related : undefined
+        };
+        if(!entry.slug||!entry.name){alert('Required: name and slug.');return;}
+        if(isNew){
+          if(data.topics.topics.find(function(t){return t.slug===entry.slug;})){alert('Slug exists.');return;}
+          data.topics.topics.push(entry);
+        }else{
+          var i=data.topics.topics.findIndex(function(t){return t.slug===entry.slug;});
+          if(i>=0){
+            // Preserve any fields not exposed in the form (e.g. excludeEvergreen).
+            data.topics.topics[i] = Object.assign({}, data.topics.topics[i], entry);
+            // Wipe keys that were explicitly cleared to undefined.
+            ['parent','rssFeedId','icon','featured','relatedParents'].forEach(function(k){ if(entry[k]===undefined) delete data.topics.topics[i][k]; });
+          }
+        }
+        closeModal(); renderTopics(); renderAssignments(); toast('Saved');
       });
     }
 
@@ -209,11 +235,11 @@
       tbody.innerHTML = shortcuts.map(function(s) {
         return '<tr><td><strong>'+esc(s.name)+'</strong></td><td class="mono">'+esc(s.id)+'</td><td>'+esc(s.icon)+'</td><td class="mono truncate" title="'+escA(s.prompt)+'">'+esc(s.prompt)+'</td><td><button class="btn" data-action="edit" data-id="'+escA(s.id)+'">Edit</button> <button class="btn btn-danger" data-action="delete" data-id="'+escA(s.id)+'">Del</button></td></tr>';
       }).join('');
-      tbody.addEventListener('click', function(e) {
+      tbody.onclick = function(e) {
         var btn = e.target.closest('[data-action]'); if (!btn) return;
         if (btn.dataset.action === 'edit') editShortcut(btn.dataset.id);
-        if (btn.dataset.action === 'delete') { if(confirm('Delete?')){ data.directory.shortcuts = data.directory.shortcuts.filter(function(s){return s.id!==btn.dataset.id;}); Object.keys(data.assignments.assignments||{}).forEach(function(k){data.assignments.assignments[k]=data.assignments.assignments[k].filter(function(id){return id!==btn.dataset.id;});}); renderDirectory(); toast('Deleted'); } }
-      });
+        if (btn.dataset.action === 'delete') { if(confirm('Delete?')){ data.directory.shortcuts = data.directory.shortcuts.filter(function(s){return s.id!==btn.dataset.id;}); Object.keys(data.assignments.assignments||{}).forEach(function(k){data.assignments.assignments[k]=data.assignments.assignments[k].filter(function(id){return id!==btn.dataset.id;});}); renderDirectory(); renderAssignments(); toast('Deleted'); } }
+      };
     }
     document.getElementById('add-shortcut').addEventListener('click', function() { showShortcutForm(null); });
     function editShortcut(id) { var s = data.directory.shortcuts.find(function(x){return x.id===id;}); if(s) showShortcutForm(s); }
@@ -294,11 +320,11 @@
       document.getElementById('models-body').innerHTML = models.map(function(m){
         return '<tr><td><strong>'+esc(m.name)+'</strong></td><td class="mono">'+esc(m.id)+'</td><td>'+esc(m.submissionMethod||'direct')+'</td><td class="mono truncate">'+esc(m.urlTemplate)+'</td><td><button class="btn" data-action="edit" data-id="'+escA(m.id)+'">Edit</button> <button class="btn btn-danger" data-action="delete" data-id="'+escA(m.id)+'">Del</button></td></tr>';
       }).join('');
-      document.getElementById('models-body').addEventListener('click', function(e){
+      document.getElementById('models-body').onclick = function(e){
         var btn=e.target.closest('[data-action]'); if(!btn)return;
         if(btn.dataset.action==='edit') editModel(btn.dataset.id);
         if(btn.dataset.action==='delete'){if(confirm('Delete?')){data.models.models=data.models.models.filter(function(m){return m.id!==btn.dataset.id;});renderModels();toast('Deleted');}}
-      });
+      };
     }
     document.getElementById('add-model').addEventListener('click', function(){showModelForm(null);});
     function editModel(id){var m=data.models.models.find(function(x){return x.id===id;});if(m)showModelForm(m);}
@@ -315,8 +341,55 @@
       });
     }
 
+    // ===== QUICK CONTENT (external searches) =====
+    function renderSearches() {
+      var list = data.searches.searches || [];
+      var tbody = document.getElementById('searches-body');
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted);text-align:center;padding:1rem;">No quick content shortcuts. Import or add one.</td></tr>';
+      } else {
+        tbody.innerHTML = list.map(function(s, i) {
+          return '<tr><td><strong>'+esc(s.name)+'</strong></td><td>'+esc(s.icon||'')+'</td><td class="mono truncate" title="'+escA(s.urlTemplate)+'">'+esc(s.urlTemplate)+'</td><td><button class="btn" data-action="up" data-i="'+i+'" title="Move up">↑</button> <button class="btn" data-action="down" data-i="'+i+'" title="Move down">↓</button> <button class="btn" data-action="edit" data-i="'+i+'">Edit</button> <button class="btn btn-danger" data-action="delete" data-i="'+i+'">Del</button></td></tr>';
+        }).join('');
+      }
+      tbody.onclick = function(e) {
+        var btn = e.target.closest('[data-action]'); if (!btn) return;
+        var i = parseInt(btn.dataset.i, 10);
+        var arr = data.searches.searches;
+        if (btn.dataset.action === 'edit') { showSearchForm(arr[i], i); }
+        else if (btn.dataset.action === 'delete') { if(confirm('Delete "'+arr[i].name+'"?')){ arr.splice(i,1); renderSearches(); toast('Deleted'); } }
+        else if (btn.dataset.action === 'up' && i > 0) { var m=arr.splice(i,1)[0]; arr.splice(i-1,0,m); renderSearches(); }
+        else if (btn.dataset.action === 'down' && i < arr.length-1) { var m=arr.splice(i,1)[0]; arr.splice(i+1,0,m); renderSearches(); }
+      };
+    }
+    document.getElementById('add-search').addEventListener('click', function() { showSearchForm(null, -1); });
+    function showSearchForm(s, idx) {
+      var isNew = idx < 0;
+      document.getElementById('modal').innerHTML = '<div class="form-overlay" id="overlay"><div class="form-modal"><h3>'+(isNew?'Add':'Edit')+' Quick Content Source</h3><div class="fg"><label>Name</label><input id="f-name" value="'+escA(s?s.name:'')+'" placeholder="e.g. Google News"></div><div class="fg"><label>Icon (emoji or text)</label><input id="f-icon" value="'+escA(s?s.icon:'')+'" placeholder="🔎"></div><div class="fg"><label>URL Template (use {query})</label><input id="f-url" value="'+escA(s?s.urlTemplate:'')+'" placeholder="https://example.com/search?q={query}"></div><div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
+      document.getElementById('f-cancel').addEventListener('click', closeModal);
+      document.getElementById('overlay').addEventListener('click', function(e){if(e.target===e.currentTarget)closeModal();});
+      document.getElementById('f-save').addEventListener('click', function() {
+        var entry = { name: document.getElementById('f-name').value.trim(), icon: document.getElementById('f-icon').value.trim(), urlTemplate: document.getElementById('f-url').value.trim() };
+        if (!entry.name || !entry.urlTemplate) { alert('Name and URL Template are required.'); return; }
+        if (entry.urlTemplate.indexOf('{query}') < 0) { if (!confirm('URL has no {query} placeholder — searches will not include the topic. Save anyway?')) return; }
+        if (!data.searches.searches) data.searches.searches = [];
+        if (isNew) { data.searches.searches.push(entry); } else { data.searches.searches[idx] = entry; }
+        closeModal(); renderSearches(); toast('Saved');
+      });
+    }
+
     // ===== PROMPT GEN =====
-    function renderPromptGen() { document.getElementById('pg-preview').textContent = JSON.stringify(data.promptgen, null, 2); }
+    function renderPromptGen() { document.getElementById('pg-editor').value = JSON.stringify(data.promptgen, null, 2); }
+    document.getElementById('pg-save').addEventListener('click', function() {
+      var text = document.getElementById('pg-editor').value;
+      try {
+        var parsed = JSON.parse(text);
+        data.promptgen = parsed;
+        toast('Prompt generator JSON applied');
+      } catch (err) {
+        alert('Invalid JSON: ' + err.message);
+      }
+    });
 
     renderAll();
   </script>
