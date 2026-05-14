@@ -2,378 +2,94 @@
   "topics": [
     {
       "slug": "home",
-      "name": "General",
+      "name": "Homepage",
       "parent": null,
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "latest-news",
-        "overview",
-        "recent-developments",
-        "explain-simply",
-        "why-it-matters",
-        "what-to-watch",
-        "key-facts-stats",
-        "history-background"
-      ],
-      "relatedParents": [],
-      "icon": "home"
+      "rssFeedId": "_KCcgQinCBKZkLpAZ",
+      "icon": null
     },
     {
-      "slug": "business-and-finance",
+      "slug": "business-finance",
       "name": "Business and Finance",
       "parent": null,
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "controversies"
-      ],
-      "relatedParents": [
-        "technology"
-      ],
-      "icon": "briefcase",
+      "rssFeedId": "tQkP30e9iGRGGNbg",
+      "icon": null,
       "featured": true
+    },
+    {
+      "slug": "banking",
+      "name": "Banking",
+      "parent": "business-finance",
+      "rssFeedId": "th0dxzMGQAM7c9Lq",
+      "icon": null
     },
     {
       "slug": "cryptocurrency",
       "name": "Cryptocurrency",
-      "parent": "business-and-finance",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "parent": "business-finance",
+      "rssFeedId": "t4nhBKehWNyb6YQB",
       "icon": null
     },
     {
-      "slug": "e-commerce",
-      "name": "E-commerce",
-      "parent": "business-and-finance",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "slug": "deals-ma",
+      "name": "Deals and M&A",
+      "parent": "business-finance",
+      "rssFeedId": "tF8cHNFQT7giF52H",
       "icon": null
     },
     {
       "slug": "economy",
       "name": "Economy",
-      "parent": "business-and-finance",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "parent": "business-finance",
+      "rssFeedId": "tfYwOa7XiBGf1SYN",
       "icon": null
     },
     {
-      "slug": "energy",
-      "name": "Energy",
-      "parent": "business-and-finance",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "slug": "energy-commodities",
+      "name": "Energy and Commodities",
+      "parent": "business-finance",
+      "rssFeedId": "tHj0VH1uWDSmGxTf",
       "icon": null
     },
     {
-      "slug": "mergers-and-acquisitions",
-      "name": "M&A",
-      "parent": "business-and-finance",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "slug": "fintech",
+      "name": "Fintech",
+      "parent": "business-finance",
+      "rssFeedId": "taVbEgJe9vYLVkx4",
+      "icon": null
+    },
+    {
+      "slug": "housing-real-estate",
+      "name": "Housing and Real Estate",
+      "parent": "business-finance",
+      "rssFeedId": "tIyH2d3YeXUdxvtw",
+      "icon": null
+    },
+    {
+      "slug": "jobs-labor",
+      "name": "Jobs and Labor",
+      "parent": "business-finance",
+      "rssFeedId": "tkSzGeVh3dhii9oX",
       "icon": null
     },
     {
       "slug": "markets",
       "name": "Markets",
-      "parent": "business-and-finance",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "parent": "business-finance",
+      "rssFeedId": "tKX6LemKjPxattr6",
       "icon": null
     },
     {
-      "slug": "real-estate",
-      "name": "Real Estate",
-      "parent": "business-and-finance",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "slug": "personal-finance",
+      "name": "Personal Finance",
+      "parent": "business-finance",
+      "rssFeedId": "tD0Wc9GSf5WiSlia",
       "icon": null
     },
     {
       "slug": "small-business",
       "name": "Small Business",
-      "parent": "business-and-finance",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "education-and-learning",
-      "name": "Education and Learning",
-      "parent": null,
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "controversies"
-      ],
-      "relatedParents": [],
-      "icon": "book",
-      "featured": true
-    },
-    {
-      "slug": "history",
-      "name": "History",
-      "parent": "education-and-learning",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "math",
-      "name": "Math",
-      "parent": "education-and-learning",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "breaking-news",
-        "controversies",
-        "key-players"
-      ],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "reading-and-writing",
-      "name": "Reading and Writing",
-      "parent": "education-and-learning",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "breaking-news",
-        "controversies",
-        "key-players"
-      ],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "science-education",
-      "name": "Science",
-      "parent": "education-and-learning",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "controversies"
-      ],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "entertainment",
-      "name": "Entertainment",
-      "parent": null,
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "expert-analysis",
-        "impact-analysis"
-      ],
-      "relatedParents": [],
-      "icon": "film",
-      "featured": true
-    },
-    {
-      "slug": "celebrities",
-      "name": "Celebrities",
-      "parent": "entertainment",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "expert-analysis",
-        "impact-analysis",
-        "beginners-guide",
-        "deep-dive"
-      ],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "podcasts",
-      "name": "Podcasts",
-      "parent": "entertainment",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "expert-analysis",
-        "impact-analysis",
-        "controversies"
-      ],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "tv-and-movies",
-      "name": "TV and Movies",
-      "parent": "entertainment",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "expert-analysis",
-        "impact-analysis"
-      ],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "politics",
-      "name": "Politics",
-      "parent": null,
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [
-        "world"
-      ],
-      "icon": "landmark",
-      "featured": true
-    },
-    {
-      "slug": "elections",
-      "name": "Elections",
-      "parent": "politics",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "beginners-guide"
-      ],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "geopolitics",
-      "name": "Geopolitics",
-      "parent": "politics",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "international-politics",
-      "name": "International Politics",
-      "parent": "politics",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "law-and-regulation",
-      "name": "Law and Regulation Developments",
-      "parent": "politics",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "political-science",
-      "name": "Political Science",
-      "parent": "politics",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "breaking-news"
-      ],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "us-politics",
-      "name": "US Politics",
-      "parent": "politics",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "sports",
-      "name": "Sports",
-      "parent": null,
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "expert-analysis",
-        "controversies",
-        "beginners-guide"
-      ],
-      "relatedParents": [],
-      "icon": "trophy",
-      "featured": true
-    },
-    {
-      "slug": "baseball",
-      "name": "Baseball",
-      "parent": "sports",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "expert-analysis",
-        "controversies",
-        "beginners-guide"
-      ],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "basketball",
-      "name": "Basketball",
-      "parent": "sports",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "expert-analysis",
-        "controversies",
-        "beginners-guide"
-      ],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "college-football",
-      "name": "College Football",
-      "parent": "sports",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "expert-analysis",
-        "controversies",
-        "beginners-guide"
-      ],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "football",
-      "name": "NFL Football",
-      "parent": "sports",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "expert-analysis",
-        "controversies",
-        "beginners-guide"
-      ],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "hockey",
-      "name": "Hockey",
-      "parent": "sports",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "expert-analysis",
-        "controversies",
-        "beginners-guide"
-      ],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "soccer",
-      "name": "Soccer",
-      "parent": "sports",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "expert-analysis",
-        "controversies",
-        "beginners-guide"
-      ],
-      "relatedParents": [],
+      "parent": "business-finance",
+      "rssFeedId": "tCLwD7EaKTTFlypE",
       "icon": null
     },
     {
@@ -381,230 +97,638 @@
       "name": "Technology",
       "parent": null,
       "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [
-        "business-and-finance"
-      ],
-      "icon": "laptop",
+      "icon": null,
       "featured": true
     },
     {
       "slug": "artificial-intelligence",
       "name": "Artificial Intelligence",
       "parent": "technology",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "rssFeedId": "tDF2yoZwRu1xVZLo",
       "icon": null
     },
     {
-      "slug": "blockchain",
-      "name": "Blockchain",
+      "slug": "ai-governance-policy",
+      "name": "AI Governance and Policy",
       "parent": "technology",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "rssFeedId": "t74akQBJRZwDjnRY",
+      "icon": null
+    },
+    {
+      "slug": "blockchain-web3",
+      "name": "Blockchain and Web3",
+      "parent": "technology",
+      "rssFeedId": "tLH5zShGITRcVLU0",
       "icon": null
     },
     {
       "slug": "cloud-computing",
       "name": "Cloud Computing",
       "parent": "technology",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "rssFeedId": "tJLR7ULYQCOIyaQa",
       "icon": null
     },
     {
       "slug": "consumer-electronics",
       "name": "Consumer Electronics",
       "parent": "technology",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "controversies",
-        "expert-analysis"
-      ],
-      "relatedParents": [],
+      "rssFeedId": "t0zXfviXKCi2L4Rq",
       "icon": null
     },
     {
       "slug": "cybersecurity",
       "name": "Cybersecurity",
       "parent": "technology",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "rssFeedId": "tfYmVuq6pXJdSEHg",
+      "icon": null
+    },
+    {
+      "slug": "data-analytics",
+      "name": "Data and Analytics",
+      "parent": "technology",
+      "rssFeedId": "tKbX6FeuN0OIT7ob",
       "icon": null
     },
     {
       "slug": "emerging-technologies",
       "name": "Emerging Technologies",
       "parent": "technology",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "rssFeedId": "tJeBBBlFJ2DYEt1i",
       "icon": null
     },
     {
-      "slug": "information-technology",
-      "name": "Information Technology",
-      "parent": "technology",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "privacy-and-data-protection",
+      "slug": "privacy-data-protection",
       "name": "Privacy and Data Protection",
       "parent": "technology",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "rssFeedId": "t1MvjvaTnj1rC9PJ",
       "icon": null
     },
     {
       "slug": "programming-development",
-      "name": "Programming / Development",
+      "name": "Programming and Development",
       "parent": "technology",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "controversies",
-        "pros-and-cons"
-      ],
-      "relatedParents": [],
+      "rssFeedId": "t78vGHnsCCKbCuiL",
       "icon": null
     },
     {
-      "slug": "robotics",
-      "name": "Robotics",
+      "slug": "robotics-automation",
+      "name": "Robotics and Automation",
       "parent": "technology",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "rssFeedId": "tZxObQ7dxOGtaykk",
       "icon": null
     },
     {
-      "slug": "software",
-      "name": "Software",
+      "slug": "social-media",
+      "name": "Social Media",
       "parent": "technology",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "rssFeedId": "tSFXJ7WNR5cQE71E",
       "icon": null
     },
     {
-      "slug": "tech-business",
-      "name": "Tech Business",
+      "slug": "software-saas",
+      "name": "Software and SaaS",
       "parent": "technology",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [
-        "beginners-guide"
-      ],
-      "relatedParents": [],
+      "rssFeedId": "tM8W8GnwBQIKGQBR",
       "icon": null
     },
     {
-      "slug": "virtual-augmented-reality",
-      "name": "Virtual / Augmented Reality",
+      "slug": "startups-venture-capital",
+      "name": "Startups and Venture Capital",
       "parent": "technology",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "rssFeedId": "tlXuxcP01NvcmTJl",
+      "icon": null
+    },
+    {
+      "slug": "science",
+      "name": "Science",
+      "parent": null,
+      "rssFeedId": "tA3D50VyXEbs5wIT",
+      "icon": null,
+      "featured": true
+    },
+    {
+      "slug": "astronomy-space",
+      "name": "Astronomy and Space",
+      "parent": "science",
+      "rssFeedId": "tPrv6dHjgYEARk5c",
+      "icon": null
+    },
+    {
+      "slug": "chemistry-biology-genetics",
+      "name": "Chemistry, Biology and Genetics",
+      "parent": "science",
+      "rssFeedId": "tJ1DI7IPnh6KFPS3",
+      "icon": null
+    },
+    {
+      "slug": "physics",
+      "name": "Physics",
+      "parent": "science",
+      "rssFeedId": "tYO5nWCAfXs83TPx",
+      "icon": null
+    },
+    {
+      "slug": "research-academia",
+      "name": "Research and Academia",
+      "parent": "science",
+      "rssFeedId": "tMySfHC5qlcQ4GI6",
+      "icon": null
+    },
+    {
+      "slug": "health-wellness",
+      "name": "Health and Wellness",
+      "parent": null,
+      "rssFeedId": "tXegKaBv8GFd6DRd",
+      "icon": null,
+      "featured": true
+    },
+    {
+      "slug": "fitness-exercise",
+      "name": "Fitness and Exercise",
+      "parent": "health-wellness",
+      "rssFeedId": "tqNyOkDAZ0beyCT0",
+      "icon": null
+    },
+    {
+      "slug": "healthcare-industry",
+      "name": "Healthcare Industry",
+      "parent": "health-wellness",
+      "rssFeedId": "ton3lR0EJOaJIXae",
+      "icon": null
+    },
+    {
+      "slug": "nutrition-diet",
+      "name": "Nutrition and Diet",
+      "parent": "health-wellness",
+      "rssFeedId": "tzvaJsrnQSfspssu",
+      "icon": null
+    },
+    {
+      "slug": "medical-research-pharma-biotech",
+      "name": "Medical Research, Pharma, Biotech",
+      "parent": "health-wellness",
+      "rssFeedId": "tYxbUP1uQaPoSzn5",
+      "icon": null
+    },
+    {
+      "slug": "public-health",
+      "name": "Public Health",
+      "parent": "health-wellness",
+      "rssFeedId": "tM2SSa6OLe4RADRQ",
+      "icon": null
+    },
+    {
+      "slug": "politics",
+      "name": "Politics",
+      "parent": null,
+      "rssFeedId": "tIAveDWZOCRQXKA7",
+      "icon": null,
+      "featured": true
+    },
+    {
+      "slug": "campaigns-elections",
+      "name": "Campaigns and Elections",
+      "parent": "politics",
+      "rssFeedId": "tXJTghEkJvWhiOt4",
+      "icon": null
+    },
+    {
+      "slug": "congress-white-house",
+      "name": "Congress and White House",
+      "parent": "politics",
+      "rssFeedId": "tgJ6fAYgfYHU3iyx",
+      "icon": null
+    },
+    {
+      "slug": "courts-law-regulation",
+      "name": "Courts, Law and Regulation",
+      "parent": "politics",
+      "rssFeedId": "t98vk4uyqJnqok4p",
+      "icon": null
+    },
+    {
+      "slug": "defense-national-security-foreign-policy",
+      "name": "Defense, National Security and Foreign Policy",
+      "parent": "politics",
+      "rssFeedId": "tcozWEeR2grPSrZE",
+      "icon": null
+    },
+    {
+      "slug": "geopolitics",
+      "name": "Geopolitics",
+      "parent": "politics",
+      "rssFeedId": "t27n3g0W4qRNyls7",
+      "icon": null
+    },
+    {
+      "slug": "us-politics",
+      "name": "US Politics",
+      "parent": "politics",
+      "rssFeedId": "tDLOR0n0PWGrna99",
       "icon": null
     },
     {
       "slug": "world",
       "name": "World",
       "parent": null,
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [
-        "politics"
-      ],
-      "icon": "globe",
+      "rssFeedId": "t9HpyZWWa7cHQtC9",
+      "icon": null,
       "featured": true
+    },
+    {
+      "slug": "africa",
+      "name": "Africa",
+      "parent": "world",
+      "rssFeedId": "tEPQq5ll7jfGkK14",
+      "icon": null
     },
     {
       "slug": "asia",
       "name": "Asia",
       "parent": "world",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "rssFeedId": "tyFeGFYM70OfKRqS",
       "icon": null
     },
     {
-      "slug": "australia-new-zealand",
-      "name": "Australia / New Zealand",
+      "slug": "canada",
+      "name": "Canada",
       "parent": "world",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "rssFeedId": "tjfSAGLMzyQ2hmw6",
       "icon": null
     },
     {
       "slug": "china",
       "name": "China",
       "parent": "world",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "europe",
-      "name": "Europe",
-      "parent": "world",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "india",
-      "name": "India",
-      "parent": "world",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "latin-america",
-      "name": "Latin America",
-      "parent": "world",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
-      "icon": null
-    },
-    {
-      "slug": "middle-east",
-      "name": "Middle East",
-      "parent": "world",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "rssFeedId": "tBBcerUAHu1dzXmv",
       "icon": null
     },
     {
       "slug": "us",
       "name": "US",
       "parent": "world",
-      "rssFeedId": "teXwFdTo6pdFWqCV",
-      "excludeEvergreen": [],
-      "relatedParents": [],
+      "rssFeedId": "tyx4MVQtNYiZAGK2",
+      "icon": null
+    },
+    {
+      "slug": "europe",
+      "name": "Europe",
+      "parent": "world",
+      "rssFeedId": "tkBkFNSGr5XvwhLl",
+      "icon": null
+    },
+    {
+      "slug": "india",
+      "name": "India",
+      "parent": "world",
+      "rssFeedId": "tJ40EG7JBWc0uVvm",
+      "icon": null
+    },
+    {
+      "slug": "latin-america",
+      "name": "Latin America",
+      "parent": "world",
+      "rssFeedId": "t4IF35h0XwrLPinz",
+      "icon": null
+    },
+    {
+      "slug": "middle-east",
+      "name": "Middle East",
+      "parent": "world",
+      "rssFeedId": "txvVbIuwrlOgFxHg",
+      "icon": null
+    },
+    {
+      "slug": "oceania",
+      "name": "Oceania",
+      "parent": "world",
+      "rssFeedId": "tBn6njP0aIebVKKb",
+      "icon": null
+    },
+    {
+      "slug": "russia-eastern-europe",
+      "name": "Russia and Eastern Europe",
+      "parent": "world",
+      "rssFeedId": "t7t0YprIOLLn60Fm",
+      "icon": null
+    },
+    {
+      "slug": "sports",
+      "name": "Sports",
+      "parent": null,
+      "rssFeedId": "tKUZfcBjwINI9xuK",
+      "icon": null,
+      "featured": true
+    },
+    {
+      "slug": "soccer",
+      "name": "Soccer",
+      "parent": "sports",
+      "rssFeedId": "_Hemhe2RoP8joBxxT (BUNDLE!!!) - Build out",
+      "icon": null
+    },
+    {
+      "slug": "mlb",
+      "name": "MLB",
+      "parent": "sports",
+      "rssFeedId": "trlEIJifkAjanb2O",
+      "icon": null
+    },
+    {
+      "slug": "nba",
+      "name": "NBA",
+      "parent": "sports",
+      "rssFeedId": "tZrWjUGaxQEcchuV",
+      "icon": null
+    },
+    {
+      "slug": "nfl",
+      "name": "NFL",
+      "parent": "sports",
+      "rssFeedId": "tYoYlXYzvpRodKvY",
+      "icon": null
+    },
+    {
+      "slug": "nhl",
+      "name": "NHL",
+      "parent": "sports",
+      "rssFeedId": "tr3w5eM5F3Og1pAE",
+      "icon": null
+    },
+    {
+      "slug": "college-basketball",
+      "name": "College Basketball",
+      "parent": "sports",
+      "rssFeedId": "t8DoGZe0J8HK0pV9",
+      "icon": null
+    },
+    {
+      "slug": "college-football",
+      "name": "College Football",
+      "parent": "sports",
+      "rssFeedId": "tiMrCvxDa6N6ZHDO",
+      "icon": null
+    },
+    {
+      "slug": "combat-sports",
+      "name": "Combat Sports",
+      "parent": "sports",
+      "rssFeedId": "taZXDE2fVA50oaPB",
+      "icon": null
+    },
+    {
+      "slug": "climate-environment",
+      "name": "Climate and Environment",
+      "parent": null,
+      "rssFeedId": "tUMbSoc6t785RC4t",
+      "icon": null,
+      "featured": true
+    },
+    {
+      "slug": "conservation-wildlife",
+      "name": "Conservation and Wildlife",
+      "parent": "climate-environment",
+      "rssFeedId": "tswhAv6oSQ5QAJBQ",
+      "icon": null
+    },
+    {
+      "slug": "clean-energy-sustainability",
+      "name": "Clean Energy and Sustainability",
+      "parent": "climate-environment",
+      "rssFeedId": "t5wgOIyZprouvUB1",
+      "icon": null
+    },
+    {
+      "slug": "climate-policy",
+      "name": "Climate Policy",
+      "parent": "climate-environment",
+      "rssFeedId": "tkfPBF317atFgkoE",
+      "icon": null
+    },
+    {
+      "slug": "weather",
+      "name": "Weather",
+      "parent": "climate-environment",
+      "rssFeedId": "thFbmVfSaf6cuU2U",
+      "icon": null
+    },
+    {
+      "slug": "entertainment",
+      "name": "Entertainment",
+      "parent": null,
+      "rssFeedId": "tNYVbcVTAqykRhD9",
+      "icon": null,
+      "featured": true
+    },
+    {
+      "slug": "celebrities",
+      "name": "Celebrities",
+      "parent": "entertainment",
+      "rssFeedId": "tADUzKuNZIvT3RGn",
+      "icon": null
+    },
+    {
+      "slug": "gaming-streaming",
+      "name": "Gaming and Streaming",
+      "parent": "entertainment",
+      "rssFeedId": "tq6X232EPyVdLHCe",
+      "icon": null
+    },
+    {
+      "slug": "television-movies",
+      "name": "Television and Movies",
+      "parent": "entertainment",
+      "rssFeedId": "t8C6rSCEfODAeBag",
+      "icon": null
+    },
+    {
+      "slug": "music",
+      "name": "Music",
+      "parent": "entertainment",
+      "rssFeedId": "tjwcB8MRFX5gdszD",
+      "icon": null
+    },
+    {
+      "slug": "podcasts",
+      "name": "Podcasts",
+      "parent": "entertainment",
+      "rssFeedId": "tUQbeRRcYI094h16",
+      "icon": null
+    },
+    {
+      "slug": "arts-culture",
+      "name": "Arts and Culture",
+      "parent": null,
+      "rssFeedId": "tT3xL6SyzIeEHXXr",
+      "icon": null,
+      "featured": true
+    },
+    {
+      "slug": "architecture-design",
+      "name": "Architecture and Design",
+      "parent": "arts-culture",
+      "rssFeedId": "th2g2Qa1R4khBWyd",
+      "icon": null
+    },
+    {
+      "slug": "books-literature",
+      "name": "Books and Literature",
+      "parent": "arts-culture",
+      "rssFeedId": "tPXZa8jUMzatE8C2",
+      "icon": null
+    },
+    {
+      "slug": "fashion-style",
+      "name": "Fashion and Style",
+      "parent": "arts-culture",
+      "rssFeedId": "tvLNvU0gjD1lV4jx",
+      "icon": null
+    },
+    {
+      "slug": "food-dining",
+      "name": "Food and Dining",
+      "parent": "arts-culture",
+      "rssFeedId": "t04yHpFic2APdGd8",
+      "icon": null
+    },
+    {
+      "slug": "lifestyle",
+      "name": "Lifestyle",
+      "parent": null,
+      "rssFeedId": "tDXh7G2Avyz1MmDj",
+      "icon": null,
+      "featured": true
+    },
+    {
+      "slug": "cars-auto",
+      "name": "Cars and Auto",
+      "parent": "lifestyle",
+      "rssFeedId": "tckDjuWnPTrHXRG3",
+      "icon": null
+    },
+    {
+      "slug": "home-garden",
+      "name": "Home and Garden",
+      "parent": "lifestyle",
+      "rssFeedId": "tnalpwRBH1hjA3ZU",
+      "icon": null
+    },
+    {
+      "slug": "relationships",
+      "name": "Relationships",
+      "parent": "lifestyle",
+      "rssFeedId": "tyFg61SNBAUAR2q5",
+      "icon": null
+    },
+    {
+      "slug": "travel",
+      "name": "Travel",
+      "parent": "lifestyle",
+      "rssFeedId": "thMt0XfmUI5F839z",
+      "icon": null
+    },
+    {
+      "slug": "work-careers",
+      "name": "Work and Careers",
+      "parent": "lifestyle",
+      "rssFeedId": "taidSyLa3e7k0GBC",
+      "icon": null
+    },
+    {
+      "slug": "media",
+      "name": "Media",
+      "parent": null,
+      "rssFeedId": "t6hPZGI9UnNe8O52",
+      "icon": null,
+      "featured": true
+    },
+    {
+      "slug": "advertising-marketing",
+      "name": "Advertising and Marketing",
+      "parent": "media",
+      "rssFeedId": "tXhqhANlSeZohRtx",
+      "icon": null
+    },
+    {
+      "slug": "journalism",
+      "name": "Journalism",
+      "parent": "media",
+      "rssFeedId": "tgi0JWAGOfVzESwY",
+      "icon": null
+    },
+    {
+      "slug": "media-business",
+      "name": "Media Business",
+      "parent": "media",
+      "rssFeedId": "tdWSP6jJHEjr9OEZ",
+      "icon": null
+    },
+    {
+      "slug": "education",
+      "name": "Education",
+      "parent": null,
+      "rssFeedId": "t9RaFU3WSi4JqCuZ",
+      "icon": null,
+      "featured": true
+    },
+    {
+      "slug": "higher-education",
+      "name": "Higher Education",
+      "parent": "education",
+      "rssFeedId": "tquzk9OHTcwoj40D",
+      "icon": null
+    },
+    {
+      "slug": "learning-edtech",
+      "name": "Learning and Edtech",
+      "parent": "education",
+      "rssFeedId": "tF102nWLVvI3Ng86",
+      "icon": null
+    },
+    {
+      "slug": "ideas-opinion-more",
+      "name": "Ideas, Opinion and More",
+      "parent": null,
+      "rssFeedId": "tsZzFN6a4baMzeWR",
+      "icon": null,
+      "featured": true
+    },
+    {
+      "slug": "ethics-philosophy",
+      "name": "Ethics and Philosophy",
+      "parent": "ideas-opinion-more",
+      "rssFeedId": "tcxOmEWFJdZZeeq9",
+      "icon": null
+    },
+    {
+      "slug": "history",
+      "name": "History",
+      "parent": "ideas-opinion-more",
+      "rssFeedId": "tBgaXKYYrGRwoqoJ",
+      "icon": null
+    },
+    {
+      "slug": "religion-faith",
+      "name": "Religion and Faith",
+      "parent": "ideas-opinion-more",
+      "rssFeedId": "tV0t10jJeJwkc3pu",
       "icon": null
     }
   ],
   "featuredOrder": [
-    "business-and-finance",
-    "education-and-learning",
-    "entertainment",
-    "politics",
-    "sports",
+    "business-finance",
     "technology",
-    "world"
+    "science",
+    "health-wellness",
+    "politics",
+    "world",
+    "sports",
+    "climate-environment",
+    "entertainment",
+    "arts-culture",
+    "lifestyle",
+    "media",
+    "education",
+    "ideas-opinion-more"
   ]
 }
