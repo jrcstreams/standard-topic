@@ -811,6 +811,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
           <span class="multi-btn-label-short">Clear Prompts</span>
         </button>
       </div>
+      <div class="shortcuts-multi-submit-sentinel" aria-hidden="true"></div>
     `;
   }
 
@@ -863,12 +864,31 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     card.dataset.multi = on ? '1' : '0';
     card.classList.toggle('is-multi-select', on);
     toggle.setAttribute('aria-checked', on ? 'true' : 'false');
+    // Multi-select reveals every shortcut: collapse hides items the
+    // user would otherwise want to pick. Restore the collapse when
+    // multi-select is turned back off.
+    if (card.classList.contains('is-collapsible')) {
+      card.classList.toggle('is-collapsed', !on);
+    }
     if (!on) {
       container.querySelectorAll('.sidebar-shortcut.is-multi-selected')
         .forEach(b => b.classList.remove('is-multi-selected'));
     }
     updateSubmit();
   });
+
+  // Sticky overlay for the multi-select submit bar. A 1px sentinel is
+  // rendered right after the bar — when it scrolls out of view, the
+  // bar is "stuck" at viewport bottom and gets chrome (shadow + top
+  // border). When the sentinel is in view, the bar is at its natural
+  // position and renders flat.
+  const sentinel = container.querySelector('.shortcuts-multi-submit-sentinel');
+  if (sentinel && submitWrap && 'IntersectionObserver' in window) {
+    const stickyObs = new IntersectionObserver(([entry]) => {
+      submitWrap.classList.toggle('is-stuck', !entry.isIntersecting);
+    }, { threshold: 0 });
+    stickyObs.observe(sentinel);
+  }
 
   container.querySelectorAll('.sidebar-shortcut').forEach(btn => {
     btn.addEventListener('click', () => {

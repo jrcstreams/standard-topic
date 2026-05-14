@@ -1756,6 +1756,31 @@ body.hide-cta .sticky-cta { display: none !important; }
   margin-top: 1.25rem;
   padding: 0;
 }
+/* When multi-select is on, the submit/select-all/clear bar pins to the
+   bottom of the viewport via sticky positioning until the user has
+   scrolled far enough that the bar's natural position is in view. The
+   .is-stuck chrome (shadow + top border + tighter padding + full bg)
+   only kicks in while the bar is pinned, and is removed when it lands
+   in its natural spot. */
+.shortcuts-sidebar.is-multi-select .shortcuts-multi-submit-wrap {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  background: #fff;
+  transition: padding 0.15s, box-shadow 0.18s, border-color 0.15s, margin 0.15s;
+}
+.shortcuts-sidebar.is-multi-select .shortcuts-multi-submit-wrap.is-stuck {
+  margin-top: 0;
+  padding: 0.85rem 0.75rem;
+  border-top: 1px solid var(--color-border);
+  box-shadow: 0 -6px 22px rgba(15, 26, 46, 0.08);
+}
+/* 1px sentinel immediately after the wrap. When out of view (i.e., bar
+   is sticky'd to the viewport bottom), the bar gets the chrome above. */
+.shortcuts-multi-submit-sentinel {
+  height: 1px;
+  margin-top: -1px;
+}
 /* Default: full labels visible, short labels hidden. */
 .multi-btn-label-short { display: none; }
 
