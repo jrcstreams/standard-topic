@@ -1651,6 +1651,11 @@ body.hide-cta .sticky-cta { display: none !important; }
 .shortcuts-sidebar:not(.is-collapsed) .shortcuts-view-toggle-more { display: none; }
 .shortcuts-sidebar:not(.is-collapsed) .shortcuts-view-toggle-less { display: inline; }
 .shortcuts-sidebar:not(.is-collapsed) .shortcuts-view-toggle-chev { transform: rotate(180deg); }
+/* Multi-select needs every shortcut visible — hide the View More/Less
+   pill while multi is on so the user can't manually re-collapse mid
+   selection (which would hide picks). It reappears once multi is off
+   in whichever collapse state the user had before. */
+.shortcuts-sidebar.is-multi-select .shortcuts-view-toggle { display: none; }
 
 /* Wrap is the positioning context. Center the toggle horizontally in
    normal flow; absolute-position it over the peek row when collapsed. */

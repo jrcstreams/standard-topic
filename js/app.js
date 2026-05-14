@@ -859,16 +859,23 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     if (countEl) countEl.textContent = String(selected.length);
   };
 
+  // Track whether multi-select forced the card open. Only flip back on
+  // multi-off if WE expanded it — preserves a user who already chose
+  // to expand manually before enabling multi-select.
+  let multiExpandedCard = false;
   toggle?.addEventListener('click', () => {
     const on = card.dataset.multi !== '1';
     card.dataset.multi = on ? '1' : '0';
     card.classList.toggle('is-multi-select', on);
     toggle.setAttribute('aria-checked', on ? 'true' : 'false');
-    // Multi-select reveals every shortcut: collapse hides items the
-    // user would otherwise want to pick. Restore the collapse when
-    // multi-select is turned back off.
     if (card.classList.contains('is-collapsible')) {
-      card.classList.toggle('is-collapsed', !on);
+      if (on && card.classList.contains('is-collapsed')) {
+        card.classList.remove('is-collapsed');
+        multiExpandedCard = true;
+      } else if (!on && multiExpandedCard) {
+        card.classList.add('is-collapsed');
+        multiExpandedCard = false;
+      }
     }
     if (!on) {
       container.querySelectorAll('.sidebar-shortcut.is-multi-selected')
