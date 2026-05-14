@@ -550,19 +550,22 @@ function renderStickyHeroBar(container, route) {
       </a>
     </div>
     <div class="navmenu-divider"></div>
-    <div class="navmenu-featured-label">Featured Topics</div>
-    <div class="navmenu-topics">${featuredLinksHTML}</div>
-    <button class="navmenu-all-topics" id="navmenu-all-topics">View All Topics</button>
-    <div class="navmenu-divider"></div>
-    <div class="navmenu-footer-links">
-      <a href="#/about" class="navmenu-link">About</a>
-      <a href="#/terms" class="navmenu-link">Terms</a>
-      <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer" class="navmenu-link">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-        GitHub
-      </a>
+    <div class="navmenu-scroll">
+      <div class="navmenu-featured-label">Featured Topics</div>
+      <div class="navmenu-topics">${featuredLinksHTML}</div>
     </div>
-    <div class="navmenu-divider"></div>
+    <div class="navmenu-footer-sticky">
+      <button class="navmenu-all-topics" id="navmenu-all-topics">View All Topics</button>
+      <div class="navmenu-divider"></div>
+      <div class="navmenu-footer-links">
+        <a href="#/about" class="navmenu-link">About</a>
+        <a href="#/terms" class="navmenu-link">Terms</a>
+        <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer" class="navmenu-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
   `;
   renderSearchBar(document.getElementById('navmenu-search-container'), route);
 
@@ -738,8 +741,13 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     ? `<span class="section-topic-pill">${escapeHTML(topicName)}</span>`
     : '';
 
+  const COLLAPSE_THRESHOLD = 12;
+  const canCollapse = all.length > COLLAPSE_THRESHOLD;
+  const cardClasses = ['sidebar-card', 'shortcuts-sidebar'];
+  if (canCollapse) cardClasses.push('is-collapsible', 'is-collapsed');
+
   let html = `
-    <div class="sidebar-card shortcuts-sidebar" data-multi="0">
+    <div class="${cardClasses.join(' ')}" data-multi="0">
       <div class="sidebar-card-header">
         <h3 class="sidebar-card-title">AI Shortcuts ${topicPill}</h3>
         <span class="sidebar-card-desc">Quickly access AI knowledge prompts.</span>
@@ -755,8 +763,16 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   if (all.length === 0) {
     html += `<p class="sidebar-empty">No shortcuts yet.</p>`;
   } else {
-    html += `<div class="sidebar-shortcut-list">
-      ${all.map(s => shortcutItem(s, topicName)).join('')}
+    html += `<div class="shortcuts-list-wrap">
+      <div class="sidebar-shortcut-list">
+        ${all.map(s => shortcutItem(s, topicName)).join('')}
+      </div>
+      ${canCollapse ? `
+        <button type="button" class="shortcuts-view-toggle" id="shortcuts-view-toggle" aria-expanded="false">
+          <span class="shortcuts-view-toggle-more">View More Shortcuts +</span>
+          <span class="shortcuts-view-toggle-less">View Less Shortcuts −</span>
+        </button>
+      ` : ''}
     </div>`;
     html += `
       <div class="shortcuts-multi-submit-wrap" hidden>
@@ -789,6 +805,16 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   const selectAllBtn = container.querySelector('#shortcuts-multi-select-all');
   const submitWrap = container.querySelector('.shortcuts-multi-submit-wrap');
   const countEl = container.querySelector('#shortcuts-multi-submit-count');
+  const viewToggle = container.querySelector('#shortcuts-view-toggle');
+
+  viewToggle?.addEventListener('click', () => {
+    const expanded = card.classList.toggle('is-collapsed') === false;
+    viewToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    if (!expanded) {
+      // Just collapsed — bring the toggle back into view so the user can see the change.
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  });
 
   const updateSubmit = () => {
     if (!submitBtn || !submitWrap) return;
