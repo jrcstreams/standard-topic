@@ -5,14 +5,14 @@
       "name": "Homepage",
       "parent": null,
       "rssFeedId": "_KCcgQinCBKZkLpAZ",
-      "icon": null
+      "icon": "house"
     },
     {
       "slug": "business-finance",
       "name": "Business and Finance",
       "parent": null,
       "rssFeedId": "tQkP30e9iGRGGNbg",
-      "icon": null,
+      "icon": "briefcase",
       "featured": true
     },
     {
@@ -20,84 +20,84 @@
       "name": "Banking",
       "parent": "business-finance",
       "rssFeedId": "th0dxzMGQAM7c9Lq",
-      "icon": null
+      "icon": "landmark"
     },
     {
       "slug": "cryptocurrency",
       "name": "Cryptocurrency",
       "parent": "business-finance",
       "rssFeedId": "t4nhBKehWNyb6YQB",
-      "icon": null
+      "icon": "bitcoin"
     },
     {
       "slug": "deals-ma",
       "name": "Deals and M&A",
       "parent": "business-finance",
       "rssFeedId": "tF8cHNFQT7giF52H",
-      "icon": null
+      "icon": "handshake"
     },
     {
       "slug": "economy",
       "name": "Economy",
       "parent": "business-finance",
       "rssFeedId": "tfYwOa7XiBGf1SYN",
-      "icon": null
+      "icon": "chart-line"
     },
     {
       "slug": "energy-commodities",
       "name": "Energy and Commodities",
       "parent": "business-finance",
       "rssFeedId": "tHj0VH1uWDSmGxTf",
-      "icon": null
+      "icon": "flame"
     },
     {
       "slug": "fintech",
       "name": "Fintech",
       "parent": "business-finance",
       "rssFeedId": "taVbEgJe9vYLVkx4",
-      "icon": null
+      "icon": "credit-card"
     },
     {
       "slug": "housing-real-estate",
       "name": "Housing and Real Estate",
       "parent": "business-finance",
       "rssFeedId": "tIyH2d3YeXUdxvtw",
-      "icon": null
+      "icon": "house"
     },
     {
       "slug": "jobs-labor",
       "name": "Jobs and Labor",
       "parent": "business-finance",
       "rssFeedId": "tkSzGeVh3dhii9oX",
-      "icon": null
+      "icon": "briefcase"
     },
     {
       "slug": "markets",
       "name": "Markets",
       "parent": "business-finance",
       "rssFeedId": "tKX6LemKjPxattr6",
-      "icon": null
+      "icon": "trending-up"
     },
     {
       "slug": "personal-finance",
       "name": "Personal Finance",
       "parent": "business-finance",
       "rssFeedId": "tD0Wc9GSf5WiSlia",
-      "icon": null
+      "icon": "piggy-bank"
     },
     {
       "slug": "small-business",
       "name": "Small Business",
       "parent": "business-finance",
       "rssFeedId": "tCLwD7EaKTTFlypE",
-      "icon": null
+      "icon": "store"
     },
     {
       "slug": "technology",
       "name": "Technology",
       "parent": null,
       "rssFeedId": "teXwFdTo6pdFWqCV",
-      "icon": null,
+      "icon": "cpu",
       "featured": true
     },
     {
@@ -105,105 +105,105 @@
       "name": "Artificial Intelligence",
       "parent": "technology",
       "rssFeedId": "tDF2yoZwRu1xVZLo",
-      "icon": null
+      "icon": "sparkles"
     },
     {
       "slug": "ai-governance-policy",
       "name": "AI Governance and Policy",
       "parent": "technology",
       "rssFeedId": "t74akQBJRZwDjnRY",
-      "icon": null
+      "icon": "sparkles"
     },
     {
       "slug": "blockchain-web3",
       "name": "Blockchain and Web3",
       "parent": "technology",
       "rssFeedId": "tLH5zShGITRcVLU0",
-      "icon": null
+      "icon": "bitcoin"
     },
     {
       "slug": "cloud-computing",
       "name": "Cloud Computing",
       "parent": "technology",
       "rssFeedId": "tJLR7ULYQCOIyaQa",
-      "icon": null
+      "icon": "cloud"
     },
     {
       "slug": "consumer-electronics",
       "name": "Consumer Electronics",
       "parent": "technology",
       "rssFeedId": "t0zXfviXKCi2L4Rq",
-      "icon": null
+      "icon": "smartphone"
     },
     {
       "slug": "cybersecurity",
       "name": "Cybersecurity",
       "parent": "technology",
       "rssFeedId": "tfYmVuq6pXJdSEHg",
-      "icon": null
+      "icon": "shield-check"
     },
     {
       "slug": "data-analytics",
       "name": "Data and Analytics",
       "parent": "technology",
       "rssFeedId": "tKbX6FeuN0OIT7ob",
-      "icon": null
+      "icon": "database"
     },
     {
       "slug": "emerging-technologies",
       "name": "Emerging Technologies",
       "parent": "technology",
       "rssFeedId": "tJeBBBlFJ2DYEt1i",
-      "icon": null
+      "icon": "rocket"
     },
     {
       "slug": "privacy-data-protection",
       "name": "Privacy and Data Protection",
       "parent": "technology",
       "rssFeedId": "t1MvjvaTnj1rC9PJ",
-      "icon": null
+      "icon": "lock"
     },
     {
       "slug": "programming-development",
       "name": "Programming and Development",
       "parent": "technology",
       "rssFeedId": "t78vGHnsCCKbCuiL",
-      "icon": null
+      "icon": "code"
     },
     {
       "slug": "robotics-automation",
       "name": "Robotics and Automation",
       "parent": "technology",
       "rssFeedId": "tZxObQ7dxOGtaykk",
-      "icon": null
+      "icon": "bot"
     },
     {
       "slug": "social-media",
       "name": "Social Media",
       "parent": "technology",
       "rssFeedId": "tSFXJ7WNR5cQE71E",
-      "icon": null
+      "icon": "message-circle"
     },
     {
       "slug": "software-saas",
       "name": "Software and SaaS",
       "parent": "technology",
       "rssFeedId": "tM8W8GnwBQIKGQBR",
-      "icon": null
+      "icon": "code"
     },
     {
       "slug": "startups-venture-capital",
       "name": "Startups and Venture Capital",
       "parent": "technology",
       "rssFeedId": "tlXuxcP01NvcmTJl",
-      "icon": null
+      "icon": "rocket"
     },
     {
       "slug": "science",
       "name": "Science",
       "parent": null,
       "rssFeedId": "tA3D50VyXEbs5wIT",
-      "icon": null,
+      "icon": "atom",
       "featured": true
     },
     {
@@ -211,35 +211,35 @@
       "name": "Astronomy and Space",
       "parent": "science",
       "rssFeedId": "tPrv6dHjgYEARk5c",
-      "icon": null
+      "icon": "rocket"
     },
     {
       "slug": "chemistry-biology-genetics",
       "name": "Chemistry, Biology and Genetics",
       "parent": "science",
       "rssFeedId": "tJ1DI7IPnh6KFPS3",
-      "icon": null
+      "icon": "flask-conical"
     },
     {
       "slug": "physics",
       "name": "Physics",
       "parent": "science",
       "rssFeedId": "tYO5nWCAfXs83TPx",
-      "icon": null
+      "icon": "atom"
     },
     {
       "slug": "research-academia",
       "name": "Research and Academia",
       "parent": "science",
       "rssFeedId": "tMySfHC5qlcQ4GI6",
-      "icon": null
+      "icon": "microscope"
     },
     {
       "slug": "health-wellness",
       "name": "Health and Wellness",
       "parent": null,
       "rssFeedId": "tXegKaBv8GFd6DRd",
-      "icon": null,
+      "icon": "heart-pulse",
       "featured": true
     },
     {
@@ -247,42 +247,42 @@
       "name": "Fitness and Exercise",
       "parent": "health-wellness",
       "rssFeedId": "tqNyOkDAZ0beyCT0",
-      "icon": null
+      "icon": "dumbbell"
     },
     {
       "slug": "healthcare-industry",
       "name": "Healthcare Industry",
       "parent": "health-wellness",
       "rssFeedId": "ton3lR0EJOaJIXae",
-      "icon": null
+      "icon": "stethoscope"
     },
     {
       "slug": "nutrition-diet",
       "name": "Nutrition and Diet",
       "parent": "health-wellness",
       "rssFeedId": "tzvaJsrnQSfspssu",
-      "icon": null
+      "icon": "utensils"
     },
     {
       "slug": "medical-research-pharma-biotech",
       "name": "Medical Research, Pharma, Biotech",
       "parent": "health-wellness",
       "rssFeedId": "tYxbUP1uQaPoSzn5",
-      "icon": null
+      "icon": "pill"
     },
     {
       "slug": "public-health",
       "name": "Public Health",
       "parent": "health-wellness",
       "rssFeedId": "tM2SSa6OLe4RADRQ",
-      "icon": null
+      "icon": "heart-pulse"
     },
     {
       "slug": "politics",
       "name": "Politics",
       "parent": null,
       "rssFeedId": "tIAveDWZOCRQXKA7",
-      "icon": null,
+      "icon": "landmark",
       "featured": true
     },
     {
@@ -290,49 +290,49 @@
       "name": "Campaigns and Elections",
       "parent": "politics",
       "rssFeedId": "tXJTghEkJvWhiOt4",
-      "icon": null
+      "icon": "vote"
     },
     {
       "slug": "congress-white-house",
       "name": "Congress and White House",
       "parent": "politics",
       "rssFeedId": "tgJ6fAYgfYHU3iyx",
-      "icon": null
+      "icon": "landmark"
     },
     {
       "slug": "courts-law-regulation",
       "name": "Courts, Law and Regulation",
       "parent": "politics",
       "rssFeedId": "t98vk4uyqJnqok4p",
-      "icon": null
+      "icon": "scale"
     },
     {
       "slug": "defense-national-security-foreign-policy",
       "name": "Defense, National Security and Foreign Policy",
       "parent": "politics",
       "rssFeedId": "tcozWEeR2grPSrZE",
-      "icon": null
+      "icon": "scroll-text"
     },
     {
       "slug": "geopolitics",
       "name": "Geopolitics",
       "parent": "politics",
       "rssFeedId": "t27n3g0W4qRNyls7",
-      "icon": null
+      "icon": "globe"
     },
     {
       "slug": "us-politics",
       "name": "US Politics",
       "parent": "politics",
       "rssFeedId": "tDLOR0n0PWGrna99",
-      "icon": null
+      "icon": "landmark"
     },
     {
       "slug": "world",
       "name": "World",
       "parent": null,
       "rssFeedId": "t9HpyZWWa7cHQtC9",
-      "icon": null,
+      "icon": "globe",
       "featured": true
     },
     {
@@ -340,84 +340,84 @@
       "name": "Africa",
       "parent": "world",
       "rssFeedId": "tEPQq5ll7jfGkK14",
-      "icon": null
+      "icon": "map"
     },
     {
       "slug": "asia",
       "name": "Asia",
       "parent": "world",
       "rssFeedId": "tyFeGFYM70OfKRqS",
-      "icon": null
+      "icon": "map"
     },
     {
       "slug": "canada",
       "name": "Canada",
       "parent": "world",
       "rssFeedId": "tjfSAGLMzyQ2hmw6",
-      "icon": null
+      "icon": "map"
     },
     {
       "slug": "china",
       "name": "China",
       "parent": "world",
       "rssFeedId": "tBBcerUAHu1dzXmv",
-      "icon": null
+      "icon": "map"
     },
     {
       "slug": "us",
       "name": "US",
       "parent": "world",
       "rssFeedId": "tyx4MVQtNYiZAGK2",
-      "icon": null
+      "icon": "map"
     },
     {
       "slug": "europe",
       "name": "Europe",
       "parent": "world",
       "rssFeedId": "tkBkFNSGr5XvwhLl",
-      "icon": null
+      "icon": "map"
     },
     {
       "slug": "india",
       "name": "India",
       "parent": "world",
       "rssFeedId": "tJ40EG7JBWc0uVvm",
-      "icon": null
+      "icon": "map"
     },
     {
       "slug": "latin-america",
       "name": "Latin America",
       "parent": "world",
       "rssFeedId": "t4IF35h0XwrLPinz",
-      "icon": null
+      "icon": "map"
     },
     {
       "slug": "middle-east",
       "name": "Middle East",
       "parent": "world",
       "rssFeedId": "txvVbIuwrlOgFxHg",
-      "icon": null
+      "icon": "map"
     },
     {
       "slug": "oceania",
       "name": "Oceania",
       "parent": "world",
       "rssFeedId": "tBn6njP0aIebVKKb",
-      "icon": null
+      "icon": "map"
     },
     {
       "slug": "russia-eastern-europe",
       "name": "Russia and Eastern Europe",
       "parent": "world",
       "rssFeedId": "t7t0YprIOLLn60Fm",
-      "icon": null
+      "icon": "map"
     },
     {
       "slug": "sports",
       "name": "Sports",
       "parent": null,
       "rssFeedId": "tKUZfcBjwINI9xuK",
-      "icon": null,
+      "icon": "trophy",
       "featured": true
     },
     {
@@ -425,63 +425,63 @@
       "name": "Soccer",
       "parent": "sports",
       "rssFeedId": "_Hemhe2RoP8joBxxT (BUNDLE!!!) - Build out",
-      "icon": null
+      "icon": "trophy"
     },
     {
       "slug": "mlb",
       "name": "MLB",
       "parent": "sports",
       "rssFeedId": "trlEIJifkAjanb2O",
-      "icon": null
+      "icon": "trophy"
     },
     {
       "slug": "nba",
       "name": "NBA",
       "parent": "sports",
       "rssFeedId": "tZrWjUGaxQEcchuV",
-      "icon": null
+      "icon": "trophy"
     },
     {
       "slug": "nfl",
       "name": "NFL",
       "parent": "sports",
       "rssFeedId": "tYoYlXYzvpRodKvY",
-      "icon": null
+      "icon": "trophy"
     },
     {
       "slug": "nhl",
       "name": "NHL",
       "parent": "sports",
       "rssFeedId": "tr3w5eM5F3Og1pAE",
-      "icon": null
+      "icon": "trophy"
     },
     {
       "slug": "college-basketball",
       "name": "College Basketball",
       "parent": "sports",
       "rssFeedId": "t8DoGZe0J8HK0pV9",
-      "icon": null
+      "icon": "trophy"
     },
     {
       "slug": "college-football",
       "name": "College Football",
       "parent": "sports",
       "rssFeedId": "tiMrCvxDa6N6ZHDO",
-      "icon": null
+      "icon": "trophy"
     },
     {
       "slug": "combat-sports",
       "name": "Combat Sports",
       "parent": "sports",
       "rssFeedId": "taZXDE2fVA50oaPB",
-      "icon": null
+      "icon": "sword"
     },
     {
       "slug": "climate-environment",
       "name": "Climate and Environment",
       "parent": null,
       "rssFeedId": "tUMbSoc6t785RC4t",
-      "icon": null,
+      "icon": "cloud-sun",
       "featured": true
     },
     {
@@ -489,35 +489,35 @@
       "name": "Conservation and Wildlife",
       "parent": "climate-environment",
       "rssFeedId": "tswhAv6oSQ5QAJBQ",
-      "icon": null
+      "icon": "rabbit"
     },
     {
       "slug": "clean-energy-sustainability",
       "name": "Clean Energy and Sustainability",
       "parent": "climate-environment",
       "rssFeedId": "t5wgOIyZprouvUB1",
-      "icon": null
+      "icon": "leaf"
     },
     {
       "slug": "climate-policy",
       "name": "Climate Policy",
       "parent": "climate-environment",
       "rssFeedId": "tkfPBF317atFgkoE",
-      "icon": null
+      "icon": "scroll-text"
     },
     {
       "slug": "weather",
       "name": "Weather",
       "parent": "climate-environment",
       "rssFeedId": "thFbmVfSaf6cuU2U",
-      "icon": null
+      "icon": "cloud-rain"
     },
     {
       "slug": "entertainment",
       "name": "Entertainment",
       "parent": null,
       "rssFeedId": "tNYVbcVTAqykRhD9",
-      "icon": null,
+      "icon": "film",
       "featured": true
     },
     {
@@ -525,42 +525,42 @@
       "name": "Celebrities",
       "parent": "entertainment",
       "rssFeedId": "tADUzKuNZIvT3RGn",
-      "icon": null
+      "icon": "star"
     },
     {
       "slug": "gaming-streaming",
       "name": "Gaming and Streaming",
       "parent": "entertainment",
       "rssFeedId": "tq6X232EPyVdLHCe",
-      "icon": null
+      "icon": "tv"
     },
     {
       "slug": "television-movies",
       "name": "Television and Movies",
       "parent": "entertainment",
       "rssFeedId": "t8C6rSCEfODAeBag",
-      "icon": null
+      "icon": "film"
     },
     {
       "slug": "music",
       "name": "Music",
       "parent": "entertainment",
       "rssFeedId": "tjwcB8MRFX5gdszD",
-      "icon": null
+      "icon": "music"
     },
     {
       "slug": "podcasts",
       "name": "Podcasts",
       "parent": "entertainment",
       "rssFeedId": "tUQbeRRcYI094h16",
-      "icon": null
+      "icon": "mic"
     },
     {
       "slug": "arts-culture",
       "name": "Arts and Culture",
       "parent": null,
       "rssFeedId": "tT3xL6SyzIeEHXXr",
-      "icon": null,
+      "icon": "palette",
       "featured": true
     },
     {
@@ -568,35 +568,35 @@
       "name": "Architecture and Design",
       "parent": "arts-culture",
       "rssFeedId": "th2g2Qa1R4khBWyd",
-      "icon": null
+      "icon": "building-2"
     },
     {
       "slug": "books-literature",
       "name": "Books and Literature",
       "parent": "arts-culture",
       "rssFeedId": "tPXZa8jUMzatE8C2",
-      "icon": null
+      "icon": "book-open"
     },
     {
       "slug": "fashion-style",
       "name": "Fashion and Style",
       "parent": "arts-culture",
       "rssFeedId": "tvLNvU0gjD1lV4jx",
-      "icon": null
+      "icon": "shirt"
     },
     {
       "slug": "food-dining",
       "name": "Food and Dining",
       "parent": "arts-culture",
       "rssFeedId": "t04yHpFic2APdGd8",
-      "icon": null
+      "icon": "utensils"
     },
     {
       "slug": "lifestyle",
       "name": "Lifestyle",
       "parent": null,
       "rssFeedId": "tDXh7G2Avyz1MmDj",
-      "icon": null,
+      "icon": "sparkles",
       "featured": true
     },
     {
@@ -604,42 +604,42 @@
       "name": "Cars and Auto",
       "parent": "lifestyle",
       "rssFeedId": "tckDjuWnPTrHXRG3",
-      "icon": null
+      "icon": "car"
     },
     {
       "slug": "home-garden",
       "name": "Home and Garden",
       "parent": "lifestyle",
       "rssFeedId": "tnalpwRBH1hjA3ZU",
-      "icon": null
+      "icon": "sprout"
     },
     {
       "slug": "relationships",
       "name": "Relationships",
       "parent": "lifestyle",
       "rssFeedId": "tyFg61SNBAUAR2q5",
-      "icon": null
+      "icon": "heart"
     },
     {
       "slug": "travel",
       "name": "Travel",
       "parent": "lifestyle",
       "rssFeedId": "thMt0XfmUI5F839z",
-      "icon": null
+      "icon": "plane"
     },
     {
       "slug": "work-careers",
       "name": "Work and Careers",
       "parent": "lifestyle",
       "rssFeedId": "taidSyLa3e7k0GBC",
-      "icon": null
+      "icon": "briefcase"
     },
     {
       "slug": "media",
       "name": "Media",
       "parent": null,
       "rssFeedId": "t6hPZGI9UnNe8O52",
-      "icon": null,
+      "icon": "newspaper",
       "featured": true
     },
     {
@@ -647,28 +647,28 @@
       "name": "Advertising and Marketing",
       "parent": "media",
       "rssFeedId": "tXhqhANlSeZohRtx",
-      "icon": null
+      "icon": "megaphone"
     },
     {
       "slug": "journalism",
       "name": "Journalism",
       "parent": "media",
       "rssFeedId": "tgi0JWAGOfVzESwY",
-      "icon": null
+      "icon": "newspaper"
     },
     {
       "slug": "media-business",
       "name": "Media Business",
       "parent": "media",
       "rssFeedId": "tdWSP6jJHEjr9OEZ",
-      "icon": null
+      "icon": "newspaper"
     },
     {
       "slug": "education",
       "name": "Education",
       "parent": null,
       "rssFeedId": "t9RaFU3WSi4JqCuZ",
-      "icon": null,
+      "icon": "graduation-cap",
       "featured": true
     },
     {
@@ -676,21 +676,21 @@
       "name": "Higher Education",
       "parent": "education",
       "rssFeedId": "tquzk9OHTcwoj40D",
-      "icon": null
+      "icon": "graduation-cap"
     },
     {
       "slug": "learning-edtech",
       "name": "Learning and Edtech",
       "parent": "education",
       "rssFeedId": "tF102nWLVvI3Ng86",
-      "icon": null
+      "icon": "monitor"
     },
     {
       "slug": "ideas-opinion-more",
       "name": "Ideas, Opinion and More",
       "parent": null,
       "rssFeedId": "tsZzFN6a4baMzeWR",
-      "icon": null,
+      "icon": "lightbulb",
       "featured": true
     },
     {
@@ -698,21 +698,21 @@
       "name": "Ethics and Philosophy",
       "parent": "ideas-opinion-more",
       "rssFeedId": "tcxOmEWFJdZZeeq9",
-      "icon": null
+      "icon": "lightbulb"
     },
     {
       "slug": "history",
       "name": "History",
       "parent": "ideas-opinion-more",
       "rssFeedId": "tBgaXKYYrGRwoqoJ",
-      "icon": null
+      "icon": "calendar"
     },
     {
       "slug": "religion-faith",
       "name": "Religion and Faith",
       "parent": "ideas-opinion-more",
       "rssFeedId": "tV0t10jJeJwkc3pu",
-      "icon": null
+      "icon": "book-open"
     }
   ],
   "featuredOrder": [

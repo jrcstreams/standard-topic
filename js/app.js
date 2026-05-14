@@ -568,8 +568,21 @@ function renderStickyHeroBar(container, route) {
   `;
   renderSearchBar(document.getElementById('navmenu-search-container'), route);
 
+  const scrollEl = navPanel.querySelector('.navmenu-scroll');
+  const updateScrollOverflow = () => {
+    if (!scrollEl) return;
+    const more = scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight > 2;
+    scrollEl.classList.toggle('has-overflow-bottom', more);
+  };
+  if (scrollEl) {
+    scrollEl.addEventListener('scroll', updateScrollOverflow, { passive: true });
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(updateScrollOverflow).observe(scrollEl);
+    }
+  }
+
   const closeMenu = () => { navPanel.classList.remove('is-open'); navOverlay.classList.remove('is-open'); document.body.style.overflow = ''; };
-  const openMenu = () => { navPanel.classList.add('is-open'); navOverlay.classList.add('is-open'); document.body.style.overflow = 'hidden'; };
+  const openMenu = () => { navPanel.classList.add('is-open'); navOverlay.classList.add('is-open'); document.body.style.overflow = 'hidden'; requestAnimationFrame(updateScrollOverflow); };
 
   container.querySelector('#nav-hamburger').addEventListener('click', openMenu);
   navOverlay.addEventListener('click', closeMenu);

@@ -464,6 +464,15 @@ body.hide-cta .sticky-cta { display: none !important; }
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
+  transition: -webkit-mask-image 0.18s, mask-image 0.18s;
+}
+/* When the topic list overflows below the visible area, fade the
+   bottom-most ~50px of the scroll viewport. Hints that more topics
+   exist; disappears once the user has scrolled to the very last
+   topic so the final entry stays fully readable. */
+.navmenu-scroll.has-overflow-bottom {
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 56px), rgba(0, 0, 0, 0.2) 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 56px), rgba(0, 0, 0, 0.2) 100%);
 }
 
 /* Sticky bottom group — About / Terms / GitHub links. Pinned to the
