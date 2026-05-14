@@ -50,5 +50,5 @@ export async function submitPrompt(model, prompt) {
 }
 
 export function fillPromptTemplate(template, topicName) {
-  return template.replace(/\{topic\}/g, topicName);
+  return template.replace(/\{topic\}/gi, topicName);
 }

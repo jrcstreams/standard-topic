@@ -4,7 +4,7 @@
       "global-headlines-today",
       "on-this-day-in-history",
       "business-day-snapshot",
-      "latest-news",
+      "ai-latest-news",
       "economic-indicators-roundup",
       "us-market-snapshot",
       "us-political-snapshots",
@@ -20,6 +20,7 @@
       "media-news-snapshot",
       "sports-snapshot",
       "what-to-watch-listen-play",
+      "latest-news",
       "breaking-news",
       "numbers-in-news"
     ],

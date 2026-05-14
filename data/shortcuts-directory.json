@@ -19,9 +19,9 @@
       "prompt": "Give me a snapshot of today's business news. Cover the biggest market moves, headline corporate news, economic data releases, and any major deal or earnings stories. Keep it tight and scannable."
     },
     {
-      "id": "latest-news",
+      "id": "ai-latest-news",
       "name": "AI News and Developments",
-      "icon": "latest-news",
+      "icon": "ai-latest-news",
       "prompt": "What's the latest news on the topic of: Artificial Intellience? Cover the most significant developments from the past week or so. For each: what happened, why it matters, and what to watch next. Skip noise and prioritize stories with real significance. Organize by significance, not chronology."
     },
     {
@@ -113,6 +113,12 @@
       "name": "What to Watch, Listen To and Play This Week",
       "icon": "what-to-watch-listen-play",
       "prompt": "What are the most notable new releases this week across film, TV, music, podcasts, and games? Note which are getting strong reception and what's worth prioritizing."
+    },
+    {
+      "id": "latest-news",
+      "name": "Global News and Developments",
+      "icon": "latest-news",
+      "prompt": "What's the latest news on the topic of: {TOPIC}? Cover the most significant developments from the past week or so. For each: what happened, why it matters, and what to watch next. Skip noise and prioritize stories with real significance. Organize by significance, not chronology."
     },
     {
       "id": "breaking-news",
