@@ -740,8 +740,10 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     ? `<span class="section-topic-pill">${escapeHTML(topicName)}</span>`
     : '';
 
-  const COLLAPSE_THRESHOLD = 12;
-  const canCollapse = all.length > COLLAPSE_THRESHOLD;
+  // Smallest per-breakpoint cutoff: collapse kicks in past 6 shortcuts.
+  // CSS handles the actual peek + hide per column count (6/6/9/12 cutoffs
+  // at 1/2/3/4 columns) and hides the toggle when it'd be useless.
+  const canCollapse = all.length > 6;
   const cardClasses = ['sidebar-card', 'shortcuts-sidebar'];
   if (canCollapse) cardClasses.push('is-collapsible', 'is-collapsed');
 
@@ -769,8 +771,8 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       ${canCollapse ? `
         <button type="button" class="shortcuts-view-toggle" id="shortcuts-view-toggle" aria-expanded="false">
           <span class="shortcuts-view-toggle-text">
-            <span class="shortcuts-view-toggle-more">View <strong>${all.length - COLLAPSE_THRESHOLD}</strong> more shortcuts</span>
-            <span class="shortcuts-view-toggle-less">View less</span>
+            <span class="shortcuts-view-toggle-more">View More Shortcuts</span>
+            <span class="shortcuts-view-toggle-less">View Less Shortcuts</span>
           </span>
           <span class="shortcuts-view-toggle-chev" aria-hidden="true">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>

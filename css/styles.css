@@ -1612,40 +1612,73 @@ body.hide-cta .sticky-cta { display: none !important; }
   margin: 0;
 }
 
-/* 1 column (mobile): show item 13 as the peek, hide everything past it. */
-.shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(n+14) { display: none; }
-.shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(13) {
+/* 1 column (mobile, <=640px): show 6 + 1 peek (row 7 = item 7); hide past 7. */
+.shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(n+8) { display: none; }
+.shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(7) {
   opacity: 0.45;
   pointer-events: none;
   -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, 0) 95%);
   mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, 0) 95%);
 }
-/* 2 columns: peek = items 13–14, hide past 14. */
+/* Hide the toggle entirely if there's nothing to reveal at this breakpoint. */
+.shortcuts-list-wrap:not(:has(.sidebar-shortcut:nth-child(7))) .shortcuts-view-toggle { display: none; }
+
+/* 2 columns (641–879px): show 6 + row 4 peek (items 7–8); hide past 8. */
 @media (min-width: 641px) and (max-width: 879.98px) {
-  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(n+15) { display: none; }
-  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(13),
-  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(14) {
+  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(n+9) { display: none; }
+  /* Reset prior breakpoint's peek so it doesn't bleed in. */
+  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(7) {
+    opacity: 0.45;
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, 0) 95%);
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, 0) 95%);
+  }
+  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(8) {
     opacity: 0.45;
     pointer-events: none;
     -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, 0) 95%);
     mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, 0) 95%);
   }
+  .shortcuts-list-wrap:not(:has(.sidebar-shortcut:nth-child(7))) .shortcuts-view-toggle { display: none; }
 }
-/* 3 columns: peek = items 13–15, hide past 15. */
+
+/* 3 columns (880–1139px): show 9 + row 4 peek (items 10–12); hide past 12. */
 @media (min-width: 880px) and (max-width: 1139.98px) {
-  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(n+16) { display: none; }
-  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(13),
-  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(14),
-  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(15) {
+  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(n+13) { display: none; }
+  /* Items 7–9 are NOT peek at this breakpoint — they're fully visible. */
+  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(7),
+  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(8),
+  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(9) {
+    opacity: 1;
+    pointer-events: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(10),
+  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(11),
+  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(12) {
     opacity: 0.45;
     pointer-events: none;
     -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, 0) 95%);
     mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, 0) 95%);
   }
+  .shortcuts-list-wrap:not(:has(.sidebar-shortcut:nth-child(10))) .shortcuts-view-toggle { display: none; }
 }
-/* 4 columns: peek = items 13–16, hide past 16. */
+
+/* 4 columns (>=1140px): show 12 + row 4 peek (items 13–16); hide past 16. */
 @media (min-width: 1140px) {
   .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(n+17) { display: none; }
+  /* Items 7–12 fully visible (rows 2–3); peek starts at item 13. */
+  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(7),
+  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(8),
+  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(9),
+  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(10),
+  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(11),
+  .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(12) {
+    opacity: 1;
+    pointer-events: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
   .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(13),
   .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(14),
   .shortcuts-sidebar.is-collapsible.is-collapsed .sidebar-shortcut-list > .sidebar-shortcut:nth-child(15),
@@ -1655,6 +1688,7 @@ body.hide-cta .sticky-cta { display: none !important; }
     -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, 0) 95%);
     mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, 0) 95%);
   }
+  .shortcuts-list-wrap:not(:has(.sidebar-shortcut:nth-child(13))) .shortcuts-view-toggle { display: none; }
 }
 
 /* === Submit selected prompts button === */
