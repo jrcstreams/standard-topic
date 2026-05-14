@@ -544,6 +544,7 @@ function renderStickyHeroBar(container, route) {
     </div>
     <div class="navmenu-search" id="navmenu-search-container"></div>
     <div class="navmenu-prompt-row">
+      <button type="button" class="navmenu-link navmenu-link-all-topics" id="navmenu-all-topics">View All Topics</button>
       <a href="#/prompt-generator" class="navmenu-link navmenu-link-prompt">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Prompt Builder
@@ -555,8 +556,6 @@ function renderStickyHeroBar(container, route) {
       <div class="navmenu-topics">${featuredLinksHTML}</div>
     </div>
     <div class="navmenu-footer-sticky">
-      <button class="navmenu-all-topics" id="navmenu-all-topics">View All Topics</button>
-      <div class="navmenu-divider"></div>
       <div class="navmenu-footer-links">
         <a href="#/about" class="navmenu-link">About</a>
         <a href="#/terms" class="navmenu-link">Terms</a>
@@ -575,7 +574,7 @@ function renderStickyHeroBar(container, route) {
   container.querySelector('#nav-hamburger').addEventListener('click', openMenu);
   navOverlay.addEventListener('click', closeMenu);
   navPanel.querySelector('#navmenu-close').addEventListener('click', closeMenu);
-  navPanel.querySelectorAll('a, .navmenu-all-topics').forEach(link => {
+  navPanel.querySelectorAll('a, #navmenu-all-topics').forEach(link => {
     link.addEventListener('click', closeMenu);
   });
   navPanel.querySelector('#navmenu-all-topics')?.addEventListener('click', () => {
@@ -769,8 +768,13 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       </div>
       ${canCollapse ? `
         <button type="button" class="shortcuts-view-toggle" id="shortcuts-view-toggle" aria-expanded="false">
-          <span class="shortcuts-view-toggle-more">View More Shortcuts +</span>
-          <span class="shortcuts-view-toggle-less">View Less Shortcuts −</span>
+          <span class="shortcuts-view-toggle-text">
+            <span class="shortcuts-view-toggle-more">View <strong>${all.length - COLLAPSE_THRESHOLD}</strong> more shortcuts</span>
+            <span class="shortcuts-view-toggle-less">View less</span>
+          </span>
+          <span class="shortcuts-view-toggle-chev" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
         </button>
       ` : ''}
     </div>`;
