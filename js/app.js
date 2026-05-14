@@ -877,7 +877,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
 function shortcutItem(shortcut, topicName) {
   const iconHTML = renderIcon(shortcut.icon, 'sidebar-shortcut-icon');
   const iconEmoji = getIconEmoji(shortcut.icon);
-  const prompt = shortcut.prompt.replace(/\{topic\}/g, topicName);
+  const prompt = shortcut.prompt.replace(/\{topic\}/gi, topicName);
   return `
     <button class="sidebar-shortcut"
             data-prompt="${escapeAttr(prompt)}"
