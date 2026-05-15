@@ -962,7 +962,8 @@ function shortcutItem(shortcut, topicName) {
     <button class="sidebar-shortcut"
             data-prompt="${escapeAttr(prompt)}"
             data-name="${escapeAttr(shortcut.name)}"
-            data-icon-key="${escapeAttr(shortcut.icon)}">
+            data-icon-key="${escapeAttr(shortcut.icon)}"
+            title="${escapeAttr(shortcut.name)}">
       <span class="sidebar-shortcut-multi-check" aria-hidden="true">✓</span>
       ${iconHTML}
       <span class="sidebar-shortcut-name">${escapeHTML(shortcut.name)}</span>
