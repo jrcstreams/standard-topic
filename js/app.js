@@ -771,6 +771,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       <div class="sidebar-card-header">
         <h3 class="sidebar-card-title">Shortcuts</h3>
       </div>
+      <div class="shortcuts-scroll-wrap">
   `;
 
   // Content Shortcuts subsection (external searches)
@@ -807,41 +808,23 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     html += `
       <div class="shortcuts-multi-submit-wrap" hidden>
         <button type="button" class="shortcuts-multi-submit" id="shortcuts-multi-submit">
-          <span class="shortcuts-multi-submit-label">
-            <span class="multi-btn-label-full">Submit Selected Prompts</span>
-            <span class="multi-btn-label-short">Submit Prompts</span>
-          </span>
+          <span class="shortcuts-multi-submit-label">Submit Prompts</span>
           <span class="shortcuts-multi-submit-count" id="shortcuts-multi-submit-count">0</span>
         </button>
-        <button type="button" class="shortcuts-multi-select-all" id="shortcuts-multi-select-all">
-          <span class="multi-btn-label-full">Select All</span>
-          <span class="multi-btn-label-short">Select All</span>
-        </button>
-        <button type="button" class="shortcuts-multi-clear" id="shortcuts-multi-clear">
-          <span class="multi-btn-label-full">Clear Selected Prompts</span>
-          <span class="multi-btn-label-short">Clear Prompts</span>
-        </button>
-      </div>
-    `;
-    html += `<div class="shortcuts-list-wrap">
-      <div class="scroll-fade scroll-fade-top" aria-hidden="true">
-        <span class="scroll-fade-chev">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
-        </span>
+        <div class="shortcuts-multi-secondary">
+          <button type="button" class="shortcuts-multi-select-all" id="shortcuts-multi-select-all">Select all</button>
+          <span class="shortcuts-multi-divider" aria-hidden="true">·</span>
+          <button type="button" class="shortcuts-multi-clear" id="shortcuts-multi-clear">Clear</button>
+        </div>
       </div>
       <div class="sidebar-shortcut-list">
         ${all.map(s => shortcutItem(s, topicName)).join('')}
       </div>
-      <div class="scroll-fade scroll-fade-bottom" aria-hidden="true">
-        <span class="scroll-fade-chev">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </span>
-      </div>
-    </div>`;
+    `;
   }
   html += `</section>`;
-
-  html += `</div>`;
+  html += `</div>`; /* close .shortcuts-scroll-wrap */
+  html += `</div>`; /* close .shortcuts-sidebar */
   container.innerHTML = html;
 
   // Track content-shortcut clicks (anchors with their own navigation; no
@@ -967,17 +950,18 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     requestAnimationFrame(updateOverflow);
   }
 
-  // Measure the sticky title height on mobile so the multi-controls
-  // bar (which sticks BELOW the title) lands flush against it.
-  const cardHeader = container.querySelector('.sidebar-card-header');
-  if (card && cardHeader) {
-    const setHeaderH = () => {
-      const h = cardHeader.offsetHeight;
-      if (h > 0) card.style.setProperty('--shortcuts-header-h', h + 'px');
+  // In multi-select mode the AI subsection header is sticky, and the
+  // multi-submit bar sticks just below it. Measure the subsection
+  // header's height so the bar's `top:` lands flush against it.
+  const aiSubHeader = container.querySelector('.ai-shortcuts-subsection .shortcuts-subsection-header');
+  if (card && aiSubHeader) {
+    const setSubH = () => {
+      const h = aiSubHeader.offsetHeight;
+      if (h > 0) card.style.setProperty('--ai-subheader-h', h + 'px');
     };
-    requestAnimationFrame(setHeaderH);
+    requestAnimationFrame(setSubH);
     if (typeof ResizeObserver !== 'undefined') {
-      new ResizeObserver(setHeaderH).observe(cardHeader);
+      new ResizeObserver(setSubH).observe(aiSubHeader);
     }
   }
 }

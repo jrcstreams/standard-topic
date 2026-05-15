@@ -1544,74 +1544,40 @@ body.hide-cta .sticky-cta { display: none !important; }
 .shortcuts-list-wrap.has-overflow-bottom .scroll-fade-bottom { opacity: 1; }
 
 /* === Submit selected prompts button === */
+/* === Multi-select controls (sidebar + mobile) =====================
+   Primary Submit button on top (full width, prominent green when
+   selections exist). Secondary Select-all / Clear actions below as
+   compact text-style buttons separated by a dot. */
 .shortcuts-multi-submit-wrap {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: 0.5rem;
-  margin-top: 0;
-  margin-bottom: 0.85rem;
-  padding: 0;
+  margin: 0;
 }
-/* Default: full labels visible, short labels hidden. */
-.multi-btn-label-short { display: none; }
-
-/* Phones (≤540px) — switch to short labels ("Submit Prompts" /
-   "Clear Prompts") AND shrink padding so all three buttons (Submit,
-   Select All, Clear) stay on a single row instead of wrapping. The
-   previous setup kept full labels down to 480px, which made the row
-   wrap at intermediate phone widths (481–540px). */
-@media (max-width: 540px) {
-  .multi-btn-label-full { display: none; }
-  .multi-btn-label-short { display: inline; }
-  .shortcuts-multi-submit { padding: 0.5rem 0.85rem; font-size: 0.78rem; }
-  .shortcuts-multi-submit-count { min-width: 16px; height: 16px; font-size: 0.68rem; padding: 0 0.3rem; }
-  .shortcuts-multi-clear,
-  .shortcuts-multi-select-all { padding: 0.5rem 0.8rem; font-size: 0.78rem; }
-  .shortcuts-multi-submit-wrap { gap: 0.45rem; }
-}
-
-/* Smaller phones — same labels, slightly tighter spacing/font. */
-@media (max-width: 420px) {
-  .shortcuts-multi-submit { padding: 0.45rem 0.7rem; font-size: 0.74rem; }
-  .shortcuts-multi-clear,
-  .shortcuts-multi-select-all { padding: 0.45rem 0.65rem; font-size: 0.74rem; }
-  .shortcuts-multi-submit-wrap { gap: 0.35rem; }
-}
-
-/* Very small phones — even tighter. */
-@media (max-width: 360px) {
-  .shortcuts-multi-submit { padding: 0.4rem 0.6rem; font-size: 0.72rem; }
-  .shortcuts-multi-clear,
-  .shortcuts-multi-select-all { padding: 0.4rem 0.55rem; font-size: 0.72rem; }
-  .shortcuts-multi-submit-wrap { gap: 0.3rem; }
-}
-/* Selector wins over .shortcuts-multi-submit-wrap { display: flex }
-   so the [hidden] HTML attribute actually hides the button. */
 .shortcuts-multi-submit-wrap[hidden] {
   display: none !important;
 }
+
 .shortcuts-multi-submit {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.55rem 1.1rem;
-  background: var(--color-text-light);
+  width: 100%;
+  padding: 0.62rem 1rem;
+  background: #9ca3af;
   color: white;
-  /* Transparent 1.5px border keeps Submit's box-model parity with the
-     outlined Select All / Clear buttons so all three render at the
-     same total height. */
-  border: 1.5px solid transparent;
-  border-radius: 6px;
+  border: none;
+  border-radius: 8px;
   font-family: var(--font-family);
-  font-size: 0.84rem;
-  font-weight: var(--font-weight-bold);
+  font-size: 0.88rem;
+  font-weight: 600;
   line-height: 1.2;
+  letter-spacing: -0.005em;
   cursor: not-allowed;
-  opacity: 0.8;
-  transition: background 0.12s, opacity 0.12s;
+  opacity: 0.6;
+  transition: background 0.14s, opacity 0.14s, transform 0.06s;
   white-space: nowrap;
 }
 .shortcuts-multi-submit.is-active {
@@ -1620,88 +1586,53 @@ body.hide-cta .sticky-cta { display: none !important; }
   opacity: 1;
 }
 .shortcuts-multi-submit.is-active:hover { background: #15803d; }
+.shortcuts-multi-submit.is-active:active { transform: translateY(1px); }
 .shortcuts-multi-submit-count {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 0.4rem;
-  background: rgba(255, 255, 255, 0.22);
+  min-width: 22px;
+  height: 22px;
+  padding: 0 0.45rem;
+  background: rgba(255, 255, 255, 0.28);
   border-radius: 999px;
   font-size: 0.74rem;
-  font-weight: var(--font-weight-bold);
+  font-weight: 700;
   line-height: 1;
 }
 
-/* Secondary "Clear Selected Prompts" / "Select All" buttons — outlined,
-   sit next to Submit. Disabled (greyed) at appropriate times. */
-.shortcuts-multi-clear,
-.shortcuts-multi-select-all {
-  display: inline-flex;
+.shortcuts-multi-secondary {
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.55rem 1.1rem;
+  gap: 0.65rem;
+}
+.shortcuts-multi-select-all,
+.shortcuts-multi-clear {
+  display: inline-flex;
+  padding: 0.2rem 0.15rem;
   background: transparent;
-  color: var(--color-text);
-  border: 1.5px solid var(--color-border);
-  border-radius: 6px;
+  border: none;
+  color: var(--color-text-muted);
   font-family: var(--font-family);
-  font-size: 0.84rem;
-  font-weight: var(--font-weight-semibold);
-  line-height: 1.2;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
   cursor: pointer;
-  white-space: nowrap;
-  transition: border-color 0.12s, color 0.12s, background 0.12s, opacity 0.12s;
+  transition: color 0.12s;
 }
-
-/* Lock all three multi-action buttons to the same min-height per
-   breakpoint. Submit's count badge can otherwise push that button
-   taller than the outlined siblings; this floor ensures the three
-   sit at a single shared height. */
-.shortcuts-multi-submit,
-.shortcuts-multi-clear,
-.shortcuts-multi-select-all {
-  min-height: 38px;
-}
-@media (max-width: 540px) {
-  .shortcuts-multi-submit,
-  .shortcuts-multi-clear,
-  .shortcuts-multi-select-all {
-    min-height: 34px;
-  }
-}
-@media (max-width: 420px) {
-  .shortcuts-multi-submit,
-  .shortcuts-multi-clear,
-  .shortcuts-multi-select-all {
-    min-height: 32px;
-  }
-}
-@media (max-width: 360px) {
-  .shortcuts-multi-submit,
-  .shortcuts-multi-clear,
-  .shortcuts-multi-select-all {
-    min-height: 30px;
-  }
-}
-.shortcuts-multi-clear:hover:not(:disabled) {
-  border-color: #dc2626;
-  color: #dc2626;
-  background: rgba(220, 38, 38, 0.06);
-}
-.shortcuts-multi-select-all:hover:not(:disabled) {
-  border-color: var(--color-primary, #1e40af);
-  color: var(--color-primary, #1e40af);
-  background: rgba(30, 64, 175, 0.06);
-}
-.shortcuts-multi-clear:disabled,
-.shortcuts-multi-select-all:disabled {
+.shortcuts-multi-select-all:hover:not(:disabled) { color: #4a7cc9; }
+.shortcuts-multi-clear:hover:not(:disabled) { color: #dc2626; }
+.shortcuts-multi-select-all:disabled,
+.shortcuts-multi-clear:disabled {
   opacity: 0.4;
   cursor: not-allowed;
-  border-color: var(--color-border-light);
+}
+.shortcuts-multi-divider {
   color: var(--color-text-light);
-  background: transparent;
+  user-select: none;
+  font-size: 0.9rem;
+  line-height: 1;
 }
 
 /* Section header — make sure flex children can shrink so the toggle
@@ -3120,8 +3051,18 @@ body.app-mode .topic-layout {
 @media (min-width: 900px) {
   .topic-layout {
     grid-template-columns: 320px minmax(0, 1fr);
-    gap: 1.5rem;
+    gap: 0;
     align-items: stretch;
+  }
+  /* Discreet vertical separator between Shortcuts (left) and News
+     Feed (right). Sits at the right edge of the shortcuts column
+     and provides visual division without a heavy card border. */
+  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts {
+    padding-right: 1.5rem;
+    border-right: 1px solid #e2e8f0;
+  }
+  body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed {
+    padding-left: 1.5rem;
   }
   /* Custom-search pages have only Shortcuts (no News Feed). Force
      single column at all widths and cap shortcut card width so the
@@ -3167,20 +3108,15 @@ body.app-mode .topic-layout {
   padding: 0;
 }
 
-/* === Shortcuts card chrome ===
-   Very light gray fill, no border. Reads as a distinct panel that
-   shares space with the News Feed without competing visually. */
+/* === Shortcuts card (no chrome) ===
+   Transparent — same visual treatment as the News Feed. Separation
+   between the two on desktop comes from a thin vertical line in the
+   grid gap (see body.app-mode .topic-layout below). */
 .shortcuts-sidebar {
-  background: #f6f7f9;
+  background: transparent;
   border: none;
-  border-radius: 10px;
-  padding: 1.1rem 1.15rem;
-}
-@media (max-width: 640px) {
-  .shortcuts-sidebar {
-    padding: 0.95rem 1rem;
-    border-radius: 8px;
-  }
+  border-radius: 0;
+  padding: 0;
 }
 
 /* === Shortcuts card layout: flex column with internal-scrolling list ===
@@ -3201,9 +3137,9 @@ body.app-mode .topic-layout {
   flex-direction: column;
   min-height: 0;
 }
-/* Card title row — "Shortcuts" h3 matches News Feed title size/weight
-   so they sit on the same baseline across the two columns. Same blue
-   accent bar to the left, same separator line below. */
+/* Card title row — matches News Feed title size/weight + blue accent
+   bar + separator line. Stays at the top of the card while the body
+   below scrolls. */
 .shortcuts-sidebar .sidebar-card-header {
   flex-shrink: 0;
   flex-wrap: nowrap;
@@ -3212,6 +3148,8 @@ body.app-mode .topic-layout {
   padding: 0 0 0.6rem 0.95rem;
   border-bottom: 1px solid #e2e8f0;
   position: relative;
+  background: var(--color-bg);
+  z-index: 4;
 }
 .shortcuts-sidebar .sidebar-card-header::before {
   content: '';
@@ -3235,24 +3173,23 @@ body.app-mode .topic-layout {
   flex: 0 1 auto;
 }
 .shortcuts-sidebar .sidebar-card-title::before { display: none; }
-@media (max-width: 640px) {
-  .shortcuts-sidebar .sidebar-card-title { font-size: 1.05rem; }
+
+/* Body scroll wrap — Content + AI scroll together. */
+.shortcuts-scroll-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-top: 1rem;
 }
 
-/* Subsections — Content Shortcuts (fixed) + AI Shortcuts (flex, scrolls).
-   First subsection gets generous top spacing from the card title. */
+/* Subsections — Content Shortcuts + AI Shortcuts, both inside the
+   single scroll wrap. */
 .shortcuts-subsection {
   display: flex;
   flex-direction: column;
-  min-height: 0;
 }
 .shortcuts-subsection + .shortcuts-subsection { margin-top: 1.25rem; }
-.content-shortcuts-subsection { flex-shrink: 0; }
-.shortcuts-sidebar > .shortcuts-subsection:first-of-type { margin-top: 1.1rem; }
-.ai-shortcuts-subsection {
-  flex: 1;
-  min-height: 0;
-}
 .shortcuts-subsection-header {
   display: flex;
   align-items: center;
@@ -3275,12 +3212,37 @@ body.app-mode .topic-layout {
   gap: 0.4rem;
   margin-left: auto;
 }
-.ai-shortcuts-subsection .shortcuts-multi-submit-wrap { flex-shrink: 0; }
-.ai-shortcuts-subsection .shortcuts-list-wrap {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+
+/* Multi-select mode — hide Content Shortcuts, AI subsection header
+   and submit-bar become sticky inside the scroll wrap. */
+.shortcuts-sidebar.is-multi-select .content-shortcuts-subsection {
+  display: none;
+}
+.shortcuts-sidebar.is-multi-select .ai-shortcuts-subsection .shortcuts-subsection-header {
+  position: sticky;
+  top: 0;
+  background: var(--color-bg);
+  z-index: 3;
+  padding-bottom: 0.55rem;
+  margin-bottom: 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+.shortcuts-sidebar.is-multi-select .ai-shortcuts-subsection .shortcuts-multi-submit-wrap {
+  position: sticky;
+  top: var(--ai-subheader-h, 36px);
+  background: var(--color-bg);
+  z-index: 2;
+  margin: 0;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+/* Pull the scroll-wrap top padding back so the sticky AI header
+   sits flush with the card title separator instead of leaving a gap. */
+.shortcuts-sidebar.is-multi-select .shortcuts-scroll-wrap {
+  padding-top: 0;
+}
+.shortcuts-sidebar.is-multi-select .ai-shortcuts-subsection .sidebar-shortcut-list {
+  margin-top: 0.4rem;
 }
 
 /* The topic-layout cell is already viewport-bounded in app-mode, so
@@ -3332,10 +3294,13 @@ body.app-mode .topic-layout {
 @media (max-width: 899.98px) {
   body.app-mode .subnav-tab-pills { display: inline-flex; }
   /* Hide the existing "Related Topics +" modal trigger on mobile —
-     the Related pill replaces it. Also hide the chips row (it was
-     already collapsed by trimOverflowLinks at narrow widths). */
-  body.app-mode #sub-header.is-subnav .subnav-related-btn,
-  body.app-mode #sub-header.is-subnav .subnav-topics-inline { display: none; }
+     the Related pill replaces it. trimOverflowLinks sets an inline
+     `style.display = 'inline-block'` on this button, so we need
+     !important to override. Same for the chips row. */
+  body.app-mode #sub-header.is-subnav #subnav-related-btn,
+  body.app-mode #sub-header.is-subnav .subnav-topics-inline {
+    display: none !important;
+  }
   /* All-or-nothing wrap: pills wrap as a group below the title when
      they don't fit alongside it. */
   body.app-mode #sub-header.is-subnav .topic-banner-row {
@@ -3351,47 +3316,6 @@ body.app-mode .topic-layout {
   body.app-mode.active-tab-shortcuts .topic-layout:not(.is-custom) > #section-shortcuts { display: flex; }
   body.app-mode.active-tab-related   .topic-layout:not(.is-custom) > #section-related   { display: flex; }
 
-  /* On mobile the shortcuts loses its card chrome and acts like the
-     news feed / related sections: the whole card becomes the scroll
-     container, with sticky title (and sticky multi-controls when
-     multi-select is on) layered above the list. */
-  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts .shortcuts-sidebar {
-    background: transparent;
-    border-radius: 0;
-    padding: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  /* Disable the inner scroll context so the parent card scrolls instead. */
-  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts .ai-shortcuts-subsection .shortcuts-list-wrap {
-    flex: 0 0 auto;
-    overflow: visible;
-    min-height: 0;
-  }
-  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts .shortcuts-sidebar .sidebar-card-header {
-    position: sticky;
-    top: 0;
-    background: var(--color-bg);
-    z-index: 3;
-    margin: 0;
-    padding: 0 0 0.6rem 0.95rem;
-    border-bottom: 1px solid #e2e8f0;
-  }
-  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts .shortcuts-sidebar .shortcuts-multi-submit-wrap {
-    position: sticky;
-    top: var(--shortcuts-header-h, 52px);
-    background: var(--color-bg);
-    z-index: 2;
-    margin: 0;
-    padding: 0.45rem 0 0.6rem;
-    border-bottom: 1px solid #e2e8f0;
-  }
-  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts .shortcuts-sidebar > .shortcuts-subsection:first-of-type {
-    margin-top: 0.85rem;
-  }
-  /* Hide the scroll-fade indicators on mobile — the parent card
-     scrolls now, not the list-wrap. Affordance no longer applies. */
-  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts .scroll-fade { display: none; }
   /* Larger section titles on mobile (per request). */
   body.app-mode .shortcuts-sidebar .sidebar-card-title,
   body.app-mode .newsfeed-title,
