@@ -1994,10 +1994,19 @@ body.hide-cta .sticky-cta { display: none !important; }
   border-radius: 3px;
   position: relative;
   overflow: hidden;
-  margin-left: -1.35rem;
-  margin-right: -1.35rem;
-  width: calc(100% + 2.7rem);
-  max-width: 100vw;
+  /* Bleed through the card padding so the iframe sits edge-to-edge
+     inside the card. Padding is 1.15rem on desktop, 1rem on mobile. */
+  margin-left: -1.15rem;
+  margin-right: -1.15rem;
+  width: calc(100% + 2.3rem);
+  max-width: none;
+}
+@media (max-width: 640px) {
+  .newsfeed-embed {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    width: calc(100% + 2rem);
+  }
 }
 
 .newsfeed-iframe {
@@ -2005,14 +2014,6 @@ body.hide-cta .sticky-cta { display: none !important; }
   width: 100%;
   min-height: 600px;
   border: none;
-}
-
-@media (max-width: 1023px) {
-  .newsfeed-embed {
-    margin-left: -1.15rem;
-    margin-right: -1.15rem;
-    width: calc(100% + 2.3rem);
-  }
 }
 
 /* Prevent horizontal overflow on any screen */
@@ -3543,6 +3544,24 @@ html, body, #app {
   padding: 0;
 }
 
+/* === Card chrome for AI Shortcuts and News Feed cards ===
+   The base .sidebar-card is intentionally transparent; these two
+   cards get visible container styling so they read as distinct
+   panels on the page. */
+.shortcuts-sidebar,
+.newsfeed-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 1.1rem 1.15rem;
+}
+@media (max-width: 640px) {
+  .shortcuts-sidebar,
+  .newsfeed-card {
+    padding: 0.95rem 1rem;
+    border-radius: 8px;
+  }
+}
 
 .sidebar-card-header {
   display: flex;
