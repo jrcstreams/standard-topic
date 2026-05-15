@@ -1404,14 +1404,14 @@ body.hide-cta .sticky-cta { display: none !important; }
    (matches the original treatment) and a separator line below. */
 .newsfeed-title {
   font-family: var(--font-family);
-  font-size: 1.32rem;
+  font-size: 1.42rem;
   line-height: 1.2;
   font-weight: 700;
   color: #1e2d44;
   letter-spacing: -0.018em;
   margin: 0;
-  padding: 0 0 0.7rem 0.95rem;
-  border-bottom: 2px solid #d0d6df;
+  padding: 0 0 0.95rem 1.05rem;
+  border-bottom: 1.5px solid #d6dae2;
   background: var(--color-bg);
   flex-shrink: 0;
   position: relative;
@@ -1421,8 +1421,8 @@ body.hide-cta .sticky-cta { display: none !important; }
   position: absolute;
   left: 0;
   top: 0;
-  bottom: calc(0.7rem + 2px);
-  width: 4px;
+  bottom: calc(0.95rem + 1.5px);
+  width: 5px;
   background: #2f855a;
   border-radius: 999px;
 }
@@ -3248,8 +3248,8 @@ body.app-mode .topic-layout {
   flex-wrap: nowrap;
   align-items: center;
   margin: 0;
-  padding: 0 0 0.7rem 0.95rem;
-  border-bottom: 2px solid #d0d6df;
+  padding: 0 0 0.95rem 1.05rem;
+  border-bottom: 1.5px solid #d6dae2;
   position: relative;
   background: var(--color-bg);
   z-index: 4;
@@ -3259,14 +3259,14 @@ body.app-mode .topic-layout {
   position: absolute;
   left: 0;
   top: 0;
-  bottom: calc(0.7rem + 2px);
-  width: 4px;
+  bottom: calc(0.95rem + 1.5px);
+  width: 5px;
   background: #4a7cc9;
   border-radius: 999px;
 }
 .shortcuts-sidebar .sidebar-card-title {
   font-family: var(--font-family);
-  font-size: 1.32rem;
+  font-size: 1.42rem;
   line-height: 1.2;
   font-weight: 700;
   color: #1e2d44;
@@ -3438,7 +3438,7 @@ body.app-mode .topic-layout {
   body.app-mode .shortcuts-sidebar .sidebar-card-title,
   body.app-mode .newsfeed-title,
   body.app-mode .related-title {
-    font-size: 1.18rem;
+    font-size: 1.28rem;
   }
 }
 
@@ -3570,14 +3570,14 @@ body.app-mode .topic-layout {
 }
 .related-title {
   font-family: var(--font-family);
-  font-size: 1.32rem;
+  font-size: 1.42rem;
   line-height: 1.2;
   font-weight: 700;
   color: #1e2d44;
   letter-spacing: -0.018em;
   margin: 0;
-  padding: 0 0 0.7rem 0.95rem;
-  border-bottom: 2px solid #d0d6df;
+  padding: 0 0 0.95rem 1.05rem;
+  border-bottom: 1.5px solid #d6dae2;
   background: var(--color-bg);
   flex-shrink: 0;
   position: relative;
@@ -3587,8 +3587,8 @@ body.app-mode .topic-layout {
   position: absolute;
   left: 0;
   top: 0;
-  bottom: calc(0.7rem + 2px);
-  width: 4px;
+  bottom: calc(0.95rem + 1.5px);
+  width: 5px;
   background: #c05621;
   border-radius: 999px;
 }
