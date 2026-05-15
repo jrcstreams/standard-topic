@@ -16,8 +16,8 @@ export function renderNewsFeed(container, topic, isHome) {
 
   container.innerHTML = `
     <div class="newsfeed-card">
+      <h3 class="newsfeed-title">News Feed</h3>
       <div class="newsfeed-scroll-wrap">
-        <h3 class="newsfeed-title">News Feed</h3>
         ${body}
       </div>
     </div>

@@ -698,8 +698,8 @@ function renderRelatedSection(container, topic) {
        </div>`;
   container.innerHTML = `
     <div class="related-panel">
+      <h3 class="related-title">Related Topics</h3>
       <div class="related-scroll-wrap">
-        <h3 class="related-title">Related Topics</h3>
         ${list}
       </div>
     </div>

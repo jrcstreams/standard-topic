@@ -1366,10 +1366,9 @@ body.hide-cta .sticky-cta { display: none !important; }
   margin: 0;
   padding: 0 0 0.6rem 0.95rem;
   border-bottom: 1px solid #e2e8f0;
-  position: sticky;
-  top: 0;
   background: var(--color-bg);
-  z-index: 2;
+  flex-shrink: 0;
+  position: relative;
 }
 .newsfeed-title::before {
   content: '';
@@ -3461,10 +3460,9 @@ body.app-mode .topic-layout {
   margin: 0;
   padding: 0 0 0.6rem 0.95rem;
   border-bottom: 1px solid #e2e8f0;
-  position: sticky;
-  top: 0;
   background: var(--color-bg);
-  z-index: 2;
+  flex-shrink: 0;
+  position: relative;
 }
 .related-title::before {
   content: '';
