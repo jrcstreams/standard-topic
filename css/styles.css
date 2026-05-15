@@ -1589,6 +1589,58 @@ body.hide-cta .sticky-cta { display: none !important; }
 
 .shortcuts-list-wrap { position: relative; }
 
+/* === Scroll-fade indicators (shared by shortcuts list + news feed) ===
+   Sits absolute over the scroll region, hidden by default. Visible
+   only when there's hidden content in that direction. The chevron
+   bobs gently to signal "more here, scroll." Reduced-motion users
+   get the fade without the animation. */
+.scroll-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  z-index: 2;
+}
+.scroll-fade-top {
+  top: 0;
+  background: linear-gradient(to bottom, var(--color-bg) 30%, rgba(255, 255, 255, 0));
+}
+.scroll-fade-bottom {
+  bottom: 0;
+  background: linear-gradient(to top, var(--color-bg) 30%, rgba(255, 255, 255, 0));
+}
+.scroll-fade-chev {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  color: var(--color-text-muted);
+  animation: scroll-fade-bob 2s ease-in-out infinite;
+}
+.scroll-fade-top .scroll-fade-chev { animation-name: scroll-fade-bob-up; }
+
+@keyframes scroll-fade-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(2px); }
+}
+@keyframes scroll-fade-bob-up {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-fade-chev { animation: none; }
+}
+
+/* Show overlays only when there's hidden content in that direction. */
+.shortcuts-list-wrap.has-overflow-top .scroll-fade-top { opacity: 1; }
+.shortcuts-list-wrap.has-overflow-bottom .scroll-fade-bottom { opacity: 1; }
+
 /* === Submit selected prompts button === */
 .shortcuts-multi-submit-wrap {
   display: flex;

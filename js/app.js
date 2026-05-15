@@ -800,8 +800,18 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       </div>
     `;
     html += `<div class="shortcuts-list-wrap">
+      <div class="scroll-fade scroll-fade-top" aria-hidden="true">
+        <span class="scroll-fade-chev">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+        </span>
+      </div>
       <div class="sidebar-shortcut-list">
         ${all.map(s => shortcutItem(s, topicName)).join('')}
+      </div>
+      <div class="scroll-fade scroll-fade-bottom" aria-hidden="true">
+        <span class="scroll-fade-chev">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </span>
       </div>
     </div>`;
   }
@@ -899,6 +909,29 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       detail: { prompt: finalPrompt, name, iconKey: '' },
     }));
   });
+
+  // Scroll-fade indicators: toggle has-overflow-top / has-overflow-bottom
+  // on the list-wrap based on the wrap's scroll position. rAF-throttled.
+  const listWrap = container.querySelector('.shortcuts-list-wrap');
+  if (listWrap) {
+    let rafId = null;
+    const updateOverflow = () => {
+      rafId = null;
+      const max = listWrap.scrollHeight - listWrap.clientHeight;
+      const hasOverflow = max > 1;
+      listWrap.classList.toggle('has-overflow-top', hasOverflow && listWrap.scrollTop > 1);
+      listWrap.classList.toggle('has-overflow-bottom', hasOverflow && listWrap.scrollTop < max - 1);
+    };
+    const schedule = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(updateOverflow);
+    };
+    listWrap.addEventListener('scroll', schedule, { passive: true });
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(schedule).observe(listWrap);
+    }
+    requestAnimationFrame(updateOverflow);
+  }
 }
 
 function shortcutItem(shortcut, topicName) {
