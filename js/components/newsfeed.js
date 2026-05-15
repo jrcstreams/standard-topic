@@ -4,28 +4,24 @@
 export function renderNewsFeed(container, topic, isHome) {
   const feedId = topic?.rssFeedId;
 
-  const header = `<h3 class="newsfeed-title">News Feed</h3>`;
+  const body = feedId
+    ? `<div class="newsfeed-embed">
+         <iframe src="rss-embed.html?id=${feedId}"
+                 class="newsfeed-iframe"
+                 id="rss-iframe-${feedId}"
+                 frameborder="0"
+                 scrolling="no"></iframe>
+       </div>`
+    : `<div class="newsfeed-placeholder"><p>News feed coming soon for this topic.</p></div>`;
 
-  let body;
-  if (feedId) {
-    body = `
-      <div class="newsfeed-embed">
-        <iframe src="rss-embed.html?id=${feedId}"
-                class="newsfeed-iframe"
-                id="rss-iframe-${feedId}"
-                frameborder="0"
-                scrolling="no"></iframe>
+  container.innerHTML = `
+    <div class="newsfeed-card">
+      <div class="newsfeed-scroll-wrap">
+        <h3 class="newsfeed-title">News Feed</h3>
+        ${body}
       </div>
-    `;
-  } else {
-    body = `
-      <div class="newsfeed-placeholder">
-        <p>News feed coming soon for this topic.</p>
-      </div>
-    `;
-  }
-
-  container.innerHTML = `<div class="newsfeed-card">${header}${body}</div>`;
+    </div>
+  `;
 
   const rssIframe = container.querySelector('.newsfeed-iframe');
   if (rssIframe && feedId) {

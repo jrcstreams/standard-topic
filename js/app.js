@@ -2,7 +2,6 @@ import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
 import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches } from './utils/data.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { renderFooter } from './components/footer.js';
 import { renderSearchBar, initSearchOverlay } from './components/search-modal.js';
 import { renderNewsFeed } from './components/newsfeed.js';
 import { renderShortcuts } from './components/shortcuts.js';
@@ -25,8 +24,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   initRelatedTopicsModal();
   initPromptPreviewModal();
   initSearchOverlay();
-
-  renderFooter(document.getElementById('site-footer'));
 
   onRoute((route) => {
     renderLayout(route);
@@ -109,7 +106,7 @@ function renderLayout(route) {
   subHeader.innerHTML = '';
   const stayingInHomeDesktop = isHome && !isMobile && wasOnHomeDesktop;
   if (heroEl && !stayingInHomeDesktop) heroEl.innerHTML = '';
-  document.body.classList.remove('sticky-always', 'has-subnav', 'home-mode', 'show-subnav-tabs');
+  document.body.classList.remove('sticky-always', 'has-subnav', 'home-mode', 'show-subnav-tabs', 'app-mode');
 
   // Always render the main sticky bar
   renderStickyHeroBar(siteHeader, route);
@@ -117,6 +114,13 @@ function renderLayout(route) {
   // All pages: main nav always fixed + visible.
   document.body.classList.add('sticky-always');
   siteHeader.classList.add('is-revealed');
+
+  // App-mode: home / topic / custom routes lock the page to viewport
+  // height so the two cards behave like an application panel rather
+  // than long-scroll content. The footer was removed for this reason.
+  if (route.type === 'home' || route.type === 'topic' || route.type === 'custom') {
+    document.body.classList.add('app-mode');
+  }
 
   // Title group: icon + name. Hamburger now lives permanently in the
   // main nav next to the brand, so the subnav title is free to sit

@@ -31,7 +31,32 @@
       "Bash(ls /Users/johnchoudhari/Desktop/standard-topic/admin*)",
       "Bash(git remote:*)",
       "Bash(git branch:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(python3:*)",
+      "Bash(curl -s http://localhost:8888/data/shortcuts-directory.json)",
+      "Bash(curl -s http://localhost:8888/data/shortcuts-assignments.json)",
+      "Bash(curl -s http://localhost:8888/admin.html)",
+      "Bash(pkill -f \"python3 -m http.server 8888\")",
+      "Bash(pkill:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8000/index.html)",
+      "Bash(curl *)",
+      "Bash(grep -n \"100vw\\\\|min-width:.*[0-9]\\\\{3,\\\\}\\\\|width: 100vw\\\\|overflow-x\" /Users/johnchoudhari/Desktop/standard-topic/css/styles.css)",
+      "Bash(git *)",
+      "Bash(awk '/\"slug\"/{slug=$0} /\"parent\": null/{p=1} /\"icon\":/{if\\(p\\){print slug, $0; p=0}}' /Users/johnchoudhari/Desktop/standard-topic/data/topics.json)",
+      "Bash(lsof -iTCP:8000 -sTCP:LISTEN -n -P)",
+      "Bash(lsof -iTCP:3000 -sTCP:LISTEN -n -P)",
+      "Bash(lsof -iTCP:5173 -sTCP:LISTEN -n -P)",
+      "Bash(lsof -iTCP:8080 -sTCP:LISTEN -n -P)",
+      "Bash(grep -i \"\\\\.\\\\\\(xlsx\\\\|xls\\\\|csv\\\\\\)$\")",
+      "Bash(lsof -ti:8000)",
+      "Bash(ps -p 3124 -o pid,command)",
+      "Bash(awk NR>=261 && NR<=282 {printf \"%3d: %s\\\\n\", NR, $0} *)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(cat)",
+      "Bash(sed -n '3649,3726p' /Users/johnchoudhari/Desktop/standard-topic/css/styles.css)",
+      "Read(//tmp/**)",
+      "Bash(sed -n '3445,3448p' /Users/johnchoudhari/Desktop/standard-topic/css/styles.css)",
+      "Bash(sed -n '3488,3491p' /Users/johnchoudhari/Desktop/standard-topic/css/styles.css)"
     ]
   }
 }
