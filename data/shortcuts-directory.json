@@ -115,12 +115,6 @@
       "prompt": "What are the most notable new releases this week across film, TV, music, podcasts, and games? Note which are getting strong reception and what's worth prioritizing."
     },
     {
-      "id": "latest-news",
-      "name": "Latest News and Developments",
-      "icon": "latest-news",
-      "prompt": "What's the latest news on the topic of: {TOPIC}? Cover the most significant developments from the past week or so. For each: what happened, why it matters, and what to watch next. Skip noise and prioritize stories with real significance. Organize by significance, not chronology."
-    },
-    {
       "id": "breaking-news",
       "name": "Breaking News Right Now",
       "icon": "breaking-news",
@@ -131,6 +125,12 @@
       "name": "Numbers in the News",
       "icon": "numbers-in-news",
       "prompt": "Give me the most important numbers, statistics, and data points making news globally right now. Cover economic indicators, polling, market moves, scientific findings, or anything else where the data itself is the story."
+    },
+    {
+      "id": "latest-news",
+      "name": "Latest News and Developments",
+      "icon": "latest-news",
+      "prompt": "What's the latest news on the topic of: {TOPIC}? Cover the most significant developments from the past week or so. For each: what happened, why it matters, and what to watch next. Skip noise and prioritize stories with real significance. Organize by significance, not chronology."
     },
     {
       "id": "trends",

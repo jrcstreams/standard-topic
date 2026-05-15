@@ -36,9 +36,17 @@
       content="Curated news feeds, AI shortcuts, and a knowledge prompt builder across every major topic. Stay informed and build custom AI prompts in seconds.">
     <meta name="twitter:image" content="https://standardtopic.com/assets/share-image.png">
 
-    <!-- Favicon -->
-    <link rel="icon" href="assets/logo-light.png" type="image/png">
-    <link rel="apple-touch-icon" href="assets/logo-light.png">
+    <!-- Favicon — explicit sizes + a root /favicon.ico so Google's
+         crawler picks up the brand mark (it hits /favicon.ico directly
+         and falls back to the registrar's icon when missing). -->
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png?v=20260515">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png?v=20260515">
+    <link rel="icon" type="image/png" sizes="48x48" href="assets/favicon-48.png?v=20260515">
+    <link rel="icon" type="image/png" sizes="96x96" href="assets/favicon-96.png?v=20260515">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png?v=20260515">
+    <link rel="icon" type="image/png" sizes="512x512" href="assets/favicon-512.png?v=20260515">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png?v=20260515">
 
     <!-- Theme Color -->
     <meta name="theme-color" content="#1e2d44">
