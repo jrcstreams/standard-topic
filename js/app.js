@@ -770,29 +770,6 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     <div class="${cardClasses.join(' ')}" data-multi="0">
       <div class="sidebar-card-header">
         <h3 class="sidebar-card-title">Shortcuts</h3>
-      </div>
-      <div class="shortcuts-scroll-wrap">
-  `;
-
-  // Content Shortcuts subsection (external searches)
-  if (contentSearches.length > 0) {
-    html += `
-      <section class="shortcuts-subsection content-shortcuts-subsection">
-        <div class="shortcuts-subsection-header">
-          <h4 class="shortcuts-subsection-title">Content Shortcuts</h4>
-        </div>
-        <div class="sidebar-shortcut-list">
-          ${contentSearches.map(s => contentShortcutItem(s, topicName)).join('')}
-        </div>
-      </section>
-    `;
-  }
-
-  // AI Shortcuts subsection (prompt shortcuts + multi-select)
-  html += `
-    <section class="shortcuts-subsection ai-shortcuts-subsection">
-      <div class="shortcuts-subsection-header">
-        <h4 class="shortcuts-subsection-title">AI Shortcuts</h4>
         ${all.length > 0 ? `
           <button type="button" class="multi-toggle" id="multi-toggle" role="switch" aria-checked="false">
             <span class="multi-toggle-label">Multi-select</span>
@@ -800,23 +777,48 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
           </button>
         ` : ''}
       </div>
+      ${all.length > 0 ? `
+        <div class="shortcuts-multi-submit-wrap" hidden>
+          <button type="button" class="shortcuts-multi-submit" id="shortcuts-multi-submit">
+            <span class="shortcuts-multi-submit-label">Submit Prompts</span>
+            <span class="shortcuts-multi-submit-count" id="shortcuts-multi-submit-count">0</span>
+          </button>
+          <div class="shortcuts-multi-secondary">
+            <button type="button" class="shortcuts-multi-select-all" id="shortcuts-multi-select-all">Select all</button>
+            <span class="shortcuts-multi-divider" aria-hidden="true">·</span>
+            <button type="button" class="shortcuts-multi-clear" id="shortcuts-multi-clear">Clear</button>
+          </div>
+        </div>
+      ` : ''}
+      <div class="shortcuts-scroll-wrap">
+  `;
+
+  // Quick Links subsection (external searches — Google News, Reddit, X, YouTube)
+  if (contentSearches.length > 0) {
+    html += `
+      <section class="shortcuts-subsection quick-links-subsection">
+        <div class="shortcuts-subsection-header">
+          <h4 class="shortcuts-subsection-title">Quick Links</h4>
+        </div>
+        <div class="quick-links-grid">
+          ${contentSearches.map(s => quickLinkItem(s, topicName)).join('')}
+        </div>
+      </section>
+    `;
+  }
+
+  // AI Shortcuts subsection
+  html += `
+    <section class="shortcuts-subsection ai-shortcuts-subsection">
+      <div class="shortcuts-subsection-header">
+        <h4 class="shortcuts-subsection-title">AI Shortcuts</h4>
+      </div>
   `;
 
   if (all.length === 0) {
     html += `<p class="sidebar-empty">No shortcuts yet.</p>`;
   } else {
     html += `
-      <div class="shortcuts-multi-submit-wrap" hidden>
-        <button type="button" class="shortcuts-multi-submit" id="shortcuts-multi-submit">
-          <span class="shortcuts-multi-submit-label">Submit Prompts</span>
-          <span class="shortcuts-multi-submit-count" id="shortcuts-multi-submit-count">0</span>
-        </button>
-        <div class="shortcuts-multi-secondary">
-          <button type="button" class="shortcuts-multi-select-all" id="shortcuts-multi-select-all">Select all</button>
-          <span class="shortcuts-multi-divider" aria-hidden="true">·</span>
-          <button type="button" class="shortcuts-multi-clear" id="shortcuts-multi-clear">Clear</button>
-        </div>
-      </div>
       <div class="sidebar-shortcut-list">
         ${all.map(s => shortcutItem(s, topicName)).join('')}
       </div>
@@ -824,13 +826,32 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   }
   html += `</section>`;
   html += `</div>`; /* close .shortcuts-scroll-wrap */
+  html += `<div class="shortcuts-toast" id="shortcuts-toast" role="status" aria-live="polite"></div>`;
   html += `</div>`; /* close .shortcuts-sidebar */
   container.innerHTML = html;
 
-  // Track content-shortcut clicks (anchors with their own navigation; no
-  // additional handler needed beyond the click listener for analytics).
-  container.querySelectorAll('.content-shortcut').forEach(link => {
-    link.addEventListener('click', () => {
+  // Quick Links: track clicks for analytics, and intercept clicks
+  // while multi-select is on to surface a transient toast (the link
+  // is visually muted but still a valid anchor, so we need to
+  // explicitly prevent navigation and animate the toast).
+  const toastEl = container.querySelector('#shortcuts-toast');
+  let toastTimer = null;
+  const flashToast = (msg) => {
+    if (!toastEl) return;
+    toastEl.textContent = msg;
+    toastEl.classList.add('is-visible');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('is-visible'), 1800);
+  };
+  container.querySelectorAll('.quick-link-tile').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const cardEl = container.querySelector('.shortcuts-sidebar');
+      const multiOn = cardEl?.dataset.multi === '1';
+      if (multiOn) {
+        e.preventDefault();
+        flashToast('Quick Links are paused while multi-select is on');
+        return;
+      }
       const name = link.dataset.name || '';
       track('content_shortcut_click', { name, route: window.location.hash || '#/' });
     });
@@ -984,23 +1005,21 @@ function shortcutItem(shortcut, topicName) {
   `;
 }
 
-// Content shortcut row — same visual shell as AI shortcut buttons but
-// rendered as an anchor (opens external search in a new tab). Uses the
-// search entry's emoji icon directly since these aren't part of the
-// preloaded SVG icon set.
-function contentShortcutItem(search, topicName) {
+// Quick Link tile — 2x2 grid card with brand emoji + name. Anchor
+// tag opens the search in a new tab. In multi-select mode the link
+// gets `.is-disabled` and tapping it shows a toast.
+function quickLinkItem(search, topicName) {
   const url = search.urlTemplate.replace(/\{query\}/g, encodeURIComponent(topicName));
   const icon = search.icon || '';
   return `
-    <a class="sidebar-shortcut content-shortcut"
+    <a class="quick-link-tile"
        href="${url}"
        target="_blank"
        rel="noopener noreferrer"
        data-name="${escapeAttr(search.name)}"
        title="${escapeAttr(search.name)}">
-      <span class="sidebar-shortcut-icon content-shortcut-emoji">${escapeHTML(icon)}</span>
-      <span class="sidebar-shortcut-name">${escapeHTML(search.name)}</span>
-      <span class="sidebar-shortcut-chev" aria-hidden="true">↗</span>
+      <span class="quick-link-tile-icon">${escapeHTML(icon)}</span>
+      <span class="quick-link-tile-name">${escapeHTML(search.name)}</span>
     </a>
   `;
 }

@@ -650,8 +650,8 @@ body.hide-cta .sticky-cta { display: none !important; }
   right: 0;
   z-index: 99;
   background: #f3f4f6;
-  border-bottom: 1px solid var(--color-border);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  border-bottom: 1px solid #d8dce3;
+  box-shadow: 0 2px 8px rgba(15, 26, 46, 0.06);
 }
 
 /* === Home subnav (desktop) ===
@@ -3041,11 +3041,11 @@ body.app-mode .topic-layout {
   height: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0.65rem 2rem 0.65rem;
+  padding: 1.6rem 2rem 0.65rem;
   box-sizing: border-box;
 }
 @media (max-width: 640px) {
-  body.app-mode .topic-layout { padding: 0.4rem 1rem; }
+  body.app-mode .topic-layout { padding: 1rem 1rem 0.5rem; }
 }
 
 @media (min-width: 900px) {
@@ -3055,11 +3055,21 @@ body.app-mode .topic-layout {
     align-items: stretch;
   }
   /* Discreet vertical separator between Shortcuts (left) and News
-     Feed (right). Sits at the right edge of the shortcuts column
-     and provides visual division without a heavy card border. */
+     Feed (right). Drawn via ::after so it can start below the subnav
+     (with breathing room above) and run down the rest of the column. */
   body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts {
+    position: relative;
     padding-right: 1.5rem;
-    border-right: 1px solid #e2e8f0;
+  }
+  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts::after {
+    content: '';
+    position: absolute;
+    top: 0.4rem;
+    right: 0;
+    bottom: 0;
+    width: 1px;
+    background: #e2e8f0;
+    pointer-events: none;
   }
   body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed {
     padding-left: 1.5rem;
@@ -3136,6 +3146,7 @@ body.app-mode .topic-layout {
   display: flex;
   flex-direction: column;
   min-height: 0;
+  height: 100%;
 }
 /* Card title row — matches News Feed title size/weight + blue accent
    bar + separator line. Stays at the top of the card while the body
@@ -3213,36 +3224,15 @@ body.app-mode .topic-layout {
   margin-left: auto;
 }
 
-/* Multi-select mode — hide Content Shortcuts, AI subsection header
-   and submit-bar become sticky inside the scroll wrap. */
-.shortcuts-sidebar.is-multi-select .content-shortcuts-subsection {
-  display: none;
-}
-.shortcuts-sidebar.is-multi-select .ai-shortcuts-subsection .shortcuts-subsection-header {
-  position: sticky;
-  top: 0;
-  background: var(--color-bg);
-  z-index: 3;
-  padding-bottom: 0.55rem;
-  margin-bottom: 0;
+/* Multi-controls bar sits between the title and the scroll-wrap via
+   flex order — flex-shrink: 0 keeps it visible while the body below
+   scrolls (no position: sticky needed). Shown only when multi is on
+   (the [hidden] attribute on the markup is removed by JS). */
+.shortcuts-sidebar > .shortcuts-multi-submit-wrap {
+  flex-shrink: 0;
+  margin: 0.85rem 0 0;
+  padding: 0 0 0.85rem;
   border-bottom: 1px solid #e2e8f0;
-}
-.shortcuts-sidebar.is-multi-select .ai-shortcuts-subsection .shortcuts-multi-submit-wrap {
-  position: sticky;
-  top: var(--ai-subheader-h, 36px);
-  background: var(--color-bg);
-  z-index: 2;
-  margin: 0;
-  padding: 0.6rem 0;
-  border-bottom: 1px solid #e2e8f0;
-}
-/* Pull the scroll-wrap top padding back so the sticky AI header
-   sits flush with the card title separator instead of leaving a gap. */
-.shortcuts-sidebar.is-multi-select .shortcuts-scroll-wrap {
-  padding-top: 0;
-}
-.shortcuts-sidebar.is-multi-select .ai-shortcuts-subsection .sidebar-shortcut-list {
-  margin-top: 0.4rem;
 }
 
 /* The topic-layout cell is already viewport-bounded in app-mode, so
@@ -3328,6 +3318,100 @@ body.app-mode .topic-layout {
    Matches the news feed's structural shape (header sticky inside a
    scroll wrap, content scrolls behind it) but with the orange accent
    bar and a vertical list of related topic links. */
+
+/* === Quick Links 2x2 grid =========================================
+   Sits in the Shortcuts card's first subsection. Four tiles
+   (Google News / Reddit / X / YouTube) arranged in a 2-column grid
+   on the sidebar / mobile, each tile a compact card with the brand
+   emoji on the left and the name on the right. */
+.quick-links-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+}
+.quick-link-tile {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.65rem 0.7rem;
+  background: #f6f7f9;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.06s;
+  min-width: 0;
+}
+.quick-link-tile:hover {
+  background: #eef0f4;
+  border-color: #d8dce3;
+  color: var(--color-primary);
+}
+.quick-link-tile:active { transform: translateY(1px); }
+.quick-link-tile-icon {
+  font-size: 1.05rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.quick-link-tile-name {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Multi-select on: Quick Links stay visible but read as disabled.
+   Color goes muted, cursor flips to not-allowed, hover effects are
+   killed. A click handler in JS catches the tap and flashes a toast
+   explaining they're locked to AI Shortcuts in multi-select mode. */
+.shortcuts-sidebar.is-multi-select .quick-link-tile {
+  color: var(--color-text-light);
+  cursor: not-allowed;
+  background: #f6f7f9;
+  opacity: 0.55;
+}
+.shortcuts-sidebar.is-multi-select .quick-link-tile:hover {
+  background: #f6f7f9;
+  border-color: transparent;
+  color: var(--color-text-light);
+}
+.shortcuts-sidebar.is-multi-select .quick-link-tile:active { transform: none; }
+
+/* Inline toast — appears briefly above the AI list when the user
+   taps a Quick Link while multi-select is on. Pure CSS animation on
+   the .is-visible class. */
+.shortcuts-toast {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translate(-50%, 8px);
+  padding: 0.5rem 0.85rem;
+  background: rgba(15, 26, 46, 0.92);
+  color: white;
+  border-radius: 999px;
+  font-family: var(--font-family);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 50;
+  white-space: nowrap;
+}
+.shortcuts-toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+/* The card needs position: relative for the absolute toast positioning. */
+.shortcuts-sidebar { position: relative; }
+
 .related-card {
   background: transparent;
   border: none;
