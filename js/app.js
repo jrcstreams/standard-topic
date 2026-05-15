@@ -780,11 +780,6 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   if (all.length === 0) {
     html += `<p class="sidebar-empty">No shortcuts yet.</p>`;
   } else {
-    html += `<div class="shortcuts-list-wrap">
-      <div class="sidebar-shortcut-list">
-        ${all.map(s => shortcutItem(s, topicName)).join('')}
-      </div>
-    </div>`;
     html += `
       <div class="shortcuts-multi-submit-wrap" hidden>
         <button type="button" class="shortcuts-multi-submit" id="shortcuts-multi-submit">
@@ -803,8 +798,12 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
           <span class="multi-btn-label-short">Clear Prompts</span>
         </button>
       </div>
-      <div class="shortcuts-multi-submit-sentinel" aria-hidden="true"></div>
     `;
+    html += `<div class="shortcuts-list-wrap">
+      <div class="sidebar-shortcut-list">
+        ${all.map(s => shortcutItem(s, topicName)).join('')}
+      </div>
+    </div>`;
   }
 
   html += `</div>`;
@@ -852,19 +851,6 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     }
     updateSubmit();
   });
-
-  // Sticky overlay for the multi-select submit bar. A 1px sentinel is
-  // rendered right after the bar — when it scrolls out of view, the
-  // bar is "stuck" at viewport bottom and gets chrome (shadow + top
-  // border). When the sentinel is in view, the bar is at its natural
-  // position and renders flat.
-  const sentinel = container.querySelector('.shortcuts-multi-submit-sentinel');
-  if (sentinel && submitWrap && 'IntersectionObserver' in window) {
-    const stickyObs = new IntersectionObserver(([entry]) => {
-      submitWrap.classList.toggle('is-stuck', !entry.isIntersecting);
-    }, { threshold: 0 });
-    stickyObs.observe(sentinel);
-  }
 
   container.querySelectorAll('.sidebar-shortcut').forEach(btn => {
     btn.addEventListener('click', () => {
