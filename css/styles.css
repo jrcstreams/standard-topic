@@ -27,7 +27,7 @@
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
-  --max-width: 1200px;
+  --max-width: 1440px;
   --header-height: 60px;
 }
 
@@ -3092,7 +3092,8 @@ body.app-mode {
 }
 body.app-mode #content {
   position: fixed;
-  top: var(--subnav-height, 110px);
+  /* 64px main nav (always revealed in app-mode) + subnav height. */
+  top: calc(64px + var(--subnav-height, 66px));
   left: 0;
   right: 0;
   bottom: 0;
@@ -3103,8 +3104,11 @@ body.app-mode .topic-layout {
   height: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 1.25rem 2rem;
+  padding: 1rem 2rem;
   box-sizing: border-box;
+}
+@media (max-width: 640px) {
+  body.app-mode .topic-layout { padding: 0.75rem 1rem; }
 }
 
 @media (min-width: 900px) {
@@ -3124,6 +3128,9 @@ body.app-mode .topic-layout {
     margin: 0 auto;
     width: 100%;
   }
+  /* Inline Related section is mobile-only — desktop uses the related-
+     topics modal triggered from the topic banner. */
+  body.app-mode .topic-layout > #section-related { display: none; }
 }
 
 .layout-section {
@@ -3133,16 +3140,15 @@ body.app-mode .topic-layout {
 }
 .layout-section > * { width: 100%; }
 
-/* In app-mode at <900px, the topic-layout is a single column. The
-   news feed (or shortcuts on custom-search) needs to fill the bounded
-   viewport — flexbox makes the active section grow to fill height. */
+/* In app-mode at <900px, the topic-layout is a single column with
+   only one section visible at a time (tab pills toggle which). That
+   active section fills the bounded viewport via flex:1. */
 @media (max-width: 899.98px) {
   body.app-mode .topic-layout {
     display: flex;
     flex-direction: column;
   }
-  body.app-mode .topic-layout > #section-newsfeed,
-  body.app-mode .topic-layout.is-custom > #section-shortcuts {
+  body.app-mode .topic-layout > .layout-section {
     flex: 1;
     min-height: 0;
   }
@@ -3279,101 +3285,109 @@ body.app-mode .topic-layout {
   height: 100%;
 }
 
-/* === Mobile shortcuts overlay =======================================
-   At <900px, the shortcuts section disappears from inline flow and
-   becomes a slide-up overlay triggered by the "Shortcuts +" link in
-   the subnav. The news feed gets the full bounded viewport below the
-   subnav; tapping "Shortcuts" lifts the panel into view. Custom-search
-   pages skip this overlay treatment — shortcuts is the main content. */
-.shortcuts-overlay-close {
+/* === Mobile tab pills (News / Shortcuts / Related) ==================
+   At <900px the page swaps between the three sections via tab pills
+   in a thin sub-subnav row. Each pill is color-coded to match its
+   section's accent bar: green = News, blue = Shortcuts, orange =
+   Related. Hidden on desktop (sidebar layout) and on custom-search
+   pages (no news feed; shortcuts is the page). */
+.subnav-tab-pills {
   display: none;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  margin-left: auto;
-  padding: 0;
-  background: transparent;
-  border: none;
-  border-radius: 999px;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  transition: background 0.14s, color 0.14s;
-}
-.shortcuts-overlay-close:hover {
-  background: rgba(15, 26, 46, 0.06);
-  color: var(--color-text);
-}
-
-.subnav-shortcuts-trigger {
-  display: none;
+  gap: 0.45rem;
   border-top: 1px solid #e2e5ea;
   background: #f9fafb;
-  padding: 0.4rem 1rem;
-  text-align: center;
-  transition: opacity 0.22s ease;
+  padding: 0.45rem 1rem;
 }
-.subnav-shortcuts-trigger.is-scrolling {
-  opacity: 0;
-  pointer-events: none;
-}
-.shortcuts-trigger-btn {
+.tab-pill {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  padding: 0.25rem 0.65rem;
+  padding: 0.3rem 0.8rem;
   background: transparent;
-  border: none;
+  border: 1.5px solid transparent;
+  border-radius: 999px;
   font-family: var(--font-family);
   font-size: 0.82rem;
   font-weight: 600;
-  color: var(--color-primary);
-  letter-spacing: -0.005em;
+  color: var(--color-text-muted);
   cursor: pointer;
+  transition: background 0.14s, color 0.14s, border-color 0.14s;
 }
-.shortcuts-trigger-btn:hover { color: var(--color-primary-dark, #1e2d44); }
-.shortcuts-trigger-plus { font-weight: 700; }
+.tab-pill:hover { color: var(--color-text); }
+.tab-pill.active { color: white; }
+.tab-pill-newsfeed.active { background: #2f855a; border-color: #2f855a; }
+.tab-pill-shortcuts.active { background: #4a7cc9; border-color: #4a7cc9; }
+.tab-pill-related.active   { background: #c05621; border-color: #c05621; }
+.tab-pill-plus { font-weight: 700; opacity: 0.85; }
 
+/* Active-tab section visibility: only one section visible at a time
+   on mobile. CSS hides the others outright. Custom-search bypasses
+   this (no pills, shortcuts is the only section). */
 @media (max-width: 899.98px) {
-  /* Show the trigger row in topic / home subnavs. Custom-search pages
-     have their own subnav (no trigger row injected). */
-  .subnav-shortcuts-trigger { display: block; }
+  body.app-mode .subnav-tab-pills { display: flex; }
+  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts,
+  body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed,
+  body.app-mode .topic-layout:not(.is-custom) > #section-related {
+    display: none;
+  }
+  body.app-mode.active-tab-newsfeed .topic-layout:not(.is-custom) > #section-newsfeed { display: flex; }
+  body.app-mode.active-tab-shortcuts .topic-layout:not(.is-custom) > #section-shortcuts { display: flex; }
+  body.app-mode.active-tab-related   .topic-layout:not(.is-custom) > #section-related   { display: flex; }
+}
 
-  /* Hide the inline shortcuts section on topic/home pages; it'll
-     appear as the overlay panel below. Custom-search keeps it inline. */
-  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts {
-    position: fixed;
-    top: var(--subnav-height, 110px);
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 50;
-    background: var(--color-bg);
-    padding: 1rem;
-    transform: translateY(100%);
-    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-    pointer-events: none;
-    box-shadow: 0 -16px 40px rgba(15, 26, 46, 0.18);
-  }
-  body.app-mode.shortcuts-open .topic-layout:not(.is-custom) > #section-shortcuts {
-    transform: translateY(0);
-    pointer-events: auto;
-  }
-  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts > .shortcuts-sidebar {
-    border-radius: 0;
-    background: transparent;
-    padding: 0;
-    height: 100%;
-  }
-  /* Show the close (X) button only in mobile overlay mode. */
-  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts .shortcuts-overlay-close {
-    display: inline-flex;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts {
-      transition: none;
-    }
-  }
+/* === Related Topics inline section ==================================
+   Matches the news feed's structural shape (header sticky inside a
+   scroll wrap, content scrolls behind it) but with the orange accent
+   bar and a vertical list of related topic links. */
+.related-card {
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+.related-title {
+  font-family: var(--font-family);
+  font-size: 1.15rem;
+  line-height: 1.2;
+  font-weight: 600;
+  color: #1e2d44;
+  letter-spacing: -0.015em;
+  margin: 0;
+  padding: 0 0 0.6rem 0.95rem;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  background: var(--color-bg);
+  z-index: 2;
+}
+.related-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: calc(0.6rem + 1px);
+  width: 4px;
+  background: #c05621;
+  border-radius: 999px;
+}
+@media (max-width: 640px) {
+  .related-title { font-size: 1.05rem; }
+}
+.related-scroll-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-top: 0.4rem;
+}
+.related-link .sidebar-shortcut-icon-svg {
+  width: 18px;
+  height: 18px;
 }
 
 .sidebar-card-header {

@@ -153,7 +153,7 @@ function renderLayout(route) {
           </div>
         </div>
       </div>
-      ${shortcutsTriggerRow()}
+      ${tabPillsRow({ showRelated: false })}
     `;
 
     subHeader.querySelector('#subnav-all-topics')?.addEventListener('click', (e) => {
@@ -208,7 +208,7 @@ function renderLayout(route) {
             ` : ''}
           </div>
         </div>
-        ${shortcutsTriggerRow()}
+        ${tabPillsRow({ showRelated: related.length > 0 })}
       `;
 
       const openRelatedModal = (e) => {
@@ -248,75 +248,43 @@ function renderLayout(route) {
   }
 }
 
-// Mobile-only sub-subnav row that opens the shortcuts overlay. CSS
-// hides it at >=900px (where shortcuts sits in the sidebar) and on
-// custom pages (where shortcuts is the page content).
-function shortcutsTriggerRow() {
-  return `
-    <div class="subnav-shortcuts-trigger" id="subnav-shortcuts-trigger-host">
-      <button type="button" class="shortcuts-trigger-btn" id="shortcuts-trigger-btn">
-        <span class="shortcuts-trigger-label">Shortcuts</span>
-        <span class="shortcuts-trigger-plus" aria-hidden="true">+</span>
-      </button>
-    </div>
-  `;
+// Mobile-only tab pill row that switches the active application
+// section between News, Shortcuts, and (on topic pages) Related Topics.
+// CSS hides it at >=900px (where shortcuts is in the sidebar and news
+// fills the rest of the layout) and on custom pages (no news feed,
+// shortcuts is the page).
+function tabPillsRow(opts = {}) {
+  const { showRelated = false } = opts;
+  const pills = [
+    `<button type="button" class="tab-pill tab-pill-newsfeed active" data-tab="newsfeed">News</button>`,
+    `<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">Shortcuts</button>`,
+  ];
+  if (showRelated) {
+    pills.push(`<button type="button" class="tab-pill tab-pill-related" data-tab="related">Related <span class="tab-pill-plus" aria-hidden="true">+</span></button>`);
+  }
+  return `<div class="subnav-tab-pills">${pills.join('')}</div>`;
 }
 
-// Wire the trigger button + close button + ESC handler. Called from
-// renderPage after the topic-layout is in the DOM so #section-shortcuts
-// exists.
-let shortcutsOverlayEscHandler = null;
-function setupShortcutsOverlay() {
-  const trigger = document.getElementById('shortcuts-trigger-btn');
-  const close = document.getElementById('shortcuts-overlay-close');
-  if (shortcutsOverlayEscHandler) {
-    document.removeEventListener('keydown', shortcutsOverlayEscHandler);
-    shortcutsOverlayEscHandler = null;
-  }
-  const open = () => document.body.classList.add('shortcuts-open');
-  const dismiss = () => document.body.classList.remove('shortcuts-open');
-  document.body.classList.remove('shortcuts-open');
-  trigger?.addEventListener('click', (e) => {
-    e.preventDefault();
-    open();
+// Wire pill clicks to switch active sections via body class. Called
+// after the page has rendered so the pills and sections are in the
+// DOM. Reset to newsfeed on every render.
+function setupTabPills() {
+  document.body.classList.remove('active-tab-newsfeed', 'active-tab-shortcuts', 'active-tab-related');
+  document.body.classList.add('active-tab-newsfeed');
+  document.querySelectorAll('#sub-header .tab-pill').forEach(pill => {
+    pill.addEventListener('click', (e) => {
+      e.preventDefault();
+      const tab = pill.dataset.tab;
+      if (!tab) return;
+      ['newsfeed', 'shortcuts', 'related'].forEach(t =>
+        document.body.classList.remove(`active-tab-${t}`)
+      );
+      document.body.classList.add(`active-tab-${tab}`);
+      document.querySelectorAll('#sub-header .tab-pill').forEach(p =>
+        p.classList.toggle('active', p.dataset.tab === tab)
+      );
+    });
   });
-  close?.addEventListener('click', (e) => {
-    e.preventDefault();
-    dismiss();
-  });
-  shortcutsOverlayEscHandler = (e) => {
-    if (e.key === 'Escape' && document.body.classList.contains('shortcuts-open')) {
-      dismiss();
-    }
-  };
-  document.addEventListener('keydown', shortcutsOverlayEscHandler);
-}
-
-// Fade the trigger button while the user is actively scrolling the
-// news feed wrap; bring it back once scrolling stops. Reset on every
-// render so the listener attaches to the current wrap element.
-let triggerFadeCleanup = null;
-function setupShortcutsTriggerFade() {
-  if (triggerFadeCleanup) {
-    triggerFadeCleanup();
-    triggerFadeCleanup = null;
-  }
-  const trigger = document.querySelector('.subnav-shortcuts-trigger');
-  if (!trigger) return;
-  const wrap = document.querySelector('.newsfeed-scroll-wrap');
-  if (!wrap) return;
-  let timer = null;
-  const onScroll = () => {
-    trigger.classList.add('is-scrolling');
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(() => trigger.classList.remove('is-scrolling'), 400);
-  };
-  wrap.addEventListener('scroll', onScroll, { passive: true });
-  triggerFadeCleanup = () => {
-    wrap.removeEventListener('scroll', onScroll);
-    if (timer) clearTimeout(timer);
-    trigger.classList.remove('is-scrolling');
-  };
 }
 
 // Unified subnav renderer for custom search pages
@@ -657,15 +625,16 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
   cleanupTopicLayoutObservers();
 
   if (isCustom) {
-    // Custom: just AI Shortcuts (with Quick Links embedded as the
-    // card's footer). No News Feed — no RSS for arbitrary search terms.
+    // Custom: just AI Shortcuts. No News Feed (no RSS for arbitrary
+    // search terms) and no Related (not a real topic).
     container.innerHTML = `
       <div class="topic-layout is-custom" id="topic-layout">
         <section class="layout-section" id="section-shortcuts"></section>
       </div>
     `;
   } else if (isHome) {
-    // Homepage: AI Shortcuts + News Feed. Topics live in the subnav.
+    // Homepage: Shortcuts + News Feed. No Related section (home
+    // already lists featured topics in the subnav).
     container.innerHTML = `
       <div class="topic-layout" id="topic-layout">
         <section class="layout-section" id="section-shortcuts"></section>
@@ -673,27 +642,58 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       </div>
     `;
   } else {
-    // Topic pages: AI Shortcuts (with Quick Links footer) + News Feed.
+    // Topic pages: Shortcuts + News Feed + Related Topics.
     container.innerHTML = `
       <div class="topic-layout" id="topic-layout">
         <section class="layout-section" id="section-shortcuts"></section>
         <section class="layout-section" id="section-newsfeed"></section>
+        <section class="layout-section" id="section-related"></section>
       </div>
     `;
   }
 
   const shortcutsSection = container.querySelector('#section-shortcuts');
   const feedSection = container.querySelector('#section-newsfeed');
+  const relatedSection = container.querySelector('#section-related');
 
   renderShortcutsSidebar(shortcutsSection, route, isHome, isCustom, customTerm);
   if (feedSection) {
     renderNewsFeed(feedSection, topic, isHome);
   }
+  if (relatedSection && topic) {
+    renderRelatedSection(relatedSection, topic);
+  }
 
-  // Mobile overlay wiring (no-op when the trigger/close aren't present
-  // — e.g., custom-search pages, or desktop where CSS hides the trigger).
-  setupShortcutsOverlay();
-  setupShortcutsTriggerFade();
+  // Wire mobile tab pills (no-op when the pills aren't rendered, e.g.
+  // on custom-search pages or at desktop widths where CSS hides them).
+  setupTabPills();
+}
+
+// Render the Related Topics inline section that shows up on topic
+// pages when the user taps "Related +" on mobile. Mirrors the
+// shortcuts/news feed card shape: orange accent header + scrollable
+// list of related topic links below.
+function renderRelatedSection(container, topic) {
+  const items = getRelatedTopics(topic) || [];
+  const list = items.length === 0
+    ? `<p class="sidebar-empty">No related topics yet.</p>`
+    : `<div class="sidebar-shortcut-list">
+         ${items.map(t => `
+           <a class="sidebar-shortcut related-link" href="#/topic/${t.slug}" title="${escapeAttr(t.name)}">
+             <span class="sidebar-shortcut-icon">${topicIconSVG(t.icon || 'globe', 'sidebar-shortcut-icon-svg')}</span>
+             <span class="sidebar-shortcut-name">${escapeHTML(t.name)}</span>
+             <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
+           </a>
+         `).join('')}
+       </div>`;
+  container.innerHTML = `
+    <div class="related-card">
+      <h3 class="related-title">Related Topics</h3>
+      <div class="related-scroll-wrap">
+        ${list}
+      </div>
+    </div>
+  `;
 }
 
 const TAB_PANELS = ['newsfeed', 'shortcuts', 'related'];
@@ -770,9 +770,6 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     <div class="${cardClasses.join(' ')}" data-multi="0">
       <div class="sidebar-card-header">
         <h3 class="sidebar-card-title">Shortcuts</h3>
-        <button type="button" class="shortcuts-overlay-close" id="shortcuts-overlay-close" aria-label="Close shortcuts">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
-        </button>
       </div>
   `;
 
