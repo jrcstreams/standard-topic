@@ -153,6 +153,7 @@ function renderLayout(route) {
           </div>
         </div>
       </div>
+      ${shortcutsTriggerRow()}
     `;
 
     subHeader.querySelector('#subnav-all-topics')?.addEventListener('click', (e) => {
@@ -207,6 +208,7 @@ function renderLayout(route) {
             ` : ''}
           </div>
         </div>
+        ${shortcutsTriggerRow()}
       `;
 
       const openRelatedModal = (e) => {
@@ -244,6 +246,77 @@ function renderLayout(route) {
   if (route.type === 'prompt-generator' || route.type === 'about' || route.type === 'terms') {
     setupResponsiveNav();
   }
+}
+
+// Mobile-only sub-subnav row that opens the shortcuts overlay. CSS
+// hides it at >=900px (where shortcuts sits in the sidebar) and on
+// custom pages (where shortcuts is the page content).
+function shortcutsTriggerRow() {
+  return `
+    <div class="subnav-shortcuts-trigger" id="subnav-shortcuts-trigger-host">
+      <button type="button" class="shortcuts-trigger-btn" id="shortcuts-trigger-btn">
+        <span class="shortcuts-trigger-label">Shortcuts</span>
+        <span class="shortcuts-trigger-plus" aria-hidden="true">+</span>
+      </button>
+    </div>
+  `;
+}
+
+// Wire the trigger button + close button + ESC handler. Called from
+// renderPage after the topic-layout is in the DOM so #section-shortcuts
+// exists.
+let shortcutsOverlayEscHandler = null;
+function setupShortcutsOverlay() {
+  const trigger = document.getElementById('shortcuts-trigger-btn');
+  const close = document.getElementById('shortcuts-overlay-close');
+  if (shortcutsOverlayEscHandler) {
+    document.removeEventListener('keydown', shortcutsOverlayEscHandler);
+    shortcutsOverlayEscHandler = null;
+  }
+  const open = () => document.body.classList.add('shortcuts-open');
+  const dismiss = () => document.body.classList.remove('shortcuts-open');
+  document.body.classList.remove('shortcuts-open');
+  trigger?.addEventListener('click', (e) => {
+    e.preventDefault();
+    open();
+  });
+  close?.addEventListener('click', (e) => {
+    e.preventDefault();
+    dismiss();
+  });
+  shortcutsOverlayEscHandler = (e) => {
+    if (e.key === 'Escape' && document.body.classList.contains('shortcuts-open')) {
+      dismiss();
+    }
+  };
+  document.addEventListener('keydown', shortcutsOverlayEscHandler);
+}
+
+// Fade the trigger button while the user is actively scrolling the
+// news feed wrap; bring it back once scrolling stops. Reset on every
+// render so the listener attaches to the current wrap element.
+let triggerFadeCleanup = null;
+function setupShortcutsTriggerFade() {
+  if (triggerFadeCleanup) {
+    triggerFadeCleanup();
+    triggerFadeCleanup = null;
+  }
+  const trigger = document.querySelector('.subnav-shortcuts-trigger');
+  if (!trigger) return;
+  const wrap = document.querySelector('.newsfeed-scroll-wrap');
+  if (!wrap) return;
+  let timer = null;
+  const onScroll = () => {
+    trigger.classList.add('is-scrolling');
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => trigger.classList.remove('is-scrolling'), 400);
+  };
+  wrap.addEventListener('scroll', onScroll, { passive: true });
+  triggerFadeCleanup = () => {
+    wrap.removeEventListener('scroll', onScroll);
+    if (timer) clearTimeout(timer);
+    trigger.classList.remove('is-scrolling');
+  };
 }
 
 // Unified subnav renderer for custom search pages
@@ -616,6 +689,11 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
   if (feedSection) {
     renderNewsFeed(feedSection, topic, isHome);
   }
+
+  // Mobile overlay wiring (no-op when the trigger/close aren't present
+  // — e.g., custom-search pages, or desktop where CSS hides the trigger).
+  setupShortcutsOverlay();
+  setupShortcutsTriggerFade();
 }
 
 const TAB_PANELS = ['newsfeed', 'shortcuts', 'related'];
@@ -692,6 +770,9 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     <div class="${cardClasses.join(' ')}" data-multi="0">
       <div class="sidebar-card-header">
         <h3 class="sidebar-card-title">Shortcuts</h3>
+        <button type="button" class="shortcuts-overlay-close" id="shortcuts-overlay-close" aria-label="Close shortcuts">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+        </button>
       </div>
   `;
 

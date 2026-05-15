@@ -3133,6 +3133,21 @@ body.app-mode .topic-layout {
 }
 .layout-section > * { width: 100%; }
 
+/* In app-mode at <900px, the topic-layout is a single column. The
+   news feed (or shortcuts on custom-search) needs to fill the bounded
+   viewport — flexbox makes the active section grow to fill height. */
+@media (max-width: 899.98px) {
+  body.app-mode .topic-layout {
+    display: flex;
+    flex-direction: column;
+  }
+  body.app-mode .topic-layout > #section-newsfeed,
+  body.app-mode .topic-layout.is-custom > #section-shortcuts {
+    flex: 1;
+    min-height: 0;
+  }
+}
+
 .sidebar-card {
   background: transparent;
   border: none;
@@ -3262,6 +3277,103 @@ body.app-mode .topic-layout {
    overflows). */
 .shortcuts-sidebar {
   height: 100%;
+}
+
+/* === Mobile shortcuts overlay =======================================
+   At <900px, the shortcuts section disappears from inline flow and
+   becomes a slide-up overlay triggered by the "Shortcuts +" link in
+   the subnav. The news feed gets the full bounded viewport below the
+   subnav; tapping "Shortcuts" lifts the panel into view. Custom-search
+   pages skip this overlay treatment — shortcuts is the main content. */
+.shortcuts-overlay-close {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-left: auto;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s;
+}
+.shortcuts-overlay-close:hover {
+  background: rgba(15, 26, 46, 0.06);
+  color: var(--color-text);
+}
+
+.subnav-shortcuts-trigger {
+  display: none;
+  border-top: 1px solid #e2e5ea;
+  background: #f9fafb;
+  padding: 0.4rem 1rem;
+  text-align: center;
+  transition: opacity 0.22s ease;
+}
+.subnav-shortcuts-trigger.is-scrolling {
+  opacity: 0;
+  pointer-events: none;
+}
+.shortcuts-trigger-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.65rem;
+  background: transparent;
+  border: none;
+  font-family: var(--font-family);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  letter-spacing: -0.005em;
+  cursor: pointer;
+}
+.shortcuts-trigger-btn:hover { color: var(--color-primary-dark, #1e2d44); }
+.shortcuts-trigger-plus { font-weight: 700; }
+
+@media (max-width: 899.98px) {
+  /* Show the trigger row in topic / home subnavs. Custom-search pages
+     have their own subnav (no trigger row injected). */
+  .subnav-shortcuts-trigger { display: block; }
+
+  /* Hide the inline shortcuts section on topic/home pages; it'll
+     appear as the overlay panel below. Custom-search keeps it inline. */
+  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts {
+    position: fixed;
+    top: var(--subnav-height, 110px);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    background: var(--color-bg);
+    padding: 1rem;
+    transform: translateY(100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    box-shadow: 0 -16px 40px rgba(15, 26, 46, 0.18);
+  }
+  body.app-mode.shortcuts-open .topic-layout:not(.is-custom) > #section-shortcuts {
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts > .shortcuts-sidebar {
+    border-radius: 0;
+    background: transparent;
+    padding: 0;
+    height: 100%;
+  }
+  /* Show the close (X) button only in mobile overlay mode. */
+  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts .shortcuts-overlay-close {
+    display: inline-flex;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts {
+      transition: none;
+    }
+  }
 }
 
 .sidebar-card-header {
