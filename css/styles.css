@@ -3280,11 +3280,13 @@ body.app-mode .topic-layout {
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
+  /* overscroll-behavior: contain stops scroll-chaining — once the
+     wrap reaches its top/bottom, the touch gesture is consumed
+     instead of bubbling to the body / window and triggering a
+     second scroll event somewhere else on the page. */
+  overscroll-behavior: contain;
   padding-top: 1rem;
   padding-right: 0.55rem;
-  /* Generous bottom safe-area — the last shortcut also gets a 1rem
-     margin-bottom (below) so the scrollable region is unmistakably
-     longer than the content, guaranteeing reachable end. */
   padding-bottom: max(2.5rem, calc(env(safe-area-inset-bottom, 0px) + 1.5rem));
   scrollbar-gutter: stable;
 }
@@ -3583,7 +3585,9 @@ body.app-mode .topic-layout {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   position: relative;
   padding-bottom: max(3rem, calc(env(safe-area-inset-bottom, 0px) + 2rem));
 }
