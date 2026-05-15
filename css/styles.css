@@ -3448,6 +3448,57 @@ html, body, #app {
   }
 }
 
+/* === News Feed card layout: sticky on desktop, internal scroll wrap ===
+   The card uses overflow:hidden + flex column. The scroll-wrap fills
+   the card and is the actual scroller. The card's sticky title sits
+   inside the wrap with position:sticky so iframe content visibly
+   scrolls behind it. */
+.newsfeed-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.newsfeed-scroll-wrap {
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+}
+.newsfeed-card .newsfeed-card-header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--color-bg);
+  /* Override the existing margin-bottom; the sticky header sits inside
+     the scroll context and we want it to abut the content cleanly. */
+  margin-bottom: 0;
+  padding-bottom: 0.85rem;
+}
+
+@media (min-width: 900px) {
+  .newsfeed-card {
+    position: sticky;
+    top: calc(var(--subnav-height, 110px) + 12px);
+    max-height: calc(100vh - var(--subnav-height, 110px) - 32px);
+  }
+}
+@media (max-width: 899.98px) {
+  .newsfeed-card {
+    max-height: min(70vh, 700px);
+  }
+}
+
+/* News-feed scroll-fade overlay overrides — top fade sits below the
+   sticky header instead of behind it. */
+.newsfeed-scroll-wrap .scroll-fade-top {
+  top: var(--newsfeed-header-h, 48px);
+}
+.newsfeed-scroll-wrap.has-overflow-top .scroll-fade-top { opacity: 1; }
+.newsfeed-scroll-wrap.has-overflow-bottom .scroll-fade-bottom { opacity: 1; }
+
 .sidebar-card-header {
   display: flex;
   flex-wrap: wrap;
