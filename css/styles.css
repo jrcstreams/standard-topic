@@ -241,7 +241,7 @@ body.sticky-always.has-subnav #content {
 .sticky-title {
   font-family: var(--font-display);
   font-size: 1.45rem;
-  font-weight: var(--font-weight-bold);
+  font-weight: 600;
   color: white;
   letter-spacing: -0.028em;
   line-height: 1;
@@ -453,7 +453,7 @@ body.hide-cta .sticky-cta { display: none !important; }
 .navmenu-title {
   font-family: var(--font-display);
   font-size: 1.3rem;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--color-text);
   letter-spacing: -0.025em;
 }
@@ -1028,7 +1028,7 @@ body.hide-cta .sticky-cta { display: none !important; }
 .hero-brand-title {
   font-family: var(--font-display);
   font-size: 1.55rem;
-  font-weight: var(--font-weight-bold);
+  font-weight: 600;
   letter-spacing: -0.03em;
   color: var(--color-primary);
   margin: 0;
