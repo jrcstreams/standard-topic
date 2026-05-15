@@ -381,10 +381,16 @@ function trimOverflowLinks() {
     // right (margin-left:auto). Reserve its width like we do for More+.
     const actionLink = container.querySelector('.subnav-action-link');
 
-    // Reset visibility before measuring.
+    // Reset visibility before measuring. The relatedBtn reset is important:
+    // when left visible from a prior collapsed state, it eats horizontal
+    // space (margin-left: auto), shrinks the container's measured width,
+    // and traps the row in the collapsed state forever even after the
+    // viewport grows back.
     container.style.display = '';
     links.forEach(l => l.style.display = '');
     if (moreLink) moreLink.style.display = '';
+    const relatedBtnReset = document.getElementById('subnav-related-btn');
+    if (relatedBtnReset) relatedBtnReset.style.display = 'none';
 
     const containerRight = container.getBoundingClientRect().right;
     // First measure with "More +" / "All Topics +" reserved so we can
@@ -438,14 +444,21 @@ function trimOverflowLinks() {
     }
 
     // Show/hide the "Related Topics +" condensed button based on visible count.
-    // When fewer than 3 inline links fit, hide the inline row and show the button.
+    // When fewer than 3 inline links fit, collapse the chip row to zero
+    // visible items and reveal the button. We don't hide the container
+    // itself — that would make container.getBoundingClientRect() return
+    // 0 width on the next measure, causing the row to stay collapsed
+    // even after the viewport grew back. Hiding only the children keeps
+    // the container measurable so widening cleanly restores the chips.
     const relatedBtn = document.getElementById('subnav-related-btn');
     if (relatedBtn) {
       if (visibleCount < 3) {
-        container.style.display = 'none';
+        links.forEach(l => l.style.display = 'none');
+        if (moreLink) moreLink.style.display = 'none';
+        visibleCount = 0;
+        hiddenCount = links.length;
         relatedBtn.style.display = 'inline-block';
       } else {
-        container.style.display = '';
         relatedBtn.style.display = 'none';
       }
     }
