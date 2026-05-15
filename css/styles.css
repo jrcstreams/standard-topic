@@ -4003,28 +4003,6 @@ html, body, #app {
   margin: 0;
 }
 
-/* On mobile — when sections become full-width tab panels, use slightly
-   wider padding so they feel like proper sections rather than compressed
-   sidebar cards. Also ensure nothing clips height / introduces internal
-   scroll — page scroll handles overflow naturally. */
-@media (max-width: 899px) {
-  .sidebar-card,
-  .newsfeed-card {
-    padding: 0;
-    max-height: none;
-    overflow: visible;
-  }
-  .sidebar-card-title,
-  .newsfeed-card-title {
-    font-size: 1.2rem;
-  }
-  .sidebar-shortcut-list,
-  .sidebar-topic-list {
-    max-height: none;
-    overflow: visible;
-  }
-}
-
 
 /* === All Topics view (homepage's "All Topics" tab) === */
 .all-topics-list {
