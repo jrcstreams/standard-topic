@@ -3379,6 +3379,47 @@ html, body, #app {
   }
 }
 
+/* === Shortcuts card layout: flex column with internal-scrolling list ===
+   Three regions stacked vertically: header (auto), optional multi-
+   controls (auto, only rendered when multi-select is on), and the
+   list-wrap (flex: 1) which is the scroll region. Header and multi-
+   controls stay visible at the top of the card while the list scrolls
+   beneath them.
+
+   Desktop (>=900px): card is position:sticky to keep it pinned in the
+   viewport while the news feed scrolls past it.
+
+   Mobile (<900px): card is in normal flow (sticky has no meaning at
+   the top of a stacked page), but still capped at a max-height so the
+   list scrolls internally instead of pushing news feed far below. */
+.shortcuts-sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.shortcuts-sidebar .sidebar-card-header { flex-shrink: 0; }
+.shortcuts-sidebar .shortcuts-multi-submit-wrap { flex-shrink: 0; }
+.shortcuts-sidebar .shortcuts-list-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  /* Scroll touch behavior on iOS / momentum scroll. */
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 900px) {
+  .shortcuts-sidebar {
+    position: sticky;
+    top: calc(var(--subnav-height, 110px) + 12px);
+    max-height: calc(100vh - var(--subnav-height, 110px) - 32px);
+  }
+}
+@media (max-width: 899.98px) {
+  .shortcuts-sidebar {
+    max-height: min(70vh, 600px);
+  }
+}
+
 .sidebar-card-header {
   display: flex;
   flex-wrap: wrap;
