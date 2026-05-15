@@ -2039,14 +2039,16 @@ html, body, #app {
 
 .search-overlay-esc { display: none; }
 
-/* Featured Topics header — matches parent topic row style */
+/* Featured Topics header — matches parent topic row style (same
+   size + same chrome) with slightly heavier weight so it reads as
+   the primary section label. */
 .search-featured-header {
-  font-family: var(--font-display);
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  letter-spacing: 0.01em;
-  padding: 0.6rem 1.15rem;
+  font-family: var(--font-family);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #1e2d44;
+  letter-spacing: -0.005em;
+  padding: 0.85rem 1.15rem;
   background: var(--color-bg-light, #f7f8fa);
   border-bottom: 1px solid var(--color-border);
 }
@@ -7032,15 +7034,21 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   background: #eef0f4;
   color: var(--color-primary);
 }
+/* Parent-topic chevron: bigger and bolder color than the subtopic
+   chev — communicates "this whole category opens" with more weight. */
 .all-topics-modal-parent.sidebar-shortcut .sidebar-shortcut-chev,
 .search-parent-row.sidebar-shortcut .sidebar-shortcut-chev {
-  opacity: 0.4;
-  font-size: 1rem;
+  opacity: 0.7;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1;
 }
 .all-topics-modal-parent.sidebar-shortcut:hover .sidebar-shortcut-chev,
 .search-parent-row.sidebar-shortcut:hover .sidebar-shortcut-chev {
-  opacity: 0.85;
+  opacity: 1;
   color: var(--color-primary);
+  transform: translateX(2px);
 }
 .all-topics-modal-parent.sidebar-shortcut .sidebar-shortcut-name,
 .search-parent-row.sidebar-shortcut .sidebar-shortcut-name {
