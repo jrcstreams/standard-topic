@@ -1339,12 +1339,14 @@ body.hide-cta .sticky-cta { display: none !important; }
   flex-direction: column;
   min-height: 0;
   height: 100%;
+  overflow: hidden;
 }
 
 .newsfeed-scroll-wrap {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   position: relative;
 }
@@ -3087,6 +3089,7 @@ body.app-mode .topic-layout {
   display: flex;
   min-height: 0;
   margin: 0;
+  overflow: hidden;
 }
 .layout-section > * { width: 100%; }
 
@@ -3185,7 +3188,11 @@ body.app-mode .topic-layout {
 /* Body scroll wrap — Content + AI scroll together. The explicit
    flex-basis: 0 and touch-action keep mobile browsers from latching
    the scroll onto an outer ancestor (which previously caused the
-   "can't scroll the list" bug on mobile). */
+   "can't scroll the list" bug on mobile).
+
+   padding-right + scrollbar-gutter give the scrollbar its own lane
+   to the right of the button content so it doesn't paint over the
+   chevron icons. */
 .shortcuts-scroll-wrap {
   flex: 1 1 0;
   min-height: 0;
@@ -3194,6 +3201,8 @@ body.app-mode .topic-layout {
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
   padding-top: 1rem;
+  padding-right: 0.55rem;
+  scrollbar-gutter: stable;
 }
 
 /* Subsections — Content Shortcuts + AI Shortcuts, both inside the
@@ -3202,7 +3211,7 @@ body.app-mode .topic-layout {
   display: flex;
   flex-direction: column;
 }
-.shortcuts-subsection + .shortcuts-subsection { margin-top: 1.25rem; }
+.shortcuts-subsection + .shortcuts-subsection { margin-top: 1rem; }
 .shortcuts-subsection-header {
   display: flex;
   align-items: center;
@@ -3246,24 +3255,21 @@ body.app-mode .topic-layout {
 }
 
 /* === Tab pills (News / Shortcuts / Related) ========================
-   On mobile (<900px) the pills sit inline at the right of the topic
-   banner row (margin-left: auto) and switch the active section. On
-   desktop they're hidden — all sections are visible at once in the
-   sidebar+main layout.
-
-   Each pill is color-coded to its section's accent bar: green = News,
-   blue = Shortcuts, orange = Related. */
+   At <900px the pills wrap to their own row beneath the topic title,
+   left-aligned. Color-coded: green = News, blue = Shortcuts, orange
+   = Related. Hidden on desktop (sidebar layout) and on custom-search
+   pages. */
 .subnav-tab-pills {
   display: none;
   align-items: center;
-  gap: 0.4rem;
-  margin-left: auto;
+  gap: 0.2rem;
+  margin: 0;
   flex-shrink: 0;
 }
 .tab-pill {
   display: inline-flex;
   align-items: center;
-  padding: 0.32rem 0.85rem;
+  padding: 0.3rem 0.6rem;
   background: transparent;
   border: 1.5px solid transparent;
   border-radius: 999px;
@@ -3330,20 +3336,20 @@ body.app-mode .topic-layout {
 .quick-links-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.55rem;
+  gap: 0.4rem;
 }
 .quick-link-tile {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
-  padding: 0.65rem 0.7rem;
-  background: #f6f7f9;
+  gap: 0.4rem;
+  padding: 0.42rem 0.55rem;
+  background: #f4f5f7;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: 6px;
   text-decoration: none;
   color: var(--color-text);
   font-family: var(--font-family);
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   font-weight: 500;
   letter-spacing: -0.005em;
   cursor: pointer;
@@ -3351,13 +3357,13 @@ body.app-mode .topic-layout {
   min-width: 0;
 }
 .quick-link-tile:hover {
-  background: #eef0f4;
+  background: #ebedf1;
   border-color: #d8dce3;
   color: var(--color-primary);
 }
 .quick-link-tile:active { transform: translateY(1px); }
 .quick-link-tile-icon {
-  font-size: 1.05rem;
+  font-size: 0.9rem;
   line-height: 1;
   flex-shrink: 0;
 }
@@ -3415,7 +3421,7 @@ body.app-mode .topic-layout {
 /* The card needs position: relative for the absolute toast positioning. */
 .shortcuts-sidebar { position: relative; }
 
-.related-card {
+.related-panel {
   background: transparent;
   border: none;
   padding: 0;
@@ -3458,16 +3464,17 @@ body.app-mode .topic-layout {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   position: relative;
+  padding-top: 0.5rem;
 }
 /* Related-section links match the sidebar-shortcut flat row style:
    icon on the left, name, chevron on the right, hairline divider
    between rows. Overrides the default boxed .sidebar-shortcut style. */
-.related-card .sidebar-shortcut-list {
+.related-panel .sidebar-shortcut-list {
   display: flex;
   flex-direction: column;
   gap: 0;
 }
-.related-card .sidebar-shortcut.related-link {
+.related-panel .sidebar-shortcut.related-link {
   display: flex;
   align-items: center;
   gap: 0.55rem;
@@ -3486,11 +3493,11 @@ body.app-mode .topic-layout {
   cursor: pointer;
   transition: background 0.12s, color 0.12s;
 }
-.related-card .sidebar-shortcut.related-link:hover {
+.related-panel .sidebar-shortcut.related-link:hover {
   background: #f6f7f9;
   color: var(--color-primary);
 }
-.related-card .sidebar-shortcut.related-link:last-child {
+.related-panel .sidebar-shortcut.related-link:last-child {
   border-bottom: none;
 }
 .related-link .sidebar-shortcut-icon-svg {

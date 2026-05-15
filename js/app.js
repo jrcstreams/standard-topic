@@ -687,7 +687,7 @@ function renderRelatedSection(container, topic) {
          `).join('')}
        </div>`;
   container.innerHTML = `
-    <div class="related-card">
+    <div class="related-panel">
       <div class="related-scroll-wrap">
         <h3 class="related-title">Related Topics</h3>
         ${list}
