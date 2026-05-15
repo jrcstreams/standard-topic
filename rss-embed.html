@@ -6,7 +6,11 @@
 <meta name="referrer" content="no-referrer">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { overflow: hidden; background: transparent; }
+  /* Top padding so the first article isn't kissing the parent's
+     sticky title separator when the feed first loads. Bottom padding
+     gives the last article some breathing room as the user scrolls
+     all the way down. */
+  body { overflow: hidden; background: transparent; padding: 0.75rem 0.25rem 1rem; }
   rssapp-wall { display: block; width: 100% !important; }
 </style>
 </head>

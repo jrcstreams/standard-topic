@@ -1,10 +1,9 @@
 import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
-import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys } from './utils/data.js';
+import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches } from './utils/data.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { renderFooter } from './components/footer.js';
 import { renderSearchBar, initSearchOverlay } from './components/search-modal.js';
-import { renderNewsFeed, renderContentShortcuts } from './components/newsfeed.js';
+import { renderNewsFeed } from './components/newsfeed.js';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
@@ -25,8 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initRelatedTopicsModal();
   initPromptPreviewModal();
   initSearchOverlay();
-
-  renderFooter(document.getElementById('site-footer'));
+  setupGlobalTabPillDelegation();
 
   onRoute((route) => {
     renderLayout(route);
@@ -85,73 +83,6 @@ function observeSubnavHeight() {
   subnavResizeObs.observe(sub);
 }
 
-// Scroll-driven hide/show for the Content Shortcuts bar inside the
-// subnav. Main nav and the title row stay sticky; the bar slides up
-// (collapses to height 0) on a meaningful scroll-down, slides back
-// when the user scrolls up. An accumulator + threshold keeps
-// inertial-scroll jitter and tiny nudges from flipping state.
-let csScrollHandler = null;
-function setupContentShortcutsScrollBehavior() {
-  const bar = document.querySelector('.subnav-content-shortcuts');
-  if (csScrollHandler) {
-    window.removeEventListener('scroll', csScrollHandler);
-    csScrollHandler = null;
-  }
-  if (!bar) return;
-
-  // Always start visible. Browser scroll-restoration on refresh can
-  // fire a phantom "scroll down" event right after setup, so defer
-  // arming the handler for ~400ms — long enough for any restoration
-  // jump to land — and resync lastY at that point.
-  bar.classList.remove('is-collapsed');
-
-  const SHOW_AT_TOP = 80;     // always show within this many px of top
-  const TOGGLE_THRESHOLD = 18; // px of accumulated direction-consistent scroll to flip
-
-  let lastY = window.scrollY;
-  let acc = 0;
-  let raf = null;
-  let armed = false;
-  setTimeout(() => {
-    armed = true;
-    lastY = window.scrollY;
-    acc = 0;
-  }, 400);
-
-  const tick = () => {
-    raf = null;
-    if (!armed) return;
-    const y = Math.max(0, window.scrollY);
-    const delta = y - lastY;
-    lastY = y;
-
-    if (y < SHOW_AT_TOP) {
-      bar.classList.remove('is-collapsed');
-      acc = 0;
-      return;
-    }
-
-    // Direction change resets the accumulator so the user has to
-    // commit to a direction before we flip state.
-    if ((acc > 0 && delta < 0) || (acc < 0 && delta > 0)) acc = 0;
-    acc += delta;
-
-    if (acc > TOGGLE_THRESHOLD) {
-      bar.classList.add('is-collapsed');
-      acc = 0;
-    } else if (acc < -TOGGLE_THRESHOLD) {
-      bar.classList.remove('is-collapsed');
-      acc = 0;
-    }
-  };
-
-  csScrollHandler = () => {
-    if (raf) return;
-    raf = requestAnimationFrame(tick);
-  };
-  window.addEventListener('scroll', csScrollHandler, { passive: true });
-}
-
 function renderLayout(route) {
   const siteHeader = document.getElementById('site-header');
   const subHeader = document.getElementById('sub-header');
@@ -176,7 +107,7 @@ function renderLayout(route) {
   subHeader.innerHTML = '';
   const stayingInHomeDesktop = isHome && !isMobile && wasOnHomeDesktop;
   if (heroEl && !stayingInHomeDesktop) heroEl.innerHTML = '';
-  document.body.classList.remove('sticky-always', 'has-subnav', 'home-mode', 'show-subnav-tabs');
+  document.body.classList.remove('sticky-always', 'has-subnav', 'home-mode', 'show-subnav-tabs', 'app-mode');
 
   // Always render the main sticky bar
   renderStickyHeroBar(siteHeader, route);
@@ -184,6 +115,13 @@ function renderLayout(route) {
   // All pages: main nav always fixed + visible.
   document.body.classList.add('sticky-always');
   siteHeader.classList.add('is-revealed');
+
+  // App-mode: home / topic / custom routes lock the page to viewport
+  // height so the two cards behave like an application panel rather
+  // than long-scroll content. The footer was removed for this reason.
+  if (route.type === 'home' || route.type === 'topic' || route.type === 'custom') {
+    document.body.classList.add('app-mode');
+  }
 
   // Title group: icon + name. Hamburger now lives permanently in the
   // main nav next to the brand, so the subnav title is free to sit
@@ -214,6 +152,7 @@ function renderLayout(route) {
             ${topicsHTML}
             <a href="#" class="subnav-action-link subnav-all-topics-link" id="subnav-all-topics">All Topics +</a>
           </div>
+          ${tabPillsRow({ showRelated: false })}
         </div>
       </div>
     `;
@@ -268,10 +207,8 @@ function renderLayout(route) {
               </div>
               <a href="#" class="subnav-related-btn" id="subnav-related-btn">Related Topics +</a>
             ` : ''}
+            ${tabPillsRow({ showRelated: related.length > 0 })}
           </div>
-        </div>
-        <div class="subnav-content-shortcuts">
-          <div class="subnav-content-shortcuts-inner" id="subnav-content-shortcuts-host"></div>
         </div>
       `;
 
@@ -284,20 +221,13 @@ function renderLayout(route) {
       subHeader.querySelector('#subnav-more-related')?.addEventListener('click', openRelatedModal);
       subHeader.querySelector('#subnav-related-btn')?.addEventListener('click', openRelatedModal);
 
-      const csHost = subHeader.querySelector('#subnav-content-shortcuts-host');
-      if (csHost) renderContentShortcuts(csHost, topic.name, { isCustom: false, isHome: false });
-
       observeSubnavHeight();
-      setupContentShortcutsScrollBehavior();
-        trimOverflowLinks();
+      trimOverflowLinks();
       setupResponsiveNav();
     } else {
       renderSubNav(subHeader, { title: route.term, iconKey: 'search' });
-      const csHost = subHeader.querySelector('#subnav-content-shortcuts-host');
-      if (csHost) renderContentShortcuts(csHost, route.term, { isCustom: true, isHome: false });
       observeSubnavHeight();
-      setupContentShortcutsScrollBehavior();
-        setupResponsiveNav();
+      setupResponsiveNav();
     }
   }
 
@@ -317,11 +247,54 @@ function renderLayout(route) {
   if (route.type === 'prompt-generator' || route.type === 'about' || route.type === 'terms') {
     setupResponsiveNav();
   }
+}
 
-  // Routes without a Content Shortcuts bar still need the previous
-  // scroll handler removed, so revisit setup at the end of every
-  // render — the function self-cleans when the bar isn't present.
-  setupContentShortcutsScrollBehavior();
+// Mobile-only tab pill row that switches the active application
+// section between News, Shortcuts, and (on topic pages) Related Topics.
+// CSS hides it at >=900px (where shortcuts is in the sidebar and news
+// fills the rest of the layout) and on custom pages (no news feed,
+// shortcuts is the page).
+function tabPillsRow(opts = {}) {
+  const { showRelated = false } = opts;
+  const pills = [
+    `<button type="button" class="tab-pill tab-pill-newsfeed active" data-tab="newsfeed">News</button>`,
+    `<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">Shortcuts</button>`,
+  ];
+  if (showRelated) {
+    pills.push(`<button type="button" class="tab-pill tab-pill-related" data-tab="related">Related</button>`);
+  }
+  return `<div class="subnav-tab-pills">${pills.join('')}</div>`;
+}
+
+// Reset active-tab to newsfeed at the start of each render. The
+// click handler itself is attached ONCE via event delegation in
+// setupGlobalTabPillDelegation — that way the pills work even when
+// the subnav is re-rendered by a viewport-crossing resize (which
+// would otherwise replace pill DOM elements without re-binding
+// click handlers).
+function setupTabPills() {
+  document.body.classList.remove('active-tab-newsfeed', 'active-tab-shortcuts', 'active-tab-related');
+  document.body.classList.add('active-tab-newsfeed');
+}
+
+let tabPillDelegationBound = false;
+function setupGlobalTabPillDelegation() {
+  if (tabPillDelegationBound) return;
+  tabPillDelegationBound = true;
+  document.addEventListener('click', (e) => {
+    const pill = e.target.closest('#sub-header .tab-pill');
+    if (!pill) return;
+    e.preventDefault();
+    const tab = pill.dataset.tab;
+    if (!tab) return;
+    ['newsfeed', 'shortcuts', 'related'].forEach(t =>
+      document.body.classList.remove(`active-tab-${t}`)
+    );
+    document.body.classList.add(`active-tab-${tab}`);
+    document.querySelectorAll('#sub-header .tab-pill').forEach(p =>
+      p.classList.toggle('active', p.dataset.tab === tab)
+    );
+  });
 }
 
 // Unified subnav renderer for custom search pages
@@ -336,9 +309,6 @@ function renderSubNav(container, { title, iconKey }) {
           </div>
         </div>
       </div>
-    </div>
-    <div class="subnav-content-shortcuts">
-      <div class="subnav-content-shortcuts-inner" id="subnav-content-shortcuts-host"></div>
     </div>
   `;
 }
@@ -665,15 +635,16 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
   cleanupTopicLayoutObservers();
 
   if (isCustom) {
-    // Custom: just AI Shortcuts (with Quick Links embedded as the
-    // card's footer). No News Feed — no RSS for arbitrary search terms.
+    // Custom: just AI Shortcuts. No News Feed (no RSS for arbitrary
+    // search terms) and no Related (not a real topic).
     container.innerHTML = `
       <div class="topic-layout is-custom" id="topic-layout">
         <section class="layout-section" id="section-shortcuts"></section>
       </div>
     `;
   } else if (isHome) {
-    // Homepage: AI Shortcuts + News Feed. Topics live in the subnav.
+    // Homepage: Shortcuts + News Feed. No Related section (home
+    // already lists featured topics in the subnav).
     container.innerHTML = `
       <div class="topic-layout" id="topic-layout">
         <section class="layout-section" id="section-shortcuts"></section>
@@ -681,22 +652,58 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       </div>
     `;
   } else {
-    // Topic pages: AI Shortcuts (with Quick Links footer) + News Feed.
+    // Topic pages: Shortcuts + News Feed + Related Topics.
     container.innerHTML = `
       <div class="topic-layout" id="topic-layout">
         <section class="layout-section" id="section-shortcuts"></section>
         <section class="layout-section" id="section-newsfeed"></section>
+        <section class="layout-section" id="section-related"></section>
       </div>
     `;
   }
 
   const shortcutsSection = container.querySelector('#section-shortcuts');
   const feedSection = container.querySelector('#section-newsfeed');
+  const relatedSection = container.querySelector('#section-related');
 
   renderShortcutsSidebar(shortcutsSection, route, isHome, isCustom, customTerm);
   if (feedSection) {
     renderNewsFeed(feedSection, topic, isHome);
   }
+  if (relatedSection && topic) {
+    renderRelatedSection(relatedSection, topic);
+  }
+
+  // Wire mobile tab pills (no-op when the pills aren't rendered, e.g.
+  // on custom-search pages or at desktop widths where CSS hides them).
+  setupTabPills();
+}
+
+// Render the Related Topics inline section that shows up on topic
+// pages when the user taps "Related +" on mobile. Mirrors the
+// shortcuts/news feed card shape: orange accent header + scrollable
+// list of related topic links below.
+function renderRelatedSection(container, topic) {
+  const items = getRelatedTopics(topic) || [];
+  const list = items.length === 0
+    ? `<p class="sidebar-empty">No related topics yet.</p>`
+    : `<div class="sidebar-shortcut-list">
+         ${items.map(t => `
+           <a class="sidebar-shortcut related-link" href="#/topic/${t.slug}" title="${escapeAttr(t.name)}">
+             <span class="sidebar-shortcut-icon">${topicIconSVG(t.icon || 'globe', 'sidebar-shortcut-icon-svg')}</span>
+             <span class="sidebar-shortcut-name">${escapeHTML(t.name)}</span>
+             <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
+           </a>
+         `).join('')}
+       </div>`;
+  container.innerHTML = `
+    <div class="related-panel">
+      <div class="related-scroll-wrap">
+        <h3 class="related-title">Related Topics</h3>
+        ${list}
+      </div>
+    </div>
+  `;
 }
 
 const TAB_PANELS = ['newsfeed', 'shortcuts', 'related'];
@@ -762,17 +769,17 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   const topicSlug = isHome ? 'home' : (isCustom ? '_custom' : route.slug);
   const all = getShortcutsForTopic(topicSlug);
 
-  // Smallest per-breakpoint cutoff: collapse kicks in past 6 shortcuts.
-  // CSS handles the actual peek + hide per column count (6/6/9/12 cutoffs
-  // at 1/2/3/4 columns) and hides the toggle when it'd be useless.
-  const canCollapse = all.length > 6;
+  // Content Shortcuts (Google News, Reddit, X, YouTube) — only on topic
+  // and custom-search pages where there's a query to send. Home doesn't
+  // surface these because there's no specific topic context yet.
+  const contentSearches = (!isHome && topicName) ? getExternalSearches() : [];
+
   const cardClasses = ['sidebar-card', 'shortcuts-sidebar'];
-  if (canCollapse) cardClasses.push('is-collapsible', 'is-collapsed');
 
   let html = `
     <div class="${cardClasses.join(' ')}" data-multi="0">
       <div class="sidebar-card-header">
-        <h3 class="sidebar-card-title">AI Shortcuts</h3>
+        <h3 class="sidebar-card-title">Shortcuts</h3>
         ${all.length > 0 ? `
           <button type="button" class="multi-toggle" id="multi-toggle" role="switch" aria-checked="false">
             <span class="multi-toggle-label">Multi-select</span>
@@ -780,51 +787,87 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
           </button>
         ` : ''}
       </div>
+      ${all.length > 0 ? `
+        <div class="shortcuts-multi-submit-wrap" hidden>
+          <div class="shortcuts-subsection-header multi-controls-header">
+            <h4 class="shortcuts-subsection-title multi-controls-title">Multi-select</h4>
+          </div>
+          <div class="multi-controls-row">
+            <button type="button" class="shortcuts-multi-submit" id="shortcuts-multi-submit">
+              <span class="shortcuts-multi-submit-label">Submit</span>
+              <span class="shortcuts-multi-submit-count" id="shortcuts-multi-submit-count">0</span>
+            </button>
+            <button type="button" class="shortcuts-multi-select-all" id="shortcuts-multi-select-all">Select all</button>
+            <button type="button" class="shortcuts-multi-clear" id="shortcuts-multi-clear">Clear</button>
+          </div>
+        </div>
+      ` : ''}
+      <div class="shortcuts-scroll-wrap">
+  `;
+
+  // Quick Links subsection (external searches — Google News, Reddit, X, YouTube)
+  if (contentSearches.length > 0) {
+    html += `
+      <section class="shortcuts-subsection quick-links-subsection">
+        <div class="shortcuts-subsection-header">
+          <h4 class="shortcuts-subsection-title">Quick Links</h4>
+        </div>
+        <div class="quick-links-grid">
+          ${contentSearches.map(s => quickLinkItem(s, topicName)).join('')}
+        </div>
+      </section>
+    `;
+  }
+
+  // AI Shortcuts subsection
+  html += `
+    <section class="shortcuts-subsection ai-shortcuts-subsection">
+      <div class="shortcuts-subsection-header">
+        <h4 class="shortcuts-subsection-title">AI Shortcuts</h4>
+      </div>
   `;
 
   if (all.length === 0) {
     html += `<p class="sidebar-empty">No shortcuts yet.</p>`;
   } else {
-    html += `<div class="shortcuts-list-wrap">
+    html += `
       <div class="sidebar-shortcut-list">
         ${all.map(s => shortcutItem(s, topicName)).join('')}
       </div>
-      ${canCollapse ? `
-        <button type="button" class="shortcuts-view-toggle" id="shortcuts-view-toggle" aria-expanded="false">
-          <span class="shortcuts-view-toggle-text">
-            <span class="shortcuts-view-toggle-more">View More Shortcuts</span>
-            <span class="shortcuts-view-toggle-less">View Less Shortcuts</span>
-          </span>
-          <span class="shortcuts-view-toggle-chev" aria-hidden="true">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </span>
-        </button>
-      ` : ''}
-    </div>`;
-    html += `
-      <div class="shortcuts-multi-submit-wrap" hidden>
-        <button type="button" class="shortcuts-multi-submit" id="shortcuts-multi-submit">
-          <span class="shortcuts-multi-submit-label">
-            <span class="multi-btn-label-full">Submit Selected Prompts</span>
-            <span class="multi-btn-label-short">Submit Prompts</span>
-          </span>
-          <span class="shortcuts-multi-submit-count" id="shortcuts-multi-submit-count">0</span>
-        </button>
-        <button type="button" class="shortcuts-multi-select-all" id="shortcuts-multi-select-all">
-          <span class="multi-btn-label-full">Select All</span>
-          <span class="multi-btn-label-short">Select All</span>
-        </button>
-        <button type="button" class="shortcuts-multi-clear" id="shortcuts-multi-clear">
-          <span class="multi-btn-label-full">Clear Selected Prompts</span>
-          <span class="multi-btn-label-short">Clear Prompts</span>
-        </button>
-      </div>
-      <div class="shortcuts-multi-submit-sentinel" aria-hidden="true"></div>
     `;
   }
-
-  html += `</div>`;
+  html += `</section>`;
+  html += `</div>`; /* close .shortcuts-scroll-wrap */
+  html += `<div class="shortcuts-toast" id="shortcuts-toast" role="status" aria-live="polite"></div>`;
+  html += `</div>`; /* close .shortcuts-sidebar */
   container.innerHTML = html;
+
+  // Quick Links: track clicks for analytics, and intercept clicks
+  // while multi-select is on to surface a transient toast (the link
+  // is visually muted but still a valid anchor, so we need to
+  // explicitly prevent navigation and animate the toast).
+  const toastEl = container.querySelector('#shortcuts-toast');
+  let toastTimer = null;
+  const flashToast = (msg) => {
+    if (!toastEl) return;
+    toastEl.textContent = msg;
+    toastEl.classList.add('is-visible');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('is-visible'), 1800);
+  };
+  container.querySelectorAll('.quick-link-tile').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const cardEl = container.querySelector('.shortcuts-sidebar');
+      const multiOn = cardEl?.dataset.multi === '1';
+      if (multiOn) {
+        e.preventDefault();
+        flashToast('Quick Links are paused while multi-select is on');
+        return;
+      }
+      const name = link.dataset.name || '';
+      track('content_shortcut_click', { name, route: window.location.hash || '#/' });
+    });
+  });
 
   const card = container.querySelector('.sidebar-card');
   const toggle = container.querySelector('#multi-toggle');
@@ -833,16 +876,6 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   const selectAllBtn = container.querySelector('#shortcuts-multi-select-all');
   const submitWrap = container.querySelector('.shortcuts-multi-submit-wrap');
   const countEl = container.querySelector('#shortcuts-multi-submit-count');
-  const viewToggle = container.querySelector('#shortcuts-view-toggle');
-
-  viewToggle?.addEventListener('click', () => {
-    const expanded = card.classList.toggle('is-collapsed') === false;
-    viewToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-    if (!expanded) {
-      // Just collapsed — bring the toggle back into view so the user can see the change.
-      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  });
 
   const updateSubmit = () => {
     if (!submitBtn || !submitWrap) return;
@@ -867,43 +900,17 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     if (countEl) countEl.textContent = String(selected.length);
   };
 
-  // Track whether multi-select forced the card open. Only flip back on
-  // multi-off if WE expanded it — preserves a user who already chose
-  // to expand manually before enabling multi-select.
-  let multiExpandedCard = false;
   toggle?.addEventListener('click', () => {
     const on = card.dataset.multi !== '1';
     card.dataset.multi = on ? '1' : '0';
     card.classList.toggle('is-multi-select', on);
     toggle.setAttribute('aria-checked', on ? 'true' : 'false');
-    if (card.classList.contains('is-collapsible')) {
-      if (on && card.classList.contains('is-collapsed')) {
-        card.classList.remove('is-collapsed');
-        multiExpandedCard = true;
-      } else if (!on && multiExpandedCard) {
-        card.classList.add('is-collapsed');
-        multiExpandedCard = false;
-      }
-    }
     if (!on) {
       container.querySelectorAll('.sidebar-shortcut.is-multi-selected')
         .forEach(b => b.classList.remove('is-multi-selected'));
     }
     updateSubmit();
   });
-
-  // Sticky overlay for the multi-select submit bar. A 1px sentinel is
-  // rendered right after the bar — when it scrolls out of view, the
-  // bar is "stuck" at viewport bottom and gets chrome (shadow + top
-  // border). When the sentinel is in view, the bar is at its natural
-  // position and renders flat.
-  const sentinel = container.querySelector('.shortcuts-multi-submit-sentinel');
-  if (sentinel && submitWrap && 'IntersectionObserver' in window) {
-    const stickyObs = new IntersectionObserver(([entry]) => {
-      submitWrap.classList.toggle('is-stuck', !entry.isIntersecting);
-    }, { threshold: 0 });
-    stickyObs.observe(sentinel);
-  }
 
   container.querySelectorAll('.sidebar-shortcut').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -952,6 +959,44 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       detail: { prompt: finalPrompt, name, iconKey: '' },
     }));
   });
+
+  // Scroll-fade indicators: toggle has-overflow-top / has-overflow-bottom
+  // on the list-wrap based on the wrap's scroll position. rAF-throttled.
+  const listWrap = container.querySelector('.shortcuts-list-wrap');
+  if (listWrap) {
+    let rafId = null;
+    const updateOverflow = () => {
+      rafId = null;
+      const max = listWrap.scrollHeight - listWrap.clientHeight;
+      const hasOverflow = max > 1;
+      listWrap.classList.toggle('has-overflow-top', hasOverflow && listWrap.scrollTop > 1);
+      listWrap.classList.toggle('has-overflow-bottom', hasOverflow && listWrap.scrollTop < max - 1);
+    };
+    const schedule = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(updateOverflow);
+    };
+    listWrap.addEventListener('scroll', schedule, { passive: true });
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(schedule).observe(listWrap);
+    }
+    requestAnimationFrame(updateOverflow);
+  }
+
+  // In multi-select mode the AI subsection header is sticky, and the
+  // multi-submit bar sticks just below it. Measure the subsection
+  // header's height so the bar's `top:` lands flush against it.
+  const aiSubHeader = container.querySelector('.ai-shortcuts-subsection .shortcuts-subsection-header');
+  if (card && aiSubHeader) {
+    const setSubH = () => {
+      const h = aiSubHeader.offsetHeight;
+      if (h > 0) card.style.setProperty('--ai-subheader-h', h + 'px');
+    };
+    requestAnimationFrame(setSubH);
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(setSubH).observe(aiSubHeader);
+    }
+  }
 }
 
 function shortcutItem(shortcut, topicName) {
@@ -962,12 +1007,32 @@ function shortcutItem(shortcut, topicName) {
     <button class="sidebar-shortcut"
             data-prompt="${escapeAttr(prompt)}"
             data-name="${escapeAttr(shortcut.name)}"
-            data-icon-key="${escapeAttr(shortcut.icon)}">
+            data-icon-key="${escapeAttr(shortcut.icon)}"
+            title="${escapeAttr(shortcut.name)}">
       <span class="sidebar-shortcut-multi-check" aria-hidden="true">✓</span>
       ${iconHTML}
       <span class="sidebar-shortcut-name">${escapeHTML(shortcut.name)}</span>
       <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
     </button>
+  `;
+}
+
+// Quick Link tile — 2x2 grid card with brand emoji + name. Anchor
+// tag opens the search in a new tab. In multi-select mode the link
+// gets `.is-disabled` and tapping it shows a toast.
+function quickLinkItem(search, topicName) {
+  const url = search.urlTemplate.replace(/\{query\}/g, encodeURIComponent(topicName));
+  const icon = search.icon || '';
+  return `
+    <a class="quick-link-tile"
+       href="${url}"
+       target="_blank"
+       rel="noopener noreferrer"
+       data-name="${escapeAttr(search.name)}"
+       title="${escapeAttr(search.name)}">
+      <span class="quick-link-tile-icon">${escapeHTML(icon)}</span>
+      <span class="quick-link-tile-name">${escapeHTML(search.name)}</span>
+    </a>
   `;
 }
 
