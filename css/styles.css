@@ -1406,12 +1406,12 @@ body.hide-cta .sticky-cta { display: none !important; }
   font-family: var(--font-family);
   font-size: 1.32rem;
   line-height: 1.2;
-  font-weight: 600;
+  font-weight: 700;
   color: #1e2d44;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.018em;
   margin: 0;
-  padding: 0 0 0.6rem 0.95rem;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 0 0 0.7rem 0.95rem;
+  border-bottom: 2px solid #d0d6df;
   background: var(--color-bg);
   flex-shrink: 0;
   position: relative;
@@ -1421,7 +1421,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   position: absolute;
   left: 0;
   top: 0;
-  bottom: calc(0.6rem + 1px);
+  bottom: calc(0.7rem + 2px);
   width: 4px;
   background: #2f855a;
   border-radius: 999px;
@@ -3091,6 +3091,20 @@ html, body, #app {
 
 body.app-mode {
   overflow: hidden;
+  /* Locks the body to the visual viewport so no ancestor (html or
+     body itself) can scroll. position: fixed prevents iOS / Chrome
+     mobile from giving the body its own scrollable height when the
+     viewport size changes (URL bar showing / hiding). overscroll-
+     behavior: none kills any chained rubber-band. */
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overscroll-behavior: none;
+}
+html:has(body.app-mode) {
+  overflow: hidden;
+  height: 100%;
 }
 /* Higher-specificity selector overrides the body.sticky-always.has-subnav
    padding-top rule that would otherwise add ~150px of top padding inside
@@ -3234,8 +3248,8 @@ body.app-mode .topic-layout {
   flex-wrap: nowrap;
   align-items: center;
   margin: 0;
-  padding: 0 0 0.6rem 0.95rem;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 0 0 0.7rem 0.95rem;
+  border-bottom: 2px solid #d0d6df;
   position: relative;
   background: var(--color-bg);
   z-index: 4;
@@ -3245,7 +3259,7 @@ body.app-mode .topic-layout {
   position: absolute;
   left: 0;
   top: 0;
-  bottom: calc(0.6rem + 1px);
+  bottom: calc(0.7rem + 2px);
   width: 4px;
   background: #4a7cc9;
   border-radius: 999px;
@@ -3254,9 +3268,9 @@ body.app-mode .topic-layout {
   font-family: var(--font-family);
   font-size: 1.32rem;
   line-height: 1.2;
-  font-weight: 600;
+  font-weight: 700;
   color: #1e2d44;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.018em;
   margin: 0;
   padding: 0;
   flex: 0 1 auto;
@@ -3558,12 +3572,12 @@ body.app-mode .topic-layout {
   font-family: var(--font-family);
   font-size: 1.32rem;
   line-height: 1.2;
-  font-weight: 600;
+  font-weight: 700;
   color: #1e2d44;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.018em;
   margin: 0;
-  padding: 0 0 0.6rem 0.95rem;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 0 0 0.7rem 0.95rem;
+  border-bottom: 2px solid #d0d6df;
   background: var(--color-bg);
   flex-shrink: 0;
   position: relative;
@@ -3573,7 +3587,7 @@ body.app-mode .topic-layout {
   position: absolute;
   left: 0;
   top: 0;
-  bottom: calc(0.6rem + 1px);
+  bottom: calc(0.7rem + 2px);
   width: 4px;
   background: #c05621;
   border-radius: 999px;
