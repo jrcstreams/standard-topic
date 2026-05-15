@@ -1350,7 +1350,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   position: relative;
-  padding-bottom: 1.5rem;
+  padding-bottom: max(3rem, calc(env(safe-area-inset-bottom, 0px) + 2rem));
 }
 
 /* News Feed title — sticky to the top of the scroll wrap so iframe
@@ -3206,7 +3206,10 @@ body.app-mode .topic-layout {
   touch-action: pan-y;
   padding-top: 1rem;
   padding-right: 0.55rem;
-  padding-bottom: 1.5rem;
+  /* Generous bottom safe-area so the last item clears the viewport
+     edge (and iOS Safari's home-indicator gesture area / URL bar). */
+  padding-bottom: max(3rem, calc(env(safe-area-inset-bottom, 0px) + 2rem));
+  scroll-padding-bottom: 1.5rem;
   scrollbar-gutter: stable;
 }
 
@@ -3482,7 +3485,7 @@ body.app-mode .topic-layout {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   position: relative;
-  padding-bottom: 1.5rem;
+  padding-bottom: max(3rem, calc(env(safe-area-inset-bottom, 0px) + 2rem));
 }
 /* Related-section links match the sidebar-shortcut flat row style:
    icon on the left, name, chevron on the right, hairline divider
