@@ -1,61 +1,10 @@
-// Page-section renderers for the body of topic / home / custom routes.
-//
-//   renderContentShortcuts: external-search CTA grid (Google News, Bing,
-//     YouTube, Wikipedia, etc). Used as a full page section on topic
-//     pages and custom-search pages.
-//
-//   renderNewsFeed: RSS embed for topics that have a feed. Used on
-//     topic pages and the homepage. Custom routes don't have a feed.
-
-import { getExternalSearches } from '../utils/data.js';
-
-export function renderContentShortcuts(container, query, opts = {}) {
-  const searches = getExternalSearches();
-  if (!query || searches.length === 0) {
-    container.innerHTML = '';
-    return;
-  }
-
-  let html = `<div class="quick-links" aria-label="Search ${escapeHTML(query)} on other platforms">`;
-  html += `<span class="quick-links-label">Quick Content</span>`;
-  html += `<div class="quick-links-scrollwrap"><div class="quick-links-list">`;
-  searches.forEach(s => {
-    const url = s.urlTemplate.replace(/\{query\}/g, encodeURIComponent(query));
-    const brand = s.name.toLowerCase().split(' ')[0];
-    html += `
-      <a href="${url}" target="_blank" rel="noopener noreferrer" class="quick-link" data-brand="${escapeHTML(brand)}">
-        <span class="quick-link-name">${escapeHTML(s.name)}</span>
-      </a>
-    `;
-  });
-  html += `</div></div></div>`;
-  container.innerHTML = html;
-
-  // Direction-aware edge fades to hint that the link list scrolls
-  // sideways when it overflows. Toggles classes on the scroll wrapper
-  // based on scrollLeft / scrollWidth so each fade appears only when
-  // there's actually content to scroll toward in that direction.
-  const wrap = container.querySelector('.quick-links-scrollwrap');
-  const list = container.querySelector('.quick-links-list');
-  if (wrap && list) {
-    const update = () => {
-      const max = list.scrollWidth - list.clientWidth;
-      const hasOverflow = max > 1;
-      wrap.classList.toggle('has-overflow-left', hasOverflow && list.scrollLeft > 1);
-      wrap.classList.toggle('has-overflow-right', hasOverflow && list.scrollLeft < max - 1);
-    };
-    list.addEventListener('scroll', update, { passive: true });
-    if (typeof ResizeObserver !== 'undefined') {
-      new ResizeObserver(update).observe(list);
-    } else {
-      window.addEventListener('resize', update, { passive: true });
-    }
-    requestAnimationFrame(update);
-  }
-}
+// renderNewsFeed: RSS embed for topics that have a feed. Used on
+// topic pages and the homepage. Custom routes don't have a feed.
 
 export function renderNewsFeed(container, topic, isHome) {
   const feedId = topic?.rssFeedId;
+
+  const header = `<h3 class="newsfeed-title">News Feed</h3>`;
 
   let body;
   if (feedId) {
@@ -76,7 +25,7 @@ export function renderNewsFeed(container, topic, isHome) {
     `;
   }
 
-  container.innerHTML = `<div class="newsfeed-card">${body}</div>`;
+  container.innerHTML = `<div class="newsfeed-card">${header}${body}</div>`;
 
   const rssIframe = container.querySelector('.newsfeed-iframe');
   if (rssIframe && feedId) {
@@ -86,10 +35,4 @@ export function renderNewsFeed(container, topic, isHome) {
       rssIframe.style.height = e.data.rssHeight + 'px';
     });
   }
-}
-
-function escapeHTML(str) {
-  const div = document.createElement('div');
-  div.textContent = String(str ?? '');
-  return div.innerHTML;
 }

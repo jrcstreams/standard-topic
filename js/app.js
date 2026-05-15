@@ -1,10 +1,10 @@
 import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
-import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys } from './utils/data.js';
+import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches } from './utils/data.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderFooter } from './components/footer.js';
 import { renderSearchBar, initSearchOverlay } from './components/search-modal.js';
-import { renderNewsFeed, renderContentShortcuts } from './components/newsfeed.js';
+import { renderNewsFeed } from './components/newsfeed.js';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
@@ -83,73 +83,6 @@ function observeSubnavHeight() {
   if (subnavResizeObs) subnavResizeObs.disconnect();
   subnavResizeObs = new ResizeObserver(() => setSubnavHeightVar());
   subnavResizeObs.observe(sub);
-}
-
-// Scroll-driven hide/show for the Content Shortcuts bar inside the
-// subnav. Main nav and the title row stay sticky; the bar slides up
-// (collapses to height 0) on a meaningful scroll-down, slides back
-// when the user scrolls up. An accumulator + threshold keeps
-// inertial-scroll jitter and tiny nudges from flipping state.
-let csScrollHandler = null;
-function setupContentShortcutsScrollBehavior() {
-  const bar = document.querySelector('.subnav-content-shortcuts');
-  if (csScrollHandler) {
-    window.removeEventListener('scroll', csScrollHandler);
-    csScrollHandler = null;
-  }
-  if (!bar) return;
-
-  // Always start visible. Browser scroll-restoration on refresh can
-  // fire a phantom "scroll down" event right after setup, so defer
-  // arming the handler for ~400ms — long enough for any restoration
-  // jump to land — and resync lastY at that point.
-  bar.classList.remove('is-collapsed');
-
-  const SHOW_AT_TOP = 80;     // always show within this many px of top
-  const TOGGLE_THRESHOLD = 18; // px of accumulated direction-consistent scroll to flip
-
-  let lastY = window.scrollY;
-  let acc = 0;
-  let raf = null;
-  let armed = false;
-  setTimeout(() => {
-    armed = true;
-    lastY = window.scrollY;
-    acc = 0;
-  }, 400);
-
-  const tick = () => {
-    raf = null;
-    if (!armed) return;
-    const y = Math.max(0, window.scrollY);
-    const delta = y - lastY;
-    lastY = y;
-
-    if (y < SHOW_AT_TOP) {
-      bar.classList.remove('is-collapsed');
-      acc = 0;
-      return;
-    }
-
-    // Direction change resets the accumulator so the user has to
-    // commit to a direction before we flip state.
-    if ((acc > 0 && delta < 0) || (acc < 0 && delta > 0)) acc = 0;
-    acc += delta;
-
-    if (acc > TOGGLE_THRESHOLD) {
-      bar.classList.add('is-collapsed');
-      acc = 0;
-    } else if (acc < -TOGGLE_THRESHOLD) {
-      bar.classList.remove('is-collapsed');
-      acc = 0;
-    }
-  };
-
-  csScrollHandler = () => {
-    if (raf) return;
-    raf = requestAnimationFrame(tick);
-  };
-  window.addEventListener('scroll', csScrollHandler, { passive: true });
 }
 
 function renderLayout(route) {
@@ -270,9 +203,6 @@ function renderLayout(route) {
             ` : ''}
           </div>
         </div>
-        <div class="subnav-content-shortcuts">
-          <div class="subnav-content-shortcuts-inner" id="subnav-content-shortcuts-host"></div>
-        </div>
       `;
 
       const openRelatedModal = (e) => {
@@ -284,20 +214,13 @@ function renderLayout(route) {
       subHeader.querySelector('#subnav-more-related')?.addEventListener('click', openRelatedModal);
       subHeader.querySelector('#subnav-related-btn')?.addEventListener('click', openRelatedModal);
 
-      const csHost = subHeader.querySelector('#subnav-content-shortcuts-host');
-      if (csHost) renderContentShortcuts(csHost, topic.name, { isCustom: false, isHome: false });
-
       observeSubnavHeight();
-      setupContentShortcutsScrollBehavior();
-        trimOverflowLinks();
+      trimOverflowLinks();
       setupResponsiveNav();
     } else {
       renderSubNav(subHeader, { title: route.term, iconKey: 'search' });
-      const csHost = subHeader.querySelector('#subnav-content-shortcuts-host');
-      if (csHost) renderContentShortcuts(csHost, route.term, { isCustom: true, isHome: false });
       observeSubnavHeight();
-      setupContentShortcutsScrollBehavior();
-        setupResponsiveNav();
+      setupResponsiveNav();
     }
   }
 
@@ -317,11 +240,6 @@ function renderLayout(route) {
   if (route.type === 'prompt-generator' || route.type === 'about' || route.type === 'terms') {
     setupResponsiveNav();
   }
-
-  // Routes without a Content Shortcuts bar still need the previous
-  // scroll handler removed, so revisit setup at the end of every
-  // render — the function self-cleans when the bar isn't present.
-  setupContentShortcutsScrollBehavior();
 }
 
 // Unified subnav renderer for custom search pages
@@ -336,9 +254,6 @@ function renderSubNav(container, { title, iconKey }) {
           </div>
         </div>
       </div>
-    </div>
-    <div class="subnav-content-shortcuts">
-      <div class="subnav-content-shortcuts-inner" id="subnav-content-shortcuts-host"></div>
     </div>
   `;
 }
@@ -762,12 +677,39 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   const topicSlug = isHome ? 'home' : (isCustom ? '_custom' : route.slug);
   const all = getShortcutsForTopic(topicSlug);
 
+  // Content Shortcuts (Google News, Reddit, X, YouTube) — only on topic
+  // and custom-search pages where there's a query to send. Home doesn't
+  // surface these because there's no specific topic context yet.
+  const contentSearches = (!isHome && topicName) ? getExternalSearches() : [];
+
   const cardClasses = ['sidebar-card', 'shortcuts-sidebar'];
 
   let html = `
     <div class="${cardClasses.join(' ')}" data-multi="0">
       <div class="sidebar-card-header">
-        <h3 class="sidebar-card-title">AI Shortcuts</h3>
+        <h3 class="sidebar-card-title">Shortcuts</h3>
+      </div>
+  `;
+
+  // Content Shortcuts subsection (external searches)
+  if (contentSearches.length > 0) {
+    html += `
+      <section class="shortcuts-subsection content-shortcuts-subsection">
+        <div class="shortcuts-subsection-header">
+          <h4 class="shortcuts-subsection-title">Content Shortcuts</h4>
+        </div>
+        <div class="sidebar-shortcut-list">
+          ${contentSearches.map(s => contentShortcutItem(s, topicName)).join('')}
+        </div>
+      </section>
+    `;
+  }
+
+  // AI Shortcuts subsection (prompt shortcuts + multi-select)
+  html += `
+    <section class="shortcuts-subsection ai-shortcuts-subsection">
+      <div class="shortcuts-subsection-header">
+        <h4 class="shortcuts-subsection-title">AI Shortcuts</h4>
         ${all.length > 0 ? `
           <button type="button" class="multi-toggle" id="multi-toggle" role="switch" aria-checked="false">
             <span class="multi-toggle-label">Multi-select</span>
@@ -815,9 +757,19 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       </div>
     </div>`;
   }
+  html += `</section>`;
 
   html += `</div>`;
   container.innerHTML = html;
+
+  // Track content-shortcut clicks (anchors with their own navigation; no
+  // additional handler needed beyond the click listener for analytics).
+  container.querySelectorAll('.content-shortcut').forEach(link => {
+    link.addEventListener('click', () => {
+      const name = link.dataset.name || '';
+      track('content_shortcut_click', { name, route: window.location.hash || '#/' });
+    });
+  });
 
   const card = container.querySelector('.sidebar-card');
   const toggle = container.querySelector('#multi-toggle');
@@ -949,6 +901,27 @@ function shortcutItem(shortcut, topicName) {
       <span class="sidebar-shortcut-name">${escapeHTML(shortcut.name)}</span>
       <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
     </button>
+  `;
+}
+
+// Content shortcut row — same visual shell as AI shortcut buttons but
+// rendered as an anchor (opens external search in a new tab). Uses the
+// search entry's emoji icon directly since these aren't part of the
+// preloaded SVG icon set.
+function contentShortcutItem(search, topicName) {
+  const url = search.urlTemplate.replace(/\{query\}/g, encodeURIComponent(topicName));
+  const icon = search.icon || '';
+  return `
+    <a class="sidebar-shortcut content-shortcut"
+       href="${url}"
+       target="_blank"
+       rel="noopener noreferrer"
+       data-name="${escapeAttr(search.name)}"
+       title="${escapeAttr(search.name)}">
+      <span class="sidebar-shortcut-icon content-shortcut-emoji">${escapeHTML(icon)}</span>
+      <span class="sidebar-shortcut-name">${escapeHTML(search.name)}</span>
+      <span class="sidebar-shortcut-chev" aria-hidden="true">↗</span>
+    </a>
   `;
 }
 
