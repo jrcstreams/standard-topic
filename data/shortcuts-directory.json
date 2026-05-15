@@ -116,7 +116,7 @@
     },
     {
       "id": "latest-news",
-      "name": "Global News and Developments",
+      "name": "Latest News and Developments",
       "icon": "latest-news",
       "prompt": "What's the latest news on the topic of: {TOPIC}? Cover the most significant developments from the past week or so. For each: what happened, why it matters, and what to watch next. Skip noise and prioritize stories with real significance. Organize by significance, not chronology."
     },
