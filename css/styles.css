@@ -1350,6 +1350,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   position: relative;
+  padding-bottom: 1.5rem;
 }
 
 /* News Feed title — sticky to the top of the scroll wrap so iframe
@@ -3193,7 +3194,9 @@ body.app-mode .topic-layout {
 
    padding-right + scrollbar-gutter give the scrollbar its own lane
    to the right of the button content so it doesn't paint over the
-   chevron icons. */
+   chevron icons. padding-bottom gives the last shortcut some
+   breathing room at the bottom of the viewport so it isn't kissed
+   by the viewport edge. */
 .shortcuts-scroll-wrap {
   flex: 1 1 0;
   min-height: 0;
@@ -3203,6 +3206,7 @@ body.app-mode .topic-layout {
   touch-action: pan-y;
   padding-top: 1rem;
   padding-right: 0.55rem;
+  padding-bottom: 1.5rem;
   scrollbar-gutter: stable;
 }
 
@@ -3478,6 +3482,7 @@ body.app-mode .topic-layout {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   position: relative;
+  padding-bottom: 1.5rem;
 }
 /* Related-section links match the sidebar-shortcut flat row style:
    icon on the left, name, chevron on the right, hairline divider
