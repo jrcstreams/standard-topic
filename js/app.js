@@ -762,12 +762,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   const topicSlug = isHome ? 'home' : (isCustom ? '_custom' : route.slug);
   const all = getShortcutsForTopic(topicSlug);
 
-  // Smallest per-breakpoint cutoff: collapse kicks in past 6 shortcuts.
-  // CSS handles the actual peek + hide per column count (6/6/9/12 cutoffs
-  // at 1/2/3/4 columns) and hides the toggle when it'd be useless.
-  const canCollapse = all.length > 6;
   const cardClasses = ['sidebar-card', 'shortcuts-sidebar'];
-  if (canCollapse) cardClasses.push('is-collapsible', 'is-collapsed');
 
   let html = `
     <div class="${cardClasses.join(' ')}" data-multi="0">
@@ -789,17 +784,6 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       <div class="sidebar-shortcut-list">
         ${all.map(s => shortcutItem(s, topicName)).join('')}
       </div>
-      ${canCollapse ? `
-        <button type="button" class="shortcuts-view-toggle" id="shortcuts-view-toggle" aria-expanded="false">
-          <span class="shortcuts-view-toggle-text">
-            <span class="shortcuts-view-toggle-more">View More Shortcuts</span>
-            <span class="shortcuts-view-toggle-less">View Less Shortcuts</span>
-          </span>
-          <span class="shortcuts-view-toggle-chev" aria-hidden="true">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </span>
-        </button>
-      ` : ''}
     </div>`;
     html += `
       <div class="shortcuts-multi-submit-wrap" hidden>
@@ -833,16 +817,6 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   const selectAllBtn = container.querySelector('#shortcuts-multi-select-all');
   const submitWrap = container.querySelector('.shortcuts-multi-submit-wrap');
   const countEl = container.querySelector('#shortcuts-multi-submit-count');
-  const viewToggle = container.querySelector('#shortcuts-view-toggle');
-
-  viewToggle?.addEventListener('click', () => {
-    const expanded = card.classList.toggle('is-collapsed') === false;
-    viewToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-    if (!expanded) {
-      // Just collapsed — bring the toggle back into view so the user can see the change.
-      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  });
 
   const updateSubmit = () => {
     if (!submitBtn || !submitWrap) return;
@@ -867,24 +841,11 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     if (countEl) countEl.textContent = String(selected.length);
   };
 
-  // Track whether multi-select forced the card open. Only flip back on
-  // multi-off if WE expanded it — preserves a user who already chose
-  // to expand manually before enabling multi-select.
-  let multiExpandedCard = false;
   toggle?.addEventListener('click', () => {
     const on = card.dataset.multi !== '1';
     card.dataset.multi = on ? '1' : '0';
     card.classList.toggle('is-multi-select', on);
     toggle.setAttribute('aria-checked', on ? 'true' : 'false');
-    if (card.classList.contains('is-collapsible')) {
-      if (on && card.classList.contains('is-collapsed')) {
-        card.classList.remove('is-collapsed');
-        multiExpandedCard = true;
-      } else if (!on && multiExpandedCard) {
-        card.classList.add('is-collapsed');
-        multiExpandedCard = false;
-      }
-    }
     if (!on) {
       container.querySelectorAll('.sidebar-shortcut.is-multi-selected')
         .forEach(b => b.classList.remove('is-multi-selected'));
