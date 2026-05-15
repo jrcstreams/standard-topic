@@ -268,7 +268,6 @@ function renderLayout(route) {
               </div>
               <a href="#" class="subnav-related-btn" id="subnav-related-btn">Related Topics +</a>
             ` : ''}
-            ` : ''}
           </div>
         </div>
         <div class="subnav-content-shortcuts">
