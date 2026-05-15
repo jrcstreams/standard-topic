@@ -637,9 +637,10 @@ function openTopicPicker(label, initialSelected, onConfirm) {
       </div>
       <div class="search-overlay-input-row">
         <svg class="search-bar-icon" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" class="search-overlay-input" id="wiz-topic-overlay-input"
+        <input type="search" class="search-overlay-input" id="wiz-topic-overlay-input"
                placeholder="Search or type a custom topic"
-               autocomplete="off" spellcheck="false">
+               autocomplete="off" autocapitalize="off" autocorrect="off"
+               spellcheck="false" enterkeyhint="done">
       </div>
       <div class="wiz-topic-selected-row" id="wiz-topic-overlay-selected"></div>
       <div class="search-overlay-body shortcuts-sidebar" id="wiz-topic-overlay-body"></div>

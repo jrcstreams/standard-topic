@@ -24,9 +24,10 @@ export function initSearchOverlay() {
     <div class="search-overlay-card">
       <div class="search-overlay-input-row">
         <svg class="search-overlay-icon-svg" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" class="search-overlay-input"
-               placeholder="Search topics..."
-               autocomplete="off" spellcheck="false">
+        <input type="search" class="search-overlay-input"
+               placeholder="Search a topic or type your own..."
+               autocomplete="off" autocapitalize="off" autocorrect="off"
+               spellcheck="false" enterkeyhint="go">
         <button class="search-overlay-close" type="button" aria-label="Close">✕</button>
       </div>
       <div class="search-overlay-body"></div>
