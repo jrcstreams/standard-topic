@@ -266,15 +266,21 @@ function tabPillsRow(opts = {}) {
   return `<div class="subnav-tab-pills">${pills.join('')}</div>`;
 }
 
-// Reset active-tab to newsfeed at the start of each render. The
-// click handler itself is attached ONCE via event delegation in
-// setupGlobalTabPillDelegation — that way the pills work even when
-// the subnav is re-rendered by a viewport-crossing resize (which
-// would otherwise replace pill DOM elements without re-binding
-// click handlers).
+// On every render, sync the active tab from the current route's
+// `tab` field (parsed from the URL hash, e.g. #/topic/fintech/shortcuts).
+// The click handler is attached once via setupGlobalTabPillDelegation,
+// so pills always work — but the active state needs setting on each
+// render so refreshes / direct links land on the right tab.
 function setupTabPills() {
-  document.body.classList.remove('active-tab-newsfeed', 'active-tab-shortcuts', 'active-tab-related');
-  document.body.classList.add('active-tab-newsfeed');
+  const route = getCurrentRoute();
+  const tab = route?.tab || 'newsfeed';
+  ['newsfeed', 'shortcuts', 'related'].forEach(t =>
+    document.body.classList.remove(`active-tab-${t}`)
+  );
+  document.body.classList.add(`active-tab-${tab}`);
+  document.querySelectorAll('#sub-header .tab-pill').forEach(p =>
+    p.classList.toggle('active', p.dataset.tab === tab)
+  );
 }
 
 let tabPillDelegationBound = false;
@@ -287,6 +293,7 @@ function setupGlobalTabPillDelegation() {
     e.preventDefault();
     const tab = pill.dataset.tab;
     if (!tab) return;
+    // Swap the body class for the visible-section CSS rules.
     ['newsfeed', 'shortcuts', 'related'].forEach(t =>
       document.body.classList.remove(`active-tab-${t}`)
     );
@@ -294,6 +301,25 @@ function setupGlobalTabPillDelegation() {
     document.querySelectorAll('#sub-header .tab-pill').forEach(p =>
       p.classList.toggle('active', p.dataset.tab === tab)
     );
+    // Update the URL (without re-rendering) so refresh / shared links
+    // preserve the active tab. News tab is the default — no extra
+    // path segment for it. Shortcuts / Related get appended.
+    const route = getCurrentRoute();
+    if (!route) return;
+    let newHash = null;
+    if (route.type === 'home') {
+      newHash = tab === 'newsfeed' ? '#/' : `#/${tab}`;
+    } else if (route.type === 'topic') {
+      newHash = tab === 'newsfeed'
+        ? `#/topic/${route.slug}`
+        : `#/topic/${route.slug}/${tab}`;
+    }
+    if (newHash && newHash !== window.location.hash) {
+      history.replaceState(null, '', newHash);
+      // Keep currentRoute.tab in sync without re-firing the router,
+      // so a subsequent click reads the right "current" state.
+      route.tab = tab;
+    }
   });
 }
 
