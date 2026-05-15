@@ -22,10 +22,6 @@
   --color-success: #38a169;
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-display: 'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  /* Editorial serif for the major page-section titles + brand
-     wordmark. Variable optical size — Fraunces tightens up automatically
-     at larger sizes for a sharper, more premium read. */
-  --font-serif: 'Fraunces', 'Source Serif Pro', Georgia, 'Times New Roman', serif;
   --font-weight-light: 300;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
@@ -240,13 +236,12 @@ body.sticky-always.has-subnav #content {
 }
 
 .sticky-title {
-  font-family: var(--font-serif);
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: var(--font-weight-bold);
   color: white;
   letter-spacing: -0.028em;
   line-height: 1;
-  font-variation-settings: "opsz" 60, "SOFT" 50;
 }
 
 .sticky-tagline {
@@ -453,12 +448,11 @@ body.hide-cta .sticky-cta { display: none !important; }
   height: 34px;
 }
 .navmenu-title {
-  font-family: var(--font-serif);
-  font-size: 1.4rem;
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 800;
   color: var(--color-text);
   letter-spacing: -0.025em;
-  font-variation-settings: "opsz" 48, "SOFT" 50;
 }
 .navmenu-close {
   width: 32px;
@@ -690,12 +684,11 @@ body.hide-cta .sticky-cta { display: none !important; }
 }
 
 #sub-header.is-home-subnav .topic-banner-title {
-  font-family: var(--font-serif);
-  font-size: 1.6rem;
+  font-family: var(--font-family);
+  font-size: 1.5rem;
   line-height: 1.15;
-  letter-spacing: -0.025em;
-  font-weight: 600;
-  font-variation-settings: "opsz" 48, "SOFT" 50;
+  letter-spacing: -0.028em;
+  font-weight: 700;
 }
 
 #sub-header.is-home-subnav .topic-banner-accent {
@@ -743,12 +736,11 @@ body.hide-cta .sticky-cta { display: none !important; }
 }
 
 #sub-header.is-subnav .topic-banner-title {
-  font-family: var(--font-serif);
-  font-size: 1.6rem;
+  font-family: var(--font-family);
+  font-size: 1.5rem;
   line-height: 1.15;
-  letter-spacing: -0.025em;
-  font-weight: 600;
-  font-variation-settings: "opsz" 48, "SOFT" 50;
+  letter-spacing: -0.028em;
+  font-weight: 700;
 }
 
 /* Custom-search title: "Search: <term>" composed of two spans —
@@ -771,16 +763,15 @@ body.hide-cta .sticky-cta { display: none !important; }
   color: var(--color-text-light);
 }
 .topic-banner-title-term {
-  font-family: var(--font-serif);
-  font-weight: 600;
+  font-family: var(--font-family);
+  font-weight: 700;
   color: #1e2d44;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
-  letter-spacing: -0.025em;
-  font-variation-settings: "opsz" 48, "SOFT" 50;
+  letter-spacing: -0.028em;
 }
 @media (max-width: 640px) {
   .topic-banner-title.topic-banner-title-search {
@@ -1032,14 +1023,13 @@ body.hide-cta .sticky-cta { display: none !important; }
 }
 
 .hero-brand-title {
-  font-family: var(--font-serif);
-  font-size: 1.65rem;
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: var(--font-weight-bold);
   letter-spacing: -0.03em;
   color: var(--color-primary);
   margin: 0;
   line-height: 1;
-  font-variation-settings: "opsz" 60, "SOFT" 50;
 }
 
 /* T2: bigger, bolder tagline */
@@ -1421,19 +1411,18 @@ body.hide-cta .sticky-cta { display: none !important; }
    content visibly scrolls behind it. Green accent bar to the left
    (matches the original treatment) and a separator line below. */
 .newsfeed-title {
-  font-family: var(--font-serif);
-  font-size: 1.55rem;
+  font-family: var(--font-family);
+  font-size: 1.45rem;
   line-height: 1.15;
-  font-weight: 600;
+  font-weight: 700;
   color: #1e2d44;
-  letter-spacing: -0.022em;
+  letter-spacing: -0.028em;
   margin: 0;
   padding: 0 0 0.95rem 1.05rem;
   border-bottom: 1.5px solid #d6dae2;
   background: var(--color-bg);
   flex-shrink: 0;
   position: relative;
-  font-variation-settings: "opsz" 36, "SOFT" 50;
 }
 .newsfeed-title::before {
   content: '';
@@ -3286,16 +3275,15 @@ body.app-mode .topic-layout {
   border-radius: 999px;
 }
 .shortcuts-sidebar .sidebar-card-title {
-  font-family: var(--font-serif);
-  font-size: 1.55rem;
+  font-family: var(--font-family);
+  font-size: 1.45rem;
   line-height: 1.15;
-  font-weight: 600;
+  font-weight: 700;
   color: #1e2d44;
-  letter-spacing: -0.022em;
+  letter-spacing: -0.028em;
   margin: 0;
   padding: 0;
   flex: 0 1 auto;
-  font-variation-settings: "opsz" 36, "SOFT" 50;
 }
 .shortcuts-sidebar .sidebar-card-title::before { display: none; }
 
@@ -3460,8 +3448,7 @@ body.app-mode .topic-layout {
   body.app-mode .shortcuts-sidebar .sidebar-card-title,
   body.app-mode .newsfeed-title,
   body.app-mode .related-title {
-    font-size: 1.4rem;
-    font-variation-settings: "opsz" 32, "SOFT" 50;
+    font-size: 1.3rem;
   }
 }
 
@@ -3592,19 +3579,18 @@ body.app-mode .topic-layout {
   height: 100%;
 }
 .related-title {
-  font-family: var(--font-serif);
-  font-size: 1.55rem;
+  font-family: var(--font-family);
+  font-size: 1.45rem;
   line-height: 1.15;
-  font-weight: 600;
+  font-weight: 700;
   color: #1e2d44;
-  letter-spacing: -0.022em;
+  letter-spacing: -0.028em;
   margin: 0;
   padding: 0 0 0.95rem 1.05rem;
   border-bottom: 1.5px solid #d6dae2;
   background: var(--color-bg);
   flex-shrink: 0;
   position: relative;
-  font-variation-settings: "opsz" 36, "SOFT" 50;
 }
 .related-title::before {
   content: '';
