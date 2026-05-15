@@ -3313,53 +3313,32 @@ html, body, #app {
 }
 
 
-/* === Split topic layout: Shortcuts + Related on top, News below == */
+/* === Topic layout: AI Shortcuts left sidebar + News Feed right ====
+   <900px: single column, shortcuts stacked above News Feed.
+   ≥900px: 320px sidebar on the left, News Feed fills the rest. */
 .topic-layout {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 @media (min-width: 900px) {
-  /* Topic pages: shortcuts + related top row, news below */
-  .topic-layout.is-split.is-home-split {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
-    grid-template-areas:
-      "shortcuts related"
-      "newsfeed newsfeed";
-    gap: 2rem 1.25rem;
-    align-items: stretch;
+  .topic-layout {
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
   }
-  .topic-layout.is-home-split .panel-shortcuts,
-  .topic-layout.is-home-split .panel-related { display: flex; }
-  .topic-layout.is-home-split .panel-shortcuts > .sidebar-card,
-  .topic-layout.is-home-split .panel-related > .sidebar-card {
-    flex: 1; display: flex; flex-direction: column;
-  }
-  .topic-layout.is-home-split .topics-card-footer { margin-top: auto; }
-  /* Custom pages: single-column (no Related). */
-  .topic-layout.is-split.is-custom {
+  /* Custom-search pages have only Shortcuts (no News Feed). Force
+     single column at all widths and cap shortcut card width so the
+     single-column buttons don't stretch absurdly across a wide page. */
+  .topic-layout.is-custom {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      "shortcuts"
-      "newsfeed";
   }
-
-  /* Content Shortcuts on custom pages: 2-column grid like AI Shortcuts */
-  .topic-layout.is-split.is-custom .panel-newsfeed .shortcuts-sidebar .sidebar-shortcut-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0 1rem;
+  .topic-layout.is-custom > #section-shortcuts {
+    max-width: 480px;
+    margin: 0 auto;
+    width: 100%;
   }
-
-  .topic-layout.is-split .panel-shortcuts .sidebar-card {
-    padding: 0.85rem 0.95rem;
-  }
-
-  /* Grid areas shared across all variants */
-  .topic-layout.is-split .panel-shortcuts { grid-area: shortcuts; }
-  .topic-layout.is-split .panel-related { grid-area: related; }
-  .topic-layout.is-split .panel-newsfeed { grid-area: newsfeed; }
 }
 
 .layout-section {
