@@ -169,6 +169,11 @@ RULES = [
 
 FALLBACK = 'circle-dot'
 
+# Icons used by app.js outside the topic dataset (e.g., Custom Search,
+# Prompt Generator). Force-included so topicIconSVG() can find them
+# even though no topic slug maps to them.
+EXTRA_ICONS = ['search', 'house', 'rocket']
+
 
 def map_topic(slug):
     s = slug.lower()
@@ -215,7 +220,7 @@ def main():
     topics = data['topics']
 
     mapping = {t['slug']: map_topic(t['slug']) for t in topics}
-    unique_icons = sorted(set(mapping.values()))
+    unique_icons = sorted(set(mapping.values()) | set(EXTRA_ICONS))
 
     print(f'Topics: {len(topics)}')
     print(f'Unique Lucide icons: {len(unique_icons)}')

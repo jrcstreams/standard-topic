@@ -58,14 +58,9 @@ export function renderNewsFeed(container, topic, isHome) {
   const query = topic?.name || '';
   const feedId = topic?.rssFeedId;
 
-  const topicPill = (!isHome && query)
-    ? `<span class="section-topic-pill">${escapeHTML(query)}</span>`
-    : '';
-
   let inner = `
     <div class="newsfeed-card-header">
-      <h3 class="newsfeed-card-title">News Feed ${topicPill}</h3>
-      <span class="sidebar-card-desc">Latest news and developments.</span>
+      <h3 class="newsfeed-card-title">News Feed</h3>
     </div>
   `;
 

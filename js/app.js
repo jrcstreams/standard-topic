@@ -209,7 +209,7 @@ function renderLayout(route) {
     subHeader.innerHTML = `
       <div class="topic-banner">
         <div class="topic-banner-row">
-          ${titleGroup('home', 'Home')}
+          ${titleGroup('house', 'Home')}
           <div class="subnav-topics-inline home-subnav-topics">
             ${topicsHTML}
             <a href="#" class="subnav-action-link subnav-all-topics-link" id="subnav-all-topics">All Topics +</a>
@@ -292,7 +292,7 @@ function renderLayout(route) {
         trimOverflowLinks();
       setupResponsiveNav();
     } else {
-      renderSubNav(subHeader, { title: route.term, iconKey: 'mag-glass' });
+      renderSubNav(subHeader, { title: route.term, iconKey: 'search' });
       const csHost = subHeader.querySelector('#subnav-content-shortcuts-host');
       if (csHost) renderContentShortcuts(csHost, route.term, { isCustom: true, isHome: false });
       observeSubnavHeight();
@@ -749,10 +749,6 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   const topicSlug = isHome ? 'home' : (isCustom ? '_custom' : route.slug);
   const all = getShortcutsForTopic(topicSlug);
 
-  const topicPill = (!isHome && !isCustom && topicName)
-    ? `<span class="section-topic-pill">${escapeHTML(topicName)}</span>`
-    : '';
-
   // Smallest per-breakpoint cutoff: collapse kicks in past 6 shortcuts.
   // CSS handles the actual peek + hide per column count (6/6/9/12 cutoffs
   // at 1/2/3/4 columns) and hides the toggle when it'd be useless.
@@ -763,8 +759,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   let html = `
     <div class="${cardClasses.join(' ')}" data-multi="0">
       <div class="sidebar-card-header">
-        <h3 class="sidebar-card-title">AI Shortcuts ${topicPill}</h3>
-        <span class="sidebar-card-desc">Quickly access AI knowledge prompts.</span>
+        <h3 class="sidebar-card-title">AI Shortcuts</h3>
         ${all.length > 0 ? `
           <button type="button" class="multi-toggle" id="multi-toggle" role="switch" aria-checked="false">
             <span class="multi-toggle-label">Multi-select</span>
