@@ -3740,18 +3740,6 @@ body.app-mode .topic-layout {
     height: 20px;
   }
 }
-@media (min-width: 641px) and (max-width: 899.98px) {
-  .ai-shortcuts-subsection .sidebar-shortcut-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 1.25rem;
-    row-gap: 0;
-  }
-  .ai-shortcuts-subsection .sidebar-shortcut {
-    width: auto;
-    padding: 0.7rem 0.5rem;
-  }
-}
 
 
 .sidebar-shortcut {
