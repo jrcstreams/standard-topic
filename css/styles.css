@@ -1941,10 +1941,16 @@ body.hide-cta .sticky-cta { display: none !important; }
    doesn't push the card past the viewport on narrow screens. */
 .sidebar-card-header { min-width: 0; }
 .sidebar-card-header > * { min-width: 0; }
-/* Title takes available space; multi-toggle sits to the right on the
-   same row. Same behavior at every viewport — title left, switch right. */
-.sidebar-card-header .sidebar-card-title { flex: 1 1 auto; max-width: none; }
+/* Mobile (1-col shortcuts): title fills the row, multi-toggle floats
+   right via margin-left: auto. */
+.sidebar-card-header .sidebar-card-title { flex: 0 1 auto; max-width: none; }
 .sidebar-card-header .multi-toggle { margin-left: auto; flex-shrink: 0; }
+/* From 2-column shortcuts up (≥641px): keep multi-toggle adjacent to
+   the title rather than the far right — communicates that it's a
+   control attached to this section, not floating chrome. */
+@media (min-width: 641px) {
+  .sidebar-card-header .multi-toggle { margin-left: 1.25rem; margin-right: auto; }
+}
 /* Smaller switch on narrow screens — still right-aligned on the same row. */
 @media (max-width: 640px) {
   .sidebar-card-header .multi-toggle {
@@ -3034,9 +3040,13 @@ html, body, #app {
 /* Action link symmetric padding: 0.85rem on both sides so the
    leading divider and the All-Topics ↔ Featured divider sit the
    same distance from the "All Topics +" text. */
+/* Home subnav action link: pill treatment via base .subnav-action-link.
+   The old huge padding + negative margin trick (used to enlarge the
+   click area) drew the new pill border around an oversized invisible
+   box. Use normal padding here instead. */
 .home-subnav-topics .subnav-action-link {
-  padding: 4rem 0.85rem;
-  margin: -4rem 0;
+  padding: 0.4rem 0.85rem;
+  margin: 0;
 }
 
 /* === Responsive nav breakpoints (CSS-only, no JS measurement) === */

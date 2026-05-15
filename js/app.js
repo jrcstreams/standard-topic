@@ -262,11 +262,12 @@ function renderLayout(route) {
         <div class="topic-banner">
           <div class="topic-banner-row">
             ${titleGroup(topic.icon || 'globe', topic.name)}
-            ${related.length > 0 ? `<a href="#" class="subnav-related-btn" id="subnav-related-btn">Related Topics +</a>` : ''}
             ${related.length > 0 ? `
               <div class="subnav-topics-inline">
                 ${relatedLinksHTML}
               </div>
+              <a href="#" class="subnav-related-btn" id="subnav-related-btn">Related Topics +</a>
+            ` : ''}
             ` : ''}
           </div>
         </div>
