@@ -225,7 +225,7 @@ function renderLayout(route) {
       trimOverflowLinks();
       setupResponsiveNav();
     } else {
-      renderSubNav(subHeader, { title: route.term, iconKey: 'search' });
+      renderSubNav(subHeader, { title: route.term, iconKey: 'search', prefix: 'Search:' });
       observeSubnavHeight();
       setupResponsiveNav();
     }
@@ -297,15 +297,24 @@ function setupGlobalTabPillDelegation() {
   });
 }
 
-// Unified subnav renderer for custom search pages
-function renderSubNav(container, { title, iconKey }) {
+// Unified subnav renderer for custom search pages. When a `prefix` is
+// supplied (e.g. "Search:" on custom-search routes) the title renders
+// as a labelled value: bold prefix + lighter term, with desktop and
+// mobile layouts styled in CSS.
+function renderSubNav(container, { title, iconKey, prefix }) {
+  const titleHTML = prefix
+    ? `<h1 class="topic-banner-title topic-banner-title-search">
+         <span class="topic-banner-title-prefix">${escapeHTML(prefix)}</span>
+         <span class="topic-banner-title-term">${escapeHTML(title)}</span>
+       </h1>`
+    : `<h1 class="topic-banner-title">${escapeHTML(title)}</h1>`;
   container.innerHTML = `
     <div class="topic-banner">
       <div class="topic-banner-row">
         <div class="topic-banner-titlegroup">
           <div class="topic-banner-titleinner">
             ${iconKey ? topicIconSVG(iconKey, 'topic-banner-icon') : ''}
-            <h1 class="topic-banner-title">${escapeHTML(title)}</h1>
+            ${titleHTML}
           </div>
         </div>
       </div>

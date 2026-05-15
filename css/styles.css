@@ -740,6 +740,52 @@ body.hide-cta .sticky-cta { display: none !important; }
   font-weight: var(--font-weight-bold);
 }
 
+/* Custom-search title: "Search: <term>" composed of two spans —
+   bolder "Search:" prefix and a lighter-weight term. Desktop keeps
+   them on one line, baseline-aligned. Mobile stacks them: a small
+   uppercase "SEARCH" label above the term. */
+.topic-banner-title.topic-banner-title-search {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.topic-banner-title-prefix {
+  font-weight: 700;
+  color: var(--color-text-muted);
+  letter-spacing: 0;
+}
+.topic-banner-title-term {
+  font-weight: 500;
+  color: #1e2d44;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+@media (max-width: 640px) {
+  .topic-banner-title.topic-banner-title-search {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.05rem;
+    line-height: 1.15;
+  }
+  .topic-banner-title-prefix {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-light);
+    font-weight: 700;
+  }
+  .topic-banner-title-term {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e2d44;
+  }
+}
+
 #sub-header.is-subnav .topic-banner-accent {
   height: 26px;
   width: 3.5px;
@@ -3097,15 +3143,14 @@ body.app-mode .topic-layout {
   body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed {
     padding-left: 1.5rem;
   }
-  /* Custom-search pages have only Shortcuts (no News Feed). Force
-     single column at all widths and cap shortcut card width so the
-     single-column buttons don't stretch absurdly across a wide page. */
+  /* Custom-search pages have only Shortcuts (no News Feed). Full
+     width, left-aligned. */
   .topic-layout.is-custom {
     grid-template-columns: minmax(0, 1fr);
   }
   .topic-layout.is-custom > #section-shortcuts {
-    max-width: 520px;
-    margin: 0 auto;
+    max-width: none;
+    margin: 0;
     width: 100%;
   }
   /* Inline Related section is mobile-only — desktop uses the related-
@@ -3395,6 +3440,25 @@ body.app-mode .topic-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.35rem;
+}
+
+/* Custom-search responsive grids — Quick Links auto-fits up to ~4
+   columns; AI Shortcuts becomes a multi-column list at wider widths
+   so the page uses available space instead of a narrow centered
+   column. Auto-fit handles all viewport sizes. */
+.topic-layout.is-custom .quick-links-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.5rem;
+}
+.topic-layout.is-custom .ai-shortcuts-subsection .sidebar-shortcut-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  column-gap: 1.5rem;
+  row-gap: 0;
+}
+.topic-layout.is-custom .ai-shortcuts-subsection .sidebar-shortcut-list > .sidebar-shortcut:last-child {
+  border-bottom: 1px solid #e6e8ec;
+  margin-bottom: 0;
 }
 .quick-link-tile {
   display: flex;
