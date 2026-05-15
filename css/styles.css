@@ -1761,11 +1761,13 @@ body.hide-cta .sticky-cta { display: none !important; }
   margin-right: -1rem;
   width: calc(100% + 2rem);
 }
-@media (max-width: 640px) {
+@media (max-width: 899.98px) {
   .newsfeed-embed {
-    margin-left: -0.5rem;
-    margin-right: -0.5rem;
-    width: calc(100% + 1rem);
+    /* Mobile: bleed all the way to the page edges since the news feed
+       fills the bounded viewport. */
+    margin-left: -1rem;
+    margin-right: -1rem;
+    width: calc(100% + 2rem);
   }
 }
 
@@ -3090,25 +3092,29 @@ html, body, #app {
 body.app-mode {
   overflow: hidden;
 }
+/* Higher-specificity selector overrides the body.sticky-always.has-subnav
+   padding-top rule that would otherwise add ~150px of top padding inside
+   #content. With position: fixed this padding was creating phantom
+   white space above the topic-layout. */
+body.app-mode.sticky-always.has-subnav #content,
 body.app-mode #content {
   position: fixed;
-  /* 64px main nav (always revealed in app-mode) + subnav height. */
   top: calc(64px + var(--subnav-height, 66px));
   left: 0;
   right: 0;
   bottom: 0;
-  padding-top: 0;
+  padding: 0;
   overflow: hidden;
 }
 body.app-mode .topic-layout {
   height: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 1rem 2rem;
+  padding: 0.65rem 2rem 0.65rem;
   box-sizing: border-box;
 }
 @media (max-width: 640px) {
-  body.app-mode .topic-layout { padding: 0.75rem 1rem; }
+  body.app-mode .topic-layout { padding: 0.4rem 1rem; }
 }
 
 @media (min-width: 900px) {
@@ -3285,34 +3291,34 @@ body.app-mode .topic-layout {
   height: 100%;
 }
 
-/* === Mobile tab pills (News / Shortcuts / Related) ==================
-   At <900px the page swaps between the three sections via tab pills
-   in a thin sub-subnav row. Each pill is color-coded to match its
-   section's accent bar: green = News, blue = Shortcuts, orange =
-   Related. Hidden on desktop (sidebar layout) and on custom-search
-   pages (no news feed; shortcuts is the page). */
+/* === Tab pills (News / Shortcuts / Related) ========================
+   On mobile (<900px) the pills sit inline at the right of the topic
+   banner row (margin-left: auto) and switch the active section. On
+   desktop they're hidden — all sections are visible at once in the
+   sidebar+main layout.
+
+   Each pill is color-coded to its section's accent bar: green = News,
+   blue = Shortcuts, orange = Related. */
 .subnav-tab-pills {
   display: none;
   align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
-  border-top: 1px solid #e2e5ea;
-  background: #f9fafb;
-  padding: 0.45rem 1rem;
+  gap: 0.4rem;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 .tab-pill {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.3rem 0.8rem;
+  padding: 0.32rem 0.85rem;
   background: transparent;
   border: 1.5px solid transparent;
   border-radius: 999px;
   font-family: var(--font-family);
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--color-text-muted);
   cursor: pointer;
+  white-space: nowrap;
   transition: background 0.14s, color 0.14s, border-color 0.14s;
 }
 .tab-pill:hover { color: var(--color-text); }
@@ -3320,13 +3326,22 @@ body.app-mode .topic-layout {
 .tab-pill-newsfeed.active { background: #2f855a; border-color: #2f855a; }
 .tab-pill-shortcuts.active { background: #4a7cc9; border-color: #4a7cc9; }
 .tab-pill-related.active   { background: #c05621; border-color: #c05621; }
-.tab-pill-plus { font-weight: 700; opacity: 0.85; }
 
-/* Active-tab section visibility: only one section visible at a time
-   on mobile. CSS hides the others outright. Custom-search bypasses
-   this (no pills, shortcuts is the only section). */
+/* Active-tab section visibility — only one section visible at a time
+   on mobile. */
 @media (max-width: 899.98px) {
-  body.app-mode .subnav-tab-pills { display: flex; }
+  body.app-mode .subnav-tab-pills { display: inline-flex; }
+  /* Hide the existing "Related Topics +" modal trigger on mobile —
+     the Related pill replaces it. Also hide the chips row (it was
+     already collapsed by trimOverflowLinks at narrow widths). */
+  body.app-mode #sub-header.is-subnav .subnav-related-btn,
+  body.app-mode #sub-header.is-subnav .subnav-topics-inline { display: none; }
+  /* All-or-nothing wrap: pills wrap as a group below the title when
+     they don't fit alongside it. */
+  body.app-mode #sub-header.is-subnav .topic-banner-row {
+    flex-wrap: wrap;
+    row-gap: 0.4rem;
+  }
   body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts,
   body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed,
   body.app-mode .topic-layout:not(.is-custom) > #section-related {
@@ -3335,6 +3350,54 @@ body.app-mode .topic-layout {
   body.app-mode.active-tab-newsfeed .topic-layout:not(.is-custom) > #section-newsfeed { display: flex; }
   body.app-mode.active-tab-shortcuts .topic-layout:not(.is-custom) > #section-shortcuts { display: flex; }
   body.app-mode.active-tab-related   .topic-layout:not(.is-custom) > #section-related   { display: flex; }
+
+  /* On mobile the shortcuts loses its card chrome and acts like the
+     news feed / related sections: the whole card becomes the scroll
+     container, with sticky title (and sticky multi-controls when
+     multi-select is on) layered above the list. */
+  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts .shortcuts-sidebar {
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* Disable the inner scroll context so the parent card scrolls instead. */
+  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts .ai-shortcuts-subsection .shortcuts-list-wrap {
+    flex: 0 0 auto;
+    overflow: visible;
+    min-height: 0;
+  }
+  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts .shortcuts-sidebar .sidebar-card-header {
+    position: sticky;
+    top: 0;
+    background: var(--color-bg);
+    z-index: 3;
+    margin: 0;
+    padding: 0 0 0.6rem 0.95rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts .shortcuts-sidebar .shortcuts-multi-submit-wrap {
+    position: sticky;
+    top: var(--shortcuts-header-h, 52px);
+    background: var(--color-bg);
+    z-index: 2;
+    margin: 0;
+    padding: 0.45rem 0 0.6rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts .shortcuts-sidebar > .shortcuts-subsection:first-of-type {
+    margin-top: 0.85rem;
+  }
+  /* Hide the scroll-fade indicators on mobile — the parent card
+     scrolls now, not the list-wrap. Affordance no longer applies. */
+  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts .scroll-fade { display: none; }
+  /* Larger section titles on mobile (per request). */
+  body.app-mode .shortcuts-sidebar .sidebar-card-title,
+  body.app-mode .newsfeed-title,
+  body.app-mode .related-title {
+    font-size: 1.3rem;
+  }
 }
 
 /* === Related Topics inline section ==================================
@@ -3383,11 +3446,61 @@ body.app-mode .topic-layout {
   min-height: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding-top: 0.4rem;
+  position: relative;
+}
+/* Related-section links match the sidebar-shortcut flat row style:
+   icon on the left, name, chevron on the right, hairline divider
+   between rows. Overrides the default boxed .sidebar-shortcut style. */
+.related-card .sidebar-shortcut-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.related-card .sidebar-shortcut.related-link {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.7rem 0.5rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #e6e8ec;
+  border-radius: 0;
+  font-family: var(--font-family);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text);
+  text-decoration: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.related-card .sidebar-shortcut.related-link:hover {
+  background: #f6f7f9;
+  color: var(--color-primary);
+}
+.related-card .sidebar-shortcut.related-link:last-child {
+  border-bottom: none;
 }
 .related-link .sidebar-shortcut-icon-svg {
   width: 18px;
   height: 18px;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+.related-link .sidebar-shortcut-name {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.related-link .sidebar-shortcut-chev {
+  color: var(--color-text-light);
+  font-size: 1rem;
+  line-height: 1;
+  opacity: 0.5;
+  flex-shrink: 0;
 }
 
 .sidebar-card-header {

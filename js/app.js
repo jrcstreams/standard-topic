@@ -151,9 +151,9 @@ function renderLayout(route) {
             ${topicsHTML}
             <a href="#" class="subnav-action-link subnav-all-topics-link" id="subnav-all-topics">All Topics +</a>
           </div>
+          ${tabPillsRow({ showRelated: false })}
         </div>
       </div>
-      ${tabPillsRow({ showRelated: false })}
     `;
 
     subHeader.querySelector('#subnav-all-topics')?.addEventListener('click', (e) => {
@@ -206,9 +206,9 @@ function renderLayout(route) {
               </div>
               <a href="#" class="subnav-related-btn" id="subnav-related-btn">Related Topics +</a>
             ` : ''}
+            ${tabPillsRow({ showRelated: related.length > 0 })}
           </div>
         </div>
-        ${tabPillsRow({ showRelated: related.length > 0 })}
       `;
 
       const openRelatedModal = (e) => {
@@ -260,7 +260,7 @@ function tabPillsRow(opts = {}) {
     `<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">Shortcuts</button>`,
   ];
   if (showRelated) {
-    pills.push(`<button type="button" class="tab-pill tab-pill-related" data-tab="related">Related <span class="tab-pill-plus" aria-hidden="true">+</span></button>`);
+    pills.push(`<button type="button" class="tab-pill tab-pill-related" data-tab="related">Related</button>`);
   }
   return `<div class="subnav-tab-pills">${pills.join('')}</div>`;
 }
@@ -688,8 +688,8 @@ function renderRelatedSection(container, topic) {
        </div>`;
   container.innerHTML = `
     <div class="related-card">
-      <h3 class="related-title">Related Topics</h3>
       <div class="related-scroll-wrap">
+        <h3 class="related-title">Related Topics</h3>
         ${list}
       </div>
     </div>
@@ -965,6 +965,20 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       new ResizeObserver(schedule).observe(listWrap);
     }
     requestAnimationFrame(updateOverflow);
+  }
+
+  // Measure the sticky title height on mobile so the multi-controls
+  // bar (which sticks BELOW the title) lands flush against it.
+  const cardHeader = container.querySelector('.sidebar-card-header');
+  if (card && cardHeader) {
+    const setHeaderH = () => {
+      const h = cardHeader.offsetHeight;
+      if (h > 0) card.style.setProperty('--shortcuts-header-h', h + 'px');
+    };
+    requestAnimationFrame(setHeaderH);
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(setHeaderH).observe(cardHeader);
+    }
   }
 }
 
