@@ -3312,20 +3312,19 @@ body.app-mode .topic-layout {
   overscroll-behavior: contain;
   padding-top: 1rem;
   padding-right: 0.55rem;
-  padding-bottom: max(2.5rem, calc(env(safe-area-inset-bottom, 0px) + 1.5rem));
+  padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
   scrollbar-gutter: stable;
 }
-/* Tail spacer — a real DOM element after the AI shortcut list that
-   guarantees scrollHeight extends well past the last button. The
-   spacer takes its full height and is included in the scroll wrap's
-   scrollable content unambiguously. */
+/* Small tail spacer — just enough to give the last item breathing
+   room when scrolled to the bottom of a long list. Kept modest so
+   short lists don't trigger unnecessary scroll. */
 .shortcuts-list-tail-spacer {
-  height: 6rem;
+  height: 1.5rem;
   flex-shrink: 0;
   pointer-events: none;
 }
 .shortcuts-scroll-wrap .ai-shortcuts-subsection .sidebar-shortcut-list > .sidebar-shortcut:last-child {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0;
 }
 
 /* Subsections — Content Shortcuts + AI Shortcuts, both inside the
