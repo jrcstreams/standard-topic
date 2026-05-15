@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initRelatedTopicsModal();
   initPromptPreviewModal();
   initSearchOverlay();
+  setupGlobalTabPillDelegation();
 
   onRoute((route) => {
     renderLayout(route);
@@ -265,25 +266,34 @@ function tabPillsRow(opts = {}) {
   return `<div class="subnav-tab-pills">${pills.join('')}</div>`;
 }
 
-// Wire pill clicks to switch active sections via body class. Called
-// after the page has rendered so the pills and sections are in the
-// DOM. Reset to newsfeed on every render.
+// Reset active-tab to newsfeed at the start of each render. The
+// click handler itself is attached ONCE via event delegation in
+// setupGlobalTabPillDelegation — that way the pills work even when
+// the subnav is re-rendered by a viewport-crossing resize (which
+// would otherwise replace pill DOM elements without re-binding
+// click handlers).
 function setupTabPills() {
   document.body.classList.remove('active-tab-newsfeed', 'active-tab-shortcuts', 'active-tab-related');
   document.body.classList.add('active-tab-newsfeed');
-  document.querySelectorAll('#sub-header .tab-pill').forEach(pill => {
-    pill.addEventListener('click', (e) => {
-      e.preventDefault();
-      const tab = pill.dataset.tab;
-      if (!tab) return;
-      ['newsfeed', 'shortcuts', 'related'].forEach(t =>
-        document.body.classList.remove(`active-tab-${t}`)
-      );
-      document.body.classList.add(`active-tab-${tab}`);
-      document.querySelectorAll('#sub-header .tab-pill').forEach(p =>
-        p.classList.toggle('active', p.dataset.tab === tab)
-      );
-    });
+}
+
+let tabPillDelegationBound = false;
+function setupGlobalTabPillDelegation() {
+  if (tabPillDelegationBound) return;
+  tabPillDelegationBound = true;
+  document.addEventListener('click', (e) => {
+    const pill = e.target.closest('#sub-header .tab-pill');
+    if (!pill) return;
+    e.preventDefault();
+    const tab = pill.dataset.tab;
+    if (!tab) return;
+    ['newsfeed', 'shortcuts', 'related'].forEach(t =>
+      document.body.classList.remove(`active-tab-${t}`)
+    );
+    document.body.classList.add(`active-tab-${tab}`);
+    document.querySelectorAll('#sub-header .tab-pill').forEach(p =>
+      p.classList.toggle('active', p.dataset.tab === tab)
+    );
   });
 }
 
@@ -779,13 +789,15 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       </div>
       ${all.length > 0 ? `
         <div class="shortcuts-multi-submit-wrap" hidden>
-          <button type="button" class="shortcuts-multi-submit" id="shortcuts-multi-submit">
-            <span class="shortcuts-multi-submit-label">Submit Prompts</span>
-            <span class="shortcuts-multi-submit-count" id="shortcuts-multi-submit-count">0</span>
-          </button>
-          <div class="shortcuts-multi-secondary">
+          <div class="shortcuts-subsection-header multi-controls-header">
+            <h4 class="shortcuts-subsection-title multi-controls-title">Multi-select</h4>
+          </div>
+          <div class="multi-controls-row">
+            <button type="button" class="shortcuts-multi-submit" id="shortcuts-multi-submit">
+              <span class="shortcuts-multi-submit-label">Submit</span>
+              <span class="shortcuts-multi-submit-count" id="shortcuts-multi-submit-count">0</span>
+            </button>
             <button type="button" class="shortcuts-multi-select-all" id="shortcuts-multi-select-all">Select all</button>
-            <span class="shortcuts-multi-divider" aria-hidden="true">·</span>
             <button type="button" class="shortcuts-multi-clear" id="shortcuts-multi-clear">Clear</button>
           </div>
         </div>
