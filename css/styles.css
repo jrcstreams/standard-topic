@@ -3344,6 +3344,12 @@ body.app-mode .topic-layout {
   margin: 0 0 0.25rem;
   flex-shrink: 0;
 }
+/* Quick Links header gets more breathing room below its label —
+   the grid tiles below feel less cramped this way. AI Shortcuts
+   keeps the tight 0.25rem spacing so the label couples to its list. */
+.quick-links-subsection .shortcuts-subsection-header {
+  margin-bottom: 0.7rem;
+}
 .shortcuts-subsection-title {
   font-family: var(--font-family);
   font-size: 0.72rem;
