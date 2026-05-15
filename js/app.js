@@ -869,6 +869,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       <div class="sidebar-shortcut-list">
         ${all.map(s => shortcutItem(s, topicName)).join('')}
       </div>
+      <div class="shortcuts-list-tail-spacer" aria-hidden="true"></div>
     `;
   }
   html += `</section>`;

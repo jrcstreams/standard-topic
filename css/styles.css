@@ -3314,11 +3314,17 @@ body.app-mode .topic-layout {
   padding-bottom: max(2.5rem, calc(env(safe-area-inset-bottom, 0px) + 1.5rem));
   scrollbar-gutter: stable;
 }
-/* Sentinel: last shortcut row in the list gets its own bottom margin
-   so even on browsers where scrollHeight math is off by a pixel or
-   two, the user can always reach past the last button. */
+/* Tail spacer — a real DOM element after the AI shortcut list that
+   guarantees scrollHeight extends well past the last button. The
+   spacer takes its full height and is included in the scroll wrap's
+   scrollable content unambiguously. */
+.shortcuts-list-tail-spacer {
+  height: 4rem;
+  flex-shrink: 0;
+  pointer-events: none;
+}
 .shortcuts-scroll-wrap .ai-shortcuts-subsection .sidebar-shortcut-list > .sidebar-shortcut:last-child {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 /* Subsections — Content Shortcuts + AI Shortcuts, both inside the
