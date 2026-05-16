@@ -719,7 +719,7 @@ body.hide-cta .sticky-cta { display: none !important; }
 #sub-header.is-subnav .topic-banner {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 1.25rem 2rem 1.05rem;
+  padding: 1.5rem 2rem 1.4rem;
   border-bottom: none;
   display: flex;
   align-items: center;
@@ -850,7 +850,7 @@ body.hide-cta .sticky-cta { display: none !important; }
    wrapping behavior softens. */
 @media (max-width: 800px) {
   #sub-header.is-subnav .topic-banner {
-    padding: 1.1rem 2rem;
+    padding: 1.35rem 2rem 1.25rem;
     min-height: 58px;
   }
   #sub-header.is-subnav .topic-banner-title {
@@ -869,7 +869,7 @@ body.hide-cta .sticky-cta { display: none !important; }
     top: 54px;
   }
   #sub-header.is-subnav .topic-banner {
-    padding: 0.85rem 1rem;
+    padding: 1.1rem 1rem 1rem;
     min-height: 54px;
   }
   #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
@@ -1714,21 +1714,21 @@ body.hide-cta .sticky-cta { display: none !important; }
   margin-right: 0;
   align-self: center;
   flex-shrink: 0;
-  font-size: 0.95rem;
-  gap: 0.5rem;
+  font-size: 0.84rem;
+  gap: 0.45rem;
 }
 .sidebar-card-header .multi-toggle .multi-toggle-switch {
-  width: 38px;
-  height: 22px;
+  width: 34px;
+  height: 20px;
 }
 .sidebar-card-header .multi-toggle .multi-toggle-knob {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   top: 2px;
   left: 2px;
 }
 .sidebar-card-header .multi-toggle[aria-checked="true"] .multi-toggle-knob {
-  transform: translateX(16px);
+  transform: translateX(14px);
 }
 @media (max-width: 640px) {
   .sidebar-card-header .multi-toggle { font-size: 0.88rem; gap: 0.45rem; }
