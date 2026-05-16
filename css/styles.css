@@ -3329,26 +3329,21 @@ body.app-mode .topic-layout {
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
-  /* overscroll-behavior: contain stops scroll-chaining — once the
-     wrap reaches its top/bottom, the touch gesture is consumed
-     instead of bubbling to the body / window and triggering a
-     second scroll event somewhere else on the page. */
   overscroll-behavior: contain;
   padding-top: 1rem;
   padding-right: 0.55rem;
-  padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  padding-bottom: max(2.5rem, calc(env(safe-area-inset-bottom, 0px) + 1.5rem));
   scrollbar-gutter: stable;
 }
-/* Small tail spacer — just enough to give the last item breathing
-   room when scrolled to the bottom of a long list. Kept modest so
-   short lists don't trigger unnecessary scroll. */
+/* Tail spacer — pushes the last item up so it clears the viewport
+   edge / mobile browser chrome on long lists. */
 .shortcuts-list-tail-spacer {
-  height: 1.5rem;
+  height: 3rem;
   flex-shrink: 0;
   pointer-events: none;
 }
 .shortcuts-scroll-wrap .ai-shortcuts-subsection .sidebar-shortcut-list > .sidebar-shortcut:last-child {
-  margin-bottom: 0;
+  margin-bottom: 1rem;
 }
 
 /* Subsections — Content Shortcuts + AI Shortcuts, both inside the
