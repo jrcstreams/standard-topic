@@ -150,17 +150,22 @@ function renderLayout(route) {
           ${titleGroup('house', 'Home')}
           <div class="subnav-topics-inline home-subnav-topics">
             ${topicsHTML}
+            <a href="#" class="subnav-action-link subnav-all-topics-link" id="subnav-all-topics-desktop">All Topics +</a>
           </div>
-          <a href="#" class="subnav-action-link subnav-all-topics-link" id="subnav-all-topics">All Topics +</a>
-          ${tabPillsRow({ showRelated: false })}
+          ${tabPillsRow({ showRelated: false, showAllTopics: true })}
         </div>
       </div>
     `;
 
-    subHeader.querySelector('#subnav-all-topics')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      const searchBar = document.querySelector('.search-bar');
-      if (searchBar) searchBar.click();
+    // Two "All Topics +" elements share the same behavior — desktop
+    // copy lives inside the chips row, mobile copy lives inside the
+    // tab-pill group. Wire both with the same handler.
+    subHeader.querySelectorAll('#subnav-all-topics, #subnav-all-topics-desktop').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        const searchBar = document.querySelector('.search-bar');
+        if (searchBar) searchBar.click();
+      });
     });
 
     if (heroEl) heroEl.innerHTML = '';
@@ -255,13 +260,16 @@ function renderLayout(route) {
 // fills the rest of the layout) and on custom pages (no news feed,
 // shortcuts is the page).
 function tabPillsRow(opts = {}) {
-  const { showRelated = false } = opts;
+  const { showRelated = false, showAllTopics = false } = opts;
   const pills = [
     `<button type="button" class="tab-pill tab-pill-newsfeed active" data-tab="newsfeed">News</button>`,
     `<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">Shortcuts</button>`,
   ];
   if (showRelated) {
     pills.push(`<button type="button" class="tab-pill tab-pill-related" data-tab="related">Related</button>`);
+  }
+  if (showAllTopics) {
+    pills.push(`<a href="#" class="tab-pill tab-pill-all-topics" id="subnav-all-topics">All Topics +</a>`);
   }
   return `<div class="subnav-tab-pills">${pills.join('')}</div>`;
 }

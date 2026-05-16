@@ -2857,30 +2857,12 @@ html, body, #app {
   margin-left: auto;
   flex-shrink: 0;
 }
+/* On mobile, the standalone .subnav-all-topics-link (inside the chips
+   wrapper) is hidden — the All Topics + is rendered inside the pills
+   group instead, as a .tab-pill-all-topics element. */
 @media (max-width: 899.98px) {
   .subnav-all-topics-link {
-    margin-left: 0.35rem !important;
-    align-items: center;
-    padding: 0.32rem 0.85rem !important;
-    background: transparent !important;
-    border: 1.5px solid transparent !important;
-    border-radius: 999px;
-    font-family: var(--font-family);
-    font-size: 0.85rem !important;
-    font-weight: 600 !important;
-    line-height: 1.2;
-    color: var(--color-text-muted) !important;
-    text-decoration: none;
-    white-space: nowrap;
-    box-shadow: none !important;
-    transition: background 0.14s, color 0.14s;
-  }
-  .subnav-all-topics-link:hover {
-    color: var(--color-text) !important;
-    text-decoration: none;
-    background: transparent !important;
-    border-color: transparent !important;
-    box-shadow: none !important;
+    display: none !important;
   }
 }
 
@@ -3458,6 +3440,17 @@ body.app-mode .topic-layout {
 .tab-pill-newsfeed.active { background: #2f855a; border-color: #2f855a; }
 .tab-pill-shortcuts.active { background: #4a7cc9; border-color: #4a7cc9; }
 .tab-pill-related.active   { background: #c05621; border-color: #c05621; }
+/* "All Topics +" lives inside the pill group on mobile but never
+   becomes the active state (it opens a modal). Reads as a plain
+   text-style pill matching the inactive News/Shortcuts. */
+.tab-pill-all-topics {
+  text-decoration: none;
+}
+.tab-pill-all-topics.active {
+  background: transparent;
+  border-color: transparent;
+  color: var(--color-text-muted);
+}
 
 /* Active-tab section visibility — only one section visible at a time
    on mobile. */
