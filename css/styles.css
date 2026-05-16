@@ -3414,7 +3414,7 @@ body.app-mode .topic-layout {
 .subnav-tab-pills {
   display: none;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.15rem;
   margin: 0;
   flex-shrink: 0;
 }
@@ -3422,7 +3422,7 @@ body.app-mode .topic-layout {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.32rem 0.85rem;
+  padding: 0.32rem 0.7rem;
   background: transparent;
   border: 1.5px solid transparent;
   border-radius: 999px;
