@@ -150,8 +150,8 @@ function renderLayout(route) {
           ${titleGroup('house', 'Home')}
           <div class="subnav-topics-inline home-subnav-topics">
             ${topicsHTML}
-            <a href="#" class="subnav-action-link subnav-all-topics-link" id="subnav-all-topics">All Topics +</a>
           </div>
+          <a href="#" class="subnav-action-link subnav-all-topics-link" id="subnav-all-topics">All Topics +</a>
           ${tabPillsRow({ showRelated: false })}
         </div>
       </div>

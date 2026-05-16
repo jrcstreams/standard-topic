@@ -2824,11 +2824,11 @@ html, body, #app {
 /* Action link symmetric padding: 0.85rem on both sides so the
    leading divider and the All-Topics ↔ Featured divider sit the
    same distance from the "All Topics +" text. */
-/* Home subnav action link: pill treatment via base .subnav-action-link.
-   The old huge padding + negative margin trick (used to enlarge the
-   click area) drew the new pill border around an oversized invisible
-   box. Use normal padding here instead. */
-.home-subnav-topics .subnav-action-link {
+/* Home subnav "All Topics +" action link — pill treatment. Lives
+   directly inside .topic-banner-row (sibling of the chips list) so
+   it stays visible on mobile when the chips are hidden. */
+.home-subnav-topics .subnav-action-link,
+#sub-header.is-home-subnav .subnav-all-topics-link {
   padding: 0.4rem 0.85rem;
   margin: 0;
 }
@@ -2846,12 +2846,13 @@ html, body, #app {
   .subnav-topics-inline > .subnav-topic-link:first-child { padding-left: 1.3rem; }
 }
 
-/* "All Topics +" stays visible on the home subnav at every desktop
-   width — it lives at the end of the row now (mirrors topic page's
-   "More +"). The trim function never hides .subnav-action-link, only
-   .subnav-topic-link items. */
-.home-subnav-topics .subnav-action-link {
-  margin-left: auto; /* push it to the row's right edge */
+/* "All Topics +" stays visible on the home subnav at every width.
+   Now lives as a direct child of .topic-banner-row (outside the
+   chips wrapper) so it's not hidden when the chips are hidden on
+   mobile. margin-left: auto pushes it past the chips toward the
+   right edge of the row on desktop. */
+#sub-header.is-home-subnav .subnav-all-topics-link {
+  margin-left: auto;
   flex-shrink: 0;
 }
 
