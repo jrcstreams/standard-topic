@@ -474,7 +474,7 @@ body.hide-cta .sticky-cta { display: none !important; }
 .navmenu-close:hover { background: var(--color-border); }
 
 .navmenu-search {
-  padding: 1rem 1.25rem 0.45rem;
+  padding: 1.1rem 1.25rem 0.9rem;
 }
 .navmenu-search .search-bar {
   width: 100%;
@@ -502,7 +502,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   display: flex;
   gap: 0.5rem;
   align-items: stretch;
-  padding: 1rem 1.25rem 1.1rem;
+  padding: 0.65rem 1.25rem 1.1rem;
 }
 .navmenu-prompt-row > .navmenu-link {
   flex: 1 1 0;
@@ -591,12 +591,12 @@ body.hide-cta .sticky-cta { display: none !important; }
 
 .navmenu-featured-label {
   font-family: var(--font-display);
-  font-size: 0.75rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: var(--color-text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 1rem 1.25rem 0.6rem;
+  letter-spacing: 0.06em;
+  padding: 1rem 1.25rem 0.65rem;
 }
 /* Sticky inside the scroll container: keeps "Featured Topics" pinned
    to the top of the scrollable region while the list scrolls beneath
