@@ -2849,35 +2849,34 @@ html, body, #app {
 /* "All Topics +" stays visible on the home subnav at every width.
    Lives as a direct child of .topic-banner-row (outside the chips
    wrapper) so it's not hidden when the chips are hidden on mobile.
-   On desktop: margin-left: auto pushes it to the right edge of the
-   chip row. On mobile (<900px): styled to match the .tab-pill look
-   so the row reads as one cohesive group — News / Shortcuts /
-   All Topics. Never gets the active state since it opens a modal
-   rather than switching the active tab. */
-#sub-header.is-home-subnav .subnav-all-topics-link {
+   On desktop: margin-left: auto pushes it past the chips toward the
+   right edge of the row. On mobile (<900px): styled to match the
+   .tab-pill look — no border, no fill, plain muted text. Never gets
+   the active state since it opens a modal rather than switching tab. */
+.subnav-all-topics-link {
   margin-left: auto;
   flex-shrink: 0;
 }
 @media (max-width: 899.98px) {
-  #sub-header.is-home-subnav .subnav-all-topics-link {
-    margin-left: 0.35rem;
+  .subnav-all-topics-link {
+    margin-left: 0.35rem !important;
     align-items: center;
-    padding: 0.32rem 0.85rem;
+    padding: 0.32rem 0.85rem !important;
     background: transparent !important;
     border: 1.5px solid transparent !important;
     border-radius: 999px;
     font-family: var(--font-family);
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
     line-height: 1.2;
-    color: var(--color-text-muted);
+    color: var(--color-text-muted) !important;
     text-decoration: none;
     white-space: nowrap;
     box-shadow: none !important;
     transition: background 0.14s, color 0.14s;
   }
-  #sub-header.is-home-subnav .subnav-all-topics-link:hover {
-    color: var(--color-text);
+  .subnav-all-topics-link:hover {
+    color: var(--color-text) !important;
     text-decoration: none;
     background: transparent !important;
     border-color: transparent !important;
