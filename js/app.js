@@ -150,8 +150,8 @@ function renderLayout(route) {
           ${titleGroup('house', 'Home')}
           <div class="subnav-topics-inline home-subnav-topics">
             ${topicsHTML}
-            <a href="#" class="subnav-action-link subnav-all-topics-link" id="subnav-all-topics-desktop">All Topics +</a>
           </div>
+          <a href="#" class="subnav-action-link subnav-all-topics-link" id="subnav-all-topics-desktop">All Topics +</a>
           ${tabPillsRow({ showRelated: false, showAllTopics: true })}
         </div>
       </div>
@@ -855,7 +855,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
         <div class="shortcuts-subsection-header">
           <h4 class="shortcuts-subsection-title">Quick Links</h4>
         </div>
-        <div class="quick-links-grid">
+        <div class="sidebar-shortcut-list quick-links-list">
           ${contentSearches.map(s => quickLinkItem(s, topicName)).join('')}
         </div>
       </section>
@@ -899,7 +899,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     if (toastTimer) clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toastEl.classList.remove('is-visible'), 1800);
   };
-  container.querySelectorAll('.quick-link-tile').forEach(link => {
+  container.querySelectorAll('.quick-link-row').forEach(link => {
     link.addEventListener('click', (e) => {
       const cardEl = container.querySelector('.shortcuts-sidebar');
       const multiOn = cardEl?.dataset.multi === '1';
@@ -1061,21 +1061,25 @@ function shortcutItem(shortcut, topicName) {
   `;
 }
 
-// Quick Link tile — 2x2 grid card with brand emoji + name. Anchor
-// tag opens the search in a new tab. In multi-select mode the link
-// gets `.is-disabled` and tapping it shows a toast.
+// Quick Link row — uses the same .sidebar-shortcut structure as AI
+// shortcuts so both lists read as one unified stack. Anchor opens
+// the platform search in a new tab; trailing ↗ glyph signals
+// external link. In multi-select mode the row gets disabled by CSS
+// (.shortcuts-sidebar.is-multi-select .quick-link-row) and a click
+// handler in renderShortcutsSidebar surfaces a toast.
 function quickLinkItem(search, topicName) {
   const url = search.urlTemplate.replace(/\{query\}/g, encodeURIComponent(topicName));
-  const icon = search.icon || '';
+  const iconHTML = renderIcon(search.icon, 'sidebar-shortcut-icon');
   return `
-    <a class="quick-link-tile"
+    <a class="sidebar-shortcut quick-link-row"
        href="${url}"
        target="_blank"
        rel="noopener noreferrer"
        data-name="${escapeAttr(search.name)}"
        title="${escapeAttr(search.name)}">
-      <span class="quick-link-tile-icon">${escapeHTML(icon)}</span>
-      <span class="quick-link-tile-name">${escapeHTML(search.name)}</span>
+      ${iconHTML}
+      <span class="sidebar-shortcut-name">${escapeHTML(search.name)}</span>
+      <span class="sidebar-shortcut-chev quick-link-external" aria-hidden="true">↗</span>
     </a>
   `;
 }

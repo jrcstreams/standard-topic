@@ -12,6 +12,9 @@ const EMOJI_MAP = {
   'book': '📚', 'mag-glass': '🔍', 'shield': '🛡️', 'money': '💰',
   'handshake': '🤝', 'megaphone': '📣', 'star': '⭐', 'scales': '⚖️',
   'film': '🎬', 'medal': '🏅', 'graduation': '🎓', 'chess': '♟️',
+  // Quick Links (external platforms) — boilerplate emoji fallbacks
+  // shown if the platform SVG fails to load.
+  'google-news': '🔎', 'reddit': '💬', 'x-twitter': '𝕏', 'youtube': '▶️',
 };
 
 // Global handler for SVG load errors — replaces broken <img> with emoji span.

@@ -716,18 +716,18 @@
     }
   ],
   "featuredOrder": [
-    "business-finance",
-    "technology",
-    "science",
-    "health-wellness",
-    "politics",
     "world",
+    "business-finance",
+    "politics",
+    "science",
+    "technology",
     "sports",
-    "climate-environment",
     "entertainment",
-    "arts-culture",
-    "lifestyle",
     "media",
+    "health-wellness",
+    "lifestyle",
+    "arts-culture",
+    "climate-environment",
     "education",
     "ideas-opinion-more"
   ]
