@@ -748,7 +748,7 @@ function renderRelatedSection(container, topic) {
     : `<div class="sidebar-shortcut-list">
          ${items.map(t => `
            <a class="sidebar-shortcut related-link" href="#/topic/${t.slug}" title="${escapeAttr(t.name)}">
-             <span class="sidebar-shortcut-icon">${topicIconSVG(t.icon || 'globe', 'sidebar-shortcut-icon-svg')}</span>
+             ${topicIconSVG(t.icon || 'globe', 'sidebar-shortcut-icon')}
              <span class="sidebar-shortcut-name">${escapeHTML(t.name)}</span>
              <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
            </a>

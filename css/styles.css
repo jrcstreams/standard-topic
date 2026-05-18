@@ -1422,33 +1422,35 @@ body.hide-cta .sticky-cta { display: none !important; }
   color: #1e2d44;
   letter-spacing: -0.024em;
   margin: 0;
-  padding: 0 0 1.2rem 0.85rem;
+  padding: 0 0 1.2rem 0;
   border-bottom: 1.5px solid #d6dae2;
   background: var(--color-bg);
   flex-shrink: 0;
-  position: relative;
+  /* Flex container so the bar (::before) and text are siblings,
+     vertically centered together. Bar height is em-based so it
+     scales with font-size; gap supplies the spacing from bar to
+     text. */
+  display: flex;
+  align-items: center;
 }
 .newsfeed-title::before {
   content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: calc(1.2rem + 1.5px);
-  width: 4px;
+  display: block;
+  flex-shrink: 0;
+  width: 3px;
+  height: 1.4em;
+  margin-right: 0.65rem;
   background: #2f855a;
   border-radius: 999px;
 }
 @media (max-width: 640px) {
   .newsfeed-title { font-size: 1.15rem; }
-  /* Mobile: bar still = text height, slightly thicker (5px) for
-     presence next to the smaller title text. Bottom anchored to
-     padding-bottom + border so bar bottom = text descender bottom. */
+  /* Mobile: 4px bar across all three section titles, same height
+     ratio (1.95em) so it scales with the smaller title font. */
   .newsfeed-title::before,
   .related-title::before,
-  .shortcuts-sidebar .sidebar-card-header::before {
-    top: 0;
-    bottom: calc(1.2rem + 1.5px);
-    width: 5px;
+  .shortcuts-sidebar .sidebar-card-title::before {
+    width: 4px;
   }
 }
 
@@ -3294,43 +3296,55 @@ body.app-mode .topic-layout {
   flex-wrap: nowrap;
   align-items: center;
   margin: 0;
-  padding: 0 0 1.2rem 0.85rem;
+  padding: 0 0 1.2rem 0;
   border-bottom: 1.5px solid #d6dae2;
   position: relative;
   background: var(--color-bg);
   z-index: 4;
 }
-.shortcuts-sidebar .sidebar-card-header::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  /* Bar = title text height exactly: top at the same y as the
-     text top, bottom flush with text descender bottom. This pairs
-     the bar to the title's vertical center, not the whole padded
-     element. Extra padding-bottom on the header itself supplies
-     the breathing room above the separator line below. */
-  top: 0;
-  bottom: calc(1.2rem + 1.5px);
-  width: 4px;
-  background: #4a7cc9;
-  border-radius: 999px;
-}
+/* Bar is anchored to the TITLE element (not the header) so its
+   geometry depends only on the title text, not on whether other
+   header children (Multi-select toggle, description) are present
+   or taller. This keeps the Shortcuts bar identical in height to
+   the News Feed / Related Topics bars. */
+.shortcuts-sidebar .sidebar-card-header::before { display: none; }
 .shortcuts-sidebar .sidebar-card-title {
   font-family: var(--font-display);
   font-size: 1.3rem;
   line-height: 1.15;
   font-weight: 500;
-  /* General Sans is loaded at static 500/600 — no real 550 exists.
-     A hair-thin text-shadow in the same color adds a half-weight
-     of visual heft without crossing into semibold territory. */
   text-shadow: 0 0 0.45px currentColor;
   color: #1e2d44;
   letter-spacing: -0.024em;
   margin: 0;
   padding: 0;
   flex: 0 1 auto;
+  /* Match the flex-sibling-bar pattern used by .newsfeed-title and
+     .related-title so the three section-title bars are identical in
+     height, width, and vertical alignment with their text. The
+     base .sidebar-card-title rule sets gap: 0.55rem — reset to 0
+     here so spacing comes from the bar's margin-right alone. */
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
 }
-.shortcuts-sidebar .sidebar-card-title::before { display: none; }
+.shortcuts-sidebar .sidebar-card-title::before {
+  content: '';
+  display: block;
+  /* Override the base .sidebar-card-title::before rule which uses
+     position: absolute — that anchored the bar at the title's
+     left edge and overlapped the text. Force it back to static
+     so it participates in the flex layout as a sibling. */
+  position: static;
+  top: auto;
+  bottom: auto;
+  flex-shrink: 0;
+  width: 3px;
+  height: 1.4em;
+  margin-right: 0.65rem;
+  background: #4a7cc9;
+  border-radius: 999px;
+}
 
 /* Body scroll wrap — Content + AI scroll together. The explicit
    flex-basis: 0 and touch-action keep mobile browsers from latching
@@ -3636,19 +3650,21 @@ body.app-mode .topic-layout {
   color: #1e2d44;
   letter-spacing: -0.024em;
   margin: 0;
-  padding: 0 0 1.2rem 0.85rem;
+  padding: 0 0 1.2rem 0;
   border-bottom: 1.5px solid #d6dae2;
   background: var(--color-bg);
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
   position: relative;
 }
 .related-title::before {
   content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: calc(1.2rem + 1.5px);
-  width: 4px;
+  display: block;
+  flex-shrink: 0;
+  width: 3px;
+  height: 1.4em;
+  margin-right: 0.65rem;
   background: #c05621;
   border-radius: 999px;
 }
@@ -3699,11 +3715,20 @@ body.app-mode .topic-layout {
 .related-panel .sidebar-shortcut.related-link:last-child {
   border-bottom: none;
 }
-.related-link .sidebar-shortcut-icon-svg {
+.related-link .sidebar-shortcut-icon {
   width: 18px;
   height: 18px;
-  opacity: 0.7;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.85;
   flex-shrink: 0;
+  color: var(--color-primary, #385c95);
+}
+.related-link .sidebar-shortcut-icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
 }
 .related-link .sidebar-shortcut-name {
   flex: 1;
