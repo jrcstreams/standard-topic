@@ -152,7 +152,7 @@ function renderLayout(route) {
             ${topicsHTML}
           </div>
           <a href="#" class="subnav-action-link subnav-all-topics-link" id="subnav-all-topics-desktop">All Topics +</a>
-          ${tabPillsRow({ showRelated: false, showAllTopics: true })}
+          ${tabPillsRow({ showRelated: false, showAllTopics: false })}
         </div>
       </div>
     `;
@@ -479,6 +479,15 @@ function trimOverflowLinks() {
     // No visible chips left → hide the leading title↔chips separator.
     // (CSS reads .is-empty to suppress .subnav-topics-inline::before.)
     container.classList.toggle('is-empty', visibleCount === 0);
+
+    // Home subnav: the desktop "All Topics +" link only exists as a
+    // continuation of the featured-chips row. If no chips are visible
+    // (e.g. the viewport is too narrow for any to fit), drop the link
+    // too so the row reads as just the page title.
+    const homeAllTopics = document.getElementById('subnav-all-topics-desktop');
+    if (homeAllTopics) {
+      homeAllTopics.style.display = visibleCount === 0 ? 'none' : '';
+    }
   };
 
   const scheduleTrim = () => requestAnimationFrame(doTrim);
@@ -519,9 +528,12 @@ function setupResponsiveNav() {
 
 function renderStickyHeroBar(container, route) {
   const featured = getFeaturedTopics();
-  const featuredLinksHTML = featured.map(t =>
-    `<a href="#/topic/${t.slug}" class="navmenu-topic-link">${escapeHTML(t.name)}</a>`
-  ).join('');
+  const featuredLinksHTML = featured.map(t => `
+    <a href="#/topic/${t.slug}" class="navmenu-topic-link">
+      <span class="navmenu-topic-icon">${topicIconSVG(t.icon || 'globe', '')}</span>
+      <span class="navmenu-topic-name">${escapeHTML(t.name)}</span>
+    </a>
+  `).join('');
 
   container.innerHTML = `
     <div class="sticky-hero-inner">
@@ -534,10 +546,13 @@ function renderStickyHeroBar(container, route) {
       <span class="sticky-tagline">News, Resources and AI Knowledge. On any topic.</span>
       <div class="sticky-actions">
         <div class="sticky-search" id="sticky-search-container"></div>
-        <a href="#/prompt-generator" class="sticky-cta" id="nav-cta">
+        <a href="#/prompt-generator" class="sticky-cta" id="nav-cta" aria-label="Prompt Builder">
+          <svg class="sticky-cta-sparkle" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/>
+            <path d="M19 3l.6 1.6L21.2 5.2 19.6 5.8 19 7.4 18.4 5.8 16.8 5.2 18.4 4.6z"/>
+          </svg>
           <span class="sticky-cta-full">Prompt Builder</span>
           <span class="sticky-cta-short">Prompt Builder</span>
-          <svg class="sticky-cta-plus" aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         </a>
       </div>
     </div>
@@ -1101,7 +1116,7 @@ function renderRelatedTopicsSidebar(container, route, isHome) {
     featured.forEach(t => {
       html += `
         <a href="#/topic/${t.slug}" class="sidebar-shortcut">
-          <span class="sidebar-shortcut-dot" aria-hidden="true"></span>
+          ${topicIconSVG(t.icon || 'globe', 'sidebar-shortcut-icon')}
           <span class="sidebar-shortcut-name">${escapeHTML(t.name)}</span>
           <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
         </a>
@@ -1144,7 +1159,7 @@ function renderRelatedTopicsSidebar(container, route, isHome) {
       const hiddenClass = (hasMore && i >= RELATED_CAP) ? 'is-overflow-related' : '';
       html += `
         <a href="#/topic/${t.slug}" class="sidebar-shortcut ${hiddenClass}">
-          <span class="sidebar-shortcut-dot" aria-hidden="true"></span>
+          ${topicIconSVG(t.icon || 'globe', 'sidebar-shortcut-icon')}
           <span class="sidebar-shortcut-name">${escapeHTML(t.name)}</span>
           <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
         </a>
