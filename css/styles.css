@@ -3888,12 +3888,13 @@ body.app-mode .topic-layout {
    on the sidebar / mobile, each tile a compact card with the brand
    emoji on the left and the name on the right. */
 /* === Quick Links — compact label-only pills ===
-   Content-sized pills that wrap onto multiple rows as space allows.
-   Pills don't stretch — narrow labels ("Reddit") stay narrow rather
-   than padding out to fill an evenly-divided grid column. */
+   Always a 2-column grid (so the four shortcuts read as a tidy
+   2×2 block rather than 3-on-row-1 + 1-stranded-on-row-2). Pills
+   are content-sized via justify-self: start so a short label like
+   "Reddit" stays narrow instead of stretching to fill its cell. */
 .quick-links-pill-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 0.4rem;
   padding-top: 0.6rem;
 }
@@ -3901,6 +3902,7 @@ body.app-mode .topic-layout {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  justify-self: start;
   padding: 0.4rem 0.75rem;
   background: #f3f5f9;
   border: 1px solid transparent;
