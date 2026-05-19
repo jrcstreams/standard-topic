@@ -3888,19 +3888,14 @@ body.app-mode .topic-layout {
    on the sidebar / mobile, each tile a compact card with the brand
    emoji on the left and the name on the right. */
 /* === Quick Links — compact label-only pills ===
-   Default 2×2 grid (sidebar view). At mobile-tabular widths where
-   the shortcuts card fills the viewport, expand to a single row of
-   4 pills. Very narrow widths fall back to 2×2 again. */
+   Content-sized pills that wrap onto multiple rows as space allows.
+   Pills don't stretch — narrow labels ("Reddit") stay narrow rather
+   than padding out to fill an evenly-divided grid column. */
 .quick-links-pill-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.4rem;
   padding-top: 0.6rem;
-}
-@media (min-width: 540px) and (max-width: 899.98px) {
-  .quick-links-pill-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
 }
 .quick-link-pill {
   display: inline-flex;
@@ -3951,12 +3946,10 @@ body.app-mode .topic-layout {
   padding-top: 1rem;
 }
 .ai-shortcut-group-label {
-  /* Sentence case, semibold, with a tiny primary-blue accent line
-     to the left for visual rhythm. Reads as a sub-grouping within
-     the AI Shortcuts section rather than another all-caps shout. */
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+  /* Sentence case, semibold. Reads as a sub-grouping within the AI
+     Shortcuts section — the bullet list below carries the visual
+     rhythm, so the label itself doesn't need an icon. */
+  display: block;
   font-family: var(--font-family);
   font-size: 0.95rem;
   font-weight: 600;
@@ -3965,16 +3958,6 @@ body.app-mode .topic-layout {
   margin: 0 0 0.4rem;
   padding: 0;
   line-height: 1.2;
-}
-.ai-shortcut-group-label::before {
-  content: '';
-  display: block;
-  width: 14px;
-  height: 2px;
-  border-radius: 999px;
-  background: #4a7cc9;
-  opacity: 0.7;
-  flex-shrink: 0;
 }
 .ai-shortcut-bullet-list {
   list-style: none;
