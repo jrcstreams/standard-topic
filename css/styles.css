@@ -1752,12 +1752,13 @@ body.hide-cta .sticky-cta { display: none !important; }
   border-radius: 3px;
   position: relative;
   overflow: hidden;
-  /* Align with the surrounding content padding — no bleed past the
-     topic-layout edge. Bleeding caused the news cards to extend
-     wider than the main nav above, making the nav read as "too far
-     in" relative to the news section. */
-  margin: 0;
-  width: 100%;
+  /* The rss.app widget has fixed internal insets (body padding +
+     grid margin + col gap ≈ 24px each side). Pull the iframe
+     outward so visible card edges line up with the title's
+     separator line above. */
+  margin-left: -24px;
+  margin-right: -24px;
+  width: calc(100% + 48px);
 }
 
 .newsfeed-iframe {
