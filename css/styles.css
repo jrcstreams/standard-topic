@@ -3486,8 +3486,13 @@ body.app-mode #content {
   bottom: 0;
   /* Explicit height ensures the scroll-wrap chain inside has a
      definite parent height to overflow against. dvh handles mobile
-     browser chrome correctly. */
+     browser chrome correctly. min-height: 0 cancels the
+     `body.home-mode #content { min-height: 100vh }` rule above,
+     which would otherwise force #content to a full-viewport height
+     and push the multi-submit panel below the fold on short
+     desktop viewports. */
   height: calc(100dvh - 64px - var(--subnav-height, 66px));
+  min-height: 0;
   padding: 0;
   overflow: hidden;
 }
