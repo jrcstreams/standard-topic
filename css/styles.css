@@ -356,6 +356,84 @@ body.sticky-always.has-subnav #content {
   flex-shrink: 0;
   opacity: 0.9;
 }
+
+/* Settings gear — sits next to the Prompt Builder pill in the
+   main nav. Hides on the same breakpoint so the mobile nav stays
+   lean (Settings is reachable through the navmenu footer link). */
+.sticky-settings {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.14s, color 0.14s, border-color 0.14s, transform 0.06s;
+}
+.sticky-settings:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.28);
+}
+.sticky-settings:active { transform: translateY(1px); }
+.sticky-settings svg { display: block; }
+
+@media (max-width: 899.98px) {
+  .sticky-settings { display: none; }
+}
+
+/* Home shortcut — sits to the right of the gear in the main nav.
+   Same color treatment as the gear (dark nav button) but stays
+   visible at every viewport width so users always have a one-tap
+   path back to the homepage. */
+.sticky-home {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+  text-decoration: none;
+  transition: background 0.14s, color 0.14s, border-color 0.14s, transform 0.06s;
+}
+.sticky-home:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.28);
+  text-decoration: none;
+}
+.sticky-home:active { transform: translateY(1px); }
+.sticky-home svg { display: block; }
+
+@media (max-width: 640px) {
+  .sticky-home { width: 32px; height: 32px; }
+}
+@media (max-width: 400px) {
+  .sticky-home { width: 30px; height: 30px; }
+}
+
+/* Navmenu Settings button — sits in the footer row alongside
+   About / Terms / GitHub, with a leading gear icon. */
+.navmenu-link-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: transparent;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+}
+.navmenu-link-button:hover { color: var(--color-primary); }
 /* === Hamburger Menu ====================================================
    The hamburger lives permanently in the main nav, immediately to the
    left of the brand title. There is no subnav hamburger and no site
@@ -449,8 +527,8 @@ body.hide-cta .sticky-cta { display: none !important; }
 .navmenu-head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 1.25rem 1.25rem 1.15rem;
+  gap: 0.65rem;
+  padding: 1.1rem 1.1rem 1rem;
   border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
 }
@@ -460,6 +538,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   gap: 0.45rem;
   text-decoration: none;
   min-width: 0;
+  flex: 1 1 auto;
 }
 .navmenu-brand:hover { text-decoration: none; }
 .navmenu-logo {
@@ -469,33 +548,53 @@ body.hide-cta .sticky-cta { display: none !important; }
 }
 .navmenu-title {
   font-family: var(--font-display);
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   font-weight: 600;
   color: var(--color-text);
   letter-spacing: -0.025em;
   line-height: 1;
-  /* Match the logo's 34px height + flex-center so glyph cap-height
-     visually lines up with the logo and close button, not the text
-     baseline (which would float low). */
   display: inline-flex;
   align-items: center;
   height: 34px;
 }
-.navmenu-close {
-  width: 32px;
-  height: 32px;
+/* Menu head buttons share the same shape, size, and quiet ghost
+   styling so they read as a matched pair flanking the brand title.
+   The Close (left) carries a muted icon to read as a "dismiss"
+   utility; the Home (right) carries a primary-tinted icon to read
+   as a quiet "navigate" action — color-only differentiation
+   instead of a heavy filled chip. */
+.navmenu-close,
+.navmenu-home {
+  width: 34px;
+  height: 34px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-bg-light);
-  border: 1px solid var(--color-border);
-  border-radius: 50%;
-  font-size: 0.9rem;
-  color: var(--color-text);
+  background: var(--color-bg-light, #f3f5f9);
+  border: 1px solid #e6e8ec;
+  border-radius: 9px;
   cursor: pointer;
-  transition: background 0.12s;
+  flex-shrink: 0;
+  text-decoration: none;
+  transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.06s;
 }
-.navmenu-close:hover { background: var(--color-border); }
+.navmenu-close { color: var(--color-text-muted, #6b7280); }
+.navmenu-home  { color: #2c4467; }
+.navmenu-close:hover {
+  background: #eef2f7;
+  border-color: #c8d3e3;
+  color: var(--color-text, #1e2d44);
+}
+.navmenu-home:hover {
+  background: #ebf2fb;
+  border-color: #95a8c5;
+  color: #1f3251;
+  text-decoration: none;
+}
+.navmenu-close:active,
+.navmenu-home:active { transform: translateY(1px); }
+.navmenu-close svg,
+.navmenu-home svg { display: block; }
 
 .navmenu-search {
   padding: 1.1rem 1.25rem 0.85rem;
@@ -549,19 +648,23 @@ body.hide-cta .sticky-cta { display: none !important; }
 }
 .navmenu-footer-links {
   display: flex;
-  gap: 0.4rem;
+  gap: 0.3rem;
   padding: 0;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
+  align-items: center;
 }
 .navmenu-footer-sticky .navmenu-footer-links .navmenu-link {
   background: transparent;
   border: 1px solid transparent;
   color: var(--color-text-muted);
-  font-size: 0.78rem;
-  padding: 0.4rem 0.75rem;
-  flex: 1 1 auto;
+  font-size: 0.74rem;
+  padding: 0.35rem 0.4rem;
+  gap: 0.3rem;
+  flex: 1 1 0;
+  min-width: 0;
   justify-content: center;
+  white-space: nowrap;
 }
 .navmenu-footer-sticky .navmenu-footer-links .navmenu-link:hover {
   background: #fff;
@@ -1260,12 +1363,11 @@ body.hide-cta .sticky-cta { display: none !important; }
    flex distribution rather than being claimed by the search bar.
    The brand separator hides alongside the tagline so a lone vertical
    bar doesn't dangle. */
-/* Hide tagline only on true mobile widths — at tablet sizes
-   (≥900px) we let it fill the middle of the main nav so the brand
-   on the left and search/CTA on the right don't read as
-   disconnected with empty space between. The tagline truncates with
-   ellipsis if the row gets tight. */
-@media (max-width: 899.98px) {
+/* Hide tagline below 1180px — between the brand on the left and
+   the search + CTA + settings + home cluster on the right, the
+   tagline only has enough room to read cleanly on roomy desktop
+   widths. Below that it gets squeezed/truncated, so just drop it. */
+@media (max-width: 1180px) {
   .sticky-tagline { display: none !important; }
   .sticky-brand::after { display: none !important; }
 }
@@ -1617,95 +1719,324 @@ body.hide-cta .sticky-cta { display: none !important; }
 .shortcuts-list-wrap.has-overflow-bottom .scroll-fade-bottom { opacity: 1; }
 
 /* === Submit selected prompts button === */
-/* === Multi-select controls — compact one-line layout =================
-   Subtitle "Multi-select" on its own row, then a single row with the
-   green Submit pill (with count badge) + "Select all" + "Clear" as
-   text buttons. Designed to fit the sidebar width cleanly. */
+/* === Multi-select floating action bar ================================
+   Sits at the bottom of the .shortcuts-sidebar card as a sticky pill
+   that slides in once any AI shortcut is selected. Single-row layout:
+   "N selected" on the left, [Select all] [Clear] in the middle, green
+   [Submit] pill on the right. The scroll wrap reserves bottom padding
+   when this bar is visible so the last shortcut row stays reachable
+   above the floating bar.
+
+   Visibility is class-driven (.is-visible) instead of the [hidden]
+   attribute so we can transition in/out. JS toggles .is-visible
+   alongside aria-hidden. */
+/* === Prompt Submission floating panel ============================
+   Sections (top → bottom):
+     1. Title + count
+     2. Send-to model picker
+     3. Preview / Direct Submit buttons (equal-weight pair)
+     4. Utility links (Select all · Clear)
+   Each separated by a hairline, with consistent inset padding.
+
+   Positioning: at desktop sidebar widths the panel is absolute-
+   positioned inside the .shortcuts-sidebar card (anchored to the
+   card's bottom). At mobile/tabular widths the card's exact height
+   isn't reliable, so we switch to position: fixed against the
+   viewport — guarantees the panel is fully visible regardless of
+   parent layout quirks. */
 .shortcuts-multi-submit-wrap {
+  position: absolute;
+  left: 0.7rem;
+  right: 0.7rem;
+  bottom: 0.7rem;
+  z-index: 6;
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  border: 1px solid #dde2eb;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(15, 26, 46, 0.10), 0 1px 2px rgba(15, 26, 46, 0.05);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: 0.35rem;
-  margin: 0;
+  overflow: visible;
 }
 .shortcuts-multi-submit-wrap[hidden] {
-  display: none !important;
+  display: flex !important;
 }
-.multi-controls-header {
-  margin: 0;
+.shortcuts-multi-submit-wrap.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.shortcuts-sidebar:has(.shortcuts-multi-submit-wrap.is-visible) .shortcuts-scroll-wrap {
+  padding-bottom: 16rem;
+}
+
+/* Mobile / tabular shortcut view — anchor to viewport. */
+@media (max-width: 899.98px) {
+  .shortcuts-multi-submit-wrap {
+    position: fixed;
+    left: 1rem;
+    right: 1rem;
+    bottom: max(1rem, calc(env(safe-area-inset-bottom, 0px) + 0.6rem));
+    z-index: 60;
+    box-shadow: 0 12px 32px rgba(15, 26, 46, 0.18), 0 1px 2px rgba(15, 26, 46, 0.06);
+  }
+}
+
+/* Section dividers */
+.shortcuts-multi-submit-wrap > * + * {
+  border-top: 1px solid #eef0f4;
+}
+
+/* 1. Title row */
+.multi-controls-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.55rem 0.85rem 0.5rem;
 }
 .multi-controls-title {
-  color: #16a34a;
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
 }
-.multi-controls-row {
+.shortcuts-multi-count {
+  font-family: var(--font-family);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}
+.shortcuts-multi-count strong {
+  color: #1e2d44;
+  font-weight: 700;
+  font-size: 0.92rem;
+  margin-right: 0.2rem;
+}
+
+/* 2. Send-to model row */
+.multi-controls-model-row {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0.5rem 0.85rem;
 }
+.multi-controls-model-label {
+  font-family: var(--font-family);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  letter-spacing: -0.005em;
+  flex-shrink: 0;
+}
+.multi-controls-model-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  padding: 0.4rem 0.7rem;
+  background: #f3f5f9;
+  border: 1px solid #e1e6ee;
+  border-radius: 8px;
+  color: #1e2d44;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: background 0.14s, border-color 0.14s;
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: left;
+}
+.multi-controls-model-btn .multi-controls-model-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.multi-controls-model-btn:hover {
+  background: #e8edf5;
+  border-color: #c8d3e3;
+}
+.multi-controls-model-caret {
+  opacity: 0.7;
+  flex-shrink: 0;
+  transition: transform 0.14s;
+}
+.multi-controls-model-btn[aria-expanded="true"] .multi-controls-model-caret {
+  transform: rotate(180deg);
+}
+.multi-controls-model-menu {
+  position: absolute;
+  left: 0.9rem;
+  right: 0.9rem;
+  bottom: calc(100% + 4px);
+  margin: 0;
+  padding: 0.3rem;
+  list-style: none;
+  background: var(--color-bg);
+  border: 1px solid #d6dae2;
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(15, 26, 46, 0.18);
+  z-index: 7;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.multi-controls-model-menu[hidden] { display: none; }
+.multi-controls-model-option {
+  display: block;
+  width: 100%;
+  padding: 0.45rem 0.65rem;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  text-align: left;
+  font-family: var(--font-family);
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+.multi-controls-model-option:hover {
+  background: #eef2f7;
+  color: var(--color-primary, #2c4467);
+}
+
+/* 3. Preview + Direct Submit row (equal-weight pair) */
+.multi-controls-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  padding: 0.5rem 0.85rem;
+}
+.shortcuts-multi-preview {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.85rem;
+  background: #ffffff;
+  color: #1e2d44;
+  border: 1.5px solid #c8d3e3;
+  border-radius: 10px;
+  font-family: var(--font-family);
+  font-size: 0.84rem;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: background 0.14s, border-color 0.14s, color 0.14s, opacity 0.14s, transform 0.06s;
+  white-space: nowrap;
+}
+.shortcuts-multi-preview:hover:not(:disabled) {
+  background: #eff2f8;
+  border-color: #95a8c5;
+  color: #1e2d44;
+}
+.shortcuts-multi-preview:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.shortcuts-multi-preview:active:not(:disabled) { transform: translateY(1px); }
 
 .shortcuts-multi-submit {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.4rem;
-  padding: 0.35rem 0.7rem;
+  padding: 0.55rem 0.85rem;
   background: #9ca3af;
   color: white;
-  border: none;
-  border-radius: 999px;
+  border: 1.5px solid transparent;
+  border-radius: 10px;
   font-family: var(--font-family);
-  font-size: 0.78rem;
+  font-size: 0.84rem;
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.1;
   letter-spacing: -0.005em;
   cursor: not-allowed;
   opacity: 0.55;
   transition: background 0.14s, opacity 0.14s, transform 0.06s;
   white-space: nowrap;
+}
+.shortcuts-multi-submit svg {
   flex-shrink: 0;
+  transition: transform 0.14s;
 }
 .shortcuts-multi-submit.is-active {
   background: #16a34a;
   cursor: pointer;
   opacity: 1;
 }
-.shortcuts-multi-submit.is-active:hover { background: #15803d; }
+.shortcuts-multi-submit.is-active:hover {
+  background: #15803d;
+}
+.shortcuts-multi-submit.is-active:hover svg {
+  transform: translateX(2px);
+}
 .shortcuts-multi-submit.is-active:active { transform: translateY(1px); }
-.shortcuts-multi-submit-count {
-  display: inline-flex;
+
+/* 4. Utility links — small, muted, centered */
+.multi-controls-utils {
+  display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 0.4rem;
-  background: rgba(255, 255, 255, 0.28);
-  border-radius: 999px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  line-height: 1;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem 0.45rem;
 }
-
 .shortcuts-multi-select-all,
 .shortcuts-multi-clear {
   display: inline-flex;
-  padding: 0.2rem 0.1rem;
+  padding: 0.2rem 0.4rem;
   background: transparent;
   border: none;
+  border-radius: 4px;
   color: var(--color-text-muted);
   font-family: var(--font-family);
-  font-size: 0.76rem;
+  font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: -0.005em;
   cursor: pointer;
   transition: color 0.12s;
   white-space: nowrap;
 }
-.shortcuts-multi-select-all { margin-left: auto; }
-.shortcuts-multi-select-all:hover:not(:disabled) { color: #4a7cc9; }
-.shortcuts-multi-clear:hover:not(:disabled) { color: #dc2626; }
+.shortcuts-multi-select-all:hover:not(:disabled) {
+  color: var(--color-primary, #2c4467);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.shortcuts-multi-clear:hover:not(:disabled) {
+  color: #b91c1c;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .shortcuts-multi-select-all:disabled,
 .shortcuts-multi-clear:disabled {
-  opacity: 0.4;
+  opacity: 0.35;
   cursor: not-allowed;
+}
+.multi-controls-util-divider {
+  color: #d6dae2;
+  font-size: 0.9rem;
+  user-select: none;
+  pointer-events: none;
 }
 
 /* Section header — make sure flex children can shrink so the toggle
@@ -3164,18 +3495,15 @@ body.app-mode .topic-layout {
   height: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
-  /* Generous bottom padding here (not inside the scroll wrap) so
-     the section's bottom edge sits well above the viewport bottom.
-     This is the most reliable way to guarantee the last item is
-     reachable on every browser — the scroll wrap is naturally
-     shorter, so its content doesn't get clipped by viewport
-     edges, browser chrome, or the iOS home-indicator gesture area. */
-  padding: 1.6rem 2rem 3rem;
+  /* Tight bottom padding — the scroll wraps inside each section
+     handle their own safe-area reservation. Avoids a big white
+     band at the bottom of the page on desktop. */
+  padding: 1.6rem 2rem 1rem;
   box-sizing: border-box;
 }
 @media (max-width: 640px) {
   body.app-mode .topic-layout {
-    padding: 1.25rem 1rem 3.5rem;
+    padding: 1.25rem 1rem 1.25rem;
   }
 }
 
@@ -3369,6 +3697,15 @@ body.app-mode .topic-layout {
   padding-right: 0.55rem;
   padding-bottom: max(2.5rem, calc(env(safe-area-inset-bottom, 0px) + 1.5rem));
   scrollbar-gutter: stable;
+  transition: -webkit-mask-image 0.18s, mask-image 0.18s;
+}
+/* When the shortcut list overflows below the visible area, fade
+   the bottom ~56px so the last visible item softly fades out —
+   signals "there's more below". Disappears once the user scrolls
+   all the way to the bottom. */
+.shortcuts-scroll-wrap.has-overflow-bottom {
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 64px), rgba(0, 0, 0, 0.2) 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 64px), rgba(0, 0, 0, 0.2) 100%);
 }
 /* Tail spacer — pushes the last item up so it clears the viewport
    edge / mobile browser chrome on long lists. */
@@ -3403,10 +3740,10 @@ body.app-mode .topic-layout {
 .shortcuts-subsection-title {
   font-family: var(--font-family);
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-text-muted);
+  letter-spacing: 0.06em;
+  color: #1e2d44;
   margin: 0;
   flex: 0 1 auto;
 }
@@ -3416,16 +3753,10 @@ body.app-mode .topic-layout {
   margin-left: auto;
 }
 
-/* Multi-controls bar sits between the title and the scroll-wrap via
-   flex order — flex-shrink: 0 keeps it visible while the body below
-   scrolls (no position: sticky needed). Shown only when multi is on
-   (the [hidden] attribute on the markup is removed by JS). */
-.shortcuts-sidebar > .shortcuts-multi-submit-wrap {
-  flex-shrink: 0;
-  margin: 0.85rem 0 0;
-  padding: 0 0 0.85rem;
-  border-bottom: 1px solid #e2e8f0;
-}
+/* The submit bar is now positioned absolutely at the bottom of the
+   .shortcuts-sidebar card (see the .shortcuts-multi-submit-wrap rule
+   above). This override block from the old in-flow layout is now a
+   no-op placeholder. */
 
 /* The topic-layout cell is already viewport-bounded in app-mode, so
    the card just fills its cell. min-height: 0 lets the inner flex
@@ -3556,82 +3887,58 @@ body.app-mode .topic-layout {
    (Google News / Reddit / X / YouTube) arranged in a 2-column grid
    on the sidebar / mobile, each tile a compact card with the brand
    emoji on the left and the name on the right. */
-/* === Quick Links pill grid ===
-   Compact label-only pills, two columns. Secondary visual weight to
-   AI Shortcuts — quiet ghost-pill background + hairline border, hover
-   warms to a soft primary-tinted state with the external glyph
-   nudging up-right. */
+/* === Quick Links — compact label-only pills ===
+   Default 2×2 grid (sidebar view). At mobile-tabular widths where
+   the shortcuts card fills the viewport, expand to a single row of
+   4 pills. Very narrow widths fall back to 2×2 again. */
 .quick-links-pill-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.45rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
   padding-top: 0.6rem;
+}
+@media (min-width: 540px) and (max-width: 899.98px) {
+  .quick-links-pill-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 .quick-link-pill {
   display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.4rem;
-  padding: 0.4rem 0.7rem;
-  background: #f6f7f9;
-  border: 1px solid #e6e8ec;
+  justify-content: center;
+  padding: 0.4rem 0.75rem;
+  background: #f3f5f9;
+  border: 1px solid transparent;
   border-radius: 999px;
   text-decoration: none;
   color: var(--color-text);
   font-family: var(--font-family);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 500;
   letter-spacing: -0.005em;
-  line-height: 1.1;
+  line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
-  cursor: pointer;
-  transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.08s;
-}
-.quick-link-pill-name {
-  flex: 1 1 auto;
-  min-width: 0;
-  overflow: hidden;
   text-overflow: ellipsis;
-}
-.quick-link-pill-glyph {
-  font-size: 0.78rem;
-  color: var(--color-text-light);
-  opacity: 0.7;
-  flex-shrink: 0;
-  transition: transform 0.14s, color 0.14s, opacity 0.14s;
+  cursor: pointer;
+  transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.06s;
 }
 @media (hover: hover) {
   .quick-link-pill:hover {
-    background: #eef2f9;
+    background: #e6ecf5;
     border-color: #c8d3e3;
-    color: var(--color-primary);
-  }
-  .quick-link-pill:hover .quick-link-pill-glyph {
-    transform: translate(1px, -1px);
-    opacity: 1;
-    color: var(--color-primary);
+    color: var(--color-primary, #2c4467);
+    text-decoration: none;
   }
 }
 .quick-link-pill:active { transform: translateY(1px); }
+.quick-link-pill:focus-visible {
+  outline: 2px solid rgba(44, 68, 103, 0.45);
+  outline-offset: 2px;
+}
 
-/* Multi-select on: Quick Link pills muted. */
-.shortcuts-sidebar.is-multi-select .quick-link-pill {
-  color: var(--color-text-light);
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-@media (hover: hover) {
-  .shortcuts-sidebar.is-multi-select .quick-link-pill:hover {
-    background: #f6f7f9;
-    border-color: #e6e8ec;
-    color: var(--color-text-light);
-  }
-  .shortcuts-sidebar.is-multi-select .quick-link-pill:hover .quick-link-pill-glyph {
-    transform: none;
-    color: var(--color-text-light);
-  }
-}
+/* Quick Links are always live now — multi-select applies only to AI
+   Shortcuts, so there's no "paused" state for the pill grid. */
 
 /* === AI Shortcuts grouped subsections ===
    Inside the AI Shortcuts subsection, shortcuts are bucketed by
@@ -3644,14 +3951,30 @@ body.app-mode .topic-layout {
   padding-top: 1rem;
 }
 .ai-shortcut-group-label {
+  /* Sentence case, semibold, with a tiny primary-blue accent line
+     to the left for visual rhythm. Reads as a sub-grouping within
+     the AI Shortcuts section rather than another all-caps shout. */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   font-family: var(--font-family);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.085em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-  margin: 0 0 0.45rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: #1e2d44;
+  margin: 0 0 0.4rem;
   padding: 0;
+  line-height: 1.2;
+}
+.ai-shortcut-group-label::before {
+  content: '';
+  display: block;
+  width: 14px;
+  height: 2px;
+  border-radius: 999px;
+  background: #4a7cc9;
+  opacity: 0.7;
+  flex-shrink: 0;
 }
 .ai-shortcut-bullet-list {
   list-style: none;
@@ -3665,42 +3988,32 @@ body.app-mode .topic-layout {
   margin: 0;
   padding: 0;
 }
-.shortcuts-sidebar .sidebar-shortcut.ai-shortcut-bullet-btn {
+/* AI shortcut row — single clickable button. Default state shows a
+   bullet dot in the marker slot; on selection, the marker swaps to
+   a filled blue circle with a white check. Submission always
+   routes through the sticky bottom bar. */
+.shortcuts-sidebar .sidebar-shortcut.ai-shortcut-select-btn {
   display: flex;
-  align-items: baseline;
-  gap: 0.55rem;
+  align-items: center;
+  gap: 0.65rem;
   width: 100%;
-  padding: 0.3rem 0.5rem 0.3rem 0.35rem;
+  padding: 0.34rem 0.5rem 0.34rem 0.45rem;
   background: transparent;
-  /* No inter-row borders — bullet dots carry the row rhythm now.
-     Selector includes .sidebar-shortcut to beat the base
-     `.shortcuts-sidebar .sidebar-shortcut { border-bottom: 1px... }`
-     rule that lives later in the file. */
   border: none;
   border-bottom: none;
-  border-radius: 4px;
+  border-radius: 6px;
   text-align: left;
   font-family: var(--font-family);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 500;
   color: var(--color-text);
   cursor: pointer;
-  transition: background 0.12s, color 0.12s;
+  transition: background 0.14s, color 0.12s;
 }
-.shortcuts-sidebar .sidebar-shortcut-list > .sidebar-shortcut.ai-shortcut-bullet-btn:last-child {
+.shortcuts-sidebar .sidebar-shortcut-list > .sidebar-shortcut.ai-shortcut-select-btn:last-child {
   border-bottom: none;
 }
-.shortcuts-sidebar .ai-shortcut-bullet-btn .ai-shortcut-dot {
-  display: inline-block;
-  flex-shrink: 0;
-  width: 5px;
-  height: 5px;
-  border-radius: 999px;
-  background: currentColor;
-  opacity: 0.55;
-  transform: translateY(-2px);
-}
-.shortcuts-sidebar .ai-shortcut-bullet-btn .sidebar-shortcut-name {
+.shortcuts-sidebar .ai-shortcut-select-btn .sidebar-shortcut-name {
   flex: 1;
   min-width: 0;
   line-height: 1.35;
@@ -3710,23 +4023,61 @@ body.app-mode .topic-layout {
   text-overflow: clip;
 }
 @media (hover: hover) {
-  .shortcuts-sidebar .ai-shortcut-bullet-btn:hover {
-    background: #eef4ff;
-    color: var(--color-primary, #2c4467);
+  .shortcuts-sidebar .ai-shortcut-select-btn:hover {
+    background: #eff4fb;
   }
-  .shortcuts-sidebar .ai-shortcut-bullet-btn:hover .sidebar-shortcut-name {
-    text-decoration: underline;
-    text-decoration-color: rgba(44, 68, 103, 0.35);
-    text-underline-offset: 3px;
-    text-decoration-thickness: 1.5px;
-  }
+}
+
+/* Marker slot — sits in the left column. Renders the bullet dot by
+   default; .is-multi-selected on the parent swaps it for a filled
+   blue circle with a white check icon. Same 16×16 footprint either
+   way so name baseline stays put on toggle. */
+.ai-shortcut-marker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text-muted);
+  transition: background 0.14s, color 0.14s;
+}
+.ai-shortcut-marker-dot {
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0.6;
+  transition: opacity 0.12s;
+}
+.ai-shortcut-marker-check {
+  display: none;
+  position: absolute;
+}
+.ai-shortcut-select-btn.is-multi-selected .ai-shortcut-marker {
+  background: #2c4467;
+  color: #fff;
+}
+.ai-shortcut-select-btn.is-multi-selected .ai-shortcut-marker-dot {
+  display: none;
+}
+.ai-shortcut-select-btn.is-multi-selected .ai-shortcut-marker-check {
+  display: block;
+}
+.ai-shortcut-select-btn.is-multi-selected .sidebar-shortcut-name {
+  color: #2c4467;
+  font-weight: 600;
 }
 
 /* Custom-search page: bullet lists go multi-column at wider widths
    so the page uses available space. */
 .topic-layout.is-custom .ai-shortcuts-subsection .ai-shortcut-bullet-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   column-gap: 1.25rem;
   row-gap: 0.05rem;
 }
@@ -6985,7 +7336,8 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 
 /* === Discover / All Topics modals =========================== */
 .discover-modal-overlay,
-.all-topics-modal-overlay {
+.all-topics-modal-overlay,
+.settings-modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.55);
@@ -6994,6 +7346,261 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   align-items: center;
   justify-content: center;
   padding: 1rem;
+}
+
+/* === Settings modal =================================================
+   Layout: header / scrollable body / sticky footer. Each setting
+   section sits in its own pale card with a clear title + helper
+   line. Footer hosts Reset (left) + Cancel / Save (right). */
+.settings-modal-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 560px;
+  max-height: 88vh;
+  background: var(--color-bg);
+  border-radius: 16px;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.35);
+  overflow: hidden;
+}
+.settings-modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1.2rem 1.3rem 1rem;
+  border-bottom: 1px solid #eef0f4;
+  flex-shrink: 0;
+}
+.settings-modal-head-text { min-width: 0; }
+.settings-modal-title {
+  margin: 0 0 0.3rem;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #1e2d44;
+}
+.settings-modal-intro {
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+  max-width: 38em;
+}
+.settings-modal-close {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f5f9;
+  border: 1px solid #e6e8ec;
+  border-radius: 999px;
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.12s, color 0.12s;
+}
+.settings-modal-close:hover {
+  background: #e8edf5;
+  color: var(--color-primary, #2c4467);
+}
+
+/* Scrollable middle region — section cards live here. */
+.settings-modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1.2rem 1.3rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #f7f9fc;
+}
+.settings-section {
+  background: var(--color-bg);
+  border: 1px solid #e6e8ec;
+  border-radius: 12px;
+  padding: 1rem 1.05rem 1.05rem;
+}
+.settings-section-head { margin-bottom: 0.75rem; }
+.settings-section-title {
+  margin: 0 0 0.2rem;
+  font-family: var(--font-family);
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: #1e2d44;
+}
+.settings-section-desc {
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
+.settings-option-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.settings-option-grid-stacked {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.5rem;
+}
+
+.settings-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.8rem;
+  background: #f3f5f9;
+  border: 1.5px solid transparent;
+  border-radius: 999px;
+  font-family: var(--font-family);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.06s;
+  text-align: left;
+}
+.settings-option:hover {
+  background: #e6ecf5;
+  border-color: #c8d3e3;
+}
+.settings-option:active { transform: translateY(1px); }
+.settings-option.is-selected {
+  background: #ebf2fb;
+  border-color: #2c4467;
+  color: #1e2d44;
+}
+.settings-option-label { font-weight: 600; }
+.settings-option-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.085em;
+  text-transform: uppercase;
+  color: #2c4467;
+  background: rgba(44, 68, 103, 0.12);
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+}
+.settings-option.is-selected .settings-option-tag {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.settings-option-stacked {
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  gap: 0.2rem;
+  text-align: left;
+}
+.settings-option-stacked .settings-option-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e2d44;
+}
+.settings-option-stacked .settings-option-desc {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+.settings-option-stacked.is-selected .settings-option-desc { color: #475569; }
+
+/* Footer — Reset (left), Cancel / Save (right). Sticks to the
+   bottom of the modal card. */
+.settings-modal-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1.3rem;
+  border-top: 1px solid #eef0f4;
+  background: var(--color-bg);
+  flex-shrink: 0;
+}
+.settings-modal-foot-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.settings-modal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-family: var(--font-family);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: background 0.14s, border-color 0.14s, color 0.14s, opacity 0.14s, transform 0.06s;
+  white-space: nowrap;
+}
+.settings-modal-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.settings-modal-btn-reset {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  padding: 0.5rem 0.6rem;
+}
+.settings-modal-btn-reset:hover {
+  color: #b91c1c;
+  background: rgba(220, 38, 38, 0.06);
+}
+.settings-modal-btn-secondary {
+  background: transparent;
+  border: 1.5px solid #d6dae2;
+  color: #1e2d44;
+}
+.settings-modal-btn-secondary:hover:not(:disabled) {
+  background: #f3f5f9;
+  border-color: #95a8c5;
+}
+.settings-modal-btn-primary {
+  background: #9ca3af;
+  border: 1.5px solid transparent;
+  color: white;
+}
+.settings-modal-btn-primary.is-active {
+  background: #2c4467;
+}
+.settings-modal-btn-primary.is-active:hover {
+  background: #1f3251;
+}
+.settings-modal-btn-primary:active:not(:disabled) { transform: translateY(1px); }
+
+@media (max-width: 540px) {
+  .settings-modal-card {
+    max-height: 92vh;
+    border-radius: 14px;
+  }
+  .settings-modal-head { padding: 1rem 1rem 0.85rem; }
+  .settings-modal-body { padding: 1rem 1rem 0.75rem; gap: 0.85rem; }
+  .settings-modal-foot {
+    padding: 0.75rem 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .settings-modal-foot-right { width: 100%; justify-content: flex-end; }
+  .settings-option-grid-stacked { grid-template-columns: 1fr; }
 }
 
 .discover-modal-card,

@@ -1,5 +1,6 @@
 import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
-import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches } from './utils/data.js';
+import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getModels, getDefaultModelId, getModelById } from './utils/data.js';
+import { getPreferredModelId, setPreferredModelId, submitPrompt } from './utils/ai-models.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay } from './components/search-modal.js';
@@ -12,6 +13,8 @@ import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
 import { initPromptPreviewModal } from './components/prompt-preview-modal.js';
+import { initSettingsModal } from './components/settings-modal.js';
+import { applyReasoningLevelToPrompt } from './utils/settings.js';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -23,6 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initAllTopicsModal();
   initRelatedTopicsModal();
   initPromptPreviewModal();
+  initSettingsModal();
   initSearchOverlay();
   setupGlobalTabPillDelegation();
 
@@ -554,11 +558,28 @@ function renderStickyHeroBar(container, route) {
           <span class="sticky-cta-full">Prompt Builder</span>
           <span class="sticky-cta-short">Prompt Builder</span>
         </a>
+        <button type="button" class="sticky-settings" id="nav-settings" aria-label="Settings">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+        <a href="#/" class="sticky-home" id="nav-home" aria-label="Home">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/>
+            <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          </svg>
+        </a>
       </div>
     </div>
 
   `;
   renderSearchBar(document.getElementById('sticky-search-container'), route, { compact: true });
+
+  // Settings gear in the main nav — opens the Settings modal.
+  document.getElementById('nav-settings')?.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('open-settings-modal'));
+  });
 
   // Nav menu panel — appended to body so it's not clipped by header overflow
   let navOverlay = document.getElementById('navmenu-overlay');
@@ -577,10 +598,21 @@ function renderStickyHeroBar(container, route) {
   }
   navPanel.innerHTML = `
     <div class="navmenu-head">
+      <button class="navmenu-close" id="navmenu-close" aria-label="Close menu">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="6" y1="6" x2="18" y2="18"/>
+          <line x1="18" y1="6" x2="6" y2="18"/>
+        </svg>
+      </button>
       <a href="#/" class="navmenu-brand" id="navmenu-brand-link">
         <span class="navmenu-title">Standard Topic</span>
       </a>
-      <button class="navmenu-close" id="navmenu-close" aria-label="Close menu">✕</button>
+      <a href="#/" class="navmenu-home" id="navmenu-home" aria-label="Home">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/>
+          <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        </svg>
+      </a>
     </div>
     <div class="navmenu-search" id="navmenu-search-container"></div>
     <div class="navmenu-prompt-row">
@@ -597,6 +629,13 @@ function renderStickyHeroBar(container, route) {
     </div>
     <div class="navmenu-footer-sticky">
       <div class="navmenu-footer-links">
+        <button type="button" class="navmenu-link navmenu-link-button" id="navmenu-settings">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          Settings
+        </button>
         <a href="#/about" class="navmenu-link">About</a>
         <a href="#/terms" class="navmenu-link">Terms</a>
         <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer" class="navmenu-link">
@@ -607,6 +646,13 @@ function renderStickyHeroBar(container, route) {
     </div>
   `;
   renderSearchBar(document.getElementById('navmenu-search-container'), route);
+
+  // Settings link in the navmenu footer — closes the menu, opens
+  // the Settings modal.
+  document.getElementById('navmenu-settings')?.addEventListener('click', () => {
+    document.body.classList.remove('navmenu-open');
+    window.dispatchEvent(new CustomEvent('open-settings-modal'));
+  });
 
   const scrollEl = navPanel.querySelector('.navmenu-scroll');
   const updateScrollOverflow = () => {
@@ -837,22 +883,46 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   const cardClasses = ['sidebar-card', 'shortcuts-sidebar'];
 
   const titlePillHTML = topicName ? `<span class="section-topic-pill">${escapeHTML(topicName)}</span>` : '';
+  // AI Shortcuts run in always-multi-select mode now — clicking a
+   // row toggles selection, and a per-row arrow opens the modal for
+   // that single shortcut directly. The `data-multi="1"` flag + the
+   // .is-multi-select class are set up-front and never toggled off.
   let html = `
-    <div class="${cardClasses.join(' ')}" data-multi="0">
+    <div class="${cardClasses.join(' ')} is-multi-select" data-multi="1">
       <div class="sidebar-card-header">
         <h3 class="sidebar-card-title">Shortcuts${titlePillHTML}</h3>
       </div>
       ${all.length > 0 ? `
-        <div class="shortcuts-multi-submit-wrap" hidden>
-          <div class="shortcuts-subsection-header multi-controls-header">
-            <h4 class="shortcuts-subsection-title multi-controls-title">Multi-select</h4>
+        <div class="shortcuts-multi-submit-wrap" role="region" aria-label="Prompt submission" aria-hidden="true">
+          <div class="multi-controls-head">
+            <h5 class="multi-controls-title">Prompt Submission</h5>
+            <span class="shortcuts-multi-count" aria-live="polite">
+              <strong id="shortcuts-multi-submit-count">0</strong> selected
+            </span>
           </div>
-          <div class="multi-controls-row">
-            <button type="button" class="shortcuts-multi-submit" id="shortcuts-multi-submit">
-              <span class="shortcuts-multi-submit-label">Submit</span>
-              <span class="shortcuts-multi-submit-count" id="shortcuts-multi-submit-count">0</span>
+          <div class="multi-controls-model-row">
+            <span class="multi-controls-model-label">Send to</span>
+            <button type="button" class="multi-controls-model-btn" id="multi-controls-model-btn" aria-haspopup="listbox" aria-expanded="false">
+              <span class="multi-controls-model-name" id="multi-controls-model-name">ChatGPT</span>
+              <svg class="multi-controls-model-caret" viewBox="0 0 12 12" width="11" height="11" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 4.5 6 8 9 4.5"/>
+              </svg>
             </button>
+            <ul class="multi-controls-model-menu" id="multi-controls-model-menu" role="listbox" hidden></ul>
+          </div>
+          <div class="multi-controls-buttons">
+            <button type="button" class="shortcuts-multi-preview" id="shortcuts-multi-preview">Preview</button>
+            <button type="button" class="shortcuts-multi-submit" id="shortcuts-multi-submit">
+              <span>Direct Submit</span>
+              <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="8" x2="12" y2="8"/>
+                <polyline points="8 4 12 8 8 12"/>
+              </svg>
+            </button>
+          </div>
+          <div class="multi-controls-utils">
             <button type="button" class="shortcuts-multi-select-all" id="shortcuts-multi-select-all">Select all</button>
+            <span class="multi-controls-util-divider" aria-hidden="true">·</span>
             <button type="button" class="shortcuts-multi-clear" id="shortcuts-multi-clear">Clear</button>
           </div>
         </div>
@@ -874,21 +944,15 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     `;
   }
 
-  // AI Shortcuts subsection — Multi-select toggle lives here next to
-  // the subsection title. Shortcuts are grouped into Discover / Learn
-  // / Analyze (and an "Other" bucket for anything unclassified) using
-  // a name-keyword heuristic. Each group renders as a bullet list.
-  // Subsection labels may later host icons.
+  // AI Shortcuts subsection — shortcuts are grouped into
+  // Discover / Learn / Analyze (and an "Other" bucket for anything
+  // unclassified) using a name-keyword heuristic. Each shortcut row
+  // is a checkbox + name + direct-access arrow. Multi-select is
+  // always on, so no toggle in the header.
   html += `
     <section class="shortcuts-subsection ai-shortcuts-subsection">
       <div class="shortcuts-subsection-header">
         <h4 class="shortcuts-subsection-title">AI Shortcuts</h4>
-        ${all.length > 0 ? `
-          <button type="button" class="multi-toggle" id="multi-toggle" role="switch" aria-checked="false">
-            <span class="multi-toggle-label">Multi-select</span>
-            <span class="multi-toggle-switch" aria-hidden="true"><span class="multi-toggle-knob"></span></span>
-          </button>
-        ` : ''}
       </div>
   `;
 
@@ -936,116 +1000,216 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     toastTimer = setTimeout(() => toastEl.classList.remove('is-visible'), 1800);
   };
   container.querySelectorAll('.quick-link-pill').forEach(link => {
-    link.addEventListener('click', (e) => {
-      const cardEl = container.querySelector('.shortcuts-sidebar');
-      const multiOn = cardEl?.dataset.multi === '1';
-      if (multiOn) {
-        e.preventDefault();
-        flashToast('Quick Links are paused while multi-select is on');
-        return;
-      }
+    link.addEventListener('click', () => {
       const name = link.dataset.name || '';
       track('content_shortcut_click', { name, route: window.location.hash || '#/' });
     });
   });
 
   const card = container.querySelector('.sidebar-card');
-  const toggle = container.querySelector('#multi-toggle');
   const submitBtn = container.querySelector('#shortcuts-multi-submit');
+  const previewBtn = container.querySelector('#shortcuts-multi-preview');
   const clearBtn = container.querySelector('#shortcuts-multi-clear');
   const selectAllBtn = container.querySelector('#shortcuts-multi-select-all');
   const submitWrap = container.querySelector('.shortcuts-multi-submit-wrap');
   const countEl = container.querySelector('#shortcuts-multi-submit-count');
+  const modelBtn = container.querySelector('#multi-controls-model-btn');
+  const modelNameEl = container.querySelector('#multi-controls-model-name');
+  const modelMenu = container.querySelector('#multi-controls-model-menu');
 
+  // Model picker — reflects the user's preferred model, and lets
+  // them swap it inline. Direct Submit uses this; Preview opens the
+  // full prompt modal where the user can also change models.
+  const refreshModelChoice = () => {
+    if (!modelNameEl) return null;
+    const models = getModels();
+    const preferredId = getPreferredModelId(getDefaultModelId());
+    const current = getModelById(preferredId) || models[0] || null;
+    modelNameEl.textContent = current?.name || 'ChatGPT';
+    return current;
+  };
+  if (modelMenu) {
+    const models = getModels();
+    modelMenu.innerHTML = models.map(m => `
+      <li>
+        <button type="button" class="multi-controls-model-option" role="option" data-model-id="${escapeAttr(m.id)}">
+          ${escapeHTML(m.name)}
+        </button>
+      </li>
+    `).join('');
+  }
+  refreshModelChoice();
+  const closeModelMenu = () => {
+    if (!modelMenu || !modelBtn) return;
+    modelMenu.hidden = true;
+    modelBtn.setAttribute('aria-expanded', 'false');
+  };
+  modelBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!modelMenu) return;
+    const open = !modelMenu.hidden;
+    modelMenu.hidden = open;
+    modelBtn.setAttribute('aria-expanded', open ? 'false' : 'true');
+  });
+  modelMenu?.addEventListener('click', (e) => {
+    const opt = e.target.closest('.multi-controls-model-option');
+    if (!opt) return;
+    setPreferredModelId(opt.dataset.modelId);
+    refreshModelChoice();
+    closeModelMenu();
+  });
+  document.addEventListener('click', (e) => {
+    if (!modelMenu || modelMenu.hidden) return;
+    if (modelBtn?.contains(e.target) || modelMenu.contains(e.target)) return;
+    closeModelMenu();
+  });
+
+  // Submit bar: floats in at the bottom of the card whenever any
+  // shortcut is selected, slides out when the selection is empty.
+  // Visibility driven by .is-visible class so we can transition.
   const updateSubmit = () => {
     if (!submitBtn || !submitWrap) return;
-    const multiOn = card.dataset.multi === '1';
-    if (!multiOn) {
-      submitWrap.hidden = true;
-      submitBtn.classList.remove('is-active');
-      if (clearBtn) clearBtn.disabled = true;
-      if (selectAllBtn) selectAllBtn.disabled = false;
-      if (countEl) countEl.textContent = '0';
-      return;
-    }
-    submitWrap.hidden = false;
-    const allShortcuts = container.querySelectorAll('.sidebar-shortcut:not(.quick-link-row)');
-    const selected = container.querySelectorAll('.sidebar-shortcut.is-multi-selected');
+    const allShortcuts = container.querySelectorAll('.ai-shortcut-select-btn');
+    const selected = container.querySelectorAll('.ai-shortcut-select-btn.is-multi-selected');
     const has = selected.length > 0;
     const allSelected = allShortcuts.length > 0 && selected.length === allShortcuts.length;
+    submitWrap.classList.toggle('is-visible', has);
+    submitWrap.setAttribute('aria-hidden', has ? 'false' : 'true');
     submitBtn.classList.toggle('is-active', has);
     submitBtn.disabled = !has;
+    if (previewBtn) previewBtn.disabled = !has;
     if (clearBtn) clearBtn.disabled = !has;
     if (selectAllBtn) selectAllBtn.disabled = allSelected;
     if (countEl) countEl.textContent = String(selected.length);
   };
 
-  toggle?.addEventListener('click', () => {
-    const on = card.dataset.multi !== '1';
-    card.dataset.multi = on ? '1' : '0';
-    card.classList.toggle('is-multi-select', on);
-    toggle.setAttribute('aria-checked', on ? 'true' : 'false');
-    if (!on) {
-      container.querySelectorAll('.sidebar-shortcut.is-multi-selected')
-        .forEach(b => b.classList.remove('is-multi-selected'));
+  // Build the combined prompt + a display name from the current
+  // selection. Single selection bypasses the multi-prompt intro.
+  // The user's session reasoning-level (Brief / Standard / Detailed
+  // / Deep) is prepended to whatever prompt we end up with.
+  const buildSubmission = () => {
+    const selected = Array.from(container.querySelectorAll('.ai-shortcut-select-btn.is-multi-selected'));
+    if (selected.length === 0) return null;
+    if (selected.length === 1) {
+      const btn = selected[0];
+      return {
+        prompt: applyReasoningLevelToPrompt(btn.dataset.prompt || ''),
+        name: btn.dataset.name || 'Shortcut',
+        iconKey: btn.dataset.iconKey || '',
+        count: 1,
+      };
     }
-    updateSubmit();
-  });
-
-  // AI Shortcut buttons only — Quick Link rows share the
-  // .sidebar-shortcut class for layout but are real <a> tags that
-  // open an external URL. They must NOT trigger the prompt modal.
-  container.querySelectorAll('.sidebar-shortcut:not(.quick-link-row)').forEach(btn => {
-    btn.addEventListener('click', () => {
-      btn.blur();
-      // Multi-select mode: toggle selection instead of opening modal
-      if (card.dataset.multi === '1') {
-        btn.classList.toggle('is-multi-selected');
-        updateSubmit();
-        return;
-      }
-      const prompt = btn.dataset.prompt;
-      const name = btn.dataset.name;
-      const iconKey = btn.dataset.iconKey || '';
-      track('shortcut_click', { shortcut_name: name, route: window.location.hash || '#/' });
-      window.dispatchEvent(new CustomEvent('open-prompt-modal', {
-        detail: { prompt, name, iconKey },
-      }));
-    });
-  });
-
-  clearBtn?.addEventListener('click', () => {
-    container.querySelectorAll('.sidebar-shortcut.is-multi-selected')
-      .forEach(b => b.classList.remove('is-multi-selected'));
-    updateSubmit();
-  });
-
-  selectAllBtn?.addEventListener('click', () => {
-    container.querySelectorAll('.sidebar-shortcut:not(.quick-link-row)')
-      .forEach(b => b.classList.add('is-multi-selected'));
-    updateSubmit();
-  });
-
-  submitBtn?.addEventListener('click', () => {
-    const selected = Array.from(container.querySelectorAll('.sidebar-shortcut.is-multi-selected'));
-    if (selected.length === 0) return;
     const combined = selected.map((b, i) => {
       const name = b.dataset.name || `Shortcut ${i + 1}`;
       const prompt = b.dataset.prompt || '';
       return `${i + 1}. ${name}\n${prompt}`;
     }).join('\n\n---\n\n');
     const intro = `Please respond to each of the following ${selected.length} prompts in order. Treat each as its own task and clearly label your answers.`;
-    const finalPrompt = `${intro}\n\n${combined}`;
-    const name = `${selected.length} Selected Shortcut${selected.length > 1 ? 's' : ''}`;
-    track('multi_shortcut_submit', { count: selected.length, route: window.location.hash || '#/' });
+    return {
+      prompt: applyReasoningLevelToPrompt(`${intro}\n\n${combined}`),
+      name: `${selected.length} Selected Shortcuts`,
+      iconKey: '',
+      count: selected.length,
+    };
+  };
+
+  // Select button (checkbox + name): toggles multi-select state.
+  // If the clicked button (and the row beneath it) is hidden under
+  // the floating Prompt Submission panel, scroll the scroll-wrap so
+  // the user can still see what they just selected.
+  container.querySelectorAll('.ai-shortcut-select-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      btn.blur();
+      const on = !btn.classList.contains('is-multi-selected');
+      btn.classList.toggle('is-multi-selected', on);
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      updateSubmit();
+      if (on) ensureRowVisible(btn);
+    });
+  });
+
+  function ensureRowVisible(btn) {
+    if (!submitWrap || !listWrap) return;
+    // Wait one frame so the panel's is-visible class + transition
+    // start state is applied (so its boundingRect is real).
+    requestAnimationFrame(() => {
+      const wrapRect = listWrap.getBoundingClientRect();
+      const panelRect = submitWrap.getBoundingClientRect();
+      // The panel may be position: fixed (mobile) or absolute (desktop);
+      // either way its rect tells us its on-screen position.
+      const panelTop = panelRect.top || (wrapRect.bottom);
+      const btnRect = btn.getBoundingClientRect();
+      // Find the next sibling row (within the same group) to also keep
+      // visible — gives the user context for what comes after.
+      const li = btn.closest('.ai-shortcut-bullet-row');
+      const nextLi = li?.nextElementSibling;
+      const nextRect = nextLi ? nextLi.getBoundingClientRect() : null;
+      const rowBottom = nextRect ? nextRect.bottom : btnRect.bottom;
+      const obstruction = panelTop - 8; // 8px breathing room
+      if (rowBottom > obstruction) {
+        const delta = rowBottom - obstruction;
+        listWrap.scrollBy({ top: delta, behavior: 'smooth' });
+      }
+    });
+  }
+
+
+  clearBtn?.addEventListener('click', () => {
+    container.querySelectorAll('.ai-shortcut-select-btn.is-multi-selected')
+      .forEach(b => {
+        b.classList.remove('is-multi-selected');
+        b.setAttribute('aria-pressed', 'false');
+      });
+    updateSubmit();
+  });
+
+  selectAllBtn?.addEventListener('click', () => {
+    container.querySelectorAll('.ai-shortcut-select-btn')
+      .forEach(b => {
+        b.classList.add('is-multi-selected');
+        b.setAttribute('aria-pressed', 'true');
+      });
+    updateSubmit();
+  });
+
+  // Preview Submission — opens the existing prompt-modal where the
+  // user can review, edit, copy, change AI model, and submit.
+  previewBtn?.addEventListener('click', () => {
+    const sub = buildSubmission();
+    if (!sub) return;
+    track(sub.count === 1 ? 'shortcut_click' : 'multi_shortcut_submit', {
+      [sub.count === 1 ? 'shortcut_name' : 'count']: sub.count === 1 ? sub.name : sub.count,
+      route: window.location.hash || '#/',
+    });
     window.dispatchEvent(new CustomEvent('open-prompt-modal', {
-      detail: { prompt: finalPrompt, name, iconKey: '' },
+      detail: { prompt: sub.prompt, name: sub.name, iconKey: sub.iconKey },
     }));
   });
 
+  // Direct Submit — fires the prompt straight to the currently
+  // chosen AI model (copy-to-clipboard + open the model's chat URL
+  // with prompt pre-filled). Skips the preview modal entirely.
+  submitBtn?.addEventListener('click', async () => {
+    const sub = buildSubmission();
+    if (!sub) return;
+    const model = refreshModelChoice();
+    if (!model) return;
+    track('direct_submit', {
+      model: model.id,
+      count: sub.count,
+      route: window.location.hash || '#/',
+    });
+    try {
+      await submitPrompt(model, sub.prompt);
+    } catch (err) {
+      console.error('Direct submit failed', err);
+    }
+  });
+
   // Scroll-fade indicators: toggle has-overflow-top / has-overflow-bottom
-  // on the list-wrap based on the wrap's scroll position. rAF-throttled.
-  const listWrap = container.querySelector('.shortcuts-list-wrap');
+  // on the scroll wrap based on the wrap's scroll position. rAF-throttled.
+  const listWrap = container.querySelector('.shortcuts-scroll-wrap');
   if (listWrap) {
     let rafId = null;
     const updateOverflow = () => {
@@ -1099,21 +1263,26 @@ function shortcutItem(shortcut, topicName) {
   `;
 }
 
-// Bullet-style AI shortcut item — used inside grouped subsections
-// (Discover / Learn / Analyze). No icon, no chev, just a leading
-// bullet and the shortcut name. Still a .sidebar-shortcut button so
-// the existing click + multi-select handlers fire.
+// AI shortcut row — single click target. Default state shows a
+// bullet dot to the left of the name. Clicking the row toggles
+// selection: bullet swaps to a filled-blue checkbox with a white
+// check. Submission always routes through the sticky bottom bar.
 function shortcutBulletItem(shortcut, topicName) {
   const prompt = shortcut.prompt.replace(/\{topic\}/gi, topicName);
   return `
     <li class="ai-shortcut-bullet-row">
-      <button class="sidebar-shortcut ai-shortcut-bullet-btn"
+      <button class="sidebar-shortcut ai-shortcut-select-btn"
               data-prompt="${escapeAttr(prompt)}"
               data-name="${escapeAttr(shortcut.name)}"
               data-icon-key="${escapeAttr(shortcut.icon)}"
+              aria-pressed="false"
               title="${escapeAttr(shortcut.name)}">
-        <span class="sidebar-shortcut-multi-check" aria-hidden="true">✓</span>
-        <span class="ai-shortcut-dot" aria-hidden="true"></span>
+        <span class="ai-shortcut-marker" aria-hidden="true">
+          <span class="ai-shortcut-marker-dot"></span>
+          <svg class="ai-shortcut-marker-check" viewBox="0 0 14 14" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="2 7 6 11 12 3"/>
+          </svg>
+        </span>
         <span class="sidebar-shortcut-name">${escapeHTML(shortcut.name)}</span>
       </button>
     </li>
@@ -1152,10 +1321,7 @@ function quickLinkPill(search, topicName) {
        target="_blank"
        rel="noopener noreferrer"
        data-name="${escapeAttr(search.name)}"
-       title="${escapeAttr(search.name)}">
-      <span class="quick-link-pill-name">${escapeHTML(search.name)}</span>
-      <span class="quick-link-pill-glyph" aria-hidden="true">↗</span>
-    </a>
+       title="${escapeAttr(search.name)}">${escapeHTML(search.name)}</a>
   `;
 }
 

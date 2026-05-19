@@ -90,7 +90,7 @@
   <div class="tab-content" id="tab-directory"><div class="toolbar"><h2>Shortcuts Directory</h2><button class="btn btn-primary" id="add-shortcut">+ Add Shortcut</button></div><table><thead><tr><th>Name</th><th>ID</th><th>Icon</th><th>Prompt</th><th>Actions</th></tr></thead><tbody id="dir-body"></tbody></table></div>
   <div class="tab-content" id="tab-assignments"><div class="toolbar"><h2>Topic Assignments</h2></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Pick a topic on the left (incl. <strong>Homepage</strong> and <strong>Custom Search</strong>) to set which AI shortcuts appear on that page. Drag to reorder.</p><div class="assign-layout"><div class="assign-sidebar"><div class="assign-sidebar-head">Topics</div><div id="assign-topics"></div></div><div class="assign-main" id="assign-main"></div></div></div>
   <div class="tab-content" id="tab-searches"><div class="toolbar"><h2>Quick Content Shortcuts</h2><button class="btn btn-primary" id="add-search">+ Add Source</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">External search destinations shown in the Quick Content sub-nav row on topic and custom search pages. Use <code>{query}</code> in the URL where the topic name goes.</p><table><thead><tr><th>Name</th><th>Icon</th><th>URL Template</th><th>Actions</th></tr></thead><tbody id="searches-body"></tbody></table></div>
-  <div class="tab-content" id="tab-models"><div class="toolbar"><h2>AI Models</h2><button class="btn btn-primary" id="add-model">+ Add Model</button></div><table><thead><tr><th>Name</th><th>ID</th><th>Submission Method</th><th>URL Template</th><th>Actions</th></tr></thead><tbody id="models-body"></tbody></table></div>
+  <div class="tab-content" id="tab-models"><div class="toolbar"><h2>AI Models</h2><button class="btn btn-primary" id="add-model">+ Add Model</button></div><div style="display:flex;align-items:center;gap:0.55rem;margin-bottom:0.85rem;padding:0.6rem 0.75rem;background:var(--bg-light);border-radius:6px;border:1px solid var(--border);"><label for="models-default" style="font-weight:600;font-size:0.85rem;">Default model</label><select id="models-default" style="flex:1;padding:0.35rem 0.5rem;border:1px solid var(--border);border-radius:4px;background:white;font-size:0.85rem;"></select><span style="color:var(--text-muted);font-size:0.75rem;">Preselected in prompt modals + the user Settings panel.</span></div><table><thead><tr><th>Name</th><th>ID</th><th>Submission Method</th><th>URL Template</th><th>Actions</th></tr></thead><tbody id="models-body"></tbody></table></div>
   <div class="tab-content" id="tab-promptgen"><div class="toolbar"><h2>Prompt Generator</h2><button class="btn btn-success" id="pg-save">Apply JSON</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Edit <code>prompt-generator.json</code> directly. Click <strong>Apply JSON</strong> to validate and stage your changes, then use <strong>Export All JSON</strong> to download the updated file.</p><textarea id="pg-editor" style="width:100%;min-height:500px;background:var(--bg-light);padding:1rem;border-radius:6px;font-size:0.78rem;font-family:monospace;border:1px solid var(--border);resize:vertical;"></textarea></div>
   <div id="modal"></div>
 
@@ -440,8 +440,22 @@
     // ===== MODELS =====
     function renderModels() {
       var models = data.models.models || [];
+      var dflt = data.models.defaultModel || (models[0] && models[0].id) || '';
+      // If the stored default isn't in the list anymore, snap to first model.
+      if (!models.some(function(m){return m.id===dflt;}) && models[0]) {
+        dflt = models[0].id; data.models.defaultModel = dflt;
+      }
+      var sel = document.getElementById('models-default');
+      if (sel) {
+        sel.innerHTML = models.map(function(m){
+          return '<option value="'+escA(m.id)+'"'+(m.id===dflt?' selected':'')+'>'+esc(m.name)+'</option>';
+        }).join('');
+        sel.onchange = function(){ data.models.defaultModel = sel.value; renderModels(); toast('Default model set to ' + sel.options[sel.selectedIndex].text); };
+      }
       document.getElementById('models-body').innerHTML = models.map(function(m, i){
-        return '<tr><td><strong>'+esc(m.name)+'</strong></td><td class="mono">'+esc(m.id)+'</td><td>'+esc(m.submissionMethod||'direct')+'</td><td class="mono truncate">'+esc(m.urlTemplate)+'</td><td style="white-space:nowrap"><button class="btn" data-action="up" data-i="'+i+'" title="Move up">↑</button> <button class="btn" data-action="down" data-i="'+i+'" title="Move down">↓</button> <button class="btn" data-action="edit" data-id="'+escA(m.id)+'">Edit</button> <button class="btn btn-danger" data-action="delete" data-id="'+escA(m.id)+'">Del</button></td></tr>';
+        var isDefault = m.id === dflt;
+        var defaultPill = isDefault ? ' <span style="display:inline-block;padding:0.1rem 0.4rem;background:rgba(44,68,103,0.12);color:#2c4467;border-radius:999px;font-size:0.65rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-left:0.35rem;">default</span>' : '';
+        return '<tr><td><strong>'+esc(m.name)+'</strong>'+defaultPill+'</td><td class="mono">'+esc(m.id)+'</td><td>'+esc(m.submissionMethod||'direct')+'</td><td class="mono truncate">'+esc(m.urlTemplate)+'</td><td style="white-space:nowrap"><button class="btn" data-action="up" data-i="'+i+'" title="Move up">↑</button> <button class="btn" data-action="down" data-i="'+i+'" title="Move down">↓</button> <button class="btn" data-action="edit" data-id="'+escA(m.id)+'">Edit</button> <button class="btn btn-danger" data-action="delete" data-id="'+escA(m.id)+'">Del</button></td></tr>';
       }).join('');
       document.getElementById('models-body').onclick = function(e){
         var btn=e.target.closest('[data-action]'); if(!btn)return;

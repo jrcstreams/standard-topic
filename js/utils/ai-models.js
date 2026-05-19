@@ -1,14 +1,18 @@
 // AI model URL building and prompt submission
 
-const STORAGE_KEY = 'standardtopic_preferred_model';
+import { getDefaultModelOverride, setDefaultModelOverride } from './settings.js';
+
 const MAX_URL_LENGTH = 2000;
 
+// Session-scoped preferred model. Reads from the user's Settings
+// override (sessionStorage). Falls back to the data-defined default
+// (admin-configured) which is passed in by callers.
 export function getPreferredModelId(defaultId) {
-  return localStorage.getItem(STORAGE_KEY) || defaultId;
+  return getDefaultModelOverride() || defaultId;
 }
 
 export function setPreferredModelId(modelId) {
-  localStorage.setItem(STORAGE_KEY, modelId);
+  setDefaultModelOverride(modelId);
 }
 
 // True when the model's URL template contains a {prompt} placeholder
