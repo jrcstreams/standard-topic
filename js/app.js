@@ -578,7 +578,6 @@ function renderStickyHeroBar(container, route) {
   navPanel.innerHTML = `
     <div class="navmenu-head">
       <a href="#/" class="navmenu-brand" id="navmenu-brand-link">
-        <img src="assets/logo-light.png" alt="Standard Topic" class="navmenu-logo">
         <span class="navmenu-title">Standard Topic</span>
       </a>
       <button class="navmenu-close" id="navmenu-close" aria-label="Close menu">✕</button>
@@ -754,9 +753,12 @@ function renderRelatedSection(container, topic) {
            </a>
          `).join('')}
        </div>`;
+  const pillHTML = topic?.name
+    ? `<span class="section-topic-pill">${escapeHTML(topic.name)}</span>`
+    : '';
   container.innerHTML = `
     <div class="related-panel">
-      <h3 class="related-title">Related Topics</h3>
+      <h3 class="related-title">Related Topics${pillHTML}</h3>
       <div class="related-scroll-wrap">
         ${list}
       </div>
@@ -834,16 +836,11 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
 
   const cardClasses = ['sidebar-card', 'shortcuts-sidebar'];
 
+  const titlePillHTML = topicName ? `<span class="section-topic-pill">${escapeHTML(topicName)}</span>` : '';
   let html = `
     <div class="${cardClasses.join(' ')}" data-multi="0">
       <div class="sidebar-card-header">
-        <h3 class="sidebar-card-title">Shortcuts</h3>
-        ${all.length > 0 ? `
-          <button type="button" class="multi-toggle" id="multi-toggle" role="switch" aria-checked="false">
-            <span class="multi-toggle-label">Multi-select</span>
-            <span class="multi-toggle-switch" aria-hidden="true"><span class="multi-toggle-knob"></span></span>
-          </button>
-        ` : ''}
+        <h3 class="sidebar-card-title">Shortcuts${titlePillHTML}</h3>
       </div>
       ${all.length > 0 ? `
         <div class="shortcuts-multi-submit-wrap" hidden>
@@ -870,30 +867,54 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
         <div class="shortcuts-subsection-header">
           <h4 class="shortcuts-subsection-title">Quick Links</h4>
         </div>
-        <div class="sidebar-shortcut-list quick-links-list">
-          ${contentSearches.map(s => quickLinkItem(s, topicName)).join('')}
+        <div class="quick-links-pill-grid">
+          ${contentSearches.map(s => quickLinkPill(s, topicName)).join('')}
         </div>
       </section>
     `;
   }
 
-  // AI Shortcuts subsection
+  // AI Shortcuts subsection — Multi-select toggle lives here next to
+  // the subsection title. Shortcuts are grouped into Discover / Learn
+  // / Analyze (and an "Other" bucket for anything unclassified) using
+  // a name-keyword heuristic. Each group renders as a bullet list.
+  // Subsection labels may later host icons.
   html += `
     <section class="shortcuts-subsection ai-shortcuts-subsection">
       <div class="shortcuts-subsection-header">
         <h4 class="shortcuts-subsection-title">AI Shortcuts</h4>
+        ${all.length > 0 ? `
+          <button type="button" class="multi-toggle" id="multi-toggle" role="switch" aria-checked="false">
+            <span class="multi-toggle-label">Multi-select</span>
+            <span class="multi-toggle-switch" aria-hidden="true"><span class="multi-toggle-knob"></span></span>
+          </button>
+        ` : ''}
       </div>
   `;
 
   if (all.length === 0) {
     html += `<p class="sidebar-empty">No shortcuts yet.</p>`;
   } else {
-    html += `
-      <div class="sidebar-shortcut-list">
-        ${all.map(s => shortcutItem(s, topicName)).join('')}
-      </div>
-      <div class="shortcuts-list-tail-spacer" aria-hidden="true"></div>
-    `;
+    const groups = groupShortcuts(all);
+    const groupOrder = [
+      { key: 'discover', label: 'Discover' },
+      { key: 'learn', label: 'Learn' },
+      { key: 'analyze', label: 'Analyze' },
+      { key: 'other', label: 'More' },
+    ];
+    groupOrder.forEach(g => {
+      const items = groups[g.key];
+      if (!items || items.length === 0) return;
+      html += `
+        <div class="ai-shortcut-group">
+          <h5 class="ai-shortcut-group-label">${g.label}</h5>
+          <ul class="ai-shortcut-bullet-list">
+            ${items.map(s => shortcutBulletItem(s, topicName)).join('')}
+          </ul>
+        </div>
+      `;
+    });
+    html += `<div class="shortcuts-list-tail-spacer" aria-hidden="true"></div>`;
   }
   html += `</section>`;
   html += `</div>`; /* close .shortcuts-scroll-wrap */
@@ -914,7 +935,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     if (toastTimer) clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toastEl.classList.remove('is-visible'), 1800);
   };
-  container.querySelectorAll('.quick-link-row').forEach(link => {
+  container.querySelectorAll('.quick-link-pill').forEach(link => {
     link.addEventListener('click', (e) => {
       const cardEl = container.querySelector('.shortcuts-sidebar');
       const multiOn = cardEl?.dataset.multi === '1';
@@ -948,7 +969,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       return;
     }
     submitWrap.hidden = false;
-    const allShortcuts = container.querySelectorAll('.sidebar-shortcut');
+    const allShortcuts = container.querySelectorAll('.sidebar-shortcut:not(.quick-link-row)');
     const selected = container.querySelectorAll('.sidebar-shortcut.is-multi-selected');
     const has = selected.length > 0;
     const allSelected = allShortcuts.length > 0 && selected.length === allShortcuts.length;
@@ -971,7 +992,10 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     updateSubmit();
   });
 
-  container.querySelectorAll('.sidebar-shortcut').forEach(btn => {
+  // AI Shortcut buttons only — Quick Link rows share the
+  // .sidebar-shortcut class for layout but are real <a> tags that
+  // open an external URL. They must NOT trigger the prompt modal.
+  container.querySelectorAll('.sidebar-shortcut:not(.quick-link-row)').forEach(btn => {
     btn.addEventListener('click', () => {
       btn.blur();
       // Multi-select mode: toggle selection instead of opening modal
@@ -997,7 +1021,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   });
 
   selectAllBtn?.addEventListener('click', () => {
-    container.querySelectorAll('.sidebar-shortcut')
+    container.querySelectorAll('.sidebar-shortcut:not(.quick-link-row)')
       .forEach(b => b.classList.add('is-multi-selected'));
     updateSubmit();
   });
@@ -1060,7 +1084,6 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
 
 function shortcutItem(shortcut, topicName) {
   const iconHTML = renderIcon(shortcut.icon, 'sidebar-shortcut-icon');
-  const iconEmoji = getIconEmoji(shortcut.icon);
   const prompt = shortcut.prompt.replace(/\{topic\}/gi, topicName);
   return `
     <button class="sidebar-shortcut"
@@ -1073,6 +1096,66 @@ function shortcutItem(shortcut, topicName) {
       <span class="sidebar-shortcut-name">${escapeHTML(shortcut.name)}</span>
       <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
     </button>
+  `;
+}
+
+// Bullet-style AI shortcut item — used inside grouped subsections
+// (Discover / Learn / Analyze). No icon, no chev, just a leading
+// bullet and the shortcut name. Still a .sidebar-shortcut button so
+// the existing click + multi-select handlers fire.
+function shortcutBulletItem(shortcut, topicName) {
+  const prompt = shortcut.prompt.replace(/\{topic\}/gi, topicName);
+  return `
+    <li class="ai-shortcut-bullet-row">
+      <button class="sidebar-shortcut ai-shortcut-bullet-btn"
+              data-prompt="${escapeAttr(prompt)}"
+              data-name="${escapeAttr(shortcut.name)}"
+              data-icon-key="${escapeAttr(shortcut.icon)}"
+              title="${escapeAttr(shortcut.name)}">
+        <span class="sidebar-shortcut-multi-check" aria-hidden="true">✓</span>
+        <span class="ai-shortcut-dot" aria-hidden="true"></span>
+        <span class="sidebar-shortcut-name">${escapeHTML(shortcut.name)}</span>
+      </button>
+    </li>
+  `;
+}
+
+// Bucket AI shortcuts into Discover / Learn / Analyze by name keyword.
+// Items that don't match any bucket fall into "other" and render in
+// the trailing "More" group. Categories are starter heuristics — a
+// `category` field on each shortcut would replace this later.
+function groupShortcuts(shortcuts) {
+  const groups = { discover: [], learn: [], analyze: [], other: [] };
+  const learnRE = /(guide|glossary|beginner|primer|fundamentals|basics|deep ?dive|history|background|key players|key terms|how |where to|why )/i;
+  const analyzeRE = /(analy|impact|affect|hype|reality|compare| vs | versus |implications|outcome|signal|forecast|prediction|risk|controversy|debate)/i;
+  const discoverRE = /(news|snapshot|update|headline|trend|watch|latest|now|today|roundup|hot|spotlight|brief|digest)/i;
+  shortcuts.forEach(s => {
+    const name = s.name || '';
+    if (learnRE.test(name)) groups.learn.push(s);
+    else if (analyzeRE.test(name)) groups.analyze.push(s);
+    else if (discoverRE.test(name)) groups.discover.push(s);
+    else groups.other.push(s);
+  });
+  return groups;
+}
+
+// Quick Link pill — compact label-only pill rendered in a tight
+// grid (.quick-links-pill-grid). External link opens in a new tab.
+// Quick Links are secondary in prominence to AI Shortcuts; the pill
+// treatment reflects that — no icon, no row chrome, just text + a
+// quiet external glyph on the right.
+function quickLinkPill(search, topicName) {
+  const url = search.urlTemplate.replace(/\{query\}/g, encodeURIComponent(topicName));
+  return `
+    <a class="quick-link-pill"
+       href="${url}"
+       target="_blank"
+       rel="noopener noreferrer"
+       data-name="${escapeAttr(search.name)}"
+       title="${escapeAttr(search.name)}">
+      <span class="quick-link-pill-name">${escapeHTML(search.name)}</span>
+      <span class="quick-link-pill-glyph" aria-hidden="true">↗</span>
+    </a>
   `;
 }
 

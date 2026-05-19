@@ -3391,21 +3391,20 @@ body.app-mode .topic-layout {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin: 0 0 0.25rem;
+  margin: 0;
+  padding: 0 0 0.55rem;
+  border-bottom: 1px solid #e6e8ec;
   flex-shrink: 0;
 }
-/* Quick Links header gets more breathing room below its label —
-   the grid tiles below feel less cramped this way. AI Shortcuts
-   keeps the tight 0.25rem spacing so the label couples to its list. */
 .quick-links-subsection .shortcuts-subsection-header {
-  margin-bottom: 0.7rem;
+  margin-bottom: 0;
 }
 .shortcuts-subsection-title {
   font-family: var(--font-family);
-  font-size: 0.72rem;
+  font-size: 0.95rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.08em;
   color: var(--color-text-muted);
   margin: 0;
   flex: 0 1 auto;
@@ -3556,51 +3555,179 @@ body.app-mode .topic-layout {
    (Google News / Reddit / X / YouTube) arranged in a 2-column grid
    on the sidebar / mobile, each tile a compact card with the brand
    emoji on the left and the name on the right. */
-/* Quick Links now render as .sidebar-shortcut rows (same look as AI
-   Shortcuts) — the only Quick-Link specific styling is the trailing
-   ↗ glyph that signals external link instead of the › chev. */
-.sidebar-shortcut-chev.quick-link-external {
-  font-size: 0.85rem;
+/* === Quick Links pill grid ===
+   Compact label-only pills, two columns. Secondary visual weight to
+   AI Shortcuts — quiet ghost-pill background + hairline border, hover
+   warms to a soft primary-tinted state with the external glyph
+   nudging up-right. */
+.quick-links-pill-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+  padding-top: 0.6rem;
+}
+.quick-link-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  padding: 0.4rem 0.7rem;
+  background: #f6f7f9;
+  border: 1px solid #e6e8ec;
+  border-radius: 999px;
+  text-decoration: none;
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.08s;
+}
+.quick-link-pill-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.quick-link-pill-glyph {
+  font-size: 0.78rem;
+  color: var(--color-text-light);
+  opacity: 0.7;
+  flex-shrink: 0;
+  transition: transform 0.14s, color 0.14s, opacity 0.14s;
 }
 @media (hover: hover) {
-  .shortcuts-sidebar .quick-link-row:hover .quick-link-external {
-    transform: translate(2px, -2px);
+  .quick-link-pill:hover {
+    background: #eef2f9;
+    border-color: #c8d3e3;
+    color: var(--color-primary);
+  }
+  .quick-link-pill:hover .quick-link-pill-glyph {
+    transform: translate(1px, -1px);
+    opacity: 1;
+    color: var(--color-primary);
   }
 }
+.quick-link-pill:active { transform: translateY(1px); }
 
-/* Custom-search page: AI Shortcuts becomes a multi-column list at
-   wider widths so the page uses available space instead of a narrow
-   centered column. Quick Links stays single-column since 4 items is
-   short enough to read as a stack. */
-.topic-layout.is-custom .ai-shortcuts-subsection .sidebar-shortcut-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  column-gap: 1.5rem;
-  row-gap: 0;
-}
-.topic-layout.is-custom .ai-shortcuts-subsection .sidebar-shortcut-list > .sidebar-shortcut:last-child {
-  border-bottom: 1px solid #e6e8ec;
-  margin-bottom: 0;
-}
-
-/* Multi-select on: Quick Links rows stay visible but read as
-   disabled. Color goes muted, cursor flips to not-allowed, hover
-   killed. A click handler in JS catches the tap and flashes a toast
-   explaining they're locked to AI Shortcuts in multi-select mode. */
-.shortcuts-sidebar.is-multi-select .quick-link-row {
+/* Multi-select on: Quick Link pills muted. */
+.shortcuts-sidebar.is-multi-select .quick-link-pill {
   color: var(--color-text-light);
   cursor: not-allowed;
   opacity: 0.55;
 }
 @media (hover: hover) {
-  .shortcuts-sidebar.is-multi-select .quick-link-row:hover {
-    background: transparent;
+  .shortcuts-sidebar.is-multi-select .quick-link-pill:hover {
+    background: #f6f7f9;
+    border-color: #e6e8ec;
     color: var(--color-text-light);
   }
-  .shortcuts-sidebar.is-multi-select .quick-link-row:hover .quick-link-external {
+  .shortcuts-sidebar.is-multi-select .quick-link-pill:hover .quick-link-pill-glyph {
     transform: none;
     color: var(--color-text-light);
   }
+}
+
+/* === AI Shortcuts grouped subsections ===
+   Inside the AI Shortcuts subsection, shortcuts are bucketed by
+   category (Discover / Learn / Analyze / More). Each bucket renders
+   as a small uppercase label followed by a bullet list. */
+.ai-shortcut-group {
+  padding-top: 0.85rem;
+}
+.ai-shortcut-group + .ai-shortcut-group {
+  padding-top: 1rem;
+}
+.ai-shortcut-group-label {
+  font-family: var(--font-family);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.085em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 0 0 0.45rem;
+  padding: 0;
+}
+.ai-shortcut-bullet-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+}
+.ai-shortcut-bullet-row {
+  margin: 0;
+  padding: 0;
+}
+.shortcuts-sidebar .sidebar-shortcut.ai-shortcut-bullet-btn {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.3rem 0.5rem 0.3rem 0.35rem;
+  background: transparent;
+  /* No inter-row borders — bullet dots carry the row rhythm now.
+     Selector includes .sidebar-shortcut to beat the base
+     `.shortcuts-sidebar .sidebar-shortcut { border-bottom: 1px... }`
+     rule that lives later in the file. */
+  border: none;
+  border-bottom: none;
+  border-radius: 4px;
+  text-align: left;
+  font-family: var(--font-family);
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.shortcuts-sidebar .sidebar-shortcut-list > .sidebar-shortcut.ai-shortcut-bullet-btn:last-child {
+  border-bottom: none;
+}
+.shortcuts-sidebar .ai-shortcut-bullet-btn .ai-shortcut-dot {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0.55;
+  transform: translateY(-2px);
+}
+.shortcuts-sidebar .ai-shortcut-bullet-btn .sidebar-shortcut-name {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.35;
+  letter-spacing: -0.005em;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+@media (hover: hover) {
+  .shortcuts-sidebar .ai-shortcut-bullet-btn:hover {
+    background: #eef4ff;
+    color: var(--color-primary, #2c4467);
+  }
+  .shortcuts-sidebar .ai-shortcut-bullet-btn:hover .sidebar-shortcut-name {
+    text-decoration: underline;
+    text-decoration-color: rgba(44, 68, 103, 0.35);
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1.5px;
+  }
+}
+
+/* Custom-search page: bullet lists go multi-column at wider widths
+   so the page uses available space. */
+.topic-layout.is-custom .ai-shortcuts-subsection .ai-shortcut-bullet-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  column-gap: 1.25rem;
+  row-gap: 0.05rem;
 }
 
 /* Inline toast — appears briefly above the AI list when the user
@@ -3772,15 +3899,18 @@ body.app-mode .topic-layout {
   display: inline-flex;
   align-items: center;
   line-height: 1;
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: #2c4467;
   background: #e6ecf5;
   border: none;
   border-radius: 999px;
-  padding: 0.32rem 0.78rem;
-  letter-spacing: 0.02em;
-  margin-left: 0.15rem;
+  padding: 0.34rem 0.75rem;
+  letter-spacing: 0.01em;
+  margin-left: 0.55rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+  text-shadow: none;
 }
 
 .sidebar-card-desc {
