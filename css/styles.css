@@ -359,8 +359,8 @@ body.sticky-always.has-subnav #content {
 }
 
 /* Settings gear — sits next to the Prompt Builder pill in the
-   main nav. Hides on the same breakpoint so the mobile nav stays
-   lean (Settings is reachable through the navmenu footer link). */
+   main nav. Visible at every viewport so users always have a
+   one-tap path to their preferences. */
 .sticky-settings {
   display: inline-flex;
   align-items: center;
@@ -383,8 +383,11 @@ body.sticky-always.has-subnav #content {
 .sticky-settings:active { transform: translateY(1px); }
 .sticky-settings svg { display: block; }
 
-@media (max-width: 899.98px) {
-  .sticky-settings { display: none; }
+@media (max-width: 640px) {
+  .sticky-settings { width: 32px; height: 32px; }
+}
+@media (max-width: 400px) {
+  .sticky-settings { width: 30px; height: 30px; }
 }
 
 /* Home shortcut — sits to the right of the gear in the main nav.
@@ -1526,7 +1529,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   letter-spacing: -0.024em;
   margin: 0;
   padding: 0 0 1.2rem 0;
-  border-bottom: 1.5px solid #d6dae2;
+  border-bottom: 2px solid #c8cfdc;
   background: var(--color-bg);
   flex-shrink: 0;
   /* Flex container so the bar (::before) and text are siblings,
@@ -1794,36 +1797,36 @@ body.hide-cta .sticky-cta { display: none !important; }
   border-top: 1px solid #eef0f4;
 }
 
-/* 1. Title row */
+/* 1. Title row — selection count on the left, utility actions
+   (Select all / Clear) on the right. Combines two previously
+   separate rows for a denser, more functional panel. */
 .multi-controls-head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  padding: 0.55rem 0.85rem 0.5rem;
-}
-.multi-controls-title {
-  margin: 0;
-  font-family: var(--font-family);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
+  padding: 0.55rem 0.9rem 0.5rem;
 }
 .shortcuts-multi-count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
   font-family: var(--font-family);
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: var(--color-text-muted);
-  letter-spacing: -0.005em;
   white-space: nowrap;
 }
 .shortcuts-multi-count strong {
   color: #1e2d44;
   font-weight: 700;
-  font-size: 0.92rem;
-  margin-right: 0.2rem;
+  font-size: 1.05rem;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.shortcuts-multi-count-label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
 }
 
 /* 2. Send-to model row */
@@ -1920,25 +1923,28 @@ body.hide-cta .sticky-cta { display: none !important; }
   color: var(--color-primary, #2c4467);
 }
 
-/* 3. Preview + Direct Submit row (equal-weight pair) */
+/* 3. Preview + Direct Submit row (equal-weight pair, with Direct
+   Submit getting the primary green treatment). Slightly more
+   vertical heft so the buttons feel like real CTAs rather than
+   inline links. */
 .multi-controls-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
-  padding: 0.5rem 0.85rem;
+  gap: 0.55rem;
+  padding: 0.65rem 0.9rem 0.85rem;
 }
 .shortcuts-multi-preview {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
-  padding: 0.55rem 0.85rem;
+  padding: 0.7rem 0.9rem;
   background: #ffffff;
   color: #1e2d44;
   border: 1.5px solid #c8d3e3;
   border-radius: 10px;
   font-family: var(--font-family);
-  font-size: 0.84rem;
+  font-size: 0.88rem;
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.005em;
@@ -1962,13 +1968,13 @@ body.hide-cta .sticky-cta { display: none !important; }
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  padding: 0.55rem 0.85rem;
+  padding: 0.7rem 0.9rem;
   background: #9ca3af;
   color: white;
   border: 1.5px solid transparent;
   border-radius: 10px;
   font-family: var(--font-family);
-  font-size: 0.84rem;
+  font-size: 0.88rem;
   font-weight: 600;
   line-height: 1.1;
   letter-spacing: -0.005em;
@@ -1994,13 +2000,11 @@ body.hide-cta .sticky-cta { display: none !important; }
 }
 .shortcuts-multi-submit.is-active:active { transform: translateY(1px); }
 
-/* 4. Utility links — small, muted, centered */
+/* Utility links — right-aligned inside the header row. */
 .multi-controls-utils {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 0.5rem;
-  padding: 0.35rem 0.85rem 0.45rem;
 }
 .shortcuts-multi-select-all,
 .shortcuts-multi-clear {
@@ -3632,7 +3636,7 @@ body.app-mode .topic-layout {
   align-items: center;
   margin: 0;
   padding: 0 0 1.2rem 0;
-  border-bottom: 1.5px solid #d6dae2;
+  border-bottom: 2px solid #c8cfdc;
   position: relative;
   background: var(--color-bg);
   z-index: 4;
@@ -3737,7 +3741,7 @@ body.app-mode .topic-layout {
   gap: 0.5rem;
   margin: 0;
   padding: 0 0 0.55rem;
-  border-bottom: 1px solid #e6e8ec;
+  border-bottom: 1px solid #eef0f4;
   flex-shrink: 0;
 }
 .quick-links-subsection .shortcuts-subsection-header {
@@ -3894,22 +3898,26 @@ body.app-mode .topic-layout {
    on the sidebar / mobile, each tile a compact card with the brand
    emoji on the left and the name on the right. */
 /* === Quick Links — compact label-only pills ===
-   Always a 2-column grid (so the four shortcuts read as a tidy
-   2×2 block rather than 3-on-row-1 + 1-stranded-on-row-2). Pills
-   are content-sized via justify-self: start so a short label like
-   "Reddit" stays narrow instead of stretching to fill its cell. */
+   Sidebar widths: 2×2 grid, pills stretch to fill cells so all
+   four read as a uniform block instead of misaligned tags.
+   Tabular widths (540-899px) where the shortcuts card spans a
+   wider column: collapse to a single 4-up row. */
 .quick-links-pill-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.4rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
   padding-top: 0.6rem;
+}
+@media (min-width: 540px) and (max-width: 899.98px) {
+  .quick-links-pill-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 .quick-link-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  justify-self: start;
-  padding: 0.4rem 0.75rem;
+  padding: 0.55rem 0.85rem;
   background: #f3f5f9;
   border: 1px solid transparent;
   border-radius: 999px;
@@ -3954,16 +3962,17 @@ body.app-mode .topic-layout {
   padding-top: 1rem;
 }
 .ai-shortcut-group-label {
-  /* Sentence case, semibold. Reads as a sub-grouping within the AI
-     Shortcuts section — the bullet list below carries the visual
-     rhythm, so the label itself doesn't need an icon. */
+  /* Quiet uppercase mini-heading — reads as a category divider
+     above its bullet list rather than competing with the AI
+     Shortcuts subsection title or the shortcut names below. */
   display: block;
   font-family: var(--font-family);
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: -0.005em;
-  color: #1e2d44;
-  margin: 0 0 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #8a96ad;
+  margin: 0 0 0.55rem;
   padding: 0;
   line-height: 1.2;
 }
@@ -4121,7 +4130,7 @@ body.app-mode .topic-layout {
   letter-spacing: -0.024em;
   margin: 0;
   padding: 0 0 1.2rem 0;
-  border-bottom: 1.5px solid #d6dae2;
+  border-bottom: 2px solid #c8cfdc;
   background: var(--color-bg);
   flex-shrink: 0;
   display: flex;
@@ -4233,24 +4242,26 @@ body.app-mode .topic-layout {
   .shortcuts-sidebar .sidebar-card-header { margin-bottom: 0; }
 }
 
-/* Topic pill next to section titles (topic pages only) — soft grey
-   filled pill with a darker text color for subtle contrast. The pill
-   sits inside an inline-flex title with align-items: center, so its
-   box centers vertically against the title text. line-height: 1 keeps
-   the pill text glyph in the same vertical position as the box. */
+/* Topic tag next to section titles (topic pages only) — reads as a
+   passive context label, not an interactive control. Uppercase
+   small-caps, no fill, leading vertical divider so it feels like a
+   meta-tag attached to the section title rather than another pill
+   button (which the Quick Links use right below). */
 .section-topic-pill {
   display: inline-flex;
   align-items: center;
   line-height: 1;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #2c4467;
-  background: #e6ecf5;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #6c7a91;
+  background: transparent;
   border: none;
-  border-radius: 999px;
-  padding: 0.34rem 0.75rem;
-  letter-spacing: 0.01em;
-  margin-left: 0.55rem;
+  border-left: 1px solid #d6dae2;
+  border-radius: 0;
+  padding: 0.1rem 0 0.1rem 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: 0.7rem;
   flex-shrink: 0;
   white-space: nowrap;
   text-shadow: none;

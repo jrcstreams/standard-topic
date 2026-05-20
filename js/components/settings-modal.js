@@ -103,6 +103,10 @@ function saveChanges() {
   }
   setReasoningLevel(pending.reasoningId);
   saved = { ...pending };
+  // Notify any open panels (e.g. the shortcuts multi-controls model
+  // picker) so they re-read the preference instead of showing the
+  // stale value they captured at render time.
+  window.dispatchEvent(new CustomEvent('preferred-model-changed'));
   close();
 }
 

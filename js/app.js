@@ -613,6 +613,12 @@ function renderStickyHeroBar(container, route) {
           <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
         </svg>
       </a>
+      <button type="button" class="navmenu-home navmenu-settings" id="navmenu-settings-head" aria-label="Settings">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
     </div>
     <div class="navmenu-search" id="navmenu-search-container"></div>
     <div class="navmenu-prompt-row">
@@ -629,13 +635,6 @@ function renderStickyHeroBar(container, route) {
     </div>
     <div class="navmenu-footer-sticky">
       <div class="navmenu-footer-links">
-        <button type="button" class="navmenu-link navmenu-link-button" id="navmenu-settings">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-          </svg>
-          Settings
-        </button>
         <a href="#/about" class="navmenu-link">About</a>
         <a href="#/terms" class="navmenu-link">Terms</a>
         <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer" class="navmenu-link">
@@ -647,9 +646,9 @@ function renderStickyHeroBar(container, route) {
   `;
   renderSearchBar(document.getElementById('navmenu-search-container'), route);
 
-  // Settings link in the navmenu footer — closes the menu, opens
+  // Settings gear in the navmenu head — closes the menu, opens
   // the Settings modal.
-  document.getElementById('navmenu-settings')?.addEventListener('click', () => {
+  document.getElementById('navmenu-settings-head')?.addEventListener('click', () => {
     document.body.classList.remove('navmenu-open');
     window.dispatchEvent(new CustomEvent('open-settings-modal'));
   });
@@ -895,10 +894,15 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       ${all.length > 0 ? `
         <div class="shortcuts-multi-submit-wrap" role="region" aria-label="Prompt submission" aria-hidden="true">
           <div class="multi-controls-head">
-            <h5 class="multi-controls-title">Prompt Submission</h5>
             <span class="shortcuts-multi-count" aria-live="polite">
-              <strong id="shortcuts-multi-submit-count">0</strong> selected
+              <strong id="shortcuts-multi-submit-count">0</strong>
+              <span class="shortcuts-multi-count-label">selected</span>
             </span>
+            <div class="multi-controls-utils">
+              <button type="button" class="shortcuts-multi-select-all" id="shortcuts-multi-select-all">Select all</button>
+              <span class="multi-controls-util-divider" aria-hidden="true">·</span>
+              <button type="button" class="shortcuts-multi-clear" id="shortcuts-multi-clear">Clear</button>
+            </div>
           </div>
           <div class="multi-controls-model-row">
             <span class="multi-controls-model-label">Send to</span>
@@ -919,11 +923,6 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
                 <polyline points="8 4 12 8 8 12"/>
               </svg>
             </button>
-          </div>
-          <div class="multi-controls-utils">
-            <button type="button" class="shortcuts-multi-select-all" id="shortcuts-multi-select-all">Select all</button>
-            <span class="multi-controls-util-divider" aria-hidden="true">·</span>
-            <button type="button" class="shortcuts-multi-clear" id="shortcuts-multi-clear">Clear</button>
           </div>
         </div>
       ` : ''}
@@ -1039,6 +1038,11 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     `).join('');
   }
   refreshModelChoice();
+  // Re-read preferred model when the Settings modal saves a change,
+  // so the label switches from (e.g.) ChatGPT to Perplexity without
+  // the user having to refresh.
+  const onPreferredModelChanged = () => refreshModelChoice();
+  window.addEventListener('preferred-model-changed', onPreferredModelChanged);
   const closeModelMenu = () => {
     if (!modelMenu || !modelBtn) return;
     modelMenu.hidden = true;
