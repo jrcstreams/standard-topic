@@ -48,11 +48,11 @@ export function renderNewsFeed(container, topic, isHome) {
       // body-padding / grid-inset region (left/right of the cards)
       // becomes a dead zone for scrolling the feed.
       if (e.data.rssWheel && scrollWrap) {
-        const { deltaY, deltaX, deltaMode } = e.data.rssWheel;
+        const { deltaY, deltaMode } = e.data.rssWheel;
         // deltaMode 1 = lines, 2 = pages, 0 = pixels. Approximate.
+        // Only forward vertical deltas; horizontal scroll is locked.
         const pxY = deltaMode === 1 ? deltaY * 16 : deltaMode === 2 ? deltaY * scrollWrap.clientHeight : deltaY;
-        const pxX = deltaMode === 1 ? deltaX * 16 : deltaMode === 2 ? deltaX * scrollWrap.clientWidth  : deltaX;
-        scrollWrap.scrollBy({ top: pxY, left: pxX, behavior: 'auto' });
+        scrollWrap.scrollBy({ top: pxY, behavior: 'auto' });
       }
     });
   }

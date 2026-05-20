@@ -9,9 +9,19 @@
   /* Top padding so the first article isn't kissing the parent's
      sticky title separator when the feed first loads. Bottom padding
      gives the last article some breathing room as the user scrolls
-     all the way down. */
-  body { overflow: hidden; background: transparent; padding: 0.75rem 0.25rem 1rem; }
-  rssapp-wall { display: block; width: 100% !important; }
+     all the way down. overflow-x clipped on both html + body so
+     the rss.app widget can never introduce a horizontal scrollbar
+     inside the iframe (regression: cards were briefly scrollable
+     sideways on wider viewports). */
+  html { overflow: hidden; overflow-x: hidden; }
+  body {
+    overflow: hidden;
+    overflow-x: hidden;
+    background: transparent;
+    padding: 0.75rem 0.25rem 1rem;
+    max-width: 100%;
+  }
+  rssapp-wall { display: block; width: 100% !important; max-width: 100%; }
 </style>
 </head>
 <body>
