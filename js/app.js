@@ -266,7 +266,7 @@ function renderLayout(route) {
 function tabPillsRow(opts = {}) {
   const { showRelated = false, showAllTopics = false } = opts;
   const pills = [
-    `<button type="button" class="tab-pill tab-pill-newsfeed active" data-tab="newsfeed">News</button>`,
+    `<button type="button" class="tab-pill tab-pill-newsfeed active" data-tab="newsfeed">News Feed</button>`,
     `<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">Shortcuts</button>`,
   ];
   if (showRelated) {

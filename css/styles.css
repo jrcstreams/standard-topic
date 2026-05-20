@@ -3897,12 +3897,89 @@ body.app-mode .topic-layout {
   body.app-mode.active-tab-shortcuts .topic-layout:not(.is-custom) > #section-shortcuts { display: flex; }
   body.app-mode.active-tab-related   .topic-layout:not(.is-custom) > #section-related   { display: flex; }
 
-  /* Section titles tuned for mobile — a touch smaller than desktop
-     but still confident. */
-  body.app-mode .shortcuts-sidebar .sidebar-card-title,
-  body.app-mode .newsfeed-title,
-  body.app-mode .related-title {
-    font-size: 1.3rem;
+  /* === Tabbed-nav hierarchy bump ============================
+     In tabbed (mobile/tablet) mode the active tab already labels
+     the panel ("News Feed" / "Shortcuts" / "Related"), so the
+     duplicate section-title row inside each panel is redundant.
+     We hide those and promote the inner labels up one rung:
+       Quick Links / AI Shortcuts → section-title styling
+       Discover / Learn / Analyze / More → editorial eyebrow
+     For panels with no subsections (News Feed / Related), the
+     content sits directly under the tab bar.
+
+     Scoped to .topic-layout:not(.is-custom) — custom-search pages
+     don't use the tab system and still need their inline section
+     titles. */
+  body.app-mode .topic-layout:not(.is-custom) .shortcuts-sidebar .sidebar-card-header,
+  body.app-mode .topic-layout:not(.is-custom) .newsfeed-title,
+  body.app-mode .topic-layout:not(.is-custom) .related-title {
+    display: none;
+  }
+
+  /* Promote .shortcuts-subsection-header to look like the old
+     section title — accent bar, larger font, full border-bottom
+     rule (not the thin eyebrow rule). */
+  body.app-mode .topic-layout:not(.is-custom) .shortcuts-subsection-header {
+    margin: 0 0 1.2rem;
+    padding: 0 0 1.2rem;
+    border-bottom: 2px solid #c8cfdc;
+    gap: 0;
+  }
+  body.app-mode .topic-layout:not(.is-custom) .shortcuts-subsection-header::after {
+    display: none;
+  }
+  body.app-mode .topic-layout:not(.is-custom) .shortcuts-subsection-title {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 500;
+    text-shadow: 0 0 0.45px currentColor;
+    color: #1e2d44;
+    letter-spacing: -0.024em;
+    line-height: 1.15;
+    text-transform: none;
+    display: inline-flex;
+    align-items: center;
+  }
+  body.app-mode .topic-layout:not(.is-custom) .shortcuts-subsection-title::before {
+    content: '';
+    display: block;
+    flex-shrink: 0;
+    width: 4px;
+    height: 1.4em;
+    margin-right: 0.65rem;
+    background: #2c4467;
+    border-radius: 999px;
+  }
+  /* Quick Links gets a softer-blue bar; AI Shortcuts gets the
+     primary navy bar — same pattern as News Feed (green) / Related
+     (orange) had at the section level. */
+  body.app-mode .topic-layout:not(.is-custom) .quick-links-subsection .shortcuts-subsection-title::before {
+    background: #4a7cc9;
+  }
+
+  /* Promote .ai-shortcut-group-label to the editorial eyebrow style
+     that .shortcuts-subsection-title had at desktop sidebar widths
+     (small uppercase letter-spaced anchored to a thin extending rule). */
+  body.app-mode .topic-layout:not(.is-custom) .ai-shortcut-group { padding-top: 0; }
+  body.app-mode .topic-layout:not(.is-custom) .ai-shortcut-group + .ai-shortcut-group { padding-top: 1.4rem; }
+  body.app-mode .topic-layout:not(.is-custom) .ai-shortcut-group-label {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #6c7a91;
+    margin: 0 0 0.6rem;
+    line-height: 1.2;
+  }
+  body.app-mode .topic-layout:not(.is-custom) .ai-shortcut-group-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #eaecf1;
+    align-self: center;
   }
 }
 
