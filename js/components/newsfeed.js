@@ -35,11 +35,25 @@ export function renderNewsFeed(container, topic, isHome) {
   `;
 
   const rssIframe = container.querySelector('.newsfeed-iframe');
+  const scrollWrap = container.querySelector('.newsfeed-scroll-wrap');
   if (rssIframe && feedId) {
     window.addEventListener('message', (e) => {
-      if (!e.data || !e.data.rssHeight) return;
-      if (e.source !== rssIframe.contentWindow) return;
-      rssIframe.style.height = e.data.rssHeight + 'px';
+      if (!e.data || e.source !== rssIframe.contentWindow) return;
+      if (e.data.rssHeight) {
+        rssIframe.style.height = e.data.rssHeight + 'px';
+        return;
+      }
+      // Wheel forwarding: the iframe captures wheel events even when
+      // its body is overflow:hidden, so without this the iframe's
+      // body-padding / grid-inset region (left/right of the cards)
+      // becomes a dead zone for scrolling the feed.
+      if (e.data.rssWheel && scrollWrap) {
+        const { deltaY, deltaX, deltaMode } = e.data.rssWheel;
+        // deltaMode 1 = lines, 2 = pages, 0 = pixels. Approximate.
+        const pxY = deltaMode === 1 ? deltaY * 16 : deltaMode === 2 ? deltaY * scrollWrap.clientHeight : deltaY;
+        const pxX = deltaMode === 1 ? deltaX * 16 : deltaMode === 2 ? deltaX * scrollWrap.clientWidth  : deltaX;
+        scrollWrap.scrollBy({ top: pxY, left: pxX, behavior: 'auto' });
+      }
     });
   }
 }

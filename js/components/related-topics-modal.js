@@ -28,13 +28,18 @@ function open(topics, title, topicName) {
     </a>
   `).join('');
 
+  // Title hierarchy: tiny "RELATED TOPICS" eyebrow + big topic name
+  // (when we have one). Without a topic context, fall back to the
+  // legacy single-title layout so the modal still reads cleanly.
+  const headerInner = topicName
+    ? `<span class="related-modal-eyebrow">${escapeHTML(title)}</span>
+       <h3 class="related-modal-title">${escapeHTML(topicName)}</h3>`
+    : `<h3 class="related-modal-title">${escapeHTML(title)}</h3>`;
+
   overlayEl.innerHTML = `
-    <div class="related-modal-card" role="dialog" aria-label="${escapeHTML(title)}">
+    <div class="related-modal-card" role="dialog" aria-label="${escapeHTML(topicName ? `${title} — ${topicName}` : title)}">
       <button type="button" class="related-modal-close" aria-label="Close">✕</button>
-      <div class="related-modal-header">
-        <h3 class="related-modal-title">${escapeHTML(title)}</h3>
-        ${topicName ? `<span class="related-modal-topic-name">for ${escapeHTML(topicName)}</span>` : ''}
-      </div>
+      <div class="related-modal-header">${headerInner}</div>
       <div class="related-modal-body">${rows}</div>
       <div class="related-modal-footer">
         <a href="#" class="related-modal-all" id="related-modal-all-topics">View All Topics +</a>

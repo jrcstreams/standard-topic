@@ -41,7 +41,7 @@ export function initPromptModal() {
   document.body.appendChild(panelEl);
 
   window.addEventListener('open-prompt-modal', (e) => {
-    openModal(e.detail.prompt, e.detail.name, e.detail.iconKey);
+    openModal(e.detail.prompt, e.detail.name, e.detail.iconKey, e.detail.count);
   });
 
   overlayEl.addEventListener('click', (e) => {
@@ -53,7 +53,7 @@ export function initPromptModal() {
   });
 }
 
-function openModal(prompt, shortcutName, iconKey) {
+function openModal(prompt, shortcutName, iconKey, count) {
   const models = getModels();
   const defaultId = getDefaultModelId();
   const preferredId = getPreferredModelId(defaultId);
@@ -63,6 +63,7 @@ function openModal(prompt, shortcutName, iconKey) {
     isEditing: false,
     shortcutName,
     iconKey,
+    count: typeof count === 'number' ? count : 1,
     selectedModelId: preferredId,
     models,
     isClosing: false,
@@ -179,9 +180,16 @@ function getSubmitLabel(model) {
 }
 
 function renderPanelContent() {
-  const { shortcutName, iconKey, models, selectedModelId, isEditing } = modalState;
+  const { shortcutName, iconKey, count, models, selectedModelId, isEditing } = modalState;
   const prompt = getCurrentPrompt();
   const isEdited = modalState.editedPrompt != null && !isEditing;
+
+  // Header subline: for a single shortcut show its name (the user
+  // wants to see what they're previewing); for multi, show the
+  // selected count.
+  const subline = (count > 1)
+    ? `${count} selected`
+    : (shortcutName || 'Single shortcut');
 
   const modelBtnsHTML = models.map(m => `
     <button class="pm-model" type="button" data-model-id="${m.id}" ${m.id === selectedModelId ? 'aria-pressed="true"' : 'aria-pressed="false"'}>
@@ -192,9 +200,11 @@ function renderPanelContent() {
   panelEl.innerHTML = `
     <div class="pm-header">
       <div class="pm-title">
-        ${iconKey ? renderIcon(iconKey, 'pm-title-icon') : ''}
-        <h3 class="pm-title-name">${escapeHTML(shortcutName || 'Submit Prompt')}</h3>
-        <span class="pm-title-tag">AI Shortcut</span>
+        ${iconKey && count === 1 ? renderIcon(iconKey, 'pm-title-icon') : ''}
+        <div class="pm-title-text">
+          <span class="pm-title-eyebrow">AI Shortcuts</span>
+          <h3 class="pm-title-name">${escapeHTML(subline)}</h3>
+        </div>
       </div>
       <button type="button" class="pm-close" id="pm-close" aria-label="Close">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg>
@@ -204,7 +214,7 @@ function renderPanelContent() {
     <div class="pm-body">
       <section class="pm-section">
         <div class="pm-section-head">
-          <span class="pm-section-label">Prompt</span>
+          <span class="pm-section-label">Prompt Preview</span>
           ${isEdited ? '<button type="button" class="pm-reset" id="pm-reset">Reset to original</button>' : ''}
         </div>
         <div class="pm-preview-wrap ${isEditing ? 'is-editing' : ''}">

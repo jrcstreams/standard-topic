@@ -40,6 +40,17 @@
   });
   new ResizeObserver(reportHeight).observe(document.body);
   setInterval(reportHeight, 1000);
+
+  // Forward wheel events to the parent. Browsers don't bubble wheel
+  // across the iframe boundary, so without this the body padding /
+  // grid inset region around the article cards becomes a dead zone
+  // for scrolling the feed.
+  window.addEventListener('wheel', (e) => {
+    if (e.deltaY === 0 && e.deltaX === 0) return;
+    window.parent.postMessage({
+      rssWheel: { deltaY: e.deltaY, deltaX: e.deltaX, deltaMode: e.deltaMode },
+    }, '*');
+  }, { passive: true });
 </script>
 </body>
 </html>

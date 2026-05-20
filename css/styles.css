@@ -288,7 +288,7 @@ body.sticky-always.has-subnav #content {
   width: auto;
 }
 .sticky-search .search-bar {
-  height: 36px;
+  height: 34px;
   padding: 0 0.95rem;
   background: rgba(255, 255, 255, 0.94);
   color: var(--color-primary-dark, #0f1a2e);
@@ -325,7 +325,7 @@ body.sticky-always.has-subnav #content {
 
 /* Prompt Builder CTA — twin of the Search Topics pill above. */
 .sticky-cta {
-  height: 36px;
+  height: 34px;
   padding: 0 0.95rem;
   background: rgba(255, 255, 255, 0.94);
   color: var(--color-primary-dark, #0f1a2e);
@@ -581,6 +581,16 @@ body.hide-cta .sticky-cta { display: none !important; }
   flex-shrink: 0;
   text-decoration: none;
   transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.06s;
+}
+/* Home + Settings sit together at the right edge of the menu head,
+   with a tighter gap between them than the head's overall gap so
+   they read as a paired action cluster. margin-left: auto pushes
+   the cluster against the right edge regardless of brand width. */
+.navmenu-head-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: auto;
 }
 .navmenu-close { color: var(--color-text-muted, #6b7280); }
 .navmenu-home  { color: #2c4467; }
@@ -1016,7 +1026,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   }
   #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
   #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
-    font-size: 1.18rem;
+    font-size: 1.05rem;
     line-height: 1.25;
   }
   #sub-header.is-subnav .topic-banner-icon,
@@ -1030,11 +1040,13 @@ body.hide-cta .sticky-cta { display: none !important; }
   }
 }
 
-/* Extra-small screens: shrink title further for long names */
+/* Extra-small screens: shrink title further for long names. Icon
+   keeps its size from the previous breakpoint so the icon-to-text
+   ratio gets a little more icon-forward at the smallest widths. */
 @media (max-width: 400px) {
   #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
   #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
-    font-size: 1.12rem;
+    font-size: 1rem;
     line-height: 1.25;
   }
   #sub-header.is-subnav .topic-banner-icon,
@@ -2645,36 +2657,33 @@ html, body, #app {
   border-radius: 6px;
   color: var(--color-primary);
 }
+.pm-title-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 0.15rem;
+}
+.pm-title-eyebrow {
+  font-family: var(--font-family);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: #9aa3b3;
+  line-height: 1;
+}
 .pm-title-name {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--color-primary);
-  letter-spacing: -0.015em;
+  letter-spacing: -0.018em;
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
-}
-.pm-title-tag {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  padding: 0.18rem 0.5rem;
-  background: #eef2f7;
-  color: #4a6a8a;
-  border-radius: 999px;
-  font-family: var(--font-display);
-  font-size: 0.62rem;
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  line-height: 1;
-}
-@media (max-width: 480px) {
-  .pm-title-tag { display: none; }
 }
 .pm-close {
   flex-shrink: 0;
@@ -2710,14 +2719,14 @@ html, body, #app {
   margin-bottom: 0.45rem;
 }
 .pm-section-label {
-  font-family: var(--font-display);
-  font-size: 0.7rem;
-  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-family);
+  font-size: 0.78rem;
+  font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: #1e2d44;
   display: block;
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.5rem;
 }
 .pm-section-head .pm-section-label { margin-bottom: 0; }
 .pm-reset {
@@ -2970,7 +2979,8 @@ html, body, #app {
   .pm-body { padding: 0.85rem 0.95rem 0.85rem; }
   .pm-actions { align-items: stretch; }
   .pm-submit { align-self: stretch; }
-  .pm-title-name { font-size: 0.95rem; }
+  .pm-title-name { font-size: 1.02rem; }
+  .pm-title-eyebrow { font-size: 0.64rem; }
 }
 
 /* === Related Topics === */
@@ -3735,27 +3745,36 @@ body.app-mode .topic-layout {
   flex-direction: column;
 }
 .shortcuts-subsection + .shortcuts-subsection { margin-top: 1.6rem; }
+/* Editorial "eyebrow" pattern: a quiet uppercase label that anchors
+   a thin horizontal rule extending to the right. The label stops
+   carrying the full visual weight (no bold dark-navy heading) and
+   instead reads as a section marker — the rule does the structural
+   work, the label just identifies. */
 .shortcuts-subsection-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin: 0;
-  padding: 0 0 0.55rem;
-  border-bottom: 1px solid #eef0f4;
+  gap: 0.65rem;
+  margin: 0 0 0.6rem;
+  padding: 0;
+  border-bottom: none;
   flex-shrink: 0;
 }
-.quick-links-subsection .shortcuts-subsection-header {
-  margin-bottom: 0;
+.shortcuts-subsection-header::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #eaecf1;
+  align-self: center;
 }
 .shortcuts-subsection-title {
   font-family: var(--font-family);
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #1e2d44;
+  letter-spacing: 0.1em;
+  color: #6c7a91;
   margin: 0;
-  flex: 0 1 auto;
+  flex: 0 0 auto;
 }
 .shortcuts-subsection-header .multi-toggle {
   font-size: 0.78rem;
@@ -3964,10 +3983,12 @@ body.app-mode .topic-layout {
 .ai-shortcut-group-label {
   /* Quiet uppercase mini-heading — reads as a category divider
      above its bullet list rather than competing with the AI
-     Shortcuts subsection title or the shortcut names below. */
+     Shortcuts subsection title (which sits one level up) or the
+     shortcut names below. Slightly smaller + lighter than the
+     subsection title so the hierarchy reads at a glance. */
   display: block;
   font-family: var(--font-family);
-  font-size: 0.7rem;
+  font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: 0.09em;
   text-transform: uppercase;
@@ -4004,7 +4025,7 @@ body.app-mode .topic-layout {
   border-radius: 6px;
   text-align: left;
   font-family: var(--font-family);
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 500;
   color: var(--color-text);
   cursor: pointer;
@@ -4582,25 +4603,29 @@ body.app-mode .topic-layout {
 }
 .related-modal-header {
   display: flex;
-  align-items: baseline;
-  gap: 0.35rem;
-  padding: 0.85rem 1.15rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  padding: 0.95rem 1.15rem 0.9rem;
   border-bottom: 1px solid var(--color-border);
-  flex-wrap: wrap;
+}
+.related-modal-eyebrow {
+  font-family: var(--font-family);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  color: #9aa3b3;
+  line-height: 1;
 }
 .related-modal-title {
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 1.25rem;
   font-weight: var(--font-weight-bold);
   color: var(--color-primary);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   margin: 0;
-}
-.related-modal-topic-name {
-  font-size: 0.82rem;
-  color: var(--color-text-muted);
-  font-weight: var(--font-weight-regular);
-  margin-left: 0.35rem;
+  line-height: 1.15;
 }
 .related-modal-body {
   flex: 1;
