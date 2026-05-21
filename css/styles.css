@@ -4051,11 +4051,14 @@ body.app-mode .topic-layout {
   white-space: nowrap;
   transition: background 0.14s, color 0.14s, border-color 0.14s;
 }
-/* Tab pill dual labels — "News Feed" by default; collapses to
-   "News" when the row is tight (body.subnav-compact). */
+/* Tab pill dual labels — "News Feed" on desktop, always "News" on
+   tabbed-nav widths (≤899px) so there's no dynamic swap to babysit
+   and the tab pills stay tight on every mobile/tablet width. */
 .tab-pill-label-short { display: none; }
-body.subnav-compact .tab-pill-newsfeed .tab-pill-label-long { display: none; }
-body.subnav-compact .tab-pill-newsfeed .tab-pill-label-short { display: inline; }
+@media (max-width: 899.98px) {
+  .tab-pill-newsfeed .tab-pill-label-long { display: none; }
+  .tab-pill-newsfeed .tab-pill-label-short { display: inline; }
+}
 .tab-pill:hover { color: var(--color-text); }
 .tab-pill.active { color: white; }
 .tab-pill-newsfeed.active { background: #2f855a; border-color: #2f855a; }
@@ -4323,6 +4326,20 @@ body.subnav-compact .tab-pill-newsfeed .tab-pill-label-short { display: inline; 
 .shortcuts-sidebar .quick-links-bullet-list {
   padding-top: 0;
   margin-top: -0.25rem;
+}
+
+/* Tabbed/tabular viewports (≤899px in app-mode): Quick Links and
+   AI Shortcut bullet lists go 2-column so the wider shortcuts
+   card uses its horizontal room instead of stranding the rows in
+   one tall stack. Mobile single-column at very narrow widths. */
+@media (min-width: 480px) and (max-width: 899.98px) {
+  body.app-mode .shortcuts-sidebar .quick-links-bullet-list,
+  body.app-mode .ai-shortcut-bullet-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 0.4rem;
+    row-gap: 0;
+  }
 }
 .shortcuts-sidebar .quick-links-bullet-list .quick-link-pill {
   display: flex;
@@ -5735,11 +5752,28 @@ body.subnav-compact .tab-pill-newsfeed .tab-pill-label-short { display: inline; 
   max-width: 720px;
 }
 
-/* Field layout */
+/* Field layout — each row is now a self-contained card block with
+   border + padding + rounded corners. Two halves sit side-by-side
+   inside the card on wide widths, stack on mobile. Matches the
+   Topics modal / Settings modal card pattern so the builder reads
+   as a family of pickers. */
 .wiz-field-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
+  gap: 1.25rem 1.5rem;
+  background: var(--color-bg);
+  border: 1px solid #e6e8ec;
+  border-radius: 12px;
+  padding: 1rem 1.15rem 1.05rem;
+  box-shadow: 0 1px 2px rgba(15, 26, 46, 0.03);
+  transition: border-color 0.14s, box-shadow 0.14s;
+}
+.wiz-field-row:focus-within {
+  border-color: #c8d3e3;
+  box-shadow: 0 2px 6px rgba(15, 26, 46, 0.06);
+}
+@media (max-width: 640px) {
+  .wiz-field-row { grid-template-columns: 1fr; gap: 1rem; padding: 0.85rem 0.95rem 0.95rem; }
 }
 .wiz-field-half { min-width: 0; }
 .wiz-field-full { min-width: 0; flex: 1 1 100%; }
@@ -5747,10 +5781,13 @@ body.subnav-compact .tab-pill-newsfeed .tab-pill-label-short { display: inline; 
 
 .wiz-field-label {
   display: block;
-  font-size: 0.92rem;
-  font-weight: 650;
-  color: #2d3748;
-  margin-bottom: 0.2rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.012em;
+  color: #1e2d44;
+  margin-bottom: 0.25rem;
+  line-height: 1.2;
 }
 .wiz-field-desc {
   font-size: 0.78rem;

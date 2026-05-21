@@ -431,32 +431,22 @@ function wireSubnavCompactMeasure() {
     const titleRight = titleGroupEl.getBoundingClientRect().right;
     const tabsLeft = tabPillsEl.getBoundingClientRect().left;
     const horizontalGap = tabsLeft - titleRight;
-    return titleHeight > singleLineTitle || horizontalGap < 16;
+    return titleHeight > singleLineTitle || horizontalGap < 12;
   };
   const measure = () => {
-    // Only relevant at tabbed widths — desktop has tabs hidden, so
-    // there's nothing to crowd against.
     if (!window.matchMedia('(max-width: 899.98px)').matches) {
-      document.body.classList.remove('subnav-compact');
       document.body.classList.remove('subnav-title-shrunk');
       return;
     }
-    // Two-tier fit:
-    //   1. Try natural size with "News Feed" tab. If title wraps,
-    //      switch the tab to compact "News" via .subnav-compact.
-    //   2. Re-measure. If the title is STILL wrapping (no shortened
-    //      tab label saved enough room), shrink the title text + icon
-    //      down a size via .subnav-title-shrunk. Both classes stack.
-    document.body.classList.remove('subnav-compact');
+    // "News Feed" is always swapped to "News" in CSS at tabbed
+    // widths, so there's no compact-tab tier to measure. We only
+    // shrink the title text + icon as an absolute last resort
+    // when even the short tab label can't keep the title from
+    // wrapping (very long topic names).
     document.body.classList.remove('subnav-title-shrunk');
     requestAnimationFrame(() => {
       if (isWrapping()) {
-        document.body.classList.add('subnav-compact');
-        requestAnimationFrame(() => {
-          if (isWrapping()) {
-            document.body.classList.add('subnav-title-shrunk');
-          }
-        });
+        document.body.classList.add('subnav-title-shrunk');
       }
     });
   };
