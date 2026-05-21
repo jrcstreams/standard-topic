@@ -256,6 +256,189 @@ function removeTopic(key, value) {
 
 // ---------- Top-level render (two-panel, single-page) ----------
 
+// ---------- Card grid (main builder view) ----------
+//
+// Replaces the long flat form with a grid of summary cards. Each
+// card represents a group of related fields. Clicking a card opens
+// a modal containing the relevant pickers (or, for Topics, defers
+// to the existing openTopicPicker flow).
+
+const PB_CARDS = [
+  { key: 'topics',  icon: '🎯', label: 'Topics',
+    desc: 'What this prompt should focus on (primary + secondary).',
+    fields: ['primaryTopic', 'secondaryTopic'], required: true },
+  { key: 'output',  icon: '📐', label: 'Output Style',
+    desc: 'Content type, format, length, tone, reading level.',
+    fields: ['outputType', 'format', 'length', 'audience', 'tone'] },
+  { key: 'sources', icon: '📚', label: 'Sources & Citations',
+    desc: 'What kinds of references and how to cite them.',
+    fields: ['sources', 'citations'] },
+  { key: 'scope',   icon: '🌍', label: 'Scope',
+    desc: 'Time window and geographic focus.',
+    fields: ['recency', 'geographic'] },
+  { key: 'custom',  icon: '✏️', label: 'Custom Instructions',
+    desc: 'Anything else — framing, exclusions, extra detail.',
+    fields: ['customizations'] },
+];
+
+function pbOptionLabel(fieldKey, valueKey) {
+  const field = pgData.fields?.find(f => f.key === fieldKey);
+  if (!field?.options) return valueKey;
+  const opt = field.options.find(o => (o.value || o.id) === valueKey);
+  return opt?.label || valueKey;
+}
+
+function pbCardSummaryItems(card) {
+  const items = [];
+  for (const f of card.fields) {
+    if (f === 'primaryTopic') {
+      getPrimaryTopics().forEach(t => items.push(t));
+    } else if (f === 'secondaryTopic') {
+      getSecondaryTopics().forEach(t => items.push(t));
+    } else if (f === 'customizations') {
+      if (state.customizations) {
+        const t = state.customizations.trim();
+        items.push(t.length > 60 ? t.slice(0, 60) + '…' : t);
+      }
+    } else {
+      const vals = state.values?.[f];
+      if (Array.isArray(vals)) {
+        vals.forEach(v => items.push(pbOptionLabel(f, v)));
+      } else if (vals) {
+        items.push(pbOptionLabel(f, vals));
+      }
+    }
+  }
+  return items;
+}
+
+function renderPbCardsHTML() {
+  return PB_CARDS.map(card => {
+    const items = pbCardSummaryItems(card);
+    const summaryHTML = items.length
+      ? items.slice(0, 5).map(s => `<span class="pb-card-chip">${escapeHTML(s)}</span>`).join('') +
+        (items.length > 5 ? `<span class="pb-card-more">+${items.length - 5} more</span>` : '')
+      : `<span class="pb-card-cta">+ Add</span>`;
+    return `
+      <button type="button" class="pb-card${items.length ? ' has-items' : ''}" data-pb-card="${card.key}">
+        <div class="pb-card-head">
+          <span class="pb-card-icon" aria-hidden="true">${card.icon}</span>
+          <div class="pb-card-meta">
+            <span class="pb-card-title">
+              ${escapeHTML(card.label)}
+              ${card.required ? '<span class="pb-card-req">Required</span>' : ''}
+            </span>
+            <span class="pb-card-desc">${escapeHTML(card.desc)}</span>
+          </div>
+          <span class="pb-card-arrow" aria-hidden="true">›</span>
+        </div>
+        <div class="pb-card-summary">${summaryHTML}</div>
+      </button>
+    `;
+  }).join('');
+}
+
+function refreshPbCards() {
+  const grid = document.getElementById('pb-card-grid');
+  if (grid) grid.innerHTML = renderPbCardsHTML();
+  // Re-bind clicks (innerHTML wipes them).
+  document.querySelectorAll('.pb-card').forEach(card => {
+    card.addEventListener('click', () => openPbCardModal(card.dataset.pbCard));
+  });
+  updatePreview();
+}
+
+function openPbCardModal(key) {
+  const card = PB_CARDS.find(c => c.key === key);
+  if (!card) return;
+
+  // Topics card uses the existing topic-picker flow (it already
+  // opens its own modal). Just route to it for primary, and let
+  // the user reopen for secondary on the same card after.
+  if (key === 'topics') {
+    openTopicPicker('Add Primary Topics', getPrimaryTopics(), (primary) => {
+      state.values.primaryTopic = primary;
+      if (primary.length === 0) delete state.values.primaryTopic;
+      // Chain: prompt for secondary if user hasn't set any.
+      if (!getSecondaryTopics().length) {
+        openTopicPicker('Add Secondary Topics (optional)', [], (secondary) => {
+          state.values.secondaryTopic = secondary;
+          if (secondary.length === 0) delete state.values.secondaryTopic;
+          refreshPbCards();
+        });
+      } else {
+        refreshPbCards();
+      }
+    });
+    return;
+  }
+
+  // Generic field modal for output / sources / scope / custom
+  const overlay = document.createElement('div');
+  overlay.className = 'pb-modal-overlay';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-label', card.label);
+  document.body.appendChild(overlay);
+  overlay.innerHTML = `
+    <div class="pb-modal-card">
+      <header class="pb-modal-head">
+        <button type="button" class="pb-modal-close" aria-label="Close">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18"/>
+            <line x1="18" y1="6" x2="6" y2="18"/>
+          </svg>
+        </button>
+        <h2 class="pb-modal-title">${escapeHTML(card.label)}</h2>
+      </header>
+      <div class="pb-modal-body" id="pb-modal-body"></div>
+      <footer class="pb-modal-foot">
+        <button type="button" class="pb-modal-done">Done</button>
+      </footer>
+    </div>
+  `;
+  const body = overlay.querySelector('#pb-modal-body');
+
+  if (key === 'custom') {
+    body.innerHTML = `
+      <p class="pb-modal-desc">Add any extra instructions — specific framing, exclusions, or detail you'd like the AI to focus on.</p>
+      <textarea class="pb-modal-textarea" placeholder="Anything else to add..." id="pb-modal-custom">${escapeHTML(state.customizations || '')}</textarea>
+    `;
+    body.querySelector('#pb-modal-custom').addEventListener('input', (e) => {
+      state.customizations = e.target.value;
+    });
+  } else {
+    body.innerHTML = card.fields.map(f => `
+      <section class="pb-modal-section">
+        <h3 class="pb-modal-section-title">${escapeHTML(getFieldLabel(f))}</h3>
+        <p class="pb-modal-section-desc">${escapeHTML(getFieldDescription(f))}</p>
+        <div data-field="${f}"></div>
+        <div class="wiz-extras" data-extras-field="${f}"></div>
+      </section>
+    `).join('');
+    card.fields.forEach(f => {
+      const host = body.querySelector(`[data-field="${f}"]`);
+      if (!host) return;
+      if (f === 'outputType') populateCardGrid(host, f);
+      else populateChipGrid(host, f);
+      const extras = body.querySelector(`[data-extras-field="${f}"]`);
+      if (extras) renderExtraInputs(extras, f);
+    });
+  }
+
+  const close = () => {
+    overlay.remove();
+    refreshPbCards();
+  };
+  overlay.querySelector('.pb-modal-close').addEventListener('click', close);
+  overlay.querySelector('.pb-modal-done').addEventListener('click', close);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+}
+
+function getFieldLabel(fieldKey) {
+  const field = pgData.fields?.find(f => f.key === fieldKey);
+  return field?.label || fieldKey;
+}
+
 function render() {
   const prompt = assemblePrompt();
   const isEmpty = !prompt;
@@ -282,93 +465,7 @@ function render() {
           <p class="wiz-intro-text">Choose topics, customize style and delivery, then preview and submit to your preferred AI model.</p>
         </div>
 
-        <div class="wiz-field-row wiz-topics-row">
-          <div class="wiz-field-half">
-            <label class="wiz-field-label">Primary Topic(s) <span class="wiz-req">required</span></label>
-            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('primaryTopic'))}</p>
-            <div class="wiz-topic-chips" id="wiz-primary-chips">
-              ${topicChips(primary, 'primaryTopic')}
-              <button type="button" class="wiz-topic-add-inline" id="wiz-primary-add">${primary.length ? '+ Add more' : '+ Add topic'}</button>
-            </div>
-          </div>
-          <div class="wiz-field-half">
-            <label class="wiz-field-label">Secondary Topic(s)</label>
-            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('secondaryTopic'))}</p>
-            <div class="wiz-topic-chips" id="wiz-secondary-chips">
-              ${topicChips(secondary, 'secondaryTopic')}
-              <button type="button" class="wiz-topic-add-inline" id="wiz-secondary-add">${secondary.length ? '+ Add more' : '+ Add topic'}</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="wiz-field-row">
-          <div class="wiz-field-full">
-            <label class="wiz-field-label">Output Type</label>
-            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('outputType'))}</p>
-            <div data-field="outputType" id="wiz-field-outputType"></div>
-            <div class="wiz-extras" data-extras-field="outputType"></div>
-          </div>
-        </div>
-
-        <div class="wiz-field-row">
-          <div class="wiz-field-half">
-            <label class="wiz-field-label">Sources</label>
-            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('sources'))}</p>
-            <div data-field="sources" id="wiz-field-sources"></div>
-            <div class="wiz-extras" data-extras-field="sources"></div>
-          </div>
-          <div class="wiz-field-half">
-            <label class="wiz-field-label">Time Period</label>
-            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('recency'))}</p>
-            <div data-field="recency" id="wiz-field-recency"></div>
-            <div class="wiz-extras" data-extras-field="recency"></div>
-          </div>
-        </div>
-
-        <div class="wiz-field-row">
-          <div class="wiz-field-half">
-            <label class="wiz-field-label">Format</label>
-            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('format'))}</p>
-            <div data-field="format" id="wiz-field-format"></div>
-          </div>
-          <div class="wiz-field-half">
-            <label class="wiz-field-label">Length</label>
-            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('length'))}</p>
-            <div data-field="length" id="wiz-field-length"></div>
-          </div>
-        </div>
-
-        <div class="wiz-field-row">
-          <div class="wiz-field-half">
-            <label class="wiz-field-label">Reading Level</label>
-            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('audience'))}</p>
-            <div data-field="audience" id="wiz-field-audience"></div>
-          </div>
-          <div class="wiz-field-half">
-            <label class="wiz-field-label">Tone</label>
-            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('tone'))}</p>
-            <div data-field="tone" id="wiz-field-tone"></div>
-          </div>
-        </div>
-
-        <div class="wiz-field-row">
-          <div class="wiz-field-half">
-            <label class="wiz-field-label">Citations</label>
-            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('citations'))}</p>
-            <div data-field="citations" id="wiz-field-citations"></div>
-          </div>
-          <div class="wiz-field-half">
-            <label class="wiz-field-label">Geographic Focus</label>
-            <p class="wiz-field-desc">${escapeHTML(getFieldDescription('geographic'))}</p>
-            <div data-field="geographic" id="wiz-field-geographic"></div>
-          </div>
-        </div>
-
-        <div class="wiz-field-group">
-          <label class="wiz-field-label">Custom Instructions</label>
-          <p class="wiz-field-desc">Anything else — specific framing, exclusions, or extra detail.</p>
-          <textarea class="wiz-custom-textarea" id="wiz-custom" placeholder="Add any extra instructions...">${escapeHTML(state.customizations || '')}</textarea>
-        </div>
+        <div class="pb-card-grid" id="pb-card-grid">${renderPbCardsHTML()}</div>
       </div>
 
       <div class="wiz-action-bar">
@@ -383,60 +480,10 @@ function render() {
     </div>
   `;
 
-  // Populate chip grids for all fields
-  populateChipGrid(document.getElementById('wiz-field-outputType'), 'outputType');
-  populateChipGrid(document.getElementById('wiz-field-sources'), 'sources');
-  populateChipGrid(document.getElementById('wiz-field-recency'), 'recency');
-  populateChipGrid(document.getElementById('wiz-field-format'), 'format');
-  populateChipGrid(document.getElementById('wiz-field-length'), 'length');
-  populateChipGrid(document.getElementById('wiz-field-audience'), 'audience');
-  populateChipGrid(document.getElementById('wiz-field-tone'), 'tone');
-  populateChipGrid(document.getElementById('wiz-field-citations'), 'citations');
-  populateChipGrid(document.getElementById('wiz-field-geographic'), 'geographic');
-
-  // Render extras for fields that have requiresInput
-  ['outputType', 'sources', 'recency'].forEach(fk => {
-    const extras = document.querySelector(`[data-extras-field="${fk}"]`);
-    if (extras) renderExtraInputs(extras, fk);
-  });
-
-  // Topic chip remove handlers
-  containerEl.querySelectorAll('.wiz-inline-chip-x').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const chip = btn.closest('.wiz-inline-chip');
-      removeTopic(chip.dataset.key, chip.dataset.value);
-      render();
-    });
-  });
-
-  // Topic add — clicking anywhere in the chips container or the "+ Add" button opens picker
-  const openPrimary = () => {
-    openTopicPicker('Add Primary Topics', getPrimaryTopics(), (values) => {
-      state.values.primaryTopic = values;
-      if (values.length === 0) delete state.values.primaryTopic;
-      render();
-    });
-  };
-  const openSecondary = () => {
-    openTopicPicker('Add Secondary Topics', getSecondaryTopics(), (values) => {
-      state.values.secondaryTopic = values;
-      if (values.length === 0) delete state.values.secondaryTopic;
-      render();
-    });
-  };
-  document.getElementById('wiz-primary-add')?.addEventListener('click', openPrimary);
-  document.getElementById('wiz-secondary-add')?.addEventListener('click', openSecondary);
-  document.getElementById('wiz-primary-chips')?.addEventListener('click', (e) => {
-    if (!e.target.closest('.wiz-inline-chip-x') && !e.target.closest('.wiz-topic-add-inline')) openPrimary();
-  });
-  document.getElementById('wiz-secondary-chips')?.addEventListener('click', (e) => {
-    if (!e.target.closest('.wiz-inline-chip-x') && !e.target.closest('.wiz-topic-add-inline')) openSecondary();
-  });
-
-  // Custom instructions
-  document.getElementById('wiz-custom')?.addEventListener('input', (e) => {
-    state.customizations = e.target.value;
-    schedulePreview();
+  // Card grid click handlers — each card opens the matching picker
+  // modal (or, for the Topics card, the existing openTopicPicker).
+  containerEl.querySelectorAll('.pb-card').forEach(card => {
+    card.addEventListener('click', () => openPbCardModal(card.dataset.pbCard));
   });
 
   // Open the unified preview+submit modal
