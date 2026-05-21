@@ -6072,9 +6072,244 @@ body.app-mode .topic-layout {
   border-color: #95a8c5;
   box-shadow: 0 0 0 3px rgba(74, 124, 201, 0.22);
 }
+/* Accordion-card topic picker (opened from "Browse topics" inside
+   the Topics buffer modal). Matches the site's Topics modal:
+   parent cards with icon + name + chevron, expand to subtopic
+   list. Supports multi-select via tick marks; Done returns the
+   set. */
+.pb-acc-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.65rem 0.85rem;
+  background: #f4f5f7;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  margin-bottom: 0.85rem;
+}
+.pb-acc-search svg { color: var(--color-text-muted); flex-shrink: 0; }
+.pb-acc-search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font: 500 0.95rem/1.2 var(--font-family);
+  color: var(--color-text);
+  min-width: 0;
+  -webkit-appearance: none; appearance: none;
+}
+.pb-acc-search-input::placeholder { color: var(--color-text-light); font-weight: 500; }
+.pb-acc-selected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.6rem 0.7rem;
+  background: rgba(44, 68, 103, 0.04);
+  border: 1px dashed rgba(44, 68, 103, 0.2);
+  border-radius: 10px;
+  margin-bottom: 0.85rem;
+}
+.pb-acc-selchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.22rem 0.4rem 0.22rem 0.6rem;
+  background: rgba(44, 68, 103, 0.1);
+  color: #1e2d44;
+  border-radius: 999px;
+  font: 600 0.82rem/1 var(--font-family);
+}
+.pb-acc-selchip-x {
+  width: 17px; height: 17px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(15, 26, 46, 0.1);
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.pb-acc-selchip-x:hover { background: rgba(15, 26, 46, 0.18); color: var(--color-text); }
+
+.pb-acc-list { display: flex; flex-direction: column; gap: 0.45rem; }
+.pb-acc-card {
+  background: var(--color-bg);
+  border: 1px solid #e6e8ec;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.14s, box-shadow 0.14s;
+}
+.pb-acc-card.is-selected { border-color: #95a8c5; box-shadow: 0 1px 2px rgba(15, 26, 46, 0.04); }
+.pb-acc-card.is-open { border-color: #c8d3e3; }
+.pb-acc-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.6rem 0.55rem 0.7rem;
+}
+.pb-acc-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px;
+  flex-shrink: 0;
+  color: #2c4467;
+}
+.pb-acc-icon svg { width: 20px; height: 20px; display: block; }
+.pb-acc-toggle {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  text-align: left;
+  cursor: pointer;
+  font: 600 0.95rem/1.2 var(--font-display);
+  color: #1e2d44;
+  letter-spacing: -0.008em;
+  transition: background 0.12s;
+}
+.pb-acc-toggle:hover { background: rgba(15, 26, 46, 0.04); }
+.pb-acc-toggle[aria-pressed="true"] { color: #2c4467; }
+.pb-acc-name { flex: 1; min-width: 0; }
+.pb-acc-tick {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px;
+  border-radius: 999px;
+  background: rgba(44, 68, 103, 0.12);
+  color: #2c4467;
+  font-weight: 700;
+  font-size: 0.78rem;
+}
+.pb-acc-toggle[aria-pressed="false"] .pb-acc-tick { background: transparent; }
+.pb-acc-chev {
+  width: 30px; height: 30px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.12s, transform 0.16s;
+}
+.pb-acc-chev:hover { background: rgba(15, 26, 46, 0.04); color: var(--color-text); }
+.pb-acc-card.is-open .pb-acc-chev { transform: rotate(180deg); }
+.pb-acc-body { display: none; padding: 0 0.7rem 0.65rem; }
+.pb-acc-card.is-open .pb-acc-body { display: block; }
+.pb-acc-sublist {
+  list-style: none;
+  margin: 0;
+  padding: 0.35rem 0 0;
+  border-top: 1px solid #eef0f4;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+@media (min-width: 540px) {
+  .pb-acc-sublist { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 0.5rem; }
+}
+.pb-acc-sub {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.4rem 0.3rem;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  text-align: left;
+  font: 500 0.88rem/1.25 var(--font-family);
+  color: #1e2d44;
+  cursor: pointer;
+  letter-spacing: -0.005em;
+  transition: background 0.12s, color 0.12s;
+}
+.pb-acc-sub:hover { background: rgba(15, 26, 46, 0.04); color: #2c4467; }
+.pb-acc-sub.is-selected { color: #2c4467; font-weight: 600; }
+.pb-acc-sub-dot {
+  flex-shrink: 0;
+  width: 5px; height: 5px;
+  border-radius: 999px;
+  background: #c1c8d4;
+}
+.pb-acc-sub.is-selected .pb-acc-sub-dot { background: #2c4467; }
+.pb-acc-sub-name { flex: 1; min-width: 0; }
+.pb-acc-sub-tick {
+  flex-shrink: 0;
+  width: 16px;
+  color: #2c4467;
+  font-weight: 700;
+  text-align: right;
+}
+.pb-acc-sub-empty {
+  margin: 0;
+  padding: 0.35rem 0.3rem;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.pb-acc-results { display: flex; flex-direction: column; gap: 0.25rem; }
+.pb-acc-custom {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  background: rgba(74, 124, 201, 0.08);
+  border: 1px solid rgba(74, 124, 201, 0.2);
+  border-radius: 8px;
+  color: var(--color-primary);
+  font: 600 0.9rem/1.25 var(--font-family);
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+  transition: background 0.12s, border-color 0.12s;
+}
+.pb-acc-custom:hover { background: rgba(74, 124, 201, 0.14); border-color: rgba(74, 124, 201, 0.32); }
+.pb-acc-custom-plus {
+  width: 22px; height: 22px;
+  background: var(--color-primary);
+  color: white;
+  border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.pb-acc-result {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.5rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  text-align: left;
+  font: 500 0.92rem/1.2 var(--font-family);
+  color: #1e2d44;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.pb-acc-result:hover { background: rgba(15, 26, 46, 0.04); border-color: rgba(15, 26, 46, 0.06); }
+.pb-acc-result.is-selected { color: #2c4467; font-weight: 600; background: rgba(44, 68, 103, 0.06); border-color: rgba(44, 68, 103, 0.18); }
+.pb-acc-result-name { flex: 1; min-width: 0; }
+.pb-acc-result-parent { font-size: 0.78rem; color: var(--color-text-muted); }
+.pb-acc-empty {
+  margin: 0.6rem 0;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  font-style: italic;
+}
+
 /* Topics card buffer modal — chip list + "Browse topics" CTA per
-   section (Primary / Secondary). Browse delegates to the existing
-   accordion-style topic picker overlay. */
+   section (Primary / Secondary). Browse delegates to the accordion
+   topic picker overlay. */
 .pb-topic-chips {
   display: flex;
   flex-wrap: wrap;

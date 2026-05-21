@@ -8,8 +8,9 @@
 //                              user for an extra value substituted into
 //                              the option's clause via {key} placeholder
 
-import { getPromptGenData, getModels, getDefaultModelId, getModelById, getParentTopics, getFeaturedTopics, getAllTopics, searchTopics, getSubmissionMethods } from '../utils/data.js';
+import { getPromptGenData, getModels, getDefaultModelId, getModelById, getParentTopics, getFeaturedTopics, getAllTopics, searchTopics, getSubmissionMethods, getTopicsGroupedByParent } from '../utils/data.js';
 import { getPreferredModelId, setPreferredModelId, submitPrompt, isUrlTooLong, shouldCopyOnOpen } from '../utils/ai-models.js';
+import { topicIconSVG } from '../utils/topic-icons.js';
 import { track } from '../utils/analytics.js';
 
 const state = {
@@ -567,20 +568,211 @@ function renderTopicsModalBody(body) {
       re();
     });
   });
-  // Wire browse — opens the existing accordion-style topic picker
+  // Wire browse — opens the accordion-card topic picker.
   body.querySelectorAll('.pb-topic-browse').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const key = btn.dataset.browse;
       const initial = key === 'primaryTopic' ? getPrimaryTopics() : getSecondaryTopics();
       const label = key === 'primaryTopic' ? 'Add Primary Topics' : 'Add Secondary Topics';
-      openTopicPicker(label, initial, (values) => {
+      openAccordionTopicPicker(label, initial, (values) => {
         state.values[key] = values;
         if (values.length === 0) delete state.values[key];
         re();
       });
     });
   });
+}
+
+// Accordion-card topic picker that matches the site's Topics modal:
+// parent topics render as bordered cards with icon + name + chevron;
+// click expands to reveal subtopics; user toggles parents and/or
+// subtopics into a working selection set. Search input filters to
+// matching topics + a "type your own" option. Done returns selected.
+let accordionPickerEl = null;
+function openAccordionTopicPicker(label, initialSelected, onConfirm) {
+  if (!accordionPickerEl) {
+    accordionPickerEl = document.createElement('div');
+    accordionPickerEl.className = 'pb-modal-overlay pb-accordion-overlay';
+    document.body.appendChild(accordionPickerEl);
+  }
+  const selected = new Set(initialSelected || []);
+  let expandedSlug = null;
+  let query = '';
+
+  const close = () => { accordionPickerEl.remove(); accordionPickerEl = null; };
+  const confirm = () => { onConfirm(Array.from(selected)); close(); };
+  const toggle = (name) => {
+    const t = (name || '').trim();
+    if (!t) return;
+    if (selected.has(t)) selected.delete(t);
+    else selected.add(t);
+    renderAll();
+  };
+
+  function renderHeader() {
+    return `
+      <header class="pb-modal-head">
+        <button type="button" class="pb-modal-close" aria-label="Close">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18"/>
+            <line x1="18" y1="6" x2="6" y2="18"/>
+          </svg>
+        </button>
+        <h2 class="pb-modal-title">${escapeHTML(label)}</h2>
+      </header>
+    `;
+  }
+
+  function renderSelectedRow() {
+    if (selected.size === 0) return '';
+    return `
+      <div class="pb-acc-selected">
+        ${Array.from(selected).map(t => `
+          <span class="pb-acc-selchip" data-acc-remove="${escapeAttr(t)}">
+            ${escapeHTML(t)}
+            <button type="button" class="pb-acc-selchip-x" aria-label="Remove">×</button>
+          </span>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderBrowse() {
+    const groups = getTopicsGroupedByParent();
+    return `
+      <div class="pb-modal-section-desc" style="margin-bottom: 0.6rem;">Pick a topic or browse to expand its subtopics.</div>
+      <div class="pb-acc-list">
+        ${groups.map(g => {
+          const isOpen = expandedSlug === g.parent.slug;
+          const parentSel = selected.has(g.parent.name);
+          return `
+            <div class="pb-acc-card ${isOpen ? 'is-open' : ''}${parentSel ? ' is-selected' : ''}">
+              <div class="pb-acc-head" data-acc-card="${g.parent.slug}">
+                <span class="pb-acc-icon">${topicIconSVG(g.parent.icon || 'globe', '')}</span>
+                <button type="button" class="pb-acc-toggle"
+                        data-acc-toggle="${escapeAttr(g.parent.name)}"
+                        aria-pressed="${parentSel ? 'true' : 'false'}">
+                  <span class="pb-acc-name">${escapeHTML(g.parent.name)}</span>
+                  <span class="pb-acc-tick" aria-hidden="true">${parentSel ? '✓' : ''}</span>
+                </button>
+                <button type="button" class="pb-acc-chev" data-acc-expand="${g.parent.slug}" aria-label="Expand subtopics">
+                  <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="3 4.5 6 7.5 9 4.5"/>
+                  </svg>
+                </button>
+              </div>
+              <div class="pb-acc-body">
+                ${g.subtopics.length ? `
+                  <ul class="pb-acc-sublist">
+                    ${g.subtopics.map(sub => {
+                      const isSel = selected.has(sub.name);
+                      return `
+                        <li>
+                          <button type="button" class="pb-acc-sub ${isSel ? 'is-selected' : ''}"
+                                  data-acc-toggle="${escapeAttr(sub.name)}">
+                            <span class="pb-acc-sub-dot" aria-hidden="true"></span>
+                            <span class="pb-acc-sub-name">${escapeHTML(sub.name)}</span>
+                            <span class="pb-acc-sub-tick">${isSel ? '✓' : ''}</span>
+                          </button>
+                        </li>
+                      `;
+                    }).join('')}
+                  </ul>
+                ` : `<p class="pb-acc-sub-empty">No subtopics yet.</p>`}
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+
+  function renderSearchResults(q) {
+    const matches = searchTopics(q);
+    const queryTrim = q.trim();
+    const customSel = selected.has(queryTrim);
+    return `
+      <div class="pb-acc-results">
+        <button type="button" class="pb-acc-custom" data-acc-toggle="${escapeAttr(queryTrim)}">
+          <span class="pb-acc-custom-plus">${customSel ? '✓' : '+'}</span>
+          <span>${customSel ? 'Added' : 'Add'} "<strong>${escapeHTML(queryTrim)}</strong>" as a custom topic</span>
+        </button>
+        ${matches.map(m => {
+          const isSel = selected.has(m.name);
+          return `
+            <button type="button" class="pb-acc-result ${isSel ? 'is-selected' : ''}" data-acc-toggle="${escapeAttr(m.name)}">
+              <span class="pb-acc-sub-dot" aria-hidden="true"></span>
+              <span class="pb-acc-result-name">${escapeHTML(m.name)}</span>
+              ${m.parentName ? `<span class="pb-acc-result-parent">in ${escapeHTML(m.parentName)}</span>` : ''}
+              <span class="pb-acc-sub-tick">${isSel ? '✓' : ''}</span>
+            </button>
+          `;
+        }).join('')}
+        ${matches.length === 0 ? `<p class="pb-acc-empty">No matching topics — try adding it as a custom topic.</p>` : ''}
+      </div>
+    `;
+  }
+
+  function renderAll() {
+    accordionPickerEl.innerHTML = `
+      <div class="pb-modal-card pb-accordion-card">
+        ${renderHeader()}
+        <div class="pb-modal-body pb-accordion-body">
+          <div class="pb-acc-search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="search" class="pb-acc-search-input" placeholder="Search a topic or type your own..." value="${escapeAttr(query)}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+          </div>
+          ${renderSelectedRow()}
+          ${query.trim() ? renderSearchResults(query) : renderBrowse()}
+        </div>
+        <footer class="pb-modal-foot">
+          <button type="button" class="pb-modal-done">Done</button>
+        </footer>
+      </div>
+    `;
+    // Restore focus to search input if user was typing
+    const searchInput = accordionPickerEl.querySelector('.pb-acc-search-input');
+    if (searchInput && query) { searchInput.focus(); const len = searchInput.value.length; searchInput.setSelectionRange(len, len); }
+    bindAccordionEvents();
+  }
+
+  function bindAccordionEvents() {
+    accordionPickerEl.querySelector('.pb-modal-close').addEventListener('click', close);
+    accordionPickerEl.querySelector('.pb-modal-done').addEventListener('click', confirm);
+    accordionPickerEl.addEventListener('click', (e) => {
+      if (e.target === accordionPickerEl) close();
+    }, { once: true });
+
+    const searchInput = accordionPickerEl.querySelector('.pb-acc-search-input');
+    searchInput?.addEventListener('input', (e) => {
+      query = e.target.value;
+      renderAll();
+    });
+
+    accordionPickerEl.querySelectorAll('[data-acc-toggle]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggle(btn.dataset.accToggle);
+      });
+    });
+    accordionPickerEl.querySelectorAll('[data-acc-expand]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const slug = btn.dataset.accExpand;
+        expandedSlug = (expandedSlug === slug) ? null : slug;
+        renderAll();
+      });
+    });
+    accordionPickerEl.querySelectorAll('[data-acc-remove]').forEach(chip => {
+      chip.querySelector('.pb-acc-selchip-x')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggle(chip.dataset.accRemove);
+      });
+    });
+  }
+
+  renderAll();
 }
 
 function getFieldLabel(fieldKey) {
