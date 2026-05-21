@@ -796,6 +796,22 @@ function openAccordionTopicPicker(label, initialSelected, onConfirm) {
     query = e.target.value;
     renderContent();
   });
+  // Enter adds the current query as a custom topic (no need to
+  // hunt for the "+ Add as custom" CTA).
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const t = (query || '').trim();
+      if (!t) return;
+      if (!selected.has(t)) selected.add(t);
+      query = '';
+      searchInput.value = '';
+      renderContent();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      close();
+    }
+  });
 
   renderContent();
 }
@@ -880,27 +896,33 @@ function render() {
 }
 
 let actionBarResizeHandler = null;
+let actionBarLastWidth = null;
 function setupActionBarPlacement() {
   const measure = () => {
     const panel = document.querySelector('.wiz-two-panel');
     const cardGrid = document.getElementById('pb-card-grid');
     if (!panel || !cardGrid) return;
-    // Measure where the card grid ends vs the viewport bottom.
-    // If the grid bottom + bar height (~80px) fits inside the
-    // viewport, we don't need a sticky bar — flip to inline mode.
     const gridBottom = cardGrid.getBoundingClientRect().bottom;
     const viewportH = window.innerHeight;
-    const barReserve = 100; // bar + breathing room
+    const barReserve = 100;
     const fits = gridBottom + barReserve <= viewportH;
     document.body.classList.toggle('pb-action-bar-inline', fits);
   };
   if (actionBarResizeHandler) {
     window.removeEventListener('resize', actionBarResizeHandler);
   }
-  actionBarResizeHandler = () => requestAnimationFrame(measure);
+  actionBarLastWidth = window.innerWidth;
+  // Only re-measure on actual VIEWPORT WIDTH changes — not height.
+  // On mobile the soft keyboard appearing fires resize with a
+  // shorter height, and we don't want the action bar to ping-pong
+  // between inline/sticky mid-typing (which was breaking the page
+  // layout for the user).
+  actionBarResizeHandler = () => {
+    if (window.innerWidth === actionBarLastWidth) return;
+    actionBarLastWidth = window.innerWidth;
+    requestAnimationFrame(measure);
+  };
   window.addEventListener('resize', actionBarResizeHandler, { passive: true });
-  // Initial measure after layout settles (next frame + small delay
-  // for fonts / images that may shift heights).
   requestAnimationFrame(measure);
   setTimeout(measure, 250);
 }

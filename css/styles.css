@@ -55,8 +55,13 @@ a {
   text-decoration: none;
 }
 
-a:hover {
-  text-decoration: underline;
+/* Underline on hover only on hover-capable pointers. On touch
+   devices the brief :hover state from a tap was leaving links
+   underlined on the next page (carryover-click). */
+@media (hover: hover) and (pointer: fine) {
+  a:hover {
+    text-decoration: underline;
+  }
 }
 
 #app {
@@ -4205,13 +4210,11 @@ body.app-mode .topic-layout {
     overflow-x: auto;
     overflow-y: hidden;
     gap: 0.3rem;
-    /* Extend to the subnav's left/right padding edges via negative
-       margin so the top separator line below spans the full subnav
-       band, matching the subnav's own bottom border. The
-       padding-left/right then re-insets the chips to their content
-       start position. */
-    margin: 0 -1rem -0.65rem;
-    padding: 0.55rem 0.45rem 0.65rem;
+    /* Equal top/bottom padding so the chip text is vertically
+       centered within the strip — keeps the absolutely-positioned
+       arrow buttons (top: 50%) aligned with the chip baseline. */
+    margin: 0 -1rem -0.6rem;
+    padding: 0.6rem 0.45rem 0.6rem;
     border-top: 1px solid #d8dce3;
     min-width: 0;
     -webkit-overflow-scrolling: touch;
@@ -4397,26 +4400,28 @@ body.app-mode .topic-layout {
 .subnav-chip-arrow-left  { left: 6px; }
 .subnav-chip-arrow-right { right: 6px; }
 
-/* Fade behind the arrows — a soft gradient so the chip behind peeks
-   through (encouraging the click) but the arrow still reads clearly
-   as the affordance. Subnav band background color: #f7f8fa. */
+/* Fade behind the arrows — wider gradient (96px) so chips that
+   sit just behind the arrow are visibly faded into the background
+   rather than peeking out around the arrow's edges. Solid 96%+
+   opacity at the very edge under the arrow itself, then ramps to
+   transparent ~60-80px in. Subnav band background = #f7f8fa. */
 .subnav-chip-wrap.can-scroll-left::before,
 .subnav-chip-wrap.can-scroll-right::after {
   content: '';
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 64px;
+  width: 96px;
   z-index: 1;
   pointer-events: none;
 }
 .subnav-chip-wrap.can-scroll-left::before {
   left: 0;
-  background: linear-gradient(to right, rgba(247, 248, 250, 0.95) 0%, rgba(247, 248, 250, 0.6) 60%, rgba(247, 248, 250, 0) 100%);
+  background: linear-gradient(to right, rgba(247, 248, 250, 0.99) 0%, rgba(247, 248, 250, 0.95) 35%, rgba(247, 248, 250, 0.6) 70%, rgba(247, 248, 250, 0) 100%);
 }
 .subnav-chip-wrap.can-scroll-right::after {
   right: 0;
-  background: linear-gradient(to left, rgba(247, 248, 250, 0.95) 0%, rgba(247, 248, 250, 0.6) 60%, rgba(247, 248, 250, 0) 100%);
+  background: linear-gradient(to left, rgba(247, 248, 250, 0.99) 0%, rgba(247, 248, 250, 0.95) 35%, rgba(247, 248, 250, 0.6) 70%, rgba(247, 248, 250, 0) 100%);
 }
 
 /* Arrows revealed only on hover-capable pointers and only when the
