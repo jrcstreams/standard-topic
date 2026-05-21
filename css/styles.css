@@ -2268,18 +2268,227 @@ html, body, #app {
 
 .search-overlay-card {
   background: var(--color-bg);
-  border-radius: 10px;
+  border-radius: 14px;
   width: 100%;
-  max-width: 560px;
-  max-height: 80vh;
+  max-width: 720px;
+  max-height: 85vh;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 24px 64px rgba(15, 26, 46, 0.28);
   display: flex;
   flex-direction: column;
   animation: search-card-in 0.12s ease-out;
   color: var(--color-text);
   text-align: left;
 }
+
+.search-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.15rem 0.9rem;
+  border-bottom: 1px solid #eef0f4;
+  flex-shrink: 0;
+}
+.search-modal-head-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e2d44;
+  letter-spacing: -0.018em;
+}
+
+.search-modal-section {
+  padding: 1.1rem 1.15rem 0.4rem;
+}
+.search-modal-section + .search-modal-section {
+  padding-top: 0.6rem;
+}
+.search-modal-eyebrow {
+  display: block;
+  font-family: var(--font-family);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #6c7a91;
+  margin-bottom: 0.55rem;
+}
+
+/* Browse grid — single column of large topic cards. Each card is a
+   self-contained accordion: head row + (when expanded) expansion. */
+.search-modal-topic-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin: 0 0 0.6rem;
+}
+@media (min-width: 720px) {
+  .search-modal-topic-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 0.55rem;
+    row-gap: 0.45rem;
+  }
+  .topic-card.is-expanded {
+    grid-column: 1 / -1;
+  }
+}
+
+.topic-card {
+  background: var(--color-bg);
+  border: 1px solid #e6e8ec;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.14s, box-shadow 0.14s;
+}
+.topic-card.is-expanded {
+  border-color: #c8d3e3;
+  box-shadow: 0 2px 10px rgba(15, 26, 46, 0.06);
+}
+.topic-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-family);
+  color: #1e2d44;
+  transition: background 0.12s, color 0.12s;
+}
+.topic-card-head:hover {
+  background: #f5f7fb;
+}
+.topic-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  color: #2c4467;
+}
+.topic-card-icon svg { width: 22px; height: 22px; display: block; }
+.topic-card-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.008em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.topic-card-caret {
+  flex-shrink: 0;
+  color: #9aa3b3;
+  transition: transform 0.18s, color 0.14s;
+}
+.topic-card-head[aria-expanded="true"] .topic-card-caret {
+  transform: rotate(180deg);
+  color: #2c4467;
+}
+
+.topic-card-expansion {
+  border-top: 1px solid #eef0f4;
+  padding: 0.65rem 0.85rem 0.85rem;
+  background: #fbfcfe;
+}
+.topic-card-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.6rem;
+  margin: 0 0 0.55rem;
+  background: rgba(44, 68, 103, 0.06);
+  border: 1px solid rgba(44, 68, 103, 0.18);
+  border-radius: 7px;
+  color: #2c4467;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: -0.005em;
+  transition: background 0.14s, border-color 0.14s, color 0.14s;
+}
+.topic-card-all:hover {
+  background: rgba(44, 68, 103, 0.11);
+  border-color: rgba(44, 68, 103, 0.32);
+  color: #1e2d44;
+  text-decoration: none;
+}
+.topic-card-all svg { transition: transform 0.14s; }
+.topic-card-all:hover svg { transform: translateX(2px); }
+
+.topic-card-sublist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+@media (min-width: 540px) {
+  .topic-card-sublist {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 0.6rem;
+  }
+}
+.topic-card-sublink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.38rem 0.2rem;
+  color: #1e2d44;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  border-radius: 4px;
+  transition: color 0.12s, background 0.12s;
+}
+.topic-card-sublink:hover {
+  color: #2c4467;
+  background: rgba(44, 68, 103, 0.05);
+  text-decoration: none;
+}
+.topic-card-subdot {
+  flex-shrink: 0;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: #c1c8d4;
+}
+.topic-card-sublink:hover .topic-card-subdot { background: #2c4467; }
+.topic-card-empty {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.search-modal-view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.2rem 0 0.6rem;
+  padding: 0.4rem 0;
+  background: transparent;
+  border: none;
+  color: #6c7a91;
+  font-family: var(--font-family);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: color 0.12s;
+}
+.search-modal-view-all:hover { color: #1e2d44; }
+.search-modal-view-all svg { transition: transform 0.14s; }
 
 @keyframes search-card-in {
   from { opacity: 0; transform: translateY(-6px); }
@@ -2290,7 +2499,7 @@ html, body, #app {
   display: flex;
   align-items: center;
   gap: 0.7rem;
-  margin: 1rem 1rem 0.75rem;
+  margin: 0;
   padding: 0.7rem 0.9rem;
   background: #f4f5f7;
   border: 1px solid #e2e8f0;
@@ -3747,7 +3956,7 @@ body.app-mode .topic-layout {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #6c7a91;
+  color: #2a3850;
   margin: 0;
   flex: 0 0 auto;
 }
@@ -3967,59 +4176,33 @@ body.app-mode .topic-layout {
    (Google News / Reddit / X / YouTube) arranged in a 2-column grid
    on the sidebar / mobile, each tile a compact card with the brand
    emoji on the left and the name on the right. */
-/* === Quick Links — compact label-only pills ===
-   Sidebar widths: 2×2 grid, pills stretch to fill cells so all
-   four read as a uniform block instead of misaligned tags.
-   Tabular widths (540-899px) where the shortcuts card spans a
-   wider column: collapse to a single 4-up row. */
-.quick-links-pill-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.45rem;
-  padding-top: 0.6rem;
-}
-@media (min-width: 540px) and (max-width: 899.98px) {
-  .quick-links-pill-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-.quick-link-pill {
-  display: inline-flex;
+/* === Quick Links — bullet rows ============================
+   Quick Links share the same bullet-row layout as AI Shortcuts so
+   the two lists read as one cohesive stack. The row is an <a>
+   (external link) rather than a button — no checkbox marker, just
+   a dot + name. */
+.quick-links-bullet-list { padding-top: 0.55rem; }
+.quick-links-bullet-list .quick-link-pill {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 0.55rem 0.85rem;
-  background: #f3f5f9;
-  border: 1px solid transparent;
-  border-radius: 999px;
+  gap: 0.65rem;
+  padding: 0.34rem 0.5rem 0.34rem 0.45rem;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
   text-decoration: none;
   color: var(--color-text);
   font-family: var(--font-family);
   font-size: 0.82rem;
   font-weight: 500;
   letter-spacing: -0.005em;
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer;
-  transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.06s;
+  transition: background 0.14s, color 0.12s;
 }
-@media (hover: hover) {
-  .quick-link-pill:hover {
-    background: #e6ecf5;
-    border-color: #c8d3e3;
-    color: var(--color-primary, #2c4467);
-    text-decoration: none;
-  }
+.quick-links-bullet-list .quick-link-pill:hover {
+  background: #eff4fb;
+  color: #2c4467;
+  text-decoration: none;
 }
-.quick-link-pill:active { transform: translateY(1px); }
-.quick-link-pill:focus-visible {
-  outline: 2px solid rgba(44, 68, 103, 0.45);
-  outline-offset: 2px;
-}
-
-/* Quick Links are always live now — multi-select applies only to AI
-   Shortcuts, so there's no "paused" state for the pill grid. */
 
 /* === AI Shortcuts grouped subsections ===
    Inside the AI Shortcuts subsection, shortcuts are bucketed by
@@ -4314,51 +4497,32 @@ body.app-mode .topic-layout {
   .shortcuts-sidebar .sidebar-card-header { margin-bottom: 0; }
 }
 
-/* Topic tag next to section titles (topic pages only) — reads as a
-   passive context label, not an interactive control. Small-caps,
-   no fill. A colored dot anchors the label and picks up the
-   section's accent (green for News Feed, navy for Shortcuts,
-   orange for Related), so the label feels related to its section
-   without competing with the title or the Quick Links pills. */
+/* Topic tag next to section titles — a quiet sentence-case label
+   sat to the right of the section title and separated by a thin
+   vertical divider. No dot, no uppercase, no bold: the section
+   title and the green/navy/orange accent bar do the heavy lifting,
+   and the tag just identifies which topic the section is scoped to.
+   Reads like a breadcrumb anchor without becoming another button. */
 .section-topic-pill {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  line-height: 1;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #6c7a91;
+  line-height: 1.15;
+  font-family: var(--font-family);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #5d6b82;
   background: transparent;
   border: none;
+  border-left: 1px solid #d6dae2;
   border-radius: 0;
-  padding: 0;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
+  padding: 0.05rem 0 0.05rem 0.85rem;
+  letter-spacing: -0.005em;
+  text-transform: none;
   margin-left: 0.85rem;
   flex-shrink: 0;
   white-space: nowrap;
   text-shadow: none;
 }
-.section-topic-pill::before {
-  content: '';
-  display: block;
-  flex-shrink: 0;
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  background: #c8cfdc;
-  /* Nudge the dot up a hair so its visual center sits at the
-     x-height midline of "SCIENCE" instead of slightly below it.
-     align-items: center on the parent centers boxes, not glyphs;
-     this is a one-pixel optical correction. */
-  position: relative;
-  top: -1px;
-}
-/* Section-accent dot colors — match the green/navy/orange bars
-   on the section titles next to which these pills sit. */
-.newsfeed-title .section-topic-pill::before { background: #2f855a; }
-.shortcuts-sidebar .sidebar-card-title .section-topic-pill::before { background: #2c4467; }
-.related-title .section-topic-pill::before { background: #c2410c; }
 
 .sidebar-card-desc {
   margin: 0.1rem 0 0.1rem;

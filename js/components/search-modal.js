@@ -1,8 +1,13 @@
-// Search: full-screen overlay. A single global overlay lives in
-// document.body. `renderSearchBar` creates trigger buttons that all open
-// the same overlay.
+// Search Topics overlay — a redesigned dual-purpose panel:
+//   1) A search section: type anything, fall through to a custom search.
+//   2) A browse section: grid of topic cards (with icons) that accordion
+//      open to reveal a "Browse all <topic>" link + the parent's
+//      subtopic list.
+// A "View all topics" link expands the visible parent set from just
+// the featured ones to every parent topic in the catalog.
 
 import { getTopicsGroupedByParent, getFeaturedTopics, searchTopics } from '../utils/data.js';
+import { topicIconSVG } from '../utils/topic-icons.js';
 import { navigate } from '../utils/router.js';
 
 let overlayEl = null;
@@ -10,7 +15,8 @@ let inputEl = null;
 let bodyEl = null;
 let currentResults = [];
 let highlightIndex = -1;
-let cachedBrowseHTML = null; // rebuilt on first open
+let expandedSlug = null;
+let showAllTopics = false;
 
 export function initSearchOverlay() {
   if (overlayEl) return;
@@ -22,40 +28,44 @@ export function initSearchOverlay() {
   overlayEl.style.display = 'none';
   overlayEl.innerHTML = `
     <div class="search-overlay-card">
-      <div class="search-overlay-input-row">
-        <svg class="search-overlay-icon-svg" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="search" class="search-overlay-input"
-               placeholder="Search a topic or type your own..."
-               autocomplete="off" autocapitalize="off" autocorrect="off"
-               spellcheck="false" enterkeyhint="go">
+      <header class="search-modal-head">
+        <h2 class="search-modal-head-title">Search Topics</h2>
         <button class="search-overlay-close" type="button" aria-label="Close">✕</button>
-      </div>
+      </header>
       <div class="search-overlay-body"></div>
     </div>
   `;
   document.body.appendChild(overlayEl);
 
-  inputEl = overlayEl.querySelector('.search-overlay-input');
   bodyEl = overlayEl.querySelector('.search-overlay-body');
   const closeBtn = overlayEl.querySelector('.search-overlay-close');
-
-  inputEl.addEventListener('input', () => {
-    highlightIndex = -1;
-    renderBody(inputEl.value);
-  });
-
-  inputEl.addEventListener('keydown', handleKeyboard);
 
   // Event delegation for all clicks in the body — no per-element listeners
   bodyEl.addEventListener('click', (e) => {
     const customBtn = e.target.closest('[data-action="custom"]');
     if (customBtn) {
-      const q = inputEl.value.trim();
+      const q = inputEl?.value.trim();
       if (q) { navigate(`#/custom/${encodeURIComponent(q)}`); closeOverlay(); }
+      return;
+    }
+    const viewAllBtn = e.target.closest('[data-action="view-all"]');
+    if (viewAllBtn) {
+      showAllTopics = !showAllTopics;
+      renderBody(inputEl?.value || '');
+      return;
+    }
+    const cardHeader = e.target.closest('.topic-card-head');
+    if (cardHeader) {
+      const slug = cardHeader.dataset.slug;
+      if (slug) {
+        expandedSlug = (expandedSlug === slug) ? null : slug;
+        renderBody(inputEl?.value || '');
+      }
       return;
     }
     const slugEl = e.target.closest('[data-slug]');
     if (slugEl) {
+      // Clicks on subtopic / parent links inside the expansion area.
       e.preventDefault();
       navigate(`#/topic/${slugEl.dataset.slug}`);
       closeOverlay();
@@ -105,12 +115,13 @@ function openOverlay() {
   if (!overlayEl) initSearchOverlay();
   overlayEl.style.display = 'flex';
   document.body.style.overflow = 'hidden';
-  inputEl.value = '';
+  expandedSlug = null;
+  showAllTopics = false;
   highlightIndex = -1;
   renderBody('');
   bodyEl.scrollTop = 0;
   const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-  if (!isTouch) inputEl.focus();
+  if (!isTouch) inputEl?.focus();
 }
 
 function closeOverlay() {
@@ -120,103 +131,175 @@ function closeOverlay() {
 }
 
 function renderBody(query) {
-  const q = query.trim();
-  let html = '';
+  const q = (query || '').trim();
   currentResults = [];
 
-  if (q) {
-    const matches = searchTopics(q);
-    currentResults = [
-      ...matches.map(m => ({ type: 'topic', slug: m.slug })),
-      { type: 'custom', term: q },
-    ];
+  const sections = [];
 
-    html += `<div class="search-overlay-results-block">`;
+  // === Search section =====================================================
+  sections.push(`
+    <section class="search-modal-section search-modal-search-section">
+      <span class="search-modal-eyebrow">Find content on any topic</span>
+      <div class="search-overlay-input-row">
+        <svg class="search-overlay-icon-svg" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" class="search-overlay-input"
+               value="${escapeAttr(q)}"
+               placeholder="Search a topic or type your own..."
+               autocomplete="off" autocapitalize="off" autocorrect="off"
+               spellcheck="false" enterkeyhint="go">
+      </div>
+      ${q ? renderSearchResults(q) : ''}
+    </section>
+  `);
 
-    if (matches.length > 0) {
-      matches.forEach(match => {
-        const parentLabel = match.parentName
-          ? `<span class="search-overlay-result-parent">${escapeHTML(match.parentName)}</span>`
-          : '';
-        html += `
-          <div class="search-overlay-result" data-slug="${match.slug}" role="button" tabindex="0">
-            <span class="search-overlay-result-name">${highlightMatch(match.name, q)}</span>
-            ${parentLabel}
-            <span class="search-overlay-result-arrow">›</span>
-          </div>
-        `;
-      });
-    } else {
-      html += `<div class="search-overlay-empty">No matching topics found.</div>`;
-    }
-
-    html += `
-        <div class="search-overlay-custom" data-action="custom" role="button" tabindex="0">
-          <span class="search-custom-badge">+</span>
-          Search "<strong>${escapeHTML(q)}</strong>" as Custom Topic
-        </div>
-    `;
-    html += `</div>`;
+  // === Browse section =====================================================
+  // Hide the browse grid when the user is actively typing — the results
+  // above + the "search as custom" CTA become the focus.
+  if (!q) {
+    sections.push(renderBrowseSection());
   }
 
-  // Browse catalog — cached after first build
-  if (!cachedBrowseHTML) cachedBrowseHTML = renderBrowseHTML();
-  html += q ? `<div class="search-overlay-section-label">Browse all topics</div>` : '';
-  html += cachedBrowseHTML;
+  bodyEl.innerHTML = sections.join('');
 
-  bodyEl.innerHTML = html;
+  // Re-grab the input element (the body was just replaced) and rebind
+  // the input listener so keystrokes don't re-trigger a full render
+  // for every character (we only re-render when transitioning between
+  // browse and search modes).
+  inputEl = bodyEl.querySelector('.search-overlay-input');
+  if (inputEl) {
+    inputEl.addEventListener('input', () => {
+      highlightIndex = -1;
+      renderBody(inputEl.value);
+      // After re-render the body lost focus; restore it.
+      const newInput = bodyEl.querySelector('.search-overlay-input');
+      if (newInput) {
+        newInput.focus();
+        const len = newInput.value.length;
+        newInput.setSelectionRange(len, len);
+      }
+    });
+    inputEl.addEventListener('keydown', handleKeyboard);
+  }
   updateHighlight();
 }
 
-function renderBrowseHTML() {
-  const groups = getTopicsGroupedByParent();
-  const featured = getFeaturedTopics();
-  let html = `<div class="search-overlay-browse shortcuts-sidebar">`;
+function renderSearchResults(q) {
+  const matches = searchTopics(q);
+  currentResults = [
+    ...matches.map(m => ({ type: 'topic', slug: m.slug })),
+    { type: 'custom', term: q },
+  ];
 
-  // Featured Topics section at the top
-  if (featured.length > 0) {
-    html += `
-      <div class="search-overlay-group">
-        <div class="search-featured-header">Featured Topics</div>
-        <div class="sidebar-shortcut-list search-subtopic-list">
-    `;
-    featured.forEach(t => {
+  let html = `<div class="search-overlay-results-block">`;
+
+  if (matches.length > 0) {
+    matches.forEach(match => {
+      const parentLabel = match.parentName
+        ? `<span class="search-overlay-result-parent">${escapeHTML(match.parentName)}</span>`
+        : '';
       html += `
-        <a href="#/topic/${t.slug}" class="sidebar-shortcut search-subtopic-row search-featured-item" data-slug="${t.slug}">
-          <span class="sidebar-shortcut-dot search-featured-dot" aria-hidden="true"></span>
-          <span class="sidebar-shortcut-name">${escapeHTML(t.name)}</span>
-          <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
-        </a>
+        <div class="search-overlay-result" data-slug="${match.slug}" role="button" tabindex="0">
+          <span class="search-overlay-result-name">${highlightMatch(match.name, q)}</span>
+          ${parentLabel}
+          <span class="search-overlay-result-arrow">›</span>
+        </div>
       `;
     });
-    html += `</div></div>`;
+  } else {
+    html += `<div class="search-overlay-empty">No matching topics found.</div>`;
   }
 
-  groups.forEach(group => {
-    html += `
-      <div class="search-overlay-group">
-        <a href="#/topic/${group.parent.slug}" class="sidebar-shortcut search-parent-row" data-slug="${group.parent.slug}">
-          <span class="sidebar-shortcut-name">${escapeHTML(group.parent.name)}</span>
-          <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
-        </a>
-        <div class="sidebar-shortcut-list search-subtopic-list">
-    `;
-    if (group.subtopics.length === 0) {
-      html += `<span class="search-overlay-group-empty">No subtopics.</span>`;
-    }
-    group.subtopics.forEach(sub => {
-      html += `
-        <a href="#/topic/${sub.slug}" class="sidebar-shortcut search-subtopic-row" data-slug="${sub.slug}">
-          <span class="sidebar-shortcut-dot" aria-hidden="true"></span>
-          <span class="sidebar-shortcut-name">${escapeHTML(sub.name)}</span>
-          <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
-        </a>
-      `;
-    });
-    html += `</div></div>`;
-  });
+  html += `
+      <div class="search-overlay-custom" data-action="custom" role="button" tabindex="0">
+        <span class="search-custom-badge">+</span>
+        Search "<strong>${escapeHTML(q)}</strong>" as Custom Topic
+      </div>
+  `;
   html += `</div>`;
   return html;
+}
+
+function renderBrowseSection() {
+  const featured = getFeaturedTopics();
+  const groups = getTopicsGroupedByParent();
+  const featuredSlugs = new Set(featured.map(t => t.slug));
+
+  // Featured first (in featured order); then non-featured parents
+  // appended only when "View all topics" has been activated.
+  const orderedGroups = [
+    ...featured
+      .map(f => groups.find(g => g.parent.slug === f.slug))
+      .filter(Boolean),
+    ...(showAllTopics
+      ? groups.filter(g => !featuredSlugs.has(g.parent.slug))
+      : []),
+  ];
+
+  const cardsHTML = orderedGroups.map(g => renderTopicCard(g)).join('');
+
+  const hiddenCount = groups.length - featured.length;
+  const viewAllHTML = (hiddenCount > 0)
+    ? `<button type="button" class="search-modal-view-all" data-action="view-all">
+         ${showAllTopics
+           ? `<span>Show fewer topics</span>
+              <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 7.5 6 4.5 3 7.5"/></svg>`
+           : `<span>View all ${groups.length} topics</span>
+              <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 4.5 6 7.5 9 4.5"/></svg>`}
+       </button>`
+    : '';
+
+  return `
+    <section class="search-modal-section search-modal-browse-section">
+      <span class="search-modal-eyebrow">Or pick a topic</span>
+      <div class="search-modal-topic-grid">
+        ${cardsHTML}
+      </div>
+      ${viewAllHTML}
+    </section>
+  `;
+}
+
+function renderTopicCard(group) {
+  const { parent, subtopics } = group;
+  const isExpanded = expandedSlug === parent.slug;
+  const iconKey = parent.icon || 'globe';
+  return `
+    <div class="topic-card ${isExpanded ? 'is-expanded' : ''}">
+      <button type="button"
+              class="topic-card-head"
+              data-slug="${parent.slug}"
+              aria-expanded="${isExpanded ? 'true' : 'false'}">
+        <span class="topic-card-icon">${topicIconSVG(iconKey, '')}</span>
+        <span class="topic-card-name">${escapeHTML(parent.name)}</span>
+        <svg class="topic-card-caret" width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="3 4.5 6 7.5 9 4.5"/>
+        </svg>
+      </button>
+      ${isExpanded ? `
+        <div class="topic-card-expansion">
+          <a href="#/topic/${parent.slug}" class="topic-card-all" data-slug="${parent.slug}">
+            <span>Browse all ${escapeHTML(parent.name)}</span>
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="3" y1="7" x2="11" y2="7"/>
+              <polyline points="7.5 3.5 11 7 7.5 10.5"/>
+            </svg>
+          </a>
+          ${subtopics.length > 0
+            ? `<ul class="topic-card-sublist">
+                 ${subtopics.map(sub => `
+                   <li>
+                     <a href="#/topic/${sub.slug}" class="topic-card-sublink" data-slug="${sub.slug}">
+                       <span class="topic-card-subdot" aria-hidden="true"></span>
+                       <span>${escapeHTML(sub.name)}</span>
+                     </a>
+                   </li>
+                 `).join('')}
+               </ul>`
+            : `<p class="topic-card-empty">No subtopics yet.</p>`}
+        </div>
+      ` : ''}
+    </div>
+  `;
 }
 
 function handleKeyboard(e) {
@@ -270,4 +353,8 @@ function escapeHTML(str) {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
+}
+
+function escapeAttr(str) {
+  return String(str ?? '').replace(/"/g, '&quot;').replace(/&/g, '&amp;');
 }

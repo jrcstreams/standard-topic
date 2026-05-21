@@ -937,9 +937,9 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
         <div class="shortcuts-subsection-header">
           <h4 class="shortcuts-subsection-title">Quick Links</h4>
         </div>
-        <div class="quick-links-pill-grid">
+        <ul class="ai-shortcut-bullet-list quick-links-bullet-list">
           ${contentSearches.map(s => quickLinkPill(s, topicName)).join('')}
-        </div>
+        </ul>
       </section>
     `;
   }
@@ -1313,20 +1313,27 @@ function groupShortcuts(shortcuts) {
   return groups;
 }
 
-// Quick Link pill — compact label-only pill rendered in a tight
-// grid (.quick-links-pill-grid). External link opens in a new tab.
-// Quick Links are secondary in prominence to AI Shortcuts; the pill
-// treatment reflects that — no icon, no row chrome, just text + a
-// quiet external glyph on the right.
+// Quick Link bullet row — matches the AI Shortcut bullet item
+// structure (dot marker + name) so both lists read as one cohesive
+// stack instead of a button grid above a bullet list. The trailing
+// "↗" badge signals "this opens externally" without competing with
+// the row's text.
 function quickLinkPill(search, topicName) {
   const url = search.urlTemplate.replace(/\{query\}/g, encodeURIComponent(topicName));
   return `
-    <a class="quick-link-pill"
-       href="${url}"
-       target="_blank"
-       rel="noopener noreferrer"
-       data-name="${escapeAttr(search.name)}"
-       title="${escapeAttr(search.name)}">${escapeHTML(search.name)}</a>
+    <li class="ai-shortcut-bullet-row quick-link-bullet-row">
+      <a class="sidebar-shortcut quick-link-pill"
+         href="${url}"
+         target="_blank"
+         rel="noopener noreferrer"
+         data-name="${escapeAttr(search.name)}"
+         title="${escapeAttr(search.name)}">
+        <span class="ai-shortcut-marker" aria-hidden="true">
+          <span class="ai-shortcut-marker-dot"></span>
+        </span>
+        <span class="sidebar-shortcut-name">${escapeHTML(search.name)}</span>
+      </a>
+    </li>
   `;
 }
 
