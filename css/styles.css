@@ -2487,18 +2487,19 @@ html, body, #app {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  padding: 0.38rem 0.2rem;
+  padding: 0.5rem 0.7rem;
+  margin: 1px 0;
   color: #1e2d44;
   text-decoration: none;
   font-size: 0.88rem;
   font-weight: 500;
   letter-spacing: -0.005em;
-  border-radius: 4px;
+  border-radius: 7px;
   transition: color 0.12s, background 0.12s;
 }
 .topic-card-sublink:hover {
   color: #2c4467;
-  background: rgba(44, 68, 103, 0.05);
+  background: rgba(44, 68, 103, 0.07);
   text-decoration: none;
 }
 .topic-card-subdot {
@@ -3478,42 +3479,18 @@ html, body, #app {
   text-decoration: none;
   white-space: nowrap;
   letter-spacing: 0.01em;
-  transition: color 0.12s;
-  padding: 4rem 1rem;
-  margin: -4rem 0;
+  transition: background 0.12s, color 0.12s;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
   display: inline-flex;
   align-items: center;
-  position: relative;
-  isolation: isolate;
-}
-/* Visible hover background is a pseudo-element clipped to a soft
-   rounded pill around the text area only — the 4rem padding hack
-   above expands the actual click target, but using `background`
-   directly would paint that whole tall column and the radius would
-   never show (the band has overflow:hidden so the rounded corners
-   end up off-band and clipped). The pseudo gets a constrained box
-   inside the visible band: ~1.9rem tall, centered vertically,
-   slightly inset horizontally, with a 7px radius for warmth. */
-.subnav-topic-link::after {
-  content: '';
-  position: absolute;
-  top: calc(50% - 0.95rem);
-  height: 1.9rem;
-  left: 0.45rem;
-  right: 0.45rem;
-  border-radius: 7px;
   background: transparent;
-  transition: background 0.12s;
-  z-index: -1;
-  pointer-events: none;
 }
 @media (hover: hover) {
   .subnav-topic-link:hover {
     color: var(--color-primary);
-    text-decoration: none;
-  }
-  .subnav-topic-link:hover::after {
     background: rgba(30, 45, 68, 0.07);
+    text-decoration: none;
   }
 }
 /* "ALL TOPICS +" — matches FEATURED label style. Symmetric 0.5rem
