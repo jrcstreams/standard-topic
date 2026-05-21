@@ -3937,18 +3937,10 @@ body.app-mode .topic-layout {
 .shortcuts-subsection-header {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
   margin: 0 0 0.6rem;
   padding: 0;
   border-bottom: none;
   flex-shrink: 0;
-}
-.shortcuts-subsection-header::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: #eaecf1;
-  align-self: center;
 }
 .shortcuts-subsection-title {
   font-family: var(--font-family);
@@ -4180,15 +4172,18 @@ body.app-mode .topic-layout {
    Quick Links share the same bullet-row layout as AI Shortcuts so
    the two lists read as one cohesive stack. The row is an <a>
    (external link) rather than a button — no checkbox marker, just
-   a dot + name. */
-.quick-links-bullet-list { padding-top: 0.55rem; }
-.quick-links-bullet-list .quick-link-pill {
+   a dot + name. Selector specificity bumped via
+   .shortcuts-sidebar so it overrides the default
+   .shortcuts-sidebar .sidebar-shortcut border-bottom. */
+.shortcuts-sidebar .quick-links-bullet-list { padding-top: 0.55rem; }
+.shortcuts-sidebar .quick-links-bullet-list .quick-link-pill {
   display: flex;
   align-items: center;
   gap: 0.65rem;
   padding: 0.34rem 0.5rem 0.34rem 0.45rem;
   background: transparent;
   border: none;
+  border-bottom: none;
   border-radius: 6px;
   text-decoration: none;
   color: var(--color-text);
@@ -4198,7 +4193,7 @@ body.app-mode .topic-layout {
   letter-spacing: -0.005em;
   transition: background 0.14s, color 0.12s;
 }
-.quick-links-bullet-list .quick-link-pill:hover {
+.shortcuts-sidebar .quick-links-bullet-list .quick-link-pill:hover {
   background: #eff4fb;
   color: #2c4467;
   text-decoration: none;
