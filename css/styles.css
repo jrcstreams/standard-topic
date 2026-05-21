@@ -2287,11 +2287,11 @@ html, body, #app {
 .search-modal-eyebrow {
   display: block;
   font-family: var(--font-family);
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #6c7a91;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: -0.008em;
+  text-transform: none;
+  color: #3a4a64;
   margin-bottom: 0.55rem;
 }
 
