@@ -1025,23 +1025,21 @@ body.hide-cta .sticky-cta { display: none !important; }
   }
 }
 
-/* Title scale-down second tier: applied by JS when News Feed → News
-   compact still isn't enough to keep title + tabs on one line.
-   Drops title font + icon a notch so the row fits without
-   wrapping. Stacks on top of body.subnav-compact (so "News" is
-   already in effect). */
+/* Title scale-down last-resort tier: applied by JS only when the
+   title genuinely wraps even with the always-"News" short tab.
+   Conservative shrink — a small step down, not a big one. */
 body.subnav-title-shrunk #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
 body.subnav-title-shrunk #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
-  font-size: 0.88rem;
+  font-size: 0.95rem;
 }
 body.subnav-title-shrunk #sub-header.is-subnav .topic-banner-icon,
 body.subnav-title-shrunk #sub-header.is-home-subnav .topic-banner-icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
 }
 body.subnav-title-shrunk #sub-header.is-subnav .topic-banner-titleinner,
 body.subnav-title-shrunk #sub-header.is-home-subnav .topic-banner-titleinner {
-  gap: 0.4rem;
+  gap: 0.45rem;
 }
 
 /* Default: show full CTA text, hide short */
@@ -4287,9 +4285,7 @@ body.app-mode .topic-layout {
   body.app-mode .topic-layout:not(.is-custom) .ai-shortcut-group { padding-top: 0; }
   body.app-mode .topic-layout:not(.is-custom) .ai-shortcut-group + .ai-shortcut-group { padding-top: 1.4rem; }
   body.app-mode .topic-layout:not(.is-custom) .ai-shortcut-group-label {
-    display: flex;
-    align-items: center;
-    gap: 0.65rem;
+    display: block;
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -4297,13 +4293,6 @@ body.app-mode .topic-layout {
     color: #6c7a91;
     margin: 0 0 0.6rem;
     line-height: 1.2;
-  }
-  body.app-mode .topic-layout:not(.is-custom) .ai-shortcut-group-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: #eaecf1;
-    align-self: center;
   }
 }
 
@@ -4328,16 +4317,18 @@ body.app-mode .topic-layout {
   margin-top: -0.25rem;
 }
 
-/* Tabbed/tabular viewports (≤899px in app-mode): Quick Links and
-   AI Shortcut bullet lists go 2-column so the wider shortcuts
-   card uses its horizontal room instead of stranding the rows in
-   one tall stack. Mobile single-column at very narrow widths. */
+/* Tabbed/tabular viewports (≤899px in app-mode): Quick Links go
+   2-column with content-sized columns so the pairs sit close
+   together instead of stranded with huge empty space inside
+   each grid column. AI Shortcuts stays single-column because
+   the longer item names + grouped sublabels read better as a
+   continuous stack. */
 @media (min-width: 480px) and (max-width: 899.98px) {
-  body.app-mode .shortcuts-sidebar .quick-links-bullet-list,
-  body.app-mode .ai-shortcut-bullet-list {
+  body.app-mode .shortcuts-sidebar .quick-links-bullet-list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 0.4rem;
+    grid-template-columns: max-content max-content;
+    justify-content: start;
+    column-gap: 1.5rem;
     row-gap: 0;
   }
 }
