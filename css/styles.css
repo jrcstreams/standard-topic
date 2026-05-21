@@ -3885,7 +3885,7 @@ body.app-mode .topic-layout {
   display: flex;
   flex-direction: column;
 }
-.shortcuts-subsection + .shortcuts-subsection { margin-top: 1.6rem; }
+.shortcuts-subsection + .shortcuts-subsection { margin-top: 1.15rem; }
 /* Editorial "eyebrow" pattern: a quiet uppercase label that anchors
    a thin horizontal rule extending to the right. The label stops
    carrying the full visual weight (no bold dark-navy heading) and
