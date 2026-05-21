@@ -241,7 +241,7 @@ function renderLayout(route) {
       wireChipStripScrollEnd();
       wireSubnavCompactMeasure();
     } else {
-      renderSubNav(subHeader, { title: route.term, iconKey: 'search', prefix: 'Search:' });
+      renderSubNav(subHeader, { title: route.term, iconKey: 'search', prefix: 'Search' });
       observeSubnavHeight();
       setupResponsiveNav();
     }

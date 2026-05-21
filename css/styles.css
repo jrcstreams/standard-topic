@@ -882,55 +882,41 @@ body.hide-cta .sticky-cta { display: none !important; }
   font-weight: 300;
 }
 
-/* Custom-search title: "Search: <term>" composed of two spans —
-   bolder "Search:" prefix and a lighter-weight term. Desktop keeps
-   them on one line, baseline-aligned. Mobile stacks them: a small
-   uppercase "SEARCH" label above the term. */
+/* Custom-search title: a small uppercase "SEARCH" eyebrow stacked
+   above the query term — same pattern on all widths so the
+   alignment never gets weird at narrow breakpoints. */
 .topic-banner-title.topic-banner-title-search {
   display: inline-flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
   min-width: 0;
+  line-height: 1.15;
 }
 .topic-banner-title-prefix {
   font-family: var(--font-family);
-  font-weight: 600;
-  font-size: 0.72rem;
+  font-weight: 700;
+  font-size: 0.66rem;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--color-text-light);
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  line-height: 1;
 }
 .topic-banner-title-term {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 700;
   color: #1e2d44;
+  font-size: 1.5rem;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
   letter-spacing: -0.026em;
+  line-height: 1.1;
 }
-@media (max-width: 640px) {
-  .topic-banner-title.topic-banner-title-search {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.05rem;
-    line-height: 1.15;
-  }
-  .topic-banner-title-prefix {
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-text-light);
-    font-weight: 700;
-  }
-  .topic-banner-title-term {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #1e2d44;
-  }
+@media (max-width: 899.98px) {
+  .topic-banner-title-term { font-size: 1.15rem; }
 }
 
 #sub-header.is-subnav .topic-banner-accent {
@@ -4388,7 +4374,7 @@ body.app-mode .topic-layout {
   align-items: center;
   gap: 0.65rem;
   width: 100%;
-  padding: 0.34rem 0.5rem 0.34rem 0.45rem;
+  padding: 0.36rem 0.5rem 0.36rem 0.45rem;
   background: transparent;
   border: none;
   border-bottom: none;
@@ -4396,7 +4382,7 @@ body.app-mode .topic-layout {
   text-decoration: none;
   color: var(--color-text);
   font-family: var(--font-family);
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   font-weight: 500;
   letter-spacing: -0.005em;
   transition: background 0.14s;
@@ -4424,13 +4410,12 @@ body.app-mode .topic-layout {
   /* Quiet uppercase mini-heading — reads as a category divider
      above its bullet list rather than competing with the AI
      Shortcuts subsection title (which sits one level up) or the
-     shortcut names below. Slightly smaller + lighter than the
-     subsection title so the hierarchy reads at a glance. */
+     shortcut names below. */
   display: block;
   font-family: var(--font-family);
-  font-size: 0.74rem;
+  font-size: 0.84rem;
   font-weight: 700;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #8a96ad;
   margin: 0 0 0.55rem;
@@ -4458,14 +4443,14 @@ body.app-mode .topic-layout {
   align-items: center;
   gap: 0.65rem;
   width: 100%;
-  padding: 0.34rem 0.5rem 0.34rem 0.45rem;
+  padding: 0.36rem 0.5rem 0.36rem 0.45rem;
   background: transparent;
   border: none;
   border-bottom: none;
   border-radius: 6px;
   text-align: left;
   font-family: var(--font-family);
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   font-weight: 500;
   color: var(--color-text);
   cursor: pointer;
@@ -4534,13 +4519,28 @@ body.app-mode .topic-layout {
   font-weight: 600;
 }
 
-/* Custom-search page: bullet lists go multi-column at wider widths
-   so the page uses available space. */
-.topic-layout.is-custom .ai-shortcuts-subsection .ai-shortcut-bullet-list {
+/* Custom-search page: bullet lists go 2-column at ≥720px so the
+   single-column page uses some of its horizontal room — fixed
+   column count (not auto-fit) so different groups don't snap to
+   different layouts as item counts vary. */
+.topic-layout.is-custom .ai-shortcuts-subsection .ai-shortcut-bullet-list,
+.topic-layout.is-custom .quick-links-subsection .quick-links-bullet-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  column-gap: 1.25rem;
-  row-gap: 0.05rem;
+  grid-template-columns: 1fr;
+  column-gap: 1rem;
+  row-gap: 0;
+}
+@media (min-width: 720px) {
+  .topic-layout.is-custom .ai-shortcuts-subsection .ai-shortcut-bullet-list,
+  .topic-layout.is-custom .quick-links-subsection .quick-links-bullet-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+/* Cap the shortcuts panel width on wide custom-search pages so the
+   columns don't stretch across the full viewport. */
+.topic-layout.is-custom #section-shortcuts {
+  max-width: 880px;
+  margin: 0 auto;
 }
 
 /* Inline toast — appears briefly above the AI list when the user
