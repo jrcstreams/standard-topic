@@ -4357,6 +4357,24 @@ body.app-mode .topic-layout {
 .subnav-chip-arrow { display: none; }
 .subnav-chip-wrap { position: relative; min-width: 0; }
 
+/* Desktop (≥900px): chip wrap fills the available space between the
+   title group and the (hidden) tab pills on the same row, with the
+   chip overflow clipped so the trim function can hide off-the-end
+   chips without their natural width pushing the row to wrap. Before
+   this, the wrap's intrinsic width was the full chip-strip width,
+   forcing .topic-banner-row's `flex-wrap: wrap` to break onto a
+   second line and stranding the title alone on row 1. */
+@media (min-width: 900px) {
+  #sub-header.is-subnav .topic-banner-row {
+    flex-wrap: nowrap;
+  }
+  #sub-header.is-subnav .topic-banner-row > .subnav-chip-wrap {
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+  }
+}
+
 /* === Quick Links — bullet rows ============================
    Quick Links share the same bullet-row layout as AI Shortcuts so
    the two lists read as one cohesive stack. The row is an <a>
