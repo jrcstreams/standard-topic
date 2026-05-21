@@ -409,6 +409,17 @@ function trimOverflowLinks() {
     const relatedBtnReset = document.getElementById('subnav-related-btn');
     if (relatedBtnReset) relatedBtnReset.style.display = 'none';
 
+    // Mobile home subnav uses a horizontal-scroll chip row — every
+    // chip stays visible and the user scrolls to reach the rest.
+    // Skip the trim/collapse logic entirely for that case.
+    const isMobileHome =
+      document.body.classList.contains('home-mode') &&
+      window.matchMedia('(max-width: 899.98px)').matches;
+    if (isMobileHome) {
+      container.classList.remove('is-empty');
+      return;
+    }
+
     const containerRight = container.getBoundingClientRect().right;
     // First measure with "More +" / "All Topics +" reserved so we can
     // drop links to make room.
