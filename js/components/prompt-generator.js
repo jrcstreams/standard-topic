@@ -872,6 +872,37 @@ function render() {
 
   // Bump action bar up when footer scrolls into view
   setupFooterDodge();
+
+  // Toggle the action bar between sticky-fixed (when content
+  // overflows the viewport) and inline (when everything fits on
+  // screen, so the bar can sit naturally below the card grid).
+  setupActionBarPlacement();
+}
+
+let actionBarResizeHandler = null;
+function setupActionBarPlacement() {
+  const measure = () => {
+    const panel = document.querySelector('.wiz-two-panel');
+    const cardGrid = document.getElementById('pb-card-grid');
+    if (!panel || !cardGrid) return;
+    // Measure where the card grid ends vs the viewport bottom.
+    // If the grid bottom + bar height (~80px) fits inside the
+    // viewport, we don't need a sticky bar — flip to inline mode.
+    const gridBottom = cardGrid.getBoundingClientRect().bottom;
+    const viewportH = window.innerHeight;
+    const barReserve = 100; // bar + breathing room
+    const fits = gridBottom + barReserve <= viewportH;
+    document.body.classList.toggle('pb-action-bar-inline', fits);
+  };
+  if (actionBarResizeHandler) {
+    window.removeEventListener('resize', actionBarResizeHandler);
+  }
+  actionBarResizeHandler = () => requestAnimationFrame(measure);
+  window.addEventListener('resize', actionBarResizeHandler, { passive: true });
+  // Initial measure after layout settles (next frame + small delay
+  // for fonts / images that may shift heights).
+  requestAnimationFrame(measure);
+  setTimeout(measure, 250);
 }
 
 let footerDodgeHandler = null;

@@ -461,48 +461,70 @@ function wireChipStripScrollEnd() {
 // We detect wrap by comparing the title element's rendered height
 // against a single-line threshold — robust whether the title bumps
 // horizontally or breaks to a new line.
-let subnavCompactObserver = null;
+let subnavCompactResizeHandler = null;
+let subnavCompactLastState = null;
+let subnavCompactLastWidth = null;
 function wireSubnavCompactMeasure() {
   const titleGroupEl = document.querySelector('#sub-header.is-subnav .topic-banner-titlegroup');
   const titleEl = document.querySelector('#sub-header.is-subnav .topic-banner-title');
   const tabPillsEl = document.querySelector('#sub-header.is-subnav .subnav-tab-pills');
   if (!titleGroupEl || !titleEl || !tabPillsEl) {
     document.body.classList.remove('subnav-compact');
+    document.body.classList.remove('subnav-title-shrunk');
+    subnavCompactLastState = null;
     return;
   }
-  const isWrapping = () => {
-    const cs = getComputedStyle(titleEl);
-    const fontSize = parseFloat(cs.fontSize) || 16;
-    const lineHeightRaw = parseFloat(cs.lineHeight);
-    const lineHeight = isNaN(lineHeightRaw) ? fontSize * 1.2 : lineHeightRaw;
-    const singleLineTitle = lineHeight + 6;
-    const titleHeight = titleEl.getBoundingClientRect().height;
+  // Measure WITHOUT first toggling the class — checking gap between
+  // title group's right edge and tab pills' left edge tells us if
+  // the title is too close to the tabs. We use a generous threshold
+  // so we don't flip back and forth on borderline widths.
+  const isCramped = () => {
     const titleRight = titleGroupEl.getBoundingClientRect().right;
     const tabsLeft = tabPillsEl.getBoundingClientRect().left;
-    const horizontalGap = tabsLeft - titleRight;
-    return titleHeight > singleLineTitle || horizontalGap < 12;
+    return (tabsLeft - titleRight) < 18;
   };
   const measure = () => {
     if (!window.matchMedia('(max-width: 899.98px)').matches) {
-      document.body.classList.remove('subnav-title-shrunk');
+      if (subnavCompactLastState !== false) {
+        document.body.classList.remove('subnav-title-shrunk');
+        subnavCompactLastState = false;
+      }
       return;
     }
-    // "News Feed" is always swapped to "News" in CSS at tabbed
-    // widths, so there's no compact-tab tier to measure. We only
-    // shrink the title text + icon as an absolute last resort
-    // when even the short tab label can't keep the title from
-    // wrapping (very long topic names).
-    document.body.classList.remove('subnav-title-shrunk');
-    requestAnimationFrame(() => {
-      if (isWrapping()) {
-        document.body.classList.add('subnav-title-shrunk');
+    // Hysteresis: when already shrunk, don't un-shrink until there
+    // is a clear amount of headroom (>56px). When not shrunk, only
+    // shrink when actually cramped (<18px gap). This prevents the
+    // ping-pong oscillation that was making the title visibly
+    // tweak between sizes.
+    const hasClass = document.body.classList.contains('subnav-title-shrunk');
+    const cramped = isCramped();
+    if (!hasClass && cramped) {
+      document.body.classList.add('subnav-title-shrunk');
+      subnavCompactLastState = true;
+    } else if (hasClass) {
+      const titleRight = titleGroupEl.getBoundingClientRect().right;
+      const tabsLeft = tabPillsEl.getBoundingClientRect().left;
+      if (tabsLeft - titleRight > 56) {
+        document.body.classList.remove('subnav-title-shrunk');
+        subnavCompactLastState = false;
       }
-    });
+    }
   };
-  if (subnavCompactObserver) subnavCompactObserver.disconnect();
-  subnavCompactObserver = new ResizeObserver(measure);
-  subnavCompactObserver.observe(document.documentElement);
-  measure();
+  // Listen to window.resize (viewport-driven) instead of
+  // ResizeObserver on documentElement — the observer was firing on
+  // class-induced height changes too, creating the flicker loop.
+  if (subnavCompactResizeHandler) {
+    window.removeEventListener('resize', subnavCompactResizeHandler);
+  }
+  subnavCompactLastWidth = window.innerWidth;
+  subnavCompactResizeHandler = () => {
+    if (window.innerWidth === subnavCompactLastWidth) return;
+    subnavCompactLastWidth = window.innerWidth;
+    measure();
+  };
+  window.addEventListener('resize', subnavCompactResizeHandler, { passive: true });
+  // Initial measure deferred to next frame so layout has settled.
+  requestAnimationFrame(measure);
 }
 
 // on container size changes, after fonts load, and on full page load so
@@ -532,14 +554,21 @@ function trimOverflowLinks() {
     const relatedBtnReset = document.getElementById('subnav-related-btn');
     if (relatedBtnReset) relatedBtnReset.style.display = 'none';
 
-    // Mobile app-mode pages (home + topic + custom) use a
-    // horizontal-scroll chip row — every chip stays visible and
-    // the user scrolls to reach the rest. Skip the trim/collapse
-    // logic entirely for those.
-    const isMobileApp =
-      document.body.classList.contains('app-mode') &&
-      window.matchMedia('(max-width: 899.98px)').matches;
-    if (isMobileApp) {
+    // Every chip stays visible at every viewport — the chip strip
+    // is now a horizontal scroller (overflow-x: auto) with arrow
+    // affordances on hover-capable pointers. Trim only runs in
+    // home-subnav mode, where we still want the "show ≥4 featured
+    // chips on row 1 or collapse to All Topics +" logic.
+    const isApp = document.body.classList.contains('app-mode');
+    const isMobile = window.matchMedia('(max-width: 899.98px)').matches;
+    if (isApp && isMobile) {
+      container.classList.remove('is-empty');
+      return;
+    }
+    // Topic pages at desktop: also let chips scroll. Only home
+    // subnav at desktop still uses trim (for its collapse logic).
+    const isHomeAtDesktop = !!actionLink && !moreLink;
+    if (!isHomeAtDesktop) {
       container.classList.remove('is-empty');
       return;
     }
