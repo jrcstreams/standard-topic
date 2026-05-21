@@ -882,41 +882,48 @@ body.hide-cta .sticky-cta { display: none !important; }
   font-weight: 300;
 }
 
-/* Custom-search title: a small uppercase "SEARCH" eyebrow stacked
-   above the query term — same pattern on all widths so the
-   alignment never gets weird at narrow breakpoints. */
+/* Custom-search title: small uppercase "SEARCH" tag inline with the
+   query term, both vertically centered with the search icon to its
+   left. Reads as one cohesive label-value pair instead of a
+   stacked two-line block. */
 .topic-banner-title.topic-banner-title-search {
   display: inline-flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.1rem;
+  align-items: center;
+  gap: 0.6rem;
   min-width: 0;
   line-height: 1.15;
+  flex-wrap: nowrap;
 }
 .topic-banner-title-prefix {
   font-family: var(--font-family);
   font-weight: 700;
-  font-size: 0.66rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.11em;
   color: var(--color-text-muted);
+  flex-shrink: 0;
   line-height: 1;
+  padding: 0.18rem 0.5rem;
+  background: rgba(15, 26, 46, 0.06);
+  border-radius: 999px;
 }
 .topic-banner-title-term {
   font-family: var(--font-display);
   font-weight: 700;
   color: #1e2d44;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
-  letter-spacing: -0.026em;
-  line-height: 1.1;
+  letter-spacing: -0.024em;
+  line-height: 1.15;
 }
 @media (max-width: 899.98px) {
-  .topic-banner-title-term { font-size: 1.15rem; }
+  .topic-banner-title-term { font-size: 1.05rem; }
+  .topic-banner-title-prefix { font-size: 0.62rem; padding: 0.14rem 0.4rem; }
+  .topic-banner-title.topic-banner-title-search { gap: 0.5rem; }
 }
 
 #sub-header.is-subnav .topic-banner-accent {
@@ -4166,36 +4173,43 @@ body.app-mode .topic-layout {
   /* Scroll arrows — hidden by default; visible only on hover-capable
      devices (desktop with mouse) when the chip strip actually
      overflows AND has scroll headroom in that direction. Touch
-     devices use native swipe. */
+     devices use native swipe. Sized smaller + positioned over the
+     fade so they read as a quiet discreet affordance. */
   body.app-mode #sub-header.is-subnav .subnav-chip-arrow {
     display: none;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     z-index: 2;
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
     align-items: center;
     justify-content: center;
-    background: var(--color-bg);
-    border: 1px solid #d8dce3;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(15, 26, 46, 0.12);
     border-radius: 999px;
-    color: #2c4467;
+    color: #4a5a72;
     cursor: pointer;
     padding: 0;
-    box-shadow: 0 1px 3px rgba(15, 26, 46, 0.10);
-    transition: background 0.14s, border-color 0.14s, transform 0.06s, box-shadow 0.14s;
+    box-shadow: 0 1px 2px rgba(15, 26, 46, 0.08);
+    transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.06s, box-shadow 0.14s;
   }
+  body.app-mode #sub-header.is-subnav .subnav-chip-arrow svg { width: 11px; height: 11px; display: block; }
   body.app-mode #sub-header.is-subnav .subnav-chip-arrow:hover {
-    background: #ecf0f5;
-    border-color: #c8d3e3;
-    box-shadow: 0 2px 6px rgba(15, 26, 46, 0.14);
+    background: var(--color-bg);
+    border-color: rgba(15, 26, 46, 0.22);
+    color: #1e2d44;
+    box-shadow: 0 2px 5px rgba(15, 26, 46, 0.12);
   }
   body.app-mode #sub-header.is-subnav .subnav-chip-arrow:active {
     transform: translateY(calc(-50% + 1px));
   }
-  body.app-mode #sub-header.is-subnav .subnav-chip-arrow-left  { left: -6px; }
-  body.app-mode #sub-header.is-subnav .subnav-chip-arrow-right { right: -6px; }
+  /* Position the arrows just inside the visible edge of the
+     scroll viewport, vertically centered on the chip row (which
+     pulls -0.65rem at the bottom via negative margin — half that
+     is the visual center). */
+  body.app-mode #sub-header.is-subnav .subnav-chip-arrow-left  { left: 2px; top: calc(50% - 5px); }
+  body.app-mode #sub-header.is-subnav .subnav-chip-arrow-right { right: 2px; top: calc(50% - 5px); }
   @media (hover: hover) and (pointer: fine) {
     body.app-mode #sub-header.is-subnav .subnav-chip-wrap.can-scroll-left  .subnav-chip-arrow-left  { display: inline-flex; }
     body.app-mode #sub-header.is-subnav .subnav-chip-wrap.can-scroll-right .subnav-chip-arrow-right { display: inline-flex; }
@@ -4536,11 +4550,12 @@ body.app-mode .topic-layout {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-/* Cap the shortcuts panel width on wide custom-search pages so the
-   columns don't stretch across the full viewport. */
+/* On wide custom-search pages the columns can stretch the full
+   available width — content takes the natural inset from the
+   layout's outer padding. */
 .topic-layout.is-custom #section-shortcuts {
-  max-width: 880px;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
 }
 
 /* Inline toast — appears briefly above the AI list when the user

@@ -207,9 +207,12 @@ function renderLayout(route) {
       const topic = getTopicBySlug(route.slug);
       if (!topic) return;
       const related = getRelatedTopics(topic);
+      // Plain related-topic links — no trailing "More +" CTA. The
+      // chip strip scrolls horizontally (with mouse arrows on
+      // desktop) so every topic stays reachable.
       const relatedLinksHTML = related.map(t =>
         `<a href="#/topic/${t.slug}" class="subnav-topic-link">${escapeHTML(t.name)}</a>`
-      ).join('') + `<a href="#" class="subnav-more-link" id="subnav-more-related">More +</a>`;
+      ).join('');
 
       subHeader.innerHTML = `
         <div class="topic-banner">
@@ -219,21 +222,11 @@ function renderLayout(route) {
               <div class="subnav-topics-inline">
                 ${relatedLinksHTML}
               </div>
-              <a href="#" class="subnav-related-btn" id="subnav-related-btn">Related Topics +</a>
             ` : ''}
             ${tabPillsRow({ showRelated: false })}
           </div>
         </div>
       `;
-
-      const openRelatedModal = (e) => {
-        e.preventDefault();
-        window.dispatchEvent(new CustomEvent('open-related-topics-modal', {
-          detail: { topics: related, title: 'Related Topics', topicName: topic.name },
-        }));
-      };
-      subHeader.querySelector('#subnav-more-related')?.addEventListener('click', openRelatedModal);
-      subHeader.querySelector('#subnav-related-btn')?.addEventListener('click', openRelatedModal);
 
       observeSubnavHeight();
       trimOverflowLinks();
