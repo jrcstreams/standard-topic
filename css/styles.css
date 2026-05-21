@@ -4104,9 +4104,9 @@ body.app-mode .topic-layout {
     flex-wrap: nowrap;
     overflow-x: auto;
     overflow-y: hidden;
-    gap: 1.1rem;
+    gap: 0.3rem;
     padding: 0.1rem 0;
-    margin: 0;
+    margin: 0 -0.55rem;
     min-width: 0;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
@@ -4132,9 +4132,13 @@ body.app-mode .topic-layout {
     font-size: 0.86rem;
     /* Override the desktop tap-target hack (padding: 4rem with
        negative margin) — that 128px outer box was breaking the
-       horizontal-scroll layout by stretching the row to 128px tall. */
-    padding: 0.2rem 0;
+       horizontal-scroll layout by stretching the row to 128px tall.
+       Horizontal padding gives the hover background visible breathing
+       room around the text instead of riding directly on the
+       letterforms. */
+    padding: 0.25rem 0.55rem;
     margin: 0;
+    border-radius: 7px;
   }
   /* "All Topics +" lives inline as the last item in the scrollable
      chip strip on mobile home. Slightly heavier weight and the
@@ -4145,11 +4149,11 @@ body.app-mode .topic-layout {
     display: inline-flex !important;
     align-items: center;
     flex: 0 0 auto;
-    padding: 0.2rem 0;
+    padding: 0.25rem 0.55rem;
     margin: 0;
     background: transparent;
     border: none;
-    border-radius: 0;
+    border-radius: 7px;
     color: #2c4467;
     font-family: var(--font-display);
     font-size: 0.88rem;
