@@ -1025,6 +1025,25 @@ body.hide-cta .sticky-cta { display: none !important; }
   }
 }
 
+/* Title scale-down second tier: applied by JS when News Feed → News
+   compact still isn't enough to keep title + tabs on one line.
+   Drops title font + icon a notch so the row fits without
+   wrapping. Stacks on top of body.subnav-compact (so "News" is
+   already in effect). */
+body.subnav-title-shrunk #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
+body.subnav-title-shrunk #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
+  font-size: 0.88rem;
+}
+body.subnav-title-shrunk #sub-header.is-subnav .topic-banner-icon,
+body.subnav-title-shrunk #sub-header.is-home-subnav .topic-banner-icon {
+  width: 18px;
+  height: 18px;
+}
+body.subnav-title-shrunk #sub-header.is-subnav .topic-banner-titleinner,
+body.subnav-title-shrunk #sub-header.is-home-subnav .topic-banner-titleinner {
+  gap: 0.4rem;
+}
+
 /* Default: show full CTA text, hide short */
 .sticky-cta-short { display: none; }
 .sticky-cta-full { display: inline; }
@@ -2290,9 +2309,8 @@ html, body, #app {
 .search-modal-head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 1rem 1.15rem 0.9rem;
+  gap: 0.7rem;
+  padding: 0.95rem 1.15rem 0.9rem;
   border-bottom: 1px solid #eef0f4;
   flex-shrink: 0;
 }
@@ -2304,6 +2322,32 @@ html, body, #app {
   color: #1e2d44;
   letter-spacing: -0.018em;
 }
+/* Modal close button matches the expanded navmenu close — same
+   34x34 ghost chip with a muted X icon on the LEFT of the title. */
+.search-modal-head .search-overlay-close {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-light, #f3f5f9);
+  border: 1px solid #e6e8ec;
+  border-radius: 9px;
+  cursor: pointer;
+  flex-shrink: 0;
+  color: var(--color-text-muted, #6b7280);
+  padding: 0;
+  font-size: inherit;
+  line-height: 1;
+  transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.06s;
+}
+.search-modal-head .search-overlay-close:hover {
+  background: #eef2f7;
+  border-color: #c8d3e3;
+  color: var(--color-text, #1e2d44);
+}
+.search-modal-head .search-overlay-close:active { transform: translateY(1px); }
+.search-modal-head .search-overlay-close svg { display: block; }
 
 .search-modal-section {
   padding: 1.1rem 1.15rem 0.4rem;
@@ -8331,7 +8375,13 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   color: #4a6a8a;
   font-weight: var(--font-weight-semibold);
 }
-#sub-header .subnav-topic-link:hover { color: var(--color-primary-dark, #0f1a2e); }
+/* Hover styles only on devices with a true hover capability so the
+   :hover state never sticks after a tap on touch devices (which
+   otherwise carries the highlight to whatever sits at the same x/y
+   on the page the tap navigated to). */
+@media (hover: hover) {
+  #sub-header .subnav-topic-link:hover { color: var(--color-primary-dark, #0f1a2e); }
+}
 
 /* === Main nav: vertical separator between brand and tagline ============ */
 .sticky-brand {

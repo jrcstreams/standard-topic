@@ -421,33 +421,43 @@ function wireSubnavCompactMeasure() {
     document.body.classList.remove('subnav-compact');
     return;
   }
+  const isWrapping = () => {
+    const cs = getComputedStyle(titleEl);
+    const fontSize = parseFloat(cs.fontSize) || 16;
+    const lineHeightRaw = parseFloat(cs.lineHeight);
+    const lineHeight = isNaN(lineHeightRaw) ? fontSize * 1.2 : lineHeightRaw;
+    const singleLineTitle = lineHeight + 6;
+    const titleHeight = titleEl.getBoundingClientRect().height;
+    const titleRight = titleGroupEl.getBoundingClientRect().right;
+    const tabsLeft = tabPillsEl.getBoundingClientRect().left;
+    const horizontalGap = tabsLeft - titleRight;
+    return titleHeight > singleLineTitle || horizontalGap < 16;
+  };
   const measure = () => {
     // Only relevant at tabbed widths — desktop has tabs hidden, so
     // there's nothing to crowd against.
     if (!window.matchMedia('(max-width: 899.98px)').matches) {
       document.body.classList.remove('subnav-compact');
+      document.body.classList.remove('subnav-title-shrunk');
       return;
     }
-    // Strip the compact class so we measure the title's natural
-    // size with the longer "News Feed" tab in place. If the title
-    // is wrapping at that natural state, switch to compact.
+    // Two-tier fit:
+    //   1. Try natural size with "News Feed" tab. If title wraps,
+    //      switch the tab to compact "News" via .subnav-compact.
+    //   2. Re-measure. If the title is STILL wrapping (no shortened
+    //      tab label saved enough room), shrink the title text + icon
+    //      down a size via .subnav-title-shrunk. Both classes stack.
     document.body.classList.remove('subnav-compact');
+    document.body.classList.remove('subnav-title-shrunk');
     requestAnimationFrame(() => {
-      // Single-line line-height for the title is ~1.2 × font-size.
-      // Use computed line-height with a small tolerance buffer.
-      const cs = getComputedStyle(titleEl);
-      const fontSize = parseFloat(cs.fontSize) || 16;
-      const lineHeightRaw = parseFloat(cs.lineHeight);
-      const lineHeight = isNaN(lineHeightRaw) ? fontSize * 1.2 : lineHeightRaw;
-      const singleLineTitle = lineHeight + 6; // tolerance
-      const titleHeight = titleEl.getBoundingClientRect().height;
-      const titleRight = titleGroupEl.getBoundingClientRect().right;
-      const tabsLeft = tabPillsEl.getBoundingClientRect().left;
-      const horizontalGap = tabsLeft - titleRight;
-      // Trigger compact if title wraps OR the horizontal gap is
-      // small enough to be visually crowded.
-      const shouldCompact = titleHeight > singleLineTitle || horizontalGap < 16;
-      document.body.classList.toggle('subnav-compact', shouldCompact);
+      if (isWrapping()) {
+        document.body.classList.add('subnav-compact');
+        requestAnimationFrame(() => {
+          if (isWrapping()) {
+            document.body.classList.add('subnav-title-shrunk');
+          }
+        });
+      }
     });
   };
   if (subnavCompactObserver) subnavCompactObserver.disconnect();
