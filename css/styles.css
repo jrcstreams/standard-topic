@@ -3924,8 +3924,7 @@ body.app-mode .topic-layout {
   body.app-mode .topic-layout:not(.is-custom) .shortcuts-subsection-title {
     font-family: var(--font-display);
     font-size: 1.15rem;
-    font-weight: 500;
-    text-shadow: 0 0 0.45px currentColor;
+    font-weight: 600;
     color: #1e2d44;
     letter-spacing: -0.024em;
     line-height: 1.15;
