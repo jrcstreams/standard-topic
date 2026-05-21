@@ -4007,6 +4007,11 @@ body.app-mode .topic-layout {
   white-space: nowrap;
   transition: background 0.14s, color 0.14s, border-color 0.14s;
 }
+/* Tab pill dual labels — "News Feed" by default; collapses to
+   "News" when the row is tight (body.subnav-compact). */
+.tab-pill-label-short { display: none; }
+body.subnav-compact .tab-pill-newsfeed .tab-pill-label-long { display: none; }
+body.subnav-compact .tab-pill-newsfeed .tab-pill-label-short { display: inline; }
 .tab-pill:hover { color: var(--color-text); }
 .tab-pill.active { color: white; }
 .tab-pill-newsfeed.active { background: #2f855a; border-color: #2f855a; }
@@ -4028,12 +4033,12 @@ body.app-mode .topic-layout {
    on mobile. */
 @media (max-width: 899.98px) {
   body.app-mode .subnav-tab-pills { display: inline-flex; }
-  /* Hide the existing "Related Topics +" modal trigger on mobile —
-     the Related pill replaces it. trimOverflowLinks sets an inline
+  /* Hide the "Related Topics +" modal-trigger sibling on mobile —
+     on app-mode pages the related list now lives inline in the
+     chip strip below. trimOverflowLinks sets an inline
      `style.display = 'inline-block'` on this button, so we need
-     !important to override. Same for the chips row. */
-  body.app-mode #sub-header.is-subnav #subnav-related-btn,
-  body.app-mode #sub-header.is-subnav .subnav-topics-inline {
+     !important to override. */
+  body.app-mode #sub-header.is-subnav #subnav-related-btn {
     display: none !important;
   }
   /* Mobile: pills ALWAYS sit on a new row below the page title (not
@@ -4061,7 +4066,7 @@ body.app-mode .topic-layout {
      The chips row scrolls horizontally with a mask-image fade
      hinting there's more content; "All Topics +" stays pinned
      outside the scroll on the right. */
-  body.app-mode.home-mode #sub-header.is-subnav .topic-banner-row {
+  body.app-mode #sub-header.is-subnav .topic-banner-row {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
@@ -4077,28 +4082,28 @@ body.app-mode .topic-layout {
      pages because it carries an extra row (the scrolling chip
      strip). Aim is the same overall band height as a topic page
      subnav while keeping the two rows breathing comfortably. */
-  body.app-mode.home-mode #sub-header.is-subnav .topic-banner {
+  body.app-mode #sub-header.is-subnav .topic-banner {
     padding: 0.7rem 1rem 0.65rem;
   }
-  body.app-mode.home-mode #sub-header.is-subnav .topic-banner-titlegroup {
+  body.app-mode #sub-header.is-subnav .topic-banner-titlegroup {
     grid-area: title;
     flex-basis: auto;
     margin-right: 0;
     min-width: 0;
   }
-  body.app-mode.home-mode #sub-header.is-subnav .subnav-tab-pills {
+  body.app-mode #sub-header.is-subnav .subnav-tab-pills {
     grid-area: tabs;
     justify-self: end;
     padding-left: 0;
   }
-  body.app-mode.home-mode #sub-header.is-subnav .subnav-tab-pills::before {
+  body.app-mode #sub-header.is-subnav .subnav-tab-pills::before {
     display: none;
   }
   /* Surface the chip row that is normally hidden on tabbed widths,
      and convert it into a horizontal scroller. The right-edge fade
      is a mask-image that softens the last chip in the visible
      window as a hint that more content scrolls past. */
-  body.app-mode.home-mode #sub-header.is-subnav .subnav-topics-inline {
+  body.app-mode #sub-header.is-subnav .subnav-topics-inline {
     display: flex !important;
     grid-area: chips;
     flex-wrap: nowrap;
@@ -4122,17 +4127,17 @@ body.app-mode .topic-layout {
   }
   /* When scrolled to the end, drop the fade so the last item
      ("All Topics +") sits fully visible without being cut off. */
-  body.app-mode.home-mode #sub-header.is-subnav .subnav-topics-inline.is-at-end {
+  body.app-mode #sub-header.is-subnav .subnav-topics-inline.is-at-end {
     mask-image: none;
     -webkit-mask-image: none;
   }
-  body.app-mode.home-mode #sub-header.is-subnav .subnav-topics-inline::before {
+  body.app-mode #sub-header.is-subnav .subnav-topics-inline::before {
     display: none; /* drop the desktop vertical divider before the chips */
   }
-  body.app-mode.home-mode #sub-header.is-subnav .subnav-topics-inline::-webkit-scrollbar {
+  body.app-mode #sub-header.is-subnav .subnav-topics-inline::-webkit-scrollbar {
     display: none;
   }
-  body.app-mode.home-mode #sub-header.is-subnav .subnav-topic-link {
+  body.app-mode #sub-header.is-subnav .subnav-topic-link {
     flex: 0 0 auto;
     white-space: nowrap;
     font-size: 0.86rem;
@@ -4147,12 +4152,13 @@ body.app-mode .topic-layout {
     margin: 0;
     border-radius: 7px;
   }
-  /* "All Topics +" lives inline as the last item in the scrollable
-     chip strip on mobile home. Slightly heavier weight and the
-     primary navy color so it reads as the natural "more" CTA at
-     the end of the list — but it still scrolls with everything
-     else (the fade gradient on the strip eases into it). */
-  body.app-mode.home-mode #sub-header.is-subnav .subnav-all-topics-link {
+  /* "All Topics +" (home) / "More +" (topic pages) lives inline as
+     the last item in the scrollable chip strip. Slightly heavier
+     weight and the primary navy color so it reads as the natural
+     "more" CTA at the end of the list — but it still scrolls
+     with everything else. */
+  body.app-mode #sub-header.is-subnav .subnav-all-topics-link,
+  body.app-mode #sub-header.is-subnav .subnav-more-link {
     display: inline-flex !important;
     align-items: center;
     flex: 0 0 auto;
@@ -4170,7 +4176,8 @@ body.app-mode .topic-layout {
     white-space: nowrap;
     line-height: 1.2;
   }
-  body.app-mode.home-mode #sub-header.is-subnav .subnav-all-topics-link:hover {
+  body.app-mode #sub-header.is-subnav .subnav-all-topics-link:hover,
+  body.app-mode #sub-header.is-subnav .subnav-more-link:hover {
     color: var(--color-primary-dark, #0f1a2e);
     text-decoration: none;
     background: transparent;

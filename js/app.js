@@ -177,19 +177,8 @@ function renderLayout(route) {
     trimOverflowLinks();
     setupResponsiveNav();
 
-    // Mobile home chip strip: toggle .is-at-end when the user has
-    // scrolled to the right edge so the CSS fade lifts and the
-    // last item ("All Topics +") sits fully visible.
-    const chipStrip = subHeader.querySelector('.subnav-topics-inline.home-subnav-topics');
-    if (chipStrip) {
-      const updateEnd = () => {
-        const atEnd = chipStrip.scrollLeft + chipStrip.clientWidth >= chipStrip.scrollWidth - 1;
-        chipStrip.classList.toggle('is-at-end', atEnd);
-      };
-      chipStrip.addEventListener('scroll', updateEnd, { passive: true });
-      // Run once on render so the class reflects the initial state.
-      requestAnimationFrame(updateEnd);
-    }
+    wireChipStripScrollEnd();
+    wireSubnavCompactMeasure();
     return;
   }
 
@@ -230,7 +219,7 @@ function renderLayout(route) {
               </div>
               <a href="#" class="subnav-related-btn" id="subnav-related-btn">Related Topics +</a>
             ` : ''}
-            ${tabPillsRow({ showRelated: related.length > 0 })}
+            ${tabPillsRow({ showRelated: false })}
           </div>
         </div>
       `;
@@ -247,6 +236,8 @@ function renderLayout(route) {
       observeSubnavHeight();
       trimOverflowLinks();
       setupResponsiveNav();
+      wireChipStripScrollEnd();
+      wireSubnavCompactMeasure();
     } else {
       renderSubNav(subHeader, { title: route.term, iconKey: 'search', prefix: 'Search:' });
       observeSubnavHeight();
@@ -280,7 +271,10 @@ function renderLayout(route) {
 function tabPillsRow(opts = {}) {
   const { showRelated = false, showAllTopics = false } = opts;
   const pills = [
-    `<button type="button" class="tab-pill tab-pill-newsfeed active" data-tab="newsfeed">News Feed</button>`,
+    `<button type="button" class="tab-pill tab-pill-newsfeed active" data-tab="newsfeed">
+       <span class="tab-pill-label-long">News Feed</span>
+       <span class="tab-pill-label-short">News</span>
+     </button>`,
     `<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">Shortcuts</button>`,
   ];
   if (showRelated) {
@@ -396,6 +390,61 @@ function setupHomeStickyReveal(mainEl, subEl) {
 }
 
 // Hide subnav topic links that overflow the container. Runs on render,
+// Wire the chip strip's right-edge scroll detection: toggles
+// .is-at-end so the CSS fade lifts when the user reaches the last
+// item, letting "All Topics +" / "More +" sit fully visible
+// without being cut off by the mask gradient.
+function wireChipStripScrollEnd() {
+  const chipStrip = document.querySelector('#sub-header.is-subnav .subnav-topics-inline');
+  if (!chipStrip) return;
+  const updateEnd = () => {
+    const atEnd = chipStrip.scrollLeft + chipStrip.clientWidth >= chipStrip.scrollWidth - 1;
+    chipStrip.classList.toggle('is-at-end', atEnd);
+  };
+  chipStrip.addEventListener('scroll', updateEnd, { passive: true });
+  requestAnimationFrame(updateEnd);
+}
+
+// In tabbed-nav widths the page title + tab pills sit on the same
+// row. If the title is long enough to crowd the tab pills, swap
+// "News Feed" for the shorter "News" label (handled in CSS via
+// body.subnav-compact). Measure with a small breathing-room buffer
+// and re-check on viewport resize.
+let subnavCompactObserver = null;
+function wireSubnavCompactMeasure() {
+  const titleGroupEl = document.querySelector('#sub-header.is-subnav .topic-banner-titlegroup');
+  const tabPillsEl = document.querySelector('#sub-header.is-subnav .subnav-tab-pills');
+  if (!titleGroupEl || !tabPillsEl) {
+    document.body.classList.remove('subnav-compact');
+    return;
+  }
+  const measure = () => {
+    // Only relevant at tabbed widths — desktop has tabs hidden, so
+    // there's nothing to crowd against.
+    if (!window.matchMedia('(max-width: 899.98px)').matches) {
+      document.body.classList.remove('subnav-compact');
+      return;
+    }
+    // Temporarily strip the compact class so we measure the title's
+    // natural width vs the "News Feed" tab's natural width.
+    const wasCompact = document.body.classList.contains('subnav-compact');
+    if (wasCompact) document.body.classList.remove('subnav-compact');
+    requestAnimationFrame(() => {
+      const titleRight = titleGroupEl.getBoundingClientRect().right;
+      const tabsLeft = tabPillsEl.getBoundingClientRect().left;
+      const gap = tabsLeft - titleRight;
+      // Trigger compact when the gap shrinks below ~12px (title is
+      // pressing against the tabs).
+      const shouldCompact = gap < 12;
+      document.body.classList.toggle('subnav-compact', shouldCompact);
+    });
+  };
+  if (subnavCompactObserver) subnavCompactObserver.disconnect();
+  subnavCompactObserver = new ResizeObserver(measure);
+  subnavCompactObserver.observe(document.documentElement);
+  measure();
+}
+
 // on container size changes, after fonts load, and on full page load so
 // the chip count converges on the same correct value regardless of when
 // layout happens to settle.
@@ -423,13 +472,14 @@ function trimOverflowLinks() {
     const relatedBtnReset = document.getElementById('subnav-related-btn');
     if (relatedBtnReset) relatedBtnReset.style.display = 'none';
 
-    // Mobile home subnav uses a horizontal-scroll chip row — every
-    // chip stays visible and the user scrolls to reach the rest.
-    // Skip the trim/collapse logic entirely for that case.
-    const isMobileHome =
-      document.body.classList.contains('home-mode') &&
+    // Mobile app-mode pages (home + topic + custom) use a
+    // horizontal-scroll chip row — every chip stays visible and
+    // the user scrolls to reach the rest. Skip the trim/collapse
+    // logic entirely for those.
+    const isMobileApp =
+      document.body.classList.contains('app-mode') &&
       window.matchMedia('(max-width: 899.98px)').matches;
-    if (isMobileHome) {
+    if (isMobileApp) {
       container.classList.remove('is-empty');
       return;
     }
