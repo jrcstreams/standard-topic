@@ -1495,47 +1495,26 @@ body.hide-cta .sticky-cta { display: none !important; }
 }
 
 /* News Feed title — sticky to the top of the scroll wrap so iframe
-   content visibly scrolls behind it. Green accent bar to the left
-   (matches the original treatment) and a separator line below. */
+   content visibly scrolls behind it. No accent bar — weight + the
+   thin separator rule below carry the section-title presence. */
 .newsfeed-title {
   font-family: var(--font-display);
   font-size: 1.3rem;
   line-height: 1.15;
-  font-weight: 500;
-  text-shadow: 0 0 0.45px currentColor;
+  font-weight: 700;
   color: #1e2d44;
   letter-spacing: -0.024em;
   margin: 0;
-  padding: 0 0 1.2rem 0;
-  border-bottom: 2px solid #c8cfdc;
+  padding: 0 0 1rem 0;
+  border-bottom: 1px solid #d6dae2;
   background: var(--color-bg);
   flex-shrink: 0;
-  /* Flex container so the bar (::before) and text are siblings,
-     vertically centered together. Bar height is em-based so it
-     scales with font-size; gap supplies the spacing from bar to
-     text. */
   display: flex;
   align-items: center;
 }
-.newsfeed-title::before {
-  content: '';
-  display: block;
-  flex-shrink: 0;
-  width: 3px;
-  height: 1.4em;
-  margin-right: 0.65rem;
-  background: #2f855a;
-  border-radius: 999px;
-}
+.newsfeed-title::before { display: none; }
 @media (max-width: 640px) {
   .newsfeed-title { font-size: 1.15rem; }
-  /* Mobile: 4px bar across all three section titles, same height
-     ratio (1.95em) so it scales with the smaller title font. */
-  .newsfeed-title::before,
-  .related-title::before,
-  .shortcuts-sidebar .sidebar-card-title::before {
-    width: 4px;
-  }
 }
 
 /* === Multi-Select toggle ===
@@ -3829,8 +3808,8 @@ body.app-mode .topic-layout {
   flex-wrap: nowrap;
   align-items: center;
   margin: 0;
-  padding: 0 0 1.2rem 0;
-  border-bottom: 2px solid #c8cfdc;
+  padding: 0 0 1rem 0;
+  border-bottom: 1px solid #d6dae2;
   position: relative;
   background: var(--color-bg);
   z-index: 4;
@@ -3845,39 +3824,17 @@ body.app-mode .topic-layout {
   font-family: var(--font-display);
   font-size: 1.3rem;
   line-height: 1.15;
-  font-weight: 500;
-  text-shadow: 0 0 0.45px currentColor;
+  font-weight: 700;
   color: #1e2d44;
   letter-spacing: -0.024em;
   margin: 0;
   padding: 0;
   flex: 0 1 auto;
-  /* Match the flex-sibling-bar pattern used by .newsfeed-title and
-     .related-title so the three section-title bars are identical in
-     height, width, and vertical alignment with their text. The
-     base .sidebar-card-title rule sets gap: 0.55rem — reset to 0
-     here so spacing comes from the bar's margin-right alone. */
   display: inline-flex;
   align-items: center;
   gap: 0;
 }
-.shortcuts-sidebar .sidebar-card-title::before {
-  content: '';
-  display: block;
-  /* Override the base .sidebar-card-title::before rule which uses
-     position: absolute — that anchored the bar at the title's
-     left edge and overlapped the text. Force it back to static
-     so it participates in the flex layout as a sibling. */
-  position: static;
-  top: auto;
-  bottom: auto;
-  flex-shrink: 0;
-  width: 3px;
-  height: 1.4em;
-  margin-right: 0.65rem;
-  background: #4a7cc9;
-  border-radius: 999px;
-}
+.shortcuts-sidebar .sidebar-card-title::before { display: none; }
 
 /* Body scroll wrap — Content + AI scroll together. The explicit
    flex-basis: 0 and touch-action keep mobile browsers from latching
@@ -4092,13 +4049,12 @@ body.app-mode .topic-layout {
     display: none;
   }
 
-  /* Promote .shortcuts-subsection-header to look like the old
-     section title — accent bar, larger font, full border-bottom
-     rule (not the thin eyebrow rule). */
+  /* Promote .shortcuts-subsection-header to look like the section
+     titles in tabbed mode — heavier label + thin separator rule. */
   body.app-mode .topic-layout:not(.is-custom) .shortcuts-subsection-header {
-    margin: 0 0 1.2rem;
-    padding: 0 0 1.2rem;
-    border-bottom: 2px solid #c8cfdc;
+    margin: 0 0 1rem;
+    padding: 0 0 1rem;
+    border-bottom: 1px solid #d6dae2;
     gap: 0;
   }
   body.app-mode .topic-layout:not(.is-custom) .shortcuts-subsection-header::after {
@@ -4107,7 +4063,7 @@ body.app-mode .topic-layout {
   body.app-mode .topic-layout:not(.is-custom) .shortcuts-subsection-title {
     font-family: var(--font-display);
     font-size: 1.15rem;
-    font-weight: 600;
+    font-weight: 700;
     color: #1e2d44;
     letter-spacing: -0.024em;
     line-height: 1.15;
@@ -4115,22 +4071,7 @@ body.app-mode .topic-layout {
     display: inline-flex;
     align-items: center;
   }
-  body.app-mode .topic-layout:not(.is-custom) .shortcuts-subsection-title::before {
-    content: '';
-    display: block;
-    flex-shrink: 0;
-    width: 4px;
-    height: 1.4em;
-    margin-right: 0.65rem;
-    background: #2c4467;
-    border-radius: 999px;
-  }
-  /* Quick Links gets a softer-blue bar; AI Shortcuts gets the
-     primary navy bar — same pattern as News Feed (green) / Related
-     (orange) had at the section level. */
-  body.app-mode .topic-layout:not(.is-custom) .quick-links-subsection .shortcuts-subsection-title::before {
-    background: #4a7cc9;
-  }
+  body.app-mode .topic-layout:not(.is-custom) .shortcuts-subsection-title::before { display: none; }
 
   /* Promote .ai-shortcut-group-label to the editorial eyebrow style
      that .shortcuts-subsection-title had at desktop sidebar widths
@@ -4172,14 +4113,14 @@ body.app-mode .topic-layout {
    Quick Links share the same bullet-row layout as AI Shortcuts so
    the two lists read as one cohesive stack. The row is an <a>
    (external link) rather than a button — no checkbox marker, just
-   a dot + name. Selector specificity bumped via
-   .shortcuts-sidebar so it overrides the default
-   .shortcuts-sidebar .sidebar-shortcut border-bottom. */
-.shortcuts-sidebar .quick-links-bullet-list { padding-top: 0.55rem; }
+   a dot + name. Padding + hover mirror the AI Shortcut rows so
+   both lists feel identical to use. */
+.shortcuts-sidebar .quick-links-bullet-list { padding-top: 0; }
 .shortcuts-sidebar .quick-links-bullet-list .quick-link-pill {
   display: flex;
   align-items: center;
   gap: 0.65rem;
+  width: 100%;
   padding: 0.34rem 0.5rem 0.34rem 0.45rem;
   background: transparent;
   border: none;
@@ -4191,11 +4132,10 @@ body.app-mode .topic-layout {
   font-size: 0.82rem;
   font-weight: 500;
   letter-spacing: -0.005em;
-  transition: background 0.14s, color 0.12s;
+  transition: background 0.14s;
 }
 .shortcuts-sidebar .quick-links-bullet-list .quick-link-pill:hover {
   background: #eff4fb;
-  color: #2c4467;
   text-decoration: none;
 }
 
@@ -4374,29 +4314,19 @@ body.app-mode .topic-layout {
   font-family: var(--font-display);
   font-size: 1.3rem;
   line-height: 1.15;
-  font-weight: 500;
-  text-shadow: 0 0 0.45px currentColor;
+  font-weight: 700;
   color: #1e2d44;
   letter-spacing: -0.024em;
   margin: 0;
-  padding: 0 0 1.2rem 0;
-  border-bottom: 2px solid #c8cfdc;
+  padding: 0 0 1rem 0;
+  border-bottom: 1px solid #d6dae2;
   background: var(--color-bg);
   flex-shrink: 0;
   display: flex;
   align-items: center;
   position: relative;
 }
-.related-title::before {
-  content: '';
-  display: block;
-  flex-shrink: 0;
-  width: 3px;
-  height: 1.4em;
-  margin-right: 0.65rem;
-  background: #c05621;
-  border-radius: 999px;
-}
+.related-title::before { display: none; }
 @media (max-width: 640px) {
   .related-title { font-size: 1.05rem; }
 }
