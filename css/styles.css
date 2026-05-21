@@ -4153,10 +4153,10 @@ body.subnav-compact .tab-pill-newsfeed .tab-pill-label-short { display: inline; 
     border-radius: 7px;
   }
   /* "All Topics +" (home) / "More +" (topic pages) lives inline as
-     the last item in the scrollable chip strip. Slightly heavier
-     weight and the primary navy color so it reads as the natural
-     "more" CTA at the end of the list — but it still scrolls
-     with everything else. */
+     the last item in the scrollable chip strip. Sits at the same
+     visual weight as the surrounding chips, just one notch heavier
+     and a touch off-color (muted teal-grey) so it still reads as a
+     distinct CTA without bolding past the topic links. */
   body.app-mode #sub-header.is-subnav .subnav-all-topics-link,
   body.app-mode #sub-header.is-subnav .subnav-more-link {
     display: inline-flex !important;
@@ -4167,10 +4167,10 @@ body.subnav-compact .tab-pill-newsfeed .tab-pill-label-short { display: inline; 
     background: transparent;
     border: none;
     border-radius: 7px;
-    color: #2c4467;
+    color: #6c7a91;
     font-family: var(--font-display);
-    font-size: 0.88rem;
-    font-weight: 700;
+    font-size: 0.86rem;
+    font-weight: 600;
     letter-spacing: 0.005em;
     text-decoration: none;
     white-space: nowrap;
@@ -4178,9 +4178,9 @@ body.subnav-compact .tab-pill-newsfeed .tab-pill-label-short { display: inline; 
   }
   body.app-mode #sub-header.is-subnav .subnav-all-topics-link:hover,
   body.app-mode #sub-header.is-subnav .subnav-more-link:hover {
-    color: var(--color-primary-dark, #0f1a2e);
+    color: #3a4a64;
     text-decoration: none;
-    background: transparent;
+    background: rgba(15, 26, 46, 0.05);
   }
   body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts,
   body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed,
