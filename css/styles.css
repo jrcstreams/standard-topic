@@ -1501,7 +1501,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   font-family: var(--font-display);
   font-size: 1.3rem;
   line-height: 1.15;
-  font-weight: 700;
+  font-weight: 600;
   color: #1e2d44;
   letter-spacing: -0.024em;
   margin: 0;
@@ -3824,7 +3824,7 @@ body.app-mode .topic-layout {
   font-family: var(--font-display);
   font-size: 1.3rem;
   line-height: 1.15;
-  font-weight: 700;
+  font-weight: 600;
   color: #1e2d44;
   letter-spacing: -0.024em;
   margin: 0;
@@ -4063,7 +4063,7 @@ body.app-mode .topic-layout {
   body.app-mode .topic-layout:not(.is-custom) .shortcuts-subsection-title {
     font-family: var(--font-display);
     font-size: 1.15rem;
-    font-weight: 700;
+    font-weight: 600;
     color: #1e2d44;
     letter-spacing: -0.024em;
     line-height: 1.15;
@@ -4144,10 +4144,14 @@ body.app-mode .topic-layout {
    category (Discover / Learn / Analyze / More). Each bucket renders
    as a small uppercase label followed by a bullet list. */
 .ai-shortcut-group {
-  padding-top: 0.85rem;
+  /* First group sits flush against the subsection header — the
+     header's own margin-bottom is the gap. Only subsequent groups
+     get the extra padding-top that separates one group from the
+     next (Discover → Learn → Analyze → More). */
+  padding-top: 0;
 }
 .ai-shortcut-group + .ai-shortcut-group {
-  padding-top: 1rem;
+  padding-top: 0.95rem;
 }
 .ai-shortcut-group-label {
   /* Quiet uppercase mini-heading — reads as a category divider
@@ -4314,7 +4318,7 @@ body.app-mode .topic-layout {
   font-family: var(--font-display);
   font-size: 1.3rem;
   line-height: 1.15;
-  font-weight: 700;
+  font-weight: 600;
   color: #1e2d44;
   letter-spacing: -0.024em;
   margin: 0;
