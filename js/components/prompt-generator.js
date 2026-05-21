@@ -416,14 +416,19 @@ function renderPbCardsHTML() {
           items.slice(0, 5).map(s => `<span class="pb-card-chip">${escapeHTML(s)}</span>`).join('') +
           (items.length > 5 ? `<span class="pb-card-more">+${items.length - 5} more</span>` : '')
         }</div>`
-      : `<span class="pb-card-cta">+ Add</span>`;
+      : '';
+    // The trailing action chip replaces both the old ">" arrow and
+    // the separate "+ Add" CTA — one element doing both jobs in the
+    // space the chevron used to waste. Label flips between "Add +"
+    // (empty card) and "Edit" (has selections).
+    const actionLabel = items.length ? 'Edit' : 'Add +';
     return `
       <button type="button" class="pb-card${items.length ? ' has-items' : ''}" data-pb-card="${card.key}">
         <div class="pb-card-head">
           <span class="pb-card-icon" aria-hidden="true">${PB_ICONS[card.key] || ''}</span>
           <span class="pb-card-title">${escapeHTML(card.label)}</span>
           ${card.required ? '<span class="pb-card-req">Required</span>' : ''}
-          <span class="pb-card-arrow" aria-hidden="true">›</span>
+          <span class="pb-card-action" aria-hidden="true">${actionLabel}</span>
         </div>
         <p class="pb-card-desc">${escapeHTML(card.desc)}</p>
         ${summaryHTML}

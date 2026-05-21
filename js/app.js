@@ -189,7 +189,7 @@ function renderLayout(route) {
     subHeader.innerHTML = `
       <div class="topic-banner">
         <div class="topic-banner-row">
-          ${titleGroup('rocket', 'Prompt Builder')}
+          ${titleGroup('sparkles', 'Prompt Builder')}
         </div>
       </div>
     `;
@@ -759,11 +759,30 @@ function renderStickyHeroBar(container, route) {
     </div>
     <div class="navmenu-search" id="navmenu-search-container"></div>
     <nav class="navmenu-quicklinks">
-      <a href="#/prompt-generator" class="navmenu-quicklink" id="navmenu-prompt-link">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Prompt Builder
+      <a href="#/prompt-generator" class="navmenu-quicklink navmenu-cta" id="navmenu-prompt-link">
+        <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/>
+          <path d="M19 3l.6 1.6L21.2 5.2 19.6 5.8 19 7.4 18.4 5.8 16.8 5.2 18.4 4.6z"/>
+        </svg>
+        <span class="navmenu-cta-label">Prompt Builder</span>
+        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="13 6 19 12 13 18"/>
+        </svg>
       </a>
-      <button type="button" class="navmenu-quicklink" id="navmenu-all-topics">View All Topics</button>
+      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-all-topics">
+        <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        <span class="navmenu-cta-label">View All Topics</span>
+        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="13 6 19 12 13 18"/>
+        </svg>
+      </button>
     </nav>
     <div class="navmenu-scroll">
       <div class="navmenu-featured-label">Featured Topics</div>
