@@ -4068,10 +4068,17 @@ body.app-mode .topic-layout {
       "title tabs"
       "chips chips";
     column-gap: 0.85rem;
-    row-gap: 0.7rem;
+    row-gap: 0.5rem;
     flex-wrap: initial;
     width: 100%;
     align-items: center;
+  }
+  /* Mobile home subnav uses tighter top/bottom padding than topic
+     pages because it carries an extra row (the scrolling chip
+     strip). Aim is the same overall band height as a topic page
+     subnav while keeping the two rows breathing comfortably. */
+  body.app-mode.home-mode #sub-header.is-subnav .topic-banner {
+    padding: 0.7rem 1rem 0.65rem;
   }
   body.app-mode.home-mode #sub-header.is-subnav .topic-banner-titlegroup {
     grid-area: title;
@@ -4119,7 +4126,7 @@ body.app-mode .topic-layout {
     /* Override the desktop tap-target hack (padding: 4rem with
        negative margin) — that 128px outer box was breaking the
        horizontal-scroll layout by stretching the row to 128px tall. */
-    padding: 0.35rem 0;
+    padding: 0.2rem 0;
     margin: 0;
   }
   /* "All Topics +" lives inline as the last item in the scrollable
@@ -4131,7 +4138,7 @@ body.app-mode .topic-layout {
     display: inline-flex !important;
     align-items: center;
     flex: 0 0 auto;
-    padding: 0.35rem 0;
+    padding: 0.2rem 0;
     margin: 0;
     background: transparent;
     border: none;
