@@ -189,10 +189,12 @@ function renderLayout(route) {
     subHeader.innerHTML = `
       <div class="topic-banner">
         <div class="topic-banner-row">
-          ${titleGroup('rocket', 'Build a Knowledge Prompt')}
+          ${titleGroup('rocket', 'Prompt Builder')}
         </div>
       </div>
     `;
+    observeSubnavHeight();
+    wireSubnavCompactMeasure();
     return;
   }
 
