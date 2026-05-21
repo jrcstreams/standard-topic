@@ -176,6 +176,20 @@ function renderLayout(route) {
 
     trimOverflowLinks();
     setupResponsiveNav();
+
+    // Mobile home chip strip: toggle .is-at-end when the user has
+    // scrolled to the right edge so the CSS fade lifts and the
+    // last item ("All Topics +") sits fully visible.
+    const chipStrip = subHeader.querySelector('.subnav-topics-inline.home-subnav-topics');
+    if (chipStrip) {
+      const updateEnd = () => {
+        const atEnd = chipStrip.scrollLeft + chipStrip.clientWidth >= chipStrip.scrollWidth - 1;
+        chipStrip.classList.toggle('is-at-end', atEnd);
+      };
+      chipStrip.addEventListener('scroll', updateEnd, { passive: true });
+      // Run once on render so the class reflects the initial state.
+      requestAnimationFrame(updateEnd);
+    }
     return;
   }
 

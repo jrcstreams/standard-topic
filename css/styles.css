@@ -4112,6 +4112,13 @@ body.app-mode .topic-layout {
     scrollbar-width: none;
     mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 28px), transparent 100%);
     -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 28px), transparent 100%);
+    transition: mask-image 0.18s ease, -webkit-mask-image 0.18s ease;
+  }
+  /* When scrolled to the end, drop the fade so the last item
+     ("All Topics +") sits fully visible without being cut off. */
+  body.app-mode.home-mode #sub-header.is-subnav .subnav-topics-inline.is-at-end {
+    mask-image: none;
+    -webkit-mask-image: none;
   }
   body.app-mode.home-mode #sub-header.is-subnav .subnav-topics-inline::before {
     display: none; /* drop the desktop vertical divider before the chips */
