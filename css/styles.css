@@ -635,31 +635,40 @@ body.hide-cta .sticky-cta { display: none !important; }
 }
 .navmenu-search .search-bar-icon { color: var(--color-text-muted); opacity: 0.7; }
 
-.navmenu-prompt-row {
+/* Quick-jump links between the search bar and the Featured Topics
+   list. Text-only — not buttons — so the visual weight stays on
+   the search bar above and the topic list below. Stacked one per
+   row, left-aligned with the rest of the menu padding. */
+.navmenu-quicklinks {
   display: flex;
-  gap: 0.4rem;
-  align-items: stretch;
-  padding: 0 1.25rem 1rem;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.4rem 1.25rem 0.5rem;
 }
-.navmenu-prompt-row > .navmenu-link {
-  flex: 1 1 0;
-  min-width: 0;
-  justify-content: center;
-  text-align: center;
+.navmenu-quicklink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
   font-family: var(--font-family);
+  font-size: 0.92rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  text-decoration: none;
+  text-align: left;
   cursor: pointer;
-  white-space: nowrap;
-  font-size: 0.78rem;
-  padding: 0.42rem 0.5rem;
-  line-height: 1.2;
-  gap: 0.3rem;
-  border-radius: 6px;
+  width: 100%;
+  transition: color 0.12s;
 }
-.navmenu-prompt-row > .navmenu-link svg {
-  flex-shrink: 0;
-  width: 12px;
-  height: 12px;
+.navmenu-quicklink svg { flex-shrink: 0; color: var(--color-text-muted); }
+.navmenu-quicklink:hover {
+  color: var(--color-primary);
+  text-decoration: none;
 }
+.navmenu-quicklink:hover svg { color: var(--color-primary); }
 .navmenu-footer-links {
   display: flex;
   gap: 0.3rem;
@@ -699,34 +708,6 @@ body.hide-cta .sticky-cta { display: none !important; }
   transition: border-color 0.12s, background 0.12s;
 }
 .navmenu-link:hover { border-color: var(--color-primary); background: var(--color-bg-light); text-decoration: none; }
-/* Both buttons share the same light ghost treatment — no "heavy"
-   filled style, both equal weight as quick-jump links. */
-.navmenu-link-prompt,
-.navmenu-link-all-topics {
-  background: var(--color-bg-light, #f6f7f9);
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-}
-.navmenu-link-prompt:hover,
-.navmenu-link-all-topics:hover {
-  background: #eef0f4;
-  border-color: #c8cdd6;
-  color: var(--color-primary);
-}
-
-.navmenu-divider {
-  height: 1px;
-  background: var(--color-border);
-  margin: 0 1.25rem;
-}
-/* The divider immediately above the scrollable Featured Topics list
-   runs full-width to reinforce that the area below it is a distinct
-   region (the scroll container with sticky header). */
-.navmenu-prompt-row + .navmenu-divider {
-  margin: 0;
-}
-
 .navmenu-featured-label {
   font-family: var(--font-display);
   font-size: 0.88rem;
@@ -1084,13 +1065,14 @@ body.hide-cta .sticky-cta { display: none !important; }
   }
 }
 
-/* Prompt Builder pill is hidden as soon as the nav loses its
-   middle tagline (≤899.98px). With the tagline gone the nav is
-   "left-aligned" and we keep it lean — Search Topics stays
-   visible; the Prompt Builder link is still reachable via the
-   navmenu hamburger. */
+/* Prompt Builder pill + Settings gear hide as soon as the nav
+   loses its middle tagline (≤899.98px). With the tagline gone the
+   nav is "left-aligned" and we keep it lean — Search Topics and
+   the Home shortcut stay visible; Prompt Builder + Settings are
+   still reachable via the navmenu hamburger. */
 @media (max-width: 899.98px) {
-  .sticky-cta { display: none !important; }
+  .sticky-cta,
+  .sticky-settings { display: none !important; }
 }
 
 /* By default (non-mobile), show the full label and hide the short one */
