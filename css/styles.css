@@ -6144,12 +6144,27 @@ body.app-mode .topic-layout {
 }
 .pb-acc-card.is-selected { border-color: #95a8c5; box-shadow: 0 1px 2px rgba(15, 26, 46, 0.04); }
 .pb-acc-card.is-open { border-color: #c8d3e3; }
+/* Entire head row is the expand toggle — single tap target. No more
+   parent-auto-select on tap. The parent topic itself becomes a row
+   inside the expanded body. */
 .pb-acc-head {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.55rem 0.6rem 0.55rem 0.7rem;
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  text-align: left;
+  cursor: pointer;
+  font: 600 0.95rem/1.2 var(--font-display);
+  color: #1e2d44;
+  letter-spacing: -0.008em;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.12s;
 }
+.pb-acc-head:hover { background: rgba(15, 26, 46, 0.03); }
 .pb-acc-icon {
   display: inline-flex; align-items: center; justify-content: center;
   width: 28px; height: 28px;
@@ -6157,25 +6172,6 @@ body.app-mode .topic-layout {
   color: #2c4467;
 }
 .pb-acc-icon svg { width: 20px; height: 20px; display: block; }
-.pb-acc-toggle {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.35rem 0.5rem;
-  background: transparent;
-  border: none;
-  border-radius: 7px;
-  text-align: left;
-  cursor: pointer;
-  font: 600 0.95rem/1.2 var(--font-display);
-  color: #1e2d44;
-  letter-spacing: -0.008em;
-  transition: background 0.12s;
-}
-.pb-acc-toggle:hover { background: rgba(15, 26, 46, 0.04); }
-.pb-acc-toggle[aria-pressed="true"] { color: #2c4467; }
 .pb-acc-name { flex: 1; min-width: 0; }
 .pb-acc-tick {
   display: inline-flex; align-items: center; justify-content: center;
@@ -6185,23 +6181,38 @@ body.app-mode .topic-layout {
   color: #2c4467;
   font-weight: 700;
   font-size: 0.78rem;
-}
-.pb-acc-toggle[aria-pressed="false"] .pb-acc-tick { background: transparent; }
-.pb-acc-chev {
-  width: 30px; height: 30px;
-  display: inline-flex; align-items: center; justify-content: center;
-  background: transparent;
-  border: none;
-  border-radius: 7px;
-  color: var(--color-text-muted);
-  cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.12s, transform 0.16s;
 }
-.pb-acc-chev:hover { background: rgba(15, 26, 46, 0.04); color: var(--color-text); }
-.pb-acc-card.is-open .pb-acc-chev { transform: rotate(180deg); }
+.pb-acc-chev {
+  width: 26px; height: 26px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: transform 0.16s;
+}
+.pb-acc-card.is-open .pb-acc-chev { transform: rotate(180deg); color: var(--color-text); }
 .pb-acc-body { display: none; padding: 0 0.7rem 0.65rem; }
 .pb-acc-card.is-open .pb-acc-body { display: block; }
+/* Parent-pick row inside the body — full-width, signals "select the
+   entire parent topic" rather than a subtopic. */
+.pb-acc-sub-parent {
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.5rem 0.45rem;
+  border: 1px dashed rgba(44, 68, 103, 0.22);
+  border-radius: 7px;
+  background: rgba(44, 68, 103, 0.03);
+}
+.pb-acc-sub-parent:hover { background: rgba(44, 68, 103, 0.07); border-color: rgba(44, 68, 103, 0.32); }
+.pb-acc-sub-parent.is-selected { background: rgba(44, 68, 103, 0.1); border-color: rgba(44, 68, 103, 0.4); border-style: solid; }
+.pb-acc-sub-parent .pb-acc-sub-name strong { font-weight: 700; }
+.pb-acc-sub-hint {
+  font-style: normal;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-left: 0.25rem;
+}
 .pb-acc-sublist {
   list-style: none;
   margin: 0;
@@ -6392,25 +6403,26 @@ body.app-mode .topic-layout {
   border-top: 1px solid #eef0f4;
   flex-shrink: 0;
 }
+/* Matches the site's primary modal button (settings modal "Save"):
+   navy pill, subtle hover, press-down on active. */
 .pb-modal-done {
   display: inline-flex;
   align-items: center;
-  padding: 0.6rem 1.1rem;
-  background: linear-gradient(to bottom, #1fae57 0%, #168a47 100%);
+  justify-content: center;
+  min-width: 96px;
+  padding: 0.55rem 1.25rem;
+  background: #2c4467;
   color: white;
-  border: 1px solid rgba(15, 26, 46, 0.1);
-  border-radius: 10px;
+  border: 1.5px solid transparent;
+  border-radius: 999px;
   font-family: var(--font-family);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   font-weight: 600;
   letter-spacing: -0.005em;
   cursor: pointer;
-  box-shadow: 0 1px 0 rgba(255,255,255,0.22) inset, 0 1px 2px rgba(15, 26, 46, 0.18);
   transition: background 0.14s, transform 0.06s;
 }
-.pb-modal-done:hover {
-  background: linear-gradient(to bottom, #199a4d 0%, #137c3f 100%);
-}
+.pb-modal-done:hover { background: #1f3251; }
 .pb-modal-done:active { transform: translateY(1px); }
 
 @media (max-width: 640px) {

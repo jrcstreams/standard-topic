@@ -586,43 +586,36 @@ function renderTopicsModalBody(body) {
 
 // Accordion-card topic picker that matches the site's Topics modal:
 // parent topics render as bordered cards with icon + name + chevron;
-// click expands to reveal subtopics; user toggles parents and/or
-// subtopics into a working selection set. Search input filters to
+// the entire head row expands the card (no auto-select on tap). Inside
+// the expanded body, the parent topic itself appears as the first
+// selectable row, followed by its subtopics. Search input filters to
 // matching topics + a "type your own" option. Done returns selected.
+//
+// Outer scaffolding (overlay, header, search input, footer) is built
+// ONCE on open. Only `.pb-acc-content` re-renders on input/select/
+// expand, keeping the search input stable and avoiding the mobile
+// focus-jump flash that hits whenever the soft keyboard tries to
+// reflow after a node swap.
 let accordionPickerEl = null;
 function openAccordionTopicPicker(label, initialSelected, onConfirm) {
-  if (!accordionPickerEl) {
-    accordionPickerEl = document.createElement('div');
-    accordionPickerEl.className = 'pb-modal-overlay pb-accordion-overlay';
-    document.body.appendChild(accordionPickerEl);
-  }
+  if (accordionPickerEl) { accordionPickerEl.remove(); accordionPickerEl = null; }
+  accordionPickerEl = document.createElement('div');
+  accordionPickerEl.className = 'pb-modal-overlay pb-accordion-overlay';
+  document.body.appendChild(accordionPickerEl);
+
   const selected = new Set(initialSelected || []);
   let expandedSlug = null;
   let query = '';
 
-  const close = () => { accordionPickerEl.remove(); accordionPickerEl = null; };
+  const close = () => { accordionPickerEl?.remove(); accordionPickerEl = null; };
   const confirm = () => { onConfirm(Array.from(selected)); close(); };
   const toggle = (name) => {
     const t = (name || '').trim();
     if (!t) return;
     if (selected.has(t)) selected.delete(t);
     else selected.add(t);
-    renderAll();
+    renderContent();
   };
-
-  function renderHeader() {
-    return `
-      <header class="pb-modal-head">
-        <button type="button" class="pb-modal-close" aria-label="Close">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="6" y1="6" x2="18" y2="18"/>
-            <line x1="18" y1="6" x2="6" y2="18"/>
-          </svg>
-        </button>
-        <h2 class="pb-modal-title">${escapeHTML(label)}</h2>
-      </header>
-    `;
-  }
 
   function renderSelectedRow() {
     if (selected.size === 0) return '';
@@ -641,28 +634,28 @@ function openAccordionTopicPicker(label, initialSelected, onConfirm) {
   function renderBrowse() {
     const groups = getTopicsGroupedByParent();
     return `
-      <div class="pb-modal-section-desc" style="margin-bottom: 0.6rem;">Pick a topic or browse to expand its subtopics.</div>
+      <div class="pb-modal-section-desc" style="margin-bottom: 0.6rem;">Tap a topic to expand it, then pick the parent or any subtopic.</div>
       <div class="pb-acc-list">
         ${groups.map(g => {
           const isOpen = expandedSlug === g.parent.slug;
           const parentSel = selected.has(g.parent.name);
           return `
             <div class="pb-acc-card ${isOpen ? 'is-open' : ''}${parentSel ? ' is-selected' : ''}">
-              <div class="pb-acc-head" data-acc-card="${g.parent.slug}">
+              <button type="button" class="pb-acc-head" data-acc-expand="${g.parent.slug}" aria-expanded="${isOpen ? 'true' : 'false'}">
                 <span class="pb-acc-icon">${topicIconSVG(g.parent.icon || 'globe', '')}</span>
-                <button type="button" class="pb-acc-toggle"
-                        data-acc-toggle="${escapeAttr(g.parent.name)}"
-                        aria-pressed="${parentSel ? 'true' : 'false'}">
-                  <span class="pb-acc-name">${escapeHTML(g.parent.name)}</span>
-                  <span class="pb-acc-tick" aria-hidden="true">${parentSel ? '✓' : ''}</span>
-                </button>
-                <button type="button" class="pb-acc-chev" data-acc-expand="${g.parent.slug}" aria-label="Expand subtopics">
-                  <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <polyline points="3 4.5 6 7.5 9 4.5"/>
-                  </svg>
-                </button>
-              </div>
+                <span class="pb-acc-name">${escapeHTML(g.parent.name)}</span>
+                ${parentSel ? `<span class="pb-acc-tick" aria-hidden="true">✓</span>` : ''}
+                <span class="pb-acc-chev" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 4.5 6 7.5 9 4.5"/></svg>
+                </span>
+              </button>
               <div class="pb-acc-body">
+                <button type="button" class="pb-acc-sub pb-acc-sub-parent ${parentSel ? 'is-selected' : ''}"
+                        data-acc-toggle="${escapeAttr(g.parent.name)}">
+                  <span class="pb-acc-sub-dot" aria-hidden="true"></span>
+                  <span class="pb-acc-sub-name">Pick <strong>${escapeHTML(g.parent.name)}</strong> <em class="pb-acc-sub-hint">(entire topic)</em></span>
+                  <span class="pb-acc-sub-tick">${parentSel ? '✓' : ''}</span>
+                </button>
                 ${g.subtopics.length ? `
                   <ul class="pb-acc-sublist">
                     ${g.subtopics.map(sub => {
@@ -679,7 +672,7 @@ function openAccordionTopicPicker(label, initialSelected, onConfirm) {
                       `;
                     }).join('')}
                   </ul>
-                ` : `<p class="pb-acc-sub-empty">No subtopics yet.</p>`}
+                ` : ''}
               </div>
             </div>
           `;
@@ -714,57 +707,57 @@ function openAccordionTopicPicker(label, initialSelected, onConfirm) {
     `;
   }
 
-  function renderAll() {
-    accordionPickerEl.innerHTML = `
-      <div class="pb-modal-card pb-accordion-card">
-        ${renderHeader()}
-        <div class="pb-modal-body pb-accordion-body">
-          <div class="pb-acc-search">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="search" class="pb-acc-search-input" placeholder="Search a topic or type your own..." value="${escapeAttr(query)}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
-          </div>
-          ${renderSelectedRow()}
-          ${query.trim() ? renderSearchResults(query) : renderBrowse()}
+  // Build outer scaffolding ONCE. Search input + chrome stay mounted;
+  // only `.pb-acc-content` is rewritten on each render so the input
+  // never loses focus and the mobile soft-keyboard stays put.
+  accordionPickerEl.innerHTML = `
+    <div class="pb-modal-card pb-accordion-card">
+      <header class="pb-modal-head">
+        <button type="button" class="pb-modal-close" aria-label="Close">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18"/>
+            <line x1="18" y1="6" x2="6" y2="18"/>
+          </svg>
+        </button>
+        <h2 class="pb-modal-title">${escapeHTML(label)}</h2>
+      </header>
+      <div class="pb-modal-body pb-accordion-body">
+        <div class="pb-acc-search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" class="pb-acc-search-input" placeholder="Search a topic or type your own..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
         </div>
-        <footer class="pb-modal-foot">
-          <button type="button" class="pb-modal-done">Done</button>
-        </footer>
+        <div class="pb-acc-content"></div>
       </div>
-    `;
-    // Restore focus to search input if user was typing
-    const searchInput = accordionPickerEl.querySelector('.pb-acc-search-input');
-    if (searchInput && query) { searchInput.focus(); const len = searchInput.value.length; searchInput.setSelectionRange(len, len); }
-    bindAccordionEvents();
+      <footer class="pb-modal-foot">
+        <button type="button" class="pb-modal-done">Done</button>
+      </footer>
+    </div>
+  `;
+
+  const contentEl = accordionPickerEl.querySelector('.pb-acc-content');
+  const searchInput = accordionPickerEl.querySelector('.pb-acc-search-input');
+
+  function renderContent() {
+    contentEl.innerHTML = renderSelectedRow() + (query.trim() ? renderSearchResults(query) : renderBrowse());
+    bindContentEvents();
   }
 
-  function bindAccordionEvents() {
-    accordionPickerEl.querySelector('.pb-modal-close').addEventListener('click', close);
-    accordionPickerEl.querySelector('.pb-modal-done').addEventListener('click', confirm);
-    accordionPickerEl.addEventListener('click', (e) => {
-      if (e.target === accordionPickerEl) close();
-    }, { once: true });
-
-    const searchInput = accordionPickerEl.querySelector('.pb-acc-search-input');
-    searchInput?.addEventListener('input', (e) => {
-      query = e.target.value;
-      renderAll();
-    });
-
-    accordionPickerEl.querySelectorAll('[data-acc-toggle]').forEach(btn => {
+  function bindContentEvents() {
+    contentEl.querySelectorAll('[data-acc-toggle]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         toggle(btn.dataset.accToggle);
       });
     });
-    accordionPickerEl.querySelectorAll('[data-acc-expand]').forEach(btn => {
+    contentEl.querySelectorAll('[data-acc-expand]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const slug = btn.dataset.accExpand;
         expandedSlug = (expandedSlug === slug) ? null : slug;
-        renderAll();
+        renderContent();
       });
     });
-    accordionPickerEl.querySelectorAll('[data-acc-remove]').forEach(chip => {
+    contentEl.querySelectorAll('[data-acc-remove]').forEach(chip => {
       chip.querySelector('.pb-acc-selchip-x')?.addEventListener('click', (e) => {
         e.stopPropagation();
         toggle(chip.dataset.accRemove);
@@ -772,7 +765,17 @@ function openAccordionTopicPicker(label, initialSelected, onConfirm) {
     });
   }
 
-  renderAll();
+  accordionPickerEl.querySelector('.pb-modal-close').addEventListener('click', close);
+  accordionPickerEl.querySelector('.pb-modal-done').addEventListener('click', confirm);
+  accordionPickerEl.addEventListener('click', (e) => {
+    if (e.target === accordionPickerEl) close();
+  });
+  searchInput.addEventListener('input', (e) => {
+    query = e.target.value;
+    renderContent();
+  });
+
+  renderContent();
 }
 
 function getFieldLabel(fieldKey) {
