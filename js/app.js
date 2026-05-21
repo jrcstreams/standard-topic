@@ -406,15 +406,18 @@ function wireChipStripScrollEnd() {
 }
 
 // In tabbed-nav widths the page title + tab pills sit on the same
-// row. If the title is long enough to crowd the tab pills, swap
-// "News Feed" for the shorter "News" label (handled in CSS via
-// body.subnav-compact). Measure with a small breathing-room buffer
-// and re-check on viewport resize.
+// row. If the title text would wrap (run into a second line because
+// it's too long for the available width), swap "News Feed" for the
+// shorter "News" label (handled in CSS via body.subnav-compact).
+// We detect wrap by comparing the title element's rendered height
+// against a single-line threshold — robust whether the title bumps
+// horizontally or breaks to a new line.
 let subnavCompactObserver = null;
 function wireSubnavCompactMeasure() {
   const titleGroupEl = document.querySelector('#sub-header.is-subnav .topic-banner-titlegroup');
+  const titleEl = document.querySelector('#sub-header.is-subnav .topic-banner-title');
   const tabPillsEl = document.querySelector('#sub-header.is-subnav .subnav-tab-pills');
-  if (!titleGroupEl || !tabPillsEl) {
+  if (!titleGroupEl || !titleEl || !tabPillsEl) {
     document.body.classList.remove('subnav-compact');
     return;
   }
@@ -425,17 +428,25 @@ function wireSubnavCompactMeasure() {
       document.body.classList.remove('subnav-compact');
       return;
     }
-    // Temporarily strip the compact class so we measure the title's
-    // natural width vs the "News Feed" tab's natural width.
-    const wasCompact = document.body.classList.contains('subnav-compact');
-    if (wasCompact) document.body.classList.remove('subnav-compact');
+    // Strip the compact class so we measure the title's natural
+    // size with the longer "News Feed" tab in place. If the title
+    // is wrapping at that natural state, switch to compact.
+    document.body.classList.remove('subnav-compact');
     requestAnimationFrame(() => {
+      // Single-line line-height for the title is ~1.2 × font-size.
+      // Use computed line-height with a small tolerance buffer.
+      const cs = getComputedStyle(titleEl);
+      const fontSize = parseFloat(cs.fontSize) || 16;
+      const lineHeightRaw = parseFloat(cs.lineHeight);
+      const lineHeight = isNaN(lineHeightRaw) ? fontSize * 1.2 : lineHeightRaw;
+      const singleLineTitle = lineHeight + 6; // tolerance
+      const titleHeight = titleEl.getBoundingClientRect().height;
       const titleRight = titleGroupEl.getBoundingClientRect().right;
       const tabsLeft = tabPillsEl.getBoundingClientRect().left;
-      const gap = tabsLeft - titleRight;
-      // Trigger compact when the gap shrinks below ~12px (title is
-      // pressing against the tabs).
-      const shouldCompact = gap < 12;
+      const horizontalGap = tabsLeft - titleRight;
+      // Trigger compact if title wraps OR the horizontal gap is
+      // small enough to be visually crowded.
+      const shouldCompact = titleHeight > singleLineTitle || horizontalGap < 16;
       document.body.classList.toggle('subnav-compact', shouldCompact);
     });
   };

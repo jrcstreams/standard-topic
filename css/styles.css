@@ -4276,7 +4276,10 @@ body.subnav-compact .tab-pill-newsfeed .tab-pill-label-short { display: inline; 
    (external link) rather than a button — no checkbox marker, just
    a dot + name. Padding + hover mirror the AI Shortcut rows so
    both lists feel identical to use. */
-.shortcuts-sidebar .quick-links-bullet-list { padding-top: 0; }
+.shortcuts-sidebar .quick-links-bullet-list {
+  padding-top: 0;
+  margin-top: -0.25rem;
+}
 .shortcuts-sidebar .quick-links-bullet-list .quick-link-pill {
   display: flex;
   align-items: center;

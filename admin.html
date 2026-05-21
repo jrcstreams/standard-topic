@@ -85,6 +85,7 @@
     <button class="tab" data-tab="searches">Quick Content</button>
     <button class="tab" data-tab="models">AI Models</button>
     <button class="tab" data-tab="promptgen">Prompt Generator</button>
+    <button class="tab" data-tab="datafiles">Data Files</button>
   </div>
   <div class="tab-content active" id="tab-topics"><div class="toolbar"><h2>Manage Topics</h2><button class="btn btn-primary" id="add-topic">+ Add Topic</button></div><div id="featured-order-panel" style="background:var(--bg-light);border:1px solid var(--border);border-radius:6px;padding:0.85rem 1rem;margin-bottom:1rem;"></div><table><thead><tr><th>Name</th><th>Slug</th><th>Parent</th><th>RSS Feed ID</th><th>Icon</th><th>Featured</th><th>Actions</th></tr></thead><tbody id="topics-body"></tbody></table></div>
   <div class="tab-content" id="tab-directory"><div class="toolbar"><h2>Shortcuts Directory</h2><button class="btn btn-primary" id="add-shortcut">+ Add Shortcut</button></div><table><thead><tr><th>Name</th><th>ID</th><th>Icon</th><th>Prompt</th><th>Actions</th></tr></thead><tbody id="dir-body"></tbody></table></div>
@@ -92,6 +93,23 @@
   <div class="tab-content" id="tab-searches"><div class="toolbar"><h2>Quick Content Shortcuts</h2><button class="btn btn-primary" id="add-search">+ Add Source</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">External search destinations shown in the Quick Content sub-nav row on topic and custom search pages. Use <code>{query}</code> in the URL where the topic name goes.</p><table><thead><tr><th>Name</th><th>Icon</th><th>URL Template</th><th>Actions</th></tr></thead><tbody id="searches-body"></tbody></table></div>
   <div class="tab-content" id="tab-models"><div class="toolbar"><h2>AI Models</h2><button class="btn btn-primary" id="add-model">+ Add Model</button></div><div style="display:flex;align-items:center;gap:0.55rem;margin-bottom:0.85rem;padding:0.6rem 0.75rem;background:var(--bg-light);border-radius:6px;border:1px solid var(--border);"><label for="models-default" style="font-weight:600;font-size:0.85rem;">Default model</label><select id="models-default" style="flex:1;padding:0.35rem 0.5rem;border:1px solid var(--border);border-radius:4px;background:white;font-size:0.85rem;"></select><span style="color:var(--text-muted);font-size:0.75rem;">Preselected in prompt modals + the user Settings panel.</span></div><table><thead><tr><th>Name</th><th>ID</th><th>Submission Method</th><th>URL Template</th><th>Actions</th></tr></thead><tbody id="models-body"></tbody></table></div>
   <div class="tab-content" id="tab-promptgen"><div class="toolbar"><h2>Prompt Generator</h2><button class="btn btn-success" id="pg-save">Apply JSON</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Edit <code>prompt-generator.json</code> directly. Click <strong>Apply JSON</strong> to validate and stage your changes, then use <strong>Export All JSON</strong> to download the updated file.</p><textarea id="pg-editor" style="width:100%;min-height:500px;background:var(--bg-light);padding:1rem;border-radius:6px;font-size:0.78rem;font-family:monospace;border:1px solid var(--border);resize:vertical;"></textarea></div>
+  <div class="tab-content" id="tab-datafiles">
+    <div class="toolbar"><h2>Data Files</h2><div style="display:flex;gap:0.5rem;"><button class="btn" id="df-revert">Revert</button><button class="btn btn-primary" id="df-download">Download this file</button><button class="btn btn-success" id="df-apply">Apply JSON</button></div></div>
+    <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.6rem;">Edit any data file directly. Pick a file, edit the JSON, click <strong>Apply JSON</strong> to validate and stage your changes in this session, then <strong>Download this file</strong> (or use <em>Export All JSON</em> in the header) to save back to disk. Useful for bulk edits, reorderings, or fields not surfaced in the other tabs.</p>
+    <div style="display:flex;align-items:center;gap:0.55rem;margin-bottom:0.85rem;padding:0.6rem 0.75rem;background:var(--bg-light);border-radius:6px;border:1px solid var(--border);">
+      <label for="df-picker" style="font-weight:600;font-size:0.85rem;">File</label>
+      <select id="df-picker" style="flex:1;padding:0.35rem 0.5rem;border:1px solid var(--border);border-radius:4px;background:white;font-size:0.85rem;">
+        <option value="topics">topics.json — topics, parents, subtopics, icons, RSS, featured</option>
+        <option value="directory">shortcuts-directory.json — every AI shortcut</option>
+        <option value="assignments">shortcuts-assignments.json — which shortcuts appear on which topic</option>
+        <option value="searches">external-searches.json — Quick Links list + order</option>
+        <option value="models">ai-models.json — AI models + default + submission methods</option>
+        <option value="promptgen">prompt-generator.json — prompt generator config</option>
+      </select>
+      <span id="df-status" style="color:var(--text-muted);font-size:0.78rem;"></span>
+    </div>
+    <textarea id="df-editor" style="width:100%;min-height:560px;background:var(--bg-light);padding:1rem;border-radius:6px;font-size:0.78rem;font-family:monospace;border:1px solid var(--border);resize:vertical;"></textarea>
+  </div>
   <div id="modal"></div>
 
   <script>
@@ -140,6 +158,10 @@
       t.classList.add('active');
       document.getElementById('tab-'+t.dataset.tab).classList.add('active');
       if (t.dataset.tab === 'assignments') renderAssignments();
+      // Re-render the raw JSON editor when the Data Files tab opens
+      // so it reflects any edits applied in other tabs since the
+      // user last viewed it.
+      if (t.dataset.tab === 'datafiles' && typeof dfLoadCurrent === 'function') dfLoadCurrent();
     });
 
     // Import
@@ -542,6 +564,55 @@
         alert('Invalid JSON: ' + err.message);
       }
     });
+
+    // ===== DATA FILES (raw JSON editor for every data file) =====
+    var dfFileNames = {
+      topics: 'topics.json',
+      directory: 'shortcuts-directory.json',
+      assignments: 'shortcuts-assignments.json',
+      searches: 'external-searches.json',
+      models: 'ai-models.json',
+      promptgen: 'prompt-generator.json'
+    };
+    function dfLoadCurrent() {
+      var key = document.getElementById('df-picker').value;
+      document.getElementById('df-editor').value = JSON.stringify(data[key], null, 2);
+      document.getElementById('df-status').textContent = dfFileNames[key];
+    }
+    document.getElementById('df-picker').addEventListener('change', dfLoadCurrent);
+    document.getElementById('df-revert').addEventListener('click', function() {
+      dfLoadCurrent();
+      toast('Reverted to last applied state');
+    });
+    document.getElementById('df-apply').addEventListener('click', function() {
+      var key = document.getElementById('df-picker').value;
+      var text = document.getElementById('df-editor').value;
+      try {
+        var parsed = JSON.parse(text);
+        data[key] = parsed;
+        // Re-render every dependent tab so the change is reflected
+        // immediately in Topics / Directory / etc.
+        renderAll();
+        toast(dfFileNames[key] + ' applied');
+      } catch (err) {
+        alert('Invalid JSON in ' + dfFileNames[key] + ': ' + err.message);
+      }
+    });
+    document.getElementById('df-download').addEventListener('click', function() {
+      var key = document.getElementById('df-picker').value;
+      // Try to parse what's in the textarea first — if the user edited
+      // without clicking Apply we still want the download to reflect
+      // that edited content (and surface JSON errors clearly).
+      var text = document.getElementById('df-editor').value;
+      try {
+        var parsed = JSON.parse(text);
+        dlJSON(dfFileNames[key], parsed);
+      } catch (err) {
+        alert('Cannot download — invalid JSON: ' + err.message);
+      }
+    });
+    // Initial fill so the editor isn't empty if you open the tab first.
+    setTimeout(dfLoadCurrent, 0);
 
     renderAll();
   </script>

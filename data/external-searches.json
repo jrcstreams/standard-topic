@@ -1,6 +1,11 @@
 {
   "searches": [
     {
+      "name": "DuckDuckGo",
+      "icon": "duckduckgo",
+      "urlTemplate": "https://duckduckgo.com/?q={query}"
+    },
+    {
       "name": "Google News",
       "icon": "google-news",
       "urlTemplate": "https://news.google.com/search?q={query}"
@@ -19,11 +24,6 @@
       "name": "YouTube",
       "icon": "youtube",
       "urlTemplate": "https://www.youtube.com/results?search_query={query}"
-    },
-    {
-      "name": "DuckDuckGo",
-      "icon": "duckduckgo",
-      "urlTemplate": "https://duckduckgo.com/?q={query}"
     }
   ]
 }
