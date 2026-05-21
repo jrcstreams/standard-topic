@@ -58,8 +58,20 @@ export function initSearchOverlay() {
     if (cardHeader) {
       const slug = cardHeader.dataset.slug;
       if (slug) {
-        expandedSlug = (expandedSlug === slug) ? null : slug;
-        renderBody(inputEl?.value || '');
+        // Class-toggle instead of re-rendering the whole modal body
+        // (which means re-building 13 topic cards + their icon SVGs
+        // — visibly laggy on every click).
+        const card = cardHeader.closest('.topic-card');
+        const previouslyOpen = bodyEl.querySelector('.topic-card.is-expanded');
+        const willOpen = !card.classList.contains('is-expanded');
+        if (previouslyOpen && previouslyOpen !== card) {
+          previouslyOpen.classList.remove('is-expanded');
+          const prevHead = previouslyOpen.querySelector('.topic-card-head');
+          if (prevHead) prevHead.setAttribute('aria-expanded', 'false');
+        }
+        card.classList.toggle('is-expanded', willOpen);
+        cardHeader.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+        expandedSlug = willOpen ? slug : null;
       }
       return;
     }
@@ -263,6 +275,11 @@ function renderTopicCard(group) {
   const { parent, subtopics } = group;
   const isExpanded = expandedSlug === parent.slug;
   const iconKey = parent.icon || 'globe';
+  // Render the expansion DOM up front for every card. CSS hides it
+  // until .topic-card.is-expanded toggles. This way the click
+  // handler only flips a class — no re-render of the whole modal
+  // body (which was rebuilding 13 topic cards + their icon SVGs
+  // on every interaction and visibly lagging the UI).
   return `
     <div class="topic-card ${isExpanded ? 'is-expanded' : ''}">
       <button type="button"
@@ -275,29 +292,27 @@ function renderTopicCard(group) {
           <polyline points="3 4.5 6 7.5 9 4.5"/>
         </svg>
       </button>
-      ${isExpanded ? `
-        <div class="topic-card-expansion">
-          <a href="#/topic/${parent.slug}" class="topic-card-all" data-slug="${parent.slug}">
-            <span>Browse all ${escapeHTML(parent.name)}</span>
-            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <line x1="3" y1="7" x2="11" y2="7"/>
-              <polyline points="7.5 3.5 11 7 7.5 10.5"/>
-            </svg>
-          </a>
-          ${subtopics.length > 0
-            ? `<ul class="topic-card-sublist">
-                 ${subtopics.map(sub => `
-                   <li>
-                     <a href="#/topic/${sub.slug}" class="topic-card-sublink" data-slug="${sub.slug}">
-                       <span class="topic-card-subdot" aria-hidden="true"></span>
-                       <span>${escapeHTML(sub.name)}</span>
-                     </a>
-                   </li>
-                 `).join('')}
-               </ul>`
-            : `<p class="topic-card-empty">No subtopics yet.</p>`}
-        </div>
-      ` : ''}
+      <div class="topic-card-expansion">
+        <a href="#/topic/${parent.slug}" class="topic-card-all" data-slug="${parent.slug}">
+          <span>Browse all ${escapeHTML(parent.name)}</span>
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="3" y1="7" x2="11" y2="7"/>
+            <polyline points="7.5 3.5 11 7 7.5 10.5"/>
+          </svg>
+        </a>
+        ${subtopics.length > 0
+          ? `<ul class="topic-card-sublist">
+               ${subtopics.map(sub => `
+                 <li>
+                   <a href="#/topic/${sub.slug}" class="topic-card-sublink" data-slug="${sub.slug}">
+                     <span class="topic-card-subdot" aria-hidden="true"></span>
+                     <span>${escapeHTML(sub.name)}</span>
+                   </a>
+                 </li>
+               `).join('')}
+             </ul>`
+          : `<p class="topic-card-empty">No subtopics yet.</p>`}
+      </div>
     </div>
   `;
 }

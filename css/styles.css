@@ -2401,9 +2401,13 @@ html, body, #app {
 }
 
 .topic-card-expansion {
+  display: none;
   border-top: 1px solid #eef0f4;
   padding: 0.65rem 0.85rem 0.85rem;
   background: #fbfcfe;
+}
+.topic-card.is-expanded .topic-card-expansion {
+  display: block;
 }
 .topic-card-all {
   display: inline-flex;
