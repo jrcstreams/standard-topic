@@ -6243,20 +6243,23 @@ body.app-mode .topic-layout {
 }
 .pb-acc-sub:hover { background: rgba(15, 26, 46, 0.04); color: #2c4467; }
 .pb-acc-sub.is-selected { color: #2c4467; font-weight: 600; }
-.pb-acc-sub-dot {
-  flex-shrink: 0;
-  width: 5px; height: 5px;
-  border-radius: 999px;
-  background: #c1c8d4;
-}
-.pb-acc-sub.is-selected .pb-acc-sub-dot { background: #2c4467; }
 .pb-acc-sub-name { flex: 1; min-width: 0; }
-.pb-acc-sub-tick {
+/* Checkbox indicator sits where the bullet was. Same fixed size in
+   both states so toggling doesn't shift the row. */
+.pb-acc-check {
   flex-shrink: 0;
-  width: 16px;
-  color: #2c4467;
-  font-weight: 700;
-  text-align: right;
+  width: 17px; height: 17px;
+  border-radius: 4px;
+  border: 1.5px solid #c1c8d4;
+  background: var(--color-bg);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: white;
+  transition: background 0.12s, border-color 0.12s;
+}
+.pb-acc-sub:hover .pb-acc-check { border-color: #95a8c5; }
+.pb-acc-check.is-checked {
+  background: #2c4467;
+  border-color: #2c4467;
 }
 .pb-acc-sub-empty {
   margin: 0;

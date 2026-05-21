@@ -584,6 +584,15 @@ function renderTopicsModalBody(body) {
   });
 }
 
+// Inline checkbox indicator used in the accordion picker — sits where
+// the bullet/dot used to be. Empty box when unchecked, navy filled
+// box with white check SVG when checked. Fixed size both states so
+// the row width never shifts on toggle.
+const ACC_CHECK_SVG = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+function accCheckHTML(isChecked) {
+  return `<span class="pb-acc-check ${isChecked ? 'is-checked' : ''}" aria-hidden="true">${isChecked ? ACC_CHECK_SVG : ''}</span>`;
+}
+
 // Accordion-card topic picker that matches the site's Topics modal:
 // parent topics render as bordered cards with icon + name + chevron;
 // the entire head row expands the card (no auto-select on tap). Inside
@@ -652,9 +661,8 @@ function openAccordionTopicPicker(label, initialSelected, onConfirm) {
               <div class="pb-acc-body">
                 <button type="button" class="pb-acc-sub pb-acc-sub-parent ${parentSel ? 'is-selected' : ''}"
                         data-acc-toggle="${escapeAttr(g.parent.name)}">
-                  <span class="pb-acc-sub-dot" aria-hidden="true"></span>
-                  <span class="pb-acc-sub-name">Pick <strong>${escapeHTML(g.parent.name)}</strong> <em class="pb-acc-sub-hint">(entire topic)</em></span>
-                  <span class="pb-acc-sub-tick">${parentSel ? '✓' : ''}</span>
+                  ${accCheckHTML(parentSel)}
+                  <span class="pb-acc-sub-name"><strong>${escapeHTML(g.parent.name)}</strong> <em class="pb-acc-sub-hint">(parent topic)</em></span>
                 </button>
                 ${g.subtopics.length ? `
                   <ul class="pb-acc-sublist">
@@ -664,9 +672,8 @@ function openAccordionTopicPicker(label, initialSelected, onConfirm) {
                         <li>
                           <button type="button" class="pb-acc-sub ${isSel ? 'is-selected' : ''}"
                                   data-acc-toggle="${escapeAttr(sub.name)}">
-                            <span class="pb-acc-sub-dot" aria-hidden="true"></span>
+                            ${accCheckHTML(isSel)}
                             <span class="pb-acc-sub-name">${escapeHTML(sub.name)}</span>
-                            <span class="pb-acc-sub-tick">${isSel ? '✓' : ''}</span>
                           </button>
                         </li>
                       `;
@@ -695,10 +702,9 @@ function openAccordionTopicPicker(label, initialSelected, onConfirm) {
           const isSel = selected.has(m.name);
           return `
             <button type="button" class="pb-acc-result ${isSel ? 'is-selected' : ''}" data-acc-toggle="${escapeAttr(m.name)}">
-              <span class="pb-acc-sub-dot" aria-hidden="true"></span>
+              ${accCheckHTML(isSel)}
               <span class="pb-acc-result-name">${escapeHTML(m.name)}</span>
               ${m.parentName ? `<span class="pb-acc-result-parent">in ${escapeHTML(m.parentName)}</span>` : ''}
-              <span class="pb-acc-sub-tick">${isSel ? '✓' : ''}</span>
             </button>
           `;
         }).join('')}
@@ -735,10 +741,16 @@ function openAccordionTopicPicker(label, initialSelected, onConfirm) {
   `;
 
   const contentEl = accordionPickerEl.querySelector('.pb-acc-content');
+  const bodyEl = accordionPickerEl.querySelector('.pb-modal-body');
   const searchInput = accordionPickerEl.querySelector('.pb-acc-search-input');
 
   function renderContent() {
+    // Preserve scroll position across re-renders so toggling an item
+    // doesn't bounce the user up to where the selected-chip strip
+    // grew (and out from under their finger).
+    const scrollY = bodyEl.scrollTop;
     contentEl.innerHTML = renderSelectedRow() + (query.trim() ? renderSearchResults(query) : renderBrowse());
+    bodyEl.scrollTop = scrollY;
     bindContentEvents();
   }
 
