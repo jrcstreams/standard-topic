@@ -6013,6 +6013,13 @@ body.app-mode .topic-layout {
   color: var(--color-text);
 }
 .pb-modal-close:active { transform: translateY(1px); }
+.pb-modal-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  flex: 1;
+}
 .pb-modal-title {
   margin: 0;
   font-family: var(--font-display);
@@ -6020,6 +6027,13 @@ body.app-mode .topic-layout {
   font-weight: 700;
   color: #1e2d44;
   letter-spacing: -0.018em;
+}
+.pb-modal-subtitle {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: var(--color-text-muted);
+  font-weight: 500;
 }
 .pb-modal-body {
   flex: 1;

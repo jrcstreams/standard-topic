@@ -440,6 +440,11 @@ function refreshPbCards() {
     card.addEventListener('click', () => openPbCardModal(card.dataset.pbCard));
   });
   updatePreview();
+  // CRITICAL: the bottom action bar lives on the main wiz panel and
+  // is keyed off assemblePrompt(). Without this, picking a topic
+  // updates the card chip but leaves the submit button stuck in its
+  // "Add Topic(s) to Submit / disabled" state.
+  updateActionBar();
 }
 
 function openPbCardModal(key) {
@@ -818,7 +823,7 @@ function render() {
     <div class="wiz-two-panel">
       <div class="wiz-fields">
         <div class="wiz-intro">
-          <p class="wiz-intro-text">Choose topics, customize style and delivery, then preview and submit to your preferred AI model.</p>
+          <p class="wiz-intro-text">Build knowledge prompts that strategically curate content and deliver clear, high-impact answers. Pick your topics, shape the output, then send straight to your preferred AI model.</p>
         </div>
 
         <div class="pb-card-grid" id="pb-card-grid">${renderPbCardsHTML()}</div>
@@ -1519,16 +1524,18 @@ function populateChipGrid(host, fieldKey) {
   });
 }
 
-// Field picker overlay — search input on top filters built-in options
-// and (when allowCustom) lets the user press Enter to add a custom value
-// that isn't already in the option list.
+// Field picker overlay — opened from the Output Style / Sources /
+// Scope buffer modals' "+ Add" CTAs. Uses the same clean chrome as
+// the accordion topic picker: outer scaffolding built once, only
+// `.pb-acc-content` re-renders on input/toggle so the search input
+// stays mounted and the mobile keyboard doesn't reflow on every
+// keystroke. Same checkbox-in-bullet indicator, same navy Done.
 let fieldPickerEl = null;
 function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
-  if (!fieldPickerEl) {
-    fieldPickerEl = document.createElement('div');
-    fieldPickerEl.className = 'wiz-topic-overlay';
-    document.body.appendChild(fieldPickerEl);
-  }
+  if (fieldPickerEl) { fieldPickerEl.remove(); fieldPickerEl = null; }
+  fieldPickerEl = document.createElement('div');
+  fieldPickerEl.className = 'pb-modal-overlay pb-accordion-overlay';
+  document.body.appendChild(fieldPickerEl);
 
   const field = getField(fieldKey);
   const label = field?.label || fieldKey;
@@ -1537,15 +1544,14 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
   let query = '';
 
   const close = () => {
-    fieldPickerEl.style.display = 'none';
-    document.body.style.overflow = '';
+    fieldPickerEl?.remove();
+    fieldPickerEl = null;
     onDone();
   };
 
   const toggle = (value) => {
     toggleValue(fieldKey, value);
-    renderPickerBody();
-    renderPickerSelected();
+    renderContent();
   };
 
   const findExistingOptionByLabel = (text) => {
@@ -1565,64 +1571,55 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
     if (!text) return;
     const existing = findExistingOptionByLabel(text);
     if (existing) {
-      if (!isValueSelected(fieldKey, existing.value)) toggle(existing.value);
+      if (!isValueSelected(fieldKey, existing.value)) toggleValue(fieldKey, existing.value);
     } else if (allowCustom) {
       addCustomValue(fieldKey, text);
-      renderPickerBody();
-      renderPickerSelected();
     } else {
       return;
     }
     query = '';
-    const inputEl = fieldPickerEl.querySelector('#field-picker-input');
+    const inputEl = fieldPickerEl.querySelector('.pb-acc-search-input');
     if (inputEl) inputEl.value = '';
+    renderContent();
   };
 
-  function renderPickerSelected() {
-    const selRow = fieldPickerEl.querySelector('#field-picker-selected');
+  function renderSelectedRow() {
     const selected = getValuesArray(fieldKey);
+    if (selected.length === 0) return '';
     const customMapNow = state.customValues[fieldKey] || {};
-    if (selected.length === 0) {
-      selRow.innerHTML = `<span class="wiz-topic-overlay-empty">Nothing selected yet.</span>`;
-    } else {
-      selRow.innerHTML = selected.map(v => {
-        const opt = opts.find(o => o.value === v);
-        const lbl = opt ? opt.label : (customMapNow[v] || v);
-        return `
-          <span class="wiz-topic-overlay-sel" data-value="${escapeAttr(v)}">
-            ${escapeHTML(lbl)}
-            <button type="button" class="wiz-topic-overlay-sel-remove" aria-label="Remove">×</button>
-          </span>
-        `;
-      }).join('');
-      selRow.querySelectorAll('.wiz-topic-overlay-sel-remove').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const chip = btn.closest('.wiz-topic-overlay-sel');
-          toggle(chip.dataset.value);
-        });
-      });
-    }
+    return `
+      <div class="pb-acc-selected">
+        ${selected.map(v => {
+          const opt = opts.find(o => o.value === v);
+          const lbl = opt ? opt.label : (customMapNow[v] || v);
+          return `
+            <span class="pb-acc-selchip" data-acc-remove="${escapeAttr(v)}">
+              ${escapeHTML(lbl)}
+              <button type="button" class="pb-acc-selchip-x" aria-label="Remove">×</button>
+            </span>
+          `;
+        }).join('')}
+      </div>
+    `;
   }
 
-  function renderPickerBody() {
-    const bodyEl = fieldPickerEl.querySelector('#field-picker-body');
+  function renderRows() {
     const q = (query || '').trim().toLowerCase();
     const customMapNow = state.customValues[fieldKey] || {};
     const filteredOpts = q ? opts.filter(o => o.label.toLowerCase().includes(q)) : opts.slice();
     const customEntries = Object.entries(customMapNow)
       .filter(([_, lbl]) => !q || lbl.toLowerCase().includes(q));
 
-    let html = '';
+    let html = '<div class="pb-acc-results">';
 
-    // When typing and no exact match exists, offer "Add ..." at the top
     if (q && allowCustom) {
       const exact = findExistingOptionByLabel(query);
       if (!exact) {
         html += `
-          <div class="search-overlay-custom wiz-field-add-row" data-add-custom="1">
-            <span class="search-custom-badge">+</span>
-            Add "<strong>${escapeHTML(query.trim())}</strong>" as custom
-          </div>
+          <button type="button" class="pb-acc-custom" data-acc-add-custom="1">
+            <span class="pb-acc-custom-plus">+</span>
+            <span>Add "<strong>${escapeHTML(query.trim())}</strong>" as a custom value</span>
+          </button>
         `;
       }
     }
@@ -1630,76 +1627,101 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
     filteredOpts.forEach(opt => {
       const isSel = isValueSelected(fieldKey, opt.value);
       html += `
-        <div class="sidebar-shortcut wiz-topic-row ${isSel ? 'is-selected' : ''}" data-name="${escapeAttr(opt.value)}">
-          <span class="wiz-topic-check">${isSel ? '✓' : ''}</span>
-          <span class="sidebar-shortcut-name">${escapeHTML(opt.label)}</span>
-        </div>
+        <button type="button" class="pb-acc-result ${isSel ? 'is-selected' : ''}" data-acc-toggle="${escapeAttr(opt.value)}">
+          ${accCheckHTML(isSel)}
+          <span class="pb-acc-result-name">${escapeHTML(opt.label)}</span>
+        </button>
       `;
     });
 
     customEntries.forEach(([id, lbl]) => {
       const isSel = isValueSelected(fieldKey, id);
       html += `
-        <div class="sidebar-shortcut wiz-topic-row ${isSel ? 'is-selected' : ''}" data-name="${escapeAttr(id)}">
-          <span class="wiz-topic-check">${isSel ? '✓' : ''}</span>
-          <span class="sidebar-shortcut-name">${escapeHTML(lbl)} <span class="wiz-custom-badge-inline">custom</span></span>
-        </div>
+        <button type="button" class="pb-acc-result ${isSel ? 'is-selected' : ''}" data-acc-toggle="${escapeAttr(id)}">
+          ${accCheckHTML(isSel)}
+          <span class="pb-acc-result-name">${escapeHTML(lbl)}</span>
+          <span class="pb-acc-result-parent">custom</span>
+        </button>
       `;
     });
 
-    if (!html) {
-      html = `<div class="wiz-topic-overlay-empty" style="padding:1rem 0.25rem;">No matches.</div>`;
+    if (filteredOpts.length === 0 && customEntries.length === 0 && !(q && allowCustom)) {
+      html += `<p class="pb-acc-empty">No matches.</p>`;
     }
 
-    bodyEl.innerHTML = html;
-    bodyEl.querySelectorAll('.wiz-topic-row').forEach(row => {
-      row.addEventListener('click', () => toggle(row.dataset.name));
-    });
-    const addRow = bodyEl.querySelector('[data-add-custom="1"]');
-    if (addRow) addRow.addEventListener('click', addCustomFromInput);
+    html += '</div>';
+    return html;
   }
 
+  // Build outer scaffolding ONCE. Only `.pb-acc-content` rewrites on
+  // input/toggle so the search input stays mounted and mobile
+  // keyboard doesn't thrash.
   fieldPickerEl.innerHTML = `
-    <div class="search-overlay-card wiz-topic-picker-card">
-      <div class="wiz-topic-picker-header">
-        <div class="wiz-topic-picker-title-block">
-          <h3 class="wiz-topic-picker-title">${escapeHTML(label)}</h3>
-          ${description ? `<p class="wiz-topic-picker-desc">${escapeHTML(description)}</p>` : ''}
+    <div class="pb-modal-card pb-accordion-card">
+      <header class="pb-modal-head">
+        <button type="button" class="pb-modal-close" aria-label="Close">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18"/>
+            <line x1="18" y1="6" x2="6" y2="18"/>
+          </svg>
+        </button>
+        <div class="pb-modal-title-block">
+          <h2 class="pb-modal-title">${escapeHTML(label)}</h2>
+          ${description ? `<p class="pb-modal-subtitle">${escapeHTML(description)}</p>` : ''}
         </div>
-        <button class="search-overlay-close" type="button" id="field-picker-close" aria-label="Close">✕</button>
+      </header>
+      <div class="pb-modal-body pb-accordion-body">
+        <div class="pb-acc-search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" class="pb-acc-search-input" placeholder="${allowCustom ? 'Search or type to add custom…' : 'Search options…'}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+        </div>
+        <div class="pb-acc-content"></div>
       </div>
-      <div class="search-overlay-input-row">
-        <svg class="search-bar-icon" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" class="search-overlay-input" id="field-picker-input"
-               placeholder="${allowCustom ? 'Search or type to add custom…' : 'Search options…'}"
-               autocomplete="off" spellcheck="false">
-      </div>
-      <div class="wiz-topic-selected-row" id="field-picker-selected"></div>
-      <div class="search-overlay-body shortcuts-sidebar" id="field-picker-body"></div>
-      <div class="wiz-topic-picker-foot wiz-topic-picker-foot-left">
-        <button type="button" class="wiz-topic-picker-done" id="field-picker-done">Done</button>
-      </div>
+      <footer class="pb-modal-foot">
+        <button type="button" class="pb-modal-done">Done</button>
+      </footer>
     </div>
   `;
 
-  fieldPickerEl.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-  renderPickerSelected();
-  renderPickerBody();
+  const contentEl = fieldPickerEl.querySelector('.pb-acc-content');
+  const bodyEl = fieldPickerEl.querySelector('.pb-modal-body');
+  const searchInput = fieldPickerEl.querySelector('.pb-acc-search-input');
 
-  fieldPickerEl.querySelector('#field-picker-close').addEventListener('click', close);
-  fieldPickerEl.querySelector('#field-picker-done').addEventListener('click', close);
-  fieldPickerEl.onclick = (e) => { if (e.target === fieldPickerEl) close(); };
+  function renderContent() {
+    const scrollY = bodyEl.scrollTop;
+    contentEl.innerHTML = renderSelectedRow() + renderRows();
+    bodyEl.scrollTop = scrollY;
+    bindContentEvents();
+  }
 
-  const inputEl = fieldPickerEl.querySelector('#field-picker-input');
-  inputEl.focus();
-  let inputTimer = null;
-  inputEl.addEventListener('input', () => {
-    query = inputEl.value;
-    if (inputTimer) clearTimeout(inputTimer);
-    inputTimer = setTimeout(renderPickerBody, 80);
+  function bindContentEvents() {
+    contentEl.querySelectorAll('[data-acc-toggle]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggle(btn.dataset.accToggle);
+      });
+    });
+    contentEl.querySelectorAll('[data-acc-remove]').forEach(chip => {
+      chip.querySelector('.pb-acc-selchip-x')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggle(chip.dataset.accRemove);
+      });
+    });
+    const addCustomBtn = contentEl.querySelector('[data-acc-add-custom]');
+    if (addCustomBtn) addCustomBtn.addEventListener('click', addCustomFromInput);
+  }
+
+  fieldPickerEl.querySelector('.pb-modal-close').addEventListener('click', close);
+  fieldPickerEl.querySelector('.pb-modal-done').addEventListener('click', close);
+  fieldPickerEl.addEventListener('click', (e) => {
+    if (e.target === fieldPickerEl) close();
   });
-  inputEl.addEventListener('keydown', (e) => {
+
+  searchInput.addEventListener('input', () => {
+    query = searchInput.value;
+    renderContent();
+  });
+  searchInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       addCustomFromInput();
@@ -1708,6 +1730,8 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
       close();
     }
   });
+
+  renderContent();
 }
 
 // Shared click handlers — uses EVENT DELEGATION on the host so that
