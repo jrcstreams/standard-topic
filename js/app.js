@@ -270,7 +270,7 @@ function tabPillsRow(opts = {}) {
     `<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">Shortcuts</button>`,
   ];
   if (showRelated) {
-    pills.push(`<button type="button" class="tab-pill tab-pill-related" data-tab="related">Related</button>`);
+    pills.push(`<button type="button" class="tab-pill tab-pill-related" data-tab="related">Related Topics</button>`);
   }
   if (showAllTopics) {
     pills.push(`<a href="#" class="tab-pill tab-pill-all-topics" id="subnav-all-topics">All Topics +</a>`);

@@ -984,11 +984,11 @@ body.hide-cta .sticky-cta { display: none !important; }
     top: 64px;
   }
   #sub-header.is-subnav .topic-banner {
-    padding: 1rem 1rem 0.85rem;
+    padding: 1rem 1rem 0.95rem;
     min-height: 54px;
   }
   #sub-header.is-home-subnav .topic-banner {
-    padding: 1rem 1rem 0.85rem;
+    padding: 1rem 1rem 0.95rem;
   }
   #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
   #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
@@ -3963,7 +3963,7 @@ body.app-mode .topic-layout {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.32rem 0.7rem;
+  padding: 0.38rem 0.82rem;
   background: transparent;
   border: 1.5px solid transparent;
   border-radius: 999px;
