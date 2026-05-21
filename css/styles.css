@@ -3901,10 +3901,10 @@ body.app-mode .topic-layout {
 }
 .shortcuts-subsection-title {
   font-family: var(--font-family);
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  text-transform: none;
+  letter-spacing: -0.01em;
   color: #2a3850;
   margin: 0;
   flex: 0 0 auto;
