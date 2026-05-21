@@ -3478,17 +3478,42 @@ html, body, #app {
   text-decoration: none;
   white-space: nowrap;
   letter-spacing: 0.01em;
-  transition: background 0.12s, color 0.12s;
+  transition: color 0.12s;
   padding: 4rem 1rem;
   margin: -4rem 0;
   display: inline-flex;
   align-items: center;
+  position: relative;
+  isolation: isolate;
+}
+/* Visible hover background is a pseudo-element clipped to a soft
+   rounded pill around the text area only — the 4rem padding hack
+   above expands the actual click target, but using `background`
+   directly would paint that whole tall column and the radius would
+   never show (the band has overflow:hidden so the rounded corners
+   end up off-band and clipped). The pseudo gets a constrained box
+   inside the visible band: ~1.9rem tall, centered vertically,
+   slightly inset horizontally, with a 7px radius for warmth. */
+.subnav-topic-link::after {
+  content: '';
+  position: absolute;
+  top: calc(50% - 0.95rem);
+  height: 1.9rem;
+  left: 0.45rem;
+  right: 0.45rem;
+  border-radius: 7px;
+  background: transparent;
+  transition: background 0.12s;
+  z-index: -1;
+  pointer-events: none;
 }
 @media (hover: hover) {
   .subnav-topic-link:hover {
     color: var(--color-primary);
-    background: rgba(30, 45, 68, 0.06);
     text-decoration: none;
+  }
+  .subnav-topic-link:hover::after {
+    background: rgba(30, 45, 68, 0.07);
   }
 }
 /* "ALL TOPICS +" — matches FEATURED label style. Symmetric 0.5rem
@@ -9075,11 +9100,18 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 /* Shared: subtopic rows in modals + search */
 .all-topics-modal-sub.sidebar-shortcut,
 .search-subtopic-row.sidebar-shortcut {
-  padding-left: 2rem;
-  padding-right: 1.15rem;
+  padding: 0.55rem 1rem 0.55rem 1.7rem;
   font-size: 0.86rem;
   font-weight: var(--font-weight-medium);
   text-decoration: none !important;
+  /* Override the modal-card flat-rectangle defaults (border-radius:0 +
+     hard border-bottom divider) so the hover background reads as a
+     soft pill rather than a tight grey block bleeding into the next
+     row. Slight horizontal inset gives the hover pill breathing room
+     from the column edges. */
+  border-radius: 7px !important;
+  border-bottom: none !important;
+  margin: 1px 0.35rem;
 }
 
 /* Subtopic groups flow into next parent seamlessly */
