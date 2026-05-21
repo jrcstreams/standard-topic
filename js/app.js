@@ -395,16 +395,70 @@ function setupHomeStickyReveal(mainEl, subEl) {
 // Wire the chip strip's right-edge scroll detection: toggles
 // .is-at-end so the CSS fade lifts when the user reaches the last
 // item, letting "All Topics +" / "More +" sit fully visible
-// without being cut off by the mask gradient.
+// without being cut off by the mask gradient. Also wires + manages
+// left/right scroll arrows that are visible only on hover-capable
+// devices (desktop with mouse) — touch devices can swipe natively.
 function wireChipStripScrollEnd() {
   const chipStrip = document.querySelector('#sub-header.is-subnav .subnav-topics-inline');
   if (!chipStrip) return;
-  const updateEnd = () => {
+
+  // Inject left/right arrow buttons as siblings of the chip strip
+  // so they can absolute-position over the strip's edges. Skip
+  // re-injection if they were added on a previous render.
+  let parent = chipStrip.parentElement;
+  // Wrap the chip strip in a relative container the first time we
+  // see it so the arrows can position against it instead of the
+  // (grid) parent.
+  let wrap = chipStrip.previousElementSibling?.classList?.contains('subnav-chip-wrap')
+    ? chipStrip.previousElementSibling
+    : null;
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.className = 'subnav-chip-wrap';
+    parent.insertBefore(wrap, chipStrip);
+    wrap.appendChild(chipStrip);
+    // Move trailing siblings that belong with the chips (e.g. the
+    // home subnav's "All Topics +" link, which now lives INSIDE
+    // .subnav-topics-inline so this isn't usually needed).
+  }
+  // Ensure left/right arrow buttons exist as siblings of the strip
+  let leftBtn = wrap.querySelector(':scope > .subnav-chip-arrow-left');
+  let rightBtn = wrap.querySelector(':scope > .subnav-chip-arrow-right');
+  if (!leftBtn) {
+    leftBtn = document.createElement('button');
+    leftBtn.type = 'button';
+    leftBtn.className = 'subnav-chip-arrow subnav-chip-arrow-left';
+    leftBtn.setAttribute('aria-label', 'Scroll topics left');
+    leftBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 6 9 12 15 18"/></svg>';
+    wrap.insertBefore(leftBtn, chipStrip);
+  }
+  if (!rightBtn) {
+    rightBtn = document.createElement('button');
+    rightBtn.type = 'button';
+    rightBtn.className = 'subnav-chip-arrow subnav-chip-arrow-right';
+    rightBtn.setAttribute('aria-label', 'Scroll topics right');
+    rightBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>';
+    wrap.appendChild(rightBtn);
+  }
+
+  const updateScrollState = () => {
+    const atStart = chipStrip.scrollLeft <= 1;
     const atEnd = chipStrip.scrollLeft + chipStrip.clientWidth >= chipStrip.scrollWidth - 1;
+    const overflowing = chipStrip.scrollWidth > chipStrip.clientWidth + 1;
     chipStrip.classList.toggle('is-at-end', atEnd);
+    chipStrip.classList.toggle('is-at-start', atStart);
+    wrap.classList.toggle('has-scroll', overflowing);
+    wrap.classList.toggle('can-scroll-left', overflowing && !atStart);
+    wrap.classList.toggle('can-scroll-right', overflowing && !atEnd);
   };
-  chipStrip.addEventListener('scroll', updateEnd, { passive: true });
-  requestAnimationFrame(updateEnd);
+  chipStrip.addEventListener('scroll', updateScrollState, { passive: true });
+  // Re-evaluate after layout settles (fonts, images, etc.)
+  requestAnimationFrame(updateScrollState);
+  setTimeout(updateScrollState, 250);
+
+  const stepBy = () => Math.max(120, Math.round(chipStrip.clientWidth * 0.7));
+  leftBtn.onclick = () => chipStrip.scrollBy({ left: -stepBy(), behavior: 'smooth' });
+  rightBtn.onclick = () => chipStrip.scrollBy({ left:  stepBy(), behavior: 'smooth' });
 }
 
 // In tabbed-nav widths the page title + tab pills sit on the same

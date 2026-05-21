@@ -1523,7 +1523,9 @@ let submitPositionRaf = null;
 let submitPositionListenersBound = false;
 const SUBMIT_PANEL_PAD = 12;
 const SUBMIT_PANEL_MAX = 720;
-const SUBMIT_PANEL_MIN = 480;
+// No hard "min" floor — narrow phones drop below 480px wide, and a
+// fixed minimum width pushed the panel outside the viewport (left
+// edge negative + right edge past viewport).
 
 function openPromptSubmitModal() {
   if (!submitOverlayEl) {
@@ -1603,7 +1605,7 @@ function scheduleSubmitPosition() {
 function positionSubmitPanel() {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  const w = Math.max(SUBMIT_PANEL_MIN, Math.min(SUBMIT_PANEL_MAX, vw - SUBMIT_PANEL_PAD * 2));
+  const w = Math.min(SUBMIT_PANEL_MAX, vw - SUBMIT_PANEL_PAD * 2);
   const left = Math.round((vw - w) / 2);
   const top = Math.max(SUBMIT_PANEL_PAD, Math.round(vh * 0.06));
   const maxH = vh - top - SUBMIT_PANEL_PAD;
