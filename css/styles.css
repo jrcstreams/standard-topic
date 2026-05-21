@@ -3999,8 +3999,8 @@ body.app-mode .topic-layout {
   border: 1.5px solid transparent;
   border-radius: 999px;
   font-family: var(--font-family);
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.88rem;
+  font-weight: 700;
   line-height: 1.2;
   color: var(--color-text-muted);
   cursor: pointer;
@@ -4105,8 +4105,14 @@ body.app-mode .topic-layout {
     overflow-x: auto;
     overflow-y: hidden;
     gap: 0.3rem;
-    padding: 0.1rem 0;
-    margin: 0 -0.55rem;
+    /* Extend to the subnav's left/right padding edges via negative
+       margin so the top separator line below spans the full subnav
+       band, matching the subnav's own bottom border. The
+       padding-left/right then re-insets the chips to their content
+       start position. */
+    margin: 0 -1rem -0.65rem;
+    padding: 0.55rem 0.45rem 0.65rem;
+    border-top: 1px solid #d8dce3;
     min-width: 0;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
@@ -4130,6 +4136,7 @@ body.app-mode .topic-layout {
     flex: 0 0 auto;
     white-space: nowrap;
     font-size: 0.86rem;
+    font-weight: 500;
     /* Override the desktop tap-target hack (padding: 4rem with
        negative margin) — that 128px outer box was breaking the
        horizontal-scroll layout by stretching the row to 128px tall.

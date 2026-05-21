@@ -9,7 +9,7 @@
     },
     {
       "slug": "business-finance",
-      "name": "Business and Finance",
+      "name": "Business & Finance",
       "parent": null,
       "rssFeedId": "tQkP30e9iGRGGNbg",
       "icon": "briefcase",
@@ -31,7 +31,7 @@
     },
     {
       "slug": "deals-ma",
-      "name": "Deals and M&A",
+      "name": "Deals & M&A",
       "parent": "business-finance",
       "rssFeedId": "tF8cHNFQT7giF52H",
       "icon": "handshake"
@@ -45,7 +45,7 @@
     },
     {
       "slug": "energy-commodities",
-      "name": "Energy and Commodities",
+      "name": "Energy & Commodities",
       "parent": "business-finance",
       "rssFeedId": "tHj0VH1uWDSmGxTf",
       "icon": "flame"
@@ -59,14 +59,14 @@
     },
     {
       "slug": "housing-real-estate",
-      "name": "Housing and Real Estate",
+      "name": "Housing & Real Estate",
       "parent": "business-finance",
       "rssFeedId": "tIyH2d3YeXUdxvtw",
       "icon": "house"
     },
     {
       "slug": "jobs-labor",
-      "name": "Jobs and Labor",
+      "name": "Jobs & Labor",
       "parent": "business-finance",
       "rssFeedId": "tkSzGeVh3dhii9oX",
       "icon": "briefcase"
@@ -109,14 +109,14 @@
     },
     {
       "slug": "ai-governance-policy",
-      "name": "AI Governance and Policy",
+      "name": "AI Governance & Policy",
       "parent": "technology",
       "rssFeedId": "t74akQBJRZwDjnRY",
       "icon": "sparkles"
     },
     {
       "slug": "blockchain-web3",
-      "name": "Blockchain and Web3",
+      "name": "Blockchain & Web3",
       "parent": "technology",
       "rssFeedId": "tLH5zShGITRcVLU0",
       "icon": "bitcoin"
@@ -144,7 +144,7 @@
     },
     {
       "slug": "data-analytics",
-      "name": "Data and Analytics",
+      "name": "Data & Analytics",
       "parent": "technology",
       "rssFeedId": "tKbX6FeuN0OIT7ob",
       "icon": "database"
@@ -158,21 +158,21 @@
     },
     {
       "slug": "privacy-data-protection",
-      "name": "Privacy and Data Protection",
+      "name": "Privacy & Data Protection",
       "parent": "technology",
       "rssFeedId": "t1MvjvaTnj1rC9PJ",
       "icon": "lock"
     },
     {
       "slug": "programming-development",
-      "name": "Programming and Development",
+      "name": "Programming & Development",
       "parent": "technology",
       "rssFeedId": "t78vGHnsCCKbCuiL",
       "icon": "code"
     },
     {
       "slug": "robotics-automation",
-      "name": "Robotics and Automation",
+      "name": "Robotics & Automation",
       "parent": "technology",
       "rssFeedId": "tZxObQ7dxOGtaykk",
       "icon": "bot"
@@ -186,14 +186,14 @@
     },
     {
       "slug": "software-saas",
-      "name": "Software and SaaS",
+      "name": "Software & SaaS",
       "parent": "technology",
       "rssFeedId": "tM8W8GnwBQIKGQBR",
       "icon": "code"
     },
     {
       "slug": "startups-venture-capital",
-      "name": "Startups and Venture Capital",
+      "name": "Startups & VC",
       "parent": "technology",
       "rssFeedId": "tlXuxcP01NvcmTJl",
       "icon": "rocket"
@@ -208,14 +208,14 @@
     },
     {
       "slug": "astronomy-space",
-      "name": "Astronomy and Space",
+      "name": "Astronomy & Space",
       "parent": "science",
       "rssFeedId": "tPrv6dHjgYEARk5c",
       "icon": "rocket"
     },
     {
       "slug": "chemistry-biology-genetics",
-      "name": "Chemistry, Biology and Genetics",
+      "name": "Chemistry, Biology, Genetics",
       "parent": "science",
       "rssFeedId": "tJ1DI7IPnh6KFPS3",
       "icon": "flask-conical"
@@ -229,14 +229,14 @@
     },
     {
       "slug": "research-academia",
-      "name": "Research and Academia",
+      "name": "Research & Academia",
       "parent": "science",
       "rssFeedId": "tMySfHC5qlcQ4GI6",
       "icon": "microscope"
     },
     {
       "slug": "health-wellness",
-      "name": "Health and Wellness",
+      "name": "Health & Wellness",
       "parent": null,
       "rssFeedId": "tXegKaBv8GFd6DRd",
       "icon": "heart-pulse",
@@ -244,7 +244,7 @@
     },
     {
       "slug": "fitness-exercise",
-      "name": "Fitness and Exercise",
+      "name": "Fitness & Exercise",
       "parent": "health-wellness",
       "rssFeedId": "tqNyOkDAZ0beyCT0",
       "icon": "dumbbell"
@@ -258,14 +258,14 @@
     },
     {
       "slug": "nutrition-diet",
-      "name": "Nutrition and Diet",
+      "name": "Nutrition & Diet",
       "parent": "health-wellness",
       "rssFeedId": "tzvaJsrnQSfspssu",
       "icon": "utensils"
     },
     {
       "slug": "medical-research-pharma-biotech",
-      "name": "Medical Research, Pharma, Biotech",
+      "name": "Life Sciences",
       "parent": "health-wellness",
       "rssFeedId": "tYxbUP1uQaPoSzn5",
       "icon": "pill"
@@ -287,28 +287,28 @@
     },
     {
       "slug": "campaigns-elections",
-      "name": "Campaigns and Elections",
+      "name": "Campaigns & Elections",
       "parent": "politics",
       "rssFeedId": "tXJTghEkJvWhiOt4",
       "icon": "vote"
     },
     {
       "slug": "congress-white-house",
-      "name": "Congress and White House",
+      "name": "Congress & White House",
       "parent": "politics",
       "rssFeedId": "tgJ6fAYgfYHU3iyx",
       "icon": "landmark"
     },
     {
       "slug": "courts-law-regulation",
-      "name": "Courts, Law and Regulation",
+      "name": "Courts, Laws, Regulations",
       "parent": "politics",
       "rssFeedId": "t98vk4uyqJnqok4p",
       "icon": "scale"
     },
     {
       "slug": "defense-national-security-foreign-policy",
-      "name": "Defense, National Security and Foreign Policy",
+      "name": "Defense, Security, Foreign Policy",
       "parent": "politics",
       "rssFeedId": "tcozWEeR2grPSrZE",
       "icon": "scroll-text"
@@ -407,7 +407,7 @@
     },
     {
       "slug": "russia-eastern-europe",
-      "name": "Russia and Eastern Europe",
+      "name": "Russia & Eastern Europe",
       "parent": "world",
       "rssFeedId": "t7t0YprIOLLn60Fm",
       "icon": "map"
@@ -478,7 +478,7 @@
     },
     {
       "slug": "climate-environment",
-      "name": "Climate and Environment",
+      "name": "Climate & Environment",
       "parent": null,
       "rssFeedId": "tUMbSoc6t785RC4t",
       "icon": "cloud-sun",
@@ -486,14 +486,14 @@
     },
     {
       "slug": "conservation-wildlife",
-      "name": "Conservation and Wildlife",
+      "name": "Conservation & Wildlife",
       "parent": "climate-environment",
       "rssFeedId": "tswhAv6oSQ5QAJBQ",
       "icon": "rabbit"
     },
     {
       "slug": "clean-energy-sustainability",
-      "name": "Clean Energy and Sustainability",
+      "name": "Clean Energy & Sustainability",
       "parent": "climate-environment",
       "rssFeedId": "t5wgOIyZprouvUB1",
       "icon": "leaf"
@@ -529,14 +529,14 @@
     },
     {
       "slug": "gaming-streaming",
-      "name": "Gaming and Streaming",
+      "name": "Gaming & Streaming",
       "parent": "entertainment",
       "rssFeedId": "tq6X232EPyVdLHCe",
       "icon": "tv"
     },
     {
       "slug": "television-movies",
-      "name": "Television and Movies",
+      "name": "TV & Movies",
       "parent": "entertainment",
       "rssFeedId": "t8C6rSCEfODAeBag",
       "icon": "film"
@@ -557,7 +557,7 @@
     },
     {
       "slug": "arts-culture",
-      "name": "Arts and Culture",
+      "name": "Arts & Culture",
       "parent": null,
       "rssFeedId": "tT3xL6SyzIeEHXXr",
       "icon": "palette",
@@ -565,28 +565,28 @@
     },
     {
       "slug": "architecture-design",
-      "name": "Architecture and Design",
+      "name": "Architecture & Design",
       "parent": "arts-culture",
       "rssFeedId": "th2g2Qa1R4khBWyd",
       "icon": "building-2"
     },
     {
       "slug": "books-literature",
-      "name": "Books and Literature",
+      "name": "Books & Literature",
       "parent": "arts-culture",
       "rssFeedId": "tPXZa8jUMzatE8C2",
       "icon": "book-open"
     },
     {
       "slug": "fashion-style",
-      "name": "Fashion and Style",
+      "name": "Fashion & Style",
       "parent": "arts-culture",
       "rssFeedId": "tvLNvU0gjD1lV4jx",
       "icon": "shirt"
     },
     {
       "slug": "food-dining",
-      "name": "Food and Dining",
+      "name": "Food & Dining",
       "parent": "arts-culture",
       "rssFeedId": "t04yHpFic2APdGd8",
       "icon": "utensils"
@@ -601,14 +601,14 @@
     },
     {
       "slug": "cars-auto",
-      "name": "Cars and Auto",
+      "name": "Cars & Auto",
       "parent": "lifestyle",
       "rssFeedId": "tckDjuWnPTrHXRG3",
       "icon": "car"
     },
     {
       "slug": "home-garden",
-      "name": "Home and Garden",
+      "name": "Home & Garden",
       "parent": "lifestyle",
       "rssFeedId": "tnalpwRBH1hjA3ZU",
       "icon": "sprout"
@@ -629,7 +629,7 @@
     },
     {
       "slug": "work-careers",
-      "name": "Work and Careers",
+      "name": "Work & Careers",
       "parent": "lifestyle",
       "rssFeedId": "taidSyLa3e7k0GBC",
       "icon": "briefcase"
@@ -644,7 +644,7 @@
     },
     {
       "slug": "advertising-marketing",
-      "name": "Advertising and Marketing",
+      "name": "Advertising & Marketing",
       "parent": "media",
       "rssFeedId": "tXhqhANlSeZohRtx",
       "icon": "megaphone"
@@ -680,14 +680,14 @@
     },
     {
       "slug": "learning-edtech",
-      "name": "Learning and Edtech",
+      "name": "Learning & Edtech",
       "parent": "education",
       "rssFeedId": "tF102nWLVvI3Ng86",
       "icon": "monitor"
     },
     {
       "slug": "ideas-opinion-more",
-      "name": "Ideas, Opinion and More",
+      "name": "Ideas, Opinion & More",
       "parent": null,
       "rssFeedId": "tsZzFN6a4baMzeWR",
       "icon": "lightbulb",
@@ -695,7 +695,7 @@
     },
     {
       "slug": "ethics-philosophy",
-      "name": "Ethics and Philosophy",
+      "name": "Ethics & Philosophy",
       "parent": "ideas-opinion-more",
       "rssFeedId": "tcxOmEWFJdZZeeq9",
       "icon": "lightbulb"
@@ -709,7 +709,7 @@
     },
     {
       "slug": "religion-faith",
-      "name": "Religion and Faith",
+      "name": "Religion & Faith",
       "parent": "ideas-opinion-more",
       "rssFeedId": "tV0t10jJeJwkc3pu",
       "icon": "book-open"
