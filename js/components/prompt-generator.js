@@ -102,10 +102,74 @@ function buildStepDefinitions() {
   ];
 }
 
+// Lucide-style inline SVG icons for the Output Type option cards.
+// Stroke-only, currentColor — picks up the navy in .wiz-card-icon.
 const cardIcons = {
-  'overview': '📋', 'research-summary': '📊', 'explainer': '💡',
-  'comparison': '🔍', 'timeline': '📅', 'case-study': '🔬',
+  'overview':
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<rect x="7" y="3" width="10" height="18" rx="1.5"/>' +
+      '<line x1="10" y1="8" x2="14" y2="8"/>' +
+      '<line x1="10" y1="12" x2="14" y2="12"/>' +
+      '<line x1="10" y1="16" x2="13" y2="16"/>' +
+    '</svg>',
+  'research-summary':
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<line x1="4" y1="20" x2="20" y2="20"/>' +
+      '<rect x="5" y="11" width="3" height="9"/>' +
+      '<rect x="10.5" y="6" width="3" height="14"/>' +
+      '<rect x="16" y="14" width="3" height="6"/>' +
+    '</svg>',
+  'explainer':
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M9 18h6"/>' +
+      '<path d="M10 22h4"/>' +
+      '<path d="M15.09 14A6 6 0 1 0 8.91 14a4 4 0 0 1 1.41 2.39h3.36A4 4 0 0 1 15.09 14z"/>' +
+    '</svg>',
+  'comparison':
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<rect x="3" y="5" width="7" height="14" rx="1"/>' +
+      '<rect x="14" y="5" width="7" height="14" rx="1"/>' +
+      '<line x1="10" y1="12" x2="14" y2="12"/>' +
+    '</svg>',
+  'timeline':
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<line x1="3" y1="12" x2="21" y2="12"/>' +
+      '<circle cx="7" cy="12" r="2"/>' +
+      '<circle cx="12" cy="12" r="2"/>' +
+      '<circle cx="17" cy="12" r="2"/>' +
+    '</svg>',
+  'case-study':
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<circle cx="11" cy="11" r="6"/>' +
+      '<line x1="21" y1="21" x2="15.65" y2="15.65"/>' +
+    '</svg>',
+  'analysis':
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<polyline points="3 17 9 11 13 15 21 7"/>' +
+      '<polyline points="14 7 21 7 21 14"/>' +
+    '</svg>',
+  'forecast':
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<polyline points="3 12 8 7 12 11 21 4"/>' +
+      '<polyline points="14 4 21 4 21 11"/>' +
+    '</svg>',
 };
+// Fallback for unmapped option values — a neutral bullet shape so
+// no emoji ever leaks through.
+const CARD_ICON_FALLBACK =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<circle cx="12" cy="12" r="3" fill="currentColor"/>' +
+  '</svg>';
+const CARD_ICON_CUSTOM =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M12 20h9"/>' +
+    '<path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>' +
+  '</svg>';
+const CARD_ICON_PLUS =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<line x1="12" y1="5" x2="12" y2="19"/>' +
+    '<line x1="5" y1="12" x2="19" y2="12"/>' +
+  '</svg>';
 
 // ---------- Helpers: field metadata + state ----------
 
@@ -263,20 +327,51 @@ function removeTopic(key, value) {
 // a modal containing the relevant pickers (or, for Topics, defers
 // to the existing openTopicPicker flow).
 
+// Inline Lucide-style SVG icons. Stroke-only, currentColor — picks
+// up the navy in .pb-card-icon. Sized 22x22 via the wrapper.
+const PB_ICONS = {
+  topics:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>' +
+    '</svg>',
+  output:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<line x1="4" y1="6"  x2="20" y2="6"/>' +
+      '<line x1="4" y1="12" x2="14" y2="12"/>' +
+      '<line x1="4" y1="18" x2="18" y2="18"/>' +
+    '</svg>',
+  sources:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>' +
+      '<path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>' +
+    '</svg>',
+  scope:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<circle cx="12" cy="12" r="10"/>' +
+      '<line x1="2" y1="12" x2="22" y2="12"/>' +
+      '<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>' +
+    '</svg>',
+  custom:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M12 20h9"/>' +
+      '<path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>' +
+    '</svg>',
+};
+
 const PB_CARDS = [
-  { key: 'topics',  icon: '🎯', label: 'Topics',
+  { key: 'topics',  label: 'Topics',
     desc: 'What this prompt should focus on (primary + secondary).',
     fields: ['primaryTopic', 'secondaryTopic'], required: true },
-  { key: 'output',  icon: '📐', label: 'Output Style',
+  { key: 'output',  label: 'Output Style',
     desc: 'Content type, format, length, tone, reading level.',
     fields: ['outputType', 'format', 'length', 'audience', 'tone'] },
-  { key: 'sources', icon: '📚', label: 'Sources & Citations',
+  { key: 'sources', label: 'Sources & Citations',
     desc: 'What kinds of references and how to cite them.',
     fields: ['sources', 'citations'] },
-  { key: 'scope',   icon: '🌍', label: 'Scope',
+  { key: 'scope',   label: 'Scope',
     desc: 'Time window and geographic focus.',
     fields: ['recency', 'geographic'] },
-  { key: 'custom',  icon: '✏️', label: 'Custom Instructions',
+  { key: 'custom',  label: 'Custom Instructions',
     desc: 'Anything else — framing, exclusions, extra detail.',
     fields: ['customizations'] },
 ];
@@ -316,23 +411,21 @@ function renderPbCardsHTML() {
   return PB_CARDS.map(card => {
     const items = pbCardSummaryItems(card);
     const summaryHTML = items.length
-      ? items.slice(0, 5).map(s => `<span class="pb-card-chip">${escapeHTML(s)}</span>`).join('') +
-        (items.length > 5 ? `<span class="pb-card-more">+${items.length - 5} more</span>` : '')
+      ? `<div class="pb-card-summary">${
+          items.slice(0, 5).map(s => `<span class="pb-card-chip">${escapeHTML(s)}</span>`).join('') +
+          (items.length > 5 ? `<span class="pb-card-more">+${items.length - 5} more</span>` : '')
+        }</div>`
       : `<span class="pb-card-cta">+ Add</span>`;
     return `
       <button type="button" class="pb-card${items.length ? ' has-items' : ''}" data-pb-card="${card.key}">
         <div class="pb-card-head">
-          <span class="pb-card-icon" aria-hidden="true">${card.icon}</span>
-          <div class="pb-card-meta">
-            <span class="pb-card-title">
-              ${escapeHTML(card.label)}
-              ${card.required ? '<span class="pb-card-req">Required</span>' : ''}
-            </span>
-            <span class="pb-card-desc">${escapeHTML(card.desc)}</span>
-          </div>
+          <span class="pb-card-icon" aria-hidden="true">${PB_ICONS[card.key] || ''}</span>
+          <span class="pb-card-title">${escapeHTML(card.label)}</span>
+          ${card.required ? '<span class="pb-card-req">Required</span>' : ''}
           <span class="pb-card-arrow" aria-hidden="true">›</span>
         </div>
-        <div class="pb-card-summary">${summaryHTML}</div>
+        <p class="pb-card-desc">${escapeHTML(card.desc)}</p>
+        ${summaryHTML}
       </button>
     `;
   }).join('');
@@ -352,28 +445,10 @@ function openPbCardModal(key) {
   const card = PB_CARDS.find(c => c.key === key);
   if (!card) return;
 
-  // Topics card uses the existing topic-picker flow (it already
-  // opens its own modal). Just route to it for primary, and let
-  // the user reopen for secondary on the same card after.
-  if (key === 'topics') {
-    openTopicPicker('Add Primary Topics', getPrimaryTopics(), (primary) => {
-      state.values.primaryTopic = primary;
-      if (primary.length === 0) delete state.values.primaryTopic;
-      // Chain: prompt for secondary if user hasn't set any.
-      if (!getSecondaryTopics().length) {
-        openTopicPicker('Add Secondary Topics (optional)', [], (secondary) => {
-          state.values.secondaryTopic = secondary;
-          if (secondary.length === 0) delete state.values.secondaryTopic;
-          refreshPbCards();
-        });
-      } else {
-        refreshPbCards();
-      }
-    });
-    return;
-  }
-
-  // Generic field modal for output / sources / scope / custom
+  // Build the buffer-modal overlay for every card. Different bodies
+  // for different cards: topics uses its own chip-list sections that
+  // delegate to the existing topic-picker overlay; other cards
+  // embed the standard chip/card field pickers; custom is a textarea.
   const overlay = document.createElement('div');
   overlay.className = 'pb-modal-overlay';
   overlay.setAttribute('role', 'dialog');
@@ -398,6 +473,19 @@ function openPbCardModal(key) {
   `;
   const body = overlay.querySelector('#pb-modal-body');
 
+  const close = () => {
+    overlay.remove();
+    refreshPbCards();
+  };
+  overlay.querySelector('.pb-modal-close').addEventListener('click', close);
+  overlay.querySelector('.pb-modal-done').addEventListener('click', close);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+
+  if (key === 'topics') {
+    renderTopicsModalBody(body);
+    return;
+  }
+
   if (key === 'custom') {
     body.innerHTML = `
       <p class="pb-modal-desc">Add any extra instructions — specific framing, exclusions, or detail you'd like the AI to focus on.</p>
@@ -406,32 +494,93 @@ function openPbCardModal(key) {
     body.querySelector('#pb-modal-custom').addEventListener('input', (e) => {
       state.customizations = e.target.value;
     });
-  } else {
-    body.innerHTML = card.fields.map(f => `
-      <section class="pb-modal-section">
-        <h3 class="pb-modal-section-title">${escapeHTML(getFieldLabel(f))}</h3>
-        <p class="pb-modal-section-desc">${escapeHTML(getFieldDescription(f))}</p>
-        <div data-field="${f}"></div>
-        <div class="wiz-extras" data-extras-field="${f}"></div>
-      </section>
-    `).join('');
-    card.fields.forEach(f => {
-      const host = body.querySelector(`[data-field="${f}"]`);
-      if (!host) return;
-      if (f === 'outputType') populateCardGrid(host, f);
-      else populateChipGrid(host, f);
-      const extras = body.querySelector(`[data-extras-field="${f}"]`);
-      if (extras) renderExtraInputs(extras, f);
-    });
+    return;
   }
 
-  const close = () => {
-    overlay.remove();
-    refreshPbCards();
-  };
-  overlay.querySelector('.pb-modal-close').addEventListener('click', close);
-  overlay.querySelector('.pb-modal-done').addEventListener('click', close);
-  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+  // Generic field modal (output / sources / scope)
+  body.innerHTML = card.fields.map(f => `
+    <section class="pb-modal-section">
+      <h3 class="pb-modal-section-title">${escapeHTML(getFieldLabel(f))}</h3>
+      <p class="pb-modal-section-desc">${escapeHTML(getFieldDescription(f))}</p>
+      <div data-field="${f}"></div>
+      <div class="wiz-extras" data-extras-field="${f}"></div>
+    </section>
+  `).join('');
+  card.fields.forEach(f => {
+    const host = body.querySelector(`[data-field="${f}"]`);
+    if (!host) return;
+    if (f === 'outputType') populateCardGrid(host, f);
+    else populateChipGrid(host, f);
+    const extras = body.querySelector(`[data-extras-field="${f}"]`);
+    if (extras) renderExtraInputs(extras, f);
+  });
+}
+
+// Topics card buffer modal — two sections (Primary + Secondary)
+// with current selections as removable chips, each section's
+// "Browse Topics" CTA opening the existing topic-picker overlay
+// (which carries the same accordion-style topic browser the rest
+// of the site uses).
+function renderTopicsModalBody(body) {
+  const re = () => renderTopicsModalBody(body);
+  const sectionHTML = (titleHTML, descHTML, items, keyClass) => `
+    <section class="pb-modal-section">
+      <h3 class="pb-modal-section-title">${titleHTML}</h3>
+      <p class="pb-modal-section-desc">${descHTML}</p>
+      <div class="pb-topic-chips" data-pb-topic-key="${keyClass}">
+        ${items.map(t => `
+          <span class="pb-topic-chip">
+            ${escapeHTML(t)}
+            <button type="button" class="pb-topic-chip-x" data-remove="${escapeAttr(t)}" aria-label="Remove">×</button>
+          </span>
+        `).join('')}
+        <button type="button" class="pb-topic-browse" data-browse="${keyClass}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          ${items.length ? 'Add more' : 'Browse topics'}
+        </button>
+      </div>
+    </section>
+  `;
+  body.innerHTML = `
+    ${sectionHTML(
+      'Primary Topic(s) <span class="pb-req-tag">Required</span>',
+      'What this prompt should focus on.',
+      getPrimaryTopics(),
+      'primaryTopic'
+    )}
+    ${sectionHTML(
+      'Secondary Topic(s) <span class="pb-optional-tag">Optional</span>',
+      'Related topics to weave in for context.',
+      getSecondaryTopics(),
+      'secondaryTopic'
+    )}
+  `;
+  // Wire chip-remove (× on each selected chip)
+  body.querySelectorAll('.pb-topic-chip-x').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const key = btn.closest('.pb-topic-chips').dataset.pbTopicKey;
+      removeTopic(key, btn.dataset.remove);
+      re();
+    });
+  });
+  // Wire browse — opens the existing accordion-style topic picker
+  body.querySelectorAll('.pb-topic-browse').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const key = btn.dataset.browse;
+      const initial = key === 'primaryTopic' ? getPrimaryTopics() : getSecondaryTopics();
+      const label = key === 'primaryTopic' ? 'Add Primary Topics' : 'Add Secondary Topics';
+      openTopicPicker(label, initial, (values) => {
+        state.values[key] = values;
+        if (values.length === 0) delete state.values[key];
+        re();
+      });
+    });
+  });
 }
 
 function getFieldLabel(fieldKey) {
@@ -1075,7 +1224,7 @@ function populateCardGrid(host, fieldKey) {
     const selected = isValueSelected(fieldKey, opt.value);
     html += `
       <button class="wiz-card ${selected ? 'selected' : ''}" type="button" data-value="${escapeAttr(opt.value)}">
-        <div class="wiz-card-icon">${cardIcons[opt.value] || '•'}</div>
+        <div class="wiz-card-icon">${cardIcons[opt.value] || CARD_ICON_FALLBACK}</div>
         <div class="wiz-card-label">${escapeHTML(opt.label)}</div>
         ${selected ? `<span class="wiz-card-remove" data-remove="${escapeAttr(opt.value)}" aria-label="Remove">×</span>` : ''}
       </button>
@@ -1086,7 +1235,7 @@ function populateCardGrid(host, fieldKey) {
     if (!isValueSelected(fieldKey, id)) return;
     html += `
       <div class="wiz-card selected wiz-card-custom" data-value="${escapeAttr(id)}">
-        <div class="wiz-card-icon">✏️</div>
+        <div class="wiz-card-icon">${CARD_ICON_CUSTOM}</div>
         <div class="wiz-card-label">${escapeHTML(label)}</div>
         <button class="wiz-card-remove" type="button" data-remove="${escapeAttr(id)}" aria-label="Remove">×</button>
       </div>
@@ -1095,7 +1244,7 @@ function populateCardGrid(host, fieldKey) {
   if (allowCustom) {
     html += `
       <button class="wiz-card wiz-card-add" type="button" data-add-custom="true">
-        <div class="wiz-card-icon">＋</div>
+        <div class="wiz-card-icon">${CARD_ICON_PLUS}</div>
         <div class="wiz-card-label">Add custom</div>
       </button>
     `;
