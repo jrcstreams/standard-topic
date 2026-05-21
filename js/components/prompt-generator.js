@@ -830,8 +830,9 @@ function openTopicPicker(label, initialSelected, onConfirm) {
 }
 
 function renderContentStep(host) {
+  host.classList.add('wiz-step-body', 'wiz-grid-2');
   host.innerHTML = `
-    <div class="wiz-sub-section">
+    <div class="wiz-sub-section wiz-sub-section-wide">
       <label class="wiz-sub-label">Content Type</label>
       <div class="wiz-cards-wrap"></div>
       <div class="wiz-extras" data-extras-field="contentType"></div>
@@ -868,6 +869,7 @@ function renderContentStep(host) {
 }
 
 function renderStyleStep(host) {
+  host.classList.add('wiz-step-body', 'wiz-grid-2');
   host.innerHTML = `
     <div class="wiz-sub-section">
       <label class="wiz-sub-label">Output Format</label>
@@ -885,11 +887,11 @@ function renderStyleStep(host) {
       <label class="wiz-sub-label">Writing Tone</label>
       <div data-field="tone"></div>
     </div>
-    <div class="wiz-sub-section">
+    <div class="wiz-sub-section wiz-sub-section-wide">
       <label class="wiz-sub-label">Geographic Focus <span class="wiz-optional">(pick one or more)</span></label>
       <div data-field="geographic"></div>
     </div>
-    <div class="wiz-sub-section">
+    <div class="wiz-sub-section wiz-sub-section-wide">
       <label class="wiz-sub-label">Custom Instructions <span class="wiz-optional">(optional)</span></label>
       <textarea class="wiz-textarea" id="wiz-custom"
                 placeholder="Add any extra instructions, e.g. 'Include code examples' or 'Avoid jargon'">${escapeHTML(state.customizations || '')}</textarea>

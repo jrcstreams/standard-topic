@@ -6855,23 +6855,60 @@ body.subnav-compact .tab-pill-newsfeed .tab-pill-label-short { display: inline; 
   padding: 0.5rem 0.75rem !important;
 }
 
-/* Sub-sections (steps that combine multiple choices) */
+/* Sub-sections render as card blocks — each pick category gets its
+   own bordered card with a clear heading, then the field UI inside.
+   Matches the Topics modal / Settings modal card pattern so the
+   Prompt Builder reads as a related family of pickers. */
 .wiz-sub-section {
-  margin-bottom: 1.25rem;
+  background: var(--color-bg);
+  border: 1px solid #e6e8ec;
+  border-radius: 12px;
+  padding: 0.95rem 1.05rem 1rem;
+  margin-bottom: 0.85rem;
+  box-shadow: 0 1px 2px rgba(15, 26, 46, 0.03);
+  transition: border-color 0.14s, box-shadow 0.14s;
 }
-
-.wiz-sub-section:last-child {
-  margin-bottom: 0;
+.wiz-sub-section:last-child { margin-bottom: 0; }
+.wiz-sub-section:focus-within {
+  border-color: #c8d3e3;
+  box-shadow: 0 2px 6px rgba(15, 26, 46, 0.06);
 }
 
 .wiz-sub-label {
   display: block;
   font-family: var(--font-display);
-  font-size: 0.9rem;
-  color: var(--color-text);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: -0.01em;
-  margin-bottom: 0.55rem;
+  font-size: 1rem;
+  color: #1e2d44;
+  font-weight: 700;
+  letter-spacing: -0.012em;
+  margin-bottom: 0.65rem;
+  line-height: 1.2;
+}
+.wiz-sub-label .wiz-optional {
+  font-family: var(--font-family);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-left: 0.35rem;
+  letter-spacing: -0.005em;
+}
+
+/* On wider viewports, the Style step (which is mostly chip-grid
+   pickers) and the Content step lay their card blocks out in a
+   responsive 2-column grid for a denser, more "settings-like"
+   read. Steps add the class on their root, e.g. .wiz-step-body. */
+@media (min-width: 720px) {
+  .wiz-step-body.wiz-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+  .wiz-step-body.wiz-grid-2 .wiz-sub-section { margin-bottom: 0; }
+  /* Full-width card for the Custom Instructions textarea so it
+     gets the breathing room it needs. */
+  .wiz-step-body.wiz-grid-2 .wiz-sub-section.wiz-sub-section-wide {
+    grid-column: 1 / -1;
+  }
 }
 
 /* Live prompt preview — neutral but with real presence */
