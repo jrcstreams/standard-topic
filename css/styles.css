@@ -4066,7 +4066,7 @@ body.app-mode .topic-layout {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
       "title tabs"
-      "chips alltopics";
+      "chips chips";
     column-gap: 0.85rem;
     row-gap: 0.7rem;
     flex-wrap: initial;
@@ -4122,28 +4122,33 @@ body.app-mode .topic-layout {
     padding: 0.35rem 0;
     margin: 0;
   }
-  /* "All Topics +" as a compact pill at the right end of the chips row. */
+  /* "All Topics +" lives inline as the last item in the scrollable
+     chip strip on mobile home. Slightly heavier weight and the
+     primary navy color so it reads as the natural "more" CTA at
+     the end of the list — but it still scrolls with everything
+     else (the fade gradient on the strip eases into it). */
   body.app-mode.home-mode #sub-header.is-subnav .subnav-all-topics-link {
-    grid-area: alltopics;
-    justify-self: end;
     display: inline-flex !important;
     align-items: center;
-    padding: 0.32rem 0.7rem;
-    background: rgba(44, 68, 103, 0.07);
-    border: 1px solid rgba(44, 68, 103, 0.18);
-    border-radius: 999px;
+    flex: 0 0 auto;
+    padding: 0.35rem 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
     color: #2c4467;
-    font-size: 0.78rem;
-    font-weight: 600;
+    font-family: var(--font-display);
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.005em;
     text-decoration: none;
     white-space: nowrap;
-    line-height: 1;
-    flex-shrink: 0;
+    line-height: 1.2;
   }
   body.app-mode.home-mode #sub-header.is-subnav .subnav-all-topics-link:hover {
-    background: rgba(44, 68, 103, 0.12);
-    border-color: rgba(44, 68, 103, 0.32);
+    color: var(--color-primary-dark, #0f1a2e);
     text-decoration: none;
+    background: transparent;
   }
   body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts,
   body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed,
