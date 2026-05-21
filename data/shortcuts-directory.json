@@ -2030,7 +2030,7 @@
     },
     {
       "id": "european-country-deep-dive",
-      "name": "Give me a current overview of [European country]. Cover political situation, economy, key issues, EU relationship, and what's distinctive about its current moment.",
+      "name": "Country Snapshot",
       "icon": "european-country-deep-dive",
       "prompt": "Give me a current overview of [European country]. Cover political situation, economy, key issues, EU relationship, and what's distinctive about its current moment."
     },
