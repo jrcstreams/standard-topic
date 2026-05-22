@@ -3508,7 +3508,6 @@ html, body, #app {
 }
 @media (max-width: 1000px) {
   .subnav-topic-link { font-size: 0.76rem; padding-left: 0.85rem; padding-right: 0.85rem; }
-  .subnav-topics-inline > .subnav-topic-link:first-child { padding-left: 1.3rem; }
 }
 
 /* "All Topics +" stays visible on the home subnav at every width.
@@ -3531,13 +3530,14 @@ html, body, #app {
   }
 }
 
-/* The first chip after the separator gets extra left padding to
-   visually balance the bigger title↔separator gap (1.5rem). Other
-   chips keep the regular 1rem padding so their inter-chip rhythm is
-   unchanged. */
-.subnav-topics-inline > .subnav-topic-link:first-child {
-  padding-left: 1.5rem;
-}
+/* Note: the first chip used to get extra left padding (1.5rem) to
+   balance a leading separator. With the new rounded-pill hover
+   background, that extra padding made the first chip's hover bg
+   visibly wider than its siblings — looked lopsided. Padding is
+   now uniform across every chip so the hover pills are identical
+   in size. The leading vertical separator (`.subnav-topics-inline
+   ::before`) sits at left:0 with absolute positioning, so removing
+   the padding doesn't push the chip into it. */
 
 /* First-chip padding stays consistent at every width so the separator
    never appears to "slide" closer to or further from the page title
