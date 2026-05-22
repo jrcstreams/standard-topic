@@ -4448,6 +4448,24 @@ body.app-mode .topic-layout {
 .subnav-chip-arrow-left  { left: 6px; }
 .subnav-chip-arrow-right { right: 6px; }
 
+/* Mobile / tabbed-nav widths: the chip strip pulls itself down by
+   margin-bottom: -0.6rem (so its bottom kisses the subnav's bottom
+   border). The wrap that contains the absolute arrows doesn't
+   "feel" that negative margin in its bounding box — top: 50% of
+   wrap ends up above the strip's visual center. Compensate by
+   nudging the arrow down by half the strip's pull. */
+@media (max-width: 899.98px) {
+  body.app-mode #sub-header.is-subnav .subnav-chip-arrow {
+    top: calc(50% + 0.3rem);
+  }
+  body.app-mode #sub-header.is-subnav .subnav-chip-arrow:hover {
+    transform: translate(0, -50%) scale(1.04);
+  }
+  body.app-mode #sub-header.is-subnav .subnav-chip-arrow:active {
+    transform: translate(0, calc(-50% + 1px));
+  }
+}
+
 /* Fade behind the arrows — wider gradient (96px) so chips that
    sit just behind the arrow are visibly faded into the background
    rather than peeking out around the arrow's edges. Solid 96%+
