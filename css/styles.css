@@ -3530,14 +3530,18 @@ html, body, #app {
   }
 }
 
-/* Note: the first chip used to get extra left padding (1.5rem) to
-   balance a leading separator. With the new rounded-pill hover
-   background, that extra padding made the first chip's hover bg
-   visibly wider than its siblings — looked lopsided. Padding is
-   now uniform across every chip so the hover pills are identical
-   in size. The leading vertical separator (`.subnav-topics-inline
-   ::before`) sits at left:0 with absolute positioning, so removing
-   the padding doesn't push the chip into it. */
+/* First chip gets a small left MARGIN (not padding) to clear the
+   leading vertical separator at the strip's left edge. Margin
+   sits outside the chip's hover-pill box, so the pill stays the
+   same width as its siblings — and the chip is offset just enough
+   that the pill doesn't kiss the separator on hover. Only applies
+   at desktop widths (≥900px); mobile uses the grid-area layout
+   and has its own first-chip rhythm. */
+@media (min-width: 900px) {
+  .subnav-topics-inline > .subnav-topic-link:first-child {
+    margin-left: 0.55rem;
+  }
+}
 
 /* First-chip padding stays consistent at every width so the separator
    never appears to "slide" closer to or further from the page title
