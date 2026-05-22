@@ -3523,11 +3523,31 @@ html, body, #app {
    auto) so its right edge aligns with the main nav's right edge
    above it. margin-right: 0 ensures the pill kisses the row's
    right padding edge cleanly. */
+/* "All Topics +" sits as the last item INSIDE the scrolling chip
+   strip — same look as a regular chip, not a separate pill. Reads
+   as a quiet text-style link the user reaches by scrolling past
+   the featured topics. */
 .home-subnav-topics .subnav-action-link,
 .subnav-all-topics-link {
-  padding: 0.4rem 0.85rem;
+  padding: 0.45rem 0.9rem;
   margin: 0;
-  margin-right: 0;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #6c7a91;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+@media (hover: hover) and (pointer: fine) {
+  .home-subnav-topics .subnav-action-link:hover,
+  .subnav-all-topics-link:hover {
+    background: rgba(15, 26, 46, 0.05);
+    color: #2c4467;
+    text-decoration: none;
+  }
 }
 
 /* === Responsive nav breakpoints (CSS-only, no JS measurement) === */
@@ -3550,7 +3570,10 @@ html, body, #app {
    .tab-pill look — no border, no fill, plain muted text. Never gets
    the active state since it opens a modal rather than switching tab. */
 .subnav-all-topics-link {
-  margin-left: auto;
+  /* No margin-left: auto — used to push the link as a pinned
+     pill to the right edge of the row. Now it sits at the
+     natural end of the chip strip and scrolls alongside the
+     featured topic chips. */
   flex-shrink: 0;
 }
 /* On mobile, the standalone .subnav-all-topics-link (inside the chips
@@ -4290,11 +4313,14 @@ body.app-mode .topic-layout {
     overflow-x: auto;
     overflow-y: hidden;
     gap: 0.3rem;
-    /* Equal top/bottom padding so the chip text is vertically
-       centered within the strip — keeps the absolutely-positioned
-       arrow buttons (top: 50%) aligned with the chip baseline. */
-    margin: 0 -1rem -0.6rem;
-    padding: 0.6rem 0.45rem 0.6rem;
+    /* No negative left/right margin — strip's edges align with the
+       topic-banner's padded content area, which in turn matches the
+       article grid below. Previously -1rem made the strip extend
+       past the band edges, which read as the layout "stretching
+       too wide" at tablet widths. Keep -0.6rem bottom to flush
+       the strip's bottom border with the subnav band's bottom. */
+    margin: 0 0 -0.6rem;
+    padding: 0.6rem 0 0.6rem;
     border-top: 1px solid #d8dce3;
     min-width: 0;
     -webkit-overflow-scrolling: touch;
@@ -6078,8 +6104,17 @@ body.app-mode .topic-layout {
   letter-spacing: -0.012em;
   color: #1e2d44;
   line-height: 1.15;
-  flex: 0 1 auto;
+  flex: 1 1 auto;
   min-width: 0;
+  /* Hold the title on a single line. With the icon + REQUIRED tag
+     + trailing Add pill, "Sources & Citations" and "Custom
+     Instructions" were wrapping to two lines in the 3-up desktop
+     grid. Ellipsis is the graceful fallback when the title still
+     doesn't fit, but at most reasonable widths the full label
+     stays visible. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .pb-card-req {
   display: inline-flex;
@@ -8821,7 +8856,20 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   font-weight: 600;
   letter-spacing: -0.02em;
   color: #1e2d44;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
 }
+.settings-modal-title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #6c7a91;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+.settings-modal-title-icon svg { display: block; }
 .settings-modal-intro {
   margin: 0;
   font-family: var(--font-family);
