@@ -6110,14 +6110,14 @@ body.app-mode .topic-layout {
   letter-spacing: -0.012em;
   color: #1e2d44;
   line-height: 1.15;
-  flex: 1 1 auto;
+  /* flex: 0 1 auto lets the title sit at its content width so the
+     REQUIRED pill stays right next to it (instead of being pushed
+     to the row's right edge by a growing title). It can still
+     shrink + ellipsize if space gets tight at narrow widths. The
+     trailing Add pill uses margin-left: auto to claim the
+     right-end space. */
+  flex: 0 1 auto;
   min-width: 0;
-  /* Hold the title on a single line. With the icon + REQUIRED tag
-     + trailing Add pill, "Sources & Citations" and "Custom
-     Instructions" were wrapping to two lines in the 3-up desktop
-     grid. Ellipsis is the graceful fallback when the title still
-     doesn't fit, but at most reasonable widths the full label
-     stays visible. */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

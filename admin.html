@@ -71,12 +71,22 @@
 </head>
 <body>
   <h1>Standard Topic — Admin</h1>
-  <div class="info-box"><strong>Local admin tool.</strong> Click <strong>Import All JSON</strong> and select every <code>.json</code> file from <code>/data/</code> (topics, shortcuts-directory, shortcuts-assignments, external-searches, ai-models, prompt-generator). Edit through the tabs, then <strong>Export All JSON</strong> to download the updated files. Drop them back into <code>/data/</code> and push to GitHub. Allow multi-file downloads when prompted by your browser.</div>
+  <div class="info-box"><strong>Local admin tool.</strong> Import + export your <code>/data/</code> JSON files for review and editing. Three import paths: <strong>Import All JSON</strong> for the six raw files, <strong>Import Bundle</strong> for a single combined <code>standard-topic-bundle.json</code> (easier to share / archive), or drop a single file in <strong>Data Files</strong>. Three export paths: <strong>Export All JSON</strong> for six separate files, <strong>Export Bundle</strong> for one combined file, or <strong>Export Topics CSV</strong> for spreadsheet review. Apply staged changes via the per-tab Apply buttons before exporting.</div>
   <div class="import-export">
     <label class="btn btn-primary" style="cursor:pointer">Import All JSON <input type="file" id="import-files" multiple accept=".json" style="display:none"></label>
+    <label class="btn btn-primary" style="cursor:pointer">Import Bundle <input type="file" id="import-bundle" accept=".json" style="display:none"></label>
     <button class="btn btn-success" id="export-all">Export All JSON</button>
+    <button class="btn btn-success" id="export-bundle">Export Bundle</button>
+    <button class="btn" id="export-topics-csv" title="Topics, parents, slugs, icons and featured status as CSV for spreadsheet review">Export Topics CSV</button>
+    <button class="btn" id="import-topics-csv-label" style="position:relative">
+      Import Topics CSV
+      <input type="file" id="import-topics-csv" accept=".csv,text/csv" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+    </button>
     <button class="btn" id="jump-home" title="Jump to homepage AI-shortcut list">Edit Homepage Shortcuts →</button>
     <button class="btn" id="jump-custom" title="Jump to custom search page AI-shortcut list">Edit Custom Search Shortcuts →</button>
+  </div>
+  <div id="dirty-banner" style="display:none;background:#fef3c7;border:1px solid #fbbf24;color:#78350f;padding:0.55rem 0.85rem;border-radius:6px;margin:0 0 1rem;font-size:0.85rem;">
+    <strong>Unsaved staged changes.</strong> <span id="dirty-files"></span> &mdash; export to disk to persist.
   </div>
   <div class="tabs" id="tabs">
     <button class="tab active" data-tab="topics">Topics</button>
@@ -179,7 +189,7 @@
       Promise.all(promises).then(function() { syncFeaturedOrder(); renderAll(); toast('Imported ' + files.length + ' files'); });
     });
 
-    // Export
+    // Export — six separate files
     document.getElementById('export-all').addEventListener('click', function() {
       dlJSON('topics.json', data.topics);
       dlJSON('shortcuts-directory.json', data.directory);
@@ -188,7 +198,176 @@
       dlJSON('ai-models.json', data.models);
       dlJSON('prompt-generator.json', data.promptgen);
       toast('Exported all JSON');
+      markClean();
     });
+
+    // Export — single combined bundle. Easier than juggling six
+    // multi-file downloads (some browsers block all but the first).
+    // Importable via "Import Bundle" below.
+    document.getElementById('export-bundle').addEventListener('click', function() {
+      var bundle = {
+        __bundle__: 'standard-topic-data',
+        __version__: 1,
+        __exportedAt__: new Date().toISOString(),
+        topics: data.topics,
+        directory: data.directory,
+        assignments: data.assignments,
+        searches: data.searches,
+        models: data.models,
+        promptgen: data.promptgen
+      };
+      var ts = new Date().toISOString().slice(0,16).replace(/[:T]/g, '-');
+      dlJSON('standard-topic-bundle-' + ts + '.json', bundle);
+      toast('Exported bundle');
+      markClean();
+    });
+
+    // Import — single combined bundle. Accepts either the bundle
+    // format (with __bundle__ marker) or a plain top-level object
+    // that already has the six keys.
+    document.getElementById('import-bundle').addEventListener('change', function(e) {
+      var f = e.target.files[0]; if (!f) return;
+      f.text().then(function(text) {
+        try {
+          var parsed = JSON.parse(text);
+          var keys = ['topics','directory','assignments','searches','models','promptgen'];
+          var loaded = 0;
+          keys.forEach(function(k) {
+            if (parsed[k] !== undefined) { data[k] = parsed[k]; loaded++; }
+          });
+          if (loaded === 0) throw new Error('No recognized data keys (expected: ' + keys.join(', ') + ')');
+          syncFeaturedOrder();
+          renderAll();
+          toast('Imported bundle (' + loaded + ' files)');
+          markDirtyAll();
+        } catch (err) {
+          alert('Bundle import failed: ' + err.message);
+        }
+        e.target.value = '';
+      });
+    });
+
+    // Topics CSV export — flat tabular view of topics.json for
+    // spreadsheet review. Round-trippable via "Import Topics CSV".
+    function topicsToCSV() {
+      var rows = [['name','slug','parent','icon','rssFeedId','featured','description']];
+      (data.topics.topics || []).forEach(function(t) {
+        rows.push([
+          t.name || '',
+          t.slug || '',
+          t.parent || '',
+          t.icon || '',
+          t.rssFeedId || '',
+          t.featured ? 'true' : 'false',
+          t.description || ''
+        ]);
+      });
+      return rows.map(function(row) {
+        return row.map(function(cell) {
+          var v = String(cell == null ? '' : cell);
+          // RFC 4180 quoting: wrap in quotes if it contains comma,
+          // quote, or newline; double up internal quotes.
+          if (/[",\r\n]/.test(v)) return '"' + v.replace(/"/g, '""') + '"';
+          return v;
+        }).join(',');
+      }).join('\r\n');
+    }
+    function csvToRows(csv) {
+      // Minimal RFC 4180 parser: handles quoted fields with commas /
+      // newlines / escaped quotes.
+      var rows = [], row = [], field = '', i = 0, inQuotes = false;
+      while (i < csv.length) {
+        var c = csv[i];
+        if (inQuotes) {
+          if (c === '"' && csv[i+1] === '"') { field += '"'; i += 2; continue; }
+          if (c === '"') { inQuotes = false; i++; continue; }
+          field += c; i++; continue;
+        }
+        if (c === '"') { inQuotes = true; i++; continue; }
+        if (c === ',') { row.push(field); field = ''; i++; continue; }
+        if (c === '\r') { i++; continue; }
+        if (c === '\n') { row.push(field); field = ''; rows.push(row); row = []; i++; continue; }
+        field += c; i++;
+      }
+      if (field !== '' || row.length) { row.push(field); rows.push(row); }
+      return rows;
+    }
+    document.getElementById('export-topics-csv').addEventListener('click', function() {
+      var csv = topicsToCSV();
+      var b = new Blob([csv], {type:'text/csv;charset=utf-8'});
+      var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'topics.csv'; a.click();
+      toast('Exported topics.csv');
+    });
+    document.getElementById('import-topics-csv').addEventListener('change', function(e) {
+      var f = e.target.files[0]; if (!f) return;
+      f.text().then(function(text) {
+        try {
+          var rows = csvToRows(text);
+          if (rows.length < 2) throw new Error('No data rows found');
+          var header = rows[0].map(function(h){return h.trim().toLowerCase();});
+          var idx = {
+            name: header.indexOf('name'),
+            slug: header.indexOf('slug'),
+            parent: header.indexOf('parent'),
+            icon: header.indexOf('icon'),
+            rssFeedId: header.indexOf('rssfeedid'),
+            featured: header.indexOf('featured'),
+            description: header.indexOf('description')
+          };
+          if (idx.name < 0 || idx.slug < 0) throw new Error('CSV must include "name" and "slug" columns');
+          var topics = [];
+          for (var i = 1; i < rows.length; i++) {
+            var r = rows[i];
+            if (!r[idx.name] && !r[idx.slug]) continue; // skip blank lines
+            var t = { name: r[idx.name] || '', slug: r[idx.slug] || '' };
+            if (idx.parent >= 0 && r[idx.parent]) t.parent = r[idx.parent];
+            if (idx.icon >= 0 && r[idx.icon]) t.icon = r[idx.icon];
+            if (idx.rssFeedId >= 0 && r[idx.rssFeedId]) t.rssFeedId = r[idx.rssFeedId];
+            if (idx.featured >= 0) t.featured = /^(true|1|yes)$/i.test((r[idx.featured]||'').trim());
+            if (idx.description >= 0 && r[idx.description]) t.description = r[idx.description];
+            topics.push(t);
+          }
+          if (!confirm('Replace ' + (data.topics.topics||[]).length + ' existing topics with ' + topics.length + ' from CSV?')) {
+            e.target.value = '';
+            return;
+          }
+          data.topics.topics = topics;
+          syncFeaturedOrder();
+          renderAll();
+          toast('Imported ' + topics.length + ' topics from CSV');
+          markDirty('topics');
+        } catch (err) {
+          alert('CSV import failed: ' + err.message);
+        }
+        e.target.value = '';
+      });
+    });
+
+    // Dirty-state tracking — reminds the user there are staged
+    // changes that haven't been exported yet.
+    var dirtyFiles = {};
+    function markDirty(key) { dirtyFiles[key] = true; updateDirtyBanner(); }
+    function markDirtyAll() { ['topics','directory','assignments','searches','models','promptgen'].forEach(function(k){dirtyFiles[k]=true;}); updateDirtyBanner(); }
+    function markClean() { dirtyFiles = {}; updateDirtyBanner(); }
+    function updateDirtyBanner() {
+      var keys = Object.keys(dirtyFiles);
+      var banner = document.getElementById('dirty-banner');
+      var names = document.getElementById('dirty-files');
+      if (!banner) return;
+      if (keys.length === 0) { banner.style.display = 'none'; return; }
+      banner.style.display = '';
+      var labels = {
+        topics: 'topics.json',
+        directory: 'shortcuts-directory.json',
+        assignments: 'shortcuts-assignments.json',
+        searches: 'external-searches.json',
+        models: 'ai-models.json',
+        promptgen: 'prompt-generator.json'
+      };
+      names.textContent = keys.map(function(k){return labels[k]||k;}).join(', ');
+    }
+    // Expose markDirty for the per-tab Apply / save handlers below.
+    window.__markDirty = markDirty;
 
     function renderAll() { renderTopics(); renderFeaturedOrder(); renderDirectory(); renderAssignments(); renderSearches(); renderModels(); renderPromptGen(); }
 
@@ -560,6 +739,7 @@
         var parsed = JSON.parse(text);
         data.promptgen = parsed;
         toast('Prompt generator JSON applied');
+        if (window.__markDirty) window.__markDirty('promptgen');
       } catch (err) {
         alert('Invalid JSON: ' + err.message);
       }
@@ -594,10 +774,12 @@
         // immediately in Topics / Directory / etc.
         renderAll();
         toast(dfFileNames[key] + ' applied');
+        if (window.__markDirty) window.__markDirty(key);
       } catch (err) {
         alert('Invalid JSON in ' + dfFileNames[key] + ': ' + err.message);
       }
     });
+
     document.getElementById('df-download').addEventListener('click', function() {
       var key = document.getElementById('df-picker').value;
       // Try to parse what's in the textarea first — if the user edited
