@@ -4533,29 +4533,52 @@ body.app-mode .topic-layout {
    the edges — there's nothing to stack against because the chips
    ARE the gradient at that edge. The subnav band background
    (#f7f8fa) shows through. Arrows sit above naturally. */
-/* Three-stop gradient: opaque until the fade region, ramp to
-   transparent, then HOLD fully transparent for the last ~50px so
-   the chip is completely invisible under and immediately around
-   the arrow circle (arrow sits at right: 6px, 32px wide → covers
-   6-38px from edge; transparent stop at 50px from edge means
-   chips can't peek out the right side of the arrow). */
-.subnav-chip-wrap.can-scroll-right .subnav-topics-inline {
-  mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 110px), transparent calc(100% - 50px), transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 110px), transparent calc(100% - 50px), transparent 100%);
+/* Desktop fade — wide three-stop gradient because the hover-only
+   scroll arrow needs ~50px of fully-transparent area to sit on top
+   of without chip text bleeding through. Only kicks in at
+   (hover: hover) widths where the arrows actually render. */
+@media (hover: hover) and (pointer: fine) {
+  .subnav-chip-wrap.can-scroll-right .subnav-topics-inline {
+    mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 110px), transparent calc(100% - 50px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 110px), transparent calc(100% - 50px), transparent 100%);
+  }
+  .subnav-chip-wrap.can-scroll-left .subnav-topics-inline {
+    mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 110px), transparent calc(100% - 50px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 110px), transparent calc(100% - 50px), transparent 100%);
+  }
+  .subnav-chip-wrap.can-scroll-left.can-scroll-right .subnav-topics-inline {
+    mask-image: linear-gradient(to right,
+      transparent 0%, transparent 50px,
+      #000 110px, #000 calc(100% - 110px),
+      transparent calc(100% - 50px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right,
+      transparent 0%, transparent 50px,
+      #000 110px, #000 calc(100% - 110px),
+      transparent calc(100% - 50px), transparent 100%);
+  }
 }
-.subnav-chip-wrap.can-scroll-left .subnav-topics-inline {
-  mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 110px), transparent calc(100% - 50px), transparent 100%);
-  -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 110px), transparent calc(100% - 50px), transparent 100%);
-}
-.subnav-chip-wrap.can-scroll-left.can-scroll-right .subnav-topics-inline {
-  mask-image: linear-gradient(to right,
-    transparent 0%, transparent 50px,
-    #000 110px, #000 calc(100% - 110px),
-    transparent calc(100% - 50px), transparent 100%);
-  -webkit-mask-image: linear-gradient(to right,
-    transparent 0%, transparent 50px,
-    #000 110px, #000 calc(100% - 110px),
-    transparent calc(100% - 50px), transparent 100%);
+
+/* Mobile / touch fade — much narrower (24px linear ramp) because
+   there's no scroll arrow to camouflage. The fade just hints
+   "more scrollable content" without sandwiching the entire chip
+   list when the user is mid-scroll with content on both sides.
+   Activates whenever the device lacks a hover-capable pointer
+   (phones, tablets, touch-only laptops). */
+@media (pointer: coarse), (hover: none) {
+  .subnav-chip-wrap.can-scroll-right .subnav-topics-inline {
+    mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 24px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 24px), transparent 100%);
+  }
+  .subnav-chip-wrap.can-scroll-left .subnav-topics-inline {
+    mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 24px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 24px), transparent 100%);
+  }
+  .subnav-chip-wrap.can-scroll-left.can-scroll-right .subnav-topics-inline {
+    mask-image: linear-gradient(to right,
+      transparent 0%, #000 24px, #000 calc(100% - 24px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right,
+      transparent 0%, #000 24px, #000 calc(100% - 24px), transparent 100%);
+  }
 }
 
 /* Arrows revealed only on hover-capable pointers and only when the
