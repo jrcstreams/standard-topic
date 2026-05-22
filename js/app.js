@@ -501,33 +501,40 @@ function wireSubnavCompactMeasure() {
     }
     return false;
   };
+  // Apply the smallest tier necessary to keep the title on one
+  // line. Three tiers:
+  //   0 — natural size (1.5rem)
+  //   1 — subnav-title-shrunk (1.15rem)
+  //   2 — subnav-title-shrunk-2 (0.95rem)
+  // Strategy: start from tier 0 (remove all classes), measure. If
+  // still too large, escalate to tier 1, measure again. If still
+  // too large, escalate to tier 2. Each measurement happens in its
+  // own rAF tick so layout settles between class applications.
   const measure = () => {
     if (!window.matchMedia('(max-width: 899.98px)').matches) {
-      if (subnavCompactLastState !== false) {
-        document.body.classList.remove('subnav-title-shrunk');
-        subnavCompactLastState = false;
-      }
+      document.body.classList.remove('subnav-title-shrunk');
+      document.body.classList.remove('subnav-title-shrunk-2');
+      subnavCompactLastState = false;
       return;
     }
-    const hasClass = document.body.classList.contains('subnav-title-shrunk');
-    // When already shrunk: only un-shrink if a HYPOTHETICAL un-shrink
-    // wouldn't immediately re-wrap. We can't easily simulate, so
-    // approximate: require a generous headroom (gap > 56px OR title
-    // height is currently sitting on a single line with room).
-    if (!hasClass && isTooLarge()) {
-      document.body.classList.add('subnav-title-shrunk');
-      subnavCompactLastState = true;
-    } else if (hasClass) {
-      const titleRight = titleGroupEl.getBoundingClientRect().right;
-      const tabsLeft = tabPillsEl.getBoundingClientRect().left;
-      const titleTop = titleGroupEl.getBoundingClientRect().top;
-      const tabsTop = tabPillsEl.getBoundingClientRect().top;
-      const sameRow = Math.abs(titleTop - tabsTop) < 24;
-      if (sameRow && (tabsLeft - titleRight) > 56) {
-        document.body.classList.remove('subnav-title-shrunk');
-        subnavCompactLastState = false;
-      }
+    // Reset to tier 0
+    document.body.classList.remove('subnav-title-shrunk');
+    document.body.classList.remove('subnav-title-shrunk-2');
+    // Force a synchronous layout read by accessing offsetHeight,
+    // then test. If too large, escalate.
+    void titleEl.offsetHeight;
+    if (!isTooLarge()) {
+      subnavCompactLastState = 0;
+      return;
     }
+    document.body.classList.add('subnav-title-shrunk');
+    void titleEl.offsetHeight;
+    if (!isTooLarge()) {
+      subnavCompactLastState = 1;
+      return;
+    }
+    document.body.classList.add('subnav-title-shrunk-2');
+    subnavCompactLastState = 2;
   };
   // Listen to window.resize (viewport-driven) instead of
   // ResizeObserver on documentElement — the observer was firing on

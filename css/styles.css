@@ -235,6 +235,16 @@ body.sticky-always.has-subnav #content {
   gap: 1rem;
   min-height: 64px;
 }
+/* At tabbed-nav widths (≤899px) the subnav drops to 1rem horizontal
+   padding to give the title + chips more room. Main nav matches so
+   the two bands' left edges align — otherwise the subnav title was
+   sitting 16px further left than the main nav brand, looking like
+   a layout error. */
+@media (max-width: 899.98px) {
+  .sticky-hero-inner {
+    padding: 0 1rem;
+  }
+}
 /* Title + tagline share line-height so their text baselines land
    at the same y inside the flex row. Mismatched line-heights here
    center the line BOXES but offset the actual letterforms inside
@@ -1081,6 +1091,22 @@ body.subnav-title-shrunk #sub-header.is-home-subnav .topic-banner-icon {
 body.subnav-title-shrunk #sub-header.is-subnav .topic-banner-titleinner,
 body.subnav-title-shrunk #sub-header.is-home-subnav .topic-banner-titleinner {
   gap: 0.5rem;
+}
+/* Tier 2 — very long titles like "Defense, Security, Foreign
+   Policy" that wrap even at the tier-1 shrunk size. Drop another
+   step so they fit on a single line. */
+body.subnav-title-shrunk-2 #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
+body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
+  font-size: 0.95rem;
+}
+body.subnav-title-shrunk-2 #sub-header.is-subnav .topic-banner-icon,
+body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-icon {
+  width: 20px;
+  height: 20px;
+}
+body.subnav-title-shrunk-2 #sub-header.is-subnav .topic-banner-titleinner,
+body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
+  gap: 0.4rem;
 }
 
 /* Default: show full CTA text, hide short */
@@ -3046,7 +3072,7 @@ html, body, #app {
   max-height: 320px;
   padding: 0.85rem 1rem;
   padding-right: 4.5rem;
-  font-size: 0.9rem;
+  font-size: 16px;
   line-height: 1.6;
   color: var(--color-text);
   font-family: var(--font-family);
@@ -4273,19 +4299,12 @@ body.app-mode .topic-layout {
     min-width: 0;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 28px), transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 28px), transparent 100%);
     transition: mask-image 0.18s ease, -webkit-mask-image 0.18s ease;
   }
-  /* (Arrows + fade gradients live OUTSIDE this mobile-only block now
-     so they work at every viewport. See the .subnav-chip-arrow rules
-     after the closing brace of this media query.) */
-  /* When scrolled to the end, drop the fade so the last item
-     ("All Topics +") sits fully visible without being cut off. */
-  body.app-mode #sub-header.is-subnav .subnav-topics-inline.is-at-end {
-    mask-image: none;
-    -webkit-mask-image: none;
-  }
+  /* Mask gradient is now driven by .can-scroll-* classes on the
+     wrap (see rules outside this media query). When scrolled to
+     the end, the can-scroll-right class drops and the mask
+     automatically goes flat. */
   body.app-mode #sub-header.is-subnav .subnav-topics-inline::before {
     display: none; /* drop the desktop vertical divider before the chips */
   }
@@ -4480,28 +4499,25 @@ body.app-mode .topic-layout {
   }
 }
 
-/* Fade behind the arrows — wider gradient (96px) so chips that
-   sit just behind the arrow are visibly faded into the background
-   rather than peeking out around the arrow's edges. Solid 96%+
-   opacity at the very edge under the arrow itself, then ramps to
-   transparent ~60-80px in. Subnav band background = #f7f8fa. */
-.subnav-chip-wrap.can-scroll-left::before,
-.subnav-chip-wrap.can-scroll-right::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 96px;
-  z-index: 1;
-  pointer-events: none;
+/* Fade via mask-image ON THE STRIP ITSELF instead of an overlay
+   pseudo on the wrap. Pseudo overlays were unreliable because
+   Safari's scroll-container stacking context kept lifting chips
+   above the overlay no matter what z-index gymnastics we tried.
+   The mask makes the strip's own content fade to transparent at
+   the edges — there's nothing to stack against because the chips
+   ARE the gradient at that edge. The subnav band background
+   (#f7f8fa) shows through. Arrows sit above naturally. */
+.subnav-chip-wrap.can-scroll-right .subnav-topics-inline {
+  mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 90px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 90px), transparent 100%);
 }
-.subnav-chip-wrap.can-scroll-left::before {
-  left: 0;
-  background: linear-gradient(to right, rgba(247, 248, 250, 0.99) 0%, rgba(247, 248, 250, 0.95) 35%, rgba(247, 248, 250, 0.6) 70%, rgba(247, 248, 250, 0) 100%);
+.subnav-chip-wrap.can-scroll-left .subnav-topics-inline {
+  mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 90px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 90px), transparent 100%);
 }
-.subnav-chip-wrap.can-scroll-right::after {
-  right: 0;
-  background: linear-gradient(to left, rgba(247, 248, 250, 0.99) 0%, rgba(247, 248, 250, 0.95) 35%, rgba(247, 248, 250, 0.6) 70%, rgba(247, 248, 250, 0) 100%);
+.subnav-chip-wrap.can-scroll-left.can-scroll-right .subnav-topics-inline {
+  mask-image: linear-gradient(to right, transparent 0%, #000 90px, #000 calc(100% - 90px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 90px, #000 calc(100% - 90px), transparent 100%);
 }
 
 /* Arrows revealed only on hover-capable pointers and only when the
@@ -7499,7 +7515,10 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
   padding: 0.7rem 0.85rem;
   border: 2px solid var(--color-border);
   border-radius: 8px;
-  font-size: 0.95rem;
+  /* 16px floor on every PB input — anything smaller triggers iOS
+     Safari's auto-zoom on focus, which was bouncing the page when
+     the user tapped a custom field. */
+  font-size: 16px;
   font-family: var(--font-family);
   color: var(--color-text);
   background: white;
@@ -7516,7 +7535,7 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
   padding: 0.7rem 0.85rem;
   border: 2px solid var(--color-border);
   border-radius: 8px;
-  font-size: 0.92rem;
+  font-size: 16px;
   font-family: var(--font-family);
   color: var(--color-text);
   background: white;
@@ -7753,7 +7772,7 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
   border: none;
   outline: none;
   font-family: var(--font-family);
-  font-size: 0.88rem;
+  font-size: 16px;
   background: transparent;
   color: var(--color-text);
   width: 180px;
@@ -7823,7 +7842,7 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
 }
 
 .wiz-extra-field {
-  font-size: 0.88rem !important;
+  font-size: 16px !important;
   padding: 0.5rem 0.75rem !important;
 }
 
@@ -8037,7 +8056,7 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
   border: 1.5px solid var(--color-primary);
   border-radius: 4px;
   font-family: var(--font-family);
-  font-size: 0.92rem;
+  font-size: 16px;
   line-height: 1.6;
   resize: vertical;
   outline: none;
