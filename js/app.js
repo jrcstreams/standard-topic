@@ -847,7 +847,7 @@ function renderStickyHeroBar(container, route) {
       </div>
     </div>
   `;
-  renderSearchBar(document.getElementById('navmenu-search-container'), route);
+  renderSearchBar(document.getElementById('navmenu-search-container'), route, { variant: 'search' });
 
   // Settings gear in the navmenu head — closes the menu, opens
   // the Settings modal.

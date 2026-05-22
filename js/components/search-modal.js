@@ -101,19 +101,24 @@ export function initSearchOverlay() {
 }
 
 export function renderSearchBar(container, route, opts = {}) {
-  const { compact = false } = opts;
+  const { compact = false, variant = 'default' } = opts;
   const cls = `search-bar${compact ? ' is-compact' : ''}`;
-  const fullLabel = 'Choose Topics';
-  const shortLabel = 'Topics';
+  // 'search' variant — used in the expanded menu — reads as a true
+  // search field with a magnifying glass icon, and opens the topic
+  // modal with the search input focused so the user can type
+  // immediately. 'default' variant uses the grid icon + "Choose
+  // Topics" label and is the main nav button (clicks open the
+  // Topics modal in browse mode).
+  const isSearch = variant === 'search';
+  const fullLabel = isSearch ? 'Search any topic' : 'Choose Topics';
+  const shortLabel = isSearch ? 'Search' : 'Topics';
+  const iconSVG = isSearch
+    ? `<svg class="search-bar-icon" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`
+    : `<svg class="search-bar-icon" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>`;
   container.innerHTML = `
     <div class="search-bar-wrapper">
       <button class="${cls}" type="button" aria-label="${fullLabel}">
-        <svg class="search-bar-icon" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="7" height="7" rx="1"/>
-          <rect x="14" y="3" width="7" height="7" rx="1"/>
-          <rect x="3" y="14" width="7" height="7" rx="1"/>
-          <rect x="14" y="14" width="7" height="7" rx="1"/>
-        </svg>
+        ${iconSVG}
         <span class="search-bar-label">
           <span class="search-bar-label-full">${fullLabel}</span>
           <span class="search-bar-label-short">${shortLabel}</span>
@@ -125,7 +130,7 @@ export function renderSearchBar(container, route, opts = {}) {
   const trigger = container.querySelector('.search-bar');
   trigger.addEventListener('click', (e) => {
     e.stopPropagation();
-    openOverlay();
+    openOverlay({ focusInput: isSearch });
   });
 }
 
@@ -133,7 +138,7 @@ function isOpen() {
   return overlayEl && overlayEl.style.display === 'flex';
 }
 
-function openOverlay() {
+function openOverlay(opts = {}) {
   if (!overlayEl) initSearchOverlay();
   overlayEl.style.display = 'flex';
   document.body.style.overflow = 'hidden';
@@ -142,8 +147,13 @@ function openOverlay() {
   highlightIndex = -1;
   renderBody('');
   bodyEl.scrollTop = 0;
+  // Default: focus the input on desktop, not on touch (touch focus
+  // forces the soft keyboard which is jarring when the user just
+  // wanted to browse). The menu's "Search any topic" trigger
+  // overrides this with focusInput: true so the user lands ready
+  // to type on every device.
   const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-  if (!isTouch) inputEl?.focus();
+  if (opts.focusInput || !isTouch) inputEl?.focus();
 }
 
 function closeOverlay() {
