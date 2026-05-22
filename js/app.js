@@ -462,83 +462,50 @@ function wireChipStripScrollEnd() {
 // against a single-line threshold — robust whether the title bumps
 // horizontally or breaks to a new line.
 let subnavCompactResizeHandler = null;
-let subnavCompactLastState = null;
 let subnavCompactLastWidth = null;
 function wireSubnavCompactMeasure() {
   const titleGroupEl = document.querySelector('#sub-header.is-subnav .topic-banner-titlegroup');
   const titleEl = document.querySelector('#sub-header.is-subnav .topic-banner-title');
   const tabPillsEl = document.querySelector('#sub-header.is-subnav .subnav-tab-pills');
+  // Always clear both shrink classes when this function runs. Any
+  // page without title+tabs (prompt builder) or any width outside
+  // tabbed-nav range exits via this path and titles return to
+  // their natural size — no stale shrink class lingers.
   if (!titleGroupEl || !titleEl || !tabPillsEl) {
-    document.body.classList.remove('subnav-compact');
     document.body.classList.remove('subnav-title-shrunk');
-    subnavCompactLastState = null;
+    document.body.classList.remove('subnav-title-shrunk-2');
     return;
   }
-  // Detect when the title actually wraps to multiple lines OR
-  // gets too close to the tab pills. Either condition means we
-  // should shrink. Wrap detection is more reliable for the case
-  // where the title group itself is in the grid layout (title and
-  // tabs on different rows), where the gap-based measure misses
-  // the multi-line wrap.
-  const isTooLarge = () => {
+  // Wrap detection only. A title wraps to a second line only if
+  // it's genuinely too long for its allotted space — that's the
+  // ONLY case where we shrink. Short titles ("Home", "Sports")
+  // stay at the natural 1.5rem size because they fit on one line
+  // by definition.
+  const isWrapping = () => {
     const cs = getComputedStyle(titleEl);
     const fontSize = parseFloat(cs.fontSize) || 16;
     const lineHeightRaw = parseFloat(cs.lineHeight);
     const lineHeight = isNaN(lineHeightRaw) ? fontSize * 1.2 : lineHeightRaw;
-    const singleLineMax = lineHeight + 6;
-    const titleHeight = titleEl.getBoundingClientRect().height;
-    if (titleHeight > singleLineMax) return true;
-    const titleRight = titleGroupEl.getBoundingClientRect().right;
-    const tabsLeft = tabPillsEl.getBoundingClientRect().left;
-    // Only compare horizontal gap if title and tabs share the
-    // same row (similar y position). In the mobile grid the title
-    // is row 1 and tabs are also row 1 — they share. Cramped if
-    // gap < 18px.
-    const titleTop = titleGroupEl.getBoundingClientRect().top;
-    const tabsTop = tabPillsEl.getBoundingClientRect().top;
-    if (Math.abs(titleTop - tabsTop) < 24) {
-      return (tabsLeft - titleRight) < 18;
-    }
-    return false;
+    // 1.4× threshold catches a true 2nd line without false
+    // positives from descenders / accent characters.
+    return titleEl.offsetHeight > lineHeight * 1.4;
   };
-  // Apply the smallest tier necessary to keep the title on one
-  // line. Three tiers:
-  //   0 — natural size (1.5rem)
-  //   1 — subnav-title-shrunk (1.15rem)
-  //   2 — subnav-title-shrunk-2 (0.95rem)
-  // Strategy: start from tier 0 (remove all classes), measure. If
-  // still too large, escalate to tier 1, measure again. If still
-  // too large, escalate to tier 2. Each measurement happens in its
-  // own rAF tick so layout settles between class applications.
   const measure = () => {
-    if (!window.matchMedia('(max-width: 899.98px)').matches) {
-      document.body.classList.remove('subnav-title-shrunk');
-      document.body.classList.remove('subnav-title-shrunk-2');
-      subnavCompactLastState = false;
-      return;
-    }
-    // Reset to tier 0
+    // Always start by removing both classes — natural size first.
+    // Then test if the title wraps. If yes, escalate to tier 1.
+    // If still wrapping at tier 1, escalate to tier 2.
     document.body.classList.remove('subnav-title-shrunk');
     document.body.classList.remove('subnav-title-shrunk-2');
-    // Force a synchronous layout read by accessing offsetHeight,
-    // then test. If too large, escalate.
-    void titleEl.offsetHeight;
-    if (!isTooLarge()) {
-      subnavCompactLastState = 0;
-      return;
-    }
+    if (!window.matchMedia('(max-width: 899.98px)').matches) return;
+    // Force layout flush via getBoundingClientRect (more reliable
+    // than offsetHeight as a layout trigger across browsers).
+    titleEl.getBoundingClientRect();
+    if (!isWrapping()) return; // fits on one line at tier 0
     document.body.classList.add('subnav-title-shrunk');
-    void titleEl.offsetHeight;
-    if (!isTooLarge()) {
-      subnavCompactLastState = 1;
-      return;
-    }
+    titleEl.getBoundingClientRect();
+    if (!isWrapping()) return; // fits on one line at tier 1
     document.body.classList.add('subnav-title-shrunk-2');
-    subnavCompactLastState = 2;
   };
-  // Listen to window.resize (viewport-driven) instead of
-  // ResizeObserver on documentElement — the observer was firing on
-  // class-induced height changes too, creating the flicker loop.
   if (subnavCompactResizeHandler) {
     window.removeEventListener('resize', subnavCompactResizeHandler);
   }
@@ -549,8 +516,11 @@ function wireSubnavCompactMeasure() {
     measure();
   };
   window.addEventListener('resize', subnavCompactResizeHandler, { passive: true });
-  // Initial measure deferred to next frame so layout has settled.
+  // Two measures: an immediate one and one after fonts/layout
+  // settle, so the result converges even if the initial measure
+  // ran with metrics that weren't fully stable yet.
   requestAnimationFrame(measure);
+  setTimeout(measure, 220);
 }
 
 // on container size changes, after fonts load, and on full page load so
