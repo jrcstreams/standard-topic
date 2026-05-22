@@ -3425,6 +3425,12 @@ html, body, #app {
   padding-left: 0;
   border-left: none;
   position: relative;
+  /* Explicit z-index so the fade pseudo on the wrap (z-index: 1)
+     reliably paints ABOVE the strip in every browser. Without
+     this, Safari's scroll-container stacking context was lifting
+     the strip's chips above the fade and the gradient appeared
+     to have no effect. */
+  z-index: 0;
 }
 .subnav-topics-inline::-webkit-scrollbar { display: none; }
 .subnav-topics-inline::before,
@@ -4413,8 +4419,16 @@ body.app-mode .topic-layout {
 /* Chip-strip wrapper + scroll arrows + fade gradients — apply at
    EVERY viewport (mobile / tablet / desktop) whenever the wrap has
    horizontal overflow. Arrows themselves only show on hover-capable
-   pointers (mouse/desktop); touch devices scroll natively via swipe. */
-.subnav-chip-wrap { position: relative; min-width: 0; }
+   pointers (mouse/desktop); touch devices scroll natively via swipe.
+   isolation: isolate forces a stacking context on the wrap so the
+   fade pseudo-elements paint above the scrollable chip strip —
+   without it Safari's scroll container was creating its own
+   stacking context and the fade rendered BEHIND the chips. */
+.subnav-chip-wrap {
+  position: relative;
+  min-width: 0;
+  isolation: isolate;
+}
 .subnav-chip-arrow {
   display: none;
   position: absolute;
@@ -4885,7 +4899,15 @@ body.app-mode .topic-layout {
   letter-spacing: -0.005em;
   text-transform: none;
   margin-left: 0.85rem;
-  flex-shrink: 0;
+  /* Was flex-shrink: 0 + white-space: nowrap, which forced long
+     topic names like "Defense, Security, Foreign Policy" to push
+     past the panel's right edge (cut off mid-word). Now the suffix
+     shrinks/ellipsizes when there isn't room. */
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
   text-shadow: none;
 }
@@ -6251,7 +6273,8 @@ body.app-mode .topic-layout {
   border: 1px solid #e1e6ee;
   border-radius: 10px;
   font-family: var(--font-family);
-  font-size: 0.95rem;
+  /* 16px floor prevents iOS auto-zoom on focus. */
+  font-size: 16px;
   color: var(--color-text);
   resize: vertical;
   line-height: 1.5;
@@ -6285,7 +6308,11 @@ body.app-mode .topic-layout {
   background: transparent;
   border: none;
   outline: none;
-  font: 500 0.95rem/1.2 var(--font-family);
+  /* iOS Safari auto-zooms into any input with font-size < 16px on
+     focus — that's where the "zoom issue still occurring in prompt
+     builder" was coming from. Bumped to 16px so the page no longer
+     jumps when the user taps the search input. */
+  font: 500 16px/1.2 var(--font-family);
   color: var(--color-text);
   min-width: 0;
   -webkit-appearance: none; appearance: none;

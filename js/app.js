@@ -474,14 +474,32 @@ function wireSubnavCompactMeasure() {
     subnavCompactLastState = null;
     return;
   }
-  // Measure WITHOUT first toggling the class — checking gap between
-  // title group's right edge and tab pills' left edge tells us if
-  // the title is too close to the tabs. We use a generous threshold
-  // so we don't flip back and forth on borderline widths.
-  const isCramped = () => {
+  // Detect when the title actually wraps to multiple lines OR
+  // gets too close to the tab pills. Either condition means we
+  // should shrink. Wrap detection is more reliable for the case
+  // where the title group itself is in the grid layout (title and
+  // tabs on different rows), where the gap-based measure misses
+  // the multi-line wrap.
+  const isTooLarge = () => {
+    const cs = getComputedStyle(titleEl);
+    const fontSize = parseFloat(cs.fontSize) || 16;
+    const lineHeightRaw = parseFloat(cs.lineHeight);
+    const lineHeight = isNaN(lineHeightRaw) ? fontSize * 1.2 : lineHeightRaw;
+    const singleLineMax = lineHeight + 6;
+    const titleHeight = titleEl.getBoundingClientRect().height;
+    if (titleHeight > singleLineMax) return true;
     const titleRight = titleGroupEl.getBoundingClientRect().right;
     const tabsLeft = tabPillsEl.getBoundingClientRect().left;
-    return (tabsLeft - titleRight) < 18;
+    // Only compare horizontal gap if title and tabs share the
+    // same row (similar y position). In the mobile grid the title
+    // is row 1 and tabs are also row 1 — they share. Cramped if
+    // gap < 18px.
+    const titleTop = titleGroupEl.getBoundingClientRect().top;
+    const tabsTop = tabPillsEl.getBoundingClientRect().top;
+    if (Math.abs(titleTop - tabsTop) < 24) {
+      return (tabsLeft - titleRight) < 18;
+    }
+    return false;
   };
   const measure = () => {
     if (!window.matchMedia('(max-width: 899.98px)').matches) {
@@ -491,20 +509,21 @@ function wireSubnavCompactMeasure() {
       }
       return;
     }
-    // Hysteresis: when already shrunk, don't un-shrink until there
-    // is a clear amount of headroom (>56px). When not shrunk, only
-    // shrink when actually cramped (<18px gap). This prevents the
-    // ping-pong oscillation that was making the title visibly
-    // tweak between sizes.
     const hasClass = document.body.classList.contains('subnav-title-shrunk');
-    const cramped = isCramped();
-    if (!hasClass && cramped) {
+    // When already shrunk: only un-shrink if a HYPOTHETICAL un-shrink
+    // wouldn't immediately re-wrap. We can't easily simulate, so
+    // approximate: require a generous headroom (gap > 56px OR title
+    // height is currently sitting on a single line with room).
+    if (!hasClass && isTooLarge()) {
       document.body.classList.add('subnav-title-shrunk');
       subnavCompactLastState = true;
     } else if (hasClass) {
       const titleRight = titleGroupEl.getBoundingClientRect().right;
       const tabsLeft = tabPillsEl.getBoundingClientRect().left;
-      if (tabsLeft - titleRight > 56) {
+      const titleTop = titleGroupEl.getBoundingClientRect().top;
+      const tabsTop = tabPillsEl.getBoundingClientRect().top;
+      const sameRow = Math.abs(titleTop - tabsTop) < 24;
+      if (sameRow && (tabsLeft - titleRight) > 56) {
         document.body.classList.remove('subnav-title-shrunk');
         subnavCompactLastState = false;
       }
