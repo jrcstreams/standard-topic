@@ -91,6 +91,7 @@
   <div class="tabs" id="tabs">
     <button class="tab active" data-tab="topics">Topics</button>
     <button class="tab" data-tab="directory">Shortcuts Directory</button>
+    <button class="tab" data-tab="groups">Shortcut Groups</button>
     <button class="tab" data-tab="assignments">Topic Assignments</button>
     <button class="tab" data-tab="searches">Quick Content</button>
     <button class="tab" data-tab="models">AI Models</button>
@@ -98,8 +99,13 @@
     <button class="tab" data-tab="datafiles">Data Files</button>
   </div>
   <div class="tab-content active" id="tab-topics"><div class="toolbar"><h2>Manage Topics</h2><button class="btn btn-primary" id="add-topic">+ Add Topic</button></div><div id="featured-order-panel" style="background:var(--bg-light);border:1px solid var(--border);border-radius:6px;padding:0.85rem 1rem;margin-bottom:1rem;"></div><table><thead><tr><th>Name</th><th>Slug</th><th>Parent</th><th>RSS Feed ID</th><th>Icon</th><th>Featured</th><th>Actions</th></tr></thead><tbody id="topics-body"></tbody></table></div>
-  <div class="tab-content" id="tab-directory"><div class="toolbar"><h2>Shortcuts Directory</h2><button class="btn btn-primary" id="add-shortcut">+ Add Shortcut</button></div><table><thead><tr><th>Name</th><th>ID</th><th>Icon</th><th>Prompt</th><th>Actions</th></tr></thead><tbody id="dir-body"></tbody></table></div>
-  <div class="tab-content" id="tab-assignments"><div class="toolbar"><h2>Topic Assignments</h2></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Pick a topic on the left (incl. <strong>Homepage</strong> and <strong>Custom Search</strong>) to set which AI shortcuts appear on that page. Drag to reorder.</p><div class="assign-layout"><div class="assign-sidebar"><div class="assign-sidebar-head">Topics</div><div id="assign-topics"></div></div><div class="assign-main" id="assign-main"></div></div></div>
+  <div class="tab-content" id="tab-directory"><div class="toolbar"><h2>Shortcuts Directory</h2><button class="btn btn-primary" id="add-shortcut">+ Add Shortcut</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.6rem;">Each shortcut has a <strong>Group</strong> (Discover / Learn / Analyze / More — or any group you defined in <em>Shortcut Groups</em>). The group determines which subsection it appears under on every topic page.</p><table><thead><tr><th>Name</th><th>ID</th><th>Group</th><th>Icon</th><th>Prompt</th><th>Actions</th></tr></thead><tbody id="dir-body"></tbody></table></div>
+  <div class="tab-content" id="tab-groups">
+    <div class="toolbar"><h2>Shortcut Groups</h2><button class="btn btn-primary" id="add-group">+ Add Group</button></div>
+    <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.6rem;">Subsections that AI Shortcuts get bucketed into on a topic page. Add / rename / reorder here; assign each shortcut to a group in <em>Shortcuts Directory</em>. Topic pages render groups in the order shown.</p>
+    <table><thead><tr><th>Label</th><th>ID</th><th>Order</th><th>Shortcuts</th><th>Actions</th></tr></thead><tbody id="groups-body"></tbody></table>
+  </div>
+  <div class="tab-content" id="tab-assignments"><div class="toolbar"><h2>Topic Assignments</h2></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Pick a topic on the left (incl. <strong>Homepage</strong> and <strong>Custom Search</strong>) to set which AI shortcuts appear on that page. Shortcuts are bucketed by their <strong>Group</strong> (set in <em>Shortcuts Directory</em>) on the rendered page. Drag inside a group to reorder; the within-group order is preserved.</p><div class="assign-layout"><div class="assign-sidebar"><div class="assign-sidebar-head">Topics</div><div id="assign-topics"></div></div><div class="assign-main" id="assign-main"></div></div></div>
   <div class="tab-content" id="tab-searches"><div class="toolbar"><h2>Quick Content Shortcuts</h2><button class="btn btn-primary" id="add-search">+ Add Source</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">External search destinations shown in the Quick Content sub-nav row on topic and custom search pages. Use <code>{query}</code> in the URL where the topic name goes.</p><table><thead><tr><th>Name</th><th>Icon</th><th>URL Template</th><th>Actions</th></tr></thead><tbody id="searches-body"></tbody></table></div>
   <div class="tab-content" id="tab-models"><div class="toolbar"><h2>AI Models</h2><button class="btn btn-primary" id="add-model">+ Add Model</button></div><div style="display:flex;align-items:center;gap:0.55rem;margin-bottom:0.85rem;padding:0.6rem 0.75rem;background:var(--bg-light);border-radius:6px;border:1px solid var(--border);"><label for="models-default" style="font-weight:600;font-size:0.85rem;">Default model</label><select id="models-default" style="flex:1;padding:0.35rem 0.5rem;border:1px solid var(--border);border-radius:4px;background:white;font-size:0.85rem;"></select><span style="color:var(--text-muted);font-size:0.75rem;">Preselected in prompt modals + the user Settings panel.</span></div><table><thead><tr><th>Name</th><th>ID</th><th>Submission Method</th><th>URL Template</th><th>Actions</th></tr></thead><tbody id="models-body"></tbody></table></div>
   <div class="tab-content" id="tab-promptgen"><div class="toolbar"><h2>Prompt Generator</h2><button class="btn btn-success" id="pg-save">Apply JSON</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Edit <code>prompt-generator.json</code> directly. Click <strong>Apply JSON</strong> to validate and stage your changes, then use <strong>Export All JSON</strong> to download the updated file.</p><textarea id="pg-editor" style="width:100%;min-height:500px;background:var(--bg-light);padding:1rem;border-radius:6px;font-size:0.78rem;font-family:monospace;border:1px solid var(--border);resize:vertical;"></textarea></div>
@@ -168,6 +174,7 @@
       t.classList.add('active');
       document.getElementById('tab-'+t.dataset.tab).classList.add('active');
       if (t.dataset.tab === 'assignments') renderAssignments();
+      if (t.dataset.tab === 'groups') renderGroups();
       // Re-render the raw JSON editor when the Data Files tab opens
       // so it reflects any edits applied in other tabs since the
       // user last viewed it.
@@ -369,7 +376,7 @@
     // Expose markDirty for the per-tab Apply / save handlers below.
     window.__markDirty = markDirty;
 
-    function renderAll() { renderTopics(); renderFeaturedOrder(); renderDirectory(); renderAssignments(); renderSearches(); renderModels(); renderPromptGen(); }
+    function renderAll() { ensureGroupsInData(); renderTopics(); renderFeaturedOrder(); renderDirectory(); renderGroups(); renderAssignments(); renderSearches(); renderModels(); renderPromptGen(); }
 
     // Featured-topics order: an explicit slug array on topics.json that
     // controls the order featured topics show in the home subnav, drawer
@@ -550,33 +557,152 @@
     }
 
     // ===== DIRECTORY =====
+    // Default group definitions used when none are present in the
+    // assignments file. Matches the runtime's hardcoded fallback so
+    // export from a fresh import behaves identically to today.
+    var DEFAULT_GROUPS = [
+      { id: 'discover', label: 'Discover', order: 0 },
+      { id: 'learn',    label: 'Learn',    order: 1 },
+      { id: 'analyze',  label: 'Analyze',  order: 2 },
+      { id: 'more',     label: 'More',     order: 3 }
+    ];
+    function getGroupDefs() {
+      // Read from data.assignments.groups (preferred), fall back to
+      // the defaults. Result is always sorted by `order` ascending.
+      var defs = (data.assignments && Array.isArray(data.assignments.groups) && data.assignments.groups.length)
+        ? data.assignments.groups.slice()
+        : DEFAULT_GROUPS.slice();
+      defs.sort(function(a,b){ return (a.order||0) - (b.order||0); });
+      return defs;
+    }
+    function ensureGroupsInData() {
+      if (!data.assignments) data.assignments = { assignments: {} };
+      if (!Array.isArray(data.assignments.groups) || !data.assignments.groups.length) {
+        data.assignments.groups = DEFAULT_GROUPS.slice();
+      }
+    }
+    function groupLabel(id) {
+      var g = getGroupDefs().find(function(x){return x.id===id;});
+      return g ? g.label : (id || '—');
+    }
+
     function renderDirectory() {
       var shortcuts = data.directory.shortcuts || [];
+      var groups = getGroupDefs();
       var tbody = document.getElementById('dir-body');
       tbody.innerHTML = shortcuts.map(function(s, i) {
-        return '<tr><td><strong>'+esc(s.name)+'</strong></td><td class="mono">'+esc(s.id)+'</td><td>'+esc(s.icon)+'</td><td class="mono truncate" title="'+escA(s.prompt)+'">'+esc(s.prompt)+'</td><td style="white-space:nowrap"><button class="btn" data-action="up" data-i="'+i+'" title="Move up">↑</button> <button class="btn" data-action="down" data-i="'+i+'" title="Move down">↓</button> <button class="btn" data-action="edit" data-id="'+escA(s.id)+'">Edit</button> <button class="btn btn-danger" data-action="delete" data-id="'+escA(s.id)+'">Del</button></td></tr>';
+        var groupSelectHTML = '<select data-action="set-group" data-id="'+escA(s.id)+'" style="padding:0.25rem 0.35rem;border:1px solid var(--border);border-radius:3px;background:white;font-size:0.78rem;">' +
+          '<option value="">— unset —</option>' +
+          groups.map(function(g){ return '<option value="'+escA(g.id)+'"'+(s.group===g.id?' selected':'')+'>'+esc(g.label)+'</option>'; }).join('') +
+        '</select>';
+        return '<tr><td><strong>'+esc(s.name)+'</strong></td><td class="mono">'+esc(s.id)+'</td><td>'+groupSelectHTML+'</td><td>'+esc(s.icon||'')+'</td><td class="mono truncate" title="'+escA(s.prompt)+'">'+esc(s.prompt)+'</td><td style="white-space:nowrap"><button class="btn" data-action="up" data-i="'+i+'" title="Move up">↑</button> <button class="btn" data-action="down" data-i="'+i+'" title="Move down">↓</button> <button class="btn" data-action="edit" data-id="'+escA(s.id)+'">Edit</button> <button class="btn btn-danger" data-action="delete" data-id="'+escA(s.id)+'">Del</button></td></tr>';
       }).join('');
       tbody.onclick = function(e) {
-        var btn = e.target.closest('[data-action]'); if (!btn) return;
+        var btn = e.target.closest('[data-action]'); if (!btn || btn.tagName === 'SELECT') return;
         var arr = data.directory.shortcuts;
         if (btn.dataset.action === 'edit') editShortcut(btn.dataset.id);
-        else if (btn.dataset.action === 'delete') { if(confirm('Delete?')){ data.directory.shortcuts = arr.filter(function(s){return s.id!==btn.dataset.id;}); Object.keys(data.assignments.assignments||{}).forEach(function(k){data.assignments.assignments[k]=data.assignments.assignments[k].filter(function(id){return id!==btn.dataset.id;});}); renderDirectory(); renderAssignments(); toast('Deleted'); } }
-        else if (btn.dataset.action === 'up') { var i=parseInt(btn.dataset.i,10); if(i>0){ var m=arr.splice(i,1)[0]; arr.splice(i-1,0,m); renderDirectory(); } }
-        else if (btn.dataset.action === 'down') { var i=parseInt(btn.dataset.i,10); if(i<arr.length-1){ var m=arr.splice(i,1)[0]; arr.splice(i+1,0,m); renderDirectory(); } }
+        else if (btn.dataset.action === 'delete') { if(confirm('Delete?')){ data.directory.shortcuts = arr.filter(function(s){return s.id!==btn.dataset.id;}); Object.keys(data.assignments.assignments||{}).forEach(function(k){data.assignments.assignments[k]=(data.assignments.assignments[k]||[]).filter(function(id){return id!==btn.dataset.id;});}); renderDirectory(); renderAssignments(); toast('Deleted'); if(window.__markDirty){window.__markDirty('directory');window.__markDirty('assignments');} } }
+        else if (btn.dataset.action === 'up') { var i=parseInt(btn.dataset.i,10); if(i>0){ var m=arr.splice(i,1)[0]; arr.splice(i-1,0,m); renderDirectory(); if(window.__markDirty)window.__markDirty('directory'); } }
+        else if (btn.dataset.action === 'down') { var i=parseInt(btn.dataset.i,10); if(i<arr.length-1){ var m=arr.splice(i,1)[0]; arr.splice(i+1,0,m); renderDirectory(); if(window.__markDirty)window.__markDirty('directory'); } }
+      };
+      tbody.onchange = function(e) {
+        var sel = e.target.closest('select[data-action="set-group"]'); if (!sel) return;
+        var s = data.directory.shortcuts.find(function(x){return x.id===sel.dataset.id;});
+        if (!s) return;
+        if (sel.value) s.group = sel.value;
+        else delete s.group;
+        if (window.__markDirty) window.__markDirty('directory');
+        renderAssignments();
+        toast('Group set to ' + (sel.options[sel.selectedIndex].text));
       };
     }
     document.getElementById('add-shortcut').addEventListener('click', function() { showShortcutForm(null); });
     function editShortcut(id) { var s = data.directory.shortcuts.find(function(x){return x.id===id;}); if(s) showShortcutForm(s); }
     function showShortcutForm(sc) {
       var isNew = !sc;
-      document.getElementById('modal').innerHTML = '<div class="form-overlay" id="overlay"><div class="form-modal"><h3>'+(isNew?'Add':'Edit')+' Shortcut</h3><div class="fg"><label>ID</label><input id="f-id" value="'+escA(sc?sc.id:'')+'" '+(isNew?'':'readonly style="background:var(--bg-light)"')+'></div><div class="fg"><label>Name</label><input id="f-name" value="'+escA(sc?sc.name:'')+'"></div><div class="fg"><label>Icon key</label><input id="f-icon" value="'+escA(sc?sc.icon:'')+'"></div><div class="fg"><label>Prompt (use {topic})</label><textarea id="f-prompt">'+esc(sc?sc.prompt:'')+'</textarea></div><div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
+      var groups = getGroupDefs();
+      var groupOptions = '<option value="">— unset —</option>' + groups.map(function(g){ return '<option value="'+escA(g.id)+'"'+(sc&&sc.group===g.id?' selected':'')+'>'+esc(g.label)+'</option>'; }).join('');
+      document.getElementById('modal').innerHTML = '<div class="form-overlay" id="overlay"><div class="form-modal"><h3>'+(isNew?'Add':'Edit')+' Shortcut</h3><div class="fg"><label>ID</label><input id="f-id" value="'+escA(sc?sc.id:'')+'" '+(isNew?'':'readonly style="background:var(--bg-light)"')+'></div><div class="fg"><label>Name</label><input id="f-name" value="'+escA(sc?sc.name:'')+'"></div><div class="fg"><label>Group</label><select id="f-group">'+groupOptions+'</select></div><div class="fg"><label>Icon key</label><input id="f-icon" value="'+escA(sc?sc.icon:'')+'"></div><div class="fg"><label>Prompt (use {topic})</label><textarea id="f-prompt">'+esc(sc?sc.prompt:'')+'</textarea></div><div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
       document.getElementById('f-cancel').addEventListener('click', closeModal);
       document.getElementById('overlay').addEventListener('click', function(e){if(e.target===e.currentTarget)closeModal();});
       document.getElementById('f-save').addEventListener('click', function() {
         var entry = {id:document.getElementById('f-id').value.trim(), name:document.getElementById('f-name').value.trim(), icon:document.getElementById('f-icon').value.trim(), prompt:document.getElementById('f-prompt').value};
+        var grp = document.getElementById('f-group').value;
+        if (grp) entry.group = grp;
         if(!entry.id||!entry.name||!entry.prompt){alert('Required.');return;}
         if(isNew){if(data.directory.shortcuts.find(function(s){return s.id===entry.id;})){alert('ID exists.');return;}data.directory.shortcuts.push(entry);}else{var i=data.directory.shortcuts.findIndex(function(s){return s.id===entry.id;});if(i>=0)data.directory.shortcuts[i]=entry;}
-        closeModal(); renderDirectory(); toast('Saved');
+        closeModal(); renderDirectory(); renderAssignments(); toast('Saved');
+        if (window.__markDirty) window.__markDirty('directory');
+      });
+    }
+
+    // ===== SHORTCUT GROUPS =====
+    function renderGroups() {
+      ensureGroupsInData();
+      var groups = data.assignments.groups;
+      // Stable display order from current `order` field
+      groups.sort(function(a,b){ return (a.order||0) - (b.order||0); });
+      var tbody = document.getElementById('groups-body');
+      var shortcuts = data.directory.shortcuts || [];
+      tbody.innerHTML = groups.map(function(g, i) {
+        var count = shortcuts.filter(function(s){return s.group===g.id;}).length;
+        return '<tr>'+
+          '<td><input data-action="rename" data-id="'+escA(g.id)+'" value="'+escA(g.label)+'" style="width:100%;padding:0.25rem 0.4rem;border:1px solid var(--border);border-radius:3px;font-size:0.85rem;"></td>'+
+          '<td class="mono">'+esc(g.id)+'</td>'+
+          '<td><input data-action="reorder" data-id="'+escA(g.id)+'" type="number" value="'+(g.order||0)+'" style="width:60px;padding:0.25rem 0.4rem;border:1px solid var(--border);border-radius:3px;font-size:0.85rem;"></td>'+
+          '<td>'+count+'</td>'+
+          '<td style="white-space:nowrap"><button class="btn" data-action="up" data-i="'+i+'" title="Move up">↑</button> <button class="btn" data-action="down" data-i="'+i+'" title="Move down">↓</button> <button class="btn btn-danger" data-action="delete" data-id="'+escA(g.id)+'">Del</button></td>'+
+        '</tr>';
+      }).join('');
+      tbody.onclick = function(e) {
+        var btn = e.target.closest('button[data-action]'); if (!btn) return;
+        var arr = data.assignments.groups;
+        if (btn.dataset.action === 'delete') {
+          var id = btn.dataset.id;
+          var ct = shortcuts.filter(function(s){return s.group===id;}).length;
+          if (!confirm('Delete group "'+groupLabel(id)+'"?'+(ct?' '+ct+' shortcut(s) currently assigned will lose their group.':''))) return;
+          data.assignments.groups = arr.filter(function(g){return g.id!==id;});
+          (data.directory.shortcuts||[]).forEach(function(s){ if(s.group===id) delete s.group; });
+          renderGroups(); renderDirectory(); renderAssignments();
+          toast('Group deleted');
+          if (window.__markDirty){ window.__markDirty('assignments'); window.__markDirty('directory'); }
+        } else if (btn.dataset.action === 'up') {
+          var i=parseInt(btn.dataset.i,10); if(i>0){ var m=arr.splice(i,1)[0]; arr.splice(i-1,0,m); arr.forEach(function(g,idx){g.order=idx;}); renderGroups(); renderDirectory(); renderAssignments(); if(window.__markDirty)window.__markDirty('assignments'); }
+        } else if (btn.dataset.action === 'down') {
+          var i=parseInt(btn.dataset.i,10); if(i<arr.length-1){ var m=arr.splice(i,1)[0]; arr.splice(i+1,0,m); arr.forEach(function(g,idx){g.order=idx;}); renderGroups(); renderDirectory(); renderAssignments(); if(window.__markDirty)window.__markDirty('assignments'); }
+        }
+      };
+      tbody.onchange = function(e) {
+        var input = e.target.closest('input[data-action]'); if (!input) return;
+        var id = input.dataset.id;
+        var g = data.assignments.groups.find(function(x){return x.id===id;});
+        if (!g) return;
+        if (input.dataset.action === 'rename') {
+          g.label = input.value.trim() || g.id;
+        } else if (input.dataset.action === 'reorder') {
+          g.order = parseInt(input.value, 10) || 0;
+        }
+        renderDirectory(); renderAssignments();
+        if (window.__markDirty) window.__markDirty('assignments');
+        toast('Group updated');
+      };
+    }
+    document.getElementById('add-group').addEventListener('click', function() { showGroupForm(); });
+    function showGroupForm() {
+      document.getElementById('modal').innerHTML = '<div class="form-overlay" id="overlay"><div class="form-modal"><h3>Add Group</h3><div class="fg"><label>ID (lowercase, no spaces)</label><input id="f-gid" placeholder="e.g. compare"></div><div class="fg"><label>Label (display name)</label><input id="f-glabel" placeholder="e.g. Compare"></div><div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
+      document.getElementById('f-cancel').addEventListener('click', closeModal);
+      document.getElementById('overlay').addEventListener('click', function(e){if(e.target===e.currentTarget)closeModal();});
+      document.getElementById('f-save').addEventListener('click', function() {
+        var id = document.getElementById('f-gid').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+        var label = document.getElementById('f-glabel').value.trim();
+        if (!id || !label) { alert('Both ID and label required.'); return; }
+        ensureGroupsInData();
+        if (data.assignments.groups.find(function(g){return g.id===id;})) { alert('Group ID already exists.'); return; }
+        var maxOrder = data.assignments.groups.reduce(function(m,g){return Math.max(m, g.order||0);}, -1);
+        data.assignments.groups.push({ id: id, label: label, order: maxOrder + 1 });
+        closeModal(); renderGroups(); renderDirectory(); renderAssignments();
+        if (window.__markDirty) window.__markDirty('assignments');
+        toast('Group added');
       });
     }
 
@@ -596,21 +722,49 @@
       var current = ids.map(function(id){return dirMap[id];}).filter(Boolean);
       var available = (data.directory.shortcuts||[]).filter(function(s){return ids.indexOf(s.id)<0;});
       var label = (topics.find(function(t){return t.slug===selectedTopic;})||{}).name||selectedTopic;
+      var groups = getGroupDefs();
+      // Bucket current shortcuts by their group. Preserve order within
+      // each bucket from the original ids array. An "Ungrouped" bucket
+      // catches shortcuts with no group set.
+      var buckets = {};
+      groups.forEach(function(g){ buckets[g.id] = []; });
+      buckets.__ungrouped__ = [];
+      current.forEach(function(s, i) {
+        var key = s.group && buckets[s.group] ? s.group : '__ungrouped__';
+        buckets[key].push({ shortcut: s, origIdx: i });
+      });
+      function bucketHTML(groupId, bucketLabel) {
+        var items = buckets[groupId];
+        if (!items.length) return '';
+        return '<div class="assign-group" style="margin-bottom:0.85rem;">'+
+          '<h4 style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);font-weight:700;margin:0.65rem 0 0.4rem;padding-bottom:0.3rem;border-bottom:1px solid var(--border);">'+esc(bucketLabel)+' <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#aaa;">· '+items.length+'</span></h4>'+
+          '<div class="assign-bucket" data-group="'+escA(groupId)+'">'+
+            items.map(function(it){
+              return '<div class="assign-item" draggable="true" data-idx="'+it.origIdx+'" data-id="'+escA(it.shortcut.id)+'"><span class="handle">&#9776;</span><span class="name">'+esc(it.shortcut.name)+'</span><button class="remove" data-rm="'+escA(it.shortcut.id)+'">&times;</button></div>';
+            }).join('')+
+          '</div>'+
+        '</div>';
+      }
+      var listHTML = groups.map(function(g){ return bucketHTML(g.id, g.label); }).join('') +
+        bucketHTML('__ungrouped__', 'Ungrouped');
       var main = document.getElementById('assign-main');
       main.innerHTML = '<h3>'+esc(label.trim())+' <span style="font-size:0.78rem;color:var(--text-muted);font-weight:400;">'+current.length+' shortcuts</span></h3>' +
         '<div id="assign-list">'+
-        (current.length===0?'<div style="color:var(--text-muted);font-size:0.84rem;padding:0.5rem;">No shortcuts. Add from below.</div>':
-        current.map(function(s,i){return '<div class="assign-item" draggable="true" data-idx="'+i+'" data-id="'+escA(s.id)+'"><span class="handle">&#9776;</span><span class="name">'+esc(s.name)+'</span><button class="remove" data-rm="'+escA(s.id)+'">&times;</button></div>';}).join(''))+
+        (current.length===0?'<div style="color:var(--text-muted);font-size:0.84rem;padding:0.5rem;">No shortcuts. Add from below.</div>':listHTML)+
         '</div>'+
         '<div class="assign-add"><div class="assign-add-label">Add shortcut</div><div class="assign-btns" id="assign-avail">'+
         (available.length===0?'<span style="color:var(--text-muted);font-size:0.82rem;">All assigned.</span>':
-        available.map(function(s){return '<button data-add="'+escA(s.id)+'">'+esc(s.name)+'</button>';}).join(''))+
+        available.map(function(s){
+          var grp = s.group ? ' · '+esc(groupLabel(s.group)) : '';
+          return '<button data-add="'+escA(s.id)+'">'+esc(s.name)+'<span style="color:#aaa;font-size:0.7rem;margin-left:0.3rem;">'+grp+'</span></button>';
+        }).join(''))+
         '</div></div>';
       // Remove
       main.querySelectorAll('.remove').forEach(function(btn){
         btn.addEventListener('click', function(){
           data.assignments.assignments[selectedTopic] = (data.assignments.assignments[selectedTopic]||[]).filter(function(id){return id!==btn.dataset.rm;});
           renderAssignments(); toast('Removed');
+          if (window.__markDirty) window.__markDirty('assignments');
         });
       });
       // Add
@@ -619,11 +773,16 @@
           if(!data.assignments.assignments[selectedTopic]) data.assignments.assignments[selectedTopic]=[];
           data.assignments.assignments[selectedTopic].push(btn.dataset.add);
           renderAssignments(); toast('Added');
+          if (window.__markDirty) window.__markDirty('assignments');
         });
       });
-      // Drag reorder
+      // Drag reorder — works across buckets too, so dragging an item
+      // from "Discover" to a position inside "Learn" moves it in the
+      // flat array. The shortcut's group field is unchanged (set
+      // group via the Directory tab); the position just changes its
+      // visual order on the page.
       var dragIdx = null;
-      document.getElementById('assign-list').querySelectorAll('.assign-item').forEach(function(item){
+      document.querySelectorAll('#assign-list .assign-item').forEach(function(item){
         item.addEventListener('dragstart', function(e){ dragIdx=parseInt(item.dataset.idx); item.classList.add('assign-dragging'); e.dataTransfer.effectAllowed='move'; });
         item.addEventListener('dragend', function(){ item.classList.remove('assign-dragging'); });
         item.addEventListener('dragover', function(e){ e.preventDefault(); });
@@ -634,6 +793,7 @@
           var moved=arr.splice(dragIdx,1)[0]; arr.splice(dropIdx,0,moved);
           data.assignments.assignments[selectedTopic]=arr;
           renderAssignments(); toast('Reordered');
+          if (window.__markDirty) window.__markDirty('assignments');
         });
       });
     }

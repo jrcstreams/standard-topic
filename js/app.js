@@ -1139,11 +1139,14 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     html += `<p class="sidebar-empty">No shortcuts yet.</p>`;
   } else {
     const groups = groupShortcuts(all);
-    const groupOrder = [
+    // Use the resolved order from the data (admin-managed groups in
+    // assignments.json) instead of a hardcoded list, so adding /
+    // renaming / reordering groups in the admin panel takes effect.
+    const groupOrder = groups.__order || [
       { key: 'discover', label: 'Discover' },
       { key: 'learn', label: 'Learn' },
       { key: 'analyze', label: 'Analyze' },
-      { key: 'other', label: 'More' },
+      { key: 'more', label: 'More' },
     ];
     groupOrder.forEach(g => {
       const items = groups[g.key];
@@ -1477,18 +1480,55 @@ function shortcutBulletItem(shortcut, topicName) {
 // Items that don't match any bucket fall into "other" and render in
 // the trailing "More" group. Categories are starter heuristics — a
 // `category` field on each shortcut would replace this later.
+// Default groups when assignments.json doesn't declare any. Mirrors
+// the admin panel's DEFAULT_GROUPS so a fresh install renders the
+// same Discover / Learn / Analyze / More layout as before. The "other"
+// internal key maps to the "more" group id so legacy regex-classified
+// shortcuts still land in the More bucket.
+const DEFAULT_GROUP_DEFS = [
+  { id: 'discover', label: 'Discover', order: 0 },
+  { id: 'learn',    label: 'Learn',    order: 1 },
+  { id: 'analyze',  label: 'Analyze',  order: 2 },
+  { id: 'more',     label: 'More',     order: 3 },
+];
 function groupShortcuts(shortcuts) {
-  const groups = { discover: [], learn: [], analyze: [], other: [] };
+  // 1) Resolve the group set: use data.assignments.groups if present
+  //    (admin-managed), else the defaults. Sort by `order` ascending.
+  const groupDefs = (window.__assignmentsData && Array.isArray(window.__assignmentsData.groups) && window.__assignmentsData.groups.length)
+    ? window.__assignmentsData.groups.slice()
+    : DEFAULT_GROUP_DEFS.slice();
+  groupDefs.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+  // 2) Initialize buckets.
+  const groups = {};
+  groupDefs.forEach(g => { groups[g.id] = []; });
+
+  // 3) For each shortcut, prefer its explicit `group` field. Fall back
+  //    to the legacy regex-based classifier so old data still renders
+  //    until it gets a group assigned in the admin.
   const learnRE = /(guide|glossary|beginner|primer|fundamentals|basics|deep ?dive|history|background|key players|key terms|how |where to|why )/i;
   const analyzeRE = /(analy|impact|affect|hype|reality|compare| vs | versus |implications|outcome|signal|forecast|prediction|risk|controversy|debate)/i;
   const discoverRE = /(news|snapshot|update|headline|trend|watch|latest|now|today|roundup|hot|spotlight|brief|digest)/i;
   shortcuts.forEach(s => {
+    if (s.group && groups[s.group]) {
+      groups[s.group].push(s);
+      return;
+    }
     const name = s.name || '';
-    if (learnRE.test(name)) groups.learn.push(s);
-    else if (analyzeRE.test(name)) groups.analyze.push(s);
-    else if (discoverRE.test(name)) groups.discover.push(s);
-    else groups.other.push(s);
+    if (learnRE.test(name) && groups.learn) groups.learn.push(s);
+    else if (analyzeRE.test(name) && groups.analyze) groups.analyze.push(s);
+    else if (discoverRE.test(name) && groups.discover) groups.discover.push(s);
+    else if (groups.more) groups.more.push(s);
+    else if (groups.other) groups.other.push(s);
+    else {
+      // No matching default bucket — drop into the first defined group.
+      const first = groupDefs[0];
+      if (first) groups[first.id].push(s);
+    }
   });
+  // Expose the resolved group order so the caller can render in
+  // the data-defined order rather than a hardcoded list.
+  groups.__order = groupDefs.map(g => ({ key: g.id, label: g.label }));
   return groups;
 }
 

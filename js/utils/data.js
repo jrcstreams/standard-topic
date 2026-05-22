@@ -26,6 +26,12 @@ export async function loadAllData() {
   modelsData = models;
   promptGenData = promptGen;
   externalSearchesData = externalSearches;
+  // Expose the assignments blob (with its `groups` definitions) on
+  // window so groupShortcuts() in app.js can resolve the admin-
+  // managed group set without an extra import wiring.
+  if (typeof window !== 'undefined') {
+    window.__assignmentsData = assignments;
+  }
 }
 
 export function getExternalSearches() {
