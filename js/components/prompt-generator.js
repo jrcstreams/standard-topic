@@ -2072,9 +2072,13 @@ function renderSubmitPanel() {
   submitPanelEl.innerHTML = `
     <div class="pm-header">
       <div class="pm-title">
-        <span class="pm-title-icon" aria-hidden="true">✦</span>
-        <h3 class="pm-title-name">Preview &amp; Submit</h3>
-        <span class="pm-title-tag">Built Prompt</span>
+        <span class="pm-title-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/>
+            <path d="M19 3l.6 1.6L21.2 5.2 19.6 5.8 19 7.4 18.4 5.8 16.8 5.2 18.4 4.6z"/>
+          </svg>
+        </span>
+        <h3 class="pm-title-name">Preview and Submit Prompt</h3>
       </div>
       <button type="button" class="pm-close" id="wiz-submit-close" aria-label="Close">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg>
@@ -2093,8 +2097,9 @@ function renderSubmitPanel() {
             : `<div class="pm-preview ${isEmpty ? 'is-empty' : ''}" id="wiz-submit-preview" tabindex="0" role="button" aria-label="Click to edit prompt">${isEmpty ? 'Add a topic to start building your prompt…' : escapeHTML(prompt)}</div>`
           }
           <div class="pm-preview-actions">
-            <button type="button" class="pm-icon-btn" id="wiz-submit-copy" aria-label="Copy prompt" title="Copy">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="8" height="9" rx="1.2"/><path d="M9.5 3.5V2.5a1 1 0 0 0-1-1h-5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1"/></svg>
+            <button type="button" class="pm-copy-btn" id="wiz-submit-copy" aria-label="Copy prompt">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="8" height="9" rx="1.2"/><path d="M9.5 3.5V2.5a1 1 0 0 0-1-1h-5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1"/></svg>
+              <span class="pm-copy-btn-label">Copy</span>
             </button>
             <button type="button" class="pm-icon-btn" id="wiz-submit-edit" aria-label="${state.isEditingPrompt ? 'Save' : 'Edit'} prompt" title="${state.isEditingPrompt ? 'Save' : 'Edit'}">
               ${state.isEditingPrompt
@@ -2144,10 +2149,43 @@ function bindSubmitPanelEvents() {
     const text = state.isEditingPrompt
       ? submitPanelEl.querySelector('#wiz-submit-textarea')?.value ?? ''
       : (state.editedPrompt ?? assemblePrompt()).trim();
-    try { await navigator.clipboard.writeText(text); } catch (_) {}
+    // Try the modern async clipboard API first. Falls back to the
+    // legacy document.execCommand('copy') flow, which works on
+    // older Safari + non-https origins where navigator.clipboard
+    // is unavailable. Both paths run sync enough to keep the user
+    // gesture context.
+    let copied = false;
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        copied = true;
+      }
+    } catch (_) { /* fall through */ }
+    if (!copied) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.top = '0';
+        ta.style.left = '0';
+        ta.style.opacity = '0';
+        ta.setAttribute('readonly', '');
+        document.body.appendChild(ta);
+        ta.select();
+        ta.setSelectionRange(0, ta.value.length);
+        copied = document.execCommand('copy');
+        document.body.removeChild(ta);
+      } catch (_) { /* give up silently */ }
+    }
     const btn = e.currentTarget;
     btn.classList.add('is-copied');
-    setTimeout(() => btn.classList.remove('is-copied'), 1200);
+    const labelEl = btn.querySelector('.pm-copy-btn-label');
+    if (labelEl) {
+      const prev = labelEl.textContent;
+      labelEl.textContent = copied ? 'Copied' : 'Copy failed';
+      setTimeout(() => { labelEl.textContent = prev; }, 1400);
+    }
+    setTimeout(() => btn.classList.remove('is-copied'), 1400);
   });
 
   submitPanelEl.querySelector('#wiz-submit-edit').addEventListener('click', (e) => {

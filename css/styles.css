@@ -3139,6 +3139,48 @@ html, body, #app {
 }
 .pm-preview-wrap.is-editing .pm-icon-btn { background: #fff; }
 
+/* Prominent copy button — wider than the icon-only edit/save
+   sibling, with a visible "Copy" label so users notice it
+   immediately. Sits inside .pm-preview-actions alongside the
+   icon-only edit button. */
+.pm-copy-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 30px;
+  padding: 0 0.7rem 0 0.55rem;
+  background: var(--color-bg);
+  border: 1.5px solid #c8d3e3;
+  border-radius: 8px;
+  color: #1e2d44;
+  font-family: var(--font-family);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.06s, box-shadow 0.14s;
+  box-shadow: 0 1px 2px rgba(15, 26, 46, 0.06);
+}
+.pm-copy-btn svg { color: #2c4467; flex-shrink: 0; }
+.pm-copy-btn:hover {
+  background: #f5f8fd;
+  border-color: #95a8c5;
+  color: #0f1a2e;
+  box-shadow: 0 2px 5px rgba(15, 26, 46, 0.1);
+}
+.pm-copy-btn:active { transform: translateY(1px); }
+.pm-copy-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.pm-copy-btn.is-copied {
+  background: #def7ec;
+  border-color: #86d3b3;
+  color: #03543f;
+}
+.pm-copy-btn.is-copied svg { color: #03543f; }
+
 /* Models — chip row */
 .pm-models {
   display: flex;
@@ -3246,8 +3288,10 @@ html, body, #app {
 @media (max-width: 640px) {
   .pm-header { padding: 0.85rem 0.95rem 0.75rem; }
   .pm-body { padding: 0.85rem 0.95rem 0.85rem; }
-  .pm-actions { align-items: stretch; }
-  .pm-submit { align-self: stretch; }
+  /* Submit button stays left-aligned + content-width on mobile too —
+     full-width stretching was making it dominate the modal. */
+  .pm-actions { align-items: flex-start; }
+  .pm-submit { align-self: flex-start; }
   .pm-title-name { font-size: 1.02rem; }
   .pm-title-eyebrow { font-size: 0.64rem; }
 }
@@ -5968,7 +6012,9 @@ body.app-mode .topic-layout {
 .pb-card-req {
   display: inline-flex;
   align-items: center;
-  padding: 0.12rem 0.45rem;
+  /* More breathing room around the text + slightly taller pill so
+     it sits visually centered with the bold card title beside it. */
+  padding: 0.3rem 0.65rem;
   background: rgba(194, 65, 12, 0.1);
   color: #c2410c;
   border-radius: 999px;
@@ -5978,6 +6024,8 @@ body.app-mode .topic-layout {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   line-height: 1;
+  /* Drop baseline alignment and ride the flex centerline instead. */
+  align-self: center;
 }
 /* Trailing action chip on every card — replaces the old chevron +
    separate "+ Add" CTA. Reads "Add +" when empty (clear call to
