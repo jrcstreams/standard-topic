@@ -2161,22 +2161,32 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   border-radius: 3px;
   position: relative;
   overflow: hidden;
-  /* The iframe now fills its parent column 1:1 — the rss-embed
-     document has zero horizontal padding inside, so the iframe
-     edges == the visible card edges. No compensating pull-out
-     needed at any breakpoint; cards align cleanly with the
-     newsfeed-title separator above. */
   margin: 0;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
 }
-/* Desktop: give the first card breathing room below the
-   newsfeed-title's bottom separator. On mobile the body-tabs
-   underline already provides that separator, so the embed sits
-   flush against it for a cleaner scroll experience. */
+/* Mobile: keep the iframe sitting close to the body-tabs sticky
+   bar above it (cleaner scroll experience), but leave a small
+   visible gap so the first card doesn't kiss the underline. */
+@media (max-width: 899.98px) {
+  .newsfeed-embed { margin-top: 0.5rem; }
+}
+/* Desktop: pull the iframe outward on each side so the rss.app
+   widget's internal card padding doesn't leave the visible card
+   edges short of the .newsfeed-title separator above. The pull-
+   out is modest (-20px each side) — enough to bring the cards'
+   visible left/right closer to the separator's full span without
+   pushing them past it. Also breathing-room top margin so the
+   first card doesn't crash into the separator. */
 @media (min-width: 900px) {
-  .newsfeed-embed { margin-top: 1rem; }
+  .newsfeed-embed {
+    margin-top: 1rem;
+    margin-left: -20px;
+    margin-right: -20px;
+    width: calc(100% + 40px);
+    max-width: calc(100% + 40px);
+  }
 }
 .newsfeed-iframe {
   /* Belt + suspenders: iframe also has an explicit max-width so
