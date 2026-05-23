@@ -4219,12 +4219,15 @@ body.app-mode .topic-layout {
   transition: -webkit-mask-image 0.18s, mask-image 0.18s;
 }
 /* Mobile (tabbed mode): the section header is hidden and the
-   body-tabs sit directly above this scroll wrap, so the 1rem
-   breathing-room padding-top would read as orphaned whitespace
-   under the tabs. Drop it so the first item starts flush. */
+   body-tabs sit directly above this scroll wrap, but the first
+   subsection title ("Quick Links" / "AI Shortcuts") still needs
+   visible breathing room beneath the body-tabs underline so it
+   doesn't kiss the tab bar. Tighter than the original 1rem
+   default since there's no longer a hidden header consuming
+   space, but enough to read as a deliberate gap. */
 @media (max-width: 899.98px) {
   body.app-mode .topic-layout:not(.is-custom) .shortcuts-scroll-wrap {
-    padding-top: 0;
+    padding-top: 0.85rem;
   }
 }
 /* When the shortcut list overflows below the visible area, fade
