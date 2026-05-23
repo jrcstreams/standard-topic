@@ -2171,6 +2171,13 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   max-width: 100%;
   box-sizing: border-box;
 }
+/* Desktop: give the first card breathing room below the
+   newsfeed-title's bottom separator. On mobile the body-tabs
+   underline already provides that separator, so the embed sits
+   flush against it for a cleaner scroll experience. */
+@media (min-width: 900px) {
+  .newsfeed-embed { margin-top: 1rem; }
+}
 .newsfeed-iframe {
   /* Belt + suspenders: iframe also has an explicit max-width so
      it can never extend past its wrapper at any viewport. */
@@ -3985,11 +3992,24 @@ body.app-mode .topic-layout {
   body.app-mode .topic-layout {
     display: flex;
     flex-direction: column;
+    /* Zero row-gap on mobile: the body-tabs row should sit flush
+       against the panel section it controls. The desktop layout
+       above still uses `gap: 1.5rem` for its two-column layout. */
+    gap: 0;
   }
   body.app-mode .topic-layout > .layout-section {
     flex: 1 1 0;
     min-height: 0;
     overflow: hidden;
+  }
+  /* News-feed section goes edge-to-edge on mobile so the iframe
+     matches the body-tabs' full-bleed width above it. The other
+     sections (shortcuts, related) keep the topic-layout's 1rem
+     side inset so their bullets/cards don't kiss the viewport
+     edge. */
+  body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed {
+    margin-left: -1rem;
+    margin-right: -1rem;
   }
   /* Body tabs: true tab navigator at the top of the panel area.
      Full-bleed (negative side margin escapes the .topic-layout 1rem
