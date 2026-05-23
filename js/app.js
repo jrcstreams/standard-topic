@@ -267,9 +267,12 @@ function bodyTabsRow(opts = {}) {
   const tabs = [
     `<button type="button" class="tab-pill tab-pill-newsfeed active" data-tab="newsfeed">
        <span class="tab-pill-label-long">News Feed</span>
-       <span class="tab-pill-label-short">News</span>
+       <span class="tab-pill-label-short">News Feed</span>
      </button>`,
-    `<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">Shortcuts</button>`,
+    `<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">
+       <span class="tab-pill-label-long">AI and Content Shortcuts</span>
+       <span class="tab-pill-label-short">AI Shortcuts</span>
+     </button>`,
   ];
   if (showRelated) {
     tabs.push(`<button type="button" class="tab-pill tab-pill-related" data-tab="related">Related</button>`);

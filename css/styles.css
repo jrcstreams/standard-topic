@@ -1046,14 +1046,14 @@ body.hide-cta .sticky-cta { display: none !important; }
   }
   #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
   #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
-    font-size: 1.5rem;
+    font-size: 1.05rem;
     line-height: 1.1;
     font-weight: 600;
   }
   #sub-header.is-subnav .topic-banner-icon,
   #sub-header.is-home-subnav .topic-banner-icon {
-    width: 28px;
-    height: 28px;
+    width: 20px;
+    height: 20px;
   }
   #sub-header.is-subnav .topic-banner-titleinner,
   #sub-header.is-home-subnav .topic-banner-titleinner {
@@ -1068,12 +1068,12 @@ body.hide-cta .sticky-cta { display: none !important; }
 @media (max-width: 400px) {
   #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
   #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
-    font-size: 1.3rem;
+    font-size: 1.05rem;
   }
   #sub-header.is-subnav .topic-banner-icon,
   #sub-header.is-home-subnav .topic-banner-icon {
-    width: 26px;
-    height: 26px;
+    width: 18px;
+    height: 18px;
   }
   #sub-header.is-subnav .topic-banner-titleinner,
   #sub-header.is-home-subnav .topic-banner-titleinner {
@@ -2161,48 +2161,20 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   border-radius: 3px;
   position: relative;
   overflow: hidden;
-  /* The rss.app widget has fixed internal insets (body padding +
-     grid margin + col gap ≈ 24px each side). Pull the iframe
-     outward so visible card edges line up with the title's
-     separator line above. */
-  margin-left: -24px;
-  margin-right: -24px;
-  width: calc(100% + 48px);
-  /* Hard ceiling — the wrapper can NEVER be wider than its
-     parent's content box. Without this, the calc(100% + 48px)
-     above could push the wrapper past the visible viewport on
-     narrow widths (image 143/145). max-width caps it regardless
-     of the width calc. */
-  max-width: calc(100% + 48px);
+  /* The iframe now fills its parent column 1:1 — the rss-embed
+     document has zero horizontal padding inside, so the iframe
+     edges == the visible card edges. No compensating pull-out
+     needed at any breakpoint; cards align cleanly with the
+     newsfeed-title separator above. */
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
 }
 .newsfeed-iframe {
   /* Belt + suspenders: iframe also has an explicit max-width so
-     it can never extend past its wrapper. */
+     it can never extend past its wrapper at any viewport. */
   max-width: 100%;
-}
-/* Tablet / narrow desktop (<=1024px): halve the pull-out so it
-   doesn't push the iframe past the visible viewport on narrower
-   columns. The rss.app widget's internal insets are similar at
-   this size, so a 12px pull-out still gets close-to-flush
-   alignment. */
-@media (max-width: 1024px) {
-  .newsfeed-embed {
-    margin-left: -12px;
-    margin-right: -12px;
-    width: calc(100% + 24px);
-    max-width: calc(100% + 24px);
-  }
-}
-/* Mobile (<=640px): drop the pull-out entirely. The iframe sits
-   flush inside the column. */
-@media (max-width: 640px) {
-  .newsfeed-embed {
-    margin-left: 0;
-    margin-right: 0;
-    width: 100%;
-    max-width: 100%;
-  }
 }
 
 .newsfeed-iframe {
@@ -3596,10 +3568,10 @@ html, body, #app {
    intermediate widths before the trim function has to start hiding
    them. */
 @media (max-width: 1200px) {
-  .subnav-topic-link { font-size: 0.8rem; }
+  .subnav-topic-link { font-size: 0.74rem; }
 }
 @media (max-width: 1000px) {
-  .subnav-topic-link { font-size: 0.76rem; padding-left: 0.85rem; padding-right: 0.85rem; }
+  .subnav-topic-link { font-size: 0.7rem; padding-left: 0.8rem; padding-right: 0.8rem; }
 }
 
 /* "All Topics +" stays visible on the home subnav at every width.
@@ -3669,12 +3641,13 @@ html, body, #app {
 
 .subnav-topic-link {
   font-family: var(--font-display);
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   font-weight: var(--font-weight-semibold);
   color: #5a6f8a;
   text-decoration: none;
   white-space: nowrap;
-  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   transition: background 0.12s, color 0.12s;
   padding: 0.45rem 0.9rem;
   border-radius: 8px;
@@ -4057,7 +4030,11 @@ body.app-mode .topic-layout {
        typographic voice — feels like part of the page identity
        rather than generic UI chrome. */
     font-family: var(--font-display);
-    font-size: 0.98rem;
+    /* Dynamic scaling so the longer labels ("News Feed" / "AI and
+       Content Shortcuts") still fit in the half-tray slot across
+       widths. Steps down at the breakpoints where the long
+       Shortcuts label would otherwise wrap or overflow. */
+    font-size: 0.95rem;
     font-weight: 500;
     letter-spacing: -0.005em;
     line-height: 1;
@@ -4078,6 +4055,22 @@ body.app-mode .topic-layout {
   .body-tabs .tab-pill-newsfeed.active  { border-bottom-color: #2f7a55; }
   .body-tabs .tab-pill-shortcuts.active { border-bottom-color: #3f6ab3; }
   .body-tabs .tab-pill-related.active   { border-bottom-color: #b04e1d; }
+  /* Stepped font-size scale-down so the long Shortcuts label
+     ("AI and Content Shortcuts") fits comfortably across mid-to-
+     narrow tablet widths before the short fallback kicks in at
+     500px. */
+  @media (max-width: 760px) {
+    .body-tabs .tab-pill { font-size: 0.88rem; padding-top: 0.85rem; padding-bottom: calc(0.85rem - 3px); }
+  }
+  @media (max-width: 620px) {
+    .body-tabs .tab-pill { font-size: 0.82rem; padding-top: 0.8rem; padding-bottom: calc(0.8rem - 3px); }
+  }
+  @media (max-width: 500px) {
+    .body-tabs .tab-pill { font-size: 0.9rem; padding-top: 0.85rem; padding-bottom: calc(0.85rem - 3px); }
+  }
+  @media (max-width: 380px) {
+    .body-tabs .tab-pill { font-size: 0.82rem; }
+  }
   /* Drop the topic-layout's top padding on mobile — the body-tabs
      hugs the very top of the panel area, immediately below the
      subnav band. */
@@ -4328,9 +4321,13 @@ body.app-mode .topic-layout {
    tabbed-nav widths (≤899px) so there's no dynamic swap to babysit
    and the tab pills stay tight on every mobile/tablet width. */
 .tab-pill-label-short { display: none; }
-@media (max-width: 899.98px) {
-  .tab-pill-newsfeed .tab-pill-label-long { display: none; }
-  .tab-pill-newsfeed .tab-pill-label-short { display: inline; }
+/* Body-tab label fallbacks. The long labels ("News Feed" / "AI and
+   Content Shortcuts") show by default; below 500px the Shortcuts
+   tab falls back to the shorter "AI Shortcuts" so it fits inside
+   the half-tray slot. */
+@media (max-width: 500px) {
+  .body-tabs .tab-pill-shortcuts .tab-pill-label-long { display: none; }
+  .body-tabs .tab-pill-shortcuts .tab-pill-label-short { display: inline; }
 }
 .tab-pill:hover { color: #0f1a2e; }
 .tab-pill.active {
@@ -4396,15 +4393,17 @@ body.app-mode .topic-layout {
     grid-template-areas:
       "title"
       "chips";
-    row-gap: 0.35rem;
+    row-gap: 0.75rem;
     flex-wrap: initial;
     width: 100%;
     align-items: center;
   }
   /* Mobile subnav is now a compact two-row band — title sits
-     above the chip strip on the same gray surface. */
+     above the chip strip on the same gray surface, with a
+     generous top inset and a clear gap into the chip strip
+     below so the page title has obvious breathing room. */
   body.app-mode #sub-header.is-subnav .topic-banner {
-    padding: 0.7rem 1rem 0;
+    padding: 1.05rem 1rem 0;
   }
   body.app-mode #sub-header.is-subnav .topic-banner-titlegroup {
     grid-area: title;
@@ -4634,8 +4633,15 @@ body.app-mode .topic-layout {
   transform: translate(0, -50%) scale(1.04);
 }
 .subnav-chip-arrow:active { transform: translate(0, calc(-50% + 1px)); }
-.subnav-chip-arrow-left  { left: 6px; }
-.subnav-chip-arrow-right { right: 6px; }
+.subnav-chip-arrow-left  { left: 1rem; }
+.subnav-chip-arrow-right { right: 1rem; }
+/* Desktop banner has wider (2rem) horizontal padding, so push the
+   arrows further in to align with the rest of the site's content
+   inset instead of sitting nearly at the viewport edge. */
+@media (min-width: 900px) {
+  .subnav-chip-arrow-left  { left: 2rem; }
+  .subnav-chip-arrow-right { right: 2rem; }
+}
 
 /* Mobile / tabbed-nav widths: the chip strip is now flush in the
    middle row of the subnav grid, so no negative-margin
@@ -4655,23 +4661,51 @@ body.app-mode .topic-layout {
    of without chip text bleeding through. Only kicks in at
    (hover: hover) widths where the arrows actually render. */
 @media (hover: hover) and (pointer: fine) {
+  /* Long, prominent fade that ends right where the arrow chip
+     sits (arrows are 1rem/2rem in from the edge, ~22px wide, so
+     the arrow's outer edge is ~38–54px from the wrap edge). We
+     ramp the gradient from fully opaque to transparent over a
+     wide region so chip text clearly softens as it approaches
+     the arrow — no hard cliff. */
   .subnav-chip-wrap.can-scroll-right .subnav-topics-inline {
-    mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 110px), transparent calc(100% - 50px), transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 110px), transparent calc(100% - 50px), transparent 100%);
+    mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 160px), transparent calc(100% - 38px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 160px), transparent calc(100% - 38px), transparent 100%);
   }
   .subnav-chip-wrap.can-scroll-left .subnav-topics-inline {
-    mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 110px), transparent calc(100% - 50px), transparent 100%);
-    -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 110px), transparent calc(100% - 50px), transparent 100%);
+    mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 160px), transparent calc(100% - 38px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 160px), transparent calc(100% - 38px), transparent 100%);
   }
   .subnav-chip-wrap.can-scroll-left.can-scroll-right .subnav-topics-inline {
     mask-image: linear-gradient(to right,
-      transparent 0%, transparent 50px,
-      #000 110px, #000 calc(100% - 110px),
-      transparent calc(100% - 50px), transparent 100%);
+      transparent 0%, transparent 38px,
+      #000 160px, #000 calc(100% - 160px),
+      transparent calc(100% - 38px), transparent 100%);
     -webkit-mask-image: linear-gradient(to right,
-      transparent 0%, transparent 50px,
-      #000 110px, #000 calc(100% - 110px),
-      transparent calc(100% - 50px), transparent 100%);
+      transparent 0%, transparent 38px,
+      #000 160px, #000 calc(100% - 160px),
+      transparent calc(100% - 38px), transparent 100%);
+  }
+  /* Desktop banner has 2rem horizontal padding, so the arrow is
+     further inset. Widen the transparent zone accordingly. */
+  @media (min-width: 900px) {
+    .subnav-chip-wrap.can-scroll-right .subnav-topics-inline {
+      mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 180px), transparent calc(100% - 54px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 180px), transparent calc(100% - 54px), transparent 100%);
+    }
+    .subnav-chip-wrap.can-scroll-left .subnav-topics-inline {
+      mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 180px), transparent calc(100% - 54px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 180px), transparent calc(100% - 54px), transparent 100%);
+    }
+    .subnav-chip-wrap.can-scroll-left.can-scroll-right .subnav-topics-inline {
+      mask-image: linear-gradient(to right,
+        transparent 0%, transparent 54px,
+        #000 180px, #000 calc(100% - 180px),
+        transparent calc(100% - 54px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right,
+        transparent 0%, transparent 54px,
+        #000 180px, #000 calc(100% - 180px),
+        transparent calc(100% - 54px), transparent 100%);
+    }
   }
 }
 
@@ -9597,7 +9631,6 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
 #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
   font-family: var(--font-display);
-  font-size: 1.32rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--color-primary-dark, #0f1a2e);
@@ -9609,12 +9642,23 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   text-overflow: clip;
   margin: 0;
 }
+/* Desktop-only title size: at <900px the mobile override earlier
+   in this file (1.05rem) takes effect, scoped via @media. Without
+   wrapping the size in a query here, this later-in-source rule
+   silently won and pinned the mobile title to 1.32rem. */
+@media (min-width: 900px) {
+  #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
+  #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
+    font-size: 1.32rem;
+  }
+}
 
 /* Topic chips: slightly muted blue so the page title stays the
-   dominant element, semibold weight for a confident chip presence. */
+   dominant element. Medium weight on desktop pairs with the
+   uppercase + letter-spaced treatment without feeling heavy. */
 #sub-header .subnav-topic-link {
   color: #4a6a8a;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-medium);
 }
 /* Hover styles only on devices with a true hover capability so the
    :hover state never sticks after a tap on touch devices (which

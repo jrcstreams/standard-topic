@@ -18,7 +18,11 @@
     overflow: hidden;
     overflow-x: hidden;
     background: transparent;
-    padding: 0 0.25rem 1rem;
+    /* No horizontal padding inside the iframe — cards fill the
+       iframe edge to edge so the iframe edge can be aligned 1:1
+       with the parent column's content edges (no compensating
+       pull-out needed on the host page). */
+    padding: 0 0 1rem;
     max-width: 100%;
   }
   rssapp-wall { display: block; width: 100% !important; max-width: 100%; }

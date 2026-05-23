@@ -12,7 +12,7 @@ export function renderNewsFeed(container, topic, isHome) {
 
   const body = feedId
     ? `<div class="newsfeed-embed">
-         <iframe src="rss-embed.html?id=${feedId}&v=20260523a"
+         <iframe src="rss-embed.html?id=${feedId}&v=20260523b"
                  class="newsfeed-iframe"
                  id="rss-iframe-${feedId}"
                  frameborder="0"
