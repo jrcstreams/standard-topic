@@ -842,8 +842,13 @@ body.hide-cta .sticky-cta { display: none !important; }
   left: 0;
   right: 0;
   z-index: 99;
+  /* Unified subnav surface: the title row and the related-topics
+     chip strip share this same fill, so the two read as one
+     cohesive identity band. A single bordering/shadow at the
+     bottom is the only hard separator between the subnav and
+     the body content below it. */
   background: #f3f4f6;
-  border-bottom: 1px solid #d8dce3;
+  border-bottom: 1px solid #cdd2d9;
   box-shadow: 0 2px 8px rgba(15, 26, 46, 0.06);
 }
 
@@ -4013,6 +4018,77 @@ body.app-mode .topic-layout {
     min-height: 0;
     overflow: hidden;
   }
+  /* Body tabs: true tab navigator at the top of the panel area.
+     Full-bleed (negative side margin escapes the .topic-layout 1rem
+     side padding) so the underline indicator runs edge-to-edge.
+     Sits on white — visually distinct from the gray subnav band
+     above — and signals to the user that it controls the panel
+     content directly beneath it. No bottom margin: the next
+     panel-section starts flush against the tab nav's bottom
+     border so there's no orphaned whitespace under the tabs. */
+  body.app-mode .topic-layout:not(.is-custom) > .body-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    flex: 0 0 auto;
+    background: #ffffff;
+    margin: 0 -1rem;
+    border-bottom: 1px solid #d8dce3;
+  }
+  /* Three-tab variant (Related included) — equal thirds. */
+  body.app-mode .topic-layout:not(.is-custom) > .body-tabs:has(.tab-pill-related) {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .body-tabs .tab-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    /* Equal top/bottom padding keeps the label optically centered
+       between the row's top edge and the underline indicator at
+       the bottom. The 3px transparent border-bottom on EVERY pill
+       (active or not) reserves the same vertical footprint so
+       toggling active state can't shift the text up or down by a
+       few pixels. */
+    padding: 0.9rem 0.75rem calc(0.9rem - 3px);
+    margin-bottom: -1px;
+    /* Display font (General Sans) matches the page title's
+       typographic voice — feels like part of the page identity
+       rather than generic UI chrome. */
+    font-family: var(--font-display);
+    font-size: 0.98rem;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    line-height: 1;
+    color: #6c7a91;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    box-shadow: none;
+    transition: color 0.14s, border-color 0.14s;
+  }
+  .body-tabs .tab-pill:hover { color: #1e2d44; }
+  .body-tabs .tab-pill.active {
+    color: #1e2d44;
+    font-weight: 600;
+    background: transparent;
+    box-shadow: none;
+  }
+  .body-tabs .tab-pill-newsfeed.active  { border-bottom-color: #2f7a55; }
+  .body-tabs .tab-pill-shortcuts.active { border-bottom-color: #3f6ab3; }
+  .body-tabs .tab-pill-related.active   { border-bottom-color: #b04e1d; }
+  /* Drop the topic-layout's top padding on mobile — the body-tabs
+     hugs the very top of the panel area, immediately below the
+     subnav band. */
+  body.app-mode .topic-layout:not(.is-custom) {
+    padding-top: 0;
+  }
+}
+@media (min-width: 900px) {
+  /* Desktop layout shows both Shortcuts (sidebar) and News Feed
+     side-by-side, so the body-tabs switcher isn't needed. */
+  .body-tabs { display: none; }
 }
 
 .sidebar-card {
@@ -4119,6 +4195,15 @@ body.app-mode .topic-layout {
   scrollbar-gutter: stable;
   transition: -webkit-mask-image 0.18s, mask-image 0.18s;
 }
+/* Mobile (tabbed mode): the section header is hidden and the
+   body-tabs sit directly above this scroll wrap, so the 1rem
+   breathing-room padding-top would read as orphaned whitespace
+   under the tabs. Drop it so the first item starts flush. */
+@media (max-width: 899.98px) {
+  body.app-mode .topic-layout:not(.is-custom) .shortcuts-scroll-wrap {
+    padding-top: 0;
+  }
+}
 /* When the shortcut list overflows below the visible area, fade
    the bottom ~56px so the last visible item softly fades out —
    signals "there's more below". Disappears once the user scrolls
@@ -4188,68 +4273,55 @@ body.app-mode .topic-layout {
 }
 
 /* === Tab pills (News / Shortcuts / Related) ========================
-   At <900px the pills wrap to their own row beneath the topic title,
-   left-aligned. Color-coded: green = News, blue = Shortcuts, orange
-   = Related. Hidden on desktop (sidebar layout) and on custom-search
-   pages. */
-.subnav-tab-pills {
-  display: none;
-  align-items: center;
-  gap: 0.15rem;
-  margin: 0;
-  padding-left: 1.05rem;
+   Two-layer structure on mobile:
+     1. .subnav-tab-pills (outer) — full-bleed white "content
+        controller" band. Hosts the pills tray and supplies the
+        hard bottom border that separates this nav from the panel
+        content directly below it.
+     2. .subnav-tab-pills-tray (inner) — soft gray segmented-pill
+        tray that visually groups the News/Shortcuts pills.
+   Hidden on desktop (sidebar layout) and on custom-search pages. */
+.subnav-tab-pills { display: none; }
+.subnav-tab-pills::before { content: none; }
+/* Tray is a tight equal-column grid so each tab gets exactly half
+   the tray width regardless of label length. Compact, fixed
+   width keeps the control from sprawling across the band. */
+.subnav-tab-pills-tray {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  gap: 0;
+  padding: 3px;
   flex-shrink: 0;
   position: relative;
-}
-/* Mobile-only: vertical accent line at the left edge of the
-   tab-pill row, left-aligned with the page title icon above
-   (which also sits at the row's content left edge). 3px wide,
-   1.55rem tall — proportional to the icon column above, with
-   ~0.7rem of breathing room between the bar and the first pill. */
-.subnav-tab-pills::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 1.55rem;
-  background: var(--color-border, #d6dae2);
+  background: #e8eaef;
   border-radius: 999px;
-  pointer-events: none;
+  width: 220px;
+  max-width: 100%;
 }
 .tab-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.38rem 0.82rem;
+  padding: 0.32rem 0.6rem;
   background: transparent;
-  border: 1.5px solid transparent;
+  border: none;
   border-radius: 999px;
   font-family: var(--font-family);
-  font-size: 0.88rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  line-height: 1.2;
-  color: var(--color-text-muted);
+  letter-spacing: 0.005em;
+  line-height: 1.1;
+  color: #3a4a64;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.14s, color 0.14s, border-color 0.14s;
-}
-/* Compress tab pills at narrow widths — at ~440px the pill was
-   competing with the page title for horizontal room and reading
-   as too dominant. Tighter padding + slightly smaller text keeps
-   the pills present without crowding the title. */
-@media (max-width: 540px) {
-  .tab-pill {
-    padding: 0.32rem 0.65rem;
-    font-size: 0.78rem;
-    border-width: 1.25px;
-  }
+  transition: background 0.14s, color 0.14s, box-shadow 0.14s;
 }
 @media (max-width: 400px) {
+  .subnav-tab-pills-tray { width: 200px; }
   .tab-pill {
-    padding: 0.28rem 0.55rem;
-    font-size: 0.74rem;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.76rem;
   }
 }
 /* Tab pill dual labels — "News Feed" on desktop, always "News" on
@@ -4260,27 +4332,30 @@ body.app-mode .topic-layout {
   .tab-pill-newsfeed .tab-pill-label-long { display: none; }
   .tab-pill-newsfeed .tab-pill-label-short { display: inline; }
 }
-.tab-pill:hover { color: var(--color-text); }
-.tab-pill.active { color: white; }
-.tab-pill-newsfeed.active { background: #2f855a; border-color: #2f855a; }
-.tab-pill-shortcuts.active { background: #4a7cc9; border-color: #4a7cc9; }
-.tab-pill-related.active   { background: #c05621; border-color: #c05621; }
+.tab-pill:hover { color: #0f1a2e; }
+.tab-pill.active {
+  color: white;
+  box-shadow: 0 1px 2px rgba(15, 26, 46, 0.12);
+}
+.tab-pill-newsfeed.active  { background: #2f7a55; }
+.tab-pill-shortcuts.active { background: #3f6ab3; }
+.tab-pill-related.active   { background: #b04e1d; }
 /* "All Topics +" lives inside the pill group on mobile but never
    becomes the active state (it opens a modal). Reads as a plain
    text-style pill matching the inactive News/Shortcuts. */
-.tab-pill-all-topics {
-  text-decoration: none;
-}
+.tab-pill-all-topics { text-decoration: none; }
 .tab-pill-all-topics.active {
   background: transparent;
-  border-color: transparent;
   color: var(--color-text-muted);
+  box-shadow: none;
 }
 
 /* Active-tab section visibility — only one section visible at a time
    on mobile. */
 @media (max-width: 899.98px) {
-  body.app-mode .subnav-tab-pills { display: inline-flex; }
+  /* Body tabs are the active navigator now — no subnav tab pills
+     on mobile. (Rule kept here as documentation; the element is
+     no longer rendered.) */
   /* Hide the "Related Topics +" modal-trigger sibling on mobile —
      on app-mode pages the related list now lives inline in the
      chip strip below. trimOverflowLinks sets an inline
@@ -4306,32 +4381,30 @@ body.app-mode .topic-layout {
     margin-right: 0;
   }
 
-  /* === Mobile HOME subnav (overrides the topic-page two-row stack
-     above) =======================================================
-     Home gets a 2x2 grid layout instead of a flex-wrap stack:
-       Row 1: [Home title]            [News Feed / Shortcuts tabs]
-       Row 2: [scrollable topic chips fade right] [All Topics + pill]
-     The chips row scrolls horizontally with a mask-image fade
-     hinting there's more content; "All Topics +" stays pinned
-     outside the scroll on the right. */
-  body.app-mode #sub-header.is-subnav .topic-banner-row {
+  /* === Mobile subnav (home + topic) ============================
+     Two-row stack: page title → related/featured chip strip.
+     Tabs no longer live in the subnav — they now sit at the top
+     of the body content (.body-tabs) as a true tab navigator that
+     controls the panel beneath it. The subnav band is now purely
+     an identity strip: "what page am I on, what's near it."
+     Scoped via :has() to rows that actually carry the chip strip,
+     so custom-search pages (title-only) keep their default flex
+     layout and don't render an empty grid row. */
+  body.app-mode #sub-header.is-subnav .topic-banner-row:has(.subnav-chip-wrap) {
     display: grid !important;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
-      "title tabs"
-      "chips chips";
-    column-gap: 0.85rem;
-    row-gap: 0.5rem;
+      "title"
+      "chips";
+    row-gap: 0.35rem;
     flex-wrap: initial;
     width: 100%;
     align-items: center;
   }
-  /* Mobile home subnav uses tighter top/bottom padding than topic
-     pages because it carries an extra row (the scrolling chip
-     strip). Aim is the same overall band height as a topic page
-     subnav while keeping the two rows breathing comfortably. */
+  /* Mobile subnav is now a compact two-row band — title sits
+     above the chip strip on the same gray surface. */
   body.app-mode #sub-header.is-subnav .topic-banner {
-    padding: 0.7rem 1rem 0.65rem;
+    padding: 0.7rem 1rem 0;
   }
   body.app-mode #sub-header.is-subnav .topic-banner-titlegroup {
     grid-area: title;
@@ -4339,41 +4412,36 @@ body.app-mode .topic-layout {
     margin-right: 0;
     min-width: 0;
   }
-  body.app-mode #sub-header.is-subnav .subnav-tab-pills {
-    grid-area: tabs;
-    justify-self: end;
-    padding-left: 0;
-  }
-  body.app-mode #sub-header.is-subnav .subnav-tab-pills::before {
-    display: none;
-  }
-  /* Wrap around the chip strip so the left/right scroll arrows can
-     position absolute against the same content bounds as the
-     scroller itself. */
+  /* Chip strip wrap. Sits on the same gray fill as the title row,
+     with a single faint top hairline that lightly separates it
+     from the title above without breaking the unified band feel.
+     Full-bleed via negative margin so the scrollable row extends
+     edge-to-edge within the band. */
   body.app-mode #sub-header.is-subnav .subnav-chip-wrap {
     grid-area: chips;
     position: relative;
     min-width: 0;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    border-top: 1px solid rgba(15, 26, 46, 0.08);
+    border-bottom: none;
+    background: transparent;
   }
-  /* Surface the chip row that is normally hidden on tabbed widths,
-     and convert it into a horizontal scroller. The right-edge fade
-     is a mask-image that softens the last chip in the visible
-     window as a hint that more content scrolls past. */
+  /* Inner scroller: horizontal overflow + inset padding so chip
+     content stays inside a readable margin while the bordered
+     band beneath it goes edge-to-edge. The mask-image fade is
+     applied to THIS element, so the wrap's borders are untouched
+     by the fade. */
   body.app-mode #sub-header.is-subnav .subnav-topics-inline {
     display: flex !important;
     flex-wrap: nowrap;
     overflow-x: auto;
     overflow-y: hidden;
-    gap: 0.3rem;
-    /* No negative left/right margin — strip's edges align with the
-       topic-banner's padded content area, which in turn matches the
-       article grid below. Previously -1rem made the strip extend
-       past the band edges, which read as the layout "stretching
-       too wide" at tablet widths. Keep -0.6rem bottom to flush
-       the strip's bottom border with the subnav band's bottom. */
-    margin: 0 0 -0.6rem;
-    padding: 0.6rem 0 0.6rem;
-    border-top: 1px solid #d8dce3;
+    gap: 0.15rem;
+    margin: 0;
+    padding: 0.6rem 1rem 0.65rem;
+    border-top: none;
+    border-bottom: none;
     min-width: 0;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
@@ -4392,17 +4460,26 @@ body.app-mode .topic-layout {
   body.app-mode #sub-header.is-subnav .subnav-topic-link {
     flex: 0 0 auto;
     white-space: nowrap;
-    font-size: 0.86rem;
+    /* Discreet eyebrow treatment: small uppercase + letter-spaced
+       so the chip strip reads as a meta-label row distinct from
+       the larger page title above. Lighter weight (medium) keeps
+       the chips airy — the all-caps + tracking already carry
+       enough presence at this size. */
+    font-size: 0.72rem;
     font-weight: 500;
-    /* Override the desktop tap-target hack (padding: 4rem with
-       negative margin) — that 128px outer box was breaking the
-       horizontal-scroll layout by stretching the row to 128px tall.
-       Horizontal padding gives the hover background visible breathing
-       room around the text instead of riding directly on the
-       letterforms. */
-    padding: 0.25rem 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #5c6b85;
+    line-height: 1.2;
+    /* Tight vertical padding shrinks the strip's height. Horizontal
+       padding gives the hover background room around the text. */
+    padding: 0.2rem 0.5rem;
     margin: 0;
-    border-radius: 7px;
+    border-radius: 6px;
+  }
+  body.app-mode #sub-header.is-subnav .subnav-topic-link:hover {
+    color: #2c4467;
+    background: rgba(15, 26, 46, 0.05);
   }
   /* "All Topics +" (home) / "More +" (topic pages) lives inline as
      the last item in the scrollable chip strip. Sits at the same
@@ -4414,16 +4491,17 @@ body.app-mode .topic-layout {
     display: inline-flex !important;
     align-items: center;
     flex: 0 0 auto;
-    padding: 0.25rem 0.55rem;
+    padding: 0.2rem 0.5rem;
     margin: 0;
     background: transparent;
     border: none;
-    border-radius: 7px;
+    border-radius: 6px;
     color: #6c7a91;
-    font-family: var(--font-display);
-    font-size: 0.86rem;
+    font-family: var(--font-family);
+    font-size: 0.72rem;
     font-weight: 600;
-    letter-spacing: 0.005em;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
     text-decoration: none;
     white-space: nowrap;
     line-height: 1.2;
@@ -4532,11 +4610,11 @@ body.app-mode .topic-layout {
   top: 50%;
   transform: translate(0, -50%);
   z-index: 3;
-  width: 32px;
-  height: 32px;
+  width: 22px;
+  height: 22px;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   border: 1px solid rgba(15, 26, 46, 0.12);
@@ -4544,10 +4622,10 @@ body.app-mode .topic-layout {
   color: #2c4467;
   cursor: pointer;
   padding: 0;
-  box-shadow: 0 2px 6px rgba(15, 26, 46, 0.14);
+  box-shadow: 0 1px 4px rgba(15, 26, 46, 0.12);
   transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.08s, box-shadow 0.14s;
 }
-.subnav-chip-arrow svg { width: 13px; height: 13px; display: block; }
+.subnav-chip-arrow svg { width: 10px; height: 10px; display: block; }
 .subnav-chip-arrow:hover {
   background: var(--color-bg);
   border-color: rgba(15, 26, 46, 0.28);
@@ -4559,23 +4637,10 @@ body.app-mode .topic-layout {
 .subnav-chip-arrow-left  { left: 6px; }
 .subnav-chip-arrow-right { right: 6px; }
 
-/* Mobile / tabbed-nav widths: the chip strip pulls itself down by
-   margin-bottom: -0.6rem (so its bottom kisses the subnav's bottom
-   border). The wrap that contains the absolute arrows doesn't
-   "feel" that negative margin in its bounding box — top: 50% of
-   wrap ends up above the strip's visual center. Compensate by
-   nudging the arrow down by half the strip's pull. */
-@media (max-width: 899.98px) {
-  body.app-mode #sub-header.is-subnav .subnav-chip-arrow {
-    top: calc(50% + 0.3rem);
-  }
-  body.app-mode #sub-header.is-subnav .subnav-chip-arrow:hover {
-    transform: translate(0, -50%) scale(1.04);
-  }
-  body.app-mode #sub-header.is-subnav .subnav-chip-arrow:active {
-    transform: translate(0, calc(-50% + 1px));
-  }
-}
+/* Mobile / tabbed-nav widths: the chip strip is now flush in the
+   middle row of the subnav grid, so no negative-margin
+   compensation is needed for the arrow vertical centering — its
+   wrap's bounding box matches the strip's visual center. */
 
 /* Fade via mask-image ON THE STRIP ITSELF instead of an overlay
    pseudo on the wrap. Pseudo overlays were unreliable because

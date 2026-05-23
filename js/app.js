@@ -156,7 +156,6 @@ function renderLayout(route) {
             ${topicsHTML}
             <a href="#" class="subnav-action-link subnav-all-topics-link" id="subnav-all-topics-desktop">All Topics +</a>
           </div>
-          ${tabPillsRow({ showRelated: false, showAllTopics: false })}
         </div>
       </div>
     `;
@@ -223,7 +222,6 @@ function renderLayout(route) {
                 ${relatedLinksHTML}
               </div>
             ` : ''}
-            ${tabPillsRow({ showRelated: false })}
           </div>
         </div>
       `;
@@ -258,14 +256,15 @@ function renderLayout(route) {
   }
 }
 
-// Mobile-only tab pill row that switches the active application
-// section between News, Shortcuts, and (on topic pages) Related Topics.
-// CSS hides it at >=900px (where shortcuts is in the sidebar and news
-// fills the rest of the layout) and on custom pages (no news feed,
-// shortcuts is the page).
-function tabPillsRow(opts = {}) {
-  const { showRelated = false, showAllTopics = false } = opts;
-  const pills = [
+// Mobile-only body-tab navigator. Renders at the TOP of the topic
+// layout (inside .topic-layout) — visually attached to the panel
+// content it controls, distinct from the subnav band above. CSS
+// hides it at >=900px (where shortcuts is in the sidebar and news
+// fills the rest of the layout) and on custom pages (shortcuts-only
+// — nothing to switch between).
+function bodyTabsRow(opts = {}) {
+  const { showRelated = false } = opts;
+  const tabs = [
     `<button type="button" class="tab-pill tab-pill-newsfeed active" data-tab="newsfeed">
        <span class="tab-pill-label-long">News Feed</span>
        <span class="tab-pill-label-short">News</span>
@@ -273,12 +272,9 @@ function tabPillsRow(opts = {}) {
     `<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">Shortcuts</button>`,
   ];
   if (showRelated) {
-    pills.push(`<button type="button" class="tab-pill tab-pill-related" data-tab="related">Related Topics</button>`);
+    tabs.push(`<button type="button" class="tab-pill tab-pill-related" data-tab="related">Related</button>`);
   }
-  if (showAllTopics) {
-    pills.push(`<a href="#" class="tab-pill tab-pill-all-topics" id="subnav-all-topics">All Topics +</a>`);
-  }
-  return `<div class="subnav-tab-pills">${pills.join('')}</div>`;
+  return `<nav class="body-tabs" aria-label="Section navigation">${tabs.join('')}</nav>`;
 }
 
 // On every render, sync the active tab from the current route's
@@ -293,7 +289,7 @@ function setupTabPills() {
     document.body.classList.remove(`active-tab-${t}`)
   );
   document.body.classList.add(`active-tab-${tab}`);
-  document.querySelectorAll('#sub-header .tab-pill').forEach(p =>
+  document.querySelectorAll('.body-tabs .tab-pill, #sub-header .tab-pill').forEach(p =>
     p.classList.toggle('active', p.dataset.tab === tab)
   );
 }
@@ -303,7 +299,7 @@ function setupGlobalTabPillDelegation() {
   if (tabPillDelegationBound) return;
   tabPillDelegationBound = true;
   document.addEventListener('click', (e) => {
-    const pill = e.target.closest('#sub-header .tab-pill');
+    const pill = e.target.closest('.body-tabs .tab-pill, #sub-header .tab-pill');
     if (!pill) return;
     e.preventDefault();
     const tab = pill.dataset.tab;
@@ -313,7 +309,7 @@ function setupGlobalTabPillDelegation() {
       document.body.classList.remove(`active-tab-${t}`)
     );
     document.body.classList.add(`active-tab-${tab}`);
-    document.querySelectorAll('#sub-header .tab-pill').forEach(p =>
+    document.querySelectorAll('.body-tabs .tab-pill, #sub-header .tab-pill').forEach(p =>
       p.classList.toggle('active', p.dataset.tab === tab)
     );
     // Update the URL (without re-rendering) so refresh / shared links
@@ -485,27 +481,28 @@ function wireSubnavCompactMeasure() {
     if (!window.matchMedia('(max-width: 899.98px)').matches) return;
 
     // Belt-and-suspenders: pre-apply a tier based on a length +
-    // viewport heuristic BEFORE measuring. Long titles like
-    // "Programming & Development" at narrow widths reliably wrap;
-    // applying tier 1 upfront means we don't depend on fonts being
-    // fully loaded at measurement time (which was the bug — the
-    // measure ran before web fonts settled, found no wrap with the
-    // fallback Inter metrics, and never escalated).
+    // viewport heuristic BEFORE measuring. With the title now on
+    // its own full-width row (chips + tabs are stacked below), it
+    // gets far more horizontal room than it did when sharing a
+    // row with the pills, so the thresholds are loosened to keep
+    // nearly all titles at the default size. Only the longest
+    // names ("Defense, Security, Foreign Policy", etc.) still
+    // need to scale at the narrowest widths.
     const titleText = (titleEl.textContent || '').trim();
     const len = titleText.length;
     const vw = window.innerWidth;
     let preTier = 0;
-    if (vw <= 480) {
-      if (len > 22) preTier = 2;
-      else if (len > 14) preTier = 1;
-    } else if (vw <= 700) {
+    if (vw <= 380) {
       if (len > 28) preTier = 2;
-      else if (len > 18) preTier = 1;
-    } else {
-      // 700-899
+      else if (len > 20) preTier = 1;
+    } else if (vw <= 480) {
       if (len > 32) preTier = 2;
       else if (len > 24) preTier = 1;
+    } else if (vw <= 700) {
+      if (len > 38) preTier = 1;
     }
+    // 700-899: full width comfortably fits every current topic
+    // name at the default 1.5rem size; no pre-tier.
     if (preTier >= 1) document.body.classList.add('subnav-title-shrunk');
     if (preTier >= 2) document.body.classList.add('subnav-title-shrunk-2');
 
@@ -940,17 +937,20 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
 
   if (isCustom) {
     // Custom: just AI Shortcuts. No News Feed (no RSS for arbitrary
-    // search terms) and no Related (not a real topic).
+    // search terms) and no Related (not a real topic). No body tabs
+    // either — nothing to switch between.
     container.innerHTML = `
       <div class="topic-layout is-custom" id="topic-layout">
         <section class="layout-section" id="section-shortcuts"></section>
       </div>
     `;
   } else if (isHome) {
-    // Homepage: Shortcuts + News Feed. No Related section (home
-    // already lists featured topics in the subnav).
+    // Homepage: Shortcuts + News Feed. Body tabs at the top let
+    // mobile users switch between them; CSS hides the tabs at
+    // desktop widths where both panels show side-by-side.
     container.innerHTML = `
       <div class="topic-layout" id="topic-layout">
+        ${bodyTabsRow({ showRelated: false })}
         <section class="layout-section" id="section-shortcuts"></section>
         <section class="layout-section" id="section-newsfeed"></section>
       </div>
@@ -959,6 +959,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // Topic pages: Shortcuts + News Feed + Related Topics.
     container.innerHTML = `
       <div class="topic-layout" id="topic-layout">
+        ${bodyTabsRow({ showRelated: false })}
         <section class="layout-section" id="section-shortcuts"></section>
         <section class="layout-section" id="section-newsfeed"></section>
         <section class="layout-section" id="section-related"></section>
