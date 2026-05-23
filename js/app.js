@@ -467,44 +467,61 @@ function wireSubnavCompactMeasure() {
   const titleGroupEl = document.querySelector('#sub-header.is-subnav .topic-banner-titlegroup');
   const titleEl = document.querySelector('#sub-header.is-subnav .topic-banner-title');
   const tabPillsEl = document.querySelector('#sub-header.is-subnav .subnav-tab-pills');
-  // Always clear both shrink classes when this function runs. Any
-  // page without title+tabs (prompt builder) or any width outside
-  // tabbed-nav range exits via this path and titles return to
-  // their natural size — no stale shrink class lingers.
   if (!titleGroupEl || !titleEl || !tabPillsEl) {
     document.body.classList.remove('subnav-title-shrunk');
     document.body.classList.remove('subnav-title-shrunk-2');
     return;
   }
-  // Wrap detection only. A title wraps to a second line only if
-  // it's genuinely too long for its allotted space — that's the
-  // ONLY case where we shrink. Short titles ("Home", "Sports")
-  // stay at the natural 1.5rem size because they fit on one line
-  // by definition.
   const isWrapping = () => {
     const cs = getComputedStyle(titleEl);
     const fontSize = parseFloat(cs.fontSize) || 16;
     const lineHeightRaw = parseFloat(cs.lineHeight);
     const lineHeight = isNaN(lineHeightRaw) ? fontSize * 1.2 : lineHeightRaw;
-    // 1.4× threshold catches a true 2nd line without false
-    // positives from descenders / accent characters.
     return titleEl.offsetHeight > lineHeight * 1.4;
   };
   const measure = () => {
-    // Always start by removing both classes — natural size first.
-    // Then test if the title wraps. If yes, escalate to tier 1.
-    // If still wrapping at tier 1, escalate to tier 2.
     document.body.classList.remove('subnav-title-shrunk');
     document.body.classList.remove('subnav-title-shrunk-2');
     if (!window.matchMedia('(max-width: 899.98px)').matches) return;
-    // Force layout flush via getBoundingClientRect (more reliable
-    // than offsetHeight as a layout trigger across browsers).
+
+    // Belt-and-suspenders: pre-apply a tier based on a length +
+    // viewport heuristic BEFORE measuring. Long titles like
+    // "Programming & Development" at narrow widths reliably wrap;
+    // applying tier 1 upfront means we don't depend on fonts being
+    // fully loaded at measurement time (which was the bug — the
+    // measure ran before web fonts settled, found no wrap with the
+    // fallback Inter metrics, and never escalated).
+    const titleText = (titleEl.textContent || '').trim();
+    const len = titleText.length;
+    const vw = window.innerWidth;
+    let preTier = 0;
+    if (vw <= 480) {
+      if (len > 22) preTier = 2;
+      else if (len > 14) preTier = 1;
+    } else if (vw <= 700) {
+      if (len > 28) preTier = 2;
+      else if (len > 18) preTier = 1;
+    } else {
+      // 700-899
+      if (len > 32) preTier = 2;
+      else if (len > 24) preTier = 1;
+    }
+    if (preTier >= 1) document.body.classList.add('subnav-title-shrunk');
+    if (preTier >= 2) document.body.classList.add('subnav-title-shrunk-2');
+
+    // Then verify with the actual layout: if still wrapping,
+    // escalate one more tier; if NOT wrapping at a lower tier
+    // than we pre-applied, we leave the pre-applied tier alone
+    // (the heuristic erred conservatively — better slightly small
+    // than wrapping).
     titleEl.getBoundingClientRect();
-    if (!isWrapping()) return; // fits on one line at tier 0
-    document.body.classList.add('subnav-title-shrunk');
-    titleEl.getBoundingClientRect();
-    if (!isWrapping()) return; // fits on one line at tier 1
-    document.body.classList.add('subnav-title-shrunk-2');
+    if (isWrapping()) {
+      if (!document.body.classList.contains('subnav-title-shrunk')) {
+        document.body.classList.add('subnav-title-shrunk');
+      } else if (!document.body.classList.contains('subnav-title-shrunk-2')) {
+        document.body.classList.add('subnav-title-shrunk-2');
+      }
+    }
   };
   if (subnavCompactResizeHandler) {
     window.removeEventListener('resize', subnavCompactResizeHandler);
@@ -516,11 +533,16 @@ function wireSubnavCompactMeasure() {
     measure();
   };
   window.addEventListener('resize', subnavCompactResizeHandler, { passive: true });
-  // Two measures: an immediate one and one after fonts/layout
-  // settle, so the result converges even if the initial measure
-  // ran with metrics that weren't fully stable yet.
+  // Multiple measure passes: immediate, after a frame, after fonts
+  // load, and a 600ms safety net. Each is idempotent so re-running
+  // is cheap.
+  measure();
   requestAnimationFrame(measure);
-  setTimeout(measure, 220);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(measure).catch(() => {});
+  }
+  setTimeout(measure, 250);
+  setTimeout(measure, 700);
 }
 
 // on container size changes, after fonts load, and on full page load so
