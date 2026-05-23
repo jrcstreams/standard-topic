@@ -2159,33 +2159,44 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   /* The rss.app widget has fixed internal insets (body padding +
      grid margin + col gap ≈ 24px each side). Pull the iframe
      outward so visible card edges line up with the title's
-     separator line above. Desktop only — at smaller widths the
-     parent column is itself narrow and the pull-out pushes card
-     edges past the visible viewport (image 143/145). The mobile
-     override below reduces it. */
+     separator line above. */
   margin-left: -24px;
   margin-right: -24px;
   width: calc(100% + 48px);
+  /* Hard ceiling — the wrapper can NEVER be wider than its
+     parent's content box. Without this, the calc(100% + 48px)
+     above could push the wrapper past the visible viewport on
+     narrow widths (image 143/145). max-width caps it regardless
+     of the width calc. */
+  max-width: calc(100% + 48px);
+  box-sizing: border-box;
 }
-/* Tablet / narrow desktop (<=1024px): the parent has less room
-   to absorb the -24px pull-out, so cards end up overflowing the
-   right edge. Halve the pull-out. */
+.newsfeed-iframe {
+  /* Belt + suspenders: iframe also has an explicit max-width so
+     it can never extend past its wrapper. */
+  max-width: 100%;
+}
+/* Tablet / narrow desktop (<=1024px): halve the pull-out so it
+   doesn't push the iframe past the visible viewport on narrower
+   columns. The rss.app widget's internal insets are similar at
+   this size, so a 12px pull-out still gets close-to-flush
+   alignment. */
 @media (max-width: 1024px) {
   .newsfeed-embed {
     margin-left: -12px;
     margin-right: -12px;
     width: calc(100% + 24px);
+    max-width: calc(100% + 24px);
   }
 }
 /* Mobile (<=640px): drop the pull-out entirely. The iframe sits
-   flush with the column's padded edges; we accept the rss.app
-   widget's own internal padding as the only inset rather than
-   fighting it. */
+   flush inside the column. */
 @media (max-width: 640px) {
   .newsfeed-embed {
     margin-left: 0;
     margin-right: 0;
     width: 100%;
+    max-width: 100%;
   }
 }
 
