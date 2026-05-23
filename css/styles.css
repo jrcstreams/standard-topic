@@ -2159,10 +2159,34 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   /* The rss.app widget has fixed internal insets (body padding +
      grid margin + col gap ≈ 24px each side). Pull the iframe
      outward so visible card edges line up with the title's
-     separator line above. */
+     separator line above. Desktop only — at smaller widths the
+     parent column is itself narrow and the pull-out pushes card
+     edges past the visible viewport (image 143/145). The mobile
+     override below reduces it. */
   margin-left: -24px;
   margin-right: -24px;
   width: calc(100% + 48px);
+}
+/* Tablet / narrow desktop (<=1024px): the parent has less room
+   to absorb the -24px pull-out, so cards end up overflowing the
+   right edge. Halve the pull-out. */
+@media (max-width: 1024px) {
+  .newsfeed-embed {
+    margin-left: -12px;
+    margin-right: -12px;
+    width: calc(100% + 24px);
+  }
+}
+/* Mobile (<=640px): drop the pull-out entirely. The iframe sits
+   flush with the column's padded edges; we accept the rss.app
+   widget's own internal padding as the only inset rather than
+   fighting it. */
+@media (max-width: 640px) {
+  .newsfeed-embed {
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+  }
 }
 
 .newsfeed-iframe {
@@ -4199,6 +4223,23 @@ body.app-mode .topic-layout {
   cursor: pointer;
   white-space: nowrap;
   transition: background 0.14s, color 0.14s, border-color 0.14s;
+}
+/* Compress tab pills at narrow widths — at ~440px the pill was
+   competing with the page title for horizontal room and reading
+   as too dominant. Tighter padding + slightly smaller text keeps
+   the pills present without crowding the title. */
+@media (max-width: 540px) {
+  .tab-pill {
+    padding: 0.32rem 0.65rem;
+    font-size: 0.78rem;
+    border-width: 1.25px;
+  }
+}
+@media (max-width: 400px) {
+  .tab-pill {
+    padding: 0.28rem 0.55rem;
+    font-size: 0.74rem;
+  }
 }
 /* Tab pill dual labels — "News Feed" on desktop, always "News" on
    tabbed-nav widths (≤899px) so there's no dynamic swap to babysit
