@@ -1,17 +1,12 @@
-// renderNewsFeed: news content for topic + home pages.
+// renderNewsFeed: news cards for topic + home pages.
 //
-// Two rendering modes:
-//   - Iframe mode (default): embed rss.app's widget directly via
-//     rss-embed.html. This is the original behavior.
-//   - API mode (?api=1 on the URL): fetch from /api/feeds/{slug}
-//     (our own Vercel function that wraps the rss.app v1 API) and
-//     render cards from JSON. Same outer card/title/scroll-wrap
-//     shell so layout/CSS hooks downstream are untouched.
+// Fetches /api/feeds/{slug} — a Vercel serverless function that
+// wraps the rss.app v1 API — and renders the items array as
+// news-card markup inside the page's .newsfeed-scroll-wrap.
 //
-// The query flag lets us roll out the API path one tab at a time
-// without breaking the default for everyone else. Once we're
-// confident the API path is solid the iframe branch goes away
-// (kept for now per the migration plan's "do not delete" rule).
+// The previous iframe-based implementation (embedding rss.app's
+// widget directly via rss-embed.html) is archived under
+// _archive/iframe-rendering-legacy/ for reference.
 
 function escapeHTML(str) {
   const div = document.createElement('div');
@@ -27,20 +22,6 @@ function escapeAttr(str) {
     .replace(/>/g, '&gt;');
 }
 
-// "?legacy=1" anywhere on the URL force-uses the iframe renderer.
-// The iframe path is broken on standard-topic.vercel.app (rss.app's
-// domain whitelist rejects it), so the default is API mode now.
-// The legacy branch remains in this file as a fallback while the
-// migration settles — it can be removed once the apex domain cuts
-// over to Vercel.
-function useApiRenderer() {
-  try {
-    return !new URLSearchParams(window.location.search).has('legacy');
-  } catch {
-    return true;
-  }
-}
-
 // Hostname without "www.", lowercased. Falls back to the raw value
 // if the URL is unparseable (rss.app occasionally returns bare
 // strings for sources rather than full URLs).
@@ -54,9 +35,9 @@ function sourceHost(rawUrl) {
   }
 }
 
-// Short relative-time formatter matching the iframe's display
-// (e.g. "12m", "2h", "3d"). Anything older than a year falls back
-// to the localized date string.
+// Short relative-time formatter matching the prior iframe display
+// (e.g. "12m", "2h", "3d"). Anything older than ~5 years falls
+// back to the localized date string.
 function relativeTime(iso) {
   if (!iso) return '';
   const then = new Date(iso).getTime();
@@ -78,11 +59,7 @@ function relativeTime(iso) {
   return new Date(iso).toLocaleDateString();
 }
 
-// One news card. Description is plain-text only — rss.app items
-// sometimes include HTML in description, but rendering arbitrary
-// upstream HTML in our shell would (a) inherit unwanted markup
-// and (b) be a small XSS surface. We strip tags client-side via
-// the escapeHTML round-trip.
+// One news card.
 function newsCardHTML(item) {
   const url = item?.url || item?.link || '';
   const title = item?.title || '';
@@ -108,7 +85,7 @@ function newsCardHTML(item) {
   // The description field is already plain-text from rss.app's
   // API — but run it through the HTML parser anyway to defang
   // anything unexpected, then truncate to ~220 chars + ellipsis
-  // to match the visual rhythm of the iframe cards.
+  // to match the visual rhythm we want.
   const tmp = document.createElement('div');
   tmp.innerHTML = descRaw;
   let descText = (tmp.textContent || '').trim();
@@ -175,41 +152,7 @@ async function renderApiMode(scrollWrap, topic, isHome) {
   }
 }
 
-function renderIframeMode(scrollWrap, feedId) {
-  const body = feedId
-    ? `<div class="newsfeed-embed">
-         <iframe src="rss-embed.html?id=${feedId}&v=20260523b"
-                 class="newsfeed-iframe"
-                 id="rss-iframe-${feedId}"
-                 frameborder="0"
-                 scrolling="no"></iframe>
-       </div>`
-    : `<div class="newsfeed-placeholder"><p>News feed coming soon for this topic.</p></div>`;
-  scrollWrap.innerHTML = body;
-
-  const rssIframe = scrollWrap.querySelector('.newsfeed-iframe');
-  if (rssIframe && feedId) {
-    window.addEventListener('message', (e) => {
-      if (!e.data || e.source !== rssIframe.contentWindow) return;
-      if (e.data.rssHeight) {
-        rssIframe.style.height = e.data.rssHeight + 'px';
-        return;
-      }
-      // Wheel forwarding: the iframe captures wheel events even when
-      // its body is overflow:hidden, so without this the iframe's
-      // body-padding / grid-inset region (left/right of the cards)
-      // becomes a dead zone for scrolling the feed.
-      if (e.data.rssWheel && scrollWrap) {
-        const { deltaY, deltaMode } = e.data.rssWheel;
-        const pxY = deltaMode === 1 ? deltaY * 16 : deltaMode === 2 ? deltaY * scrollWrap.clientHeight : deltaY;
-        scrollWrap.scrollBy({ top: pxY, behavior: 'auto' });
-      }
-    });
-  }
-}
-
 export function renderNewsFeed(container, topic, isHome) {
-  const feedId = topic?.rssFeedId;
   const topicName = (!isHome && topic?.name) ? topic.name : '';
   const pillHTML = topicName
     ? `<span class="section-topic-pill">${escapeHTML(topicName)}</span>`
@@ -222,10 +165,5 @@ export function renderNewsFeed(container, topic, isHome) {
     </div>
   `;
   const scrollWrap = container.querySelector('.newsfeed-scroll-wrap');
-
-  if (useApiRenderer()) {
-    renderApiMode(scrollWrap, topic, isHome);
-  } else {
-    renderIframeMode(scrollWrap, feedId);
-  }
+  renderApiMode(scrollWrap, topic, isHome);
 }

@@ -1,0 +1,57 @@
+/* ============================================================
+   Iframe-era news feed CSS (archived 2026-05-24)
+
+   Removed from css/styles.css after the API-based migration.
+   These rules only ever applied to the rss.app widget iframe;
+   they're no longer referenced by any element on the live site.
+
+   If you ever need to re-enable the iframe rendering path (see
+   the README in this folder), paste these rules back into
+   css/styles.css somewhere near the old .newsfeed-placeholder
+   block and restore the iframe markup in js/components/newsfeed.js.
+   ============================================================ */
+
+.newsfeed-embed {
+  background: var(--color-bg);
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+/* Mobile: keep the iframe sitting close to the body-tabs sticky
+   bar above it (cleaner scroll experience), but leave a small
+   visible gap so the first card doesn't kiss the underline. */
+@media (max-width: 899.98px) {
+  .newsfeed-embed { margin-top: 0.5rem; }
+}
+/* Desktop: pull the iframe outward on each side so the rss.app
+   widget's internal card padding doesn't leave the visible card
+   edges short of the .newsfeed-title separator above. The pull-
+   out is modest (-20px each side) — enough to bring the cards'
+   visible left/right closer to the separator's full span without
+   pushing them past it. Also breathing-room top margin so the
+   first card doesn't crash into the separator. */
+@media (min-width: 900px) {
+  .newsfeed-embed {
+    margin-top: 1rem;
+    margin-left: -20px;
+    margin-right: -20px;
+    width: calc(100% + 40px);
+    max-width: calc(100% + 40px);
+  }
+}
+.newsfeed-iframe {
+  /* Belt + suspenders: iframe also has an explicit max-width so
+     it can never extend past its wrapper at any viewport. */
+  max-width: 100%;
+}
+
+.newsfeed-iframe {
+  display: block;
+  width: 100%;
+  min-height: 600px;
+  border: none;
+}

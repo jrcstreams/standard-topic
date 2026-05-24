@@ -1,0 +1,9 @@
+# Archived reference material — tracked in git for the
+# repository owner's records, but not part of the live site.
+_archive/
+
+# Local Playwright artifacts — never deployed.
+.playwright-mcp/
+
+# Stray local screenshot.
+home-mobile.png
