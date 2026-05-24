@@ -1823,7 +1823,7 @@ function renderPage(route) {
           <p>Standard Topic is a free, non-commercial, open-source tool that organizes publicly available information by topic. The Site offers four core functions:</p>
           <ul>
             <li><strong>Topic pages</strong> that aggregate links and references to a subject.</li>
-            <li><strong>News feeds</strong> displayed via embedded RSS widgets provided by rss.app, using publicly available RSS sources.</li>
+            <li><strong>News feeds</strong> aggregated from publicly available RSS sources via the rss.app API. The Site fetches and renders the articles itself; no third-party widgets or trackers are loaded on news pages.</li>
             <li><strong>AI Shortcuts</strong> that open a preset prompt in a third-party AI service (e.g., ChatGPT, Claude, Gemini, Perplexity) in a new browser tab.</li>
             <li><strong>A Prompt Builder</strong> that composes a text prompt in your browser and lets you send it to an AI service of your choice.</li>
           </ul>
@@ -1852,7 +1852,7 @@ function renderPage(route) {
           <p>The Site links to and embeds content from third parties, including but not limited to:</p>
           <ul>
             <li><strong>AI providers:</strong> OpenAI (ChatGPT), Anthropic (Claude), Google (Gemini), Perplexity, and others.</li>
-            <li><strong>Feed embeds:</strong> rss.app widgets loaded from <code>widget.rss.app</code>.</li>
+            <li><strong>News feed source:</strong> articles fetched server-side from the rss.app API. No rss.app widget code or scripts run in your browser.</li>
             <li><strong>Search &amp; reference:</strong> Google News, Bing News, DuckDuckGo, Reddit, YouTube, Wikipedia.</li>
             <li><strong>Fonts:</strong> Google Fonts, served from <code>fonts.googleapis.com</code> and <code>fonts.gstatic.com</code>.</li>
             <li><strong>Code hosting:</strong> GitHub, which hosts both the source code and the deployed Site via GitHub Pages.</li>
@@ -1873,7 +1873,7 @@ function renderPage(route) {
 
         <div class="about-section">
           <h3>8. News &amp; RSS Feeds</h3>
-          <p>News feed content is published by third-party outlets and surfaced on the Site via rss.app's embedded widget. Standard Topic does not write, edit, select, or endorse any individual article. Headlines, summaries, images, and links belong to the originating publishers. For copyright concerns or corrections about specific articles, contact the originating publisher directly.</p>
+          <p>News feed content is published by third-party outlets and aggregated through rss.app's RSS feed service. The Site fetches feed contents server-side and renders them as plain links — no third-party scripts, widgets, or trackers run on news pages. Standard Topic does not write, edit, select, or endorse any individual article. Headlines, summaries, images, and links belong to the originating publishers. For copyright concerns or corrections about specific articles, contact the originating publisher directly.</p>
         </div>
 
         <div class="about-section">
