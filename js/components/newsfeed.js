@@ -27,12 +27,17 @@ function escapeAttr(str) {
     .replace(/>/g, '&gt;');
 }
 
-// "?api=1" anywhere on the URL flips the renderer to API mode.
+// "?legacy=1" anywhere on the URL force-uses the iframe renderer.
+// The iframe path is broken on standard-topic.vercel.app (rss.app's
+// domain whitelist rejects it), so the default is API mode now.
+// The legacy branch remains in this file as a fallback while the
+// migration settles — it can be removed once the apex domain cuts
+// over to Vercel.
 function useApiRenderer() {
   try {
-    return new URLSearchParams(window.location.search).has('api');
+    return !new URLSearchParams(window.location.search).has('legacy');
   } catch {
-    return false;
+    return true;
   }
 }
 
@@ -81,17 +86,31 @@ function relativeTime(iso) {
 function newsCardHTML(item) {
   const url = item?.url || item?.link || '';
   const title = item?.title || '';
-  const desc = item?.description || item?.summary || '';
-  const pubDate = item?.pub_date || item?.published_at || item?.date || '';
+  // rss.app v1 returns plain-text snippets in `description_text`
+  // (no HTML). Older/alternate shapes (`description`, `summary`,
+  // `content_text`) kept as defensive fallbacks in case a feed
+  // type returns a different envelope.
+  const descRaw = item?.description_text
+    || item?.content_text
+    || item?.description
+    || item?.summary
+    || '';
+  // rss.app v1 returns ISO timestamps as `date_published`. Legacy
+  // names kept as fallbacks.
+  const pubDate = item?.date_published
+    || item?.pub_date
+    || item?.published_at
+    || item?.date
+    || '';
   const host = sourceHost(url);
   const rel = relativeTime(pubDate);
 
-  // Plain-text snippet from description: parse via the browser's
-  // own HTML parser by setting textContent indirectly through a
-  // detached div. Cap at ~220 chars + ellipsis to match the
-  // visual rhythm of the iframe cards.
+  // The description field is already plain-text from rss.app's
+  // API — but run it through the HTML parser anyway to defang
+  // anything unexpected, then truncate to ~220 chars + ellipsis
+  // to match the visual rhythm of the iframe cards.
   const tmp = document.createElement('div');
-  tmp.innerHTML = desc;
+  tmp.innerHTML = descRaw;
   let descText = (tmp.textContent || '').trim();
   if (descText.length > 220) descText = descText.slice(0, 217).trimEnd() + '…';
 

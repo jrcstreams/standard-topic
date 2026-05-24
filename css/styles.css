@@ -2276,10 +2276,18 @@ html, body, #app {
    source+time meta row. Lives inside .newsfeed-scroll-wrap, so
    outer layout/scroll behavior is unchanged from the iframe path. */
 .news-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 1rem;
   padding: 0 0 1rem;
+}
+/* Desktop (sidebar + news main column): the news column is wide
+   enough to host a 2-up card grid, matching the previous iframe
+   layout. Mobile + tablet keep single column for readability. */
+@media (min-width: 900px) {
+  .news-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 .news-card {
   background: #ffffff;
