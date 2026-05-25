@@ -1833,7 +1833,7 @@ function renderPage(route) {
         <div class="about-section">
           <h3>3. No Accounts, No Personal Data Collected</h3>
           <p>The Site does not require an account. It does not ask for your name, email, or any personal information. It does not set advertising cookies and does not sell or share data with advertising networks.</p>
-          <p>The Site's own servers do not receive your prompts, your searches, or your browsing activity. If GitHub (which hosts the Site) or any third-party service you interact with keeps its own logs, those are governed by their respective policies.</p>
+          <p>The Site's own servers do not receive your prompts, your searches, or your browsing activity. If Vercel (which hosts the Site) or any third-party service you interact with keeps its own logs, those are governed by their respective policies.</p>
         </div>
 
         <div class="about-section">
@@ -1855,7 +1855,7 @@ function renderPage(route) {
             <li><strong>News feed source:</strong> articles fetched server-side from the rss.app API. No rss.app widget code or scripts run in your browser.</li>
             <li><strong>Search &amp; reference:</strong> Google News, Bing News, DuckDuckGo, Reddit, YouTube, Wikipedia.</li>
             <li><strong>Fonts:</strong> Google Fonts, served from <code>fonts.googleapis.com</code> and <code>fonts.gstatic.com</code>.</li>
-            <li><strong>Code hosting:</strong> GitHub, which hosts both the source code and the deployed Site via GitHub Pages.</li>
+            <li><strong>Hosting:</strong> GitHub hosts the open-source code; the deployed Site is served from Vercel.</li>
           </ul>
           <p>Standard Topic is not affiliated with, endorsed by, or sponsored by any of these companies. Their trademarks and logos are the property of their respective owners. When you click a link or submit a prompt to one of these services, you leave the Site and their terms of service and privacy policies apply &mdash; not ours. Review them directly before using those services.</p>
         </div>
