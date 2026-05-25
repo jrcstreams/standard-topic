@@ -8,3 +8,8 @@ node_modules/
 .claude/
 .env
 .env.local
+
+# Local working/status docs — kept on disk for personal reference
+# but not committed to the public repo.
+docs/rss-api-migration-status.md
+
