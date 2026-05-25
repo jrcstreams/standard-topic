@@ -84,12 +84,12 @@ function newsCardHTML(item) {
 
   // The description field is already plain-text from rss.app's
   // API — but run it through the HTML parser anyway to defang
-  // anything unexpected, then truncate to ~220 chars + ellipsis
-  // to match the visual rhythm we want.
+  // anything unexpected. Visual truncation is handled by CSS
+  // line-clamp on .news-card-desc so the full text stays in the
+  // DOM for screen readers and SEO.
   const tmp = document.createElement('div');
   tmp.innerHTML = descRaw;
-  let descText = (tmp.textContent || '').trim();
-  if (descText.length > 220) descText = descText.slice(0, 217).trimEnd() + '…';
+  const descText = (tmp.textContent || '').trim();
 
   const metaParts = [];
   if (host) metaParts.push(`<span class="news-card-source">${escapeHTML(host)}</span>`);
