@@ -2290,7 +2290,11 @@ html, body, #app {
   -webkit-font-smoothing: subpixel-antialiased;
   line-height: 1.25;
   letter-spacing: -0.02em;
-  color: #1e2d44;
+  /* Off-black (slight warm-blue tint) for content headlines —
+     differentiates story titles from the UI's slate-blue
+     section titles ("News Feed", "Shortcuts"). Editorial feel:
+     content reads like newsprint, chrome stays branded. */
+  color: #101418;
   margin: 0;
   text-decoration: none;
   display: -webkit-box;
