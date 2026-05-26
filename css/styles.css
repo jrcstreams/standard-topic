@@ -9841,12 +9841,13 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 }
 
 /* === Topic Intelligence — title sizing ============================
-   The two-word title is longer than the old "Shortcuts", so the font
-   drops slightly so it sits on one line at 320px sidebar width. The
-   topic pill is intentionally not rendered here (set to empty in JS)
-   — the topic is identified one row up in the page banner. */
+   The topic pill is intentionally not rendered here (set to empty in
+   JS) since the topic is identified one row up in the page banner.
+   With the pill gone, the title runs at the same size as the other
+   panel titles. */
 .shortcuts-sidebar .sidebar-card-title {
-  font-size: 1.18rem;
+  font-size: 1.28rem;
+  letter-spacing: -0.02em;
 }
 
 /* ===============================================================
@@ -9865,27 +9866,72 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
    with the section header.
    =============================================================== */
 
-/* Subsection rhythm — tight rhythm so the panel reads as one stack
-   rather than separate sections. The AI Actions subsection no longer
-   has a header (its per-group eyebrows do the structural work), so
-   the gap to the first DISCOVER eyebrow is the only handoff between
-   Web Sources and the cards below. */
-.shortcuts-sidebar .ti-web-sources-section + .ti-actions-section {
-  margin-top: 0.95rem;
-}
+/* Subsection rhythm — Web Sources now uses the same eyebrow style as
+   DISCOVER / LEARN / ANALYZE / MORE so the hierarchy reads
+   consistently: a single panel with five small uppercase section
+   markers (one for chips + four for card groups), all parallel,
+   none competing with the "Topic Intelligence" panel title above. */
+.shortcuts-sidebar .ti-web-sources-section { --ti-accent: #5d6b7e; }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-header {
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.55rem;
 }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title {
-  font-size: 0.82rem;
-  letter-spacing: 0;
+  color: var(--ti-accent);
+  font-family: var(--font-family);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+}
+.shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, color-mix(in srgb, var(--ti-accent) 28%, transparent), transparent);
+}
+.shortcuts-sidebar .ti-web-sources-section + .ti-actions-section {
+  margin-top: 1.15rem;
+}
+/* Mobile: undo the legacy "promote subsection-title to a panel
+   heading" bump for the Web Sources eyebrow specifically. The bump
+   was meant for the old "Quick Links / AI Shortcuts" pair when the
+   sidebar card title was hidden on mobile; with the AI Actions
+   subsection gone, leaving only Web Sources bumped would make it
+   look heavier than the DISCOVER/LEARN/ANALYZE/MORE eyebrows below
+   it. The override re-applies the eyebrow look so all five section
+   markers in the panel read the same way at any width. */
+@media (max-width: 899.98px) {
+  body.app-mode .topic-layout:not(.is-custom)
+    .ti-web-sources-section .shortcuts-subsection-title {
+    font-family: var(--font-family);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--ti-accent);
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    width: 100%;
+  }
+  body.app-mode .topic-layout:not(.is-custom)
+    .ti-web-sources-section .shortcuts-subsection-header {
+    margin-bottom: 0.55rem;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
 }
 
 /* --- Web Sources chips ------------------------------------------------ */
 .ti-web-source-chips {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 0.25rem 0 0;
   display: flex;
   flex-wrap: wrap;
   gap: 0.32rem 0.32rem;
@@ -9946,14 +9992,14 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .ti-action-group--analyze  { --ti-accent: #b48528; }
 .ti-action-group--more     { --ti-accent: #5d6b7e; }
 
-.ti-action-group + .ti-action-group { margin-top: 0.85rem; }
+.ti-action-group + .ti-action-group { margin-top: 1.15rem; }
 .ti-action-group-label {
   color: var(--ti-accent);
   font-weight: 700;
   letter-spacing: 0.09em;
   font-size: 0.68rem;
   text-transform: uppercase;
-  margin: 0 0 0.35rem;
+  margin: 0 0 0.55rem;
   display: flex;
   align-items: center;
   gap: 0.45rem;
@@ -9968,25 +10014,27 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .ti-action-cards {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 0.25rem 0 0;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.45rem;
 }
 .ti-action-card-row { margin: 0; padding: 0; }
 
 .shortcuts-sidebar .sidebar-shortcut.ti-action-card {
   /* Override the underlying .sidebar-shortcut.ai-shortcut-select-btn
-     base styles: switch from flat row to elevated card. */
+     base styles: switch from flat row to elevated card.
+     align-items: center so the icon vertically centers with the text
+     block — works for both 1-line and 2-line descriptions. */
   display: grid;
-  grid-template-columns: 26px 1fr;
+  grid-template-columns: 30px 1fr;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.6rem;
   width: 100%;
-  padding: 0.45rem 0.55rem 0.48rem 0.5rem;
+  padding: 0.55rem 0.7rem 0.6rem 0.6rem;
   background: #ffffff;
-  border: 1px solid #e4e8f0;
-  border-radius: 7px;
+  border: 1px solid #dde2ec;
+  border-radius: 8px;
   text-align: left;
   font-family: var(--font-family);
   cursor: pointer;
@@ -9998,31 +10046,29 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 6px;
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
   /* Tint background to the group accent at low opacity — quiet
      enough to not compete with the name, strong enough to read
      as a category cue at a glance. */
   background: color-mix(in srgb, var(--ti-accent) 12%, #ffffff);
   color: var(--ti-accent);
   flex-shrink: 0;
-  align-self: flex-start;
-  margin-top: 0.05rem;
 }
 .ti-action-card-icon-svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   color: inherit;
 }
 .ti-action-card-body {
   display: flex;
   flex-direction: column;
-  gap: 0.05rem;
+  gap: 0.1rem;
   min-width: 0;
 }
 .shortcuts-sidebar .ti-action-card .ti-action-card-name {
-  font-size: 0.84rem;
+  font-size: 0.86rem;
   font-weight: 600;
   line-height: 1.25;
   letter-spacing: -0.008em;
@@ -10031,9 +10077,9 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   flex: 0 0 auto;
 }
 .ti-action-card-desc {
-  font-size: 0.735rem;
+  font-size: 0.745rem;
   font-weight: 400;
-  line-height: 1.32;
+  line-height: 1.35;
   letter-spacing: -0.002em;
   color: #6a7689;
 }
@@ -10060,7 +10106,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   position: absolute;
   inset: 0;
   display: none;
-  border-radius: 6px;
+  border-radius: inherit;
   background: var(--ti-accent);
   color: #fff;
   align-items: center;
@@ -10086,20 +10132,19 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
    above). */
 .ti-action-card .ai-shortcut-marker-dot { display: none; }
 
-/* Mobile (tabbed mode): the sidebar gets the full viewport width,
-   so cards can breathe a hair more than on the 320px desktop
-   sidebar. Slightly more padding and a touch larger icon so the
-   card doesn't look undernourished at phone widths. */
+/* Mobile (tabbed mode): cards get slightly more room since the
+   sidebar fills the viewport. Icon goes up to 34px and the text
+   sizes nudge up so the card reads comfortably from arm's length. */
 @media (max-width: 899.98px) {
   .shortcuts-sidebar .sidebar-shortcut.ti-action-card {
-    padding: 0.55rem 0.65rem 0.6rem 0.55rem;
-    gap: 0.7rem;
-    grid-template-columns: 30px 1fr;
+    padding: 0.65rem 0.8rem 0.7rem 0.65rem;
+    gap: 0.75rem;
+    grid-template-columns: 34px 1fr;
   }
-  .ti-action-card-icon { width: 30px; height: 30px; }
-  .ti-action-card-icon-svg { width: 16px; height: 16px; }
-  .shortcuts-sidebar .ti-action-card .ti-action-card-name { font-size: 0.92rem; }
-  .ti-action-card-desc { font-size: 0.79rem; }
+  .ti-action-card-icon { width: 34px; height: 34px; border-radius: 8px; }
+  .ti-action-card-icon-svg { width: 17px; height: 17px; }
+  .shortcuts-sidebar .ti-action-card .ti-action-card-name { font-size: 0.95rem; }
+  .ti-action-card-desc { font-size: 0.8rem; }
 }
 
 /* Custom-search page goes 2-column at ≥720px (same breakpoint the
