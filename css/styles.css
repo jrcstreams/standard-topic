@@ -2279,11 +2279,17 @@ html, body, #app {
    prominent without the punchy heaviness of full bold (700). */
 .news-card-title {
   font-family: var(--font-display);
-  font-size: 1.2rem;
-  /* Sub-step weight via the variable cut of General Sans — sits
-     between medium (500) and semibold (600) so the headline reads
-     as confident but not bold. */
-  font-weight: 520;
+  font-size: 1.13rem;
+  /* True font-weight stays at medium (500). The hair of extra
+     visual weight comes from a 0.4px text-shadow that softly
+     thickens each glyph's edge — fakes a ~half-weight bump
+     without snapping to semibold or relying on the variable
+     font's interpolation. Subpixel antialiasing keeps glyph
+     edges from being rendered too thinly by the OS, which
+     would undo the effect. */
+  font-weight: 500;
+  text-shadow: 0 0 0.4px currentColor;
+  -webkit-font-smoothing: subpixel-antialiased;
   line-height: 1.25;
   letter-spacing: -0.02em;
   color: #1e2d44;
