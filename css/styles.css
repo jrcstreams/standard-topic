@@ -2367,13 +2367,14 @@ html, body, #app {
 }
 .news-error { color: #b04e1d; }
 
-/* Mobile — slightly tighter horizontal padding so headlines
-   reach closer to the viewport edges (the news section is full-
-   bleed on mobile per the topic-layout overrides). Vertical
-   rhythm stays the same so headlines stay scannable. */
-@media (max-width: 640px) {
+/* Tablet + mobile (under the body-tabs threshold): the news
+   section is full-bleed via #section-newsfeed's negative side
+   margins, so story content needs its own horizontal inset to
+   keep from kissing the viewport edges. Scoped at ≤899.98px
+   to match the body-tabs visibility window. */
+@media (max-width: 899.98px) {
   .news-list { padding: 0 0 1rem; }
-  .news-card-link { padding: 0.95rem 1rem; }
+  .news-card-link { padding: 0.95rem 1.25rem; }
   .news-card-title { font-size: 1.05rem; }
   .news-card-desc { font-size: 0.88rem; }
 }
