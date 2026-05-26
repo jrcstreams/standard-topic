@@ -1095,7 +1095,11 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
 
   const cardClasses = ['sidebar-card', 'shortcuts-sidebar'];
 
-  const titlePillHTML = topicName ? `<span class="section-topic-pill">${escapeHTML(topicName)}</span>` : '';
+  // Topic Intelligence drops the topic pill in the title — the topic
+  // is already identified in the page banner directly above, and the
+  // section title needs the horizontal room so "Topic Intelligence"
+  // fits on one line in the 320px sidebar.
+  const titlePillHTML = '';
   // AI Shortcuts run in always-multi-select mode now — clicking a
    // row toggles selection, and a per-row arrow opens the modal for
    // that single shortcut directly. The `data-multi="1"` flag + the
@@ -1160,16 +1164,17 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     `;
   }
 
-  // AI Actions subsection — shortcuts are grouped into
-  // Discover / Learn / Analyze (and a "More" bucket for anything
-  // unclassified). Each shortcut renders as a card (icon + name +
-  // evergreen description) with a group-tinted accent. Multi-select
-  // is always on; the whole card is the toggle target.
+  // AI Actions section — shortcuts are grouped into Discover / Learn
+  // / Analyze (and a "More" bucket for anything unclassified). Each
+  // shortcut renders as a card (icon + name + evergreen description)
+  // with a group-tinted accent. The "AI Actions" subsection header
+  // is intentionally omitted: the cards-vs-chips visual difference
+  // already says "these are prompts, those were external links",
+  // and the per-group eyebrows (DISCOVER / LEARN / ANALYZE / MORE)
+  // do the structural work. Multi-select is always on; the whole
+  // card is the toggle target.
   html += `
     <section class="shortcuts-subsection ti-actions-section">
-      <div class="shortcuts-subsection-header">
-        <h4 class="shortcuts-subsection-title">AI Actions</h4>
-      </div>
   `;
 
   if (all.length === 0) {
