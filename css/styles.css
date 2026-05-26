@@ -9846,7 +9846,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
    With the pill gone, the title runs at the same size as the other
    panel titles. */
 .shortcuts-sidebar .sidebar-card-title {
-  font-size: 1.28rem;
+  font-size: 1.08rem;
   letter-spacing: -0.02em;
 }
 
@@ -9878,7 +9878,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title {
   color: var(--ti-accent);
   font-family: var(--font-family);
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.09em;
   text-transform: uppercase;
@@ -9908,7 +9908,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   body.app-mode .topic-layout:not(.is-custom)
     .ti-web-sources-section .shortcuts-subsection-title {
     font-family: var(--font-family);
-    font-size: 0.7rem;
+    font-size: 0.62rem;
     font-weight: 700;
     color: var(--ti-accent);
     letter-spacing: 0.09em;
@@ -9940,13 +9940,13 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .ti-web-source-chip {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.26rem 0.55rem 0.26rem 0.45rem;
+  gap: 0.32rem;
+  padding: 0.22rem 0.5rem 0.22rem 0.42rem;
   background: #f3f5f9;
   border: 1px solid #e2e6ee;
   border-radius: 999px;
   font-family: var(--font-family);
-  font-size: 0.74rem;
+  font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: -0.005em;
   color: #36425a;
@@ -9955,13 +9955,13 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   line-height: 1;
 }
 .ti-web-source-chip-icon {
-  width: 13px;
-  height: 13px;
+  width: 12px;
+  height: 12px;
   flex-shrink: 0;
   color: #5d6b7e;
 }
 .ti-web-source-chip-arrow {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   color: #8290a8;
   margin-left: 0.02rem;
   line-height: 1;
@@ -9992,14 +9992,14 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .ti-action-group--analyze  { --ti-accent: #b48528; }
 .ti-action-group--more     { --ti-accent: #5d6b7e; }
 
-.ti-action-group + .ti-action-group { margin-top: 1.35rem; }
+.ti-action-group + .ti-action-group { margin-top: 1.05rem; }
 .ti-action-group-label {
   color: var(--ti-accent);
   font-weight: 700;
   letter-spacing: 0.1em;
-  font-size: 0.7rem;
+  font-size: 0.62rem;
   text-transform: uppercase;
-  margin: 0 0 0.65rem;
+  margin: 0 0 0.5rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -10017,15 +10017,18 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   padding: 0 0.25rem 0 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  /* No gap — consecutive rows' left accent rules stack into one
+     continuous spine per group, visually unifying the four DISCOVER
+     rows (etc.) without any card chrome. */
+  gap: 0;
 }
 .ti-action-card-row { margin: 0; padding: 0; }
 
-/* Card body — vertical stack of an inline icon+name "header" row
-   and a description row beneath. Cards are intentionally light:
-   no heavy borders, no icon backgrounds. The icon reads as a small
-   group-accent glyph that prefixes the title, and the description
-   spans the full card width as a continuation of the title row. */
+/* Flat row — no card chrome. A 2px left accent rule (in the group
+   color, muted) carries identity; consecutive rows in the same group
+   stack so their rules form one continuous spine. Hover and selected
+   states tint the row background and bring the rule to full accent.
+   Reads as a list of capabilities, not a deck of products. */
 .shortcuts-sidebar .sidebar-shortcut.ti-action-card {
   display: flex;
   flex-direction: column;
@@ -10035,22 +10038,23 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
      content-width and center it instead of stretching across
      the full card width. */
   align-items: stretch;
-  gap: 0.28rem;
+  gap: 0.14rem;
   width: 100%;
-  padding: 0.7rem 0.85rem 0.78rem;
-  background: #ffffff;
-  border: 1px solid #e9ecf2;
-  border-radius: 10px;
+  padding: 0.5rem 0.7rem 0.55rem 0.68rem;
+  background: transparent;
+  border: none;
+  border-left: 2px solid color-mix(in srgb, var(--ti-accent) 45%, #d8dde7);
+  border-radius: 0;
   text-align: left;
   font-family: var(--font-family);
   cursor: pointer;
   color: var(--color-text);
-  transition: border-color 0.18s, box-shadow 0.18s, transform 0.18s, background 0.16s;
+  transition: background 0.16s, border-left-color 0.18s;
 }
 .ti-action-card-header {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.45rem;
   min-width: 0;
   width: 100%;
 }
@@ -10064,26 +10068,26 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 17px;
+  height: 17px;
   border-radius: 5px;
   background: transparent;
   color: var(--ti-accent);
   flex-shrink: 0;
 }
 .ti-action-card-icon-svg {
-  width: 17px;
-  height: 17px;
+  width: 15px;
+  height: 15px;
   color: inherit;
   stroke-width: 1.5;
 }
 .shortcuts-sidebar .ti-action-card .ti-action-card-name {
   flex: 1 1 auto;
   min-width: 0;
-  font-size: 0.925rem;
+  font-size: 0.8rem;
   font-weight: 600;
   line-height: 1.28;
-  letter-spacing: -0.012em;
+  letter-spacing: -0.01em;
   color: #1a2235;
   /* Allow long titles to wrap to a second line within the header
      row — sits to the right of the inline glyph naturally. */
@@ -10092,10 +10096,10 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 }
 .ti-action-card-desc {
   display: block;
-  font-size: 0.795rem;
+  font-size: 0.7rem;
   font-weight: 400;
-  line-height: 1.42;
-  letter-spacing: -0.003em;
+  line-height: 1.4;
+  letter-spacing: -0.002em;
   color: #6a7689;
   /* Description spans the full card width — no indent under the
      icon. Reads as a continuation of the title row rather than a
@@ -10103,25 +10107,27 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   margin: 0;
 }
 
-/* Hover state — soft accent tint on the card surface + slight
-   border accent. No transform / no lift (it was too "buttony" for
-   a dense card list). */
+/* Hover state — row picks up a soft accent tint and the left rule
+   resolves from muted to full accent. No lift, no border, no shadow:
+   the tint + rule are the only signals, keeping the row legible as
+   a list item rather than a button. */
 @media (hover: hover) {
   .shortcuts-sidebar .sidebar-shortcut.ti-action-card:hover {
-    background: color-mix(in srgb, var(--ti-accent) 4%, #ffffff);
-    border-color: color-mix(in srgb, var(--ti-accent) 38%, #d5dbe6);
+    background: color-mix(in srgb, var(--ti-accent) 5%, transparent);
+    border-left-color: var(--ti-accent);
   }
 }
 
-/* Multi-select state — the icon slot fills with a rounded accent
-   block + white check, and the card surface picks up a soft tint
-   and an accent border. Reads as "ticked" from a meter away
-   without going harsh. */
+/* Multi-select state — the small icon slot fills with a rounded
+   accent square + white check (reads as a ticked checkbox), the row
+   tints accent, and the left rule resolves to full accent. No
+   border / box-shadow on the row itself — the tint + rule + check
+   carry the state without re-introducing card chrome. */
 .ti-action-card-marker {
   position: absolute;
   inset: 0;
   display: none;
-  border-radius: inherit;
+  border-radius: 4px;
   background: var(--ti-accent);
   color: #fff;
   align-items: center;
@@ -10129,9 +10135,8 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 }
 .ti-action-card-check { color: #fff; }
 .shortcuts-sidebar .sidebar-shortcut.ti-action-card.is-multi-selected {
-  border-color: var(--ti-accent);
-  background: color-mix(in srgb, var(--ti-accent) 6%, #ffffff);
-  box-shadow: 0 0 0 1px var(--ti-accent) inset;
+  background: color-mix(in srgb, var(--ti-accent) 9%, transparent);
+  border-left-color: var(--ti-accent);
 }
 .shortcuts-sidebar .sidebar-shortcut.ti-action-card.is-multi-selected
   .ti-action-card-marker { display: inline-flex; }
@@ -10152,15 +10157,16 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
    card reads comfortably from arm's length on a phone. */
 @media (max-width: 899.98px) {
   .shortcuts-sidebar .sidebar-shortcut.ti-action-card {
-    padding: 0.85rem 1rem 0.95rem;
-    gap: 0.32rem;
-    border-radius: 12px;
+    padding: 0.55rem 0.85rem 0.62rem 0.78rem;
+    gap: 0.16rem;
+    border-radius: 0;
+    border-left-width: 2px;
   }
-  .ti-action-card-header { gap: 0.65rem; }
-  .ti-action-card-icon { width: 22px; height: 22px; border-radius: 6px; }
-  .ti-action-card-icon-svg { width: 19px; height: 19px; }
-  .shortcuts-sidebar .ti-action-card .ti-action-card-name { font-size: 1rem; }
-  .ti-action-card-desc { font-size: 0.85rem; }
+  .ti-action-card-header { gap: 0.5rem; }
+  .ti-action-card-icon { width: 18px; height: 18px; }
+  .ti-action-card-icon-svg { width: 16px; height: 16px; }
+  .shortcuts-sidebar .ti-action-card .ti-action-card-name { font-size: 0.84rem; }
+  .ti-action-card-desc { font-size: 0.72rem; line-height: 1.38; }
 }
 
 /* Custom-search page goes 2-column at ≥720px (same breakpoint the
