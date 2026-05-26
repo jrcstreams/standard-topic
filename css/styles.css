@@ -2224,60 +2224,81 @@ html, body, #app {
   justify-content: center;
 }
 
-/* === API-driven news cards =========================================
-   Used when the renderer is in API mode (?api=1). Visually matches
-   the previous rss.app iframe cards: white pill-card with subtle
-   border, large title, muted description snippet, and a small
-   source+time meta row. Lives inside .newsfeed-scroll-wrap, so
-   outer layout/scroll behavior is unchanged from the iframe path. */
+/* === API-driven news list =========================================
+   Vertical scannable list (not a card grid). Each item: bold
+   headline, two-line description, then a meta row with a pill-
+   styled source label and a relative time. Hairline separators
+   between items + a subtle on-hover tint with a sliding accent
+   bar give clear hover/focus affordance without underlining any
+   text. Lives inside .newsfeed-scroll-wrap. */
 .news-list {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
   padding: 0 0 1rem;
-}
-/* Desktop (sidebar + news main column): the news column is wide
-   enough to host a 2-up card grid, matching the previous iframe
-   layout. Mobile + tablet keep single column for readability. */
-@media (min-width: 900px) {
-  .news-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  /* Negative side margin so each row's hover tint can fill the
+     full content column edge-to-edge without a visible inset.
+     Inner padding on .news-card-link restores readable text
+     margins. */
+  margin: 0;
 }
 .news-card {
-  background: #ffffff;
-  border: 1px solid #e4e7ec;
-  border-radius: 10px;
-  transition: border-color 0.14s, box-shadow 0.18s, transform 0.18s;
+  position: relative;
+  border-bottom: 1px solid #eef0f3;
+  transition: background-color 0.14s;
+}
+/* No top border on the first item — the newsfeed-title separator
+   (desktop) or the body-tabs underline (mobile) is already the
+   visual boundary above the list. */
+.news-card::before {
+  /* Sliding accent bar on the left, revealed on hover/focus.
+     Lives at the card edge so it reads as "this row is active"
+     without crowding the title with a hover underline. */
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--color-primary, #2c4467);
+  transform: scaleY(0);
+  transform-origin: center;
+  transition: transform 0.18s ease;
+  pointer-events: none;
 }
 @media (hover: hover) {
-  .news-card:hover {
-    border-color: #cdd2d9;
-    box-shadow: 0 4px 12px rgba(15, 26, 46, 0.07);
-    transform: translateY(-1px);
-  }
+  .news-card:hover { background: rgba(15, 26, 46, 0.025); }
+  .news-card:hover::before { transform: scaleY(1); }
+}
+.news-card:has(.news-card-link:focus-visible) {
+  background: rgba(15, 26, 46, 0.025);
+}
+.news-card:has(.news-card-link:focus-visible)::before {
+  transform: scaleY(1);
 }
 .news-card-link {
   display: block;
-  padding: 1rem 1.15rem;
+  padding: 1.1rem 1.5rem;
   color: inherit;
   text-decoration: none;
 }
+.news-card-link:hover,
+.news-card-link:focus,
 .news-card-link:focus-visible {
-  outline: 2px solid var(--color-primary, #2c4467);
-  outline-offset: 2px;
-  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  outline: none;
 }
+/* Title — dominant element, never underlined regardless of
+   hover/focus state on the anchor. */
 .news-card-title {
   font-family: var(--font-display);
-  font-size: 1.15rem;
-  font-weight: 650;
+  font-size: 1.2rem;
+  font-weight: 700;
   line-height: 1.25;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.018em;
   color: #1e2d44;
   margin: 0;
-  /* Clamp to 2 lines so cards in the same row hit consistent
-     heights regardless of headline length. */
+  text-decoration: none;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -2285,32 +2306,54 @@ html, body, #app {
   overflow: hidden;
 }
 .news-card-desc {
-  margin: 0.5rem 0 0;
+  margin: 0.4rem 0 0;
   font-family: var(--font-family);
   font-size: 0.95rem;
   line-height: 1.5;
-  color: #4a5568;
-  /* 3-line clamp pairs with the title clamp above to keep cards
-     uniform across the grid. Full text remains in the DOM so
-     screen readers / SEO get the complete description. */
+  color: #54627a;
+  text-decoration: none;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 .news-card-meta {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  margin: 0.9rem 0 0;
+  gap: 0.6rem;
+  margin: 0.7rem 0 0;
   font-family: var(--font-family);
-  font-size: 0.8rem;
-  letter-spacing: 0.01em;
+  font-size: 0.78rem;
   color: #8492a6;
 }
-.news-card-meta-sep { opacity: 0.7; }
-.news-card-time { font-variant-numeric: tabular-nums; }
+/* Source pill — small slate chip that reads as a deliberate
+   label, not running prose. Lowercase since these are URLs. */
+.news-card-source {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.18rem 0.55rem;
+  background: #eef1f5;
+  color: #3a4a64;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  line-height: 1.4;
+  text-transform: lowercase;
+  white-space: nowrap;
+}
+@media (hover: hover) {
+  .news-card:hover .news-card-source {
+    background: #e3e7ee;
+    color: #1e2d44;
+  }
+}
+.news-card-meta-sep { display: none; }
+.news-card-time {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.015em;
+}
 
 .news-loading,
 .news-empty,
@@ -2322,23 +2365,15 @@ html, body, #app {
 }
 .news-error { color: #b04e1d; }
 
-/* Tighter on narrow phones — slightly less padding so cards
-   don't feel oversized when the column is full-bleed. The
-   single-column layout doesn't need height-equalizing clamps as
-   strictly as the desktop grid, but we keep them for predictable
-   card heights when scrolling. */
+/* Mobile — slightly tighter horizontal padding so headlines
+   reach closer to the viewport edges (the news section is full-
+   bleed on mobile per the topic-layout overrides). Vertical
+   rhythm stays the same so headlines stay scannable. */
 @media (max-width: 640px) {
-  .news-list { gap: 0.75rem; padding: 0.5rem 1rem 1rem; }
-  .news-card-link { padding: 0.85rem 1rem; }
-  .news-card-title { font-size: 1.05rem; }
-  .news-card-desc {
-    font-size: 0.92rem;
-    /* Phones have more vertical room per item — let the
-       description breathe with 4 lines before truncating. */
-    -webkit-line-clamp: 4;
-    line-clamp: 4;
-  }
-  .news-card-meta { margin-top: 0.7rem; }
+  .news-list { padding: 0 0 1rem; }
+  .news-card-link { padding: 1rem 1rem; }
+  .news-card-title { font-size: 1.08rem; }
+  .news-card-desc { font-size: 0.92rem; }
 }
 
 /* === AI Shortcuts === */
