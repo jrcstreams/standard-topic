@@ -9,6 +9,12 @@ node_modules/
 .env
 .env.local
 
+# Playwright MCP scratch dir — local browser test artifacts.
+.playwright-mcp/
+
+# Stray local screenshot from early Playwright tests.
+home-mobile.png
+
 # Local working/status docs — kept on disk for personal reference
 # but not committed to the public repo.
 docs/rss-api-migration-status.md
