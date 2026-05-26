@@ -2277,7 +2277,7 @@ html, body, #app {
 .news-card-title {
   font-family: var(--font-display);
   font-size: 1.2rem;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.25;
   letter-spacing: -0.02em;
   color: #1e2d44;
