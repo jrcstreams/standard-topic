@@ -2283,7 +2283,7 @@ html, body, #app {
   /* Sub-step weight via the variable cut of General Sans — sits
      between medium (500) and semibold (600) so the headline reads
      as confident but not bold. */
-  font-weight: 540;
+  font-weight: 520;
   line-height: 1.25;
   letter-spacing: -0.02em;
   color: #1e2d44;
