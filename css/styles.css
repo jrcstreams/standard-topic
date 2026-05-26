@@ -1593,7 +1593,7 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   font-family: var(--font-display);
   font-size: 1.3rem;
   line-height: 1.15;
-  font-weight: 600;
+  font-weight: 650;
   /* Section title sits in branded navy so the eye separates app
      chrome ("News Feed") from editorial content (story titles in
      off-black). Pushed bluer than the previous #1e2d44 so the
@@ -4285,7 +4285,7 @@ body.app-mode .topic-layout {
   font-family: var(--font-display);
   font-size: 1.3rem;
   line-height: 1.15;
-  font-weight: 600;
+  font-weight: 650;
   /* Branded navy — same value the other panel section titles use
      so the editorial split (chrome=blue, content=off-black) is
      consistent across panels. */
@@ -5138,7 +5138,7 @@ body.app-mode .topic-layout {
   font-family: var(--font-display);
   font-size: 1.3rem;
   line-height: 1.15;
-  font-weight: 600;
+  font-weight: 650;
   /* Branded navy — matches .newsfeed-title / .sidebar-card-title. */
   color: #1c3a6b;
   letter-spacing: -0.024em;
