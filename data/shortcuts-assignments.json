@@ -1553,5 +1553,27 @@
       "glossary-key-terms",
       "industry-deep-dive"
     ]
-  }
+  },
+  "groups": [
+    {
+      "id": "discover",
+      "label": "Discover",
+      "order": 0
+    },
+    {
+      "id": "learn",
+      "label": "Learn",
+      "order": 1
+    },
+    {
+      "id": "analyze",
+      "label": "Analyze",
+      "order": 2
+    },
+    {
+      "id": "more",
+      "label": "More",
+      "order": 3
+    }
+  ]
 }

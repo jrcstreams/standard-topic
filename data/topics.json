@@ -110,7 +110,7 @@
       "name": "Technology",
       "parent": null,
       "rssFeedId": "teXwFdTo6pdFWqCV",
-      "webhookEnabled": false,
+      "webhookEnabled": true,
       "icon": "cpu",
       "featured": true
     },
