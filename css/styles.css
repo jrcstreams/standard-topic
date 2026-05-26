@@ -10017,21 +10017,26 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   padding: 0 0.25rem 0 0;
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: 0.4rem;
 }
 .ti-action-card-row { margin: 0; padding: 0; }
 
+/* Card body — vertical stack of an inline icon+name "header" row
+   and a description row beneath. Inline icon keeps the header
+   reading as one unit (badge + label) and frees the full card
+   width for the description below. */
 .shortcuts-sidebar .sidebar-shortcut.ti-action-card {
-  /* Override the underlying .sidebar-shortcut.ai-shortcut-select-btn
-     base styles: switch from flat row to elevated card.
-     align-items: center so the icon vertically centers with the text
-     block — works for both 1-line and 2-line descriptions. */
-  display: grid;
-  grid-template-columns: 30px 1fr;
-  align-items: center;
-  gap: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  /* Override the underlying .ai-shortcut-select-btn rule's
+     align-items: center — in a flex column that horizontally
+     centers children, which would shrink the description to
+     content-width and center it instead of stretching across
+     the full card width. */
+  align-items: stretch;
+  gap: 0.22rem;
   width: 100%;
-  padding: 0.55rem 0.7rem 0.6rem 0.6rem;
+  padding: 0.58rem 0.72rem 0.62rem;
   background: #ffffff;
   border: 1px solid #dde2ec;
   border-radius: 8px;
@@ -10041,14 +10046,21 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   color: var(--color-text);
   transition: border-color 0.16s, box-shadow 0.16s, transform 0.16s, background 0.14s;
 }
+.ti-action-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  width: 100%;
+}
 .ti-action-card-icon {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 7px;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
   /* Tint background to the group accent at low opacity — quiet
      enough to not compete with the name, strong enough to read
      as a category cue at a glance. */
@@ -10057,31 +10069,34 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   flex-shrink: 0;
 }
 .ti-action-card-icon-svg {
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   color: inherit;
 }
-.ti-action-card-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-  min-width: 0;
-}
 .shortcuts-sidebar .ti-action-card .ti-action-card-name {
-  font-size: 0.86rem;
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.88rem;
   font-weight: 600;
   line-height: 1.25;
-  letter-spacing: -0.008em;
+  letter-spacing: -0.01em;
   color: #1c2538;
-  /* Cancel the bullet-row reset above */
-  flex: 0 0 auto;
+  /* Allow long titles to wrap to a second line within the header
+     row — sits to the right of the inline icon naturally. */
+  white-space: normal;
+  word-break: break-word;
 }
 .ti-action-card-desc {
-  font-size: 0.745rem;
+  display: block;
+  font-size: 0.755rem;
   font-weight: 400;
-  line-height: 1.35;
+  line-height: 1.38;
   letter-spacing: -0.002em;
   color: #6a7689;
+  /* Description spans the full card width — no indent under the
+     icon. Reads as a continuation of the title row rather than a
+     subordinate paragraph aligned with a separate icon column. */
+  margin: 0;
 }
 
 /* Hover elevation — subtle lift + accent border so the card reads
@@ -10133,18 +10148,19 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .ti-action-card .ai-shortcut-marker-dot { display: none; }
 
 /* Mobile (tabbed mode): cards get slightly more room since the
-   sidebar fills the viewport. Icon goes up to 34px and the text
-   sizes nudge up so the card reads comfortably from arm's length. */
+   sidebar fills the viewport. Icon nudges up to 24px and the
+   text sizes step up so the card reads comfortably from arm's
+   length. Header gap also widens a hair. */
 @media (max-width: 899.98px) {
   .shortcuts-sidebar .sidebar-shortcut.ti-action-card {
-    padding: 0.65rem 0.8rem 0.7rem 0.65rem;
-    gap: 0.75rem;
-    grid-template-columns: 34px 1fr;
+    padding: 0.7rem 0.85rem 0.75rem;
+    gap: 0.25rem;
   }
-  .ti-action-card-icon { width: 34px; height: 34px; border-radius: 8px; }
-  .ti-action-card-icon-svg { width: 17px; height: 17px; }
-  .shortcuts-sidebar .ti-action-card .ti-action-card-name { font-size: 0.95rem; }
-  .ti-action-card-desc { font-size: 0.8rem; }
+  .ti-action-card-header { gap: 0.6rem; }
+  .ti-action-card-icon { width: 26px; height: 26px; border-radius: 6px; }
+  .ti-action-card-icon-svg { width: 14px; height: 14px; }
+  .shortcuts-sidebar .ti-action-card .ti-action-card-name { font-size: 0.97rem; }
+  .ti-action-card-desc { font-size: 0.82rem; }
 }
 
 /* Custom-search page goes 2-column at ≥720px (same breakpoint the

@@ -1493,11 +1493,16 @@ function shortcutItem(shortcut, topicName) {
   `;
 }
 
-// AI action card — single click target. Renders icon + name +
-// evergreen description in a small elevated card with a group-
-// tinted accent. Click toggles multi-select; the marker check
-// overlays on the icon when selected. Keeps the .sidebar-shortcut
-// + .ai-shortcut-select-btn classes so the existing select / submit
+// AI action card — single click target. Vertical layout: the icon
+// sits inline with the title on the first row (icon acts as a
+// small "tag" preceding the name), and the description occupies a
+// second row spanning the card's full width. This pattern (vs. a
+// fixed icon column on the left) keeps long titles from getting
+// squeezed and gives descriptions room to breathe, while the
+// in-line icon still carries the group's accent color identity.
+// Click toggles multi-select; the marker check replaces the icon
+// glyph when selected. Keeps the .sidebar-shortcut +
+// .ai-shortcut-select-btn classes so the existing select / submit
 // handlers still pick it up.
 function shortcutCard(shortcut, topicName, groupKey) {
   const prompt = shortcut.prompt.replace(/\{topic\}/gi, topicName);
@@ -1514,18 +1519,18 @@ function shortcutCard(shortcut, topicName, groupKey) {
               data-group="${escapeAttr(groupKey || '')}"
               aria-pressed="false"
               title="${escapeAttr(shortcut.name)}">
-        <span class="ti-action-card-icon" aria-hidden="true">
-          ${iconHTML}
-          <span class="ai-shortcut-marker ti-action-card-marker" aria-hidden="true">
-            <svg class="ai-shortcut-marker-check ti-action-card-check" viewBox="0 0 14 14" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="2 7 6 11 12 3"/>
-            </svg>
+        <span class="ti-action-card-header">
+          <span class="ti-action-card-icon" aria-hidden="true">
+            ${iconHTML}
+            <span class="ai-shortcut-marker ti-action-card-marker" aria-hidden="true">
+              <svg class="ai-shortcut-marker-check ti-action-card-check" viewBox="0 0 14 14" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="2 7 6 11 12 3"/>
+              </svg>
+            </span>
           </span>
-        </span>
-        <span class="ti-action-card-body">
           <span class="sidebar-shortcut-name ti-action-card-name">${escapeHTML(shortcut.name)}</span>
-          ${description}
         </span>
+        ${description}
       </button>
     </li>
   `;
