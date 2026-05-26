@@ -2290,12 +2290,12 @@ html, body, #app {
 .news-card-title {
   font-family: var(--font-display);
   font-size: 1.07rem;
-  /* True medium weight, no shadow trick. The previous 0.2px
-     text-shadow boost gave a half-step heavier feel; removed
-     so the headline reads a touch lighter while staying
-     legible. Antialiased smoothing keeps glyph edges from
-     looking sub-pixel-faint. */
+  /* True medium weight (500) with a 0.15px currentColor
+     text-shadow — the smallest visible glyph-edge thickening
+     trick we use anywhere. Adds a hair of body to story
+     headlines without crossing into the "feels bold" zone. */
   font-weight: 500;
+  text-shadow: 0 0 0.15px currentColor;
   -webkit-font-smoothing: antialiased;
   line-height: 1.25;
   letter-spacing: -0.02em;
