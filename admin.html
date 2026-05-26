@@ -444,15 +444,39 @@
     // so we don't quietly accept settings rss.app will reject when
     // you go to configure them in their dashboard.
     var WEBHOOK_CAP = 50;
-    // Webhook URL template — the actual ?token=<value> is held in
-    // RSSAPP_WEBHOOK_TOKEN on Vercel and never displayed in this
-    // public admin page. You'll paste the full URL (with your real
-    // token) into rss.app's webhook config field per feed.
-    var WEBHOOK_URL_TEMPLATE = 'https://www.standardtopic.com/api/webhooks/rss-app?token=YOUR_RSSAPP_WEBHOOK_TOKEN';
+    var WEBHOOK_URL_BASE = 'https://www.standardtopic.com/api/webhooks/rss-app';
+    var WEBHOOK_TOKEN_LS_KEY = 'st_rssapp_webhook_token';
+
+    function getStoredWebhookToken() {
+      try { return localStorage.getItem(WEBHOOK_TOKEN_LS_KEY) || ''; } catch (e) { return ''; }
+    }
+    function setStoredWebhookToken(v) {
+      try {
+        if (v) localStorage.setItem(WEBHOOK_TOKEN_LS_KEY, v);
+        else   localStorage.removeItem(WEBHOOK_TOKEN_LS_KEY);
+      } catch (e) {}
+    }
+    // Resolved webhook URL — ready to paste into rss.app. If no
+    // token is stored in this browser, returns the URL with the
+    // placeholder so the user knows they need to fill it in.
+    function resolvedWebhookURL() {
+      var t = getStoredWebhookToken();
+      return WEBHOOK_URL_BASE + '?token=' + (t || 'YOUR_RSSAPP_WEBHOOK_TOKEN');
+    }
+    function webhookTokenIsSet() { return !!getStoredWebhookToken(); }
 
     function countEnabledWebhooks() {
       var topics = (data.topics && data.topics.topics) || [];
       return topics.filter(function(t){ return t.webhookEnabled === true; }).length;
+    }
+
+    function copyToClipboardWithFeedback(text, btn, doneLabel) {
+      doneLabel = doneLabel || 'Copied!';
+      var orig = btn.textContent;
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = doneLabel;
+        setTimeout(function(){ btn.textContent = orig; }, 1200);
+      }).catch(function(){ toast('Copy failed — select the URL manually'); });
     }
 
     function renderWebhookPanel() {
@@ -460,6 +484,12 @@
       var remaining = Math.max(0, WEBHOOK_CAP - enabled);
       var atCap = enabled >= WEBHOOK_CAP;
       var statusColor = atCap ? 'var(--danger,#c62828)' : (enabled > WEBHOOK_CAP*0.8 ? '#b85c00' : '#2f7a55');
+      var tokenSet = webhookTokenIsSet();
+      var urlForDisplay = resolvedWebhookURL();
+      var tokenHintColor = tokenSet ? '#2f7a55' : '#b85c00';
+      var tokenHintText  = tokenSet
+        ? 'Token saved locally. The URL below is ready to paste.'
+        : 'Paste your RSSAPP_WEBHOOK_TOKEN from Vercel below to get a ready-to-use URL.';
       var html = ''+
         '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;">' +
           '<div>' +
@@ -470,25 +500,69 @@
             '</div>' +
           '</div>' +
           '<div style="font-size:0.78rem;color:var(--text-muted);max-width:540px;text-align:right;line-height:1.45;">' +
-            'After toggling on, configure the same webhook URL in <a href="https://rss.app" target="_blank" rel="noopener">rss.app dashboard</a> for that feed. Use this URL (substitute your token from Vercel env <code>RSSAPP_WEBHOOK_TOKEN</code>):' +
-            '<div style="margin-top:0.4rem;display:flex;gap:0.4rem;align-items:center;justify-content:flex-end;">' +
-              '<code id="webhook-url-template" style="background:white;padding:0.25rem 0.45rem;border:1px solid var(--border);border-radius:3px;font-size:0.72rem;user-select:all;">'+esc(WEBHOOK_URL_TEMPLATE)+'</code>' +
-              '<button class="btn" id="webhook-copy-btn" type="button">Copy</button>' +
-            '</div>' +
+            'Same webhook URL is used for every feed — rss.app sends the feed_id in the payload and our handler routes it. Paste it into each chosen feed in the <a href="https://rss.app" target="_blank" rel="noopener">rss.app dashboard</a>.' +
           '</div>' +
+        '</div>' +
+
+        // Token row — input that persists to localStorage only.
+        '<div style="margin-top:0.85rem;padding-top:0.75rem;border-top:1px dashed var(--border);">' +
+          '<div style="display:flex;flex-wrap:wrap;gap:0.6rem;align-items:center;">' +
+            '<label for="webhook-token-input" style="font-size:0.82rem;font-weight:600;white-space:nowrap;">rss.app webhook token</label>' +
+            '<input type="password" id="webhook-token-input" placeholder="paste RSSAPP_WEBHOOK_TOKEN value" value="'+escA(getStoredWebhookToken())+'" autocomplete="off" spellcheck="false" style="flex:1;min-width:260px;padding:0.32rem 0.5rem;border:1px solid var(--border);border-radius:4px;font-family:ui-monospace,monospace;font-size:0.78rem;">' +
+            '<button class="btn" id="webhook-token-clear" type="button" title="Clear from this browser">Clear</button>' +
+          '</div>' +
+          '<div style="margin-top:0.35rem;font-size:0.72rem;color:'+tokenHintColor+';">'+esc(tokenHintText)+' Stored in your browser only (<code>localStorage</code>) — never sent to the server, never committed.</div>' +
+        '</div>' +
+
+        // Resolved URL row — copy as one-click.
+        '<div style="margin-top:0.6rem;display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center;">' +
+          '<code id="webhook-url-resolved" style="flex:1;min-width:260px;background:white;padding:0.32rem 0.5rem;border:1px solid var(--border);border-radius:4px;font-size:0.72rem;user-select:all;word-break:break-all;">'+esc(urlForDisplay)+'</code>' +
+          '<button class="btn btn-primary" id="webhook-copy-btn" type="button"'+(tokenSet?'':' disabled title="Set token first"')+'>Copy URL</button>' +
         '</div>';
+
       var panel = document.getElementById('webhook-status-panel');
-      if (panel) {
-        panel.innerHTML = html;
-        var btn = document.getElementById('webhook-copy-btn');
-        if (btn) {
-          btn.onclick = function() {
-            navigator.clipboard.writeText(WEBHOOK_URL_TEMPLATE).then(function(){
-              btn.textContent = 'Copied!';
-              setTimeout(function(){ btn.textContent = 'Copy'; }, 1200);
-            }).catch(function(){ toast('Copy failed — select the URL manually'); });
-          };
-        }
+      if (!panel) return;
+      panel.innerHTML = html;
+
+      // Wire input → localStorage on each keystroke. Re-rendering the
+      // panel on every keystroke would steal focus, so we update the
+      // URL/copy-button inline instead.
+      var input = document.getElementById('webhook-token-input');
+      var urlEl = document.getElementById('webhook-url-resolved');
+      var copyBtn = document.getElementById('webhook-copy-btn');
+      var clearBtn = document.getElementById('webhook-token-clear');
+      if (input) {
+        input.addEventListener('input', function() {
+          var v = input.value.trim();
+          setStoredWebhookToken(v);
+          var fresh = resolvedWebhookURL();
+          if (urlEl) urlEl.textContent = fresh;
+          if (copyBtn) {
+            if (v) { copyBtn.removeAttribute('disabled'); copyBtn.removeAttribute('title'); }
+            else   { copyBtn.setAttribute('disabled', ''); copyBtn.setAttribute('title', 'Set token first'); }
+          }
+          // Also refresh per-row Copy URL buttons (their copy target
+          // is the resolved URL).
+          document.querySelectorAll('button[data-action="copy-webhook-url"]').forEach(function(b){
+            if (v) { b.removeAttribute('disabled'); b.removeAttribute('title'); }
+            else   { b.setAttribute('disabled',''); b.setAttribute('title','Set token first'); }
+          });
+        });
+      }
+      if (copyBtn) {
+        copyBtn.onclick = function() { copyToClipboardWithFeedback(resolvedWebhookURL(), copyBtn); };
+      }
+      if (clearBtn) {
+        clearBtn.onclick = function() {
+          setStoredWebhookToken('');
+          if (input) input.value = '';
+          if (urlEl) urlEl.textContent = resolvedWebhookURL();
+          if (copyBtn) { copyBtn.setAttribute('disabled',''); copyBtn.setAttribute('title','Set token first'); }
+          document.querySelectorAll('button[data-action="copy-webhook-url"]').forEach(function(b){
+            b.setAttribute('disabled',''); b.setAttribute('title','Set token first');
+          });
+          toast('Token cleared');
+        };
       }
     }
 
@@ -514,10 +588,10 @@
       } else {
         t.webhookEnabled = false;
       }
-      // No need to re-render whole topics list — just refresh the
-      // counter panel; checkbox state already reflects the new value
-      // because the user just clicked it.
-      renderWebhookPanel();
+      // Re-render the full topics list so the per-row "Copy URL"
+      // button appears (when toggling on) or disappears (when off)
+      // alongside the checkbox state. Cheap at 100 rows.
+      renderTopics();
       return true;
     }
 
@@ -540,6 +614,10 @@
         else if (btn.dataset.action === 'delete') { if(confirm('Delete "'+btn.dataset.slug+'"?')){ data.topics.topics = data.topics.topics.filter(function(t){return t.slug!==btn.dataset.slug;}); syncFeaturedOrder(); renderTopics(); renderFeaturedOrder(); renderAssignments(); } }
         else if (btn.dataset.action === 'up') { moveTopic(btn.dataset.slug, -1); }
         else if (btn.dataset.action === 'down') { moveTopic(btn.dataset.slug, 1); }
+        else if (btn.dataset.action === 'copy-webhook-url') {
+          if (!webhookTokenIsSet()) { toast('Set rss.app webhook token in panel above first'); return; }
+          copyToClipboardWithFeedback(resolvedWebhookURL(), btn, '✓');
+        }
       };
       // Inline toggle for the Live column — uses a change handler
       // (rather than click delegation) so we can read the new
@@ -555,9 +633,11 @@
     function topicRow(t, sub) {
       var up = t.slug==='home' ? '' : '<button class="btn" data-action="up" data-slug="'+escA(t.slug)+'" title="Move up">↑</button> ';
       var down = t.slug==='home' ? '' : '<button class="btn" data-action="down" data-slug="'+escA(t.slug)+'" title="Move down">↓</button> ';
-      // Live column: shows a toggle checkbox if the topic has an
-      // rssFeedId (no point enabling webhooks for a topic without
-      // a feed). Disabled checkbox with em-dash otherwise.
+      // Live column: checkbox toggle + "Copy URL" shortcut when
+      // webhookEnabled. The URL is the same for every feed (rss.app
+      // sends feed_id in the payload, our handler routes it) — the
+      // per-row copy button is just a UX nicety so the user doesn't
+      // have to scroll to the panel at top during bulk setup.
       var liveCell;
       if (!t.rssFeedId) {
         liveCell = '<td style="text-align:center;color:var(--text-muted);">—</td>';
@@ -566,7 +646,13 @@
         var title = t.webhookEnabled
           ? 'Webhook enabled — uncheck to fall back to 15-min cache'
           : 'Click to enable webhook (limit: '+WEBHOOK_CAP+')';
-        liveCell = '<td style="text-align:center"><input type="checkbox" data-action="toggle-webhook" data-slug="'+escA(t.slug)+'"'+checked+' title="'+escA(title)+'" style="width:16px;height:16px;cursor:pointer;"></td>';
+        var tokenReady = webhookTokenIsSet();
+        var copyBtnHTML = '';
+        if (t.webhookEnabled) {
+          var disAttr = tokenReady ? '' : ' disabled title="Set token in webhook panel first"';
+          copyBtnHTML = ' <button class="btn" data-action="copy-webhook-url" data-slug="'+escA(t.slug)+'" type="button" title="Copy ready-to-use webhook URL"'+disAttr+' style="margin-left:0.4rem;padding:2px 6px;font-size:0.7rem;">Copy URL</button>';
+        }
+        liveCell = '<td style="text-align:center;white-space:nowrap;"><input type="checkbox" data-action="toggle-webhook" data-slug="'+escA(t.slug)+'"'+checked+' title="'+escA(title)+'" style="width:16px;height:16px;cursor:pointer;vertical-align:middle;">'+copyBtnHTML+'</td>';
       }
       return '<tr class="'+(sub?'subtopic-row':'')+'"><td>'+(sub?'↳ ':'')+esc(t.name)+'</td><td class="mono">'+esc(t.slug)+'</td><td class="mono">'+esc(t.parent||'—')+'</td><td class="mono">'+esc(t.rssFeedId||'—')+'</td><td class="mono">'+esc(t.icon||'—')+'</td><td>'+(t.featured?'★':'')+'</td>'+liveCell+'<td style="white-space:nowrap">'+up+down+'<button class="btn" data-action="edit" data-slug="'+escA(t.slug)+'">Edit</button> '+(t.slug!=='home'?'<button class="btn btn-danger" data-action="delete" data-slug="'+escA(t.slug)+'">Del</button>':'')+'</td></tr>';
     }
