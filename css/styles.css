@@ -2244,40 +2244,23 @@ html, body, #app {
 .news-card {
   position: relative;
   border-bottom: 1px solid #eef0f3;
-  transition: background-color 0.14s;
+  transition: background-color 0.16s;
 }
 /* No top border on the first item — the newsfeed-title separator
    (desktop) or the body-tabs underline (mobile) is already the
    visual boundary above the list. */
-.news-card::before {
-  /* Sliding accent bar on the left, revealed on hover/focus.
-     Lives at the card edge so it reads as "this row is active"
-     without crowding the title with a hover underline. */
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: var(--color-primary, #2c4467);
-  transform: scaleY(0);
-  transform-origin: center;
-  transition: transform 0.18s ease;
-  pointer-events: none;
-}
 @media (hover: hover) {
-  .news-card:hover { background: rgba(15, 26, 46, 0.025); }
-  .news-card:hover::before { transform: scaleY(1); }
+  /* Hover affordance is a single, subtle tonal shift — no accent
+     bar, no chrome. The cursor + the tinted row are enough
+     signal that the row is clickable. */
+  .news-card:hover { background: rgba(15, 26, 46, 0.022); }
 }
 .news-card:has(.news-card-link:focus-visible) {
-  background: rgba(15, 26, 46, 0.025);
-}
-.news-card:has(.news-card-link:focus-visible)::before {
-  transform: scaleY(1);
+  background: rgba(15, 26, 46, 0.022);
 }
 .news-card-link {
   display: block;
-  padding: 1.1rem 1.5rem;
+  padding: 1.05rem 1.5rem;
   color: inherit;
   text-decoration: none;
 }
@@ -2289,13 +2272,14 @@ html, body, #app {
   outline: none;
 }
 /* Title — dominant element, never underlined regardless of
-   hover/focus state on the anchor. */
+   hover/focus state on the anchor. Semibold (600) keeps it
+   prominent without the punchy heaviness of full bold (700). */
 .news-card-title {
   font-family: var(--font-display);
   font-size: 1.2rem;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.25;
-  letter-spacing: -0.018em;
+  letter-spacing: -0.02em;
   color: #1e2d44;
   margin: 0;
   text-decoration: none;
@@ -2308,7 +2292,7 @@ html, body, #app {
 .news-card-desc {
   margin: 0.4rem 0 0;
   font-family: var(--font-family);
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   line-height: 1.5;
   color: #54627a;
   text-decoration: none;
@@ -2321,33 +2305,28 @@ html, body, #app {
 .news-card-meta {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.55rem;
   margin: 0.7rem 0 0;
   font-family: var(--font-family);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: #8492a6;
 }
-/* Source pill — small slate chip that reads as a deliberate
-   label, not running prose. Lowercase since these are URLs. */
+/* Source label — almost-imperceptible chip. Just enough fill to
+   read as a deliberate badge instead of running text, but quiet
+   enough that the headline always wins the eye. */
 .news-card-source {
   display: inline-flex;
   align-items: center;
-  padding: 0.18rem 0.55rem;
-  background: #eef1f5;
-  color: #3a4a64;
+  padding: 0.14rem 0.5rem;
+  background: #f4f6f9;
+  color: #6c7a91;
   border-radius: 4px;
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-size: 0.7rem;
+  font-weight: 500;
   letter-spacing: 0.005em;
   line-height: 1.4;
   text-transform: lowercase;
   white-space: nowrap;
-}
-@media (hover: hover) {
-  .news-card:hover .news-card-source {
-    background: #e3e7ee;
-    color: #1e2d44;
-  }
 }
 .news-card-meta-sep { display: none; }
 .news-card-time {
@@ -2371,9 +2350,9 @@ html, body, #app {
    rhythm stays the same so headlines stay scannable. */
 @media (max-width: 640px) {
   .news-list { padding: 0 0 1rem; }
-  .news-card-link { padding: 1rem 1rem; }
-  .news-card-title { font-size: 1.08rem; }
-  .news-card-desc { font-size: 0.92rem; }
+  .news-card-link { padding: 0.95rem 1rem; }
+  .news-card-title { font-size: 1.05rem; }
+  .news-card-desc { font-size: 0.88rem; }
 }
 
 /* === AI Shortcuts === */
