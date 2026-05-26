@@ -598,12 +598,26 @@ function trimOverflowLinks() {
     const actionWidth = actionLink ? actionLink.offsetWidth + 20 : 0;
     let cutoff = containerRight - moreWidth - actionWidth;
 
+    // Tail-only hiding: once any chip overflows past the cutoff,
+    // hide every chip after it too. Previously this iterated each
+    // link independently and hid any whose right edge crossed
+    // the cutoff — which produced a non-sequential visible list
+    // when a wide chip overflowed but the next (narrower) chip
+    // still fit. Result: e.g. World, Business, Politics, Science,
+    // Technology, Sports, *Media*, All Topics + — with
+    // Entertainment skipped between Sports and Media because it
+    // was too wide for the slot it would have taken. The user
+    // reads that as "All Topics + is in a weird mid-list
+    // position." Consecutive-run hiding restores the expected
+    // order.
     let visibleCount = 0;
     let hiddenCount = 0;
+    let hideRest = false;
     links.forEach(l => {
-      if (l.getBoundingClientRect().right > cutoff) {
+      if (hideRest || l.getBoundingClientRect().right > cutoff) {
         l.style.display = 'none';
         hiddenCount++;
+        hideRest = true;
       } else {
         visibleCount++;
       }

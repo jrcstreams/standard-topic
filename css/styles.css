@@ -1594,7 +1594,11 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   font-size: 1.3rem;
   line-height: 1.15;
   font-weight: 600;
-  color: #1e2d44;
+  /* Section title sits in branded navy so the eye separates app
+     chrome ("News Feed") from editorial content (story titles in
+     off-black). Pushed bluer than the previous #1e2d44 so the
+     blueness reads on a casual look, not just on inspection. */
+  color: #1c3a6b;
   letter-spacing: -0.024em;
   margin: 0;
   padding: 0 0 1rem 0;
@@ -2280,14 +2284,13 @@ html, body, #app {
 .news-card-title {
   font-family: var(--font-display);
   font-size: 1.07rem;
-  /* True font-weight stays at medium (500). A very faint
-     0.2px text-shadow in currentColor softly thickens each
-     glyph edge — adds a hair of presence without reading as
-     bolded. Subpixel antialiasing keeps the OS from rendering
-     the glyphs too thinly, which would undo the effect. */
+  /* True medium weight, no shadow trick. The previous 0.2px
+     text-shadow boost gave a half-step heavier feel; removed
+     so the headline reads a touch lighter while staying
+     legible. Antialiased smoothing keeps glyph edges from
+     looking sub-pixel-faint. */
   font-weight: 500;
-  text-shadow: 0 0 0.2px currentColor;
-  -webkit-font-smoothing: subpixel-antialiased;
+  -webkit-font-smoothing: antialiased;
   line-height: 1.25;
   letter-spacing: -0.02em;
   /* Off-black (slight warm-blue tint) for content headlines —
@@ -4283,7 +4286,10 @@ body.app-mode .topic-layout {
   font-size: 1.3rem;
   line-height: 1.15;
   font-weight: 600;
-  color: #1e2d44;
+  /* Branded navy — same value the other panel section titles use
+     so the editorial split (chrome=blue, content=off-black) is
+     consistent across panels. */
+  color: #1c3a6b;
   letter-spacing: -0.024em;
   margin: 0;
   padding: 0;
@@ -4375,7 +4381,9 @@ body.app-mode .topic-layout {
   font-weight: 700;
   text-transform: none;
   letter-spacing: -0.01em;
-  color: #2a3850;
+  /* Sub-section title in the same branded navy as the panel
+     headers, just at body-text size. */
+  color: #1c3a6b;
   margin: 0;
   flex: 0 0 auto;
 }
@@ -5131,7 +5139,8 @@ body.app-mode .topic-layout {
   font-size: 1.3rem;
   line-height: 1.15;
   font-weight: 600;
-  color: #1e2d44;
+  /* Branded navy — matches .newsfeed-title / .sidebar-card-title. */
+  color: #1c3a6b;
   letter-spacing: -0.024em;
   margin: 0;
   padding: 0 0 1rem 0;
