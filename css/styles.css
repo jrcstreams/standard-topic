@@ -2279,16 +2279,14 @@ html, body, #app {
    prominent without the punchy heaviness of full bold (700). */
 .news-card-title {
   font-family: var(--font-display);
-  font-size: 1.13rem;
-  /* True font-weight stays at medium (500). The hair of extra
-     visual weight comes from a 0.4px text-shadow that softly
-     thickens each glyph's edge — fakes a ~half-weight bump
-     without snapping to semibold or relying on the variable
-     font's interpolation. Subpixel antialiasing keeps glyph
-     edges from being rendered too thinly by the OS, which
-     would undo the effect. */
+  font-size: 1.07rem;
+  /* True font-weight stays at medium (500). A very faint
+     0.2px text-shadow in currentColor softly thickens each
+     glyph edge — adds a hair of presence without reading as
+     bolded. Subpixel antialiasing keeps the OS from rendering
+     the glyphs too thinly, which would undo the effect. */
   font-weight: 500;
-  text-shadow: 0 0 0.4px currentColor;
+  text-shadow: 0 0 0.2px currentColor;
   -webkit-font-smoothing: subpixel-antialiased;
   line-height: 1.25;
   letter-spacing: -0.02em;
