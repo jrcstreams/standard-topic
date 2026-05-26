@@ -26,7 +26,20 @@ const RSSAPP_BASE = 'https://api.rss.app/v1/feeds';
 // Edge cache window: 15 minutes fresh, 1 hour stale-while-revalidate.
 // Articles can update within ~15min of publishing — fresh enough for
 // a news site without hammering the upstream API on every request.
+// When a topic has webhookEnabled: true the rss.app webhook fires on
+// publish and /api/webhooks/rss-app invalidates this response by tag,
+// so the 15-min ceiling becomes a fallback rather than the primary
+// latency.
 const CACHE_HEADER = 's-maxage=900, stale-while-revalidate=3600';
+
+// Vercel CDN cache tag — lets /api/webhooks/rss-app invalidate this
+// specific topic's cached response (and only this one) when rss.app
+// notifies us of a new article. Format: topic-{slug}. The catch-all
+// "feeds-all" tag is added so a maintenance script can drop every
+// feed cache at once if ever needed.
+function cacheTags(slug) {
+  return `topic-${slug},feeds-all`;
+}
 
 function findTopic(slug) {
   if (!slug || typeof slug !== 'string') return null;
@@ -53,6 +66,7 @@ module.exports = async function handler(req, res) {
   // a real, navigable page.
   if (!feedId) {
     res.setHeader('Cache-Control', CACHE_HEADER);
+    res.setHeader('Vercel-Cache-Tag', cacheTags(topic.slug));
     return res.status(200).json({
       slug: topic.slug,
       title: topic.name,
@@ -90,6 +104,7 @@ module.exports = async function handler(req, res) {
     const items = Array.isArray(payload?.items) ? payload.items : [];
 
     res.setHeader('Cache-Control', CACHE_HEADER);
+    res.setHeader('Vercel-Cache-Tag', cacheTags(topic.slug));
     return res.status(200).json({
       slug: topic.slug,
       title: topic.name,

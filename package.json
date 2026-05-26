@@ -1,0 +1,9 @@
+{
+  "name": "standard-topic",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Static SPA + Vercel serverless functions. package.json exists so Vercel's bundler includes @vercel/functions for cache-tag invalidation in api/webhooks/rss-app.js.",
+  "dependencies": {
+    "@vercel/functions": "^3.0.0"
+  }
+}

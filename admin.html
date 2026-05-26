@@ -98,7 +98,7 @@
     <button class="tab" data-tab="promptgen">Prompt Generator</button>
     <button class="tab" data-tab="datafiles">Data Files</button>
   </div>
-  <div class="tab-content active" id="tab-topics"><div class="toolbar"><h2>Manage Topics</h2><button class="btn btn-primary" id="add-topic">+ Add Topic</button></div><div id="featured-order-panel" style="background:var(--bg-light);border:1px solid var(--border);border-radius:6px;padding:0.85rem 1rem;margin-bottom:1rem;"></div><table><thead><tr><th>Name</th><th>Slug</th><th>Parent</th><th>RSS Feed ID</th><th>Icon</th><th>Featured</th><th>Actions</th></tr></thead><tbody id="topics-body"></tbody></table></div>
+  <div class="tab-content active" id="tab-topics"><div class="toolbar"><h2>Manage Topics</h2><button class="btn btn-primary" id="add-topic">+ Add Topic</button></div><div id="webhook-status-panel" style="background:var(--bg-light);border:1px solid var(--border);border-radius:6px;padding:0.85rem 1rem;margin-bottom:1rem;"></div><div id="featured-order-panel" style="background:var(--bg-light);border:1px solid var(--border);border-radius:6px;padding:0.85rem 1rem;margin-bottom:1rem;"></div><table><thead><tr><th>Name</th><th>Slug</th><th>Parent</th><th>RSS Feed ID</th><th>Icon</th><th>Featured</th><th>Live</th><th>Actions</th></tr></thead><tbody id="topics-body"></tbody></table></div>
   <div class="tab-content" id="tab-directory"><div class="toolbar"><h2>Shortcuts Directory</h2><button class="btn btn-primary" id="add-shortcut">+ Add Shortcut</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.6rem;">Each shortcut has a <strong>Group</strong> (Discover / Learn / Analyze / More — or any group you defined in <em>Shortcut Groups</em>). The group determines which subsection it appears under on every topic page.</p><table><thead><tr><th>Name</th><th>ID</th><th>Group</th><th>Icon</th><th>Prompt</th><th>Actions</th></tr></thead><tbody id="dir-body"></tbody></table></div>
   <div class="tab-content" id="tab-groups">
     <div class="toolbar"><h2>Shortcut Groups</h2><button class="btn btn-primary" id="add-group">+ Add Group</button></div>
@@ -257,7 +257,7 @@
     // Topics CSV export — flat tabular view of topics.json for
     // spreadsheet review. Round-trippable via "Import Topics CSV".
     function topicsToCSV() {
-      var rows = [['name','slug','parent','icon','rssFeedId','featured','description']];
+      var rows = [['name','slug','parent','icon','rssFeedId','featured','webhookEnabled','description']];
       (data.topics.topics || []).forEach(function(t) {
         rows.push([
           t.name || '',
@@ -266,6 +266,7 @@
           t.icon || '',
           t.rssFeedId || '',
           t.featured ? 'true' : 'false',
+          t.webhookEnabled ? 'true' : 'false',
           t.description || ''
         ]);
       });
@@ -319,6 +320,7 @@
             icon: header.indexOf('icon'),
             rssFeedId: header.indexOf('rssfeedid'),
             featured: header.indexOf('featured'),
+            webhookEnabled: header.indexOf('webhookenabled'),
             description: header.indexOf('description')
           };
           if (idx.name < 0 || idx.slug < 0) throw new Error('CSV must include "name" and "slug" columns');
@@ -331,6 +333,7 @@
             if (idx.icon >= 0 && r[idx.icon]) t.icon = r[idx.icon];
             if (idx.rssFeedId >= 0 && r[idx.rssFeedId]) t.rssFeedId = r[idx.rssFeedId];
             if (idx.featured >= 0) t.featured = /^(true|1|yes)$/i.test((r[idx.featured]||'').trim());
+            if (idx.webhookEnabled >= 0) t.webhookEnabled = /^(true|1|yes)$/i.test((r[idx.webhookEnabled]||'').trim());
             if (idx.description >= 0 && r[idx.description]) t.description = r[idx.description];
             topics.push(t);
           }
@@ -436,6 +439,88 @@
     }
 
     // ===== TOPICS =====
+    // ===== Webhook (rss.app → /api/webhooks/rss-app) state =====
+    // rss.app Pro plan caps webhooks at 50. Admin enforces this here
+    // so we don't quietly accept settings rss.app will reject when
+    // you go to configure them in their dashboard.
+    var WEBHOOK_CAP = 50;
+    // Webhook URL template — the actual ?token=<value> is held in
+    // RSSAPP_WEBHOOK_TOKEN on Vercel and never displayed in this
+    // public admin page. You'll paste the full URL (with your real
+    // token) into rss.app's webhook config field per feed.
+    var WEBHOOK_URL_TEMPLATE = 'https://www.standardtopic.com/api/webhooks/rss-app?token=YOUR_RSSAPP_WEBHOOK_TOKEN';
+
+    function countEnabledWebhooks() {
+      var topics = (data.topics && data.topics.topics) || [];
+      return topics.filter(function(t){ return t.webhookEnabled === true; }).length;
+    }
+
+    function renderWebhookPanel() {
+      var enabled = countEnabledWebhooks();
+      var remaining = Math.max(0, WEBHOOK_CAP - enabled);
+      var atCap = enabled >= WEBHOOK_CAP;
+      var statusColor = atCap ? 'var(--danger,#c62828)' : (enabled > WEBHOOK_CAP*0.8 ? '#b85c00' : '#2f7a55');
+      var html = ''+
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;">' +
+          '<div>' +
+            '<strong style="font-size:0.95rem;">Live updates — rss.app webhooks</strong>' +
+            '<div style="margin-top:0.3rem;font-size:0.85rem;">' +
+              '<span style="color:'+statusColor+';font-weight:600;">'+enabled+' / '+WEBHOOK_CAP+' enabled</span>' +
+              ' · <span style="color:var(--text-muted);">'+remaining+' available</span>' +
+            '</div>' +
+          '</div>' +
+          '<div style="font-size:0.78rem;color:var(--text-muted);max-width:540px;text-align:right;line-height:1.45;">' +
+            'After toggling on, configure the same webhook URL in <a href="https://rss.app" target="_blank" rel="noopener">rss.app dashboard</a> for that feed. Use this URL (substitute your token from Vercel env <code>RSSAPP_WEBHOOK_TOKEN</code>):' +
+            '<div style="margin-top:0.4rem;display:flex;gap:0.4rem;align-items:center;justify-content:flex-end;">' +
+              '<code id="webhook-url-template" style="background:white;padding:0.25rem 0.45rem;border:1px solid var(--border);border-radius:3px;font-size:0.72rem;user-select:all;">'+esc(WEBHOOK_URL_TEMPLATE)+'</code>' +
+              '<button class="btn" id="webhook-copy-btn" type="button">Copy</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      var panel = document.getElementById('webhook-status-panel');
+      if (panel) {
+        panel.innerHTML = html;
+        var btn = document.getElementById('webhook-copy-btn');
+        if (btn) {
+          btn.onclick = function() {
+            navigator.clipboard.writeText(WEBHOOK_URL_TEMPLATE).then(function(){
+              btn.textContent = 'Copied!';
+              setTimeout(function(){ btn.textContent = 'Copy'; }, 1200);
+            }).catch(function(){ toast('Copy failed — select the URL manually'); });
+          };
+        }
+      }
+    }
+
+    // Toggle a topic's webhookEnabled flag. Enforces the WEBHOOK_CAP
+    // by hard-blocking on the 51st — checkbox snaps back to unchecked
+    // and the user gets an explanatory alert.
+    function toggleWebhook(slug, intendedState) {
+      var t = (data.topics && data.topics.topics || []).find(function(x){ return x.slug === slug; });
+      if (!t) return false;
+      if (!t.rssFeedId) {
+        alert('This topic has no RSS Feed ID — set one before enabling live updates.');
+        return false;
+      }
+      if (intendedState === true) {
+        var current = countEnabledWebhooks();
+        // If the topic is already counted (e.g. someone toggled and
+        // the data was rewritten), don't double-count.
+        if (t.webhookEnabled !== true && current >= WEBHOOK_CAP) {
+          alert('Webhook cap reached ('+WEBHOOK_CAP+').\n\nDisable another topic first, then come back to this one.\n\nrss.app Pro caps webhooks at 50; enabling more would silently fail when you configure them in rss.app dashboard.');
+          return false;
+        }
+        t.webhookEnabled = true;
+      } else {
+        t.webhookEnabled = false;
+      }
+      // No need to re-render whole topics list — just refresh the
+      // counter panel; checkbox state already reflects the new value
+      // because the user just clicked it.
+      renderWebhookPanel();
+      return true;
+    }
+
     function renderTopics() {
       var topics = data.topics.topics || [];
       var parents = topics.filter(function(t){return !t.parent && t.slug!=='home';});
@@ -448,6 +533,7 @@
       });
       var tbody = document.getElementById('topics-body');
       tbody.innerHTML = html;
+      renderWebhookPanel();
       tbody.onclick = function(e) {
         var btn = e.target.closest('[data-action]'); if (!btn) return;
         if (btn.dataset.action === 'edit') editTopic(btn.dataset.slug);
@@ -455,11 +541,34 @@
         else if (btn.dataset.action === 'up') { moveTopic(btn.dataset.slug, -1); }
         else if (btn.dataset.action === 'down') { moveTopic(btn.dataset.slug, 1); }
       };
+      // Inline toggle for the Live column — uses a change handler
+      // (rather than click delegation) so we can read the new
+      // checkbox state directly and revert if cap blocks the toggle.
+      tbody.onchange = function(e) {
+        var box = e.target;
+        if (!(box && box.dataset && box.dataset.action === 'toggle-webhook')) return;
+        var intended = box.checked;
+        var accepted = toggleWebhook(box.dataset.slug, intended);
+        if (!accepted) { box.checked = !intended; }
+      };
     }
     function topicRow(t, sub) {
       var up = t.slug==='home' ? '' : '<button class="btn" data-action="up" data-slug="'+escA(t.slug)+'" title="Move up">↑</button> ';
       var down = t.slug==='home' ? '' : '<button class="btn" data-action="down" data-slug="'+escA(t.slug)+'" title="Move down">↓</button> ';
-      return '<tr class="'+(sub?'subtopic-row':'')+'"><td>'+(sub?'↳ ':'')+esc(t.name)+'</td><td class="mono">'+esc(t.slug)+'</td><td class="mono">'+esc(t.parent||'—')+'</td><td class="mono">'+esc(t.rssFeedId||'—')+'</td><td class="mono">'+esc(t.icon||'—')+'</td><td>'+(t.featured?'★':'')+'</td><td style="white-space:nowrap">'+up+down+'<button class="btn" data-action="edit" data-slug="'+escA(t.slug)+'">Edit</button> '+(t.slug!=='home'?'<button class="btn btn-danger" data-action="delete" data-slug="'+escA(t.slug)+'">Del</button>':'')+'</td></tr>';
+      // Live column: shows a toggle checkbox if the topic has an
+      // rssFeedId (no point enabling webhooks for a topic without
+      // a feed). Disabled checkbox with em-dash otherwise.
+      var liveCell;
+      if (!t.rssFeedId) {
+        liveCell = '<td style="text-align:center;color:var(--text-muted);">—</td>';
+      } else {
+        var checked = t.webhookEnabled ? ' checked' : '';
+        var title = t.webhookEnabled
+          ? 'Webhook enabled — uncheck to fall back to 15-min cache'
+          : 'Click to enable webhook (limit: '+WEBHOOK_CAP+')';
+        liveCell = '<td style="text-align:center"><input type="checkbox" data-action="toggle-webhook" data-slug="'+escA(t.slug)+'"'+checked+' title="'+escA(title)+'" style="width:16px;height:16px;cursor:pointer;"></td>';
+      }
+      return '<tr class="'+(sub?'subtopic-row':'')+'"><td>'+(sub?'↳ ':'')+esc(t.name)+'</td><td class="mono">'+esc(t.slug)+'</td><td class="mono">'+esc(t.parent||'—')+'</td><td class="mono">'+esc(t.rssFeedId||'—')+'</td><td class="mono">'+esc(t.icon||'—')+'</td><td>'+(t.featured?'★':'')+'</td>'+liveCell+'<td style="white-space:nowrap">'+up+down+'<button class="btn" data-action="edit" data-slug="'+escA(t.slug)+'">Edit</button> '+(t.slug!=='home'?'<button class="btn btn-danger" data-action="delete" data-slug="'+escA(t.slug)+'">Del</button>':'')+'</td></tr>';
     }
     // Reorder topics. Subtopics swap with the adjacent subtopic of the same parent.
     // Parents move as a block: parent + its consecutive subs, swapped with the previous/next parent block.
@@ -519,11 +628,13 @@
       var parents = data.topics.topics.filter(function(t){return !t.parent && t.slug!=='home';});
       var opts = parents.map(function(p){return '<option value="'+escA(p.slug)+'" '+(topic&&topic.parent===p.slug?'selected':'')+'>'+esc(p.name)+'</option>';}).join('');
       var relatedVal = topic && Array.isArray(topic.relatedParents) ? topic.relatedParents.join(', ') : '';
-      document.getElementById('modal').innerHTML = '<div class="form-overlay" id="overlay"><div class="form-modal"><h3>'+(isNew?'Add':'Edit')+' Topic</h3><div class="fg"><label>Name</label><input id="f-name" value="'+escA(topic?topic.name:'')+'"></div><div class="fg"><label>Slug</label><input id="f-slug" value="'+escA(topic?topic.slug:'')+'" '+(isNew?'':'readonly style="background:var(--bg-light)"')+'></div><div class="fg"><label>Parent</label><select id="f-parent"><option value="">None (parent)</option>'+opts+'</select></div><div class="fg"><label>RSS Feed ID</label><input id="f-rss" value="'+escA(topic?topic.rssFeedId:'')+'"></div><div class="fg"><label>Icon key</label><input id="f-icon" value="'+escA(topic?topic.icon:'')+'" placeholder="e.g. home, globe, briefcase"></div><div class="fg"><label>Featured (shown in main-nav featured list)</label><select id="f-featured"><option value="false">No</option><option value="true" '+(topic&&topic.featured?'selected':'')+'>Yes</option></select></div><div class="fg"><label>Related Parents (comma-separated slugs)</label><input id="f-related" value="'+escA(relatedVal)+'" placeholder="e.g. technology, business-and-finance"></div><div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
+      var webhookChecked = topic && topic.webhookEnabled === true ? ' checked' : '';
+      document.getElementById('modal').innerHTML = '<div class="form-overlay" id="overlay"><div class="form-modal"><h3>'+(isNew?'Add':'Edit')+' Topic</h3><div class="fg"><label>Name</label><input id="f-name" value="'+escA(topic?topic.name:'')+'"></div><div class="fg"><label>Slug</label><input id="f-slug" value="'+escA(topic?topic.slug:'')+'" '+(isNew?'':'readonly style="background:var(--bg-light)"')+'></div><div class="fg"><label>Parent</label><select id="f-parent"><option value="">None (parent)</option>'+opts+'</select></div><div class="fg"><label>RSS Feed ID</label><input id="f-rss" value="'+escA(topic?topic.rssFeedId:'')+'"></div><div class="fg"><label>Icon key</label><input id="f-icon" value="'+escA(topic?topic.icon:'')+'" placeholder="e.g. home, globe, briefcase"></div><div class="fg"><label>Featured (shown in main-nav featured list)</label><select id="f-featured"><option value="false">No</option><option value="true" '+(topic&&topic.featured?'selected':'')+'>Yes</option></select></div><div class="fg"><label>Live updates (rss.app webhook)</label><div style="display:flex;align-items:center;gap:0.5rem;"><input type="checkbox" id="f-webhook"'+webhookChecked+' style="width:16px;height:16px;cursor:pointer;"><span style="font-size:0.78rem;color:var(--text-muted);">When on, news appears within seconds of an rss.app publish. Limit: '+WEBHOOK_CAP+' across all topics. Configure the webhook at rss.app dashboard after saving.</span></div></div><div class="fg"><label>Related Parents (comma-separated slugs)</label><input id="f-related" value="'+escA(relatedVal)+'" placeholder="e.g. technology, business-and-finance"></div><div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
       document.getElementById('f-cancel').addEventListener('click', closeModal);
       document.getElementById('overlay').addEventListener('click', function(e){if(e.target===e.currentTarget)closeModal();});
       document.getElementById('f-save').addEventListener('click', function() {
         var related = document.getElementById('f-related').value.split(',').map(function(s){return s.trim();}).filter(Boolean);
+        var webhookOn = document.getElementById('f-webhook').checked;
         var entry = {
           slug: document.getElementById('f-slug').value.trim(),
           name: document.getElementById('f-name').value.trim(),
@@ -531,9 +642,26 @@
           rssFeedId: document.getElementById('f-rss').value.trim() || undefined,
           icon: document.getElementById('f-icon').value.trim() || undefined,
           featured: document.getElementById('f-featured').value === 'true' || undefined,
+          webhookEnabled: webhookOn || undefined,
           relatedParents: related.length ? related : undefined
         };
         if(!entry.slug||!entry.name){alert('Required: name and slug.');return;}
+        // Enforce webhook cap on form save, same as the inline
+        // checkbox toggle does. Compare against the count excluding
+        // *this* topic so editing an already-enabled topic doesn't
+        // self-block.
+        if (webhookOn && entry.rssFeedId) {
+          var others = (data.topics.topics || []).filter(function(x){ return x.slug !== entry.slug && x.webhookEnabled === true; }).length;
+          if (others >= WEBHOOK_CAP) {
+            alert('Webhook cap reached ('+WEBHOOK_CAP+'). Disable another topic first.');
+            return;
+          }
+        }
+        // Webhooks only make sense for topics that have a feed.
+        if (webhookOn && !entry.rssFeedId) {
+          alert('A RSS Feed ID is required to enable webhooks.');
+          return;
+        }
         if(isNew){
           if(data.topics.topics.find(function(t){return t.slug===entry.slug;})){alert('Slug exists.');return;}
           data.topics.topics.push(entry);
@@ -543,7 +671,7 @@
             // Preserve any fields not exposed in the form (e.g. excludeEvergreen).
             data.topics.topics[i] = Object.assign({}, data.topics.topics[i], entry);
             // Wipe keys that were explicitly cleared to undefined.
-            ['parent','rssFeedId','icon','featured','relatedParents'].forEach(function(k){ if(entry[k]===undefined) delete data.topics.topics[i][k]; });
+            ['parent','rssFeedId','icon','featured','webhookEnabled','relatedParents'].forEach(function(k){ if(entry[k]===undefined) delete data.topics.topics[i][k]; });
           }
         }
         // When a topic was just promoted to featured, append it to the
