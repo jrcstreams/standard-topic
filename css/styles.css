@@ -22,9 +22,12 @@
   --color-success: #38a169;
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   /* General Sans — humanist sans for display roles (section titles,
-     brand wordmark, topic banner). Slight Apple SF Pro flavor without
-     being a copy. Loaded from Fontshare (see index.html). */
-  --font-display: 'General Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+     brand wordmark, topic banner). The variable cut is loaded first
+     so font-weight values between the static stops (e.g. 540) get
+     interpolated smoothly rather than snapping to 500/600. Static
+     cut stays as a fallback for browsers that miss the variable
+     resource. Loaded from Fontshare (see index.html). */
+  --font-display: 'General Sans Variable', 'General Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-weight-light: 300;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
@@ -2277,7 +2280,10 @@ html, body, #app {
 .news-card-title {
   font-family: var(--font-display);
   font-size: 1.2rem;
-  font-weight: 500;
+  /* Sub-step weight via the variable cut of General Sans — sits
+     between medium (500) and semibold (600) so the headline reads
+     as confident but not bold. */
+  font-weight: 540;
   line-height: 1.25;
   letter-spacing: -0.02em;
   color: #1e2d44;
