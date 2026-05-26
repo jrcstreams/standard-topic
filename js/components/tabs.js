@@ -5,12 +5,12 @@ import { navigate } from '../utils/router.js';
 const TAB_CONFIGS = {
   home: [
     { id: 'newsfeed', label: 'News Feed', hash: '#/' },
-    { id: 'shortcuts', label: 'AI Shortcuts', hash: '#/shortcuts' },
+    { id: 'shortcuts', label: 'Intelligence', hash: '#/shortcuts' },
     { id: 'related', label: 'Featured Topics', hash: '#/related' },
   ],
   topic: (slug) => [
     { id: 'newsfeed', label: 'News Feed', hash: `#/topic/${slug}` },
-    { id: 'shortcuts', label: 'AI Shortcuts', hash: `#/topic/${slug}/shortcuts` },
+    { id: 'shortcuts', label: 'Intelligence', hash: `#/topic/${slug}/shortcuts` },
     { id: 'related', label: 'Related Topics', hash: `#/topic/${slug}/related` },
   ],
 };

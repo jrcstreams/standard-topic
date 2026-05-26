@@ -270,8 +270,8 @@ function bodyTabsRow(opts = {}) {
        <span class="tab-pill-label-short">News Feed</span>
      </button>`,
     `<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">
-       <span class="tab-pill-label-long">AI and Content Shortcuts</span>
-       <span class="tab-pill-label-short">AI Shortcuts</span>
+       <span class="tab-pill-label-long">Topic Intelligence</span>
+       <span class="tab-pill-label-short">Intelligence</span>
      </button>`,
   ];
   if (showRelated) {
@@ -1103,7 +1103,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   let html = `
     <div class="${cardClasses.join(' ')} is-multi-select" data-multi="1">
       <div class="sidebar-card-header">
-        <h3 class="sidebar-card-title">Shortcuts${titlePillHTML}</h3>
+        <h3 class="sidebar-card-title">Topic Intelligence${titlePillHTML}</h3>
       </div>
       ${all.length > 0 ? `
         <div class="shortcuts-multi-submit-wrap" role="region" aria-label="Prompt submission" aria-hidden="true">
@@ -1143,29 +1143,32 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       <div class="shortcuts-scroll-wrap">
   `;
 
-  // Quick Links subsection (external searches — Google News, Reddit, X, YouTube)
+  // Web Sources subsection — compact chip strip linking out to
+  // external searches (Google News, Reddit, X, YouTube, DuckDuckGo).
+  // Visually distinct from the AI Actions cards below so users don't
+  // confuse "open an external search" with "send a prompt to an LLM".
   if (contentSearches.length > 0) {
     html += `
-      <section class="shortcuts-subsection quick-links-subsection">
+      <section class="shortcuts-subsection ti-web-sources-section">
         <div class="shortcuts-subsection-header">
-          <h4 class="shortcuts-subsection-title">Quick Links</h4>
+          <h4 class="shortcuts-subsection-title">Web Sources</h4>
         </div>
-        <ul class="ai-shortcut-bullet-list quick-links-bullet-list">
-          ${contentSearches.map(s => quickLinkPill(s, topicName)).join('')}
+        <ul class="ti-web-source-chips">
+          ${contentSearches.map(s => webSourceChip(s, topicName)).join('')}
         </ul>
       </section>
     `;
   }
 
-  // AI Shortcuts subsection — shortcuts are grouped into
-  // Discover / Learn / Analyze (and an "Other" bucket for anything
-  // unclassified) using a name-keyword heuristic. Each shortcut row
-  // is a checkbox + name + direct-access arrow. Multi-select is
-  // always on, so no toggle in the header.
+  // AI Actions subsection — shortcuts are grouped into
+  // Discover / Learn / Analyze (and a "More" bucket for anything
+  // unclassified). Each shortcut renders as a card (icon + name +
+  // evergreen description) with a group-tinted accent. Multi-select
+  // is always on; the whole card is the toggle target.
   html += `
-    <section class="shortcuts-subsection ai-shortcuts-subsection">
+    <section class="shortcuts-subsection ti-actions-section">
       <div class="shortcuts-subsection-header">
-        <h4 class="shortcuts-subsection-title">AI Shortcuts</h4>
+        <h4 class="shortcuts-subsection-title">AI Actions</h4>
       </div>
   `;
 
@@ -1185,11 +1188,12 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     groupOrder.forEach(g => {
       const items = groups[g.key];
       if (!items || items.length === 0) return;
+      const accentClass = `ti-action-group--${g.key}`;
       html += `
-        <div class="ai-shortcut-group">
-          <h5 class="ai-shortcut-group-label">${g.label}</h5>
-          <ul class="ai-shortcut-bullet-list">
-            ${items.map(s => shortcutBulletItem(s, topicName)).join('')}
+        <div class="ai-shortcut-group ti-action-group ${accentClass}" data-group="${g.key}">
+          <h5 class="ai-shortcut-group-label ti-action-group-label">${g.label}</h5>
+          <ul class="ti-action-cards">
+            ${items.map(s => shortcutCard(s, topicName, g.key)).join('')}
           </ul>
         </div>
       `;
@@ -1481,6 +1485,67 @@ function shortcutItem(shortcut, topicName) {
       <span class="sidebar-shortcut-name">${escapeHTML(shortcut.name)}</span>
       <span class="sidebar-shortcut-chev" aria-hidden="true">›</span>
     </button>
+  `;
+}
+
+// AI action card — single click target. Renders icon + name +
+// evergreen description in a small elevated card with a group-
+// tinted accent. Click toggles multi-select; the marker check
+// overlays on the icon when selected. Keeps the .sidebar-shortcut
+// + .ai-shortcut-select-btn classes so the existing select / submit
+// handlers still pick it up.
+function shortcutCard(shortcut, topicName, groupKey) {
+  const prompt = shortcut.prompt.replace(/\{topic\}/gi, topicName);
+  const iconHTML = renderIcon(shortcut.icon, 'ti-action-card-icon-svg');
+  const description = shortcut.description && shortcut.description.trim()
+    ? `<span class="ti-action-card-desc">${escapeHTML(shortcut.description)}</span>`
+    : '';
+  return `
+    <li class="ai-shortcut-bullet-row ti-action-card-row">
+      <button class="sidebar-shortcut ai-shortcut-select-btn ti-action-card"
+              data-prompt="${escapeAttr(prompt)}"
+              data-name="${escapeAttr(shortcut.name)}"
+              data-icon-key="${escapeAttr(shortcut.icon)}"
+              data-group="${escapeAttr(groupKey || '')}"
+              aria-pressed="false"
+              title="${escapeAttr(shortcut.name)}">
+        <span class="ti-action-card-icon" aria-hidden="true">
+          ${iconHTML}
+          <span class="ai-shortcut-marker ti-action-card-marker" aria-hidden="true">
+            <svg class="ai-shortcut-marker-check ti-action-card-check" viewBox="0 0 14 14" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="2 7 6 11 12 3"/>
+            </svg>
+          </span>
+        </span>
+        <span class="ti-action-card-body">
+          <span class="sidebar-shortcut-name ti-action-card-name">${escapeHTML(shortcut.name)}</span>
+          ${description}
+        </span>
+      </button>
+    </li>
+  `;
+}
+
+// Web Source chip — compact pill linking out to an external search.
+// Distinct from the AI Action cards above so users immediately read
+// "external link" vs. "send to an LLM". Icon + name in a single
+// horizontal chip; the chip strip wraps to fit the sidebar width.
+function webSourceChip(search, topicName) {
+  const url = search.urlTemplate.replace(/\{query\}/g, encodeURIComponent(topicName));
+  const iconHTML = renderIcon(search.icon, 'ti-web-source-chip-icon');
+  return `
+    <li class="ti-web-source-chip-row">
+      <a class="ti-web-source-chip quick-link-pill"
+         href="${url}"
+         target="_blank"
+         rel="noopener noreferrer"
+         data-name="${escapeAttr(search.name)}"
+         title="Open ${escapeAttr(search.name)} search">
+        ${iconHTML}
+        <span class="ti-web-source-chip-name">${escapeHTML(search.name)}</span>
+        <span class="ti-web-source-chip-arrow" aria-hidden="true">↗</span>
+      </a>
+    </li>
   `;
 }
 

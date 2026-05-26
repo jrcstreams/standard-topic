@@ -9840,3 +9840,246 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   margin-left: 1.15rem;
 }
 
+/* ===============================================================
+   Topic Intelligence — Web Sources + AI Actions
+   ===============================================================
+   Two visually distinct subsections inside the renamed sidebar card.
+
+   Web Sources (top) — compact horizontal chips. External links to
+   Reddit/Google News/X/YouTube/DuckDuckGo. Reads as "open external
+   search" at a glance.
+
+   AI Actions (below) — group-tinted cards with icon + name + an
+   evergreen one-line description. Reads as "send a prompt to an
+   LLM". Group accent colors (Discover/Learn/Analyze/More) make the
+   four categories distinguishable without sub-headers competing
+   with the section header.
+   =============================================================== */
+
+/* --- Web Sources chips ------------------------------------------------ */
+.ti-web-sources-section { margin-bottom: 1.35rem; }
+.ti-web-source-chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.4rem;
+}
+.ti-web-source-chip-row { margin: 0; padding: 0; }
+.ti-web-source-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.32rem 0.6rem 0.32rem 0.5rem;
+  background: #f3f5f9;
+  border: 1px solid #e2e6ee;
+  border-radius: 999px;
+  font-family: var(--font-family);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: #36425a;
+  text-decoration: none;
+  transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.14s;
+  line-height: 1;
+}
+.ti-web-source-chip-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: #5d6b7e;
+}
+.ti-web-source-chip-arrow {
+  font-size: 0.7rem;
+  color: #8290a8;
+  margin-left: 0.05rem;
+  line-height: 1;
+}
+.ti-web-source-chip:hover {
+  background: #e7ecf5;
+  border-color: #c8d2e4;
+  color: #1c3a6b;
+  text-decoration: none;
+  transform: translateY(-0.5px);
+}
+.ti-web-source-chip:hover .ti-web-source-chip-icon { color: #1c3a6b; }
+
+/* Multi-select mode: external links should remain clickable visually
+   but the toast still surfaces when clicked (handled in JS). No
+   muting needed — they read as a separate affordance from the cards. */
+
+/* --- AI Actions cards ------------------------------------------------- */
+.ti-actions-section { /* inherits .shortcuts-subsection layout */ }
+
+/* Group accent palette — each group gets its own tint on the
+   eyebrow label + card icon. Subtle on the card itself so the
+   reading rhythm comes from the name + description, not a wash
+   of color across the row. */
+.ti-action-group { --ti-accent: #5d6b7e; }
+.ti-action-group--discover { --ti-accent: #3261a0; }
+.ti-action-group--learn    { --ti-accent: #2e8a73; }
+.ti-action-group--analyze  { --ti-accent: #b48528; }
+.ti-action-group--more     { --ti-accent: #5d6b7e; }
+
+.ti-action-group + .ti-action-group { margin-top: 1.15rem; }
+.ti-action-group-label {
+  color: var(--ti-accent);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  margin: 0 0 0.45rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.ti-action-group-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, color-mix(in srgb, var(--ti-accent) 35%, transparent), transparent);
+}
+
+.ti-action-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.ti-action-card-row { margin: 0; padding: 0; }
+
+.shortcuts-sidebar .sidebar-shortcut.ti-action-card {
+  /* Override the underlying .sidebar-shortcut.ai-shortcut-select-btn
+     base styles: switch from flat row to elevated card. */
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  align-items: start;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.55rem 0.65rem 0.6rem 0.55rem;
+  background: #ffffff;
+  border: 1px solid #e4e8f0;
+  border-radius: 8px;
+  text-align: left;
+  font-family: var(--font-family);
+  cursor: pointer;
+  color: var(--color-text);
+  transition: border-color 0.16s, box-shadow 0.16s, transform 0.16s, background 0.14s;
+}
+.ti-action-card-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  /* Tint background to the group accent at low opacity — quiet
+     enough to not compete with the name, strong enough to read
+     as a category cue at a glance. */
+  background: color-mix(in srgb, var(--ti-accent) 12%, #ffffff);
+  color: var(--ti-accent);
+  flex-shrink: 0;
+}
+.ti-action-card-icon-svg {
+  width: 17px;
+  height: 17px;
+  color: inherit;
+}
+.ti-action-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+.shortcuts-sidebar .ti-action-card .ti-action-card-name {
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.008em;
+  color: #1c2538;
+  /* Cancel the bullet-row reset above */
+  flex: 0 0 auto;
+}
+.ti-action-card-desc {
+  font-size: 0.78rem;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: -0.002em;
+  color: #5d6b7e;
+}
+
+/* Hover elevation — subtle lift + accent border so the card reads
+   as "interactive" without going full button. */
+@media (hover: hover) {
+  .shortcuts-sidebar .sidebar-shortcut.ti-action-card:hover {
+    background: #ffffff;
+    border-color: color-mix(in srgb, var(--ti-accent) 45%, #d5dbe6);
+    box-shadow: 0 2px 8px -2px color-mix(in srgb, var(--ti-accent) 22%, transparent),
+                0 1px 2px rgba(20, 30, 50, 0.04);
+    transform: translateY(-1px);
+  }
+  .shortcuts-sidebar .sidebar-shortcut.ti-action-card:hover .ti-action-card-icon {
+    background: color-mix(in srgb, var(--ti-accent) 18%, #ffffff);
+  }
+}
+
+/* Multi-select state — replace the dot in the icon slot with a
+   filled-accent check overlay. Card border + name pick up the
+   accent so the selection state reads from a meter away. */
+.ti-action-card-marker {
+  position: absolute;
+  inset: 0;
+  display: none;
+  border-radius: 7px;
+  background: var(--ti-accent);
+  color: #fff;
+  align-items: center;
+  justify-content: center;
+}
+.ti-action-card-check { color: #fff; }
+.shortcuts-sidebar .sidebar-shortcut.ti-action-card.is-multi-selected {
+  border-color: var(--ti-accent);
+  background: color-mix(in srgb, var(--ti-accent) 4%, #ffffff);
+  box-shadow: 0 0 0 1px var(--ti-accent) inset;
+}
+.shortcuts-sidebar .sidebar-shortcut.ti-action-card.is-multi-selected
+  .ti-action-card-marker { display: inline-flex; }
+.shortcuts-sidebar .sidebar-shortcut.ti-action-card.is-multi-selected
+  .ti-action-card-icon-svg { visibility: hidden; }
+.shortcuts-sidebar .sidebar-shortcut.ti-action-card.is-multi-selected
+  .ti-action-card-name { color: var(--ti-accent); }
+
+/* Hide the legacy bullet marker on cards (it was the original
+   selection indicator before the card redesign — keeping the
+   .ai-shortcut-marker classname intact so the existing JS still
+   works, but visually we replaced it with the icon-overlay check
+   above). */
+.ti-action-card .ai-shortcut-marker-dot { display: none; }
+
+/* Mobile (tabbed mode): cards stay full-width single-column. The
+   inner grid stays the same — just slightly tighter padding so the
+   card stack doesn't feel sparse on narrow viewports. */
+@media (max-width: 480px) {
+  .shortcuts-sidebar .sidebar-shortcut.ti-action-card {
+    padding: 0.5rem 0.55rem 0.55rem 0.5rem;
+    gap: 0.55rem;
+  }
+  .ti-action-card-icon { width: 28px; height: 28px; }
+  .ti-action-card-icon-svg { width: 15px; height: 15px; }
+}
+
+/* Custom-search page goes 2-column at ≥720px (same breakpoint the
+   legacy bullet list used). Cards work well in 2 columns since each
+   is self-contained. */
+@media (min-width: 720px) {
+  .topic-layout.is-custom .ti-actions-section .ti-action-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+}
+
