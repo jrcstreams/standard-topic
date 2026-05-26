@@ -573,23 +573,17 @@ function trimOverflowLinks() {
     if (relatedBtnReset) relatedBtnReset.style.display = 'none';
 
     // Every chip stays visible at every viewport — the chip strip
-    // is now a horizontal scroller (overflow-x: auto) with arrow
-    // affordances on hover-capable pointers. Trim only runs in
-    // home-subnav mode, where we still want the "show ≥4 featured
-    // chips on row 1 or collapse to All Topics +" logic.
-    const isApp = document.body.classList.contains('app-mode');
-    const isMobile = window.matchMedia('(max-width: 899.98px)').matches;
-    if (isApp && isMobile) {
-      container.classList.remove('is-empty');
-      return;
-    }
-    // Topic pages at desktop: also let chips scroll. Only home
-    // subnav at desktop still uses trim (for its collapse logic).
-    const isHomeAtDesktop = !!actionLink && !moreLink;
-    if (!isHomeAtDesktop) {
-      container.classList.remove('is-empty');
-      return;
-    }
+    // is a horizontal scroller (overflow-x: auto) with arrow
+    // affordances on hover-capable pointers, on both mobile AND
+    // desktop. Previously home-desktop went through a separate
+    // "show as many as fit + hide the rest" trim path that left
+    // "All Topics +" sitting at the right edge with the
+    // overflowing chips display:none'd, which was confusing —
+    // user expectation is a scrollable row containing every
+    // featured topic, with "All Topics +" pinned as the last
+    // item of that scroll.
+    container.classList.remove('is-empty');
+    return;
 
     const containerRight = container.getBoundingClientRect().right;
     // First measure with "More +" / "All Topics +" reserved so we can
