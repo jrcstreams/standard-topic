@@ -1594,11 +1594,6 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   font-size: 1.3rem;
   line-height: 1.15;
   font-weight: 600;
-  /* 0.35px text-shadow softly thickens each glyph for a
-     between-600-and-700 visual weight without snapping to bold.
-     Same trick used elsewhere (see .news-card-title comment). */
-  text-shadow: 0 0 0.35px currentColor;
-  -webkit-font-smoothing: subpixel-antialiased;
   /* Section title sits in branded navy so the eye separates app
      chrome ("News Feed") from editorial content (story titles in
      off-black). Pushed bluer than the previous #1e2d44 so the
@@ -2246,11 +2241,10 @@ html, body, #app {
 .news-list {
   display: flex;
   flex-direction: column;
-  padding: 0 0 1rem;
-  /* Negative side margin so each row's hover tint can fill the
-     full content column edge-to-edge without a visible inset.
-     Inner padding on .news-card-link restores readable text
-     margins. */
+  /* Top padding gives the first story extra breathing room
+     below the .newsfeed-title separator — desktop only; mobile
+     scope rules override below. */
+  padding: 0.6rem 0 1rem;
   margin: 0;
 }
 .news-card {
@@ -4298,8 +4292,6 @@ body.app-mode .topic-layout {
   font-size: 1.3rem;
   line-height: 1.15;
   font-weight: 600;
-  text-shadow: 0 0 0.35px currentColor;
-  -webkit-font-smoothing: subpixel-antialiased;
   /* Branded navy — same value the other panel section titles use
      so the editorial split (chrome=blue, content=off-black) is
      consistent across panels. */
@@ -5153,8 +5145,6 @@ body.app-mode .topic-layout {
   font-size: 1.3rem;
   line-height: 1.15;
   font-weight: 600;
-  text-shadow: 0 0 0.35px currentColor;
-  -webkit-font-smoothing: subpixel-antialiased;
   /* Branded navy — matches .newsfeed-title / .sidebar-card-title. */
   color: #1c3a6b;
   letter-spacing: -0.024em;
