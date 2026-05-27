@@ -232,7 +232,12 @@ function renderLayout(route) {
       wireChipStripScrollEnd();
       wireSubnavCompactMeasure();
     } else {
-      renderSubNav(subHeader, { title: route.term, iconKey: 'search', prefix: 'Search' });
+      // Custom-search subnav: render the term inside what reads as
+      // an editable search field — magnify icon on the left, the
+      // term as the value, "Edit search" affordance on the right.
+      // Clicking anywhere reopens the search modal pre-filled with
+      // the current term so the user can refine without retyping.
+      renderCustomSearchSubnav(subHeader, route.term);
       observeSubnavHeight();
       setupResponsiveNav();
     }
@@ -334,6 +339,41 @@ function setupGlobalTabPillDelegation() {
       // so a subsequent click reads the right "current" state.
       route.tab = tab;
     }
+  });
+}
+
+// Custom-search subnav — renders the search term inside a button
+// that visually reads as an editable search field. Click anywhere
+// on it reopens the Topics modal with the term pre-filled so the
+// user can refine the search rather than retype it. The "Edit"
+// affordance on the right makes the click target's purpose
+// explicit at a glance.
+function renderCustomSearchSubnav(container, term) {
+  container.innerHTML = `
+    <div class="topic-banner custom-search-banner">
+      <div class="topic-banner-row">
+        <button type="button" class="custom-search-display" data-action="edit-search" aria-label="Edit search">
+          <span class="custom-search-display-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </span>
+          <span class="custom-search-display-label">Search</span>
+          <span class="custom-search-display-term">${escapeHTML(term)}</span>
+          <span class="custom-search-display-edit" aria-hidden="true">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            <span>Edit</span>
+          </span>
+        </button>
+      </div>
+    </div>
+  `;
+  container.querySelector('[data-action="edit-search"]')?.addEventListener('click', () => {
+    openSearchOverlay({ focusInput: true, initialQuery: term });
   });
 }
 

@@ -182,7 +182,11 @@ function openOverlay(opts = {}) {
   expandedSlug = null;
   showAllTopics = false;
   highlightIndex = -1;
-  renderBody('');
+  // initialQuery lets callers pre-fill the input — used by the
+  // custom-search subnav "edit search" affordance so clicking the
+  // search-field display reopens the modal with the existing term
+  // ready to refine, not a blank slate.
+  renderBody(opts.initialQuery || '');
   bodyEl.scrollTop = 0;
   // Default: focus the input on desktop, not on touch (touch focus
   // forces the soft keyboard which is jarring when the user just
@@ -190,7 +194,14 @@ function openOverlay(opts = {}) {
   // overrides this with focusInput: true so the user lands ready
   // to type on every device.
   const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-  if (opts.focusInput || !isTouch) inputEl?.focus();
+  if (opts.focusInput || !isTouch) {
+    const input = bodyEl.querySelector('.search-overlay-input');
+    if (input) {
+      input.focus();
+      const len = input.value.length;
+      input.setSelectionRange(len, len);
+    }
+  }
 }
 
 function closeOverlay() {
