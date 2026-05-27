@@ -314,12 +314,17 @@ body.sticky-always.has-subnav #content {
   flex: 0 0 auto;
   width: auto;
 }
+/* Pill chips on the dark nav — toned down from stark white to a
+   soft cool-slate (#dde3ec). Reads as a quiet utility chip rather
+   than a high-contrast CTA, so the nav has less visual shouting.
+   Hover lifts to brighter slate, keeping a subtle response without
+   going full white. */
 .sticky-search .search-bar {
   height: 34px;
   padding: 0 0.95rem;
-  background: rgba(255, 255, 255, 0.94);
-  color: var(--color-primary-dark, #0f1a2e);
-  border: 1px solid rgba(255, 255, 255, 0.94);
+  background: #dde3ec;
+  color: #1e2d44;
+  border: 1px solid #dde3ec;
   border-radius: 8px;
   font-size: 0.8rem;
   font-weight: var(--font-weight-semibold);
@@ -327,7 +332,7 @@ body.sticky-always.has-subnav #content {
   white-space: nowrap;
   flex-shrink: 0;
   gap: 0.4rem;
-  transition: background 0.14s, color 0.14s, transform 0.08s;
+  transition: background 0.14s, color 0.14s, border-color 0.14s, transform 0.08s;
   line-height: 1;
   display: inline-flex;
   align-items: center;
@@ -335,18 +340,18 @@ body.sticky-always.has-subnav #content {
   cursor: pointer;
 }
 .sticky-search .search-bar-icon {
-  color: var(--color-primary-dark, #0f1a2e) !important;
+  color: #2c4467 !important;
   flex-shrink: 0;
 }
 .sticky-search .search-bar:hover,
 .sticky-search .search-bar:focus-visible {
-  background: #ffffff;
-  border-color: #ffffff;
-  color: var(--color-primary-dark, #0f1a2e);
+  background: #ecf0f6;
+  border-color: #ecf0f6;
+  color: #0f1a2e;
 }
 .sticky-search .search-bar:hover .search-bar-icon,
 .sticky-search .search-bar:focus-visible .search-bar-icon {
-  color: var(--color-primary-dark, #0f1a2e) !important;
+  color: #0f1a2e !important;
 }
 .sticky-search .search-bar:active { transform: translateY(1px); }
 
@@ -354,9 +359,9 @@ body.sticky-always.has-subnav #content {
 .sticky-cta {
   height: 34px;
   padding: 0 0.95rem;
-  background: rgba(255, 255, 255, 0.94);
-  color: var(--color-primary-dark, #0f1a2e);
-  border: 1px solid rgba(255, 255, 255, 0.94);
+  background: #dde3ec;
+  color: #1e2d44;
+  border: 1px solid #dde3ec;
   border-radius: 8px;
   font-size: 0.8rem;
   font-weight: var(--font-weight-semibold);
@@ -365,7 +370,7 @@ body.sticky-always.has-subnav #content {
   white-space: nowrap;
   flex-shrink: 0;
   gap: 0.4rem;
-  transition: background 0.14s, color 0.14s, transform 0.08s;
+  transition: background 0.14s, color 0.14s, border-color 0.14s, transform 0.08s;
   line-height: 1;
   display: inline-flex;
   align-items: center;
@@ -373,9 +378,9 @@ body.sticky-always.has-subnav #content {
 }
 
 .sticky-cta:hover {
-  background: #ffffff;
-  border-color: #ffffff;
-  color: var(--color-primary-dark, #0f1a2e);
+  background: #ecf0f6;
+  border-color: #ecf0f6;
+  color: #0f1a2e;
   text-decoration: none;
 }
 .sticky-cta:active { transform: translateY(1px); }
