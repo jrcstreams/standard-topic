@@ -10288,6 +10288,27 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   color: #6a7689;
   margin: 0;
 }
+
+/* Mobile: drop the card shape entirely. Hide the description,
+   collapse the chip to a compact horizontal pill (icon + name),
+   tighten padding. Card-with-description is a desktop affordance;
+   on mobile the descriptions cause uneven row heights and waste
+   vertical space — names alone are enough. */
+@media (max-width: 899.98px) {
+  .ti-web-source-chip {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.42rem 0.6rem;
+    border-radius: 7px;
+  }
+  .ti-web-source-chip-header { width: auto; }
+  .ti-web-source-chip-desc { display: none; }
+  .ti-web-source-chip-name {
+    font-size: 0.8rem;
+  }
+  .ti-web-source-chip-icon { width: 14px; height: 14px; }
+}
 .ti-web-source-chip-icon {
   width: 17px;
   height: 17px;
