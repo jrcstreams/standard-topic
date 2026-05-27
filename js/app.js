@@ -3,7 +3,7 @@ import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getSho
 import { getPreferredModelId, setPreferredModelId, submitPrompt } from './utils/ai-models.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { renderSearchBar, initSearchOverlay } from './components/search-modal.js';
+import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js';
 import { renderNewsFeed } from './components/newsfeed.js';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
@@ -754,6 +754,12 @@ function renderStickyHeroBar(container, route) {
             <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
           </svg>
         </a>
+        <button type="button" class="sticky-search-icon" id="nav-search" aria-label="Search topics">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </button>
         <button type="button" class="sticky-settings" id="nav-settings" aria-label="Settings">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="3"/>
@@ -769,6 +775,14 @@ function renderStickyHeroBar(container, route) {
   // Settings gear in the main nav — opens the Settings modal.
   document.getElementById('nav-settings')?.addEventListener('click', () => {
     window.dispatchEvent(new CustomEvent('open-settings-modal'));
+  });
+
+  // Magnify icon — opens the Topics modal with the search input
+  // focused so the user lands ready to type. Same modal as the
+  // "Choose Topics" pill earlier in the nav, but the icon signals
+  // "search" specifically rather than "browse".
+  document.getElementById('nav-search')?.addEventListener('click', () => {
+    openSearchOverlay({ focusInput: true });
   });
 
   // Nav menu panel — appended to body so it's not clipped by header overflow

@@ -452,6 +452,41 @@ body.sticky-always.has-subnav #content {
   .sticky-home { width: 30px; height: 30px; }
 }
 
+/* Magnify icon — opens the Topics modal with input focused. Sits
+   between Home and Settings in the main nav icon cluster, matching
+   their dark-nav-chip treatment so the three read as a single
+   utility group (Home · Search · Settings). The Choose Topics
+   pill earlier in the nav still exists for users who want to
+   browse, not search — this is the "I want to type a topic" path. */
+.sticky-search-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+  transition: background 0.14s, color 0.14s, border-color 0.14s, transform 0.06s;
+}
+.sticky-search-icon:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.28);
+}
+.sticky-search-icon:active { transform: translateY(1px); }
+.sticky-search-icon svg { display: block; }
+@media (max-width: 640px) {
+  .sticky-search-icon { width: 32px; height: 32px; }
+}
+@media (max-width: 400px) {
+  .sticky-search-icon { width: 30px; height: 30px; }
+}
+
 /* Navmenu Settings button — sits in the footer row alongside
    About / Terms / GitHub, with a leading gear icon. */
 .navmenu-link-button {
@@ -9967,9 +10002,9 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title {
   color: var(--ti-accent);
   font-family: var(--font-family);
-  font-size: 0.62rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.085em;
   text-transform: uppercase;
   display: flex;
   align-items: center;
@@ -9997,7 +10032,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   body.app-mode .topic-layout:not(.is-custom)
     .ti-web-sources-section .shortcuts-subsection-title {
     font-family: var(--font-family);
-    font-size: 0.62rem;
+    font-size: 0.78rem;
     font-weight: 700;
     color: var(--ti-accent);
     letter-spacing: 0.09em;
@@ -10023,44 +10058,50 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   padding: 0 0.25rem 0 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.32rem 0.32rem;
+  gap: 0.38rem 0.38rem;
 }
 .ti-web-source-chip-row { margin: 0; padding: 0; }
+/* Chips read as "outbound portals" — white pills sitting on the
+   panel's tinted body so they pop as interactive surfaces, not as
+   sticker labels on a colored band. Slightly larger than the
+   previous gray-on-tint version since the contrast carries more
+   visual weight and they can take it. */
 .ti-web-source-chip {
   display: inline-flex;
   align-items: center;
-  gap: 0.32rem;
-  padding: 0.22rem 0.5rem 0.22rem 0.42rem;
-  background: #f3f5f9;
-  border: 1px solid #e2e6ee;
+  gap: 0.4rem;
+  padding: 0.32rem 0.62rem 0.32rem 0.55rem;
+  background: #ffffff;
+  border: 1px solid #d9dee8;
   border-radius: 999px;
   font-family: var(--font-family);
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: -0.005em;
-  color: #36425a;
+  color: #2c3a52;
   text-decoration: none;
-  transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.14s;
+  transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.14s, box-shadow 0.14s;
   line-height: 1;
 }
 .ti-web-source-chip-icon {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
   color: #5d6b7e;
 }
 .ti-web-source-chip-arrow {
-  font-size: 0.6rem;
+  font-size: 0.68rem;
   color: #8290a8;
-  margin-left: 0.02rem;
+  margin-left: 0.05rem;
   line-height: 1;
 }
 .ti-web-source-chip:hover {
-  background: #e7ecf5;
-  border-color: #c8d2e4;
+  background: #ffffff;
+  border-color: #1c3a6b;
   color: #1c3a6b;
   text-decoration: none;
   transform: translateY(-0.5px);
+  box-shadow: 0 2px 6px rgba(28, 58, 107, 0.08);
 }
 .ti-web-source-chip:hover .ti-web-source-chip-icon { color: #1c3a6b; }
 
@@ -10081,14 +10122,14 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .ti-action-group--analyze  { --ti-accent: #b48528; }
 .ti-action-group--more     { --ti-accent: #5d6b7e; }
 
-.ti-action-group + .ti-action-group { margin-top: 1.05rem; }
+.ti-action-group + .ti-action-group { margin-top: 1.15rem; }
 .ti-action-group-label {
   color: var(--ti-accent);
   font-weight: 700;
-  letter-spacing: 0.1em;
-  font-size: 0.62rem;
+  letter-spacing: 0.085em;
+  font-size: 0.78rem;
   text-transform: uppercase;
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.6rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
