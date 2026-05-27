@@ -32,7 +32,7 @@
       "id": "economic-indicators-roundup",
       "name": "Economic Indicators Roundup",
       "icon": "economic-indicators-roundup",
-      "prompt": "Summarize the most recent major economic indicators \u2014 GDP, jobs report, inflation (CPI/PCE), consumer spending, manufacturing, housing. For each, give the latest reading, the prior reading, what was expected, and what it signals about the economy.",
+      "prompt": "Summarize the most recent major economic indicators — GDP, jobs report, inflation (CPI/PCE), consumer spending, manufacturing, housing. For each, give the latest reading, the prior reading, what was expected, and what it signals about the economy.",
       "description": "Where the key economic gauges stand"
     },
     {
@@ -152,49 +152,56 @@
       "name": "Latest News and Developments",
       "icon": "latest-news",
       "prompt": "What's the latest news on the topic of: {TOPIC}? Cover the most significant developments from the past week or so. For each: what happened, why it matters, and what to watch next. Skip noise and prioritize stories with real significance. Organize by significance, not chronology.",
-      "description": "Recent updates worth knowing about"
+      "description": "Recent updates worth knowing about",
+      "group": "discover"
     },
     {
       "id": "trends",
       "name": "Trends to Watch",
       "icon": "trends",
       "prompt": "What are the most important trends right now and over the next year or two shaping the topic of: {TOPIC}? For each trend: what's driving it, who's leading or being affected, and how to tell if it's playing out.",
-      "description": "Emerging patterns worth following"
+      "description": "Emerging patterns worth following",
+      "group": "discover"
     },
     {
       "id": "risks-red-flags",
       "name": "Risks and Red Flags",
       "icon": "risks-red-flags",
       "prompt": "What are the biggest risks, warning signs, and red flags right now on the topic of: {TOPIC}? Cover what could go wrong, where vulnerabilities are building, and what credible observers are worried about. Distinguish real risks from hype.",
-      "description": "Risks and warning signs to watch"
+      "description": "Risks and warning signs to watch",
+      "group": "analyze"
     },
     {
       "id": "key-players",
       "name": "Key Players to Know",
       "icon": "key-players",
       "prompt": "Who are the most important people, companies, organizations, or institutions right now on the topic of: {TOPIC}? For each: who they are, why they matter, and what to know about their current position. Cover both the obvious heavyweights and rising names worth tracking.",
-      "description": "The people and groups shaping this space"
+      "description": "The people and groups shaping this space",
+      "group": "learn"
     },
     {
       "id": "how-this-affects-me",
       "name": "How This Affects Me",
       "icon": "how-this-affects-me",
-      "prompt": "Help me understand how the topic of {TOPIC} affects me personally. Ask me a few questions about my situation if needed, then walk me through the practical implications \u2014 what I should pay attention to, what decisions might be affected, and what I can do about it.",
-      "description": "How this likely shows up in your daily life"
+      "prompt": "Help me understand how the topic of {TOPIC} affects me personally. Ask me a few questions about my situation if needed, then walk me through the practical implications — what I should pay attention to, what decisions might be affected, and what I can do about it.",
+      "description": "How this likely shows up in your daily life",
+      "group": "analyze"
     },
     {
       "id": "glossary-key-terms",
       "name": "Glossary of Key Terms",
       "icon": "glossary-key-terms",
       "prompt": "Give me a glossary of the most important terms, acronyms, and jargon used on the topic of: {TOPIC}. Define each clearly and note any terms that are commonly misused or contested.",
-      "description": "Key terms used in this space, plain-language"
+      "description": "Key terms used in this space, plain-language",
+      "group": "learn"
     },
     {
       "id": "industry-deep-dive",
       "name": "Industry Deep Dive",
       "icon": "industry-deep-dive",
       "prompt": "Give me a current state-of-the-industry overview for the topic of: {TOPIC}. Cover the major players, the competitive dynamics, recent disruptions, regulatory environment, and what to watch over the next 12 months.",
-      "description": "A closer look at how the industry actually works"
+      "description": "A closer look at how the industry actually works",
+      "group": "learn"
     },
     {
       "id": "earnings-season-pulse",
@@ -249,7 +256,7 @@
       "id": "deposit-rates",
       "name": "Best Deposit Rates Right Now",
       "icon": "deposit-rates",
-      "prompt": "What are the best current deposit rates \u2014 savings accounts, CDs, money market accounts? Include both traditional banks and online banks. Note any banks offering standout promotional rates.",
+      "prompt": "What are the best current deposit rates — savings accounts, CDs, money market accounts? Include both traditional banks and online banks. Note any banks offering standout promotional rates.",
       "description": "Top picks worth knowing about right now"
     },
     {
@@ -257,7 +264,8 @@
       "name": "Beginner's Guide",
       "icon": "beginners-guide",
       "prompt": "Give me a clear, practical beginner's guide to the topic of: {TOPIC}. Cover the foundational concepts, what to learn first, why it matters, who the major players are, the key concepts I need to understand to follow the conversation, common starting mistakes, and the most useful next steps to go deeper. Don't oversimplify.",
-      "description": "Background for someone starting out"
+      "description": "Background for someone starting out",
+      "group": "learn"
     },
     {
       "id": "crypto-market-snapshot",
@@ -306,7 +314,8 @@
       "name": "Different Perspectives",
       "icon": "different-perspectives",
       "prompt": "What are the main perspectives, schools of thought, or sides in current debates around the topic of: {TOPIC}? For each: who holds the view, their core argument, the strongest evidence in their favor, and where they tend to disagree with others. Be even-handed.",
-      "description": "Where the major sides actually disagree"
+      "description": "Where the major sides actually disagree",
+      "group": "analyze"
     },
     {
       "id": "biggest-deals-weekly",
@@ -403,7 +412,7 @@
       "id": "energy-earnings",
       "name": "Energy Earnings Roundup",
       "icon": "energy-earnings",
-      "prompt": "Summarize the most recent earnings from major energy companies \u2014 supermajors, US E&P, refiners, midstream, and renewables. Cover key takeaways, capex plans, and management commentary on the outlook.",
+      "prompt": "Summarize the most recent earnings from major energy companies — supermajors, US E&P, refiners, midstream, and renewables. Cover key takeaways, capex plans, and management commentary on the outlook.",
       "description": "Recent earnings results that matter"
     },
     {
@@ -460,7 +469,8 @@
       "name": "Where to Follow This Best",
       "icon": "where-to-follow",
       "prompt": "What are the best sources to follow for staying current on the topic of: {TOPIC}? Cover newsletters, podcasts, journalists, analysts, websites, and any other sources worth subscribing to. Note who's best for what (breaking news, analysis, deep dives, contrarian takes, etc.).",
-      "description": "Sources worth following for ongoing coverage"
+      "description": "Sources worth following for ongoing coverage",
+      "group": "learn"
     },
     {
       "id": "us-housing-market",
@@ -509,7 +519,7 @@
       "name": "Local Market Deep Dive",
       "icon": "local-market-deep-dive",
       "prompt": "Give me a deep look at the housing market in [city or metro area]. Cover prices and trends, inventory and demand dynamics, neighborhoods worth knowing, and what's specific to this market right now.",
-      "description": "A deeper read \u2014 context, dynamics, what matters"
+      "description": "A deeper read — context, dynamics, what matters"
     },
     {
       "id": "labor-market-snapshot",
@@ -558,7 +568,7 @@
       "name": "Stock Deep Dive",
       "icon": "stock-deep-dive",
       "prompt": "Give me a current look at [company or ticker]. Cover recent price action and earnings, the bull and bear cases, key catalysts ahead, valuation context, and how it compares to its main peers.",
-      "description": "A deeper read \u2014 context, dynamics, what matters"
+      "description": "A deeper read — context, dynamics, what matters"
     },
     {
       "id": "earning-seasons-tracker",
@@ -620,7 +630,7 @@
       "id": "retirement-planning-check-in",
       "name": "Retirement Planning Check-In",
       "icon": "retirement-planning-check-in",
-      "prompt": "Help me think through my retirement planning. Ask about my age, retirement goal age, current savings, account types I'm using, and risk tolerance \u2014 then walk me through where to focus.",
+      "prompt": "Help me think through my retirement planning. Ask about my age, retirement goal age, current savings, account types I'm using, and risk tolerance — then walk me through where to focus.",
       "description": "Help me think through my retirement planning"
     },
     {
@@ -642,7 +652,8 @@
       "name": "Myths vs. Reality",
       "icon": "myths-vs-reality",
       "prompt": "What are the most common myths, misconceptions, or oversimplifications about the topic of: {TOPIC}? For each: the myth, what's actually true (with evidence), and why the myth persists.",
-      "description": "Common misconceptions and the real story"
+      "description": "Common misconceptions and the real story",
+      "group": "analyze"
     },
     {
       "id": "small-business-climate-check",
@@ -718,8 +729,9 @@
       "id": "catch-me-up",
       "name": "Catch Me Up",
       "icon": "catch-me-up",
-      "prompt": "I haven't been following {TOPIC} for a while. Catch me up on what I need to know \u2014 the major recent developments, the current state of play, the dominant storylines, and what's coming up. Assume I have general background but missed the last few months.",
-      "description": "A quick re-up if you've been away from it"
+      "prompt": "I haven't been following {TOPIC} for a while. Catch me up on what I need to know — the major recent developments, the current state of play, the dominant storylines, and what's coming up. Assume I have general background but missed the last few months.",
+      "description": "A quick re-up if you've been away from it",
+      "group": "more"
     },
     {
       "id": "new-model-releases",
@@ -760,7 +772,7 @@
       "id": "best-ai-tool-use-case",
       "name": "Best AI Tool for My Use Case",
       "icon": "best-ai-tool-use-case",
-      "prompt": "Help me pick the best AI tool for [use case \u2014 writing, coding, research, image generation, video, voice, agents, etc.]. Cover the leading options, what each does best, pricing, and how to choose based on what I'm trying to do.",
+      "prompt": "Help me pick the best AI tool for [use case — writing, coding, research, image generation, video, voice, agents, etc.]. Cover the leading options, what each does best, pricing, and how to choose based on what I'm trying to do.",
       "description": "Top picks worth knowing about right now"
     },
     {
@@ -795,7 +807,7 @@
       "id": "ai-compliance-help-by-sector",
       "name": "AI Compliance Help by Sector",
       "icon": "ai-compliance-help-by-sector",
-      "prompt": "Walk me through the AI compliance landscape for [sector \u2014 healthcare, finance, employment, education, etc.]. Cover the relevant regulations, key obligations, recent enforcement, and what an organization in this sector should be doing.",
+      "prompt": "Walk me through the AI compliance landscape for [sector — healthcare, finance, employment, education, etc.]. Cover the relevant regulations, key obligations, recent enforcement, and what an organization in this sector should be doing.",
       "description": "Compliance considerations across major sectors"
     },
     {
@@ -942,7 +954,7 @@
       "id": "threat-briefing-for-sector",
       "name": "Threat Briefing for My Sector",
       "icon": "threat-briefing-for-sector",
-      "prompt": "Give me a current threat briefing for [sector \u2014 healthcare, finance, manufacturing, retail, government, etc.]. Cover the active threat actors, common attack patterns, regulatory requirements, and where to focus defenses.",
+      "prompt": "Give me a current threat briefing for [sector — healthcare, finance, manufacturing, retail, government, etc.]. Cover the active threat actors, common attack patterns, regulatory requirements, and where to focus defenses.",
       "description": "Risks and warning signs to watch"
     },
     {
@@ -977,7 +989,7 @@
       "id": "help-pick-data-tool",
       "name": "Help Me Pick a Data Tool",
       "icon": "help-pick-data-tool",
-      "prompt": "Help me pick the right tool for [data task \u2014 warehousing, transformation, BI, observability, etc.]. Ask about my scale, team, budget, and existing stack \u2014 then recommend specific options with reasoning.",
+      "prompt": "Help me pick the right tool for [data task — warehousing, transformation, BI, observability, etc.]. Ask about my scale, team, budget, and existing stack — then recommend specific options with reasoning.",
       "description": "Walking you through the right choice"
     },
     {
@@ -1076,7 +1088,8 @@
       "name": "How We Got Here",
       "icon": "how-we-got-here",
       "prompt": "Walk me through how the topic of {TOPIC} got to where it is today. Cover the major turning points, key decisions, and historical context that explain the current landscape. Note any historical patterns worth knowing about.",
-      "description": "How the current situation actually formed"
+      "description": "How the current situation actually formed",
+      "group": "learn"
     },
     {
       "id": "language-and-frameworks",
@@ -1117,14 +1130,14 @@
       "id": "pick-a-tech-stack",
       "name": "Pick a Stack for My Project",
       "icon": "pick-a-tech-stack",
-      "prompt": "Help me pick a tech stack for [project type]. Ask about the project, my experience, scale expectations, and team \u2014 then recommend a specific stack with reasoning.",
+      "prompt": "Help me pick a tech stack for [project type]. Ask about the project, my experience, scale expectations, and team — then recommend a specific stack with reasoning.",
       "description": "Walking you through the right pick"
     },
     {
       "id": "build-programming-learning-path",
       "name": "Build My Learning Path",
       "icon": "build-programming-learning-path",
-      "prompt": "Build me a learning path for [language, framework, or skill]. Ask about my current level and goals \u2014 then map out a structured progression with specific resources at each stage.",
+      "prompt": "Build me a learning path for [language, framework, or skill]. Ask about my current level and goals — then map out a structured progression with specific resources at each stage.",
       "description": "A plan tailored to your situation"
     },
     {
@@ -1243,7 +1256,7 @@
       "id": "help-pick-software",
       "name": "Help Me Pick Software",
       "icon": "help-pick-software",
-      "prompt": "Help me pick software for [function \u2014 CRM, project management, etc.]. Ask about my company size, budget, key needs, and existing stack \u2014 then recommend specific options with reasoning.",
+      "prompt": "Help me pick software for [function — CRM, project management, etc.]. Ask about my company size, budget, key needs, and existing stack — then recommend specific options with reasoning.",
       "description": "Walking you through the right choice"
     },
     {
@@ -1488,7 +1501,7 @@
       "id": "evidence-based-fitness-updates",
       "name": "Evidence-Based Fitness Updates",
       "icon": "evidence-based-fitness-updates",
-      "prompt": "What are the most important recent findings in exercise science? Cover what the strongest evidence supports right now around strength, cardio, longevity, and recovery \u2014 and which popular beliefs are not well-supported.",
+      "prompt": "What are the most important recent findings in exercise science? Cover what the strongest evidence supports right now around strength, cardio, longevity, and recovery — and which popular beliefs are not well-supported.",
       "description": "Recent developments in evidence-based fitness"
     },
     {
@@ -1509,7 +1522,7 @@
       "id": "build-my-workout-routine",
       "name": "Build My Workout Routine",
       "icon": "build-my-workout-routine",
-      "prompt": "Help me build an effective workout routine. Ask me about my goals (strength, hypertrophy, endurance, general fitness), available equipment, time per week, and experience level \u2014 then build a program that fits.",
+      "prompt": "Help me build an effective workout routine. Ask me about my goals (strength, hypertrophy, endurance, general fitness), available equipment, time per week, and experience level — then build a program that fits.",
       "description": "A plan tailored to your situation"
     },
     {
@@ -1523,14 +1536,14 @@
       "id": "endurance-training-plan",
       "name": "Endurance Training Plan",
       "icon": "endurance-training-plan",
-      "prompt": "Help me build an endurance training plan for [event or goal]. Ask about my current level, timeline, and constraints \u2014 then map out a periodization with specific weekly structure.",
+      "prompt": "Help me build an endurance training plan for [event or goal]. Ask about my current level, timeline, and constraints — then map out a periodization with specific weekly structure.",
       "description": "A plan built around your event and timeline"
     },
     {
       "id": "healthcare-earnings-roundup",
       "name": "Healthcare Earnings Roundup",
       "icon": "healthcare-earnings-roundup",
-      "prompt": "Summarize the most recent earnings from major healthcare companies \u2014 health insurers, hospital systems, and major providers. Cover key metrics and management commentary on costs, utilization, and policy.",
+      "prompt": "Summarize the most recent earnings from major healthcare companies — health insurers, hospital systems, and major providers. Cover key metrics and management commentary on costs, utilization, and policy.",
       "description": "Recent earnings results that matter"
     },
     {
@@ -1579,7 +1592,7 @@
       "id": "diet-approach-comparisons",
       "name": "Diet Approach Comparisons",
       "icon": "diet-approach-comparisons",
-      "prompt": "Compare the major diet approaches (Mediterranean, low-carb/keto, plant-based, intermittent fasting, etc.) on the dimensions that matter \u2014 evidence base, sustainability, who they work best for, and trade-offs.",
+      "prompt": "Compare the major diet approaches (Mediterranean, low-carb/keto, plant-based, intermittent fasting, etc.) on the dimensions that matter — evidence base, sustainability, who they work best for, and trade-offs.",
       "description": "How the major diet approaches actually compare"
     },
     {
@@ -1614,7 +1627,7 @@
       "id": "build-my-eating-plan",
       "name": "Build My Eating Plan",
       "icon": "build-my-eating-plan",
-      "prompt": "Help me build an eating plan for [goal \u2014 fat loss, muscle gain, performance, general health]. Ask about my preferences, schedule, cooking ability, and constraints \u2014 then suggest an evidence-based approach.",
+      "prompt": "Help me build an eating plan for [goal — fat loss, muscle gain, performance, general health]. Ask about my preferences, schedule, cooking ability, and constraints — then suggest an evidence-based approach.",
       "description": "A plan tailored to your situation"
     },
     {
@@ -1712,7 +1725,7 @@
       "id": "vaccination-landscape",
       "name": "Vaccination Landscape",
       "icon": "vaccination-landscape",
-      "prompt": "What's the current state of vaccination \u2014 uptake trends, recommendations, hesitancy, supply, policy debates? Cover routine childhood vaccines, COVID, flu, and recently approved vaccines.",
+      "prompt": "What's the current state of vaccination — uptake trends, recommendations, hesitancy, supply, policy debates? Cover routine childhood vaccines, COVID, flu, and recently approved vaccines.",
       "description": "The state of play across vaccination"
     },
     {
@@ -1775,7 +1788,7 @@
       "id": "most-consequental-stories",
       "name": "Most Consequential Stories",
       "icon": "most-consequental-stories",
-      "prompt": "What are the most consequential political stories right now \u2014 the ones that will actually shape policy or election outcomes, distinguished from stories that are simply loud?",
+      "prompt": "What are the most consequential political stories right now — the ones that will actually shape policy or election outcomes, distinguished from stories that are simply loud?",
       "description": "Stories most likely to shape outcomes"
     },
     {
@@ -1825,7 +1838,7 @@
       "name": "Race or State Deep Dive",
       "icon": "elections-race-state-deep-dive",
       "prompt": "Give me a deep dive on the [race or state] election landscape. Cover the candidates, the key issues, current polling, the structural environment, and what to watch for.",
-      "description": "A deeper read \u2014 context, dynamics, what matters"
+      "description": "A deeper read — context, dynamics, what matters"
     },
     {
       "id": "congressional-agenda-updates",
@@ -2076,7 +2089,7 @@
       "id": "global-tech-ai-race",
       "name": "Global Tech and AI Race",
       "icon": "global-tech-ai-race",
-      "prompt": "How are different countries and blocs competing on tech and AI right now? Cover US, China, EU, UK, India, and Gulf state strategies \u2014 chips and compute, AI models and policy, digital infrastructure, and the geopolitics of tech supply chains.",
+      "prompt": "How are different countries and blocs competing on tech and AI right now? Cover US, China, EU, UK, India, and Gulf state strategies — chips and compute, AI models and policy, digital infrastructure, and the geopolitics of tech supply chains.",
       "description": "Who's ahead in the global tech and AI race"
     },
     {
@@ -2084,7 +2097,7 @@
       "name": "Country Deep Dive",
       "icon": "country-deep-dive",
       "prompt": "Give me a current overview of [country]. Cover the political situation, economy, security environment, key recent developments, foreign policy posture, and how it fits into its region and the wider world.",
-      "description": "A deeper read \u2014 context, dynamics, what matters"
+      "description": "A deeper read — context, dynamics, what matters"
     },
     {
       "id": "content-wide-snapshot",
@@ -2118,7 +2131,7 @@
       "id": "africa-global-partnerships",
       "name": "Africa's Global Partnerships",
       "icon": "africa-global-partnerships",
-      "prompt": "How are external powers engaging with Africa right now? Cover China, Russia, US, EU, Gulf states, India, and Turkey \u2014 their recent investments, military cooperation, and diplomatic moves.",
+      "prompt": "How are external powers engaging with Africa right now? Cover China, Russia, US, EU, Gulf states, India, and Turkey — their recent investments, military cooperation, and diplomatic moves.",
       "description": "External powers engaging with Africa right now"
     },
     {
@@ -2133,7 +2146,7 @@
       "name": "African Country Deep Dive",
       "icon": "african-country-deep-dive",
       "prompt": "Give me a current overview of [African country]. Cover political situation, economy, security, key issues, and how it fits into regional dynamics.",
-      "description": "A deeper read \u2014 context, dynamics, what matters"
+      "description": "A deeper read — context, dynamics, what matters"
     },
     {
       "id": "asia-pacfic-snapshot",
@@ -2174,7 +2187,7 @@
       "id": "asian-markets-snapshot",
       "name": "Asian Markets Snapshot",
       "icon": "asian-markets-snapshot",
-      "prompt": "What's happening in major Asian financial markets right now? Cover Tokyo, Hong Kong, Shanghai, Seoul, Mumbai, and Singapore \u2014 major moves, currency dynamics, and key drivers.",
+      "prompt": "What's happening in major Asian financial markets right now? Cover Tokyo, Hong Kong, Shanghai, Seoul, Mumbai, and Singapore — major moves, currency dynamics, and key drivers.",
       "description": "Current state of Asian markets"
     },
     {
@@ -2195,7 +2208,7 @@
       "id": "canada-provincial-politics",
       "name": "Provincial Politics",
       "icon": "canada-provincial-politics",
-      "prompt": "What's happening in Canadian provinces? Cover Ontario, Quebec, BC, and Alberta and other provinces \u2014 their leaders, current political dynamics, and any federal-provincial tensions.",
+      "prompt": "What's happening in Canadian provinces? Cover Ontario, Quebec, BC, and Alberta and other provinces — their leaders, current political dynamics, and any federal-provincial tensions.",
       "description": "Politics across the Canadian provinces"
     },
     {
@@ -2223,7 +2236,7 @@
       "id": "china-snapshot",
       "name": "China Snapshot",
       "icon": "china-snapshot",
-      "prompt": "Give me a current snapshot of China \u2014 the most significant political, economic, and foreign policy developments right now. Note signal vs. noise in interpreting state media coverage.",
+      "prompt": "Give me a current snapshot of China — the most significant political, economic, and foreign policy developments right now. Note signal vs. noise in interpreting state media coverage.",
       "description": "Current state of China"
     },
     {
@@ -2300,7 +2313,7 @@
       "id": "domestic-stories-world-watching",
       "name": "Domestic Stories the World Is Watching",
       "icon": "domestic-stories-world-watching",
-      "prompt": "Which US domestic stories are getting the most international attention right now and why? Cover political developments, court rulings, regulatory moves, and cultural stories that foreign media and governments are tracking closely \u2014 and what they're reading into them.",
+      "prompt": "Which US domestic stories are getting the most international attention right now and why? Cover political developments, court rulings, regulatory moves, and cultural stories that foreign media and governments are tracking closely — and what they're reading into them.",
       "description": "US stories drawing international attention"
     },
     {
@@ -2321,14 +2334,14 @@
       "id": "eu-snapshot",
       "name": "EU Snapshot",
       "icon": "eu-snapshot",
-      "prompt": "Give me a current snapshot of the EU \u2014 major Commission and Council developments, Parliament activity, the dominant policy debates, and how member-state politics is shaping the agenda.",
+      "prompt": "Give me a current snapshot of the EU — major Commission and Council developments, Parliament activity, the dominant policy debates, and how member-state politics is shaping the agenda.",
       "description": "Current state of EU"
     },
     {
       "id": "european-politics-watch",
       "name": "European Politics Watch",
       "icon": "european-politics-watch",
-      "prompt": "What's happening in major European national politics right now? Cover Germany, France, Italy, Spain, Poland, the Nordics and more \u2014 leadership, coalition dynamics, and key policy fights.",
+      "prompt": "What's happening in major European national politics right now? Cover Germany, France, Italy, Spain, Poland, the Nordics and more — leadership, coalition dynamics, and key policy fights.",
       "description": "Signals worth tracking in European politics"
     },
     {
@@ -2377,7 +2390,7 @@
       "id": "india-snapshot",
       "name": "India Snapshot",
       "icon": "india-snapshot",
-      "prompt": "Give me a current snapshot of India \u2014 major political, economic, and foreign policy developments. Cover the central government, state-level developments worth knowing, and dominant policy debates.",
+      "prompt": "Give me a current snapshot of India — major political, economic, and foreign policy developments. Cover the central government, state-level developments worth knowing, and dominant policy debates.",
       "description": "Current state of India"
     },
     {
@@ -2454,7 +2467,7 @@
       "id": "latin-america-migration-border-issues",
       "name": "Migration and Border Issues",
       "icon": "latin-america-migration-border-issues",
-      "prompt": "What's happening with migration in the Americas? Cover the US-Mexico border, Dari\u00e9n Gap dynamics, source-country conditions, regional responses, and US policy.",
+      "prompt": "What's happening with migration in the Americas? Cover the US-Mexico border, Darién Gap dynamics, source-country conditions, regional responses, and US policy.",
       "description": "Migration in the Americas"
     },
     {
@@ -2468,7 +2481,7 @@
       "id": "middle-east-snapshot",
       "name": "Middle East Snapshot",
       "icon": "middle-east-snapshot",
-      "prompt": "Give me a snapshot of the most significant developments across the Middle East right now \u2014 the major conflicts, diplomacy, and regional dynamics.",
+      "prompt": "Give me a snapshot of the most significant developments across the Middle East right now — the major conflicts, diplomacy, and regional dynamics.",
       "description": "Current state of Middle East"
     },
     {
@@ -2496,7 +2509,7 @@
       "id": "gulf-states-snapshot",
       "name": "Gulf States Snapshot",
       "icon": "gulf-states-updates",
-      "prompt": "What's happening in the Gulf right now? Cover Saudi Arabia, UAE, Qatar, and others \u2014 major political and economic developments, progress, regional diplomacy, and key business and sovereign wealth moves.",
+      "prompt": "What's happening in the Gulf right now? Cover Saudi Arabia, UAE, Qatar, and others — major political and economic developments, progress, regional diplomacy, and key business and sovereign wealth moves.",
       "description": "Current state of gulf states"
     },
     {
@@ -2573,7 +2586,7 @@
       "id": "eastern-europe-snapshot",
       "name": "Eastern Europe Snapshot",
       "icon": "eastern-europe-snapshot",
-      "prompt": "What's happening across Eastern Europe right now? Cover Poland, Romania, Hungary, the Baltics, Slovakia, Czech Republic, and Bulgaria \u2014 major political and security developments.",
+      "prompt": "What's happening across Eastern Europe right now? Cover Poland, Romania, Hungary, the Baltics, Slovakia, Czech Republic, and Bulgaria — major political and security developments.",
       "description": "Current state of Eastern Europe"
     },
     {
@@ -2672,7 +2685,7 @@
       "name": "Club Deep Dive",
       "icon": "soccer-club-deep-dive",
       "prompt": "Give me a current snapshot of [soccer club]. Cover league position, recent form, key players, manager situation, transfer activity, and outlook for the season.",
-      "description": "A deeper read \u2014 context, dynamics, what matters"
+      "description": "A deeper read — context, dynamics, what matters"
     },
     {
       "id": "mlb-snapshot",
@@ -2888,7 +2901,7 @@
       "id": "nhl-stat-leaders",
       "name": "Stat Leaders",
       "icon": "nhl-stat-leaders",
-      "prompt": "Who are the current statistical leaders in the NHL \u2014 focus on the notable stats and include any advanced metrics worth knowing?",
+      "prompt": "Who are the current statistical leaders in the NHL — focus on the notable stats and include any advanced metrics worth knowing?",
       "description": "Who's currently leading the statistical categories"
     },
     {
@@ -3273,7 +3286,7 @@
       "id": "suggested-entertainment",
       "name": "Suggested Entertainment for You",
       "icon": "suggested-entertainment",
-      "prompt": "Help me find something to watch, listen to, play, or read. Ask me about my mood, time available, recent things I've enjoyed, and what format I'm open to \u2014 then recommend several options with reasoning.",
+      "prompt": "Help me find something to watch, listen to, play, or read. Ask me about my mood, time available, recent things I've enjoyed, and what format I'm open to — then recommend several options with reasoning.",
       "description": "Personalized picks based on your taste"
     },
     {
@@ -3357,7 +3370,7 @@
       "id": "gaming-what-should-i-play",
       "name": "What Should I Play Right Now",
       "icon": "gaming-what-should-i-play",
-      "prompt": "Help me find what to play. Ask me about platforms, genres I like, time per session, and recent games I've enjoyed \u2014 then recommend a few well-reasoned options.",
+      "prompt": "Help me find what to play. Ask me about platforms, genres I like, time per session, and recent games I've enjoyed — then recommend a few well-reasoned options.",
       "description": "Help me find what to play"
     },
     {
@@ -3406,7 +3419,7 @@
       "id": "tv-movies-suggestions",
       "name": "Suggest me a show or movie",
       "icon": "tv-movies-suggestions",
-      "prompt": "Help me find something to watch. Ask about my mood, time commitment, recent things I've enjoyed, and any hard preferences (genre, era, etc.) \u2014 then recommend a few well-reasoned options.",
+      "prompt": "Help me find something to watch. Ask about my mood, time commitment, recent things I've enjoyed, and any hard preferences (genre, era, etc.) — then recommend a few well-reasoned options.",
       "description": "Help me find something to watch"
     },
     {
@@ -3448,7 +3461,7 @@
       "id": "music-help-find-new",
       "name": "Help Me Find New Music",
       "icon": "music-help-find-new",
-      "prompt": "Help me find new music. Ask about my current favorites, the moods I want, and how adventurous I want to be \u2014 then recommend artists and specific tracks/albums.",
+      "prompt": "Help me find new music. Ask about my current favorites, the moods I want, and how adventurous I want to be — then recommend artists and specific tracks/albums.",
       "description": "Walking you through the right choice"
     },
     {
@@ -3483,7 +3496,7 @@
       "id": "podcast-recommendations",
       "name": "Podcast Recommendations",
       "icon": "podcast-recommendations",
-      "prompt": "Help me find new podcasts. Ask about topics I'm interested in, episode length preference, host styles I like, and shows I already love \u2014 then recommend matches with reasoning.",
+      "prompt": "Help me find new podcasts. Ask about topics I'm interested in, episode length preference, host styles I like, and shows I already love — then recommend matches with reasoning.",
       "description": "Help me find new podcasts"
     },
     {
@@ -3588,15 +3601,15 @@
       "id": "books-what-should-i-read-next",
       "name": "What Should I Read Next",
       "icon": "books-what-should-i-read-next",
-      "prompt": "Help me find what to read next. Ask about my recent favorites, mood I'm in, fiction vs. nonfiction preference, and length tolerance \u2014 then recommend a few well-reasoned options.",
+      "prompt": "Help me find what to read next. Ask about my recent favorites, mood I'm in, fiction vs. nonfiction preference, and length tolerance — then recommend a few well-reasoned options.",
       "description": "Help me find what to read next"
     },
     {
       "id": "books-genre-deep-dive",
       "name": "Genre Deep Dive",
       "icon": "books-genre-deep-dive",
-      "prompt": "Give me a current snapshot of [genre \u2014 literary fiction, sci-fi/fantasy, romance, thriller, memoir, history, business, etc.]. Cover the dominant authors, recent standouts, and where the genre is heading.",
-      "description": "A deeper read \u2014 context, dynamics, what matters"
+      "prompt": "Give me a current snapshot of [genre — literary fiction, sci-fi/fantasy, romance, thriller, memoir, history, business, etc.]. Cover the dominant authors, recent standouts, and where the genre is heading.",
+      "description": "A deeper read — context, dynamics, what matters"
     },
     {
       "id": "books-backlist-worth-reading",
@@ -3637,7 +3650,7 @@
       "id": "build-my-wardrobe",
       "name": "Build My Wardrobe",
       "icon": "build-my-wardrobe",
-      "prompt": "Help me build out my wardrobe or refine my style. Ask about my lifestyle, current wardrobe, budget, and goals \u2014 then give specific, practical recommendations.",
+      "prompt": "Help me build out my wardrobe or refine my style. Ask about my lifestyle, current wardrobe, budget, and goals — then give specific, practical recommendations.",
       "description": "A plan tailored to your situation"
     },
     {
@@ -3679,14 +3692,14 @@
       "id": "what-should-i-cook-tonight",
       "name": "What Should I Cook Tonight",
       "icon": "what-should-i-cook-tonight",
-      "prompt": "Help me figure out what to cook. Ask about ingredients I have, time available, skill level, and any dietary considerations \u2014 then suggest a few options with reasoning.",
+      "prompt": "Help me figure out what to cook. Ask about ingredients I have, time available, skill level, and any dietary considerations — then suggest a few options with reasoning.",
       "description": "Help me figure out what to cook"
     },
     {
       "id": "restaurant-recommendations",
       "name": "Restaurant Recommendations",
       "icon": "restaurant-recommendations",
-      "prompt": "Help me find a great restaurant. Ask about location, cuisine preference, occasion, budget, and how adventurous I want to be \u2014 then recommend matches with reasoning.",
+      "prompt": "Help me find a great restaurant. Ask about location, cuisine preference, occasion, budget, and how adventurous I want to be — then recommend matches with reasoning.",
       "description": "Help me find a great restaurant"
     },
     {
@@ -3735,7 +3748,7 @@
       "id": "help-me-pick-a-car",
       "name": "Help Me Pick a Car",
       "icon": "help-me-pick-a-car",
-      "prompt": "Help me find a new or used car. Ask me about needs, budget, gas/hybrid/EV preference, and any must-haves \u2014 and then give me a shortlist with reasoning.",
+      "prompt": "Help me find a new or used car. Ask me about needs, budget, gas/hybrid/EV preference, and any must-haves — and then give me a shortlist with reasoning.",
       "description": "Walking you through the right choice"
     },
     {
@@ -3763,28 +3776,28 @@
       "id": "plan-my-home-improvement",
       "name": "Plan My Home Improvement Project",
       "icon": "plan-my-home-improvement",
-      "prompt": "Help me plan a home improvement project. Ask about the project (kitchen, bath, deck, etc.), goals, budget, and timeline \u2014 then walk me through the right sequence, key decisions, and where to splurge vs. save.",
+      "prompt": "Help me plan a home improvement project. Ask about the project (kitchen, bath, deck, etc.), goals, budget, and timeline — then walk me through the right sequence, key decisions, and where to splurge vs. save.",
       "description": "Help me plan a home improvement project"
     },
     {
       "id": "plan-my-garden",
       "name": "Plan My Garden",
       "icon": "plan-my-garden",
-      "prompt": "Help me plan my garden. Ask about my growing zone, sun exposure, available space, what I want to grow, and experience level \u2014 then give me a thoughtful plan.",
+      "prompt": "Help me plan my garden. Ask about my growing zone, sun exposure, available space, what I want to grow, and experience level — then give me a thoughtful plan.",
       "description": "Help me plan my garden"
     },
     {
       "id": "set-up-my-smart-home",
       "name": "Set Up My Smart Home",
       "icon": "set-up-my-smart-home",
-      "prompt": "Help me set up or upgrade my smart home. Ask about my platform preference, budget, and what I want to automate \u2014 then recommend a coherent setup.",
+      "prompt": "Help me set up or upgrade my smart home. Ask about my platform preference, budget, and what I want to automate — then recommend a coherent setup.",
       "description": "Help me set up or upgrade my smart home"
     },
     {
       "id": "renovate-a-room",
       "name": "Renovate a Room",
       "icon": "renovate-a-room",
-      "prompt": "Help me refresh a room without a major renovation. Ask about the room, my style preference, and budget \u2014 then suggest specific, achievable changes with the biggest impact.",
+      "prompt": "Help me refresh a room without a major renovation. Ask about the room, my style preference, and budget — then suggest specific, achievable changes with the biggest impact.",
       "description": "Help me refresh a room without a major renovation"
     },
     {
@@ -3805,28 +3818,28 @@
       "id": "friendship-help",
       "name": "Friendship Help",
       "icon": "friendship-help",
-      "prompt": "Help me think through a friendship situation \u2014 drifting apart, repairing, making new friends as an adult, or navigating a conflict. Ask about the situation and what I want, then think it through with me.",
+      "prompt": "Help me think through a friendship situation — drifting apart, repairing, making new friends as an adult, or navigating a conflict. Ask about the situation and what I want, then think it through with me.",
       "description": "Practical help with friendship"
     },
     {
       "id": "parenting-through-phases",
       "name": "Parenting Through Phases",
       "icon": "parenting-through-phases",
-      "prompt": "Help me think through a parenting question or phase. Ask about the child's age, situation, and what I'm trying to address \u2014 then offer perspectives drawing on what's well-supported and what experienced parents tend to find helpful.",
+      "prompt": "Help me think through a parenting question or phase. Ask about the child's age, situation, and what I'm trying to address — then offer perspectives drawing on what's well-supported and what experienced parents tend to find helpful.",
       "description": "Help me think through a parenting question or phase"
     },
     {
       "id": "family-dynamics",
       "name": "Family Dynamics",
       "icon": "family-dynamics",
-      "prompt": "Help me think through a family dynamic or situation. Ask about the relationship, what's happening, what I've tried, and what outcome I want \u2014 then help me work through perspectives and approaches.",
+      "prompt": "Help me think through a family dynamic or situation. Ask about the relationship, what's happening, what I've tried, and what outcome I want — then help me work through perspectives and approaches.",
       "description": "Help me think through a family dynamic or situation"
     },
     {
       "id": "working-through-conflict",
       "name": "Working Through Conflict",
       "icon": "working-through-conflict",
-      "prompt": "Help me work through a current conflict in my life. Ask about the parties, what's happened, what each side seems to want, and what I'm hoping for \u2014 then help me think through productive paths forward.",
+      "prompt": "Help me work through a current conflict in my life. Ask about the parties, what's happened, what each side seems to want, and what I'm hoping for — then help me think through productive paths forward.",
       "description": "Help me work through a current conflict in my life"
     },
     {
@@ -3847,14 +3860,14 @@
       "id": "where-should-i-go",
       "name": "Where Should I Go",
       "icon": "where-should-i-go",
-      "prompt": "Help me decide where to travel. Ask about timing, budget, travel style, who's going, and what I'm in the mood for \u2014 then recommend several destinations with reasoning for each.",
+      "prompt": "Help me decide where to travel. Ask about timing, budget, travel style, who's going, and what I'm in the mood for — then recommend several destinations with reasoning for each.",
       "description": "Help me decide where to travel"
     },
     {
       "id": "plan-my-trip",
       "name": "Plan My Trip",
       "icon": "plan-my-trip",
-      "prompt": "Help me plan a trip. Ask about destination(s), travel dates, group size, budget, travel style (adventure, relaxation, food, culture, etc.), and any constraints \u2014 then build out a thoughtful itinerary.",
+      "prompt": "Help me plan a trip. Ask about destination(s), travel dates, group size, budget, travel style (adventure, relaxation, food, culture, etc.), and any constraints — then build out a thoughtful itinerary.",
       "description": "Help me plan a trip"
     },
     {
@@ -3868,7 +3881,7 @@
       "id": "plan-a-local-getaway",
       "name": "Plan a Local Getaway",
       "icon": "plan-a-local-getaway",
-      "prompt": "Help me plan a getaway closer to home. Ask about my home base, distance willing to travel, dates, and travel style \u2014 then suggest options with reasoning.",
+      "prompt": "Help me plan a getaway closer to home. Ask about my home base, distance willing to travel, dates, and travel style — then suggest options with reasoning.",
       "description": "Help me plan a getaway closer to home"
     },
     {
@@ -3889,49 +3902,49 @@
       "id": "career-move-help",
       "name": "Help Me Decide on a Career Move",
       "icon": "career-move-help",
-      "prompt": "Help me think through a career decision. Ask about the decision (job change, pivot, promotion, school, starting something), my situation, what I value, and what's pulling me \u2014 then help me think through it.",
+      "prompt": "Help me think through a career decision. Ask about the decision (job change, pivot, promotion, school, starting something), my situation, what I value, and what's pulling me — then help me think through it.",
       "description": "Help me think through a career decision"
     },
     {
       "id": "job-search-strategy",
       "name": "Job Search Strategy",
       "icon": "job-search-strategy",
-      "prompt": "Help me build a job search strategy. Ask about role type, industry, level, location preferences, and timeline \u2014 then give me a structured plan covering targeting, application strategy, networking, and interview prep.",
+      "prompt": "Help me build a job search strategy. Ask about role type, industry, level, location preferences, and timeline — then give me a structured plan covering targeting, application strategy, networking, and interview prep.",
       "description": "Help me build a job search strategy"
     },
     {
       "id": "resume-portfolio-profile-help",
       "name": "Resume, Portfolio and Online Profile Help",
       "icon": "resume-portfolio-profile-help",
-      "prompt": "Help me improve my resume, portfolio, and online profile, in relation to a career move. Ask me about the role I'm targeting, my experience, and what I have currently \u2014 then give me specific, actionable feedback.",
+      "prompt": "Help me improve my resume, portfolio, and online profile, in relation to a career move. Ask me about the role I'm targeting, my experience, and what I have currently — then give me specific, actionable feedback.",
       "description": "Practical help with resume, portfolio and online profile"
     },
     {
       "id": "salary-negotiation-help",
       "name": "Salary Negotiation Help",
       "icon": "salary-negotiation-help",
-      "prompt": "Help me negotiate compensation. Ask about the role, the offer, my current situation, and any leverage I have \u2014 then walk me through approach, scripts, and what's reasonable to ask for.",
+      "prompt": "Help me negotiate compensation. Ask about the role, the offer, my current situation, and any leverage I have — then walk me through approach, scripts, and what's reasonable to ask for.",
       "description": "Practical help with salary negotiation"
     },
     {
       "id": "workplace-conflict-help",
       "name": "Workplace Conflict Help",
       "icon": "workplace-conflict-help",
-      "prompt": "Help me navigate a workplace situation. Ask about the situation, the people involved, and what outcome I want \u2014 then help me think through perspectives and approaches.",
+      "prompt": "Help me navigate a workplace situation. Ask about the situation, the people involved, and what outcome I want — then help me think through perspectives and approaches.",
       "description": "Practical help with workplace conflict"
     },
     {
       "id": "career-pivot-help",
       "name": "Career Pivot Help",
       "icon": "career-pivot-help",
-      "prompt": "Help me think through a career pivot. Ask about my current field, where I'm thinking of going, my transferable skills, and my constraints (timeline, money, family) \u2014 then map a realistic path.",
+      "prompt": "Help me think through a career pivot. Ask about my current field, where I'm thinking of going, my transferable skills, and my constraints (timeline, money, family) — then map a realistic path.",
       "description": "Practical help with career pivot"
     },
     {
       "id": "manager-leadership-help",
-      "name": "Manager and Leadership Help \u00b7",
+      "name": "Manager and Leadership Help ·",
       "icon": "manager-leadership-help",
-      "prompt": "Help me with a management or leadership challenge. Ask about my role, team, and the specific challenge \u2014 then offer frameworks and concrete suggestions.",
+      "prompt": "Help me with a management or leadership challenge. Ask about my role, team, and the specific challenge — then offer frameworks and concrete suggestions.",
       "description": "Help me with a management or leadership challenge"
     },
     {
@@ -4134,7 +4147,7 @@
       "id": "build-my-learning-plan",
       "name": "Build My Learning Plan",
       "icon": "build-my-learning-plan",
-      "prompt": "Help me build a learning plan for [topic or skill]. Ask about my current level, goals, time available, and learning style \u2014 then map out a structured path with specific resources.",
+      "prompt": "Help me build a learning plan for [topic or skill]. Ask about my current level, goals, time available, and learning style — then map out a structured path with specific resources.",
       "description": "A plan tailored to your situation"
     },
     {
@@ -4191,7 +4204,7 @@
       "name": "Institution Deep Dive",
       "icon": "institution-deep-dive",
       "prompt": "Give me a current overview of [institution]. Cover its position and reputation, recent stories and controversies, financial health, leadership, and what's distinctive about it right now.",
-      "description": "A deeper read \u2014 context, dynamics, what matters"
+      "description": "A deeper read — context, dynamics, what matters"
     },
     {
       "id": "edtech-snapshot",
@@ -4253,7 +4266,7 @@
       "id": "best-long-reads",
       "name": "Best Long Reads",
       "icon": "best-long-reads",
-      "prompt": "What are the best recent long-form essays and articles worth reading right now? Cover pieces from major publications and independent writers across topics \u2014 politics, ideas, culture, history, science.",
+      "prompt": "What are the best recent long-form essays and articles worth reading right now? Cover pieces from major publications and independent writers across topics — politics, ideas, culture, history, science.",
       "description": "Top picks worth knowing about right now"
     },
     {
@@ -4274,7 +4287,7 @@
       "id": "help-with-ethical-dilemma",
       "name": "Help With an Ethical Dilemma",
       "icon": "help-with-ethical-dilemma",
-      "prompt": "Help me think through an ethical dilemma I'm facing. Ask me about the situation, the considerations on different sides, and what I value \u2014 then help me reason through it carefully without telling me what to do.",
+      "prompt": "Help me think through an ethical dilemma I'm facing. Ask me about the situation, the considerations on different sides, and what I value — then help me reason through it carefully without telling me what to do.",
       "description": "Help me think through an ethical dilemma I'm facing"
     },
     {
@@ -4288,7 +4301,7 @@
       "id": "philosophy-reading-recommendations",
       "name": "Philosophy Reading Recommendations",
       "icon": "philosophy-reading-recommendations",
-      "prompt": "Recommend philosophy reading based on what I'm interested in. Ask about my current familiarity, the questions or topics that interest me, and how technical I want it \u2014 then suggest a thoughtful sequence.",
+      "prompt": "Recommend philosophy reading based on what I'm interested in. Ask about my current familiarity, the questions or topics that interest me, and how technical I want it — then suggest a thoughtful sequence.",
       "description": "Recommend philosophy reading based on what I'm interested in"
     },
     {
@@ -4303,20 +4316,20 @@
       "name": "Historical Topic Deep Dive",
       "icon": "historical-topic-deep-dive",
       "prompt": "Give me a deep introduction to [historical topic, era, or event]. Cover the essential context, key figures, major events, what changed because of it, and the dominant historical interpretations.",
-      "description": "A deeper read \u2014 context, dynamics, what matters"
+      "description": "A deeper read — context, dynamics, what matters"
     },
     {
       "id": "historical-parralels",
       "name": "Historical Parallels",
       "icon": "historical-parralels",
-      "prompt": "What historical parallels are most relevant to [current event or trend]? Cover the parallels carefully \u2014 what's similar, what's different, and what we can and can't reasonably take from them.",
+      "prompt": "What historical parallels are most relevant to [current event or trend]? Cover the parallels carefully — what's similar, what's different, and what we can and can't reasonably take from them.",
       "description": "Parallels from history worth weighing carefully"
     },
     {
       "id": "recommended-history-reading",
       "name": "Recommended History Reading",
       "icon": "recommended-history-reading",
-      "prompt": "Recommend history books on [topic, era, or region]. Ask about my prior familiarity and how academic vs. popular I want \u2014 then suggest a thoughtful reading list with brief justifications.",
+      "prompt": "Recommend history books on [topic, era, or region]. Ask about my prior familiarity and how academic vs. popular I want — then suggest a thoughtful reading list with brief justifications.",
       "description": "Books worth reading on the subject"
     },
     {
@@ -4330,7 +4343,7 @@
       "id": "history-of-a-topic",
       "name": "History of a Topic",
       "icon": "history-of-a-topic",
-      "prompt": "Walk me through the history of [topic \u2014 a country, idea, technology, institution, etc.]. Cover the origins, key turning points, current state, and how to understand its trajectory.",
+      "prompt": "Walk me through the history of [topic — a country, idea, technology, institution, etc.]. Cover the origins, key turning points, current state, and how to understand its trajectory.",
       "description": "How things got to where they are now"
     },
     {
@@ -4387,7 +4400,23 @@
       "name": "SHORTCUT_TITLE",
       "icon": "shortcut-svg-icon",
       "prompt": "PROMPT_TEXT",
-      "description": "Placeholder template \u2014 do not surface"
+      "description": "Placeholder template — do not surface"
+    },
+    {
+      "id": "timeline-key-dates",
+      "name": "Timeline of Key Dates",
+      "icon": "timeline-key-dates",
+      "prompt": "Give me a timeline of the key dates and milestones in the topic of: {TOPIC}. Cover the most consequential events that shaped this space — when each happened, what it was, and why it mattered. Include both the historical foundations and recent inflection points. Organize chronologically.",
+      "description": "Key moments that shaped this space",
+      "group": "learn"
+    },
+    {
+      "id": "latest-research-reports",
+      "name": "Latest Research and Reports",
+      "icon": "latest-research-reports",
+      "prompt": "What's the latest serious research, reports, and studies on the topic of: {TOPIC}? Cover peer-reviewed papers, industry reports, government findings, and credible analysis published recently. For each: what it found, who published it, and why it matters. Skip blog posts and press releases.",
+      "description": "Recent serious studies and analysis",
+      "group": "discover"
     }
   ]
 }
