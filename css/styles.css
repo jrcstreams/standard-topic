@@ -4290,44 +4290,48 @@ body.app-mode .topic-layout {
      content directly beneath it. No bottom margin: the next
      panel-section starts flush against the tab nav's bottom
      border so there's no orphaned whitespace under the tabs. */
-  /* Body-tabs (tablet + mobile): filled pill buttons left-aligned in
-     a flex row with content-width sizing, not stretched to fill the
-     panel. Active tab is filled navy with white text; inactive is
-     white with a hairline border. Container has bottom margin so
-     the panel content below breathes from the tab row. */
+  /* Body-tabs (tablet + mobile): equal-width pill segments sitting
+     inside a single tab-group container with a soft background, so
+     the two pills read as a proper tab switcher (not two floating
+     buttons). Active pill is filled navy with white text; inactive
+     is transparent with muted text. Compact height (~40px) at all
+     widths. */
   body.app-mode .topic-layout:not(.is-custom) > .body-tabs {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     flex: 0 0 auto;
-    flex-wrap: wrap;
-    background: transparent;
-    margin: 0 0 1rem;
-    padding: 0;
-    gap: 0.45rem;
-    border-bottom: none;
+    background: #eef1f6;
+    margin: 0 0 1.1rem;
+    padding: 0.25rem;
+    gap: 0.25rem;
+    border: 1px solid #dee2ea;
+    border-radius: 10px;
+  }
+  body.app-mode .topic-layout:not(.is-custom) > .body-tabs:has(.tab-pill-related) {
+    grid-template-columns: 1fr 1fr 1fr;
   }
   .body-tabs .tab-pill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: #ffffff;
-    border: 1px solid #dde2ec;
-    border-radius: 9px;
-    padding: 0.5rem 1.05rem;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    padding: 0.5rem 0.85rem;
     margin: 0;
     font-family: var(--font-display);
     font-size: 0.88rem;
     font-weight: 600;
     letter-spacing: -0.008em;
     line-height: 1.15;
-    color: #4a5568;
+    color: #5d6b7e;
     cursor: pointer;
     white-space: nowrap;
-    flex: 0 0 auto;
     transition: background 0.14s, color 0.14s, border-color 0.14s, transform 0.06s;
   }
   .body-tabs .tab-pill:hover {
     color: #1e2d44;
-    border-color: #c8d2e0;
+    background: rgba(255, 255, 255, 0.6);
   }
   .body-tabs .tab-pill.active {
     background: #1c3a6b;
@@ -4335,28 +4339,15 @@ body.app-mode .topic-layout {
     color: #ffffff;
   }
   .body-tabs .tab-pill.active:hover {
-    background: #163058;
-    border-color: #163058;
+    background: #1c3a6b;
+    color: #ffffff;
   }
   .body-tabs .tab-pill:active { transform: translateY(1px); }
-  /* Narrowest phones: equal-width 50/50 so the two pills fill the
-     row instead of leaving an awkward gap to the right. Pills can
-     still wrap if labels are long. */
   @media (max-width: 500px) {
-    body.app-mode .topic-layout:not(.is-custom) > .body-tabs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-    body.app-mode .topic-layout:not(.is-custom) > .body-tabs:has(.tab-pill-related) {
-      grid-template-columns: 1fr 1fr 1fr;
-    }
-    .body-tabs .tab-pill {
-      font-size: 0.85rem;
-      padding: 0.5rem 0.7rem;
-    }
+    .body-tabs .tab-pill { font-size: 0.84rem; padding: 0.45rem 0.7rem; }
   }
   @media (max-width: 380px) {
-    .body-tabs .tab-pill { font-size: 0.8rem; padding: 0.45rem 0.6rem; }
+    .body-tabs .tab-pill { font-size: 0.8rem; padding: 0.4rem 0.55rem; }
   }
   /* Drop the topic-layout's top padding on mobile — the body-tabs
      hugs the very top of the panel area, immediately below the
