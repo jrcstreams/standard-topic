@@ -10289,29 +10289,41 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 }
 .ti-web-source-chip-desc { display: none; }
 
-/* Mobile: 2-column grid. The spine treatment doesn't translate
-   to a multi-column grid (orphaned stubs in each cell don't
-   connect into anything), so mobile drops the spine and uses a
-   compact pill with a hairline border instead. Reads as a clean
-   set of 2-col link buttons, not a scatter of spined rows. */
+/* Mobile: drop the grid, use flex-wrap with NATURAL widths so
+   chips pack tightly side-by-side and wrap when they run out of
+   room. No orphan empty cells, no awkward fixed-column widths —
+   a clean pill toolbar that's truly condensed. The spine
+   treatment doesn't translate to a multi-column wrap, so chips
+   become pill-shaped with a hairline border and a soft white
+   surface that pops against the panel tint. */
 @media (max-width: 899.98px) {
   .ti-web-source-chips {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.35rem 0.45rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .ti-web-source-chip-row {
+    flex: 0 1 auto;
   }
   .ti-web-source-chip {
-    padding: 0.4rem 0.6rem;
-    border: 1px solid #e2e6ee;
-    border-left: 1px solid #e2e6ee;
-    border-radius: 7px;
-    background: rgba(255, 255, 255, 0.6);
+    width: auto;
+    padding: 0.4rem 0.78rem 0.4rem 0.7rem;
+    background: #ffffff;
+    border: 1px solid #d8dee8;
+    border-left: 1px solid #d8dee8;
+    border-radius: 999px;
+    box-shadow: 0 1px 2px rgba(15, 26, 46, 0.04);
   }
   .ti-web-source-chip:hover {
     background: #ffffff;
-    border-color: #c8d2e0;
-    border-left-color: #c8d2e0;
+    border-color: #2c4467;
+    border-left-color: #2c4467;
+    box-shadow: 0 2px 6px rgba(28, 58, 107, 0.1);
   }
-  .ti-web-source-chip-name { font-size: 0.76rem; }
+  .ti-web-source-chip:hover .ti-web-source-chip-icon { color: #2c4467; }
+  .ti-web-source-chip-icon { width: 14px; height: 14px; color: #5d6b7e; }
+  .ti-web-source-chip-name { font-size: 0.78rem; }
+  .ti-web-source-chip-header { gap: 0.45rem; }
 }
 .ti-web-source-chip-icon {
   width: 14px;
