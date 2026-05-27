@@ -1720,7 +1720,12 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   color: #1c3a6b;
   letter-spacing: -0.024em;
   margin: 0;
-  padding: 0 0 1rem 0;
+  /* Vertically center the title inside a fixed-height row. Matches
+     the Topic Intelligence panel header (also min-height: 2.56rem +
+     align-items: center) so the two titles sit on the same baseline
+     across columns. The bottom border serves as the visual rule. */
+  padding: 0;
+  min-height: 2.56rem;
   border-bottom: 1px solid #d6dae2;
   background: var(--color-bg);
   flex-shrink: 0;
@@ -10099,17 +10104,14 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
      band's rectangular corner meets the panel's rounded one
      (overflow: hidden mostly handles it, but not always). */
   border-radius: 10px 10px 0 0;
-  /* Match the News Feed header's vertical structure: title at the
-     top with 1rem of padding below, so the TI title and the News
-     Feed title share the same top edge (y=0) and sit on a parallel
-     baseline across the two columns. The min-height keeps the
-     navy band the same total height as the News Feed header row
-     (≈2.56rem = 1.5rem title + 1rem padding-bottom + 1px border),
-     so the band's bottom edge still lands on News Feed's underline. */
-  padding: 0 0.95rem 1rem 0.95rem;
+  /* Vertically centered title in a fixed-height band — matches the
+     News Feed header above (also min-height: 2.56rem +
+     align-items: center) so the two titles sit on the same y
+     coordinate across columns. */
+  padding: 0 0.95rem;
   margin: 0;
   min-height: 2.56rem;
-  align-items: flex-start;
+  align-items: center;
 }
 .topic-intelligence-panel .sidebar-card-title {
   font-family: var(--font-display);
