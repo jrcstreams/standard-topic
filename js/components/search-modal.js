@@ -196,7 +196,13 @@ function closeOverlay() {
 }
 
 function renderBody(query) {
-  const q = (query || '').trim();
+  // Render the input with the raw value (un-trimmed) so trailing
+  // spaces survive between keystrokes — otherwise a space typed
+  // between two words gets stripped before the next character lands,
+  // collapsing "bernie sanders" into "berniesanders". Trimming is
+  // only for the match logic below.
+  const raw = query || '';
+  const q = raw.trim();
   currentResults = [];
 
   const sections = [];
@@ -208,7 +214,7 @@ function renderBody(query) {
       <div class="search-overlay-input-row">
         <svg class="search-overlay-icon-svg" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="search" class="search-overlay-input"
-               value="${escapeAttr(q)}"
+               value="${escapeAttr(raw)}"
                placeholder="Search a topic or type your own..."
                autocomplete="off" autocapitalize="off" autocorrect="off"
                spellcheck="false" enterkeyhint="go">
