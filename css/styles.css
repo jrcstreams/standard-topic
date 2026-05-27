@@ -10063,44 +10063,56 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 }
 
 /* --- Web Sources chips ------------------------------------------------ */
-/* Web sources read as a tight row of launcher tiles — each tile
-   is a small icon-forward card that opens an external search.
-   Flex-wrap so the row reflows naturally: sidebar context (~300px
-   wide) gives 2 columns and a wrapped third row; custom-search
-   context (full page width) gives a single row of 5 tiles. The
-   min-width on each tile keeps them substantial enough to read
-   as "launcher" without ballooning on wide panels. */
+/* Web sources — 2-column grid by default. 5 items pack into 3
+   tight rows in the narrow sidebar context. The custom-search
+   page (full-width panel) override below switches to an auto-fit
+   grid so the row spreads horizontally instead of stacking. */
 .ti-web-source-chips {
   list-style: none;
   margin: 0;
   padding: 0 0.25rem 0 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
 }
-.ti-web-source-chip-row { flex: 0 1 auto; min-width: 140px; }
+.ti-web-source-chip-row { min-width: 0; }
+/* Wide-panel contexts (custom-search page, prompt-builder picker,
+   anywhere the panel takes substantial horizontal room): let the
+   grid auto-fit across the available width instead of forcing a
+   2-column stack. */
+.topic-layout.is-custom .ti-web-source-chips {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
 .ti-web-source-chip-row { margin: 0; padding: 0; }
-/* Launcher tile — icon-forward, rectangular (not pill), white
-   surface with hairline border. Reads as a quick-launch button
-   for an external search, parallel to (but visually distinct
-   from) the AI action spines below. */
+/* Launcher tile — icon + platform name, white surface, hairline
+   border. No outbound arrow (the name + new-tab behavior already
+   carry "external"). Tile fills its grid cell so each row reads
+   as a uniform set of buttons, not a scatter of variable-width
+   chips. */
 .ti-web-source-chip {
   display: inline-flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 0.5rem;
-  padding: 0.5rem 0.65rem 0.5rem 0.6rem;
+  padding: 0.45rem 0.65rem;
   background: #ffffff;
   border: 1px solid #d9dee8;
-  border-radius: 8px;
+  border-radius: 7px;
   font-family: var(--font-family);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: -0.005em;
   color: #1e2d44;
   text-decoration: none;
-  transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.14s, box-shadow 0.14s;
+  transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.12s, box-shadow 0.14s;
   line-height: 1.1;
   width: 100%;
+}
+.ti-web-source-chip-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 .ti-web-source-chip-icon {
   width: 16px;
@@ -10324,23 +10336,35 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
    News Feed sibling), so the AI action cards have a lot of
    horizontal real estate to fill. Use an auto-fit grid that
    adapts to width: 3 columns at wide widths, 2 at medium, 1 at
-   narrow. Each cell gets its own short left-accent stub (the
-   continuous-spine effect from the sidebar doesn't translate to
-   a multi-column grid). Cards stay tight rather than ballooning
-   to fill the cell, so a long-titled card and a short-titled
-   card read at the same density. */
+   narrow. The left-accent spine doesn't translate to a multi-
+   column grid (stubby orphan rules), so cells get a proper
+   bordered tile treatment instead — same module-like card edge
+   the rest of the wide-panel layout uses. */
 @media (min-width: 720px) {
   .topic-layout.is-custom .ti-actions-section .ti-action-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     column-gap: 0.7rem;
-    row-gap: 0.35rem;
+    row-gap: 0.55rem;
     padding-right: 0;
   }
-  /* Tighter padding inside each card-cell so the grid feels like
-     a dense board of capabilities, not a list of paragraphs. */
+  /* Drop the spine, add a hairline border + slight background so
+     each card reads as a self-contained tile. Pad symmetrically
+     (no extra left inset for the accent rule). */
   .topic-layout.is-custom .sidebar-shortcut.ti-action-card {
-    padding: 0.5rem 0.7rem 0.55rem 0.7rem;
+    padding: 0.6rem 0.85rem 0.7rem;
+    background: #ffffff;
+    border: 1px solid #e2e6ee;
+    border-left: 1px solid #e2e6ee;
+    border-radius: 8px;
+  }
+  .topic-layout.is-custom .sidebar-shortcut.ti-action-card:hover {
+    background: #ffffff;
+    border-color: var(--ti-accent);
+  }
+  .topic-layout.is-custom .sidebar-shortcut.ti-action-card.is-multi-selected {
+    background: color-mix(in srgb, var(--ti-accent) 6%, #ffffff);
+    border-color: var(--ti-accent);
   }
 }
 

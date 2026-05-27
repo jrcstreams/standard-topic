@@ -1579,7 +1579,6 @@ function webSourceChip(search, topicName) {
          title="Open ${escapeAttr(search.name)} search">
         ${iconHTML}
         <span class="ti-web-source-chip-name">${escapeHTML(search.name)}</span>
-        <span class="ti-web-source-chip-arrow" aria-hidden="true">↗</span>
       </a>
     </li>
   `;
