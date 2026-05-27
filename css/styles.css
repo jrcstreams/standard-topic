@@ -10219,60 +10219,67 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 }
 
 /* --- Web Sources chips ------------------------------------------------ */
-/* Web sources — 2-column grid by default in the narrow sidebar
-   context (5 items pack into 3 rows). The custom-search override
-   below switches to an auto-fit grid bounded to a comfortable
-   card width so descriptions fit on one line and cards don't
-   inflate when there's leftover row space. */
+/* Web sources — single-column stack by default (sidebar context)
+   so consecutive rows' left-accent spines connect into one
+   continuous rule for the WEB SOURCES group. Mobile + custom-
+   search overrides below switch to multi-column grids. */
 .ti-web-source-chips {
   list-style: none;
   margin: 0;
   padding: 0 0.25rem 0 0;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.45rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
 }
-.ti-web-source-chip-row { min-width: 0; }
-/* Wide-panel contexts (custom-search page): auto-fit grid with
-   bounded card width (220–280px) so the row reuses available
-   space by adding more columns instead of stretching cards out. */
+.ti-web-source-chip-row { min-width: 0; margin: 0; padding: 0; }
+/* Custom-search page (full-width panel): auto-fit grid with a
+   bounded cell width so the row spreads out without stretching
+   each cell to fill leftover space. */
 .topic-layout.is-custom .ti-web-source-chips {
-  grid-template-columns: repeat(auto-fit, minmax(220px, 280px));
-  gap: 0.55rem;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 220px));
+  gap: 0.15rem 0.5rem;
 }
 .ti-web-source-chip-row { margin: 0; padding: 0; }
-/* Web source card — same vertical shape as the AI action cards
-   below (icon + name on a header row, description spanning the
-   card width). Sized a notch smaller than the AI action cards
-   since web sources read as secondary (external link affordance
-   vs. the primary AI prompt actions). */
+/* Web source row — same flat-row + left-accent spine treatment
+   as the AI action cards. No bordered card, no background; the
+   spine carries identity. Single column in the sidebar so the
+   spines stack into one continuous rule. Descriptions hidden on
+   all sizes for now (data kept in case we re-enable). */
 .ti-web-source-chip {
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0.14rem;
+  align-items: center;
+  gap: 0.45rem;
   width: 100%;
-  padding: 0.42rem 0.62rem 0.48rem;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid #e4e8ef;
-  border-radius: 7px;
-  font-family: var(--font-family);
+  padding: 0.42rem 0.7rem 0.42rem 0.68rem;
+  background: transparent;
+  border: none;
+  border-left: 2px solid color-mix(in srgb, #5d6b7e 45%, #d8dde7);
+  border-radius: 0;
+  text-align: left;
   text-decoration: none;
-  color: #1e2d44;
-  transition: background 0.14s, border-color 0.14s, color 0.14s;
+  font-family: var(--font-family);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background 0.16s, border-left-color 0.18s;
   line-height: 1.2;
+}
+.ti-web-source-chip:hover {
+  background: color-mix(in srgb, #5d6b7e 6%, transparent);
+  border-left-color: #5d6b7e;
+  text-decoration: none;
+  color: var(--color-text);
 }
 .ti-web-source-chip-header {
   display: flex;
   align-items: center;
-  gap: 0.42rem;
+  gap: 0.45rem;
   min-width: 0;
   width: 100%;
 }
 .ti-web-source-chip-name {
   flex: 1 1 auto;
   min-width: 0;
-  font-size: 0.76rem;
+  font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: -0.008em;
   color: #1a2235;
@@ -10280,34 +10287,21 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.ti-web-source-chip-desc {
-  display: block;
-  font-size: 0.66rem;
-  font-weight: 400;
-  line-height: 1.38;
-  color: #6a7689;
-  margin: 0;
-}
+.ti-web-source-chip-desc { display: none; }
 
-/* Mobile: drop the card shape entirely. Hide the description,
-   collapse the chip to a compact horizontal pill (icon + name),
-   tighten padding. Card-with-description is a desktop affordance;
-   on mobile the descriptions cause uneven row heights and waste
-   vertical space — names alone are enough. */
+/* Mobile: 2-column grid so the 5 sources sit as 3 condensed rows
+   instead of 5 stacked rows. Each cell still carries its left
+   spine — they don't form a continuous rule like the single-
+   column desktop view, but the spine identifies the section. */
 @media (max-width: 899.98px) {
+  .ti-web-source-chips {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.2rem 0.6rem;
+  }
   .ti-web-source-chip {
-    flex-direction: row;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.42rem 0.6rem;
-    border-radius: 7px;
+    padding: 0.4rem 0.55rem 0.4rem 0.55rem;
   }
-  .ti-web-source-chip-header { width: auto; }
-  .ti-web-source-chip-desc { display: none; }
-  .ti-web-source-chip-name {
-    font-size: 0.8rem;
-  }
-  .ti-web-source-chip-icon { width: 14px; height: 14px; }
+  .ti-web-source-chip-name { font-size: 0.76rem; }
 }
 .ti-web-source-chip-icon {
   width: 14px;
