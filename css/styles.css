@@ -10097,17 +10097,29 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
      band's rectangular corner meets the panel's rounded one
      (overflow: hidden mostly handles it, but not always). */
   border-radius: 10px 10px 0 0;
-  padding: 0 0.95rem;
+  /* Match the News Feed header's vertical structure: title at the
+     top with 1rem of padding below, so the TI title and the News
+     Feed title share the same top edge (y=0) and sit on a parallel
+     baseline across the two columns. The min-height keeps the
+     navy band the same total height as the News Feed header row
+     (≈2.56rem = 1.5rem title + 1rem padding-bottom + 1px border),
+     so the band's bottom edge still lands on News Feed's underline. */
+  padding: 0 0.95rem 1rem 0.95rem;
   margin: 0;
   min-height: 2.56rem;
-  align-items: center;
+  align-items: flex-start;
 }
 .topic-intelligence-panel .sidebar-card-title {
   font-family: var(--font-display);
   color: #ffffff;
-  font-size: 0.92rem;
+  /* Bigger, matching the News Feed title's typographic weight on
+     desktop. Line-height locked to 1.15 to match News Feed exactly
+     so the two titles share the same metric (top edge AND baseline
+     line up across columns). */
+  font-size: 1.15rem;
+  line-height: 1.15;
   font-weight: 600;
-  letter-spacing: 0.005em;
+  letter-spacing: -0.012em;
 }
 
 /* Body inset — eyebrows (WEB SOURCES / DISCOVER / LEARN ...) and the

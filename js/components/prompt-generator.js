@@ -23,6 +23,27 @@ const state = {
   visited: new Set(), // Step indices the user has visited
 };
 
+// Snapshot / restore for the Cancel button in picker modals. Modals
+// mutate `state` live as the user clicks options, so "Done" requires
+// no commit step — but "Cancel" needs to revert what was added/removed
+// during the modal session. Snapshot is captured on open; restore
+// (via Cancel) puts state back to that baseline.
+function snapshotState() {
+  return {
+    values: JSON.parse(JSON.stringify(state.values || {})),
+    customValues: JSON.parse(JSON.stringify(state.customValues || {})),
+    extraInputs: JSON.parse(JSON.stringify(state.extraInputs || {})),
+    customizations: state.customizations || '',
+  };
+}
+function restoreState(snap) {
+  if (!snap) return;
+  state.values = JSON.parse(JSON.stringify(snap.values));
+  state.customValues = JSON.parse(JSON.stringify(snap.customValues));
+  state.extraInputs = JSON.parse(JSON.stringify(snap.extraInputs));
+  state.customizations = snap.customizations;
+}
+
 let pgData = null;
 let modelsData = null;
 let stepDefs = [];
@@ -485,14 +506,23 @@ function openPbCardModal(key) {
   `;
   const body = overlay.querySelector('#pb-modal-body');
 
+  // Snapshot state on open so Cancel can revert. The user may toggle
+  // chips, edit the textarea, etc. — all of which mutate `state`
+  // immediately. Without a snapshot, Cancel has nothing to roll back
+  // to and silently behaves identically to Done.
+  const snap = snapshotState();
   const close = () => {
     overlay.remove();
     refreshPbCards();
   };
-  overlay.querySelector('.pb-modal-close').addEventListener('click', close);
+  const cancel = () => {
+    restoreState(snap);
+    close();
+  };
+  overlay.querySelector('.pb-modal-close').addEventListener('click', cancel);
   overlay.querySelector('.pb-modal-done').addEventListener('click', close);
-  overlay.querySelector('.pb-modal-cancel').addEventListener('click', close);
-  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+  overlay.querySelector('.pb-modal-cancel').addEventListener('click', cancel);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) cancel(); });
 
   if (key === 'topics') {
     renderTopicsModalBody(body);
@@ -1605,10 +1635,17 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
 
   let query = '';
 
+  // Snapshot state on open so Cancel can revert the toggles + custom
+  // additions the user made during this picker session.
+  const snap = snapshotState();
   const close = () => {
     fieldPickerEl?.remove();
     fieldPickerEl = null;
     onDone();
+  };
+  const cancel = () => {
+    restoreState(snap);
+    close();
   };
 
   const toggle = (value) => {
@@ -1774,11 +1811,11 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
     if (addCustomBtn) addCustomBtn.addEventListener('click', addCustomFromInput);
   }
 
-  fieldPickerEl.querySelector('.pb-modal-close').addEventListener('click', close);
+  fieldPickerEl.querySelector('.pb-modal-close').addEventListener('click', cancel);
   fieldPickerEl.querySelector('.pb-modal-done').addEventListener('click', close);
-  fieldPickerEl.querySelector('.pb-modal-cancel').addEventListener('click', close);
+  fieldPickerEl.querySelector('.pb-modal-cancel').addEventListener('click', cancel);
   fieldPickerEl.addEventListener('click', (e) => {
-    if (e.target === fieldPickerEl) close();
+    if (e.target === fieldPickerEl) cancel();
   });
 
   searchInput.addEventListener('input', () => {
