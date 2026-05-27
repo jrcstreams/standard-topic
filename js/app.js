@@ -779,15 +779,6 @@ function renderStickyHeroBar(container, route) {
       </a>
       <span class="sticky-tagline">News, Resources and AI Knowledge. On any topic.</span>
       <div class="sticky-actions">
-        <div class="sticky-search" id="sticky-search-container"></div>
-        <a href="#/prompt-generator" class="sticky-cta" id="nav-cta" aria-label="Prompt Builder">
-          <svg class="sticky-cta-sparkle" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/>
-            <path d="M19 3l.6 1.6L21.2 5.2 19.6 5.8 19 7.4 18.4 5.8 16.8 5.2 18.4 4.6z"/>
-          </svg>
-          <span class="sticky-cta-full">Prompt Builder</span>
-          <span class="sticky-cta-short">Prompt Builder</span>
-        </a>
         <div class="sticky-search sticky-search-pill" id="sticky-search-pill-container">
           <div class="search-bar-wrapper">
             <button class="search-bar is-compact search-bar-search-variant" type="button" id="nav-search" aria-label="Search topics">
@@ -801,6 +792,15 @@ function renderStickyHeroBar(container, route) {
             </button>
           </div>
         </div>
+        <div class="sticky-search" id="sticky-search-container"></div>
+        <a href="#/prompt-generator" class="sticky-cta" id="nav-cta" aria-label="Prompt Builder">
+          <svg class="sticky-cta-sparkle" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/>
+            <path d="M19 3l.6 1.6L21.2 5.2 19.6 5.8 19 7.4 18.4 5.8 16.8 5.2 18.4 4.6z"/>
+          </svg>
+          <span class="sticky-cta-full">Prompt Builder</span>
+          <span class="sticky-cta-short">Prompt Builder</span>
+        </a>
         <a href="#/" class="sticky-home" id="nav-home" aria-label="Home">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/>

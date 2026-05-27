@@ -4885,7 +4885,10 @@ body.app-mode .topic-layout {
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #6c7a91;
+    /* Use the per-group accent (set by .ti-action-group--discover
+       etc. via --ti-accent) instead of a hardcoded gray, so the
+       eyebrows are colored on mobile to match desktop. */
+    color: var(--ti-accent, #6c7a91);
     margin: 0 0 0.6rem;
     line-height: 1.2;
   }
@@ -4911,6 +4914,12 @@ body.app-mode .topic-layout {
    stacking context and the fade rendered BEHIND the chips. */
 .subnav-chip-wrap {
   position: relative;
+  /* Take remaining horizontal space in .topic-banner-row so the
+     scroll strip extends to the row's right edge (matching the
+     news feed's right edge below). Without flex: 1, the wrap
+     shrinks to content width and the strip ends well before the
+     content boundary — leaving an awkward gap on the right. */
+  flex: 1 1 0;
   min-width: 0;
   isolation: isolate;
 }
@@ -7220,6 +7229,31 @@ body.app-mode .topic-layout {
 }
 .pb-modal-done:hover { background: #1f3251; }
 .pb-modal-done:active { transform: translateY(1px); }
+
+/* Cancel — secondary action, sits to the left of Done. Closes
+   the modal without committing (for pickers that have a confirm-
+   on-Done flow). On modals where Done is already a "close" (no
+   commit), Cancel is functionally equivalent — provides a
+   familiar affordance for users who instinctively look for it. */
+.pb-modal-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 96px;
+  padding: 0.55rem 1.25rem;
+  background: transparent;
+  color: var(--color-text);
+  border: 1.5px solid #d8dee8;
+  border-radius: 999px;
+  font-family: var(--font-family);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: background 0.14s, border-color 0.14s, transform 0.06s;
+}
+.pb-modal-cancel:hover { background: #f3f5f9; border-color: #c8d2e0; }
+.pb-modal-cancel:active { transform: translateY(1px); }
 
 @media (max-width: 640px) {
   /* Denser cards on mobile: tighter padding, smaller icon, smaller
@@ -10090,13 +10124,35 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   padding-right: 0.7rem;
 }
 
-/* Mobile: drop the rounded module corners + phantom border so the
-   panel fills the viewport edges naturally in tabbed mode. The
-   banded header stays. */
+/* Mobile: strip the control-panel chrome entirely. The TI panel
+   on mobile lives in a tabbed view and doesn't need its own
+   container (no News Feed sibling competing for the page), so the
+   navy band + tinted body + module border just create visual
+   noise. Header collapses to a quiet underlined eyebrow; body
+   sits on the page bg. Eyebrows below stay colored by group as
+   they do on desktop. */
 @media (max-width: 899.98px) {
   .topic-intelligence-panel {
+    background: transparent;
     border-radius: 0;
     box-shadow: none;
+    overflow: visible;
+  }
+  .topic-intelligence-panel .sidebar-card-header {
+    background: transparent;
+    padding: 0 0 0.55rem 0;
+    margin: 0 0 0.85rem 0;
+    border-bottom: 1px solid #e2e6ee;
+    min-height: 0;
+  }
+  .topic-intelligence-panel .sidebar-card-title {
+    color: #5d6b7e;
+    font-family: var(--font-family);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    line-height: 1.2;
+    text-transform: uppercase;
   }
 }
 
@@ -10208,7 +10264,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   background: linear-gradient(to right, color-mix(in srgb, var(--ti-accent) 28%, transparent), transparent);
 }
 .shortcuts-sidebar .ti-web-sources-section + .ti-actions-section {
-  margin-top: 1.15rem;
+  margin-top: 0.85rem;
 }
 /* Mobile: undo the legacy "promote subsection-title to a panel
    heading" bump for the Web Sources eyebrow specifically. The bump
@@ -10242,17 +10298,17 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 }
 
 /* --- Web Sources chips ------------------------------------------------ */
-/* Web sources — single-column stack by default (sidebar context)
-   so consecutive rows' left-accent spines connect into one
-   continuous rule for the WEB SOURCES group. Mobile + custom-
-   search overrides below switch to multi-column grids. */
+/* Web sources — 2-column grid in the sidebar so the 5 sources
+   pack into 3 tight rows side-by-side instead of stacking 5
+   deep. Sensible 0.4rem gap (columns aren't lightyears apart).
+   Custom-search override below switches to a wider auto-fit. */
 .ti-web-source-chips {
   list-style: none;
   margin: 0;
   padding: 0 0.25rem 0 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem 0.4rem;
 }
 .ti-web-source-chip-row { min-width: 0; margin: 0; padding: 0; }
 /* Custom-search page (full-width panel): auto-fit grid with a
@@ -10263,34 +10319,32 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   gap: 0.15rem 0.5rem;
 }
 .ti-web-source-chip-row { margin: 0; padding: 0; }
-/* Web source row — same flat-row + left-accent spine treatment
-   as the AI action cards. No bordered card, no background; the
-   spine carries identity. Single column in the sidebar so the
-   spines stack into one continuous rule. Descriptions hidden on
-   all sizes for now (data kept in case we re-enable). */
+/* Web source row — compact pill with a hairline border. Sits in
+   a 2-column grid (sidebar) so 5 sources pack into 3 tight rows.
+   No spine (spine stubs in a multi-column grid look orphaned),
+   no description (data kept in JSON in case we re-enable). */
 .ti-web-source-chip {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.42rem;
   width: 100%;
-  padding: 0.42rem 0.7rem 0.42rem 0.68rem;
-  background: transparent;
-  border: none;
-  border-left: 2px solid color-mix(in srgb, #5d6b7e 45%, #d8dde7);
-  border-radius: 0;
+  padding: 0.38rem 0.6rem;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid #e2e6ee;
+  border-radius: 7px;
   text-align: left;
   text-decoration: none;
   font-family: var(--font-family);
   color: var(--color-text);
   cursor: pointer;
-  transition: background 0.16s, border-left-color 0.18s;
+  transition: background 0.16s, border-color 0.18s;
   line-height: 1.2;
 }
 .ti-web-source-chip:hover {
-  background: color-mix(in srgb, #5d6b7e 6%, transparent);
-  border-left-color: #5d6b7e;
+  background: #ffffff;
+  border-color: #c8d2e0;
   text-decoration: none;
-  color: var(--color-text);
+  color: #1c3a6b;
 }
 .ti-web-source-chip-header {
   display: flex;
@@ -10387,7 +10441,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .ti-action-group--analyze  { --ti-accent: #b48528; }
 .ti-action-group--more     { --ti-accent: #5d6b7e; }
 
-.ti-action-group + .ti-action-group { margin-top: 1.15rem; }
+.ti-action-group + .ti-action-group { margin-top: 0.85rem; }
 .ti-action-group-label {
   color: var(--ti-accent);
   font-weight: 700;

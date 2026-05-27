@@ -478,6 +478,7 @@ function openPbCardModal(key) {
       </header>
       <div class="pb-modal-body" id="pb-modal-body"></div>
       <footer class="pb-modal-foot">
+        <button type="button" class="pb-modal-cancel">Cancel</button>
         <button type="button" class="pb-modal-done">Done</button>
       </footer>
     </div>
@@ -490,6 +491,7 @@ function openPbCardModal(key) {
   };
   overlay.querySelector('.pb-modal-close').addEventListener('click', close);
   overlay.querySelector('.pb-modal-done').addEventListener('click', close);
+  overlay.querySelector('.pb-modal-cancel').addEventListener('click', close);
   overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
 
   if (key === 'topics') {
@@ -745,6 +747,7 @@ function openAccordionTopicPicker(label, initialSelected, onConfirm) {
         <div class="pb-acc-content"></div>
       </div>
       <footer class="pb-modal-foot">
+        <button type="button" class="pb-modal-cancel">Cancel</button>
         <button type="button" class="pb-modal-done">Done</button>
       </footer>
     </div>
@@ -789,6 +792,7 @@ function openAccordionTopicPicker(label, initialSelected, onConfirm) {
 
   accordionPickerEl.querySelector('.pb-modal-close').addEventListener('click', close);
   accordionPickerEl.querySelector('.pb-modal-done').addEventListener('click', confirm);
+  accordionPickerEl.querySelector('.pb-modal-cancel').addEventListener('click', close);
   accordionPickerEl.addEventListener('click', (e) => {
     if (e.target === accordionPickerEl) close();
   });
@@ -1736,6 +1740,7 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
         <div class="pb-acc-content"></div>
       </div>
       <footer class="pb-modal-foot">
+        <button type="button" class="pb-modal-cancel">Cancel</button>
         <button type="button" class="pb-modal-done">Done</button>
       </footer>
     </div>
@@ -1771,6 +1776,7 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
 
   fieldPickerEl.querySelector('.pb-modal-close').addEventListener('click', close);
   fieldPickerEl.querySelector('.pb-modal-done').addEventListener('click', close);
+  fieldPickerEl.querySelector('.pb-modal-cancel').addEventListener('click', close);
   fieldPickerEl.addEventListener('click', (e) => {
     if (e.target === fieldPickerEl) close();
   });

@@ -83,7 +83,11 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const upstream = await fetch(`${RSSAPP_BASE}/${encodeURIComponent(feedId)}`, {
+    // rss.app's v1 API defaults to ~20 items per feed; pass limit=50
+    // explicitly so the news feed has more headlines per page. 50 is
+    // well below rss.app's per-request ceiling (typically 100) and
+    // keeps the payload small enough for the 15-minute edge cache.
+    const upstream = await fetch(`${RSSAPP_BASE}/${encodeURIComponent(feedId)}?limit=50`, {
       headers: {
         Authorization: `Bearer ${apiKey}:${apiSecret}`,
         Accept: 'application/json',
