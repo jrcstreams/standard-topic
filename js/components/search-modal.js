@@ -37,12 +37,45 @@ export function initSearchOverlay() {
         </button>
         <h2 class="search-modal-head-title">Topics</h2>
       </header>
-      <div class="search-overlay-body"></div>
+      <div class="search-overlay-body-wrap">
+        <div class="search-overlay-body"></div>
+        <div class="scroll-fade scroll-fade-top" aria-hidden="true">
+          <svg class="scroll-fade-chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 7.5 6 4.5 9 7.5"/></svg>
+        </div>
+        <div class="scroll-fade scroll-fade-bottom" aria-hidden="true">
+          <svg class="scroll-fade-chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 4.5 6 7.5 9 4.5"/></svg>
+        </div>
+      </div>
     </div>
   `;
   document.body.appendChild(overlayEl);
 
   bodyEl = overlayEl.querySelector('.search-overlay-body');
+  const bodyWrapEl = overlayEl.querySelector('.search-overlay-body-wrap');
+
+  // Toggle has-overflow-top / has-overflow-bottom on the wrap based on
+  // the body's scroll position. Same pattern as the shortcuts list
+  // scroll fades — rAF-throttled to keep scroll smooth.
+  let rafId = null;
+  const updateOverflow = () => {
+    rafId = null;
+    if (!bodyEl || !bodyWrapEl) return;
+    const max = bodyEl.scrollHeight - bodyEl.clientHeight;
+    const hasOverflow = max > 1;
+    bodyWrapEl.classList.toggle('has-overflow-top', hasOverflow && bodyEl.scrollTop > 1);
+    bodyWrapEl.classList.toggle('has-overflow-bottom', hasOverflow && bodyEl.scrollTop < max - 1);
+  };
+  const scheduleOverflow = () => {
+    if (rafId) return;
+    rafId = requestAnimationFrame(updateOverflow);
+  };
+  bodyEl.addEventListener('scroll', scheduleOverflow, { passive: true });
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(scheduleOverflow).observe(bodyEl);
+  }
+  // Expose for openOverlay() to call after a re-render so the
+  // indicators reflect the new content height.
+  overlayEl._refreshScrollFade = scheduleOverflow;
   const closeBtn = overlayEl.querySelector('.search-overlay-close');
 
   // Event delegation for all clicks in the body — no per-element listeners
@@ -213,6 +246,10 @@ function renderBody(query) {
     inputEl.addEventListener('keydown', handleKeyboard);
   }
   updateHighlight();
+  // Re-evaluate scroll-fade overlay visibility now that body content
+  // height has changed. ResizeObserver also fires here, but calling
+  // explicitly avoids a one-frame flash where the overlays lag.
+  overlayEl?._refreshScrollFade?.();
 }
 
 function renderSearchResults(q) {

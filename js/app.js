@@ -1093,7 +1093,12 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   // surface these because there's no specific topic context yet.
   const contentSearches = (!isHome && topicName) ? getExternalSearches() : [];
 
-  const cardClasses = ['sidebar-card', 'shortcuts-sidebar'];
+  // topic-intelligence-panel: scopes the banded control-panel
+  // treatment (dark header band + tinted body) to this panel only.
+  // .shortcuts-sidebar is also used by the discover modal, all-topics
+  // modal, and prompt-generator wizard topic picker — those should
+  // not pick up the navy banded header.
+  const cardClasses = ['sidebar-card', 'shortcuts-sidebar', 'topic-intelligence-panel'];
 
   // Topic Intelligence drops the topic pill in the title — the topic
   // is already identified in the page banner directly above, and the

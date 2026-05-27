@@ -2571,24 +2571,16 @@ html, body, #app {
   margin-bottom: 0.55rem;
 }
 
-/* Browse grid — single column of large topic cards. Each card is a
-   self-contained accordion: head row + (when expanded) expansion. */
+/* Browse grid — single column of large topic cards at every width.
+   The earlier 2-column desktop variant felt clunky (12 stubby cards
+   tiled), and a single column scrolls predictably with the scroll-fade
+   indicators below. Each card is a self-contained accordion: head row
+   + (when expanded) expansion. */
 .search-modal-topic-grid {
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
   margin: 0 0 0.6rem;
-}
-@media (min-width: 720px) {
-  .search-modal-topic-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 0.55rem;
-    row-gap: 0.45rem;
-  }
-  .topic-card.is-expanded {
-    grid-column: 1 / -1;
-  }
 }
 
 .topic-card {
@@ -2868,11 +2860,34 @@ html, body, #app {
   background: var(--color-border);
 }
 
+/* Body wrap — positioning context for the top/bottom scroll-fade
+   overlays. The inner .search-overlay-body is the actual scroller;
+   the wrap is fixed-flex so the overlays anchor to its edges and
+   only become visible when there's hidden content above/below. */
+.search-overlay-body-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 .search-overlay-body {
   flex: 1;
   overflow-y: auto;
   padding: 0;
 }
+/* Scroll-fade overlays anchor to the wrap, not the page. Use the
+   modal's background so the fade reads as content sliding under the
+   modal's chrome rather than a generic gray. */
+.search-overlay-body-wrap .scroll-fade-top {
+  background: linear-gradient(to bottom, var(--color-bg) 35%, rgba(255, 255, 255, 0));
+}
+.search-overlay-body-wrap .scroll-fade-bottom {
+  background: linear-gradient(to top, var(--color-bg) 35%, rgba(255, 255, 255, 0));
+}
+.search-overlay-body-wrap.has-overflow-top .scroll-fade-top { opacity: 1; }
+.search-overlay-body-wrap.has-overflow-bottom .scroll-fade-bottom { opacity: 1; }
 
 .search-overlay-group {
   margin-bottom: 0;
@@ -9840,14 +9855,78 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   margin-left: 1.15rem;
 }
 
-/* === Topic Intelligence — title sizing ============================
-   The topic pill is intentionally not rendered here (set to empty in
-   JS) since the topic is identified one row up in the page banner.
-   With the pill gone, the title runs at the same size as the other
-   panel titles. */
-.shortcuts-sidebar .sidebar-card-title {
-  font-size: 1.08rem;
-  letter-spacing: -0.02em;
+/* === Topic Intelligence — control-panel module ====================
+   The TI sidebar reads as a control surface, not a peer section. A
+   navy header band sits at the top with the panel label in white;
+   the body underneath is a soft cool-tinted surface that holds the
+   web-source chips and AI-action spines. The band's bottom edge
+   replaces the explicit border-rule used in the News Feed header
+   and lands at the same y as the News Feed underline so the two
+   columns share a single horizontal axis across the page.
+
+   Scoping: the .topic-intelligence-panel modifier is applied only
+   to the actual TI sidebar render (app.js). The all-topics modal,
+   discover modal, search overlay, prompt-builder pickers, and
+   related-topics sidebar all share .shortcuts-sidebar but stay
+   visually untouched. */
+
+/* Outer panel — tinted surface with module-rounded corners. A 1px
+   phantom border via box-shadow gives the panel a visible edge
+   without taking layout space, so the header band's bottom can
+   land on the same y as the News Feed underline. */
+.topic-intelligence-panel {
+  background: #f5f7fb;
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px #e2e6ee;
+}
+
+/* Header band — navy strip with the panel label in white. Min-height
+   matches the News Feed title row's effective height (1.3rem ×
+   line-height 1.15 + 1rem padding-bottom ≈ 2.56rem) so the band's
+   bottom edge lands at the same y as the News Feed underline. The
+   navy/tint color transition at the band's bottom replaces the
+   border-bottom rule used elsewhere. */
+.topic-intelligence-panel .sidebar-card-header {
+  background: #1c3a6b;
+  border-bottom: none;
+  padding: 0 0.95rem;
+  margin: 0;
+  min-height: 2.56rem;
+  align-items: center;
+}
+.topic-intelligence-panel .sidebar-card-title {
+  font-family: var(--font-display);
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+}
+
+/* Body inset — eyebrows (WEB SOURCES / DISCOVER / LEARN ...) and the
+   action spines breathe inside the tinted surface rather than sitting
+   flush against the panel walls. Left padding is slightly heavier so
+   the colored spines have visible margin from the panel edge. */
+.topic-intelligence-panel .shortcuts-scroll-wrap {
+  padding-left: 0.95rem;
+  padding-right: 0.7rem;
+}
+
+/* Multi-controls wrap inherits the tinted surface — no white
+   chip floating inside the module. */
+.topic-intelligence-panel .shortcuts-multi-submit-wrap {
+  background: transparent;
+}
+
+/* Mobile: drop the rounded module corners + phantom border so the
+   panel fills the viewport edges naturally in tabbed mode. The
+   banded header stays. */
+@media (max-width: 899.98px) {
+  .topic-intelligence-panel {
+    border-radius: 0;
+    box-shadow: none;
+  }
 }
 
 /* ===============================================================
