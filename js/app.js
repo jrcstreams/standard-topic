@@ -1609,6 +1609,14 @@ function shortcutCard(shortcut, topicName, groupKey) {
 function webSourceChip(search, topicName) {
   const url = search.urlTemplate.replace(/\{query\}/g, encodeURIComponent(topicName));
   const iconHTML = renderIcon(search.icon, 'ti-web-source-chip-icon');
+  // Card shape matches the AI action cards below — icon + name on
+  // the header row, evergreen description spanning the card width
+  // underneath. Reads as a parallel set of "things you can open"
+  // tied to this search, with the difference being external link
+  // vs. send-prompt-to-LLM.
+  const description = search.description
+    ? `<span class="ti-web-source-chip-desc">${escapeHTML(search.description)}</span>`
+    : '';
   return `
     <li class="ti-web-source-chip-row">
       <a class="ti-web-source-chip quick-link-pill"
@@ -1617,8 +1625,11 @@ function webSourceChip(search, topicName) {
          rel="noopener noreferrer"
          data-name="${escapeAttr(search.name)}"
          title="Open ${escapeAttr(search.name)} search">
-        ${iconHTML}
-        <span class="ti-web-source-chip-name">${escapeHTML(search.name)}</span>
+        <span class="ti-web-source-chip-header">
+          ${iconHTML}
+          <span class="ti-web-source-chip-name">${escapeHTML(search.name)}</span>
+        </span>
+        ${description}
       </a>
     </li>
   `;

@@ -10219,60 +10219,80 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 }
 
 /* --- Web Sources chips ------------------------------------------------ */
-/* Web sources — 2-column grid by default. 5 items pack into 3
-   tight rows in the narrow sidebar context. The custom-search
-   page (full-width panel) override below switches to an auto-fit
-   grid so the row spreads horizontally instead of stacking. */
+/* Web sources — 2-column grid by default in the narrow sidebar
+   context (5 items pack into 3 rows). The custom-search override
+   below switches to an auto-fit grid bounded to a comfortable
+   card width so descriptions fit on one line and cards don't
+   inflate when there's leftover row space. */
 .ti-web-source-chips {
   list-style: none;
   margin: 0;
   padding: 0 0.25rem 0 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.35rem;
+  gap: 0.45rem;
 }
 .ti-web-source-chip-row { min-width: 0; }
 /* Wide-panel contexts (custom-search page): auto-fit grid with
-   BOUNDED tile width (minmax(140px, 180px)) so tiles respond to
-   width by adding more columns instead of inflating. A 5-tile row
-   on a wide panel is 5 columns of ~170px, not 5 columns of 350px. */
+   bounded card width (220–280px) so the row reuses available
+   space by adding more columns instead of stretching cards out. */
 .topic-layout.is-custom .ti-web-source-chips {
-  grid-template-columns: repeat(auto-fit, minmax(140px, 180px));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 280px));
+  gap: 0.55rem;
 }
 .ti-web-source-chip-row { margin: 0; padding: 0; }
-/* Launcher tile — quiet by default. Soft surface, soft border,
-   medium-weight text, muted icon. Should read as a secondary
-   utility row, not a primary CTA. */
+/* Web source card — same vertical shape as the AI action cards
+   below (icon + name on a header row, description spanning the
+   card width). The difference is purpose, not form: web sources
+   open external searches in a new tab, AI actions send prompts
+   to LLMs. The eyebrow above each section says which. */
 .ti-web-source-chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0.45rem;
-  padding: 0.42rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.18rem;
+  width: 100%;
+  padding: 0.55rem 0.75rem 0.6rem;
   background: rgba(255, 255, 255, 0.7);
   border: 1px solid #e4e8ef;
-  border-radius: 7px;
+  border-radius: 8px;
   font-family: var(--font-family);
-  font-size: 0.76rem;
-  font-weight: 500;
-  letter-spacing: -0.003em;
-  color: #4a5568;
   text-decoration: none;
+  color: #1e2d44;
   transition: background 0.14s, border-color 0.14s, color 0.14s;
-  line-height: 1.1;
+  line-height: 1.2;
+}
+.ti-web-source-chip-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
   width: 100%;
 }
 .ti-web-source-chip-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #1a2235;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-width: 0;
+}
+.ti-web-source-chip-desc {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: #6a7689;
+  margin: 0;
 }
 .ti-web-source-chip-icon {
-  width: 14px;
-  height: 14px;
+  width: 17px;
+  height: 17px;
   flex-shrink: 0;
-  color: #7c8696;
+  color: #5d6b7e;
 }
 .ti-web-source-chip-arrow {
   font-size: 0.78rem;
