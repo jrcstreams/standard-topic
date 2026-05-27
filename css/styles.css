@@ -452,39 +452,31 @@ body.sticky-always.has-subnav #content {
   .sticky-home { width: 30px; height: 30px; }
 }
 
-/* Magnify icon — opens the Topics modal with input focused. Sits
-   between Home and Settings in the main nav icon cluster, matching
-   their dark-nav-chip treatment so the three read as a single
-   utility group (Home · Search · Settings). The Choose Topics
-   pill earlier in the nav still exists for users who want to
-   browse, not search — this is the "I want to type a topic" path. */
-.sticky-search-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 8px;
-  cursor: pointer;
-  flex-shrink: 0;
-  padding: 0;
-  transition: background 0.14s, color 0.14s, border-color 0.14s, transform 0.06s;
+/* Search pill — opens the Topics modal with input focused. Mirrors
+   the Choose Topics pill's white-on-navy treatment so the two
+   read as a paired set (browse vs. search), with the icon cluster
+   (Home · Settings) sitting separately to the right. On mobile
+   the "Search" text label hides so only the magnify icon remains;
+   the button shrinks to match the surrounding icon chips. */
+.sticky-search-pill .search-bar-search-variant {
+  /* Inherits .search-bar / .is-compact base — only the mobile
+     icon-only behavior is custom to this variant. */
 }
-.sticky-search-icon:hover {
-  background: rgba(255, 255, 255, 0.14);
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.28);
-}
-.sticky-search-icon:active { transform: translateY(1px); }
-.sticky-search-icon svg { display: block; }
 @media (max-width: 640px) {
-  .sticky-search-icon { width: 32px; height: 32px; }
+  .sticky-search-pill .search-bar-label { display: none; }
+  .sticky-search-pill .search-bar-search-variant {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    justify-content: center;
+    gap: 0;
+  }
 }
 @media (max-width: 400px) {
-  .sticky-search-icon { width: 30px; height: 30px; }
+  .sticky-search-pill .search-bar-search-variant {
+    width: 30px;
+    height: 30px;
+  }
 }
 
 /* Navmenu Settings button — sits in the footer row alongside
@@ -3649,7 +3641,12 @@ html, body, #app {
   z-index: 0;
 }
 .subnav-topics-inline::-webkit-scrollbar { display: none; }
-.subnav-topics-inline::before,
+/* Only the action-link↔first-topic separator lives inside the strip
+   (it's positioned relative to a specific child, not the strip's
+   left edge, so it doesn't conflict with the scroll mask). The
+   title↔topics separator moved onto .subnav-chip-wrap::before below
+   so it sits outside the masked / scrolled region and doesn't get
+   faded or covered by the left scroll arrow. */
 .subnav-topics-inline .subnav-action-link + .subnav-topic-link::before {
   content: '';
   position: absolute;
@@ -3661,12 +3658,6 @@ html, body, #app {
   transition: background 0.12s;
   pointer-events: none;
 }
-.subnav-topics-inline::before { left: 0; }
-/* When the trim function hides every chip (only the action link
-   remains), the title↔chips separator no longer separates anything
-   meaningful — suppress it so the title group doesn't look like it
-   has a stray vertical bar dangling next to it. */
-.subnav-topics-inline.is-empty::before { display: none; }
 /* Second separator sits between "All Topics +" and the first topic
    chip. The chip itself is positioned (relative) so the absolute
    ::before anchors to its left edge. */
@@ -4802,6 +4793,26 @@ body.app-mode .topic-layout {
   min-width: 0;
   isolation: isolate;
 }
+/* Title↔topics vertical separator — pinned to the left edge of the
+   chip wrap rather than the scrolling strip inside it, so it stays
+   visible regardless of scroll position and isn't faded by the
+   scroll-mask gradient or covered by the left scroll arrow. */
+.subnav-chip-wrap::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 1.5rem;
+  background: #b9c2d0;
+  pointer-events: none;
+  z-index: 1;
+}
+/* When the strip has no chips (trim hid them all), suppress the
+   separator so the title group doesn't look like it has a dangling
+   bar next to it. */
+.subnav-chip-wrap:has(.subnav-topics-inline.is-empty)::before { display: none; }
 .subnav-chip-arrow {
   display: none;
   position: absolute;
@@ -10052,48 +10063,58 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 }
 
 /* --- Web Sources chips ------------------------------------------------ */
+/* Web sources read as a tight row of launcher tiles — each tile
+   is a small icon-forward card that opens an external search.
+   Flex-wrap so the row reflows naturally: sidebar context (~300px
+   wide) gives 2 columns and a wrapped third row; custom-search
+   context (full page width) gives a single row of 5 tiles. The
+   min-width on each tile keeps them substantial enough to read
+   as "launcher" without ballooning on wide panels. */
 .ti-web-source-chips {
   list-style: none;
   margin: 0;
   padding: 0 0.25rem 0 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.38rem 0.38rem;
+  gap: 0.4rem;
 }
+.ti-web-source-chip-row { flex: 0 1 auto; min-width: 140px; }
 .ti-web-source-chip-row { margin: 0; padding: 0; }
-/* Chips read as "outbound portals" — white pills sitting on the
-   panel's tinted body so they pop as interactive surfaces, not as
-   sticker labels on a colored band. Slightly larger than the
-   previous gray-on-tint version since the contrast carries more
-   visual weight and they can take it. */
+/* Launcher tile — icon-forward, rectangular (not pill), white
+   surface with hairline border. Reads as a quick-launch button
+   for an external search, parallel to (but visually distinct
+   from) the AI action spines below. */
 .ti-web-source-chip {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.32rem 0.62rem 0.32rem 0.55rem;
+  gap: 0.5rem;
+  padding: 0.5rem 0.65rem 0.5rem 0.6rem;
   background: #ffffff;
   border: 1px solid #d9dee8;
-  border-radius: 999px;
+  border-radius: 8px;
   font-family: var(--font-family);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: -0.005em;
-  color: #2c3a52;
+  color: #1e2d44;
   text-decoration: none;
   transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.14s, box-shadow 0.14s;
-  line-height: 1;
+  line-height: 1.1;
+  width: 100%;
 }
 .ti-web-source-chip-icon {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   flex-shrink: 0;
-  color: #5d6b7e;
+  color: #2c4467;
 }
 .ti-web-source-chip-arrow {
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   color: #8290a8;
-  margin-left: 0.05rem;
+  margin-left: auto;
+  padding-left: 0.4rem;
   line-height: 1;
+  flex-shrink: 0;
 }
 .ti-web-source-chip:hover {
   background: #ffffff;
@@ -10299,14 +10320,27 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   .ti-action-card-desc { font-size: 0.72rem; line-height: 1.38; }
 }
 
-/* Custom-search page goes 2-column at ≥720px (same breakpoint the
-   legacy bullet list used). Cards work well in 2 columns since each
-   is self-contained. */
+/* Custom-search page — the panel takes the full page width (no
+   News Feed sibling), so the AI action cards have a lot of
+   horizontal real estate to fill. Use an auto-fit grid that
+   adapts to width: 3 columns at wide widths, 2 at medium, 1 at
+   narrow. Each cell gets its own short left-accent stub (the
+   continuous-spine effect from the sidebar doesn't translate to
+   a multi-column grid). Cards stay tight rather than ballooning
+   to fill the cell, so a long-titled card and a short-titled
+   card read at the same density. */
 @media (min-width: 720px) {
   .topic-layout.is-custom .ti-actions-section .ti-action-cards {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.55rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    column-gap: 0.7rem;
+    row-gap: 0.35rem;
+    padding-right: 0;
+  }
+  /* Tighter padding inside each card-cell so the grid feels like
+     a dense board of capabilities, not a list of paragraphs. */
+  .topic-layout.is-custom .sidebar-shortcut.ti-action-card {
+    padding: 0.5rem 0.7rem 0.55rem 0.7rem;
   }
 }
 

@@ -748,18 +748,25 @@ function renderStickyHeroBar(container, route) {
           <span class="sticky-cta-full">Prompt Builder</span>
           <span class="sticky-cta-short">Prompt Builder</span>
         </a>
+        <div class="sticky-search sticky-search-pill" id="sticky-search-pill-container">
+          <div class="search-bar-wrapper">
+            <button class="search-bar is-compact search-bar-search-variant" type="button" id="nav-search" aria-label="Search topics">
+              <svg class="search-bar-icon" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <span class="search-bar-label">
+                <span class="search-bar-label-full">Search</span>
+              </span>
+            </button>
+          </div>
+        </div>
         <a href="#/" class="sticky-home" id="nav-home" aria-label="Home">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/>
             <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
           </svg>
         </a>
-        <button type="button" class="sticky-search-icon" id="nav-search" aria-label="Search topics">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"/>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
-        </button>
         <button type="button" class="sticky-settings" id="nav-settings" aria-label="Settings">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="3"/>
