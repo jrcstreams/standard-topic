@@ -10114,16 +10114,25 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   padding-top: 0;
 }
 
-/* Eyebrows match topic-page sidebar scale (0.78rem). Section gaps
-   are generous so the page breathes — eyebrow → content has
-   1rem clearance, and a new group opens 2rem below the last one
-   so the reader gets a clear "new section" break instead of a
-   rolling list. */
+/* Eyebrows match topic-page sidebar scale (0.78rem). The WEB
+   SOURCES eyebrow is wrapped in a .shortcuts-subsection-header
+   so its margin lives there (otherwise the title's margin-bottom
+   collapses into the wrapper and the gap disappears). DISCOVER /
+   LEARN / ANALYZE labels are direct h5s so their margin-bottom
+   applies directly. Both end up with the same 1.1rem of breathing
+   below the eyebrow before the content row starts. */
 .topic-layout.is-custom .ti-web-sources-section .shortcuts-subsection-title,
 .topic-layout.is-custom .ti-action-group-label {
   font-size: 0.78rem;
   letter-spacing: 0.09em;
-  margin-bottom: 1rem;
+}
+.topic-layout.is-custom .ti-web-sources-section .shortcuts-subsection-header {
+  margin-bottom: 1.1rem;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+.topic-layout.is-custom .ti-action-group-label {
+  margin-bottom: 1.1rem;
 }
 .topic-layout.is-custom .ti-action-group + .ti-action-group {
   margin-top: 2rem;
