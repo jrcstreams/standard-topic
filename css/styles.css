@@ -1028,24 +1028,24 @@ body.hide-cta .sticky-cta { display: none !important; }
 }
 
 /* === Custom-search subnav — editable search field display ========
-   Replaces the old "Search: <term>" subnav with a button that
-   visually reads as a filled-in search field. The user immediately
-   sees what they searched for AND that they can refine it. Click
-   anywhere reopens the Topics modal pre-filled with the term. */
+   Compact field display: magnify icon, SEARCH eyebrow, the term,
+   Edit chip. Sized to match the rest of the subnav heights, not
+   to dominate it. Click anywhere reopens the Topics modal
+   pre-filled with the current term. */
 .custom-search-banner .topic-banner-row {
-  padding-top: 0.7rem;
-  padding-bottom: 0.7rem;
+  padding-top: 0.35rem;
+  padding-bottom: 0.35rem;
 }
 .custom-search-display {
   display: inline-flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.5rem;
   width: 100%;
-  max-width: 720px;
-  padding: 0.65rem 0.85rem 0.65rem 0.95rem;
+  max-width: 560px;
+  padding: 0.38rem 0.45rem 0.38rem 0.65rem;
   background: #ffffff;
-  border: 1.5px solid #d8dee8;
-  border-radius: 10px;
+  border: 1px solid #d8dee8;
+  border-radius: 8px;
   cursor: text;
   font-family: var(--font-family);
   text-align: left;
@@ -1055,7 +1055,7 @@ body.hide-cta .sticky-cta { display: none !important; }
 .custom-search-display:hover,
 .custom-search-display:focus-visible {
   border-color: #2c4467;
-  box-shadow: 0 2px 12px rgba(28, 58, 107, 0.08);
+  box-shadow: 0 1px 6px rgba(28, 58, 107, 0.06);
   outline: none;
 }
 .custom-search-display-icon {
@@ -1065,23 +1065,24 @@ body.hide-cta .sticky-cta { display: none !important; }
   color: #2c4467;
   flex-shrink: 0;
 }
+.custom-search-display-icon svg { width: 14px; height: 14px; }
 .custom-search-display-label {
-  font-size: 0.66rem;
+  font-size: 0.6rem;
   font-weight: 700;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #7c8696;
   flex-shrink: 0;
-  padding-right: 0.5rem;
+  padding-right: 0.45rem;
   border-right: 1px solid #e2e6ee;
 }
 .custom-search-display-term {
   flex: 1 1 auto;
   min-width: 0;
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: 0.92rem;
   font-weight: 600;
-  letter-spacing: -0.018em;
+  letter-spacing: -0.012em;
   color: #0f1a2e;
   white-space: nowrap;
   overflow: hidden;
@@ -1090,26 +1091,27 @@ body.hide-cta .sticky-cta { display: none !important; }
 .custom-search-display-edit {
   display: inline-flex;
   align-items: center;
-  gap: 0.32rem;
-  padding: 0.35rem 0.7rem;
+  gap: 0.28rem;
+  padding: 0.22rem 0.5rem;
   background: #f3f5f9;
-  border-radius: 7px;
-  font-size: 0.75rem;
+  border-radius: 5px;
+  font-size: 0.68rem;
   font-weight: 600;
   color: #2c4467;
   flex-shrink: 0;
   transition: background 0.14s, color 0.14s;
 }
+.custom-search-display-edit svg { width: 11px; height: 11px; }
 .custom-search-display:hover .custom-search-display-edit {
   background: #e6ecf5;
   color: #1c3a6b;
 }
 @media (max-width: 640px) {
-  .custom-search-display { gap: 0.5rem; padding: 0.55rem 0.7rem; }
+  .custom-search-display { gap: 0.45rem; padding: 0.32rem 0.4rem 0.32rem 0.55rem; }
   .custom-search-display-label { display: none; }
-  .custom-search-display-term { font-size: 1rem; }
+  .custom-search-display-term { font-size: 0.88rem; }
   .custom-search-display-edit span { display: none; }
-  .custom-search-display-edit { padding: 0.4rem; }
+  .custom-search-display-edit { padding: 0.3rem; }
 }
 
 #sub-header.is-subnav .topic-banner-tabs {
@@ -10092,18 +10094,19 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 }
 .topic-layout.is-custom .topic-intelligence-panel .sidebar-card-header {
   background: transparent;
-  padding: 0 0 1rem 0;
-  margin: 0 0 1.5rem 0;
-  border-bottom: 1px solid #d6dae2;
+  padding: 0 0 0.55rem 0;
+  margin: 0 0 0.85rem 0;
+  border-bottom: 1px solid #e2e6ee;
   min-height: 0;
 }
 .topic-layout.is-custom .topic-intelligence-panel .sidebar-card-title {
-  color: #1c3a6b;
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: -0.024em;
-  line-height: 1.15;
+  color: #5d6b7e;
+  font-family: var(--font-family);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  line-height: 1.2;
+  text-transform: uppercase;
 }
 .topic-layout.is-custom .topic-intelligence-panel .shortcuts-scroll-wrap {
   padding-left: 0;
@@ -10111,20 +10114,20 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   padding-top: 0;
 }
 
-/* Bigger eyebrows + more generous section spacing — the page has
-   the room. Eyebrows go from 0.78rem → 0.9rem with more tracking,
-   and groups gap apart instead of stacking. */
+/* Eyebrows match topic-page sidebar scale (0.78rem). Section gaps
+   are tight — enough to read as separation, not so wide that the
+   page looks like it has phantom empty rows. */
 .topic-layout.is-custom .ti-web-sources-section .shortcuts-subsection-title,
 .topic-layout.is-custom .ti-action-group-label {
-  font-size: 0.88rem;
-  letter-spacing: 0.11em;
-  margin-bottom: 0.85rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.09em;
+  margin-bottom: 0.55rem;
 }
 .topic-layout.is-custom .ti-action-group + .ti-action-group {
-  margin-top: 1.8rem;
+  margin-top: 1.1rem;
 }
 .topic-layout.is-custom .ti-web-sources-section + .ti-actions-section {
-  margin-top: 1.85rem;
+  margin-top: 1.1rem;
 }
 
 /* ===============================================================
