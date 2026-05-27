@@ -9352,6 +9352,16 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 }
 .settings-option-stacked.is-selected .settings-option-desc { color: #475569; }
 
+/* Label row — holds the model name + the optional DEFAULT tag on
+   the same line above the description, since the stacked card is a
+   flex column and the tag would otherwise drop to its own row. */
+.settings-option-stacked .settings-option-label-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
 /* Footer — Reset (left), Cancel / Save (right). Sticks to the
    bottom of the modal card. */
 .settings-modal-foot {

@@ -127,17 +127,27 @@ function render() {
   const adminDefaultId = getDefaultModelId();
   const dirty = isDirty();
 
+  // Model options use the stacked card shape — vendor name on the
+  // first line, a short description (vendor + what it is) underneath.
+  // Same .settings-option-stacked class the Reasoning level options
+  // use, so the two sections read as parallel choices.
   const modelChips = models.map(m => {
     const isCurrent = m.id === pending.modelId;
     const isAdminDefault = m.id === adminDefaultId;
+    const description = m.description
+      ? `<span class="settings-option-desc">${escapeHTML(m.description)}</span>`
+      : '';
     return `
       <button type="button"
-              class="settings-option ${isCurrent ? 'is-selected' : ''}"
+              class="settings-option settings-option-stacked ${isCurrent ? 'is-selected' : ''}"
               data-setting="model"
               data-value="${escapeAttr(m.id)}"
               aria-pressed="${isCurrent}">
-        <span class="settings-option-label">${escapeHTML(m.name)}</span>
-        ${isAdminDefault ? '<span class="settings-option-tag">default</span>' : ''}
+        <span class="settings-option-label-row">
+          <span class="settings-option-label">${escapeHTML(m.name)}</span>
+          ${isAdminDefault ? '<span class="settings-option-tag">default</span>' : ''}
+        </span>
+        ${description}
       </button>
     `;
   }).join('');
@@ -177,7 +187,7 @@ function render() {
             <h3 class="settings-section-title">Default AI model</h3>
             <p class="settings-section-desc">Preset for new prompt submissions. You can still switch models inside any prompt modal.</p>
           </div>
-          <div class="settings-option-grid">${modelChips}</div>
+          <div class="settings-option-grid settings-option-grid-stacked">${modelChips}</div>
         </section>
 
         <section class="settings-section">

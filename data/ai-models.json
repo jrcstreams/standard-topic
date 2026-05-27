@@ -3,6 +3,7 @@
     {
       "id": "chatgpt",
       "name": "ChatGPT",
+      "description": "OpenAI's conversational AI assistant.",
       "icon": "chatgpt",
       "urlTemplate": "https://chatgpt.com/?q={prompt}",
       "chatUrl": "https://chatgpt.com/",
@@ -12,6 +13,7 @@
     {
       "id": "perplexity",
       "name": "Perplexity",
+      "description": "AI-powered search with cited sources.",
       "icon": "perplexity",
       "urlTemplate": "https://www.perplexity.ai/search?q={prompt}",
       "chatUrl": "https://www.perplexity.ai/",
@@ -21,6 +23,7 @@
     {
       "id": "google-ai",
       "name": "Google AI Mode",
+      "description": "Google's AI-native search experience.",
       "icon": "google",
       "urlTemplate": "https://www.google.com/search?udm=50&q={prompt}",
       "chatUrl": "https://www.google.com/?udm=50",
@@ -30,6 +33,7 @@
     {
       "id": "gemini",
       "name": "Gemini",
+      "description": "Google's flagship multimodal AI.",
       "icon": "gemini",
       "urlTemplate": "https://gemini.google.com/app?q={prompt}",
       "chatUrl": "https://gemini.google.com/app",
@@ -39,6 +43,7 @@
     {
       "id": "copilot",
       "name": "Bing Copilot",
+      "description": "Microsoft's AI assistant, built into Bing.",
       "icon": "copilot",
       "urlTemplate": "https://www.bing.com/chat?q={prompt}",
       "chatUrl": "https://copilot.microsoft.com/",
@@ -48,6 +53,7 @@
     {
       "id": "claude",
       "name": "Claude",
+      "description": "Anthropic's AI assistant for thoughtful analysis.",
       "icon": "claude",
       "urlTemplate": "https://claude.ai/new?q={prompt}",
       "chatUrl": "https://claude.ai/new",
