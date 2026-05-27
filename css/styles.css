@@ -10061,12 +10061,6 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   padding-right: 0.7rem;
 }
 
-/* Multi-controls wrap inherits the tinted surface — no white
-   chip floating inside the module. */
-.topic-intelligence-panel .shortcuts-multi-submit-wrap {
-  background: transparent;
-}
-
 /* Mobile: drop the rounded module corners + phantom border so the
    panel fills the viewport edges naturally in tabbed mode. The
    banded header stays. */
