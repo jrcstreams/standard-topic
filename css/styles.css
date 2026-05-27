@@ -10081,12 +10081,17 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   gap: 0.35rem;
 }
 .ti-web-source-chip-row { min-width: 0; }
-/* Wide-panel contexts (custom-search page, prompt-builder picker,
-   anywhere the panel takes substantial horizontal room): let the
-   grid auto-fit across the available width instead of forcing a
-   2-column stack. */
+/* Wide-panel contexts (custom-search page): flex-wrap with FIXED
+   tile widths (150px) so the row packs left-to-right without each
+   tile ballooning to fill 1fr of the available space. */
 .topic-layout.is-custom .ti-web-source-chips {
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.topic-layout.is-custom .ti-web-source-chip-row {
+  flex: 0 0 auto;
+  width: 150px;
 }
 .ti-web-source-chip-row { margin: 0; padding: 0; }
 /* Launcher tile — quiet by default. Soft surface, soft border,
@@ -10333,21 +10338,25 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   .ti-action-card-desc { font-size: 0.72rem; line-height: 1.38; }
 }
 
-/* Custom-search page — the panel takes the full page width (no
-   News Feed sibling), so the AI action cards have a lot of
-   horizontal real estate to fill. Use an auto-fit grid that
-   adapts to width: 3 columns at wide widths, 2 at medium, 1 at
-   narrow. The left-accent spine doesn't translate to a multi-
-   column grid (stubby orphan rules), so cells get a proper
-   bordered tile treatment instead — same module-like card edge
-   the rest of the wide-panel layout uses. */
+/* Custom-search page — the panel takes the full page width. AI
+   action cards use a flex-wrap layout with FIXED width per cell
+   (280px) so they pack tightly into rows and wrap to a new line
+   when they run out of space. No stretching: a row of 2 cards
+   sits as two 280px cards on the left, not two cards expanded to
+   fill the whole row. The continuous-spine effect doesn't work in
+   a multi-column grid (stubby orphan rules), so cells switch to a
+   proper bordered tile treatment instead. */
 @media (min-width: 720px) {
   .topic-layout.is-custom .ti-actions-section .ti-action-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     column-gap: 0.7rem;
     row-gap: 0.55rem;
     padding-right: 0;
+  }
+  .topic-layout.is-custom .ti-action-card-row {
+    flex: 0 0 auto;
+    width: 280px;
   }
   /* Drop the spine, add a hairline border + slight background so
      each card reads as a self-contained tile. Pad symmetrically
