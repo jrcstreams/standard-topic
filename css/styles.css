@@ -4480,7 +4480,19 @@ body.app-mode .topic-layout {
   padding-right: 0.55rem;
   padding-bottom: max(2.5rem, calc(env(safe-area-inset-bottom, 0px) + 1.5rem));
   scrollbar-gutter: stable;
+  /* Hide the visible scrollbar — the gutter stays reserved so
+     content doesn't shift when scroll appears/disappears, but the
+     scrollbar itself no longer competes with the floating submit
+     modal for visual real estate on the panel's right edge. The
+     mask-image fade at the bottom (.has-overflow-bottom) is the
+     scroll-progress signal instead. */
+  scrollbar-width: none;
   transition: -webkit-mask-image 0.18s, mask-image 0.18s;
+}
+.shortcuts-scroll-wrap::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  background: transparent;
 }
 /* Mobile (tabbed mode): the section header is hidden and the
    body-tabs sit directly above this scroll wrap, but the first
