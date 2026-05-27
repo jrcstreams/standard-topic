@@ -10084,27 +10084,25 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 }
 .ti-web-source-chip-row { margin: 0; padding: 0; }
-/* Launcher tile — icon + platform name, white surface, hairline
-   border. No outbound arrow (the name + new-tab behavior already
-   carry "external"). Tile fills its grid cell so each row reads
-   as a uniform set of buttons, not a scatter of variable-width
-   chips. */
+/* Launcher tile — quiet by default. Soft surface, soft border,
+   medium-weight text, muted icon. Should read as a secondary
+   utility row, not a primary CTA. */
 .ti-web-source-chip {
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 0.5rem;
-  padding: 0.45rem 0.65rem;
-  background: #ffffff;
-  border: 1px solid #d9dee8;
+  gap: 0.45rem;
+  padding: 0.42rem 0.6rem;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid #e4e8ef;
   border-radius: 7px;
   font-family: var(--font-family);
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: -0.005em;
-  color: #1e2d44;
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: -0.003em;
+  color: #4a5568;
   text-decoration: none;
-  transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.12s, box-shadow 0.14s;
+  transition: background 0.14s, border-color 0.14s, color 0.14s;
   line-height: 1.1;
   width: 100%;
 }
@@ -10115,10 +10113,10 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   min-width: 0;
 }
 .ti-web-source-chip-icon {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
-  color: #2c4467;
+  color: #7c8696;
 }
 .ti-web-source-chip-arrow {
   font-size: 0.78rem;
@@ -10130,11 +10128,9 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 }
 .ti-web-source-chip:hover {
   background: #ffffff;
-  border-color: #1c3a6b;
+  border-color: #c8d2e0;
   color: #1c3a6b;
   text-decoration: none;
-  transform: translateY(-0.5px);
-  box-shadow: 0 2px 6px rgba(28, 58, 107, 0.08);
 }
 .ti-web-source-chip:hover .ti-web-source-chip-icon { color: #1c3a6b; }
 
