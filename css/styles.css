@@ -4321,8 +4321,13 @@ body.app-mode .topic-layout {
        No top margin — band sits flush against the subnav band
        above (no orphan whitespace strip). */
     background: #e7ecf3;
-    margin: 0 -2rem 1rem;
-    padding: 0.7rem 2rem;
+    margin: 0 -2rem 0.8rem;
+    padding: 0.45rem 2rem;
+    gap: 0.65rem;
+    border: none;
+    border-top: 1px solid #d6dce6;
+    border-bottom: 1px solid #d6dce6;
+    border-radius: 0;
   }
   /* Narrow phones (≤640px): the topic-layout drops to 1rem
      horizontal padding, so the tab band's negative margin needs
@@ -4335,11 +4340,6 @@ body.app-mode .topic-layout {
       padding-left: 1rem;
       padding-right: 1rem;
     }
-    gap: 0.75rem;
-    border: none;
-    border-top: 1px solid #d6dce6;
-    border-bottom: 1px solid #d6dce6;
-    border-radius: 0;
   }
   body.app-mode .topic-layout:not(.is-custom) > .body-tabs:has(.tab-pill-related) {
     grid-template-columns: 1fr 1fr 1fr;
@@ -4926,7 +4926,8 @@ body.app-mode .topic-layout {
   body.app-mode .topic-layout:not(.is-custom) .ai-shortcut-group { padding-top: 0; }
   body.app-mode .topic-layout:not(.is-custom) .ai-shortcut-group + .ai-shortcut-group { padding-top: 1.2rem; }
   body.app-mode .topic-layout:not(.is-custom) .ai-shortcut-group-label {
-    display: block;
+    display: flex;
+    align-items: center;
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -4936,7 +4937,7 @@ body.app-mode .topic-layout {
        card in a section visible clearance from the rule above it. */
     margin: 0 0 0.9rem;
     padding-bottom: 0.3rem;
-    border-bottom: 1.5px solid var(--ti-accent, #6c7a91);
+    border-bottom: 1.5px solid #d8dce5;
     line-height: 1.2;
   }
 }
@@ -10323,19 +10324,30 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   margin-bottom: 0.55rem;
 }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title {
-  /* Same treatment as .ti-action-group-label — black text + accent-
-     colored underline, no fade ::after. */
+  /* Same treatment as .ti-action-group-label — black text + neutral
+     off-grey underline + small accent chip via ::before. */
   color: #1a2235;
   font-family: var(--font-family);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.085em;
   text-transform: uppercase;
-  display: block;
+  display: flex;
+  align-items: center;
   width: 100%;
   padding-bottom: 0.32rem;
-  border-bottom: 1.5px solid var(--ti-accent);
+  border-bottom: 1.5px solid #d8dce5;
   margin: 0;
+}
+.shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 14px;
+  background: var(--ti-accent);
+  border-radius: 2px;
+  margin-right: 0.55rem;
+  flex-shrink: 0;
 }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-header {
   margin-bottom: 0.55rem;
@@ -10354,8 +10366,8 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
    markers in the panel read the same way at any width. */
 @media (max-width: 899.98px) {
   /* Mobile WEB SOURCES eyebrow: match the desktop treatment —
-     black text + accent-colored underline (don't revert to the
-     old colored-text + no-underline style). */
+     black text + neutral off-grey underline + accent ::before
+     chip carried over from desktop. */
   body.app-mode .topic-layout:not(.is-custom)
     .ti-web-sources-section .shortcuts-subsection-title {
     font-family: var(--font-family);
@@ -10365,10 +10377,11 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
     letter-spacing: 0.09em;
     line-height: 1.2;
     text-transform: uppercase;
-    display: block;
+    display: flex;
+    align-items: center;
     width: 100%;
     padding-bottom: 0.3rem;
-    border-bottom: 1px solid var(--ti-accent);
+    border-bottom: 1.5px solid #d8dce5;
     margin: 0;
   }
 }
@@ -10545,9 +10558,11 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 
 .ti-action-group + .ti-action-group { margin-top: 0.1rem; }
 .ti-action-group-label {
-  /* Section header: black/off-black text + accent-colored underline.
-     Underline does the color-coding work; the text itself stays
-     neutral so the eye reads "section name" not "colored label". */
+  /* Section header: black text + neutral off-grey underline. The
+     section's accent color now lives in a small chip rendered via
+     ::before (small filled bar before the label text), so the row
+     of icons + names below reads as uniform content while still
+     carrying the section's color identity at the header level. */
   color: #1a2235;
   font-weight: 700;
   letter-spacing: 0.085em;
@@ -10555,13 +10570,25 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   text-transform: uppercase;
   margin: 0 0 0.7rem;
   padding-bottom: 0.3rem;
-  border-bottom: 1.5px solid var(--ti-accent);
+  border-bottom: 1.5px solid #d8dce5;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-/* The thick colored bottom-border (set on the label itself above)
-   replaces the previous fade ::after rule. */
+/* Accent chip — small filled colored bar before the section
+   label text. Replaces the underline-as-color signal so the
+   underline can stay neutral. Sized to read as a confident "this
+   section is X" tag without dominating. */
+.ti-action-group-label::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 14px;
+  background: var(--ti-accent);
+  border-radius: 2px;
+  margin-right: 0.55rem;
+  flex-shrink: 0;
+}
 .ti-action-group-label::after { display: none; }
 
 .ti-action-cards {
@@ -10620,16 +10647,20 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 17px;
-  height: 17px;
+  width: 15px;
+  height: 15px;
   border-radius: 5px;
   background: transparent;
-  color: var(--ti-accent);
+  /* Single neutral icon color across all sections — the accent
+     work now lives on the section-label chip instead, keeping
+     the row content (icon + name + description) reading as
+     uniform content rather than color-coded by section. */
+  color: #6c7589;
   flex-shrink: 0;
 }
 .ti-action-card-icon-svg {
-  width: 15px;
-  height: 15px;
+  width: 13px;
+  height: 13px;
   color: inherit;
   stroke-width: 1.5;
 }
@@ -10755,9 +10786,9 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
     background: color-mix(in srgb, var(--ti-accent) 7%, #ffffff);
     border-color: var(--ti-accent);
   }
-  .ti-action-card-header { gap: 0.55rem; }
-  .ti-action-card-icon { width: 20px; height: 20px; }
-  .ti-action-card-icon-svg { width: 18px; height: 18px; }
+  .ti-action-card-header { gap: 0.4rem; }
+  .ti-action-card-icon { width: 18px; height: 18px; }
+  .ti-action-card-icon-svg { width: 16px; height: 16px; }
   .shortcuts-sidebar .ti-action-card .ti-action-card-name { font-size: 0.88rem; }
   .ti-action-card-desc { font-size: 0.74rem; line-height: 1.4; }
 }
