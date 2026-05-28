@@ -1114,6 +1114,88 @@ body.hide-cta .sticky-cta { display: none !important; }
   .custom-search-display-edit { padding: 0.3rem; }
 }
 
+/* === Custom-search page in-page header =============================
+   Replaces the subnav entirely on custom-search pages. The header
+   sits at the top of the topic-layout with a title + intro
+   sentence, then a search bar that becomes sticky as the user
+   scrolls — keeps search reachable without permanently consuming
+   the fixed-nav vertical space. */
+.topic-layout.is-custom {
+  /* Override the app-mode grid constraints — custom pages need to
+     scroll the whole page so position: sticky works on the search
+     bar. Resets max-height + overflow that app-mode applies to
+     the layout panel. */
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  display: block;
+  padding-bottom: 4rem;
+}
+/* Custom page sections don't need internal scroll — the page
+   itself scrolls. Drop the flex:1 + overflow-y:auto that the
+   shortcuts wrap uses on topic pages. */
+.topic-layout.is-custom > .layout-section,
+.topic-layout.is-custom .shortcuts-scroll-wrap {
+  flex: none;
+  min-height: 0;
+  overflow: visible;
+  display: block;
+  padding-top: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+}
+.topic-layout.is-custom .shortcuts-sidebar {
+  height: auto;
+  overflow: visible;
+}
+.custom-search-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin: 0 0 1.5rem;
+  padding: 1.5rem 0 0;
+}
+.custom-search-page-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  max-width: 720px;
+}
+.custom-search-page-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: -0.022em;
+  line-height: 1.15;
+  color: #0f1a2e;
+}
+.custom-search-page-intro {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: #4a5568;
+  font-weight: 400;
+}
+/* Sticky search bar container — sticks to the top of the viewport
+   (just below the main nav) once the user scrolls past it. Carries
+   a light background so the input stays legible over whatever
+   content scrolls behind. */
+.custom-search-page-bar {
+  position: sticky;
+  top: 64px;
+  z-index: 20;
+  background: #ffffff;
+  padding: 0.5rem 0;
+  margin: 0 -0.25rem;
+}
+@media (max-width: 899.98px) {
+  .custom-search-page-header { margin-bottom: 1.1rem; padding-top: 1rem; }
+  .custom-search-page-title { font-size: 1.4rem; }
+  .custom-search-page-intro { font-size: 0.92rem; }
+  .custom-search-page-bar { top: 56px; }
+}
+
 /* === Custom-search subnav: live search input + autocomplete drop ===
    Replaces the read-only "display" pill with a real <input> that
    updates the page in place as the user types. Dropdown anchors
@@ -4744,7 +4826,7 @@ body.app-mode .topic-layout {
    space, but enough to read as a deliberate gap. */
 @media (max-width: 899.98px) {
   body.app-mode .topic-layout:not(.is-custom) .shortcuts-scroll-wrap {
-    padding-top: 0.85rem;
+    padding-top: 1.4rem;
   }
 }
 /* When the shortcut list overflows below the visible area, fade
@@ -11090,31 +11172,44 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
    viewport gets 3–4 columns instead of 2 fat ones. The continuous-
    spine effect doesn't work in a multi-column grid (stubby orphan
    rules), so cells switch to a proper bordered tile treatment. */
-@media (min-width: 720px) {
-  .topic-layout.is-custom .ti-actions-section .ti-action-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 340px));
-    column-gap: 0.7rem;
-    row-gap: 0.55rem;
-    padding-right: 0;
-  }
-  /* Drop the spine, add a hairline border + slight background so
-     each card reads as a self-contained tile. Pad symmetrically
-     (no extra left inset for the accent rule). */
-  .topic-layout.is-custom .sidebar-shortcut.ti-action-card {
-    padding: 0.6rem 0.85rem 0.7rem;
-    background: #ffffff;
-    border: 1px solid #e2e6ee;
-    border-left: 1px solid #e2e6ee;
-    border-radius: 8px;
-  }
-  .topic-layout.is-custom .sidebar-shortcut.ti-action-card:hover {
-    background: #ffffff;
-    border-color: var(--ti-accent);
-  }
-  .topic-layout.is-custom .sidebar-shortcut.ti-action-card.is-multi-selected {
-    background: color-mix(in srgb, var(--ti-accent) 6%, #ffffff);
-    border-color: var(--ti-accent);
+/* Custom-search pages: use the same single-column tabular row
+   layout as topic-page Topic Intelligence on mobile/tabular widths.
+   Each row spans the full content width — icon + name on top, short
+   description below, chevron on the right — instead of the 2-column
+   tile grid we previously used at desktop widths. The user wants
+   custom pages to read like the tabular nav on topic pages, not
+   like a card deck. */
+.topic-layout.is-custom .ti-actions-section .ti-action-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding-right: 0;
+}
+.topic-layout.is-custom .sidebar-shortcut.ti-action-card {
+  padding: 0.7rem 0.95rem 0.75rem;
+  background: #ffffff;
+  border: 1px solid #e2e6ee;
+  border-left: 1px solid #e2e6ee;
+  border-radius: 8px;
+}
+.topic-layout.is-custom .sidebar-shortcut.ti-action-card:hover {
+  background: #ffffff;
+  border-color: var(--ti-accent);
+}
+.topic-layout.is-custom .sidebar-shortcut.ti-action-card.is-multi-selected {
+  background: color-mix(in srgb, var(--ti-accent) 6%, #ffffff);
+  border-color: var(--ti-accent);
+}
+/* Three-column Web Sources grid for is-custom (matches mobile
+   tabular feel — three chips per row, full-width tabular rather
+   than the 4-col compact pack we had at desktop). */
+.topic-layout.is-custom .ti-web-source-chips {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+@media (max-width: 640px) {
+  .topic-layout.is-custom .ti-web-source-chips {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

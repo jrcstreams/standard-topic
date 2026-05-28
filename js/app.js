@@ -123,10 +123,12 @@ function renderLayout(route) {
   document.body.classList.add('sticky-always');
   siteHeader.classList.add('is-revealed');
 
-  // App-mode: home / topic / custom routes lock the page to viewport
+  // App-mode: home / topic routes lock the page to viewport
   // height so the two cards behave like an application panel rather
-  // than long-scroll content. The footer was removed for this reason.
-  if (route.type === 'home' || route.type === 'topic' || route.type === 'custom') {
+  // than long-scroll content. Custom-search pages opt out — they
+  // scroll naturally so the in-page sticky search bar can pin to
+  // the top as the user scrolls past it.
+  if (route.type === 'home' || route.type === 'topic') {
     document.body.classList.add('app-mode');
   }
 
@@ -200,50 +202,40 @@ function renderLayout(route) {
     return;
   }
 
-  // Topic / custom pages also get a sub-nav below the main nav
-  if (route.type === 'topic' || route.type === 'custom') {
+  // Topic pages get a subnav below the main nav. Custom-search
+  // pages no longer use the subnav — their search lives at the top
+  // of the page content instead so the input + dropdown can be
+  // a normal scrollable part of the page (no z-index / overflow
+  // gymnastics fighting with the subnav strip).
+  if (route.type === 'topic') {
     document.body.classList.add('has-subnav');
     subHeader.classList.add('is-subnav');
 
-    if (route.type === 'topic') {
-      const topic = getTopicBySlug(route.slug);
-      if (!topic) return;
-      const related = getRelatedTopics(topic);
-      // Plain related-topic links — no trailing "More +" CTA. The
-      // chip strip scrolls horizontally (with mouse arrows on
-      // desktop) so every topic stays reachable.
-      const relatedLinksHTML = related.map(t =>
-        `<a href="#/topic/${t.slug}" class="subnav-topic-link">${escapeHTML(t.name)}</a>`
-      ).join('');
+    const topic = getTopicBySlug(route.slug);
+    if (!topic) return;
+    const related = getRelatedTopics(topic);
+    const relatedLinksHTML = related.map(t =>
+      `<a href="#/topic/${t.slug}" class="subnav-topic-link">${escapeHTML(t.name)}</a>`
+    ).join('');
 
-      subHeader.innerHTML = `
-        <div class="topic-banner">
-          <div class="topic-banner-row">
-            ${titleGroup(topic.icon || 'globe', topic.name)}
-            ${related.length > 0 ? `
-              <div class="subnav-topics-inline">
-                ${relatedLinksHTML}
-              </div>
-            ` : ''}
-          </div>
+    subHeader.innerHTML = `
+      <div class="topic-banner">
+        <div class="topic-banner-row">
+          ${titleGroup(topic.icon || 'globe', topic.name)}
+          ${related.length > 0 ? `
+            <div class="subnav-topics-inline">
+              ${relatedLinksHTML}
+            </div>
+          ` : ''}
         </div>
-      `;
+      </div>
+    `;
 
-      observeSubnavHeight();
-      trimOverflowLinks();
-      setupResponsiveNav();
-      wireChipStripScrollEnd();
-      wireSubnavCompactMeasure();
-    } else {
-      // Custom-search subnav: render the term inside what reads as
-      // an editable search field — magnify icon on the left, the
-      // term as the value, "Edit search" affordance on the right.
-      // Clicking anywhere reopens the search modal pre-filled with
-      // the current term so the user can refine without retyping.
-      renderCustomSearchSubnav(subHeader, route.term);
-      observeSubnavHeight();
-      setupResponsiveNav();
-    }
+    observeSubnavHeight();
+    trimOverflowLinks();
+    setupResponsiveNav();
+    wireChipStripScrollEnd();
+    wireSubnavCompactMeasure();
   }
 
   if (route.type === 'about' || route.type === 'terms') {
@@ -352,36 +344,32 @@ function setupGlobalTabPillDelegation() {
 // user can refine the search rather than retype it. The "Edit"
 // affordance on the right makes the click target's purpose
 // explicit at a glance.
-function renderCustomSearchSubnav(container, term) {
+function renderCustomSearchBar(container, term) {
   container.innerHTML = `
-    <div class="topic-banner custom-search-banner">
-      <div class="topic-banner-row">
-        <div class="custom-search-input-wrap" data-role="custom-search">
-          <span class="custom-search-input-icon" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="7"/>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-          </span>
-          <input
-            type="text"
-            class="custom-search-input"
-            data-role="custom-search-input"
-            value="${escapeAttr(term)}"
-            placeholder="Search any topic"
-            autocomplete="off"
-            spellcheck="false"
-            aria-label="Search topic"
-          />
-          <button type="button" class="custom-search-clear" data-action="clear" aria-label="Clear">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"/>
-              <line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          </button>
-          <div class="custom-search-dropdown" data-role="dropdown" hidden></div>
-        </div>
-      </div>
+    <div class="custom-search-input-wrap" data-role="custom-search">
+      <span class="custom-search-input-icon" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </span>
+      <input
+        type="text"
+        class="custom-search-input"
+        data-role="custom-search-input"
+        value="${escapeAttr(term)}"
+        placeholder="Search any topic"
+        autocomplete="off"
+        spellcheck="false"
+        aria-label="Search topic"
+      />
+      <button type="button" class="custom-search-clear" data-action="clear" aria-label="Clear">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <div class="custom-search-dropdown" data-role="dropdown" hidden></div>
     </div>
   `;
   wireCustomSearchInput(container, term);
@@ -1186,14 +1174,25 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
   cleanupTopicLayoutObservers();
 
   if (isCustom) {
-    // Custom: just AI Shortcuts. No News Feed (no RSS for arbitrary
-    // search terms) and no Related (not a real topic). No body tabs
-    // either — nothing to switch between.
+    // Custom: in-page header with intro copy + sticky search bar,
+    // then the Topic Intelligence section (Web Sources, Discover,
+    // Learn, Analyze) as the page body. No subnav (handled in the
+    // route block above) and no app-mode constraint — the page
+    // scrolls naturally so the search bar's sticky behavior works.
     container.innerHTML = `
       <div class="topic-layout is-custom" id="topic-layout">
+        <header class="custom-search-page-header">
+          <div class="custom-search-page-header-text">
+            <h1 class="custom-search-page-title">Custom Topic Search</h1>
+            <p class="custom-search-page-intro">Type any topic and we'll build out web sources, AI shortcuts, and analysis tools tailored to it — search, edit, and refine on the fly.</p>
+          </div>
+          <div class="custom-search-page-bar" data-role="custom-search-bar"></div>
+        </header>
         <section class="layout-section" id="section-shortcuts"></section>
       </div>
     `;
+    const barContainer = container.querySelector('[data-role="custom-search-bar"]');
+    if (barContainer) renderCustomSearchBar(barContainer, customTerm);
   } else if (isHome) {
     // Homepage: Shortcuts + News Feed. Body tabs at the top let
     // mobile users switch between them; CSS hides the tabs at
