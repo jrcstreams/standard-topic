@@ -4321,7 +4321,7 @@ body.app-mode .topic-layout {
        No top margin — band sits flush against the subnav band
        above (no orphan whitespace strip). */
     background: #e7ecf3;
-    margin: 0 -2rem 0.8rem;
+    margin: 0 -2rem 0;
     padding: 0.45rem 2rem;
     gap: 0.65rem;
     border: none;
@@ -4820,11 +4820,11 @@ body.app-mode .topic-layout {
   body.app-mode #sub-header.is-subnav .subnav-topic-link {
     flex: 0 0 auto;
     white-space: nowrap;
-    /* Mobile ghost-pill treatment matching desktop weight + family
-       so the topic row reads with the same confident typographic
-       voice as the desktop version. */
+    /* Mobile chips: identical to desktop subnav-topic-link (font,
+       size, weight, color, letter-spacing) so the home page and
+       topic page horizontal scroll read the same way. */
     font-family: var(--font-display);
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     font-weight: 600;
     text-transform: none;
     letter-spacing: -0.005em;
