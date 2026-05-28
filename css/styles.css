@@ -4936,7 +4936,7 @@ body.app-mode .topic-layout {
        card in a section visible clearance from the rule above it. */
     margin: 0 0 0.9rem;
     padding-bottom: 0.3rem;
-    border-bottom: 1px solid var(--ti-accent, #6c7a91);
+    border-bottom: 1.5px solid var(--ti-accent, #6c7a91);
     line-height: 1.2;
   }
 }
@@ -10334,7 +10334,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   display: block;
   width: 100%;
   padding-bottom: 0.32rem;
-  border-bottom: 1px solid var(--ti-accent);
+  border-bottom: 1.5px solid var(--ti-accent);
   margin: 0;
 }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-header {
@@ -10342,7 +10342,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title::after { display: none; }
 .shortcuts-sidebar .ti-web-sources-section + .ti-actions-section {
-  margin-top: 1rem;
+  margin-top: 1.6rem;
 }
 /* Mobile: undo the legacy "promote subsection-title to a panel
    heading" bump for the Web Sources eyebrow specifically. The bump
@@ -10541,9 +10541,9 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .ti-action-group--discover { --ti-accent: #3261a0; }
 .ti-action-group--learn    { --ti-accent: #2e8a73; }
 .ti-action-group--analyze  { --ti-accent: #b48528; }
-.ti-action-group--more     { --ti-accent: #5d6b7e; }
+.ti-action-group--more     { --ti-accent: #8a4f7a; }
 
-.ti-action-group + .ti-action-group { margin-top: 0.25rem; }
+.ti-action-group + .ti-action-group { margin-top: 0.1rem; }
 .ti-action-group-label {
   /* Section header: black/off-black text + accent-colored underline.
      Underline does the color-coding work; the text itself stays
@@ -10555,7 +10555,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   text-transform: uppercase;
   margin: 0 0 0.7rem;
   padding-bottom: 0.3rem;
-  border-bottom: 1px solid var(--ti-accent);
+  border-bottom: 1.5px solid var(--ti-accent);
   display: flex;
   align-items: center;
   gap: 0.5rem;
