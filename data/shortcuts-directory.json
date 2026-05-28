@@ -5,147 +5,168 @@
       "name": "Global Headlines",
       "icon": "global-headlines-today",
       "prompt": "Give me the most significant international news stories from across the world. Organize by region. For each: what's happening and why it matters globally, not just locally.",
-      "description": "The major international stories right now"
+      "description": "The major international stories right now",
+      "group": "discover"
     },
     {
       "id": "on-this-day-in-history",
       "name": "On This Day in History",
       "icon": "on-this-day-in-history",
       "prompt": "What are the most significant historical events that occurred on today's date? Cover major events across different eras and regions, with brief context on why each mattered.",
-      "description": "Notable events from this date in history"
+      "description": "Notable events from this date in history",
+      "group": "learn"
     },
     {
       "id": "business-day-snapshot",
       "name": "Business News Snapshot",
       "icon": "business-day-snapshot",
       "prompt": "Give me a snapshot of today's business news. Cover the biggest market moves, headline corporate news, economic data releases, and any major deal or earnings stories. Keep it tight and scannable.",
-      "description": "Current state of business news"
+      "description": "Current state of business news",
+      "group": "discover"
     },
     {
       "id": "ai-latest-news",
       "name": "AI News and Developments",
       "icon": "ai-latest-news",
       "prompt": "What's the latest news on the topic of: Artificial Intellience? Cover the most significant developments from the past week or so. For each: what happened, why it matters, and what to watch next. Skip noise and prioritize stories with real significance. Organize by significance, not chronology.",
-      "description": "Recent updates worth knowing about"
+      "description": "Recent updates worth knowing about",
+      "group": "discover"
     },
     {
       "id": "economic-indicators-roundup",
       "name": "Economic Indicators Roundup",
       "icon": "economic-indicators-roundup",
       "prompt": "Summarize the most recent major economic indicators — GDP, jobs report, inflation (CPI/PCE), consumer spending, manufacturing, housing. For each, give the latest reading, the prior reading, what was expected, and what it signals about the economy.",
-      "description": "Where the key economic gauges stand"
+      "description": "Where the key economic gauges stand",
+      "group": "discover"
     },
     {
       "id": "us-market-snapshot",
       "name": "US Markets Snapshot",
       "icon": "us-market-snapshot",
       "prompt": "Give me a snapshot of US markets today. Cover where the major indexes stand, biggest sector moves, notable single-stock movers, bond yields, the dollar, and what's driving the day's action.",
-      "description": "Current state of US markets"
+      "description": "Current state of US markets",
+      "group": "discover"
     },
     {
       "id": "us-political-snapshots",
       "name": "US Political Snapshot",
       "icon": "us-political-snapshots",
       "prompt": "Give me a snapshot of US politics today. Cover the biggest stories, major statements from key figures, polling moves, and the dominant narratives across both parties.",
-      "description": "Current state of US politics"
+      "description": "Current state of US politics",
+      "group": "discover"
     },
     {
       "id": "global-political-snapshots",
       "name": "Global Politics Snapshot",
       "icon": "global-political-snapshots",
       "prompt": "Give me a snapshot of global politics today. Cover the biggest stories, major statements from key figures, polling moves, and the dominant narratives across both parties.",
-      "description": "Current state of global politics"
+      "description": "Current state of global politics",
+      "group": "discover"
     },
     {
       "id": "global-market-snapshot",
       "name": "International Markets Snapshot",
       "icon": "global-market-snapshot",
       "prompt": "Give me a snapshot of global markets today. Cover where the major indexes stand, biggest sector moves, notable single-stock movers, bond yields, the dollar, and what's driving the day's action.",
-      "description": "Current state of international markets"
+      "description": "Current state of international markets",
+      "group": "discover"
     },
     {
       "id": "global-hotspots-updates",
       "name": "Global Geopolitical Hotspots Updates",
       "icon": "global-hotspots-updates",
       "prompt": "What are the most consequential geopolitical situations right now? For each major hotspot, cover the current state, recent developments, the players involved, and what to watch for next.",
-      "description": "Recent developments in global geopolitical hotspots"
+      "description": "Recent developments in global geopolitical hotspots",
+      "group": "discover"
     },
     {
       "id": "globla-defense-policy-updates",
       "name": "Global Defense Policy Updates",
       "icon": "globla-defense-policy-updates",
       "prompt": "What are the most important recent developments in global defense policy? Cover budget and authorization, defense departments, priorities, weapons programs, posture decisions, and major debates.",
-      "description": "Recent developments in global defense policy"
+      "description": "Recent developments in global defense policy",
+      "group": "discover"
     },
     {
       "id": "climate-snapshot",
       "name": "Climate and Environment Snapshot",
       "icon": "climate-snapshot",
       "prompt": "Give me a snapshot of the most significant climate and environment news right now. Cover policy, science, extreme weather, energy transition, and corporate developments.",
-      "description": "Current state of climate and environment"
+      "description": "Current state of climate and environment",
+      "group": "discover"
     },
     {
       "id": "public-health-watch",
       "name": "Public Health Watch",
       "icon": "public-health-watch",
       "prompt": "What public health threats and trends are most worth attention right now? Cover infectious disease, chronic disease, mental health, environmental health, and where conditions are improving or worsening.",
-      "description": "Where public health risks currently sit"
+      "description": "Where public health risks currently sit",
+      "group": "discover"
     },
     {
       "id": "science-recent-discoveries",
       "name": "Recent Scientific Discoveries",
       "icon": "science-recent-discoveries",
       "prompt": "What are the most consequential scientific discoveries and breakthroughs recently? Cover findings that are well-established (not preliminary) and explain what each changes about how we understand the world.",
-      "description": "The most consequential scientific discoveries and breakthroughs recently"
+      "description": "The most consequential scientific discoveries and breakthroughs recently",
+      "group": "learn"
     },
     {
       "id": "active-conflicts-tracker",
       "name": "Active Conflicts Tracker",
       "icon": "active-conflicts-tracker",
       "prompt": "What's the current state of major active armed conflicts globally? Cover the situation on the ground, key developments in the past month, US and allied involvement, and humanitarian dimensions.",
-      "description": "Ongoing conflicts to follow"
+      "description": "Ongoing conflicts to follow",
+      "group": "analyze"
     },
     {
       "id": "lifestyle-snapshot",
       "name": "Lifestyle Snapshot",
       "icon": "lifestyle-snapshot",
       "prompt": "Give me a snapshot of significant lifestyle stories and trends from the past week across travel, home, relationships, work, and personal life topics.",
-      "description": "Current state of lifestyle"
+      "description": "Current state of lifestyle",
+      "group": "discover"
     },
     {
       "id": "media-news-snapshot",
       "name": "Media News Snapshot",
       "icon": "media-news-snapshot",
       "prompt": "Give me a snapshot of the most significant media industry news from the past week across journalism, advertising, and the media business.",
-      "description": "Current state of media news"
+      "description": "Current state of media news",
+      "group": "discover"
     },
     {
       "id": "sports-snapshot",
       "name": "Sports Snapshot",
       "icon": "sports-snapshot",
       "prompt": "Give me a snapshot of the most important sports stories happening right now across the major leagues and sports. Cover results, news, and what to watch tonight or this weekend.",
-      "description": "Current state of sports"
+      "description": "Current state of sports",
+      "group": "discover"
     },
     {
       "id": "what-to-watch-listen-play",
       "name": "What to Watch, Listen To and Play This Week",
       "icon": "what-to-watch-listen-play",
       "prompt": "What are the most notable new releases this week across film, TV, music, podcasts, and games? Note which are getting strong reception and what's worth prioritizing.",
-      "description": "Picks worth your time this week"
+      "description": "Picks worth your time this week",
+      "group": "learn"
     },
     {
       "id": "breaking-news",
       "name": "Breaking News Right Now",
       "icon": "breaking-news",
       "prompt": "What is the most significant breaking news happening right now globally? Identify the 5-10 stories with the most active coverage in the past few hours. For each, explain what's happening, what's confirmed vs. unconfirmed, and what to watch for as the story develops.",
-      "description": "The most significant breaking news happening right now globally"
+      "description": "The most significant breaking news happening right now globally",
+      "group": "discover"
     },
     {
       "id": "numbers-in-news",
       "name": "Numbers in the News",
       "icon": "numbers-in-news",
       "prompt": "Give me the most important numbers, statistics, and data points making news globally right now. Cover economic indicators, polling, market moves, scientific findings, or anything else where the data itself is the story.",
-      "description": "The figures driving recent coverage"
+      "description": "The figures driving recent coverage",
+      "group": "analyze"
     },
     {
       "id": "latest-news",
@@ -208,56 +229,64 @@
       "name": "Earnings Season Pulse",
       "icon": "earnings-season-pulse",
       "prompt": "Where are we in the current earnings season across major sectors (banking, tech, consumer, energy, healthcare)? Cover the headline trends, biggest beats and misses, and forward guidance themes.",
-      "description": "Recent earnings results that matter"
+      "description": "Recent earnings results that matter",
+      "group": "discover"
     },
     {
       "id": "wall-street-worries",
       "name": "Wall Street Worries",
       "icon": "wall-street-worries",
       "prompt": "What is Wall Street most worried about right now? Cover the dominant macro concerns, what's driving them, the data points being watched, and how positioning reflects the worry.",
-      "description": "Top concerns on Wall Street right now"
+      "description": "Top concerns on Wall Street right now",
+      "group": "analyze"
     },
     {
       "id": "big-company-news",
       "name": "Big Companies in the News",
       "icon": "big-company-news",
       "prompt": "Which large public companies are dominating business news this week and why? Cover the stories, the stakes, and what each says about broader industry dynamics.",
-      "description": "Major companies dominating recent coverage"
+      "description": "Major companies dominating recent coverage",
+      "group": "discover"
     },
     {
       "id": "interest-rate-watch",
       "name": "Interest Rate Watch",
       "icon": "interest-rate-watch",
       "prompt": "What's the current state of interest rates and bank lending? Cover the Fed's current stance, where rates stand, how banks are responding, and what it means for borrowers, savers, and the broader economy.",
-      "description": "Signals worth tracking in interest rate"
+      "description": "Signals worth tracking in interest rate",
+      "group": "analyze"
     },
     {
       "id": "bank-earnings-roundup",
       "name": "Bank Earnings Roundup",
       "icon": "bank-earnings-roundup",
       "prompt": "Summarize the most recent earnings reports from major banks. For each, cover headline numbers, key takeaways, and what management said about the outlook.",
-      "description": "Recent earnings results that matter"
+      "description": "Recent earnings results that matter",
+      "group": "analyze"
     },
     {
       "id": "bank-health-check",
       "name": "Bank Health Check",
       "icon": "bank-health-check",
       "prompt": "Assess the current health of the US banking system. Cover capital levels, credit quality, deposit trends, regional vs. national bank dynamics, and any institutions or segments showing stress.",
-      "description": "Quick read on Bank health right now"
+      "description": "Quick read on Bank health right now",
+      "group": "analyze"
     },
     {
       "id": "banking-regulation-update",
       "name": "Banking Regulation Update",
       "icon": "banking-regulation-update",
       "prompt": "What are the most important recent and pending banking regulations? Cover capital rules, stress tests, consumer protection, crypto and fintech oversight, and what's changing under the current administration.",
-      "description": "Latest movement on banking regulation"
+      "description": "Latest movement on banking regulation",
+      "group": "analyze"
     },
     {
       "id": "deposit-rates",
       "name": "Best Deposit Rates Right Now",
       "icon": "deposit-rates",
       "prompt": "What are the best current deposit rates — savings accounts, CDs, money market accounts? Include both traditional banks and online banks. Note any banks offering standout promotional rates.",
-      "description": "Top picks worth knowing about right now"
+      "description": "Top picks worth knowing about right now",
+      "group": "learn"
     },
     {
       "id": "beginners-guide",
@@ -272,42 +301,48 @@
       "name": "Crypto Market Snapshot",
       "icon": "crypto-market-snapshot",
       "prompt": "Give me a snapshot of the crypto market right now. Cover Bitcoin and Ethereum prices and recent moves, top altcoin performers and decliners, total market cap, key technical levels, and the dominant narratives driving sentiment.",
-      "description": "Current state of crypto market"
+      "description": "Current state of crypto market",
+      "group": "discover"
     },
     {
       "id": "crypto-regulation-watch",
       "name": "Crypto Regulation Watch",
       "icon": "crypto-regulation-watch",
       "prompt": "Summarize the current state of crypto regulation. Cover the SEC's stance, recent court cases, congressional action, stablecoin legislation, and how the regulatory landscape is shifting under the current administration.",
-      "description": "Signals worth tracking in crypto regulation"
+      "description": "Signals worth tracking in crypto regulation",
+      "group": "analyze"
     },
     {
       "id": "bitcoin-watch",
       "name": "Bitcoin Watch",
       "icon": "bitcoin-watch",
       "prompt": "What's the current state of Bitcoin? Cover price action, on-chain metrics worth knowing, ETF flows, miner dynamics, and the most credible bull and bear cases right now.",
-      "description": "Signals worth tracking in bitcoin"
+      "description": "Signals worth tracking in bitcoin",
+      "group": "discover"
     },
     {
       "id": "ethereum-update",
       "name": "Ethereum Updates",
       "icon": "ethereum-update",
       "prompt": "What's happening with Ethereum and its layer 2 ecosystem? Cover ETH price and fundamentals, network activity, the major L2s (Arbitrum, Optimism, Base, etc.), recent upgrades, and where developer activity is concentrating.",
-      "description": "Recent developments in ethereum"
+      "description": "Recent developments in ethereum",
+      "group": "discover"
     },
     {
       "id": "defi-pulse",
       "name": "DeFi Pulse",
       "icon": "defi-pulse",
       "prompt": "Give me a snapshot of decentralized finance right now. Cover total value locked across major protocols, dominant categories (DEXs, lending, staking, RWAs), the strongest projects, and recent exploits or concerns.",
-      "description": "Where things stand on DeFi"
+      "description": "Where things stand on DeFi",
+      "group": "discover"
     },
     {
       "id": "crypto-avoid-scams",
       "name": "Crypto Scams to Avoid",
       "icon": "crypto-avoid-scams",
       "prompt": "What scams, hacks, and security threats are most active in crypto right now? Cover common attack patterns, recent major exploits, and practical steps for protecting wallets and assets.",
-      "description": "Common scams and how they catch people"
+      "description": "Common scams and how they catch people",
+      "group": "learn"
     },
     {
       "id": "different-perspectives",
@@ -322,147 +357,168 @@
       "name": "Biggest Deals of the Week",
       "icon": "biggest-deals-weekly",
       "prompt": "What are the biggest M&A deals announced or closed in the past week? For each: companies involved, deal value, strategic rationale, expected close timeline, and any antitrust or regulatory considerations.",
-      "description": "The largest deals announced recently"
+      "description": "The largest deals announced recently",
+      "group": "learn"
     },
     {
       "id": "pending-deals-tracker",
       "name": "Pending Deals Tracker",
       "icon": "pending-deals-tracker",
       "prompt": "What are the largest pending mergers and acquisitions waiting to close? For each: status, timeline, regulatory hurdles, and what would change in the industry if the deal closes vs. falls apart.",
-      "description": "Ongoing pending deals developments worth following"
+      "description": "Ongoing pending deals developments worth following",
+      "group": "analyze"
     },
     {
       "id": "antitrust-watch",
       "name": "Antitrust Watch",
       "icon": "antitrust-watch",
       "prompt": "What's the current state of antitrust enforcement on M&A? Cover the FTC and DOJ's stances, recent challenges and court rulings, and which sectors are getting the most scrutiny.",
-      "description": "Signals worth tracking in antitrust"
+      "description": "Signals worth tracking in antitrust",
+      "group": "discover"
     },
     {
       "id": "sector-ma-heatmap",
       "name": "Sector M&A Heatmap",
       "icon": "sector-ma-heatmap",
       "prompt": "Which industries are seeing the most M&A activity right now and why? Cover the most active sectors, the strategic drivers, key serial acquirers, and where consolidation is reshaping the competitive landscape.",
-      "description": "Where M&A activity is heating up most"
+      "description": "Where M&A activity is heating up most",
+      "group": "analyze"
     },
     {
       "id": "activist-investor-watch",
       "name": "Activist Investor Watch",
       "icon": "activist-investor-watch",
       "prompt": "Which activist investors are most active right now and what campaigns are they running? Cover the major activists, their current targets, the changes they're pushing for, and recent wins and losses.",
-      "description": "Signals worth tracking in activist investor"
+      "description": "Signals worth tracking in activist investor",
+      "group": "more"
     },
     {
       "id": "inflation-watch",
       "name": "Inflation Watch",
       "icon": "inflation-watch",
       "prompt": "What's the current state of inflation? Cover the latest CPI and PCE readings, the components driving prices, where inflation is sticky vs. cooling, and what economists expect over the next 6-12 months.",
-      "description": "Signals worth tracking in inflation"
+      "description": "Signals worth tracking in inflation",
+      "group": "analyze"
     },
     {
       "id": "jobs-report-breakdown",
       "name": "Latest Jobs Report Breakdown",
       "icon": "jobs-report-breakdown",
       "prompt": "Break down the latest US jobs report. Cover headline payroll number, unemployment rate, wage growth, labor force participation, sector breakdowns, and revisions to prior months. Explain what it signals about the economy.",
-      "description": "Breaking down latest jobs in plain terms"
+      "description": "Breaking down latest jobs in plain terms",
+      "group": "analyze"
     },
     {
       "id": "recession-risk-check",
       "name": "Recession Risk Check",
       "icon": "recession-risk-check",
       "prompt": "What's the current consensus on recession risk? Cover the key indicators (yield curve, leading indicators, consumer health, labor market), where economists land, and the strongest cases on each side of the debate.",
-      "description": "Risks and warning signs to watch"
+      "description": "Risks and warning signs to watch",
+      "group": "analyze"
     },
     {
       "id": "fed-watch",
       "name": "Fed Watch",
       "icon": "fed-watch",
       "prompt": "What's the Federal Reserve's current stance and what's expected next? Cover recent Fed communications, market expectations for upcoming meetings, the data the Fed is watching, and how policy is affecting the economy.",
-      "description": "Signals worth tracking in fed"
+      "description": "Signals worth tracking in fed",
+      "group": "discover"
     },
     {
       "id": "consumer-health-check",
       "name": "Consumer Health Check",
       "icon": "consumer-health-check",
       "prompt": "How is the US consumer doing right now? Cover spending trends, savings rates, credit card debt and delinquencies, wage growth, and how different income groups are faring differently.",
-      "description": "Quick read on consumer health right now"
+      "description": "Quick read on consumer health right now",
+      "group": "discover"
     },
     {
       "id": "oil-market-snapshot",
       "name": "Oil Market Snapshot",
       "icon": "oil-market-snapshot",
       "prompt": "What's the current state of the oil market? Cover crude prices, OPEC+ dynamics, US production, demand outlook, key geopolitical risks, and what's driving the current price level.",
-      "description": "Current state of oil market"
+      "description": "Current state of oil market",
+      "group": "discover"
     },
     {
       "id": "natural-gas-update",
       "name": "Natural Gas Update",
       "icon": "natural-gas-update",
       "prompt": "What's happening in natural gas right now? Cover US prices, European prices and LNG flows, storage levels, demand drivers, and the outlook for the upcoming season.",
-      "description": "Latest movement on natural gas"
+      "description": "Latest movement on natural gas",
+      "group": "discover"
     },
     {
       "id": "gold-precious-metals",
       "name": "Gold and Precious Metals",
       "icon": "gold-precious-metals",
       "prompt": "What's happening in gold and precious metals markets? Cover gold's recent moves, central bank buying, silver and platinum, and what factors are driving demand right now.",
-      "description": "Gold and precious metals markets"
+      "description": "Gold and precious metals markets",
+      "group": "analyze"
     },
     {
       "id": "energy-earnings",
       "name": "Energy Earnings Roundup",
       "icon": "energy-earnings",
       "prompt": "Summarize the most recent earnings from major energy companies — supermajors, US E&P, refiners, midstream, and renewables. Cover key takeaways, capex plans, and management commentary on the outlook.",
-      "description": "Recent earnings results that matter"
+      "description": "Recent earnings results that matter",
+      "group": "discover"
     },
     {
       "id": "energy-geopolitics",
       "name": "Energy Geopolitics Watch",
       "icon": "energy-geopolitics",
       "prompt": "What are the most important geopolitical dynamics shaping energy markets right now? Cover OPEC+ decisions, sanctions and rerouting, tensions, demand, and energy policy.",
-      "description": "Signals worth tracking in energy geopolitics"
+      "description": "Signals worth tracking in energy geopolitics",
+      "group": "analyze"
     },
     {
       "id": "fintech-funding",
       "name": "Fintech Funding Roundup",
       "icon": "fintech-funding",
       "prompt": "Summarize recent fintech funding activity. Cover the largest recent rounds, IPOs and exits, sectors attracting capital, valuation trends, and notable down rounds or shutdowns.",
-      "description": "Recent highlights from fintech funding"
+      "description": "Recent highlights from fintech funding",
+      "group": "analyze"
     },
     {
       "id": "payments-industry",
       "name": "Payments Industry Update",
       "icon": "payments-industry",
       "prompt": "What's the current state of the payments industry? Cover the major players, real-time payments, stablecoin payments, and where the industry is heading.",
-      "description": "Latest movement on payments industry"
+      "description": "Latest movement on payments industry",
+      "group": "discover"
     },
     {
       "id": "embedded-finance",
       "name": "Embedded Finance Watch",
       "icon": "embedded-finance",
       "prompt": "What's happening in embedded finance? Cover banking-as-a-service, embedded lending and payments, key infrastructure providers, regulatory developments, and which non-financial companies are launching financial products.",
-      "description": "Signals worth tracking in embedded finance"
+      "description": "Signals worth tracking in embedded finance",
+      "group": "analyze"
     },
     {
       "id": "neobanks-update",
       "name": "Neobanks Update",
       "icon": "neobanks-update",
       "prompt": "Who are the biggest neobanks and digital banks right now and how are they performing? Cover major regional players. Cover users, profitability, and product strategy.",
-      "description": "Latest movement on neobanks"
+      "description": "Latest movement on neobanks",
+      "group": "more"
     },
     {
       "id": "fintech-regulation-update",
       "name": "Fintech Regulation Update",
       "icon": "fintech-regulation-update",
       "prompt": "What are the most important recent and pending regulatory developments affecting fintech? Cover CFPB actions, banking-as-a-service oversight, BNPL rules, crypto-fintech overlap, and state-level activity.",
-      "description": "Latest movement on fintech regulation"
+      "description": "Latest movement on fintech regulation",
+      "group": "discover"
     },
     {
       "id": "consumer-credit-updates",
       "name": "Consumer Credit Updates",
       "icon": "consumer-credit-updates",
       "prompt": "What's happening in consumer credit? Cover the major players, regulatory pressure, default trends, and how consumer credit products are evolving.",
-      "description": "Recent developments in consumer credit"
+      "description": "Recent developments in consumer credit",
+      "group": "discover"
     },
     {
       "id": "where-to-follow",
@@ -477,175 +533,200 @@
       "name": "US Housing Market Snapshot",
       "icon": "us-housing-market",
       "prompt": "Give me a snapshot of the US housing market right now. Cover home prices, sales volume, inventory levels, mortgage rates, days on market, and which regional markets are heating up or cooling down.",
-      "description": "Current state of US housing market"
+      "description": "Current state of US housing market",
+      "group": "discover"
     },
     {
       "id": "best-and-worst-us-housing-markets",
       "name": "Best and Worst US Markets",
       "icon": "best-and-worst-us-housing-markets",
       "prompt": "What are the strongest and weakest housing markets in the US right now? Cover both strong markets (price appreciation, demand drivers) and weak markets (declining prices, oversupply, outmigration).",
-      "description": "Top picks worth knowing about right now"
+      "description": "Top picks worth knowing about right now",
+      "group": "analyze"
     },
     {
       "id": "global-housing-market",
       "name": "Global Housing Market Snapshot",
       "icon": "global-housing-market",
       "prompt": "Give me a snapshot of the global housing market right now. Cover home prices, sales volume, inventory levels, mortgage rates, days on market, and which global markets are heating up or cooling down.",
-      "description": "Current state of global housing market"
+      "description": "Current state of global housing market",
+      "group": "discover"
     },
     {
       "id": "mortgage-rate-watch",
       "name": "Mortgage Rate Watch",
       "icon": "mortgage-rate-watch",
       "prompt": "What's happening with mortgage rates? Cover the current 30-year and 15-year averages, recent trends, what's driving rate moves, and the outlook for the coming months.",
-      "description": "Signals worth tracking in mortgage rate"
+      "description": "Signals worth tracking in mortgage rate",
+      "group": "discover"
     },
     {
       "id": "housing-affordability-updates",
       "name": "Housing Affordability Update",
       "icon": "housing-affordability-updates",
       "prompt": "What's the current state of housing affordability? Cover the key metrics (price-to-income, rent-to-income, mortgage payment-to-income), how it varies by region, and what's being proposed at federal, state, and local levels to address it.",
-      "description": "Latest movement on housing affordability"
+      "description": "Latest movement on housing affordability",
+      "group": "analyze"
     },
     {
       "id": "commercial-real-estate-update",
       "name": "Commercial Real Estate Update",
       "icon": "commercial-real-estate-update",
       "prompt": "What's happening in commercial real estate right now? Cover office, retail, industrial, and multifamily separately. Cover vacancy rates, transaction volume, distressed properties, and refinancing risk.",
-      "description": "Latest movement on commercial real estate"
+      "description": "Latest movement on commercial real estate",
+      "group": "discover"
     },
     {
       "id": "local-market-deep-dive",
       "name": "Local Market Deep Dive",
       "icon": "local-market-deep-dive",
       "prompt": "Give me a deep look at the housing market in [city or metro area]. Cover prices and trends, inventory and demand dynamics, neighborhoods worth knowing, and what's specific to this market right now.",
-      "description": "A deeper read — context, dynamics, what matters"
+      "description": "A deeper read — context, dynamics, what matters",
+      "group": "analyze"
     },
     {
       "id": "labor-market-snapshot",
       "name": "Labor Market Snapshot",
       "icon": "labor-market-snapshot",
       "prompt": "Give me a snapshot of the US labor market right now. Cover unemployment, wage growth, job openings, quits and layoffs, labor force participation, and which sectors are hiring or cutting.",
-      "description": "Current state of labor market"
+      "description": "Current state of labor market",
+      "group": "discover"
     },
     {
       "id": "layoff-tracker",
       "name": "Layoff Tracker",
       "icon": "layoff-tracker",
       "prompt": "What major layoffs have been announced recently? Organize by sector (tech, finance, media, retail, etc.). For each: company, headcount affected, reason given, and what it signals about the broader industry.",
-      "description": "Ongoing layoff developments worth following"
+      "description": "Ongoing layoff developments worth following",
+      "group": "analyze"
     },
     {
       "id": "remote-work-updates",
       "name": "Remote Work Updates",
       "icon": "remote-work-updates",
       "prompt": "What's the current state of remote and hybrid work? Cover the data on where workers are working, return-to-office mandates, employer vs. employee preferences, and how this is shaping commercial real estate and labor markets.",
-      "description": "Recent developments in remote work"
+      "description": "Recent developments in remote work",
+      "group": "more"
     },
     {
       "id": "wage-growth-inequality",
       "name": "Wage Growth and Inequality Updates",
       "icon": "wage-growth-inequality",
       "prompt": "What's happening with wages right now? Cover wage growth across income levels, sectors with the strongest and weakest gains, the gap between wage growth and inflation, and trends in income inequality.",
-      "description": "Recent developments in wage growth and inequality"
+      "description": "Recent developments in wage growth and inequality",
+      "group": "more"
     },
     {
       "id": "ai-impact-on-jobs",
       "name": "AI Impact on Jobs",
       "icon": "ai-impact-on-jobs",
       "prompt": "Where is AI actually affecting jobs right now? Cover sectors and roles seeing real impact, hiring data, comp shifts, and what credible analysis suggests for the next 1-3 years. Distinguish hype from substance.",
-      "description": "AI actually affecting jobs right now"
+      "description": "AI actually affecting jobs right now",
+      "group": "learn"
     },
     {
       "id": "biggest-movers-market",
       "name": "Biggest Movers",
       "icon": "biggest-movers-market",
       "prompt": "What are the biggest stock movers today (and over the past week)? Cover the top gainers and losers among large caps, the catalysts driving each move, and any unusual volume or momentum patterns worth knowing about.",
-      "description": "Who and what is shifting in biggest movers"
+      "description": "Who and what is shifting in biggest movers",
+      "group": "discover"
     },
     {
       "id": "stock-deep-dive",
       "name": "Stock Deep Dive",
       "icon": "stock-deep-dive",
       "prompt": "Give me a current look at [company or ticker]. Cover recent price action and earnings, the bull and bear cases, key catalysts ahead, valuation context, and how it compares to its main peers.",
-      "description": "A deeper read — context, dynamics, what matters"
+      "description": "A deeper read — context, dynamics, what matters",
+      "group": "analyze"
     },
     {
       "id": "earning-seasons-tracker",
       "name": "Earnings Season Tracker",
       "icon": "earning-seasons-tracker",
       "prompt": "Where are we in the current earnings season? Cover companies that have reported, the biggest beats and misses, sector trends, forward guidance themes, and the most important earnings reports still to come.",
-      "description": "Recent earnings results that matter"
+      "description": "Recent earnings results that matter",
+      "group": "analyze"
     },
     {
       "id": "sector-rotation-check",
       "name": "Sector Rotation Check",
       "icon": "sector-rotation-check",
       "prompt": "Which sectors are leading and lagging in the market right now? For each major sector, cover recent performance, what's driving it, and the dominant narrative among investors.",
-      "description": "Quick read on sector rotation right now"
+      "description": "Quick read on sector rotation right now",
+      "group": "analyze"
     },
     {
       "id": "market-sentiment-check",
       "name": "Market Sentiment Check",
       "icon": "market-sentiment-check",
       "prompt": "What's the current state of market sentiment? Cover positioning indicators, fear/greed measures, options activity, valuation metrics, and where bulls and bears are pointing for evidence.",
-      "description": "Quick read on market sentiment right now"
+      "description": "Quick read on market sentiment right now",
+      "group": "discover"
     },
     {
       "id": "bond-market-check",
       "name": "Bond Market Check",
       "icon": "bond-market-check",
       "prompt": "What's happening in the US bond market? Cover Treasury yields across the curve, the shape of the curve, credit spreads, recent auctions, and what bond markets are signaling about growth and inflation.",
-      "description": "Quick read on bond market right now"
+      "description": "Quick read on bond market right now",
+      "group": "analyze"
     },
     {
       "id": "best-rates-personal-finance",
       "name": "Best Rates Right Now",
       "icon": "best-rates-personal-finance",
       "prompt": "What are the best current rates I should know about as a consumer? Cover high-yield savings, CDs, money market accounts, mortgages, credit card rewards and 0% APR offers. Note which are limited-time vs. ongoing.",
-      "description": "Top picks worth knowing about right now"
+      "description": "Top picks worth knowing about right now",
+      "group": "analyze"
     },
     {
       "id": "tax-strategy-updates",
       "name": "Tax Strategy Updates",
       "icon": "tax-strategy-updates",
       "prompt": "What are the most important tax planning moves to consider right now? Cover deadlines on the horizon, recent rule changes, year-end strategies, and commonly missed opportunities for individuals.",
-      "description": "Recent developments in tax strategy"
+      "description": "Recent developments in tax strategy",
+      "group": "learn"
     },
     {
       "id": "best-credit-cards-now",
       "name": "Best Credit Cards Now",
       "icon": "best-credit-cards-now",
       "prompt": "What are the best credit card strategies right now? Cover top cards by category (travel, cash back, no annual fee), current welcome bonuses, and how to think about points vs. cash back given current conditions.",
-      "description": "Top picks worth knowing about right now"
+      "description": "Top picks worth knowing about right now",
+      "group": "analyze"
     },
     {
       "id": "investing-for-beginners",
       "name": "Investing for Beginners",
       "icon": "investing-for-beginners",
       "prompt": "Give me a clear, practical guide to getting started with investing. Cover account types (brokerage, IRA, 401k), what to invest in (index funds, ETFs, target-date funds), how much to invest, and the most common beginner mistakes to avoid.",
-      "description": "Clear, practical guide to getting started with investing"
+      "description": "Clear, practical guide to getting started with investing",
+      "group": "learn"
     },
     {
       "id": "retirement-planning-check-in",
       "name": "Retirement Planning Check-In",
       "icon": "retirement-planning-check-in",
       "prompt": "Help me think through my retirement planning. Ask about my age, retirement goal age, current savings, account types I'm using, and risk tolerance — then walk me through where to focus.",
-      "description": "Help me think through my retirement planning"
+      "description": "Help me think through my retirement planning",
+      "group": "more"
     },
     {
       "id": "finance-tools-resources",
       "name": "Finance Tools and Resources",
       "icon": "finance-tools-resources",
       "prompt": "What are the best current tools and resources for managing personal and business finances? Cover budgeting and tracking apps, investing platforms, tax software, financial calculators, and free educational resources worth knowing. Note which are best for which use case and flag any with notable cost, privacy, or reliability caveats.",
-      "description": "Practical tools for managing money"
+      "description": "Practical tools for managing money",
+      "group": "learn"
     },
     {
       "id": "budget-analysis",
       "name": "Budget Analysis",
       "icon": "budget-analysis",
       "prompt": "Help me build a working budget from the ground up. Ask about my take-home income, fixed expenses, variable spending, debts, and what I'm saving toward. Then recommend a framework that fits (50/30/20, zero-based, etc.), build the line-item budget in a clean table, flag where the numbers look unrealistic, and suggest a tracking method and review cadence that will keep it alive past month one.",
-      "description": "Help me build a working budget from the ground up"
+      "description": "Help me build a working budget from the ground up",
+      "group": "analyze"
     },
     {
       "id": "myths-vs-reality",
@@ -660,70 +741,80 @@
       "name": "Small Business Climate Check",
       "icon": "small-business-climate-check",
       "prompt": "What's the current state of the small business climate in the US? Cover sentiment surveys, hiring and revenue trends, financing conditions, the biggest pain points business owners report, and where things are improving or getting harder.",
-      "description": "Quick read on small business climate right now"
+      "description": "Quick read on small business climate right now",
+      "group": "discover"
     },
     {
       "id": "funding-and-lending-small-business",
       "name": "Funding and Lending Options",
       "icon": "funding-and-lending-small-business",
       "prompt": "What financing options are available for small businesses right now? Cover SBA loans, traditional bank lending, online lenders, lines of credit, and alternative funding (revenue-based, invoice factoring). Note current rates and qualification trends.",
-      "description": "Financing routes available to small businesses"
+      "description": "Financing routes available to small businesses",
+      "group": "learn"
     },
     {
       "id": "best-software-small-business",
       "name": "Best Software for Small Business",
       "icon": "best-software-small-business",
       "prompt": "What are the most useful tools and software platforms for small businesses right now? Organize by category (accounting, payroll, payments, CRM, marketing, e-commerce). Note industry-standard picks and best-for-budget alternatives.",
-      "description": "Top picks worth knowing about right now"
+      "description": "Top picks worth knowing about right now",
+      "group": "learn"
     },
     {
       "id": "tax-compliance-small-business",
       "name": "Tax and Compliance Updates",
       "icon": "tax-compliance-small-business",
       "prompt": "What tax and compliance updates do small business owners need to know about? Cover recent rule changes, upcoming deadlines, BOI reporting status, payroll tax updates, and state-level developments.",
-      "description": "Recent developments in tax and compliance"
+      "description": "Recent developments in tax and compliance",
+      "group": "learn"
     },
     {
       "id": "marketing-small-business",
       "name": "Small Business Marketing Updates",
       "icon": "marketing-small-business",
       "prompt": "What marketing tactics are working for small businesses right now? Cover digital channels (SEO, social, email, paid ads), local marketing, content and AI-assisted marketing, and which approaches are getting the best ROI.",
-      "description": "Recent developments in small business marketing"
+      "description": "Recent developments in small business marketing",
+      "group": "analyze"
     },
     {
       "id": "tech-industry-snapshot",
       "name": "Tech Industry Snapshot",
       "icon": "tech-industry-snapshot",
       "prompt": "Give me a snapshot of the tech industry today. Cover the biggest stories, major company news, product launches, regulatory developments, and the dominant industry conversations.",
-      "description": "Current state of tech industry"
+      "description": "Current state of tech industry",
+      "group": "discover"
     },
     {
       "id": "big-tech-watch",
       "name": "Big Tech Watch",
       "icon": "big-tech-watch",
       "prompt": "What's happening at the major tech companies right now? For each: recent stories, strategic moves, and where they're positioned in AI, etc..",
-      "description": "Signals worth tracking in big tech"
+      "description": "Signals worth tracking in big tech",
+      "group": "discover"
     },
     {
       "id": "product-launch-roundup",
       "name": "Product Launch Roundup",
       "icon": "product-launch-roundup",
       "prompt": "What are the most significant tech product launches across consumer, enterprise, and developer-facing products in the past month? For each: what it is, who it's for, and whether it's worth attention.",
-      "description": "Recent highlights from product launch"
+      "description": "Recent highlights from product launch",
+      "group": "discover"
     },
     {
       "id": "tech-earnings-pulse",
       "name": "Tech Earnings Pulse",
       "icon": "tech-earnings-pulse",
       "prompt": "Where are we in the current tech earnings cycle? Cover the biggest reports, common themes (AI revenue, capex, demand environment), and what reports are still coming.",
-      "description": "Recent earnings results that matter"
+      "description": "Recent earnings results that matter",
+      "group": "analyze"
     },
     {
       "id": "tech-policy-updates",
       "name": "Tech Policy Updates",
       "icon": "tech-policy-updates",
       "prompt": "What are the most consequential tech policy and regulatory developments right now? Cover antitrust, AI policy, privacy, content moderation, and trade restrictions across major jurisdictions.",
-      "description": "Recent developments in tech policy"
+      "description": "Recent developments in tech policy",
+      "group": "analyze"
     },
     {
       "id": "catch-me-up",
@@ -731,357 +822,407 @@
       "icon": "catch-me-up",
       "prompt": "I haven't been following {TOPIC} for a while. Catch me up on what I need to know — the major recent developments, the current state of play, the dominant storylines, and what's coming up. Assume I have general background but missed the last few months.",
       "description": "A quick re-up if you've been away from it",
-      "group": "more"
+      "group": "learn"
     },
     {
       "id": "new-model-releases",
       "name": "New AI Model Releases",
       "icon": "new-model-releases",
       "prompt": "What are the most significant AI model releases and updates from the past month? Cover top models from and major open-source releases. For each: capabilities, benchmarks, pricing, and how it compares to alternatives.",
-      "description": "Notable model launches worth knowing about"
+      "description": "Notable model launches worth knowing about",
+      "group": "discover"
     },
     {
       "id": "frontier-lab-watch",
       "name": "Frontier AI Lab Watch",
       "icon": "frontier-lab-watch",
       "prompt": "What are the major AI labs up to right now? Cover their latest releases, leadership and strategic moves, funding, and how their positioning is shifting.",
-      "description": "Signals worth tracking in frontier AI lab"
+      "description": "Signals worth tracking in frontier AI lab",
+      "group": "discover"
     },
     {
       "id": "where-ai-is-being-used",
       "name": "Where AI Is Actually Being Used",
       "icon": "where-ai-is-being-used",
       "prompt": "Where is AI adoption actually happening in the real world? Cover enterprise deployments, consumer apps, specific industries seeing meaningful uptake, and where adoption is hyped but slow.",
-      "description": "AI adoption actually happening in the real world"
+      "description": "AI adoption actually happening in the real world",
+      "group": "learn"
     },
     {
       "id": "ai-safety-updates",
       "name": "AI Safety Updates",
       "icon": "ai-safety-updates",
       "prompt": "What are the most important recent developments in AI safety and alignment research? Cover technical advances, lab safety policies, government initiatives, and active debates within the research community.",
-      "description": "Recent developments in AI safety"
+      "description": "Recent developments in AI safety",
+      "group": "discover"
     },
     {
       "id": "open-source-ai-watch",
       "name": "Open Source AI Watch",
       "icon": "open-source-ai-watch",
       "prompt": "What's happening in open-source AI right now? Cover the most capable open models, the leading labs, licensing developments, and how the open vs. closed gap is evolving.",
-      "description": "Signals worth tracking in open source AI"
+      "description": "Signals worth tracking in open source AI",
+      "group": "analyze"
     },
     {
       "id": "best-ai-tool-use-case",
       "name": "Best AI Tool for My Use Case",
       "icon": "best-ai-tool-use-case",
       "prompt": "Help me pick the best AI tool for [use case — writing, coding, research, image generation, video, voice, agents, etc.]. Cover the leading options, what each does best, pricing, and how to choose based on what I'm trying to do.",
-      "description": "Top picks worth knowing about right now"
+      "description": "Top picks worth knowing about right now",
+      "group": "analyze"
     },
     {
       "id": "global-ai-regulation-tracking",
       "name": "Global AI Regulation Tracking",
       "icon": "global-ai-regulation-tracking",
       "prompt": "Give me a current snapshot of AI regulation around the world. Cover the EU AI Act implementation, US federal and state activity, UK approach, China's framework, and other notable jurisdictions. Note what's in force vs. pending.",
-      "description": "Tracking how global AI regulation is evolving"
+      "description": "Tracking how global AI regulation is evolving",
+      "group": "analyze"
     },
     {
       "id": "us-ai-policy-updates",
       "name": "US AI Policy Updates",
       "icon": "us-ai-policy-updates",
       "prompt": "What's happening with AI policy in the US right now? Cover the current administration's approach, congressional activity, agency action (NIST, FTC, Commerce, etc.), state-level legislation, and key court cases.",
-      "description": "Recent developments in US AI policy"
+      "description": "Recent developments in US AI policy",
+      "group": "analyze"
     },
     {
       "id": "ai-copyright-updates",
       "name": "AI and Copyright Updates",
       "icon": "ai-copyright-updates",
       "prompt": "What's happening in AI and copyright law right now? Cover active lawsuits, licensing deals, court rulings to date, and how the legal landscape is shifting.",
-      "description": "Recent developments in AI and copyright"
+      "description": "Recent developments in AI and copyright",
+      "group": "analyze"
     },
     {
       "id": "ai-in-workplace",
       "name": "AI in the Workplace",
       "icon": "ai-in-workplace",
       "prompt": "What's happening in AI workplace policy and labor implications? Cover guidance, transparency and notice laws, hiring and surveillance restrictions, and union responses.",
-      "description": "AI workplace policy and labor implications"
+      "description": "AI workplace policy and labor implications",
+      "group": "more"
     },
     {
       "id": "ai-compliance-help-by-sector",
       "name": "AI Compliance Help by Sector",
       "icon": "ai-compliance-help-by-sector",
       "prompt": "Walk me through the AI compliance landscape for [sector — healthcare, finance, employment, education, etc.]. Cover the relevant regulations, key obligations, recent enforcement, and what an organization in this sector should be doing.",
-      "description": "Compliance considerations across major sectors"
+      "description": "Compliance considerations across major sectors",
+      "group": "analyze"
     },
     {
       "id": "layer-1-blockchain",
       "name": "Layer 1 Blockchain Roundup",
       "icon": "layer-1-blockchain",
       "prompt": "Give me a snapshot of the major layer 1 blockchains. For each: activity levels, recent upgrades, ecosystem health, and how they're differentiating.",
-      "description": "Recent highlights from layer 1 blockchain"
+      "description": "Recent highlights from layer 1 blockchain",
+      "group": "discover"
     },
     {
       "id": "defi-status-check",
       "name": "DeFi Status Check",
       "icon": "defi-status-check",
       "prompt": "What's the current state of decentralized finance? Cover total value locked, leading protocols by category (DEX, lending, derivatives, staking), recent exploits, and where developer activity is concentrating.",
-      "description": "Quick read on DeFi status right now"
+      "description": "Quick read on DeFi status right now",
+      "group": "discover"
     },
     {
       "id": "rwa-tokenization-updates",
       "name": "Real World Asset Tokenization Updates",
       "icon": "rwa-tokenization-updates",
       "prompt": "What's happening with real world asset (RWA) tokenization? Cover tokenized treasuries, private credit, real estate, and other categories. Cover the leading platforms, asset volumes, and adoption among traditional finance.",
-      "description": "Recent developments in real world asset tokenization"
+      "description": "Recent developments in real world asset tokenization",
+      "group": "discover"
     },
     {
       "id": "web3-developer-activity",
       "name": "Web3 Developer Activity",
       "icon": "web3-developer-activity",
       "prompt": "Where is Web3 developer activity concentrating right now? Cover the most active ecosystems by developer count, the categories getting the most builds (infra, DeFi, social, gaming), and where meaningful new product activity is happening.",
-      "description": "Web3 developer activity concentrating right now"
+      "description": "Web3 developer activity concentrating right now",
+      "group": "analyze"
     },
     {
       "id": "crypto-infrastructure-watch",
       "name": "Crypto Infrastructure Watch",
       "icon": "crypto-infrastructure-watch",
       "prompt": "What's happening in crypto infrastructure (oracles, indexing, staking, MEV, custody, wallets)? Cover the leading providers in each category and recent developments.",
-      "description": "Signals worth tracking in crypto infrastructure"
+      "description": "Signals worth tracking in crypto infrastructure",
+      "group": "discover"
     },
     {
       "id": "hyperscaler-earnings-roundup",
       "name": "Hyperscaler Earnings Roundup",
       "icon": "hyperscaler-earnings-roundup",
       "prompt": "Summarize the most recent earnings from cloud computing hyperscalers. Cover revenue growth, operating margins, AI-related revenue, capex trends, and what each is signaling about demand.",
-      "description": "Recent earnings results that matter"
+      "description": "Recent earnings results that matter",
+      "group": "discover"
     },
     {
       "id": "ai-infrastructure-buildout",
       "name": "AI Infrastructure Buildout",
       "icon": "ai-infrastructure-buildout",
       "prompt": "What's happening with AI infrastructure capex from the hyperscalers? Cover announced data center investments, GPU and CPU procurement, power constraints, geographic concentration, and what this means for the cloud market.",
-      "description": "Where the AI infrastructure buildout currently stands"
+      "description": "Where the AI infrastructure buildout currently stands",
+      "group": "analyze"
     },
     {
       "id": "cloud-cost-optimization",
       "name": "Cloud Cost Optimization",
       "icon": "cloud-cost-optimization",
       "prompt": "What are the most effective ways to manage and reduce cloud costs right now? Cover reserved instances and committed use, FinOps tools, architectural patterns, and common waste to identify.",
-      "description": "Practical ways to manage and reduce cloud spend"
+      "description": "Practical ways to manage and reduce cloud spend",
+      "group": "analyze"
     },
     {
       "id": "cloud-security-watch",
       "name": "Cloud Security Watch",
       "icon": "cloud-security-watch",
       "prompt": "What are the most important cloud security threats and best practices right now? Cover common misconfigurations, identity and access management, recent major incidents, and the leading security tools.",
-      "description": "Signals worth tracking in cloud security"
+      "description": "Signals worth tracking in cloud security",
+      "group": "analyze"
     },
     {
       "id": "edge-distributed-cloud",
       "name": "Edge and Distributed Cloud",
       "icon": "edge-distributed-cloud",
       "prompt": "What's happening with edge computing and distributed cloud? Cover the leading platforms, real-world use cases gaining traction, the role of CDNs evolving into compute, and how this fits with AI inference.",
-      "description": "Edge computing and distributed cloud"
+      "description": "Edge computing and distributed cloud",
+      "group": "analyze"
     },
     {
       "id": "new-product-launches",
       "name": "New Consumer Product Launches",
       "icon": "new-product-launches",
       "prompt": "What are the most significant consumer electronics launches from the past month? Cover phones, laptops, tablets, wearables, smart home, audio, and gaming hardware. For each: what's new, who it's for, and whether it's worth attention.",
-      "description": "The most significant consumer electronics launches from the past month"
+      "description": "The most significant consumer electronics launches from the past month",
+      "group": "discover"
     },
     {
       "id": "wearables-update",
       "name": "Wearables Updates",
       "icon": "wearables-update",
       "prompt": "What's happening in wearables right now? Cover smartwatches, fitness trackers, smart rings, and emerging form factors like AI pendants and smart glasses.",
-      "description": "Recent developments in wearables"
+      "description": "Recent developments in wearables",
+      "group": "discover"
     },
     {
       "id": "smart-home-updates",
       "name": "Smart Home Updates",
       "icon": "smart-home-updates",
       "prompt": "What's the current state of the smart home? Cover the platform landscape, the best products by category, where adoption is going well, and where it's still painful.",
-      "description": "Recent developments in smart home"
+      "description": "Recent developments in smart home",
+      "group": "discover"
     },
     {
       "id": "best-tech-deals-right-now",
       "name": "Best Tech Deals Right Now",
       "icon": "best-tech-deals-right-now",
       "prompt": "What are the best current deals on consumer electronics? Note any seasonal sales context, products worth waiting for vs. buying now, and patterns to know about pricing throughout the year.",
-      "description": "Top picks worth knowing about right now"
+      "description": "Top picks worth knowing about right now",
+      "group": "learn"
     },
     {
       "id": "recent-major-breaches",
       "name": "Recent Major Breaches",
       "icon": "recent-major-breaches",
       "prompt": "What are the most significant data breaches and cyber incidents from the past month? For each: target, scale, attack vector, attribution if known, impact on affected parties, and what defenders should learn from it.",
-      "description": "Notable recent breaches and what was exposed"
+      "description": "Notable recent breaches and what was exposed",
+      "group": "analyze"
     },
     {
       "id": "active-threats-watch",
       "name": "Active Threats Watch",
       "icon": "active-threats-watch",
       "prompt": "What threats are most active right now? Cover ransomware groups, nation-state activity, supply chain attacks, and emerging tactics. Note which sectors and regions are most targeted.",
-      "description": "Risks and warning signs to watch"
+      "description": "Risks and warning signs to watch",
+      "group": "analyze"
     },
     {
       "id": "critical-vulnerabilities",
       "name": "Critical Vulnerabilities to Patch",
       "icon": "critical-vulnerabilities",
       "prompt": "What are the most critical recently disclosed vulnerabilities and zero-days? Cover CISA's KEV additions, vendor patches that need urgent attention, and any actively exploited issues.",
-      "description": "The most critical recently disclosed vulnerabilities and zero-days"
+      "description": "The most critical recently disclosed vulnerabilities and zero-days",
+      "group": "analyze"
     },
     {
       "id": "ransomware-tracker",
       "name": "Ransomware Tracker",
       "icon": "ransomware-tracker",
       "prompt": "What's the current state of ransomware? Cover the most active groups, recent high-profile attacks, ransom payment trends, law enforcement actions, and how the threat is evolving.",
-      "description": "Ongoing ransomware developments worth following"
+      "description": "Ongoing ransomware developments worth following",
+      "group": "analyze"
     },
     {
       "id": "ai-impact-cybersecurity",
       "name": "Impact of AI on Cybersecurity",
       "icon": "ai-impact-cybersecurity",
       "prompt": "How is AI changing cybersecurity on both offense and defense? Cover AI-powered attacks, AI in defense, and what defenders need to prepare for.",
-      "description": "AI's effect across attack and defense"
+      "description": "AI's effect across attack and defense",
+      "group": "analyze"
     },
     {
       "id": "personal-security-hygiene",
       "name": "Personal Security Hygiene",
       "icon": "personal-security-hygiene",
       "prompt": "What are the most important personal cybersecurity practices people should be doing right now? Cover authentication, password managers, device security, scam awareness, and what's actually worth the effort vs. what's overkill.",
-      "description": "Practical security habits worth adopting"
+      "description": "Practical security habits worth adopting",
+      "group": "more"
     },
     {
       "id": "threat-briefing-for-sector",
       "name": "Threat Briefing for My Sector",
       "icon": "threat-briefing-for-sector",
       "prompt": "Give me a current threat briefing for [sector — healthcare, finance, manufacturing, retail, government, etc.]. Cover the active threat actors, common attack patterns, regulatory requirements, and where to focus defenses.",
-      "description": "Risks and warning signs to watch"
+      "description": "Risks and warning signs to watch",
+      "group": "analyze"
     },
     {
       "id": "modern-data-stack",
       "name": "Modern Data Stack Snapshot",
       "icon": "modern-data-stack",
       "prompt": "What does a modern data stack look like right now? Cover the leading tools across ingestion, storage (data warehouses and lakes), transformation, BI, and reverse ETL. Note industry-standard choices and emerging alternatives.",
-      "description": "Current state of modern data stack"
+      "description": "Current state of modern data stack",
+      "group": "analyze"
     },
     {
       "id": "ai-data-stack",
       "name": "AI and the Data Stack",
       "icon": "ai-data-stack",
       "prompt": "How is AI reshaping the data stack? Cover AI-powered analytics tools, vector databases, RAG infrastructure, and how data engineering practices are changing.",
-      "description": "AI's footprint across the modern data stack"
+      "description": "AI's footprint across the modern data stack",
+      "group": "analyze"
     },
     {
       "id": "real-time-streaming-data",
       "name": "Real-Time and Streaming Data",
       "icon": "real-time-streaming-data",
       "prompt": "What's happening in real-time and streaming data? Cover the leading tools, real-world use cases, and where streaming is overkill vs. essential.",
-      "description": "Real-time and streaming data"
+      "description": "Real-time and streaming data",
+      "group": "more"
     },
     {
       "id": "data-quality-observability",
       "name": "Data Quality and Observability",
       "icon": "data-quality-observability",
       "prompt": "What's the current state of data quality and observability? Cover the leading tools, common failure modes, organizational practices, and how AI is being applied here.",
-      "description": "Current state of data quality and observability"
+      "description": "Current state of data quality and observability",
+      "group": "analyze"
     },
     {
       "id": "help-pick-data-tool",
       "name": "Help Me Pick a Data Tool",
       "icon": "help-pick-data-tool",
       "prompt": "Help me pick the right tool for [data task — warehousing, transformation, BI, observability, etc.]. Ask about my scale, team, budget, and existing stack — then recommend specific options with reasoning.",
-      "description": "Walking you through the right choice"
+      "description": "Walking you through the right choice",
+      "group": "analyze"
     },
     {
       "id": "quantum-computing-watch",
       "name": "Quantum Computing Watch",
       "icon": "quantum-computing-watch",
       "prompt": "What's the current state of quantum computing? Cover recent milestones, leading companies, the path to useful applications, and credible timelines.",
-      "description": "Signals worth tracking in quantum computing"
+      "description": "Signals worth tracking in quantum computing",
+      "group": "analyze"
     },
     {
       "id": "brain-computer-interfaces",
       "name": "Brain-Computer Interface Updates",
       "icon": "brain-computer-interfaces",
       "prompt": "What's happening in brain-computer interfaces? Cover the leading companies, recent clinical trials, capabilities demonstrated, and what's realistic in the near term.",
-      "description": "Recent developments in brain-computer interface"
+      "description": "Recent developments in brain-computer interface",
+      "group": "analyze"
     },
     {
       "id": "nuclear-fusion-energy",
       "name": "Nuclear and Fusion Energy Updates",
       "icon": "nuclear-fusion-energy",
       "prompt": "What's happening in advanced nuclear and fusion energy? Cover leading SMR companies, fusion startups, recent milestones, government investment, and credible timelines for commercial deployment.",
-      "description": "Recent developments in nuclear and fusion energy"
+      "description": "Recent developments in nuclear and fusion energy",
+      "group": "discover"
     },
     {
       "id": "synthetic-biology-updates",
       "name": "Synthetic Biology Updates",
       "icon": "synthetic-biology-updates",
       "prompt": "What's happening in synthetic biology and biotech engineering right now? Cover advances in protein design, CRISPR applications, lab-grown materials, and where the field is heading.",
-      "description": "Recent developments in synthetic biology"
+      "description": "Recent developments in synthetic biology",
+      "group": "analyze"
     },
     {
       "id": "robotics-frontier-updates",
       "name": "Robotics Frontier Updates",
       "icon": "robotics-frontier-updates",
       "prompt": "What's at the frontier of robotics right now? Cover humanoid robots, industrial automation advances, autonomous vehicles, and how AI advances are changing what's possible.",
-      "description": "Recent developments in robotics frontier"
+      "description": "Recent developments in robotics frontier",
+      "group": "discover"
     },
     {
       "id": "space-tech-watch",
       "name": "Space Tech Watch",
       "icon": "space-tech-watch",
       "prompt": "What's happening at the frontier of space technology? Cover launch, satellite constellations, lunar and Mars programs, and emerging commercial space applications.",
-      "description": "Signals worth tracking in space tech"
+      "description": "Signals worth tracking in space tech",
+      "group": "discover"
     },
     {
       "id": "us-privacy-law-tracking",
       "name": "US Privacy Law Tracking",
       "icon": "us-privacy-law-tracking",
       "prompt": "What's the current state of US privacy law? Cover federal proposals, state comprehensive privacy laws, sector-specific laws, and enforcement.",
-      "description": "Tracking how US privacy law is evolving"
+      "description": "Tracking how US privacy law is evolving",
+      "group": "analyze"
     },
     {
       "id": "global-privacy-law-tracking",
       "name": "Global Privacy Law Tracking",
       "icon": "global-privacy-law-tracking",
       "prompt": "What's the current state of global privacy laws? Cover proposals, comprehensive privacy laws, sector-specific laws, and enforcement.",
-      "description": "Tracking how global privacy law is evolving"
+      "description": "Tracking how global privacy law is evolving",
+      "group": "analyze"
     },
     {
       "id": "cross-border-data-transfer-updates",
       "name": "Cross-Border Data Transfer Updates",
       "icon": "cross-border-data-transfer-updates",
       "prompt": "What's the current state of cross-border data transfers? Cover major developments, trends, updates, outbound rules, and other notable jurisdictional developments.",
-      "description": "Recent developments in cross-border data transfer"
+      "description": "Recent developments in cross-border data transfer",
+      "group": "analyze"
     },
     {
       "id": "childrens-privacy-watch",
       "name": "Children's Privacy Watch",
       "icon": "childrens-privacy-watch",
       "prompt": "What's happening in children's online privacy and safety? Cover major stories, enforcement, reform, age-appropriate design codes, age verification mandates, and social media age restrictions.",
-      "description": "Signals worth tracking in children's privacy"
+      "description": "Signals worth tracking in children's privacy",
+      "group": "analyze"
     },
     {
       "id": "privacy-tech-updates",
       "name": "Privacy Tech Updates",
       "icon": "privacy-tech-updates",
       "prompt": "What's happening in privacy-enhancing technologies? Cover differential privacy, federated learning, confidential computing, zero-knowledge proofs, and where these are seeing real-world deployment.",
-      "description": "Recent developments in privacy tech"
+      "description": "Recent developments in privacy tech",
+      "group": "discover"
     },
     {
       "id": "personal-privacy-hygiene",
       "name": "Personal Privacy Hygiene",
       "icon": "personal-privacy-hygiene",
       "prompt": "What practical steps should individuals take to protect their privacy right now? Cover browser and search settings, mobile permissions, data broker opt-outs, communication tools, and what's actually worth the effort.",
-      "description": "Practical privacy habits worth adopting"
+      "description": "Practical privacy habits worth adopting",
+      "group": "more"
     },
     {
       "id": "ai-and-privacy",
       "name": "AI and Privacy",
       "icon": "ai-and-privacy",
       "prompt": "How is AI creating new privacy challenges? Cover training data, inference-time data exposure, deepfakes and biometric concerns, employer monitoring, and what regulators are doing about it.",
-      "description": "Privacy challenges emerging from AI use"
+      "description": "Privacy challenges emerging from AI use",
+      "group": "discover"
     },
     {
       "id": "how-we-got-here",
@@ -1096,798 +1237,912 @@
       "name": "Language and Framework Watch",
       "icon": "language-and-frameworks",
       "prompt": "What's happening with major programming languages and frameworks right now? Cover recent releases and updates for top languages and major frameworks. Note where momentum is building or fading.",
-      "description": "Signals worth tracking in language and framework"
+      "description": "Signals worth tracking in language and framework",
+      "group": "discover"
     },
     {
       "id": "ai-coding-tools",
       "name": "Best AI Coding Tools",
       "icon": "ai-coding-tools",
       "prompt": "What are the best AI coding tools right now? Cover IDE integrations, agentic coding, and code review tools. Note what each does best and how they compare.",
-      "description": "Top picks worth knowing about right now"
+      "description": "Top picks worth knowing about right now",
+      "group": "learn"
     },
     {
       "id": "developer-productivity-tools",
       "name": "Developer Productivity Tools",
       "icon": "developer-productivity-tools",
       "prompt": "What are the most useful developer productivity tools right now? Cover terminals, editors, debugging, testing, deployment, and observability. Include both established standards and notable newcomers.",
-      "description": "The most useful developer productivity tools right now"
+      "description": "The most useful developer productivity tools right now",
+      "group": "learn"
     },
     {
       "id": "open-source-watch",
       "name": "Open Source Watch",
       "icon": "open-source-watch",
       "prompt": "What's happening in major open source projects right now? Cover notable releases, governance changes, license disputes, and where new projects are gaining significant adoption.",
-      "description": "Signals worth tracking in open source"
+      "description": "Signals worth tracking in open source",
+      "group": "discover"
     },
     {
       "id": "coding-career-pulse",
       "name": "Coding Career Pulse",
       "icon": "coding-career-pulse",
       "prompt": "What's the current state of the developer job market? Cover hiring trends by stack and seniority, remote vs. in-office, comp benchmarks, the impact of AI coding tools on hiring, and where opportunities are growing or shrinking.",
-      "description": "Where things stand on coding career"
+      "description": "Where things stand on coding career",
+      "group": "analyze"
     },
     {
       "id": "pick-a-tech-stack",
       "name": "Pick a Stack for My Project",
       "icon": "pick-a-tech-stack",
       "prompt": "Help me pick a tech stack for [project type]. Ask about the project, my experience, scale expectations, and team — then recommend a specific stack with reasoning.",
-      "description": "Walking you through the right pick"
+      "description": "Walking you through the right pick",
+      "group": "analyze"
     },
     {
       "id": "build-programming-learning-path",
       "name": "Build My Learning Path",
       "icon": "build-programming-learning-path",
       "prompt": "Build me a learning path for [language, framework, or skill]. Ask about my current level and goals — then map out a structured progression with specific resources at each stage.",
-      "description": "A plan tailored to your situation"
+      "description": "A plan tailored to your situation",
+      "group": "analyze"
     },
     {
       "id": "humanoid-robots",
       "name": "Humanoid Robot Watch",
       "icon": "humanoid-robots",
       "prompt": "What's happening with humanoid robots right now? Cover the leading companies, capabilities demonstrated, deployment progress, and how realistic recent demos are.",
-      "description": "Signals worth tracking in humanoid robot"
+      "description": "Signals worth tracking in humanoid robot",
+      "group": "discover"
     },
     {
       "id": "industrial-automation-updates",
       "name": "Industrial Automation Updates",
       "icon": "industrial-automation-updates",
       "prompt": "What's happening in industrial automation? Cover collaborative robots, warehouse automation, manufacturing applications, and how AI advances are changing what's possible.",
-      "description": "Recent developments in industrial automation"
+      "description": "Recent developments in industrial automation",
+      "group": "discover"
     },
     {
       "id": "autonomous-vehicles",
       "name": "Autonomous Vehicles Status",
       "icon": "autonomous-vehicles",
       "prompt": "What's the current state of autonomous vehicles? Cover expansion, progress, autonomous trucking, and the regulatory landscape across jurisdictions.",
-      "description": "Current state of autonomous vehicles"
+      "description": "Current state of autonomous vehicles",
+      "group": "discover"
     },
     {
       "id": "drones-aerial-robotics",
       "name": "Drones and Aerial Robotics",
       "icon": "drones-aerial-robotics",
       "prompt": "What's happening in drone technology and aerial robotics? Cover commercial delivery, defense applications, consumer drones, and air mobility/eVTOL progress.",
-      "description": "Drone technology and aerial robotics"
+      "description": "Drone technology and aerial robotics",
+      "group": "discover"
     },
     {
       "id": "robotics-healthcare",
       "name": "Robotics in Healthcare",
       "icon": "robotics-healthcare",
       "prompt": "What's happening with robotics in healthcare? Cover surgical robotics, hospital logistics, eldercare, prosthetics, and emerging clinical applications.",
-      "description": "Robotics taking on more roles in care"
+      "description": "Robotics taking on more roles in care",
+      "group": "discover"
     },
     {
       "id": "automation-workforce-impact",
       "name": "Automation's Workforce Impact",
       "icon": "automation-workforce-impact",
       "prompt": "How is automation affecting different parts of the workforce? Cover where job displacement is happening, where automation is augmenting workers, the skills in growing demand, and the most credible projections for the next 5-10 years.",
-      "description": "Automation's effect across the workforce"
+      "description": "Automation's effect across the workforce",
+      "group": "analyze"
     },
     {
       "id": "social-platforms-snapshot",
       "name": "Major and Emerging Social Platforms",
       "icon": "social-platforms-snapshot",
       "prompt": "Give me a snapshot of the major and emerging social platforms right now. Cover user trends, monetization, recent product changes, competitive positioning for major platforms, and emerging platforms.",
-      "description": "Snapshot of the major and emerging social platforms right now"
+      "description": "Snapshot of the major and emerging social platforms right now",
+      "group": "analyze"
     },
     {
       "id": "creator-economy-updates",
       "name": "Creator Economy Updates",
       "icon": "creator-economy-updates",
       "prompt": "What's happening in the creator economy? Cover platform monetization changes, the biggest creators and channels, brand deal dynamics, and the tools creators are using.",
-      "description": "Recent developments in creator economy"
+      "description": "Recent developments in creator economy",
+      "group": "discover"
     },
     {
       "id": "content-moderation-watch",
       "name": "Content Moderation Watch",
       "icon": "content-moderation-watch",
       "prompt": "What's happening in content moderation across major platforms? Cover policy changes, transparency reports, government pressure, AI-generated content rules, and major incidents.",
-      "description": "Signals worth tracking in content moderation"
+      "description": "Signals worth tracking in content moderation",
+      "group": "analyze"
     },
     {
       "id": "social-media-marketing",
       "name": "Social Media Marketing Updates",
       "icon": "social-media-marketing",
       "prompt": "What's working in social media marketing right now? Cover the top platforms by category (B2C, B2B, e-commerce), content formats getting the most reach, and tactical approaches that are working in the current environment.",
-      "description": "Recent developments in social media marketing"
+      "description": "Recent developments in social media marketing",
+      "group": "analyze"
     },
     {
       "id": "youth-privacy-safety-social-media",
       "name": "Youth Privacy and Safety on Social Media",
       "icon": "youth-privacy-safety-social-media",
       "prompt": "What's happening with youth privacy and safety on social media right now? Cover age-verification laws and platform compliance, legislation, lawsuits against major platforms over teen mental health and addictive design, platform-side changes (teen accounts, default privacy settings, parental controls), and the research and advocacy shaping the debate. Note where the US is moving vs. the EU, UK, and Australia and more jurisdictions.",
-      "description": "Youth privacy and safety on social media right now"
+      "description": "Youth privacy and safety on social media right now",
+      "group": "learn"
     },
     {
       "id": "saas-earnings-roundup",
       "name": "SaaS Earnings Roundup",
       "icon": "saas-earnings-roundup",
       "prompt": "Summarize the most recent earnings from major SaaS companies. Cover growth rates, NRR, AI revenue, profitability, and management commentary on the demand environment.",
-      "description": "Recent earnings results that matter"
+      "description": "Recent earnings results that matter",
+      "group": "discover"
     },
     {
       "id": "enterprise-software-buyers-guide",
       "name": "Enterprise Software Buyer's Guide",
       "icon": "enterprise-software-buyers-guide",
       "prompt": "What are the leading software platforms across major enterprise categories? For each category, note the leader and the most credible challengers.",
-      "description": "Background and basics for enterprise software buyer's"
+      "description": "Background and basics for enterprise software buyer's",
+      "group": "learn"
     },
     {
       "id": "vertical-saas-watch",
       "name": "Vertical SaaS Watch",
       "icon": "vertical-saas-watch",
       "prompt": "What's happening in vertical SaaS? Cover the most active verticals, the leading platforms, and how AI is reshaping the vertical software opportunity.",
-      "description": "Signals worth tracking in vertical saas"
+      "description": "Signals worth tracking in vertical saas",
+      "group": "analyze"
     },
     {
       "id": "ai-in-saas",
       "name": "AI in SaaS",
       "icon": "ai-in-saas",
       "prompt": "How is AI reshaping the SaaS landscape? Cover incumbent AI strategies, AI-native challengers, pricing model shifts (usage vs. seat), and which categories face the biggest disruption.",
-      "description": "AI's growing role inside SaaS products"
+      "description": "AI's growing role inside SaaS products",
+      "group": "discover"
     },
     {
       "id": "saas-pricing-trends",
       "name": "SaaS Pricing Trends",
       "icon": "saas-pricing-trends",
       "prompt": "What's happening with SaaS pricing right now? Cover the shift from per-seat to usage-based pricing, AI feature pricing, contract terms, and what buyers should know about negotiation leverage in the current environment.",
-      "description": "SaaS pricing right now"
+      "description": "SaaS pricing right now",
+      "group": "analyze"
     },
     {
       "id": "help-pick-software",
       "name": "Help Me Pick Software",
       "icon": "help-pick-software",
       "prompt": "Help me pick software for [function — CRM, project management, etc.]. Ask about my company size, budget, key needs, and existing stack — then recommend specific options with reasoning.",
-      "description": "Walking you through the right choice"
+      "description": "Walking you through the right choice",
+      "group": "analyze"
     },
     {
       "id": "funding-roundup",
       "name": "Funding Roundup",
       "icon": "funding-roundup",
       "prompt": "What are the most notable venture funding rounds from the past week? Cover the largest rounds, sectors getting the most capital, valuation trends, lead investors, and any notable down rounds or shutdowns.",
-      "description": "Recent highlights from funding"
+      "description": "Recent highlights from funding",
+      "group": "discover"
     },
     {
       "id": "vc-hot-sectors",
       "name": "Hot Sectors Right Now",
       "icon": "vc-hot-sectors",
       "prompt": "What sectors are getting the most VC attention and capital right now? For each, cover the thesis, leading startups, valuation environment, and the bull and bear cases.",
-      "description": "Where venture capital is most active"
+      "description": "Where venture capital is most active",
+      "group": "discover"
     },
     {
       "id": "startup-ipo-watch",
       "name": "Startup IPO Watch",
       "icon": "startup-ipo-watch",
       "prompt": "Which startups are pre-IPO and what's their trajectory? Cover companies considered IPO candidates, recent filings, secondary market signals, and what to watch for in the next 6-12 months.",
-      "description": "Signals worth tracking in startup IPO"
+      "description": "Signals worth tracking in startup IPO",
+      "group": "discover"
     },
     {
       "id": "vc-firm-watch",
       "name": "VC Firm Watch",
       "icon": "vc-firm-watch",
       "prompt": "What are the major VC firms doing right now? Cover recent fund raises, strategy shifts, notable hires and departures, and how the firm landscape is evolving.",
-      "description": "Signals worth tracking in vc firm"
+      "description": "Signals worth tracking in vc firm",
+      "group": "discover"
     },
     {
       "id": "science-funding-politics",
       "name": "Science Funding and Politics",
       "icon": "science-funding-politics",
       "prompt": "What's happening at the intersection of science and politics right now? Cover federal research funding, agency leadership, controversial policy decisions, and how the science community is responding.",
-      "description": "How politics is shaping research funding"
+      "description": "How politics is shaping research funding",
+      "group": "discover"
     },
     {
       "id": "science-results-to-watch-for",
       "name": "Results to Watch For",
       "icon": "science-results-to-watch-for",
       "prompt": "What major scientific results, mission outcomes, or trial readouts are expected in the next 6-12 months? For each, cover what's being tested and what would be a meaningful result.",
-      "description": "Major results expected in the months ahead"
+      "description": "Major results expected in the months ahead",
+      "group": "discover"
     },
     {
       "id": "science-hype-reality-check",
       "name": "Science Hype vs Reality Check",
       "icon": "science-hype-reality-check",
       "prompt": "What science stories are getting attention in the public conversation right now, and how well is the coverage matching the actual evidence? Note where hype is outrunning the science and where solid findings deserve more attention.",
-      "description": "Quick read on science hype vs reality right now"
+      "description": "Quick read on science hype vs reality right now",
+      "group": "analyze"
     },
     {
       "id": "space-mission-updates",
       "name": "Space Mission Updates",
       "icon": "space-mission-updates",
       "prompt": "What are the most important active and upcoming space missions right now? Cover notable government, public and commercial missions. For each: status, key milestones approaching, and what we're learning.",
-      "description": "Recent developments in space mission"
+      "description": "Recent developments in space mission",
+      "group": "discover"
     },
     {
       "id": "launch-cadence-watch",
       "name": "Launch Cadence Watch",
       "icon": "launch-cadence-watch",
       "prompt": "What's happening with launch activity right now? Cover SpaceX cadence, other major launch providers (Rocket Lab, Blue Origin, ULA, Arianespace, China), notable upcoming launches, and any anomalies to know about.",
-      "description": "Signals worth tracking in launch cadence"
+      "description": "Signals worth tracking in launch cadence",
+      "group": "discover"
     },
     {
       "id": "astronomy-discoveries",
       "name": "Astronomy Discoveries",
       "icon": "astronomy-discoveries",
       "prompt": "What are the most exciting recent astronomy discoveries? Cover findings, exoplanets, gravitational waves, black holes, cosmology, and any results that change how we understand the universe.",
-      "description": "The most exciting recent astronomy discoveries"
+      "description": "The most exciting recent astronomy discoveries",
+      "group": "discover"
     },
     {
       "id": "mars-lunar-programs",
       "name": "Mars and Lunar Programs",
       "icon": "mars-lunar-programs",
       "prompt": "What's happening with Mars and lunar exploration right now? Cover mission statuses, lunar landers from various nations, Mars sample return, launch vehicle roles, and the timeline for crewed Mars ambitions.",
-      "description": "Mars and lunar exploration right now"
+      "description": "Mars and lunar exploration right now",
+      "group": "learn"
     },
     {
       "id": "sky-watching-guide",
       "name": "Sky Watching Guide",
       "icon": "sky-watching-guide",
       "prompt": "What astronomical events are visible from Earth in the coming weeks? Cover meteor showers, planetary alignments, eclipses, comets, and other naked-eye or amateur-telescope-friendly events.",
-      "description": "Background and basics for sky watching"
+      "description": "Background and basics for sky watching",
+      "group": "learn"
     },
     {
       "id": "commercial-space-sector",
       "name": "Commercial Space Sector",
       "icon": "commercial-space-sector",
       "prompt": "What's happening in the commercial space sector right now? Cover satellite constellations, Earth observation, in-space services, and the landscape of public space companies.",
-      "description": "The commercial space sector right now"
+      "description": "The commercial space sector right now",
+      "group": "discover"
     },
     {
       "id": "biology-breakthrough-watch",
       "name": "Biology Breakthrough Watch",
       "icon": "biology-breakthrough-watch",
       "prompt": "What are the most significant recent breakthroughs in biology and the life sciences? Cover major journal publications, conference highlights, and findings that change how we understand a field.",
-      "description": "Signals worth tracking in biology breakthrough"
+      "description": "Signals worth tracking in biology breakthrough",
+      "group": "discover"
     },
     {
       "id": "gene-editing-updates",
       "name": "Gene Editing Updates",
       "icon": "gene-editing-updates",
       "prompt": "What's happening with gene editing right now? Cover approved therapies, clinical trial milestones, base and prime editing advances, and emerging applications beyond medicine.",
-      "description": "Recent developments in gene editing"
+      "description": "Recent developments in gene editing",
+      "group": "analyze"
     },
     {
       "id": "synthetic-biology-watch",
       "name": "Synthetic Biology Watch",
       "icon": "synthetic-biology-watch",
       "prompt": "What's happening in synthetic biology? Cover protein design (especially AI-driven), engineered organisms, lab-grown materials and food, and where the field is heading commercially.",
-      "description": "Signals worth tracking in synthetic biology"
+      "description": "Signals worth tracking in synthetic biology",
+      "group": "analyze"
     },
     {
       "id": "chemistry-highlights",
       "name": "Chemistry Highlights",
       "icon": "chemistry-highlights",
       "prompt": "What are the most important recent advances in chemistry? Cover materials, catalysis, batteries, green chemistry, and any developments with significant practical implications.",
-      "description": "The most important recent advances in chemistry"
+      "description": "The most important recent advances in chemistry",
+      "group": "discover"
     },
     {
       "id": "genomics-updates",
       "name": "Genomics Updates",
       "icon": "genomics-updates",
       "prompt": "What's happening in genomics and personalized medicine? Cover sequencing cost trends, polygenic risk scores, pharmacogenomics, direct-to-consumer testing landscape, and clinical applications gaining traction.",
-      "description": "Recent developments in genomics"
+      "description": "Recent developments in genomics",
+      "group": "discover"
     },
     {
       "id": "microbiome-research-updates",
       "name": "Microbiome Research Updates",
       "icon": "microbiome-research-updates",
       "prompt": "What's the current state of microbiome research? Cover the most credible findings, distinguishing established science from hype, and emerging therapeutic and diagnostic applications.",
-      "description": "Recent developments in microbiome research"
+      "description": "Recent developments in microbiome research",
+      "group": "analyze"
     },
     {
       "id": "physics-breakthrough-watch",
       "name": "Physics Breakthrough Watch",
       "icon": "physics-breakthrough-watch",
       "prompt": "What are the most significant recent results in physics? Cover particle physics, condensed matter, quantum information, astrophysics and cosmology. Distinguish solid findings from preliminary or contested results.",
-      "description": "Signals worth tracking in physics breakthrough"
+      "description": "Signals worth tracking in physics breakthrough",
+      "group": "discover"
     },
     {
       "id": "quantum-frontier-updates",
       "name": "Quantum Frontier Updates",
       "icon": "quantum-frontier-updates",
       "prompt": "What's happening at the frontier of quantum physics right now? Cover quantum computing milestones, quantum sensing applications, quantum communication, and theoretical advances.",
-      "description": "Recent developments in quantum frontier"
+      "description": "Recent developments in quantum frontier",
+      "group": "discover"
     },
     {
       "id": "particle-physics-updates",
       "name": "Particle Physics Updates",
       "icon": "particle-physics-updates",
       "prompt": "What's happening in particle physics right now? Cover LHC and other collider results, neutrino experiments, dark matter searches, and any anomalies the community is taking seriously.",
-      "description": "Recent developments in particle physics"
+      "description": "Recent developments in particle physics",
+      "group": "analyze"
     },
     {
       "id": "cosmology-open-questions",
       "name": "Cosmology Open Questions",
       "icon": "cosmology-open-questions",
       "prompt": "What are the biggest open questions in cosmology right now? Cover the Hubble tension, dark matter and dark energy, early universe observations from JWST, and where new data is forcing rethinking.",
-      "description": "The biggest open questions in cosmology right now"
+      "description": "The biggest open questions in cosmology right now",
+      "group": "analyze"
     },
     {
       "id": "advances-in-materials-condensed-matter",
       "name": "Advances in Materials and Condensed Matter",
       "icon": "advances-in-materials-condensed-matter",
       "prompt": "What are the most significant recent advances in materials science and condensed matter physics? Cover superconductors, topological materials, 2D materials, and any practical applications emerging.",
-      "description": "Recent strides across materials research"
+      "description": "Recent strides across materials research",
+      "group": "analyze"
     },
     {
       "id": "fusion-progress-check",
       "name": "Fusion Progress Check",
       "icon": "fusion-progress-check",
       "prompt": "What's the latest in fusion energy research? Cover the most recent milestones at major facilities (ITER, NIF, etc.) and private companies (Commonwealth, Helion, TAE, etc.), and what realistic timelines look like.",
-      "description": "Quick read on fusion progress right now"
+      "description": "Quick read on fusion progress right now",
+      "group": "analyze"
     },
     {
       "id": "federal-research-funding-watch",
       "name": "Federal Research Funding Watch",
       "icon": "federal-research-funding-watch",
       "prompt": "What's happening with federal research funding in the US? Cover NIH, NSF, DOE, and DARPA budget developments, agency priorities, and how the funding environment is shifting.",
-      "description": "Signals worth tracking in federal research funding"
+      "description": "Signals worth tracking in federal research funding",
+      "group": "discover"
     },
     {
       "id": "academic-publishing-updates",
       "name": "Academic Publishing Updates",
       "icon": "academic-publishing-updates",
       "prompt": "What's happening in academic publishing? Cover open access mandates, preprint adoption, peer review changes, retraction trends, and how AI is affecting publishing on both authoring and review sides.",
-      "description": "Recent developments in academic publishing"
+      "description": "Recent developments in academic publishing",
+      "group": "analyze"
     },
     {
       "id": "universities-politics",
       "name": "Universities and Politics",
       "icon": "universities-politics",
       "prompt": "What's happening at the intersection of universities, politics, and funding? Cover federal-university tensions, endowment policy debates, donor pressure, and how research universities are responding.",
-      "description": "Where universities and politics are colliding"
+      "description": "Where universities and politics are colliding",
+      "group": "discover"
     },
     {
       "id": "research-misconduct-watch",
       "name": "Research Misconduct Watch",
       "icon": "research-misconduct-watch",
       "prompt": "What are the most significant recent research integrity issues? Cover high-profile retractions, data fabrication cases, policy responses, and the work being done on better integrity systems.",
-      "description": "Signals worth tracking in research misconduct"
+      "description": "Signals worth tracking in research misconduct",
+      "group": "analyze"
     },
     {
       "id": "early-research-career-check",
       "name": "Early Research Career Reality Check",
       "icon": "early-research-career-check",
       "prompt": "What's the current state of academic careers for early-career researchers? Cover the postdoc and faculty job market, salary trends, alternative career paths, and what's changing in PhD training.",
-      "description": "Quick read on early research career reality right now"
+      "description": "Quick read on early research career reality right now",
+      "group": "analyze"
     },
     {
       "id": "ai-in-research",
       "name": "AI in Research",
       "icon": "ai-in-research",
       "prompt": "How is AI changing how research gets done? Cover AI for literature review, hypothesis generation, lab automation, drug discovery, materials discovery, and concerns about AI in scholarly work.",
-      "description": "AI's growing role in scientific research"
+      "description": "AI's growing role in scientific research",
+      "group": "learn"
     },
     {
       "id": "major-trial-approval-watch",
       "name": "Major Trial and Approval Watch",
       "icon": "major-trial-approval-watch",
       "prompt": "What are the most consequential clinical trial readouts and FDA approvals from the past month? For each: what was tested, the result, and what it means for patients and clinicians.",
-      "description": "Signals worth tracking in major trial and approval"
+      "description": "Signals worth tracking in major trial and approval",
+      "group": "discover"
     },
     {
       "id": "healthcare-politics-updates",
       "name": "Healthcare Politics Updates",
       "icon": "healthcare-politics-updates",
       "prompt": "What's happening in healthcare politics and policy right now? Cover ACA, Medicare, Medicaid, drug pricing, agency leadership, and major political fights.",
-      "description": "Recent developments in healthcare politics"
+      "description": "Recent developments in healthcare politics",
+      "group": "discover"
     },
     {
       "id": "health-condition-primer",
       "name": "Health Condition Primer",
       "icon": "health-condition-primer",
       "prompt": "Give me a current overview of [health condition]. Cover what it is, prevalence, risk factors, current standard of care, the most promising research directions, and reliable sources for further learning.",
-      "description": "Background and basics for health condition"
+      "description": "Background and basics for health condition",
+      "group": "analyze"
     },
     {
       "id": "evidence-based-fitness-updates",
       "name": "Evidence-Based Fitness Updates",
       "icon": "evidence-based-fitness-updates",
       "prompt": "What are the most important recent findings in exercise science? Cover what the strongest evidence supports right now around strength, cardio, longevity, and recovery — and which popular beliefs are not well-supported.",
-      "description": "Recent developments in evidence-based fitness"
+      "description": "Recent developments in evidence-based fitness",
+      "group": "analyze"
     },
     {
       "id": "recovery-science",
       "name": "Recovery Science Updates",
       "icon": "recovery-science",
       "prompt": "What does the current evidence say about recovery, mobility, and injury prevention? Cover sleep, nutrition timing, foam rolling and stretching, deload weeks, and which trendy modalities are worth the time vs. not.",
-      "description": "Recent developments in recovery science"
+      "description": "Recent developments in recovery science",
+      "group": "analyze"
     },
     {
       "id": "best-fitness-wearables",
       "name": "Best Fitness Wearables",
       "icon": "best-fitness-wearables",
       "prompt": "What are the most useful fitness wearables right now and what should I actually do with the data? Cover top brands and emerging contenders, and which metrics actually matter for training decisions.",
-      "description": "Top picks worth knowing about right now"
+      "description": "Top picks worth knowing about right now",
+      "group": "learn"
     },
     {
       "id": "build-my-workout-routine",
       "name": "Build My Workout Routine",
       "icon": "build-my-workout-routine",
       "prompt": "Help me build an effective workout routine. Ask me about my goals (strength, hypertrophy, endurance, general fitness), available equipment, time per week, and experience level — then build a program that fits.",
-      "description": "A plan tailored to your situation"
+      "description": "A plan tailored to your situation",
+      "group": "analyze"
     },
     {
       "id": "training-as-i-age",
       "name": "Training as I Age",
       "icon": "training-as-i-age",
       "prompt": "Give me guidance on how to train at [age range]. Cover what's most important to prioritize at this stage, common mistakes, and how to maintain long-term progress.",
-      "description": "How to train smart at every stage of life"
+      "description": "How to train smart at every stage of life",
+      "group": "analyze"
     },
     {
       "id": "endurance-training-plan",
       "name": "Endurance Training Plan",
       "icon": "endurance-training-plan",
       "prompt": "Help me build an endurance training plan for [event or goal]. Ask about my current level, timeline, and constraints — then map out a periodization with specific weekly structure.",
-      "description": "A plan built around your event and timeline"
+      "description": "A plan built around your event and timeline",
+      "group": "analyze"
     },
     {
       "id": "healthcare-earnings-roundup",
       "name": "Healthcare Earnings Roundup",
       "icon": "healthcare-earnings-roundup",
       "prompt": "Summarize the most recent earnings from major healthcare companies — health insurers, hospital systems, and major providers. Cover key metrics and management commentary on costs, utilization, and policy.",
-      "description": "Recent earnings results that matter"
+      "description": "Recent earnings results that matter",
+      "group": "discover"
     },
     {
       "id": "medicare-medicaid-watch",
       "name": "Medicare and Medicaid Watch",
       "icon": "medicare-medicaid-watch",
       "prompt": "What are the most important recent developments in Medicare and Medicaid? Cover policy and rate changes, Advantage plan dynamics, drug pricing rules, and state-level Medicaid changes.",
-      "description": "Signals worth tracking in medicare and medicaid"
+      "description": "Signals worth tracking in medicare and medicaid",
+      "group": "discover"
     },
     {
       "id": "hospital-industry-check",
       "name": "Hospital Industry Check",
       "icon": "hospital-industry-check",
       "prompt": "What's the current state of US hospitals and health systems? Cover financial performance, labor costs, M&A and consolidation, rural hospital pressure, and the major chains' positioning.",
-      "description": "Quick read on hospital industry right now"
+      "description": "Quick read on hospital industry right now",
+      "group": "analyze"
     },
     {
       "id": "health-insurance-landscape",
       "name": "Health Insurance Landscape",
       "icon": "health-insurance-landscape",
       "prompt": "What's happening in US health insurance right now? Cover enrollment and pricing, employer coverage trends, dynamics, and key regulatory and political developments.",
-      "description": "The state of play across health insurance"
+      "description": "The state of play across health insurance",
+      "group": "discover"
     },
     {
       "id": "healthcare-ai-in-practice",
       "name": "Healthcare AI in Practice",
       "icon": "healthcare-ai-in-practice",
       "prompt": "Where is AI actually being deployed in healthcare right now? Cover clinical documentation, imaging, diagnostics, revenue cycle, drug discovery, and what's getting traction vs. still piloting.",
-      "description": "AI actually being deployed in healthcare right now"
+      "description": "AI actually being deployed in healthcare right now",
+      "group": "learn"
     },
     {
       "id": "drug-pricing-updates",
       "name": "Drug Pricing Updates",
       "icon": "drug-pricing-updates",
       "prompt": "What's happening with drug pricing? Cover negotiation results and progression, PBM scrutiny, biosimilars, and high-profile drug pricing storie",
-      "description": "Recent developments in drug pricing"
+      "description": "Recent developments in drug pricing",
+      "group": "discover"
     },
     {
       "id": "nutrition-science-updates",
       "name": "Nutrition Science Updates",
       "icon": "nutrition-science-updates",
       "prompt": "What are the most significant recent findings in nutrition science? Distinguish solid evidence from preliminary or weak findings. Cover any results that should change conventional wisdom.",
-      "description": "Recent developments in nutrition science"
+      "description": "Recent developments in nutrition science",
+      "group": "analyze"
     },
     {
       "id": "diet-approach-comparisons",
       "name": "Diet Approach Comparisons",
       "icon": "diet-approach-comparisons",
       "prompt": "Compare the major diet approaches (Mediterranean, low-carb/keto, plant-based, intermittent fasting, etc.) on the dimensions that matter — evidence base, sustainability, who they work best for, and trade-offs.",
-      "description": "How the major diet approaches actually compare"
+      "description": "How the major diet approaches actually compare",
+      "group": "analyze"
     },
     {
       "id": "protein-macros-guidance",
       "name": "Protein and Macros Guidance",
       "icon": "protein-macros-guidance",
       "prompt": "What does the current evidence say about protein intake, macronutrient ratios, and meal timing for different goals (muscle gain, fat loss, endurance, longevity)?",
-      "description": "Practical guidance on protein and macros"
+      "description": "Practical guidance on protein and macros",
+      "group": "learn"
     },
     {
       "id": "ultra-processed-food-watch",
       "name": "Ultra-Processed Food Watch",
       "icon": "ultra-processed-food-watch",
       "prompt": "What's the current state of evidence on ultra-processed foods? Cover what's well-established, what's contested, and what practical guidance the strongest evidence supports.",
-      "description": "Signals worth tracking in ultra-processed food"
+      "description": "Signals worth tracking in ultra-processed food",
+      "group": "learn"
     },
     {
       "id": "supplements-worth-taking",
       "name": "Supplements Worth Taking",
       "icon": "supplements-worth-taking",
       "prompt": "Which supplements have the strongest evidence for general health? Cover what's well-supported, what's situational, and what's likely a waste of money. Note any quality and dosing considerations.",
-      "description": "Which supplements have real evidence behind them"
+      "description": "Which supplements have real evidence behind them",
+      "group": "learn"
     },
     {
       "id": "food-industry-policy-watch",
       "name": "Food Industry and Policy Watch",
       "icon": "food-industry-policy-watch",
       "prompt": "What's happening in food policy and the food industry? Cover dietary guideline updates, actions, food labeling, school food, and major industry shifts.",
-      "description": "Signals worth tracking in food industry and policy"
+      "description": "Signals worth tracking in food industry and policy",
+      "group": "discover"
     },
     {
       "id": "build-my-eating-plan",
       "name": "Build My Eating Plan",
       "icon": "build-my-eating-plan",
       "prompt": "Help me build an eating plan for [goal — fat loss, muscle gain, performance, general health]. Ask about my preferences, schedule, cooking ability, and constraints — then suggest an evidence-based approach.",
-      "description": "A plan tailored to your situation"
+      "description": "A plan tailored to your situation",
+      "group": "analyze"
     },
     {
       "id": "pharma-earnings-roundup",
       "name": "Pharma Earnings Roundup",
       "icon": "pharma-earnings-roundup",
       "prompt": "Summarize recent earnings from the major pharma companies. Cover top-selling drugs and pipeline progress, M&A activity, and management commentary on the regulatory and pricing environment.",
-      "description": "Recent earnings results that matter"
+      "description": "Recent earnings results that matter",
+      "group": "discover"
     },
     {
       "id": "biotech-funding-pipeline",
       "name": "Biotech Funding and Pipeline Updates",
       "icon": "biotech-funding-pipeline",
       "prompt": "What's happening in biotech funding and the pipeline? Cover recent IPOs and notable funding rounds, hot disease areas, and the most-watched late-stage assets.",
-      "description": "Recent developments in biotech funding and pipeline"
+      "description": "Recent developments in biotech funding and pipeline",
+      "group": "discover"
     },
     {
       "id": "patent-cliff-watch",
       "name": "Patent Cliff Watch",
       "icon": "patent-cliff-watch",
       "prompt": "Which major drugs face patent cliffs in the next 1-3 years? Cover the assets at risk, biosimilar and generic competitors, and how affected companies are responding.",
-      "description": "Signals worth tracking in patent cliff"
+      "description": "Signals worth tracking in patent cliff",
+      "group": "analyze"
     },
     {
       "id": "drug-pipeline-highlights",
       "name": "Drug Pipeline Highlights",
       "icon": "drug-pipeline-highlights",
       "prompt": "What are the most promising drugs in late-stage development right now? Cover novel mechanisms and high-impact disease areas, with realistic context on probability of approval and commercial potential.",
-      "description": "The most promising drugs in late-stage development right now"
+      "description": "The most promising drugs in late-stage development right now",
+      "group": "discover"
     },
     {
       "id": "pharma-ma-watch",
       "name": "Pharma M&A Watch",
       "icon": "pharma-ma-watch",
       "prompt": "What's the current state of pharma M&A? Cover recent major deals, sectors and modalities attracting acquirers, and which mid-cap biotechs are seen as likely targets.",
-      "description": "Signals worth tracking in pharma M&A"
+      "description": "Signals worth tracking in pharma M&A",
+      "group": "analyze"
     },
     {
       "id": "pharma-regulatory-landscape",
       "name": "Regulatory Landscape",
       "icon": "pharma-regulatory-landscape",
       "prompt": "What's happening in the pharma regulatory landscape? Cover leadership and priorities, impact on R&D decisions, accelerated approval scrutiny, and international regulatory developments.",
-      "description": "The state of play across regulatory"
+      "description": "The state of play across regulatory",
+      "group": "discover"
     },
     {
       "id": "major-trial-readouts",
       "name": "Major Trial Readouts",
       "icon": "major-trial-readouts",
       "prompt": "What are the most important recent and upcoming clinical trial readouts? Cover oncology, cardiometabolic, neurology, immunology, and any high-impact studies. Note what's at stake for each.",
-      "description": "The most important recent and upcoming clinical trial readouts"
+      "description": "The most important recent and upcoming clinical trial readouts",
+      "group": "analyze"
     },
     {
       "id": "fda-approval-tracker",
       "name": "FDA Approval Tracker",
       "icon": "fda-approval-tracker",
       "prompt": "What recent FDA approvals matter most? Cover novel mechanisms, expanded indications, biosimilars, and any controversial approvals. Note what each means for patients.",
-      "description": "Ongoing FDA approval developments worth following"
+      "description": "Ongoing FDA approval developments worth following",
+      "group": "analyze"
     },
     {
       "id": "glp1-metabolic-watch",
       "name": "GLP-1 and Metabolic Watch",
       "icon": "glp1-metabolic-watch",
       "prompt": "What's the latest on GLP-1 drugs and the broader metabolic disease landscape? Cover trial data, supply, pricing, label expansions, and competitive dynamics.",
-      "description": "Signals worth tracking in glp-1 and metabolic"
+      "description": "Signals worth tracking in glp-1 and metabolic",
+      "group": "analyze"
     },
     {
       "id": "vaccine-development-updates",
       "name": "Vaccine Development Updates",
       "icon": "vaccine-development-updates",
       "prompt": "What's happening in vaccine development right now? Cover novel vaccine platforms, candidates in late-stage trials, and any updates on how policy is affecting research and uptake.",
-      "description": "Recent developments in vaccine development"
+      "description": "Recent developments in vaccine development",
+      "group": "analyze"
     },
     {
       "id": "mental-health-treatment-frontier",
       "name": "Mental Health Treatment Frontier",
       "icon": "mental-health-treatment-frontier",
       "prompt": "What's at the frontier of mental health treatment? Cover psychedelics research, ketamine, neuromodulation, digital therapeutics, and traditional pharmacology updates.",
-      "description": "At the frontier of mental health treatment"
+      "description": "At the frontier of mental health treatment",
+      "group": "more"
     },
     {
       "id": "disease-outbreak-watch",
       "name": "Disease Outbreak Watch",
       "icon": "disease-outbreak-watch",
       "prompt": "What infectious disease outbreaks and concerning trends are active globally right now? Cover both major outbreaks and surveillance signals worth tracking. Distinguish from low-risk situations getting attention.",
-      "description": "Signals worth tracking in disease outbreak"
+      "description": "Signals worth tracking in disease outbreak",
+      "group": "analyze"
     },
     {
       "id": "respiratory-virus-season-updates",
       "name": "Respiratory Virus Season Updates",
       "icon": "respiratory-virus-season-updates",
       "prompt": "What's the current state of respiratory virus season? Cover trends, current variants, vaccination uptake, and what public health authorities are recommending.",
-      "description": "Recent developments in respiratory virus season"
+      "description": "Recent developments in respiratory virus season",
+      "group": "more"
     },
     {
       "id": "vaccination-landscape",
       "name": "Vaccination Landscape",
       "icon": "vaccination-landscape",
       "prompt": "What's the current state of vaccination — uptake trends, recommendations, hesitancy, supply, policy debates? Cover routine childhood vaccines, COVID, flu, and recently approved vaccines.",
-      "description": "The state of play across vaccination"
+      "description": "The state of play across vaccination",
+      "group": "more"
     },
     {
       "id": "public-health-agency-watch",
       "name": "Public Health Agency Watch",
       "icon": "public-health-agency-watch",
       "prompt": "What's happening with major public health agencies? Cover leadership, policy direction, controversies, and how they're navigating political pressure.",
-      "description": "Where public health risks currently sit"
+      "description": "Where public health risks currently sit",
+      "group": "discover"
     },
     {
       "id": "health-disparities-updates",
       "name": "Health Disparities Updates",
       "icon": "health-disparities-updates",
       "prompt": "What are the most important developments in health equity and disparities research? Cover where gaps are widening or narrowing, drivers being identified, and policy responses.",
-      "description": "Recent developments in health disparities"
+      "description": "Recent developments in health disparities",
+      "group": "more"
     },
     {
       "id": "substance-use-overdose",
       "name": "Substance Use and Overdose Updates",
       "icon": "substance-use-overdose",
       "prompt": "What's happening with substance use and the overdose crisis? Cover overdose trends, fentanyl and emerging synthetics, treatment access, harm reduction, and policy developments.",
-      "description": "Recent developments in substance use and overdose"
+      "description": "Recent developments in substance use and overdose",
+      "group": "more"
     },
     {
       "id": "global-polling-snapshot",
       "name": "Global Polling Snapshot",
       "icon": "global-polling-snapshot",
       "prompt": "What does the most current global political polling tell us? Cover presidential approval, generic ballot, key race polling, and views on the dominant issues. Note any methodological caveats.",
-      "description": "Current state of global polling"
+      "description": "Current state of global polling",
+      "group": "analyze"
     },
     {
       "id": "global-political-calendar",
       "name": "Global Political Calendar",
       "icon": "global-political-calendar",
       "prompt": "What are the most important political dates and events coming up in the next 30-90 days? Cover elections, key legislative deadlines, court hearings, summits, and major political moments.",
-      "description": "What's coming up on the global political"
+      "description": "What's coming up on the global political",
+      "group": "analyze"
     },
     {
       "id": "us-polling-snapshot",
       "name": "US Polling Snapshot",
       "icon": "us-polling-snapshot",
       "prompt": "What does the most current US political polling tell us? Cover presidential approval, generic ballot, key race polling, and views on the dominant issues. Note any methodological caveats.",
-      "description": "Current state of US polling"
+      "description": "Current state of US polling",
+      "group": "analyze"
     },
     {
       "id": "us-political-calendar",
       "name": "US Political Calendar",
       "icon": "us-political-calendar",
       "prompt": "What are the most important US political dates and events coming up? Cover elections, key legislative deadlines, court hearings, summits, and major political moments.",
-      "description": "What's coming up on the US political"
+      "description": "What's coming up on the US political",
+      "group": "analyze"
     },
     {
       "id": "this-week-in-washington",
       "name": "This Week in Washington",
       "icon": "this-week-in-washington",
       "prompt": "What's happening in Washington this week? Cover Congress, the White House, federal agencies, and the courts. Note what's likely to actually happen vs. dominate coverage.",
-      "description": "What's moving across DC this week"
+      "description": "What's moving across DC this week",
+      "group": "discover"
     },
     {
       "id": "most-consequental-stories",
       "name": "Most Consequential Stories",
       "icon": "most-consequental-stories",
       "prompt": "What are the most consequential political stories right now — the ones that will actually shape policy or election outcomes, distinguished from stories that are simply loud?",
-      "description": "Stories most likely to shape outcomes"
+      "description": "Stories most likely to shape outcomes",
+      "group": "discover"
     },
     {
       "id": "global-election-calendar",
       "name": "Global Election Calendar",
       "icon": "global-election-calendar",
       "prompt": "What are the most important upcoming elections globally over the next 12 months? Cover federal, state, and major local races. Note key dates, candidates, and what's at stake.",
-      "description": "What's coming up on the global election"
+      "description": "What's coming up on the global election",
+      "group": "analyze"
     },
     {
       "id": "us-election-calendar",
       "name": "US Election Calendar",
       "icon": "us-election-calendar",
       "prompt": "What are the most important upcoming elections in the US over the next 12 months? Cover federal, state, and major local races. Note key dates, candidates, and what's at stake.",
-      "description": "What's coming up on the US election"
+      "description": "What's coming up on the US election",
+      "group": "analyze"
     },
     {
       "id": "us-campaign-finance-watch",
       "name": "US Campaign Finance Watch",
       "icon": "us-campaign-finance-watch",
       "prompt": "What's happening with campaign finance right now? Cover top fundraising and spending across federal races, major SuperPACs, dark money, and notable donors and their impact.",
-      "description": "Signals worth tracking in US campaign finance"
+      "description": "Signals worth tracking in US campaign finance",
+      "group": "more"
     },
     {
       "id": "us-ballot-initiative-tracker",
       "name": "US Ballot Initiative Tracker",
       "icon": "us-ballot-initiative-tracker",
       "prompt": "What major ballot initiatives are upcoming or recently decided in US states? Cover the policy areas (abortion, drugs, taxes, redistricting, etc.) and their implications.",
-      "description": "Ongoing US ballot initiative developments worth following"
+      "description": "Ongoing US ballot initiative developments worth following",
+      "group": "analyze"
     },
     {
       "id": "us-voting-rights-updates",
       "name": "US Voting Rights Updates",
       "icon": "us-voting-rights-updates",
       "prompt": "What's happening in voting rights and election administration right now? Cover state legislation, court cases, voting access changes, and the people running US elections.",
-      "description": "Recent developments in US voting rights"
+      "description": "Recent developments in US voting rights",
+      "group": "learn"
     },
     {
       "id": "us-electoral-map-analysis",
       "name": "US Electoral Map Analysis",
       "icon": "us-electoral-map-analysis",
       "prompt": "What does the current electoral landscape look like for major upcoming US races? Cover the structural environment, key swing states or districts, demographic shifts, and what's likely to be decisive.",
-      "description": "Reading the current electoral landscape"
+      "description": "Reading the current electoral landscape",
+      "group": "analyze"
     },
     {
       "id": "elections-race-state-deep-dive",
       "name": "Race or State Deep Dive",
       "icon": "elections-race-state-deep-dive",
       "prompt": "Give me a deep dive on the [race or state] election landscape. Cover the candidates, the key issues, current polling, the structural environment, and what to watch for.",
-      "description": "A deeper read — context, dynamics, what matters"
+      "description": "A deeper read — context, dynamics, what matters",
+      "group": "more"
     },
     {
       "id": "congressional-agenda-updates",
       "name": "Congressional Agenda Updates",
       "icon": "congressional-agenda-updates",
       "prompt": "What's on the congressional agenda right now? Cover bills being voted on this week, key committee hearings, ongoing negotiations, and what's likely to actually pass vs. die.",
-      "description": "Recent developments in congressional agenda"
+      "description": "Recent developments in congressional agenda",
+      "group": "analyze"
     },
     {
       "id": "white-house-watch",
       "name": "White House Watch",
       "icon": "white-house-watch",
       "prompt": "What's happening at the White House right now? Cover major executive actions, policy priorities, key personnel news, and how the administration is approaching its current priorities.",
-      "description": "Signals worth tracking in white house"
+      "description": "Signals worth tracking in white house",
+      "group": "discover"
     },
     {
       "id": "budget-spending-watch",
       "name": "Budget and Spending Watch",
       "icon": "budget-spending-watch",
       "prompt": "What's the current state of federal spending and budget battles? Cover appropriations status, debt ceiling and shutdown risks, ongoing supplemental requests, and where major fights are forming.",
-      "description": "Signals worth tracking in budget and spending"
+      "description": "Signals worth tracking in budget and spending",
+      "group": "analyze"
     },
     {
       "id": "key-bills-to-watch",
       "name": "Key Bills to Watch",
       "icon": "key-bills-to-watch",
       "prompt": "What are the most important bills currently moving (or stalled) in Congress? For each: what it would do, the political dynamics around it, the realistic probability of passage, and timing.",
-      "description": "Signals worth tracking in key bills to"
+      "description": "Signals worth tracking in key bills to",
+      "group": "discover"
     },
     {
       "id": "administration-personnel-watch",
       "name": "Administration Personnel Watch",
       "icon": "administration-personnel-watch",
       "prompt": "Who are the key personnel at the White House and across federal agencies right now? Cover the Cabinet and senior staff, recent appointments and departures, and any positions still pending confirmation.",
-      "description": "Signals worth tracking in administration personnel"
+      "description": "Signals worth tracking in administration personnel",
+      "group": "more"
     },
     {
       "id": "executive-action-tracker",
       "name": "Executive Action Tracker",
       "icon": "executive-action-tracker",
       "prompt": "What are the most consequential recent executive orders, agency actions, and presidential memoranda? For each, cover what it does, likely legal challenges, and real-world impact.",
-      "description": "Ongoing executive action developments worth following"
+      "description": "Ongoing executive action developments worth following",
+      "group": "analyze"
     },
     {
       "id": "supreme-court-watch",
       "name": "Supreme Court Watch",
       "icon": "supreme-court-watch",
       "prompt": "What's happening at the Supreme Court right now? Cover the cases on the current docket, recent decisions and what they mean, oral arguments worth knowing about, and any procedural or institutional developments.",
-      "description": "Signals worth tracking in supreme court"
+      "description": "Signals worth tracking in supreme court",
+      "group": "analyze"
     },
     {
       "id": "federal-court-watch",
@@ -1901,252 +2156,288 @@
       "name": "Major Regulatory Actions",
       "icon": "major-regulatory-actions",
       "prompt": "What are the most significant recent and pending federal regulatory actions? Cover the major agencies, and what they're proposing or finalizing.",
-      "description": "Where the rules currently sit"
+      "description": "Where the rules currently sit",
+      "group": "analyze"
     },
     {
       "id": "big-tech-antitrust-cases",
       "name": "Big Tech Antitrust Cases",
       "icon": "big-tech-antitrust-cases",
       "prompt": "What's happening in antitrust enforcement, especially around big tech? Cover active DOJ and FTC cases, recent rulings, the trial calendar, and what these cases could mean for competition.",
-      "description": "Antitrust enforcement, especially around big tech"
+      "description": "Antitrust enforcement, especially around big tech",
+      "group": "analyze"
     },
     {
       "id": "state-ag-activity",
       "name": "State AG Activity",
       "icon": "state-ag-activity",
       "prompt": "What are state attorneys general doing right now? Cover major investigations and lawsuits, multistate coordination, and the AGs to watch on tech, consumer protection, and other priorities.",
-      "description": "What state attorneys general are doing"
+      "description": "What state attorneys general are doing",
+      "group": "analyze"
     },
     {
       "id": "constitutional-law-trends",
       "name": "Constitutional Law Trends",
       "icon": "constitutional-law-trends",
       "prompt": "What are the most important constitutional law developments and debates right now? Cover First Amendment, Second Amendment, executive power, federalism, and any active doctrinal shifts.",
-      "description": "Where constitutional law is being tested"
+      "description": "Where constitutional law is being tested",
+      "group": "learn"
     },
     {
       "id": "explain-this-case",
       "name": "Explain This Court Case",
       "icon": "explain-this-case",
       "prompt": "Walk me through [court case]. Cover the underlying facts, the legal questions, the arguments on each side, the court's ruling (if decided) or expected timing (if pending), and the broader implications.",
-      "description": "A plain-language read on what this actually is"
+      "description": "A plain-language read on what this actually is",
+      "group": "analyze"
     },
     {
       "id": "us-defense-policy-updates",
       "name": "US Defense Policy Updates",
       "icon": "us-defense-policy-updates",
       "prompt": "What are the most important recent developments in US defense policy? Cover budget and authorization, DOD priorities, weapons programs, posture decisions, and major debates.",
-      "description": "Recent developments in US defense policy"
+      "description": "Recent developments in US defense policy",
+      "group": "discover"
     },
     {
       "id": "us-china-strategic-competition",
       "name": "US-China Strategic Competition",
       "icon": "us-china-strategic-competition",
       "prompt": "What's the current state of US-China strategic competition? Cover military, economic, technology, and diplomatic dimensions, with recent flashpoints and the trajectory of the relationship.",
-      "description": "Current state of US-China strategic competition"
+      "description": "Current state of US-China strategic competition",
+      "group": "analyze"
     },
     {
       "id": "sanctions-export-controls",
       "name": "Sanctions and Export Controls",
       "icon": "sanctions-export-controls",
       "prompt": "What's happening in sanctions and export controls? Cover major regimes, recent actions and adjustments, and how enforcement is evolving.",
-      "description": "Sanctions and export controls"
+      "description": "Sanctions and export controls",
+      "group": "discover"
     },
     {
       "id": "defense-industry-watch",
       "name": "Defense Industry Watch",
       "icon": "defense-industry-watch",
       "prompt": "What's happening in the defense industry right now? Cover the major primes' performance and outlook, defense tech startups gaining traction, contract awards, and how AI is reshaping defense procurement.",
-      "description": "Signals worth tracking in defense industry"
+      "description": "Signals worth tracking in defense industry",
+      "group": "discover"
     },
     {
       "id": "diplomatic-calendar",
       "name": "Diplomatic Calendar",
       "icon": "diplomatic-calendar",
       "prompt": "What major diplomatic events, meetings, and negotiations are upcoming? For each: what's at stake, the key players, and what to watch for.",
-      "description": "What's coming up on the diplomatic"
+      "description": "What's coming up on the diplomatic",
+      "group": "discover"
     },
     {
       "id": "power-shifts-to-watch",
       "name": "Global Power Shifts to Watch",
       "icon": "power-shifts-to-watch",
       "prompt": "What are the most important shifts in global power dynamics happening right now? Cover great power competition, regional realignments, alliance changes, and emerging powers' influence.",
-      "description": "Signals worth tracking in global power shifts to"
+      "description": "Signals worth tracking in global power shifts to",
+      "group": "analyze"
     },
     {
       "id": "trade-economic-statecraft",
       "name": "Trade and Economic Statecraft",
       "icon": "trade-economic-statecraft",
       "prompt": "What's happening in global trade tensions and economic statecraft? Cover tariffs, sanctions, export controls, supply chain reshaping, and how economic tools are being used as geopolitical leverage.",
-      "description": "Global trade tensions and economic statecraft"
+      "description": "Global trade tensions and economic statecraft",
+      "group": "analyze"
     },
     {
       "id": "multilateral-institutions-watch",
       "name": "Multilateral Institutions Watch",
       "icon": "what-s-happening-at-major-multilateral-institutions-un-nato-g7-g20-brics-imf-wto-eu-cover-their-current-focus-internal-tensions-and-effectiveness-on-major-issues",
       "prompt": "What's happening at major multilateral institutions? Cover their current focus, internal tensions, and effectiveness on major issues.",
-      "description": "Signals worth tracking in multilateral institutions"
+      "description": "Signals worth tracking in multilateral institutions",
+      "group": "more"
     },
     {
       "id": "election-spillovers",
       "name": "Election Spillovers",
       "icon": "election-spillovers",
       "prompt": "What recent or upcoming elections globally have major geopolitical implications? Cover the stakes, likely outcomes, and how the result could shift regional or global dynamics.",
-      "description": "What recent or upcoming elections globally have major geopolitical implications"
+      "description": "What recent or upcoming elections globally have major geopolitical implications",
+      "group": "analyze"
     },
     {
       "id": "polling-public-opinion",
       "name": "Polling and Public Opinion",
       "icon": "polling-public-opinion",
       "prompt": "What does current US public opinion polling tell us? Cover presidential approval, congressional approval, party generic ballot, and views on the issues currently dominating coverage.",
-      "description": "Current US public opinion polling tell us"
+      "description": "Current US public opinion polling tell us",
+      "group": "discover"
     },
     {
       "id": "state-politics-spotlight",
       "name": "State Politics Spotlight",
       "icon": "state-politics-spotlight",
       "prompt": "What's happening in state politics right now that has national implications? Cover key governors, state legislative action, and policy experiments worth watching.",
-      "description": "State politics right now that has national implications"
+      "description": "State politics right now that has national implications",
+      "group": "discover"
     },
     {
       "id": "us-politics-inside-the-parties",
       "name": "Inside the Parties",
       "icon": "us-politics-inside-the-parties",
       "prompt": "What's happening inside the major US political parties right now? Cover internal debates, factional dynamics, leadership tensions, and where each party is fighting over its identity.",
-      "description": "Internal dynamics within the major parties"
+      "description": "Internal dynamics within the major parties",
+      "group": "learn"
     },
     {
       "id": "political-movements-updates",
       "name": "Political Movements Updates",
       "icon": "political-movements-updates",
       "prompt": "What political movements and coalitions are gaining or losing influence right now? Cover both established movements and emerging ones across the political spectrum.",
-      "description": "Recent developments in political movements"
+      "description": "Recent developments in political movements",
+      "group": "analyze"
     },
     {
       "id": "us-politics-media-narratives-check",
       "name": "Media Narratives Check",
       "icon": "us-politics-media-narratives-check",
       "prompt": "What are the dominant political narratives and media frames right now? Cover what each side is emphasizing, where coverage is converging or diverging, and what's not getting attention that probably should be.",
-      "description": "Quick read on media narratives right now"
+      "description": "Quick read on media narratives right now",
+      "group": "analyze"
     },
     {
       "id": "global-economy-pulse",
       "name": "Global Economy Pulse",
       "icon": "global-economy-pulse",
       "prompt": "What's happening in the global economy right now? Cover growth and inflation across major economies, central bank moves, currency dynamics, commodity prices, trade flows and tariff developments, and where the biggest risks are concentrated.",
-      "description": "Where things stand on global economy"
+      "description": "Where things stand on global economy",
+      "group": "discover"
     },
     {
       "id": "this-week-around-the-world",
       "name": "This Week Around the World",
       "icon": "this-week-around-the-world",
       "prompt": "What were the most consequential developments globally this past week? Cover political, economic, and security stories across all major regions, with emphasis on what will have lasting impact.",
-      "description": "What were the most consequential developments globally this past week"
+      "description": "What were the most consequential developments globally this past week",
+      "group": "discover"
     },
     {
       "id": "cross-border-trends",
       "name": "Cross-Border Trends",
       "icon": "cross-border-trends",
       "prompt": "What major trends are playing out across multiple countries right now? Cover political shifts (e.g., far-right gains, democratic backsliding), economic dynamics, demographic changes, and migration patterns.",
-      "description": "Patterns playing out across multiple countries"
+      "description": "Patterns playing out across multiple countries",
+      "group": "analyze"
     },
     {
       "id": "conflict-and-crisis-update",
       "name": "Conflict and Crisis Update",
       "icon": "conflict-and-crisis-update",
       "prompt": "What are the most significant active conflicts and humanitarian crises globally right now? Cover the current state, recent developments, and how the international community is responding.",
-      "description": "Latest movement on conflict and crisis"
+      "description": "Latest movement on conflict and crisis",
+      "group": "analyze"
     },
     {
       "id": "diplomacy-in-motion",
       "name": "Diplomacy in Motion",
       "icon": "diplomacy-in-motion",
       "prompt": "What major diplomatic developments are unfolding right now? Cover active negotiations, recent or upcoming summits, notable state visits, and any ceasefire, treaty, or normalization talks worth tracking.",
-      "description": "What major diplomatic developments are unfolding right now"
+      "description": "What major diplomatic developments are unfolding right now",
+      "group": "discover"
     },
     {
       "id": "elections-around-the-world",
       "name": "Elections Around the World",
       "icon": "elections-around-the-world",
       "prompt": "What major national elections are upcoming or have just concluded around the world? For each: what's at stake, the key candidates or parties, current polling or outcomes, and the international implications.",
-      "description": "Major upcoming elections worth tracking"
+      "description": "Major upcoming elections worth tracking",
+      "group": "discover"
     },
     {
       "id": "underreported-stories-world",
       "name": "Underreported Global Stories",
       "icon": "underreported-stories-world",
       "prompt": "What significant international stories aren't getting the coverage they deserve in US/Western media right now? Cover developments in regions and on topics that are systematically underreported.",
-      "description": "Significant stories not getting enough coverage"
+      "description": "Significant stories not getting enough coverage",
+      "group": "discover"
     },
     {
       "id": "authoritarianism-democracy-watch",
       "name": "Authoritarianism and Democracy Watch",
       "icon": "authoritarianism-democracy-watch",
       "prompt": "What's happening with the global state of democracy and authoritarianism right now? Cover democratic backsliding, contested elections, press freedom developments, civil society crackdowns, and where democratic movements are gaining or losing ground.",
-      "description": "Signals worth tracking in authoritarianism and democracy"
+      "description": "Signals worth tracking in authoritarianism and democracy",
+      "group": "analyze"
     },
     {
       "id": "global-tech-ai-race",
       "name": "Global Tech and AI Race",
       "icon": "global-tech-ai-race",
       "prompt": "How are different countries and blocs competing on tech and AI right now? Cover US, China, EU, UK, India, and Gulf state strategies — chips and compute, AI models and policy, digital infrastructure, and the geopolitics of tech supply chains.",
-      "description": "Who's ahead in the global tech and AI race"
+      "description": "Who's ahead in the global tech and AI race",
+      "group": "analyze"
     },
     {
       "id": "country-deep-dive",
       "name": "Country Deep Dive",
       "icon": "country-deep-dive",
       "prompt": "Give me a current overview of [country]. Cover the political situation, economy, security environment, key recent developments, foreign policy posture, and how it fits into its region and the wider world.",
-      "description": "A deeper read — context, dynamics, what matters"
+      "description": "A deeper read — context, dynamics, what matters",
+      "group": "analyze"
     },
     {
       "id": "content-wide-snapshot",
       "name": "Continent-Wide Snapshot",
       "icon": "content-wide-snapshot",
       "prompt": "Give me a current snapshot of Africa's most significant developments. Cover the biggest political, economic, and security stories across the major regions (West, East, Southern, North, and the Sahel).",
-      "description": "Current state of continent-wide"
+      "description": "Current state of continent-wide",
+      "group": "discover"
     },
     {
       "id": "african-economic-updates",
       "name": "African Economic Updates",
       "icon": "african-economic-updates",
       "prompt": "What's happening in African economies right now? Cover growth leaders and laggards, currency and debt situations, foreign investment trends, implementation, and major business developments.",
-      "description": "Recent developments in African economic"
+      "description": "Recent developments in African economic",
+      "group": "discover"
     },
     {
       "id": "african-politics-watch",
       "name": "African Politics Watch",
       "icon": "african-politics-watch",
       "prompt": "What are the most consequential political developments across Africa right now? Cover upcoming elections, leadership transitions, coups and constitutional crises, and major reform efforts.",
-      "description": "Signals worth tracking in African politics"
+      "description": "Signals worth tracking in African politics",
+      "group": "discover"
     },
     {
       "id": "sahel-security",
       "name": "Sahel and Security",
       "icon": "sahel-security",
       "prompt": "What's the current security situation in the Sahel and broader African security landscape? Cover insurgent groups, foreign military presence shifts, and the humanitarian dimensions.",
-      "description": "Security dynamics across the Sahel region"
+      "description": "Security dynamics across the Sahel region",
+      "group": "analyze"
     },
     {
       "id": "africa-global-partnerships",
       "name": "Africa's Global Partnerships",
       "icon": "africa-global-partnerships",
       "prompt": "How are external powers engaging with Africa right now? Cover China, Russia, US, EU, Gulf states, India, and Turkey — their recent investments, military cooperation, and diplomatic moves.",
-      "description": "External powers engaging with Africa right now"
+      "description": "External powers engaging with Africa right now",
+      "group": "analyze"
     },
     {
       "id": "african-tech-scene",
       "name": "African Tech Scene",
       "icon": "african-tech-scene",
       "prompt": "What's happening in African tech and innovation? Cover the startup hubs, funding trends, fintech leadership, and infrastructure developments.",
-      "description": "African tech and innovation"
+      "description": "African tech and innovation",
+      "group": "analyze"
     },
     {
       "id": "african-country-deep-dive",
       "name": "African Country Deep Dive",
       "icon": "african-country-deep-dive",
       "prompt": "Give me a current overview of [African country]. Cover political situation, economy, security, key issues, and how it fits into regional dynamics.",
-      "description": "A deeper read — context, dynamics, what matters"
+      "description": "A deeper read — context, dynamics, what matters",
+      "group": "analyze"
     },
     {
       "id": "asia-pacfic-snapshot",
