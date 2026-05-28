@@ -277,7 +277,7 @@ function bodyTabsRow(opts = {}) {
      </button>`,
     `<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">
        <span class="tab-pill-label-long">Topic Intelligence</span>
-       <span class="tab-pill-label-short">Intelligence</span>
+       <span class="tab-pill-label-short">Topic Intelligence</span>
      </button>`,
   ];
   if (showRelated) {

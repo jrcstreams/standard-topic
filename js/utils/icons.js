@@ -36,12 +36,19 @@ export function getIconEmoji(key) {
 }
 
 /**
- * Returns HTML for an icon. Renders an <img> pointing to the SVG.
- * If the SVG doesn't load, the onerror handler swaps it for the emoji.
+ * Returns HTML for an icon. Uses CSS mask-image so the SVG is
+ * tinted by the parent's color (CSS `color:` → `currentColor` →
+ * the mask's background-color). Lets section-accent colors
+ * propagate into the icon shape without needing inline SVG or
+ * a special build step.
+ *
+ * Sized to 20×20 by default via the shortcut-icon base class;
+ * additional classes (.ti-action-card-icon-svg, etc.) can
+ * override width/height.
  */
 export function renderIcon(key, cls = '') {
-  const className = cls ? ` class="${cls}"` : '';
-  return `<img src="${ICON_PATH}${key}.svg" alt="" data-icon-key="${key}"${className} width="20" height="20" onerror="__iconFallback(this)">`;
+  const className = cls ? `shortcut-icon ${cls}` : 'shortcut-icon';
+  return `<span aria-hidden="true" data-icon-key="${key}" class="${className}" style="--icon-src:url('${ICON_PATH}${key}.svg')"></span>`;
 }
 
 /**

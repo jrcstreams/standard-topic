@@ -4884,22 +4884,21 @@ body.app-mode .topic-layout {
   }
   body.app-mode .topic-layout:not(.is-custom) .shortcuts-subsection-title::before { display: none; }
 
-  /* Promote .ai-shortcut-group-label to the editorial eyebrow style
-     that .shortcuts-subsection-title had at desktop sidebar widths
-     (small uppercase letter-spaced anchored to a thin extending rule). */
+  /* Section eyebrow on mobile: black/off-black text with a thick
+     accent-colored underline. Matches the desktop sidebar treatment
+     — the underline does the color-coding, not the text color. */
   body.app-mode .topic-layout:not(.is-custom) .ai-shortcut-group { padding-top: 0; }
-  body.app-mode .topic-layout:not(.is-custom) .ai-shortcut-group + .ai-shortcut-group { padding-top: 1.4rem; }
+  body.app-mode .topic-layout:not(.is-custom) .ai-shortcut-group + .ai-shortcut-group { padding-top: 1.2rem; }
   body.app-mode .topic-layout:not(.is-custom) .ai-shortcut-group-label {
     display: block;
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    /* Use the per-group accent (set by .ti-action-group--discover
-       etc. via --ti-accent) instead of a hardcoded gray, so the
-       eyebrows are colored on mobile to match desktop. */
-    color: var(--ti-accent, #6c7a91);
-    margin: 0 0 0.6rem;
+    color: #1a2235;
+    margin: 0 0 0.7rem;
+    padding-bottom: 0.45rem;
+    border-bottom: 3px solid var(--ti-accent, #6c7a91);
     line-height: 1.2;
   }
 }
@@ -10286,23 +10285,21 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   margin-bottom: 0.55rem;
 }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title {
-  color: var(--ti-accent);
+  /* Same treatment as .ti-action-group-label — black text + thick
+     accent-colored underline, no fade ::after. */
+  color: #1a2235;
   font-family: var(--font-family);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.085em;
   text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
+  display: block;
   width: 100%;
+  padding-bottom: 0.45rem;
+  border-bottom: 3px solid var(--ti-accent);
+  margin: 0;
 }
-.shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(to right, color-mix(in srgb, var(--ti-accent) 28%, transparent), transparent);
-}
+.shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title::after { display: none; }
 .shortcuts-sidebar .ti-web-sources-section + .ti-actions-section {
   margin-top: 0.85rem;
 }
@@ -10407,12 +10404,13 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .ti-web-source-chip-desc { display: none; }
 
 /* Desktop sidebar icon size + hover (lives above the mobile block
-   so the mobile @media can override). */
+   so the mobile @media can override). Color uses the section's
+   --ti-accent so the icon matches the WEB SOURCES underline. */
 .ti-web-source-chip-icon {
   width: 14px;
   height: 14px;
   flex-shrink: 0;
-  color: #5d6b7e;
+  color: var(--ti-accent);
 }
 .ti-web-source-chip:hover {
   background: #ffffff;
@@ -10465,8 +10463,8 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title::after {
     display: none;
   }
-  .ti-web-source-chip:hover .ti-web-source-chip-icon { color: #2c4467; }
-  .ti-web-source-chip-icon { width: 16px; height: 16px; color: #2c4467; flex-shrink: 0; }
+  .ti-web-source-chip:hover .ti-web-source-chip-icon { color: var(--ti-accent); }
+  .ti-web-source-chip-icon { width: 16px; height: 16px; color: var(--ti-accent); flex-shrink: 0; }
   .ti-web-source-chip-name {
     font-size: 0.78rem;
     font-weight: 600;
@@ -10506,24 +10504,27 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .ti-action-group--analyze  { --ti-accent: #b48528; }
 .ti-action-group--more     { --ti-accent: #5d6b7e; }
 
-.ti-action-group + .ti-action-group { margin-top: 0.85rem; }
+.ti-action-group + .ti-action-group { margin-top: 1.1rem; }
 .ti-action-group-label {
-  color: var(--ti-accent);
+  /* Section header: black/off-black text + thick underline in the
+     group accent color. Underline does the color-coding work; the
+     text itself stays neutral so the eye reads "section name" not
+     "colored label". */
+  color: #1a2235;
   font-weight: 700;
   letter-spacing: 0.085em;
   font-size: 0.78rem;
   text-transform: uppercase;
-  margin: 0 0 0.6rem;
+  margin: 0 0 0.7rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 3px solid var(--ti-accent);
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-.ti-action-group-label::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(to right, color-mix(in srgb, var(--ti-accent) 28%, transparent), transparent);
-}
+/* The thick colored bottom-border (set on the label itself above)
+   replaces the previous fade ::after rule. */
+.ti-action-group-label::after { display: none; }
 
 .ti-action-cards {
   list-style: none;
@@ -10554,16 +10555,15 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   align-items: stretch;
   gap: 0.14rem;
   width: 100%;
-  padding: 0.5rem 0.7rem 0.55rem 0.68rem;
+  padding: 0.5rem 0.7rem 0.55rem 0.7rem;
   background: transparent;
   border: none;
-  border-left: 2px solid color-mix(in srgb, var(--ti-accent) 45%, #d8dde7);
   border-radius: 0;
   text-align: left;
   font-family: var(--font-family);
   cursor: pointer;
   color: var(--color-text);
-  transition: background 0.16s, border-left-color 0.18s;
+  transition: background 0.16s;
 }
 .ti-action-card-header {
   display: flex;
@@ -10595,6 +10595,23 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   color: inherit;
   stroke-width: 1.5;
 }
+
+/* === Mask-based shortcut icon ====================================
+   Replaces the previous <img> renderer. The SVG is used as a CSS
+   mask; the background-color resolves to `currentColor`, which
+   means any parent setting `color: var(--ti-accent)` (or any
+   other color) tints the icon to that color. SVGs were one-time-
+   normalized to stroke="currentColor" so the same icons work
+   tinted to any section color. */
+.shortcut-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-color: currentColor;
+  -webkit-mask: var(--icon-src) center / contain no-repeat;
+  mask: var(--icon-src) center / contain no-repeat;
+  flex-shrink: 0;
+}
 .shortcuts-sidebar .ti-action-card .ti-action-card-name {
   flex: 1 1 auto;
   min-width: 0;
@@ -10621,14 +10638,11 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   margin: 0;
 }
 
-/* Hover state — row picks up a soft accent tint and the left rule
-   resolves from muted to full accent. No lift, no border, no shadow:
-   the tint + rule are the only signals, keeping the row legible as
-   a list item rather than a button. */
+/* Hover state — row picks up a soft accent tint. No spine, no
+   border, no shadow: the tint alone signals interactivity. */
 @media (hover: hover) {
   .shortcuts-sidebar .sidebar-shortcut.ti-action-card:hover {
     background: color-mix(in srgb, var(--ti-accent) 5%, transparent);
-    border-left-color: var(--ti-accent);
   }
 }
 
@@ -10650,7 +10664,6 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .ti-action-card-check { color: #fff; }
 .shortcuts-sidebar .sidebar-shortcut.ti-action-card.is-multi-selected {
   background: color-mix(in srgb, var(--ti-accent) 9%, transparent);
-  border-left-color: var(--ti-accent);
 }
 .shortcuts-sidebar .sidebar-shortcut.ti-action-card.is-multi-selected
   .ti-action-card-marker { display: inline-flex; }
