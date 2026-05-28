@@ -19,6 +19,9 @@ import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadAllData();
+  // Apply per-group accent colors from data.assignments.groups so
+  // admin-managed colors take effect at render time.
+  applyGroupAccentColors();
   // Preload shortcut icon SVGs (non-blocking — renders emoji until resolved)
   preloadIcons(getAllShortcutIconKeys());
   initPromptModal();
@@ -1672,11 +1675,34 @@ function shortcutBulletItem(shortcut, topicName) {
 // internal key maps to the "more" group id so legacy regex-classified
 // shortcuts still land in the More bucket.
 const DEFAULT_GROUP_DEFS = [
-  { id: 'discover', label: 'Discover', order: 0 },
-  { id: 'learn',    label: 'Learn',    order: 1 },
-  { id: 'analyze',  label: 'Analyze',  order: 2 },
-  { id: 'more',     label: 'More',     order: 3 },
+  { id: 'discover', label: 'Discover', order: 0, color: '#3261a0' },
+  { id: 'learn',    label: 'Learn',    order: 1, color: '#2e8a73' },
+  { id: 'analyze',  label: 'Analyze',  order: 2, color: '#b48528' },
+  { id: 'more',     label: 'More',     order: 3, color: '#5d6b7e' },
 ];
+
+// Apply per-group accent colors as CSS overrides. Runs once at data
+// load — generates a <style> block that sets --ti-accent on each
+// .ti-action-group--<id> class to the group's color from data. This
+// is how admin-managed colors (set in the admin panel's Shortcut
+// Groups tab) propagate into the section underlines + tinted SVG
+// icons without needing to ship a new build.
+function applyGroupAccentColors() {
+  const defs = (window.__assignmentsData && Array.isArray(window.__assignmentsData.groups) && window.__assignmentsData.groups.length)
+    ? window.__assignmentsData.groups
+    : DEFAULT_GROUP_DEFS;
+  const rules = defs
+    .filter(g => g.color)
+    .map(g => `.ti-action-group--${g.id} { --ti-accent: ${g.color}; }`)
+    .join('\n');
+  let styleEl = document.getElementById('group-accent-overrides');
+  if (!styleEl) {
+    styleEl = document.createElement('style');
+    styleEl.id = 'group-accent-overrides';
+    document.head.appendChild(styleEl);
+  }
+  styleEl.textContent = rules;
+}
 function groupShortcuts(shortcuts) {
   // 1) Resolve the group set: use data.assignments.groups if present
   //    (admin-managed), else the defaults. Sort by `order` ascending.

@@ -2345,22 +2345,26 @@
     {
       "id": "discover",
       "label": "Discover",
-      "order": 0
+      "order": 0,
+      "color": "#3261a0"
     },
     {
       "id": "learn",
       "label": "Learn",
-      "order": 1
+      "order": 1,
+      "color": "#2e8a73"
     },
     {
       "id": "analyze",
       "label": "Analyze",
-      "order": 2
+      "order": 2,
+      "color": "#b48528"
     },
     {
       "id": "more",
       "label": "More",
-      "order": 3
+      "order": 3,
+      "color": "#5d6b7e"
     }
   ]
 }

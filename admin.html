@@ -103,7 +103,7 @@
   <div class="tab-content" id="tab-groups">
     <div class="toolbar"><h2>Shortcut Groups</h2><button class="btn btn-primary" id="add-group">+ Add Group</button></div>
     <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.6rem;">Subsections that AI Shortcuts get bucketed into on a topic page. Add / rename / reorder here; assign each shortcut to a group in <em>Shortcuts Directory</em>. Topic pages render groups in the order shown.</p>
-    <table><thead><tr><th>Label</th><th>ID</th><th>Order</th><th>Shortcuts</th><th>Actions</th></tr></thead><tbody id="groups-body"></tbody></table>
+    <table><thead><tr><th>Label</th><th>ID</th><th>Order</th><th>Color</th><th>Shortcuts</th><th>Actions</th></tr></thead><tbody id="groups-body"></tbody></table>
   </div>
   <div class="tab-content" id="tab-assignments"><div class="toolbar"><h2>Topic Assignments</h2></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Pick a topic on the left (incl. <strong>Homepage</strong> and <strong>Custom Search</strong>) to set which AI shortcuts appear on that page. Shortcuts are bucketed by their <strong>Group</strong> (set in <em>Shortcuts Directory</em>) on the rendered page. Drag inside a group to reorder; the within-group order is preserved.</p><div class="assign-layout"><div class="assign-sidebar"><div class="assign-sidebar-head">Topics</div><div id="assign-topics"></div></div><div class="assign-main" id="assign-main"></div></div></div>
   <div class="tab-content" id="tab-searches"><div class="toolbar"><h2>Quick Content Shortcuts</h2><button class="btn btn-primary" id="add-search">+ Add Source</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">External search destinations shown in the Quick Content sub-nav row on topic and custom search pages. Use <code>{query}</code> in the URL where the topic name goes.</p><table><thead><tr><th>Name</th><th>Icon</th><th>URL Template</th><th>Actions</th></tr></thead><tbody id="searches-body"></tbody></table></div>
@@ -775,10 +775,10 @@
     // assignments file. Matches the runtime's hardcoded fallback so
     // export from a fresh import behaves identically to today.
     var DEFAULT_GROUPS = [
-      { id: 'discover', label: 'Discover', order: 0 },
-      { id: 'learn',    label: 'Learn',    order: 1 },
-      { id: 'analyze',  label: 'Analyze',  order: 2 },
-      { id: 'more',     label: 'More',     order: 3 }
+      { id: 'discover', label: 'Discover', order: 0, color: '#3261a0' },
+      { id: 'learn',    label: 'Learn',    order: 1, color: '#2e8a73' },
+      { id: 'analyze',  label: 'Analyze',  order: 2, color: '#b48528' },
+      { id: 'more',     label: 'More',     order: 3, color: '#5d6b7e' }
     ];
     function getGroupDefs() {
       // Read from data.assignments.groups (preferred), fall back to
@@ -860,10 +860,12 @@
       var shortcuts = data.directory.shortcuts || [];
       tbody.innerHTML = groups.map(function(g, i) {
         var count = shortcuts.filter(function(s){return s.group===g.id;}).length;
+        var color = g.color || '#5d6b7e';
         return '<tr>'+
           '<td><input data-action="rename" data-id="'+escA(g.id)+'" value="'+escA(g.label)+'" style="width:100%;padding:0.25rem 0.4rem;border:1px solid var(--border);border-radius:3px;font-size:0.85rem;"></td>'+
           '<td class="mono">'+esc(g.id)+'</td>'+
           '<td><input data-action="reorder" data-id="'+escA(g.id)+'" type="number" value="'+(g.order||0)+'" style="width:60px;padding:0.25rem 0.4rem;border:1px solid var(--border);border-radius:3px;font-size:0.85rem;"></td>'+
+          '<td><input data-action="recolor" data-id="'+escA(g.id)+'" type="color" value="'+escA(color)+'" style="width:48px;height:28px;padding:0;border:1px solid var(--border);border-radius:3px;cursor:pointer;" title="Section accent color"></td>'+
           '<td>'+count+'</td>'+
           '<td style="white-space:nowrap"><button class="btn" data-action="up" data-i="'+i+'" title="Move up">↑</button> <button class="btn" data-action="down" data-i="'+i+'" title="Move down">↓</button> <button class="btn btn-danger" data-action="delete" data-id="'+escA(g.id)+'">Del</button></td>'+
         '</tr>';
@@ -895,6 +897,8 @@
           g.label = input.value.trim() || g.id;
         } else if (input.dataset.action === 'reorder') {
           g.order = parseInt(input.value, 10) || 0;
+        } else if (input.dataset.action === 'recolor') {
+          g.color = input.value;
         }
         renderDirectory(); renderAssignments();
         if (window.__markDirty) window.__markDirty('assignments');
@@ -903,17 +907,18 @@
     }
     document.getElementById('add-group').addEventListener('click', function() { showGroupForm(); });
     function showGroupForm() {
-      document.getElementById('modal').innerHTML = '<div class="form-overlay" id="overlay"><div class="form-modal"><h3>Add Group</h3><div class="fg"><label>ID (lowercase, no spaces)</label><input id="f-gid" placeholder="e.g. compare"></div><div class="fg"><label>Label (display name)</label><input id="f-glabel" placeholder="e.g. Compare"></div><div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
+      document.getElementById('modal').innerHTML = '<div class="form-overlay" id="overlay"><div class="form-modal"><h3>Add Group</h3><div class="fg"><label>ID (lowercase, no spaces)</label><input id="f-gid" placeholder="e.g. compare"></div><div class="fg"><label>Label (display name)</label><input id="f-glabel" placeholder="e.g. Compare"></div><div class="fg"><label>Accent color</label><input id="f-gcolor" type="color" value="#5d6b7e" style="width:60px;height:34px;padding:0;border:1px solid var(--border);border-radius:3px;cursor:pointer;"></div><div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
       document.getElementById('f-cancel').addEventListener('click', closeModal);
       document.getElementById('overlay').addEventListener('click', function(e){if(e.target===e.currentTarget)closeModal();});
       document.getElementById('f-save').addEventListener('click', function() {
         var id = document.getElementById('f-gid').value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
         var label = document.getElementById('f-glabel').value.trim();
+        var color = document.getElementById('f-gcolor').value || '#5d6b7e';
         if (!id || !label) { alert('Both ID and label required.'); return; }
         ensureGroupsInData();
         if (data.assignments.groups.find(function(g){return g.id===id;})) { alert('Group ID already exists.'); return; }
         var maxOrder = data.assignments.groups.reduce(function(m,g){return Math.max(m, g.order||0);}, -1);
-        data.assignments.groups.push({ id: id, label: label, order: maxOrder + 1 });
+        data.assignments.groups.push({ id: id, label: label, order: maxOrder + 1, color: color });
         closeModal(); renderGroups(); renderDirectory(); renderAssignments();
         if (window.__markDirty) window.__markDirty('assignments');
         toast('Group added');
