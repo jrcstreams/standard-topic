@@ -4321,7 +4321,7 @@ body.app-mode .topic-layout {
        No top margin — band sits flush against the subnav band
        above (no orphan whitespace strip). */
     background: #e7ecf3;
-    margin: 0 -2rem 0;
+    margin: 0 -2rem 1.2rem;
     padding: 0.45rem 2rem;
     gap: 0.65rem;
     border: none;
@@ -4907,12 +4907,13 @@ body.app-mode .topic-layout {
     display: none;
   }
 
-  /* Promote .shortcuts-subsection-header to look like the section
-     titles in tabbed mode — heavier label + thin separator rule. */
+  /* Mobile subsection-header: spacing only, no border-bottom rule.
+     The accent chip + label carries the section identity; an
+     extra separator just adds visual noise. */
   body.app-mode .topic-layout:not(.is-custom) .shortcuts-subsection-header {
-    margin: 0 0 1rem;
-    padding: 0 0 1rem;
-    border-bottom: 1px solid #d6dae2;
+    margin: 0 0 0.85rem;
+    padding: 0;
+    border-bottom: none;
     gap: 0;
   }
   body.app-mode .topic-layout:not(.is-custom) .shortcuts-subsection-header::after {
@@ -4995,6 +4996,12 @@ body.app-mode .topic-layout {
   background: #b9c2d0;
   pointer-events: none;
   z-index: 1;
+}
+/* Mobile: hide the title↔topics separator entirely. The topic
+   scroll reads as a direct sub-list of the page title, no rule
+   needed between them. */
+@media (max-width: 899.98px) {
+  .subnav-chip-wrap::before { display: none; }
 }
 /* When the strip has no chips (trim hid them all), suppress the
    separator so the title group doesn't look like it has a dangling
@@ -10595,7 +10602,11 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   border-bottom: none;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  /* No `gap` here — the chip's margin-right is the ONLY space
+     between chip and label, matching Web Sources's layout. A
+     stray flex gap was previously adding ~0.5rem on top of the
+     margin, which made Discover / Learn / Analyze / More look
+     visibly farther from their chips than Web Sources. */
 }
 /* Accent chip — thin tall colored bar to the left of the section
    label text. Carries the section's color identity. Slightly
