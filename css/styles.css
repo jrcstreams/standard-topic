@@ -10327,7 +10327,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
    none competing with the "Topic Intelligence" panel title above. */
 .shortcuts-sidebar .ti-web-sources-section { --ti-accent: #5d6b7e; }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-header {
-  margin-bottom: 0.55rem;
+  margin-bottom: 0.45rem;
 }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title {
   /* Same treatment as .ti-action-group-label — title-case dark text
@@ -10335,8 +10335,8 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   color: #1a2235;
   font-family: var(--font-family);
   font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: -0.012em;
+  font-weight: 700;
+  letter-spacing: -0.014em;
   text-transform: none;
   display: flex;
   align-items: center;
@@ -10352,11 +10352,11 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   height: 22px;
   background: var(--ti-accent);
   border-radius: 2px;
-  margin-right: 0.6rem;
+  margin-right: 0.4rem;
   flex-shrink: 0;
 }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-header {
-  margin-bottom: 0.55rem;
+  margin-bottom: 0.45rem;
 }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title::after { display: none; }
 .shortcuts-sidebar .ti-web-sources-section + .ti-actions-section {
@@ -10568,11 +10568,11 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
      to its left. No underline — the row's identity is the chip +
      larger label text, not a separator rule. */
   color: #1a2235;
-  font-weight: 600;
-  letter-spacing: -0.012em;
+  font-weight: 700;
+  letter-spacing: -0.014em;
   font-size: 1rem;
   text-transform: none;
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.45rem;
   padding-bottom: 0;
   border-bottom: none;
   display: flex;
@@ -10590,7 +10590,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   height: 22px;
   background: var(--ti-accent);
   border-radius: 2px;
-  margin-right: 0.6rem;
+  margin-right: 0.4rem;
   flex-shrink: 0;
 }
 .ti-action-group-label::after { display: none; }
