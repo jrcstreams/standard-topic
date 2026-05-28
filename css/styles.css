@@ -4919,8 +4919,8 @@ body.app-mode .topic-layout {
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: #1a2235;
-    margin: 0 0 0.85rem;
-    padding-bottom: 0.32rem;
+    margin: 0 0 0.55rem;
+    padding-bottom: 0.3rem;
     border-bottom: 1px solid var(--ti-accent, #6c7a91);
     line-height: 1.2;
   }
@@ -10323,11 +10323,11 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   margin: 0;
 }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-header {
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.55rem;
 }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title::after { display: none; }
 .shortcuts-sidebar .ti-web-sources-section + .ti-actions-section {
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 }
 /* Mobile: undo the legacy "promote subsection-title to a panel
    heading" bump for the Web Sources eyebrow specifically. The bump
@@ -10530,7 +10530,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .ti-action-group--analyze  { --ti-accent: #b48528; }
 .ti-action-group--more     { --ti-accent: #5d6b7e; }
 
-.ti-action-group + .ti-action-group { margin-top: 1.1rem; }
+.ti-action-group + .ti-action-group { margin-top: 0.65rem; }
 .ti-action-group-label {
   /* Section header: black/off-black text + accent-colored underline.
      Underline does the color-coding work; the text itself stays
@@ -10540,8 +10540,8 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   letter-spacing: 0.085em;
   font-size: 0.78rem;
   text-transform: uppercase;
-  margin: 0 0 0.85rem;
-  padding-bottom: 0.32rem;
+  margin: 0 0 0.55rem;
+  padding-bottom: 0.3rem;
   border-bottom: 1px solid var(--ti-accent);
   display: flex;
   align-items: center;
