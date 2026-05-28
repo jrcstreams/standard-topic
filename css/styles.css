@@ -4523,6 +4523,29 @@ body.app-mode .topic-layout {
   -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 64px), rgba(0, 0, 0, 0.2) 100%);
   mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 64px), rgba(0, 0, 0, 0.2) 100%);
 }
+/* Top-edge fade — mirror of the bottom fade; lights up when the
+   user has scrolled past the top of the list so there's content
+   above to scroll back to. Same 64px gradient length so both
+   edges read identically. */
+.shortcuts-scroll-wrap.has-overflow-top {
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, #000 64px, #000 100%);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, #000 64px, #000 100%);
+}
+/* Both edges fading at once — single combined gradient (mask-image
+   accepts only one image per element, so the single-edge rules
+   above need an explicit override when both classes apply). */
+.shortcuts-scroll-wrap.has-overflow-top.has-overflow-bottom {
+  -webkit-mask-image: linear-gradient(to bottom,
+    rgba(0, 0, 0, 0.2) 0%,
+    #000 64px,
+    #000 calc(100% - 64px),
+    rgba(0, 0, 0, 0.2) 100%);
+  mask-image: linear-gradient(to bottom,
+    rgba(0, 0, 0, 0.2) 0%,
+    #000 64px,
+    #000 calc(100% - 64px),
+    rgba(0, 0, 0, 0.2) 100%);
+}
 /* Tail spacer — pushes the last item up so it clears the viewport
    edge / mobile browser chrome on long lists. */
 .shortcuts-list-tail-spacer {
