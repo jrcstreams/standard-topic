@@ -4749,7 +4749,9 @@ body.app-mode .topic-layout {
     grid-template-areas:
       "title"
       "chips";
-    row-gap: 0.25rem;
+    /* Tight row-gap so the topic scroll reads as a direct
+       sub-list of the page title, not a separate row below. */
+    row-gap: 0;
     flex-wrap: initial;
     width: 100%;
     align-items: center;
@@ -10328,29 +10330,29 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   margin-bottom: 0.55rem;
 }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title {
-  /* Same treatment as .ti-action-group-label — black text + neutral
-     off-grey underline + small accent chip via ::before. */
+  /* Same treatment as .ti-action-group-label — title-case dark text
+     + thin tall accent chip, no underline. */
   color: #1a2235;
   font-family: var(--font-family);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.085em;
-  text-transform: uppercase;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  text-transform: none;
   display: flex;
   align-items: center;
   width: 100%;
-  padding-bottom: 0.32rem;
-  border-bottom: 1.5px solid #d8dce5;
+  padding-bottom: 0;
+  border-bottom: none;
   margin: 0;
 }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title::before {
   content: '';
   display: inline-block;
-  width: 6px;
-  height: 14px;
+  width: 3px;
+  height: 22px;
   background: var(--ti-accent);
   border-radius: 2px;
-  margin-right: 0.55rem;
+  margin-right: 0.6rem;
   flex-shrink: 0;
 }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-header {
@@ -10560,37 +10562,35 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .ti-action-group--analyze  { --ti-accent: #b48528; }
 .ti-action-group--more     { --ti-accent: #8a4f7a; }
 
-.ti-action-group + .ti-action-group { margin-top: 0.1rem; }
+.ti-action-group + .ti-action-group { margin-top: 0.75rem; }
 .ti-action-group-label {
-  /* Section header: black text + neutral off-grey underline. The
-     section's accent color now lives in a small chip rendered via
-     ::before (small filled bar before the label text), so the row
-     of icons + names below reads as uniform content while still
-     carrying the section's color identity at the header level. */
+  /* Section header: title-case dark text + a thin tall accent bar
+     to its left. No underline — the row's identity is the chip +
+     larger label text, not a separator rule. */
   color: #1a2235;
-  font-weight: 700;
-  letter-spacing: 0.085em;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  margin: 0 0 0.7rem;
-  padding-bottom: 0.3rem;
-  border-bottom: 1.5px solid #d8dce5;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  font-size: 1rem;
+  text-transform: none;
+  margin: 0 0 0.75rem;
+  padding-bottom: 0;
+  border-bottom: none;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
-/* Accent chip — small filled colored bar before the section
-   label text. Replaces the underline-as-color signal so the
-   underline can stay neutral. Sized to read as a confident "this
-   section is X" tag without dominating. */
+/* Accent chip — thin tall colored bar to the left of the section
+   label text. Carries the section's color identity. Slightly
+   bigger than the header text height so it reads as a confident
+   "this section is X" marker. */
 .ti-action-group-label::before {
   content: '';
   display: inline-block;
-  width: 6px;
-  height: 14px;
+  width: 3px;
+  height: 22px;
   background: var(--ti-accent);
   border-radius: 2px;
-  margin-right: 0.55rem;
+  margin-right: 0.6rem;
   flex-shrink: 0;
 }
 .ti-action-group-label::after { display: none; }
@@ -10622,9 +10622,9 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
      content-width and center it instead of stretching across
      the full card width. */
   align-items: stretch;
-  gap: 0.14rem;
+  gap: 0.28rem;
   width: 100%;
-  padding: 0.5rem 0.7rem 0.55rem 0.7rem;
+  padding: 0.55rem 0.7rem 0.6rem 0.7rem;
   background: transparent;
   border: none;
   border-radius: 0;
@@ -10637,7 +10637,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .ti-action-card-header {
   display: flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.6rem;
   min-width: 0;
   width: 100%;
 }
