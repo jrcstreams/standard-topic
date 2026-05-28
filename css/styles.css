@@ -4896,9 +4896,9 @@ body.app-mode .topic-layout {
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: #1a2235;
-    margin: 0 0 0.7rem;
-    padding-bottom: 0.45rem;
-    border-bottom: 3px solid var(--ti-accent, #6c7a91);
+    margin: 0 0 0.65rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 2px solid var(--ti-accent, #6c7a91);
     line-height: 1.2;
   }
 }
@@ -10285,8 +10285,8 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   margin-bottom: 0.55rem;
 }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title {
-  /* Same treatment as .ti-action-group-label — black text + thick
-     accent-colored underline, no fade ::after. */
+  /* Same treatment as .ti-action-group-label — black text + accent-
+     colored underline, no fade ::after. */
   color: #1a2235;
   font-family: var(--font-family);
   font-size: 0.78rem;
@@ -10295,8 +10295,8 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   text-transform: uppercase;
   display: block;
   width: 100%;
-  padding-bottom: 0.45rem;
-  border-bottom: 3px solid var(--ti-accent);
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid var(--ti-accent);
   margin: 0;
 }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title::after { display: none; }
@@ -10506,18 +10506,17 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 
 .ti-action-group + .ti-action-group { margin-top: 1.1rem; }
 .ti-action-group-label {
-  /* Section header: black/off-black text + thick underline in the
-     group accent color. Underline does the color-coding work; the
-     text itself stays neutral so the eye reads "section name" not
-     "colored label". */
+  /* Section header: black/off-black text + accent-colored underline.
+     Underline does the color-coding work; the text itself stays
+     neutral so the eye reads "section name" not "colored label". */
   color: #1a2235;
   font-weight: 700;
   letter-spacing: 0.085em;
   font-size: 0.78rem;
   text-transform: uppercase;
-  margin: 0 0 0.7rem;
-  padding-bottom: 0.45rem;
-  border-bottom: 3px solid var(--ti-accent);
+  margin: 0 0 0.65rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid var(--ti-accent);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -10602,14 +10601,24 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
    means any parent setting `color: var(--ti-accent)` (or any
    other color) tints the icon to that color. SVGs were one-time-
    normalized to stroke="currentColor" so the same icons work
-   tinted to any section color. */
+   tinted to any section color.
+
+   Uses longhand mask-* properties (not the `mask:` shorthand)
+   because some browsers fail to resolve var() inside the
+   shorthand even though they handle it fine in the longhand. */
 .shortcut-icon {
   display: inline-block;
   width: 20px;
   height: 20px;
   background-color: currentColor;
-  -webkit-mask: var(--icon-src) center / contain no-repeat;
-  mask: var(--icon-src) center / contain no-repeat;
+  -webkit-mask-image: var(--icon-src);
+  mask-image: var(--icon-src);
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
   flex-shrink: 0;
 }
 .shortcuts-sidebar .ti-action-card .ti-action-card-name {
