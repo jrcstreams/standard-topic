@@ -10589,7 +10589,12 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   height: 22px;
   background: var(--ti-accent);
   border-radius: 2px;
-  margin-right: 0.45rem;
+  /* Tighter than Web Sources's 0.45rem because the first letters
+     of "Discover" / "Learn" / "Analyze" / "More" all have larger
+     left-side bearings than "W", making the same margin appear
+     visually farther. 0.2rem optically matches Web Sources's
+     chip-to-label spacing. */
+  margin-right: 0.2rem;
   flex-shrink: 0;
 }
 .ti-action-group-label::after { display: none; }
