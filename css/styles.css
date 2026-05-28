@@ -4315,13 +4315,26 @@ body.app-mode .topic-layout {
     /* Tinted band — darker than the subnav above so the tab row
        reads as a contained "control center" element rather than
        two floating buttons on the page bg. Negative horizontal
-       margin to bleed out to the topic-layout edges (1rem padding
-       on mobile, matched here) so the band runs full-bleed across
-       the panel. No top margin — band sits flush against the
-       subnav band above (no orphan whitespace strip). */
+       margin matches the topic-layout's horizontal padding
+       (2rem at >640px, 1rem at ≤640px) so the band runs full-
+       bleed to the topic-layout edges across all viewport widths.
+       No top margin — band sits flush against the subnav band
+       above (no orphan whitespace strip). */
     background: #e7ecf3;
-    margin: 0 -1rem 1rem;
-    padding: 0.7rem 1rem;
+    margin: 0 -2rem 1rem;
+    padding: 0.7rem 2rem;
+  }
+  /* Narrow phones (≤640px): the topic-layout drops to 1rem
+     horizontal padding, so the tab band's negative margin needs
+     to follow suit or the band would over-bleed past the
+     viewport edges and trigger a horizontal scrollbar. */
+  @media (max-width: 640px) {
+    body.app-mode .topic-layout:not(.is-custom) > .body-tabs {
+      margin-left: -1rem;
+      margin-right: -1rem;
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
     gap: 0.75rem;
     border: none;
     border-top: 1px solid #d6dce6;
@@ -4919,7 +4932,9 @@ body.app-mode .topic-layout {
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: #1a2235;
-    margin: 0 0 0.55rem;
+    /* More breathing below the header underline — gives the first
+       card in a section visible clearance from the rule above it. */
+    margin: 0 0 0.9rem;
     padding-bottom: 0.3rem;
     border-bottom: 1px solid var(--ti-accent, #6c7a91);
     line-height: 1.2;
@@ -10338,25 +10353,23 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
    it. The override re-applies the eyebrow look so all five section
    markers in the panel read the same way at any width. */
 @media (max-width: 899.98px) {
+  /* Mobile WEB SOURCES eyebrow: match the desktop treatment —
+     black text + accent-colored underline (don't revert to the
+     old colored-text + no-underline style). */
   body.app-mode .topic-layout:not(.is-custom)
     .ti-web-sources-section .shortcuts-subsection-title {
     font-family: var(--font-family);
     font-size: 0.78rem;
     font-weight: 700;
-    color: var(--ti-accent);
+    color: #1a2235;
     letter-spacing: 0.09em;
     line-height: 1.2;
     text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
+    display: block;
     width: 100%;
-  }
-  body.app-mode .topic-layout:not(.is-custom)
-    .ti-web-sources-section .shortcuts-subsection-header {
-    margin-bottom: 0.55rem;
-    padding-bottom: 0;
-    border-bottom: none;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--ti-accent);
+    margin: 0;
   }
 }
 
@@ -10530,7 +10543,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .ti-action-group--analyze  { --ti-accent: #b48528; }
 .ti-action-group--more     { --ti-accent: #5d6b7e; }
 
-.ti-action-group + .ti-action-group { margin-top: 0.65rem; }
+.ti-action-group + .ti-action-group { margin-top: 0.25rem; }
 .ti-action-group-label {
   /* Section header: black/off-black text + accent-colored underline.
      Underline does the color-coding work; the text itself stays
@@ -10540,7 +10553,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   letter-spacing: 0.085em;
   font-size: 0.78rem;
   text-transform: uppercase;
-  margin: 0 0 0.55rem;
+  margin: 0 0 0.7rem;
   padding-bottom: 0.3rem;
   border-bottom: 1px solid var(--ti-accent);
   display: flex;
@@ -10708,9 +10721,10 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
      card a bordered chevron-row treatment — icon on the left, title
      + description in the middle, ">" chevron pinned to the right.
      Reads as a "tap to open" list item, matching the mobile redesign
-     mockup. Cards are spaced (not stacked flush) since the spine
-     unification effect doesn't apply here anyway. */
-  .ti-action-cards { gap: 0.4rem; }
+     mockup. Minimal gap between consecutive cards so the list reads
+     as a tight set; section-header margin-bottom handles the larger
+     separation between sections. */
+  .ti-action-cards { gap: 0.3rem; }
   .shortcuts-sidebar .sidebar-shortcut.ti-action-card {
     padding: 0.7rem 2.2rem 0.78rem 0.85rem;
     gap: 0.14rem;
