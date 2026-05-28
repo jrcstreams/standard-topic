@@ -4820,15 +4820,17 @@ body.app-mode .topic-layout {
   body.app-mode #sub-header.is-subnav .subnav-topic-link {
     flex: 0 0 auto;
     white-space: nowrap;
-    /* Mobile chips: identical to desktop subnav-topic-link (font,
-       size, weight, color, letter-spacing) so the home page and
-       topic page horizontal scroll read the same way. */
+    /* Mobile chips: exact match to the desktop final-state — the
+       #sub-header .subnav-topic-link rule later in the stylesheet
+       wins on desktop with color #4a6a8a + weight medium (500),
+       so mobile mirrors that here rather than the base
+       .subnav-topic-link spec. */
     font-family: var(--font-display);
     font-size: 0.82rem;
-    font-weight: 600;
+    font-weight: var(--font-weight-medium);
     text-transform: none;
     letter-spacing: -0.005em;
-    color: #1e2d44;
+    color: #4a6a8a;
     line-height: 1.1;
     padding: 0.4rem 0.75rem;
     margin: 0;
@@ -4934,8 +4936,8 @@ body.app-mode .topic-layout {
     display: flex;
     align-items: center;
     font-size: 1rem;
-    font-weight: 800;
-    letter-spacing: -0.016em;
+    font-weight: 700;
+    letter-spacing: -0.014em;
     text-transform: none;
     color: #1a2235;
     margin: 0 0 0.45rem;
@@ -10333,8 +10335,8 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   color: #1a2235;
   font-family: var(--font-family);
   font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: -0.016em;
+  font-weight: 700;
+  letter-spacing: -0.014em;
   text-transform: none;
   display: flex;
   align-items: center;
@@ -10350,7 +10352,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   height: 22px;
   background: var(--ti-accent);
   border-radius: 2px;
-  margin-right: 0.3rem;
+  margin-right: 0.45rem;
   flex-shrink: 0;
 }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-header {
@@ -10375,9 +10377,9 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
     .ti-web-sources-section .shortcuts-subsection-title {
     font-family: var(--font-family);
     font-size: 1rem;
-    font-weight: 800;
+    font-weight: 700;
     color: #1a2235;
-    letter-spacing: -0.016em;
+    letter-spacing: -0.014em;
     line-height: 1.2;
     text-transform: none;
     display: flex;
@@ -10565,8 +10567,8 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
      to its left. No underline — the row's identity is the chip +
      larger label text, not a separator rule. */
   color: #1a2235;
-  font-weight: 800;
-  letter-spacing: -0.016em;
+  font-weight: 700;
+  letter-spacing: -0.014em;
   font-size: 1rem;
   text-transform: none;
   margin: 0 0 0.45rem;
@@ -10587,7 +10589,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   height: 22px;
   background: var(--ti-accent);
   border-radius: 2px;
-  margin-right: 0.3rem;
+  margin-right: 0.45rem;
   flex-shrink: 0;
 }
 .ti-action-group-label::after { display: none; }
