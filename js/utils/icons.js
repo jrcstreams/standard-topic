@@ -1,4 +1,9 @@
-// Shortcut icon utility — renders SVG if available, emoji fallback otherwise.
+// Shortcut icon utility — inlines SVG content from the build-generated
+// registry so the icon stroke uses currentColor and inherits the
+// parent's CSS color (used by section-accent tinting on shortcut
+// cards). Emoji fallback if a key isn't in the registry.
+
+import { SHORTCUT_ICONS } from './shortcut-icons-registry.js';
 
 const ICON_PATH = 'assets/shortcut-icons/';
 
@@ -36,19 +41,24 @@ export function getIconEmoji(key) {
 }
 
 /**
- * Returns HTML for an icon. Uses CSS mask-image so the SVG is
- * tinted by the parent's color (CSS `color:` → `currentColor` →
- * the mask's background-color). Lets section-accent colors
- * propagate into the icon shape without needing inline SVG or
- * a special build step.
+ * Returns HTML for an icon. Emits an inline <svg> from the
+ * build-generated registry so stroke="currentColor" resolves to
+ * the parent's CSS color. Section-accent tinting (color: var(--
+ * ti-accent) on the wrapper) propagates into the icon stroke
+ * automatically.
  *
- * Sized to 20×20 by default via the shortcut-icon base class;
- * additional classes (.ti-action-card-icon-svg, etc.) can
- * override width/height.
+ * Falls back to an emoji span if the key isn't in the registry
+ * (e.g., a brand-new SVG dropped in /assets/shortcut-icons/
+ * before the registry has been regenerated).
  */
 export function renderIcon(key, cls = '') {
   const className = cls ? `shortcut-icon ${cls}` : 'shortcut-icon';
-  return `<span aria-hidden="true" data-icon-key="${key}" class="${className}" style="--icon-src:url('${ICON_PATH}${key}.svg')"></span>`;
+  const inner = SHORTCUT_ICONS[key];
+  if (!inner) {
+    const emoji = EMOJI_MAP[key] || '🔗';
+    return `<span aria-hidden="true" data-icon-key="${key}" class="${className}">${emoji}</span>`;
+  }
+  return `<svg aria-hidden="true" data-icon-key="${key}" class="${className}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
 }
 
 /**

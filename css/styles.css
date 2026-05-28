@@ -10595,31 +10595,17 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   stroke-width: 1.5;
 }
 
-/* === Mask-based shortcut icon ====================================
-   Replaces the previous <img> renderer. The SVG is used as a CSS
-   mask; the background-color resolves to `currentColor`, which
-   means any parent setting `color: var(--ti-accent)` (or any
-   other color) tints the icon to that color. SVGs were one-time-
-   normalized to stroke="currentColor" so the same icons work
-   tinted to any section color.
-
-   Uses longhand mask-* properties (not the `mask:` shorthand)
-   because some browsers fail to resolve var() inside the
-   shorthand even though they handle it fine in the longhand. */
+/* === Inline-SVG shortcut icon ====================================
+   Icon SVGs are inlined from the build-generated registry so
+   stroke="currentColor" resolves to the parent's CSS color
+   directly. Section-accent tinting (color: var(--ti-accent)
+   on the wrapper) propagates automatically. */
 .shortcut-icon {
   display: inline-block;
   width: 20px;
   height: 20px;
-  background-color: currentColor;
-  -webkit-mask-image: var(--icon-src);
-  mask-image: var(--icon-src);
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
   flex-shrink: 0;
+  color: inherit;
 }
 .shortcuts-sidebar .ti-action-card .ti-action-card-name {
   flex: 1 1 auto;
