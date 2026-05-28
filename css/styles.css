@@ -3054,11 +3054,11 @@ html, body, #app {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.55rem 0.75rem;
+  padding: 0.7rem 0.85rem;
   cursor: pointer;
-  font-size: 0.88rem;
+  font-size: 0.98rem;
   color: var(--color-text);
-  border-radius: 4px;
+  border-radius: 6px;
   transition: background 0.1s;
 }
 
@@ -3069,7 +3069,20 @@ html, body, #app {
 
 .search-overlay-result-name {
   flex: 1;
-  font-weight: var(--font-weight-medium);
+  font-weight: 600;
+  color: #0f1a2e;
+}
+/* Matched substring inside the result name — bright yellow
+   highlight so the user can immediately see which characters
+   matched their query. */
+.search-overlay-result-name strong {
+  background: rgba(255, 213, 96, 0.55);
+  color: #0f1a2e;
+  font-weight: 700;
+  padding: 0.05em 0.15em;
+  border-radius: 3px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
 .search-overlay-result-parent {
@@ -3086,42 +3099,63 @@ html, body, #app {
 }
 .search-overlay-result:hover .search-overlay-result-arrow { opacity: 1; color: var(--color-primary); }
 
-/* "Add as Custom Topic" row — surfaced as a primary call-to-action
-   when there's a query. Soft blue panel with a circled + on the
-   left; tap or hit Enter to navigate to the custom-search page. */
+/* "Add as Custom Topic" row — primary CTA when the query doesn't
+   match an existing topic. Two-line layout (action label on top,
+   search term on the bottom) so the term reads as a clear quoted
+   value rather than as part of a sentence — eliminates the
+   "Search " query " as Custom Topic" awkward-spacing problem and
+   makes the action unambiguous. */
 .search-overlay-custom {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-  padding: 0.7rem 0.85rem;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
   margin: 0.6rem 0 0.25rem;
   cursor: pointer;
   background: rgba(74, 124, 201, 0.08);
-  border: 1px solid rgba(74, 124, 201, 0.2);
+  border: 1px solid rgba(74, 124, 201, 0.22);
   border-radius: 8px;
   color: var(--color-primary);
-  font-size: 0.92rem;
-  font-weight: 500;
-  letter-spacing: -0.005em;
   transition: background 0.14s, border-color 0.14s, transform 0.06s;
-}
-.search-overlay-custom strong {
-  font-weight: 700;
-  color: var(--color-primary);
 }
 .search-overlay-custom:hover,
 .search-overlay-custom.highlighted {
   background: rgba(74, 124, 201, 0.14);
-  border-color: rgba(74, 124, 201, 0.32);
+  border-color: rgba(74, 124, 201, 0.34);
 }
 .search-overlay-custom:active { transform: translateY(1px); }
+
+.search-custom-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+  flex: 1;
+}
+.search-custom-action {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  opacity: 0.85;
+}
+.search-custom-term {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f1a2e;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .search-custom-badge {
   background: var(--color-primary);
   color: white;
-  font-size: 0.85rem;
-  width: 22px;
-  height: 22px;
+  font-size: 1rem;
+  width: 28px;
+  height: 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;

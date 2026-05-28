@@ -301,8 +301,11 @@ function renderSearchResults(q) {
 
   html += `
       <div class="search-overlay-custom" data-action="custom" role="button" tabindex="0">
-        <span class="search-custom-badge">+</span>
-        Search "<strong>${escapeHTML(q)}</strong>" as Custom Topic
+        <span class="search-custom-badge" aria-hidden="true">+</span>
+        <span class="search-custom-text">
+          <span class="search-custom-action">Add as custom topic</span>
+          <span class="search-custom-term">${escapeHTML(q)}</span>
+        </span>
       </div>
   `;
   html += `</div>`;
