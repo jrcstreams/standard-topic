@@ -10422,45 +10422,42 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 }
 .ti-web-source-chip:hover .ti-web-source-chip-icon { color: #1c3a6b; }
 
-/* Mobile: square icon tile layout — icon centered on top, platform
-   name beneath in small text. Reads as a quick-launch toolbar of
-   external portals (matching the mobile redesign mockup). 5-up
-   grid (with auto-fit fallback at very narrow widths). */
+/* Mobile: 3-column grid of horizontal button-pills (icon + name
+   side by side), dropping to 2 columns at narrower widths. 5
+   sources lay out as 3+2 rows (or 2+2+1 at narrow widths). */
 @media (max-width: 899.98px) {
   .ti-web-source-chips {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(58px, 1fr));
-    gap: 0.45rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.4rem;
   }
   .ti-web-source-chip-row { min-width: 0; }
   .ti-web-source-chip {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    gap: 0.35rem;
+    justify-content: flex-start;
+    gap: 0.45rem;
     width: 100%;
-    padding: 0.65rem 0.4rem 0.55rem;
+    padding: 0.5rem 0.65rem;
     background: #ffffff;
     border: 1px solid #e2e6ee;
     border-left: 1px solid #e2e6ee;
-    border-radius: 10px;
-    text-align: center;
+    border-radius: 8px;
+    text-align: left;
   }
   .ti-web-source-chip:hover {
     background: #ffffff;
     border-color: #c8d2e0;
     color: #1c3a6b;
   }
-  /* Stack icon ABOVE name on mobile (chip-header wraps both as
-     siblings — making it a flex column puts icon on top and name
-     beneath, the "quick launcher" layout from the mockup). */
   .ti-web-source-chip-header {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     width: 100%;
-    gap: 0.35rem;
+    gap: 0.45rem;
+    min-width: 0;
   }
   /* Hide the trailing horizontal rule on WEB SOURCES so it
      matches the other eyebrows (DISCOVER / LEARN / ANALYZE /
@@ -10469,19 +10466,23 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
     display: none;
   }
   .ti-web-source-chip:hover .ti-web-source-chip-icon { color: #2c4467; }
-  .ti-web-source-chip-icon { width: 22px; height: 22px; color: #2c4467; }
+  .ti-web-source-chip-icon { width: 16px; height: 16px; color: #2c4467; flex-shrink: 0; }
   .ti-web-source-chip-name {
-    font-size: 0.66rem;
+    font-size: 0.78rem;
     font-weight: 600;
-    color: #4a5568;
+    color: #1e2d44;
     line-height: 1.2;
-    white-space: normal;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    text-align: center;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+}
+/* Narrow phones: drop to 2 columns so the names don't truncate. */
+@media (max-width: 480px) {
+  .ti-web-source-chips {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 /* (Orphan rules previously here — icon size, hover, arrow — moved
