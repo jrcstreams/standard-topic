@@ -4999,9 +4999,13 @@ body.app-mode .topic-layout {
 }
 /* Mobile: hide the title↔topics separator entirely. The topic
    scroll reads as a direct sub-list of the page title, no rule
-   needed between them. */
+   needed between them. !important because there's been other
+   high-specificity chip-wrap rules in the mobile @media block
+   above (margin-left/-right, border-top/bottom) that share the
+   selector path; this guarantees the pseudo stays hidden. */
 @media (max-width: 899.98px) {
-  .subnav-chip-wrap::before { display: none; }
+  .subnav-chip-wrap::before { display: none !important; }
+  body.app-mode #sub-header.is-subnav .subnav-chip-wrap::before { display: none !important; }
 }
 /* When the strip has no chips (trim hid them all), suppress the
    separator so the title group doesn't look like it has a dangling
