@@ -1168,14 +1168,14 @@ body.hide-cta .sticky-cta { display: none !important; }
   }
   #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
   #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
-    font-size: 1.05rem;
+    font-size: 1.3rem;
     line-height: 1.1;
     font-weight: 600;
   }
   #sub-header.is-subnav .topic-banner-icon,
   #sub-header.is-home-subnav .topic-banner-icon {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
   }
   #sub-header.is-subnav .topic-banner-titleinner,
   #sub-header.is-home-subnav .topic-banner-titleinner {
@@ -1190,12 +1190,12 @@ body.hide-cta .sticky-cta { display: none !important; }
 @media (max-width: 400px) {
   #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
   #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
-    font-size: 1.05rem;
+    font-size: 1.2rem;
   }
   #sub-header.is-subnav .topic-banner-icon,
   #sub-header.is-home-subnav .topic-banner-icon {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
   }
   #sub-header.is-subnav .topic-banner-titleinner,
   #sub-header.is-home-subnav .topic-banner-titleinner {
@@ -4839,11 +4839,9 @@ body.app-mode .topic-layout {
     padding: 0.35rem 1rem 0.55rem 0 !important;
   }
   body.app-mode #sub-header.is-subnav .subnav-topics-inline > .subnav-topic-link:first-child {
-    /* Small left padding on the first chip so it doesn't kiss the
-       viewport edge, but still sits visibly under the page-title
-       icon (banner padding-left is 1rem; first-chip text lands at
-       roughly the same x as the icon glyph). */
-    padding-left: 0.35rem !important;
+    /* Flush with the wrap edge — chip text lands at the same x as
+       the page-title icon glyph (both at banner's 1rem inset). */
+    padding-left: 0 !important;
     margin-left: 0 !important;
   }
   body.app-mode #sub-header.is-subnav .subnav-topic-link {
