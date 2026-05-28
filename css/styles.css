@@ -4834,9 +4834,21 @@ body.app-mode .topic-layout {
     margin-left: 0 !important;
   }
   body.app-mode #sub-header.is-subnav .subnav-topics-inline {
-    /* Tight top padding — scroll strip sits closer to the title row
-       above instead of feeling like a separate band. */
-    padding: 0.35rem 1rem 0.55rem 0 !important;
+    /* Tight + symmetric vertical padding so the chip strip stays
+       close to the title row above AND the absolutely-positioned
+       scroll arrows (which center on the wrap's 50%) align with
+       the chip text vertically. Asymmetric padding made arrows
+       appear visually below the chip baseline. */
+    padding: 0.4rem 1rem 0.4rem 0 !important;
+  }
+  /* Mobile arrow placement: left edge sits flush at the wrap's
+     left edge (= banner content edge = 1rem from viewport), which
+     matches the right arrow's distance from the viewport's right
+     edge — so the two arrows look symmetric. Default 1rem-from-
+     wrap-edge offset put the left arrow 2rem from viewport while
+     the right one stayed at 1rem, throwing the symmetry off. */
+  body.app-mode #sub-header.is-subnav .subnav-chip-arrow-left {
+    left: 0 !important;
   }
   body.app-mode #sub-header.is-subnav .subnav-topics-inline > .subnav-topic-link:first-child {
     /* Flush with the wrap edge — chip text lands at the same x as
