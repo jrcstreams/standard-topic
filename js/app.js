@@ -1,5 +1,5 @@
 import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
-import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getModels, getDefaultModelId, getModelById } from './utils/data.js';
+import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getModels, getDefaultModelId, getModelById, searchTopics } from './utils/data.js';
 import { getPreferredModelId, setPreferredModelId, submitPrompt } from './utils/ai-models.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
@@ -356,29 +356,203 @@ function renderCustomSearchSubnav(container, term) {
   container.innerHTML = `
     <div class="topic-banner custom-search-banner">
       <div class="topic-banner-row">
-        <button type="button" class="custom-search-display" data-action="edit-search" aria-label="Edit search">
-          <span class="custom-search-display-icon" aria-hidden="true">
+        <div class="custom-search-input-wrap" data-role="custom-search">
+          <span class="custom-search-input-icon" aria-hidden="true">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="7"/>
               <line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
           </span>
-          <span class="custom-search-display-label">Search</span>
-          <span class="custom-search-display-term">${escapeHTML(term)}</span>
-          <span class="custom-search-display-edit" aria-hidden="true">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          <input
+            type="text"
+            class="custom-search-input"
+            data-role="custom-search-input"
+            value="${escapeAttr(term)}"
+            placeholder="Search any topic"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Search topic"
+          />
+          <button type="button" class="custom-search-clear" data-action="clear" aria-label="Clear">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
-            <span>Edit</span>
-          </span>
-        </button>
+          </button>
+          <div class="custom-search-dropdown" data-role="dropdown" hidden></div>
+        </div>
       </div>
     </div>
   `;
-  container.querySelector('[data-action="edit-search"]')?.addEventListener('click', () => {
-    openSearchOverlay({ focusInput: true, initialQuery: term });
+  wireCustomSearchInput(container, term);
+}
+
+// Live-search input wiring for the custom-search subnav.
+// As the user types, debounced 280ms:
+//   - re-renders the shortcuts section in-place with the new term
+//     (so the AI shortcuts / web sources update to use the new query)
+//   - rewrites the URL via history.replaceState so refresh / share
+//     captures the current term, without firing hashchange (which
+//     would re-render the entire layout and blow away focus)
+//   - re-renders the autocomplete dropdown with matching topics
+// Enter / clicking a topic does navigate (hashchange) so the route
+// type can transition from custom → topic when the user picks a real
+// topic from the dropdown.
+function wireCustomSearchInput(container, initialTerm) {
+  const wrap = container.querySelector('[data-role="custom-search"]');
+  const input = container.querySelector('[data-role="custom-search-input"]');
+  const dropdown = container.querySelector('[data-role="dropdown"]');
+  const clearBtn = container.querySelector('[data-action="clear"]');
+  if (!wrap || !input || !dropdown) return;
+
+  let debounceTimer = null;
+  let highlightedIdx = -1;
+  let currentMatches = [];
+
+  const updateClearVisible = () => {
+    clearBtn.style.display = input.value.trim() ? 'inline-flex' : 'none';
+  };
+  updateClearVisible();
+
+  const renderDropdown = (q) => {
+    const matches = q ? searchTopics(q).slice(0, 6) : [];
+    currentMatches = matches;
+    highlightedIdx = -1;
+    if (!q) {
+      dropdown.hidden = true;
+      dropdown.innerHTML = '';
+      return;
+    }
+    const matchHTML = matches.map((m, i) => {
+      const parent = m.parentName
+        ? `<span class="custom-search-result-parent">${escapeHTML(m.parentName)}</span>`
+        : '';
+      return `
+        <div class="custom-search-result" data-slug="${escapeAttr(m.slug)}" data-idx="${i}" role="button" tabindex="-1">
+          <span class="custom-search-result-name">${highlightCustomMatch(m.name, q)}</span>
+          ${parent}
+          <span class="custom-search-result-arrow" aria-hidden="true">›</span>
+        </div>
+      `;
+    }).join('');
+    dropdown.innerHTML = `
+      ${matchHTML || `<div class="custom-search-empty">No matching topics</div>`}
+      <div class="custom-search-custom-cta" data-action="custom" role="button" tabindex="-1">
+        <span class="custom-search-custom-badge" aria-hidden="true">+</span>
+        <span class="custom-search-custom-text">
+          <span class="custom-search-custom-action">Use as custom topic</span>
+          <span class="custom-search-custom-term">${escapeHTML(q)}</span>
+        </span>
+      </div>
+    `;
+    dropdown.hidden = false;
+  };
+
+  const liveUpdate = (q) => {
+    const trimmed = q.trim();
+    const newHash = trimmed ? `#/custom/${encodeURIComponent(trimmed)}` : '#/';
+    if (window.location.hash !== newHash && trimmed) {
+      history.replaceState(null, '', newHash);
+    }
+    const shortcutsSection = document.querySelector('#section-shortcuts');
+    if (shortcutsSection) {
+      const route = { type: 'custom', term: trimmed, tab: 'shortcuts' };
+      renderShortcutsSidebar(shortcutsSection, route, false, true, trimmed);
+    }
+  };
+
+  input.addEventListener('input', () => {
+    updateClearVisible();
+    const q = input.value;
+    renderDropdown(q.trim());
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => liveUpdate(q), 280);
   });
+
+  input.addEventListener('focus', () => {
+    if (input.value.trim()) renderDropdown(input.value.trim());
+  });
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (currentMatches.length === 0) return;
+      highlightedIdx = Math.min(highlightedIdx + 1, currentMatches.length - 1);
+      updateHighlight();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      highlightedIdx = Math.max(highlightedIdx - 1, -1);
+      updateHighlight();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      const term = input.value.trim();
+      if (highlightedIdx >= 0 && currentMatches[highlightedIdx]) {
+        navigate(`#/topic/${currentMatches[highlightedIdx].slug}`);
+      } else if (term) {
+        navigate(`#/custom/${encodeURIComponent(term)}`);
+      }
+      dropdown.hidden = true;
+    } else if (e.key === 'Escape') {
+      dropdown.hidden = true;
+      input.blur();
+    }
+  });
+
+  const updateHighlight = () => {
+    dropdown.querySelectorAll('.custom-search-result').forEach((el, i) => {
+      el.classList.toggle('is-highlighted', i === highlightedIdx);
+    });
+  };
+
+  dropdown.addEventListener('mousedown', (e) => {
+    const result = e.target.closest('.custom-search-result');
+    const customCta = e.target.closest('[data-action="custom"]');
+    if (result) {
+      e.preventDefault();
+      navigate(`#/topic/${result.dataset.slug}`);
+      dropdown.hidden = true;
+    } else if (customCta) {
+      e.preventDefault();
+      const term = input.value.trim();
+      if (term) navigate(`#/custom/${encodeURIComponent(term)}`);
+      dropdown.hidden = true;
+    }
+  });
+
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    updateClearVisible();
+    dropdown.hidden = true;
+    input.focus();
+    history.replaceState(null, '', '#/');
+    // Re-render shortcuts section as empty/home state.
+    const shortcutsSection = document.querySelector('#section-shortcuts');
+    if (shortcutsSection) {
+      const route = { type: 'custom', term: '', tab: 'shortcuts' };
+      renderShortcutsSidebar(shortcutsSection, route, false, true, '');
+    }
+  });
+
+  document.addEventListener('mousedown', (e) => {
+    if (!wrap.contains(e.target)) {
+      dropdown.hidden = true;
+    }
+  });
+}
+
+function highlightCustomMatch(name, query) {
+  const idx = name.toLowerCase().indexOf(query.toLowerCase());
+  if (idx === -1) return escapeHTML(name);
+  const before = name.slice(0, idx);
+  const match = name.slice(idx, idx + query.length);
+  const after = name.slice(idx + query.length);
+  return `${escapeHTML(before)}<strong>${escapeHTML(match)}</strong>${escapeHTML(after)}`;
+}
+
+// navigate helper — uses router's hash navigation so the route handler
+// fires and the layout updates accordingly.
+function navigate(hash) {
+  window.location.hash = hash;
 }
 
 // Unified subnav renderer for custom search pages. When a `prefix` is

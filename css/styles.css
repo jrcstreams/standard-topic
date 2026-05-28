@@ -1114,6 +1114,187 @@ body.hide-cta .sticky-cta { display: none !important; }
   .custom-search-display-edit { padding: 0.3rem; }
 }
 
+/* === Custom-search subnav: live search input + autocomplete drop ===
+   Replaces the read-only "display" pill with a real <input> that
+   updates the page in place as the user types. Dropdown anchors
+   to the input and lists matching topics + an "Add as custom
+   topic" CTA. */
+.custom-search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 640px;
+  padding: 0.4rem 0.5rem 0.4rem 0.7rem;
+  background: #ffffff;
+  border: 1px solid #d8dee8;
+  border-radius: 8px;
+  transition: border-color 0.14s, box-shadow 0.14s;
+}
+.custom-search-input-wrap:focus-within {
+  border-color: #2c4467;
+  box-shadow: 0 1px 8px rgba(28, 58, 107, 0.1);
+}
+.custom-search-input-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #2c4467;
+  flex-shrink: 0;
+}
+.custom-search-input-icon svg { width: 15px; height: 15px; }
+.custom-search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  color: #0f1a2e;
+  padding: 0.2rem 0;
+}
+.custom-search-input::placeholder { color: #94a0b3; font-weight: 500; }
+.custom-search-clear {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #6c7589;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.14s, color 0.14s;
+}
+.custom-search-clear:hover { background: #eef1f6; color: #1c3a6b; }
+
+/* Dropdown panel — anchors absolutely below the input wrap, no
+   gap so the connected look reads as one component. Floats above
+   the page content on a small shadow. */
+.custom-search-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: #ffffff;
+  border: 1px solid #d8dee8;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(15, 26, 46, 0.12);
+  padding: 0.4rem;
+  max-height: 360px;
+  overflow-y: auto;
+}
+.custom-search-dropdown[hidden] { display: none; }
+.custom-search-result {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.7rem;
+  cursor: pointer;
+  border-radius: 6px;
+  color: var(--color-text);
+  transition: background 0.1s;
+}
+.custom-search-result:hover,
+.custom-search-result.is-highlighted {
+  background: #f3f5f9;
+}
+.custom-search-result-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0f1a2e;
+}
+.custom-search-result-name strong {
+  background: rgba(255, 213, 96, 0.55);
+  color: #0f1a2e;
+  font-weight: 700;
+  padding: 0.05em 0.15em;
+  border-radius: 3px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.custom-search-result-parent {
+  font-size: 0.74rem;
+  color: var(--color-text-light);
+  flex-shrink: 0;
+}
+.custom-search-result-arrow {
+  color: var(--color-text-light);
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+.custom-search-empty {
+  padding: 0.7rem 0.75rem;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  text-align: center;
+}
+.custom-search-custom-cta {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem 0.7rem;
+  margin-top: 0.35rem;
+  border-top: 1px solid #e6e9f0;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.14s;
+}
+.custom-search-custom-cta:hover { background: rgba(74, 124, 201, 0.08); }
+.custom-search-custom-badge {
+  background: var(--color-primary);
+  color: white;
+  font-size: 1rem;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 700;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.custom-search-custom-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+  flex: 1;
+}
+.custom-search-custom-action {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  opacity: 0.9;
+}
+.custom-search-custom-term {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f1a2e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 640px) {
+  .custom-search-input-wrap { padding: 0.35rem 0.45rem 0.35rem 0.6rem; max-width: none; }
+  .custom-search-input { font-size: 0.95rem; }
+  .custom-search-dropdown { padding: 0.3rem; }
+  .custom-search-result-name { font-size: 0.92rem; }
+}
+
 #sub-header.is-subnav .topic-banner-tabs {
   gap: 1.25rem;
   align-items: center;
@@ -10339,21 +10520,13 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   box-shadow: none;
   overflow: visible;
 }
+/* Custom-search pages: drop the "Topic Intelligence" header
+   entirely. The page identity is already carried by the search
+   input in the subnav above, and the content sections (Web
+   Sources, Discover, Learn, Analyze) have their own labels —
+   the panel-level header was redundant and stole vertical space. */
 .topic-layout.is-custom .topic-intelligence-panel .sidebar-card-header {
-  background: transparent;
-  padding: 0 0 0.8rem 0;
-  margin: 0.5rem 0 1.6rem 0;
-  border-bottom: 1px solid #e2e6ee;
-  min-height: 0;
-}
-.topic-layout.is-custom .topic-intelligence-panel .sidebar-card-title {
-  color: #1c3a6b;
-  font-family: var(--font-display);
-  font-size: 1.18rem;
-  font-weight: 600;
-  letter-spacing: -0.018em;
-  line-height: 1.2;
-  text-transform: none;
+  display: none;
 }
 .topic-layout.is-custom .topic-intelligence-panel .shortcuts-scroll-wrap {
   padding-left: 0;
