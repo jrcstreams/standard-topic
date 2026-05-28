@@ -4778,7 +4778,11 @@ body.app-mode .topic-layout {
     grid-area: chips;
     position: relative;
     min-width: 0;
-    margin-left: -1rem;
+    /* Align the topic scroll's left edge with the page-title icon
+       (no negative margin on the left). Right side keeps a -1rem
+       bleed so chips that scroll past the viewport fade out into
+       the page edge instead of stopping in the middle. */
+    margin-left: 0;
     margin-right: -1rem;
     /* Separator border removed so the topic scroll reads as a
        direct sub-list of the page title above, not a separate
@@ -4940,7 +4944,7 @@ body.app-mode .topic-layout {
     letter-spacing: -0.014em;
     text-transform: none;
     color: #1a2235;
-    margin: 0 0 0.45rem;
+    margin: 0 0 0.85rem;
     padding-bottom: 0;
     border-bottom: none;
     line-height: 1.2;
@@ -10352,11 +10356,11 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   height: 22px;
   background: var(--ti-accent);
   border-radius: 2px;
-  margin-right: 0.45rem;
+  margin-right: 0.55rem;
   flex-shrink: 0;
 }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-header {
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.85rem;
 }
 .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title::after { display: none; }
 .shortcuts-sidebar .ti-web-sources-section + .ti-actions-section {
@@ -10388,6 +10392,21 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
     padding-bottom: 0;
     border-bottom: none;
     margin: 0;
+  }
+  /* The generic "hide ::before on mobile subsection titles" rule
+     above (intended for the old accent-bar design) wins against
+     the Web Sources chip rule by specificity. Re-show the chip
+     here for Web Sources specifically on mobile. */
+  body.app-mode .topic-layout:not(.is-custom)
+    .ti-web-sources-section .shortcuts-subsection-title::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 22px;
+    background: var(--ti-accent);
+    border-radius: 2px;
+    margin-right: 0.55rem;
+    flex-shrink: 0;
   }
 }
 
@@ -10589,12 +10608,12 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   height: 22px;
   background: var(--ti-accent);
   border-radius: 2px;
-  /* Tighter than Web Sources's 0.45rem because the first letters
+  /* Tighter than Web Sources (0.55rem) because the first letters
      of "Discover" / "Learn" / "Analyze" / "More" all have larger
      left-side bearings than "W", making the same margin appear
-     visually farther. 0.2rem optically matches Web Sources's
+     visually farther. 0.35rem optically matches Web Sources's
      chip-to-label spacing. */
-  margin-right: 0.2rem;
+  margin-right: 0.35rem;
   flex-shrink: 0;
 }
 .ti-action-group-label::after { display: none; }
