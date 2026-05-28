@@ -4322,7 +4322,7 @@ body.app-mode .topic-layout {
        above (no orphan whitespace strip). */
     background: #e7ecf3;
     margin: 0 -2rem;
-    padding: 0.45rem 2rem;
+    padding: 0.7rem 2rem;
     gap: 0.65rem;
     border: none;
     border-top: 1px solid #d6dce6;
@@ -4355,7 +4355,7 @@ body.app-mode .topic-layout {
     background: #ffffff;
     border: 1px solid #dde2ec;
     border-radius: 8px;
-    padding: 0.4rem 0.85rem;
+    padding: 0.6rem 0.85rem;
     margin: 0;
     font-family: var(--font-display);
     font-size: 0.85rem;
@@ -4831,13 +4831,19 @@ body.app-mode .topic-layout {
     display: none;
   }
   body.app-mode #sub-header.is-subnav .subnav-chip-wrap {
-    margin-left: -0.5rem !important;
+    margin-left: 0 !important;
   }
   body.app-mode #sub-header.is-subnav .subnav-topics-inline {
-    padding-left: 0 !important;
+    /* Tight top padding — scroll strip sits closer to the title row
+       above instead of feeling like a separate band. */
+    padding: 0.35rem 1rem 0.55rem 0 !important;
   }
   body.app-mode #sub-header.is-subnav .subnav-topics-inline > .subnav-topic-link:first-child {
-    padding-left: 0 !important;
+    /* Small left padding on the first chip so it doesn't kiss the
+       viewport edge, but still sits visibly under the page-title
+       icon (banner padding-left is 1rem; first-chip text lands at
+       roughly the same x as the icon glyph). */
+    padding-left: 0.35rem !important;
     margin-left: 0 !important;
   }
   body.app-mode #sub-header.is-subnav .subnav-topic-link {
