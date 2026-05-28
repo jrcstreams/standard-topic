@@ -4830,9 +4830,15 @@ body.app-mode .topic-layout {
   body.app-mode #sub-header.is-subnav .subnav-topics-inline::-webkit-scrollbar {
     display: none;
   }
+  body.app-mode #sub-header.is-subnav .subnav-chip-wrap {
+    margin-left: -0.5rem !important;
+  }
+  body.app-mode #sub-header.is-subnav .subnav-topics-inline {
+    padding-left: 0 !important;
+  }
   body.app-mode #sub-header.is-subnav .subnav-topics-inline > .subnav-topic-link:first-child {
-    padding-left: 0;
-    margin-left: 0;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
   }
   body.app-mode #sub-header.is-subnav .subnav-topic-link {
     flex: 0 0 auto;
@@ -10513,11 +10519,11 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
    color set here (both are single-class selectors, but the later
    rule wins on source order). */
 .shortcuts-sidebar .ti-web-source-chip-icon {
-  width: 14px;
-  height: 14px;
+  width: 14px !important;
+  height: 14px !important;
   flex-shrink: 0;
-  color: #6c7589;
-  stroke-width: 1.5;
+  color: #6c7589 !important;
+  stroke-width: 1.5 !important;
 }
 .ti-web-source-chip:hover {
   background: #ffffff;
@@ -10570,8 +10576,8 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   .shortcuts-sidebar .ti-web-sources-section .shortcuts-subsection-title::after {
     display: none;
   }
-  .shortcuts-sidebar .ti-web-source-chip:hover .ti-web-source-chip-icon { color: #6c7589; }
-  .shortcuts-sidebar .ti-web-source-chip-icon { width: 16px; height: 16px; color: #6c7589; stroke-width: 1.5; flex-shrink: 0; }
+  .shortcuts-sidebar .ti-web-source-chip:hover .ti-web-source-chip-icon { color: #6c7589 !important; }
+  .shortcuts-sidebar .ti-web-source-chip-icon { width: 16px !important; height: 16px !important; color: #6c7589 !important; stroke-width: 1.5 !important; flex-shrink: 0; }
   .ti-web-source-chip-name {
     font-size: 0.78rem;
     font-weight: 600;
