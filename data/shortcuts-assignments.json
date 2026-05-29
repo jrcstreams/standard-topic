@@ -6,21 +6,13 @@
       "business-day-snapshot",
       "ai-latest-news",
       "economic-indicators-roundup",
+      "global-market-snapshot",
       "us-market-snapshot",
       "us-political-snapshots",
       "global-political-snapshots",
-      "global-market-snapshot",
-      "global-hotspots-updates",
-      "globla-defense-policy-updates",
-      "climate-snapshot",
-      "public-health-watch",
-      "science-recent-discoveries",
-      "active-conflicts-tracker",
-      "lifestyle-snapshot",
       "media-news-snapshot",
       "sports-snapshot",
       "what-to-watch-listen-play",
-      "breaking-news",
       "numbers-in-news"
     ],
     "business-finance": [
@@ -32,8 +24,8 @@
       "key-players",
       "industry-deep-dive",
       "how-we-got-here",
-      "where-to-follow",
       "timeline-key-dates",
+      "where-to-follow",
       "risks-red-flags",
       "different-perspectives",
       "myths-vs-reality",
@@ -2320,8 +2312,7 @@
       "religion-politics",
       "spirituality-meaning-trends",
       "religious-tradition-primer",
-      "compare-religious-traditions",
-      "shortcut-id"
+      "compare-religious-traditions"
     ],
     "_custom": [
       "latest-news",

@@ -526,7 +526,7 @@
       "icon": "where-to-follow",
       "prompt": "What are the best sources to follow for staying current on the topic of: {TOPIC}? Cover newsletters, podcasts, journalists, analysts, websites, and any other sources worth subscribing to. Note who's best for what (breaking news, analysis, deep dives, contrarian takes, etc.).",
       "description": "Sources worth following for ongoing coverage",
-      "group": "topic-specific"
+      "group": "learn"
     },
     {
       "id": "us-housing-market",
@@ -4626,10 +4626,9 @@
     },
     {
       "id": "local-news-crisis",
-      "name": "local-news-crisis-updates",
+      "name": "Local News Crisis Updates",
       "icon": "local-news-crisis",
       "prompt": "What's the current state of local news in the US? Cover the closure trends, news deserts, the remaining models that work, and major efforts to address the crisis.",
-      "description": "Current state of local news in the US",
       "group": "topic-specific"
     },
     {
@@ -5006,14 +5005,6 @@
       "icon": "compare-religious-traditions",
       "prompt": "Compare [traditions or beliefs] on [a specific question or topic]. Cover where they agree, where they differ, and how each tradition has approached the question over time.",
       "description": "Side-by-side on a contested question",
-      "group": "topic-specific"
-    },
-    {
-      "id": "shortcut-id",
-      "name": "SHORTCUT_TITLE",
-      "icon": "shortcut-svg-icon",
-      "prompt": "PROMPT_TEXT",
-      "description": "Placeholder template. Do not surface",
       "group": "topic-specific"
     },
     {
