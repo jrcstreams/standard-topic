@@ -1151,7 +1151,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   grid-template-rows: auto auto;
   align-items: center;
   column-gap: 0.55rem;
-  row-gap: 0.15rem;
+  row-gap: 0.35rem;
   padding: 0.7rem 0.85rem;
   cursor: pointer;
   list-style: none;
