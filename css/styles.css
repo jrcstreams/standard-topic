@@ -1194,29 +1194,23 @@ body.hide-cta .sticky-cta { display: none !important; }
   grid-column: 1 / -1;
   grid-row: 2;
 }
+/* Chev spans both grid rows so it vertically centers across the
+   whole summary (icon+title row + blurb row), not just the title
+   row. No background — just the glyph in muted grey, picking up
+   the section accent on hover and when expanded. */
 .ti-accordion-chev {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  color: #6c7589;
-  background: rgba(15, 26, 46, 0.04);
-  transition: transform 0.2s ease, color 0.14s, background 0.14s;
+  color: #94a0b3;
+  transition: transform 0.2s ease, color 0.14s;
   flex-shrink: 0;
   grid-column: 3;
-  grid-row: 1;
+  grid-row: 1 / -1;
 }
-.ti-accordion-chev svg { width: 18px; height: 18px; }
-.ti-accordion-summary:hover .ti-accordion-chev {
-  background: color-mix(in srgb, var(--ti-accent) 10%, #ffffff);
-  color: var(--ti-accent);
-}
-.ti-accordion[open] .ti-accordion-chev {
-  background: color-mix(in srgb, var(--ti-accent) 12%, #ffffff);
-  color: var(--ti-accent);
-}
+.ti-accordion-chev svg { width: 20px; height: 20px; }
+.ti-accordion-summary:hover .ti-accordion-chev { color: var(--ti-accent); }
+.ti-accordion[open] .ti-accordion-chev { color: var(--ti-accent); }
 .ti-accordion[open] .ti-accordion-chev {
   transform: rotate(180deg);
   color: var(--ti-accent);
