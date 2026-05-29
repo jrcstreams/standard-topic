@@ -1401,7 +1401,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     html += renderTIAccordion({
       key: 'websources',
       label: 'Web Sources',
-      open: true,
+      open: false,
       bodyHTML: `
         <ul class="ti-item-list">
           ${contentSearches.map(s => webSourceItem(s, topicName)).join('')}
@@ -1741,27 +1741,27 @@ function shortcutItem(shortcut, topicName) {
 const TI_SECTION_META = {
   websources: {
     accent: '#5d6b7e',
-    blurb: 'External search engines and platforms — open in a new tab to explore primary sources.',
+    blurb: 'External search platforms — primary sources.',
     icon: `<circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a14 14 0 0 1 4 9 14 14 0 0 1-4 9 14 14 0 0 1-4-9 14 14 0 0 1 4-9z"/>`,
   },
   discover: {
     accent: '#3261a0',
-    blurb: 'AI prompts that surface what\'s happening now — news, trends, and notable developments.',
+    blurb: 'What\'s happening right now.',
     icon: `<circle cx="12" cy="12" r="9"/><polygon points="16 8 13.5 13.5 8 16 10.5 10.5 16 8"/>`,
   },
   learn: {
     accent: '#2e8a73',
-    blurb: 'Background, fundamentals, and context — terms, history, and the key people shaping the space.',
+    blurb: 'Background, fundamentals, and context.',
     icon: `<path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/>`,
   },
   analyze: {
     accent: '#b48528',
-    blurb: 'Deeper analytical lenses — compare perspectives, weigh risks, and stress-test the conventional wisdom.',
+    blurb: 'Deeper analytical lenses and tradeoffs.',
     icon: `<line x1="6" y1="20" x2="6" y2="14"/><line x1="12" y1="20" x2="12" y2="9"/><line x1="18" y1="20" x2="18" y2="4"/>`,
   },
   more: {
     accent: '#8a4f7a',
-    blurb: 'Additional prompts that don\'t fit cleanly into the categories above.',
+    blurb: 'Other useful prompts.',
     icon: `<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>`,
   },
 };
@@ -1781,13 +1781,15 @@ function renderTIAccordion({ key, label, open, bodyHTML }) {
           </svg>
         </span>
         <span class="ti-accordion-headtext">
-          <span class="ti-accordion-title">${escapeHTML(label)}</span>
+          <span class="ti-accordion-titlerow">
+            <span class="ti-accordion-title">${escapeHTML(label)}</span>
+            <span class="ti-accordion-chev" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </span>
+          </span>
           ${blurbHTML}
-        </span>
-        <span class="ti-accordion-chev" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
         </span>
       </summary>
       <div class="ti-accordion-body">
