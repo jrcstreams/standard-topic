@@ -1429,7 +1429,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
         open: false,
         bodyHTML: `
           <ul class="ti-item-list ti-item-list-shortcuts" data-group="${escapeAttr(g.key)}">
-            ${items.map(s => shortcutItem(s, topicName, g.key)).join('')}
+            ${items.map(s => tiShortcutItem(s, topicName, g.key)).join('')}
           </ul>
         `,
       });
@@ -1827,7 +1827,7 @@ function webSourceItem(search, topicName) {
 // Individual shortcut icons are NOT rendered in the row — the
 // section header carries the visual identity, and dropping the
 // per-row icon leaves more room for the title + description.
-function shortcutItem(shortcut, topicName, groupKey) {
+function tiShortcutItem(shortcut, topicName, groupKey) {
   const prompt = shortcut.prompt.replace(/\{topic\}/gi, topicName);
   const description = shortcut.description && shortcut.description.trim()
     ? `<span class="ti-item-desc">${escapeHTML(shortcut.description)}</span>`
