@@ -1210,9 +1210,12 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // scrolls naturally so the search bar's sticky behavior works.
     container.innerHTML = `
       <div class="topic-layout is-custom" id="topic-layout">
-        <p class="custom-search-page-intro">Type any topic and we'll build out web sources, AI shortcuts, and analysis tools tailored to it — search, edit, and refine on the fly.</p>
-        <div class="custom-search-page-bar">
+        <div class="custom-search-head">
           <h1 class="custom-search-page-title">Custom Topic Search</h1>
+          <p class="custom-search-page-intro">Type any topic and we'll build out web sources, AI shortcuts, and analysis tools tailored to it — search, edit, and refine on the fly.</p>
+        </div>
+        <div class="custom-search-page-bar">
+          <span class="custom-search-bar-title" aria-hidden="true">Custom Topic Search</span>
           <div class="custom-search-page-bar-input" data-role="custom-search-bar"></div>
         </div>
         <section class="layout-section" id="section-shortcuts"></section>
@@ -1375,11 +1378,10 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
    // row toggles selection, and a per-row arrow opens the modal for
    // that single shortcut directly. The `data-multi="1"` flag + the
    // .is-multi-select class are set up-front and never toggled off.
-  // Custom-search pages relabel the panel "Search Intelligence" and
-  // carry a subtitle showing the search term, so the section reads as
-  // scoped to what the user typed. Topic / home pages keep the plain
-  // "Topic Intelligence" title (the topic is already named above).
-  const panelTitle = isCustom ? 'Search Intelligence' : 'Topic Intelligence';
+  // The panel is always "Topic Intelligence". On custom-search pages it
+  // additionally carries a subtitle showing the search term, so the
+  // section reads as scoped to what the user typed.
+  const panelTitle = 'Topic Intelligence';
   const panelSubtitleHTML = (isCustom && topicName)
     ? `<p class="sidebar-card-subtitle">Covering &ldquo;${escapeHTML(topicName)}&rdquo;</p>`
     : '';

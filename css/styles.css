@@ -1375,31 +1375,43 @@ body.hide-cta .sticky-cta { display: none !important; }
   height: auto;
   overflow: visible;
 }
-/* Intro sits above the sticky bar (as a sibling in the page-tall
-   layout), so it simply scrolls out of view once the user scrolls —
-   the bar then reads as a compact subnav. */
+/* At rest: a clean stacked header — page title + intro — above a
+   full-width search bar. The header block scrolls away on scroll;
+   the bar pins below the main nav and collapses to a compact subnav
+   (its own inline title appears, intro is already gone). */
+.custom-search-head {
+  margin: 0 0 1.15rem;
+}
+.custom-search-page-title {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.022em;
+  line-height: 1.18;
+  color: #0f1a2e;
+}
 .custom-search-page-intro {
-  margin: 0 0 0.95rem;
-  max-width: 720px;
+  margin: 0;
+  max-width: 680px;
   font-size: 0.95rem;
   line-height: 1.5;
   color: #4a5568;
   font-weight: 400;
 }
-/* Sticky subnav: the page title + search input pin together just
-   below the main nav once the intro scrolls past. Title sits left,
-   input flexes to fill. A shadow/hairline fades in only when pinned
-   (.is-stuck) so it reads flat at rest and as a bar when stuck. */
+/* Sticky bar. At rest it holds only the search input (full width);
+   once pinned (.is-stuck) the inline title appears to its left and a
+   shadow/hairline fades in so it reads as a compact subnav. */
 .custom-search-page-bar {
   position: sticky;
   top: 64px;
   z-index: 20;
   display: flex;
   align-items: center;
-  gap: 0.9rem;
+  gap: 0.85rem;
   margin: 0 0 1.5rem;
   background: #ffffff;
-  padding: 0.6rem 0;
+  padding: 0.45rem 0;
   border-bottom: 1px solid transparent;
   transition: box-shadow 0.18s, border-color 0.18s;
 }
@@ -1407,30 +1419,36 @@ body.hide-cta .sticky-cta { display: none !important; }
   border-bottom-color: #e2e6ee;
   box-shadow: 0 6px 16px rgba(15, 26, 46, 0.06);
 }
-.custom-search-page-title {
-  margin: 0;
+.custom-search-bar-title {
+  display: none;
   flex: 0 0 auto;
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.2;
   color: #0f1a2e;
   white-space: nowrap;
 }
+.custom-search-page-bar.is-stuck .custom-search-bar-title {
+  display: block;
+}
 .custom-search-page-bar-input {
   flex: 1 1 auto;
   min-width: 0;
 }
 @media (max-width: 899.98px) {
-  .custom-search-page-bar {
-    top: 56px;
-    flex-wrap: wrap;
-    gap: 0.5rem 0.75rem;
-  }
-  .custom-search-page-title { font-size: 1.05rem; flex-basis: 100%; }
-  .custom-search-page-bar-input { flex-basis: 100%; }
+  .custom-search-page-bar { top: 56px; }
+  .custom-search-page-title { font-size: 1.2rem; }
   .custom-search-page-intro { font-size: 0.9rem; }
+  .custom-search-bar-title { font-size: 1rem; }
+  /* Stuck on mobile: title wraps to its own line above the input. */
+  .custom-search-page-bar.is-stuck {
+    flex-wrap: wrap;
+    gap: 0.4rem 0.75rem;
+  }
+  .custom-search-page-bar.is-stuck .custom-search-bar-title { flex-basis: 100%; }
+  .custom-search-page-bar.is-stuck .custom-search-page-bar-input { flex-basis: 100%; }
 }
 
 /* === Custom-search subnav: live search input + autocomplete drop ===
@@ -10838,8 +10856,9 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
    Intelligence header treatment on topic pages). */
 .topic-layout.is-custom .topic-intelligence-panel .sidebar-card-header {
   display: flex;
-  align-items: center;
-  margin-bottom: 1.25rem;
+  align-items: flex-start;
+  padding-bottom: 0.65rem;
+  margin-bottom: 1.35rem;
 }
 .topic-layout.is-custom .topic-intelligence-panel .shortcuts-scroll-wrap {
   padding-left: 0;
@@ -10853,7 +10872,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .sidebar-card-heading {
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  gap: 0.3rem;
   min-width: 0;
 }
 .sidebar-card-subtitle {
