@@ -1455,7 +1455,11 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   if (all.length === 0) {
     html += `<p class="sidebar-empty">No shortcuts yet.</p>`;
   } else {
-    const groups = groupShortcuts(all);
+    // Per-topic section overrides (e.g. the homepage sorts otherwise
+    // topic-specific shortcuts into Discover / Learn / Analyze).
+    const allOverrides = (window.__assignmentsData && window.__assignmentsData.groupOverrides) || {};
+    const overrideMap = allOverrides[topicSlug] || {};
+    const groups = groupShortcuts(all, overrideMap);
     const groupOrder = groups.__order || [
       { key: 'discover', label: 'Discover' },
       { key: 'learn', label: 'Learn' },
@@ -2030,7 +2034,12 @@ function applyGroupAccentColors() {
   }
   styleEl.textContent = rules;
 }
-function groupShortcuts(shortcuts) {
+// `overrideMap` (optional) is a per-topic { shortcutId: groupId } map that
+// re-buckets specific shortcuts into a different section than their global
+// `group` field — used so the homepage can sort otherwise topic-specific
+// shortcuts into Discover / Learn / Analyze independently. A shortcut not in
+// the map falls back to its global group (then the legacy regex classifier).
+function groupShortcuts(shortcuts, overrideMap = {}) {
   // 1) Resolve the group set: use data.assignments.groups if present
   //    (admin-managed), else the defaults. Sort by `order` ascending.
   const groupDefs = (window.__assignmentsData && Array.isArray(window.__assignmentsData.groups) && window.__assignmentsData.groups.length)
@@ -2042,13 +2051,18 @@ function groupShortcuts(shortcuts) {
   const groups = {};
   groupDefs.forEach(g => { groups[g.id] = []; });
 
-  // 3) For each shortcut, prefer its explicit `group` field. Fall back
-  //    to the legacy regex-based classifier so old data still renders
-  //    until it gets a group assigned in the admin.
+  // 3) For each shortcut, prefer a per-topic override, then its explicit
+  //    `group` field. Fall back to the legacy regex-based classifier so old
+  //    data still renders until it gets a group assigned in the admin.
   const learnRE = /(guide|glossary|beginner|primer|fundamentals|basics|deep ?dive|history|background|key players|key terms|how |where to|why )/i;
   const analyzeRE = /(analy|impact|affect|hype|reality|compare| vs | versus |implications|outcome|signal|forecast|prediction|risk|controversy|debate)/i;
   const discoverRE = /(news|snapshot|update|headline|trend|watch|latest|now|today|roundup|hot|spotlight|brief|digest)/i;
   shortcuts.forEach(s => {
+    const override = overrideMap && overrideMap[s.id];
+    if (override && groups[override]) {
+      groups[override].push(s);
+      return;
+    }
     if (s.group && groups[s.group]) {
       groups[s.group].push(s);
       return;

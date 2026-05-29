@@ -58,6 +58,7 @@
     .assign-item:active { cursor: grabbing; }
     .assign-item .handle { color: #ccc; font-size: 0.7rem; user-select: none; }
     .assign-item .name { flex: 1; }
+    .assign-item .assign-section { font-size: 0.72rem; padding: 0.12rem 0.3rem; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-light); color: var(--text); cursor: pointer; max-width: 11rem; }
     .assign-item .remove { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 0.85rem; opacity: 0.5; padding: 0.1rem 0.3rem; }
     .assign-item .remove:hover { opacity: 1; }
     .assign-dragging { opacity: 0.4; border-style: dashed; }
@@ -105,7 +106,7 @@
     <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.6rem;">Subsections that AI Shortcuts get bucketed into on a topic page. Add / rename / reorder here; assign each shortcut to a group in <em>Shortcuts Directory</em>. Topic pages render groups in the order shown.</p>
     <table><thead><tr><th>Label</th><th>ID</th><th>Order</th><th>Color</th><th>Shortcuts</th><th>Actions</th></tr></thead><tbody id="groups-body"></tbody></table>
   </div>
-  <div class="tab-content" id="tab-assignments"><div class="toolbar"><h2>Topic Assignments</h2></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Pick a topic on the left (incl. <strong>Homepage</strong> and <strong>Custom Search</strong>) to set which AI shortcuts appear on that page. Shortcuts are bucketed by their <strong>Group</strong> (set in <em>Shortcuts Directory</em>) on the rendered page. Drag inside a group to reorder; the within-group order is preserved.</p><div class="assign-layout"><div class="assign-sidebar"><div class="assign-sidebar-head">Topics</div><div id="assign-topics"></div></div><div class="assign-main" id="assign-main"></div></div></div>
+  <div class="tab-content" id="tab-assignments"><div class="toolbar"><h2>Topic Assignments</h2></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Pick a topic on the left (incl. <strong>Homepage</strong> and <strong>Custom Search</strong>) to set which AI shortcuts appear on that page. Shortcuts are bucketed by their <strong>Group</strong> (set in <em>Shortcuts Directory</em>) on the rendered page. Use each shortcut's <strong>section dropdown</strong> to override its group <em>just for this topic</em> (e.g. sort the homepage's topic-specific shortcuts into Discover / Learn / Analyze). Drag inside a group to reorder; the within-group order is preserved.</p><div class="assign-layout"><div class="assign-sidebar"><div class="assign-sidebar-head">Topics</div><div id="assign-topics"></div></div><div class="assign-main" id="assign-main"></div></div></div>
   <div class="tab-content" id="tab-searches"><div class="toolbar"><h2>Quick Content Shortcuts</h2><button class="btn btn-primary" id="add-search">+ Add Source</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">External search destinations shown in the Quick Content sub-nav row on topic and custom search pages. Use <code>{query}</code> in the URL where the topic name goes.</p><table><thead><tr><th>Name</th><th>Icon</th><th>URL Template</th><th>Actions</th></tr></thead><tbody id="searches-body"></tbody></table></div>
   <div class="tab-content" id="tab-models"><div class="toolbar"><h2>AI Models</h2><button class="btn btn-primary" id="add-model">+ Add Model</button></div><div style="display:flex;align-items:center;gap:0.55rem;margin-bottom:0.85rem;padding:0.6rem 0.75rem;background:var(--bg-light);border-radius:6px;border:1px solid var(--border);"><label for="models-default" style="font-weight:600;font-size:0.85rem;">Default model</label><select id="models-default" style="flex:1;padding:0.35rem 0.5rem;border:1px solid var(--border);border-radius:4px;background:white;font-size:0.85rem;"></select><span style="color:var(--text-muted);font-size:0.75rem;">Preselected in prompt modals + the user Settings panel.</span></div><table><thead><tr><th>Name</th><th>ID</th><th>Submission Method</th><th>URL Template</th><th>Actions</th></tr></thead><tbody id="models-body"></tbody></table></div>
   <div class="tab-content" id="tab-promptgen"><div class="toolbar"><h2>Prompt Generator</h2><button class="btn btn-success" id="pg-save">Apply JSON</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Edit <code>prompt-generator.json</code> directly. Click <strong>Apply JSON</strong> to validate and stage your changes, then use <strong>Export All JSON</strong> to download the updated file.</p><textarea id="pg-editor" style="width:100%;min-height:500px;background:var(--bg-light);padding:1rem;border-radius:6px;font-size:0.78rem;font-family:monospace;border:1px solid var(--border);resize:vertical;"></textarea></div>
@@ -943,14 +944,30 @@
       var available = (data.directory.shortcuts||[]).filter(function(s){return ids.indexOf(s.id)<0;});
       var label = (topics.find(function(t){return t.slug===selectedTopic;})||{}).name||selectedTopic;
       var groups = getGroupDefs();
-      // Bucket current shortcuts by their group. Preserve order within
-      // each bucket from the original ids array. An "Ungrouped" bucket
-      // catches shortcuts with no group set.
+      // Per-topic section overrides: { shortcutId: groupId }. A shortcut
+      // with an override is bucketed into that section for THIS topic only,
+      // regardless of its global Group. Lets the homepage sort otherwise
+      // topic-specific shortcuts into Discover / Learn / Analyze, etc.
+      var overrides = (data.assignments.groupOverrides && data.assignments.groupOverrides[selectedTopic]) || {};
+      function effGroup(s) { return overrides[s.id] || s.group || ''; }
+      // Build the per-row section dropdown — current value = effective
+      // section (override || global Group).
+      function sectionSelectHTML(s) {
+        var eff = effGroup(s);
+        var opts = groups.map(function(g){
+          return '<option value="'+escA(g.id)+'"'+(g.id===eff?' selected':'')+'>'+esc(g.label)+'</option>';
+        }).join('');
+        return '<select class="assign-section" data-id="'+escA(s.id)+'" title="Section on this page (overrides the global Group for this topic only)">'+opts+'</select>';
+      }
+      // Bucket current shortcuts by their effective group. Preserve order
+      // within each bucket from the original ids array. An "Ungrouped"
+      // bucket catches shortcuts with no group set.
       var buckets = {};
       groups.forEach(function(g){ buckets[g.id] = []; });
       buckets.__ungrouped__ = [];
       current.forEach(function(s, i) {
-        var key = s.group && buckets[s.group] ? s.group : '__ungrouped__';
+        var eff = effGroup(s);
+        var key = eff && buckets[eff] ? eff : '__ungrouped__';
         buckets[key].push({ shortcut: s, origIdx: i });
       });
       function bucketHTML(groupId, bucketLabel) {
@@ -960,7 +977,7 @@
           '<h4 style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);font-weight:700;margin:0.65rem 0 0.4rem;padding-bottom:0.3rem;border-bottom:1px solid var(--border);">'+esc(bucketLabel)+' <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#aaa;">· '+items.length+'</span></h4>'+
           '<div class="assign-bucket" data-group="'+escA(groupId)+'">'+
             items.map(function(it){
-              return '<div class="assign-item" draggable="true" data-idx="'+it.origIdx+'" data-id="'+escA(it.shortcut.id)+'"><span class="handle">&#9776;</span><span class="name">'+esc(it.shortcut.name)+'</span><button class="remove" data-rm="'+escA(it.shortcut.id)+'">&times;</button></div>';
+              return '<div class="assign-item" draggable="true" data-idx="'+it.origIdx+'" data-id="'+escA(it.shortcut.id)+'"><span class="handle">&#9776;</span><span class="name">'+esc(it.shortcut.name)+'</span>'+sectionSelectHTML(it.shortcut)+'<button class="remove" data-rm="'+escA(it.shortcut.id)+'">&times;</button></div>';
             }).join('')+
           '</div>'+
         '</div>';
@@ -996,6 +1013,22 @@
           if (window.__markDirty) window.__markDirty('assignments');
         });
       });
+      // Section dropdown — sets a per-topic override so the shortcut
+      // buckets into the chosen section on THIS topic's page. Choosing the
+      // shortcut's own global Group clears the override (keeps data tidy).
+      main.querySelectorAll('.assign-section').forEach(function(sel){
+        sel.addEventListener('change', function(){
+          var id = sel.dataset.id, val = sel.value, sc = dirMap[id];
+          if (!data.assignments.groupOverrides) data.assignments.groupOverrides = {};
+          if (!data.assignments.groupOverrides[selectedTopic]) data.assignments.groupOverrides[selectedTopic] = {};
+          var ov = data.assignments.groupOverrides[selectedTopic];
+          if (sc && sc.group === val) { delete ov[id]; } else { ov[id] = val; }
+          if (Object.keys(ov).length === 0) delete data.assignments.groupOverrides[selectedTopic];
+          if (Object.keys(data.assignments.groupOverrides).length === 0) delete data.assignments.groupOverrides;
+          renderAssignments(); toast('Section set');
+          if (window.__markDirty) window.__markDirty('assignments');
+        });
+      });
       // Drag reorder — works across buckets too, so dragging an item
       // from "Discover" to a position inside "Learn" moves it in the
       // flat array. The shortcut's group field is unchanged (set
@@ -1003,7 +1036,7 @@
       // visual order on the page.
       var dragIdx = null;
       document.querySelectorAll('#assign-list .assign-item').forEach(function(item){
-        item.addEventListener('dragstart', function(e){ dragIdx=parseInt(item.dataset.idx); item.classList.add('assign-dragging'); e.dataTransfer.effectAllowed='move'; });
+        item.addEventListener('dragstart', function(e){ if(e.target.closest('.assign-section')){e.preventDefault();return;} dragIdx=parseInt(item.dataset.idx); item.classList.add('assign-dragging'); e.dataTransfer.effectAllowed='move'; });
         item.addEventListener('dragend', function(){ item.classList.remove('assign-dragging'); });
         item.addEventListener('dragover', function(e){ e.preventDefault(); });
         item.addEventListener('drop', function(e){
