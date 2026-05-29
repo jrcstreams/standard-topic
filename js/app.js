@@ -1780,17 +1780,13 @@ function renderTIAccordion({ key, label, open, bodyHTML }) {
             ${meta.icon}
           </svg>
         </span>
-        <span class="ti-accordion-headtext">
-          <span class="ti-accordion-titlerow">
-            <span class="ti-accordion-title">${escapeHTML(label)}</span>
-            <span class="ti-accordion-chev" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"/>
-              </svg>
-            </span>
-          </span>
-          ${blurbHTML}
+        <span class="ti-accordion-title">${escapeHTML(label)}</span>
+        <span class="ti-accordion-chev" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
         </span>
+        ${blurbHTML}
       </summary>
       <div class="ti-accordion-body">
         ${bodyHTML}
