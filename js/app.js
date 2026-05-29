@@ -1390,43 +1390,30 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       <div class="shortcuts-scroll-wrap">
   `;
 
-  // Web Sources subsection — compact chip strip linking out to
-  // external searches (Google News, Reddit, X, YouTube, DuckDuckGo).
-  // Visually distinct from the AI Actions cards below so users don't
-  // confuse "open an external search" with "send a prompt to an LLM".
-  if (contentSearches.length > 0) {
-    html += `
-      <section class="shortcuts-subsection ti-web-sources-section">
-        <div class="shortcuts-subsection-header">
-          <h4 class="shortcuts-subsection-title">Web Sources</h4>
-        </div>
-        <ul class="ti-web-source-chips">
-          ${contentSearches.map(s => webSourceChip(s, topicName)).join('')}
-        </ul>
-      </section>
-    `;
-  }
+  // Accordion sections — Web Sources, then the AI action groups
+  // (Discover / Learn / Analyze / More). Each section is a
+  // <details> element so it's natively keyboard accessible and
+  // doesn't need JS toggle wiring. First section starts open;
+  // others closed so the panel reads as a tidy stack of choices.
+  html += `<div class="ti-accordions">`;
 
-  // AI Actions section — shortcuts are grouped into Discover / Learn
-  // / Analyze (and a "More" bucket for anything unclassified). Each
-  // shortcut renders as a card (icon + name + evergreen description)
-  // with a group-tinted accent. The "AI Actions" subsection header
-  // is intentionally omitted: the cards-vs-chips visual difference
-  // already says "these are prompts, those were external links",
-  // and the per-group eyebrows (DISCOVER / LEARN / ANALYZE / MORE)
-  // do the structural work. Multi-select is always on; the whole
-  // card is the toggle target.
-  html += `
-    <section class="shortcuts-subsection ti-actions-section">
-  `;
+  if (contentSearches.length > 0) {
+    html += renderTIAccordion({
+      key: 'websources',
+      label: 'Web Sources',
+      open: true,
+      bodyHTML: `
+        <ul class="ti-item-list">
+          ${contentSearches.map(s => webSourceItem(s, topicName)).join('')}
+        </ul>
+      `,
+    });
+  }
 
   if (all.length === 0) {
     html += `<p class="sidebar-empty">No shortcuts yet.</p>`;
   } else {
     const groups = groupShortcuts(all);
-    // Use the resolved order from the data (admin-managed groups in
-    // assignments.json) instead of a hardcoded list, so adding /
-    // renaming / reordering groups in the admin panel takes effect.
     const groupOrder = groups.__order || [
       { key: 'discover', label: 'Discover' },
       { key: 'learn', label: 'Learn' },
@@ -1436,19 +1423,19 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     groupOrder.forEach(g => {
       const items = groups[g.key];
       if (!items || items.length === 0) return;
-      const accentClass = `ti-action-group--${g.key}`;
-      html += `
-        <div class="ai-shortcut-group ti-action-group ${accentClass}" data-group="${g.key}">
-          <h5 class="ai-shortcut-group-label ti-action-group-label">${g.label}</h5>
-          <ul class="ti-action-cards">
-            ${items.map(s => shortcutCard(s, topicName, g.key)).join('')}
+      html += renderTIAccordion({
+        key: g.key,
+        label: g.label,
+        open: false,
+        bodyHTML: `
+          <ul class="ti-item-list ti-item-list-shortcuts" data-group="${escapeAttr(g.key)}">
+            ${items.map(s => shortcutItem(s, topicName, g.key)).join('')}
           </ul>
-        </div>
-      `;
+        `,
+      });
     });
-    html += `<div class="shortcuts-list-tail-spacer" aria-hidden="true"></div>`;
   }
-  html += `</section>`;
+  html += `</div>`; /* close .ti-accordions */
   html += `</div>`; /* close .shortcuts-scroll-wrap */
   html += `<div class="shortcuts-toast" id="shortcuts-toast" role="status" aria-live="polite"></div>`;
   html += `</div>`; /* close .shortcuts-sidebar */
@@ -1747,6 +1734,127 @@ function shortcutItem(shortcut, topicName) {
 // glyph when selected. Keeps the .sidebar-shortcut +
 // .ai-shortcut-select-btn classes so the existing select / submit
 // handlers still pick it up.
+// === Topic Intelligence accordions ====================================
+// Section metadata: icon path (inline SVG) + accent color per
+// section. The section header pulls from this. New sections (e.g.
+// added in admin) fall back to a neutral globe + gray accent.
+const TI_SECTION_META = {
+  websources: {
+    accent: '#5d6b7e',
+    blurb: 'External search engines and platforms — open in a new tab to explore primary sources.',
+    icon: `<circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a14 14 0 0 1 4 9 14 14 0 0 1-4 9 14 14 0 0 1-4-9 14 14 0 0 1 4-9z"/>`,
+  },
+  discover: {
+    accent: '#3261a0',
+    blurb: 'AI prompts that surface what\'s happening now — news, trends, and notable developments.',
+    icon: `<circle cx="12" cy="12" r="9"/><polygon points="16 8 13.5 13.5 8 16 10.5 10.5 16 8"/>`,
+  },
+  learn: {
+    accent: '#2e8a73',
+    blurb: 'Background, fundamentals, and context — terms, history, and the key people shaping the space.',
+    icon: `<path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/>`,
+  },
+  analyze: {
+    accent: '#b48528',
+    blurb: 'Deeper analytical lenses — compare perspectives, weigh risks, and stress-test the conventional wisdom.',
+    icon: `<line x1="6" y1="20" x2="6" y2="14"/><line x1="12" y1="20" x2="12" y2="9"/><line x1="18" y1="20" x2="18" y2="4"/>`,
+  },
+  more: {
+    accent: '#8a4f7a',
+    blurb: 'Additional prompts that don\'t fit cleanly into the categories above.',
+    icon: `<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>`,
+  },
+};
+
+function renderTIAccordion({ key, label, open, bodyHTML }) {
+  const meta = TI_SECTION_META[key] || TI_SECTION_META.more;
+  const openAttr = open ? ' open' : '';
+  const blurbHTML = meta.blurb
+    ? `<span class="ti-accordion-blurb">${escapeHTML(meta.blurb)}</span>`
+    : '';
+  return `
+    <details class="ti-accordion" data-section="${escapeAttr(key)}" style="--ti-accent: ${meta.accent};"${openAttr}>
+      <summary class="ti-accordion-summary">
+        <span class="ti-accordion-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            ${meta.icon}
+          </svg>
+        </span>
+        <span class="ti-accordion-headtext">
+          <span class="ti-accordion-title">${escapeHTML(label)}</span>
+          ${blurbHTML}
+        </span>
+        <span class="ti-accordion-chev" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </span>
+      </summary>
+      <div class="ti-accordion-body">
+        ${bodyHTML}
+      </div>
+    </details>
+  `;
+}
+
+// Web source row — title + description, anchor link to the
+// external search URL. Mirrors the shortcut row format so both
+// section bodies read as the same tabular list of "things you
+// can open" with a one-line evergreen description below.
+function webSourceItem(search, topicName) {
+  const url = search.urlTemplate.replace(/\{query\}/g, encodeURIComponent(topicName));
+  const description = search.description
+    ? `<span class="ti-item-desc">${escapeHTML(search.description)}</span>`
+    : '';
+  return `
+    <li class="ti-item-row">
+      <a class="ti-item ti-item-link"
+         href="${url}"
+         target="_blank"
+         rel="noopener noreferrer"
+         data-name="${escapeAttr(search.name)}"
+         title="Open ${escapeAttr(search.name)} search">
+        <span class="ti-item-name">${escapeHTML(search.name)}</span>
+        ${description}
+      </a>
+    </li>
+  `;
+}
+
+// AI shortcut row — title + description in a button. Keeps the
+// existing multi-select wiring (data-prompt / data-name / etc)
+// so the bottom controls (Preview / Direct Submit) still work.
+// Individual shortcut icons are NOT rendered in the row — the
+// section header carries the visual identity, and dropping the
+// per-row icon leaves more room for the title + description.
+function shortcutItem(shortcut, topicName, groupKey) {
+  const prompt = shortcut.prompt.replace(/\{topic\}/gi, topicName);
+  const description = shortcut.description && shortcut.description.trim()
+    ? `<span class="ti-item-desc">${escapeHTML(shortcut.description)}</span>`
+    : '';
+  return `
+    <li class="ti-item-row">
+      <button class="ti-item ti-item-shortcut ai-shortcut-select-btn"
+              data-prompt="${escapeAttr(prompt)}"
+              data-name="${escapeAttr(shortcut.name)}"
+              data-icon-key="${escapeAttr(shortcut.icon)}"
+              data-group="${escapeAttr(groupKey || '')}"
+              aria-pressed="false"
+              title="${escapeAttr(shortcut.name)}">
+        <span class="ti-item-marker" aria-hidden="true">
+          <svg class="ti-item-marker-check" viewBox="0 0 14 14" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="2 7 6 11 12 3"/>
+          </svg>
+        </span>
+        <span class="ti-item-text">
+          <span class="ti-item-name">${escapeHTML(shortcut.name)}</span>
+          ${description}
+        </span>
+      </button>
+    </li>
+  `;
+}
+
 function shortcutCard(shortcut, topicName, groupKey) {
   const prompt = shortcut.prompt.replace(/\{topic\}/gi, topicName);
   const iconHTML = renderIcon(shortcut.icon, 'ti-action-card-icon-svg');
