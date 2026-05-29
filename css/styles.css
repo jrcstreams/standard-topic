@@ -1154,25 +1154,21 @@ body.hide-cta .sticky-cta { display: none !important; }
 .ti-accordion-summary:hover {
   background: color-mix(in srgb, var(--ti-accent) 4%, #ffffff);
 }
-/* Icon: small accent badge that vertically centers with the
-   title row. No oversized background — the icon reads as a glyph
-   marker, not a full button. */
+/* Icon: just the SVG glyph in the section's accent color. No
+   background chip — the title carries the visual weight, the icon
+   sits beside it as a small accent marker. Sized to match the
+   title's cap-height so the two line up cleanly without the
+   icon-box-extends-past-title look. */
 .ti-accordion-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 5px;
-  background: color-mix(in srgb, var(--ti-accent) 12%, #ffffff);
+  width: 18px;
+  height: 18px;
   color: var(--ti-accent);
   flex-shrink: 0;
-  transition: background 0.18s;
 }
-.ti-accordion-icon svg { width: 13px; height: 13px; }
-.ti-accordion[open] .ti-accordion-icon {
-  background: color-mix(in srgb, var(--ti-accent) 18%, #ffffff);
-}
+.ti-accordion-icon svg { width: 17px; height: 17px; stroke-width: 2; }
 .ti-accordion-headtext {
   display: flex;
   flex-direction: column;
@@ -1313,8 +1309,8 @@ body.hide-cta .sticky-cta { display: none !important; }
 
 @media (max-width: 640px) {
   .ti-accordion-summary { padding: 0.65rem 0.8rem; gap: 0.6rem; }
-  .ti-accordion-icon { width: 22px; height: 22px; }
-  .ti-accordion-icon svg { width: 13px; height: 13px; }
+  .ti-accordion-icon { width: 18px; height: 18px; }
+  .ti-accordion-icon svg { width: 17px; height: 17px; }
   .ti-accordion-title { font-size: 0.9rem; }
   .ti-accordion-blurb { font-size: 0.72rem; }
   .ti-accordion-body { padding: 0.15rem 0.45rem 0.65rem; }
@@ -10713,35 +10709,29 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
    bottom edge lands at the same y as the News Feed underline. The
    navy/tint color transition at the band's bottom replaces the
    border-bottom rule used elsewhere. */
+/* Topic Intelligence panel header — quiet header band that matches
+   the News Feed sibling's typographic weight + height (min-height
+   2.56rem, line-height 1.15) but drops the heavy navy fill. Brand-
+   color title text sits on the panel surface with a single thin
+   accent rule below — same visual rhythm as the News Feed title
+   (which uses a hairline border-bottom), so the two columns read
+   as parallel headers instead of one banner vs. one text title. */
 .topic-intelligence-panel .sidebar-card-header {
-  background: #1c3a6b;
-  border-bottom: none;
-  /* Round the navy band's top corners to match the panel's
-     border-radius. Without this the subpixel renderer can leave a
-     1-2px sliver of the tinted panel bg poking through where the
-     band's rectangular corner meets the panel's rounded one
-     (overflow: hidden mostly handles it, but not always). */
-  border-radius: 10px 10px 0 0;
-  /* Vertically centered title in a fixed-height band — matches the
-     News Feed header above (also min-height: 2.56rem +
-     align-items: center) so the two titles sit on the same y
-     coordinate across columns. */
-  padding: 0 0.95rem;
+  background: transparent;
+  border-bottom: 1px solid #d6dae2;
+  border-radius: 0;
+  padding: 0 0.4rem;
   margin: 0;
   min-height: 2.56rem;
   align-items: center;
 }
 .topic-intelligence-panel .sidebar-card-title {
   font-family: var(--font-display);
-  color: #ffffff;
-  /* Bigger, matching the News Feed title's typographic weight on
-     desktop. Line-height locked to 1.15 to match News Feed exactly
-     so the two titles share the same metric (top edge AND baseline
-     line up across columns). */
-  font-size: 1.15rem;
+  color: #1c3a6b;
+  font-size: 1.3rem;
   line-height: 1.15;
   font-weight: 600;
-  letter-spacing: -0.012em;
+  letter-spacing: -0.024em;
 }
 
 /* Body inset — eyebrows (WEB SOURCES / DISCOVER / LEARN ...) and the
