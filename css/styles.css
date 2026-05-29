@@ -1412,23 +1412,11 @@ body.hide-cta .sticky-cta { display: none !important; }
   transition: box-shadow 0.18s, border-color 0.18s;
 }
 .custom-search-sticky.is-stuck {
-  border-bottom-color: #dfe3ea;
-  box-shadow: 0 10px 22px -8px rgba(15, 26, 46, 0.14);
-  padding-bottom: 0.55rem;
-}
-/* Soft fade just below the pinned block so content reads as scrolling
-   UNDER it rather than hard-cutting at the edge. pointer-events:none so
-   it never blocks clicks on the content beneath. */
-.custom-search-sticky.is-stuck::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  transform: translateY(100%);
-  height: 14px;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0));
-  pointer-events: none;
+  border-bottom-color: #d3d9e3;
+  /* Layered, clearly-visible elevation — white-on-white content needs a
+     real shadow to read as a pinned bar above the scroll. */
+  box-shadow: 0 6px 14px -4px rgba(15, 26, 46, 0.13), 0 2px 5px -2px rgba(15, 26, 46, 0.08);
+  padding-bottom: 0.6rem;
 }
 .custom-search-page-bar {
   display: flex;
@@ -1459,7 +1447,6 @@ body.hide-cta .sticky-cta { display: none !important; }
   flex-direction: column;
   gap: 0.18rem;
   padding: 0.55rem 0 0.7rem;
-  border-top: 1px solid #eef0f4;
 }
 .custom-ti-title {
   font-family: var(--font-display);
