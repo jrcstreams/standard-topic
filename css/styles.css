@@ -216,6 +216,14 @@ body.sticky-always.has-subnav #content {
   padding-top: calc(64px + var(--subnav-height, 66px) + 1.75rem);
 }
 
+/* Custom-search pages have no subnav — sit content just below the
+   main nav with a small gap (not the subnav-sized reservation that
+   left a weird void above the title). The in-page sticky bar pins to
+   the nav as the user scrolls. */
+body.custom-mode.sticky-always #content {
+  padding-top: calc(64px + 0.85rem);
+}
+
 
 @media (max-width: 640px) {
   body.sticky-always #content {
@@ -224,6 +232,10 @@ body.sticky-always.has-subnav #content {
 
   body.sticky-always.has-subnav #content {
     padding-top: calc(64px + var(--subnav-height, 66px) + 1rem);
+  }
+
+  body.custom-mode.sticky-always #content {
+    padding-top: calc(56px + 0.75rem);
   }
 }
 
@@ -1172,6 +1184,10 @@ body.hide-cta .sticky-cta { display: none !important; }
   flex-shrink: 0;
   grid-column: 1;
   grid-row: 1;
+  /* Optical nudge: Title-Case glyphs sit slightly high in their line
+     box, so a geometrically-centered icon reads as floating. Drop the
+     icon 1px to align with the title's visual center. */
+  transform: translateY(1px);
 }
 .ti-accordion-icon svg { width: 19px; height: 19px; stroke-width: 2; }
 .ti-accordion-title {
@@ -1359,52 +1375,62 @@ body.hide-cta .sticky-cta { display: none !important; }
   height: auto;
   overflow: visible;
 }
-.custom-search-page-header {
-  display: flex;
-  flex-direction: column;
-  gap: 1.1rem;
-  margin: 0 0 1.5rem;
-  padding: 1.5rem 0 0;
-}
-.custom-search-page-header-text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  max-width: 720px;
-}
-.custom-search-page-title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: 1.65rem;
-  font-weight: 700;
-  letter-spacing: -0.022em;
-  line-height: 1.15;
-  color: #0f1a2e;
-}
+/* Intro sits above the sticky bar (as a sibling in the page-tall
+   layout), so it simply scrolls out of view once the user scrolls —
+   the bar then reads as a compact subnav. */
 .custom-search-page-intro {
-  margin: 0;
-  font-size: 0.98rem;
+  margin: 0 0 0.95rem;
+  max-width: 720px;
+  font-size: 0.95rem;
   line-height: 1.5;
   color: #4a5568;
   font-weight: 400;
 }
-/* Sticky search bar container — sticks to the top of the viewport
-   (just below the main nav) once the user scrolls past it. Carries
-   a light background so the input stays legible over whatever
-   content scrolls behind. */
+/* Sticky subnav: the page title + search input pin together just
+   below the main nav once the intro scrolls past. Title sits left,
+   input flexes to fill. A shadow/hairline fades in only when pinned
+   (.is-stuck) so it reads flat at rest and as a bar when stuck. */
 .custom-search-page-bar {
   position: sticky;
   top: 64px;
   z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: 0 0 1.5rem;
   background: #ffffff;
-  padding: 0.5rem 0;
-  margin: 0 -0.25rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid transparent;
+  transition: box-shadow 0.18s, border-color 0.18s;
+}
+.custom-search-page-bar.is-stuck {
+  border-bottom-color: #e2e6ee;
+  box-shadow: 0 6px 16px rgba(15, 26, 46, 0.06);
+}
+.custom-search-page-title {
+  margin: 0;
+  flex: 0 0 auto;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: #0f1a2e;
+  white-space: nowrap;
+}
+.custom-search-page-bar-input {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 @media (max-width: 899.98px) {
-  .custom-search-page-header { margin-bottom: 1.1rem; padding-top: 1rem; }
-  .custom-search-page-title { font-size: 1.4rem; }
-  .custom-search-page-intro { font-size: 0.92rem; }
-  .custom-search-page-bar { top: 56px; }
+  .custom-search-page-bar {
+    top: 56px;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+  }
+  .custom-search-page-title { font-size: 1.05rem; flex-basis: 100%; }
+  .custom-search-page-bar-input { flex-basis: 100%; }
+  .custom-search-page-intro { font-size: 0.9rem; }
 }
 
 /* === Custom-search subnav: live search input + autocomplete drop ===
@@ -10806,18 +10832,41 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   box-shadow: none;
   overflow: visible;
 }
-/* Custom-search pages: drop the "Topic Intelligence" header
-   entirely. The page identity is already carried by the search
-   input in the subnav above, and the content sections (Web
-   Sources, Discover, Learn, Analyze) have their own labels —
-   the panel-level header was redundant and stole vertical space. */
+/* Custom-search pages: show the panel header relabeled "Search
+   Intelligence", with the search term as a subtitle so the section
+   reads as scoped to what the user typed (mirrors the Topic
+   Intelligence header treatment on topic pages). */
 .topic-layout.is-custom .topic-intelligence-panel .sidebar-card-header {
-  display: none;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.25rem;
 }
 .topic-layout.is-custom .topic-intelligence-panel .shortcuts-scroll-wrap {
   padding-left: 0;
   padding-right: 0;
   padding-top: 0;
+}
+
+/* Title + subtitle stack inside the panel header. Only custom-search
+   renders a subtitle today; on topic/home pages the heading wraps the
+   title alone and reads identically to before. */
+.sidebar-card-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+.sidebar-card-subtitle {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0;
+  color: #6b7686;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 /* Eyebrows match topic-page sidebar scale (0.78rem). The WEB

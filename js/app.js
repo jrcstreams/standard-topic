@@ -71,6 +71,26 @@ let heroScrollHandler = null;
 const MOBILE_QUERY = '(max-width: 640px)';
 
 let subnavResizeObs = null;
+
+// Toggles `.is-stuck` on the custom-search sticky bar when it pins to
+// the top, so the bar's shadow/hairline only shows once it's a fixed
+// subnav (flat at rest). Uses a sentinel one pixel above the bar:
+// when the sentinel scrolls out the top, the bar is stuck.
+let customStickyObs = null;
+function setupCustomStickyBar(bar) {
+  if (customStickyObs) { customStickyObs.disconnect(); customStickyObs = null; }
+  if (!bar || typeof IntersectionObserver === 'undefined') return;
+  const sentinel = document.createElement('div');
+  sentinel.className = 'custom-search-sticky-sentinel';
+  sentinel.setAttribute('aria-hidden', 'true');
+  bar.parentNode.insertBefore(sentinel, bar);
+  customStickyObs = new IntersectionObserver(
+    ([entry]) => bar.classList.toggle('is-stuck', !entry.isIntersecting),
+    { threshold: 0, rootMargin: '-64px 0px 0px 0px' }
+  );
+  customStickyObs.observe(sentinel);
+}
+
 function setSubnavHeightVar() {
   const sub = document.getElementById('sub-header');
   if (!sub) return;
@@ -114,7 +134,7 @@ function renderLayout(route) {
   subHeader.innerHTML = '';
   const stayingInHomeDesktop = isHome && !isMobile && wasOnHomeDesktop;
   if (heroEl && !stayingInHomeDesktop) heroEl.innerHTML = '';
-  document.body.classList.remove('sticky-always', 'has-subnav', 'home-mode', 'show-subnav-tabs', 'app-mode');
+  document.body.classList.remove('sticky-always', 'has-subnav', 'home-mode', 'show-subnav-tabs', 'app-mode', 'custom-mode');
 
   // Always render the main sticky bar
   renderStickyHeroBar(siteHeader, route);
@@ -130,6 +150,15 @@ function renderLayout(route) {
   // the top as the user scrolls past it.
   if (route.type === 'home' || route.type === 'topic') {
     document.body.classList.add('app-mode');
+  }
+
+  // Custom-search pages scroll naturally (no app-mode lock) and carry
+  // no subnav — the page's own title + search bar pin to the top as a
+  // sticky bar instead. The custom-mode class lets CSS trim the
+  // content's top padding (which otherwise reserves room for a subnav
+  // that isn't there) and drive the sticky-bar offset.
+  if (route.type === 'custom') {
+    document.body.classList.add('custom-mode');
   }
 
   // Title group: icon + name. Hamburger now lives permanently in the
@@ -1181,18 +1210,17 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // scrolls naturally so the search bar's sticky behavior works.
     container.innerHTML = `
       <div class="topic-layout is-custom" id="topic-layout">
-        <header class="custom-search-page-header">
-          <div class="custom-search-page-header-text">
-            <h1 class="custom-search-page-title">Custom Topic Search</h1>
-            <p class="custom-search-page-intro">Type any topic and we'll build out web sources, AI shortcuts, and analysis tools tailored to it — search, edit, and refine on the fly.</p>
-          </div>
-          <div class="custom-search-page-bar" data-role="custom-search-bar"></div>
-        </header>
+        <p class="custom-search-page-intro">Type any topic and we'll build out web sources, AI shortcuts, and analysis tools tailored to it — search, edit, and refine on the fly.</p>
+        <div class="custom-search-page-bar">
+          <h1 class="custom-search-page-title">Custom Topic Search</h1>
+          <div class="custom-search-page-bar-input" data-role="custom-search-bar"></div>
+        </div>
         <section class="layout-section" id="section-shortcuts"></section>
       </div>
     `;
     const barContainer = container.querySelector('[data-role="custom-search-bar"]');
     if (barContainer) renderCustomSearchBar(barContainer, customTerm);
+    setupCustomStickyBar(container.querySelector('.custom-search-page-bar'));
   } else if (isHome) {
     // Homepage: Shortcuts + News Feed. Body tabs at the top let
     // mobile users switch between them; CSS hides the tabs at
@@ -1347,10 +1375,22 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
    // row toggles selection, and a per-row arrow opens the modal for
    // that single shortcut directly. The `data-multi="1"` flag + the
    // .is-multi-select class are set up-front and never toggled off.
+  // Custom-search pages relabel the panel "Search Intelligence" and
+  // carry a subtitle showing the search term, so the section reads as
+  // scoped to what the user typed. Topic / home pages keep the plain
+  // "Topic Intelligence" title (the topic is already named above).
+  const panelTitle = isCustom ? 'Search Intelligence' : 'Topic Intelligence';
+  const panelSubtitleHTML = (isCustom && topicName)
+    ? `<p class="sidebar-card-subtitle">Covering &ldquo;${escapeHTML(topicName)}&rdquo;</p>`
+    : '';
+
   let html = `
     <div class="${cardClasses.join(' ')} is-multi-select" data-multi="1">
       <div class="sidebar-card-header">
-        <h3 class="sidebar-card-title">Topic Intelligence${titlePillHTML}</h3>
+        <div class="sidebar-card-heading">
+          <h3 class="sidebar-card-title">${panelTitle}${titlePillHTML}</h3>
+          ${panelSubtitleHTML}
+        </div>
       </div>
       ${all.length > 0 ? `
         <div class="shortcuts-multi-submit-wrap" role="region" aria-label="Prompt submission" aria-hidden="true">
