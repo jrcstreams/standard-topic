@@ -77,15 +77,15 @@ let subnavResizeObs = null;
 // subnav (flat at rest). Uses a sentinel one pixel above the bar:
 // when the sentinel scrolls out the top, the bar is stuck.
 let customStickyObs = null;
-function setupCustomStickyBar(bar) {
+function setupCustomStickyBar(stickyEl) {
   if (customStickyObs) { customStickyObs.disconnect(); customStickyObs = null; }
-  if (!bar || typeof IntersectionObserver === 'undefined') return;
+  if (!stickyEl || typeof IntersectionObserver === 'undefined') return;
   const sentinel = document.createElement('div');
   sentinel.className = 'custom-search-sticky-sentinel';
   sentinel.setAttribute('aria-hidden', 'true');
-  bar.parentNode.insertBefore(sentinel, bar);
+  stickyEl.parentNode.insertBefore(sentinel, stickyEl);
   customStickyObs = new IntersectionObserver(
-    ([entry]) => bar.classList.toggle('is-stuck', !entry.isIntersecting),
+    ([entry]) => stickyEl.classList.toggle('is-stuck', !entry.isIntersecting),
     { threshold: 0, rootMargin: '-64px 0px 0px 0px' }
   );
   customStickyObs.observe(sentinel);
@@ -1208,22 +1208,35 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // Learn, Analyze) as the page body. No subnav (handled in the
     // route block above) and no app-mode constraint — the page
     // scrolls naturally so the search bar's sticky behavior works.
+    // The intro header scrolls away; the sticky block (search bar +
+    // Topic Intelligence / Covering context) pins below the nav and
+    // collapses to a compact bar — title, search, and the TI/covering
+    // line all transition together.
+    const coveringHTML = customTerm
+      ? `<span class="custom-ti-sub">Covering &ldquo;${escapeHTML(customTerm)}&rdquo;</span>`
+      : '';
     container.innerHTML = `
       <div class="topic-layout is-custom" id="topic-layout">
         <div class="custom-search-head">
           <h1 class="custom-search-page-title">Custom Topic Search</h1>
           <p class="custom-search-page-intro">Type any topic and we'll build out web sources, AI shortcuts, and analysis tools tailored to it — search, edit, and refine on the fly.</p>
         </div>
-        <div class="custom-search-page-bar">
-          <span class="custom-search-bar-title" aria-hidden="true">Custom Topic Search</span>
-          <div class="custom-search-page-bar-input" data-role="custom-search-bar"></div>
+        <div class="custom-search-sticky">
+          <div class="custom-search-page-bar">
+            <span class="custom-search-bar-title" aria-hidden="true">Custom Topic Search</span>
+            <div class="custom-search-page-bar-input" data-role="custom-search-bar"></div>
+          </div>
+          <div class="custom-ti-header">
+            <span class="custom-ti-title">Topic Intelligence</span>
+            ${coveringHTML}
+          </div>
         </div>
         <section class="layout-section" id="section-shortcuts"></section>
       </div>
     `;
     const barContainer = container.querySelector('[data-role="custom-search-bar"]');
     if (barContainer) renderCustomSearchBar(barContainer, customTerm);
-    setupCustomStickyBar(container.querySelector('.custom-search-page-bar'));
+    setupCustomStickyBar(container.querySelector('.custom-search-sticky'));
   } else if (isHome) {
     // Homepage: Shortcuts + News Feed. Body tabs at the top let
     // mobile users switch between them; CSS hides the tabs at
