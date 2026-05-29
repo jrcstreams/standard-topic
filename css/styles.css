@@ -10732,7 +10732,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   background: transparent;
   border-bottom: 1px solid #d6dae2;
   border-radius: 0;
-  padding: 0 0.4rem;
+  padding: 0;
   margin: 0;
   min-height: 2.56rem;
   align-items: center;
@@ -10746,13 +10746,12 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   letter-spacing: -0.024em;
 }
 
-/* Body inset — eyebrows (WEB SOURCES / DISCOVER / LEARN ...) and the
-   action spines breathe inside the tinted surface rather than sitting
-   flush against the panel walls. Left padding is slightly heavier so
-   the colored spines have visible margin from the panel edge. */
+/* No body inset now that the panel chrome is gone — the
+   accordion cards align flush with the panel title above them
+   (which sits at padding 0 on the same x-axis). */
 .topic-intelligence-panel .shortcuts-scroll-wrap {
-  padding-left: 0.95rem;
-  padding-right: 0.7rem;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 /* Mobile: strip the control-panel chrome entirely. The TI panel
