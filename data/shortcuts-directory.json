@@ -581,7 +581,7 @@
       "name": "Local Market Deep Dive",
       "icon": "local-market-deep-dive",
       "prompt": "Give me a deep look at the housing market in [city or metro area]. Cover prices and trends, inventory and demand dynamics, neighborhoods worth knowing, and what's specific to this market right now.",
-      "description": "A deeper read — context, dynamics, what matters",
+      "description": "A deeper read of context, dynamics, and what matters",
       "group": "analyze"
     },
     {
@@ -637,7 +637,7 @@
       "name": "Stock Deep Dive",
       "icon": "stock-deep-dive",
       "prompt": "Give me a current look at [company or ticker]. Cover recent price action and earnings, the bull and bear cases, key catalysts ahead, valuation context, and how it compares to its main peers.",
-      "description": "A deeper read — context, dynamics, what matters",
+      "description": "A deeper read of context, dynamics, and what matters",
       "group": "analyze"
     },
     {
@@ -2085,7 +2085,7 @@
       "name": "Race or State Deep Dive",
       "icon": "elections-race-state-deep-dive",
       "prompt": "Give me a deep dive on the [race or state] election landscape. Cover the candidates, the key issues, current polling, the structural environment, and what to watch for.",
-      "description": "A deeper read — context, dynamics, what matters",
+      "description": "A deeper read of context, dynamics, and what matters",
       "group": "more"
     },
     {
@@ -2380,7 +2380,7 @@
       "name": "Country Deep Dive",
       "icon": "country-deep-dive",
       "prompt": "Give me a current overview of [country]. Cover the political situation, economy, security environment, key recent developments, foreign policy posture, and how it fits into its region and the wider world.",
-      "description": "A deeper read — context, dynamics, what matters",
+      "description": "A deeper read of context, dynamics, and what matters",
       "group": "analyze"
     },
     {
@@ -2436,7 +2436,7 @@
       "name": "African Country Deep Dive",
       "icon": "african-country-deep-dive",
       "prompt": "Give me a current overview of [African country]. Cover political situation, economy, security, key issues, and how it fits into regional dynamics.",
-      "description": "A deeper read — context, dynamics, what matters",
+      "description": "A deeper read of context, dynamics, and what matters",
       "group": "analyze"
     },
     {
@@ -2444,448 +2444,512 @@
       "name": "Asia-Pacific Snapshot",
       "icon": "asia-pacfic-snapshot",
       "prompt": "Give me a snapshot of the most significant developments across Asia (excluding China and India, which have their own pages). Cover Japan, Korea, Southeast Asia, and the broader region.",
-      "description": "Current state of Asia-Pacific"
+      "description": "Current state of Asia-Pacific",
+      "group": "discover"
     },
     {
       "id": "southeast-asia-updates",
       "name": "Southeast Asia Updates",
       "icon": "southeast-asia-updates",
       "prompt": "What's happening across Southeast Asia right now? Cover political and economic developments in Indonesia, Vietnam, Philippines, Thailand, Malaysia, Singapore, and the smaller states. Note ASEAN-level dynamics.",
-      "description": "Recent developments in southeast Asia"
+      "description": "Recent developments in southeast Asia",
+      "group": "discover"
     },
     {
       "id": "korean-peninsula-watch",
       "name": "Korean Peninsula Watch",
       "icon": "korean-peninsula-watch",
       "prompt": "What's happening on the Korean Peninsula right now? Cover South Korea's political and economic situation, North Korea's weapons activity and diplomacy, US-South Korea-Japan dynamics, and inter-Korean relations.",
-      "description": "Signals worth tracking in Korean peninsula"
+      "description": "Signals worth tracking in Korean peninsula",
+      "group": "discover"
     },
     {
       "id": "japan-updates",
       "name": "Japan Updates",
       "icon": "japan-updates",
       "prompt": "What's happening in Japan right now? Cover political leadership, economic developments, defense and foreign policy shifts, demographic challenges, and major business stories.",
-      "description": "Recent developments in Japan"
+      "description": "Recent developments in Japan",
+      "group": "discover"
     },
     {
       "id": "taiwan-strait-watch",
       "name": "Taiwan Strait Watch",
       "icon": "taiwan-strait-watch",
       "prompt": "What's the current situation in the Taiwan Strait? Cover Chinese military activity, Taiwan's domestic politics, US engagement, and economic and supply chain dimensions, especially around semiconductors.",
-      "description": "Signals worth tracking in Taiwan strait"
+      "description": "Signals worth tracking in Taiwan strait",
+      "group": "analyze"
     },
     {
       "id": "asian-markets-snapshot",
       "name": "Asian Markets Snapshot",
       "icon": "asian-markets-snapshot",
       "prompt": "What's happening in major Asian financial markets right now? Cover Tokyo, Hong Kong, Shanghai, Seoul, Mumbai, and Singapore — major moves, currency dynamics, and key drivers.",
-      "description": "Current state of Asian markets"
+      "description": "Current state of Asian markets",
+      "group": "discover"
     },
     {
       "id": "canadian-political-snapshot",
       "name": "Canadian Political Snapshot",
       "icon": "canadian-political-snapshot",
       "prompt": "Give me a current snapshot of Canadian politics. Cover federal politics, the prime minister and major party leaders, current polling, and the issues dominating debate.",
-      "description": "Current state of Canadian political"
+      "description": "Current state of Canadian political",
+      "group": "discover"
     },
     {
       "id": "canada-us-relations-watch",
       "name": "Canada-US Relations Watch",
       "icon": "canada-us-relations-watch",
       "prompt": "What's happening in Canada-US relations right now? Cover trade frictions, defense and border issues, energy and critical minerals, and how the relationship is evolving.",
-      "description": "Signals worth tracking in Canada-US relations"
+      "description": "Signals worth tracking in Canada-US relations",
+      "group": "discover"
     },
     {
       "id": "canada-provincial-politics",
       "name": "Provincial Politics",
       "icon": "canada-provincial-politics",
       "prompt": "What's happening in Canadian provinces? Cover Ontario, Quebec, BC, and Alberta and other provinces — their leaders, current political dynamics, and any federal-provincial tensions.",
-      "description": "Politics across the Canadian provinces"
+      "description": "Politics across the Canadian provinces",
+      "group": "discover"
     },
     {
       "id": "canada-economy-updates",
       "name": "Canadian Economy Updates",
       "icon": "canada-economy-updates",
       "prompt": "What's the current state of the Canadian economy? Cover GDP, inflation, the Bank of Canada's stance, housing affordability, immigration's economic effects, and major industry developments.",
-      "description": "Recent developments in Canadian economy"
+      "description": "Recent developments in Canadian economy",
+      "group": "discover"
     },
     {
       "id": "canada-indigenous-affairs-watch",
       "name": "Indigenous Affairs Watch",
       "icon": "canada-indigenous-affairs-watch",
       "prompt": "What are the most important recent developments in Indigenous affairs in Canada? Cover reconciliation efforts, land and resource disputes, court cases, and policy developments.",
-      "description": "Signals worth tracking in indigenous affairs"
+      "description": "Signals worth tracking in indigenous affairs",
+      "group": "analyze"
     },
     {
       "id": "canada-markets-business",
       "name": "Canadian Markets and Business",
       "icon": "canada-markets-business",
       "prompt": "What's happening in Canadian markets and business? Cover the TSX, the loonie, major Canadian companies, and resource sector developments.",
-      "description": "Canadian markets and business"
+      "description": "Canadian markets and business",
+      "group": "analyze"
     },
     {
       "id": "china-snapshot",
       "name": "China Snapshot",
       "icon": "china-snapshot",
       "prompt": "Give me a current snapshot of China — the most significant political, economic, and foreign policy developments right now. Note signal vs. noise in interpreting state media coverage.",
-      "description": "Current state of China"
+      "description": "Current state of China",
+      "group": "discover"
     },
     {
       "id": "chinese-economy-watch",
       "name": "Chinese Economy Watch",
       "icon": "chinese-economy-watch",
       "prompt": "What's happening in the Chinese economy? Cover GDP, property sector, consumer demand, deflation dynamics, employment, and government stimulus measures.",
-      "description": "Signals worth tracking in Chinese economy"
+      "description": "Signals worth tracking in Chinese economy",
+      "group": "discover"
     },
     {
       "id": "xi-ccp-watch",
       "name": "Xi and CCP Watch",
       "icon": "xi-ccp-watch",
       "prompt": "What's happening at the top of the Chinese Communist Party? Cover Xi's recent statements and travel, Politburo and Central Committee dynamics, anti-corruption activity, and any signals about succession or factional politics.",
-      "description": "Signals worth tracking in xi and ccp"
+      "description": "Signals worth tracking in xi and ccp",
+      "group": "analyze"
     },
     {
       "id": "chinese-tech-sector-updates",
       "name": "Chinese Tech Sector Updates",
       "icon": "chinese-tech-sector-updates",
       "prompt": "What's the current state of China's tech sector regulation and industrial policy? Cover which sectors are getting promoted vs. restricted, recent enforcement actions, and major Chinese tech company developments.",
-      "description": "Recent developments in Chinese tech sector"
+      "description": "Recent developments in Chinese tech sector",
+      "group": "analyze"
     },
     {
       "id": "china-global-reach",
       "name": "China's Global Reach",
       "icon": "china-global-reach",
       "prompt": "Where is China expanding its global influence right now? Cover Belt and Road, BRICS+, infrastructure deals, military presence, and diplomatic offensives across regions.",
-      "description": "China expanding its global influence right now"
+      "description": "China expanding its global influence right now",
+      "group": "analyze"
     },
     {
       "id": "china-us-tech-trade-war",
       "name": "China-US Tech and Trade War",
       "icon": "china-us-tech-trade-war",
       "prompt": "What's the current state of China-US tech and trade tensions? Cover tariffs, export controls, semiconductor policy, Chinese countermeasures, and the impact on businesses on both sides.",
-      "description": "Current state of China-US tech and trade tensions"
+      "description": "Current state of China-US tech and trade tensions",
+      "group": "learn"
     },
     {
       "id": "us-snapshot",
       "name": "United States Snapshot",
       "icon": "us-snapshot",
       "prompt": "Give me a current snapshot of the United States from an international perspective. Cover the major political, economic, and foreign policy stories shaping how the US is acting in the world right now, and how the rest of the world is reading those signals.",
-      "description": "Current state of united states"
+      "description": "Current state of united states",
+      "group": "discover"
     },
     {
       "id": "us-foreign-policy-watch",
       "name": "US Foreign Policy Watch",
       "icon": "us-foreign-policy-watch",
       "prompt": "What's happening in US foreign policy right now? Cover the administration's priorities, major diplomatic moves, allies and adversaries the US is leaning into or stepping back from, and the foreign-policy debates dominating Washington.",
-      "description": "Signals worth tracking in US foreign policy"
+      "description": "Signals worth tracking in US foreign policy",
+      "group": "discover"
     },
     {
       "id": "us-economy-world",
       "name": "US Economy and the World",
       "icon": "us-economy-world",
       "prompt": "How is the US economy affecting the rest of the world right now? Cover Fed policy and the dollar, trade and tariffs, capital flows, commodity demand, and how major trading partners are responding.",
-      "description": "How the US economy ripples outward"
+      "description": "How the US economy ripples outward",
+      "group": "discover"
     },
     {
       "id": "us-defense-alliances",
       "name": "US Defense and Alliances",
       "icon": "us-defense-alliances",
       "prompt": "What's happening with US defense posture and alliances? Cover NATO, the Indo-Pacific alliance network (Japan, South Korea, Australia, AUKUS, Quad), Middle East deployments, defense spending and procurement, and any shifts in the US security commitment to key regions.",
-      "description": "US defense posture and alliances"
+      "description": "US defense posture and alliances",
+      "group": "analyze"
     },
     {
       "id": "us-trade-tariffs-tracker",
       "name": "US Trade and Tariffs Tracker",
       "icon": "us-trade-tariffs-tracker",
       "prompt": "What's the current state of US trade policy and tariffs? Cover the major tariff actions in effect, ongoing trade negotiations, country-by-country dynamics (China, Mexico, Canada, EU, key Asian partners), and how businesses and other governments are responding.",
-      "description": "Ongoing US trade and tariffs developments worth following"
+      "description": "Ongoing US trade and tariffs developments worth following",
+      "group": "analyze"
     },
     {
       "id": "domestic-stories-world-watching",
       "name": "Domestic Stories the World Is Watching",
       "icon": "domestic-stories-world-watching",
       "prompt": "Which US domestic stories are getting the most international attention right now and why? Cover political developments, court rulings, regulatory moves, and cultural stories that foreign media and governments are tracking closely — and what they're reading into them.",
-      "description": "US stories drawing international attention"
+      "description": "US stories drawing international attention",
+      "group": "discover"
     },
     {
       "id": "us-china-relationship-watch",
       "name": "US-China Relationship Watch",
       "icon": "us-china-relationship-watch",
       "prompt": "What's the current state of the US-China relationship? Cover diplomatic posture, trade and tech tensions, Taiwan and the South China Sea, military signaling, and any active points of cooperation or escalation.",
-      "description": "Signals worth tracking in US-China relationship"
+      "description": "Signals worth tracking in US-China relationship",
+      "group": "analyze"
     },
     {
       "id": "us-immigration-border-updates",
       "name": "US Immigration and Border Updates",
       "icon": "us-immigration-border-updates",
       "prompt": "What's happening with US immigration and border policy right now? Cover the administration's actions, court challenges, border conditions, the international dimension (Mexico, Central America, and source countries), and the political dynamics shaping it all.",
-      "description": "Recent developments in US immigration and border"
+      "description": "Recent developments in US immigration and border",
+      "group": "analyze"
     },
     {
       "id": "eu-snapshot",
       "name": "EU Snapshot",
       "icon": "eu-snapshot",
       "prompt": "Give me a current snapshot of the EU — major Commission and Council developments, Parliament activity, the dominant policy debates, and how member-state politics is shaping the agenda.",
-      "description": "Current state of EU"
+      "description": "Current state of EU",
+      "group": "discover"
     },
     {
       "id": "european-politics-watch",
       "name": "European Politics Watch",
       "icon": "european-politics-watch",
       "prompt": "What's happening in major European national politics right now? Cover Germany, France, Italy, Spain, Poland, the Nordics and more — leadership, coalition dynamics, and key policy fights.",
-      "description": "Signals worth tracking in European politics"
+      "description": "Signals worth tracking in European politics",
+      "group": "discover"
     },
     {
       "id": "eu-regulation-tracker",
       "name": "EU Regulation Tracker",
       "icon": "eu-regulation-tracker",
       "prompt": "What major EU regulations are being implemented or proposed right now? Cover digital, green, competition, and any other consequential rules.",
-      "description": "Ongoing EU regulation developments worth following"
+      "description": "Ongoing EU regulation developments worth following",
+      "group": "analyze"
     },
     {
       "id": "european-economy-check",
       "name": "European Economy Check",
       "icon": "european-economy-check",
       "prompt": "What's happening in major European economies? Cover ECB policy, inflation across the Eurozone, growth and recession dynamics, and major industrial developments.",
-      "description": "Quick read on European economy right now"
+      "description": "Quick read on European economy right now",
+      "group": "discover"
     },
     {
       "id": "europe-far-right-far-left",
       "name": "Far Right and Far Left Watch",
       "icon": "europe-far-right-far-left",
       "prompt": "What's happening with far-right and far-left movements across Europe? Cover their electoral performance, governing roles, mainstream party responses, and trajectory.",
-      "description": "Signals worth tracking in far right and far left"
+      "description": "Signals worth tracking in far right and far left",
+      "group": "analyze"
     },
     {
       "id": "uk-in-europe-post-brexit",
       "name": "UK in Europe post-Brexit",
       "icon": "uk-in-europe-post-brexit",
       "prompt": "How is the UK relating to Europe post-Brexit? Cover trade and regulatory alignment, security cooperation, ongoing disputes, and any shifts in the relationship.",
-      "description": "The UK relating to Europe post-Brexit"
+      "description": "The UK relating to Europe post-Brexit",
+      "group": "analyze"
     },
     {
       "id": "european-defense-updates",
       "name": "European Defense Updates",
       "icon": "european-defense-updates",
       "prompt": "What's happening with European defense right now? Cover alliances, treaties, European posture, EU defense initiatives, Ukraine and Russia updates relevant to European defense, Russia, defense spending across member states, and the European defense industrial base.",
-      "description": "Recent developments in European defense"
+      "description": "Recent developments in European defense",
+      "group": "analyze"
     },
     {
       "id": "european-country-deep-dive",
       "name": "Country Snapshot",
       "icon": "european-country-deep-dive",
       "prompt": "Give me a current overview of [European country]. Cover political situation, economy, key issues, EU relationship, and what's distinctive about its current moment.",
-      "description": "Current state of country"
+      "description": "Current state of country",
+      "group": "analyze"
     },
     {
       "id": "india-snapshot",
       "name": "India Snapshot",
       "icon": "india-snapshot",
       "prompt": "Give me a current snapshot of India — major political, economic, and foreign policy developments. Cover the central government, state-level developments worth knowing, and dominant policy debates.",
-      "description": "Current state of India"
+      "description": "Current state of India",
+      "group": "discover"
     },
     {
       "id": "india-government-watch",
       "name": "Government Watch",
       "icon": "india-government-watch",
       "prompt": "What are the latest developments around the government? Cover policy initiatives, electoral dynamics, party developments, and recent controversies or wins.5",
-      "description": "Signals worth tracking in government"
+      "description": "Signals worth tracking in government",
+      "group": "discover"
     },
     {
       "id": "india-economy-updates",
       "name": "Indian Economy Updates",
       "icon": "india-economy-updates",
       "prompt": "What's the current state of the Indian economy? Cover GDP, RBI policy, inflation, employment, the consumer story, manufacturing initiatives, and major sectoral developments.",
-      "description": "Recent developments in Indian economy"
+      "description": "Recent developments in Indian economy",
+      "group": "discover"
     },
     {
       "id": "indian-tech-startups",
       "name": "India Tech and Startups",
       "icon": "indian-tech-startups",
       "prompt": "What's happening in Indian tech and startups right now? Cover the funding environment, top startups by sector, IPO activity, and how India is positioning in AI and digital infrastructure.",
-      "description": "Indian tech and startups right now"
+      "description": "Indian tech and startups right now",
+      "group": "analyze"
     },
     {
       "id": "india-foreign-policy",
       "name": "India's Foreign Policy",
       "icon": "india-foreign-policy",
       "prompt": "What's happening in Indian foreign policy? Cover relations with the US, China, Russia, the Gulf, Europe, and neighbors. Cover India's stance on major global issues and its role in BRICS, Quad, and other groupings.",
-      "description": "How policy is currently shaping this area"
+      "description": "How policy is currently shaping this area",
+      "group": "discover"
     },
     {
       "id": "state-politics-india",
       "name": "State Politics in India",
       "icon": "state-politics-india",
       "prompt": "What's happening in major Indian state politics? Cover the most consequential state governments, upcoming state elections, and federal-state tensions worth knowing about.",
-      "description": "Major Indian state politics"
+      "description": "Major Indian state politics",
+      "group": "discover"
     },
     {
       "id": "latin-america-snapshot",
       "name": "Latin America Snapshot",
       "icon": "latin-america-snapshot",
       "prompt": "Give me a current snapshot of Latin America. Cover the most significant political, economic, and security developments across the major countries and sub-regions.",
-      "description": "Current state of Latin America"
+      "description": "Current state of Latin America",
+      "group": "discover"
     },
     {
       "id": "mexico-snapshot",
       "name": "Mexico Snapshot",
       "icon": "mexico-snapshot",
       "prompt": "What's happening in Mexico right now? Cover politics under the current administration, security situation, the US-Mexico relationship, the economy and peso, and major business developments.",
-      "description": "Current state of Mexico"
+      "description": "Current state of Mexico",
+      "group": "discover"
     },
     {
       "id": "brazil-snapshot",
       "name": "Brazil Snapshot",
       "icon": "brazil-snapshot",
       "prompt": "What's happening in Brazil right now? Cover government, Congress dynamics, economy and real, environmental policy, and Brazil's role on the world stage.",
-      "description": "Current state of Brazil"
+      "description": "Current state of Brazil",
+      "group": "more"
     },
     {
       "id": "argentina-snapshot",
       "name": "Argentina Snapshot",
       "icon": "argentina-snapshot",
       "prompt": "What's happening in Argentina right now? Cover the government's reforms, economic stabilization progress, inflation and currency, social and political response, and IMF dynamics.",
-      "description": "Current state of Argentina"
+      "description": "Current state of Argentina",
+      "group": "more"
     },
     {
       "id": "latin-america-andean-region-updates",
       "name": "Andean Region Updates",
       "icon": "latin-america-andean-region-updates",
       "prompt": "What's happening across the Andean countries? Cover political dynamics, economic situations, and any cross-border issues.",
-      "description": "Recent developments in andean region"
+      "description": "Recent developments in andean region",
+      "group": "more"
     },
     {
       "id": "latin-america-migration-border-issues",
       "name": "Migration and Border Issues",
       "icon": "latin-america-migration-border-issues",
       "prompt": "What's happening with migration in the Americas? Cover the US-Mexico border, Darién Gap dynamics, source-country conditions, regional responses, and US policy.",
-      "description": "Migration in the Americas"
+      "description": "Migration in the Americas",
+      "group": "analyze"
     },
     {
       "id": "latin-america-organized-crime-security",
       "name": "Organized Crime and Security Updates",
       "icon": "latin-america-organized-crime-security",
       "prompt": "What's the current state of organized crime and security across Latin America? Cover major cartel and gang developments, government responses, and where violence is rising or falling.",
-      "description": "Recent developments in organized crime and security"
+      "description": "Recent developments in organized crime and security",
+      "group": "analyze"
     },
     {
       "id": "middle-east-snapshot",
       "name": "Middle East Snapshot",
       "icon": "middle-east-snapshot",
       "prompt": "Give me a snapshot of the most significant developments across the Middle East right now — the major conflicts, diplomacy, and regional dynamics.",
-      "description": "Current state of Middle East"
+      "description": "Current state of Middle East",
+      "group": "discover"
     },
     {
       "id": "middle-east-israel-region-updates",
       "name": "Israel and the Region Snapshot",
       "icon": "middle-east-israel-region-updates",
       "prompt": "What's happening with Israel and its neighbors right now? Cover the situation on multiple fronts (Gaza, Lebanon, West Bank, broader region), Israeli politics, and diplomatic developments.",
-      "description": "Current state of Israel and the region"
+      "description": "Current state of Israel and the region",
+      "group": "discover"
     },
     {
       "id": "iran-snapshot",
       "name": "Iran Snapshot",
       "icon": "iran-snapshot",
       "prompt": "What's happening with Iran right now? Cover internal politics, the nuclear program, regional proxy activity, sanctions and economy, and Iran's diplomatic posture.",
-      "description": "Current state of Iran"
+      "description": "Current state of Iran",
+      "group": "more"
     },
     {
       "id": "turkey-snapshot",
       "name": "Turkey Snapshot",
       "icon": "turkey-snapshot",
       "prompt": "What's happening in Turkey right now? Cover the government, the Turkish economy and lira, foreign policy across multiple fronts, and major political developments.",
-      "description": "Current state of Turkey"
+      "description": "Current state of Turkey",
+      "group": "more"
     },
     {
       "id": "gulf-states-snapshot",
       "name": "Gulf States Snapshot",
       "icon": "gulf-states-updates",
       "prompt": "What's happening in the Gulf right now? Cover Saudi Arabia, UAE, Qatar, and others — major political and economic developments, progress, regional diplomacy, and key business and sovereign wealth moves.",
-      "description": "Current state of gulf states"
+      "description": "Current state of gulf states",
+      "group": "more"
     },
     {
       "id": "egypt-north-africa-snapshot",
       "name": "Egypt and North Africa Snapshot",
       "icon": "egypt-north-africa-snapshot",
       "prompt": "What's happening in Egypt and North Africa? Cover Egypt's political and economic situation, Libya's status, Tunisia, Morocco and Algeria dynamics, and regional flashpoints.",
-      "description": "Current state of Egypt and North Africa"
+      "description": "Current state of Egypt and North Africa",
+      "group": "more"
     },
     {
       "id": "energy-middle-east-updates",
       "name": "Energy and the Middle East",
       "icon": "energy-middle-east-updates",
       "prompt": "How are energy dynamics shaping Middle East politics and economics right now? Cover decisions, oil price impact on Gulf states, energy transition pressures, and how energy revenue shapes regional power.",
-      "description": "Energy dynamics shaping Middle East politics and economics right now"
+      "description": "Energy dynamics shaping Middle East politics and economics right now",
+      "group": "analyze"
     },
     {
       "id": "australia-snapshot",
       "name": "Australia Snapshot",
       "icon": "australia-snapshot",
       "prompt": "Give me a current snapshot of Australia. Cover federal politics, the economy and policy, China relations, security and partnerships, and major domestic issues.",
-      "description": "Current state of Australia"
+      "description": "Current state of Australia",
+      "group": "discover"
     },
     {
       "id": "new-zealand-snapshot",
       "name": "New Zealand Snapshots",
       "icon": "new-zealand-snapshot",
       "prompt": "What's happening in New Zealand right now? Cover government and politics, economy and finance, Maori and Treaty issues, and major domestic and foreign policy developments.",
-      "description": "Current state of new zealand"
+      "description": "Current state of new zealand",
+      "group": "discover"
     },
     {
       "id": "pacific-island-snapshot",
       "name": "Pacific Islands Snapshot",
       "icon": "pacific-island-snapshot",
       "prompt": "What's happening across the Pacific Islands? Cover political developments in major nations, climate impacts, China-US-Australia competition for influence, and regional cooperation.",
-      "description": "Current state of Pacific islands"
+      "description": "Current state of Pacific islands",
+      "group": "discover"
     },
     {
       "id": "oceania-auk-us-defens",
       "name": "AUKUS and Defense",
       "icon": "oceania-auk-us-defens",
       "prompt": "What's happening with AUKUS and Indo-Pacific defense cooperation? Cover submarine program progress, technology cooperation, and broader defense posture changes in the region.",
-      "description": "AUKUS and Indo-Pacific defense cooperation"
+      "description": "AUKUS and Indo-Pacific defense cooperation",
+      "group": "analyze"
     },
     {
       "id": "australian-economy-markets",
       "name": "Australian Economy and Markets",
       "icon": "australian-economy-markets",
       "prompt": "What's happening in the Australian economy and markets? Cover RBA policy, inflation and housing, ASX moves, currency, commodity exports, and major business developments.",
-      "description": "The Australian economy and markets"
+      "description": "The Australian economy and markets",
+      "group": "discover"
     },
     {
       "id": "climate-pacific-updates",
       "name": "Climate and the Pacific Updates",
       "icon": "climate-pacific-updates",
       "prompt": "How is climate change affecting Oceania right now? Cover Pacific Island vulnerability, Australia's policy debates, extreme weather impacts, and climate-driven migration discussions.",
-      "description": "Recent developments in climate and the Pacific"
+      "description": "Recent developments in climate and the Pacific",
+      "group": "analyze"
     },
     {
       "id": "russia-ukraine-updates",
       "name": "Russia-Ukraine Updates",
       "icon": "russia-ukraine-updates",
       "prompt": "What's the current state of things between Russia and Ukraine? Cover negotiations, relations, the front lines, recent military developments, Western support, Russian operations, and any diplomatic initiatives.",
-      "description": "Recent developments in Russia-Ukraine"
+      "description": "Recent developments in Russia-Ukraine",
+      "group": "discover"
     },
     {
       "id": "russia-snapshot",
       "name": "Russia Snapshot",
       "icon": "russia-snapshot",
       "prompt": "What's happening inside Russia right now? Cover Putin's government, the economy under sanctions, elite dynamics, opposition and dissent, and signals about strategic intent.",
-      "description": "Current state of Russia"
+      "description": "Current state of Russia",
+      "group": "discover"
     },
     {
       "id": "eastern-europe-snapshot",
       "name": "Eastern Europe Snapshot",
       "icon": "eastern-europe-snapshot",
       "prompt": "What's happening across Eastern Europe right now? Cover Poland, Romania, Hungary, the Baltics, Slovakia, Czech Republic, and Bulgaria — major political and security developments.",
-      "description": "Current state of Eastern Europe"
+      "description": "Current state of Eastern Europe",
+      "group": "discover"
     },
     {
       "id": "caucasus-central-asia-updates",
       "name": "Caucasus and Central Asia Snapshot",
       "icon": "caucasus-central-asia-updates",
       "prompt": "What's happening across the Caucasus and Central Asia? Cover Armenia-Azerbaijan dynamics, Georgia's political direction, and the Central Asian states' balancing between Russia, China, and the West.",
-      "description": "Current state of Caucasus and Central Asia"
+      "description": "Current state of Caucasus and Central Asia",
+      "group": "more"
     },
     {
       "id": "belarus-moldova-updates",
@@ -2976,7 +3040,7 @@
       "name": "Club Deep Dive",
       "icon": "soccer-club-deep-dive",
       "prompt": "Give me a current snapshot of [soccer club]. Cover league position, recent form, key players, manager situation, transfer activity, and outlook for the season.",
-      "description": "A deeper read — context, dynamics, what matters"
+      "description": "A deeper read of context, dynamics, and what matters"
     },
     {
       "id": "mlb-snapshot",
@@ -3900,7 +3964,7 @@
       "name": "Genre Deep Dive",
       "icon": "books-genre-deep-dive",
       "prompt": "Give me a current snapshot of [genre — literary fiction, sci-fi/fantasy, romance, thriller, memoir, history, business, etc.]. Cover the dominant authors, recent standouts, and where the genre is heading.",
-      "description": "A deeper read — context, dynamics, what matters"
+      "description": "A deeper read of context, dynamics, and what matters"
     },
     {
       "id": "books-backlist-worth-reading",
@@ -4495,7 +4559,7 @@
       "name": "Institution Deep Dive",
       "icon": "institution-deep-dive",
       "prompt": "Give me a current overview of [institution]. Cover its position and reputation, recent stories and controversies, financial health, leadership, and what's distinctive about it right now.",
-      "description": "A deeper read — context, dynamics, what matters"
+      "description": "A deeper read of context, dynamics, and what matters"
     },
     {
       "id": "edtech-snapshot",
@@ -4607,7 +4671,7 @@
       "name": "Historical Topic Deep Dive",
       "icon": "historical-topic-deep-dive",
       "prompt": "Give me a deep introduction to [historical topic, era, or event]. Cover the essential context, key figures, major events, what changed because of it, and the dominant historical interpretations.",
-      "description": "A deeper read — context, dynamics, what matters"
+      "description": "A deeper read of context, dynamics, and what matters"
     },
     {
       "id": "historical-parralels",
@@ -4691,7 +4755,7 @@
       "name": "SHORTCUT_TITLE",
       "icon": "shortcut-svg-icon",
       "prompt": "PROMPT_TEXT",
-      "description": "Placeholder template — do not surface"
+      "description": "Placeholder template. Do not surface"
     },
     {
       "id": "timeline-key-dates",
