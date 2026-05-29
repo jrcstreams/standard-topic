@@ -63,7 +63,21 @@
     .assign-item .remove:hover { opacity: 1; }
     .assign-dragging { opacity: 0.4; border-style: dashed; }
     .assign-add { margin-top: 0.75rem; border-top: 1px solid var(--border); padding-top: 0.65rem; }
-    .assign-add-label { font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem; letter-spacing: 0.03em; }
+    .assign-add-label { font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.03em; }
+    .assign-add-head { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+    .assign-add-head .assign-add-label { flex: 1 0 100%; }
+    .assign-filter { flex: 1; min-width: 160px; padding: 0.35rem 0.5rem; border: 1px solid var(--border); border-radius: 4px; font-size: 0.82rem; }
+    #assign-add-selected { white-space: nowrap; }
+    .assign-avail-list { max-height: 340px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; padding: 0.35rem; display: flex; flex-direction: column; gap: 0.2rem; background: var(--bg-light); }
+    .assign-avail-item { display: flex; align-items: center; gap: 0.55rem; padding: 0.32rem 0.45rem; border: 1px solid transparent; border-radius: 4px; font-size: 0.83rem; cursor: pointer; background: white; }
+    .assign-avail-item:hover { border-color: var(--border); }
+    .assign-avail-item.selected { background: rgba(44,68,103,0.1); border-color: #2c4467; }
+    .assign-avail-item .check { width: 1rem; text-align: center; color: #bbb; font-weight: 700; flex-shrink: 0; }
+    .assign-avail-item .check::before { content: '+'; }
+    .assign-avail-item.selected .check { color: #2c4467; }
+    .assign-avail-item.selected .check::before { content: '✓'; }
+    .assign-avail-item .av-name { flex: 1; }
+    .assign-avail-item .av-grp { color: #aaa; font-size: 0.72rem; white-space: nowrap; }
     .assign-btns { display: flex; flex-wrap: wrap; gap: 0.25rem; max-height: 180px; overflow-y: auto; }
     .assign-btns button { padding: 0.25rem 0.55rem; font-size: 0.78rem; border: 1px solid var(--border); border-radius: 3px; background: white; cursor: pointer; font-family: inherit; }
     .assign-btns button:hover { border-color: var(--success); background: #f0fff4; color: var(--success); }
@@ -989,13 +1003,25 @@
         '<div id="assign-list">'+
         (current.length===0?'<div style="color:var(--text-muted);font-size:0.84rem;padding:0.5rem;">No shortcuts. Add from below.</div>':listHTML)+
         '</div>'+
-        '<div class="assign-add"><div class="assign-add-label">Add shortcut</div><div class="assign-btns" id="assign-avail">'+
-        (available.length===0?'<span style="color:var(--text-muted);font-size:0.82rem;">All assigned.</span>':
-        available.map(function(s){
-          var grp = s.group ? ' · '+esc(groupLabel(s.group)) : '';
-          return '<button data-add="'+escA(s.id)+'">'+esc(s.name)+'<span style="color:#aaa;font-size:0.7rem;margin-left:0.3rem;">'+grp+'</span></button>';
-        }).join(''))+
-        '</div></div>';
+        '<div class="assign-add">'+
+          '<div class="assign-add-head">'+
+            '<div class="assign-add-label">Add shortcuts <span style="text-transform:none;letter-spacing:0;color:#aaa;font-weight:400;">· '+available.length+' available</span></div>'+
+            (available.length===0?'':'<input type="text" id="assign-filter" class="assign-filter" placeholder="Filter by name or section…" autocomplete="off">'+
+            '<button class="btn btn-primary" id="assign-add-selected" disabled>Add selected (0)</button>')+
+          '</div>'+
+          (available.length===0?'<div style="color:var(--text-muted);font-size:0.82rem;padding:0.35rem;">All assigned.</div>':
+          '<div class="assign-avail-list" id="assign-avail">'+
+          available.map(function(s){
+            var gl = s.group ? groupLabel(s.group) : '';
+            var search = (s.name+' '+gl+' '+s.id).toLowerCase();
+            return '<div class="assign-avail-item" data-add="'+escA(s.id)+'" data-search="'+escA(search)+'">'+
+              '<span class="check" aria-hidden="true"></span>'+
+              '<span class="av-name">'+esc(s.name)+'</span>'+
+              (gl?'<span class="av-grp">'+esc(gl)+'</span>':'')+
+            '</div>';
+          }).join('')+
+          '</div>')+
+        '</div>';
       // Remove
       main.querySelectorAll('.remove').forEach(function(btn){
         btn.addEventListener('click', function(){
@@ -1004,15 +1030,50 @@
           if (window.__markDirty) window.__markDirty('assignments');
         });
       });
-      // Add
-      document.getElementById('assign-avail').querySelectorAll('button').forEach(function(btn){
-        btn.addEventListener('click', function(){
+      // Add — multi-select: click rows to toggle, then "Add selected" to
+      // commit them all at once. Toggling and filtering are pure DOM ops
+      // (no re-render), so scroll position and the current selection are
+      // preserved while you scan a 600+ list. The full re-render happens
+      // only after you submit.
+      var availList = document.getElementById('assign-avail');
+      var addBtn = document.getElementById('assign-add-selected');
+      var filterInput = document.getElementById('assign-filter');
+      var pending = {};
+      function updateAddBtn(){
+        var n = Object.keys(pending).length;
+        if (!addBtn) return;
+        addBtn.textContent = 'Add selected (' + n + ')';
+        addBtn.disabled = n === 0;
+      }
+      if (availList) {
+        availList.querySelectorAll('.assign-avail-item').forEach(function(item){
+          item.addEventListener('click', function(){
+            var id = item.dataset.add;
+            if (pending[id]) { delete pending[id]; item.classList.remove('selected'); }
+            else { pending[id] = true; item.classList.add('selected'); }
+            updateAddBtn();
+          });
+        });
+      }
+      if (filterInput) {
+        filterInput.addEventListener('input', function(){
+          var q = filterInput.value.trim().toLowerCase();
+          availList.querySelectorAll('.assign-avail-item').forEach(function(item){
+            item.style.display = (!q || item.dataset.search.indexOf(q) >= 0) ? '' : 'none';
+          });
+        });
+      }
+      if (addBtn) {
+        addBtn.addEventListener('click', function(){
+          var ids = Object.keys(pending);
+          if (!ids.length) return;
           if(!data.assignments.assignments[selectedTopic]) data.assignments.assignments[selectedTopic]=[];
-          data.assignments.assignments[selectedTopic].push(btn.dataset.add);
-          renderAssignments(); toast('Added');
+          var arr = data.assignments.assignments[selectedTopic];
+          ids.forEach(function(id){ if (arr.indexOf(id) < 0) arr.push(id); });
+          renderAssignments(); toast('Added ' + ids.length + (ids.length===1?' shortcut':' shortcuts'));
           if (window.__markDirty) window.__markDirty('assignments');
         });
-      });
+      }
       // Section dropdown — sets a per-topic override so the shortcut
       // buckets into the chosen section on THIS topic's page. Choosing the
       // shortcut's own global Group clears the override (keeps data tidy).
