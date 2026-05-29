@@ -2343,27 +2343,33 @@
   },
   "groups": [
     {
+      "id": "topic-specific",
+      "label": "Topic-Specific Insights",
+      "order": 0,
+      "color": "#b35a4e"
+    },
+    {
       "id": "discover",
       "label": "Discover",
-      "order": 0,
+      "order": 1,
       "color": "#3261a0"
     },
     {
       "id": "learn",
       "label": "Learn",
-      "order": 1,
+      "order": 2,
       "color": "#2e8a73"
     },
     {
       "id": "analyze",
       "label": "Analyze",
-      "order": 2,
+      "order": 3,
       "color": "#b48528"
     },
     {
       "id": "more",
       "label": "More",
-      "order": 3,
+      "order": 4,
       "color": "#8a4f7a"
     }
   ]

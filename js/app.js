@@ -1744,6 +1744,11 @@ const TI_SECTION_META = {
     blurb: 'Search platforms and primary sources.',
     icon: `<circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a14 14 0 0 1 4 9 14 14 0 0 1-4 9 14 14 0 0 1-4-9 14 14 0 0 1 4-9z"/>`,
   },
+  'topic-specific': {
+    accent: '#b35a4e',
+    blurb: 'Insights tailored to this topic.',
+    icon: `<path d="M12 2.5l2.3 6.4 6.7.3-5.3 4.1 1.9 6.5L12 16.2 6.4 19.8l1.9-6.5L3 9.2l6.7-.3z"/>`,
+  },
   discover: {
     accent: '#3261a0',
     blurb: 'What\'s happening right now.',
@@ -1954,10 +1959,11 @@ function shortcutBulletItem(shortcut, topicName) {
 // internal key maps to the "more" group id so legacy regex-classified
 // shortcuts still land in the More bucket.
 const DEFAULT_GROUP_DEFS = [
-  { id: 'discover', label: 'Discover', order: 0, color: '#3261a0' },
-  { id: 'learn',    label: 'Learn',    order: 1, color: '#2e8a73' },
-  { id: 'analyze',  label: 'Analyze',  order: 2, color: '#b48528' },
-  { id: 'more',     label: 'More',     order: 3, color: '#8a4f7a' },
+  { id: 'topic-specific', label: 'Topic-Specific Insights', order: 0, color: '#b35a4e' },
+  { id: 'discover', label: 'Discover', order: 1, color: '#3261a0' },
+  { id: 'learn',    label: 'Learn',    order: 2, color: '#2e8a73' },
+  { id: 'analyze',  label: 'Analyze',  order: 3, color: '#b48528' },
+  { id: 'more',     label: 'More',     order: 4, color: '#8a4f7a' },
 ];
 
 // Apply per-group accent colors as CSS overrides. Runs once at data
@@ -2009,6 +2015,7 @@ function groupShortcuts(shortcuts) {
     if (learnRE.test(name) && groups.learn) groups.learn.push(s);
     else if (analyzeRE.test(name) && groups.analyze) groups.analyze.push(s);
     else if (discoverRE.test(name) && groups.discover) groups.discover.push(s);
+    else if (groups['topic-specific']) groups['topic-specific'].push(s);
     else if (groups.more) groups.more.push(s);
     else if (groups.other) groups.other.push(s);
     else {
