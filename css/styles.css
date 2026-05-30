@@ -1400,23 +1400,34 @@ body.hide-cta .sticky-cta { display: none !important; }
   font-weight: 400;
 }
 /* The whole block (search bar + TI/covering) is one sticky unit so
-   they pin and re-format together. A shadow/hairline fades in only
-   once pinned. */
+   they pin and re-format together. At rest it's flat on the page; once
+   pinned it becomes a full-bleed tinted bar (edge to edge under the
+   nav) with a clear shadow so it reads as a distinct subnav, not a
+   white box lost in white content.
+   --bleed = distance from the content column to the viewport edge, so
+   negative margins of that size make the bar span full width while the
+   matching padding keeps the inner content aligned to the page. */
 .custom-search-sticky {
+  --bleed: max(32px, calc((100vw - 1440px) / 2 + 32px));
   position: sticky;
   top: 64px;
   z-index: 20;
-  background: #ffffff;
+  background: transparent;
   margin: 0 0 1.25rem;
   border-bottom: 1px solid transparent;
-  transition: box-shadow 0.18s, border-color 0.18s;
+  transition: background-color 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
 }
 .custom-search-sticky.is-stuck {
-  border-bottom-color: #d3d9e3;
-  /* Layered, clearly-visible elevation — white-on-white content needs a
-     real shadow to read as a pinned bar above the scroll. */
-  box-shadow: 0 6px 14px -4px rgba(15, 26, 46, 0.13), 0 2px 5px -2px rgba(15, 26, 46, 0.08);
-  padding-bottom: 0.6rem;
+  margin-left: calc(-1 * var(--bleed));
+  margin-right: calc(-1 * var(--bleed));
+  padding: 0.2rem var(--bleed) 0.7rem;
+  background: #eef1f6;
+  border-bottom-color: #ccd3df;
+  box-shadow: 0 8px 18px -5px rgba(15, 26, 46, 0.18);
+}
+/* Content column gutter is 16px at <=800px (matches #content padding). */
+@media (max-width: 800px) {
+  .custom-search-sticky { --bleed: 16px; }
 }
 .custom-search-page-bar {
   display: flex;
@@ -1468,7 +1479,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   flex-wrap: wrap;
   gap: 0.5rem;
   padding: 0.5rem 0 0.1rem;
-  border-top: 1px solid #eef0f4;
+  border-top: 1px solid #d8dee8;
 }
 .custom-search-sticky.is-stuck .custom-ti-title { font-size: 0.95rem; }
 .custom-search-sticky.is-stuck .custom-ti-sub { font-size: 0.8rem; }
