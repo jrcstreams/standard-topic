@@ -1209,17 +1209,13 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // route block above) and no app-mode constraint — the page
     // scrolls naturally so the search bar's sticky behavior works.
     // The intro header scrolls away; the sticky block (search bar +
-    // Topic Intelligence / Covering context) pins below the nav and
-    // collapses to a compact bar — title, search, and the TI/covering
-    // line all transition together.
-    const coveringHTML = customTerm
-      ? `<span class="custom-ti-sub">Covering &ldquo;${escapeHTML(customTerm)}&rdquo;</span>`
-      : '';
+    // Topic Intelligence header) pins below the nav and collapses to a
+    // compact bar — title, search, and the TI line transition together.
     container.innerHTML = `
       <div class="topic-layout is-custom" id="topic-layout">
         <div class="custom-search-head">
           <h1 class="custom-search-page-title">Custom Topic Search</h1>
-          <p class="custom-search-page-intro">Type any topic and we'll build out web sources, AI shortcuts, and analysis tools tailored to it — search, edit, and refine on the fly.</p>
+          <p class="custom-search-page-intro">Type any topic and we'll build out web sources, AI shortcuts, and analysis tools tailored to it.</p>
         </div>
         <div class="custom-search-sticky">
           <div class="custom-search-page-bar">
@@ -1228,7 +1224,6 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           </div>
           <div class="custom-ti-header">
             <span class="custom-ti-title">Topic Intelligence</span>
-            ${coveringHTML}
           </div>
         </div>
         <section class="layout-section" id="section-shortcuts"></section>

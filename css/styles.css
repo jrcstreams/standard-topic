@@ -81,7 +81,11 @@ a {
   padding: 1.5rem 2rem;
 }
 
-@media (max-width: 800px) {
+/* Match the main nav's 899.98px padding breakpoint (.sticky-hero-inner
+   drops to 1rem there) so the content column's left edge stays aligned
+   with the nav. Previously content switched at 800px, leaving an
+   ~16px misalignment in the 800–900px range. */
+@media (max-width: 899.98px) {
   #content {
     padding-left: 1rem;
     padding-right: 1rem;
@@ -1380,7 +1384,7 @@ body.hide-cta .sticky-cta { display: none !important; }
    Covering context) pins under the nav and collapses to a compact
    subnav, all transitioning together. */
 .custom-search-head {
-  margin: 0 0 1rem;
+  margin: 0 0 0.5rem;
 }
 .custom-search-page-title {
   margin: 0 0 0.3rem;
@@ -1425,8 +1429,8 @@ body.hide-cta .sticky-cta { display: none !important; }
   border-bottom-color: #ccd3df;
   box-shadow: 0 8px 18px -5px rgba(15, 26, 46, 0.18);
 }
-/* Content column gutter is 16px at <=800px (matches #content padding). */
-@media (max-width: 800px) {
+/* Content column gutter is 16px at <=899.98px (matches #content padding). */
+@media (max-width: 899.98px) {
   .custom-search-sticky { --bleed: 16px; }
 }
 .custom-search-page-bar {
@@ -1451,13 +1455,12 @@ body.hide-cta .sticky-cta { display: none !important; }
   flex: 1 1 auto;
   min-width: 0;
 }
-/* Topic Intelligence / Covering — at rest a stacked title + subtitle
-   with a separator beneath (sits directly above the accordions). */
+/* Topic Intelligence — title with a hairline separator beneath it,
+   sitting directly above the accordions (matches the topic-page TI
+   header treatment). */
 .custom-ti-header {
-  display: flex;
-  flex-direction: column;
-  gap: 0.18rem;
   padding: 0.55rem 0 0.7rem;
+  border-bottom: 1px solid #d6dae2;
 }
 .custom-ti-title {
   font-family: var(--font-display);
@@ -1467,23 +1470,15 @@ body.hide-cta .sticky-cta { display: none !important; }
   line-height: 1.15;
   color: #1c3a6b;
 }
-.custom-ti-sub {
-  font-size: 0.85rem;
-  line-height: 1.3;
-  color: #6b7686;
-}
-/* Stuck: TI/covering collapses to one compact line, title shrinks. */
+/* Stuck: TI line shrinks; the block's own bottom border + shadow is the
+   separator, so drop the header's own bottom border and add a subtle
+   top divider from the search row. */
 .custom-search-sticky.is-stuck .custom-ti-header {
-  flex-direction: row;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 0.5rem;
   padding: 0.5rem 0 0.1rem;
+  border-bottom: none;
   border-top: 1px solid #d8dee8;
 }
 .custom-search-sticky.is-stuck .custom-ti-title { font-size: 0.95rem; }
-.custom-search-sticky.is-stuck .custom-ti-sub { font-size: 0.8rem; }
-.custom-search-sticky.is-stuck .custom-ti-sub::before { content: '·\00a0'; color: #aeb6c2; }
 @media (max-width: 899.98px) {
   .custom-search-page-title { font-size: 1.2rem; }
   .custom-search-page-intro { font-size: 0.9rem; }
