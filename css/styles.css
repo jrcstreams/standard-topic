@@ -2495,13 +2495,13 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   padding: 0;
   background: #ffffff;
   border: 1px solid #e2e6ee;
-  border-radius: 14px;
-  /* Floating panel shadow — refined to read as elevated above the TI
-     panel surface while staying soft and on-brand. */
+  border-radius: 12px;
+  /* Soft, on-brand float — lighter than before so it reads as part of
+     the TI panel system rather than a heavy popup bolted on top. */
   box-shadow:
-    0 1px 2px rgba(15, 26, 46, 0.05),
-    0 8px 20px rgba(15, 26, 46, 0.09),
-    0 22px 48px rgba(15, 26, 46, 0.13);
+    0 1px 2px rgba(15, 26, 46, 0.04),
+    0 6px 16px rgba(15, 26, 46, 0.08),
+    0 16px 32px rgba(15, 26, 46, 0.10);
   opacity: 0;
   transform: translateY(8px);
   pointer-events: none;
@@ -2544,9 +2544,28 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
     right: 1rem;
     bottom: max(1rem, calc(env(safe-area-inset-bottom, 0px) + 0.6rem));
     z-index: 60;
-    box-shadow: 0 12px 32px rgba(15, 26, 46, 0.18), 0 1px 2px rgba(15, 26, 46, 0.06);
+    box-shadow: 0 10px 28px rgba(15, 26, 46, 0.14), 0 1px 2px rgba(15, 26, 46, 0.06);
   }
 }
+
+/* Custom-search page scrolls the whole window (not app-mode), so the
+   in-panel absolute position left the bar stranded at the bottom of a
+   tall page instead of pinned. Fix it to the viewport as a centered
+   floating action bar so it stays put while scrolling the shortcuts. */
+body.custom-mode .shortcuts-multi-submit-wrap {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 1.25rem;
+  width: min(560px, calc(100vw - 2rem));
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 60;
+  box-shadow: 0 10px 28px rgba(15, 26, 46, 0.14), 0 1px 2px rgba(15, 26, 46, 0.06);
+}
+/* The panel-tint fade above the bar only makes sense for the in-panel
+   absolute placement; drop it for the centered floating bar. */
+body.custom-mode .shortcuts-multi-submit-wrap::before { display: none; }
 
 /* Section dividers — hairline matching the accordion body borders. */
 .shortcuts-multi-submit-wrap > * + * {
@@ -2563,7 +2582,7 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  padding: 0.55rem 0.85rem 0.5rem;
+  padding: 0.5rem 0.8rem 0.45rem;
 }
 .shortcuts-multi-count {
   display: inline-flex;
@@ -2599,7 +2618,7 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   align-items: center;
   justify-content: space-between;
   gap: 0.7rem;
-  padding: 0.55rem 0.85rem;
+  padding: 0.5rem 0.8rem;
 }
 .multi-controls-model-label {
   font-family: var(--font-family);
@@ -2698,14 +2717,14 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   display: grid;
   grid-template-columns: 1fr 1.05fr;
   gap: 0.5rem;
-  padding: 0.6rem 0.85rem 0.85rem;
+  padding: 0.55rem 0.8rem 0.7rem;
 }
 .shortcuts-multi-preview {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
-  padding: 0.7rem 0.95rem;
+  padding: 0.6rem 0.95rem;
   background: #ffffff;
   color: #1c3a6b;
   border: 1px solid #d4dae5;
@@ -2740,7 +2759,7 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  padding: 0.7rem 0.95rem;
+  padding: 0.6rem 0.95rem;
   background: #eaecf1;
   color: #9aa3b2;
   border: 1px solid #e2e6ee;
