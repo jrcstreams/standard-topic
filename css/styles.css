@@ -2494,15 +2494,14 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   margin: 0;
   padding: 0;
   background: #ffffff;
-  border: 1px solid rgba(15, 26, 46, 0.08);
+  border: 1px solid #e2e6ee;
   border-radius: 14px;
-  /* Stronger shadow so the modal reads as floating clearly above
-     the panel, even on the tinted TI panel surface where a weak
-     shadow gets lost in the bg color. */
+  /* Floating panel shadow — refined to read as elevated above the TI
+     panel surface while staying soft and on-brand. */
   box-shadow:
     0 1px 2px rgba(15, 26, 46, 0.05),
-    0 6px 14px rgba(15, 26, 46, 0.08),
-    0 22px 50px rgba(15, 26, 46, 0.14);
+    0 8px 20px rgba(15, 26, 46, 0.09),
+    0 22px 48px rgba(15, 26, 46, 0.13);
   opacity: 0;
   transform: translateY(8px);
   pointer-events: none;
@@ -2549,9 +2548,9 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   }
 }
 
-/* Section dividers — hairline that matches Apple-style cards. */
+/* Section dividers — hairline matching the accordion body borders. */
 .shortcuts-multi-submit-wrap > * + * {
-  border-top: 1px solid rgba(15, 26, 46, 0.06);
+  border-top: 1px solid #eef0f5;
 }
 
 /* 1. Title row — selection count on the left, utility actions
@@ -2578,9 +2577,10 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   white-space: nowrap;
 }
 .shortcuts-multi-count strong {
-  color: #1e2d44;
+  color: #1c3a6b;
+  font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.92rem;
+  font-size: 1rem;
   line-height: 1;
   letter-spacing: -0.012em;
 }
@@ -2615,10 +2615,10 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   justify-content: space-between;
   gap: 0.45rem;
   padding: 0.5rem 0.8rem;
-  background: #f5f6f9;
-  border: 1px solid rgba(15, 26, 46, 0.08);
+  background: #f6f8fb;
+  border: 1px solid #e2e6ee;
   border-radius: 10px;
-  color: #1e2d44;
+  color: #0f1a2e;
   font-family: inherit;
   font-size: 0.92rem;
   font-weight: 600;
@@ -2637,13 +2637,13 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   white-space: nowrap;
 }
 .multi-controls-model-btn:hover {
-  background: #ecf0f5;
-  border-color: rgba(15, 26, 46, 0.14);
+  background: #eef2f7;
+  border-color: #cfd6e2;
 }
 .multi-controls-model-btn:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(74, 124, 201, 0.22);
-  border-color: rgba(74, 124, 201, 0.55);
+  box-shadow: 0 0 0 3px rgba(28, 58, 107, 0.18);
+  border-color: #1c3a6b;
 }
 .multi-controls-model-caret {
   opacity: 0.7;
@@ -2688,7 +2688,7 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
 }
 .multi-controls-model-option:hover {
   background: #eef2f7;
-  color: var(--color-primary, #2c4467);
+  color: #1c3a6b;
 }
 
 /* 3. Preview + Direct Submit row — refined to feel like a pair of
@@ -2705,10 +2705,10 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
-  padding: 0.65rem 0.95rem;
+  padding: 0.7rem 0.95rem;
   background: #ffffff;
-  color: #1e2d44;
-  border: 1px solid rgba(15, 26, 46, 0.14);
+  color: #1c3a6b;
+  border: 1px solid #d4dae5;
   border-radius: 10px;
   font-family: var(--font-family);
   font-size: 0.92rem;
@@ -2720,14 +2720,14 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   white-space: nowrap;
 }
 .shortcuts-multi-preview:hover:not(:disabled) {
-  background: #f5f6f9;
-  border-color: rgba(15, 26, 46, 0.22);
-  color: #1e2d44;
+  background: #f6f8fb;
+  border-color: #b9c2d4;
+  color: #15294d;
   box-shadow: 0 1px 2px rgba(15, 26, 46, 0.04);
 }
 .shortcuts-multi-preview:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(74, 124, 201, 0.22);
+  box-shadow: 0 0 0 3px rgba(28, 58, 107, 0.18);
 }
 .shortcuts-multi-preview:disabled {
   opacity: 0.45;
@@ -2740,10 +2740,10 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  padding: 0.65rem 0.95rem;
-  background: linear-gradient(to bottom, #d4d8e0 0%, #c0c5d0 100%);
-  color: white;
-  border: 1px solid rgba(15, 26, 46, 0.04);
+  padding: 0.7rem 0.95rem;
+  background: #eaecf1;
+  color: #9aa3b2;
+  border: 1px solid #e2e6ee;
   border-radius: 10px;
   font-family: var(--font-family);
   font-size: 0.92rem;
@@ -2751,30 +2751,31 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   line-height: 1.1;
   letter-spacing: -0.008em;
   cursor: not-allowed;
-  opacity: 0.85;
-  transition: background 0.14s, opacity 0.14s, transform 0.06s, box-shadow 0.14s;
+  transition: background 0.14s, color 0.14s, transform 0.06s, box-shadow 0.14s;
   white-space: nowrap;
 }
 .shortcuts-multi-submit svg {
   flex-shrink: 0;
   transition: transform 0.14s;
 }
+/* Active CTA — brand navy, matching the Topic Intelligence title color,
+   so the action panel reads as part of the same system (was green). */
 .shortcuts-multi-submit.is-active {
-  background: linear-gradient(to bottom, #1fae57 0%, #168a47 100%);
-  border-color: rgba(15, 26, 46, 0.10);
+  background: linear-gradient(180deg, #2a4f8c 0%, #1c3a6b 100%);
+  color: #ffffff;
+  border-color: #15294d;
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.22) inset,
-    0 1px 2px rgba(15, 26, 46, 0.18),
-    0 4px 10px rgba(22, 160, 71, 0.22);
+    0 1px 0 rgba(255, 255, 255, 0.16) inset,
+    0 1px 2px rgba(15, 26, 46, 0.20),
+    0 5px 14px rgba(28, 58, 107, 0.30);
   cursor: pointer;
-  opacity: 1;
 }
 .shortcuts-multi-submit.is-active:hover {
-  background: linear-gradient(to bottom, #199a4d 0%, #137c3f 100%);
+  background: linear-gradient(180deg, #244680 0%, #16305c 100%);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.18) inset,
-    0 2px 4px rgba(15, 26, 46, 0.20),
-    0 6px 14px rgba(22, 160, 71, 0.28);
+    0 1px 0 rgba(255, 255, 255, 0.14) inset,
+    0 2px 5px rgba(15, 26, 46, 0.22),
+    0 7px 18px rgba(28, 58, 107, 0.36);
 }
 .shortcuts-multi-submit.is-active:hover svg {
   transform: translateX(2px);
@@ -2804,7 +2805,7 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   white-space: nowrap;
 }
 .shortcuts-multi-select-all:hover:not(:disabled) {
-  color: var(--color-primary, #2c4467);
+  color: #1c3a6b;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
