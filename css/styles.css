@@ -1455,35 +1455,20 @@ body.hide-cta .sticky-cta { display: none !important; }
   flex: 1 1 auto;
   min-width: 0;
 }
-/* Topic Intelligence — title with a hairline separator beneath it,
-   sitting directly above the accordions (matches the topic-page TI
-   header treatment). */
-.custom-ti-header {
-  padding: 0.55rem 0 0.7rem;
-  border-bottom: 1px solid #d6dae2;
+/* Just a hairline separator beneath the search bar, sitting above the
+   accordions. Desktop only; hidden when the bar is pinned (the stuck
+   bar's own bottom border + shadow does the separating then). */
+.custom-ti-sep {
+  height: 0;
+  margin-top: 0.5rem;
+  border-top: 1px solid #d6dae2;
 }
-.custom-ti-title {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: -0.024em;
-  line-height: 1.15;
-  color: #1c3a6b;
-}
-/* Stuck: TI line shrinks; the block's own bottom border + shadow is the
-   separator, so drop the header's own bottom border and add a subtle
-   top divider from the search row. */
-.custom-search-sticky.is-stuck .custom-ti-header {
-  padding: 0.5rem 0 0.1rem;
-  border-bottom: none;
-  border-top: 1px solid #d8dee8;
-}
-.custom-search-sticky.is-stuck .custom-ti-title { font-size: 0.95rem; }
+.custom-search-sticky.is-stuck .custom-ti-sep { display: none; }
 @media (max-width: 899.98px) {
+  .custom-ti-sep { display: none; }
   .custom-search-page-title { font-size: 1.2rem; }
   .custom-search-page-intro { font-size: 0.9rem; }
   .custom-search-bar-title { font-size: 1rem; }
-  .custom-ti-title { font-size: 1.1rem; }
   /* Stuck on mobile: page title wraps above the input in the bar. */
   .custom-search-sticky.is-stuck .custom-search-page-bar {
     flex-wrap: wrap;

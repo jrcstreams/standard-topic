@@ -1222,9 +1222,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
             <span class="custom-search-bar-title" aria-hidden="true">Custom Topic Search</span>
             <div class="custom-search-page-bar-input" data-role="custom-search-bar"></div>
           </div>
-          <div class="custom-ti-header">
-            <span class="custom-ti-title">Topic Intelligence</span>
-          </div>
+          <div class="custom-ti-sep" aria-hidden="true"></div>
         </div>
         <section class="layout-section" id="section-shortcuts"></section>
       </div>
