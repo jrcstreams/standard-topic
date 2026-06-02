@@ -1254,6 +1254,9 @@ body.hide-cta .sticky-cta { display: none !important; }
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  /* Drop the first eyebrow down from the accordion header above so it
+     doesn't ride against the summary divider. */
+  padding-top: 0.5rem;
 }
 /* Subgroup eyebrow — small uppercase label followed by a hairline rule
    that fills the row, so each cluster (Search / Social / Audio & video
