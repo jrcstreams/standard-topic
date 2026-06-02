@@ -1253,17 +1253,33 @@ body.hide-cta .sticky-cta { display: none !important; }
 .ti-source-groups {
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
+  gap: 1.15rem;
 }
+/* Subgroup eyebrow — a short accent tick + uppercase label, so each
+   cluster (Search / Social / Audio & video / Writing) reads as an
+   intentional section marker rather than a faint floating label.
+   Accent inherits the Web Sources accordion's --ti-accent. */
 .ti-subhead {
   list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   margin: 0;
-  padding: 0 0.6rem 0.25rem;
-  font-size: 0.68rem;
+  padding: 0 0.6rem 0.5rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.085em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--color-text) 52%, transparent);
+  color: #51607a;
+}
+.ti-subhead::before {
+  content: "";
+  flex: none;
+  width: 16px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--ti-accent, #5d6b7e);
+  opacity: 0.85;
 }
 .ti-item {
   display: flex;
@@ -1721,11 +1737,11 @@ body.hide-cta .sticky-cta { display: none !important; }
     top: 64px;
   }
   #sub-header.is-subnav .topic-banner {
-    padding: 1rem 1rem 0.95rem;
-    min-height: 54px;
+    padding: 0.55rem 1rem 0.95rem;
+    min-height: 50px;
   }
   #sub-header.is-home-subnav .topic-banner {
-    padding: 1rem 1rem 0.95rem;
+    padding: 0.55rem 1rem 0.95rem;
   }
   #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
   #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
@@ -2296,6 +2312,32 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
 .newsfeed-title::before { display: none; }
 @media (max-width: 640px) {
   .newsfeed-title { font-size: 1.15rem; }
+}
+/* Desktop: render the topic name as a quiet under-title sublabel
+   beneath "News Feed" (instead of an inline suffix after a divider),
+   mirroring the Topic Intelligence header in the next column. Mobile
+   (< 900px) keeps the inline .section-topic-pill. */
+@media (min-width: 900px) {
+  .newsfeed-title {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.3rem;
+  }
+  .newsfeed-title .section-topic-pill {
+    border-left: none;
+    margin-left: 0;
+    padding-left: 0;
+    font-size: 0.85rem;
+    font-weight: 400;
+    line-height: 1.3;
+    color: #6b7686;
+  }
+}
+/* The TI topic sublabel is a desktop-only echo of the News Feed one;
+   on mobile the TI panel header collapses to an eyebrow, so hide it. */
+@media (max-width: 899.98px) {
+  .ti-topic-sublabel { display: none; }
 }
 
 /* === Multi-Select toggle ===

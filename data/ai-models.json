@@ -31,6 +31,16 @@
       "submissionMethod": "direct"
     },
     {
+      "id": "duck-ai",
+      "name": "Duck.ai",
+      "description": "DuckDuckGo's private, no-tracking AI chat.",
+      "icon": "duckduckgo",
+      "urlTemplate": "https://duckduckgo.com/?ia=chat&bang=true&q={prompt}",
+      "chatUrl": "https://duckduckgo.com/?ia=chat",
+      "copyOnOpen": true,
+      "submissionMethod": "direct"
+    },
+    {
       "id": "gemini",
       "name": "Gemini",
       "description": "Google's flagship multimodal AI.",

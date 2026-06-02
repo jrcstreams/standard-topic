@@ -1385,12 +1385,16 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
    // that single shortcut directly. The `data-multi="1"` flag + the
    // .is-multi-select class are set up-front and never toggled off.
   // The panel is always "Topic Intelligence". On custom-search pages it
-  // additionally carries a subtitle showing the search term, so the
-  // section reads as scoped to what the user typed.
+  // carries a subtitle showing the search term ("Covering …"); on topic
+  // pages it carries the topic name as a quiet under-title sublabel
+  // (desktop only — mobile renders the panel header as an eyebrow). Both
+  // mirror the News Feed header so the two columns read in parallel.
   const panelTitle = 'Topic Intelligence';
   const panelSubtitleHTML = (isCustom && topicName)
     ? `<p class="sidebar-card-subtitle">Covering &ldquo;${escapeHTML(topicName)}&rdquo;</p>`
-    : '';
+    : (!isHome && !isCustom && topicName)
+      ? `<p class="sidebar-card-subtitle ti-topic-sublabel">${escapeHTML(topicName)}</p>`
+      : '';
 
   let html = `
     <div class="${cardClasses.join(' ')} is-multi-select" data-multi="1">
