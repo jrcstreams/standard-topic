@@ -107,34 +107,44 @@ export function getRelatedTopics(topic) {
   return related;
 }
 
-/**
- * Get shortcuts for a specific topic slug, in display order.
- * Looks up the assignment list for the topic, resolves each ID from the directory.
- */
-export function getShortcutsForTopic(topicSlug) {
-  const directory = shortcutsDirectory?.shortcuts || [];
-  const assignments = shortcutsAssignments?.assignments || {};
-  const ids = assignments[topicSlug] || assignments['_custom'] || [];
+// Pure selector — all inputs explicit so it runs under Node with no DOM/fetch.
+// Topic-specific shortcuts first (assignment order), then evergreen shortcuts in
+// the global evergreenOrder, minus this topic's exclusions. Home gets no evergreen
+// injection (it has no single topic for the {topic} placeholder). Deduped by id.
+export function selectShortcutsForTopic({ directory, assignments, evergreenOrder, evergreenExclusions, topicSlug }) {
   const dirMap = {};
-  directory.forEach(s => { dirMap[s.id] = s; });
+  (directory || []).forEach(s => { dirMap[s.id] = s; });
+  const ids = (assignments && (assignments[topicSlug] || assignments['_custom'])) || [];
   const list = ids.map(id => dirMap[id]).filter(Boolean);
 
-  // Evergreen shortcuts (Discover/Learn/Analyze prompts that apply to
-  // any subject) are injected into every topic + custom search rather
-  // than listed in each topic's assignments. Home is excluded — it has
-  // no single topic, so the {topic} placeholder would be empty. They're
-  // appended after the topic's dedicated shortcuts and de-duped in case
-  // a topic also lists one explicitly.
   if (topicSlug !== 'home') {
     const have = new Set(list.map(s => s.id));
-    directory.forEach(s => {
-      if (s.evergreen && !have.has(s.id)) {
-        list.push(s);
-        have.add(s.id);
-      }
-    });
+    const excluded = new Set((evergreenExclusions && evergreenExclusions[topicSlug]) || []);
+    const orderIdx = new Map((evergreenOrder || []).map((id, i) => [id, i]));
+    const evergreens = (directory || [])
+      .filter(s => s.evergreen && !have.has(s.id) && !excluded.has(s.id))
+      .sort((a, b) => (orderIdx.has(a.id) ? orderIdx.get(a.id) : 1e9) - (orderIdx.has(b.id) ? orderIdx.get(b.id) : 1e9));
+    evergreens.forEach(s => { list.push(s); have.add(s.id); });
   }
   return list;
+}
+
+export function getShortcutsForTopic(topicSlug) {
+  return selectShortcutsForTopic({
+    directory: shortcutsDirectory?.shortcuts || [],
+    assignments: shortcutsAssignments?.assignments || {},
+    evergreenOrder: shortcutsAssignments?.evergreenOrder || [],
+    evergreenExclusions: shortcutsAssignments?.evergreenExclusions || {},
+    topicSlug,
+  });
+}
+
+export function getEvergreenOrder() {
+  return shortcutsAssignments?.evergreenOrder || [];
+}
+
+export function getEvergreenExclusions() {
+  return shortcutsAssignments?.evergreenExclusions || {};
 }
 
 /**
