@@ -1060,7 +1060,9 @@
       var ids = assigns[selectedTopic] || [];
       var dirMap = {}; (data.directory.shortcuts||[]).forEach(function(s){dirMap[s.id]=s;});
       var current = ids.map(function(id){return dirMap[id];}).filter(Boolean);
-      var available = (data.directory.shortcuts||[]).filter(function(s){return ids.indexOf(s.id)<0;});
+      // Evergreens are managed globally (Evergreen tab) + per-topic via the
+      // exclusion toggles below — they are NOT addable as topic-specific.
+      var available = (data.directory.shortcuts||[]).filter(function(s){return ids.indexOf(s.id)<0 && !s.evergreen;});
       var label = (topics.find(function(t){return t.slug===selectedTopic;})||{}).name||selectedTopic;
       var groups = getGroupDefs();
       // Per-topic section overrides: { shortcutId: groupId }. A shortcut
@@ -1127,6 +1129,40 @@
           }).join('')+
           '</div>')+
         '</div>';
+      // Evergreen-on-this-topic panel — toggles that write evergreenExclusions,
+      // synced with the Evergreen tab (same in-memory data). Home is excluded
+      // (it gets no evergreen injection). _custom (Custom Search) is included.
+      (function(){
+        ensureEvergreenData();
+        if (selectedTopic === 'home') {
+          main.insertAdjacentHTML('beforeend', '<div class="assign-evergreen" style="margin-top:1.25rem;border-top:1px solid var(--border);padding-top:0.85rem;"><h4 style="margin:0 0 0.3rem;">Evergreen shortcuts</h4><p style="color:var(--text-muted);font-size:0.82rem;margin:0;">Evergreens don’t apply to the homepage — it uses the hand-curated list above.</p></div>');
+          return;
+        }
+        var dm = {}; (data.directory.shortcuts||[]).forEach(function(s){dm[s.id]=s;});
+        var order = (data.assignments.evergreenOrder||[]).filter(function(id){ return dm[id] && dm[id].evergreen; });
+        var excluded = data.assignments.evergreenExclusions[selectedTopic] || [];
+        var nOn = order.length - order.filter(function(id){ return excluded.indexOf(id) >= 0; }).length;
+        var rows = order.map(function(id){
+          var s = dm[id]; var on = excluded.indexOf(id) < 0;
+          return '<label style="display:flex;align-items:center;gap:0.4rem;font-size:0.82rem;padding:0.18rem 0;break-inside:avoid;"><input type="checkbox" data-eg-on="'+escA(id)+'" '+(on?'checked':'')+'> <span>'+esc(s.name)+' <span style="color:#aaa;">· '+esc(groupLabel(s.group))+'</span></span></label>';
+        }).join('');
+        main.insertAdjacentHTML('beforeend',
+          '<div class="assign-evergreen" style="margin-top:1.25rem;border-top:1px solid var(--border);padding-top:0.85rem;">'+
+          '<h4 style="margin:0 0 0.2rem;">Evergreen on this topic <span class="assign-eg-count" style="font-weight:400;color:var(--text-muted);font-size:0.8rem;">· '+nOn+' of '+order.length+' shown</span></h4>'+
+          '<p style="color:var(--text-muted);font-size:0.8rem;margin:0 0 0.5rem;">Uncheck to exclude an evergreen from this topic. Synced with the Evergreen tab.</p>'+
+          '<div style="columns:2;column-gap:1.5rem;">'+rows+'</div>'+
+          '</div>');
+        main.querySelectorAll('[data-eg-on]').forEach(function(cb){
+          cb.addEventListener('change', function(){
+            setEvergreenExclusion(selectedTopic, cb.dataset.egOn, !cb.checked);
+            var ex = data.assignments.evergreenExclusions[selectedTopic] || [];
+            var on = order.length - order.filter(function(id){ return ex.indexOf(id) >= 0; }).length;
+            var cnt = main.querySelector('.assign-eg-count');
+            if (cnt) cnt.textContent = '· ' + on + ' of ' + order.length + ' shown';
+          });
+        });
+      })();
+
       // Remove
       main.querySelectorAll('.remove').forEach(function(btn){
         btn.addEventListener('click', function(){
