@@ -20,6 +20,7 @@
     th.sortable { cursor: pointer; user-select: none; white-space: nowrap; }
     th.sortable:hover { color: var(--primary); }
     th.sortable .arrow { color: var(--primary); }
+    .btn-copied { background: var(--success) !important; color: #fff !important; border-color: var(--success) !important; transition: background 0.1s; }
     .tab { padding: 0.6rem 1.1rem; font-size: 0.85rem; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; color: var(--text-muted); background: none; border-top: none; border-left: none; border-right: none; font-family: inherit; font-weight: 500; }
     .tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
     .tab-content { display: none; }
@@ -542,7 +543,9 @@
       var orig = btn.textContent;
       function done() {
         btn.textContent = doneLabel;
-        setTimeout(function(){ btn.textContent = orig; }, 1200);
+        btn.classList.add('btn-copied');
+        toast('URL copied to clipboard');
+        setTimeout(function(){ btn.textContent = orig; btn.classList.remove('btn-copied'); }, 1400);
       }
       // Legacy fallback — works when the async Clipboard API is missing or
       // rejected (non-focused doc, permissions policy, some http contexts).
