@@ -15,7 +15,7 @@ import { initAllTopicsModal } from './components/all-topics-modal.js';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
 import { initPromptPreviewModal } from './components/prompt-preview-modal.js';
 import { initSettingsModal } from './components/settings-modal.js';
-import { applyReasoningLevelToPrompt } from './utils/settings.js';
+import { assemblePrompt } from './utils/prompt-assembly.js';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1408,31 +1408,14 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       </div>
       ${all.length > 0 ? `
         <div class="shortcuts-multi-submit-wrap" role="region" aria-label="Prompt submission" aria-hidden="true">
-          <div class="multi-controls-head">
-            <span class="shortcuts-multi-count" aria-live="polite">
-              <strong id="shortcuts-multi-submit-count">0</strong>
-              <span class="shortcuts-multi-count-label">selected</span>
-            </span>
-            <div class="multi-controls-utils">
-              <button type="button" class="shortcuts-multi-select-all" id="shortcuts-multi-select-all">Select all</button>
-              <span class="multi-controls-util-divider" aria-hidden="true">·</span>
-              <button type="button" class="shortcuts-multi-clear" id="shortcuts-multi-clear">Clear</button>
-            </div>
-          </div>
-          <div class="multi-controls-model-row">
-            <span class="multi-controls-model-label">Send to</span>
-            <button type="button" class="multi-controls-model-btn" id="multi-controls-model-btn" aria-haspopup="listbox" aria-expanded="false">
-              <span class="multi-controls-model-name" id="multi-controls-model-name">ChatGPT</span>
-              <svg class="multi-controls-model-caret" viewBox="0 0 12 12" width="11" height="11" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 4.5 6 8 9 4.5"/>
-              </svg>
-            </button>
-            <ul class="multi-controls-model-menu" id="multi-controls-model-menu" role="listbox" hidden></ul>
-          </div>
-          <div class="multi-controls-buttons">
-            <button type="button" class="shortcuts-multi-preview" id="shortcuts-multi-preview">Preview</button>
-            <button type="button" class="shortcuts-multi-submit" id="shortcuts-multi-submit">
-              <span>Direct Submit</span>
+          <span class="shortcuts-multi-count" aria-live="polite">
+            <strong id="shortcuts-multi-submit-count">0</strong>
+            <span class="shortcuts-multi-count-label"> shortcuts selected</span>
+          </span>
+          <div class="shortcuts-multi-trigger-utils">
+            <button type="button" class="shortcuts-multi-clear" id="shortcuts-multi-clear">Clear</button>
+            <button type="button" class="shortcuts-multi-review" id="shortcuts-multi-review">
+              <span>Review &amp; Submit</span>
               <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="3" y1="8" x2="12" y2="8"/>
                 <polyline points="8 4 12 8 8 12"/>
@@ -1547,98 +1530,43 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   });
 
   const card = container.querySelector('.sidebar-card');
-  const submitBtn = container.querySelector('#shortcuts-multi-submit');
-  const previewBtn = container.querySelector('#shortcuts-multi-preview');
+  const reviewBtn = container.querySelector('#shortcuts-multi-review');
   const clearBtn = container.querySelector('#shortcuts-multi-clear');
-  const selectAllBtn = container.querySelector('#shortcuts-multi-select-all');
   const submitWrap = container.querySelector('.shortcuts-multi-submit-wrap');
   const countEl = container.querySelector('#shortcuts-multi-submit-count');
-  const modelBtn = container.querySelector('#multi-controls-model-btn');
-  const modelNameEl = container.querySelector('#multi-controls-model-name');
-  const modelMenu = container.querySelector('#multi-controls-model-menu');
 
-  // Model picker — reflects the user's preferred model, and lets
-  // them swap it inline. Direct Submit uses this; Preview opens the
-  // full prompt modal where the user can also change models.
+  // The preferred AI model (chosen in Settings or in the submission modal).
+  // The modal owns the inline model picker now; here we just resolve it.
   const refreshModelChoice = () => {
-    if (!modelNameEl) return null;
     const models = getModels();
     const preferredId = getPreferredModelId(getDefaultModelId());
-    const current = getModelById(preferredId) || models[0] || null;
-    modelNameEl.textContent = current?.name || 'ChatGPT';
-    return current;
+    return getModelById(preferredId) || models[0] || null;
   };
-  if (modelMenu) {
-    const models = getModels();
-    modelMenu.innerHTML = models.map(m => `
-      <li>
-        <button type="button" class="multi-controls-model-option" role="option" data-model-id="${escapeAttr(m.id)}">
-          ${escapeHTML(m.name)}
-        </button>
-      </li>
-    `).join('');
-  }
-  refreshModelChoice();
-  // Re-read preferred model when the Settings modal saves a change,
-  // so the label switches from (e.g.) ChatGPT to Perplexity without
-  // the user having to refresh.
-  const onPreferredModelChanged = () => refreshModelChoice();
-  window.addEventListener('preferred-model-changed', onPreferredModelChanged);
-  const closeModelMenu = () => {
-    if (!modelMenu || !modelBtn) return;
-    modelMenu.hidden = true;
-    modelBtn.setAttribute('aria-expanded', 'false');
-  };
-  modelBtn?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (!modelMenu) return;
-    const open = !modelMenu.hidden;
-    modelMenu.hidden = open;
-    modelBtn.setAttribute('aria-expanded', open ? 'false' : 'true');
-  });
-  modelMenu?.addEventListener('click', (e) => {
-    const opt = e.target.closest('.multi-controls-model-option');
-    if (!opt) return;
-    setPreferredModelId(opt.dataset.modelId);
-    refreshModelChoice();
-    closeModelMenu();
-  });
-  document.addEventListener('click', (e) => {
-    if (!modelMenu || modelMenu.hidden) return;
-    if (modelBtn?.contains(e.target) || modelMenu.contains(e.target)) return;
-    closeModelMenu();
-  });
 
-  // Submit bar: floats in at the bottom of the card whenever any
+  // Trigger bar: floats in at the bottom of the card whenever any
   // shortcut is selected, slides out when the selection is empty.
-  // Visibility driven by .is-visible class so we can transition.
   const updateSubmit = () => {
-    if (!submitBtn || !submitWrap) return;
-    const allShortcuts = container.querySelectorAll('.ai-shortcut-select-btn');
+    if (!submitWrap) return;
     const selected = container.querySelectorAll('.ai-shortcut-select-btn.is-multi-selected');
     const has = selected.length > 0;
-    const allSelected = allShortcuts.length > 0 && selected.length === allShortcuts.length;
     submitWrap.classList.toggle('is-visible', has);
     submitWrap.setAttribute('aria-hidden', has ? 'false' : 'true');
-    submitBtn.classList.toggle('is-active', has);
-    submitBtn.disabled = !has;
-    if (previewBtn) previewBtn.disabled = !has;
+    if (reviewBtn) reviewBtn.disabled = !has;
     if (clearBtn) clearBtn.disabled = !has;
-    if (selectAllBtn) selectAllBtn.disabled = allSelected;
     if (countEl) countEl.textContent = String(selected.length);
   };
 
-  // Build the combined prompt + a display name from the current
-  // selection. Single selection bypasses the multi-prompt intro.
-  // The user's session reasoning-level (Brief / Standard / Detailed
-  // / Deep) is prepended to whatever prompt we end up with.
+  // Build the BASE combined prompt + display name from the current
+  // selection (single selection bypasses the multi-prompt intro).
+  // Advanced settings — reasoning level, output type, secondary topic,
+  // custom instructions — are layered on later by assemblePrompt().
   const buildSubmission = () => {
     const selected = Array.from(container.querySelectorAll('.ai-shortcut-select-btn.is-multi-selected'));
     if (selected.length === 0) return null;
     if (selected.length === 1) {
       const btn = selected[0];
       return {
-        prompt: applyReasoningLevelToPrompt(btn.dataset.prompt || ''),
+        prompt: btn.dataset.prompt || '',
         name: btn.dataset.name || 'Shortcut',
         iconKey: btn.dataset.iconKey || '',
         count: 1,
@@ -1651,7 +1579,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     }).join('\n\n---\n\n');
     const intro = `Please respond to each of the following ${selected.length} prompts in order. Treat each as its own task and clearly label your answers.`;
     return {
-      prompt: applyReasoningLevelToPrompt(`${intro}\n\n${combined}`),
+      prompt: `${intro}\n\n${combined}`,
       name: `${selected.length} Selected Shortcuts`,
       iconKey: '',
       count: selected.length,
@@ -1700,56 +1628,64 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   }
 
 
-  clearBtn?.addEventListener('click', () => {
-    container.querySelectorAll('.ai-shortcut-select-btn.is-multi-selected')
-      .forEach(b => {
-        b.classList.remove('is-multi-selected');
-        b.setAttribute('aria-pressed', 'false');
-      });
-    updateSubmit();
-  });
-
-  selectAllBtn?.addEventListener('click', () => {
-    container.querySelectorAll('.ai-shortcut-select-btn')
-      .forEach(b => {
-        b.classList.add('is-multi-selected');
-        b.setAttribute('aria-pressed', 'true');
-      });
-    updateSubmit();
-  });
-
-  // Preview Submission — opens the existing prompt-modal where the
-  // user can review, edit, copy, change AI model, and submit.
-  previewBtn?.addEventListener('click', () => {
-    const sub = buildSubmission();
-    if (!sub) return;
-    track(sub.count === 1 ? 'shortcut_click' : 'multi_shortcut_submit', {
-      [sub.count === 1 ? 'shortcut_name' : 'count']: sub.count === 1 ? sub.name : sub.count,
-      route: window.location.hash || '#/',
+  const selectAllShortcuts = () => {
+    container.querySelectorAll('.ai-shortcut-select-btn').forEach(b => {
+      b.classList.add('is-multi-selected'); b.setAttribute('aria-pressed', 'true');
     });
-    window.dispatchEvent(new CustomEvent('open-prompt-modal', {
-      detail: { prompt: sub.prompt, name: sub.name, iconKey: sub.iconKey, count: sub.count },
-    }));
-  });
+    updateSubmit();
+  };
+  const clearShortcuts = () => {
+    container.querySelectorAll('.ai-shortcut-select-btn.is-multi-selected').forEach(b => {
+      b.classList.remove('is-multi-selected'); b.setAttribute('aria-pressed', 'false');
+    });
+    updateSubmit();
+  };
+  const selectionInfo = () => {
+    const allBtns = container.querySelectorAll('.ai-shortcut-select-btn');
+    const sel = container.querySelectorAll('.ai-shortcut-select-btn.is-multi-selected');
+    return { count: sel.length, allSelected: allBtns.length > 0 && sel.length === allBtns.length };
+  };
 
-  // Direct Submit — fires the prompt straight to the currently
-  // chosen AI model (copy-to-clipboard + open the model's chat URL
-  // with prompt pre-filled). Skips the preview modal entirely.
-  submitBtn?.addEventListener('click', async () => {
-    const sub = buildSubmission();
-    if (!sub) return;
+  clearBtn?.addEventListener('click', clearShortcuts);
+
+  // Review & Submit — opens the centered Prompt Submission modal, which owns the
+  // selection summary, model picker, advanced settings, Preview and Direct Submit.
+  reviewBtn?.addEventListener('click', () => {
+    const info = selectionInfo();
+    if (info.count === 0) return;
     const model = refreshModelChoice();
-    if (!model) return;
-    track('direct_submit', {
-      model: model.id,
-      count: sub.count,
-      route: window.location.hash || '#/',
-    });
-    try {
-      await submitPrompt(model, sub.prompt);
-    } catch (err) {
-      console.error('Direct submit failed', err);
-    }
+    window.dispatchEvent(new CustomEvent('open-submit-modal', {
+      detail: {
+        count: info.count,
+        allSelected: info.allSelected,
+        topicName: topicName,
+        selectedModelId: model ? model.id : getDefaultModelId(),
+        callbacks: {
+          onSelectAll: selectAllShortcuts,
+          onClear: clearShortcuts,
+          onSetModel: (id) => setPreferredModelId(id),
+          getSelectionInfo: selectionInfo,
+          buildBase: () => buildSubmission(),
+          onPreview: (sub, opts) => {
+            const prompt = assemblePrompt(sub.prompt, opts);
+            track(sub.count === 1 ? 'shortcut_click' : 'multi_shortcut_submit', {
+              [sub.count === 1 ? 'shortcut_name' : 'count']: sub.count === 1 ? sub.name : sub.count,
+              route: window.location.hash || '#/',
+            });
+            window.dispatchEvent(new CustomEvent('open-prompt-modal', {
+              detail: { prompt, name: sub.name, iconKey: sub.iconKey, count: sub.count },
+            }));
+          },
+          onDirectSubmit: async (sub, opts) => {
+            const m = refreshModelChoice();
+            if (!m) return;
+            const prompt = assemblePrompt(sub.prompt, opts);
+            track('direct_submit', { model: m.id, count: sub.count, route: window.location.hash || '#/' });
+            try { await submitPrompt(m, prompt); } catch (err) { console.error('Direct submit failed', err); }
+          },
+        },
+      },
+    }));
   });
 
   // Scroll-fade indicators: toggle has-overflow-top / has-overflow-bottom

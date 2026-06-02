@@ -11665,3 +11665,31 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 @media (max-width: 640px) {
   .psm-panel { width: calc(100vw - 1rem); border-radius: 12px; }
 }
+
+/* === Compact submission trigger bar (replaces the old multi-row panel) === */
+.shortcuts-multi-submit-wrap {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 0.85rem;
+}
+.shortcuts-multi-submit-wrap > * + * { border-top: none; }
+.shortcuts-multi-submit-wrap .shortcuts-multi-count { font-size: 0.9rem; color: var(--color-text); }
+.shortcuts-multi-submit-wrap .shortcuts-multi-count strong { color: var(--color-primary); font-weight: 700; }
+.shortcuts-multi-submit-wrap .shortcuts-multi-count-label { color: var(--color-text-muted); }
+.shortcuts-sidebar:has(.shortcuts-multi-submit-wrap.is-visible) .shortcuts-scroll-wrap { padding-bottom: 5.5rem; }
+.shortcuts-multi-trigger-utils { display: inline-flex; align-items: center; gap: 0.55rem; }
+.shortcuts-multi-clear {
+  background: none; border: none; color: var(--color-text-muted); font-family: inherit;
+  font-size: 0.85rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0.4rem; border-radius: 6px;
+}
+.shortcuts-multi-clear:hover { color: var(--color-text); text-decoration: underline; }
+.shortcuts-multi-clear:disabled { color: var(--color-text-light); cursor: default; text-decoration: none; }
+.shortcuts-multi-review {
+  display: inline-flex; align-items: center; gap: 0.4rem; background: var(--color-primary); color: #fff;
+  border: 1px solid var(--color-primary); font-family: inherit; font-weight: 600; font-size: 0.9rem;
+  padding: 0.5rem 0.9rem; border-radius: 9px; cursor: pointer;
+}
+.shortcuts-multi-review:hover { background: var(--color-primary-dark); }
+.shortcuts-multi-review:disabled { opacity: 0.5; cursor: default; }
