@@ -1,5 +1,5 @@
 import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
-import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getModels, getDefaultModelId, getModelById, searchTopics } from './utils/data.js';
+import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, getModels, getDefaultModelId, getModelById, searchTopics } from './utils/data.js';
 import { getPreferredModelId, setPreferredModelId, submitPrompt } from './utils/ai-models.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
@@ -1446,15 +1446,42 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   html += `<div class="ti-accordions">`;
 
   if (contentSearches.length > 0) {
+    // Group the web sources into labelled subtopics (Search,
+    // Social, Audio & video, Writing). Order/labels come from the
+    // data file's `categories`; any source whose category isn't
+    // listed falls into a trailing "Other" group so nothing is
+    // silently dropped.
+    const categories = getExternalSearchCategories();
+    const order = categories.length
+      ? categories.slice()
+      : [{ key: '__all', label: '' }];
+    const known = new Set(order.map(c => c.key));
+    const leftovers = contentSearches.filter(s => !known.has(s.category));
+    if (leftovers.length) order.push({ key: '__other', label: 'Other' });
+
+    const groupsHTML = order.map(cat => {
+      const items = cat.key === '__other'
+        ? leftovers
+        : cat.key === '__all'
+          ? contentSearches
+          : contentSearches.filter(s => s.category === cat.key);
+      if (!items.length) return '';
+      const heading = cat.label
+        ? `<li class="ti-subhead" aria-hidden="true">${escapeHTML(cat.label)}</li>`
+        : '';
+      return `
+        <ul class="ti-item-list ti-item-list-grouped">
+          ${heading}
+          ${items.map(s => webSourceItem(s, topicName)).join('')}
+        </ul>
+      `;
+    }).join('');
+
     html += renderTIAccordion({
       key: 'websources',
       label: 'Web Sources',
       open: false,
-      bodyHTML: `
-        <ul class="ti-item-list">
-          ${contentSearches.map(s => webSourceItem(s, topicName)).join('')}
-        </ul>
-      `,
+      bodyHTML: `<div class="ti-source-groups">${groupsHTML}</div>`,
     });
   }
 

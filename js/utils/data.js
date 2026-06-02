@@ -38,6 +38,10 @@ export function getExternalSearches() {
   return externalSearchesData?.searches || [];
 }
 
+export function getExternalSearchCategories() {
+  return externalSearchesData?.categories || [];
+}
+
 async function fetchJSON(path) {
   const res = await fetch(path);
   return res.json();
@@ -113,7 +117,24 @@ export function getShortcutsForTopic(topicSlug) {
   const ids = assignments[topicSlug] || assignments['_custom'] || [];
   const dirMap = {};
   directory.forEach(s => { dirMap[s.id] = s; });
-  return ids.map(id => dirMap[id]).filter(Boolean);
+  const list = ids.map(id => dirMap[id]).filter(Boolean);
+
+  // Evergreen shortcuts (Discover/Learn/Analyze prompts that apply to
+  // any subject) are injected into every topic + custom search rather
+  // than listed in each topic's assignments. Home is excluded — it has
+  // no single topic, so the {topic} placeholder would be empty. They're
+  // appended after the topic's dedicated shortcuts and de-duped in case
+  // a topic also lists one explicitly.
+  if (topicSlug !== 'home') {
+    const have = new Set(list.map(s => s.id));
+    directory.forEach(s => {
+      if (s.evergreen && !have.has(s.id)) {
+        list.push(s);
+        have.add(s.id);
+      }
+    });
+  }
+  return list;
 }
 
 /**

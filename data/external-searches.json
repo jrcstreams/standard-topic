@@ -1,34 +1,108 @@
 {
+  "categories": [
+    { "key": "search", "label": "Search & reference" },
+    { "key": "social", "label": "Social & discussion" },
+    { "key": "media", "label": "Audio & video" },
+    { "key": "writing", "label": "Writing & newsletters" }
+  ],
   "searches": [
     {
       "name": "DuckDuckGo",
       "description": "Privacy-first web search results.",
       "icon": "duckduckgo",
+      "category": "search",
       "urlTemplate": "https://duckduckgo.com/?q={query}"
     },
     {
       "name": "Google News",
       "description": "Headlines from Google's news aggregator.",
       "icon": "google-news",
+      "category": "search",
       "urlTemplate": "https://news.google.com/search?q={query}"
+    },
+    {
+      "name": "Wikipedia",
+      "description": "Encyclopedic overview and citations.",
+      "icon": "wikipedia",
+      "category": "search",
+      "urlTemplate": "https://en.wikipedia.org/w/index.php?search={query}"
     },
     {
       "name": "Reddit",
       "description": "Community discussions and threads.",
       "icon": "reddit",
+      "category": "social",
       "urlTemplate": "https://www.reddit.com/search/?q={query}&type=link"
     },
     {
       "name": "X (Twitter)",
       "description": "Real-time posts and reactions.",
       "icon": "x-twitter",
+      "category": "social",
       "urlTemplate": "https://x.com/search?q={query}"
+    },
+    {
+      "name": "Bluesky",
+      "description": "Real-time posts on the open social web.",
+      "icon": "bluesky",
+      "category": "social",
+      "urlTemplate": "https://bsky.app/search?q={query}"
+    },
+    {
+      "name": "LinkedIn",
+      "description": "Professional posts and commentary.",
+      "icon": "linkedin",
+      "category": "social",
+      "urlTemplate": "https://www.linkedin.com/search/results/content/?keywords={query}"
+    },
+    {
+      "name": "Quora",
+      "description": "Crowd-sourced questions and answers.",
+      "icon": "quora",
+      "category": "social",
+      "urlTemplate": "https://www.quora.com/search?q={query}"
     },
     {
       "name": "YouTube",
       "description": "Video search results.",
       "icon": "youtube",
+      "category": "media",
       "urlTemplate": "https://www.youtube.com/results?search_query={query}"
+    },
+    {
+      "name": "TikTok",
+      "description": "Short-form video and explainers.",
+      "icon": "tiktok",
+      "category": "media",
+      "urlTemplate": "https://www.tiktok.com/search?q={query}"
+    },
+    {
+      "name": "Apple Podcasts",
+      "description": "Podcast episodes and shows.",
+      "icon": "apple-podcasts",
+      "category": "media",
+      "urlTemplate": "https://podcasts.apple.com/us/search?term={query}"
+    },
+    {
+      "name": "Spotify",
+      "description": "Podcasts and audio search.",
+      "icon": "spotify",
+      "category": "media",
+      "urlTemplate": "https://open.spotify.com/search/{query}"
+    },
+    {
+      "name": "Substack",
+      "description": "Independent newsletters and essays.",
+      "icon": "substack",
+      "category": "writing",
+      "urlTemplate": "https://substack.com/search/{query}"
+    },
+    {
+      "name": "Medium",
+      "description": "Long-form articles and opinion.",
+      "icon": "medium",
+      "category": "writing",
+      "urlTemplate": "https://medium.com/search?q={query}"
     }
   ]
 }

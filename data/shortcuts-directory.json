@@ -5022,6 +5022,177 @@
       "prompt": "What's the latest serious research, reports, and studies on the topic of: {TOPIC}? Cover peer-reviewed papers, industry reports, government findings, and credible analysis published recently. For each: what it found, who published it, and why it matters. Skip blog posts and press releases.",
       "description": "Recent serious studies and analysis",
       "group": "discover"
+    },
+    {
+      "id": "what-just-changed",
+      "name": "What Just Changed",
+      "icon": "what-just-changed",
+      "prompt": "What has meaningfully changed in {topic} recently — the development that, if I'd been away, I'd most need to know? Explain what shifted, what it replaced, and how it changes the way to think about this topic going forward.",
+      "description": "The recent shift that resets the picture",
+      "group": "discover",
+      "evergreen": true
+    },
+    {
+      "id": "the-cutting-edge",
+      "name": "The Cutting Edge",
+      "icon": "the-cutting-edge",
+      "prompt": "Where is the frontier in {topic} right now — the questions being actively worked on, the new approaches being tried, or the discoveries being made? Explain what's driving progress at the edge and what might come of it.",
+      "description": "Where the active work is happening now",
+      "group": "discover",
+      "evergreen": true
+    },
+    {
+      "id": "recent-milestones",
+      "name": "Recent Milestones",
+      "icon": "recent-milestones",
+      "prompt": "What are the most notable recent milestones in {topic} — discoveries, achievements, releases, or events worth knowing about? For each, explain what happened and why it mattered, and note which will still matter a year from now.",
+      "description": "The notable moments of the last while",
+      "group": "discover",
+      "evergreen": true
+    },
+    {
+      "id": "the-big-ideas",
+      "name": "The Big Ideas",
+      "icon": "the-big-ideas",
+      "prompt": "What are the handful of core ideas at the heart of {topic} — the concepts everything else builds on? Explain each clearly and show how they connect, so I come away understanding the foundation rather than a pile of facts.",
+      "description": "The core concepts everything rests on",
+      "group": "learn",
+      "evergreen": true
+    },
+    {
+      "id": "how-it-actually-works",
+      "name": "How It Actually Works",
+      "icon": "how-it-actually-works",
+      "prompt": "Walk me through how {topic} actually works — the real mechanics, steps, or moving parts, not just the surface description. Use a concrete example to make it tangible, and point out where people's intuitions usually go wrong.",
+      "description": "The mechanics under the hood",
+      "group": "learn",
+      "evergreen": true
+    },
+    {
+      "id": "the-main-types",
+      "name": "The Main Types",
+      "icon": "the-main-types",
+      "prompt": "Break down the main types, categories, or branches within {topic}. Explain what distinguishes each one, how they relate, and when each matters — so I can tell them apart and place anything new I encounter.",
+      "description": "The varieties, kinds, or schools within it",
+      "group": "learn",
+      "evergreen": true
+    },
+    {
+      "id": "how-the-pieces-fit-together",
+      "name": "How the Pieces Fit Together",
+      "icon": "how-the-pieces-fit-together",
+      "prompt": "Give me a map of {topic} — the main parts, ideas, or players and how they relate to each other. Help me see the overall structure so I know where any given detail fits, and point out the connections people most often miss.",
+      "description": "A map of the whole landscape",
+      "group": "learn",
+      "evergreen": true
+    },
+    {
+      "id": "notable-examples",
+      "name": "Notable Examples",
+      "icon": "notable-examples",
+      "prompt": "Show me the most illuminating examples of {topic} — the specific cases, instances, or stories that make the idea concrete. For each, explain what it demonstrates and why it's a good example to remember.",
+      "description": "The concrete cases that make it click",
+      "group": "learn",
+      "evergreen": true
+    },
+    {
+      "id": "how-it-compares",
+      "name": "How It Compares",
+      "icon": "how-it-compares",
+      "prompt": "Help me place {topic} by comparing it to the things it's most often confused with or grouped alongside. Explain the key differences and similarities, so I understand not just what it is, but what it isn't.",
+      "description": "Where it sits among similar things",
+      "group": "learn",
+      "evergreen": true
+    },
+    {
+      "id": "frequently-asked-questions",
+      "name": "Frequently Asked Questions",
+      "icon": "frequently-asked-questions",
+      "prompt": "Answer the most common questions people have about {topic} — the things a curious newcomer would naturally ask. Give a clear, direct answer to each, and prioritize the questions whose answers are surprising or commonly gotten wrong.",
+      "description": "The questions everyone asks",
+      "group": "learn",
+      "evergreen": true
+    },
+    {
+      "id": "cheat-sheet",
+      "name": "Cheat Sheet",
+      "icon": "cheat-sheet",
+      "prompt": "Build me a quick-reference cheat sheet for {topic} — the key terms, facts, distinctions, and rules of thumb worth keeping at a glance. Keep it tight and scannable, and prioritize what I'd actually want to look up again.",
+      "description": "The quick reference to keep handy",
+      "group": "learn",
+      "evergreen": true
+    },
+    {
+      "id": "best-resources-to-go-deeper",
+      "name": "Best Resources to Go Deeper",
+      "icon": "best-resources-to-go-deeper",
+      "prompt": "Point me to the best resources for genuinely learning {topic} — standout books, courses, documentaries, sites, or guides. For each, say who it's best for and what it does better than the alternatives, and suggest a sensible order to take them in.",
+      "description": "Where to learn this properly",
+      "group": "learn",
+      "evergreen": true
+    },
+    {
+      "id": "why-it-matters",
+      "name": "Why It Matters",
+      "icon": "why-it-matters",
+      "prompt": "Make the case for why {topic} matters. Explain its significance — what it affects, what depends on it, and what we'd lose or misunderstand without it — and distinguish the reasons it genuinely matters from the reasons it's merely talked about.",
+      "description": "The significance, plainly stated",
+      "group": "analyze",
+      "evergreen": true
+    },
+    {
+      "id": "the-big-picture",
+      "name": "The Big Picture",
+      "icon": "the-big-picture",
+      "prompt": "Zoom out and place {topic} in its broader context. How does it connect to other fields, events, or ideas, and what larger story is it part of? Help me see why it doesn't exist in isolation.",
+      "description": "How it connects to the wider world",
+      "group": "analyze",
+      "evergreen": true
+    },
+    {
+      "id": "what-drives-it",
+      "name": "What Drives It",
+      "icon": "what-drives-it",
+      "prompt": "What are the underlying forces that shape {topic} — the causes, drivers, or conditions that make it what it is? Trace cause and effect, and separate the factors that genuinely drive things from the ones that just come along for the ride.",
+      "description": "The causes and forces underneath",
+      "group": "analyze",
+      "evergreen": true
+    },
+    {
+      "id": "whats-surprising",
+      "name": "What's Surprising",
+      "icon": "whats-surprising",
+      "prompt": "What's surprising or counterintuitive about {topic} — the things that run against common assumptions or that even interested people often get wrong? For each, explain what people expect, what's actually true, and why the gap exists.",
+      "description": "The counterintuitive parts",
+      "group": "analyze",
+      "evergreen": true
+    },
+    {
+      "id": "what-we-dont-know-yet",
+      "name": "What We Don't Know Yet",
+      "icon": "what-we-dont-know-yet",
+      "prompt": "What are the real open questions in {topic} — the things even informed people genuinely can't answer yet? Separate \"unknown because it's unsettled\" from \"unknown because no one's looked,\" and note which answers would change the most if we got them.",
+      "description": "The genuine open questions",
+      "group": "analyze",
+      "evergreen": true
+    },
+    {
+      "id": "strengths-and-limitations",
+      "name": "Strengths and Limitations",
+      "icon": "strengths-and-limitations",
+      "prompt": "Give me an honest assessment of {topic}'s strengths and limitations — where it works well, where it breaks down, and the tradeoffs involved. Avoid both boosterism and cynicism, and tell me what to keep in mind before relying on it.",
+      "description": "What it does well and where it falls short",
+      "group": "analyze",
+      "evergreen": true
+    },
+    {
+      "id": "overhyped-vs-underrated",
+      "name": "Overhyped vs. Underrated",
+      "icon": "overhyped-vs-underrated",
+      "prompt": "When it comes to {topic}, what gets more attention than it deserves, and what's quietly more important than people realize? Explain the gap between perception and reality for each, and what's driving the mismatch.",
+      "description": "Where attention is mispriced",
+      "group": "analyze",
+      "evergreen": true
     }
   ]
 }
