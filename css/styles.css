@@ -1253,33 +1253,31 @@ body.hide-cta .sticky-cta { display: none !important; }
 .ti-source-groups {
   display: flex;
   flex-direction: column;
-  gap: 1.15rem;
+  gap: 1rem;
 }
-/* Subgroup eyebrow — a short accent tick + uppercase label, so each
-   cluster (Search / Social / Audio & video / Writing) reads as an
-   intentional section marker rather than a faint floating label.
-   Accent inherits the Web Sources accordion's --ti-accent. */
+/* Subgroup eyebrow — small uppercase label followed by a hairline rule
+   that fills the row, so each cluster (Search / Social / Audio & video
+   / Writing) reads as a tidy section divider, matching the hairline-
+   separated listings elsewhere on the site. */
 .ti-subhead {
   list-style: none;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
   margin: 0;
-  padding: 0 0.6rem 0.5rem;
-  font-size: 0.7rem;
+  padding: 0 0.6rem 0.55rem;
+  font-size: 0.64rem;
   font-weight: 700;
-  letter-spacing: 0.085em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #51607a;
+  color: #8a96ad;
+  white-space: nowrap;
 }
-.ti-subhead::before {
+.ti-subhead::after {
   content: "";
-  flex: none;
-  width: 16px;
-  height: 2px;
-  border-radius: 1px;
-  background: var(--ti-accent, #5d6b7e);
-  opacity: 0.85;
+  flex: 1;
+  height: 1px;
+  background: #e6e9ef;
 }
 .ti-item {
   display: flex;
@@ -1327,7 +1325,9 @@ body.hide-cta .sticky-cta { display: none !important; }
   flex-direction: column;
   gap: 0.1rem;
 }
-.ti-item-link .ti-item-name { font-size: 0.84rem; }
+/* Web Source rows sit a touch smaller than AI shortcut rows — they're
+   secondary "open external search" links, not the primary prompts. */
+.ti-item-link .ti-item-name { font-size: 0.76rem; }
 
 /* AI shortcut row marker — compact checkbox that fills in on select. */
 .ti-item-marker {
@@ -2323,6 +2323,7 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
     align-items: flex-start;
     justify-content: center;
     gap: 0.3rem;
+    padding-bottom: 0.5rem;
   }
   .newsfeed-title .section-topic-pill {
     border-left: none;
@@ -10875,7 +10876,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   background: transparent;
   border-bottom: 1px solid #d6dae2;
   border-radius: 0;
-  padding: 0;
+  padding: 0 0 0.5rem;
   margin: 0;
   min-height: 2.56rem;
   align-items: center;
