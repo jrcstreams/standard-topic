@@ -635,12 +635,6 @@
             if (v) { copyBtn.removeAttribute('disabled'); copyBtn.removeAttribute('title'); }
             else   { copyBtn.setAttribute('disabled', ''); copyBtn.setAttribute('title', 'Set token first'); }
           }
-          // Also refresh per-row Copy URL buttons (their copy target
-          // is the resolved URL).
-          document.querySelectorAll('button[data-action="copy-webhook-url"]').forEach(function(b){
-            if (v) { b.removeAttribute('disabled'); b.removeAttribute('title'); }
-            else   { b.setAttribute('disabled',''); b.setAttribute('title','Set token first'); }
-          });
         });
       }
       if (copyBtn) {
@@ -652,9 +646,6 @@
           if (input) input.value = '';
           if (urlEl) urlEl.textContent = resolvedWebhookURL();
           if (copyBtn) { copyBtn.setAttribute('disabled',''); copyBtn.setAttribute('title','Set token first'); }
-          document.querySelectorAll('button[data-action="copy-webhook-url"]').forEach(function(b){
-            b.setAttribute('disabled',''); b.setAttribute('title','Set token first');
-          });
           toast('Token cleared');
         };
       }
@@ -743,7 +734,9 @@
         var tokenReady = webhookTokenIsSet();
         var copyBtnHTML = '';
         if (t.webhookEnabled) {
-          var disAttr = tokenReady ? '' : ' disabled title="Set token in webhook panel first"';
+          // Always clickable — when no token is set the click handler shows a
+          // guidance toast (a disabled button gave no feedback at all).
+          var disAttr = tokenReady ? '' : ' title="No webhook token set yet — click for help"';
           copyBtnHTML = ' <button class="btn" data-action="copy-webhook-url" data-slug="'+escA(t.slug)+'" type="button" title="Copy ready-to-use webhook URL"'+disAttr+' style="margin-left:0.4rem;padding:2px 6px;font-size:0.7rem;">Copy URL</button>';
         }
         liveCell = '<td style="text-align:center;white-space:nowrap;"><input type="checkbox" data-action="toggle-webhook" data-slug="'+escA(t.slug)+'"'+checked+' title="'+escA(title)+'" style="width:16px;height:16px;cursor:pointer;vertical-align:middle;">'+copyBtnHTML+'</td>';
