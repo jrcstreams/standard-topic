@@ -174,7 +174,8 @@
       "icon": "latest-news",
       "prompt": "What's the latest news on the topic of: {TOPIC}? Cover the most significant developments from the past week or so. For each: what happened, why it matters, and what to watch next. Skip noise and prioritize stories with real significance. Organize by significance, not chronology.",
       "description": "Recent updates worth knowing about",
-      "group": "discover"
+      "group": "discover",
+      "evergreen": true
     },
     {
       "id": "trends",
@@ -182,7 +183,8 @@
       "icon": "trends",
       "prompt": "What are the most important trends right now and over the next year or two shaping the topic of: {TOPIC}? For each trend: what's driving it, who's leading or being affected, and how to tell if it's playing out.",
       "description": "Emerging patterns worth following",
-      "group": "discover"
+      "group": "discover",
+      "evergreen": true
     },
     {
       "id": "risks-red-flags",
@@ -190,7 +192,8 @@
       "icon": "risks-red-flags",
       "prompt": "What are the biggest risks, warning signs, and red flags right now on the topic of: {TOPIC}? Cover what could go wrong, where vulnerabilities are building, and what credible observers are worried about. Distinguish real risks from hype.",
       "description": "Risks and warning signs to watch",
-      "group": "analyze"
+      "group": "analyze",
+      "evergreen": true
     },
     {
       "id": "key-players",
@@ -198,7 +201,8 @@
       "icon": "key-players",
       "prompt": "Who are the most important people, companies, organizations, or institutions right now on the topic of: {TOPIC}? For each: who they are, why they matter, and what to know about their current position. Cover both the obvious heavyweights and rising names worth tracking.",
       "description": "The people and groups shaping this space",
-      "group": "learn"
+      "group": "learn",
+      "evergreen": true
     },
     {
       "id": "how-this-affects-me",
@@ -206,7 +210,8 @@
       "icon": "how-this-affects-me",
       "prompt": "Help me understand how the topic of {TOPIC} affects me personally. Ask me a few questions about my situation if needed, then walk me through the practical implications — what I should pay attention to, what decisions might be affected, and what I can do about it.",
       "description": "How this likely shows up in your daily life",
-      "group": "analyze"
+      "group": "analyze",
+      "evergreen": true
     },
     {
       "id": "glossary-key-terms",
@@ -214,7 +219,8 @@
       "icon": "glossary-key-terms",
       "prompt": "Give me a glossary of the most important terms, acronyms, and jargon used on the topic of: {TOPIC}. Define each clearly and note any terms that are commonly misused or contested.",
       "description": "Key terms used in this space, plain-language",
-      "group": "learn"
+      "group": "learn",
+      "evergreen": true
     },
     {
       "id": "industry-deep-dive",
@@ -222,7 +228,8 @@
       "icon": "industry-deep-dive",
       "prompt": "Give me a current state-of-the-industry overview for the topic of: {TOPIC}. Cover the major players, the competitive dynamics, recent disruptions, regulatory environment, and what to watch over the next 12 months.",
       "description": "A closer look at how the industry actually works",
-      "group": "learn"
+      "group": "learn",
+      "evergreen": true
     },
     {
       "id": "earnings-season-pulse",
@@ -294,7 +301,8 @@
       "icon": "beginners-guide",
       "prompt": "Give me a clear, practical beginner's guide to the topic of: {TOPIC}. Cover the foundational concepts, what to learn first, why it matters, who the major players are, the key concepts I need to understand to follow the conversation, common starting mistakes, and the most useful next steps to go deeper. Don't oversimplify.",
       "description": "Background for someone starting out",
-      "group": "learn"
+      "group": "learn",
+      "evergreen": true
     },
     {
       "id": "crypto-market-snapshot",
@@ -350,7 +358,8 @@
       "icon": "different-perspectives",
       "prompt": "What are the main perspectives, schools of thought, or sides in current debates around the topic of: {TOPIC}? For each: who holds the view, their core argument, the strongest evidence in their favor, and where they tend to disagree with others. Be even-handed.",
       "description": "Where the major sides actually disagree",
-      "group": "analyze"
+      "group": "analyze",
+      "evergreen": true
     },
     {
       "id": "biggest-deals-weekly",
@@ -526,7 +535,8 @@
       "icon": "where-to-follow",
       "prompt": "What are the best sources to follow for staying current on the topic of: {TOPIC}? Cover newsletters, podcasts, journalists, analysts, websites, and any other sources worth subscribing to. Note who's best for what (breaking news, analysis, deep dives, contrarian takes, etc.).",
       "description": "Sources worth following for ongoing coverage",
-      "group": "learn"
+      "group": "learn",
+      "evergreen": true
     },
     {
       "id": "us-housing-market",
@@ -734,7 +744,8 @@
       "icon": "myths-vs-reality",
       "prompt": "What are the most common myths, misconceptions, or oversimplifications about the topic of: {TOPIC}? For each: the myth, what's actually true (with evidence), and why the myth persists.",
       "description": "Common misconceptions and the real story",
-      "group": "analyze"
+      "group": "analyze",
+      "evergreen": true
     },
     {
       "id": "small-business-climate-check",
@@ -822,7 +833,8 @@
       "icon": "catch-me-up",
       "prompt": "I haven't been following {TOPIC} for a while. Catch me up on what I need to know — the major recent developments, the current state of play, the dominant storylines, and what's coming up. Assume I have general background but missed the last few months.",
       "description": "A quick re-up if you've been away from it",
-      "group": "learn"
+      "group": "learn",
+      "evergreen": true
     },
     {
       "id": "new-model-releases",
@@ -1230,7 +1242,8 @@
       "icon": "how-we-got-here",
       "prompt": "Walk me through how the topic of {TOPIC} got to where it is today. Cover the major turning points, key decisions, and historical context that explain the current landscape. Note any historical patterns worth knowing about.",
       "description": "How the current situation actually formed",
-      "group": "learn"
+      "group": "learn",
+      "evergreen": true
     },
     {
       "id": "language-and-frameworks",
@@ -5013,7 +5026,8 @@
       "icon": "timeline-key-dates",
       "prompt": "Give me a timeline of the key dates and milestones in the topic of: {TOPIC}. Cover the most consequential events that shaped this space — when each happened, what it was, and why it mattered. Include both the historical foundations and recent inflection points. Organize chronologically.",
       "description": "Key moments that shaped this space",
-      "group": "learn"
+      "group": "learn",
+      "evergreen": true
     },
     {
       "id": "latest-research-reports",
@@ -5021,7 +5035,8 @@
       "icon": "latest-research-reports",
       "prompt": "What's the latest serious research, reports, and studies on the topic of: {TOPIC}? Cover peer-reviewed papers, industry reports, government findings, and credible analysis published recently. For each: what it found, who published it, and why it matters. Skip blog posts and press releases.",
       "description": "Recent serious studies and analysis",
-      "group": "discover"
+      "group": "discover",
+      "evergreen": true
     },
     {
       "id": "what-just-changed",
