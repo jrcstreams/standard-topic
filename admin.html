@@ -17,6 +17,9 @@
     .tabgroup.active { color: white; background: var(--primary); border-color: var(--primary); }
     .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 1.5rem; flex-wrap: wrap; }
     .tabs.single { display: none; }
+    th.sortable { cursor: pointer; user-select: none; white-space: nowrap; }
+    th.sortable:hover { color: var(--primary); }
+    th.sortable .arrow { color: var(--primary); }
     .tab { padding: 0.6rem 1.1rem; font-size: 0.85rem; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; color: var(--text-muted); background: none; border-top: none; border-left: none; border-right: none; font-family: inherit; font-weight: 500; }
     .tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
     .tab-content { display: none; }
@@ -116,7 +119,7 @@
   </div>
   <div class="tabs" id="tabs"></div>
   <div class="tab-content active" id="tab-topics"><div class="toolbar"><h2>Manage Topics</h2><button class="btn btn-primary" id="add-topic">+ Add Topic</button></div><div id="webhook-status-panel" style="background:var(--bg-light);border:1px solid var(--border);border-radius:6px;padding:0.85rem 1rem;margin-bottom:1rem;"></div><div id="featured-order-panel" style="background:var(--bg-light);border:1px solid var(--border);border-radius:6px;padding:0.85rem 1rem;margin-bottom:1rem;"></div><table><thead><tr><th>Name</th><th>Slug</th><th>Parent</th><th>RSS Feed ID</th><th>Icon</th><th>Featured</th><th>Live</th><th>Actions</th></tr></thead><tbody id="topics-body"></tbody></table></div>
-  <div class="tab-content" id="tab-directory"><div class="toolbar"><h2>Shortcuts Directory</h2><button class="btn btn-primary" id="add-shortcut">+ Add Shortcut</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.6rem;">Each shortcut has a <strong>Group</strong> (Discover / Learn / Analyze / More — or any group you defined in <em>Shortcut Groups</em>). The group determines which subsection it appears under on every topic page.</p><table><thead><tr><th>Name</th><th>ID</th><th>Group</th><th>Icon</th><th>Prompt</th><th>Actions</th></tr></thead><tbody id="dir-body"></tbody></table></div>
+  <div class="tab-content" id="tab-directory"><div class="toolbar"><h2>Topic-Specific Shortcuts</h2><button class="btn btn-primary" id="add-shortcut">+ Add Shortcut</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.6rem;">Shortcuts assigned to specific topics (i.e. <strong>not</strong> evergreen — those live in the Evergreen tab). The <strong>Assigned topics</strong> column shows the topic slugs each appears on; manage assignments in <em>Topics → Topic Assignments</em>. Click a column header to sort.</p><table><thead><tr><th class="sortable" data-dir-sort="name">Name</th><th class="sortable" data-dir-sort="id">ID</th><th class="sortable" data-dir-sort="group">Group</th><th class="sortable" data-dir-sort="topics">Assigned topics</th><th>Actions</th></tr></thead><tbody id="dir-body"></tbody></table></div>
   <div class="tab-content" id="tab-evergreen">
     <div class="toolbar"><h2>Evergreen Shortcuts</h2></div>
     <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Evergreen shortcuts appear on <strong>every topic + custom search</strong> (not the homepage), after each topic's own shortcuts, in the global order set here. Reorder within a section with the arrows. Use <strong>Excluded on…</strong> to turn an evergreen off for specific topics — that exclusion is shared with the topic's own tab.</p>
@@ -193,7 +196,7 @@
     // off-nav as an "advanced" escape hatch.
     var TAB_GROUPS = [
       { id: 'g-topics',     label: 'Topics',           tabs: [ {id:'topics', label:'Topics'}, {id:'assignments', label:'Topic Assignments'} ] },
-      { id: 'g-shortcuts',  label: 'Shortcuts',        tabs: [ {id:'directory', label:'Directory'}, {id:'evergreen', label:'Evergreen'}, {id:'groups', label:'Groups'} ] },
+      { id: 'g-shortcuts',  label: 'Shortcuts',        tabs: [ {id:'directory', label:'Topic-Specific'}, {id:'evergreen', label:'Evergreen'}, {id:'groups', label:'Groups'} ] },
       { id: 'g-websources', label: 'Web Sources',      tabs: [ {id:'searches', label:'Web Sources'} ] },
       { id: 'g-models',     label: 'AI Models',        tabs: [ {id:'models', label:'AI Models'} ] },
       { id: 'g-promptgen',  label: 'Prompt Generator', tabs: [ {id:'promptgen', label:'Prompt Generator'} ] }
@@ -865,34 +868,41 @@
       return g ? g.label : (id || '—');
     }
 
+    var dirSort = { key: 'name', dir: 1 };
+    function topicsForShortcut(id) {
+      var res = [], a = (data.assignments && data.assignments.assignments) || {};
+      Object.keys(a).forEach(function(slug){ if ((a[slug]||[]).indexOf(id) >= 0) res.push(slug); });
+      return res;
+    }
     function renderDirectory() {
-      var shortcuts = data.directory.shortcuts || [];
-      var groups = getGroupDefs();
+      var list = (data.directory.shortcuts||[]).filter(function(s){ return !s.evergreen; });
       var tbody = document.getElementById('dir-body');
-      tbody.innerHTML = shortcuts.map(function(s, i) {
-        var groupSelectHTML = '<select data-action="set-group" data-id="'+escA(s.id)+'" style="padding:0.25rem 0.35rem;border:1px solid var(--border);border-radius:3px;background:white;font-size:0.78rem;">' +
-          '<option value="">— unset —</option>' +
-          groups.map(function(g){ return '<option value="'+escA(g.id)+'"'+(s.group===g.id?' selected':'')+'>'+esc(g.label)+'</option>'; }).join('') +
-        '</select>';
-        return '<tr><td><strong>'+esc(s.name)+'</strong></td><td class="mono">'+esc(s.id)+'</td><td>'+groupSelectHTML+'</td><td>'+esc(s.icon||'')+'</td><td class="mono truncate" title="'+escA(s.prompt)+'">'+esc(s.prompt)+'</td><td style="white-space:nowrap"><button class="btn" data-action="up" data-i="'+i+'" title="Move up">↑</button> <button class="btn" data-action="down" data-i="'+i+'" title="Move down">↓</button> <button class="btn" data-action="edit" data-id="'+escA(s.id)+'">Edit</button> <button class="btn btn-danger" data-action="delete" data-id="'+escA(s.id)+'">Del</button></td></tr>';
-      }).join('');
-      tbody.onclick = function(e) {
-        var btn = e.target.closest('[data-action]'); if (!btn || btn.tagName === 'SELECT') return;
-        var arr = data.directory.shortcuts;
-        if (btn.dataset.action === 'edit') editShortcut(btn.dataset.id);
-        else if (btn.dataset.action === 'delete') { if(confirm('Delete?')){ data.directory.shortcuts = arr.filter(function(s){return s.id!==btn.dataset.id;}); Object.keys(data.assignments.assignments||{}).forEach(function(k){data.assignments.assignments[k]=(data.assignments.assignments[k]||[]).filter(function(id){return id!==btn.dataset.id;});}); renderDirectory(); renderAssignments(); toast('Deleted'); if(window.__markDirty){window.__markDirty('directory');window.__markDirty('assignments');} } }
-        else if (btn.dataset.action === 'up') { var i=parseInt(btn.dataset.i,10); if(i>0){ var m=arr.splice(i,1)[0]; arr.splice(i-1,0,m); renderDirectory(); if(window.__markDirty)window.__markDirty('directory'); } }
-        else if (btn.dataset.action === 'down') { var i=parseInt(btn.dataset.i,10); if(i<arr.length-1){ var m=arr.splice(i,1)[0]; arr.splice(i+1,0,m); renderDirectory(); if(window.__markDirty)window.__markDirty('directory'); } }
-      };
-      tbody.onchange = function(e) {
-        var sel = e.target.closest('select[data-action="set-group"]'); if (!sel) return;
-        var s = data.directory.shortcuts.find(function(x){return x.id===sel.dataset.id;});
-        if (!s) return;
-        if (sel.value) s.group = sel.value;
-        else delete s.group;
-        if (window.__markDirty) window.__markDirty('directory');
-        renderAssignments();
-        toast('Group set to ' + (sel.options[sel.selectedIndex].text));
+      var k = dirSort.key, d = dirSort.dir;
+      var rows = list.slice().sort(function(a,b){
+        var va, vb;
+        if (k === 'topics') { va=topicsForShortcut(a.id); vb=topicsForShortcut(b.id); va=(va[0]||'')+'~'+(1000+va.length); vb=(vb[0]||'')+'~'+(1000+vb.length); }
+        else if (k === 'group') { va=groupLabel(a.group||'').toLowerCase(); vb=groupLabel(b.group||'').toLowerCase(); }
+        else { va=String(a[k]||'').toLowerCase(); vb=String(b[k]||'').toLowerCase(); }
+        return va<vb?-d:va>vb?d:0;
+      });
+      tbody.innerHTML = rows.map(function(s){
+        var tops = topicsForShortcut(s.id), topsStr = tops.join(', ');
+        return '<tr><td><strong>'+esc(s.name)+'</strong></td>'+
+          '<td class="mono">'+esc(s.id)+'</td>'+
+          '<td>'+esc(groupLabel(s.group||'—'))+'</td>'+
+          '<td class="mono truncate" title="'+escA(topsStr)+'" style="max-width:240px;">'+(tops.length?esc(topsStr)+' <span style="color:#aaa;">('+tops.length+')</span>':'<span style="color:#c00;">unassigned</span>')+'</td>'+
+          '<td style="white-space:nowrap"><button class="btn" data-edit="'+escA(s.id)+'">Edit</button> <button class="btn btn-danger" data-del="'+escA(s.id)+'">Del</button></td></tr>';
+      }).join('') || '<tr><td colspan="5" style="color:var(--text-muted);text-align:center;padding:1rem;">No topic-specific shortcuts.</td></tr>';
+      document.querySelectorAll('#tab-directory th.sortable').forEach(function(th){
+        var key = th.dataset.dirSort;
+        var base = th.textContent.replace(/[▲▼]\s*$/,'').trim();
+        th.innerHTML = base + (key===dirSort.key ? ' <span class="arrow">'+(dirSort.dir>0?'▲':'▼')+'</span>' : '');
+        th.onclick = function(){ if (dirSort.key===key) dirSort.dir*=-1; else { dirSort.key=key; dirSort.dir=1; } renderDirectory(); };
+      });
+      tbody.onclick = function(e){
+        var b = e.target.closest('button'); if (!b) return;
+        if (b.dataset.edit !== undefined) editShortcut(b.dataset.edit);
+        else if (b.dataset.del !== undefined) { var id=b.dataset.del; if(confirm('Delete?')){ data.directory.shortcuts=data.directory.shortcuts.filter(function(s){return s.id!==id;}); Object.keys(data.assignments.assignments||{}).forEach(function(kk){data.assignments.assignments[kk]=(data.assignments.assignments[kk]||[]).filter(function(x){return x!==id;});}); renderDirectory(); renderAssignments(); toast('Deleted'); if(window.__markDirty){window.__markDirty('directory');window.__markDirty('assignments');} } }
       };
     }
     document.getElementById('add-shortcut').addEventListener('click', function() { showShortcutForm(null); });
@@ -901,17 +911,38 @@
       var isNew = !sc;
       var groups = getGroupDefs();
       var groupOptions = '<option value="">— unset —</option>' + groups.map(function(g){ return '<option value="'+escA(g.id)+'"'+(sc&&sc.group===g.id?' selected':'')+'>'+esc(g.label)+'</option>'; }).join('');
-      document.getElementById('modal').innerHTML = '<div class="form-overlay" id="overlay"><div class="form-modal"><h3>'+(isNew?'Add':'Edit')+' Shortcut</h3><div class="fg"><label>ID</label><input id="f-id" value="'+escA(sc?sc.id:'')+'" '+(isNew?'':'readonly style="background:var(--bg-light)"')+'></div><div class="fg"><label>Name</label><input id="f-name" value="'+escA(sc?sc.name:'')+'"></div><div class="fg"><label>Group</label><select id="f-group">'+groupOptions+'</select></div><div class="fg"><label>Icon key</label><input id="f-icon" value="'+escA(sc?sc.icon:'')+'"></div><div class="fg"><label>Prompt (use {topic})</label><textarea id="f-prompt">'+esc(sc?sc.prompt:'')+'</textarea></div><div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
+      document.getElementById('modal').innerHTML = '<div class="form-overlay" id="overlay"><div class="form-modal"><h3>'+(isNew?'Add':'Edit')+' Shortcut</h3>'+
+        '<div class="fg"><label>ID</label><input id="f-id" value="'+escA(sc?sc.id:'')+'" '+(isNew?'':'readonly style="background:var(--bg-light)"')+'></div>'+
+        '<div class="fg"><label>Name</label><input id="f-name" value="'+escA(sc?sc.name:'')+'"></div>'+
+        '<div class="fg"><label>Group</label><select id="f-group">'+groupOptions+'</select></div>'+
+        '<div class="fg"><label>Summary (sidebar description)</label><input id="f-desc" value="'+escA(sc?sc.description:'')+'"></div>'+
+        '<div class="fg"><label>Icon key</label><input id="f-icon" value="'+escA(sc?sc.icon:'')+'"></div>'+
+        '<div class="fg"><label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;"><input type="checkbox" id="f-evergreen" '+(sc&&sc.evergreen?'checked':'')+'> <strong>Evergreen</strong> — appears on every topic + custom search</label></div>'+
+        '<div class="fg"><label>Prompt (use {topic})</label><textarea id="f-prompt">'+esc(sc?sc.prompt:'')+'</textarea></div>'+
+        '<div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
       document.getElementById('f-cancel').addEventListener('click', closeModal);
       document.getElementById('overlay').addEventListener('click', function(e){if(e.target===e.currentTarget)closeModal();});
       document.getElementById('f-save').addEventListener('click', function() {
-        var entry = {id:document.getElementById('f-id').value.trim(), name:document.getElementById('f-name').value.trim(), icon:document.getElementById('f-icon').value.trim(), prompt:document.getElementById('f-prompt').value};
+        var base = sc ? Object.assign({}, sc) : {};
+        base.id = document.getElementById('f-id').value.trim();
+        base.name = document.getElementById('f-name').value.trim();
+        base.icon = document.getElementById('f-icon').value.trim();
+        base.description = document.getElementById('f-desc').value.trim();
+        base.prompt = document.getElementById('f-prompt').value;
         var grp = document.getElementById('f-group').value;
-        if (grp) entry.group = grp;
-        if(!entry.id||!entry.name||!entry.prompt){alert('Required.');return;}
-        if(isNew){if(data.directory.shortcuts.find(function(s){return s.id===entry.id;})){alert('ID exists.');return;}data.directory.shortcuts.push(entry);}else{var i=data.directory.shortcuts.findIndex(function(s){return s.id===entry.id;});if(i>=0)data.directory.shortcuts[i]=entry;}
-        closeModal(); renderDirectory(); renderAssignments(); toast('Saved');
-        if (window.__markDirty) window.__markDirty('directory');
+        if (grp) base.group = grp; else delete base.group;
+        var isEver = document.getElementById('f-evergreen').checked;
+        if (isEver) base.evergreen = true; else delete base.evergreen;
+        if (!base.id || !base.name || !base.prompt) { alert('ID, Name and Prompt are required.'); return; }
+        if (isNew) { if(data.directory.shortcuts.find(function(s){return s.id===base.id;})){alert('ID already exists.');return;} data.directory.shortcuts.push(base); }
+        else { var i=data.directory.shortcuts.findIndex(function(s){return s.id===base.id;}); if(i>=0) data.directory.shortcuts[i]=base; }
+        // Keep evergreenOrder in sync with the evergreen flag.
+        ensureEvergreenData();
+        var ord = data.assignments.evergreenOrder;
+        if (isEver && ord.indexOf(base.id) < 0) ord.push(base.id);
+        if (!isEver) { var oi=ord.indexOf(base.id); if(oi>=0) ord.splice(oi,1); }
+        closeModal(); renderDirectory(); renderEvergreen(); renderAssignments(); toast('Saved');
+        if (window.__markDirty) { window.__markDirty('directory'); window.__markDirty('assignments'); }
       });
     }
 
@@ -1047,44 +1078,53 @@
         });
       });
     }
+    var egSort = { key: 'order', dir: 1 }; // 'order' = manual section order (reorderable)
     function renderEvergreen() {
       ensureEvergreenData();
       var body = document.getElementById('evergreen-body');
       if (!body) return;
       var dirMap = {}; (data.directory.shortcuts||[]).forEach(function(s){dirMap[s.id]=s;});
-      // Normalize order: keep only still-evergreen ids, append any newly-flagged.
       var order = data.assignments.evergreenOrder.filter(function(id){ return dirMap[id] && dirMap[id].evergreen; });
       (data.directory.shortcuts||[]).forEach(function(s){ if (s.evergreen && order.indexOf(s.id) < 0) order.push(s.id); });
       data.assignments.evergreenOrder = order;
-      var groups = getGroupDefs();
-      var html = '';
-      groups.forEach(function(g){
-        var inGroup = order.filter(function(id){ return (dirMap[id].group||'') === g.id; });
-        if (!inGroup.length) return;
-        html += '<h3 style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);font-weight:700;margin:1.1rem 0 0.5rem;">'+esc(g.label)+' <span style="font-weight:400;color:#aaa;">· '+inGroup.length+'</span></h3>';
-        html += '<table style="margin-bottom:0.4rem;"><tbody>';
-        inGroup.forEach(function(id){
-          var s = dirMap[id];
-          var oi = order.indexOf(id);
-          var prevSame = oi > 0 && (dirMap[order[oi-1]].group||'') === g.id;
-          var nextSame = oi < order.length-1 && (dirMap[order[oi+1]].group||'') === g.id;
-          var n = evergreenExclusionCount(id);
-          html += '<tr>'+
-            '<td style="width:1%;white-space:nowrap;">'+
-              '<button class="btn" data-eg-up="'+escA(id)+'" '+(prevSame?'':'disabled')+' style="padding:0.15rem 0.45rem;">&uarr;</button> '+
-              '<button class="btn" data-eg-down="'+escA(id)+'" '+(nextSame?'':'disabled')+' style="padding:0.15rem 0.45rem;">&darr;</button>'+
-            '</td>'+
-            '<td><strong>'+esc(s.name)+'</strong><div style="font-size:0.76rem;color:var(--text-muted);">'+esc(s.description||'')+'</div></td>'+
-            '<td style="width:1%;white-space:nowrap;text-align:right;"><button class="btn" data-eg-excl="'+escA(id)+'">'+(n? 'Excluded on '+n+' topic'+(n>1?'s':'') : 'Excluded on none')+' &#9662;</button></td>'+
-          '</tr>'+
-          '<tr class="eg-excl-row" id="eg-excl-'+escA(id)+'" style="display:none;"><td></td><td colspan="2" style="padding-top:0;"></td></tr>';
+      var manual = egSort.key === 'order';
+      var ids = order.slice();
+      if (!manual) {
+        var k = egSort.key, d = egSort.dir;
+        ids.sort(function(a,b){
+          var va, vb;
+          if (k === 'name') { va=String(dirMap[a].name||'').toLowerCase(); vb=String(dirMap[b].name||'').toLowerCase(); }
+          else if (k === 'section') { va=groupLabel(dirMap[a].group||'').toLowerCase(); vb=groupLabel(dirMap[b].group||'').toLowerCase(); }
+          else if (k === 'excl') { va=evergreenExclusionCount(a); vb=evergreenExclusionCount(b); }
+          else { va=0; vb=0; }
+          return va<vb?-d:va>vb?d:0;
         });
-        html += '</tbody></table>';
-      });
-      body.innerHTML = html || '<p style="color:var(--text-muted);">No evergreen shortcuts. Flag shortcuts as evergreen in the Shortcuts Directory.</p>';
-      body.querySelectorAll('[data-eg-up]').forEach(function(b){ b.addEventListener('click', function(){ swapEvergreen(b.dataset.egUp, -1); }); });
-      body.querySelectorAll('[data-eg-down]').forEach(function(b){ b.addEventListener('click', function(){ swapEvergreen(b.dataset.egDown, 1); }); });
-      body.querySelectorAll('[data-eg-excl]').forEach(function(b){ b.addEventListener('click', function(){ toggleEvergreenExclPanel(b.dataset.egExcl); }); });
+      }
+      var sortOpts = [['order','Section + manual order'],['name','Name'],['section','Section'],['excl','# excluded']];
+      var sortCtl = '<div style="margin-bottom:0.6rem;font-size:0.82rem;display:flex;align-items:center;gap:0.35rem;flex-wrap:wrap;"><span style="color:var(--text-muted);">Sort:</span>'+
+        sortOpts.map(function(o){ return '<button class="btn" data-eg-sort="'+o[0]+'"'+(egSort.key===o[0]?' style="border-color:var(--primary);color:var(--primary);"':'')+'>'+o[1]+(egSort.key===o[0]&&o[0]!=='order'?(egSort.dir>0?' ▲':' ▼'):'')+'</button>'; }).join('')+'</div>';
+      var colspan = manual ? 5 : 4;
+      var rows = ids.map(function(id){
+        var s = dirMap[id], oi = order.indexOf(id), n = evergreenExclusionCount(id);
+        var arrows = manual ?
+          '<td style="width:1%;white-space:nowrap;"><button class="btn" data-eg-up="'+escA(id)+'" '+((oi===0||(dirMap[order[oi-1]]||{}).group!==s.group)?'disabled':'')+' style="padding:0.15rem 0.4rem;">&uarr;</button> <button class="btn" data-eg-down="'+escA(id)+'" '+((oi===order.length-1||(dirMap[order[oi+1]]||{}).group!==s.group)?'disabled':'')+' style="padding:0.15rem 0.4rem;">&darr;</button></td>' : '';
+        return '<tr>'+arrows+
+          '<td><strong>'+esc(s.name)+'</strong><div style="font-size:0.74rem;color:var(--text-muted);">'+esc(s.description||'')+'</div></td>'+
+          '<td>'+esc(groupLabel(s.group||'—'))+'</td>'+
+          '<td><button class="btn" data-eg-excl="'+escA(id)+'">'+(n? 'Excluded on '+n+' topic'+(n>1?'s':'') : 'none')+' &#9662;</button></td>'+
+          '<td style="white-space:nowrap;"><button class="btn" data-eg-edit="'+escA(id)+'">Edit</button> <button class="btn btn-danger" data-eg-del="'+escA(id)+'">Del</button></td>'+
+        '</tr>'+
+        '<tr class="eg-excl-row" id="eg-excl-'+escA(id)+'" style="display:none;"><td colspan="'+colspan+'" style="padding-top:0;"></td></tr>';
+      }).join('');
+      body.innerHTML = sortCtl + (ids.length ?
+        '<table><thead><tr>'+(manual?'<th></th>':'')+'<th class="sortable" data-eg-sort="name">Name</th><th class="sortable" data-eg-sort="section">Section</th><th class="sortable" data-eg-sort="excl">Excluded on</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table>'
+        : '<p style="color:var(--text-muted);">No evergreen shortcuts. Flag a shortcut as Evergreen in its edit form (Topic-Specific tab) to add one.</p>');
+      body.querySelectorAll('[data-eg-sort]').forEach(function(b){ b.onclick=function(){ var key=b.dataset.egSort; if(egSort.key===key && key!=='order') egSort.dir*=-1; else { egSort.key=key; egSort.dir=1; } renderEvergreen(); }; });
+      body.querySelectorAll('[data-eg-up]').forEach(function(b){ b.onclick=function(){ swapEvergreen(b.dataset.egUp, -1); }; });
+      body.querySelectorAll('[data-eg-down]').forEach(function(b){ b.onclick=function(){ swapEvergreen(b.dataset.egDown, 1); }; });
+      body.querySelectorAll('[data-eg-excl]').forEach(function(b){ b.onclick=function(){ toggleEvergreenExclPanel(b.dataset.egExcl); }; });
+      body.querySelectorAll('[data-eg-edit]').forEach(function(b){ b.onclick=function(){ editShortcut(b.dataset.egEdit); }; });
+      body.querySelectorAll('[data-eg-del]').forEach(function(b){ b.onclick=function(){ var id=b.dataset.egDel; if(confirm('Delete evergreen "'+((dirMap[id]||{}).name||id)+'"?')){ data.directory.shortcuts=data.directory.shortcuts.filter(function(s){return s.id!==id;}); var oi=data.assignments.evergreenOrder.indexOf(id); if(oi>=0) data.assignments.evergreenOrder.splice(oi,1); renderEvergreen(); renderDirectory(); toast('Deleted'); if(window.__markDirty){window.__markDirty('directory');window.__markDirty('assignments');} } }; });
     }
 
     function renderAssignments() {
