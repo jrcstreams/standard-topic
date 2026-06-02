@@ -86,12 +86,14 @@
 </head>
 <body>
   <h1>Standard Topic — Admin</h1>
-  <div class="info-box"><strong>Local admin tool.</strong> Import + export your <code>/data/</code> JSON files for review and editing. Three import paths: <strong>Import All JSON</strong> for the six raw files, <strong>Import Bundle</strong> for a single combined <code>standard-topic-bundle.json</code> (easier to share / archive), or drop a single file in <strong>Data Files</strong>. Three export paths: <strong>Export All JSON</strong> for six separate files, <strong>Export Bundle</strong> for one combined file, or <strong>Export Topics CSV</strong> for spreadsheet review. Apply staged changes via the per-tab Apply buttons before exporting.</div>
+  <div class="info-box"><strong>Local admin tool.</strong> Opens pre-loaded with the live <code>/data/</code> files (when served over <code>http</code>). Edit across the tabs, then <strong>Export changed files</strong> to download only what you touched, commit + deploy. <strong>Reload live data</strong> re-fetches and discards unsaved edits. Manual <strong>Import</strong> stays as a fallback (e.g. if opened as a <code>file://</code> page). <span id="autoload-status" style="color:var(--text-muted);"></span></div>
   <div class="import-export">
-    <label class="btn btn-primary" style="cursor:pointer">Import All JSON <input type="file" id="import-files" multiple accept=".json" style="display:none"></label>
-    <label class="btn btn-primary" style="cursor:pointer">Import Bundle <input type="file" id="import-bundle" accept=".json" style="display:none"></label>
+    <button class="btn btn-success" id="export-changed" title="Download only the files you changed this session">Export changed files</button>
     <button class="btn btn-success" id="export-all">Export All JSON</button>
+    <button class="btn" id="reload-live" title="Re-fetch the live /data/ files, discarding unsaved staged changes">Reload live data</button>
     <button class="btn btn-success" id="export-bundle">Export Bundle</button>
+    <label class="btn" style="cursor:pointer">Import All JSON <input type="file" id="import-files" multiple accept=".json" style="display:none"></label>
+    <label class="btn" style="cursor:pointer">Import Bundle <input type="file" id="import-bundle" accept=".json" style="display:none"></label>
     <button class="btn" id="export-topics-csv" title="Topics, parents, slugs, icons and featured status as CSV for spreadsheet review">Export Topics CSV</button>
     <button class="btn" id="import-topics-csv-label" style="position:relative">
       Import Topics CSV
@@ -1270,7 +1272,44 @@
     // Initial fill so the editor isn't empty if you open the tab first.
     setTimeout(dfLoadCurrent, 0);
 
-    renderAll();
+    // Export only the files changed this session (save model A).
+    document.getElementById('export-changed').addEventListener('click', function() {
+      var keys = Object.keys(dirtyFiles);
+      if (keys.length === 0) { toast('No changes to export'); return; }
+      keys.forEach(function(k){ dlJSON(dfFileNames[k], data[k]); });
+      toast('Exported ' + keys.length + ' changed file' + (keys.length > 1 ? 's' : ''));
+      markClean();
+    });
+
+    // Auto-load the live /data/ files so the admin opens populated (no manual
+    // Import). Works when served over http (same-origin fetch); falls back to
+    // the empty state + manual Import when opened as a file:// page.
+    var DATA_KEYS = ['topics','directory','assignments','searches','models','promptgen'];
+    function autoLoad() {
+      var status = document.getElementById('autoload-status');
+      if (status) status.textContent = 'Loading live data…';
+      return Promise.all(DATA_KEYS.map(function(k){
+        return fetch('data/' + dfFileNames[k]).then(function(r){
+          if (!r.ok) throw new Error(dfFileNames[k] + ' (' + r.status + ')');
+          return r.json();
+        }).then(function(j){ data[k] = j; });
+      })).then(function(){
+        syncFeaturedOrder();
+        renderAll();
+        markClean();
+        if (status) status.textContent = 'Loaded live data from /data/.';
+      }).catch(function(err){
+        renderAll();
+        if (status) status.textContent = 'Auto-load failed (' + err.message + '). Use Import to load files manually.';
+      });
+    }
+
+    document.getElementById('reload-live').addEventListener('click', function() {
+      if (Object.keys(dirtyFiles).length && !confirm('Discard unsaved staged changes and reload live data?')) return;
+      autoLoad().then(function(){ toast('Reloaded live data'); });
+    });
+
+    autoLoad();
   </script>
 </body>
 </html>
