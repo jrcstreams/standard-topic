@@ -1,3 +1,7 @@
+# Local admin tool — must NOT be publicly reachable. Run it locally with
+# `npm run admin` (serves the repo so the in-admin auto-load works).
+admin.html
+
 # Local Playwright artifacts — never deployed.
 .playwright-mcp/
 
