@@ -9,6 +9,7 @@ import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
 import { initPromptModal } from './components/prompt-modal.js';
+import { initPromptSubmitModal } from './components/prompt-submit-modal.js';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
@@ -25,6 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Preload shortcut icon SVGs (non-blocking — renders emoji until resolved)
   preloadIcons(getAllShortcutIconKeys());
   initPromptModal();
+  initPromptSubmitModal();
   initDiscoverModal();
   initAllTopicsModal();
   initRelatedTopicsModal();
