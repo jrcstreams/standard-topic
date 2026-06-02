@@ -5,6 +5,7 @@
 const KEYS = {
   defaultModelId: 'st_settings_default_model_id',
   reasoningLevel: 'st_settings_reasoning_level',
+  customInstructions: 'st_settings_custom_instructions',
 };
 
 function read(key) {
@@ -57,4 +58,13 @@ export function applyReasoningLevelToPrompt(prompt) {
   const hint = getReasoningHint();
   if (!hint) return prompt;
   return `${hint}\n\n${prompt}`;
+}
+
+// Free-text instructions appended to every submitted prompt this session.
+export function getCustomInstructions() {
+  return read(KEYS.customInstructions) || '';
+}
+
+export function setCustomInstructions(text) {
+  write(KEYS.customInstructions, (text || '').trim());
 }

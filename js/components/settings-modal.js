@@ -10,6 +10,7 @@ import { getModels, getDefaultModelId } from '../utils/data.js';
 import {
   getDefaultModelOverride, setDefaultModelOverride,
   getReasoningLevel, setReasoningLevel,
+  getCustomInstructions, setCustomInstructions,
   REASONING_LEVELS,
 } from '../utils/settings.js';
 
@@ -46,6 +47,22 @@ export function initSettingsModal() {
     }
   });
 
+  // Custom instructions textarea — update pending on each keystroke without
+  // re-rendering (a re-render would steal focus). The Save button's enabled
+  // state refreshes when the user interacts elsewhere; dirty is recomputed
+  // on save/close so the typed value is honored.
+  overlayEl.addEventListener('input', (e) => {
+    const ci = e.target.closest('[data-setting="custom-instructions"]');
+    if (ci && pending) {
+      pending.customInstructions = ci.value;
+      const saveBtn = overlayEl.querySelector('[data-action="save"]');
+      const cancelBtn = overlayEl.querySelector('[data-action="cancel"]');
+      const dirty = isDirty();
+      if (saveBtn) { saveBtn.disabled = !dirty; saveBtn.classList.toggle('is-active', dirty); }
+      if (cancelBtn) cancelBtn.disabled = !dirty;
+    }
+  });
+
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && overlayEl.style.display !== 'none') tryClose();
   });
@@ -59,6 +76,7 @@ function open() {
   saved = {
     modelId: getDefaultModelOverride() || adminDefault,
     reasoningId: getReasoningLevel(),
+    customInstructions: getCustomInstructions(),
   };
   pending = { ...saved };
   render();
@@ -79,7 +97,8 @@ function close() {
 function isDirty() {
   return pending && saved && (
     pending.modelId !== saved.modelId ||
-    pending.reasoningId !== saved.reasoningId
+    pending.reasoningId !== saved.reasoningId ||
+    pending.customInstructions !== saved.customInstructions
   );
 }
 
@@ -102,6 +121,7 @@ function saveChanges() {
     setDefaultModelOverride(null);
   }
   setReasoningLevel(pending.reasoningId);
+  setCustomInstructions(pending.customInstructions);
   saved = { ...pending };
   // Notify any open panels (e.g. the shortcuts multi-controls model
   // picker) so they re-read the preference instead of showing the
@@ -118,7 +138,7 @@ function cancelChanges() {
 
 function resetToDefault() {
   const adminDefault = getDefaultModelId();
-  pending = { modelId: adminDefault, reasoningId: 'standard' };
+  pending = { modelId: adminDefault, reasoningId: 'standard', customInstructions: '' };
   render();
 }
 
@@ -196,6 +216,16 @@ function render() {
             <p class="settings-section-desc">Depth of response added to every prompt before it's submitted.</p>
           </div>
           <div class="settings-option-grid settings-option-grid-stacked">${reasoningChips}</div>
+        </section>
+
+        <section class="settings-section">
+          <div class="settings-section-head">
+            <h3 class="settings-section-title">Custom instructions</h3>
+            <p class="settings-section-desc">Added to the end of every prompt you submit. Applies across the site this session.</p>
+          </div>
+          <textarea class="settings-custom-instructions" data-setting="custom-instructions"
+            rows="3" placeholder="e.g. Use British English. Prefer bullet points."
+            aria-label="Custom instructions">${escapeHTML(pending.customInstructions || '')}</textarea>
         </section>
       </div>
 
