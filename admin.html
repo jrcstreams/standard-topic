@@ -11,7 +11,12 @@
     h1 { font-size: 1.5rem; margin-bottom: 0.75rem; }
     .info-box { background: #fffbeb; border: 1px solid #f6e05e; border-radius: 6px; padding: 0.75rem 1rem; font-size: 0.82rem; color: #744210; margin-bottom: 1rem; line-height: 1.5; }
     .import-export { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .tabgroups { display: flex; gap: 0.4rem; margin: 0 0 0.85rem; flex-wrap: wrap; }
+    .tabgroup { padding: 0.5rem 1.15rem; font-size: 0.92rem; cursor: pointer; border-radius: 6px; color: var(--text-muted); background: var(--bg-light); border: 1px solid var(--border); font-family: inherit; font-weight: 600; }
+    .tabgroup:hover { border-color: var(--primary); }
+    .tabgroup.active { color: white; background: var(--primary); border-color: var(--primary); }
     .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .tabs.single { display: none; }
     .tab { padding: 0.6rem 1.1rem; font-size: 0.85rem; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; color: var(--text-muted); background: none; border-top: none; border-left: none; border-right: none; font-family: inherit; font-weight: 500; }
     .tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
     .tab-content { display: none; }
@@ -105,17 +110,11 @@
   <div id="dirty-banner" style="display:none;background:#fef3c7;border:1px solid #fbbf24;color:#78350f;padding:0.55rem 0.85rem;border-radius:6px;margin:0 0 1rem;font-size:0.85rem;">
     <strong>Unsaved staged changes.</strong> <span id="dirty-files"></span> &mdash; export to disk to persist.
   </div>
-  <div class="tabs" id="tabs">
-    <button class="tab active" data-tab="topics">Topics</button>
-    <button class="tab" data-tab="directory">Shortcuts Directory</button>
-    <button class="tab" data-tab="evergreen">Evergreen</button>
-    <button class="tab" data-tab="groups">Shortcut Groups</button>
-    <button class="tab" data-tab="assignments">Topic Assignments</button>
-    <button class="tab" data-tab="searches">Quick Content</button>
-    <button class="tab" data-tab="models">AI Models</button>
-    <button class="tab" data-tab="promptgen">Prompt Generator</button>
-    <button class="tab" data-tab="datafiles">Data Files</button>
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.5rem;flex-wrap:wrap;">
+    <div class="tabgroups" id="tabgroups"></div>
+    <button class="btn" id="open-datafiles" title="Advanced: edit any raw JSON file directly" style="margin-top:0.1rem;">⚙ Data Files (raw JSON)</button>
   </div>
+  <div class="tabs" id="tabs"></div>
   <div class="tab-content active" id="tab-topics"><div class="toolbar"><h2>Manage Topics</h2><button class="btn btn-primary" id="add-topic">+ Add Topic</button></div><div id="webhook-status-panel" style="background:var(--bg-light);border:1px solid var(--border);border-radius:6px;padding:0.85rem 1rem;margin-bottom:1rem;"></div><div id="featured-order-panel" style="background:var(--bg-light);border:1px solid var(--border);border-radius:6px;padding:0.85rem 1rem;margin-bottom:1rem;"></div><table><thead><tr><th>Name</th><th>Slug</th><th>Parent</th><th>RSS Feed ID</th><th>Icon</th><th>Featured</th><th>Live</th><th>Actions</th></tr></thead><tbody id="topics-body"></tbody></table></div>
   <div class="tab-content" id="tab-directory"><div class="toolbar"><h2>Shortcuts Directory</h2><button class="btn btn-primary" id="add-shortcut">+ Add Shortcut</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.6rem;">Each shortcut has a <strong>Group</strong> (Discover / Learn / Analyze / More — or any group you defined in <em>Shortcut Groups</em>). The group determines which subsection it appears under on every topic page.</p><table><thead><tr><th>Name</th><th>ID</th><th>Group</th><th>Icon</th><th>Prompt</th><th>Actions</th></tr></thead><tbody id="dir-body"></tbody></table></div>
   <div class="tab-content" id="tab-evergreen">
@@ -129,7 +128,7 @@
     <table><thead><tr><th>Label</th><th>ID</th><th>Order</th><th>Color</th><th>Shortcuts</th><th>Actions</th></tr></thead><tbody id="groups-body"></tbody></table>
   </div>
   <div class="tab-content" id="tab-assignments"><div class="toolbar"><h2>Topic Assignments</h2></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Pick a topic on the left (incl. <strong>Homepage</strong> and <strong>Custom Search</strong>) to set which AI shortcuts appear on that page. Shortcuts are bucketed by their <strong>Group</strong> (set in <em>Shortcuts Directory</em>) on the rendered page. Use each shortcut's <strong>section dropdown</strong> to override its group <em>just for this topic</em> (e.g. sort the homepage's topic-specific shortcuts into Discover / Learn / Analyze). Drag inside a group to reorder; the within-group order is preserved.</p><div class="assign-layout"><div class="assign-sidebar"><div class="assign-sidebar-head">Topics</div><div id="assign-topics"></div></div><div class="assign-main" id="assign-main"></div></div></div>
-  <div class="tab-content" id="tab-searches"><div class="toolbar"><h2>Quick Content Shortcuts</h2><button class="btn btn-primary" id="add-search">+ Add Source</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">External search destinations shown in the Quick Content sub-nav row on topic and custom search pages. Use <code>{query}</code> in the URL where the topic name goes.</p><table><thead><tr><th>Name</th><th>Icon</th><th>URL Template</th><th>Actions</th></tr></thead><tbody id="searches-body"></tbody></table></div>
+  <div class="tab-content" id="tab-searches"><div class="toolbar"><h2>Web Sources</h2><button class="btn btn-primary" id="add-search">+ Add Source</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">External search destinations shown in the <strong>Web Sources</strong> accordion on topic and custom search pages, grouped by category. Use <code>{query}</code> in the URL where the topic name goes.</p><div id="searches-body"></div></div>
   <div class="tab-content" id="tab-models"><div class="toolbar"><h2>AI Models</h2><button class="btn btn-primary" id="add-model">+ Add Model</button></div><div style="display:flex;align-items:center;gap:0.55rem;margin-bottom:0.85rem;padding:0.6rem 0.75rem;background:var(--bg-light);border-radius:6px;border:1px solid var(--border);"><label for="models-default" style="font-weight:600;font-size:0.85rem;">Default model</label><select id="models-default" style="flex:1;padding:0.35rem 0.5rem;border:1px solid var(--border);border-radius:4px;background:white;font-size:0.85rem;"></select><span style="color:var(--text-muted);font-size:0.75rem;">Preselected in prompt modals + the user Settings panel.</span></div><table><thead><tr><th>Name</th><th>ID</th><th>Submission Method</th><th>URL Template</th><th>Actions</th></tr></thead><tbody id="models-body"></tbody></table></div>
   <div class="tab-content" id="tab-promptgen"><div class="toolbar"><h2>Prompt Generator</h2><button class="btn btn-success" id="pg-save">Apply JSON</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Edit <code>prompt-generator.json</code> directly. Click <strong>Apply JSON</strong> to validate and stage your changes, then use <strong>Export All JSON</strong> to download the updated file.</p><textarea id="pg-editor" style="width:100%;min-height:500px;background:var(--bg-light);padding:1rem;border-radius:6px;font-size:0.78rem;font-family:monospace;border:1px solid var(--border);resize:vertical;"></textarea></div>
   <div class="tab-content" id="tab-datafiles">
@@ -189,21 +188,62 @@
       return list;
     }
 
-    // Tabs
+    // Two-level tab nav: 5 top-level groups, each with one or more sub-tabs
+    // that map to the existing #tab-<id> content panels. Data Files lives
+    // off-nav as an "advanced" escape hatch.
+    var TAB_GROUPS = [
+      { id: 'g-topics',     label: 'Topics',           tabs: [ {id:'topics', label:'Topics'}, {id:'assignments', label:'Topic Assignments'} ] },
+      { id: 'g-shortcuts',  label: 'Shortcuts',        tabs: [ {id:'directory', label:'Directory'}, {id:'evergreen', label:'Evergreen'}, {id:'groups', label:'Groups'} ] },
+      { id: 'g-websources', label: 'Web Sources',      tabs: [ {id:'searches', label:'Web Sources'} ] },
+      { id: 'g-models',     label: 'AI Models',        tabs: [ {id:'models', label:'AI Models'} ] },
+      { id: 'g-promptgen',  label: 'Prompt Generator', tabs: [ {id:'promptgen', label:'Prompt Generator'} ] }
+    ];
+    var activeGroupId = TAB_GROUPS[0].id;
+
+    function tabRenderHook(tabId) {
+      if (tabId === 'assignments') renderAssignments();
+      if (tabId === 'evergreen') renderEvergreen();
+      if (tabId === 'groups') renderGroups();
+      if (tabId === 'datafiles' && typeof dfLoadCurrent === 'function') dfLoadCurrent();
+    }
+    function showTab(tabId) {
+      document.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('active', x.dataset.tab === tabId); });
+      document.querySelectorAll('.tab-content').forEach(function(x){ x.classList.remove('active'); });
+      var content = document.getElementById('tab-' + tabId);
+      if (content) content.classList.add('active');
+      tabRenderHook(tabId);
+    }
+    function selectGroup(groupId) {
+      activeGroupId = groupId;
+      var group = TAB_GROUPS.find(function(g){ return g.id === groupId; }) || TAB_GROUPS[0];
+      document.querySelectorAll('.tabgroup').forEach(function(x){ x.classList.toggle('active', x.dataset.group === groupId); });
+      var sub = document.getElementById('tabs');
+      sub.innerHTML = group.tabs.map(function(t){ return '<button class="tab" data-tab="'+t.id+'">'+t.label+'</button>'; }).join('');
+      sub.classList.toggle('single', group.tabs.length <= 1);
+      showTab(group.tabs[0].id);
+    }
+    function renderTabNav() {
+      document.getElementById('tabgroups').innerHTML = TAB_GROUPS.map(function(g){
+        return '<button class="tabgroup" data-group="'+g.id+'">'+g.label+'</button>';
+      }).join('');
+      selectGroup(activeGroupId);
+    }
+    document.getElementById('tabgroups').addEventListener('click', function(e){
+      var g = e.target.closest('.tabgroup'); if (!g) return;
+      selectGroup(g.dataset.group);
+    });
     document.getElementById('tabs').addEventListener('click', function(e) {
       var t = e.target.closest('.tab'); if (!t) return;
-      document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});
-      document.querySelectorAll('.tab-content').forEach(function(x){x.classList.remove('active');});
-      t.classList.add('active');
-      document.getElementById('tab-'+t.dataset.tab).classList.add('active');
-      if (t.dataset.tab === 'assignments') renderAssignments();
-      if (t.dataset.tab === 'evergreen') renderEvergreen();
-      if (t.dataset.tab === 'groups') renderGroups();
-      // Re-render the raw JSON editor when the Data Files tab opens
-      // so it reflects any edits applied in other tabs since the
-      // user last viewed it.
-      if (t.dataset.tab === 'datafiles' && typeof dfLoadCurrent === 'function') dfLoadCurrent();
+      showTab(t.dataset.tab);
     });
+    // Data Files escape hatch — clears group highlight, shows the raw editor.
+    document.getElementById('open-datafiles').addEventListener('click', function() {
+      document.querySelectorAll('.tabgroup').forEach(function(x){ x.classList.remove('active'); });
+      document.getElementById('tabs').innerHTML = '';
+      document.getElementById('tabs').classList.add('single');
+      showTab('datafiles');
+    });
+    renderTabNav();
 
     // Import
     document.getElementById('import-files').addEventListener('change', function(e) {
@@ -1298,39 +1338,110 @@
     }
 
     // ===== QUICK CONTENT (external searches) =====
+    function ensureSearchesData() {
+      if (!data.searches) data.searches = { categories: [], searches: [] };
+      if (!Array.isArray(data.searches.categories)) data.searches.categories = [];
+      if (!Array.isArray(data.searches.searches)) data.searches.searches = [];
+    }
+    function searchesDirty() { if (window.__markDirty) window.__markDirty('searches'); }
     function renderSearches() {
-      var list = data.searches.searches || [];
-      var tbody = document.getElementById('searches-body');
-      if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted);text-align:center;padding:1rem;">No quick content shortcuts. Import or add one.</td></tr>';
-      } else {
-        tbody.innerHTML = list.map(function(s, i) {
-          return '<tr><td><strong>'+esc(s.name)+'</strong></td><td>'+esc(s.icon||'')+'</td><td class="mono truncate" title="'+escA(s.urlTemplate)+'">'+esc(s.urlTemplate)+'</td><td><button class="btn" data-action="up" data-i="'+i+'" title="Move up">↑</button> <button class="btn" data-action="down" data-i="'+i+'" title="Move down">↓</button> <button class="btn" data-action="edit" data-i="'+i+'">Edit</button> <button class="btn btn-danger" data-action="delete" data-i="'+i+'">Del</button></td></tr>';
+      ensureSearchesData();
+      var cats = data.searches.categories, list = data.searches.searches;
+      var body = document.getElementById('searches-body');
+      // Category manager bar
+      var catBar = '<div style="background:var(--bg-light);border:1px solid var(--border);border-radius:6px;padding:0.6rem 0.75rem;margin-bottom:1rem;">'+
+        '<div style="font-weight:600;font-size:0.8rem;margin-bottom:0.4rem;">Categories <span style="font-weight:400;color:var(--text-muted);">· source groups on the public Web Sources accordion</span></div>'+
+        '<div style="display:flex;flex-wrap:wrap;gap:0.4rem;align-items:center;">'+
+        cats.map(function(c,ci){
+          return '<span style="display:inline-flex;align-items:center;gap:0.25rem;border:1px solid var(--border);border-radius:5px;padding:0.15rem 0.4rem;background:white;font-size:0.8rem;">'+
+            '<button class="btn" data-cat-up="'+ci+'" '+(ci===0?'disabled':'')+' style="padding:0 0.3rem;">↑</button>'+
+            '<button class="btn" data-cat-down="'+ci+'" '+(ci===cats.length-1?'disabled':'')+' style="padding:0 0.3rem;">↓</button>'+
+            '<strong>'+esc(c.label)+'</strong> <span style="color:#aaa;">('+esc(c.key)+')</span>'+
+            '<button class="btn" data-cat-edit="'+ci+'" style="padding:0 0.3rem;">✎</button>'+
+            '<button class="btn btn-danger" data-cat-del="'+ci+'" style="padding:0 0.3rem;">×</button>'+
+          '</span>';
+        }).join('')+
+        '<button class="btn btn-primary" id="add-category" style="padding:0.15rem 0.5rem;">+ Category</button>'+
+        '</div></div>';
+      function sourcesTable(catKey, label){
+        var idxs = []; list.forEach(function(s,i){ if((s.category||'')===catKey) idxs.push(i); });
+        if (!idxs.length) return '';
+        var rows = idxs.map(function(i, pos){
+          var s = list[i];
+          return '<tr><td style="width:1%;white-space:nowrap;">'+
+            '<button class="btn" data-src-up="'+i+'" '+(pos===0?'disabled':'')+' style="padding:0.15rem 0.4rem;">↑</button> '+
+            '<button class="btn" data-src-down="'+i+'" '+(pos===idxs.length-1?'disabled':'')+' style="padding:0.15rem 0.4rem;">↓</button></td>'+
+            '<td><strong>'+esc(s.name)+'</strong><div style="font-size:0.76rem;color:var(--text-muted);">'+esc(s.description||'')+'</div></td>'+
+            '<td class="mono truncate" title="'+escA(s.urlTemplate)+'" style="max-width:280px;">'+esc(s.urlTemplate)+'</td>'+
+            '<td style="width:1%;white-space:nowrap;"><button class="btn" data-src-edit="'+i+'">Edit</button> <button class="btn btn-danger" data-src-del="'+i+'">Del</button></td></tr>';
         }).join('');
+        return '<h3 style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);font-weight:700;margin:1rem 0 0.4rem;">'+esc(label)+' <span style="font-weight:400;color:#aaa;">· '+idxs.length+'</span></h3>'+
+          '<table style="margin-bottom:0.4rem;"><tbody>'+rows+'</tbody></table>';
       }
-      tbody.onclick = function(e) {
-        var btn = e.target.closest('[data-action]'); if (!btn) return;
-        var i = parseInt(btn.dataset.i, 10);
-        var arr = data.searches.searches;
-        if (btn.dataset.action === 'edit') { showSearchForm(arr[i], i); }
-        else if (btn.dataset.action === 'delete') { if(confirm('Delete "'+arr[i].name+'"?')){ arr.splice(i,1); renderSearches(); toast('Deleted'); } }
-        else if (btn.dataset.action === 'up' && i > 0) { var m=arr.splice(i,1)[0]; arr.splice(i-1,0,m); renderSearches(); }
-        else if (btn.dataset.action === 'down' && i < arr.length-1) { var m=arr.splice(i,1)[0]; arr.splice(i+1,0,m); renderSearches(); }
-      };
+      var html = cats.map(function(c){ return sourcesTable(c.key, c.label); }).join('') + sourcesTable('__uncat__', 'Uncategorized');
+      body.innerHTML = catBar + (html || '<p style="color:var(--text-muted);margin-top:0.5rem;">No web sources yet. Add one.</p>');
+      // source controls
+      body.querySelectorAll('[data-src-up]').forEach(function(b){ b.onclick=function(){ swapSearch(parseInt(b.dataset.srcUp,10),-1); }; });
+      body.querySelectorAll('[data-src-down]').forEach(function(b){ b.onclick=function(){ swapSearch(parseInt(b.dataset.srcDown,10),1); }; });
+      body.querySelectorAll('[data-src-edit]').forEach(function(b){ b.onclick=function(){ var i=parseInt(b.dataset.srcEdit,10); showSearchForm(list[i], i); }; });
+      body.querySelectorAll('[data-src-del]').forEach(function(b){ b.onclick=function(){ var i=parseInt(b.dataset.srcDel,10); if(confirm('Delete "'+list[i].name+'"?')){ list.splice(i,1); renderSearches(); toast('Deleted'); searchesDirty(); } }; });
+      // category controls
+      var addCat=document.getElementById('add-category'); if(addCat) addCat.onclick=function(){ showCategoryForm(-1); };
+      body.querySelectorAll('[data-cat-edit]').forEach(function(b){ b.onclick=function(){ showCategoryForm(parseInt(b.dataset.catEdit,10)); }; });
+      body.querySelectorAll('[data-cat-del]').forEach(function(b){ b.onclick=function(){ delCategory(parseInt(b.dataset.catDel,10)); }; });
+      body.querySelectorAll('[data-cat-up]').forEach(function(b){ b.onclick=function(){ swapCategory(parseInt(b.dataset.catUp,10),-1); }; });
+      body.querySelectorAll('[data-cat-down]').forEach(function(b){ b.onclick=function(){ swapCategory(parseInt(b.dataset.catDown,10),1); }; });
+    }
+    function swapSearch(i, dir){
+      var list=data.searches.searches, cat=list[i].category||'', j=i+dir;
+      while(j>=0 && j<list.length && (list[j].category||'')!==cat) j+=dir;
+      if(j<0||j>=list.length) return;
+      var m=list.splice(i,1)[0]; list.splice(j,0,m); renderSearches(); searchesDirty();
+    }
+    function swapCategory(ci, dir){
+      var cats=data.searches.categories, j=ci+dir; if(j<0||j>=cats.length) return;
+      var m=cats.splice(ci,1)[0]; cats.splice(j,0,m); renderSearches(); searchesDirty();
+    }
+    function delCategory(ci){
+      var cats=data.searches.categories, c=cats[ci];
+      var n=data.searches.searches.filter(function(s){return (s.category||'')===c.key;}).length;
+      if(!confirm('Delete category "'+c.label+'"?'+(n?' '+n+' source(s) become Uncategorized.':''))) return;
+      data.searches.searches.forEach(function(s){ if((s.category||'')===c.key) s.category=''; });
+      cats.splice(ci,1); renderSearches(); toast('Category deleted'); searchesDirty();
+    }
+    function showCategoryForm(ci){
+      var isNew=ci<0, c=isNew?null:data.searches.categories[ci];
+      document.getElementById('modal').innerHTML='<div class="form-overlay" id="overlay"><div class="form-modal"><h3>'+(isNew?'Add':'Edit')+' Category</h3><div class="fg"><label>Label</label><input id="f-clabel" value="'+escA(c?c.label:'')+'" placeholder="Search & reference"></div><div class="fg"><label>Key (lowercase id)</label><input id="f-ckey" value="'+escA(c?c.key:'')+'" placeholder="search"></div><div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
+      document.getElementById('f-cancel').addEventListener('click',closeModal);
+      document.getElementById('overlay').addEventListener('click',function(e){if(e.target===e.currentTarget)closeModal();});
+      document.getElementById('f-save').addEventListener('click',function(){
+        var label=document.getElementById('f-clabel').value.trim();
+        var key=document.getElementById('f-ckey').value.trim().toLowerCase().replace(/[^a-z0-9_-]/g,'-');
+        if(!label||!key){alert('Label and key are required.');return;}
+        ensureSearchesData();
+        if(data.searches.categories.find(function(x,xi){return x.key===key && xi!==ci;})){alert('That key already exists.');return;}
+        var oldKey=c?c.key:null;
+        if(isNew) data.searches.categories.push({key:key,label:label});
+        else { data.searches.categories[ci]={key:key,label:label}; if(oldKey&&oldKey!==key){ data.searches.searches.forEach(function(s){ if((s.category||'')===oldKey) s.category=key; }); } }
+        closeModal(); renderSearches(); toast('Saved'); searchesDirty();
+      });
     }
     document.getElementById('add-search').addEventListener('click', function() { showSearchForm(null, -1); });
     function showSearchForm(s, idx) {
       var isNew = idx < 0;
-      document.getElementById('modal').innerHTML = '<div class="form-overlay" id="overlay"><div class="form-modal"><h3>'+(isNew?'Add':'Edit')+' Quick Content Source</h3><div class="fg"><label>Name</label><input id="f-name" value="'+escA(s?s.name:'')+'" placeholder="e.g. Google News"></div><div class="fg"><label>Icon (emoji or text)</label><input id="f-icon" value="'+escA(s?s.icon:'')+'" placeholder="🔎"></div><div class="fg"><label>URL Template (use {query})</label><input id="f-url" value="'+escA(s?s.urlTemplate:'')+'" placeholder="https://example.com/search?q={query}"></div><div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
+      ensureSearchesData();
+      var catOpts = '<option value="">— Uncategorized —</option>' + data.searches.categories.map(function(c){
+        return '<option value="'+escA(c.key)+'"'+((s&&(s.category||'')===c.key)?' selected':'')+'>'+esc(c.label)+'</option>';
+      }).join('');
+      document.getElementById('modal').innerHTML = '<div class="form-overlay" id="overlay"><div class="form-modal"><h3>'+(isNew?'Add':'Edit')+' Web Source</h3><div class="fg"><label>Name</label><input id="f-name" value="'+escA(s?s.name:'')+'" placeholder="e.g. Google News"></div><div class="fg"><label>Category</label><select id="f-cat">'+catOpts+'</select></div><div class="fg"><label>Summary (shown in sidebar)</label><input id="f-desc" value="'+escA(s?s.description:'')+'" placeholder="Headlines from Google\'s news aggregator."></div><div class="fg"><label>Icon (key or emoji)</label><input id="f-icon" value="'+escA(s?s.icon:'')+'" placeholder="google-news"></div><div class="fg"><label>URL Template (use {query})</label><input id="f-url" value="'+escA(s?s.urlTemplate:'')+'" placeholder="https://example.com/search?q={query}"></div><div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
       document.getElementById('f-cancel').addEventListener('click', closeModal);
       document.getElementById('overlay').addEventListener('click', function(e){if(e.target===e.currentTarget)closeModal();});
       document.getElementById('f-save').addEventListener('click', function() {
-        var entry = { name: document.getElementById('f-name').value.trim(), icon: document.getElementById('f-icon').value.trim(), urlTemplate: document.getElementById('f-url').value.trim() };
+        var entry = { name: document.getElementById('f-name').value.trim(), description: document.getElementById('f-desc').value.trim(), icon: document.getElementById('f-icon').value.trim(), category: document.getElementById('f-cat').value, urlTemplate: document.getElementById('f-url').value.trim() };
         if (!entry.name || !entry.urlTemplate) { alert('Name and URL Template are required.'); return; }
         if (entry.urlTemplate.indexOf('{query}') < 0) { if (!confirm('URL has no {query} placeholder — searches will not include the topic. Save anyway?')) return; }
-        if (!data.searches.searches) data.searches.searches = [];
-        if (isNew) { data.searches.searches.push(entry); } else { data.searches.searches[idx] = entry; }
-        closeModal(); renderSearches(); toast('Saved');
+        if (isNew) { data.searches.searches.push(entry); } else { data.searches.searches[idx] = Object.assign({}, data.searches.searches[idx], entry); }
+        closeModal(); renderSearches(); toast('Saved'); searchesDirty();
       });
     }
 
@@ -1338,10 +1449,8 @@
     function renderPromptGen() { document.getElementById('pg-editor').value = JSON.stringify(data.promptgen, null, 2); }
     function jumpToAssignments(slug) {
       selectedTopic = slug;
-      document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});
-      document.querySelectorAll('.tab-content').forEach(function(x){x.classList.remove('active');});
-      document.querySelector('.tab[data-tab="assignments"]').classList.add('active');
-      document.getElementById('tab-assignments').classList.add('active');
+      selectGroup('g-topics');   // Topics group hosts the Topic Assignments sub-tab
+      showTab('assignments');
       renderAssignments();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
