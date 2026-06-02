@@ -540,10 +540,34 @@
     function copyToClipboardWithFeedback(text, btn, doneLabel) {
       doneLabel = doneLabel || 'Copied!';
       var orig = btn.textContent;
-      navigator.clipboard.writeText(text).then(function(){
+      function done() {
         btn.textContent = doneLabel;
         setTimeout(function(){ btn.textContent = orig; }, 1200);
-      }).catch(function(){ toast('Copy failed — select the URL manually'); });
+      }
+      // Legacy fallback — works when the async Clipboard API is missing or
+      // rejected (non-focused doc, permissions policy, some http contexts).
+      function fallback() {
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = text;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.top = '-1000px';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          ta.setSelectionRange(0, text.length);
+          var ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+          if (ok) done(); else toast('Copy failed — select the URL manually');
+        } catch (e) { toast('Copy failed — select the URL manually'); }
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(fallback);
+      } else {
+        fallback();
+      }
     }
 
     function renderWebhookPanel() {
