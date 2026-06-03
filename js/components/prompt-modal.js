@@ -19,10 +19,7 @@ import {
   setPreferredModelId,
   submitPrompt,
 } from '../utils/ai-models.js';
-import {
-  REASONING_LEVELS, getReasoningLevel, setReasoningLevel,
-  getCustomInstructions, setCustomInstructions,
-} from '../utils/settings.js';
+import { REASONING_LEVELS } from '../utils/settings.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { renderIcon } from '../utils/icons.js';
 import { track } from '../utils/analytics.js';
@@ -70,11 +67,7 @@ export function initPromptModal() {
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && overlayEl.style.display !== 'none') {
-      // Esc dismisses an open Model-info popover first, then the modal.
-      if (modalState && modalState.modelInfoOpen) { setModelInfoOpen(false); return; }
-      closeModal();
-    }
+    if (e.key === 'Escape' && overlayEl.style.display !== 'none') closeModal();
   });
 }
 
@@ -94,7 +87,11 @@ function openModal({ basePrompt, topicName, shortcutName, iconKey, count }) {
     modelOpen: false,
     advancedOpen: false,
     modelInfoOpen: false,
-    perSubmission: { outputType: '', secondaryTopic: '' },
+    // Per-submission advanced settings. These are ONE-OFFS — they live only
+    // in this modal instance, start neutral every time it opens, and are
+    // never written to the persistent site settings (the Settings panel owns
+    // those). So nothing here survives a refresh or carries to the next prompt.
+    perSubmission: { reasoning: 'standard', outputType: '', secondaryTopic: '', customInstructions: '' },
     isClosing: false,
   };
   renderPanelContent();
@@ -117,7 +114,6 @@ function closeModal() {
   modalState.isClosing = true;
 
   unbindPositionListeners();
-  document.removeEventListener('click', onDocClickForPopover);
 
   overlayEl.classList.remove('is-open');
   panelEl.classList.remove('is-open');
@@ -217,14 +213,15 @@ function secondaryClauseTpl() {
 }
 
 function currentAdvancedOpts() {
-  const reasoning = REASONING_LEVELS.find(l => l.id === getReasoningLevel());
-  const ot = simpleOutputOptions().find(o => o.value === modalState.perSubmission.outputType);
+  const ps = modalState.perSubmission;
+  const reasoning = REASONING_LEVELS.find(l => l.id === ps.reasoning);
+  const ot = simpleOutputOptions().find(o => o.value === ps.outputType);
   return {
     reasoningHint: reasoning && reasoning.hint ? reasoning.hint : '',
     outputClause: ot ? ot.clause : '',
-    secondaryTopic: modalState.perSubmission.secondaryTopic.trim(),
+    secondaryTopic: ps.secondaryTopic.trim(),
     secondaryClauseTpl: secondaryClauseTpl(),
-    customInstructions: getCustomInstructions(),
+    customInstructions: ps.customInstructions.trim(),
     topicName: modalState.topicName || '',
   };
 }
@@ -272,7 +269,7 @@ function renderPanelContent() {
   const otOptions = '<option value="">— None —</option>' + simpleOutputOptions().map(o =>
     `<option value="${escapeAttr(o.value)}"${o.value === perSubmission.outputType ? ' selected' : ''}>${escapeHTML(o.label)}</option>`).join('');
   const reasoningOptions = REASONING_LEVELS.map(l =>
-    `<option value="${escapeAttr(l.id)}"${l.id === getReasoningLevel() ? ' selected' : ''}>${escapeHTML(l.name)}</option>`).join('');
+    `<option value="${escapeAttr(l.id)}"${l.id === perSubmission.reasoning ? ' selected' : ''}>${escapeHTML(l.name)}</option>`).join('');
 
   panelEl.innerHTML = `
     <div class="pm-header">
@@ -317,11 +314,11 @@ function renderPanelContent() {
           </div>
         </div>
         <div class="pm-modelinfo">
-          <button type="button" class="pm-modelinfo-link" id="pm-modelinfo-link" aria-expanded="false">
-            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5.4"/><path d="M7 6.2v3.4" stroke-linecap="round"/><circle cx="7" cy="4.4" r="0.55" fill="currentColor" stroke="none"/></svg>
+          <button type="button" class="pm-modelinfo-toggle" id="pm-modelinfo-toggle" aria-expanded="false" aria-controls="pm-modelinfo-body">
+            <svg class="pm-disclosure-chev pm-modelinfo-chev" width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 4.5 6 8 9 4.5"/></svg>
             Model info
           </button>
-          <div class="pm-modelinfo-pop" id="pm-modelinfo-pop" hidden role="dialog" aria-label="Model info"></div>
+          <div class="pm-modelinfo-body" id="pm-modelinfo-body" hidden></div>
         </div>
       </section>
 
@@ -340,8 +337,8 @@ function renderPanelContent() {
           </div>
           <label class="pm-field"><span class="pm-flabel">Secondary topics</span>
             <input id="pm-secondary" class="pm-input-control" type="text" placeholder="e.g. trade policy" value="${escapeAttr(perSubmission.secondaryTopic)}"></label>
-          <label class="pm-field"><span class="pm-flabel">Custom instructions</span>
-            <textarea id="pm-custom" class="pm-input-control pm-adv-textarea" rows="3" placeholder="Applies to every submission this session">${escapeHTML(getCustomInstructions())}</textarea></label>
+          <label class="pm-field"><span class="pm-flabel">Custom instructions <span class="pm-flabel-note">— this submission only</span></span>
+            <textarea id="pm-custom" class="pm-input-control pm-adv-textarea" rows="3" placeholder="A one-off instruction for this prompt">${escapeHTML(perSubmission.customInstructions)}</textarea></label>
         </div>
       </section>
 
@@ -398,20 +395,20 @@ function bindEvents() {
     toggleDisclosure('#pm-model-toggle', '#pm-model-body', false);
   });
 
-  // Model info popover
-  panelEl.querySelector('#pm-modelinfo-link').addEventListener('click', (e) => {
-    e.stopPropagation();
-    setModelInfoOpen(!modalState.modelInfoOpen);
+  // Model info — discreet inline accordion
+  panelEl.querySelector('#pm-modelinfo-toggle').addEventListener('click', () => {
+    modalState.modelInfoOpen = !modalState.modelInfoOpen;
+    if (modalState.modelInfoOpen) buildModelInfoBody();
+    toggleDisclosure('#pm-modelinfo-toggle', '#pm-modelinfo-body', modalState.modelInfoOpen);
   });
-  document.addEventListener('click', onDocClickForPopover);
 
-  // Advanced settings
+  // Advanced settings — all per-submission one-offs, kept in modalState only.
   panelEl.querySelector('#pm-adv-toggle').addEventListener('click', () => {
     modalState.advancedOpen = !modalState.advancedOpen;
     toggleDisclosure('#pm-adv-toggle', '#pm-adv-body', modalState.advancedOpen);
   });
   panelEl.querySelector('#pm-reasoning').addEventListener('change', (e) => {
-    setReasoningLevel(e.target.value); regenPreview();
+    modalState.perSubmission.reasoning = e.target.value; regenPreview();
   });
   panelEl.querySelector('#pm-output').addEventListener('change', (e) => {
     modalState.perSubmission.outputType = e.target.value; regenPreview();
@@ -420,7 +417,7 @@ function bindEvents() {
     modalState.perSubmission.secondaryTopic = e.target.value; regenPreview();
   });
   panelEl.querySelector('#pm-custom').addEventListener('input', (e) => {
-    setCustomInstructions(e.target.value); regenPreview();
+    modalState.perSubmission.customInstructions = e.target.value; regenPreview();
   });
 
   panelEl.querySelector('#pm-submit').addEventListener('click', doSubmit);
@@ -448,44 +445,37 @@ function toggleDisclosure(toggleSel, bodySel, open) {
 }
 
 // Reflect the current model in the accordion label, submit button, and
-// (if open) the model-info popover — without a full re-render.
+// (if open) the model-info accordion — without a full re-render.
 function syncModelUI() {
   const model = selectedModel();
   const current = panelEl.querySelector('#pm-model-current');
   if (current) current.textContent = model ? model.name : 'Choose a model';
   const submit = panelEl.querySelector('#pm-submit');
   if (submit) { submit.textContent = getSubmitLabel(model); submit.disabled = !model; }
-  if (modalState.modelInfoOpen) populateModelInfo();
+  if (modalState.modelInfoOpen) buildModelInfoBody();
 }
 
-function populateModelInfo() {
-  const pop = panelEl.querySelector('#pm-modelinfo-pop');
-  if (!pop) return;
+// Fill the Model info accordion with the model's name, what it is, and how
+// submission works — mirroring the detail shown when picking a default model
+// in Settings.
+function buildModelInfoBody() {
+  const body = panelEl.querySelector('#pm-modelinfo-body');
+  if (!body) return;
   const model = selectedModel();
+  if (!model) { body.innerHTML = '<p class="pm-modelinfo-text">No model selected.</p>'; return; }
+  const methods = getSubmissionMethods();
+  const method = model.submissionMethod || 'direct';
+  const methodMeta = methods[method] || {};
+  const methodLabel = methodMeta.label || '';
   const helper = modelHelperText(model);
-  const modelHomeUrl = model ? (model.chatUrl || (model.urlTemplate || '').replace('{prompt}', '')) : '';
-  pop.innerHTML = model ? `
-    <div class="pm-modelinfo-pop-head">
+  const modelHomeUrl = model.chatUrl || (model.urlTemplate || '').replace('{prompt}', '');
+  body.innerHTML = `
+    <div class="pm-modelinfo-head">
       <a href="${modelHomeUrl}" target="_blank" rel="noopener noreferrer" class="pm-meta-link">${escapeHTML(model.name)}</a>
     </div>
-    ${helper ? `<p class="pm-modelinfo-pop-text">${escapeHTML(helper)}</p>` : ''}
-  ` : '<p class="pm-modelinfo-pop-text">No model selected.</p>';
-}
-
-function setModelInfoOpen(open) {
-  modalState.modelInfoOpen = open;
-  const pop = panelEl.querySelector('#pm-modelinfo-pop');
-  const link = panelEl.querySelector('#pm-modelinfo-link');
-  if (link) link.setAttribute('aria-expanded', String(open));
-  if (!pop) return;
-  if (open) { populateModelInfo(); pop.hidden = false; }
-  else pop.hidden = true;
-}
-
-function onDocClickForPopover(e) {
-  if (!modalState || !modalState.modelInfoOpen) return;
-  const wrap = panelEl.querySelector('.pm-modelinfo');
-  if (wrap && !wrap.contains(e.target)) setModelInfoOpen(false);
+    ${model.description ? `<p class="pm-modelinfo-text">${escapeHTML(model.description)}</p>` : ''}
+    ${helper ? `<p class="pm-modelinfo-text pm-modelinfo-method">${methodLabel ? `<strong>${escapeHTML(methodLabel)}.</strong> ` : ''}${escapeHTML(helper)}</p>` : ''}
+  `;
 }
 
 async function doSubmit() {

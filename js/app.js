@@ -1429,15 +1429,15 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
             </span>
           </label>
           <div class="shortcuts-multi-trigger-utils">
+            <button type="button" class="shortcuts-multi-review" id="shortcuts-multi-review">
+              <span>Preview</span>
+            </button>
             <button type="button" class="shortcuts-multi-submit-direct" id="shortcuts-multi-submit-direct">
               <span>Submit</span>
               <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="3" y1="8" x2="12" y2="8"/>
                 <polyline points="8 4 12 8 8 12"/>
               </svg>
-            </button>
-            <button type="button" class="shortcuts-multi-review" id="shortcuts-multi-review">
-              <span>Review &amp; Submit</span>
             </button>
           </div>
         </div>
