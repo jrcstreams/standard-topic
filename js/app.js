@@ -1,5 +1,8 @@
 import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
-import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, searchTopics } from './utils/data.js';
+import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, searchTopics, getModels, getDefaultModelId, getModelById } from './utils/data.js';
+import { getPreferredModelId, setPreferredModelId, submitPrompt } from './utils/ai-models.js';
+import { assemblePrompt } from './utils/prompt-assembly.js';
+import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js';
@@ -1394,6 +1397,13 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       ? `<p class="sidebar-card-subtitle ti-topic-sublabel">${escapeHTML(topicName)}</p>`
       : '';
 
+  // Model options for the selection bar's "Send to" picker. Pre-selects
+  // the user's preferred model so direct Submit + the modal agree.
+  const barModels = getModels();
+  const barPreferredId = getPreferredModelId(getDefaultModelId());
+  const barModelOptions = barModels.map(m =>
+    `<option value="${escapeAttr(m.id)}"${m.id === barPreferredId ? ' selected' : ''}>${escapeHTML(m.name)}</option>`).join('');
+
   let html = `
     <div class="${cardClasses.join(' ')} is-multi-select" data-multi="1">
       <div class="sidebar-card-header">
@@ -1403,22 +1413,31 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
         </div>
       </div>
       ${all.length > 0 ? `
-        <div class="shortcuts-multi-submit-wrap" role="region" aria-label="Prompt submission" aria-hidden="true">
+        <div class="shortcuts-multi-submit-wrap" role="region" aria-label="Submit prompts" aria-hidden="true">
           <div class="shortcuts-multi-head">
-            <span class="shortcuts-multi-badge" id="shortcuts-multi-submit-count" aria-hidden="true">0</span>
-            <span class="shortcuts-multi-headtext" aria-live="polite">
-              <span class="shortcuts-multi-eyebrow">Selected shortcuts</span>
-              <span class="shortcuts-multi-count-label" id="shortcuts-multi-count-label">0 shortcuts selected</span>
+            <span class="shortcuts-multi-eyebrow">Submit Prompts</span>
+            <span class="shortcuts-multi-headrow">
+              <span class="shortcuts-multi-count-label" id="shortcuts-multi-count-label" aria-live="polite">0 shortcuts selected</span>
+              <button type="button" class="shortcuts-multi-clear" id="shortcuts-multi-clear">Clear</button>
             </span>
           </div>
+          <label class="shortcuts-multi-modelrow">
+            <span class="shortcuts-multi-modellabel">Send to</span>
+            <span class="shortcuts-multi-modelselect-wrap">
+              <select class="shortcuts-multi-model" id="shortcuts-multi-model" aria-label="Send to AI model">${barModelOptions}</select>
+              <svg class="shortcuts-multi-modelselect-chev" width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 4.5 6 8 9 4.5"/></svg>
+            </span>
+          </label>
           <div class="shortcuts-multi-trigger-utils">
-            <button type="button" class="shortcuts-multi-clear" id="shortcuts-multi-clear">Clear</button>
-            <button type="button" class="shortcuts-multi-review" id="shortcuts-multi-review">
-              <span>Review &amp; Submit</span>
+            <button type="button" class="shortcuts-multi-submit-direct" id="shortcuts-multi-submit-direct">
+              <span>Submit</span>
               <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="3" y1="8" x2="12" y2="8"/>
                 <polyline points="8 4 12 8 8 12"/>
               </svg>
+            </button>
+            <button type="button" class="shortcuts-multi-review" id="shortcuts-multi-review">
+              <span>Review &amp; Submit</span>
             </button>
           </div>
         </div>
@@ -1530,9 +1549,10 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
 
   const card = container.querySelector('.sidebar-card');
   const reviewBtn = container.querySelector('#shortcuts-multi-review');
+  const directBtn = container.querySelector('#shortcuts-multi-submit-direct');
   const clearBtn = container.querySelector('#shortcuts-multi-clear');
   const submitWrap = container.querySelector('.shortcuts-multi-submit-wrap');
-  const countEl = container.querySelector('#shortcuts-multi-submit-count');
+  const modelSelect = container.querySelector('#shortcuts-multi-model');
   const countLabelEl = container.querySelector('#shortcuts-multi-count-label');
 
   // Trigger bar: floats in at the bottom of the card whenever any
@@ -1545,10 +1565,34 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     submitWrap.classList.toggle('is-visible', has);
     submitWrap.setAttribute('aria-hidden', has ? 'false' : 'true');
     if (reviewBtn) reviewBtn.disabled = !has;
+    if (directBtn) directBtn.disabled = !has;
     if (clearBtn) clearBtn.disabled = !has;
-    if (countEl) countEl.textContent = String(n);
     if (countLabelEl) countLabelEl.textContent = `${n} shortcut${n === 1 ? '' : 's'} selected`;
   };
+
+  // "Send to" picker persists the preferred model (shared with the modal).
+  modelSelect?.addEventListener('change', (e) => setPreferredModelId(e.target.value));
+
+  // Direct Submit — assemble the base prompt (no advanced settings) and
+  // send it straight to the picked model, skipping the review modal.
+  directBtn?.addEventListener('click', async () => {
+    const sub = buildSubmission();
+    if (!sub) return;
+    const modelId = modelSelect ? modelSelect.value : getPreferredModelId(getDefaultModelId());
+    const model = getModelById(modelId) || getModelById(getDefaultModelId());
+    if (!model) return;
+    // Quick submit honors the session-wide settings (reasoning level +
+    // "applies to every submission" custom instructions). Per-submission
+    // options (output type, secondary topic) stay modal-only.
+    const reasoning = REASONING_LEVELS.find(l => l.id === getReasoningLevel());
+    const prompt = assemblePrompt(sub.prompt, {
+      reasoningHint: reasoning && reasoning.hint ? reasoning.hint : '',
+      customInstructions: getCustomInstructions(),
+      topicName,
+    });
+    track('direct_submit', { model: model.id, count: sub.count, route: window.location.hash || '#/' });
+    try { await submitPrompt(model, prompt); } catch (err) { console.error('Direct submit failed', err); }
+  });
 
   // Build the BASE combined prompt + display name from the current
   // selection (single selection bypasses the multi-prompt intro).

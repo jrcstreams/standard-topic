@@ -1,11 +1,13 @@
 // Unified prompt review + submission modal.
 //
-// Opened from the AI Shortcuts "Review & Submit" trigger via the
+// Opened from the AI Shortcuts selection bar ("Review & Submit") via the
 // `open-prompt-modal` CustomEvent. Owns the whole submission flow on a
-// single screen: an editable prompt preview, an Advanced settings
-// dropdown (reasoning / output / secondary topic / custom instructions)
-// that re-assembles the preview live, AI model selection, the submit
-// button, and a Model Info & Disclaimer dropdown.
+// single screen, top to bottom:
+//   1. editable prompt preview (re-assembles live from advanced settings)
+//   2. AI model picker (collapsible accordion) + discreet "Model info" popover
+//   3. Advanced settings (collapsible)
+//   4. Submit button
+//   5. discreet disclaimer line
 //
 // Anchored panel that opens over the AI Shortcuts card. Width snaps to
 // the card but enforces a usable minimum and shifts horizontally to
@@ -54,9 +56,6 @@ export function initPromptModal() {
 
   window.addEventListener('open-prompt-modal', (e) => {
     const d = e.detail || {};
-    // New unified callers pass a base (unassembled) prompt + topicName so
-    // the modal can layer advanced settings live. Older callers passed a
-    // fully-assembled `prompt`; treat that as the base too.
     openModal({
       basePrompt: d.basePrompt != null ? d.basePrompt : (d.prompt || ''),
       topicName: d.topicName || '',
@@ -71,7 +70,11 @@ export function initPromptModal() {
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && overlayEl.style.display !== 'none') closeModal();
+    if (e.key === 'Escape' && overlayEl.style.display !== 'none') {
+      // Esc dismisses an open Model-info popover first, then the modal.
+      if (modalState && modalState.modelInfoOpen) { setModelInfoOpen(false); return; }
+      closeModal();
+    }
   });
 }
 
@@ -83,14 +86,14 @@ function openModal({ basePrompt, topicName, shortcutName, iconKey, count }) {
     basePrompt,
     topicName: topicName || '',
     editedPrompt: null,
-    isEditing: false,
     shortcutName,
     iconKey,
     count: typeof count === 'number' ? count : 1,
     selectedModelId: preferredId,
     models,
+    modelOpen: false,
     advancedOpen: false,
-    metaOpen: false,
+    modelInfoOpen: false,
     perSubmission: { outputType: '', secondaryTopic: '' },
     isClosing: false,
   };
@@ -114,6 +117,7 @@ function closeModal() {
   modalState.isClosing = true;
 
   unbindPositionListeners();
+  document.removeEventListener('click', onDocClickForPopover);
 
   overlayEl.classList.remove('is-open');
   panelEl.classList.remove('is-open');
@@ -177,9 +181,6 @@ function positionPanel() {
   const desired = Math.max(PANEL_MIN_WIDTH, rect.width);
   const width = Math.min(desired, maxAllowed);
 
-  // Prefer aligning the panel's left edge to the card's left edge. If
-  // the card is narrower than the panel, the panel extends rightward —
-  // shift it left if that would clip the viewport edge.
   let left = rect.left;
   if (left + width > vw - PANEL_VIEWPORT_PAD) {
     left = Math.max(PANEL_VIEWPORT_PAD, vw - width - PANEL_VIEWPORT_PAD);
@@ -203,15 +204,21 @@ function outputTypeField() {
   const f = (pg.fields || []).find(x => x.key === 'outputType');
   return f || { options: [] };
 }
+// Output-type options safe for one-tap shortcut submission: those that do
+// NOT require an extra user input (Comparison's "compare to", Case Study's
+// "specific case", etc. carry a `requiresInput` and are excluded — they
+// belong in the full Prompt Builder, not a quick submit).
+function simpleOutputOptions() {
+  return (outputTypeField().options || []).filter(o => !o.requiresInput);
+}
 function secondaryClauseTpl() {
   const pg = getPromptGenData() || {};
   return pg.secondaryTopicClause || '';
 }
 
-// Build the advanced-settings options object consumed by assemblePrompt.
 function currentAdvancedOpts() {
   const reasoning = REASONING_LEVELS.find(l => l.id === getReasoningLevel());
-  const ot = outputTypeField().options.find(o => o.value === modalState.perSubmission.outputType);
+  const ot = simpleOutputOptions().find(o => o.value === modalState.perSubmission.outputType);
   return {
     reasoningHint: reasoning && reasoning.hint ? reasoning.hint : '',
     outputClause: ot ? ot.clause : '',
@@ -229,22 +236,32 @@ function getCurrentPrompt() {
   return modalState.editedPrompt ?? getAssembledPrompt();
 }
 
+function selectedModel() {
+  return getModelById(modalState.selectedModelId) || modalState.models[0] || null;
+}
 function getSubmitLabel(model) {
   if (!model) return 'Send Prompt';
   return `Send Prompt with ${model.name}`;
+}
+function modelHelperText(model) {
+  if (!model) return '';
+  const methods = getSubmissionMethods();
+  const method = model.submissionMethod || 'direct';
+  const meta = methods[method] || {};
+  return meta.description ? meta.description.replace(/\{model\}/g, model.name) : '';
 }
 
 /* ---- render -------------------------------------------------------- */
 
 function renderPanelContent() {
-  const { count, models, selectedModelId, isEditing, advancedOpen, metaOpen, perSubmission } = modalState;
+  const { count, models, selectedModelId, advancedOpen, modelOpen, perSubmission } = modalState;
   const prompt = getCurrentPrompt();
-  const isEdited = modalState.editedPrompt != null && !isEditing;
+  const model = selectedModel();
 
-  const eyebrow = 'AI Shortcuts';
+  const eyebrow = 'Review &amp; Submit';
   const title = (count > 1)
     ? `${count} shortcuts selected`
-    : (modalState.shortcutName || 'Review & Submit');
+    : (modalState.shortcutName || 'Selected shortcut');
 
   const modelBtnsHTML = models.map(m => `
     <button class="pm-model" type="button" data-model-id="${m.id}" ${m.id === selectedModelId ? 'aria-pressed="true"' : 'aria-pressed="false"'}>
@@ -252,8 +269,7 @@ function renderPanelContent() {
     </button>
   `).join('');
 
-  const otField = outputTypeField();
-  const otOptions = '<option value="">— None —</option>' + (otField.options || []).map(o =>
+  const otOptions = '<option value="">— None —</option>' + simpleOutputOptions().map(o =>
     `<option value="${escapeAttr(o.value)}"${o.value === perSubmission.outputType ? ' selected' : ''}>${escapeHTML(o.label)}</option>`).join('');
   const reasoningOptions = REASONING_LEVELS.map(l =>
     `<option value="${escapeAttr(l.id)}"${l.id === getReasoningLevel() ? ' selected' : ''}>${escapeHTML(l.name)}</option>`).join('');
@@ -263,7 +279,7 @@ function renderPanelContent() {
       <div class="pm-title">
         ${modalState.iconKey && count === 1 ? renderIcon(modalState.iconKey, 'pm-title-icon') : ''}
         <div class="pm-title-text">
-          <span class="pm-title-eyebrow">${escapeHTML(eyebrow)}</span>
+          <span class="pm-title-eyebrow">${eyebrow}</span>
           <h3 class="pm-title-name">${escapeHTML(title)}</h3>
         </div>
       </div>
@@ -276,24 +292,36 @@ function renderPanelContent() {
       <section class="pm-section">
         <div class="pm-section-head">
           <span class="pm-section-label">Prompt Preview</span>
-          ${isEdited ? '<button type="button" class="pm-reset" id="pm-reset">Reset to original</button>' : ''}
+          <button type="button" class="pm-reset" id="pm-reset" ${modalState.editedPrompt == null ? 'hidden' : ''}>Reset to generated</button>
         </div>
-        <div class="pm-preview-wrap ${isEditing ? 'is-editing' : ''}">
-          ${isEditing
-            ? `<textarea class="pm-textarea" id="pm-textarea">${escapeHTML(prompt)}</textarea>`
-            : `<div class="pm-preview" id="pm-preview" tabindex="0" role="button" aria-label="Click to edit prompt">${escapeHTML(prompt)}</div>`
-          }
+        <div class="pm-preview-wrap">
+          <textarea class="pm-preview-input" id="pm-preview" aria-label="Prompt text — editable">${escapeHTML(prompt)}</textarea>
           <div class="pm-preview-actions">
             <button type="button" class="pm-icon-btn" id="pm-copy" aria-label="Copy prompt" title="Copy">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="8" height="9" rx="1.2"/><path d="M9.5 3.5V2.5a1 1 0 0 0-1-1h-5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1"/></svg>
             </button>
-            <button type="button" class="pm-icon-btn" id="pm-edit" aria-label="${isEditing ? 'Save prompt' : 'Edit prompt'}" title="${isEditing ? 'Save' : 'Edit'}">
-              ${isEditing
-                ? `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="2.5,7.5 5.5,10.5 11.5,4"/></svg>`
-                : `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2.2l2.3 2.3-7 7H2.5v-2.3l7-7z"/></svg>`
-              }
-            </button>
           </div>
+        </div>
+      </section>
+
+      <section class="pm-section">
+        <div class="pm-section-label">AI Model</div>
+        <div class="pm-model-acc">
+          <button type="button" class="pm-model-acc-toggle" id="pm-model-toggle" aria-expanded="${modelOpen}" aria-controls="pm-model-body">
+            <span class="pm-model-acc-lead">Send to</span>
+            <span class="pm-model-acc-current" id="pm-model-current">${escapeHTML(model ? model.name : 'Choose a model')}</span>
+            <svg class="pm-disclosure-chev" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 4.5 6 8 9 4.5"/></svg>
+          </button>
+          <div class="pm-model-acc-body" id="pm-model-body" ${modelOpen ? '' : 'hidden'}>
+            <div class="pm-models" id="pm-models">${modelBtnsHTML}</div>
+          </div>
+        </div>
+        <div class="pm-modelinfo">
+          <button type="button" class="pm-modelinfo-link" id="pm-modelinfo-link" aria-expanded="false">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5.4"/><path d="M7 6.2v3.4" stroke-linecap="round"/><circle cx="7" cy="4.4" r="0.55" fill="currentColor" stroke="none"/></svg>
+            Model info
+          </button>
+          <div class="pm-modelinfo-pop" id="pm-modelinfo-pop" hidden role="dialog" aria-label="Model info"></div>
         </div>
       </section>
 
@@ -317,86 +345,45 @@ function renderPanelContent() {
         </div>
       </section>
 
-      <section class="pm-section">
-        <div class="pm-section-label">AI Model</div>
-        <div class="pm-models" id="pm-models">${modelBtnsHTML}</div>
-      </section>
-
-      <section class="pm-submit-area" id="pm-submit-area"></section>
-
-      <section class="pm-section pm-disclosure-section pm-disclosure-section-quiet">
-        <button type="button" class="pm-disclosure-toggle" id="pm-meta-toggle" aria-expanded="${metaOpen}" aria-controls="pm-meta-body">
-          <svg class="pm-disclosure-chev" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 4.5 6 8 9 4.5"/></svg>
-          <span class="pm-disclosure-title">Model info &amp; disclaimer</span>
-        </button>
-        <div class="pm-disclosure-body" id="pm-meta-body" ${metaOpen ? '' : 'hidden'}></div>
+      <section class="pm-section pm-submit-area">
+        <div class="pm-section-label">Prompt Submission</div>
+        <div class="pm-actions">
+          <button class="pm-submit" id="pm-submit" type="button"${model ? '' : ' disabled'}>${escapeHTML(getSubmitLabel(model))}</button>
+        </div>
+        <p class="pm-disclaimer">Standard Topic isn’t responsible for actions taken once you leave this site.</p>
       </section>
     </div>
   `;
 
   bindEvents();
-  updateSubmitArea();
-  updateMetaBody();
 }
 
 function bindEvents() {
   panelEl.querySelector('#pm-close').addEventListener('click', closeModal);
 
+  const ta = panelEl.querySelector('#pm-preview');
+  ta.addEventListener('input', () => {
+    modalState.editedPrompt = (ta.value === getAssembledPrompt()) ? null : ta.value;
+    toggleReset();
+  });
+
   panelEl.querySelector('#pm-copy').addEventListener('click', async (e) => {
     e.stopPropagation();
-    const text = modalState.isEditing
-      ? panelEl.querySelector('#pm-textarea')?.value ?? ''
-      : getCurrentPrompt();
-    try { await navigator.clipboard.writeText(text); } catch (_) {}
+    try { await navigator.clipboard.writeText(ta.value); } catch (_) {}
     flashIconBtn(e.currentTarget, 'copied');
   });
 
-  panelEl.querySelector('#pm-edit').addEventListener('click', (e) => {
-    e.stopPropagation();
-    enterEditOrSave();
-  });
-
-  const preview = panelEl.querySelector('#pm-preview');
-  if (preview) {
-    preview.addEventListener('click', enterEdit);
-    preview.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); enterEdit(); }
-    });
-  }
-
-  panelEl.querySelector('#pm-reset')?.addEventListener('click', (e) => {
-    e.stopPropagation();
+  panelEl.querySelector('#pm-reset').addEventListener('click', () => {
     modalState.editedPrompt = null;
-    renderPanelContent();
+    ta.value = getAssembledPrompt();
+    toggleReset();
   });
 
-  // Disclosure toggles — no full re-render, so open state + field focus
-  // survive interactions elsewhere in the panel.
-  panelEl.querySelector('#pm-adv-toggle').addEventListener('click', () => {
-    modalState.advancedOpen = !modalState.advancedOpen;
-    toggleDisclosure('#pm-adv-toggle', '#pm-adv-body', modalState.advancedOpen);
+  // Model accordion
+  panelEl.querySelector('#pm-model-toggle').addEventListener('click', () => {
+    modalState.modelOpen = !modalState.modelOpen;
+    toggleDisclosure('#pm-model-toggle', '#pm-model-body', modalState.modelOpen);
   });
-  panelEl.querySelector('#pm-meta-toggle').addEventListener('click', () => {
-    modalState.metaOpen = !modalState.metaOpen;
-    toggleDisclosure('#pm-meta-toggle', '#pm-meta-body', modalState.metaOpen);
-  });
-
-  // Advanced fields re-assemble the preview live (clearing any manual
-  // edit). We update the preview text in place rather than re-rendering
-  // so the field keeps focus while typing.
-  panelEl.querySelector('#pm-reasoning').addEventListener('change', (e) => {
-    setReasoningLevel(e.target.value); modalState.editedPrompt = null; refreshPreviewText();
-  });
-  panelEl.querySelector('#pm-output').addEventListener('change', (e) => {
-    modalState.perSubmission.outputType = e.target.value; modalState.editedPrompt = null; refreshPreviewText();
-  });
-  panelEl.querySelector('#pm-secondary').addEventListener('input', (e) => {
-    modalState.perSubmission.secondaryTopic = e.target.value; modalState.editedPrompt = null; refreshPreviewText();
-  });
-  panelEl.querySelector('#pm-custom').addEventListener('input', (e) => {
-    setCustomInstructions(e.target.value); modalState.editedPrompt = null; refreshPreviewText();
-  });
-
   panelEl.querySelector('#pm-models').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-model-id]');
     if (!btn) return;
@@ -405,9 +392,52 @@ function bindEvents() {
     panelEl.querySelectorAll('.pm-model').forEach(b => {
       b.setAttribute('aria-pressed', b.dataset.modelId === modalState.selectedModelId ? 'true' : 'false');
     });
-    updateSubmitArea();
-    updateMetaBody();
+    syncModelUI();
+    // Collapse the accordion to confirm the choice.
+    modalState.modelOpen = false;
+    toggleDisclosure('#pm-model-toggle', '#pm-model-body', false);
   });
+
+  // Model info popover
+  panelEl.querySelector('#pm-modelinfo-link').addEventListener('click', (e) => {
+    e.stopPropagation();
+    setModelInfoOpen(!modalState.modelInfoOpen);
+  });
+  document.addEventListener('click', onDocClickForPopover);
+
+  // Advanced settings
+  panelEl.querySelector('#pm-adv-toggle').addEventListener('click', () => {
+    modalState.advancedOpen = !modalState.advancedOpen;
+    toggleDisclosure('#pm-adv-toggle', '#pm-adv-body', modalState.advancedOpen);
+  });
+  panelEl.querySelector('#pm-reasoning').addEventListener('change', (e) => {
+    setReasoningLevel(e.target.value); regenPreview();
+  });
+  panelEl.querySelector('#pm-output').addEventListener('change', (e) => {
+    modalState.perSubmission.outputType = e.target.value; regenPreview();
+  });
+  panelEl.querySelector('#pm-secondary').addEventListener('input', (e) => {
+    modalState.perSubmission.secondaryTopic = e.target.value; regenPreview();
+  });
+  panelEl.querySelector('#pm-custom').addEventListener('input', (e) => {
+    setCustomInstructions(e.target.value); regenPreview();
+  });
+
+  panelEl.querySelector('#pm-submit').addEventListener('click', doSubmit);
+}
+
+// Advanced settings changed → discard manual edits and rewrite the preview
+// from the freshly assembled prompt. Always reflects the change.
+function regenPreview() {
+  modalState.editedPrompt = null;
+  const ta = panelEl.querySelector('#pm-preview');
+  if (ta) ta.value = getAssembledPrompt();
+  toggleReset();
+}
+
+function toggleReset() {
+  const btn = panelEl.querySelector('#pm-reset');
+  if (btn) btn.hidden = (modalState.editedPrompt == null);
 }
 
 function toggleDisclosure(toggleSel, bodySel, open) {
@@ -417,89 +447,65 @@ function toggleDisclosure(toggleSel, bodySel, open) {
   if (body) body.hidden = !open;
 }
 
-// Update the preview <div> text without re-rendering (only valid when
-// not in edit mode — the textarea owns the value while editing).
-function refreshPreviewText() {
-  if (modalState.isEditing) return;
-  const preview = panelEl.querySelector('#pm-preview');
-  if (preview) preview.textContent = getCurrentPrompt();
+// Reflect the current model in the accordion label, submit button, and
+// (if open) the model-info popover — without a full re-render.
+function syncModelUI() {
+  const model = selectedModel();
+  const current = panelEl.querySelector('#pm-model-current');
+  if (current) current.textContent = model ? model.name : 'Choose a model';
+  const submit = panelEl.querySelector('#pm-submit');
+  if (submit) { submit.textContent = getSubmitLabel(model); submit.disabled = !model; }
+  if (modalState.modelInfoOpen) populateModelInfo();
+}
+
+function populateModelInfo() {
+  const pop = panelEl.querySelector('#pm-modelinfo-pop');
+  if (!pop) return;
+  const model = selectedModel();
+  const helper = modelHelperText(model);
+  const modelHomeUrl = model ? (model.chatUrl || (model.urlTemplate || '').replace('{prompt}', '')) : '';
+  pop.innerHTML = model ? `
+    <div class="pm-modelinfo-pop-head">
+      <a href="${modelHomeUrl}" target="_blank" rel="noopener noreferrer" class="pm-meta-link">${escapeHTML(model.name)}</a>
+    </div>
+    ${helper ? `<p class="pm-modelinfo-pop-text">${escapeHTML(helper)}</p>` : ''}
+  ` : '<p class="pm-modelinfo-pop-text">No model selected.</p>';
+}
+
+function setModelInfoOpen(open) {
+  modalState.modelInfoOpen = open;
+  const pop = panelEl.querySelector('#pm-modelinfo-pop');
+  const link = panelEl.querySelector('#pm-modelinfo-link');
+  if (link) link.setAttribute('aria-expanded', String(open));
+  if (!pop) return;
+  if (open) { populateModelInfo(); pop.hidden = false; }
+  else pop.hidden = true;
+}
+
+function onDocClickForPopover(e) {
+  if (!modalState || !modalState.modelInfoOpen) return;
+  const wrap = panelEl.querySelector('.pm-modelinfo');
+  if (wrap && !wrap.contains(e.target)) setModelInfoOpen(false);
+}
+
+async function doSubmit() {
+  const model = selectedModel();
+  if (!model) return;
+  const ta = panelEl.querySelector('#pm-preview');
+  const prompt = ta ? ta.value : getCurrentPrompt();
+  track('prompt_submit', {
+    model: model.id,
+    shortcut_name: modalState.shortcutName || '',
+    count: modalState.count,
+    edited: modalState.editedPrompt != null,
+  });
+  await submitPrompt(model, prompt);
+  closeModal();
 }
 
 function flashIconBtn(btn, state) {
   btn.classList.add(`is-${state}`);
   setTimeout(() => btn.classList.remove(`is-${state}`), 1200);
-}
-
-function enterEdit() {
-  if (modalState.isEditing) return;
-  modalState.isEditing = true;
-  renderPanelContent();
-}
-
-function enterEditOrSave() {
-  if (modalState.isEditing) {
-    const ta = panelEl.querySelector('#pm-textarea');
-    if (ta) {
-      const newVal = ta.value;
-      modalState.editedPrompt = (newVal === getAssembledPrompt()) ? null : newVal;
-    }
-    modalState.isEditing = false;
-  } else {
-    modalState.isEditing = true;
-  }
-  renderPanelContent();
-}
-
-function updateSubmitArea() {
-  const { selectedModelId } = modalState;
-  const model = getModelById(selectedModelId);
-  const area = panelEl.querySelector('#pm-submit-area');
-  if (!area) return;
-  area.innerHTML = `
-    <div class="pm-section-label">Prompt Submission</div>
-    <div class="pm-actions">
-      <button class="pm-submit" id="pm-submit" type="button"${model ? '' : ' disabled'}>${escapeHTML(getSubmitLabel(model))}</button>
-    </div>
-  `;
-  const submitBtn = area.querySelector('#pm-submit');
-  if (submitBtn && model) {
-    submitBtn.addEventListener('click', async () => {
-      if (modalState.isEditing) {
-        const ta = panelEl.querySelector('#pm-textarea');
-        if (ta) modalState.editedPrompt = ta.value;
-      }
-      track('prompt_submit', {
-        model: model.id,
-        shortcut_name: modalState.shortcutName || '',
-        count: modalState.count,
-        edited: modalState.editedPrompt != null,
-      });
-      await submitPrompt(model, getCurrentPrompt());
-      closeModal();
-    });
-  }
-}
-
-function updateMetaBody() {
-  const body = panelEl.querySelector('#pm-meta-body');
-  if (!body) return;
-  const model = getModelById(modalState.selectedModelId);
-  const methods = getSubmissionMethods();
-  const method = (model && model.submissionMethod) || 'direct';
-  const meta = methods[method] || {};
-  const helper = (model && meta.description) ? meta.description.replace(/\{model\}/g, model.name) : '';
-  const modelHomeUrl = model ? (model.chatUrl || (model.urlTemplate || '').replace('{prompt}', '')) : '';
-  body.innerHTML = `
-    ${helper ? `<div class="pm-meta-line">
-      <span class="pm-meta-label">Model info:</span>
-      <a href="${modelHomeUrl}" target="_blank" rel="noopener noreferrer" class="pm-meta-link">${escapeHTML(model.name)}</a>
-      <span class="pm-meta-text">— ${escapeHTML(helper)}</span>
-    </div>` : ''}
-    <div class="pm-meta-line">
-      <span class="pm-meta-label">Disclaimer:</span>
-      <span class="pm-meta-text">Standard Topic isn't responsible for actions taken once you leave this site.</span>
-    </div>
-  `;
 }
 
 function escapeHTML(str) {
