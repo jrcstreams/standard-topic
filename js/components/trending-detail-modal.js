@@ -10,8 +10,14 @@ import { groupShortcuts, renderTIAccordion, webSourceItem } from './ti-shortcuts
 
 let overlayEl = null;
 let panelEl = null;
-let stack = [];     // previous items (for the back link)
+let stack = [];          // previous items (for the back link)
 let current = null;
+let cameFromList = false; // opened from the global Trending list modal?
+
+function isListOpen() {
+  const el = document.querySelector('.tlm-panel');
+  return !!el && getComputedStyle(el).display !== 'none';
+}
 
 function escapeHTML(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
 function escapeAttr(s) { return String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -99,14 +105,15 @@ function render() {
   const related = Array.isArray(item.trendBreakdown) ? item.trendBreakdown.slice(0, 8) : [];
   const t101 = getTrending101();
   const trendsUrl = item.googleTrendsUrl || gtUrl(term);
-  const backName = stack.length ? titleCase(stack[stack.length - 1].query) : '';
+  const showBack = stack.length > 0 || cameFromList;
+  const backName = stack.length ? titleCase(stack[stack.length - 1].query) : 'Trending';
 
   panelEl.innerHTML = `
     <div class="td-header">
       <button type="button" class="td-close" id="td-close" aria-label="Close">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg>
       </button>
-      ${stack.length ? `<button type="button" class="td-back" id="td-back"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>${escapeHTML(backName)}</button>` : ''}
+      ${showBack ? `<button type="button" class="td-back" id="td-back"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>${escapeHTML(backName)}</button>` : ''}
       <span class="td-eyebrow">Trending Now</span>
       <h3 class="td-title">${escapeHTML(titleCase(term))}</h3>
       <div class="td-headmeta">
@@ -134,8 +141,10 @@ function render() {
   if (back) back.addEventListener('click', goBack);
   panelEl.querySelectorAll('.td-shortcut').forEach(btn => {
     btn.addEventListener('click', () => {
+      // No iconKey — the Review & Submit modal shouldn't show an emoji/icon
+      // for trending shortcuts.
       window.dispatchEvent(new CustomEvent('open-prompt-modal', {
-        detail: { basePrompt: btn.dataset.prompt || '', topicName: term, name: btn.dataset.name, iconKey: btn.dataset.icon, count: 1 },
+        detail: { basePrompt: btn.dataset.prompt || '', topicName: term, name: btn.dataset.name, count: 1 },
       }));
     });
   });
@@ -153,6 +162,7 @@ function openFresh(item) {
   if (!item || !item.query) return;
   stack = [];
   current = item;
+  cameFromList = isListOpen();   // remember so we can offer "← Trending"
   render();
   overlayEl.style.display = 'block';
   panelEl.style.display = 'flex';
@@ -168,11 +178,24 @@ function navigateTo(item) {
 }
 
 function goBack() {
-  if (!stack.length) return;
-  current = stack.pop();
-  render();
+  if (stack.length) { current = stack.pop(); render(); return; }
+  if (cameFromList) { revealList(); }
 }
 
+// Back to the Trending list modal: hide this detail view but leave the list
+// (which is still open underneath) on screen.
+function revealList() {
+  overlayEl.style.display = 'none';
+  panelEl.style.display = 'none';
+  panelEl.classList.remove('is-in');
+  panelEl.innerHTML = '';
+  stack = [];
+  current = null;
+  cameFromList = false;
+  // Leave body overflow hidden — the list modal still owns it.
+}
+
+// Full close (✕ / overlay / Esc) — also dismiss the list modal if it's open.
 function close() {
   overlayEl.style.display = 'none';
   panelEl.style.display = 'none';
@@ -180,5 +203,7 @@ function close() {
   panelEl.innerHTML = '';
   stack = [];
   current = null;
+  if (cameFromList) window.dispatchEvent(new CustomEvent('close-trending-list'));
+  cameFromList = false;
   document.body.style.overflow = '';
 }

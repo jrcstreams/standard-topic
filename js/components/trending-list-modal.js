@@ -24,6 +24,9 @@ export function initTrendingListModal() {
   document.body.appendChild(panelEl);
 
   window.addEventListener('open-trending-list', open);
+  // The detail modal fires this when its ✕/Esc fully closes after being
+  // opened from here, so the whole stack dismisses together.
+  window.addEventListener('close-trending-list', close);
   overlayEl.addEventListener('click', close);
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && overlayEl.style.display !== 'none') close();

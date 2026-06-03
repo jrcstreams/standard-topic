@@ -477,9 +477,11 @@ body.custom-mode.sticky-always #content {
   justify-content: center;
   width: 34px;
   height: 34px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  /* Light pill so the home icon reads the same navy as the Search /
+     Trending / Topics icons next to it (rather than the gear's white). */
+  background: #dde3ec;
+  color: #1e2d44;
+  border: 1px solid #dde3ec;
   border-radius: 8px;
   cursor: pointer;
   flex-shrink: 0;
@@ -487,9 +489,9 @@ body.custom-mode.sticky-always #content {
   transition: background 0.14s, color 0.14s, border-color 0.14s, transform 0.06s;
 }
 .sticky-home:hover {
-  background: rgba(255, 255, 255, 0.14);
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.28);
+  background: #ecf0f6;
+  color: #0f1a2e;
+  border-color: #ecf0f6;
   text-decoration: none;
 }
 .sticky-home:active { transform: translateY(1px); }
@@ -1910,18 +1912,29 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   .sticky-trending-full { display: none; }
   .sticky-trending-short { display: inline; }
 }
-/* Narrow phones: labels for Topics + Trends won't fit alongside the brand
-   title, so collapse both to icon-only square buttons (matching the Search
-   + Home icons) and trim the title a touch. The nav reads as a clean row of
-   icon controls. */
-@media (max-width: 480px) {
-  .sticky-title { font-size: 1.1rem; }
-  #sticky-search-container .search-bar-label { display: none !important; }
+/* Tighter phones: trim the brand title and collapse the lower-priority
+   Trending pill to an icon — this frees the row so the Topics label can stay
+   as long as possible. */
+@media (max-width: 540px) {
+  .sticky-title { font-size: 1.12rem; }
   .sticky-trending-short { display: none; }
   .sticky-trending {
     width: 32px; height: 32px; padding: 0; gap: 0;
     justify-content: center;
   }
+}
+@media (max-width: 440px) {
+  .sticky-title { font-size: 1rem; }
+  .sticky-actions { gap: 0.45rem; }
+}
+/* Only when truly cramped, drop the Topics label to an icon too. */
+@media (max-width: 360px) {
+  .sticky-title { font-size: 0.92rem; }
+  .sticky-actions { gap: 0.4rem; }
+  #sticky-search-container .search-bar-label { display: none !important; }
+}
+@media (max-width: 330px) {
+  .sticky-title { font-size: 0.84rem; }
 }
 
 /* By default (non-mobile), show the full label and hide the short one */
@@ -12174,7 +12187,7 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 }
 .td-panel {
   position: fixed; z-index: 151; top: 50%; left: 50%;
-  width: min(520px, calc(100vw - 2rem)); max-height: min(88vh, 800px);
+  width: min(600px, calc(100vw - 2rem)); max-height: min(88vh, 800px);
   display: flex; flex-direction: column; overflow: hidden;
   background: #fff; border: 1px solid rgba(15, 23, 42, 0.06); border-radius: 16px;
   box-shadow: 0 30px 70px -16px rgba(15, 23, 42, 0.40), 0 10px 22px -10px rgba(15, 23, 42, 0.20);

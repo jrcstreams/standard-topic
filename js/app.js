@@ -988,6 +988,12 @@ function renderStickyHeroBar(container, route) {
       </a>
       <span class="sticky-tagline">News, Resources and AI Knowledge. On any topic.</span>
       <div class="sticky-actions">
+        <a href="#/" class="sticky-home" id="nav-home" aria-label="Home">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/>
+            <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          </svg>
+        </a>
         <div class="sticky-search sticky-search-pill" id="sticky-search-pill-container">
           <div class="search-bar-wrapper">
             <button class="search-bar is-compact search-bar-search-variant" type="button" id="nav-search" aria-label="Search topics">
@@ -1001,7 +1007,6 @@ function renderStickyHeroBar(container, route) {
             </button>
           </div>
         </div>
-        <div class="sticky-search" id="sticky-search-container"></div>
         <button type="button" class="sticky-trending" id="nav-trending" aria-label="Trending">
           <svg class="sticky-trending-icon" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="3 17 9 11 13 15 21 7"/>
@@ -1010,6 +1015,7 @@ function renderStickyHeroBar(container, route) {
           <span class="sticky-trending-full">Trending</span>
           <span class="sticky-trending-short">Trends</span>
         </button>
+        <div class="sticky-search" id="sticky-search-container"></div>
         <a href="#/prompt-generator" class="sticky-cta" id="nav-cta" aria-label="Prompt Builder">
           <svg class="sticky-cta-sparkle" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/>
@@ -1017,12 +1023,6 @@ function renderStickyHeroBar(container, route) {
           </svg>
           <span class="sticky-cta-full">Prompt Builder</span>
           <span class="sticky-cta-short">Prompt Builder</span>
-        </a>
-        <a href="#/" class="sticky-home" id="nav-home" aria-label="Home">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/>
-            <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          </svg>
         </a>
         <button type="button" class="sticky-settings" id="nav-settings" aria-label="Settings">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1108,6 +1108,17 @@ function renderStickyHeroBar(container, route) {
           <polyline points="13 6 19 12 13 18"/>
         </svg>
       </a>
+      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-trending">
+        <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="3 17 9 11 13 15 21 7"/>
+          <polyline points="15 7 21 7 21 13"/>
+        </svg>
+        <span class="navmenu-cta-label">Trending Topics</span>
+        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="13 6 19 12 13 18"/>
+        </svg>
+      </button>
       <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-all-topics">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="3" y="3" width="7" height="7" rx="1"/>
@@ -1171,6 +1182,10 @@ function renderStickyHeroBar(container, route) {
   navPanel.querySelector('#navmenu-all-topics')?.addEventListener('click', () => {
     const searchBar = document.querySelector('.search-bar');
     if (searchBar) searchBar.click();
+  });
+  navPanel.querySelector('#navmenu-trending')?.addEventListener('click', () => {
+    closeMenu();
+    window.dispatchEvent(new CustomEvent('open-trending-list'));
   });
 
   // Clicking logo/title always goes home with News Feed active —
