@@ -1747,6 +1747,13 @@ body.hide-cta .sticky-cta { display: none !important; }
     padding: 0.55rem 1rem 0.95rem;
     min-height: 50px;
   }
+  /* Title-only subnav pages (Prompt Builder / About / Terms) aren't in
+     app-mode, so they miss the generous top inset that topic pages get
+     (body.app-mode rule below). Match it here so their page title has the
+     same breathing room beneath the main nav. */
+  body:not(.app-mode) #sub-header.is-subnav .topic-banner {
+    padding-top: 1.05rem;
+  }
   #sub-header.is-home-subnav .topic-banner {
     padding: 0.55rem 1rem 0.95rem;
   }
@@ -5104,24 +5111,43 @@ body.app-mode .topic-layout {
     background: #e2e8f0;
     pointer-events: none;
   }
-  /* Home only: Trending (left column, row 1) stacks above Topic
-     Intelligence (left column, row 2); News Feed spans both rows in the
-     right column. On topic pages there's no #section-trending — row 1 of
-     the left column is simply empty, so shortcuts/news still read right. */
-  body.app-mode .topic-layout:not(.is-custom) {
-    grid-template-rows: auto minmax(0, 1fr);
+  /* Home only (its left column has #section-trending): Topic Intelligence
+     sits on top (row 1, capped so it scrolls internally rather than
+     crowding out Trending); Trending Now (row 2) fills the REMAINING
+     height beneath it and scrolls from there. News Feed spans both rows on
+     the right. Scoped with :has() so topic pages — which have no Trending
+     section — keep their default full-height Topic Intelligence column. */
+  body.app-mode .topic-layout:not(.is-custom):has(#section-trending) {
+    /* Topic Intelligence (row 1) sizes to its own content; Trending (row 2)
+       fills the genuine remaining height and scrolls from there. */
+    grid-template-rows: minmax(0, auto) minmax(0, 1fr);
   }
-  body.app-mode .topic-layout:not(.is-custom) > #section-trending {
+  body.app-mode .topic-layout:not(.is-custom):has(#section-trending) > #section-shortcuts {
     grid-column: 1;
     grid-row: 1;
-    padding-right: 1.5rem;
-    margin-bottom: 1rem;
   }
-  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts {
+  /* On home, TI's scroll region sizes to its (modest) content rather than
+     flex-filling — so the section is content-height (no gap before
+     Trending) — but still caps + scrolls if the panel is fully expanded,
+     leaving Trending its space. */
+  body.app-mode .topic-layout:not(.is-custom):has(#section-trending) > #section-shortcuts .shortcuts-sidebar {
+    height: auto;
+    min-height: 0;
+  }
+  body.app-mode .topic-layout:not(.is-custom):has(#section-trending) > #section-shortcuts .shortcuts-scroll-wrap {
+    flex: 0 1 auto;
+    max-height: 52vh;
+    /* Fill-mode reserved a big bottom inset; not needed when the panel is
+       content-sized, so trim it to keep Trending snug below. */
+    padding-bottom: 0.75rem;
+  }
+  body.app-mode .topic-layout:not(.is-custom):has(#section-trending) > #section-trending {
     grid-column: 1;
     grid-row: 2;
+    padding-right: 1.5rem;
+    margin-top: 1rem;
   }
-  body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed {
+  body.app-mode .topic-layout:not(.is-custom):has(#section-trending) > #section-newsfeed {
     grid-column: 2;
     grid-row: 1 / span 2;
   }
@@ -11996,7 +12022,10 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
    Sidebar card above Topic Intelligence (desktop) / its own mobile tab.
    Title + separator mirror News Feed / Topic Intelligence; the list is a
    tight fixed-height scroll area with shared .scroll-fade indicators. */
-.trending-card { display: flex; flex-direction: column; }
+/* The card fills its section (desktop row 2 below Topic Intelligence, or
+   the mobile Trending tab); the list flexes to take the remaining height
+   and scrolls — so how many entries show is driven by available space. */
+.trending-card { display: flex; flex-direction: column; height: 100%; min-height: 0; }
 /* Title — same treatment as .newsfeed-title / .sidebar-card-title: navy
    display type with a hairline separator below. */
 .trending-title {
@@ -12019,8 +12048,15 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .trending-meta-dot { font-size: 0.7rem; color: var(--color-text-light); }
 .trending-updated { font-size: 0.7rem; color: var(--color-text-light); }
 
-/* List — tight rows inside a fade-scrolled area. */
-.trending-list-wrap { position: relative; margin-top: 0.55rem; }
+/* List — tight rows inside a fade-scrolled area that fills the card. */
+.trending-list-wrap {
+  position: relative;
+  margin-top: 0.55rem;
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
 .trending-list-wrap.has-overflow-top .scroll-fade-top { opacity: 1; }
 .trending-list-wrap.has-overflow-bottom .scroll-fade-bottom { opacity: 1; }
 .trending-list {
@@ -12028,7 +12064,8 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
   display: flex; flex-direction: column; gap: 0;
 }
 .trending-scroll {
-  max-height: 15.5rem;
+  flex: 1 1 0;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
@@ -12063,36 +12100,15 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 }
 @keyframes trending-shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
 
-/* Desktop sidebar: scale the visible window with width so Topic
-   Intelligence keeps room beneath Trending Now on narrower screens. The
-   full list stays scrollable (fade indicators) — only the window shrinks.
-   ~3 rows on small 2-col widths → ~5 → ~7 on wide. */
-@media (min-width: 900px) {
-  .trending-scroll { max-height: 6.3rem; }   /* ~3 rows + peek */
-}
-@media (min-width: 1024px) {
-  .trending-scroll { max-height: 10.3rem; }  /* ~5 rows + peek */
-}
-@media (min-width: 1200px) {
-  .trending-scroll { max-height: 14.3rem; }  /* ~7 rows + peek */
-}
-
-/* Mobile / tablet (own Trending tab): no cap — the list fills the tab
-   height and scrolls full-length, keeping the top/bottom fade. */
+/* Mobile / tablet (own Trending tab): the active "Trending" tab pill
+   already labels the panel, so the duplicate "Trending Now" title +
+   separator are hidden here; the quiet "via Google Trends · Updated …"
+   meta stays. The fill behaviour is handled by the base rules above. */
 @media (max-width: 899.98px) {
-  body.app-mode .topic-layout:not(.is-custom) > #section-trending .trending-card {
-    height: 100%;
-    min-height: 0;
+  body.app-mode .topic-layout:not(.is-custom) > #section-trending .trending-title {
+    display: none;
   }
-  .trending-list-wrap {
-    flex: 1 1 0;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-  }
-  .trending-scroll {
-    max-height: none;
-    flex: 1 1 0;
-    min-height: 0;
+  body.app-mode .topic-layout:not(.is-custom) > #section-trending .trending-meta {
+    margin-top: 1.1rem;
   }
 }
