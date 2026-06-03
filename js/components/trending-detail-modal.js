@@ -1,18 +1,23 @@
 // Slim modal shown when a Trending Now row is clicked. Renders the term,
-// related searches + a Google Trends link, the admin-managed Trending 101
-// shortcuts, and the Topic-Intelligence accordions scoped to the term
-// ("Trending Intelligence"). Opened via the `open-trending-detail` event
-// with the full trending item. Shortcut clicks reuse the existing prompt
-// modal (`open-prompt-modal`).
+// related searches (clickable chips that drill into their own trend view),
+// a Google Trends link, the admin-managed Trending 101 shortcuts, and the
+// Topic-Intelligence accordions scoped to the term ("Trending Intelligence").
+// Opened via `open-trending-detail` with the full trending item. Shortcut
+// clicks reuse the existing prompt modal (`open-prompt-modal`). A history
+// stack lets related-term views offer a "← back" link.
 import { getTrending101, getTrendingIntelligenceShortcuts, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { groupShortcuts, renderTIAccordion, webSourceItem } from './ti-shortcuts.js';
+import { renderIcon } from '../utils/icons.js';
 
 let overlayEl = null;
 let panelEl = null;
+let stack = [];     // previous items (for the back link)
+let current = null;
 
 function escapeHTML(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
 function escapeAttr(s) { return String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
 function titleCase(s) { return String(s || '').replace(/\b\w/g, c => c.toUpperCase()); }
+function gtUrl(term) { return `https://trends.google.com/trends/explore?q=${encodeURIComponent(term)}&geo=US`; }
 function relTime(iso) {
   if (!iso) return '';
   const t = new Date(iso).getTime();
@@ -38,27 +43,25 @@ export function initTrendingDetailModal() {
   panelEl.style.display = 'none';
   document.body.appendChild(panelEl);
 
-  window.addEventListener('open-trending-detail', (e) => open(e.detail));
+  window.addEventListener('open-trending-detail', (e) => openFresh(e.detail));
   overlayEl.addEventListener('click', close);
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && overlayEl.style.display !== 'none') close();
   });
 }
 
-function shortcutRow(s, term) {
+function shortcutRow(s, term, withIcon) {
   const prompt = (s.prompt || '').replace(/\{topic\}/gi, term);
   const desc = s.description ? `<span class="td-row-desc">${escapeHTML(s.description)}</span>` : '';
-  return `<button type="button" class="td-shortcut" data-prompt="${escapeAttr(prompt)}" data-name="${escapeAttr(s.name)}" data-icon="${escapeAttr(s.icon || '')}">
-      <span class="td-row-text"><span class="td-row-name">${escapeHTML(s.name)}</span>${desc}</span>
+  const icon = (withIcon && s.icon) ? `<span class="td-row-icon" aria-hidden="true">${renderIcon(s.icon)}</span>` : '';
+  return `<li><button type="button" class="td-shortcut${withIcon ? ' td-shortcut-iconed' : ''}" data-prompt="${escapeAttr(prompt)}" data-name="${escapeAttr(s.name)}" data-icon="${escapeAttr(s.icon || '')}">
+      ${icon}<span class="td-row-text"><span class="td-row-name">${escapeHTML(s.name)}</span>${desc}</span>
       <svg class="td-row-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
-    </button>`;
+    </button></li>`;
 }
 
-// Topic-Intelligence accordions (Web Sources + Discover/Learn/Analyze/More)
-// scoped to the trending term, reusing the shared TI builders.
 function trendingIntelligenceHTML(term) {
   let html = '<div class="ti-accordions">';
-
   const searches = getExternalSearches();
   if (searches.length) {
     const cats = getExternalSearchCategories();
@@ -76,33 +79,34 @@ function trendingIntelligenceHTML(term) {
     }).join('');
     html += renderTIAccordion({ key: 'websources', label: 'Web Sources', open: false, bodyHTML: `<div class="ti-source-groups">${groupsHTML}</div>` });
   }
-
   const groups = groupShortcuts(getTrendingIntelligenceShortcuts(), {});
   (groups.__order || []).forEach(g => {
     const items = groups[g.key];
     if (!items || !items.length) return;
     html += renderTIAccordion({
       key: g.key, label: g.label, open: false,
-      bodyHTML: `<ul class="ti-item-list td-shortcut-list">${items.map(s => shortcutRow(s, term)).join('')}</ul>`,
+      bodyHTML: `<ul class="ti-item-list td-shortcut-list">${items.map(s => shortcutRow(s, term, false)).join('')}</ul>`,
     });
   });
-
   html += '</div>';
   return html;
 }
 
-function open(item) {
-  if (!item || !item.query) return;
+function render() {
+  const item = current;
   const term = item.query;
   const since = relTime(item.startedAt);
   const cat = item.category || (Array.isArray(item.categories) ? item.categories[0] : '') || '';
   const subParts = [cat, since ? `Trending since ${since}` : ''].filter(Boolean).join(' · ');
-  const related = Array.isArray(item.trendBreakdown) ? item.trendBreakdown.slice(0, 6) : [];
+  const related = Array.isArray(item.trendBreakdown) ? item.trendBreakdown.slice(0, 8) : [];
   const t101 = getTrending101();
+  const trendsUrl = item.googleTrendsUrl || gtUrl(term);
+  const backName = stack.length ? titleCase(stack[stack.length - 1].query) : '';
 
   panelEl.innerHTML = `
     <div class="td-header">
       <div class="td-head-text">
+        ${stack.length ? `<button type="button" class="td-back" id="td-back"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>${escapeHTML(backName)}</button>` : ''}
         <span class="td-eyebrow">Trending Now</span>
         <h3 class="td-title">${escapeHTML(titleCase(term))}</h3>
         ${subParts ? `<p class="td-sub">${escapeHTML(subParts)}</p>` : ''}
@@ -112,11 +116,14 @@ function open(item) {
       </button>
     </div>
     <div class="td-body">
-      ${related.length ? `<p class="td-related"><span class="td-related-label">Related:</span> ${related.map(escapeHTML).join(' · ')}</p>` : ''}
-      ${item.googleTrendsUrl ? `<a class="td-trends-link" href="${escapeAttr(item.googleTrendsUrl)}" target="_blank" rel="noopener noreferrer">View on Google Trends ↗</a>` : ''}
+      ${related.length ? `<div class="td-related">
+        <span class="td-related-label">Related searches</span>
+        <div class="td-related-chips">${related.map(r => `<button type="button" class="td-related-chip" data-term="${escapeAttr(r)}">${escapeHTML(r)}</button>`).join('')}</div>
+      </div>` : ''}
+      <a class="td-trends-link" href="${escapeAttr(trendsUrl)}" target="_blank" rel="noopener noreferrer">View on Google Trends <span aria-hidden="true">↗</span></a>
       ${t101.length ? `<section class="td-section">
         <div class="td-section-label">Trending 101</div>
-        <ul class="ti-item-list td-shortcut-list">${t101.map(s => shortcutRow(s, term)).join('')}</ul>
+        <ul class="td-shortcut-list">${t101.map(s => shortcutRow(s, term, true)).join('')}</ul>
       </section>` : ''}
       <section class="td-section">
         <div class="td-section-label">Trending Intelligence</div>
@@ -125,6 +132,8 @@ function open(item) {
     </div>`;
 
   panelEl.querySelector('#td-close').addEventListener('click', close);
+  const back = panelEl.querySelector('#td-back');
+  if (back) back.addEventListener('click', goBack);
   panelEl.querySelectorAll('.td-shortcut').forEach(btn => {
     btn.addEventListener('click', () => {
       window.dispatchEvent(new CustomEvent('open-prompt-modal', {
@@ -132,16 +141,46 @@ function open(item) {
       }));
     });
   });
+  panelEl.querySelectorAll('.td-related-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const t = chip.dataset.term;
+      if (t) navigateTo({ query: t, googleTrendsUrl: gtUrl(t) });
+    });
+  });
+  panelEl.scrollTop = 0;
+  panelEl.querySelector('.td-body').scrollTop = 0;
+}
 
+function openFresh(item) {
+  if (!item || !item.query) return;
+  stack = [];
+  current = item;
+  render();
   overlayEl.style.display = 'block';
   panelEl.style.display = 'flex';
+  panelEl.classList.remove('is-in'); void panelEl.offsetWidth; panelEl.classList.add('is-in');
   document.body.style.overflow = 'hidden';
-  panelEl.scrollTop = 0;
+}
+
+function navigateTo(item) {
+  if (!item || !item.query) return;
+  if (current) stack.push(current);
+  current = item;
+  render();
+}
+
+function goBack() {
+  if (!stack.length) return;
+  current = stack.pop();
+  render();
 }
 
 function close() {
   overlayEl.style.display = 'none';
   panelEl.style.display = 'none';
+  panelEl.classList.remove('is-in');
   panelEl.innerHTML = '';
+  stack = [];
+  current = null;
   document.body.style.overflow = '';
 }
