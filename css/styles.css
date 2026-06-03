@@ -4268,6 +4268,94 @@ html, body, #app {
 .pm-meta-link:hover { color: #1d4ed8; }
 .pm-meta-text { color: var(--color-text-light); }
 
+/* Submit area sits between the AI Model pills and the Model info dropdown. */
+.pm-submit-area { margin: 0 0 1.1rem; }
+
+/* === Collapsible disclosures inside the modal (Advanced settings,
+   Model info & disclaimer) === */
+.pm-disclosure-section { margin-bottom: 1rem; }
+.pm-disclosure-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  background: #f7f8fa;
+  border: 1px solid #e7eaf0;
+  border-radius: 9px;
+  padding: 0.6rem 0.75rem;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: background 0.12s, border-color 0.12s;
+}
+.pm-disclosure-toggle:hover { background: #f1f3f7; border-color: #dce0e8; }
+.pm-disclosure-toggle:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 1px; }
+.pm-disclosure-chev {
+  flex: 0 0 auto;
+  color: var(--color-text-muted);
+  transition: transform 0.16s ease;
+}
+.pm-disclosure-toggle[aria-expanded="true"] .pm-disclosure-chev { transform: rotate(180deg); }
+.pm-disclosure-title { font-size: 0.85rem; font-weight: 600; color: var(--color-primary); }
+.pm-disclosure-hint {
+  margin-left: auto;
+  font-size: 0.73rem;
+  color: var(--color-text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pm-disclosure-body {
+  padding: 0.85rem 0.15rem 0.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.pm-disclosure-body[hidden] { display: none; }
+
+/* Quiet variant — model info / disclaimer reads as a footer, not a control */
+.pm-disclosure-section-quiet { margin-bottom: 0.25rem; }
+.pm-disclosure-section-quiet .pm-disclosure-toggle {
+  background: transparent;
+  border-color: transparent;
+  padding: 0.45rem 0.2rem;
+}
+.pm-disclosure-section-quiet .pm-disclosure-toggle:hover { background: #f7f8fa; }
+.pm-disclosure-section-quiet .pm-disclosure-title { color: var(--color-text-muted); }
+.pm-disclosure-section-quiet .pm-disclosure-body { gap: 0.4rem; padding-top: 0.5rem; }
+
+/* Advanced-settings form fields */
+.pm-field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem;
+}
+.pm-field { display: flex; flex-direction: column; gap: 0.3rem; }
+.pm-flabel {
+  font-family: var(--font-family);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+.pm-input-control {
+  width: 100%;
+  font-family: var(--font-family);
+  font-size: 0.88rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--color-text);
+  transition: border-color 0.12s, box-shadow 0.12s;
+}
+.pm-input-control:focus {
+  outline: none;
+  border-color: var(--color-primary-light);
+  box-shadow: 0 0 0 3px rgba(58, 74, 99, 0.1);
+}
+.pm-adv-textarea { resize: vertical; min-height: 62px; line-height: 1.5; }
+@media (max-width: 640px) { .pm-field-grid { grid-template-columns: 1fr; } }
+
 /* Legacy class — no longer used */
 .prompt-modal { display: none; }
 
@@ -11612,90 +11700,122 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   }
 }
 
-
-/* === Prompt Submission modal === */
-.psm-overlay { position: fixed; inset: 0; background: rgba(15,26,46,0.55); z-index: 1000; }
-.psm-panel {
-  position: fixed; z-index: 1001; top: 50%; left: 50%; transform: translate(-50%,-50%);
-  width: min(520px, calc(100vw - 2rem)); max-height: calc(100vh - 2rem); overflow: auto;
-  background: var(--color-bg); border-radius: 14px; box-shadow: 0 24px 60px rgba(15,26,46,0.32);
-  outline: none;
-}
-.psm-header {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  padding: 1.1rem 1.25rem 0.9rem; border-bottom: 1px solid var(--color-border);
-}
-.psm-eyebrow { display: block; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.12em;
-  text-transform: uppercase; color: var(--color-text-muted); }
-.psm-title { margin: 0.15rem 0 0; font-family: var(--font-display); font-size: 1.2rem;
-  font-weight: 600; letter-spacing: -0.02em; color: var(--color-primary); }
-.psm-close { background: none; border: none; color: var(--color-text-muted); cursor: pointer;
-  padding: 0.25rem; border-radius: 6px; display: inline-flex; }
-.psm-close:hover { background: var(--color-bg-light); color: var(--color-text); }
-.psm-body { padding: 1rem 1.25rem 1.25rem; }
-.psm-selrow { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.95rem; }
-.psm-count { font-size: 0.95rem; color: var(--color-text); }
-.psm-count strong { color: var(--color-primary); }
-.psm-selutils { display: inline-flex; align-items: center; gap: 0.4rem; }
-.psm-link { background: none; border: none; color: var(--color-primary-light); font-size: 0.85rem;
-  font-weight: 600; cursor: pointer; padding: 0.1rem 0.2rem; font-family: inherit; }
-.psm-link:hover { text-decoration: underline; }
-.psm-link:disabled { color: var(--color-text-light); cursor: default; text-decoration: none; }
-.psm-dot { color: var(--color-text-light); }
-.psm-modelrow { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.9rem; }
-.psm-label, .psm-flabel { font-size: 0.82rem; font-weight: 600; color: var(--color-text-muted); }
-.psm-select, .psm-input, .psm-textarea {
-  font-family: var(--font-family); font-size: 0.9rem; padding: 0.45rem 0.6rem;
-  border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-bg); color: var(--color-text);
-}
-.psm-select:focus, .psm-input:focus, .psm-textarea:focus { outline: none; border-color: var(--color-primary-light); }
-.psm-modelrow .psm-select { flex: 1; }
-.psm-adv-toggle { display: inline-flex; align-items: center; gap: 0.45rem; background: none; border: none;
-  font-family: inherit; font-size: 0.86rem; font-weight: 600; color: var(--color-primary); cursor: pointer;
-  padding: 0.5rem 0; }
-.psm-adv-toggle[aria-expanded="true"] .psm-chev { transform: rotate(180deg); }
-.psm-chev { transition: transform 0.15s; }
-.psm-adv { display: flex; flex-direction: column; gap: 0.7rem; padding: 0.4rem 0 0.6rem;
-  border-top: 1px dashed var(--color-border); margin-top: 0.1rem; }
-.psm-field { display: flex; flex-direction: column; gap: 0.25rem; }
-.psm-textarea { resize: vertical; min-height: 56px; }
-.psm-actions { display: flex; justify-content: flex-end; gap: 0.6rem; margin-top: 1.1rem; }
-.psm-btn { display: inline-flex; align-items: center; gap: 0.45rem; font-family: inherit;
-  font-size: 0.92rem; font-weight: 600; padding: 0.55rem 1.1rem; border-radius: 9px; cursor: pointer; border: 1px solid var(--color-border); }
-.psm-btn-secondary { background: var(--color-bg); color: var(--color-text); }
-.psm-btn-secondary:hover { border-color: var(--color-primary-light); }
-.psm-btn-primary { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
-.psm-btn-primary:hover { background: var(--color-primary-dark); }
-@media (max-width: 640px) {
-  .psm-panel { width: calc(100vw - 1rem); border-radius: 12px; }
-}
-
-/* === Compact submission trigger bar (replaces the old multi-row panel) === */
+/* === Submission trigger bar ===
+   Floats at the bottom of the Topic Intelligence panel once one or more
+   shortcuts are selected. Labelled, with a filled count badge so it reads
+   clearly against the white panel, and a prominent primary action. */
 .shortcuts-multi-submit-wrap {
   flex-direction: column;
   align-items: stretch;
-  gap: 0.55rem;
-  padding: 0.7rem 0.8rem;
+  gap: 0.6rem;
+  padding: 0.7rem 0.75rem;
+  background: #ffffff;
+  border: 1px solid #d6deec;
+  border-radius: 13px;
+  box-shadow:
+    0 2px 4px rgba(15, 26, 46, 0.05),
+    0 10px 22px rgba(15, 26, 46, 0.14),
+    0 22px 44px rgba(15, 26, 46, 0.10);
 }
 .shortcuts-multi-submit-wrap > * + * { border-top: none; }
-.shortcuts-multi-submit-wrap .shortcuts-multi-count { font-size: 0.88rem; color: var(--color-text); }
-.shortcuts-multi-submit-wrap .shortcuts-multi-count strong { color: var(--color-primary); font-weight: 700; }
-.shortcuts-multi-submit-wrap .shortcuts-multi-count-label { color: var(--color-text-muted); }
-.shortcuts-sidebar:has(.shortcuts-multi-submit-wrap.is-visible) .shortcuts-scroll-wrap { padding-bottom: 6.5rem; }
-.shortcuts-multi-trigger-utils { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; }
+.shortcuts-sidebar:has(.shortcuts-multi-submit-wrap.is-visible) .shortcuts-scroll-wrap { padding-bottom: 7.5rem; }
+
+/* Head — count badge + label */
+.shortcuts-multi-head {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+}
+.shortcuts-multi-badge {
+  flex: 0 0 auto;
+  min-width: 1.65rem;
+  height: 1.65rem;
+  padding: 0 0.45rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  border-radius: 8px;
+}
+.shortcuts-multi-headtext {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-width: 0;
+}
+.shortcuts-multi-eyebrow {
+  font-family: var(--font-family);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: #9aa3b3;
+  line-height: 1;
+}
+.shortcuts-multi-count-label {
+  font-family: var(--font-family);
+  font-size: 0.84rem;
+  font-weight: 600;
+  letter-spacing: -0.006em;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+/* Actions row — quiet Clear on the left, primary action filling the rest */
+.shortcuts-multi-trigger-utils {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
 .shortcuts-multi-clear {
-  background: none; border: none; color: var(--color-text-muted); font-family: inherit;
-  font-size: 0.85rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0.4rem; border-radius: 6px;
+  flex: 0 0 auto;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.45rem 0.55rem;
+  border-radius: 7px;
+  transition: color 0.12s, background 0.12s;
 }
-.shortcuts-multi-clear:hover { color: var(--color-text); text-decoration: underline; }
-.shortcuts-multi-clear:disabled { color: var(--color-text-light); cursor: default; text-decoration: none; }
+.shortcuts-multi-clear:hover { color: #b91c1c; background: #fbecec; }
+.shortcuts-multi-clear:disabled { color: var(--color-text-light); cursor: default; background: none; }
 .shortcuts-multi-review {
-  display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
-  background: var(--color-primary); color: #fff; white-space: nowrap;
-  border: 1px solid var(--color-primary); font-family: inherit; font-weight: 600; font-size: 0.9rem;
-  padding: 0.5rem 0.95rem; border-radius: 9px; cursor: pointer;
+  flex: 1 1 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  background: var(--color-primary);
+  color: #fff;
+  white-space: nowrap;
+  border: 1px solid var(--color-primary);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.92rem;
+  letter-spacing: -0.005em;
+  padding: 0.62rem 1rem;
+  border-radius: 9px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(15, 26, 46, 0.18);
+  transition: background 0.14s, transform 0.1s, box-shadow 0.14s;
 }
-.shortcuts-multi-review:hover { background: var(--color-primary-dark); }
-.shortcuts-multi-review:disabled { opacity: 0.5; cursor: default; }
-/* Custom-search page bar is wider → keep it a single tidy row. */
-body.custom-mode .shortcuts-multi-submit-wrap { flex-direction: row; align-items: center; justify-content: space-between; }
+.shortcuts-multi-review:hover { background: var(--color-primary-dark); box-shadow: 0 3px 8px rgba(15, 26, 46, 0.24); }
+.shortcuts-multi-review:active { transform: translateY(1px); }
+.shortcuts-multi-review:disabled { opacity: 0.5; cursor: default; box-shadow: none; }
+.shortcuts-multi-review svg { flex: 0 0 auto; }
+
+/* Custom-search page bar is wider → lay it out as a single tidy row. */
+body.custom-mode .shortcuts-multi-submit-wrap { flex-direction: row; align-items: center; gap: 0.9rem; }
+body.custom-mode .shortcuts-multi-head { flex: 1 1 auto; }
+body.custom-mode .shortcuts-multi-trigger-utils { flex: 0 0 auto; }
+body.custom-mode .shortcuts-multi-review { flex: 0 0 auto; }

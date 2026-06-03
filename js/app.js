@@ -1,6 +1,5 @@
 import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
-import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, getModels, getDefaultModelId, getModelById, searchTopics } from './utils/data.js';
-import { getPreferredModelId, setPreferredModelId, submitPrompt } from './utils/ai-models.js';
+import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, searchTopics } from './utils/data.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js';
@@ -9,13 +8,11 @@ import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
 import { initPromptModal } from './components/prompt-modal.js';
-import { initPromptSubmitModal } from './components/prompt-submit-modal.js';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
 import { initPromptPreviewModal } from './components/prompt-preview-modal.js';
 import { initSettingsModal } from './components/settings-modal.js';
-import { assemblePrompt } from './utils/prompt-assembly.js';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -26,7 +23,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Preload shortcut icon SVGs (non-blocking — renders emoji until resolved)
   preloadIcons(getAllShortcutIconKeys());
   initPromptModal();
-  initPromptSubmitModal();
   initDiscoverModal();
   initAllTopicsModal();
   initRelatedTopicsModal();
@@ -1408,10 +1404,13 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       </div>
       ${all.length > 0 ? `
         <div class="shortcuts-multi-submit-wrap" role="region" aria-label="Prompt submission" aria-hidden="true">
-          <span class="shortcuts-multi-count" aria-live="polite">
-            <strong id="shortcuts-multi-submit-count">0</strong>
-            <span class="shortcuts-multi-count-label"> shortcuts selected</span>
-          </span>
+          <div class="shortcuts-multi-head">
+            <span class="shortcuts-multi-badge" id="shortcuts-multi-submit-count" aria-hidden="true">0</span>
+            <span class="shortcuts-multi-headtext" aria-live="polite">
+              <span class="shortcuts-multi-eyebrow">Selected shortcuts</span>
+              <span class="shortcuts-multi-count-label" id="shortcuts-multi-count-label">0 shortcuts selected</span>
+            </span>
+          </div>
           <div class="shortcuts-multi-trigger-utils">
             <button type="button" class="shortcuts-multi-clear" id="shortcuts-multi-clear">Clear</button>
             <button type="button" class="shortcuts-multi-review" id="shortcuts-multi-review">
@@ -1534,26 +1533,21 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   const clearBtn = container.querySelector('#shortcuts-multi-clear');
   const submitWrap = container.querySelector('.shortcuts-multi-submit-wrap');
   const countEl = container.querySelector('#shortcuts-multi-submit-count');
-
-  // The preferred AI model (chosen in Settings or in the submission modal).
-  // The modal owns the inline model picker now; here we just resolve it.
-  const refreshModelChoice = () => {
-    const models = getModels();
-    const preferredId = getPreferredModelId(getDefaultModelId());
-    return getModelById(preferredId) || models[0] || null;
-  };
+  const countLabelEl = container.querySelector('#shortcuts-multi-count-label');
 
   // Trigger bar: floats in at the bottom of the card whenever any
   // shortcut is selected, slides out when the selection is empty.
   const updateSubmit = () => {
     if (!submitWrap) return;
     const selected = container.querySelectorAll('.ai-shortcut-select-btn.is-multi-selected');
-    const has = selected.length > 0;
+    const n = selected.length;
+    const has = n > 0;
     submitWrap.classList.toggle('is-visible', has);
     submitWrap.setAttribute('aria-hidden', has ? 'false' : 'true');
     if (reviewBtn) reviewBtn.disabled = !has;
     if (clearBtn) clearBtn.disabled = !has;
-    if (countEl) countEl.textContent = String(selected.length);
+    if (countEl) countEl.textContent = String(n);
+    if (countLabelEl) countLabelEl.textContent = `${n} shortcut${n === 1 ? '' : 's'} selected`;
   };
 
   // Build the BASE combined prompt + display name from the current
@@ -1628,62 +1622,32 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   }
 
 
-  const selectAllShortcuts = () => {
-    container.querySelectorAll('.ai-shortcut-select-btn').forEach(b => {
-      b.classList.add('is-multi-selected'); b.setAttribute('aria-pressed', 'true');
-    });
-    updateSubmit();
-  };
   const clearShortcuts = () => {
     container.querySelectorAll('.ai-shortcut-select-btn.is-multi-selected').forEach(b => {
       b.classList.remove('is-multi-selected'); b.setAttribute('aria-pressed', 'false');
     });
     updateSubmit();
   };
-  const selectionInfo = () => {
-    const allBtns = container.querySelectorAll('.ai-shortcut-select-btn');
-    const sel = container.querySelectorAll('.ai-shortcut-select-btn.is-multi-selected');
-    return { count: sel.length, allSelected: allBtns.length > 0 && sel.length === allBtns.length };
-  };
 
   clearBtn?.addEventListener('click', clearShortcuts);
 
-  // Review & Submit — opens the centered Prompt Submission modal, which owns the
-  // selection summary, model picker, advanced settings, Preview and Direct Submit.
+  // Review & Submit — opens the unified prompt modal directly. It owns the
+  // editable preview, advanced settings, model picker, submit, and the
+  // model-info/disclaimer dropdown, all on a single screen.
   reviewBtn?.addEventListener('click', () => {
-    const info = selectionInfo();
-    if (info.count === 0) return;
-    const model = refreshModelChoice();
-    window.dispatchEvent(new CustomEvent('open-submit-modal', {
+    const sub = buildSubmission();
+    if (!sub) return;
+    track(sub.count === 1 ? 'shortcut_click' : 'multi_shortcut_submit', {
+      [sub.count === 1 ? 'shortcut_name' : 'count']: sub.count === 1 ? sub.name : sub.count,
+      route: window.location.hash || '#/',
+    });
+    window.dispatchEvent(new CustomEvent('open-prompt-modal', {
       detail: {
-        count: info.count,
-        allSelected: info.allSelected,
+        basePrompt: sub.prompt,
         topicName: topicName,
-        selectedModelId: model ? model.id : getDefaultModelId(),
-        callbacks: {
-          onSelectAll: selectAllShortcuts,
-          onClear: clearShortcuts,
-          onSetModel: (id) => setPreferredModelId(id),
-          getSelectionInfo: selectionInfo,
-          buildBase: () => buildSubmission(),
-          onPreview: (sub, opts) => {
-            const prompt = assemblePrompt(sub.prompt, opts);
-            track(sub.count === 1 ? 'shortcut_click' : 'multi_shortcut_submit', {
-              [sub.count === 1 ? 'shortcut_name' : 'count']: sub.count === 1 ? sub.name : sub.count,
-              route: window.location.hash || '#/',
-            });
-            window.dispatchEvent(new CustomEvent('open-prompt-modal', {
-              detail: { prompt, name: sub.name, iconKey: sub.iconKey, count: sub.count },
-            }));
-          },
-          onDirectSubmit: async (sub, opts) => {
-            const m = refreshModelChoice();
-            if (!m) return;
-            const prompt = assemblePrompt(sub.prompt, opts);
-            track('direct_submit', { model: m.id, count: sub.count, route: window.location.hash || '#/' });
-            try { await submitPrompt(m, prompt); } catch (err) { console.error('Direct submit failed', err); }
-          },
-        },
+        name: sub.name,
+        iconKey: sub.iconKey,
+        count: sub.count,
       },
     }));
   });
