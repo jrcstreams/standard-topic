@@ -406,6 +406,35 @@ body.custom-mode.sticky-always #content {
   opacity: 0.9;
 }
 
+/* Trending pill — sits next to Choose Topics; opens the global Trending
+   modal. Neutral pill (matches the other nav pills) with a warm flame
+   icon hinting at "what's hot". Visible at every viewport. */
+.sticky-trending {
+  height: 34px;
+  padding: 0 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #dde3ec;
+  color: #1e2d44;
+  border: 1px solid #dde3ec;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: background 0.14s, color 0.14s, border-color 0.14s, transform 0.08s;
+}
+.sticky-trending:hover { background: #ecf0f6; border-color: #ecf0f6; color: #0f1a2e; }
+.sticky-trending:active { transform: translateY(1px); }
+.sticky-trending-icon { flex-shrink: 0; color: #e8590c; }
+.sticky-trending-short { display: none; }
+.sticky-trending-full { display: inline; }
+
 /* Settings gear — sits next to the Prompt Builder pill in the
    main nav. Visible at every viewport so users always have a
    one-tap path to their preferences. */
@@ -1875,6 +1904,24 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
 @media (max-width: 899.98px) {
   .sticky-cta,
   .sticky-settings { display: none !important; }
+  /* Trending pill stays visible (it's the only "discovery" entry on mobile);
+     swap to the short "Trends" label + tighter padding. */
+  .sticky-trending { padding: 0 0.65rem; }
+  .sticky-trending-full { display: none; }
+  .sticky-trending-short { display: inline; }
+}
+/* Narrow phones: labels for Topics + Trends won't fit alongside the brand
+   title, so collapse both to icon-only square buttons (matching the Search
+   + Home icons) and trim the title a touch. The nav reads as a clean row of
+   icon controls. */
+@media (max-width: 480px) {
+  .sticky-title { font-size: 1.1rem; }
+  #sticky-search-container .search-bar-label { display: none !important; }
+  .sticky-trending-short { display: none; }
+  .sticky-trending {
+    width: 32px; height: 32px; padding: 0; gap: 0;
+    justify-content: center;
+  }
 }
 
 /* By default (non-mobile), show the full label and hide the short one */
@@ -12181,4 +12228,47 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 @media (max-width: 640px) {
   .td-panel { width: calc(100vw - 1rem); max-height: 92vh; border-radius: 14px; }
   .td-body { padding: 0.9rem 1rem 1.1rem; }
+}
+
+/* === Global Trending modal (from the nav pill) =======================
+   Reuses the Trending card (renderTrending) in a centered modal. Sits
+   below the trending detail modal (z 150) so a clicked term stacks on
+   top. */
+.tlm-overlay {
+  position: fixed; inset: 0;
+  background: rgba(15, 26, 46, 0.5);
+  backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+  z-index: 140;
+}
+.tlm-panel {
+  position: fixed; z-index: 141; top: 50%; left: 50%;
+  width: min(430px, calc(100vw - 2rem)); max-height: min(80vh, 700px);
+  display: flex; flex-direction: column; overflow: hidden;
+  background: #fff; border: 1px solid rgba(15, 23, 42, 0.06); border-radius: 16px;
+  box-shadow: 0 30px 70px -16px rgba(15, 23, 42, 0.40), 0 10px 22px -10px rgba(15, 23, 42, 0.20);
+  padding: 1.05rem 1.15rem 0.7rem;
+  transform: translate(-50%, -50%) scale(0.97); opacity: 0;
+  transition: opacity 0.18s ease, transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.05);
+}
+.tlm-panel.is-in { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+.tlm-close {
+  position: absolute; top: 0.7rem; right: 0.8rem; z-index: 2;
+  width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; border: none; border-radius: 50%;
+  color: var(--color-text-muted); cursor: pointer; transition: background 0.14s, color 0.14s;
+}
+.tlm-close:hover { background: #f3f4f6; color: var(--color-text); }
+.tlm-body { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+/* Strip the sidebar-card chrome — the modal panel provides the surface. */
+.tlm-body .sidebar-card { border: none; background: none; padding: 0; box-shadow: none; }
+/* Size to content (the panel only has a max-height), and let the list grow
+   to a capped height then scroll — the fill-to-flex behaviour needs a fixed
+   parent height, which a content-sized modal doesn't provide. */
+.tlm-body .trending-card { height: auto; }
+.tlm-body .trending-list-wrap { flex: 0 1 auto; }
+.tlm-body .trending-scroll { flex: 0 1 auto; max-height: 56vh; }
+/* Leave room so the "Trending Now" title doesn't run under the close button. */
+.tlm-body .trending-title { padding-right: 2rem; }
+@media (max-width: 640px) {
+  .tlm-panel { width: calc(100vw - 1rem); max-height: 86vh; border-radius: 14px; }
 }

@@ -14,6 +14,7 @@ import { initPromptModal } from './components/prompt-modal.js';
 import { renderTrending } from './components/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js';
+import { initTrendingListModal } from './components/trending-list-modal.js';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
@@ -30,6 +31,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   preloadIcons(getAllShortcutIconKeys());
   initPromptModal();
   initTrendingDetailModal();
+  initTrendingListModal();
   initDiscoverModal();
   initAllTopicsModal();
   initRelatedTopicsModal();
@@ -1000,6 +1002,13 @@ function renderStickyHeroBar(container, route) {
           </div>
         </div>
         <div class="sticky-search" id="sticky-search-container"></div>
+        <button type="button" class="sticky-trending" id="nav-trending" aria-label="Trending">
+          <svg class="sticky-trending-icon" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2c1 3-1.5 4.5-2.5 6S8 12 9 13c.5-1 1.5-1.5 2-2.5.8 1.2 2 2 2 3.7a3 3 0 0 1-6 0c0-.6.1-1.1.3-1.6C5.5 14 4.5 16 4.5 18a7.5 7.5 0 0 0 15 0c0-4.5-4-6-7.5-16z"/>
+          </svg>
+          <span class="sticky-trending-full">Trending</span>
+          <span class="sticky-trending-short">Trends</span>
+        </button>
         <a href="#/prompt-generator" class="sticky-cta" id="nav-cta" aria-label="Prompt Builder">
           <svg class="sticky-cta-sparkle" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/>
@@ -1029,6 +1038,11 @@ function renderStickyHeroBar(container, route) {
   // Settings gear in the main nav — opens the Settings modal.
   document.getElementById('nav-settings')?.addEventListener('click', () => {
     window.dispatchEvent(new CustomEvent('open-settings-modal'));
+  });
+
+  // Trending pill — opens the global Trending modal from any page.
+  document.getElementById('nav-trending')?.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('open-trending-list'));
   });
 
   // Magnify icon — opens the Topics modal with the search input
