@@ -1003,8 +1003,9 @@ function renderStickyHeroBar(container, route) {
         </div>
         <div class="sticky-search" id="sticky-search-container"></div>
         <button type="button" class="sticky-trending" id="nav-trending" aria-label="Trending">
-          <svg class="sticky-trending-icon" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2c1 3-1.5 4.5-2.5 6S8 12 9 13c.5-1 1.5-1.5 2-2.5.8 1.2 2 2 2 3.7a3 3 0 0 1-6 0c0-.6.1-1.1.3-1.6C5.5 14 4.5 16 4.5 18a7.5 7.5 0 0 0 15 0c0-4.5-4-6-7.5-16z"/>
+          <svg class="sticky-trending-icon" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 17 9 11 13 15 21 7"/>
+            <polyline points="15 7 21 7 21 13"/>
           </svg>
           <span class="sticky-trending-full">Trending</span>
           <span class="sticky-trending-short">Trends</span>

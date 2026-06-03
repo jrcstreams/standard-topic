@@ -7,7 +7,6 @@
 // stack lets related-term views offer a "← back" link.
 import { getTrending101, getTrendingIntelligenceShortcuts, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { groupShortcuts, renderTIAccordion, webSourceItem } from './ti-shortcuts.js';
-import { renderIcon } from '../utils/icons.js';
 
 let overlayEl = null;
 let panelEl = null;
@@ -50,12 +49,11 @@ export function initTrendingDetailModal() {
   });
 }
 
-function shortcutRow(s, term, withIcon) {
+function shortcutRow(s, term) {
   const prompt = (s.prompt || '').replace(/\{topic\}/gi, term);
   const desc = s.description ? `<span class="td-row-desc">${escapeHTML(s.description)}</span>` : '';
-  const icon = (withIcon && s.icon) ? `<span class="td-row-icon" aria-hidden="true">${renderIcon(s.icon)}</span>` : '';
-  return `<li><button type="button" class="td-shortcut${withIcon ? ' td-shortcut-iconed' : ''}" data-prompt="${escapeAttr(prompt)}" data-name="${escapeAttr(s.name)}" data-icon="${escapeAttr(s.icon || '')}">
-      ${icon}<span class="td-row-text"><span class="td-row-name">${escapeHTML(s.name)}</span>${desc}</span>
+  return `<li><button type="button" class="td-shortcut" data-prompt="${escapeAttr(prompt)}" data-name="${escapeAttr(s.name)}" data-icon="${escapeAttr(s.icon || '')}">
+      <span class="td-row-text"><span class="td-row-name">${escapeHTML(s.name)}</span>${desc}</span>
       <svg class="td-row-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
     </button></li>`;
 }
@@ -85,7 +83,7 @@ function trendingIntelligenceHTML(term) {
     if (!items || !items.length) return;
     html += renderTIAccordion({
       key: g.key, label: g.label, open: false,
-      bodyHTML: `<ul class="ti-item-list td-shortcut-list">${items.map(s => shortcutRow(s, term, false)).join('')}</ul>`,
+      bodyHTML: `<ul class="ti-item-list td-shortcut-list">${items.map(s => shortcutRow(s, term)).join('')}</ul>`,
     });
   });
   html += '</div>';
@@ -105,25 +103,25 @@ function render() {
 
   panelEl.innerHTML = `
     <div class="td-header">
-      <div class="td-head-text">
-        ${stack.length ? `<button type="button" class="td-back" id="td-back"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>${escapeHTML(backName)}</button>` : ''}
-        <span class="td-eyebrow">Trending Now</span>
-        <h3 class="td-title">${escapeHTML(titleCase(term))}</h3>
-        ${subParts ? `<p class="td-sub">${escapeHTML(subParts)}</p>` : ''}
-      </div>
       <button type="button" class="td-close" id="td-close" aria-label="Close">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg>
       </button>
+      ${stack.length ? `<button type="button" class="td-back" id="td-back"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>${escapeHTML(backName)}</button>` : ''}
+      <span class="td-eyebrow">Trending Now</span>
+      <h3 class="td-title">${escapeHTML(titleCase(term))}</h3>
+      <div class="td-headmeta">
+        ${subParts ? `<span class="td-sub">${escapeHTML(subParts)}</span>` : ''}
+        <a class="td-trends-link" href="${escapeAttr(trendsUrl)}" target="_blank" rel="noopener noreferrer">View on Google Trends <span aria-hidden="true">↗</span></a>
+      </div>
     </div>
     <div class="td-body">
       ${related.length ? `<div class="td-related">
         <span class="td-related-label">Related searches</span>
         <div class="td-related-chips">${related.map(r => `<button type="button" class="td-related-chip" data-term="${escapeAttr(r)}">${escapeHTML(r)}</button>`).join('')}</div>
       </div>` : ''}
-      <a class="td-trends-link" href="${escapeAttr(trendsUrl)}" target="_blank" rel="noopener noreferrer">View on Google Trends <span aria-hidden="true">↗</span></a>
       ${t101.length ? `<section class="td-section">
         <div class="td-section-label">Trending 101</div>
-        <ul class="td-shortcut-list">${t101.map(s => shortcutRow(s, term, true)).join('')}</ul>
+        <ul class="td-shortcut-list">${t101.map(s => shortcutRow(s, term)).join('')}</ul>
       </section>` : ''}
       <section class="td-section">
         <div class="td-section-label">Trending Intelligence</div>
