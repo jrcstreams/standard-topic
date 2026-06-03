@@ -1423,7 +1423,7 @@ body.hide-cta .sticky-cta { display: none !important; }
    subnav, all transitioning together. */
 .custom-search-head {
   margin: 0 0 0.5rem;
-  padding-top: 1.5rem;
+  padding-top: 0.35rem;
 }
 .custom-search-page-title {
   margin: 0 0 0.3rem;
