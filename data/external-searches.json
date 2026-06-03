@@ -1,17 +1,32 @@
 {
   "categories": [
     { "key": "search", "label": "Search & reference" },
+    { "key": "noai", "label": "No AI Web Sources" },
     { "key": "social", "label": "Social & discussion" },
     { "key": "media", "label": "Audio & video" },
     { "key": "writing", "label": "Writing & newsletters" }
   ],
   "searches": [
     {
-      "name": "DuckDuckGo",
-      "description": "Privacy-first web search results.",
+      "name": "DuckDuckGo News",
+      "description": "Privacy-first news results from DuckDuckGo.",
       "icon": "duckduckgo",
       "category": "search",
-      "urlTemplate": "https://duckduckgo.com/?q={query}"
+      "urlTemplate": "https://duckduckgo.com/?q={query}&iar=news"
+    },
+    {
+      "name": "NoAI DuckDuckGo Search",
+      "description": "DuckDuckGo web search with AI features turned off.",
+      "icon": "duckduckgo",
+      "category": "noai",
+      "urlTemplate": "https://noai.duckduckgo.com/?q={query}&noai=1&ia=web"
+    },
+    {
+      "name": "NoAI DuckDuckGo News",
+      "description": "DuckDuckGo news search with AI features turned off.",
+      "icon": "duckduckgo",
+      "category": "noai",
+      "urlTemplate": "https://noai.duckduckgo.com/?q={query}&noai=1&ia=news&iar=news"
     },
     {
       "name": "Google News",
