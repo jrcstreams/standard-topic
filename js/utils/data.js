@@ -6,19 +6,21 @@ let shortcutsAssignments = null;
 let modelsData = null;
 let promptGenData = null;
 let externalSearchesData = null;
+let trending101Data = null;
 
 // Legacy references kept for compatibility
 let evergreenShortcuts = null;
 let specificShortcuts = null;
 
 export async function loadAllData() {
-  const [topics, directory, assignments, models, promptGen, externalSearches] = await Promise.all([
+  const [topics, directory, assignments, models, promptGen, externalSearches, trending101] = await Promise.all([
     fetchJSON('data/topics.json'),
     fetchJSON('data/shortcuts-directory.json'),
     fetchJSON('data/shortcuts-assignments.json'),
     fetchJSON('data/ai-models.json'),
     fetchJSON('data/prompt-generator.json'),
     fetchJSON('data/external-searches.json').catch(() => ({ searches: [] })),
+    fetchJSON('data/shortcuts-trending101.json').catch(() => ({ shortcuts: [] })),
   ]);
   topicsData = topics;
   shortcutsDirectory = directory;
@@ -26,6 +28,7 @@ export async function loadAllData() {
   modelsData = models;
   promptGenData = promptGen;
   externalSearchesData = externalSearches;
+  trending101Data = trending101;
   // Expose the assignments blob (with its `groups` definitions) on
   // window so groupShortcuts() in app.js can resolve the admin-
   // managed group set without an extra import wiring.
@@ -36,6 +39,21 @@ export async function loadAllData() {
 
 export function getExternalSearches() {
   return externalSearchesData?.searches || [];
+}
+
+// Admin-managed "Trending 101" shortcuts shown only in the trending modal.
+export function getTrending101() {
+  return trending101Data?.shortcuts || [];
+}
+
+// Evergreen shortcuts as a generic-term list (for the modal's Trending
+// Intelligence), ordered by evergreenOrder — the same evergreen selection
+// the custom-search page uses, with no topic context or exclusions.
+export function getTrendingIntelligenceShortcuts() {
+  const dir = shortcutsDirectory?.shortcuts || [];
+  const orderIdx = new Map((shortcutsAssignments?.evergreenOrder || []).map((id, i) => [id, i]));
+  return dir.filter(s => s.evergreen)
+    .sort((a, b) => (orderIdx.has(a.id) ? orderIdx.get(a.id) : 1e9) - (orderIdx.has(b.id) ? orderIdx.get(b.id) : 1e9));
 }
 
 export function getExternalSearchCategories() {

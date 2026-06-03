@@ -24,4 +24,14 @@ assert.equal(out[2].region, 'UK');
 const many = { trending_searches: Array.from({ length: 30 }, (_, i) => ({ query: `q${i}` })).concat([{ query: '' }, {}]) };
 assert.equal(normalizeTrending([{ geo: 'US', data: many }], 20).length, 20, 'caps at limit, drops blanks');
 
+// trendBreakdown + googleTrendsUrl passthrough
+const br = { trending_searches: [
+  { query: 'Foo Bar', start_timestamp: 1700000000, trend_breakdown: ['a', 'b', '', null, 'c'] },
+  { query: 'No Breakdown' },
+] };
+const bo = normalizeTrending([{ geo: 'US', data: br }], 20);
+assert.deepEqual(bo[0].trendBreakdown, ['a', 'b', 'c'], 'keeps non-empty breakdown terms');
+assert.equal(bo[0].googleTrendsUrl, 'https://trends.google.com/trends/explore?q=Foo%20Bar&geo=US');
+assert.deepEqual(bo[1].trendBreakdown, [], 'defaults breakdown to []');
+
 console.log('OK: normalizeTrending');

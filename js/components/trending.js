@@ -24,14 +24,14 @@ const CHEV = `<svg class="trending-row-chev" viewBox="0 0 24 24" width="14" heig
 const CHEV_UP = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 15 12 9 18 15"/></svg>`;
 const CHEV_DOWN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
 
-function rowHTML(topic) {
+function rowHTML(topic, idx) {
   const q = topic.query;
   return `
     <li class="trending-row-item">
-      <a class="trending-row" href="#/custom/${encodeURIComponent(q)}" title="Search ${escapeAttr(q)}">
+      <button type="button" class="trending-row" data-idx="${idx}" title="Open ${escapeAttr(q)}">
         <span class="trending-row-text">${escapeHTML(q)}</span>
         ${CHEV}
-      </a>
+      </button>
     </li>`;
 }
 
@@ -52,7 +52,7 @@ function shell(bodyHTML, fetched) {
 function listShell(topics) {
   return `
     <div class="trending-list-wrap">
-      <ul class="trending-list trending-scroll" id="trending-scroll">${topics.map(rowHTML).join('')}</ul>
+      <ul class="trending-list trending-scroll" id="trending-scroll">${topics.map((t, i) => rowHTML(t, i)).join('')}</ul>
       <div class="scroll-fade scroll-fade-top" aria-hidden="true"><span class="scroll-fade-chev">${CHEV_UP}</span></div>
       <div class="scroll-fade scroll-fade-bottom" aria-hidden="true"><span class="scroll-fade-chev">${CHEV_DOWN}</span></div>
     </div>`;
@@ -89,6 +89,13 @@ export function renderTrending(container) {
     }
     container.innerHTML = shell(listShell(topics), fetched);
     wireScrollFade(container);
+    // Each row opens the trending detail modal with its full item (no nav).
+    container.querySelectorAll('.trending-row').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const t = topics[Number(btn.dataset.idx)];
+        if (t) window.dispatchEvent(new CustomEvent('open-trending-detail', { detail: t }));
+      });
+    });
   }).catch(() => {
     container.innerHTML = shell(`<p class="trending-empty">Trending is taking a break — check back soon.</p>`, null);
   });

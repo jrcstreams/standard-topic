@@ -23,6 +23,8 @@ function normalizeTrending(results, limit = 20) {
         categories: Array.isArray(t && t.categories) ? t.categories.map(c => c && c.name).filter(Boolean) : [],
         startedAt: Number.isFinite(ts) && ts > 0 ? new Date(ts * 1000).toISOString() : null,
         region: geo,
+        trendBreakdown: Array.isArray(t && t.trend_breakdown) ? t.trend_breakdown.filter(Boolean).map(s => String(s)) : [],
+        googleTrendsUrl: `https://trends.google.com/trends/explore?q=${encodeURIComponent(query)}&geo=${encodeURIComponent(geo || 'US')}`,
       });
       if (out.length >= limit) return out;
     }

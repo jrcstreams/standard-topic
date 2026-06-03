@@ -126,6 +126,11 @@
     <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Evergreen shortcuts appear on <strong>every topic + custom search</strong> (not the homepage), after each topic's own shortcuts, in the global order set here. Reorder within a section with the arrows. Use <strong>Excluded on…</strong> to turn an evergreen off for specific topics — that exclusion is shared with the topic's own tab.</p>
     <div id="evergreen-body"></div>
   </div>
+  <div class="tab-content" id="tab-trending101">
+    <div class="toolbar"><h2>Trending 101</h2><button class="btn btn-primary" id="add-t101">+ Add Shortcut</button></div>
+    <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">AI prompts shown only inside the <strong>Trending Now</strong> detail modal — the "101" on why a term is trending. <code>{topic}</code> is replaced with the trending term. These never appear on normal topic pages.</p>
+    <table><thead><tr><th>Name</th><th>Icon</th><th>Description</th><th>Prompt</th><th>Actions</th></tr></thead><tbody id="t101-body"></tbody></table>
+  </div>
   <div class="tab-content" id="tab-groups">
     <div class="toolbar"><h2>Shortcut Groups</h2><button class="btn btn-primary" id="add-group">+ Add Group</button></div>
     <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.6rem;">Subsections that AI Shortcuts get bucketed into on a topic page. Add / rename / reorder here; assign each shortcut to a group in <em>Shortcuts Directory</em>. Topic pages render groups in the order shown.</p>
@@ -147,6 +152,7 @@
         <option value="searches">external-searches.json — Quick Links list + order</option>
         <option value="models">ai-models.json — AI models + default + submission methods</option>
         <option value="promptgen">prompt-generator.json — prompt generator config</option>
+        <option value="trending101">shortcuts-trending101.json — Trending Now modal shortcuts</option>
       </select>
       <span id="df-status" style="color:var(--text-muted);font-size:0.78rem;"></span>
     </div>
@@ -161,7 +167,8 @@
       assignments: { assignments: {} },
       searches: { searches: [] },
       models: { models: [], defaultModel: 'chatgpt', submissionMethods: {} },
-      promptgen: {}
+      promptgen: {},
+      trending101: { shortcuts: [] }
     };
 
     var fileMap = {
@@ -170,7 +177,8 @@
       'shortcuts-assignments.json': 'assignments',
       'external-searches.json': 'searches',
       'ai-models.json': 'models',
-      'prompt-generator.json': 'promptgen'
+      'prompt-generator.json': 'promptgen',
+      'shortcuts-trending101.json': 'trending101'
     };
 
     var selectedTopic = 'home';
@@ -197,7 +205,7 @@
     // off-nav as an "advanced" escape hatch.
     var TAB_GROUPS = [
       { id: 'g-topics',     label: 'Topics',           tabs: [ {id:'topics', label:'Topics'}, {id:'assignments', label:'Topic Assignments'} ] },
-      { id: 'g-shortcuts',  label: 'Shortcuts',        tabs: [ {id:'directory', label:'Topic-Specific'}, {id:'evergreen', label:'Evergreen'}, {id:'groups', label:'Groups'} ] },
+      { id: 'g-shortcuts',  label: 'Shortcuts',        tabs: [ {id:'directory', label:'Topic-Specific'}, {id:'evergreen', label:'Evergreen'}, {id:'trending101', label:'Trending 101'}, {id:'groups', label:'Groups'} ] },
       { id: 'g-websources', label: 'Web Sources',      tabs: [ {id:'searches', label:'Web Sources'} ] },
       { id: 'g-models',     label: 'AI Models',        tabs: [ {id:'models', label:'AI Models'} ] },
       { id: 'g-promptgen',  label: 'Prompt Generator', tabs: [ {id:'promptgen', label:'Prompt Generator'} ] }
@@ -207,6 +215,7 @@
     function tabRenderHook(tabId) {
       if (tabId === 'assignments') renderAssignments();
       if (tabId === 'evergreen') renderEvergreen();
+      if (tabId === 'trending101') renderTrending101();
       if (tabId === 'groups') renderGroups();
       if (tabId === 'datafiles' && typeof dfLoadCurrent === 'function') dfLoadCurrent();
     }
@@ -272,6 +281,7 @@
       dlJSON('external-searches.json', data.searches);
       dlJSON('ai-models.json', data.models);
       dlJSON('prompt-generator.json', data.promptgen);
+      dlJSON('shortcuts-trending101.json', data.trending101);
       toast('Exported all JSON');
       markClean();
     });
@@ -289,7 +299,8 @@
         assignments: data.assignments,
         searches: data.searches,
         models: data.models,
-        promptgen: data.promptgen
+        promptgen: data.promptgen,
+        trending101: data.trending101
       };
       var ts = new Date().toISOString().slice(0,16).replace(/[:T]/g, '-');
       dlJSON('standard-topic-bundle-' + ts + '.json', bundle);
@@ -305,7 +316,7 @@
       f.text().then(function(text) {
         try {
           var parsed = JSON.parse(text);
-          var keys = ['topics','directory','assignments','searches','models','promptgen'];
+          var keys = ['topics','directory','assignments','searches','models','promptgen','trending101'];
           var loaded = 0;
           keys.forEach(function(k) {
             if (parsed[k] !== undefined) { data[k] = parsed[k]; loaded++; }
@@ -425,7 +436,7 @@
     // changes that haven't been exported yet.
     var dirtyFiles = {};
     function markDirty(key) { dirtyFiles[key] = true; updateDirtyBanner(); }
-    function markDirtyAll() { ['topics','directory','assignments','searches','models','promptgen'].forEach(function(k){dirtyFiles[k]=true;}); updateDirtyBanner(); }
+    function markDirtyAll() { ['topics','directory','assignments','searches','models','promptgen','trending101'].forEach(function(k){dirtyFiles[k]=true;}); updateDirtyBanner(); }
     function markClean() { dirtyFiles = {}; updateDirtyBanner(); }
     function updateDirtyBanner() {
       var keys = Object.keys(dirtyFiles);
@@ -447,7 +458,7 @@
     // Expose markDirty for the per-tab Apply / save handlers below.
     window.__markDirty = markDirty;
 
-    function renderAll() { ensureGroupsInData(); renderTopics(); renderFeaturedOrder(); renderDirectory(); renderGroups(); renderEvergreen(); renderAssignments(); renderSearches(); renderModels(); renderPromptGen(); }
+    function renderAll() { ensureGroupsInData(); renderTopics(); renderFeaturedOrder(); renderDirectory(); renderGroups(); renderEvergreen(); renderTrending101(); renderAssignments(); renderSearches(); renderModels(); renderPromptGen(); }
 
     // Featured-topics order: an explicit slug array on topics.json that
     // controls the order featured topics show in the home subnav, drawer
@@ -1658,13 +1669,42 @@
     document.getElementById('jump-custom').addEventListener('click', function() { jumpToAssignments('_custom'); });
 
     // ===== DATA FILES (raw JSON editor for every data file) =====
+    function t101Dirty() { if (window.__markDirty) window.__markDirty('trending101'); }
+    function t101Slug(name) { return (String(name||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40)) || 'shortcut'; }
+    function t101NewId(name) { var base=t101Slug(name), ids=(data.trending101.shortcuts||[]).map(function(s){return s.id;}), id=base, n=2; while(ids.indexOf(id)>=0){ id=base+'-'+n; n++; } return id; }
+    function renderTrending101() {
+      var body = document.getElementById('t101-body');
+      if (!body) return;
+      if (!data.trending101 || !Array.isArray(data.trending101.shortcuts)) data.trending101 = { shortcuts: [] };
+      var rows = data.trending101.shortcuts;
+      body.innerHTML = rows.length ? rows.map(function(s, i){
+        return '<tr>'+
+          '<td><input data-t101="'+i+'" data-prop="name" value="'+escA(s.name)+'" placeholder="name" style="width:100%;"></td>'+
+          '<td><input data-t101="'+i+'" data-prop="icon" value="'+escA(s.icon)+'" placeholder="icon key" style="width:6.5rem;"></td>'+
+          '<td><input data-t101="'+i+'" data-prop="description" value="'+escA(s.description)+'" placeholder="short description" style="width:100%;"></td>'+
+          '<td><textarea data-t101="'+i+'" data-prop="prompt" rows="2" placeholder="prompt — use {topic}" style="width:100%;font-family:inherit;font-size:0.8rem;">'+esc(s.prompt)+'</textarea></td>'+
+          '<td style="white-space:nowrap;"><button class="btn btn-danger" data-t101-del="'+i+'">Delete</button></td>'+
+        '</tr>';
+      }).join('') : '<tr><td colspan="5" style="color:var(--text-muted);">No Trending 101 shortcuts yet — click <strong>+ Add Shortcut</strong>.</td></tr>';
+      if (!body.__wired) {
+        body.__wired = true;
+        function edit(e){ var t=e.target; if(t.dataset.t101===undefined) return; var s=data.trending101.shortcuts[+t.dataset.t101]; if(!s) return; s[t.dataset.prop]=t.value; t101Dirty(); }
+        body.addEventListener('input', edit);
+        body.addEventListener('change', edit);
+        body.addEventListener('click', function(e){ var b=e.target.closest('button'); if(!b) return; if(b.dataset.t101Del!==undefined){ if(confirm('Delete this Trending 101 shortcut?')){ data.trending101.shortcuts.splice(+b.dataset.t101Del,1); renderTrending101(); t101Dirty(); } } });
+        var addBtn = document.getElementById('add-t101');
+        if (addBtn) addBtn.addEventListener('click', function(){ data.trending101.shortcuts.push({ id: t101NewId('shortcut'), name:'', icon:'', description:'', prompt:'' }); renderTrending101(); t101Dirty(); });
+      }
+    }
+
     var dfFileNames = {
       topics: 'topics.json',
       directory: 'shortcuts-directory.json',
       assignments: 'shortcuts-assignments.json',
       searches: 'external-searches.json',
       models: 'ai-models.json',
-      promptgen: 'prompt-generator.json'
+      promptgen: 'prompt-generator.json',
+      trending101: 'shortcuts-trending101.json'
     };
     function dfLoadCurrent() {
       var key = document.getElementById('df-picker').value;
@@ -1720,7 +1760,7 @@
     // Auto-load the live /data/ files so the admin opens populated (no manual
     // Import). Works when served over http (same-origin fetch); falls back to
     // the empty state + manual Import when opened as a file:// page.
-    var DATA_KEYS = ['topics','directory','assignments','searches','models','promptgen'];
+    var DATA_KEYS = ['topics','directory','assignments','searches','models','promptgen','trending101'];
     function autoLoad() {
       var status = document.getElementById('autoload-status');
       if (status) status.textContent = 'Loading live data…';

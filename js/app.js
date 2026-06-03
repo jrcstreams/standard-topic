@@ -12,6 +12,8 @@ import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
 import { initPromptModal } from './components/prompt-modal.js';
 import { renderTrending } from './components/trending.js';
+import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
@@ -27,6 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Preload shortcut icon SVGs (non-blocking — renders emoji until resolved)
   preloadIcons(getAllShortcutIconKeys());
   initPromptModal();
+  initTrendingDetailModal();
   initDiscoverModal();
   initAllTopicsModal();
   initRelatedTopicsModal();
@@ -1775,94 +1778,8 @@ function shortcutItem(shortcut, topicName) {
 // .ai-shortcut-select-btn classes so the existing select / submit
 // handlers still pick it up.
 // === Topic Intelligence accordions ====================================
-// Section metadata: icon path (inline SVG) + accent color per
-// section. The section header pulls from this. New sections (e.g.
-// added in admin) fall back to a neutral globe + gray accent.
-const TI_SECTION_META = {
-  websources: {
-    accent: '#5d6b7e',
-    blurb: 'Search platforms and primary sources.',
-    icon: `<circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a14 14 0 0 1 4 9 14 14 0 0 1-4 9 14 14 0 0 1-4-9 14 14 0 0 1 4-9z"/>`,
-  },
-  'topic-specific': {
-    accent: '#b35a4e',
-    blurb: 'Insights tailored to this topic.',
-    icon: `<path d="M12 2.5l2.3 6.4 6.7.3-5.3 4.1 1.9 6.5L12 16.2 6.4 19.8l1.9-6.5L3 9.2l6.7-.3z"/>`,
-  },
-  discover: {
-    accent: '#3261a0',
-    blurb: 'What\'s happening right now.',
-    icon: `<circle cx="12" cy="12" r="9"/><polygon points="16 8 13.5 13.5 8 16 10.5 10.5 16 8"/>`,
-  },
-  learn: {
-    accent: '#2e8a73',
-    blurb: 'Background, fundamentals, and context.',
-    icon: `<path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/>`,
-  },
-  analyze: {
-    accent: '#b48528',
-    blurb: 'Deeper analytical lenses and tradeoffs.',
-    icon: `<line x1="6" y1="20" x2="6" y2="14"/><line x1="12" y1="20" x2="12" y2="9"/><line x1="18" y1="20" x2="18" y2="4"/>`,
-  },
-  more: {
-    accent: '#8a4f7a',
-    blurb: 'Other useful prompts.',
-    icon: `<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>`,
-  },
-};
 
-function renderTIAccordion({ key, label, open, bodyHTML }) {
-  const meta = TI_SECTION_META[key] || TI_SECTION_META.more;
-  const openAttr = open ? ' open' : '';
-  const blurbHTML = meta.blurb
-    ? `<span class="ti-accordion-blurb">${escapeHTML(meta.blurb)}</span>`
-    : '';
-  return `
-    <details class="ti-accordion" data-section="${escapeAttr(key)}" style="--ti-accent: ${meta.accent};"${openAttr}>
-      <summary class="ti-accordion-summary">
-        <span class="ti-accordion-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            ${meta.icon}
-          </svg>
-        </span>
-        <span class="ti-accordion-title">${escapeHTML(label)}</span>
-        <span class="ti-accordion-chev" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
-        </span>
-        ${blurbHTML}
-      </summary>
-      <div class="ti-accordion-body">
-        ${bodyHTML}
-      </div>
-    </details>
-  `;
-}
 
-// Web source row — title + description, anchor link to the
-// external search URL. Mirrors the shortcut row format so both
-// section bodies read as the same tabular list of "things you
-// can open" with a one-line evergreen description below.
-function webSourceItem(search, topicName) {
-  const url = search.urlTemplate.replace(/\{query\}/g, encodeURIComponent(topicName));
-  const description = search.description
-    ? `<span class="ti-item-desc">${escapeHTML(search.description)}</span>`
-    : '';
-  return `
-    <li class="ti-item-row">
-      <a class="ti-item ti-item-link"
-         href="${url}"
-         target="_blank"
-         rel="noopener noreferrer"
-         data-name="${escapeAttr(search.name)}"
-         title="Open ${escapeAttr(search.name)} search">
-        <span class="ti-item-name">${escapeHTML(search.name)}</span>
-        ${description}
-      </a>
-    </li>
-  `;
-}
 
 // AI shortcut row — title + description in a button. Keeps the
 // existing multi-select wiring (data-prompt / data-name / etc)
@@ -1993,18 +1910,6 @@ function shortcutBulletItem(shortcut, topicName) {
 // Items that don't match any bucket fall into "other" and render in
 // the trailing "More" group. Categories are starter heuristics — a
 // `category` field on each shortcut would replace this later.
-// Default groups when assignments.json doesn't declare any. Mirrors
-// the admin panel's DEFAULT_GROUPS so a fresh install renders the
-// same Discover / Learn / Analyze / More layout as before. The "other"
-// internal key maps to the "more" group id so legacy regex-classified
-// shortcuts still land in the More bucket.
-const DEFAULT_GROUP_DEFS = [
-  { id: 'topic-specific', label: 'Topic-Specific Insights', order: 0, color: '#b35a4e' },
-  { id: 'discover', label: 'Discover', order: 1, color: '#3261a0' },
-  { id: 'learn',    label: 'Learn',    order: 2, color: '#2e8a73' },
-  { id: 'analyze',  label: 'Analyze',  order: 3, color: '#b48528' },
-  { id: 'more',     label: 'More',     order: 4, color: '#8a4f7a' },
-];
 
 // Apply per-group accent colors as CSS overrides. Runs once at data
 // load — generates a <style> block that sets --ti-accent on each
@@ -2027,57 +1932,6 @@ function applyGroupAccentColors() {
     document.head.appendChild(styleEl);
   }
   styleEl.textContent = rules;
-}
-// `overrideMap` (optional) is a per-topic { shortcutId: groupId } map that
-// re-buckets specific shortcuts into a different section than their global
-// `group` field — used so the homepage can sort otherwise topic-specific
-// shortcuts into Discover / Learn / Analyze independently. A shortcut not in
-// the map falls back to its global group (then the legacy regex classifier).
-function groupShortcuts(shortcuts, overrideMap = {}) {
-  // 1) Resolve the group set: use data.assignments.groups if present
-  //    (admin-managed), else the defaults. Sort by `order` ascending.
-  const groupDefs = (window.__assignmentsData && Array.isArray(window.__assignmentsData.groups) && window.__assignmentsData.groups.length)
-    ? window.__assignmentsData.groups.slice()
-    : DEFAULT_GROUP_DEFS.slice();
-  groupDefs.sort((a, b) => (a.order || 0) - (b.order || 0));
-
-  // 2) Initialize buckets.
-  const groups = {};
-  groupDefs.forEach(g => { groups[g.id] = []; });
-
-  // 3) For each shortcut, prefer a per-topic override, then its explicit
-  //    `group` field. Fall back to the legacy regex-based classifier so old
-  //    data still renders until it gets a group assigned in the admin.
-  const learnRE = /(guide|glossary|beginner|primer|fundamentals|basics|deep ?dive|history|background|key players|key terms|how |where to|why )/i;
-  const analyzeRE = /(analy|impact|affect|hype|reality|compare| vs | versus |implications|outcome|signal|forecast|prediction|risk|controversy|debate)/i;
-  const discoverRE = /(news|snapshot|update|headline|trend|watch|latest|now|today|roundup|hot|spotlight|brief|digest)/i;
-  shortcuts.forEach(s => {
-    const override = overrideMap && overrideMap[s.id];
-    if (override && groups[override]) {
-      groups[override].push(s);
-      return;
-    }
-    if (s.group && groups[s.group]) {
-      groups[s.group].push(s);
-      return;
-    }
-    const name = s.name || '';
-    if (learnRE.test(name) && groups.learn) groups.learn.push(s);
-    else if (analyzeRE.test(name) && groups.analyze) groups.analyze.push(s);
-    else if (discoverRE.test(name) && groups.discover) groups.discover.push(s);
-    else if (groups['topic-specific']) groups['topic-specific'].push(s);
-    else if (groups.more) groups.more.push(s);
-    else if (groups.other) groups.other.push(s);
-    else {
-      // No matching default bucket — drop into the first defined group.
-      const first = groupDefs[0];
-      if (first) groups[first.id].push(s);
-    }
-  });
-  // Expose the resolved group order so the caller can render in
-  // the data-defined order rather than a hardcoded list.
-  groups.__order = groupDefs.map(g => ({ key: g.id, label: g.label }));
-  return groups;
 }
 
 // Quick Link bullet row — matches the AI Shortcut bullet item
