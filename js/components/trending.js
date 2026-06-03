@@ -1,10 +1,9 @@
-// Homepage Trending Topics card. Lists US Google-Trends searches (via
-// /api/trending); each row links to the Custom Search page. Shows 7 rows
-// collapsed, expands to the full ~20 in a scroll area. Matches the Topic
-// Intelligence sidebar card's look & feel.
+// Homepage Trending Now card. Lists US Google-Trends searches (via
+// /api/trending); each row links to the Custom Search page. Title +
+// separator match News Feed / Topic Intelligence; the list is a tight
+// fixed-height scroll area with top/bottom fade + chevron affordances
+// (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
-
-const COLLAPSED_COUNT = 7;
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -21,8 +20,9 @@ function relativeTime(iso) {
   return `${Math.round(hrs / 24)} d ago`;
 }
 
-const FLAME = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 3-1.5 4.5-2.5 6S8 12 9 13c.5-1 1.5-1.5 2-2.5.8 1.2 2 2 2 3.7a3 3 0 0 1-6 0c0-.6.1-1.1.3-1.6C5.5 14 4.5 16 4.5 18a7.5 7.5 0 0 0 15 0c0-4.5-4-6-7.5-16z"/></svg>`;
-const CHEV = `<svg class="trending-row-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>`;
+const CHEV = `<svg class="trending-row-chev" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>`;
+const CHEV_UP = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 15 12 9 18 15"/></svg>`;
+const CHEV_DOWN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
 
 function rowHTML(topic) {
   const q = topic.query;
@@ -35,38 +35,48 @@ function rowHTML(topic) {
     </li>`;
 }
 
-function listMarkup(topics, expanded) {
-  const shown = expanded ? topics : topics.slice(0, COLLAPSED_COUNT);
-  const remaining = topics.length - COLLAPSED_COUNT;
-  const moreBtn = remaining > 0
-    ? `<button type="button" class="trending-more" id="trending-more" aria-expanded="${expanded}">
-         ${expanded ? 'Show less' : `Show more (${remaining})`}
-       </button>`
-    : '';
-  return `
-    <ul class="trending-list ${expanded ? 'is-expanded' : ''}">${shown.map(rowHTML).join('')}</ul>
-    ${moreBtn}`;
+function metaHTML(fetched) {
+  const updated = fetched ? `<span class="trending-meta-dot" aria-hidden="true">·</span><span class="trending-updated">Updated ${escapeHTML(relativeTime(fetched))}</span>` : '';
+  return `<div class="trending-meta"><span class="trending-attr">via Google Trends</span>${updated}</div>`;
 }
 
 function shell(bodyHTML, fetched) {
-  const updated = fetched ? `<span class="trending-updated">Updated ${escapeHTML(relativeTime(fetched))}</span>` : '';
   return `
     <div class="sidebar-card trending-card">
-      <div class="sidebar-card-header trending-header">
-        <span class="trending-icon" aria-hidden="true">${FLAME}</span>
-        <div class="trending-heading">
-          <h3 class="sidebar-card-title trending-title">Trending Topics</h3>
-          <span class="trending-attr">via Google Trends</span>
-        </div>
-      </div>
-      <div class="trending-body" id="trending-body">${bodyHTML}</div>
-      <div class="trending-foot">${updated}</div>
+      <h3 class="trending-title">Trending Now</h3>
+      ${metaHTML(fetched)}
+      ${bodyHTML}
+    </div>`;
+}
+
+function listShell(topics) {
+  return `
+    <div class="trending-list-wrap">
+      <ul class="trending-list trending-scroll" id="trending-scroll">${topics.map(rowHTML).join('')}</ul>
+      <div class="scroll-fade scroll-fade-top" aria-hidden="true"><span class="scroll-fade-chev">${CHEV_UP}</span></div>
+      <div class="scroll-fade scroll-fade-bottom" aria-hidden="true"><span class="scroll-fade-chev">${CHEV_DOWN}</span></div>
     </div>`;
 }
 
 function skeleton() {
-  const rows = Array.from({ length: COLLAPSED_COUNT }, () => `<li class="trending-skel-row"></li>`).join('');
-  return shell(`<ul class="trending-list trending-skeleton">${rows}</ul>`, null);
+  const rows = Array.from({ length: 8 }, () => `<li class="trending-skel-row"></li>`).join('');
+  return shell(`<div class="trending-list-wrap"><ul class="trending-list trending-scroll trending-skeleton">${rows}</ul></div>`, null);
+}
+
+// Toggle the top/bottom fade overlays based on scroll position.
+function wireScrollFade(container) {
+  const wrap = container.querySelector('.trending-list-wrap');
+  const scroll = container.querySelector('#trending-scroll');
+  if (!wrap || !scroll) return;
+  const update = () => {
+    const top = scroll.scrollTop;
+    const max = scroll.scrollHeight - scroll.clientHeight;
+    wrap.classList.toggle('has-overflow-top', top > 2);
+    wrap.classList.toggle('has-overflow-bottom', max > 2 && top < max - 2);
+  };
+  scroll.addEventListener('scroll', update, { passive: true });
+  requestAnimationFrame(update);
+  setTimeout(update, 150); // re-check after fonts/layout settle
 }
 
 export function renderTrending(container) {
@@ -77,13 +87,8 @@ export function renderTrending(container) {
       container.innerHTML = shell(`<p class="trending-empty">Trending is taking a break — check back soon.</p>`, fetched);
       return;
     }
-    let expanded = false;
-    const paint = () => {
-      container.innerHTML = shell(listMarkup(topics, expanded), fetched);
-      const moreBtn = container.querySelector('#trending-more');
-      if (moreBtn) moreBtn.addEventListener('click', () => { expanded = !expanded; paint(); });
-    };
-    paint();
+    container.innerHTML = shell(listShell(topics), fetched);
+    wireScrollFade(container);
   }).catch(() => {
     container.innerHTML = shell(`<p class="trending-empty">Trending is taking a break — check back soon.</p>`, null);
   });
