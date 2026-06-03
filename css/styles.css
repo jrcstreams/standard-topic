@@ -5081,25 +5081,49 @@ body.app-mode .topic-layout {
     gap: 0;
     align-items: stretch;
   }
-  /* Discreet vertical separator between Shortcuts (left) and News
-     Feed (right). Drawn via ::after so it can start below the subnav
-     (with breathing room above) and run down the rest of the column. */
+  /* Discreet vertical separator between the left column (Trending +
+     Topic Intelligence) and News Feed. Drawn on the News Feed's left
+     edge so it runs the FULL column height — News Feed always spans the
+     whole right column (single row on topic pages, both rows on home),
+     whereas the left column is split into two sections on home. */
   body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts {
     position: relative;
     padding-right: 1.5rem;
   }
-  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts::after {
+  body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed {
+    position: relative;
+    padding-left: 1.5rem;
+  }
+  body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed::before {
     content: '';
     position: absolute;
     top: 0.4rem;
-    right: 0;
+    left: 0;
     bottom: 0;
     width: 1px;
     background: #e2e8f0;
     pointer-events: none;
   }
+  /* Home only: Trending (left column, row 1) stacks above Topic
+     Intelligence (left column, row 2); News Feed spans both rows in the
+     right column. On topic pages there's no #section-trending — row 1 of
+     the left column is simply empty, so shortcuts/news still read right. */
+  body.app-mode .topic-layout:not(.is-custom) {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  body.app-mode .topic-layout:not(.is-custom) > #section-trending {
+    grid-column: 1;
+    grid-row: 1;
+    padding-right: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts {
+    grid-column: 1;
+    grid-row: 2;
+  }
   body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed {
-    padding-left: 1.5rem;
+    grid-column: 2;
+    grid-row: 1 / span 2;
   }
   /* Custom-search pages have only Shortcuts (no News Feed). Full
      width, left-aligned. */
@@ -5167,7 +5191,11 @@ body.app-mode .topic-layout {
      above; bottom margin from the panel content below. */
   body.app-mode .topic-layout:not(.is-custom) > .body-tabs {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* Equal columns regardless of tab count (2 on topic pages, 3 on
+       home with the Trending tab). */
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    grid-template-columns: unset;
     flex: 0 0 auto;
     /* Tinted band — darker than the subnav above so the tab row
        reads as a contained "control center" element rather than
@@ -5772,11 +5800,13 @@ body.app-mode .topic-layout {
     background: rgba(15, 26, 46, 0.05);
   }
   body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts,
+  body.app-mode .topic-layout:not(.is-custom) > #section-trending,
   body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed,
   body.app-mode .topic-layout:not(.is-custom) > #section-related {
     display: none;
   }
   body.app-mode.active-tab-newsfeed .topic-layout:not(.is-custom) > #section-newsfeed { display: flex; }
+  body.app-mode.active-tab-trending .topic-layout:not(.is-custom) > #section-trending { display: flex; }
   body.app-mode.active-tab-shortcuts .topic-layout:not(.is-custom) > #section-shortcuts { display: flex; }
   body.app-mode.active-tab-related   .topic-layout:not(.is-custom) > #section-related   { display: flex; }
 
@@ -11961,3 +11991,56 @@ body.custom-mode .shortcuts-multi-modelrow { flex: 1 1 220px; }
 body.custom-mode .shortcuts-multi-trigger-utils { flex: 0 0 auto; }
 body.custom-mode .shortcuts-multi-review,
 body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
+
+/* === Trending Topics card (homepage) ===================================
+   Sidebar card listing Google-Trends searches above Topic Intelligence
+   (desktop) / in its own mobile tab. Matches the .sidebar-card shell. */
+.trending-card { display: flex; flex-direction: column; }
+.trending-header { display: flex; align-items: center; gap: 0.6rem; }
+.trending-icon {
+  width: 26px; height: 26px; flex: 0 0 26px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #e8590c; background: #fff4ec; border-radius: 7px;
+}
+.trending-icon svg { width: 16px; height: 16px; }
+.trending-heading { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+.trending-title { margin: 0; }
+/* The flame icon is the accent — suppress the inherited title accent bar. */
+.trending-title::before { display: none !important; }
+.trending-attr { font-size: 0.66rem; font-weight: 600; letter-spacing: 0.02em; color: var(--color-text-light); }
+.trending-body { margin-top: 0.6rem; }
+.trending-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.15rem; }
+.trending-list.is-expanded { max-height: 22rem; overflow-y: auto; }
+.trending-row {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.5rem 0.55rem; border-radius: 8px;
+  text-decoration: none; color: var(--color-text);
+  transition: background 0.12s, color 0.12s;
+}
+.trending-row:hover { background: #fff4ec; color: #c2410c; }
+.trending-row-text {
+  flex: 1 1 auto; min-width: 0;
+  font-size: 0.9rem; font-weight: 600; letter-spacing: -0.006em;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.trending-row-chev { flex: 0 0 auto; color: var(--color-text-light); transition: transform 0.12s, color 0.12s; }
+.trending-row:hover .trending-row-chev { color: #e8590c; transform: translateX(2px); }
+.trending-more {
+  margin-top: 0.4rem; width: 100%;
+  background: var(--color-bg-light); border: 1px solid var(--color-border);
+  border-radius: 8px; padding: 0.45rem;
+  font-family: inherit; font-size: 0.82rem; font-weight: 600; color: var(--color-primary);
+  cursor: pointer; transition: background 0.12s, border-color 0.12s;
+}
+.trending-more:hover { background: #eef1f6; border-color: #cdd5e2; }
+.trending-foot { margin-top: 0.55rem; }
+.trending-foot:empty { margin-top: 0; }
+.trending-updated { font-size: 0.7rem; color: var(--color-text-light); }
+.trending-empty { font-size: 0.86rem; color: var(--color-text-muted); padding: 0.4rem 0.1rem; }
+.trending-skeleton { pointer-events: none; }
+.trending-skel-row {
+  height: 2.1rem; border-radius: 8px;
+  background: linear-gradient(90deg, #f1f3f7 25%, #e9edf3 37%, #f1f3f7 63%);
+  background-size: 400% 100%; animation: trending-shimmer 1.4s ease infinite;
+}
+@keyframes trending-shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }

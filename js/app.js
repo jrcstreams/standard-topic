@@ -11,6 +11,7 @@ import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
 import { initPromptModal } from './components/prompt-modal.js';
+import { renderTrending } from './components/trending.js';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
@@ -294,17 +295,24 @@ function renderLayout(route) {
 // fills the rest of the layout) and on custom pages (shortcuts-only
 // — nothing to switch between).
 function bodyTabsRow(opts = {}) {
-  const { showRelated = false } = opts;
+  const { showRelated = false, showTrending = false } = opts;
+  // Order: News Feed → (Trending) → Topic Intelligence → (Related).
   const tabs = [
     `<button type="button" class="tab-pill tab-pill-newsfeed active" data-tab="newsfeed">
        <span class="tab-pill-label-long">News Feed</span>
        <span class="tab-pill-label-short">News Feed</span>
      </button>`,
-    `<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">
+  ];
+  if (showTrending) {
+    tabs.push(`<button type="button" class="tab-pill tab-pill-trending" data-tab="trending">
+       <span class="tab-pill-label-long">Trending</span>
+       <span class="tab-pill-label-short">Trending</span>
+     </button>`);
+  }
+  tabs.push(`<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">
        <span class="tab-pill-label-long">Topic Intelligence</span>
        <span class="tab-pill-label-short">Topic Intelligence</span>
-     </button>`,
-  ];
+     </button>`);
   if (showRelated) {
     tabs.push(`<button type="button" class="tab-pill tab-pill-related" data-tab="related">Related</button>`);
   }
@@ -319,7 +327,7 @@ function bodyTabsRow(opts = {}) {
 function setupTabPills() {
   const route = getCurrentRoute();
   const tab = route?.tab || 'newsfeed';
-  ['newsfeed', 'shortcuts', 'related'].forEach(t =>
+  ['newsfeed', 'trending', 'shortcuts', 'related'].forEach(t =>
     document.body.classList.remove(`active-tab-${t}`)
   );
   document.body.classList.add(`active-tab-${tab}`);
@@ -339,7 +347,7 @@ function setupGlobalTabPillDelegation() {
     const tab = pill.dataset.tab;
     if (!tab) return;
     // Swap the body class for the visible-section CSS rules.
-    ['newsfeed', 'shortcuts', 'related'].forEach(t =>
+    ['newsfeed', 'trending', 'shortcuts', 'related'].forEach(t =>
       document.body.classList.remove(`active-tab-${t}`)
     );
     document.body.classList.add(`active-tab-${tab}`);
@@ -1237,7 +1245,8 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // desktop widths where both panels show side-by-side.
     container.innerHTML = `
       <div class="topic-layout" id="topic-layout">
-        ${bodyTabsRow({ showRelated: false })}
+        ${bodyTabsRow({ showRelated: false, showTrending: true })}
+        <section class="layout-section" id="section-trending"></section>
         <section class="layout-section" id="section-shortcuts"></section>
         <section class="layout-section" id="section-newsfeed"></section>
       </div>
@@ -1254,10 +1263,12 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     `;
   }
 
+  const trendingSection = container.querySelector('#section-trending');
   const shortcutsSection = container.querySelector('#section-shortcuts');
   const feedSection = container.querySelector('#section-newsfeed');
   const relatedSection = container.querySelector('#section-related');
 
+  if (trendingSection) renderTrending(trendingSection);
   renderShortcutsSidebar(shortcutsSection, route, isHome, isCustom, customTerm);
   if (feedSection) {
     renderNewsFeed(feedSection, topic, isHome);
@@ -1301,7 +1312,7 @@ function renderRelatedSection(container, topic) {
   `;
 }
 
-const TAB_PANELS = ['newsfeed', 'shortcuts', 'related'];
+const TAB_PANELS = ['newsfeed', 'trending', 'shortcuts', 'related'];
 
 function setActiveTabPanel(tabId) {
   TAB_PANELS.forEach(t => document.body.classList.remove(`active-tab-${t}`));

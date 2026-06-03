@@ -33,8 +33,8 @@ function parseRoute(hash) {
     return { type: 'home', slug: 'home', tab: 'newsfeed' };
   }
 
-  // Homepage tabs: #/shortcuts, #/related
-  if (segments.length === 1 && (segments[0] === 'shortcuts' || segments[0] === 'related')) {
+  // Homepage tabs: #/shortcuts, #/related, #/trending
+  if (segments.length === 1 && (segments[0] === 'shortcuts' || segments[0] === 'related' || segments[0] === 'trending')) {
     return { type: 'home', slug: 'home', tab: segments[0] };
   }
 
