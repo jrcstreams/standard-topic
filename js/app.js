@@ -1463,12 +1463,15 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   // pages it carries the topic name as a quiet under-title sublabel
   // (desktop only — mobile renders the panel header as an eyebrow). Both
   // mirror the News Feed header so the two columns read in parallel.
-  // Search results → "Search Intelligence" (no "Covering …" subtitle).
-  // Everywhere else (home / topic) → "Intelligence".
+  // Search results → "Search Intelligence" with the live search term as a
+  // sublabel (updated in place as the user edits the input). Everywhere else
+  // (home / topic) → "Intelligence" with the topic name sublabel.
   const panelTitle = isCustom ? 'Search Intelligence' : 'Intelligence';
-  const panelSubtitleHTML = (!isHome && !isCustom && topicName)
-    ? `<p class="sidebar-card-subtitle ti-topic-sublabel">${escapeHTML(topicName)}</p>`
-    : '';
+  const panelSubtitleHTML = (isCustom && topicName)
+    ? `<p class="sidebar-card-subtitle ti-topic-sublabel" data-role="search-term-sub">${escapeHTML(topicName)}</p>`
+    : (!isHome && !isCustom && topicName)
+      ? `<p class="sidebar-card-subtitle ti-topic-sublabel">${escapeHTML(topicName)}</p>`
+      : '';
 
   // Model options for the selection bar's "Send to" picker. Pre-selects
   // the user's preferred model so direct Submit + the modal agree.
@@ -2184,7 +2187,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
         </form>
         <div class="search-panel-actions">
           <button type="button" class="search-panel-copy" aria-label="Copy link">${LINK_ICON_SVG}<span>Copy link</span></button>
-          <button type="button" class="search-panel-close" aria-label="Close search">${X_ICON_SVG}</button>
+          ${isModal ? '' : `<button type="button" class="search-panel-close" aria-label="Reset search">${X_ICON_SVG}</button>`}
         </div>
         <div class="search-panel-suggest" role="listbox" hidden></div>
       </div>
@@ -2256,19 +2259,41 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   }
 
   form.addEventListener('submit', (e) => { e.preventDefault(); const v = input.value.trim(); if (v) { if (activeIdx >= 0 && !suggestEl.hidden) chooseSuggestion(activeIdx); else expand(v); } });
-  input.addEventListener('input', () => { refreshSuggestions(); });
+  // Live update: once expanded, editing the term re-renders the intelligence
+  // so the shortcuts use the new term immediately (no Enter needed). The
+  // sublabel under "Search Intelligence" updates instantly for feedback.
+  let liveTimer = null;
+  input.addEventListener('input', () => {
+    if (panelEl.dataset.state === 'expanded') {
+      const v = input.value.trim();
+      const sub = resultsInner.querySelector('[data-role="search-term-sub"]');
+      if (sub) sub.textContent = v;
+      clearTimeout(liveTimer);
+      liveTimer = setTimeout(() => {
+        const t = input.value.trim();
+        if (t && t !== currentTerm) {
+          currentTerm = t;
+          renderShortcutsSidebar(resultsInner, { type: 'custom', term: t, tab: 'shortcuts' }, false, true, t);
+        }
+      }, 350);
+    } else {
+      refreshSuggestions();
+    }
+  });
   input.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowDown') { e.preventDefault(); moveActive(1); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); moveActive(-1); }
     else if (e.key === 'Escape' && !suggestEl.hidden) { e.preventDefault(); hideSuggest(); }
   });
   document.addEventListener('click', (e) => { if (!panelEl.contains(e.target)) hideSuggest(); });
-  // Single X: when expanded it resets the search back to the empty hero;
-  // when already empty (modal only) it closes the modal.
-  closeBtn.addEventListener('click', () => {
+  // X behavior: when expanded it resets the search back to the empty hero;
+  // when already empty (modal only) it closes the modal. Wired to both the
+  // modal's corner close and the inline reset button.
+  const onClose = () => {
     if (panelEl.dataset.state === 'expanded') { collapse(); input.focus(); }
     else if (isModal) { userCloseSearchModal(); }
-  });
+  };
+  panelEl.querySelector('.search-panel-close')?.addEventListener('click', onClose);
   copyBtn.addEventListener('click', async () => {
     if (!currentTerm) return;
     const url = location.origin + location.pathname + '#/custom/' + encodeURIComponent(currentTerm);
@@ -2280,7 +2305,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     copyBtn.classList.add('is-copied'); if (label) label.textContent = 'Copied';
     setTimeout(() => { copyBtn.classList.remove('is-copied'); if (label) label.textContent = 'Copy link'; }, 1600);
   });
-  const ctl = { el: panelEl, input, expand, collapse, refreshSuggestions, onExpand: null, onCollapse: null,
+  const ctl = { el: panelEl, input, expand, collapse, refreshSuggestions, close: onClose, onExpand: null, onCollapse: null,
     setTerm(t) { input.value = t || ''; },
     focus() { try { input.focus(); } catch (_) {} } };
   if (term && term.trim()) expand(term);
@@ -2372,6 +2397,16 @@ function userCloseSearchModal() {
 
 function renderSearchModalBody(term) {
   searchPanelModalCtl = renderSearchPanel(searchModalPanel, { mode: 'modal', term });
+  // Corner close — appended to the modal PANEL (not the centered hero) so it
+  // sits at the modal's true top-right corner. Resets when expanded, closes
+  // when already empty.
+  const cc = document.createElement('button');
+  cc.type = 'button';
+  cc.className = 'search-panel-corner-close';
+  cc.setAttribute('aria-label', 'Close');
+  cc.innerHTML = X_ICON_SVG;
+  cc.addEventListener('click', () => searchPanelModalCtl.close());
+  searchModalPanel.appendChild(cc);
   // Modal submit keeps the URL shareable; the openSearchPageModal guard makes
   // the resulting route change expand the live panel rather than rebuild it.
   searchPanelModalCtl.onExpand = (t) => {

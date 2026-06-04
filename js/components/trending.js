@@ -103,7 +103,7 @@ function durationLabel(iso) {
   if (hrs < 24) return `${hrs}h`;
   return `${Math.round(hrs / 24)}d`;
 }
-const TREND_UP_SVG = `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>`;
+const TREND_UP_SVG = `<svg class="trending-topics-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>`;
 
 // Google returns trend queries lowercase ("jalen brunson") — title-case them.
 function titleCase(s) {
@@ -126,7 +126,7 @@ function trendCardsHead(fetched) {
   return `
     <div class="trending-topics-head">
       <h3 class="trending-topics-title">${TREND_UP_SVG}<span>Trending</span></h3>
-      <span class="trending-topics-meta">via Google Trends${fetched ? ` &middot; Updated ${escapeHTML(relativeTime(fetched))}` : ''}</span>
+      <span class="trending-topics-meta"><span class="trending-topics-src">via Google Trends</span>${fetched ? `<span class="trending-topics-updated">Updated ${escapeHTML(relativeTime(fetched))}</span>` : ''}</span>
     </div>`;
 }
 
