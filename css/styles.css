@@ -12443,3 +12443,18 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 @media (min-width: 720px) {
   .search-page-results .ti-accordions { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem 0.9rem; align-items: start; }
 }
+/* The multi-select submit bar is absolute-anchored to the sidebar bottom,
+   which strands it at the foot of the (tall) scrolled content. Inside the
+   modal, float it as a centered fixed action bar (same pattern the old
+   custom page used). Mobile (<900px) already pins it via the existing
+   fixed rule. */
+@media (min-width: 900px) {
+  .search-page-results .shortcuts-multi-submit-wrap {
+    position: fixed; left: 0; right: 0; bottom: 1.6rem;
+    width: min(520px, calc(100vw - 3rem)); margin-left: auto; margin-right: auto;
+    z-index: 170;
+    box-shadow: 0 12px 30px rgba(15, 26, 46, 0.18), 0 2px 6px rgba(15, 26, 46, 0.08);
+  }
+  .search-page-results .shortcuts-multi-submit-wrap::before { display: none; }
+  .search-page-results .shortcuts-sidebar:has(.shortcuts-multi-submit-wrap.is-visible) .shortcuts-scroll-wrap { padding-bottom: 0; }
+}
