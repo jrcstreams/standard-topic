@@ -38,16 +38,35 @@ document.addEventListener('DOMContentLoaded', async () => {
   initPromptPreviewModal();
   initSettingsModal();
   initSearchOverlay();
+  initSearchPageModal();
   setupGlobalTabPillDelegation();
 
   onRoute((route) => {
-    renderLayout(route);
-    renderPage(route);
-    // Scroll to top after render — use rAF to ensure DOM is settled
-    requestAnimationFrame(() => {
-      window.scrollTo(0, 0);
-      setSubnavHeightVar();
-    });
+    // Search (#/search) and Custom (#/custom/{term}) routes don't render
+    // their own page — they open the Search modal over the home layout.
+    const isSearchRoute = route.type === 'search' || route.type === 'custom';
+    const baseRoute = isSearchRoute ? { type: 'home', slug: 'home', tab: 'newsfeed' } : route;
+
+    // Only (re)render the underlying page when the base actually changes, so
+    // typing/clearing inside the Search modal doesn't tear down home beneath it.
+    if (!(isSearchRoute && lastBaseRouteKey === 'home')) {
+      renderLayout(baseRoute);
+      renderPage(baseRoute);
+      lastBaseRouteKey = baseRoute.type === 'home' ? 'home'
+        : baseRoute.type === 'topic' ? 'topic:' + baseRoute.slug
+        : baseRoute.type;
+      requestAnimationFrame(() => {
+        window.scrollTo(0, 0);
+        setSubnavHeightVar();
+      });
+    }
+
+    if (isSearchRoute) {
+      openSearchPageModal(route.type === 'custom' ? decodeURIComponent(route.term || '') : '');
+    } else {
+      closeSearchPageModal({ silent: true });
+    }
+
     // Fire GA4 page_view after the DOM has the right document.title.
     trackPageView(window.location.hash || '#/', document.title);
   });
@@ -1051,7 +1070,7 @@ function renderStickyHeroBar(container, route) {
   // "Choose Topics" pill earlier in the nav, but the icon signals
   // "search" specifically rather than "browse".
   document.getElementById('nav-search')?.addEventListener('click', () => {
-    openSearchOverlay({ focusInput: true });
+    navigate('#/search');
   });
 
   // Nav menu panel — appended to body so it's not clipped by header overflow
@@ -2121,6 +2140,125 @@ function escapeAttr(str) {
   return String(str || '')
     .replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')
     .replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// ===== Search modal (Custom Topic Search, as a takeover modal) ============
+// Tracks the currently-rendered underlying page so search/custom routes can
+// open the modal without re-rendering home beneath it on every keystroke.
+let lastBaseRouteKey = null;
+let searchModalOverlay = null;
+let searchModalPanel = null;
+let searchModalTerm = '';
+
+const SEARCH_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
+const X_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>';
+
+function initSearchPageModal() {
+  searchModalOverlay = document.createElement('div');
+  searchModalOverlay.className = 'takeover-overlay search-page-overlay';
+  searchModalOverlay.style.display = 'none';
+  document.body.appendChild(searchModalOverlay);
+
+  searchModalPanel = document.createElement('div');
+  searchModalPanel.className = 'takeover-panel search-page-panel';
+  searchModalPanel.setAttribute('role', 'dialog');
+  searchModalPanel.setAttribute('aria-modal', 'true');
+  searchModalPanel.setAttribute('aria-label', 'Search any topic');
+  searchModalOverlay.appendChild(searchModalPanel);
+
+  searchModalOverlay.addEventListener('click', (e) => {
+    if (e.target === searchModalOverlay) userCloseSearchModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isSearchModalOpen()) userCloseSearchModal();
+  });
+}
+
+function isSearchModalOpen() {
+  return searchModalOverlay && searchModalOverlay.style.display !== 'none';
+}
+
+function openSearchPageModal(term) {
+  if (!searchModalOverlay) return;
+  searchModalTerm = term || '';
+  renderSearchModalBody(searchModalTerm);
+  if (!isSearchModalOpen()) {
+    searchModalOverlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+  searchModalPanel.classList.remove('is-in');
+  void searchModalPanel.offsetWidth;
+  searchModalPanel.classList.add('is-in');
+}
+
+function closeSearchPageModal(opts = {}) {
+  if (!isSearchModalOpen()) return;
+  searchModalOverlay.style.display = 'none';
+  searchModalPanel.classList.remove('is-in');
+  searchModalPanel.innerHTML = '';
+  searchModalTerm = '';
+  document.body.style.overflow = '';
+}
+
+// ✕ / overlay / Esc: close and, if we're on a #/search or #/custom deep-link,
+// return to home so the URL reflects the dismissed modal.
+function userCloseSearchModal() {
+  const hash = window.location.hash || '';
+  const onModalRoute = hash.startsWith('#/custom/') || hash === '#/search';
+  closeSearchPageModal();
+  if (onModalRoute) navigate('#/');
+}
+
+function renderSearchModalBody(term) {
+  const t = (term || '').trim();
+  if (!t) {
+    // Empty state — centered hero with the search bar in the middle.
+    searchModalPanel.innerHTML = `
+      <button type="button" class="takeover-close search-page-close-float" id="search-modal-close" aria-label="Close">${X_ICON_SVG}</button>
+      <div class="search-page-hero">
+        <h2 class="search-page-hero-title">News, Resources and AI Knowledge.<br>On any topic.</h2>
+        <p class="search-page-hero-sub">Type any topic and we'll build out web sources, AI shortcuts, and analysis tools tailored to it.</p>
+        <form class="search-page-form search-page-form--hero" id="search-page-form" autocomplete="off" role="search">
+          <span class="search-page-input-icon" aria-hidden="true">${SEARCH_ICON_SVG}</span>
+          <input class="search-page-input" id="search-page-input" type="search" placeholder="Search any topic…" aria-label="Search any topic">
+        </form>
+      </div>`;
+  } else {
+    // Filled state — search pinned to the top, intelligence below.
+    searchModalPanel.innerHTML = `
+      <div class="takeover-head search-page-head">
+        <form class="search-page-form search-page-form--top" id="search-page-form" autocomplete="off" role="search">
+          <span class="search-page-input-icon" aria-hidden="true">${SEARCH_ICON_SVG}</span>
+          <input class="search-page-input" id="search-page-input" type="search" value="${escapeAttr(t)}" placeholder="Search any topic…" aria-label="Search any topic">
+          <button type="button" class="search-page-clear" id="search-page-clear" aria-label="Clear search">${X_ICON_SVG}</button>
+        </form>
+        <button type="button" class="takeover-close" id="search-modal-close" aria-label="Close">${X_ICON_SVG}</button>
+      </div>
+      <div class="takeover-body search-page-body">
+        <div class="search-page-results" id="search-page-results"></div>
+      </div>`;
+    const results = searchModalPanel.querySelector('#search-page-results');
+    renderShortcutsSidebar(results, { type: 'custom', term: t, tab: 'shortcuts' }, false, true, t);
+  }
+  wireSearchModal();
+}
+
+function wireSearchModal() {
+  searchModalPanel.querySelector('#search-modal-close')?.addEventListener('click', userCloseSearchModal);
+  const form = searchModalPanel.querySelector('#search-page-form');
+  const input = searchModalPanel.querySelector('#search-page-input');
+  if (form && input) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const v = input.value.trim();
+      if (v) navigate('#/custom/' + encodeURIComponent(v));
+    });
+    if (!searchModalTerm) setTimeout(() => { try { input.focus(); } catch (_) {} }, 60);
+  }
+  // Clear → back to the empty hero (modal stays open).
+  searchModalPanel.querySelector('#search-page-clear')?.addEventListener('click', () => {
+    navigate('#/search');
+  });
 }
 
 function renderPage(route) {

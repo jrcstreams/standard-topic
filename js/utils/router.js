@@ -38,6 +38,11 @@ function parseRoute(hash) {
     return { type: 'home', slug: 'home', tab: segments[0] };
   }
 
+  // Search modal (empty state). #/custom/{term} below opens it prefilled.
+  if (segments.length === 1 && segments[0] === 'search') {
+    return { type: 'search' };
+  }
+
   if (segments[0] === 'topic' && segments[1]) {
     const tab = segments[2] === 'shortcuts' ? 'shortcuts'
               : segments[2] === 'related' ? 'related'
