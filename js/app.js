@@ -1300,13 +1300,22 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // Homepage: inline search hero on top, then Shortcuts + News Feed.
     // Body tabs let mobile users switch between them; CSS hides the tabs
     // at desktop widths where both panels show side-by-side.
+    // Wrap the left column (Intelligence + Trending) so it stays an
+    // independent column on desktop — otherwise the tall News Feed,
+    // spanning both grid rows, stretches the left rows and leaves a big
+    // gap. On mobile the wrappers dissolve (display:contents) so the tab
+    // logic still sees flat sections.
     container.innerHTML = `
       <div class="home-search-hero" id="home-search-hero"></div>
       <div class="topic-layout" id="topic-layout">
         ${bodyTabsRow({ showRelated: false, showTrending: true })}
-        <section class="layout-section" id="section-trending"></section>
-        <section class="layout-section" id="section-shortcuts"></section>
-        <section class="layout-section" id="section-newsfeed"></section>
+        <div class="home-col-left">
+          <section class="layout-section" id="section-shortcuts"></section>
+          <section class="layout-section" id="section-trending"></section>
+        </div>
+        <div class="home-col-main">
+          <section class="layout-section" id="section-newsfeed"></section>
+        </div>
       </div>
     `;
     homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });

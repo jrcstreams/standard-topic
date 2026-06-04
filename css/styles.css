@@ -12543,19 +12543,32 @@ body.home-search.app-mode.sticky-always.has-subnav #content {
   padding: calc(64px + var(--subnav-height, 66px) + 1rem) 0 3rem;
 }
 body.home-search.app-mode .topic-layout {
-  height: auto;
-  padding: 0 2rem 1rem;
+  height: auto; max-width: var(--max-width); margin: 0 auto; padding: 0 2rem 2rem;
 }
+/* Desktop: independent columns — left = Intelligence + Trending, right =
+   News Feed. The wrappers keep the columns from sharing/stretching rows. */
 @media (min-width: 900px) {
-  /* Both rows size to content (no viewport-fill 1fr) since the page scrolls. */
-  body.home-search.app-mode .topic-layout:not(.is-custom):has(#section-trending) {
-    grid-template-rows: auto auto;
+  body.home-search.app-mode .topic-layout {
+    grid-template-columns: 320px minmax(0, 1fr);
+    grid-template-rows: auto;
+    align-items: start;
+    gap: 0;
   }
+  body.home-search .home-col-left { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; padding-right: 2.5rem; }
+  body.home-search .home-col-main { min-width: 0; padding-left: 2.5rem; border-left: 1px solid #e2e8f0; }
+}
+/* Mobile: wrappers dissolve so the tab logic still sees flat sections. */
+@media (max-width: 899.98px) {
+  body.home-search .home-col-left, body.home-search .home-col-main { display: contents; }
 }
 /* Cards size to content + the page scrolls (no internal card scrollbars). */
 body.home-search .layout-section { overflow: visible; }
 body.home-search .topic-layout .shortcuts-scroll-wrap,
-body.home-search .topic-layout .trending-scroll { max-height: none; }
+body.home-search .topic-layout .trending-scroll,
+body.home-search .topic-layout .newsfeed-scroll-wrap { max-height: none; }
+/* News Feed never overflows its column. */
+body.home-search #section-newsfeed, body.home-search .news-list, body.home-search .news-card { min-width: 0; max-width: 100%; }
+body.home-search .news-card-title, body.home-search .news-card-desc { overflow-wrap: anywhere; }
 
 .home-search-hero { max-width: 960px; margin: 0 auto; padding: 0.4rem 1rem 0.6rem; }
 .home-search-hero .search-panel-results { max-width: 100%; }
@@ -12616,13 +12629,6 @@ body.home-search #topic-layout { margin-top: 0.6rem; }
 .search-panel-results .ti-accordions { grid-auto-flow: row dense; }
 @media (min-width: 720px) {
   .search-panel-results .ti-accordion[open] { grid-column: 1 / -1; }
-}
-
-/* Trending Now was buried below Topic Intelligence on the scrolling home —
-   surface it to the TOP of the left column. */
-@media (min-width: 900px) {
-  body.home-search.app-mode .topic-layout:not(.is-custom):has(#section-trending) > #section-trending { grid-row: 1; margin-top: 0; }
-  body.home-search.app-mode .topic-layout:not(.is-custom):has(#section-trending) > #section-shortcuts { grid-row: 2; margin-top: 1.25rem; }
 }
 
 /* Mobile: the tab band goes full-bleed (edge to edge) again. */
