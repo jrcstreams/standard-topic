@@ -12522,3 +12522,12 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 @media (min-width: 720px) {
   .search-panel-results .ti-accordions { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem 0.9rem; align-items: start; }
 }
+
+/* Search panel inside the takeover modal: pad the card. Collapsed = overflow
+   visible so the suggestions dropdown can escape the short card; expanded =
+   scroll the tall accordions within the card's max-height. */
+.search-page-panel.takeover-panel { overflow: visible; padding: 0.7rem 1.15rem 1.3rem; }
+.search-page-panel.takeover-panel:has(.search-panel[data-state="expanded"]) { overflow-y: auto; }
+.search-panel--modal { min-height: 0; }
+.search-panel--modal .search-panel-close { top: 0.5rem; right: 0.5rem; }
+.search-panel--modal .search-panel-hero-inner { padding: 1.8rem 1rem 1.2rem; }

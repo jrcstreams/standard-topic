@@ -2149,9 +2149,136 @@ let lastBaseRouteKey = null;
 let searchModalOverlay = null;
 let searchModalPanel = null;
 let searchModalTerm = '';
+let searchPanelModalCtl = null;
+let homeSearchPanelCtl = null;
 
 const SEARCH_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
 const X_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>';
+const LINK_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
+
+// Shared expanding search panel — used by the nav modal (mode:'modal') and
+// the homepage hero (mode:'inline'). Renders hero + search bar + suggestions
+// + results host, owns the collapse/expand animation, returns a controller.
+function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
+  const isModal = mode === 'modal';
+  container.innerHTML = `
+    <div class="search-panel search-panel--${mode}" data-state="collapsed">
+      ${isModal ? `<button type="button" class="takeover-close search-panel-close" aria-label="Close">${X_ICON_SVG}</button>` : ''}
+      <div class="search-panel-hero"><div class="search-panel-hero-inner">
+        <h2 class="search-panel-title">News, Resources and AI Knowledge.<br>On any topic.</h2>
+        <p class="search-panel-sub">Type any topic and we'll build out web sources, AI shortcuts, and analysis tools tailored to it.</p>
+      </div></div>
+      <div class="search-panel-barrow">
+        <form class="search-panel-form" role="search" autocomplete="off">
+          <span class="search-panel-icon" aria-hidden="true">${SEARCH_ICON_SVG}</span>
+          <input class="search-panel-input" type="search" placeholder="Search any topic…" aria-label="Search any topic" value="${escapeAttr(term)}">
+          <button type="button" class="search-panel-clear" aria-label="Clear search" hidden>${X_ICON_SVG}</button>
+        </form>
+        <div class="search-panel-suggest" role="listbox" hidden></div>
+      </div>
+      <div class="search-panel-tools" hidden>
+        <button type="button" class="search-panel-copy">${LINK_ICON_SVG}<span>Copy link</span></button>
+      </div>
+      <div class="search-panel-results"><div class="search-panel-results-inner"></div></div>
+    </div>`;
+
+  const panelEl = container.querySelector('.search-panel');
+  const form = panelEl.querySelector('.search-panel-form');
+  const input = panelEl.querySelector('.search-panel-input');
+  const clearBtn = panelEl.querySelector('.search-panel-clear');
+  const suggestEl = panelEl.querySelector('.search-panel-suggest');
+  const toolsEl = panelEl.querySelector('.search-panel-tools');
+  const copyBtn = panelEl.querySelector('.search-panel-copy');
+  const resultsInner = panelEl.querySelector('.search-panel-results-inner');
+  let currentTerm = '';
+  let suggestItems = [];   // [{type:'topic', slug, name, parent} | {type:'custom', term}]
+  let activeIdx = -1;
+
+  function expand(rawTerm) {
+    const t = (rawTerm || '').trim();
+    if (!t) return;
+    currentTerm = t;
+    input.value = t;
+    clearBtn.hidden = false;
+    hideSuggest();
+    resultsInner.innerHTML = '';
+    renderShortcutsSidebar(resultsInner, { type: 'custom', term: t, tab: 'shortcuts' }, false, true, t);
+    panelEl.dataset.state = 'expanded';
+    toolsEl.hidden = isModal;   // copy-link only on the inline homepage hero
+    ctl.onExpand && ctl.onExpand(t);
+  }
+  function collapse() {
+    currentTerm = '';
+    input.value = '';
+    clearBtn.hidden = true;
+    toolsEl.hidden = true;
+    panelEl.dataset.state = 'collapsed';
+    hideSuggest();
+    resultsInner.innerHTML = '';
+    ctl.onCollapse && ctl.onCollapse();
+  }
+  function hideSuggest() { suggestEl.hidden = true; suggestEl.innerHTML = ''; suggestItems = []; activeIdx = -1; }
+  function refreshSuggestions() {
+    const q = input.value.trim();
+    if (!q || panelEl.dataset.state === 'expanded') { hideSuggest(); return; }
+    const topics = searchTopics(q).slice(0, 6);
+    suggestItems = topics.map(t => ({ type: 'topic', slug: t.slug, name: t.name, parent: t.parentName }))
+      .concat([{ type: 'custom', term: q }]);
+    activeIdx = -1;
+    suggestEl.innerHTML = suggestItems.map((it, i) => it.type === 'topic'
+      ? `<button type="button" class="search-panel-suggest-row" data-i="${i}" role="option"><span class="search-panel-suggest-name">${escapeHTML(it.name)}</span>${it.parent ? `<span class="search-panel-suggest-parent">${escapeHTML(it.parent)}</span>` : ''}</button>`
+      : `<button type="button" class="search-panel-suggest-row is-custom" data-i="${i}" role="option"><span class="search-panel-suggest-name">Search "${escapeHTML(it.term)}" &rarr;</span></button>`
+    ).join('');
+    suggestEl.hidden = false;
+    suggestEl.querySelectorAll('.search-panel-suggest-row').forEach(row => {
+      row.addEventListener('click', () => chooseSuggestion(Number(row.dataset.i)));
+    });
+  }
+  function chooseSuggestion(i) {
+    const it = suggestItems[i];
+    if (!it) return;
+    if (it.type === 'topic') {
+      hideSuggest();
+      if (isModal) { closeSearchPageModal(); document.body.style.overflow = ''; }
+      navigate('#/topic/' + it.slug);
+    } else {
+      expand(it.term);
+    }
+  }
+  function moveActive(d) {
+    if (suggestEl.hidden || !suggestItems.length) return;
+    activeIdx = (activeIdx + d + suggestItems.length) % suggestItems.length;
+    suggestEl.querySelectorAll('.search-panel-suggest-row').forEach((r, i) => r.classList.toggle('is-active', i === activeIdx));
+  }
+
+  form.addEventListener('submit', (e) => { e.preventDefault(); const v = input.value.trim(); if (v) { if (activeIdx >= 0 && !suggestEl.hidden) chooseSuggestion(activeIdx); else expand(v); } });
+  input.addEventListener('input', () => { clearBtn.hidden = !input.value; refreshSuggestions(); });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); moveActive(1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); moveActive(-1); }
+    else if (e.key === 'Escape' && !suggestEl.hidden) { e.preventDefault(); hideSuggest(); }
+  });
+  document.addEventListener('click', (e) => { if (!panelEl.contains(e.target)) hideSuggest(); });
+  clearBtn.addEventListener('click', () => { collapse(); input.focus(); });
+  copyBtn.addEventListener('click', async () => {
+    if (!currentTerm) return;
+    const url = location.origin + location.pathname + '#/custom/' + encodeURIComponent(currentTerm);
+    try { await navigator.clipboard.writeText(url); } catch (_) {
+      const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (_) {} ta.remove();
+    }
+    const label = copyBtn.querySelector('span');
+    copyBtn.classList.add('is-copied'); if (label) label.textContent = 'Copied';
+    setTimeout(() => { copyBtn.classList.remove('is-copied'); if (label) label.textContent = 'Copy link'; }, 1600);
+  });
+  panelEl.querySelector('.search-panel-close')?.addEventListener('click', () => userCloseSearchModal());
+
+  const ctl = { el: panelEl, input, expand, collapse, refreshSuggestions, onExpand: null, onCollapse: null,
+    setTerm(t) { input.value = t || ''; clearBtn.hidden = !input.value; },
+    focus() { try { input.focus(); } catch (_) {} } };
+  if (term && term.trim()) expand(term);
+  return ctl;
+}
 
 function initSearchPageModal() {
   searchModalOverlay = document.createElement('div');
@@ -2180,12 +2307,17 @@ function isSearchModalOpen() {
 
 function openSearchPageModal(term) {
   if (!searchModalOverlay) return;
-  searchModalTerm = term || '';
-  renderSearchModalBody(searchModalTerm);
-  if (!isSearchModalOpen()) {
-    searchModalOverlay.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+  const t = (term || '').trim();
+  // Already open — expand/collapse the live panel so the URL update from a
+  // submit doesn't replace the animating panel with a fresh render.
+  if (isSearchModalOpen() && searchPanelModalCtl) {
+    if (t) searchPanelModalCtl.expand(t); else searchPanelModalCtl.collapse();
+    return;
   }
+  searchModalTerm = t;
+  renderSearchModalBody(t);
+  searchModalOverlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
   searchModalPanel.classList.remove('is-in');
   void searchModalPanel.offsetWidth;
   searchModalPanel.classList.add('is-in');
@@ -2210,55 +2342,18 @@ function userCloseSearchModal() {
 }
 
 function renderSearchModalBody(term) {
-  const t = (term || '').trim();
-  if (!t) {
-    // Empty state — centered hero with the search bar in the middle.
-    searchModalPanel.innerHTML = `
-      <button type="button" class="takeover-close search-page-close-float" id="search-modal-close" aria-label="Close">${X_ICON_SVG}</button>
-      <div class="search-page-hero">
-        <h2 class="search-page-hero-title">News, Resources and AI Knowledge.<br>On any topic.</h2>
-        <p class="search-page-hero-sub">Type any topic and we'll build out web sources, AI shortcuts, and analysis tools tailored to it.</p>
-        <form class="search-page-form search-page-form--hero" id="search-page-form" autocomplete="off" role="search">
-          <span class="search-page-input-icon" aria-hidden="true">${SEARCH_ICON_SVG}</span>
-          <input class="search-page-input" id="search-page-input" type="search" placeholder="Search any topic…" aria-label="Search any topic">
-        </form>
-      </div>`;
-  } else {
-    // Filled state — search pinned to the top, intelligence below.
-    searchModalPanel.innerHTML = `
-      <div class="takeover-head search-page-head">
-        <form class="search-page-form search-page-form--top" id="search-page-form" autocomplete="off" role="search">
-          <span class="search-page-input-icon" aria-hidden="true">${SEARCH_ICON_SVG}</span>
-          <input class="search-page-input" id="search-page-input" type="search" value="${escapeAttr(t)}" placeholder="Search any topic…" aria-label="Search any topic">
-          <button type="button" class="search-page-clear" id="search-page-clear" aria-label="Clear search">${X_ICON_SVG}</button>
-        </form>
-        <button type="button" class="takeover-close" id="search-modal-close" aria-label="Close">${X_ICON_SVG}</button>
-      </div>
-      <div class="takeover-body search-page-body">
-        <div class="search-page-results" id="search-page-results"></div>
-      </div>`;
-    const results = searchModalPanel.querySelector('#search-page-results');
-    renderShortcutsSidebar(results, { type: 'custom', term: t, tab: 'shortcuts' }, false, true, t);
-  }
-  wireSearchModal();
-}
-
-function wireSearchModal() {
-  searchModalPanel.querySelector('#search-modal-close')?.addEventListener('click', userCloseSearchModal);
-  const form = searchModalPanel.querySelector('#search-page-form');
-  const input = searchModalPanel.querySelector('#search-page-input');
-  if (form && input) {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const v = input.value.trim();
-      if (v) navigate('#/custom/' + encodeURIComponent(v));
-    });
-    if (!searchModalTerm) setTimeout(() => { try { input.focus(); } catch (_) {} }, 60);
-  }
-  // Clear → back to the empty hero (modal stays open).
-  searchModalPanel.querySelector('#search-page-clear')?.addEventListener('click', () => {
-    navigate('#/search');
-  });
+  searchPanelModalCtl = renderSearchPanel(searchModalPanel, { mode: 'modal', term });
+  // Modal submit keeps the URL shareable; the openSearchPageModal guard makes
+  // the resulting route change expand the live panel rather than rebuild it.
+  searchPanelModalCtl.onExpand = (t) => {
+    const target = '#/custom/' + encodeURIComponent(t);
+    if (window.location.hash !== target) navigate(target);
+  };
+  // Clearing inside the modal drops back to the empty-search route.
+  searchPanelModalCtl.onCollapse = () => {
+    if ((window.location.hash || '').startsWith('#/custom/')) navigate('#/search');
+  };
+  if (!term || !term.trim()) setTimeout(() => searchPanelModalCtl.focus(), 60);
 }
 
 function renderPage(route) {
