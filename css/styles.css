@@ -12566,9 +12566,10 @@ body.home-search .layout-section { overflow: visible; }
 body.home-search .topic-layout .shortcuts-scroll-wrap,
 body.home-search .topic-layout .trending-scroll,
 body.home-search .topic-layout .newsfeed-scroll-wrap { max-height: none; }
-/* News Feed never overflows its column. */
-body.home-search #section-newsfeed, body.home-search .news-list, body.home-search .news-card { min-width: 0; max-width: 100%; }
-body.home-search .news-card-title, body.home-search .news-card-desc { overflow-wrap: anywhere; }
+/* News Feed never overflows its column — global insurance against long
+   titles/URLs (applies on home + topic pages). */
+#section-newsfeed, .newsfeed-card, .newsfeed-scroll-wrap, .news-list, .news-card, .news-card-link { min-width: 0; max-width: 100%; }
+.news-card-title, .news-card-desc { overflow-wrap: anywhere; }
 
 .home-search-hero { max-width: 960px; margin: 0 auto; padding: 0.4rem 1rem 0.6rem; }
 .home-search-hero .search-panel-results { max-width: 100%; }
