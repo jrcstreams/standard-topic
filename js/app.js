@@ -11,7 +11,7 @@ import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
 import { initPromptModal } from './components/prompt-modal.js';
-import { renderTrending } from './components/trending.js';
+import { renderTrending, renderTrendingTopics } from './components/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js';
 import { initTrendingListModal } from './components/trending-list-modal.js';
@@ -1297,29 +1297,22 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     if (barContainer) renderCustomSearchBar(barContainer, customTerm);
     setupCustomStickyBar(container.querySelector('.custom-search-sticky'));
   } else if (isHome) {
-    // Homepage: inline search hero on top, then Shortcuts + News Feed.
-    // Body tabs let mobile users switch between them; CSS hides the tabs
-    // at desktop widths where both panels show side-by-side.
-    // Wrap the left column (Intelligence + Trending) so it stays an
-    // independent column on desktop — otherwise the tall News Feed,
-    // spanning both grid rows, stretches the left rows and leaves a big
-    // gap. On mobile the wrappers dissolve (display:contents) so the tab
-    // logic still sees flat sections.
+    // Homepage: search hero, then a full-width "Trending Topics" card
+    // section, then the Intelligence + News Feed columns. Each column now
+    // holds exactly one section (Trending lives in its own section above),
+    // so the mobile tab switcher works on flat direct-child sections.
     container.innerHTML = `
       <div class="home-search-hero" id="home-search-hero"></div>
+      <section class="home-trending" id="home-trending"></section>
       <div class="topic-layout" id="topic-layout">
-        ${bodyTabsRow({ showRelated: false, showTrending: true })}
-        <div class="home-col-left">
-          <section class="layout-section" id="section-shortcuts"></section>
-          <section class="layout-section" id="section-trending"></section>
-        </div>
-        <div class="home-col-main">
-          <section class="layout-section" id="section-newsfeed"></section>
-        </div>
+        ${bodyTabsRow({ showRelated: false, showTrending: false })}
+        <section class="layout-section" id="section-shortcuts"></section>
+        <section class="layout-section" id="section-newsfeed"></section>
       </div>
     `;
     homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });
     setupHomeHeroFade(container.querySelector('#home-search-hero'));
+    renderTrendingTopics(container.querySelector('#home-trending'), { limit: 6, viewAll: true });
   } else {
     // Topic pages: Shortcuts + News Feed + Related Topics.
     container.innerHTML = `

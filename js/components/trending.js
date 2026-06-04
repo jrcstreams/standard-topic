@@ -79,24 +79,98 @@ function wireScrollFade(container) {
   setTimeout(update, 150); // re-check after fonts/layout settle
 }
 
-export function renderTrending(container) {
-  container.innerHTML = skeleton();
+// ===== Trend cards (rich SerpAPI data) ================================
+// Approx. search count → compact label: 200000 → "200K+", 2e6 → "2M+".
+function formatVolume(n) {
+  if (!Number.isFinite(n) || n <= 0) return '';
+  if (n >= 1e6) return `${(n / 1e6).toFixed(n >= 1e7 ? 0 : 1).replace(/\.0$/, '')}M+`;
+  if (n >= 1e3) return `${Math.round(n / 1e3)}K+`;
+  return `${n}`;
+}
+// increase_percentage 1000 → "+1,000%". Google reports "Breakout" (very high) as huge numbers.
+function formatPercent(n) {
+  if (!Number.isFinite(n) || n <= 0) return '';
+  return `+${n.toLocaleString('en-US')}%`;
+}
+// startedAt → "Trending for 5h" style duration.
+function durationLabel(iso) {
+  if (!iso) return '';
+  const start = new Date(iso).getTime();
+  if (Number.isNaN(start)) return '';
+  const mins = Math.max(0, Math.round((Date.now() - start) / 60000));
+  if (mins < 60) return `${mins || 1}m`;
+  const hrs = Math.round(mins / 60);
+  if (hrs < 24) return `${hrs}h`;
+  return `${Math.round(hrs / 24)}d`;
+}
+const TREND_UP_SVG = `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>`;
 
+function trendCardHTML(topic, idx) {
+  const cat = (topic.categories && topic.categories[0]) || '';
+  const dur = durationLabel(topic.startedAt);
+  const pct = formatPercent(topic.increasePercent);
+  const vol = formatVolume(topic.searchVolume);
+  const stats = [];
+  if (pct) stats.push(`<span class="trend-card-badge">${TREND_UP_SVG}${pct}</span>`);
+  if (vol) stats.push(`<span class="trend-card-stat trend-card-vol">${escapeHTML(vol)} searches</span>`);
+  if (dur) stats.push(`<span class="trend-card-stat trend-card-since">Trending for ${escapeHTML(dur)}</span>`);
+  return `
+    <button type="button" class="trend-card" data-idx="${idx}" title="Open ${escapeAttr(topic.query)}">
+      <span class="trend-card-main">
+        <span class="trend-card-titlerow">
+          <span class="trend-card-title">${escapeHTML(topic.query)}</span>
+          ${cat ? `<span class="trend-card-cat">${escapeHTML(cat)}</span>` : ''}
+        </span>
+        ${stats.length ? `<span class="trend-card-stats">${stats.join('')}</span>` : ''}
+      </span>
+      ${CHEV}
+    </button>`;
+}
+
+function trendCardsShell(topics, { fetched, viewAll }) {
+  return `
+    <div class="trending-topics">
+      <div class="trending-topics-head">
+        <h3 class="trending-topics-title">Trending Topics</h3>
+        <span class="trending-topics-meta">via Google Trends${fetched ? ` · Updated ${escapeHTML(relativeTime(fetched))}` : ''}</span>
+      </div>
+      <div class="trend-card-grid">${topics.map((t, i) => trendCardHTML(t, i)).join('')}</div>
+      ${viewAll ? `<button type="button" class="trending-topics-viewall" data-action="view-all-trending">View all trending ${CHEV}</button>` : ''}
+    </div>`;
+}
+
+function trendCardsSkeleton() {
+  const cards = Array.from({ length: 6 }, () => `<div class="trend-card trend-card-skel"></div>`).join('');
+  return `<div class="trending-topics"><div class="trending-topics-head"><h3 class="trending-topics-title">Trending Topics</h3></div><div class="trend-card-grid">${cards}</div></div>`;
+}
+
+// Render the "Trending Topics" card grid. limit caps how many cards;
+// viewAll adds a "View all trending →" button (opens the Trending modal).
+export function renderTrendingTopics(container, { limit = 20, viewAll = false } = {}) {
+  container.innerHTML = trendCardsSkeleton();
   fetchTrending().then(({ topics, fetched }) => {
     if (!topics.length) {
-      container.innerHTML = shell(`<p class="trending-empty">Trending is taking a break — check back soon.</p>`, fetched);
+      container.innerHTML = `<div class="trending-topics"><div class="trending-topics-head"><h3 class="trending-topics-title">Trending Topics</h3></div><p class="trending-empty">Trending is taking a break — check back soon.</p></div>`;
       return;
     }
-    container.innerHTML = shell(listShell(topics), fetched);
-    wireScrollFade(container);
-    // Each row opens the trending detail modal with its full item (no nav).
-    container.querySelectorAll('.trending-row').forEach(btn => {
+    const shown = topics.slice(0, limit);
+    container.innerHTML = trendCardsShell(shown, { fetched, viewAll });
+    container.querySelectorAll('.trend-card').forEach(btn => {
+      if (btn.classList.contains('trend-card-skel')) return;
       btn.addEventListener('click', () => {
-        const t = topics[Number(btn.dataset.idx)];
+        const t = shown[Number(btn.dataset.idx)];
         if (t) window.dispatchEvent(new CustomEvent('open-trending-detail', { detail: t }));
       });
     });
+    container.querySelector('[data-action="view-all-trending"]')?.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('open-trending-list'));
+    });
   }).catch(() => {
-    container.innerHTML = shell(`<p class="trending-empty">Trending is taking a break — check back soon.</p>`, null);
+    container.innerHTML = `<div class="trending-topics"><div class="trending-topics-head"><h3 class="trending-topics-title">Trending Topics</h3></div><p class="trending-empty">Trending is taking a break — check back soon.</p></div>`;
   });
+}
+
+// Back-compat name used by the Trending modal — full card grid, no cap badge.
+export function renderTrending(container) {
+  renderTrendingTopics(container, { limit: 20, viewAll: false });
 }

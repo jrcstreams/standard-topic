@@ -12552,32 +12552,25 @@ body.home-search.app-mode .topic-layout {
 @media (min-width: 720px) {
   .search-panel--inline[data-state="collapsed"] .search-panel-barrow { max-width: 760px; margin-left: auto; margin-right: auto; }
 }
-/* Desktop: independent columns — left = Intelligence + Trending, right =
-   News Feed. The wrappers keep the columns from sharing/stretching rows. */
+/* Desktop: simple two columns — Intelligence | News Feed. Each column is a
+   single section now (Trending is its own full-width section above), so no
+   row-spanning or gap tricks are needed and the base app-mode placement +
+   separator apply directly. */
 @media (min-width: 900px) {
   body.home-search.app-mode .topic-layout {
     grid-template-columns: 320px minmax(0, 1fr);
-    grid-template-rows: auto;
     align-items: start;
     gap: 0;
   }
-  body.home-search .home-col-left { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; padding-right: 2.5rem; }
-  body.home-search .home-col-main { min-width: 0; padding-left: 2.5rem; border-left: 1px solid #e2e8f0; }
-}
-/* Mobile: wrappers dissolve so the tab logic still sees flat sections. */
-@media (max-width: 899.98px) {
-  body.home-search .home-col-left, body.home-search .home-col-main { display: contents; }
 }
 /* Cards size to content + the page scrolls. The inner scroll-wraps are
    `flex: 1 1 0` so they fill app-mode's fixed-height panel — but on the
    scrolling home there's no fixed height, so they collapse to ~0 and clip
-   the accordions / trending list. Make everything content-sized instead. */
+   the accordions. Make everything content-sized instead. */
 body.home-search .layout-section,
 body.home-search .shortcuts-sidebar,
-body.home-search .trending-card,
 body.home-search .newsfeed-card { height: auto; overflow: visible; }
 body.home-search .topic-layout .shortcuts-scroll-wrap,
-body.home-search .topic-layout .trending-scroll,
 body.home-search .topic-layout .newsfeed-scroll-wrap {
   flex: none; height: auto; max-height: none; overflow: visible;
 }
@@ -12660,3 +12653,51 @@ body.home-search #topic-layout { margin-top: 0.6rem; }
 /* Hide the native type="search" clear button — we have one explicit X. */
 .search-panel-input::-webkit-search-cancel-button,
 .search-panel-input::-webkit-search-decoration { -webkit-appearance: none; appearance: none; display: none; }
+
+/* === Trending Topics card section (homepage + Trending modal) ========= */
+.home-trending { max-width: 1280px; margin: 0.2rem auto 0.4rem; padding: 0 2rem; }
+.trending-topics-head { display: flex; align-items: baseline; gap: 0.7rem; padding-bottom: 0.6rem; border-bottom: 1px solid #d6dae2; margin-bottom: 0.9rem; }
+.trending-topics-title { margin: 0; font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; letter-spacing: -0.024em; color: #1c3a6b; }
+.trending-topics-meta { font-size: 0.8rem; color: var(--color-text-muted); }
+.trend-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(236px, 1fr)); gap: 0.7rem; }
+.trend-card {
+  display: flex; align-items: center; gap: 0.5rem; text-align: left; width: 100%;
+  background: #fff; border: 1px solid #e6e8ec; border-radius: 12px; padding: 0.8rem 0.85rem 0.8rem 0.95rem;
+  font-family: inherit; color: var(--color-text); cursor: pointer;
+  transition: border-color 0.14s, box-shadow 0.14s, transform 0.06s;
+}
+.trend-card:hover { border-color: #c8d3e3; box-shadow: 0 6px 16px -8px rgba(15, 26, 46, 0.18); }
+.trend-card:active { transform: translateY(1px); }
+.trend-card-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 0.3rem; }
+.trend-card-titlerow { display: flex; align-items: baseline; gap: 0.5rem; min-width: 0; }
+.trend-card-title { font-size: 0.98rem; font-weight: 600; line-height: 1.25; overflow-wrap: anywhere; }
+.trend-card-cat { flex: 0 0 auto; font-size: 0.74rem; color: var(--color-text-muted); }
+.trend-card-stats { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; }
+.trend-card-badge { display: inline-flex; align-items: center; gap: 0.2rem; font-size: 0.74rem; font-weight: 700; color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 999px; padding: 0.08rem 0.45rem; }
+.trend-card-badge svg { display: block; }
+.trend-card-stat { font-size: 0.74rem; color: var(--color-text-muted); }
+.trend-card-since { color: #9aa6b8; }
+.trend-card .trending-row-chev { flex: 0 0 auto; color: #c2cad6; }
+.trend-card-skel { display: block; height: 80px; border-color: #eef0f4; background: #f5f7fb; pointer-events: none; }
+.trending-topics-viewall {
+  display: inline-flex; align-items: center; gap: 0.25rem; margin-top: 0.9rem;
+  background: none; border: none; padding: 0.2rem 0; font-family: inherit; font-size: 0.9rem; font-weight: 600;
+  color: var(--color-accent, #f97316); cursor: pointer;
+}
+.trending-topics-viewall:hover { text-decoration: underline; }
+.trending-topics-viewall .trending-row-chev { color: currentColor; }
+
+/* Trending modal hosts the same card grid. */
+.tlm-body .trending-topics { display: block; }
+.tlm-body .trend-card-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+@media (max-width: 640px) {
+  .tlm-body .trend-card-grid { grid-template-columns: 1fr; }
+}
+
+/* Tighten the homepage's trailing space (kills the big bottom gap). */
+body.home-search.app-mode #content { padding-bottom: 1.5rem; }
+body.home-search.app-mode .topic-layout { padding-bottom: 1rem; }
+@media (max-width: 899.98px) {
+  .home-trending { padding: 0 1rem; margin-top: 0; }
+  .trend-card-grid { grid-template-columns: 1fr; }
+}
