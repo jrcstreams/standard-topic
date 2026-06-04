@@ -12237,8 +12237,9 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .td-sub { font-size: 0.76rem; font-weight: 500; color: var(--color-text-muted); }
 .td-trends-link { display: inline-flex; align-items: center; gap: 0.2rem; font-size: 0.76rem; font-weight: 600; color: #2563eb; text-decoration: none; }
 .td-trends-link:hover { text-decoration: underline; }
-.td-close { position: absolute; top: 0.85rem; right: 0.9rem; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: none; border-radius: 50%; color: var(--color-text-muted); cursor: pointer; transition: background 0.14s, color 0.14s; }
-.td-close:hover { background: #f3f4f6; color: var(--color-text); }
+.td-close { position: absolute; top: 0.85rem; right: 0.9rem; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; background: #f1f3f7; border: 1px solid #e7eaf0; border-radius: 9px; color: var(--color-text-muted); cursor: pointer; transition: background 0.14s, color 0.14s; }
+.td-close:hover { background: #e8ecf2; color: var(--color-text); }
+.td-close svg { width: 15px; height: 15px; display: block; }
 
 .td-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 1rem 1.2rem 1.25rem; }
 
@@ -12300,13 +12301,16 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
   transition: opacity 0.18s ease, transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.05);
 }
 .tlm-panel.is-in { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+/* Match the search modal's close chip so it stands out (was a faint
+   borderless circle). */
 .tlm-close {
-  position: absolute; top: 0.7rem; right: 0.8rem; z-index: 2;
-  width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;
-  background: transparent; border: none; border-radius: 50%;
+  position: absolute; top: 0.85rem; right: 0.9rem; z-index: 2;
+  width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center;
+  background: #f1f3f7; border: 1px solid #e7eaf0; border-radius: 9px;
   color: var(--color-text-muted); cursor: pointer; transition: background 0.14s, color 0.14s;
 }
-.tlm-close:hover { background: #f3f4f6; color: var(--color-text); }
+.tlm-close:hover { background: #e8ecf2; color: var(--color-text); }
+.tlm-close svg { width: 15px; height: 15px; display: block; }
 /* Scroll the modal body itself — the trend-card grid has no inner scroll
    container (the old .trending-scroll element is gone), so without this the
    list overflows the clipped panel with no way to scroll. */
@@ -12559,6 +12563,13 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .search-panel--modal { min-height: 0; }
 .search-panel--modal .search-panel-close { top: 0.5rem; right: 0.5rem; }
 .search-panel--modal .search-panel-hero-inner { padding: 1.8rem 1rem 1.2rem; }
+/* Search modal on mobile: bias the hero down from the very top (not glued
+   to it, not perfectly centered) so the collapsed state reads as intentional
+   and leaves room below for results to expand into. Consistent across
+   collapsed/expanded so the bar doesn't jump on submit. */
+@media (max-width: 640px) {
+  .search-page-panel.takeover-panel { padding-top: 13vh; }
+}
 
 /* === Homepage inline search hero ===================================== */
 /* Home keeps the app-mode grid placement but unlocks the viewport lock so
@@ -12667,7 +12678,7 @@ body.home-search #topic-layout { margin-top: 0.4rem; }
 .search-panel-results .topic-intelligence-panel .sidebar-card-title,
 .search-panel-results .sidebar-card-title {
   font-family: var(--font-display);
-  font-size: 1.05rem;
+  font-size: 1.2rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   text-transform: none;
@@ -12718,7 +12729,7 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
 /* Trending gap is state-aware at every width — roomier when the search is
    collapsed, tighter once results are showing below the bar. */
 body.home-search #home-search-hero:has(.search-panel[data-state="collapsed"]) + #home-trending { margin-top: 1.5rem; }
-body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #home-trending { margin-top: 0.6rem; }
+body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #home-trending { margin-top: 0.95rem; }
 /* On the homepage the whole section sits in a soft card to set it apart. */
 .home-trending .trending-topics {
   background: #f6f8fc; border: 1px solid #e9edf4; border-radius: 16px;
@@ -12764,10 +12775,8 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
 .trending-topics-viewall:hover { color: var(--color-primary-light, #3a4a63); text-decoration: underline; }
 .trending-topics-viewall .trending-row-chev { color: currentColor; }
 
-/* Homepage: 6 terms in a 3-col grid; drop to 3 terms as the screen narrows. */
-@media (max-width: 899.98px) {
-  .home-trending .trend-card:nth-child(n+4) { display: none; }
-}
+/* Homepage: 6 terms in a 3-col grid; keep all 6 on tablet/mobile (single
+   column) rather than trimming to 3. */
 @media (max-width: 599.98px) {
   .home-trending .trend-card-grid { grid-template-columns: 1fr; }
 }
