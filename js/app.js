@@ -160,7 +160,7 @@ function renderLayout(route) {
   subHeader.innerHTML = '';
   const stayingInHomeDesktop = isHome && !isMobile && wasOnHomeDesktop;
   if (heroEl && !stayingInHomeDesktop) heroEl.innerHTML = '';
-  document.body.classList.remove('sticky-always', 'has-subnav', 'home-mode', 'show-subnav-tabs', 'app-mode', 'custom-mode');
+  document.body.classList.remove('sticky-always', 'has-subnav', 'home-mode', 'show-subnav-tabs', 'app-mode', 'custom-mode', 'home-search');
 
   // Always render the main sticky bar
   renderStickyHeroBar(siteHeader, route);
@@ -174,8 +174,13 @@ function renderLayout(route) {
   // than long-scroll content. Custom-search pages opt out — they
   // scroll naturally so the in-page sticky search bar can pin to
   // the top as the user scrolls past it.
-  if (route.type === 'home' || route.type === 'topic') {
+  if (route.type === 'topic') {
     document.body.classList.add('app-mode');
+  }
+  // Home keeps the app-mode grid (section placement) but adds home-search,
+  // which unlocks scrolling so the search hero can sit on top.
+  if (route.type === 'home') {
+    document.body.classList.add('app-mode', 'home-search');
   }
 
   // Custom-search pages scroll naturally (no app-mode lock) and carry
@@ -1292,10 +1297,11 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     if (barContainer) renderCustomSearchBar(barContainer, customTerm);
     setupCustomStickyBar(container.querySelector('.custom-search-sticky'));
   } else if (isHome) {
-    // Homepage: Shortcuts + News Feed. Body tabs at the top let
-    // mobile users switch between them; CSS hides the tabs at
-    // desktop widths where both panels show side-by-side.
+    // Homepage: inline search hero on top, then Shortcuts + News Feed.
+    // Body tabs let mobile users switch between them; CSS hides the tabs
+    // at desktop widths where both panels show side-by-side.
     container.innerHTML = `
+      <div class="home-search-hero" id="home-search-hero"></div>
       <div class="topic-layout" id="topic-layout">
         ${bodyTabsRow({ showRelated: false, showTrending: true })}
         <section class="layout-section" id="section-trending"></section>
@@ -1303,6 +1309,8 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         <section class="layout-section" id="section-newsfeed"></section>
       </div>
     `;
+    homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });
+    setupHomeHeroFade(container.querySelector('#home-search-hero'));
   } else {
     // Topic pages: Shortcuts + News Feed + Related Topics.
     container.innerHTML = `
@@ -2278,6 +2286,28 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     focus() { try { input.focus(); } catch (_) {} } };
   if (term && term.trim()) expand(term);
   return ctl;
+}
+
+// Mobile homepage: fade the search hero as the user scrolls toward the
+// sticky tab bar, then latch it dismissed (one-way until reload).
+let homeHeroScrollHandler = null;
+function setupHomeHeroFade(heroEl) {
+  if (homeHeroScrollHandler) { window.removeEventListener('scroll', homeHeroScrollHandler); homeHeroScrollHandler = null; }
+  document.body.classList.remove('hero-dismissed');
+  document.documentElement.style.setProperty('--hero-fade', '1');
+  if (!heroEl) return;
+  const isMobile = () => window.matchMedia(MOBILE_QUERY).matches;
+  homeHeroScrollHandler = () => {
+    if (!isMobile() || document.body.classList.contains('hero-dismissed')) return;
+    // Don't fade while the user is mid-search (panel expanded).
+    if (heroEl.querySelector('.search-panel[data-state="expanded"]')) return;
+    const h = heroEl.offsetHeight || 1;
+    const y = window.scrollY;
+    const fade = Math.max(0, 1 - y / (h * 0.7));
+    document.documentElement.style.setProperty('--hero-fade', String(fade));
+    if (y > h) document.body.classList.add('hero-dismissed');   // one-way latch
+  };
+  window.addEventListener('scroll', homeHeroScrollHandler, { passive: true });
 }
 
 function initSearchPageModal() {

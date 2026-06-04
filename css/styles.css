@@ -12489,6 +12489,7 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .search-panel-input:focus { outline: none; border-color: var(--color-accent, #f97316); background: #fff; box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.12); }
 .search-panel-clear { position: absolute; right: 0.55rem; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; background: #eceff4; border: none; border-radius: 50%; color: var(--color-text-muted); cursor: pointer; }
 .search-panel-clear:hover { background: #e0e4ec; color: var(--color-text); }
+.search-panel-clear[hidden] { display: none; }
 .search-panel-clear svg { width: 13px; height: 13px; display: block; }
 .search-panel[data-state="expanded"] .search-panel-input { height: 46px; font-size: 1rem; }
 
@@ -12531,3 +12532,45 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .search-panel--modal { min-height: 0; }
 .search-panel--modal .search-panel-close { top: 0.5rem; right: 0.5rem; }
 .search-panel--modal .search-panel-hero-inner { padding: 1.8rem 1rem 1.2rem; }
+
+/* === Homepage inline search hero ===================================== */
+/* Home keeps the app-mode grid placement but unlocks the viewport lock so
+   the search hero sits on top and the whole page scrolls. */
+html:has(body.home-search), body.home-search { overflow: visible; height: auto; }
+body.home-search.app-mode #content,
+body.home-search.app-mode.sticky-always.has-subnav #content {
+  position: static; height: auto; min-height: 0; overflow: visible;
+  padding: calc(64px + var(--subnav-height, 66px) + 1rem) 0 3rem;
+}
+body.home-search.app-mode .topic-layout {
+  height: auto;
+  padding: 0 2rem 1rem;
+}
+@media (min-width: 900px) {
+  /* Both rows size to content (no viewport-fill 1fr) since the page scrolls. */
+  body.home-search.app-mode .topic-layout:not(.is-custom):has(#section-trending) {
+    grid-template-rows: auto auto;
+  }
+}
+/* Cards size to content + the page scrolls (no internal card scrollbars). */
+body.home-search .layout-section { overflow: visible; }
+body.home-search .topic-layout .shortcuts-scroll-wrap,
+body.home-search .topic-layout .trending-scroll { max-height: none; }
+
+.home-search-hero { max-width: 960px; margin: 0 auto; padding: 0.4rem 1rem 0.6rem; }
+.home-search-hero .search-panel-results { max-width: 100%; }
+body.home-search #topic-layout { margin-top: 0.6rem; }
+
+/* Mobile: sticky tabs + one-way fading search hero. */
+@media (max-width: 899.98px) {
+  body.home-search .body-tabs {
+    position: sticky; top: var(--subnav-height, 0px); z-index: 8;
+    background: var(--color-bg, #fff); padding: 0.5rem 0; margin: 0 -0.2rem;
+  }
+  body.home-search .home-search-hero {
+    opacity: var(--hero-fade, 1);
+    transform: translateY(calc((1 - var(--hero-fade, 1)) * -12px));
+    transition: opacity 0.12s linear;
+  }
+  body.home-search.hero-dismissed .home-search-hero { display: none; }
+}
