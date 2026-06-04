@@ -2192,11 +2192,8 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
         <form class="search-panel-form" role="search" autocomplete="off">
           <span class="search-panel-icon" aria-hidden="true">${SEARCH_ICON_SVG}</span>
           <input class="search-panel-input" type="search" placeholder="Search any topic…" aria-label="Search any topic" value="${escapeAttr(term)}">
+          <button type="button" class="search-panel-clear" aria-label="Clear search" hidden>${X_ICON_SVG}</button>
         </form>
-        <div class="search-panel-actions">
-          <button type="button" class="search-panel-copy" aria-label="Copy link">${LINK_ICON_SVG}<span>Copy link</span></button>
-          ${isModal ? '' : `<button type="button" class="search-panel-close" aria-label="Reset search">${X_ICON_SVG}</button>`}
-        </div>
         <div class="search-panel-suggest" role="listbox" hidden></div>
       </div>
       <div class="search-panel-results"><div class="search-panel-results-inner"></div></div>
@@ -2206,9 +2203,21 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   const form = panelEl.querySelector('.search-panel-form');
   const input = panelEl.querySelector('.search-panel-input');
   const suggestEl = panelEl.querySelector('.search-panel-suggest');
-  const copyBtn = panelEl.querySelector('.search-panel-copy');
-  const closeBtn = panelEl.querySelector('.search-panel-close');
+  const clearBtn = panelEl.querySelector('.search-panel-clear');
   const resultsInner = panelEl.querySelector('.search-panel-results-inner');
+  // Copy link lives on the "Search Intelligence" header row, not the bar.
+  // Created here so it keeps its click handler, then re-placed into the
+  // freshly rendered results header after every (re)render.
+  const copyBtn = document.createElement('button');
+  copyBtn.type = 'button';
+  copyBtn.className = 'search-panel-copy';
+  copyBtn.setAttribute('aria-label', 'Copy link');
+  copyBtn.innerHTML = `${LINK_ICON_SVG}<span>Copy link</span>`;
+  function placeCopy() {
+    const hdr = resultsInner.querySelector('.sidebar-card-header');
+    if (hdr) hdr.appendChild(copyBtn);
+  }
+  function syncClear() { if (clearBtn) clearBtn.hidden = !input.value; }
   let currentTerm = '';
   let suggestItems = [];   // [{type:'topic', slug, name, parent} | {type:'custom', term}]
   let activeIdx = -1;
@@ -2221,7 +2230,9 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     hideSuggest();
     resultsInner.innerHTML = '';
     renderShortcutsSidebar(resultsInner, { type: 'custom', term: t, tab: 'shortcuts' }, false, true, t);
+    placeCopy();
     panelEl.dataset.state = 'expanded';
+    syncClear();
     ctl.onExpand && ctl.onExpand(t);
   }
   function collapse() {
@@ -2230,6 +2241,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     panelEl.dataset.state = 'collapsed';
     hideSuggest();
     resultsInner.innerHTML = '';
+    syncClear();
     ctl.onCollapse && ctl.onCollapse();
   }
   function hideSuggest() { suggestEl.hidden = true; suggestEl.innerHTML = ''; suggestItems = []; activeIdx = -1; }
@@ -2272,6 +2284,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   // sublabel under "Search Intelligence" updates instantly for feedback.
   let liveTimer = null;
   input.addEventListener('input', () => {
+    syncClear();
     if (panelEl.dataset.state === 'expanded') {
       const v = input.value.trim();
       const sub = resultsInner.querySelector('[data-role="search-term-sub"]');
@@ -2282,6 +2295,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
         if (t && t !== currentTerm) {
           currentTerm = t;
           renderShortcutsSidebar(resultsInner, { type: 'custom', term: t, tab: 'shortcuts' }, false, true, t);
+          placeCopy();
         }
       }, 350);
     } else {
@@ -2298,10 +2312,21 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   // when already empty (modal only) it closes the modal. Wired to both the
   // modal's corner close and the inline reset button.
   const onClose = () => {
+    // Modal corner-X always closes the modal now that the in-bar clear ✕
+    // handles resetting the term. Inline (homepage) just collapses.
+    if (isModal) { userCloseSearchModal(); return; }
     if (panelEl.dataset.state === 'expanded') { collapse(); input.focus(); }
-    else if (isModal) { userCloseSearchModal(); }
   };
-  panelEl.querySelector('.search-panel-close')?.addEventListener('click', onClose);
+  // In-bar clear (✕): wipe the term and drop back to the empty hero. The
+  // modal's corner close (ctl.close → onClose) still closes the modal.
+  clearBtn?.addEventListener('click', () => {
+    input.value = '';
+    syncClear();
+    if (panelEl.dataset.state === 'expanded') collapse();
+    else hideSuggest();
+    input.focus();
+  });
+  syncClear();
   copyBtn.addEventListener('click', async () => {
     if (!currentTerm) return;
     const url = location.origin + location.pathname + '#/custom/' + encodeURIComponent(currentTerm);

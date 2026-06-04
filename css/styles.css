@@ -12558,8 +12558,6 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 /* Empty modal feels more welcoming with some height; the hero sits near the
    top so searched content reveals smoothly into the space below it. */
 .search-page-panel.takeover-panel:has(.search-panel[data-state="collapsed"]) { min-height: min(360px, 64vh); }
-/* Expanded modal: keep the inline Copy clear of the corner close. */
-.search-panel--modal[data-state="expanded"] .search-panel-barrow { padding-right: 3.2rem; }
 .search-panel--modal { min-height: 0; }
 .search-panel--modal .search-panel-close { top: 0.5rem; right: 0.5rem; }
 .search-panel--modal .search-panel-hero-inner { padding: 1.8rem 1rem 1.2rem; }
@@ -12593,10 +12591,10 @@ body.home-search.app-mode .topic-layout {
 /* Collapsed hero: keep the search bar a comfortable centered width. */
 @media (min-width: 720px) {
   .search-panel--inline[data-state="collapsed"] .search-panel-barrow { width: min(560px, 100%); max-width: 560px; margin-left: auto; margin-right: auto; }
-  /* Expanded: keep the input at ~the collapsed width instead of stretching
-     full-width — just widen enough to seat the X + Copy link controls
-     beside it, centered like the collapsed bar. */
-  .search-panel--inline[data-state="expanded"] .search-panel-barrow { width: min(720px, 100%); max-width: 720px; margin-left: auto; margin-right: auto; }
+  /* Expanded: the bar stays exactly the collapsed width — its actions (Copy
+     link) now live on the results header and the clear ✕ sits inside the
+     input, so the bar never needs to grow. */
+  .search-panel--inline[data-state="expanded"] .search-panel-barrow { width: min(560px, 100%); max-width: 560px; margin-left: auto; margin-right: auto; }
 }
 /* Desktop: Search & Trends spans the full width on top; Intelligence |
    News Feed columns below. */
@@ -12693,6 +12691,14 @@ body.home-search #topic-layout { margin-top: 0.4rem; }
 .search-panel-results .shortcuts-scroll-wrap,
 body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-wrap { padding-top: 0; padding-bottom: 0; }
 .search-panel-results .ti-accordions { padding-top: 0.85rem; }
+/* Keep the live search-term sublabel visible in the results at every width
+   (the generic .ti-topic-sublabel rule hides it below 900px for topic pages). */
+.search-panel-results .ti-topic-sublabel { display: block; }
+/* "Search Intelligence" header is a row: heading on the left, Copy link
+   pinned top-right (relocated here from the search bar). */
+.search-panel-results .sidebar-card-header { align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+.search-panel-results .sidebar-card-heading { flex: 1 1 auto; min-width: 0; }
+.search-panel-results .search-panel-copy { flex: 0 0 auto; align-self: flex-start; }
 
 /* Accordions open IN PLACE within their own grid column (no full-width
    span) — the row simply grows to fit the open one while its neighbour
