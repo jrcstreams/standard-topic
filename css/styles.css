@@ -12481,7 +12481,9 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .search-panel-hero-inner { padding: 1.1rem 1rem 1.3rem; }
 .search-panel-title { margin: 0 0 0.7rem; font-family: var(--font-display); font-size: clamp(1.3rem, 2.5vw, 1.7rem); font-weight: 700; line-height: 1.14; letter-spacing: -0.025em; color: var(--color-primary); }
 .search-panel-sub { margin: 0 auto; max-width: 44rem; color: var(--color-text-muted); font-size: 1rem; line-height: 1.5; text-wrap: balance; }
-.search-panel[data-state="expanded"] .search-panel-hero { grid-template-rows: 0fr; opacity: 0; margin: 0; }
+/* Hero (tagline + subtext) stays visible when expanded — the results just
+   reveal below it for a smoother transition. */
+.search-panel[data-state="expanded"] .search-panel-hero-inner { padding-bottom: 0.8rem; }
 
 /* Search bar row + suggestions dropdown. */
 .search-panel-barrow { position: relative; padding: 0 0.2rem; }
@@ -12538,8 +12540,9 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
    scroll the tall accordions within the card's max-height. */
 .search-page-panel.takeover-panel { overflow: visible; padding: 0.7rem 1.15rem 1.3rem; }
 .search-page-panel.takeover-panel:has(.search-panel[data-state="expanded"]) { overflow-y: auto; }
-/* Empty modal feels more welcoming with a taller, vertically-centered hero. */
-.search-page-panel.takeover-panel:has(.search-panel[data-state="collapsed"]) { min-height: min(420px, 70vh); justify-content: center; }
+/* Empty modal feels more welcoming with some height; the hero sits near the
+   top so searched content reveals smoothly into the space below it. */
+.search-page-panel.takeover-panel:has(.search-panel[data-state="collapsed"]) { min-height: min(360px, 64vh); }
 /* Expanded modal: keep the inline Copy clear of the corner close. */
 .search-panel--modal[data-state="expanded"] .search-panel-barrow { padding-right: 3.2rem; }
 .search-panel--modal { min-height: 0; }
@@ -12555,31 +12558,33 @@ body.home-search.app-mode.sticky-always.has-subnav #content {
   position: static; height: auto; min-height: 0; overflow: visible;
   padding: calc(64px + var(--subnav-height, 66px) + 0.25rem) 0 3rem;
 }
-/* One cohesive centered width for the whole homepage so the hero and the
-   content columns line up (not edge-to-edge). */
+/* One cohesive centered width for the whole homepage. */
 body.home-search.app-mode .topic-layout {
   height: auto; max-width: 1280px; margin: 0 auto; padding: 0 2rem 2rem;
 }
-.home-search-hero { max-width: 1280px; }
+/* Search hero + Trending live inside the full-width #section-searchtrends
+   (one tab on mobile). They fill the section — strip their own max-width /
+   side padding so they don't double-inset within the padded layout. */
+#section-searchtrends { display: block; }
+.home-search-hero { max-width: none; margin: 0; padding: 0.3rem 0 0.5rem; }
+.home-search-hero .search-panel-results { max-width: 100%; }
 /* Collapsed hero: keep the search bar a comfortable centered width. */
 @media (min-width: 720px) {
   .search-panel--inline[data-state="collapsed"] .search-panel-barrow { width: min(560px, 100%); max-width: 560px; margin-left: auto; margin-right: auto; }
 }
-/* Desktop: simple two columns — Intelligence | News Feed. Each column is a
-   single section now (Trending is its own full-width section above), so no
-   row-spanning or gap tricks are needed and the base app-mode placement +
-   separator apply directly. */
+/* Desktop: Search & Trends spans the full width on top; Intelligence |
+   News Feed columns below. */
 @media (min-width: 900px) {
   body.home-search.app-mode .topic-layout {
     grid-template-columns: 320px minmax(0, 1fr);
     align-items: start;
     gap: 0;
   }
+  body.home-search #section-searchtrends { grid-column: 1 / -1; margin-bottom: 1.6rem; }
+  body.home-search #section-shortcuts { grid-column: 1; }
+  body.home-search #section-newsfeed { grid-column: 2; }
 }
-/* Cards size to content + the page scrolls. The inner scroll-wraps are
-   `flex: 1 1 0` so they fill app-mode's fixed-height panel — but on the
-   scrolling home there's no fixed height, so they collapse to ~0 and clip
-   the accordions. Make everything content-sized instead. */
+/* Cards size to content + the page scrolls. */
 body.home-search .layout-section,
 body.home-search .shortcuts-sidebar,
 body.home-search .newsfeed-card { height: auto; overflow: visible; }
@@ -12592,14 +12597,10 @@ body.home-search .topic-layout .newsfeed-scroll-wrap {
 #section-newsfeed, .newsfeed-card, .newsfeed-scroll-wrap, .news-list, .news-card, .news-card-link { min-width: 0; max-width: 100%; }
 .news-card-title, .news-card-desc { overflow-wrap: anywhere; }
 
-.home-search-hero { max-width: 1280px; margin: 0 auto; padding: 0.4rem 2rem 0.6rem; }
-.home-search-hero .search-panel-results { max-width: 100%; }
-body.home-search #topic-layout { margin-top: 0.6rem; }
+body.home-search #topic-layout { margin-top: 0.4rem; }
 
-/* Mobile: sticky tabs + one-way fading search hero. */
+/* Mobile: 3 tabs — Search & Trends (default) / News Feed / Intelligence. */
 @media (max-width: 899.98px) {
-  /* The active section flows its content (no inner scroll) and fills at least
-     the viewport so the page is tall enough to scroll the hero away. */
   body.home-search.app-mode .topic-layout > .layout-section {
     flex: none; overflow: visible;
     min-height: calc(100dvh - 64px - var(--subnav-height, 80px) - 64px);
@@ -12608,12 +12609,10 @@ body.home-search #topic-layout { margin-top: 0.6rem; }
     position: sticky; top: calc(64px + var(--subnav-height, 80px)); z-index: 8;
     background: var(--color-bg, #fff); padding: 0.5rem 0; margin: 0 -0.2rem;
   }
-  body.home-search .home-search-hero {
-    opacity: var(--hero-fade, 1);
-    transform: translateY(calc((1 - var(--hero-fade, 1)) * -12px));
-    transition: opacity 0.12s linear;
-  }
-  body.home-search.hero-dismissed .home-search-hero { display: none; }
+  /* The Search & Trends section is a tab like the others — hidden unless active. */
+  body.home-search.app-mode .topic-layout > #section-searchtrends { display: none; }
+  body.home-search.app-mode.active-tab-searchtrends .topic-layout > #section-searchtrends { display: block; }
+  body.home-search #section-searchtrends .home-trending { margin-top: 1.2rem; }
 }
 
 /* === Phase 14: search panel refinements ============================== */
@@ -12668,7 +12667,7 @@ body.home-search #topic-layout { margin-top: 0.6rem; }
 .search-panel-input::-webkit-search-decoration { -webkit-appearance: none; appearance: none; display: none; }
 
 /* === Trending section (homepage + Trending modal) ==================== */
-.home-trending { max-width: 1280px; margin: 1.8rem auto 2rem; padding: 0 2rem; }
+.home-trending { margin: 1.6rem 0 0; padding: 0; }
 /* On the homepage the whole section sits in a soft card to set it apart. */
 .home-trending .trending-topics {
   background: #f6f8fc; border: 1px solid #e9edf4; border-radius: 16px;
@@ -12733,6 +12732,5 @@ body.home-search #topic-layout { margin-top: 0.6rem; }
 body.home-search.app-mode #content { padding-bottom: 1.5rem; }
 body.home-search.app-mode .topic-layout { padding-bottom: 1rem; }
 @media (max-width: 899.98px) {
-  .home-trending { padding: 0 1rem; margin-top: 1.4rem; }
   .home-trending .trending-topics { padding-top: 0.85rem; }
 }

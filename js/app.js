@@ -324,14 +324,21 @@ function renderLayout(route) {
 // fills the rest of the layout) and on custom pages (shortcuts-only
 // — nothing to switch between).
 function bodyTabsRow(opts = {}) {
-  const { showRelated = false, showTrending = false } = opts;
-  // Order: News Feed → (Trending) → Topic Intelligence → (Related).
-  const tabs = [
-    `<button type="button" class="tab-pill tab-pill-newsfeed active" data-tab="newsfeed">
+  const { showRelated = false, showTrending = false, showSearchTrends = false } = opts;
+  // Order: (Search & Trends) → News Feed → (Trending) → Intelligence → (Related).
+  const tabs = [];
+  if (showSearchTrends) {
+    tabs.push(`<button type="button" class="tab-pill tab-pill-searchtrends" data-tab="searchtrends">
+       <span class="tab-pill-label-long">Search &amp; Trends</span>
+       <span class="tab-pill-label-short">Search &amp; Trends</span>
+     </button>`);
+  }
+  tabs.push(
+    `<button type="button" class="tab-pill tab-pill-newsfeed" data-tab="newsfeed">
        <span class="tab-pill-label-long">News Feed</span>
        <span class="tab-pill-label-short">News Feed</span>
      </button>`,
-  ];
+  );
   if (showTrending) {
     tabs.push(`<button type="button" class="tab-pill tab-pill-trending" data-tab="trending">
        <span class="tab-pill-label-long">Trending</span>
@@ -356,7 +363,7 @@ function bodyTabsRow(opts = {}) {
 function setupTabPills() {
   const route = getCurrentRoute();
   const tab = route?.tab || 'newsfeed';
-  ['newsfeed', 'trending', 'shortcuts', 'related'].forEach(t =>
+  ['searchtrends', 'newsfeed', 'trending', 'shortcuts', 'related'].forEach(t =>
     document.body.classList.remove(`active-tab-${t}`)
   );
   document.body.classList.add(`active-tab-${tab}`);
@@ -376,7 +383,7 @@ function setupGlobalTabPillDelegation() {
     const tab = pill.dataset.tab;
     if (!tab) return;
     // Swap the body class for the visible-section CSS rules.
-    ['newsfeed', 'trending', 'shortcuts', 'related'].forEach(t =>
+    ['searchtrends', 'newsfeed', 'trending', 'shortcuts', 'related'].forEach(t =>
       document.body.classList.remove(`active-tab-${t}`)
     );
     document.body.classList.add(`active-tab-${tab}`);
@@ -390,7 +397,7 @@ function setupGlobalTabPillDelegation() {
     if (!route) return;
     let newHash = null;
     if (route.type === 'home') {
-      newHash = tab === 'newsfeed' ? '#/' : `#/${tab}`;
+      newHash = tab === 'searchtrends' ? '#/' : `#/${tab}`;
     } else if (route.type === 'topic') {
       newHash = tab === 'newsfeed'
         ? `#/topic/${route.slug}`
@@ -1297,21 +1304,22 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     if (barContainer) renderCustomSearchBar(barContainer, customTerm);
     setupCustomStickyBar(container.querySelector('.custom-search-sticky'));
   } else if (isHome) {
-    // Homepage: search hero, then a full-width "Trending Topics" card
-    // section, then the Intelligence + News Feed columns. Each column now
-    // holds exactly one section (Trending lives in its own section above),
-    // so the mobile tab switcher works on flat direct-child sections.
+    // Homepage. Desktop: a full-width "Search & Trends" section (search hero +
+    // trending cards) on top, then the Intelligence | News Feed columns below.
+    // Mobile: three tabs — Search & Trends / News Feed / Intelligence — each a
+    // direct-child section the tab switcher shows one at a time.
     container.innerHTML = `
-      <div class="home-search-hero" id="home-search-hero"></div>
-      <section class="home-trending" id="home-trending"></section>
       <div class="topic-layout" id="topic-layout">
-        ${bodyTabsRow({ showRelated: false, showTrending: false })}
+        ${bodyTabsRow({ showSearchTrends: true })}
+        <section class="layout-section" id="section-searchtrends">
+          <div class="home-search-hero" id="home-search-hero"></div>
+          <section class="home-trending" id="home-trending"></section>
+        </section>
         <section class="layout-section" id="section-shortcuts"></section>
         <section class="layout-section" id="section-newsfeed"></section>
       </div>
     `;
     homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });
-    setupHomeHeroFade(container.querySelector('#home-search-hero'));
     renderTrendingTopics(container.querySelector('#home-trending'), { limit: 6, viewAll: true });
   } else {
     // Topic pages: Shortcuts + News Feed + Related Topics.

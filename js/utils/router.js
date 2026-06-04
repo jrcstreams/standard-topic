@@ -30,11 +30,11 @@ function parseRoute(hash) {
   const segments = path.split('/').filter(Boolean);
 
   if (segments.length === 0) {
-    return { type: 'home', slug: 'home', tab: 'newsfeed' };
+    return { type: 'home', slug: 'home', tab: 'searchtrends' };
   }
 
-  // Homepage tabs: #/shortcuts, #/related, #/trending
-  if (segments.length === 1 && (segments[0] === 'shortcuts' || segments[0] === 'related' || segments[0] === 'trending')) {
+  // Homepage tabs: #/searchtrends, #/newsfeed, #/shortcuts, #/related, #/trending
+  if (segments.length === 1 && ['searchtrends', 'newsfeed', 'shortcuts', 'related', 'trending'].includes(segments[0])) {
     return { type: 'home', slug: 'home', tab: segments[0] };
   }
 
