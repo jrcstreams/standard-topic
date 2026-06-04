@@ -12482,9 +12482,9 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .search-panel-hero-inner { padding: 1.1rem 1rem 1.3rem; }
 .search-panel-title { margin: 0 0 0.7rem; font-family: var(--font-display); font-size: clamp(1.3rem, 2.5vw, 1.7rem); font-weight: 700; line-height: 1.14; letter-spacing: -0.025em; color: var(--color-primary); }
 .search-panel-sub { margin: 0 auto; max-width: 44rem; color: var(--color-text-muted); font-size: 1rem; line-height: 1.5; text-wrap: balance; }
-/* Hero (tagline + subtext) stays visible when expanded — the results just
-   reveal below it for a smoother transition. */
-.search-panel[data-state="expanded"] .search-panel-hero-inner { padding-bottom: 0.8rem; }
+/* Hero (tagline + subtext) stays visible AND fixed when expanded — the
+   results reveal below it without the search bar sliding up toward the
+   subtext (so no jump). Padding-bottom intentionally NOT shrunk here. */
 
 /* Search bar row + suggestions dropdown. */
 .search-panel-barrow { position: relative; padding: 0 0.2rem; }
@@ -12503,7 +12503,8 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .search-panel-clear:hover { background: #e0e4ec; color: var(--color-text); }
 .search-panel-clear[hidden] { display: none; }
 .search-panel-clear svg { width: 13px; height: 13px; display: block; }
-.search-panel[data-state="expanded"] .search-panel-input { height: 46px; font-size: 1rem; }
+/* Input keeps its 52px height + 1.05rem text when expanded — don't shrink
+   it, so the bar doesn't visibly resize the moment a search is entered. */
 
 /* Suggestions dropdown. */
 .search-panel-suggest {
@@ -12646,10 +12647,32 @@ body.home-search #topic-layout { margin-top: 0.4rem; }
 /* Search results header: rename is in JS ("Search Intelligence"); here make
    it smaller, give room above (below the bar) and tighten it to the
    accordions. */
-.search-panel-results .shortcuts-sidebar { margin-top: 0.5rem; }
+/* "Search Intelligence" header: ~14px of breathing room above it (from the
+   bar) and a matching ~14px below the divider to the accordions, so it's
+   not cramped against the bar while floating far from the cards. */
+.search-panel-results .shortcuts-sidebar { margin-top: 0.85rem; }
 .search-panel-results .sidebar-card-header { padding-bottom: 0.45rem; }
-.search-panel-results .sidebar-card-title { font-size: 1.05rem; }
-.search-panel-results .ti-accordions { padding-top: 0.35rem; }
+/* Always a navy title — override the mobile .topic-intelligence-panel rule
+   that turns it into an uppercase slate eyebrow (the search hero wants the
+   same readable title as desktop, not a section eyebrow). */
+.search-panel-results .topic-intelligence-panel .sidebar-card-title,
+.search-panel-results .sidebar-card-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  color: #1c3a6b;
+}
+/* Kill the stacked vertical slack below the header (mobile header margin +
+   scroll-wrap top padding) so the accordions sit a tidy ~14px below it. */
+.search-panel-results .topic-intelligence-panel .sidebar-card-header { margin-bottom: 0; }
+/* The home grid's `topic-layout:not(.is-custom) .shortcuts-scroll-wrap`
+   rule adds ~1.4rem top padding here; out-specify it (and cover the modal
+   with the plain selector) so the accordions sit ~14px below the header. */
+.search-panel-results .shortcuts-scroll-wrap,
+body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-wrap { padding-top: 0; }
+.search-panel-results .ti-accordions { padding-top: 0.85rem; }
 
 /* Multi-column accordions open FULL WIDTH (span both columns), stay in
    column when closed. Dense flow keeps the grid packed around the
@@ -12671,8 +12694,11 @@ body.home-search #topic-layout { margin-top: 0.4rem; }
      labeling — NOT a tab-labeled panel — so keep its header visible even
      though the generic mobile rule hides section headers. */
   body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-sidebar .sidebar-card-header { display: flex; }
-  /* Tighten the gap between the search section and the Trending card. */
+  /* Gap between the search section and the Trending card. Expanded
+     (results showing) stays tight; collapsed (empty search bar) gets a
+     little more breathing room below the bar. */
   body.home-search #section-searchtrends .home-trending { margin-top: 0.5rem; }
+  body.home-search #home-search-hero:has(.search-panel[data-state="collapsed"]) + #home-trending { margin-top: 1rem; }
   /* Seat the tab band flush under the subnav — drop the ~10px of white
      space above it (the topic-layout's 0.4rem margin + content's 0.25rem
      padding slack). */
