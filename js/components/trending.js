@@ -126,7 +126,7 @@ function trendCardsHead(fetched) {
   return `
     <div class="trending-topics-head">
       <h3 class="trending-topics-title">${TREND_UP_SVG}<span>Trending</span></h3>
-      <span class="trending-topics-meta">via Google Trends${fetched ? `<span class="trending-topics-updated">Updated ${escapeHTML(relativeTime(fetched))}</span>` : ''}</span>
+      <span class="trending-topics-meta">via Google Trends${fetched ? ` &middot; Updated ${escapeHTML(relativeTime(fetched))}` : ''}</span>
     </div>`;
 }
 
