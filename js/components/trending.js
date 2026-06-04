@@ -116,9 +116,12 @@ function trendCardHTML(topic, idx) {
   const title = titleCase(topic.query);
   return `
     <button type="button" class="trend-card" data-idx="${idx}" title="Open ${escapeAttr(title)}">
-      ${cat ? `<span class="trend-card-kicker">${escapeHTML(cat)}</span>` : ''}
-      <span class="trend-card-title">${escapeHTML(title)}</span>
-      ${dur ? `<span class="trend-card-since">Trending for ${escapeHTML(dur)}</span>` : ''}
+      <span class="trend-card-main">
+        ${cat ? `<span class="trend-card-kicker">${escapeHTML(cat)}</span>` : ''}
+        <span class="trend-card-title">${escapeHTML(title)}</span>
+        ${dur ? `<span class="trend-card-since">Trending for ${escapeHTML(dur)}</span>` : ''}
+      </span>
+      <span class="trend-card-chev" aria-hidden="true">${CHEV}</span>
     </button>`;
 }
 
@@ -126,7 +129,7 @@ function trendCardsHead(fetched) {
   return `
     <div class="trending-topics-head">
       <h3 class="trending-topics-title">${TREND_UP_SVG}<span>Trending</span></h3>
-      <span class="trending-topics-meta"><span class="trending-topics-src">via Google Trends</span>${fetched ? `<span class="trending-topics-updated">Updated ${escapeHTML(relativeTime(fetched))}</span>` : ''}</span>
+      <span class="trending-topics-meta"><a class="trending-topics-src" href="https://trends.google.com/trending" target="_blank" rel="noopener noreferrer">via Google Trends</a>${fetched ? `<span class="trending-topics-updated">Updated ${escapeHTML(relativeTime(fetched))}</span>` : ''}</span>
     </div>`;
 }
 

@@ -12672,7 +12672,7 @@ body.home-search #topic-layout { margin-top: 0.6rem; }
 /* On the homepage the whole section sits in a soft card to set it apart. */
 .home-trending .trending-topics {
   background: #f6f8fc; border: 1px solid #e9edf4; border-radius: 16px;
-  padding: 1.15rem 1.3rem 0.4rem;
+  padding: 1.15rem 1.3rem 1.3rem;
 }
 /* Header — a clear "Trending" title with the teal trend icon; the source +
    updated meta sit just below it as a subtitle. */
@@ -12680,32 +12680,38 @@ body.home-search #topic-layout { margin-top: 0.6rem; }
 .trending-topics-title { margin: 0; display: inline-flex; align-items: center; gap: 0.45rem; font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em; color: var(--color-primary); }
 .trending-topics-title svg { color: #1f8f6b; display: block; width: 20px; height: 20px; }
 .trending-topics-meta { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.76rem; color: var(--color-text-muted); }
-.trending-topics-src { font-weight: 600; color: #5f6b85; }
+.trending-topics-src { font-weight: 600; color: #5f6b85; text-decoration: none; }
+.trending-topics-src:hover { color: #1f8f6b; text-decoration: underline; }
 .trending-topics-updated { position: relative; padding-left: 0.6rem; }
 .trending-topics-updated::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 3px; border-radius: 50%; background: currentColor; opacity: 0.5; }
 
 /* Cards: category kicker → term → "Trending for …" subtext. Compact. */
 .trend-card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; }
 .trend-card {
-  display: flex; flex-direction: column; gap: 0.22rem; text-align: left; width: 100%;
-  background: #fff; border: 1px solid #e6e8ec; border-radius: 12px; padding: 0.7rem 0.9rem;
+  display: flex; flex-direction: row; align-items: center; gap: 0.6rem; text-align: left; width: 100%;
+  background: #fff; border: 1px solid #e6e8ec; border-radius: 12px; padding: 0.7rem 0.85rem 0.7rem 0.9rem;
   font-family: inherit; color: var(--color-text); cursor: pointer;
   transition: border-color 0.14s, box-shadow 0.14s, transform 0.06s;
 }
 .trend-card:hover { border-color: #c8d3e3; box-shadow: 0 6px 16px -8px rgba(15, 26, 46, 0.18); }
 .trend-card:active { transform: translateY(1px); }
+.trend-card-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 0.22rem; }
 .trend-card-kicker { font-size: 0.64rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #7b86a0; }
 .trend-card-title { font-size: 0.85rem; font-weight: 600; line-height: 1.25; overflow-wrap: anywhere; }
 .trend-card-since { font-size: 0.75rem; color: var(--color-text-muted); }
+/* Chevron — a quiet "open this trend" affordance that nudges on hover. */
+.trend-card-chev { flex: 0 0 auto; display: inline-flex; color: #b8c2d2; transition: transform 0.14s, color 0.14s; }
+.trend-card-chev svg { width: 16px; height: 16px; display: block; }
+.trend-card:hover .trend-card-chev { color: #1f8f6b; transform: translateX(2px); }
 .trend-card-skel { display: block; height: 72px; border-color: #eef0f4; background: #eef1f6; pointer-events: none; }
-/* View all — centered footer link that stands apart from the cards. */
+/* View all — centered footer link (navy, no divider, breathing room). */
 .trending-topics-viewall {
   display: flex; align-items: center; justify-content: center; gap: 0.35rem; width: 100%;
-  margin: 0.9rem 0 0; padding: 0.7rem 0 0;
-  border: none; border-top: 1px solid #e4e9f1; background: none;
-  font-family: inherit; font-size: 0.88rem; font-weight: 700; color: #1f8f6b; cursor: pointer;
+  margin: 1.1rem 0 0; padding: 0;
+  border: none; background: none;
+  font-family: inherit; font-size: 0.9rem; font-weight: 700; color: var(--color-primary); cursor: pointer;
 }
-.trending-topics-viewall:hover { color: #156a4f; }
+.trending-topics-viewall:hover { color: var(--color-primary-light, #3a4a63); text-decoration: underline; }
 .trending-topics-viewall .trending-row-chev { color: currentColor; }
 
 /* Homepage: 6 terms in a 3-col grid; drop to 3 terms as the screen narrows. */
@@ -12727,5 +12733,6 @@ body.home-search #topic-layout { margin-top: 0.6rem; }
 body.home-search.app-mode #content { padding-bottom: 1.5rem; }
 body.home-search.app-mode .topic-layout { padding-bottom: 1rem; }
 @media (max-width: 899.98px) {
-  .home-trending { padding: 0 1rem; margin-top: 0; }
+  .home-trending { padding: 0 1rem; margin-top: 1.4rem; }
+  .home-trending .trending-topics { padding-top: 0.85rem; }
 }
