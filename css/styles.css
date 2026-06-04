@@ -3342,10 +3342,10 @@ html, body, #app {
 
 .search-overlay-card {
   background: var(--color-bg);
-  border-radius: 14px;
+  border-radius: 16px;
   width: 100%;
-  max-width: 720px;
-  max-height: 85vh;
+  max-width: min(960px, 94vw);
+  max-height: 88vh;
   overflow: hidden;
   box-shadow: 0 24px 64px rgba(15, 26, 46, 0.28);
   display: flex;
@@ -3421,10 +3421,15 @@ html, body, #app {
    indicators below. Each card is a self-contained accordion: head row
    + (when expanded) expansion. */
 .search-modal-topic-grid {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: start;
   gap: 0.45rem;
   margin: 0 0 0.6rem;
+}
+/* Two columns of topic cards on desktop (the takeover is wide enough now). */
+@media (min-width: 720px) {
+  .search-modal-topic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem 0.7rem; }
 }
 
 .topic-card {
@@ -10464,12 +10469,30 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 560px;
+  max-width: min(760px, 94vw);
   max-height: 88vh;
   background: var(--color-bg);
   border-radius: 16px;
   box-shadow: 0 25px 60px rgba(15, 23, 42, 0.35);
   overflow: hidden;
+}
+/* Two-column body on desktop: Default model (col 1, full height) +
+   Reasoning over Custom instructions (col 2). */
+@media (min-width: 720px) {
+  .settings-modal-card .settings-modal-body {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.5rem; align-items: start;
+  }
+  .settings-modal-card .settings-modal-body .settings-section:nth-child(1) { grid-column: 1; grid-row: 1 / span 2; }
+  .settings-modal-card .settings-modal-body .settings-section:nth-child(2) { grid-column: 2; grid-row: 1; }
+  .settings-modal-card .settings-modal-body .settings-section:nth-child(3) { grid-column: 2; grid-row: 2; }
+}
+@media (max-width: 640px) {
+  .settings-modal-overlay { padding: 0; align-items: stretch; }
+  .settings-modal-overlay .settings-modal-card {
+    position: fixed; inset: 0;
+    max-width: none; width: 100vw; height: 100vh; height: 100dvh; max-height: none;
+    border-radius: 0;
+  }
 }
 .settings-modal-head {
   display: flex;
@@ -12267,7 +12290,7 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 }
 .tlm-panel {
   position: fixed; z-index: 141; top: 50%; left: 50%;
-  width: min(430px, calc(100vw - 2rem)); max-height: min(80vh, 700px);
+  width: min(720px, 94vw); max-height: 88vh;
   display: flex; flex-direction: column; overflow: hidden;
   background: #fff; border: 1px solid rgba(15, 23, 42, 0.06); border-radius: 16px;
   box-shadow: 0 30px 70px -16px rgba(15, 23, 42, 0.40), 0 10px 22px -10px rgba(15, 23, 42, 0.20);
@@ -12294,8 +12317,18 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .tlm-body .trending-scroll { flex: 0 1 auto; max-height: 56vh; }
 /* Leave room so the "Trending Now" title doesn't run under the close button. */
 .tlm-body .trending-title { padding-right: 2rem; }
+/* Two-column trending list on desktop (the takeover is wide enough now). */
+@media (min-width: 720px) {
+  .tlm-body .trending-scroll { max-height: 62vh; column-gap: 1.1rem; }
+  .tlm-body ul.trending-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; }
+}
 @media (max-width: 640px) {
-  .tlm-panel { width: calc(100vw - 1rem); max-height: 86vh; border-radius: 14px; }
+  .tlm-overlay { z-index: 140; }
+  .tlm-panel {
+    top: 0; left: 0; transform: none; width: 100%; max-width: none;
+    height: 100%; max-height: none; border-radius: 0; border: none;
+  }
+  .tlm-panel.is-in { transform: none; }
 }
 
 /* === Shared takeover modal shell =====================================
