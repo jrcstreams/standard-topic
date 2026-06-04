@@ -339,8 +339,8 @@ function bodyTabsRow(opts = {}) {
      </button>`);
   }
   tabs.push(`<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">
-       <span class="tab-pill-label-long">Topic Intelligence</span>
-       <span class="tab-pill-label-short">Topic Intelligence</span>
+       <span class="tab-pill-label-long">Intelligence</span>
+       <span class="tab-pill-label-short">Intelligence</span>
      </button>`);
   if (showRelated) {
     tabs.push(`<button type="button" class="tab-pill tab-pill-related" data-tab="related">Related</button>`);
@@ -1461,12 +1461,12 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   // pages it carries the topic name as a quiet under-title sublabel
   // (desktop only — mobile renders the panel header as an eyebrow). Both
   // mirror the News Feed header so the two columns read in parallel.
-  const panelTitle = 'Topic Intelligence';
-  const panelSubtitleHTML = (isCustom && topicName)
-    ? `<p class="sidebar-card-subtitle">Covering &ldquo;${escapeHTML(topicName)}&rdquo;</p>`
-    : (!isHome && !isCustom && topicName)
-      ? `<p class="sidebar-card-subtitle ti-topic-sublabel">${escapeHTML(topicName)}</p>`
-      : '';
+  // Search results → "Search Intelligence" (no "Covering …" subtitle).
+  // Everywhere else (home / topic) → "Intelligence".
+  const panelTitle = isCustom ? 'Search Intelligence' : 'Intelligence';
+  const panelSubtitleHTML = (!isHome && !isCustom && topicName)
+    ? `<p class="sidebar-card-subtitle ti-topic-sublabel">${escapeHTML(topicName)}</p>`
+    : '';
 
   // Model options for the selection bar's "Send to" picker. Pre-selects
   // the user's preferred model so direct Submit + the modal agree.
@@ -2171,7 +2171,6 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   const isModal = mode === 'modal';
   container.innerHTML = `
     <div class="search-panel search-panel--${mode}" data-state="collapsed">
-      ${isModal ? `<button type="button" class="takeover-close search-panel-close" aria-label="Close">${X_ICON_SVG}</button>` : ''}
       <div class="search-panel-hero"><div class="search-panel-hero-inner">
         <h2 class="search-panel-title">News, Resources and AI Knowledge.<br>On any topic.</h2>
         <p class="search-panel-sub">Type any topic and we'll build out web sources, AI shortcuts, and analysis tools tailored to it.</p>
@@ -2180,12 +2179,12 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
         <form class="search-panel-form" role="search" autocomplete="off">
           <span class="search-panel-icon" aria-hidden="true">${SEARCH_ICON_SVG}</span>
           <input class="search-panel-input" type="search" placeholder="Search any topic…" aria-label="Search any topic" value="${escapeAttr(term)}">
-          <button type="button" class="search-panel-clear" aria-label="Clear search" hidden>${X_ICON_SVG}</button>
         </form>
+        <div class="search-panel-actions">
+          <button type="button" class="search-panel-copy" aria-label="Copy link">${LINK_ICON_SVG}<span>Copy link</span></button>
+          <button type="button" class="search-panel-close" aria-label="Close search">${X_ICON_SVG}</button>
+        </div>
         <div class="search-panel-suggest" role="listbox" hidden></div>
-      </div>
-      <div class="search-panel-tools" hidden>
-        <button type="button" class="search-panel-copy">${LINK_ICON_SVG}<span>Copy link</span></button>
       </div>
       <div class="search-panel-results"><div class="search-panel-results-inner"></div></div>
     </div>`;
@@ -2193,10 +2192,9 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   const panelEl = container.querySelector('.search-panel');
   const form = panelEl.querySelector('.search-panel-form');
   const input = panelEl.querySelector('.search-panel-input');
-  const clearBtn = panelEl.querySelector('.search-panel-clear');
   const suggestEl = panelEl.querySelector('.search-panel-suggest');
-  const toolsEl = panelEl.querySelector('.search-panel-tools');
   const copyBtn = panelEl.querySelector('.search-panel-copy');
+  const closeBtn = panelEl.querySelector('.search-panel-close');
   const resultsInner = panelEl.querySelector('.search-panel-results-inner');
   let currentTerm = '';
   let suggestItems = [];   // [{type:'topic', slug, name, parent} | {type:'custom', term}]
@@ -2207,19 +2205,15 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     if (!t) return;
     currentTerm = t;
     input.value = t;
-    clearBtn.hidden = false;
     hideSuggest();
     resultsInner.innerHTML = '';
     renderShortcutsSidebar(resultsInner, { type: 'custom', term: t, tab: 'shortcuts' }, false, true, t);
     panelEl.dataset.state = 'expanded';
-    toolsEl.hidden = isModal;   // copy-link only on the inline homepage hero
     ctl.onExpand && ctl.onExpand(t);
   }
   function collapse() {
     currentTerm = '';
     input.value = '';
-    clearBtn.hidden = true;
-    toolsEl.hidden = true;
     panelEl.dataset.state = 'collapsed';
     hideSuggest();
     resultsInner.innerHTML = '';
@@ -2260,14 +2254,19 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   }
 
   form.addEventListener('submit', (e) => { e.preventDefault(); const v = input.value.trim(); if (v) { if (activeIdx >= 0 && !suggestEl.hidden) chooseSuggestion(activeIdx); else expand(v); } });
-  input.addEventListener('input', () => { clearBtn.hidden = !input.value; refreshSuggestions(); });
+  input.addEventListener('input', () => { refreshSuggestions(); });
   input.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowDown') { e.preventDefault(); moveActive(1); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); moveActive(-1); }
     else if (e.key === 'Escape' && !suggestEl.hidden) { e.preventDefault(); hideSuggest(); }
   });
   document.addEventListener('click', (e) => { if (!panelEl.contains(e.target)) hideSuggest(); });
-  clearBtn.addEventListener('click', () => { collapse(); input.focus(); });
+  // Single X: when expanded it resets the search back to the empty hero;
+  // when already empty (modal only) it closes the modal.
+  closeBtn.addEventListener('click', () => {
+    if (panelEl.dataset.state === 'expanded') { collapse(); input.focus(); }
+    else if (isModal) { userCloseSearchModal(); }
+  });
   copyBtn.addEventListener('click', async () => {
     if (!currentTerm) return;
     const url = location.origin + location.pathname + '#/custom/' + encodeURIComponent(currentTerm);
@@ -2279,10 +2278,8 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     copyBtn.classList.add('is-copied'); if (label) label.textContent = 'Copied';
     setTimeout(() => { copyBtn.classList.remove('is-copied'); if (label) label.textContent = 'Copy link'; }, 1600);
   });
-  panelEl.querySelector('.search-panel-close')?.addEventListener('click', () => userCloseSearchModal());
-
   const ctl = { el: panelEl, input, expand, collapse, refreshSuggestions, onExpand: null, onCollapse: null,
-    setTerm(t) { input.value = t || ''; clearBtn.hidden = !input.value; },
+    setTerm(t) { input.value = t || ''; },
     focus() { try { input.focus(); } catch (_) {} } };
   if (term && term.trim()) expand(term);
   return ctl;
