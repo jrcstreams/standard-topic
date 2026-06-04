@@ -2390,13 +2390,6 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
   align-items: center;
 }
 .newsfeed-title::before { display: none; }
-/* Leading section icon — teal, matches the Trending header so the
-   News Feed / Intelligence / Trending titles read as one family. The
-   icon keeps its own size regardless of the title's font-size. */
-.newsfeed-title .section-head-icon,
-.shortcuts-sidebar .sidebar-card-title .section-head-icon {
-  flex: none; width: 20px; height: 20px; margin-right: 0.5rem; color: #1f8f6b;
-}
 @media (max-width: 640px) {
   .newsfeed-title { font-size: 1.15rem; }
 }
@@ -12674,6 +12667,17 @@ body.home-search #topic-layout { margin-top: 0.4rem; }
   }
   /* TI / sections flow their full content on mobile (no clipped accordions). */
   body.home-search.app-mode .topic-layout > .layout-section .shortcuts-sidebar { height: auto; }
+  /* The search hero's "Search Intelligence" block is inline results
+     labeling — NOT a tab-labeled panel — so keep its header visible even
+     though the generic mobile rule hides section headers. */
+  body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-sidebar .sidebar-card-header { display: flex; }
+  /* Tighten the gap between the search section and the Trending card. */
+  body.home-search #section-searchtrends .home-trending { margin-top: 0.5rem; }
+  /* Seat the tab band flush under the subnav — drop the ~10px of white
+     space above it (the topic-layout's 0.4rem margin + content's 0.25rem
+     padding slack). */
+  body.home-search.app-mode.sticky-always.has-subnav #content { padding-top: calc(64px + var(--subnav-height, 80px)); }
+  body.home-search #topic-layout { margin-top: 0; }
 }
 
 /* Hide the native type="search" clear button — we have one explicit X. */

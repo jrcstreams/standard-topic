@@ -1475,9 +1475,6 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   // sublabel (updated in place as the user edits the input). Everywhere else
   // (home / topic) → "Intelligence" with the topic name sublabel.
   const panelTitle = isCustom ? 'Search Intelligence' : 'Intelligence';
-  // Leading section icon (teal lightbulb) — mirrors the Trending / News
-  // Feed header treatment so the section titles read as one family.
-  const intelIconSVG = '<svg class="section-head-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"/></svg>';
   const panelSubtitleHTML = (isCustom && topicName)
     ? `<p class="sidebar-card-subtitle ti-topic-sublabel" data-role="search-term-sub">${escapeHTML(topicName)}</p>`
     : (!isHome && !isCustom && topicName)
@@ -1495,7 +1492,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     <div class="${cardClasses.join(' ')} is-multi-select" data-multi="1">
       <div class="sidebar-card-header">
         <div class="sidebar-card-heading">
-          <h3 class="sidebar-card-title">${intelIconSVG}<span class="section-head-text">${panelTitle}</span>${titlePillHTML}</h3>
+          <h3 class="sidebar-card-title">${panelTitle}${titlePillHTML}</h3>
           ${panelSubtitleHTML}
         </div>
       </div>
