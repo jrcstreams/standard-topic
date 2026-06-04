@@ -12563,8 +12563,14 @@ body.home-search #topic-layout { margin-top: 0.6rem; }
 
 /* Mobile: sticky tabs + one-way fading search hero. */
 @media (max-width: 899.98px) {
+  /* The active section flows its content (no inner scroll) and fills at least
+     the viewport so the page is tall enough to scroll the hero away. */
+  body.home-search.app-mode .topic-layout > .layout-section {
+    flex: none; overflow: visible;
+    min-height: calc(100dvh - 64px - var(--subnav-height, 80px) - 64px);
+  }
   body.home-search .body-tabs {
-    position: sticky; top: var(--subnav-height, 0px); z-index: 8;
+    position: sticky; top: calc(64px + var(--subnav-height, 80px)); z-index: 8;
     background: var(--color-bg, #fff); padding: 0.5rem 0; margin: 0 -0.2rem;
   }
   body.home-search .home-search-hero {
