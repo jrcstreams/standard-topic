@@ -2174,8 +2174,8 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   container.innerHTML = `
     <div class="search-panel search-panel--${mode}" data-state="collapsed">
       <div class="search-panel-hero"><div class="search-panel-hero-inner">
-        <h2 class="search-panel-title">News, Resources and AI Knowledge.<br>On any topic.</h2>
-        <p class="search-panel-sub">Type any topic and we'll build out web sources, AI shortcuts, and analysis tools tailored to it.</p>
+        <h2 class="search-panel-title">News, Resources and AI Knowledge.</h2>
+        <p class="search-panel-sub">Search any term and get web sources, AI knowledge shortcuts and analysis.</p>
       </div></div>
       <div class="search-panel-barrow">
         <form class="search-panel-form" role="search" autocomplete="off">

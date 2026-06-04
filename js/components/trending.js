@@ -103,37 +103,37 @@ function durationLabel(iso) {
   if (hrs < 24) return `${hrs}h`;
   return `${Math.round(hrs / 24)}d`;
 }
-const TREND_UP_SVG = `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>`;
+const TREND_UP_SVG = `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>`;
+
+// Google returns trend queries lowercase ("jalen brunson") — title-case them.
+function titleCase(s) {
+  return String(s || '').toLowerCase().replace(/\b([a-z])/g, (m, c) => c.toUpperCase());
+}
 
 function trendCardHTML(topic, idx) {
   const cat = (topic.categories && topic.categories[0]) || '';
   const dur = durationLabel(topic.startedAt);
-  const pct = formatPercent(topic.increasePercent);
-  const vol = formatVolume(topic.searchVolume);
-  const stats = [];
-  if (pct) stats.push(`<span class="trend-card-badge">${TREND_UP_SVG}${pct}</span>`);
-  if (vol) stats.push(`<span class="trend-card-stat trend-card-vol">${escapeHTML(vol)} searches</span>`);
-  if (dur) stats.push(`<span class="trend-card-stat trend-card-since">Trending for ${escapeHTML(dur)}</span>`);
+  const title = titleCase(topic.query);
   return `
-    <button type="button" class="trend-card" data-idx="${idx}" title="Open ${escapeAttr(topic.query)}">
-      <span class="trend-card-main">
-        <span class="trend-card-titlerow">
-          <span class="trend-card-title">${escapeHTML(topic.query)}</span>
-          ${cat ? `<span class="trend-card-cat">${escapeHTML(cat)}</span>` : ''}
-        </span>
-        ${stats.length ? `<span class="trend-card-stats">${stats.join('')}</span>` : ''}
-      </span>
-      ${CHEV}
+    <button type="button" class="trend-card" data-idx="${idx}" title="Open ${escapeAttr(title)}">
+      ${cat ? `<span class="trend-card-kicker">${escapeHTML(cat)}</span>` : ''}
+      <span class="trend-card-title">${escapeHTML(title)}</span>
+      ${dur ? `<span class="trend-card-since">Trending for ${escapeHTML(dur)}</span>` : ''}
     </button>`;
+}
+
+function trendCardsHead(fetched) {
+  return `
+    <div class="trending-topics-head">
+      <h3 class="trending-topics-title">${TREND_UP_SVG}<span>Trending</span></h3>
+      <span class="trending-topics-meta">via Google Trends${fetched ? `<span class="trending-topics-updated">Updated ${escapeHTML(relativeTime(fetched))}</span>` : ''}</span>
+    </div>`;
 }
 
 function trendCardsShell(topics, { fetched, viewAll }) {
   return `
     <div class="trending-topics">
-      <div class="trending-topics-head">
-        <h3 class="trending-topics-title">Trending Topics</h3>
-        <span class="trending-topics-meta">via Google Trends${fetched ? ` · Updated ${escapeHTML(relativeTime(fetched))}` : ''}</span>
-      </div>
+      ${trendCardsHead(fetched)}
       <div class="trend-card-grid">${topics.map((t, i) => trendCardHTML(t, i)).join('')}</div>
       ${viewAll ? `<button type="button" class="trending-topics-viewall" data-action="view-all-trending">View all trending ${CHEV}</button>` : ''}
     </div>`;
@@ -141,7 +141,7 @@ function trendCardsShell(topics, { fetched, viewAll }) {
 
 function trendCardsSkeleton() {
   const cards = Array.from({ length: 6 }, () => `<div class="trend-card trend-card-skel"></div>`).join('');
-  return `<div class="trending-topics"><div class="trending-topics-head"><h3 class="trending-topics-title">Trending Topics</h3></div><div class="trend-card-grid">${cards}</div></div>`;
+  return `<div class="trending-topics">${trendCardsHead(null)}<div class="trend-card-grid">${cards}</div></div>`;
 }
 
 // Render the "Trending Topics" card grid. limit caps how many cards;
@@ -150,7 +150,7 @@ export function renderTrendingTopics(container, { limit = 20, viewAll = false } 
   container.innerHTML = trendCardsSkeleton();
   fetchTrending().then(({ topics, fetched }) => {
     if (!topics.length) {
-      container.innerHTML = `<div class="trending-topics"><div class="trending-topics-head"><h3 class="trending-topics-title">Trending Topics</h3></div><p class="trending-empty">Trending is taking a break — check back soon.</p></div>`;
+      container.innerHTML = `<div class="trending-topics">${trendCardsHead(null)}<p class="trending-empty">Trending is taking a break — check back soon.</p></div>`;
       return;
     }
     const shown = topics.slice(0, limit);
