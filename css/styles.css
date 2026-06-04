@@ -12307,7 +12307,10 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
   color: var(--color-text-muted); cursor: pointer; transition: background 0.14s, color 0.14s;
 }
 .tlm-close:hover { background: #f3f4f6; color: var(--color-text); }
-.tlm-body { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+/* Scroll the modal body itself — the trend-card grid has no inner scroll
+   container (the old .trending-scroll element is gone), so without this the
+   list overflows the clipped panel with no way to scroll. */
+.tlm-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
 /* Strip the sidebar-card chrome — the modal panel provides the surface. */
 .tlm-body .sidebar-card { border: none; background: none; padding: 0; box-shadow: none; }
 /* Size to content (the panel only has a max-height), and let the list grow
@@ -12579,6 +12582,10 @@ body.home-search.app-mode .topic-layout {
 /* Collapsed hero: keep the search bar a comfortable centered width. */
 @media (min-width: 720px) {
   .search-panel--inline[data-state="collapsed"] .search-panel-barrow { width: min(560px, 100%); max-width: 560px; margin-left: auto; margin-right: auto; }
+  /* Expanded: keep the input at ~the collapsed width instead of stretching
+     full-width — just widen enough to seat the X + Copy link controls
+     beside it, centered like the collapsed bar. */
+  .search-panel--inline[data-state="expanded"] .search-panel-barrow { width: min(720px, 100%); max-width: 720px; margin-left: auto; margin-right: auto; }
 }
 /* Desktop: Search & Trends spans the full width on top; Intelligence |
    News Feed columns below. */
@@ -12627,7 +12634,9 @@ body.home-search #topic-layout { margin-top: 0.4rem; }
 /* Actions group (Copy link + single close X) to the RIGHT of the bar. */
 .search-panel-barrow { display: flex; align-items: center; gap: 0.5rem; }
 .search-panel-form { flex: 1 1 auto; min-width: 0; }
-.search-panel-actions { flex: 0 0 auto; display: flex; align-items: center; gap: 0.4rem; }
+/* X (close) sits first, Copy link second — row-reverse keeps the DOM order
+   (copy, close) but renders close → copy left-to-right. */
+.search-panel-actions { flex: 0 0 auto; display: flex; flex-direction: row-reverse; align-items: center; gap: 0.4rem; }
 .search-panel-close {
   flex: 0 0 auto; width: 36px; height: 36px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center;
   background: #f1f3f7; border: 1px solid #e7eaf0; border-radius: 9px;
@@ -12650,7 +12659,7 @@ body.home-search #topic-layout { margin-top: 0.4rem; }
 /* "Search Intelligence" header: ~14px of breathing room above it (from the
    bar) and a matching ~14px below the divider to the accordions, so it's
    not cramped against the bar while floating far from the cards. */
-.search-panel-results .shortcuts-sidebar { margin-top: 0.85rem; }
+.search-panel-results .shortcuts-sidebar { margin-top: 1.15rem; }
 .search-panel-results .sidebar-card-header { padding-bottom: 0.45rem; }
 /* Always a navy title — override the mobile .topic-intelligence-panel rule
    that turns it into an uppercase slate eyebrow (the search hero wants the
@@ -12671,16 +12680,12 @@ body.home-search #topic-layout { margin-top: 0.4rem; }
    rule adds ~1.4rem top padding here; out-specify it (and cover the modal
    with the plain selector) so the accordions sit ~14px below the header. */
 .search-panel-results .shortcuts-scroll-wrap,
-body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-wrap { padding-top: 0; }
+body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-wrap { padding-top: 0; padding-bottom: 0; }
 .search-panel-results .ti-accordions { padding-top: 0.85rem; }
 
-/* Multi-column accordions open FULL WIDTH (span both columns), stay in
-   column when closed. Dense flow keeps the grid packed around the
-   full-width row. */
-.search-panel-results .ti-accordions { grid-auto-flow: row dense; }
-@media (min-width: 720px) {
-  .search-panel-results .ti-accordion[open] { grid-column: 1 / -1; }
-}
+/* Accordions open IN PLACE within their own grid column (no full-width
+   span) — the row simply grows to fit the open one while its neighbour
+   stays top-aligned. */
 
 /* Mobile: the tab band goes full-bleed (edge to edge) again. */
 @media (max-width: 899.98px) {
@@ -12697,8 +12702,6 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   /* Gap between the search section and the Trending card. Expanded
      (results showing) stays tight; collapsed (empty search bar) gets a
      little more breathing room below the bar. */
-  body.home-search #section-searchtrends .home-trending { margin-top: 0.5rem; }
-  body.home-search #home-search-hero:has(.search-panel[data-state="collapsed"]) + #home-trending { margin-top: 1rem; }
   /* Seat the tab band flush under the subnav — drop the ~10px of white
      space above it (the topic-layout's 0.4rem margin + content's 0.25rem
      padding slack). */
@@ -12712,6 +12715,10 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
 
 /* === Trending section (homepage + Trending modal) ==================== */
 .home-trending { margin: 1.6rem 0 0; padding: 0; }
+/* Trending gap is state-aware at every width — roomier when the search is
+   collapsed, tighter once results are showing below the bar. */
+body.home-search #home-search-hero:has(.search-panel[data-state="collapsed"]) + #home-trending { margin-top: 1.5rem; }
+body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #home-trending { margin-top: 0.6rem; }
 /* On the homepage the whole section sits in a soft card to set it apart. */
 .home-trending .trending-topics {
   background: #f6f8fc; border: 1px solid #e9edf4; border-radius: 16px;
