@@ -12542,8 +12542,15 @@ body.home-search.app-mode.sticky-always.has-subnav #content {
   position: static; height: auto; min-height: 0; overflow: visible;
   padding: calc(64px + var(--subnav-height, 66px) + 1rem) 0 3rem;
 }
+/* One cohesive centered width for the whole homepage so the hero and the
+   content columns line up (not edge-to-edge). */
 body.home-search.app-mode .topic-layout {
-  height: auto; max-width: var(--max-width); margin: 0 auto; padding: 0 2rem 2rem;
+  height: auto; max-width: 1280px; margin: 0 auto; padding: 0 2rem 2rem;
+}
+.home-search-hero { max-width: 1280px; }
+/* Collapsed hero: keep the search bar a comfortable centered width. */
+@media (min-width: 720px) {
+  .search-panel--inline[data-state="collapsed"] .search-panel-barrow { max-width: 760px; margin-left: auto; margin-right: auto; }
 }
 /* Desktop: independent columns — left = Intelligence + Trending, right =
    News Feed. The wrappers keep the columns from sharing/stretching rows. */
@@ -12561,17 +12568,25 @@ body.home-search.app-mode .topic-layout {
 @media (max-width: 899.98px) {
   body.home-search .home-col-left, body.home-search .home-col-main { display: contents; }
 }
-/* Cards size to content + the page scrolls (no internal card scrollbars). */
-body.home-search .layout-section { overflow: visible; }
+/* Cards size to content + the page scrolls. The inner scroll-wraps are
+   `flex: 1 1 0` so they fill app-mode's fixed-height panel — but on the
+   scrolling home there's no fixed height, so they collapse to ~0 and clip
+   the accordions / trending list. Make everything content-sized instead. */
+body.home-search .layout-section,
+body.home-search .shortcuts-sidebar,
+body.home-search .trending-card,
+body.home-search .newsfeed-card { height: auto; overflow: visible; }
 body.home-search .topic-layout .shortcuts-scroll-wrap,
 body.home-search .topic-layout .trending-scroll,
-body.home-search .topic-layout .newsfeed-scroll-wrap { max-height: none; }
+body.home-search .topic-layout .newsfeed-scroll-wrap {
+  flex: none; height: auto; max-height: none; overflow: visible;
+}
 /* News Feed never overflows its column — global insurance against long
    titles/URLs (applies on home + topic pages). */
 #section-newsfeed, .newsfeed-card, .newsfeed-scroll-wrap, .news-list, .news-card, .news-card-link { min-width: 0; max-width: 100%; }
 .news-card-title, .news-card-desc { overflow-wrap: anywhere; }
 
-.home-search-hero { max-width: 960px; margin: 0 auto; padding: 0.4rem 1rem 0.6rem; }
+.home-search-hero { max-width: 1280px; margin: 0 auto; padding: 0.4rem 2rem 0.6rem; }
 .home-search-hero .search-panel-results { max-width: 100%; }
 body.home-search #topic-layout { margin-top: 0.6rem; }
 
