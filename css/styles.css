@@ -1413,12 +1413,12 @@ body.hide-cta .sticky-cta { display: none !important; }
 .ti-shortcut.is-open .ti-shortcut-chev { transform: rotate(180deg); color: var(--ti-accent, #3261a0); }
 .ti-shortcut-panel { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 0.26s ease, opacity 0.2s ease; }
 .ti-shortcut.is-open .ti-shortcut-panel { grid-template-rows: 1fr; opacity: 1; }
-.ti-shortcut-panel-inner { overflow: hidden; min-height: 0; padding: 0.35rem 0.15rem 0.15rem; }
-.ti-shortcut-modelslabel { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #9aa5b8; padding: 0 0.3rem 0.3rem; }
-.ti-model + .ti-model { margin-top: 0.05rem; }
+.ti-shortcut-panel-inner { overflow: hidden; min-height: 0; padding: 0.25rem 0.15rem 0.1rem; }
+.ti-shortcut-modelslabel { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #9aa5b8; padding: 0 0.3rem 0.16rem; }
+.ti-model + .ti-model { margin-top: 0; }
 .ti-model-trigger {
   display: flex; align-items: center; justify-content: space-between; width: 100%;
-  padding: 0.42rem 0.55rem; border: none; border-radius: 8px; background: transparent;
+  padding: 0.28rem 0.55rem; border: none; border-radius: 8px; background: transparent;
   font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #2c3a52; cursor: pointer;
   transition: background 0.12s;
 }
@@ -1440,6 +1440,22 @@ body.hide-cta .sticky-cta { display: none !important; }
 .ti-act:hover { background: #f1f5fc; }
 .ti-act-submit:hover { color: #1f8f6b; }
 .ti-act-review:hover { color: #1e2d44; }
+
+/* Submit loading — a bar that fills 0→100% and overtakes the button area,
+   shared by the inline shortcut submit and the Review & Submit modal. */
+.submit-loading { width: 100%; padding: 0.45rem 0.1rem 0.2rem; animation: submit-loading-in 0.18s ease both; }
+.submit-loading-bar { height: 6px; border-radius: 999px; background: #e6ebf3; overflow: hidden; }
+.submit-loading-fill {
+  display: block; height: 100%; width: 0; border-radius: 999px;
+  background: linear-gradient(90deg, #3f6ab3, #2f8f63);
+  transition: width 1.2s cubic-bezier(0.3, 0.7, 0.35, 1);
+}
+.submit-loading-sub { margin-top: 0.5rem; font-size: 0.72rem; font-weight: 500; line-height: 1.35; color: #6b7790; }
+@keyframes submit-loading-in { from { opacity: 0; } to { opacity: 1; } }
+/* In the modal the area is wider/centered — give the bar a little more presence. */
+.pm-submit-area .submit-loading { padding: 0.2rem 0 0.1rem; }
+.pm-submit-area .submit-loading-bar { height: 8px; }
+.pm-submit-area .submit-loading-sub { font-size: 0.8rem; text-align: center; }
 
 /* Multi-select is retired — never show its submit bar. */
 .shortcuts-multi-submit-wrap { display: none !important; }

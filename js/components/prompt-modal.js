@@ -18,6 +18,7 @@ import {
   getPreferredModelId,
   setPreferredModelId,
   submitPrompt,
+  submitWithLoading,
 } from '../utils/ai-models.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
@@ -489,8 +490,9 @@ async function doSubmit() {
     count: modalState.count,
     edited: modalState.editedPrompt != null,
   });
-  await submitPrompt(model, prompt);
-  closeModal();
+  // Loading animation overtakes the submit button area, then navigates.
+  const host = panelEl.querySelector('.pm-submit-area .pm-actions');
+  await submitWithLoading(model, prompt, host);
 }
 
 function flashIconBtn(btn, state) {

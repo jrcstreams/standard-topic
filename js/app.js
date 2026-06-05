@@ -1,6 +1,6 @@
 import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
 import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, searchTopics, getModels, getDefaultModelId, getModelById } from './utils/data.js';
-import { getPreferredModelId, setPreferredModelId, submitPrompt } from './utils/ai-models.js';
+import { getPreferredModelId, setPreferredModelId, submitPrompt, submitWithLoading } from './utils/ai-models.js';
 import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
@@ -1685,9 +1685,9 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       const reasoning = REASONING_LEVELS.find(l => l.id === getReasoningLevel());
       const full = assemblePrompt(basePrompt, { reasoningHint: reasoning && reasoning.hint ? reasoning.hint : '', customInstructions: getCustomInstructions(), topicName });
       track('shortcut_submit', { model: model.id, route: window.location.hash || '#/' });
-      try { await submitPrompt(model, full); } catch (err) { console.error('Shortcut submit failed', err); }
-      flashToast('Prompt copied to clipboard');
-      closeAllTIShortcuts(null);
+      // Loading animation overtakes the Submit/Review row, then navigates.
+      const host = modelEl?.querySelector('.ti-model-actions-inner');
+      try { await submitWithLoading(model, full, host); } catch (err) { console.error('Shortcut submit failed', err); }
     });
   });
   if (!container.__tiShortcutWired) {
