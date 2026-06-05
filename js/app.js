@@ -345,8 +345,8 @@ function bodyTabsRow(opts = {}) {
      </button>`);
   }
   tabs.push(`<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">
-       <span class="tab-pill-label-long">Intelligence</span>
-       <span class="tab-pill-label-short">Intelligence</span>
+       <span class="tab-pill-label-long">Topic Intelligence</span>
+       <span class="tab-pill-label-short">Topic Intel</span>
      </button>`);
   if (showRelated) {
     tabs.push(`<button type="button" class="tab-pill tab-pill-related" data-tab="related">Related</button>`);
@@ -1473,7 +1473,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   // Search results → "Search Intelligence" with the live search term as a
   // sublabel (updated in place as the user edits the input). Everywhere else
   // (home / topic) → "Intelligence" with the topic name sublabel.
-  const panelTitle = isCustom ? 'Search Intelligence' : 'Intelligence';
+  const panelTitle = isCustom ? 'Search Intelligence' : (isHome ? 'Intelligence' : 'Topic Intelligence');
   // Homepage Intelligence card gets the Trending-style treatment: an amber
   // lightbulb icon and a descriptive subtext. Topic pages keep the topic
   // name as the sublabel; search results keep the live term.

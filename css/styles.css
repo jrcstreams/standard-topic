@@ -12671,19 +12671,19 @@ body.home-search .topic-layout .newsfeed-scroll-wrap {
 
 body.home-search #topic-layout { margin-top: 0.4rem; }
 
-/* Mobile: 3 tabs — Search & Trends (default) / News Feed / Intelligence. */
+/* Mobile home: one continuous scroll — NO tabs. Search & Trending, then
+   Intelligence, then News Feed, all stacked and sized to content. (Topic
+   pages keep their tab nav — this is scoped to body.home-search.) */
 @media (max-width: 899.98px) {
-  body.home-search.app-mode .topic-layout > .layout-section {
-    flex: none; overflow: visible;
-    min-height: calc(100dvh - 64px - var(--subnav-height, 80px) - 64px);
-  }
-  body.home-search .body-tabs {
-    position: sticky; top: calc(64px + var(--subnav-height, 80px)); z-index: 8;
-    background: var(--color-bg, #fff); padding: 0.5rem 0; margin: 0 -0.2rem;
-  }
-  /* The Search & Trends section is a tab like the others — hidden unless active. */
-  body.home-search.app-mode .topic-layout > #section-searchtrends { display: none; }
-  body.home-search.app-mode.active-tab-searchtrends .topic-layout > #section-searchtrends { display: block; }
+  body.home-search .body-tabs { display: none !important; }
+  body.home-search.app-mode .topic-layout > .layout-section { flex: none; overflow: visible; min-height: 0; }
+  body.home-search.app-mode .topic-layout > #section-searchtrends,
+  body.home-search.app-mode .topic-layout > #section-shortcuts,
+  body.home-search.app-mode .topic-layout > #section-newsfeed { display: block; }
+  /* Section headers show (no tab labels them now); separate the stacked sections. */
+  body.home-search #section-shortcuts .sidebar-card-header { display: flex; }
+  body.home-search #section-shortcuts,
+  body.home-search #section-newsfeed { margin-top: 1.75rem; }
   body.home-search #section-searchtrends .home-trending { margin-top: 1.2rem; }
 }
 
@@ -12901,14 +12901,14 @@ body.home-search #section-shortcuts .sidebar-card-title,
 body.home-search #section-newsfeed .newsfeed-title {
   display: inline-flex; flex-direction: row; align-items: center; gap: 0.45rem;
   font-family: var(--font-display); font-size: 1.2rem; font-weight: 700;
-  letter-spacing: -0.02em; color: var(--color-primary);
+  letter-spacing: -0.02em; color: var(--color-primary); text-transform: none;
   min-height: 0; border: none; padding: 0; margin: 0;
 }
 
-/* Mobile: the tab pill already labels each section, so drop the in-card
-   header (icon-title + subtext). */
+/* Mobile home now scrolls as one column (no tabs), so the News Feed header
+   shows to label the section. */
 @media (max-width: 899.98px) {
-  body.home-search #section-newsfeed .newsfeed-head { display: none; }
+  body.home-search #section-newsfeed .newsfeed-head { display: flex; }
 }
 
 /* Homepage subnav: Home label/icon removed → topics own the full width
@@ -12916,3 +12916,14 @@ body.home-search #section-newsfeed .newsfeed-title {
 .topic-banner-row--home-topics-only { gap: 0; }
 .topic-banner-row--home-topics-only .subnav-chip-wrap { flex: 1 1 0; }
 .topic-banner-row--home-topics-only .subnav-chip-wrap::before { display: none !important; }
+/* The home subnav holds only the featured-topic scroll (no Home title/icon),
+   so it needs less height than topic pages — tighten + vertically center the
+   names with symmetric padding. */
+body.home-mode #sub-header.is-subnav .topic-banner {
+  min-height: 0; padding-top: 0.45rem; padding-bottom: 0.45rem; align-items: center;
+}
+@media (max-width: 899.98px) {
+  body.home-mode #sub-header.is-subnav .topic-banner {
+    min-height: 0; padding-top: 0.35rem; padding-bottom: 0.35rem; align-items: center;
+  }
+}
