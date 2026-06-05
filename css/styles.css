@@ -3208,6 +3208,9 @@ html, body, #app {
    small dropdown menu (fade/scale) of one-tap insight prompts. The story
    title reserves right-gutter space so it never runs under the pill. */
 .news-ai { position: absolute; top: 1.05rem; right: 0.75rem; z-index: 4; }
+/* While open, lift the whole AI stacking context above later sibling cards
+   so the dropdown isn't painted over by the next story's pill. */
+.news-ai.is-open { z-index: 50; }
 .news-card:has(.news-ai) .news-card-title { padding-right: 9rem; }
 .news-ai-trigger {
   display: inline-flex; align-items: center; gap: 0.34rem;
