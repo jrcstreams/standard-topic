@@ -1019,10 +1019,10 @@ body.hide-cta .sticky-cta { display: none !important; }
 
 #sub-header.is-subnav .topic-banner-title {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 1.15rem;
   line-height: 1.15;
-  letter-spacing: -0.026em;
-  font-weight: 300;
+  letter-spacing: -0.02em;
+  font-weight: 600;
 }
 
 /* Custom-search title: small uppercase "SEARCH" tag inline with the
@@ -1832,8 +1832,8 @@ body.hide-cta .sticky-cta { display: none !important; }
   }
   #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
   #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
-    font-size: 1.3rem;
-    line-height: 1.1;
+    font-size: 1.05rem;
+    line-height: 1.15;
     font-weight: 600;
   }
   #sub-header.is-subnav .topic-banner-icon,
@@ -1869,7 +1869,7 @@ body.hide-cta .sticky-cta { display: none !important; }
 @media (max-width: 400px) {
   #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
   #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
   #sub-header.is-subnav .topic-banner-icon,
   #sub-header.is-home-subnav .topic-banner-icon {
