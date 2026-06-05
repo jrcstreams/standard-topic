@@ -5302,33 +5302,48 @@ body.app-mode .topic-layout {
 }
 
 @media (min-width: 900px) {
+  /* Single-column stack: Intelligence (full width) above News Feed (full
+     width), matching the homepage's full-width Trending. The old two-column
+     (Topic Intelligence | News Feed) split is retired. */
   .topic-layout {
-    grid-template-columns: 320px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: 0;
-    align-items: stretch;
+    align-items: start;
   }
-  /* Discreet vertical separator between the left column (Trending +
-     Topic Intelligence) and News Feed. Drawn on the News Feed's left
-     edge so it runs the FULL column height — News Feed always spans the
-     whole right column (single row on topic pages, both rows on home),
-     whereas the left column is split into two sections on home. */
   body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts {
     position: relative;
-    padding-right: 1.5rem;
+    margin-bottom: 1.8rem;
   }
   body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed {
     position: relative;
-    padding-left: 1.5rem;
   }
-  body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed::before {
-    content: '';
-    position: absolute;
-    top: 0.4rem;
-    left: 0;
-    bottom: 0;
-    width: 1px;
-    background: #e2e8f0;
-    pointer-events: none;
+  /* Topic pages: stacked sections are taller than the viewport, so the
+     content area scrolls as ONE column (like the homepage) instead of the
+     old fixed two-column internal scroll. Home already scrolls naturally. */
+  body.app-mode:not(.home-search) #content { overflow-y: auto; overflow-x: hidden; }
+  /* Content-height grid that packs rows at the top — no min-height:100%, which
+     would stretch the grid taller than its content and strand a big gap
+     between the stacked sections. */
+  body.app-mode:not(.home-search) .topic-layout { height: auto; min-height: 0; align-content: start; }
+  body.app-mode:not(.home-search) .topic-layout > .layout-section { height: auto; overflow: visible; min-height: 0; }
+  body.app-mode:not(.home-search) .shortcuts-sidebar,
+  body.app-mode:not(.home-search) .newsfeed-card { height: auto; overflow: visible; }
+  body.app-mode:not(.home-search) .shortcuts-scroll-wrap,
+  body.app-mode:not(.home-search) .newsfeed-scroll-wrap {
+    flex: none; height: auto; max-height: none; overflow: visible;
+    padding-top: 0; padding-bottom: 0;
+  }
+  /* Intelligence is full width now — lay the accordion buttons out as a tidy
+     2-up grid (2x2 for the four groups). An OPEN accordion spans the full
+     width so its model list has room and doesn't strand a tall empty cell. */
+  body.app-mode .topic-layout:not(.is-custom) #section-shortcuts .ti-accordions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem 1rem;
+    align-items: start;
+  }
+  body.app-mode .topic-layout:not(.is-custom) #section-shortcuts .ti-accordion[open] {
+    grid-column: 1 / -1;
   }
   /* Home only (its left column has #section-trending): Topic Intelligence
      sits on top (row 1, capped so it scrolls internally rather than
@@ -12756,13 +12771,13 @@ body.home-search.app-mode .topic-layout {
    News Feed columns below. */
 @media (min-width: 900px) {
   body.home-search.app-mode .topic-layout {
-    grid-template-columns: 320px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     align-items: start;
     gap: 0;
   }
-  body.home-search #section-searchtrends { grid-column: 1 / -1; margin-bottom: 1.6rem; }
-  body.home-search #section-shortcuts { grid-column: 1; }
-  body.home-search #section-newsfeed { grid-column: 2; }
+  body.home-search #section-searchtrends { grid-column: 1; margin-bottom: 1.8rem; }
+  body.home-search #section-shortcuts { grid-column: 1; margin-bottom: 1.8rem; }
+  body.home-search #section-newsfeed { grid-column: 1; }
 }
 /* Cards size to content + the page scrolls. */
 body.home-search .layout-section,
@@ -12904,7 +12919,7 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
    below as a subtitle (matches News Feed / Intelligence section heads). */
 .trending-topics-head { margin-bottom: 0.9rem; padding-bottom: 0.7rem; border-bottom: 1px solid #d6dae2; }
 .trending-topics-titlerow { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
-.trending-topics-title { margin: 0; font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; letter-spacing: -0.024em; line-height: 1.15; color: #1c3a6b; }
+.trending-topics-title { margin: 0; font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; color: var(--color-primary); }
 .trending-topics-updated { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.01em; color: #6b7689; background: #eef1f6; padding: 0.24rem 0.55rem; border-radius: 6px; white-space: nowrap; }
 .trending-topics-sub { margin: 0.3rem 0 0; font-size: 0.82rem; color: var(--color-text-muted); }
 .trending-topics-src { color: #5f6b85; text-decoration: none; }
@@ -13008,14 +13023,16 @@ body.home-search.app-mode .topic-layout { padding-bottom: 1rem; }
 .section-head-icon--news { color: #3b6fb5; }
 
 body.home-search #section-shortcuts .sidebar-card-header,
-body.home-search #section-newsfeed .newsfeed-head {
+/* News Feed head + section titles — one consistent treatment on BOTH the
+   homepage and topic pages (unscoped from body.home-search). */
+#section-newsfeed .newsfeed-head {
   display: flex; flex-direction: column; align-items: flex-start;
   gap: 0.15rem; margin: 0 0 0.9rem; padding: 0 0 0.7rem;
   border-bottom: 1px solid #d6dae2; background: transparent; min-height: 0;
 }
-body.home-search #section-shortcuts .sidebar-card-heading { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
-body.home-search #section-shortcuts .sidebar-card-title,
-body.home-search #section-newsfeed .newsfeed-title {
+#section-shortcuts .sidebar-card-heading { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+#section-shortcuts .sidebar-card-title,
+#section-newsfeed .newsfeed-title {
   display: inline-flex; flex-direction: row; align-items: center; gap: 0.45rem;
   font-family: var(--font-display); font-size: 1.2rem; font-weight: 700;
   letter-spacing: -0.02em; color: var(--color-primary); text-transform: none;

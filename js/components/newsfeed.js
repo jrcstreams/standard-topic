@@ -227,19 +227,13 @@ async function renderApiMode(scrollWrap, topic, isHome) {
 const NEWS_ICON = '<svg class="section-head-icon section-head-icon--news" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>';
 
 export function renderNewsFeed(container, topic, isHome) {
-  const topicName = (!isHome && topic?.name) ? topic.name : '';
-  const pillHTML = topicName
-    ? `<span class="section-topic-pill">${escapeHTML(topicName)}</span>`
-    : '';
-
-  // Homepage gets the Trending-style card header (blue newspaper icon +
-  // subtext); topic pages keep the bare sticky title.
-  const headHTML = isHome
-    ? `<div class="newsfeed-head section-card-head">
-         <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">News Feed</span></h3>
-         <p class="section-card-sub">Latest stories and developments, powered by RSS.app</p>
-       </div>`
-    : `<h3 class="newsfeed-title"><span class="newsfeed-title-main">News Feed</span>${pillHTML}</h3>`;
+  // Same header treatment on home and topic pages: "News Feed" title + a
+  // descriptive subtext, matching the Trending / Intelligence section heads.
+  const headHTML = `
+    <div class="newsfeed-head section-card-head">
+      <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">News Feed</span></h3>
+      <p class="section-card-sub">Latest stories and developments, powered by RSS.app</p>
+    </div>`;
 
   container.innerHTML = `
     <div class="newsfeed-card">
