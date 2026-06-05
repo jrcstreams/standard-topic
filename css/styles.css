@@ -1808,6 +1808,21 @@ body.hide-cta .sticky-cta { display: none !important; }
   }
 }
 
+/* "Topic" kind pill — sits to the left of the topic icon to label the title. */
+.topic-banner-kind {
+  flex: none; font-family: var(--font-family); font-size: 0.62rem; font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase; color: #5f6b85;
+  background: #e7ecf3; border: 1px solid #dde3ec; padding: 0.22rem 0.55rem; border-radius: 999px;
+  line-height: 1;
+}
+@media (max-width: 899.98px) {
+  /* Topic subnav title row only (home has no titlegroup): lower it a touch
+     and size the icon up so it reads in proportion to the bold name. */
+  #sub-header.is-subnav .topic-banner:has(.topic-banner-titlegroup) { padding-top: 1.05rem; padding-bottom: 0.8rem; }
+  #sub-header.is-subnav .topic-banner:has(.topic-banner-titlegroup) .topic-banner-icon { width: 28px; height: 28px; }
+  .topic-banner-kind { font-size: 0.58rem; padding: 0.2rem 0.48rem; }
+}
+
 /* Extra-small screens: shrink title further for long names. */
 @media (max-width: 400px) {
   #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,

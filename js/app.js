@@ -195,9 +195,10 @@ function renderLayout(route) {
   // Title group: icon + name. Hamburger now lives permanently in the
   // main nav next to the brand, so the subnav title is free to sit
   // hard-left without competing with a menu trigger.
-  const titleGroup = (iconKey, title) => `
+  const titleGroup = (iconKey, title, kindLabel = '') => `
     <div class="topic-banner-titlegroup">
       <div class="topic-banner-titleinner">
+        ${kindLabel ? `<span class="topic-banner-kind">${escapeHTML(kindLabel)}</span>` : ''}
         ${topicIconSVG(iconKey, 'topic-banner-icon')}
         <h1 class="topic-banner-title">${escapeHTML(title)}</h1>
       </div>
@@ -280,7 +281,7 @@ function renderLayout(route) {
     subHeader.innerHTML = `
       <div class="topic-banner">
         <div class="topic-banner-row">
-          ${titleGroup(topic.icon || 'globe', topic.name)}
+          ${titleGroup(topic.icon || 'globe', topic.name, 'Topic')}
           ${related.length > 0 ? `
             <div class="subnav-topics-inline">
               ${relatedLinksHTML}
