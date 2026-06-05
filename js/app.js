@@ -1635,6 +1635,64 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     if (toastTimer) clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toastEl.classList.remove('is-visible'), 1800);
   };
+
+  // AI shortcut → model → Submit/Review dropdown wiring (replaces multi-select).
+  const closeAllTIShortcuts = (except) => container.querySelectorAll('.ti-shortcut.is-open').forEach(s => {
+    if (s === except) return;
+    s.classList.remove('is-open');
+    s.querySelector('.ti-shortcut-trigger')?.setAttribute('aria-expanded', 'false');
+    s.querySelectorAll('.ti-model.is-open').forEach(m => { m.classList.remove('is-open'); m.querySelector('.ti-model-trigger')?.setAttribute('aria-expanded', 'false'); });
+  });
+  container.querySelectorAll('.ti-shortcut-trigger').forEach(trig => {
+    trig.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const sc = trig.closest('.ti-shortcut');
+      const willOpen = !sc.classList.contains('is-open');
+      closeAllTIShortcuts(sc);
+      sc.classList.toggle('is-open', willOpen);
+      trig.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      if (!willOpen) sc.querySelectorAll('.ti-model.is-open').forEach(m => { m.classList.remove('is-open'); m.querySelector('.ti-model-trigger')?.setAttribute('aria-expanded', 'false'); });
+    });
+  });
+  container.querySelectorAll('.ti-model-trigger').forEach(mt => {
+    mt.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const model = mt.closest('.ti-model');
+      const sc = mt.closest('.ti-shortcut');
+      const willOpen = !model.classList.contains('is-open');
+      sc.querySelectorAll('.ti-model.is-open').forEach(m => { if (m !== model) { m.classList.remove('is-open'); m.querySelector('.ti-model-trigger')?.setAttribute('aria-expanded', 'false'); } });
+      model.classList.toggle('is-open', willOpen);
+      mt.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    });
+  });
+  container.querySelectorAll('.ti-act').forEach(actBtn => {
+    actBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const sc = actBtn.closest('.ti-shortcut');
+      const modelEl = actBtn.closest('.ti-model');
+      const basePrompt = sc?.dataset.prompt || '';
+      const name = sc?.dataset.name || 'Shortcut';
+      const model = getModelById(modelEl?.dataset.modelId) || getModelById(getDefaultModelId());
+      if (!model) return;
+      if (actBtn.dataset.act === 'review') {
+        window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt, name, iconKey: sc?.dataset.iconKey || '', count: 1 } }));
+        closeAllTIShortcuts(null);
+        return;
+      }
+      const reasoning = REASONING_LEVELS.find(l => l.id === getReasoningLevel());
+      const full = assemblePrompt(basePrompt, { reasoningHint: reasoning && reasoning.hint ? reasoning.hint : '', customInstructions: getCustomInstructions(), topicName });
+      track('shortcut_submit', { model: model.id, route: window.location.hash || '#/' });
+      try { await submitPrompt(model, full); } catch (err) { console.error('Shortcut submit failed', err); }
+      flashToast('Prompt copied to clipboard');
+      closeAllTIShortcuts(null);
+    });
+  });
+  if (!container.__tiShortcutWired) {
+    container.__tiShortcutWired = true;
+    document.addEventListener('click', () => closeAllTIShortcuts(null));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAllTIShortcuts(null); });
+  }
+
   container.querySelectorAll('.quick-link-pill').forEach(link => {
     link.addEventListener('click', () => {
       const name = link.dataset.name || '';
@@ -1868,30 +1926,46 @@ function shortcutItem(shortcut, topicName) {
 // Individual shortcut icons are NOT rendered in the row — the
 // section header carries the visual identity, and dropping the
 // per-row icon leaves more room for the title + description.
+const TI_CHEV_SVG = '<svg class="ti-chev-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+const TI_SUBMIT_SVG = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9z"/></svg>';
+const TI_REVIEW_SVG = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
+
+// AI shortcut row → click expands a model list → click a model expands
+// Submit / Review actions. No multi-select; each action acts on this one
+// prompt (Submit sends to the model + copies to clipboard; Review opens the
+// prompt modal). Drops the .ai-shortcut-select-btn class so the legacy
+// multi-select wiring no longer attaches.
 function tiShortcutItem(shortcut, topicName, groupKey) {
   const prompt = shortcut.prompt.replace(/\{topic\}/gi, topicName);
   const description = shortcut.description && shortcut.description.trim()
     ? `<span class="ti-item-desc">${escapeHTML(shortcut.description)}</span>`
     : '';
+  const modelsHTML = getModels().map(m => `
+        <div class="ti-model" data-model-id="${escapeAttr(m.id)}">
+          <button type="button" class="ti-model-trigger" aria-expanded="false">
+            <span class="ti-model-name">${escapeHTML(m.name)}</span>
+            <span class="ti-model-chev" aria-hidden="true">${TI_CHEV_SVG}</span>
+          </button>
+          <div class="ti-model-actions"><div class="ti-model-actions-inner">
+            <button type="button" class="ti-act ti-act-submit" data-act="submit">${TI_SUBMIT_SVG}<span>Submit Prompt</span></button>
+            <button type="button" class="ti-act ti-act-review" data-act="review">${TI_REVIEW_SVG}<span>Review before Submitting</span></button>
+          </div></div>
+        </div>`).join('');
   return `
     <li class="ti-item-row">
-      <button class="ti-item ti-item-shortcut ai-shortcut-select-btn"
-              data-prompt="${escapeAttr(prompt)}"
-              data-name="${escapeAttr(shortcut.name)}"
-              data-icon-key="${escapeAttr(shortcut.icon)}"
-              data-group="${escapeAttr(groupKey || '')}"
-              aria-pressed="false"
-              title="${escapeAttr(shortcut.name)}">
-        <span class="ti-item-marker" aria-hidden="true">
-          <svg class="ti-item-marker-check" viewBox="0 0 14 14" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="2 7 6 11 12 3"/>
-          </svg>
-        </span>
-        <span class="ti-item-text">
-          <span class="ti-item-name">${escapeHTML(shortcut.name)}</span>
-          ${description}
-        </span>
-      </button>
+      <div class="ti-shortcut" data-prompt="${escapeAttr(prompt)}" data-name="${escapeAttr(shortcut.name)}" data-icon-key="${escapeAttr(shortcut.icon)}" data-group="${escapeAttr(groupKey || '')}">
+        <button type="button" class="ti-item ti-item-shortcut ti-shortcut-trigger" aria-expanded="false" title="${escapeAttr(shortcut.name)}">
+          <span class="ti-item-text">
+            <span class="ti-item-name">${escapeHTML(shortcut.name)}</span>
+            ${description}
+          </span>
+          <span class="ti-shortcut-chev" aria-hidden="true">${TI_CHEV_SVG}</span>
+        </button>
+        <div class="ti-shortcut-panel"><div class="ti-shortcut-panel-inner">
+          <div class="ti-shortcut-modelslabel">Choose a model</div>
+          ${modelsHTML}
+        </div></div>
+      </div>
     </li>
   `;
 }

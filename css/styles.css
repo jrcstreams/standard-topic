@@ -1402,6 +1402,48 @@ body.hide-cta .sticky-cta { display: none !important; }
   border-color: color-mix(in srgb, var(--ti-accent) 35%, #e2e6ee);
 }
 
+/* === AI shortcut → model → Submit/Review dropdown ====================
+   Click a shortcut to reveal a model list; click a model to reveal its
+   Submit / Review actions. Two nested grid-rows expansions. */
+.ti-shortcut { position: relative; }
+.ti-shortcut-trigger { align-items: center; }
+.ti-shortcut-chev { flex: 0 0 auto; align-self: center; color: #b8c2d2; transition: transform 0.2s ease, color 0.14s; }
+.ti-shortcut-trigger:hover .ti-shortcut-chev { color: var(--ti-accent, #3261a0); }
+.ti-shortcut.is-open > .ti-shortcut-trigger { background: #fff; border-color: color-mix(in srgb, var(--ti-accent) 30%, #e2e6ee); }
+.ti-shortcut.is-open .ti-shortcut-chev { transform: rotate(180deg); color: var(--ti-accent, #3261a0); }
+.ti-shortcut-panel { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 0.26s ease, opacity 0.2s ease; }
+.ti-shortcut.is-open .ti-shortcut-panel { grid-template-rows: 1fr; opacity: 1; }
+.ti-shortcut-panel-inner { overflow: hidden; min-height: 0; padding: 0.35rem 0.15rem 0.15rem; }
+.ti-shortcut-modelslabel { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #9aa5b8; padding: 0 0.3rem 0.3rem; }
+.ti-model + .ti-model { margin-top: 0.05rem; }
+.ti-model-trigger {
+  display: flex; align-items: center; justify-content: space-between; width: 100%;
+  padding: 0.42rem 0.55rem; border: none; border-radius: 8px; background: transparent;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #2c3a52; cursor: pointer;
+  transition: background 0.12s;
+}
+.ti-model-trigger:hover, .ti-model.is-open .ti-model-trigger { background: #eef2f9; }
+.ti-model-chev { flex: none; color: #b8c2d2; transition: transform 0.2s ease; }
+.ti-model-chev svg { display: block; }
+.ti-model.is-open .ti-model-chev { transform: rotate(180deg); color: var(--ti-accent, #3261a0); }
+.ti-model-actions { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.22s ease; }
+.ti-model.is-open .ti-model-actions { grid-template-rows: 1fr; }
+.ti-model-actions-inner { overflow: hidden; min-height: 0; display: flex; flex-direction: column; gap: 0.1rem; padding: 0.2rem 0 0.3rem 0.55rem; }
+.ti-act {
+  display: flex; align-items: center; gap: 0.45rem; width: 100%; text-align: left;
+  padding: 0.42rem 0.55rem; border: none; border-radius: 7px; background: transparent;
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #3a4a64; cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.ti-act svg { flex: none; }
+.ti-act-submit { color: #2f7a55; }
+.ti-act:hover { background: #f1f5fc; }
+.ti-act-submit:hover { color: #1f8f6b; }
+.ti-act-review:hover { color: #1e2d44; }
+
+/* Multi-select is retired — never show its submit bar. */
+.shortcuts-multi-submit-wrap { display: none !important; }
+
 @media (max-width: 640px) {
   .ti-accordion-summary { padding: 0.65rem 0.8rem; column-gap: 0.4rem; row-gap: 0.3rem; }
   .ti-accordion-icon { width: 20px; height: 20px; }
