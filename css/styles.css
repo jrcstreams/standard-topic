@@ -1409,12 +1409,28 @@ body.hide-cta .sticky-cta { display: none !important; }
 .ti-shortcut-trigger { align-items: center; }
 .ti-shortcut-chev { flex: 0 0 auto; align-self: center; color: #b8c2d2; transition: transform 0.2s ease, color 0.14s; }
 .ti-shortcut-trigger:hover .ti-shortcut-chev { color: var(--ti-accent, #3261a0); }
-.ti-shortcut.is-open > .ti-shortcut-trigger { background: #fff; border-color: color-mix(in srgb, var(--ti-accent) 30%, #e2e6ee); }
+/* Expanded shortcut = one contained card. The border wraps the whole
+   shortcut (title + sub-options), not just the title button, so the model
+   list reads as nested children rather than loose siblings below it. */
+.ti-shortcut.is-open {
+  background: #fff;
+  border: 1px solid color-mix(in srgb, var(--ti-accent) 20%, #e4e8ef);
+  border-radius: 10px;
+  box-shadow: 0 6px 16px -12px rgba(15, 26, 46, 0.16);
+}
+.ti-shortcut.is-open > .ti-shortcut-trigger { background: transparent; border-color: transparent; }
 .ti-shortcut.is-open .ti-shortcut-chev { transform: rotate(180deg); color: var(--ti-accent, #3261a0); }
 .ti-shortcut-panel { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 0.26s ease, opacity 0.2s ease; }
 .ti-shortcut.is-open .ti-shortcut-panel { grid-template-rows: 1fr; opacity: 1; }
-.ti-shortcut-panel-inner { overflow: hidden; min-height: 0; padding: 0.25rem 0.15rem 0.1rem; }
-.ti-shortcut-modelslabel { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #9aa5b8; padding: 0 0.3rem 0.16rem; }
+/* Sub-options are indented with a quiet vertical guide line so they clearly
+   hang off the shortcut above them. */
+.ti-shortcut-panel-inner {
+  overflow: hidden; min-height: 0;
+  margin: 0 0.55rem 0.2rem 1rem;
+  padding: 0 0 0.1rem 0.7rem;
+  border-left: 1.5px solid #e9ecf2;
+}
+.ti-shortcut-modelslabel { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #9aa5b8; padding: 0.34rem 0 0.32rem; }
 .ti-model + .ti-model { margin-top: 0; }
 .ti-model-trigger {
   display: flex; align-items: center; justify-content: space-between; width: 100%;
