@@ -106,6 +106,9 @@ function durationLabel(iso) {
 const TREND_UP_SVG = `<svg class="trending-topics-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>`;
 // Small green up-trend mark shown next to each trend term.
 const TREND_CARD_ICON = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>`;
+// AI Insights spark — same mark/branding as the News Feed AI Insights label,
+// reused as the mini-header inside each trend's insight dropdown.
+const AI_SPARK_SVG = `<svg class="trend-ai-spark" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>`;
 
 // Google returns trend queries lowercase ("jalen brunson") — title-case them.
 function titleCase(s) {
@@ -142,6 +145,7 @@ function trendCardHTML(topic, idx) {
         <span class="trend-card-chev" aria-hidden="true">${CHEV_DOWN}</span>
       </button>
       <div class="trend-card-panel"><div class="trend-card-panel-inner">
+        <div class="trend-ai-head">${AI_SPARK_SVG}<span>AI Insights</span></div>
         ${TREND_INSIGHTS.map(o => `<button type="button" class="trend-ai-opt" data-insight="${o.key}">${escapeHTML(o.label)}</button>`).join('')}
       </div></div>
     </div>`;
@@ -184,11 +188,11 @@ function wireTrendCards(container) {
 function trendCardsHead(fetched) {
   return `
     <div class="trending-topics-head">
-      <h3 class="trending-topics-title"><span>Trending</span></h3>
-      <div class="trending-topics-meta">
-        <span class="trending-topics-sub">Trending search terms from <a class="trending-topics-src" href="https://trends.google.com/trending" target="_blank" rel="noopener noreferrer">Google Trends</a></span>
-        ${fetched ? `<span class="trending-topics-updated">Last Updated ${escapeHTML(relativeTime(fetched))}</span>` : ''}
+      <div class="trending-topics-titlerow">
+        <h3 class="trending-topics-title"><span>Trending</span></h3>
+        ${fetched ? `<span class="trending-topics-updated">Updated ${escapeHTML(relativeTime(fetched))}</span>` : ''}
       </div>
+      <p class="trending-topics-sub">Trending search terms from <a class="trending-topics-src" href="https://trends.google.com/trending" target="_blank" rel="noopener noreferrer">Google Trends</a></p>
     </div>`;
 }
 

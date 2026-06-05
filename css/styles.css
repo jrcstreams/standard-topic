@@ -1016,11 +1016,17 @@ body.hide-cta .sticky-cta { display: none !important; }
   align-items: center;
   gap: 0.55rem;
 }
+#sub-header.is-subnav .topic-banner-titleinner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
 
 #sub-header.is-subnav .topic-banner-title {
   font-family: var(--font-display);
-  font-size: 1.15rem;
-  line-height: 1.15;
+  font-size: 0.92rem;
+  line-height: 1.1;
   letter-spacing: -0.02em;
   font-weight: 600;
 }
@@ -1409,28 +1415,29 @@ body.hide-cta .sticky-cta { display: none !important; }
 .ti-shortcut-trigger { align-items: center; }
 .ti-shortcut-chev { flex: 0 0 auto; align-self: center; color: #b8c2d2; transition: transform 0.2s ease, color 0.14s; }
 .ti-shortcut-trigger:hover .ti-shortcut-chev { color: var(--ti-accent, #3261a0); }
-/* Expanded shortcut = one contained card. The border wraps the whole
-   shortcut (title + sub-options), not just the title button, so the model
-   list reads as nested children rather than loose siblings below it. */
+/* Expanded shortcut: NO nested card/border (the group accordion is already a
+   bordered card — a second border inside read as heavy "card-in-card"). Just a
+   soft accent-tinted fill + a left accent bar in the group's colour, so the
+   whole expansion reads as one quiet block hanging off its group. */
 .ti-shortcut.is-open {
-  background: #fff;
-  border: 1px solid color-mix(in srgb, var(--ti-accent) 20%, #e4e8ef);
-  border-radius: 10px;
-  box-shadow: 0 6px 16px -12px rgba(15, 26, 46, 0.16);
+  background: color-mix(in srgb, var(--ti-accent, #3261a0) 5%, #ffffff);
+  border-radius: 8px;
+  box-shadow: inset 2.5px 0 0 var(--ti-accent, #3261a0);
 }
 .ti-shortcut.is-open > .ti-shortcut-trigger { background: transparent; border-color: transparent; }
 .ti-shortcut.is-open .ti-shortcut-chev { transform: rotate(180deg); color: var(--ti-accent, #3261a0); }
 .ti-shortcut-panel { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 0.26s ease, opacity 0.2s ease; }
 .ti-shortcut.is-open .ti-shortcut-panel { grid-template-rows: 1fr; opacity: 1; }
-/* Sub-options are indented with a quiet vertical guide line so they clearly
-   hang off the shortcut above them. */
+/* Models indent inside the tinted block — the fill already groups them, so no
+   guide line is needed. */
 .ti-shortcut-panel-inner {
   overflow: hidden; min-height: 0;
-  margin: 0 0.55rem 0.2rem 1rem;
-  padding: 0 0 0.1rem 0.7rem;
-  border-left: 1.5px solid #e9ecf2;
+  margin: 0;
+  padding: 0 0.5rem 0.4rem 0.95rem;
 }
-.ti-shortcut-modelslabel { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #9aa5b8; padding: 0.34rem 0 0.32rem; }
+.ti-shortcut-modelslabel { font-size: 0.56rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #97a1b3; padding: 0.2rem 0 0.34rem 0.1rem; }
+/* Model rows read as sub-options: lighter than the shortcut title above. */
+.ti-shortcut-panel-inner .ti-model-trigger { font-weight: 500; }
 .ti-model + .ti-model { margin-top: 0; }
 .ti-model-trigger {
   display: flex; align-items: center; justify-content: space-between; width: 100%;
@@ -1880,11 +1887,12 @@ body.hide-cta .sticky-cta { display: none !important; }
   }
 }
 
-/* "Topic" kind pill — sits to the left of the topic icon to label the title. */
+/* "Topic" kind label — a refined editorial badge (squared 5px corners, quiet
+   navy tint), not the generic full-round grey pill. Sits left of the title. */
 .topic-banner-kind {
-  flex: none; font-family: var(--font-family); font-size: 0.62rem; font-weight: 700;
-  letter-spacing: 0.07em; text-transform: uppercase; color: #5f6b85;
-  background: #e7ecf3; border: 1px solid #dde3ec; padding: 0.22rem 0.55rem; border-radius: 999px;
+  flex: none; align-self: center; font-family: var(--font-family); font-size: 0.56rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: #5a6b8c;
+  background: #eef2f8; border: 1px solid #e2e8f1; padding: 0.22rem 0.46rem; border-radius: 5px;
   line-height: 1;
 }
 @media (max-width: 899.98px) {
@@ -3205,8 +3213,9 @@ html, body, #app {
      Modest horizontal inset (0.75rem) for the rhythm we
      settled on. Hover bg lives on the parent .news-card so it
      extends edge-to-edge in the column regardless of this
-     link-level padding. */
-  padding: 1.2rem 0.75rem;
+     link-level padding. Horizontal padding is 0 so story text aligns
+     flush with the section title + the full-width hover fill. */
+  padding: 1.2rem 0;
   color: inherit;
   text-decoration: none;
 }
@@ -3297,7 +3306,7 @@ html, body, #app {
 .news-card:has(.news-ai) .news-card-link { padding-bottom: 0; }
 .news-card-foot {
   display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; row-gap: 0.3rem;
-  padding: 0.7rem 0.75rem 1.2rem;
+  padding: 0.7rem 0 1.2rem;
 }
 .news-card-foot .news-card-meta { margin: 0; }
 /* AI Insights sits inline-left, right after the source/time — no longer
@@ -5411,6 +5420,11 @@ body.app-mode .topic-layout {
   body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed {
     margin-left: -1rem;
     margin-right: -1rem;
+    /* Override the global max-width:100% guard, which otherwise caps the
+       section at the parent's content width while the -1rem left margin still
+       shifts it left — producing an asymmetric bleed (flush left, clipped
+       right). With max-width:none the negative margins expand symmetrically. */
+    max-width: none;
   }
   /* Body tabs: true tab navigator at the top of the panel area.
      Full-bleed (negative side margin escapes the .topic-layout 1rem
@@ -5623,7 +5637,7 @@ body.app-mode .topic-layout {
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
   overscroll-behavior: contain;
-  padding-top: 1rem;
+  padding-top: 0.4rem;
   padding-right: 0.55rem;
   padding-bottom: max(2.5rem, calc(env(safe-area-inset-bottom, 0px) + 1.5rem));
   scrollbar-gutter: stable;
@@ -12886,35 +12900,33 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
    updated meta sit just below it as a subtitle. */
 /* Header: one line on desktop — title left, descriptive sentence + a
    "Last Updated" pill pushed to the right; stacks on mobile. */
-.trending-topics-head { display: flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 0.4rem 0.85rem; margin-bottom: 0.9rem; padding-bottom: 0.7rem; border-bottom: 1px solid #d6dae2; }
-.trending-topics-title { margin: 0; display: inline-flex; align-items: center; gap: 0.45rem; font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em; color: var(--color-primary); }
-.trending-topics-title svg { color: #1f8f6b; display: block; width: 20px; height: 20px; }
-.trending-topics-meta { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 0.45rem 0.6rem; margin-left: auto; }
-.trending-topics-sub { font-size: 0.8rem; color: var(--color-text-muted); }
+/* Title + "Updated" pill on the first line; the descriptive subtext sits
+   below as a subtitle (matches News Feed / Intelligence section heads). */
+.trending-topics-head { margin-bottom: 0.9rem; padding-bottom: 0.7rem; border-bottom: 1px solid #d6dae2; }
+.trending-topics-titlerow { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.trending-topics-title { margin: 0; font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; letter-spacing: -0.024em; line-height: 1.15; color: #1c3a6b; }
+.trending-topics-updated { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.01em; color: #6b7689; background: #eef1f6; padding: 0.24rem 0.55rem; border-radius: 6px; white-space: nowrap; }
+.trending-topics-sub { margin: 0.3rem 0 0; font-size: 0.82rem; color: var(--color-text-muted); }
 .trending-topics-src { color: #5f6b85; text-decoration: none; }
 .trending-topics-src:hover { color: #1f8f6b; text-decoration: underline; }
-.trending-topics-updated { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #5a6678; background: #eef1f6; padding: 0.22rem 0.6rem; border-radius: 999px; white-space: nowrap; }
-@media (max-width: 899.98px) {
-  .trending-topics-head { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
-  .trending-topics-meta { margin-left: 0; }
-}
 
 /* Compact 2-row card (category · trending-for, then term) with an attached
    quick-insights dropdown. The .trend-card is just a positioning wrapper. */
-.trend-card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.1rem 1.6rem; }
+.trend-card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.35rem 1rem; }
 .trend-card { position: relative; }
 .trend-card.is-open { z-index: 50; }
-/* No bordered "card" — each trend is a clean two-line row (icon + term, then
-   topic · trending-for) separated by a hairline, kept in a grid column. */
+/* No bordered "card" and no hairline dividers (they read as disconnected
+   segments across the grid gaps). Each trend is a clean two-line row — icon +
+   term, then topic · trending-for — with a soft rounded hover fill. */
 .trend-card-trigger {
   display: flex; flex-direction: row; align-items: center; gap: 0.5rem; text-align: left; width: 100%;
-  background: transparent; border: none; border-bottom: 1px solid #ebedf1; border-radius: 0;
-  padding: 0.5rem 0.3rem 0.5rem 0.2rem;
+  background: transparent; border: none; border-radius: 9px;
+  padding: 0.45rem 0.5rem;
   font-family: inherit; color: var(--color-text); cursor: pointer;
-  transition: background 0.14s, border-color 0.14s;
+  transition: background 0.14s;
 }
 .trend-card-trigger:hover,
-.trend-card.is-open .trend-card-trigger { background: rgba(31, 143, 107, 0.055); border-bottom-color: #d3d8e0; }
+.trend-card.is-open .trend-card-trigger { background: rgba(31, 143, 107, 0.07); }
 .trend-card-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 0.16rem; }
 .trend-card-head { display: flex; align-items: center; gap: 0.4rem; min-width: 0; }
 .trend-card-icon { flex: 0 0 auto; display: inline-flex; color: #1f8f6b; }
@@ -12938,6 +12950,15 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
 }
 .trend-card.is-open .trend-card-panel { opacity: 1; transform: translateY(0) scale(1); visibility: visible; pointer-events: auto; }
 .trend-card-panel-inner { display: flex; flex-direction: column; gap: 0.05rem; }
+/* Reused "AI Insights" branding inside the trend dropdown — same blue + spark
+   as the News Feed AI Insights label. */
+.trend-ai-head {
+  display: flex; align-items: center; gap: 0.3rem;
+  padding: 0.3rem 0.6rem 0.4rem; margin-bottom: 0.1rem;
+  border-bottom: 1px solid #eef1f6;
+  font-family: inherit; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.02em; color: #2f6fe0;
+}
+.trend-ai-head .trend-ai-spark { flex: none; opacity: 0.95; }
 .trend-ai-opt {
   display: flex; align-items: center; width: 100%; text-align: left;
   padding: 0.45rem 0.6rem; border: none; border-radius: 8px; background: transparent;
@@ -12945,14 +12966,15 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
   transition: background 0.12s, color 0.12s;
 }
 .trend-ai-opt:hover { background: #f1f5fc; color: #1e2d44; }
-/* View all — centered footer link (navy, no divider, breathing room). */
+/* View all — a clear, left-aligned text link (blue, arrow nudges on hover). */
 .trending-topics-viewall {
-  display: flex; align-items: center; justify-content: center; gap: 0.35rem; width: 100%;
-  margin: 1.1rem 0 0; padding: 0;
+  display: inline-flex; align-items: center; gap: 0.32rem; width: auto;
+  margin: 0.9rem 0 0; padding: 0.15rem 0;
   border: none; background: none;
-  font-family: inherit; font-size: 0.9rem; font-weight: 700; color: var(--color-primary); cursor: pointer;
+  font-family: inherit; font-size: 0.82rem; font-weight: 600; color: #2f6fe0; cursor: pointer;
+  transition: color 0.14s, gap 0.14s;
 }
-.trending-topics-viewall:hover { color: var(--color-primary-light, #3a4a63); text-decoration: underline; }
+.trending-topics-viewall:hover { color: #1f5fd0; gap: 0.5rem; }
 .trending-topics-viewall .trending-row-chev { color: currentColor; }
 
 /* Homepage: 6 terms in a 3-col grid on desktop; trim to 3 on mobile/tablet. */
@@ -13004,6 +13026,14 @@ body.home-search #section-newsfeed .newsfeed-title {
    shows to label the section. */
 @media (max-width: 899.98px) {
   body.home-search #section-newsfeed .newsfeed-head { display: flex; }
+  /* The section is full-bleed on mobile (negative side margins), so the
+     header would pin to the viewport edge while story text is inset 1.5rem.
+     Inset the header to match — both the home head and the topic title. */
+  body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed .newsfeed-card > .newsfeed-head,
+  body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed .newsfeed-card > .newsfeed-title {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
 }
 
 /* Homepage subnav: Home label/icon removed → topics own the full width

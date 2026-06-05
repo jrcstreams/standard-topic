@@ -11,7 +11,7 @@ import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
 import { initPromptModal } from './components/prompt-modal.js?v=20260605-polish30';
-import { renderTrending, renderTrendingTopics } from './components/trending.js?v=20260605-polish32';
+import { renderTrending, renderTrendingTopics } from './components/trending.js?v=20260605-polish33';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js';
 import { initTrendingListModal } from './components/trending-list-modal.js';
