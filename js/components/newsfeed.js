@@ -236,7 +236,7 @@ export function renderNewsFeed(container, topic, isHome) {
   // subtext); topic pages keep the bare sticky title.
   const headHTML = isHome
     ? `<div class="newsfeed-head section-card-head">
-         <h3 class="newsfeed-title section-card-title">${NEWS_ICON}<span class="newsfeed-title-main">News Feed</span></h3>
+         <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">News Feed</span></h3>
          <p class="section-card-sub">Latest stories and developments, powered by RSS.app</p>
        </div>`
     : `<h3 class="newsfeed-title"><span class="newsfeed-title-main">News Feed</span>${pillHTML}</h3>`;

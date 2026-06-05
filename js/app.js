@@ -6,12 +6,12 @@ import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './ut
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js';
-import { renderNewsFeed } from './components/newsfeed.js';
+import { renderNewsFeed } from './components/newsfeed.js?v=20260605-polish32';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
 import { initPromptModal } from './components/prompt-modal.js?v=20260605-polish30';
-import { renderTrending, renderTrendingTopics } from './components/trending.js';
+import { renderTrending, renderTrendingTopics } from './components/trending.js?v=20260605-polish32';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js';
 import { initTrendingListModal } from './components/trending-list-modal.js';
@@ -1480,13 +1480,12 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   // sublabel (updated in place as the user edits the input). Everywhere else
   // (home / topic) → "Intelligence" with the topic name sublabel.
   const panelTitle = isCustom ? 'Search Intelligence' : (isHome ? 'Intelligence' : 'Topic Intelligence');
-  // Homepage Intelligence card gets the Trending-style treatment: an amber
-  // lightbulb icon and a descriptive subtext. Topic pages keep the topic
-  // name as the sublabel; search results keep the live term.
+  // Homepage Intelligence card gets a descriptive subtext. The section icon
+  // is intentionally dropped — the accordions inside carry their own icons,
+  // so a header icon is redundant. Topic pages keep the topic name as the
+  // sublabel; search results keep the live term.
   const isHomeIntel = isHome && !isCustom;
-  const intelIconSVG = isHomeIntel
-    ? '<svg class="section-head-icon section-head-icon--intel" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"/></svg>'
-    : '';
+  const intelIconSVG = '';
   const panelSubtitleHTML = (isCustom && topicName)
     ? `<p class="sidebar-card-subtitle ti-topic-sublabel" data-role="search-term-sub">${escapeHTML(topicName)}</p>`
     : isHomeIntel

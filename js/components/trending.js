@@ -104,6 +104,8 @@ function durationLabel(iso) {
   return `${Math.round(hrs / 24)}d`;
 }
 const TREND_UP_SVG = `<svg class="trending-topics-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>`;
+// Small green up-trend mark shown next to each trend term.
+const TREND_CARD_ICON = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>`;
 
 // Google returns trend queries lowercase ("jalen brunson") — title-case them.
 function titleCase(s) {
@@ -125,13 +127,17 @@ function trendCardHTML(topic, idx) {
   const cat = (topic.categories && topic.categories[0]) || '';
   const dur = durationLabel(topic.startedAt);
   const title = titleCase(topic.query);
-  const eyebrow = [cat, dur ? `Trending for ${dur}` : ''].filter(Boolean).join(' · ');
+  // Line 2: the topic/category and how long it's been trending, sentence-case.
+  const meta = [cat, dur ? `trending ${dur}` : ''].filter(Boolean).join(' · ');
   return `
     <div class="trend-card" data-idx="${idx}" data-query="${escapeAttr(title)}">
       <button type="button" class="trend-card-trigger" aria-expanded="false" title="Quick insights on ${escapeAttr(title)}">
         <span class="trend-card-main">
-          ${eyebrow ? `<span class="trend-card-eyebrow">${escapeHTML(eyebrow)}</span>` : ''}
-          <span class="trend-card-title">${escapeHTML(title)}</span>
+          <span class="trend-card-head">
+            <span class="trend-card-icon" aria-hidden="true">${TREND_CARD_ICON}</span>
+            <span class="trend-card-title">${escapeHTML(title)}</span>
+          </span>
+          ${meta ? `<span class="trend-card-meta">${escapeHTML(meta)}</span>` : ''}
         </span>
         <span class="trend-card-chev" aria-hidden="true">${CHEV_DOWN}</span>
       </button>
@@ -178,7 +184,7 @@ function wireTrendCards(container) {
 function trendCardsHead(fetched) {
   return `
     <div class="trending-topics-head">
-      <h3 class="trending-topics-title">${TREND_UP_SVG}<span>Trending</span></h3>
+      <h3 class="trending-topics-title"><span>Trending</span></h3>
       <div class="trending-topics-meta">
         <span class="trending-topics-sub">Trending search terms from <a class="trending-topics-src" href="https://trends.google.com/trending" target="_blank" rel="noopener noreferrer">Google Trends</a></span>
         ${fetched ? `<span class="trending-topics-updated">Last Updated ${escapeHTML(relativeTime(fetched))}</span>` : ''}
