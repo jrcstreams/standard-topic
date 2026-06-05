@@ -127,9 +127,10 @@ function trendCardHTML(topic, idx) {
 
 function trendCardsHead(fetched) {
   return `
-    <div class="trending-topics-head">
-      <h3 class="trending-topics-title">${TREND_UP_SVG}<span>Trending</span></h3>
-      <span class="trending-topics-meta"><a class="trending-topics-src" href="https://trends.google.com/trending" target="_blank" rel="noopener noreferrer">via Google Trends</a>${fetched ? `<span class="trending-topics-updated">Updated ${escapeHTML(relativeTime(fetched))}</span>` : ''}</span>
+    <div class="trending-topics-head section-card-head">
+      <h3 class="trending-topics-title section-card-title">${TREND_UP_SVG}<span>Trending</span></h3>
+      <p class="section-card-sub">Trending search terms from <a class="trending-topics-src" href="https://trends.google.com/trending" target="_blank" rel="noopener noreferrer">Google Trends</a>.</p>
+      ${fetched ? `<span class="trending-topics-updated section-card-updated">Last Updated ${escapeHTML(relativeTime(fetched))}</span>` : ''}
     </div>`;
 }
 

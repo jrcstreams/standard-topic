@@ -215,8 +215,7 @@ function renderLayout(route) {
 
     subHeader.innerHTML = `
       <div class="topic-banner">
-        <div class="topic-banner-row">
-          ${titleGroup('house', 'Home')}
+        <div class="topic-banner-row topic-banner-row--home-topics-only">
           <div class="subnav-topics-inline home-subnav-topics">
             ${topicsHTML}
             <a href="#" class="subnav-action-link subnav-all-topics-link" id="subnav-all-topics-desktop">All Topics +</a>
@@ -1475,11 +1474,20 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   // sublabel (updated in place as the user edits the input). Everywhere else
   // (home / topic) → "Intelligence" with the topic name sublabel.
   const panelTitle = isCustom ? 'Search Intelligence' : 'Intelligence';
+  // Homepage Intelligence card gets the Trending-style treatment: an amber
+  // lightbulb icon and a descriptive subtext. Topic pages keep the topic
+  // name as the sublabel; search results keep the live term.
+  const isHomeIntel = isHome && !isCustom;
+  const intelIconSVG = isHomeIntel
+    ? '<svg class="section-head-icon section-head-icon--intel" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"/></svg>'
+    : '';
   const panelSubtitleHTML = (isCustom && topicName)
     ? `<p class="sidebar-card-subtitle ti-topic-sublabel" data-role="search-term-sub">${escapeHTML(topicName)}</p>`
-    : (!isHome && !isCustom && topicName)
-      ? `<p class="sidebar-card-subtitle ti-topic-sublabel">${escapeHTML(topicName)}</p>`
-      : '';
+    : isHomeIntel
+      ? `<p class="sidebar-card-subtitle section-card-sub">Curated web sources and AI knowledge shortcuts</p>`
+      : (!isHome && !isCustom && topicName)
+        ? `<p class="sidebar-card-subtitle ti-topic-sublabel">${escapeHTML(topicName)}</p>`
+        : '';
 
   // Model options for the selection bar's "Send to" picker. Pre-selects
   // the user's preferred model so direct Submit + the modal agree.
@@ -1492,7 +1500,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     <div class="${cardClasses.join(' ')} is-multi-select" data-multi="1">
       <div class="sidebar-card-header">
         <div class="sidebar-card-heading">
-          <h3 class="sidebar-card-title">${panelTitle}${titlePillHTML}</h3>
+          <h3 class="sidebar-card-title section-card-title">${intelIconSVG}<span>${panelTitle}</span>${titlePillHTML}</h3>
           ${panelSubtitleHTML}
         </div>
       </div>

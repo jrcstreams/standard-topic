@@ -12749,8 +12749,8 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
 .trending-topics-meta { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.76rem; color: var(--color-text-muted); }
 .trending-topics-src { font-weight: 600; color: #5f6b85; text-decoration: none; }
 .trending-topics-src:hover { color: #1f8f6b; text-decoration: underline; }
-.trending-topics-updated { position: relative; padding-left: 0.6rem; }
-.trending-topics-updated::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 3px; border-radius: 50%; background: currentColor; opacity: 0.5; }
+.trending-topics-updated { display: block; margin-top: 0.45rem; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #9aa5b8; }
+.trending-topics-updated::before { display: none; }
 
 /* Cards: category kicker → term → "Trending for …" subtext. Compact. */
 .trend-card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; }
@@ -12800,3 +12800,67 @@ body.home-search.app-mode .topic-layout { padding-bottom: 1rem; }
 @media (max-width: 899.98px) {
   .home-trending .trending-topics { padding-top: 0.85rem; }
 }
+
+/* === Shared "section card" header bits (Trending / Intelligence / News
+   Feed share an icon-title + subtext + the gray card surface) ========= */
+.section-card-sub { margin: 0; font-size: 0.82rem; line-height: 1.45; font-weight: 400; color: var(--color-text-muted); }
+.section-card-sub a { color: #5f6b85; font-weight: 600; text-decoration: none; }
+.section-card-sub a:hover { color: #1f8f6b; text-decoration: underline; }
+.section-head-icon { flex: none; width: 20px; height: 20px; }
+.section-head-icon--intel { color: #e0892b; }
+.section-head-icon--news { color: #3b6fb5; }
+
+/* Homepage Intelligence + News Feed: same gray card surface as Trending. */
+body.home-search #section-shortcuts .shortcuts-sidebar,
+body.home-search #section-newsfeed .newsfeed-card {
+  background: #f6f8fc;
+  border: 1px solid #e9edf4;
+  border-radius: 16px;
+  padding: 1.15rem 1.3rem 1.3rem;
+  box-shadow: none;
+  overflow: visible;
+}
+/* Matching icon-title + subtext header (stacked, no divider). */
+body.home-search #section-shortcuts .sidebar-card-header,
+body.home-search #section-newsfeed .newsfeed-head {
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: 0.15rem; margin: 0 0 1rem; padding: 0;
+  border-bottom: none; background: transparent; min-height: 0;
+}
+body.home-search #section-shortcuts .sidebar-card-heading { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+body.home-search #section-shortcuts .sidebar-card-title,
+body.home-search #section-newsfeed .newsfeed-title {
+  display: inline-flex; flex-direction: row; align-items: center; gap: 0.45rem;
+  font-family: var(--font-display); font-size: 1.2rem; font-weight: 700;
+  letter-spacing: -0.02em; color: var(--color-primary);
+  min-height: 0; border: none; padding: 0; margin: 0;
+}
+
+/* News stories become white cards inside the gray News Feed card. */
+body.home-search #section-newsfeed .news-list {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: 0.7rem; padding: 0;
+}
+body.home-search #section-newsfeed .news-card {
+  background: #fff; border: 1px solid #e7ecf3; border-bottom: 1px solid #e7ecf3;
+  border-radius: 12px; transition: border-color 0.16s, box-shadow 0.16s;
+}
+body.home-search #section-newsfeed .news-card:hover {
+  background: #fff; border-color: #d3dceb;
+  box-shadow: 0 6px 16px -8px rgba(15, 26, 46, 0.14);
+}
+body.home-search #section-newsfeed .news-card-link { padding: 0.95rem 1.05rem; }
+body.home-search #section-newsfeed .newsfeed-scroll-wrap { padding-bottom: 0; }
+
+/* Mobile: the tab pill already labels each section, so drop the in-card
+   header (icon-title + subtext); keep the gray card + story cards. */
+@media (max-width: 899.98px) {
+  body.home-search #section-newsfeed .newsfeed-head { display: none; }
+  body.home-search #section-newsfeed .news-list { grid-template-columns: 1fr; }
+}
+
+/* Homepage subnav: Home label/icon removed → topics own the full width
+   with no leading separator. */
+.topic-banner-row--home-topics-only { gap: 0; }
+.topic-banner-row--home-topics-only .subnav-chip-wrap { flex: 1 1 0; }
+.topic-banner-row--home-topics-only .subnav-chip-wrap::before { display: none !important; }
