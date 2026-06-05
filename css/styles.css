@@ -3211,18 +3211,19 @@ html, body, #app {
 /* While open, lift the whole AI stacking context above later sibling cards
    so the dropdown isn't painted over by the next story's pill. */
 .news-ai.is-open { z-index: 50; }
-.news-card:has(.news-ai) .news-card-title { padding-right: 9rem; }
+.news-card:has(.news-ai) .news-card-title,
+.news-card:has(.news-ai) .news-card-desc { padding-right: 9rem; }
 .news-ai-trigger {
-  display: inline-flex; align-items: center; gap: 0.34rem;
-  padding: 0.3rem 0.62rem; border: 1px solid #e2e8f2; border-radius: 999px;
-  background: #f4f6fb; color: #54627a;
-  font-family: var(--font-family); font-size: 0.73rem; font-weight: 600;
-  cursor: pointer; white-space: nowrap; transition: background 0.14s, color 0.14s, border-color 0.14s;
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.26rem 0.5rem; border: none; border-radius: 7px;
+  background: transparent; color: #8a94a6;
+  font-family: var(--font-family); font-size: 0.72rem; font-weight: 600;
+  cursor: pointer; white-space: nowrap; transition: background 0.14s, color 0.14s;
 }
 .news-ai-trigger:hover,
-.news-ai.is-open .news-ai-trigger { background: #eef2fb; color: #2c4467; border-color: #d3def0; }
-.news-ai-spark { flex: none; color: #7c5cd6; }
-.news-ai-chev { flex: none; opacity: 0.65; transition: transform 0.22s ease; }
+.news-ai.is-open .news-ai-trigger { background: #eef1f6; color: #5a6678; }
+.news-ai-spark { flex: none; color: currentColor; opacity: 0.85; }
+.news-ai-chev { flex: none; opacity: 0.55; transition: transform 0.22s ease; }
 .news-ai.is-open .news-ai-chev { transform: rotate(180deg); }
 .news-ai-panel {
   position: absolute; top: calc(100% + 6px); right: 0; z-index: 30;
@@ -3246,7 +3247,8 @@ html, body, #app {
   /* Compact icon-only trigger on phones to free up title width. */
   .news-ai-trigger span, .news-ai-trigger .news-ai-chev { display: none; }
   .news-ai-trigger { padding: 0.34rem; }
-  .news-card:has(.news-ai) .news-card-title { padding-right: 2.7rem; }
+  .news-card:has(.news-ai) .news-card-title,
+  .news-card:has(.news-ai) .news-card-desc { padding-right: 2.7rem; }
 }
 
 .news-loading,
