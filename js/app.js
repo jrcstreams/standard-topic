@@ -1,6 +1,6 @@
 import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
 import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, searchTopics, getModels, getDefaultModelId, getModelById } from './utils/data.js';
-import { getPreferredModelId, setPreferredModelId, submitPrompt, submitWithLoading } from './utils/ai-models.js';
+import { getPreferredModelId, setPreferredModelId, submitPrompt, submitWithLoading } from './utils/ai-models.js?v=20260605-polish29';
 import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
@@ -10,7 +10,7 @@ import { renderNewsFeed } from './components/newsfeed.js';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
-import { initPromptModal } from './components/prompt-modal.js';
+import { initPromptModal } from './components/prompt-modal.js?v=20260605-polish29';
 import { renderTrending, renderTrendingTopics } from './components/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js';

@@ -19,7 +19,7 @@ import {
   setPreferredModelId,
   submitPrompt,
   submitWithLoading,
-} from '../utils/ai-models.js';
+} from '../utils/ai-models.js?v=20260605-polish29';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { renderIcon } from '../utils/icons.js';
