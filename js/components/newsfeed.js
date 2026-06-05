@@ -59,6 +59,56 @@ function relativeTime(iso) {
   return new Date(iso).toLocaleDateString();
 }
 
+// Per-story "AI Insights" expander: a small trigger that reveals a few
+// one-tap insight prompts. Clicking one opens the shared prompt modal
+// (open-prompt-modal) pre-filled so the user can submit it to an AI model.
+const AI_SPARK_SVG = '<svg class="news-ai-spark" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>';
+const AI_CHEV_SVG = '<svg class="news-ai-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+const NEWS_INSIGHTS = [
+  { key: 'explain', label: 'Explain', ask: 'Explain this news story in clear, simple terms — what happened and why it matters.' },
+  { key: 'background', label: 'Background', ask: 'Give the background and context behind this news story: the key players, the history, and what led up to it.' },
+  { key: 'timeline', label: 'Timeline', ask: 'Lay out a timeline of the key events leading up to and surrounding this news story.' },
+  { key: 'keypoints', label: 'Key Points', ask: 'Summarize the key points and main takeaways from this news story as a short list of bullet points.' },
+];
+
+function buildInsightPrompt(kind, title, desc, url) {
+  const meta = NEWS_INSIGHTS.find(i => i.key === kind) || NEWS_INSIGHTS[0];
+  const story = `"${title}"${desc ? `\n\n${desc}` : ''}${url ? `\n\nSource: ${url}` : ''}`;
+  return { label: meta.label, prompt: `${meta.ask}\n\n${story}` };
+}
+
+// Wire the AI Insights triggers + option buttons within a rendered list.
+function wireNewsAI(root) {
+  root.querySelectorAll('.news-ai-trigger').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      const ai = trigger.closest('.news-ai');
+      const open = ai.classList.toggle('is-open');
+      trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  });
+  root.querySelectorAll('.news-ai-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.news-card');
+      if (!card) return;
+      const { label, prompt } = buildInsightPrompt(
+        btn.dataset.insight, card.dataset.title || '', card.dataset.desc || '', card.dataset.url || '');
+      window.dispatchEvent(new CustomEvent('open-prompt-modal', {
+        detail: { basePrompt: prompt, topicName: card.dataset.title || '', name: `AI Insight · ${label}`, count: 1 },
+      }));
+    });
+  });
+}
+
+function newsAIHTML() {
+  return `
+    <div class="news-ai">
+      <button type="button" class="news-ai-trigger" aria-expanded="false">${AI_SPARK_SVG}<span>AI Insights</span>${AI_CHEV_SVG}</button>
+      <div class="news-ai-panel"><div class="news-ai-panel-inner">
+        ${NEWS_INSIGHTS.map(o => `<button type="button" class="news-ai-opt" data-insight="${o.key}">${escapeHTML(o.label)}</button>`).join('')}
+      </div></div>
+    </div>`;
+}
+
 // One news card.
 function newsCardHTML(item) {
   const url = item?.url || item?.link || '';
@@ -97,7 +147,7 @@ function newsCardHTML(item) {
   if (rel) metaParts.push(`<time class="news-card-time">${escapeHTML(rel)}</time>`);
 
   return `
-    <article class="news-card">
+    <article class="news-card" data-title="${escapeAttr(title)}" data-desc="${escapeAttr(descText.slice(0, 500))}" data-url="${escapeAttr(url)}">
       <a class="news-card-link"
          href="${escapeAttr(url)}"
          target="_blank"
@@ -106,6 +156,7 @@ function newsCardHTML(item) {
         ${descText ? `<p class="news-card-desc">${escapeHTML(descText)}</p>` : ''}
         ${metaParts.length ? `<footer class="news-card-meta">${metaParts.join('')}</footer>` : ''}
       </a>
+      ${newsAIHTML()}
     </article>
   `;
 }
@@ -147,6 +198,7 @@ async function renderApiMode(scrollWrap, topic, isHome) {
       return;
     }
     scrollWrap.innerHTML = listHTML(payload?.items);
+    wireNewsAI(scrollWrap);
   } catch (err) {
     scrollWrap.innerHTML = `<div class="news-error"><p>News feed temporarily unavailable. Refresh to try again.</p></div>`;
   }

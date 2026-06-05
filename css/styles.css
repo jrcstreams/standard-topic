@@ -3203,6 +3203,44 @@ html, body, #app {
   letter-spacing: 0.015em;
 }
 
+/* === Per-story "AI Insights" expander ================================
+   A subtle pill trigger below each story; clicking smoothly reveals a
+   row of one-tap insight prompts (grid-rows 0fr↔1fr for a clean,
+   layout-safe transition). Each option opens the prompt modal. */
+.news-ai:has(.news-ai-panel) { padding: 0 0.75rem 0.95rem; }
+.news-card:has(.news-ai) .news-card-link { padding-bottom: 0.7rem; }
+.news-ai-trigger {
+  display: inline-flex; align-items: center; gap: 0.34rem;
+  padding: 0.3rem 0.62rem; border: 1px solid #e2e8f2; border-radius: 999px;
+  background: #f4f6fb; color: #54627a;
+  font-family: var(--font-family); font-size: 0.73rem; font-weight: 600;
+  cursor: pointer; transition: background 0.14s, color 0.14s, border-color 0.14s;
+}
+.news-ai-trigger:hover,
+.news-ai.is-open .news-ai-trigger { background: #eef2fb; color: #2c4467; border-color: #d3def0; }
+.news-ai-spark { flex: none; color: #7c5cd6; }
+.news-ai-chev { flex: none; opacity: 0.65; transition: transform 0.26s ease; }
+.news-ai.is-open .news-ai-chev { transform: rotate(180deg); }
+.news-ai-panel {
+  display: grid; grid-template-rows: 0fr; opacity: 0;
+  transition: grid-template-rows 0.28s ease, opacity 0.22s ease;
+}
+.news-ai.is-open .news-ai-panel { grid-template-rows: 1fr; opacity: 1; }
+.news-ai-panel-inner {
+  overflow: hidden; min-height: 0;
+  display: flex; flex-wrap: wrap; gap: 0.4rem; padding-top: 0.55rem;
+}
+.news-ai-opt {
+  padding: 0.34rem 0.72rem; border: 1px solid #e2e8f2; border-radius: 8px; background: #fff;
+  color: #2c3a52; font-family: var(--font-family); font-size: 0.76rem; font-weight: 600;
+  cursor: pointer; transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.08s;
+}
+.news-ai-opt:hover { background: #f1f5fc; border-color: #c6d3ec; color: #1e2d44; }
+.news-ai-opt:active { transform: translateY(1px); }
+@media (max-width: 899.98px) {
+  .news-ai:has(.news-ai-panel) { padding: 0 1.5rem 1rem; }
+}
+
 .news-loading,
 .news-empty,
 .news-error {
