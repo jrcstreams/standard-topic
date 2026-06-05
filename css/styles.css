@@ -6091,9 +6091,12 @@ body.app-mode .topic-layout {
      Scoped to .topic-layout:not(.is-custom) — custom-search pages
      don't use the tab system and still need their inline section
      titles. */
-  body.app-mode .topic-layout:not(.is-custom) .shortcuts-sidebar .sidebar-card-header,
-  body.app-mode .topic-layout:not(.is-custom) .newsfeed-title,
-  body.app-mode .topic-layout:not(.is-custom) .related-title {
+  /* Topic pages only (home is single-scroll, not tabbed, so its headers must
+     stay visible). The active tab already labels each topic-page panel. */
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts .shortcuts-sidebar .sidebar-card-header,
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed .newsfeed-head,
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed .newsfeed-title,
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) .related-title {
     display: none;
   }
 
@@ -6267,22 +6270,20 @@ body.app-mode .topic-layout {
      wide region so chip text clearly softens as it approaches
      the arrow — no hard cliff. */
   .subnav-chip-wrap.can-scroll-right .subnav-topics-inline {
-    mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 70px), transparent calc(100% - 24px), transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 70px), transparent calc(100% - 24px), transparent 100%);
+    mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 72px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 72px), transparent 100%);
   }
   .subnav-chip-wrap.can-scroll-left .subnav-topics-inline {
-    mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 70px), transparent calc(100% - 24px), transparent 100%);
-    -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 70px), transparent calc(100% - 24px), transparent 100%);
+    mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 72px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 72px), transparent 100%);
   }
   .subnav-chip-wrap.can-scroll-left.can-scroll-right .subnav-topics-inline {
     mask-image: linear-gradient(to right,
-      transparent 0%, transparent 24px,
-      #000 70px, #000 calc(100% - 70px),
-      transparent calc(100% - 24px), transparent 100%);
+      transparent 0%, #000 72px,
+      #000 calc(100% - 72px), transparent 100%);
     -webkit-mask-image: linear-gradient(to right,
-      transparent 0%, transparent 24px,
-      #000 70px, #000 calc(100% - 70px),
-      transparent calc(100% - 24px), transparent 100%);
+      transparent 0%, #000 72px,
+      #000 calc(100% - 72px), transparent 100%);
   }
   /* Desktop banner has 2rem horizontal padding, so the arrow is
      further inset. Widen the transparent zone accordingly. */
@@ -12808,6 +12809,10 @@ body.home-search #topic-layout { margin-top: 0.4rem; }
   body.home-search #section-shortcuts,
   body.home-search #section-newsfeed { margin-top: 1.75rem; }
   body.home-search #section-searchtrends .home-trending { margin-top: 1.2rem; }
+  /* Tighten the Intelligence panel's own padding so the accordions sit close
+     under the header (not floating well below it) and don't strand a big gap
+     above News Feed. */
+  body.home-search #section-shortcuts .shortcuts-scroll-wrap { padding-top: 0.5rem; padding-bottom: 0; }
 }
 
 /* === Phase 14: search panel refinements ============================== */
@@ -12919,7 +12924,7 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
    below as a subtitle (matches News Feed / Intelligence section heads). */
 .trending-topics-head { margin-bottom: 0.9rem; padding-bottom: 0.7rem; border-bottom: 1px solid #d6dae2; }
 .trending-topics-titlerow { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
-.trending-topics-title { margin: 0; font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; color: var(--color-primary); }
+.trending-topics-title { margin: 0; font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; color: var(--color-primary); }
 .trending-topics-updated { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.01em; color: #6b7689; background: #eef1f6; padding: 0.24rem 0.55rem; border-radius: 6px; white-space: nowrap; }
 .trending-topics-sub { margin: 0.3rem 0 0; font-size: 0.82rem; color: var(--color-text-muted); }
 .trending-topics-src { color: #5f6b85; text-decoration: none; }
@@ -13034,7 +13039,7 @@ body.home-search #section-shortcuts .sidebar-card-header,
 #section-shortcuts .sidebar-card-title,
 #section-newsfeed .newsfeed-title {
   display: inline-flex; flex-direction: row; align-items: center; gap: 0.45rem;
-  font-family: var(--font-display); font-size: 1.2rem; font-weight: 700;
+  font-family: var(--font-display); font-size: 1.2rem; font-weight: 600;
   letter-spacing: -0.02em; color: var(--color-primary); text-transform: none;
   min-height: 0; border: none; padding: 0; margin: 0;
 }
