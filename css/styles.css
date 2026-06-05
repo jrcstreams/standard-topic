@@ -12801,31 +12801,22 @@ body.home-search.app-mode .topic-layout { padding-bottom: 1rem; }
   .home-trending .trending-topics { padding-top: 0.85rem; }
 }
 
-/* === Shared "section card" header bits (Trending / Intelligence / News
-   Feed share an icon-title + subtext + the gray card surface) ========= */
-.section-card-sub { margin: 0; font-size: 0.82rem; line-height: 1.45; font-weight: 400; color: var(--color-text-muted); }
+/* === Shared "section header" bits — icon-title + subtext. Intelligence +
+   News Feed keep their previous PLAIN (non-card) treatment; only the header
+   adopts the Trending-style icon + title + subtext, with a divider rule
+   beneath (Trending keeps its own gray card elsewhere). ================ */
+.section-card-sub { margin: 0; font-size: 0.82rem; line-height: 1.45; font-weight: 400; color: var(--color-text-muted); white-space: normal; overflow: visible; text-overflow: clip; max-width: none; }
 .section-card-sub a { color: #5f6b85; font-weight: 600; text-decoration: none; }
 .section-card-sub a:hover { color: #1f8f6b; text-decoration: underline; }
 .section-head-icon { flex: none; width: 20px; height: 20px; }
 .section-head-icon--intel { color: #e0892b; }
 .section-head-icon--news { color: #3b6fb5; }
 
-/* Homepage Intelligence + News Feed: same gray card surface as Trending. */
-body.home-search #section-shortcuts .shortcuts-sidebar,
-body.home-search #section-newsfeed .newsfeed-card {
-  background: #f6f8fc;
-  border: 1px solid #e9edf4;
-  border-radius: 16px;
-  padding: 1.15rem 1.3rem 1.3rem;
-  box-shadow: none;
-  overflow: visible;
-}
-/* Matching icon-title + subtext header (stacked, no divider). */
 body.home-search #section-shortcuts .sidebar-card-header,
 body.home-search #section-newsfeed .newsfeed-head {
   display: flex; flex-direction: column; align-items: flex-start;
-  gap: 0.15rem; margin: 0 0 1rem; padding: 0;
-  border-bottom: none; background: transparent; min-height: 0;
+  gap: 0.15rem; margin: 0 0 0.9rem; padding: 0 0 0.7rem;
+  border-bottom: 1px solid #d6dae2; background: transparent; min-height: 0;
 }
 body.home-search #section-shortcuts .sidebar-card-heading { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
 body.home-search #section-shortcuts .sidebar-card-title,
@@ -12836,27 +12827,10 @@ body.home-search #section-newsfeed .newsfeed-title {
   min-height: 0; border: none; padding: 0; margin: 0;
 }
 
-/* News stories become white cards inside the gray News Feed card. */
-body.home-search #section-newsfeed .news-list {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
-  gap: 0.7rem; padding: 0;
-}
-body.home-search #section-newsfeed .news-card {
-  background: #fff; border: 1px solid #e7ecf3; border-bottom: 1px solid #e7ecf3;
-  border-radius: 12px; transition: border-color 0.16s, box-shadow 0.16s;
-}
-body.home-search #section-newsfeed .news-card:hover {
-  background: #fff; border-color: #d3dceb;
-  box-shadow: 0 6px 16px -8px rgba(15, 26, 46, 0.14);
-}
-body.home-search #section-newsfeed .news-card-link { padding: 0.95rem 1.05rem; }
-body.home-search #section-newsfeed .newsfeed-scroll-wrap { padding-bottom: 0; }
-
 /* Mobile: the tab pill already labels each section, so drop the in-card
-   header (icon-title + subtext); keep the gray card + story cards. */
+   header (icon-title + subtext). */
 @media (max-width: 899.98px) {
   body.home-search #section-newsfeed .newsfeed-head { display: none; }
-  body.home-search #section-newsfeed .news-list { grid-template-columns: 1fr; }
 }
 
 /* Homepage subnav: Home label/icon removed → topics own the full width
