@@ -5727,6 +5727,9 @@ body.app-mode .topic-layout {
 .tab-pill-newsfeed.active  { background: #2f7a55; }
 .tab-pill-shortcuts.active { background: #3f6ab3; }
 .tab-pill-related.active   { background: #b04e1d; }
+/* Tab icons inherit the pill's text color (currentColor) — white on the
+   active filled pill, slate when inactive — so they contrast, not compete. */
+.tab-pill-icon { flex: none; width: 15px; height: 15px; margin-right: 0.34rem; }
 /* "All Topics +" lives inside the pill group on mobile but never
    becomes the active state (it opens a modal). Reads as a plain
    text-style pill matching the inactive News/Shortcuts. */
@@ -12785,15 +12788,14 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
 body.home-search #home-search-hero:has(.search-panel[data-state="collapsed"]) + #home-trending { margin-top: 1.5rem; }
 body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #home-trending { margin-top: 0.95rem; }
 /* On the homepage the whole section sits in a soft card to set it apart. */
-.home-trending .trending-topics {
-  background: #f6f8fc; border: 1px solid #e9edf4; border-radius: 16px;
-  padding: 1.15rem 1.3rem 1.3rem;
-}
+/* Plain section (no gray card) so Trending reads in the same continuous
+   flow as Intelligence / News Feed below it. */
+.home-trending .trending-topics { background: transparent; border: none; border-radius: 0; padding: 0; }
 /* Header — a clear "Trending" title with the teal trend icon; the source +
    updated meta sit just below it as a subtitle. */
 /* Header: one line on desktop — title left, descriptive sentence + a
    "Last Updated" pill pushed to the right; stacks on mobile. */
-.trending-topics-head { display: flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 0.4rem 0.85rem; margin-bottom: 0.9rem; }
+.trending-topics-head { display: flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 0.4rem 0.85rem; margin-bottom: 0.9rem; padding-bottom: 0.7rem; border-bottom: 1px solid #d6dae2; }
 .trending-topics-title { margin: 0; display: inline-flex; align-items: center; gap: 0.45rem; font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em; color: var(--color-primary); }
 .trending-topics-title svg { color: #1f8f6b; display: block; width: 20px; height: 20px; }
 .trending-topics-meta { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 0.45rem 0.6rem; margin-left: auto; }
@@ -12875,9 +12877,6 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
 /* Tighten the homepage's trailing space (kills the big bottom gap). */
 body.home-search.app-mode #content { padding-bottom: 1.5rem; }
 body.home-search.app-mode .topic-layout { padding-bottom: 1rem; }
-@media (max-width: 899.98px) {
-  .home-trending .trending-topics { padding-top: 0.85rem; }
-}
 
 /* === Shared "section header" bits — icon-title + subtext. Intelligence +
    News Feed keep their previous PLAIN (non-card) treatment; only the header

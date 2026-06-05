@@ -334,6 +334,7 @@ function bodyTabsRow(opts = {}) {
   }
   tabs.push(
     `<button type="button" class="tab-pill tab-pill-newsfeed" data-tab="newsfeed">
+       <svg class="tab-pill-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
        <span class="tab-pill-label-long">News Feed</span>
        <span class="tab-pill-label-short">News Feed</span>
      </button>`,
@@ -345,6 +346,7 @@ function bodyTabsRow(opts = {}) {
      </button>`);
   }
   tabs.push(`<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">
+       <svg class="tab-pill-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"/></svg>
        <span class="tab-pill-label-long">Topic Intelligence</span>
        <span class="tab-pill-label-short">Topic Intel</span>
      </button>`);
