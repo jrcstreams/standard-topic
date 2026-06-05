@@ -5320,7 +5320,10 @@ body.app-mode .topic-layout {
   /* Topic pages: stacked sections are taller than the viewport, so the
      content area scrolls as ONE column (like the homepage) instead of the
      old fixed two-column internal scroll. Home already scrolls naturally. */
-  body.app-mode:not(.home-search) #content { overflow-y: auto; overflow-x: hidden; }
+  /* !important needed: the base `body.app-mode.sticky-always.has-subnav #content`
+     rule sets overflow:hidden at higher specificity, which would block user
+     scrolling of the now-taller stacked content. */
+  body.app-mode:not(.home-search) #content { overflow-y: auto !important; overflow-x: hidden; }
   /* Content-height grid that packs rows at the top — no min-height:100%, which
      would stretch the grid taller than its content and strand a big gap
      between the stacked sections. */
@@ -5333,6 +5336,9 @@ body.app-mode .topic-layout {
     flex: none; height: auto; max-height: none; overflow: visible;
     padding-top: 0; padding-bottom: 0;
   }
+  /* Give the Intelligence accordions breathing room below the header rule so
+     they don't ride up against the separator. */
+  body.app-mode:not(.home-search) #section-shortcuts .shortcuts-scroll-wrap { padding-top: 0.7rem; }
   /* Intelligence is full width now — lay the accordion buttons out as a tidy
      2-up grid (2x2 for the four groups). An OPEN accordion spans the full
      width so its model list has room and doesn't strand a tall empty cell. */
