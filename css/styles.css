@@ -3203,16 +3203,20 @@ html, body, #app {
   letter-spacing: 0.015em;
 }
 
-/* === Per-story "AI Insights" dropdown (top-right of each story) =======
-   A subtle pill anchored to the card's upper-right; clicking opens a
-   small dropdown menu (fade/scale) of one-tap insight prompts. The story
-   title reserves right-gutter space so it never runs under the pill. */
-.news-ai { position: absolute; top: 1.05rem; right: 0.75rem; z-index: 4; }
-/* While open, lift the whole AI stacking context above later sibling cards
-   so the dropdown isn't painted over by the next story's pill. */
+/* === Per-story "AI Insights" dropdown (on the source/time footer row) ==
+   A discreet trigger sitting at the right end of each story's meta row;
+   clicking opens a small dropdown menu (fade/scale) of one-tap insight
+   prompts. Title + description get the full card width. */
+.news-card:has(.news-ai) .news-card-link { padding-bottom: 0; }
+.news-card-foot {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.7rem 0.75rem 1.2rem;
+}
+.news-card-foot .news-card-meta { margin: 0; }
+.news-ai { position: relative; margin-left: auto; flex: none; z-index: 4; }
+/* While open, lift above later sibling cards so the dropdown isn't painted
+   over by the next story's row. */
 .news-ai.is-open { z-index: 50; }
-.news-card:has(.news-ai) .news-card-title,
-.news-card:has(.news-ai) .news-card-desc { padding-right: 9rem; }
 .news-ai-trigger {
   display: inline-flex; align-items: center; gap: 0.3rem;
   padding: 0.26rem 0.5rem; border: none; border-radius: 7px;
@@ -3243,12 +3247,8 @@ html, body, #app {
   cursor: pointer; transition: background 0.12s, color 0.12s;
 }
 .news-ai-opt:hover { background: #f1f5fc; color: #1e2d44; }
-@media (max-width: 640px) {
-  /* Compact icon-only trigger on phones to free up title width. */
-  .news-ai-trigger span, .news-ai-trigger .news-ai-chev { display: none; }
-  .news-ai-trigger { padding: 0.34rem; }
-  .news-card:has(.news-ai) .news-card-title,
-  .news-card:has(.news-ai) .news-card-desc { padding-right: 2.7rem; }
+@media (max-width: 899.98px) {
+  .news-card-foot { padding: 0.7rem 1.5rem 1.05rem; }
 }
 
 .news-loading,

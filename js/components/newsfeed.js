@@ -172,9 +172,11 @@ function newsCardHTML(item) {
          rel="noopener noreferrer">
         <h4 class="news-card-title">${escapeHTML(title)}</h4>
         ${descText ? `<p class="news-card-desc">${escapeHTML(descText)}</p>` : ''}
-        ${metaParts.length ? `<footer class="news-card-meta">${metaParts.join('')}</footer>` : ''}
       </a>
-      ${newsAIHTML()}
+      <div class="news-card-foot">
+        <div class="news-card-meta">${metaParts.join('')}</div>
+        ${newsAIHTML()}
+      </div>
     </article>
   `;
 }
