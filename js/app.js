@@ -1484,7 +1484,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   const panelSubtitleHTML = (isCustom && topicName)
     ? `<p class="sidebar-card-subtitle ti-topic-sublabel" data-role="search-term-sub">${escapeHTML(topicName)}</p>`
     : isHomeIntel
-      ? `<p class="sidebar-card-subtitle section-card-sub">Curated web sources and AI knowledge shortcuts</p>`
+      ? `<p class="sidebar-card-subtitle section-card-sub">Web sources and AI knowledge shortcuts</p>`
       : (!isHome && !isCustom && topicName)
         ? `<p class="sidebar-card-subtitle ti-topic-sublabel">${escapeHTML(topicName)}</p>`
         : '';
