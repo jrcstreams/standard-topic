@@ -1429,6 +1429,10 @@ body.hide-cta .sticky-cta { display: none !important; }
 .ti-model-actions { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.22s ease; }
 .ti-model.is-open .ti-model-actions { grid-template-rows: 1fr; }
 .ti-model-actions-inner { overflow: hidden; min-height: 0; display: flex; flex-direction: column; gap: 0.1rem; padding: 0.2rem 0 0.3rem 0.55rem; }
+/* The inner's vertical padding doesn't collapse with the 0fr grid track, so a
+   closed model still reserves ~8px — enough for the copied-note's top edge to
+   peek through. Zero the vertical padding while collapsed so it's truly hidden. */
+.ti-model:not(.is-open) .ti-model-actions-inner { padding-top: 0; padding-bottom: 0; }
 .ti-act {
   display: flex; align-items: center; gap: 0.45rem; width: 100%; text-align: left;
   padding: 0.42rem 0.55rem; border: none; border-radius: 7px; background: transparent;
@@ -1441,21 +1445,15 @@ body.hide-cta .sticky-cta { display: none !important; }
 .ti-act-submit:hover { color: #1f8f6b; }
 .ti-act-review:hover { color: #1e2d44; }
 
-/* Submit loading — a bar that fills 0→100% and overtakes the button area,
-   shared by the inline shortcut submit and the Review & Submit modal. */
-.submit-loading { width: 100%; padding: 0.45rem 0.1rem 0.2rem; animation: submit-loading-in 0.18s ease both; }
-.submit-loading-bar { height: 6px; border-radius: 999px; background: #e6ebf3; overflow: hidden; }
-.submit-loading-fill {
-  display: block; height: 100%; width: 0; border-radius: 999px;
-  background: linear-gradient(90deg, #3f6ab3, #2f8f63);
-  transition: width 1.2s cubic-bezier(0.3, 0.7, 0.35, 1);
+/* Discreet "prompt copied" note shown above the Submit / Review actions
+   once a model is expanded (the prompt is copied to the clipboard at that
+   moment). Also reused in the Review & Submit modal after submit. */
+.ti-copied-note {
+  margin: 0 0 0.3rem; padding: 0 0.55rem;
+  font-family: var(--font-family); font-size: 0.68rem; font-weight: 500;
+  line-height: 1.35; color: #7a8699;
 }
-.submit-loading-sub { margin-top: 0.5rem; font-size: 0.72rem; font-weight: 500; line-height: 1.35; color: #6b7790; }
-@keyframes submit-loading-in { from { opacity: 0; } to { opacity: 1; } }
-/* In the modal the area is wider/centered — give the bar a little more presence. */
-.pm-submit-area .submit-loading { padding: 0.2rem 0 0.1rem; }
-.pm-submit-area .submit-loading-bar { height: 8px; }
-.pm-submit-area .submit-loading-sub { font-size: 0.8rem; text-align: center; }
+.pm-copied-note { padding: 0.2rem 0; font-size: 0.78rem; text-align: center; color: #6b7790; }
 
 /* Multi-select is retired — never show its submit bar. */
 .shortcuts-multi-submit-wrap { display: none !important; }
@@ -3282,32 +3280,36 @@ html, body, #app {
    prompts. Title + description get the full card width. */
 .news-card:has(.news-ai) .news-card-link { padding-bottom: 0; }
 .news-card-foot {
-  display: flex; align-items: center; gap: 0.7rem;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; row-gap: 0.3rem;
   padding: 0.7rem 0.75rem 1.2rem;
 }
 .news-card-foot .news-card-meta { margin: 0; }
-.news-ai { position: relative; margin-left: auto; flex: none; z-index: 4; }
+/* AI Insights sits inline-left, right after the source/time — no longer
+   pinned to the right edge. */
+.news-ai { position: relative; flex: none; z-index: 4; }
 /* While open, lift above later sibling cards so the dropdown isn't painted
    over by the next story's row. */
 .news-ai.is-open { z-index: 50; }
 .news-ai-trigger {
-  display: inline-flex; align-items: center; gap: 0.3rem;
-  padding: 0.26rem 0.5rem; border: none; border-radius: 7px;
-  background: transparent; color: #8a94a6;
+  display: inline-flex; align-items: center; gap: 0.28rem;
+  padding: 0.24rem 0.45rem; border: none; border-radius: 7px;
+  background: transparent; color: #2f6fe0;
   font-family: var(--font-family); font-size: 0.72rem; font-weight: 600;
   cursor: pointer; white-space: nowrap; transition: background 0.14s, color 0.14s;
 }
 .news-ai-trigger:hover,
-.news-ai.is-open .news-ai-trigger { background: #eef1f6; color: #5a6678; }
-.news-ai-spark { flex: none; color: currentColor; opacity: 0.85; }
-.news-ai-chev { flex: none; opacity: 0.55; transition: transform 0.22s ease; }
-.news-ai.is-open .news-ai-chev { transform: rotate(180deg); }
+.news-ai.is-open .news-ai-trigger { background: #eaf1fe; color: #1f5fd0; }
+.news-ai-spark { flex: none; color: currentColor; opacity: 0.95; }
+/* Chevron only appears once the dropdown is open — a quiet "click to close"
+   affordance. When collapsed, the blue label alone signals it's clickable. */
+.news-ai-chev { display: none; flex: none; opacity: 0.75; }
+.news-ai.is-open .news-ai-chev { display: inline-flex; transform: rotate(180deg); }
 .news-ai-panel {
-  position: absolute; top: calc(100% + 6px); right: 0; z-index: 30;
+  position: absolute; top: calc(100% + 6px); left: 0; right: auto; z-index: 30;
   min-width: 168px; padding: 0.3rem;
   background: #fff; border: 1px solid #e7ecf3; border-radius: 12px;
   box-shadow: 0 14px 34px -12px rgba(15, 26, 46, 0.28), 0 2px 6px rgba(15, 26, 46, 0.08);
-  opacity: 0; transform: translateY(-6px) scale(0.97); transform-origin: top right;
+  opacity: 0; transform: translateY(-6px) scale(0.97); transform-origin: top left;
   visibility: hidden; pointer-events: none;
   transition: opacity 0.15s ease, transform 0.17s cubic-bezier(0.2, 0.9, 0.3, 1.05), visibility 0.15s;
 }

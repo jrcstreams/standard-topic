@@ -53,34 +53,22 @@ export async function submitPrompt(model, prompt) {
   return { copied: copying, url, supportsUrlPrompt: supportsUrlPrompt(model) };
 }
 
-function escapeHtml(s) {
-  return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+// Copy text to the clipboard (best-effort). Returns true on success.
+// Used to copy the prompt the moment a model is expanded, so the actual
+// submit click can open the model synchronously (see openModel).
+export async function copyPrompt(text) {
+  try { await navigator.clipboard.writeText(text); return true; }
+  catch (_) { return false; }
 }
 
-// Submit with a brief loading animation that overtakes `hostEl`: copies the
-// prompt to the clipboard, shows a bar that fills to 100% with a
-// "Prompt copied… Taking you to {model}" subtext, then navigates to the model.
-export async function submitWithLoading(model, prompt, hostEl) {
-  const copying = shouldCopyOnOpen(model);
-  if (copying) {
-    try { await navigator.clipboard.writeText(prompt); } catch (_) {}
-  }
+// Open the model's URL in a new tab. SYNCHRONOUS — no await before
+// window.open, so the call stays inside the user's click gesture and is
+// not caught by the browser's popup blocker. The prompt is expected to
+// already be on the clipboard (copied on model-expand).
+export function openModel(model, prompt) {
   const url = buildPromptUrl(model, prompt);
-  const name = model?.name || 'the model';
-  if (hostEl) {
-    hostEl.innerHTML = `
-      <div class="submit-loading" role="status" aria-live="polite">
-        <div class="submit-loading-bar"><span class="submit-loading-fill"></span></div>
-        <div class="submit-loading-sub">${copying ? 'Prompt copied to clipboard. ' : ''}Taking you to ${escapeHtml(name)}…</div>
-      </div>`;
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const fill = hostEl.querySelector('.submit-loading-fill');
-      if (fill) fill.style.width = '100%';
-    }));
-  }
-  await new Promise(r => setTimeout(r, 1350));
-  window.location.href = url;
-  return { copied: copying, url };
+  window.open(url, '_blank');
+  return url;
 }
 
 export function fillPromptTemplate(template, topicName) {

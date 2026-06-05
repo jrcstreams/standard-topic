@@ -17,9 +17,9 @@ import { getModels, getDefaultModelId, getModelById, getSubmissionMethods, getPr
 import {
   getPreferredModelId,
   setPreferredModelId,
-  submitPrompt,
-  submitWithLoading,
-} from '../utils/ai-models.js?v=20260605-polish29';
+  openModel,
+  copyPrompt,
+} from '../utils/ai-models.js?v=20260605-polish30';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { renderIcon } from '../utils/icons.js';
@@ -490,9 +490,14 @@ async function doSubmit() {
     count: modalState.count,
     edited: modalState.editedPrompt != null,
   });
-  // Loading animation overtakes the submit button area, then navigates.
-  const host = panelEl.querySelector('.pm-submit-area .pm-actions');
-  await submitWithLoading(model, prompt, host);
+  // Open synchronously (still inside the click gesture → no popup block),
+  // copy the prompt, then swap the button for a discreet confirmation.
+  openModel(model, prompt);
+  copyPrompt(prompt);
+  const actions = panelEl.querySelector('.pm-submit-area .pm-actions');
+  if (actions) {
+    actions.innerHTML = `<p class="ti-copied-note pm-copied-note">Prompt copied to clipboard. Paste in ${escapeHTML(model.name)} if not auto-submitted.</p>`;
+  }
 }
 
 function flashIconBtn(btn, state) {

@@ -1,6 +1,6 @@
 import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
 import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, searchTopics, getModels, getDefaultModelId, getModelById } from './utils/data.js';
-import { getPreferredModelId, setPreferredModelId, submitPrompt, submitWithLoading } from './utils/ai-models.js?v=20260605-polish29';
+import { getPreferredModelId, setPreferredModelId, submitPrompt, openModel, copyPrompt } from './utils/ai-models.js?v=20260605-polish30';
 import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
@@ -10,7 +10,7 @@ import { renderNewsFeed } from './components/newsfeed.js';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
-import { initPromptModal } from './components/prompt-modal.js?v=20260605-polish29';
+import { initPromptModal } from './components/prompt-modal.js?v=20260605-polish30';
 import { renderTrending, renderTrendingTopics } from './components/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js';
@@ -1666,10 +1666,19 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       sc.querySelectorAll('.ti-model.is-open').forEach(m => { if (m !== model) { m.classList.remove('is-open'); m.querySelector('.ti-model-trigger')?.setAttribute('aria-expanded', 'false'); } });
       model.classList.toggle('is-open', willOpen);
       mt.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      // Copy the assembled prompt the moment the model is expanded. This both
+      // (a) lets us tell the user "copied — paste if not auto-submitted" right
+      // here, and (b) frees the later Submit click to open the model
+      // synchronously (no await), sidestepping the popup blocker.
+      if (willOpen) {
+        const reasoning = REASONING_LEVELS.find(l => l.id === getReasoningLevel());
+        const full = assemblePrompt(sc?.dataset.prompt || '', { reasoningHint: reasoning && reasoning.hint ? reasoning.hint : '', customInstructions: getCustomInstructions(), topicName });
+        copyPrompt(full);
+      }
     });
   });
   container.querySelectorAll('.ti-act').forEach(actBtn => {
-    actBtn.addEventListener('click', async (e) => {
+    actBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       const sc = actBtn.closest('.ti-shortcut');
       const modelEl = actBtn.closest('.ti-model');
@@ -1685,9 +1694,11 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       const reasoning = REASONING_LEVELS.find(l => l.id === getReasoningLevel());
       const full = assemblePrompt(basePrompt, { reasoningHint: reasoning && reasoning.hint ? reasoning.hint : '', customInstructions: getCustomInstructions(), topicName });
       track('shortcut_submit', { model: model.id, route: window.location.hash || '#/' });
-      // Loading animation overtakes the Submit/Review row, then navigates.
-      const host = modelEl?.querySelector('.ti-model-actions-inner');
-      try { await submitWithLoading(model, full, host); } catch (err) { console.error('Shortcut submit failed', err); }
+      // Open synchronously (still inside the click gesture → no popup block).
+      // The prompt was already copied to the clipboard on model-expand.
+      openModel(model, full);
+      copyPrompt(full); // refresh clipboard in case the user copied something since
+      closeAllTIShortcuts(null);
     });
   });
   if (!container.__tiShortcutWired) {
@@ -1950,6 +1961,7 @@ function tiShortcutItem(shortcut, topicName, groupKey) {
             <span class="ti-model-chev" aria-hidden="true">${TI_CHEV_SVG}</span>
           </button>
           <div class="ti-model-actions"><div class="ti-model-actions-inner">
+            <p class="ti-copied-note">Prompt copied to clipboard. Paste in model if not auto-submitted.</p>
             <button type="button" class="ti-act ti-act-submit" data-act="submit">${TI_SUBMIT_SVG}<span>Submit Prompt</span></button>
             <button type="button" class="ti-act ti-act-review" data-act="review">${TI_REVIEW_SVG}<span>Review before Submitting</span></button>
           </div></div>
