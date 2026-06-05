@@ -77,26 +77,44 @@ function buildInsightPrompt(kind, title, desc, url) {
   return { label: meta.label, prompt: `${meta.ask}\n\n${story}` };
 }
 
-// Wire the AI Insights triggers + option buttons within a rendered list.
+// Wire the AI Insights dropdown triggers + option buttons within a list.
 function wireNewsAI(root) {
+  const closeAll = (except) => root.querySelectorAll('.news-ai.is-open').forEach(ai => {
+    if (ai !== except) {
+      ai.classList.remove('is-open');
+      ai.querySelector('.news-ai-trigger')?.setAttribute('aria-expanded', 'false');
+    }
+  });
   root.querySelectorAll('.news-ai-trigger').forEach(trigger => {
-    trigger.addEventListener('click', () => {
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
       const ai = trigger.closest('.news-ai');
-      const open = ai.classList.toggle('is-open');
-      trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      const willOpen = !ai.classList.contains('is-open');
+      closeAll(ai);
+      ai.classList.toggle('is-open', willOpen);
+      trigger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
     });
   });
   root.querySelectorAll('.news-ai-opt').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
       const card = btn.closest('.news-card');
-      if (!card) return;
-      const { label, prompt } = buildInsightPrompt(
-        btn.dataset.insight, card.dataset.title || '', card.dataset.desc || '', card.dataset.url || '');
-      window.dispatchEvent(new CustomEvent('open-prompt-modal', {
-        detail: { basePrompt: prompt, topicName: card.dataset.title || '', name: `AI Insight · ${label}`, count: 1 },
-      }));
+      if (card) {
+        const { label, prompt } = buildInsightPrompt(
+          btn.dataset.insight, card.dataset.title || '', card.dataset.desc || '', card.dataset.url || '');
+        window.dispatchEvent(new CustomEvent('open-prompt-modal', {
+          detail: { basePrompt: prompt, topicName: card.dataset.title || '', name: `AI Insight · ${label}`, count: 1 },
+        }));
+      }
+      closeAll(null);
     });
   });
+  // Outside-click / Escape closes any open dropdown (attached once per host).
+  if (!root.__newsAIClose) {
+    root.__newsAIClose = true;
+    document.addEventListener('click', () => closeAll(null));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(null); });
+  }
 }
 
 function newsAIHTML() {

@@ -3203,42 +3203,47 @@ html, body, #app {
   letter-spacing: 0.015em;
 }
 
-/* === Per-story "AI Insights" expander ================================
-   A subtle pill trigger below each story; clicking smoothly reveals a
-   row of one-tap insight prompts (grid-rows 0fr↔1fr for a clean,
-   layout-safe transition). Each option opens the prompt modal. */
-.news-ai:has(.news-ai-panel) { padding: 0 0.75rem 0.95rem; }
-.news-card:has(.news-ai) .news-card-link { padding-bottom: 0.7rem; }
+/* === Per-story "AI Insights" dropdown (top-right of each story) =======
+   A subtle pill anchored to the card's upper-right; clicking opens a
+   small dropdown menu (fade/scale) of one-tap insight prompts. The story
+   title reserves right-gutter space so it never runs under the pill. */
+.news-ai { position: absolute; top: 1.05rem; right: 0.75rem; z-index: 4; }
+.news-card:has(.news-ai) .news-card-title { padding-right: 9rem; }
 .news-ai-trigger {
   display: inline-flex; align-items: center; gap: 0.34rem;
   padding: 0.3rem 0.62rem; border: 1px solid #e2e8f2; border-radius: 999px;
   background: #f4f6fb; color: #54627a;
   font-family: var(--font-family); font-size: 0.73rem; font-weight: 600;
-  cursor: pointer; transition: background 0.14s, color 0.14s, border-color 0.14s;
+  cursor: pointer; white-space: nowrap; transition: background 0.14s, color 0.14s, border-color 0.14s;
 }
 .news-ai-trigger:hover,
 .news-ai.is-open .news-ai-trigger { background: #eef2fb; color: #2c4467; border-color: #d3def0; }
 .news-ai-spark { flex: none; color: #7c5cd6; }
-.news-ai-chev { flex: none; opacity: 0.65; transition: transform 0.26s ease; }
+.news-ai-chev { flex: none; opacity: 0.65; transition: transform 0.22s ease; }
 .news-ai.is-open .news-ai-chev { transform: rotate(180deg); }
 .news-ai-panel {
-  display: grid; grid-template-rows: 0fr; opacity: 0;
-  transition: grid-template-rows 0.28s ease, opacity 0.22s ease;
+  position: absolute; top: calc(100% + 6px); right: 0; z-index: 30;
+  min-width: 168px; padding: 0.3rem;
+  background: #fff; border: 1px solid #e7ecf3; border-radius: 12px;
+  box-shadow: 0 14px 34px -12px rgba(15, 26, 46, 0.28), 0 2px 6px rgba(15, 26, 46, 0.08);
+  opacity: 0; transform: translateY(-6px) scale(0.97); transform-origin: top right;
+  visibility: hidden; pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.17s cubic-bezier(0.2, 0.9, 0.3, 1.05), visibility 0.15s;
 }
-.news-ai.is-open .news-ai-panel { grid-template-rows: 1fr; opacity: 1; }
-.news-ai-panel-inner {
-  overflow: hidden; min-height: 0;
-  display: flex; flex-wrap: wrap; gap: 0.4rem; padding-top: 0.55rem;
-}
+.news-ai.is-open .news-ai-panel { opacity: 1; transform: translateY(0) scale(1); visibility: visible; pointer-events: auto; }
+.news-ai-panel-inner { display: flex; flex-direction: column; gap: 0.05rem; }
 .news-ai-opt {
-  padding: 0.34rem 0.72rem; border: 1px solid #e2e8f2; border-radius: 8px; background: #fff;
-  color: #2c3a52; font-family: var(--font-family); font-size: 0.76rem; font-weight: 600;
-  cursor: pointer; transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.08s;
+  display: flex; align-items: center; width: 100%; text-align: left;
+  padding: 0.5rem 0.65rem; border: none; border-radius: 8px; background: transparent;
+  color: #2c3a52; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; transition: background 0.12s, color 0.12s;
 }
-.news-ai-opt:hover { background: #f1f5fc; border-color: #c6d3ec; color: #1e2d44; }
-.news-ai-opt:active { transform: translateY(1px); }
-@media (max-width: 899.98px) {
-  .news-ai:has(.news-ai-panel) { padding: 0 1.5rem 1rem; }
+.news-ai-opt:hover { background: #f1f5fc; color: #1e2d44; }
+@media (max-width: 640px) {
+  /* Compact icon-only trigger on phones to free up title width. */
+  .news-ai-trigger span, .news-ai-trigger .news-ai-chev { display: none; }
+  .news-ai-trigger { padding: 0.34rem; }
+  .news-card:has(.news-ai) .news-card-title { padding-right: 2.7rem; }
 }
 
 .news-loading,
