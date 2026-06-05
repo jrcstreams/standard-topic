@@ -110,27 +110,79 @@ function titleCase(s) {
   return String(s || '').toLowerCase().replace(/\b([a-z])/g, (m, c) => c.toUpperCase());
 }
 
+// Quick-insight links shown when a trend is clicked — each opens the shared
+// prompt modal (open-prompt-modal) so the user can submit it to an AI model.
+const TREND_INSIGHTS = [
+  { key: 'explain', label: 'Explain', ask: 'Explain what "{term}" is and why it\'s in the news right now.' },
+  { key: 'why', label: 'Why now', ask: 'Why is "{term}" trending right now — what just happened?' },
+  { key: 'background', label: 'Background', ask: 'Give the background and context on "{term}".' },
+  { key: 'latest', label: 'Latest', ask: 'What\'s the latest news and key developments on "{term}"?' },
+];
+
+// Compact 2-row card: [category · trending-for] on top, term below. Clicking
+// the card opens an attached dropdown of quick insight links (no modal).
 function trendCardHTML(topic, idx) {
   const cat = (topic.categories && topic.categories[0]) || '';
   const dur = durationLabel(topic.startedAt);
   const title = titleCase(topic.query);
+  const eyebrow = [cat, dur ? `Trending for ${dur}` : ''].filter(Boolean).join(' · ');
   return `
-    <button type="button" class="trend-card" data-idx="${idx}" title="Open ${escapeAttr(title)}">
-      <span class="trend-card-main">
-        ${cat ? `<span class="trend-card-kicker">${escapeHTML(cat)}</span>` : ''}
-        <span class="trend-card-title">${escapeHTML(title)}</span>
-        ${dur ? `<span class="trend-card-since">Trending for ${escapeHTML(dur)}</span>` : ''}
-      </span>
-      <span class="trend-card-chev" aria-hidden="true">${CHEV}</span>
-    </button>`;
+    <div class="trend-card" data-idx="${idx}" data-query="${escapeAttr(title)}">
+      <button type="button" class="trend-card-trigger" aria-expanded="false" title="Quick insights on ${escapeAttr(title)}">
+        <span class="trend-card-main">
+          ${eyebrow ? `<span class="trend-card-eyebrow">${escapeHTML(eyebrow)}</span>` : ''}
+          <span class="trend-card-title">${escapeHTML(title)}</span>
+        </span>
+        <span class="trend-card-chev" aria-hidden="true">${CHEV_DOWN}</span>
+      </button>
+      <div class="trend-card-panel"><div class="trend-card-panel-inner">
+        ${TREND_INSIGHTS.map(o => `<button type="button" class="trend-ai-opt" data-insight="${o.key}">${escapeHTML(o.label)}</button>`).join('')}
+      </div></div>
+    </div>`;
+}
+
+// Wire trend-card dropdowns: click toggles its menu; option → prompt modal.
+function wireTrendCards(container) {
+  const closeAll = (except) => container.querySelectorAll('.trend-card.is-open').forEach(c => {
+    if (c !== except) { c.classList.remove('is-open'); c.querySelector('.trend-card-trigger')?.setAttribute('aria-expanded', 'false'); }
+  });
+  container.querySelectorAll('.trend-card').forEach(card => {
+    if (card.classList.contains('trend-card-skel')) return;
+    const trigger = card.querySelector('.trend-card-trigger');
+    trigger?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const willOpen = !card.classList.contains('is-open');
+      closeAll(card);
+      card.classList.toggle('is-open', willOpen);
+      trigger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    });
+    card.querySelectorAll('.trend-ai-opt').forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const term = card.dataset.query || '';
+        const meta = TREND_INSIGHTS.find(i => i.key === opt.dataset.insight) || TREND_INSIGHTS[0];
+        window.dispatchEvent(new CustomEvent('open-prompt-modal', {
+          detail: { basePrompt: meta.ask.replace(/\{term\}/g, term), topicName: term, name: `Trending · ${meta.label}`, count: 1 },
+        }));
+        closeAll(null);
+      });
+    });
+  });
+  if (!container.__trendClose) {
+    container.__trendClose = true;
+    document.addEventListener('click', () => closeAll(null));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(null); });
+  }
 }
 
 function trendCardsHead(fetched) {
   return `
-    <div class="trending-topics-head section-card-head">
-      <h3 class="trending-topics-title section-card-title">${TREND_UP_SVG}<span>Trending</span></h3>
-      <p class="section-card-sub">Trending search terms from <a class="trending-topics-src" href="https://trends.google.com/trending" target="_blank" rel="noopener noreferrer">Google Trends</a>.</p>
-      ${fetched ? `<span class="trending-topics-updated section-card-updated">Last Updated ${escapeHTML(relativeTime(fetched))}</span>` : ''}
+    <div class="trending-topics-head">
+      <h3 class="trending-topics-title">${TREND_UP_SVG}<span>Trending</span></h3>
+      <div class="trending-topics-meta">
+        <span class="trending-topics-sub">Trending search terms from <a class="trending-topics-src" href="https://trends.google.com/trending" target="_blank" rel="noopener noreferrer">Google Trends</a></span>
+        ${fetched ? `<span class="trending-topics-updated">Last Updated ${escapeHTML(relativeTime(fetched))}</span>` : ''}
+      </div>
     </div>`;
 }
 
@@ -159,13 +211,7 @@ export function renderTrendingTopics(container, { limit = 20, viewAll = false } 
     }
     const shown = topics.slice(0, limit);
     container.innerHTML = trendCardsShell(shown, { fetched, viewAll });
-    container.querySelectorAll('.trend-card').forEach(btn => {
-      if (btn.classList.contains('trend-card-skel')) return;
-      btn.addEventListener('click', () => {
-        const t = shown[Number(btn.dataset.idx)];
-        if (t) window.dispatchEvent(new CustomEvent('open-trending-detail', { detail: t }));
-      });
-    });
+    wireTrendCards(container);
     container.querySelector('[data-action="view-all-trending"]')?.addEventListener('click', () => {
       window.dispatchEvent(new CustomEvent('open-trending-list'));
     });

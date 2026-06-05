@@ -12791,34 +12791,62 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
 }
 /* Header — a clear "Trending" title with the teal trend icon; the source +
    updated meta sit just below it as a subtitle. */
-.trending-topics-head { display: flex; flex-direction: column; gap: 0.15rem; margin-bottom: 1rem; }
+/* Header: one line on desktop — title left, descriptive sentence + a
+   "Last Updated" pill pushed to the right; stacks on mobile. */
+.trending-topics-head { display: flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 0.4rem 0.85rem; margin-bottom: 0.9rem; }
 .trending-topics-title { margin: 0; display: inline-flex; align-items: center; gap: 0.45rem; font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em; color: var(--color-primary); }
 .trending-topics-title svg { color: #1f8f6b; display: block; width: 20px; height: 20px; }
-.trending-topics-meta { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.76rem; color: var(--color-text-muted); }
-.trending-topics-src { font-weight: 600; color: #5f6b85; text-decoration: none; }
+.trending-topics-meta { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 0.45rem 0.6rem; margin-left: auto; }
+.trending-topics-sub { font-size: 0.8rem; color: var(--color-text-muted); }
+.trending-topics-src { color: #5f6b85; text-decoration: none; }
 .trending-topics-src:hover { color: #1f8f6b; text-decoration: underline; }
-.trending-topics-updated { display: block; margin-top: 0.45rem; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #9aa5b8; }
-.trending-topics-updated::before { display: none; }
+.trending-topics-updated { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #5a6678; background: #eef1f6; padding: 0.22rem 0.6rem; border-radius: 999px; white-space: nowrap; }
+@media (max-width: 899.98px) {
+  .trending-topics-head { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
+  .trending-topics-meta { margin-left: 0; }
+}
 
-/* Cards: category kicker → term → "Trending for …" subtext. Compact. */
+/* Compact 2-row card (category · trending-for, then term) with an attached
+   quick-insights dropdown. The .trend-card is just a positioning wrapper. */
 .trend-card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; }
-.trend-card {
+.trend-card { position: relative; }
+.trend-card.is-open { z-index: 50; }
+.trend-card-trigger {
   display: flex; flex-direction: row; align-items: center; gap: 0.6rem; text-align: left; width: 100%;
-  background: #fff; border: 1px solid #e6e8ec; border-radius: 12px; padding: 0.7rem 0.85rem 0.7rem 0.9rem;
+  background: #fff; border: 1px solid #e6e8ec; border-radius: 12px; padding: 0.5rem 0.7rem 0.5rem 0.8rem;
   font-family: inherit; color: var(--color-text); cursor: pointer;
   transition: border-color 0.14s, box-shadow 0.14s, transform 0.06s;
 }
-.trend-card:hover { border-color: #c8d3e3; box-shadow: 0 6px 16px -8px rgba(15, 26, 46, 0.18); }
-.trend-card:active { transform: translateY(1px); }
-.trend-card-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 0.22rem; }
-.trend-card-kicker { font-size: 0.64rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #7b86a0; }
-.trend-card-title { font-size: 0.85rem; font-weight: 600; line-height: 1.25; overflow-wrap: anywhere; }
-.trend-card-since { font-size: 0.75rem; color: var(--color-text-muted); }
-/* Chevron — a quiet "open this trend" affordance that nudges on hover. */
-.trend-card-chev { flex: 0 0 auto; display: inline-flex; color: #b8c2d2; transition: transform 0.14s, color 0.14s; }
-.trend-card-chev svg { width: 16px; height: 16px; display: block; }
-.trend-card:hover .trend-card-chev { color: #1f8f6b; transform: translateX(2px); }
-.trend-card-skel { display: block; height: 72px; border-color: #eef0f4; background: #eef1f6; pointer-events: none; }
+.trend-card-trigger:hover,
+.trend-card.is-open .trend-card-trigger { border-color: #c8d3e3; box-shadow: 0 6px 16px -8px rgba(15, 26, 46, 0.18); }
+.trend-card-trigger:active { transform: translateY(1px); }
+.trend-card-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 0.08rem; }
+.trend-card-eyebrow { font-size: 0.63rem; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase; color: #7b86a0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.trend-card-title { font-size: 0.88rem; font-weight: 600; line-height: 1.2; overflow-wrap: anywhere; }
+.trend-card-chev { flex: 0 0 auto; display: inline-flex; color: #b8c2d2; transition: transform 0.16s, color 0.14s; }
+.trend-card-chev svg { width: 15px; height: 15px; display: block; }
+.trend-card-trigger:hover .trend-card-chev { color: #1f8f6b; }
+.trend-card.is-open .trend-card-chev { transform: rotate(180deg); color: #1f8f6b; }
+.trend-card-skel { display: block; height: 46px; border: 1px solid #eef0f4; border-radius: 12px; background: #eef1f6; pointer-events: none; }
+/* Quick-insights dropdown anchored to the card. */
+.trend-card-panel {
+  position: absolute; top: calc(100% + 5px); left: 0; right: 0; z-index: 30;
+  min-width: 150px; padding: 0.3rem;
+  background: #fff; border: 1px solid #e7ecf3; border-radius: 11px;
+  box-shadow: 0 14px 32px -12px rgba(15, 26, 46, 0.28), 0 2px 6px rgba(15, 26, 46, 0.08);
+  opacity: 0; transform: translateY(-6px) scale(0.97); transform-origin: top center;
+  visibility: hidden; pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.17s cubic-bezier(0.2, 0.9, 0.3, 1.05), visibility 0.15s;
+}
+.trend-card.is-open .trend-card-panel { opacity: 1; transform: translateY(0) scale(1); visibility: visible; pointer-events: auto; }
+.trend-card-panel-inner { display: flex; flex-direction: column; gap: 0.05rem; }
+.trend-ai-opt {
+  display: flex; align-items: center; width: 100%; text-align: left;
+  padding: 0.45rem 0.6rem; border: none; border-radius: 8px; background: transparent;
+  color: #2c3a52; font-family: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.trend-ai-opt:hover { background: #f1f5fc; color: #1e2d44; }
 /* View all — centered footer link (navy, no divider, breathing room). */
 .trending-topics-viewall {
   display: flex; align-items: center; justify-content: center; gap: 0.35rem; width: 100%;
@@ -12829,8 +12857,10 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
 .trending-topics-viewall:hover { color: var(--color-primary-light, #3a4a63); text-decoration: underline; }
 .trending-topics-viewall .trending-row-chev { color: currentColor; }
 
-/* Homepage: 6 terms in a 3-col grid; keep all 6 on tablet/mobile (single
-   column) rather than trimming to 3. */
+/* Homepage: 6 terms in a 3-col grid on desktop; trim to 3 on mobile/tablet. */
+@media (max-width: 899.98px) {
+  .home-trending .trend-card-grid > .trend-card:nth-child(n+4) { display: none; }
+}
 @media (max-width: 599.98px) {
   .home-trending .trend-card-grid { grid-template-columns: 1fr; }
 }
