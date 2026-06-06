@@ -163,7 +163,10 @@ export function renderSearchBar(container, route, opts = {}) {
   const trigger = container.querySelector('.search-bar');
   trigger.addEventListener('click', (e) => {
     e.stopPropagation();
-    openOverlay({ focusInput: isSearch });
+    // 'search' variant opens the search overlay focused; the 'default'
+    // (Topics) variant opens the revamped All Topics modal.
+    if (isSearch) openOverlay({ focusInput: true });
+    else window.dispatchEvent(new CustomEvent('open-all-topics-modal'));
   });
 }
 

@@ -5,7 +5,7 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js';
+import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260606-polish40';
 import { renderNewsFeed } from './components/newsfeed.js?v=20260606-polish38';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
@@ -2304,8 +2304,10 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   container.innerHTML = `
     <div class="search-panel search-panel--${mode}" data-state="collapsed">
       <div class="search-panel-hero"><div class="search-panel-hero-inner">
-        <h2 class="search-panel-title">News, Resources and AI Knowledge.</h2>
-        <p class="search-panel-sub">Search any term and get web sources, AI knowledge shortcuts and analysis.</p>
+        ${isModal
+          ? `<h2 class="search-panel-title">Search</h2>
+             <p class="search-panel-tagline">News, Resources and AI Knowledge.</p>`
+          : `<h2 class="search-panel-title">News, Resources and AI Knowledge.</h2>`}
       </div></div>
       <div class="search-panel-barrow">
         <form class="search-panel-form" role="search" autocomplete="off">
