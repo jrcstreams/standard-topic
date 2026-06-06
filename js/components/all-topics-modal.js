@@ -8,6 +8,7 @@ import { topicIconSVG } from '../utils/topic-icons.js';
 let overlayEl = null;
 
 const CHEV = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+const ARROW = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
 const X = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 // Warm, on-brand accent palette cycled across the topic accordions so the
 // stack reads lively rather than uniform grey (mirrors the Intelligence
@@ -36,7 +37,7 @@ function open() {
         <span class="at-acc-flat-chev">${CHEV}</span>
       </a>`;
     }
-    const subs = `<a href="#/topic/${parent.slug}" class="at-sub at-sub-parent">All ${escapeHTML(parent.name)}</a>`
+    const subs = `<a href="#/topic/${parent.slug}" class="at-sub at-sub-parent">All ${escapeHTML(parent.name)}<span class="at-sub-arrow" aria-hidden="true">${ARROW}</span></a>`
       + subtopics.map(s => `<a href="#/topic/${s.slug}" class="at-sub">${escapeHTML(s.name)}</a>`).join('');
     return `<details class="ti-accordion at-acc" style="--ti-accent: ${accent};">
       <summary class="ti-accordion-summary">

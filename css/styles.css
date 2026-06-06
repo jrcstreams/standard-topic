@@ -11044,9 +11044,17 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   transition: background 0.12s, color 0.12s;
 }
 .at-sub:hover { background: color-mix(in srgb, var(--ti-accent, #3261a0) 9%, #fff); color: #1e2d44; text-decoration: none; }
-/* Prominent parent link at the top of the nested list — accent colour. */
-.at-sub-parent { color: var(--ti-accent, #2f6fe0); font-weight: 700; }
+/* Prominent parent link at the top of the nested list — accent colour, with a
+   trailing arrow so it reads as a (clickable) link to the parent topic page. */
+.at-sub-parent { display: flex; align-items: center; gap: 0.4rem; color: var(--ti-accent, #2f6fe0); font-weight: 700; }
 .at-sub-parent:hover { color: var(--ti-accent, #1f5fd0); }
+.at-sub-arrow { flex: none; display: inline-flex; color: currentColor; transition: transform 0.14s; }
+.at-sub-arrow svg { display: block; }
+.at-sub-parent:hover .at-sub-arrow { transform: translateX(2px); }
+/* Center the topic icon vertically in the collapsed accordion summary (drop
+   the Intelligence optical nudge — these rows have no blurb). */
+.at-acc .ti-accordion-icon { transform: none; align-self: center; }
+.at-acc .ti-accordion-summary { align-items: center; }
 /* Parents with no subtopics — a plain bordered row (matches the accordion cards). */
 .at-acc-flat {
   display: flex; align-items: center; gap: 0.55rem; padding: 0.7rem 0.85rem;
