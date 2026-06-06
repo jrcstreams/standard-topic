@@ -10,6 +10,7 @@ import { renderNewsFeed } from './components/newsfeed.js?v=20260606-polish38';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260606-polish43';
 import { initPromptModal } from './components/prompt-modal.js?v=20260605-polish30';
 import { renderTrending, renderTrendingTopics } from './components/trending.js?v=20260605-polish33';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
@@ -39,17 +40,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   initSettingsModal();
   initSearchOverlay();
   initSearchPageModal();
+  initPromptBuilderModal();
   setupGlobalTabPillDelegation();
 
   onRoute((route) => {
     // Search (#/search) and Custom (#/custom/{term}) routes don't render
     // their own page — they open the Search modal over the home layout.
     const isSearchRoute = route.type === 'search' || route.type === 'custom';
-    const baseRoute = isSearchRoute ? { type: 'home', slug: 'home', tab: 'newsfeed' } : route;
+    const isPromptRoute = route.type === 'prompt-generator';
+    // These routes don't render their own page — they open a modal over home.
+    const isOverlayRoute = isSearchRoute || isPromptRoute;
+    const baseRoute = isOverlayRoute ? { type: 'home', slug: 'home', tab: 'newsfeed' } : route;
 
     // Only (re)render the underlying page when the base actually changes, so
-    // typing/clearing inside the Search modal doesn't tear down home beneath it.
-    if (!(isSearchRoute && lastBaseRouteKey === 'home')) {
+    // typing/clearing inside an open modal doesn't tear down home beneath it.
+    if (!(isOverlayRoute && lastBaseRouteKey === 'home')) {
       renderLayout(baseRoute);
       renderPage(baseRoute);
       lastBaseRouteKey = baseRoute.type === 'home' ? 'home'
@@ -66,6 +71,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       closeSearchPageModal({ silent: true });
     }
+    if (isPromptRoute) openPromptBuilderModal(); else closePromptBuilderModal();
 
     // Fire GA4 page_view after the DOM has the right document.title.
     trackPageView(window.location.hash || '#/', document.title);

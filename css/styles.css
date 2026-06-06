@@ -11058,8 +11058,57 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .at-acc-flat-chev { flex: none; color: #b8c2d2; display: inline-flex; }
 .at-acc-flat-chev svg { transform: rotate(-90deg); width: 16px; height: 16px; display: block; }
 @media (max-width: 640px) {
-  .at-modal-panel { max-width: 100%; padding: 1.3rem 1rem 1.3rem; border-radius: 14px; }
-  .at-modal-head { padding: 0 1.5rem; }
+  .at-modal-panel { max-width: 100%; border-radius: 14px; }
+  .at-modal-head { padding: 1.3rem 1.1rem 0.9rem; }
+  .at-modal-body { padding: 0.9rem 1rem 1.2rem; }
+}
+
+/* === Prompt Builder modal (the prompt generator, now a takeover modal) =====
+   Same centered card as Search / Topics / Trends. */
+.pbm-overlay {
+  position: fixed; inset: 0;
+  background: rgba(15, 26, 46, 0.5);
+  backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+  z-index: 160;
+  display: flex; align-items: center; justify-content: center; padding: 1rem;
+}
+.pbm-panel {
+  position: relative; background: #fff; border-radius: 16px;
+  width: 100%; max-width: 600px; height: min(86vh, 680px);
+  overflow: hidden; display: flex; flex-direction: column;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.35);
+  animation: modalPop 0.18s ease-out;
+}
+.pbm-close {
+  position: absolute; top: 0.9rem; right: 0.9rem; width: 32px; height: 32px; z-index: 4;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: none; border-radius: 8px; background: #eef1f6; color: #5a6678;
+  cursor: pointer; transition: background 0.14s, color 0.14s;
+}
+.pbm-close:hover { background: #e2e7ef; color: #1e2d44; }
+.pbm-head { flex-shrink: 0; text-align: center; margin: 0; padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid #eef0f4; }
+.pbm-title { margin: 0 0 0.3rem; font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; letter-spacing: -0.025em; color: var(--color-primary); }
+.pbm-subtext { margin: 0; font-size: 0.88rem; color: var(--color-text-muted); }
+.pbm-body { flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; padding: 1rem 1.4rem 0; }
+/* The wizard's two-panel/intro shrink to fit the modal; the page-fixed action
+   bar becomes an inline sticky footer pinned to the modal bottom. */
+.pbm-body .wiz-two-panel { display: block; }
+.pbm-body .wiz-intro { display: none; }
+.pbm-body .pb-card-grid { gap: 0.6rem; }
+.pbm-body .wiz-action-bar {
+  position: sticky !important; bottom: 0 !important; left: auto !important; right: auto !important; z-index: 3;
+  margin: 0.9rem -1.4rem 0 !important; padding: 0 !important;
+  background: #fff !important; border-top: 1px solid var(--color-border) !important; box-shadow: 0 -2px 8px rgba(15, 23, 42, 0.05) !important;
+  transform: none !important;
+}
+.pbm-body .wiz-action-bar-inner { max-width: none; padding: 0.8rem 1.4rem calc(0.8rem + env(safe-area-inset-bottom, 0px)); }
+.pbm-body .wiz-action-bar-spacer { display: none; }
+@media (max-width: 640px) {
+  .pbm-panel { max-width: 100%; border-radius: 14px; }
+  .pbm-head { padding: 1.3rem 1.1rem 0.9rem; }
+  .pbm-body { padding: 0.9rem 1rem 0; }
+  .pbm-body .wiz-action-bar { margin: 0.9rem -1rem 0; }
+  .pbm-body .wiz-action-bar-inner { padding: 0.8rem 1rem calc(0.8rem + env(safe-area-inset-bottom, 0px)); }
 }
 .discover-modal-card .sidebar-card-title {
   font-size: 1rem;
