@@ -11031,7 +11031,11 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .at-modal-head { flex-shrink: 0; text-align: center; margin: 0; padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid #eef0f4; }
 .at-modal-title { margin: 0 0 0.3rem; font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; letter-spacing: -0.025em; color: var(--color-primary); }
 .at-modal-subtext { margin: 0; font-size: 0.88rem; color: var(--color-text-muted); }
-.at-modal-body { flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; gap: 0.6rem; padding: 1rem 1.4rem 1.4rem; }
+.at-modal-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; gap: 0.6rem; padding: 1rem 1.4rem 1.4rem; }
+/* The body is a fixed-height flex column that scrolls — its accordion cards
+   must keep their natural height (not shrink to fit), so content overflows and
+   scrolls instead of squishing. */
+.at-modal-body > * { flex-shrink: 0; }
 /* Subtopics inside an open accordion. */
 .at-subs { display: flex; flex-direction: column; padding-top: 0.1rem; }
 .at-sub {
