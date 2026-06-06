@@ -907,6 +907,33 @@ body.hide-cta .sticky-cta { display: none !important; }
   height: 18px;
   display: block;
 }
+/* Topic accordion: the summary toggles subtopics; the "All {name}" link inside
+   navigates to the parent topic. */
+.navmenu-topic-summary {
+  display: flex; align-items: center; gap: 0.65rem;
+  padding: 0.55rem 0.75rem; cursor: pointer; list-style: none; user-select: none;
+  font-size: 0.88rem; font-weight: var(--font-weight-medium); color: var(--color-text);
+  border-radius: 4px; transition: background 0.1s;
+}
+.navmenu-topic-summary::-webkit-details-marker { display: none; }
+.navmenu-topic-summary:hover { background: var(--color-bg-light); }
+.navmenu-topic-summary .navmenu-topic-name { flex: 1 1 auto; min-width: 0; }
+.navmenu-topic-chev { flex: none; color: #9aa5b8; transition: transform 0.2s ease; }
+.navmenu-topic-chev svg { display: block; }
+.navmenu-topic-acc[open] > .navmenu-topic-summary .navmenu-topic-chev { transform: rotate(180deg); color: var(--color-primary, #385c95); }
+.navmenu-subtopics {
+  display: flex; flex-direction: column;
+  margin: 0.05rem 0 0.4rem 1.45rem;
+  padding-left: 0.55rem; border-left: 1.5px solid #e9ecf2;
+}
+.navmenu-subtopic-link {
+  padding: 0.4rem 0.6rem; font-size: 0.82rem; font-weight: 500;
+  color: #4a5568; text-decoration: none; border-radius: 4px; transition: background 0.1s, color 0.1s;
+}
+.navmenu-subtopic-link:hover { background: var(--color-bg-light); color: var(--color-text); text-decoration: none; }
+/* Prominent parent link at the top of the nested list — accent colour. */
+.navmenu-subtopic-parent { color: #2f6fe0; font-weight: 700; }
+.navmenu-subtopic-parent:hover { color: #1f5fd0; background: #eef3ff; }
 
 .sticky-cta:active {
   background: rgba(255, 255, 255, 0.18);
@@ -3325,6 +3352,18 @@ html, body, #app {
 .news-ai-trigger:hover,
 .news-ai.is-open .news-ai-trigger { background: #eaf1fe; color: #1f5fd0; }
 .news-ai-spark { flex: none; color: currentColor; opacity: 0.95; }
+/* Share + Copy link — same shape as the AI Insights label but quiet grey,
+   inline in the footer row. */
+.news-action {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.24rem 0.45rem; border: none; border-radius: 7px;
+  background: transparent; color: #7a8699;
+  font-family: var(--font-family); font-size: 0.72rem; font-weight: 600;
+  cursor: pointer; white-space: nowrap; transition: background 0.14s, color 0.14s;
+}
+.news-action svg { flex: none; }
+.news-action:hover { background: #eef1f6; color: #4a5568; }
+.news-action.is-copied { color: #2f8f63; }
 /* Chevron only appears once the dropdown is open — a quiet "click to close"
    affordance. When collapsed, the blue label alone signals it's clickable. */
 .news-ai-chev { display: none; flex: none; opacity: 0.75; }
@@ -12664,9 +12703,16 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
   text-align: center; transition: grid-template-rows 0.32s ease, opacity 0.24s ease, margin 0.32s ease;
 }
 .search-panel-hero > * { overflow: hidden; min-height: 0; }
-.search-panel-hero-inner { padding: 1.1rem 1rem 1.3rem; }
-.search-panel-title { margin: 0 0 0.7rem; font-family: var(--font-display); font-size: clamp(1.3rem, 2.5vw, 1.7rem); font-weight: 700; line-height: 1.14; letter-spacing: -0.025em; color: var(--color-primary); }
-.search-panel-sub { margin: 0 auto; max-width: 44rem; color: var(--color-text-muted); font-size: 1rem; line-height: 1.5; text-wrap: balance; }
+.search-panel-hero-inner { padding: 0.4rem 1rem 0.7rem; }
+.search-panel-title { margin: 0 0 0.4rem; font-family: var(--font-display); font-size: clamp(1.1rem, 1.9vw, 1.35rem); font-weight: 700; line-height: 1.14; letter-spacing: -0.025em; color: var(--color-primary); }
+.search-panel-sub { margin: 0 auto; max-width: 44rem; color: var(--color-text-muted); font-size: 0.88rem; line-height: 1.45; text-wrap: balance; }
+/* Compact the homepage hero further on phones — it was eating too much of the
+   first screen. */
+@media (max-width: 640px) {
+  .search-panel--inline .search-panel-hero-inner { padding: 0.2rem 1rem 0.55rem; }
+  .search-panel--inline .search-panel-title { font-size: 1.05rem; margin-bottom: 0.3rem; }
+  .search-panel--inline .search-panel-sub { font-size: 0.8rem; line-height: 1.4; }
+}
 /* Hero (tagline + subtext) stays visible AND fixed when expanded — the
    results reveal below it without the search bar sliding up toward the
    subtext (so no jump). Padding-bottom intentionally NOT shrunk here. */
@@ -12677,10 +12723,13 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .search-panel-icon { position: absolute; left: 1.05rem; top: 50%; transform: translateY(-50%); width: 19px; height: 19px; color: var(--color-text-muted); pointer-events: none; }
 .search-panel-icon svg { width: 100%; height: 100%; display: block; }
 .search-panel-input {
-  width: 100%; box-sizing: border-box; height: 52px; padding: 0 3rem 0 3rem;
+  width: 100%; box-sizing: border-box; height: 46px; padding: 0 3rem 0 3rem;
   border: 1.5px solid #e2e6ee; border-radius: 999px; background: #f7f9fc;
-  font-family: inherit; font-size: 1.05rem; color: var(--color-text);
+  font-family: inherit; font-size: 0.98rem; color: var(--color-text);
   transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+@media (max-width: 640px) {
+  .search-panel--inline .search-panel-input { height: 44px; font-size: 0.95rem; }
 }
 .search-panel-input::placeholder { color: #9aa3b2; }
 .search-panel-input:focus { outline: none; border-color: var(--color-accent, #f97316); background: #fff; box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.12); }
@@ -12764,7 +12813,10 @@ body.home-search.app-mode .topic-layout {
    (one tab on mobile). They fill the section — strip their own max-width /
    side padding so they don't double-inset within the padded layout. */
 #section-searchtrends { display: block; }
-.home-search-hero { max-width: none; margin: 0; padding: 0.3rem 0 0.5rem; }
+.home-search-hero { max-width: none; margin: 0; padding: 0.2rem 0 0.4rem; }
+/* Home Intelligence panel: kill the big reserved scroll padding-bottom (it's
+   content-height here) so there's no dead space before News Feed. */
+body.home-search #section-shortcuts .shortcuts-scroll-wrap { padding-bottom: 0; }
 .home-search-hero .search-panel-results { max-width: 100%; }
 /* Collapsed hero: keep the search bar a comfortable centered width. */
 @media (min-width: 720px) {
@@ -12930,8 +12982,8 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
    below as a subtitle (matches News Feed / Intelligence section heads). */
 .trending-topics-head { margin-bottom: 0.9rem; padding-bottom: 0.7rem; border-bottom: 1px solid #d6dae2; }
 .trending-topics-titlerow { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
-.trending-topics-title { margin: 0; font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; color: var(--color-primary); }
-.trending-topics-updated { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.01em; color: #6b7689; background: #eef1f6; padding: 0.24rem 0.55rem; border-radius: 6px; white-space: nowrap; }
+.trending-topics-title { margin: 0; font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1; color: var(--color-primary); }
+.trending-topics-updated { align-self: center; font-size: 0.62rem; font-weight: 600; letter-spacing: 0.01em; color: #6b7689; background: #eef1f6; padding: 0.24rem 0.55rem; border-radius: 6px; white-space: nowrap; line-height: 1; }
 .trending-topics-sub { margin: 0.3rem 0 0; font-size: 0.82rem; color: var(--color-text-muted); }
 .trending-topics-src { color: #5f6b85; text-decoration: none; }
 .trending-topics-src:hover { color: #1f8f6b; text-decoration: underline; }

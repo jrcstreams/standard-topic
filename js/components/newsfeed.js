@@ -64,6 +64,8 @@ function relativeTime(iso) {
 // (open-prompt-modal) pre-filled so the user can submit it to an AI model.
 const AI_SPARK_SVG = '<svg class="news-ai-spark" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>';
 const AI_CHEV_SVG = '<svg class="news-ai-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+const SHARE_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
+const LINK_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
 const NEWS_INSIGHTS = [
   { key: 'explain', label: 'Explain', ask: 'Explain this news story in clear, simple terms — what happened and why it matters.' },
   { key: 'background', label: 'Background', ask: 'Give the background and context behind this news story: the key players, the history, and what led up to it.' },
@@ -75,6 +77,15 @@ function buildInsightPrompt(kind, title, desc, url) {
   const meta = NEWS_INSIGHTS.find(i => i.key === kind) || NEWS_INSIGHTS[0];
   const story = `"${title}"${desc ? `\n\n${desc}` : ''}${url ? `\n\nSource: ${url}` : ''}`;
   return { label: meta.label, prompt: `${meta.ask}\n\n${story}` };
+}
+
+// Brief "Copied" confirmation on a share/copy button.
+function flashCopied(btn, msg) {
+  const label = btn.querySelector('span');
+  const orig = label ? label.textContent : '';
+  btn.classList.add('is-copied');
+  if (label) label.textContent = msg;
+  setTimeout(() => { btn.classList.remove('is-copied'); if (label) label.textContent = orig; }, 1500);
 }
 
 // Wire the AI Insights dropdown triggers + option buttons within a list.
@@ -107,6 +118,33 @@ function wireNewsAI(root) {
         }));
       }
       closeAll(null);
+    });
+  });
+  // Share — native share sheet on mobile (Apple/Android), copy-link fallback.
+  root.querySelectorAll('.news-share').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.news-card');
+      const url = card?.dataset.url || '';
+      const title = card?.dataset.title || '';
+      if (!url) return;
+      if (navigator.share) {
+        try { await navigator.share({ title, url }); } catch (_) { /* user cancelled */ }
+      } else {
+        try { await navigator.clipboard.writeText(url); } catch (_) {}
+        flashCopied(btn, 'Link copied');
+      }
+    });
+  });
+  // Copy link — copies the story URL with brief confirmation.
+  root.querySelectorAll('.news-copy').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const url = btn.closest('.news-card')?.dataset.url || '';
+      if (!url) return;
+      try { await navigator.clipboard.writeText(url); }
+      catch (_) { const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (_) {} ta.remove(); }
+      flashCopied(btn, 'Copied');
     });
   });
   // Outside-click / Escape closes any open dropdown (attached once per host).
@@ -176,6 +214,8 @@ function newsCardHTML(item) {
       <div class="news-card-foot">
         <div class="news-card-meta">${metaParts.join('')}</div>
         ${newsAIHTML()}
+        <button type="button" class="news-action news-share" aria-label="Share this story">${SHARE_SVG}<span>Share</span></button>
+        <button type="button" class="news-action news-copy" aria-label="Copy link to this story">${LINK_SVG}<span>Copy link</span></button>
       </div>
     </article>
   `;

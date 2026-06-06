@@ -1,12 +1,12 @@
 import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
-import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, searchTopics, getModels, getDefaultModelId, getModelById } from './utils/data.js';
+import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getSubtopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, searchTopics, getModels, getDefaultModelId, getModelById } from './utils/data.js';
 import { getPreferredModelId, setPreferredModelId, submitPrompt, openModel, copyPrompt } from './utils/ai-models.js?v=20260605-polish30';
 import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js';
-import { renderNewsFeed } from './components/newsfeed.js?v=20260605-polish34';
+import { renderNewsFeed } from './components/newsfeed.js?v=20260606-polish37';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
@@ -1007,12 +1007,32 @@ function setupResponsiveNav() {
 
 function renderStickyHeroBar(container, route) {
   const featured = getFeaturedTopics();
-  const featuredLinksHTML = featured.map(t => `
-    <a href="#/topic/${t.slug}" class="navmenu-topic-link">
-      <span class="navmenu-topic-icon">${topicIconSVG(t.icon || 'globe', '')}</span>
-      <span class="navmenu-topic-name">${escapeHTML(t.name)}</span>
-    </a>
-  `).join('');
+  const NAVMENU_CHEV = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+  // Each featured parent is an accordion: tap the row to reveal its subtopics
+  // (so every topic is reachable from the menu); the parent itself is reachable
+  // via a prominent "All {name}" link at the top of the nested list. Parents
+  // with no subtopics stay a plain link.
+  const featuredLinksHTML = featured.map(t => {
+    const subs = getSubtopics(t.slug);
+    if (!subs.length) {
+      return `<a href="#/topic/${t.slug}" class="navmenu-topic-link">
+        <span class="navmenu-topic-icon">${topicIconSVG(t.icon || 'globe', '')}</span>
+        <span class="navmenu-topic-name">${escapeHTML(t.name)}</span>
+      </a>`;
+    }
+    const subsHTML = subs.map(s => `<a href="#/topic/${escapeAttr(s.slug)}" class="navmenu-subtopic-link">${escapeHTML(s.name)}</a>`).join('');
+    return `<details class="navmenu-topic-acc">
+      <summary class="navmenu-topic-summary">
+        <span class="navmenu-topic-icon">${topicIconSVG(t.icon || 'globe', '')}</span>
+        <span class="navmenu-topic-name">${escapeHTML(t.name)}</span>
+        <span class="navmenu-topic-chev" aria-hidden="true">${NAVMENU_CHEV}</span>
+      </summary>
+      <div class="navmenu-subtopics">
+        <a href="#/topic/${escapeAttr(t.slug)}" class="navmenu-subtopic-link navmenu-subtopic-parent">All ${escapeHTML(t.name)}</a>
+        ${subsHTML}
+      </div>
+    </details>`;
+  }).join('');
 
   container.innerHTML = `
     <div class="sticky-hero-inner">
@@ -2377,7 +2397,16 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     suggestEl.querySelectorAll('.search-panel-suggest-row').forEach((r, i) => r.classList.toggle('is-active', i === activeIdx));
   }
 
-  form.addEventListener('submit', (e) => { e.preventDefault(); const v = input.value.trim(); if (v) { if (activeIdx >= 0 && !suggestEl.hidden) chooseSuggestion(activeIdx); else expand(v); } });
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const v = input.value.trim();
+    if (!v) return;
+    if (activeIdx >= 0 && !suggestEl.hidden) { chooseSuggestion(activeIdx); return; }
+    // Inline (homepage) submit opens the search MODAL with results rather than
+    // expanding in place; the #/custom route drives openSearchPageModal.
+    if (isModal) { expand(v); }
+    else { hideSuggest(); navigate('#/custom/' + encodeURIComponent(v)); }
+  });
   // Live update: once expanded, editing the term re-renders the intelligence
   // so the shortcuts use the new term immediately (no Enter needed). The
   // sublabel under "Search Intelligence" updates instantly for feedback.
