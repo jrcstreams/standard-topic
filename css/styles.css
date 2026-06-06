@@ -11013,23 +11013,25 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
    Intelligence-style accordions) ===================================== */
 .at-modal-panel {
   position: relative; background: #fff; border-radius: 16px;
-  width: 100%; max-width: 600px; max-height: 86vh;
-  overflow-y: auto; overflow-x: hidden;
-  padding: 1.6rem 1.4rem 1.6rem;
+  width: 100%; max-width: 600px;
+  height: min(86vh, 680px); /* shared size across Search / Topics / Trends */
+  overflow: hidden; display: flex; flex-direction: column;
+  padding: 0;
   box-shadow: 0 25px 60px rgba(15, 23, 42, 0.35);
   animation: modalPop 0.18s ease-out;
 }
 .at-modal-close {
-  position: absolute; top: 0.9rem; right: 0.9rem; width: 32px; height: 32px;
+  position: absolute; top: 0.9rem; right: 0.9rem; width: 32px; height: 32px; z-index: 2;
   display: inline-flex; align-items: center; justify-content: center;
   border: none; border-radius: 8px; background: #eef1f6; color: #5a6678;
   cursor: pointer; transition: background 0.14s, color 0.14s;
 }
 .at-modal-close:hover { background: #e2e7ef; color: #1e2d44; }
-.at-modal-head { text-align: center; margin: 0 0 1.2rem; padding: 0 1.5rem; }
+/* Fixed header with a light separator; the body scrolls under it. */
+.at-modal-head { flex-shrink: 0; text-align: center; margin: 0; padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid #eef0f4; }
 .at-modal-title { margin: 0 0 0.3rem; font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; letter-spacing: -0.025em; color: var(--color-primary); }
 .at-modal-subtext { margin: 0; font-size: 0.88rem; color: var(--color-text-muted); }
-.at-modal-body { gap: 0.6rem; }
+.at-modal-body { flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; gap: 0.6rem; padding: 1rem 1.4rem 1.4rem; }
 /* Subtopics inside an open accordion. */
 .at-subs { display: flex; flex-direction: column; padding-top: 0.1rem; }
 .at-sub {
@@ -12567,17 +12569,17 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
    (not a child of the overlay), so it self-centers via fixed positioning. */
 .tlm-panel {
   position: fixed; z-index: 141; top: 50%; left: 50%;
-  width: min(600px, calc(100% - 2rem)); max-height: 86vh;
+  width: min(600px, calc(100% - 2rem)); height: min(86vh, 680px);
   display: flex; flex-direction: column; overflow: hidden;
   background: #fff; border: 1px solid rgba(15, 23, 42, 0.06); border-radius: 16px;
   box-shadow: 0 30px 70px -16px rgba(15, 23, 42, 0.40), 0 10px 22px -10px rgba(15, 23, 42, 0.20);
-  padding: 1.5rem 1.4rem 0.8rem;
+  padding: 0;
   transform: translate(-50%, -50%) scale(0.97); opacity: 0;
   transition: opacity 0.18s ease, transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.05);
 }
 .tlm-panel.is-in { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-/* Centered header (same treatment as the Topics modal). */
-.tlm-head { text-align: center; margin: 0 0 1rem; padding: 0 1.5rem; flex-shrink: 0; }
+/* Fixed centered header with a light separator; body scrolls under it. */
+.tlm-head { flex-shrink: 0; text-align: center; margin: 0; padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid #eef0f4; }
 .tlm-title { margin: 0 0 0.3rem; font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; letter-spacing: -0.025em; color: var(--color-primary); }
 .tlm-subtext { margin: 0; font-size: 0.88rem; color: var(--color-text-muted); }
 /* The trending card renders its own left-aligned head — hide it; the centered
@@ -12596,7 +12598,7 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 /* Scroll the modal body itself — the trend-card grid has no inner scroll
    container (the old .trending-scroll element is gone), so without this the
    list overflows the clipped panel with no way to scroll. */
-.tlm-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.tlm-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 1rem 1.4rem 1.4rem; }
 /* Strip the sidebar-card chrome — the modal panel provides the surface. */
 .tlm-body .sidebar-card { border: none; background: none; padding: 0; box-shadow: none; }
 /* Size to content (the panel only has a max-height), and let the list grow
@@ -12615,7 +12617,9 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 @media (max-width: 640px) {
   .tlm-overlay { z-index: 140; }
   /* Stay a centered card on mobile too (not full-screen) — site visible behind. */
-  .tlm-panel { padding: 1.3rem 1rem 0.7rem; border-radius: 14px; }
+  .tlm-panel { border-radius: 14px; }
+  .tlm-head { padding: 1.3rem 1.1rem 0.9rem; }
+  .tlm-body { padding: 0.9rem 1rem 1.2rem; }
 }
 
 /* === Shared takeover modal shell =====================================
@@ -12850,12 +12854,13 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 /* Search panel inside the takeover modal: pad the card. Collapsed = overflow
    visible so the suggestions dropdown can escape the short card; expanded =
    scroll the tall accordions within the card's max-height. */
-.search-page-panel.takeover-panel { overflow: visible; padding: 0.7rem 1.15rem 1.3rem; }
-.search-page-panel.takeover-panel:has(.search-panel[data-state="expanded"]) { overflow-y: auto; }
-/* Empty modal feels more welcoming with some height; the hero sits near the
-   top so searched content reveals smoothly into the space below it. */
-.search-page-panel.takeover-panel:has(.search-panel[data-state="collapsed"]) { min-height: min(360px, 64vh); }
-.search-panel--modal { min-height: 0; }
+/* Fixed-size modal (matches Topics / Trends). Sticky head (title + tagline)
+   with a light separator; the search bar stays fixed; results scroll under. */
+.search-page-panel.takeover-panel { overflow: hidden; padding: 0; height: min(86vh, 680px); }
+.search-panel--modal { min-height: 0; display: flex; flex-direction: column; height: 100%; }
+.search-panel--modal .search-panel-hero { flex-shrink: 0; border-bottom: 1px solid #eef0f4; }
+.search-panel--modal .search-panel-barrow { flex-shrink: 0; padding: 0.85rem 1.15rem; }
+.search-panel--modal .search-panel-results { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0 1.15rem 1.2rem; }
 .search-panel--modal .search-panel-close { top: 0.5rem; right: 0.5rem; }
 .search-panel--modal .search-panel-hero-inner { padding: 1.4rem 1rem 1rem; }
 /* "Search" header matches the Topics modal title size/weight. */
