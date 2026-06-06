@@ -11101,8 +11101,12 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   background: #fff !important; border-top: 1px solid var(--color-border) !important; box-shadow: 0 -2px 8px rgba(15, 23, 42, 0.05) !important;
   transform: none !important;
 }
-.pbm-body .wiz-action-bar-inner { max-width: none; padding: 0.8rem 1.4rem calc(0.8rem + env(safe-area-inset-bottom, 0px)); }
+.pbm-body .wiz-action-bar-inner { max-width: none; gap: 0.6rem; padding: 0.8rem 1.4rem calc(0.8rem + env(safe-area-inset-bottom, 0px)); }
 .pbm-body .wiz-action-bar-spacer { display: none; }
+/* Fit the buttons to the (narrower) modal: primary fills, Clear is auto —
+   drop the page-era 280px min-width that overflowed the modal on mobile. */
+.pbm-body .wiz-action-btn { flex: 1 1 auto; min-width: 0; padding-left: 1rem; padding-right: 1rem; }
+.pbm-body .wiz-action-restart { flex: 0 0 auto; }
 @media (max-width: 640px) {
   .pbm-panel { max-width: 100%; border-radius: 14px; }
   .pbm-head { padding: 1.3rem 1.1rem 0.9rem; }
