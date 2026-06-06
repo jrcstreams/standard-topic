@@ -38,6 +38,10 @@ function open() {
     <button type="button" class="tlm-close" id="tlm-close" aria-label="Close">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg>
     </button>
+    <div class="tlm-head">
+      <h2 class="tlm-title">Trending</h2>
+      <p class="tlm-subtext">Trending search terms from Google Trends.</p>
+    </div>
     <div class="tlm-body" id="tlm-body"></div>`;
   panelEl.querySelector('#tlm-close').addEventListener('click', close);
   // renderTrending fetches + renders the card and wires row → open-trending-detail.

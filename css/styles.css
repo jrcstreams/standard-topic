@@ -12560,18 +12560,29 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
   background: rgba(15, 26, 46, 0.5);
   backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
   z-index: 140;
+  display: flex; align-items: center; justify-content: center; padding: 1rem;
 }
+/* Centered-card takeover (matches the Topics modal): never full-screen, the
+   dimmed site stays visible around it. The panel is a separate fixed element
+   (not a child of the overlay), so it self-centers via fixed positioning. */
 .tlm-panel {
   position: fixed; z-index: 141; top: 50%; left: 50%;
-  width: min(720px, 94vw); max-height: 88vh;
+  width: min(600px, calc(100% - 2rem)); max-height: 86vh;
   display: flex; flex-direction: column; overflow: hidden;
   background: #fff; border: 1px solid rgba(15, 23, 42, 0.06); border-radius: 16px;
   box-shadow: 0 30px 70px -16px rgba(15, 23, 42, 0.40), 0 10px 22px -10px rgba(15, 23, 42, 0.20);
-  padding: 1.05rem 1.15rem 0.7rem;
+  padding: 1.5rem 1.4rem 0.8rem;
   transform: translate(-50%, -50%) scale(0.97); opacity: 0;
   transition: opacity 0.18s ease, transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.05);
 }
 .tlm-panel.is-in { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+/* Centered header (same treatment as the Topics modal). */
+.tlm-head { text-align: center; margin: 0 0 1rem; padding: 0 1.5rem; flex-shrink: 0; }
+.tlm-title { margin: 0 0 0.3rem; font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; letter-spacing: -0.025em; color: var(--color-primary); }
+.tlm-subtext { margin: 0; font-size: 0.88rem; color: var(--color-text-muted); }
+/* The trending card renders its own left-aligned head — hide it; the centered
+   .tlm-head above labels the modal. */
+.tlm-body .trending-topics-head { display: none; }
 /* Match the search modal's close chip so it stands out (was a faint
    borderless circle). */
 .tlm-close {
@@ -12603,11 +12614,8 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 }
 @media (max-width: 640px) {
   .tlm-overlay { z-index: 140; }
-  .tlm-panel {
-    top: 0; left: 0; transform: none; width: 100%; max-width: none;
-    height: 100%; max-height: none; border-radius: 0; border: none;
-  }
-  .tlm-panel.is-in { transform: none; }
+  /* Stay a centered card on mobile too (not full-screen) — site visible behind. */
+  .tlm-panel { padding: 1.3rem 1rem 0.7rem; border-radius: 14px; }
 }
 
 /* === Shared takeover modal shell =====================================
@@ -12619,12 +12627,12 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
   background: rgba(15, 26, 46, 0.5);
   backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
   z-index: 160;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: center; padding: 1rem;
 }
 .takeover-panel {
   position: relative;
-  width: min(960px, 94vw);
-  max-height: 88vh;
+  width: 100%; max-width: 600px;
+  max-height: 86vh;
   display: flex; flex-direction: column; overflow: hidden;
   background: #fff; border: 1px solid rgba(15, 23, 42, 0.06); border-radius: 16px;
   box-shadow: 0 30px 80px -18px rgba(15, 23, 42, 0.42), 0 10px 24px -10px rgba(15, 23, 42, 0.2);
@@ -12648,11 +12656,10 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 @media (min-width: 720px) {
   .takeover-body--cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem 1rem; }
 }
-/* Mobile: full-screen takeover. */
+/* Mobile: stay a centered card (not full-screen) so the dimmed site shows
+   behind, matching the Topics modal. */
 @media (max-width: 640px) {
-  .takeover-panel {
-    width: 100%; height: 100%; max-height: none; border-radius: 0; border: none;
-  }
+  .takeover-panel { max-width: 100%; max-height: 86vh; border-radius: 14px; }
   .takeover-body { padding: 1rem 1rem 1.5rem; }
 }
 
@@ -12850,14 +12857,9 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .search-page-panel.takeover-panel:has(.search-panel[data-state="collapsed"]) { min-height: min(360px, 64vh); }
 .search-panel--modal { min-height: 0; }
 .search-panel--modal .search-panel-close { top: 0.5rem; right: 0.5rem; }
-.search-panel--modal .search-panel-hero-inner { padding: 1.8rem 1rem 1.2rem; }
-/* Search modal on mobile: bias the hero down from the very top (not glued
-   to it, not perfectly centered) so the collapsed state reads as intentional
-   and leaves room below for results to expand into. Consistent across
-   collapsed/expanded so the bar doesn't jump on submit. */
-@media (max-width: 640px) {
-  .search-page-panel.takeover-panel { padding-top: 13vh; }
-}
+.search-panel--modal .search-panel-hero-inner { padding: 1.4rem 1rem 1rem; }
+/* "Search" header matches the Topics modal title size/weight. */
+.search-panel--modal .search-panel-title { font-size: 1.35rem; margin-bottom: 0.3rem; }
 
 /* === Homepage inline search hero ===================================== */
 /* Home keeps the app-mode grid placement but unlocks the viewport lock so

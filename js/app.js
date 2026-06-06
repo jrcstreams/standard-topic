@@ -14,7 +14,7 @@ import { initPromptModal } from './components/prompt-modal.js?v=20260605-polish3
 import { renderTrending, renderTrendingTopics } from './components/trending.js?v=20260605-polish33';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js';
-import { initTrendingListModal } from './components/trending-list-modal.js';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260606-polish41';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260606-polish39';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
