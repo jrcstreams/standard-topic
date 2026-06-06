@@ -215,7 +215,7 @@ function newsCardHTML(item) {
         <div class="news-card-meta">${metaParts.join('')}</div>
         ${newsAIHTML()}
         <button type="button" class="news-action news-share" aria-label="Share this story">${SHARE_SVG}<span>Share</span></button>
-        <button type="button" class="news-action news-copy" aria-label="Copy link to this story">${LINK_SVG}<span>Copy link</span></button>
+        <button type="button" class="news-action news-copy" aria-label="Copy link to this story">${LINK_SVG}<span>Copy</span></button>
       </div>
     </article>
   `;

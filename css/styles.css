@@ -12709,9 +12709,11 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 /* Compact the homepage hero further on phones — it was eating too much of the
    first screen. */
 @media (max-width: 640px) {
-  .search-panel--inline .search-panel-hero-inner { padding: 0.2rem 1rem 0.55rem; }
-  .search-panel--inline .search-panel-title { font-size: 1.05rem; margin-bottom: 0.3rem; }
-  .search-panel--inline .search-panel-sub { font-size: 0.8rem; line-height: 1.4; }
+  /* Breathing room above the tagline (it was kissing the subnav) and a touch
+     more size — the phone hero had gone too small/cramped. */
+  .search-panel--inline .search-panel-hero-inner { padding: 1rem 1rem 0.65rem; }
+  .search-panel--inline .search-panel-title { font-size: 1.18rem; margin-bottom: 0.35rem; }
+  .search-panel--inline .search-panel-sub { font-size: 0.85rem; line-height: 1.45; }
 }
 /* Hero (tagline + subtext) stays visible AND fixed when expanded — the
    results reveal below it without the search bar sliding up toward the
@@ -12729,7 +12731,7 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
   transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
 }
 @media (max-width: 640px) {
-  .search-panel--inline .search-panel-input { height: 44px; font-size: 0.95rem; }
+  .search-panel--inline .search-panel-input { height: 46px; font-size: 0.98rem; }
 }
 .search-panel-input::placeholder { color: #9aa3b2; }
 .search-panel-input:focus { outline: none; border-color: var(--color-accent, #f97316); background: #fff; box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.12); }
