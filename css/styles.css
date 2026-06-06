@@ -921,10 +921,12 @@ body.hide-cta .sticky-cta { display: none !important; }
 .navmenu-topic-chev { flex: none; color: #9aa5b8; transition: transform 0.2s ease; }
 .navmenu-topic-chev svg { display: block; }
 .navmenu-topic-acc[open] > .navmenu-topic-summary .navmenu-topic-chev { transform: rotate(180deg); color: var(--color-primary, #385c95); }
+/* Open accordion gets a soft tint so its subtopics read as one grouped block
+   (no harsh guide line). Subtopics align just under the parent name. */
+.navmenu-topic-acc[open] { background: #f6f8fc; border-radius: 8px; }
 .navmenu-subtopics {
   display: flex; flex-direction: column;
-  margin: 0.05rem 0 0.4rem 1.45rem;
-  padding-left: 0.55rem; border-left: 1.5px solid #e9ecf2;
+  margin: 0; padding: 0.05rem 0.5rem 0.4rem 1.9rem;
 }
 .navmenu-subtopic-link {
   padding: 0.4rem 0.6rem; font-size: 0.82rem; font-weight: 500;
@@ -3387,7 +3389,7 @@ html, body, #app {
 }
 .news-ai-opt:hover { background: #f1f5fc; color: #1e2d44; }
 @media (max-width: 899.98px) {
-  .news-card-foot { padding: 0.7rem 1.5rem 1.05rem; }
+  .news-card-foot { padding: 0.7rem 0 1.05rem; }
 }
 
 .news-loading,
@@ -3407,7 +3409,7 @@ html, body, #app {
    to match the body-tabs visibility window. */
 @media (max-width: 899.98px) {
   .news-list { padding: 0 0 1rem; }
-  .news-card-link { padding: 1.05rem 1.5rem; }
+  .news-card-link { padding: 1.05rem 0; }
   .news-card-title { font-size: 1.05rem; }
   .news-card-desc { font-size: 0.88rem; }
 }
@@ -5478,12 +5480,13 @@ body.app-mode .topic-layout {
      side inset so their bullets/cards don't kiss the viewport
      edge. */
   body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed {
-    margin-left: -1rem;
-    margin-right: -1rem;
-    /* Override the global max-width:100% guard, which otherwise caps the
-       section at the parent's content width while the -1rem left margin still
-       shifts it left — producing an asymmetric bleed (flush left, clipped
-       right). With max-width:none the negative margins expand symmetrically. */
+    /* No full-bleed: the section sits at the layout inset so the header
+       separator, story dividers and text all share the same edges (the old
+       bleed put separators edge-to-edge while text stayed inset — looked off).
+       Story content uses zero internal horizontal padding (below) so it runs
+       the full available width. */
+    margin-left: 0;
+    margin-right: 0;
     max-width: none;
   }
   /* Body tabs: true tab navigator at the top of the panel area.
@@ -11005,6 +11008,57 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   padding: 1.15rem 1.25rem 1.25rem;
   box-shadow: 0 25px 60px rgba(15, 23, 42, 0.35);
 }
+
+/* === All Topics modal (revamped: search-modal-style takeover with
+   Intelligence-style accordions) ===================================== */
+.at-modal-panel {
+  position: relative; background: #fff; border-radius: 16px;
+  width: 100%; max-width: 600px; max-height: 86vh;
+  overflow-y: auto; overflow-x: hidden;
+  padding: 1.6rem 1.4rem 1.6rem;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.35);
+  animation: modalPop 0.18s ease-out;
+}
+.at-modal-close {
+  position: absolute; top: 0.9rem; right: 0.9rem; width: 32px; height: 32px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: none; border-radius: 8px; background: #eef1f6; color: #5a6678;
+  cursor: pointer; transition: background 0.14s, color 0.14s;
+}
+.at-modal-close:hover { background: #e2e7ef; color: #1e2d44; }
+.at-modal-head { text-align: center; margin: 0 0 1.2rem; padding: 0 1.5rem; }
+.at-modal-title { margin: 0 0 0.3rem; font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; letter-spacing: -0.025em; color: var(--color-primary); }
+.at-modal-subtext { margin: 0; font-size: 0.88rem; color: var(--color-text-muted); }
+.at-modal-body { gap: 0.6rem; }
+/* Subtopics inside an open accordion. */
+.at-subs { display: flex; flex-direction: column; padding-top: 0.1rem; }
+.at-sub {
+  display: block; padding: 0.5rem 0.7rem; border-radius: 7px;
+  font-size: 0.85rem; font-weight: 500; color: #4a5568; text-decoration: none;
+  transition: background 0.12s, color 0.12s;
+}
+.at-sub:hover { background: color-mix(in srgb, var(--ti-accent, #3261a0) 9%, #fff); color: #1e2d44; text-decoration: none; }
+/* Prominent parent link at the top of the nested list — accent colour. */
+.at-sub-parent { color: var(--ti-accent, #2f6fe0); font-weight: 700; }
+.at-sub-parent:hover { color: var(--ti-accent, #1f5fd0); }
+/* Parents with no subtopics — a plain bordered row (matches the accordion cards). */
+.at-acc-flat {
+  display: flex; align-items: center; gap: 0.55rem; padding: 0.7rem 0.85rem;
+  background: #fff; border: 1px solid #e2e6ee; border-radius: 10px;
+  text-decoration: none; color: var(--color-text);
+  font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; letter-spacing: -0.012em;
+  transition: border-color 0.16s, box-shadow 0.16s;
+}
+.at-acc-flat:hover { border-color: color-mix(in srgb, var(--ti-accent) 38%, #e2e6ee); box-shadow: 0 2px 10px rgba(15, 26, 46, 0.04); text-decoration: none; }
+.at-acc-flat-icon { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; color: var(--ti-accent, #5d6b7e); flex: none; }
+.at-acc-flat-icon svg { width: 19px; height: 19px; display: block; }
+.at-acc-flat-name { flex: 1 1 auto; min-width: 0; }
+.at-acc-flat-chev { flex: none; color: #b8c2d2; display: inline-flex; }
+.at-acc-flat-chev svg { transform: rotate(-90deg); width: 16px; height: 16px; display: block; }
+@media (max-width: 640px) {
+  .at-modal-panel { max-width: 100%; padding: 1.3rem 1rem 1.3rem; border-radius: 14px; }
+  .at-modal-head { padding: 0 1.5rem; }
+}
 .discover-modal-card .sidebar-card-title {
   font-size: 1rem;
   padding-left: 0;
@@ -13108,13 +13162,12 @@ body.home-search #section-shortcuts .sidebar-card-header,
    shows to label the section. */
 @media (max-width: 899.98px) {
   body.home-search #section-newsfeed .newsfeed-head { display: flex; }
-  /* The section is full-bleed on mobile (negative side margins), so the
-     header would pin to the viewport edge while story text is inset 1.5rem.
-     Inset the header to match — both the home head and the topic title. */
+  /* Header sits at the section edge (no full-bleed now), so the title, its
+     separator, the story text and the row dividers all share the same edges. */
   body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed .newsfeed-card > .newsfeed-head,
   body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed .newsfeed-card > .newsfeed-title {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding-left: 0;
+    padding-right: 0;
   }
 }
 

@@ -16,7 +16,7 @@ import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } 
 import { initTrendingDetailModal } from './components/trending-detail-modal.js';
 import { initTrendingListModal } from './components/trending-list-modal.js';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260606-polish39';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
 import { initPromptPreviewModal } from './components/prompt-preview-modal.js';
 import { initSettingsModal } from './components/settings-modal.js';
@@ -1236,8 +1236,8 @@ function renderStickyHeroBar(container, route) {
     link.addEventListener('click', closeMenu);
   });
   navPanel.querySelector('#navmenu-all-topics')?.addEventListener('click', () => {
-    const searchBar = document.querySelector('.search-bar');
-    if (searchBar) searchBar.click();
+    closeMenu();
+    window.dispatchEvent(new CustomEvent('open-all-topics-modal'));
   });
   navPanel.querySelector('#navmenu-trending')?.addEventListener('click', () => {
     closeMenu();
