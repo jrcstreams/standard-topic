@@ -11051,10 +11051,13 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .at-sub-arrow { flex: none; display: inline-flex; color: currentColor; transition: transform 0.14s; }
 .at-sub-arrow svg { display: block; }
 .at-sub-parent:hover .at-sub-arrow { transform: translateX(2px); }
-/* Center the topic icon vertically in the collapsed accordion summary (drop
-   the Intelligence optical nudge — these rows have no blurb). */
+/* Center the topic icon vertically. These rows have no blurb, so collapse the
+   Intelligence 2-row grid (whose empty second row + row-gap pushed the icon and
+   title above the row's true center) to a single centered row, and make the
+   icon a flush-centered block (drop the optical nudge + inline baseline gap). */
+.at-acc .ti-accordion-summary { grid-template-rows: auto; row-gap: 0; align-items: center; }
 .at-acc .ti-accordion-icon { transform: none; align-self: center; }
-.at-acc .ti-accordion-summary { align-items: center; }
+.at-acc .ti-accordion-icon svg { display: block; }
 /* Parents with no subtopics — a plain bordered row (matches the accordion cards). */
 .at-acc-flat {
   display: flex; align-items: center; gap: 0.55rem; padding: 0.7rem 0.85rem;
