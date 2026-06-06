@@ -848,12 +848,48 @@ body.hide-cta .sticky-cta { display: none !important; }
 .navmenu-link:hover { border-color: var(--color-primary); background: var(--color-bg-light); text-decoration: none; }
 .navmenu-featured-label {
   font-family: var(--font-display);
-  font-size: 0.88rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 1rem 1.25rem 0.35rem;
+  color: var(--color-primary);
+  text-transform: none;
+  letter-spacing: -0.015em;
+  padding: 0.9rem 1.25rem 0.5rem;
+}
+
+/* === Touch devices: kill sticky :hover ================================
+   iOS/Android keep :hover applied to a tapped element until the next tap
+   elsewhere, so after navigating, the element in the same screen spot on the
+   NEXT page reads as "held down." Neutralise hover visuals where hover isn't a
+   real input; tap feedback still comes from :active. */
+@media (hover: none) {
+  #sub-header .subnav-topic-link:hover,
+  body.app-mode #sub-header.is-subnav .subnav-topic-link:hover,
+  .subnav-action-link:hover,
+  .subnav-topic-link:hover,
+  .navmenu-topic-link:hover,
+  .navmenu-subtopic-link:hover,
+  .navmenu-topic-summary:hover,
+  .navmenu-quicklink:hover,
+  .navmenu-link:hover,
+  .ti-accordion-summary:hover,
+  .ti-item:hover,
+  .ti-model-trigger:hover,
+  .ti-act:hover,
+  .at-sub:hover,
+  .at-acc-flat:hover,
+  .news-card:hover,
+  .news-ai-trigger:hover,
+  .news-action:hover,
+  .news-ai-opt:hover,
+  .trend-card-trigger:hover,
+  .trend-ai-opt:hover,
+  .sidebar-shortcut:hover,
+  .trending-topics-viewall:hover {
+    background: transparent;
+  }
+  /* Bordered rows also revert their hover border / shadow. */
+  .ti-item:hover { border-color: transparent; }
+  .at-acc-flat:hover { border-color: #e2e6ee; box-shadow: none; }
 }
 /* Sticky inside the scroll container: keeps "Featured Topics" pinned
    to the top of the scrollable region while the list scrolls beneath

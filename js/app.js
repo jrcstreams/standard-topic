@@ -1196,7 +1196,7 @@ function renderStickyHeroBar(container, route) {
       </button>
     </nav>
     <div class="navmenu-scroll">
-      <div class="navmenu-featured-label">Featured Topics</div>
+      <div class="navmenu-featured-label">Topics</div>
       <div class="navmenu-topics">${featuredLinksHTML}</div>
     </div>
     <div class="navmenu-footer-sticky">
