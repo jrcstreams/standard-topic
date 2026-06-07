@@ -93,8 +93,14 @@ module.exports = async function handler(req, res) {
     if (!topics.length) return res.status(200).json({ ok: true, batch: 0, topics: 0, inserted: 0, fetched });
 
     const totalBatches = Math.ceil(topics.length / BATCH_SIZE);
-    const batch = Math.floor(Date.now() / ROTATE_MS) % totalBatches;
-    const slice = topics.slice(batch * BATCH_SIZE, batch * BATCH_SIZE + BATCH_SIZE);
+    // Manual overrides for backfilling coverage: ?all=1 ingests every topic in
+    // one run; ?batch=N forces a specific rotation batch. Default rotates by time.
+    const all = req.query.all === '1' || req.query.all === 'true';
+    const override = parseInt(req.query.batch, 10);
+    const batch = Number.isInteger(override)
+      ? ((override % totalBatches) + totalBatches) % totalBatches
+      : Math.floor(Date.now() / ROTATE_MS) % totalBatches;
+    const slice = all ? topics : topics.slice(batch * BATCH_SIZE, batch * BATCH_SIZE + BATCH_SIZE);
 
     let inserted = 0;
     const auth = `Bearer ${apiKey}:${apiSecret}`;
