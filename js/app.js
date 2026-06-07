@@ -2305,6 +2305,45 @@ const LINK_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor
 // Shared expanding search panel — used by the nav modal (mode:'modal') and
 // the homepage hero (mode:'inline'). Renders hero + search bar + suggestions
 // + results host, owns the collapse/expand animation, returns a controller.
+// Helpers for the Search panel's stored News + Trending results.
+function spHost(u) {
+  if (!u) return '';
+  try { return new URL(u).hostname.replace(/^www\./i, '').toLowerCase(); }
+  catch { return String(u).replace(/^https?:\/\//i, '').split('/')[0]; }
+}
+function spRel(iso) {
+  if (!iso) return '';
+  const t = new Date(iso).getTime();
+  if (Number.isNaN(t)) return '';
+  const m = Math.max(0, Math.round((Date.now() - t) / 60000));
+  if (m < 60) return (m || 1) + 'm';
+  const h = Math.round(m / 60);
+  if (h < 24) return h + 'h';
+  const d = Math.round(h / 24);
+  if (d < 7) return d + 'd';
+  const w = Math.round(d / 7);
+  if (w < 5) return w + 'w';
+  return new Date(iso).toLocaleDateString();
+}
+function spTitleCase(s) { return String(s || '').toLowerCase().replace(/\b([a-z])/g, (m, c) => c.toUpperCase()); }
+function spNewsHTML(stories) {
+  const rows = stories.map(s => {
+    const url = s.url || '';
+    const meta = [spHost(url), spRel(s.published_at)].filter(Boolean).map(escapeHTML).join(' · ');
+    const topic = s.topic_name ? ` · <span class="search-news-topic">${escapeHTML(s.topic_name)}</span>` : '';
+    return `<a class="search-news-item" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer"><span class="search-news-title">${escapeHTML(s.title || '')}</span><span class="search-news-meta">${meta}${topic}</span></a>`;
+  }).join('');
+  return `<div class="search-content-group"><div class="search-content-head">In the news</div><div class="search-content-body">${rows}</div></div>`;
+}
+function spTrendHTML(items) {
+  const chips = items.map(it => {
+    const term = it.query || '';
+    const cat = it.category ? `<span class="search-trend-cat">${escapeHTML(it.category)}</span>` : '';
+    return `<button type="button" class="search-trend-item" data-trend="${escapeAttr(term)}"><span class="search-trend-name">${escapeHTML(spTitleCase(term))}</span>${cat}</button>`;
+  }).join('');
+  return `<div class="search-content-group"><div class="search-content-head">Trending</div><div class="search-content-chips">${chips}</div></div>`;
+}
+
 function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   const isModal = mode === 'modal';
   container.innerHTML = `
@@ -2358,6 +2397,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     resultsInner.innerHTML = '';
     renderShortcutsSidebar(resultsInner, { type: 'custom', term: t, tab: 'shortcuts' }, false, true, t);
     placeCopy();
+    loadContentResults(t);
     panelEl.dataset.state = 'expanded';
     syncClear();
     ctl.onExpand && ctl.onExpand(t);
@@ -2370,6 +2410,35 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     resultsInner.innerHTML = '';
     syncClear();
     ctl.onCollapse && ctl.onCollapse();
+  }
+  // Stored News + Trending results, appended under "Search Intelligence".
+  // Re-run on expand and on every live term change (renderShortcutsSidebar
+  // replaces resultsInner, so this re-appends each time).
+  async function loadContentResults(term) {
+    let block = resultsInner.querySelector('.search-panel-content');
+    if (!block) { block = document.createElement('div'); block.className = 'search-panel-content'; resultsInner.appendChild(block); }
+    block.innerHTML = `<div class="search-content"><div class="search-content-loading">Searching news &amp; trends…</div></div>`;
+    let news = [], trends = [];
+    try {
+      const [nr, tr] = await Promise.all([
+        fetch(`/api/news-search?q=${encodeURIComponent(term)}&limit=6`, { headers: { Accept: 'application/json' } }).then(r => r.ok ? r.json() : null).catch(() => null),
+        fetch(`/api/trending-history?mode=search&q=${encodeURIComponent(term)}&limit=10`, { headers: { Accept: 'application/json' } }).then(r => r.ok ? r.json() : null).catch(() => null),
+      ]);
+      news = (nr && nr.stories) || [];
+      trends = (tr && tr.items) || [];
+    } catch (_) { /* leave empty */ }
+    if (input.value.trim() !== term) return; // stale
+    const live = resultsInner.querySelector('.search-panel-content');
+    if (!live) return;
+    const parts = [];
+    if (news.length) parts.push(spNewsHTML(news));
+    if (trends.length) parts.push(spTrendHTML(trends));
+    live.innerHTML = parts.length ? `<div class="search-content">${parts.join('')}</div>` : '';
+    live.querySelectorAll('[data-trend]').forEach(b => b.addEventListener('click', () => {
+      const t = b.dataset.trend; if (!t) return;
+      if (isModal) { closeSearchPageModal(); document.body.style.overflow = ''; }
+      navigate('#/custom/' + encodeURIComponent(t));
+    }));
   }
   function hideSuggest() { suggestEl.hidden = true; suggestEl.innerHTML = ''; suggestItems = []; activeIdx = -1; }
   function refreshSuggestions() {
@@ -2432,6 +2501,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
           currentTerm = t;
           renderShortcutsSidebar(resultsInner, { type: 'custom', term: t, tab: 'shortcuts' }, false, true, t);
           placeCopy();
+          loadContentResults(t);
         }
       }, 350);
     } else {

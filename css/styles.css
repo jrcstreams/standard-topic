@@ -13433,3 +13433,6 @@ body.home-mode #sub-header.is-subnav .topic-banner {
   cursor: pointer; padding: 0;
 }
 .ai-result-deeper:hover { text-decoration: underline; }
+
+/* Search panel: stored News + Trending results block */
+.search-panel-content { margin-top: 16px; }
