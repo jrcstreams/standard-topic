@@ -73,3 +73,31 @@ CREATE INDEX IF NOT EXISTS trending_query_idx
   ON trending_items (lower(query), snapshot_at DESC);
 CREATE INDEX IF NOT EXISTS trending_category_idx
   ON trending_items (category, snapshot_at DESC);
+
+-- ---------------------------------------------------------------------------
+-- ai_insights — lazily-generated, cached AI summaries served instantly.
+-- entity_key: news = story URL; trend = lower(query). One row per
+-- (entity, insight type). Generated on first view, then reused forever.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS ai_insights (
+  id          SERIAL PRIMARY KEY,
+  entity_type TEXT NOT NULL,          -- 'news' | 'trend'
+  entity_key  TEXT NOT NULL,
+  insight     TEXT NOT NULL,          -- 'summary' | 'keypoints' | 'background' | 'why'
+  content     TEXT NOT NULL,
+  model       TEXT,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ai_insights_key_idx
+  ON ai_insights (entity_type, entity_key, insight);
+
+-- ---------------------------------------------------------------------------
+-- ai_usage — per-UTC-day spend guard. Every generation adds its estimated
+-- cost (in millionths of USD); the /api/insight endpoint refuses to generate
+-- once the day's total crosses AI_DAILY_CAP_MICROS (default $0.25 = 250000).
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS ai_usage (
+  day             DATE PRIMARY KEY,
+  calls           INTEGER NOT NULL DEFAULT 0,
+  est_cost_micros BIGINT  NOT NULL DEFAULT 0
+);
