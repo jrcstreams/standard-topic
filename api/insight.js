@@ -163,7 +163,11 @@ module.exports = async function handler(req, res) {
       try { out = await generate(prompt, { grounded: false, model: INSIGHT_MODEL, maxTokens }); }
       catch (e) { out = null; lastErr = String((e && e.message) || e); }
     }
-    if (!out || !out.text) return res.status(200).json({ unavailable: true, reason: 'no-text', err: lastErr ? lastErr.slice(0, 220) : 'empty' });
+    if (!out || !out.text) {
+      const body = { unavailable: true };
+      if (input.debug) body._debug = { reason: 'no-text', err: lastErr ? lastErr.slice(0, 220) : 'empty', calls };
+      return res.status(200).json(body);
+    }
     const sources = out.citations || [];
 
     // 5. Store (resilient) + account spend.
