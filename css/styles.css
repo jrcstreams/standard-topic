@@ -1501,6 +1501,10 @@ body.hide-cta .sticky-cta { display: none !important; }
   padding: 0 0.5rem 0.4rem 0.95rem;
 }
 .ti-shortcut-modelslabel { font-size: 0.56rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #97a1b3; padding: 0.2rem 0 0.34rem 0.1rem; }
+/* Per-shortcut AI brief (home) — sits above "Choose a model" in the panel. */
+.ti-shortcut-ai { margin: 0.25rem 0 0.5rem; }
+.ti-shortcut-ai[hidden] { display: none; }
+.ti-shortcut-ai .ai-result { margin-top: 0; }
 /* Model rows read as sub-options: lighter than the shortcut title above. */
 .ti-shortcut-panel-inner .ti-model-trigger { font-weight: 500; }
 .ti-model + .ti-model { margin-top: 0; }
