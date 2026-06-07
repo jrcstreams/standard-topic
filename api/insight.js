@@ -103,7 +103,8 @@ function shortcutPrompt(topic, lens) {
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   const sql = getSql();
-  if (!sql || !process.env.GEMINI_API_KEY) return res.status(200).json({ unavailable: true });
+  if (!sql) return res.status(200).json({ unavailable: true, reason: 'no-db' });
+  if (!process.env.GEMINI_API_KEY) return res.status(200).json({ unavailable: true, reason: 'no-key' });
 
   const input = readInput(req);
   const type = String(input.type || '').trim();
@@ -159,7 +160,7 @@ module.exports = async function handler(req, res) {
       if (useGrounding) { try { out = await generate(prompt, { grounded: false, model: INSIGHT_MODEL, maxTokens }); } catch (_) { out = null; } }
       else throw e;
     }
-    if (!out || !out.text) return res.status(200).json({ unavailable: true });
+    if (!out || !out.text) return res.status(200).json({ unavailable: true, reason: 'no-text', calls, useGrounding });
     const sources = out.citations || [];
 
     // 5. Store (resilient) + account spend.
