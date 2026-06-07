@@ -67,57 +67,58 @@ const AI_SPARK_SVG = '<svg class="news-ai-spark" viewBox="0 0 24 24" width="13" 
 const AI_CHEV_SVG = '<svg class="news-ai-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 const SHARE_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
 const LINK_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
-const NEWS_INSIGHTS = [
-  { key: 'explain', label: 'Explain', ask: 'Explain this news story in clear, simple terms — what happened and why it matters.' },
-  { key: 'background', label: 'Background', ask: 'Give the background and context behind this news story: the key players, the history, and what led up to it.' },
-  { key: 'timeline', label: 'Timeline', ask: 'Lay out a timeline of the key events leading up to and surrounding this news story.' },
-  { key: 'keypoints', label: 'Key Points', ask: 'Summarize the key points and main takeaways from this news story as a short list of bullet points.' },
-];
-
-function buildInsightPrompt(kind, title, desc, url) {
-  const meta = NEWS_INSIGHTS.find(i => i.key === kind) || NEWS_INSIGHTS[0];
-  const story = `"${title}"${desc ? `\n\n${desc}` : ''}${url ? `\n\nSource: ${url}` : ''}`;
-  return { label: meta.label, prompt: `${meta.ask}\n\n${story}` };
+// Renders a brief's body: "### Section" subheaders, "- "/"• " bullets, and
+// source citation links. Shared shape for news (sectioned) + trend (prose).
+function hostFromUri(u) { try { return new URL(u).hostname.replace(/^www\./i, ''); } catch { return 'source'; } }
+export function renderBriefBody(content, sources) {
+  const lines = String(content || '').split('\n');
+  let html = ''; let inList = false;
+  const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line) { closeList(); continue; }
+    if (line.startsWith('### ')) { closeList(); html += `<div class="ai-result-sub">${escapeHTML(line.slice(4))}</div>`; }
+    else if (line.startsWith('- ') || line.startsWith('• ')) { if (!inList) { html += '<ul class="ai-result-list">'; inList = true; } html += `<li>${escapeHTML(line.replace(/^[-•]\s+/, ''))}</li>`; }
+    else { closeList(); html += `<p>${escapeHTML(line)}</p>`; }
+  }
+  closeList();
+  const src = (sources && sources.length)
+    ? `<div class="ai-result-sources"><span>Sources:</span> ${sources.map(s => `<a href="${escapeAttr(s.uri)}" target="_blank" rel="noopener noreferrer">${escapeHTML(s.title || hostFromUri(s.uri))}</a>`).join(' · ')}</div>`
+    : '';
+  return `<div class="ai-result-body">${html}</div>${src}`;
 }
 
-// Map a card's dropdown option → the cached insight type served by /api/insight.
-const NEWS_INLINE_MAP = { explain: 'summary', background: 'background', timeline: 'timeline', keypoints: 'keypoints' };
-const NEWS_INLINE_LABEL = { summary: 'Summary', background: 'Background', timeline: 'Timeline', keypoints: 'Key points' };
-
-// Escalate to the full chat (the original behavior) for going deeper.
-function openNewsChat(card, dataKey) {
-  const { label, prompt } = buildInsightPrompt(dataKey, card.dataset.title || '', card.dataset.desc || '', card.dataset.url || '');
+// Escalate to the full chat for going deeper.
+function openNewsChat(card) {
+  const title = card.dataset.title || '';
+  const desc = card.dataset.desc || '';
+  const url = card.dataset.url || '';
+  const prompt = `Give me a thorough, accurate briefing on this news story — what happened, why it matters, background, a timeline, and the latest developments.\n\n"${title}"${desc ? `\n\n${desc}` : ''}${url ? `\n\nSource: ${url}` : ''}`;
   window.dispatchEvent(new CustomEvent('open-prompt-modal', {
-    detail: { basePrompt: prompt, topicName: card.dataset.title || '', name: `AI Insight · ${label}`, count: 1 },
+    detail: { basePrompt: prompt, topicName: title, name: 'AI Insight · News', count: 1 },
   }));
 }
 
-// Show a cached/lazy AI insight inline under the card. Falls back to chat if
-// the AI layer is unavailable / the daily cap is hit.
-async function showNewsInsight(card, dataKey) {
-  const insight = NEWS_INLINE_MAP[dataKey];
-  if (!insight) { openNewsChat(card, dataKey); return; }
-  const label = NEWS_INLINE_LABEL[insight] || 'AI';
-  let region = card.querySelector('.ai-result');
-  if (!region) { region = document.createElement('div'); region.className = 'ai-result'; card.appendChild(region); }
-  region.innerHTML = `<div class="ai-result-head"><span class="ai-result-label">${escapeHTML(label)}</span><span class="ai-result-badge">AI</span></div><div class="ai-result-body ai-result-loading">Generating…</div>`;
+// One combined, grounded AI brief inline under the card (click toggles). Falls
+// back to chat if the AI layer is unavailable / the daily cap is hit.
+async function showNewsBrief(card) {
+  const existing = card.querySelector('.ai-result');
+  if (existing) { existing.remove(); return; } // toggle off
+  const headHTML = `<div class="ai-result-head"><span class="ai-result-label">AI Insights</span><span class="ai-result-badge">AI</span><button type="button" class="ai-result-close" aria-label="Dismiss">✕</button></div>`;
+  const region = document.createElement('div'); region.className = 'ai-result'; card.appendChild(region);
+  region.innerHTML = `${headHTML}<div class="ai-result-body ai-result-loading">Generating…</div>`;
+  region.querySelector('.ai-result-close')?.addEventListener('click', () => region.remove());
   try {
     const res = await fetch('/api/insight', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'news', insight, url: card.dataset.url || '', title: card.dataset.title || '', description: card.dataset.desc || '' }),
+      body: JSON.stringify({ type: 'news', url: card.dataset.url || '', title: card.dataset.title || '', description: card.dataset.desc || '' }),
     });
     const data = res.ok ? await res.json() : null;
-    if (!data || !data.content) { region.remove(); openNewsChat(card, dataKey); return; }
-    region.innerHTML = `
-      <div class="ai-result-head"><span class="ai-result-label">${escapeHTML(label)}</span><span class="ai-result-badge">AI</span><button type="button" class="ai-result-close" aria-label="Dismiss">✕</button></div>
-      <div class="ai-result-body">${escapeHTML(data.content)}</div>
-      <button type="button" class="ai-result-deeper">Open in chat ↗</button>`;
+    if (!data || !data.content) { region.remove(); openNewsChat(card); return; }
+    region.innerHTML = `${headHTML}${renderBriefBody(data.content, data.sources)}<button type="button" class="ai-result-deeper">Open in chat ↗</button>`;
     region.querySelector('.ai-result-close')?.addEventListener('click', () => region.remove());
-    region.querySelector('.ai-result-deeper')?.addEventListener('click', () => openNewsChat(card, dataKey));
-  } catch (_) {
-    region.remove();
-    openNewsChat(card, dataKey);
-  }
+    region.querySelector('.ai-result-deeper')?.addEventListener('click', () => openNewsChat(card));
+  } catch (_) { region.remove(); openNewsChat(card); }
 }
 
 // Brief "Copied" confirmation on a share/copy button.
@@ -131,29 +132,11 @@ function flashCopied(btn, msg) {
 
 // Wire the AI Insights dropdown triggers + option buttons within a list.
 export function wireNewsAI(root) {
-  const closeAll = (except) => root.querySelectorAll('.news-ai.is-open').forEach(ai => {
-    if (ai !== except) {
-      ai.classList.remove('is-open');
-      ai.querySelector('.news-ai-trigger')?.setAttribute('aria-expanded', 'false');
-    }
-  });
   root.querySelectorAll('.news-ai-trigger').forEach(trigger => {
     trigger.addEventListener('click', (e) => {
       e.stopPropagation();
-      const ai = trigger.closest('.news-ai');
-      const willOpen = !ai.classList.contains('is-open');
-      closeAll(ai);
-      ai.classList.toggle('is-open', willOpen);
-      trigger.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
-    });
-  });
-  root.querySelectorAll('.news-ai-opt').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const card = btn.closest('.news-card');
-      const dataKey = btn.dataset.insight;
-      closeAll(null);
-      if (card) showNewsInsight(card, dataKey);
+      const card = trigger.closest('.news-card');
+      if (card) showNewsBrief(card);
     });
   });
   // Share — native share sheet on mobile (Apple/Android), copy-link fallback.
@@ -183,22 +166,10 @@ export function wireNewsAI(root) {
       flashCopied(btn, 'Copied');
     });
   });
-  // Outside-click / Escape closes any open dropdown (attached once per host).
-  if (!root.__newsAIClose) {
-    root.__newsAIClose = true;
-    document.addEventListener('click', () => closeAll(null));
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(null); });
-  }
 }
 
 function newsAIHTML() {
-  return `
-    <div class="news-ai">
-      <button type="button" class="news-ai-trigger" aria-expanded="false">${AI_SPARK_SVG}<span>AI Insights</span>${AI_CHEV_SVG}</button>
-      <div class="news-ai-panel"><div class="news-ai-panel-inner">
-        ${NEWS_INSIGHTS.map(o => `<button type="button" class="news-ai-opt" data-insight="${o.key}">${escapeHTML(o.label)}</button>`).join('')}
-      </div></div>
-    </div>`;
+  return `<div class="news-ai"><button type="button" class="news-ai-trigger">${AI_SPARK_SVG}<span>AI Insights</span></button></div>`;
 }
 
 // Field accessors that work for BOTH rss.app live items and stored archive

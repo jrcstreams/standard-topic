@@ -13456,3 +13456,15 @@ body.home-mode #sub-header.is-subnav .topic-banner {
   color: #1c3a6b; letter-spacing: -0.024em;
 }
 .search-news-head-sub { margin: 4px 0 0; font-size: 0.85rem; color: var(--color-text-muted); }
+
+/* ===== AI brief: section subheaders, bullets, source links ============== */
+.ai-result-sub { font-size: 0.72rem; font-weight: var(--font-weight-bold); letter-spacing: 0.05em; text-transform: uppercase; color: var(--color-primary); margin: 10px 0 3px; }
+.ai-result-sub:first-child { margin-top: 0; }
+.ai-result-body p { margin: 0 0 6px; }
+.ai-result-body p:last-child { margin-bottom: 0; }
+.ai-result-list { margin: 2px 0 6px; padding-left: 1.1rem; }
+.ai-result-list li { margin: 1px 0; }
+.ai-result-sources { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--color-border); font-size: 0.76rem; color: var(--color-text-muted); }
+.ai-result-sources span { font-weight: var(--font-weight-semibold); }
+.ai-result-sources a { color: var(--color-primary); text-decoration: none; }
+.ai-result-sources a:hover { text-decoration: underline; }
