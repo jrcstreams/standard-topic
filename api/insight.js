@@ -156,15 +156,14 @@ module.exports = async function handler(req, res) {
     // 4. Generate. Grounding can fail OR silently return empty when the free
     // Google-Search quota is exhausted — in BOTH cases fall back to ungrounded
     // self-grounding so a summary still gets produced (never pause).
-    let out = null;
+    let out = null; let lastErr = null;
     try { out = await generate(prompt, { grounded: useGrounding, model: INSIGHT_MODEL, maxTokens }); }
-    catch (_) { out = null; }
-    let grounded = useGrounding && !!(out && out.text);
+    catch (e) { out = null; lastErr = String((e && e.message) || e); }
     if (useGrounding && (!out || !out.text)) {
       try { out = await generate(prompt, { grounded: false, model: INSIGHT_MODEL, maxTokens }); }
-      catch (_) { out = null; }
+      catch (e) { out = null; lastErr = String((e && e.message) || e); }
     }
-    if (!out || !out.text) return res.status(200).json({ unavailable: true, reason: 'no-text' });
+    if (!out || !out.text) return res.status(200).json({ unavailable: true, reason: 'no-text', err: lastErr ? lastErr.slice(0, 220) : 'empty' });
     const sources = out.citations || [];
 
     // 5. Store (resilient) + account spend.
