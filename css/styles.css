@@ -13305,3 +13305,45 @@ body.home-mode #sub-header.is-subnav .topic-banner {
     min-height: 0; padding-top: 0.35rem; padding-bottom: 0.35rem; align-items: center;
   }
 }
+
+/* ===== News Feed: filters + archive paging (Phase 1) ===================== */
+.newsfeed-filters {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 0 12px;
+}
+.nf-search-wrap { position: relative; display: flex; align-items: center; }
+.nf-search-icon { position: absolute; left: 11px; color: var(--color-text-muted); pointer-events: none; }
+.nf-search {
+  width: 100%; box-sizing: border-box;
+  padding: 9px 12px 9px 34px;
+  border: 1px solid var(--color-border); border-radius: 9px;
+  font-size: 0.9rem; font-family: var(--font-family); color: var(--color-text);
+  background: var(--color-bg);
+}
+.nf-search:focus { outline: none; border-color: var(--color-primary); background: var(--color-bg-light); }
+.nf-search::placeholder { color: var(--color-text-light); }
+.nf-filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.nf-time, .nf-source, .nf-sort {
+  padding: 7px 10px;
+  border: 1px solid var(--color-border); border-radius: 8px;
+  font-size: 0.82rem; font-family: var(--font-family); color: var(--color-text);
+  background: var(--color-bg); cursor: pointer;
+}
+.nf-time:focus, .nf-source:focus, .nf-sort:focus { outline: none; border-color: var(--color-primary); }
+.nf-time:hover, .nf-source:hover, .nf-sort:hover { border-color: var(--color-primary); background: var(--color-bg-light); }
+.nf-source { flex: 1 1 auto; min-width: 0; max-width: 200px; }
+.nf-sort { font-weight: var(--font-weight-medium); white-space: nowrap; }
+.newsfeed-foot { flex-shrink: 0; display: flex; justify-content: center; padding: 14px 0 4px; }
+.newsfeed-loadmore {
+  padding: 10px 20px;
+  border: 1px solid var(--color-border); border-radius: 9px;
+  background: var(--color-bg); color: var(--color-primary);
+  font-size: 0.86rem; font-weight: var(--font-weight-semibold); font-family: var(--font-family);
+  cursor: pointer; transition: border-color .15s, background .15s;
+}
+.newsfeed-loadmore:hover:not(:disabled) { border-color: var(--color-primary); background: var(--color-bg-light); }
+.newsfeed-loadmore:disabled { opacity: .6; cursor: default; }
+.newsfeed-end { color: var(--color-text-light); font-size: 0.8rem; text-align: center; margin: 0; }

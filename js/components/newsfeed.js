@@ -1,12 +1,14 @@
 // renderNewsFeed: news cards for topic + home pages.
 //
-// Fetches /api/feeds/{slug} — a Vercel serverless function that
-// wraps the rss.app v1 API — and renders the items array as
-// news-card markup inside the page's .newsfeed-scroll-wrap.
+// Two-tier feed:
+//   1. LIVE — /api/feeds/{slug} (rss.app proxy, ~50 fresh stories), shown first.
+//   2. ARCHIVE — "Load older stories" pages further back through the stored
+//      history (/api/news/{slug}?before=… keyset cursor), appended seamlessly.
+// Plus client-side filters over the loaded set: search (server full-text over
+// the whole archive), time range, source/site, and newest/oldest sort.
 //
-// The previous iframe-based implementation (embedding rss.app's
-// widget directly via rss-embed.html) is archived under
-// _archive/iframe-rendering-legacy/ for reference.
+// newsCardHTML/wireNewsAI/listHTML are exported so the Search modal can reuse
+// the exact same card + AI-insight behavior for archive results.
 
 function escapeHTML(str) {
   const div = document.createElement('div');
@@ -35,9 +37,8 @@ function sourceHost(rawUrl) {
   }
 }
 
-// Short relative-time formatter matching the prior iframe display
-// (e.g. "12m", "2h", "3d"). Anything older than ~5 years falls
-// back to the localized date string.
+// Short relative-time formatter (e.g. "12m", "2h", "3d"). Anything older
+// than ~5 years falls back to the localized date string.
 function relativeTime(iso) {
   if (!iso) return '';
   const then = new Date(iso).getTime();
@@ -89,7 +90,7 @@ function flashCopied(btn, msg) {
 }
 
 // Wire the AI Insights dropdown triggers + option buttons within a list.
-function wireNewsAI(root) {
+export function wireNewsAI(root) {
   const closeAll = (except) => root.querySelectorAll('.news-ai.is-open').forEach(ai => {
     if (ai !== except) {
       ai.classList.remove('is-open');
@@ -165,34 +166,35 @@ function newsAIHTML() {
     </div>`;
 }
 
-// One news card.
-function newsCardHTML(item) {
-  const url = item?.url || item?.link || '';
+// Field accessors that work for BOTH rss.app live items and stored archive
+// rows (which use url / description / published_at directly).
+function itemUrl(it) { return (it && (it.url || it.link)) || ''; }
+function itemDescRaw(it) {
+  return (it && (it.description_text || it.content_text || it.description || it.summary)) || '';
+}
+function itemPubRaw(it) {
+  return (it && (it.date_published || it.pub_date || it.published_at || it.date)) || '';
+}
+function itemPubMs(it) {
+  const t = new Date(itemPubRaw(it)).getTime();
+  return Number.isNaN(t) ? 0 : t;
+}
+function itemHost(it) {
+  return sourceHost(itemUrl(it)) || String((it && it.source_name) || '').replace(/^www\./i, '').toLowerCase();
+}
+
+// One news card. Accepts rss.app items OR stored archive rows.
+export function newsCardHTML(item) {
+  const url = itemUrl(item);
   const title = item?.title || '';
-  // rss.app v1 returns plain-text snippets in `description_text`
-  // (no HTML). Older/alternate shapes (`description`, `summary`,
-  // `content_text`) kept as defensive fallbacks in case a feed
-  // type returns a different envelope.
-  const descRaw = item?.description_text
-    || item?.content_text
-    || item?.description
-    || item?.summary
-    || '';
-  // rss.app v1 returns ISO timestamps as `date_published`. Legacy
-  // names kept as fallbacks.
-  const pubDate = item?.date_published
-    || item?.pub_date
-    || item?.published_at
-    || item?.date
-    || '';
-  const host = sourceHost(url);
+  const descRaw = itemDescRaw(item);
+  const pubDate = itemPubRaw(item);
+  const host = sourceHost(url) || String(item?.source_name || '');
   const rel = relativeTime(pubDate);
 
-  // The description field is already plain-text from rss.app's
-  // API — but run it through the HTML parser anyway to defang
-  // anything unexpected. Visual truncation is handled by CSS
-  // line-clamp on .news-card-desc so the full text stays in the
-  // DOM for screen readers and SEO.
+  // The description is plain-text from rss.app's API — but run it through
+  // the HTML parser anyway to defang anything unexpected. Visual truncation
+  // is handled by CSS line-clamp so the full text stays in the DOM.
   const tmp = document.createElement('div');
   tmp.innerHTML = descRaw;
   const descText = (tmp.textContent || '').trim();
@@ -221,54 +223,199 @@ function newsCardHTML(item) {
   `;
 }
 
-function listHTML(items) {
+export function listHTML(items) {
   if (!items || items.length === 0) {
     return `<div class="news-empty"><p>No news yet — check back soon.</p></div>`;
   }
   return `<div class="news-list">${items.map(newsCardHTML).join('')}</div>`;
 }
 
-async function renderApiMode(scrollWrap, topic, isHome) {
-  // Home uses the dedicated "home" slug in topics.json.
-  const slug = isHome ? 'home' : topic?.slug;
-  if (!slug) {
-    scrollWrap.innerHTML = `<div class="news-error"><p>News feed unavailable.</p></div>`;
-    return;
-  }
+// ===== Feed controller (live + archive paging + filters) =================
 
-  scrollWrap.innerHTML = `<div class="news-loading"><p>Loading news…</p></div>`;
+const TIME_OPTS = [['all', 'All time'], ['day', 'Past 24h'], ['week', 'Past week'], ['month', 'Past month']];
+const TIME_WINDOWS = { day: 864e5, week: 6048e5, month: 2592e6 };
+const NEWS_SEARCH_SVG = '<svg class="nf-search-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
 
-  try {
-    const res = await fetch(`/api/feeds/${encodeURIComponent(slug)}`, {
-      headers: { Accept: 'application/json' },
-    });
-    if (!res.ok) {
-      // 404 means the slug isn't in topics.json — surface as
-      // empty rather than a hard error, since the user has
-      // navigated to a real page.
-      if (res.status === 404) {
-        scrollWrap.innerHTML = `<div class="news-empty"><p>No news yet for this topic.</p></div>`;
-        return;
-      }
-      throw new Error(`API ${res.status}`);
-    }
-    const payload = await res.json();
-    if (payload?.noFeed) {
-      scrollWrap.innerHTML = `<div class="newsfeed-placeholder"><p>News feed coming soon for this topic.</p></div>`;
-      return;
-    }
-    scrollWrap.innerHTML = listHTML(payload?.items);
-    wireNewsAI(scrollWrap);
-  } catch (err) {
-    scrollWrap.innerHTML = `<div class="news-error"><p>News feed temporarily unavailable. Refresh to try again.</p></div>`;
-  }
+function filterBarHTML(label) {
+  const ph = label ? `Search ${label} news…` : 'Search news…';
+  return `
+    <div class="newsfeed-filters" role="group" aria-label="Filter news">
+      <label class="nf-search-wrap">
+        ${NEWS_SEARCH_SVG}
+        <input type="search" class="nf-search" placeholder="${escapeAttr(ph)}" aria-label="${escapeAttr(ph)}">
+      </label>
+      <div class="nf-filter-row">
+        <select class="nf-time" aria-label="Time range">${TIME_OPTS.map(([v, l]) => `<option value="${v}">${l}</option>`).join('')}</select>
+        <select class="nf-source" aria-label="Source"><option value="all">All sources</option></select>
+        <button type="button" class="nf-sort" data-sort="newest" aria-label="Toggle sort order">Newest</button>
+      </div>
+    </div>`;
 }
 
-const NEWS_ICON = '<svg class="section-head-icon section-head-icon--news" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>';
+async function fetchLiveFeed(slug) {
+  const res = await fetch(`/api/feeds/${encodeURIComponent(slug)}`, { headers: { Accept: 'application/json' } });
+  if (!res.ok) {
+    if (res.status === 404) return { items: [] };
+    throw new Error(`API ${res.status}`);
+  }
+  const p = await res.json();
+  if (p && p.noFeed) return { noFeed: true };
+  return { items: Array.isArray(p && p.items) ? p.items : [] };
+}
+
+async function fetchArchive(slug, { q = '', before = '', limit = 30 } = {}) {
+  const params = new URLSearchParams();
+  if (q) params.set('q', q);
+  if (before) params.set('before', before);
+  params.set('limit', String(limit));
+  const res = await fetch(`/api/news/${encodeURIComponent(slug)}?${params.toString()}`, { headers: { Accept: 'application/json' } });
+  if (!res.ok) throw new Error(`API ${res.status}`);
+  const p = await res.json();
+  return { stories: Array.isArray(p && p.stories) ? p.stories : [], nextBefore: (p && p.nextBefore) || null };
+}
+
+function startFeed(ctx) {
+  const { card, scrollWrap, foot, slug, label } = ctx;
+  const els = {
+    search: card.querySelector('.nf-search'),
+    time: card.querySelector('.nf-time'),
+    source: card.querySelector('.nf-source'),
+    sort: card.querySelector('.nf-sort'),
+  };
+  const state = {
+    q: '', time: 'all', source: 'all', sort: 'newest',
+    stories: [], urls: new Set(), exhausted: false, loading: false,
+    liveCache: null, noFeed: false,
+  };
+
+  function addStories(arr) {
+    let added = 0;
+    for (const s of arr || []) {
+      const u = itemUrl(s);
+      if (!u || state.urls.has(u)) continue;
+      state.urls.add(u); state.stories.push(s); added++;
+    }
+    return added;
+  }
+  function resetStories() { state.stories = []; state.urls = new Set(); }
+
+  function visible() {
+    let arr = state.stories.slice();
+    const win = TIME_WINDOWS[state.time];
+    if (win) { const cut = Date.now() - win; arr = arr.filter(s => itemPubMs(s) >= cut); }
+    if (state.source !== 'all') arr = arr.filter(s => itemHost(s) === state.source);
+    arr.sort((a, b) => state.sort === 'oldest' ? itemPubMs(a) - itemPubMs(b) : itemPubMs(b) - itemPubMs(a));
+    return arr;
+  }
+
+  function refreshSources() {
+    const hosts = [...new Set(state.stories.map(itemHost).filter(Boolean))].sort();
+    const cur = state.source;
+    els.source.innerHTML = `<option value="all">All sources</option>` +
+      hosts.map(h => `<option value="${escapeAttr(h)}">${escapeHTML(h)}</option>`).join('');
+    if (hosts.includes(cur)) els.source.value = cur; else { els.source.value = 'all'; state.source = 'all'; }
+  }
+
+  function renderFoot() {
+    if (state.noFeed) { foot.innerHTML = ''; return; }
+    if (state.exhausted) {
+      foot.innerHTML = state.stories.length ? `<p class="newsfeed-end">You've reached the end of the archive.</p>` : '';
+      return;
+    }
+    foot.innerHTML = `<button type="button" class="newsfeed-loadmore"${state.loading ? ' disabled' : ''}>${state.loading ? 'Loading…' : 'Load older stories'}</button>`;
+    foot.querySelector('.newsfeed-loadmore')?.addEventListener('click', loadOlder);
+  }
+
+  function renderList() {
+    if (state.noFeed) {
+      scrollWrap.innerHTML = `<div class="newsfeed-placeholder"><p>News feed coming soon for this topic.</p></div>`;
+      renderFoot();
+      return;
+    }
+    const vis = visible();
+    if (!vis.length) {
+      scrollWrap.innerHTML = `<div class="news-empty"><p>${state.q ? 'No stories match your search.' : 'No stories match these filters.'}</p></div>`;
+    } else {
+      scrollWrap.innerHTML = `<div class="news-list">${vis.map(newsCardHTML).join('')}</div>`;
+      wireNewsAI(scrollWrap);
+    }
+    renderFoot();
+  }
+
+  function oldestBefore() {
+    let min = Infinity;
+    for (const s of state.stories) { const t = itemPubMs(s); if (t > 0 && t < min) min = t; }
+    return Number.isFinite(min) ? new Date(min).toISOString() : '';
+  }
+
+  async function loadOlder() {
+    if (state.loading || state.exhausted) return;
+    state.loading = true; renderFoot();
+    try {
+      const { stories, nextBefore } = await fetchArchive(slug, { q: state.q, before: oldestBefore(), limit: 30 });
+      addStories(stories);
+      if (!nextBefore || stories.length === 0) state.exhausted = true;
+      state.loading = false;
+      refreshSources(); renderList();
+    } catch (_) {
+      state.loading = false;
+      foot.innerHTML = `<button type="button" class="newsfeed-loadmore">Retry</button>`;
+      foot.querySelector('.newsfeed-loadmore')?.addEventListener('click', loadOlder);
+    }
+  }
+
+  async function loadLive() {
+    scrollWrap.innerHTML = `<div class="news-loading"><p>Loading news…</p></div>`; foot.innerHTML = '';
+    try {
+      const r = await fetchLiveFeed(slug);
+      if (r.noFeed) { state.noFeed = true; renderList(); return; }
+      state.liveCache = (r.items || []).slice();
+      addStories(r.items);
+      refreshSources(); renderList();
+    } catch (_) {
+      scrollWrap.innerHTML = `<div class="news-error"><p>News feed temporarily unavailable. Refresh to try again.</p></div>`;
+    }
+  }
+
+  async function runSearch(q) {
+    state.q = q; state.exhausted = false; resetStories();
+    scrollWrap.innerHTML = `<div class="news-loading"><p>${q ? 'Searching…' : 'Loading news…'}</p></div>`; foot.innerHTML = '';
+    try {
+      if (!q) {
+        if (state.liveCache) { addStories(state.liveCache); refreshSources(); renderList(); }
+        else await loadLive();
+        return;
+      }
+      const { stories, nextBefore } = await fetchArchive(slug, { q, limit: 30 });
+      addStories(stories);
+      if (!nextBefore) state.exhausted = true;
+      refreshSources(); renderList();
+    } catch (_) {
+      scrollWrap.innerHTML = `<div class="news-error"><p>Search unavailable. Try again.</p></div>`;
+    }
+  }
+
+  let searchTimer = null;
+  els.search.addEventListener('input', () => {
+    clearTimeout(searchTimer);
+    const q = els.search.value.trim();
+    searchTimer = setTimeout(() => runSearch(q), 300);
+  });
+  els.time.addEventListener('change', () => { state.time = els.time.value; renderList(); });
+  els.source.addEventListener('change', () => { state.source = els.source.value; renderList(); });
+  els.sort.addEventListener('click', () => {
+    state.sort = state.sort === 'newest' ? 'oldest' : 'newest';
+    els.sort.dataset.sort = state.sort;
+    els.sort.textContent = state.sort === 'newest' ? 'Newest' : 'Oldest';
+    renderList();
+  });
+
+  loadLive();
+}
 
 export function renderNewsFeed(container, topic, isHome) {
-  // Same header treatment on home and topic pages: "News Feed" title + a
-  // descriptive subtext, matching the Trending / Intelligence section heads.
+  const slug = isHome ? 'home' : (topic && topic.slug);
+  const label = isHome ? '' : ((topic && topic.name) || '');
   const headHTML = `
     <div class="newsfeed-head section-card-head">
       <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">News Feed</span></h3>
@@ -278,9 +425,17 @@ export function renderNewsFeed(container, topic, isHome) {
   container.innerHTML = `
     <div class="newsfeed-card">
       ${headHTML}
+      ${filterBarHTML(label)}
       <div class="newsfeed-scroll-wrap"></div>
-    </div>
-  `;
-  const scrollWrap = container.querySelector('.newsfeed-scroll-wrap');
-  renderApiMode(scrollWrap, topic, isHome);
+      <div class="newsfeed-foot"></div>
+    </div>`;
+
+  const card = container.querySelector('.newsfeed-card');
+  const scrollWrap = card.querySelector('.newsfeed-scroll-wrap');
+  const foot = card.querySelector('.newsfeed-foot');
+  if (!slug) {
+    scrollWrap.innerHTML = `<div class="news-error"><p>News feed unavailable.</p></div>`;
+    return;
+  }
+  startFeed({ card, scrollWrap, foot, slug, label });
 }
