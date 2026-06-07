@@ -1501,10 +1501,35 @@ body.hide-cta .sticky-cta { display: none !important; }
   padding: 0 0.5rem 0.4rem 0.95rem;
 }
 .ti-shortcut-modelslabel { font-size: 0.56rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #97a1b3; padding: 0.2rem 0 0.34rem 0.1rem; }
-/* Per-shortcut AI brief (home) — sits above "Choose a model" in the panel. */
-.ti-shortcut-ai { margin: 0.25rem 0 0.5rem; }
-.ti-shortcut-ai[hidden] { display: none; }
-.ti-shortcut-ai .ai-result { margin-top: 0; }
+/* Group AI overview — fills the accordion body for Discover/Learn/Analyze/
+   Topic-Insights on home + topic pages (custom pages keep shortcut rows). */
+.ti-overview { padding: 0.35rem 0.45rem 0.55rem 0.55rem; }
+.ti-overview-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.ti-overview-ago { font-size: 0.68rem; color: var(--color-text-light); }
+.ti-overview-run {
+  margin-left: auto; border: none; background: transparent; padding: 0;
+  font-size: 0.74rem; font-weight: var(--font-weight-semibold); color: var(--color-primary); cursor: pointer;
+}
+.ti-overview-run:hover { text-decoration: underline; }
+.ti-ov-section { margin: 0 0 12px; }
+.ti-ov-section:last-of-type { margin-bottom: 0; }
+.ti-ov-section-name {
+  margin: 0 0 4px; font-size: 0.78rem; font-weight: var(--font-weight-bold);
+  letter-spacing: 0.03em; text-transform: uppercase; color: var(--color-primary);
+}
+.ti-ov-section .ai-result-body { font-size: 0.84rem; }
+.ti-ov-deeper { margin-top: 2px; }
+.ti-overview-unavailable { margin: 0.3rem 0.2rem; font-size: 0.82rem; color: var(--color-text-muted); }
+/* Loading skeleton shimmer */
+.ti-overview-loading { display: grid; gap: 8px; padding: 2px 0; }
+.ti-overview-skel {
+  height: 12px; border-radius: 6px;
+  background: linear-gradient(90deg, var(--color-border) 25%, var(--color-bg-light) 50%, var(--color-border) 75%);
+  background-size: 200% 100%; animation: ti-skel-shimmer 1.2s ease-in-out infinite;
+}
+.ti-overview-skel:nth-child(2) { width: 92%; }
+.ti-overview-skel:nth-child(3) { width: 78%; }
+@keyframes ti-skel-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 /* Model rows read as sub-options: lighter than the shortcut title above. */
 .ti-shortcut-panel-inner .ti-model-trigger { font-weight: 500; }
 .ti-model + .ti-model { margin-top: 0; }

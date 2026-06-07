@@ -1,0 +1,5 @@
+{
+  "overviewGeneration": "You are writing the \"{groupLabel}\" intelligence overview for {scopeLabel}.\nProduce EXACTLY the sections listed below, in this order. Each section MUST start with \"## \" followed by the section name copied exactly, on its own line. Under each header write 2-4 sentences of plain prose answering that section's brief, then up to 2 key takeaways as \"- \" bullet lines. No other headers, no preamble before the first section, no closing remarks. Be accurate and specific — do not invent.\n\nSections:\n{sections}",
+  "sectionDeeper": "{shortcutPrompt}\n\nI already have this summary — go significantly deeper than it, with more detail, more recent developments, and sources where relevant:\n\n{sectionContent}",
+  "overviewRun": "Give me a comprehensive \"{groupLabel}\" briefing on {scopeLabel}. Cover each of these areas as its own section, current and specific:\n{sectionNames}\n\nGo deeper than headline level — include the why and what-to-watch for each area."
+}

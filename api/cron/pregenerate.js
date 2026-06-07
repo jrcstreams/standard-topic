@@ -6,28 +6,49 @@
 // budget REFRESHING the stalest time-sensitive briefs, paced for rate limits:
 //   Fills (priority order):
 //   - Trends: the current snapshot's top terms without a 'brief'.
-//   - Home shortcut items: per-shortcut briefs for home's directory shortcuts.
 //   - News: recent stories (48h, newest first) without a 'brief' — sub-budget
 //     NEWS_PER_RUN so news volume can't starve the rest.
-//   - Shortcuts: every topic × lens (discover/learn/analyze/topic-specific).
+//   - Group overviews: home + every topic × non-empty AI lens group
+//     (discover/learn/analyze/topic-specific) without an overview.
 //   Refresh (stalest first, via generateInsight refresh flag):
-//   - shortcut items + discover/topic-specific lenses older than 24h,
-//   - analyze lens older than 72h (learn is evergreen — never refreshed),
+//   - discover/topic-specific overviews older than 24h, analyze older than
+//     72h (learn is evergreen — never refreshed),
+//   - any lens row whose content lacks "## " sections (one-time migration of
+//     pre-overview prose briefs, learn included),
 //   - trend briefs still in the current US snapshot, older than 24h.
 // Failed items simply get retried next run (still missing/stale).
 //
 // Auth: Vercel Cron sends `Authorization: Bearer ${CRON_SECRET}`.
 // Manual: ?n=<total> ?type=trends|shortcuts|news|refresh|all
-//   200 — { ok, trends, homeItems, news, shortcuts, refreshed, remaining }
+//   200 — { ok, trends, news, overviews, refreshed, remaining }
 
 const { getSql } = require('../../lib/db');
 const { generateInsight } = require('../../lib/insight-core');
+const { resolveSections, AI_LENSES } = require('../../lib/shortcut-sections');
 const topicsData = require('../../data/topics.json');
-const assignmentsData = require('../../data/shortcuts-assignments.json');
 
-const LENSES = ['discover', 'learn', 'analyze', 'topic-specific'];
 const NEWS_PER_RUN = 10;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// Every (scope, group) that should have an overview: home + each topic, AI
+// lens groups only, skipping groups with no shortcuts on that page.
+function overviewCandidates() {
+  const scopes = ['home'].concat(
+    (topicsData.topics || []).filter((t) => t.slug && t.slug !== 'home').map((t) => t.slug));
+  const out = [];
+  for (const scope of scopes) {
+    for (const group of AI_LENSES) {
+      const sections = resolveSections(scope, group);
+      if (sections && sections.length) {
+        // generateInsight keys by lower(topic input) — pass what the frontend
+        // passes: 'home' for home, the topic NAME for topics.
+        const t = (topicsData.topics || []).find((x) => x.slug === scope);
+        out.push({ topic: scope === 'home' ? 'home' : t.name, group });
+      }
+    }
+  }
+  return out;
+}
 
 module.exports = async function handler(req, res) {
   const secret = process.env.CRON_SECRET;
@@ -45,7 +66,7 @@ module.exports = async function handler(req, res) {
   };
 
   try {
-    let trends = 0; let homeItems = 0; let news = 0; let shortcuts = 0; let refreshed = 0;
+    let trends = 0; let news = 0; let overviews = 0; let refreshed = 0;
     let budget = total;
 
     // 1. Top current trends missing a brief.
@@ -67,22 +88,7 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    // 2. Home per-shortcut item briefs missing.
-    const homeIds = (assignmentsData.assignments && assignmentsData.assignments.home) || [];
-    if ((which === 'all' || which === 'shortcuts') && budget > 0 && homeIds.length) {
-      const existing = await sql.query(
-        `SELECT entity_key FROM ai_insights WHERE entity_type='shortcut' AND insight='item'`);
-      const have = new Set(existing.map((r) => r.entity_key));
-      for (const id of homeIds) {
-        if (budget <= 0) break;
-        if (have.has(id)) continue;
-        if (await call({ type: 'shortcut', id })) homeItems++;
-        budget--;
-        await sleep(600);
-      }
-    }
-
-    // 3. Recent news stories missing a brief (newest first, sub-budget).
+    // 2. Recent news stories missing a brief (newest first, sub-budget).
     if ((which === 'all' || which === 'news') && budget > 0) {
       const rows = await sql.query(
         `SELECT url, title, description,
@@ -102,36 +108,33 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    // 4. Shortcut topic × lens missing.
+    // 3. Group overviews missing (home first in candidate order).
+    const candidates = overviewCandidates();
     if ((which === 'all' || which === 'shortcuts') && budget > 0) {
       const existing = await sql.query(`SELECT entity_key, insight FROM ai_insights WHERE entity_type='shortcut'`);
       const have = new Set(existing.map((r) => `${r.entity_key}|${r.insight}`));
-      const topics = (topicsData.topics || []).filter((t) => t.slug && t.slug !== 'home');
-      const candidates = [];
-      for (const t of topics) {
-        for (const g of LENSES) {
-          if (!have.has(`${t.name.toLowerCase()}|${g}`)) candidates.push({ topic: t.name, group: g });
-        }
-      }
       for (const c of candidates) {
         if (budget <= 0) break;
-        if (await call({ type: 'shortcut', topic: c.topic, group: c.group })) shortcuts++;
+        if (have.has(`${c.topic.toLowerCase()}|${c.group}`)) continue;
+        if (await call({ type: 'shortcut', topic: c.topic, group: c.group })) overviews++;
         budget--;
         await sleep(600);
       }
     }
 
-    // 5. Refresh the stalest time-sensitive briefs with leftover budget.
+    // 4. Refresh the stalest time-sensitive briefs with leftover budget.
     //    Keeps Discover/trends current without ever blocking a user read.
+    //    The "content lacks '## '" arm migrates pre-overview prose briefs once.
     if ((which === 'all' || which === 'refresh') && budget > 0) {
-      const topicByLower = new Map(
-        (topicsData.topics || []).map((t) => [String(t.name || '').toLowerCase(), t.name]));
+      const byKey = new Map(candidates.map((c) => [`${c.topic.toLowerCase()}|${c.group}`, c]));
       const stale = await sql.query(
         `SELECT entity_type, entity_key, insight FROM ai_insights ai
-          WHERE (entity_type='shortcut' AND insight IN ('item','discover','topic-specific')
+          WHERE (entity_type='shortcut' AND insight IN ('discover','topic-specific')
                  AND created_at < now() - interval '24 hours')
              OR (entity_type='shortcut' AND insight='analyze'
                  AND created_at < now() - interval '72 hours')
+             OR (entity_type='shortcut' AND insight IN ('discover','learn','analyze','topic-specific')
+                 AND content NOT LIKE '%## %')
              OR (entity_type='trend' AND insight='brief'
                  AND created_at < now() - interval '24 hours'
                  AND EXISTS (
@@ -144,10 +147,9 @@ module.exports = async function handler(req, res) {
         if (budget <= 0) break;
         let payload = null;
         if (r.entity_type === 'trend') payload = { type: 'trend', query: r.entity_key, refresh: 1 };
-        else if (r.insight === 'item') payload = { type: 'shortcut', id: r.entity_key, refresh: 1 };
         else {
-          const topic = topicByLower.get(r.entity_key);
-          if (topic) payload = { type: 'shortcut', topic, group: r.insight, refresh: 1 };
+          const c = byKey.get(`${r.entity_key}|${r.insight}`);
+          if (c) payload = { type: 'shortcut', topic: c.topic, group: c.group, refresh: 1 };
         }
         if (payload && await call(payload)) refreshed++;
         budget--;
@@ -161,23 +163,20 @@ module.exports = async function handler(req, res) {
          SELECT DISTINCT lower(query) q FROM trending_items
           WHERE snapshot_at = (SELECT max(snapshot_at) FROM trending_items WHERE geo='US') AND geo='US') t
         WHERE NOT EXISTS (SELECT 1 FROM ai_insights ai WHERE ai.entity_type='trend' AND ai.entity_key=t.q AND ai.insight='brief')`);
-    const shortcutHave = await sql.query(
-      `SELECT count(*)::int AS n FROM ai_insights WHERE entity_type='shortcut' AND insight <> 'item'`);
-    const itemHave = await sql.query(
-      `SELECT count(*)::int AS n FROM ai_insights WHERE entity_type='shortcut' AND insight='item'`);
     const remNews = await sql.query(
       `SELECT count(*)::int AS n FROM news_stories ns
         WHERE coalesce(published_at, fetched_at) > now() - interval '48 hours'
           AND NOT EXISTS (SELECT 1 FROM ai_insights ai WHERE ai.entity_type='news' AND ai.entity_key=ns.url AND ai.insight='brief')`);
-    const topicCount = (topicsData.topics || []).filter((t) => t.slug && t.slug !== 'home').length;
+    const overviewHave = await sql.query(
+      `SELECT count(*)::int AS n FROM ai_insights
+        WHERE entity_type='shortcut' AND insight IN ('discover','learn','analyze','topic-specific')`);
 
     return res.status(200).json({
-      ok: true, trends, homeItems, news, shortcuts, refreshed,
+      ok: true, trends, news, overviews, refreshed,
       remaining: {
         trends: remTrends[0].n,
         news: remNews[0].n,
-        homeItems: homeIds.length - itemHave[0].n,
-        shortcuts: (topicCount * LENSES.length) - shortcutHave[0].n,
+        overviews: candidates.length - overviewHave[0].n,
       },
     });
   } catch (err) {
