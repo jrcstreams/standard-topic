@@ -14,6 +14,7 @@
 //   200 — { ok, trends, shortcuts, remaining }
 
 const { getSql } = require('../../lib/db');
+const { generateInsight } = require('../../lib/insight-core');
 const topicsData = require('../../data/topics.json');
 
 const LENSES = ['discover', 'learn', 'analyze', 'topic-specific'];
@@ -27,17 +28,11 @@ module.exports = async function handler(req, res) {
   const sql = getSql();
   if (!sql || !process.env.GEMINI_API_KEY) return res.status(200).json({ ok: true, skipped: true });
 
-  const base = `https://${process.env.VERCEL_URL || req.headers.host}`;
   const total = Math.min(Math.max(parseInt(req.query.n, 10) || 30, 1), 120);
   const which = (req.query.type || 'all').trim();
   const call = async (payload) => {
-    try {
-      const r = await fetch(`${base}/api/insight`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
-      });
-      const j = r.ok ? await r.json() : null;
-      return !!(j && j.content);
-    } catch (_) { return false; }
+    try { const r = await generateInsight(sql, payload); return !!(r && r.content); }
+    catch (_) { return false; }
   };
 
   try {
