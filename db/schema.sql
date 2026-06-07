@@ -113,3 +113,6 @@ ALTER TABLE news_stories   ADD COLUMN IF NOT EXISTS embedding vector(768);
 ALTER TABLE trending_items ADD COLUMN IF NOT EXISTS embedding vector(768);
 CREATE INDEX IF NOT EXISTS news_embedding_idx
   ON news_stories USING hnsw (embedding vector_cosine_ops);
+
+-- Citation links for grounded insights (added later; endpoint tolerates absence).
+ALTER TABLE ai_insights ADD COLUMN IF NOT EXISTS sources JSONB;
