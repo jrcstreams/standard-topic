@@ -101,3 +101,15 @@ CREATE TABLE IF NOT EXISTS ai_usage (
   calls           INTEGER NOT NULL DEFAULT 0,
   est_cost_micros BIGINT  NOT NULL DEFAULT 0
 );
+
+-- ---------------------------------------------------------------------------
+-- Semantic search (pgvector). Embeddings (Gemini text-embedding-004 = 768-dim)
+-- live alongside each story/trend; HNSW cosine index powers nearest-neighbor
+-- "meaning" search so e.g. "horse" surfaces Kentucky Derby coverage.
+-- Backfilled + kept current by /api/cron/embed.
+-- ---------------------------------------------------------------------------
+CREATE EXTENSION IF NOT EXISTS vector;
+ALTER TABLE news_stories   ADD COLUMN IF NOT EXISTS embedding vector(768);
+ALTER TABLE trending_items ADD COLUMN IF NOT EXISTS embedding vector(768);
+CREATE INDEX IF NOT EXISTS news_embedding_idx
+  ON news_stories USING hnsw (embedding vector_cosine_ops);
