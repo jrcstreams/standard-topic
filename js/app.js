@@ -2333,7 +2333,13 @@ function spNewsHTML(stories) {
     const topic = s.topic_name ? ` · <span class="search-news-topic">${escapeHTML(s.topic_name)}</span>` : '';
     return `<a class="search-news-item" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer"><span class="search-news-title">${escapeHTML(s.title || '')}</span><span class="search-news-meta">${meta}${topic}</span></a>`;
   }).join('');
-  return `<div class="search-content-group"><div class="search-content-head">In the news</div><div class="search-content-body">${rows}</div></div>`;
+  return `<section class="search-news-section">
+    <div class="search-news-header">
+      <h3 class="search-news-head-title"><span>News Feed</span></h3>
+      <p class="search-news-head-sub">Stories from across your topics</p>
+    </div>
+    <div class="search-content-body">${rows}</div>
+  </section>`;
 }
 function spTrendHTML(items) {
   const chips = items.map(it => {

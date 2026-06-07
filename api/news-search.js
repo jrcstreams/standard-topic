@@ -62,13 +62,18 @@ module.exports = async function handler(req, res) {
     let vector = [];
     let qvec = null;
     try { qvec = await embedQuery(q); } catch (_) { qvec = null; }
+    // Only keep vector hits that are actually close — otherwise an entity we
+    // have no coverage of (e.g. "drake") returns its far-flung nearest
+    // neighbors, which look like garbage. Cosine distance 0=identical … 2=opposite.
+    const maxDist = Number(process.env.AI_SEMANTIC_MAX_DIST || 0.55);
     if (qvec) {
       try {
         vector = await sql.query(
-          `SELECT ${COLS} FROM news_stories n JOIN topics t ON t.id = n.topic_id
-            WHERE n.embedding IS NOT NULL
+          `SELECT ${COLS}, (n.embedding <=> $1::vector) AS _dist
+             FROM news_stories n JOIN topics t ON t.id = n.topic_id
+            WHERE n.embedding IS NOT NULL AND (n.embedding <=> $1::vector) < $3
             ORDER BY n.embedding <=> $1::vector LIMIT $2`,
-          [toVector(qvec), pool]
+          [toVector(qvec), pool, maxDist]
         );
       } catch (_) {
         // embedding column not migrated yet (or pgvector off) → keyword-only.
@@ -91,7 +96,11 @@ module.exports = async function handler(req, res) {
       .slice(0, limit);
 
     res.setHeader('Cache-Control', CACHE_HEADER);
-    return res.status(200).json({ count: stories.length, q, stories, nextBefore: null, semantic: !!qvec });
+    const body = { count: stories.length, q, stories, nextBefore: null, semantic: !!qvec };
+    if (req.query.debug) {
+      body._debug = { keyword: keyword.length, vector: vector.length, maxDist, dists: vector.map(v => Number(Number(v._dist).toFixed(3))) };
+    }
+    return res.status(200).json(body);
   } catch (err) {
     return res.status(500).json({ error: String((err && err.message) || err) });
   }

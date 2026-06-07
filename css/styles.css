@@ -13436,3 +13436,23 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 
 /* Search panel: stored News + Trending results block */
 .search-panel-content { margin-top: 16px; }
+
+/* ===== Search modal: real scroll + sticky News Feed header ============== */
+.search-panel--modal { flex: 1 1 auto; min-height: 0; }
+/* Defeat the inline collapse grid-clip so modal results actually scroll. */
+.search-panel--modal .search-panel-results { display: block; }
+.search-panel--modal .search-panel-results > * { overflow: visible; }
+.search-news-section { display: block; }
+.search-news-header {
+  position: sticky; top: 0; z-index: 5;
+  background: #fff;
+  padding: 12px 0 10px;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 10px;
+}
+.search-news-head-title {
+  margin: 0; font-family: var(--font-display);
+  font-size: 1.3rem; line-height: 1.15; font-weight: 600;
+  color: #1c3a6b; letter-spacing: -0.024em;
+}
+.search-news-head-sub { margin: 4px 0 0; font-size: 0.85rem; color: var(--color-text-muted); }
