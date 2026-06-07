@@ -153,14 +153,18 @@ module.exports = async function handler(req, res) {
     else if (type === 'trend') { prompt = trendPrompt(entity.query, await trendContext(sql, entity.query)); maxTokens = 500; }
     else { prompt = shortcutPrompt(entity.topic, SHORTCUT_LENS[entity.group]); maxTokens = 700; }
 
-    // 4. Generate (grounded if within budget → fall back to ungrounded).
+    // 4. Generate. Grounding can fail OR silently return empty when the free
+    // Google-Search quota is exhausted — in BOTH cases fall back to ungrounded
+    // self-grounding so a summary still gets produced (never pause).
     let out = null;
     try { out = await generate(prompt, { grounded: useGrounding, model: INSIGHT_MODEL, maxTokens }); }
-    catch (e) {
-      if (useGrounding) { try { out = await generate(prompt, { grounded: false, model: INSIGHT_MODEL, maxTokens }); } catch (_) { out = null; } }
-      else throw e;
+    catch (_) { out = null; }
+    let grounded = useGrounding && !!(out && out.text);
+    if (useGrounding && (!out || !out.text)) {
+      try { out = await generate(prompt, { grounded: false, model: INSIGHT_MODEL, maxTokens }); }
+      catch (_) { out = null; }
     }
-    if (!out || !out.text) return res.status(200).json({ unavailable: true, reason: 'no-text', calls, useGrounding });
+    if (!out || !out.text) return res.status(200).json({ unavailable: true, reason: 'no-text' });
     const sources = out.citations || [];
 
     // 5. Store (resilient) + account spend.
