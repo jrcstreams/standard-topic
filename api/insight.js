@@ -24,9 +24,13 @@
 const { getSql } = require('../lib/db');
 const { generate } = require('../lib/gemini');
 
-const CAP_CALLS = parseInt(process.env.AI_DAILY_CAP_CALLS || '500', 10);
+// Never pause: use paid Google grounding only while under GROUNDED_LIMIT/day
+// (keep it ~free), then fall back to self-grounding (token-pennies). ABS_CAP is
+// a high abuse backstop only.
+const GROUNDED_LIMIT = parseInt(process.env.AI_GROUNDED_DAILY_LIMIT || '400', 10);
+const ABS_CAP = parseInt(process.env.AI_DAILY_CAP_CALLS || '5000', 10);
 const INSIGHT_MODEL = process.env.GEMINI_INSIGHT_MODEL || 'gemini-2.5-flash';
-const GROUNDED = process.env.AI_GROUNDING !== '0';
+const GROUNDING = process.env.AI_GROUNDING !== '0';
 
 function readInput(req) {
   let body = req.body;
@@ -73,7 +77,10 @@ function trendPrompt(query, ctx) {
 
 function newsPrompt(e) {
   return [
-    `Write an AI briefing on the news story below. Use Google Search to verify facts and add current context. Be accurate and specific — do not invent.`,
+    `Write an AI briefing on the news story below. Use Google Search to find current reporting on THIS specific story, verify facts, and cite sources. Be accurate and specific — do not invent.`,
+    e.date
+      ? `CRITICAL: this article was published on ${e.date}. Treat it as a CURRENT story from that date — summarize this event and its present-day context. Do NOT confuse it with older events that share similar names or phrasing, and do NOT assume an earlier year.`
+      : `Treat this as a current story; do not assume an older year based on the headline.`,
     `Format EXACTLY as these four sections, each starting with the label on its own line ("### Explanation", etc.), followed by 1-3 sentences (Key Points as "- " bullet lines):`,
     `### Explanation`,
     `### Background`,
@@ -97,7 +104,7 @@ module.exports = async function handler(req, res) {
   const insight = 'brief';
 
   const entity = type === 'news'
-    ? { url: String(input.url || '').trim(), title: String(input.title || '').trim(), description: String(input.description || '').trim() }
+    ? { url: String(input.url || '').trim(), title: String(input.title || '').trim(), description: String(input.description || '').trim(), date: String(input.date || '').trim() }
     : { query: String(input.query || '').trim() };
   const key = type === 'news' ? entity.url : entity.query.toLowerCase();
   if (!key || (type === 'news' && !entity.title) || (type === 'trend' && !entity.query)) {
@@ -114,22 +121,23 @@ module.exports = async function handler(req, res) {
     }
     if (hit.length) return res.status(200).json({ content: hit[0].content, sources: hit[0].sources || [], cached: true });
 
-    // 2. Count-based daily cap.
+    // 2. Daily budget → decide grounding (never pause; only an abuse backstop).
     const day = new Date().toISOString().slice(0, 10);
     const usage = await sql.query(`SELECT calls FROM ai_usage WHERE day=$1`, [day]);
     const calls = (usage[0] && Number(usage[0].calls)) || 0;
-    if (calls >= CAP_CALLS) return res.status(200).json({ capped: true });
+    if (calls >= ABS_CAP) return res.status(200).json({ capped: true });
+    const useGrounding = GROUNDING && calls < GROUNDED_LIMIT;
 
     // 3. Build grounded prompt.
     let prompt; let maxTokens;
     if (type === 'news') { prompt = newsPrompt(entity); maxTokens = 900; }
     else { prompt = trendPrompt(entity.query, await trendContext(sql, entity.query)); maxTokens = 500; }
 
-    // 4. Generate (grounded → fall back to ungrounded self-grounding).
+    // 4. Generate (grounded if within budget → fall back to ungrounded).
     let out = null;
-    try { out = await generate(prompt, { grounded: GROUNDED, model: INSIGHT_MODEL, maxTokens }); }
+    try { out = await generate(prompt, { grounded: useGrounding, model: INSIGHT_MODEL, maxTokens }); }
     catch (e) {
-      if (GROUNDED) { try { out = await generate(prompt, { grounded: false, model: INSIGHT_MODEL, maxTokens }); } catch (_) { out = null; } }
+      if (useGrounding) { try { out = await generate(prompt, { grounded: false, model: INSIGHT_MODEL, maxTokens }); } catch (_) { out = null; } }
       else throw e;
     }
     if (!out || !out.text) return res.status(200).json({ unavailable: true });

@@ -111,7 +111,7 @@ async function showNewsBrief(card) {
   try {
     const res = await fetch('/api/insight', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'news', url: card.dataset.url || '', title: card.dataset.title || '', description: card.dataset.desc || '' }),
+      body: JSON.stringify({ type: 'news', url: card.dataset.url || '', title: card.dataset.title || '', description: card.dataset.desc || '', date: card.dataset.date || '' }),
     });
     const data = res.ok ? await res.json() : null;
     if (!data || !data.content) { region.remove(); openNewsChat(card); return; }
@@ -211,7 +211,7 @@ export function newsCardHTML(item) {
   if (rel) metaParts.push(`<time class="news-card-time">${escapeHTML(rel)}</time>`);
 
   return `
-    <article class="news-card" data-title="${escapeAttr(title)}" data-desc="${escapeAttr(descText.slice(0, 500))}" data-url="${escapeAttr(url)}">
+    <article class="news-card" data-title="${escapeAttr(title)}" data-desc="${escapeAttr(descText.slice(0, 500))}" data-url="${escapeAttr(url)}" data-date="${escapeAttr(pubDate)}">
       <a class="news-card-link"
          href="${escapeAttr(url)}"
          target="_blank"
