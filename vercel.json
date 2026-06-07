@@ -2,11 +2,13 @@
   "crons": [
     { "path": "/api/cron/trending", "schedule": "0 */2 * * *" },
     { "path": "/api/cron/news", "schedule": "0 */6 * * *" },
-    { "path": "/api/cron/embed", "schedule": "30 */2 * * *" }
+    { "path": "/api/cron/embed", "schedule": "30 */2 * * *" },
+    { "path": "/api/cron/pregenerate", "schedule": "15 * * * *" }
   ],
   "functions": {
     "api/cron/news.js": { "maxDuration": 300 },
     "api/cron/trending.js": { "maxDuration": 60 },
-    "api/cron/embed.js": { "maxDuration": 120 }
+    "api/cron/embed.js": { "maxDuration": 120 },
+    "api/cron/pregenerate.js": { "maxDuration": 300 }
   }
 }
