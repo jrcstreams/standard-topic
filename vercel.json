@@ -1,0 +1,10 @@
+{
+  "crons": [
+    { "path": "/api/cron/trending", "schedule": "0 */2 * * *" },
+    { "path": "/api/cron/news", "schedule": "0 */6 * * *" }
+  ],
+  "functions": {
+    "api/cron/news.js": { "maxDuration": 300 },
+    "api/cron/trending.js": { "maxDuration": 60 }
+  }
+}
