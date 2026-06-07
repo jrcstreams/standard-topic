@@ -62,10 +62,13 @@ module.exports = async function handler(req, res) {
     let vector = [];
     let qvec = null;
     try { qvec = await embedQuery(q); } catch (_) { qvec = null; }
-    // Only keep vector hits that are actually close — otherwise an entity we
-    // have no coverage of (e.g. "drake") returns its far-flung nearest
-    // neighbors, which look like garbage. Cosine distance 0=identical … 2=opposite.
-    const maxDist = Number(process.env.AI_SEMANTIC_MAX_DIST || 0.55);
+    // Semantic results need a real anchor. cap = how far a hit may be to show
+    // at all; gate = the best hit must be at least this close, else the query
+    // has no genuine coverage (e.g. "drake"/"ohtani") and we drop ALL vector
+    // hits to avoid garbage. Literal queries still ride the keyword list.
+    const cap = Number(process.env.AI_SEMANTIC_CAP || 0.50);
+    const gate = Number(process.env.AI_SEMANTIC_GATE || 0.47);
+    let best = null;
     if (qvec) {
       try {
         vector = await sql.query(
@@ -73,11 +76,14 @@ module.exports = async function handler(req, res) {
              FROM news_stories n JOIN topics t ON t.id = n.topic_id
             WHERE n.embedding IS NOT NULL AND (n.embedding <=> $1::vector) < $3
             ORDER BY n.embedding <=> $1::vector LIMIT $2`,
-          [toVector(qvec), pool, maxDist]
+          [toVector(qvec), pool, cap]
         );
       } catch (_) {
-        // embedding column not migrated yet (or pgvector off) → keyword-only.
-        vector = [];
+        vector = []; // embedding column not migrated yet (or pgvector off)
+      }
+      if (vector.length) {
+        best = Math.min(...vector.map(v => Number(v._dist)));
+        if (best >= gate) vector = [];
       }
     }
 
@@ -98,7 +104,7 @@ module.exports = async function handler(req, res) {
     res.setHeader('Cache-Control', CACHE_HEADER);
     const body = { count: stories.length, q, stories, nextBefore: null, semantic: !!qvec };
     if (req.query.debug) {
-      body._debug = { keyword: keyword.length, vector: vector.length, maxDist, dists: vector.map(v => Number(Number(v._dist).toFixed(3))) };
+      body._debug = { keyword: keyword.length, vector: vector.length, gate, cap, best };
     }
     return res.status(200).json(body);
   } catch (err) {
