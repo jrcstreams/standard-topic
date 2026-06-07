@@ -1,49 +1,17 @@
 // Vercel Cron — /api/cron/embed  (schedule in vercel.json)
 //
-// Backfills + maintains semantic-search embeddings. Each run grabs a batch of
-// rows still missing an embedding (newest first), embeds them with Gemini
-// (batched 100/call), and writes the vectors back. Running every couple hours
-// it both fills history and keeps up with new ingested rows. Embeddings are
-// cheap + free-tier; no spend cap needed here.
+// Backfills + maintains semantic-search embeddings. Each call embeds ONE small
+// batch of rows still missing an embedding (newest first, news before trends),
+// then returns counts — pacing it well under Gemini's free-tier rate limits.
+// The scheduled run nibbles steadily; manual calls (?n=) can probe/accelerate.
+// Graceful: a rate-limit (429) returns {error} without throwing, so the next
+// run just picks up where it left off.
 //
 // Auth: Vercel Cron sends `Authorization: Bearer ${CRON_SECRET}`.
-//   200 — { ok, news, trends }   (counts embedded; skipped:true pre-provision)
+//   200 — { ok, table, embedded, remaining, error? , done? }
 
 const { getSql } = require('../../lib/db');
 const { embed, toVector } = require('../../lib/gemini');
-
-const NEWS_BATCH = 300;   // rows scanned per run
-const TREND_BATCH = 200;
-const CHUNK = 100;        // Gemini batchEmbedContents ceiling
-
-async function embedTable(sql, table, selectSql) {
-  const rows = await sql.query(selectSql);
-  if (!rows.length) return 0;
-  let done = 0;
-  for (let i = 0; i < rows.length; i += CHUNK) {
-    const chunk = rows.slice(i, i + CHUNK);
-    const vecs = await embed(chunk.map(r => r.text));
-    if (!vecs) break;
-    const tuples = [];
-    const params = [];
-    let p = 1;
-    for (let j = 0; j < chunk.length; j++) {
-      const v = vecs[j];
-      if (!v || !v.length) continue;
-      tuples.push(`($${p++}::int, $${p++}::vector)`);
-      params.push(chunk[j].id, toVector(v));
-    }
-    if (!tuples.length) continue;
-    await sql.query(
-      `UPDATE ${table} AS t SET embedding = v.emb
-         FROM (VALUES ${tuples.join(',')}) AS v(id, emb)
-        WHERE t.id = v.id`,
-      params
-    );
-    done += tuples.length;
-  }
-  return done;
-}
 
 module.exports = async function handler(req, res) {
   const secret = process.env.CRON_SECRET;
@@ -53,18 +21,56 @@ module.exports = async function handler(req, res) {
   const sql = getSql();
   if (!sql || !process.env.GEMINI_API_KEY) return res.status(200).json({ ok: true, skipped: true });
 
+  const n = Math.min(Math.max(parseInt(req.query.n, 10) || 64, 1), 100);
+
   try {
-    const news = await embedTable(
-      sql, 'news_stories',
+    const remRows = await sql`SELECT
+        (SELECT count(*) FROM news_stories   WHERE embedding IS NULL) AS news,
+        (SELECT count(*) FROM trending_items WHERE embedding IS NULL) AS trends`;
+    const remaining = { news: Number(remRows[0].news), trends: Number(remRows[0].trends) };
+
+    let table = 'news_stories';
+    let rows = await sql.query(
       `SELECT id, coalesce(title,'') || ' ' || coalesce(description,'') AS text
-         FROM news_stories WHERE embedding IS NULL ORDER BY id DESC LIMIT ${NEWS_BATCH}`
+         FROM news_stories WHERE embedding IS NULL ORDER BY id DESC LIMIT ${n}`
     );
-    const trends = await embedTable(
-      sql, 'trending_items',
-      `SELECT id, coalesce(query,'') || ' ' || coalesce(category,'') AS text
-         FROM trending_items WHERE embedding IS NULL ORDER BY id DESC LIMIT ${TREND_BATCH}`
-    );
-    return res.status(200).json({ ok: true, news, trends });
+    if (!rows.length) {
+      table = 'trending_items';
+      rows = await sql.query(
+        `SELECT id, coalesce(query,'') || ' ' || coalesce(category,'') AS text
+           FROM trending_items WHERE embedding IS NULL ORDER BY id DESC LIMIT ${n}`
+      );
+    }
+    if (!rows.length) return res.status(200).json({ ok: true, embedded: 0, remaining, done: true });
+
+    let embedded = 0;
+    let error = null;
+    try {
+      const vecs = await embed(rows.map(r => r.text));
+      if (vecs) {
+        const tuples = [];
+        const params = [];
+        let p = 1;
+        for (let i = 0; i < rows.length; i++) {
+          const v = vecs[i];
+          if (!v || !v.length) continue;
+          tuples.push(`($${p++}::int, $${p++}::vector)`);
+          params.push(rows[i].id, toVector(v));
+        }
+        if (tuples.length) {
+          await sql.query(
+            `UPDATE ${table} AS t SET embedding = v.emb
+               FROM (VALUES ${tuples.join(',')}) AS v(id, emb) WHERE t.id = v.id`,
+            params
+          );
+          embedded = tuples.length;
+        }
+      }
+    } catch (e) {
+      error = String((e && e.message) || e).slice(0, 200);
+    }
+
+    return res.status(200).json({ ok: !error, table, embedded, error, remaining });
   } catch (err) {
     return res.status(500).json({ error: String((err && err.message) || err) });
   }
