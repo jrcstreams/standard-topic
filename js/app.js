@@ -12,7 +12,7 @@ import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
 import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260606-polish43';
 import { initPromptModal } from './components/prompt-modal.js?v=20260605-polish30';
-import { renderTrending, renderTrendingTopics } from './components/trending.js?v=20260605-polish33';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260607-polish51';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260606-polish41';
@@ -1351,7 +1351,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       </div>
     `;
     homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });
-    renderTrendingTopics(container.querySelector('#home-trending'), { limit: 6, viewAll: true });
+    renderTrendingHome(container.querySelector('#home-trending'), { limit: 12 });
   } else {
     // Topic pages: Shortcuts + News Feed + Related Topics.
     container.innerHTML = `

@@ -234,3 +234,105 @@ export function renderTrendingTopics(container, { limit = 20, viewAll = false } 
 export function renderTrending(container) {
   renderTrendingTopics(container, { limit: 20, viewAll: false });
 }
+
+// ===== Homepage trending with Now ⇄ Over-time + category filter ==========
+// "Now" = current snapshot (/api/trending). "Over time" = stored history
+// (/api/trending-history mode=range), sortable. Category pills are built from
+// Google Trends' own categories present in the loaded data.
+export function renderTrendingHome(container, { limit = 12 } = {}) {
+  const state = { mode: 'now', category: 'all', sort: 'recent', items: [], loading: true };
+
+  const normNow = (topics) => (topics || []).map(t => ({
+    query: t.query, categories: t.categories || [], startedAt: t.startedAt,
+    _cat: (t.categories && t.categories[0]) || '',
+  }));
+  const normOver = (rows) => (rows || []).map(r => ({
+    query: r.query, categories: r.category ? [r.category] : [], startedAt: r.started_at,
+    _cat: r.category || '',
+  }));
+  const catList = () => [...new Set(state.items.map(i => i._cat).filter(Boolean))].sort();
+
+  async function load() {
+    state.loading = true; renderShell();
+    try {
+      if (state.mode === 'now') {
+        const { topics } = await fetchTrending();
+        state.items = normNow(topics);
+      } else {
+        const to = new Date().toISOString();
+        const from = new Date(Date.now() - 7 * 864e5).toISOString();
+        const res = await fetch(`/api/trending-history?mode=range&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&sort=${encodeURIComponent(state.sort)}&limit=60`, { headers: { Accept: 'application/json' } });
+        const data = res.ok ? await res.json() : { items: [] };
+        state.items = normOver(data.items);
+      }
+    } catch (_) { state.items = []; }
+    state.loading = false;
+    if (state.category !== 'all' && !catList().includes(state.category)) state.category = 'all';
+    renderShell();
+  }
+
+  function headHTML() {
+    return `
+      <div class="trending-topics-head">
+        <div class="trending-topics-titlerow">
+          <h3 class="trending-topics-title"><span>Trending</span></h3>
+          <div class="trend-mode-toggle" role="group" aria-label="Trending view">
+            <button type="button" class="trend-mode-btn ${state.mode === 'now' ? 'is-active' : ''}" data-mode="now">Now</button>
+            <button type="button" class="trend-mode-btn ${state.mode === 'over' ? 'is-active' : ''}" data-mode="over">Over time</button>
+          </div>
+        </div>
+        <p class="trending-topics-sub">Trending search terms from <a class="trending-topics-src" href="https://trends.google.com/trending" target="_blank" rel="noopener noreferrer">Google Trends</a></p>
+      </div>`;
+  }
+
+  function controlsHTML() {
+    const cats = catList();
+    const pills = [`<button type="button" class="trend-cat-pill ${state.category === 'all' ? 'is-active' : ''}" data-cat="all">All</button>`]
+      .concat(cats.map(c => `<button type="button" class="trend-cat-pill ${state.category === c ? 'is-active' : ''}" data-cat="${escapeAttr(c)}">${escapeHTML(c)}</button>`)).join('');
+    const sort = state.mode === 'over'
+      ? `<select class="trend-sort" aria-label="Sort trends">
+           <option value="recent"${state.sort === 'recent' ? ' selected' : ''}>Most recent</option>
+           <option value="volume"${state.sort === 'volume' ? ' selected' : ''}>Top volume</option>
+           <option value="duration"${state.sort === 'duration' ? ' selected' : ''}>Longest trending</option>
+         </select>`
+      : '';
+    return `<div class="trend-controls"><div class="trend-cat-pills">${pills}</div>${sort}</div>`;
+  }
+
+  function renderGrid() {
+    const grid = container.querySelector('#trend-home-grid');
+    if (!grid) return;
+    if (state.loading) { grid.innerHTML = Array.from({ length: 6 }, () => `<div class="trend-card trend-card-skel"></div>`).join(''); return; }
+    let items = state.items;
+    if (state.category !== 'all') items = items.filter(i => i._cat === state.category);
+    items = items.slice(0, limit);
+    if (!items.length) { grid.innerHTML = `<p class="trending-empty">No trends ${state.mode === 'over' ? 'in this window yet' : 'right now'}.</p>`; return; }
+    grid.innerHTML = items.map((t, i) => trendCardHTML(t, i)).join('');
+    wireTrendCards(grid);
+  }
+
+  function renderShell() {
+    container.innerHTML = `
+      <div class="trending-topics trending-home">
+        ${headHTML()}
+        ${controlsHTML()}
+        <div class="trend-card-grid" id="trend-home-grid"></div>
+        <button type="button" class="trending-topics-viewall" data-action="view-all-trending">View all trending ${CHEV}</button>
+      </div>`;
+    container.querySelectorAll('.trend-mode-btn').forEach(b => b.addEventListener('click', () => {
+      if (b.dataset.mode === state.mode) return; state.mode = b.dataset.mode; load();
+    }));
+    container.querySelectorAll('.trend-cat-pill').forEach(b => b.addEventListener('click', () => {
+      state.category = b.dataset.cat;
+      container.querySelectorAll('.trend-cat-pill').forEach(p => p.classList.toggle('is-active', p === b));
+      renderGrid();
+    }));
+    container.querySelector('.trend-sort')?.addEventListener('change', (e) => { state.sort = e.target.value; load(); });
+    container.querySelector('[data-action="view-all-trending"]')?.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('open-trending-list'));
+    });
+    renderGrid();
+  }
+
+  load();
+}
