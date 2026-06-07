@@ -122,8 +122,8 @@ module.exports = async function handler(req, res) {
 
     // 3. Build grounded prompt.
     let prompt; let maxTokens;
-    if (type === 'news') { prompt = newsPrompt(entity); maxTokens = 520; }
-    else { prompt = trendPrompt(entity.query, await trendContext(sql, entity.query)); maxTokens = 420; }
+    if (type === 'news') { prompt = newsPrompt(entity); maxTokens = 900; }
+    else { prompt = trendPrompt(entity.query, await trendContext(sql, entity.query)); maxTokens = 500; }
 
     // 4. Generate (grounded → fall back to ungrounded self-grounding).
     let out = null;
