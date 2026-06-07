@@ -71,15 +71,17 @@ const LINK_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" st
 // source citation links. Shared shape for news (sectioned) + trend (prose).
 function hostFromUri(u) { try { return new URL(u).hostname.replace(/^www\./i, ''); } catch { return 'source'; } }
 export function renderBriefBody(content, sources) {
+  // Escape, then render light markdown: **bold**, *bold* fallback.
+  const fmt = (s) => escapeHTML(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   const lines = String(content || '').split('\n');
   let html = ''; let inList = false;
   const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
   for (const raw of lines) {
     const line = raw.trim();
     if (!line) { closeList(); continue; }
-    if (line.startsWith('### ')) { closeList(); html += `<div class="ai-result-sub">${escapeHTML(line.slice(4))}</div>`; }
-    else if (line.startsWith('- ') || line.startsWith('• ')) { if (!inList) { html += '<ul class="ai-result-list">'; inList = true; } html += `<li>${escapeHTML(line.replace(/^[-•]\s+/, ''))}</li>`; }
-    else { closeList(); html += `<p>${escapeHTML(line)}</p>`; }
+    if (/^#{1,4}\s+/.test(line)) { closeList(); html += `<div class="ai-result-sub">${fmt(line.replace(/^#{1,4}\s+/, ''))}</div>`; }
+    else if (/^[*\-•]\s+/.test(line)) { if (!inList) { html += '<ul class="ai-result-list">'; inList = true; } html += `<li>${fmt(line.replace(/^[*\-•]\s+/, ''))}</li>`; }
+    else { closeList(); html += `<p>${fmt(line)}</p>`; }
   }
   closeList();
   const src = (sources && sources.length)

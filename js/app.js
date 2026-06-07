@@ -6,13 +6,13 @@ import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './ut
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed } from './components/newsfeed.js?v=20260607-polish56';
+import { renderNewsFeed, renderBriefBody } from './components/newsfeed.js?v=20260607-polish57';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
 import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260606-polish43';
 import { initPromptModal } from './components/prompt-modal.js?v=20260605-polish30';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260607-polish56';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260607-polish57';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260606-polish41';
@@ -1469,6 +1469,28 @@ function attachTabPanelHandlers() {
 
 // ---------- Sidebar renderers (compact vertical lists) ----------
 
+// Groups that get an AI overview brief (per topic), and the spark icon.
+const TI_AI_LENSES = new Set(['discover', 'learn', 'analyze', 'topic-specific']);
+const TI_AI_SPARK = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>';
+const TI_AI_LABELS = { discover: 'Discover', learn: 'Learn', analyze: 'Analyze', 'topic-specific': 'Topic Insights' };
+
+// Generate/render a grounded per-topic group brief into el; fall back to chat.
+async function loadShortcutInsight(el, topic, group) {
+  const label = TI_AI_LABELS[group] || 'AI';
+  const head = `<div class="ai-result-head"><span class="ai-result-label">${escapeHTML(label)}</span><span class="ai-result-badge">AI</span></div>`;
+  el.innerHTML = `<div class="ai-result">${head}<div class="ai-result-body ai-result-loading">Generating…</div></div>`;
+  const openChat = () => window.dispatchEvent(new CustomEvent('open-prompt-modal', {
+    detail: { basePrompt: `Give me a ${label.toLowerCase()} briefing on ${topic} — current, accurate, with key points.`, topicName: topic, name: `${label} · ${topic}`, count: 1 },
+  }));
+  try {
+    const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shortcut', topic, group }) });
+    const data = res.ok ? await res.json() : null;
+    if (!data || !data.content) { el.innerHTML = ''; openChat(); return; }
+    el.innerHTML = `<div class="ai-result">${head}${renderBriefBody(data.content, data.sources)}<button type="button" class="ai-result-deeper">Open in chat ↗</button></div>`;
+    el.querySelector('.ai-result-deeper')?.addEventListener('click', openChat);
+  } catch (_) { el.innerHTML = ''; openChat(); }
+}
+
 function renderShortcutsSidebar(container, route, isHome, isCustom = false, customTerm = '') {
   const topic = isHome ? getTopicBySlug('home') : (isCustom ? null : getTopicBySlug(route.slug));
   const topicName = isCustom ? customTerm : (isHome ? '' : topic?.name || '');
@@ -1632,11 +1654,15 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     groupOrder.forEach(g => {
       const items = groups[g.key];
       if (!items || items.length === 0) return;
+      const aiBlock = (topicName && TI_AI_LENSES.has(g.key))
+        ? `<div class="ti-ai" data-group="${escapeAttr(g.key)}"><button type="button" class="ti-ai-btn">${TI_AI_SPARK}<span>AI overview · ${escapeHTML(topicName)}</span></button><div class="ti-ai-result"></div></div>`
+        : '';
       html += renderTIAccordion({
         key: g.key,
         label: g.label,
         open: false,
         bodyHTML: `
+          ${aiBlock}
           <ul class="ti-item-list ti-item-list-shortcuts" data-group="${escapeAttr(g.key)}">
             ${items.map(s => tiShortcutItem(s, topicName, g.key)).join('')}
           </ul>
@@ -1649,6 +1675,19 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   html += `<div class="shortcuts-toast" id="shortcuts-toast" role="status" aria-live="polite"></div>`;
   html += `</div>`; /* close .shortcuts-sidebar */
   container.innerHTML = html;
+
+  // AI overview per group — generate the grounded brief on click (toggles).
+  container.querySelectorAll('.ti-ai-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const wrap = btn.closest('.ti-ai');
+      if (!wrap) return;
+      const resultEl = wrap.querySelector('.ti-ai-result');
+      if (wrap.classList.contains('is-open')) { wrap.classList.remove('is-open'); resultEl.innerHTML = ''; return; }
+      wrap.classList.add('is-open');
+      loadShortcutInsight(resultEl, topicName, wrap.dataset.group);
+    });
+  });
 
   // Quick Links: track clicks for analytics, and intercept clicks
   // while multi-select is on to surface a transient toast (the link

@@ -13468,3 +13468,15 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .ai-result-sources span { font-weight: var(--font-weight-semibold); }
 .ai-result-sources a { color: var(--color-primary); text-decoration: none; }
 .ai-result-sources a:hover { text-decoration: underline; }
+
+/* ===== Intelligence: per-group AI overview ============================== */
+.ti-ai { margin: 0 0 10px; }
+.ti-ai-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 12px; border: 1px solid var(--color-border); border-radius: 9px;
+  background: var(--color-bg); color: var(--color-primary);
+  font-size: 0.82rem; font-weight: var(--font-weight-semibold); font-family: var(--font-family);
+  cursor: pointer; transition: border-color .12s, background .12s;
+}
+.ti-ai-btn:hover { border-color: var(--color-primary); background: var(--color-bg-light); }
+.ti-ai-result:not(:empty) { margin-top: 8px; }

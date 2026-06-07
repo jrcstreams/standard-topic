@@ -1,21 +1,16 @@
 // Vercel serverless function — /api/insight  (GET or POST)
 //
-// ONE consolidated, accurate AI briefing per entity (cached). Trends → a single
-// "what it is + why now + background" brief. News → a sectioned brief
-// (Explanation / Background / Timeline / Key Points). Both are GROUNDED:
-//   - self-grounded with our own data (trend category + related searches +
-//     matching archive headlines), and
-//   - grounded with Google Search (live-accurate + citation links),
-// with an explicit anti-hallucination instruction. Falls back to self-grounding
-// only if Google grounding isn't enabled on the key.
+// ONE consolidated, accurate, GROUNDED AI briefing per entity (cached):
+//   - type 'news'  → sectioned brief (Explanation/Background/Timeline/Key Points)
+//                    for THIS dated story (publish date passed in to avoid stale-year errors).
+//   - type 'trend' → "what it is + why now + background" brief.
+//   - type 'shortcut' → a per-topic briefing through a group lens
+//                    (discover / learn / analyze / topic-specific).
+// Grounding = self-grounding (our data) + Google Search (live + citations), with
+// an anti-hallucination instruction.
 //
-// Spend guard is COUNT-based: ai_usage.calls vs AI_DAILY_CAP_CALLS (default 500,
-// ~the free grounded-request line). Cached briefs always serve, even when capped.
-//
-// Input (query for GET, JSON body for POST):
-//   type   'news' | 'trend'   (required)
-//   news:  url (required, cache key), title, description
-//   trend: query (required)
+// Never pauses: paid Google grounding only while daily calls < AI_GROUNDED_DAILY_LIMIT
+// (~free line), then auto-fallback to free self-grounding. ABS_CAP is an abuse backstop.
 //
 //   200 — { content, sources:[{title,uri}], cached }
 //   200 — { capped:true } | { unavailable:true }
@@ -24,13 +19,18 @@
 const { getSql } = require('../lib/db');
 const { generate } = require('../lib/gemini');
 
-// Never pause: use paid Google grounding only while under GROUNDED_LIMIT/day
-// (keep it ~free), then fall back to self-grounding (token-pennies). ABS_CAP is
-// a high abuse backstop only.
 const GROUNDED_LIMIT = parseInt(process.env.AI_GROUNDED_DAILY_LIMIT || '400', 10);
 const ABS_CAP = parseInt(process.env.AI_DAILY_CAP_CALLS || '5000', 10);
 const INSIGHT_MODEL = process.env.GEMINI_INSIGHT_MODEL || 'gemini-2.5-flash';
 const GROUNDING = process.env.AI_GROUNDING !== '0';
+
+// Per-group lens for the Intelligence shortcut overviews.
+const SHORTCUT_LENS = {
+  discover: { grounded: true, prompt: (t) => `Give a current briefing on what's happening in ${t} right now — the latest developments, major stories, and what people are focused on today.` },
+  learn: { grounded: false, prompt: (t) => `Explain ${t} for someone getting up to speed: the fundamentals, key concepts, important background, and why it matters.` },
+  analyze: { grounded: true, prompt: (t) => `Give an analytical briefing on ${t}: the key tensions and tradeoffs, the main competing perspectives, and what to watch going forward.` },
+  'topic-specific': { grounded: true, prompt: (t) => `Give the most important current insights specific to ${t} — the developments and angles that matter most right now.` },
+};
 
 function readInput(req) {
   let body = req.body;
@@ -48,14 +48,13 @@ async function trendContext(sql, query) {
     if (r[0]) {
       category = r[0].category || '';
       const tb = r[0].trend_breakdown;
-      breakdown = Array.isArray(tb) ? tb : (typeof tb === 'string' ? (JSON.parse(tb || '[]')) : []);
+      breakdown = Array.isArray(tb) ? tb : (typeof tb === 'string' ? JSON.parse(tb || '[]') : []);
     }
-  } catch (_) { /* table/col may differ */ }
+  } catch (_) {}
   let headlines = [];
   try {
     const h = await sql.query(
-      `SELECT title FROM news_stories
-        WHERE search_vector @@ websearch_to_tsquery('english', $1)
+      `SELECT title FROM news_stories WHERE search_vector @@ websearch_to_tsquery('english', $1)
         ORDER BY published_at DESC NULLS LAST LIMIT 5`, [query]);
     headlines = h.map(x => x.title).filter(Boolean);
   } catch (_) {}
@@ -93,6 +92,14 @@ function newsPrompt(e) {
   ].filter(Boolean).join('\n');
 }
 
+function shortcutPrompt(topic, lens) {
+  return [
+    lens.prompt(topic),
+    `Write 3-5 sentences of plain prose, then 3-4 key takeaways as "- " bullet lines. Accurate and specific — do not invent.`,
+    lens.grounded ? `Use Google Search for current facts and cite sources.` : '',
+  ].filter(Boolean).join('\n');
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   const sql = getSql();
@@ -100,15 +107,26 @@ module.exports = async function handler(req, res) {
 
   const input = readInput(req);
   const type = String(input.type || '').trim();
-  if (type !== 'news' && type !== 'trend') return res.status(400).json({ error: 'Unknown type' });
-  const insight = 'brief';
+  if (type !== 'news' && type !== 'trend' && type !== 'shortcut') return res.status(400).json({ error: 'Unknown type' });
 
-  const entity = type === 'news'
-    ? { url: String(input.url || '').trim(), title: String(input.title || '').trim(), description: String(input.description || '').trim(), date: String(input.date || '').trim() }
-    : { query: String(input.query || '').trim() };
-  const key = type === 'news' ? entity.url : entity.query.toLowerCase();
-  if (!key || (type === 'news' && !entity.title) || (type === 'trend' && !entity.query)) {
-    return res.status(400).json({ error: 'Missing entity fields' });
+  // Resolve entity + cache identity per type.
+  let insight, entity, key, lensGrounded = true;
+  if (type === 'shortcut') {
+    const group = String(input.group || '').trim().toLowerCase();
+    const topic = String(input.topic || '').trim();
+    const lens = SHORTCUT_LENS[group];
+    if (!lens || !topic) return res.status(400).json({ error: 'Missing/invalid shortcut group or topic' });
+    insight = group; entity = { topic, group }; key = topic.toLowerCase(); lensGrounded = lens.grounded;
+  } else if (type === 'news') {
+    insight = 'brief';
+    entity = { url: String(input.url || '').trim(), title: String(input.title || '').trim(), description: String(input.description || '').trim(), date: String(input.date || '').trim() };
+    key = entity.url;
+    if (!key || !entity.title) return res.status(400).json({ error: 'Missing entity fields' });
+  } else {
+    insight = 'brief';
+    entity = { query: String(input.query || '').trim() };
+    key = entity.query.toLowerCase();
+    if (!entity.query) return res.status(400).json({ error: 'Missing entity fields' });
   }
 
   try {
@@ -126,12 +144,13 @@ module.exports = async function handler(req, res) {
     const usage = await sql.query(`SELECT calls FROM ai_usage WHERE day=$1`, [day]);
     const calls = (usage[0] && Number(usage[0].calls)) || 0;
     if (calls >= ABS_CAP) return res.status(200).json({ capped: true });
-    const useGrounding = GROUNDING && calls < GROUNDED_LIMIT;
+    const useGrounding = GROUNDING && lensGrounded && calls < GROUNDED_LIMIT;
 
-    // 3. Build grounded prompt.
+    // 3. Build prompt.
     let prompt; let maxTokens;
     if (type === 'news') { prompt = newsPrompt(entity); maxTokens = 900; }
-    else { prompt = trendPrompt(entity.query, await trendContext(sql, entity.query)); maxTokens = 500; }
+    else if (type === 'trend') { prompt = trendPrompt(entity.query, await trendContext(sql, entity.query)); maxTokens = 500; }
+    else { prompt = shortcutPrompt(entity.topic, SHORTCUT_LENS[entity.group]); maxTokens = 700; }
 
     // 4. Generate (grounded if within budget → fall back to ungrounded).
     let out = null;
@@ -168,7 +187,7 @@ module.exports = async function handler(req, res) {
     );
 
     const body = { content: out.text, sources, cached: false };
-    if (input.debug) body._debug = { parts: out.parts, finish: out.finish, meta: out.meta };
+    if (input.debug) body._debug = { parts: out.parts, finish: out.finish, useGrounding };
     return res.status(200).json(body);
   } catch (err) {
     return res.status(500).json({ error: String((err && err.message) || err) });
