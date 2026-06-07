@@ -17,6 +17,7 @@ let currentResults = [];
 let highlightIndex = -1;
 let expandedSlug = null;
 let showAllTopics = false;
+let contentSearchTimer = null;
 
 export function initSearchOverlay() {
   if (overlayEl) return;
@@ -111,6 +112,12 @@ export function initSearchOverlay() {
         cardHeader.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
         expandedSlug = willOpen ? slug : null;
       }
+      return;
+    }
+    const trendBtn = e.target.closest('[data-trend]');
+    if (trendBtn) {
+      const term = trendBtn.dataset.trend;
+      if (term) { navigate(`#/custom/${encodeURIComponent(term)}`); closeOverlay(); }
       return;
     }
     const slugEl = e.target.closest('[data-slug]');
@@ -274,6 +281,90 @@ function renderBody(query) {
   // height has changed. ResizeObserver also fires here, but calling
   // explicitly avoids a one-frame flash where the overlays lag.
   overlayEl?._refreshScrollFade?.();
+  // Kick off the async News + Trending lookup for the current query.
+  if (q) scheduleContentSearch(q);
+}
+
+// ===== Stored content results (News + Trending) =========================
+
+function scheduleContentSearch(q) {
+  clearTimeout(contentSearchTimer);
+  contentSearchTimer = setTimeout(() => runContentSearch(q), 250);
+}
+
+async function runContentSearch(q) {
+  if (!bodyEl || !bodyEl.querySelector('#search-content')) return;
+  let news = [];
+  let trends = [];
+  try {
+    const [nr, tr] = await Promise.all([
+      fetch(`/api/news-search?q=${encodeURIComponent(q)}&limit=6`, { headers: { Accept: 'application/json' } })
+        .then(r => (r.ok ? r.json() : null)).catch(() => null),
+      fetch(`/api/trending-history?mode=search&q=${encodeURIComponent(q)}&limit=10`, { headers: { Accept: 'application/json' } })
+        .then(r => (r.ok ? r.json() : null)).catch(() => null),
+    ]);
+    news = (nr && nr.stories) || [];
+    trends = (tr && tr.items) || [];
+  } catch (_) { /* leave empty */ }
+
+  // Stale guard: bail if the user kept typing past this query.
+  if (!inputEl || inputEl.value.trim() !== q) return;
+  const live = bodyEl.querySelector('#search-content');
+  if (!live) return;
+
+  const blocks = [];
+  if (news.length) blocks.push(renderNewsResults(news));
+  if (trends.length) blocks.push(renderTrendResults(trends));
+  live.innerHTML = blocks.join('');
+}
+
+function renderNewsResults(stories) {
+  const rows = stories.map(s => {
+    const url = s.url || '';
+    const host = sourceHost(url);
+    const when = relTime(s.published_at);
+    const meta = [host, when].filter(Boolean).map(escapeHTML).join(' · ');
+    const topic = s.topic_name ? `<span class="search-news-topic">${escapeHTML(s.topic_name)}</span>` : '';
+    return `
+      <a class="search-news-item" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">
+        <span class="search-news-title">${escapeHTML(s.title || '')}</span>
+        <span class="search-news-meta">${meta}${topic ? ` · ${topic}` : ''}</span>
+      </a>`;
+  }).join('');
+  return `<div class="search-content-group"><div class="search-content-head">In the news</div><div class="search-content-body">${rows}</div></div>`;
+}
+
+function renderTrendResults(items) {
+  const chips = items.map(it => {
+    const term = it.query || '';
+    const cat = it.category ? `<span class="search-trend-cat">${escapeHTML(it.category)}</span>` : '';
+    return `<button type="button" class="search-trend-item" data-trend="${escapeAttr(term)}"><span class="search-trend-name">${escapeHTML(titleCase(term))}</span>${cat}</button>`;
+  }).join('');
+  return `<div class="search-content-group"><div class="search-content-head">Trending</div><div class="search-content-chips">${chips}</div></div>`;
+}
+
+function sourceHost(rawUrl) {
+  if (!rawUrl) return '';
+  try { return new URL(rawUrl).hostname.replace(/^www\./i, '').toLowerCase(); } catch { return ''; }
+}
+
+function relTime(iso) {
+  if (!iso) return '';
+  const t = new Date(iso).getTime();
+  if (Number.isNaN(t)) return '';
+  const m = Math.max(0, Math.round((Date.now() - t) / 60000));
+  if (m < 60) return (m || 1) + 'm';
+  const h = Math.round(m / 60);
+  if (h < 24) return h + 'h';
+  const d = Math.round(h / 24);
+  if (d < 7) return d + 'd';
+  const w = Math.round(d / 7);
+  if (w < 5) return w + 'w';
+  return new Date(iso).toLocaleDateString();
+}
+
+function titleCase(s) {
+  return String(s || '').toLowerCase().replace(/\b([a-z])/g, (m, c) => c.toUpperCase());
 }
 
 function renderSearchResults(q) {
@@ -312,6 +403,11 @@ function renderSearchResults(q) {
       </div>
   `;
   html += `</div>`;
+
+  // Stored News + Trending results — filled asynchronously by
+  // runContentSearch() after a short debounce so each keystroke doesn't
+  // fire a request. This is the woven-in "global history" surface.
+  html += `<div class="search-content" id="search-content"><div class="search-content-loading">Searching news &amp; trends…</div></div>`;
   return html;
 }
 

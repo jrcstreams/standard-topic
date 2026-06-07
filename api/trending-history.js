@@ -61,6 +61,27 @@ module.exports = async function handler(req, res) {
       return send(res, { geo, query, points });
     }
 
+    if (mode === 'search') {
+      // Keyword match of trending terms — feeds the Search modal's
+      // "Trending" results. Distinct terms, most-recently-seen first.
+      const term = (req.query.q || '').trim();
+      if (!term) return send(res, { geo, q: '', items: [] });
+      const items = await sql.query(
+        `SELECT query,
+                max(category) AS category,
+                max(snapshot_at) AS last_seen,
+                max(search_volume) AS peak_volume,
+                min(coalesce(started_at, snapshot_at)) AS started_at
+           FROM trending_items
+          WHERE geo = $1 AND query ILIKE '%' || $2 || '%'
+          GROUP BY query
+          ORDER BY last_seen DESC
+          LIMIT $3`,
+        [geo, term, limit]
+      );
+      return send(res, { geo, q: term, items });
+    }
+
     if (mode === 'range') {
       const from = (req.query.from || '').trim();
       const to = (req.query.to || '').trim();
