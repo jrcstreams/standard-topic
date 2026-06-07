@@ -106,9 +106,12 @@ module.exports = async function handler(req, res) {
 
   try {
     // 1. Cache (resilient to a missing sources column pre-migration).
-    let hit;
-    try { hit = await sql.query(`SELECT content, sources FROM ai_insights WHERE entity_type=$1 AND entity_key=$2 AND insight=$3 LIMIT 1`, [type, key, insight]); }
-    catch (_) { hit = await sql.query(`SELECT content FROM ai_insights WHERE entity_type=$1 AND entity_key=$2 AND insight=$3 LIMIT 1`, [type, key, insight]); }
+    const refresh = input.refresh === '1' || input.refresh === 1 || input.refresh === true;
+    let hit = [];
+    if (!refresh) {
+      try { hit = await sql.query(`SELECT content, sources FROM ai_insights WHERE entity_type=$1 AND entity_key=$2 AND insight=$3 LIMIT 1`, [type, key, insight]); }
+      catch (_) { hit = await sql.query(`SELECT content FROM ai_insights WHERE entity_type=$1 AND entity_key=$2 AND insight=$3 LIMIT 1`, [type, key, insight]); }
+    }
     if (hit.length) return res.status(200).json({ content: hit[0].content, sources: hit[0].sources || [], cached: true });
 
     // 2. Count-based daily cap.
@@ -119,8 +122,8 @@ module.exports = async function handler(req, res) {
 
     // 3. Build grounded prompt.
     let prompt; let maxTokens;
-    if (type === 'news') { prompt = newsPrompt(entity); maxTokens = 480; }
-    else { prompt = trendPrompt(entity.query, await trendContext(sql, entity.query)); maxTokens = 300; }
+    if (type === 'news') { prompt = newsPrompt(entity); maxTokens = 520; }
+    else { prompt = trendPrompt(entity.query, await trendContext(sql, entity.query)); maxTokens = 420; }
 
     // 4. Generate (grounded → fall back to ungrounded self-grounding).
     let out = null;
@@ -156,7 +159,9 @@ module.exports = async function handler(req, res) {
       [day, out.micros]
     );
 
-    return res.status(200).json({ content: out.text, sources, cached: false });
+    const body = { content: out.text, sources, cached: false };
+    if (input.debug) body._debug = { parts: out.parts, finish: out.finish, meta: out.meta };
+    return res.status(200).json(body);
   } catch (err) {
     return res.status(500).json({ error: String((err && err.message) || err) });
   }
