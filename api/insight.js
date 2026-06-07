@@ -28,9 +28,11 @@ const INSIGHTS = {
     summary: { max: 160, prompt: (e) => `Summarize this news story in 2 plain-English sentences — what happened and why it matters. No preamble, no markdown.\n\nHeadline: ${e.title}\n${e.description || ''}` },
     keypoints: { max: 200, prompt: (e) => `List the 3 most important points from this news story as terse bullet lines starting with "• " (each ≤ 12 words). No preamble.\n\nHeadline: ${e.title}\n${e.description || ''}` },
     background: { max: 200, prompt: (e) => `In 2-3 sentences, give the background and context behind this news story — the key players and what led up to it. No preamble, no markdown.\n\nHeadline: ${e.title}\n${e.description || ''}` },
+    timeline: { max: 220, prompt: (e) => `Give a short timeline of the key events leading to this story as bullet lines starting with "• " (each ≤ 14 words, earliest first). No preamble.\n\nHeadline: ${e.title}\n${e.description || ''}` },
   },
   trend: {
-    why: { max: 160, prompt: (e) => `In 2 plain-English sentences, explain what "${e.query}" refers to and why it is trending in the news right now. No preamble, no markdown.` },
+    explain: { max: 160, prompt: (e) => `In 2 plain-English sentences, explain what "${e.query}" is and why it is in the news right now. No preamble, no markdown.` },
+    why: { max: 160, prompt: (e) => `In 2 plain-English sentences, explain why "${e.query}" is trending right now — what just happened. No preamble, no markdown.` },
     background: { max: 200, prompt: (e) => `In 2-3 sentences, give background and context on "${e.query}". No preamble, no markdown.` },
   },
 };

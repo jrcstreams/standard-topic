@@ -80,6 +80,46 @@ function buildInsightPrompt(kind, title, desc, url) {
   return { label: meta.label, prompt: `${meta.ask}\n\n${story}` };
 }
 
+// Map a card's dropdown option → the cached insight type served by /api/insight.
+const NEWS_INLINE_MAP = { explain: 'summary', background: 'background', timeline: 'timeline', keypoints: 'keypoints' };
+const NEWS_INLINE_LABEL = { summary: 'Summary', background: 'Background', timeline: 'Timeline', keypoints: 'Key points' };
+
+// Escalate to the full chat (the original behavior) for going deeper.
+function openNewsChat(card, dataKey) {
+  const { label, prompt } = buildInsightPrompt(dataKey, card.dataset.title || '', card.dataset.desc || '', card.dataset.url || '');
+  window.dispatchEvent(new CustomEvent('open-prompt-modal', {
+    detail: { basePrompt: prompt, topicName: card.dataset.title || '', name: `AI Insight · ${label}`, count: 1 },
+  }));
+}
+
+// Show a cached/lazy AI insight inline under the card. Falls back to chat if
+// the AI layer is unavailable / the daily cap is hit.
+async function showNewsInsight(card, dataKey) {
+  const insight = NEWS_INLINE_MAP[dataKey];
+  if (!insight) { openNewsChat(card, dataKey); return; }
+  const label = NEWS_INLINE_LABEL[insight] || 'AI';
+  let region = card.querySelector('.ai-result');
+  if (!region) { region = document.createElement('div'); region.className = 'ai-result'; card.appendChild(region); }
+  region.innerHTML = `<div class="ai-result-head"><span class="ai-result-label">${escapeHTML(label)}</span><span class="ai-result-badge">AI</span></div><div class="ai-result-body ai-result-loading">Generating…</div>`;
+  try {
+    const res = await fetch('/api/insight', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'news', insight, url: card.dataset.url || '', title: card.dataset.title || '', description: card.dataset.desc || '' }),
+    });
+    const data = res.ok ? await res.json() : null;
+    if (!data || !data.content) { region.remove(); openNewsChat(card, dataKey); return; }
+    region.innerHTML = `
+      <div class="ai-result-head"><span class="ai-result-label">${escapeHTML(label)}</span><span class="ai-result-badge">AI</span><button type="button" class="ai-result-close" aria-label="Dismiss">✕</button></div>
+      <div class="ai-result-body">${escapeHTML(data.content)}</div>
+      <button type="button" class="ai-result-deeper">Open in chat ↗</button>`;
+    region.querySelector('.ai-result-close')?.addEventListener('click', () => region.remove());
+    region.querySelector('.ai-result-deeper')?.addEventListener('click', () => openNewsChat(card, dataKey));
+  } catch (_) {
+    region.remove();
+    openNewsChat(card, dataKey);
+  }
+}
+
 // Brief "Copied" confirmation on a share/copy button.
 function flashCopied(btn, msg) {
   const label = btn.querySelector('span');
@@ -111,14 +151,9 @@ export function wireNewsAI(root) {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const card = btn.closest('.news-card');
-      if (card) {
-        const { label, prompt } = buildInsightPrompt(
-          btn.dataset.insight, card.dataset.title || '', card.dataset.desc || '', card.dataset.url || '');
-        window.dispatchEvent(new CustomEvent('open-prompt-modal', {
-          detail: { basePrompt: prompt, topicName: card.dataset.title || '', name: `AI Insight · ${label}`, count: 1 },
-        }));
-      }
+      const dataKey = btn.dataset.insight;
       closeAll(null);
+      if (card) showNewsInsight(card, dataKey);
     });
   });
   // Share — native share sheet on mobile (Apple/Android), copy-link fallback.

@@ -151,7 +151,46 @@ function trendCardHTML(topic, idx) {
     </div>`;
 }
 
-// Wire trend-card dropdowns: click toggles its menu; option → prompt modal.
+// Map a trend dropdown option → the cached insight type served by /api/insight.
+const TREND_INLINE_MAP = { explain: 'explain', why: 'why', background: 'background' };
+const TREND_INLINE_LABEL = { explain: 'What it is', why: 'Why now', background: 'Background' };
+
+function openTrendChat(card, dataKey) {
+  const term = card.dataset.query || '';
+  const meta = TREND_INSIGHTS.find(i => i.key === dataKey) || TREND_INSIGHTS[0];
+  window.dispatchEvent(new CustomEvent('open-prompt-modal', {
+    detail: { basePrompt: meta.ask.replace(/\{term\}/g, term), topicName: term, name: `Trending · ${meta.label}`, count: 1 },
+  }));
+}
+
+async function showTrendInsight(card, dataKey) {
+  const insight = TREND_INLINE_MAP[dataKey];
+  if (!insight) { openTrendChat(card, dataKey); return; }
+  const label = TREND_INLINE_LABEL[insight] || 'AI';
+  const term = card.dataset.query || '';
+  let region = card.querySelector('.ai-result');
+  if (!region) { region = document.createElement('div'); region.className = 'ai-result'; card.appendChild(region); }
+  region.innerHTML = `<div class="ai-result-head"><span class="ai-result-label">${escapeHTML(label)}</span><span class="ai-result-badge">AI</span></div><div class="ai-result-body ai-result-loading">Generating…</div>`;
+  try {
+    const res = await fetch('/api/insight', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'trend', insight, query: term }),
+    });
+    const data = res.ok ? await res.json() : null;
+    if (!data || !data.content) { region.remove(); openTrendChat(card, dataKey); return; }
+    region.innerHTML = `
+      <div class="ai-result-head"><span class="ai-result-label">${escapeHTML(label)}</span><span class="ai-result-badge">AI</span><button type="button" class="ai-result-close" aria-label="Dismiss">✕</button></div>
+      <div class="ai-result-body">${escapeHTML(data.content)}</div>
+      <button type="button" class="ai-result-deeper">Open in chat ↗</button>`;
+    region.querySelector('.ai-result-close')?.addEventListener('click', () => region.remove());
+    region.querySelector('.ai-result-deeper')?.addEventListener('click', () => openTrendChat(card, dataKey));
+  } catch (_) {
+    region.remove();
+    openTrendChat(card, dataKey);
+  }
+}
+
+// Wire trend-card dropdowns: click toggles its menu; option → inline AI insight.
 function wireTrendCards(container) {
   const closeAll = (except) => container.querySelectorAll('.trend-card.is-open').forEach(c => {
     if (c !== except) { c.classList.remove('is-open'); c.querySelector('.trend-card-trigger')?.setAttribute('aria-expanded', 'false'); }
@@ -169,12 +208,9 @@ function wireTrendCards(container) {
     card.querySelectorAll('.trend-ai-opt').forEach(opt => {
       opt.addEventListener('click', (e) => {
         e.stopPropagation();
-        const term = card.dataset.query || '';
-        const meta = TREND_INSIGHTS.find(i => i.key === opt.dataset.insight) || TREND_INSIGHTS[0];
-        window.dispatchEvent(new CustomEvent('open-prompt-modal', {
-          detail: { basePrompt: meta.ask.replace(/\{term\}/g, term), topicName: term, name: `Trending · ${meta.label}`, count: 1 },
-        }));
+        const dataKey = opt.dataset.insight;
         closeAll(null);
+        showTrendInsight(card, dataKey);
       });
     });
   });
