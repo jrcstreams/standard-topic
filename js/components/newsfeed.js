@@ -10,6 +10,9 @@
 // newsCardHTML/wireNewsAI/listHTML are exported so the Search modal can reuse
 // the exact same card + AI-insight behavior for archive results.
 
+import { getModels } from '../utils/data.js';
+import { openModel, copyPrompt } from '../utils/ai-models.js';
+
 function escapeHTML(str) {
   const div = document.createElement('div');
   div.textContent = str ?? '';
@@ -101,7 +104,7 @@ export function renderBriefBody(content, sources, opts = {}) {
     const line = raw.trim();
     if (!line) { closeList(); continue; }
     if (/^#{1,4}\s+/.test(line)) { closeList(); html += `<div class="ai-result-sub">${fmt(line.replace(/^#{1,4}\s+/, ''))}</div>`; }
-    else if (/^[*\-•]\s+/.test(line)) { if (!inList) { html += '<ul class="ai-result-list">'; inList = true; } html += `<li>${fmt(line.replace(/^[*\-•]\s+/, ''))}</li>`; }
+    else if (/^[*\-•]\s+/.test(line)) { if (!inList) { html += '<ul class="ai-result-list">'; inList = true; } html += `<li>${fmt(line.replace(/^([*\-•]\s+)+/, ''))}</li>`; }
     else { closeList(); html += `<p>${fmt(line)}</p>`; }
   }
   closeList();
@@ -121,15 +124,54 @@ export function renderBriefBody(content, sources, opts = {}) {
   return `<div class="ai-result-body">${html}</div>${src}`;
 }
 
-// Escalate to the full chat for going deeper.
-function openNewsChat(card) {
+const CHEV_SM = '<svg class="ai-ins-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+const ARROW_SM = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>';
+
+// The prompt we hand off to an external model for a deeper dive on this story.
+function newsStoryPrompt(card) {
   const title = card.dataset.title || '';
   const desc = card.dataset.desc || '';
   const url = card.dataset.url || '';
-  const prompt = `Give me a thorough, accurate briefing on this news story — what happened, why it matters, background, a timeline, and the latest developments.\n\n"${title}"${desc ? `\n\n${desc}` : ''}${url ? `\n\nSource: ${url}` : ''}`;
+  return `Give me a thorough, accurate briefing on this news story — what happened, why it matters, background, a timeline, and the latest developments.\n\n"${title}"${desc ? `\n\n${desc}` : ''}${url ? `\n\nSource: ${url}` : ''}`;
+}
+
+// "Review Prompt" path → the full prompt modal.
+function openNewsChat(card) {
   window.dispatchEvent(new CustomEvent('open-prompt-modal', {
-    detail: { basePrompt: prompt, topicName: title, name: 'AI Insight · News', count: 1 },
+    detail: { basePrompt: newsStoryPrompt(card), topicName: card.dataset.title || '', name: 'AI Insight · News', count: 1 },
   }));
+}
+
+// Clean list of cited sources (no favicons) for the Sources accordion.
+function renderInsightSources(sources) {
+  const seen = new Set(); const rows = [];
+  for (const s of (sources || [])) {
+    const r = resolveSource(s);
+    const key = (r.label || '').toLowerCase();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    rows.push(`<a class="ai-ins-source-row" href="${escapeAttr(r.uri)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(r.title || r.label)}"><span class="ai-ins-source-name">${escapeHTML(r.label)}</span>${ARROW_SM}</a>`);
+  }
+  return rows.length ? `<div class="ai-ins-source-list">${rows.join('')}</div>` : '<p class="ai-ins-empty">No sources cited.</p>';
+}
+
+// Explore panel, step 1: pick a model.
+function exploreChooseModelHTML() {
+  const models = getModels() || [];
+  const rows = models.map(m =>
+    `<button type="button" class="ai-ins-model" data-model="${escapeAttr(m.id)}"><span class="ai-ins-model-name">${escapeHTML(m.name)}</span>${m.description ? `<span class="ai-ins-model-desc">${escapeHTML(m.description)}</span>` : ''}</button>`).join('');
+  return `<div class="ai-ins-substep" data-step="choose"><div class="ai-ins-subhead">Choose model</div><div class="ai-ins-model-list">${rows}</div></div>`;
+}
+// Explore panel, step 2: submit or review for the chosen model.
+function exploreSubmitHTML(model) {
+  return `<div class="ai-ins-substep" data-step="submit">
+    <button type="button" class="ai-ins-back">← Models</button>
+    <div class="ai-ins-subhead">Prompt submission · ${escapeHTML(model.name)}</div>
+    <div class="ai-ins-submit-row">
+      <button type="button" class="ai-ins-submitbtn ai-ins-submitbtn-primary" data-act="direct">Direct Submit</button>
+      <button type="button" class="ai-ins-submitbtn" data-act="review">Review Prompt</button>
+    </div>
+  </div>`;
 }
 
 // One combined, grounded AI brief inline under the card (click toggles). Falls
@@ -137,10 +179,19 @@ function openNewsChat(card) {
 async function showNewsBrief(card) {
   const existing = card.querySelector('.ai-result');
   if (existing) { existing.remove(); return; } // toggle off
-  const headHTML = `<div class="ai-result-head"><span class="ai-result-label">AI Insights</span><span class="ai-result-badge">AI</span><button type="button" class="ai-result-close" aria-label="Dismiss">✕</button></div>`;
-  const region = document.createElement('div'); region.className = 'ai-result'; card.appendChild(region);
+  const headHTML = `<div class="ai-ins-head">
+      <div class="ai-ins-head-main">
+        <span class="ai-ins-spark" aria-hidden="true">${AI_SPARK_SVG}</span>
+        <span class="ai-ins-titles">
+          <span class="ai-ins-title">AI Insights</span>
+          <span class="ai-ins-disclaimer">AI-generated summary — verify important details with the linked sources before relying on it.</span>
+        </span>
+      </div>
+      <button type="button" class="ai-result-close ai-ins-close" aria-label="Dismiss">✕</button>
+    </div>`;
+  const region = document.createElement('div'); region.className = 'ai-result ai-news-insight'; card.appendChild(region);
   region.innerHTML = `${headHTML}<div class="ai-result-body ai-result-loading">Generating…</div>`;
-  region.querySelector('.ai-result-close')?.addEventListener('click', () => region.remove());
+  region.querySelector('.ai-ins-close')?.addEventListener('click', () => region.remove());
   try {
     const res = await fetch('/api/insight', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -148,10 +199,68 @@ async function showNewsBrief(card) {
     });
     const data = res.ok ? await res.json() : null;
     if (!data || !data.content) { region.remove(); openNewsChat(card); return; }
-    region.innerHTML = `${headHTML}${renderBriefBody(data.content, data.sources)}<button type="button" class="ai-result-deeper">Explore further with AI ↗</button>`;
-    region.querySelector('.ai-result-close')?.addEventListener('click', () => region.remove());
-    region.querySelector('.ai-result-deeper')?.addEventListener('click', () => openNewsChat(card));
+    const sources = data.sources || [];
+    region.innerHTML = headHTML
+      + `<div class="ai-ins-body">${renderBriefBody(data.content, null)}</div>`
+      + `<div class="ai-ins-actions">
+           ${sources.length ? `<button type="button" class="ai-ins-actbtn" data-panel="sources" aria-expanded="false"><span>Sources</span>${CHEV_SM}</button>` : ''}
+           <button type="button" class="ai-ins-actbtn ai-ins-actbtn-primary" data-panel="explore" aria-expanded="false"><span>Explore this story further with AI</span>${CHEV_SM}</button>
+         </div>
+         ${sources.length ? `<div class="ai-ins-panel" data-body="sources">${renderInsightSources(sources)}</div>` : ''}
+         <div class="ai-ins-panel" data-body="explore"></div>`;
+    region.querySelector('.ai-ins-close')?.addEventListener('click', () => region.remove());
+    wireInsightPanel(region, card);
   } catch (_) { region.remove(); openNewsChat(card); }
+}
+
+// Wire the Sources / Explore accordions + the model → submit flow.
+function wireInsightPanel(region, card) {
+  const explorePanel = region.querySelector('[data-body="explore"]');
+  region.querySelectorAll('.ai-ins-actbtn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const name = btn.dataset.panel;
+      const body = region.querySelector(`[data-body="${name}"]`);
+      const willOpen = btn.getAttribute('aria-expanded') !== 'true';
+      // Close every panel first.
+      region.querySelectorAll('.ai-ins-actbtn').forEach(b => b.setAttribute('aria-expanded', 'false'));
+      region.querySelectorAll('.ai-ins-panel').forEach(p => p.classList.remove('is-open'));
+      if (willOpen) {
+        btn.setAttribute('aria-expanded', 'true');
+        if (name === 'explore' && !explorePanel.dataset.ready) {
+          explorePanel.innerHTML = exploreChooseModelHTML();
+          explorePanel.dataset.ready = '1';
+        }
+        body.classList.add('is-open');
+      }
+    });
+  });
+  // Explore flow: choose model → submit step → direct/review.
+  explorePanel.addEventListener('click', (e) => {
+    const modelBtn = e.target.closest('.ai-ins-model');
+    const back = e.target.closest('.ai-ins-back');
+    const submit = e.target.closest('.ai-ins-submitbtn');
+    if (modelBtn) {
+      e.stopPropagation();
+      const model = (getModels() || []).find(m => m.id === modelBtn.dataset.model);
+      if (!model) return;
+      explorePanel.innerHTML = exploreSubmitHTML(model);
+      explorePanel.dataset.model = model.id;
+      // Copy-on-expand so a paste-style model has the prompt ready and the
+      // later Direct Submit window.open stays inside the click gesture.
+      copyPrompt(newsStoryPrompt(card));
+    } else if (back) {
+      e.stopPropagation();
+      explorePanel.innerHTML = exploreChooseModelHTML();
+      delete explorePanel.dataset.model;
+    } else if (submit) {
+      e.stopPropagation();
+      const model = (getModels() || []).find(m => m.id === explorePanel.dataset.model);
+      if (!model) return;
+      if (submit.dataset.act === 'direct') openModel(model, newsStoryPrompt(card));
+      else openNewsChat(card);
+    }
+  });
 }
 
 // Brief "Copied" confirmation on a share/copy button.

@@ -51,11 +51,12 @@ export const TI_SECTION_META = {
   },
 };
 
-export function renderTIAccordion({ key, label, open, bodyHTML, blurb }) {
+export function renderTIAccordion({ key, label, open, bodyHTML, blurb, icon }) {
   const meta = TI_SECTION_META[key] || TI_SECTION_META.more;
   const openAttr = open ? ' open' : '';
-  // `blurb` overrides the section default; pass '' to hide it entirely.
+  // `blurb`/`icon` override the section defaults; pass blurb='' to hide it.
   const blurbText = blurb !== undefined ? blurb : meta.blurb;
+  const iconPaths = icon !== undefined ? icon : meta.icon;
   const blurbHTML = blurbText
     ? `<span class="ti-accordion-blurb">${escapeHTML(blurbText)}</span>`
     : '';
@@ -64,7 +65,7 @@ export function renderTIAccordion({ key, label, open, bodyHTML, blurb }) {
       <summary class="ti-accordion-summary">
         <span class="ti-accordion-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            ${meta.icon}
+            ${iconPaths}
           </svg>
         </span>
         <span class="ti-accordion-title">${escapeHTML(label)}</span>

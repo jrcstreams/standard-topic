@@ -6,7 +6,7 @@ import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './ut
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody } from './components/newsfeed.js?v=20260608-revamp3';
+import { renderNewsFeed, renderBriefBody } from './components/newsfeed.js?v=20260608-revamp6';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
@@ -357,8 +357,8 @@ function bodyTabsRow(opts = {}) {
   }
   tabs.push(`<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">
        <svg class="tab-pill-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"/></svg>
-       <span class="tab-pill-label-long">Topic Intelligence</span>
-       <span class="tab-pill-label-short">Topic Intel</span>
+       <span class="tab-pill-label-long">AI Intelligence</span>
+       <span class="tab-pill-label-short">AI Intel</span>
      </button>`);
   if (showWebSources) {
     tabs.push(`<button type="button" class="tab-pill tab-pill-websources" data-tab="websources">
@@ -1363,8 +1363,8 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     container.innerHTML = `
       <div class="topic-layout" id="topic-layout">
         ${bodyTabsRow({ showRelated: false, showWebSources: true })}
-        <section class="layout-section" id="section-shortcuts"></section>
         <section class="layout-section" id="section-websources"></section>
+        <section class="layout-section" id="section-shortcuts"></section>
         <section class="layout-section" id="section-newsfeed"></section>
         <section class="layout-section" id="section-related"></section>
       </div>
@@ -1604,6 +1604,15 @@ async function loadGroupOverview(el, topicArg, group, items, scopeLabel) {
   });
 }
 
+// Per-category icon + summary blurb for the Web Sources accordions.
+const WS_CAT_META = {
+  search:  { blurb: 'Search engines, encyclopedias, and reference.', icon: '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>' },
+  noai:    { blurb: 'Web search with AI features turned off.', icon: '<path d="M12 2 4 5v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V5z"/><line x1="4.5" y1="4" x2="19.5" y2="20"/>' },
+  social:  { blurb: 'Communities, threads, and real-time posts.', icon: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/>' },
+  media:   { blurb: 'Podcasts, video, and explainers.', icon: '<rect x="2" y="5" width="20" height="14" rx="2"/><polygon points="10 9 15 12 10 15"/>' },
+  writing: { blurb: 'Newsletters, essays, and long-form.', icon: '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/>' },
+};
+
 // Builds the Web Sources card: one boxed accordion per category (Search &
 // Reference, Social & Discussion, …), the search term substituted into each link.
 function buildWebSourcesCard(contentSearches, topicName, scopeLabel) {
@@ -1618,11 +1627,13 @@ function buildWebSourcesCard(contentSearches, topicName, scopeLabel) {
       : cat.key === '__all' ? contentSearches
       : contentSearches.filter(s => s.category === cat.key);
     if (!items.length) return '';
+    const m = WS_CAT_META[cat.key] || {};
     return renderTIAccordion({
       key: 'websources',
       label: cat.label || 'Web Sources',
       open: false,
-      blurb: '',
+      blurb: m.blurb || '',
+      icon: m.icon,
       bodyHTML: `<ul class="ti-item-list ti-item-list-grouped">${items.map(s => webSourceItem(s, topicName)).join('')}</ul>`,
     });
   }).join('');
@@ -1682,7 +1693,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   // Search results → "Search Intelligence" with the live search term as a
   // sublabel (updated in place as the user edits the input). Everywhere else
   // (home / topic) → "Intelligence" with the topic name sublabel.
-  const panelTitle = isCustom ? 'Search Intelligence' : (isHome ? 'AI Intelligence' : 'Topic Intelligence');
+  const panelTitle = isCustom ? 'AI Intelligence' : 'AI Intelligence';
   // Homepage Intelligence card gets a descriptive subtext. The section icon
   // is intentionally dropped — the accordions inside carry their own icons,
   // so a header icon is redundant. Topic pages keep the topic name as the
