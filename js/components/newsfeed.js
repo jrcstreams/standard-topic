@@ -83,13 +83,15 @@ export function resolveSource(s) {
     : (redirect ? '' : host);
   return { uri: s.uri, title: t, domain, label: domain || t || host };
 }
-export function sourceChip(r) {
-  const fav = r.domain
+export function sourceChip(r, opts = {}) {
+  // opts.noFavicons → text-only chip (used by the AI Intelligence overview).
+  const fav = opts.noFavicons ? '' : (r.domain
     ? `<img class="ai-source-favicon" src="https://www.google.com/s2/favicons?domain=${escapeAttr(r.domain)}&sz=64" alt="" width="14" height="14" loading="lazy" referrerpolicy="no-referrer">`
-    : SRC_GLOBE_SVG;
-  return `<a class="ai-source-chip" href="${escapeAttr(r.uri)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(r.title || r.label)}">${fav}<span>${escapeHTML(r.label)}</span></a>`;
+    : SRC_GLOBE_SVG);
+  const cls = opts.noFavicons ? 'ai-source-chip ai-source-chip--plain' : 'ai-source-chip';
+  return `<a class="${cls}" href="${escapeAttr(r.uri)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(r.title || r.label)}">${fav}<span>${escapeHTML(r.label)}</span></a>`;
 }
-export function renderBriefBody(content, sources) {
+export function renderBriefBody(content, sources, opts = {}) {
   // Escape, then render light markdown: **bold**, *bold* fallback.
   const fmt = (s) => escapeHTML(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   const lines = String(content || '').split('\n');
@@ -112,7 +114,7 @@ export function renderBriefBody(content, sources) {
       const key = (r.label || '').toLowerCase();
       if (!key || seen.has(key)) continue;
       seen.add(key);
-      chips.push(sourceChip(r));
+      chips.push(sourceChip(r, opts));
     }
     if (chips.length) src = `<div class="ai-result-sources"><span class="ai-result-sources-label">Sources</span>${chips.join('')}</div>`;
   }
@@ -300,14 +302,15 @@ function filterBarHTML(label) {
         ${NEWS_SEARCH_SVG}
         <input type="search" class="nf-search" placeholder="${escapeAttr(ph)}" aria-label="${escapeAttr(ph)}">
       </label>
-      <div class="nf-filter-row">
-        <label class="nf-field"><span class="nf-field-label">Time</span>
-          <select class="nf-time nf-select" aria-label="Time range">${TIME_OPTS.map(([v, l]) => `<option value="${v}">${l === 'All time' ? 'All' : l}</option>`).join('')}</select></label>
-        <label class="nf-field"><span class="nf-field-label">Sources</span>
-          <select class="nf-source nf-select" aria-label="Source"><option value="all">All</option></select></label>
-        <label class="nf-field"><span class="nf-field-label">Sort</span>
-          <select class="nf-sort nf-select" aria-label="Sort order"><option value="newest">Newest</option><option value="oldest">Oldest</option></select></label>
-      </div>
+      <label class="nf-field nf-sortfield">
+        <select class="nf-sort nf-select" aria-label="Sort and filter news">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="day">Past 24 hours</option>
+          <option value="week">Past week</option>
+          <option value="month">Past month</option>
+        </select>
+      </label>
     </div>`;
 }
 
@@ -337,8 +340,6 @@ function startFeed(ctx) {
   const { card, scrollWrap, foot, slug, label } = ctx;
   const els = {
     search: card.querySelector('.nf-search'),
-    time: card.querySelector('.nf-time'),
-    source: card.querySelector('.nf-source'),
     sort: card.querySelector('.nf-sort'),
   };
   const state = {
@@ -362,18 +363,13 @@ function startFeed(ctx) {
     let arr = state.stories.slice();
     const win = TIME_WINDOWS[state.time];
     if (win) { const cut = Date.now() - win; arr = arr.filter(s => itemPubMs(s) >= cut); }
-    if (state.source !== 'all') arr = arr.filter(s => itemHost(s) === state.source);
     arr.sort((a, b) => state.sort === 'oldest' ? itemPubMs(a) - itemPubMs(b) : itemPubMs(b) - itemPubMs(a));
     return arr;
   }
 
-  function refreshSources() {
-    const hosts = [...new Set(state.stories.map(itemHost).filter(Boolean))].sort();
-    const cur = state.source;
-    els.source.innerHTML = `<option value="all">All sources</option>` +
-      hosts.map(h => `<option value="${escapeAttr(h)}">${escapeHTML(h)}</option>`).join('');
-    if (hosts.includes(cur)) els.source.value = cur; else { els.source.value = 'all'; state.source = 'all'; }
-  }
+  // Source filtering was removed (curation > per-source filtering); no-op kept
+  // so existing call sites stay simple.
+  function refreshSources() {}
 
   function renderFoot() {
     if (state.noFeed) { foot.innerHTML = ''; return; }
@@ -460,10 +456,12 @@ function startFeed(ctx) {
     const q = els.search.value.trim();
     searchTimer = setTimeout(() => runSearch(q), 300);
   });
-  els.time.addEventListener('change', () => { state.time = els.time.value; renderList(); });
-  els.source.addEventListener('change', () => { state.source = els.source.value; renderList(); });
+  // One combined select: Newest / Oldest (all-time direction) or a time window.
   els.sort.addEventListener('change', () => {
-    state.sort = els.sort.value === 'oldest' ? 'oldest' : 'newest';
+    const v = els.sort.value;
+    if (v === 'oldest') { state.sort = 'oldest'; state.time = 'all'; }
+    else if (v === 'newest') { state.sort = 'newest'; state.time = 'all'; }
+    else { state.sort = 'newest'; state.time = v; } // day | week | month
     renderList();
   });
 

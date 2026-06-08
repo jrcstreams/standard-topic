@@ -6,7 +6,7 @@ import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './ut
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody } from './components/newsfeed.js?v=20260608-revamp2';
+import { renderNewsFeed, renderBriefBody } from './components/newsfeed.js?v=20260608-revamp3';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
@@ -1546,42 +1546,32 @@ async function loadGroupOverview(el, topicArg, group, items, scopeLabel) {
   const ago = timeAgoLabel(data.generatedAt);
   const sections = splitOverviewSections(data.content);
 
-  const multi = sections.length > 1;
   let html = `<div class="ti-overview-head">
     <span class="ai-result-label">${escapeHTML(label)} overview</span><span class="ai-result-badge">AI</span>
     ${ago ? `<span class="ti-overview-ago">${escapeHTML(ago)}</span>` : ''}
     <button type="button" class="ti-overview-run">Run full overview ↗</button>
   </div>`;
-  if (multi) {
-    // In-content nav: pill per section, tabs through the briefing one at a time.
-    html += `<div class="ti-ov-nav" role="tablist" aria-label="${escapeHTML(label)} sections">${
-      sections.map((sec, i) => `<button type="button" class="ti-ov-navpill${i === 0 ? ' is-active' : ''}" role="tab" aria-selected="${i === 0}" data-target="${i}">${escapeHTML(sec.name)}</button>`).join('')
-    }</div>`;
-  }
   if (sections.length) {
-    html += sections.map((sec, i) => `
-      <section class="ti-ov-section${i === 0 ? ' is-active' : ''}" data-i="${i}" role="tabpanel">
-        ${multi ? '' : `<h4 class="ti-ov-section-name">${escapeHTML(sec.name)}</h4>`}
-        ${renderBriefBody(sec.body, null)}
-        ${byName.has(sec.name.trim().toLowerCase()) ? `<button type="button" class="ai-result-deeper ti-ov-deeper" data-name="${escapeAttr(sec.name)}">Explore further with AI ↗</button>` : ''}
-      </section>`).join('');
+    // Each section is its own mini-accordion — the user clicks through the
+    // briefing (e.g. Beginner's Guide, Glossary) and expands what they want.
+    html += `<div class="ti-ov-minis">` + sections.map((sec, i) => `
+      <details class="ti-ov-mini"${i === 0 ? ' open' : ''}>
+        <summary class="ti-ov-mini-summary">
+          <span class="ti-ov-mini-name">${escapeHTML(sec.name)}</span>
+          <svg class="ti-ov-mini-chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="ti-ov-mini-body">
+          ${renderBriefBody(sec.body, null)}
+          ${byName.has(sec.name.trim().toLowerCase()) ? `<button type="button" class="ai-result-deeper ti-ov-deeper" data-name="${escapeAttr(sec.name)}">Explore further with AI ↗</button>` : ''}
+        </div>
+      </details>`).join('') + `</div>`;
   } else {
     // Legacy (pre-section) cached brief — single block until the cron migrates it.
     html += `<div class="ti-ov-section is-active">${renderBriefBody(data.content, null)}</div>`;
   }
-  if (data.sources && data.sources.length) html += renderBriefBody('', data.sources); // empty body div + sources block
+  if (data.sources && data.sources.length) html += renderBriefBody('', data.sources, { noFavicons: true }); // text-only source links
   el.innerHTML = html;
   el.dataset.state = 'done';
-
-  // Tab nav: switch the visible section.
-  const navPills = el.querySelectorAll('.ti-ov-navpill');
-  const ovSections = el.querySelectorAll('.ti-ov-section');
-  navPills.forEach((pill) => pill.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const t = pill.dataset.target;
-    navPills.forEach((x) => { const on = x === pill; x.classList.toggle('is-active', on); x.setAttribute('aria-selected', on); });
-    ovSections.forEach((s) => s.classList.toggle('is-active', s.dataset.i === t));
-  }));
 
   el.querySelector('.ti-overview-run')?.addEventListener('click', (e) => {
     e.stopPropagation();
