@@ -125,7 +125,7 @@ function trendCardHTML(topic, idx) {
   const dur = durationLabel(topic.startedAt);
   const title = titleCase(topic.query);
   // Line 2: the topic/category and how long it's been trending, sentence-case.
-  const meta = [cat, dur ? `trending ${dur}` : ''].filter(Boolean).join(' · ');
+  const meta = [cat, dur ? `Since ${dur} ago` : ''].filter(Boolean).join(' · ');
   return `
     <div class="trend-card" data-idx="${idx}" data-query="${escapeAttr(title)}">
       <button type="button" class="trend-card-trigger" aria-expanded="false" title="Quick insights on ${escapeAttr(title)}">
@@ -172,7 +172,7 @@ async function showTrendBrief(card) {
     });
     const data = res.ok ? await res.json() : null;
     if (!data || !data.content) { close(); openTrendChat(card); return; }
-    region.innerHTML = `${headHTML}${renderTrendExpansionBody(term, data)}<button type="button" class="ai-result-deeper">Open in chat ↗</button>`;
+    region.innerHTML = `${headHTML}${renderTrendExpansionBody(term, data)}<button type="button" class="ai-result-deeper">Explore further with AI ↗</button>`;
     region.querySelector('.ai-result-close')?.addEventListener('click', close);
     region.querySelector('.ai-result-deeper')?.addEventListener('click', () => openTrendChat(card));
   } catch (_) { close(); openTrendChat(card); }

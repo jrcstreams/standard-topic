@@ -146,7 +146,7 @@ async function showNewsBrief(card) {
     });
     const data = res.ok ? await res.json() : null;
     if (!data || !data.content) { region.remove(); openNewsChat(card); return; }
-    region.innerHTML = `${headHTML}${renderBriefBody(data.content, data.sources)}<button type="button" class="ai-result-deeper">Open in chat ↗</button>`;
+    region.innerHTML = `${headHTML}${renderBriefBody(data.content, data.sources)}<button type="button" class="ai-result-deeper">Explore further with AI ↗</button>`;
     region.querySelector('.ai-result-close')?.addEventListener('click', () => region.remove());
     region.querySelector('.ai-result-deeper')?.addEventListener('click', () => openNewsChat(card));
   } catch (_) { region.remove(); openNewsChat(card); }

@@ -1556,7 +1556,7 @@ async function loadGroupOverview(el, topicArg, group, items, scopeLabel) {
       <section class="ti-ov-section" data-i="${i}">
         <h4 class="ti-ov-section-name">${escapeHTML(sec.name)}</h4>
         ${renderBriefBody(sec.body, null)}
-        ${byName.has(sec.name.trim().toLowerCase()) ? `<button type="button" class="ai-result-deeper ti-ov-deeper" data-name="${escapeAttr(sec.name)}">Explore in chat ↗</button>` : ''}
+        ${byName.has(sec.name.trim().toLowerCase()) ? `<button type="button" class="ai-result-deeper ti-ov-deeper" data-name="${escapeAttr(sec.name)}">Explore further with AI ↗</button>` : ''}
       </section>`).join('');
   } else {
     // Legacy (pre-section) cached brief — single block until the cron migrates it.
@@ -1624,7 +1624,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   // Search results → "Search Intelligence" with the live search term as a
   // sublabel (updated in place as the user edits the input). Everywhere else
   // (home / topic) → "Intelligence" with the topic name sublabel.
-  const panelTitle = isCustom ? 'Search Intelligence' : (isHome ? 'Intelligence' : 'Topic Intelligence');
+  const panelTitle = isCustom ? 'Search Intelligence' : (isHome ? 'AI Intelligence' : 'Topic Intelligence');
   // Homepage Intelligence card gets a descriptive subtext. The section icon
   // is intentionally dropped — the accordions inside carry their own icons,
   // so a header icon is redundant. Topic pages keep the topic name as the
@@ -1634,7 +1634,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   const panelSubtitleHTML = (isCustom && topicName)
     ? `<p class="sidebar-card-subtitle ti-topic-sublabel" data-role="search-term-sub">${escapeHTML(topicName)}</p>`
     : isHomeIntel
-      ? `<p class="sidebar-card-subtitle section-card-sub">Web sources and AI knowledge shortcuts</p>`
+      ? `<p class="sidebar-card-subtitle section-card-sub">AI-powered knowledge shortcuts</p>`
       : (!isHome && !isCustom && topicName)
         ? `<p class="sidebar-card-subtitle ti-topic-sublabel">${escapeHTML(topicName)}</p>`
         : '';
