@@ -25,6 +25,17 @@ function relTime(iso) {
   return `${Math.round(h / 24)} d ago`;
 }
 function hostOf(u) { try { return new URL(u).hostname.replace(/^www\./i, ''); } catch { return ''; } }
+// Bring an accordion's header to the top of the scrollable body so the content
+// that just expanded starts where the reader is looking (with a small offset).
+function scrollHeaderToTop(el) {
+  const body = panelEl && panelEl.querySelector('.im-body');
+  if (!body || !el) return;
+  // Let the expand layout settle first, then scroll the header near the top.
+  requestAnimationFrame(() => {
+    const delta = el.getBoundingClientRect().top - body.getBoundingClientRect().top - 10;
+    if (Math.abs(delta) > 4) body.scrollTo({ top: body.scrollTop + delta, behavior: 'smooth' });
+  });
+}
 
 const SPARK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>';
 const ARROW = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>';
@@ -222,6 +233,7 @@ function wireActions(ctx) {
         if (name === 'explore' && explorePanel && !explorePanel.dataset.ready) { explorePanel.innerHTML = exploreChooseHTML(); explorePanel.dataset.ready = '1'; }
         if (name === 'websources' && wsPanel && !wsPanel.dataset.ready) { wsPanel.innerHTML = webSourcesCategoriesHTML(); wsPanel.dataset.ready = '1'; }
         body && body.classList.add('is-open');
+        scrollHeaderToTop(btn);
       }
     });
   });
@@ -377,15 +389,23 @@ function splitSections(content) {
 }
 function renderOverview(d) {
   const lens = d.label || 'AI';
-  const sub = d.scopeTopic ? `<span>${esc(d.scopeTopic)}</span>` : '';
+  const topicLabel = d.scopeTopic || 'this topic';
   panelEl.innerHTML = `
-    ${headerHTML('AI Intelligence · ' + lens, lens, sub)}
+    ${brandHeaderHTML()}
     <div class="im-body">
-      <p class="im-disclaimer">AI-generated — verify important details with the linked sources.</p>
-      <div class="im-brief" id="im-brief"><div class="ai-result-body ai-result-loading">Loading ${esc(lens)} overview…</div></div>
-      ${actionsHTML(false)}
+      <section class="im-section im-article">
+        <div class="im-section-title">${esc(lens)}</div>
+        <h3 class="im-article-title">${esc(topicLabel)}</h3>
+      </section>
+      <section class="im-section im-brief-section">
+        <div class="im-section-title im-section-title--brief">${SPARK}<span>AI Brief</span></div>
+        <p class="im-disclaimer">The below is an AI-generated ${esc(lens)} overview of ${esc(topicLabel)}, compiled from current sources. Please verify important details with the linked sources.</p>
+        <div class="im-actions-slot" id="im-actions-slot"></div>
+        <hr class="im-rule">
+        <div class="im-brief im-brief-ov" id="im-brief"><div class="ai-result-body ai-result-loading">Loading ${esc(lens)} overview…</div></div>
+      </section>
     </div>`;
-  const prompt = `Give me a thorough "${lens}" overview of ${d.scopeTopic || 'this topic'} — be specific and current.`;
+  const prompt = `Give me a thorough "${lens}" overview of ${topicLabel} — be specific and current.`;
   (async () => {
     const briefEl = panelEl.querySelector('#im-brief');
     let sources = [];
@@ -395,20 +415,25 @@ function renderOverview(d) {
       if (panelEl.querySelector('#im-brief') !== briefEl) return;
       if (data && data.content) {
         sources = data.sources || [];
-        const ago = data.generatedAt ? relTime(data.generatedAt) : '';
         const sections = splitSections(data.content);
-        const sectionsHTML = sections.length
+        briefEl.innerHTML = sections.length
           ? sections.map((s, i) => `<details class="im-ovsec"${i === 0 ? ' open' : ''}><summary class="im-ovsec-sum"><span>${esc(s.name)}</span>${CHEV}</summary><div class="im-ovsec-body">${renderBriefBody(s.body, null)}</div></details>`).join('')
           : renderBriefBody(data.content, null);
-        briefEl.innerHTML = `${ago ? `<p class="im-updated">Updated ${esc(ago)}</p>` : ''}${sectionsHTML}`;
+        wireOvsecScroll();
       } else { briefEl.innerHTML = '<p class="im-empty">Overview is being generated — check back shortly.</p>'; }
     } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">Overview unavailable.</p>'; }
-    const body = panelEl.querySelector('.im-body');
-    if (body) {
-      body.querySelector('.im-actions')?.remove();
-      body.querySelectorAll('.im-acc').forEach(p => p.remove());
-      body.insertAdjacentHTML('beforeend', actionsHTML(sources.length > 0));
+    // Sources + Explore sit ABOVE the section list (in the AI Brief area).
+    const slot = panelEl.querySelector('#im-actions-slot');
+    if (slot) {
+      slot.innerHTML = actionsHTML(sources.length > 0);
       wireActions({ prompt, sources, onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, name: lens + ' overview', count: 1 } })) });
     }
   })();
+}
+// When a section accordion opens, bring its header to the top of the scroll
+// area so the just-revealed content starts where the eye is.
+function wireOvsecScroll() {
+  panelEl.querySelectorAll('.im-ovsec').forEach((det) => {
+    det.addEventListener('toggle', () => { if (det.open) scrollHeaderToTop(det.querySelector('.im-ovsec-sum')); });
+  });
 }
