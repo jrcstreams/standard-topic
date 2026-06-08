@@ -13291,13 +13291,11 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
 .trend-card-trigger:hover .trend-card-chev { color: #1f8f6b; }
 .trend-card.is-open .trend-card-chev { transform: rotate(180deg); color: #1f8f6b; }
 
-/* Trend card one-liner ("why it's trending"), shown on the collapsed front view;
-   clamps to 1 line collapsed, 2 lines when the card is open. */
+/* Trend card one-liner ("why it's trending"), shown in full on the front view. */
 .trend-card-summary {
-  display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
-  margin-top: 3px; font-size: 0.72rem; line-height: 1.35; color: var(--color-text-light, #5b6b86);
+  display: block; margin-top: 3px;
+  font-size: 0.72rem; line-height: 1.35; color: var(--color-text-light, #5b6b86);
 }
-.trend-card.is-open .trend-card-summary { -webkit-line-clamp: 2; }
 
 /* Expanded trend body: cited-sources bar + Web/AI Explore accordions + full brief. */
 .trend-exp-sources { display: flex; align-items: center; gap: 8px; margin: 4px 0 10px; min-width: 0; }

@@ -248,10 +248,12 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
 
   const normNow = (topics) => (topics || []).map(t => ({
     query: t.query, categories: t.categories || [], startedAt: t.startedAt,
+    summary: t.summary || null,
     _cat: (t.categories && t.categories[0]) || '',
   }));
   const normOver = (rows) => (rows || []).map(r => ({
     query: r.query, categories: r.category ? [r.category] : [], startedAt: r.started_at,
+    summary: r.summary || null,
     _cat: r.category || '',
   }));
   const catList = () => [...new Set(state.items.map(i => i._cat).filter(Boolean))].sort();
