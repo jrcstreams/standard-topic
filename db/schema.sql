@@ -116,3 +116,12 @@ CREATE INDEX IF NOT EXISTS news_embedding_idx
 
 -- Citation links for grounded insights (added later; endpoint tolerates absence).
 ALTER TABLE ai_insights ADD COLUMN IF NOT EXISTS sources JSONB;
+
+-- ai_usage extra accounting (added later) — split out grounded-call count and
+-- raw token volume so the admin AI Usage panel can show real run-rate, not just
+-- a lumped micros total. grounded drives the Google-Search grounding fee, which
+-- only kicks in past the daily free tier (GEMINI_GROUNDING_FREE, default 1500).
+ALTER TABLE ai_usage ADD COLUMN IF NOT EXISTS grounded INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE ai_usage ADD COLUMN IF NOT EXISTS searches INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE ai_usage ADD COLUMN IF NOT EXISTS in_tok   BIGINT  NOT NULL DEFAULT 0;
+ALTER TABLE ai_usage ADD COLUMN IF NOT EXISTS out_tok  BIGINT  NOT NULL DEFAULT 0;

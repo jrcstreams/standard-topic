@@ -11,8 +11,10 @@
 //   - Group overviews: home + every topic × non-empty AI lens group
 //     (discover/learn/analyze/topic-specific) without an overview.
 //   Refresh (stalest first, via generateInsight refresh flag):
-//   - discover/topic-specific overviews older than 24h, analyze older than
-//     72h (learn is evergreen — never refreshed),
+//   - discover/topic-specific overviews older than 72h, analyze older than
+//     168h/1wk (learn is evergreen — never refreshed). Windows are long on
+//     purpose: each refresh is a fresh grounded generation, and re-grounding
+//     slow-changing briefs is the main thing that burns Google-Search quota.
 //   - any lens row whose content lacks "## " sections (one-time migration of
 //     pre-overview prose briefs, learn included),
 //   - trend briefs still in the current US snapshot, older than 24h.
@@ -139,9 +141,9 @@ module.exports = async function handler(req, res) {
       const stale = await sql.query(
         `SELECT entity_type, entity_key, insight FROM ai_insights ai
           WHERE (entity_type='shortcut' AND insight IN ('discover','topic-specific')
-                 AND created_at < now() - interval '24 hours')
-             OR (entity_type='shortcut' AND insight='analyze'
                  AND created_at < now() - interval '72 hours')
+             OR (entity_type='shortcut' AND insight='analyze'
+                 AND created_at < now() - interval '168 hours')
              OR (entity_type='shortcut' AND insight IN ('discover','learn','analyze','topic-specific')
                  AND content NOT LIKE '%## %')
              OR (entity_type='trend' AND insight='brief'
