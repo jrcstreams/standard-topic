@@ -6,15 +6,16 @@ import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './ut
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody } from './components/newsfeed.js?v=20260608-revamp11';
+import { renderNewsFeed, renderBriefBody } from './components/newsfeed.js?v=20260608-revamp12';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
 import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260606-polish43';
 import { initPromptModal } from './components/prompt-modal.js?v=20260605-polish30';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260608-revamp2';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260608-revamp12';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260608-revamp9';
+import { initInsightModal } from './components/insight-modal.js';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260606-polish41';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260606-polish46';
@@ -32,6 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   preloadIcons(getAllShortcutIconKeys());
   initPromptModal();
   initTrendingDetailModal();
+  initInsightModal();
   initTrendingListModal();
   initDiscoverModal();
   initAllTopicsModal();

@@ -176,41 +176,13 @@ function exploreSubmitHTML(model) {
 
 // One combined, grounded AI brief inline under the card (click toggles). Falls
 // back to chat if the AI layer is unavailable / the daily cap is hit.
-async function showNewsBrief(card) {
-  const existing = card.querySelector('.ai-result');
-  if (existing) { existing.remove(); return; } // toggle off
-  const headHTML = `<div class="ai-ins-head">
-      <div class="ai-ins-head-main">
-        <span class="ai-ins-spark" aria-hidden="true">${AI_SPARK_SVG}</span>
-        <span class="ai-ins-titles">
-          <span class="ai-ins-title">AI Insights</span>
-          <span class="ai-ins-disclaimer">AI-generated summary — verify important details with the linked sources before relying on it.</span>
-        </span>
-      </div>
-      <button type="button" class="ai-result-close ai-ins-close" aria-label="Dismiss">✕</button>
-    </div>`;
-  const region = document.createElement('div'); region.className = 'ai-result ai-news-insight'; card.appendChild(region);
-  region.innerHTML = `${headHTML}<div class="ai-result-body ai-result-loading">Generating…</div>`;
-  region.querySelector('.ai-ins-close')?.addEventListener('click', () => region.remove());
-  try {
-    const res = await fetch('/api/insight', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'news', url: card.dataset.url || '', title: card.dataset.title || '', description: card.dataset.desc || '', date: card.dataset.date || '' }),
-    });
-    const data = res.ok ? await res.json() : null;
-    if (!data || !data.content) { region.remove(); openNewsChat(card); return; }
-    const sources = data.sources || [];
-    region.innerHTML = headHTML
-      + `<div class="ai-ins-body">${renderBriefBody(data.content, null)}</div>`
-      + `<div class="ai-ins-actions">
-           ${sources.length ? `<button type="button" class="ai-ins-actbtn" data-panel="sources" aria-expanded="false"><span>Sources</span>${CHEV_SM}</button>` : ''}
-           <button type="button" class="ai-ins-actbtn ai-ins-actbtn-primary" data-panel="explore" aria-expanded="false"><span>Explore this story further with AI</span>${CHEV_SM}</button>
-         </div>
-         ${sources.length ? `<div class="ai-ins-panel" data-body="sources">${renderInsightSources(sources)}</div>` : ''}
-         <div class="ai-ins-panel" data-body="explore"></div>`;
-    region.querySelector('.ai-ins-close')?.addEventListener('click', () => region.remove());
-    wireInsightPanel(region, card);
-  } catch (_) { region.remove(); openNewsChat(card); }
+// AI Insights now open in the unified insight modal.
+function showNewsBrief(card) {
+  window.dispatchEvent(new CustomEvent('open-insight-modal', { detail: {
+    type: 'news',
+    url: card.dataset.url || '', title: card.dataset.title || '',
+    description: card.dataset.desc || '', date: card.dataset.date || '',
+  } }));
 }
 
 // Wire the Sources / Explore accordions + the model → submit flow.

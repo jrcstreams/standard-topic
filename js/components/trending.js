@@ -127,7 +127,7 @@ function trendCardHTML(topic, idx) {
   // Line 2: the topic/category and how long it's been trending, sentence-case.
   const meta = [cat, dur ? `Since ${dur} ago` : ''].filter(Boolean).join(' · ');
   return `
-    <div class="trend-card" data-idx="${idx}" data-query="${escapeAttr(title)}">
+    <div class="trend-card" data-idx="${idx}" data-query="${escapeAttr(title)}" data-cat="${escapeAttr(cat)}" data-started="${escapeAttr(topic.startedAt || '')}">
       <button type="button" class="trend-card-trigger" aria-expanded="false" title="Quick insights on ${escapeAttr(title)}">
         <span class="trend-card-main">
           <span class="trend-card-head">
@@ -149,33 +149,14 @@ function openTrendChat(card) {
   }));
 }
 
-// One combined, grounded AI brief inline under the card (click toggles).
-async function showTrendBrief(card) {
-  const trigger = card.querySelector('.trend-card-trigger');
-  const setOpen = (open) => {
-    card.classList.toggle('is-open', open);
-    trigger?.setAttribute('aria-expanded', open ? 'true' : 'false');
-  };
-  const existing = card.querySelector('.ai-result');
-  if (existing) { existing.remove(); setOpen(false); return; } // toggle off
-  const term = card.dataset.query || '';
-  const headHTML = `<div class="ai-result-head"><span class="ai-result-label">What it is</span><span class="ai-result-badge">AI</span><button type="button" class="ai-result-close" aria-label="Dismiss">✕</button></div>`;
-  const region = document.createElement('div'); region.className = 'ai-result'; card.appendChild(region);
-  setOpen(true);
-  region.innerHTML = `${headHTML}<div class="ai-result-body ai-result-loading">Generating…</div>`;
-  const close = () => { region.remove(); setOpen(false); };
-  region.querySelector('.ai-result-close')?.addEventListener('click', close);
-  try {
-    const res = await fetch('/api/insight', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'trend', query: term }),
-    });
-    const data = res.ok ? await res.json() : null;
-    if (!data || !data.content) { close(); openTrendChat(card); return; }
-    region.innerHTML = `${headHTML}${renderTrendExpansionBody(term, data)}<button type="button" class="ai-result-deeper">Explore further with AI ↗</button>`;
-    region.querySelector('.ai-result-close')?.addEventListener('click', close);
-    region.querySelector('.ai-result-deeper')?.addEventListener('click', () => openTrendChat(card));
-  } catch (_) { close(); openTrendChat(card); }
+// Trend AI brief now opens in the unified insight modal.
+function showTrendBrief(card) {
+  window.dispatchEvent(new CustomEvent('open-insight-modal', { detail: {
+    type: 'trend',
+    query: card.dataset.query || '',
+    category: card.dataset.cat || '',
+    startedAt: card.dataset.started || '',
+  } }));
 }
 
 // Clicking a trend card opens its single combined AI brief.
