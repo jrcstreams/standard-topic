@@ -32,6 +32,14 @@ const topicsData = require('../../data/topics.json');
 const NEWS_PER_RUN = 10;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+let invalidateByTag;
+try {
+  // Lazy import so module load doesn't crash where @vercel/functions is absent.
+  ({ invalidateByTag } = require('@vercel/functions'));
+} catch (e) {
+  invalidateByTag = null;
+}
+
 // Every (scope, group) that should have an overview: home + each topic, AI
 // lens groups only, skipping groups with no shortcuts on that page.
 function overviewCandidates() {
@@ -205,6 +213,13 @@ module.exports = async function handler(req, res) {
         budget--;
         await sleep(600);
       }
+    }
+
+    // New/refreshed trend briefs mean new one-liners — bust the trending list
+    // cache so the homepage/modal pick them up without waiting out the 1h edge
+    // cache. (refreshed also covers overview refreshes; a stray bust is cheap.)
+    if ((trends > 0 || refreshed > 0) && invalidateByTag) {
+      try { await invalidateByTag('trending-all'); } catch (_) {}
     }
 
     // Remaining counts (for visibility).
