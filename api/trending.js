@@ -17,14 +17,17 @@ const { getSql } = require('../lib/db');
 const GEOS = ['US'];
 const LIMIT = 20;
 const SERP_BASE = 'https://serpapi.com/search.json';
-// Past-hours window for the live list. SerpAPI's google_trends_trending_now
-// defaults to 24h and keeps trends flagged active for that whole window, which
-// floats day-old high-volume trends to #1 long after Google's own "Trending
-// now" view has aged them off. 4h tracks that near-real-time view. (The 2h
-// history cron deliberately stays on the wider default for a richer series.)
-const TREND_HOURS = 4;
-// 1h fresh, serve stale up to a day while revalidating in the background.
-const CACHE_HEADER = 'public, s-maxage=3600, stale-while-revalidate=86400';
+// Past-hours window for the live list. This maps to Google's own "Past N
+// hours" Trending-now filter (4/24/48/168). Google's trends.google.com/trending
+// page defaults to "Past 24 hours" and ranks by its trending score — so 24
+// gives us the SAME set and order Google shows (a 17h-old trend that's still
+// Active can legitimately sit at #1). A narrower window would drop trends
+// Google still features, so we mirror Google's default.
+const TREND_HOURS = 24;
+// Keep the homepage list close to Google's periodically-updated page: 30 min
+// fresh, then serve stale for at most 2h while a background refresh runs (so
+// the list never drifts to a day-old snapshot). SerpAPI is still hit ~≤2×/hr.
+const CACHE_HEADER = 'public, s-maxage=1800, stale-while-revalidate=7200';
 
 module.exports = async function handler(req, res) {
   const apiKey = process.env.SERPAPI_API_KEY;
