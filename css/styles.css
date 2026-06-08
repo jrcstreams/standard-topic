@@ -13503,21 +13503,30 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 }
 .trend-mode-btn.is-active { background: var(--color-bg); color: var(--color-primary); box-shadow: 0 1px 2px rgba(0,0,0,0.06); font-weight: var(--font-weight-semibold); }
 .trend-mode-btn:hover:not(.is-active) { color: var(--color-text); }
-.trend-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 4px 0 12px; }
-.trend-cat-pills { display: flex; flex-wrap: wrap; gap: 6px; flex: 1 1 auto; min-width: 0; }
-.trend-cat-pill {
+/* Trending controls: labeled select dropdowns under the separator. */
+.trend-controls { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin: 6px 0 14px; }
+.trend-select-field { display: inline-flex; flex-direction: column; gap: 3px; }
+.trend-select-label {
+  font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.05em;
+  font-weight: var(--font-weight-semibold); color: var(--color-text-muted); padding-left: 2px;
+}
+.trend-select {
+  padding: 7px 30px 7px 11px; border: 1px solid var(--color-border); border-radius: 9px;
+  font-size: 0.82rem; font-family: var(--font-family); color: var(--color-text);
+  background-color: var(--color-bg); cursor: pointer; appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b94a5' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 9px center; background-size: 13px;
+}
+.trend-select:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 14%, transparent); }
+/* Discreet, centered "View more" pill that opens the full trending modal. */
+.trend-viewmore-row { display: flex; justify-content: center; margin-top: 14px; }
+.trend-viewmore {
   border: 1px solid var(--color-border); background: var(--color-bg);
-  cursor: pointer; padding: 4px 11px; border-radius: 999px;
-  font-size: 0.76rem; font-family: var(--font-family); color: var(--color-text-muted);
-  transition: border-color .12s, background .12s, color .12s;
+  padding: 8px 22px; border-radius: 999px; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: var(--font-weight-semibold); color: var(--color-text-light);
+  transition: border-color .14s, color .14s, background .14s;
 }
-.trend-cat-pill:hover { border-color: var(--color-primary); color: var(--color-text); }
-.trend-cat-pill.is-active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; font-weight: var(--font-weight-medium); }
-.trend-sort {
-  padding: 6px 10px; border: 1px solid var(--color-border); border-radius: 8px;
-  font-size: 0.78rem; font-family: var(--font-family); color: var(--color-text); background: var(--color-bg); cursor: pointer;
-}
-.trend-sort:focus { outline: none; border-color: var(--color-primary); }
+.trend-viewmore:hover { border-color: var(--color-primary); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 5%, #fff); }
 
 /* ===== Inline AI insight result — news + trend cards (Phase 4) =========== */
 .ai-result {
