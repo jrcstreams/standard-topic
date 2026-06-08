@@ -65,6 +65,15 @@ module.exports = async function handler(req, res) {
     catch (_) { return false; }
   };
 
+  // Wall-clock guard: grounded generations run ~10s each, so a large batch
+  // would blow Vercel's 300s maxDuration and die with FUNCTION_INVOCATION_
+  // TIMEOUT (losing the tail + the remaining-counts response). Stop issuing
+  // new generations past TIME_BUDGET_MS and return cleanly; the next run (or
+  // the hourly cron) picks up where this left off.
+  const startedAt = Date.now();
+  const TIME_BUDGET_MS = 230 * 1000;
+  const timeLeft = () => Date.now() - startedAt < TIME_BUDGET_MS;
+
   try {
     let trends = 0; let news = 0; let overviews = 0; let refreshed = 0;
     let budget = total;
@@ -81,7 +90,7 @@ module.exports = async function handler(req, res) {
           ORDER BY ti.rank
           LIMIT $1`, [Math.min(budget, 40)]);
       for (const r of rows) {
-        if (budget <= 0) break;
+        if (budget <= 0 || !timeLeft()) break;
         if (await call({ type: 'trend', query: r.query })) trends++;
         budget--;
         await sleep(600);
@@ -101,7 +110,7 @@ module.exports = async function handler(req, res) {
           ORDER BY coalesce(published_at, fetched_at) DESC
           LIMIT $1`, [Math.min(budget, NEWS_PER_RUN)]);
       for (const r of rows) {
-        if (budget <= 0) break;
+        if (budget <= 0 || !timeLeft()) break;
         if (await call({ type: 'news', url: r.url, title: r.title, description: r.description || '', date: r.date || '' })) news++;
         budget--;
         await sleep(600);
@@ -114,7 +123,7 @@ module.exports = async function handler(req, res) {
       const existing = await sql.query(`SELECT entity_key, insight FROM ai_insights WHERE entity_type='shortcut'`);
       const have = new Set(existing.map((r) => `${r.entity_key}|${r.insight}`));
       for (const c of candidates) {
-        if (budget <= 0) break;
+        if (budget <= 0 || !timeLeft()) break;
         if (have.has(`${c.topic.toLowerCase()}|${c.group}`)) continue;
         if (await call({ type: 'shortcut', topic: c.topic, group: c.group })) overviews++;
         budget--;
@@ -144,7 +153,7 @@ module.exports = async function handler(req, res) {
           ORDER BY created_at ASC
           LIMIT $1`, [budget]);
       for (const r of stale) {
-        if (budget <= 0) break;
+        if (budget <= 0 || !timeLeft()) break;
         let payload = null;
         if (r.entity_type === 'trend') payload = { type: 'trend', query: r.entity_key, refresh: 1 };
         else {
