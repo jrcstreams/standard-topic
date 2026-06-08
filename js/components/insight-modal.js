@@ -29,6 +29,9 @@ function hostOf(u) { try { return new URL(u).hostname.replace(/^www\./i, ''); } 
 const SPARK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>';
 const ARROW = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>';
 const CHEV = '<svg class="im-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+// Filled mark for the brand lockup — reads as a logo at larger size, vs the
+// thin outline SPARK used for small inline labels.
+const LOGO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.6l1.62 6.32a3 3 0 0 0 2.46 2.46L22.4 12l-6.32 1.62a3 3 0 0 0-2.46 2.46L12 22.4l-1.62-6.32a3 3 0 0 0-2.46-2.46L1.6 12l6.32-1.62a3 3 0 0 0 2.46-2.46z"/></svg>';
 
 export function initInsightModal() {
   overlayEl = document.createElement('div');
@@ -91,6 +94,21 @@ function headerHTML(eyebrow, title, subHTML) {
     ${showBack ? `<span class="im-eyebrow-wrap"><span class="im-spark">${SPARK}</span><span class="im-eyebrow">${esc(eyebrow)}</span></span>` : ''}
     <h3 class="im-title">${esc(title)}</h3>
     ${subHTML ? `<div class="im-sub">${subHTML}</div>` : ''}
+  </div>`;
+}
+
+// Brand-only header: the "AI Insights" lockup is the card title (the article
+// title moves into the Article Overview section below). Keeps the back action
+// when stacked.
+function brandHeaderHTML() {
+  const showBack = stack.length > 0;
+  const backLabel = stack.length ? stack[stack.length - 1].label : '';
+  return `<div class="im-head im-head--brand">
+    <span class="im-brandlock"><span class="im-logo">${LOGO}</span><span class="im-brandname">AI Insights</span></span>
+    <span class="im-head-actions">
+      ${showBack ? `<button type="button" class="im-back" id="im-back"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>${esc(backLabel)}</button>` : ''}
+      <button type="button" class="im-close" id="im-close" aria-label="Close"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg></button>
+    </span>
   </div>`;
 }
 
@@ -201,17 +219,27 @@ function newsPromptFor(d) {
 function renderNews(d) {
   const host = hostOf(d.url) || (d.source_name || '');
   const when = relTime(d.date);
-  const sub = [
-    host ? `<a class="im-source-link" href="${escAttr(d.url)}" target="_blank" rel="noopener noreferrer">${esc(host)} ${ARROW}</a>` : '',
+  const meta = [
+    host ? `<a class="im-pub" href="${escAttr(d.url)}" target="_blank" rel="noopener noreferrer">${esc(host)} ${ARROW}</a>` : '',
     when ? `<span class="im-when">${esc(when)}</span>` : '',
   ].filter(Boolean).join('<span class="im-dot">·</span>');
   panelEl.innerHTML = `
-    ${headerHTML('AI Insights', d.title || 'News story', sub)}
+    ${brandHeaderHTML()}
     <div class="im-body">
-      <p class="im-disclaimer">AI-generated summary — verify important details with the linked sources.</p>
-      ${d.description ? `<div class="im-rss"><span class="im-rss-label">From the source</span><p>${esc(d.description)}</p></div>` : ''}
-      ${briefSkeleton()}
-      ${actionsHTML(false)}
+      <section class="im-section im-article">
+        <div class="im-section-title">Article Overview</div>
+        <h3 class="im-article-title">${esc(d.title || 'News story')}</h3>
+        ${meta ? `<div class="im-article-meta">${meta}</div>` : ''}
+        ${d.description ? `<p class="im-article-summary">${esc(d.description)}</p>` : ''}
+        ${d.url ? `<a class="im-orig-link" href="${escAttr(d.url)}" target="_blank" rel="noopener noreferrer">View original article ${ARROW}</a>` : ''}
+      </section>
+      <section class="im-section im-brief-section">
+        <div class="im-section-title im-section-title--brief">${SPARK}<span>AI Brief</span></div>
+        <p class="im-disclaimer">The below is an AI-generated summary of the topic at hand from this article. Please verify important details with the linked sources.</p>
+        <div class="im-actions-slot" id="im-actions-slot"></div>
+        <hr class="im-rule">
+        ${briefSkeleton()}
+      </section>
     </div>`;
   const prompt = newsPromptFor(d);
   (async () => {
@@ -223,15 +251,15 @@ function renderNews(d) {
       if (panelEl.querySelector('#im-brief') !== briefEl) return;
       if (data && data.content) {
         sources = data.sources || [];
-        briefEl.innerHTML = `<div class="im-brief-head">${SPARK}<span>AI Brief</span></div>${renderBriefBody(data.content, null)}`;
+        briefEl.innerHTML = renderBriefBody(data.content, null);
       } else { briefEl.innerHTML = '<p class="im-empty">AI brief unavailable right now.</p>'; }
     } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
-    // (Re)build the actions now that we know whether there are sources.
-    const body = panelEl.querySelector('.im-body');
-    if (body) {
-      body.querySelector('.im-actions')?.remove();
-      body.querySelectorAll('.im-acc').forEach(p => p.remove());
-      body.insertAdjacentHTML('beforeend', actionsHTML(sources.length > 0));
+    // Mount the actions (Sources + Explore) inside the AI Brief header area —
+    // below the disclaimer, above the brief content — now that we know whether
+    // there are sources to show.
+    const slot = panelEl.querySelector('#im-actions-slot');
+    if (slot) {
+      slot.innerHTML = actionsHTML(sources.length > 0);
       wireActions({ prompt, sources, onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, topicName: d.title || '', name: 'AI Insight · News', count: 1 } })) });
     }
   })();
