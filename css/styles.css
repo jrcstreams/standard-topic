@@ -5540,7 +5540,8 @@ body.app-mode .topic-layout {
     gap: 0;
     align-items: start;
   }
-  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts {
+  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts,
+  body.app-mode .topic-layout:not(.is-custom) > #section-websources {
     position: relative;
     margin-bottom: 1.8rem;
   }
@@ -6306,6 +6307,7 @@ body.app-mode .topic-layout {
   }
   body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts,
   body.app-mode .topic-layout:not(.is-custom) > #section-trending,
+  body.app-mode .topic-layout:not(.is-custom) > #section-websources,
   body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed,
   body.app-mode .topic-layout:not(.is-custom) > #section-related {
     display: none;
@@ -6313,6 +6315,7 @@ body.app-mode .topic-layout {
   body.app-mode.active-tab-newsfeed .topic-layout:not(.is-custom) > #section-newsfeed { display: flex; }
   body.app-mode.active-tab-trending .topic-layout:not(.is-custom) > #section-trending { display: flex; }
   body.app-mode.active-tab-shortcuts .topic-layout:not(.is-custom) > #section-shortcuts { display: flex; }
+  body.app-mode.active-tab-websources .topic-layout:not(.is-custom) > #section-websources { display: flex; }
   body.app-mode.active-tab-related   .topic-layout:not(.is-custom) > #section-related   { display: flex; }
 
   /* === Tabbed-nav hierarchy bump ============================

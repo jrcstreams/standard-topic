@@ -333,7 +333,7 @@ function renderLayout(route) {
 // fills the rest of the layout) and on custom pages (shortcuts-only
 // — nothing to switch between).
 function bodyTabsRow(opts = {}) {
-  const { showRelated = false, showTrending = false, showSearchTrends = false } = opts;
+  const { showRelated = false, showTrending = false, showSearchTrends = false, showWebSources = false } = opts;
   // Order: (Search & Trends) → News Feed → (Trending) → Intelligence → (Related).
   const tabs = [];
   if (showSearchTrends) {
@@ -360,6 +360,12 @@ function bodyTabsRow(opts = {}) {
        <span class="tab-pill-label-long">Topic Intelligence</span>
        <span class="tab-pill-label-short">Topic Intel</span>
      </button>`);
+  if (showWebSources) {
+    tabs.push(`<button type="button" class="tab-pill tab-pill-websources" data-tab="websources">
+       <span class="tab-pill-label-long">Web Sources</span>
+       <span class="tab-pill-label-short">Web Sources</span>
+     </button>`);
+  }
   if (showRelated) {
     tabs.push(`<button type="button" class="tab-pill tab-pill-related" data-tab="related">Related</button>`);
   }
@@ -394,7 +400,7 @@ function setupGlobalTabPillDelegation() {
     const tab = pill.dataset.tab;
     if (!tab) return;
     // Swap the body class for the visible-section CSS rules.
-    ['searchtrends', 'newsfeed', 'trending', 'shortcuts', 'related'].forEach(t =>
+    ['searchtrends', 'newsfeed', 'trending', 'shortcuts', 'websources', 'related'].forEach(t =>
       document.body.classList.remove(`active-tab-${t}`)
     );
     document.body.classList.add(`active-tab-${tab}`);
@@ -1356,8 +1362,9 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // Topic pages: Shortcuts + News Feed + Related Topics.
     container.innerHTML = `
       <div class="topic-layout" id="topic-layout">
-        ${bodyTabsRow({ showRelated: false })}
+        ${bodyTabsRow({ showRelated: false, showWebSources: true })}
         <section class="layout-section" id="section-shortcuts"></section>
+        <section class="layout-section" id="section-websources"></section>
         <section class="layout-section" id="section-newsfeed"></section>
         <section class="layout-section" id="section-related"></section>
       </div>
@@ -1366,11 +1373,13 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
 
   const trendingSection = container.querySelector('#section-trending');
   const shortcutsSection = container.querySelector('#section-shortcuts');
+  const websourcesSection = container.querySelector('#section-websources');
   const feedSection = container.querySelector('#section-newsfeed');
   const relatedSection = container.querySelector('#section-related');
 
   if (trendingSection) renderTrending(trendingSection);
   renderShortcutsSidebar(shortcutsSection, route, isHome, isCustom, customTerm);
+  if (websourcesSection && topic) renderWebSourcesSection(websourcesSection, topic);
   if (feedSection) {
     renderNewsFeed(feedSection, topic, isHome);
   }
@@ -1413,7 +1422,7 @@ function renderRelatedSection(container, topic) {
   `;
 }
 
-const TAB_PANELS = ['newsfeed', 'trending', 'shortcuts', 'related'];
+const TAB_PANELS = ['newsfeed', 'trending', 'shortcuts', 'websources', 'related'];
 
 function setActiveTabPanel(tabId) {
   TAB_PANELS.forEach(t => document.body.classList.remove(`active-tab-${t}`));
@@ -1595,6 +1604,48 @@ async function loadGroupOverview(el, topicArg, group, items, scopeLabel) {
   });
 }
 
+// Builds the Web Sources card: one boxed accordion per category (Search &
+// Reference, Social & Discussion, …), the search term substituted into each link.
+function buildWebSourcesCard(contentSearches, topicName, scopeLabel) {
+  if (!contentSearches || !contentSearches.length) return '';
+  const categories = getExternalSearchCategories();
+  const order = categories.length ? categories.slice() : [{ key: '__all', label: 'Web Sources' }];
+  const known = new Set(order.map(c => c.key));
+  const leftovers = contentSearches.filter(s => !known.has(s.category));
+  if (leftovers.length) order.push({ key: '__other', label: 'Other' });
+  const accordions = order.map(cat => {
+    const items = cat.key === '__other' ? leftovers
+      : cat.key === '__all' ? contentSearches
+      : contentSearches.filter(s => s.category === cat.key);
+    if (!items.length) return '';
+    return renderTIAccordion({
+      key: 'websources',
+      label: cat.label || 'Web Sources',
+      open: false,
+      blurb: '',
+      bodyHTML: `<ul class="ti-item-list ti-item-list-grouped">${items.map(s => webSourceItem(s, topicName)).join('')}</ul>`,
+    });
+  }).join('');
+  return `
+    <div class="sidebar-card section-card websources-section">
+      <div class="sidebar-card-header section-card-head">
+        <div class="sidebar-card-heading">
+          <h3 class="sidebar-card-title section-card-title"><span>Web Sources</span></h3>
+          <p class="sidebar-card-subtitle section-card-sub">Search platforms and primary sources for ${scopeLabel}.</p>
+        </div>
+      </div>
+      <div class="ti-accordions ti-accordions-websources">${accordions}</div>
+    </div>`;
+}
+
+// Renders the standalone Web Sources section/tab for a topic page.
+function renderWebSourcesSection(container, topic) {
+  if (!container) return;
+  const topicName = (topic && topic.name) || '';
+  const contentSearches = topicName ? getExternalSearches() : [];
+  container.innerHTML = buildWebSourcesCard(contentSearches, topicName, escapeHTML(topicName || 'this topic'));
+}
+
 function renderShortcutsSidebar(container, route, isHome, isCustom = false, customTerm = '') {
   const topic = isHome ? getTopicBySlug('home') : (isCustom ? null : getTopicBySlug(route.slug));
   const topicName = isCustom ? customTerm : (isHome ? '' : topic?.name || '');
@@ -1701,43 +1752,12 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   // others closed so the panel reads as a tidy stack of choices.
   html += `<div class="ti-accordions">`;
 
-  // Web Sources now live in their OWN section (built below, appended after this
-  // AI Intelligence card) — each category gets its own boxed accordion. The
-  // AI Intelligence panel keeps only the AI lens groups (callout-line styled).
-  let webSourcesCardHTML = '';
-  if (contentSearches.length > 0) {
-    const categories = getExternalSearchCategories();
-    const order = categories.length ? categories.slice() : [{ key: '__all', label: 'Web Sources' }];
-    const known = new Set(order.map(c => c.key));
-    const leftovers = contentSearches.filter(s => !known.has(s.category));
-    if (leftovers.length) order.push({ key: '__other', label: 'Other' });
-
-    const accordions = order.map(cat => {
-      const items = cat.key === '__other' ? leftovers
-        : cat.key === '__all' ? contentSearches
-        : contentSearches.filter(s => s.category === cat.key);
-      if (!items.length) return '';
-      return renderTIAccordion({
-        key: 'websources',
-        label: cat.label || 'Web Sources',
-        open: false,
-        blurb: '',
-        bodyHTML: `<ul class="ti-item-list ti-item-list-grouped">${items.map(s => webSourceItem(s, topicName)).join('')}</ul>`,
-      });
-    }).join('');
-
-    const wsScope = isHome ? 'any topic' : (isCustom ? 'your search' : escapeHTML(topicName || 'this topic'));
-    webSourcesCardHTML = `
-      <div class="sidebar-card section-card websources-section">
-        <div class="sidebar-card-header section-card-head">
-          <div class="sidebar-card-heading">
-            <h3 class="sidebar-card-title section-card-title"><span>Web Sources</span></h3>
-            <p class="sidebar-card-subtitle section-card-sub">Search platforms and primary sources for ${wsScope}.</p>
-          </div>
-        </div>
-        <div class="ti-accordions ti-accordions-websources">${accordions}</div>
-      </div>`;
-  }
+  // Web Sources live in their OWN section. On topic pages that's a dedicated
+  // tab/section (#section-websources, rendered separately). Custom-search pages
+  // have no tabs, so there we append the card inline below the AI lenses.
+  const webSourcesCardHTML = (isCustom && contentSearches.length)
+    ? buildWebSourcesCard(contentSearches, topicName, 'your search')
+    : '';
 
   if (all.length === 0) {
     html += `<p class="sidebar-empty">No shortcuts yet.</p>`;

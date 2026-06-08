@@ -45,6 +45,7 @@ function parseRoute(hash) {
 
   if (segments[0] === 'topic' && segments[1]) {
     const tab = segments[2] === 'shortcuts' ? 'shortcuts'
+              : segments[2] === 'websources' ? 'websources'
               : segments[2] === 'related' ? 'related'
               : 'newsfeed';
     return { type: 'topic', slug: segments[1], tab };
