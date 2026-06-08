@@ -13,9 +13,9 @@ import { renderPromptGenerator } from './components/prompt-generator.js';
 import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260606-polish43';
 import { initPromptModal } from './components/prompt-modal.js?v=20260605-polish30';
 import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260608-revamp13';
-import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
+import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260608-revamp9';
-import { initInsightModal } from './components/insight-modal.js';
+import { initInsightModal } from './components/insight-modal.js?v=20260608-revamp14';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260606-polish41';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260606-polish46';
@@ -1794,18 +1794,22 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     groupOrder.forEach(g => {
       const items = groups[g.key];
       if (!items || items.length === 0) return;
-      html += renderTIAccordion({
-        key: g.key,
-        label: g.label,
-        open: false,
-        bodyHTML: hasOverview(g.key)
-          ? `<div class="ti-overview" data-group="${escapeAttr(g.key)}"></div>`
-          : `
-          <ul class="ti-item-list ti-item-list-shortcuts" data-group="${escapeAttr(g.key)}">
-            ${items.map(s => tiShortcutItem(s, topicName, g.key)).join('')}
-          </ul>
-        `,
-      });
+      if (hasOverview(g.key)) {
+        // Lens rows OPEN the AI insight modal (not an inline accordion).
+        const meta = TI_SECTION_META[g.key] || TI_SECTION_META.more;
+        html += `<button type="button" class="ti-lens-row" data-overview-group="${escapeAttr(g.key)}" style="--ti-accent: ${meta.accent};">
+            <span class="ti-lens-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${meta.icon}</svg></span>
+            <span class="ti-lens-text"><span class="ti-lens-title">${escapeHTML(g.label)}</span><span class="ti-lens-blurb">${escapeHTML(meta.blurb || '')}</span></span>
+            <span class="ti-lens-open" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg></span>
+          </button>`;
+      } else {
+        html += renderTIAccordion({
+          key: g.key,
+          label: g.label,
+          open: false,
+          bodyHTML: `<ul class="ti-item-list ti-item-list-shortcuts" data-group="${escapeAttr(g.key)}">${items.map(s => tiShortcutItem(s, topicName, g.key)).join('')}</ul>`,
+        });
+      }
     });
   }
   html += `</div>`; /* close .ti-accordions */
@@ -1815,26 +1819,17 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   html += webSourcesCardHTML; /* Web Sources as its own sibling section */
   container.innerHTML = html;
 
-  // Group overviews auto-load when their accordion opens (cached → instant).
-  // topicArg 'home' on home; topic NAME on topic pages (the API key).
+  // Lens rows open the unified AI insight modal (overview type).
   if (!isCustom) {
     const overviewTopicArg = isHome ? 'home' : topicName;
-    const overviewScopeLabel = isHome ? 'the world right now' : topicName;
-    const allOverridesOv = (window.__assignmentsData && window.__assignmentsData.groupOverrides) || {};
-    const overrideMapOv = allOverridesOv[topicSlug] || {};
-    const grouped = groupShortcuts(all, overrideMapOv);
-    container.querySelectorAll('details.ti-accordion').forEach(det => {
-      const ovEl = det.querySelector('.ti-overview');
-      if (!ovEl) return;
-      const group = ovEl.dataset.group;
-      const items = (grouped[group] || []).map(s => ({
-        name: s.name, icon: s.icon,
-        prompt: String(s.prompt || '').replace(/\{topic\}/gi, topicName),
-      }));
-      det.addEventListener('toggle', () => {
-        if (det.open) loadGroupOverview(ovEl, overviewTopicArg, group, items, overviewScopeLabel);
+    const scopeTopic = isHome ? "today's world" : topicName;
+    container.querySelectorAll('[data-overview-group]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const group = btn.dataset.overviewGroup;
+        window.dispatchEvent(new CustomEvent('open-insight-modal', {
+          detail: { type: 'overview', topic: overviewTopicArg, group, label: TI_AI_LABELS[group] || 'AI', scopeTopic },
+        }));
       });
-      if (det.open) loadGroupOverview(ovEl, overviewTopicArg, group, items, overviewScopeLabel);
     });
   }
 

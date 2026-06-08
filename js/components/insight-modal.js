@@ -187,6 +187,7 @@ function render() {
   if (!current) return;
   if (current.type === 'news') renderNews(current);
   else if (current.type === 'trend') renderTrend(current);
+  else if (current.type === 'overview') renderOverview(current);
   else renderNews(current);
   panelEl.querySelector('#im-close')?.addEventListener('click', close);
   panelEl.querySelector('#im-back')?.addEventListener('click', goBack);
@@ -269,6 +270,53 @@ function renderTrend(d) {
       body.querySelectorAll('.im-acc').forEach(p => p.remove());
       body.insertAdjacentHTML('beforeend', actionsHTML(sources.length > 0));
       wireActions({ prompt, sources, onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, topicName: d.query, name: 'Trending · AI', count: 1 } })) });
+    }
+  })();
+}
+
+// ---- AI Intelligence overview --------------------------------------------
+function splitSections(content) {
+  const text = String(content || '');
+  const re = /^##\s+(.+)$/gm;
+  const idx = []; let m;
+  while ((m = re.exec(text))) idx.push({ name: m[1].trim(), start: m.index, headEnd: m.index + m[0].length });
+  if (!idx.length) return [];
+  return idx.map((s, i) => ({ name: s.name, body: text.slice(s.headEnd, i + 1 < idx.length ? idx[i + 1].start : text.length).trim() }));
+}
+function renderOverview(d) {
+  const lens = d.label || 'AI';
+  const sub = d.scopeTopic ? `<span>${esc(d.scopeTopic)}</span>` : '';
+  panelEl.innerHTML = `
+    ${headerHTML('AI Intelligence · ' + lens, lens, sub)}
+    <div class="im-body">
+      <p class="im-disclaimer">AI-generated — verify important details with the linked sources.</p>
+      <div class="im-brief" id="im-brief"><div class="ai-result-body ai-result-loading">Loading ${esc(lens)} overview…</div></div>
+      ${actionsHTML(false)}
+    </div>`;
+  const prompt = `Give me a thorough "${lens}" overview of ${d.scopeTopic || 'this topic'} — be specific and current.`;
+  (async () => {
+    const briefEl = panelEl.querySelector('#im-brief');
+    let sources = [];
+    try {
+      const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shortcut', topic: d.topic, group: d.group }) });
+      const data = res.ok ? await res.json() : null;
+      if (panelEl.querySelector('#im-brief') !== briefEl) return;
+      if (data && data.content) {
+        sources = data.sources || [];
+        const ago = data.generatedAt ? relTime(data.generatedAt) : '';
+        const sections = splitSections(data.content);
+        const sectionsHTML = sections.length
+          ? sections.map((s, i) => `<details class="im-ovsec"${i === 0 ? ' open' : ''}><summary class="im-ovsec-sum"><span>${esc(s.name)}</span>${CHEV}</summary><div class="im-ovsec-body">${renderBriefBody(s.body, null)}</div></details>`).join('')
+          : renderBriefBody(data.content, null);
+        briefEl.innerHTML = `${ago ? `<p class="im-updated">Updated ${esc(ago)}</p>` : ''}${sectionsHTML}`;
+      } else { briefEl.innerHTML = '<p class="im-empty">Overview is being generated — check back shortly.</p>'; }
+    } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">Overview unavailable.</p>'; }
+    const body = panelEl.querySelector('.im-body');
+    if (body) {
+      body.querySelector('.im-actions')?.remove();
+      body.querySelectorAll('.im-acc').forEach(p => p.remove());
+      body.insertAdjacentHTML('beforeend', actionsHTML(sources.length > 0));
+      wireActions({ prompt, sources, onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, name: lens + ' overview', count: 1 } })) });
     }
   })();
 }
