@@ -12,11 +12,11 @@ import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
 import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260606-polish43';
 import { initPromptModal } from './components/prompt-modal.js?v=20260605-polish30';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260608-revamp23';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260608-revamp24';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260608-revamp9';
 import { initInsightModal } from './components/insight-modal.js?v=20260608-revamp23';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260608-revamp23';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260608-revamp24';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260606-polish46';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
@@ -335,7 +335,7 @@ function renderLayout(route) {
 // fills the rest of the layout) and on custom pages (shortcuts-only
 // — nothing to switch between).
 function bodyTabsRow(opts = {}) {
-  const { showRelated = false, showTrending = false, showSearchTrends = false, showWebSources = false } = opts;
+  const { showRelated = false, showTrending = false, showSearchTrends = false, showWebSources = false, showShortcuts = true } = opts;
   // Order: (Search & Trends) → News Feed → (Trending) → Intelligence → (Related).
   const tabs = [];
   if (showSearchTrends) {
@@ -357,11 +357,13 @@ function bodyTabsRow(opts = {}) {
        <span class="tab-pill-label-short">Trending</span>
      </button>`);
   }
-  tabs.push(`<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">
+  if (showShortcuts) {
+    tabs.push(`<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">
        <svg class="tab-pill-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"/></svg>
        <span class="tab-pill-label-long">AI Intelligence</span>
        <span class="tab-pill-label-short">AI Intel</span>
      </button>`);
+  }
   if (showWebSources) {
     tabs.push(`<button type="button" class="tab-pill tab-pill-websources" data-tab="websources">
        <span class="tab-pill-label-long">Web Sources</span>
@@ -1347,19 +1349,20 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // trending cards) on top, then the Intelligence | News Feed columns below.
     // Mobile: three tabs — Search & Trends / News Feed / Intelligence — each a
     // direct-child section the tab switcher shows one at a time.
+    // AI Intelligence lives on topic/search pages, not home. Home is the
+    // full-width search hero + trending (2-up on desktop), then News Feed.
     container.innerHTML = `
       <div class="topic-layout" id="topic-layout">
-        ${bodyTabsRow({ showSearchTrends: true })}
+        ${bodyTabsRow({ showSearchTrends: true, showShortcuts: false })}
         <section class="layout-section" id="section-searchtrends">
           <div class="home-search-hero" id="home-search-hero"></div>
           <section class="home-trending" id="home-trending"></section>
         </section>
-        <section class="layout-section" id="section-shortcuts"></section>
         <section class="layout-section" id="section-newsfeed"></section>
       </div>
     `;
     homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });
-    renderTrendingHome(container.querySelector('#home-trending'), { limit: 3 });
+    renderTrendingHome(container.querySelector('#home-trending'), { limit: 6 });
   } else {
     // Topic pages: Shortcuts + News Feed + Related Topics.
     container.innerHTML = `
@@ -1380,7 +1383,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
   const relatedSection = container.querySelector('#section-related');
 
   if (trendingSection) renderTrending(trendingSection);
-  renderShortcutsSidebar(shortcutsSection, route, isHome, isCustom, customTerm);
+  if (shortcutsSection) renderShortcutsSidebar(shortcutsSection, route, isHome, isCustom, customTerm);
   if (websourcesSection && topic) renderWebSourcesSection(websourcesSection, topic);
   if (feedSection) {
     renderNewsFeed(feedSection, topic, isHome);

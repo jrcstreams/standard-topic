@@ -13138,20 +13138,16 @@ body.home-search #section-shortcuts .shortcuts-scroll-wrap { padding-bottom: 0; 
 /* Desktop: Search & Trends spans the full width on top; Intelligence |
    News Feed columns below. */
 @media (min-width: 900px) {
-  /* Search hero full width (centered), then AI Intelligence | Trending, then News. */
+  /* Centered search hero on top, then full-width Trending (its cards form a
+     2-up grid), then the News Feed. AI Intelligence is not on home. */
   body.home-search.app-mode .topic-layout {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     align-items: start;
-    column-gap: 1.8rem; row-gap: 0;
+    row-gap: 0;
   }
   body.home-search #section-searchtrends { display: contents; }
   body.home-search #home-search-hero { grid-column: 1 / -1; justify-self: center; width: min(600px, 100%); margin-bottom: 1.8rem; }
-  /* AI Intelligence | Trending, both pinned to row 2 so the column swap
-     (shortcuts→col1) doesn't trigger a grid auto-placement row-break — DOM
-     order has #home-trending first, so without an explicit row the col-1
-     item would be bumped to a new row. */
-  body.home-search #section-shortcuts { grid-column: 1; grid-row: 2; margin-top: 0 !important; margin-bottom: 1.8rem; }
-  body.home-search #home-trending { grid-column: 2; grid-row: 2; margin-top: 0 !important; margin-bottom: 1.8rem; }
+  body.home-search #home-trending { grid-column: 1 / -1; margin-top: 0 !important; margin-bottom: 1.8rem; }
   body.home-search #section-newsfeed { grid-column: 1 / -1; }
 }
 /* Cards size to content + the page scrolls. */
@@ -13307,8 +13303,9 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
 /* Compact 2-row card (category · trending-for, then term) with an attached
    quick-insights dropdown. The .trend-card is just a positioning wrapper. */
 .trend-card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.35rem 1rem; }
-/* Homepage Trending now lives in its own column (beside AI Intelligence) — single column. */
-.home-trending .trend-card-grid { grid-template-columns: 1fr; }
+/* Homepage Trending is full-width now (no AI Intelligence column) — 2-up card
+   grid on desktop, collapsing to a single column in the narrow tab view. */
+.home-trending .trend-card-grid { grid-template-columns: 1fr 1fr; }
 .trend-card { position: relative; }
 .trend-card.is-open { z-index: 50; }
 /* No bordered "card" and no hairline dividers (they read as disconnected
@@ -13389,12 +13386,11 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
 .trending-topics-viewall:hover { color: #1f5fd0; gap: 0.5rem; }
 .trending-topics-viewall .trending-row-chev { color: currentColor; }
 
-/* Homepage: 6 terms in a 3-col grid on desktop; trim to 3 on mobile/tablet. */
+/* Homepage: 6 terms in a 2-col grid on desktop; single column with just 3
+   terms in the narrow tab-nav view. */
 @media (max-width: 899.98px) {
-  .home-trending .trend-card-grid > .trend-card:nth-child(n+4) { display: none; }
-}
-@media (max-width: 599.98px) {
   .home-trending .trend-card-grid { grid-template-columns: 1fr; }
+  .home-trending .trend-card-grid > .trend-card:nth-child(n+4) { display: none; }
 }
 
 /* Trending modal hosts the same cards (full list, plain — no section card). */

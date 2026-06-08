@@ -319,16 +319,9 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
       </div>`;
   }
 
-  function controlsHTML() {
-    const cats = catList();
-    const catOpts = ['all'].concat(cats).map(c =>
-      `<option value="${escapeAttr(c)}"${state.category === c ? ' selected' : ''}>${c === 'all' ? 'All categories' : escapeHTML(c)}</option>`).join('');
-    return `
-      <div class="trend-controls">
-        <label class="trend-select-field"><span class="trend-select-label">Category</span>
-          <select class="trend-select trend-cat-select" aria-label="Filter by category">${catOpts}</select></label>
-      </div>`;
-  }
+  // Homepage trending has no controls now — category filtering lives in the
+  // "View more" trending modal where there's room for it.
+  function controlsHTML() { return ''; }
 
   function renderGrid() {
     const grid = container.querySelector('#trend-home-grid');
