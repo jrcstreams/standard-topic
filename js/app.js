@@ -14,7 +14,7 @@ import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal
 import { initPromptModal } from './components/prompt-modal.js?v=20260605-polish30';
 import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260608-revamp2';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260608-revamp9';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260606-polish41';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260606-polish46';
@@ -2600,6 +2600,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     resultsInner.innerHTML = '';
     renderShortcutsSidebar(resultsInner, { type: 'custom', term: t, tab: 'shortcuts' }, false, true, t);
     placeCopy();
+    if (isModal) { resultsInner.insertAdjacentHTML('afterbegin', anchorNavHTML()); wireAnchorNav(); }
     loadContentResults(t);
     panelEl.dataset.state = 'expanded';
     syncClear();
@@ -2614,7 +2615,38 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     syncClear();
     ctl.onCollapse && ctl.onCollapse();
   }
-  // Stored News + Trending results, appended under "Search Intelligence".
+  // Sticky in-modal anchor nav: jump between the result sections.
+  function anchorNavHTML() {
+    const items = [
+      ['AI Intelligence', '.topic-intelligence-panel'],
+      ['Web Sources', '.websources-section'],
+      ['Trending', '.search-trend-section'],
+      ['News', '.search-news-section'],
+    ];
+    return `<nav class="search-anchor-nav" aria-label="Jump to section">${items
+      .map(([label, sel]) => `<button type="button" class="search-anchor-pill" data-target="${sel}" hidden>${label}</button>`)
+      .join('')}</nav>`;
+  }
+  function wireAnchorNav() {
+    const nav = resultsInner.querySelector('.search-anchor-nav');
+    if (!nav) return;
+    nav.querySelectorAll('.search-anchor-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const el = resultsInner.querySelector(btn.dataset.target);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    refreshAnchorNav();
+  }
+  function refreshAnchorNav() {
+    const nav = resultsInner.querySelector('.search-anchor-nav');
+    if (!nav) return;
+    nav.querySelectorAll('.search-anchor-pill').forEach(btn => {
+      btn.hidden = !resultsInner.querySelector(btn.dataset.target);
+    });
+  }
+
+  // Stored News + Trending results, appended under "AI Intelligence".
   // Re-run on expand and on every live term change (renderShortcutsSidebar
   // replaces resultsInner, so this re-appends each time).
   async function loadContentResults(term) {
@@ -2646,6 +2678,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
         detail: { query: t, category: cat, categories: cat ? [cat] : [] },
       }));
     }));
+    if (isModal) refreshAnchorNav();
   }
   function hideSuggest() { suggestEl.hidden = true; suggestEl.innerHTML = ''; suggestItems = []; activeIdx = -1; }
   function refreshSuggestions() {

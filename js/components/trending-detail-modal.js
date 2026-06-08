@@ -7,6 +7,7 @@
 // stack lets related-term views offer a "← back" link.
 import { getTrending101, getTrendingIntelligenceShortcuts, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { groupShortcuts, renderTIAccordion, webSourceItem } from './ti-shortcuts.js';
+import { renderBriefBody } from './newsfeed.js';
 
 let overlayEl = null;
 let panelEl = null;
@@ -122,6 +123,10 @@ function render() {
       </div>
     </div>
     <div class="td-body">
+      <section class="td-section td-ai-section">
+        <div class="td-section-label"><span class="ai-result-badge">AI</span> Why it's trending</div>
+        <div class="td-ai-brief" id="td-ai-brief"><div class="ai-result-body ai-result-loading">Generating AI brief…</div></div>
+      </section>
       ${related.length ? `<div class="td-related">
         <span class="td-related-label">Related searches</span>
         <div class="td-related-chips">${related.map(r => `<button type="button" class="td-related-chip" data-term="${escapeAttr(r)}">${escapeHTML(r)}</button>`).join('')}</div>
@@ -156,6 +161,25 @@ function render() {
   });
   panelEl.scrollTop = 0;
   panelEl.querySelector('.td-body').scrollTop = 0;
+
+  // Lazy-load the grounded AI brief (same layer the homepage trend cards use).
+  (async () => {
+    const briefEl = panelEl.querySelector('#td-ai-brief');
+    if (!briefEl) return;
+    try {
+      const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'trend', query: term }) });
+      const data = res.ok ? await res.json() : null;
+      if (panelEl.querySelector('#td-ai-brief') !== briefEl) return; // a newer render replaced it
+      if (data && data.content) {
+        const summary = data.summary ? `<p class="td-ai-summary">${escapeHTML(data.summary)}</p>` : '';
+        briefEl.innerHTML = summary + renderBriefBody(data.content, data.sources);
+      } else {
+        briefEl.innerHTML = '<p class="td-ai-empty">No AI brief generated for this trend yet.</p>';
+      }
+    } catch (_) {
+      if (panelEl.querySelector('#td-ai-brief') === briefEl) briefEl.innerHTML = '<p class="td-ai-empty">AI brief unavailable.</p>';
+    }
+  })();
 }
 
 function openFresh(item) {

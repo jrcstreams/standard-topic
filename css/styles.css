@@ -12791,7 +12791,12 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 /* Sections — clear navy headers with a hairline divider above so "Trending
    101" / "Trending Intelligence" read as real section breaks, not afterthoughts. */
 .td-section { padding-top: 1.15rem; margin-top: 1.15rem; border-top: 1px solid #eef0f4; }
-.td-section-label { font-family: var(--font-display); font-size: 0.98rem; font-weight: 700; letter-spacing: -0.012em; color: var(--color-primary); margin-bottom: 0.65rem; }
+.td-section:first-child { padding-top: 0; margin-top: 0; border-top: none; }
+.td-section-label { font-family: var(--font-display); font-size: 0.98rem; font-weight: 700; letter-spacing: -0.012em; color: var(--color-primary); margin-bottom: 0.65rem; display: flex; align-items: center; gap: 7px; }
+.td-section-label .ai-result-badge { font-size: 0.58rem; }
+.td-ai-summary { margin: 0 0 9px; font-size: 0.94rem; font-weight: 600; line-height: 1.4; color: #1c3a6b; }
+.td-ai-brief .ai-result-body { font-size: 0.875rem; line-height: 1.6; color: #2c3a52; white-space: normal; }
+.td-ai-empty { margin: 0; font-size: 0.85rem; color: var(--color-text-muted); }
 
 .td-shortcut-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.05rem; }
 .td-shortcut { display: flex; align-items: center; gap: 0.65rem; width: 100%; text-align: left; background: none; border: none; cursor: pointer; padding: 0.45rem 0.5rem; border-radius: 8px; color: var(--color-text); font-family: inherit; transition: background 0.12s; }
@@ -13606,6 +13611,23 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .search-trend-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .search-trend-row .search-trend-name { font-size: 0.88rem; font-weight: var(--font-weight-medium); color: var(--color-text); }
 .search-trend-row .search-trend-cat { font-size: 0.72rem; color: var(--color-text-muted); }
+/* Search modal: sticky anchor nav to jump between result sections. */
+.search-anchor-nav {
+  position: sticky; top: 0; z-index: 6;
+  display: flex; gap: 6px; flex-wrap: wrap; padding: 9px 0 10px; margin-bottom: 6px;
+  background: #f6f7f9; border-bottom: 1px solid var(--color-surface-border);
+}
+.search-anchor-pill {
+  border: 1px solid var(--color-surface-border); background: #fff; cursor: pointer;
+  padding: 6px 13px; border-radius: 999px;
+  font-family: var(--font-family); font-size: 0.76rem; font-weight: var(--font-weight-semibold); color: var(--color-text-light);
+  transition: border-color .14s, color .14s;
+}
+.search-anchor-pill:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.search-panel-results-inner > .topic-intelligence-panel,
+.search-panel-results-inner > .websources-section,
+.search-panel-results-inner .search-trend-section,
+.search-panel-results-inner .search-news-section { scroll-margin-top: 58px; }
 
 /* ===== Homepage Trending: Now/Over-time toggle + category pills (Phase 2) = */
 .trend-mode-toggle { display: inline-flex; gap: 2px; padding: 2px; background: var(--color-bg-muted); border-radius: 999px; }
