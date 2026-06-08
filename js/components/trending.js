@@ -24,6 +24,8 @@ function relativeTime(iso) {
 const CHEV = `<svg class="trending-row-chev" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>`;
 const CHEV_UP = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 15 12 9 18 15"/></svg>`;
 const CHEV_DOWN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+// Open-action icon (arrow up-right) — trend rows OPEN the AI insight modal.
+const OPEN_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>`;
 
 function rowHTML(topic, idx) {
   const q = topic.query;
@@ -137,7 +139,7 @@ function trendCardHTML(topic, idx) {
           ${meta ? `<span class="trend-card-meta">${escapeHTML(meta)}</span>` : ''}
           ${topic.summary ? `<span class="trend-card-summary">${escapeHTML(topic.summary)}</span>` : ''}
         </span>
-        <span class="trend-card-chev" aria-hidden="true">${CHEV_DOWN}</span>
+        <span class="trend-card-chev trend-card-open" aria-hidden="true">${OPEN_ICON}</span>
       </button>
     </div>`;
 }
