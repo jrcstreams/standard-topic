@@ -5512,13 +5512,8 @@ body.app-mode .topic-layout {
   body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-shortcuts { grid-column: 2; position: relative; margin-bottom: 0; }
   body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-newsfeed { grid-column: 1 / -1; position: relative; }
   body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-related { grid-column: 1 / -1; }
-  /* Home: search hero full width centered, then Trending | AI Intelligence, then News. */
-  body.home-mode .topic-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  body.home-mode #section-searchtrends { display: contents; }
-  body.home-mode #home-search-hero { grid-column: 1 / -1; justify-self: center; width: min(600px, 100%); }
-  body.home-mode #home-trending { grid-column: 1; margin-top: 0; }
-  body.home-mode .topic-layout > #section-shortcuts { grid-column: 2; margin-bottom: 0; }
-  body.home-mode .topic-layout > #section-newsfeed { grid-column: 1 / -1; }
+  /* Home 2-column layout lives in the body.home-search block below (higher
+     specificity); kept there as the single source of truth. */
   /* Topic pages: stacked sections are taller than the viewport, so the
      content area scrolls as ONE column (like the homepage) instead of the
      old fixed two-column internal scroll. Home already scrolls naturally. */
@@ -13143,14 +13138,17 @@ body.home-search #section-shortcuts .shortcuts-scroll-wrap { padding-bottom: 0; 
 /* Desktop: Search & Trends spans the full width on top; Intelligence |
    News Feed columns below. */
 @media (min-width: 900px) {
+  /* Search hero full width (centered), then Trending | AI Intelligence, then News. */
   body.home-search.app-mode .topic-layout {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: start;
-    gap: 0;
+    column-gap: 1.8rem; row-gap: 0;
   }
-  body.home-search #section-searchtrends { grid-column: 1; margin-bottom: 1.8rem; }
-  body.home-search #section-shortcuts { grid-column: 1; margin-bottom: 1.8rem; }
-  body.home-search #section-newsfeed { grid-column: 1; }
+  body.home-search #section-searchtrends { display: contents; }
+  body.home-search #home-search-hero { grid-column: 1 / -1; justify-self: center; width: min(600px, 100%); margin-bottom: 1.8rem; }
+  body.home-search #home-trending { grid-column: 1; margin-top: 0; margin-bottom: 1.8rem; }
+  body.home-search #section-shortcuts { grid-column: 2; margin-bottom: 1.8rem; }
+  body.home-search #section-newsfeed { grid-column: 1 / -1; }
 }
 /* Cards size to content + the page scrolls. */
 body.home-search .layout-section,
