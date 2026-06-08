@@ -13027,7 +13027,7 @@ body.home-search.app-mode .topic-layout {
    inline search never expands in place (submit routes to the modal), so the
    600px cap constrains nothing but the resting title + bar. */
 .home-search-hero {
-  max-width: 600px; margin: 0.4rem auto 0.2rem; padding: 0.5rem 0.6rem 0.7rem;
+  max-width: 600px; margin: 0.4rem auto 0.2rem; padding: 0.5rem 0.6rem 1.2rem;
   background: var(--color-surface);
   border: 1px solid var(--color-surface-border);
   border-radius: 16px;
