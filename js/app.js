@@ -6,7 +6,7 @@ import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './ut
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody } from './components/newsfeed.js?v=20260608-revamp6';
+import { renderNewsFeed, renderBriefBody } from './components/newsfeed.js?v=20260608-revamp11';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
@@ -1704,7 +1704,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     : isHomeIntel
       ? `<p class="sidebar-card-subtitle section-card-sub">AI-powered knowledge shortcuts</p>`
       : (!isHome && !isCustom && topicName)
-        ? `<p class="sidebar-card-subtitle ti-topic-sublabel">${escapeHTML(topicName)}</p>`
+        ? `<p class="sidebar-card-subtitle section-card-sub">AI-powered briefings, lenses, and prompts on ${escapeHTML(topicName)}.</p>`
         : '';
 
   // Model options for the selection bar's "Send to" picker. Pre-selects

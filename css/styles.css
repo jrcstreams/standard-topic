@@ -1352,8 +1352,11 @@ body.hide-cta .sticky-cta { display: none !important; }
    (icon tile + title + blurb), single column within their own column. */
 /* Standalone Web Sources section spacing. */
 /* Web Sources header: match News Feed / AI Intelligence (no accent bar). */
-.websources-section { margin-top: 14px; }
+/* No top margin so it aligns with the AI Intelligence column beside it. */
+.websources-section { margin-top: 0; }
 .websources-section .sidebar-card-title::before { display: none !important; }
+/* Accent bar is hidden, so drop the padding it reserved — flush-left header. */
+.websources-section .sidebar-card-title { padding-left: 0; }
 .ti-accordions-websources { margin-top: 2px; }
 
 .ti-item-list {
