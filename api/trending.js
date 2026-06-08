@@ -17,6 +17,12 @@ const { getSql } = require('../lib/db');
 const GEOS = ['US'];
 const LIMIT = 20;
 const SERP_BASE = 'https://serpapi.com/search.json';
+// Past-hours window for the live list. SerpAPI's google_trends_trending_now
+// defaults to 24h and keeps trends flagged active for that whole window, which
+// floats day-old high-volume trends to #1 long after Google's own "Trending
+// now" view has aged them off. 4h tracks that near-real-time view. (The 2h
+// history cron deliberately stays on the wider default for a richer series.)
+const TREND_HOURS = 4;
 // 1h fresh, serve stale up to a day while revalidating in the background.
 const CACHE_HEADER = 'public, s-maxage=3600, stale-while-revalidate=86400';
 
@@ -27,7 +33,7 @@ module.exports = async function handler(req, res) {
   const fetched = new Date().toISOString();
   try {
     const results = await Promise.all(GEOS.map(async (geo) => {
-      const url = `${SERP_BASE}?engine=google_trends_trending_now&geo=${encodeURIComponent(geo)}&api_key=${encodeURIComponent(apiKey)}`;
+      const url = `${SERP_BASE}?engine=google_trends_trending_now&geo=${encodeURIComponent(geo)}&hours=${TREND_HOURS}&api_key=${encodeURIComponent(apiKey)}`;
       const r = await fetch(url, { headers: { Accept: 'application/json' } });
       if (!r.ok) throw new Error(`SerpAPI ${r.status}`);
       return { geo, data: await r.json() };
