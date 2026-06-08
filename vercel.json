@@ -9,6 +9,7 @@
     "api/cron/news.js": { "maxDuration": 300 },
     "api/cron/trending.js": { "maxDuration": 60 },
     "api/cron/embed.js": { "maxDuration": 120 },
-    "api/cron/pregenerate.js": { "maxDuration": 300 }
+    "api/cron/pregenerate.js": { "maxDuration": 300 },
+    "api/trending.js": { "maxDuration": 120 }
   }
 }

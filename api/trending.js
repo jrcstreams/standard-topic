@@ -5,12 +5,32 @@
 // for an hour (stale-while-revalidate). With on-demand caching + SWR,
 // SerpAPI is hit at most ~once/hour under load and never with no traffic.
 //
+// Self-heal: any trend in the list that doesn't yet have a stored "why it's
+// trending" one-liner gets a brief generated in the BACKGROUND (after the
+// response is sent), then the list cache is busted so the next load shows the
+// filled-in summaries. This keys off the EXACT list we display — including
+// brand-new trends not yet in any DB snapshot, which the pregenerate cron
+// (which works off the 2h snapshot) can't reach — so the displayed list and
+// its summaries converge within a refresh instead of lagging the cron.
+//
 // 200 — { topics, fetched, geos }
 // 500 — { error: "Server misconfiguration" }    (SERPAPI_API_KEY missing)
 // 502 — { error: "Upstream trends unavailable" } (SerpAPI non-2xx / network)
 
 const { normalizeTrending } = require('../js/utils/trending-normalize.js');
 const { getSql } = require('../lib/db');
+const { generateInsight } = require('../lib/insight-core');
+
+// Background scheduling + cache busting. Lazy/guarded so module load never
+// crashes where @vercel/functions is absent (local/tests) — heal just no-ops.
+let waitUntil; let invalidateByTag;
+try { ({ waitUntil, invalidateByTag } = require('@vercel/functions')); }
+catch (e) { waitUntil = null; invalidateByTag = null; }
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// Cap briefs generated per heal pass so the background work stays well inside
+// the function's maxDuration. Only ever a handful are missing at once.
+const HEAL_MAX = 8;
 
 // Geo config — single source of truth. Add 'GB','DE',… here (and only
 // here) to widen coverage; each geo is one upstream call per refresh.
@@ -44,10 +64,11 @@ module.exports = async function handler(req, res) {
 
     const topics = normalizeTrending(results, LIMIT);
 
+    const sql = getSql();
+
     // Attach the stored one-liner ("why it's trending") for any trend we've
     // already briefed. One lookup keyed by lower(query); absent => no summary.
     try {
-      const sql = getSql();
       if (sql && topics.length) {
         const keys = topics.map((t) => String(t.query || '').toLowerCase());
         const rows = await sql.query(
@@ -58,6 +79,33 @@ module.exports = async function handler(req, res) {
         topics.forEach((t) => { t.summary = byKey.get(String(t.query || '').toLowerCase()) || null; });
       }
     } catch (_) { /* DB optional — render without summaries */ }
+
+    // Self-heal missing one-liners in the background (after the response is
+    // sent). Generation is idempotent — generateInsight returns cached briefs
+    // without re-charging — so even if this races the cron, nothing duplicates.
+    // Only runs on a cache MISS (~every 30 min), so it self-throttles.
+    try {
+      const missing = sql && waitUntil
+        ? topics.filter((t) => !t.summary && String(t.query || '').trim()).slice(0, HEAL_MAX).map((t) => t.query)
+        : [];
+      if (missing.length) {
+        waitUntil((async () => {
+          let made = 0;
+          for (const query of missing) {
+            try {
+              const r = await generateInsight(sql, { type: 'trend', query });
+              if (r && r.cached === false && r.summary) made += 1;
+            } catch (_) { /* retried on a later refresh */ }
+            await sleep(600);
+          }
+          // Bust the list cache ONLY if we added summaries — otherwise an
+          // un-briefable term would loop invalidate → recompute → invalidate.
+          if (made > 0 && invalidateByTag) {
+            try { await invalidateByTag('trending-all'); } catch (_) {}
+          }
+        })());
+      }
+    } catch (_) { /* best-effort — never block the list response */ }
 
     res.setHeader('Cache-Control', CACHE_HEADER);
     res.setHeader('Vercel-Cache-Tag', 'trending-all');
