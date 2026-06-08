@@ -13432,6 +13432,29 @@ body.home-search #section-shortcuts .sidebar-card-header,
   min-height: 0; border: none; padding: 0; margin: 0;
 }
 
+/* Web Sources column: mirror the AI Intelligence (shortcuts) header metrics
+   so the two side-by-side topic-page columns' subtext and first content row
+   sit at identical Y. Without this, Web Sources inherits the base
+   .sidebar-card-header (≈2rem bottom spacing, 1.2rem body-font title,
+   0.3rem heading gap) while AI Intelligence uses tighter shortcuts metrics,
+   leaving the first row ~19px lower and the subtext ~6px lower. */
+#section-websources .sidebar-card-header {
+  margin: 0;
+  padding: 0 0 1rem 0;
+  border-bottom: 1px solid #d6dae2;
+  align-items: center;
+}
+#section-websources .sidebar-card-heading { gap: 0.15rem; }
+#section-websources .sidebar-card-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--color-primary);
+  margin: 0;
+  padding: 0;
+}
+
 /* Mobile home now scrolls as one column (no tabs), so the News Feed header
    shows to label the section. */
 @media (max-width: 899.98px) {
