@@ -12999,11 +12999,11 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .search-panel-sub { margin: 0 auto; max-width: 44rem; color: var(--color-text-muted); font-size: 0.88rem; line-height: 1.45; text-wrap: balance; }
 /* Search modal subtitle — the "News, Resources and AI Knowledge." tagline sits
    under the "Search" header at a lighter weight than the homepage title. */
-.search-panel-tagline { margin: 0.1rem auto 0; max-width: 30rem; text-wrap: balance; font-family: var(--font-display); font-size: 1rem; font-weight: 600; letter-spacing: -0.012em; color: #6b7689; }
+.search-panel-tagline { margin: 0.1rem auto 0; max-width: 30rem; text-wrap: balance; font-family: var(--font-display); font-size: 1rem; font-weight: 450; letter-spacing: -0.012em; color: #6b7689; }
 @media (max-width: 560px) { .search-panel-tagline { font-size: 0.9rem; max-width: 22rem; } }
 .search-panel--modal .search-panel-hero-inner { text-align: center; }
 @media (max-width: 640px) {
-  .search-panel--modal .search-panel-tagline { font-size: 0.88rem; font-weight: 500; }
+  .search-panel--modal .search-panel-tagline { font-size: 0.88rem; font-weight: 450; }
 }
 /* Compact the homepage hero further on phones — it was eating too much of the
    first screen. */
@@ -13038,6 +13038,15 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .search-panel-clear:hover { background: #e0e4ec; color: var(--color-text); }
 .search-panel-clear[hidden] { display: none; }
 .search-panel-clear svg { width: 13px; height: 13px; display: block; }
+/* Copy-link icon in the search bar (modal only) — sits at the right, shifting
+   left of the clear X when that's visible. Copies a deep link to the search. */
+.search-panel-copylink { display: none; position: absolute; right: 0.55rem; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; align-items: center; justify-content: center; background: #eceff4; border: none; border-radius: 50%; color: var(--color-text-muted); cursor: pointer; transition: background .14s, color .14s; z-index: 2; }
+.search-panel--modal .search-panel-copylink { display: inline-flex; }
+.search-panel-copylink:hover { background: #e0e4ec; color: var(--color-text); }
+.search-panel-copylink svg { width: 14px; height: 14px; display: block; }
+.search-panel-copylink.is-copied { background: #f0fdf4; color: #15803d; }
+.search-panel--modal .search-panel-form:has(.search-panel-clear:not([hidden])) .search-panel-copylink { right: 2.7rem; }
+.search-panel--modal .search-panel-form:has(.search-panel-clear:not([hidden])) .search-panel-input { padding-right: 4.6rem; }
 /* Input keeps its 52px height + 1.05rem text when expanded — don't shrink
    it, so the bar doesn't visibly resize the moment a search is entered. */
 
@@ -13089,10 +13098,16 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 /* Search bar sits in the fixed top section; a full-width divider beneath it
    separates the bar from the scrolling results (bar above the line, results
    below). */
-.search-panel--modal .search-panel-barrow { flex-shrink: 0; padding: 0.85rem 1.15rem 0.7rem; border-bottom: 1px solid var(--color-surface-border); }
+.search-panel--modal .search-panel-barrow { flex-shrink: 0; padding: 0.55rem 1.15rem 0.7rem; border-bottom: 1px solid var(--color-surface-border); }
 .search-panel--modal .search-panel-results { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0 1.15rem 1.2rem; }
 .search-panel--modal .search-panel-close { top: 0.5rem; right: 0.5rem; }
-.search-panel--modal .search-panel-hero-inner { padding: 1.4rem 1rem 1rem; }
+/* Tighter title→tagline→bar rhythm so it matches the homepage hero card. */
+.search-panel--modal .search-panel-hero-inner { padding: 1.3rem 1rem 0.6rem; }
+/* Search results: separate the Web Sources card from AI Intelligence above it,
+   and pull its accordions up under the divider (they were stranded ~32px below). */
+.search-panel-results-inner .websources-section { margin-top: 1.6rem; }
+.search-panel-results-inner .websources-section .sidebar-card-header { margin-bottom: 0; padding-bottom: 0.5rem; }
+.search-panel-results-inner .websources-section .ti-accordions-websources { margin-top: 0; padding-top: 0.7rem; }
 /* "Search" header matches the Topics modal title size/weight. */
 .search-panel--modal .search-panel-title { font-size: 1.35rem; margin-bottom: 0.3rem; }
 

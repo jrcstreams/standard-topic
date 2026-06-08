@@ -6,7 +6,7 @@ import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './ut
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody } from './components/newsfeed.js?v=20260608-revamp12';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260608-revamp12';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
@@ -2537,18 +2537,14 @@ function spRel(iso) {
 }
 function spTitleCase(s) { return String(s || '').toLowerCase().replace(/\b([a-z])/g, (m, c) => c.toUpperCase()); }
 function spNewsHTML(stories) {
-  const rows = stories.map(s => {
-    const url = s.url || '';
-    const meta = [spHost(url), spRel(s.published_at)].filter(Boolean).map(escapeHTML).join(' · ');
-    const topic = s.topic_name ? ` · <span class="search-news-topic">${escapeHTML(s.topic_name)}</span>` : '';
-    return `<a class="search-news-item" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer"><span class="search-news-title">${escapeHTML(s.title || '')}</span><span class="search-news-meta">${meta}${topic}</span></a>`;
-  }).join('');
+  // Reuse the desktop news cards verbatim (publisher · time, AI Insights,
+  // Share) — minus the topic name. wireNewsAI() is called after insertion.
   return `<section class="search-news-section">
     <div class="search-news-header">
       <h3 class="search-news-head-title"><span>News Feed</span></h3>
       <p class="search-news-head-sub">Stories from across your topics</p>
     </div>
-    <div class="search-content-body">${rows}</div>
+    ${newsListHTML(stories)}
   </section>`;
 }
 const SP_TREND_ICON = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>';
@@ -2585,6 +2581,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
         <form class="search-panel-form" role="search" autocomplete="off">
           <span class="search-panel-icon" aria-hidden="true">${SEARCH_ICON_SVG}</span>
           <input class="search-panel-input" type="search" placeholder="Search any topic…" aria-label="Search any topic" value="${escapeAttr(term)}">
+          <button type="button" class="search-panel-copylink" aria-label="Copy a shareable link to this search" title="Copy link to this search">${LINK_ICON_SVG}</button>
           <button type="button" class="search-panel-clear" aria-label="Clear search" hidden>${X_ICON_SVG}</button>
         </form>
         <div class="search-panel-suggest" role="listbox" hidden></div>
@@ -2598,18 +2595,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   const suggestEl = panelEl.querySelector('.search-panel-suggest');
   const clearBtn = panelEl.querySelector('.search-panel-clear');
   const resultsInner = panelEl.querySelector('.search-panel-results-inner');
-  // Copy link lives on the "Search Intelligence" header row, not the bar.
-  // Created here so it keeps its click handler, then re-placed into the
-  // freshly rendered results header after every (re)render.
-  const copyBtn = document.createElement('button');
-  copyBtn.type = 'button';
-  copyBtn.className = 'search-panel-copy';
-  copyBtn.setAttribute('aria-label', 'Copy link');
-  copyBtn.innerHTML = `${LINK_ICON_SVG}<span>Copy link</span>`;
-  function placeCopy() {
-    const hdr = resultsInner.querySelector('.sidebar-card-header');
-    if (hdr) hdr.appendChild(copyBtn);
-  }
+  const copyLinkBtn = panelEl.querySelector('.search-panel-copylink');
   function syncClear() { if (clearBtn) clearBtn.hidden = !input.value; }
   let currentTerm = '';
   let suggestItems = [];   // [{type:'topic', slug, name, parent} | {type:'custom', term}]
@@ -2623,7 +2609,6 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     hideSuggest();
     resultsInner.innerHTML = '';
     renderShortcutsSidebar(resultsInner, { type: 'custom', term: t, tab: 'shortcuts' }, false, true, t);
-    placeCopy();
     if (isModal) { resultsInner.insertAdjacentHTML('afterbegin', anchorNavHTML()); wireAnchorNav(); }
     loadContentResults(t);
     panelEl.dataset.state = 'expanded';
@@ -2702,6 +2687,8 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
         detail: { query: t, category: cat, categories: cat ? [cat] : [] },
       }));
     }));
+    // Wire the desktop news cards' AI Insights + Share controls.
+    wireNewsAI(live);
     if (isModal) refreshAnchorNav();
   }
   function hideSuggest() { suggestEl.hidden = true; suggestEl.innerHTML = ''; suggestItems = []; activeIdx = -1; }
@@ -2764,7 +2751,6 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
         if (t && t !== currentTerm) {
           currentTerm = t;
           renderShortcutsSidebar(resultsInner, { type: 'custom', term: t, tab: 'shortcuts' }, false, true, t);
-          placeCopy();
           loadContentResults(t);
         }
       }, 350);
@@ -2797,16 +2783,17 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     input.focus();
   });
   syncClear();
-  copyBtn.addEventListener('click', async () => {
-    if (!currentTerm) return;
-    const url = location.origin + location.pathname + '#/custom/' + encodeURIComponent(currentTerm);
+  // Copy-link icon in the bar — shares a deep link to this search (with the
+  // current term, or the empty search modal when blank).
+  copyLinkBtn && copyLinkBtn.addEventListener('click', async () => {
+    const t = input.value.trim();
+    const url = location.origin + location.pathname + (t ? '#/custom/' + encodeURIComponent(t) : '#/search');
     try { await navigator.clipboard.writeText(url); } catch (_) {
       const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select();
       try { document.execCommand('copy'); } catch (_) {} ta.remove();
     }
-    const label = copyBtn.querySelector('span');
-    copyBtn.classList.add('is-copied'); if (label) label.textContent = 'Copied';
-    setTimeout(() => { copyBtn.classList.remove('is-copied'); if (label) label.textContent = 'Copy link'; }, 1600);
+    copyLinkBtn.classList.add('is-copied');
+    setTimeout(() => copyLinkBtn.classList.remove('is-copied'), 1400);
   });
   const ctl = { el: panelEl, input, expand, collapse, refreshSuggestions, close: onClose, onExpand: null, onCollapse: null,
     setTerm(t) { input.value = t || ''; },
