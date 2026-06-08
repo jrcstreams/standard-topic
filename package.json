@@ -5,6 +5,7 @@
   "description": "Static SPA + Vercel serverless functions. package.json exists so Vercel's bundler includes @vercel/functions for cache-tag invalidation in api/webhooks/rss-app.js.",
   "scripts": {
     "admin": "echo 'Admin → http://localhost:8000/admin.html  (Ctrl-C to stop)' && python3 -m http.server 8000",
+    "test": "node --test",
     "db:migrate": "node scripts/db-migrate.js",
     "db:seed": "node scripts/seed-topics.js"
   },

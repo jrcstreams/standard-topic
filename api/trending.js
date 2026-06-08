@@ -10,6 +10,7 @@
 // 502 — { error: "Upstream trends unavailable" } (SerpAPI non-2xx / network)
 
 const { normalizeTrending } = require('../js/utils/trending-normalize.js');
+const { getSql } = require('../lib/db');
 
 // Geo config — single source of truth. Add 'GB','DE',… here (and only
 // here) to widen coverage; each geo is one upstream call per refresh.
@@ -33,6 +34,21 @@ module.exports = async function handler(req, res) {
     }));
 
     const topics = normalizeTrending(results, LIMIT);
+
+    // Attach the stored one-liner ("why it's trending") for any trend we've
+    // already briefed. One lookup keyed by lower(query); absent => no summary.
+    try {
+      const sql = getSql();
+      if (sql && topics.length) {
+        const keys = topics.map((t) => String(t.query || '').toLowerCase());
+        const rows = await sql.query(
+          `SELECT entity_key, summary FROM ai_insights
+            WHERE entity_type='trend' AND insight='brief' AND summary IS NOT NULL
+              AND entity_key = ANY($1)`, [keys]);
+        const byKey = new Map(rows.map((r) => [r.entity_key, r.summary]));
+        topics.forEach((t) => { t.summary = byKey.get(String(t.query || '').toLowerCase()) || null; });
+      }
+    } catch (_) { /* DB optional — render without summaries */ }
 
     res.setHeader('Cache-Control', CACHE_HEADER);
     res.setHeader('Vercel-Cache-Tag', 'trending-all');

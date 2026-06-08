@@ -4,7 +4,7 @@
 // fixed-height scroll area with top/bottom fade + chevron affordances
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
-import { renderBriefBody } from './newsfeed.js?v=20260607-polish57';
+import { renderTrendExpansionBody } from './trend-expansion.js';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -135,6 +135,7 @@ function trendCardHTML(topic, idx) {
             <span class="trend-card-title">${escapeHTML(title)}</span>
           </span>
           ${meta ? `<span class="trend-card-meta">${escapeHTML(meta)}</span>` : ''}
+          ${topic.summary ? `<span class="trend-card-summary">${escapeHTML(topic.summary)}</span>` : ''}
         </span>
         <span class="trend-card-chev" aria-hidden="true">${CHEV_DOWN}</span>
       </button>
@@ -150,24 +151,31 @@ function openTrendChat(card) {
 
 // One combined, grounded AI brief inline under the card (click toggles).
 async function showTrendBrief(card) {
+  const trigger = card.querySelector('.trend-card-trigger');
+  const setOpen = (open) => {
+    card.classList.toggle('is-open', open);
+    trigger?.setAttribute('aria-expanded', open ? 'true' : 'false');
+  };
   const existing = card.querySelector('.ai-result');
-  if (existing) { existing.remove(); return; }
+  if (existing) { existing.remove(); setOpen(false); return; } // toggle off
   const term = card.dataset.query || '';
   const headHTML = `<div class="ai-result-head"><span class="ai-result-label">What it is</span><span class="ai-result-badge">AI</span><button type="button" class="ai-result-close" aria-label="Dismiss">✕</button></div>`;
   const region = document.createElement('div'); region.className = 'ai-result'; card.appendChild(region);
+  setOpen(true);
   region.innerHTML = `${headHTML}<div class="ai-result-body ai-result-loading">Generating…</div>`;
-  region.querySelector('.ai-result-close')?.addEventListener('click', () => region.remove());
+  const close = () => { region.remove(); setOpen(false); };
+  region.querySelector('.ai-result-close')?.addEventListener('click', close);
   try {
     const res = await fetch('/api/insight', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'trend', query: term }),
     });
     const data = res.ok ? await res.json() : null;
-    if (!data || !data.content) { region.remove(); openTrendChat(card); return; }
-    region.innerHTML = `${headHTML}${renderBriefBody(data.content, data.sources)}<button type="button" class="ai-result-deeper">Open in chat ↗</button>`;
-    region.querySelector('.ai-result-close')?.addEventListener('click', () => region.remove());
+    if (!data || !data.content) { close(); openTrendChat(card); return; }
+    region.innerHTML = `${headHTML}${renderTrendExpansionBody(term, data)}<button type="button" class="ai-result-deeper">Open in chat ↗</button>`;
+    region.querySelector('.ai-result-close')?.addEventListener('click', close);
     region.querySelector('.ai-result-deeper')?.addEventListener('click', () => openTrendChat(card));
-  } catch (_) { region.remove(); openTrendChat(card); }
+  } catch (_) { close(); openTrendChat(card); }
 }
 
 // Clicking a trend card opens its single combined AI brief.

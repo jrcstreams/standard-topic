@@ -117,6 +117,11 @@ CREATE INDEX IF NOT EXISTS news_embedding_idx
 -- Citation links for grounded insights (added later; endpoint tolerates absence).
 ALTER TABLE ai_insights ADD COLUMN IF NOT EXISTS sources JSONB;
 
+-- Trend one-liner: a single-sentence "why it's trending" distilled from the
+-- same grounded generation as `content`. Only trend rows populate it; surfaced
+-- on the homepage/modal trend list via /api/trending.
+ALTER TABLE ai_insights ADD COLUMN IF NOT EXISTS summary TEXT;
+
 -- ai_usage extra accounting (added later) — split out grounded-call count and
 -- raw token volume so the admin AI Usage panel can show real run-rate, not just
 -- a lumped micros total. grounded drives the Google-Search grounding fee, which

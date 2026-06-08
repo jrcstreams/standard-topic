@@ -13290,6 +13290,24 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
 .trend-card-chev svg { width: 15px; height: 15px; display: block; }
 .trend-card-trigger:hover .trend-card-chev { color: #1f8f6b; }
 .trend-card.is-open .trend-card-chev { transform: rotate(180deg); color: #1f8f6b; }
+
+/* Trend card one-liner ("why it's trending"), shown on the collapsed front view;
+   clamps to 1 line collapsed, 2 lines when the card is open. */
+.trend-card-summary {
+  display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+  margin-top: 3px; font-size: 0.72rem; line-height: 1.35; color: var(--color-text-light, #5b6b86);
+}
+.trend-card.is-open .trend-card-summary { -webkit-line-clamp: 2; }
+
+/* Expanded trend body: cited-sources bar + Web/AI Explore accordions + full brief. */
+.trend-exp-sources { display: flex; align-items: center; gap: 8px; margin: 4px 0 10px; min-width: 0; }
+.trend-exp-sources-label { flex: 0 0 auto; font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-muted, #8b94a5); }
+.trend-exp-sources-scroll { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: thin; }
+.trend-exp-sources-scroll::-webkit-scrollbar { height: 5px; }
+.trend-exp-sources-scroll::-webkit-scrollbar-thumb { background: var(--color-surface-border, #dfe4ec); border-radius: 999px; }
+.trend-exp-sources-scroll .ai-source-chip { flex: 0 0 auto; }
+.trend-exp-explore { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+.trend-exp-full { border-top: 1px solid var(--color-surface-border, #e6eaf1); padding-top: 8px; }
 .trend-card-skel { display: block; height: 48px; border-bottom: 1px solid #eef0f4; background: linear-gradient(90deg, #f1f3f6, #f6f8fa, #f1f3f6); pointer-events: none; }
 /* Quick-insights dropdown anchored to the card. */
 .trend-card-panel {

@@ -74,7 +74,7 @@ const SRC_GLOBE_SVG = '<svg class="ai-source-favicon ai-source-globe" viewBox="0
 // Gemini grounding returns redirect URIs (vertexaisearch.cloud.google.com/...)
 // with the real publisher in `title`. Resolve a clean domain for the chip:
 // prefer a domain-shaped title, else the uri host when it isn't a redirect.
-function resolveSource(s) {
+export function resolveSource(s) {
   const t = String(s.title || '').trim();
   const host = hostFromUri(s.uri);
   const redirect = /vertexaisearch|grounding-api|googleusercontent|^google\.com$/i.test(host);
@@ -83,7 +83,7 @@ function resolveSource(s) {
     : (redirect ? '' : host);
   return { uri: s.uri, title: t, domain, label: domain || t || host };
 }
-function sourceChip(r) {
+export function sourceChip(r) {
   const fav = r.domain
     ? `<img class="ai-source-favicon" src="https://www.google.com/s2/favicons?domain=${escapeAttr(r.domain)}&sz=64" alt="" width="14" height="14" loading="lazy" referrerpolicy="no-referrer">`
     : SRC_GLOBE_SVG;
