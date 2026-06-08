@@ -13138,7 +13138,7 @@ body.home-search #section-shortcuts .shortcuts-scroll-wrap { padding-bottom: 0; 
 /* Desktop: Search & Trends spans the full width on top; Intelligence |
    News Feed columns below. */
 @media (min-width: 900px) {
-  /* Search hero full width (centered), then Trending | AI Intelligence, then News. */
+  /* Search hero full width (centered), then AI Intelligence | Trending, then News. */
   body.home-search.app-mode .topic-layout {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: start;
@@ -13146,8 +13146,12 @@ body.home-search #section-shortcuts .shortcuts-scroll-wrap { padding-bottom: 0; 
   }
   body.home-search #section-searchtrends { display: contents; }
   body.home-search #home-search-hero { grid-column: 1 / -1; justify-self: center; width: min(600px, 100%); margin-bottom: 1.8rem; }
-  body.home-search #home-trending { grid-column: 1; margin-top: 0 !important; margin-bottom: 1.8rem; }
-  body.home-search #section-shortcuts { grid-column: 2; margin-bottom: 1.8rem; }
+  /* AI Intelligence | Trending, both pinned to row 2 so the column swap
+     (shortcuts→col1) doesn't trigger a grid auto-placement row-break — DOM
+     order has #home-trending first, so without an explicit row the col-1
+     item would be bumped to a new row. */
+  body.home-search #section-shortcuts { grid-column: 1; grid-row: 2; margin-top: 0 !important; margin-bottom: 1.8rem; }
+  body.home-search #home-trending { grid-column: 2; grid-row: 2; margin-top: 0 !important; margin-bottom: 1.8rem; }
   body.home-search #section-newsfeed { grid-column: 1 / -1; }
 }
 /* Cards size to content + the page scrolls. */
