@@ -197,21 +197,61 @@ function trendCardsSkeleton() {
   return `<div class="trending-topics">${trendCardsHead(null)}<div class="trend-card-grid">${cards}</div></div>`;
 }
 
-// Render the "Trending Topics" card grid. limit caps how many cards;
-// viewAll adds a "View all trending →" button (opens the Trending modal).
+// Preferred category order (shared): these first, then the rest A→Z, Other last.
+const TT_CAT_ORDER = ['Politics', 'Entertainment', 'Sports', 'Law and Government'];
+function ttCatRank(c) { const i = TT_CAT_ORDER.indexOf(c); if (i !== -1) return i; return c === 'Other' ? 999 : 500; }
+function ttCatOf(t) { return (t.categories && t.categories[0]) || ''; }
+
+// Render the "Trending Topics" card grid with a Category filter. limit caps how
+// many cards; viewAll adds a "View all trending →" button (opens the modal).
 export function renderTrendingTopics(container, { limit = 20, viewAll = false } = {}) {
   container.innerHTML = trendCardsSkeleton();
+  const state = { all: [], fetched: null, category: 'all' };
+  const catList = () => [...new Set(state.all.map(ttCatOf).filter(Boolean))]
+    .sort((a, b) => (ttCatRank(a) - ttCatRank(b)) || a.localeCompare(b));
+
+  function controlsHTML() {
+    const cats = catList();
+    if (!cats.length) return '';
+    const opts = ['all'].concat(cats).map(c =>
+      `<option value="${escapeAttr(c)}"${state.category === c ? ' selected' : ''}>${c === 'all' ? 'All categories' : escapeHTML(c)}</option>`).join('');
+    return `<div class="trend-controls trend-controls-grid"><label class="trend-select-field"><span class="trend-select-label">Category</span>
+        <select class="trend-select trend-cat-select" aria-label="Filter by category">${opts}</select></label></div>`;
+  }
+  function visible() {
+    const items = state.category === 'all' ? state.all : state.all.filter(t => ttCatOf(t) === state.category);
+    return items.slice(0, limit);
+  }
+  function renderGrid() {
+    const grid = container.querySelector('.trend-card-grid');
+    if (!grid) return;
+    const shown = visible();
+    grid.innerHTML = shown.length ? shown.map((t, i) => trendCardHTML(t, i)).join('') : '<p class="trending-empty">No trends in this category right now.</p>';
+    wireTrendCards(container);
+  }
+  function renderShell() {
+    const shown = visible();
+    container.innerHTML = `
+      <div class="trending-topics">
+        ${trendCardsHead(state.fetched)}
+        ${controlsHTML()}
+        <div class="trend-card-grid">${shown.map((t, i) => trendCardHTML(t, i)).join('')}</div>
+        ${viewAll ? `<button type="button" class="trending-topics-viewall" data-action="view-all-trending">View all trending ${CHEV}</button>` : ''}
+      </div>`;
+    wireTrendCards(container);
+    container.querySelector('.trend-cat-select')?.addEventListener('change', (e) => { state.category = e.target.value; renderGrid(); });
+    container.querySelector('[data-action="view-all-trending"]')?.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('open-trending-list'));
+    });
+  }
+
   fetchTrending().then(({ topics, fetched }) => {
     if (!topics.length) {
       container.innerHTML = `<div class="trending-topics">${trendCardsHead(null)}<p class="trending-empty">Trending is taking a break — check back soon.</p></div>`;
       return;
     }
-    const shown = topics.slice(0, limit);
-    container.innerHTML = trendCardsShell(shown, { fetched, viewAll });
-    wireTrendCards(container);
-    container.querySelector('[data-action="view-all-trending"]')?.addEventListener('click', () => {
-      window.dispatchEvent(new CustomEvent('open-trending-list'));
-    });
+    state.all = topics; state.fetched = fetched;
+    renderShell();
   }).catch(() => {
     container.innerHTML = `<div class="trending-topics"><div class="trending-topics-head"><h3 class="trending-topics-title">Trending Topics</h3></div><p class="trending-empty">Trending is taking a break — check back soon.</p></div>`;
   });
@@ -283,24 +323,10 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
     const cats = catList();
     const catOpts = ['all'].concat(cats).map(c =>
       `<option value="${escapeAttr(c)}"${state.category === c ? ' selected' : ''}>${c === 'all' ? 'All categories' : escapeHTML(c)}</option>`).join('');
-    const sortField = state.mode === 'over'
-      ? `<label class="trend-select-field"><span class="trend-select-label">Sort</span>
-           <select class="trend-select trend-sort" aria-label="Sort trends">
-             <option value="recent"${state.sort === 'recent' ? ' selected' : ''}>Most recent</option>
-             <option value="volume"${state.sort === 'volume' ? ' selected' : ''}>Top volume</option>
-             <option value="duration"${state.sort === 'duration' ? ' selected' : ''}>Longest trending</option>
-           </select></label>`
-      : '';
     return `
       <div class="trend-controls">
-        <label class="trend-select-field"><span class="trend-select-label">Showing</span>
-          <select class="trend-select trend-mode-select" aria-label="Trending timeframe">
-            <option value="now"${state.mode === 'now' ? ' selected' : ''}>Now</option>
-            <option value="over"${state.mode === 'over' ? ' selected' : ''}>Over time</option>
-          </select></label>
         <label class="trend-select-field"><span class="trend-select-label">Category</span>
           <select class="trend-select trend-cat-select" aria-label="Filter by category">${catOpts}</select></label>
-        ${sortField}
       </div>`;
   }
 
@@ -326,13 +352,9 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
           <button type="button" class="trend-viewmore" data-action="view-all-trending">View more</button>
         </div>
       </div>`;
-    container.querySelector('.trend-mode-select')?.addEventListener('change', (e) => {
-      if (e.target.value === state.mode) return; state.mode = e.target.value; load();
-    });
     container.querySelector('.trend-cat-select')?.addEventListener('change', (e) => {
       state.category = e.target.value; renderGrid();
     });
-    container.querySelector('.trend-sort')?.addEventListener('change', (e) => { state.sort = e.target.value; load(); });
     container.querySelector('[data-action="view-all-trending"]')?.addEventListener('click', () => {
       window.dispatchEvent(new CustomEvent('open-trending-list'));
     });

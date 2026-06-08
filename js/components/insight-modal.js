@@ -431,9 +431,14 @@ function renderOverview(d) {
   })();
 }
 // When a section accordion opens, bring its header to the top of the scroll
-// area so the just-revealed content starts where the eye is.
+// area so the just-revealed content starts where the eye is. Click-based (not
+// 'toggle') so the default first-section-open never auto-scrolls on load.
 function wireOvsecScroll() {
   panelEl.querySelectorAll('.im-ovsec').forEach((det) => {
-    det.addEventListener('toggle', () => { if (det.open) scrollHeaderToTop(det.querySelector('.im-ovsec-sum')); });
+    const sum = det.querySelector('.im-ovsec-sum');
+    if (!sum) return;
+    sum.addEventListener('click', () => { requestAnimationFrame(() => { if (det.open) scrollHeaderToTop(sum); }); });
   });
+  const body = panelEl.querySelector('.im-body');
+  if (body) body.scrollTop = 0;
 }
