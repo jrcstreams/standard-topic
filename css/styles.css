@@ -2580,6 +2580,13 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
 @media (max-width: 899.98px) {
   .topic-banner-tabs .tab-pill-icon { display: none; }
 }
+/* Mobile: a little breathing room between the nav/tab band and the section
+   content below (news feed / search card were sitting too tight to the nav). */
+@media (max-width: 899.98px) {
+  body.app-mode .topic-layout .newsfeed-head,
+  body.app-mode .topic-layout .search-panel--inline { padding-top: 0.55rem; }
+  body.home-mode #content > *:first-child { margin-top: 0.4rem; }
+}
 
 .tab-pill.active {
   color: var(--color-primary);
