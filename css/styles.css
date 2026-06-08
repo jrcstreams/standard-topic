@@ -12,11 +12,11 @@
   --color-bg: #ffffff;
   --color-bg-light: #f7f8fa;
   --color-bg-muted: #f0f4f8;
-  /* Warm off-white "surface" — the homepage search card and all takeover/modal
+  /* Light cool-gray "surface" — the homepage search card and all takeover/modal
      panels share this so clicking the home search lifts cleanly into the modal.
-     Inner inputs/result wells stay white to read as depth on the cream. */
-  --color-surface: #faf8f5;
-  --color-surface-border: #efe9e0;
+     Inner inputs/result wells stay white to read as depth on the gray. */
+  --color-surface: #f6f7f9;
+  --color-surface-border: #e8eaef;
   --color-text: #2d3748;
   --color-text-muted: #718096;
   --color-text-light: #a0aec0;
