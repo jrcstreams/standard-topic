@@ -1393,11 +1393,6 @@ body.hide-cta .sticky-cta { display: none !important; }
 .websources-section { margin-top: 14px; }
 .websources-section .sidebar-card-title::before { display: none !important; }
 .ti-accordions-websources { margin-top: 2px; }
-/* Desktop: lay the Web Sources category accordions out in two columns. */
-@media (min-width: 900px) {
-  .ti-accordions-websources { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; align-content: start; }
-  .ti-accordions-websources .ti-accordion { align-self: start; }
-}
 
 .ti-item-list {
   list-style: none;
@@ -5541,18 +5536,23 @@ body.app-mode .topic-layout {
      width), matching the homepage's full-width Trending. The old two-column
      (Topic Intelligence | News Feed) split is retired. */
   .topic-layout {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 1.8rem; row-gap: 1.8rem;
     align-items: start;
   }
-  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts,
-  body.app-mode .topic-layout:not(.is-custom) > #section-websources {
-    position: relative;
-    margin-bottom: 1.8rem;
-  }
-  body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed {
-    position: relative;
-  }
+  /* Custom-search pages keep their single column. */
+  .topic-layout.is-custom { grid-template-columns: minmax(0, 1fr); }
+  /* Topic pages: Web Sources | AI Intelligence side by side; News + Related full. */
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-websources { grid-column: 1; position: relative; margin-bottom: 0; }
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-shortcuts { grid-column: 2; position: relative; margin-bottom: 0; }
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-newsfeed { grid-column: 1 / -1; position: relative; }
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-related { grid-column: 1 / -1; }
+  /* Home: search hero full width, then Trending | AI Intelligence, then News full. */
+  body.home-mode #section-searchtrends { display: contents; }
+  body.home-mode #home-search-hero { grid-column: 1 / -1; }
+  body.home-mode #home-trending { grid-column: 1; }
+  body.home-mode .topic-layout > #section-shortcuts { grid-column: 2; margin-bottom: 0; }
+  body.home-mode .topic-layout > #section-newsfeed { grid-column: 1 / -1; }
   /* Topic pages: stacked sections are taller than the viewport, so the
      content area scrolls as ONE column (like the homepage) instead of the
      old fixed two-column internal scroll. Home already scrolls naturally. */
@@ -13339,6 +13339,8 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
 /* Compact 2-row card (category · trending-for, then term) with an attached
    quick-insights dropdown. The .trend-card is just a positioning wrapper. */
 .trend-card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.35rem 1rem; }
+/* Homepage Trending now lives in its own column (beside AI Intelligence) — single column. */
+.home-trending .trend-card-grid { grid-template-columns: 1fr; }
 .trend-card { position: relative; }
 .trend-card.is-open { z-index: 50; }
 /* No bordered "card" and no hairline dividers (they read as disconnected

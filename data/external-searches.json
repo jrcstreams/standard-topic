@@ -2,9 +2,8 @@
   "categories": [
     { "key": "search", "label": "Search & reference" },
     { "key": "noai", "label": "No AI Web Sources" },
-    { "key": "social", "label": "Social & discussion" },
-    { "key": "media", "label": "Audio & video" },
-    { "key": "writing", "label": "Writing & newsletters" }
+    { "key": "social", "label": "Social, discussion & writing" },
+    { "key": "media", "label": "Audio & video" }
   ],
   "searches": [
     {
@@ -109,14 +108,14 @@
       "name": "Substack",
       "description": "Independent newsletters and essays.",
       "icon": "substack",
-      "category": "writing",
+      "category": "social",
       "urlTemplate": "https://substack.com/search/{query}"
     },
     {
       "name": "Medium",
       "description": "Long-form articles and opinion.",
       "icon": "medium",
-      "category": "writing",
+      "category": "social",
       "urlTemplate": "https://medium.com/search?q={query}"
     }
   ]

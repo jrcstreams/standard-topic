@@ -1357,7 +1357,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       </div>
     `;
     homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });
-    renderTrendingHome(container.querySelector('#home-trending'), { limit: 12 });
+    renderTrendingHome(container.querySelector('#home-trending'), { limit: 3 });
   } else {
     // Topic pages: Shortcuts + News Feed + Related Topics.
     container.innerHTML = `
@@ -1608,9 +1608,8 @@ async function loadGroupOverview(el, topicArg, group, items, scopeLabel) {
 const WS_CAT_META = {
   search:  { blurb: 'Search engines, encyclopedias, and reference.', icon: '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>' },
   noai:    { blurb: 'Web search with AI features turned off.', icon: '<path d="M12 2 4 5v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V5z"/><line x1="4.5" y1="4" x2="19.5" y2="20"/>' },
-  social:  { blurb: 'Communities, threads, and real-time posts.', icon: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/>' },
+  social:  { blurb: 'Communities, threads, posts, newsletters, and long-form.', icon: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/>' },
   media:   { blurb: 'Podcasts, video, and explainers.', icon: '<rect x="2" y="5" width="20" height="14" rx="2"/><polygon points="10 9 15 12 10 15"/>' },
-  writing: { blurb: 'Newsletters, essays, and long-form.', icon: '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/>' },
 };
 
 // Builds the Web Sources card: one boxed accordion per category (Search &
