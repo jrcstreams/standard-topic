@@ -2528,13 +2528,23 @@ function spNewsHTML(stories) {
     <div class="search-content-body">${rows}</div>
   </section>`;
 }
+const SP_TREND_ICON = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>';
 function spTrendHTML(items) {
-  const chips = items.map(it => {
+  const rows = items.map(it => {
     const term = it.query || '';
-    const cat = it.category ? `<span class="search-trend-cat">${escapeHTML(it.category)}</span>` : '';
-    return `<button type="button" class="search-trend-item" data-trend="${escapeAttr(term)}"><span class="search-trend-name">${escapeHTML(spTitleCase(term))}</span>${cat}</button>`;
+    const cat = it.category || '';
+    return `<button type="button" class="search-trend-row" data-trend="${escapeAttr(term)}" data-cat="${escapeAttr(cat)}">
+      <span class="search-trend-mark" aria-hidden="true">${SP_TREND_ICON}</span>
+      <span class="search-trend-text"><span class="search-trend-name">${escapeHTML(spTitleCase(term))}</span>${cat ? `<span class="search-trend-cat">${escapeHTML(cat)}</span>` : ''}</span>
+    </button>`;
   }).join('');
-  return `<div class="search-content-group"><div class="search-content-head">Trending</div><div class="search-content-chips">${chips}</div></div>`;
+  return `<section class="search-trend-section">
+    <div class="search-news-header">
+      <h3 class="search-news-head-title"><span>Trending</span></h3>
+      <p class="search-news-head-sub">Related trending searches</p>
+    </div>
+    <div class="search-trend-list">${rows}</div>
+  </section>`;
 }
 
 function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
@@ -2625,13 +2635,17 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     const live = resultsInner.querySelector('.search-panel-content');
     if (!live) return;
     const parts = [];
+    if (trends.length) parts.push(spTrendHTML(trends)); // Trending before News
     if (news.length) parts.push(spNewsHTML(news));
-    if (trends.length) parts.push(spTrendHTML(trends));
     live.innerHTML = parts.length ? `<div class="search-content">${parts.join('')}</div>` : '';
+    // Trend click → open the rich Trending detail modal (the AI layer), same as
+    // the homepage/trending modal — not a plain custom-search navigation.
     live.querySelectorAll('[data-trend]').forEach(b => b.addEventListener('click', () => {
       const t = b.dataset.trend; if (!t) return;
-      if (isModal) { closeSearchPageModal(); document.body.style.overflow = ''; }
-      navigate('#/custom/' + encodeURIComponent(t));
+      const cat = b.dataset.cat || '';
+      window.dispatchEvent(new CustomEvent('open-trending-detail', {
+        detail: { query: t, category: cat, categories: cat ? [cat] : [] },
+      }));
     }));
   }
   function hideSuggest() { suggestEl.hidden = true; suggestEl.innerHTML = ''; suggestItems = []; activeIdx = -1; }

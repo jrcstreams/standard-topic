@@ -13590,6 +13590,20 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 }
 .search-trend-item:hover { border-color: var(--color-primary); background: var(--color-bg-light); }
 .search-trend-cat { font-size: 0.7rem; color: var(--color-text-muted); }
+/* Search-results Trending: clean rows (matches the homepage trend cards). */
+.search-trend-section { display: block; }
+.search-trend-list { display: grid; gap: 2px; }
+@media (min-width: 720px) { .search-trend-list { grid-template-columns: 1fr 1fr; gap: 2px 16px; } }
+.search-trend-row {
+  display: flex; align-items: flex-start; gap: 9px; width: 100%; text-align: left;
+  padding: 9px 10px; border: none; background: none; border-radius: 9px; cursor: pointer;
+  font-family: var(--font-family); transition: background .12s;
+}
+.search-trend-row:hover { background: var(--color-bg-light); }
+.search-trend-mark { flex: 0 0 auto; margin-top: 2px; color: #1f8f6b; display: inline-flex; }
+.search-trend-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.search-trend-row .search-trend-name { font-size: 0.88rem; font-weight: var(--font-weight-medium); color: var(--color-text); }
+.search-trend-row .search-trend-cat { font-size: 0.72rem; color: var(--color-text-muted); }
 
 /* ===== Homepage Trending: Now/Over-time toggle + category pills (Phase 2) = */
 .trend-mode-toggle { display: inline-flex; gap: 2px; padding: 2px; background: var(--color-bg-muted); border-radius: 999px; }
