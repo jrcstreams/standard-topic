@@ -57,7 +57,7 @@ function openFresh(entry) {
   current = entry;
   render();
   overlayEl.style.display = 'block';
-  panelEl.style.display = 'block';
+  panelEl.style.display = 'flex';
   document.body.style.overflow = 'hidden';
 }
 function openStacked(entry, backLabel) {
