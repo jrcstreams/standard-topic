@@ -12,6 +12,11 @@
   --color-bg: #ffffff;
   --color-bg-light: #f7f8fa;
   --color-bg-muted: #f0f4f8;
+  /* Warm off-white "surface" — the homepage search card and all takeover/modal
+     panels share this so clicking the home search lifts cleanly into the modal.
+     Inner inputs/result wells stay white to read as depth on the cream. */
+  --color-surface: #faf8f5;
+  --color-surface-border: #efe9e0;
   --color-text: #2d3748;
   --color-text-muted: #718096;
   --color-text-light: #a0aec0;
@@ -4186,10 +4191,10 @@ html, body, #app {
 }
 .prompt-modal-overlay.is-open { opacity: 1; }
 
-.prompt-modal-panel {
+.prompt-modal-panel { /* anchored submit-prompt card */
   position: fixed;
   z-index: 201;
-  background: #ffffff;
+  background: var(--color-surface);
   border: 1px solid rgba(15, 23, 42, 0.06);
   border-radius: 12px;
   box-shadow:
@@ -4223,7 +4228,7 @@ html, body, #app {
   justify-content: space-between;
   gap: 0.75rem;
   padding: 1rem 1.15rem 0.85rem;
-  border-bottom: 1px solid #eef0f4;
+  border-bottom: 1px solid var(--color-surface-border);
   flex-shrink: 0;
 }
 .pm-title {
@@ -7135,7 +7140,7 @@ body.app-mode .topic-layout {
 }
 .related-modal-card {
   position: relative;
-  background: var(--color-bg);
+  background: var(--color-surface);
   border-radius: 6px;
   width: 100%;
   max-width: 420px;
@@ -8128,7 +8133,7 @@ body.app-mode .topic-layout {
   width: 100%;
   max-width: 640px;
   max-height: 88vh;
-  background: var(--color-bg);
+  background: var(--color-surface);
   border-radius: 16px;
   box-shadow: 0 24px 64px rgba(15, 26, 46, 0.28);
   display: flex;
@@ -8145,7 +8150,7 @@ body.app-mode .topic-layout {
   align-items: center;
   gap: 0.7rem;
   padding: 0.95rem 1.15rem 0.9rem;
-  border-bottom: 1px solid #eef0f4;
+  border-bottom: 1px solid var(--color-surface-border);
   flex-shrink: 0;
 }
 .pb-modal-close {
@@ -10135,7 +10140,7 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
 }
 .prompt-preview-modal-card {
   position: relative;
-  background: var(--color-bg);
+  background: var(--color-surface);
   border-radius: 6px;
   width: 100%;
   max-width: 620px;
@@ -10757,7 +10762,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   width: 100%;
   max-width: min(760px, 94vw);
   max-height: 88vh;
-  background: var(--color-bg);
+  background: var(--color-surface);
   border-radius: 16px;
   box-shadow: 0 25px 60px rgba(15, 23, 42, 0.35);
   overflow: hidden;
@@ -10786,7 +10791,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   justify-content: space-between;
   gap: 0.75rem;
   padding: 1.2rem 1.3rem 1rem;
-  border-bottom: 1px solid #eef0f4;
+  border-bottom: 1px solid var(--color-surface-border);
   flex-shrink: 0;
 }
 .settings-modal-head-text { min-width: 0; }
@@ -11063,7 +11068,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .discover-modal-card,
 .all-topics-modal-card {
   position: relative;
-  background: var(--color-bg);
+  background: var(--color-surface);
   border-radius: 6px;
   width: 100%;
   max-width: 480px;
@@ -11077,7 +11082,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 /* === All Topics modal (revamped: search-modal-style takeover with
    Intelligence-style accordions) ===================================== */
 .at-modal-panel {
-  position: relative; background: #fff; border-radius: 16px;
+  position: relative; background: var(--color-surface); border-radius: 16px;
   width: 100%; max-width: 600px;
   height: min(86vh, 680px); /* shared size across Search / Topics / Trends */
   overflow: hidden; display: flex; flex-direction: column;
@@ -11093,7 +11098,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 }
 .at-modal-close:hover { background: #e2e7ef; color: #1e2d44; }
 /* Fixed header with a light separator; the body scrolls under it. */
-.at-modal-head { flex-shrink: 0; text-align: center; margin: 0; padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid #eef0f4; }
+.at-modal-head { flex-shrink: 0; text-align: center; margin: 0; padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid var(--color-surface-border); }
 .at-modal-title { margin: 0 0 0.3rem; font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; letter-spacing: -0.025em; color: var(--color-primary); }
 .at-modal-subtext { margin: 0; font-size: 0.88rem; color: var(--color-text-muted); }
 .at-modal-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; gap: 0.6rem; padding: 1rem 1.4rem 1.4rem; }
@@ -11166,7 +11171,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   cursor: pointer; transition: background 0.14s, color 0.14s;
 }
 .pbm-close:hover { background: #e2e7ef; color: #1e2d44; }
-.pbm-head { flex-shrink: 0; text-align: center; margin: 0; padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid #eef0f4; }
+.pbm-head { flex-shrink: 0; text-align: center; margin: 0; padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid var(--color-surface-border); }
 .pbm-title { margin: 0 0 0.3rem; font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; letter-spacing: -0.025em; color: var(--color-primary); }
 .pbm-subtext { margin: 0; font-size: 0.88rem; color: var(--color-text-muted); }
 .pbm-body { flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; padding: 1rem 1.4rem 0; }
@@ -12633,7 +12638,7 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 
 /* Header — title block with the close button + Google Trends link living
    up here, so the body is purely the related chips + the two sections. */
-.td-header { position: relative; padding: 1.05rem 1.2rem 0.85rem; border-bottom: 1px solid #eef0f4; flex-shrink: 0; }
+.td-header { position: relative; padding: 1.05rem 1.2rem 0.85rem; border-bottom: 1px solid var(--color-surface-border); flex-shrink: 0; }
 .td-back { display: inline-flex; align-items: center; gap: 0.25rem; background: none; border: none; padding: 0 0 0.5rem; margin: 0; font-family: inherit; font-size: 0.74rem; font-weight: 600; color: var(--color-text-muted); cursor: pointer; transition: color 0.12s; }
 .td-back svg { flex: 0 0 auto; }
 .td-back:hover { color: var(--color-primary); }
@@ -12704,7 +12709,7 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
   position: fixed; z-index: 141; top: 50%; left: 50%;
   width: min(600px, calc(100% - 2rem)); height: min(86vh, 680px);
   display: flex; flex-direction: column; overflow: hidden;
-  background: #fff; border: 1px solid rgba(15, 23, 42, 0.06); border-radius: 16px;
+  background: var(--color-surface); border: 1px solid rgba(15, 23, 42, 0.06); border-radius: 16px;
   box-shadow: 0 30px 70px -16px rgba(15, 23, 42, 0.40), 0 10px 22px -10px rgba(15, 23, 42, 0.20);
   padding: 0;
   transform: translate(-50%, -50%) scale(0.97); opacity: 0;
@@ -12712,7 +12717,7 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 }
 .tlm-panel.is-in { transform: translate(-50%, -50%) scale(1); opacity: 1; }
 /* Fixed centered header with a light separator; body scrolls under it. */
-.tlm-head { flex-shrink: 0; text-align: center; margin: 0; padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid #eef0f4; }
+.tlm-head { flex-shrink: 0; text-align: center; margin: 0; padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid var(--color-surface-border); }
 .tlm-title { margin: 0 0 0.3rem; font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; letter-spacing: -0.025em; color: var(--color-primary); }
 .tlm-subtext { margin: 0; font-size: 0.88rem; color: var(--color-text-muted); }
 /* The trending card renders its own left-aligned head — hide it; the centered
@@ -12771,7 +12776,7 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
   width: 100%; max-width: 600px;
   max-height: 86vh;
   display: flex; flex-direction: column; overflow: hidden;
-  background: #fff; border: 1px solid rgba(15, 23, 42, 0.06); border-radius: 16px;
+  background: var(--color-surface); border: 1px solid rgba(15, 23, 42, 0.06); border-radius: 16px;
   box-shadow: 0 30px 80px -18px rgba(15, 23, 42, 0.42), 0 10px 24px -10px rgba(15, 23, 42, 0.2);
   transform: scale(0.98); opacity: 0;
   transition: opacity 0.16s ease, transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.05);
@@ -12779,7 +12784,7 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .takeover-panel.is-in { transform: scale(1); opacity: 1; }
 .takeover-head {
   flex-shrink: 0; display: flex; align-items: center; gap: 0.7rem;
-  padding: 0.85rem 1.1rem; border-bottom: 1px solid #eef0f4;
+  padding: 0.85rem 1.1rem; border-bottom: 1px solid var(--color-surface-border);
 }
 .takeover-head-title { margin: 0; font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em; color: var(--color-primary); }
 .takeover-close {
@@ -12802,7 +12807,7 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 
 /* === Search modal (Custom Topic Search reborn) ======================= */
 .takeover-close svg { width: 15px; height: 15px; display: block; }
-.search-page-panel { background: #fff; }
+.search-page-panel { background: var(--color-surface); }
 
 /* Empty hero state */
 .search-page-close-float { position: absolute; top: 0.85rem; right: 0.85rem; z-index: 2; }
@@ -12931,7 +12936,7 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .search-panel-icon svg { width: 100%; height: 100%; display: block; }
 .search-panel-input {
   width: 100%; box-sizing: border-box; height: 46px; padding: 0 3rem 0 3rem;
-  border: 1.5px solid #e2e6ee; border-radius: 999px; background: #f7f9fc;
+  border: 1.5px solid #e2e6ee; border-radius: 999px; background: #fff;
   font-family: inherit; font-size: 0.98rem; color: var(--color-text);
   transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
 }
@@ -12991,7 +12996,7 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
    with a light separator; the search bar stays fixed; results scroll under. */
 .search-page-panel.takeover-panel { overflow: hidden; padding: 0; height: min(86vh, 680px); }
 .search-panel--modal { min-height: 0; display: flex; flex-direction: column; height: 100%; }
-.search-panel--modal .search-panel-hero { flex-shrink: 0; border-bottom: 1px solid #eef0f4; }
+.search-panel--modal .search-panel-hero { flex-shrink: 0; border-bottom: 1px solid var(--color-surface-border); }
 .search-panel--modal .search-panel-barrow { flex-shrink: 0; padding: 0.85rem 1.15rem; }
 .search-panel--modal .search-panel-results { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0 1.15rem 1.2rem; }
 .search-panel--modal .search-panel-close { top: 0.5rem; right: 0.5rem; }
@@ -13016,18 +13021,27 @@ body.home-search.app-mode .topic-layout {
    (one tab on mobile). They fill the section — strip their own max-width /
    side padding so they don't double-inset within the padded layout. */
 #section-searchtrends { display: block; }
-.home-search-hero { max-width: none; margin: 0; padding: 0.2rem 0 0.4rem; }
+/* Home search hero is a contained CARD on the warm surface, sized to EXACTLY
+   the search modal's width (.takeover-panel max-width: 600px) so clicking it
+   lifts cleanly into the modal — same width, same color, no jump. The home
+   inline search never expands in place (submit routes to the modal), so the
+   600px cap constrains nothing but the resting title + bar. */
+.home-search-hero {
+  max-width: 600px; margin: 0.4rem auto 0.2rem; padding: 0.5rem 0.6rem 0.7rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-surface-border);
+  border-radius: 16px;
+  box-shadow: 0 2px 10px -4px rgba(15, 23, 42, 0.10);
+}
 /* Home Intelligence panel: kill the big reserved scroll padding-bottom (it's
    content-height here) so there's no dead space before News Feed. */
 body.home-search #section-shortcuts .shortcuts-scroll-wrap { padding-bottom: 0; }
 .home-search-hero .search-panel-results { max-width: 100%; }
-/* Collapsed hero: keep the search bar a comfortable centered width. */
+/* The bar fills the card (minus padding), matching how it fills the 600px
+   modal — so the bar width is identical in card and modal. */
 @media (min-width: 720px) {
-  .search-panel--inline[data-state="collapsed"] .search-panel-barrow { width: min(560px, 100%); max-width: 560px; margin-left: auto; margin-right: auto; }
-  /* Expanded: the bar stays exactly the collapsed width — its actions (Copy
-     link) now live on the results header and the clear ✕ sits inside the
-     input, so the bar never needs to grow. */
-  .search-panel--inline[data-state="expanded"] .search-panel-barrow { width: min(560px, 100%); max-width: 560px; margin-left: auto; margin-right: auto; }
+  .search-panel--inline[data-state="collapsed"] .search-panel-barrow,
+  .search-panel--inline[data-state="expanded"] .search-panel-barrow { width: 100%; max-width: none; margin-left: 0; margin-right: 0; }
 }
 /* Desktop: Search & Trends spans the full width on top; Intelligence |
    News Feed columns below. */
