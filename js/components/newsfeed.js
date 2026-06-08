@@ -170,31 +170,45 @@ export function wireNewsAI(root) {
       if (card) showNewsBrief(card);
     });
   });
-  // Share — native share sheet on mobile (Apple/Android), copy-link fallback.
-  root.querySelectorAll('.news-share').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
+  // Share — one button toggles a smooth accordion with Copy Link + Share via.
+  root.querySelectorAll('.news-share-toggle').forEach(btn => {
+    btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const card = btn.closest('.news-card');
-      const url = card?.dataset.url || '';
-      const title = card?.dataset.title || '';
-      if (!url) return;
-      if (navigator.share) {
-        try { await navigator.share({ title, url }); } catch (_) { /* user cancelled */ }
-      } else {
-        try { await navigator.clipboard.writeText(url); } catch (_) {}
-        flashCopied(btn, 'Link copied');
+      const panel = btn.closest('.news-card')?.querySelector('.news-share-panel');
+      if (!panel) return;
+      const willOpen = !panel.classList.contains('is-open');
+      // Close any other open share panels first.
+      root.querySelectorAll('.news-share-panel.is-open').forEach(p => p.classList.remove('is-open'));
+      root.querySelectorAll('.news-share-toggle[aria-expanded="true"]').forEach(b => b.setAttribute('aria-expanded', 'false'));
+      panel.classList.toggle('is-open', willOpen);
+      btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      if (willOpen) {
+        setTimeout(() => document.addEventListener('click', function close() {
+          panel.classList.remove('is-open'); btn.setAttribute('aria-expanded', 'false');
+        }, { once: true }), 0);
       }
     });
   });
-  // Copy link — copies the story URL with brief confirmation.
-  root.querySelectorAll('.news-copy').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
+  // Copy Link / Share via inside the panel.
+  root.querySelectorAll('.news-share-opt').forEach(opt => {
+    opt.addEventListener('click', async (e) => {
       e.stopPropagation();
-      const url = btn.closest('.news-card')?.dataset.url || '';
+      const card = opt.closest('.news-card');
+      const url = card?.dataset.url || '';
+      const title = card?.dataset.title || '';
+      const panel = opt.closest('.news-share-panel');
       if (!url) return;
-      try { await navigator.clipboard.writeText(url); }
-      catch (_) { const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (_) {} ta.remove(); }
-      flashCopied(btn, 'Copied');
+      if (opt.dataset.act === 'copy') {
+        try { await navigator.clipboard.writeText(url); }
+        catch (_) { const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (_) {} ta.remove(); }
+        flashCopied(opt, 'Copied');
+      } else if (navigator.share) {
+        try { await navigator.share({ title, url }); } catch (_) { /* cancelled */ }
+      } else {
+        try { await navigator.clipboard.writeText(url); } catch (_) {}
+        flashCopied(opt, 'Link copied');
+      }
+      if (panel) { setTimeout(() => panel.classList.remove('is-open'), 400); }
     });
   });
 }
@@ -253,8 +267,13 @@ export function newsCardHTML(item) {
       <div class="news-card-foot">
         <div class="news-card-meta">${metaParts.join('')}</div>
         ${newsAIHTML()}
-        <button type="button" class="news-action news-share" aria-label="Share this story">${SHARE_SVG}<span>Share</span></button>
-        <button type="button" class="news-action news-copy" aria-label="Copy link to this story">${LINK_SVG}<span>Copy</span></button>
+        <button type="button" class="news-action news-share-toggle" aria-expanded="false" aria-label="Share this story">${SHARE_SVG}<span>Share</span></button>
+      </div>
+      <div class="news-share-panel" aria-hidden="true">
+        <div class="news-share-panel-inner">
+          <button type="button" class="news-share-opt" data-act="copy">${LINK_SVG}<span>Copy Link</span></button>
+          <button type="button" class="news-share-opt" data-act="share">${SHARE_SVG}<span>Share via</span></button>
+        </div>
       </div>
     </article>
   `;
@@ -282,9 +301,12 @@ function filterBarHTML(label) {
         <input type="search" class="nf-search" placeholder="${escapeAttr(ph)}" aria-label="${escapeAttr(ph)}">
       </label>
       <div class="nf-filter-row">
-        <select class="nf-time" aria-label="Time range">${TIME_OPTS.map(([v, l]) => `<option value="${v}">${l}</option>`).join('')}</select>
-        <select class="nf-source" aria-label="Source"><option value="all">All sources</option></select>
-        <button type="button" class="nf-sort" data-sort="newest" aria-label="Toggle sort order">Newest</button>
+        <label class="nf-field"><span class="nf-field-label">Time</span>
+          <select class="nf-time nf-select" aria-label="Time range">${TIME_OPTS.map(([v, l]) => `<option value="${v}">${l === 'All time' ? 'All' : l}</option>`).join('')}</select></label>
+        <label class="nf-field"><span class="nf-field-label">Sources</span>
+          <select class="nf-source nf-select" aria-label="Source"><option value="all">All</option></select></label>
+        <label class="nf-field"><span class="nf-field-label">Sort</span>
+          <select class="nf-sort nf-select" aria-label="Sort order"><option value="newest">Newest</option><option value="oldest">Oldest</option></select></label>
       </div>
     </div>`;
 }
@@ -440,10 +462,8 @@ function startFeed(ctx) {
   });
   els.time.addEventListener('change', () => { state.time = els.time.value; renderList(); });
   els.source.addEventListener('change', () => { state.source = els.source.value; renderList(); });
-  els.sort.addEventListener('click', () => {
-    state.sort = state.sort === 'newest' ? 'oldest' : 'newest';
-    els.sort.dataset.sort = state.sort;
-    els.sort.textContent = state.sort === 'newest' ? 'Newest' : 'Oldest';
+  els.sort.addEventListener('change', () => {
+    state.sort = els.sort.value === 'oldest' ? 'oldest' : 'newest';
     renderList();
   });
 

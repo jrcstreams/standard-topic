@@ -1546,25 +1546,42 @@ async function loadGroupOverview(el, topicArg, group, items, scopeLabel) {
   const ago = timeAgoLabel(data.generatedAt);
   const sections = splitOverviewSections(data.content);
 
+  const multi = sections.length > 1;
   let html = `<div class="ti-overview-head">
     <span class="ai-result-label">${escapeHTML(label)} overview</span><span class="ai-result-badge">AI</span>
     ${ago ? `<span class="ti-overview-ago">${escapeHTML(ago)}</span>` : ''}
     <button type="button" class="ti-overview-run">Run full overview ↗</button>
   </div>`;
+  if (multi) {
+    // In-content nav: pill per section, tabs through the briefing one at a time.
+    html += `<div class="ti-ov-nav" role="tablist" aria-label="${escapeHTML(label)} sections">${
+      sections.map((sec, i) => `<button type="button" class="ti-ov-navpill${i === 0 ? ' is-active' : ''}" role="tab" aria-selected="${i === 0}" data-target="${i}">${escapeHTML(sec.name)}</button>`).join('')
+    }</div>`;
+  }
   if (sections.length) {
     html += sections.map((sec, i) => `
-      <section class="ti-ov-section" data-i="${i}">
-        <h4 class="ti-ov-section-name">${escapeHTML(sec.name)}</h4>
+      <section class="ti-ov-section${i === 0 ? ' is-active' : ''}" data-i="${i}" role="tabpanel">
+        ${multi ? '' : `<h4 class="ti-ov-section-name">${escapeHTML(sec.name)}</h4>`}
         ${renderBriefBody(sec.body, null)}
         ${byName.has(sec.name.trim().toLowerCase()) ? `<button type="button" class="ai-result-deeper ti-ov-deeper" data-name="${escapeAttr(sec.name)}">Explore further with AI ↗</button>` : ''}
       </section>`).join('');
   } else {
     // Legacy (pre-section) cached brief — single block until the cron migrates it.
-    html += `<div class="ti-ov-section">${renderBriefBody(data.content, null)}</div>`;
+    html += `<div class="ti-ov-section is-active">${renderBriefBody(data.content, null)}</div>`;
   }
   if (data.sources && data.sources.length) html += renderBriefBody('', data.sources); // empty body div + sources block
   el.innerHTML = html;
   el.dataset.state = 'done';
+
+  // Tab nav: switch the visible section.
+  const navPills = el.querySelectorAll('.ti-ov-navpill');
+  const ovSections = el.querySelectorAll('.ti-ov-section');
+  navPills.forEach((pill) => pill.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const t = pill.dataset.target;
+    navPills.forEach((x) => { const on = x === pill; x.classList.toggle('is-active', on); x.setAttribute('aria-selected', on); });
+    ovSections.forEach((s) => s.classList.toggle('is-active', s.dataset.i === t));
+  }));
 
   el.querySelector('.ti-overview-run')?.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -1694,44 +1711,42 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   // others closed so the panel reads as a tidy stack of choices.
   html += `<div class="ti-accordions">`;
 
+  // Web Sources now live in their OWN section (built below, appended after this
+  // AI Intelligence card) — each category gets its own boxed accordion. The
+  // AI Intelligence panel keeps only the AI lens groups (callout-line styled).
+  let webSourcesCardHTML = '';
   if (contentSearches.length > 0) {
-    // Group the web sources into labelled subtopics (Search,
-    // Social, Audio & video, Writing). Order/labels come from the
-    // data file's `categories`; any source whose category isn't
-    // listed falls into a trailing "Other" group so nothing is
-    // silently dropped.
     const categories = getExternalSearchCategories();
-    const order = categories.length
-      ? categories.slice()
-      : [{ key: '__all', label: '' }];
+    const order = categories.length ? categories.slice() : [{ key: '__all', label: 'Web Sources' }];
     const known = new Set(order.map(c => c.key));
     const leftovers = contentSearches.filter(s => !known.has(s.category));
     if (leftovers.length) order.push({ key: '__other', label: 'Other' });
 
-    const groupsHTML = order.map(cat => {
-      const items = cat.key === '__other'
-        ? leftovers
-        : cat.key === '__all'
-          ? contentSearches
-          : contentSearches.filter(s => s.category === cat.key);
+    const accordions = order.map(cat => {
+      const items = cat.key === '__other' ? leftovers
+        : cat.key === '__all' ? contentSearches
+        : contentSearches.filter(s => s.category === cat.key);
       if (!items.length) return '';
-      const heading = cat.label
-        ? `<li class="ti-subhead" aria-hidden="true">${escapeHTML(cat.label)}</li>`
-        : '';
-      return `
-        <ul class="ti-item-list ti-item-list-grouped">
-          ${heading}
-          ${items.map(s => webSourceItem(s, topicName)).join('')}
-        </ul>
-      `;
+      return renderTIAccordion({
+        key: 'websources',
+        label: cat.label || 'Web Sources',
+        open: false,
+        blurb: '',
+        bodyHTML: `<ul class="ti-item-list ti-item-list-grouped">${items.map(s => webSourceItem(s, topicName)).join('')}</ul>`,
+      });
     }).join('');
 
-    html += renderTIAccordion({
-      key: 'websources',
-      label: 'Web Sources',
-      open: false,
-      bodyHTML: `<div class="ti-source-groups">${groupsHTML}</div>`,
-    });
+    const wsScope = isHome ? 'any topic' : (isCustom ? 'your search' : escapeHTML(topicName || 'this topic'));
+    webSourcesCardHTML = `
+      <div class="sidebar-card section-card websources-section">
+        <div class="sidebar-card-header section-card-head">
+          <div class="sidebar-card-heading">
+            <h3 class="sidebar-card-title section-card-title"><span>Web Sources</span></h3>
+            <p class="sidebar-card-subtitle section-card-sub">Search platforms and primary sources for ${wsScope}.</p>
+          </div>
+        </div>
+        <div class="ti-accordions ti-accordions-websources">${accordions}</div>
+      </div>`;
   }
 
   if (all.length === 0) {
@@ -1775,6 +1790,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   html += `</div>`; /* close .shortcuts-scroll-wrap */
   html += `<div class="shortcuts-toast" id="shortcuts-toast" role="status" aria-live="polite"></div>`;
   html += `</div>`; /* close .shortcuts-sidebar */
+  html += webSourcesCardHTML; /* Web Sources as its own sibling section */
   container.innerHTML = html;
 
   // Group overviews auto-load when their accordion opens (cached → instant).

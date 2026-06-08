@@ -51,11 +51,13 @@ export const TI_SECTION_META = {
   },
 };
 
-export function renderTIAccordion({ key, label, open, bodyHTML }) {
+export function renderTIAccordion({ key, label, open, bodyHTML, blurb }) {
   const meta = TI_SECTION_META[key] || TI_SECTION_META.more;
   const openAttr = open ? ' open' : '';
-  const blurbHTML = meta.blurb
-    ? `<span class="ti-accordion-blurb">${escapeHTML(meta.blurb)}</span>`
+  // `blurb` overrides the section default; pass '' to hide it entirely.
+  const blurbText = blurb !== undefined ? blurb : meta.blurb;
+  const blurbHTML = blurbText
+    ? `<span class="ti-accordion-blurb">${escapeHTML(blurbText)}</span>`
     : '';
   return `
     <details class="ti-accordion" data-section="${escapeAttr(key)}" style="--ti-accent: ${meta.accent};"${openAttr}>

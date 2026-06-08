@@ -1348,6 +1348,39 @@ body.hide-cta .sticky-cta { display: none !important; }
   background: color-mix(in srgb, var(--ti-accent) 2.5%, #ffffff);
 }
 
+/* AI Intelligence panel: present the lens accordions as clean callout LINES
+   (not boxed buttons) — title + inviting blurb, hairline-separated, so they
+   read as "click for instant knowledge". (Web Sources keeps the boxed style.) */
+.topic-intelligence-panel .ti-accordions { display: block; }
+.topic-intelligence-panel .ti-accordion {
+  border: none; border-radius: 0; margin: 0; box-shadow: none; overflow: visible;
+  background: none; border-top: 1px solid var(--color-surface-border);
+}
+.topic-intelligence-panel .ti-accordion:last-of-type { border-bottom: 1px solid var(--color-surface-border); }
+.topic-intelligence-panel .ti-accordion[open] { background: none; }
+.topic-intelligence-panel .ti-accordion-summary {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0 8px;
+  padding: 15px 4px; background: none; border-radius: 0; transition: opacity .14s;
+}
+.topic-intelligence-panel .ti-accordion-summary:hover { opacity: 0.78; background: none; }
+.topic-intelligence-panel .ti-accordion-icon { display: none; }
+.topic-intelligence-panel .ti-accordion-title {
+  order: 1; flex: 1 1 auto; font-size: 0.98rem; font-weight: var(--font-weight-semibold);
+  color: var(--color-text); letter-spacing: -0.01em;
+}
+.topic-intelligence-panel .ti-accordion-chev { order: 2; flex: 0 0 auto; color: var(--color-text-light); }
+.topic-intelligence-panel .ti-accordion[open] .ti-accordion-chev { color: var(--ti-accent); }
+.topic-intelligence-panel .ti-accordion-blurb {
+  order: 3; flex: 1 1 100%; margin-top: 3px;
+  font-size: 0.815rem; line-height: 1.4; color: var(--color-text-muted);
+}
+.topic-intelligence-panel .ti-accordion-body {
+  border-top: none; background: none; padding: 0 4px 14px;
+}
+/* Standalone Web Sources section spacing. */
+.websources-section { margin-top: 14px; }
+.ti-accordions-websources { margin-top: 2px; }
+
 .ti-item-list {
   list-style: none;
   margin: 0;
@@ -1536,32 +1569,45 @@ body.hide-cta .sticky-cta { display: none !important; }
 }
 
 /* Each section is its own card with a navy accent rail. */
-.ti-ov-section {
-  position: relative; margin: 0 0 10px;
-  padding: 13px 15px 14px;
-  background: #fff; border: 1px solid var(--color-surface-border);
-  border-radius: 12px; box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
+/* In-content nav: pill per briefing section; tab through one at a time. */
+.ti-ov-nav {
+  display: flex; gap: 6px; overflow-x: auto; margin: 2px 0 14px; padding-bottom: 2px;
+  scrollbar-width: none; -ms-overflow-style: none;
 }
-.ti-ov-section:last-of-type { margin-bottom: 0; }
+.ti-ov-nav::-webkit-scrollbar { display: none; }
+.ti-ov-navpill {
+  flex: 0 0 auto; cursor: pointer; white-space: nowrap;
+  border: 1px solid var(--color-surface-border); background: #fff;
+  padding: 5px 13px; border-radius: 999px;
+  font-family: var(--font-family); font-size: 0.715rem; font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.01em; color: var(--color-text-light);
+  transition: background .16s, color .16s, border-color .16s;
+}
+.ti-ov-navpill:hover { color: var(--color-text); border-color: #c3ccdb; }
+.ti-ov-navpill.is-active { background: #1c3a6b; border-color: #1c3a6b; color: #fff; }
+/* Sections: flat (no AI-card box), one visible at a time, soft fade-in. */
+.ti-ov-section { display: none; margin: 0; padding: 2px 0 0; animation: tiOvFade .24s ease; }
+.ti-ov-section.is-active { display: block; }
+@keyframes tiOvFade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
 .ti-ov-section-name {
   margin: 0 0 7px; font-size: 0.7rem; font-weight: var(--font-weight-bold);
   letter-spacing: 0.07em; text-transform: uppercase; color: #1c3a6b;
 }
-.ti-ov-section .ai-result-body { font-size: 0.85rem; line-height: 1.55; color: #2c3a52; }
-.ti-ov-section .ai-result-body p { margin: 0 0 6px; }
+.ti-ov-section .ai-result-body { font-size: 0.875rem; line-height: 1.62; color: #2c3a52; }
+.ti-ov-section .ai-result-body p { margin: 0 0 9px; }
 .ti-ov-section .ai-result-body p:last-child { margin-bottom: 0; }
-/* Key takeaways: pull them out of plain bullets into tinted rows with an arrow. */
+/* Key takeaways: clean hanging-arrow lines, no boxes. */
 .ti-ov-section .ai-result-list {
-  list-style: none; margin: 9px 0 0; padding: 0; display: grid; gap: 5px;
+  list-style: none; margin: 12px 0 0; padding: 13px 0 0; display: grid; gap: 9px;
+  border-top: 1px solid var(--color-surface-border);
 }
 .ti-ov-section .ai-result-list li {
-  position: relative; margin: 0; padding: 6px 11px 6px 28px;
-  background: var(--color-surface); border-radius: 8px;
-  font-size: 0.81rem; line-height: 1.45; color: #34425c;
+  position: relative; margin: 0; padding: 0 0 0 24px;
+  font-size: 0.84rem; line-height: 1.5; color: #34425c;
 }
 .ti-ov-section .ai-result-list li::before {
-  content: '→'; position: absolute; left: 11px; top: 6px;
-  font-size: 0.8rem; font-weight: 700; color: #2f6fd0;
+  content: '→'; position: absolute; left: 2px; top: 1px;
+  font-size: 0.82rem; font-weight: 700; color: var(--color-primary);
 }
 /* Explore in chat → subtle ghost chip aligned to the section. */
 .ti-overview .ti-ov-deeper {
@@ -13420,35 +13466,52 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 }
 
 /* ===== News Feed: filters + archive paging (Phase 1) ===================== */
+/* News controls: compact labeled selects with the search inline on desktop. */
 .newsfeed-filters {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 4px 0 12px;
+  flex-shrink: 0; display: flex; flex-wrap: wrap; align-items: flex-end;
+  gap: 10px 12px; padding: 4px 0 14px;
 }
-.nf-search-wrap { position: relative; display: flex; align-items: center; }
+.nf-search-wrap { position: relative; display: flex; align-items: center; flex: 1 1 220px; min-width: 170px; }
 .nf-search-icon { position: absolute; left: 11px; color: var(--color-text-muted); pointer-events: none; }
 .nf-search {
   width: 100%; box-sizing: border-box;
-  padding: 9px 12px 9px 34px;
+  padding: 8px 12px 8px 33px;
   border: 1px solid var(--color-border); border-radius: 9px;
-  font-size: 0.9rem; font-family: var(--font-family); color: var(--color-text);
+  font-size: 0.85rem; font-family: var(--font-family); color: var(--color-text);
   background: var(--color-bg);
 }
 .nf-search:focus { outline: none; border-color: var(--color-primary); background: var(--color-bg-light); }
 .nf-search::placeholder { color: var(--color-text-light); }
-.nf-filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.nf-time, .nf-source, .nf-sort {
-  padding: 7px 10px;
-  border: 1px solid var(--color-border); border-radius: 8px;
-  font-size: 0.82rem; font-family: var(--font-family); color: var(--color-text);
-  background: var(--color-bg); cursor: pointer;
+.nf-filter-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+.nf-field { display: inline-flex; flex-direction: column; gap: 3px; }
+.nf-field-label {
+  font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em;
+  font-weight: var(--font-weight-semibold); color: var(--color-text-muted); padding-left: 2px;
 }
-.nf-time:focus, .nf-source:focus, .nf-sort:focus { outline: none; border-color: var(--color-primary); }
-.nf-time:hover, .nf-source:hover, .nf-sort:hover { border-color: var(--color-primary); background: var(--color-bg-light); }
-.nf-source { flex: 1 1 auto; min-width: 0; max-width: 200px; }
-.nf-sort { font-weight: var(--font-weight-medium); white-space: nowrap; }
+.nf-select {
+  padding: 7px 28px 7px 10px; border: 1px solid var(--color-border); border-radius: 8px;
+  font-size: 0.8rem; font-family: var(--font-family); color: var(--color-text);
+  background-color: var(--color-bg); cursor: pointer; appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b94a5' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 8px center; background-size: 12px;
+}
+.nf-select:focus { outline: none; border-color: var(--color-primary); }
+.nf-select:hover { border-color: var(--color-primary); }
+@media (max-width: 640px) { .nf-search-wrap { flex: 1 1 100%; } }
+/* Share accordion under a news card (Copy Link / Share via). */
+.news-share-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .22s ease; }
+.news-share-panel.is-open { grid-template-rows: 1fr; }
+.news-share-panel-inner { overflow: hidden; display: flex; gap: 8px; }
+.news-share-panel.is-open .news-share-panel-inner { padding: 2px 0 9px; }
+.news-share-opt {
+  display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px;
+  border: 1px solid var(--color-surface-border); border-radius: 8px; background: #fff; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.79rem; font-weight: var(--font-weight-medium); color: var(--color-text);
+  transition: border-color .14s, color .14s;
+}
+.news-share-opt:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.news-share-opt svg { width: 14px; height: 14px; flex: 0 0 auto; }
+.news-share-opt.is-copied { color: #2f8f63; border-color: #2f8f63; }
 .newsfeed-foot { flex-shrink: 0; display: flex; justify-content: center; padding: 14px 0 4px; }
 .newsfeed-loadmore {
   padding: 10px 20px;
