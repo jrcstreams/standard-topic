@@ -118,6 +118,15 @@ function titleCase(s) {
   return String(s || '').toLowerCase().replace(/\b([a-z])/g, (m, c) => c.toUpperCase());
 }
 
+// Some older cached briefs leaked the raw "**SUMMARY:** … **DETAIL:** …"
+// scaffold into the stored summary. Keep only the one-liner, label-free.
+export function cleanSummary(s) {
+  let t = String(s || '').replace(/[*_]+/g, '').trim();
+  const m = t.match(/summary\s*:\s*([\s\S]*?)(?:\s*detail\s*:|$)/i);
+  if (m) t = m[1];
+  return t.replace(/^\s*(summary|detail)\s*:\s*/i, '').replace(/\s+/g, ' ').trim();
+}
+
 // Trend cards open one combined, grounded AI brief (see showTrendBrief).
 
 // Compact 2-row card: [category · trending-for] on top, term below. Clicking
@@ -137,7 +146,7 @@ function trendCardHTML(topic, idx) {
             <span class="trend-card-title">${escapeHTML(title)}</span>
           </span>
           ${meta ? `<span class="trend-card-meta">${escapeHTML(meta)}</span>` : ''}
-          ${topic.summary ? `<span class="trend-card-summary">${escapeHTML(topic.summary)}</span>` : ''}
+          ${topic.summary && cleanSummary(topic.summary) ? `<span class="trend-card-summary">${escapeHTML(cleanSummary(topic.summary))}</span>` : ''}
         </span>
         <span class="trend-card-chev trend-card-open" aria-hidden="true">${OPEN_ICON}</span>
       </button>

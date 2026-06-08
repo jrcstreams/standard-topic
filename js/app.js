@@ -12,11 +12,11 @@ import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
 import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260606-polish43';
 import { initPromptModal } from './components/prompt-modal.js?v=20260605-polish30';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260608-revamp25';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260608-revamp26';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260608-revamp9';
-import { initInsightModal } from './components/insight-modal.js?v=20260608-revamp23';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260608-revamp25';
+import { initInsightModal } from './components/insight-modal.js?v=20260608-revamp26';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260608-revamp26';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260606-polish46';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Preload shortcut icon SVGs (non-blocking — renders emoji until resolved)
   preloadIcons(getAllShortcutIconKeys());
   initPromptModal();
+  initScrollFades();
   initTrendingDetailModal();
   initInsightModal();
   initTrendingListModal();
@@ -334,6 +335,29 @@ function renderLayout(route) {
 // hides it at >=900px (where shortcuts is in the sidebar and news
 // fills the rest of the layout) and on custom pages (shortcuts-only
 // — nothing to switch between).
+// Fixed top/bottom fade overlays that hint the page body can scroll up/down.
+// They sit BELOW the fixed header + subnav (top fade starts at the subnav's
+// bottom) so the chrome is never covered, and below modals (z-index 50).
+function initScrollFades() {
+  if (document.querySelector('.pg-scroll-fade-bottom')) return;
+  const top = document.createElement('div'); top.className = 'pg-scroll-fade pg-scroll-fade-top';
+  const bot = document.createElement('div'); bot.className = 'pg-scroll-fade pg-scroll-fade-bottom';
+  document.body.append(top, bot);
+  const sub = document.getElementById('sub-header');
+  const update = () => {
+    const b = sub ? Math.max(0, Math.round(sub.getBoundingClientRect().bottom)) : 0;
+    top.style.top = b + 'px';
+    const y = window.scrollY || 0;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    top.classList.toggle('is-on', y > 8);
+    bot.classList.toggle('is-on', max - y > 8);
+  };
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update, { passive: true });
+  if (window.ResizeObserver) new ResizeObserver(update).observe(document.getElementById('content') || document.body);
+  update();
+}
+
 function bodyTabsRow(opts = {}) {
   const { showRelated = false, showTrending = false, showSearchTrends = false, showWebSources = false, showShortcuts = true } = opts;
   // Order: (Search & Trends) → News Feed → (Trending) → Intelligence → (Related).

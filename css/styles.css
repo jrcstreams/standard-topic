@@ -13780,6 +13780,17 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .ai-ins-submitbtn-primary { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
 .ai-ins-submitbtn-primary:hover { background: color-mix(in srgb, var(--color-primary) 88%, #000); color: #fff; }
 
+/* Scroll-hint fades — body content only (top fade starts below the fixed
+   header + subnav). Page-level (fixed to viewport) + modal-level (in panel). */
+.pg-scroll-fade { position: fixed; left: 0; right: 0; height: 34px; pointer-events: none; z-index: 50; opacity: 0; transition: opacity .22s ease; }
+.pg-scroll-fade.is-on { opacity: 1; }
+.pg-scroll-fade-top { background: linear-gradient(to bottom, #fff, rgba(255, 255, 255, 0)); }
+.pg-scroll-fade-bottom { bottom: 0; background: linear-gradient(to top, #fff, rgba(255, 255, 255, 0)); }
+.im-fade { position: absolute; left: 0; right: 0; height: 22px; pointer-events: none; z-index: 7; opacity: 0; transition: opacity .18s ease; }
+.im-fade.is-on { opacity: 1; }
+.im-fade-top { background: linear-gradient(to bottom, #fff, rgba(255, 255, 255, 0)); }
+.im-fade-bottom { bottom: 0; background: linear-gradient(to top, #fff, rgba(255, 255, 255, 0)); border-radius: 0 0 18px 18px; }
+
 /* ===== Unified AI Insight modal ========================================= */
 .im-overlay { position: fixed; inset: 0; z-index: 1200; background: rgba(15, 26, 46, 0.46); }
 .im-panel {

@@ -25,6 +25,28 @@ function relTime(iso) {
   return `${Math.round(h / 24)} d ago`;
 }
 function hostOf(u) { try { return new URL(u).hostname.replace(/^www\./i, ''); } catch { return ''; } }
+// Top/bottom fade overlays on the panel that signal the body can scroll up or
+// down. Re-created each render (innerHTML wipes them); a MutationObserver keeps
+// them in sync as async content (the brief) loads in.
+function setupModalFades() {
+  const body = panelEl && panelEl.querySelector('.im-body');
+  if (!body) return;
+  if (panelEl._imFadeMO) { try { panelEl._imFadeMO.disconnect(); } catch (_) {} }
+  const top = document.createElement('div'); top.className = 'im-fade im-fade-top';
+  const bot = document.createElement('div'); bot.className = 'im-fade im-fade-bottom';
+  panelEl.append(top, bot);
+  const head = panelEl.querySelector('.im-head');
+  const update = () => {
+    top.style.top = (head ? head.offsetHeight : 0) + 'px';
+    const scrollable = body.scrollHeight > body.clientHeight + 2;
+    top.classList.toggle('is-on', scrollable && body.scrollTop > 2);
+    bot.classList.toggle('is-on', scrollable && body.scrollTop < body.scrollHeight - body.clientHeight - 2);
+  };
+  body.addEventListener('scroll', update, { passive: true });
+  if (window.ResizeObserver) { const ro = new ResizeObserver(update); ro.observe(body); }
+  if (window.MutationObserver) { const mo = new MutationObserver(update); mo.observe(body, { childList: true, subtree: true }); panelEl._imFadeMO = mo; }
+  requestAnimationFrame(update); setTimeout(update, 400);
+}
 // Bring an accordion's header to the top of the scrollable body so the content
 // that just expanded starts where the reader is looking (with a small offset).
 function scrollHeaderToTop(el) {
@@ -191,10 +213,17 @@ function webSourcesListHTML(catKey, term) {
 // scaffold into the stored body. Show only the DETAIL prose when present.
 function cleanTrendContent(s) {
   let t = String(s || '');
-  const di = t.search(/\bdetail\s*:/i);
-  if (di !== -1) t = t.slice(di).replace(/^\s*detail\s*:\s*/i, '');
-  t = t.replace(/\bsummary\s*:[\s\S]*?(?:\n\n|$)/i, '').trim();
+  const di = t.search(/[*_]*\s*detail\s*[*_]*\s*:/i);
+  if (di !== -1) t = t.slice(di).replace(/^[*_\s]*detail\s*[*_]*\s*:\s*[*_]*/i, '');
+  t = t.replace(/[*_]*\s*summary\s*[*_]*\s*:[\s\S]*?(?:\n\n|$)/i, '').replace(/^[\s*_]+/, '').trim();
   return t || String(s || '');
+}
+// Keep only the label-free one-liner from a possibly-dirty stored summary.
+function cleanSummary(s) {
+  let t = String(s || '').replace(/[*_]+/g, '').trim();
+  const m = t.match(/summary\s*:\s*([\s\S]*?)(?:\s*detail\s*:|$)/i);
+  if (m) t = m[1];
+  return t.replace(/^\s*(summary|detail)\s*:\s*/i, '').replace(/\s+/g, ' ').trim();
 }
 
 function exploreChooseHTML() {
@@ -283,6 +312,7 @@ function render() {
   panelEl.querySelector('#im-close')?.addEventListener('click', close);
   panelEl.querySelector('#im-back')?.addEventListener('click', goBack);
   panelEl.scrollTop = 0;
+  setupModalFades();
 }
 
 // ---- News -----------------------------------------------------------------
@@ -371,7 +401,8 @@ function renderTrend(d) {
       const data = res.ok ? await res.json() : null;
       if (panelEl.querySelector('#im-brief') !== briefEl) return;
       if (data && data.content) {
-        const summary = data.summary ? `<p class="im-trend-summary">${esc(data.summary)}</p>` : '';
+        const cleanSum = cleanSummary(data.summary);
+        const summary = cleanSum ? `<p class="im-trend-summary">${esc(cleanSum)}</p>` : '';
         briefEl.innerHTML = `${summary}${renderBriefBody(cleanTrendContent(data.content), null)}`;
       } else { briefEl.innerHTML = '<p class="im-empty">No AI brief generated for this trend yet.</p>'; }
     } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
