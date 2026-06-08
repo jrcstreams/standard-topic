@@ -16,7 +16,7 @@
 
 const { getSql } = require('../lib/db');
 
-const GROUNDING_FREE = parseInt(process.env.GEMINI_GROUNDING_FREE || '0', 10);
+const GROUNDING_FREE = parseInt(process.env.GEMINI_GROUNDING_FREE || '1500', 10);
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
