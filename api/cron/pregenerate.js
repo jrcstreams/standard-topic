@@ -62,6 +62,32 @@ module.exports = async function handler(req, res) {
 
   const total = Math.min(Math.max(parseInt(req.query.n, 10) || 30, 1), 120);
   const which = (req.query.type || 'all').trim();
+  // force=1 makes the refresh pass ignore the staleness windows and re-ground
+  // EVERY overview/trend (stalest first) — use after a prompt change to flush
+  // old-dated briefs. type=purge deletes cached rows outright so each one
+  // regenerates fresh (with the current prompt) on its next view or cron pass.
+  const force = req.query.force === '1' || req.query.force === 'true';
+
+  // type=purge — drop cached insights so they regenerate from scratch. scope
+  // defaults to overviews; pass scope=all to also clear trend + news briefs.
+  if (which === 'purge') {
+    const sql2 = sql;
+    const scope = (req.query.scope || 'overviews').trim();
+    const types = scope === 'all'
+      ? ['shortcut', 'trend', 'news']
+      : (scope === 'trends' ? ['trend'] : (scope === 'news' ? ['news'] : ['shortcut']));
+    let purged = 0;
+    try {
+      const r = await sql2.query(
+        `WITH d AS (DELETE FROM ai_insights WHERE entity_type = ANY($1) RETURNING 1)
+         SELECT count(*)::int AS n FROM d`, [types]);
+      purged = (r[0] && r[0].n) || 0;
+    } catch (e) {
+      return res.status(500).json({ error: String((e && e.message) || e) });
+    }
+    return res.status(200).json({ ok: true, purged, types });
+  }
+
   const call = async (payload) => {
     try { const r = await generateInsight(sql, payload); return !!(r && r.content); }
     catch (_) { return false; }
@@ -138,7 +164,20 @@ module.exports = async function handler(req, res) {
     //    The "content lacks '## '" arm migrates pre-overview prose briefs once.
     if ((which === 'all' || which === 'refresh') && budget > 0) {
       const byKey = new Map(candidates.map((c) => [`${c.topic.toLowerCase()}|${c.group}`, c]));
-      const stale = await sql.query(
+      // force=1 → re-ground every overview + current trend regardless of age
+      // (flush after a prompt change). Otherwise only the stale ones.
+      const stale = force
+        ? await sql.query(
+            `SELECT entity_type, entity_key, insight FROM ai_insights ai
+              WHERE entity_type='shortcut'
+                 OR (entity_type='trend' AND insight='brief'
+                     AND EXISTS (
+                       SELECT 1 FROM trending_items ti
+                        WHERE ti.geo='US' AND lower(ti.query) = ai.entity_key
+                          AND ti.snapshot_at = (SELECT max(snapshot_at) FROM trending_items WHERE geo='US')))
+              ORDER BY created_at ASC
+              LIMIT $1`, [budget])
+        : await sql.query(
         `SELECT entity_type, entity_key, insight FROM ai_insights ai
           WHERE (entity_type='shortcut' AND insight IN ('discover','topic-specific')
                  AND created_at < now() - interval '72 hours')

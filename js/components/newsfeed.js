@@ -85,7 +85,10 @@ export function renderBriefBody(content, sources) {
   }
   closeList();
   const src = (sources && sources.length)
-    ? `<div class="ai-result-sources"><span>Sources:</span> ${sources.map(s => `<a href="${escapeAttr(s.uri)}" target="_blank" rel="noopener noreferrer">${escapeHTML(s.title || hostFromUri(s.uri))}</a>`).join(' · ')}</div>`
+    ? `<div class="ai-result-sources"><span class="ai-result-sources-label">Sources</span>${sources.map(s => {
+        const host = hostFromUri(s.uri);
+        return `<a class="ai-source-chip" href="${escapeAttr(s.uri)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(s.title || host)}"><img class="ai-source-favicon" src="https://www.google.com/s2/favicons?domain=${escapeAttr(host)}&sz=64" alt="" width="14" height="14" loading="lazy" referrerpolicy="no-referrer"><span>${escapeHTML(host)}</span></a>`;
+      }).join('')}</div>`
     : '';
   return `<div class="ai-result-body">${html}</div>${src}`;
 }

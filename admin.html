@@ -141,7 +141,8 @@
   <div class="tab-content" id="tab-models"><div class="toolbar"><h2>AI Models</h2><button class="btn btn-primary" id="add-model">+ Add Model</button></div><div style="display:flex;align-items:center;gap:0.55rem;margin-bottom:0.85rem;padding:0.6rem 0.75rem;background:var(--bg-light);border-radius:6px;border:1px solid var(--border);"><label for="models-default" style="font-weight:600;font-size:0.85rem;">Default model</label><select id="models-default" style="flex:1;padding:0.35rem 0.5rem;border:1px solid var(--border);border-radius:4px;background:white;font-size:0.85rem;"></select><span style="color:var(--text-muted);font-size:0.75rem;">Preselected in prompt modals + the user Settings panel.</span></div><table><thead><tr><th>Name</th><th>ID</th><th>Submission Method</th><th>URL Template</th><th>Actions</th></tr></thead><tbody id="models-body"></tbody></table></div>
   <div class="tab-content" id="tab-promptgen"><div class="toolbar"><h2>Prompt Generator</h2></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Edit the generator's fields, their options, and the prompt templates below. Changes stage live — use <strong>Export changed files</strong> to save. (Raw JSON is still available via <strong>⚙ Data Files</strong>.)</p><div id="pg-body"></div></div>
   <div class="tab-content" id="tab-usage">
-    <div class="toolbar"><h2>AI Usage &amp; Spend</h2><button class="btn" id="usage-refresh">Refresh</button></div>
+    <div class="toolbar"><h2>AI Usage &amp; Spend</h2><div style="display:flex;gap:0.5rem;"><button class="btn" id="insights-purge" title="Delete every cached AI overview so each regenerates fresh (with the current, date-anchored prompt) on its next view or cron pass. Needs the CRON secret.">Force-refresh AI overviews</button><button class="btn" id="usage-refresh">Refresh</button></div></div>
+    <div id="insights-purge-status" style="display:none;font-size:0.82rem;margin-bottom:0.75rem;"></div>
     <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Live per-UTC-day Gemini spend, written by the insight pipeline on every generated brief (cached reads cost nothing, so they don't appear here). <strong>Est. $</strong> sums token cost (gemini-2.5-flash-lite list pricing) plus any Google-Search grounding fee — billed per <strong>search query</strong> (one grounded call can fire several) at ~$0.035 each, but <strong>free up to 1,500/day on paid Tier 1</strong> (confirmed via the Cloud Console "search query gemini 2.5 free" SKU), so at these volumes grounding costs $0 and the estimate is essentially token cost. Embedding backfill (<code>cron/embed</code>) is negligible and not tracked here. Read live from <code>/api/ai-usage</code>.</p>
     <div id="usage-body"><p style="color:var(--text-muted);">Loading…</p></div>
   </div>
@@ -663,7 +664,35 @@
     }
     document.addEventListener('click', function(e){
       if (e.target && e.target.id === 'usage-refresh') { _usageLoading = false; renderUsage(); }
+      if (e.target && e.target.id === 'insights-purge') { purgeInsights(); }
     });
+
+    // Force-refresh: purge cached AI overviews so they regenerate fresh (with
+    // the current, date-anchored + grounded prompt) on next view / cron. Hits
+    // the protected pregenerate cron, so it needs the CRON secret (entered at
+    // click-time, remembered in localStorage for convenience, never committed).
+    var CRON_SECRET_LS_KEY = 'st_cron_secret';
+    function purgeInsights() {
+      var status = document.getElementById('insights-purge-status');
+      var stored = '';
+      try { stored = localStorage.getItem(CRON_SECRET_LS_KEY) || ''; } catch (e) {}
+      var secret = window.prompt('CRON secret (from the Vercel env var CRON_SECRET) — this clears every cached AI overview so they regenerate fresh on next view:', stored);
+      if (!secret) return;
+      try { localStorage.setItem(CRON_SECRET_LS_KEY, secret); } catch (e) {}
+      if (status) { status.style.display = 'block'; status.style.color = 'var(--text-muted)'; status.textContent = 'Purging cached overviews…'; }
+      fetch(API_BASE + '/cron/pregenerate?type=purge&scope=overviews', {
+        method: 'POST', cache: 'no-store',
+        headers: { 'Authorization': 'Bearer ' + secret }
+      })
+        .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, d: d }; }); })
+        .then(function(res){
+          if (!res.ok) throw new Error((res.d && res.d.error) || 'HTTP error');
+          if (status) { status.style.color = '#2f7a55'; status.textContent = 'Cleared ' + ((res.d && res.d.purged) || 0) + ' cached overviews. Each regenerates (date-anchored + grounded) the next time it is viewed; the hourly cron also backfills.'; }
+        })
+        .catch(function(err){
+          if (status) { status.style.color = '#c62828'; status.textContent = 'Failed: ' + esc(String(err.message || err)) + '. Check the CRON secret (and that you are hitting the live deploy).'; }
+        });
+    }
 
     function renderWebhookPanel() {
       var enabled = countEnabledWebhooks();
