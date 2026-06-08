@@ -1348,46 +1348,8 @@ body.hide-cta .sticky-cta { display: none !important; }
   background: color-mix(in srgb, var(--ti-accent) 2.5%, #ffffff);
 }
 
-/* AI Intelligence panel: lens accordions as clean callout ROWS with an
-   accent icon tile (signals "click for instant knowledge"), title + inviting
-   blurb, hairline-separated. (Web Sources keeps the boxed accordion style.) */
-.topic-intelligence-panel .ti-accordions { display: block; }
-.topic-intelligence-panel .ti-accordion {
-  border: none; border-radius: 0; margin: 0; box-shadow: none; overflow: visible;
-  background: none; border-top: 1px solid var(--color-surface-border);
-}
-.topic-intelligence-panel .ti-accordion:last-of-type { border-bottom: 1px solid var(--color-surface-border); }
-.topic-intelligence-panel .ti-accordion[open] { background: none; }
-.topic-intelligence-panel .ti-accordion-summary {
-  display: grid; grid-template-columns: auto 1fr auto; grid-template-rows: auto auto;
-  align-items: center; column-gap: 12px; row-gap: 1px;
-  padding: 14px 4px; background: none; border-radius: 0;
-}
-.topic-intelligence-panel .ti-accordion-summary:hover .ti-accordion-title { color: var(--ti-accent); }
-.topic-intelligence-panel .ti-accordion-icon {
-  display: inline-flex; align-items: center; justify-content: center;
-  grid-column: 1; grid-row: 1 / 3; width: 36px; height: 36px; border-radius: 10px;
-  background: color-mix(in srgb, var(--ti-accent) 9%, #fff);
-  border: 1px solid color-mix(in srgb, var(--ti-accent) 22%, #e2e6ee);
-  color: var(--ti-accent);
-}
-.topic-intelligence-panel .ti-accordion-icon svg { width: 18px; height: 18px; }
-.topic-intelligence-panel .ti-accordion-title {
-  grid-column: 2; grid-row: 1; align-self: end;
-  font-size: 0.96rem; font-weight: var(--font-weight-semibold); color: var(--color-text); letter-spacing: -0.01em;
-  transition: color .14s;
-}
-.topic-intelligence-panel .ti-accordion-chev {
-  grid-column: 3; grid-row: 1 / 3; flex: 0 0 auto; color: var(--color-text-light);
-}
-.topic-intelligence-panel .ti-accordion[open] .ti-accordion-chev { color: var(--ti-accent); }
-.topic-intelligence-panel .ti-accordion-blurb {
-  grid-column: 2; grid-row: 2; align-self: start; margin: 0;
-  font-size: 0.805rem; line-height: 1.35; color: var(--color-text-muted);
-}
-.topic-intelligence-panel .ti-accordion-body {
-  border-top: none; background: none; padding: 2px 4px 16px 52px;
-}
+/* AI Intelligence lenses use the same boxed accordion style as Web Sources
+   (icon tile + title + blurb), single column within their own column. */
 /* Standalone Web Sources section spacing. */
 /* Web Sources header: match News Feed / AI Intelligence (no accent bar). */
 .websources-section { margin-top: 14px; }
@@ -5536,7 +5498,7 @@ body.app-mode .topic-layout {
      width), matching the homepage's full-width Trending. The old two-column
      (Topic Intelligence | News Feed) split is retired. */
   .topic-layout {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     column-gap: 1.8rem; row-gap: 1.8rem;
     align-items: start;
   }
@@ -5578,14 +5540,9 @@ body.app-mode .topic-layout {
   /* Intelligence is full width now — lay the accordion buttons out as a tidy
      2-up grid (2x2 for the four groups). An OPEN accordion spans the full
      width so its model list has room and doesn't strand a tall empty cell. */
+  /* AI Intelligence accordions: single column within their own column. */
   body.app-mode .topic-layout:not(.is-custom) #section-shortcuts .ti-accordions {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.8rem 1rem;
-    align-items: start;
-  }
-  body.app-mode .topic-layout:not(.is-custom) #section-shortcuts .ti-accordion[open] {
-    grid-column: 1 / -1;
+    display: flex; flex-direction: column; gap: 0.7rem;
   }
   /* Home only (its left column has #section-trending): Topic Intelligence
      sits on top (row 1, capped so it scrolls internally rather than
