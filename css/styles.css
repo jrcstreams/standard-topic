@@ -13590,6 +13590,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
   flex: 0 0 auto; width: 14px; height: 14px; border-radius: 3px;
   background: var(--color-surface);
 }
+.ai-source-globe { background: transparent; color: inherit; opacity: 0.7; }
 
 /* ===== Intelligence: per-group AI overview ============================== */
 .ti-ai { margin: 0 0 10px; }

@@ -70,6 +70,25 @@ const LINK_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" st
 // Renders a brief's body: "### Section" subheaders, "- "/"• " bullets, and
 // source citation links. Shared shape for news (sectioned) + trend (prose).
 function hostFromUri(u) { try { return new URL(u).hostname.replace(/^www\./i, ''); } catch { return 'source'; } }
+const SRC_GLOBE_SVG = '<svg class="ai-source-favicon ai-source-globe" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/></svg>';
+// Gemini grounding returns redirect URIs (vertexaisearch.cloud.google.com/...)
+// with the real publisher in `title`. Resolve a clean domain for the chip:
+// prefer a domain-shaped title, else the uri host when it isn't a redirect.
+function resolveSource(s) {
+  const t = String(s.title || '').trim();
+  const host = hostFromUri(s.uri);
+  const redirect = /vertexaisearch|grounding-api|googleusercontent|^google\.com$/i.test(host);
+  const domain = /^[a-z0-9.-]+\.[a-z]{2,}$/i.test(t)
+    ? t.toLowerCase().replace(/^www\./, '')
+    : (redirect ? '' : host);
+  return { uri: s.uri, title: t, domain, label: domain || t || host };
+}
+function sourceChip(r) {
+  const fav = r.domain
+    ? `<img class="ai-source-favicon" src="https://www.google.com/s2/favicons?domain=${escapeAttr(r.domain)}&sz=64" alt="" width="14" height="14" loading="lazy" referrerpolicy="no-referrer">`
+    : SRC_GLOBE_SVG;
+  return `<a class="ai-source-chip" href="${escapeAttr(r.uri)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(r.title || r.label)}">${fav}<span>${escapeHTML(r.label)}</span></a>`;
+}
 export function renderBriefBody(content, sources) {
   // Escape, then render light markdown: **bold**, *bold* fallback.
   const fmt = (s) => escapeHTML(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
@@ -84,12 +103,19 @@ export function renderBriefBody(content, sources) {
     else { closeList(); html += `<p>${fmt(line)}</p>`; }
   }
   closeList();
-  const src = (sources && sources.length)
-    ? `<div class="ai-result-sources"><span class="ai-result-sources-label">Sources</span>${sources.map(s => {
-        const host = hostFromUri(s.uri);
-        return `<a class="ai-source-chip" href="${escapeAttr(s.uri)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(s.title || host)}"><img class="ai-source-favicon" src="https://www.google.com/s2/favicons?domain=${escapeAttr(host)}&sz=64" alt="" width="14" height="14" loading="lazy" referrerpolicy="no-referrer"><span>${escapeHTML(host)}</span></a>`;
-      }).join('')}</div>`
-    : '';
+  let src = '';
+  if (sources && sources.length) {
+    const seen = new Set();
+    const chips = [];
+    for (const s of sources) {
+      const r = resolveSource(s);
+      const key = (r.label || '').toLowerCase();
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      chips.push(sourceChip(r));
+    }
+    if (chips.length) src = `<div class="ai-result-sources"><span class="ai-result-sources-label">Sources</span>${chips.join('')}</div>`;
+  }
   return `<div class="ai-result-body">${html}</div>${src}`;
 }
 
