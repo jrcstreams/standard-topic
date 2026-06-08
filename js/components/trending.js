@@ -342,7 +342,7 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
         ${controlsHTML()}
         <div class="trend-card-grid" id="trend-home-grid"></div>
         <div class="trend-viewmore-row">
-          <button type="button" class="trend-viewmore" data-action="view-all-trending">View more</button>
+          <button type="button" class="trend-viewmore" data-action="view-all-trending">View more trending</button>
         </div>
       </div>`;
     container.querySelector('.trend-cat-select')?.addEventListener('change', (e) => {

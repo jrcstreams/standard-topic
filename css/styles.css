@@ -13119,7 +13119,9 @@ body.home-search.app-mode .topic-layout {
    inline search never expands in place (submit routes to the modal), so the
    600px cap constrains nothing but the resting title + bar. */
 .home-search-hero {
-  max-width: 600px; margin: 0.4rem auto 0.2rem; padding: 0.5rem 0.6rem 1.2rem;
+  /* margin-top: breathing room below the main/sub nav. padding top/bottom:
+     room above the title and below the search bar inside the card. */
+  max-width: 600px; margin: 1.5rem auto 0.2rem; padding: 1.2rem 0.6rem 1.5rem;
   background: var(--color-surface);
   border: 1px solid var(--color-surface-border);
   border-radius: 16px;
@@ -13496,8 +13498,11 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* A faint, contained control bar so search + sort stand on their own under
    the tab nav (esp. on mobile). */
 .newsfeed-filters {
+  /* Sizes to its controls (search + sort) rather than stretching full width —
+     the empty grey gutter on wide screens isn't needed. Stays full width below
+     620px where the viewport is the constraint anyway. */
   flex-shrink: 0; display: flex; flex-wrap: nowrap; align-items: center;
-  gap: 10px; margin: 2px 0 14px; padding: 9px 10px;
+  gap: 10px; margin: 2px 0 14px; padding: 9px 10px; max-width: 620px;
   background: color-mix(in srgb, var(--color-primary) 2.5%, #f5f7fa);
   border: 1px solid var(--color-surface-border); border-radius: 12px;
 }
