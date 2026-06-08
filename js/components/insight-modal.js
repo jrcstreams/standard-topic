@@ -4,7 +4,7 @@
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
 import { renderBriefBody } from './newsfeed.js';
-import { getModels } from '../utils/data.js';
+import { getModels, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt } from '../utils/ai-models.js';
 
 let overlayEl = null;
@@ -32,6 +32,8 @@ const CHEV = '<svg class="im-chev" viewBox="0 0 24 24" width="15" height="15" fi
 // Filled mark for the brand lockup — reads as a logo at larger size, vs the
 // thin outline SPARK used for small inline labels.
 const LOGO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.6l1.62 6.32a3 3 0 0 0 2.46 2.46L22.4 12l-6.32 1.62a3 3 0 0 0-2.46 2.46L12 22.4l-1.62-6.32a3 3 0 0 0-2.46-2.46L1.6 12l6.32-1.62a3 3 0 0 0 2.46-2.46z"/></svg>';
+// Right chevron — "drill into this sub-level" affordance (Web Sources → category).
+const CHEVR = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 
 export function initInsightModal() {
   overlayEl = document.createElement('div');
@@ -139,6 +141,51 @@ function sourcesListHTML(sources) {
   return rows.length ? `<div class="im-source-list">${rows.join('')}</div>` : '<p class="im-empty">No sources cited.</p>';
 }
 
+// Trend actions: Web Sources (sub-layered) + Explore further with AI. Unlike
+// news (which lists the brief's cited sources), trends offer external search
+// platforms to dig into the term.
+function trendActionsHTML() {
+  return `<div class="im-actions">
+      <button type="button" class="im-actbtn" data-panel="websources" aria-expanded="false"><span>Web Sources</span>${CHEV}</button>
+      <button type="button" class="im-actbtn" data-panel="explore" aria-expanded="false"><span>Explore further with AI</span>${CHEV}</button>
+    </div>
+    <div class="im-acc" data-body="websources" id="im-websources-panel"></div>
+    <div class="im-acc" data-body="explore" id="im-explore-panel"></div>`;
+}
+// Web Sources level 1 — pick a source type (Search & reference, Audio & video…).
+function webSourcesCategoriesHTML() {
+  const cats = getExternalSearchCategories() || [];
+  const searches = getExternalSearches() || [];
+  const avail = cats.filter((c) => searches.some((s) => s.category === c.key));
+  if (!avail.length) return '<p class="im-empty">No web sources available.</p>';
+  return `<div class="im-substep"><div class="im-subhead">Choose a source type</div><div class="im-wscat-list">${
+    avail.map((c) => `<button type="button" class="im-wscat" data-cat="${escAttr(c.key)}"><span>${esc(c.label)}</span>${CHEVR}</button>`).join('')
+  }</div></div>`;
+}
+// Web Sources level 2 — the platforms in the chosen category, term substituted.
+function webSourcesListHTML(catKey, term) {
+  const cat = (getExternalSearchCategories() || []).find((c) => c.key === catKey);
+  const items = (getExternalSearches() || []).filter((s) => s.category === catKey);
+  const rows = items.map((s) => {
+    const url = String(s.urlTemplate || '').replace(/\{query\}/g, encodeURIComponent(term || ''));
+    return `<a class="im-source-row" href="${escAttr(url)}" target="_blank" rel="noopener noreferrer"><span class="im-source-row-text"><span class="im-source-name">${esc(s.name)}</span>${s.description ? `<span class="im-source-desc">${esc(s.description)}</span>` : ''}</span>${ARROW}</a>`;
+  }).join('');
+  return `<div class="im-substep">
+    <button type="button" class="im-back-step im-wsback">← Source types</button>
+    <div class="im-subhead">${esc(cat ? cat.label : 'Web Sources')}</div>
+    <div class="im-source-list">${rows || '<p class="im-empty">No sources here.</p>'}</div>
+  </div>`;
+}
+// Older cached trend briefs sometimes leaked the raw "SUMMARY: …/DETAIL: …"
+// scaffold into the stored body. Show only the DETAIL prose when present.
+function cleanTrendContent(s) {
+  let t = String(s || '');
+  const di = t.search(/\bdetail\s*:/i);
+  if (di !== -1) t = t.slice(di).replace(/^\s*detail\s*:\s*/i, '');
+  t = t.replace(/\bsummary\s*:[\s\S]*?(?:\n\n|$)/i, '').trim();
+  return t || String(s || '');
+}
+
 function exploreChooseHTML() {
   const models = getModels() || [];
   return `<div class="im-substep"><div class="im-subhead">Choose model</div><div class="im-model-list">${
@@ -149,17 +196,18 @@ function exploreSubmitHTML(model) {
   return `<div class="im-substep">
     <button type="button" class="im-back-step">← Models</button>
     <div class="im-subhead">Prompt submission · ${esc(model.name)}</div>
-    <div class="im-submit-row">
-      <button type="button" class="im-submitbtn im-submitbtn-primary" data-act="direct">Direct Submit</button>
-      <button type="button" class="im-submitbtn" data-act="review">Review Prompt</button>
+    <div class="im-model-list">
+      <button type="button" class="im-model" data-act="direct"><span class="im-model-name">Direct Submit</span><span class="im-model-desc">Open ${esc(model.name)} with the prompt sent automatically.</span></button>
+      <button type="button" class="im-model" data-act="review"><span class="im-model-name">Review Prompt</span><span class="im-model-desc">Preview and tweak the prompt before you send it.</span></button>
     </div>
   </div>`;
 }
 
-// Wire the shared bottom actions + explore flow. `ctx` provides the prompt +
-// review handler + sources.
+// Wire the shared bottom actions + explore flow. `ctx` provides the prompt,
+// review handler, cited sources, and (for trends) webTerm for Web Sources.
 function wireActions(ctx) {
   const explorePanel = panelEl.querySelector('#im-explore-panel');
+  const wsPanel = panelEl.querySelector('#im-websources-panel');
   panelEl.querySelectorAll('.im-actbtn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -172,14 +220,15 @@ function wireActions(ctx) {
         btn.setAttribute('aria-expanded', 'true');
         if (name === 'sources' && body && !body.dataset.ready) { body.innerHTML = sourcesListHTML(ctx.sources); body.dataset.ready = '1'; }
         if (name === 'explore' && explorePanel && !explorePanel.dataset.ready) { explorePanel.innerHTML = exploreChooseHTML(); explorePanel.dataset.ready = '1'; }
+        if (name === 'websources' && wsPanel && !wsPanel.dataset.ready) { wsPanel.innerHTML = webSourcesCategoriesHTML(); wsPanel.dataset.ready = '1'; }
         body && body.classList.add('is-open');
       }
     });
   });
   if (explorePanel) explorePanel.addEventListener('click', (e) => {
-    const modelBtn = e.target.closest('.im-model');
+    const modelBtn = e.target.closest('.im-model[data-model]');
+    const submit = e.target.closest('.im-model[data-act]');
     const back = e.target.closest('.im-back-step');
-    const submit = e.target.closest('.im-submitbtn');
     if (modelBtn) {
       e.stopPropagation();
       const model = (getModels() || []).find(m => m.id === modelBtn.dataset.model);
@@ -197,6 +246,18 @@ function wireActions(ctx) {
       if (!model) return;
       if (submit.dataset.act === 'direct') openModel(model, ctx.prompt);
       else ctx.onReview();
+    }
+  });
+  // Web Sources two-level sub-nav: category → its platforms → back.
+  if (wsPanel) wsPanel.addEventListener('click', (e) => {
+    const catBtn = e.target.closest('.im-wscat');
+    const back = e.target.closest('.im-wsback');
+    if (catBtn) {
+      e.stopPropagation();
+      wsPanel.innerHTML = webSourcesListHTML(catBtn.dataset.cat, ctx.webTerm || '');
+    } else if (back) {
+      e.stopPropagation();
+      wsPanel.innerHTML = webSourcesCategoriesHTML();
     }
   });
 }
@@ -265,40 +326,43 @@ function renderNews(d) {
   })();
 }
 
-// ---- Trend (filled in next pass) -----------------------------------------
+// ---- Trend ----------------------------------------------------------------
 function renderTrend(d) {
   const cat = d.category || (Array.isArray(d.categories) ? d.categories[0] : '') || '';
   const since = relTime(d.startedAt);
-  const sub = [cat, since ? `Trending since ${since}` : ''].filter(Boolean).join('<span class="im-dot">·</span>');
   const title = String(d.query || '').replace(/\b\w/g, c => c.toUpperCase());
+  const meta = [cat ? `<span>${esc(cat)}</span>` : '', since ? `<span class="im-when">Trending since ${esc(since)}</span>` : '']
+    .filter(Boolean).join('<span class="im-dot">·</span>');
   panelEl.innerHTML = `
-    ${headerHTML('AI Insights · Trending', title, sub)}
+    ${brandHeaderHTML()}
     <div class="im-body">
-      <p class="im-disclaimer">AI-generated summary — verify important details with the linked sources.</p>
-      ${briefSkeleton()}
-      ${actionsHTML(false)}
+      <section class="im-section im-article">
+        <div class="im-section-title">Trend Overview</div>
+        <h3 class="im-article-title">${esc(title)}</h3>
+        ${meta ? `<div class="im-article-meta">${meta}</div>` : ''}
+      </section>
+      <section class="im-section im-brief-section">
+        <div class="im-section-title im-section-title--brief">${SPARK}<span>AI Brief</span></div>
+        <p class="im-disclaimer">The below is an AI-generated summary of why this is trending. Please verify important details with the linked sources.</p>
+        <div class="im-actions-slot" id="im-actions-slot">${trendActionsHTML()}</div>
+        <hr class="im-rule">
+        ${briefSkeleton()}
+      </section>
     </div>`;
   const prompt = `Explain what "${d.query}" is and why it's trending right now — what just happened, the background, and the latest developments.`;
+  // Web Sources + Explore don't depend on the brief, so wire them immediately.
+  wireActions({ prompt, webTerm: d.query, sources: [], onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, topicName: d.query, name: 'Trending · AI', count: 1 } })) });
   (async () => {
     const briefEl = panelEl.querySelector('#im-brief');
-    let sources = [];
     try {
       const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'trend', query: d.query }) });
       const data = res.ok ? await res.json() : null;
       if (panelEl.querySelector('#im-brief') !== briefEl) return;
       if (data && data.content) {
-        sources = data.sources || [];
         const summary = data.summary ? `<p class="im-trend-summary">${esc(data.summary)}</p>` : '';
-        briefEl.innerHTML = `${summary}<div class="im-brief-head">${SPARK}<span>AI Brief</span></div>${renderBriefBody(data.content, null)}`;
+        briefEl.innerHTML = `${summary}${renderBriefBody(cleanTrendContent(data.content), null)}`;
       } else { briefEl.innerHTML = '<p class="im-empty">No AI brief generated for this trend yet.</p>'; }
     } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
-    const body = panelEl.querySelector('.im-body');
-    if (body) {
-      body.querySelector('.im-actions')?.remove();
-      body.querySelectorAll('.im-acc').forEach(p => p.remove());
-      body.insertAdjacentHTML('beforeend', actionsHTML(sources.length > 0));
-      wireActions({ prompt, sources, onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, topicName: d.query, name: 'Trending · AI', count: 1 } })) });
-    }
   })();
 }
 

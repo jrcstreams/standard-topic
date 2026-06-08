@@ -13444,10 +13444,16 @@ body.home-search #section-shortcuts .sidebar-card-header,
    leaving the first row ~19px lower and the subtext ~6px lower. */
 #section-websources .sidebar-card-header {
   margin: 0;
-  padding: 0 0 1rem 0;
+  /* Match AI Intelligence's header padding-bottom (0.5rem) so the divider
+     lines sit at the SAME Y in both columns... */
+  padding: 0 0 0.5rem 0;
   border-bottom: 1px solid #d6dae2;
   align-items: center;
 }
+/* ...then give the accordion list the same top gap AI Intelligence's body has
+   (≈0.7rem) so the first row still lands level AND isn't riding up on the
+   divider. */
+#section-websources .ti-accordions-websources { margin-top: 0.7rem; }
 #section-websources .sidebar-card-heading { gap: 0.15rem; }
 #section-websources .sidebar-card-title {
   font-family: var(--font-display);
@@ -13847,14 +13853,17 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .im-rule { border: none; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 60%, transparent); margin: 15px 0 16px; }
 .im-brief .ai-result-body { font-size: 0.875rem; line-height: 1.62; color: #2c3a52; white-space: normal; }
 .im-brief .ai-result-body p { margin: 0 0 8px; }
-.im-brief .ai-result-sub { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7689; margin: 16px 0 7px; padding-bottom: 5px; border-bottom: 1px solid var(--color-surface-border); }
+.im-brief .ai-result-sub { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.045em; text-transform: uppercase; color: #54607a; margin: 18px 0 8px; padding-bottom: 6px; border-bottom: 1px solid var(--color-surface-border); }
 .im-brief .ai-result-list { margin: 4px 0 8px; padding-left: 1.15rem; display: grid; gap: 5px; }
 .im-brief .ai-result-list li::marker { color: var(--color-primary); }
 .im-empty { font-size: 0.85rem; color: var(--color-text-muted); margin: 0; }
 .im-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-.im-actbtn { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border: 1px solid var(--color-surface-border); border-radius: 999px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: var(--color-text); transition: border-color .14s, color .14s; }
-.im-actbtn:hover { border-color: var(--color-primary); color: var(--color-primary); }
-.im-actbtn-primary { color: var(--color-primary); border-color: color-mix(in srgb, var(--color-primary) 35%, #e2e6ee); background: color-mix(in srgb, var(--color-primary) 5%, #fff); }
+/* Both accordion triggers share ONE soft-grey pill style (Sources/Web Sources
+   and Explore further with AI read as the same control). */
+.im-actbtn { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border: 1px solid var(--color-surface-border); border-radius: 999px; background: #f0f2f6; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: var(--color-text); transition: border-color .14s, color .14s, background .14s; }
+.im-actbtn:hover { border-color: var(--color-primary); color: var(--color-primary); background: #eaedf3; }
+.im-actbtn-primary { color: var(--color-text); border-color: var(--color-surface-border); background: #f0f2f6; }
+.im-actbtn-primary:hover { color: var(--color-primary); border-color: var(--color-primary); background: #eaedf3; }
 .im-actbtn .im-chev { transition: transform .18s; }
 .im-actbtn[aria-expanded="true"] .im-chev { transform: rotate(180deg); }
 .im-acc { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .24s ease; }
@@ -13863,6 +13872,15 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .im-source-list { display: grid; gap: 5px; }
 .im-source-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; text-decoration: none; color: var(--color-text); font-size: 0.82rem; transition: border-color .14s, color .14s; }
 .im-source-row:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.im-source-row-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.im-source-name { font-size: 0.83rem; font-weight: 600; }
+.im-source-desc { font-size: 0.74rem; font-weight: 400; color: var(--color-text-muted); }
+/* Web Sources level 1 — source-type chooser (drills into the platform list). */
+.im-wscat-list { display: grid; gap: 5px; }
+.im-wscat { display: flex; align-items: center; justify-content: space-between; gap: 10px; text-align: left; padding: 10px 13px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.84rem; font-weight: 600; color: var(--color-text); transition: border-color .14s, color .14s; }
+.im-wscat:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.im-wscat svg { flex: none; color: var(--color-text-light); }
+.im-wscat:hover svg { color: var(--color-primary); }
 .im-subhead { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-muted); margin: 0 0 8px; }
 .im-model-list { display: grid; gap: 5px; }
 .im-model { display: flex; flex-direction: column; gap: 1px; text-align: left; padding: 9px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; cursor: pointer; font-family: var(--font-family); transition: border-color .14s; }
