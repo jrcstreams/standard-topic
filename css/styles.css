@@ -13380,8 +13380,8 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
 .trending-topics-head { margin-bottom: 0.9rem; padding-bottom: 0.7rem; border-bottom: 1px solid #d6dae2; }
 .trending-topics-titlerow { display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap; }
 /* Icon tile — matches the AI Intelligence header lockup. */
-.trending-topics-logo { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 9px; background: var(--color-primary); color: #fff; }
-.trending-topics-logo svg { width: 16px; height: 16px; }
+.trending-topics-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
+.trending-topics-logo svg { width: 14px; height: 14px; }
 .trending-topics-title { margin: 0; font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; letter-spacing: -0.015em; line-height: 1; color: var(--color-text); }
 .trending-topics-updated { margin-left: auto; align-self: center; font-size: 0.62rem; font-weight: 600; letter-spacing: 0.01em; color: #6b7689; background: #eef1f6; padding: 0.24rem 0.55rem; border-radius: 6px; white-space: nowrap; line-height: 1; }
 .trending-topics-sub { margin: 0.5rem 0 0; font-size: 0.85rem; line-height: 1.45; color: var(--color-text-muted); }
@@ -13440,8 +13440,8 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
   #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 18px 14px; }
 }
 /* News Feed icon tile — matches the AI Intelligence / Trending header lockups. */
-.newsfeed-logo { display: inline-flex; width: 27px; height: 27px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; transform: translateY(2px); }
-.newsfeed-logo svg { width: 15px; height: 15px; }
+.newsfeed-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
+.newsfeed-logo svg { width: 14px; height: 14px; }
 /* News Feed headtext is a plain block off-desktop (title + sub stack as before;
    filters fall below within the head). */
 .newsfeed-headtext { min-width: 0; }
@@ -14002,8 +14002,8 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii { border: 1px solid var(--color-surface-border); border-radius: 16px; background: #fff; overflow: hidden; }
 .aii-head { display: flex; flex-direction: column; gap: 9px; padding: 15px 18px; border-bottom: 1px solid var(--color-surface-border); background: color-mix(in srgb, var(--color-primary) 3%, #fff); }
 .aii-head-top { display: flex; align-items: center; gap: 11px; }
-.aii-logo { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 9px; background: var(--color-primary); color: #fff; }
-.aii-logo svg { width: 16px; height: 16px; }
+.aii-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
+.aii-logo svg { width: 14px; height: 14px; }
 .aii-brand { font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: var(--color-text); letter-spacing: -0.015em; }
 .aii-headsub { margin: 0; font-size: 0.85rem; line-height: 1.45; color: var(--color-text-muted); }
 .aii-stage { padding: 6px 16px 16px; }
@@ -14071,8 +14071,8 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .ws { border: 1px solid var(--color-surface-border); border-radius: 16px; background: #fff; overflow: hidden; }
 .ws-head { display: flex; flex-direction: column; gap: 9px; padding: 15px 18px; border-bottom: 1px solid var(--color-surface-border); background: color-mix(in srgb, var(--color-primary) 3%, #fff); }
 .ws-head-top { display: flex; align-items: center; gap: 11px; }
-.ws-logo { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 9px; background: var(--color-primary); color: #fff; }
-.ws-logo svg { width: 16px; height: 16px; }
+.ws-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
+.ws-logo svg { width: 14px; height: 14px; }
 .ws-brand { font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: var(--color-text); letter-spacing: -0.015em; }
 .ws-headsub { margin: 0; font-size: 0.85rem; line-height: 1.45; color: var(--color-text-muted); }
 .ws-stage { padding: 6px 16px 16px; }
