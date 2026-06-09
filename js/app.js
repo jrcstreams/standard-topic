@@ -16,7 +16,7 @@ import { renderTrending, renderTrendingTopics, renderTrendingHome } from './comp
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260608-revamp9';
 import { initInsightModal } from './components/insight-modal.js?v=20260609-revamp30';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260609-revamp32';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260609-revamp33';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260608-revamp26';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260606-polish46';
@@ -1391,9 +1391,9 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     renderTrendingHome(container.querySelector('#home-trending'), { limit: 6 });
     const aiiHome = container.querySelector('#section-aii-home');
     if (aiiHome) {
-      const homeDesc = {}; const homeGroups = new Set();
-      try { (getShortcutsForTopic('home') || []).forEach((s) => { if (s && s.name) { homeDesc[s.name] = s.description || ''; if (s.group) homeGroups.add(s.group); } }); } catch (_) {}
-      renderAIIntelligence(aiiHome, { topic: 'home', label: "today's world", descriptions: homeDesc, groups: [...homeGroups] });
+      const homeDesc = {};
+      try { (getShortcutsForTopic('home') || []).forEach((s) => { if (s && s.name) homeDesc[s.name] = s.description || ''; }); } catch (_) {}
+      renderAIIntelligence(aiiHome, { topic: 'home', label: "today's world", descriptions: homeDesc, hideGroups: ['topic-specific'] });
     }
   } else {
     // Topic pages: Shortcuts + News Feed + Related Topics.
@@ -1420,9 +1420,9 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       // Topic pages get the living AI Intelligence component. Map each
       // shortcut's name → its description so the section menu can show a
       // one-line summary under each insight.
-      const descriptions = {}; const groupSet = new Set();
-      try { (getShortcutsForTopic(topic.slug) || []).forEach((s) => { if (s && s.name) { descriptions[s.name] = s.description || ''; if (s.group) groupSet.add(s.group); } }); } catch (_) {}
-      renderAIIntelligence(shortcutsSection, { topic: topic.name, label: topic.name, descriptions, groups: [...groupSet] });
+      const descriptions = {};
+      try { (getShortcutsForTopic(topic.slug) || []).forEach((s) => { if (s && s.name) descriptions[s.name] = s.description || ''; }); } catch (_) {}
+      renderAIIntelligence(shortcutsSection, { topic: topic.name, label: topic.name, descriptions });
     } else {
       renderShortcutsSidebar(shortcutsSection, route, isHome, isCustom, customTerm);
     }
