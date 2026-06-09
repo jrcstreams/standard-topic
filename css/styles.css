@@ -1317,7 +1317,9 @@ body.hide-cta .sticky-cta { display: none !important; }
   line-height: 1.35;
   color: #8390a3;
   font-weight: 400;
-  grid-column: 1 / -1;
+  /* Stop before the chevron column (col 3) so wrapped blurb text never runs
+     under the chevron in a narrow sidebar. */
+  grid-column: 1 / 3;
   grid-row: 2;
 }
 /* Chev spans both grid rows so it vertically centers across the
@@ -5503,9 +5505,9 @@ body.app-mode .topic-layout {
      width), matching the homepage's full-width Trending. The old two-column
      (Topic Intelligence | News Feed) split is retired. */
   .topic-layout {
-    /* Topic pages: Web Sources is a thin ~30% sidebar; AI Intelligence takes
-       the wide ~70%. News Feed + Related span full width below. */
-    grid-template-columns: minmax(0, 3fr) minmax(0, 7fr);
+    /* Topic pages: Web Sources is a thin ~25% sidebar; AI Intelligence takes
+       the wide ~75%. News Feed + Related span full width below. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
     column-gap: 1.8rem; row-gap: 1.8rem;
     align-items: start;
   }
@@ -13140,11 +13142,16 @@ body.home-search.app-mode .topic-layout {
 .home-search-hero {
   /* margin-top: breathing room below the main/sub nav. padding top/bottom:
      room above the title and below the search bar inside the card. */
-  max-width: 600px; margin: 1.5rem auto 0.2rem; padding: 1.2rem 0.6rem 1.5rem;
+  max-width: 600px; margin: 1.3rem auto 0.2rem; padding: 0.95rem 0.6rem 1.8rem;
   background: var(--color-surface);
   border: 1px solid var(--color-surface-border);
   border-radius: 16px;
   box-shadow: 0 2px 10px -4px rgba(15, 23, 42, 0.10);
+}
+/* Mobile: the card was too tall up top + the tagline wrapped awkwardly. */
+@media (max-width: 640px) {
+  .home-search-hero { margin-top: 0.7rem; padding: 0.6rem 0.7rem 1.3rem; }
+  .home-search-hero .search-panel-tagline { font-size: 0.86rem; max-width: 19rem; text-wrap: balance; }
 }
 /* Home Intelligence panel: kill the big reserved scroll padding-bottom (it's
    content-height here) so there's no dead space before News Feed. */
@@ -13159,18 +13166,18 @@ body.home-search #section-shortcuts .shortcuts-scroll-wrap { padding-bottom: 0; 
 /* Desktop: Search & Trends spans the full width on top; Intelligence |
    News Feed columns below. */
 @media (min-width: 900px) {
-  /* Centered search hero on top, then full-width Trending (its cards form a
-     2-up grid), then the News Feed. AI Intelligence is not on home. */
+  /* Centered hero on top, then a 25/75 row — Trending (3, sidebar) | AI
+     Intelligence (wide) — then full-width News Feed. */
   body.home-search.app-mode .topic-layout {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
     align-items: start;
-    row-gap: 0;
+    column-gap: 1.8rem; row-gap: 0;
   }
   body.home-search #section-searchtrends { display: contents; }
   body.home-search #home-search-hero { grid-column: 1 / -1; justify-self: center; width: min(600px, 100%); margin-bottom: 1.8rem; }
-  body.home-search #home-trending { grid-column: 1 / -1; margin-top: 0 !important; margin-bottom: 1.8rem; }
-  body.home-search #section-aii-home { grid-column: 1 / -1; margin: 0 0 1.8rem; }
-  body.home-search #section-newsfeed { grid-column: 1 / -1; }
+  body.home-search #home-trending { grid-column: 1; grid-row: 2; margin-top: 0 !important; margin-bottom: 1.8rem; }
+  body.home-search #section-aii-home { grid-column: 2; grid-row: 2; margin: 0 0 1.8rem; }
+  body.home-search #section-newsfeed { grid-column: 1 / -1; grid-row: 3; }
 }
 /* Cards size to content + the page scrolls. */
 body.home-search .layout-section,
@@ -13329,7 +13336,7 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
 .trend-card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.35rem 1rem; }
 /* Homepage Trending is full-width now (no AI Intelligence column) — 2-up card
    grid on desktop, collapsing to a single column in the narrow tab view. */
-.home-trending .trend-card-grid { grid-template-columns: 1fr 1fr; }
+.home-trending .trend-card-grid { grid-template-columns: 1fr; }
 .trend-card { position: relative; }
 .trend-card.is-open { z-index: 50; }
 /* No bordered "card" and no hairline dividers (they read as disconnected
