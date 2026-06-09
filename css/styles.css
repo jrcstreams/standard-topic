@@ -4262,51 +4262,71 @@ html, body, #app {
 
 /* === Prompt Preview Modal (M2 — compact card) === */
 /* === AI Shortcuts / Prompt Modal === */
-/* === Prompt Modal (anchored panel over AI Shortcuts card) ============
-   Two layers:
-     .prompt-modal-overlay  full-viewport translucent backdrop
-     .prompt-modal-panel    JS-positioned card with internal sections
+/* === Prompt Modal (Review & Submit — centered takeover) ==============
+   Restyled to match the Search / Topics / Trending takeover modals: a
+   viewport-centered card (no JS anchoring to the shortcuts sidebar).
+     .prompt-modal-overlay  flex-centered translucent backdrop
+     .prompt-modal-panel    centered card with internal sections
    ====================================================================*/
 .prompt-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 26, 46, 0.38);
+  background: rgba(15, 26, 46, 0.5);
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
   z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
   opacity: 0;
   transition: opacity 0.18s ease-out;
 }
 .prompt-modal-overlay.is-open { opacity: 1; }
 
-.prompt-modal-panel { /* anchored submit-prompt card */
-  position: fixed;
+.prompt-modal-panel { /* centered review-and-submit card */
+  position: relative;
   z-index: 201;
+  width: 100%;
+  max-width: 640px;
+  max-height: 88vh;
   background: var(--color-surface);
   border: 1px solid rgba(15, 23, 42, 0.06);
-  border-radius: 12px;
+  border-radius: 16px;
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.6) inset,
-    0 24px 60px -12px rgba(15, 23, 42, 0.32),
-    0 8px 18px -8px rgba(15, 23, 42, 0.18);
+    0 30px 80px -18px rgba(15, 23, 42, 0.42),
+    0 10px 24px -10px rgba(15, 23, 42, 0.2);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transform-origin: top center;
-  transform: translateY(-6px) scale(0.985);
+  transform: scale(0.97);
   opacity: 0;
   transition:
-    opacity 0.2s ease-out,
-    transform 0.24s cubic-bezier(0.2, 0.9, 0.3, 1.05);
+    opacity 0.16s ease-out,
+    transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.05);
   will-change: transform, opacity;
 }
 .prompt-modal-panel.is-open {
-  transform: translateY(0) scale(1);
+  transform: scale(1);
   opacity: 1;
 }
 .prompt-modal-panel.is-closing {
-  transform: translateY(-4px) scale(0.985);
+  transform: scale(0.985);
   opacity: 0;
+}
+@media (max-width: 640px) {
+  .prompt-modal-panel { max-width: 100%; max-height: 90vh; border-radius: 14px; }
+}
+
+/* Topic chip in the header (the "topic name, type" context line). */
+.pm-title-meta { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.3rem; }
+.pm-topic-chip {
+  display: inline-block; max-width: 100%;
+  padding: 0.16rem 0.5rem;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.01em;
+  color: var(--color-text-muted);
+  background: #f1f3f7; border: 1px solid #e7eaf0; border-radius: 999px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
 /* Header */
@@ -13815,6 +13835,11 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .ai-ins-submitbtn:hover { border-color: var(--color-primary); color: var(--color-primary); }
 .ai-ins-submitbtn-primary { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
 .ai-ins-submitbtn-primary:hover { background: color-mix(in srgb, var(--color-primary) 88%, #000); color: #fff; }
+/* Direct Submit "leaving the site" confirm. */
+.ai-ins-leave-card { padding: 12px 13px 13px; border: 1px solid var(--color-surface-border); border-radius: 10px; background: #f8fafc; }
+.ai-ins-leave-title { margin: 0 0 5px; font-size: 0.85rem; font-weight: 700; color: var(--color-text); }
+.ai-ins-leave-body { margin: 0 0 11px; font-size: 0.78rem; line-height: 1.45; color: var(--color-text-muted); }
+.ai-ins-leave-card .ai-ins-submitbtn { flex: none; width: 100%; }
 
 /* Scroll-hint fades — body content only (top fade starts below the fixed
    header + subnav). Page-level (fixed to viewport) + modal-level (in panel). */
@@ -13894,11 +13919,23 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-src-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; text-decoration: none; color: var(--color-text); font-size: 0.82rem; transition: border-color .14s, color .14s; }
 .aii-src-row:hover { border-color: var(--color-primary); color: var(--color-primary); }
 .aii-src-row svg { flex: none; color: var(--color-text-light); }
-.aii-model-list { display: grid; gap: 5px; }
-.aii-model { display: flex; flex-direction: column; gap: 1px; text-align: left; padding: 9px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; cursor: pointer; font-family: var(--font-family); transition: border-color .14s; }
-.aii-model:hover { border-color: var(--color-primary); }
-.aii-model-name { font-size: 0.83rem; font-weight: 600; color: var(--color-text); }
-.aii-model-desc { font-size: 0.74rem; color: var(--color-text-muted); }
+/* Explore-further: Direct Submit / Review Prompt chooser + leaving-site card. */
+.aii-explore { display: grid; gap: 6px; }
+.aii-explore-opt { display: flex; align-items: center; gap: 11px; text-align: left; width: 100%; padding: 10px 12px; border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; cursor: pointer; font-family: var(--font-family); transition: border-color .14s, background .14s; }
+.aii-explore-opt:hover { border-color: var(--color-primary); background: #f7f9fc; }
+.aii-explore-ic { flex: none; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border-radius: 9px; background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: var(--color-primary); }
+.aii-explore-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
+.aii-explore-name { font-size: 0.85rem; font-weight: 600; color: var(--color-text); }
+.aii-explore-sub { font-size: 0.74rem; color: var(--color-text-muted); }
+.aii-explore-opt > svg:last-child { flex: none; color: var(--color-text-light); }
+.aii-leave-back { display: inline-flex; align-items: center; gap: 5px; padding: 4px 4px 8px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; color: var(--color-text-muted); }
+.aii-leave-back:hover { color: var(--color-primary); }
+.aii-leave-card { padding: 13px 14px 14px; border: 1px solid var(--color-surface-border); border-radius: 11px; background: #f8fafc; }
+.aii-leave-title { margin: 0 0 5px; font-size: 0.88rem; font-weight: 700; color: var(--color-text); }
+.aii-leave-body { margin: 0 0 12px; font-size: 0.79rem; line-height: 1.45; color: var(--color-text-muted); }
+.aii-leave-go { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border: none; border-radius: 999px; background: var(--color-primary); color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; transition: background .14s; }
+.aii-leave-go:hover { background: var(--color-primary-dark, #0f1a2e); }
+.aii-leave-go svg { stroke: #fff; }
 @media (max-width: 560px) { .aii-grid { grid-template-columns: 1fr; } }
 
 /* ===== Unified AI Insight modal ========================================= */

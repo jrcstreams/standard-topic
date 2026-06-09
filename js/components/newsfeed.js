@@ -183,6 +183,17 @@ function exploreSubmitHTML(model) {
     </div>
   </div>`;
 }
+// Explore panel, step 3 (Direct Submit): "leaving the site" confirm.
+function exploreLeaveHTML(model) {
+  return `<div class="ai-ins-substep" data-step="leave">
+    <button type="button" class="ai-ins-back" data-back="submit">← Back</button>
+    <div class="ai-ins-leave-card">
+      <p class="ai-ins-leave-title">You're leaving Standard Topic</p>
+      <p class="ai-ins-leave-body">Continue opens <strong>${escapeHTML(model.name)}</strong> in a new tab. If the prompt doesn't auto-fill, it's copied to your clipboard — just paste it in. You may need to be signed in.</p>
+      <button type="button" class="ai-ins-submitbtn ai-ins-submitbtn-primary" data-act="continue">Continue →</button>
+    </div>
+  </div>`;
+}
 
 // One combined, grounded AI brief inline under the card (click toggles). Falls
 // back to chat if the AI layer is unavailable / the daily cap is hit.
@@ -233,14 +244,27 @@ function wireInsightPanel(region, card) {
       copyPrompt(newsStoryPrompt(card));
     } else if (back) {
       e.stopPropagation();
-      explorePanel.innerHTML = exploreChooseModelHTML();
-      delete explorePanel.dataset.model;
+      const model = (getModels() || []).find(m => m.id === explorePanel.dataset.model);
+      // Back from the leaving-site confirm returns to the submit step; back
+      // from the submit step returns to the model list.
+      if (back.dataset.back === 'submit' && model) {
+        explorePanel.innerHTML = exploreSubmitHTML(model);
+      } else {
+        explorePanel.innerHTML = exploreChooseModelHTML();
+        delete explorePanel.dataset.model;
+      }
     } else if (submit) {
       e.stopPropagation();
       const model = (getModels() || []).find(m => m.id === explorePanel.dataset.model);
       if (!model) return;
-      if (submit.dataset.act === 'direct') openModel(model, newsStoryPrompt(card));
-      else openNewsChat(card);
+      if (submit.dataset.act === 'direct') {
+        // Confirm leaving the site first. Prompt already copied on model-expand.
+        explorePanel.innerHTML = exploreLeaveHTML(model);
+      } else if (submit.dataset.act === 'continue') {
+        openModel(model, newsStoryPrompt(card));
+      } else {
+        openNewsChat(card);
+      }
     }
   });
 }

@@ -25,17 +25,9 @@ import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { renderIcon } from '../utils/icons.js';
 import { track } from '../utils/analytics.js';
 
-const ANCHOR_SELECTOR = '.shortcuts-sidebar[data-multi]';
-const MOBILE_BREAKPOINT = 640;
-const PANEL_VIEWPORT_PAD = 12;
-const PANEL_MIN_WIDTH = 540;
-const PANEL_MAX_WIDTH = 780;
-
 let overlayEl = null;
 let panelEl = null;
 let modalState = null;
-let positionRaf = null;
-let positionListenersBound = false;
 
 export function initPromptModal() {
   overlayEl = document.createElement('div');
@@ -50,7 +42,9 @@ export function initPromptModal() {
   panelEl.setAttribute('aria-modal', 'true');
   panelEl.setAttribute('aria-label', 'Review and submit prompt');
   panelEl.style.display = 'none';
-  document.body.appendChild(panelEl);
+  // Centered takeover: the panel lives inside the flex overlay so it stays
+  // viewport-centered (no JS positioning / anchoring to the shortcuts card).
+  overlayEl.appendChild(panelEl);
 
   window.addEventListener('open-prompt-modal', (e) => {
     const d = e.detail || {};
@@ -97,24 +91,19 @@ function openModal({ basePrompt, topicName, shortcutName, iconKey, count }) {
   };
   renderPanelContent();
 
-  overlayEl.style.display = 'block';
+  overlayEl.style.display = 'flex';
   panelEl.style.display = 'flex';
   document.body.style.overflow = 'hidden';
 
-  positionPanel();
   // eslint-disable-next-line no-unused-expressions
   panelEl.offsetWidth; // commit initial transform before adding .is-open
   overlayEl.classList.add('is-open');
   panelEl.classList.add('is-open');
-
-  bindPositionListeners();
 }
 
 function closeModal() {
   if (!modalState || modalState.isClosing) return;
   modalState.isClosing = true;
-
-  unbindPositionListeners();
 
   overlayEl.classList.remove('is-open');
   panelEl.classList.remove('is-open');
@@ -131,67 +120,6 @@ function closeModal() {
   };
   panelEl.addEventListener('transitionend', onEnd);
   setTimeout(() => { if (modalState && modalState.isClosing) onEnd(); }, 280);
-}
-
-function bindPositionListeners() {
-  if (positionListenersBound) return;
-  positionListenersBound = true;
-  window.addEventListener('resize', schedulePosition, { passive: true });
-  window.addEventListener('scroll', schedulePosition, { passive: true });
-}
-function unbindPositionListeners() {
-  if (!positionListenersBound) return;
-  positionListenersBound = false;
-  window.removeEventListener('resize', schedulePosition);
-  window.removeEventListener('scroll', schedulePosition);
-  if (positionRaf) cancelAnimationFrame(positionRaf);
-  positionRaf = null;
-}
-function schedulePosition() {
-  if (positionRaf) return;
-  positionRaf = requestAnimationFrame(() => {
-    positionRaf = null;
-    positionPanel();
-  });
-}
-
-function positionPanel() {
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const isMobile = vw <= MOBILE_BREAKPOINT;
-  const anchor = document.querySelector(ANCHOR_SELECTOR);
-
-  if (isMobile || !anchor) {
-    const w = Math.min(vw - PANEL_VIEWPORT_PAD * 2, PANEL_MAX_WIDTH);
-    const left = Math.round((vw - w) / 2);
-    const top = Math.max(PANEL_VIEWPORT_PAD, Math.round(vh * 0.06));
-    panelEl.style.left = `${left}px`;
-    panelEl.style.top = `${top}px`;
-    panelEl.style.width = `${w}px`;
-    panelEl.style.maxHeight = `${vh - top - PANEL_VIEWPORT_PAD}px`;
-    panelEl.dataset.anchored = 'mobile';
-    return;
-  }
-
-  const rect = anchor.getBoundingClientRect();
-  const maxAllowed = Math.min(PANEL_MAX_WIDTH, vw - PANEL_VIEWPORT_PAD * 2);
-  const desired = Math.max(PANEL_MIN_WIDTH, rect.width);
-  const width = Math.min(desired, maxAllowed);
-
-  let left = rect.left;
-  if (left + width > vw - PANEL_VIEWPORT_PAD) {
-    left = Math.max(PANEL_VIEWPORT_PAD, vw - width - PANEL_VIEWPORT_PAD);
-  }
-  if (left < PANEL_VIEWPORT_PAD) left = PANEL_VIEWPORT_PAD;
-
-  const top = Math.max(PANEL_VIEWPORT_PAD, Math.min(rect.top, vh - 240));
-  const maxH = vh - top - PANEL_VIEWPORT_PAD;
-
-  panelEl.style.left = `${left}px`;
-  panelEl.style.top = `${top}px`;
-  panelEl.style.width = `${width}px`;
-  panelEl.style.maxHeight = `${maxH}px`;
-  panelEl.dataset.anchored = 'desktop';
 }
 
 /* ---- prompt assembly ---------------------------------------------- */
@@ -260,6 +188,9 @@ function renderPanelContent() {
   const title = (count > 1)
     ? `${count} shortcuts selected`
     : (modalState.shortcutName || 'Selected shortcut');
+  const topicChip = modalState.topicName
+    ? `<span class="pm-topic-chip" title="${escapeAttr(modalState.topicName)}">${escapeHTML(modalState.topicName)}</span>`
+    : '';
 
   const modelBtnsHTML = models.map(m => `
     <button class="pm-model" type="button" data-model-id="${m.id}" ${m.id === selectedModelId ? 'aria-pressed="true"' : 'aria-pressed="false"'}>
@@ -279,6 +210,7 @@ function renderPanelContent() {
         <div class="pm-title-text">
           <span class="pm-title-eyebrow">${eyebrow}</span>
           <h3 class="pm-title-name">${escapeHTML(title)}</h3>
+          ${topicChip ? `<div class="pm-title-meta">${topicChip}</div>` : ''}
         </div>
       </div>
       <button type="button" class="pm-close" id="pm-close" aria-label="Close">

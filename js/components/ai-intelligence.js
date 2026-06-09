@@ -4,9 +4,9 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody } from './newsfeed.js?v=20260609-revamp35';
-import { getModels } from '../utils/data.js';
-import { openModel } from '../utils/ai-models.js';
+import { renderBriefBody } from './newsfeed.js?v=20260609-revamp41';
+import { getModels, getModelById, getDefaultModelId } from '../utils/data.js';
+import { openModel, copyPrompt, getPreferredModelId } from '../utils/ai-models.js';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -46,6 +46,9 @@ const LOGO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><p
 const ARROW = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 const BACK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
 const CHEV = '<svg class="aii-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+// Paper-plane (Direct Submit — "send it off") and an eye (Review — "preview").
+const ICON_SEND = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2.5L11 13"/><path d="M21.5 2.5L15 21l-4-8-8-4z"/></svg>';
+const ICON_EYES = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>';
 const ICONS = {
   discover: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="15.5 8.5 10.5 10.5 8.5 15.5 13.5 13.5"/></svg>',
   learn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v15a2 2 0 0 0-2-1.5H2z"/><path d="M22 5a2 2 0 0 0-2-2h-6a2 2 0 0 0-2 2v15a2 2 0 0 1 2-1.5h8z"/></svg>',
@@ -168,8 +171,44 @@ export function renderAIIntelligence(container, scope) {
     const c = cache[curGroup]; const s = (c && c.sections[curIdx]) || {};
     return `Give me a thorough, current briefing on "${s.name || ''}" for ${scope.label}. Be specific and cite sources.`;
   }
-  function modelListHTML() {
-    return `<div class="aii-model-list">${(getModels() || []).map((m) => `<button type="button" class="aii-model" data-model="${escAttr(m.id)}"><span class="aii-model-name">${esc(m.name)}</span>${m.description ? `<span class="aii-model-desc">${esc(m.description)}</span>` : ''}</button>`).join('')}</div>`;
+  function curSectionName() {
+    const c = cache[curGroup]; const s = (c && c.sections[curIdx]) || {};
+    return s.name || '';
+  }
+  // The model a Direct Submit goes to (the user's preferred / site default).
+  function preferredModel() {
+    const id = getPreferredModelId(getDefaultModelId());
+    return getModelById(id) || (getModels() || [])[0] || null;
+  }
+
+  // Explore-further panel, step 1: choose how to send (direct vs review).
+  function exploreHomeHTML() {
+    const m = preferredModel();
+    return `<div class="aii-explore" data-step="home">
+      <button type="button" class="aii-explore-opt" data-opt="direct">
+        <span class="aii-explore-ic">${ICON_SEND}</span>
+        <span class="aii-explore-tx"><span class="aii-explore-name">Direct Submit</span><span class="aii-explore-sub">Open ${esc(m ? m.name : 'an AI model')} with this prompt</span></span>
+        ${ARROW}
+      </button>
+      <button type="button" class="aii-explore-opt" data-opt="review">
+        <span class="aii-explore-ic">${ICON_EYES}</span>
+        <span class="aii-explore-tx"><span class="aii-explore-name">Review Prompt</span><span class="aii-explore-sub">Preview &amp; tweak it before you send</span></span>
+        ${ARROW}
+      </button>
+    </div>`;
+  }
+  // Explore-further panel, step 2 (Direct Submit): "leaving the site" confirm.
+  function exploreLeaveHTML() {
+    const m = preferredModel();
+    const name = m ? m.name : 'the AI model';
+    return `<div class="aii-explore" data-step="leave">
+      <button type="button" class="aii-leave-back">${BACK}<span>Back</span></button>
+      <div class="aii-leave-card">
+        <p class="aii-leave-title">You're leaving Standard Topic</p>
+        <p class="aii-leave-body">Continue opens <strong>${esc(name)}</strong> in a new tab. If the prompt doesn't auto-fill, it's copied to your clipboard — just paste it in. You may need to be signed in.</p>
+        <button type="button" class="aii-leave-go">Continue ${ARROW}</button>
+      </div>
+    </div>`;
   }
 
   function wire() {
@@ -191,15 +230,33 @@ export function renderAIIntelligence(container, scope) {
       stage.querySelectorAll('.aii-acc').forEach((a) => a.classList.remove('is-open'));
       if (willOpen) {
         btn.setAttribute('aria-expanded', 'true');
-        if (body && !body.dataset.ready) { body.innerHTML = name === 'sources' ? sourceRowsHTML() : modelListHTML(); body.dataset.ready = '1'; }
+        if (body && !body.dataset.ready) { body.innerHTML = name === 'sources' ? sourceRowsHTML() : exploreHomeHTML(); body.dataset.ready = '1'; }
         body && body.classList.add('is-open');
       }
     }));
     const exBody = stage.querySelector('[data-accbody="explore"]');
     if (exBody) exBody.addEventListener('click', (e) => {
-      const m = e.target.closest('.aii-model'); if (!m) return;
-      const model = (getModels() || []).find((x) => x.id === m.dataset.model); if (!model) return;
-      openModel(model, explorePrompt());
+      const opt = e.target.closest('.aii-explore-opt');
+      const back = e.target.closest('.aii-leave-back');
+      const go = e.target.closest('.aii-leave-go');
+      if (opt) {
+        if (opt.dataset.opt === 'review') {
+          // Hand off to the full Review & Submit takeover modal.
+          window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: {
+            basePrompt: explorePrompt(), topicName: scope.label, name: curSectionName(), count: 1,
+          } }));
+        } else {
+          // Direct Submit → confirm leaving the site. Copy now so the later
+          // Continue click can open the model synchronously (no popup block).
+          copyPrompt(explorePrompt());
+          exBody.innerHTML = exploreLeaveHTML();
+        }
+      } else if (back) {
+        exBody.innerHTML = exploreHomeHTML();
+      } else if (go) {
+        const model = preferredModel(); if (!model) return;
+        openModel(model, explorePrompt());
+      }
     });
   }
 
