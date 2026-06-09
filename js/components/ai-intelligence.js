@@ -54,7 +54,11 @@ const ICONS = {
 
 // scope: { topic: '<Topic Name>' | 'home', label: '<display>' }
 export function renderAIIntelligence(container, scope) {
-  const paths = PATHS;
+  // Only show paths that actually have shortcuts for this scope (e.g. the
+  // homepage has no "topic-specific" shortcuts, so "For This Topic" is hidden).
+  const paths = (scope.groups && scope.groups.length)
+    ? PATHS.filter((p) => scope.groups.includes(p.group))
+    : PATHS;
   const cache = {};               // group -> { sections, generatedAt, sources, loading, error }
   let view = 'paths';             // 'paths' | 'sections' | 'content'
   let curGroup = null;
