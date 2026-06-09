@@ -9,7 +9,7 @@
     },
     {
       "group": "topic-specific",
-      "label": "For This Topic",
+      "label": "Topic-Specific Insights",
       "subtitle": "Insights tailored to this topic.",
       "order": 2,
       "refreshClass": "live"

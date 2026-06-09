@@ -15,8 +15,8 @@ import { initPromptModal } from './components/prompt-modal.js?v=20260609-revamp4
 import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260609-revamp39';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260608-revamp9';
-import { initInsightModal } from './components/insight-modal.js?v=20260609-revamp42';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260609-revamp42';
+import { initInsightModal } from './components/insight-modal.js?v=20260609-revamp43';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260609-revamp43';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260609-revamp39';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260606-polish46';
@@ -1194,17 +1194,17 @@ function renderStickyHeroBar(container, route) {
     </div>
     <div class="navmenu-search" id="navmenu-search-container"></div>
     <nav class="navmenu-quicklinks">
-      <a href="#/prompt-generator" class="navmenu-quicklink navmenu-cta" id="navmenu-prompt-link">
+      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-trending">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/>
-          <path d="M19 3l.6 1.6L21.2 5.2 19.6 5.8 19 7.4 18.4 5.8 16.8 5.2 18.4 4.6z"/>
+          <polyline points="3 17 9 11 13 15 21 7"/>
+          <polyline points="15 7 21 7 21 13"/>
         </svg>
-        <span class="navmenu-cta-label">Prompt Builder</span>
+        <span class="navmenu-cta-label">Trending</span>
         <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <line x1="5" y1="12" x2="19" y2="12"/>
           <polyline points="13 6 19 12 13 18"/>
         </svg>
-      </a>
+      </button>
       <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-all-topics">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="3" y="3" width="7" height="7" rx="1"/>
@@ -1218,17 +1218,17 @@ function renderStickyHeroBar(container, route) {
           <polyline points="13 6 19 12 13 18"/>
         </svg>
       </button>
-      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-trending">
+      <a href="#/prompt-generator" class="navmenu-quicklink navmenu-cta" id="navmenu-prompt-link">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <polyline points="3 17 9 11 13 15 21 7"/>
-          <polyline points="15 7 21 7 21 13"/>
+          <path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/>
+          <path d="M19 3l.6 1.6L21.2 5.2 19.6 5.8 19 7.4 18.4 5.8 16.8 5.2 18.4 4.6z"/>
         </svg>
-        <span class="navmenu-cta-label">Trending</span>
+        <span class="navmenu-cta-label">Prompt Builder</span>
         <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <line x1="5" y1="12" x2="19" y2="12"/>
           <polyline points="13 6 19 12 13 18"/>
         </svg>
-      </button>
+      </a>
     </nav>
     <div class="navmenu-scroll">
       <div class="navmenu-featured-label">Topics</div>
@@ -1898,7 +1898,9 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     if (s === except) return;
     s.classList.remove('is-open');
     s.querySelector('.ti-shortcut-trigger')?.setAttribute('aria-expanded', 'false');
-    s.querySelectorAll('.ti-model.is-open').forEach(m => { m.classList.remove('is-open'); m.querySelector('.ti-model-trigger')?.setAttribute('aria-expanded', 'false'); });
+    // Reset the panel to the chooser so reopening never shows a stale confirm.
+    const inner = s.querySelector('.ti-shortcut-panel-inner');
+    if (inner) inner.innerHTML = tiExploreHomeHTML();
   });
   container.querySelectorAll('.ti-shortcut-trigger').forEach(trig => {
     trig.addEventListener('click', (e) => {
@@ -1908,51 +1910,43 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       closeAllTIShortcuts(sc);
       sc.classList.toggle('is-open', willOpen);
       trig.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
-      if (!willOpen) sc.querySelectorAll('.ti-model.is-open').forEach(m => { m.classList.remove('is-open'); m.querySelector('.ti-model-trigger')?.setAttribute('aria-expanded', 'false'); });
+      if (!willOpen) { const inner = sc.querySelector('.ti-shortcut-panel-inner'); if (inner) inner.innerHTML = tiExploreHomeHTML(); }
     });
   });
-  container.querySelectorAll('.ti-model-trigger').forEach(mt => {
-    mt.addEventListener('click', (e) => {
+  // Consistent submission flow per shortcut: Direct Submit → leaving-site
+  // confirm → open preferred model; Review Prompt → full prompt modal.
+  const assembleFor = (basePrompt) => {
+    const reasoning = REASONING_LEVELS.find(l => l.id === getReasoningLevel());
+    return assemblePrompt(basePrompt, { reasoningHint: reasoning && reasoning.hint ? reasoning.hint : '', customInstructions: getCustomInstructions(), topicName });
+  };
+  container.querySelectorAll('.ti-shortcut-panel').forEach(panel => {
+    panel.addEventListener('click', (e) => {
       e.stopPropagation();
-      const model = mt.closest('.ti-model');
-      const sc = mt.closest('.ti-shortcut');
-      const willOpen = !model.classList.contains('is-open');
-      sc.querySelectorAll('.ti-model.is-open').forEach(m => { if (m !== model) { m.classList.remove('is-open'); m.querySelector('.ti-model-trigger')?.setAttribute('aria-expanded', 'false'); } });
-      model.classList.toggle('is-open', willOpen);
-      mt.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
-      // Copy the assembled prompt the moment the model is expanded. This both
-      // (a) lets us tell the user "copied — paste if not auto-submitted" right
-      // here, and (b) frees the later Submit click to open the model
-      // synchronously (no await), sidestepping the popup blocker.
-      if (willOpen) {
-        const reasoning = REASONING_LEVELS.find(l => l.id === getReasoningLevel());
-        const full = assemblePrompt(sc?.dataset.prompt || '', { reasoningHint: reasoning && reasoning.hint ? reasoning.hint : '', customInstructions: getCustomInstructions(), topicName });
-        copyPrompt(full);
-      }
-    });
-  });
-  container.querySelectorAll('.ti-act').forEach(actBtn => {
-    actBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const sc = actBtn.closest('.ti-shortcut');
-      const modelEl = actBtn.closest('.ti-model');
+      const sc = panel.closest('.ti-shortcut');
+      const inner = panel.querySelector('.ti-shortcut-panel-inner');
       const basePrompt = sc?.dataset.prompt || '';
       const name = sc?.dataset.name || 'Shortcut';
-      const model = getModelById(modelEl?.dataset.modelId) || getModelById(getDefaultModelId());
-      if (!model) return;
-      if (actBtn.dataset.act === 'review') {
-        window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt, name, iconKey: sc?.dataset.iconKey || '', count: 1 } }));
+      const opt = e.target.closest('.ti-explore-opt');
+      const back = e.target.closest('.ti-leave-back');
+      const go = e.target.closest('.ti-leave-go');
+      if (opt) {
+        if (opt.dataset.opt === 'review') {
+          window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt, name, iconKey: sc?.dataset.iconKey || '', count: 1 } }));
+          closeAllTIShortcuts(null);
+        } else {
+          // Direct → copy now so the later Continue opens the model synchronously.
+          copyPrompt(assembleFor(basePrompt));
+          if (inner) inner.innerHTML = tiLeaveHTML();
+        }
+      } else if (back) {
+        if (inner) inner.innerHTML = tiExploreHomeHTML();
+      } else if (go) {
+        const model = tiPreferredModel(); if (!model) return;
+        const full = assembleFor(basePrompt);
+        track('shortcut_submit', { model: model.id, route: window.location.hash || '#/' });
+        openModel(model, full); copyPrompt(full);
         closeAllTIShortcuts(null);
-        return;
       }
-      const reasoning = REASONING_LEVELS.find(l => l.id === getReasoningLevel());
-      const full = assemblePrompt(basePrompt, { reasoningHint: reasoning && reasoning.hint ? reasoning.hint : '', customInstructions: getCustomInstructions(), topicName });
-      track('shortcut_submit', { model: model.id, route: window.location.hash || '#/' });
-      // Open synchronously (still inside the click gesture → no popup block).
-      // The prompt was already copied to the clipboard on model-expand.
-      openModel(model, full);
-      copyPrompt(full); // refresh clipboard in case the user copied something since
-      closeAllTIShortcuts(null);
     });
   });
   if (!container.__tiShortcutWired) {
@@ -2197,6 +2191,30 @@ function shortcutItem(shortcut, topicName) {
 const TI_CHEV_SVG = '<svg class="ti-chev-svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 const TI_SUBMIT_SVG = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9z"/></svg>';
 const TI_REVIEW_SVG = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
+const TI_RIGHT_SVG = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
+const TI_BACK_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
+
+// The model a Direct Submit goes to (the user's preferred / site default).
+function tiPreferredModel() {
+  return getModelById(getPreferredModelId(getDefaultModelId())) || (getModels() || [])[0] || null;
+}
+// Consistent submission flow (matches the AI Intelligence component + modals):
+// Direct Submit (→ leaving-site confirm) / Review Prompt (→ full prompt modal).
+function tiExploreHomeHTML() {
+  const m = tiPreferredModel();
+  return `<div class="ti-explore" data-step="home">
+    <button type="button" class="ti-explore-opt" data-opt="direct"><span class="ti-explore-ic">${TI_SUBMIT_SVG}</span><span class="ti-explore-tx"><span class="ti-explore-name">Direct Submit</span><span class="ti-explore-sub">Open ${escapeHTML(m ? m.name : 'an AI model')} with this prompt</span></span><span class="ti-explore-go">${TI_RIGHT_SVG}</span></button>
+    <button type="button" class="ti-explore-opt" data-opt="review"><span class="ti-explore-ic">${TI_REVIEW_SVG}</span><span class="ti-explore-tx"><span class="ti-explore-name">Review Prompt</span><span class="ti-explore-sub">Preview &amp; tweak it before you send</span></span><span class="ti-explore-go">${TI_RIGHT_SVG}</span></button>
+  </div>`;
+}
+function tiLeaveHTML() {
+  const m = tiPreferredModel();
+  const name = m ? m.name : 'the AI model';
+  return `<div class="ti-explore" data-step="leave">
+    <button type="button" class="ti-leave-back">${TI_BACK_SVG}<span>Back</span></button>
+    <div class="ti-leave-card"><p class="ti-leave-title">You're leaving Standard Topic</p><p class="ti-leave-body">Continue opens <strong>${escapeHTML(name)}</strong> in a new tab. If the prompt doesn't auto-fill, it's copied to your clipboard — just paste it in. You may need to be signed in.</p><button type="button" class="ti-leave-go">Continue ${TI_RIGHT_SVG}</button></div>
+  </div>`;
+}
 
 // AI shortcut row → click expands a model list → click a model expands
 // Submit / Review actions. No multi-select; each action acts on this one
@@ -2208,18 +2226,6 @@ function tiShortcutItem(shortcut, topicName, groupKey) {
   const description = shortcut.description && shortcut.description.trim()
     ? `<span class="ti-item-desc">${escapeHTML(shortcut.description)}</span>`
     : '';
-  const modelsHTML = getModels().map(m => `
-        <div class="ti-model" data-model-id="${escapeAttr(m.id)}">
-          <button type="button" class="ti-model-trigger" aria-expanded="false">
-            <span class="ti-model-name">${escapeHTML(m.name)}</span>
-            <span class="ti-model-chev" aria-hidden="true">${TI_CHEV_SVG}</span>
-          </button>
-          <div class="ti-model-actions"><div class="ti-model-actions-inner">
-            <p class="ti-copied-note">Prompt copied to clipboard. Paste in model if not auto-submitted.</p>
-            <button type="button" class="ti-act ti-act-submit" data-act="submit">${TI_SUBMIT_SVG}<span>Submit Prompt</span></button>
-            <button type="button" class="ti-act ti-act-review" data-act="review">${TI_REVIEW_SVG}<span>Review before Submitting</span></button>
-          </div></div>
-        </div>`).join('');
   return `
     <li class="ti-item-row">
       <div class="ti-shortcut" data-prompt="${escapeAttr(prompt)}" data-name="${escapeAttr(shortcut.name)}" data-icon-key="${escapeAttr(shortcut.icon)}" data-group="${escapeAttr(groupKey || '')}" data-id="${escapeAttr(shortcut.id || '')}">
@@ -2230,10 +2236,7 @@ function tiShortcutItem(shortcut, topicName, groupKey) {
           </span>
           <span class="ti-shortcut-chev" aria-hidden="true">${TI_CHEV_SVG}</span>
         </button>
-        <div class="ti-shortcut-panel"><div class="ti-shortcut-panel-inner">
-          <div class="ti-shortcut-modelslabel">Choose a model</div>
-          ${modelsHTML}
-        </div></div>
+        <div class="ti-shortcut-panel"><div class="ti-shortcut-panel-inner">${tiExploreHomeHTML()}</div></div>
       </div>
     </li>
   `;
@@ -2652,7 +2655,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       ['News', '.search-news-section'],
     ];
     return `<nav class="search-anchor-nav" aria-label="Jump to section">
-      <span class="search-anchor-label">Go to</span>
+      <span class="search-anchor-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="6 13 12 19 18 13"/></svg>Jump to</span>
       <div class="search-anchor-pills">${items
         .map(([label, sel]) => `<button type="button" class="search-anchor-pill" data-target="${sel}" hidden>${label}</button>`)
         .join('')}</div></nav>`;

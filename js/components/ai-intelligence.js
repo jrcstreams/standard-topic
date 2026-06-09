@@ -14,7 +14,7 @@ import { openModel, copyPrompt, getPreferredModelId } from '../utils/ai-models.j
 // freshly-changed data.js (the no-version singleton).
 const PATHS = [
   { group: 'discover',       label: "What's Happening Now", subtitle: "What's happening right now." },
-  { group: 'topic-specific', label: 'For This Topic', subtitle: 'Insights tailored to this topic.' },
+  { group: 'topic-specific', label: 'Topic-Specific Insights', subtitle: 'Go deeper on what makes this topic tick.' },
   { group: 'analyze',        label: 'Analysis',        subtitle: 'Deeper analytical lenses and tradeoffs.' },
   { group: 'learn',          label: 'Learn',          subtitle: 'Background, fundamentals, and context.' },
 ];
@@ -45,9 +45,9 @@ function splitSections(content) {
   return idx.map((s, i) => ({ name: s.name, body: text.slice(s.headEnd, i + 1 < idx.length ? idx[i + 1].start : text.length).trim() }));
 }
 
-// Brand mark — a faceted gem (a "gem of insight"): premium, editorial, and a
-// deliberate departure from the generic AI sparkle. White on the navy tile.
-const LOGO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M6 4.5h12l3 4.5-9 11-9-11z"/><path d="M3 9h18"/><path d="M9 9l3 11 3-11"/><path d="M9 9l1.6-4.5M15 9l-1.6-4.5"/></svg>';
+// Brand mark — a clean, flat 4-point sparkle (the same spark used inline),
+// filled white on the navy tile. Simple and on-brand (no glossy facets).
+const LOGO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
 const ARROW = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 const BACK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
 const CHEV = '<svg class="aii-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
@@ -95,12 +95,12 @@ export function renderAIIntelligence(container, scope) {
 
   function pathsHTML() {
     const introScope = scope.topic === 'home' ? "today's world" : `the topic of ${scope.label}`;
-    return `<p class="aii-intro">Live, AI-generated intelligence on ${esc(introScope)}. Pick a lens — what's happening now, the essentials, deeper analysis, and more — then dive into any insight.</p>
-      <div class="aii-grid">${paths.map((p) => `
-      <button type="button" class="aii-tile" data-group="${escAttr(p.group)}">
-        <span class="aii-tile-icon aii-icon-${escAttr(p.group)}">${ICONS[p.group] || ICONS._}</span>
-        <span class="aii-tile-text"><span class="aii-tile-name">${esc(p.label)}</span><span class="aii-tile-sub">${esc(p.subtitle)}</span></span>
-        <span class="aii-tile-go">${ARROW}</span>
+    return `<p class="aii-intro">Live, AI-generated intelligence on ${esc(introScope)}. Pick a path — what's happening now, the essentials, deeper analysis, and more — then explore any insight.</p>
+      <div class="aii-pathlist">${paths.map((p) => `
+      <button type="button" class="aii-pathrow" data-group="${escAttr(p.group)}">
+        <span class="aii-pathrow-icon aii-icon-${escAttr(p.group)}">${ICONS[p.group] || ICONS._}</span>
+        <span class="aii-pathrow-text"><span class="aii-pathrow-name">${esc(p.label)}</span><span class="aii-pathrow-sub">${esc(p.subtitle)}</span></span>
+        <span class="aii-pathrow-go">${ARROW}</span>
       </button>`).join('')}</div>`;
   }
   function sectionsHTML() {
@@ -217,7 +217,7 @@ export function renderAIIntelligence(container, scope) {
   }
 
   function wire() {
-    stage.querySelectorAll('.aii-tile').forEach((b) => b.addEventListener('click', async () => {
+    stage.querySelectorAll('.aii-pathrow').forEach((b) => b.addEventListener('click', async () => {
       curGroup = b.dataset.group;
       go('sections', 'fwd');
       await loadGroup(curGroup);
