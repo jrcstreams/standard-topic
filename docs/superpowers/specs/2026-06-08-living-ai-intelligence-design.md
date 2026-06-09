@@ -11,30 +11,25 @@ component** — a branded responsive block where a user drills lens → section
 menu → section content and back, with content that's noticeably fresher than
 today's 72h–168h. Name stays **AI Intelligence**.
 
-## Engine change — ONE consolidated query per topic
+## Engine — per-path generation, presented as one living thing
 
-Today each **lens** (Discover/Learn/Analyze/Topic-Specific) is its own grounded
-query returning that lens's sections as `## Section Name` blocks (the screenshot
-of "Learn" is one such query → ~10 sections). That's 4 queries × ~100 topics.
+Keep ALL existing shortcut/section data. Group sections into a few **paths**
+(Now / Learn / Analyze / For This Topic). Generation stays **one focused grounded
+query per path** (≈ today's per-lens query, quality intact) — NOT one giant query
+for ~40 sections (that would hurt quality + hit token limits).
 
-**New model:** collapse to **one grounded query per topic** that returns a
-**curated set of ~12–18 sections, each tagged with a "path"** (the navigation
-category — Discover / Learn / Analyze, or renamed). The UI organizes the tagged
-sections into paths → section menu → content. This is "one large lens organized
-into different paths/sections."
+The "one-query cost" John wanted comes from **freshness, not physical merging**:
+each path refreshes on its own class (see below), so on a typical hot-topic view
+only the **Now** path regenerates (~1 grounded call), while Learn/Analyze are
+still fresh from their slow windows. Same cost as a single-query model, better
+quality, all data preserved.
 
-Why: (1) ~4× cheaper to refresh (1 query/topic, not 4), enabling the hourly
-target; (2) matches the desired UX. The catch: one grounded call can't deeply
-research ~40 sections at quality, so we **curate** the current ~40 shortcuts down
-to ~12–18 strong sections (admin content task) and tag each with its path.
-
-- Output format stays `## Section` blocks, with a path tag per section (e.g. a
-  `#path:learn` marker or a leading `### <Path>` grouping the model emits).
-- Stored as one row in `ai_insights` per topic (e.g. `insight='brief'`), content
-  split into sections, sections grouped by path in the UI.
-- `maxTokens` raised to fit ~18 sections (~3.5–4k).
-- The shortcut → section definitions move from "per lens" to "one curated set
-  per scope, each carrying a path tag" in the admin.
+- Output format unchanged: `## Section Name` blocks per path query.
+- Storage unchanged: one `ai_insights` row per (topic, path).
+- The UI stitches the paths into one component, so the user sees a single living
+  "AI Intelligence," navigated path → section → content.
+- Admin: add a per-section **path tag** + per-topic **tier** (below). No section
+  content is removed.
 
 ## Part 1 — The living component
 
@@ -104,14 +99,35 @@ Mechanism: **refresh-on-view**, mirroring the trending self-heal, instead of
 blindly pre-generating every lens hourly (which would exceed the free grounding
 tier).
 
-- On a read of a lens overview, if the cached row is **older than 1 hour**,
+- On read, if the cached content is **older than its effective window**,
   schedule a background regeneration (`waitUntil`) and return the cached copy
-  immediately. The next view shows the fresh one.
-- Window: **1 hour for ALL lenses** (Discover, Learn, Analyze, Topic-Specific).
-  So everything a user actually views is ≤1h old.
-- The **homepage `'home'` scope** is pre-warmed hourly by a cron (it's always on
-  screen, so generate it before it's viewed). Topic/search scopes rely on
-  refresh-on-view.
+  immediately. Next view shows the fresh one.
+- **Effective window = path's refresh class × topic's tier**, so we never re-pay
+  for evergreen content and niche topics refresh slower than hot ones.
+- The **homepage `'home'` scope** is pre-warmed hourly by a cron (always on
+  screen). Topic/search scopes rely on refresh-on-view.
+
+### Refresh classes (per path) and tiers (per topic)
+
+Keep ALL existing shortcut/section data — we only group it into paths and tag
+each path with a refresh class.
+
+| Path | Refresh class | Window |
+|---|---|---|
+| Now | live | the topic's tier window |
+| For This Topic | live | the topic's tier window |
+| Analyze | slow | ~7 days |
+| Learn | evergreen | ~30 days |
+
+| Topic tier | Default membership | Live-path window |
+|---|---|---|
+| 1 — hot | top-level topics (~14) | 1h |
+| 2 — mid | chosen busy subtopics | 6h |
+| 3 — long tail | niche subtopics (~85) | 12–24h |
+
+Tier is a per-topic admin field (default: top-level = 1, subtopic = 3). Path
+membership + refresh class are derived from a per-section tag (preserving the
+topic-specific sections).
 
 ### Push vs pull (the important nuance)
 
