@@ -13440,8 +13440,8 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
   #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 18px 14px; }
 }
 /* News Feed icon tile — matches the AI Intelligence / Trending header lockups. */
-.newsfeed-logo { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 9px; background: var(--color-primary); color: #fff; }
-.newsfeed-logo svg { width: 16px; height: 16px; }
+.newsfeed-logo { display: inline-flex; width: 27px; height: 27px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; transform: translateY(2px); }
+.newsfeed-logo svg { width: 15px; height: 15px; }
 /* News Feed headtext is a plain block off-desktop (title + sub stack as before;
    filters fall below within the head). */
 .newsfeed-headtext { min-width: 0; }
@@ -14187,7 +14187,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-leave-go { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border: none; border-radius: 999px; background: var(--color-primary); color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; transition: background .14s; }
 .aii-leave-go:hover { background: var(--color-primary-dark, #0f1a2e); }
 .aii-leave-go svg { stroke: #fff; }
-@media (max-width: 560px) { .aii-pathrow { padding: 14px 2px; } .aii-pathrow-name { font-size: 1.02rem; } }
+@media (max-width: 560px) { .aii-pathrow { padding: 14px 18px; } .aii-pathrow-name { font-size: 1.02rem; } }
 
 /* ===== Unified AI Insight modal ========================================= */
 .im-overlay { position: fixed; inset: 0; z-index: 1200; background: rgba(15, 26, 46, 0.46); }
