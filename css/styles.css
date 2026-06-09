@@ -13706,7 +13706,14 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 }
 .ai-result-close:hover { color: var(--color-text); }
 .ai-result-body { font-size: 0.86rem; line-height: 1.5; color: var(--color-text); white-space: pre-line; }
-.ai-result-loading { color: var(--color-text-muted); }
+/* Loading state: a gentle pulse on "Generating AI insights…" so it reads as
+   live data streaming into the window. */
+@keyframes aiPulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+.ai-result-loading { color: var(--color-text-muted); animation: aiPulse 1.3s ease-in-out infinite; }
+/* Reveal: brief content fades/slides in when it lands (instant or after a real
+   load) — gives the impression of data being loaded into the window. */
+@keyframes aiReveal { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+.ai-reveal { animation: aiReveal 0.4s ease both; }
 .ai-result-deeper {
   margin-top: 8px; border: none; background: transparent; color: var(--color-primary);
   font-size: 0.78rem; font-weight: var(--font-weight-semibold); font-family: var(--font-family);
@@ -13811,14 +13818,16 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 
 /* Scroll-hint fades — body content only (top fade starts below the fixed
    header + subnav). Page-level (fixed to viewport) + modal-level (in panel). */
-.pg-scroll-fade { position: fixed; left: 0; right: 0; height: 34px; pointer-events: none; z-index: 50; opacity: 0; transition: opacity .22s ease; }
+.pg-scroll-fade { position: fixed; left: 0; right: 0; height: 52px; pointer-events: none; z-index: 50; opacity: 0; transition: opacity .22s ease; }
 .pg-scroll-fade.is-on { opacity: 1; }
-.pg-scroll-fade-top { background: linear-gradient(to bottom, #fff, rgba(255, 255, 255, 0)); }
-.pg-scroll-fade-bottom { bottom: 0; background: linear-gradient(to top, #fff, rgba(255, 255, 255, 0)); }
-.im-fade { position: absolute; left: 0; right: 0; height: 22px; pointer-events: none; z-index: 7; opacity: 0; transition: opacity .18s ease; }
+.pg-scroll-fade-top { background: linear-gradient(to bottom, #fff 45%, rgba(255, 255, 255, 0)); }
+.pg-scroll-fade-bottom { bottom: 0; background: linear-gradient(to top, #fff 45%, rgba(255, 255, 255, 0)); }
+/* Modal fades: stronger + a 1px overlap onto the header/edge so no sliver of
+   content shows through behind the fade ("behind the curtain" gap). */
+.im-fade { position: absolute; left: 0; right: 0; height: 38px; pointer-events: none; z-index: 7; opacity: 0; transition: opacity .18s ease; }
 .im-fade.is-on { opacity: 1; }
-.im-fade-top { background: linear-gradient(to bottom, #fff, rgba(255, 255, 255, 0)); }
-.im-fade-bottom { bottom: 0; background: linear-gradient(to top, #fff, rgba(255, 255, 255, 0)); border-radius: 0 0 18px 18px; }
+.im-fade-top { margin-top: -1px; background: linear-gradient(to bottom, #fff 48%, rgba(255, 255, 255, 0)); }
+.im-fade-bottom { bottom: -1px; background: linear-gradient(to top, #fff 48%, rgba(255, 255, 255, 0)); border-radius: 0 0 18px 18px; }
 
 /* ===== Living AI Intelligence component ================================= */
 .aii { border: 1px solid var(--color-surface-border); border-radius: 16px; background: #fff; overflow: hidden; }
@@ -13946,27 +13955,33 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 
 /* Article Overview — one cohesive card. */
 .im-article { padding: 15px 17px; background: color-mix(in srgb, var(--color-primary) 3%, #fff); border: 1px solid var(--color-surface-border); border-radius: 14px; }
-.im-article .im-section-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; font-family: var(--font-family); color: var(--color-text-light); margin-bottom: 9px; }
-.im-article-title { margin: 0 0 9px; font-family: var(--font-display); font-size: 1.16rem; line-height: 1.26; font-weight: 700; letter-spacing: -0.015em; color: #16243d; }
-.im-article-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; font-size: 0.82rem; color: var(--color-text-muted); }
-.im-pub { display: inline-flex; align-items: center; gap: 4px; color: var(--color-primary); font-weight: 600; text-decoration: none; }
-.im-pub:hover { text-decoration: underline; }
-.im-pub svg { width: 11px; height: 11px; }
+.im-article .im-section-title { font-size: 0.76rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-family: var(--font-family); color: var(--color-primary); margin-bottom: 10px; }
+.im-article-title { margin: 0 0 10px; font-family: var(--font-display); font-size: 1.16rem; line-height: 1.28; font-weight: 600; letter-spacing: -0.012em; color: #16243d; }
+.im-article-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--color-text-muted); }
+/* Publisher rendered as a brand pill (like the homepage/topic source chips). */
+.im-pub { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; background: #eef1f6; color: var(--color-text); font-weight: 600; font-size: 0.76rem; text-decoration: none; transition: background .14s; }
+.im-pub:hover { background: #e4e8f0; }
+.im-pub svg { width: 10px; height: 10px; opacity: 0.7; }
 .im-when { color: var(--color-text-muted); }
 .im-article-summary { margin: 11px 0 0; font-size: 0.9rem; line-height: 1.55; color: var(--color-text); }
 .im-orig-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 13px; padding: 8px 15px; border: 1px solid color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border)); border-radius: 999px; background: #fff; font-size: 0.8rem; font-weight: 600; color: var(--color-primary); text-decoration: none; transition: background .14s, border-color .14s; }
 .im-orig-link:hover { background: color-mix(in srgb, var(--color-primary) 7%, #fff); border-color: var(--color-primary); }
 .im-orig-link svg { width: 12px; height: 12px; }
 
-/* AI Brief — disclaimer, then actions, then a faint rule, then the content. */
-.im-brief-section .im-disclaimer { margin: 0 0 13px; font-size: 0.78rem; line-height: 1.5; font-style: italic; color: var(--color-text-muted); }
+/* AI Brief — disclaimer (tight under the label, not italic), then actions, a
+   clear rule, then the content. */
+.im-brief-section .im-section-title--brief { margin-bottom: 7px; }
+.im-brief-section .im-disclaimer { margin: 0 0 12px; font-size: 0.78rem; line-height: 1.5; color: var(--color-text-muted); }
 .im-actions-slot:empty { display: none; }
 .im-actions-slot .im-actions { margin-top: 0; }
 .im-actions-slot:empty + .im-rule { display: none; }
-.im-rule { border: none; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 60%, transparent); margin: 15px 0 16px; }
+.im-rule { border: none; border-top: 1px solid var(--color-surface-border); margin: 15px 0 16px; }
 .im-brief .ai-result-body { font-size: 0.875rem; line-height: 1.62; color: #2c3a52; white-space: normal; }
 .im-brief .ai-result-body p { margin: 0 0 8px; }
-.im-brief .ai-result-sub { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.045em; text-transform: uppercase; color: #54607a; margin: 18px 0 8px; padding-bottom: 6px; border-bottom: 1px solid var(--color-surface-border); }
+/* Section label: no rule UNDER the label — instead a faint divider at the END
+   of each section (i.e. a top border on every section after the first). */
+.im-brief .ai-result-sub { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.045em; text-transform: uppercase; color: #54607a; margin: 8px 0 8px; }
+.im-brief .ai-result-sub:not(:first-child) { margin-top: 18px; padding-top: 18px; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 75%, transparent); }
 .im-brief .ai-result-list { margin: 4px 0 8px; padding-left: 1.15rem; display: grid; gap: 5px; }
 .im-brief .ai-result-list li::marker { color: var(--color-primary); }
 .im-empty { font-size: 0.85rem; color: var(--color-text-muted); margin: 0; }

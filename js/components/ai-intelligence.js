@@ -126,7 +126,7 @@ export function renderAIIntelligence(container, scope) {
       ${hasSrc ? '<div class="aii-acc" data-accbody="sources"></div>' : ''}
       <div class="aii-acc" data-accbody="explore"></div>
       <hr class="aii-rule">
-      <div class="aii-content-body">${renderBriefBody(s.body, null)}</div>
+      <div class="aii-content-body ai-reveal">${renderBriefBody(s.body, null)}</div>
     </div>`;
   }
   function sourceRowsHTML() {

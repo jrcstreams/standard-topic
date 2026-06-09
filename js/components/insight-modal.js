@@ -148,7 +148,7 @@ function brandHeaderHTML() {
 }
 
 function briefSkeleton() {
-  return '<div class="im-brief" id="im-brief"><div class="ai-result-body ai-result-loading">Generating AI brief…</div></div>';
+  return '<div class="im-brief" id="im-brief"><div class="ai-result-body ai-result-loading">Generating AI insights…</div></div>';
 }
 
 // Bottom actions (Sources + Explore-further) — shared across types.
@@ -354,7 +354,7 @@ function renderNews(d) {
       if (panelEl.querySelector('#im-brief') !== briefEl) return;
       if (data && data.content) {
         sources = data.sources || [];
-        briefEl.innerHTML = renderBriefBody(data.content, null);
+        briefEl.innerHTML = renderBriefBody(data.content, null); briefEl.classList.add('ai-reveal');
       } else { briefEl.innerHTML = '<p class="im-empty">AI brief unavailable right now.</p>'; }
     } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
     // Mount the actions (Sources + Explore) inside the AI Brief header area —
@@ -403,7 +403,7 @@ function renderTrend(d) {
       if (data && data.content) {
         const cleanSum = cleanSummary(data.summary);
         const summary = cleanSum ? `<p class="im-trend-summary">${esc(cleanSum)}</p>` : '';
-        briefEl.innerHTML = `${summary}${renderBriefBody(cleanTrendContent(data.content), null)}`;
+        briefEl.innerHTML = `${summary}${renderBriefBody(cleanTrendContent(data.content), null)}`; briefEl.classList.add('ai-reveal');
       } else { briefEl.innerHTML = '<p class="im-empty">No AI brief generated for this trend yet.</p>'; }
     } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
   })();
@@ -450,6 +450,7 @@ function renderOverview(d) {
         briefEl.innerHTML = sections.length
           ? sections.map((s, i) => `<details class="im-ovsec"${i === 0 ? ' open' : ''}><summary class="im-ovsec-sum"><span>${esc(s.name)}</span>${CHEV}</summary><div class="im-ovsec-body">${renderBriefBody(s.body, null)}</div></details>`).join('')
           : renderBriefBody(data.content, null);
+        briefEl.classList.add('ai-reveal');
         wireOvsecScroll();
       } else { briefEl.innerHTML = '<p class="im-empty">Overview is being generated — check back shortly.</p>'; }
     } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">Overview unavailable.</p>'; }
