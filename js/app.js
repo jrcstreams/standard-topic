@@ -15,8 +15,8 @@ import { initPromptModal } from './components/prompt-modal.js?v=20260609-revamp4
 import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260609-revamp39';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260608-revamp9';
-import { initInsightModal } from './components/insight-modal.js?v=20260609-revamp45';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260609-revamp45';
+import { initInsightModal } from './components/insight-modal.js?v=20260609-revamp47';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260609-revamp47';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260609-revamp39';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260606-polish46';
@@ -1920,6 +1920,13 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     return assemblePrompt(basePrompt, { reasoningHint: reasoning && reasoning.hint ? reasoning.hint : '', customInstructions: getCustomInstructions(), topicName });
   };
   container.querySelectorAll('.ti-shortcut-panel').forEach(panel => {
+    panel.addEventListener('change', (e) => {
+      const sel = e.target.closest('.ti-explore-select'); if (!sel) return;
+      setPreferredModelId(sel.value);
+      const m = tiPreferredModel();
+      const mn = panel.querySelector('.ti-explore-mn');
+      if (mn && m) mn.textContent = m.name;
+    });
     panel.addEventListener('click', (e) => {
       e.stopPropagation();
       const sc = panel.closest('.ti-shortcut');
@@ -2202,8 +2209,11 @@ function tiPreferredModel() {
 // Direct Submit (→ leaving-site confirm) / Review Prompt (→ full prompt modal).
 function tiExploreHomeHTML() {
   const m = tiPreferredModel();
+  const opts = (getModels() || []).map((x) => `<option value="${escapeAttr(x.id)}"${m && x.id === m.id ? ' selected' : ''}>${escapeHTML(x.name)}</option>`).join('');
   return `<div class="ti-explore" data-step="home">
-    <button type="button" class="ti-explore-opt" data-opt="direct"><span class="ti-explore-ic">${TI_SUBMIT_SVG}</span><span class="ti-explore-tx"><span class="ti-explore-name">Direct Submit</span><span class="ti-explore-sub">Open ${escapeHTML(m ? m.name : 'an AI model')} with this prompt</span></span><span class="ti-explore-go">${TI_RIGHT_SVG}</span></button>
+    <label class="ti-explore-model"><span class="ti-explore-model-lead">Send to</span>
+      <span class="ti-explore-select-wrap"><select class="ti-explore-select" aria-label="Choose AI model">${opts}</select>${TI_CHEV_SVG}</span></label>
+    <button type="button" class="ti-explore-opt" data-opt="direct"><span class="ti-explore-ic">${TI_SUBMIT_SVG}</span><span class="ti-explore-tx"><span class="ti-explore-name">Direct Submit</span><span class="ti-explore-sub">Open <span class="ti-explore-mn">${escapeHTML(m ? m.name : 'an AI model')}</span> with this prompt</span></span><span class="ti-explore-go">${TI_RIGHT_SVG}</span></button>
     <button type="button" class="ti-explore-opt" data-opt="review"><span class="ti-explore-ic">${TI_REVIEW_SVG}</span><span class="ti-explore-tx"><span class="ti-explore-name">Review Prompt</span><span class="ti-explore-sub">Preview &amp; tweak it before you send</span></span><span class="ti-explore-go">${TI_RIGHT_SVG}</span></button>
   </div>`;
 }

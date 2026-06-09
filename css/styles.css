@@ -14013,6 +14013,28 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-src-row:hover { border-color: var(--color-primary); color: var(--color-primary); }
 .aii-src-row svg { flex: none; color: var(--color-text-light); }
 /* Explore-further: Direct Submit / Review Prompt chooser + leaving-site card. */
+/* Model selector at the top of the Explore panel (shared across the AI
+   Intelligence component, the insight modal, and the search shortcuts).
+   Pick the model first; Direct Submit + Review both honor it. */
+.aii-explore-model, .im-explore-model, .ti-explore-model {
+  display: flex; align-items: center; gap: 9px; padding: 2px 2px 8px; cursor: pointer;
+}
+.aii-explore-model-lead, .im-explore-model-lead, .ti-explore-model-lead {
+  flex: none; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-text-muted);
+}
+.aii-explore-select-wrap, .im-explore-select-wrap, .ti-explore-select-wrap {
+  position: relative; flex: 1 1 auto; display: flex; align-items: center;
+}
+.aii-explore-select, .im-explore-select, .ti-explore-select {
+  -webkit-appearance: none; appearance: none; width: 100%;
+  padding: 8px 30px 8px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px;
+  background: #fff; font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; color: var(--color-text); cursor: pointer;
+}
+.aii-explore-select:hover, .im-explore-select:hover, .ti-explore-select:hover { border-color: var(--color-primary); }
+.aii-explore-select-wrap > svg, .im-explore-select-wrap > svg, .ti-explore-select-wrap > svg {
+  position: absolute; right: 10px; pointer-events: none; color: var(--color-text-muted); width: 14px; height: 14px;
+}
+
 .aii-explore { display: grid; gap: 6px; }
 .aii-explore-opt { display: flex; align-items: center; gap: 11px; text-align: left; width: 100%; padding: 10px 12px; border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; cursor: pointer; font-family: var(--font-family); transition: border-color .14s, background .14s; }
 .aii-explore-opt:hover { border-color: var(--color-primary); background: #f7f9fc; }

@@ -6,7 +6,7 @@
 // path loads, hopping between its sections is instant.
 import { renderBriefBody } from './newsfeed.js?v=20260609-revamp45';
 import { getModels, getModelById, getDefaultModelId } from '../utils/data.js';
-import { openModel, copyPrompt, getPreferredModelId } from '../utils/ai-models.js';
+import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -194,13 +194,19 @@ export function renderAIIntelligence(container, scope) {
     return getModelById(id) || (getModels() || [])[0] || null;
   }
 
-  // Explore-further panel, step 1: choose how to send (direct vs review).
+  // Explore-further panel, step 1: pick a model, then choose how to send.
+  function modelOptionsHTML() {
+    const m = preferredModel();
+    return (getModels() || []).map((x) => `<option value="${escAttr(x.id)}"${m && x.id === m.id ? ' selected' : ''}>${esc(x.name)}</option>`).join('');
+  }
   function exploreHomeHTML() {
     const m = preferredModel();
     return `<div class="aii-explore" data-step="home">
+      <label class="aii-explore-model"><span class="aii-explore-model-lead">Send to</span>
+        <span class="aii-explore-select-wrap"><select class="aii-explore-select" aria-label="Choose AI model">${modelOptionsHTML()}</select>${CHEV}</span></label>
       <button type="button" class="aii-explore-opt" data-opt="direct">
         <span class="aii-explore-ic">${ICON_SEND}</span>
-        <span class="aii-explore-tx"><span class="aii-explore-name">Direct Submit</span><span class="aii-explore-sub">Open ${esc(m ? m.name : 'an AI model')} with this prompt</span></span>
+        <span class="aii-explore-tx"><span class="aii-explore-name">Direct Submit</span><span class="aii-explore-sub">Open <span class="aii-explore-mn">${esc(m ? m.name : 'an AI model')}</span> with this prompt</span></span>
         ${ARROW}
       </button>
       <button type="button" class="aii-explore-opt" data-opt="review">
@@ -260,6 +266,14 @@ export function renderAIIntelligence(container, scope) {
       }
     }));
     const exBody = stage.querySelector('[data-accbody="explore"]');
+    // Model choice persists (Direct Submit + Review both honor it).
+    if (exBody) exBody.addEventListener('change', (e) => {
+      const sel = e.target.closest('.aii-explore-select'); if (!sel) return;
+      setPreferredModelId(sel.value);
+      const m = preferredModel();
+      const mn = exBody.querySelector('.aii-explore-mn');
+      if (mn && m) mn.textContent = m.name;
+    });
     if (exBody) exBody.addEventListener('click', (e) => {
       const opt = e.target.closest('.aii-explore-opt');
       const back = e.target.closest('.aii-leave-back');

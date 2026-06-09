@@ -5,7 +5,7 @@
 // stacking: opening one from inside another keeps a "← Back to …" action.
 import { renderBriefBody } from './newsfeed.js?v=20260609-revamp45';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
-import { openModel, copyPrompt, getPreferredModelId } from '../utils/ai-models.js';
+import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
 let overlayEl = null;
 let panelEl = null;
@@ -246,12 +246,18 @@ function cleanSummary(s) {
 
 // Explore-further step 1: choose how to send (matches the AI Intelligence
 // component). Direct Submit → leaving-site confirm; Review → full prompt modal.
+function imModelOptionsHTML() {
+  const m = preferredModelIM();
+  return (getModels() || []).map((x) => `<option value="${escAttr(x.id)}"${m && x.id === m.id ? ' selected' : ''}>${esc(x.name)}</option>`).join('');
+}
 function exploreHomeHTML() {
   const m = preferredModelIM();
   return `<div class="im-explore" data-step="home">
+    <label class="im-explore-model"><span class="im-explore-model-lead">Send to</span>
+      <span class="im-explore-select-wrap"><select class="im-explore-select" aria-label="Choose AI model">${imModelOptionsHTML()}</select>${CHEV}</span></label>
     <button type="button" class="im-explore-opt" data-opt="direct">
       <span class="im-explore-ic">${ICON_SEND}</span>
-      <span class="im-explore-tx"><span class="im-explore-name">Direct Submit</span><span class="im-explore-sub">Open ${esc(m ? m.name : 'an AI model')} with this prompt</span></span>
+      <span class="im-explore-tx"><span class="im-explore-name">Direct Submit</span><span class="im-explore-sub">Open <span class="im-explore-mn">${esc(m ? m.name : 'an AI model')}</span> with this prompt</span></span>
       ${CHEVR}
     </button>
     <button type="button" class="im-explore-opt" data-opt="review">
@@ -297,6 +303,13 @@ function wireActions(ctx) {
         scrollHeaderToTop(btn);
       }
     });
+  });
+  if (explorePanel) explorePanel.addEventListener('change', (e) => {
+    const sel = e.target.closest('.im-explore-select'); if (!sel) return;
+    setPreferredModelId(sel.value);
+    const m = preferredModelIM();
+    const mn = explorePanel.querySelector('.im-explore-mn');
+    if (mn && m) mn.textContent = m.name;
   });
   if (explorePanel) explorePanel.addEventListener('click', (e) => {
     const opt = e.target.closest('.im-explore-opt');
