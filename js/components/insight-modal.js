@@ -161,9 +161,10 @@ function brandHeaderHTML(condensed) {
   // condensed = { title, meta } — a compact title bar that fades in once the
   // overview card scrolls out of view, so the reader keeps context deep in a
   // long brief.
+  const condMeta = condensed && (condensed.meta || condensed.url) ? `<span class="im-condensed-meta">${condensed.meta ? `<span class="im-condensed-pub">${esc(condensed.meta)}</span>` : ''}${condensed.url ? `<a class="im-condensed-link" href="${escAttr(condensed.url)}" target="_blank" rel="noopener noreferrer">View original ${ARROW}</a>` : ''}</span>` : '';
   const cond = condensed && condensed.title ? `<div class="im-condensed" aria-hidden="true">
       <span class="im-condensed-title">${esc(condensed.title)}</span>
-      ${condensed.meta ? `<span class="im-condensed-meta">${esc(condensed.meta)}</span>` : ''}
+      ${condMeta}
     </div>` : '';
   return `<div class="im-head im-head--brand">
     <div class="im-head-row">
@@ -392,7 +393,7 @@ function renderNews(d) {
     when ? `<span class="im-when">${esc(when)}</span>` : '',
   ].filter(Boolean).join('<span class="im-dot">·</span>');
   panelEl.innerHTML = `
-    ${brandHeaderHTML({ title: d.title || 'News story', meta: host })}
+    ${brandHeaderHTML({ title: d.title || 'News story', meta: host, url: d.url || '' })}
     <div class="im-body">
       <section class="im-section im-article">
         <div class="im-section-title">Article Overview</div>

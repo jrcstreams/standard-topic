@@ -13382,9 +13382,9 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
 /* Icon tile — matches the AI Intelligence header lockup. */
 .trending-topics-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
 .trending-topics-logo svg { width: 14px; height: 14px; }
-.trending-topics-title { margin: 0; font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; letter-spacing: -0.015em; line-height: 1; color: var(--color-text); }
+.trending-topics-title { margin: 0; font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; letter-spacing: -0.015em; line-height: 1.5; color: var(--color-text); }
 .trending-topics-updated { margin-left: auto; align-self: center; font-size: 0.62rem; font-weight: 600; letter-spacing: 0.01em; color: #6b7689; background: #eef1f6; padding: 0.24rem 0.55rem; border-radius: 6px; white-space: nowrap; line-height: 1; }
-.trending-topics-sub { margin: 0.5rem 0 0; font-size: 0.85rem; line-height: 1.45; color: var(--color-text-muted); }
+.trending-topics-sub { margin: 7px 0 0; font-size: 0.85rem; line-height: 1.45; color: var(--color-text-muted); }
 .trending-topics-src { color: #5f6b85; text-decoration: none; }
 .trending-topics-src:hover { color: #1f8f6b; text-decoration: underline; }
 
@@ -13425,7 +13425,7 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
   }
   /* 10px (not 7) — the title text is a shorter box centered in the icon-height
      row, so it needs ~3px more to match AI/Trending's visual text→subtext gap. */
-  #section-newsfeed .newsfeed-card .newsfeed-headtext { display: flex; flex-direction: column; gap: 10px; min-width: 0; flex: 1 1 auto; }
+  #section-newsfeed .newsfeed-card .newsfeed-headtext { display: flex; flex-direction: column; gap: 7px; min-width: 0; flex: 1 1 auto; }
   /* Reset the legacy full-bleed title chrome (white bg + min-height + bottom
      rule) that caused the centered white box; clean inline lockup instead. */
   #section-newsfeed .newsfeed-card .newsfeed-title {
@@ -13446,7 +13446,12 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
 .newsfeed-logo svg { width: 14px; height: 14px; }
 /* News Feed headtext is a plain block off-desktop (title + sub stack as before;
    filters fall below within the head). */
-.newsfeed-headtext { min-width: 0; }
+/* Flex column EVERYWHERE (not just desktop) so the title→subtext gap actually
+   applies on mobile too. */
+.newsfeed-headtext { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+/* Tall line-height so the title text box fills the icon-height row (no centering
+   offset) — that's what makes the visual title→subtext gap match AI/Trending. */
+.newsfeed-title-main { line-height: 1.55; }
 
 /* Mobile HOMEPAGE only (one-column scroll): give Trending + News Feed the same
    card + faint-header treatment as the search card and AI Intelligence. Scoped
@@ -13479,7 +13484,7 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
     background: transparent; min-height: 0; border-bottom: none; padding: 0; margin: 0;
     font-size: 1.12rem; font-weight: 700; letter-spacing: -0.015em; color: var(--color-text);
   }
-  body.home-search #section-newsfeed .newsfeed-card .newsfeed-headtext { gap: 10px; }
+  body.home-search #section-newsfeed .newsfeed-card .newsfeed-headtext { gap: 7px; }
   body.home-search #section-newsfeed .newsfeed-card .newsfeed-filters {
     margin: 11px 0 0; background: transparent; border: none; border-radius: 0; padding: 0;
   }
@@ -14283,7 +14288,12 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .im-condensed { display: flex; flex-direction: column; gap: 1px; max-height: 0; opacity: 0; overflow: hidden; padding: 0 20px; border-top: 1px solid transparent; transition: max-height .22s ease, opacity .16s ease, padding .2s ease; }
 .im-panel.is-scrolled .im-condensed { max-height: 64px; opacity: 1; padding: 9px 20px 11px; border-top-color: var(--color-surface-border); }
 .im-condensed-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.im-condensed-meta { font-size: 0.78rem; color: var(--color-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.im-condensed-meta { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--color-text-muted); min-width: 0; }
+.im-condensed-pub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.im-condensed-pub:not(:last-child)::after { content: '·'; margin-left: 8px; color: var(--color-text-muted); }
+.im-condensed-link { flex: none; display: inline-flex; align-items: center; gap: 3px; color: #1d4ed8; font-weight: 600; text-decoration: none; }
+.im-condensed-link:hover { text-decoration: underline; }
+.im-condensed-link svg { width: 11px; height: 11px; }
 .im-brandlock { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
 .im-logo { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 9px; background: var(--color-primary); color: #fff; }
 .im-logo svg { width: 16px; height: 16px; }
