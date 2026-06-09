@@ -66,9 +66,13 @@ flip/slide (~0.3s transform+opacity). The block sizes to its container
 - The unified insight modal stays as-is for **news** and **trend** insights.
 - "Explore further with AI" reuses the existing prompt/model submission flow.
 
-### Placement
+### Placement & layout
 
-- **Topic pages** — replaces the current AI Intelligence card.
+- **Topic pages** — the top section becomes a **~30 / 70 split**: Web Sources
+  shrinks to a thin **left sidebar (~30%)**, and the living **AI Intelligence
+  component takes the remaining ~70%** (its own near-full-width canvas, which
+  resolves the earlier "half-width is too cramped" concern). News Feed stays
+  full-width below.
 - **Homepage** — a `'home'` scope version ("today's world"), bringing AI
   Intelligence back to home in this living form.
 - **Search results** — the custom-term version (as today).
@@ -79,12 +83,23 @@ Mechanism: **refresh-on-view**, mirroring the trending self-heal, instead of
 blindly pre-generating every lens hourly (which would exceed the free grounding
 tier).
 
-- On a read of a lens overview, if the cached row is **older than that lens's
-  window**, schedule a background regeneration (`waitUntil`) and return the
-  cached copy immediately. The next view shows the fresh one.
-- Windows: **Discover ~1h**, Topic-Specific / Analyze **~24h**, Learn **~30d**.
-- A light cron pre-warms a handful of popular/home scopes so common pages are
-  already fresh.
+- On a read of a lens overview, if the cached row is **older than 1 hour**,
+  schedule a background regeneration (`waitUntil`) and return the cached copy
+  immediately. The next view shows the fresh one.
+- Window: **1 hour for ALL lenses** (Discover, Learn, Analyze, Topic-Specific).
+  So everything a user actually views is ≤1h old.
+- The **homepage `'home'` scope** is pre-warmed hourly by a cron (it's always on
+  screen, so generate it before it's viewed). Topic/search scopes rely on
+  refresh-on-view.
+
+### Push vs pull (the important nuance)
+
+We do NOT cron-regenerate all 4 lenses × ~35 scopes every hour — that's ~3,400
+grounded gens/day, far over the free search tier (~$12k/mo). Refresh-on-view
+means we only regenerate a lens when someone opens a stale one, so:
+- every viewed lens is ≤1h old (the "hourly" guarantee that matters), and
+- cost scales with actual views → stays free at current traffic.
+Unviewed pages going stale costs nothing and nobody sees them.
 
 ### Why this is affordable
 
@@ -110,17 +125,22 @@ generation faster and cheaper.
 - News and trend insight modals.
 - The trending list, news feed, and their freshness.
 
+## Resolved decisions
+
+- **Topic-page layout:** ~30/70 split — Web Sources thin left sidebar, AI
+  Intelligence ~70%. (The component now has near-full-width room, so section
+  content gets a comfortable canvas; very long sections scroll within the block.)
+- **Freshness:** 1-hour target for all lenses, delivered via refresh-on-view;
+  home pre-warmed hourly by cron.
+
 ## Open questions / risks
 
-1. **Topic-page width** — the AI Intelligence column is ~half-width on desktop;
-   section content can be long. Decide: content scrolls within the block, or the
-   block grows in height. (Lean: grows, with a max-height + internal scroll on
-   very long sections.)
-2. **Flip vs slide** on mobile — confirm the transition reads well at full-width.
-3. **Pre-warm set** — which scopes the cron keeps hot (home + top N topics?).
-4. **Condense prompts?** — optional; reduces cost/latency but changes section
-   counts. Default: leave sections as-is, revisit if generation latency hurts
-   on-view refresh.
+1. **Flip vs slide** on mobile — confirm the transition reads well at full-width.
+2. **Pre-warm set beyond home** — keep just `home` hot, or `home` + top ~8
+   topics? (Lean: home only to start; add topics if needed.)
+3. **Condense prompts?** — optional; reduces on-view regeneration latency but
+   changes section counts. Default: leave sections as-is, revisit if the
+   background refresh feels slow.
 
 ## Rough build sequence
 
