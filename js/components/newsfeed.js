@@ -541,6 +541,16 @@ function startFeed(ctx) {
       if (r.noFeed) { state.noFeed = true; renderList(); return; }
       state.liveCache = (r.items || []).slice();
       addStories(r.items);
+      // If the live feed is thin, top up with a page of archive so there's a
+      // FULL feed to scroll before the "Load older stories" button appears —
+      // it shouldn't show after just a handful of stories on first load.
+      if (state.stories.length < 12 && !state.exhausted) {
+        try {
+          const { stories, nextBefore } = await fetchArchive(slug, { before: oldestBefore(), limit: 30 });
+          addStories(stories);
+          if (!nextBefore || stories.length === 0) state.exhausted = true;
+        } catch (_) {}
+      }
       refreshSources(); renderList();
     } catch (_) {
       scrollWrap.innerHTML = `<div class="news-error"><p>News feed temporarily unavailable. Refresh to try again.</p></div>`;

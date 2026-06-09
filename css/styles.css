@@ -13423,7 +13423,9 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
     background: color-mix(in srgb, var(--color-primary) 3%, #fff);
     border-radius: 16px 16px 0 0;
   }
-  #section-newsfeed .newsfeed-card .newsfeed-headtext { display: flex; flex-direction: column; gap: 7px; min-width: 0; flex: 1 1 auto; }
+  /* 10px (not 7) — the title text is a shorter box centered in the icon-height
+     row, so it needs ~3px more to match AI/Trending's visual text→subtext gap. */
+  #section-newsfeed .newsfeed-card .newsfeed-headtext { display: flex; flex-direction: column; gap: 10px; min-width: 0; flex: 1 1 auto; }
   /* Reset the legacy full-bleed title chrome (white bg + min-height + bottom
      rule) that caused the centered white box; clean inline lockup instead. */
   #section-newsfeed .newsfeed-card .newsfeed-title {
@@ -14064,7 +14066,11 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-pathrow:hover .aii-pathrow-go { color: var(--color-primary); transform: translateX(3px); }
 
 /* "Back to …" link — clearly a clickable link (blue), not underlined at rest. */
-.aii-back { display: inline-flex; align-items: center; gap: 6px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; color: #1d4ed8; padding: 0 0 14px; }
+/* Back link + "Updated" pill share the top row, so the section title gets its
+   own full line (it was wrapping to make room for the pill). Breathing room
+   above so the link isn't cramped against the header. */
+.aii-backrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 4px; }
+.aii-back { display: inline-flex; align-items: center; gap: 6px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; color: #1d4ed8; padding: 4px 0 14px; }
 .aii-back svg { width: 15px; height: 15px; color: #1d4ed8; }
 .aii-back span { text-decoration: none; text-underline-offset: 2px; }
 .aii-back:hover { color: #1e40af; }

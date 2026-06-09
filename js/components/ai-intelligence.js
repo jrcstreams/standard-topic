@@ -4,7 +4,7 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody } from './newsfeed.js?v=20260609-revamp49';
+import { renderBriefBody } from './newsfeed.js?v=20260609-revamp63';
 import { getModels, getModelById, getDefaultModelId } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -123,11 +123,14 @@ export function renderAIIntelligence(container, scope) {
     }).join('')}</div>`;
     const updated = c && c.generatedAt ? `<span class="aii-updated">Updated ${esc(relTime(c.generatedAt))}</span>` : '';
     return `<div class="aii-sub">
-      <button type="button" class="aii-back" data-back="paths">${BACK}<span>Back to AI Intelligence</span></button>
+      <div class="aii-backrow">
+        <button type="button" class="aii-back" data-back="paths">${BACK}<span>Back to AI Intelligence</span></button>
+        ${updated}
+      </div>
       <div class="aii-subhead">
         <span class="aii-subhead-icon aii-icon-${escAttr(curGroup)}">${ICONS[curGroup] || ICONS._}</span>
         <div class="aii-subhead-text">
-          <div class="aii-subhead-titlerow"><span class="aii-subhead-name">${esc(p.label || '')}</span>${updated}</div>
+          <span class="aii-subhead-name">${esc(p.label || '')}</span>
           ${p.subtitle ? `<span class="aii-subhead-sub">${esc(p.subtitle)}</span>` : ''}
         </div>
       </div>
