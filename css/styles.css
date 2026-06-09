@@ -883,7 +883,6 @@ body.hide-cta .sticky-cta { display: none !important; }
   .at-sub:hover,
   .at-acc-flat:hover,
   .news-card:hover,
-  .news-ai-trigger:hover,
   .news-action:hover,
   .news-ai-opt:hover,
   .trend-card-trigger:hover,
@@ -3494,20 +3493,23 @@ html, body, #app {
 .news-card-foot .news-card-meta { margin: 0; }
 /* AI Insights sits inline-left, right after the source/time — no longer
    pinned to the right edge. */
-.news-ai { position: relative; flex: none; z-index: 4; }
+/* AI Insights is the prominent CTA — pushed to the right of the footer, a
+   filled navy pill so it pops over the quiet Share/meta. */
+.news-ai { position: relative; flex: none; z-index: 4; margin-left: auto; }
 /* While open, lift above later sibling cards so the dropdown isn't painted
    over by the next story's row. */
 .news-ai.is-open { z-index: 50; }
 .news-ai-trigger {
-  display: inline-flex; align-items: center; gap: 0.28rem;
-  padding: 0.24rem 0.45rem; border: none; border-radius: 7px;
-  background: transparent; color: #2f6fe0;
-  font-family: var(--font-family); font-size: 0.72rem; font-weight: 600;
-  cursor: pointer; white-space: nowrap; transition: background 0.14s, color 0.14s;
+  display: inline-flex; align-items: center; gap: 0.38rem;
+  padding: 0.38rem 0.75rem; border: none; border-radius: 999px;
+  background: var(--color-primary); color: #fff;
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 600;
+  cursor: pointer; white-space: nowrap; transition: background 0.14s, transform 0.14s, box-shadow 0.14s;
+  box-shadow: 0 1px 5px -1px rgba(28, 58, 107, 0.4);
 }
 .news-ai-trigger:hover,
-.news-ai.is-open .news-ai-trigger { background: #eaf1fe; color: #1f5fd0; }
-.news-ai-spark { flex: none; color: currentColor; opacity: 0.95; }
+.news-ai.is-open .news-ai-trigger { background: color-mix(in srgb, var(--color-primary) 88%, #000); color: #fff; transform: translateY(-1px); }
+.news-ai-spark { flex: none; color: currentColor; }
 /* Share + Copy link — same shape as the AI Insights label but quiet grey,
    inline in the footer row. */
 .news-action {

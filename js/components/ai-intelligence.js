@@ -4,7 +4,7 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody } from './newsfeed.js?v=20260609-revamp30';
+import { renderBriefBody } from './newsfeed.js?v=20260609-revamp35';
 import { getModels } from '../utils/data.js';
 import { openModel } from '../utils/ai-models.js';
 
@@ -83,7 +83,8 @@ export function renderAIIntelligence(container, scope) {
   }
 
   function pathsHTML() {
-    return `<p class="aii-intro">Live, AI-generated intelligence on <strong>${esc(scope.label)}</strong>. Pick a lens — what's happening now, the essentials, deeper analysis, and more — then dive into any insight.</p>
+    const introScope = scope.topic === 'home' ? "today's world" : `the topic of ${scope.label}`;
+    return `<p class="aii-intro">Live, AI-generated intelligence on ${esc(introScope)}. Pick a lens — what's happening now, the essentials, deeper analysis, and more — then dive into any insight.</p>
       <div class="aii-grid">${paths.map((p) => `
       <button type="button" class="aii-tile" data-group="${escAttr(p.group)}">
         <span class="aii-tile-icon aii-icon-${escAttr(p.group)}">${ICONS[p.group] || ICONS._}</span>

@@ -359,8 +359,8 @@ export function newsCardHTML(item) {
       </a>
       <div class="news-card-foot">
         <div class="news-card-meta">${metaParts.join('')}</div>
-        ${newsAIHTML()}
         <button type="button" class="news-action news-share-toggle" aria-expanded="false" aria-label="Share this story">${SHARE_SVG}<span>Share</span></button>
+        ${newsAIHTML()}
       </div>
       <div class="news-share-panel" aria-hidden="true">
         <div class="news-share-panel-inner">
