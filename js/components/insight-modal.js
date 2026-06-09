@@ -42,11 +42,14 @@ function setupModalFades() {
   const bot = document.createElement('div'); bot.className = 'im-fade im-fade-bottom';
   panelEl.append(top, bot);
   const head = panelEl.querySelector('.im-head');
+  const article = panelEl.querySelector('.im-article');
   const update = () => {
     top.style.top = (head ? head.offsetHeight : 0) + 'px';
     const scrollable = body.scrollHeight > body.clientHeight + 2;
     top.classList.toggle('is-on', scrollable && body.scrollTop > 2);
     bot.classList.toggle('is-on', scrollable && body.scrollTop < body.scrollHeight - body.clientHeight - 2);
+    // Condensed title bar: reveal once the overview card has scrolled out of view.
+    if (article) panelEl.classList.toggle('is-scrolled', article.getBoundingClientRect().bottom < body.getBoundingClientRect().top + 6);
   };
   body.addEventListener('scroll', update, { passive: true });
   if (window.ResizeObserver) { const ro = new ResizeObserver(update); ro.observe(body); }
@@ -150,15 +153,25 @@ function headerHTML(eyebrow, title, subHTML) {
 // Brand-only header: the "AI Insights" lockup is the card title (the article
 // title moves into the Article Overview section below). Keeps the back action
 // when stacked.
-function brandHeaderHTML() {
+function brandHeaderHTML(condensed) {
   const showBack = stack.length > 0;
   const backLabel = stack.length ? stack[stack.length - 1].label : '';
+  // condensed = { title, meta } — a compact title bar that fades in once the
+  // overview card scrolls out of view, so the reader keeps context deep in a
+  // long brief.
+  const cond = condensed && condensed.title ? `<div class="im-condensed" aria-hidden="true">
+      <span class="im-condensed-title">${esc(condensed.title)}</span>
+      ${condensed.meta ? `<span class="im-condensed-meta">${esc(condensed.meta)}</span>` : ''}
+    </div>` : '';
   return `<div class="im-head im-head--brand">
-    <span class="im-brandlock"><span class="im-logo">${LOGO}</span><span class="im-brandname">AI Insights</span></span>
-    <span class="im-head-actions">
-      ${showBack ? `<button type="button" class="im-back" id="im-back"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>${esc(backLabel)}</button>` : ''}
-      <button type="button" class="im-close" id="im-close" aria-label="Close"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg></button>
-    </span>
+    <div class="im-head-row">
+      <span class="im-brandlock"><span class="im-logo">${LOGO}</span><span class="im-brandname">AI Insights</span></span>
+      <span class="im-head-actions">
+        ${showBack ? `<button type="button" class="im-back" id="im-back"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>${esc(backLabel)}</button>` : ''}
+        <button type="button" class="im-close" id="im-close" aria-label="Close"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg></button>
+      </span>
+    </div>
+    ${cond}
   </div>`;
 }
 
@@ -377,7 +390,7 @@ function renderNews(d) {
     when ? `<span class="im-when">${esc(when)}</span>` : '',
   ].filter(Boolean).join('<span class="im-dot">·</span>');
   panelEl.innerHTML = `
-    ${brandHeaderHTML()}
+    ${brandHeaderHTML({ title: d.title || 'News story', meta: host })}
     <div class="im-body">
       <section class="im-section im-article">
         <div class="im-section-title">Article Overview</div>
@@ -429,7 +442,7 @@ function renderTrend(d) {
   const meta = [cat ? `<span class="im-cat-pill">${esc(cat)}</span>` : '', since ? `<span class="im-when">Trending since ${esc(since)}</span>` : '']
     .filter(Boolean).join('');
   panelEl.innerHTML = `
-    ${brandHeaderHTML()}
+    ${brandHeaderHTML({ title, meta: [cat, since ? `Trending since ${since}` : ''].filter(Boolean).join(' · ') })}
     <div class="im-body">
       <section class="im-section im-article">
         <div class="im-section-title">Trend Overview</div>
@@ -482,7 +495,7 @@ function renderOverview(d) {
   const lens = d.label || 'AI';
   const topicLabel = d.scopeTopic || 'this topic';
   panelEl.innerHTML = `
-    ${brandHeaderHTML()}
+    ${brandHeaderHTML({ title: topicLabel, meta: lens })}
     <div class="im-body">
       <section class="im-section im-article">
         <div class="im-section-title">${esc(lens)}</div>

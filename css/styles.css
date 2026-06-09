@@ -13188,7 +13188,9 @@ body.home-search.app-mode .topic-layout {
 }
 /* Mobile: the card was too tall up top + the tagline wrapped awkwardly. */
 @media (max-width: 640px) {
-  .home-search-hero { margin: 0.6rem 0.55rem 0.2rem; padding: 0.4rem 0.6rem 1.15rem; }
+  /* Align with the Trending / AI / News cards (full content width, no extra
+     side margin that pushed it off-center). */
+  .home-search-hero { margin: 0.6rem 0 0.2rem; max-width: none; padding: 0.4rem 0.6rem 1.15rem; }
   .home-search-hero .search-panel-tagline { font-size: 0.86rem; max-width: 24rem; line-height: 1.4; }
 }
 /* Home Intelligence panel: kill the big reserved scroll padding-bottom (it's
@@ -14179,7 +14181,14 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .im-trend-summary { margin: 0 0 12px; font-size: 0.95rem; font-weight: 600; line-height: 1.45; color: #1c3a6b; }
 
 /* News modal v2 — brand header + Article Overview / AI Brief sections ------ */
-.im-head--brand { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 20px; }
+.im-head--brand { display: block; padding: 0; }
+.im-head-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 20px; }
+/* Condensed title bar — fades in once the overview card scrolls out of view so
+   the reader keeps context deep in a long brief. */
+.im-condensed { display: flex; flex-direction: column; gap: 1px; max-height: 0; opacity: 0; overflow: hidden; padding: 0 20px; border-top: 1px solid transparent; transition: max-height .22s ease, opacity .16s ease, padding .2s ease; }
+.im-panel.is-scrolled .im-condensed { max-height: 64px; opacity: 1; padding: 9px 20px 11px; border-top-color: var(--color-surface-border); }
+.im-condensed-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.im-condensed-meta { font-size: 0.78rem; color: var(--color-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .im-brandlock { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
 .im-logo { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 9px; background: var(--color-primary); color: #fff; }
 .im-logo svg { width: 16px; height: 16px; }
