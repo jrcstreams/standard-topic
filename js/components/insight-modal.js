@@ -4,8 +4,8 @@
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
 import { renderBriefBody } from './newsfeed.js?v=20260609-revamp41';
-import { getModels, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
-import { openModel, copyPrompt } from '../utils/ai-models.js';
+import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
+import { openModel, copyPrompt, getPreferredModelId } from '../utils/ai-models.js';
 
 let overlayEl = null;
 let panelEl = null;
@@ -62,11 +62,20 @@ function scrollHeaderToTop(el) {
 const SPARK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>';
 const ARROW = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>';
 const CHEV = '<svg class="im-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
-// Filled mark for the brand lockup — reads as a logo at larger size, vs the
-// thin outline SPARK used for small inline labels.
-const LOGO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.6l1.62 6.32a3 3 0 0 0 2.46 2.46L22.4 12l-6.32 1.62a3 3 0 0 0-2.46 2.46L12 22.4l-1.62-6.32a3 3 0 0 0-2.46-2.46L1.6 12l6.32-1.62a3 3 0 0 0 2.46-2.46z"/></svg>';
+// Brand mark — a faceted gem (a "gem of insight"): premium, editorial, and a
+// deliberate departure from the generic AI sparkle. White on the navy tile.
+const LOGO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M6 4.5h12l3 4.5-9 11-9-11z"/><path d="M3 9h18"/><path d="M9 9l3 11 3-11"/><path d="M9 9l1.6-4.5M15 9l-1.6-4.5"/></svg>';
 // Right chevron — "drill into this sub-level" affordance (Web Sources → category).
 const CHEVR = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
+// Explore-further icons: paper-plane (Direct Submit) + eye (Review Prompt).
+const ICON_SEND = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2.5L11 13"/><path d="M21.5 2.5L15 21l-4-8-8-4z"/></svg>';
+const ICON_EYE = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+
+// The model a Direct Submit goes to (the user's preferred / site default).
+function preferredModelIM() {
+  const id = getPreferredModelId(getDefaultModelId());
+  return getModelById(id) || (getModels() || [])[0] || null;
+}
 
 export function initInsightModal() {
   overlayEl = document.createElement('div');
@@ -147,14 +156,23 @@ function brandHeaderHTML() {
   </div>`;
 }
 
-function briefSkeleton() {
-  return '<div class="im-brief" id="im-brief"><div class="ai-result-body ai-result-loading">Generating AI insights…</div></div>';
+// Generating state — a centered, animated block that occupies roughly the
+// space the brief will fill (spark pulse + label + shimmering text bars).
+function genLoaderHTML(label) {
+  return `<div class="im-gen">
+    <div class="im-gen-spark">${LOGO}</div>
+    <div class="im-gen-label">${esc(label || 'Generating AI insights…')}</div>
+    <div class="im-gen-bars"><span></span><span></span><span></span><span></span><span></span></div>
+  </div>`;
+}
+function briefSkeleton(label) {
+  return `<div class="im-brief" id="im-brief">${genLoaderHTML(label)}</div>`;
 }
 
 // Bottom actions (Sources + Explore-further) — shared across types.
 function actionsHTML(hasSources) {
   return `<div class="im-actions">
-      ${hasSources ? `<button type="button" class="im-actbtn" data-panel="sources" aria-expanded="false"><span>Sources</span>${CHEV}</button>` : ''}
+      ${hasSources ? `<button type="button" class="im-actbtn" data-panel="sources" aria-expanded="false"><span>Web Sources</span>${CHEV}</button>` : ''}
       <button type="button" class="im-actbtn im-actbtn-primary" data-panel="explore" aria-expanded="false"><span>Explore further with AI</span>${CHEV}</button>
     </div>
     ${hasSources ? '<div class="im-acc" data-body="sources" id="im-sources-panel"></div>' : ''}
@@ -226,19 +244,33 @@ function cleanSummary(s) {
   return t.replace(/^\s*(summary|detail)\s*:\s*/i, '').replace(/\s+/g, ' ').trim();
 }
 
-function exploreChooseHTML() {
-  const models = getModels() || [];
-  return `<div class="im-substep"><div class="im-subhead">Choose model</div><div class="im-model-list">${
-    models.map(m => `<button type="button" class="im-model" data-model="${escAttr(m.id)}"><span class="im-model-name">${esc(m.name)}</span>${m.description ? `<span class="im-model-desc">${esc(m.description)}</span>` : ''}</button>`).join('')
-  }</div></div>`;
+// Explore-further step 1: choose how to send (matches the AI Intelligence
+// component). Direct Submit → leaving-site confirm; Review → full prompt modal.
+function exploreHomeHTML() {
+  const m = preferredModelIM();
+  return `<div class="im-explore" data-step="home">
+    <button type="button" class="im-explore-opt" data-opt="direct">
+      <span class="im-explore-ic">${ICON_SEND}</span>
+      <span class="im-explore-tx"><span class="im-explore-name">Direct Submit</span><span class="im-explore-sub">Open ${esc(m ? m.name : 'an AI model')} with this prompt</span></span>
+      ${CHEVR}
+    </button>
+    <button type="button" class="im-explore-opt" data-opt="review">
+      <span class="im-explore-ic">${ICON_EYE}</span>
+      <span class="im-explore-tx"><span class="im-explore-name">Review Prompt</span><span class="im-explore-sub">Preview &amp; tweak it before you send</span></span>
+      ${CHEVR}
+    </button>
+  </div>`;
 }
-function exploreSubmitHTML(model) {
-  return `<div class="im-substep">
-    <button type="button" class="im-back-step">← Models</button>
-    <div class="im-subhead">Prompt submission · ${esc(model.name)}</div>
-    <div class="im-model-list">
-      <button type="button" class="im-model" data-act="direct"><span class="im-model-name">Direct Submit</span><span class="im-model-desc">Open ${esc(model.name)} with the prompt sent automatically.</span></button>
-      <button type="button" class="im-model" data-act="review"><span class="im-model-name">Review Prompt</span><span class="im-model-desc">Preview and tweak the prompt before you send it.</span></button>
+// Explore-further step 2 (Direct Submit): "leaving the site" confirm.
+function exploreLeaveHTML() {
+  const m = preferredModelIM();
+  const name = m ? m.name : 'the AI model';
+  return `<div class="im-explore" data-step="leave">
+    <button type="button" class="im-leave-back">${'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'}<span>Back</span></button>
+    <div class="im-leave-card">
+      <p class="im-leave-title">You're leaving Standard Topic</p>
+      <p class="im-leave-body">Continue opens <strong>${esc(name)}</strong> in a new tab. If the prompt doesn't auto-fill, it's copied to your clipboard — just paste it in. You may need to be signed in.</p>
+      <button type="button" class="im-leave-go">Continue ${ARROW}</button>
     </div>
   </div>`;
 }
@@ -259,7 +291,7 @@ function wireActions(ctx) {
       if (willOpen) {
         btn.setAttribute('aria-expanded', 'true');
         if (name === 'sources' && body && !body.dataset.ready) { body.innerHTML = sourcesListHTML(ctx.sources); body.dataset.ready = '1'; }
-        if (name === 'explore' && explorePanel && !explorePanel.dataset.ready) { explorePanel.innerHTML = exploreChooseHTML(); explorePanel.dataset.ready = '1'; }
+        if (name === 'explore' && explorePanel && !explorePanel.dataset.ready) { explorePanel.innerHTML = exploreHomeHTML(); explorePanel.dataset.ready = '1'; }
         if (name === 'websources' && wsPanel && !wsPanel.dataset.ready) { wsPanel.innerHTML = webSourcesCategoriesHTML(); wsPanel.dataset.ready = '1'; }
         body && body.classList.add('is-open');
         scrollHeaderToTop(btn);
@@ -267,26 +299,25 @@ function wireActions(ctx) {
     });
   });
   if (explorePanel) explorePanel.addEventListener('click', (e) => {
-    const modelBtn = e.target.closest('.im-model[data-model]');
-    const submit = e.target.closest('.im-model[data-act]');
-    const back = e.target.closest('.im-back-step');
-    if (modelBtn) {
+    const opt = e.target.closest('.im-explore-opt');
+    const back = e.target.closest('.im-leave-back');
+    const go = e.target.closest('.im-leave-go');
+    if (opt) {
       e.stopPropagation();
-      const model = (getModels() || []).find(m => m.id === modelBtn.dataset.model);
-      if (!model) return;
-      explorePanel.innerHTML = exploreSubmitHTML(model);
-      explorePanel.dataset.model = model.id;
-      copyPrompt(ctx.prompt);
+      if (opt.dataset.opt === 'review') { ctx.onReview(); }
+      else {
+        // Direct Submit → confirm leaving the site. Copy now so the later
+        // Continue click can open the model synchronously (no popup block).
+        copyPrompt(ctx.prompt);
+        explorePanel.innerHTML = exploreLeaveHTML();
+      }
     } else if (back) {
       e.stopPropagation();
-      explorePanel.innerHTML = exploreChooseHTML();
-      delete explorePanel.dataset.model;
-    } else if (submit) {
+      explorePanel.innerHTML = exploreHomeHTML();
+    } else if (go) {
       e.stopPropagation();
-      const model = (getModels() || []).find(m => m.id === explorePanel.dataset.model);
-      if (!model) return;
-      if (submit.dataset.act === 'direct') openModel(model, ctx.prompt);
-      else ctx.onReview();
+      const model = preferredModelIM(); if (!model) return;
+      openModel(model, ctx.prompt);
     }
   });
   // Web Sources two-level sub-nav: category → its platforms → back.
@@ -412,9 +443,14 @@ function renderTrend(d) {
 // ---- AI Intelligence overview --------------------------------------------
 function splitSections(content) {
   const text = String(content || '');
-  const re = /^##\s+(.+)$/gm;
+  // Tolerate header drift: the model sometimes wraps headers in bold
+  // (**## Name**), uses ### , or trailing **. Match all and clean the name.
+  const re = /^[ \t]*(?:\*\*)?#{2,3}\s+(.+?)\s*$/gm;
   const idx = []; let m;
-  while ((m = re.exec(text))) idx.push({ name: m[1].trim(), start: m.index, headEnd: m.index + m[0].length });
+  while ((m = re.exec(text))) {
+    const name = m[1].replace(/\*\*/g, '').replace(/[:#\s]+$/, '').trim();
+    idx.push({ name, start: m.index, headEnd: m.index + m[0].length });
+  }
   if (!idx.length) return [];
   return idx.map((s, i) => ({ name: s.name, body: text.slice(s.headEnd, i + 1 < idx.length ? idx[i + 1].start : text.length).trim() }));
 }
@@ -433,7 +469,7 @@ function renderOverview(d) {
         <p class="im-disclaimer">The below is an AI-generated ${esc(lens)} overview of ${esc(topicLabel)}, compiled from current sources. Please verify important details with the linked sources.</p>
         <div class="im-actions-slot" id="im-actions-slot"></div>
         <hr class="im-rule">
-        <div class="im-brief im-brief-ov" id="im-brief"><div class="ai-result-body ai-result-loading">Loading ${esc(lens)} overview…</div></div>
+        <div class="im-brief im-brief-ov" id="im-brief">${genLoaderHTML(`Generating ${lens} overview…`)}</div>
       </section>
     </div>`;
   const prompt = `Give me a thorough "${lens}" overview of ${topicLabel} — be specific and current.`;

@@ -2065,9 +2065,9 @@ body.hide-cta .sticky-cta { display: none !important; }
 /* "Topic" kind label — a refined editorial badge (squared 5px corners, quiet
    navy tint), not the generic full-round grey pill. Sits left of the title. */
 .topic-banner-kind {
-  flex: none; align-self: center; font-family: var(--font-family); font-size: 0.56rem; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase; color: #5a6b8c;
-  background: #eef2f8; border: 1px solid #e2e8f1; padding: 0.22rem 0.46rem; border-radius: 5px;
+  flex: none; align-self: center; font-family: var(--font-family); font-size: 0.64rem; font-weight: 800;
+  letter-spacing: 0.13em; text-transform: uppercase; color: #fff;
+  background: var(--color-primary); border: none; padding: 0.3rem 0.6rem; border-radius: 6px;
   line-height: 1;
 }
 @media (max-width: 899.98px) {
@@ -2075,7 +2075,7 @@ body.hide-cta .sticky-cta { display: none !important; }
      and size the icon up so it reads in proportion to the bold name. */
   #sub-header.is-subnav .topic-banner:has(.topic-banner-titlegroup) { padding-top: 1.05rem; padding-bottom: 0.8rem; }
   #sub-header.is-subnav .topic-banner:has(.topic-banner-titlegroup) .topic-banner-icon { width: 28px; height: 28px; }
-  .topic-banner-kind { font-size: 0.58rem; padding: 0.2rem 0.48rem; }
+  .topic-banner-kind { font-size: 0.62rem; padding: 0.26rem 0.52rem; }
 }
 
 /* Extra-small screens: shrink title further for long names. */
@@ -3493,11 +3493,9 @@ html, body, #app {
   padding: 0.7rem 0 1.2rem;
 }
 .news-card-foot .news-card-meta { margin: 0; }
-/* AI Insights sits inline-left, right after the source/time — no longer
-   pinned to the right edge. */
-/* AI Insights is the prominent CTA — pushed to the right of the footer, a
-   filled navy pill so it pops over the quiet Share/meta. */
-.news-ai { position: relative; flex: none; z-index: 4; margin-left: auto; }
+/* AI Insights sits INLINE with the source/time/share cluster (no longer
+   pinned to the right edge) but stays the prominent filled navy pill. */
+.news-ai { position: relative; flex: none; z-index: 4; }
 /* While open, lift above later sibling cards so the dropdown isn't painted
    over by the next story's row. */
 .news-ai.is-open { z-index: 50; }
@@ -13287,7 +13285,14 @@ body.home-search #topic-layout { margin-top: 0.4rem; }
    with the plain selector) so the accordions sit ~14px below the header. */
 .search-panel-results .shortcuts-scroll-wrap,
 body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-wrap { padding-top: 0; padding-bottom: 0; }
+/* In the search modal the WHOLE results area scrolls (.search-panel-results) —
+   the AI Intelligence panel must NOT carry its own inner scrollbar (#87). */
+.search-panel-results .shortcuts-scroll-wrap { overflow: visible; flex: none; max-height: none; -webkit-mask-image: none; mask-image: none; }
+.search-panel-results .topic-intelligence-panel { overflow: visible; }
 .search-panel-results .ti-accordions { padding-top: 0.85rem; }
+/* Equal-height lens cards (#87): center content within a consistent min-height
+   so a 1-line and a 2-line description produce the same card size. */
+.search-panel-results .ti-accordion:not([open]) .ti-accordion-summary { min-height: 4.6rem; align-content: center; }
 /* Keep the live search-term sublabel visible in the results at every width
    (the generic .ti-topic-sublabel rule hides it below 900px for topic pages). */
 .search-panel-results .ti-topic-sublabel { display: block; }
@@ -13656,20 +13661,28 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Search modal: sticky anchor nav to jump between result sections. */
 .search-anchor-nav {
   position: sticky; top: 0; z-index: 6;
-  display: flex; gap: 6px; flex-wrap: wrap; padding: 9px 0 10px; margin-bottom: 6px;
-  background: #f6f7f9; border-bottom: 1px solid var(--color-surface-border);
+  display: flex; align-items: center; gap: 9px; flex-wrap: nowrap; padding: 11px 0 12px; margin-bottom: 10px;
+  background: var(--color-surface, #fff);
+  border-bottom: 2px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-surface-border));
 }
+.search-anchor-label {
+  flex: none; font-family: var(--font-family); font-size: 0.64rem; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text-light);
+}
+.search-anchor-pills { display: flex; gap: 6px; flex-wrap: wrap; min-width: 0; }
 .search-anchor-pill {
   border: 1px solid var(--color-surface-border); background: #fff; cursor: pointer;
   padding: 6px 13px; border-radius: 999px;
   font-family: var(--font-family); font-size: 0.76rem; font-weight: var(--font-weight-semibold); color: var(--color-text-light);
-  transition: border-color .14s, color .14s;
+  transition: border-color .14s, color .14s, background .14s;
 }
 .search-anchor-pill:hover { border-color: var(--color-primary); color: var(--color-primary); }
+/* Scrollspy: the section currently in view is filled navy. */
+.search-anchor-pill.is-active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
 .search-panel-results-inner > .topic-intelligence-panel,
 .search-panel-results-inner > .websources-section,
 .search-panel-results-inner .search-trend-section,
-.search-panel-results-inner .search-news-section { scroll-margin-top: 58px; }
+.search-panel-results-inner .search-news-section { scroll-margin-top: 66px; }
 
 /* ===== Homepage Trending: Now/Over-time toggle + category pills (Phase 2) = */
 .trend-mode-toggle { display: inline-flex; gap: 2px; padding: 2px; background: var(--color-bg-muted); border-radius: 999px; }
@@ -13882,8 +13895,12 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-tile-sub { font-size: 0.82rem; color: var(--color-text-muted); }
 .aii-tile-go { margin-left: auto; color: var(--color-text-light); flex: none; display: inline-flex; }
 
-.aii-back { display: inline-flex; align-items: center; gap: 5px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: var(--color-text-light); padding: 0 0 14px; }
-.aii-back:hover { color: var(--color-primary); }
+/* Prominent "Back to …" link — reads clearly as a clickable link (blue). */
+.aii-back { display: inline-flex; align-items: center; gap: 6px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; color: var(--color-accent, #2563eb); padding: 0 0 14px; }
+.aii-back svg { width: 15px; height: 15px; }
+.aii-back span { text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--color-accent, #2563eb) 35%, transparent); text-underline-offset: 2px; }
+.aii-back:hover { color: #1d4ed8; }
+.aii-back:hover span { text-decoration-color: currentColor; }
 .aii-subhead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-bottom: 6px; }
 .aii-eyebrow { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: #25324a; letter-spacing: -0.01em; }
 .aii-subtopic { font-size: 0.88rem; color: var(--color-text-muted); }
@@ -14054,6 +14071,38 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .im-model-desc { font-size: 0.74rem; color: var(--color-text-muted); }
 .im-back-step { border: none; background: none; color: var(--color-text-light); cursor: pointer; font-family: var(--font-family); font-size: 0.76rem; padding: 0 0 9px; }
 .im-back-step:hover { color: var(--color-primary); }
+
+/* Explore-further: Direct Submit / Review chooser + leaving-site confirm. */
+.im-explore { display: grid; gap: 6px; }
+.im-explore-opt { display: flex; align-items: center; gap: 11px; text-align: left; width: 100%; padding: 10px 12px; border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; cursor: pointer; font-family: var(--font-family); transition: border-color .14s, background .14s; }
+.im-explore-opt:hover { border-color: var(--color-primary); background: #f7f9fc; }
+.im-explore-ic { flex: none; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border-radius: 9px; background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: var(--color-primary); }
+.im-explore-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
+.im-explore-name { font-size: 0.85rem; font-weight: 600; color: var(--color-text); }
+.im-explore-sub { font-size: 0.74rem; color: var(--color-text-muted); }
+.im-explore-opt > svg:last-child { flex: none; color: var(--color-text-light); }
+.im-leave-back { display: inline-flex; align-items: center; gap: 5px; padding: 0 0 8px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; color: var(--color-text-muted); }
+.im-leave-back:hover { color: var(--color-primary); }
+.im-leave-card { padding: 13px 14px 14px; border: 1px solid var(--color-surface-border); border-radius: 11px; background: #f8fafc; }
+.im-leave-title { margin: 0 0 5px; font-size: 0.88rem; font-weight: 700; color: var(--color-text); }
+.im-leave-body { margin: 0 0 12px; font-size: 0.79rem; line-height: 1.45; color: var(--color-text-muted); }
+.im-leave-go { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border: none; border-radius: 999px; background: var(--color-primary); color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; transition: background .14s; }
+.im-leave-go:hover { background: color-mix(in srgb, var(--color-primary) 88%, #000); }
+.im-leave-go svg { stroke: #fff; }
+
+/* Generating state — centered, animated, occupies space the brief will fill. */
+.im-gen { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 26px 12px 30px; }
+.im-gen-spark { width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 12px; background: var(--color-primary); color: #fff; animation: imGenPulse 1.5s ease-in-out infinite; }
+.im-gen-spark svg { width: 22px; height: 22px; }
+@keyframes imGenPulse { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-primary) 35%, transparent); } 50% { transform: scale(1.06); box-shadow: 0 0 0 10px color-mix(in srgb, var(--color-primary) 0%, transparent); } }
+.im-gen-label { margin-top: 14px; font-size: 0.92rem; font-weight: 600; color: var(--color-text); }
+.im-gen-bars { width: 100%; max-width: 440px; margin-top: 20px; display: grid; gap: 11px; }
+.im-gen-bars span { height: 11px; border-radius: 6px; background: linear-gradient(90deg, #eef1f6 0%, #e2e7ef 20%, #eef1f6 40%); background-size: 200% 100%; animation: imShimmer 1.4s linear infinite; }
+.im-gen-bars span:nth-child(2) { width: 92%; }
+.im-gen-bars span:nth-child(3) { width: 97%; }
+.im-gen-bars span:nth-child(4) { width: 80%; }
+.im-gen-bars span:nth-child(5) { width: 60%; }
+@keyframes imShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 .im-submit-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .im-submitbtn { flex: 1 1 auto; padding: 10px 14px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: var(--color-text); transition: border-color .14s, color .14s, background .14s; }
 .im-submitbtn:hover { border-color: var(--color-primary); color: var(--color-primary); }

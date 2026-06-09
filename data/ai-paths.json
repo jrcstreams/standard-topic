@@ -2,7 +2,7 @@
   "paths": [
     {
       "group": "discover",
-      "label": "Now",
+      "label": "What's Happening Now",
       "subtitle": "What's happening right now.",
       "order": 1,
       "refreshClass": "live"

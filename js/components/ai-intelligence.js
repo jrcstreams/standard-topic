@@ -13,7 +13,7 @@ import { openModel, copyPrompt, getPreferredModelId } from '../utils/ai-models.j
 // holds the refresh class). Kept inline so the component never depends on a
 // freshly-changed data.js (the no-version singleton).
 const PATHS = [
-  { group: 'discover',       label: 'Now',            subtitle: "What's happening right now." },
+  { group: 'discover',       label: "What's Happening Now", subtitle: "What's happening right now." },
   { group: 'topic-specific', label: 'For This Topic', subtitle: 'Insights tailored to this topic.' },
   { group: 'analyze',        label: 'Analysis',        subtitle: 'Deeper analytical lenses and tradeoffs.' },
   { group: 'learn',          label: 'Learn',          subtitle: 'Background, fundamentals, and context.' },
@@ -33,16 +33,21 @@ function relTime(iso) {
 }
 function splitSections(content) {
   const text = String(content || '');
-  const re = /^##\s+(.+)$/gm;
+  // Tolerate header drift: the model sometimes wraps headers in bold
+  // (**## Name**), uses ### , or trailing **. Match all and clean the name.
+  const re = /^[ \t]*(?:\*\*)?#{2,3}\s+(.+?)\s*$/gm;
   const idx = []; let m;
-  while ((m = re.exec(text))) idx.push({ name: m[1].trim(), start: m.index, headEnd: m.index + m[0].length });
+  while ((m = re.exec(text))) {
+    const name = m[1].replace(/\*\*/g, '').replace(/[:#\s]+$/, '').trim();
+    idx.push({ name, start: m.index, headEnd: m.index + m[0].length });
+  }
   if (!idx.length) return [];
   return idx.map((s, i) => ({ name: s.name, body: text.slice(s.headEnd, i + 1 < idx.length ? idx[i + 1].start : text.length).trim() }));
 }
 
-// Sparkle duo — a large 4-point spark with a small accent spark, reads as a
-// designed "AI" mark rather than a single generic star.
-const LOGO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 2.4l1.18 4.02a3 3 0 0 0 2.04 2.04L21.2 9.6l-3.98 1.18a3 3 0 0 0-2.04 2.04L14 16.8l-1.18-3.98a3 3 0 0 0-2.04-2.04L6.8 9.6l3.98-1.18a3 3 0 0 0 2.04-2.04z" opacity="0.96"/><path d="M6.3 14.4l.52 1.78a1.4 1.4 0 0 0 .95.95l1.78.52-1.78.52a1.4 1.4 0 0 0-.95.95L6.3 21.9l-.52-1.78a1.4 1.4 0 0 0-.95-.95L3.05 18.65l1.78-.52a1.4 1.4 0 0 0 .95-.95z"/></svg>';
+// Brand mark — a faceted gem (a "gem of insight"): premium, editorial, and a
+// deliberate departure from the generic AI sparkle. White on the navy tile.
+const LOGO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M6 4.5h12l3 4.5-9 11-9-11z"/><path d="M3 9h18"/><path d="M9 9l3 11 3-11"/><path d="M9 9l1.6-4.5M15 9l-1.6-4.5"/></svg>';
 const ARROW = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 const BACK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
 const CHEV = '<svg class="aii-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
@@ -110,7 +115,7 @@ export function renderAIIntelligence(container, scope) {
     }).join('')}</div>`;
     const updated = c && c.generatedAt ? `<span class="aii-updated">Updated ${esc(relTime(c.generatedAt))}</span>` : '';
     return `<div class="aii-sub">
-      <button type="button" class="aii-back" data-back="paths">${BACK}<span>AI Intelligence</span></button>
+      <button type="button" class="aii-back" data-back="paths">${BACK}<span>Back to AI Intelligence</span></button>
       <div class="aii-subhead"><span class="aii-eyebrow">${esc(p.label || '')}</span><span class="aii-subtopic">${esc(scope.label)}</span>${updated}</div>
       ${body}
     </div>`;
@@ -120,10 +125,10 @@ export function renderAIIntelligence(container, scope) {
     const s = (c && c.sections[curIdx]) || { name: '', body: '' };
     const hasSrc = !!(c && c.sources && c.sources.length);
     return `<div class="aii-sub">
-      <button type="button" class="aii-back" data-back="sections">${BACK}<span>${esc(p.label || '')}</span></button>
+      <button type="button" class="aii-back" data-back="sections">${BACK}<span>Back to ${esc(p.label || 'menu')}</span></button>
       <h3 class="aii-content-title">${esc(s.name)}</h3>
       <div class="aii-actions">
-        ${hasSrc ? `<button type="button" class="aii-actbtn" data-acc="sources" aria-expanded="false"><span>Sources</span>${CHEV}</button>` : ''}
+        ${hasSrc ? `<button type="button" class="aii-actbtn" data-acc="sources" aria-expanded="false"><span>Web Sources</span>${CHEV}</button>` : ''}
         <button type="button" class="aii-actbtn" data-acc="explore" aria-expanded="false"><span>Explore further with AI</span>${CHEV}</button>
       </div>
       ${hasSrc ? '<div class="aii-acc" data-accbody="sources"></div>' : ''}

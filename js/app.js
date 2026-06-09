@@ -15,8 +15,8 @@ import { initPromptModal } from './components/prompt-modal.js?v=20260609-revamp4
 import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260609-revamp39';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260608-revamp9';
-import { initInsightModal } from './components/insight-modal.js?v=20260609-revamp41';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260609-revamp41';
+import { initInsightModal } from './components/insight-modal.js?v=20260609-revamp42';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260609-revamp42';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260609-revamp39';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260606-polish46';
@@ -1205,17 +1205,6 @@ function renderStickyHeroBar(container, route) {
           <polyline points="13 6 19 12 13 18"/>
         </svg>
       </a>
-      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-trending">
-        <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <polyline points="3 17 9 11 13 15 21 7"/>
-          <polyline points="15 7 21 7 21 13"/>
-        </svg>
-        <span class="navmenu-cta-label">Trending Topics</span>
-        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="5" y1="12" x2="19" y2="12"/>
-          <polyline points="13 6 19 12 13 18"/>
-        </svg>
-      </button>
       <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-all-topics">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="3" y="3" width="7" height="7" rx="1"/>
@@ -1224,6 +1213,17 @@ function renderStickyHeroBar(container, route) {
           <rect x="14" y="14" width="7" height="7" rx="1"/>
         </svg>
         <span class="navmenu-cta-label">View All Topics</span>
+        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="13 6 19 12 13 18"/>
+        </svg>
+      </button>
+      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-trending">
+        <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="3 17 9 11 13 15 21 7"/>
+          <polyline points="15 7 21 7 21 13"/>
+        </svg>
+        <span class="navmenu-cta-label">Trending</span>
         <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <line x1="5" y1="12" x2="19" y2="12"/>
           <polyline points="13 6 19 12 13 18"/>
@@ -2651,19 +2651,41 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       ['Trending', '.search-trend-section'],
       ['News', '.search-news-section'],
     ];
-    return `<nav class="search-anchor-nav" aria-label="Jump to section">${items
-      .map(([label, sel]) => `<button type="button" class="search-anchor-pill" data-target="${sel}" hidden>${label}</button>`)
-      .join('')}</nav>`;
+    return `<nav class="search-anchor-nav" aria-label="Jump to section">
+      <span class="search-anchor-label">Go to</span>
+      <div class="search-anchor-pills">${items
+        .map(([label, sel]) => `<button type="button" class="search-anchor-pill" data-target="${sel}" hidden>${label}</button>`)
+        .join('')}</div></nav>`;
   }
   function wireAnchorNav() {
     const nav = resultsInner.querySelector('.search-anchor-nav');
     if (!nav) return;
-    nav.querySelectorAll('.search-anchor-pill').forEach(btn => {
+    const scroller = panelEl.querySelector('.search-panel-results');
+    const pills = [...nav.querySelectorAll('.search-anchor-pill')];
+    pills.forEach(btn => {
       btn.addEventListener('click', () => {
         const el = resultsInner.querySelector(btn.dataset.target);
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
+    // Scrollspy: highlight the pill whose section is currently at the top. This
+    // replaces sticky section headers — the nav alone tells you where you are.
+    const spy = () => {
+      const navBottom = nav.getBoundingClientRect().bottom + 10;
+      let active = null;
+      pills.forEach(btn => {
+        if (btn.hidden) return;
+        const el = resultsInner.querySelector(btn.dataset.target);
+        if (el && el.getBoundingClientRect().top <= navBottom) active = btn;
+      });
+      if (!active) active = pills.find(b => !b.hidden) || null;
+      pills.forEach(b => b.classList.toggle('is-active', b === active));
+    };
+    if (scroller) {
+      if (scroller._anchorSpy) scroller.removeEventListener('scroll', scroller._anchorSpy);
+      scroller._anchorSpy = spy;
+      scroller.addEventListener('scroll', spy, { passive: true });
+    }
     refreshAnchorNav();
   }
   function refreshAnchorNav() {
@@ -2672,6 +2694,8 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     nav.querySelectorAll('.search-anchor-pill').forEach(btn => {
       btn.hidden = !resultsInner.querySelector(btn.dataset.target);
     });
+    const scroller = panelEl.querySelector('.search-panel-results');
+    if (scroller && scroller._anchorSpy) scroller._anchorSpy();
   }
 
   // Stored News + Trending results, appended under "AI Intelligence".
