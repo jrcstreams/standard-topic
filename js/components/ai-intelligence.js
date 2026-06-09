@@ -4,7 +4,7 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody } from './newsfeed.js';
+import { renderBriefBody } from './newsfeed.js?v=20260609-revamp30';
 import { getModels } from '../utils/data.js';
 import { openModel } from '../utils/ai-models.js';
 
@@ -80,7 +80,8 @@ export function renderAIIntelligence(container, scope) {
   }
 
   function pathsHTML() {
-    return `<div class="aii-grid">${paths.map((p) => `
+    return `<p class="aii-intro">Live, AI-generated intelligence on <strong>${esc(scope.label)}</strong>. Pick a lens — what's happening now, the essentials, deeper analysis, and more — then dive into any insight.</p>
+      <div class="aii-grid">${paths.map((p) => `
       <button type="button" class="aii-tile" data-group="${escAttr(p.group)}">
         <span class="aii-tile-icon aii-icon-${escAttr(p.group)}">${ICONS[p.group] || ICONS._}</span>
         <span class="aii-tile-text"><span class="aii-tile-name">${esc(p.label)}</span><span class="aii-tile-sub">${esc(p.subtitle)}</span></span>
@@ -93,7 +94,10 @@ export function renderAIIntelligence(container, scope) {
     let body;
     if (!c || c.loading) body = `<div class="aii-loading">Loading ${esc(p.label || '')}…</div>`;
     else if (c.error || !c.sections.length) body = `<p class="aii-empty">This overview is being generated — check back shortly.</p>`;
-    else body = `<div class="aii-menu">${c.sections.map((s, i) => `<button type="button" class="aii-menu-row" data-idx="${i}"><span>${esc(s.name)}</span>${ARROW}</button>`).join('')}</div>`;
+    else body = `<div class="aii-menu">${c.sections.map((s, i) => {
+      const desc = (scope.descriptions && scope.descriptions[s.name]) || '';
+      return `<button type="button" class="aii-menu-row" data-idx="${i}"><span class="aii-menu-text"><span class="aii-menu-name">${esc(s.name)}</span>${desc ? `<span class="aii-menu-desc">${esc(desc)}</span>` : ''}</span>${ARROW}</button>`;
+    }).join('')}</div>`;
     const updated = c && c.generatedAt ? `<span class="aii-updated">Updated ${esc(relTime(c.generatedAt))}</span>` : '';
     return `<div class="aii-sub">
       <button type="button" class="aii-back" data-back="paths">${BACK}<span>AI Intelligence</span></button>

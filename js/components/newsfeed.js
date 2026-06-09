@@ -95,8 +95,14 @@ export function sourceChip(r, opts = {}) {
   return `<a class="${cls}" href="${escapeAttr(r.uri)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(r.title || r.label)}">${fav}<span>${escapeHTML(r.label)}</span></a>`;
 }
 export function renderBriefBody(content, sources, opts = {}) {
-  // Escape, then render light markdown: **bold**, *bold* fallback.
-  const fmt = (s) => escapeHTML(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  // Escape, then render light markdown: **bold**, *italic*, and drop any stray
+  // asterisks the model leaves behind (so "*The Prince*" / a lone "**" never
+  // show raw).
+  const fmt = (s) => escapeHTML(s)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*\n]+?)\*/g, '<em>$1</em>')
+    .replace(/\*+/g, '');
+  const isEmpty = (h) => !h.replace(/<[^>]+>/g, '').trim();
   const lines = String(content || '').split('\n');
   let html = ''; let inList = false;
   const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
@@ -104,8 +110,12 @@ export function renderBriefBody(content, sources, opts = {}) {
     const line = raw.trim();
     if (!line) { closeList(); continue; }
     if (/^#{1,4}\s+/.test(line)) { closeList(); html += `<div class="ai-result-sub">${fmt(line.replace(/^#{1,4}\s+/, ''))}</div>`; }
-    else if (/^[*\-•]\s+/.test(line)) { if (!inList) { html += '<ul class="ai-result-list">'; inList = true; } html += `<li>${fmt(line.replace(/^([*\-•]\s+)+/, ''))}</li>`; }
-    else { closeList(); html += `<p>${fmt(line)}</p>`; }
+    else if (/^[*\-•]\s+/.test(line)) {
+      const inner = fmt(line.replace(/^([*\-•]\s+)+/, ''));
+      if (isEmpty(inner)) continue;          // skip a bullet that was just "**" etc.
+      if (!inList) { html += '<ul class="ai-result-list">'; inList = true; }
+      html += `<li>${inner}</li>`;
+    } else { closeList(); const p = fmt(line); if (!isEmpty(p)) html += `<p>${p}</p>`; }
   }
   closeList();
   let src = '';
