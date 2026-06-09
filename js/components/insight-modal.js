@@ -56,15 +56,17 @@ function setupModalFades() {
   if (window.MutationObserver) { const mo = new MutationObserver(update); mo.observe(body, { childList: true, subtree: true }); panelEl._imFadeMO = mo; }
   requestAnimationFrame(update); setTimeout(update, 400);
 }
-// Bring an accordion's header to the top of the scrollable body so the content
-// that just expanded starts where the reader is looking (with a small offset).
+// Bring an accordion's header near the top of the scroll area when it expands.
+// Lands it BELOW the top scroll-fade (38px) so the button stays clearly
+// readable — anchoring it to the very top hid it under the fade.
 function scrollHeaderToTop(el) {
   const body = panelEl && panelEl.querySelector('.im-body');
   if (!body || !el) return;
-  // Let the expand layout settle first, then scroll the header near the top.
   requestAnimationFrame(() => {
-    const delta = el.getBoundingClientRect().top - body.getBoundingClientRect().top - 10;
-    if (Math.abs(delta) > 4) body.scrollTo({ top: body.scrollTop + delta, behavior: 'smooth' });
+    const delta = el.getBoundingClientRect().top - body.getBoundingClientRect().top - 50;
+    // Only scroll DOWN to reveal expanded content — never yank the button up
+    // under the fade when it's already comfortably in view.
+    if (delta > 8) body.scrollTo({ top: body.scrollTop + delta, behavior: 'smooth' });
   });
 }
 

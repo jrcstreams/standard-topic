@@ -15,7 +15,7 @@ import { initPromptModal } from './components/prompt-modal.js?v=20260609-revamp4
 import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260609-revamp50';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260608-revamp9';
-import { initInsightModal } from './components/insight-modal.js?v=20260609-revamp56';
+import { initInsightModal } from './components/insight-modal.js?v=20260609-revamp60';
 import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260609-revamp54';
 import { renderWebSources } from './components/websources.js?v=20260609-revamp57';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260609-revamp54';
@@ -2734,13 +2734,14 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     if (trends.length) parts.push(spTrendHTML(trends)); // Trending before News
     if (news.length) parts.push(spNewsHTML(news));
     live.innerHTML = parts.length ? `<div class="search-content">${parts.join('')}</div>` : '';
-    // Trend click → open the rich Trending detail modal (the AI layer), same as
-    // the homepage/trending modal — not a plain custom-search navigation.
+    // Trend click → open the NEW unified AI Insights modal (type: trend), the
+    // same one used everywhere else — NOT the old trending-detail modal (which
+    // opened behind the search overlay).
     live.querySelectorAll('[data-trend]').forEach(b => b.addEventListener('click', () => {
       const t = b.dataset.trend; if (!t) return;
       const cat = b.dataset.cat || '';
-      window.dispatchEvent(new CustomEvent('open-trending-detail', {
-        detail: { query: t, category: cat, categories: cat ? [cat] : [] },
+      window.dispatchEvent(new CustomEvent('open-insight-modal', {
+        detail: { type: 'trend', query: t, category: cat, categories: cat ? [cat] : [] },
       }));
     }));
     // Wire the desktop news cards' AI Insights + Share controls.

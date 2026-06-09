@@ -13794,14 +13794,17 @@ body.home-mode #sub-header.is-subnav .topic-banner {
   border-bottom: 2px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-surface-border));
 }
 .search-anchor-label {
-  flex: none; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600;
+  flex: none; font-family: var(--font-family); font-size: 0.74rem; font-weight: 600;
   color: var(--color-text-muted); white-space: nowrap;
 }
-.search-anchor-pills { display: flex; gap: 6px; flex-wrap: wrap; min-width: 0; }
+/* Always one line — never wrap. Scrolls horizontally on the off chance the
+   pills exceed the width (scrollbar hidden). */
+.search-anchor-pills { display: flex; gap: 5px; flex-wrap: nowrap; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+.search-anchor-pills::-webkit-scrollbar { display: none; }
 .search-anchor-pill {
-  border: 1px solid var(--color-surface-border); background: #fff; cursor: pointer;
-  padding: 6px 13px; border-radius: 999px;
-  font-family: var(--font-family); font-size: 0.76rem; font-weight: var(--font-weight-semibold); color: var(--color-text-light);
+  flex: none; border: 1px solid var(--color-surface-border); background: #fff; cursor: pointer;
+  padding: 5px 11px; border-radius: 999px; white-space: nowrap;
+  font-family: var(--font-family); font-size: 0.74rem; font-weight: var(--font-weight-semibold); color: var(--color-text-light);
   transition: border-color .14s, color .14s, background .14s;
 }
 .search-anchor-pill:hover { border-color: var(--color-primary); color: var(--color-primary); }
