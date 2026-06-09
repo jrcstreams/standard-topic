@@ -13042,8 +13042,10 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .search-panel-sub { margin: 0 auto; max-width: 44rem; color: var(--color-text-muted); font-size: 0.88rem; line-height: 1.45; text-wrap: balance; }
 /* Search modal subtitle — the "News, Resources and AI Knowledge." tagline sits
    under the "Search" header at a lighter weight than the homepage title. */
-.search-panel-tagline { margin: 0.1rem auto 0; max-width: 30rem; text-wrap: balance; font-family: var(--font-display); font-size: 1rem; font-weight: 450; letter-spacing: -0.012em; color: #6b7689; }
-@media (max-width: 560px) { .search-panel-tagline { font-size: 0.9rem; max-width: 22rem; } }
+/* Let the tagline sit on one line where it fits and wrap naturally only when
+   the viewport forces it — no balanced/forced mid-phrase break. */
+.search-panel-tagline { margin: 0.1rem auto 0; max-width: 40rem; font-family: var(--font-display); font-size: 1rem; font-weight: 450; letter-spacing: -0.012em; color: #6b7689; }
+@media (max-width: 560px) { .search-panel-tagline { font-size: 0.9rem; max-width: 26rem; } }
 .search-panel--modal .search-panel-hero-inner { text-align: center; }
 @media (max-width: 640px) {
   .search-panel--modal .search-panel-tagline { font-size: 0.88rem; font-weight: 450; }
@@ -13187,7 +13189,7 @@ body.home-search.app-mode .topic-layout {
 /* Mobile: the card was too tall up top + the tagline wrapped awkwardly. */
 @media (max-width: 640px) {
   .home-search-hero { margin: 0.6rem 0.55rem 0.2rem; padding: 0.4rem 0.6rem 1.15rem; }
-  .home-search-hero .search-panel-tagline { font-size: 0.86rem; max-width: 16.5rem; text-wrap: balance; line-height: 1.4; }
+  .home-search-hero .search-panel-tagline { font-size: 0.86rem; max-width: 24rem; line-height: 1.4; }
 }
 /* Home Intelligence panel: kill the big reserved scroll padding-bottom (it's
    content-height here) so there's no dead space before News Feed. */
@@ -13390,10 +13392,14 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
     border: 1px solid var(--color-surface-border); border-radius: 16px;
     background: #fff; overflow: hidden; padding: 0;
   }
+  /* Match the AI Intelligence header metrics exactly (padding + gap) so the two
+     side-by-side cards' header bands are the same height. */
   body.home-search #home-trending .trending-topics-head {
-    margin: 0; padding: 14px 18px; border-bottom: 1px solid var(--color-surface-border);
+    margin: 0; padding: 15px 18px; display: flex; flex-direction: column; gap: 9px;
+    border-bottom: 1px solid var(--color-surface-border);
     background: color-mix(in srgb, var(--color-primary) 3%, #fff);
   }
+  body.home-search #home-trending .trending-topics-sub { margin: 0; }
   body.home-search #home-trending .trend-card-grid { padding: 10px 12px 4px; }
   body.home-search #home-trending .trend-viewmore-row { margin-top: 10px; padding: 0 14px 16px; }
 
@@ -13413,12 +13419,14 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
   /* Reset the legacy full-bleed title chrome (white bg + min-height + bottom
      rule) that caused the centered white box; clean inline lockup instead. */
   #section-newsfeed .newsfeed-card .newsfeed-title {
-    display: inline-flex; flex-direction: row; align-items: center; gap: 0.6rem;
+    display: inline-flex; flex-direction: row; align-items: center; justify-content: flex-start; align-self: flex-start; gap: 0.6rem;
     background: transparent; min-height: 0; border-bottom: none; padding: 0; margin: 0;
     font-size: 1.16rem; font-weight: 700; letter-spacing: -0.015em; color: var(--color-text);
   }
+  /* Filters sit naked in the header band (just the search field + sort) — no
+     wrapping box (the box-in-box looked heavy). */
   #section-newsfeed .newsfeed-card .newsfeed-filters {
-    margin: 0; padding: 7px 8px; flex: 0 1 auto; max-width: 100%; background: #fff;
+    margin: 0; padding: 0; flex: 0 1 auto; max-width: 100%; background: transparent; border: none; border-radius: 0;
   }
   #section-newsfeed .newsfeed-card .newsfeed-scroll-wrap { padding: 8px 18px 6px; }
   #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 18px 14px; }
@@ -13454,13 +13462,13 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
     background: color-mix(in srgb, var(--color-primary) 3%, #fff);
   }
   body.home-search #section-newsfeed .newsfeed-card .newsfeed-title {
-    display: inline-flex; flex-direction: row; align-items: center; gap: 0.55rem;
+    display: inline-flex; flex-direction: row; align-items: center; justify-content: flex-start; align-self: flex-start; gap: 0.55rem;
     background: transparent; min-height: 0; border-bottom: none; padding: 0; margin: 0;
     font-size: 1.12rem; font-weight: 700; letter-spacing: -0.015em; color: var(--color-text);
   }
   body.home-search #section-newsfeed .newsfeed-card .newsfeed-headtext { gap: 0.2rem; }
   body.home-search #section-newsfeed .newsfeed-card .newsfeed-filters {
-    margin: 11px 0 0; background: #fff;
+    margin: 11px 0 0; background: transparent; border: none; border-radius: 0; padding: 0;
   }
   body.home-search #section-newsfeed .newsfeed-card .newsfeed-scroll-wrap { padding: 6px 14px 6px; }
   body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 14px 12px; }
@@ -13820,15 +13828,16 @@ body.home-mode #sub-header.is-subnav .topic-banner {
   background-repeat: no-repeat; background-position: right 9px center; background-size: 13px;
 }
 .trend-select:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 14%, transparent); }
-/* Discreet, centered "View more" pill that opens the full trending modal. */
-.trend-viewmore-row { display: flex; justify-content: center; margin-top: 14px; }
+/* Discreet text link (blue + arrow) that opens the full trending modal. */
+.trend-viewmore-row { display: flex; justify-content: center; margin-top: 10px; }
 .trend-viewmore {
-  border: 1px solid var(--color-border); background: var(--color-bg);
-  padding: 8px 22px; border-radius: 999px; cursor: pointer;
-  font-family: var(--font-family); font-size: 0.8rem; font-weight: var(--font-weight-semibold); color: var(--color-text-light);
-  transition: border-color .14s, color .14s, background .14s;
+  display: inline-flex; align-items: center; gap: 4px;
+  border: none; background: none; padding: 4px 2px; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #2563eb;
+  transition: color .14s, gap .14s;
 }
-.trend-viewmore:hover { border-color: var(--color-primary); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 5%, #fff); }
+.trend-viewmore::after { content: "→"; font-size: 0.9em; }
+.trend-viewmore:hover { color: #1d4ed8; gap: 7px; }
 
 /* ===== Inline AI insight result — news + trend cards (Phase 4) =========== */
 .ai-result {
@@ -13995,7 +14004,8 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Path exploration: a full-width, text-based list of clickable paths (not
    button-cards). Row dividers + hover tint + a sliding arrow signal you can
    click through to each path. */
-.aii-pathlist { display: flex; flex-direction: column; border-top: 1px solid var(--color-surface-border); }
+/* No top divider — the card header's bottom border already closes the top. */
+.aii-pathlist { display: flex; flex-direction: column; }
 .aii-pathrow { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 16px 6px; border: none; border-bottom: 1px solid var(--color-surface-border); background: none; cursor: pointer; font-family: var(--font-family); transition: background .14s; }
 .aii-pathrow:hover { background: color-mix(in srgb, var(--color-primary) 4.5%, transparent); }
 /* Last path needs no divider — the card's own bottom border closes the list. */
