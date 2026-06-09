@@ -11,19 +11,30 @@ component** — a branded responsive block where a user drills lens → section
 menu → section content and back, with content that's noticeably fresher than
 today's 72h–168h. Name stays **AI Intelligence**.
 
-## What already exists (and does NOT change)
+## Engine change — ONE consolidated query per topic
 
-The generation engine is already what John wanted ("ask ~10 questions in one
-prompt, serve answers as sections"):
+Today each **lens** (Discover/Learn/Analyze/Topic-Specific) is its own grounded
+query returning that lens's sections as `## Section Name` blocks (the screenshot
+of "Learn" is one such query → ~10 sections). That's 4 queries × ~100 topics.
 
-- Each **lens** (Discover / Learn / Analyze / Topic-Specific) is **one grounded
-  AI query** that returns all of its sections as `## Section Name` blocks.
-- The admin-assigned shortcuts for a lens ARE its sections.
-- Stored as one row in `ai_insights` (`entity_type='shortcut'`,
-  `entity_key=<topic name | 'home'>`, `insight=<lens>`), content split on `## `.
+**New model:** collapse to **one grounded query per topic** that returns a
+**curated set of ~12–18 sections, each tagged with a "path"** (the navigation
+category — Discover / Learn / Analyze, or renamed). The UI organizes the tagged
+sections into paths → section menu → content. This is "one large lens organized
+into different paths/sections."
 
-We keep this engine verbatim. The work is (1) a new front-end component and (2) a
-freshness mechanism. No change to the prompt/section structure or admin.
+Why: (1) ~4× cheaper to refresh (1 query/topic, not 4), enabling the hourly
+target; (2) matches the desired UX. The catch: one grounded call can't deeply
+research ~40 sections at quality, so we **curate** the current ~40 shortcuts down
+to ~12–18 strong sections (admin content task) and tag each with its path.
+
+- Output format stays `## Section` blocks, with a path tag per section (e.g. a
+  `#path:learn` marker or a leading `### <Path>` grouping the model emits).
+- Stored as one row in `ai_insights` per topic (e.g. `insight='brief'`), content
+  split into sections, sections grouped by path in the UI.
+- `maxTokens` raised to fit ~18 sections (~3.5–4k).
+- The shortcut → section definitions move from "per lens" to "one curated set
+  per scope, each carrying a path tag" in the admin.
 
 ## Part 1 — The living component
 
@@ -49,15 +60,25 @@ Back walks the stack content → sections → lenses. Transitions are CSS
 flip/slide (~0.3s transform+opacity). The block sizes to its container
 (responsive); on mobile it's full-width and the content area scrolls.
 
-### Data flow (instant after first load)
+### Data flow (one fetch, then everything is instant)
 
-- On entering a lens, fetch that lens overview once via `/api/insight`
-  (`type:'shortcut', topic, group`) and cache it on the component.
-- The section MENU = the `## ` section names parsed from that one payload.
-- A section's CONTENT = that section's body from the SAME payload — so once the
-  lens is loaded, navigating sections is **instant, no extra queries**.
-- If the lens isn't generated yet, the section menu shows a loading state while
-  it generates on-open (existing behavior), then populates.
+- On open, fetch the topic's single consolidated brief once via `/api/insight`
+  and cache it on the component.
+- Parse it into sections, each with its path tag. The lens grid = the set of
+  paths present. A path's section MENU = its sections. A section's CONTENT = that
+  section's body — all from the SAME payload.
+- So after the one fetch, **every path/section hop is instant, no extra queries.**
+- If the brief isn't generated yet, show a loading state while it generates
+  on-open, then populate.
+
+### Cost model (why hourly stays affordable)
+
+- Regenerations/day ≈ **distinct topics opened per hour, summed over the day**
+  (NOT topics × 24). A topic viewed 1,000×/hr regenerates once; an unviewed
+  topic regenerates zero times. One query per topic (not 4).
+- Free Google-Search tier covers ~a few hundred generations/day. ~10–15 distinct
+  topics/hour → free. Scales with real traffic; widen the window (1h→2–3h) if it
+  ever crosses into paid.
 
 ### Relationship to existing pieces
 
