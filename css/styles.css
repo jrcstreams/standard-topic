@@ -5501,7 +5501,9 @@ body.app-mode .topic-layout {
      width), matching the homepage's full-width Trending. The old two-column
      (Topic Intelligence | News Feed) split is retired. */
   .topic-layout {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    /* Topic pages: Web Sources is a thin ~30% sidebar; AI Intelligence takes
+       the wide ~70%. News Feed + Related span full width below. */
+    grid-template-columns: minmax(0, 3fr) minmax(0, 7fr);
     column-gap: 1.8rem; row-gap: 1.8rem;
     align-items: start;
   }
