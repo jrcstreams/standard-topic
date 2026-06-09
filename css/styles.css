@@ -13479,7 +13479,7 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
     background: transparent; min-height: 0; border-bottom: none; padding: 0; margin: 0;
     font-size: 1.12rem; font-weight: 700; letter-spacing: -0.015em; color: var(--color-text);
   }
-  body.home-search #section-newsfeed .newsfeed-card .newsfeed-headtext { gap: 7px; }
+  body.home-search #section-newsfeed .newsfeed-card .newsfeed-headtext { gap: 10px; }
   body.home-search #section-newsfeed .newsfeed-card .newsfeed-filters {
     margin: 11px 0 0; background: transparent; border: none; border-radius: 0; padding: 0;
   }
@@ -14034,6 +14034,20 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-brand { font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: var(--color-text); letter-spacing: -0.015em; }
 .aii-headsub { margin: 0; font-size: 0.85rem; line-height: 1.45; color: var(--color-text-muted); }
 .aii-stage { padding: 6px 16px 16px; }
+/* Secondary tab bar (mobile tab mode) — the AI Intelligence paths as sub-tabs
+   under the primary News Feed / AI Intelligence / Web Sources tabs. Same family
+   as the primary tabs but pill-shaped + a touch quieter. Scrolls if it
+   overflows so it always stays one line. */
+.aii-subtabs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 4px 0 12px; margin: 0; border-bottom: 1px solid var(--color-surface-border); }
+.aii-subtabs::-webkit-scrollbar { display: none; }
+.aii-subtab { flex: none; border: 1px solid var(--color-surface-border); background: #fff; padding: 7px 13px; border-radius: 999px; cursor: pointer; white-space: nowrap; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: var(--color-text-light); transition: background .14s, color .14s, border-color .14s; }
+.aii-subtab:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.aii-subtab.is-active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+/* In tab mode the subtabs ARE the path nav, so hide the section menu's back row
+   (Back to AI Intelligence + Updated pill). Drilling into a section keeps its
+   own "Back to <path>" link. The section header sits directly under the tabs. */
+.aii-tabmode .aii-backrow { display: none; }
+.aii-tabmode .aii-subhead { padding-top: 12px; }
 @keyframes aiiInRight { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
 @keyframes aiiInLeft { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
 .aii-anim-fwd { animation: aiiInRight .26s ease; }

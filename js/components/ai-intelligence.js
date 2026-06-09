@@ -13,10 +13,10 @@ import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from 
 // holds the refresh class). Kept inline so the component never depends on a
 // freshly-changed data.js (the no-version singleton).
 const PATHS = [
-  { group: 'discover',       label: "What's Happening Now",   subtitle: 'The latest news, moves, and developments.' },
-  { group: 'topic-specific', label: 'Topic-Specific Insights', subtitle: 'Go deeper on what makes this topic tick.' },
-  { group: 'analyze',        label: 'Analysis',                subtitle: 'Deeper lenses, tradeoffs, and what it all means.' },
-  { group: 'learn',          label: 'Learn',                   subtitle: 'Background, fundamentals, and key context.' },
+  { group: 'discover',       label: "What's Happening Now",   tab: "What's Happening", subtitle: 'The latest news, moves, and developments.' },
+  { group: 'topic-specific', label: 'Topic-Specific Insights', tab: 'Topic Insights',   subtitle: 'Go deeper on what makes this topic tick.' },
+  { group: 'analyze',        label: 'Analysis',                tab: 'Analysis',         subtitle: 'Deeper lenses, tradeoffs, and what it all means.' },
+  { group: 'learn',          label: 'Learn',                   tab: 'Learn',            subtitle: 'Background, fundamentals, and key context.' },
 ];
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
@@ -79,17 +79,30 @@ export function renderAIIntelligence(container, scope) {
   let view = 'paths';             // 'paths' | 'sections' | 'content'
   let curGroup = null;
   let curIdx = 0;
+  // Tab mode: on a topic page at mobile width, the paths become a secondary tab
+  // bar (under the primary News Feed / AI Intelligence / Web Sources tabs)
+  // instead of the flip-nav landing list.
+  const tabMode = scope.topic !== 'home'
+    && typeof window !== 'undefined' && window.matchMedia
+    && window.matchMedia('(max-width: 899.98px)').matches;
+
+  const subtabsHTML = () => `<nav class="aii-subtabs">${paths.map((p) => `<button type="button" class="aii-subtab" data-group="${escAttr(p.group)}">${esc(p.tab || p.label)}</button>`).join('')}</nav>`;
 
   container.innerHTML = `
-    <div class="aii">
+    <div class="aii${tabMode ? ' aii-tabmode' : ''}">
       <div class="aii-head">
         <div class="aii-head-top"><span class="aii-logo">${LOGO}</span><span class="aii-brand">AI Intelligence</span></div>
         <p class="aii-headsub">Pick a path and explore live AI insights.</p>
       </div>
+      ${tabMode ? subtabsHTML() : ''}
       <div class="aii-stage" data-view="paths"></div>
     </div>`;
   const stage = container.querySelector('.aii-stage');
 
+  function setActiveSubtab() {
+    if (!tabMode) return;
+    container.querySelectorAll('.aii-subtab').forEach((b) => b.classList.toggle('is-active', b.dataset.group === curGroup));
+  }
   function go(v, dir) {
     view = v; stage.dataset.view = v;
     stage.innerHTML = viewHTML();
@@ -97,6 +110,7 @@ export function renderAIIntelligence(container, scope) {
     void stage.offsetWidth;
     stage.classList.add(dir === 'back' ? 'aii-anim-back' : 'aii-anim-fwd');
     wire();
+    setActiveSubtab();
     if (dir === 'fwd' && view !== 'paths') ensureVisible();
   }
   function viewHTML() {
@@ -314,6 +328,20 @@ export function renderAIIntelligence(container, scope) {
     });
   }
 
-  go('paths', 'fwd');
+  // Secondary tab bar (mobile tab mode): each tab opens that path's section
+  // menu directly. Wired once (the subtabs live outside the re-rendered stage).
+  async function openTab(group) {
+    if (curGroup === group && (view === 'sections' || view === 'content')) return;
+    curGroup = group; curIdx = 0;
+    go('sections', 'fwd');
+    await loadGroup(curGroup);
+    if (curGroup === group && stage.dataset.view === 'sections') { stage.innerHTML = sectionsHTML(); wire(); setActiveSubtab(); }
+  }
+  if (tabMode) {
+    container.querySelectorAll('.aii-subtab').forEach((b) => b.addEventListener('click', () => openTab(b.dataset.group)));
+    openTab(paths[0].group);          // default to the first path's sections
+  } else {
+    go('paths', 'fwd');
+  }
   return { destroy() { container.innerHTML = ''; } };
 }
