@@ -132,9 +132,14 @@ export function renderAIIntelligence(container, scope) {
     const c = cache[curGroup]; const p = paths.find((x) => x.group === curGroup) || {};
     const s = (c && c.sections[curIdx]) || { name: '', body: '' };
     const hasSrc = !!(c && c.sources && c.sources.length);
+    const desc = (scope.descriptions && scope.descriptions[s.name]) || '';
     return `<div class="aii-sub">
       <button type="button" class="aii-back" data-back="sections">${BACK}<span>Back to ${esc(p.label || 'menu')}</span></button>
-      <h3 class="aii-content-title">${esc(s.name)}</h3>
+      <div class="aii-overview">
+        <div class="aii-overview-eyebrow">${esc(p.label || '')}</div>
+        <h3 class="aii-overview-title">${esc(s.name)}</h3>
+        ${desc ? `<p class="aii-overview-sub">${esc(desc)}</p>` : ''}
+      </div>
       <div class="aii-brief-head">${SPARK}<span>AI Brief</span></div>
       <div class="aii-actions">
         ${hasSrc ? `<button type="button" class="aii-actbtn" data-acc="sources" aria-expanded="false"><span>Web Sources</span>${CHEV}</button>` : ''}
