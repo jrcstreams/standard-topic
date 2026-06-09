@@ -13415,7 +13415,7 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
     border-bottom: 1px solid var(--color-surface-border);
     background: color-mix(in srgb, var(--color-primary) 3%, #fff);
   }
-  #section-newsfeed .newsfeed-card .newsfeed-headtext { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; flex: 1 1 auto; }
+  #section-newsfeed .newsfeed-card .newsfeed-headtext { display: flex; flex-direction: column; gap: 0.45rem; min-width: 0; flex: 1 1 auto; }
   /* Reset the legacy full-bleed title chrome (white bg + min-height + bottom
      rule) that caused the centered white box; clean inline lockup instead. */
   #section-newsfeed .newsfeed-card .newsfeed-title {
@@ -13466,7 +13466,7 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
     background: transparent; min-height: 0; border-bottom: none; padding: 0; margin: 0;
     font-size: 1.12rem; font-weight: 700; letter-spacing: -0.015em; color: var(--color-text);
   }
-  body.home-search #section-newsfeed .newsfeed-card .newsfeed-headtext { gap: 0.2rem; }
+  body.home-search #section-newsfeed .newsfeed-card .newsfeed-headtext { gap: 0.4rem; }
   body.home-search #section-newsfeed .newsfeed-card .newsfeed-filters {
     margin: 11px 0 0; background: transparent; border: none; border-radius: 0; padding: 0;
   }
@@ -13995,7 +13995,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-logo svg { width: 16px; height: 16px; }
 .aii-brand { font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: var(--color-text); letter-spacing: -0.015em; }
 .aii-headsub { margin: 0; font-size: 0.85rem; line-height: 1.45; color: var(--color-text-muted); }
-.aii-stage { padding: 14px 16px 18px; }
+.aii-stage { padding: 6px 16px 16px; }
 @keyframes aiiInRight { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
 @keyframes aiiInLeft { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
 .aii-anim-fwd { animation: aiiInRight .26s ease; }
@@ -14005,11 +14005,14 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    button-cards). Row dividers + hover tint + a sliding arrow signal you can
    click through to each path. */
 /* No top divider — the card header's bottom border already closes the top. */
-.aii-pathlist { display: flex; flex-direction: column; }
-.aii-pathrow { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 16px 6px; border: none; border-bottom: 1px solid var(--color-surface-border); background: none; cursor: pointer; font-family: var(--font-family); transition: background .14s; }
+/* Full-bleed list (escapes the stage's 16px padding) so the hover highlight +
+   row dividers span the full card width; content stays inset to align with the
+   header (18px). */
+.aii-pathlist { display: flex; flex-direction: column; margin: 0 -16px; }
+.aii-pathrow { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 15px 18px; border: none; border-bottom: 1px solid var(--color-surface-border); background: none; cursor: pointer; font-family: var(--font-family); transition: background .14s; }
 .aii-pathrow:hover { background: color-mix(in srgb, var(--color-primary) 4.5%, transparent); }
-/* Last path needs no divider — the card's own bottom border closes the list. */
-.aii-pathrow:last-child { border-bottom: none; }
+/* Keep a divider below the last path too — it closes the list cleanly above
+   the empty space when the card is stretched to match Trending's height. */
 .aii-pathrow-icon { display: inline-flex; width: 38px; height: 38px; flex: none; align-items: center; justify-content: center; border-radius: 10px; background: var(--color-bg-light); color: var(--color-primary); }
 .aii-pathrow-icon svg { width: 19px; height: 19px; }
 .aii-icon-discover { background: #eef4ff; color: #2f6fe0; }
@@ -14030,14 +14033,22 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-back span { text-decoration: none; text-underline-offset: 2px; }
 .aii-back:hover { color: #1e40af; }
 .aii-back:hover span { text-decoration: underline; }
-.aii-subhead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-bottom: 6px; }
-.aii-eyebrow { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: #25324a; letter-spacing: -0.01em; }
-.aii-subtopic { font-size: 0.88rem; color: var(--color-text-muted); }
-.aii-updated { margin-left: auto; font-size: 0.66rem; font-weight: 500; color: #6b7689; background: #eef1f6; padding: 0.22rem 0.5rem; border-radius: 6px; align-self: center; }
+/* Path-menu header: the path's own icon + title + subtext, with a full-bleed
+   divider below that serves as the top border of the first item. */
+.aii-subhead { display: flex; align-items: center; gap: 14px; margin: 0 -16px; padding: 6px 18px 14px; border-bottom: 1px solid var(--color-surface-border); }
+.aii-subhead-icon { display: inline-flex; width: 38px; height: 38px; flex: none; align-items: center; justify-content: center; border-radius: 10px; background: var(--color-bg-light); color: var(--color-primary); }
+.aii-subhead-icon svg { width: 19px; height: 19px; }
+.aii-subhead-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
+.aii-subhead-titlerow { display: flex; align-items: center; gap: 10px; }
+.aii-subhead-name { font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; color: #25324a; letter-spacing: -0.012em; }
+.aii-subhead-sub { font-size: 0.86rem; color: var(--color-text-muted); }
+.aii-updated { margin-left: auto; font-size: 0.66rem; font-weight: 500; color: #6b7689; background: #eef1f6; padding: 0.22rem 0.5rem; border-radius: 6px; white-space: nowrap; }
 
-.aii-menu { display: grid; gap: 0; }
-.aii-menu-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; padding: 13px 4px; border: none; border-top: 1px solid var(--color-surface-border); background: none; cursor: pointer; font-family: var(--font-family); }
-.aii-menu-row:first-child { border-top: none; }
+/* Full-bleed menu rows (match the path list): divider below each, content
+   aligned with the header icon (18px), full-width hover. */
+.aii-menu { display: grid; gap: 0; margin: 0 -16px; }
+.aii-menu-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; padding: 14px 18px; border: none; border-bottom: 1px solid var(--color-surface-border); background: none; cursor: pointer; font-family: var(--font-family); transition: background .14s; }
+.aii-menu-row:hover { background: color-mix(in srgb, var(--color-primary) 4.5%, transparent); }
 .aii-menu-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .aii-menu-name { font-size: 0.94rem; font-weight: 600; color: #25324a; }
 .aii-menu-desc { font-size: 0.8rem; font-weight: 400; color: var(--color-text-muted); line-height: 1.4; }

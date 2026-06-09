@@ -40,7 +40,7 @@ function open() {
     </button>
     <div class="tlm-head">
       <h2 class="tlm-title">Trending</h2>
-      <p class="tlm-subtext">Trending search terms from Google Trends.</p>
+      <p class="tlm-subtext">What the world is searching for right now.</p>
     </div>
     <div class="tlm-body" id="tlm-body"></div>`;
   panelEl.querySelector('#tlm-close').addEventListener('click', close);

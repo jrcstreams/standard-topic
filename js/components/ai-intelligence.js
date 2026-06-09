@@ -124,7 +124,13 @@ export function renderAIIntelligence(container, scope) {
     const updated = c && c.generatedAt ? `<span class="aii-updated">Updated ${esc(relTime(c.generatedAt))}</span>` : '';
     return `<div class="aii-sub">
       <button type="button" class="aii-back" data-back="paths">${BACK}<span>Back to AI Intelligence</span></button>
-      <div class="aii-subhead"><span class="aii-eyebrow">${esc(p.label || '')}</span><span class="aii-subtopic">${esc(scope.label)}</span>${updated}</div>
+      <div class="aii-subhead">
+        <span class="aii-subhead-icon aii-icon-${escAttr(curGroup)}">${ICONS[curGroup] || ICONS._}</span>
+        <div class="aii-subhead-text">
+          <div class="aii-subhead-titlerow"><span class="aii-subhead-name">${esc(p.label || '')}</span>${updated}</div>
+          ${p.subtitle ? `<span class="aii-subhead-sub">${esc(p.subtitle)}</span>` : ''}
+        </div>
+      </div>
       ${body}
     </div>`;
   }
