@@ -15,7 +15,7 @@ import { initPromptModal } from './components/prompt-modal.js?v=20260609-revamp4
 import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260609-revamp50';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260608-revamp9';
-import { initInsightModal } from './components/insight-modal.js?v=20260609-revamp65';
+import { initInsightModal } from './components/insight-modal.js?v=20260609-revamp67';
 import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260609-revamp64';
 import { renderWebSources } from './components/websources.js?v=20260609-revamp57';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260609-revamp54';
@@ -2604,8 +2604,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     <div class="search-panel search-panel--${mode}" data-state="collapsed">
       <div class="search-panel-hero"><div class="search-panel-hero-inner">
         ${isModal
-          ? `<h2 class="search-panel-title">Search</h2>
-             <p class="search-panel-tagline">Search to retrieve web sources, news, trends and AI insights.</p>`
+          ? `<h2 class="search-panel-title">Search</h2>`
           : `<h2 class="search-panel-title">News, Resources and AI Knowledge.</h2>
              <p class="search-panel-tagline">Search to retrieve web sources, news, trends and AI insights.</p>`}
       </div></div>
@@ -2641,7 +2640,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     hideSuggest();
     resultsInner.innerHTML = '';
     renderShortcutsSidebar(resultsInner, { type: 'custom', term: t, tab: 'shortcuts' }, false, true, t);
-    if (isModal) { resultsInner.insertAdjacentHTML('afterbegin', anchorNavHTML()); wireAnchorNav(); }
+    if (isModal) { resultsInner.insertAdjacentHTML('afterbegin', searchTabsHTML()); wireSearchTabs(); }
     loadContentResults(t);
     panelEl.dataset.state = 'expanded';
     syncClear();
@@ -2656,59 +2655,56 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     syncClear();
     ctl.onCollapse && ctl.onCollapse();
   }
-  // Sticky in-modal anchor nav: jump between the result sections.
-  function anchorNavHTML() {
-    const items = [
-      ['AI Intelligence', '.topic-intelligence-panel'],
-      ['Web Sources', '.websources-section'],
-      ['Trending', '.search-trend-section'],
-      ['News', '.search-news-section'],
-    ];
-    return `<nav class="search-anchor-nav" aria-label="Jump to section">
-      <span class="search-anchor-label">Jump to:</span>
-      <div class="search-anchor-pills">${items
-        .map(([label, sel]) => `<button type="button" class="search-anchor-pill" data-target="${sel}" hidden>${label}</button>`)
-        .join('')}</div></nav>`;
+  // Search results tabular navigation — one section per tab (AI Intelligence /
+  // Web Sources / Trending / News), styled to the search card and mirroring the
+  // topic pages' mobile tab bar. A tab only appears when its section returned
+  // content, and the active tab persists across live-term edits.
+  const SEARCH_TABS = [
+    { key: 'ai', label: 'AI Intelligence', sel: '.topic-intelligence-panel' },
+    { key: 'web', label: 'Web Sources', sel: '.websources-section' },
+    { key: 'trending', label: 'Trending', sel: '.search-trend-section' },
+    { key: 'news', label: 'News', sel: '.search-news-section' },
+  ];
+  let activeTab = null;
+  function searchTabsHTML() {
+    return `<nav class="search-tabs" aria-label="Search results" hidden></nav>`;
   }
-  function wireAnchorNav() {
-    const nav = resultsInner.querySelector('.search-anchor-nav');
-    if (!nav) return;
-    const scroller = panelEl.querySelector('.search-panel-results');
-    const pills = [...nav.querySelectorAll('.search-anchor-pill')];
-    pills.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const el = resultsInner.querySelector(btn.dataset.target);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    });
-    // Scrollspy: highlight the pill whose section is currently at the top. This
-    // replaces sticky section headers — the nav alone tells you where you are.
-    const spy = () => {
-      const navBottom = nav.getBoundingClientRect().bottom + 10;
-      let active = null;
-      pills.forEach(btn => {
-        if (btn.hidden) return;
-        const el = resultsInner.querySelector(btn.dataset.target);
-        if (el && el.getBoundingClientRect().top <= navBottom) active = btn;
-      });
-      if (!active) active = pills.find(b => !b.hidden) || null;
-      pills.forEach(b => b.classList.toggle('is-active', b === active));
-    };
-    if (scroller) {
-      if (scroller._anchorSpy) scroller.removeEventListener('scroll', scroller._anchorSpy);
-      scroller._anchorSpy = spy;
-      scroller.addEventListener('scroll', spy, { passive: true });
-    }
-    refreshAnchorNav();
+  function availableTabKeys() {
+    return SEARCH_TABS
+      .filter((t) => { const el = resultsInner.querySelector(t.sel); return el && el.textContent.trim().length > 0; })
+      .map((t) => t.key);
   }
-  function refreshAnchorNav() {
-    const nav = resultsInner.querySelector('.search-anchor-nav');
-    if (!nav) return;
-    nav.querySelectorAll('.search-anchor-pill').forEach(btn => {
-      btn.hidden = !resultsInner.querySelector(btn.dataset.target);
+  // Show only the active tab's section; hide the others (and the Trending/News
+  // wrapper unless one of those is the active tab).
+  function applyTabVisibility() {
+    SEARCH_TABS.forEach((t) => {
+      const el = resultsInner.querySelector(t.sel);
+      if (el) el.hidden = t.key !== activeTab;
     });
+    const content = resultsInner.querySelector('.search-panel-content');
+    if (content) content.hidden = !(activeTab === 'trending' || activeTab === 'news');
+    const nav = resultsInner.querySelector('.search-tabs');
+    if (nav) nav.querySelectorAll('.search-tab').forEach((b) => b.classList.toggle('is-active', b.dataset.stab === activeTab));
+  }
+  function showTab(key) {
+    activeTab = key;
+    applyTabVisibility();
     const scroller = panelEl.querySelector('.search-panel-results');
-    if (scroller && scroller._anchorSpy) scroller._anchorSpy();
+    if (scroller) scroller.scrollTop = 0;
+  }
+  function wireSearchTabs() { refreshSearchTabs(); }
+  // (Re)build the tab buttons for whichever sections currently have content,
+  // preserving the active tab when it's still present (else default to first).
+  function refreshSearchTabs() {
+    const nav = resultsInner.querySelector('.search-tabs');
+    if (!nav) return;
+    const keys = availableTabKeys();
+    nav.innerHTML = SEARCH_TABS.filter((t) => keys.includes(t.key))
+      .map((t) => `<button type="button" class="search-tab" data-stab="${escapeAttr(t.key)}">${escapeHTML(t.label)}</button>`).join('');
+    nav.hidden = keys.length === 0;
+    nav.querySelectorAll('.search-tab').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.stab)));
+    if (!activeTab || !keys.includes(activeTab)) activeTab = keys[0] || null;
+    applyTabVisibility();
   }
 
   // Stored News + Trending results, appended under "AI Intelligence".
@@ -2718,6 +2714,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     let block = resultsInner.querySelector('.search-panel-content');
     if (!block) { block = document.createElement('div'); block.className = 'search-panel-content'; resultsInner.appendChild(block); }
     block.innerHTML = `<div class="search-content"><div class="search-content-loading">Searching news &amp; trends…</div></div>`;
+    if (isModal) applyTabVisibility(); // keep the loading block hidden unless a content tab is active
     let news = [], trends = [];
     try {
       const [nr, tr] = await Promise.all([
@@ -2746,7 +2743,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     }));
     // Wire the desktop news cards' AI Insights + Share controls.
     wireNewsAI(live);
-    if (isModal) refreshAnchorNav();
+    if (isModal) refreshSearchTabs();
   }
   function hideSuggest() { suggestEl.hidden = true; suggestEl.innerHTML = ''; suggestItems = []; activeIdx = -1; }
   function refreshSuggestions() {
@@ -2808,6 +2805,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
         if (t && t !== currentTerm) {
           currentTerm = t;
           renderShortcutsSidebar(resultsInner, { type: 'custom', term: t, tab: 'shortcuts' }, false, true, t);
+          if (isModal) { resultsInner.insertAdjacentHTML('afterbegin', searchTabsHTML()); wireSearchTabs(); }
           loadContentResults(t);
         }
       }, 350);

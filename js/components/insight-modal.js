@@ -109,6 +109,34 @@ export function initInsightModal() {
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlayEl.style.display !== 'none') close(); });
 }
 
+// iOS Safari ignores `body { overflow: hidden }` for touch scrolling, so the
+// background steals the gesture and the modal "won't scroll". Lock the body
+// with position:fixed (preserving + restoring scroll position and any prior
+// inline styles a parent takeover may have set) so every gesture lands inside
+// the modal's own scroll container.
+let scrollLock = null;
+function lockScroll() {
+  if (scrollLock) return; // already locked (e.g. opened from a takeover) — keep it
+  const b = document.body;
+  const y = window.scrollY || window.pageYOffset || 0;
+  scrollLock = { y, position: b.style.position, top: b.style.top, width: b.style.width, overflow: b.style.overflow };
+  b.style.position = 'fixed';
+  b.style.top = `-${y}px`;
+  b.style.width = '100%';
+  b.style.overflow = 'hidden';
+}
+function unlockScroll() {
+  if (!scrollLock) return;
+  const b = document.body;
+  const { y, position, top, width, overflow } = scrollLock;
+  b.style.position = position;
+  b.style.top = top;
+  b.style.width = width;
+  b.style.overflow = overflow;
+  scrollLock = null;
+  if (position !== 'fixed') window.scrollTo(0, y); // restore unless a parent lock remains
+}
+
 function openFresh(entry) {
   if (!entry || !entry.type) return;
   stack = [];
@@ -116,7 +144,7 @@ function openFresh(entry) {
   render();
   overlayEl.style.display = 'block';
   panelEl.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
+  lockScroll();
 }
 function openStacked(entry, backLabel) {
   if (!entry) return;
@@ -133,7 +161,7 @@ function goBack() {
 function close() {
   overlayEl.style.display = 'none';
   panelEl.style.display = 'none';
-  document.body.style.overflow = '';
+  unlockScroll();
   stack = [];
   current = null;
 }

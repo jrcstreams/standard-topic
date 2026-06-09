@@ -13812,33 +13812,36 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .search-trend-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .search-trend-row .search-trend-name { font-size: 0.88rem; font-weight: var(--font-weight-medium); color: var(--color-text); }
 .search-trend-row .search-trend-cat { font-size: 0.72rem; color: var(--color-text-muted); }
-/* Search modal: sticky anchor nav to jump between result sections. */
-.search-anchor-nav {
-  position: sticky; top: -1px; z-index: 8;
-  display: flex; align-items: center; gap: 9px; flex-wrap: nowrap; padding: 11px 1.15rem 11px; margin: -3px -1.15rem 12px;
-  background: var(--color-surface, #fff);
-  /* Full-bleed thick bar = the separator from the search area to results. The
-     small top overlap (negative margin) eats the sub-pixel seam so no sliver
-     of scrolling content creeps in behind the sticky bar. */
-  border-bottom: 2px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-surface-border));
+/* Search modal: tabular navigation — one section per tab (AI Intelligence /
+   Web Sources / Trending / News), styled to the card and mirroring the topic
+   pages' mobile tab band. Sticky so the tabs stay put while a long section
+   scrolls. Full-bleed via negative margin matching the results padding. */
+.search-tabs {
+  position: sticky; top: 0; z-index: 8;
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 7px;
+  margin: 0 -1.15rem 14px; padding: 11px 1.15rem;
+  background: #eef1f6; border-bottom: 1px solid var(--color-surface-border);
 }
-.search-anchor-label {
-  flex: none; font-family: var(--font-family); font-size: 0.74rem; font-weight: 600;
-  color: var(--color-text-muted); white-space: nowrap;
+.search-tabs[hidden] { display: none; }
+.search-tab {
+  display: inline-flex; align-items: center; justify-content: center; text-align: center;
+  background: #fff; border: 1px solid #dde2ec; border-radius: 8px;
+  padding: 0.5rem 0.5rem; margin: 0;
+  font-family: var(--font-display); font-size: 0.8rem; font-weight: 600; letter-spacing: -0.008em;
+  line-height: 1.18; color: #4a5568; cursor: pointer;
+  transition: background .14s, color .14s, border-color .14s, transform .06s;
 }
-/* Always one line — never wrap. Scrolls horizontally on the off chance the
-   pills exceed the width (scrollbar hidden). */
-.search-anchor-pills { display: flex; gap: 5px; flex-wrap: nowrap; min-width: 0; overflow-x: auto; scrollbar-width: none; }
-.search-anchor-pills::-webkit-scrollbar { display: none; }
-.search-anchor-pill {
-  flex: none; border: 1px solid var(--color-surface-border); background: #fff; cursor: pointer;
-  padding: 5px 11px; border-radius: 999px; white-space: nowrap;
-  font-family: var(--font-family); font-size: 0.74rem; font-weight: var(--font-weight-semibold); color: var(--color-text-light);
-  transition: border-color .14s, color .14s, background .14s;
+.search-tab:hover { color: #1e2d44; border-color: #b8c3d5; }
+.search-tab.is-active { background: #1c3a6b; border-color: #1c3a6b; color: #fff; }
+.search-tab.is-active:hover { background: #163058; border-color: #163058; }
+.search-tab:active { transform: translateY(1px); }
+@media (max-width: 460px) {
+  .search-tabs { gap: 5px; }
+  .search-tab { font-size: 0.72rem; padding: 0.46rem 0.3rem; }
 }
-.search-anchor-pill:hover { border-color: var(--color-primary); color: var(--color-primary); }
-/* Scrollspy: the section currently in view is filled navy. */
-.search-anchor-pill.is-active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+/* The tab controller toggles `hidden` on result sections; ensure that wins over
+   each section's own display value (cards are flex/grid). */
+.search-panel-results-inner [hidden] { display: none !important; }
 .search-panel-results-inner > .topic-intelligence-panel,
 .search-panel-results-inner > .websources-section,
 .search-panel-results-inner .search-trend-section,
@@ -14043,16 +14046,22 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    under the primary News Feed / AI Intelligence / Web Sources tabs. Same family
    as the primary tabs but pill-shaped + a touch quieter. Scrolls if it
    overflows so it always stays one line. */
-.aii-subtabs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 4px 0 12px; margin: 0; border-bottom: 1px solid var(--color-surface-border); }
+.aii-subtabs { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; padding: 8px 0 14px; margin: 0; border-bottom: 1px solid var(--color-surface-border); }
 .aii-subtabs::-webkit-scrollbar { display: none; }
-.aii-subtab { flex: none; border: 1px solid var(--color-surface-border); background: #fff; padding: 7px 13px; border-radius: 999px; cursor: pointer; white-space: nowrap; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: var(--color-text-light); transition: background .14s, color .14s, border-color .14s; }
+.aii-subtab { flex: none; border: 1px solid var(--color-surface-border); background: #fff; padding: 5px 11px; border-radius: 999px; cursor: pointer; white-space: nowrap; font-family: var(--font-family); font-size: 0.74rem; font-weight: 600; color: var(--color-text-light); transition: background .14s, color .14s, border-color .14s; }
 .aii-subtab:hover { border-color: var(--color-primary); color: var(--color-primary); }
 .aii-subtab.is-active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
 /* In tab mode the subtabs ARE the path nav, so hide the section menu's back row
    (Back to AI Intelligence + Updated pill). Drilling into a section keeps its
    own "Back to <path>" link. The section header sits directly under the tabs. */
 .aii-tabmode .aii-backrow { display: none; }
-.aii-tabmode .aii-subhead { padding-top: 12px; }
+/* In tab mode the active sub-tab already names the path, so the section-menu
+   header block is redundant — hide it for a clean word-flow. */
+.aii-tabmode .aii-subhead { display: none; }
+/* Breathing room between the sub-tabs and whatever view sits below them
+   (section menu OR the content-view "Back to <path>" link). */
+.aii-tabmode .aii-stage { padding-top: 14px; }
+.aii-tabmode .aii-stage > .aii-sub > .aii-back { padding-top: 2px; }
 @keyframes aiiInRight { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
 @keyframes aiiInLeft { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
 .aii-anim-fwd { animation: aiiInRight .26s ease; }
