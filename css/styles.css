@@ -5545,12 +5545,17 @@ body.app-mode .topic-layout {
      width), matching the homepage's full-width Trending. The old two-column
      (Topic Intelligence | News Feed) split is retired. */
   .topic-layout {
-    /* Topic pages: Web Sources is a thin ~25% sidebar; AI Intelligence takes
-       the wide ~75%. News Feed + Related span full width below. */
-    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+    /* Topic pages: Web Sources ~30% | AI Intelligence ~70%. News Feed +
+       Related span full width below. */
+    grid-template-columns: minmax(0, 3fr) minmax(0, 7fr);
     column-gap: 1.8rem; row-gap: 1.8rem;
     align-items: start;
   }
+  /* Match the two cards' heights on load (stretch the row; cards fill it). */
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-websources,
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-shortcuts { align-self: stretch; }
+  .topic-layout:not(.is-custom) > #section-websources .ws,
+  .topic-layout:not(.is-custom) > #section-shortcuts .aii { height: 100%; }
   /* Custom-search pages keep their single column. */
   .topic-layout.is-custom { grid-template-columns: minmax(0, 1fr); }
   /* Topic pages: Web Sources | AI Intelligence side by side; News + Related full. */
@@ -14061,6 +14066,48 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-menu-row:hover .aii-menu-name { color: var(--color-primary); }
 .aii-menu-row svg { color: var(--color-text-light); flex: none; }
 .aii-menu-row:hover svg { color: var(--color-primary); }
+
+/* ===== Web Sources card (same flip-nav + card treatment as AI Intelligence) */
+.ws { border: 1px solid var(--color-surface-border); border-radius: 16px; background: #fff; overflow: hidden; }
+.ws-head { display: flex; flex-direction: column; gap: 9px; padding: 15px 18px; border-bottom: 1px solid var(--color-surface-border); background: color-mix(in srgb, var(--color-primary) 3%, #fff); }
+.ws-head-top { display: flex; align-items: center; gap: 11px; }
+.ws-logo { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 9px; background: var(--color-primary); color: #fff; }
+.ws-logo svg { width: 16px; height: 16px; }
+.ws-brand { font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: var(--color-text); letter-spacing: -0.015em; }
+.ws-headsub { margin: 0; font-size: 0.85rem; line-height: 1.45; color: var(--color-text-muted); }
+.ws-stage { padding: 6px 16px 16px; }
+.ws-empty { font-size: 0.85rem; color: var(--color-text-muted); padding: 8px 2px; }
+/* Category list — full-bleed rows + hover + dividers (matches the AI paths). */
+.ws-pathlist { display: flex; flex-direction: column; margin: 0 -16px; }
+.ws-pathrow { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 15px 18px; border: none; border-bottom: 1px solid var(--color-surface-border); background: none; cursor: pointer; font-family: var(--font-family); transition: background .14s; }
+.ws-pathrow:hover { background: color-mix(in srgb, var(--color-primary) 4.5%, transparent); }
+.ws-pathrow-icon { display: inline-flex; width: 38px; height: 38px; flex: none; align-items: center; justify-content: center; border-radius: 10px; background: var(--color-bg-light); color: var(--color-primary); }
+.ws-pathrow-icon svg { width: 19px; height: 19px; }
+.ws-pathrow-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
+.ws-pathrow-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: #25324a; letter-spacing: -0.01em; }
+.ws-pathrow-sub { font-size: 0.86rem; color: var(--color-text-muted); }
+.ws-pathrow > svg:last-child { margin-left: auto; color: var(--color-text-light); flex: none; transition: transform .16s ease, color .14s; }
+.ws-pathrow:hover > svg:last-child { color: var(--color-primary); transform: translateX(3px); }
+/* Category → its sources (the next path). */
+.ws-back { display: inline-flex; align-items: center; gap: 6px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; color: #1d4ed8; padding: 0 0 14px; }
+.ws-back svg { width: 15px; height: 15px; color: #1d4ed8; }
+.ws-back:hover { color: #1e40af; }
+.ws-back:hover span { text-decoration: underline; text-underline-offset: 2px; }
+.ws-subhead { display: flex; align-items: center; gap: 14px; margin: 0 -16px; padding: 0 18px 14px; border-bottom: 1px solid var(--color-surface-border); }
+.ws-subhead-icon { display: inline-flex; width: 38px; height: 38px; flex: none; align-items: center; justify-content: center; border-radius: 10px; background: var(--color-bg-light); color: var(--color-primary); }
+.ws-subhead-icon svg { width: 19px; height: 19px; }
+.ws-subhead-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ws-subhead-name { font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; color: #25324a; letter-spacing: -0.012em; }
+.ws-subhead-sub { font-size: 0.86rem; color: var(--color-text-muted); }
+.ws-srclist { display: flex; flex-direction: column; margin: 0 -16px; }
+.ws-srcrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; text-decoration: none; padding: 13px 18px; border-bottom: 1px solid var(--color-surface-border); transition: background .14s; }
+.ws-srcrow:hover { background: color-mix(in srgb, var(--color-primary) 4.5%, transparent); }
+.ws-srcrow-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ws-srcrow-name { font-size: 0.94rem; font-weight: 600; color: #25324a; }
+.ws-srcrow:hover .ws-srcrow-name { color: var(--color-primary); }
+.ws-srcrow-desc { font-size: 0.8rem; color: var(--color-text-muted); line-height: 1.4; }
+.ws-srcrow > svg:last-child { flex: none; color: var(--color-text-light); }
+.ws-srcrow:hover > svg:last-child { color: var(--color-primary); }
 
 .aii-content-title { margin: 6px 0 12px; font-family: var(--font-display); font-size: 1.12rem; font-weight: 600; color: #25324a; letter-spacing: -0.01em; }
 /* Overview mini-card (matches the news modal's Article Overview): path eyebrow

@@ -17,6 +17,7 @@ import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, T
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260608-revamp9';
 import { initInsightModal } from './components/insight-modal.js?v=20260609-revamp56';
 import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260609-revamp54';
+import { renderWebSources } from './components/websources.js?v=20260609-revamp57';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260609-revamp54';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260606-polish46';
@@ -1427,7 +1428,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       renderShortcutsSidebar(shortcutsSection, route, isHome, isCustom, customTerm);
     }
   }
-  if (websourcesSection && topic) renderWebSourcesSection(websourcesSection, topic);
+  if (websourcesSection && topic) renderWebSources(websourcesSection, topic);
   if (feedSection) {
     renderNewsFeed(feedSection, topic, isHome);
   }
