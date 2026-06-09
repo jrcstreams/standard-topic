@@ -13413,6 +13413,36 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
    filters fall below within the head). */
 .newsfeed-headtext { min-width: 0; }
 
+/* Mobile HOMEPAGE only (one-column scroll): give Trending + News Feed the same
+   card + faint-header treatment as the search card and AI Intelligence. Scoped
+   to body.home-search so the topic-page TAB navigation is untouched. */
+@media (max-width: 899.98px) {
+  body.home-search #home-trending .trending-topics {
+    border: 1px solid var(--color-surface-border); border-radius: 14px;
+    background: #fff; overflow: hidden; padding: 0;
+  }
+  body.home-search #home-trending .trending-topics-head {
+    margin: 0; padding: 13px 15px; border-bottom: 1px solid var(--color-surface-border);
+    background: color-mix(in srgb, var(--color-primary) 3%, #fff);
+  }
+  body.home-search #home-trending .trend-card-grid { padding: 8px 10px 10px; }
+  body.home-search #home-trending .trending-topics-viewall { margin: 2px 12px 12px; }
+
+  body.home-search #section-newsfeed .newsfeed-card {
+    border: 1px solid var(--color-surface-border); border-radius: 14px;
+    background: #fff; overflow: visible;
+  }
+  body.home-search #section-newsfeed .newsfeed-card .newsfeed-head {
+    margin: 0; padding: 13px 15px; border-bottom: 1px solid var(--color-surface-border);
+    background: color-mix(in srgb, var(--color-primary) 3%, #fff);
+  }
+  body.home-search #section-newsfeed .newsfeed-card .newsfeed-filters {
+    margin: 11px 0 0; background: #fff;
+  }
+  body.home-search #section-newsfeed .newsfeed-card .newsfeed-scroll-wrap { padding: 6px 14px 6px; }
+  body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 14px 12px; }
+}
+
 /* Compact 2-row card (category · trending-for, then term) with an attached
    quick-insights dropdown. The .trend-card is just a positioning wrapper. */
 .trend-card-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.35rem 1rem; }
