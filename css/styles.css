@@ -14122,7 +14122,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 
 /* ===== Web Sources card (same flip-nav + card treatment as AI Intelligence) */
 .ws { border: 1px solid var(--color-surface-border); border-radius: 16px; background: #fff; overflow: hidden; }
-.ws-head { display: flex; flex-direction: column; gap: 9px; padding: 15px 18px; border-bottom: 1px solid var(--color-surface-border); background: color-mix(in srgb, var(--color-primary) 3%, #fff); }
+.ws-head { display: flex; flex-direction: column; gap: 7px; padding: 15px 18px; border-bottom: 1px solid var(--color-surface-border); background: color-mix(in srgb, var(--color-primary) 3%, #fff); }
 .ws-head-top { display: flex; align-items: center; gap: 11px; }
 .ws-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
 .ws-logo svg { width: 14px; height: 14px; }
