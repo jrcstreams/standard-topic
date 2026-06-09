@@ -1,0 +1,13 @@
+{
+  "paths": [
+    { "group": "discover",       "label": "Now",            "subtitle": "What's happening right now.",             "order": 1, "refreshClass": "live" },
+    { "group": "topic-specific", "label": "For This Topic", "subtitle": "Insights tailored to this topic.",        "order": 2, "refreshClass": "live" },
+    { "group": "analyze",        "label": "Analyze",        "subtitle": "Deeper analytical lenses and tradeoffs.", "order": 3, "refreshClass": "slow" },
+    { "group": "learn",          "label": "Learn",          "subtitle": "Background, fundamentals, and context.",  "order": 4, "refreshClass": "evergreen" }
+  ],
+  "windows": {
+    "live":      { "1": 1, "2": 6, "3": 18 },
+    "slow":      168,
+    "evergreen": 720
+  }
+}
