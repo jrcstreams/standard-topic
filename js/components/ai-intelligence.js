@@ -242,7 +242,7 @@ export function renderAIIntelligence(container, scope) {
         bodyEl.removeAttribute('data-loading');
         bodyEl.innerHTML = renderBriefBody(s.body, null);
         bodyEl.classList.add('ai-reveal');
-      }, 1100);
+      }, 1000);
     }
     stage.querySelectorAll('.aii-pathrow').forEach((b) => b.addEventListener('click', async () => {
       curGroup = b.dataset.group;

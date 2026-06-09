@@ -25,6 +25,12 @@ function relTime(iso) {
   return `${Math.round(h / 24)} d ago`;
 }
 function hostOf(u) { try { return new URL(u).hostname.replace(/^www\./i, ''); } catch { return ''; } }
+// Keep the "Generating AI insights…" loader up for at least ~1s even when the
+// brief is cached/instant — gives the generation a moment of presence without
+// making anyone wait longer than necessary.
+const MIN_LOADER_MS = 1000;
+function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
+async function holdLoader(t0) { const left = MIN_LOADER_MS - (Date.now() - t0); if (left > 0) await sleep(left); }
 // Top/bottom fade overlays on the panel that signal the body can scroll up or
 // down. Re-created each render (innerHTML wipes them); a MutationObserver keeps
 // them in sync as async content (the brief) loads in.
@@ -391,11 +397,13 @@ function renderNews(d) {
     </div>`;
   const prompt = newsPromptFor(d);
   (async () => {
+    const t0 = Date.now();
     const briefEl = panelEl.querySelector('#im-brief');
     let sources = [];
     try {
       const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'news', url: d.url || '', title: d.title || '', description: d.description || '', date: d.date || '' }) });
       const data = res.ok ? await res.json() : null;
+      await holdLoader(t0);
       if (panelEl.querySelector('#im-brief') !== briefEl) return;
       if (data && data.content) {
         sources = data.sources || [];
@@ -440,10 +448,12 @@ function renderTrend(d) {
   // Web Sources + Explore don't depend on the brief, so wire them immediately.
   wireActions({ prompt, webTerm: d.query, sources: [], onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, topicName: d.query, name: 'Trending · AI', count: 1 } })) });
   (async () => {
+    const t0 = Date.now();
     const briefEl = panelEl.querySelector('#im-brief');
     try {
       const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'trend', query: d.query }) });
       const data = res.ok ? await res.json() : null;
+      await holdLoader(t0);
       if (panelEl.querySelector('#im-brief') !== briefEl) return;
       if (data && data.content) {
         const cleanSum = cleanSummary(data.summary);
@@ -488,11 +498,13 @@ function renderOverview(d) {
     </div>`;
   const prompt = `Give me a thorough "${lens}" overview of ${topicLabel} — be specific and current.`;
   (async () => {
+    const t0 = Date.now();
     const briefEl = panelEl.querySelector('#im-brief');
     let sources = [];
     try {
       const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shortcut', topic: d.topic, group: d.group }) });
       const data = res.ok ? await res.json() : null;
+      await holdLoader(t0);
       if (panelEl.querySelector('#im-brief') !== briefEl) return;
       if (data && data.content) {
         sources = data.sources || [];
