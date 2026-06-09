@@ -14059,9 +14059,10 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    header block is redundant — hide it for a clean word-flow. */
 .aii-tabmode .aii-subhead { display: none; }
 /* Breathing room between the sub-tabs and whatever view sits below them
-   (section menu OR the content-view "Back to <path>" link). */
-.aii-tabmode .aii-stage { padding-top: 14px; }
-.aii-tabmode .aii-stage > .aii-sub > .aii-back { padding-top: 2px; }
+   (section menu OR the content-view "Back to <path>" link). Applied to the
+   inner .aii-sub wrapper because the mobile card-hiding rule forces the
+   .aii-stage's own padding-top to 0 at higher specificity. */
+.aii-tabmode .aii-stage > .aii-sub { padding-top: 14px; }
 @keyframes aiiInRight { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
 @keyframes aiiInLeft { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
 .aii-anim-fwd { animation: aiiInRight .26s ease; }
