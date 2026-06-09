@@ -13167,6 +13167,7 @@ body.home-search #section-shortcuts .shortcuts-scroll-wrap { padding-bottom: 0; 
   body.home-search #section-searchtrends { display: contents; }
   body.home-search #home-search-hero { grid-column: 1 / -1; justify-self: center; width: min(600px, 100%); margin-bottom: 1.8rem; }
   body.home-search #home-trending { grid-column: 1 / -1; margin-top: 0 !important; margin-bottom: 1.8rem; }
+  body.home-search #section-aii-home { grid-column: 1 / -1; margin: 0 0 1.8rem; }
   body.home-search #section-newsfeed { grid-column: 1 / -1; }
 }
 /* Cards size to content + the page scrolls. */
@@ -13192,7 +13193,9 @@ body.home-search #topic-layout { margin-top: 0.4rem; }
   body.home-search.app-mode .topic-layout > .layout-section { flex: none; overflow: visible; min-height: 0; }
   body.home-search.app-mode .topic-layout > #section-searchtrends,
   body.home-search.app-mode .topic-layout > #section-shortcuts,
+  body.home-search.app-mode .topic-layout > #section-aii-home,
   body.home-search.app-mode .topic-layout > #section-newsfeed { display: block; }
+  body.home-search #section-aii-home { margin-top: 1.75rem; }
   /* Section headers show (no tab labels them now); separate the stacked sections. */
   body.home-search #section-shortcuts .sidebar-card-header { display: flex; }
   body.home-search #section-shortcuts,

@@ -1383,11 +1383,18 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           <div class="home-search-hero" id="home-search-hero"></div>
           <section class="home-trending" id="home-trending"></section>
         </section>
+        <section class="layout-section" id="section-aii-home"></section>
         <section class="layout-section" id="section-newsfeed"></section>
       </div>
     `;
     homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });
     renderTrendingHome(container.querySelector('#home-trending'), { limit: 6 });
+    const aiiHome = container.querySelector('#section-aii-home');
+    if (aiiHome) {
+      const homeDesc = {};
+      try { (getShortcutsForTopic('home') || []).forEach((s) => { if (s && s.name) homeDesc[s.name] = s.description || ''; }); } catch (_) {}
+      renderAIIntelligence(aiiHome, { topic: 'home', label: "today's world", descriptions: homeDesc });
+    }
   } else {
     // Topic pages: Shortcuts + News Feed + Related Topics.
     container.innerHTML = `
