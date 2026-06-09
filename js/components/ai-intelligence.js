@@ -194,7 +194,7 @@ export function renderAIIntelligence(container, scope) {
         if (body && !body.dataset.ready) { body.innerHTML = name === 'sources' ? sourceRowsHTML() : modelListHTML(); body.dataset.ready = '1'; }
         body && body.classList.add('is-open');
       }
-    });
+    }));
     const exBody = stage.querySelector('[data-accbody="explore"]');
     if (exBody) exBody.addEventListener('click', (e) => {
       const m = e.target.closest('.aii-model'); if (!m) return;
