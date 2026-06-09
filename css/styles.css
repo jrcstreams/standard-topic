@@ -13402,7 +13402,7 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
   /* Match the AI Intelligence header metrics exactly (padding + gap) so the two
      side-by-side cards' header bands are the same height. */
   body.home-search #home-trending .trending-topics-head {
-    margin: 0; padding: 15px 18px; display: flex; flex-direction: column; gap: 9px;
+    margin: 0; padding: 15px 18px; display: flex; flex-direction: column; gap: 7px;
     border-bottom: 1px solid var(--color-surface-border);
     background: color-mix(in srgb, var(--color-primary) 3%, #fff);
   }
@@ -13423,7 +13423,7 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
     background: color-mix(in srgb, var(--color-primary) 3%, #fff);
     border-radius: 16px 16px 0 0;
   }
-  #section-newsfeed .newsfeed-card .newsfeed-headtext { display: flex; flex-direction: column; gap: 0.45rem; min-width: 0; flex: 1 1 auto; }
+  #section-newsfeed .newsfeed-card .newsfeed-headtext { display: flex; flex-direction: column; gap: 7px; min-width: 0; flex: 1 1 auto; }
   /* Reset the legacy full-bleed title chrome (white bg + min-height + bottom
      rule) that caused the centered white box; clean inline lockup instead. */
   #section-newsfeed .newsfeed-card .newsfeed-title {
@@ -13455,9 +13455,11 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
     background: #fff; overflow: hidden; padding: 0;
   }
   body.home-search #home-trending .trending-topics-head {
-    margin: 0; padding: 13px 15px; border-bottom: 1px solid var(--color-surface-border);
+    margin: 0; padding: 13px 15px; display: flex; flex-direction: column; gap: 7px;
+    border-bottom: 1px solid var(--color-surface-border);
     background: color-mix(in srgb, var(--color-primary) 3%, #fff);
   }
+  body.home-search #home-trending .trending-topics-sub { margin: 0; }
   body.home-search #home-trending .trend-card-grid { padding: 8px 10px 4px; }
   body.home-search #home-trending .trend-viewmore-row { margin-top: 8px; padding: 0 12px 14px; }
 
@@ -13475,7 +13477,7 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
     background: transparent; min-height: 0; border-bottom: none; padding: 0; margin: 0;
     font-size: 1.12rem; font-weight: 700; letter-spacing: -0.015em; color: var(--color-text);
   }
-  body.home-search #section-newsfeed .newsfeed-card .newsfeed-headtext { gap: 0.4rem; }
+  body.home-search #section-newsfeed .newsfeed-card .newsfeed-headtext { gap: 7px; }
   body.home-search #section-newsfeed .newsfeed-card .newsfeed-filters {
     margin: 11px 0 0; background: transparent; border: none; border-radius: 0; padding: 0;
   }
@@ -13655,6 +13657,23 @@ body.home-search #section-shortcuts .sidebar-card-header,
   body.app-mode:not(.home-search) .topic-layout:not(.is-custom) > #section-newsfeed .newsfeed-card > .newsfeed-title {
     padding-left: 0;
     padding-right: 0;
+  }
+  /* Mobile tabular navigation (topic pages, NOT the homepage): the active tab
+     already labels the section, so the AI Intelligence / Web Sources CARD
+     header band is redundant — hide it and drop the card chrome so the content
+     flows straight under the tabs. The homepage (body.home-search) keeps its
+     cards untouched. */
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts .aii,
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws {
+    border: none; border-radius: 0; background: transparent; overflow: visible;
+  }
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts .aii-head,
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws-head {
+    display: none;
+  }
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts .aii-stage,
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws-stage {
+    padding-top: 0;
   }
 }
 
@@ -14006,7 +14025,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 
 /* ===== Living AI Intelligence component ================================= */
 .aii { border: 1px solid var(--color-surface-border); border-radius: 16px; background: #fff; overflow: hidden; }
-.aii-head { display: flex; flex-direction: column; gap: 9px; padding: 15px 18px; border-bottom: 1px solid var(--color-surface-border); background: color-mix(in srgb, var(--color-primary) 3%, #fff); }
+.aii-head { display: flex; flex-direction: column; gap: 7px; padding: 15px 18px; border-bottom: 1px solid var(--color-surface-border); background: color-mix(in srgb, var(--color-primary) 3%, #fff); }
 .aii-head-top { display: flex; align-items: center; gap: 11px; }
 .aii-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
 .aii-logo svg { width: 14px; height: 14px; }
@@ -14053,7 +14072,10 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Path-menu header: the path's own icon + title + subtext, with a full-bleed
    divider below that serves as the top border of the first item. */
 .aii-subhead { display: flex; align-items: center; gap: 14px; margin: 0 -16px; padding: 6px 18px 14px; border-bottom: 1px solid var(--color-surface-border); }
-.aii-subhead-icon { display: inline-flex; width: 38px; height: 38px; flex: none; align-items: center; justify-content: center; border-radius: 10px; background: var(--color-bg-light); color: var(--color-primary); }
+/* No bg/color here — the aii-icon-{group} accent class (Discover blue, Learn
+   green, Analysis orange, …) provides them so the path's color is retained
+   when you drill into its section menu. */
+.aii-subhead-icon { display: inline-flex; width: 38px; height: 38px; flex: none; align-items: center; justify-content: center; border-radius: 10px; }
 .aii-subhead-icon svg { width: 19px; height: 19px; }
 .aii-subhead-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
 .aii-subhead-titlerow { display: flex; align-items: center; gap: 10px; }
