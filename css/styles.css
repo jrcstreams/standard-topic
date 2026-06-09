@@ -3518,14 +3518,14 @@ html, body, #app {
    over by the next story's row. */
 .news-ai.is-open { z-index: 50; }
 .news-ai-trigger {
-  display: inline-flex; align-items: center; gap: 0.32rem;
-  padding: 0.36rem 0.62rem; border: none; border-radius: 999px;
+  display: inline-flex; align-items: center; gap: 0.24rem;
+  padding: 0.34rem 0.56rem; border: none; border-radius: 999px;
   background: #45597c; color: #fff;
   font-family: var(--font-family); font-size: 0.8rem; font-weight: 600;
   cursor: pointer; white-space: nowrap; transition: background 0.14s, transform 0.14s, box-shadow 0.14s;
   box-shadow: 0 1px 5px -1px rgba(28, 58, 107, 0.24);
 }
-.news-ai-trigger .news-ai-spark { margin-right: -0.04rem; }
+.news-ai-trigger .news-ai-spark { margin-right: -0.02rem; }
 .news-ai-trigger:hover,
 .news-ai.is-open .news-ai-trigger { background: var(--color-primary); color: #fff; transform: translateY(-1px); }
 .news-ai-spark { flex: none; color: currentColor; }
@@ -13648,10 +13648,11 @@ body.home-search #section-shortcuts .sidebar-card-header,
    shows to label the section. */
 @media (max-width: 899.98px) {
   body.home-search #section-newsfeed .newsfeed-head { display: flex; }
-  /* Header sits at the section edge (no full-bleed now), so the title, its
-     separator, the story text and the row dividers all share the same edges. */
-  body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed .newsfeed-card > .newsfeed-head,
-  body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed .newsfeed-card > .newsfeed-title {
+  /* Topic-page tab mode only: header sits at the section edge. The homepage
+     (body.home-search) keeps its CARD padding — excluded here so the icon/title
+     aren't jammed against the card's left edge. */
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) > #section-newsfeed .newsfeed-card > .newsfeed-head,
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) > #section-newsfeed .newsfeed-card > .newsfeed-title {
     padding-left: 0;
     padding-right: 0;
   }
@@ -13787,10 +13788,12 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .search-trend-row .search-trend-cat { font-size: 0.72rem; color: var(--color-text-muted); }
 /* Search modal: sticky anchor nav to jump between result sections. */
 .search-anchor-nav {
-  position: sticky; top: 0; z-index: 6;
-  display: flex; align-items: center; gap: 9px; flex-wrap: nowrap; padding: 9px 1.15rem 11px; margin: 0 -1.15rem 12px;
+  position: sticky; top: -1px; z-index: 8;
+  display: flex; align-items: center; gap: 9px; flex-wrap: nowrap; padding: 11px 1.15rem 11px; margin: -3px -1.15rem 12px;
   background: var(--color-surface, #fff);
-  /* Full-bleed thick bar = the separator from the search area to results. */
+  /* Full-bleed thick bar = the separator from the search area to results. The
+     small top overlap (negative margin) eats the sub-pixel seam so no sliver
+     of scrolling content creeps in behind the sticky bar. */
   border-bottom: 2px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-surface-border));
 }
 .search-anchor-label {
@@ -14415,8 +14418,12 @@ body.home-mode #sub-header.is-subnav .topic-banner {
   background: var(--color-surface);
   padding: 12px 0 8px;
   border-bottom: 1px solid var(--color-surface-border);
-  margin-bottom: 10px;
+  margin-bottom: 2px;
 }
+/* Tighten the gap above the first story (the header divider + the row's own
+   padding already give breathing room). */
+.search-news-section .news-card:first-child .news-card-link,
+.search-news-section .news-list { padding-top: 4px; }
 .search-news-head-title {
   margin: 0; font-family: var(--font-display);
   font-size: 1.3rem; line-height: 1.15; font-weight: 600;
