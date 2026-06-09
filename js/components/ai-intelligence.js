@@ -40,7 +40,9 @@ function splitSections(content) {
   return idx.map((s, i) => ({ name: s.name, body: text.slice(s.headEnd, i + 1 < idx.length ? idx[i + 1].start : text.length).trim() }));
 }
 
-const LOGO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.6l1.62 6.32a3 3 0 0 0 2.46 2.46L22.4 12l-6.32 1.62a3 3 0 0 0-2.46 2.46L12 22.4l-1.62-6.32a3 3 0 0 0-2.46-2.46L1.6 12l6.32-1.62a3 3 0 0 0 2.46-2.46z"/></svg>';
+// Sparkle duo — a large 4-point spark with a small accent spark, reads as a
+// designed "AI" mark rather than a single generic star.
+const LOGO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 2.4l1.18 4.02a3 3 0 0 0 2.04 2.04L21.2 9.6l-3.98 1.18a3 3 0 0 0-2.04 2.04L14 16.8l-1.18-3.98a3 3 0 0 0-2.04-2.04L6.8 9.6l3.98-1.18a3 3 0 0 0 2.04-2.04z" opacity="0.96"/><path d="M6.3 14.4l.52 1.78a1.4 1.4 0 0 0 .95.95l1.78.52-1.78.52a1.4 1.4 0 0 0-.95.95L6.3 21.9l-.52-1.78a1.4 1.4 0 0 0-.95-.95L3.05 18.65l1.78-.52a1.4 1.4 0 0 0 .95-.95z"/></svg>';
 const ARROW = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 const BACK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
 const CHEV = '<svg class="aii-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
@@ -77,6 +79,7 @@ export function renderAIIntelligence(container, scope) {
     void stage.offsetWidth;
     stage.classList.add(dir === 'back' ? 'aii-anim-back' : 'aii-anim-fwd');
     wire();
+    if (dir === 'fwd' && view !== 'paths') ensureVisible();
   }
   function viewHTML() {
     return view === 'paths' ? pathsHTML() : view === 'sections' ? sectionsHTML() : contentHTML();
@@ -112,15 +115,40 @@ export function renderAIIntelligence(container, scope) {
   function contentHTML() {
     const c = cache[curGroup]; const p = paths.find((x) => x.group === curGroup) || {};
     const s = (c && c.sections[curIdx]) || { name: '', body: '' };
+    const hasSrc = !!(c && c.sources && c.sources.length);
     return `<div class="aii-sub">
       <button type="button" class="aii-back" data-back="sections">${BACK}<span>${esc(p.label || '')}</span></button>
       <h3 class="aii-content-title">${esc(s.name)}</h3>
-      <div class="aii-content-body">${renderBriefBody(s.body, (c && c.sources) || null)}</div>
-      <div class="aii-explore">
-        <button type="button" class="aii-explore-btn" aria-expanded="false"><span>Explore further with AI</span>${CHEV}</button>
-        <div class="aii-explore-panel"></div>
+      <div class="aii-actions">
+        ${hasSrc ? `<button type="button" class="aii-actbtn" data-acc="sources" aria-expanded="false"><span>Sources</span>${CHEV}</button>` : ''}
+        <button type="button" class="aii-actbtn" data-acc="explore" aria-expanded="false"><span>Explore further with AI</span>${CHEV}</button>
       </div>
+      ${hasSrc ? '<div class="aii-acc" data-accbody="sources"></div>' : ''}
+      <div class="aii-acc" data-accbody="explore"></div>
+      <hr class="aii-rule">
+      <div class="aii-content-body">${renderBriefBody(s.body, null)}</div>
     </div>`;
+  }
+  function sourceRowsHTML() {
+    const src = (cache[curGroup] && cache[curGroup].sources) || [];
+    const seen = new Set(); const rows = [];
+    for (const x of src) {
+      const uri = x.uri || x.url || '';
+      let label = x.title || '';
+      try { if (!label || /^https?:/i.test(label)) label = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
+      const key = (label || '').toLowerCase(); if (!key || seen.has(key)) continue; seen.add(key);
+      rows.push(`<a class="aii-src-row" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer"><span>${esc(label)}</span>${ARROW}</a>`);
+    }
+    return rows.length ? `<div class="aii-src-list">${rows.join('')}</div>` : '<p class="aii-empty">No sources cited.</p>';
+  }
+  // Keep the just-navigated view in view (fixes the page anchoring past the
+  // component when you drill in). Only nudges when the block is out of comfort.
+  function ensureVisible() {
+    const rect = container.getBoundingClientRect();
+    const top = 112; // clears the fixed header + subnav
+    if (rect.top < top || rect.top > window.innerHeight * 0.6) {
+      window.scrollTo({ top: Math.max(0, window.scrollY + rect.top - top), behavior: 'smooth' });
+    }
   }
 
   async function loadGroup(group) {
@@ -154,15 +182,21 @@ export function renderAIIntelligence(container, scope) {
     }));
     stage.querySelectorAll('.aii-menu-row').forEach((b) => b.addEventListener('click', () => { curIdx = Number(b.dataset.idx); go('content', 'fwd'); }));
     stage.querySelectorAll('.aii-back').forEach((b) => b.addEventListener('click', () => go(b.dataset.back, 'back')));
-    const exBtn = stage.querySelector('.aii-explore-btn');
-    const exPanel = stage.querySelector('.aii-explore-panel');
-    if (exBtn) exBtn.addEventListener('click', () => {
-      const open = exBtn.getAttribute('aria-expanded') !== 'true';
-      exBtn.setAttribute('aria-expanded', String(open));
-      exPanel.classList.toggle('is-open', open);
-      if (open && !exPanel.dataset.ready) { exPanel.innerHTML = modelListHTML(); exPanel.dataset.ready = '1'; }
+    // Sources + Explore accordions (above the brief). Only one open at a time.
+    stage.querySelectorAll('.aii-actbtn').forEach((btn) => btn.addEventListener('click', () => {
+      const name = btn.dataset.acc;
+      const body = stage.querySelector(`[data-accbody="${name}"]`);
+      const willOpen = btn.getAttribute('aria-expanded') !== 'true';
+      stage.querySelectorAll('.aii-actbtn').forEach((b) => b.setAttribute('aria-expanded', 'false'));
+      stage.querySelectorAll('.aii-acc').forEach((a) => a.classList.remove('is-open'));
+      if (willOpen) {
+        btn.setAttribute('aria-expanded', 'true');
+        if (body && !body.dataset.ready) { body.innerHTML = name === 'sources' ? sourceRowsHTML() : modelListHTML(); body.dataset.ready = '1'; }
+        body && body.classList.add('is-open');
+      }
     });
-    if (exPanel) exPanel.addEventListener('click', (e) => {
+    const exBody = stage.querySelector('[data-accbody="explore"]');
+    if (exBody) exBody.addEventListener('click', (e) => {
       const m = e.target.closest('.aii-model'); if (!m) return;
       const model = (getModels() || []).find((x) => x.id === m.dataset.model); if (!model) return;
       openModel(model, explorePrompt());

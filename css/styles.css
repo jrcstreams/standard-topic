@@ -13863,14 +13863,21 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-content-body .ai-result-sub { font-size: 0.82rem; font-weight: 700; letter-spacing: .045em; text-transform: uppercase; color: #54607a; margin: 16px 0 7px; }
 .aii-loading, .aii-empty { font-size: 0.9rem; color: var(--color-text-muted); padding: 14px 4px; margin: 0; }
 
-.aii-explore { margin-top: 16px; }
-.aii-explore-btn { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border: 1px solid var(--color-surface-border); border-radius: 999px; background: #f0f2f6; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: var(--color-text); transition: border-color .14s, color .14s, background .14s; }
-.aii-explore-btn:hover { border-color: var(--color-primary); color: var(--color-primary); background: #eaedf3; }
-.aii-explore-btn .aii-chev { transition: transform .18s; }
-.aii-explore-btn[aria-expanded="true"] .aii-chev { transform: rotate(180deg); }
-.aii-explore-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .24s ease; }
-.aii-explore-panel.is-open { grid-template-rows: 1fr; padding-top: 10px; }
-.aii-explore-panel > * { overflow: hidden; }
+/* Sources + Explore accordions sit ABOVE the brief content, with a faint rule
+   between them and the body (matches the news/trend modal layout). */
+.aii-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 0; }
+.aii-actbtn { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border: 1px solid var(--color-surface-border); border-radius: 999px; background: #f0f2f6; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: var(--color-text); transition: border-color .14s, color .14s, background .14s; }
+.aii-actbtn:hover { border-color: var(--color-primary); color: var(--color-primary); background: #eaedf3; }
+.aii-actbtn .aii-chev { transition: transform .18s; }
+.aii-actbtn[aria-expanded="true"] .aii-chev { transform: rotate(180deg); }
+.aii-acc { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .24s ease; }
+.aii-acc.is-open { grid-template-rows: 1fr; padding-top: 10px; }
+.aii-acc > * { overflow: hidden; }
+.aii-rule { border: none; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); margin: 14px 0 14px; }
+.aii-src-list { display: grid; gap: 5px; }
+.aii-src-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; text-decoration: none; color: var(--color-text); font-size: 0.82rem; transition: border-color .14s, color .14s; }
+.aii-src-row:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.aii-src-row svg { flex: none; color: var(--color-text-light); }
 .aii-model-list { display: grid; gap: 5px; }
 .aii-model { display: flex; flex-direction: column; gap: 1px; text-align: left; padding: 9px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; cursor: pointer; font-family: var(--font-family); transition: border-color .14s; }
 .aii-model:hover { border-color: var(--color-primary); }
