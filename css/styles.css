@@ -13390,23 +13390,24 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
   body.home-search #home-trending .trend-card-grid { padding: 10px 12px 12px; }
   body.home-search #home-trending .trending-topics-viewall { margin: 0 14px 14px; }
 
-  /* News Feed (homepage + topic pages) */
+  /* News Feed (homepage + topic pages). Higher specificity (.newsfeed-card
+     ancestor) so these win over the base #section-newsfeed .newsfeed-head. */
   #section-newsfeed .newsfeed-card {
     border: 1px solid var(--color-surface-border); border-radius: 16px;
     background: #fff; overflow: visible;
   }
-  #section-newsfeed .newsfeed-head {
-    flex-direction: row; align-items: center; justify-content: space-between;
+  #section-newsfeed .newsfeed-card .newsfeed-head {
+    display: flex; flex-direction: row; align-items: center; justify-content: space-between;
     flex-wrap: wrap; gap: 10px 18px; margin: 0; padding: 13px 18px;
     border-bottom: 1px solid var(--color-surface-border);
     background: color-mix(in srgb, var(--color-primary) 3%, #fff);
   }
-  #section-newsfeed .newsfeed-headtext { display: flex; flex-direction: column; gap: 0.12rem; min-width: 0; flex: 1 1 auto; }
-  #section-newsfeed .newsfeed-filters {
+  #section-newsfeed .newsfeed-card .newsfeed-headtext { display: flex; flex-direction: column; gap: 0.12rem; min-width: 0; flex: 1 1 auto; }
+  #section-newsfeed .newsfeed-card .newsfeed-filters {
     margin: 0; padding: 7px 8px; flex: 0 1 auto; max-width: 100%; background: #fff;
   }
-  #section-newsfeed .newsfeed-scroll-wrap { padding: 4px 18px 6px; }
-  #section-newsfeed .newsfeed-foot { padding: 0 18px 14px; }
+  #section-newsfeed .newsfeed-card .newsfeed-scroll-wrap { padding: 4px 18px 6px; }
+  #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 18px 14px; }
 }
 /* News Feed headtext is a plain block off-desktop (title + sub stack as before;
    filters fall below within the head). */
