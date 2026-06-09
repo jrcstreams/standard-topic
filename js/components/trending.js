@@ -338,7 +338,15 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
     if (state.loading) { grid.innerHTML = Array.from({ length: 6 }, () => `<div class="trend-card trend-card-skel"></div>`).join(''); return; }
     let items = state.items;
     if (state.category !== 'all') items = items.filter(i => i._cat === state.category);
-    items = items.slice(0, limit);
+    // Front-facing slots: prefer category variety — at most one per category,
+    // backfilling with the skipped ones only if there aren't enough distinct
+    // categories to fill `limit`. (The "View more" modal keeps the full order.)
+    const seen = new Set(); const primary = []; const extra = [];
+    for (const it of items) {
+      const c = it._cat || '';
+      if (c && seen.has(c)) extra.push(it); else { seen.add(c); primary.push(it); }
+    }
+    items = primary.concat(extra).slice(0, limit);
     if (!items.length) { grid.innerHTML = `<p class="trending-empty">No trends ${state.mode === 'over' ? 'in this window yet' : 'right now'}.</p>`; return; }
     grid.innerHTML = items.map((t, i) => trendCardHTML(t, i)).join('');
     wireTrendCards(grid);
