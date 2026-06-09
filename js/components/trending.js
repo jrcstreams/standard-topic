@@ -321,12 +321,14 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
   }
 
   function headHTML() {
+    const ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>';
     return `
       <div class="trending-topics-head">
         <div class="trending-topics-titlerow">
+          <span class="trending-topics-logo">${ICON}</span>
           <h3 class="trending-topics-title"><span>Trending</span></h3>
         </div>
-        <p class="trending-topics-sub">Trending search terms from <a class="trending-topics-src" href="https://trends.google.com/trending" target="_blank" rel="noopener noreferrer">Google Trends</a></p>
+        <p class="trending-topics-sub">What the world is searching for right now.</p>
       </div>`;
   }
 
