@@ -4,7 +4,7 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody } from './newsfeed.js?v=20260609-revamp41';
+import { renderBriefBody } from './newsfeed.js?v=20260609-revamp45';
 import { getModels, getModelById, getDefaultModelId } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId } from '../utils/ai-models.js';
 

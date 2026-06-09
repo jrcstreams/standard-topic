@@ -588,14 +588,16 @@ export function renderNewsFeed(container, topic, isHome) {
   const label = isHome ? '' : ((topic && topic.name) || '');
   const headHTML = `
     <div class="newsfeed-head section-card-head">
-      <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">News Feed</span></h3>
-      <p class="section-card-sub">${label ? `Latest stories and developments on ${escapeHTML(label)}.` : 'Latest stories and developments across your topics.'}</p>
+      <div class="newsfeed-headtext">
+        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">News Feed</span></h3>
+        <p class="section-card-sub">${label ? `Latest stories and developments on ${escapeHTML(label)}.` : 'Latest stories and developments across your topics.'}</p>
+      </div>
+      ${filterBarHTML(label)}
     </div>`;
 
   container.innerHTML = `
     <div class="newsfeed-card">
       ${headHTML}
-      ${filterBarHTML(label)}
       <div class="newsfeed-scroll-wrap"></div>
       <div class="newsfeed-foot"></div>
     </div>`;
