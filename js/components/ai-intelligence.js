@@ -4,7 +4,7 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody } from './newsfeed.js?v=20260609-revamp45';
+import { renderBriefBody } from './newsfeed.js?v=20260609-revamp49';
 import { getModels, getModelById, getDefaultModelId } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -82,7 +82,10 @@ export function renderAIIntelligence(container, scope) {
 
   container.innerHTML = `
     <div class="aii">
-      <div class="aii-head"><span class="aii-logo">${LOGO}</span><span class="aii-brand">AI Intelligence</span></div>
+      <div class="aii-head">
+        <div class="aii-head-top"><span class="aii-logo">${LOGO}</span><span class="aii-brand">AI Intelligence</span></div>
+        <p class="aii-headsub">Pick a path and explore live AI insights.</p>
+      </div>
       <div class="aii-stage" data-view="paths"></div>
     </div>`;
   const stage = container.querySelector('.aii-stage');
@@ -101,9 +104,7 @@ export function renderAIIntelligence(container, scope) {
   }
 
   function pathsHTML() {
-    const introScope = scope.topic === 'home' ? "today's world" : `the topic of ${scope.label}`;
-    return `<p class="aii-intro">Live, AI-generated intelligence on ${esc(introScope)}. Pick a path — what's happening now, the essentials, deeper analysis, and more — then explore any insight.</p>
-      <div class="aii-pathlist">${paths.map((p) => `
+    return `<div class="aii-pathlist">${paths.map((p) => `
       <button type="button" class="aii-pathrow" data-group="${escAttr(p.group)}">
         <span class="aii-pathrow-icon aii-icon-${escAttr(p.group)}">${ICONS[p.group] || ICONS._}</span>
         <span class="aii-pathrow-text"><span class="aii-pathrow-name">${esc(p.label)}</span><span class="aii-pathrow-sub">${esc(p.subtitle)}</span></span>

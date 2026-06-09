@@ -586,11 +586,12 @@ function startFeed(ctx) {
 export function renderNewsFeed(container, topic, isHome) {
   const slug = isHome ? 'home' : (topic && topic.slug);
   const label = isHome ? '' : ((topic && topic.name) || '');
+  const FEED_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><line x1="7" y1="8" x2="14" y2="8"/><line x1="7" y1="12" x2="14" y2="12"/><line x1="7" y1="16" x2="11" y2="16"/></svg>';
   const headHTML = `
     <div class="newsfeed-head section-card-head">
       <div class="newsfeed-headtext">
-        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">News Feed</span></h3>
-        <p class="section-card-sub">${label ? `Latest stories and developments on ${escapeHTML(label)}.` : 'Latest stories and developments across your topics.'}</p>
+        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-logo">${FEED_ICON}</span><span class="newsfeed-title-main">News Feed</span></h3>
+        <p class="section-card-sub">Latest stories and developments.</p>
       </div>
       ${filterBarHTML(label)}
     </div>`;
