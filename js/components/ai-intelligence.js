@@ -15,7 +15,7 @@ import { openModel } from '../utils/ai-models.js';
 const PATHS = [
   { group: 'discover',       label: 'Now',            subtitle: "What's happening right now." },
   { group: 'topic-specific', label: 'For This Topic', subtitle: 'Insights tailored to this topic.' },
-  { group: 'analyze',        label: 'Analyze',        subtitle: 'Deeper analytical lenses and tradeoffs.' },
+  { group: 'analyze',        label: 'Analysis',        subtitle: 'Deeper analytical lenses and tradeoffs.' },
   { group: 'learn',          label: 'Learn',          subtitle: 'Background, fundamentals, and context.' },
 ];
 

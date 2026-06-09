@@ -877,7 +877,7 @@
     },
     {
       "id": "analyze",
-      "label": "Analyze",
+      "label": "Analysis",
       "order": 3,
       "color": "#b48528"
     },
@@ -940,7 +940,6 @@
     "latest-news",
     "latest-research-reports",
     "trends",
-    "what-just-changed",
     "the-cutting-edge",
     "recent-milestones",
     "beginners-guide",
@@ -950,27 +949,17 @@
     "how-we-got-here",
     "timeline-key-dates",
     "where-to-follow",
-    "catch-me-up",
-    "the-big-ideas",
     "how-it-actually-works",
-    "the-main-types",
-    "how-the-pieces-fit-together",
-    "notable-examples",
-    "how-it-compares",
     "frequently-asked-questions",
     "cheat-sheet",
     "best-resources-to-go-deeper",
     "risks-red-flags",
     "different-perspectives",
-    "myths-vs-reality",
     "how-this-affects-me",
     "why-it-matters",
     "the-big-picture",
-    "what-drives-it",
-    "whats-surprising",
     "what-we-dont-know-yet",
-    "strengths-and-limitations",
-    "overhyped-vs-underrated"
+    "strengths-and-limitations"
   ],
   "evergreenExclusions": {}
 }

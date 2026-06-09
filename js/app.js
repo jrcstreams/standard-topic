@@ -16,7 +16,7 @@ import { renderTrending, renderTrendingTopics, renderTrendingHome } from './comp
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260608-revamp9';
 import { initInsightModal } from './components/insight-modal.js?v=20260609-revamp30';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260609-revamp33';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260609-revamp34';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260608-revamp26';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260606-polish46';
@@ -1528,7 +1528,7 @@ function attachTabPanelHandlers() {
 
 // Groups that get an AI overview brief (per topic), and the spark icon.
 const TI_AI_LENSES = new Set(['discover', 'learn', 'analyze', 'topic-specific']);
-const TI_AI_LABELS = { discover: 'Discover', learn: 'Learn', analyze: 'Analyze', 'topic-specific': 'Topic Insights' };
+const TI_AI_LABELS = { discover: 'Discover', learn: 'Learn', analyze: 'Analysis', 'topic-specific': 'Topic Insights' };
 
 // Prompt templates for "explore deeper" / "run full overview" — admin-tunable
 // in data/insight-templates.json (lazy-loaded, with safe fallbacks).
@@ -1828,7 +1828,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     const groupOrder = groups.__order || [
       { key: 'discover', label: 'Discover' },
       { key: 'learn', label: 'Learn' },
-      { key: 'analyze', label: 'Analyze' },
+      { key: 'analyze', label: 'Analysis' },
       { key: 'more', label: 'More' },
     ];
     // AI lens groups (home + topic pages) render as a generated GROUP

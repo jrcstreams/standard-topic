@@ -111,7 +111,7 @@ export const DEFAULT_GROUP_DEFS = [
   { id: 'topic-specific', label: 'Topic-Specific Insights', order: 0, color: '#b35a4e' },
   { id: 'discover', label: 'Discover', order: 1, color: '#3261a0' },
   { id: 'learn',    label: 'Learn',    order: 2, color: '#2e8a73' },
-  { id: 'analyze',  label: 'Analyze',  order: 3, color: '#b48528' },
+  { id: 'analyze',  label: 'Analysis',  order: 3, color: '#b48528' },
   { id: 'more',     label: 'More',     order: 4, color: '#8a4f7a' },
 ];
 

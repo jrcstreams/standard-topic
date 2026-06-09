@@ -739,15 +739,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "myths-vs-reality",
-      "name": "Myths vs. Reality",
-      "icon": "myths-vs-reality",
-      "prompt": "What are the most common myths, misconceptions, or oversimplifications about the topic of: {TOPIC}? For each: the myth, what's actually true (with evidence), and why the myth persists.",
-      "description": "Common misconceptions and the real story",
-      "group": "analyze",
-      "evergreen": true
-    },
-    {
       "id": "small-business-climate-check",
       "name": "Small Business Climate Check",
       "icon": "small-business-climate-check",
@@ -826,15 +817,6 @@
       "prompt": "What are the most consequential tech policy and regulatory developments right now? Cover antitrust, AI policy, privacy, content moderation, and trade restrictions across major jurisdictions.",
       "description": "Recent developments in tech policy",
       "group": "topic-specific"
-    },
-    {
-      "id": "catch-me-up",
-      "name": "Catch Me Up",
-      "icon": "catch-me-up",
-      "prompt": "I haven't been following {TOPIC} for a while. Catch me up on what I need to know — the major recent developments, the current state of play, the dominant storylines, and what's coming up. Assume I have general background but missed the last few months.",
-      "description": "A quick re-up if you've been away from it",
-      "group": "learn",
-      "evergreen": true
     },
     {
       "id": "new-model-releases",
@@ -5039,15 +5021,6 @@
       "evergreen": true
     },
     {
-      "id": "what-just-changed",
-      "name": "What Just Changed",
-      "icon": "what-just-changed",
-      "prompt": "What has meaningfully changed in {topic} recently — the development that, if I'd been away, I'd most need to know? Explain what shifted, what it replaced, and how it changes the way to think about this topic going forward.",
-      "description": "The recent shift that resets the picture",
-      "group": "discover",
-      "evergreen": true
-    },
-    {
       "id": "the-cutting-edge",
       "name": "The Cutting Edge",
       "icon": "the-cutting-edge",
@@ -5066,56 +5039,11 @@
       "evergreen": true
     },
     {
-      "id": "the-big-ideas",
-      "name": "The Big Ideas",
-      "icon": "the-big-ideas",
-      "prompt": "What are the handful of core ideas at the heart of {topic} — the concepts everything else builds on? Explain each clearly and show how they connect, so I come away understanding the foundation rather than a pile of facts.",
-      "description": "The core concepts everything rests on",
-      "group": "learn",
-      "evergreen": true
-    },
-    {
       "id": "how-it-actually-works",
       "name": "How It Actually Works",
       "icon": "how-it-actually-works",
       "prompt": "Walk me through how {topic} actually works — the real mechanics, steps, or moving parts, not just the surface description. Use a concrete example to make it tangible, and point out where people's intuitions usually go wrong.",
       "description": "The mechanics under the hood",
-      "group": "learn",
-      "evergreen": true
-    },
-    {
-      "id": "the-main-types",
-      "name": "The Main Types",
-      "icon": "the-main-types",
-      "prompt": "Break down the main types, categories, or branches within {topic}. Explain what distinguishes each one, how they relate, and when each matters — so I can tell them apart and place anything new I encounter.",
-      "description": "The varieties, kinds, or schools within it",
-      "group": "learn",
-      "evergreen": true
-    },
-    {
-      "id": "how-the-pieces-fit-together",
-      "name": "How the Pieces Fit Together",
-      "icon": "how-the-pieces-fit-together",
-      "prompt": "Give me a map of {topic} — the main parts, ideas, or players and how they relate to each other. Help me see the overall structure so I know where any given detail fits, and point out the connections people most often miss.",
-      "description": "A map of the whole landscape",
-      "group": "learn",
-      "evergreen": true
-    },
-    {
-      "id": "notable-examples",
-      "name": "Notable Examples",
-      "icon": "notable-examples",
-      "prompt": "Show me the most illuminating examples of {topic} — the specific cases, instances, or stories that make the idea concrete. For each, explain what it demonstrates and why it's a good example to remember.",
-      "description": "The concrete cases that make it click",
-      "group": "learn",
-      "evergreen": true
-    },
-    {
-      "id": "how-it-compares",
-      "name": "How It Compares",
-      "icon": "how-it-compares",
-      "prompt": "Help me place {topic} by comparing it to the things it's most often confused with or grouped alongside. Explain the key differences and similarities, so I understand not just what it is, but what it isn't.",
-      "description": "Where it sits among similar things",
       "group": "learn",
       "evergreen": true
     },
@@ -5159,26 +5087,8 @@
       "id": "the-big-picture",
       "name": "The Big Picture",
       "icon": "the-big-picture",
-      "prompt": "Zoom out and place {topic} in its broader context. How does it connect to other fields, events, or ideas, and what larger story is it part of? Help me see why it doesn't exist in isolation.",
-      "description": "How it connects to the wider world",
-      "group": "analyze",
-      "evergreen": true
-    },
-    {
-      "id": "what-drives-it",
-      "name": "What Drives It",
-      "icon": "what-drives-it",
-      "prompt": "What are the underlying forces that shape {topic} — the causes, drivers, or conditions that make it what it is? Trace cause and effect, and separate the factors that genuinely drive things from the ones that just come along for the ride.",
-      "description": "The causes and forces underneath",
-      "group": "analyze",
-      "evergreen": true
-    },
-    {
-      "id": "whats-surprising",
-      "name": "What's Surprising",
-      "icon": "whats-surprising",
-      "prompt": "What's surprising or counterintuitive about {topic} — the things that run against common assumptions or that even interested people often get wrong? For each, explain what people expect, what's actually true, and why the gap exists.",
-      "description": "The counterintuitive parts",
+      "prompt": "Zoom out on {topic}: place it in its broader context — how it connects to other fields, events, and ideas — and trace the underlying forces that drive it (the causes, conditions, and incentives that make it what it is). Separate the factors that genuinely shape it from the noise, and show the larger story it is part of.",
+      "description": "The wider context — and the forces driving it",
       "group": "analyze",
       "evergreen": true
     },
@@ -5197,15 +5107,6 @@
       "icon": "strengths-and-limitations",
       "prompt": "Give me an honest assessment of {topic}'s strengths and limitations — where it works well, where it breaks down, and the tradeoffs involved. Avoid both boosterism and cynicism, and tell me what to keep in mind before relying on it.",
       "description": "What it does well and where it falls short",
-      "group": "analyze",
-      "evergreen": true
-    },
-    {
-      "id": "overhyped-vs-underrated",
-      "name": "Overhyped vs. Underrated",
-      "icon": "overhyped-vs-underrated",
-      "prompt": "When it comes to {topic}, what gets more attention than it deserves, and what's quietly more important than people realize? Explain the gap between perception and reality for each, and what's driving the mismatch.",
-      "description": "Where attention is mispriced",
       "group": "analyze",
       "evergreen": true
     }
