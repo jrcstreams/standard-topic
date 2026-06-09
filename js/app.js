@@ -15,8 +15,8 @@ import { initPromptModal } from './components/prompt-modal.js?v=20260609-revamp4
 import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260609-revamp39';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260608-revamp9';
-import { initInsightModal } from './components/insight-modal.js?v=20260609-revamp43';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260609-revamp43';
+import { initInsightModal } from './components/insight-modal.js?v=20260609-revamp44';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260609-revamp44';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260609-revamp39';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260606-polish46';
@@ -2211,8 +2211,7 @@ function tiLeaveHTML() {
   const m = tiPreferredModel();
   const name = m ? m.name : 'the AI model';
   return `<div class="ti-explore" data-step="leave">
-    <button type="button" class="ti-leave-back">${TI_BACK_SVG}<span>Back</span></button>
-    <div class="ti-leave-card"><p class="ti-leave-title">You're leaving Standard Topic</p><p class="ti-leave-body">Continue opens <strong>${escapeHTML(name)}</strong> in a new tab. If the prompt doesn't auto-fill, it's copied to your clipboard — just paste it in. You may need to be signed in.</p><button type="button" class="ti-leave-go">Continue ${TI_RIGHT_SVG}</button></div>
+    <div class="ti-leave-card"><button type="button" class="ti-leave-back">${TI_BACK_SVG}<span>Back</span></button><p class="ti-leave-title">You're leaving Standard Topic</p><p class="ti-leave-body">Continue opens <strong>${escapeHTML(name)}</strong> in a new tab. If the prompt doesn't auto-fill, it's copied to your clipboard — just paste it in. You may need to be signed in.</p><button type="button" class="ti-leave-go">Continue ${TI_RIGHT_SVG}</button></div>
   </div>`;
 }
 
@@ -2655,7 +2654,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       ['News', '.search-news-section'],
     ];
     return `<nav class="search-anchor-nav" aria-label="Jump to section">
-      <span class="search-anchor-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="6 13 12 19 18 13"/></svg>Jump to</span>
+      <span class="search-anchor-label">Jump to</span>
       <div class="search-anchor-pills">${items
         .map(([label, sel]) => `<button type="button" class="search-anchor-pill" data-target="${sel}" hidden>${label}</button>`)
         .join('')}</div></nav>`;

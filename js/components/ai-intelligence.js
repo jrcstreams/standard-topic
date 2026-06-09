@@ -13,10 +13,10 @@ import { openModel, copyPrompt, getPreferredModelId } from '../utils/ai-models.j
 // holds the refresh class). Kept inline so the component never depends on a
 // freshly-changed data.js (the no-version singleton).
 const PATHS = [
-  { group: 'discover',       label: "What's Happening Now", subtitle: "What's happening right now." },
+  { group: 'discover',       label: "What's Happening Now",   subtitle: 'The latest news, moves, and developments.' },
   { group: 'topic-specific', label: 'Topic-Specific Insights', subtitle: 'Go deeper on what makes this topic tick.' },
-  { group: 'analyze',        label: 'Analysis',        subtitle: 'Deeper analytical lenses and tradeoffs.' },
-  { group: 'learn',          label: 'Learn',          subtitle: 'Background, fundamentals, and context.' },
+  { group: 'analyze',        label: 'Analysis',                subtitle: 'Deeper lenses, tradeoffs, and what it all means.' },
+  { group: 'learn',          label: 'Learn',                   subtitle: 'Background, fundamentals, and key context.' },
 ];
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
@@ -51,8 +51,15 @@ const LOGO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><p
 const ARROW = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 const BACK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
 const CHEV = '<svg class="aii-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+// Small inline spark for the "AI Brief" eyebrow (matches the news modal).
+const SPARK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>';
 // Paper-plane (Direct Submit — "send it off") and an eye (Review — "preview").
 const ICON_SEND = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2.5L11 13"/><path d="M21.5 2.5L15 21l-4-8-8-4z"/></svg>';
+// Brief generating loader — spark pulse + shimmer bars (occupies the space the
+// brief will fill). Shown briefly on section open even when cached.
+function genLoaderHTML() {
+  return `<div class="aii-gen"><div class="aii-gen-spark">${SPARK}</div><div class="aii-gen-label">Generating AI insights…</div><div class="aii-gen-bars"><span></span><span></span><span></span><span></span></div></div>`;
+}
 const ICON_EYES = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>';
 const ICONS = {
   discover: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="15.5 8.5 10.5 10.5 8.5 15.5 13.5 13.5"/></svg>',
@@ -127,6 +134,7 @@ export function renderAIIntelligence(container, scope) {
     return `<div class="aii-sub">
       <button type="button" class="aii-back" data-back="sections">${BACK}<span>Back to ${esc(p.label || 'menu')}</span></button>
       <h3 class="aii-content-title">${esc(s.name)}</h3>
+      <div class="aii-brief-head">${SPARK}<span>AI Brief</span></div>
       <div class="aii-actions">
         ${hasSrc ? `<button type="button" class="aii-actbtn" data-acc="sources" aria-expanded="false"><span>Web Sources</span>${CHEV}</button>` : ''}
         <button type="button" class="aii-actbtn" data-acc="explore" aria-expanded="false"><span>Explore further with AI</span>${CHEV}</button>
@@ -134,7 +142,7 @@ export function renderAIIntelligence(container, scope) {
       ${hasSrc ? '<div class="aii-acc" data-accbody="sources"></div>' : ''}
       <div class="aii-acc" data-accbody="explore"></div>
       <hr class="aii-rule">
-      <div class="aii-content-body ai-reveal">${renderBriefBody(s.body, null)}</div>
+      <div class="aii-content-body" data-loading="1">${genLoaderHTML()}</div>
     </div>`;
   }
   function sourceRowsHTML() {
@@ -207,8 +215,8 @@ export function renderAIIntelligence(container, scope) {
     const m = preferredModel();
     const name = m ? m.name : 'the AI model';
     return `<div class="aii-explore" data-step="leave">
-      <button type="button" class="aii-leave-back">${BACK}<span>Back</span></button>
       <div class="aii-leave-card">
+        <button type="button" class="aii-leave-back">${BACK}<span>Back</span></button>
         <p class="aii-leave-title">You're leaving Standard Topic</p>
         <p class="aii-leave-body">Continue opens <strong>${esc(name)}</strong> in a new tab. If the prompt doesn't auto-fill, it's copied to your clipboard — just paste it in. You may need to be signed in.</p>
         <button type="button" class="aii-leave-go">Continue ${ARROW}</button>
@@ -217,6 +225,18 @@ export function renderAIIntelligence(container, scope) {
   }
 
   function wire() {
+    // Section content: briefly show the generating loader (even when cached)
+    // then reveal the brief — gives the AI a moment of presence.
+    const bodyEl = stage.querySelector('.aii-content-body[data-loading]');
+    if (bodyEl) {
+      const c = cache[curGroup]; const s = (c && c.sections[curIdx]) || { body: '' };
+      setTimeout(() => {
+        if (stage.querySelector('.aii-content-body') !== bodyEl) return;
+        bodyEl.removeAttribute('data-loading');
+        bodyEl.innerHTML = renderBriefBody(s.body, null);
+        bodyEl.classList.add('ai-reveal');
+      }, 1100);
+    }
     stage.querySelectorAll('.aii-pathrow').forEach((b) => b.addEventListener('click', async () => {
       curGroup = b.dataset.group;
       go('sections', 'fwd');

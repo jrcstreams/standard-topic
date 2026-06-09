@@ -3518,13 +3518,14 @@ html, body, #app {
    over by the next story's row. */
 .news-ai.is-open { z-index: 50; }
 .news-ai-trigger {
-  display: inline-flex; align-items: center; gap: 0.38rem;
-  padding: 0.38rem 0.75rem; border: none; border-radius: 999px;
-  background: #3a4d6e; color: #fff;
+  display: inline-flex; align-items: center; gap: 0.32rem;
+  padding: 0.36rem 0.62rem; border: none; border-radius: 999px;
+  background: #45597c; color: #fff;
   font-family: var(--font-family); font-size: 0.8rem; font-weight: 600;
   cursor: pointer; white-space: nowrap; transition: background 0.14s, transform 0.14s, box-shadow 0.14s;
-  box-shadow: 0 1px 5px -1px rgba(28, 58, 107, 0.28);
+  box-shadow: 0 1px 5px -1px rgba(28, 58, 107, 0.24);
 }
+.news-ai-trigger .news-ai-spark { margin-right: -0.04rem; }
 .news-ai-trigger:hover,
 .news-ai.is-open .news-ai-trigger { background: var(--color-primary); color: #fff; transform: translateY(-1px); }
 .news-ai-spark { flex: none; color: currentColor; }
@@ -4290,7 +4291,9 @@ html, body, #app {
   background: rgba(15, 26, 46, 0.5);
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
-  z-index: 200;
+  /* Above the insight modal (z 1200/1201) — Review Prompt is opened FROM
+     inside it, so it must sit on top, not behind. */
+  z-index: 1300;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4302,7 +4305,7 @@ html, body, #app {
 
 .prompt-modal-panel { /* centered review-and-submit card */
   position: relative;
-  z-index: 201;
+  z-index: 1301;
   width: 100%;
   max-width: 640px;
   max-height: 88vh;
@@ -4684,21 +4687,22 @@ html, body, #app {
   gap: 0.5rem;
 }
 .pm-submit {
-  align-self: flex-start;
-  height: 38px;
-  padding: 0 1rem;
-  background: #16a34a;
+  align-self: stretch;
+  width: 100%;
+  height: 44px;
+  padding: 0 1.2rem;
+  background: var(--color-primary);
   color: #fff;
-  border: 1px solid #16a34a;
-  border-radius: 6px;
+  border: none;
+  border-radius: 999px;
   font-family: var(--font-family);
-  font-size: 0.86rem;
+  font-size: 0.9rem;
   font-weight: var(--font-weight-semibold);
   letter-spacing: -0.005em;
   cursor: pointer;
-  transition: background 0.14s, border-color 0.14s, opacity 0.14s;
+  transition: background 0.14s, opacity 0.14s;
 }
-.pm-submit:hover { background: #15803d; border-color: #15803d; }
+.pm-submit:hover { background: color-mix(in srgb, var(--color-primary) 88%, #000); }
 .pm-submit:disabled { opacity: 0.45; cursor: not-allowed; }
 
 /* Meta subsection — model info + disclaimer below the submit button.
@@ -13047,10 +13051,9 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 /* Compact the homepage hero further on phones — it was eating too much of the
    first screen. */
 @media (max-width: 640px) {
-  /* Breathing room above the tagline (it was kissing the subnav) and a touch
-     more size — the phone hero had gone too small/cramped. */
-  .search-panel--inline .search-panel-hero-inner { padding: 1rem 1rem 0.65rem; }
-  .search-panel--inline .search-panel-title { font-size: 1.18rem; margin-bottom: 0.35rem; }
+  /* Tighter top (was leaving a big gap above the title) + a calmer tagline. */
+  .search-panel--inline .search-panel-hero-inner { padding: 0.45rem 0.9rem 0.55rem; }
+  .search-panel--inline .search-panel-title { font-size: 1.14rem; margin-bottom: 0.3rem; }
   .search-panel--inline .search-panel-sub { font-size: 0.85rem; line-height: 1.45; }
 }
 /* Hero (tagline + subtext) stays visible AND fixed when expanded — the
@@ -13181,8 +13184,8 @@ body.home-search.app-mode .topic-layout {
 }
 /* Mobile: the card was too tall up top + the tagline wrapped awkwardly. */
 @media (max-width: 640px) {
-  .home-search-hero { margin-top: 0.7rem; padding: 0.6rem 0.7rem 1.3rem; }
-  .home-search-hero .search-panel-tagline { font-size: 0.86rem; max-width: 19rem; text-wrap: balance; }
+  .home-search-hero { margin: 0.6rem 0.55rem 0.2rem; padding: 0.4rem 0.6rem 1.15rem; }
+  .home-search-hero .search-panel-tagline { font-size: 0.86rem; max-width: 16.5rem; text-wrap: balance; line-height: 1.4; }
 }
 /* Home Intelligence panel: kill the big reserved scroll padding-bottom (it's
    content-height here) so there's no dead space before News Feed. */
@@ -13197,10 +13200,10 @@ body.home-search #section-shortcuts .shortcuts-scroll-wrap { padding-bottom: 0; 
 /* Desktop: Search & Trends spans the full width on top; Intelligence |
    News Feed columns below. */
 @media (min-width: 900px) {
-  /* Centered hero on top, then a 25/75 row — Trending (3, sidebar) | AI
+  /* Centered hero on top, then a ~33/67 row — Trending (sidebar) | AI
      Intelligence (wide) — then full-width News Feed. */
   body.home-search.app-mode .topic-layout {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
     align-items: start;
     column-gap: 1.8rem; row-gap: 0;
   }
@@ -13679,11 +13682,9 @@ body.home-mode #sub-header.is-subnav .topic-banner {
   border-bottom: 2px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-surface-border));
 }
 .search-anchor-label {
-  flex: none; display: inline-flex; align-items: center; gap: 4px;
-  font-family: var(--font-family); font-size: 0.8rem; font-weight: 600;
+  flex: none; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600;
   color: var(--color-text-muted); white-space: nowrap;
 }
-.search-anchor-label svg { width: 13px; height: 13px; opacity: 0.7; }
 .search-anchor-pills { display: flex; gap: 6px; flex-wrap: wrap; min-width: 0; }
 .search-anchor-pill {
   border: 1px solid var(--color-surface-border); background: #fff; cursor: pointer;
@@ -13885,7 +13886,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* ===== Living AI Intelligence component ================================= */
 .aii { border: 1px solid var(--color-surface-border); border-radius: 16px; background: #fff; overflow: hidden; }
 .aii-head { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--color-surface-border); background: color-mix(in srgb, var(--color-primary) 3%, #fff); }
-.aii-logo { display: inline-flex; width: 28px; height: 28px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: linear-gradient(150deg, #2c4d92, #18294e); color: #fff; box-shadow: 0 2px 6px -2px rgba(24,41,78,.45); }
+.aii-logo { display: inline-flex; width: 28px; height: 28px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
 .aii-logo svg { width: 15px; height: 15px; }
 .aii-brand { font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; color: var(--color-text); letter-spacing: -0.01em; }
 .aii-stage { padding: 14px 16px 18px; }
@@ -13900,6 +13901,8 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-pathlist { display: flex; flex-direction: column; border-top: 1px solid var(--color-surface-border); }
 .aii-pathrow { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 16px 6px; border: none; border-bottom: 1px solid var(--color-surface-border); background: none; cursor: pointer; font-family: var(--font-family); transition: background .14s; }
 .aii-pathrow:hover { background: color-mix(in srgb, var(--color-primary) 4.5%, transparent); }
+/* Last path needs no divider — the card's own bottom border closes the list. */
+.aii-pathrow:last-child { border-bottom: none; }
 .aii-pathrow-icon { display: inline-flex; width: 38px; height: 38px; flex: none; align-items: center; justify-content: center; border-radius: 10px; background: var(--color-bg-light); color: var(--color-primary); }
 .aii-pathrow-icon svg { width: 19px; height: 19px; }
 .aii-icon-discover { background: #eef4ff; color: #2f6fe0; }
@@ -13914,12 +13917,12 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-pathrow-go { margin-left: auto; color: var(--color-text-light); flex: none; display: inline-flex; transition: transform .16s ease, color .14s; }
 .aii-pathrow:hover .aii-pathrow-go { color: var(--color-primary); transform: translateX(3px); }
 
-/* Prominent "Back to …" link — reads clearly as a clickable link (blue). */
-.aii-back { display: inline-flex; align-items: center; gap: 6px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; color: #2563eb; padding: 0 0 14px; }
-.aii-back svg { width: 15px; height: 15px; color: #2563eb; }
-.aii-back span { text-decoration: underline; text-decoration-color: rgba(37, 99, 235, 0.4); text-underline-offset: 2px; }
-.aii-back:hover { color: #1d4ed8; }
-.aii-back:hover span { text-decoration-color: currentColor; }
+/* "Back to …" link — clearly a clickable link (blue), not underlined at rest. */
+.aii-back { display: inline-flex; align-items: center; gap: 6px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; color: #1d4ed8; padding: 0 0 14px; }
+.aii-back svg { width: 15px; height: 15px; color: #1d4ed8; }
+.aii-back span { text-decoration: none; text-underline-offset: 2px; }
+.aii-back:hover { color: #1e40af; }
+.aii-back:hover span { text-decoration: underline; }
 .aii-subhead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-bottom: 6px; }
 .aii-eyebrow { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: #25324a; letter-spacing: -0.01em; }
 .aii-subtopic { font-size: 0.88rem; color: var(--color-text-muted); }
@@ -13936,6 +13939,19 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-menu-row:hover svg { color: var(--color-primary); }
 
 .aii-content-title { margin: 6px 0 12px; font-family: var(--font-display); font-size: 1.12rem; font-weight: 600; color: #25324a; letter-spacing: -0.01em; }
+/* "AI Brief" eyebrow above the actions (matches the news/trend modal). */
+.aii-brief-head { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-primary); margin: 0 0 9px; }
+.aii-brief-head svg { width: 13px; height: 13px; }
+/* Generating loader on section open (brief flash even when cached). */
+.aii-gen { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 20px 8px 24px; }
+.aii-gen-spark { width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; border-radius: 11px; background: var(--color-primary); color: #fff; animation: imGenPulse 1.5s ease-in-out infinite; }
+.aii-gen-spark svg { width: 20px; height: 20px; }
+.aii-gen-label { margin-top: 12px; font-size: 0.9rem; font-weight: 600; color: var(--color-text); }
+.aii-gen-bars { width: 100%; max-width: 460px; margin-top: 18px; display: grid; gap: 10px; }
+.aii-gen-bars span { height: 11px; border-radius: 6px; background: linear-gradient(90deg, #eef1f6 0%, #e2e7ef 20%, #eef1f6 40%); background-size: 200% 100%; animation: imShimmer 1.4s linear infinite; }
+.aii-gen-bars span:nth-child(2) { width: 94%; }
+.aii-gen-bars span:nth-child(3) { width: 98%; }
+.aii-gen-bars span:nth-child(4) { width: 72%; }
 .aii-content-body .ai-result-body { font-size: clamp(0.92rem, 0.88rem + 0.28vw, 1.02rem); line-height: 1.66; color: #2c3a52; }
 .aii-content-body .ai-result-sub { font-size: 0.82rem; font-weight: 700; letter-spacing: .045em; text-transform: uppercase; color: #54607a; margin: 16px 0 7px; }
 .aii-loading, .aii-empty { font-size: 0.9rem; color: var(--color-text-muted); padding: 14px 4px; margin: 0; }
@@ -14015,7 +14031,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* News modal v2 — brand header + Article Overview / AI Brief sections ------ */
 .im-head--brand { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 20px; }
 .im-brandlock { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
-.im-logo { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 9px; background: linear-gradient(150deg, #2c4d92 0%, #18294e 100%); color: #fff; box-shadow: 0 3px 8px -2px rgba(24, 41, 78, 0.45); }
+.im-logo { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 9px; background: var(--color-primary); color: #fff; }
 .im-logo svg { width: 16px; height: 16px; }
 .im-brandname { font-family: var(--font-display); font-size: 1.06rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-text); }
 .im-head-actions { display: inline-flex; align-items: center; gap: 8px; flex: none; }
@@ -14036,10 +14052,17 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .im-pub:hover { background: #e4e8f0; }
 .im-pub svg { width: 10px; height: 10px; opacity: 0.7; }
 .im-when { color: var(--color-text-muted); }
+/* Trend category as a brand pill (matches the publisher chip). */
+.im-cat-pill { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px; background: #eef1f6; color: var(--color-text); font-weight: 600; font-size: 0.76rem; }
+.im-cat-pill + .im-when { margin-left: 2px; }
 .im-article-summary { margin: 11px 0 0; font-size: 0.9rem; line-height: 1.55; color: var(--color-text); }
 .im-orig-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 13px; padding: 8px 15px; border: 1px solid color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border)); border-radius: 999px; background: #fff; font-size: 0.8rem; font-weight: 600; color: var(--color-primary); text-decoration: none; transition: background .14s, border-color .14s; }
 .im-orig-link:hover { background: color-mix(in srgb, var(--color-primary) 7%, #fff); border-color: var(--color-primary); }
 .im-orig-link svg { width: 12px; height: 12px; }
+/* Discreet, centered second pathway to the source at the end of the AI brief. */
+.im-brief-source { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 20px auto 4px; padding: 6px 4px; font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted); text-decoration: none; transition: color .14s; }
+.im-brief-source:hover { color: var(--color-primary); text-decoration: underline; text-underline-offset: 2px; }
+.im-brief-source svg { width: 12px; height: 12px; }
 
 /* AI Brief — disclaimer (tight under the label, not italic), then actions, a
    clear rule, then the content. */

@@ -266,8 +266,8 @@ function exploreLeaveHTML() {
   const m = preferredModelIM();
   const name = m ? m.name : 'the AI model';
   return `<div class="im-explore" data-step="leave">
-    <button type="button" class="im-leave-back">${'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'}<span>Back</span></button>
     <div class="im-leave-card">
+      <button type="button" class="im-leave-back">${'<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'}<span>Back</span></button>
       <p class="im-leave-title">You're leaving Standard Topic</p>
       <p class="im-leave-body">Continue opens <strong>${esc(name)}</strong> in a new tab. If the prompt doesn't auto-fill, it's copied to your clipboard — just paste it in. You may need to be signed in.</p>
       <button type="button" class="im-leave-go">Continue ${ARROW}</button>
@@ -373,6 +373,7 @@ function renderNews(d) {
         <div class="im-actions-slot" id="im-actions-slot"></div>
         <hr class="im-rule">
         ${briefSkeleton()}
+        ${d.url ? `<a class="im-brief-source" href="${escAttr(d.url)}" target="_blank" rel="noopener noreferrer">View original article ${ARROW}</a>` : ''}
       </section>
     </div>`;
   const prompt = newsPromptFor(d);
@@ -404,8 +405,8 @@ function renderTrend(d) {
   const cat = d.category || (Array.isArray(d.categories) ? d.categories[0] : '') || '';
   const since = relTime(d.startedAt);
   const title = String(d.query || '').replace(/\b\w/g, c => c.toUpperCase());
-  const meta = [cat ? `<span>${esc(cat)}</span>` : '', since ? `<span class="im-when">Trending since ${esc(since)}</span>` : '']
-    .filter(Boolean).join('<span class="im-dot">·</span>');
+  const meta = [cat ? `<span class="im-cat-pill">${esc(cat)}</span>` : '', since ? `<span class="im-when">Trending since ${esc(since)}</span>` : '']
+    .filter(Boolean).join('');
   panelEl.innerHTML = `
     ${brandHeaderHTML()}
     <div class="im-body">
