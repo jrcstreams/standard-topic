@@ -245,8 +245,7 @@ function renderLayout(route) {
     subHeader.querySelectorAll('#subnav-all-topics, #subnav-all-topics-desktop').forEach(el => {
       el.addEventListener('click', (e) => {
         e.preventDefault();
-        const searchBar = document.querySelector('.search-bar');
-        if (searchBar) searchBar.click();
+        window.dispatchEvent(new CustomEvent('open-all-topics-modal'));
       });
     });
 
@@ -1070,7 +1069,7 @@ function renderStickyHeroBar(container, route) {
         <span class="navmenu-topic-chev" aria-hidden="true">${NAVMENU_CHEV}</span>
       </summary>
       <div class="navmenu-subtopics">
-        <a href="#/topic/${escapeAttr(t.slug)}" class="navmenu-subtopic-link navmenu-subtopic-parent">All ${escapeHTML(t.name)}</a>
+        <a href="#/topic/${escapeAttr(t.slug)}" class="navmenu-subtopic-link navmenu-subtopic-parent"><span>All ${escapeHTML(t.name)}</span><svg class="navmenu-subtopic-arrow" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></a>
         ${subsHTML}
       </div>
     </details>`;

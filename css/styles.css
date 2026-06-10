@@ -973,9 +973,12 @@ body.hide-cta .sticky-cta { display: none !important; }
   color: #4a5568; text-decoration: none; border-radius: 4px; transition: background 0.1s, color 0.1s;
 }
 .navmenu-subtopic-link:hover { background: var(--color-bg-light); color: var(--color-text); text-decoration: none; }
-/* Prominent parent link at the top of the nested list — accent colour. */
-.navmenu-subtopic-parent { color: #2f6fe0; font-weight: 700; }
+/* Prominent parent link at the top of the nested list — accent colour, with a
+   chevron so it reads clearly as a navigable link (not just a header). */
+.navmenu-subtopic-parent { display: flex; align-items: center; gap: 4px; color: #2f6fe0; font-weight: 700; }
 .navmenu-subtopic-parent:hover { color: #1f5fd0; background: #eef3ff; }
+.navmenu-subtopic-arrow { flex: none; transition: transform .14s; }
+.navmenu-subtopic-parent:hover .navmenu-subtopic-arrow { transform: translateX(2px); }
 
 .sticky-cta:active {
   background: rgba(255, 255, 255, 0.18);
@@ -10905,7 +10908,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
    Reasoning over Custom instructions (col 2). */
 @media (min-width: 720px) {
   .settings-modal-card .settings-modal-body {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.5rem; align-items: start;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start;
   }
   .settings-modal-card .settings-modal-body .settings-section:nth-child(1) { grid-column: 1; grid-row: 1 / span 2; }
   .settings-modal-card .settings-modal-body .settings-section:nth-child(2) { grid-column: 2; grid-row: 1; }
