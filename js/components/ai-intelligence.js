@@ -47,6 +47,38 @@ function splitSections(content) {
   return idx.map((s, i) => ({ name: s.name, body: text.slice(s.headEnd, i + 1 < idx.length ? idx[i + 1].start : text.length).trim() }));
 }
 
+// Per-section relevance split for the "In the news" list. A group overview is ONE
+// generation, so its grounding citations / fed headlines are pooled across all
+// sections; when Gemini doesn't return per-section attribution we'd otherwise show
+// the same flat list under every insight. Instead, assign each story to the
+// section whose name+body it best matches (token overlap — the synthesized body
+// names the specific people/events each story is about) and keep only the ones
+// that belong to the current section.
+const HL_STOP = new Set(['news','this','that','with','from','have','will','your','they','them','their','there','about','would','could','should','what','when','where','which','were','been','more','than','then','some','into','over','after','also','these','those','said','says','amid','year','years','week','time','today','latest','update','updates','report','reports','first','here','your','have']);
+function hlTokens(s) {
+  const out = new Set();
+  const m = String(s || '').toLowerCase().match(/[a-z0-9]{4,}/g);
+  if (m) for (const t of m) if (!HL_STOP.has(t)) out.add(t);
+  return out;
+}
+function poolForSection(pool, sections, curIdx) {
+  if (!sections.length) return pool;
+  const secTok = sections.map((s) => hlTokens(`${s.name || ''} ${s.body || ''}`));
+  const out = [];
+  for (const story of pool) {
+    const tt = hlTokens(story.title || '');
+    if (!tt.size) continue;
+    let best = -1; let bestScore = 0;
+    for (let i = 0; i < sections.length; i++) {
+      let score = 0;
+      for (const t of tt) if (secTok[i].has(t)) score++;
+      if (score > bestScore) { bestScore = score; best = i; }
+    }
+    if (best === curIdx) out.push(story); // best>-1 only when bestScore>0
+  }
+  return out;
+}
+
 // Brand mark — a clean, flat 4-point sparkle (the same spark used inline),
 // filled white on the navy tile. Simple and on-brand (no glossy facets).
 const LOGO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
@@ -178,36 +210,49 @@ export function renderAIIntelligence(container, scope) {
       <div class="aii-headlines"></div>
     </div>`;
   }
-  // Real headline links shown under the synthesized intro. Source priority,
-  // per section:
-  //   1. genuine per-section grounding citations — when Gemini returned a
-  //      { sectionName: [...] } map (the minority case, but the most precise);
-  //   2. our own curated news_stories feed for this path (clean, current, the
-  //      literal "real headlines") — group-level, served for every path but Learn;
-  //   3. flat pooled citations (ungrounded fallback / no per-section attribution).
-  // Returns '' when there's nothing to show (e.g. Learn with no citations) so the
-  // section is just the intro.
+  // "In the news" links for the current section. Grounding citations are the
+  // source (the live pages the AI cited — broad reach), with the group RSS feed
+  // pooled in as a fallback. The hard part is keeping them per-section: a group
+  // overview is ONE generation, so its citations are pooled across all sections.
+  //   1. If Gemini returned per-section attribution (a { section: [...] } map),
+  //      use this section's slice directly — precise but the minority case.
+  //   2. Otherwise split the flat pool ourselves by relevance (poolForSection),
+  //      so each insight shows the stories that match IT, not the same shared
+  //      list under every section.
+  // Returns '' when there's nothing for this section so it's just the intro.
   function headlineListHTML() {
     const c = cache[curGroup]; if (!c) return '';
-    const curName = ((c.sections[curIdx]) || {}).name || '';
+    const sections = c.sections || [];
+    const curName = (sections[curIdx] || {}).name || '';
     const src = c.sources;
     let list = [];
-    // Grounding citations FIRST (the live web pages the AI actually cited) — a
-    // genuine per-section map when Gemini returned one, else the flat pooled list.
-    if (src && !Array.isArray(src) && Array.isArray(src[curName]) && src[curName].length) list = src[curName];
-    if (!list.length && Array.isArray(src) && src.length) list = src;
-    // Our RSS feed is only a SILENT fallback for when grounding produced nothing
-    // (grounding budget exhausted, or a topic too niche for live search) — so the
-    // list is never blank. Grounding is the primary, higher-reach source.
-    if (!list.length && Array.isArray(c.headlines) && c.headlines.length) list = c.headlines;
+    // 1. Accurate per-section citations: Gemini's groundingSupports mapped each
+    //    cited page to the section it backs. Use them directly when present.
+    if (src && !Array.isArray(src) && Array.isArray(src[curName]) && src[curName].length) {
+      list = src[curName];
+    } else {
+      // 2. We only have a FLAT pool — the grounding citations (broad reach) and/or
+      //    the group RSS feed for the WHOLE overview, not split per section.
+      //    Showing it raw repeats the same (often irrelevant) stories under every
+      //    insight. Split it per section by relevance and keep only this one's.
+      const pool = [];
+      if (Array.isArray(src)) pool.push(...src);
+      if (Array.isArray(c.headlines)) pool.push(...c.headlines);
+      list = poolForSection(pool, sections, curIdx);
+    }
     if (!list.length) return '';
-    const seen = new Set(); const rows = [];
+    // Dedup by URL AND by normalized title — the same story often appears in both
+    // the grounding citations and the RSS feed under different URLs.
+    const seen = new Set(); const seenT = new Set(); const rows = [];
     for (const x of list) {
       const uri = x.uri || x.url || ''; if (!uri) continue;
-      const key = uri.toLowerCase(); if (seen.has(key)) continue; seen.add(key);
+      const ukey = uri.toLowerCase();
       let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
       let title = x.title || ''; if (!title || /^https?:/i.test(title)) title = host;
       if (!title) continue;
+      const tkey = title.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+      if (seen.has(ukey) || (tkey && seenT.has(tkey))) continue;
+      seen.add(ukey); if (tkey) seenT.add(tkey);
       rows.push(`<li class="aii-hl-row"><a class="aii-hl-link" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a>${host ? `<span class="aii-hl-src">${esc(host)}</span>` : ''}</li>`);
       if (rows.length >= 8) break;
     }
