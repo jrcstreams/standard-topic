@@ -24,10 +24,15 @@ function escapeHTML(s) { const d = document.createElement('div'); d.textContent 
 function escapeAttr(s) { return String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
 function titleCase(s) { return String(s || '').replace(/\b\w/g, c => c.toUpperCase()); }
 function gtUrl(term) { return `https://trends.google.com/trends/explore?q=${encodeURIComponent(term)}&geo=US`; }
-// Related "In the news" links from our news feed (data.headlines) — the same
-// clean blue-link list AI Intelligence uses. Empty string when none.
-function inTheNewsHTML(headlines) {
-  const list = Array.isArray(headlines) ? headlines : [];
+// "In the news" links. Grounding citations FIRST (what the AI cited — broad
+// reach), our RSS feed (`headlines`) only as a silent fallback when grounding is
+// empty (budget exhausted / niche term), so it's never blank. Same clean
+// blue-link list AI Intelligence uses. Empty string when there's nothing.
+function inTheNewsHTML(sources, headlines) {
+  let list = [];
+  if (Array.isArray(sources) && sources.length) list = sources;
+  else if (sources && typeof sources === 'object') { const f = Object.values(sources).flat(); if (f.length) list = f; }
+  if (!list.length && Array.isArray(headlines)) list = headlines;
   const seen = new Set(); const rows = [];
   for (const h of list) {
     const uri = (h && (h.url || h.uri)) || ''; if (!uri) continue;
@@ -188,7 +193,7 @@ function render() {
       if (panelEl.querySelector('#td-ai-brief') !== briefEl) return; // a newer render replaced it
       if (data && data.content) {
         const summary = data.summary ? `<p class="td-ai-summary">${escapeHTML(data.summary)}</p>` : '';
-        briefEl.innerHTML = summary + renderBriefBody(data.content, data.sources) + inTheNewsHTML(data.headlines);
+        briefEl.innerHTML = summary + renderBriefBody(data.content, null) + inTheNewsHTML(data.sources, data.headlines);
       } else {
         briefEl.innerHTML = '<p class="td-ai-empty">No AI brief generated for this trend yet.</p>';
       }

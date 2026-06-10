@@ -191,10 +191,15 @@ export function renderAIIntelligence(container, scope) {
     const c = cache[curGroup]; if (!c) return '';
     const curName = ((c.sections[curIdx]) || {}).name || '';
     const src = c.sources;
-    let list = []; let kind = '';
-    if (src && !Array.isArray(src) && Array.isArray(src[curName]) && src[curName].length) { list = src[curName]; kind = 'sources'; }
-    if (!list.length && Array.isArray(c.headlines) && c.headlines.length) { list = c.headlines; kind = 'news'; }
-    if (!list.length && Array.isArray(src) && src.length) { list = src; kind = 'sources'; }
+    let list = [];
+    // Grounding citations FIRST (the live web pages the AI actually cited) — a
+    // genuine per-section map when Gemini returned one, else the flat pooled list.
+    if (src && !Array.isArray(src) && Array.isArray(src[curName]) && src[curName].length) list = src[curName];
+    if (!list.length && Array.isArray(src) && src.length) list = src;
+    // Our RSS feed is only a SILENT fallback for when grounding produced nothing
+    // (grounding budget exhausted, or a topic too niche for live search) — so the
+    // list is never blank. Grounding is the primary, higher-reach source.
+    if (!list.length && Array.isArray(c.headlines) && c.headlines.length) list = c.headlines;
     if (!list.length) return '';
     const seen = new Set(); const rows = [];
     for (const x of list) {
@@ -207,8 +212,7 @@ export function renderAIIntelligence(container, scope) {
       if (rows.length >= 8) break;
     }
     if (!rows.length) return '';
-    const label = kind === 'news' ? 'In the news' : 'Sources &amp; coverage';
-    return `<div class="aii-hl"><div class="aii-hl-head">${label}</div><ul class="aii-hl-list">${rows.join('')}</ul></div>`;
+    return `<div class="aii-hl"><div class="aii-hl-head">In the news</div><ul class="aii-hl-list">${rows.join('')}</ul></div>`;
   }
   // "Explore further on web" — the full Web Sources platform picker (source
   // types → platforms), searching this topic. Mirrors the Web Sources card.

@@ -223,13 +223,16 @@ function briefSkeleton(label) {
 //   1) Sources and citations  2) Explore further with AI  3) Explore further on web
 // (1) lists the brief's cited sources (a "View original article" row leads it on
 // news). (3) opens the full Web Sources platform picker for the term.
-function actionsHTML() {
+// `sources:false` omits the "Sources & citations" panel — used on trends, where
+// the cited grounding now renders as the visible "In the news" list instead, so a
+// collapsible Sources panel would just duplicate it.
+function actionsHTML({ sources = true } = {}) {
   return `<div class="im-actions im-actions-row">
-      <button type="button" class="im-actbtn" data-panel="sources" aria-expanded="false"><span><span class="actlbl-long">Sources &amp; citations</span><span class="actlbl-short">Sources</span></span>${CHEV}</button>
+      ${sources ? `<button type="button" class="im-actbtn" data-panel="sources" aria-expanded="false"><span><span class="actlbl-long">Sources &amp; citations</span><span class="actlbl-short">Sources</span></span>${CHEV}</button>` : ''}
       <button type="button" class="im-actbtn im-actbtn-primary" data-panel="explore" aria-expanded="false"><span>Explore with AI</span>${CHEV}</button>
       <button type="button" class="im-actbtn" data-panel="web" aria-expanded="false"><span>Explore on web</span>${CHEV}</button>
     </div>
-    <div class="im-acc" data-body="sources" id="im-sources-panel"></div>
+    ${sources ? '<div class="im-acc" data-body="sources" id="im-sources-panel"></div>' : ''}
     <div class="im-acc" data-body="explore" id="im-explore-panel"></div>
     <div class="im-acc" data-body="web" id="im-web-panel"></div>`;
 }
@@ -465,19 +468,24 @@ function renderNews(d) {
   })();
 }
 
-// Related "In the news" links from our own news feed — the same clean blue-link
-// list AI Intelligence uses, rendered under a brief so trends/overviews get real
-// related stories, not just cited sources. Empty string when there are none.
-function inTheNewsHTML(headlines) {
-  const list = Array.isArray(headlines) ? headlines : [];
+// "In the news" links rendered under a brief (trends/overviews). Grounding
+// citations FIRST (the live web pages the AI actually cited — broad reach), with
+// our RSS feed as a SILENT fallback only when grounding produced nothing
+// (budget exhausted / niche topic), so the list is never blank. `sources` is a
+// flat citation array or a per-section map; `headlines` is the RSS fallback.
+function inTheNewsHTML(sources, headlines) {
+  let list = [];
+  if (Array.isArray(sources) && sources.length) list = sources;
+  else if (sources && typeof sources === 'object') { const f = Object.values(sources).flat(); if (f.length) list = f; }
+  if (!list.length && Array.isArray(headlines)) list = headlines;
   const seen = new Set(); const rows = [];
   for (const h of list) {
-    const uri = (h && (h.url || h.uri)) || ''; if (!uri) continue;
+    const uri = (h && (h.uri || h.url)) || ''; if (!uri) continue;
     const key = uri.toLowerCase(); if (seen.has(key)) continue; seen.add(key);
     let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
-    let title = (h && h.title) || ''; if (!title) title = host; if (!title) continue;
+    let title = (h && h.title) || ''; if (!title || /^https?:/i.test(title)) title = host; if (!title) continue;
     rows.push(`<li class="aii-hl-row"><a class="aii-hl-link" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a>${host ? `<span class="aii-hl-src">${esc(host)}</span>` : ''}</li>`);
-    if (rows.length >= 6) break;
+    if (rows.length >= 8) break;
   }
   if (!rows.length) return '';
   return `<div class="aii-hl im-hl"><div class="aii-hl-head">In the news</div><ul class="aii-hl-list">${rows.join('')}</ul></div>`;
@@ -536,12 +544,12 @@ function renderTrend(d) {
           }
         }
         const summary = cleanSum ? `<p class="im-trend-summary">${esc(cleanSum)}</p>` : '';
-        briefEl.innerHTML = `${summary}${renderBriefBody(detail, null)}${inTheNewsHTML(data.headlines)}`; briefEl.classList.add('ai-reveal');
+        briefEl.innerHTML = `${summary}${renderBriefBody(detail, null)}${inTheNewsHTML(data.sources, data.headlines)}`; briefEl.classList.add('ai-reveal');
       } else { briefEl.innerHTML = '<p class="im-empty">No AI brief generated for this trend yet.</p>'; }
     } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
     const slot = panelEl.querySelector('#im-actions-slot');
     if (slot) {
-      slot.innerHTML = actionsHTML();
+      slot.innerHTML = actionsHTML({ sources: false }); // grounding shows as the visible "In the news" list above
       wireActions({ prompt, sources, origUrl: '', webTerm: d.query, onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, topicName: d.query, name: 'Trending · AI', count: 1 } })) });
     }
   })();
