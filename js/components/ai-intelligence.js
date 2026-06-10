@@ -225,21 +225,20 @@ export function renderAIIntelligence(container, scope) {
     const sections = c.sections || [];
     const curName = (sections[curIdx] || {}).name || '';
     const src = c.sources;
-    let list = [];
-    // 1. Accurate per-section citations: Gemini's groundingSupports mapped each
-    //    cited page to the section it backs. Use them directly when present.
-    if (src && !Array.isArray(src) && Array.isArray(src[curName]) && src[curName].length) {
-      list = src[curName];
-    } else {
-      // 2. We only have a FLAT pool — the grounding citations (broad reach) and/or
-      //    the group RSS feed for the WHOLE overview, not split per section.
-      //    Showing it raw repeats the same (often irrelevant) stories under every
-      //    insight. Split it per section by relevance and keep only this one's.
-      const pool = [];
-      if (Array.isArray(src)) pool.push(...src);
-      if (Array.isArray(c.headlines)) pool.push(...c.headlines);
-      list = poolForSection(pool, sections, curIdx);
-    }
+    // Citations for THIS section (grounding — broad reach): the accurate
+    // per-section attribution map when Gemini returned one, otherwise split the
+    // flat pool by relevance so each insight gets the ones that match IT.
+    let cites = [];
+    if (src && !Array.isArray(src) && Array.isArray(src[curName])) cites = src[curName];
+    else if (Array.isArray(src) && src.length) cites = poolForSection(src, sections, curIdx);
+    // Feed stories for THIS section: the server's per-section keyword-matched map
+    // (so sections with no relevant citation still show real on-topic headlines
+    // from our feed). Older payloads send a flat array — split it as a fallback.
+    const hl = c.headlines;
+    let feed = [];
+    if (hl && !Array.isArray(hl)) feed = hl[curName] || [];
+    else if (Array.isArray(hl) && hl.length) feed = poolForSection(hl, sections, curIdx);
+    const list = cites.concat(feed);
     if (!list.length) return '';
     // Dedup by URL AND by normalized title — the same story often appears in both
     // the grounding citations and the RSS feed under different URLs.
