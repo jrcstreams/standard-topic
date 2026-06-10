@@ -167,7 +167,7 @@ export function renderAIIntelligence(container, scope) {
         ${desc ? `<p class="aii-overview-sub">${esc(desc)}</p>` : ''}
       </div>
       <div class="aii-actions aii-actions-row">
-        <button type="button" class="aii-actbtn" data-acc="sources" aria-expanded="false"><span>Sources &amp; citations</span>${CHEV}</button>
+        <button type="button" class="aii-actbtn" data-acc="sources" aria-expanded="false"><span><span class="actlbl-long">Sources &amp; citations</span><span class="actlbl-short">Sources</span></span>${CHEV}</button>
         <button type="button" class="aii-actbtn" data-acc="explore" aria-expanded="false"><span>Explore with AI</span>${CHEV}</button>
         <button type="button" class="aii-actbtn" data-acc="web" aria-expanded="false"><span>Explore on web</span>${CHEV}</button>
       </div>

@@ -14260,6 +14260,13 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-actions-row .aii-actbtn { flex: 1 1 0; min-width: 0; justify-content: center; gap: 4px; padding: 7px 9px; font-size: clamp(0.68rem, 1.7vw, 0.78rem); white-space: nowrap; overflow: hidden; }
 .aii-actions-row .aii-actbtn span { overflow: hidden; text-overflow: ellipsis; }
 .aii-actions-row .aii-actbtn .aii-chev { flex: none; }
+/* "Sources & citations" is the longest chip and ellipsizes first on narrow
+   screens — swap it for "Sources" once the three chips can't all fit. */
+.actlbl-short { display: none; }
+@media (max-width: 580px) {
+  .actlbl-long { display: none; }
+  .actlbl-short { display: inline; }
+}
 .aii-content .aii-brief-head { margin: 0 0 7px; }
 .aii-brief-note { margin: 0; font-size: 0.86rem; line-height: 1.5; color: var(--color-text-muted); }
 .aii-src-list { display: grid; gap: 5px; }

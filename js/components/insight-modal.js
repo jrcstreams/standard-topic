@@ -225,7 +225,7 @@ function briefSkeleton(label) {
 // news). (3) opens the full Web Sources platform picker for the term.
 function actionsHTML() {
   return `<div class="im-actions im-actions-row">
-      <button type="button" class="im-actbtn" data-panel="sources" aria-expanded="false"><span>Sources &amp; citations</span>${CHEV}</button>
+      <button type="button" class="im-actbtn" data-panel="sources" aria-expanded="false"><span><span class="actlbl-long">Sources &amp; citations</span><span class="actlbl-short">Sources</span></span>${CHEV}</button>
       <button type="button" class="im-actbtn im-actbtn-primary" data-panel="explore" aria-expanded="false"><span>Explore with AI</span>${CHEV}</button>
       <button type="button" class="im-actbtn" data-panel="web" aria-expanded="false"><span>Explore on web</span>${CHEV}</button>
     </div>
