@@ -157,7 +157,6 @@ export function renderAIIntelligence(container, scope) {
   function contentHTML() {
     const c = cache[curGroup]; const p = paths.find((x) => x.group === curGroup) || {};
     const s = (c && c.sections[curIdx]) || { name: '', body: '' };
-    const hasSrc = !!(c && c.sources && c.sources.length);
     const desc = (scope.descriptions && scope.descriptions[s.name]) || '';
     return `<div class="aii-sub aii-content">
       <button type="button" class="aii-back" data-back="sections">${BACK}<span>Back to ${esc(p.label || 'menu')}</span></button>
@@ -169,39 +168,47 @@ export function renderAIIntelligence(container, scope) {
       <div class="aii-brief-head">${SPARK}<span>AI Brief</span></div>
       <p class="aii-brief-note">The below is an AI-generated summary of the topic at hand. Please verify important details with the linked sources.</p>
       <div class="aii-actions aii-actions-row">
-        <button type="button" class="aii-actbtn" data-acc="sources" aria-expanded="false"><span><span class="actlbl-long">Sources &amp; citations</span><span class="actlbl-short">Sources</span></span>${CHEV}</button>
         <button type="button" class="aii-actbtn" data-acc="explore" aria-expanded="false"><span>Explore with AI</span>${CHEV}</button>
         <button type="button" class="aii-actbtn" data-acc="web" aria-expanded="false"><span>Explore on web</span>${CHEV}</button>
       </div>
-      <div class="aii-acc" data-accbody="sources"></div>
       <div class="aii-acc" data-accbody="explore"></div>
       <div class="aii-acc" data-accbody="web"></div>
       <hr class="aii-rule">
       <div class="aii-content-body" data-loading="1">${genLoaderHTML()}</div>
+      <div class="aii-headlines"></div>
     </div>`;
   }
-  function sourceRowsHTML() {
-    // sources is either a flat array (news/trend, ungrounded fallback, or older
-    // cached overviews) or a per-section map { sectionName: [...] }. For a map,
-    // show only the current section's sources (falls back to the union if that
-    // section has none, so the list is never wrongly empty).
-    const all = (cache[curGroup] && cache[curGroup].sources) || [];
-    const curName = ((cache[curGroup] && cache[curGroup].sections[curIdx]) || {}).name || '';
-    let src;
-    if (Array.isArray(all)) src = all;
-    else {
-      src = (all && all[curName]) || [];
-      if (!src.length) src = Object.values(all || {}).flat();
-    }
+  // Real headline links shown under the synthesized intro. Source priority,
+  // per section:
+  //   1. genuine per-section grounding citations — when Gemini returned a
+  //      { sectionName: [...] } map (the minority case, but the most precise);
+  //   2. our own curated news_stories feed for this path (clean, current, the
+  //      literal "real headlines") — group-level, served for every path but Learn;
+  //   3. flat pooled citations (ungrounded fallback / no per-section attribution).
+  // Returns '' when there's nothing to show (e.g. Learn with no citations) so the
+  // section is just the intro.
+  function headlineListHTML() {
+    const c = cache[curGroup]; if (!c) return '';
+    const curName = ((c.sections[curIdx]) || {}).name || '';
+    const src = c.sources;
+    let list = []; let kind = '';
+    if (src && !Array.isArray(src) && Array.isArray(src[curName]) && src[curName].length) { list = src[curName]; kind = 'sources'; }
+    if (!list.length && Array.isArray(c.headlines) && c.headlines.length) { list = c.headlines; kind = 'news'; }
+    if (!list.length && Array.isArray(src) && src.length) { list = src; kind = 'sources'; }
+    if (!list.length) return '';
     const seen = new Set(); const rows = [];
-    for (const x of src) {
-      const uri = x.uri || x.url || '';
-      let label = x.title || '';
-      try { if (!label || /^https?:/i.test(label)) label = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
-      const key = (label || '').toLowerCase(); if (!key || seen.has(key)) continue; seen.add(key);
-      rows.push(`<a class="aii-src-row" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer"><span>${esc(label)}</span>${ARROW}</a>`);
+    for (const x of list) {
+      const uri = x.uri || x.url || ''; if (!uri) continue;
+      const key = uri.toLowerCase(); if (seen.has(key)) continue; seen.add(key);
+      let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
+      let title = x.title || ''; if (!title || /^https?:/i.test(title)) title = host;
+      if (!title) continue;
+      rows.push(`<a class="aii-hl-row" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer"><span class="aii-hl-text"><span class="aii-hl-title">${esc(title)}</span>${host ? `<span class="aii-hl-src">${esc(host)}</span>` : ''}</span>${EXT}</a>`);
+      if (rows.length >= 8) break;
     }
-    return rows.length ? `<div class="aii-src-list">${rows.join('')}</div>` : '<p class="aii-empty">No sources cited for this brief.</p>';
+    if (!rows.length) return '';
+    const label = kind === 'news' ? 'In the news' : 'Sources &amp; coverage';
+    return `<div class="aii-hl"><div class="aii-hl-head">${label}</div><div class="aii-hl-list">${rows.join('')}</div></div>`;
   }
   // "Explore further on web" — the full Web Sources platform picker (source
   // types → platforms), searching this topic. Mirrors the Web Sources card.
@@ -238,7 +245,7 @@ export function renderAIIntelligence(container, scope) {
       const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shortcut', topic: scope.topic, group }) });
       const data = res.ok ? await res.json() : null;
       cache[group] = data && data.content
-        ? { sections: splitSections(data.content), generatedAt: data.generatedAt, sources: data.sources || [], loading: false }
+        ? { sections: splitSections(data.content), generatedAt: data.generatedAt, sources: data.sources || [], headlines: data.headlines || [], loading: false }
         : { sections: [], loading: false, error: true };
     } catch (_) { cache[group] = { sections: [], loading: false, error: true }; }
     return cache[group];
@@ -305,6 +312,10 @@ export function renderAIIntelligence(container, scope) {
         bodyEl.removeAttribute('data-loading');
         bodyEl.innerHTML = renderBriefBody(s.body, null);
         bodyEl.classList.add('ai-reveal');
+        // Reveal the real headline links with the brief (they're not part of the
+        // synthesized body, so they live in their own block below the rule).
+        const hl = stage.querySelector('.aii-headlines');
+        if (hl) { hl.innerHTML = headlineListHTML(); if (hl.firstChild) hl.classList.add('ai-reveal'); }
       }, 1000);
     }
     stage.querySelectorAll('.aii-pathrow').forEach((b) => b.addEventListener('click', async () => {
@@ -326,7 +337,7 @@ export function renderAIIntelligence(container, scope) {
       if (willOpen) {
         btn.setAttribute('aria-expanded', 'true');
         if (body && !body.dataset.ready) {
-          body.innerHTML = name === 'sources' ? sourceRowsHTML() : name === 'web' ? webCatsHTML() : exploreHomeHTML();
+          body.innerHTML = name === 'web' ? webCatsHTML() : exploreHomeHTML();
           body.dataset.ready = '1';
         }
         body && body.classList.add('is-open');

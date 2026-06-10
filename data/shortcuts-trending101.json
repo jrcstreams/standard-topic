@@ -1,8 +1,32 @@
 {
   "shortcuts": [
-    { "id": "why-trending", "name": "Why It's Trending", "icon": "fire", "description": "The story behind the spike", "prompt": "Explain why {topic} is trending right now — what happened, when, and what's driving the surge in interest. Keep it to a few clear sentences." },
-    { "id": "the-backstory", "name": "The Backstory", "icon": "book", "description": "How we got here", "prompt": "Give me the essential background on {topic} so the current moment makes sense — what led up to this and what I need to know to follow it." },
-    { "id": "whos-involved", "name": "Who's Involved", "icon": "handshake", "description": "The main players", "prompt": "Who are the key people, organizations, or teams behind {topic} right now, and what role does each play? Keep it brief." },
-    { "id": "whats-next", "name": "What's Next", "icon": "compass", "description": "What to watch for", "prompt": "What happens next with {topic}? What should I watch for in the coming days, and why does it matter?" }
+    {
+      "id": "why-trending",
+      "name": "Why It's Trending",
+      "icon": "fire",
+      "description": "The story behind the spike",
+      "prompt": "Explain why {topic} is trending right now — what happened, when, and what's driving the surge in interest. Keep it to a few clear sentences."
+    },
+    {
+      "id": "the-backstory",
+      "name": "The Backstory",
+      "icon": "book",
+      "description": "How we got here",
+      "prompt": "Give me the essential background on {topic} so the current moment makes sense — what led up to this and what I need to know to follow it."
+    },
+    {
+      "id": "whos-involved",
+      "name": "Who's Involved",
+      "icon": "handshake",
+      "description": "The main players",
+      "prompt": "Who are the key people, organizations, or teams behind {topic} right now, and what role does each play? Keep it brief."
+    },
+    {
+      "id": "whats-next",
+      "name": "What's Next",
+      "icon": "compass",
+      "description": "What to watch for",
+      "prompt": "What happens next with {topic}? What should I watch for in the coming days, and why does it matter?"
+    }
   ]
 }

@@ -26,7 +26,6 @@
       "ai-impact-on-jobs",
       "best-ai-tool-use-case",
       "best-tech-deals-right-now",
-      "build-programming-learning-path",
       "food-trends-watch",
       "fashion-industry-watch",
       "best-long-reads",
@@ -97,8 +96,7 @@
       "global-housing-market",
       "mortgage-rate-watch",
       "housing-affordability-updates",
-      "commercial-real-estate-update",
-      "local-market-deep-dive"
+      "commercial-real-estate-update"
     ],
     "jobs-labor": [
       "labor-market-snapshot",
@@ -111,7 +109,6 @@
       "us-market-snapshot",
       "global-market-snapshot",
       "biggest-movers-market",
-      "stock-deep-dive",
       "earning-seasons-tracker",
       "sector-rotation-check",
       "market-sentiment-check",
@@ -122,7 +119,6 @@
       "tax-strategy-updates",
       "best-credit-cards-now",
       "investing-for-beginners",
-      "retirement-planning-check-in",
       "finance-tools-resources",
       "budget-analysis"
     ],
@@ -188,8 +184,7 @@
       "modern-data-stack",
       "ai-data-stack",
       "real-time-streaming-data",
-      "data-quality-observability",
-      "help-pick-data-tool"
+      "data-quality-observability"
     ],
     "emerging-technologies": [
       "quantum-computing-watch",
@@ -213,9 +208,7 @@
       "ai-coding-tools",
       "developer-productivity-tools",
       "open-source-watch",
-      "coding-career-pulse",
-      "pick-a-tech-stack",
-      "build-programming-learning-path"
+      "coding-career-pulse"
     ],
     "robotics-automation": [
       "humanoid-robots",
@@ -354,8 +347,7 @@
       "us-campaign-finance-watch",
       "us-ballot-initiative-tracker",
       "us-voting-rights-updates",
-      "us-electoral-map-analysis",
-      "elections-race-state-deep-dive"
+      "us-electoral-map-analysis"
     ],
     "congress-white-house": [
       "congressional-agenda-updates",
@@ -462,8 +454,7 @@
       "european-economy-check",
       "europe-far-right-far-left",
       "uk-in-europe-post-brexit",
-      "european-defense-updates",
-      "european-country-deep-dive"
+      "european-defense-updates"
     ],
     "india": [
       "india-snapshot",
@@ -530,8 +521,7 @@
       "trade-roster-watch",
       "mlb-injury-report",
       "stat-leaders-updates",
-      "awards-watch",
-      "mlb-team-deep-dive"
+      "awards-watch"
     ],
     "nba": [
       "nba-league-snapshot-today",
@@ -540,8 +530,7 @@
       "nba-trade-roster-watch",
       "nba-injury-report",
       "nba-awards-race",
-      "nba-stat-trends",
-      "nba-team-deep-dive"
+      "nba-stat-trends"
     ],
     "nfl": [
       "nfl-weekly-snapshot",
@@ -550,8 +539,7 @@
       "nfl-injury-report",
       "nfl-qb-carousel",
       "nfl-trade-cut-coaching-watch",
-      "nfl-awards-race",
-      "nfl-team-deep-dive"
+      "nfl-awards-race"
     ],
     "nhl": [
       "nhl-league-snapshot",
@@ -560,8 +548,7 @@
       "nhl-trade-roster-watch",
       "nhl-injury-report",
       "nhl-awards-race",
-      "nhl-stat-leaders",
-      "nhl-team-deep-dive"
+      "nhl-stat-leaders"
     ],
     "college-basketball": [
       "ncaab-rankings-and-movers",
@@ -580,8 +567,7 @@
       "ncaaf-heisman-watch",
       "ncaaf-coaching-carousel",
       "ncaaf-transfer-portal-nil-watch",
-      "ncaaf-big-games",
-      "ncaaf-team-deep-dive"
+      "ncaaf-big-games"
     ],
     "combat-sports": [
       "ufc-snapshot",
@@ -628,14 +614,12 @@
       "tornado-season-check",
       "wildfire-season-updates",
       "winter-storm-cold-watch",
-      "climate-extreme-weather-updates",
-      "local-forecast-context"
+      "climate-extreme-weather-updates"
     ],
     "entertainment": [
       "what-to-watch-listen-play",
       "cultural-moments-right-now",
-      "awards-season-watch",
-      "suggested-entertainment"
+      "awards-season-watch"
     ],
     "celebrities": [
       "celebrity-news-snapshot",
@@ -659,24 +643,20 @@
       "streaming-wars-updates",
       "tv-movies-awards-season-watch",
       "hollywood-business-watch",
-      "tv-movies-trailer-hype-watch",
-      "tv-movies-suggestions"
+      "tv-movies-trailer-hype-watch"
     ],
     "music": [
       "new-music-this-week",
       "music-charts-hits-watch",
       "music-tours-concerts-watch",
       "music-festival-season-updates",
-      "music-genre-spotlight",
-      "music-help-find-new"
+      "music-genre-spotlight"
     ],
     "podcasts": [
       "top-podcasts-right-now",
       "podcast-industry-watch",
       "podcast-episodes-worth-hearing",
-      "video-podcasting-watch",
-      "podcast-recommendations",
-      "best-podcasts-in-a-category"
+      "video-podcasting-watch"
     ],
     "arts-culture": [
       "arts-culture-culturual-conversations",
@@ -704,17 +684,14 @@
       "fashion-week-recaps",
       "fashion-industry-watch",
       "sustainable-fashion-watch",
-      "streetwear-sneaker-updates",
-      "build-my-wardrobe"
+      "streetwear-sneaker-updates"
     ],
     "food-dining": [
       "restaurant-industry-watch",
       "food-trends-watch",
       "restaurant-awards-lists",
       "coffee-wine-drinks-watch",
-      "home-cooking-trends",
-      "what-should-i-cook-tonight",
-      "restaurant-recommendations"
+      "home-cooking-trends"
     ],
     "lifestyle": [
       "lifestyle-snapshot",
@@ -725,44 +702,21 @@
       "auto-industry-snapshot",
       "cars-best-evs",
       "car-buying-negotiation",
-      "maintenance-ownership",
-      "help-me-pick-a-car"
+      "maintenance-ownership"
     ],
     "home-garden": [
       "seasonal-home-maintenance",
       "energy-efficiency-upgrades",
-      "smart-home-snapshot",
-      "plan-my-home-improvement",
-      "plan-my-garden",
-      "set-up-my-smart-home",
-      "renovate-a-room"
+      "smart-home-snapshot"
     ],
-    "relationships": [
-      "dating-relationships-updates",
-      "research-healthy-relationships",
-      "friendship-help",
-      "parenting-through-phases",
-      "family-dynamics",
-      "working-through-conflict"
-    ],
+    "relationships": [],
     "travel": [
       "travel-industry-updates",
-      "flight-hotel-strategy",
-      "where-should-i-go",
-      "plan-my-trip",
-      "practical-travel-help",
-      "plan-a-local-getaway"
+      "flight-hotel-strategy"
     ],
     "work-careers": [
       "job-market-snapshot",
-      "compensation-trends",
-      "career-move-help",
-      "job-search-strategy",
-      "resume-portfolio-profile-help",
-      "salary-negotiation-help",
-      "workplace-conflict-help",
-      "career-pivot-help",
-      "manager-leadership-help"
+      "compensation-trends"
     ],
     "media": [
       "media-news-snapshot",
@@ -820,7 +774,6 @@
       "online-learning-snapshot",
       "k-12-edtech-watch",
       "skills-based-learning",
-      "best-tools-to-learn-a-skill",
       "build-my-learning-plan"
     ],
     "ideas-opinion-more": [
@@ -831,28 +784,17 @@
     ],
     "ethics-philosophy": [
       "applied-ethics-watch",
-      "moral-philosophical-frameworks",
-      "help-with-ethical-dilemma",
-      "philosophy-primer",
-      "philosophy-reading-recommendations"
+      "moral-philosophical-frameworks"
     ],
     "history": [
-      "on-this-day-in-history",
-      "underrated-moments-in-history",
-      "historical-topic-deep-dive",
-      "historical-parralels",
-      "recommended-history-reading",
-      "historiography-updates",
-      "history-of-a-topic"
+      "on-this-day-in-history"
     ],
     "religion-faith": [
       "religion-news-snapshot",
       "vatican-catholic-church-watch",
       "us-religious-landscape",
       "religion-politics",
-      "spirituality-meaning-trends",
-      "religious-tradition-primer",
-      "compare-religious-traditions"
+      "spirituality-meaning-trends"
     ],
     "_custom": []
   },
@@ -944,20 +886,20 @@
     "recent-milestones",
     "beginners-guide",
     "glossary-key-terms",
+    "frequently-asked-questions",
+    "how-it-actually-works",
     "key-players",
-    "industry-deep-dive",
     "how-we-got-here",
+    "industry-deep-dive",
     "timeline-key-dates",
     "where-to-follow",
-    "how-it-actually-works",
-    "frequently-asked-questions",
     "cheat-sheet",
     "best-resources-to-go-deeper",
+    "the-big-picture",
+    "why-it-matters",
     "risks-red-flags",
     "different-perspectives",
     "how-this-affects-me",
-    "why-it-matters",
-    "the-big-picture",
     "what-we-dont-know-yet",
     "strengths-and-limitations"
   ],

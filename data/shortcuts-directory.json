@@ -587,14 +587,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "local-market-deep-dive",
-      "name": "Local Market Deep Dive",
-      "icon": "local-market-deep-dive",
-      "prompt": "Give me a deep look at the housing market in [city or metro area]. Cover prices and trends, inventory and demand dynamics, neighborhoods worth knowing, and what's specific to this market right now.",
-      "description": "A deeper read of context, dynamics, and what matters",
-      "group": "topic-specific"
-    },
-    {
       "id": "labor-market-snapshot",
       "name": "Labor Market Snapshot",
       "icon": "labor-market-snapshot",
@@ -640,14 +632,6 @@
       "icon": "biggest-movers-market",
       "prompt": "What are the biggest stock movers today (and over the past week)? Cover the top gainers and losers among large caps, the catalysts driving each move, and any unusual volume or momentum patterns worth knowing about.",
       "description": "Who and what is shifting in biggest movers",
-      "group": "topic-specific"
-    },
-    {
-      "id": "stock-deep-dive",
-      "name": "Stock Deep Dive",
-      "icon": "stock-deep-dive",
-      "prompt": "Give me a current look at [company or ticker]. Cover recent price action and earnings, the bull and bear cases, key catalysts ahead, valuation context, and how it compares to its main peers.",
-      "description": "A deeper read of context, dynamics, and what matters",
       "group": "topic-specific"
     },
     {
@@ -712,14 +696,6 @@
       "icon": "investing-for-beginners",
       "prompt": "Give me a clear, practical guide to getting started with investing. Cover account types (brokerage, IRA, 401k), what to invest in (index funds, ETFs, target-date funds), how much to invest, and the most common beginner mistakes to avoid.",
       "description": "Clear, practical guide to getting started with investing",
-      "group": "topic-specific"
-    },
-    {
-      "id": "retirement-planning-check-in",
-      "name": "Retirement Planning Check-In",
-      "icon": "retirement-planning-check-in",
-      "prompt": "Help me think through my retirement planning. Ask about my age, retirement goal age, current savings, account types I'm using, and risk tolerance — then walk me through where to focus.",
-      "description": "Help me think through my retirement planning",
       "group": "topic-specific"
     },
     {
@@ -1107,14 +1083,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "help-pick-data-tool",
-      "name": "Help Me Pick a Data Tool",
-      "icon": "help-pick-data-tool",
-      "prompt": "Help me pick the right tool for [data task — warehousing, transformation, BI, observability, etc.]. Ask about my scale, team, budget, and existing stack — then recommend specific options with reasoning.",
-      "description": "Walking you through the right choice",
-      "group": "topic-specific"
-    },
-    {
       "id": "quantum-computing-watch",
       "name": "Quantum Computing Watch",
       "icon": "quantum-computing-watch",
@@ -1265,22 +1233,6 @@
       "icon": "coding-career-pulse",
       "prompt": "What's the current state of the developer job market? Cover hiring trends by stack and seniority, remote vs. in-office, comp benchmarks, the impact of AI coding tools on hiring, and where opportunities are growing or shrinking.",
       "description": "Where things stand on coding career",
-      "group": "topic-specific"
-    },
-    {
-      "id": "pick-a-tech-stack",
-      "name": "Pick a Stack for My Project",
-      "icon": "pick-a-tech-stack",
-      "prompt": "Help me pick a tech stack for [project type]. Ask about the project, my experience, scale expectations, and team — then recommend a specific stack with reasoning.",
-      "description": "Walking you through the right pick",
-      "group": "topic-specific"
-    },
-    {
-      "id": "build-programming-learning-path",
-      "name": "Build My Learning Path",
-      "icon": "build-programming-learning-path",
-      "prompt": "Build me a learning path for [language, framework, or skill]. Ask about my current level and goals — then map out a structured progression with specific resources at each stage.",
-      "description": "A plan tailored to your situation",
       "group": "topic-specific"
     },
     {
@@ -2076,14 +2028,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "elections-race-state-deep-dive",
-      "name": "Race or State Deep Dive",
-      "icon": "elections-race-state-deep-dive",
-      "prompt": "Give me a deep dive on the [race or state] election landscape. Cover the candidates, the key issues, current polling, the structural environment, and what to watch for.",
-      "description": "A deeper read of context, dynamics, and what matters",
-      "group": "topic-specific"
-    },
-    {
       "id": "congressional-agenda-updates",
       "name": "Congressional Agenda Updates",
       "icon": "congressional-agenda-updates",
@@ -2700,14 +2644,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "european-country-deep-dive",
-      "name": "Country Snapshot",
-      "icon": "european-country-deep-dive",
-      "prompt": "Give me a current overview of [European country]. Cover political situation, economy, key issues, EU relationship, and what's distinctive about its current moment.",
-      "description": "Current state of country",
-      "group": "topic-specific"
-    },
-    {
       "id": "india-snapshot",
       "name": "India Snapshot",
       "icon": "india-snapshot",
@@ -3108,14 +3044,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "mlb-team-deep-dive",
-      "name": "Team Deep Dive",
-      "icon": "mlb-team-deep-dive",
-      "prompt": "Give me a current snapshot of [MLB team]. Cover their record and standing, recent performance, key players and injuries, schedule context, and outlook for the rest of the season.",
-      "description": "A deeper look at a specific team",
-      "group": "topic-specific"
-    },
-    {
       "id": "nba-league-snapshot-today",
       "name": "League Snapshot",
       "icon": "nba-league-snapshot-today",
@@ -3169,14 +3097,6 @@
       "icon": "nba-stat-trends",
       "prompt": "What are the most interesting statistical trends in the NBA right now? Cover league-wide shifts (pace, three-point rate, etc.), individual statistical anomalies, and any historical pace contexts worth noting.",
       "description": "The most interesting statistical trends in the NBA right now",
-      "group": "topic-specific"
-    },
-    {
-      "id": "nba-team-deep-dive",
-      "name": "Team Deep Dive",
-      "icon": "nba-team-deep-dive",
-      "prompt": "Give me a current snapshot of [NBA team]. Cover record, recent form, key players and injuries, schedule context, and outlook.",
-      "description": "A deeper look at a specific team",
       "group": "topic-specific"
     },
     {
@@ -3236,14 +3156,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "nfl-team-deep-dive",
-      "name": "Team Deep Dive",
-      "icon": "nfl-team-deep-dive",
-      "prompt": "Give me a current snapshot of [NFL team]. Cover record, recent form, key players and injuries, schedule context, and playoff outlook.",
-      "description": "A deeper look at a specific team",
-      "group": "topic-specific"
-    },
-    {
       "id": "nhl-league-snapshot",
       "name": "League Snapshot",
       "icon": "nhl-league-snapshot",
@@ -3297,14 +3209,6 @@
       "icon": "nhl-stat-leaders",
       "prompt": "Who are the current statistical leaders in the NHL — focus on the notable stats and include any advanced metrics worth knowing?",
       "description": "Who's currently leading the statistical categories",
-      "group": "topic-specific"
-    },
-    {
-      "id": "nhl-team-deep-dive",
-      "name": "Team Deep Dive",
-      "icon": "nhl-team-deep-dive",
-      "prompt": "Give me a current snapshot of [NHL team]. Cover record, recent form, key players and injuries, schedule context, and outlook.",
-      "description": "A deeper look at a specific team",
       "group": "topic-specific"
     },
     {
@@ -3425,14 +3329,6 @@
       "icon": "ncaaf-big-games",
       "prompt": "What are the most important upcoming college football games? For each: stakes, key matchups, betting line context, and what to watch for.",
       "description": "The most important upcoming college football games",
-      "group": "topic-specific"
-    },
-    {
-      "id": "ncaaf-team-deep-dive",
-      "name": "Team Deep Dive",
-      "icon": "ncaaf-team-deep-dive",
-      "prompt": "Give me a current snapshot of [college football team]. Cover record, ranking, key players, recent performance, and outlook.",
-      "description": "A deeper look at a specific team",
       "group": "topic-specific"
     },
     {
@@ -3708,14 +3604,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "local-forecast-context",
-      "name": "Local Forecast Context",
-      "icon": "local-forecast-context",
-      "prompt": "Give me a longer-range outlook for [region or city]. Cover the upcoming weeks, any developing weather patterns to watch, and how it compares to seasonal norms.",
-      "description": "Where things are likely headed",
-      "group": "topic-specific"
-    },
-    {
       "id": "cultural-moments-right-now",
       "name": "Cultural Moments Right Now",
       "icon": "cultural-moments-right-now",
@@ -3729,14 +3617,6 @@
       "icon": "awards-season-watch",
       "prompt": "Where are we in the current awards seasons across film, TV, and music? Cover the upcoming major ceremonies, current frontrunners, and the storylines shaping each race.",
       "description": "Who's in contention for the major awards",
-      "group": "topic-specific"
-    },
-    {
-      "id": "suggested-entertainment",
-      "name": "Suggested Entertainment for You",
-      "icon": "suggested-entertainment",
-      "prompt": "Help me find something to watch, listen to, play, or read. Ask me about my mood, time available, recent things I've enjoyed, and what format I'm open to — then recommend several options with reasoning.",
-      "description": "Personalized picks based on your taste",
       "group": "topic-specific"
     },
     {
@@ -3884,14 +3764,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "tv-movies-suggestions",
-      "name": "Suggest me a show or movie",
-      "icon": "tv-movies-suggestions",
-      "prompt": "Help me find something to watch. Ask about my mood, time commitment, recent things I've enjoyed, and any hard preferences (genre, era, etc.) — then recommend a few well-reasoned options.",
-      "description": "Help me find something to watch",
-      "group": "topic-specific"
-    },
-    {
       "id": "new-music-this-week",
       "name": "New Music This Week",
       "icon": "new-music-this-week",
@@ -3932,14 +3804,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "music-help-find-new",
-      "name": "Help Me Find New Music",
-      "icon": "music-help-find-new",
-      "prompt": "Help me find new music. Ask about my current favorites, the moods I want, and how adventurous I want to be — then recommend artists and specific tracks/albums.",
-      "description": "Walking you through the right choice",
-      "group": "topic-specific"
-    },
-    {
       "id": "top-podcasts-right-now",
       "name": "Top Podcasts Right Now",
       "icon": "top-podcasts-right-now",
@@ -3969,22 +3833,6 @@
       "icon": "video-podcasting-watch",
       "prompt": "What's happening with the shift to video podcasting? Cover which podcasts are succeeding on YouTube, the leading video-first podcasts, and how this is changing the medium and ad market.",
       "description": "Signals worth tracking in video podcasting",
-      "group": "topic-specific"
-    },
-    {
-      "id": "podcast-recommendations",
-      "name": "Podcast Recommendations",
-      "icon": "podcast-recommendations",
-      "prompt": "Help me find new podcasts. Ask about topics I'm interested in, episode length preference, host styles I like, and shows I already love — then recommend matches with reasoning.",
-      "description": "Help me find new podcasts",
-      "group": "topic-specific"
-    },
-    {
-      "id": "best-podcasts-in-a-category",
-      "name": "Best Podcasts in a Category",
-      "icon": "best-podcasts-in-a-category",
-      "prompt": "What are the best podcasts in [category]? Cover well-established standards and standout newer entries.",
-      "description": "Top picks worth knowing about right now",
       "group": "topic-specific"
     },
     {
@@ -4148,14 +3996,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "build-my-wardrobe",
-      "name": "Build My Wardrobe",
-      "icon": "build-my-wardrobe",
-      "prompt": "Help me build out my wardrobe or refine my style. Ask about my lifestyle, current wardrobe, budget, and goals — then give specific, practical recommendations.",
-      "description": "A plan tailored to your situation",
-      "group": "topic-specific"
-    },
-    {
       "id": "restaurant-industry-watch",
       "name": "Restaurant Industry Watch",
       "icon": "restaurant-industry-watch",
@@ -4193,22 +4033,6 @@
       "icon": "home-cooking-trends",
       "prompt": "What are the dominant home cooking trends right now? Cover techniques, ingredients, equipment, and food media shaping how people are cooking at home.",
       "description": "The dominant home cooking trends right now",
-      "group": "topic-specific"
-    },
-    {
-      "id": "what-should-i-cook-tonight",
-      "name": "What Should I Cook Tonight",
-      "icon": "what-should-i-cook-tonight",
-      "prompt": "Help me figure out what to cook. Ask about ingredients I have, time available, skill level, and any dietary considerations — then suggest a few options with reasoning.",
-      "description": "Help me figure out what to cook",
-      "group": "topic-specific"
-    },
-    {
-      "id": "restaurant-recommendations",
-      "name": "Restaurant Recommendations",
-      "icon": "restaurant-recommendations",
-      "prompt": "Help me find a great restaurant. Ask about location, cuisine preference, occasion, budget, and how adventurous I want to be — then recommend matches with reasoning.",
-      "description": "Help me find a great restaurant",
       "group": "topic-specific"
     },
     {
@@ -4260,14 +4084,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "help-me-pick-a-car",
-      "name": "Help Me Pick a Car",
-      "icon": "help-me-pick-a-car",
-      "prompt": "Help me find a new or used car. Ask me about needs, budget, gas/hybrid/EV preference, and any must-haves — and then give me a shortlist with reasoning.",
-      "description": "Walking you through the right choice",
-      "group": "topic-specific"
-    },
-    {
       "id": "seasonal-home-maintenance",
       "name": "Seasonal Home Maintenance",
       "icon": "seasonal-home-maintenance",
@@ -4292,86 +4108,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "plan-my-home-improvement",
-      "name": "Plan My Home Improvement Project",
-      "icon": "plan-my-home-improvement",
-      "prompt": "Help me plan a home improvement project. Ask about the project (kitchen, bath, deck, etc.), goals, budget, and timeline — then walk me through the right sequence, key decisions, and where to splurge vs. save.",
-      "description": "Help me plan a home improvement project",
-      "group": "topic-specific"
-    },
-    {
-      "id": "plan-my-garden",
-      "name": "Plan My Garden",
-      "icon": "plan-my-garden",
-      "prompt": "Help me plan my garden. Ask about my growing zone, sun exposure, available space, what I want to grow, and experience level — then give me a thoughtful plan.",
-      "description": "Help me plan my garden",
-      "group": "topic-specific"
-    },
-    {
-      "id": "set-up-my-smart-home",
-      "name": "Set Up My Smart Home",
-      "icon": "set-up-my-smart-home",
-      "prompt": "Help me set up or upgrade my smart home. Ask about my platform preference, budget, and what I want to automate — then recommend a coherent setup.",
-      "description": "Help me set up or upgrade my smart home",
-      "group": "topic-specific"
-    },
-    {
-      "id": "renovate-a-room",
-      "name": "Renovate a Room",
-      "icon": "renovate-a-room",
-      "prompt": "Help me refresh a room without a major renovation. Ask about the room, my style preference, and budget — then suggest specific, achievable changes with the biggest impact.",
-      "description": "Help me refresh a room without a major renovation",
-      "group": "topic-specific"
-    },
-    {
-      "id": "dating-relationships-updates",
-      "name": "Dating and Relationships Updates",
-      "icon": "dating-relationships-updates",
-      "prompt": "What's the current state of dating and relationships culturally? Cover dating app dynamics, demographic and generational trends, and the dominant cultural conversations around dating, marriage, and partnership.",
-      "description": "Recent developments in dating and relationships",
-      "group": "topic-specific"
-    },
-    {
-      "id": "research-healthy-relationships",
-      "name": "What Research Says About Healthy Relationships",
-      "icon": "research-healthy-relationships",
-      "prompt": "What are the most credible recent findings from relationship research? Cover what well-supported research suggests about communication, conflict, attachment, and long-term relationship health.",
-      "description": "The most credible recent findings from relationship research",
-      "group": "topic-specific"
-    },
-    {
-      "id": "friendship-help",
-      "name": "Friendship Help",
-      "icon": "friendship-help",
-      "prompt": "Help me think through a friendship situation — drifting apart, repairing, making new friends as an adult, or navigating a conflict. Ask about the situation and what I want, then think it through with me.",
-      "description": "Practical help with friendship",
-      "group": "topic-specific"
-    },
-    {
-      "id": "parenting-through-phases",
-      "name": "Parenting Through Phases",
-      "icon": "parenting-through-phases",
-      "prompt": "Help me think through a parenting question or phase. Ask about the child's age, situation, and what I'm trying to address — then offer perspectives drawing on what's well-supported and what experienced parents tend to find helpful.",
-      "description": "Help me think through a parenting question or phase",
-      "group": "topic-specific"
-    },
-    {
-      "id": "family-dynamics",
-      "name": "Family Dynamics",
-      "icon": "family-dynamics",
-      "prompt": "Help me think through a family dynamic or situation. Ask about the relationship, what's happening, what I've tried, and what outcome I want — then help me work through perspectives and approaches.",
-      "description": "Help me think through a family dynamic or situation",
-      "group": "topic-specific"
-    },
-    {
-      "id": "working-through-conflict",
-      "name": "Working Through Conflict",
-      "icon": "working-through-conflict",
-      "prompt": "Help me work through a current conflict in my life. Ask about the parties, what's happened, what each side seems to want, and what I'm hoping for — then help me think through productive paths forward.",
-      "description": "Help me work through a current conflict in my life",
-      "group": "topic-specific"
-    },
-    {
       "id": "travel-industry-updates",
       "name": "Travel Industry Updates",
       "icon": "travel-industry-updates",
@@ -4388,38 +4124,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "where-should-i-go",
-      "name": "Where Should I Go",
-      "icon": "where-should-i-go",
-      "prompt": "Help me decide where to travel. Ask about timing, budget, travel style, who's going, and what I'm in the mood for — then recommend several destinations with reasoning for each.",
-      "description": "Help me decide where to travel",
-      "group": "topic-specific"
-    },
-    {
-      "id": "plan-my-trip",
-      "name": "Plan My Trip",
-      "icon": "plan-my-trip",
-      "prompt": "Help me plan a trip. Ask about destination(s), travel dates, group size, budget, travel style (adventure, relaxation, food, culture, etc.), and any constraints — then build out a thoughtful itinerary.",
-      "description": "Help me plan a trip",
-      "group": "topic-specific"
-    },
-    {
-      "id": "practical-travel-help",
-      "name": "Practical Travel Help",
-      "icon": "practical-travel-help",
-      "prompt": "Help me with practical travel logistics for my trip to [destination]. Cover packing for the trip type, navigating airports efficiently, what to do about delays, travel insurance, and other on-the-ground basics.",
-      "description": "Practical advice for real-world trip planning",
-      "group": "topic-specific"
-    },
-    {
-      "id": "plan-a-local-getaway",
-      "name": "Plan a Local Getaway",
-      "icon": "plan-a-local-getaway",
-      "prompt": "Help me plan a getaway closer to home. Ask about my home base, distance willing to travel, dates, and travel style — then suggest options with reasoning.",
-      "description": "Help me plan a getaway closer to home",
-      "group": "topic-specific"
-    },
-    {
       "id": "job-market-snapshot",
       "name": "Job Market Snapshot",
       "icon": "job-market-snapshot",
@@ -4433,62 +4137,6 @@
       "icon": "compensation-trends",
       "prompt": "What's happening with compensation right now? Cover pay trends across industries and seniority levels, sign-on bonus dynamics, and what's leverage in the current market.",
       "description": "How pay is shifting across industries",
-      "group": "topic-specific"
-    },
-    {
-      "id": "career-move-help",
-      "name": "Help Me Decide on a Career Move",
-      "icon": "career-move-help",
-      "prompt": "Help me think through a career decision. Ask about the decision (job change, pivot, promotion, school, starting something), my situation, what I value, and what's pulling me — then help me think through it.",
-      "description": "Help me think through a career decision",
-      "group": "topic-specific"
-    },
-    {
-      "id": "job-search-strategy",
-      "name": "Job Search Strategy",
-      "icon": "job-search-strategy",
-      "prompt": "Help me build a job search strategy. Ask about role type, industry, level, location preferences, and timeline — then give me a structured plan covering targeting, application strategy, networking, and interview prep.",
-      "description": "Help me build a job search strategy",
-      "group": "topic-specific"
-    },
-    {
-      "id": "resume-portfolio-profile-help",
-      "name": "Resume, Portfolio and Online Profile Help",
-      "icon": "resume-portfolio-profile-help",
-      "prompt": "Help me improve my resume, portfolio, and online profile, in relation to a career move. Ask me about the role I'm targeting, my experience, and what I have currently — then give me specific, actionable feedback.",
-      "description": "Practical help with resume, portfolio and online profile",
-      "group": "topic-specific"
-    },
-    {
-      "id": "salary-negotiation-help",
-      "name": "Salary Negotiation Help",
-      "icon": "salary-negotiation-help",
-      "prompt": "Help me negotiate compensation. Ask about the role, the offer, my current situation, and any leverage I have — then walk me through approach, scripts, and what's reasonable to ask for.",
-      "description": "Practical help with salary negotiation",
-      "group": "topic-specific"
-    },
-    {
-      "id": "workplace-conflict-help",
-      "name": "Workplace Conflict Help",
-      "icon": "workplace-conflict-help",
-      "prompt": "Help me navigate a workplace situation. Ask about the situation, the people involved, and what outcome I want — then help me think through perspectives and approaches.",
-      "description": "Practical help with workplace conflict",
-      "group": "topic-specific"
-    },
-    {
-      "id": "career-pivot-help",
-      "name": "Career Pivot Help",
-      "icon": "career-pivot-help",
-      "prompt": "Help me think through a career pivot. Ask about my current field, where I'm thinking of going, my transferable skills, and my constraints (timeline, money, family) — then map a realistic path.",
-      "description": "Practical help with career pivot",
-      "group": "topic-specific"
-    },
-    {
-      "id": "manager-leadership-help",
-      "name": "Manager and Leadership Help ·",
-      "icon": "manager-leadership-help",
-      "prompt": "Help me with a management or leadership challenge. Ask about my role, team, and the specific challenge — then offer frameworks and concrete suggestions.",
-      "description": "Help me with a management or leadership challenge",
       "group": "topic-specific"
     },
     {
@@ -4819,14 +4467,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "best-tools-to-learn-a-skill",
-      "name": "Best Tools to Learn A Skill",
-      "icon": "best-tools-to-learn-a-skill",
-      "prompt": "What are the best tools for learning [language, math, coding, professional skills, etc.]? Cover the leading platforms and apps, what each does best, and how they compare on price and approach.",
-      "description": "Top picks worth knowing about right now",
-      "group": "topic-specific"
-    },
-    {
       "id": "ideas-in-the-air",
       "name": "Ideas in the Air",
       "icon": "ideas-in-the-air",
@@ -4875,78 +4515,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "help-with-ethical-dilemma",
-      "name": "Help With an Ethical Dilemma",
-      "icon": "help-with-ethical-dilemma",
-      "prompt": "Help me think through an ethical dilemma I'm facing. Ask me about the situation, the considerations on different sides, and what I value — then help me reason through it carefully without telling me what to do.",
-      "description": "Help me think through an ethical dilemma I'm facing",
-      "group": "topic-specific"
-    },
-    {
-      "id": "philosophy-primer",
-      "name": "Philosophy Primer",
-      "icon": "philosophy-primer",
-      "prompt": "Give me a primer on [philosophical topic, school of thought, or thinker]. Cover the core ideas, the historical context, key arguments and critiques, and recommended reading to go deeper.",
-      "description": "Background and basics for philosophy",
-      "group": "topic-specific"
-    },
-    {
-      "id": "philosophy-reading-recommendations",
-      "name": "Philosophy Reading Recommendations",
-      "icon": "philosophy-reading-recommendations",
-      "prompt": "Recommend philosophy reading based on what I'm interested in. Ask about my current familiarity, the questions or topics that interest me, and how technical I want it — then suggest a thoughtful sequence.",
-      "description": "Recommend philosophy reading based on what I'm interested in",
-      "group": "topic-specific"
-    },
-    {
-      "id": "underrated-moments-in-history",
-      "name": "Underrated Moments in History",
-      "icon": "underrated-moments-in-history",
-      "prompt": "What are some lesser-known but consequential moments in history that deserve more attention? Cover events, decisions, or figures whose importance often gets missed in standard narratives.",
-      "description": "How things got to where they are now",
-      "group": "topic-specific"
-    },
-    {
-      "id": "historical-topic-deep-dive",
-      "name": "Historical Topic Deep Dive",
-      "icon": "historical-topic-deep-dive",
-      "prompt": "Give me a deep introduction to [historical topic, era, or event]. Cover the essential context, key figures, major events, what changed because of it, and the dominant historical interpretations.",
-      "description": "A deeper read of context, dynamics, and what matters",
-      "group": "topic-specific"
-    },
-    {
-      "id": "historical-parralels",
-      "name": "Historical Parallels",
-      "icon": "historical-parralels",
-      "prompt": "What historical parallels are most relevant to [current event or trend]? Cover the parallels carefully — what's similar, what's different, and what we can and can't reasonably take from them.",
-      "description": "Parallels from history worth weighing carefully",
-      "group": "topic-specific"
-    },
-    {
-      "id": "recommended-history-reading",
-      "name": "Recommended History Reading",
-      "icon": "recommended-history-reading",
-      "prompt": "Recommend history books on [topic, era, or region]. Ask about my prior familiarity and how academic vs. popular I want — then suggest a thoughtful reading list with brief justifications.",
-      "description": "Books worth reading on the subject",
-      "group": "topic-specific"
-    },
-    {
-      "id": "historiography-updates",
-      "name": "Historiography Update",
-      "icon": "historiography-updates",
-      "prompt": "How has the historical understanding of [topic or period] changed in recent decades? Cover what new sources, methods, or interpretive shifts have changed the picture.",
-      "description": "Latest movement on historiography",
-      "group": "topic-specific"
-    },
-    {
-      "id": "history-of-a-topic",
-      "name": "History of a Topic",
-      "icon": "history-of-a-topic",
-      "prompt": "Walk me through the history of [topic — a country, idea, technology, institution, etc.]. Cover the origins, key turning points, current state, and how to understand its trajectory.",
-      "description": "How things got to where they are now",
-      "group": "topic-specific"
-    },
-    {
       "id": "religion-news-snapshot",
       "name": "Religion News Snapshot",
       "icon": "religion-news-snapshot",
@@ -4984,22 +4552,6 @@
       "icon": "spirituality-meaning-trends",
       "prompt": "What's happening in non-institutional spirituality and meaning-making? Cover trends in mindfulness, secular ritual, \"spiritual but not religious\" identities, and the cultural conversations around meaning.",
       "description": "Non-institutional spirituality and meaning-making",
-      "group": "topic-specific"
-    },
-    {
-      "id": "religious-tradition-primer",
-      "name": "Religious Tradition Primer",
-      "icon": "religious-tradition-primer",
-      "prompt": "Give me a primer on [religion or tradition]. Cover core beliefs, major branches and their differences, key practices, the historical development, and how it's lived in the world today.",
-      "description": "Background and basics for religious tradition",
-      "group": "topic-specific"
-    },
-    {
-      "id": "compare-religious-traditions",
-      "name": "Compare Religious Traditions",
-      "icon": "compare-religious-traditions",
-      "prompt": "Compare [traditions or beliefs] on [a specific question or topic]. Cover where they agree, where they differ, and how each tradition has approached the question over time.",
-      "description": "Side-by-side on a contested question",
       "group": "topic-specific"
     },
     {

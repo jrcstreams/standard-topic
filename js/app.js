@@ -16,7 +16,7 @@ import { renderTrending, renderTrendingTopics, renderTrendingHome } from './comp
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260608-revamp9';
 import { initInsightModal } from './components/insight-modal.js?v=20260610-revamp86';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260610-revamp83';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260610-revamp91';
 import { renderWebSources } from './components/websources.js?v=20260609-revamp73';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260609-revamp71';
 import { initDiscoverModal } from './components/discover-modal.js';
@@ -1392,7 +1392,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       </div>
     `;
     homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });
-    renderTrendingHome(container.querySelector('#home-trending'), { limit: 3 });
+    renderTrendingHome(container.querySelector('#home-trending'), { limit: 4 });
     const aiiHome = container.querySelector('#section-aii-home');
     if (aiiHome) {
       const homeDesc = {};

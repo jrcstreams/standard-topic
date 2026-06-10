@@ -13164,7 +13164,8 @@ html:has(body.home-search), body.home-search { overflow: visible; height: auto; 
 body.home-search.app-mode #content,
 body.home-search.app-mode.sticky-always.has-subnav #content {
   position: static; height: auto; min-height: 0; overflow: visible;
-  padding: calc(64px + var(--subnav-height, 66px) + 0.25rem) 0 3rem;
+  /* More breathing room between the nav and the search card (#228). */
+  padding: calc(64px + var(--subnav-height, 66px) + 1.15rem) 0 3rem;
 }
 /* One cohesive centered width for the whole homepage. */
 body.home-search.app-mode .topic-layout {
@@ -13216,18 +13217,24 @@ body.home-search #section-shortcuts .shortcuts-scroll-wrap { padding-bottom: 0; 
   body.home-search.app-mode .topic-layout {
     grid-template-columns: minmax(0, 1fr);
     align-items: start;
-    row-gap: 1.8rem;
+    row-gap: 1.2rem;
   }
   body.home-search #section-searchtrends { display: contents; }
-  body.home-search #home-search-hero { grid-column: 1; order: 1; justify-self: center; width: min(600px, 100%); margin: 0 0 1.8rem; }
-  body.home-search #home-trending { grid-column: 1; order: 2; margin: 0 0 1.8rem; }
-  body.home-search #section-aii-home { grid-column: 1; order: 3; margin: 0 0 1.8rem; }
+  /* Per-section margins removed — the grid row-gap alone spaces the stack so the
+     sections aren't doubly separated (gap + margin). Tighter overall (#228). */
+  body.home-search #home-search-hero { grid-column: 1; order: 1; justify-self: center; width: min(600px, 100%); margin: 0; }
+  body.home-search #home-trending { grid-column: 1; order: 2; margin: 0; }
+  body.home-search #section-aii-home { grid-column: 1; order: 3; margin: 0; }
   body.home-search #section-newsfeed { grid-column: 1; order: 4; }
-  /* Trending is full width now — lay its cards out horizontally too (instead of
-     the narrow-column single file it had in the old 2-column layout). */
+  /* Trending shows 4 trends. To avoid an uneven partial row (the old auto-fit
+     gave a lonely 3+1), it goes straight to a single vertical column on narrow
+     desktop and a clean 2×2 once there's room (≥1024px, below). */
   body.home-search #home-trending .trend-card-grid {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    grid-template-columns: 1fr;
   }
+}
+@media (min-width: 1024px) {
+  body.home-search #home-trending .trend-card-grid { grid-template-columns: repeat(2, 1fr); }
 }
 /* Cards size to content + the page scrolls. */
 body.home-search .layout-section,
@@ -13387,7 +13394,7 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
 .trending-topics-logo svg { width: 14px; height: 14px; }
 .trending-topics-title { margin: 0; font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; letter-spacing: -0.015em; line-height: 1.5; color: var(--color-text); }
 .trending-topics-updated { margin-left: auto; align-self: center; font-size: 0.62rem; font-weight: 600; letter-spacing: 0.01em; color: #6b7689; background: #eef1f6; padding: 0.24rem 0.55rem; border-radius: 6px; white-space: nowrap; line-height: 1; }
-.trending-topics-sub { margin: 7px 0 0; font-size: 0.85rem; line-height: 1.45; color: var(--color-text-muted); }
+.trending-topics-sub { margin: 7px 0 0; font-size: 0.8rem; line-height: 1.45; color: var(--color-text-muted); }
 .trending-topics-src { color: #5f6b85; text-decoration: none; }
 .trending-topics-src:hover { color: #1f8f6b; text-decoration: underline; }
 
@@ -13433,8 +13440,10 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
     background: color-mix(in srgb, var(--color-primary) 3%, #fff);
     border-radius: 16px 16px 0 0;
   }
-  #section-newsfeed .newsfeed-card .newsfeed-headtext { display: flex; flex-direction: row; align-items: center; min-width: 0; flex: 0 0 auto; }
-  #section-newsfeed .newsfeed-card .section-card-sub { display: none; }
+  /* Title + "Latest stories and developments." inline (#230); search/sort stay
+     to the right of the whole lockup. */
+  #section-newsfeed .newsfeed-card .newsfeed-headtext { display: flex; flex-direction: row; align-items: center; gap: 12px; min-width: 0; flex: 0 1 auto; }
+  #section-newsfeed .newsfeed-card .section-card-sub { display: block; flex: 0 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   /* Reset the legacy full-bleed title chrome (white bg + min-height + bottom
      rule) that caused the centered white box; clean inline lockup instead. */
   #section-newsfeed .newsfeed-card .newsfeed-title {
@@ -13526,7 +13535,9 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
 .trend-card-head { display: flex; align-items: center; gap: 0.4rem; min-width: 0; }
 .trend-card-icon { flex: 0 0 auto; display: inline-flex; color: #1f8f6b; }
 .trend-card-icon svg { display: block; }
-.trend-card-title { font-size: 0.99rem; font-weight: 500; line-height: 1.2; letter-spacing: -0.01em; color: #1a2235; overflow-wrap: anywhere; }
+/* Match the AI Intelligence path-button title (display font, 0.92rem, 600) —
+   a touch bolder + same size as those titles (#229). */
+.trend-card-title { font-family: var(--font-display); font-size: 0.92rem; font-weight: 600; line-height: 1.25; letter-spacing: -0.01em; color: #1a2235; overflow-wrap: anywhere; }
 .trend-card-meta { font-size: 0.68rem; font-weight: 500; line-height: 1.2; color: #8b94a5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .trend-card-chev { flex: 0 0 auto; display: inline-flex; color: #c2cad6; transition: transform 0.16s, color 0.14s; }
 .trend-card-chev svg { width: 15px; height: 15px; display: block; }
@@ -13610,7 +13621,7 @@ body.home-search.app-mode .topic-layout { padding-bottom: 1rem; }
    News Feed keep their previous PLAIN (non-card) treatment; only the header
    adopts the Trending-style icon + title + subtext, with a divider rule
    beneath (Trending keeps its own gray card elsewhere). ================ */
-.section-card-sub { margin: 0; font-size: 0.82rem; line-height: 1.45; font-weight: 400; color: var(--color-text-muted); white-space: normal; overflow: visible; text-overflow: clip; max-width: none; }
+.section-card-sub { margin: 0; font-size: 0.78rem; line-height: 1.45; font-weight: 400; color: var(--color-text-muted); white-space: normal; overflow: visible; text-overflow: clip; max-width: none; }
 .section-card-sub a { color: #5f6b85; font-weight: 600; text-decoration: none; }
 .section-card-sub a:hover { color: #1f8f6b; text-decoration: underline; }
 .section-head-icon { flex: none; width: 20px; height: 20px; }
@@ -14089,7 +14100,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
 .aii-logo svg { width: 14px; height: 14px; }
 .aii-brand { font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: var(--color-text); letter-spacing: -0.015em; }
-.aii-headsub { margin: 0; font-size: 0.85rem; line-height: 1.45; color: var(--color-text-muted); }
+.aii-headsub { margin: 0; font-size: 0.8rem; line-height: 1.45; color: var(--color-text-muted); }
 .aii-stage { padding: 14px 16px 16px; }
 /* Secondary tab bar (mobile tab mode) — the AI Intelligence paths as sub-tabs
    under the primary News Feed / AI Intelligence / Web Sources tabs. Same family
@@ -14198,7 +14209,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .ws-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
 .ws-logo svg { width: 14px; height: 14px; }
 .ws-brand { font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: var(--color-text); letter-spacing: -0.015em; }
-.ws-headsub { margin: 0; font-size: 0.85rem; line-height: 1.45; color: var(--color-text-muted); }
+.ws-headsub { margin: 0; font-size: 0.8rem; line-height: 1.45; color: var(--color-text-muted); }
 /* No vertical stage padding — the rows sit flush under the header and flush to
    the card's rounded bottom (no orphan gap above the first / below the last). */
 .ws-stage { padding: 0 16px; }
@@ -14305,6 +14316,19 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-src-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; text-decoration: none; color: var(--color-text); font-size: 0.82rem; transition: border-color .14s, color .14s; }
 .aii-src-row:hover { border-color: var(--color-primary); color: var(--color-primary); }
 .aii-src-row svg { flex: none; color: var(--color-text-light); }
+/* Real headline links under the synthesized intro (the "In the news" / "Sources
+   & coverage" block). Two-line rows: headline title + source host. */
+.aii-headlines { display: block; }
+.aii-hl { margin: 18px 0 2px; }
+.aii-hl-head { font-size: 0.78rem; font-weight: 700; letter-spacing: .045em; text-transform: uppercase; color: #54607a; margin: 0 0 9px; }
+.aii-hl-list { display: grid; gap: 6px; }
+.aii-hl-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 13px; border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; text-decoration: none; color: var(--color-text); transition: border-color .14s, box-shadow .14s; }
+.aii-hl-row:hover { border-color: var(--color-primary); box-shadow: 0 1px 0 color-mix(in srgb, var(--color-primary) 22%, transparent); }
+.aii-hl-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.aii-hl-title { font-size: 0.9rem; font-weight: 600; line-height: 1.35; color: var(--color-primary); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.aii-hl-src { font-size: 0.74rem; color: var(--color-text-light); }
+.aii-hl-row svg { flex: none; color: var(--color-text-light); }
+.aii-hl-row:hover svg { color: var(--color-primary); }
 /* "Explore further on web" accordion: source-type chips → platform rows. */
 .aii-web { display: grid; gap: 5px; }
 .aii-web-cat { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; text-align: left; padding: 10px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.84rem; font-weight: 600; color: var(--color-text); transition: border-color .14s, color .14s, background .14s; }
@@ -14330,6 +14354,8 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 @media (hover: none) {
   .aii-pathrow:hover, .aii-menu-row:hover, .ws-pathrow:hover, .ws-srcrow:hover { background: transparent; }
   .aii-src-row:hover, .aii-web-cat:hover, .aii-web-row:hover { border-color: var(--color-surface-border); }
+  .aii-hl-row:hover { border-color: var(--color-surface-border); box-shadow: none; }
+  .aii-hl-row:hover svg { color: var(--color-text-light); }
   /* arrows/chevrons → resting muted grey (NOT inherit, which resolved dark) */
   .ws-srcrow:hover > svg:last-child, .ws-pathrow:hover > svg:last-child,
   .aii-menu-row:hover svg, .aii-web-cat:hover svg { color: var(--color-text-light); }
@@ -14341,7 +14367,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Press feedback (momentary, no carryover — :active clears the instant the
    finger lifts / the view changes, unlike :hover). */
 .aii-pathrow:active, .aii-menu-row:active, .ws-pathrow:active, .ws-srcrow:active { background: color-mix(in srgb, var(--color-primary) 7%, transparent); }
-.aii-src-row:active, .aii-web-cat:active, .aii-web-row:active { border-color: var(--color-primary); }
+.aii-src-row:active, .aii-web-cat:active, .aii-web-row:active, .aii-hl-row:active { border-color: var(--color-primary); }
 /* "View original article" leads the Sources & citations list on news briefs. */
 .im-source-row--orig { font-weight: 600; color: #1d4ed8; }
 .im-source-row--orig svg { color: #1d4ed8; }
@@ -14707,7 +14733,10 @@ body.home-mode #sub-header.is-subnav .topic-banner {
   .aii-pathlist > .aii-pathrow, .ws-pathlist > .ws-pathrow {
     background: #fff;
     border-bottom: none;
-    padding: 11px 15px;   /* shorter cells (#217) */
+    /* min-height gives the buttons presence so they fill a comfortable card
+       height (#226) — single-line rows reach it, two-line rows grow past it. */
+    min-height: 64px;
+    padding: 12px 15px;
     gap: 11px;
   }
   /* Opaque hover tint (white-based) so the grey grid bg never shows through. */
@@ -14725,6 +14754,18 @@ body.home-mode #sub-header.is-subnav .topic-banner {
      tab nav (topic pages), so the inline line never has to wrap. */
   .aii-head, .ws-head { flex-direction: row; align-items: center; gap: 12px; }
   .aii-headsub, .ws-headsub { margin: 0; }
+
+  /* Drill-in "Back to AI Intelligence" row: vertically center the link with the
+     "Updated …" pill and give the row balanced padding (#234-236). The base
+     back-button padding (4/14, for the stacked mobile view) is reset here. */
+  .aii-stage .aii-backrow { align-items: center; padding: 9px 0 11px; }
+  .aii-stage .aii-backrow .aii-back { padding: 0; }
+  .aii-stage .aii-backrow .aii-updated { align-self: center; }
+
+  /* Section-menu drill-in: the list runs flush to the card's bottom edge — cancel
+     the stage's 16px bottom padding so there's no orphan gap below the last row
+     (#237-239). The content view (the brief) keeps its bottom padding. */
+  .aii-stage > .aii-sub:not(.aii-content) { margin-bottom: -16px; }
 }
 @media (min-width: 1240px) {
   .aii-pathlist:has(> :nth-child(4)),
