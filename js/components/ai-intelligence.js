@@ -203,12 +203,12 @@ export function renderAIIntelligence(container, scope) {
       let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
       let title = x.title || ''; if (!title || /^https?:/i.test(title)) title = host;
       if (!title) continue;
-      rows.push(`<a class="aii-hl-row" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer"><span class="aii-hl-text"><span class="aii-hl-title">${esc(title)}</span>${host ? `<span class="aii-hl-src">${esc(host)}</span>` : ''}</span>${EXT}</a>`);
+      rows.push(`<li class="aii-hl-row"><a class="aii-hl-link" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a>${host ? `<span class="aii-hl-src">${esc(host)}</span>` : ''}</li>`);
       if (rows.length >= 8) break;
     }
     if (!rows.length) return '';
     const label = kind === 'news' ? 'In the news' : 'Sources &amp; coverage';
-    return `<div class="aii-hl"><div class="aii-hl-head">${label}</div><div class="aii-hl-list">${rows.join('')}</div></div>`;
+    return `<div class="aii-hl"><div class="aii-hl-head">${label}</div><ul class="aii-hl-list">${rows.join('')}</ul></div>`;
   }
   // "Explore further on web" — the full Web Sources platform picker (source
   // types → platforms), searching this topic. Mirrors the Web Sources card.

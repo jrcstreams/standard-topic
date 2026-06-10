@@ -13217,7 +13217,7 @@ body.home-search #section-shortcuts .shortcuts-scroll-wrap { padding-bottom: 0; 
   body.home-search.app-mode .topic-layout {
     grid-template-columns: minmax(0, 1fr);
     align-items: start;
-    row-gap: 1.2rem;
+    row-gap: 1.5rem;
   }
   body.home-search #section-searchtrends { display: contents; }
   /* Per-section margins removed — the grid row-gap alone spaces the stack so the
@@ -13373,10 +13373,14 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
 
 /* === Trending section (homepage + Trending modal) ==================== */
 .home-trending { margin: 1.6rem 0 0; padding: 0; }
-/* Trending gap is state-aware at every width — roomier when the search is
-   collapsed, tighter once results are showing below the bar. */
-body.home-search #home-search-hero:has(.search-panel[data-state="collapsed"]) + #home-trending { margin-top: 1.5rem; }
-body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #home-trending { margin-top: 0.95rem; }
+/* Trending gap is state-aware — roomier when the search is collapsed, tighter
+   once results are showing below the bar. MOBILE ONLY: on desktop the
+   single-column grid's row-gap alone spaces Search → Trending (this adjacency
+   margin would stack on top of the gap and push Trending too far down). */
+@media (max-width: 899.98px) {
+  body.home-search #home-search-hero:has(.search-panel[data-state="collapsed"]) + #home-trending { margin-top: 1.5rem; }
+  body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #home-trending { margin-top: 0.95rem; }
+}
 /* On the homepage the whole section sits in a soft card to set it apart. */
 /* Plain section (no gray card) so Trending reads in the same continuous
    flow as Intelligence / News Feed below it. */
@@ -14176,7 +14180,13 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Back link + "Updated" pill share the top row, so the section title gets its
    own full line (it was wrapping to make room for the pill). Breathing room
    above so the link isn't cramped against the header. */
-.aii-backrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 4px; }
+.aii-backrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 4px 0 14px; }
+/* Inside the back-row the link sits next to the "Updated …" pill, so its
+   padding must be symmetric (0) or align-items:center centres the button BOX
+   while the asymmetric bottom padding floats the text above the pill. The
+   row's own bottom padding supplies the gap to the subhead below. The
+   standalone content-view back button (not in a row) keeps the base padding. */
+.aii-backrow .aii-back { padding: 0; }
 .aii-back { display: inline-flex; align-items: center; gap: 6px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; color: #1d4ed8; padding: 4px 0 14px; }
 .aii-back svg { width: 15px; height: 15px; color: #1d4ed8; }
 .aii-back span { text-decoration: none; text-underline-offset: 2px; }
@@ -14328,18 +14338,17 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-src-row:hover { border-color: var(--color-primary); color: var(--color-primary); }
 .aii-src-row svg { flex: none; color: var(--color-text-light); }
 /* Real headline links under the synthesized intro (the "In the news" / "Sources
-   & coverage" block). Two-line rows: headline title + source host. */
+   & coverage" block). A clean, scannable list — blue title links with the
+   source host beside each, thin separators. No boxes, no arrows. */
 .aii-headlines { display: block; }
 .aii-hl { margin: 18px 0 2px; }
-.aii-hl-head { font-size: 0.78rem; font-weight: 700; letter-spacing: .045em; text-transform: uppercase; color: #54607a; margin: 0 0 9px; }
-.aii-hl-list { display: grid; gap: 6px; }
-.aii-hl-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 13px; border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; text-decoration: none; color: var(--color-text); transition: border-color .14s, box-shadow .14s; }
-.aii-hl-row:hover { border-color: var(--color-primary); box-shadow: 0 1px 0 color-mix(in srgb, var(--color-primary) 22%, transparent); }
-.aii-hl-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.aii-hl-title { font-size: 0.9rem; font-weight: 600; line-height: 1.35; color: var(--color-primary); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-.aii-hl-src { font-size: 0.74rem; color: var(--color-text-light); }
-.aii-hl-row svg { flex: none; color: var(--color-text-light); }
-.aii-hl-row:hover svg { color: var(--color-primary); }
+.aii-hl-head { font-size: 0.72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #8b95a7; margin: 0 0 4px; }
+.aii-hl-list { list-style: none; margin: 0; padding: 0; }
+.aii-hl-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px 8px; padding: 8px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 55%, transparent); }
+.aii-hl-row:last-child { border-bottom: none; }
+.aii-hl-link { font-size: 0.9rem; font-weight: 500; line-height: 1.4; color: #1d4ed8; text-decoration: none; }
+.aii-hl-link:hover { text-decoration: underline; text-underline-offset: 2px; }
+.aii-hl-src { font-size: 0.74rem; color: var(--color-text-light); white-space: nowrap; }
 /* "Explore further on web" accordion: source-type chips → platform rows. */
 .aii-web { display: grid; gap: 5px; }
 .aii-web-cat { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; text-align: left; padding: 10px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.84rem; font-weight: 600; color: var(--color-text); transition: border-color .14s, color .14s, background .14s; }
@@ -14365,8 +14374,6 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 @media (hover: none) {
   .aii-pathrow:hover, .aii-menu-row:hover, .ws-pathrow:hover, .ws-srcrow:hover { background: transparent; }
   .aii-src-row:hover, .aii-web-cat:hover, .aii-web-row:hover { border-color: var(--color-surface-border); }
-  .aii-hl-row:hover { border-color: var(--color-surface-border); box-shadow: none; }
-  .aii-hl-row:hover svg { color: var(--color-text-light); }
   /* arrows/chevrons → resting muted grey (NOT inherit, which resolved dark) */
   .ws-srcrow:hover > svg:last-child, .ws-pathrow:hover > svg:last-child,
   .aii-menu-row:hover svg, .aii-web-cat:hover svg { color: var(--color-text-light); }
@@ -14378,7 +14385,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Press feedback (momentary, no carryover — :active clears the instant the
    finger lifts / the view changes, unlike :hover). */
 .aii-pathrow:active, .aii-menu-row:active, .ws-pathrow:active, .ws-srcrow:active { background: color-mix(in srgb, var(--color-primary) 7%, transparent); }
-.aii-src-row:active, .aii-web-cat:active, .aii-web-row:active, .aii-hl-row:active { border-color: var(--color-primary); }
+.aii-src-row:active, .aii-web-cat:active, .aii-web-row:active { border-color: var(--color-primary); }
 /* "View original article" leads the Sources & citations list on news briefs. */
 .im-source-row--orig { font-weight: 600; color: #1d4ed8; }
 .im-source-row--orig svg { color: #1d4ed8; }
