@@ -4,7 +4,7 @@
 // Updated" meta, and the fade-scrolled list whose rows open the trending
 // detail modal. Sits BELOW the detail modal (z 150) so a clicked term
 // stacks its detail view on top.
-import { renderTrending } from './trending.js?v=20260609-revamp39';
+import { renderTrending } from './trending.js?v=20260609-revamp71';
 
 let overlayEl = null;
 let panelEl = null;
@@ -40,7 +40,7 @@ function open() {
     </button>
     <div class="tlm-head">
       <h2 class="tlm-title">Trending</h2>
-      <p class="tlm-subtext">What the world is searching for right now.</p>
+      <p class="tlm-subtext">What's being searched for right now.</p>
     </div>
     <div class="tlm-body" id="tlm-body"></div>`;
   panelEl.querySelector('#tlm-close').addEventListener('click', close);

@@ -3520,7 +3520,7 @@ html, body, #app {
 .news-ai-trigger {
   display: inline-flex; align-items: center; gap: 0.24rem;
   padding: 0.34rem 0.56rem; border: none; border-radius: 999px;
-  background: #45597c; color: #fff;
+  background: #3f6cb8; color: #fff;
   font-family: var(--font-family); font-size: 0.8rem; font-weight: 600;
   cursor: pointer; white-space: nowrap; transition: background 0.14s, transform 0.14s, box-shadow 0.14s;
   box-shadow: 0 1px 5px -1px rgba(28, 58, 107, 0.24);
@@ -5545,9 +5545,9 @@ body.app-mode .topic-layout {
      width), matching the homepage's full-width Trending. The old two-column
      (Topic Intelligence | News Feed) split is retired. */
   .topic-layout {
-    /* Topic pages: Web Sources ~30% | AI Intelligence ~70%. News Feed +
+    /* Topic pages: Web Sources ~35% | AI Intelligence ~65%. News Feed +
        Related span full width below. */
-    grid-template-columns: minmax(0, 3fr) minmax(0, 7fr);
+    grid-template-columns: minmax(0, 35fr) minmax(0, 65fr);
     column-gap: 1.8rem; row-gap: 1.8rem;
     align-items: start;
   }
@@ -13516,7 +13516,7 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
 .trend-card-head { display: flex; align-items: center; gap: 0.4rem; min-width: 0; }
 .trend-card-icon { flex: 0 0 auto; display: inline-flex; color: #1f8f6b; }
 .trend-card-icon svg { display: block; }
-.trend-card-title { font-size: 0.9rem; font-weight: 500; line-height: 1.2; letter-spacing: -0.01em; color: #1a2235; overflow-wrap: anywhere; }
+.trend-card-title { font-size: 0.99rem; font-weight: 500; line-height: 1.2; letter-spacing: -0.01em; color: #1a2235; overflow-wrap: anywhere; }
 .trend-card-meta { font-size: 0.68rem; font-weight: 500; line-height: 1.2; color: #8b94a5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .trend-card-chev { flex: 0 0 auto; display: inline-flex; color: #c2cad6; transition: transform 0.16s, color 0.14s; }
 .trend-card-chev svg { width: 15px; height: 15px; display: block; }
@@ -13682,6 +13682,15 @@ body.home-search #section-shortcuts .sidebar-card-header,
   body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws-stage {
     padding-top: 0;
   }
+  /* Tab mode: the drill-in category header is redundant (the "Back to all web
+     sources" link gives context) — hide it for clean word-flow, matching the
+     AI Intelligence sub-head treatment. Keep breathing room above the back link. */
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws-subhead {
+    display: none;
+  }
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws-sub > .ws-back {
+    padding-top: 14px;
+  }
 }
 
 /* Homepage subnav: Home label/icon removed → topics own the full width
@@ -13810,7 +13819,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .search-trend-row:hover { background: var(--color-bg-light); }
 .search-trend-mark { flex: 0 0 auto; margin-top: 2px; color: #1f8f6b; display: inline-flex; }
 .search-trend-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.search-trend-row .search-trend-name { font-size: 0.88rem; font-weight: var(--font-weight-medium); color: var(--color-text); }
+.search-trend-row .search-trend-name { font-size: 0.96rem; font-weight: var(--font-weight-medium); color: var(--color-text); }
 .search-trend-row .search-trend-cat { font-size: 0.72rem; color: var(--color-text-muted); }
 /* Search modal: tabular navigation — one section per tab (AI Intelligence /
    Web Sources / Trending / News), styled to the card and mirroring the topic
@@ -14051,7 +14060,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-logo svg { width: 14px; height: 14px; }
 .aii-brand { font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: var(--color-text); letter-spacing: -0.015em; }
 .aii-headsub { margin: 0; font-size: 0.85rem; line-height: 1.45; color: var(--color-text-muted); }
-.aii-stage { padding: 6px 16px 16px; }
+.aii-stage { padding: 14px 16px 16px; }
 /* Secondary tab bar (mobile tab mode) — the AI Intelligence paths as sub-tabs
    under the primary News Feed / AI Intelligence / Web Sources tabs. Same family
    as the primary tabs but pill-shaped + a touch quieter. Scrolls if it
@@ -14085,7 +14094,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Full-bleed list (escapes the stage's 16px padding) so the hover highlight +
    row dividers span the full card width; content stays inset to align with the
    header (18px). */
-.aii-pathlist { display: flex; flex-direction: column; margin: 0 -16px; }
+.aii-pathlist { display: flex; flex-direction: column; margin: -14px -16px 0; }
 .aii-pathrow { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 15px 18px; border: none; border-bottom: 1px solid var(--color-surface-border); background: none; cursor: pointer; font-family: var(--font-family); transition: background .14s; }
 .aii-pathrow:hover { background: color-mix(in srgb, var(--color-primary) 4.5%, transparent); }
 /* Keep a divider below the last path too — it closes the list cleanly above
@@ -14157,12 +14166,12 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .ws-pathrow-icon { display: inline-flex; width: 38px; height: 38px; flex: none; align-items: center; justify-content: center; border-radius: 10px; background: var(--color-bg-light); color: var(--color-primary); }
 .ws-pathrow-icon svg { width: 19px; height: 19px; }
 .ws-pathrow-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
-.ws-pathrow-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: #25324a; letter-spacing: -0.01em; }
+.ws-pathrow-name { font-family: var(--font-display); font-size: 0.98rem; font-weight: 600; color: #25324a; letter-spacing: -0.01em; }
 .ws-pathrow-sub { font-size: 0.86rem; color: var(--color-text-muted); }
 .ws-pathrow > svg:last-child { margin-left: auto; color: var(--color-text-light); flex: none; transition: transform .16s ease, color .14s; }
 .ws-pathrow:hover > svg:last-child { color: var(--color-primary); transform: translateX(3px); }
 /* Category → its sources (the next path). */
-.ws-back { display: inline-flex; align-items: center; gap: 6px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; color: #1d4ed8; padding: 0 0 14px; }
+.ws-back { display: inline-flex; align-items: center; gap: 6px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; color: #1d4ed8; padding: 12px 0 14px; }
 .ws-back svg { width: 15px; height: 15px; color: #1d4ed8; }
 .ws-back:hover { color: #1e40af; }
 .ws-back:hover span { text-decoration: underline; text-underline-offset: 2px; }
@@ -14222,7 +14231,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    short AI-summary note + a thicker rounded divider lead into the brief body. */
 .aii-overview-centered { padding: 0; margin: 8px 0 18px; background: none; border: none; border-radius: 0; text-align: center; }
 .aii-overview-centered .aii-overview-eyebrow { color: var(--color-text-muted); margin-bottom: 7px; }
-.aii-overview-centered .aii-overview-title { font-size: clamp(1.35rem, 3.4vw, 1.6rem); line-height: 1.2; }
+.aii-overview-centered .aii-overview-title { font-size: clamp(1.18rem, 2.8vw, 1.36rem); line-height: 1.22; }
 .aii-overview-centered .aii-overview-sub { margin-top: 9px; }
 .aii-actions-centered { justify-content: center; margin: 0 0 20px; }
 .aii-content .aii-brief-head { margin: 0 0 7px; }

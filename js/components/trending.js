@@ -190,7 +190,7 @@ function trendCardsHead(fetched) {
         <h3 class="trending-topics-title"><span>Trending</span></h3>
         ${fetched ? `<span class="trending-topics-updated">Updated ${escapeHTML(relativeTime(fetched))}</span>` : ''}
       </div>
-      <p class="trending-topics-sub">What the world is searching for right now.</p>
+      <p class="trending-topics-sub">What's being searched for right now.</p>
     </div>`;
 }
 
@@ -328,7 +328,7 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
           <span class="trending-topics-logo">${ICON}</span>
           <h3 class="trending-topics-title"><span>Trending</span></h3>
         </div>
-        <p class="trending-topics-sub">What the world is searching for right now.</p>
+        <p class="trending-topics-sub">What's being searched for right now.</p>
       </div>`;
   }
 
