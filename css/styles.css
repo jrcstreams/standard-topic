@@ -14126,6 +14126,19 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-subtab { flex: none; border: 1px solid var(--color-surface-border); background: #fff; padding: 5px 11px; border-radius: 999px; cursor: pointer; white-space: nowrap; font-family: var(--font-family); font-size: 0.74rem; font-weight: 600; color: var(--color-text-light); transition: background .14s, color .14s, border-color .14s; }
 .aii-subtab:hover { border-color: var(--color-primary); color: var(--color-primary); }
 .aii-subtab.is-active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+/* Tab mode (#3): the section overview as a card (mirrors the News AI Insights
+   "ARTICLE OVERVIEW"). The subtabs already stay put (they're outside .aii-stage,
+   the actual scroll container), so they need no sticky treatment. */
+.aii-tabmode .aii-ovcard { border: 1px solid var(--color-surface-border); border-radius: 12px; background: var(--color-bg, #fff); padding: 13px 15px 14px; margin: 2px 0 14px; }
+.aii-tabmode .aii-ovcard .aii-overview-eyebrow { margin-bottom: 3px; }
+/* Condensed "path · section" bar — sticks to the TOP OF .aii-stage (the brief's
+   scroll container) once the overview card scrolls out (JS toggles .is-on).
+   Collapsed to nothing until then so it overlays the top edge without shifting
+   the brief. top:0 is the stage's scrollport top — right under the subtabs. */
+.aii-condensed { position: sticky; top: 0; z-index: 5; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; width: 100%; text-align: left; border: none; border-bottom: 1px solid var(--color-surface-border); background: var(--color-bg, #fff); padding: 0 2px; max-height: 0; overflow: hidden; opacity: 0; pointer-events: none; cursor: pointer; transition: max-height .2s ease, opacity .15s ease, padding .2s ease; }
+.aii-condensed.is-on { max-height: 64px; opacity: 1; pointer-events: auto; padding: 9px 2px 8px; }
+.aii-condensed-eyebrow { font-size: 0.62rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--color-text-light); }
+.aii-condensed-title { font-family: var(--font-display); font-size: 0.96rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-primary); line-height: 1.2; }
 /* In tab mode the subtabs ARE the path nav, so hide the section menu's back row
    (Back to AI Intelligence + Updated pill). Drilling into a section keeps its
    own "Back to <path>" link. The section header sits directly under the tabs. */

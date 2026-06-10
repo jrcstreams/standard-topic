@@ -114,6 +114,7 @@ export function renderAIIntelligence(container, scope) {
   let view = 'paths';             // 'paths' | 'sections' | 'content'
   let curGroup = null;
   let curIdx = 0;
+  let aiiObserver = null;         // tab-mode: watches the overview card (root = .aii-stage scroller) to toggle the sticky condensed bar
   // Tab mode: on a topic page at mobile width, the paths become a secondary tab
   // bar (under the primary News Feed / AI Intelligence / Web Sources tabs)
   // instead of the flip-nav landing list.
@@ -190,9 +191,21 @@ export function renderAIIntelligence(container, scope) {
     const c = cache[curGroup]; const p = paths.find((x) => x.group === curGroup) || {};
     const s = (c && c.sections[curIdx]) || { name: '', body: '' };
     const desc = (scope.descriptions && scope.descriptions[s.name]) || '';
+    // Tab mode: a condensed "path · section" bar that sticks to the top of the
+    // scrolling brief (.aii-stage is the scroll container — the window doesn't
+    // scroll here) once the overview card scrolls out of view. Collapsed to zero
+    // until an IntersectionObserver (rooted on .aii-stage) reveals it, so it
+    // overlays the top edge without shifting the brief. Tapping it scrolls back up.
+    const condensed = tabMode
+      ? `<button type="button" class="aii-condensed" aria-hidden="true">
+           <span class="aii-condensed-eyebrow">${esc(p.label || '')}</span>
+           <span class="aii-condensed-title">${esc(s.name)}</span>
+         </button>`
+      : '';
     return `<div class="aii-sub aii-content">
+      ${condensed}
       <button type="button" class="aii-back" data-back="sections">${BACK}<span>Back to ${esc(p.label || 'menu')}</span></button>
-      <div class="aii-overview aii-overview-plain">
+      <div class="aii-overview ${tabMode ? 'aii-ovcard' : 'aii-overview-plain'}">
         <div class="aii-overview-eyebrow">${esc(p.label || '')}</div>
         <h3 class="aii-overview-title">${esc(s.name)}</h3>
         ${desc ? `<p class="aii-overview-sub">${esc(desc)}</p>` : ''}
@@ -349,7 +362,29 @@ export function renderAIIntelligence(container, scope) {
     </div>`;
   }
 
+  function teardownSticky() { if (aiiObserver) { aiiObserver.disconnect(); aiiObserver = null; } }
+  // Tab mode: reveal the condensed "path · section" bar once the overview card
+  // scrolls out of the top of the brief. The scroll container is .aii-stage
+  // (overflow:auto) — NOT the window — so the observer is rooted on it and the bar
+  // is position:sticky;top:0 inside it. Tapping the bar scrolls the stage to top.
+  function setupSticky() {
+    teardownSticky();
+    if (!tabMode || view !== 'content' || typeof IntersectionObserver === 'undefined') return;
+    const ov = stage.querySelector('.aii-ovcard');
+    const cond = stage.querySelector('.aii-condensed');
+    if (!ov || !cond) return;
+    aiiObserver = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        const top = e.rootBounds ? e.rootBounds.top : 0;
+        cond.classList.toggle('is-on', !e.isIntersecting && e.boundingClientRect.top <= top + 1);
+      }
+    }, { root: stage, threshold: 0 });
+    aiiObserver.observe(ov);
+    cond.addEventListener('click', () => stage.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
+
   function wire() {
+    setupSticky();
     // Section content: briefly show the generating loader (even when cached)
     // then reveal the brief — gives the AI a moment of presence.
     const bodyEl = stage.querySelector('.aii-content-body[data-loading]');
@@ -462,6 +497,7 @@ export function renderAIIntelligence(container, scope) {
     container._aiiMqHandler = handler;
   }
   return { destroy() {
+    teardownSticky();
     if (container._aiiMq && container._aiiMqHandler) container._aiiMq.removeEventListener('change', container._aiiMqHandler);
     container._aiiMq = container._aiiMqHandler = null;
     container.innerHTML = '';
