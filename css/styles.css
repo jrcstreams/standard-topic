@@ -14115,8 +14115,11 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-intro { margin: 0 0 16px; font-size: 0.9rem; line-height: 1.5; color: var(--color-text-muted); }
 .aii-intro strong { font-weight: 600; color: var(--color-text); }
 .aii-pathrow-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
-.aii-pathrow-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; color: #25324a; letter-spacing: -0.01em; }
-.aii-pathrow-sub { font-size: 0.86rem; color: var(--color-text-muted); }
+/* Match the Web Sources path-row metrics (title 0.92 / sub 0.8 / icon 38·19)
+   so the two side-by-side cards load at the same row height — and thus the
+   same card height — on regular desktop widths. */
+.aii-pathrow-name { font-family: var(--font-display); font-size: 0.92rem; font-weight: 600; color: #25324a; letter-spacing: -0.01em; }
+.aii-pathrow-sub { font-size: 0.8rem; color: var(--color-text-muted); }
 .aii-pathrow-go { margin-left: auto; color: var(--color-text-light); flex: none; display: inline-flex; transition: transform .16s ease, color .14s; }
 .aii-pathrow:hover .aii-pathrow-go { color: var(--color-primary); transform: translateX(3px); }
 
@@ -14322,7 +14325,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-leave-go { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border: none; border-radius: 999px; background: var(--color-primary); color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; transition: background .14s; }
 .aii-leave-go:hover { background: var(--color-primary-dark, #0f1a2e); }
 .aii-leave-go svg { stroke: #fff; }
-@media (max-width: 560px) { .aii-pathrow { padding: 14px 18px; } .aii-pathrow-name { font-size: 1.02rem; } }
+@media (max-width: 560px) { .aii-pathrow { padding: 14px 18px; } }
 
 /* ===== Unified AI Insight modal ========================================= */
 .im-overlay { position: fixed; inset: 0; z-index: 1200; background: rgba(15, 26, 46, 0.46); }
