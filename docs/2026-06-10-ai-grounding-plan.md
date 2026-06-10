@@ -99,3 +99,86 @@ quality where it matters without a blanket cost bump.
 2. Which shortcuts/sections do we cut vs. reshape? (C)
 3. Roll the new prompts out gradually (cron) or force-regenerate now? (D)
 4. Worth upgrading the model for the broad overviews only? (E)
+
+---
+
+# Update — session 2 (decisions: do A, B, D; hold C, E)
+
+## A — RSS headlines fed into overviews ✅ SHIPPED
+`overviewHeadlines()` now pulls recent real stories from `news_stories` and feeds
+them into the overview prompt as **"CURRENT HEADLINES … primary source material"**:
+- **home / Global Headlines:** newest story per topic (DISTINCT ON topic_id, 36h
+  window, 16 items) so the global view spans many topics instead of one feed.
+- **a topic:** that topic's 10 newest stories (96h window).
+- **Learn lens:** skipped (evergreen — live headlines aren't relevant).
+This anchors the synthesis to concrete current stories (kills the "a natural
+disaster in South America" hedge) and gives the model real titles/URLs to name.
+No added cost (same call). Takes effect on next (re)generation.
+
+## B — Global Headlines format
+A delivers the **substance** of B: the section is now built from real headlines +
+the specificity rule, so it should stop hedging. The *pure format swap* (render 5
+headlines as a list with one AI sentence each, instead of a synthesized paragraph)
+is a bigger render-path change. **Recommend:** look at the post-A output first; if
+it still reads too synthesized, we do the list format as a focused follow-up. Not
+building the format swap blind before seeing A's effect.
+
+## D — rollout timing + tracking ✅ TOOLING SHIPPED
+**Cron cadence:** `/api/cron/pregenerate` runs **every 3h** (8×/day), ~20–30
+grounded generations per run (230s wall-clock budget, ~10s each).
+
+**Natural ("gradual") refresh windows — how long to fully roll the new prompts in:**
+| Lens | Refresh window | Gradual rollout time |
+|---|---|---|
+| discover, topic-specific | > 72h | **~3 days** |
+| analyze | > 168h | **~7 days** |
+| **learn** | **never** (evergreen) | **never — needs a force/purge** |
+| trends (current snapshot) | > 24h | ~1 day |
+| news briefs | not refreshed | only NEW stories get new prompt |
+
+So gradual covers discover/topic-specific/analyze within a week, but **Learn and
+existing news briefs never update on their own.**
+
+**To force a full flush (incl. Learn)** — pick one (both need `Authorization: Bearer $CRON_SECRET`):
+- `…/api/cron/pregenerate?type=refresh&force=1&n=120` — re-grounds every overview +
+  current trend, stalest first, paced; run a few times until `refreshed` drops to 0.
+- `…/api/cron/pregenerate?type=purge&scope=overviews` — deletes overview rows; each
+  regenerates fresh on its next view or cron pass (brief first-view latency).
+
+**Watch the rollout (new `type=status`, read-only, no cost):**
+`…/api/cron/pregenerate?type=status&since=2026-06-10T13:00:00Z`
+→ returns `freshByGroup` (regenerated since the cutoff), `totalByGroup`, and
+`recentlyRegenerated` (last 80 keys with timestamps). Pass `since` = the prompt
+deploy time to see exactly which briefs are on the new prompts.
+
+**Recommendation:** gradual is fine for discover/topic-specific/analyze, but run one
+`force=1` sweep so Learn + stale news also pick up the new prompts; use `type=status`
+to confirm coverage and to review which generated.
+
+## E — cheaper/stronger model? (research)
+**The "6×" worry was based on stale pricing.** Current (2026) API pricing:
+| Model | $/1M in | $/1M out | Native web grounding? |
+|---|---|---|---|
+| Gemini 2.5 Flash-Lite (current) | 0.10 | 0.40 | ✅ Google Search, 1,500/day free |
+| Gemini 3.1 Flash-Lite | 0.10 | 0.40 | ✅ |
+| Gemini 2.5 Flash | ~0.15 | ~0.60 | ✅ (~1.5× lite, **not 6×**) |
+| Gemini 3 Flash | ~0.50 | ~3.00 | ✅ |
+| DeepSeek V3 | ~0.27 | ~1.10 | ❌ no built-in web search |
+| Kimi K2.x | (unconfirmed) | — | ❌ |
+
+**The real lock-in isn't the token price — it's Gemini's free Google Search
+grounding (1,500 queries/day).** DeepSeek / Kimi / open models are cheap per token
+but have **no native web grounding**, so switching means losing live grounding +
+citations and building our own retrieval (a separate, likely paid, search API) —
+which would cost more and add complexity, not less.
+
+**Recommendation:**
+- Stay on Gemini for the free grounding.
+- If we want richer synthesis, the cheap path is bumping the broad discover
+  overviews to **Gemini 2.5 Flash (~1.5×, not 6×)** — affordable, keeps grounding.
+- Only consider DeepSeek/Kimi if we fully own retrieval (feed sources, which A
+  already starts) AND accept a separate search bill. Possible later, not a win now.
+
+Sources: [DeepSeek API pricing](https://api-docs.deepseek.com/quick_start/pricing) ·
+[LLM pricing comparison 2026](https://benchlm.ai/llm-pricing) ·
+[DeepSeek V4/Gemini/Kimi benchmark & pricing](https://aicybr.com/blog/deepseek-pricing).

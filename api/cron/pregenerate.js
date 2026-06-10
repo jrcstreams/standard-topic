@@ -96,6 +96,27 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({ ok: true, purged, types });
   }
 
+  // type=status — read-only rollout tracker. Reports how many briefs have been
+  // (re)generated SINCE a cutoff (?since=ISO, default last 24h) vs the totals,
+  // plus a list of the most recently regenerated keys — so a prompt change can
+  // be watched as it rolls out via the gradual refresh. No generation, no cost.
+  if (which === 'status') {
+    const since = (req.query.since || '').trim() || new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+    try {
+      const freshByGroup = await sql.query(
+        `SELECT entity_type, insight, count(*)::int AS n FROM ai_insights
+          WHERE created_at >= $1 GROUP BY 1,2 ORDER BY 1,2`, [since]);
+      const totalByGroup = await sql.query(
+        `SELECT entity_type, insight, count(*)::int AS n FROM ai_insights GROUP BY 1,2 ORDER BY 1,2`);
+      const recentlyRegenerated = await sql.query(
+        `SELECT entity_type, entity_key, insight, to_char(created_at, 'YYYY-MM-DD HH24:MI') AS at
+           FROM ai_insights WHERE created_at >= $1 ORDER BY created_at DESC LIMIT 80`, [since]);
+      return res.status(200).json({ ok: true, since, freshByGroup, totalByGroup, recentlyRegenerated });
+    } catch (e) {
+      return res.status(500).json({ error: String((e && e.message) || e) });
+    }
+  }
+
   const call = async (payload) => {
     try { const r = await generateInsight(sql, payload); return !!(r && r.content); }
     catch (_) { return false; }
