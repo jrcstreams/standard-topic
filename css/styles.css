@@ -13457,16 +13457,19 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
     margin: 0; padding: 0; display: flex; gap: 10px; flex: 0 1 auto; justify-content: flex-end; background: transparent; border: none; border-radius: 0;
   }
   #section-newsfeed .newsfeed-card .nf-search-wrap { width: 260px; max-width: 100%; }
-  #section-newsfeed .newsfeed-card .newsfeed-scroll-wrap { padding: 8px 18px 6px; }
+  /* Stories run the full card width — drop the scroll-wrap's horizontal padding
+     so each story's clickable link + hover fill span edge-to-edge (no dead,
+     un-clickable gutter, #244). The text inset moves onto the link/foot so titles
+     still align with the header. Empty/loading states keep an inset of their own. */
+  #section-newsfeed .newsfeed-card .newsfeed-scroll-wrap { padding: 8px 0 6px; }
   #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 18px 14px; }
-  /* Each story spans the full card width — the clickable link + hover fill run
-     edge-to-edge (no dead, un-clickable gutter on either side, #244). The card
-     full-bleeds past the scroll-wrap's 18px padding; the text inset moves onto
-     the link/foot so titles still align with the header. */
-  #section-newsfeed .newsfeed-card .news-card { margin-left: -18px; margin-right: -18px; }
   #section-newsfeed .newsfeed-card .news-card-link,
   #section-newsfeed .newsfeed-card .news-card-foot,
   #section-newsfeed .newsfeed-card .news-share-panel-inner { padding-left: 18px; padding-right: 18px; }
+  #section-newsfeed .newsfeed-card .news-empty,
+  #section-newsfeed .newsfeed-card .news-loading,
+  #section-newsfeed .newsfeed-card .news-error,
+  #section-newsfeed .newsfeed-card .newsfeed-placeholder { padding-left: 18px; padding-right: 18px; }
 }
 /* News Feed icon tile — matches the AI Intelligence / Trending header lockups. */
 .newsfeed-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
