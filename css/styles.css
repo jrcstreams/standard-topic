@@ -5547,25 +5547,19 @@ body.app-mode .topic-layout {
   /* Single-column stack: Intelligence (full width) above News Feed (full
      width), matching the homepage's full-width Trending. The old two-column
      (Topic Intelligence | News Feed) split is retired. */
+  /* Topic pages: AI Intelligence, then Web Sources, then News Feed — each a
+     FULL-WIDTH stacked card (the old 35/65 two-column split is retired). The
+     path/category lists inside lay out as a horizontal grid (see below). */
   .topic-layout {
-    /* Topic pages: Web Sources ~35% | AI Intelligence ~65%. News Feed +
-       Related span full width below. */
-    grid-template-columns: minmax(0, 35fr) minmax(0, 65fr);
-    column-gap: 1.8rem; row-gap: 1.8rem;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 1.8rem;
     align-items: start;
   }
-  /* Match the two cards' heights on load (stretch the row; cards fill it). */
-  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-websources,
-  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-shortcuts { align-self: stretch; }
-  .topic-layout:not(.is-custom) > #section-websources .ws,
-  .topic-layout:not(.is-custom) > #section-shortcuts .aii { height: 100%; }
-  /* Custom-search pages keep their single column. */
   .topic-layout.is-custom { grid-template-columns: minmax(0, 1fr); }
-  /* Topic pages: Web Sources | AI Intelligence side by side; News + Related full. */
-  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-websources { grid-column: 1; position: relative; margin-bottom: 0; }
-  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-shortcuts { grid-column: 2; position: relative; margin-bottom: 0; }
-  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-newsfeed { grid-column: 1 / -1; position: relative; }
-  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-related { grid-column: 1 / -1; }
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-shortcuts { grid-column: 1; order: 1; position: relative; margin-bottom: 0; }
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-websources { grid-column: 1; order: 2; position: relative; margin-bottom: 0; }
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-newsfeed { grid-column: 1; order: 3; position: relative; }
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-related { grid-column: 1; order: 4; }
   /* Home 2-column layout lives in the body.home-search block below (higher
      specificity); kept there as the single source of truth. */
   /* Topic pages: stacked sections are taller than the viewport, so the
@@ -14675,3 +14669,27 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 }
 .ti-ai-btn:hover { border-color: var(--color-primary); background: var(--color-bg-light); }
 .ti-ai-result:not(:empty) { margin-top: 8px; }
+
+/* ===== Desktop overhaul: full-width AI Intelligence / Web Sources cards with
+   their path & category lists as a responsive HORIZONTAL grid (auto-fit →
+   3–4 across on wide screens, collapsing to 2-up then 1-up as width drops).
+   The 1px grid gap over a surface-border background paints seamless cell
+   dividers (matches the mockup). Desktop only — mobile tab nav is untouched. */
+@media (min-width: 900px) {
+  .aii-pathlist, .ws-pathlist {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
+    gap: 1px;
+    margin: 0 -16px;
+    background: var(--color-surface-border);
+  }
+  .aii-pathlist > .aii-pathrow, .ws-pathlist > .ws-pathrow {
+    background: #fff;
+    border-bottom: none;
+    padding: 16px 18px;
+  }
+  /* Opaque hover tint (white-based) so the grey grid bg never shows through. */
+  .aii-pathlist > .aii-pathrow:hover, .ws-pathlist > .ws-pathrow:hover {
+    background: color-mix(in srgb, var(--color-primary) 5%, #fff);
+  }
+}
