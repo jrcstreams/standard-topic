@@ -13842,6 +13842,16 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* The tab controller toggles `hidden` on result sections; ensure that wins over
    each section's own display value (cards are flex/grid). */
 .search-panel-results-inner [hidden] { display: none !important; }
+/* Each tab already names its section, so the in-content section header is
+   redundant — hide it in the modal's tabular nav (the inline homepage search
+   keeps headers since it stacks all sections). */
+.search-panel--modal .search-panel-results-inner .topic-intelligence-panel > .sidebar-card-header,
+.search-panel--modal .search-panel-results-inner .websources-section > .sidebar-card-header,
+.search-panel--modal .search-panel-results-inner .search-news-header { display: none; }
+/* With the header gone, drop the section's top margin so its content sits
+   directly below the sticky tab bar (which supplies its own bottom spacing). */
+.search-panel--modal .search-panel-results-inner .shortcuts-sidebar,
+.search-panel--modal .search-panel-results-inner .websources-section { margin-top: 0; }
 .search-panel-results-inner > .topic-intelligence-panel,
 .search-panel-results-inner > .websources-section,
 .search-panel-results-inner .search-trend-section,
