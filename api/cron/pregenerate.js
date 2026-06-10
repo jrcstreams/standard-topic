@@ -12,7 +12,7 @@
 //     (discover/learn/analyze/topic-specific) without an overview.
 //   Refresh (stalest first, via generateInsight refresh flag):
 //   - discover/topic-specific overviews older than 72h, analyze older than
-//     168h/1wk (learn is evergreen — never refreshed). Windows are long on
+//     168h/1wk, learn older than 336h/2wk (evergreen — slow cadence). Windows are long on
 //     purpose: each refresh is a fresh grounded generation, and re-grounding
 //     slow-changing briefs is the main thing that burns Google-Search quota.
 //   - any lens row whose content lacks "## " sections (one-time migration of
@@ -212,6 +212,8 @@ module.exports = async function handler(req, res) {
                  AND created_at < now() - interval '72 hours')
              OR (entity_type='shortcut' AND insight='analyze'
                  AND created_at < now() - interval '168 hours')
+             OR (entity_type='shortcut' AND insight='learn'
+                 AND created_at < now() - interval '336 hours')
              OR (entity_type='shortcut' AND insight IN ('discover','learn','analyze','topic-specific')
                  AND content NOT LIKE '%## %')
              OR (entity_type='trend' AND insight='brief'

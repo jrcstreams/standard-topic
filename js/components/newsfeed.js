@@ -492,13 +492,14 @@ function startFeed(ctx) {
       foot.innerHTML = state.stories.length ? `<p class="newsfeed-end">You've reached the end of the archive.</p>` : '';
       return;
     }
-    foot.innerHTML = `<button type="button" class="newsfeed-loadmore"${state.loading ? ' disabled' : ''}>${state.loading ? 'Loading…' : 'Load older stories'}</button>`;
+    foot.innerHTML = `<button type="button" class="newsfeed-loadmore"${state.loading ? ' disabled' : ''}>${state.loading ? 'Loading…' : 'Load more stories'}</button>`;
     foot.querySelector('.newsfeed-loadmore')?.addEventListener('click', loadOlder);
   }
 
   function renderList() {
     if (state.noFeed) {
       scrollWrap.innerHTML = `<div class="newsfeed-placeholder"><p>News feed coming soon for this topic.</p></div>`;
+      scrollWrap.appendChild(foot);
       renderFoot();
       return;
     }
@@ -509,6 +510,10 @@ function startFeed(ctx) {
       scrollWrap.innerHTML = `<div class="news-list">${vis.map(newsCardHTML).join('')}</div>`;
       wireNewsAI(scrollWrap);
     }
+    // Foot (Load more / end-of-archive) lives at the END of the scroll content,
+    // so in tab mode it only appears once you scroll to the bottom of the list
+    // — not pinned-and-visible at first load.
+    scrollWrap.appendChild(foot);
     renderFoot();
   }
 
@@ -520,6 +525,7 @@ function startFeed(ctx) {
 
   async function loadOlder() {
     if (state.loading || state.exhausted) return;
+    const keepTop = scrollWrap.scrollTop; // preserve position (button is in-flow now)
     state.loading = true; renderFoot();
     try {
       const { stories, nextBefore } = await fetchArchive(slug, { q: state.q, before: oldestBefore(), limit: 30 });
@@ -527,6 +533,7 @@ function startFeed(ctx) {
       if (!nextBefore || stories.length === 0) state.exhausted = true;
       state.loading = false;
       refreshSources(); renderList();
+      scrollWrap.scrollTop = keepTop;
     } catch (_) {
       state.loading = false;
       foot.innerHTML = `<button type="button" class="newsfeed-loadmore">Retry</button>`;
