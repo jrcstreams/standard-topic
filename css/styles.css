@@ -13223,6 +13223,11 @@ body.home-search #section-shortcuts .shortcuts-scroll-wrap { padding-bottom: 0; 
   body.home-search #home-trending { grid-column: 1; order: 2; margin: 0 0 1.8rem; }
   body.home-search #section-aii-home { grid-column: 1; order: 3; margin: 0 0 1.8rem; }
   body.home-search #section-newsfeed { grid-column: 1; order: 4; }
+  /* Trending is full width now — lay its cards out horizontally too (instead of
+     the narrow-column single file it had in the old 2-column layout). */
+  body.home-search #home-trending .trend-card-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  }
 }
 /* Cards size to content + the page scrolls. */
 body.home-search .layout-section,
