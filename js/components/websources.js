@@ -43,7 +43,7 @@ export function renderWebSources(container, topic) {
     <div class="ws">
       <div class="ws-head">
         <div class="ws-head-top"><span class="ws-logo">${LOGO}</span><span class="ws-brand">Web Sources</span></div>
-        <p class="ws-headsub">Search platforms and primary content sources.</p>
+        <p class="ws-headsub">Search platforms and content sources.</p>
       </div>
       <div class="ws-stage"></div>
     </div>`;

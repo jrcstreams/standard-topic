@@ -38,7 +38,9 @@ function splitSections(content) {
   const re = /^[ \t]*(?:\*\*)?#{2,3}\s+(.+?)\s*$/gm;
   const idx = []; let m;
   while ((m = re.exec(text))) {
-    const name = m[1].replace(/\*\*/g, '').replace(/[:#\s]+$/, '').trim();
+    // The model sometimes echoes the generation scaffold ("Name — section
+    // brief: <prompt>") into the header; keep only the clean section name.
+    const name = m[1].replace(/\*\*/g, '').replace(/\s*[—–-]\s*section brief\s*:.*/i, '').replace(/[:#\s]+$/, '').trim();
     idx.push({ name, start: m.index, headEnd: m.index + m[0].length });
   }
   if (!idx.length) return [];
@@ -159,22 +161,22 @@ export function renderAIIntelligence(container, scope) {
     const desc = (scope.descriptions && scope.descriptions[s.name]) || '';
     return `<div class="aii-sub aii-content">
       <button type="button" class="aii-back" data-back="sections">${BACK}<span>Back to ${esc(p.label || 'menu')}</span></button>
-      <div class="aii-overview aii-overview-centered">
+      <div class="aii-overview aii-overview-plain">
         <div class="aii-overview-eyebrow">${esc(p.label || '')}</div>
         <h3 class="aii-overview-title">${esc(s.name)}</h3>
         ${desc ? `<p class="aii-overview-sub">${esc(desc)}</p>` : ''}
       </div>
-      <div class="aii-actions aii-actions-centered">
-        <button type="button" class="aii-actbtn" data-acc="sources" aria-expanded="false"><span>Sources and citations</span>${CHEV}</button>
-        <button type="button" class="aii-actbtn" data-acc="explore" aria-expanded="false"><span>Explore further with AI</span>${CHEV}</button>
-        <button type="button" class="aii-actbtn" data-acc="web" aria-expanded="false"><span>Explore further on web</span>${CHEV}</button>
+      <div class="aii-actions aii-actions-row">
+        <button type="button" class="aii-actbtn" data-acc="sources" aria-expanded="false"><span>Sources &amp; citations</span>${CHEV}</button>
+        <button type="button" class="aii-actbtn" data-acc="explore" aria-expanded="false"><span>Explore with AI</span>${CHEV}</button>
+        <button type="button" class="aii-actbtn" data-acc="web" aria-expanded="false"><span>Explore on web</span>${CHEV}</button>
       </div>
       <div class="aii-acc" data-accbody="sources"></div>
       <div class="aii-acc" data-accbody="explore"></div>
       <div class="aii-acc" data-accbody="web"></div>
       <div class="aii-brief-head">${SPARK}<span>AI Brief</span></div>
       <p class="aii-brief-note">The below is an AI-generated summary of the topic at hand. Please verify important details with the linked sources.</p>
-      <hr class="aii-rule aii-rule-thick">
+      <hr class="aii-rule">
       <div class="aii-content-body" data-loading="1">${genLoaderHTML()}</div>
     </div>`;
   }
@@ -376,5 +378,22 @@ export function renderAIIntelligence(container, scope) {
   } else {
     go('paths', 'fwd');
   }
-  return { destroy() { container.innerHTML = ''; } };
+  // Responsive: tabMode is fixed at render, so without this the first-render
+  // layout (desktop paths-grid OR mobile secondary-tab nav) would stick across
+  // a viewport resize. Re-render whenever the breakpoint is crossed.
+  if (typeof window !== 'undefined' && window.matchMedia && scope.topic !== 'home') {
+    if (container._aiiMq && container._aiiMqHandler) {
+      container._aiiMq.removeEventListener('change', container._aiiMqHandler);
+    }
+    const mq = window.matchMedia('(max-width: 899.98px)');
+    const handler = () => renderAIIntelligence(container, scope);
+    mq.addEventListener('change', handler);
+    container._aiiMq = mq;
+    container._aiiMqHandler = handler;
+  }
+  return { destroy() {
+    if (container._aiiMq && container._aiiMqHandler) container._aiiMq.removeEventListener('change', container._aiiMqHandler);
+    container._aiiMq = container._aiiMqHandler = null;
+    container.innerHTML = '';
+  } };
 }

@@ -224,10 +224,10 @@ function briefSkeleton(label) {
 // (1) lists the brief's cited sources (a "View original article" row leads it on
 // news). (3) opens the full Web Sources platform picker for the term.
 function actionsHTML() {
-  return `<div class="im-actions">
-      <button type="button" class="im-actbtn" data-panel="sources" aria-expanded="false"><span>Sources and citations</span>${CHEV}</button>
-      <button type="button" class="im-actbtn im-actbtn-primary" data-panel="explore" aria-expanded="false"><span>Explore further with AI</span>${CHEV}</button>
-      <button type="button" class="im-actbtn" data-panel="web" aria-expanded="false"><span>Explore further on web</span>${CHEV}</button>
+  return `<div class="im-actions im-actions-row">
+      <button type="button" class="im-actbtn" data-panel="sources" aria-expanded="false"><span>Sources &amp; citations</span>${CHEV}</button>
+      <button type="button" class="im-actbtn im-actbtn-primary" data-panel="explore" aria-expanded="false"><span>Explore with AI</span>${CHEV}</button>
+      <button type="button" class="im-actbtn" data-panel="web" aria-expanded="false"><span>Explore on web</span>${CHEV}</button>
     </div>
     <div class="im-acc" data-body="sources" id="im-sources-panel"></div>
     <div class="im-acc" data-body="explore" id="im-explore-panel"></div>
@@ -521,7 +521,7 @@ function splitSections(content) {
   const re = /^[ \t]*(?:\*\*)?#{2,3}\s+(.+?)\s*$/gm;
   const idx = []; let m;
   while ((m = re.exec(text))) {
-    const name = m[1].replace(/\*\*/g, '').replace(/[:#\s]+$/, '').trim();
+    const name = m[1].replace(/\*\*/g, '').replace(/\s*[—–-]\s*section brief\s*:.*/i, '').replace(/[:#\s]+$/, '').trim();
     idx.push({ name, start: m.index, headEnd: m.index + m[0].length });
   }
   if (!idx.length) return [];

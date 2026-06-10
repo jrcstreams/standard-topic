@@ -15,9 +15,9 @@ import { initPromptModal } from './components/prompt-modal.js?v=20260609-revamp4
 import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260609-revamp71';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260608-revamp9';
-import { initInsightModal } from './components/insight-modal.js?v=20260609-revamp72';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260609-revamp72';
-import { renderWebSources } from './components/websources.js?v=20260609-revamp71';
+import { initInsightModal } from './components/insight-modal.js?v=20260609-revamp73';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260609-revamp73';
+import { renderWebSources } from './components/websources.js?v=20260609-revamp73';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260609-revamp71';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260606-polish46';
@@ -2605,8 +2605,8 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       <div class="search-panel-hero"><div class="search-panel-hero-inner">
         ${isModal
           ? `<h2 class="search-panel-title">Search</h2>
-             <p class="search-panel-tagline">News, Resources and AI Knowledge.</p>`
-          : `<h2 class="search-panel-title">News, Resources and AI Knowledge.</h2>`}
+             <p class="search-panel-tagline">News, Resources and AI Knowledge</p>`
+          : `<h2 class="search-panel-title">News, Resources and AI Knowledge</h2>`}
       </div></div>
       <div class="search-panel-barrow">
         <form class="search-panel-form" role="search" autocomplete="off">

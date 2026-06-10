@@ -1,9 +1,9 @@
 {
   "categories": [
-    { "key": "search", "label": "Search & reference" },
+    { "key": "search", "label": "Search & Reference" },
     { "key": "noai", "label": "No AI Web Sources" },
-    { "key": "social", "label": "Social, discussion & writing" },
-    { "key": "media", "label": "Audio & video" }
+    { "key": "social", "label": "Social, Discussion & Writing" },
+    { "key": "media", "label": "Audio & Video" }
   ],
   "searches": [
     {

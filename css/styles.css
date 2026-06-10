@@ -13440,8 +13440,8 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
   #section-newsfeed .newsfeed-card .newsfeed-filters {
     margin: 0; padding: 0; display: flex; gap: 10px; width: 100%; background: transparent; border: none; border-radius: 0;
   }
-  /* Wider, left-aligned search field — sits strong below the heading. */
-  #section-newsfeed .newsfeed-card .nf-search-wrap { max-width: 560px; }
+  /* Left-aligned search field below the heading — reasonable, responsive width. */
+  #section-newsfeed .newsfeed-card .nf-search-wrap { max-width: 420px; }
   #section-newsfeed .newsfeed-card .newsfeed-scroll-wrap { padding: 8px 18px 6px; }
   #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 18px 14px; }
 }
@@ -14069,7 +14069,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    under the primary News Feed / AI Intelligence / Web Sources tabs. Same family
    as the primary tabs but pill-shaped + a touch quieter. Scrolls if it
    overflows so it always stays one line. */
-.aii-subtabs { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; padding: 8px 0 14px; margin: 0; border-bottom: 1px solid var(--color-surface-border); }
+.aii-subtabs { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; padding: 14px 0 14px; margin: 0; border-bottom: 1px solid var(--color-surface-border); }
 .aii-subtabs::-webkit-scrollbar { display: none; }
 .aii-subtab { flex: none; border: 1px solid var(--color-surface-border); background: #fff; padding: 5px 11px; border-radius: 999px; cursor: pointer; white-space: nowrap; font-family: var(--font-family); font-size: 0.74rem; font-weight: 600; color: var(--color-text-light); transition: background .14s, color .14s, border-color .14s; }
 .aii-subtab:hover { border-color: var(--color-primary); color: var(--color-primary); }
@@ -14129,21 +14129,26 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-back:hover span { text-decoration: underline; }
 /* Path-menu header: the path's own icon + title + subtext, with a full-bleed
    divider below that serves as the top border of the first item. */
-.aii-subhead { display: flex; align-items: center; gap: 14px; margin: 0 -16px; padding: 6px 18px 14px; border-bottom: 1px solid var(--color-surface-border); }
+/* Carried-over section header (drill-in): a distinct, quiet gray band so it
+   reads as a header for the rows below — not another clickable row. Smaller
+   than the rows; the colored path icon still anchors it. */
+.aii-subhead { display: flex; align-items: center; gap: 12px; margin: 0 -16px; padding: 11px 18px; background: #f3f5f9; border-top: 1px solid var(--color-surface-border); border-bottom: 1px solid var(--color-surface-border); }
 /* No bg/color here — the aii-icon-{group} accent class (Discover blue, Learn
    green, Analysis orange, …) provides them so the path's color is retained
    when you drill into its section menu. */
-.aii-subhead-icon { display: inline-flex; width: 38px; height: 38px; flex: none; align-items: center; justify-content: center; border-radius: 10px; }
-.aii-subhead-icon svg { width: 19px; height: 19px; }
-.aii-subhead-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
+.aii-subhead-icon { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 8px; }
+.aii-subhead-icon svg { width: 16px; height: 16px; }
+.aii-subhead-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
 .aii-subhead-titlerow { display: flex; align-items: center; gap: 10px; }
-.aii-subhead-name { font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; color: #25324a; letter-spacing: -0.012em; }
-.aii-subhead-sub { font-size: 0.86rem; color: var(--color-text-muted); }
+.aii-subhead-name { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: #25324a; letter-spacing: -0.012em; }
+.aii-subhead-sub { font-size: 0.8rem; color: var(--color-text-muted); }
 .aii-updated { margin-left: auto; font-size: 0.66rem; font-weight: 500; color: #6b7689; background: #eef1f6; padding: 0.22rem 0.5rem; border-radius: 6px; white-space: nowrap; }
 
 /* Full-bleed menu rows (match the path list): divider below each, content
    aligned with the header icon (18px), full-width hover. */
 .aii-menu { display: grid; gap: 0; margin: 0 -16px; }
+.aii-menu > .aii-menu-row:last-child,
+.aii-pathlist > .aii-pathrow:last-child { border-bottom: none; }
 .aii-menu-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; padding: 14px 18px; border: none; border-bottom: 1px solid var(--color-surface-border); background: none; cursor: pointer; font-family: var(--font-family); transition: background .14s; }
 .aii-menu-row:hover { background: color-mix(in srgb, var(--color-primary) 4.5%, transparent); }
 .aii-menu-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
@@ -14161,7 +14166,11 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .ws-logo svg { width: 14px; height: 14px; }
 .ws-brand { font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: var(--color-text); letter-spacing: -0.015em; }
 .ws-headsub { margin: 0; font-size: 0.85rem; line-height: 1.45; color: var(--color-text-muted); }
-.ws-stage { padding: 6px 16px 16px; }
+/* No vertical stage padding — the rows sit flush under the header and flush to
+   the card's rounded bottom (no orphan gap above the first / below the last). */
+.ws-stage { padding: 0 16px; }
+.ws-pathlist > .ws-pathrow:last-child,
+.ws-srclist > .ws-srcrow:last-child { border-bottom: none; }
 .ws-empty { font-size: 0.85rem; color: var(--color-text-muted); padding: 8px 2px; }
 /* Category list — full-bleed rows + hover + dividers (matches the AI paths). */
 .ws-pathlist { display: flex; flex-direction: column; margin: 0 -16px; }
@@ -14170,8 +14179,8 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .ws-pathrow-icon { display: inline-flex; width: 38px; height: 38px; flex: none; align-items: center; justify-content: center; border-radius: 10px; background: var(--color-bg-light); color: var(--color-primary); }
 .ws-pathrow-icon svg { width: 19px; height: 19px; }
 .ws-pathrow-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
-.ws-pathrow-name { font-family: var(--font-display); font-size: 0.98rem; font-weight: 600; color: #25324a; letter-spacing: -0.01em; }
-.ws-pathrow-sub { font-size: 0.86rem; color: var(--color-text-muted); }
+.ws-pathrow-name { font-family: var(--font-display); font-size: 0.92rem; font-weight: 600; color: #25324a; letter-spacing: -0.01em; }
+.ws-pathrow-sub { font-size: 0.8rem; color: var(--color-text-muted); }
 .ws-pathrow > svg:last-child { margin-left: auto; color: var(--color-text-light); flex: none; transition: transform .16s ease, color .14s; }
 .ws-pathrow:hover > svg:last-child { color: var(--color-primary); transform: translateX(3px); }
 /* Category → its sources (the next path). */
@@ -14179,12 +14188,12 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .ws-back svg { width: 15px; height: 15px; color: #1d4ed8; }
 .ws-back:hover { color: #1e40af; }
 .ws-back:hover span { text-decoration: underline; text-underline-offset: 2px; }
-.ws-subhead { display: flex; align-items: center; gap: 14px; margin: 0 -16px; padding: 0 18px 14px; border-bottom: 1px solid var(--color-surface-border); }
-.ws-subhead-icon { display: inline-flex; width: 38px; height: 38px; flex: none; align-items: center; justify-content: center; border-radius: 10px; background: var(--color-bg-light); color: var(--color-primary); }
-.ws-subhead-icon svg { width: 19px; height: 19px; }
-.ws-subhead-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.ws-subhead-name { font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; color: #25324a; letter-spacing: -0.012em; }
-.ws-subhead-sub { font-size: 0.86rem; color: var(--color-text-muted); }
+.ws-subhead { display: flex; align-items: center; gap: 12px; margin: 0 -16px; padding: 11px 18px; background: #f3f5f9; border-top: 1px solid var(--color-surface-border); border-bottom: 1px solid var(--color-surface-border); }
+.ws-subhead-icon { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-bg-light); color: var(--color-primary); }
+.ws-subhead-icon svg { width: 16px; height: 16px; }
+.ws-subhead-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.ws-subhead-name { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: #25324a; letter-spacing: -0.012em; }
+.ws-subhead-sub { font-size: 0.8rem; color: var(--color-text-muted); }
 .ws-srclist { display: flex; flex-direction: column; margin: 0 -16px; }
 .ws-srcrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; text-decoration: none; padding: 13px 18px; border-bottom: 1px solid var(--color-surface-border); transition: background .14s; }
 .ws-srcrow:hover { background: color-mix(in srgb, var(--color-primary) 4.5%, transparent); }
@@ -14233,14 +14242,20 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Centered content-view layout (mockup): the overview drops its card and
    centers; the action buttons sit in a centered row above the AI Brief; a
    short AI-summary note + a thicker rounded divider lead into the brief body. */
-.aii-overview-centered { padding: 0; margin: 8px 0 18px; background: none; border: none; border-radius: 0; text-align: center; }
-.aii-overview-centered .aii-overview-eyebrow { color: var(--color-text-muted); margin-bottom: 7px; }
-.aii-overview-centered .aii-overview-title { font-size: clamp(1.18rem, 2.8vw, 1.36rem); line-height: 1.22; }
-.aii-overview-centered .aii-overview-sub { margin-top: 9px; }
-.aii-actions-centered { justify-content: center; margin: 0 0 20px; }
+/* Left-aligned content overview (the card drops its tinted box; eyebrow/title/
+   sub read down the left edge). */
+.aii-overview-plain { padding: 0; margin: 6px 0 14px; background: none; border: none; border-radius: 0; text-align: left; }
+.aii-overview-plain .aii-overview-eyebrow { color: var(--color-text-muted); margin-bottom: 6px; }
+.aii-overview-plain .aii-overview-title { font-size: 1.2rem; line-height: 1.24; }
+.aii-overview-plain .aii-overview-sub { margin-top: 7px; }
+/* Three action chips on ONE line — equal-width, shrink-to-fit (font scales down
+   responsively), label ellipsizes before it ever wraps. */
+.aii-actions-row { flex-wrap: nowrap; gap: 6px; margin: 0 0 18px; }
+.aii-actions-row .aii-actbtn { flex: 1 1 0; min-width: 0; justify-content: center; gap: 4px; padding: 7px 9px; font-size: clamp(0.68rem, 1.7vw, 0.78rem); white-space: nowrap; overflow: hidden; }
+.aii-actions-row .aii-actbtn span { overflow: hidden; text-overflow: ellipsis; }
+.aii-actions-row .aii-actbtn .aii-chev { flex: none; }
 .aii-content .aii-brief-head { margin: 0 0 7px; }
 .aii-brief-note { margin: 0; font-size: 0.86rem; line-height: 1.5; color: var(--color-text-muted); }
-.aii-rule-thick { border: none; height: 5px; border-radius: 999px; background: color-mix(in srgb, var(--color-surface-border) 85%, transparent); margin: 16px 0 18px; }
 .aii-src-list { display: grid; gap: 5px; }
 .aii-src-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; text-decoration: none; color: var(--color-text); font-size: 0.82rem; transition: border-color .14s, color .14s; }
 .aii-src-row:hover { border-color: var(--color-primary); color: var(--color-primary); }
@@ -14418,6 +14433,12 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .im-actbtn-primary:hover { color: var(--color-primary); border-color: var(--color-primary); background: #eaedf3; }
 .im-actbtn .im-chev { transition: transform .18s; }
 .im-actbtn[aria-expanded="true"] .im-chev { transform: rotate(180deg); }
+/* Three action chips on ONE line (matches the AI Intelligence card) — equal
+   width, font scales down responsively, label ellipsizes before wrapping. */
+.im-actions-row { flex-wrap: nowrap; gap: 6px; }
+.im-actions-row .im-actbtn { flex: 1 1 0; min-width: 0; justify-content: center; gap: 4px; padding: 8px 10px; font-size: clamp(0.7rem, 1.6vw, 0.8rem); white-space: nowrap; overflow: hidden; }
+.im-actions-row .im-actbtn span { overflow: hidden; text-overflow: ellipsis; }
+.im-actions-row .im-actbtn .im-chev { flex: none; }
 .im-acc { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .24s ease; }
 .im-acc.is-open { grid-template-rows: 1fr; padding-top: 10px; }
 .im-acc > * { overflow: hidden; }
