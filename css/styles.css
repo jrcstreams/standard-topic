@@ -14217,6 +14217,17 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-acc.is-open { grid-template-rows: 1fr; padding-top: 10px; }
 .aii-acc > * { overflow: hidden; }
 .aii-rule { border: none; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); margin: 14px 0 14px; }
+/* Centered content-view layout (mockup): the overview drops its card and
+   centers; the action buttons sit in a centered row above the AI Brief; a
+   short AI-summary note + a thicker rounded divider lead into the brief body. */
+.aii-overview-centered { padding: 0; margin: 8px 0 18px; background: none; border: none; border-radius: 0; text-align: center; }
+.aii-overview-centered .aii-overview-eyebrow { color: var(--color-text-muted); margin-bottom: 7px; }
+.aii-overview-centered .aii-overview-title { font-size: clamp(1.35rem, 3.4vw, 1.6rem); line-height: 1.2; }
+.aii-overview-centered .aii-overview-sub { margin-top: 9px; }
+.aii-actions-centered { justify-content: center; margin: 0 0 20px; }
+.aii-content .aii-brief-head { margin: 0 0 7px; }
+.aii-brief-note { margin: 0; font-size: 0.86rem; line-height: 1.5; color: var(--color-text-muted); }
+.aii-rule-thick { border: none; height: 5px; border-radius: 999px; background: color-mix(in srgb, var(--color-surface-border) 85%, transparent); margin: 16px 0 18px; }
 .aii-src-list { display: grid; gap: 5px; }
 .aii-src-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; text-decoration: none; color: var(--color-text); font-size: 0.82rem; transition: border-color .14s, color .14s; }
 .aii-src-row:hover { border-color: var(--color-primary); color: var(--color-primary); }

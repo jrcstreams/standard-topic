@@ -156,21 +156,22 @@ export function renderAIIntelligence(container, scope) {
     const s = (c && c.sections[curIdx]) || { name: '', body: '' };
     const hasSrc = !!(c && c.sources && c.sources.length);
     const desc = (scope.descriptions && scope.descriptions[s.name]) || '';
-    return `<div class="aii-sub">
+    return `<div class="aii-sub aii-content">
       <button type="button" class="aii-back" data-back="sections">${BACK}<span>Back to ${esc(p.label || 'menu')}</span></button>
-      <div class="aii-overview">
+      <div class="aii-overview aii-overview-centered">
         <div class="aii-overview-eyebrow">${esc(p.label || '')}</div>
         <h3 class="aii-overview-title">${esc(s.name)}</h3>
         ${desc ? `<p class="aii-overview-sub">${esc(desc)}</p>` : ''}
       </div>
-      <div class="aii-brief-head">${SPARK}<span>AI Brief</span></div>
-      <div class="aii-actions">
-        ${hasSrc ? `<button type="button" class="aii-actbtn" data-acc="sources" aria-expanded="false"><span>Web Sources</span>${CHEV}</button>` : ''}
+      <div class="aii-actions aii-actions-centered">
         <button type="button" class="aii-actbtn" data-acc="explore" aria-expanded="false"><span>Explore further with AI</span>${CHEV}</button>
+        ${hasSrc ? `<button type="button" class="aii-actbtn" data-acc="sources" aria-expanded="false"><span>Explore further on web</span>${CHEV}</button>` : ''}
       </div>
       ${hasSrc ? '<div class="aii-acc" data-accbody="sources"></div>' : ''}
       <div class="aii-acc" data-accbody="explore"></div>
-      <hr class="aii-rule">
+      <div class="aii-brief-head">${SPARK}<span>AI Brief</span></div>
+      <p class="aii-brief-note">The below is an AI-generated summary of the topic at hand. Please verify important details with the linked sources.</p>
+      <hr class="aii-rule aii-rule-thick">
       <div class="aii-content-body" data-loading="1">${genLoaderHTML()}</div>
     </div>`;
   }

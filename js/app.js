@@ -16,7 +16,7 @@ import { renderTrending, renderTrendingTopics, renderTrendingHome } from './comp
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260608-revamp9';
 import { initInsightModal } from './components/insight-modal.js?v=20260609-revamp67';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260609-revamp64';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260609-revamp70';
 import { renderWebSources } from './components/websources.js?v=20260609-revamp57';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260609-revamp54';
 import { initDiscoverModal } from './components/discover-modal.js';
