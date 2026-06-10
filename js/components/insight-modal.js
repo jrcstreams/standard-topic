@@ -556,7 +556,14 @@ function renderOverview(d) {
       await holdLoader(t0);
       if (panelEl.querySelector('#im-brief') !== briefEl) return;
       if (data && data.content) {
-        sources = data.sources || [];
+        // Overview sources may be a per-section map { name: [...] }; this modal
+        // shows all sections together, so flatten to the de-duped union.
+        const raw = data.sources || [];
+        if (Array.isArray(raw)) sources = raw;
+        else {
+          const seen = new Set();
+          sources = Object.values(raw).flat().filter((s) => s && s.uri && !seen.has(s.uri) && seen.add(s.uri));
+        }
         const sections = splitSections(data.content);
         briefEl.innerHTML = sections.length
           ? sections.map((s, i) => `<details class="im-ovsec"${i === 0 ? ' open' : ''}><summary class="im-ovsec-sum"><span>${esc(s.name)}</span>${CHEV}</summary><div class="im-ovsec-body">${renderBriefBody(s.body, null)}</div></details>`).join('')

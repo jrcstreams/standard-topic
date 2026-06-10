@@ -181,7 +181,18 @@ export function renderAIIntelligence(container, scope) {
     </div>`;
   }
   function sourceRowsHTML() {
-    const src = (cache[curGroup] && cache[curGroup].sources) || [];
+    // sources is either a flat array (news/trend, ungrounded fallback, or older
+    // cached overviews) or a per-section map { sectionName: [...] }. For a map,
+    // show only the current section's sources (falls back to the union if that
+    // section has none, so the list is never wrongly empty).
+    const all = (cache[curGroup] && cache[curGroup].sources) || [];
+    const curName = ((cache[curGroup] && cache[curGroup].sections[curIdx]) || {}).name || '';
+    let src;
+    if (Array.isArray(all)) src = all;
+    else {
+      src = (all && all[curName]) || [];
+      if (!src.length) src = Object.values(all || {}).flat();
+    }
     const seen = new Set(); const rows = [];
     for (const x of src) {
       const uri = x.uri || x.url || '';
