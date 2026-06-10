@@ -14269,8 +14269,8 @@ body.home-mode #sub-header.is-subnav .topic-banner {
   /* Below the equal-thirds breakpoint, size each chip to its own content and
      shrink the chip footprint (font/padding/gap) so all three fit one readable
      line instead of clipping "Explore with AI" / "Explore on web" on phones. */
-  .aii-actions-row, .im-actions-row { justify-content: center; gap: 4px; }
-  .aii-actions-row .aii-actbtn, .im-actions-row .im-actbtn { flex: 0 1 auto; gap: 3px; padding: 7px 8px; font-size: clamp(0.62rem, 2vw, 0.76rem); }
+  .aii .aii-actions-row, .im-panel .im-actions-row { justify-content: center; gap: 4px; }
+  .aii .aii-actions-row .aii-actbtn, .im-panel .im-actions-row .im-actbtn { flex: 0 1 auto; gap: 3px; padding: 7px 8px; font-size: clamp(0.62rem, 2vw, 0.76rem); }
 }
 .aii-content .aii-brief-head { margin: 0 0 7px; }
 .aii-brief-note { margin: 0; font-size: 0.86rem; line-height: 1.5; color: var(--color-text-muted); }
