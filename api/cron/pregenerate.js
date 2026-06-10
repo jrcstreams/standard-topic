@@ -18,18 +18,27 @@
 //   - any lens row whose content lacks "## " sections (one-time migration of
 //     pre-overview prose briefs, learn included),
 //   - trend briefs still in the current US snapshot, older than 24h.
+//   Heal (every run, after fills, before refresh — see runHeal):
+//   - Re-grounds cached briefs that stored NO citations (e.g. generated on a day
+//     the grounding budget was spent). ONLY runs while there's grounding headroom
+//     today, so it's a no-op on budget-spent days and catches up on a later one.
+//     News benefits most (it never refreshes by age). ?type=heal runs it alone.
 // Failed items simply get retried next run (still missing/stale).
 //
 // Auth: Vercel Cron sends `Authorization: Bearer ${CRON_SECRET}`.
-// Manual: ?n=<total> ?type=trends|shortcuts|news|refresh|all
-//   200 — { ok, trends, news, overviews, refreshed, remaining }
+// Manual: ?n=<total> ?type=trends|shortcuts|news|heal|refresh|all
+//   200 — { ok, trends, news, overviews, healed, refreshed, remaining }
 
 const { getSql } = require('../../lib/db');
-const { generateInsight } = require('../../lib/insight-core');
+const { generateInsight, groundingHeadroom } = require('../../lib/insight-core');
 const { resolveSections, AI_LENSES } = require('../../lib/shortcut-sections');
 const topicsData = require('../../data/topics.json');
 
 const NEWS_PER_RUN = 10;
+// Per-run cap on healing sourceless briefs (re-grounding ones that cached with
+// no citations). Bounded like news so a backlog can't starve the rest, and the
+// heal only runs while there's grounding headroom — see runHeal below.
+const HEAL_PER_RUN = 12;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 let invalidateByTag;
@@ -132,8 +141,53 @@ module.exports = async function handler(req, res) {
   const timeLeft = () => Date.now() - startedAt < TIME_BUDGET_MS;
 
   try {
-    let trends = 0; let news = 0; let overviews = 0; let refreshed = 0;
+    let trends = 0; let news = 0; let overviews = 0; let refreshed = 0; let healed = 0;
     let budget = total;
+
+    // Built once and reused by the overview-fill, heal, and refresh phases:
+    // every (scope, group) overview that should exist, keyed for lookup.
+    const candidates = overviewCandidates();
+    const byKey = new Map(candidates.map((c) => [`${c.topic.toLowerCase()}|${c.group}`, c]));
+
+    // Heal sourceless briefs: re-ground cached briefs that stored NO grounding
+    // citations (typically generated on a day the grounding budget was spent).
+    // STRATEGIC: only runs while there's grounding headroom today — otherwise it
+    // would regenerate them ungrounded and STILL get no sources, so it simply
+    // waits for a day with budget. News is the main beneficiary (it never
+    // refreshes by age). OLDEST first: a re-grounded brief gets created_at=now(),
+    // so anything still sourceless (genuinely unsourceable) rotates to the BACK
+    // instead of being retried first forever, starving the fixable ones. The
+    // on-view heal in /api/insight covers freshly-viewed briefs. Returns count.
+    async function runHeal(limit) {
+      if (limit <= 0 || !timeLeft()) return 0;
+      if (!(await groundingHeadroom(sql))) return 0;
+      let rows;
+      try {
+        rows = await sql.query(
+          `SELECT ai.entity_type, ai.entity_key, ai.insight,
+                  ns.title, ns.description,
+                  to_char(coalesce(ns.published_at, ns.fetched_at), 'YYYY-MM-DD') AS date
+             FROM ai_insights ai
+             LEFT JOIN news_stories ns ON ai.entity_type='news' AND ns.url = ai.entity_key
+            WHERE (ai.sources IS NULL OR ai.sources='[]'::jsonb OR ai.sources='{}'::jsonb
+                   OR (jsonb_typeof(ai.sources)='array' AND jsonb_array_length(ai.sources)=0))
+              AND ai.entity_type IN ('news','trend','shortcut')
+              AND (ai.entity_type <> 'news' OR ns.url IS NOT NULL)
+            ORDER BY ai.created_at ASC
+            LIMIT $1`, [limit]);
+      } catch (_) { return 0; }
+      let n = 0;
+      for (const r of rows) {
+        if (!timeLeft()) break;
+        let payload = null;
+        if (r.entity_type === 'trend') payload = { type: 'trend', query: r.entity_key, refresh: 1 };
+        else if (r.entity_type === 'news') payload = { type: 'news', url: r.entity_key, title: r.title || '', description: r.description || '', date: r.date || '', refresh: 1 };
+        else { const c = byKey.get(`${r.entity_key}|${r.insight}`); if (c) payload = { type: 'shortcut', topic: c.topic, group: c.group, refresh: 1 }; }
+        if (payload && await call(payload)) n++;
+        await sleep(600);
+      }
+      return n;
+    }
 
     // 1. Top current trends missing a brief.
     if (which === 'all' || which === 'trends') {
@@ -175,7 +229,6 @@ module.exports = async function handler(req, res) {
     }
 
     // 3. Group overviews missing (home first in candidate order).
-    const candidates = overviewCandidates();
     if ((which === 'all' || which === 'shortcuts') && budget > 0) {
       const existing = await sql.query(`SELECT entity_key, insight FROM ai_insights WHERE entity_type='shortcut'`);
       const have = new Set(existing.map((r) => `${r.entity_key}|${r.insight}`));
@@ -188,11 +241,19 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    // 4. Refresh the stalest time-sensitive briefs with leftover budget.
+    // 4. Heal sourceless briefs (re-ground ones cached without citations). In the
+    //    regular pass it takes a bounded share (HEAL_PER_RUN); ?type=heal runs it
+    //    alone with the full budget. runHeal is headroom-gated, so on a
+    //    grounding-spent day this is a clean no-op that defers to a later run.
+    if ((which === 'all' || which === 'heal') && budget > 0) {
+      healed = await runHeal(which === 'heal' ? budget : Math.min(budget, HEAL_PER_RUN));
+      budget -= healed;
+    }
+
+    // 5. Refresh the stalest time-sensitive briefs with leftover budget.
     //    Keeps Discover/trends current without ever blocking a user read.
     //    The "content lacks '## '" arm migrates pre-overview prose briefs once.
     if ((which === 'all' || which === 'refresh') && budget > 0) {
-      const byKey = new Map(candidates.map((c) => [`${c.topic.toLowerCase()}|${c.group}`, c]));
       // force=1 → re-ground every overview + current trend regardless of age
       // (flush after a prompt change). Otherwise only the stale ones.
       const stale = force
@@ -260,7 +321,7 @@ module.exports = async function handler(req, res) {
         WHERE entity_type='shortcut' AND insight IN ('discover','learn','analyze','topic-specific')`);
 
     return res.status(200).json({
-      ok: true, trends, news, overviews, refreshed,
+      ok: true, trends, news, overviews, healed, refreshed,
       remaining: {
         trends: remTrends[0].n,
         news: remNews[0].n,

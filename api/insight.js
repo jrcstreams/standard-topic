@@ -8,7 +8,7 @@
 //   400 — { error }
 
 const { getSql } = require('../lib/db');
-const { generateInsight } = require('../lib/insight-core');
+const { generateInsight, sourcesEmpty, groundingHeadroom } = require('../lib/insight-core');
 const { effectiveWindowHours } = require('../lib/ai-freshness');
 const topicsData = require('../data/topics.json');
 
@@ -48,13 +48,26 @@ module.exports = async function handler(req, res) {
     if (input.type === 'trend' && out && out.content && !out.cached && invalidateByTag) {
       try { await invalidateByTag('trending-all'); } catch (_) {}
     }
-    // Refresh-on-view: if an AI Intelligence path was served from cache but is
-    // older than its (path-class × topic-tier) window, regenerate it in the
-    // background and serve the current copy now. Next view shows the fresh one.
-    if (input.type === 'shortcut' && out && out.cached && out.generatedAt && waitUntil) {
-      const ageH = (Date.now() - new Date(out.generatedAt).getTime()) / 36e5;
-      const windowH = effectiveWindowHours(input.group, tierForTopic(input.topic));
-      if (Number.isFinite(ageH) && ageH >= windowH) {
+    // Background refresh-on-view: regenerate a cached brief without blocking this
+    // read. Two triggers, at most one refresh fired:
+    //   (a) AGE — an AI Intelligence overview past its (path-class × topic-tier)
+    //       freshness window.
+    //   (b) SOURCES-HEAL — any grounded brief (news/trend/overview) cached WITHOUT
+    //       grounding citations (e.g. generated on a day the grounding budget was
+    //       exhausted). Re-grounds it on view, but ONLY when there's grounding
+    //       headroom today — otherwise it would just regenerate sourceless again
+    //       and burn tokens. News matters most: it never refreshes by age, so
+    //       without this a sourceless news brief stays that way forever.
+    if (out && out.cached && waitUntil
+        && (input.type === 'shortcut' || input.type === 'news' || input.type === 'trend')) {
+      let doRefresh = false;
+      if (input.type === 'shortcut' && out.generatedAt) {
+        const ageH = (Date.now() - new Date(out.generatedAt).getTime()) / 36e5;
+        const windowH = effectiveWindowHours(input.group, tierForTopic(input.topic));
+        if (Number.isFinite(ageH) && ageH >= windowH) doRefresh = true;
+      }
+      if (!doRefresh && sourcesEmpty(out.sources) && await groundingHeadroom(sql)) doRefresh = true;
+      if (doRefresh) {
         waitUntil((async () => { try { await generateInsight(sql, { ...input, refresh: 1 }); } catch (_) {} })());
       }
     }
