@@ -114,7 +114,6 @@ export function renderAIIntelligence(container, scope) {
   let view = 'paths';             // 'paths' | 'sections' | 'content'
   let curGroup = null;
   let curIdx = 0;
-  let aiiObserver = null;         // tab-mode: watches the overview card to toggle the sticky condensed bar
   // Tab mode: on a topic page at mobile width, the paths become a secondary tab
   // bar (under the primary News Feed / AI Intelligence / Web Sources tabs)
   // instead of the flip-nav landing list.
@@ -191,19 +190,9 @@ export function renderAIIntelligence(container, scope) {
     const c = cache[curGroup]; const p = paths.find((x) => x.group === curGroup) || {};
     const s = (c && c.sections[curIdx]) || { name: '', body: '' };
     const desc = (scope.descriptions && scope.descriptions[s.name]) || '';
-    // Tab mode: a condensed "path · section" bar that pins under the sticky
-    // subtabs and fades in once the overview card scrolls past (mirrors the News
-    // AI Insights modal's sticky header). Tapping it scrolls back to the card.
-    const condensed = tabMode
-      ? `<button type="button" class="aii-condensed" aria-hidden="true">
-           <span class="aii-condensed-eyebrow">${esc(p.label || '')}</span>
-           <span class="aii-condensed-title">${esc(s.name)}</span>
-         </button>`
-      : '';
     return `<div class="aii-sub aii-content">
-      ${condensed}
       <button type="button" class="aii-back" data-back="sections">${BACK}<span>Back to ${esc(p.label || 'menu')}</span></button>
-      <div class="aii-overview ${tabMode ? 'aii-ovcard' : 'aii-overview-plain'}">
+      <div class="aii-overview aii-overview-plain">
         <div class="aii-overview-eyebrow">${esc(p.label || '')}</div>
         <h3 class="aii-overview-title">${esc(s.name)}</h3>
         ${desc ? `<p class="aii-overview-sub">${esc(desc)}</p>` : ''}
@@ -360,35 +349,7 @@ export function renderAIIntelligence(container, scope) {
     </div>`;
   }
 
-  function teardownSticky() { if (aiiObserver) { aiiObserver.disconnect(); aiiObserver = null; } }
-  // Tab mode only: pin the secondary nav under the fixed header+subnav and reveal
-  // a condensed "path · section" bar once the overview card scrolls above the pin
-  // line. Page-scrolled (not a modal), so an IntersectionObserver on the card
-  // drives it. The pin offset follows the site's fixed-chrome convention
-  // (64px header + --subnav-height) plus the sticky subtabs' own height.
-  function setupSticky() {
-    teardownSticky();
-    if (!tabMode || view !== 'content' || typeof IntersectionObserver === 'undefined') return;
-    const ov = stage.querySelector('.aii-ovcard');
-    const cond = stage.querySelector('.aii-condensed');
-    if (!ov || !cond) return;
-    const subtabsEl = container.querySelector('.aii-subtabs');
-    const subH = subtabsEl ? subtabsEl.offsetHeight : 46;
-    container.style.setProperty('--aii-subtabs-h', `${subH}px`);
-    const subnav = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--subnav-height'), 10) || 66;
-    const pin = 64 + subnav + subH;
-    aiiObserver = new IntersectionObserver((entries) => {
-      for (const e of entries) cond.classList.toggle('is-on', !e.isIntersecting && e.boundingClientRect.top < pin);
-    }, { rootMargin: `-${pin}px 0px 0px 0px`, threshold: 0 });
-    aiiObserver.observe(ov);
-    cond.addEventListener('click', () => {
-      const top = ov.getBoundingClientRect().top + window.scrollY - 64 - subnav - 10;
-      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
-    });
-  }
-
   function wire() {
-    setupSticky();
     // Section content: briefly show the generating loader (even when cached)
     // then reveal the brief — gives the AI a moment of presence.
     const bodyEl = stage.querySelector('.aii-content-body[data-loading]');
@@ -501,7 +462,6 @@ export function renderAIIntelligence(container, scope) {
     container._aiiMqHandler = handler;
   }
   return { destroy() {
-    teardownSticky();
     if (container._aiiMq && container._aiiMqHandler) container._aiiMq.removeEventListener('change', container._aiiMqHandler);
     container._aiiMq = container._aiiMqHandler = null;
     container.innerHTML = '';
