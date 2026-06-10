@@ -501,8 +501,24 @@ function renderTrend(d) {
       if (data && data.content) {
         sources = data.sources || [];
         const cleanSum = cleanSummary(data.summary);
+        let detail = cleanTrendContent(data.content);
+        // Older cached briefs stored the summary inside the content, so the
+        // modal (summary line + detail) showed it twice. Strip a leading exact
+        // repeat of the summary from the detail.
+        if (cleanSum && detail) {
+          const norm = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+          const sN = norm(cleanSum);
+          for (let i = 0; i < 4; i++) {
+            const fsm = detail.match(/^.*?[.!?](?=\s|$)/);
+            const fs = fsm ? fsm[0] : '';
+            if (!fs || norm(fs) !== sN) break;
+            const rest = detail.slice(fs.length).replace(/^[\s).,:;–—-]+/, '').trim();
+            if (!rest) break;
+            detail = rest;
+          }
+        }
         const summary = cleanSum ? `<p class="im-trend-summary">${esc(cleanSum)}</p>` : '';
-        briefEl.innerHTML = `${summary}${renderBriefBody(cleanTrendContent(data.content), null)}`; briefEl.classList.add('ai-reveal');
+        briefEl.innerHTML = `${summary}${renderBriefBody(detail, null)}`; briefEl.classList.add('ai-reveal');
       } else { briefEl.innerHTML = '<p class="im-empty">No AI brief generated for this trend yet.</p>'; }
     } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
     const slot = panelEl.querySelector('#im-actions-slot');

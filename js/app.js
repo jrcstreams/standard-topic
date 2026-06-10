@@ -15,7 +15,7 @@ import { initPromptModal } from './components/prompt-modal.js?v=20260609-revamp4
 import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260609-revamp71';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260608-revamp9';
-import { initInsightModal } from './components/insight-modal.js?v=20260609-revamp82';
+import { initInsightModal } from './components/insight-modal.js?v=20260610-revamp86';
 import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260610-revamp83';
 import { renderWebSources } from './components/websources.js?v=20260609-revamp73';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260609-revamp71';
@@ -409,7 +409,10 @@ function bodyTabsRow(opts = {}) {
 function setupTabPills() {
   const route = getCurrentRoute();
   const tab = route?.tab || 'newsfeed';
-  ['searchtrends', 'newsfeed', 'trending', 'shortcuts', 'related'].forEach(t =>
+  // Must clear EVERY tab class (incl. websources) — otherwise switching topics
+  // from a Web Sources tab leaves active-tab-websources on the body and the
+  // stale section bleeds onto the new topic page alongside the new tab.
+  ['searchtrends', 'newsfeed', 'trending', 'shortcuts', 'websources', 'related'].forEach(t =>
     document.body.classList.remove(`active-tab-${t}`)
   );
   document.body.classList.add(`active-tab-${tab}`);
@@ -1291,7 +1294,8 @@ function renderStickyHeroBar(container, route) {
     e.preventDefault();
     if (window.location.hash === '#/' || window.location.hash === '' || window.location.hash === '#') {
       // Already on home — force re-render with newsfeed tab
-      document.body.classList.remove('active-tab-shortcuts', 'active-tab-related');
+      ['searchtrends', 'newsfeed', 'trending', 'shortcuts', 'websources', 'related'].forEach(t =>
+        document.body.classList.remove(`active-tab-${t}`));
       document.body.classList.add('active-tab-newsfeed');
       document.querySelectorAll('#sub-header .tab-pill').forEach(p => {
         p.classList.toggle('active', p.dataset.tab === 'newsfeed');
@@ -1332,7 +1336,7 @@ function escapeHTML(str) {
 // ---------- Two-column topic layout (L2 + L4 hybrid) ----------
 
 function cleanupTopicLayoutObservers() {
-  ['newsfeed', 'shortcuts', 'related'].forEach(t => {
+  ['searchtrends', 'newsfeed', 'trending', 'shortcuts', 'websources', 'related'].forEach(t => {
     document.body.classList.remove(`active-tab-${t}`);
   });
 }
