@@ -14186,7 +14186,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    while the asymmetric bottom padding floats the text above the pill. The
    row's own bottom padding supplies the gap to the subhead below. The
    standalone content-view back button (not in a row) keeps the base padding. */
-.aii-backrow .aii-back { padding: 0; }
+.aii-backrow .aii-back { padding: 0; line-height: 1; }
 .aii-back { display: inline-flex; align-items: center; gap: 6px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; color: #1d4ed8; padding: 4px 0 14px; }
 .aii-back svg { width: 15px; height: 15px; color: #1d4ed8; }
 .aii-back span { text-decoration: none; text-underline-offset: 2px; }
@@ -14207,7 +14207,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-subhead-titlerow { display: flex; align-items: center; gap: 10px; }
 .aii-subhead-name { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: #25324a; letter-spacing: -0.012em; }
 .aii-subhead-sub { font-size: 0.8rem; color: var(--color-text-muted); }
-.aii-updated { margin-left: auto; font-size: 0.66rem; font-weight: 500; color: #6b7689; background: #eef1f6; padding: 0.22rem 0.5rem; border-radius: 6px; white-space: nowrap; }
+.aii-updated { margin-left: auto; display: inline-flex; align-items: center; line-height: 1; font-size: 0.66rem; font-weight: 500; color: #6b7689; background: #eef1f6; padding: 0.3rem 0.5rem; border-radius: 6px; white-space: nowrap; }
 
 /* Full-bleed menu rows (match the path list): divider below each, content
    aligned with the header icon (18px), full-width hover. */
@@ -14342,13 +14342,16 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    source host beside each, thin separators. No boxes, no arrows. */
 .aii-headlines { display: block; }
 .aii-hl { margin: 18px 0 2px; }
-.aii-hl-head { font-size: 0.72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #8b95a7; margin: 0 0 4px; }
+.aii-hl-head { font-size: 0.7rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #98a1b2; margin: 2px 0 6px; }
 .aii-hl-list { list-style: none; margin: 0; padding: 0; }
-.aii-hl-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px 8px; padding: 8px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 55%, transparent); }
+.aii-hl-row { display: block; padding: 9px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 50%, transparent); }
 .aii-hl-row:last-child { border-bottom: none; }
-.aii-hl-link { font-size: 0.9rem; font-weight: 500; line-height: 1.4; color: #1d4ed8; text-decoration: none; }
-.aii-hl-link:hover { text-decoration: underline; text-underline-offset: 2px; }
-.aii-hl-src { font-size: 0.74rem; color: var(--color-text-light); white-space: nowrap; }
+/* Deep, calm blue — clearly a link, but not the neon #1d4ed8 that turned a
+   stack of 8 headlines into a blinding wall. The brighter blue is reserved for
+   hover so the interaction still pops. */
+.aii-hl-link { font-size: 0.92rem; font-weight: 500; line-height: 1.4; color: #2a4d8f; text-decoration: none; }
+.aii-hl-link:hover { color: #1d4ed8; text-decoration: underline; text-underline-offset: 2px; }
+.aii-hl-src { display: block; font-size: 0.72rem; color: var(--color-text-light); margin-top: 2px; }
 /* "Explore further on web" accordion: source-type chips → platform rows. */
 .aii-web { display: grid; gap: 5px; }
 .aii-web-cat { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; text-align: left; padding: 10px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.84rem; font-weight: 600; color: var(--color-text); transition: border-color .14s, color .14s, background .14s; }
