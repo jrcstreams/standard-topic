@@ -13416,9 +13416,11 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
     border: 1px solid var(--color-surface-border); border-radius: 16px;
     background: #fff; overflow: visible;
   }
+  /* Stack the search/sort on its own row BELOW the title + summary, left-
+     aligned — instead of pushing it to the far right edge on wide screens. */
   #section-newsfeed .newsfeed-card .newsfeed-head {
-    display: flex; flex-direction: row; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 10px 18px; margin: 0; padding: 13px 18px;
+    display: flex; flex-direction: column; align-items: stretch;
+    gap: 12px; margin: 0; padding: 13px 18px;
     border-bottom: 1px solid var(--color-surface-border);
     background: color-mix(in srgb, var(--color-primary) 3%, #fff);
     border-radius: 16px 16px 0 0;
@@ -13436,8 +13438,10 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
   /* Filters sit naked in the header band (just the search field + sort) — no
      wrapping box (the box-in-box looked heavy). */
   #section-newsfeed .newsfeed-card .newsfeed-filters {
-    margin: 0; padding: 0; flex: 0 1 auto; max-width: 100%; background: transparent; border: none; border-radius: 0;
+    margin: 0; padding: 0; display: flex; gap: 10px; width: 100%; background: transparent; border: none; border-radius: 0;
   }
+  /* Wider, left-aligned search field — sits strong below the heading. */
+  #section-newsfeed .newsfeed-card .nf-search-wrap { max-width: 560px; }
   #section-newsfeed .newsfeed-card .newsfeed-scroll-wrap { padding: 8px 18px 6px; }
   #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 18px 14px; }
 }
@@ -14241,6 +14245,26 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-src-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; text-decoration: none; color: var(--color-text); font-size: 0.82rem; transition: border-color .14s, color .14s; }
 .aii-src-row:hover { border-color: var(--color-primary); color: var(--color-primary); }
 .aii-src-row svg { flex: none; color: var(--color-text-light); }
+/* "Explore further on web" accordion: source-type chips → platform rows. */
+.aii-web { display: grid; gap: 5px; }
+.aii-web-cat { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; text-align: left; padding: 10px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.84rem; font-weight: 600; color: var(--color-text); transition: border-color .14s, color .14s, background .14s; }
+.aii-web-cat:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.aii-web-cat svg { flex: none; color: var(--color-text-light); }
+.aii-web-cat:hover svg { color: var(--color-primary); }
+.aii-web-back { display: inline-flex; align-items: center; gap: 6px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #1d4ed8; padding: 0 0 8px; }
+.aii-web-back svg { width: 14px; height: 14px; }
+.aii-web-back:hover span { text-decoration: underline; text-underline-offset: 2px; }
+.aii-web-rows { display: grid; gap: 5px; }
+.aii-web-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; text-decoration: none; transition: border-color .14s; }
+.aii-web-row:hover { border-color: var(--color-primary); }
+.aii-web-row-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.aii-web-row-name { font-size: 0.84rem; font-weight: 600; color: var(--color-text); }
+.aii-web-row:hover .aii-web-row-name { color: var(--color-primary); }
+.aii-web-row-desc { font-size: 0.76rem; color: var(--color-text-muted); line-height: 1.4; }
+.aii-web-row svg { flex: none; color: var(--color-text-light); }
+/* "View original article" leads the Sources & citations list on news briefs. */
+.im-source-row--orig { font-weight: 600; color: #1d4ed8; }
+.im-source-row--orig svg { color: #1d4ed8; }
 /* Explore-further: Direct Submit / Review Prompt chooser + leaving-site card. */
 /* Model selector at the top of the Explore panel (shared across the AI
    Intelligence component, the insight modal, and the search shortcuts).

@@ -5,7 +5,7 @@
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
 import { renderBriefBody } from './newsfeed.js?v=20260609-revamp63';
-import { getModels, getModelById, getDefaultModelId } from '../utils/data.js';
+import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
 // Display metadata for the paths (the navigation categories). Each `group`
@@ -50,6 +50,7 @@ function splitSections(content) {
 const LOGO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
 const ARROW = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 const BACK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
+const EXT = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>';
 const CHEV = '<svg class="aii-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 // Small inline spark for the "AI Brief" eyebrow (matches the news modal).
 const SPARK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>';
@@ -164,11 +165,13 @@ export function renderAIIntelligence(container, scope) {
         ${desc ? `<p class="aii-overview-sub">${esc(desc)}</p>` : ''}
       </div>
       <div class="aii-actions aii-actions-centered">
+        <button type="button" class="aii-actbtn" data-acc="sources" aria-expanded="false"><span>Sources and citations</span>${CHEV}</button>
         <button type="button" class="aii-actbtn" data-acc="explore" aria-expanded="false"><span>Explore further with AI</span>${CHEV}</button>
-        ${hasSrc ? `<button type="button" class="aii-actbtn" data-acc="sources" aria-expanded="false"><span>Explore further on web</span>${CHEV}</button>` : ''}
+        <button type="button" class="aii-actbtn" data-acc="web" aria-expanded="false"><span>Explore further on web</span>${CHEV}</button>
       </div>
-      ${hasSrc ? '<div class="aii-acc" data-accbody="sources"></div>' : ''}
+      <div class="aii-acc" data-accbody="sources"></div>
       <div class="aii-acc" data-accbody="explore"></div>
+      <div class="aii-acc" data-accbody="web"></div>
       <div class="aii-brief-head">${SPARK}<span>AI Brief</span></div>
       <p class="aii-brief-note">The below is an AI-generated summary of the topic at hand. Please verify important details with the linked sources.</p>
       <hr class="aii-rule aii-rule-thick">
@@ -185,7 +188,25 @@ export function renderAIIntelligence(container, scope) {
       const key = (label || '').toLowerCase(); if (!key || seen.has(key)) continue; seen.add(key);
       rows.push(`<a class="aii-src-row" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer"><span>${esc(label)}</span>${ARROW}</a>`);
     }
-    return rows.length ? `<div class="aii-src-list">${rows.join('')}</div>` : '<p class="aii-empty">No sources cited.</p>';
+    return rows.length ? `<div class="aii-src-list">${rows.join('')}</div>` : '<p class="aii-empty">No sources cited for this brief.</p>';
+  }
+  // "Explore further on web" — the full Web Sources platform picker (source
+  // types → platforms), searching this topic. Mirrors the Web Sources card.
+  function webCatsHTML() {
+    const cats = getExternalSearchCategories() || [];
+    const searches = getExternalSearches() || [];
+    const avail = cats.filter((c) => searches.some((s) => s.category === c.key));
+    if (!avail.length) return '<p class="aii-empty">No web sources available.</p>';
+    return `<div class="aii-web">${avail.map((c) => `<button type="button" class="aii-web-cat" data-cat="${escAttr(c.key)}"><span>${esc(c.label)}</span>${ARROW}</button>`).join('')}</div>`;
+  }
+  function webListHTML(catKey) {
+    const term = scope.label || scope.topic || '';
+    const items = (getExternalSearches() || []).filter((s) => s.category === catKey);
+    const rows = items.map((s) => {
+      const url = String(s.urlTemplate || '').replace(/\{query\}/g, encodeURIComponent(term));
+      return `<a class="aii-web-row" href="${escAttr(url)}" target="_blank" rel="noopener noreferrer"><span class="aii-web-row-text"><span class="aii-web-row-name">${esc(s.name)}</span>${s.description ? `<span class="aii-web-row-desc">${esc(s.description)}</span>` : ''}</span>${EXT}</a>`;
+    }).join('');
+    return `<div class="aii-web"><button type="button" class="aii-web-back">${BACK}<span>All source types</span></button><div class="aii-web-rows">${rows || '<p class="aii-empty">No sources here.</p>'}</div></div>`;
   }
   // Keep the just-navigated view in view (fixes the page anchoring past the
   // component when you drill in). Only nudges when the block is out of comfort.
@@ -291,10 +312,21 @@ export function renderAIIntelligence(container, scope) {
       stage.querySelectorAll('.aii-acc').forEach((a) => a.classList.remove('is-open'));
       if (willOpen) {
         btn.setAttribute('aria-expanded', 'true');
-        if (body && !body.dataset.ready) { body.innerHTML = name === 'sources' ? sourceRowsHTML() : exploreHomeHTML(); body.dataset.ready = '1'; }
+        if (body && !body.dataset.ready) {
+          body.innerHTML = name === 'sources' ? sourceRowsHTML() : name === 'web' ? webCatsHTML() : exploreHomeHTML();
+          body.dataset.ready = '1';
+        }
         body && body.classList.add('is-open');
       }
     }));
+    // "Explore further on web": source-type → platforms → back, in place.
+    const webBody = stage.querySelector('[data-accbody="web"]');
+    if (webBody) webBody.addEventListener('click', (e) => {
+      const catBtn = e.target.closest('.aii-web-cat');
+      const back = e.target.closest('.aii-web-back');
+      if (catBtn) { webBody.innerHTML = webListHTML(catBtn.dataset.cat); }
+      else if (back) { webBody.innerHTML = webCatsHTML(); }
+    });
     const exBody = stage.querySelector('[data-accbody="explore"]');
     // Model choice persists (Direct Submit + Review both honor it).
     if (exBody) exBody.addEventListener('change', (e) => {
