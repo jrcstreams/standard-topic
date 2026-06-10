@@ -24,3 +24,7 @@ docs/rss-api-migration-status.md
 # Verification screenshots / Playwright MCP output (not part of the app)
 /.playwright-mcp/
 /*.png
+
+# one-off rollout regen (not part of the app)
+/rollout-regen.js
+/rollout.log
