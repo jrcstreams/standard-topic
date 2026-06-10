@@ -20,3 +20,7 @@ home-mobile.png
 docs/rss-api-migration-status.md
 
 .vercel
+
+# Verification screenshots / Playwright MCP output (not part of the app)
+/.playwright-mcp/
+/*.png
