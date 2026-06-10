@@ -13210,18 +13210,19 @@ body.home-search #section-shortcuts .shortcuts-scroll-wrap { padding-bottom: 0; 
 @media (min-width: 900px) {
   /* Centered hero on top, then a 50/50 row — Trending | AI Intelligence —
      then full-width News Feed. The two cards stretch to equal height. */
+  /* Single-column stack: search hero, Trending, AI Intelligence, News Feed —
+     each full width (Trending + AI Intelligence lay their items out as a
+     horizontal grid, matching the topic pages). */
   body.home-search.app-mode .topic-layout {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     align-items: start;
-    column-gap: 1.8rem; row-gap: 0;
+    row-gap: 1.8rem;
   }
-  body.home-search #home-trending, body.home-search #section-aii-home { align-self: stretch; }
-  body.home-search #home-trending .trending-topics, body.home-search #section-aii-home .aii { height: 100%; }
   body.home-search #section-searchtrends { display: contents; }
-  body.home-search #home-search-hero { grid-column: 1 / -1; justify-self: center; width: min(600px, 100%); margin-bottom: 1.8rem; }
-  body.home-search #home-trending { grid-column: 1; grid-row: 2; margin-top: 0 !important; margin-bottom: 1.8rem; }
-  body.home-search #section-aii-home { grid-column: 2; grid-row: 2; margin: 0 0 1.8rem; }
-  body.home-search #section-newsfeed { grid-column: 1 / -1; grid-row: 3; }
+  body.home-search #home-search-hero { grid-column: 1; order: 1; justify-self: center; width: min(600px, 100%); margin: 0 0 1.8rem; }
+  body.home-search #home-trending { grid-column: 1; order: 2; margin: 0 0 1.8rem; }
+  body.home-search #section-aii-home { grid-column: 1; order: 3; margin: 0 0 1.8rem; }
+  body.home-search #section-newsfeed { grid-column: 1; order: 4; }
 }
 /* Cards size to content + the page scrolls. */
 body.home-search .layout-section,
