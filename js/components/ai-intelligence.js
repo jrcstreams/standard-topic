@@ -166,6 +166,8 @@ export function renderAIIntelligence(container, scope) {
         <h3 class="aii-overview-title">${esc(s.name)}</h3>
         ${desc ? `<p class="aii-overview-sub">${esc(desc)}</p>` : ''}
       </div>
+      <div class="aii-brief-head">${SPARK}<span>AI Brief</span></div>
+      <p class="aii-brief-note">The below is an AI-generated summary of the topic at hand. Please verify important details with the linked sources.</p>
       <div class="aii-actions aii-actions-row">
         <button type="button" class="aii-actbtn" data-acc="sources" aria-expanded="false"><span><span class="actlbl-long">Sources &amp; citations</span><span class="actlbl-short">Sources</span></span>${CHEV}</button>
         <button type="button" class="aii-actbtn" data-acc="explore" aria-expanded="false"><span>Explore with AI</span>${CHEV}</button>
@@ -174,8 +176,6 @@ export function renderAIIntelligence(container, scope) {
       <div class="aii-acc" data-accbody="sources"></div>
       <div class="aii-acc" data-accbody="explore"></div>
       <div class="aii-acc" data-accbody="web"></div>
-      <div class="aii-brief-head">${SPARK}<span>AI Brief</span></div>
-      <p class="aii-brief-note">The below is an AI-generated summary of the topic at hand. Please verify important details with the linked sources.</p>
       <hr class="aii-rule">
       <div class="aii-content-body" data-loading="1">${genLoaderHTML()}</div>
     </div>`;

@@ -13679,7 +13679,14 @@ body.home-search #section-shortcuts .sidebar-card-header,
      cards untouched. */
   body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts .aii,
   body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws {
-    border: none; border-radius: 0; background: transparent; overflow: visible;
+    border: none; border-radius: 0; background: transparent;
+    /* Fill the bounded tab panel and scroll the STAGE internally (the sub-tabs
+       stay pinned) — without this the long brief/menu overflows the fixed app
+       shell and can't be scrolled on mobile. Mirrors the News Feed card. */
+    display: flex; flex-direction: column; min-height: 0; overflow: hidden;
+  }
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts .aii-subtabs {
+    flex: none;
   }
   body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts .aii-head,
   body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws-head {
@@ -13687,7 +13694,7 @@ body.home-search #section-shortcuts .sidebar-card-header,
   }
   body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts .aii-stage,
   body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws-stage {
-    padding-top: 0;
+    padding-top: 0; flex: 1 1 0; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
   }
   /* Tab mode: the drill-in category header is redundant (the "Back to all web
      sources" link gives context) — hide it for clean word-flow, matching the
@@ -14072,7 +14079,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    under the primary News Feed / AI Intelligence / Web Sources tabs. Same family
    as the primary tabs but pill-shaped + a touch quieter. Scrolls if it
    overflows so it always stays one line. */
-.aii-subtabs { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; padding: 14px 0 14px; margin: 0; border-bottom: 1px solid var(--color-surface-border); }
+.aii-subtabs { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; padding: 14px 0 10px; margin: 0; border-bottom: 1px solid var(--color-surface-border); }
 .aii-subtabs::-webkit-scrollbar { display: none; }
 .aii-subtab { flex: none; border: 1px solid var(--color-surface-border); background: #fff; padding: 5px 11px; border-radius: 999px; cursor: pointer; white-space: nowrap; font-family: var(--font-family); font-size: 0.74rem; font-weight: 600; color: var(--color-text-light); transition: background .14s, color .14s, border-color .14s; }
 .aii-subtab:hover { border-color: var(--color-primary); color: var(--color-primary); }
@@ -14088,7 +14095,11 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    (section menu OR the content-view "Back to <path>" link). Applied to the
    inner .aii-sub wrapper because the mobile card-hiding rule forces the
    .aii-stage's own padding-top to 0 at higher specificity. */
-.aii-tabmode .aii-stage > .aii-sub { padding-top: 14px; }
+/* Content view (drill-in) keeps breathing room for its "Back to <path>" link;
+   the sections menu sits closer (the sub-tabs' border + the row's own padding
+   already separate it — no extra top gap above the first item). */
+.aii-tabmode .aii-stage > .aii-sub.aii-content { padding-top: 14px; }
+.aii-tabmode .aii-stage > .aii-sub:not(.aii-content) { padding-top: 0; }
 @keyframes aiiInRight { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
 @keyframes aiiInLeft { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
 .aii-anim-fwd { animation: aiiInRight .26s ease; }
@@ -14256,7 +14267,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-overview-plain .aii-overview-sub { margin-top: 7px; }
 /* Three action chips on ONE line — equal-width, shrink-to-fit (font scales down
    responsively), label ellipsizes before it ever wraps. */
-.aii-actions-row { flex-wrap: nowrap; gap: 6px; margin: 0 0 18px; }
+.aii-actions-row { flex-wrap: nowrap; gap: 6px; margin: 12px 0 18px; }
 .aii-actions-row .aii-actbtn { flex: 1 1 0; min-width: 0; justify-content: center; gap: 4px; padding: 7px 9px; font-size: clamp(0.68rem, 1.7vw, 0.78rem); white-space: nowrap; overflow: hidden; }
 .aii-actions-row .aii-actbtn span { overflow: hidden; text-overflow: ellipsis; }
 .aii-actions-row .aii-actbtn .aii-chev { flex: none; }
@@ -14269,7 +14280,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
   /* Below the equal-thirds breakpoint, size each chip to its own content and
      shrink the chip footprint (font/padding/gap) so all three fit one readable
      line instead of clipping "Explore with AI" / "Explore on web" on phones. */
-  .aii .aii-actions-row, .im-panel .im-actions-row { justify-content: center; gap: 4px; }
+  .aii .aii-actions-row, .im-panel .im-actions-row { justify-content: flex-start; gap: 6px; }
   .aii .aii-actions-row .aii-actbtn, .im-panel .im-actions-row .im-actbtn { flex: 0 1 auto; gap: 3px; padding: 7px 8px; font-size: clamp(0.62rem, 2.8vw, 0.78rem); }
 }
 .aii-content .aii-brief-head { margin: 0 0 7px; }
