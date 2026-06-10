@@ -14306,6 +14306,19 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-web-row:hover .aii-web-row-name { color: var(--color-primary); }
 .aii-web-row-desc { font-size: 0.76rem; color: var(--color-text-muted); line-height: 1.4; }
 .aii-web-row svg { flex: none; color: var(--color-text-light); }
+/* Touch carryover: a tap that swaps the view (e.g. drilling into a Web Sources
+   category) leaves the row now under the finger stuck in :hover — a phantom
+   highlight on a row the user never chose (the "Spotify looks clicked" bug).
+   On touch pointers, neutralize the row hover states so nothing sticks. */
+@media (hover: none) {
+  .aii-pathrow:hover, .aii-menu-row:hover, .ws-pathrow:hover, .ws-srcrow:hover { background: transparent; }
+  .aii-src-row:hover, .aii-web-cat:hover, .aii-web-row:hover { border-color: var(--color-surface-border); }
+  .aii-menu-row:hover .aii-menu-name, .aii-menu-row:hover svg,
+  .ws-srcrow:hover .ws-srcrow-name, .ws-srcrow:hover > svg:last-child,
+  .ws-pathrow:hover > svg:last-child,
+  .aii-web-cat:hover, .aii-web-cat:hover svg, .aii-web-row:hover .aii-web-row-name { color: inherit; }
+  .ws-pathrow:hover > svg:last-child, .aii-pathrow:hover .aii-pathrow-go { transform: none; }
+}
 /* "View original article" leads the Sources & citations list on news briefs. */
 .im-source-row--orig { font-weight: 600; color: #1d4ed8; }
 .im-source-row--orig svg { color: #1d4ed8; }
