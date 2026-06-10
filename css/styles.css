@@ -13705,6 +13705,19 @@ body.home-search #section-shortcuts .sidebar-card-header,
   body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws-sub > .ws-back {
     padding-top: 14px;
   }
+  /* Tab mode has no enclosing card, so the row lists need their own outer
+     edges: a bottom border under the LAST row (re-adding what the card setup
+     drops), and — in a drilled-in view that opens with a "Back to…" link —
+     a top border above the FIRST row (the back link replaces the sub-nav, so
+     without this the list has no top edge). */
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws-pathlist > .ws-pathrow:last-child,
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws-srclist > .ws-srcrow:last-child,
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts .aii-menu > .aii-menu-row:last-child {
+    border-bottom: 1px solid var(--color-surface-border);
+  }
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws-srclist > .ws-srcrow:first-child {
+    border-top: 1px solid var(--color-surface-border);
+  }
 }
 
 /* Homepage subnav: Home label/icon removed → topics own the full width
@@ -14308,17 +14321,24 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-web-row svg { flex: none; color: var(--color-text-light); }
 /* Touch carryover: a tap that swaps the view (e.g. drilling into a Web Sources
    category) leaves the row now under the finger stuck in :hover — a phantom
-   highlight on a row the user never chose (the "Spotify looks clicked" bug).
-   On touch pointers, neutralize the row hover states so nothing sticks. */
+   highlight (background AND arrow colour) on a row the user never chose. On
+   touch pointers, reset every hover change back to its RESTING value so nothing
+   sticks. Press feedback is handled by :active below (which ends on release). */
 @media (hover: none) {
   .aii-pathrow:hover, .aii-menu-row:hover, .ws-pathrow:hover, .ws-srcrow:hover { background: transparent; }
   .aii-src-row:hover, .aii-web-cat:hover, .aii-web-row:hover { border-color: var(--color-surface-border); }
-  .aii-menu-row:hover .aii-menu-name, .aii-menu-row:hover svg,
-  .ws-srcrow:hover .ws-srcrow-name, .ws-srcrow:hover > svg:last-child,
-  .ws-pathrow:hover > svg:last-child,
-  .aii-web-cat:hover, .aii-web-cat:hover svg, .aii-web-row:hover .aii-web-row-name { color: inherit; }
+  /* arrows/chevrons → resting muted grey (NOT inherit, which resolved dark) */
+  .ws-srcrow:hover > svg:last-child, .ws-pathrow:hover > svg:last-child,
+  .aii-menu-row:hover svg, .aii-web-cat:hover svg { color: var(--color-text-light); }
+  /* row text/names → resting */
+  .aii-menu-row:hover .aii-menu-name, .ws-srcrow:hover .ws-srcrow-name,
+  .aii-web-cat:hover, .aii-web-row:hover .aii-web-row-name, .aii-src-row:hover { color: inherit; }
   .ws-pathrow:hover > svg:last-child, .aii-pathrow:hover .aii-pathrow-go { transform: none; }
 }
+/* Press feedback (momentary, no carryover — :active clears the instant the
+   finger lifts / the view changes, unlike :hover). */
+.aii-pathrow:active, .aii-menu-row:active, .ws-pathrow:active, .ws-srcrow:active { background: color-mix(in srgb, var(--color-primary) 7%, transparent); }
+.aii-src-row:active, .aii-web-cat:active, .aii-web-row:active { border-color: var(--color-primary); }
 /* "View original article" leads the Sources & citations list on news briefs. */
 .im-source-row--orig { font-weight: 600; color: #1d4ed8; }
 .im-source-row--orig svg { color: #1d4ed8; }
