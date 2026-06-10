@@ -24,6 +24,22 @@ function escapeHTML(s) { const d = document.createElement('div'); d.textContent 
 function escapeAttr(s) { return String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
 function titleCase(s) { return String(s || '').replace(/\b\w/g, c => c.toUpperCase()); }
 function gtUrl(term) { return `https://trends.google.com/trends/explore?q=${encodeURIComponent(term)}&geo=US`; }
+// Related "In the news" links from our news feed (data.headlines) — the same
+// clean blue-link list AI Intelligence uses. Empty string when none.
+function inTheNewsHTML(headlines) {
+  const list = Array.isArray(headlines) ? headlines : [];
+  const seen = new Set(); const rows = [];
+  for (const h of list) {
+    const uri = (h && (h.url || h.uri)) || ''; if (!uri) continue;
+    const key = uri.toLowerCase(); if (seen.has(key)) continue; seen.add(key);
+    let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
+    let title = (h && h.title) || ''; if (!title) title = host; if (!title) continue;
+    rows.push(`<li class="aii-hl-row"><a class="aii-hl-link" href="${escapeAttr(uri)}" target="_blank" rel="noopener noreferrer">${escapeHTML(title)}</a>${host ? `<span class="aii-hl-src">${escapeHTML(host)}</span>` : ''}</li>`);
+    if (rows.length >= 6) break;
+  }
+  if (!rows.length) return '';
+  return `<div class="aii-hl"><div class="aii-hl-head">In the news</div><ul class="aii-hl-list">${rows.join('')}</ul></div>`;
+}
 function relTime(iso) {
   if (!iso) return '';
   const t = new Date(iso).getTime();
@@ -172,7 +188,7 @@ function render() {
       if (panelEl.querySelector('#td-ai-brief') !== briefEl) return; // a newer render replaced it
       if (data && data.content) {
         const summary = data.summary ? `<p class="td-ai-summary">${escapeHTML(data.summary)}</p>` : '';
-        briefEl.innerHTML = summary + renderBriefBody(data.content, data.sources);
+        briefEl.innerHTML = summary + renderBriefBody(data.content, data.sources) + inTheNewsHTML(data.headlines);
       } else {
         briefEl.innerHTML = '<p class="td-ai-empty">No AI brief generated for this trend yet.</p>';
       }

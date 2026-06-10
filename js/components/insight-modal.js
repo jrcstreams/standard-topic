@@ -465,6 +465,24 @@ function renderNews(d) {
   })();
 }
 
+// Related "In the news" links from our own news feed — the same clean blue-link
+// list AI Intelligence uses, rendered under a brief so trends/overviews get real
+// related stories, not just cited sources. Empty string when there are none.
+function inTheNewsHTML(headlines) {
+  const list = Array.isArray(headlines) ? headlines : [];
+  const seen = new Set(); const rows = [];
+  for (const h of list) {
+    const uri = (h && (h.url || h.uri)) || ''; if (!uri) continue;
+    const key = uri.toLowerCase(); if (seen.has(key)) continue; seen.add(key);
+    let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
+    let title = (h && h.title) || ''; if (!title) title = host; if (!title) continue;
+    rows.push(`<li class="aii-hl-row"><a class="aii-hl-link" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a>${host ? `<span class="aii-hl-src">${esc(host)}</span>` : ''}</li>`);
+    if (rows.length >= 6) break;
+  }
+  if (!rows.length) return '';
+  return `<div class="aii-hl im-hl"><div class="aii-hl-head">In the news</div><ul class="aii-hl-list">${rows.join('')}</ul></div>`;
+}
+
 // ---- Trend ----------------------------------------------------------------
 function renderTrend(d) {
   const cat = d.category || (Array.isArray(d.categories) ? d.categories[0] : '') || '';
@@ -518,7 +536,7 @@ function renderTrend(d) {
           }
         }
         const summary = cleanSum ? `<p class="im-trend-summary">${esc(cleanSum)}</p>` : '';
-        briefEl.innerHTML = `${summary}${renderBriefBody(detail, null)}`; briefEl.classList.add('ai-reveal');
+        briefEl.innerHTML = `${summary}${renderBriefBody(detail, null)}${inTheNewsHTML(data.headlines)}`; briefEl.classList.add('ai-reveal');
       } else { briefEl.innerHTML = '<p class="im-empty">No AI brief generated for this trend yet.</p>'; }
     } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
     const slot = panelEl.querySelector('#im-actions-slot');
