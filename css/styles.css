@@ -13404,12 +13404,17 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
   }
   /* Match the AI Intelligence header metrics exactly (padding + gap) so the two
      side-by-side cards' header bands are the same height. */
+  /* Inline head: title left, descriptive sentence to its right, "Updated" pill
+     pushed to the far right (#220-222). display:contents on the titlerow flattens
+     logo + title + pill into the head's flex so order can interleave the sub. */
   body.home-search #home-trending .trending-topics-head {
-    margin: 0; padding: 15px 18px; display: flex; flex-direction: column; gap: 7px;
+    margin: 0; padding: 15px 18px; display: flex; flex-direction: row; align-items: center; gap: 12px;
     border-bottom: 1px solid var(--color-surface-border);
     background: color-mix(in srgb, var(--color-primary) 3%, #fff);
   }
-  body.home-search #home-trending .trending-topics-sub { margin: 0; }
+  body.home-search #home-trending .trending-topics-titlerow { display: contents; }
+  body.home-search #home-trending .trending-topics-sub { margin: 0; order: 1; }
+  body.home-search #home-trending .trending-topics-updated { order: 2; margin-left: auto; }
   body.home-search #home-trending .trend-card-grid { padding: 10px 12px 4px; }
   body.home-search #home-trending .trend-viewmore-row { margin-top: 10px; padding: 0 14px 16px; }
 
@@ -13419,18 +13424,17 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
     border: 1px solid var(--color-surface-border); border-radius: 16px;
     background: #fff; overflow: visible;
   }
-  /* Stack the search/sort on its own row BELOW the title + summary, left-
-     aligned — instead of pushing it to the far right edge on wide screens. */
+  /* News Feed needs no subtext — put the title left and the search + sort to its
+     RIGHT on one row (#220), instead of stacking the controls below. */
   #section-newsfeed .newsfeed-card .newsfeed-head {
-    display: flex; flex-direction: column; align-items: stretch;
-    gap: 12px; margin: 0; padding: 13px 18px;
+    display: flex; flex-direction: row; align-items: center; justify-content: space-between;
+    gap: 16px; margin: 0; padding: 11px 18px;
     border-bottom: 1px solid var(--color-surface-border);
     background: color-mix(in srgb, var(--color-primary) 3%, #fff);
     border-radius: 16px 16px 0 0;
   }
-  /* 10px (not 7) — the title text is a shorter box centered in the icon-height
-     row, so it needs ~3px more to match AI/Trending's visual text→subtext gap. */
-  #section-newsfeed .newsfeed-card .newsfeed-headtext { display: flex; flex-direction: column; gap: 7px; min-width: 0; flex: 1 1 auto; }
+  #section-newsfeed .newsfeed-card .newsfeed-headtext { display: flex; flex-direction: row; align-items: center; min-width: 0; flex: 0 0 auto; }
+  #section-newsfeed .newsfeed-card .section-card-sub { display: none; }
   /* Reset the legacy full-bleed title chrome (white bg + min-height + bottom
      rule) that caused the centered white box; clean inline lockup instead. */
   #section-newsfeed .newsfeed-card .newsfeed-title {
@@ -13439,12 +13443,11 @@ body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #
     font-size: 1.16rem; font-weight: 700; letter-spacing: -0.015em; color: var(--color-text);
   }
   /* Filters sit naked in the header band (just the search field + sort) — no
-     wrapping box (the box-in-box looked heavy). */
+     wrapping box (the box-in-box looked heavy). To the right of the title. */
   #section-newsfeed .newsfeed-card .newsfeed-filters {
-    margin: 0; padding: 0; display: flex; gap: 10px; width: 100%; background: transparent; border: none; border-radius: 0;
+    margin: 0; padding: 0; display: flex; gap: 10px; flex: 0 1 auto; justify-content: flex-end; background: transparent; border: none; border-radius: 0;
   }
-  /* Left-aligned search field below the heading — reasonable, responsive width. */
-  #section-newsfeed .newsfeed-card .nf-search-wrap { max-width: 420px; }
+  #section-newsfeed .newsfeed-card .nf-search-wrap { width: 260px; max-width: 100%; }
   #section-newsfeed .newsfeed-card .newsfeed-scroll-wrap { padding: 8px 18px 6px; }
   #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 18px 14px; }
 }
@@ -14677,25 +14680,53 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .ti-ai-result:not(:empty) { margin-top: 8px; }
 
 /* ===== Desktop overhaul: full-width AI Intelligence / Web Sources cards with
-   their path & category lists as a responsive HORIZONTAL grid (auto-fit →
-   3–4 across on wide screens, collapsing to 2-up then 1-up as width drops).
-   The 1px grid gap over a surface-border background paints seamless cell
-   dividers (matches the mockup). Desktop only — mobile tab nav is untouched. */
+   their path & category lists as a responsive HORIZONTAL grid. The 1px grid gap
+   over a surface-border background paints seamless cell dividers (matches the
+   mockup). Desktop only — mobile tab nav is untouched.
+   Column counts are driven by item count via :has() so incomplete rows never
+   leave an empty grey cell: 4-item grids go 2×2 at medium widths and 4-across
+   on big screens; 3-item grids (homepage AI Intelligence) sit 3-across. */
 @media (min-width: 900px) {
   .aii-pathlist, .ws-pathlist {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
     gap: 1px;
     margin: 0 -16px;
     background: var(--color-surface-border);
   }
+  /* Pull the AI Intelligence grid flush to the header's bottom border — cancels
+     the stage's 14px top padding (Web Sources' stage already has no top pad). */
+  .aii-pathlist { margin-top: -14px; }
+  /* 4+ paths/categories → clean 2×2 at medium widths (no lonely 3+1 row with an
+     empty grey cell); widens to a single 4-across row on big screens (≥1240). */
+  .aii-pathlist:has(> :nth-child(4)),
+  .ws-pathlist:has(> :nth-child(4)) { grid-template-columns: repeat(2, 1fr); }
+  /* 3 (or fewer) paths → one row across (homepage AI Intelligence). */
+  .aii-pathlist:not(:has(> :nth-child(4))),
+  .ws-pathlist:not(:has(> :nth-child(4))) { grid-template-columns: repeat(3, 1fr); }
+
   .aii-pathlist > .aii-pathrow, .ws-pathlist > .ws-pathrow {
     background: #fff;
     border-bottom: none;
-    padding: 16px 18px;
+    padding: 11px 15px;   /* shorter cells (#217) */
+    gap: 11px;
   }
   /* Opaque hover tint (white-based) so the grey grid bg never shows through. */
   .aii-pathlist > .aii-pathrow:hover, .ws-pathlist > .ws-pathrow:hover {
     background: color-mix(in srgb, var(--color-primary) 5%, #fff);
   }
+  /* Smaller path-row icons — the 38px tiles read as oversized in the grid (#223). */
+  .aii-pathlist .aii-pathrow-icon, .ws-pathlist .ws-pathrow-icon {
+    width: 30px; height: 30px; border-radius: 9px;
+  }
+  .aii-pathlist .aii-pathrow-icon svg, .ws-pathlist .ws-pathrow-icon svg { width: 16px; height: 16px; }
+
+  /* Inline header lockup (#220-222): subtext sits to the RIGHT of the title, not
+     stacked below. Below 900px the heads stay stacked (homepage) / hidden behind
+     tab nav (topic pages), so the inline line never has to wrap. */
+  .aii-head, .ws-head { flex-direction: row; align-items: center; gap: 12px; }
+  .aii-headsub, .ws-headsub { margin: 0; }
+}
+@media (min-width: 1240px) {
+  .aii-pathlist:has(> :nth-child(4)),
+  .ws-pathlist:has(> :nth-child(4)) { grid-template-columns: repeat(4, 1fr); }
 }
