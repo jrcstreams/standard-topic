@@ -3793,19 +3793,32 @@ html, body, #app {
    on the right, vertically centred; a discreet share icon pins to the card's
    top-right corner. The share popover is position:absolute so it can't steal
    row width (the old in-flow accordion was squeezing the text to ~65%). */
-.news-card { position: relative; display: flex; align-items: stretch; gap: 1rem; }
-.news-card-body { flex: 1 1 auto; min-width: 0; padding: 1.05rem 0; padding-right: 0.4rem; }
-.news-card-body .news-card-link { display: block; padding: 0; }
-.news-card-body .news-card-meta { margin: 0.6rem 0 0; }
-/* Actions GROUPED at the bottom-right (aligned with the meta row): a discreet
-   share icon next to the AI Insights button. Same spot on every card regardless
-   of description length, and clearly one action cluster (not split corners). */
-.news-card-aside { flex: 0 0 auto; display: flex; align-items: flex-end; gap: 0.45rem; padding-bottom: 1.05rem; }
-.news-card-aside .news-share-toggle { padding: 0.34rem; border-radius: 8px; color: #b3bccb; background: transparent; }
-.news-card-aside .news-share-toggle:hover { background: #eef1f6; color: #5a6678; }
-.news-card-aside .news-share-toggle svg { width: 16px; height: 16px; }
-/* The AI dropdown opens UPWARD from the bottom-right so it never spills off the card. */
-.news-card-aside .news-ai-panel { top: auto; bottom: calc(100% + 6px); left: auto; right: 0; transform-origin: bottom right; }
+/* Vertical card (#10/#11/#12): title + summary span the FULL width; the foot
+   row carries source · time · share on the left and the AI Insights pill on the
+   right. A stretched link makes the WHOLE card clickable (incl. the margins
+   outside the separator) with a full-width hover; the foot controls raise above
+   it so they stay independently clickable — fixes the old aside that squeezed
+   text to ~65% and let the AI button overflow the right edge on desktop. */
+.news-card { position: relative; display: block; }
+.news-card-link { position: static; display: block; padding: 1.1rem 0 0; }
+.news-card-link::after { content: ''; position: absolute; inset: 0; z-index: 0; }
+.news-card-foot {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 0.75rem; flex-wrap: nowrap;
+  padding: 0.7rem 0 1.1rem;
+}
+.news-card-foot .news-card-meta { margin: 0; min-width: 0; flex: 1 1 auto; }
+/* Share icon sits right after the timestamp inside the meta cluster. */
+.news-card-meta .news-share-toggle {
+  flex: none; padding: 0.28rem; margin-left: 0.15rem; border-radius: 7px;
+  color: #aab3c2; background: transparent; line-height: 0; cursor: pointer; border: none;
+}
+.news-card-meta .news-share-toggle:hover { background: #eef1f6; color: #5a6678; }
+.news-card-meta .news-share-toggle svg { width: 15px; height: 15px; }
+/* AI Insights pinned bottom-right; dropdown opens upward so it never spills. */
+.news-card-foot .news-ai { flex: none; }
+.news-card-foot .news-ai .news-ai-panel { top: auto; bottom: calc(100% + 6px); left: auto; right: 0; transform-origin: bottom right; }
 
 .news-loading,
 .news-empty,

@@ -372,20 +372,25 @@ export function newsCardHTML(item) {
   if (host && rel) metaParts.push(`<span class="news-card-meta-sep" aria-hidden="true">·</span>`);
   if (rel) metaParts.push(`<time class="news-card-time">${escapeHTML(rel)}</time>`);
 
+  // Layout (#10/#11/#12): title + summary span the FULL card width via a
+  // stretched link (its ::after covers the whole card, so clicking anywhere —
+  // including the meta margins — opens the story, with a full-width hover).
+  // The foot row carries source · time · share on the left and the AI Insights
+  // pill bottom-right; both sit above the stretched link so they stay clickable.
   return `
     <article class="news-card" data-title="${escapeAttr(title)}" data-desc="${escapeAttr(descText.slice(0, 500))}" data-url="${escapeAttr(url)}" data-date="${escapeAttr(pubDate)}">
-      <div class="news-card-body">
-        <a class="news-card-link"
-           href="${escapeAttr(url)}"
-           target="_blank"
-           rel="noopener noreferrer">
-          <h4 class="news-card-title">${escapeHTML(title)}</h4>
-          ${descText ? `<p class="news-card-desc">${escapeHTML(descText)}</p>` : ''}
-        </a>
-        <div class="news-card-meta">${metaParts.join('')}</div>
-      </div>
-      <div class="news-card-aside">
-        <button type="button" class="news-action news-share-toggle" aria-expanded="false" aria-label="Share this story" title="Share">${SHARE_SVG}</button>
+      <a class="news-card-link"
+         href="${escapeAttr(url)}"
+         target="_blank"
+         rel="noopener noreferrer">
+        <h4 class="news-card-title">${escapeHTML(title)}</h4>
+        ${descText ? `<p class="news-card-desc">${escapeHTML(descText)}</p>` : ''}
+      </a>
+      <div class="news-card-foot">
+        <div class="news-card-meta">
+          ${metaParts.join('')}
+          <button type="button" class="news-action news-share-toggle" aria-expanded="false" aria-label="Share this story" title="Share">${SHARE_SVG}</button>
+        </div>
         ${newsAIHTML()}
       </div>
       <div class="news-share-panel" aria-hidden="true">
