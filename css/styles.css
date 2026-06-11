@@ -654,6 +654,52 @@ body.custom-mode.sticky-always #content {
   }
 }
 
+/* ═══════════════ Mobile top bar — theScore-style (2026-06-11) ═════════
+   Sub-pages (topic / about / terms / prompt / search) get a BACK button +
+   PAGE LABEL on the left; the hamburger becomes the right-side "more" menu
+   (Settings, About, full topic tree). Home keeps the brand on the left.
+   The page title leaves the sub-header (only the subtopic scroll stays). */
+.nav-back { display: none; }
+.nav-pagelabel { display: none; }
+@media (max-width: 899.98px) {
+  /* Hamburger → right edge as the "more" affordance. The empty actions
+     cluster (its pills now live in the bottom nav) is removed from flow so
+     its margin-left:auto can't shove the back+label toward center. */
+  .sticky-hero-inner .nav-hamburger { order: 10; margin-left: auto; }
+  .sticky-hero-inner .sticky-brand { order: 1; }
+  .sticky-hero-inner .sticky-actions { display: none; }
+
+  .nav-back {
+    order: 1; display: none; /* shown per-route below */
+    width: 36px; height: 36px; margin: 0 2px 0 -6px;
+    align-items: center; justify-content: center;
+    background: none; border: none; border-radius: 9px;
+    color: rgba(255, 255, 255, 0.92); cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background .14s;
+  }
+  .nav-back:active { background: rgba(255, 255, 255, 0.12); }
+  .nav-back svg { display: block; }
+  .nav-pagelabel {
+    order: 2; display: none; min-width: 0; flex: 0 1 auto;
+    font-family: var(--font-display, inherit);
+    font-size: 1.16rem; font-weight: 700; letter-spacing: -0.01em;
+    color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  /* Sub-pages: back + label in, brand out. */
+  body.has-subnav:not(.home-mode) .sticky-hero-inner .nav-back,
+  body.custom-mode .sticky-hero-inner .nav-back { display: inline-flex; }
+  body.has-subnav:not(.home-mode) .sticky-hero-inner .nav-pagelabel,
+  body.custom-mode .sticky-hero-inner .nav-pagelabel { display: block; }
+  body.has-subnav:not(.home-mode) .sticky-hero-inner .sticky-brand,
+  body.custom-mode .sticky-hero-inner .sticky-brand { display: none; }
+
+  /* Title now lives in the top bar — the sub-header keeps only the
+     horizontal subtopic scroll. */
+  body.has-subnav:not(.home-mode) #sub-header .topic-banner-titlegroup { display: none; }
+}
+
 /* Search pill — opens the Topics modal with input focused. Mirrors
    the Choose Topics pill's white-on-navy treatment so the two
    read as a paired set (browse vs. search), with the icon cluster
@@ -13408,6 +13454,12 @@ body.home-search #home-search-hero { order: 1; }
 body.home-search #home-trending    { order: 2; }
 body.home-search #section-aii-home { order: 3; }
 body.home-search #section-newsfeed { order: 4; }
+/* Sidebar sections (Web Sources, Prompt Builder promo) have no order otherwise,
+   so they'd default to order:0 and jump ABOVE the search hero on mobile. Pin
+   them after the main stack. On desktop they sit inside .home-side (re-flexed)
+   where these orders match their source order, so the sidebar is unaffected. */
+body.home-search #section-websources { order: 5; }
+body.home-search .home-promo          { order: 6; }
 /* Home trending is a vertical list (sidebar + mobile both read as a list). */
 body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; }
 /* Each major section reads as its own distinct white card (matching the mockup).

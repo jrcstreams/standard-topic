@@ -78,6 +78,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     if (isPromptRoute) openPromptBuilderModal(); else closePromptBuilderModal();
 
+    // Always refresh the bottom-nav active tab from the REAL route — overlay
+    // routes (search/custom) skip renderLayout, so its internal call is missed.
+    renderBottomNav(route);
+
     // Fire GA4 page_view after the DOM has the right document.title.
     trackPageView(window.location.hash || '#/', document.title);
   });
@@ -1050,6 +1054,22 @@ function setupResponsiveNav() {
   // No JS measurement needed — CSS media queries handle all breakpoints
 }
 
+// theScore-style mobile top bar: the page label shown next to the back
+// button on sub-pages (topic / about / terms / prompt builder / search).
+// Empty string on home (the brand shows instead).
+function pageLabelFor(route) {
+  if (!route) return '';
+  switch (route.type) {
+    case 'topic': { const t = getTopicBySlug(route.slug); return t ? t.name : ''; }
+    case 'about': return 'About';
+    case 'terms': return 'Terms';
+    case 'prompt-generator': return 'Prompt Builder';
+    case 'search': return 'Search';
+    case 'custom': return route.term ? `“${route.term}”` : 'Search';
+    default: return '';
+  }
+}
+
 function renderStickyHeroBar(container, route) {
   const featured = getFeaturedTopics();
   const NAVMENU_CHEV = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
@@ -1087,6 +1107,10 @@ function renderStickyHeroBar(container, route) {
       <a href="#/" class="sticky-brand" id="sticky-brand-link">
         <span class="sticky-title">Standard Topic</span>
       </a>
+      <button type="button" class="nav-back" id="nav-back" aria-label="Back">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <span class="nav-pagelabel" id="nav-pagelabel"></span>
       <nav class="sticky-nav-topics" aria-label="Top topics">
         <a href="#/topic/world" class="sticky-nav-topic">World</a>
         <a href="#/topic/politics" class="sticky-nav-topic">Politics</a>
@@ -1312,6 +1336,16 @@ function renderStickyHeroBar(container, route) {
     window.dispatchEvent(new CustomEvent('open-trending-list'));
   });
 
+  // Mobile top-bar page label (theScore-style): topic/page name next to
+  // the back button on sub-pages; blank on home (brand shows instead).
+  const pageLabelEl = container.querySelector('#nav-pagelabel');
+  if (pageLabelEl) pageLabelEl.textContent = pageLabelFor(route);
+  // Back button → previous screen, falling back to home for deep links.
+  container.querySelector('#nav-back')?.addEventListener('click', () => {
+    if (window.history.length > 1) window.history.back();
+    else navigate('#/');
+  });
+
   // Clicking logo/title always goes home with News Feed active —
   // even if already on #/, force re-render so mobile tab resets.
   container.querySelector('#sticky-brand-link')?.addEventListener('click', (e) => {
@@ -1368,7 +1402,13 @@ function renderBottomNav(route) {
       if (h === '#/' || h === '' || h === '#') { e.preventDefault(); window.scrollTo(0, 0); }
     });
   }
-  const active = route && route.type === 'home' ? 'home' : '';
+  // The hash is the source of truth: search/custom open as modals over the
+  // HOME layout (renderLayout runs with baseRoute=home), so check the real
+  // route from the hash BEFORE the home fallback.
+  let active = '';
+  const h = (window.location.hash || '').toLowerCase();
+  if (h.startsWith('#/search') || h.startsWith('#/custom')) active = 'search';
+  else if (route && route.type === 'home') active = 'home';
   nav.querySelectorAll('.botnav-tab').forEach(t => t.classList.toggle('is-active', t.dataset.tab === active));
 }
 
