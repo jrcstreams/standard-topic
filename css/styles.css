@@ -310,6 +310,37 @@ body.custom-mode.sticky-always #content {
   align-items: center;
 }
 
+/* Desktop topic nav in the main bar — light links on the navy band, the active
+   top-level topic underlined. Takes the middle (flex:1) like the old tagline.
+   Hidden below 1024px (mobile gets a bottom tab nav). */
+.sticky-nav-topics { display: none; }
+@media (min-width: 1024px) {
+  .sticky-nav-topics {
+    display: flex; align-items: center; gap: 1.15rem;
+    flex: 1 1 auto; min-width: 0; margin: 0 0.5rem 0 1.25rem; overflow: hidden;
+  }
+}
+.sticky-nav-topic, .sticky-nav-more {
+  position: relative; white-space: nowrap; flex: 0 0 auto;
+  font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; letter-spacing: -0.004em;
+  color: rgba(255, 255, 255, 0.68); text-decoration: none; padding: 0.25rem 0;
+  background: none; border: none; cursor: pointer; transition: color 0.14s;
+}
+.sticky-nav-topic:hover, .sticky-nav-more:hover { color: #fff; text-decoration: none; }
+.sticky-nav-topic.is-active { color: #fff; }
+.sticky-nav-topic.is-active::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px;
+  background: #5b8def; border-radius: 2px;
+}
+.sticky-nav-more { display: inline-flex; align-items: center; gap: 3px; }
+.sticky-nav-more svg { opacity: 0.85; }
+/* Desktop home: the main-bar topic nav replaces the old subnav chip strip, so
+   hide the redundant second row and reclaim its reserved content padding. */
+@media (min-width: 1024px) {
+  body.home-search.sticky-always #sub-header { display: none !important; }
+  body.home-search.sticky-always.has-subnav #content { padding-top: calc(64px + 1.5rem); }
+}
+
 /* Search + CTA always right-aligned as a group. Natural-width
    (flex: 0 0 auto) so the tagline in the middle can claim the
    leftover space via its own flex: 1 — otherwise actions and

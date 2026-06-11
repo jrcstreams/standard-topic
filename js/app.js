@@ -1086,7 +1086,17 @@ function renderStickyHeroBar(container, route) {
       <a href="#/" class="sticky-brand" id="sticky-brand-link">
         <span class="sticky-title">Standard Topic</span>
       </a>
-      <span class="sticky-tagline">News, Resources and AI Knowledge. On any topic.</span>
+      <nav class="sticky-nav-topics" aria-label="Top topics">
+        <a href="#/topic/world" class="sticky-nav-topic">World</a>
+        <a href="#/topic/politics" class="sticky-nav-topic">Politics</a>
+        <a href="#/topic/business-finance" class="sticky-nav-topic">Business &amp; Finance</a>
+        <a href="#/topic/technology" class="sticky-nav-topic">Technology</a>
+        <a href="#/topic/sports" class="sticky-nav-topic">Sports</a>
+        <a href="#/topic/science" class="sticky-nav-topic">Science</a>
+        <button type="button" class="sticky-nav-more" id="sticky-nav-more" aria-haspopup="dialog">More
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </nav>
       <div class="sticky-actions">
         <a href="#/" class="sticky-home" id="nav-home" aria-label="Home">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1116,14 +1126,6 @@ function renderStickyHeroBar(container, route) {
           <span class="sticky-trending-short">Trends</span>
         </button>
         <div class="sticky-search" id="sticky-search-container"></div>
-        <a href="#/prompt-generator" class="sticky-cta" id="nav-cta" aria-label="Prompt Builder">
-          <svg class="sticky-cta-sparkle" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/>
-            <path d="M19 3l.6 1.6L21.2 5.2 19.6 5.8 19 7.4 18.4 5.8 16.8 5.2 18.4 4.6z"/>
-          </svg>
-          <span class="sticky-cta-full">Prompt Builder</span>
-          <span class="sticky-cta-short">Prompt Builder</span>
-        </a>
         <button type="button" class="sticky-settings" id="nav-settings" aria-label="Settings">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="3"/>
@@ -1140,6 +1142,15 @@ function renderStickyHeroBar(container, route) {
   document.getElementById('nav-settings')?.addEventListener('click', () => {
     window.dispatchEvent(new CustomEvent('open-settings-modal'));
   });
+
+  // "More" in the desktop topic nav opens the full All Topics modal.
+  document.getElementById('sticky-nav-more')?.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('open-all-topics-modal'));
+  });
+  // Highlight the active top-level topic in the nav.
+  if (route && route.type === 'topic' && route.slug) {
+    document.querySelector(`.sticky-nav-topic[href="#/topic/${route.slug}"]`)?.classList.add('is-active');
+  }
 
   // Trending pill — opens the global Trending modal from any page.
   document.getElementById('nav-trending')?.addEventListener('click', () => {
