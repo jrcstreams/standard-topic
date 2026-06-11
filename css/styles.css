@@ -551,29 +551,32 @@ body.custom-mode.sticky-always #content {
    at the end. Replaces the old row of identical slate icon-pills. Scoped
    to ≥900px — the sub-900 nav is handled by the upcoming mobile overhaul. */
 @media (min-width: 900px) {
+  /* Every action is a uniform translucent pill (the Topics-chip family);
+     the active page turns solid white. Even, deliberate gaps. */
+  .sticky-actions { gap: 0.5rem; }
   .sticky-actions .sticky-home,
   .sticky-actions .sticky-trending,
   .sticky-actions .sticky-settings,
   .sticky-actions .sticky-search-pill .search-bar {
-    width: 34px; height: 34px; min-width: 0; padding: 0;
-    background: transparent;
-    border: 1px solid transparent;
+    width: 36px; height: 36px; min-width: 0; padding: 0;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: 9px;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.85);
     transition: background .14s, color .14s, border-color .14s, transform .06s;
   }
   /* drop the inline text labels — these become pure icons */
   .sticky-actions .sticky-search-pill .search-bar-label,
   .sticky-actions .sticky-trending-full,
   .sticky-actions .sticky-trending-short { display: none; }
-  .sticky-actions .sticky-search-pill .search-bar-icon { color: rgba(255, 255, 255, 0.6) !important; }
-  /* hover — faint white wash, icon brightens to full white */
+  .sticky-actions .sticky-search-pill .search-bar-icon { color: rgba(255, 255, 255, 0.85) !important; }
+  /* hover — brighter pill, icon to full white */
   .sticky-actions .sticky-home:hover,
   .sticky-actions .sticky-trending:hover,
   .sticky-actions .sticky-settings:hover,
   .sticky-actions .sticky-search-pill .search-bar:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: transparent;
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.28);
     color: #fff;
   }
   .sticky-actions .sticky-search-pill .search-bar:hover .search-bar-icon { color: #fff !important; }
@@ -582,10 +585,11 @@ body.custom-mode.sticky-always #content {
   .sticky-actions .sticky-home.is-active:hover {
     background: #fff; border-color: #fff; color: #16223b;
   }
-  /* Topics — keeps its label inside a subtle translucent pill */
+  .sticky-actions .sticky-home.is-active:hover .search-bar-icon { color: #16223b !important; }
+  /* Topics — same pill family, with its label. */
   .sticky-topics {
     display: inline-flex; align-items: center; gap: 0.4rem;
-    height: 34px; padding: 0 0.74rem;
+    height: 36px; padding: 0 0.8rem;
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: 9px;
@@ -595,7 +599,7 @@ body.custom-mode.sticky-always #content {
     cursor: pointer; flex-shrink: 0;
     transition: background .14s, border-color .14s, color .14s, transform .06s;
   }
-  .sticky-topics:hover { background: rgba(255, 255, 255, 0.14); border-color: rgba(255, 255, 255, 0.28); color: #fff; }
+  .sticky-topics:hover { background: rgba(255, 255, 255, 0.16); border-color: rgba(255, 255, 255, 0.28); color: #fff; }
   .sticky-topics:active { transform: translateY(1px); }
   .sticky-topics svg { flex-shrink: 0; opacity: 0.92; }
 }
@@ -620,16 +624,16 @@ body.custom-mode.sticky-always #content {
   }
   .botnav-tab {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 4px; padding: 8px 4px 7px;
+    gap: 5px; padding: 10px 4px 9px;
     background: none; border: none; cursor: pointer;
-    color: rgba(255, 255, 255, 0.52);
+    color: rgba(255, 255, 255, 0.55);
     text-decoration: none; font-family: inherit;
     transition: color .14s;
     -webkit-tap-highlight-color: transparent;
   }
   .botnav-ico { display: inline-flex; }
-  .botnav-ico svg { display: block; }
-  .botnav-label { font-size: 0.625rem; font-weight: 600; letter-spacing: 0.01em; line-height: 1; }
+  .botnav-ico svg { display: block; width: 24px; height: 24px; }
+  .botnav-label { font-size: 0.665rem; font-weight: 600; letter-spacing: 0.01em; line-height: 1; }
   .botnav-tab:active { color: rgba(255, 255, 255, 0.85); }
   .botnav-tab.is-active { color: #fff; }
 
@@ -640,17 +644,17 @@ body.custom-mode.sticky-always #content {
   .sticky-actions .sticky-trending,
   .sticky-actions .sticky-topics { display: none; }
 
-  /* Clear the fixed bottom nav (52px + iOS safe area). Scrolling home gets
+  /* Clear the fixed bottom nav (64px + iOS safe area). Scrolling home gets
      extra bottom padding; the app-mode locked topic panel shrinks its
      internal scroll height so the last row clears the bar. Selectors mirror
      the base rules' specificity so these overrides actually win. */
   html body.home-search.app-mode.sticky-always.has-subnav #content,
   html body.home-search.app-mode #content {
-    padding-bottom: calc(52px + env(safe-area-inset-bottom, 0px) + 1.1rem);
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px) + 1.1rem);
   }
   body.app-mode.sticky-always.has-subnav:not(.home-search) #content,
   body.app-mode:not(.home-search) #content {
-    height: calc(100dvh - 64px - var(--subnav-height, 66px) - 52px - env(safe-area-inset-bottom, 0px));
+    height: calc(100dvh - 64px - var(--subnav-height, 66px) - 64px - env(safe-area-inset-bottom, 0px));
   }
 }
 
@@ -1191,8 +1195,9 @@ body.hide-cta .sticky-cta { display: none !important; }
      chip strip share this same fill, so the two read as one
      cohesive identity band. A single bordering/shadow at the
      bottom is the only hard separator between the subnav and
-     the body content below it. */
-  background: #f3f4f6;
+     the body content below it. Inverted hierarchy (#2): the identity/subtopic
+     band is now the DARKER fill; the tab control below it goes lighter. */
+  background: #e7ecf3;
   border-bottom: 1px solid #cdd2d9;
   box-shadow: 0 2px 8px rgba(15, 26, 46, 0.06);
 }
@@ -5926,8 +5931,9 @@ body.app-mode .topic-layout {
        (2rem at >640px, 1rem at ≤640px) so the band runs full-
        bleed to the topic-layout edges across all viewport widths.
        No top margin — band sits flush against the subnav band
-       above (no orphan whitespace strip). */
-    background: #e7ecf3;
+       above (no orphan whitespace strip). Inverted (#2): the tab control is
+       now the LIGHTER band, sitting beneath the darker subnav above it. */
+    background: #f3f4f6;
     margin: 0 -2rem;
     padding: 0.7rem 2rem;
     gap: 0.65rem;
