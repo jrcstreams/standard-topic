@@ -658,50 +658,49 @@ body.custom-mode.sticky-always #content {
   }
 }
 
-/* ═══════════════ Mobile top bar — theScore-style (2026-06-11) ═════════
-   Sub-pages (topic / about / terms / prompt / search) get a BACK button +
-   PAGE LABEL on the left; the hamburger becomes the right-side "more" menu
-   (Settings, About, full topic tree). Home keeps the brand on the left.
-   The page title leaves the sub-header (only the subtopic scroll stays). */
+/* ═══════════════ Mobile top bar — ESPN-style (2026-06-11) ═════════════
+   Consistent on EVERY page: [☰ Standard Topic] left-aligned, [🔍] search on
+   the right (still handy even though Search is in the bottom nav too). The
+   page/topic title is NOT in the top bar — it moves to the sub-header
+   identity line below (see the mobile sub-header rules). */
 .nav-back { display: none; }
 .nav-pagelabel { display: none; }
+.nav-search-mobile { display: none; }
 @media (max-width: 899.98px) {
-  /* Hamburger → right edge as the "more" affordance. The empty actions
-     cluster (its pills now live in the bottom nav) is removed from flow so
-     its margin-left:auto can't shove the back+label toward center. */
-  .sticky-hero-inner .nav-hamburger { order: 10; margin-left: auto; }
-  .sticky-hero-inner .sticky-brand { order: 1; }
+  .nav-back, .nav-pagelabel { display: none !important; }   /* retired on mobile */
+  .sticky-hero-inner .nav-hamburger { order: 1; margin-left: 0; }
+  .sticky-hero-inner .sticky-brand { order: 2; display: flex; }
   .sticky-hero-inner .sticky-actions { display: none; }
-
-  .nav-back {
-    order: 1; display: none; /* shown per-route below */
-    width: 36px; height: 36px; margin: 0 2px 0 -6px;
-    align-items: center; justify-content: center;
+  .sticky-hero-inner .nav-search-mobile {
+    order: 10; margin-left: auto; display: inline-flex;
+    width: 36px; height: 36px; align-items: center; justify-content: center;
     background: none; border: none; border-radius: 9px;
-    color: rgba(255, 255, 255, 0.92); cursor: pointer;
+    color: rgba(255, 255, 255, 0.9); cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     transition: background .14s;
   }
-  .nav-back:active { background: rgba(255, 255, 255, 0.12); }
-  .nav-back svg { display: block; }
-  .nav-pagelabel {
-    order: 2; display: none; min-width: 0; flex: 0 1 auto;
-    font-family: var(--font-display, inherit);
-    font-size: 1.16rem; font-weight: 700; letter-spacing: -0.01em;
-    color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  .sticky-hero-inner .nav-search-mobile:active { background: rgba(255, 255, 255, 0.12); }
+  .sticky-hero-inner .nav-search-mobile svg { display: block; }
+
+  /* Sub-header is now the ESPN identity line: topic name (small + bold) on
+     top, a hairline separator, then the horizontal subtopic scroll below.
+     Short, tidy height. */
+  body.has-subnav:not(.home-mode) #sub-header .topic-banner-row {
+    flex-direction: column; align-items: stretch; gap: 0; flex: 1; min-width: 0;
   }
-
-  /* Sub-pages: back + label in, brand out. */
-  body.has-subnav:not(.home-mode) .sticky-hero-inner .nav-back,
-  body.custom-mode .sticky-hero-inner .nav-back { display: inline-flex; }
-  body.has-subnav:not(.home-mode) .sticky-hero-inner .nav-pagelabel,
-  body.custom-mode .sticky-hero-inner .nav-pagelabel { display: block; }
-  body.has-subnav:not(.home-mode) .sticky-hero-inner .sticky-brand,
-  body.custom-mode .sticky-hero-inner .sticky-brand { display: none; }
-
-  /* Title now lives in the top bar — the sub-header keeps only the
-     horizontal subtopic scroll. */
-  body.has-subnav:not(.home-mode) #sub-header .topic-banner-titlegroup { display: none; }
+  body.has-subnav:not(.home-mode) #sub-header .topic-banner-titlegroup {
+    display: flex; flex: 0 0 auto;
+    padding: 0 0 5px; margin: 0 0 6px;
+    border-bottom: 1px solid #d3d9e2;
+  }
+  body.has-subnav:not(.home-mode) #sub-header .topic-banner-kind { display: none; }
+  body.has-subnav:not(.home-mode) #sub-header .topic-banner-title {
+    font-size: 0.84rem; font-weight: 700; letter-spacing: -0.01em; color: #1e2d44; white-space: nowrap;
+  }
+  body.has-subnav:not(.home-mode) #sub-header.is-subnav .topic-banner {
+    flex-direction: column; align-items: stretch;
+    padding: 0.5rem 1rem 0.55rem; min-height: 0;
+  }
 }
 
 /* Search pill — opens the Topics modal with input focused. Mirrors

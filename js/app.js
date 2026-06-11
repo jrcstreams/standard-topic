@@ -1107,10 +1107,9 @@ function renderStickyHeroBar(container, route) {
       <a href="#/" class="sticky-brand" id="sticky-brand-link">
         <span class="sticky-title">Standard Topic</span>
       </a>
-      <button type="button" class="nav-back" id="nav-back" aria-label="Back">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+      <button type="button" class="nav-search-mobile" id="nav-search-mobile" aria-label="Search">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </button>
-      <span class="nav-pagelabel" id="nav-pagelabel"></span>
       <nav class="sticky-nav-topics" aria-label="Top topics">
         <a href="#/topic/world" class="sticky-nav-topic">World</a>
         <a href="#/topic/politics" class="sticky-nav-topic">Politics</a>
@@ -1336,15 +1335,9 @@ function renderStickyHeroBar(container, route) {
     window.dispatchEvent(new CustomEvent('open-trending-list'));
   });
 
-  // Mobile top-bar page label (theScore-style): topic/page name next to
-  // the back button on sub-pages; blank on home (brand shows instead).
-  const pageLabelEl = container.querySelector('#nav-pagelabel');
-  if (pageLabelEl) pageLabelEl.textContent = pageLabelFor(route);
-  // Back button → previous screen, falling back to home for deep links.
-  container.querySelector('#nav-back')?.addEventListener('click', () => {
-    if (window.history.length > 1) window.history.back();
-    else navigate('#/');
-  });
+  // Mobile top-bar search icon (kept upper-right even though Search is also
+  // in the bottom nav) — opens the search modal.
+  container.querySelector('#nav-search-mobile')?.addEventListener('click', () => navigate('#/search'));
 
   // Clicking logo/title always goes home with News Feed active —
   // even if already on #/, force re-render so mobile tab resets.
