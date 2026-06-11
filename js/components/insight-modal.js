@@ -492,6 +492,37 @@ function render() {
 }
 
 // ---- News -----------------------------------------------------------------
+// Relabel + reorder a news brief's sections so EXISTING cached briefs (written
+// with the old "Explanation / Key Points / Background / Timeline" prompt) render
+// with the new vocabulary + order — not just freshly-generated ones.
+const NEWS_SECTION_MAP = [
+  { keys: ['what happened', 'explanation'], label: 'What Happened' },
+  { keys: ['key takeaways', 'key takeaway', 'key points'], label: 'Key Takeaways' },
+  { keys: ['why it matters', 'why this matters', 'background'], label: 'Why It Matters' },
+  { keys: ['timeline'], label: 'Timeline' },
+];
+function normalizeNewsBrief(content) {
+  const text = String(content || '');
+  const re = /^#{1,4}\s+(.+?)\s*$/gm;
+  const heads = []; let m;
+  while ((m = re.exec(text))) heads.push({ title: m[1].trim(), start: m.index, contentStart: re.lastIndex });
+  if (!heads.length) return text; // no section headers — leave prose untouched
+  const sections = heads.map((h, i) => ({
+    title: h.title,
+    body: text.slice(h.contentStart, i + 1 < heads.length ? heads[i + 1].start : text.length).replace(/^\n+/, '').replace(/\s+$/, ''),
+  }));
+  const norm = (t) => t.toLowerCase().replace(/[^a-z ]/g, '').replace(/\s+/g, ' ').trim();
+  const buckets = NEWS_SECTION_MAP.map(() => null);
+  const extras = [];
+  for (const s of sections) {
+    const n = norm(s.title);
+    const idx = NEWS_SECTION_MAP.findIndex(g => g.keys.includes(n));
+    if (idx >= 0 && !buckets[idx]) buckets[idx] = { label: NEWS_SECTION_MAP[idx].label, body: s.body };
+    else extras.push({ label: s.title, body: s.body }); // unknown section keeps its name, lands at the end
+  }
+  const ordered = buckets.filter(Boolean).concat(extras);
+  return ordered.length ? ordered.map(s => `### ${s.label}\n${s.body}`).join('\n\n') : text;
+}
 function newsPromptFor(d) {
   return `Give me a thorough, accurate briefing on this news story — what happened, why it matters, background, a timeline, and the latest developments.\n\n"${d.title || ''}"${d.description ? `\n\n${d.description}` : ''}${d.url ? `\n\nSource: ${d.url}` : ''}`;
 }
@@ -547,7 +578,7 @@ function renderNews(d) {
       if (panelEl.querySelector('#im-brief') !== briefEl) return;
       if (data && data.content) {
         ctx.sources = data.sources || [];
-        briefEl.innerHTML = renderBriefBody(data.content, null); briefEl.classList.add('ai-reveal');
+        briefEl.innerHTML = renderBriefBody(normalizeNewsBrief(data.content), null); briefEl.classList.add('ai-reveal');
       } else { briefEl.innerHTML = '<p class="im-empty">AI brief unavailable right now.</p>'; }
     } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
     // Fill the Sources panel + the Sources & Coverage card from the citations.

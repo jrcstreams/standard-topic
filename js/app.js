@@ -15,7 +15,7 @@ import { initPromptModal } from './components/prompt-modal.js?v=20260609-revamp4
 import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260611-revamp126';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260611-revamp118';
-import { initInsightModal } from './components/insight-modal.js?v=20260611-revamp136';
+import { initInsightModal } from './components/insight-modal.js?v=20260611-revamp137';
 import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260611-revamp135';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260611-revamp121';
 import { renderWebSources } from './components/websources.js?v=20260609-revamp73';
