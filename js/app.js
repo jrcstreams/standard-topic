@@ -16,7 +16,8 @@ import { renderTrending, renderTrendingTopics, renderTrendingHome } from './comp
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260611-revamp118';
 import { initInsightModal } from './components/insight-modal.js?v=20260610-revamp98';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260610-revamp104';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260611-revamp121';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260611-revamp121';
 import { renderWebSources } from './components/websources.js?v=20260609-revamp73';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260611-revamp118';
 import { initDiscoverModal } from './components/discover-modal.js';
@@ -46,6 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initSearchOverlay();
   initSearchPageModal();
   initPromptBuilderModal();
+  initAIIntelligenceModal();
   setupGlobalTabPillDelegation();
 
   onRoute((route) => {

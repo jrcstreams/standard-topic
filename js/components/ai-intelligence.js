@@ -121,6 +121,11 @@ export function renderAIIntelligence(container, scope) {
   const tabMode = scope.topic !== 'home'
     && typeof window !== 'undefined' && window.matchMedia
     && window.matchMedia('(max-width: 899.98px)').matches;
+  // Launcher mode (#13): on the homepage + topic-page DESKTOP, the section is a
+  // launcher — clicking a path opens the AI Intelligence MODAL (the in-place
+  // flip was a shitshow on those layouts). Inside the modal (scope.inModal) we
+  // run the full flip-nav. Topic-page MOBILE stays the inline tab-mode.
+  const launcher = !tabMode && !scope.inModal;
 
   const subtabsHTML = () => `<nav class="aii-subtabs">${paths.map((p) => `<button type="button" class="aii-subtab" data-group="${escAttr(p.group)}">${esc(p.tab || p.label)}</button>`).join('')}</nav>`;
 
@@ -141,6 +146,7 @@ export function renderAIIntelligence(container, scope) {
   }
   function go(v, dir) {
     view = v; stage.dataset.view = v;
+    container.dataset.aiiGroup = curGroup || '';   // expose for the modal→tab hand-off (#13)
     stage.innerHTML = viewHTML();
     stage.classList.remove('aii-anim-fwd', 'aii-anim-back');
     void stage.offsetWidth;
@@ -479,14 +485,36 @@ export function renderAIIntelligence(container, scope) {
   }
   if (tabMode) {
     container.querySelectorAll('.aii-subtab').forEach((b) => b.addEventListener('click', () => openTab(b.dataset.group)));
-    openTab(paths[0].group);          // default to the first path's sections
+    // Deep-link from a desktop→mobile hand-off (#13): open straight to a section.
+    if (scope.initialGroup && paths.some((p) => p.group === scope.initialGroup)) openTab(scope.initialGroup);
+    else openTab(paths[0].group);     // default to the first path's sections
+    // Listen for a hand-off from the desktop modal (resize → mobile): jump to
+    // the section the user had open. Stored on the container so re-renders /
+    // destroy can detach it (no leak).
+    if (container._aiiSectionHandler) window.removeEventListener('aii-open-section', container._aiiSectionHandler);
+    container._aiiSectionHandler = (e) => { const g = e && e.detail && e.detail.group; if (g && paths.some((p) => p.group === g)) openTab(g); };
+    window.addEventListener('aii-open-section', container._aiiSectionHandler);
+  } else if (launcher) {
+    // Render the path tiles as a launcher; clicking one opens the modal.
+    stage.innerHTML = pathsHTML();
+    stage.querySelectorAll('.aii-pathrow').forEach((b) => b.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: {
+        topic: scope.topic, label: scope.label, group: b.dataset.group,
+        hideGroups: scope.hideGroups || [], descriptions: scope.descriptions || {},
+      } }));
+    }));
+  } else if (scope.inModal && scope.initialGroup && paths.some((p) => p.group === scope.initialGroup)) {
+    // Inside the modal, deep-link to the path the user clicked.
+    curGroup = scope.initialGroup;
+    go('sections', 'fwd');
+    loadGroup(curGroup).then(() => { if (view === 'sections' && stage.dataset.view === 'sections') { stage.innerHTML = sectionsHTML(); wire(); } });
   } else {
     go('paths', 'fwd');
   }
   // Responsive: tabMode is fixed at render, so without this the first-render
   // layout (desktop paths-grid OR mobile secondary-tab nav) would stick across
   // a viewport resize. Re-render whenever the breakpoint is crossed.
-  if (typeof window !== 'undefined' && window.matchMedia && scope.topic !== 'home') {
+  if (typeof window !== 'undefined' && window.matchMedia && scope.topic !== 'home' && !scope.inModal) {
     if (container._aiiMq && container._aiiMqHandler) {
       container._aiiMq.removeEventListener('change', container._aiiMqHandler);
     }
@@ -500,6 +528,8 @@ export function renderAIIntelligence(container, scope) {
     teardownSticky();
     if (container._aiiMq && container._aiiMqHandler) container._aiiMq.removeEventListener('change', container._aiiMqHandler);
     container._aiiMq = container._aiiMqHandler = null;
+    if (container._aiiSectionHandler) window.removeEventListener('aii-open-section', container._aiiSectionHandler);
+    container._aiiSectionHandler = null;
     container.innerHTML = '';
   } };
 }
