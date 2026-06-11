@@ -3,7 +3,7 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody } from './newsfeed.js?v=20260611-revamp138';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260611-revamp138';
 import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260611-revamp138';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
@@ -216,9 +216,16 @@ function coverageListHTML(sources, origUrl) {
   for (const s of (Array.isArray(sources) ? sources : [])) {
     const uri = (s && (s.uri || s.url)) || ''; if (!uri) continue;
     const k = uri.toLowerCase(); if (seen.has(k)) continue; seen.add(k);
-    let h = ''; try { h = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
-    let title = (s && s.title) || ''; if (!title || /^https?:/i.test(title)) title = h; if (!title) continue;
-    rows.push(`<a class="im-cov-row" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(title)}</span>${h ? `<span class="im-cov-host">${esc(h)}</span>` : ''}</span>${ARROW}</a>`);
+    // Resolve the real publisher (grounding URIs are redirects — the host is
+    // junk; the domain lives in the title). Drop a subtitle that just repeats
+    // the link text (grounding citations have no separate headline).
+    const r = resolveSource({ title: s && s.title, uri });
+    const host = r.domain || '';
+    let title = String((s && s.title) || '').trim();
+    if (!title || /^https?:/i.test(title)) title = host;
+    if (!title) continue;
+    const showHost = host && host.toLowerCase() !== title.toLowerCase();
+    rows.push(`<a class="im-cov-row" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(title)}</span>${showHost ? `<span class="im-cov-host">${esc(host)}</span>` : ''}</span>${ARROW}</a>`);
     if (rows.length >= 12) break;
   }
   return rows.join('');
@@ -608,9 +615,12 @@ function inTheNewsHTML(sources, headlines) {
   for (const h of list) {
     const uri = (h && (h.uri || h.url)) || ''; if (!uri) continue;
     const key = uri.toLowerCase(); if (seen.has(key)) continue; seen.add(key);
-    let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
-    let title = (h && h.title) || ''; if (!title || /^https?:/i.test(title)) title = host; if (!title) continue;
-    rows.push(`<li class="aii-hl-row"><a class="aii-hl-link" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a>${host ? `<span class="aii-hl-src">${esc(host)}</span>` : ''}</li>`);
+    const r = resolveSource({ title: h && h.title, uri });
+    const host = r.domain || '';
+    let title = String((h && h.title) || '').trim();
+    if (!title || /^https?:/i.test(title)) title = host; if (!title) continue;
+    const showHost = host && host.toLowerCase() !== title.toLowerCase();
+    rows.push(`<li class="aii-hl-row"><a class="aii-hl-link" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a>${showHost ? `<span class="aii-hl-src">${esc(host)}</span>` : ''}</li>`);
     if (rows.length >= 8) break;
   }
   if (!rows.length) return '';

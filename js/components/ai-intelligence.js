@@ -4,7 +4,7 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody } from './newsfeed.js?v=20260611-revamp138';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260611-revamp138';
 import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260611-revamp138';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
@@ -270,8 +270,10 @@ export function renderAIIntelligence(container, scope) {
     for (const x of list) {
       const uri = x.uri || x.url || ''; if (!uri) continue;
       const ukey = uri.toLowerCase();
-      let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
-      let title = x.title || ''; if (!title || /^https?:/i.test(title)) title = host;
+      // Real publisher, not the grounding redirect host (which is junk).
+      const r = resolveSource({ title: x.title, uri });
+      const host = r.domain || '';
+      let title = String(x.title || '').trim(); if (!title || /^https?:/i.test(title)) title = host;
       if (!title) continue;
       const tkey = title.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
       if (seen.has(ukey) || (tkey && seenT.has(tkey))) continue;
@@ -282,8 +284,12 @@ export function renderAIIntelligence(container, scope) {
     return out;
   }
   function headlineListHTML() {
-    const rows = sectionNewsItems().map((x) =>
-      `<li class="aii-hl-row"><a class="aii-hl-link" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer">${esc(x.title)}</a>${x.host ? `<span class="aii-hl-src">${esc(x.host)}</span>` : ''}</li>`);
+    const rows = sectionNewsItems().map((x) => {
+      // Skip a subtitle that just repeats the link text (grounding citations
+      // carry no separate headline — the title IS the publisher).
+      const showHost = x.host && x.host.toLowerCase() !== x.title.toLowerCase();
+      return `<li class="aii-hl-row"><a class="aii-hl-link" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer">${esc(x.title)}</a>${showHost ? `<span class="aii-hl-src">${esc(x.host)}</span>` : ''}</li>`;
+    });
     if (!rows.length) return '';
     return `<div class="aii-hl"><div class="aii-hl-head">In the news</div><ul class="aii-hl-list">${rows.join('')}</ul></div>`;
   }
