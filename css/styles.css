@@ -14915,7 +14915,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Condensed title bar — fades in once the overview card scrolls out of view so
    the reader keeps context deep in a long brief. */
 .im-condensed { display: flex; flex-direction: column; gap: 1px; max-height: 0; opacity: 0; overflow: hidden; padding: 0 20px; border-top: 1px solid transparent; transition: max-height .22s ease, opacity .16s ease, padding .2s ease; }
-.im-panel.is-scrolled .im-condensed { max-height: 64px; opacity: 1; padding: 9px 20px 11px; border-top-color: var(--color-surface-border); }
+.im-panel.is-scrolled .im-condensed { max-height: 96px; opacity: 1; padding: 9px 20px 11px; border-top-color: var(--color-surface-border); }
 .im-condensed-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .im-condensed-meta { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--color-text-muted); min-width: 0; }
 .im-condensed-pub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
@@ -14990,8 +14990,53 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .im-brief-source:hover { color: var(--color-primary); text-decoration: underline; text-underline-offset: 2px; }
 .im-brief-source svg { width: 12px; height: 12px; }
 
+/* News v3 — source · time ABOVE the title; title sits directly over summary. */
+.im-article-meta--top { margin: 0 0 9px; }
+
+/* Prev / Next story — clean arrow links above the article card. */
+.im-storynav { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 15px; }
+.im-storynav-link { display: inline-flex; align-items: center; gap: 5px; padding: 7px 14px; border: 1px solid var(--color-surface-border); border-radius: 999px; background: #fff; font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; color: var(--color-text); cursor: pointer; transition: border-color .14s, color .14s, background .14s; }
+.im-storynav-link:hover { border-color: var(--color-primary); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 5%, #fff); }
+.im-storynav-link--next { margin-left: auto; }
+.im-storynav-arrow { font-size: 1.1rem; line-height: 0.8; }
+.im-storynav-spacer { flex: 0 0 auto; }
+
+/* Quicklinks — discreet text links inside the overview card (View Original ·
+   Sources · Ask AI · Web Search). They free the space the action chips used. */
+.im-quicklinks { display: flex; flex-wrap: wrap; align-items: center; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--color-surface-border); }
+.im-qlink { display: inline-flex; align-items: center; gap: 4px; padding: 3px 0; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #1d4ed8; background: none; border: none; cursor: pointer; text-decoration: none; transition: color .14s; }
+.im-qlink:hover { text-decoration: underline; text-underline-offset: 2px; }
+.im-qlink svg { width: 11px; height: 11px; }
+.im-qlink[aria-expanded="true"] { color: #1e3a8a; text-decoration: underline; text-underline-offset: 2px; }
+.im-qlink:not(:last-child) { margin-right: 11px; padding-right: 11px; border-right: 1px solid var(--color-surface-border); }
+
+/* Sources & Coverage — final card listing the cited sources as a link list. */
+.im-coverage-list { display: grid; gap: 6px; }
+.im-cov-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 13px; border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; text-decoration: none; color: var(--color-text); transition: border-color .14s; }
+.im-cov-row:hover { border-color: var(--color-primary); }
+.im-cov-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.im-cov-title { font-size: 0.84rem; font-weight: 600; color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.im-cov-row:hover .im-cov-title { color: var(--color-primary); }
+.im-cov-host { font-size: 0.72rem; color: var(--color-text-muted); }
+.im-cov-row svg { flex: none; width: 13px; height: 13px; color: var(--color-text-light); }
+
+/* Sticky bar carries the affordances: prev/next chevrons + jump-up action links. */
+.im-condensed-top { display: flex; align-items: center; gap: 8px; }
+.im-condensed-top .im-condensed-title { flex: 1 1 auto; min-width: 0; }
+.im-condensed-sub { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 3px; }
+.im-condensed-acts { display: inline-flex; align-items: center; flex: none; }
+.im-cond-act { background: none; border: none; font-family: var(--font-family); font-size: 0.74rem; font-weight: 600; color: #1d4ed8; cursor: pointer; padding: 2px 0; transition: color .14s; }
+.im-cond-act:hover { text-decoration: underline; text-underline-offset: 2px; }
+.im-cond-act[aria-expanded="true"] { color: #1e3a8a; text-decoration: underline; text-underline-offset: 2px; }
+.im-cond-act:not(:last-child) { margin-right: 9px; padding-right: 9px; border-right: 1px solid var(--color-surface-border); }
+.im-cond-arrow { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex: none; border: 1px solid var(--color-surface-border); border-radius: 7px; background: #fff; color: var(--color-text); cursor: pointer; transition: border-color .14s, color .14s; }
+.im-cond-arrow:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.im-cond-arrow--ghost { visibility: hidden; }
+
 /* AI Brief — disclaimer (tight under the label, not italic), then actions, a
    clear rule, then the content. */
+.im-section-title--brief { font-size: 1.2rem; color: #1b3a8c; }
+.im-section-title--brief svg { color: #1b3a8c; }
 .im-brief-section .im-section-title--brief { margin-bottom: 7px; }
 .im-brief-section .im-disclaimer { margin: 0 0 12px; font-size: 0.78rem; line-height: 1.5; color: var(--color-text-muted); }
 .im-actions-slot:empty { display: none; }

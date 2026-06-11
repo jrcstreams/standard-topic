@@ -206,7 +206,7 @@ function showNewsBrief(card) {
   let index = cards.indexOf(card); if (index < 0) index = 0;
   window.dispatchEvent(new CustomEvent('open-insight-modal', { detail: {
     ...entries[index],
-    nav: { list: entries, index, backLabel: 'News Feed', itemKind: 'story' },
+    nav: { list: entries, index, itemKind: 'story' },
   } }));
 }
 
