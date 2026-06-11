@@ -13301,12 +13301,42 @@ body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; }
    overflow:hidden clips any internal header band to the rounded corners. */
 body.home-search #home-trending,
 body.home-search #section-aii-home,
-body.home-search #section-newsfeed {
+body.home-search #section-newsfeed,
+body.home-search #section-websources {
   background: var(--color-bg, #fff);
   border: 1px solid var(--color-surface-border);
   border-radius: 16px;
   overflow: hidden;
 }
+
+/* Prompt Builder promo — a dark navy card with a faint constellation texture
+   and a blue CTA (replaces the nav's Prompt Builder button on home). */
+.home-promo {
+  display: block; text-decoration: none; position: relative; overflow: hidden;
+  border-radius: 16px; border: 1px solid #243355;
+  background: linear-gradient(155deg, #16233c 0%, #1d2c49 55%, #16233c 100%);
+}
+.home-promo::after {
+  content: ''; position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(120, 150, 210, 0.2) 1px, transparent 1.6px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(125% 120% at 86% 14%, #000, transparent 68%);
+  mask-image: radial-gradient(125% 120% at 86% 14%, #000, transparent 68%);
+  pointer-events: none;
+}
+.home-promo-inner { position: relative; z-index: 1; padding: 1.45rem 1.4rem 1.55rem; }
+.home-promo-eyebrow { margin: 0 0 0.55rem; font-size: 0.67rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #7d93c4; }
+.home-promo-title { margin: 0 0 0.5rem; font-family: var(--font-display); font-size: 1.3rem; line-height: 1.13; letter-spacing: -0.02em; color: #fff; font-weight: 700; }
+.home-promo-text { margin: 0 0 1.15rem; font-size: 0.855rem; line-height: 1.5; color: #aab6cf; }
+.home-promo-btn {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  padding: 0.6rem 1rem; border-radius: 10px;
+  background: #2f6df0; color: #fff; font-size: 0.85rem; font-weight: 600;
+  box-shadow: 0 8px 20px -8px rgba(47, 109, 240, 0.6);
+  transition: background 0.14s, transform 0.14s;
+}
+.home-promo:hover .home-promo-btn { background: #2a62d8; transform: translateY(-1px); }
+.home-promo-btn svg { flex: none; }
 @media (min-width: 1024px) {
   body.home-search.app-mode .topic-layout.home-grid {
     display: grid;
@@ -13316,6 +13346,9 @@ body.home-search #section-newsfeed {
   }
   body.home-search .home-main { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; grid-column: 1; }
   body.home-search .home-side { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; grid-column: 2; }
+  /* Reset the mobile `order: 2` so the sidebar follows DOM order:
+     Trending -> Web Sources -> Prompt Builder promo. */
+  body.home-search #home-trending { order: 0; }
 }
 /* Cards size to content + the page scrolls. */
 body.home-search .layout-section,

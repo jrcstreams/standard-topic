@@ -1401,6 +1401,18 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         </div>
         <aside class="home-side">
           <section class="home-trending" id="home-trending"></section>
+          <section class="layout-section home-ws-card" id="section-websources"></section>
+          <a href="#/prompt-generator" class="home-promo" aria-label="Open the Prompt Builder">
+            <div class="home-promo-inner">
+              <p class="home-promo-eyebrow">Prompt Builder</p>
+              <h3 class="home-promo-title">Smarter prompts,<br>better answers.</h3>
+              <p class="home-promo-text">Turn any topic into a structured, ready-to-run prompt for ChatGPT, Claude, or Gemini.</p>
+              <span class="home-promo-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>
+                Open Prompt Builder
+              </span>
+            </div>
+          </a>
         </aside>
       </div>
     `;
@@ -1412,6 +1424,9 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       try { (getShortcutsForTopic('home') || []).forEach((s) => { if (s && s.name) homeDesc[s.name] = s.description || ''; }); } catch (_) {}
       renderAIIntelligence(aiiHome, { topic: 'home', label: "today's world", descriptions: homeDesc, hideGroups: ['topic-specific'] });
     }
+    // Home sidebar: Web Sources platform picker (browse mode — empty term).
+    const homeWs = container.querySelector('#section-websources');
+    if (homeWs) renderWebSources(homeWs, { name: '' });
   } else {
     // Topic pages: Shortcuts + News Feed + Related Topics.
     container.innerHTML = `
