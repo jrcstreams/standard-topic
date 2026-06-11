@@ -3611,11 +3611,13 @@ html, body, #app {
    on the right, vertically centred; a discreet share icon pins to the card's
    top-right corner. The share popover is position:absolute so it can't steal
    row width (the old in-flow accordion was squeezing the text to ~65%). */
-.news-card { position: relative; display: flex; align-items: center; gap: 1rem; }
+.news-card { position: relative; display: flex; align-items: stretch; gap: 1rem; }
 .news-card-body { flex: 1 1 auto; min-width: 0; padding: 1.05rem 0; padding-right: 0.4rem; }
 .news-card-body .news-card-link { display: block; padding: 0; }
 .news-card-body .news-card-meta { margin: 0.6rem 0 0; }
-.news-card-aside { flex: 0 0 auto; display: flex; align-items: center; }
+/* AI Insights pinned to the BOTTOM-right (aligned with the meta row) so it sits
+   in the same spot on every card regardless of how many description lines. */
+.news-card-aside { flex: 0 0 auto; display: flex; align-items: flex-end; padding-bottom: 1.05rem; }
 .news-card-aside .news-ai-panel { left: auto; right: 0; transform-origin: top right; }
 /* Discreet share — icon only, pinned to the card's top-right corner. */
 .news-card > .news-share-toggle {
@@ -13259,9 +13261,9 @@ body.home-search.app-mode .topic-layout {
 .home-search-hero .search-panel { position: relative; z-index: 1; }
 .home-search-hero .search-panel-hero-inner { padding: 0; text-align: left; }
 .home-search-hero .search-panel-title {
-  text-align: left; max-width: 15ch;
-  font-size: clamp(1.65rem, 1rem + 2.7vw, 2.55rem); line-height: 1.07; letter-spacing: -0.032em;
-  margin: 0 0 clamp(1.1rem, 0.6rem + 1.6vw, 1.7rem);
+  text-align: left; max-width: none;
+  font-size: clamp(1.45rem, 1rem + 1.5vw, 2.05rem); line-height: 1.12; letter-spacing: -0.028em;
+  margin: 0 0 clamp(1rem, 0.6rem + 1.3vw, 1.5rem);
 }
 .home-search-hero .search-panel-barrow { padding: 0; }
 /* Warm, elevated bar — rounded rect (not a pill), soft shadow, larger tap area. */
@@ -13317,15 +13319,14 @@ body.home-search #section-websources {
    and a blue CTA (replaces the nav's Prompt Builder button on home). */
 .home-promo {
   display: block; text-decoration: none; position: relative; overflow: hidden;
-  border-radius: 16px; border: 1px solid #243355;
-  background: linear-gradient(155deg, #16233c 0%, #1d2c49 55%, #16233c 100%);
+  border-radius: 16px; border: 1px solid #28395c;
+  background: linear-gradient(165deg, #1c2b48 0%, #15223a 100%);
 }
+/* A soft blue glow in the top-right corner — depth without the dotty
+   "AI constellation" texture. */
 .home-promo::after {
-  content: ''; position: absolute; inset: 0;
-  background-image: radial-gradient(rgba(120, 150, 210, 0.2) 1px, transparent 1.6px);
-  background-size: 22px 22px;
-  -webkit-mask-image: radial-gradient(125% 120% at 86% 14%, #000, transparent 68%);
-  mask-image: radial-gradient(125% 120% at 86% 14%, #000, transparent 68%);
+  content: ''; position: absolute; top: -32%; right: -26%; width: 78%; height: 135%;
+  background: radial-gradient(circle at center, rgba(64, 112, 224, 0.34), transparent 62%);
   pointer-events: none;
 }
 .home-promo-inner { position: relative; z-index: 1; padding: 1.45rem 1.4rem 1.55rem; }
@@ -13488,7 +13489,7 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
    reserve the hidden subnav's height — and zero Trending's base margin so its
    top aligns with the Search card across the two columns. */
 @media (min-width: 1024px) {
-  body.home-search.app-mode.sticky-always.has-subnav #content { padding-top: calc(64px + 0.7rem); }
+  body.home-search.app-mode.sticky-always.has-subnav #content { padding-top: calc(64px + 1.9rem); }
   body.home-search #home-trending { margin-top: 0; }
 }
 /* On the homepage the whole section sits in a soft card to set it apart. */
@@ -13529,13 +13530,13 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
      pushed to the far right (#220-222). display:contents on the titlerow flattens
      logo + title + pill into the head's flex so order can interleave the sub. */
   body.home-search #home-trending .trending-topics-head {
-    margin: 0; padding: 15px 18px; display: flex; flex-direction: row; align-items: center; gap: 12px;
+    margin: 0; padding: 15px 18px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
     border-bottom: 1px solid var(--color-surface-border);
     background: color-mix(in srgb, var(--color-primary) 3%, #fff);
   }
-  body.home-search #home-trending .trending-topics-titlerow { display: contents; }
-  body.home-search #home-trending .trending-topics-sub { margin: 0; order: 1; }
-  body.home-search #home-trending .trending-topics-updated { order: 2; margin-left: auto; }
+  body.home-search #home-trending .trending-topics-titlerow { display: flex; align-items: center; gap: 12px; width: 100%; }
+  body.home-search #home-trending .trending-topics-sub { margin: 0; }
+  body.home-search #home-trending .trending-topics-updated { margin-left: auto; }
   body.home-search #home-trending .trend-card-grid { padding: 10px 12px 4px; }
   body.home-search #home-trending .trend-viewmore-row { margin-top: 10px; padding: 0 14px 16px; }
 
@@ -14904,13 +14905,22 @@ body.home-mode #sub-header.is-subnav .topic-banner {
     background: transparent; gap: 12px; margin: 0; padding: 14px 16px 16px;
   }
   body.home-search #section-aii-home .aii-pathlist > .aii-pathrow {
-    flex-direction: column; align-items: flex-start; gap: 9px; position: relative;
-    min-height: 0; padding: 15px 15px 16px;
-    background: #f5f6f9; border: 1px solid var(--color-surface-border); border-radius: 12px;
+    flex-direction: column; align-items: flex-start; gap: 10px; position: relative;
+    min-height: 0; padding: 16px 16px 17px;
+    background: #fff; border: 1px solid var(--color-surface-border); border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    transition: border-color .14s, box-shadow .16s, transform .14s;
   }
   body.home-search #section-aii-home .aii-pathlist > .aii-pathrow:hover {
-    background: #eef2f8; border-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-surface-border));
+    background: #fff;
+    border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border));
+    box-shadow: 0 10px 24px -14px rgba(31, 49, 99, 0.28);
+    transform: translateY(-2px);
   }
+  /* Bigger, softer icon chip for presence in the card. */
+  body.home-search #section-aii-home .aii-pathrow-icon { width: 36px; height: 36px; border-radius: 11px; }
+  body.home-search #section-aii-home .aii-pathrow-icon svg { width: 18px; height: 18px; }
+  body.home-search #section-aii-home .aii-pathrow-name { font-size: 0.98rem; }
   body.home-search #section-aii-home .aii-pathrow-go { position: absolute; top: 13px; right: 13px; margin: 0; }
   body.home-search #section-aii-home .aii-pathrow-text { gap: 3px; }
   /* Web Sources sidebar: a single vertical list, not a cramped 2-up grid. */
@@ -14921,6 +14931,10 @@ body.home-mode #sub-header.is-subnav .topic-banner {
      tab nav (topic pages), so the inline line never has to wrap. */
   .aii-head, .ws-head { flex-direction: row; align-items: center; gap: 12px; }
   .aii-headsub, .ws-headsub { margin: 0; }
+  /* Homepage: section subtext drops to its OWN line under the title (#25). */
+  body.home-search .aii-head, body.home-search .ws-head { flex-direction: column; align-items: flex-start; gap: 4px; }
+  body.home-search .aii-headsub, body.home-search .ws-headsub { margin: 0; }
+  body.home-search #section-newsfeed .newsfeed-headtext { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
 
   /* Drill-in "Back to AI Intelligence" row: vertically center the link with the
      "Updated …" pill and give the row balanced padding (#234-236). The base
