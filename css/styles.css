@@ -567,21 +567,21 @@ body.custom-mode.sticky-always #content {
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: 9px;
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255, 255, 255, 0.92);
     transition: background .14s, color .14s, border-color .14s, transform .06s;
   }
   /* drop the inline text labels — these become pure icons */
   .sticky-actions .sticky-search-pill .search-bar-label,
   .sticky-actions .sticky-trending-full,
   .sticky-actions .sticky-trending-short { display: none; }
-  .sticky-actions .sticky-search-pill .search-bar-icon { color: rgba(255, 255, 255, 0.85) !important; }
-  /* Normalize every action glyph to the same size + stroke (#15) — they were a
-     mix of 15/16px and stroke 2–2.5, which read as "off". */
+  .sticky-actions .sticky-search-pill .search-bar-icon { color: rgba(255, 255, 255, 0.92) !important; }
+  /* Normalize every action glyph: one size, one stroke, a touch larger so they
+     fill the pill and read crisply (#15/#36). */
   .sticky-actions .sticky-home svg,
   .sticky-actions .sticky-trending svg,
   .sticky-actions .sticky-settings svg,
   .sticky-actions .sticky-search-pill .search-bar-icon,
-  .sticky-actions .sticky-topics svg { width: 17px !important; height: 17px !important; stroke-width: 2; }
+  .sticky-actions .sticky-topics svg { width: 18.5px !important; height: 18.5px !important; stroke-width: 1.9 !important; }
   /* hover — brighter pill, icon to full white */
   .sticky-actions .sticky-home:hover,
   .sticky-actions .sticky-trending:hover,
@@ -13539,8 +13539,10 @@ body.home-search.app-mode .topic-layout {
 .home-search-hero .search-panel-results { max-width: 100%; }
 @media (max-width: 640px) {
   .home-search-hero { padding: 1.4rem 1.15rem 1.5rem; border-radius: 18px; }
-  /* One line on phones too (#7): size down so the full tagline never wraps. */
-  .home-search-hero .search-panel-title { font-size: clamp(1rem, 4.6vw, 1.25rem); }
+  /* One line on phones too (#7): size down so the full tagline never wraps.
+     Center the tagline on small screens (#37). */
+  .home-search-hero .search-panel-hero-inner { text-align: center; }
+  .home-search-hero .search-panel-title { font-size: clamp(1rem, 4.6vw, 1.25rem); text-align: center; }
   .home-search-hero .search-panel-input { height: 52px; font-size: 1rem; }
 }
 /* The bar fills the card (minus padding), matching how it fills the 600px
@@ -14525,6 +14527,32 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-modal-body .aii-ovcard { border: none; border-radius: 0; background: none; padding: 0; margin: 2px 0 14px; }
 .aii-tabmode .aii-ovcard .aii-overview-eyebrow,
 .aii-modal-body .aii-ovcard .aii-overview-eyebrow { margin-bottom: 4px; color: var(--color-text-muted); }
+
+/* ── AI Intelligence MODAL redesign (#38/#39) ─────────────────────────────
+   The desktop grid (≥900) turned the modal's paths into a cramped 3-up grid of
+   wrapping cards, and the sections view nested a grey/boxed sub-header. In the
+   modal we want ONE clean column of full-width rows. */
+.aii-modal-body .aii-pathlist {
+  display: flex !important; flex-direction: column; gap: 0; margin: 0; background: none; padding: 0;
+}
+.aii-modal-body .aii-pathlist > .aii-pathrow {
+  flex-direction: row; align-items: center; gap: 14px; min-height: 0;
+  padding: 15px 2px; background: none; border: none; border-bottom: 1px solid var(--color-surface-border);
+  border-radius: 0; box-shadow: none; transform: none;
+}
+.aii-modal-body .aii-pathlist > .aii-pathrow:last-child { border-bottom: none; }
+.aii-modal-body .aii-pathlist > .aii-pathrow:hover {
+  background: color-mix(in srgb, var(--color-primary) 4%, transparent);
+  transform: none; box-shadow: none; border-color: var(--color-surface-border);
+}
+.aii-modal-body .aii-pathrow-icon { width: 36px; height: 36px; }
+.aii-modal-body .aii-pathrow-icon svg { width: 18px; height: 18px; }
+.aii-modal-body .aii-pathrow-go { margin-left: auto; position: static; }
+/* Sections view: plain header (drop the full-bleed grey box), tidy rows. */
+.aii-modal-body .aii-subhead { background: none; border: none; margin: 0; padding: 2px 2px 12px; }
+.aii-modal-body .aii-menu { margin: 0; }
+.aii-modal-body .aii-menu-row { padding: 15px 2px; }
+.aii-modal-body .aii-backrow { padding: 2px 2px 8px; }
 /* Condensed "path · section" bar — sticks to the TOP OF .aii-stage (the brief's
    scroll container) once the overview card scrolls out (JS toggles .is-on).
    Collapsed to nothing until then so it overlays the top edge without shifting
