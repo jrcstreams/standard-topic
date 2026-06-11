@@ -13180,61 +13180,91 @@ body.home-search.app-mode .topic-layout {
    lifts cleanly into the modal — same width, same color, no jump. The home
    inline search never expands in place (submit routes to the modal), so the
    600px cap constrains nothing but the resting title + bar. */
+/* Homepage hero — a spacey gradient "command card": a large display title over a
+   warm, elevated search bar. Fills the main column (no 600px cap now). */
 .home-search-hero {
-  /* margin-top: breathing room below the main/sub nav. padding top/bottom:
-     room above the title and below the search bar inside the card. */
-  max-width: 600px; margin: 1.3rem auto 0.2rem; padding: 0.95rem 0.6rem 1.8rem;
-  background: var(--color-surface);
-  border: 1px solid var(--color-surface-border);
-  border-radius: 16px;
-  box-shadow: 0 2px 10px -4px rgba(15, 23, 42, 0.10);
+  position: relative; overflow: hidden;
+  max-width: none; margin: 0;
+  padding: clamp(1.7rem, 1rem + 2.4vw, 2.7rem) clamp(1.4rem, 0.8rem + 2vw, 2.4rem);
+  background:
+    radial-gradient(125% 130% at 90% 6%, rgba(96, 132, 205, 0.18), rgba(96, 132, 205, 0) 48%),
+    linear-gradient(140deg, #e8eefb 0%, #f2f5fc 54%, #edf1fb 100%);
+  border: 1px solid #dbe4f3;
+  border-radius: 20px;
 }
-/* Mobile: the card was too tall up top + the tagline wrapped awkwardly. */
-@media (max-width: 640px) {
-  /* Align with the Trending / AI / News cards (full content width, no extra
-     side margin that pushed it off-center). */
-  .home-search-hero { margin: 0.6rem 0 0.2rem; max-width: none; padding: 0.4rem 0.6rem 1.15rem; }
-  .home-search-hero .search-panel-tagline { font-size: 0.86rem; max-width: 24rem; line-height: 1.4; }
+/* Faint dotted-map texture, top-right, fading left — atmosphere, no image. */
+.home-search-hero::after {
+  content: ''; position: absolute; inset: 0 0 0 auto; width: 60%;
+  background-image: radial-gradient(rgba(54, 86, 158, 0.13) 1px, transparent 1.5px);
+  background-size: 14px 14px;
+  -webkit-mask-image: linear-gradient(to left, #000, transparent 78%);
+  mask-image: linear-gradient(to left, #000, transparent 78%);
+  pointer-events: none;
 }
-/* Home Intelligence panel: kill the big reserved scroll padding-bottom (it's
-   content-height here) so there's no dead space before News Feed. */
-body.home-search #section-shortcuts .shortcuts-scroll-wrap { padding-bottom: 0; }
+.home-search-hero .search-panel { position: relative; z-index: 1; }
+.home-search-hero .search-panel-hero-inner { padding: 0; text-align: left; }
+.home-search-hero .search-panel-title {
+  text-align: left; max-width: 15ch;
+  font-size: clamp(1.65rem, 1rem + 2.7vw, 2.55rem); line-height: 1.07; letter-spacing: -0.032em;
+  margin: 0 0 clamp(1.1rem, 0.6rem + 1.6vw, 1.7rem);
+}
+.home-search-hero .search-panel-barrow { padding: 0; }
+/* Warm, elevated bar — rounded rect (not a pill), soft shadow, larger tap area. */
+.home-search-hero .search-panel-input {
+  height: 56px; border-radius: 14px; border: 1px solid #d7e0ef;
+  padding: 0 3rem 0 3.15rem; font-size: 1.04rem;
+  box-shadow: 0 10px 26px -14px rgba(31, 49, 99, 0.34);
+}
+.home-search-hero .search-panel-input:focus { border-color: #9db6e6; box-shadow: 0 10px 26px -14px rgba(31, 49, 99, 0.34), 0 0 0 4px rgba(80, 120, 210, 0.14); }
+.home-search-hero .search-panel-icon { left: 1.15rem; width: 20px; height: 20px; color: #7a89a6; }
+/* No copy-link button cluttering the resting hero bar. */
+.home-search-hero .search-panel[data-state="collapsed"] .search-panel-copylink { display: none; }
 .home-search-hero .search-panel-results { max-width: 100%; }
+@media (max-width: 640px) {
+  .home-search-hero { padding: 1.5rem 1.25rem 1.6rem; border-radius: 18px; }
+  .home-search-hero .search-panel-title { font-size: clamp(1.5rem, 6vw, 1.95rem); }
+  .home-search-hero .search-panel-input { height: 52px; font-size: 1rem; }
+}
 /* The bar fills the card (minus padding), matching how it fills the 600px
    modal — so the bar width is identical in card and modal. */
 @media (min-width: 720px) {
   .search-panel--inline[data-state="collapsed"] .search-panel-barrow,
   .search-panel--inline[data-state="expanded"] .search-panel-barrow { width: 100%; max-width: none; margin-left: 0; margin-right: 0; }
 }
-/* Desktop: Search & Trends spans the full width on top; Intelligence |
-   News Feed columns below. */
-@media (min-width: 900px) {
-  /* Centered hero on top, then a 50/50 row — Trending | AI Intelligence —
-     then full-width News Feed. The two cards stretch to equal height. */
-  /* Single-column stack: search hero, Trending, AI Intelligence, News Feed —
-     each full width (Trending + AI Intelligence lay their items out as a
-     horizontal grid, matching the topic pages). */
-  body.home-search.app-mode .topic-layout {
-    grid-template-columns: minmax(0, 1fr);
-    align-items: start;
-    row-gap: 1.5rem;
-  }
-  body.home-search #section-searchtrends { display: contents; }
-  /* Per-section margins removed — the grid row-gap alone spaces the stack so the
-     sections aren't doubly separated (gap + margin). Tighter overall (#228). */
-  body.home-search #home-search-hero { grid-column: 1; order: 1; justify-self: center; width: min(600px, 100%); margin: 0; }
-  body.home-search #home-trending { grid-column: 1; order: 2; margin: 0; }
-  body.home-search #section-aii-home { grid-column: 1; order: 3; margin: 0; }
-  body.home-search #section-newsfeed { grid-column: 1; order: 4; }
-  /* Trending shows 4 trends. To avoid an uneven partial row (the old auto-fit
-     gave a lonely 3+1), it goes straight to a single vertical column on narrow
-     desktop and a clean 2×2 once there's room (≥1024px, below). */
-  body.home-search #home-trending .trend-card-grid {
-    grid-template-columns: 1fr;
-  }
+/* === Homepage dashboard layout (2026-06-10 redesign) ====================
+   Two columns on desktop (≥1024px): a MAIN column (Search card → AI
+   Intelligence → News Feed) and a right SIDEBAR (Trending → …). Below 1024px
+   the .home-main / .home-side wrappers flatten via display:contents and the
+   sections stack in one flow, re-sequenced with `order` so Trending weaves
+   between Search and AI (matching the mobile concept). */
+body.home-search .body-tabs { display: none !important; }
+body.home-search.app-mode .topic-layout.home-grid { display: flex; flex-direction: column; gap: 1.25rem; align-items: stretch; }
+body.home-search .home-main, body.home-search .home-side { display: contents; }
+body.home-search #home-search-hero { order: 1; }
+body.home-search #home-trending    { order: 2; }
+body.home-search #section-aii-home { order: 3; }
+body.home-search #section-newsfeed { order: 4; }
+/* Home trending is a vertical list (sidebar + mobile both read as a list). */
+body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; }
+/* Each major section reads as its own distinct white card (matching the mockup).
+   overflow:hidden clips any internal header band to the rounded corners. */
+body.home-search #home-trending,
+body.home-search #section-aii-home,
+body.home-search #section-newsfeed {
+  background: var(--color-bg, #fff);
+  border: 1px solid var(--color-surface-border);
+  border-radius: 16px;
+  overflow: hidden;
 }
 @media (min-width: 1024px) {
-  body.home-search #home-trending .trend-card-grid { grid-template-columns: repeat(2, 1fr); }
+  body.home-search.app-mode .topic-layout.home-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 358px;
+    align-items: start;
+    column-gap: 1.5rem;
+  }
+  body.home-search .home-main { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; grid-column: 1; }
+  body.home-search .home-side { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; grid-column: 2; }
 }
 /* Cards size to content + the page scrolls. */
 body.home-search .layout-section,
@@ -13251,26 +13281,11 @@ body.home-search .topic-layout .newsfeed-scroll-wrap {
 
 body.home-search #topic-layout { margin-top: 0.4rem; }
 
-/* Mobile home: one continuous scroll — NO tabs. Search & Trending, then
-   Intelligence, then News Feed, all stacked and sized to content. (Topic
-   pages keep their tab nav — this is scoped to body.home-search.) */
-@media (max-width: 899.98px) {
-  body.home-search .body-tabs { display: none !important; }
+/* Stacked layout (<1024px): the .home-grid flex column + gap spaces the cards,
+   so no per-section margins. Keep the Intelligence panel's tightened padding. */
+@media (max-width: 1023.98px) {
   body.home-search.app-mode .topic-layout > .layout-section { flex: none; overflow: visible; min-height: 0; }
-  body.home-search.app-mode .topic-layout > #section-searchtrends,
-  body.home-search.app-mode .topic-layout > #section-shortcuts,
-  body.home-search.app-mode .topic-layout > #section-aii-home,
-  body.home-search.app-mode .topic-layout > #section-newsfeed { display: block; }
-  body.home-search #section-aii-home { margin-top: 1.75rem; }
-  /* Section headers show (no tab labels them now); separate the stacked sections. */
-  body.home-search #section-shortcuts .sidebar-card-header { display: flex; }
-  body.home-search #section-shortcuts,
-  body.home-search #section-newsfeed { margin-top: 1.75rem; }
-  body.home-search #section-searchtrends .home-trending { margin-top: 1.2rem; }
-  /* Tighten the Intelligence panel's own padding so the accordions sit close
-     under the header (not floating well below it) and don't strand a big gap
-     above News Feed. */
-  body.home-search #section-shortcuts .shortcuts-scroll-wrap { padding-top: 0.5rem; padding-bottom: 0; }
+  body.home-search #section-aii-home .shortcuts-scroll-wrap { padding-top: 0.5rem; padding-bottom: 0; }
 }
 
 /* === Phase 14: search panel refinements ============================== */

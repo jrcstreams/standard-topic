@@ -1381,14 +1381,16 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // AI Intelligence lives on topic/search pages, not home. Home is the
     // full-width search hero + trending (2-up on desktop), then News Feed.
     container.innerHTML = `
-      <div class="topic-layout" id="topic-layout">
+      <div class="topic-layout home-grid" id="topic-layout">
         ${bodyTabsRow({ showSearchTrends: true, showShortcuts: false })}
-        <section class="layout-section" id="section-searchtrends">
+        <div class="home-main">
           <div class="home-search-hero" id="home-search-hero"></div>
+          <section class="layout-section" id="section-aii-home"></section>
+          <section class="layout-section" id="section-newsfeed"></section>
+        </div>
+        <aside class="home-side">
           <section class="home-trending" id="home-trending"></section>
-        </section>
-        <section class="layout-section" id="section-aii-home"></section>
-        <section class="layout-section" id="section-newsfeed"></section>
+        </aside>
       </div>
     `;
     homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });
