@@ -15039,6 +15039,12 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .im-section-title--brief svg { color: #1b3a8c; }
 .im-brief-section .im-section-title--brief { margin-bottom: 7px; }
 
+/* Inline "AI-generated" tag — sits at the top of the brief body so the prose
+   itself is unmistakably marked (the "AI Brief" header is above the buttons +
+   rule). Same navy chip language as the trending-card badge. */
+.aigen-tag { display: inline-flex; align-items: center; gap: 5px; margin: 0 0 12px; padding: 2px 9px 2px 7px; border-radius: 999px; background: color-mix(in srgb, var(--color-primary) 8%, #fff); border: 1px solid color-mix(in srgb, var(--color-primary) 16%, transparent); font-size: 0.64rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--color-primary); }
+.aigen-tag svg { width: 11px; height: 11px; }
+
 /* AI provenance — the consistent "this is AI-generated, grounded in these
    sources" marker. Full form (brief surfaces, no badge): a "Sources: A, B +N"
    line under the AI Brief disclaimer. Compact form (trending cards): a "✦ AI ·

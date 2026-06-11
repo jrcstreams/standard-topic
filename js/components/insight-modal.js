@@ -72,6 +72,10 @@ function scrollHeaderToTop(el) {
 }
 
 const SPARK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>';
+// Inline "this block is AI" tag, attached directly to the brief body (the
+// "AI Brief" header sits above the action buttons + rule, so the prose itself
+// reads unmarked without it).
+const AIGEN_TAG = `<div class="aigen-tag">${SPARK}<span>AI-generated</span></div>`;
 const ARROW = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>';
 const CHEV = '<svg class="im-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 // Brand mark — a clean, flat 4-point sparkle (the same spark used inline),
@@ -564,6 +568,7 @@ function renderNews(d) {
         <p class="im-disclaimer">An AI-generated summary of this story. Please verify important details with the linked sources.</p>
         <div class="ai-prov-slot" id="im-prov"></div>
         <hr class="im-rule">
+        ${AIGEN_TAG}
         ${briefSkeleton()}
       </section>
       <section class="im-section im-coverage" id="im-coverage" hidden>
@@ -653,6 +658,7 @@ function renderTrend(d) {
         <div class="ai-prov-slot" id="im-prov"></div>
         <div class="im-actions-slot" id="im-actions-slot"></div>
         <hr class="im-rule">
+        ${AIGEN_TAG}
         ${briefSkeleton()}
       </section>
     </div>`;

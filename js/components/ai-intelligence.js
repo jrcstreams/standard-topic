@@ -228,6 +228,7 @@ export function renderAIIntelligence(container, scope) {
       <div class="aii-acc" data-accbody="explore"></div>
       <div class="aii-acc" data-accbody="web"></div>
       <hr class="aii-rule">
+      <div class="aigen-tag">${SPARK}<span>AI-generated</span></div>
       <div class="aii-content-body" data-loading="1">${genLoaderHTML()}</div>
       <div class="aii-headlines"></div>
     </div>`;
