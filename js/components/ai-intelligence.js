@@ -202,7 +202,8 @@ export function renderAIIntelligence(container, scope) {
     // scroll here) once the overview card scrolls out of view. Collapsed to zero
     // until an IntersectionObserver (rooted on .aii-stage) reveals it, so it
     // overlays the top edge without shifting the brief. Tapping it scrolls back up.
-    const condensed = tabMode
+    const stickyCtx = tabMode || scope.inModal;   // sticky sub-header in tab mode AND the modal
+    const condensed = stickyCtx
       ? `<button type="button" class="aii-condensed" aria-hidden="true">
            <span class="aii-condensed-eyebrow">${esc(p.label || '')}</span>
            <span class="aii-condensed-title">${esc(s.name)}</span>
@@ -211,7 +212,7 @@ export function renderAIIntelligence(container, scope) {
     return `<div class="aii-sub aii-content">
       ${condensed}
       <button type="button" class="aii-back" data-back="sections">${BACK}<span>Back to ${esc(p.label || 'menu')}</span></button>
-      <div class="aii-overview ${tabMode ? 'aii-ovcard' : 'aii-overview-plain'}">
+      <div class="aii-overview ${stickyCtx ? 'aii-ovcard' : 'aii-overview-plain'}">
         <div class="aii-overview-eyebrow">${esc(p.label || '')}</div>
         <h3 class="aii-overview-title">${esc(s.name)}</h3>
         ${desc ? `<p class="aii-overview-sub">${esc(desc)}</p>` : ''}
@@ -375,18 +376,21 @@ export function renderAIIntelligence(container, scope) {
   // is position:sticky;top:0 inside it. Tapping the bar scrolls the stage to top.
   function setupSticky() {
     teardownSticky();
-    if (!tabMode || view !== 'content' || typeof IntersectionObserver === 'undefined') return;
+    if ((!tabMode && !scope.inModal) || view !== 'content' || typeof IntersectionObserver === 'undefined') return;
     const ov = stage.querySelector('.aii-ovcard');
     const cond = stage.querySelector('.aii-condensed');
     if (!ov || !cond) return;
+    // Scroll container differs by context: .aii-stage in tab mode, the modal
+    // body (.aii-modal-body — the component's own container) inside the modal.
+    const scrollRoot = tabMode ? stage : (container.closest('.aii-modal-body') || container);
     aiiObserver = new IntersectionObserver((entries) => {
       for (const e of entries) {
         const top = e.rootBounds ? e.rootBounds.top : 0;
         cond.classList.toggle('is-on', !e.isIntersecting && e.boundingClientRect.top <= top + 1);
       }
-    }, { root: stage, threshold: 0 });
+    }, { root: scrollRoot, threshold: 0 });
     aiiObserver.observe(ov);
-    cond.addEventListener('click', () => stage.scrollTo({ top: 0, behavior: 'smooth' }));
+    cond.addEventListener('click', () => scrollRoot.scrollTo({ top: 0, behavior: 'smooth' }));
   }
 
   function wire() {
