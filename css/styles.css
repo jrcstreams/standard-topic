@@ -339,6 +339,11 @@ body.custom-mode.sticky-always #content {
 @media (min-width: 1024px) {
   body.home-search.sticky-always #sub-header { display: none !important; }
   body.home-search.sticky-always.has-subnav #content { padding-top: calc(64px + 1.5rem); }
+  /* Icon-only Search + Trending in the nav (the topic links carry the labels). */
+  body.home-search .sticky-actions .search-bar-label,
+  body.home-search .sticky-trending-full,
+  body.home-search .sticky-trending-short { display: none; }
+  body.home-search .sticky-trending { padding-left: 0.5rem; padding-right: 0.5rem; }
 }
 
 /* Search + CTA always right-aligned as a group. Natural-width
