@@ -628,18 +628,28 @@ body.custom-mode.sticky-always #content {
     box-shadow: 0 -6px 20px -12px rgba(8, 15, 30, 0.6);
   }
   .botnav-tab {
+    position: relative;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 5px; padding: 10px 4px 9px;
     background: none; border: none; cursor: pointer;
     color: rgba(255, 255, 255, 0.55);
     text-decoration: none; font-family: inherit;
-    transition: color .14s;
+    transition: color .14s, background-color .14s, transform .08s;
     -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none; user-select: none;   /* no stray text-selection marks (#17) */
   }
+  /* Never underline (the Home <a> was picking up a hover underline, #29). */
+  .botnav-tab, .botnav-tab:hover, .botnav-tab:focus, .botnav-tab:active { text-decoration: none; }
+  .botnav-tab:focus-visible { outline: none; }
   .botnav-ico { display: inline-flex; }
   .botnav-ico svg { display: block; width: 24px; height: 24px; }
   .botnav-label { font-size: 0.665rem; font-weight: 600; letter-spacing: 0.01em; line-height: 1; }
-  .botnav-tab:active { color: rgba(255, 255, 255, 0.85); }
+  /* Hover only with a real pointer — never sticks after a tap on touch (#29). */
+  @media (hover: hover) {
+    .botnav-tab:hover { color: #fff; background: rgba(255, 255, 255, 0.07); }
+  }
+  /* Press feedback — momentary, doesn't carry to the next page. */
+  .botnav-tab:active { color: #fff; background: rgba(255, 255, 255, 0.1); transform: scale(0.93); }
   .botnav-tab.is-active { color: #fff; }
 
   /* The top-bar action pills now live in the bottom nav — hide them on
@@ -3635,7 +3645,7 @@ html, body, #app {
   /* Hover affordance is a single, subtle tonal shift — no accent
      bar, no chrome. The cursor + the tinted row are enough
      signal that the row is clickable. */
-  .news-card:hover { background: rgba(15, 26, 46, 0.022); }
+  .news-card:hover { background: rgba(15, 26, 46, 0.04); }
 }
 .news-card:has(.news-card-link:focus-visible) {
   background: rgba(15, 26, 46, 0.022);
@@ -14487,14 +14497,19 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    overflows so it always stays one line. */
 .aii-subtabs { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; padding: 14px 0 10px; margin: 0; border-bottom: 1px solid var(--color-surface-border); }
 .aii-subtabs::-webkit-scrollbar { display: none; }
-.aii-subtab { flex: none; border: 1px solid var(--color-surface-border); background: #fff; padding: 5px 11px; border-radius: 999px; cursor: pointer; white-space: nowrap; font-family: var(--font-family); font-size: 0.74rem; font-weight: 600; color: var(--color-text-light); transition: background .14s, color .14s, border-color .14s; }
-.aii-subtab:hover { border-color: var(--color-primary); color: var(--color-primary); }
+/* Filled chips so the path switcher clearly reads as a row of controls (#23). */
+.aii-subtab { flex: none; border: 1px solid transparent; background: #e9edf4; padding: 6px 13px; border-radius: 999px; cursor: pointer; white-space: nowrap; font-family: var(--font-family); font-size: 0.76rem; font-weight: 600; color: #4a5568; transition: background .14s, color .14s, border-color .14s; }
+.aii-subtab:hover { background: #dde3ee; color: var(--color-primary); }
 .aii-subtab.is-active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
 /* Tab mode (#3): the section overview as a card (mirrors the News AI Insights
    "ARTICLE OVERVIEW"). The subtabs already stay put (they're outside .aii-stage,
    the actual scroll container), so they need no sticky treatment. */
-.aii-tabmode .aii-ovcard { border: 1px solid var(--color-surface-border); border-radius: 12px; background: var(--color-bg, #fff); padding: 13px 15px 14px; margin: 2px 0 14px; }
-.aii-tabmode .aii-ovcard .aii-overview-eyebrow { margin-bottom: 3px; }
+/* Plain overview (#28): no bordered card — just eyebrow + title + summary, then
+   the AI Brief below. (The element stays for the sticky-condensed observer.) */
+.aii-tabmode .aii-ovcard,
+.aii-modal-body .aii-ovcard { border: none; border-radius: 0; background: none; padding: 0; margin: 2px 0 14px; }
+.aii-tabmode .aii-ovcard .aii-overview-eyebrow,
+.aii-modal-body .aii-ovcard .aii-overview-eyebrow { margin-bottom: 4px; color: var(--color-text-muted); }
 /* Condensed "path · section" bar — sticks to the TOP OF .aii-stage (the brief's
    scroll container) once the overview card scrolls out (JS toggles .is-on).
    Collapsed to nothing until then so it overlays the top edge without shifting

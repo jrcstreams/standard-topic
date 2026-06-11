@@ -180,7 +180,7 @@ export function renderAIIntelligence(container, scope) {
     const updated = c && c.generatedAt ? `<span class="aii-updated">Updated ${esc(relTime(c.generatedAt))}</span>` : '';
     return `<div class="aii-sub">
       <div class="aii-backrow">
-        <button type="button" class="aii-back" data-back="paths">${BACK}<span>Back to AI Intelligence</span></button>
+        <button type="button" class="aii-back" data-back="paths">${BACK}<span>Back</span></button>
         ${updated}
       </div>
       <div class="aii-subhead">
@@ -211,7 +211,7 @@ export function renderAIIntelligence(container, scope) {
       : '';
     return `<div class="aii-sub aii-content">
       ${condensed}
-      <button type="button" class="aii-back" data-back="sections">${BACK}<span>Back to ${esc(p.label || 'menu')}</span></button>
+      <button type="button" class="aii-back" data-back="sections">${BACK}<span>Back</span></button>
       <div class="aii-overview ${stickyCtx ? 'aii-ovcard' : 'aii-overview-plain'}">
         <div class="aii-overview-eyebrow">${esc(p.label || '')}</div>
         <h3 class="aii-overview-title">${esc(s.name)}</h3>
