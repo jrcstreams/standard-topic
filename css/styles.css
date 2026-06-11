@@ -3615,17 +3615,15 @@ html, body, #app {
 .news-card-body { flex: 1 1 auto; min-width: 0; padding: 1.05rem 0; padding-right: 0.4rem; }
 .news-card-body .news-card-link { display: block; padding: 0; }
 .news-card-body .news-card-meta { margin: 0.6rem 0 0; }
-/* AI Insights pinned to the BOTTOM-right (aligned with the meta row) so it sits
-   in the same spot on every card regardless of how many description lines. */
-.news-card-aside { flex: 0 0 auto; display: flex; align-items: flex-end; padding-bottom: 1.05rem; }
-.news-card-aside .news-ai-panel { left: auto; right: 0; transform-origin: top right; }
-/* Discreet share — icon only, pinned to the card's top-right corner. */
-.news-card > .news-share-toggle {
-  position: absolute; top: 0.95rem; right: 0; z-index: 6;
-  padding: 0.32rem; border-radius: 8px; color: #b3bccb; background: transparent;
-}
-.news-card > .news-share-toggle:hover { background: #eef1f6; color: #5a6678; }
-.news-card > .news-share-toggle svg { width: 16px; height: 16px; }
+/* Actions GROUPED at the bottom-right (aligned with the meta row): a discreet
+   share icon next to the AI Insights button. Same spot on every card regardless
+   of description length, and clearly one action cluster (not split corners). */
+.news-card-aside { flex: 0 0 auto; display: flex; align-items: flex-end; gap: 0.45rem; padding-bottom: 1.05rem; }
+.news-card-aside .news-share-toggle { padding: 0.34rem; border-radius: 8px; color: #b3bccb; background: transparent; }
+.news-card-aside .news-share-toggle:hover { background: #eef1f6; color: #5a6678; }
+.news-card-aside .news-share-toggle svg { width: 16px; height: 16px; }
+/* The AI dropdown opens UPWARD from the bottom-right so it never spills off the card. */
+.news-card-aside .news-ai-panel { top: auto; bottom: calc(100% + 6px); left: auto; right: 0; transform-origin: bottom right; }
 
 .news-loading,
 .news-empty,
@@ -13317,16 +13315,15 @@ body.home-search #section-websources {
 
 /* Prompt Builder promo — a dark navy card with a faint constellation texture
    and a blue CTA (replaces the nav's Prompt Builder button on home). */
+/* Clean brand-navy card with a subtle top sheen — crisp, not the muddy glow. */
 .home-promo {
   display: block; text-decoration: none; position: relative; overflow: hidden;
-  border-radius: 16px; border: 1px solid #28395c;
-  background: linear-gradient(165deg, #1c2b48 0%, #15223a 100%);
+  border-radius: 16px;
+  background: linear-gradient(180deg, #223150 0%, #18243d 100%);
 }
-/* A soft blue glow in the top-right corner — depth without the dotty
-   "AI constellation" texture. */
 .home-promo::after {
-  content: ''; position: absolute; top: -32%; right: -26%; width: 78%; height: 135%;
-  background: radial-gradient(circle at center, rgba(64, 112, 224, 0.34), transparent 62%);
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), transparent 34%);
   pointer-events: none;
 }
 .home-promo-inner { position: relative; z-index: 1; padding: 1.45rem 1.4rem 1.55rem; }
@@ -13920,7 +13917,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Share accordion under a news card (Copy Link / Share via). */
 /* Share popover — absolute (out of the card's flex flow) so it never steals
    row width; anchored top-right under the share icon. */
-.news-share-panel { position: absolute; top: 2.5rem; right: 0; z-index: 25; display: grid; grid-template-rows: 0fr; transition: grid-template-rows .2s ease; }
+.news-share-panel { position: absolute; bottom: 2.9rem; right: 0; z-index: 25; display: grid; grid-template-rows: 0fr; transition: grid-template-rows .2s ease; }
 .news-share-panel.is-open { grid-template-rows: 1fr; }
 .news-share-panel-inner { overflow: hidden; display: flex; gap: 6px; }
 .news-share-panel.is-open .news-share-panel-inner { padding: 7px; background: #fff; border: 1px solid #e7ecf3; border-radius: 10px; box-shadow: 0 12px 30px -12px rgba(15, 26, 46, 0.28); }
@@ -14062,14 +14059,20 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .trend-select:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 14%, transparent); }
 /* Discreet text link (blue + arrow) that opens the full trending modal. */
 .trend-viewmore-row { display: flex; justify-content: center; margin-top: 10px; }
+/* Subtle, clearly-clickable button (not a bare link) — light bordered pill. */
 .trend-viewmore {
-  display: inline-flex; align-items: center; gap: 4px;
-  border: none; background: none; padding: 4px 2px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--color-surface-border); background: #fff; border-radius: 9px;
+  padding: 8px 16px; cursor: pointer;
   font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #2563eb;
-  transition: color .14s, gap .14s;
+  transition: background .14s, border-color .14s, color .14s, gap .14s;
 }
 .trend-viewmore::after { content: "→"; font-size: 0.9em; }
-.trend-viewmore:hover { color: #1d4ed8; gap: 7px; }
+.trend-viewmore:hover {
+  background: color-mix(in srgb, var(--color-primary) 4%, #fff);
+  border-color: color-mix(in srgb, var(--color-primary) 32%, var(--color-surface-border));
+  color: #1d4ed8; gap: 9px;
+}
 
 /* ===== Inline AI insight result — news + trend cards (Phase 4) =========== */
 .ai-result {
@@ -14934,7 +14937,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
   /* Homepage: section subtext drops to its OWN line under the title (#25). */
   body.home-search .aii-head, body.home-search .ws-head { flex-direction: column; align-items: flex-start; gap: 4px; }
   body.home-search .aii-headsub, body.home-search .ws-headsub { margin: 0; }
-  body.home-search #section-newsfeed .newsfeed-headtext { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+  body.home-search #section-newsfeed .newsfeed-headtext { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
 
   /* Drill-in "Back to AI Intelligence" row: vertically center the link with the
      "Updated …" pill and give the row balanced padding (#234-236). The base

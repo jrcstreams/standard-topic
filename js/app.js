@@ -6,7 +6,7 @@ import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './ut
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260610-revamp110';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260610-revamp112';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
@@ -1406,7 +1406,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
             <div class="home-promo-inner">
               <p class="home-promo-eyebrow">Prompt Builder</p>
               <h3 class="home-promo-title">Smarter prompts,<br>better answers.</h3>
-              <p class="home-promo-text">Turn any topic into a structured, ready-to-run prompt for ChatGPT, Claude, or Gemini.</p>
+              <p class="home-promo-text">Turn any topic into a structured, ready-to-run prompt for any AI assistant.</p>
               <span class="home-promo-btn">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>
                 Open Prompt Builder
