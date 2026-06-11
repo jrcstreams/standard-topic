@@ -40,7 +40,12 @@
   --font-weight-bold: 700;
   --max-width: 1440px;
   --header-height: 60px;
+  /* Main-nav (sticky hero) height. Desktop 64px; mobile shrinks it (#1) — every
+     fixed-layout offset that reserves the nav reads this var instead of a literal
+     64px, so the trim cascades correctly. */
+  --nav-h: 64px;
 }
+@media (max-width: 899.98px) { :root { --nav-h: 54px; } }
 
 body {
   font-family: var(--font-family);
@@ -107,7 +112,7 @@ a {
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 0 1rem;
-  height: var(--header-height);
+  height: var(--nav-h);
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -218,11 +223,11 @@ body.home-mode #content {
    Subnav (when present): ~62px desktop / ~62px mobile (incl. top padding).
    Add breathing room beneath the final fixed band. */
 body.sticky-always #content {
-  padding-top: calc(64px + 2rem);
+  padding-top: calc(var(--nav-h) + 2rem);
 }
 
 body.sticky-always.has-subnav #content {
-  padding-top: calc(64px + var(--subnav-height, 66px) + 1.75rem);
+  padding-top: calc(var(--nav-h) + var(--subnav-height, 66px) + 1.75rem);
 }
 
 /* Custom-search pages have no subnav — sit content just below the
@@ -230,21 +235,21 @@ body.sticky-always.has-subnav #content {
    left a weird void above the title). The in-page sticky bar pins to
    the nav as the user scrolls. */
 body.custom-mode.sticky-always #content {
-  padding-top: calc(64px + 0.85rem);
+  padding-top: calc(var(--nav-h) + 0.85rem);
 }
 
 
 @media (max-width: 640px) {
   body.sticky-always #content {
-    padding-top: calc(64px + 1.5rem);
+    padding-top: calc(var(--nav-h) + 1.5rem);
   }
 
   body.sticky-always.has-subnav #content {
-    padding-top: calc(64px + var(--subnav-height, 66px) + 1rem);
+    padding-top: calc(var(--nav-h) + var(--subnav-height, 66px) + 1rem);
   }
 
   body.custom-mode.sticky-always #content {
-    padding-top: calc(64px + 1rem);
+    padding-top: calc(var(--nav-h) + 1rem);
   }
 }
 
@@ -257,7 +262,7 @@ body.custom-mode.sticky-always #content {
   display: flex;
   align-items: center;
   gap: 1rem;
-  min-height: 64px;
+  min-height: var(--nav-h);
 }
 /* At tabbed-nav widths (≤899px) the subnav drops to 1rem horizontal
    padding to give the title + chips more room. Main nav matches so
@@ -338,7 +343,7 @@ body.custom-mode.sticky-always #content {
    hide the redundant second row and reclaim its reserved content padding. */
 @media (min-width: 1024px) {
   body.home-search.sticky-always #sub-header { display: none !important; }
-  body.home-search.sticky-always.has-subnav #content { padding-top: calc(64px + 1.5rem); }
+  body.home-search.sticky-always.has-subnav #content { padding-top: calc(var(--nav-h) + 1.5rem); }
   /* Icon-only Search + Trending in the nav (the topic links carry the labels). */
   body.home-search .sticky-actions .search-bar-label,
   body.home-search .sticky-trending-full,
@@ -654,7 +659,7 @@ body.custom-mode.sticky-always #content {
   }
   body.app-mode.sticky-always.has-subnav:not(.home-search) #content,
   body.app-mode:not(.home-search) #content {
-    height: calc(100dvh - 64px - var(--subnav-height, 66px) - 64px - env(safe-area-inset-bottom, 0px));
+    height: calc(100dvh - var(--nav-h) - var(--subnav-height, 66px) - 64px - env(safe-area-inset-bottom, 0px));
   }
 
   /* ── Modals + the bottom nav (#3/#6) ───────────────────────────────────
@@ -1209,7 +1214,7 @@ body.hide-cta .sticky-cta { display: none !important; }
    ==================================================================== */
 #sub-header.is-subnav {
   position: fixed;
-  top: 64px;
+  top: var(--nav-h);
   left: 0;
   right: 0;
   z-index: 99;
@@ -1977,7 +1982,7 @@ body.hide-cta .sticky-cta { display: none !important; }
 .custom-search-sticky {
   --bleed: max(32px, calc((100vw - 1440px) / 2 + 32px));
   position: sticky;
-  top: 64px;
+  top: var(--nav-h);
   z-index: 20;
   background: transparent;
   margin: 0 0 1.25rem;
@@ -2265,7 +2270,7 @@ body.hide-cta .sticky-cta { display: none !important; }
    tightened, title group and icon vertically centered. */
 @media (max-width: 899.98px) {
   #sub-header.is-subnav {
-    top: 64px;
+    top: var(--nav-h);
   }
   #sub-header.is-subnav .topic-banner {
     padding: 0.55rem 1rem 0.95rem;
@@ -2375,13 +2380,14 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
    padding-left kept at 1rem so it lines up with the subnav and
    topic-layout's mobile padding (alignment grid). */
 @media (max-width: 640px) {
-  /* Keep the mobile nav at the same min-height as desktop (64px)
-     and the brand at its full size — only paddings/gaps tighten. */
+  /* Shorter mobile nav (#1): trim to var(--nav-h) (54px) with tighter vertical
+     padding — the 36px icons + the old 0.9rem padding would otherwise hold the
+     bar at ~65px regardless of min-height. */
   .sticky-hero-inner {
     flex-wrap: nowrap;
-    padding: 0.9rem 1rem;
+    padding: 0.5rem 1rem;
     gap: 0.75rem;
-    min-height: 64px;
+    min-height: var(--nav-h);
   }
 
   .sticky-brand {
@@ -5749,7 +5755,7 @@ html:has(body.app-mode) {
 body.app-mode.sticky-always.has-subnav #content,
 body.app-mode #content {
   position: fixed;
-  top: calc(64px + var(--subnav-height, 66px));
+  top: calc(var(--nav-h) + var(--subnav-height, 66px));
   left: 0;
   right: 0;
   bottom: 0;
@@ -5760,7 +5766,7 @@ body.app-mode #content {
      which would otherwise force #content to a full-viewport height
      and push the multi-submit panel below the fold on short
      desktop viewports. */
-  height: calc(100dvh - 64px - var(--subnav-height, 66px));
+  height: calc(100dvh - var(--nav-h) - var(--subnav-height, 66px));
   min-height: 0;
   padding: 0;
   overflow: hidden;
@@ -13450,7 +13456,7 @@ body.home-search.app-mode #content,
 body.home-search.app-mode.sticky-always.has-subnav #content {
   position: static; height: auto; min-height: 0; overflow: visible;
   /* More breathing room between the nav and the search card (#228). */
-  padding: calc(64px + var(--subnav-height, 66px) + 1.15rem) 0 3rem;
+  padding: calc(var(--nav-h) + var(--subnav-height, 66px) + 1.15rem) 0 3rem;
 }
 /* One cohesive centered width for the whole homepage. */
 body.home-search.app-mode .topic-layout {
@@ -13696,7 +13702,7 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   /* Seat the tab band flush under the subnav — drop the ~10px of white
      space above it (the topic-layout's 0.4rem margin + content's 0.25rem
      padding slack). */
-  body.home-search.app-mode.sticky-always.has-subnav #content { padding-top: calc(64px + var(--subnav-height, 80px) + 0.7rem); }
+  body.home-search.app-mode.sticky-always.has-subnav #content { padding-top: calc(var(--nav-h) + var(--subnav-height, 80px) + 0.7rem); }
   body.home-search #topic-layout { margin-top: 0; }
 }
 
@@ -13722,7 +13728,7 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
    reserve the hidden subnav's height — and zero Trending's base margin so its
    top aligns with the Search card across the two columns. */
 @media (min-width: 1024px) {
-  body.home-search.app-mode.sticky-always.has-subnav #content { padding-top: calc(64px + 1.9rem); }
+  body.home-search.app-mode.sticky-always.has-subnav #content { padding-top: calc(var(--nav-h) + 1.9rem); }
   body.home-search #home-trending { margin-top: 0; }
 }
 /* On the homepage the whole section sits in a soft card to set it apart. */
