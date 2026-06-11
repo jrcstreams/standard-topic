@@ -280,21 +280,22 @@ export function renderAIIntelligence(container, scope) {
   }
   // "Explore further on web" — the full Web Sources platform picker (source
   // types → platforms), searching this topic. Mirrors the Web Sources card.
+  // Each source type is a native <details> accordion — clicking it drops its
+  // platforms down IN PLACE (no next-page / back) (#30). One open at a time via
+  // the shared name attribute.
   function webCatsHTML() {
     const cats = getExternalSearchCategories() || [];
     const searches = getExternalSearches() || [];
+    const term = scope.label || scope.topic || '';
     const avail = cats.filter((c) => searches.some((s) => s.category === c.key));
     if (!avail.length) return '<p class="aii-empty">No web sources available.</p>';
-    return `<div class="aii-web">${avail.map((c) => `<button type="button" class="aii-web-cat" data-cat="${escAttr(c.key)}"><span>${esc(c.label)}</span>${ARROW}</button>`).join('')}</div>`;
-  }
-  function webListHTML(catKey) {
-    const term = scope.label || scope.topic || '';
-    const items = (getExternalSearches() || []).filter((s) => s.category === catKey);
-    const rows = items.map((s) => {
-      const url = String(s.urlTemplate || '').replace(/\{query\}/g, encodeURIComponent(term));
-      return `<a class="aii-web-row" href="${escAttr(url)}" target="_blank" rel="noopener noreferrer"><span class="aii-web-row-text"><span class="aii-web-row-name">${esc(s.name)}</span>${s.description ? `<span class="aii-web-row-desc">${esc(s.description)}</span>` : ''}</span>${EXT}</a>`;
-    }).join('');
-    return `<div class="aii-web"><button type="button" class="aii-web-back">${BACK}<span>All source types</span></button><div class="aii-web-rows">${rows || '<p class="aii-empty">No sources here.</p>'}</div></div>`;
+    return `<div class="aii-web aii-web-acc">${avail.map((c) => {
+      const rows = (searches.filter((s) => s.category === c.key)).map((s) => {
+        const url = String(s.urlTemplate || '').replace(/\{query\}/g, encodeURIComponent(term));
+        return `<a class="aii-web-row" href="${escAttr(url)}" target="_blank" rel="noopener noreferrer"><span class="aii-web-row-text"><span class="aii-web-row-name">${esc(s.name)}</span>${s.description ? `<span class="aii-web-row-desc">${esc(s.description)}</span>` : ''}</span>${EXT}</a>`;
+      }).join('');
+      return `<details class="aii-web-cat" name="aii-web-cat"><summary class="aii-web-cat-sum"><span>${esc(c.label)}</span>${CHEV}</summary><div class="aii-web-rows">${rows}</div></details>`;
+    }).join('')}</div>`;
   }
   // Keep the just-navigated view in view (fixes the page anchoring past the
   // component when you drill in). Only nudges when the block is out of comfort.
@@ -436,14 +437,8 @@ export function renderAIIntelligence(container, scope) {
         body && body.classList.add('is-open');
       }
     }));
-    // "Explore further on web": source-type → platforms → back, in place.
-    const webBody = stage.querySelector('[data-accbody="web"]');
-    if (webBody) webBody.addEventListener('click', (e) => {
-      const catBtn = e.target.closest('.aii-web-cat');
-      const back = e.target.closest('.aii-web-back');
-      if (catBtn) { webBody.innerHTML = webListHTML(catBtn.dataset.cat); }
-      else if (back) { webBody.innerHTML = webCatsHTML(); }
-    });
+    // "Explore further on web" is now native <details> accordions (#30) — each
+    // source type drops its platforms down in place, no JS wiring needed.
     const exBody = stage.querySelector('[data-accbody="explore"]');
     // Model choice persists (Direct Submit + Review both honor it).
     if (exBody) exBody.addEventListener('change', (e) => {

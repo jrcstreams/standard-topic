@@ -301,28 +301,22 @@ function sourcesListHTML(sources, origUrl) {
 }
 
 // Web Sources level 1 — pick a source type (Search & reference, Audio & video…).
-function webSourcesCategoriesHTML() {
+// Web Sources as native <details> accordions (#30) — each source type drops
+// its platforms down in place (term substituted). No next-page / back.
+function webSourcesCategoriesHTML(term) {
   const cats = getExternalSearchCategories() || [];
   const searches = getExternalSearches() || [];
   const avail = cats.filter((c) => searches.some((s) => s.category === c.key));
   if (!avail.length) return '<p class="im-empty">No web sources available.</p>';
-  return `<div class="im-substep"><div class="im-subhead">Choose a source type</div><div class="im-wscat-list">${
-    avail.map((c) => `<button type="button" class="im-wscat" data-cat="${escAttr(c.key)}"><span>${esc(c.label)}</span>${CHEVR}</button>`).join('')
-  }</div></div>`;
-}
-// Web Sources level 2 — the platforms in the chosen category, term substituted.
-function webSourcesListHTML(catKey, term) {
-  const cat = (getExternalSearchCategories() || []).find((c) => c.key === catKey);
-  const items = (getExternalSearches() || []).filter((s) => s.category === catKey);
-  const rows = items.map((s) => {
-    const url = String(s.urlTemplate || '').replace(/\{query\}/g, encodeURIComponent(term || ''));
-    return `<a class="im-source-row" href="${escAttr(url)}" target="_blank" rel="noopener noreferrer"><span class="im-source-row-text"><span class="im-source-name">${esc(s.name)}</span>${s.description ? `<span class="im-source-desc">${esc(s.description)}</span>` : ''}</span>${ARROW}</a>`;
-  }).join('');
-  return `<div class="im-substep">
-    <button type="button" class="im-back-step im-wsback">← Source types</button>
-    <div class="im-subhead">${esc(cat ? cat.label : 'Web Sources')}</div>
-    <div class="im-source-list">${rows || '<p class="im-empty">No sources here.</p>'}</div>
-  </div>`;
+  return `<div class="im-substep im-wscat-acc">${
+    avail.map((c) => {
+      const rows = (searches.filter((s) => s.category === c.key)).map((s) => {
+        const url = String(s.urlTemplate || '').replace(/\{query\}/g, encodeURIComponent(term || ''));
+        return `<a class="im-source-row" href="${escAttr(url)}" target="_blank" rel="noopener noreferrer"><span class="im-source-row-text"><span class="im-source-name">${esc(s.name)}</span>${s.description ? `<span class="im-source-desc">${esc(s.description)}</span>` : ''}</span>${ARROW}</a>`;
+      }).join('');
+      return `<details class="im-wscat" name="im-wscat"><summary class="im-wscat-sum"><span>${esc(c.label)}</span>${CHEV}</summary><div class="im-source-list">${rows}</div></details>`;
+    }).join('')
+  }</div>`;
 }
 // Older cached trend briefs sometimes leaked the raw "SUMMARY: …/DETAIL: …"
 // scaffold into the stored body. Show only the DETAIL prose when present.
@@ -395,7 +389,7 @@ function wireActions(ctx) {
         btn.setAttribute('aria-expanded', 'true');
         if (name === 'sources' && body && !body.dataset.ready) { body.innerHTML = sourcesListHTML(ctx.sources, ctx.origUrl); body.dataset.ready = '1'; }
         if (name === 'explore' && explorePanel && !explorePanel.dataset.ready) { explorePanel.innerHTML = exploreHomeHTML(); explorePanel.dataset.ready = '1'; }
-        if (name === 'web' && wsPanel && !wsPanel.dataset.ready) { wsPanel.innerHTML = webSourcesCategoriesHTML(); wsPanel.dataset.ready = '1'; }
+        if (name === 'web' && wsPanel && !wsPanel.dataset.ready) { wsPanel.innerHTML = webSourcesCategoriesHTML(ctx.webTerm || ''); wsPanel.dataset.ready = '1'; }
         body && body.classList.add('is-open');
         scrollHeaderToTop(btn);
       }
@@ -430,18 +424,8 @@ function wireActions(ctx) {
       openModel(model, ctx.prompt);
     }
   });
-  // Web Sources two-level sub-nav: category → its platforms → back.
-  if (wsPanel) wsPanel.addEventListener('click', (e) => {
-    const catBtn = e.target.closest('.im-wscat');
-    const back = e.target.closest('.im-wsback');
-    if (catBtn) {
-      e.stopPropagation();
-      wsPanel.innerHTML = webSourcesListHTML(catBtn.dataset.cat, ctx.webTerm || '');
-    } else if (back) {
-      e.stopPropagation();
-      wsPanel.innerHTML = webSourcesCategoriesHTML();
-    }
-  });
+  // Web Sources are now native <details> accordions (#30) — each source type
+  // drops its platforms down in place, no JS wiring needed.
 }
 
 function render() {

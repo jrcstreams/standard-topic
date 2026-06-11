@@ -14789,14 +14789,17 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-hl-src { display: block; font-size: 0.72rem; color: var(--color-text-light); margin-top: 2px; }
 /* "Explore further on web" accordion: source-type chips → platform rows. */
 .aii-web { display: grid; gap: 5px; }
-.aii-web-cat { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; text-align: left; padding: 10px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.84rem; font-weight: 600; color: var(--color-text); transition: border-color .14s, color .14s, background .14s; }
-.aii-web-cat:hover { border-color: var(--color-primary); color: var(--color-primary); }
-.aii-web-cat svg { flex: none; color: var(--color-text-light); }
-.aii-web-cat:hover svg { color: var(--color-primary); }
-.aii-web-back { display: inline-flex; align-items: center; gap: 6px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #1d4ed8; padding: 0 0 8px; }
-.aii-web-back svg { width: 14px; height: 14px; }
-.aii-web-back:hover span { text-decoration: underline; text-underline-offset: 2px; }
-.aii-web-rows { display: grid; gap: 5px; }
+/* Source-type accordion (#30): native <details> — the platforms drop down in
+   place. The summary is a clean tappable row; the chevron flips when open. */
+.aii-web-cat { border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; overflow: hidden; transition: border-color .14s; }
+.aii-web-cat[open] { border-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-surface-border)); }
+.aii-web-cat-sum { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 13px; cursor: pointer; list-style: none; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; color: var(--color-text); transition: color .14s, background .14s; }
+.aii-web-cat-sum::-webkit-details-marker { display: none; }
+.aii-web-cat-sum:hover { color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 3.5%, transparent); }
+.aii-web-cat-sum .aii-chev { flex: none; color: var(--color-text-light); transition: transform .18s ease, color .14s; }
+.aii-web-cat[open] > .aii-web-cat-sum .aii-chev { transform: rotate(180deg); color: var(--color-primary); }
+.aii-web-cat[open] > .aii-web-cat-sum { border-bottom: 1px solid var(--color-surface-border); }
+.aii-web-rows { display: grid; gap: 5px; padding: 8px; }
 .aii-web-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; text-decoration: none; transition: border-color .14s; }
 .aii-web-row:hover { border-color: var(--color-primary); text-decoration: none; }
 .aii-web-row-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
@@ -15031,11 +15034,17 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .im-source-name { font-size: 0.83rem; font-weight: 600; }
 .im-source-desc { font-size: 0.74rem; font-weight: 400; color: var(--color-text-muted); }
 /* Web Sources level 1 — source-type chooser (drills into the platform list). */
-.im-wscat-list { display: grid; gap: 5px; }
-.im-wscat { display: flex; align-items: center; justify-content: space-between; gap: 10px; text-align: left; padding: 10px 13px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.84rem; font-weight: 600; color: var(--color-text); transition: border-color .14s, color .14s; }
-.im-wscat:hover { border-color: var(--color-primary); color: var(--color-primary); }
-.im-wscat svg { flex: none; color: var(--color-text-light); }
-.im-wscat:hover svg { color: var(--color-primary); }
+.im-wscat-list, .im-wscat-acc { display: grid; gap: 5px; }
+/* Source-type accordion (#30): native <details>, platforms drop down in place. */
+.im-wscat { border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; overflow: hidden; transition: border-color .14s; }
+.im-wscat[open] { border-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-surface-border)); }
+.im-wscat-sum { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 13px; cursor: pointer; list-style: none; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; color: var(--color-text); transition: color .14s, background .14s; }
+.im-wscat-sum::-webkit-details-marker { display: none; }
+.im-wscat-sum:hover { color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 3.5%, transparent); }
+.im-wscat-sum .im-chev { flex: none; color: var(--color-text-light); transition: transform .18s ease, color .14s; }
+.im-wscat[open] > .im-wscat-sum .im-chev { transform: rotate(180deg); color: var(--color-primary); }
+.im-wscat[open] > .im-wscat-sum { border-bottom: 1px solid var(--color-surface-border); }
+.im-wscat .im-source-list { padding: 8px; }
 .im-subhead { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-muted); margin: 0 0 8px; }
 .im-model-list { display: grid; gap: 5px; }
 .im-model { display: flex; flex-direction: column; gap: 1px; text-align: left; padding: 9px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; cursor: pointer; font-family: var(--font-family); transition: border-color .14s; }
