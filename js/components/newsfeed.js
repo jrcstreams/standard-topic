@@ -374,16 +374,18 @@ export function newsCardHTML(item) {
 
   return `
     <article class="news-card" data-title="${escapeAttr(title)}" data-desc="${escapeAttr(descText.slice(0, 500))}" data-url="${escapeAttr(url)}" data-date="${escapeAttr(pubDate)}">
-      <a class="news-card-link"
-         href="${escapeAttr(url)}"
-         target="_blank"
-         rel="noopener noreferrer">
-        <h4 class="news-card-title">${escapeHTML(title)}</h4>
-        ${descText ? `<p class="news-card-desc">${escapeHTML(descText)}</p>` : ''}
-      </a>
-      <div class="news-card-foot">
+      <div class="news-card-body">
+        <a class="news-card-link"
+           href="${escapeAttr(url)}"
+           target="_blank"
+           rel="noopener noreferrer">
+          <h4 class="news-card-title">${escapeHTML(title)}</h4>
+          ${descText ? `<p class="news-card-desc">${escapeHTML(descText)}</p>` : ''}
+        </a>
         <div class="news-card-meta">${metaParts.join('')}</div>
-        <button type="button" class="news-action news-share-toggle" aria-expanded="false" aria-label="Share this story">${SHARE_SVG}<span>Share</span></button>
+      </div>
+      <div class="news-card-aside">
+        <button type="button" class="news-action news-share-toggle" aria-expanded="false" aria-label="Share this story" title="Share">${SHARE_SVG}</button>
         ${newsAIHTML()}
       </div>
       <div class="news-share-panel" aria-hidden="true">

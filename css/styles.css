@@ -3601,6 +3601,26 @@ html, body, #app {
   .news-card-foot { padding: 0.7rem 0 1.05rem; }
 }
 
+/* === News card horizontal layout (homepage redesign Chunk B) =============
+   Text (title/desc/meta) on the left; a right aside with a DISCREET share icon
+   (no label) above the AI Insights button. */
+.news-card { display: flex; align-items: stretch; gap: 0.9rem; }
+.news-card-body { flex: 1 1 auto; min-width: 0; padding: 1.05rem 0; }
+.news-card-body .news-card-link { display: block; padding: 0; }
+.news-card-body .news-card-meta { margin: 0.55rem 0 0; }
+.news-card-aside {
+  flex: 0 0 auto;
+  display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between;
+  gap: 0.5rem; padding: 1.05rem 0;
+}
+/* Discreet share — icon only, top-right of the row. */
+.news-card-aside .news-share-toggle { padding: 0.32rem; border-radius: 8px; color: #aeb7c6; background: transparent; }
+.news-card-aside .news-share-toggle:hover { background: #eef1f6; color: #5a6678; }
+.news-card-aside .news-share-toggle svg { width: 16px; height: 16px; }
+.news-card-aside .news-ai { align-self: flex-end; }
+/* Anchor the AI dropdown to the button's RIGHT edge so it stays inside the card. */
+.news-card-aside .news-ai-panel { left: auto; right: 0; transform-origin: top right; }
+
 .news-loading,
 .news-empty,
 .news-error {
