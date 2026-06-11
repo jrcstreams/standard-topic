@@ -554,6 +554,10 @@ function renderTrend(d) {
         <div class="im-section-title">Trend Overview</div>
         <h3 class="im-article-title">${esc(title)}</h3>
         ${meta ? `<div class="im-article-meta">${meta}</div>` : ''}
+        ${Array.isArray(d.trendBreakdown) && d.trendBreakdown.length ? `<div class="im-related">
+          <span class="im-related-label">Related searches</span>
+          <div class="im-related-chips">${d.trendBreakdown.slice(0, 8).map((r) => `<button type="button" class="im-related-chip" data-term="${escAttr(r)}">${esc(r)}</button>`).join('')}</div>
+        </div>` : ''}
       </section>
       <section class="im-section im-brief-section">
         <div class="im-section-title im-section-title--brief">${SPARK}<span>AI Brief</span></div>
@@ -563,6 +567,14 @@ function renderTrend(d) {
         ${briefSkeleton()}
       </section>
     </div>`;
+  // Related-search chips drill into that term as a new trend page IN THIS modal
+  // (stacked, so "Back to {this trend}" returns here).
+  panelEl.querySelectorAll('.im-related-chip').forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const t = chip.dataset.term; if (!t) return;
+      openStacked({ type: 'trend', query: t }, `Back to ${title}`);
+    });
+  });
   const prompt = `Explain what "${d.query}" is and why it's trending right now — what just happened, the background, and the latest developments.`;
   (async () => {
     const t0 = Date.now();

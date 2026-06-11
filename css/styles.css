@@ -14883,6 +14883,19 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .im-pn-name { font-family: var(--font-display); font-size: 0.86rem; font-weight: 600; letter-spacing: -0.01em; color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* The back-to-list action reads as the primary "up a level" affordance. */
 .im-head--brand .im-back { background: color-mix(in srgb, var(--color-primary) 6%, #fff); border-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-surface-border)); color: var(--color-primary); }
+
+/* Related-search chips (trend overview) — drill into that term in-modal. */
+.im-related { margin: 12px 0 2px; }
+.im-related-label { display: block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--color-text-muted); margin: 0 0 7px; }
+.im-related-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.im-related-chip {
+  display: inline-flex; align-items: center; padding: 5px 11px; border-radius: 999px;
+  border: 1px solid var(--color-surface-border); background: #fff; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 500; color: var(--color-text);
+  transition: border-color .14s, background .14s, color .14s, transform .06s;
+}
+.im-related-chip:hover { border-color: color-mix(in srgb, var(--color-primary) 32%, var(--color-surface-border)); background: color-mix(in srgb, var(--color-primary) 5%, #fff); color: var(--color-primary); }
+.im-related-chip:active { transform: translateY(1px); }
 .im-logo { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 9px; background: var(--color-primary); color: #fff; }
 .im-logo svg { width: 16px; height: 16px; }
 .im-brandname { font-family: var(--font-display); font-size: 1.06rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-text); }

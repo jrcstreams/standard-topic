@@ -138,7 +138,7 @@ function trendCardHTML(topic, idx) {
   // Line 2: the topic/category and how long it's been trending, sentence-case.
   const meta = [cat, dur ? `Since ${dur} ago` : ''].filter(Boolean).join(' · ');
   return `
-    <div class="trend-card" data-idx="${idx}" data-query="${escapeAttr(title)}" data-cat="${escapeAttr(cat)}" data-started="${escapeAttr(topic.startedAt || '')}">
+    <div class="trend-card" data-idx="${idx}" data-query="${escapeAttr(title)}" data-cat="${escapeAttr(cat)}" data-started="${escapeAttr(topic.startedAt || '')}" data-breakdown="${escapeAttr(JSON.stringify(Array.isArray(topic.trendBreakdown) ? topic.trendBreakdown.slice(0, 8) : []))}">
       <button type="button" class="trend-card-trigger" aria-expanded="false" title="Quick insights on ${escapeAttr(title)}">
         <span class="trend-card-main">
           <span class="trend-card-head">
@@ -165,7 +165,8 @@ function openTrendChat(card) {
 function showTrendBrief(card) {
   const grid = card.closest('.trend-card-grid');
   const cards = grid ? [...grid.querySelectorAll('.trend-card:not(.trend-card-skel)')] : [card];
-  const list = cards.map((c) => ({ type: 'trend', query: c.dataset.query || '', category: c.dataset.cat || '', startedAt: c.dataset.started || '' }));
+  const parseBd = (c) => { try { return JSON.parse(c.dataset.breakdown || '[]'); } catch (_) { return []; } };
+  const list = cards.map((c) => ({ type: 'trend', query: c.dataset.query || '', category: c.dataset.cat || '', startedAt: c.dataset.started || '', trendBreakdown: parseBd(c) }));
   let index = cards.indexOf(card); if (index < 0) index = 0;
   window.dispatchEvent(new CustomEvent('open-insight-modal', { detail: {
     ...list[index],
