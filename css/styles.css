@@ -604,6 +604,56 @@ body.custom-mode.sticky-always #content {
 .sticky-topics { display: inline-flex; align-items: center; }
 .sticky-topics-label { display: inline; }
 
+/* ═══════════════ Mobile bottom tab nav (2026-06-11) ═══════════════════
+   theScore-style fixed bottom bar — Home / Search / Trending / Topics.
+   Rendered into <body>, shown only ≤899.98px. Navy to match the top bar;
+   muted icons, active tab goes full white ("white = active page"). */
+#bottom-nav { display: none; }
+@media (max-width: 899.98px) {
+  #bottom-nav {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 1150;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    background: #0f1a2e;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-shadow: 0 -6px 20px -12px rgba(8, 15, 30, 0.6);
+  }
+  .botnav-tab {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; padding: 8px 4px 7px;
+    background: none; border: none; cursor: pointer;
+    color: rgba(255, 255, 255, 0.52);
+    text-decoration: none; font-family: inherit;
+    transition: color .14s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .botnav-ico { display: inline-flex; }
+  .botnav-ico svg { display: block; }
+  .botnav-label { font-size: 0.625rem; font-weight: 600; letter-spacing: 0.01em; line-height: 1; }
+  .botnav-tab:active { color: rgba(255, 255, 255, 0.85); }
+  .botnav-tab.is-active { color: #fff; }
+
+  /* The top-bar action pills now live in the bottom nav — hide them on
+     mobile. Keep the settings gear up top so preferences stay reachable. */
+  .sticky-actions .sticky-home,
+  .sticky-actions .sticky-search-pill,
+  .sticky-actions .sticky-trending,
+  .sticky-actions .sticky-topics { display: none; }
+
+  /* Clear the fixed bottom nav (52px + iOS safe area). Scrolling home gets
+     extra bottom padding; the app-mode locked topic panel shrinks its
+     internal scroll height so the last row clears the bar. Selectors mirror
+     the base rules' specificity so these overrides actually win. */
+  html body.home-search.app-mode.sticky-always.has-subnav #content,
+  html body.home-search.app-mode #content {
+    padding-bottom: calc(52px + env(safe-area-inset-bottom, 0px) + 1.1rem);
+  }
+  body.app-mode.sticky-always.has-subnav:not(.home-search) #content,
+  body.app-mode:not(.home-search) #content {
+    height: calc(100dvh - 64px - var(--subnav-height, 66px) - 52px - env(safe-area-inset-bottom, 0px));
+  }
+}
+
 /* Search pill — opens the Topics modal with input focused. Mirrors
    the Choose Topics pill's white-on-navy treatment so the two
    read as a paired set (browse vs. search), with the icon cluster

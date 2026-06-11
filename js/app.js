@@ -173,8 +173,9 @@ function renderLayout(route) {
   if (heroEl && !stayingInHomeDesktop) heroEl.innerHTML = '';
   document.body.classList.remove('sticky-always', 'has-subnav', 'home-mode', 'show-subnav-tabs', 'app-mode', 'custom-mode', 'home-search');
 
-  // Always render the main sticky bar
+  // Always render the main sticky bar + the mobile bottom tab nav
   renderStickyHeroBar(siteHeader, route);
+  renderBottomNav(route);
 
   // All pages: main nav always fixed + visible.
   document.body.classList.add('sticky-always');
@@ -1328,6 +1329,47 @@ function renderStickyHeroBar(container, route) {
       window.location.hash = '#/';
     }
   });
+}
+
+// Mobile bottom tab bar (Home / Search / Trending / Topics). Rendered once
+// and appended to <body> so it's never clipped by header/content overflow;
+// active state is refreshed on every route render. Hidden ≥900px via CSS.
+function renderBottomNav(route) {
+  let nav = document.getElementById('bottom-nav');
+  if (!nav) {
+    nav = document.createElement('nav');
+    nav.id = 'bottom-nav';
+    nav.setAttribute('aria-label', 'Primary');
+    nav.innerHTML = `
+      <a href="#/" class="botnav-tab" data-tab="home" id="botnav-home" aria-label="Home">
+        <span class="botnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
+        <span class="botnav-label">Home</span>
+      </a>
+      <button type="button" class="botnav-tab" data-tab="search" id="botnav-search" aria-label="Search">
+        <span class="botnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+        <span class="botnav-label">Search</span>
+      </button>
+      <button type="button" class="botnav-tab" data-tab="trending" id="botnav-trending" aria-label="Trending">
+        <span class="botnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg></span>
+        <span class="botnav-label">Trending</span>
+      </button>
+      <button type="button" class="botnav-tab" data-tab="topics" id="botnav-topics" aria-label="All topics">
+        <span class="botnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>
+        <span class="botnav-label">Topics</span>
+      </button>`;
+    document.body.appendChild(nav);
+    nav.querySelector('#botnav-search').addEventListener('click', () => navigate('#/search'));
+    nav.querySelector('#botnav-trending').addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-trending-list')));
+    nav.querySelector('#botnav-topics').addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-all-topics-modal')));
+    // Home: native href handles routing; if already home, force a re-render
+    // so the homepage resets to the top (mirrors the brand-link behavior).
+    nav.querySelector('#botnav-home').addEventListener('click', (e) => {
+      const h = window.location.hash;
+      if (h === '#/' || h === '' || h === '#') { e.preventDefault(); window.scrollTo(0, 0); }
+    });
+  }
+  const active = route && route.type === 'home' ? 'home' : '';
+  nav.querySelectorAll('.botnav-tab').forEach(t => t.classList.toggle('is-active', t.dataset.tab === active));
 }
 
 function renderHero(container, route) {
