@@ -22,11 +22,14 @@ export function initAllTopicsModal() {
   document.body.appendChild(overlayEl);
 
   window.addEventListener('open-all-topics-modal', () => open());
+  window.addEventListener('close-all-modals', close);
   overlayEl.addEventListener('click', (e) => { if (e.target === overlayEl) close(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlayEl.style.display !== 'none') close(); });
 }
 
 function open() {
+  // Close any other open modal first (single-modal invariant).
+  window.dispatchEvent(new CustomEvent('close-all-modals'));
   const groups = getTopicsGroupedByParent();
   const accordions = groups.map(({ parent, subtopics }, i) => {
     const accent = PALETTE[i % PALETTE.length];

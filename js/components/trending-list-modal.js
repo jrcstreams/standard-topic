@@ -27,6 +27,9 @@ export function initTrendingListModal() {
   // The detail modal fires this when its ✕/Esc fully closes after being
   // opened from here, so the whole stack dismisses together.
   window.addEventListener('close-trending-list', close);
+  // Global modal coordinator: any other modal opening closes this one, so
+  // only one top-level modal is ever visible (no stacking-behind).
+  window.addEventListener('close-all-modals', close);
   overlayEl.addEventListener('click', close);
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && overlayEl.style.display !== 'none') close();
@@ -34,6 +37,8 @@ export function initTrendingListModal() {
 }
 
 function open() {
+  // Close any other open modal first (single-modal invariant).
+  window.dispatchEvent(new CustomEvent('close-all-modals'));
   panelEl.innerHTML = `
     <button type="button" class="tlm-close" id="tlm-close" aria-label="Close">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg>

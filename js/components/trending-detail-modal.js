@@ -71,6 +71,8 @@ export function initTrendingDetailModal() {
   document.body.appendChild(panelEl);
 
   window.addEventListener('open-trending-detail', (e) => openFresh(e.detail));
+  // Switching to any other top-level modal dismisses the trending stack too.
+  window.addEventListener('close-all-modals', close);
   overlayEl.addEventListener('click', close);
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && overlayEl.style.display !== 'none') close();

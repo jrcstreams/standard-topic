@@ -26,6 +26,7 @@ export function initSettingsModal() {
   document.body.appendChild(overlayEl);
 
   window.addEventListener('open-settings-modal', () => open());
+  window.addEventListener('close-all-modals', close);
 
   overlayEl.addEventListener('click', (e) => {
     if (e.target === overlayEl) { tryClose(); return; }
@@ -70,6 +71,8 @@ export function initSettingsModal() {
 
 function open() {
   if (!overlayEl) initSettingsModal();
+  // Close any other open modal first (single-modal invariant).
+  window.dispatchEvent(new CustomEvent('close-all-modals'));
   // Snapshot current values into "saved" baseline. Pending starts
   // identical and diverges as the user toggles options.
   const adminDefault = getDefaultModelId();

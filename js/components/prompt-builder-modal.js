@@ -18,6 +18,8 @@ export function initPromptBuilderModal() {
   document.body.appendChild(overlayEl);
   overlayEl.addEventListener('click', (e) => { if (e.target === overlayEl) userClose(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isOpen()) userClose(); });
+  // Single-modal coordinator: another modal opening closes this + clears its route.
+  window.addEventListener('close-all-modals', () => { if (isOpen()) userClose(); });
 }
 
 function isOpen() { return overlayEl && overlayEl.style.display !== 'none'; }
@@ -27,6 +29,8 @@ export function openPromptBuilderModal() {
   // Route can re-fire while already open (e.g. a child picker navigates) —
   // don't tear down the in-progress builder.
   if (isOpen()) return;
+  // Fresh open — close any other top-level modal first.
+  window.dispatchEvent(new CustomEvent('close-all-modals'));
   overlayEl.innerHTML = `
     <div class="pbm-panel" role="dialog" aria-modal="true" aria-label="Prompt Builder">
       <button type="button" class="pbm-close" aria-label="Close">${X}</button>

@@ -656,6 +656,29 @@ body.custom-mode.sticky-always #content {
   body.app-mode:not(.home-search) #content {
     height: calc(100dvh - 64px - var(--subnav-height, 66px) - 64px - env(safe-area-inset-bottom, 0px));
   }
+
+  /* ── Modals + the bottom nav (#3/#6) ───────────────────────────────────
+     Center every takeover in the space ABOVE the 60px bottom bar (not hidden
+     behind it), and trim the width a touch so tapping the side dismisses. */
+  html .takeover-overlay,
+  html .pbm-overlay,
+  html .all-topics-modal-overlay {
+    align-items: center;
+    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px) + 0.85rem);
+  }
+  /* tlm/td panels self-center via top:50% — lift the center above the nav. */
+  html .tlm-panel,
+  html .td-panel { top: calc(50% - 34px); }
+  /* Narrower cards + height capped to the space above the bar. */
+  html .takeover-panel,
+  html .pbm-panel,
+  html .all-topics-modal-card,
+  html .tlm-panel,
+  html .td-panel {
+    max-width: 440px;
+    width: calc(100% - 2.6rem);
+    max-height: calc(100dvh - 60px - env(safe-area-inset-bottom, 0px) - 2.2rem);
+  }
 }
 
 /* ═══════════════ Mobile top bar — ESPN-style (2026-06-11) ═════════════

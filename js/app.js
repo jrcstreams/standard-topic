@@ -10,20 +10,20 @@ import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI }
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260606-polish43';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260611-revamp118';
 import { initPromptModal } from './components/prompt-modal.js?v=20260609-revamp41';
 import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260609-revamp71';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260610-revamp98';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260611-revamp118';
 import { initInsightModal } from './components/insight-modal.js?v=20260610-revamp98';
 import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260610-revamp104';
 import { renderWebSources } from './components/websources.js?v=20260609-revamp73';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260609-revamp71';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260611-revamp118';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260606-polish46';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260611-revamp118';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
 import { initPromptPreviewModal } from './components/prompt-preview-modal.js';
-import { initSettingsModal } from './components/settings-modal.js';
+import { initSettingsModal } from './components/settings-modal.js?v=20260611-revamp118';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -3016,6 +3016,12 @@ function initSearchPageModal() {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && isSearchModalOpen()) userCloseSearchModal();
   });
+  // Single-modal coordinator: another modal opening closes search + clears
+  // its deep-link route. Guarded so search's OWN open (which dispatches
+  // close-all) doesn't tear itself down.
+  window.addEventListener('close-all-modals', () => {
+    if (isSearchModalOpen()) userCloseSearchModal();
+  });
 }
 
 function isSearchModalOpen() {
@@ -3031,6 +3037,9 @@ function openSearchPageModal(term) {
     if (t) searchPanelModalCtl.expand(t); else searchPanelModalCtl.collapse();
     return;
   }
+  // Fresh open — close any other top-level modal first (search isn't open yet,
+  // so its own close-all listener no-ops here).
+  window.dispatchEvent(new CustomEvent('close-all-modals'));
   searchModalTerm = t;
   renderSearchModalBody(t);
   searchModalOverlay.style.display = 'flex';
