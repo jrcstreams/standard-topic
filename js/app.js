@@ -1517,14 +1517,21 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     const homeWs = container.querySelector('#section-websources');
     if (homeWs) renderWebSources(homeWs, { name: '' });
   } else {
-    // Topic pages: Shortcuts + News Feed + Related Topics.
+    // Topic pages: a desktop 35/65 split — SIDEBAR (AI Intelligence, then Web
+    // Sources) + MAIN (News Feed, Related). The wrappers are display:contents
+    // below 1024px, so the mobile tab navigator (which shows ONE section at a
+    // time) is unaffected; at ≥1024 they become the two columns (#14).
     container.innerHTML = `
       <div class="topic-layout" id="topic-layout">
         ${bodyTabsRow({ showRelated: false, showWebSources: true })}
-        <section class="layout-section" id="section-websources"></section>
-        <section class="layout-section" id="section-shortcuts"></section>
-        <section class="layout-section" id="section-newsfeed"></section>
-        <section class="layout-section" id="section-related"></section>
+        <div class="topic-side">
+          <section class="layout-section" id="section-shortcuts"></section>
+          <section class="layout-section" id="section-websources"></section>
+        </div>
+        <div class="topic-main">
+          <section class="layout-section" id="section-newsfeed"></section>
+          <section class="layout-section" id="section-related"></section>
+        </div>
       </div>
     `;
   }

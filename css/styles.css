@@ -5843,10 +5843,10 @@ body.app-mode .topic-layout {
     align-items: start;
   }
   .topic-layout.is-custom { grid-template-columns: minmax(0, 1fr); }
-  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-shortcuts { grid-column: 1; order: 1; position: relative; margin-bottom: 0; }
-  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-websources { grid-column: 1; order: 2; position: relative; margin-bottom: 0; }
-  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-newsfeed { grid-column: 1; order: 3; position: relative; }
-  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-related { grid-column: 1; order: 4; }
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom)  #section-shortcuts { grid-column: 1; order: 1; position: relative; margin-bottom: 0; }
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom)  #section-websources { grid-column: 1; order: 2; position: relative; margin-bottom: 0; }
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom)  #section-newsfeed { grid-column: 1; order: 3; position: relative; }
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom)  #section-related { grid-column: 1; order: 4; }
   /* Home 2-column layout lives in the body.home-search block below (higher
      specificity); kept there as the single source of truth. */
   /* Topic pages: stacked sections are taller than the viewport, so the
@@ -5889,7 +5889,7 @@ body.app-mode .topic-layout {
        fills the genuine remaining height and scrolls from there. */
     grid-template-rows: minmax(0, auto) minmax(0, 1fr);
   }
-  body.app-mode .topic-layout:not(.is-custom):has(#section-trending) > #section-shortcuts {
+  body.app-mode .topic-layout:not(.is-custom):has(#section-trending)  #section-shortcuts {
     grid-column: 1;
     grid-row: 1;
   }
@@ -5897,24 +5897,24 @@ body.app-mode .topic-layout {
      flex-filling — so the section is content-height (no gap before
      Trending) — but still caps + scrolls if the panel is fully expanded,
      leaving Trending its space. */
-  body.app-mode .topic-layout:not(.is-custom):has(#section-trending) > #section-shortcuts .shortcuts-sidebar {
+  body.app-mode .topic-layout:not(.is-custom):has(#section-trending)  #section-shortcuts .shortcuts-sidebar {
     height: auto;
     min-height: 0;
   }
-  body.app-mode .topic-layout:not(.is-custom):has(#section-trending) > #section-shortcuts .shortcuts-scroll-wrap {
+  body.app-mode .topic-layout:not(.is-custom):has(#section-trending)  #section-shortcuts .shortcuts-scroll-wrap {
     flex: 0 1 auto;
     max-height: 52vh;
     /* Fill-mode reserved a big bottom inset; not needed when the panel is
        content-sized, so trim it to keep Trending snug below. */
     padding-bottom: 0.75rem;
   }
-  body.app-mode .topic-layout:not(.is-custom):has(#section-trending) > #section-trending {
+  body.app-mode .topic-layout:not(.is-custom):has(#section-trending)  #section-trending {
     grid-column: 1;
     grid-row: 2;
     padding-right: 1.5rem;
     margin-top: 1rem;
   }
-  body.app-mode .topic-layout:not(.is-custom):has(#section-trending) > #section-newsfeed {
+  body.app-mode .topic-layout:not(.is-custom):has(#section-trending)  #section-newsfeed {
     grid-column: 2;
     grid-row: 1 / span 2;
   }
@@ -5923,14 +5923,14 @@ body.app-mode .topic-layout {
   .topic-layout.is-custom {
     grid-template-columns: minmax(0, 1fr);
   }
-  .topic-layout.is-custom > #section-shortcuts {
+  .topic-layout.is-custom  #section-shortcuts {
     max-width: none;
     margin: 0;
     width: 100%;
   }
   /* Inline Related section is mobile-only — desktop uses the related-
      topics modal triggered from the topic banner. */
-  body.app-mode .topic-layout > #section-related { display: none; }
+  body.app-mode .topic-layout  #section-related { display: none; }
 }
 
 .layout-section {
@@ -5965,7 +5965,7 @@ body.app-mode .topic-layout {
      sections (shortcuts, related) keep the topic-layout's 1rem
      side inset so their bullets/cards don't kiss the viewport
      edge. */
-  body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed {
+  body.app-mode .topic-layout:not(.is-custom)  #section-newsfeed {
     /* No full-bleed: the section sits at the layout inset so the header
        separator, story dividers and text all share the same edges (the old
        bleed put separators edge-to-edge while text stayed inset — looked off).
@@ -6602,18 +6602,18 @@ body.app-mode .topic-layout {
     text-decoration: none;
     background: rgba(15, 26, 46, 0.05);
   }
-  body.app-mode .topic-layout:not(.is-custom) > #section-shortcuts,
-  body.app-mode .topic-layout:not(.is-custom) > #section-trending,
-  body.app-mode .topic-layout:not(.is-custom) > #section-websources,
-  body.app-mode .topic-layout:not(.is-custom) > #section-newsfeed,
-  body.app-mode .topic-layout:not(.is-custom) > #section-related {
+  body.app-mode .topic-layout:not(.is-custom)  #section-shortcuts,
+  body.app-mode .topic-layout:not(.is-custom)  #section-trending,
+  body.app-mode .topic-layout:not(.is-custom)  #section-websources,
+  body.app-mode .topic-layout:not(.is-custom)  #section-newsfeed,
+  body.app-mode .topic-layout:not(.is-custom)  #section-related {
     display: none;
   }
-  body.app-mode.active-tab-newsfeed .topic-layout:not(.is-custom) > #section-newsfeed { display: flex; }
-  body.app-mode.active-tab-trending .topic-layout:not(.is-custom) > #section-trending { display: flex; }
-  body.app-mode.active-tab-shortcuts .topic-layout:not(.is-custom) > #section-shortcuts { display: flex; }
-  body.app-mode.active-tab-websources .topic-layout:not(.is-custom) > #section-websources { display: flex; }
-  body.app-mode.active-tab-related   .topic-layout:not(.is-custom) > #section-related   { display: flex; }
+  body.app-mode.active-tab-newsfeed .topic-layout:not(.is-custom)  #section-newsfeed { display: flex; }
+  body.app-mode.active-tab-trending .topic-layout:not(.is-custom)  #section-trending { display: flex; }
+  body.app-mode.active-tab-shortcuts .topic-layout:not(.is-custom)  #section-shortcuts { display: flex; }
+  body.app-mode.active-tab-websources .topic-layout:not(.is-custom)  #section-websources { display: flex; }
+  body.app-mode.active-tab-related   .topic-layout:not(.is-custom)  #section-related   { display: flex; }
 
   /* === Tabbed-nav hierarchy bump ============================
      In tabbed (mobile/tablet) mode the active tab already labels
@@ -13026,10 +13026,10 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
    separator are hidden here; the quiet "via Google Trends · Updated …"
    meta stays. The fill behaviour is handled by the base rules above. */
 @media (max-width: 899.98px) {
-  body.app-mode .topic-layout:not(.is-custom) > #section-trending .trending-title {
+  body.app-mode .topic-layout:not(.is-custom)  #section-trending .trending-title {
     display: none;
   }
-  body.app-mode .topic-layout:not(.is-custom) > #section-trending .trending-meta {
+  body.app-mode .topic-layout:not(.is-custom)  #section-trending .trending-meta {
     margin-top: 1.1rem;
   }
 }
@@ -14077,8 +14077,8 @@ body.home-search #section-shortcuts .sidebar-card-header,
   /* Topic-page tab mode only: header sits at the section edge. The homepage
      (body.home-search) keeps its CARD padding — excluded here so the icon/title
      aren't jammed against the card's left edge. */
-  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) > #section-newsfeed .newsfeed-card > .newsfeed-head,
-  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) > #section-newsfeed .newsfeed-card > .newsfeed-title {
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom)  #section-newsfeed .newsfeed-card > .newsfeed-head,
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom)  #section-newsfeed .newsfeed-card > .newsfeed-title {
     padding-left: 0;
     padding-right: 0;
   }
@@ -15265,4 +15265,33 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 @media (min-width: 1240px) {
   .aii-pathlist:has(> :nth-child(4)),
   .ws-pathlist:has(> :nth-child(4)) { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ═══════════════ Desktop topic-page 35/65 split (#14) ═════════════════════
+   SIDEBAR (AI Intelligence → Web Sources) on the left, MAIN (News Feed →
+   Related) on the right. The .topic-side / .topic-main wrappers are
+   display:contents below 1024px, so the mobile tab navigator (one section at a
+   time) and the 900–1023 single stack are untouched; at ≥1024 they become two
+   independent-height flex columns. Appended last so it wins source order. */
+.topic-side, .topic-main { display: contents; }
+@media (min-width: 1024px) {
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) {
+    grid-template-columns: minmax(0, 35fr) minmax(0, 65fr) !important;
+    column-gap: 1.6rem; row-gap: 0; align-items: start;
+  }
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) .topic-side {
+    display: flex; flex-direction: column; gap: 1.5rem; grid-column: 1; min-width: 0;
+  }
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) .topic-main {
+    display: flex; flex-direction: column; gap: 1.5rem; grid-column: 2; grid-row: 1; min-width: 0;
+  }
+  /* Sections inside the columns are plain stacked blocks (no grid placement). */
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) .topic-side > .layout-section,
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) .topic-main > .layout-section {
+    grid-column: auto; order: 0; width: 100%; margin: 0;
+  }
+  /* In the narrow sidebar the AI/Web-Sources path tiles become a single-column
+     list (the full-width 3–4-up grid is far too cramped at 35%). */
+  body.app-mode:not(.home-mode) .topic-side .aii-pathlist,
+  body.app-mode:not(.home-mode) .topic-side .ws-pathlist { grid-template-columns: 1fr !important; }
 }
