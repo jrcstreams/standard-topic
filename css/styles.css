@@ -14863,6 +14863,26 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .im-condensed-link:hover { text-decoration: underline; }
 .im-condensed-link svg { width: 11px; height: 11px; }
 .im-brandlock { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+
+/* Prev/Next bar (in-modal navigation across the originating Trending list / News
+   feed). Previous on the left, next on the right, each with the item's name. */
+.im-prevnext { display: flex; align-items: stretch; gap: 10px; margin: 0 0 4px; }
+.im-pn {
+  flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px; border: 1px solid var(--color-surface-border); border-radius: 11px;
+  background: #fff; cursor: pointer; font-family: var(--font-family); text-align: left;
+  transition: border-color .14s, background .14s, transform .06s;
+}
+.im-pn:hover { border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); background: color-mix(in srgb, var(--color-primary) 3%, #fff); }
+.im-pn:active { transform: translateY(1px); }
+.im-pn-next { justify-content: flex-end; text-align: right; }
+.im-pn-empty { visibility: hidden; border: none; background: none; cursor: default; }
+.im-pn-arrow { flex: none; font-size: 1.25rem; line-height: 1; color: var(--color-text-muted); }
+.im-pn-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.im-pn-dir { font-size: 0.64rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--color-text-muted); }
+.im-pn-name { font-family: var(--font-display); font-size: 0.86rem; font-weight: 600; letter-spacing: -0.01em; color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* The back-to-list action reads as the primary "up a level" affordance. */
+.im-head--brand .im-back { background: color-mix(in srgb, var(--color-primary) 6%, #fff); border-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-surface-border)); color: var(--color-primary); }
 .im-logo { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 9px; background: var(--color-primary); color: #fff; }
 .im-logo svg { width: 16px; height: 16px; }
 .im-brandname { font-family: var(--font-display); font-size: 1.06rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-text); }

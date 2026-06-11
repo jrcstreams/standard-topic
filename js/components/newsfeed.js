@@ -197,12 +197,16 @@ function exploreLeaveHTML(model) {
 
 // One combined, grounded AI brief inline under the card (click toggles). Falls
 // back to chat if the AI layer is unavailable / the daily cap is hit.
-// AI Insights now open in the unified insight modal.
+// AI Insights open in the unified insight modal — with the surrounding feed as
+// nav context so the modal offers Prev/Next story + "Back to News Feed".
 function showNewsBrief(card) {
+  const list = card.closest('.news-list');
+  const cards = list ? [...list.querySelectorAll('.news-card[data-url]')] : [card];
+  const entries = cards.map((c) => ({ type: 'news', url: c.dataset.url || '', title: c.dataset.title || '', description: c.dataset.desc || '', date: c.dataset.date || '' }));
+  let index = cards.indexOf(card); if (index < 0) index = 0;
   window.dispatchEvent(new CustomEvent('open-insight-modal', { detail: {
-    type: 'news',
-    url: card.dataset.url || '', title: card.dataset.title || '',
-    description: card.dataset.desc || '', date: card.dataset.date || '',
+    ...entries[index],
+    nav: { list: entries, index, backLabel: 'News Feed', itemKind: 'story' },
   } }));
 }
 

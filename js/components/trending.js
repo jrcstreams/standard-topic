@@ -160,13 +160,16 @@ function openTrendChat(card) {
   }));
 }
 
-// Trend AI brief now opens in the unified insight modal.
+// Trend AI brief opens in the unified insight modal — with the full trend list
+// as nav context so the modal can offer Prev/Next trend + "Back to Trending".
 function showTrendBrief(card) {
+  const grid = card.closest('.trend-card-grid');
+  const cards = grid ? [...grid.querySelectorAll('.trend-card:not(.trend-card-skel)')] : [card];
+  const list = cards.map((c) => ({ type: 'trend', query: c.dataset.query || '', category: c.dataset.cat || '', startedAt: c.dataset.started || '' }));
+  let index = cards.indexOf(card); if (index < 0) index = 0;
   window.dispatchEvent(new CustomEvent('open-insight-modal', { detail: {
-    type: 'trend',
-    query: card.dataset.query || '',
-    category: card.dataset.cat || '',
-    startedAt: card.dataset.started || '',
+    ...list[index],
+    nav: { list, index, backLabel: 'Trending', backEvent: 'open-trending-list', itemKind: 'trend' },
   } }));
 }
 

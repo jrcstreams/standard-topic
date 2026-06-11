@@ -3,7 +3,7 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody } from './newsfeed.js?v=20260609-revamp63';
+import { renderBriefBody } from './newsfeed.js?v=20260611-revamp124';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -105,6 +105,10 @@ export function initInsightModal() {
   window.addEventListener('open-insight-modal', (e) => openFresh(e.detail));
   // Open stacked from within another modal: { entry, backLabel }.
   window.addEventListener('open-insight-modal-stacked', (e) => openStacked(e.detail && e.detail.entry, e.detail && e.detail.backLabel));
+  // Single-modal coordinator: another top-level modal opening closes this one,
+  // so a trend/news detail is never STACKED over the Trending list — it replaces
+  // it (and "Back to Trending" reopens the list).
+  window.addEventListener('close-all-modals', close);
   overlayEl.addEventListener('click', close);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlayEl.style.display !== 'none') close(); });
 }
@@ -139,6 +143,10 @@ function unlockScroll() {
 
 function openFresh(entry) {
   if (!entry || !entry.type) return;
+  // Close any other top-level modal first (e.g. the Trending list) so this
+  // detail REPLACES it rather than stacking over it. This modal isn't open yet,
+  // so its own close-all listener no-ops here.
+  window.dispatchEvent(new CustomEvent('close-all-modals'));
   stack = [];
   current = entry;
   render();
@@ -154,9 +162,40 @@ function openStacked(entry, backLabel) {
 }
 function goBack() {
   const prev = stack.pop();
-  if (!prev) { close(); return; }
-  current = prev.entry;
+  if (prev) { current = prev.entry; render(); return; }
+  // No stacked parent — if this entry came from a list (Trending / News Feed),
+  // "back" returns there: dispatch the list event (Trending) or just close to
+  // the feed (News). #13/in-modal-nav.
+  const nav = current && current.nav;
+  if (nav && nav.backEvent) { close(); window.dispatchEvent(new CustomEvent(nav.backEvent)); return; }
+  close();
+}
+// Jump to the previous/next item in the originating list (Trending/News), in
+// place — same modal, new "page".
+function navTo(i) {
+  const nav = current && current.nav;
+  if (!nav || !Array.isArray(nav.list) || i < 0 || i >= nav.list.length) return;
+  current = { ...nav.list[i], nav: { ...nav, index: i } };
   render();
+}
+function titleCaseIM(s) { return String(s || '').replace(/\b\w/g, (c) => c.toUpperCase()); }
+function navItemName(e) { return e && e.type === 'trend' ? titleCaseIM(e.query) : (e && e.title) || ''; }
+// Prev/Next bar — previous on the left, next on the right, each with the item's
+// name. Hidden when there's no originating list.
+function navBarHTML(nav) {
+  if (!nav || !Array.isArray(nav.list) || nav.list.length < 2) return '';
+  const prev = nav.index > 0 ? nav.list[nav.index - 1] : null;
+  const next = nav.index < nav.list.length - 1 ? nav.list[nav.index + 1] : null;
+  if (!prev && !next) return '';
+  const kind = nav.itemKind || 'item';
+  const cell = (e, dir) => e
+    ? `<button type="button" class="im-pn im-pn-${dir}" id="im-${dir}">
+         ${dir === 'prev' ? '<span class="im-pn-arrow">‹</span>' : ''}
+         <span class="im-pn-tx"><span class="im-pn-dir">${dir === 'prev' ? 'Previous' : 'Next'} ${esc(kind)}</span><span class="im-pn-name">${esc(navItemName(e))}</span></span>
+         ${dir === 'next' ? '<span class="im-pn-arrow">›</span>' : ''}
+       </button>`
+    : '<span class="im-pn im-pn-empty" aria-hidden="true"></span>';
+  return `<div class="im-prevnext">${cell(prev, 'prev')}${cell(next, 'next')}</div>`;
 }
 function close() {
   overlayEl.style.display = 'none';
@@ -183,9 +222,14 @@ function headerHTML(eyebrow, title, subHTML) {
 // Brand-only header: the "AI Insights" lockup is the card title (the article
 // title moves into the Article Overview section below). Keeps the back action
 // when stacked.
-function brandHeaderHTML(condensed) {
-  const showBack = stack.length > 0;
-  const backLabel = stack.length ? stack[stack.length - 1].label : '';
+function brandHeaderHTML(condensed, opts = {}) {
+  const brandLabel = opts.brandLabel || 'AI Insights';
+  const nav = current && current.nav;
+  // Back action: a stacked parent wins; otherwise the originating list
+  // ("Back to Trending" / "Back to News Feed").
+  const showBack = stack.length > 0 || !!(nav && nav.backLabel);
+  const backLabel = stack.length ? stack[stack.length - 1].label
+    : (nav && nav.backLabel ? `Back to ${nav.backLabel}` : '');
   // condensed = { title, meta } — a compact title bar that fades in once the
   // overview card scrolls out of view, so the reader keeps context deep in a
   // long brief.
@@ -196,7 +240,7 @@ function brandHeaderHTML(condensed) {
     </div>` : '';
   return `<div class="im-head im-head--brand">
     <div class="im-head-row">
-      <span class="im-brandlock"><span class="im-logo">${LOGO}</span><span class="im-brandname">AI Insights</span></span>
+      <span class="im-brandlock"><span class="im-logo">${LOGO}</span><span class="im-brandname">${esc(brandLabel)}</span></span>
       <span class="im-head-actions">
         ${showBack ? `<button type="button" class="im-back" id="im-back"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>${esc(backLabel)}</button>` : ''}
         <button type="button" class="im-close" id="im-close" aria-label="Close"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg></button>
@@ -408,6 +452,9 @@ function render() {
   else renderNews(current);
   panelEl.querySelector('#im-close')?.addEventListener('click', close);
   panelEl.querySelector('#im-back')?.addEventListener('click', goBack);
+  const navIdx = current && current.nav ? current.nav.index : -1;
+  panelEl.querySelector('#im-prev')?.addEventListener('click', () => navTo(navIdx - 1));
+  panelEl.querySelector('#im-next')?.addEventListener('click', () => navTo(navIdx + 1));
   panelEl.scrollTop = 0;
   setupModalFades();
 }
@@ -426,6 +473,7 @@ function renderNews(d) {
   panelEl.innerHTML = `
     ${brandHeaderHTML({ title: d.title || 'News story', meta: host, url: d.url || '' })}
     <div class="im-body">
+      ${navBarHTML(d.nav)}
       <section class="im-section im-article">
         <div class="im-section-title">Article Overview</div>
         <h3 class="im-article-title">${esc(d.title || 'News story')}</h3>
@@ -499,8 +547,9 @@ function renderTrend(d) {
   const meta = [cat ? `<span class="im-cat-pill">${esc(cat)}</span>` : '', since ? `<span class="im-when">Trending since ${esc(since)}</span>` : '']
     .filter(Boolean).join('');
   panelEl.innerHTML = `
-    ${brandHeaderHTML({ title, meta: [cat, since ? `Trending since ${since}` : ''].filter(Boolean).join(' · ') })}
+    ${brandHeaderHTML({ title, meta: [cat, since ? `Trending since ${since}` : ''].filter(Boolean).join(' · ') }, { brandLabel: 'Trending' })}
     <div class="im-body">
+      ${navBarHTML(d.nav)}
       <section class="im-section im-article">
         <div class="im-section-title">Trend Overview</div>
         <h3 class="im-article-title">${esc(title)}</h3>
