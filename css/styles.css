@@ -710,24 +710,30 @@ body.custom-mode.sticky-always #content {
   .sticky-hero-inner .nav-search-mobile:active { background: rgba(255, 255, 255, 0.12); }
   .sticky-hero-inner .nav-search-mobile svg { display: block; }
 
-  /* Sub-header is now the ESPN identity line: topic name (small + bold) on
-     top, a hairline separator, then the horizontal subtopic scroll below.
-     Short, tidy height. */
+  /* Sub-header is the ESPN identity line: topic name (small + bold) · vertical
+     separator · related-topics horizontal scroll to its RIGHT, fading at the
+     edge. One tidy row — much shorter than the old stacked version. */
+  body.has-subnav:not(.home-mode) #sub-header.is-subnav .topic-banner {
+    flex-direction: row; align-items: center;
+    padding: 0.4rem 0 0.4rem 1rem; min-height: 0;
+  }
   body.has-subnav:not(.home-mode) #sub-header .topic-banner-row {
-    flex-direction: column; align-items: stretch; gap: 0; flex: 1; min-width: 0;
+    flex-direction: row; align-items: center; gap: 0; flex: 1; min-width: 0;
   }
   body.has-subnav:not(.home-mode) #sub-header .topic-banner-titlegroup {
     display: flex; flex: 0 0 auto;
-    padding: 0 0 5px; margin: 0 0 6px;
-    border-bottom: 1px solid #d3d9e2;
+    padding: 1px 0.7rem 1px 0; margin: 0 0.7rem 0 0;
+    border-right: 1px solid #c5cdd9; border-bottom: none;
   }
   body.has-subnav:not(.home-mode) #sub-header .topic-banner-kind { display: none; }
   body.has-subnav:not(.home-mode) #sub-header .topic-banner-title {
-    font-size: 0.84rem; font-weight: 700; letter-spacing: -0.01em; color: #1e2d44; white-space: nowrap;
+    font-size: 0.86rem; font-weight: 700; letter-spacing: -0.01em; color: #1e2d44; white-space: nowrap;
   }
-  body.has-subnav:not(.home-mode) #sub-header.is-subnav .topic-banner {
-    flex-direction: column; align-items: stretch;
-    padding: 0.5rem 1rem 0.55rem; min-height: 0;
+  /* The strip fades at its right edge so it clearly reads as scrollable. */
+  body.has-subnav:not(.home-mode) #sub-header .subnav-topics-inline {
+    padding-right: 1rem;
+    -webkit-mask-image: linear-gradient(to right, #000 86%, transparent);
+    mask-image: linear-gradient(to right, #000 86%, transparent);
   }
 }
 
@@ -6406,12 +6412,10 @@ body.app-mode .topic-layout {
      layout and don't render an empty grid row. */
   body.app-mode #sub-header.is-subnav .topic-banner-row:has(.subnav-chip-wrap) {
     display: grid !important;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      "title"
-      "chips";
-    /* Tight row-gap so the topic scroll reads as a direct
-       sub-list of the page title, not a separate row below. */
+    /* INLINE identity line: topic name (auto) │ related-topics scroll (1fr). */
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: "title chips";
+    column-gap: 0;
     row-gap: 0;
     flex-wrap: initial;
     width: 100%;
@@ -6422,12 +6426,14 @@ body.app-mode .topic-layout {
      generous top inset and a clear gap into the chip strip
      below so the page title has obvious breathing room. */
   body.app-mode #sub-header.is-subnav .topic-banner {
-    padding: 1.05rem 1rem 0;
+    padding: 0.42rem 1rem;
   }
   body.app-mode #sub-header.is-subnav .topic-banner-titlegroup {
     grid-area: title;
     flex-basis: auto;
-    margin-right: 0;
+    margin-right: 0.7rem;
+    padding-right: 0.7rem;
+    border-right: 1px solid #c5cdd9;
     min-width: 0;
   }
   /* Chip strip wrap. Sits on the same gray fill as the title row,
