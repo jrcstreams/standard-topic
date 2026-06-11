@@ -3606,25 +3606,24 @@ html, body, #app {
   .news-card-foot { padding: 0.7rem 0 1.05rem; }
 }
 
-/* === News card horizontal layout (homepage redesign Chunk B) =============
-   Text (title/desc/meta) on the left; a right aside with a DISCREET share icon
-   (no label) above the AI Insights button. */
-.news-card { display: flex; align-items: stretch; gap: 0.9rem; }
-.news-card-body { flex: 1 1 auto; min-width: 0; padding: 1.05rem 0; }
+/* === News card layout (homepage redesign — Chunk B, fixed) ===============
+   Text (title/desc/meta) takes the FULL row width; the AI Insights button sits
+   on the right, vertically centred; a discreet share icon pins to the card's
+   top-right corner. The share popover is position:absolute so it can't steal
+   row width (the old in-flow accordion was squeezing the text to ~65%). */
+.news-card { position: relative; display: flex; align-items: center; gap: 1rem; }
+.news-card-body { flex: 1 1 auto; min-width: 0; padding: 1.05rem 0; padding-right: 0.4rem; }
 .news-card-body .news-card-link { display: block; padding: 0; }
-.news-card-body .news-card-meta { margin: 0.55rem 0 0; }
-.news-card-aside {
-  flex: 0 0 auto;
-  display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between;
-  gap: 0.5rem; padding: 1.05rem 0;
-}
-/* Discreet share — icon only, top-right of the row. */
-.news-card-aside .news-share-toggle { padding: 0.32rem; border-radius: 8px; color: #aeb7c6; background: transparent; }
-.news-card-aside .news-share-toggle:hover { background: #eef1f6; color: #5a6678; }
-.news-card-aside .news-share-toggle svg { width: 16px; height: 16px; }
-.news-card-aside .news-ai { align-self: flex-end; }
-/* Anchor the AI dropdown to the button's RIGHT edge so it stays inside the card. */
+.news-card-body .news-card-meta { margin: 0.6rem 0 0; }
+.news-card-aside { flex: 0 0 auto; display: flex; align-items: center; }
 .news-card-aside .news-ai-panel { left: auto; right: 0; transform-origin: top right; }
+/* Discreet share — icon only, pinned to the card's top-right corner. */
+.news-card > .news-share-toggle {
+  position: absolute; top: 0.95rem; right: 0; z-index: 6;
+  padding: 0.32rem; border-radius: 8px; color: #b3bccb; background: transparent;
+}
+.news-card > .news-share-toggle:hover { background: #eef1f6; color: #5a6678; }
+.news-card > .news-share-toggle svg { width: 16px; height: 16px; }
 
 .news-loading,
 .news-empty,
@@ -13485,6 +13484,13 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   body.home-search #home-search-hero:has(.search-panel[data-state="collapsed"]) + #home-trending { margin-top: 1.5rem; }
   body.home-search #home-search-hero:has(.search-panel[data-state="expanded"]) + #home-trending { margin-top: 0.95rem; }
 }
+/* Desktop home (subnav hidden): seat the cards just under the main nav — don't
+   reserve the hidden subnav's height — and zero Trending's base margin so its
+   top aligns with the Search card across the two columns. */
+@media (min-width: 1024px) {
+  body.home-search.app-mode.sticky-always.has-subnav #content { padding-top: calc(64px + 0.7rem); }
+  body.home-search #home-trending { margin-top: 0; }
+}
 /* On the homepage the whole section sits in a soft card to set it apart. */
 /* Plain section (no gray card) so Trending reads in the same continuous
    flow as Intelligence / News Feed below it. */
@@ -13911,10 +13917,12 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .nf-select:focus { outline: none; border-color: var(--color-primary); }
 .nf-select:hover { border-color: var(--color-primary); }
 /* Share accordion under a news card (Copy Link / Share via). */
-.news-share-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .22s ease; }
+/* Share popover — absolute (out of the card's flex flow) so it never steals
+   row width; anchored top-right under the share icon. */
+.news-share-panel { position: absolute; top: 2.5rem; right: 0; z-index: 25; display: grid; grid-template-rows: 0fr; transition: grid-template-rows .2s ease; }
 .news-share-panel.is-open { grid-template-rows: 1fr; }
-.news-share-panel-inner { overflow: hidden; display: flex; gap: 8px; }
-.news-share-panel.is-open .news-share-panel-inner { padding: 2px 0 9px; }
+.news-share-panel-inner { overflow: hidden; display: flex; gap: 6px; }
+.news-share-panel.is-open .news-share-panel-inner { padding: 7px; background: #fff; border: 1px solid #e7ecf3; border-radius: 10px; box-shadow: 0 12px 30px -12px rgba(15, 26, 46, 0.28); }
 .news-share-opt {
   display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px;
   border: 1px solid var(--color-surface-border); border-radius: 8px; background: #fff; cursor: pointer;
@@ -14888,6 +14896,25 @@ body.home-mode #sub-header.is-subnav .topic-banner {
     width: 30px; height: 30px; border-radius: 9px;
   }
   .aii-pathlist .aii-pathrow-icon svg, .ws-pathlist .ws-pathrow-icon svg { width: 16px; height: 16px; }
+
+  /* Homepage tweaks (2026-06-11). AI Intelligence paths become separate grey
+     CARD tiles (vertical: icon + arrow top, title, description), not a divided
+     white row. */
+  body.home-search #section-aii-home .aii-pathlist {
+    background: transparent; gap: 12px; margin: 0; padding: 14px 16px 16px;
+  }
+  body.home-search #section-aii-home .aii-pathlist > .aii-pathrow {
+    flex-direction: column; align-items: flex-start; gap: 9px; position: relative;
+    min-height: 0; padding: 15px 15px 16px;
+    background: #f5f6f9; border: 1px solid var(--color-surface-border); border-radius: 12px;
+  }
+  body.home-search #section-aii-home .aii-pathlist > .aii-pathrow:hover {
+    background: #eef2f8; border-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-surface-border));
+  }
+  body.home-search #section-aii-home .aii-pathrow-go { position: absolute; top: 13px; right: 13px; margin: 0; }
+  body.home-search #section-aii-home .aii-pathrow-text { gap: 3px; }
+  /* Web Sources sidebar: a single vertical list, not a cramped 2-up grid. */
+  body.home-search #section-websources .ws-pathlist { grid-template-columns: 1fr; }
 
   /* Inline header lockup (#220-222): subtext sits to the RIGHT of the title, not
      stacked below. Below 900px the heads stay stacked (homepage) / hidden behind

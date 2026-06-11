@@ -374,6 +374,7 @@ export function newsCardHTML(item) {
 
   return `
     <article class="news-card" data-title="${escapeAttr(title)}" data-desc="${escapeAttr(descText.slice(0, 500))}" data-url="${escapeAttr(url)}" data-date="${escapeAttr(pubDate)}">
+      <button type="button" class="news-action news-share-toggle" aria-expanded="false" aria-label="Share this story" title="Share">${SHARE_SVG}</button>
       <div class="news-card-body">
         <a class="news-card-link"
            href="${escapeAttr(url)}"
@@ -384,10 +385,7 @@ export function newsCardHTML(item) {
         </a>
         <div class="news-card-meta">${metaParts.join('')}</div>
       </div>
-      <div class="news-card-aside">
-        <button type="button" class="news-action news-share-toggle" aria-expanded="false" aria-label="Share this story" title="Share">${SHARE_SVG}</button>
-        ${newsAIHTML()}
-      </div>
+      <div class="news-card-aside">${newsAIHTML()}</div>
       <div class="news-share-panel" aria-hidden="true">
         <div class="news-share-panel-inner">
           <button type="button" class="news-share-opt" data-act="copy">${LINK_SVG}<span>Copy Link</span></button>
