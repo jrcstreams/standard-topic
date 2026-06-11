@@ -1348,6 +1348,14 @@ body.hide-cta .sticky-cta { display: none !important; }
   letter-spacing: -0.02em;
   font-weight: 600;
 }
+/* Desktop subnav (#31/#32): carry the mobile ESPN look up here — small bold
+   topic name (scaled a touch larger than mobile), no "TOPIC" badge, and a
+   trimmed band height (it was ~66px / 21px title — way too tall). */
+@media (min-width: 900px) {
+  #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title { font-size: 1.05rem !important; font-weight: 700; line-height: 1.15; }
+  #sub-header.is-subnav .topic-banner-kind { display: none; }
+  #sub-header.is-subnav .topic-banner { padding-top: 0.5rem; padding-bottom: 0.5rem; min-height: 0; }
+}
 
 /* Custom-search title: small uppercase "SEARCH" tag inline with the
    query term, both vertically centered with the search icon to its
