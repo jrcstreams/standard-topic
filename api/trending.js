@@ -72,11 +72,15 @@ module.exports = async function handler(req, res) {
       if (sql && topics.length) {
         const keys = topics.map((t) => String(t.query || '').toLowerCase());
         const rows = await sql.query(
-          `SELECT entity_key, summary FROM ai_insights
+          `SELECT entity_key, summary, sources FROM ai_insights
             WHERE entity_type='trend' AND insight='brief' AND summary IS NOT NULL
               AND entity_key = ANY($1)`, [keys]);
-        const byKey = new Map(rows.map((r) => [r.entity_key, r.summary]));
-        topics.forEach((t) => { t.summary = byKey.get(String(t.query || '').toLowerCase()) || null; });
+        const byKey = new Map(rows.map((r) => [r.entity_key, r]));
+        topics.forEach((t) => {
+          const row = byKey.get(String(t.query || '').toLowerCase());
+          t.summary = (row && row.summary) || null;
+          t.sources = (row && row.sources) || null; // for the AI provenance ("N sources") on the card
+        });
       }
     } catch (_) { /* DB optional — render without summaries */ }
 

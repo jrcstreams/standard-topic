@@ -5,6 +5,7 @@
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
 import { renderTrendExpansionBody } from './trend-expansion.js';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260611-revamp138';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -146,7 +147,7 @@ function trendCardHTML(topic, idx) {
             <span class="trend-card-title">${escapeHTML(title)}</span>
           </span>
           ${meta ? `<span class="trend-card-meta">${escapeHTML(meta)}</span>` : ''}
-          ${topic.summary && cleanSummary(topic.summary) ? `<span class="trend-card-summary">${escapeHTML(cleanSummary(topic.summary))}</span>` : ''}
+          ${topic.summary && cleanSummary(topic.summary) ? `<span class="trend-card-summary">${escapeHTML(cleanSummary(topic.summary))}</span>${aiProvenanceHTML(topic.sources, { compact: true })}` : ''}
         </span>
         <span class="trend-card-chev trend-card-open" aria-hidden="true">${OPEN_ICON}</span>
       </button>
@@ -286,12 +287,12 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
 
   const normNow = (topics) => (topics || []).map(t => ({
     query: t.query, categories: t.categories || [], startedAt: t.startedAt,
-    summary: t.summary || null,
+    summary: t.summary || null, sources: t.sources || null,
     _cat: (t.categories && t.categories[0]) || '',
   }));
   const normOver = (rows) => (rows || []).map(r => ({
     query: r.query, categories: r.category ? [r.category] : [], startedAt: r.started_at,
-    summary: r.summary || null,
+    summary: r.summary || null, sources: r.sources || null,
     _cat: r.category || '',
   }));
   // Preferred category order: these first (in this order), then the rest

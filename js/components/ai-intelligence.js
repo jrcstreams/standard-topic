@@ -4,7 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody } from './newsfeed.js?v=20260611-revamp136';
+import { renderBriefBody } from './newsfeed.js?v=20260611-revamp138';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260611-revamp138';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -219,6 +220,7 @@ export function renderAIIntelligence(container, scope) {
       </div>
       <div class="aii-brief-head">${SPARK}<span>AI Brief</span></div>
       <p class="aii-brief-note">The below is an AI-generated summary of the topic at hand. Please verify important details with the linked sources.</p>
+      <div class="ai-prov-slot aii-prov-slot"></div>
       <div class="aii-actions aii-actions-row">
         <button type="button" class="aii-actbtn" data-acc="explore" aria-expanded="false"><span>Explore with AI</span>${CHEV}</button>
         <button type="button" class="aii-actbtn" data-acc="web" aria-expanded="false"><span>Explore on web</span>${CHEV}</button>
@@ -240,8 +242,11 @@ export function renderAIIntelligence(container, scope) {
   //      so each insight shows the stories that match IT, not the same shared
   //      list under every section.
   // Returns '' when there's nothing for this section so it's just the intro.
-  function headlineListHTML() {
-    const c = cache[curGroup]; if (!c) return '';
+  // The deduped news items for THIS section (grounding citations first, RSS feed
+  // pooled in as fallback). Shared by the "In the news" list AND the AI provenance
+  // line, so the named publishers match the links shown below.
+  function sectionNewsItems() {
+    const c = cache[curGroup]; if (!c) return [];
     const sections = c.sections || [];
     const curName = (sections[curIdx] || {}).name || '';
     const src = c.sources;
@@ -259,10 +264,9 @@ export function renderAIIntelligence(container, scope) {
     if (hl && !Array.isArray(hl)) feed = hl[curName] || [];
     else if (Array.isArray(hl) && hl.length) feed = poolForSection(hl, sections, curIdx);
     const list = cites.concat(feed);
-    if (!list.length) return '';
     // Dedup by URL AND by normalized title — the same story often appears in both
     // the grounding citations and the RSS feed under different URLs.
-    const seen = new Set(); const seenT = new Set(); const rows = [];
+    const seen = new Set(); const seenT = new Set(); const out = [];
     for (const x of list) {
       const uri = x.uri || x.url || ''; if (!uri) continue;
       const ukey = uri.toLowerCase();
@@ -272,9 +276,14 @@ export function renderAIIntelligence(container, scope) {
       const tkey = title.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
       if (seen.has(ukey) || (tkey && seenT.has(tkey))) continue;
       seen.add(ukey); if (tkey) seenT.add(tkey);
-      rows.push(`<li class="aii-hl-row"><a class="aii-hl-link" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a>${host ? `<span class="aii-hl-src">${esc(host)}</span>` : ''}</li>`);
-      if (rows.length >= 8) break;
+      out.push({ uri, title, host });
+      if (out.length >= 8) break;
     }
+    return out;
+  }
+  function headlineListHTML() {
+    const rows = sectionNewsItems().map((x) =>
+      `<li class="aii-hl-row"><a class="aii-hl-link" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer">${esc(x.title)}</a>${x.host ? `<span class="aii-hl-src">${esc(x.host)}</span>` : ''}</li>`);
     if (!rows.length) return '';
     return `<div class="aii-hl"><div class="aii-hl-head">In the news</div><ul class="aii-hl-list">${rows.join('')}</ul></div>`;
   }
@@ -410,6 +419,8 @@ export function renderAIIntelligence(container, scope) {
         // synthesized body, so they live in their own block below the rule).
         const hl = stage.querySelector('.aii-headlines');
         if (hl) { hl.innerHTML = headlineListHTML(); if (hl.firstChild) hl.classList.add('ai-reveal'); }
+        const prov = stage.querySelector('.aii-prov-slot');
+        if (prov) prov.innerHTML = aiProvenanceHTML(sectionNewsItems(), { badge: false });
       }, 1000);
     }
     stage.querySelectorAll('.aii-pathrow').forEach((b) => b.addEventListener('click', async () => {

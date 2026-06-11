@@ -15038,6 +15038,24 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .im-section-title--brief { font-size: 1.2rem; color: #1b3a8c; }
 .im-section-title--brief svg { color: #1b3a8c; }
 .im-brief-section .im-section-title--brief { margin-bottom: 7px; }
+
+/* AI provenance — the consistent "this is AI-generated, grounded in these
+   sources" marker. Full form (brief surfaces, no badge): a "Sources: A, B +N"
+   line under the AI Brief disclaimer. Compact form (trending cards): a "✦ AI ·
+   N sources" chip. See js/utils/ai-provenance.js. */
+.ai-prov-slot:empty { display: none; }
+.ai-prov { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; font-size: 0.76rem; line-height: 1.4; color: var(--color-text-muted); }
+.ai-prov-slot .ai-prov { margin: -2px 0 13px; }
+.aii-prov-slot .ai-prov { margin: -2px 0 12px; }
+.ai-prov-srcs { display: inline; }
+.ai-prov-srcs-lead { font-weight: 700; color: #54607a; letter-spacing: 0.02em; }
+.ai-prov-srcs--feed { font-style: italic; }
+/* Compact card chip + source count. */
+.ai-prov--compact { margin-top: 6px; gap: 5px; font-size: 0.66rem; align-items: center; }
+.ai-prov-badge { display: inline-flex; align-items: center; gap: 3px; padding: 1px 7px 1px 5px; border-radius: 999px; background: color-mix(in srgb, var(--color-primary) 8%, #fff); border: 1px solid color-mix(in srgb, var(--color-primary) 15%, transparent); color: var(--color-primary); font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; }
+.ai-prov-badge svg { width: 10px; height: 10px; }
+.ai-prov--compact .ai-prov-sep { color: var(--color-text-light); }
+.ai-prov--compact .ai-prov-count { color: var(--color-text-muted); font-weight: 600; }
 .im-brief-section .im-disclaimer { margin: 0 0 12px; font-size: 0.78rem; line-height: 1.5; color: var(--color-text-muted); }
 .im-actions-slot:empty { display: none; }
 .im-actions-slot .im-actions { margin-top: 0; }

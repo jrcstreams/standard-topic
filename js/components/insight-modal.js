@@ -3,7 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody } from './newsfeed.js?v=20260611-revamp136';
+import { renderBriefBody } from './newsfeed.js?v=20260611-revamp138';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260611-revamp138';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -554,6 +555,7 @@ function renderNews(d) {
       <section class="im-section im-brief-section">
         <div class="im-section-title im-section-title--brief">${SPARK}<span>AI Brief</span></div>
         <p class="im-disclaimer">An AI-generated summary of this story. Please verify important details with the linked sources.</p>
+        <div class="ai-prov-slot" id="im-prov"></div>
         <hr class="im-rule">
         ${briefSkeleton()}
       </section>
@@ -579,6 +581,8 @@ function renderNews(d) {
       if (data && data.content) {
         ctx.sources = data.sources || [];
         briefEl.innerHTML = renderBriefBody(normalizeNewsBrief(data.content), null); briefEl.classList.add('ai-reveal');
+        const prov = panelEl.querySelector('#im-prov');
+        if (prov) prov.innerHTML = aiProvenanceHTML(ctx.sources, { badge: false });
       } else { briefEl.innerHTML = '<p class="im-empty">AI brief unavailable right now.</p>'; }
     } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
     // Fill the Sources panel + the Sources & Coverage card from the citations.
@@ -636,6 +640,7 @@ function renderTrend(d) {
       <section class="im-section im-brief-section">
         <div class="im-section-title im-section-title--brief">${SPARK}<span>AI Brief</span></div>
         <p class="im-disclaimer">The below is an AI-generated summary of why this is trending. Please verify important details with the linked sources.</p>
+        <div class="ai-prov-slot" id="im-prov"></div>
         <div class="im-actions-slot" id="im-actions-slot"></div>
         <hr class="im-rule">
         ${briefSkeleton()}
@@ -680,6 +685,8 @@ function renderTrend(d) {
         }
         const summary = cleanSum ? `<p class="im-trend-summary">${esc(cleanSum)}</p>` : '';
         briefEl.innerHTML = `${summary}${renderBriefBody(detail, null)}${inTheNewsHTML(data.sources, data.headlines)}`; briefEl.classList.add('ai-reveal');
+        const prov = panelEl.querySelector('#im-prov');
+        if (prov) prov.innerHTML = aiProvenanceHTML(data.sources, { badge: false });
       } else { briefEl.innerHTML = '<p class="im-empty">No AI brief generated for this trend yet.</p>'; }
     } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
     const slot = panelEl.querySelector('#im-actions-slot');
