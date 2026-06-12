@@ -13252,6 +13252,12 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
    let the flip-nav flow in the scrolling body (no fixed-height stage). */
 .aii-modal-body .aii-head { display: none; }
 .aii-modal-body .aii, .aii-modal-body .aii-stage { height: auto; overflow: visible; }
+/* One cohesive surface: the component's own card frame (border + radius + white
+   fill) nested inside the modal's white body reads as a card-within-a-card.
+   Flatten it so the content sits flush in the modal; the modal body already
+   provides the gutter, so the stage adds none. */
+.aii-modal-body .aii { border: none; border-radius: 0; background: none; }
+.aii-modal-body .aii-stage { padding: 0; }
 /* Narrow screens: the title + topic picker can't share one row — keep the
    title and close on top, drop the picker to its own full-width row below. */
 @media (max-width: 560px) {
@@ -14927,7 +14933,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 
 /* Prev/Next bar (in-modal navigation across the originating Trending list / News
    feed). Previous on the left, next on the right, each with the item's name. */
-.im-prevnext { display: flex; align-items: stretch; gap: 10px; margin: 0 0 4px; }
+.im-prevnext { display: flex; align-items: stretch; gap: 10px; margin: 2px 0 14px; }
 .im-pn {
   flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 8px;
   padding: 9px 12px; border: 1px solid var(--color-surface-border); border-radius: 11px;

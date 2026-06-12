@@ -292,7 +292,7 @@ export function renderAIIntelligence(container, scope) {
       return `<li class="aii-hl-row"><a class="aii-hl-link" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer">${esc(x.title)}</a>${showHost ? `<span class="aii-hl-src">${esc(x.host)}</span>` : ''}</li>`;
     });
     if (!rows.length) return '';
-    return `<div class="aii-hl"><div class="aii-hl-head">In the news</div><ul class="aii-hl-list">${rows.join('')}</ul></div>`;
+    return `<div class="aii-hl"><div class="aii-hl-head">Sources &amp; Coverage</div><ul class="aii-hl-list">${rows.join('')}</ul></div>`;
   }
   // "Explore further on web" — the full Web Sources platform picker (source
   // types → platforms), searching this topic. Mirrors the Web Sources card.

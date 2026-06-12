@@ -629,7 +629,7 @@ function inTheNewsHTML(sources, headlines) {
     if (rows.length >= 8) break;
   }
   if (!rows.length) return '';
-  return `<div class="aii-hl im-hl"><div class="aii-hl-head">In the news</div><ul class="aii-hl-list">${rows.join('')}</ul></div>`;
+  return `<div class="aii-hl im-hl"><div class="aii-hl-head">Sources &amp; Coverage</div><ul class="aii-hl-list">${rows.join('')}</ul></div>`;
 }
 
 // ---- Trend ----------------------------------------------------------------
