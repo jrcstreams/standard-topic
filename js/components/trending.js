@@ -302,6 +302,52 @@ export function renderTrending(container) {
   renderTrendingTopics(container, { limit: 20, viewAll: false });
 }
 
+// Trending MODAL variant (#81): the legend + category filter live in the modal's
+// STICKY header (always visible) and only the card grid scrolls in the body. The
+// modal passes two mount points — `controlsEl` (in the header, under the subtext)
+// and `gridEl` (the scrolling body).
+export function renderTrendingModal(controlsEl, gridEl) {
+  gridEl.innerHTML = `<div class="trend-card-grid">${Array.from({ length: 8 }, () => '<div class="trend-card trend-card-skel"></div>').join('')}</div>`;
+  const state = { all: [], category: 'all' };
+  const catList = () => [...new Set(state.all.map(ttCatOf).filter(Boolean))]
+    .sort((a, b) => (ttCatRank(a) - ttCatRank(b)) || a.localeCompare(b));
+
+  function controlsHTML() {
+    const cats = catList();
+    const catSel = cats.length ? `<label class="tlm-catfield"><span class="tlm-catfield-label">Category</span>
+        <select class="trend-select trend-cat-select" aria-label="Filter by category">${['all'].concat(cats).map((c) =>
+          `<option value="${escapeAttr(c)}"${state.category === c ? ' selected' : ''}>${c === 'all' ? 'All categories' : escapeHTML(c)}</option>`).join('')}</select></label>` : '';
+    return `<div class="tlm-controlbar-inner">
+      <div class="trend-legend">
+        <span class="trend-legend-item">${aiSparkInline()}<span>AI-generated text</span></span>
+        <span class="trend-legend-item"><span class="trend-legend-trend-ic">${TREND_CARD_ICON}</span><span>via Google Trends</span></span>
+      </div>
+      ${catSel}
+    </div>`;
+  }
+  function visible() {
+    return state.category === 'all' ? state.all : state.all.filter((t) => ttCatOf(t) === state.category);
+  }
+  function renderGrid() {
+    const shown = visible();
+    gridEl.innerHTML = shown.length
+      ? `<div class="trend-card-grid">${shown.map((t, i) => trendCardHTML(t, i)).join('')}</div>`
+      : '<p class="trending-empty">No trends in this category right now.</p>';
+    wireTrendCards(gridEl);
+  }
+  function renderControls() {
+    controlsEl.innerHTML = controlsHTML();
+    controlsEl.querySelector('.trend-cat-select')?.addEventListener('change', (e) => { state.category = e.target.value; renderGrid(); });
+  }
+
+  fetchTrending().then(({ topics }) => {
+    if (!topics.length) { controlsEl.innerHTML = ''; gridEl.innerHTML = '<p class="trending-empty">Trending is taking a break — check back soon.</p>'; return; }
+    state.all = topics;
+    renderControls();
+    renderGrid();
+  }).catch(() => { controlsEl.innerHTML = ''; gridEl.innerHTML = '<p class="trending-empty">Trending is taking a break — check back soon.</p>'; });
+}
+
 // ===== Homepage trending with Now ⇄ Over-time + category filter ==========
 // "Now" = current snapshot (/api/trending). "Over time" = stored history
 // (/api/trending-history mode=range), sortable. Category pills are built from

@@ -4,7 +4,7 @@
 // Updated" meta, and the fade-scrolled list whose rows open the trending
 // detail modal. Sits BELOW the detail modal (z 150) so a clicked term
 // stacks its detail view on top.
-import { renderTrending } from './trending.js?v=20260611-revamp149';
+import { renderTrendingModal } from './trending.js?v=20260612-revamp162';
 
 let overlayEl = null;
 let panelEl = null;
@@ -46,11 +46,13 @@ function open() {
     <div class="tlm-head">
       <h2 class="tlm-title">Trending</h2>
       <p class="tlm-subtext">What's being searched for right now.</p>
+      <div class="tlm-controlbar" id="tlm-controls"></div>
     </div>
     <div class="tlm-body" id="tlm-body"></div>`;
   panelEl.querySelector('#tlm-close').addEventListener('click', close);
-  // renderTrending fetches + renders the card and wires row → open-trending-detail.
-  renderTrending(panelEl.querySelector('#tlm-body'));
+  // Legend + category filter mount in the sticky header (#81); only the grid
+  // scrolls in the body.
+  renderTrendingModal(panelEl.querySelector('#tlm-controls'), panelEl.querySelector('#tlm-body'));
 
   overlayEl.style.display = 'block';
   panelEl.style.display = 'flex';

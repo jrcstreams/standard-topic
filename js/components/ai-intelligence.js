@@ -164,7 +164,7 @@ export function renderAIIntelligence(container, scope) {
     return `<div class="aii-pathlist">${paths.map((p) => `
       <button type="button" class="aii-pathrow" data-group="${escAttr(p.group)}">
         <span class="aii-pathrow-icon aii-icon-${escAttr(p.group)}">${ICONS[p.group] || ICONS._}</span>
-        <span class="aii-pathrow-text"><span class="aii-pathrow-name">${esc(p.label)}</span><span class="aii-pathrow-sub">${esc(p.subtitle)}</span></span>
+        <span class="aii-pathrow-text"><span class="aii-pathrow-name">${esc(p.tab || p.label)}</span><span class="aii-pathrow-sub">${esc(p.subtitle)}</span></span>
         <span class="aii-pathrow-go">${ARROW}</span>
       </button>`).join('')}</div>`;
   }

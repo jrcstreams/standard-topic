@@ -12640,6 +12640,13 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .tlm-head { flex-shrink: 0; text-align: center; margin: 0; padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid var(--color-surface-border); }
 .tlm-title { margin: 0 0 0.3rem; font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; letter-spacing: -0.025em; color: var(--color-primary); }
 .tlm-subtext { margin: 0; font-size: 0.88rem; color: var(--color-text-muted); }
+/* Sticky control bar in the modal header (#81): the legend block + category
+   filter sit under the subtext, so they stay visible while the grid scrolls. */
+.tlm-controlbar { margin-top: 0.85rem; }
+.tlm-controlbar-inner { display: flex; align-items: center; justify-content: center; gap: 9px 14px; flex-wrap: wrap; }
+.tlm-catfield { display: inline-flex; align-items: center; gap: 8px; }
+.tlm-catfield-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); }
+.tlm-catfield .trend-select { margin: 0; }
 /* The trending card renders its own left-aligned head — hide it; the centered
    .tlm-head above labels the modal. */
 .tlm-body .trending-topics-head { display: none; }
@@ -13357,12 +13364,15 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   /* News Feed needs no subtext — put the title left and the search + sort to its
      RIGHT on one row (#220), instead of stacking the controls below. */
   #section-newsfeed .newsfeed-card .newsfeed-head {
-    display: flex; flex-direction: row; align-items: center; justify-content: space-between;
+    display: flex; flex-direction: row; align-items: flex-start; justify-content: space-between;
     gap: 16px; margin: 0; padding: 15px 18px;
     border-bottom: 1px solid var(--color-surface-border);
     background: color-mix(in srgb, var(--color-primary) 3%, #fff);
     border-radius: 16px 16px 0 0;
   }
+  /* Search + sort ride the title row (#78), not centred across the two-line
+     text block. The filters block self-aligns to the top of the header. */
+  #section-newsfeed .newsfeed-card .newsfeed-filters { align-self: flex-start; align-items: center; }
   /* Title+icon on top, "Latest stories and developments." stacked on its OWN
      line below (#76); search/sort sit to the right, on the title row. The text
      block must NOT shrink — otherwise the subtext wraps/ellipsizes. It sizes to
@@ -13701,9 +13711,9 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .nf-search-icon { position: absolute; left: 11px; color: var(--color-text-muted); pointer-events: none; }
 .nf-search {
   width: 100%; box-sizing: border-box;
-  padding: 8px 12px 8px 33px;
-  border: 1px solid var(--color-border); border-radius: 9px;
-  font-size: 0.85rem; font-family: var(--font-family); color: var(--color-text);
+  padding: 6px 12px 6px 31px;
+  border: 1px solid var(--color-border); border-radius: 8px;
+  font-size: 0.84rem; font-family: var(--font-family); color: var(--color-text);
   background: #fff;
 }
 .nf-search:focus { outline: none; border-color: var(--color-primary); background: var(--color-bg-light); }
@@ -13715,7 +13725,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
   font-weight: var(--font-weight-semibold); color: var(--color-text-muted); padding-left: 2px;
 }
 .nf-select {
-  padding: 7px 28px 7px 10px; border: 1px solid var(--color-border); border-radius: 8px;
+  padding: 6px 28px 6px 10px; border: 1px solid var(--color-border); border-radius: 8px;
   font-size: 0.8rem; font-family: var(--font-family); color: var(--color-text);
   background-color: var(--color-bg); cursor: pointer; appearance: none; -webkit-appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b94a5' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
@@ -14630,13 +14640,15 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Legend pill at the top-left of the trend list body — defines the two card
    glyphs (sparkle = AI text, up-arrow = Google Trends). A faint pill; the two
    items wrap as whole units when the card is narrow. */
-.trend-legend-row { display: flex; justify-content: flex-start; padding: 11px 16px 20px; }
+.trend-legend-row { display: flex; justify-content: flex-start; padding: 11px 16px 8px; }
 /* In the Trending modal, the legend shares the category-chooser line (chooser
    left, legend right), with clear breathing room before the trend grid. */
 .trend-controls-legend { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap; margin-bottom: 18px; }
 .trend-controls-legend .trend-controls { margin: 0; }
 .trend-controls-legend .trend-legend-row { padding: 0; justify-content: flex-end; }
-.trend-legend { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding: 5px 11px; border-radius: 999px; background: color-mix(in srgb, var(--color-text) 3.5%, #fff); border: 1px solid color-mix(in srgb, var(--color-surface-border) 55%, transparent); }
+/* A squared-off label block (not a pill) so it reads as an info marker about the
+   list below, not a tappable control (#80). */
+.trend-legend { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding: 5px 11px; border-radius: 7px; background: color-mix(in srgb, var(--color-text) 4%, #fff); border: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); }
 .trend-legend-item { display: inline-flex; align-items: center; gap: 5px; font-size: 0.68rem; font-weight: 600; color: var(--color-text-muted); white-space: nowrap; }
 .trend-legend-item .ai-spark-mark svg { width: 11px; height: 11px; }
 .trend-legend-trend-ic { display: inline-flex; align-items: center; color: #475569; }
@@ -14951,7 +14963,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
   body.home-search #section-aii-home .aii-pathrow-sub { font-size: 0.82rem; line-height: 1.5; color: var(--color-text-muted); }
   /* "Go" chevron: a quiet circular affordance, top-right, that wakes on hover. */
   body.home-search #section-aii-home .aii-pathrow-go {
-    position: absolute; top: 12px; right: 12px; margin: 0;
+    position: absolute; top: 20px; right: 14px; margin: 0;
     width: 24px; height: 24px; border-radius: 50%;
     align-items: center; justify-content: center;
     background: color-mix(in srgb, var(--color-primary) 5%, #fff);
