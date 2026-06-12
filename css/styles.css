@@ -3840,6 +3840,8 @@ html, body, #app {
    text to ~65% and let the AI button overflow the right edge on desktop. */
 .news-card { position: relative; display: block; }
 .news-card-link { position: static; display: block; padding: 1.1rem 0 0; }
+/* First story sits snug under the feed header — trim the extra top whitespace. */
+#section-newsfeed .news-list .news-card:first-child .news-card-link { padding-top: 0.5rem; }
 .news-card-link::after { content: ''; position: absolute; inset: 0; z-index: 0; }
 .news-card-foot {
   position: relative; z-index: 1;
@@ -6604,11 +6606,14 @@ body.app-mode .topic-layout {
     text-decoration: none;
     background: rgba(15, 26, 46, 0.05);
   }
-  body.app-mode .topic-layout:not(.is-custom)  #section-shortcuts,
-  body.app-mode .topic-layout:not(.is-custom)  #section-trending,
-  body.app-mode .topic-layout:not(.is-custom)  #section-websources,
-  body.app-mode .topic-layout:not(.is-custom)  #section-newsfeed,
-  body.app-mode .topic-layout:not(.is-custom)  #section-related {
+  /* Topic pages only — home (.home-search) is a single stacked scroll with the
+     tabs hidden, so its sections must NOT be tab-gated (that was hiding the home
+     News Feed + Web Sources on mobile). */
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom)  #section-shortcuts,
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom)  #section-trending,
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom)  #section-websources,
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom)  #section-newsfeed,
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom)  #section-related {
     display: none;
   }
   body.app-mode.active-tab-newsfeed .topic-layout:not(.is-custom)  #section-newsfeed { display: flex; }
@@ -13578,6 +13583,11 @@ body.home-search #section-newsfeed { order: 4; }
    where these orders match their source order, so the sidebar is unaffected. */
 body.home-search #section-websources { order: 5; }
 body.home-search .home-promo          { order: 6; }
+/* Prompt Builder promo is a desktop-sidebar flourish — drop it from the stacked
+   mobile/tablet home (it just tacks a tall card onto the end of the scroll). */
+@media (max-width: 1023.98px) {
+  body.home-search .home-promo { display: none !important; }
+}
 /* Home trending is a vertical list (sidebar + mobile both read as a list). */
 body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; }
 /* Denser homepage trending sidebar (ESPN-style headline rail): smaller responsive
