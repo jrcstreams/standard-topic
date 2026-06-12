@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp172';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp172';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp173';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp173';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -672,12 +672,12 @@ function renderTrend(d) {
         </div>` : ''}
       </section>
       <section class="im-section im-brief-section">
-        <div class="im-section-title im-section-title--brief">${SPARK}<span>AI Brief</span></div>
+        <div class="im-brief-head" id="im-brief-head"><span class="im-brief-logo">${LOGO}</span><span class="im-brief-title">AI Brief</span></div>
         <p class="im-disclaimer">The below is an AI-generated summary of why this is trending. Please verify important details with the linked sources.</p>
         <div class="ai-prov-slot" id="im-prov"></div>
+        <div class="im-aiflag-legend">${SPARK_FILL}<span>= AI-generated text</span></div>
         <div class="im-actions-slot" id="im-actions-slot"></div>
         <hr class="im-rule">
-        ${AIGEN_TAG}
         ${briefSkeleton()}
       </section>
     </div>`;
@@ -719,9 +719,9 @@ function renderTrend(d) {
           }
         }
         const summary = cleanSum ? `<p class="im-trend-summary">${esc(cleanSum)}</p>` : '';
-        briefEl.innerHTML = `${summary}${renderBriefBody(detail, null)}${inTheNewsHTML(data.sources, data.headlines)}`; briefEl.classList.add('ai-reveal');
+        briefEl.innerHTML = `${summary}${renderBriefBody(detail, null, { aiFlag: SPARK_FILL })}${inTheNewsHTML(data.sources, data.headlines)}`; briefEl.classList.add('ai-reveal');
         const prov = panelEl.querySelector('#im-prov');
-        if (prov) prov.innerHTML = aiProvenanceHTML(data.sources, { badge: false });
+        if (prov) { prov.innerHTML = aiProvenanceHTML(data.sources, { badge: false }); prov.hidden = !prov.textContent.trim(); }
       } else { briefEl.innerHTML = '<p class="im-empty">No AI brief generated for this trend yet.</p>'; }
     } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
     const slot = panelEl.querySelector('#im-actions-slot');
@@ -757,8 +757,9 @@ function renderOverview(d) {
         <h3 class="im-article-title">${esc(topicLabel)}</h3>
       </section>
       <section class="im-section im-brief-section">
-        <div class="im-section-title im-section-title--brief">${SPARK}<span>AI Brief</span></div>
+        <div class="im-brief-head"><span class="im-brief-logo">${LOGO}</span><span class="im-brief-title">AI Brief</span></div>
         <p class="im-disclaimer">The below is an AI-generated ${esc(lens)} overview of ${esc(topicLabel)}, compiled from current sources. Please verify important details with the linked sources.</p>
+        <div class="im-aiflag-legend">${SPARK_FILL}<span>= AI-generated text</span></div>
         <div class="im-actions-slot" id="im-actions-slot"></div>
         <hr class="im-rule">
         <div class="im-brief im-brief-ov" id="im-brief">${genLoaderHTML(`Generating ${lens} overview…`)}</div>
@@ -785,8 +786,8 @@ function renderOverview(d) {
         }
         const sections = splitSections(data.content);
         briefEl.innerHTML = sections.length
-          ? sections.map((s, i) => `<details class="im-ovsec"${i === 0 ? ' open' : ''}><summary class="im-ovsec-sum"><span>${esc(s.name)}</span>${CHEV}</summary><div class="im-ovsec-body">${renderBriefBody(s.body, null)}</div></details>`).join('')
-          : renderBriefBody(data.content, null);
+          ? sections.map((s, i) => `<details class="im-ovsec"${i === 0 ? ' open' : ''}><summary class="im-ovsec-sum"><span>${esc(s.name)}</span>${CHEV}</summary><div class="im-ovsec-body">${renderBriefBody(s.body, null, { aiFlag: SPARK_FILL })}</div></details>`).join('')
+          : renderBriefBody(data.content, null, { aiFlag: SPARK_FILL });
         briefEl.classList.add('ai-reveal');
         wireOvsecScroll();
       } else { briefEl.innerHTML = '<p class="im-empty">Overview is being generated — check back shortly.</p>'; }

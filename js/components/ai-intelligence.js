@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp172';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp172';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp173';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp173';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -218,17 +218,17 @@ export function renderAIIntelligence(container, scope) {
         <h3 class="aii-overview-title">${esc(s.name)}</h3>
         ${desc ? `<p class="aii-overview-sub">${esc(desc)}</p>` : ''}
       </div>
-      <div class="aii-brief-head">${SPARK}<span>AI Brief</span></div>
+      <div class="aii-brief-head"><span class="aii-brief-logo">${LOGO}</span><span class="aii-brief-title">AI Brief</span></div>
       <p class="aii-brief-note">The below is an AI-generated summary of the topic at hand. Please verify important details with the linked sources.</p>
       <div class="ai-prov-slot aii-prov-slot"></div>
+      <div class="im-aiflag-legend aii-aiflag-legend">${LOGO}<span>= AI-generated text</span></div>
       <div class="aii-actions aii-actions-row">
-        <button type="button" class="aii-actbtn" data-acc="explore" aria-expanded="false"><span>Explore with AI</span>${CHEV}</button>
-        <button type="button" class="aii-actbtn" data-acc="web" aria-expanded="false"><span>Explore on web</span>${CHEV}</button>
+        <button type="button" class="aii-actbtn" data-acc="explore" aria-expanded="false"><span>Ask AI</span>${CHEV}</button>
+        <button type="button" class="aii-actbtn" data-acc="web" aria-expanded="false"><span>Web Search</span>${CHEV}</button>
       </div>
       <div class="aii-acc" data-accbody="explore"></div>
       <div class="aii-acc" data-accbody="web"></div>
       <hr class="aii-rule">
-      <div class="aigen-tag">${SPARK}<span>AI-generated</span></div>
       <div class="aii-content-body" data-loading="1">${genLoaderHTML()}</div>
       <div class="aii-headlines"></div>
     </div>`;
@@ -434,14 +434,14 @@ export function renderAIIntelligence(container, scope) {
       setTimeout(() => {
         if (stage.querySelector('.aii-content-body') !== bodyEl) return;
         bodyEl.removeAttribute('data-loading');
-        bodyEl.innerHTML = renderBriefBody(s.body, null);
+        bodyEl.innerHTML = renderBriefBody(s.body, null, { aiFlag: LOGO });
         bodyEl.classList.add('ai-reveal');
         // Reveal the real headline links with the brief (they're not part of the
         // synthesized body, so they live in their own block below the rule).
         const hl = stage.querySelector('.aii-headlines');
         if (hl) { hl.innerHTML = headlineListHTML(); if (hl.firstChild) hl.classList.add('ai-reveal'); }
         const prov = stage.querySelector('.aii-prov-slot');
-        if (prov) prov.innerHTML = aiProvenanceHTML(sectionNewsItems(), { badge: false });
+        if (prov) { prov.innerHTML = aiProvenanceHTML(sectionNewsItems(), { badge: false }); prov.hidden = !prov.textContent.trim(); }
       }, 1000);
     }
     stage.querySelectorAll('.aii-pathrow').forEach((b) => b.addEventListener('click', async () => {
