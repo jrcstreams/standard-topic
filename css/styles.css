@@ -13345,7 +13345,7 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
      pushed to the far right (#220-222). display:contents on the titlerow flattens
      logo + title + pill into the head's flex so order can interleave the sub. */
   body.home-search #home-trending .trending-topics-head {
-    margin: 0; padding: 15px 18px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+    margin: 0; padding: 15px 18px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
     border-bottom: 1px solid var(--color-surface-border);
     background: color-mix(in srgb, var(--color-primary) 3%, #fff);
   }
@@ -14071,7 +14071,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
     border-bottom-color: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface-border));
   }
   body.home-search #section-aii-home .aii-logo {
-    width: 30px; height: 30px; border-radius: 9px;
+    width: 26px; height: 26px; border-radius: 8px;
     box-shadow: 0 4px 12px -5px color-mix(in srgb, var(--color-primary) 55%, transparent);
   }
   body.home-search #section-aii-home .aii-brand { font-size: 1.2rem; }
@@ -14598,9 +14598,12 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .im-cov-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 2px; border: none; border-radius: 0; background: none; text-decoration: none; color: var(--color-text); border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); transition: none; }
 .im-cov-row:last-child { border-bottom: none; }
 .im-cov-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.im-cov-title { font-size: 0.86rem; font-weight: 600; line-height: 1.3; color: #1d4ed8; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+/* Muted slate-blue link (less saturated than the old royal blue, #84). */
+.im-cov-title { font-size: 0.86rem; font-weight: 600; line-height: 1.3; color: #33446b; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .im-cov-row { align-items: flex-start; padding-top: 10px; padding-bottom: 10px; }
-.im-cov-row:hover .im-cov-title { text-decoration: underline; text-underline-offset: 2px; }
+/* No whole-row underline on hover (#84) — just deepen the title colour. */
+.im-cov-row:hover, .im-cov-row:hover .im-cov-title, .im-cov-row:hover .im-cov-host { text-decoration: none; }
+.im-cov-row:hover .im-cov-title { color: #1f2d4d; }
 .im-cov-host { font-size: 0.73rem; color: var(--color-text-muted); }
 .im-cov-row svg { margin-top: 2px; }
 .im-cov-row svg { flex: none; width: 13px; height: 13px; color: var(--color-text-light); }
@@ -14608,8 +14611,11 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Sticky bar carries the affordances: prev/next chevrons + jump-up action links. */
 .im-condensed-top { display: flex; align-items: center; gap: 8px; }
 .im-condensed-top .im-condensed-title { flex: 1 1 auto; min-width: 0; }
-.im-condensed-sub { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 3px; }
+/* Actions sit left, next to "View original" (#86) — not split to the right. */
+.im-condensed-sub { display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 6px 12px; margin-top: 3px; }
+.im-condensed-meta { flex: none; }
 .im-condensed-acts { display: inline-flex; align-items: center; flex: none; }
+.im-condensed-meta + .im-condensed-acts { padding-left: 12px; border-left: 1px solid var(--color-surface-border); }
 .im-cond-act { background: none; border: none; font-family: var(--font-family); font-size: 0.74rem; font-weight: 600; color: #1d4ed8; cursor: pointer; padding: 2px 0; transition: color .14s; }
 .im-cond-act:hover { text-decoration: underline; text-underline-offset: 2px; }
 .im-cond-act[aria-expanded="true"] { color: #1e3a8a; text-decoration: underline; text-underline-offset: 2px; }
@@ -14629,6 +14635,43 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    rule). Same navy chip language as the trending-card badge. */
 .aigen-tag { display: inline-flex; align-items: center; gap: 5px; margin: 0 0 12px; padding: 2px 9px 2px 7px; border-radius: 999px; background: color-mix(in srgb, var(--color-primary) 8%, #fff); border: 1px solid color-mix(in srgb, var(--color-primary) 16%, transparent); font-size: 0.64rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--color-primary); }
 .aigen-tag svg { width: 11px; height: 11px; }
+
+/* ===== News AI Insights modal refinements (#83-#94) ===== */
+/* AI Brief header: navy square sparkle logo + BLACK title (#93/#94). */
+.im-brief-head { display: flex; align-items: center; gap: 10px; margin: 0 0 8px; }
+.im-brief-logo { display: inline-flex; width: 28px; height: 28px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
+.im-brief-logo svg { width: 15px; height: 15px; }
+.im-brief-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; letter-spacing: -0.015em; text-transform: none; color: #16243d; }
+
+/* "Sources:" line under the AI Brief — clickable jump to Sources & Coverage (#88). */
+.im-prov-link { cursor: pointer; border-radius: 7px; transition: background .14s; outline: none; }
+.im-prov-link:hover { background: color-mix(in srgb, var(--color-primary) 5%, transparent); text-decoration: underline; text-underline-offset: 2px; }
+.im-prov-link:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 35%, transparent); }
+
+/* "✦ = AI-generated text" legend beneath the sources line (#88). */
+.im-aiflag-legend { display: flex; align-items: center; gap: 6px; margin: 6px 0 0; font-size: 0.76rem; font-weight: 600; color: var(--color-text-muted); }
+.im-aiflag-legend svg { width: 13px; height: 13px; color: var(--color-primary); flex: none; }
+
+/* Inline AI sparkle on the first line of each AI-generated section. */
+.ai-flag { display: inline-flex; align-items: center; vertical-align: -2px; margin-right: 5px; color: var(--color-primary); }
+.ai-flag svg { width: 13px; height: 13px; }
+
+/* Story Prev/Next pills in the top header row (#87). */
+.im-head-nav { display: inline-flex; align-items: center; gap: 6px; flex: none; }
+.im-head-navbtn { display: inline-flex; align-items: center; gap: 3px; padding: 5px 10px; border: 1px solid var(--color-surface-border); border-radius: 999px; background: #fff; font-family: var(--font-family); font-size: 0.76rem; font-weight: 600; color: var(--color-text); cursor: pointer; transition: border-color .14s, color .14s, background .14s; }
+.im-head-navbtn:hover:not(:disabled) { border-color: var(--color-primary); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 5%, #fff); }
+.im-head-navbtn:disabled { opacity: 0.4; cursor: default; }
+.im-head-navbtn svg { width: 14px; height: 14px; }
+@media (max-width: 560px) { .im-head-navbtn span { display: none; } .im-head-navbtn { padding: 5px 7px; } }
+
+/* Discreet second sticky: appears below the main header once the AI Brief
+   header scrolls up under it (#89). */
+.im-brief-sticky { display: none; align-items: center; gap: 8px; padding: 8px 18px; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); background: color-mix(in srgb, var(--color-primary) 3%, #fff); }
+.is-brief-scrolled .im-brief-sticky { display: flex; }
+.im-brief-sticky-logo { display: inline-flex; align-items: center; color: var(--color-primary); flex: none; }
+.im-brief-sticky-logo svg { width: 14px; height: 14px; }
+.im-brief-sticky-title { font-family: var(--font-display); font-size: 0.85rem; font-weight: 700; text-transform: none; color: var(--color-text); flex: none; }
+.im-brief-sticky-note { font-size: 0.74rem; color: var(--color-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 
 /* Discreet inline AI marker (blue sparkle) + the one-line legend that defines it
    at the top of a list. Used on trending summaries (and reusable across the board). */
@@ -14680,7 +14723,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .im-brief .ai-result-body p { margin: 0 0 8px; }
 /* Section label: no rule UNDER the label — instead a faint divider at the END
    of each section (i.e. a top border on every section after the first). */
-.im-brief .ai-result-sub { font-family: var(--font-display); font-size: 0.98rem; font-weight: 700; letter-spacing: -0.01em; text-transform: none; color: #1b3a8c; margin: 8px 0 10px; }
+.im-brief .ai-result-sub { font-family: var(--font-display); font-size: 0.98rem; font-weight: 700; letter-spacing: -0.01em; text-transform: none; color: #122451; margin: 8px 0 10px; }
 .im-brief .ai-result-sub:not(:first-child) { margin-top: 20px; padding-top: 18px; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 75%, transparent); }
 /* Brief section header = icon badge + label (reads as packaged intelligence). */
 .ai-result-sub { display: flex; align-items: center; gap: 9px; }
@@ -14981,9 +15024,9 @@ body.home-mode #sub-header.is-subnav .topic-banner {
      "Web Sources" wrap awkwardly in the narrow topic-page sidebar. */
   .aii-head, .ws-head { flex-direction: column; align-items: flex-start; gap: 5px; }
   .aii-headsub, .ws-headsub { margin: 0; }
-  body.home-search .aii-head, body.home-search .ws-head { gap: 5px; }
+  body.home-search .aii-head, body.home-search .ws-head { gap: 8px; }
   body.home-search .aii-headsub, body.home-search .ws-headsub { margin: 0; }
-  body.home-search #section-newsfeed .newsfeed-headtext { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
+  body.home-search #section-newsfeed .newsfeed-headtext { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
 
   /* Drill-in "Back to AI Intelligence" row: vertically center the link with the
      "Updated …" pill and give the row balanced padding (#234-236). The base

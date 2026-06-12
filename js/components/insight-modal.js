@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260611-revamp154';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260611-revamp154';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp164';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp164';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -44,13 +44,18 @@ function setupModalFades() {
   panelEl.append(top, bot);
   const head = panelEl.querySelector('.im-head');
   const article = panelEl.querySelector('.im-article');
+  const briefHead = panelEl.querySelector('#im-brief-head');
   const update = () => {
     top.style.top = (head ? head.offsetHeight : 0) + 'px';
     const scrollable = body.scrollHeight > body.clientHeight + 2;
     top.classList.toggle('is-on', scrollable && body.scrollTop > 2);
     bot.classList.toggle('is-on', scrollable && body.scrollTop < body.scrollHeight - body.clientHeight - 2);
+    const bodyTop = body.getBoundingClientRect().top;
     // Condensed title bar: reveal once the overview card has scrolled out of view.
-    if (article) panelEl.classList.toggle('is-scrolled', article.getBoundingClientRect().bottom < body.getBoundingClientRect().top + 6);
+    if (article) panelEl.classList.toggle('is-scrolled', article.getBoundingClientRect().bottom < bodyTop + 6);
+    // Discreet "AI Brief" sticky: reveal once the AI Brief header scrolls up
+    // under the main header (#89).
+    if (briefHead) panelEl.classList.toggle('is-brief-scrolled', briefHead.getBoundingClientRect().bottom < bodyTop + 6);
   };
   body.addEventListener('scroll', update, { passive: true });
   if (window.ResizeObserver) { const ro = new ResizeObserver(update); ro.observe(body); }
@@ -81,6 +86,8 @@ const CHEV = '<svg class="im-chev" viewBox="0 0 24 24" width="15" height="15" fi
 // Brand mark — a clean, flat 4-point sparkle (the same spark used inline),
 // filled white on the navy tile. Simple and on-brand (no glossy facets).
 const LOGO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
+// News Feed (document) glyph — used as the News AI Insights modal's title icon (#90).
+const NEWS_FEED_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><line x1="7" y1="8" x2="14" y2="8"/><line x1="7" y1="12" x2="14" y2="12"/><line x1="7" y1="16" x2="11" y2="16"/></svg>';
 // Right chevron — "drill into this sub-level" affordance (Web Sources → category).
 const CHEVR = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 // Explore-further icons: paper-plane (Direct Submit) + eye (Review Prompt).
@@ -223,17 +230,10 @@ function coverageRow(uri, title, metaParts) {
 }
 function coverageListHTML(headlines, sources, origUrl) {
   const seen = new Set(); const rows = [];
-  // Rich related coverage from our feed: title + publisher · date.
-  for (const h of (Array.isArray(headlines) ? headlines : [])) {
-    const uri = (h && (h.url || h.uri)) || ''; if (!uri) continue;
-    const k = uri.toLowerCase(); if (seen.has(k)) continue; seen.add(k);
-    const title = String((h && h.title) || '').trim(); if (!title || /^https?:/i.test(title)) continue;
-    let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
-    rows.push(coverageRow(uri, title, [(h.source || '').trim() || host, relTime(h.date)]));
-    if (rows.length >= 10) break;
-  }
-  if (rows.length) return rows.join('');
-  // Fallback — grounding citations (publisher domain only, no headline/date).
+  // The brief's CITED sources lead the list — these are the publishers the AI
+  // actually used, so they're relevant by construction and mirror the "Sources:"
+  // line under the brief (#88). (Previously these were only a fallback, so the
+  // section filled with loosely-matched, often-irrelevant feed stories — #83.)
   for (const s of (Array.isArray(sources) ? sources : [])) {
     const uri = (s && (s.uri || s.url)) || ''; if (!uri) continue;
     const k = uri.toLowerCase(); if (seen.has(k)) continue; seen.add(k);
@@ -245,6 +245,17 @@ function coverageListHTML(headlines, sources, origUrl) {
     const showHost = host && host.toLowerCase() !== title.toLowerCase();
     rows.push(coverageRow(uri, title, showHost ? [host] : []));
     if (rows.length >= 12) break;
+  }
+  // Then rich related coverage from our own feed (title + publisher · date),
+  // now relevance-filtered server-side so only stories genuinely about THIS
+  // story appear. Deduped against the cited sources above.
+  for (const h of (Array.isArray(headlines) ? headlines : [])) {
+    if (rows.length >= 14) break;
+    const uri = (h && (h.url || h.uri)) || ''; if (!uri) continue;
+    const k = uri.toLowerCase(); if (seen.has(k)) continue; seen.add(k);
+    const title = String((h && h.title) || '').trim(); if (!title || /^https?:/i.test(title)) continue;
+    let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
+    rows.push(coverageRow(uri, title, [(h.source || '').trim() || host, relTime(h.date)]));
   }
   return rows.join('');
 }
@@ -275,44 +286,47 @@ function headerHTML(eyebrow, title, subHTML) {
 // when stacked.
 function brandHeaderHTML(condensed, opts = {}) {
   const brandLabel = opts.brandLabel || 'AI Insights';
+  const icon = opts.icon || LOGO;
   const nav = current && current.nav;
   // Back action: a stacked parent wins; otherwise the originating list
   // ("Back to Trending" / "Back to News Feed").
   const showBack = stack.length > 0 || !!(nav && nav.backLabel);
   const backLabel = stack.length ? stack[stack.length - 1].label
     : (nav && nav.backLabel ? `Back to ${nav.backLabel}` : '');
+  // Story Prev/Next now lives in the TOP header row (#87), freeing the body so
+  // the overview starts higher. Only for list-backed news (Trending uses the
+  // stacked prev/next bar elsewhere).
+  const headerNav = opts.headerNav && nav && Array.isArray(nav.list) && nav.list.length > 1;
+  const hasPrev = headerNav && nav.index > 0;
+  const hasNext = headerNav && nav.index < nav.list.length - 1;
+  const headNav = headerNav ? `<span class="im-head-nav">
+      <button type="button" class="im-head-navbtn" data-navdir="prev"${hasPrev ? '' : ' disabled'} aria-label="Previous story"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg><span>Prev</span></button>
+      <button type="button" class="im-head-navbtn" data-navdir="next"${hasNext ? '' : ' disabled'} aria-label="Next story"><span>Next</span><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </span>` : '';
   // condensed = { title, meta } — a compact title bar that fades in once the
-  // overview card scrolls out of view, so the reader keeps context deep in a
-  // long brief.
+  // overview card scrolls out of view. NO prev/next arrows now (#85); the title
+  // is left-aligned and the actions sit next to "View original" (#86).
   const condMeta = condensed && (condensed.meta || condensed.url) ? `<span class="im-condensed-meta">${condensed.meta ? `<span class="im-condensed-pub">${esc(condensed.meta)}</span>` : ''}${condensed.url ? `<a class="im-condensed-link" href="${escAttr(condensed.url)}" target="_blank" rel="noopener noreferrer">View original ${ARROW}</a>` : ''}</span>` : '';
-  // News: the sticky bar carries the same affordances as the overview card —
-  // prev/next story chevrons flanking the title, and Sources / Ask AI / Web
-  // Search links that jump back up and open the matching panel.
-  const condNav = opts.condActions && nav && Array.isArray(nav.list) && nav.list.length > 1;
-  const condPrev = condNav && nav.index > 0
-    ? `<button type="button" class="im-cond-arrow" data-navdir="prev" aria-label="Previous story"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>`
-    : (condNav ? '<span class="im-cond-arrow im-cond-arrow--ghost" aria-hidden="true"></span>' : '');
-  const condNext = condNav && nav.index < nav.list.length - 1
-    ? `<button type="button" class="im-cond-arrow" data-navdir="next" aria-label="Next story"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>`
-    : (condNav ? '<span class="im-cond-arrow im-cond-arrow--ghost" aria-hidden="true"></span>' : '');
-  const condActs = opts.condActions ? `<div class="im-condensed-acts">
+  const condActs = opts.condActions ? `<span class="im-condensed-acts">
       <button type="button" class="im-cond-act" data-panel="sources">Sources</button>
       <button type="button" class="im-cond-act" data-panel="explore">Ask AI</button>
       <button type="button" class="im-cond-act" data-panel="web">Web Search</button>
-    </div>` : '';
+    </span>` : '';
   const cond = condensed && condensed.title ? `<div class="im-condensed">
-      <div class="im-condensed-top">${condPrev}<span class="im-condensed-title">${esc(condensed.title)}</span>${condNext}</div>
+      <div class="im-condensed-top"><span class="im-condensed-title">${esc(condensed.title)}</span></div>
       <div class="im-condensed-sub">${condMeta}${condActs}</div>
     </div>` : '';
   return `<div class="im-head im-head--brand">
     <div class="im-head-row">
-      <span class="im-brandlock"><span class="im-logo">${LOGO}</span><span class="im-brandname">${esc(brandLabel)}</span></span>
+      <span class="im-brandlock"><span class="im-logo">${icon}</span><span class="im-brandname">${esc(brandLabel)}</span></span>
       <span class="im-head-actions">
+        ${headNav}
         ${showBack ? `<button type="button" class="im-back" id="im-back"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>${esc(backLabel)}</button>` : ''}
         <button type="button" class="im-close" id="im-close" aria-label="Close"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg></button>
       </span>
     </div>
     ${cond}
+    ${opts.briefSticky ? `<div class="im-brief-sticky"><span class="im-brief-sticky-logo">${SPARK}</span><span class="im-brief-sticky-title">AI Brief</span><span class="im-brief-sticky-note">Text in this section is generated by AI.</span></div>` : ''}
   </div>`;
 }
 
@@ -560,9 +574,8 @@ function renderNews(d) {
     when ? `<span class="im-when">${esc(when)}</span>` : '',
   ].filter(Boolean).join('<span class="im-dot">·</span>');
   panelEl.innerHTML = `
-    ${brandHeaderHTML({ title: d.title || 'News story', meta: host, url: d.url || '' }, { brandLabel: 'News AI Insights', condActions: true })}
+    ${brandHeaderHTML({ title: d.title || 'News story', meta: host, url: d.url || '' }, { brandLabel: 'News AI Insights', condActions: true, icon: NEWS_FEED_ICON, headerNav: true, briefSticky: true })}
     <div class="im-body">
-      ${storyNavHTML(d.nav)}
       <section class="im-section im-article">
         ${meta ? `<div class="im-article-meta im-article-meta--top">${meta}</div>` : ''}
         <h3 class="im-article-title">${esc(d.title || 'News story')}</h3>
@@ -578,11 +591,11 @@ function renderNews(d) {
         <div class="im-acc" data-body="web" id="im-web-panel"></div>
       </section>
       <section class="im-section im-brief-section">
-        <div class="im-section-title im-section-title--brief">${SPARK}<span>AI Brief</span></div>
+        <div class="im-brief-head" id="im-brief-head"><span class="im-brief-logo">${LOGO}</span><span class="im-brief-title">AI Brief</span></div>
         <p class="im-disclaimer">An AI-generated summary of this story. Please verify important details with the linked sources.</p>
-        <div class="ai-prov-slot" id="im-prov"></div>
+        <div class="ai-prov-slot im-prov-link" id="im-prov" role="link" tabindex="0" title="Jump to Sources &amp; Coverage"></div>
+        <div class="im-aiflag-legend">${SPARK}<span>= AI-generated text</span></div>
         <hr class="im-rule">
-        ${AIGEN_TAG}
         ${briefSkeleton()}
       </section>
       <section class="im-section im-coverage" id="im-coverage" hidden>
@@ -596,6 +609,13 @@ function renderNews(d) {
   // panel + the Sources & Coverage card both fill in then.
   const ctx = { prompt, sources: [], headlines: [], origUrl: d.url || '', webTerm: d.title || '', onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, topicName: d.title || '', name: 'AI Insight · News', count: 1 } })) };
   wireActions(ctx);
+  // "Sources:" line under the AI Brief jumps to the Sources & Coverage section (#88).
+  const provLink = panelEl.querySelector('#im-prov');
+  if (provLink) {
+    const jump = () => { const cov = panelEl.querySelector('#im-coverage'); if (cov && !cov.hidden) cov.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+    provLink.addEventListener('click', jump);
+    provLink.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); jump(); } });
+  }
   (async () => {
     const t0 = Date.now();
     const briefEl = panelEl.querySelector('#im-brief');
@@ -607,7 +627,7 @@ function renderNews(d) {
       if (data && data.content) {
         ctx.sources = data.sources || [];
         ctx.headlines = Array.isArray(data.headlines) ? data.headlines : [];
-        briefEl.innerHTML = renderBriefBody(normalizeNewsBrief(data.content), null); briefEl.classList.add('ai-reveal');
+        briefEl.innerHTML = renderBriefBody(normalizeNewsBrief(data.content), null, { aiFlag: SPARK }); briefEl.classList.add('ai-reveal');
         const prov = panelEl.querySelector('#im-prov');
         if (prov) prov.innerHTML = aiProvenanceHTML(ctx.sources, { badge: false });
       } else { briefEl.innerHTML = '<p class="im-empty">AI brief unavailable right now.</p>'; }

@@ -121,19 +121,24 @@ export function renderBriefBody(content, sources, opts = {}) {
     .replace(/\*([^*\n]+?)\*/g, '<em>$1</em>')
     .replace(/\*+/g, '');
   const isEmpty = (h) => !h.replace(/<[^>]+>/g, '').trim();
+  // Optional inline "AI-generated" sparkle on the FIRST line of each section
+  // (news brief only) — flags that the section text is AI-written.
+  const flagSpan = opts.aiFlag ? `<span class="ai-flag" aria-label="AI-generated" title="AI-generated text">${opts.aiFlag}</span>` : '';
+  let pendingFlag = false;
   const lines = String(content || '').split('\n');
   let html = ''; let inList = false;
   const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
   for (const raw of lines) {
     const line = raw.trim();
     if (!line) { closeList(); continue; }
-    if (/^#{1,4}\s+/.test(line)) { closeList(); const raw2 = line.replace(/^#{1,4}\s+/, ''); html += `<div class="ai-result-sub">${sectionIcon(raw2)}<span class="ai-result-sub-tx">${fmt(raw2)}</span></div>`; }
+    if (/^#{1,4}\s+/.test(line)) { closeList(); const raw2 = line.replace(/^#{1,4}\s+/, ''); html += `<div class="ai-result-sub">${sectionIcon(raw2)}<span class="ai-result-sub-tx">${fmt(raw2)}</span></div>`; if (flagSpan) pendingFlag = true; }
     else if (/^[*\-•]\s+/.test(line)) {
       const inner = fmt(line.replace(/^([*\-•]\s+)+/, ''));
       if (isEmpty(inner)) continue;          // skip a bullet that was just "**" etc.
       if (!inList) { html += '<ul class="ai-result-list">'; inList = true; }
-      html += `<li>${inner}</li>`;
-    } else { closeList(); const p = fmt(line); if (!isEmpty(p)) html += `<p>${p}</p>`; }
+      const lead = pendingFlag ? flagSpan : ''; pendingFlag = false;
+      html += `<li>${lead}${inner}</li>`;
+    } else { closeList(); const p = fmt(line); if (!isEmpty(p)) { const lead = pendingFlag ? flagSpan : ''; pendingFlag = false; html += `<p>${lead}${p}</p>`; } }
   }
   closeList();
   let src = '';
