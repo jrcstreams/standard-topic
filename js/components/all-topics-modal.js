@@ -31,8 +31,10 @@ function open() {
   // Close any other open modal first (single-modal invariant).
   window.dispatchEvent(new CustomEvent('close-all-modals'));
   const groups = getTopicsGroupedByParent();
-  const accordions = groups.map(({ parent, subtopics }, i) => {
-    const accent = PALETTE[i % PALETTE.length];
+  const accordions = groups.map(({ parent, subtopics }) => {
+    // One neutral accent for every topic — a clean, uniform list (the per-topic
+    // colors fought the "collection" feel of the inventory).
+    const accent = '#475569';
     if (!subtopics.length) {
       return `<a href="#/topic/${parent.slug}" class="at-acc-flat" style="--ti-accent: ${accent};">
         <span class="at-acc-flat-icon">${topicIconSVG(parent.icon || 'globe', '')}</span>

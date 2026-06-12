@@ -274,8 +274,7 @@ export function renderTrendingTopics(container, { limit = 20, viewAll = false } 
     container.innerHTML = `
       <div class="trending-topics">
         ${trendCardsHead(state.fetched)}
-        ${controlsHTML()}
-        ${trendLegendRow()}
+        <div class="trend-controls-legend">${controlsHTML()}${trendLegendRow()}</div>
         <div class="trend-card-grid">${shown.map((t, i) => trendCardHTML(t, i)).join('')}</div>
         ${viewAll ? `<button type="button" class="trending-topics-viewall" data-action="view-all-trending">View all trending ${CHEV}</button>` : ''}
       </div>`;
