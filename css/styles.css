@@ -14241,7 +14241,8 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-gen-bars span:nth-child(3) { width: 98%; }
 .aii-gen-bars span:nth-child(4) { width: 72%; }
 .aii-content-body .ai-result-body { font-size: clamp(0.92rem, 0.88rem + 0.28vw, 1.02rem); line-height: 1.66; color: #2c3a52; }
-.aii-content-body .ai-result-sub { font-size: 0.82rem; font-weight: 700; letter-spacing: .045em; text-transform: uppercase; color: #54607a; margin: 16px 0 7px; }
+.aii-content-body .ai-result-sub { font-family: var(--font-display); font-size: 0.96rem; font-weight: 700; letter-spacing: -0.01em; text-transform: none; color: #1b3a8c; margin: 20px 0 9px; }
+.aii-content-body .ai-result-sub:not(:first-child) { padding-top: 18px; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 75%, transparent); }
 .aii-loading, .aii-empty { font-size: 0.9rem; color: var(--color-text-muted); padding: 14px 4px; margin: 0; }
 
 /* Sources + Explore accordions sit ABOVE the brief content, with a faint rule
@@ -14614,8 +14615,13 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .im-brief .ai-result-body p { margin: 0 0 8px; }
 /* Section label: no rule UNDER the label — instead a faint divider at the END
    of each section (i.e. a top border on every section after the first). */
-.im-brief .ai-result-sub { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.045em; text-transform: uppercase; color: #54607a; margin: 8px 0 8px; }
-.im-brief .ai-result-sub:not(:first-child) { margin-top: 18px; padding-top: 18px; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 75%, transparent); }
+.im-brief .ai-result-sub { font-family: var(--font-display); font-size: 0.98rem; font-weight: 700; letter-spacing: -0.01em; text-transform: none; color: #1b3a8c; margin: 8px 0 10px; }
+.im-brief .ai-result-sub:not(:first-child) { margin-top: 20px; padding-top: 18px; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 75%, transparent); }
+/* Brief section header = icon badge + label (reads as packaged intelligence). */
+.ai-result-sub { display: flex; align-items: center; gap: 9px; }
+.ai-result-sub-ic { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; flex: none; border-radius: 7px; background: color-mix(in srgb, var(--color-primary) 8%, #fff); border: 1px solid color-mix(in srgb, var(--color-primary) 14%, transparent); color: #1d4ed8; }
+.ai-result-sub-ic svg { width: 14px; height: 14px; }
+.ai-result-sub-tx { min-width: 0; }
 .im-brief .ai-result-list { margin: 4px 0 8px; padding-left: 1.15rem; display: grid; gap: 5px; }
 .im-brief .ai-result-list li::marker { color: var(--color-primary); }
 .im-empty { font-size: 0.85rem; color: var(--color-text-muted); margin: 0; }

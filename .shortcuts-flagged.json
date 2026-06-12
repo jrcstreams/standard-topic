@@ -1,0 +1,259 @@
+[
+  {
+    "file": "shortcuts-directory.json",
+    "id": "how-this-affects-me",
+    "name": "How This Affects Me",
+    "group": "analyze",
+    "prompt": "Help me understand how the topic of {TOPIC} affects me personally. Ask me a few questions about my situation if needed, then walk me through the practical implications \u2014 what I should pay attention to, what decisions might be affected, and what I can do about it.",
+    "reasons": [
+      "asks the user questions first"
+    ],
+    "bucket": "A"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "budget-analysis",
+    "name": "Budget Analysis",
+    "group": "topic-specific",
+    "prompt": "Help me build a working budget from the ground up. Ask about my take-home income, fixed expenses, variable spending, debts, and what I'm saving toward. Then recommend a framework that fits (50/30/20, zero-based, etc.), build the line-item budget in a clean table, flag where the numbers look unrealistic, and suggest a tracking method and review cadence that will keep it alive past month one.",
+    "reasons": [
+      "asks the user questions first"
+    ],
+    "bucket": "A"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "best-ai-tool-use-case",
+    "name": "Best AI Tool for My Use Case",
+    "group": "topic-specific",
+    "prompt": "Help me pick the best AI tool for [use case \u2014 writing, coding, research, image generation, video, voice, agents, etc.]. Cover the leading options, what each does best, pricing, and how to choose based on what I'm trying to do.",
+    "reasons": [
+      "placeholder(s): [use case \u2014 writing, coding, research, im]"
+    ],
+    "bucket": "B"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "ai-compliance-help-by-sector",
+    "name": "AI Compliance Help by Sector",
+    "group": "topic-specific",
+    "prompt": "Walk me through the AI compliance landscape for [sector \u2014 healthcare, finance, employment, education, etc.]. Cover the relevant regulations, key obligations, recent enforcement, and what an organization in this sector should be doing.",
+    "reasons": [
+      "placeholder(s): [sector \u2014 healthcare, finance, employment]"
+    ],
+    "bucket": "B"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "threat-briefing-for-sector",
+    "name": "Threat Briefing for My Sector",
+    "group": "topic-specific",
+    "prompt": "Give me a current threat briefing for [sector \u2014 healthcare, finance, manufacturing, retail, government, etc.]. Cover the active threat actors, common attack patterns, regulatory requirements, and where to focus defenses.",
+    "reasons": [
+      "placeholder(s): [sector \u2014 healthcare, finance, manufactur]"
+    ],
+    "bucket": "B"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "help-pick-software",
+    "name": "Help Me Pick Software",
+    "group": "topic-specific",
+    "prompt": "Help me pick software for [function \u2014 CRM, project management, etc.]. Ask about my company size, budget, key needs, and existing stack \u2014 then recommend specific options with reasoning.",
+    "reasons": [
+      "asks the user questions first",
+      "placeholder(s): [function \u2014 CRM, project management, etc.]"
+    ],
+    "bucket": "A"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "health-condition-primer",
+    "name": "Health Condition Primer",
+    "group": "topic-specific",
+    "prompt": "Give me a current overview of [health condition]. Cover what it is, prevalence, risk factors, current standard of care, the most promising research directions, and reliable sources for further learning.",
+    "reasons": [
+      "placeholder(s): [health condition]"
+    ],
+    "bucket": "B"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "build-my-workout-routine",
+    "name": "Build My Workout Routine",
+    "group": "topic-specific",
+    "prompt": "Help me build an effective workout routine. Ask me about my goals (strength, hypertrophy, endurance, general fitness), available equipment, time per week, and experience level \u2014 then build a program that fits.",
+    "reasons": [
+      "asks the user questions first"
+    ],
+    "bucket": "A"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "training-as-i-age",
+    "name": "Training as I Age",
+    "group": "topic-specific",
+    "prompt": "Give me guidance on how to train at [age range]. Cover what's most important to prioritize at this stage, common mistakes, and how to maintain long-term progress.",
+    "reasons": [
+      "placeholder(s): [age range]"
+    ],
+    "bucket": "B"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "endurance-training-plan",
+    "name": "Endurance Training Plan",
+    "group": "topic-specific",
+    "prompt": "Help me build an endurance training plan for [event or goal]. Ask about my current level, timeline, and constraints \u2014 then map out a periodization with specific weekly structure.",
+    "reasons": [
+      "asks the user questions first",
+      "placeholder(s): [event or goal]"
+    ],
+    "bucket": "A"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "build-my-eating-plan",
+    "name": "Build My Eating Plan",
+    "group": "topic-specific",
+    "prompt": "Help me build an eating plan for [goal \u2014 fat loss, muscle gain, performance, general health]. Ask about my preferences, schedule, cooking ability, and constraints \u2014 then suggest an evidence-based approach.",
+    "reasons": [
+      "asks the user questions first",
+      "placeholder(s): [goal \u2014 fat loss, muscle gain, performanc]"
+    ],
+    "bucket": "A"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "explain-this-case",
+    "name": "Explain This Court Case",
+    "group": "topic-specific",
+    "prompt": "Walk me through [court case]. Cover the underlying facts, the legal questions, the arguments on each side, the court's ruling (if decided) or expected timing (if pending), and the broader implications.",
+    "reasons": [
+      "placeholder(s): [court case]"
+    ],
+    "bucket": "B"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "country-deep-dive",
+    "name": "Country Deep Dive",
+    "group": "topic-specific",
+    "prompt": "Give me a current overview of [country]. Cover the political situation, economy, security environment, key recent developments, foreign policy posture, and how it fits into its region and the wider world.",
+    "reasons": [
+      "placeholder(s): [country]"
+    ],
+    "bucket": "B"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "african-country-deep-dive",
+    "name": "African Country Deep Dive",
+    "group": "topic-specific",
+    "prompt": "Give me a current overview of [African country]. Cover political situation, economy, security, key issues, and how it fits into regional dynamics.",
+    "reasons": [
+      "placeholder(s): [African country]"
+    ],
+    "bucket": "B"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "soccer-club-deep-dive",
+    "name": "Club Deep Dive",
+    "group": "topic-specific",
+    "prompt": "Give me a current snapshot of [soccer club]. Cover league position, recent form, key players, manager situation, transfer activity, and outlook for the season.",
+    "reasons": [
+      "placeholder(s): [soccer club]"
+    ],
+    "bucket": "B"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "ncaab-team-deep-dive",
+    "name": "Team Deep Dive",
+    "group": "topic-specific",
+    "prompt": "Give me a current snapshot of [school name] college basketball team. Cover record, ranking, key players, recent performance, and tournament outlook.",
+    "reasons": [
+      "placeholder(s): [school name]"
+    ],
+    "bucket": "B"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "gaming-what-should-i-play",
+    "name": "What Should I Play Right Now",
+    "group": "topic-specific",
+    "prompt": "Help me find what to play. Ask me about platforms, genres I like, time per session, and recent games I've enjoyed \u2014 then recommend a few well-reasoned options.",
+    "reasons": [
+      "asks the user questions first"
+    ],
+    "bucket": "A"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "music-genre-spotlight",
+    "name": "Genre Spotlight",
+    "group": "topic-specific",
+    "prompt": "Give me a current snapshot of [genre]. Cover the dominant artists, biggest recent releases, emerging acts, and where the genre is heading.",
+    "reasons": [
+      "placeholder(s): [genre]"
+    ],
+    "bucket": "B"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "books-what-should-i-read-next",
+    "name": "What Should I Read Next",
+    "group": "topic-specific",
+    "prompt": "Help me find what to read next. Ask about my recent favorites, mood I'm in, fiction vs. nonfiction preference, and length tolerance \u2014 then recommend a few well-reasoned options.",
+    "reasons": [
+      "asks the user questions first"
+    ],
+    "bucket": "A"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "books-genre-deep-dive",
+    "name": "Genre Deep Dive",
+    "group": "topic-specific",
+    "prompt": "Give me a current snapshot of [genre \u2014 literary fiction, sci-fi/fantasy, romance, thriller, memoir, history, business, etc.]. Cover the dominant authors, recent standouts, and where the genre is heading.",
+    "reasons": [
+      "placeholder(s): [genre \u2014 literary fiction, sci-fi/fantasy]"
+    ],
+    "bucket": "B"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "books-backlist-worth-reading",
+    "name": "Backlist Worth Reading",
+    "group": "topic-specific",
+    "prompt": "What are great older books in [category or theme] worth reading now? Recommend books that have aged well or feel especially relevant today, with reasoning for each pick.",
+    "reasons": [
+      "placeholder(s): [category or theme]"
+    ],
+    "bucket": "B"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "build-my-learning-plan",
+    "name": "Build My Learning Plan",
+    "group": "topic-specific",
+    "prompt": "Help me build a learning plan for [topic or skill]. Ask about my current level, goals, time available, and learning style \u2014 then map out a structured path with specific resources.",
+    "reasons": [
+      "asks the user questions first",
+      "placeholder(s): [topic or skill]"
+    ],
+    "bucket": "A"
+  },
+  {
+    "file": "shortcuts-directory.json",
+    "id": "institution-deep-dive",
+    "name": "Institution Deep Dive",
+    "group": "topic-specific",
+    "prompt": "Give me a current overview of [institution]. Cover its position and reputation, recent stories and controversies, financial health, leadership, and what's distinctive about it right now.",
+    "reasons": [
+      "placeholder(s): [institution]"
+    ],
+    "bucket": "B"
+  }
+]

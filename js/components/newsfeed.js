@@ -94,6 +94,24 @@ export function sourceChip(r, opts = {}) {
   const cls = opts.noFavicons ? 'ai-source-chip ai-source-chip--plain' : 'ai-source-chip';
   return `<a class="${cls}" href="${escapeAttr(r.uri)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(r.title || r.label)}">${fav}<span>${escapeHTML(r.label)}</span></a>`;
 }
+// A small glyph that represents each brief section, so a brief reads as packaged
+// intelligence (What Happened ⚡ / Key Takeaways ✔ / Why It Matters ◎ / Timeline ◷ …).
+// Matched on the section label's keywords; falls back to a sparkle.
+function sectionIcon(label) {
+  const l = String(label || '').toLowerCase();
+  const svg = (inner) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
+  let inner;
+  if (/take ?away|key point|highlight|bottom line/.test(l)) inner = '<path d="M9 11l3 3 9-9"/><path d="M20.5 12.5V19a2 2 0 0 1-2 2H5.5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2H15"/>'; // check-list
+  else if (/timeline|chronolog|sequence|how it unfolded/.test(l)) inner = '<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/>'; // clock
+  else if (/why it matter|so what|impact|implication|stakes|significan/.test(l)) inner = '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/>'; // target
+  else if (/what happen|develop|latest|happening|the news|the event/.test(l)) inner = '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>'; // bolt
+  else if (/background|context|history|origin|backstory/.test(l)) inner = '<circle cx="12" cy="12" r="9"/><line x1="12" y1="16" x2="12" y2="11.5"/><line x1="12" y1="8" x2="12.01" y2="8"/>'; // info
+  else if (/player|people|who|key figure|stakeholder|cast/.test(l)) inner = '<circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.5a3 3 0 0 1 0 5"/><path d="M20.5 20a5.5 5.5 0 0 0-4-5.3"/>'; // people
+  else if (/overview|summary|the story|in brief|snapshot/.test(l)) inner = '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="14 3 14 9 20 9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/>'; // doc
+  else if (/what.?s next|outlook|forecast|ahead|to watch|future/.test(l)) inner = '<path d="M3 17l6-6 4 4 8-8"/><polyline points="17 7 21 7 21 11"/>'; // trend
+  else inner = '<path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/>'; // sparkle
+  return `<span class="ai-result-sub-ic">${svg(inner)}</span>`;
+}
 export function renderBriefBody(content, sources, opts = {}) {
   // Escape, then render light markdown: **bold**, *italic*, and drop any stray
   // asterisks the model leaves behind (so "*The Prince*" / a lone "**" never
@@ -109,7 +127,7 @@ export function renderBriefBody(content, sources, opts = {}) {
   for (const raw of lines) {
     const line = raw.trim();
     if (!line) { closeList(); continue; }
-    if (/^#{1,4}\s+/.test(line)) { closeList(); html += `<div class="ai-result-sub">${fmt(line.replace(/^#{1,4}\s+/, ''))}</div>`; }
+    if (/^#{1,4}\s+/.test(line)) { closeList(); const raw2 = line.replace(/^#{1,4}\s+/, ''); html += `<div class="ai-result-sub">${sectionIcon(raw2)}<span class="ai-result-sub-tx">${fmt(raw2)}</span></div>`; }
     else if (/^[*\-•]\s+/.test(line)) {
       const inner = fmt(line.replace(/^([*\-•]\s+)+/, ''));
       if (isEmpty(inner)) continue;          // skip a bullet that was just "**" etc.
