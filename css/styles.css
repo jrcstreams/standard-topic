@@ -14347,6 +14347,9 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .ws-logo svg { width: 14px; height: 14px; }
 .ws-brand { font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: var(--color-text); letter-spacing: -0.015em; }
 .ws-headsub { margin: 0; font-size: 0.8rem; line-height: 1.45; color: var(--color-text-muted); }
+/* Drilled into a category: the control bar carries its own title + blurb, so the
+   card's generic summary is redundant — hide it for a focused view (#161/#163). */
+.ws.ws-drilled .ws-headsub { display: none; }
 /* No vertical stage padding — the rows sit flush under the header and flush to
    the card's rounded bottom (no orphan gap above the first / below the last). */
 .ws-stage { padding: 0 16px; }

@@ -82,6 +82,10 @@ export function renderWebSources(container, topic) {
   }
   function go(v, dir) {
     view = v;
+    // Drilled into a category: the category control bar carries its own title +
+    // blurb, so the card's generic "Search platforms and content sources."
+    // summary is redundant — hide it so the focused view reads clean (#161/#163).
+    container.querySelector('.ws')?.classList.toggle('ws-drilled', v === 'sources');
     stage.innerHTML = v === 'cats' ? catsHTML() : sourcesHTML();
     stage.classList.remove('aii-anim-fwd', 'aii-anim-back');
     void stage.offsetWidth;
