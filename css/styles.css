@@ -7928,8 +7928,9 @@ body.app-mode .topic-layout {
   /* More breathing room around the text + slightly taller pill so
      it sits visually centered with the bold card title beside it. */
   padding: 0.3rem 0.65rem;
-  background: rgba(194, 65, 12, 0.1);
-  color: #c2410c;
+  background: color-mix(in srgb, var(--color-primary) 8%, #fff);
+  color: var(--color-primary);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 16%, transparent);
   border-radius: 999px;
   font-family: var(--font-family);
   font-size: 0.62rem;
@@ -8890,7 +8891,8 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
   justify-content: center;
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
+  background: var(--color-primary);
   font-size: 0.95rem;
   font-weight: var(--font-weight-bold);
   color: white;
@@ -8902,17 +8904,16 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
      between "Add Topic(s) to Submit" and "Preview Prompt and Submit" */
   min-width: 280px;
 }
-/* Ready state: green */
-.wiz-action-btn.is-ready {
-  background: #16a34a;
-}
-.wiz-action-btn.is-ready:hover { background: #15803d; }
-/* Empty / disabled state: red, faded */
+/* Ready state — the primary navy action (matches Submit across the app). */
+.wiz-action-btn.is-ready { background: var(--color-primary); }
+.wiz-action-btn:hover:not(:disabled):not(.is-empty),
+.wiz-action-btn.is-ready:hover { background: color-mix(in srgb, var(--color-primary) 88%, #000); }
+/* Empty / disabled — quiet slate (add a topic first), not an alarming red. */
 .wiz-action-btn.is-empty,
 .wiz-action-btn:disabled {
-  background: #dc2626;
-  color: white;
-  opacity: 0.6;
+  background: #cdd4df;
+  color: #fff;
+  opacity: 1;
   cursor: not-allowed;
 }
 
@@ -8938,9 +8939,9 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
   min-height: 44px;
 }
 .wiz-action-restart:hover:not(:disabled) {
-  border-color: #dc2626;
-  color: #dc2626;
-  background: rgba(220, 38, 38, 0.06);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 5%, #fff);
 }
 .wiz-action-restart:disabled {
   opacity: 0.4;
