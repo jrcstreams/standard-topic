@@ -5,7 +5,7 @@
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
 import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260611-revamp138';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260611-revamp138';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260611-revamp142';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 

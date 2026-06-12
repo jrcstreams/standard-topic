@@ -55,6 +55,18 @@ export function distinctSources(sources) {
 //   compact  → card form: badge + "· N sources" (count only, no names)
 //   badge    → include the "✦ AI summary" chip (default true; false on surfaces
 //              that already carry an "AI Brief" header — avoids a double sparkle)
+// Discreet inline AI marker — a small blue sparkle that prefixes AI-generated
+// text (e.g. a trending one-liner). Pair with aiLegendHTML() — a single
+// "✦ AI-generated" key shown once at the top of the list — so each item carries
+// just the sparkle, no repeated label.
+const SPARK_FILL = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
+export function aiSparkInline() {
+  return `<span class="ai-spark-mark" title="AI-generated" aria-label="AI-generated">${SPARK_FILL}</span>`;
+}
+export function aiLegendHTML() {
+  return `<span class="ai-legend"><span class="ai-spark-mark">${SPARK_FILL}</span>AI-generated</span>`;
+}
+
 export function aiProvenanceHTML(sources, opts = {}) {
   const { compact = false, badge = true, label = 'AI summary' } = opts;
   const list = distinctSources(sources);

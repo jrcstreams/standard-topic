@@ -6826,22 +6826,22 @@ body.app-mode .topic-layout {
      further inset. Widen the transparent zone accordingly. */
   @media (min-width: 900px) {
     .subnav-chip-wrap.can-scroll-right .subnav-topics-inline {
-      mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 180px), transparent calc(100% - 54px), transparent 100%);
-      -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 180px), transparent calc(100% - 54px), transparent 100%);
+      mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 210px), transparent calc(100% - 66px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 210px), transparent calc(100% - 66px), transparent 100%);
     }
     .subnav-chip-wrap.can-scroll-left .subnav-topics-inline {
-      mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 180px), transparent calc(100% - 54px), transparent 100%);
-      -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 180px), transparent calc(100% - 54px), transparent 100%);
+      mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 210px), transparent calc(100% - 66px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 210px), transparent calc(100% - 66px), transparent 100%);
     }
     .subnav-chip-wrap.can-scroll-left.can-scroll-right .subnav-topics-inline {
       mask-image: linear-gradient(to right,
-        transparent 0%, transparent 54px,
-        #000 180px, #000 calc(100% - 180px),
-        transparent calc(100% - 54px), transparent 100%);
+        transparent 0%, transparent 66px,
+        #000 210px, #000 calc(100% - 210px),
+        transparent calc(100% - 66px), transparent 100%);
       -webkit-mask-image: linear-gradient(to right,
-        transparent 0%, transparent 54px,
-        #000 180px, #000 calc(100% - 180px),
-        transparent calc(100% - 54px), transparent 100%);
+        transparent 0%, transparent 66px,
+        #000 210px, #000 calc(100% - 210px),
+        transparent calc(100% - 66px), transparent 100%);
     }
   }
 }
@@ -11502,7 +11502,7 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
    Intelligence-style accordions) ===================================== */
 .at-modal-panel {
   position: relative; background: var(--color-surface); border-radius: 16px;
-  width: 100%; max-width: 600px;
+  width: min(600px, calc(100% - 2rem)); max-width: 600px; /* identical formula to .tlm-panel (Trending) so they never diverge */
   height: min(86vh, 680px); /* shared size across Search / Topics / Trends */
   overflow: hidden; display: flex; flex-direction: column;
   padding: 0;
@@ -13513,7 +13513,7 @@ body.home-search.app-mode .topic-layout {
 .home-search-hero {
   position: relative; overflow: hidden;
   max-width: none; margin: 0;
-  padding: clamp(1.7rem, 1rem + 2.4vw, 2.7rem) clamp(1.4rem, 0.8rem + 2vw, 2.4rem);
+  padding: clamp(1.1rem, 0.7rem + 1.2vw, 1.55rem) clamp(1.4rem, 0.8rem + 2vw, 2.4rem) clamp(1.5rem, 0.9rem + 1.8vw, 2.1rem);
   /* Cleaner, editorial surface (#7): flat cool off-white + a single soft
      corner glow — no repeating dotted texture (that read as "AI-generated"). */
   background: #f6f8fc;
@@ -13816,7 +13816,7 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   body.home-search #home-trending .trending-topics-sub { margin: 0; }
   body.home-search #home-trending .trending-topics-updated { margin-left: auto; }
   body.home-search #home-trending .trend-card-grid { padding: 10px 12px 4px; }
-  body.home-search #home-trending .trend-viewmore-row { margin-top: 10px; padding: 0 14px 16px; }
+  body.home-search #home-trending .trend-viewmore-row { margin-top: 2px; padding: 0 14px 20px; }
 
   /* News Feed (homepage + topic pages). Higher specificity (.newsfeed-card
      ancestor) so these win over the base #section-newsfeed .newsfeed-head. */
@@ -13891,7 +13891,7 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   }
   body.home-search #home-trending .trending-topics-sub { margin: 0; }
   body.home-search #home-trending .trend-card-grid { padding: 8px 10px 4px; }
-  body.home-search #home-trending .trend-viewmore-row { margin-top: 8px; padding: 0 12px 14px; }
+  body.home-search #home-trending .trend-viewmore-row { margin-top: 2px; padding: 0 12px 18px; }
 
   body.home-search #section-newsfeed .newsfeed-card {
     border: 1px solid var(--color-surface-border); border-radius: 14px;
@@ -15017,13 +15017,16 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .im-qlink:not(:last-child) { margin-right: 11px; padding-right: 11px; border-right: 1px solid var(--color-surface-border); }
 
 /* Sources & Coverage — final card listing the cited sources as a link list. */
-.im-coverage-list { display: grid; gap: 6px; }
-.im-cov-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 13px; border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; text-decoration: none; color: var(--color-text); transition: border-color .14s; }
-.im-cov-row:hover { border-color: var(--color-primary); }
-.im-cov-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.im-cov-title { font-size: 0.84rem; font-weight: 600; color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.im-cov-row:hover .im-cov-title { color: var(--color-primary); }
-.im-cov-host { font-size: 0.72rem; color: var(--color-text-muted); }
+/* Clean list (not bordered buttons): hyperlinked title, publisher beneath, thin
+   dividers. Title is the link; when we only have the publisher domain, that IS
+   the title. */
+.im-coverage-list { display: flex; flex-direction: column; }
+.im-cov-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 2px; border: none; border-radius: 0; background: none; text-decoration: none; color: var(--color-text); border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); transition: none; }
+.im-cov-row:last-child { border-bottom: none; }
+.im-cov-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.im-cov-title { font-size: 0.88rem; font-weight: 600; color: #1d4ed8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.im-cov-row:hover .im-cov-title { text-decoration: underline; text-underline-offset: 2px; }
+.im-cov-host { font-size: 0.74rem; color: var(--color-text-muted); }
 .im-cov-row svg { flex: none; width: 13px; height: 13px; color: var(--color-text-light); }
 
 /* Sticky bar carries the affordances: prev/next chevrons + jump-up action links. */
@@ -15050,6 +15053,16 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    rule). Same navy chip language as the trending-card badge. */
 .aigen-tag { display: inline-flex; align-items: center; gap: 5px; margin: 0 0 12px; padding: 2px 9px 2px 7px; border-radius: 999px; background: color-mix(in srgb, var(--color-primary) 8%, #fff); border: 1px solid color-mix(in srgb, var(--color-primary) 16%, transparent); font-size: 0.64rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--color-primary); }
 .aigen-tag svg { width: 11px; height: 11px; }
+
+/* Discreet inline AI marker (blue sparkle) + the one-line legend that defines it
+   at the top of a list. Used on trending summaries (and reusable across the board). */
+.ai-spark-mark { display: inline-flex; align-items: center; color: #1d4ed8; }
+.ai-spark-mark svg { width: 12px; height: 12px; }
+.trend-card-summary .ai-spark-mark { margin-right: 5px; vertical-align: -2px; }
+.ai-legend { display: inline-flex; align-items: center; gap: 4px; flex: none; font-size: 0.68rem; font-weight: 600; color: var(--color-text-muted); letter-spacing: 0.01em; white-space: nowrap; }
+.ai-legend .ai-spark-mark svg { width: 11px; height: 11px; }
+.trending-topics-subrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.trending-topics-subrow .trending-topics-sub { margin: 0; }
 
 /* AI provenance — the consistent "this is AI-generated, grounded in these
    sources" marker. Full form (brief surfaces, no badge): a "Sources: A, B +N"

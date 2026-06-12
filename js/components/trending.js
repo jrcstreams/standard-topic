@@ -5,7 +5,7 @@
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
 import { renderTrendExpansionBody } from './trend-expansion.js';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260611-revamp138';
+import { aiSparkInline, aiLegendHTML } from '../utils/ai-provenance.js?v=20260611-revamp142';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -147,7 +147,7 @@ function trendCardHTML(topic, idx) {
             <span class="trend-card-title">${escapeHTML(title)}</span>
           </span>
           ${meta ? `<span class="trend-card-meta">${escapeHTML(meta)}</span>` : ''}
-          ${topic.summary && cleanSummary(topic.summary) ? `<span class="trend-card-summary">${escapeHTML(cleanSummary(topic.summary))}</span>${aiProvenanceHTML(topic.sources, { compact: true })}` : ''}
+          ${topic.summary && cleanSummary(topic.summary) ? `<span class="trend-card-summary">${aiSparkInline()}${escapeHTML(cleanSummary(topic.summary))}</span>` : ''}
         </span>
         <span class="trend-card-chev trend-card-open" aria-hidden="true">${OPEN_ICON}</span>
       </button>
@@ -195,7 +195,10 @@ function trendCardsHead(fetched) {
         <h3 class="trending-topics-title"><span>Trending</span></h3>
         ${fetched ? `<span class="trending-topics-updated">Updated ${escapeHTML(relativeTime(fetched))}</span>` : ''}
       </div>
-      <p class="trending-topics-sub">What's being searched for right now.</p>
+      <div class="trending-topics-subrow">
+        <p class="trending-topics-sub">What's being searched for right now.</p>
+        ${aiLegendHTML()}
+      </div>
     </div>`;
 }
 
@@ -333,7 +336,10 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
           <span class="trending-topics-logo">${ICON}</span>
           <h3 class="trending-topics-title"><span>Trending</span></h3>
         </div>
-        <p class="trending-topics-sub">What's being searched for right now.</p>
+        <div class="trending-topics-subrow">
+          <p class="trending-topics-sub">What's being searched for right now.</p>
+          ${aiLegendHTML()}
+        </div>
       </div>`;
   }
 

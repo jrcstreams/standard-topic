@@ -4,7 +4,7 @@
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
 import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260611-revamp138';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260611-revamp138';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260611-revamp142';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -194,7 +194,7 @@ function navBarHTML(nav) {
   if (!prev && !next) return '';
   const kind = nav.itemKind || 'item';
   const cell = (e, dir) => e
-    ? `<button type="button" class="im-pn im-pn-${dir}" id="im-${dir}">
+    ? `<button type="button" class="im-pn im-pn-${dir}" data-navdir="${dir}">
          ${dir === 'prev' ? '<span class="im-pn-arrow">‹</span>' : ''}
          <span class="im-pn-tx"><span class="im-pn-dir">${dir === 'prev' ? 'Previous' : 'Next'} ${esc(kind)}</span><span class="im-pn-name">${esc(navItemName(e))}</span></span>
          ${dir === 'next' ? '<span class="im-pn-arrow">›</span>' : ''}
