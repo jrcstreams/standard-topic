@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp177';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp177';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp179';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp179';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -260,23 +260,37 @@ export function renderAIIntelligence(container, scope) {
            <span class="aii-condensed-title">${esc(s.name)}</span>
          </button>`
       : '';
+    const sects = (c && c.sections) || [];
+    const prev = curIdx > 0 ? sects[curIdx - 1] : null;
+    const next = curIdx < sects.length - 1 ? sects[curIdx + 1] : null;
+    const updated = c && c.generatedAt ? `<span class="aii-updated">Updated ${esc(relTime(c.generatedAt))}</span>` : '';
+    // Prev/Next INSIGHT bar — names the adjacent sections in this path (#136).
+    const pnBar = (prev || next) ? `<div class="aii-pn">
+        ${prev ? `<button type="button" class="aii-pn-btn" data-pn="prev">${BACK}<span class="aii-pn-tx"><span class="aii-pn-dir">Previous insight</span><span class="aii-pn-name">${esc(prev.name)}</span></span></button>` : '<span class="aii-pn-spacer" aria-hidden="true"></span>'}
+        ${next ? `<button type="button" class="aii-pn-btn aii-pn-btn--next" data-pn="next"><span class="aii-pn-tx"><span class="aii-pn-dir">Next insight</span><span class="aii-pn-name">${esc(next.name)}</span></span>${ARROW}</button>` : '<span class="aii-pn-spacer" aria-hidden="true"></span>'}
+      </div>` : '';
     return `<div class="aii-sub aii-content">
       ${condensed}
-      <button type="button" class="aii-back" data-back="sections">${BACK}<span>Back</span></button>
+      <div class="aii-backrow">
+        <button type="button" class="aii-back" data-back="sections">${BACK}<span>Back</span></button>
+        ${updated}
+      </div>
+      ${pnBar}
       <div class="aii-overview ${stickyCtx ? 'aii-ovcard' : 'aii-overview-plain'}">
-        <div class="aii-overview-eyebrow">${esc(p.label || '')}</div>
+        <div class="aii-ov-toprow"><span class="aii-ov-topicpill">${esc(topicTitle)}</span><span class="aii-ov-eyebrow">${esc(p.label || '')}</span></div>
         <h3 class="aii-overview-title">${esc(s.name)}</h3>
         ${desc ? `<p class="aii-overview-sub">${esc(desc)}</p>` : ''}
+        <div class="im-quicklinks aii-quicklinks">
+          <button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="sources">Sources</button>
+          <button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="explore" aria-expanded="false">Ask AI</button>
+          <button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="web" aria-expanded="false">Web Search</button>
+        </div>
+        <div class="aii-acc" data-accbody="explore"></div>
+        <div class="aii-acc" data-accbody="web"></div>
       </div>
       <div class="im-aiflag-legend im-aiflag-legend--lg aii-aiflag-legend">${LOGO}<span>= AI-generated text</span></div>
       <p class="aii-brief-note">The below is an AI-generated summary of the topic at hand. Please verify important details with the linked sources.</p>
       <div class="ai-prov-slot aii-prov-slot"></div>
-      <div class="aii-actions aii-actions-row">
-        <button type="button" class="aii-actbtn" data-acc="explore" aria-expanded="false"><span>Ask AI</span>${CHEV}</button>
-        <button type="button" class="aii-actbtn" data-acc="web" aria-expanded="false"><span>Web Search</span>${CHEV}</button>
-      </div>
-      <div class="aii-acc" data-accbody="explore"></div>
-      <div class="aii-acc" data-accbody="web"></div>
       <hr class="aii-rule">
       <div class="aii-content-body" data-loading="1">${genLoaderHTML()}</div>
       <div class="aii-headlines"></div>
@@ -502,9 +516,22 @@ export function renderAIIntelligence(container, scope) {
     }));
     stage.querySelectorAll('.aii-menu-row, .aii-menu-card').forEach((b) => b.addEventListener('click', () => { curIdx = Number(b.dataset.idx); go('content', 'fwd'); }));
     stage.querySelectorAll('.aii-back').forEach((b) => b.addEventListener('click', () => go(b.dataset.back, 'back')));
-    // Sources + Explore accordions (above the brief). Only one open at a time.
-    stage.querySelectorAll('.aii-actbtn').forEach((btn) => btn.addEventListener('click', () => {
+    // Prev/Next INSIGHT — step through the path's sections (#136).
+    stage.querySelectorAll('.aii-pn-btn[data-pn]').forEach((b) => b.addEventListener('click', () => {
+      const c = cache[curGroup]; const n = (c && c.sections.length) || 0;
+      const ni = b.dataset.pn === 'next' ? curIdx + 1 : curIdx - 1;
+      if (ni < 0 || ni >= n) return;
+      curIdx = ni; go('content', b.dataset.pn === 'next' ? 'fwd' : 'back');
+    }));
+    // Sources / Ask AI / Web Search. Sources jumps to the Sources & Coverage list;
+    // Ask AI + Web Search open their panel in place. Only one panel open at a time.
+    stage.querySelectorAll('.aii-actbtn, .aii-qlink-btn').forEach((btn) => btn.addEventListener('click', () => {
       const name = btn.dataset.acc;
+      if (name === 'sources') {
+        const hl = stage.querySelector('.aii-headlines');
+        if (hl && hl.firstChild) hl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
       const body = stage.querySelector(`[data-accbody="${name}"]`);
       const willOpen = btn.getAttribute('aria-expanded') !== 'true';
       stage.querySelectorAll('.aii-actbtn').forEach((b) => b.setAttribute('aria-expanded', 'false'));
