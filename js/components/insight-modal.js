@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp182';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp182';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp183';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp183';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -654,6 +654,26 @@ function inTheNewsHTML(sources, headlines) {
   return `<div class="im-coverage im-coverage--inline" id="im-coverage"><div class="im-section-title im-section-title--icon">${SOURCES_BADGE}<span>Sources &amp; Coverage</span></div><div class="im-coverage-list">${rows}</div></div>`;
 }
 
+// Related searches — show a tidy first row, collapse the rest behind a "+N more"
+// toggle, and truncate any one over-long term to a single ellipsised line (the
+// full term stays in the tooltip + drill-in). Keeps the card from ballooning
+// when Google hands us a dozen verbose related queries (#155).
+const REL_VISIBLE = 6;
+const REL_MAX = 16;
+function relatedSearchesHTML(breakdown) {
+  const terms = (Array.isArray(breakdown) ? breakdown : [])
+    .map((s) => String(s || '').trim()).filter(Boolean).slice(0, REL_MAX);
+  if (!terms.length) return '';
+  const hidden = Math.max(0, terms.length - REL_VISIBLE);
+  const chips = terms.map((r, i) =>
+    `<button type="button" class="im-related-chip${i >= REL_VISIBLE ? ' is-extra' : ''}" data-term="${escAttr(r)}" title="${escAttr(r)}"><span class="im-related-chip-tx">${esc(r)}</span></button>`).join('');
+  const more = hidden ? `<button type="button" class="im-related-more" data-rel-more aria-expanded="false">+${hidden} more</button>` : '';
+  return `<div class="im-related">
+    <span class="im-related-label">Related searches</span>
+    <div class="im-related-chips">${chips}${more}</div>
+  </div>`;
+}
+
 // ---- Trend ----------------------------------------------------------------
 function renderTrend(d) {
   const cat = d.category || (Array.isArray(d.categories) ? d.categories[0] : '') || '';
@@ -669,10 +689,7 @@ function renderTrend(d) {
       <section class="im-section im-article">
         <h3 class="im-article-title">${esc(title)}</h3>
         ${meta ? `<div class="im-article-meta im-article-meta--top">${meta}</div>` : ''}
-        ${Array.isArray(d.trendBreakdown) && d.trendBreakdown.length ? `<div class="im-related">
-          <span class="im-related-label">Related searches</span>
-          <div class="im-related-chips">${d.trendBreakdown.slice(0, 8).map((r) => `<button type="button" class="im-related-chip" data-term="${escAttr(r)}">${esc(r)}</button>`).join('')}</div>
-        </div>` : ''}
+        ${relatedSearchesHTML(d.trendBreakdown)}
         <div class="im-quicklinks">
           <a class="im-qlink" href="${escAttr(gtUrl)}" target="_blank" rel="noopener noreferrer">View on Google Trends ${ARROW}</a>
           <button type="button" class="im-qlink im-qlink-btn" data-panel="sources" aria-expanded="false">Sources</button>
@@ -697,6 +714,17 @@ function renderTrend(d) {
       openStacked({ type: 'trend', query: t }, `Back to ${title}`);
     });
   });
+  // "+N more" reveals the collapsed chips in place (and flips to "Show less").
+  const relMore = panelEl.querySelector('[data-rel-more]');
+  if (relMore) {
+    const hiddenCount = panelEl.querySelectorAll('.im-related-chip.is-extra').length;
+    relMore.addEventListener('click', () => {
+      const wrap = relMore.closest('.im-related-chips');
+      const expanded = wrap.classList.toggle('is-expanded');
+      relMore.setAttribute('aria-expanded', String(expanded));
+      relMore.textContent = expanded ? 'Show less' : `+${hiddenCount} more`;
+    });
+  }
   const prompt = `Explain what "${d.query}" is and why it's trending right now — what just happened, the background, and the latest developments.`;
   // Wire the overview-card quicklinks up front (Sources jumps to coverage; Ask AI
   // / Web Search open their panels) so they work before the brief lands.
