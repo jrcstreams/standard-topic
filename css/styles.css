@@ -14208,7 +14208,11 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-ov-toprow { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 10px; margin-bottom: 10px; }
 .aii-ov-topicpill { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 999px; background: color-mix(in srgb, var(--color-primary) 9%, #fff); border: 1px solid color-mix(in srgb, var(--color-primary) 18%, transparent); font-size: 0.92rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-primary); }
 .aii-ov-eyebrow { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--color-text-muted); }
-.aii-ovcard .aii-overview-title { margin: 0 0 4px; font-family: var(--font-display); font-size: 1.2rem; line-height: 1.25; font-weight: 700; letter-spacing: -0.015em; color: #16243d; }
+.aii-ovcard .aii-overview-title { display: flex; align-items: center; gap: 9px; margin: 0 0 4px; font-family: var(--font-display); font-size: 1.2rem; line-height: 1.25; font-weight: 700; letter-spacing: -0.015em; color: #16243d; }
+/* Section icon badge ahead of the insight title — same per-section glyph as the
+   section card, so the content page reads as one continuous insight (#157). */
+.aii-overview-title-ic { display: inline-flex; flex: none; width: 28px; height: 28px; align-items: center; justify-content: center; border-radius: 8px; background: color-mix(in srgb, var(--color-primary) 10%, #fff); color: var(--color-primary); }
+.aii-overview-title-ic svg { width: 16px; height: 16px; }
 .aii-ovcard .aii-overview-sub { margin: 0; font-size: 0.88rem; line-height: 1.5; color: var(--color-text-muted); }
 .aii-ovcard .aii-quicklinks { margin-top: 13px; }
 

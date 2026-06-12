@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp184';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp184';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp185';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp185';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -331,8 +331,8 @@ export function renderAIIntelligence(container, scope) {
       </div>
       ${pnBar}
       <div class="aii-overview ${stickyCtx ? 'aii-ovcard' : 'aii-overview-plain'}">
-        <div class="aii-ov-toprow"><span class="aii-ov-topicpill">${esc(topicTitle)}</span><span class="aii-ov-eyebrow">${esc(p.label || '')}</span></div>
-        <h3 class="aii-overview-title">${esc(s.name)}</h3>
+        <div class="aii-ov-toprow">${scope.inModal ? '' : `<span class="aii-ov-topicpill">${esc(topicTitle)}</span>`}<span class="aii-ov-eyebrow">${esc(p.label || '')}</span></div>
+        <h3 class="aii-overview-title"><span class="aii-overview-title-ic">${sectionIcon(s.name)}</span>${esc(s.name)}</h3>
         ${desc ? `<p class="aii-overview-sub">${esc(desc)}</p>` : ''}
         <div class="im-quicklinks aii-quicklinks">
           <button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="sources">Sources</button>
