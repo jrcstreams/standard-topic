@@ -15061,8 +15061,15 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .trend-card-summary .ai-spark-mark { margin-right: 5px; vertical-align: -2px; }
 .ai-legend { display: inline-flex; align-items: center; gap: 4px; flex: none; font-size: 0.68rem; font-weight: 600; color: var(--color-text-muted); letter-spacing: 0.01em; white-space: nowrap; }
 .ai-legend .ai-spark-mark svg { width: 11px; height: 11px; }
-/* Legend at the top of the trend list body (defines the inline sparkle). */
-.trend-legend-row { display: flex; justify-content: flex-end; padding: 9px 16px 1px; }
+/* Legend pill at the top-left of the trend list body — defines the two card
+   glyphs (sparkle = AI text, up-arrow = Google Trends). A faint pill; the two
+   items wrap as whole units when the card is narrow. */
+.trend-legend-row { display: flex; justify-content: flex-start; padding: 10px 16px 2px; }
+.trend-legend { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding: 5px 11px; border-radius: 999px; background: color-mix(in srgb, var(--color-text) 3.5%, #fff); border: 1px solid color-mix(in srgb, var(--color-surface-border) 55%, transparent); }
+.trend-legend-item { display: inline-flex; align-items: center; gap: 5px; font-size: 0.68rem; font-weight: 600; color: var(--color-text-muted); white-space: nowrap; }
+.trend-legend-item .ai-spark-mark svg { width: 11px; height: 11px; }
+.trend-legend-trend-ic { display: inline-flex; align-items: center; color: #475569; }
+.trend-legend-trend-ic svg { width: 12px; height: 12px; }
 
 /* AI provenance — the consistent "this is AI-generated, grounded in these
    sources" marker. Full form (brief surfaces, no badge): a "Sources: A, B +N"

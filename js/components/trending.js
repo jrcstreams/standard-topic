@@ -5,7 +5,7 @@
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
 import { renderTrendExpansionBody } from './trend-expansion.js';
-import { aiSparkInline, aiLegendHTML } from '../utils/ai-provenance.js?v=20260611-revamp142';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260611-revamp142';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -210,10 +210,16 @@ function trendCardsHead(fetched) {
       <p class="trending-topics-sub">What's being searched for right now.</p>
     </div>`;
 }
-// Legend defining the inline blue sparkle — sits at the top of the card body
-// (just above the trend list), not in the section header.
+// Legend pill (upper-left of the card body): defines the two card glyphs — the
+// blue sparkle (AI-generated text) and the trend up-arrow (via Google Trends).
+// The two items sit side by side and wrap as whole units when space is tight.
 function trendLegendRow() {
-  return `<div class="trend-legend-row">${aiLegendHTML()}</div>`;
+  return `<div class="trend-legend-row">
+    <div class="trend-legend">
+      <span class="trend-legend-item">${aiSparkInline()}<span>AI-generated text</span></span>
+      <span class="trend-legend-item"><span class="trend-legend-trend-ic">${TREND_CARD_ICON}</span><span>via Google Trends</span></span>
+    </div>
+  </div>`;
 }
 
 function trendCardsShell(topics, { fetched, viewAll }) {
