@@ -12932,6 +12932,14 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .search-panel-suggest-name { font-size: 0.96rem; font-weight: 600; }
 .search-panel-suggest-parent { font-size: 0.8rem; color: var(--color-text-muted); }
 .search-panel-suggest-row.is-custom .search-panel-suggest-name { font-weight: 600; color: var(--color-primary); }
+/* Trending typeahead rows (#77): a hot-trend glyph on the left + a "Trending ·
+   Category" tag pushed to the right, so live searches read distinctly from
+   topic matches. */
+.search-panel-suggest-row.is-trend { align-items: center; }
+.search-panel-suggest-ic { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex: none; border-radius: 7px; background: color-mix(in srgb, var(--color-primary) 8%, #fff); color: var(--color-primary); }
+.search-panel-suggest-ic svg { width: 13px; height: 13px; }
+.search-panel-suggest-row.is-trend .search-panel-suggest-name { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.search-panel-suggest-tag { margin-left: auto; flex: none; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #1f8f6b; background: color-mix(in srgb, #22a47a 11%, transparent); padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
 
 /* Tools (copy link) — shown only in expanded state. */
 .search-panel-tools { display: flex; align-items: center; gap: 0.6rem; padding: 0.7rem 0.4rem 0.2rem; }
@@ -13007,7 +13015,10 @@ body.home-search.app-mode .topic-layout {
 /* Homepage hero — a spacey gradient "command card": a large display title over a
    warm, elevated search bar. Fills the main column (no 600px cap now). */
 .home-search-hero {
-  position: relative; overflow: hidden;
+  /* NB: no overflow:hidden — the typeahead dropdown is absolutely positioned and
+     must be allowed to spill past the card's bottom edge (#77). The corner glow
+     is kept inside the rounded corners by giving the ::after its own radius. */
+  position: relative;
   max-width: none; margin: 0;
   padding: clamp(1.1rem, 0.7rem + 1.2vw, 1.55rem) clamp(1.4rem, 0.8rem + 2vw, 2.4rem) clamp(1.5rem, 0.9rem + 1.8vw, 2.1rem);
   /* Cleaner, editorial surface (#7): flat cool off-white + a single soft
@@ -13017,7 +13028,7 @@ body.home-search.app-mode .topic-layout {
   border-radius: 20px;
 }
 .home-search-hero::after {
-  content: ''; position: absolute; inset: 0; pointer-events: none;
+  content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; overflow: hidden;
   background: radial-gradient(72% 92% at 100% 0%, rgba(47, 78, 140, 0.07), transparent 56%);
 }
 .home-search-hero .search-panel { position: relative; z-index: 1; }

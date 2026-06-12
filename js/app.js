@@ -13,6 +13,7 @@ import { renderPromptGenerator } from './components/prompt-generator.js?v=202606
 import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260611-revamp155';
 import { initPromptModal } from './components/prompt-modal.js?v=20260611-revamp152';
 import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260611-revamp154';
+import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260611-revamp118';
 import { initInsightModal } from './components/insight-modal.js?v=20260611-revamp154';
@@ -2756,8 +2757,24 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   const copyLinkBtn = panelEl.querySelector('.search-panel-copylink');
   function syncClear() { if (clearBtn) clearBtn.hidden = !input.value; }
   let currentTerm = '';
-  let suggestItems = [];   // [{type:'topic', slug, name, parent} | {type:'custom', term}]
+  let suggestItems = [];   // [{type:'topic'…} | {type:'trend', query, category} | {type:'custom', term}]
   let activeIdx = -1;
+
+  // Live trending searches feed the typeahead: type "kni" → "Knicks" surfaces as
+  // a hot suggestion (#77). fetchTrending() is session-cached, so this is one
+  // shared request across the home hero + nav modal. Warm it on panel creation.
+  let trendSuggest = [];   // [{query, category, queryLc}]
+  const spTitleCase = (s) => String(s || '').replace(/\b\w/g, (c) => c.toUpperCase());
+  fetchTrending().then(({ topics }) => {
+    trendSuggest = (topics || [])
+      .map((t) => {
+        const query = spTitleCase(t.query);
+        return { query, category: (t.categories && t.categories[0]) || '', queryLc: query.toLowerCase() };
+      })
+      .filter((t) => t.query);
+    // If the user is already mid-type when trends land, refresh the dropdown.
+    if (input.value.trim() && panelEl.dataset.state !== 'expanded') refreshSuggestions();
+  }).catch(() => {});
 
   function expand(rawTerm) {
     const t = (rawTerm || '').trim();
@@ -2876,14 +2893,32 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   function refreshSuggestions() {
     const q = input.value.trim();
     if (!q || panelEl.dataset.state === 'expanded') { hideSuggest(); return; }
-    const topics = searchTopics(q).slice(0, 6);
-    suggestItems = topics.map(t => ({ type: 'topic', slug: t.slug, name: t.name, parent: t.parentName }))
+    const ql = q.toLowerCase();
+    // Hot trends that contain the query — prefix matches rank first, then the
+    // shortest (closest) match. Cap so the dropdown stays tidy.
+    const trends = trendSuggest
+      .filter((t) => t.queryLc.includes(ql))
+      .sort((a, b) => {
+        const ap = a.queryLc.startsWith(ql) ? 0 : 1, bp = b.queryLc.startsWith(ql) ? 0 : 1;
+        return ap - bp || a.query.length - b.query.length;
+      })
+      .slice(0, 4);
+    const trendNames = new Set(trends.map((t) => t.queryLc));
+    // Topic matches, minus any that a trend row already covers (avoid dupes).
+    const topics = searchTopics(q).filter((t) => !trendNames.has(String(t.name).toLowerCase())).slice(0, 4);
+    suggestItems = trends.map((t) => ({ type: 'trend', query: t.query, category: t.category }))
+      .concat(topics.map((t) => ({ type: 'topic', slug: t.slug, name: t.name, parent: t.parentName })))
       .concat([{ type: 'custom', term: q }]);
     activeIdx = -1;
-    suggestEl.innerHTML = suggestItems.map((it, i) => it.type === 'topic'
-      ? `<button type="button" class="search-panel-suggest-row" data-i="${i}" role="option"><span class="search-panel-suggest-name">${escapeHTML(it.name)}</span>${it.parent ? `<span class="search-panel-suggest-parent">${escapeHTML(it.parent)}</span>` : ''}</button>`
-      : `<button type="button" class="search-panel-suggest-row is-custom" data-i="${i}" role="option"><span class="search-panel-suggest-name">Search "${escapeHTML(it.term)}" &rarr;</span></button>`
-    ).join('');
+    suggestEl.innerHTML = suggestItems.map((it, i) => {
+      if (it.type === 'trend') {
+        return `<button type="button" class="search-panel-suggest-row is-trend" data-i="${i}" role="option"><span class="search-panel-suggest-ic" aria-hidden="true">${SP_TREND_ICON}</span><span class="search-panel-suggest-name">${escapeHTML(it.query)}</span><span class="search-panel-suggest-tag">Trending${it.category ? ` &middot; ${escapeHTML(it.category)}` : ''}</span></button>`;
+      }
+      if (it.type === 'topic') {
+        return `<button type="button" class="search-panel-suggest-row" data-i="${i}" role="option"><span class="search-panel-suggest-name">${escapeHTML(it.name)}</span>${it.parent ? `<span class="search-panel-suggest-parent">${escapeHTML(it.parent)}</span>` : ''}</button>`;
+      }
+      return `<button type="button" class="search-panel-suggest-row is-custom" data-i="${i}" role="option"><span class="search-panel-suggest-name">Search "${escapeHTML(it.term)}" &rarr;</span></button>`;
+    }).join('');
     suggestEl.hidden = false;
     suggestEl.querySelectorAll('.search-panel-suggest-row').forEach(row => {
       row.addEventListener('click', () => chooseSuggestion(Number(row.dataset.i)));
@@ -2897,7 +2932,9 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       if (isModal) { closeSearchPageModal(); document.body.style.overflow = ''; }
       navigate('#/topic/' + it.slug);
     } else {
-      expand(it.term);
+      // custom OR trend → run the search for that term (a trend is just a
+      // curated, timely query). Same path as any custom search.
+      expand(it.type === 'trend' ? it.query : it.term);
     }
   }
   function moveActive(d) {
