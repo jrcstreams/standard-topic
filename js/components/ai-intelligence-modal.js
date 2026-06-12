@@ -9,7 +9,7 @@
 //               AI Intelligence" handles switching PATHS.
 //
 // Participates in the global single-modal coordinator (`close-all-modals`).
-import { renderAIIntelligence } from './ai-intelligence.js?v=20260612-revamp183';
+import { renderAIIntelligence } from './ai-intelligence.js?v=20260612-revamp184';
 import { getFeaturedTopics, getTopicBySlug, getShortcutsForTopic } from '../utils/data.js';
 
 let overlayEl = null;
@@ -82,16 +82,16 @@ function changeTopic(key) {
 function scopeFor(topic, label, group) {
   const shared = { inModal: true, initialGroup: group, topics: topicList(), onChangeTopic: changeTopic };
   if (topic === 'home') {
-    const desc = {};
-    try { (getShortcutsForTopic('home') || []).forEach((s) => { if (s && s.name) desc[s.name] = s.description || ''; }); } catch (_) {}
-    return { ...shared, topic: 'home', label: "today's world", descriptions: desc, hideGroups: ['topic-specific'], topicKey: 'home' };
+    const desc = {}; const icons = {};
+    try { (getShortcutsForTopic('home') || []).forEach((s) => { if (s && s.name) { desc[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } }); } catch (_) {}
+    return { ...shared, topic: 'home', label: "today's world", descriptions: desc, icons, hideGroups: ['topic-specific'], topicKey: 'home' };
   }
   const t = getTopicBySlug(topic) || (getFeaturedTopics() || []).find((x) => x.name === (label || topic)) || null;
   const name = t ? t.name : label || topic;
   const slug = t ? t.slug : null;
-  const desc = {};
-  try { if (slug) (getShortcutsForTopic(slug) || []).forEach((s) => { if (s && s.name) desc[s.name] = s.description || ''; }); } catch (_) {}
-  return { ...shared, topic: name, label: name, descriptions: desc, topicKey: slug || (topic || '') };
+  const desc = {}; const icons = {};
+  try { if (slug) (getShortcutsForTopic(slug) || []).forEach((s) => { if (s && s.name) { desc[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } }); } catch (_) {}
+  return { ...shared, topic: name, label: name, descriptions: desc, icons, topicKey: slug || (topic || '') };
 }
 
 function renderBody(scope) {

@@ -6,26 +6,26 @@ import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './ut
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260612-revamp183';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260612-revamp184';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260612-revamp183';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260612-revamp183';
-import { initPromptModal } from './components/prompt-modal.js?v=20260612-revamp183';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260612-revamp183';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260612-revamp184';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260612-revamp184';
+import { initPromptModal } from './components/prompt-modal.js?v=20260612-revamp184';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260612-revamp184';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260612-revamp183';
-import { initInsightModal } from './components/insight-modal.js?v=20260612-revamp183';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260612-revamp183';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260612-revamp183';
-import { renderWebSources } from './components/websources.js?v=20260612-revamp183';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260612-revamp183';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260612-revamp184';
+import { initInsightModal } from './components/insight-modal.js?v=20260612-revamp184';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260612-revamp184';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260612-revamp184';
+import { renderWebSources } from './components/websources.js?v=20260612-revamp184';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260612-revamp184';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260612-revamp183';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260612-revamp184';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260612-revamp183';
-import { initSettingsModal } from './components/settings-modal.js?v=20260612-revamp183';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260612-revamp184';
+import { initSettingsModal } from './components/settings-modal.js?v=20260612-revamp184';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1510,9 +1510,9 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     renderTrendingHome(container.querySelector('#home-trending'), { limit: 7 });
     const aiiHome = container.querySelector('#section-aii-home');
     if (aiiHome) {
-      const homeDesc = {};
-      try { (getShortcutsForTopic('home') || []).forEach((s) => { if (s && s.name) homeDesc[s.name] = s.description || ''; }); } catch (_) {}
-      renderAIIntelligence(aiiHome, { topic: 'home', label: "today's world", descriptions: homeDesc, hideGroups: ['topic-specific'] });
+      const homeDesc = {}; const homeIcons = {};
+      try { (getShortcutsForTopic('home') || []).forEach((s) => { if (s && s.name) { homeDesc[s.name] = s.description || ''; homeIcons[s.name] = s.icon || ''; } }); } catch (_) {}
+      renderAIIntelligence(aiiHome, { topic: 'home', label: "today's world", descriptions: homeDesc, icons: homeIcons, hideGroups: ['topic-specific'] });
     }
     // Home sidebar: Web Sources platform picker (browse mode — empty term).
     const homeWs = container.querySelector('#section-websources');
@@ -1549,9 +1549,9 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       // Topic pages get the living AI Intelligence component. Map each
       // shortcut's name → its description so the section menu can show a
       // one-line summary under each insight.
-      const descriptions = {};
-      try { (getShortcutsForTopic(topic.slug) || []).forEach((s) => { if (s && s.name) descriptions[s.name] = s.description || ''; }); } catch (_) {}
-      renderAIIntelligence(shortcutsSection, { topic: topic.name, label: topic.name, descriptions });
+      const descriptions = {}; const icons = {};
+      try { (getShortcutsForTopic(topic.slug) || []).forEach((s) => { if (s && s.name) { descriptions[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } }); } catch (_) {}
+      renderAIIntelligence(shortcutsSection, { topic: topic.name, label: topic.name, descriptions, icons });
     } else {
       renderShortcutsSidebar(shortcutsSection, route, isHome, isCustom, customTerm);
     }

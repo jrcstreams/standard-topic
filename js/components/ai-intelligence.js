@@ -4,10 +4,11 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp183';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp183';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp184';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp184';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
+import { renderIcon } from '../utils/icons.js';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -225,6 +226,17 @@ export function renderAIIntelligence(container, scope) {
         <span class="aii-pathrow-go">${ARROW}</span>
       </button>`).join('')}</div>`;
   }
+  // Each section card gets ITS OWN icon (the shortcut's icon from the registry),
+  // falling back to the shared path glyph when the caller didn't supply an icon
+  // map or the name isn't found (#147). scope.icons is keyed by shortcut name.
+  function sectionIcon(name) {
+    const slug = scope.icons && scope.icons[name];
+    if (slug) {
+      const svg = renderIcon(slug);
+      if (svg && /^<svg/.test(svg)) return svg;   // emoji fallback → use the path glyph instead
+    }
+    return ICONS[curGroup] || ICONS._;
+  }
   function sectionsHTML() {
     const p = paths.find((x) => x.group === curGroup) || {};
     const c = cache[curGroup];
@@ -233,7 +245,7 @@ export function renderAIIntelligence(container, scope) {
     else if (c.error || !c.sections.length) body = `<p class="aii-empty">This overview is being generated — check back shortly.</p>`;
     else body = `<div class="aii-menu aii-menu-grid">${c.sections.map((s, i) => {
       const desc = (scope.descriptions && scope.descriptions[s.name]) || '';
-      return `<button type="button" class="aii-menu-card" data-idx="${i}"><span class="aii-menu-card-ic aii-icon-${escAttr(curGroup)}">${ICONS[curGroup] || ICONS._}</span><span class="aii-menu-card-tx"><span class="aii-menu-name">${esc(s.name)}</span>${desc ? `<span class="aii-menu-desc">${esc(desc)}</span>` : ''}</span></button>`;
+      return `<button type="button" class="aii-menu-card" data-idx="${i}"><span class="aii-menu-card-ic aii-icon-${escAttr(curGroup)}">${sectionIcon(s.name)}</span><span class="aii-menu-card-tx"><span class="aii-menu-name">${esc(s.name)}</span>${desc ? `<span class="aii-menu-desc">${esc(desc)}</span>` : ''}</span></button>`;
     }).join('')}</div>`;
     const updated = c && c.generatedAt ? `<span class="aii-updated">Updated ${esc(relTime(c.generatedAt))}</span>` : '';
     return `<div class="aii-sub">
