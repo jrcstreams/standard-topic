@@ -327,6 +327,16 @@ export function renderAIIntelligence(container, scope) {
     }
   }
 
+  // A cached brief may still contain sections for shortcuts that have since been
+  // removed (the brief regenerates on its own slow cadence). Drop any section that
+  // no longer maps to a current shortcut for this topic — `scope.descriptions` is
+  // keyed by the live shortcut names. Guarded: if we have no description data,
+  // don't filter (avoid hiding everything).
+  function keepCurrentSections(sections) {
+    const keys = new Set(Object.keys(scope.descriptions || {}).map((k) => k.toLowerCase().trim()));
+    if (!keys.size) return sections;
+    return sections.filter((s) => keys.has(String(s.name || '').toLowerCase().trim()));
+  }
   async function loadGroup(group) {
     if (cache[group] && !cache[group].loading) return cache[group];
     cache[group] = { sections: [], loading: true };
@@ -334,7 +344,7 @@ export function renderAIIntelligence(container, scope) {
       const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shortcut', topic: scope.topic, group }) });
       const data = res.ok ? await res.json() : null;
       cache[group] = data && data.content
-        ? { sections: splitSections(data.content), generatedAt: data.generatedAt, sources: data.sources || [], headlines: data.headlines || [], loading: false }
+        ? { sections: keepCurrentSections(splitSections(data.content)), generatedAt: data.generatedAt, sources: data.sources || [], headlines: data.headlines || [], loading: false }
         : { sections: [], loading: false, error: true };
     } catch (_) { cache[group] = { sections: [], loading: false, error: true }; }
     return cache[group];
