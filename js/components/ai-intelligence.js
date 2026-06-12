@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp181';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp181';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp182';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp182';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -185,6 +185,7 @@ export function renderAIIntelligence(container, scope) {
         <p class="aii-headsub">Pick a path and explore live AI insights.</p>
       </div>
       ${scope.inModal ? topicSwitcherHTML() : ''}
+      ${scope.inModal ? '<div class="aii-condensed aii-condensed--ext" data-cond-ext aria-hidden="true"></div>' : ''}
       ${tabMode ? subtabsHTML() : ''}
       <div class="aii-stage" data-view="paths"></div>
     </div>`;
@@ -208,6 +209,7 @@ export function renderAIIntelligence(container, scope) {
     stage.classList.add(dir === 'back' ? 'aii-anim-back' : 'aii-anim-fwd');
     wire();
     setActiveSubtab();
+    updateExtCondensed();   // modal: sync/clear the external sticky bar for this view
     if (dir === 'fwd' && view !== 'paths') ensureVisible();
   }
   function viewHTML() {
@@ -249,6 +251,41 @@ export function renderAIIntelligence(container, scope) {
       ${body}
     </div>`;
   }
+  // The condensed "topic · path / section" sticky bar (shared by tab mode's
+  // inline copy and the modal's external persistent copy).
+  function condBarHTML() {
+    const c = cache[curGroup]; const p = paths.find((x) => x.group === curGroup) || {};
+    const s = (c && c.sections[curIdx]) || { name: '' };
+    return `<div class="aii-condensed" aria-hidden="true">
+         <button type="button" class="aii-condensed-top" data-cond-top>
+           <span class="aii-condensed-eyebrow">${esc(topicTitle)}${p.label ? ` &middot; ${esc(p.label)}` : ''}</span>
+           <span class="aii-condensed-title">${esc(s.name)}</span>
+         </button>
+         <div class="aii-condensed-acts">
+           <button type="button" class="aii-cond-act" data-acc="sources">Sources</button>
+           <button type="button" class="aii-cond-act" data-acc="explore">Ask AI</button>
+           <button type="button" class="aii-cond-act" data-acc="web">Web Search</button>
+         </div>
+       </div>`;
+  }
+  // Modal only: keep the external (persistent) condensed bar in sync with the
+  // current view. On content views it holds the current insight + acts; elsewhere
+  // it's emptied and collapsed. Lives OUTSIDE .aii-stage so the stage's slide
+  // transform never breaks its position:sticky (#158).
+  function updateExtCondensed() {
+    if (!scope.inModal) return;
+    const ext = container.querySelector('[data-cond-ext]');
+    if (!ext) return;
+    if (view !== 'content') { ext.classList.remove('is-on'); ext.innerHTML = ''; ext.setAttribute('aria-hidden', 'true'); return; }
+    // condBarHTML() yields a wrapper .aii-condensed; we only want its inner markup
+    // since `ext` is itself the .aii-condensed element.
+    const tmp = document.createElement('div');
+    tmp.innerHTML = condBarHTML();
+    ext.innerHTML = tmp.firstElementChild ? tmp.firstElementChild.innerHTML : '';
+    ext.querySelectorAll('.aii-cond-act').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); openAcc(btn, true); }));
+    const condTop = ext.querySelector('[data-cond-top]');
+    if (condTop) condTop.addEventListener('click', () => { const sr = container.closest('.aii-modal-body') || container; sr.scrollTo({ top: 0, behavior: 'smooth' }); });
+  }
   function contentHTML() {
     const c = cache[curGroup]; const p = paths.find((x) => x.group === curGroup) || {};
     const s = (c && c.sections[curIdx]) || { name: '', body: '' };
@@ -259,19 +296,12 @@ export function renderAIIntelligence(container, scope) {
     // until an IntersectionObserver (rooted on .aii-stage) reveals it, so it
     // overlays the top edge without shifting the brief. Tapping it scrolls back up.
     const stickyCtx = tabMode || scope.inModal;   // sticky sub-header in tab mode AND the modal
-    const condensed = stickyCtx
-      ? `<div class="aii-condensed" aria-hidden="true">
-           <button type="button" class="aii-condensed-top" data-cond-top>
-             <span class="aii-condensed-eyebrow">${esc(topicTitle)}${p.label ? ` &middot; ${esc(p.label)}` : ''}</span>
-             <span class="aii-condensed-title">${esc(s.name)}</span>
-           </button>
-           <div class="aii-condensed-acts">
-             <button type="button" class="aii-cond-act" data-acc="sources">Sources</button>
-             <button type="button" class="aii-cond-act" data-acc="explore">Ask AI</button>
-             <button type="button" class="aii-cond-act" data-acc="web">Web Search</button>
-           </div>
-         </div>`
-      : '';
+    // Tab mode keeps the condensed bar INSIDE the scrolling .aii-stage (the stage
+    // is its own scroll container there, so position:sticky pins correctly). The
+    // MODAL renders the bar OUTSIDE the stage (a persistent sibling in .aii) —
+    // .aii-stage's slide animation (transform) would otherwise break sticky, since
+    // the modal's scroll container is .aii-modal-body ABOVE the stage (#158).
+    const condensed = tabMode ? condBarHTML() : '';
     const sects = (c && c.sections) || [];
     const prev = curIdx > 0 ? sects[curIdx - 1] : null;
     const next = curIdx < sects.length - 1 ? sects[curIdx + 1] : null;
@@ -506,7 +536,9 @@ export function renderAIIntelligence(container, scope) {
     teardownSticky();
     if ((!tabMode && !scope.inModal) || view !== 'content' || typeof IntersectionObserver === 'undefined') return;
     const ov = stage.querySelector('.aii-ovcard');
-    const cond = stage.querySelector('.aii-condensed');
+    // Tab mode: the bar is inline in the stage. Modal: it's the external,
+    // persistent bar (a sibling of the stage — outside the slide transform) (#158).
+    const cond = tabMode ? stage.querySelector('.aii-condensed') : container.querySelector('[data-cond-ext]');
     if (!ov || !cond) return;
     // Scroll container differs by context: .aii-stage in tab mode, the modal
     // body (.aii-modal-body — the component's own container) inside the modal.
@@ -518,8 +550,39 @@ export function renderAIIntelligence(container, scope) {
       }
     }, { root: scrollRoot, threshold: 0 });
     aiiObserver.observe(ov);
-    const condTop = cond.querySelector('[data-cond-top]') || cond;
-    condTop.addEventListener('click', () => scrollRoot.scrollTo({ top: 0, behavior: 'smooth' }));
+    // Tab mode wires the inline bar's tap-to-top here; the modal's external bar is
+    // wired in updateExtCondensed().
+    if (tabMode) {
+      const condTop = cond.querySelector('[data-cond-top]') || cond;
+      condTop.addEventListener('click', () => scrollRoot.scrollTo({ top: 0, behavior: 'smooth' }));
+    }
+  }
+
+  // Open one of the content-page actions. `btn` is the clicked control (a card
+  // quicklink OR a condensed-bar button); `fromCond` means it came from the
+  // sticky bar (which lives away from the scrolled overview card, so we always
+  // open the panel and jump the scroller to the top to bring it into view).
+  function openAcc(btn, fromCond) {
+    const name = btn.dataset.acc;
+    const scrollRoot = scope.inModal ? (container.closest('.aii-modal-body') || container) : stage;
+    if (name === 'sources') {
+      const hl = stage.querySelector('.aii-headlines');
+      if (hl && hl.firstChild) hl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    const body = stage.querySelector(`[data-accbody="${name}"]`);
+    const willOpen = fromCond || btn.getAttribute('aria-expanded') !== 'true';
+    stage.querySelectorAll('.aii-actbtn, .aii-qlink-btn').forEach((b) => b.setAttribute('aria-expanded', 'false'));
+    stage.querySelectorAll('.aii-acc').forEach((a) => a.classList.remove('is-open'));
+    if (willOpen) {
+      stage.querySelectorAll(`[data-acc="${name}"]:not(.aii-cond-act)`).forEach((b) => b.setAttribute('aria-expanded', 'true'));
+      if (body && !body.dataset.ready) {
+        body.innerHTML = name === 'web' ? webCatsHTML() : exploreHomeHTML();
+        body.dataset.ready = '1';
+      }
+      body && body.classList.add('is-open');
+      if (fromCond) scrollRoot.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }
 
   function wire() {
@@ -562,29 +625,7 @@ export function renderAIIntelligence(container, scope) {
     // Ask AI + Web Search open their panel in place. Only one panel open at a time.
     stage.querySelectorAll('.aii-actbtn, .aii-qlink-btn, .aii-cond-act').forEach((btn) => btn.addEventListener('click', (e) => {
       e.stopPropagation();   // sticky-bar buttons must not also trigger scroll-to-top
-      const name = btn.dataset.acc;
-      const fromCond = btn.classList.contains('aii-cond-act');
-      const scrollRoot = scope.inModal ? (container.closest('.aii-modal-body') || container) : stage;
-      if (name === 'sources') {
-        const hl = stage.querySelector('.aii-headlines');
-        if (hl && hl.firstChild) hl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        return;
-      }
-      const body = stage.querySelector(`[data-accbody="${name}"]`);
-      // From the sticky bar the panel lives up in the (scrolled-away) overview
-      // card — always open it and jump the body back to the top so it's visible.
-      const willOpen = fromCond || btn.getAttribute('aria-expanded') !== 'true';
-      stage.querySelectorAll('.aii-actbtn, .aii-qlink-btn').forEach((b) => b.setAttribute('aria-expanded', 'false'));
-      stage.querySelectorAll('.aii-acc').forEach((a) => a.classList.remove('is-open'));
-      if (willOpen) {
-        stage.querySelectorAll(`[data-acc="${name}"]:not(.aii-cond-act)`).forEach((b) => b.setAttribute('aria-expanded', 'true'));
-        if (body && !body.dataset.ready) {
-          body.innerHTML = name === 'web' ? webCatsHTML() : exploreHomeHTML();
-          body.dataset.ready = '1';
-        }
-        body && body.classList.add('is-open');
-        if (fromCond) scrollRoot.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+      openAcc(btn, btn.classList.contains('aii-cond-act'));
     }));
     // "Explore further on web" is now native <details> accordions (#30) — each
     // source type drops its platforms down in place, no JS wiring needed.
