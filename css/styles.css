@@ -14131,6 +14131,49 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-modal-body .aii-subhead { background: none; border: none; margin: 0; padding: 2px 2px 12px; }
 .aii-modal-body .aii-menu { margin: 0; }
 .aii-modal-body .aii-menu-row { padding: 15px 2px; }
+
+/* ===== AI Intelligence modal redesign (#130-134) ===== */
+/* Persistent topic title-switcher (heads every modal view; click to swap topic). */
+.aii-modal-body .aii-topbar { position: relative; padding: 16px 20px 4px; text-align: center; }
+.aii-topic-switch { display: inline-flex; align-items: center; gap: 8px; max-width: 100%; padding: 5px 10px 5px 14px; border: none; background: none; cursor: pointer; border-radius: 11px; font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; color: var(--color-text); transition: background .14s; }
+.aii-topic-switch:hover:not(.is-static) { background: color-mix(in srgb, var(--color-primary) 6%, transparent); }
+.aii-topic-switch.is-static { cursor: default; padding: 5px 0; }
+.aii-topic-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aii-topic-switch svg { width: 19px; height: 19px; color: var(--color-text-light); flex: none; transition: transform .16s; }
+.aii-topic-switch[aria-expanded="true"] svg { transform: rotate(180deg); }
+.aii-topic-pop { position: absolute; left: 50%; top: 100%; transform: translateX(-50%); z-index: 30; width: min(380px, calc(100% - 28px)); background: #fff; border: 1px solid var(--color-surface-border); border-radius: 14px; box-shadow: 0 18px 44px -14px rgba(15,23,42,.32); padding: 10px; text-align: left; }
+.aii-topic-pop[hidden] { display: none; }
+.aii-topic-searchwrap { position: relative; display: flex; align-items: center; margin-bottom: 8px; }
+.aii-topic-search-ic { position: absolute; left: 11px; color: var(--color-text-muted); pointer-events: none; }
+.aii-topic-search { width: 100%; box-sizing: border-box; padding: 9px 12px 9px 34px; border: 1px solid var(--color-surface-border); border-radius: 9px; font-size: 0.9rem; font-family: var(--font-family); color: var(--color-text); }
+.aii-topic-search:focus { outline: none; border-color: var(--color-primary); }
+.aii-topic-list { display: flex; flex-direction: column; max-height: 280px; overflow-y: auto; }
+.aii-topic-item { text-align: left; padding: 9px 11px; border: none; background: none; border-radius: 8px; cursor: pointer; font-family: var(--font-family); font-size: 0.92rem; font-weight: 500; color: var(--color-text); }
+.aii-topic-item:hover { background: #f1f4f9; }
+.aii-topic-item.is-active { background: color-mix(in srgb, var(--color-primary) 8%, #fff); color: var(--color-primary); font-weight: 600; }
+.aii-topic-empty { padding: 14px; text-align: center; color: var(--color-text-muted); font-size: 0.88rem; }
+
+/* Intro paths as centered rounded cards. */
+.aii-modal-body .aii-stage[data-view="paths"] .aii-pathlist { max-width: 600px; margin: 6px auto 0; gap: 12px; padding: 6px 4px 4px; }
+.aii-modal-body .aii-stage[data-view="paths"] .aii-pathlist > .aii-pathrow {
+  border: 1px solid var(--color-surface-border); border-radius: 15px; padding: 16px 18px;
+  background: color-mix(in srgb, var(--color-primary) 2.5%, #fff); transition: border-color .14s, background .14s, transform .14s;
+}
+.aii-modal-body .aii-stage[data-view="paths"] .aii-pathlist > .aii-pathrow:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border));
+  background: color-mix(in srgb, var(--color-primary) 5%, #fff); transform: translateY(-1px);
+}
+
+/* Section menu = 2-column card grid. */
+.aii-menu-grid { display: grid !important; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 0 !important; }
+.aii-menu-card { display: flex; flex-direction: column; align-items: flex-start; gap: 11px; text-align: left; padding: 15px 16px; border: 1px solid var(--color-surface-border); border-radius: 14px; background: #fff; cursor: pointer; font-family: var(--font-family); box-shadow: 0 1px 2px rgba(15,23,42,.04); transition: border-color .14s, box-shadow .16s, transform .14s; }
+.aii-menu-card:hover { border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border)); box-shadow: 0 10px 24px -14px rgba(31,49,99,.28); transform: translateY(-2px); }
+.aii-menu-card-ic { display: inline-flex; width: 34px; height: 34px; flex: none; align-items: center; justify-content: center; border-radius: 10px; }
+.aii-menu-card-ic svg { width: 17px; height: 17px; }
+.aii-menu-card-tx { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.aii-menu-card .aii-menu-name { font-family: var(--font-display); font-size: 0.98rem; font-weight: 600; letter-spacing: -0.01em; color: #25324a; }
+.aii-menu-card .aii-menu-desc { font-size: 0.82rem; line-height: 1.45; color: var(--color-text-muted); }
+@media (max-width: 560px) { .aii-menu-grid { grid-template-columns: 1fr; } }
 .aii-modal-body .aii-backrow { padding: 2px 2px 8px; }
 /* Condensed "path · section" bar — sticks to the TOP OF .aii-stage (the brief's
    scroll container) once the overview card scrolls out (JS toggles .is-on).

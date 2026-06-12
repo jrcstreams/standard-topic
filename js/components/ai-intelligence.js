@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp176';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp176';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp177';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp177';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -92,6 +92,7 @@ const CHEV = '<svg class="aii-chev" viewBox="0 0 24 24" width="15" height="15" f
 const SOURCES_BADGE = '<span class="ai-result-sub-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>';
 // Small inline spark for the "AI Brief" eyebrow (matches the news modal).
 const SPARK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>';
+const SEARCH_ICON = '<svg class="aii-topic-search-ic" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
 // Paper-plane (Direct Submit — "send it off") and an eye (Review — "preview").
 const ICON_SEND = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2.5L11 13"/><path d="M21.5 2.5L15 21l-4-8-8-4z"/></svg>';
 // Brief generating loader — spark pulse + shimmer bars (occupies the space the
@@ -133,16 +134,62 @@ export function renderAIIntelligence(container, scope) {
 
   const subtabsHTML = () => `<nav class="aii-subtabs">${paths.map((p) => `<button type="button" class="aii-subtab" data-group="${escAttr(p.group)}">${esc(p.tab || p.label)}</button>`).join('')}</nav>`;
 
+  // Topic title that doubles as the switcher (#130-133): the topic name heads the
+  // body on every modal view; clicking it drops a searchable topic picker. The
+  // modal supplies scope.topics / scope.topicKey / scope.onChangeTopic.
+  const topicTitle = scope.topic === 'home' ? "Today's World" : (scope.label || scope.topic || '');
+  function topicSwitcherHTML() {
+    const switchable = Array.isArray(scope.topics) && scope.topics.length && typeof scope.onChangeTopic === 'function';
+    return `<div class="aii-topbar">
+      <button type="button" class="aii-topic-switch${switchable ? '' : ' is-static'}" ${switchable ? 'data-topic-switch aria-haspopup="listbox" aria-expanded="false"' : 'disabled'}>
+        <span class="aii-topic-name">${esc(topicTitle)}</span>${switchable ? CHEV : ''}
+      </button>
+      <div class="aii-topic-pop" data-topic-pop hidden></div>
+    </div>`;
+  }
+  function topicPopHTML(filter) {
+    const f = String(filter || '').toLowerCase().trim();
+    const items = (scope.topics || []).filter((t) => !f || String(t.name).toLowerCase().includes(f));
+    const rows = items.map((t) => `<button type="button" class="aii-topic-item${t.key === scope.topicKey ? ' is-active' : ''}" data-topic-key="${escAttr(t.key)}">${esc(t.name)}</button>`).join('')
+      || '<p class="aii-topic-empty">No topics found.</p>';
+    return `<div class="aii-topic-searchwrap">${SEARCH_ICON}<input type="text" class="aii-topic-search" placeholder="Search topics…" value="${escAttr(filter || '')}" aria-label="Search topics"></div>
+      <div class="aii-topic-list">${rows}</div>`;
+  }
+  function wireTopicSwitcher() {
+    const btn = container.querySelector('[data-topic-switch]');
+    const pop = container.querySelector('[data-topic-pop]');
+    if (!btn || !pop) return;
+    const close = () => { pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); };
+    const fill = (filter) => {
+      pop.innerHTML = topicPopHTML(filter);
+      const search = pop.querySelector('.aii-topic-search');
+      if (search) { search.addEventListener('input', () => fill(search.value)); }
+      pop.querySelectorAll('.aii-topic-item').forEach((it) => it.addEventListener('click', () => {
+        close(); scope.onChangeTopic(it.dataset.topicKey);
+      }));
+    };
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!pop.hidden) { close(); return; }
+      fill('');
+      pop.hidden = false; btn.setAttribute('aria-expanded', 'true');
+      const search = pop.querySelector('.aii-topic-search'); if (search) search.focus();
+    });
+    document.addEventListener('click', (e) => { if (!pop.hidden && !pop.contains(e.target) && !btn.contains(e.target)) close(); });
+  }
+
   container.innerHTML = `
     <div class="aii${tabMode ? ' aii-tabmode' : ''}">
       <div class="aii-head">
         <div class="aii-head-top"><span class="aii-logo">${LOGO}</span><span class="aii-brand">AI Intelligence</span><span class="aii-live"><span class="aii-live-dot" aria-hidden="true"></span>Live</span></div>
         <p class="aii-headsub">Pick a path and explore live AI insights.</p>
       </div>
+      ${scope.inModal ? topicSwitcherHTML() : ''}
       ${tabMode ? subtabsHTML() : ''}
       <div class="aii-stage" data-view="paths"></div>
     </div>`;
   const stage = container.querySelector('.aii-stage');
+  if (scope.inModal) wireTopicSwitcher();
 
   function setActiveSubtab() {
     if (!tabMode) return;
@@ -177,9 +224,9 @@ export function renderAIIntelligence(container, scope) {
     let body;
     if (!c || c.loading) body = `<div class="aii-loading">Loading ${esc(p.label || '')}…</div>`;
     else if (c.error || !c.sections.length) body = `<p class="aii-empty">This overview is being generated — check back shortly.</p>`;
-    else body = `<div class="aii-menu">${c.sections.map((s, i) => {
+    else body = `<div class="aii-menu aii-menu-grid">${c.sections.map((s, i) => {
       const desc = (scope.descriptions && scope.descriptions[s.name]) || '';
-      return `<button type="button" class="aii-menu-row" data-idx="${i}"><span class="aii-menu-text"><span class="aii-menu-name">${esc(s.name)}</span>${desc ? `<span class="aii-menu-desc">${esc(desc)}</span>` : ''}</span>${ARROW}</button>`;
+      return `<button type="button" class="aii-menu-card" data-idx="${i}"><span class="aii-menu-card-ic aii-icon-${escAttr(curGroup)}">${ICONS[curGroup] || ICONS._}</span><span class="aii-menu-card-tx"><span class="aii-menu-name">${esc(s.name)}</span>${desc ? `<span class="aii-menu-desc">${esc(desc)}</span>` : ''}</span></button>`;
     }).join('')}</div>`;
     const updated = c && c.generatedAt ? `<span class="aii-updated">Updated ${esc(relTime(c.generatedAt))}</span>` : '';
     return `<div class="aii-sub">
@@ -453,7 +500,7 @@ export function renderAIIntelligence(container, scope) {
       // Re-render the menu in place if the user is still on this path.
       if (view === 'sections' && stage.dataset.view === 'sections') { stage.innerHTML = sectionsHTML(); wire(); }
     }));
-    stage.querySelectorAll('.aii-menu-row').forEach((b) => b.addEventListener('click', () => { curIdx = Number(b.dataset.idx); go('content', 'fwd'); }));
+    stage.querySelectorAll('.aii-menu-row, .aii-menu-card').forEach((b) => b.addEventListener('click', () => { curIdx = Number(b.dataset.idx); go('content', 'fwd'); }));
     stage.querySelectorAll('.aii-back').forEach((b) => b.addEventListener('click', () => go(b.dataset.back, 'back')));
     // Sources + Explore accordions (above the brief). Only one open at a time.
     stage.querySelectorAll('.aii-actbtn').forEach((btn) => btn.addEventListener('click', () => {

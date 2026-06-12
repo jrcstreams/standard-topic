@@ -9,7 +9,7 @@
 //               AI Intelligence" handles switching PATHS.
 //
 // Participates in the global single-modal coordinator (`close-all-modals`).
-import { renderAIIntelligence } from './ai-intelligence.js?v=20260612-revamp176';
+import { renderAIIntelligence } from './ai-intelligence.js?v=20260612-revamp177';
 import { getFeaturedTopics, getTopicBySlug, getShortcutsForTopic } from '../utils/data.js';
 
 let overlayEl = null;
@@ -66,29 +66,32 @@ export function initAIIntelligenceModal() {
 
 function isOpen() { return overlayEl && overlayEl.style.display !== 'none'; }
 
-function topicPickerHTML(activeTopic) {
-  const topics = getFeaturedTopics() || [];
-  const opts = [`<option value="home"${activeTopic === 'home' ? ' selected' : ''}>Today's World</option>`]
-    .concat(topics.map((t) => `<option value="${escAttr(t.slug)}"${activeTopic === t.name ? ' selected' : ''}>${esc(t.name)}</option>`));
-  return `<label class="aii-modal-topic">
-      <span class="aii-modal-topic-lead">Topic</span>
-      <span class="aii-modal-topic-wrap"><select class="aii-modal-topic-select" aria-label="Choose topic">${opts.join('')}</select>${CHEV}</span>
-    </label>`;
+// Topics for the in-body switcher: Today's World + every featured topic.
+function topicList() {
+  return [{ key: 'home', name: "Today's World" }]
+    .concat((getFeaturedTopics() || []).map((t) => ({ key: t.slug, name: t.name })));
+}
+// Re-render the modal body for a newly-picked topic key ('home' or a slug).
+function changeTopic(key) {
+  current = { topic: key === 'home' ? 'home' : (getTopicBySlug(key)?.name || key) };
+  renderBody(scopeFor(key, null, null));
 }
 
-// Build the scope object renderAIIntelligence expects for a given selection.
+// Build the scope object renderAIIntelligence expects for a given selection. The
+// in-body title-switcher (#130-133) drives topic changes via onChangeTopic.
 function scopeFor(topic, label, group) {
+  const shared = { inModal: true, initialGroup: group, topics: topicList(), onChangeTopic: changeTopic };
   if (topic === 'home') {
     const desc = {};
     try { (getShortcutsForTopic('home') || []).forEach((s) => { if (s && s.name) desc[s.name] = s.description || ''; }); } catch (_) {}
-    return { topic: 'home', label: "today's world", descriptions: desc, hideGroups: ['topic-specific'], inModal: true, initialGroup: group };
+    return { ...shared, topic: 'home', label: "today's world", descriptions: desc, hideGroups: ['topic-specific'], topicKey: 'home' };
   }
-  const t = getTopicBySlug(topic) || null;       // `topic` may be a slug (picker) or a name (launcher)
+  const t = getTopicBySlug(topic) || (getFeaturedTopics() || []).find((x) => x.name === (label || topic)) || null;
   const name = t ? t.name : label || topic;
   const slug = t ? t.slug : null;
   const desc = {};
   try { if (slug) (getShortcutsForTopic(slug) || []).forEach((s) => { if (s && s.name) desc[s.name] = s.description || ''; }); } catch (_) {}
-  return { topic: name, label: name, descriptions: desc, inModal: true, initialGroup: group };
+  return { ...shared, topic: name, label: name, descriptions: desc, topicKey: slug || (topic || '') };
 }
 
 function renderBody(scope) {
@@ -104,29 +107,17 @@ function open(detail) {
   // Single-modal invariant: close anything else first (search isn't this one).
   window.dispatchEvent(new CustomEvent('close-all-modals'));
 
-  const isHome = detail.topic === 'home';
   current = { topic: detail.topic, label: detail.label };
-  const headerRight = isHome
-    ? topicPickerHTML('home')
-    : `<span class="aii-modal-chip">${esc(detail.label || detail.topic || '')}</span>`;
-
+  // Header is just the brand + close now; topic context + switching live in the
+  // body (the title-switcher), so there's one obvious control (#130-133).
   panelEl.innerHTML = `
     <div class="aii-modal-head">
       <div class="aii-modal-head-id"><span class="aii-modal-logo">${LOGO}</span><h2 class="aii-modal-title">AI Intelligence</h2></div>
-      <div class="aii-modal-head-right">${headerRight}</div>
       <button type="button" class="aii-modal-close" aria-label="Close">${X}</button>
     </div>
     <div class="aii-modal-body"></div>`;
 
   panelEl.querySelector('.aii-modal-close').addEventListener('click', close);
-
-  // Home: the topic picker swaps the whole section set in place.
-  const sel = panelEl.querySelector('.aii-modal-topic-select');
-  if (sel) sel.addEventListener('change', () => {
-    const v = sel.value;
-    current = { topic: v === 'home' ? 'home' : (getTopicBySlug(v)?.name || v) };
-    renderBody(scopeFor(v, null, null));
-  });
 
   renderBody(scopeFor(detail.topic, detail.label, detail.group));
 
