@@ -382,19 +382,19 @@ const PB_ICONS = {
 
 const PB_CARDS = [
   { key: 'topics',  label: 'Topics',
-    desc: 'What this prompt should focus on (primary + secondary).',
+    desc: 'What this prompt should focus on.',
     fields: ['primaryTopic', 'secondaryTopic'], required: true },
   { key: 'output',  label: 'Output Style',
-    desc: 'Content type, format, length, tone, reading level.',
+    desc: 'Type, format, length, and tone.',
     fields: ['outputType', 'format', 'length', 'audience', 'tone'] },
   { key: 'sources', label: 'Sources & Citations',
-    desc: 'What kinds of references and how to cite them.',
+    desc: 'References and how to cite them.',
     fields: ['sources', 'citations'] },
   { key: 'scope',   label: 'Scope',
     desc: 'Time window and geographic focus.',
     fields: ['recency', 'geographic'] },
   { key: 'custom',  label: 'Custom Instructions',
-    desc: 'Anything else — framing, exclusions, extra detail.',
+    desc: 'Framing, exclusions, extra detail.',
     fields: ['customizations'] },
 ];
 

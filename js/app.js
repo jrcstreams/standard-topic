@@ -9,8 +9,8 @@ import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './compone
 import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260611-revamp154';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260611-revamp118';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260611-revamp155';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260611-revamp155';
 import { initPromptModal } from './components/prompt-modal.js?v=20260611-revamp152';
 import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260611-revamp154';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
@@ -23,7 +23,7 @@ import { initTrendingListModal } from './components/trending-list-modal.js?v=202
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260611-revamp149';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260611-revamp155';
 import { initSettingsModal } from './components/settings-modal.js?v=20260611-revamp118';
 import { trackPageView, track } from './utils/analytics.js';
 

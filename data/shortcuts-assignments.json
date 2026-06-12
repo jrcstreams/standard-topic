@@ -24,7 +24,6 @@
       "energy-geopolitics",
       "job-market-snapshot",
       "ai-impact-on-jobs",
-      "best-ai-tool-use-case",
       "best-tech-deals-right-now",
       "food-trends-watch",
       "fashion-industry-watch",
@@ -36,7 +35,6 @@
       "underreported-stories-world",
       "new-music-this-week",
       "tv-movies-what-to-watch-this-week",
-      "gaming-what-should-i-play",
       "top-podcasts-right-now"
     ],
     "business-finance": [
@@ -119,8 +117,7 @@
       "tax-strategy-updates",
       "best-credit-cards-now",
       "investing-for-beginners",
-      "finance-tools-resources",
-      "budget-analysis"
+      "finance-tools-resources"
     ],
     "small-business": [
       "small-business-climate-check",
@@ -141,15 +138,13 @@
       "frontier-lab-watch",
       "where-ai-is-being-used",
       "ai-safety-updates",
-      "open-source-ai-watch",
-      "best-ai-tool-use-case"
+      "open-source-ai-watch"
     ],
     "ai-governance-policy": [
       "global-ai-regulation-tracking",
       "us-ai-policy-updates",
       "ai-copyright-updates",
-      "ai-in-workplace",
-      "ai-compliance-help-by-sector"
+      "ai-in-workplace"
     ],
     "blockchain-web3": [
       "layer-1-blockchain",
@@ -177,8 +172,7 @@
       "critical-vulnerabilities",
       "ransomware-tracker",
       "ai-impact-cybersecurity",
-      "personal-security-hygiene",
-      "threat-briefing-for-sector"
+      "personal-security-hygiene"
     ],
     "data-analytics": [
       "modern-data-stack",
@@ -230,8 +224,7 @@
       "enterprise-software-buyers-guide",
       "vertical-saas-watch",
       "ai-in-saas",
-      "saas-pricing-trends",
-      "help-pick-software"
+      "saas-pricing-trends"
     ],
     "startups-venture-capital": [
       "funding-roundup",
@@ -280,16 +273,12 @@
     "health-wellness": [
       "major-trial-approval-watch",
       "healthcare-politics-updates",
-      "public-health-watch",
-      "health-condition-primer"
+      "public-health-watch"
     ],
     "fitness-exercise": [
       "evidence-based-fitness-updates",
       "recovery-science",
-      "best-fitness-wearables",
-      "build-my-workout-routine",
-      "training-as-i-age",
-      "endurance-training-plan"
+      "best-fitness-wearables"
     ],
     "healthcare-industry": [
       "healthcare-earnings-roundup",
@@ -305,8 +294,7 @@
       "protein-macros-guidance",
       "ultra-processed-food-watch",
       "supplements-worth-taking",
-      "food-industry-policy-watch",
-      "build-my-eating-plan"
+      "food-industry-policy-watch"
     ],
     "medical-research-pharma-biotech": [
       "pharma-earnings-roundup",
@@ -363,8 +351,7 @@
       "major-regulatory-actions",
       "big-tech-antitrust-cases",
       "state-ag-activity",
-      "constitutional-law-trends",
-      "explain-this-case"
+      "constitutional-law-trends"
     ],
     "defense-national-security-foreign-policy": [
       "globla-defense-policy-updates",
@@ -401,8 +388,7 @@
       "elections-around-the-world",
       "underreported-stories-world",
       "authoritarianism-democracy-watch",
-      "global-tech-ai-race",
-      "country-deep-dive"
+      "global-tech-ai-race"
     ],
     "africa": [
       "content-wide-snapshot",
@@ -410,8 +396,7 @@
       "african-politics-watch",
       "sahel-security",
       "africa-global-partnerships",
-      "african-tech-scene",
-      "african-country-deep-dive"
+      "african-tech-scene"
     ],
     "asia": [
       "asia-pacfic-snapshot",
@@ -511,8 +496,7 @@
       "mls-us-soccer-snapshot",
       "international-soccer-updates",
       "soccer-transfer-window-watch",
-      "soccer-ballon-dor-race",
-      "soccer-club-deep-dive"
+      "soccer-ballon-dor-race"
     ],
     "mlb": [
       "mlb-snapshot",
@@ -557,8 +541,7 @@
       "ncaab-coaching-watch",
       "ncaab-player-of-year-watch",
       "ncaab-transfer-portal-nil-watch",
-      "ncaab-upset-theats-warning-signs",
-      "ncaab-team-deep-dive"
+      "ncaab-upset-theats-warning-signs"
     ],
     "college-football": [
       "ncaaf-top-25-movers",
@@ -634,8 +617,7 @@
       "gaming-hardware-snapshot",
       "gaming-streaming-live-service-watch",
       "esports-streaming-snapshot",
-      "indie-game-snapshot",
-      "gaming-what-should-i-play"
+      "indie-game-snapshot"
     ],
     "television-movies": [
       "tv-movies-what-to-watch-this-week",
@@ -649,8 +631,7 @@
       "new-music-this-week",
       "music-charts-hits-watch",
       "music-tours-concerts-watch",
-      "music-festival-season-updates",
-      "music-genre-spotlight"
+      "music-festival-season-updates"
     ],
     "podcasts": [
       "top-podcasts-right-now",
@@ -675,10 +656,7 @@
       "new-releases-worth-reading",
       "bestseller-watch",
       "literary-awards-watch",
-      "publishing-industry-watch",
-      "books-what-should-i-read-next",
-      "books-genre-deep-dive",
-      "books-backlist-worth-reading"
+      "publishing-industry-watch"
     ],
     "fashion-style": [
       "fashion-week-recaps",
@@ -755,8 +733,7 @@
       "education-news-snapshot",
       "ai-in-education-watch",
       "federal-education-policy",
-      "learning-trends",
-      "build-my-learning-plan"
+      "learning-trends"
     ],
     "higher-education": [
       "higher-ed-snapshot",
@@ -765,16 +742,14 @@
       "student-debt-updates",
       "universities-in-the-news",
       "college-affordability-value",
-      "international-students-watch",
-      "institution-deep-dive"
+      "international-students-watch"
     ],
     "learning-edtech": [
       "edtech-snapshot",
       "ai-in-education-watch",
       "online-learning-snapshot",
       "k-12-edtech-watch",
-      "skills-based-learning",
-      "build-my-learning-plan"
+      "skills-based-learning"
     ],
     "ideas-opinion-more": [
       "ideas-in-the-air",
@@ -852,7 +827,6 @@
       "global-housing-market": "analyze",
       "ai-impact-on-jobs": "discover",
       "frontier-lab-watch": "analyze",
-      "best-ai-tool-use-case": "learn",
       "best-tech-deals-right-now": "learn",
       "build-programming-learning-path": "learn",
       "space-mission-updates": "analyze",
@@ -867,7 +841,6 @@
       "fashion-industry-watch": "more",
       "best-long-reads": "more",
       "top-podcasts-right-now": "more",
-      "gaming-what-should-i-play": "more",
       "tv-movies-what-to-watch-this-week": "more",
       "new-music-this-week": "more",
       "underreported-stories-world": "learn",
@@ -899,7 +872,6 @@
     "why-it-matters",
     "risks-red-flags",
     "different-perspectives",
-    "how-this-affects-me",
     "what-we-dont-know-yet",
     "strengths-and-limitations"
   ],

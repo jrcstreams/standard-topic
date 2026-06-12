@@ -7895,14 +7895,13 @@ body.app-mode .topic-layout {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #eef2f8 0%, #e1e8f3 100%);
-  border-radius: 9px;
-  color: #2c4467;
+  background: none;
+  color: #475569;
 }
-.pb-card-icon svg { width: 18px; height: 18px; display: block; }
+.pb-card-icon svg { width: 19px; height: 19px; display: block; }
 .pb-card-title {
   font-family: var(--font-display);
   font-size: 1rem;
@@ -7988,16 +7987,16 @@ body.app-mode .topic-layout {
   font-weight: 500;
   line-height: 1.4;
   margin: 0;
-  padding-left: calc(32px + 0.6rem);
+  padding-left: 0;
 }
 
-/* Row 3: chip summary or "+ Add" CTA, also indented to the title. */
+/* Row 3: chip summary or "+ Add" CTA — flush-left under the head. */
 .pb-card-summary {
   display: flex;
   flex-wrap: wrap;
   gap: 0.3rem;
   align-items: center;
-  padding-left: calc(32px + 0.6rem);
+  padding-left: 0;
   margin-top: 0.15rem;
 }
 .pb-card-chip {
@@ -8547,11 +8546,11 @@ body.app-mode .topic-layout {
      more of the screen is usable without scrolling. */
   .pb-card-grid { grid-template-columns: 1fr; gap: 0.55rem; }
   .pb-card { padding: 0.7rem 0.85rem 0.8rem; gap: 0.3rem; }
-  .pb-card-icon { width: 30px; height: 30px; }
-  .pb-card-icon svg { width: 16px; height: 16px; }
+  .pb-card-icon { width: 19px; height: 19px; }
+  .pb-card-icon svg { width: 18px; height: 18px; }
   .pb-card-title { font-size: 0.92rem; }
-  .pb-card-desc { font-size: 0.78rem; padding-left: calc(30px + 0.6rem); }
-  .pb-card-summary { padding-left: calc(30px + 0.6rem); }
+  .pb-card-desc { font-size: 0.78rem; padding-left: 0; }
+  .pb-card-summary { padding-left: 0; }
   .pb-card-action { font-size: 0.72rem; padding: 0.25rem 0.55rem; }
   .pb-modal-card { max-height: 92vh; }
 }
@@ -8899,10 +8898,11 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
   cursor: pointer;
   transition: background 0.12s, opacity 0.12s;
   white-space: nowrap;
-  min-height: 44px;
-  /* Fixed width so the bar doesn't trampoline as the label flips
-     between "Add Topic(s) to Submit" and "Preview Prompt and Submit" */
-  min-width: 280px;
+  min-height: 46px;
+  /* Primary action fills the row; the quiet "Clear" sits beside it. */
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 0.45rem;
 }
 /* Ready state — the primary navy action (matches Submit across the app). */
 .wiz-action-btn.is-ready { background: var(--color-primary); }
@@ -8925,18 +8925,19 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.7rem 1.1rem;
+  padding: 0.7rem 0.95rem;
   background: transparent;
-  border: 1.5px solid var(--color-border);
-  border-radius: 6px;
-  color: var(--color-text);
-  font-size: 0.85rem;
-  font-weight: var(--font-weight-semibold);
+  border: 1px solid var(--color-surface-border);
+  border-radius: 10px;
+  color: var(--color-text-muted);
+  font-family: var(--font-family);
+  font-size: 0.82rem;
+  font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
   text-decoration: none;
   transition: border-color 0.12s, color 0.12s, background 0.12s, opacity 0.12s;
-  min-height: 44px;
+  min-height: 46px;
 }
 .wiz-action-restart:hover:not(:disabled) {
   border-color: var(--color-primary);

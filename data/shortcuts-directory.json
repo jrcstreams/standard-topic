@@ -205,15 +205,6 @@
       "evergreen": true
     },
     {
-      "id": "how-this-affects-me",
-      "name": "How This Affects Me",
-      "icon": "how-this-affects-me",
-      "prompt": "Help me understand how the topic of {TOPIC} affects me personally. Ask me a few questions about my situation if needed, then walk me through the practical implications — what I should pay attention to, what decisions might be affected, and what I can do about it.",
-      "description": "How this likely shows up in your daily life",
-      "group": "analyze",
-      "evergreen": true
-    },
-    {
       "id": "glossary-key-terms",
       "name": "Glossary of Key Terms",
       "icon": "glossary-key-terms",
@@ -707,14 +698,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "budget-analysis",
-      "name": "Budget Analysis",
-      "icon": "budget-analysis",
-      "prompt": "Help me build a working budget from the ground up. Ask about my take-home income, fixed expenses, variable spending, debts, and what I'm saving toward. Then recommend a framework that fits (50/30/20, zero-based, etc.), build the line-item budget in a clean table, flag where the numbers look unrealistic, and suggest a tracking method and review cadence that will keep it alive past month one.",
-      "description": "Help me build a working budget from the ground up",
-      "group": "topic-specific"
-    },
-    {
       "id": "small-business-climate-check",
       "name": "Small Business Climate Check",
       "icon": "small-business-climate-check",
@@ -835,14 +818,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "best-ai-tool-use-case",
-      "name": "Best AI Tool for My Use Case",
-      "icon": "best-ai-tool-use-case",
-      "prompt": "Help me pick the best AI tool for [use case — writing, coding, research, image generation, video, voice, agents, etc.]. Cover the leading options, what each does best, pricing, and how to choose based on what I'm trying to do.",
-      "description": "Top picks worth knowing about right now",
-      "group": "topic-specific"
-    },
-    {
       "id": "global-ai-regulation-tracking",
       "name": "Global AI Regulation Tracking",
       "icon": "global-ai-regulation-tracking",
@@ -872,14 +847,6 @@
       "icon": "ai-in-workplace",
       "prompt": "What's happening in AI workplace policy and labor implications? Cover guidance, transparency and notice laws, hiring and surveillance restrictions, and union responses.",
       "description": "AI workplace policy and labor implications",
-      "group": "topic-specific"
-    },
-    {
-      "id": "ai-compliance-help-by-sector",
-      "name": "AI Compliance Help by Sector",
-      "icon": "ai-compliance-help-by-sector",
-      "prompt": "Walk me through the AI compliance landscape for [sector — healthcare, finance, employment, education, etc.]. Cover the relevant regulations, key obligations, recent enforcement, and what an organization in this sector should be doing.",
-      "description": "Compliance considerations across major sectors",
       "group": "topic-specific"
     },
     {
@@ -1040,14 +1007,6 @@
       "icon": "personal-security-hygiene",
       "prompt": "What are the most important personal cybersecurity practices people should be doing right now? Cover authentication, password managers, device security, scam awareness, and what's actually worth the effort vs. what's overkill.",
       "description": "Practical security habits worth adopting",
-      "group": "topic-specific"
-    },
-    {
-      "id": "threat-briefing-for-sector",
-      "name": "Threat Briefing for My Sector",
-      "icon": "threat-briefing-for-sector",
-      "prompt": "Give me a current threat briefing for [sector — healthcare, finance, manufacturing, retail, government, etc.]. Cover the active threat actors, common attack patterns, regulatory requirements, and where to focus defenses.",
-      "description": "Risks and warning signs to watch",
       "group": "topic-specific"
     },
     {
@@ -1364,14 +1323,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "help-pick-software",
-      "name": "Help Me Pick Software",
-      "icon": "help-pick-software",
-      "prompt": "Help me pick software for [function — CRM, project management, etc.]. Ask about my company size, budget, key needs, and existing stack — then recommend specific options with reasoning.",
-      "description": "Walking you through the right choice",
-      "group": "topic-specific"
-    },
-    {
       "id": "funding-roundup",
       "name": "Funding Roundup",
       "icon": "funding-roundup",
@@ -1636,14 +1587,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "health-condition-primer",
-      "name": "Health Condition Primer",
-      "icon": "health-condition-primer",
-      "prompt": "Give me a current overview of [health condition]. Cover what it is, prevalence, risk factors, current standard of care, the most promising research directions, and reliable sources for further learning.",
-      "description": "Background and basics for health condition",
-      "group": "topic-specific"
-    },
-    {
       "id": "evidence-based-fitness-updates",
       "name": "Evidence-Based Fitness Updates",
       "icon": "evidence-based-fitness-updates",
@@ -1665,30 +1608,6 @@
       "icon": "best-fitness-wearables",
       "prompt": "What are the most useful fitness wearables right now and what should I actually do with the data? Cover top brands and emerging contenders, and which metrics actually matter for training decisions.",
       "description": "Top picks worth knowing about right now",
-      "group": "topic-specific"
-    },
-    {
-      "id": "build-my-workout-routine",
-      "name": "Build My Workout Routine",
-      "icon": "build-my-workout-routine",
-      "prompt": "Help me build an effective workout routine. Ask me about my goals (strength, hypertrophy, endurance, general fitness), available equipment, time per week, and experience level — then build a program that fits.",
-      "description": "A plan tailored to your situation",
-      "group": "topic-specific"
-    },
-    {
-      "id": "training-as-i-age",
-      "name": "Training as I Age",
-      "icon": "training-as-i-age",
-      "prompt": "Give me guidance on how to train at [age range]. Cover what's most important to prioritize at this stage, common mistakes, and how to maintain long-term progress.",
-      "description": "How to train smart at every stage of life",
-      "group": "topic-specific"
-    },
-    {
-      "id": "endurance-training-plan",
-      "name": "Endurance Training Plan",
-      "icon": "endurance-training-plan",
-      "prompt": "Help me build an endurance training plan for [event or goal]. Ask about my current level, timeline, and constraints — then map out a periodization with specific weekly structure.",
-      "description": "A plan built around your event and timeline",
       "group": "topic-specific"
     },
     {
@@ -1785,14 +1704,6 @@
       "icon": "food-industry-policy-watch",
       "prompt": "What's happening in food policy and the food industry? Cover dietary guideline updates, actions, food labeling, school food, and major industry shifts.",
       "description": "Signals worth tracking in food industry and policy",
-      "group": "topic-specific"
-    },
-    {
-      "id": "build-my-eating-plan",
-      "name": "Build My Eating Plan",
-      "icon": "build-my-eating-plan",
-      "prompt": "Help me build an eating plan for [goal — fat loss, muscle gain, performance, general health]. Ask about my preferences, schedule, cooking ability, and constraints — then suggest an evidence-based approach.",
-      "description": "A plan tailored to your situation",
       "group": "topic-specific"
     },
     {
@@ -2124,14 +2035,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "explain-this-case",
-      "name": "Explain This Court Case",
-      "icon": "explain-this-case",
-      "prompt": "Walk me through [court case]. Cover the underlying facts, the legal questions, the arguments on each side, the court's ruling (if decided) or expected timing (if pending), and the broader implications.",
-      "description": "A plain-language read on what this actually is",
-      "group": "topic-specific"
-    },
-    {
       "id": "us-defense-policy-updates",
       "name": "US Defense Policy Updates",
       "icon": "us-defense-policy-updates",
@@ -2316,14 +2219,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "country-deep-dive",
-      "name": "Country Deep Dive",
-      "icon": "country-deep-dive",
-      "prompt": "Give me a current overview of [country]. Cover the political situation, economy, security environment, key recent developments, foreign policy posture, and how it fits into its region and the wider world.",
-      "description": "A deeper read of context, dynamics, and what matters",
-      "group": "topic-specific"
-    },
-    {
       "id": "content-wide-snapshot",
       "name": "Continent-Wide Snapshot",
       "icon": "content-wide-snapshot",
@@ -2369,14 +2264,6 @@
       "icon": "african-tech-scene",
       "prompt": "What's happening in African tech and innovation? Cover the startup hubs, funding trends, fintech leadership, and infrastructure developments.",
       "description": "African tech and innovation",
-      "group": "topic-specific"
-    },
-    {
-      "id": "african-country-deep-dive",
-      "name": "African Country Deep Dive",
-      "icon": "african-country-deep-dive",
-      "prompt": "Give me a current overview of [African country]. Cover political situation, economy, security, key issues, and how it fits into regional dynamics.",
-      "description": "A deeper read of context, dynamics, and what matters",
       "group": "topic-specific"
     },
     {
@@ -2980,14 +2867,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "soccer-club-deep-dive",
-      "name": "Club Deep Dive",
-      "icon": "soccer-club-deep-dive",
-      "prompt": "Give me a current snapshot of [soccer club]. Cover league position, recent form, key players, manager situation, transfer activity, and outlook for the season.",
-      "description": "A deeper read of context, dynamics, and what matters",
-      "group": "topic-specific"
-    },
-    {
       "id": "mlb-snapshot",
       "name": "League Snapshot",
       "icon": "mlb-snapshot",
@@ -3265,14 +3144,6 @@
       "icon": "ncaab-upset-theats-warning-signs",
       "prompt": "Which lower-seeded college basketball teams have the profile of upset threats this year, and which highly-seeded teams have warning signs? Cover the specific factors that historically predict upsets.",
       "description": "Risks and warning signs to watch",
-      "group": "topic-specific"
-    },
-    {
-      "id": "ncaab-team-deep-dive",
-      "name": "Team Deep Dive",
-      "icon": "ncaab-team-deep-dive",
-      "prompt": "Give me a current snapshot of [school name] college basketball team. Cover record, ranking, key players, recent performance, and tournament outlook.",
-      "description": "A deeper look at a specific team",
       "group": "topic-specific"
     },
     {
@@ -3708,14 +3579,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "gaming-what-should-i-play",
-      "name": "What Should I Play Right Now",
-      "icon": "gaming-what-should-i-play",
-      "prompt": "Help me find what to play. Ask me about platforms, genres I like, time per session, and recent games I've enjoyed — then recommend a few well-reasoned options.",
-      "description": "Help me find what to play",
-      "group": "topic-specific"
-    },
-    {
       "id": "tv-movies-what-to-watch-this-week",
       "name": "What to Watch This Week",
       "icon": "tv-movies-what-to-watch-this-week",
@@ -3793,14 +3656,6 @@
       "icon": "music-festival-season-updates",
       "prompt": "What are the biggest upcoming and recent music festivals? Cover the major US and international festivals, headliners, ticket dynamics, and any noteworthy stories around the festival circuit.",
       "description": "Latest movement on festival season",
-      "group": "topic-specific"
-    },
-    {
-      "id": "music-genre-spotlight",
-      "name": "Genre Spotlight",
-      "icon": "music-genre-spotlight",
-      "prompt": "Give me a current snapshot of [genre]. Cover the dominant artists, biggest recent releases, emerging acts, and where the genre is heading.",
-      "description": "A current read on a specific genre",
       "group": "topic-specific"
     },
     {
@@ -3937,30 +3792,6 @@
       "icon": "publishing-industry-watch",
       "prompt": "What's happening in book publishing right now? Cover Big Five dynamics, AI and copyright, the audiobook boom, indie publishing, and the bookstore landscape.",
       "description": "Signals worth tracking in publishing industry",
-      "group": "topic-specific"
-    },
-    {
-      "id": "books-what-should-i-read-next",
-      "name": "What Should I Read Next",
-      "icon": "books-what-should-i-read-next",
-      "prompt": "Help me find what to read next. Ask about my recent favorites, mood I'm in, fiction vs. nonfiction preference, and length tolerance — then recommend a few well-reasoned options.",
-      "description": "Help me find what to read next",
-      "group": "topic-specific"
-    },
-    {
-      "id": "books-genre-deep-dive",
-      "name": "Genre Deep Dive",
-      "icon": "books-genre-deep-dive",
-      "prompt": "Give me a current snapshot of [genre — literary fiction, sci-fi/fantasy, romance, thriller, memoir, history, business, etc.]. Cover the dominant authors, recent standouts, and where the genre is heading.",
-      "description": "A deeper read of context, dynamics, and what matters",
-      "group": "topic-specific"
-    },
-    {
-      "id": "books-backlist-worth-reading",
-      "name": "Backlist Worth Reading",
-      "icon": "books-backlist-worth-reading",
-      "prompt": "What are great older books in [category or theme] worth reading now? Recommend books that have aged well or feel especially relevant today, with reasoning for each pick.",
-      "description": "Older books that still earn the read",
       "group": "topic-specific"
     },
     {
@@ -4363,14 +4194,6 @@
       "group": "topic-specific"
     },
     {
-      "id": "build-my-learning-plan",
-      "name": "Build My Learning Plan",
-      "icon": "build-my-learning-plan",
-      "prompt": "Help me build a learning plan for [topic or skill]. Ask about my current level, goals, time available, and learning style — then map out a structured path with specific resources.",
-      "description": "A plan tailored to your situation",
-      "group": "topic-specific"
-    },
-    {
       "id": "higher-ed-snapshot",
       "name": "Higher Ed Snapshot",
       "icon": "higher-ed-snapshot",
@@ -4424,14 +4247,6 @@
       "icon": "international-students-watch",
       "prompt": "What's happening with international student enrollment in higher ed? Cover policy developments, country-of-origin trends, financial implications, and competitive dynamics with other host countries.",
       "description": "Signals worth tracking in international students",
-      "group": "topic-specific"
-    },
-    {
-      "id": "institution-deep-dive",
-      "name": "Institution Deep Dive",
-      "icon": "institution-deep-dive",
-      "prompt": "Give me a current overview of [institution]. Cover its position and reputation, recent stories and controversies, financial health, leadership, and what's distinctive about it right now.",
-      "description": "A deeper read of context, dynamics, and what matters",
       "group": "topic-specific"
     },
     {
