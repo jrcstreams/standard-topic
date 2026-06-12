@@ -4632,607 +4632,87 @@ html, body, #app {
   .prompt-modal-panel { max-width: 100%; max-height: 90vh; border-radius: 14px; }
 }
 
-/* Topic chip in the header (the "topic name, type" context line). */
-.pm-title-meta { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.3rem; }
-.pm-topic-chip {
-  display: inline-block; max-width: 100%;
-  padding: 0.16rem 0.5rem;
-  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.01em;
-  color: var(--color-text-muted);
-  background: #f1f3f7; border: 1px solid #e7eaf0; border-radius: 999px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
+/* ===== Review & Submit modal — same visual language as the AI Insights modal === */
+.pm-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 20px; border-bottom: 1px solid var(--color-surface-border); flex-shrink: 0; }
+.pm-brandlock { display: inline-flex; align-items: center; gap: 9px; }
+.pm-logo { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; flex: none; border-radius: 8px; background: var(--color-primary); color: #fff; }
+.pm-logo svg { width: 15px; height: 15px; }
+.pm-eyebrow { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; letter-spacing: -0.015em; color: var(--color-primary); }
+.pm-close { flex: none; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border: none; border-radius: 8px; background: transparent; color: var(--color-text-light); cursor: pointer; transition: background .14s, color .14s; }
+.pm-close:hover { background: var(--color-bg-light, #f1f3f7); color: var(--color-text); }
 
-/* Header */
-.pm-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 1rem 1.15rem 0.85rem;
-  border-bottom: 1px solid var(--color-surface-border);
-  flex-shrink: 0;
-}
-.pm-title {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  min-width: 0;
-  flex: 1 1 auto;
-}
-.pm-title-icon {
-  width: 26px;
-  height: 26px;
-  flex: 0 0 26px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  background: var(--color-bg-light, #f3f4f6);
-  border-radius: 6px;
-  color: var(--color-primary);
-}
-.pm-title-text {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  gap: 0.15rem;
-}
-.pm-title-eyebrow {
-  font-family: var(--font-family);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-  color: #9aa3b3;
-  line-height: 1;
-}
-.pm-title-name {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  letter-spacing: -0.018em;
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-}
-.pm-close {
-  flex-shrink: 0;
-  width: 30px;
-  height: 30px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: none;
-  border-radius: 50%;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  transition: background 0.14s, color 0.14s;
-}
-.pm-close:hover { background: #f3f4f6; color: var(--color-text); }
-.pm-close:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 1px; }
+.pm-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px 20px 20px; }
+.pm-titlerow { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; margin: 0 0 16px; }
+.pm-title-name { margin: 0; font-family: var(--font-display); font-size: 1.16rem; line-height: 1.25; font-weight: 700; letter-spacing: -0.015em; color: #16243d; }
+.pm-topic-chip { display: inline-flex; align-items: center; max-width: 100%; padding: 3px 10px; font-size: 0.74rem; font-weight: 600; color: var(--color-text); background: #eef1f6; border-radius: 999px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* Body — scrolls when content exceeds panel max-height */
-.pm-body {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 1rem 1.15rem 0.5rem;
-}
-.pm-section { margin-bottom: 1.1rem; }
-.pm-section:last-child { margin-bottom: 0.25rem; }
+.pm-section { margin-bottom: 16px; }
+.pm-section-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.pm-section-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; letter-spacing: -0.01em; color: #1c3a6b; }
+.pm-reset { border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.76rem; font-weight: 600; color: #1d4ed8; padding: 2px 4px; }
+.pm-reset:hover { text-decoration: underline; text-underline-offset: 2px; }
 
-.pm-section-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.45rem;
-}
-.pm-section-label {
-  font-family: var(--font-family);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: #1e2d44;
-  display: block;
-  margin-bottom: 0.5rem;
-}
-.pm-section-head .pm-section-label { margin-bottom: 0; }
-.pm-reset {
-  background: none;
-  border: none;
-  color: var(--color-primary);
-  font-family: var(--font-family);
-  font-size: 0.78rem;
-  font-weight: var(--font-weight-semibold);
-  cursor: pointer;
-  padding: 0.1rem 0;
-  text-decoration: none;
-  border-bottom: 1px dashed currentColor;
-}
-.pm-reset:hover { color: var(--color-primary-dark, #0f1a2e); }
+/* Editable prompt card */
+.pm-preview-wrap { position: relative; border: 1px solid var(--color-surface-border); border-radius: 12px; background: color-mix(in srgb, var(--color-primary) 3%, #fff); transition: border-color .14s, background .14s; }
+.pm-preview-wrap:focus-within { border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-surface-border)); background: #fff; box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 9%, transparent); }
+.pm-preview { display: block; width: 100%; min-height: 132px; resize: vertical; box-sizing: border-box; padding: 13px 46px 13px 14px; border: none; background: none; border-radius: 12px; font-family: var(--font-family); font-size: 0.875rem; line-height: 1.6; color: #2c3a52; }
+.pm-preview:focus { outline: none; }
+.pm-preview.is-empty { color: var(--color-text-muted); font-style: italic; }
+.pm-copy { position: absolute; top: 9px; right: 9px; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--color-surface-border); border-radius: 8px; background: #fff; color: var(--color-text-muted); cursor: pointer; transition: border-color .14s, color .14s; }
+.pm-copy:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.pm-copy.is-copied { border-color: #2f8f63; color: #2f8f63; }
+@media (max-width: 640px) { .pm-preview { font-size: 16px; } }
 
-/* Preview / textarea — share container so floating action buttons sit
-   in the same spot regardless of mode. */
-.pm-preview-wrap {
-  position: relative;
-  border: 1px solid #e6e8ee;
-  border-radius: 8px;
-  background: #f8f9fb;
-  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
-}
-.pm-preview-wrap:hover { border-color: #cdd3de; background: #fff; }
-.pm-preview-wrap.is-editing {
-  border-color: var(--color-primary);
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(30, 45, 68, 0.08);
-}
-.pm-preview {
-  padding: 0.85rem 1rem;
-  padding-right: 4.5rem; /* room for floating action buttons */
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: var(--color-text);
-  max-height: 260px;
-  overflow-y: auto;
-  white-space: pre-wrap;
-  cursor: text;
-  border-radius: 8px;
-}
-.pm-preview:focus-visible { outline: none; }
-.pm-textarea {
-  width: 100%;
-  min-height: 160px;
-  max-height: 320px;
-  padding: 0.85rem 1rem;
-  padding-right: 4.5rem;
-  font-size: 16px;
-  line-height: 1.6;
-  color: var(--color-text);
-  font-family: var(--font-family);
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  resize: vertical;
-  box-sizing: border-box;
-}
-.pm-textarea:focus { outline: none; }
+/* "Send to" model select — mirrors the AI Insights explore flow */
+.pm-sendto { display: flex; align-items: center; gap: 12px; }
+.pm-sendto-lead { flex: none; font-size: 0.82rem; font-weight: 600; color: var(--color-text-muted); }
+.pm-select-wrap { position: relative; display: inline-flex; align-items: center; flex: 1 1 auto; min-width: 0; }
+.pm-select-wrap .pm-chev { position: absolute; right: 11px; pointer-events: none; color: var(--color-text-muted); width: 14px; height: 14px; }
+.pm-select, .pm-input { width: 100%; box-sizing: border-box; appearance: none; -webkit-appearance: none; padding: 9px 34px 9px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; color: var(--color-text); cursor: pointer; transition: border-color .14s, box-shadow .14s; }
+.pm-select:focus, .pm-input:focus { outline: none; border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-surface-border)); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 9%, transparent); }
+.pm-input { padding-right: 12px; font-weight: 500; cursor: text; }
 
-/* Floating action buttons in preview corner */
-.pm-preview-actions {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.55rem;
-  display: flex;
-  gap: 0.25rem;
-  z-index: 1;
-}
-.pm-icon-btn {
-  position: relative;
-  width: 28px;
-  height: 28px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid transparent;
-  border-radius: 6px;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  transition: background 0.14s, color 0.14s, border-color 0.14s, transform 0.08s;
-}
-.pm-icon-btn:hover {
-  background: #fff;
-  color: var(--color-primary);
-  border-color: #e6e8ee;
-}
-.pm-icon-btn:active { transform: scale(0.92); }
-.pm-icon-btn:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 1px;
-}
-.pm-icon-btn.is-copied {
-  background: #def7ec;
-  color: #03543f;
-  border-color: #c3e4d4;
-}
-/* Floating "Copied" tooltip — appears briefly after a successful copy. */
-.pm-icon-btn::after {
-  content: 'Copied';
-  position: absolute;
-  bottom: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%) translateY(4px);
-  background: var(--color-primary);
-  color: #fff;
-  padding: 0.22rem 0.5rem;
-  border-radius: 4px;
-  font-family: var(--font-display);
-  font-size: 0.65rem;
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.16s, transform 0.16s;
-}
-.pm-icon-btn::before {
-  /* Small triangle pointing down from the tooltip */
-  content: '';
-  position: absolute;
-  bottom: calc(100% + 1px);
-  left: 50%;
-  width: 0;
-  height: 0;
-  border: 4px solid transparent;
-  border-top-color: var(--color-primary);
-  transform: translateX(-50%) translateY(4px);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.16s, transform 0.16s;
-}
-.pm-icon-btn.is-copied::after,
-.pm-icon-btn.is-copied::before {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-.pm-preview-wrap.is-editing .pm-icon-btn { background: #fff; }
+/* Native <details> accordions (Model info, Advanced settings) */
+.pm-acc { margin-top: 10px; border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; overflow: hidden; }
+.pm-acc-sum { display: flex; align-items: center; gap: 8px; padding: 10px 13px; list-style: none; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: var(--color-text); }
+.pm-acc-sum::-webkit-details-marker { display: none; }
+.pm-acc-sum:hover { background: color-mix(in srgb, var(--color-primary) 3.5%, #fff); }
+.pm-acc-hint { font-size: 0.74rem; font-weight: 500; color: var(--color-text-muted); }
+.pm-acc-sum .pm-chev { margin-left: auto; transition: transform .18s; }
+.pm-acc[open] > .pm-acc-sum .pm-chev { transform: rotate(180deg); }
+.pm-acc-body { padding: 4px 13px 14px; border-top: 1px solid var(--color-surface-border); }
+.pm-adv { margin-top: 16px; }
 
-/* Prominent copy button — wider than the icon-only edit/save
-   sibling, with a visible "Copy" label so users notice it
-   immediately. Sits inside .pm-preview-actions alongside the
-   icon-only edit button. */
-.pm-copy-btn {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  height: 30px;
-  padding: 0 0.7rem 0 0.55rem;
-  background: var(--color-bg);
-  border: 1.5px solid #c8d3e3;
-  border-radius: 8px;
-  color: #1e2d44;
-  font-family: var(--font-family);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: -0.005em;
-  cursor: pointer;
-  transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.06s, box-shadow 0.14s;
-  box-shadow: 0 1px 2px rgba(15, 26, 46, 0.06);
-}
-.pm-copy-btn svg { color: #2c4467; flex-shrink: 0; }
-.pm-copy-btn:hover {
-  background: #f5f8fd;
-  border-color: #95a8c5;
-  color: #0f1a2e;
-  box-shadow: 0 2px 5px rgba(15, 26, 46, 0.1);
-}
-.pm-copy-btn:active { transform: translateY(1px); }
-.pm-copy-btn:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-.pm-copy-btn.is-copied {
-  background: #def7ec;
-  border-color: #86d3b3;
-  color: #03543f;
-}
-.pm-copy-btn.is-copied svg { color: #03543f; }
-
-/* Models — chip row */
-.pm-models {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
-.pm-model {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.45rem 0.85rem;
-  background: #fff;
-  border: 1px solid #e2e6ee;
-  border-radius: 999px;
-  font-family: var(--font-family);
-  font-size: 0.84rem;
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text);
-  cursor: pointer;
-  transition: border-color 0.14s, background 0.14s, color 0.14s, box-shadow 0.14s;
-  white-space: nowrap;
-}
-.pm-model:hover {
-  border-color: var(--color-primary-light, #3a4a63);
-  color: var(--color-primary);
-}
-.pm-model[aria-pressed="true"] {
-  background: #eef2f7;
-  border-color: #c8d2e0;
-  color: var(--color-primary);
-  font-weight: var(--font-weight-semibold);
-  box-shadow: inset 0 0 0 1px #c8d2e0;
-}
-.pm-model[aria-pressed="true"]::before {
-  content: '';
-  width: 12px;
-  height: 12px;
-  margin-right: 0.4rem;
-  flex-shrink: 0;
-  background-color: var(--color-primary);
-  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='2,6.5 5,9.5 10,3.5'/></svg>") no-repeat center / contain;
-          mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='2,6.5 5,9.5 10,3.5'/></svg>") no-repeat center / contain;
-}
-
-/* Submit area — sits as a regular section; meta block below provides
-   the visual separator. */
-.pm-submit-area { margin-top: 0; }
-/* Primary on its own row; secondary "Open only" sits beneath as a quiet
-   text link. Helper text gets its own breathing room below both. */
-.pm-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.5rem;
-}
-.pm-submit {
-  align-self: stretch;
-  width: 100%;
-  height: 44px;
-  padding: 0 1.2rem;
-  background: var(--color-primary);
-  color: #fff;
-  border: none;
-  border-radius: 999px;
-  font-family: var(--font-family);
-  font-size: 0.9rem;
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: -0.005em;
-  cursor: pointer;
-  transition: background 0.14s, opacity 0.14s;
-}
-.pm-submit:hover { background: color-mix(in srgb, var(--color-primary) 88%, #000); }
-.pm-submit:disabled { opacity: 0.45; cursor: not-allowed; }
-
-/* Meta subsection — model info + disclaimer below the submit button.
-   Reads as a quiet footer block, not a primary section. */
-.pm-meta {
-  margin-top: 1rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid #f0f2f6;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-.pm-meta-line {
-  font-size: 0.74rem;
-  line-height: 1.5;
-  color: var(--color-text-light);
-}
-.pm-meta-label {
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-muted);
-  margin-right: 0.25rem;
-}
-.pm-meta-link {
-  color: #2563eb;
-  font-weight: var(--font-weight-regular, 400);
-  text-decoration: underline;
-}
-.pm-meta-link:hover { color: #1d4ed8; }
-.pm-meta-text { color: var(--color-text-light); }
-
-/* Submit area sits between the AI Model pills and the Model info dropdown. */
-.pm-submit-area { margin: 0 0 1.1rem; }
-
-/* === Collapsible disclosures inside the modal (Advanced settings,
-   Model info & disclaimer) === */
-.pm-disclosure-section { margin-bottom: 1rem; }
-.pm-disclosure-toggle {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-  background: #f7f8fa;
-  border: 1px solid #e7eaf0;
-  border-radius: 9px;
-  padding: 0.6rem 0.75rem;
-  cursor: pointer;
-  font-family: inherit;
-  text-align: left;
-  transition: background 0.12s, border-color 0.12s;
-}
-.pm-disclosure-toggle:hover { background: #f1f3f7; border-color: #dce0e8; }
-.pm-disclosure-toggle:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 1px; }
-.pm-disclosure-chev {
-  flex: 0 0 auto;
-  color: var(--color-text-muted);
-  transition: transform 0.16s ease;
-}
-.pm-disclosure-toggle[aria-expanded="true"] .pm-disclosure-chev { transform: rotate(180deg); }
-.pm-disclosure-title { font-size: 0.85rem; font-weight: 600; color: var(--color-primary); }
-.pm-disclosure-hint {
-  margin-left: auto;
-  font-size: 0.73rem;
-  color: var(--color-text-light);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.pm-disclosure-body {
-  padding: 0.85rem 0.15rem 0.15rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-}
-.pm-disclosure-body[hidden] { display: none; }
-
-/* Quiet variant — model info / disclaimer reads as a footer, not a control */
-.pm-disclosure-section-quiet { margin-bottom: 0.25rem; }
-.pm-disclosure-section-quiet .pm-disclosure-toggle {
-  background: transparent;
-  border-color: transparent;
-  padding: 0.45rem 0.2rem;
-}
-.pm-disclosure-section-quiet .pm-disclosure-toggle:hover { background: #f7f8fa; }
-.pm-disclosure-section-quiet .pm-disclosure-title { color: var(--color-text-muted); }
-.pm-disclosure-section-quiet .pm-disclosure-body { gap: 0.4rem; padding-top: 0.5rem; }
-
-/* Advanced-settings form fields */
-.pm-field-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.7rem;
-}
-.pm-field { display: flex; flex-direction: column; gap: 0.3rem; }
-.pm-flabel {
-  font-family: var(--font-family);
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--color-text-muted);
-}
-.pm-input-control {
-  width: 100%;
-  font-family: var(--font-family);
-  font-size: 0.88rem;
-  padding: 0.5rem 0.6rem;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: #fff;
-  color: var(--color-text);
-  transition: border-color 0.12s, box-shadow 0.12s;
-}
-.pm-input-control:focus {
-  outline: none;
-  border-color: var(--color-primary-light);
-  box-shadow: 0 0 0 3px rgba(58, 74, 99, 0.1);
-}
-.pm-adv-textarea { resize: vertical; min-height: 62px; line-height: 1.5; }
+.pm-field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; margin: 8px 0 10px; }
 @media (max-width: 640px) { .pm-field-grid { grid-template-columns: 1fr; } }
+.pm-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+.pm-field:last-child { margin-bottom: 0; }
+.pm-field-grid .pm-field { margin-bottom: 0; }
+.pm-field .pm-select-wrap { width: 100%; }
+.pm-flabel { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: #54607a; }
+.pm-flabel-note { font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--color-text-light); }
+.pm-adv-textarea { resize: vertical; min-height: 64px; line-height: 1.5; }
 
-/* === Editable prompt preview (always editable; re-syncs from advanced
-   settings) === */
-.pm-preview-wrap:focus-within {
-  border-color: var(--color-primary);
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(30, 45, 68, 0.08);
-}
-.pm-preview-input {
-  display: block;
-  width: 100%;
-  min-height: 150px;
-  max-height: 300px;
-  padding: 0.85rem 1rem;
-  padding-right: 3.9rem; /* room for the floating Copy button */
-  font-family: var(--font-family);
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: var(--color-text);
-  background: transparent;
-  border: none;
-  border-radius: 8px;
-  resize: vertical;
-  box-sizing: border-box;
-  white-space: pre-wrap;
-}
-.pm-preview-input:focus { outline: none; }
-@media (max-width: 640px) { .pm-preview-input { font-size: 16px; } }
-
-/* === AI Model accordion === */
-.pm-model-acc-toggle {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  width: 100%;
-  background: #f7f8fa;
-  border: 1px solid #e7eaf0;
-  border-radius: 9px;
-  padding: 0.62rem 0.8rem;
-  cursor: pointer;
-  font-family: inherit;
-  text-align: left;
-  transition: background 0.12s, border-color 0.12s;
-}
-.pm-model-acc-toggle:hover { background: #f1f3f7; border-color: #dce0e8; }
-.pm-model-acc-toggle:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 1px; }
-.pm-model-acc-lead { flex: 0 0 auto; font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted); }
-.pm-model-acc-current {
-  flex: 1 1 auto;
-  min-width: 0;
-  font-size: 0.92rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--color-primary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.pm-model-acc-toggle[aria-expanded="true"] .pm-disclosure-chev { transform: rotate(180deg); }
-.pm-model-acc-body { padding: 0.7rem 0.1rem 0.1rem; }
-.pm-model-acc-body[hidden] { display: none; }
-
-/* === Model info — discreet link + popover === */
-.pm-modelinfo { margin-top: 0.5rem; }
-.pm-modelinfo-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  background: none;
-  border: none;
-  padding: 0.2rem 0.1rem;
-  font-family: inherit;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  transition: color 0.12s;
-}
-.pm-modelinfo-toggle:hover { color: var(--color-primary); }
-.pm-modelinfo-chev { color: var(--color-text-light); transition: transform 0.16s ease; }
-.pm-modelinfo-toggle:hover .pm-modelinfo-chev { color: var(--color-primary); }
-.pm-modelinfo-toggle[aria-expanded="true"] .pm-modelinfo-chev { transform: rotate(180deg); }
-.pm-modelinfo-body {
-  margin-top: 0.4rem;
-  padding: 0.65rem 0.75rem;
-  background: var(--color-bg-light, #f7f8fa);
-  border: 1px solid #eceef3;
-  border-radius: 9px;
-}
-.pm-modelinfo-body[hidden] { display: none; }
-.pm-modelinfo-head { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.3rem; }
-.pm-modelinfo-icon { width: 16px; height: 16px; flex: 0 0 16px; display: inline-flex; align-items: center; justify-content: center; color: var(--color-primary); }
-.pm-modelinfo-head .pm-meta-link { font-size: 0.84rem; font-weight: 700; }
-.pm-modelinfo-text { margin: 0.2rem 0 0; font-size: 0.8rem; line-height: 1.5; color: var(--color-text-muted); }
+/* Model info body */
+.pm-modelinfo-head { margin-bottom: 4px; }
+.pm-meta-link { font-size: 0.85rem; font-weight: 700; color: #1d4ed8; text-decoration: none; }
+.pm-meta-link:hover { text-decoration: underline; }
+.pm-modelinfo-text { margin: 3px 0 0; font-size: 0.8rem; line-height: 1.5; color: var(--color-text-muted); }
 .pm-modelinfo-method strong { color: var(--color-text); font-weight: 600; }
-.pm-flabel-note { font-weight: 500; color: var(--color-text-light); text-transform: none; letter-spacing: 0; }
 
-/* === Discreet disclaimer under the submit button === */
-.pm-disclaimer {
-  margin: 0.7rem 0 0;
-  font-size: 0.72rem;
-  line-height: 1.5;
-  color: var(--color-text-light);
-}
+/* Submit + confirmation + disclaimer */
+.pm-submit { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 18px; padding: 12px 16px; border: none; border-radius: 11px; background: var(--color-primary); color: #fff; font-family: var(--font-family); font-size: 0.92rem; font-weight: 700; letter-spacing: -0.01em; cursor: pointer; transition: background .14s, transform .06s; }
+.pm-submit:hover { background: color-mix(in srgb, var(--color-primary) 88%, #000); }
+.pm-submit:active { transform: translateY(1px); }
+.pm-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+.pm-submit svg { flex: none; }
+.pm-copied-note { margin: 18px 0 0; padding: 12px 14px; border-radius: 11px; background: color-mix(in srgb, #2f8f63 8%, #fff); border: 1px solid color-mix(in srgb, #2f8f63 22%, transparent); font-size: 0.84rem; font-weight: 600; line-height: 1.45; color: #1f6e4b; text-align: center; }
+.pm-disclaimer { margin: 10px 2px 0; font-size: 0.74rem; line-height: 1.5; color: var(--color-text-muted); text-align: center; }
 
-/* Legacy class — no longer used */
-.prompt-modal { display: none; }
-
-/* Mobile tweaks for the redesigned panel */
 @media (max-width: 640px) {
-  .pm-header { padding: 0.85rem 0.95rem 0.75rem; }
-  .pm-body { padding: 0.85rem 0.95rem 0.85rem; }
-  /* Submit button stays left-aligned + content-width on mobile too —
-     full-width stretching was making it dominate the modal. */
-  .pm-actions { align-items: flex-start; }
-  .pm-submit { align-self: flex-start; }
-  .pm-title-name { font-size: 1.02rem; }
-  .pm-title-eyebrow { font-size: 0.64rem; }
+  .pm-head { padding: 13px 15px; }
+  .pm-body { padding: 14px 15px 16px; }
+  .pm-title-name { font-size: 1.05rem; }
 }
 
 /* === Related Topics === */

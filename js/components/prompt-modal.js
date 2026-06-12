@@ -29,6 +29,15 @@ let overlayEl = null;
 let panelEl = null;
 let modalState = null;
 
+// Shared glyphs — same language as the AI Insights modal (brand sparkle, chevron,
+// paper-plane send). Keeps Review & Submit visually identical to the rest of the
+// AI surfaces.
+const LOGO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
+const CHEV = '<svg class="pm-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+const ICON_SEND = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2.5L11 13"/><path d="M21.5 2.5L15 21l-4-8-8-4z"/></svg>';
+const ICON_COPY = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="8" height="9" rx="1.2"/><path d="M9.5 3.5V2.5a1 1 0 0 0-1-1h-5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1"/></svg>';
+const ICON_X = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg>';
+
 export function initPromptModal() {
   overlayEl = document.createElement('div');
   overlayEl.className = 'prompt-modal-overlay';
@@ -166,8 +175,8 @@ function selectedModel() {
   return getModelById(modalState.selectedModelId) || modalState.models[0] || null;
 }
 function getSubmitLabel(model) {
-  if (!model) return 'Send Prompt';
-  return `Send Prompt with ${model.name}`;
+  if (!model) return 'Submit prompt';
+  return `Submit to ${model.name}`;
 }
 function modelHelperText(model) {
   if (!model) return '';
@@ -180,11 +189,10 @@ function modelHelperText(model) {
 /* ---- render -------------------------------------------------------- */
 
 function renderPanelContent() {
-  const { count, models, selectedModelId, advancedOpen, modelOpen, perSubmission } = modalState;
+  const { count, models, selectedModelId, advancedOpen, perSubmission } = modalState;
   const prompt = getCurrentPrompt();
   const model = selectedModel();
 
-  const eyebrow = 'Review &amp; Submit';
   const title = (count > 1)
     ? `${count} shortcuts selected`
     : (modalState.shortcutName || 'Selected shortcut');
@@ -192,96 +200,64 @@ function renderPanelContent() {
     ? `<span class="pm-topic-chip" title="${escapeAttr(modalState.topicName)}">${escapeHTML(modalState.topicName)}</span>`
     : '';
 
-  const modelBtnsHTML = models.map(m => `
-    <button class="pm-model" type="button" data-model-id="${m.id}" ${m.id === selectedModelId ? 'aria-pressed="true"' : 'aria-pressed="false"'}>
-      <span class="pm-model-name">${escapeHTML(m.name)}</span>
-    </button>
-  `).join('');
-
-  const otOptions = '<option value="">— None —</option>' + simpleOutputOptions().map(o =>
+  const modelOptions = models.map(m =>
+    `<option value="${escapeAttr(m.id)}"${m.id === selectedModelId ? ' selected' : ''}>${escapeHTML(m.name)}</option>`).join('');
+  const otOptions = '<option value="">None</option>' + simpleOutputOptions().map(o =>
     `<option value="${escapeAttr(o.value)}"${o.value === perSubmission.outputType ? ' selected' : ''}>${escapeHTML(o.label)}</option>`).join('');
   const reasoningOptions = REASONING_LEVELS.map(l =>
     `<option value="${escapeAttr(l.id)}"${l.id === perSubmission.reasoning ? ' selected' : ''}>${escapeHTML(l.name)}</option>`).join('');
 
   panelEl.innerHTML = `
-    <div class="pm-header">
-      <div class="pm-title">
-        ${modalState.iconKey && count === 1 ? renderIcon(modalState.iconKey, 'pm-title-icon') : ''}
-        <div class="pm-title-text">
-          <span class="pm-title-eyebrow">${eyebrow}</span>
-          <h3 class="pm-title-name">${escapeHTML(title)}</h3>
-          ${topicChip ? `<div class="pm-title-meta">${topicChip}</div>` : ''}
-        </div>
-      </div>
-      <button type="button" class="pm-close" id="pm-close" aria-label="Close">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg>
-      </button>
+    <div class="pm-head">
+      <span class="pm-brandlock"><span class="pm-logo">${LOGO}</span><span class="pm-eyebrow">Review &amp; Submit</span></span>
+      <button type="button" class="pm-close" id="pm-close" aria-label="Close">${ICON_X}</button>
     </div>
 
     <div class="pm-body">
+      <div class="pm-titlerow">
+        <h3 class="pm-title-name">${escapeHTML(title)}</h3>
+        ${topicChip}
+      </div>
+
       <section class="pm-section">
         <div class="pm-section-head">
-          <span class="pm-section-label">Prompt Preview</span>
-          <button type="button" class="pm-reset" id="pm-reset" ${modalState.editedPrompt == null ? 'hidden' : ''}>Reset to generated</button>
+          <span class="pm-section-title">Prompt</span>
+          <button type="button" class="pm-reset" id="pm-reset" ${modalState.editedPrompt == null ? 'hidden' : ''}>Reset</button>
         </div>
         <div class="pm-preview-wrap">
-          <textarea class="pm-preview-input" id="pm-preview" aria-label="Prompt text — editable">${escapeHTML(prompt)}</textarea>
-          <div class="pm-preview-actions">
-            <button type="button" class="pm-icon-btn" id="pm-copy" aria-label="Copy prompt" title="Copy">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="8" height="9" rx="1.2"/><path d="M9.5 3.5V2.5a1 1 0 0 0-1-1h-5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1"/></svg>
-            </button>
-          </div>
+          <textarea class="pm-preview" id="pm-preview" aria-label="Prompt text — editable">${escapeHTML(prompt)}</textarea>
+          <button type="button" class="pm-copy" id="pm-copy" aria-label="Copy prompt" title="Copy">${ICON_COPY}</button>
         </div>
       </section>
 
       <section class="pm-section">
-        <div class="pm-section-label">AI Model</div>
-        <div class="pm-model-acc">
-          <button type="button" class="pm-model-acc-toggle" id="pm-model-toggle" aria-expanded="${modelOpen}" aria-controls="pm-model-body">
-            <span class="pm-model-acc-lead">Send to</span>
-            <span class="pm-model-acc-current" id="pm-model-current">${escapeHTML(model ? model.name : 'Choose a model')}</span>
-            <svg class="pm-disclosure-chev" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 4.5 6 8 9 4.5"/></svg>
-          </button>
-          <div class="pm-model-acc-body" id="pm-model-body" ${modelOpen ? '' : 'hidden'}>
-            <div class="pm-models" id="pm-models">${modelBtnsHTML}</div>
-          </div>
-        </div>
-        <div class="pm-modelinfo">
-          <button type="button" class="pm-modelinfo-toggle" id="pm-modelinfo-toggle" aria-expanded="false" aria-controls="pm-modelinfo-body">
-            <svg class="pm-disclosure-chev pm-modelinfo-chev" width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 4.5 6 8 9 4.5"/></svg>
-            Model info
-          </button>
-          <div class="pm-modelinfo-body" id="pm-modelinfo-body" hidden></div>
-        </div>
+        <label class="pm-sendto"><span class="pm-sendto-lead">Send to</span>
+          <span class="pm-select-wrap"><select class="pm-select" id="pm-model-select" aria-label="Choose AI model">${modelOptions}</select>${CHEV}</span>
+        </label>
+        <details class="pm-acc" id="pm-modelinfo">
+          <summary class="pm-acc-sum"><span>Model info</span>${CHEV}</summary>
+          <div class="pm-acc-body" id="pm-modelinfo-body"></div>
+        </details>
       </section>
 
-      <section class="pm-section pm-disclosure-section">
-        <button type="button" class="pm-disclosure-toggle" id="pm-adv-toggle" aria-expanded="${advancedOpen}" aria-controls="pm-adv-body">
-          <svg class="pm-disclosure-chev" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 4.5 6 8 9 4.5"/></svg>
-          <span class="pm-disclosure-title">Advanced settings</span>
-          <span class="pm-disclosure-hint">Reasoning, format, custom instructions</span>
-        </button>
-        <div class="pm-disclosure-body" id="pm-adv-body" ${advancedOpen ? '' : 'hidden'}>
+      <details class="pm-acc pm-adv"${advancedOpen ? ' open' : ''}>
+        <summary class="pm-acc-sum"><span class="pm-acc-title">Advanced settings</span><span class="pm-acc-hint">Reasoning, format, custom instructions</span>${CHEV}</summary>
+        <div class="pm-acc-body">
           <div class="pm-field-grid">
             <label class="pm-field"><span class="pm-flabel">Reasoning level</span>
-              <select id="pm-reasoning" class="pm-input-control">${reasoningOptions}</select></label>
+              <span class="pm-select-wrap"><select id="pm-reasoning" class="pm-input">${reasoningOptions}</select>${CHEV}</span></label>
             <label class="pm-field"><span class="pm-flabel">Output type</span>
-              <select id="pm-output" class="pm-input-control">${otOptions}</select></label>
+              <span class="pm-select-wrap"><select id="pm-output" class="pm-input">${otOptions}</select>${CHEV}</span></label>
           </div>
           <label class="pm-field"><span class="pm-flabel">Secondary topics</span>
-            <input id="pm-secondary" class="pm-input-control" type="text" placeholder="e.g. trade policy" value="${escapeAttr(perSubmission.secondaryTopic)}"></label>
+            <input id="pm-secondary" class="pm-input" type="text" placeholder="e.g. trade policy" value="${escapeAttr(perSubmission.secondaryTopic)}"></label>
           <label class="pm-field"><span class="pm-flabel">Custom instructions <span class="pm-flabel-note">— this submission only</span></span>
-            <textarea id="pm-custom" class="pm-input-control pm-adv-textarea" rows="3" placeholder="A one-off instruction for this prompt">${escapeHTML(perSubmission.customInstructions)}</textarea></label>
+            <textarea id="pm-custom" class="pm-input pm-adv-textarea" rows="3" placeholder="A one-off instruction for this prompt">${escapeHTML(perSubmission.customInstructions)}</textarea></label>
         </div>
-      </section>
+      </details>
 
-      <section class="pm-section pm-submit-area">
-        <div class="pm-section-label">Prompt Submission</div>
-        <div class="pm-actions">
-          <button class="pm-submit" id="pm-submit" type="button"${model ? '' : ' disabled'}>${escapeHTML(getSubmitLabel(model))}</button>
-        </div>
-        <p class="pm-disclaimer">Standard Topic isn’t responsible for actions taken once you leave this site.</p>
-      </section>
+      <button class="pm-submit" id="pm-submit" type="button"${model ? '' : ' disabled'}>${ICON_SEND}<span id="pm-submit-label">${escapeHTML(getSubmitLabel(model))}</span></button>
+      <p class="pm-disclaimer">Opens ${escapeHTML(model ? model.name : 'the AI model')} in a new tab — the prompt auto-fills or is copied to your clipboard. Standard Topic isn’t responsible for actions taken once you leave the site.</p>
     </div>
   `;
 
@@ -309,36 +285,22 @@ function bindEvents() {
     toggleReset();
   });
 
-  // Model accordion
-  panelEl.querySelector('#pm-model-toggle').addEventListener('click', () => {
-    modalState.modelOpen = !modalState.modelOpen;
-    toggleDisclosure('#pm-model-toggle', '#pm-model-body', modalState.modelOpen);
-  });
-  panelEl.querySelector('#pm-models').addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-model-id]');
-    if (!btn) return;
-    modalState.selectedModelId = btn.dataset.modelId;
+  // Model picker — a single "Send to" select (matches the AI Insights modal).
+  panelEl.querySelector('#pm-model-select').addEventListener('change', (e) => {
+    modalState.selectedModelId = e.target.value;
     setPreferredModelId(modalState.selectedModelId);
-    panelEl.querySelectorAll('.pm-model').forEach(b => {
-      b.setAttribute('aria-pressed', b.dataset.modelId === modalState.selectedModelId ? 'true' : 'false');
-    });
     syncModelUI();
-    // Collapse the accordion to confirm the choice.
-    modalState.modelOpen = false;
-    toggleDisclosure('#pm-model-toggle', '#pm-model-body', false);
   });
 
-  // Model info — discreet inline accordion
-  panelEl.querySelector('#pm-modelinfo-toggle').addEventListener('click', () => {
-    modalState.modelInfoOpen = !modalState.modelInfoOpen;
-    if (modalState.modelInfoOpen) buildModelInfoBody();
-    toggleDisclosure('#pm-modelinfo-toggle', '#pm-modelinfo-body', modalState.modelInfoOpen);
+  // Model info — native <details>; fill on first open.
+  panelEl.querySelector('#pm-modelinfo').addEventListener('toggle', (e) => {
+    if (e.target.open) buildModelInfoBody();
   });
 
-  // Advanced settings — all per-submission one-offs, kept in modalState only.
-  panelEl.querySelector('#pm-adv-toggle').addEventListener('click', () => {
-    modalState.advancedOpen = !modalState.advancedOpen;
-    toggleDisclosure('#pm-adv-toggle', '#pm-adv-body', modalState.advancedOpen);
+  // Advanced settings is a native <details>; track its open state so a re-render
+  // (from an edit) keeps it open.
+  panelEl.querySelector('.pm-adv').addEventListener('toggle', (e) => {
+    modalState.advancedOpen = e.target.open;
   });
   panelEl.querySelector('#pm-reasoning').addEventListener('change', (e) => {
     modalState.perSubmission.reasoning = e.target.value; regenPreview();
@@ -381,11 +343,14 @@ function toggleDisclosure(toggleSel, bodySel, open) {
 // (if open) the model-info accordion — without a full re-render.
 function syncModelUI() {
   const model = selectedModel();
-  const current = panelEl.querySelector('#pm-model-current');
-  if (current) current.textContent = model ? model.name : 'Choose a model';
+  const label = panelEl.querySelector('#pm-submit-label');
+  if (label) label.textContent = getSubmitLabel(model);
   const submit = panelEl.querySelector('#pm-submit');
-  if (submit) { submit.textContent = getSubmitLabel(model); submit.disabled = !model; }
-  if (modalState.modelInfoOpen) buildModelInfoBody();
+  if (submit) submit.disabled = !model;
+  const disc = panelEl.querySelector('.pm-disclaimer');
+  if (disc) disc.textContent = `Opens ${model ? model.name : 'the AI model'} in a new tab — the prompt auto-fills or is copied to your clipboard. Standard Topic isn’t responsible for actions taken once you leave the site.`;
+  const mi = panelEl.querySelector('#pm-modelinfo');
+  if (mi && mi.open) buildModelInfoBody();
 }
 
 // Fill the Model info accordion with the model's name, what it is, and how
@@ -426,9 +391,12 @@ async function doSubmit() {
   // copy the prompt, then swap the button for a discreet confirmation.
   openModel(model, prompt);
   copyPrompt(prompt);
-  const actions = panelEl.querySelector('.pm-submit-area .pm-actions');
-  if (actions) {
-    actions.innerHTML = `<p class="ti-copied-note pm-copied-note">Prompt copied to clipboard. Paste in ${escapeHTML(model.name)} if not auto-submitted.</p>`;
+  const submit = panelEl.querySelector('#pm-submit');
+  if (submit) {
+    const note = document.createElement('p');
+    note.className = 'pm-copied-note';
+    note.textContent = `Opened ${model.name} · prompt copied to your clipboard — paste it in if it didn’t auto-fill.`;
+    submit.replaceWith(note);
   }
 }
 
