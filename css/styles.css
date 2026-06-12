@@ -13391,7 +13391,9 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   #section-newsfeed .newsfeed-card .newsfeed-filters {
     margin: 0; padding: 0; display: flex; gap: 10px; flex: 0 1 auto; justify-content: flex-end; background: transparent; border: none; border-radius: 0;
   }
-  #section-newsfeed .newsfeed-card .nf-search-wrap { width: 260px; max-width: 100%; }
+  /* Fixed, modest width — flex-grow 0 so the search never balloons on wide
+     viewports (#103); shrinkable so it never pushes the sort past the edge. */
+  #section-newsfeed .newsfeed-card .nf-search-wrap { flex: 0 1 240px; width: auto; max-width: 240px; }
   /* Stories run the full card width — drop the scroll-wrap's horizontal padding
      so each story's clickable link + hover fill span edge-to-edge (no dead,
      un-clickable gutter, #244). The text inset moves onto the link/foot so titles

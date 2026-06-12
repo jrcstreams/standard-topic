@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp166';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp166';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp167';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp167';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -77,6 +77,10 @@ function scrollHeaderToTop(el) {
 }
 
 const SPARK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>';
+// FILLED sparkle — the exact mark used to flag AI-generated text on the homepage
+// (ai-provenance SPARK_FILL). Used for the inline section flags + the legend so
+// the modal's "AI-generated text" marker matches the rest of the app (#101/#102).
+const SPARK_FILL = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
 // Inline "this block is AI" tag, attached directly to the brief body (the
 // "AI Brief" header sits above the action buttons + rule, so the prose itself
 // reads unmarked without it).
@@ -586,7 +590,7 @@ function renderNews(d) {
         <div class="im-brief-head" id="im-brief-head"><span class="im-brief-logo">${LOGO}</span><span class="im-brief-title">AI Brief</span></div>
         <p class="im-disclaimer">An AI-generated summary of this story. Please verify important details with the linked sources.</p>
         <div class="ai-prov-slot im-prov-link" id="im-prov" role="link" tabindex="0" title="Jump to Sources &amp; Coverage"></div>
-        <div class="im-aiflag-legend">${SPARK}<span>= AI-generated text</span></div>
+        <div class="im-aiflag-legend">${SPARK_FILL}<span>= AI-generated text</span></div>
         <hr class="im-rule">
         ${briefSkeleton()}
       </section>
@@ -619,7 +623,7 @@ function renderNews(d) {
       if (data && data.content) {
         ctx.sources = data.sources || [];
         ctx.headlines = Array.isArray(data.headlines) ? data.headlines : [];
-        briefEl.innerHTML = renderBriefBody(normalizeNewsBrief(data.content), null, { aiFlag: SPARK }); briefEl.classList.add('ai-reveal');
+        briefEl.innerHTML = renderBriefBody(normalizeNewsBrief(data.content), null, { aiFlag: SPARK_FILL }); briefEl.classList.add('ai-reveal');
         const prov = panelEl.querySelector('#im-prov');
         if (prov) prov.innerHTML = aiProvenanceHTML(ctx.sources, { badge: false });
       } else { briefEl.innerHTML = '<p class="im-empty">AI brief unavailable right now.</p>'; }
