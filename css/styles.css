@@ -14650,10 +14650,11 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 
 /* "✦ = AI-generated text" legend beneath the sources line (#88). */
 .im-aiflag-legend { display: flex; align-items: center; gap: 6px; margin: 6px 0 0; font-size: 0.76rem; font-weight: 600; color: var(--color-text-muted); }
-.im-aiflag-legend svg { width: 13px; height: 13px; color: var(--color-primary); flex: none; }
+.im-aiflag-legend svg { width: 13px; height: 13px; color: #1d4ed8; flex: none; }
 
-/* Inline AI sparkle on the first line of each AI-generated section. */
-.ai-flag { display: inline-flex; align-items: center; vertical-align: -2px; margin-right: 5px; color: var(--color-primary); }
+/* Inline AI sparkle on the first line of each AI-generated section — the same
+   blue used to flag AI-generated text everywhere else (.ai-spark-mark). */
+.ai-flag { display: inline-flex; align-items: center; vertical-align: -2px; margin-right: 5px; color: #1d4ed8; }
 .ai-flag svg { width: 13px; height: 13px; }
 
 /* Story Prev/Next pills in the top header row (#87). */
