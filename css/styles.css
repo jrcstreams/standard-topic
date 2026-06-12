@@ -14649,8 +14649,11 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .im-brief-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; letter-spacing: -0.015em; text-transform: none; color: #16243d; }
 
 /* "Sources:" line under the AI Brief — clickable jump to Sources & Coverage (#88). */
-.im-prov-link { cursor: pointer; border-radius: 7px; transition: background .14s; outline: none; }
-.im-prov-link:hover { background: color-mix(in srgb, var(--color-primary) 5%, transparent); text-decoration: underline; text-underline-offset: 2px; }
+/* Hugs the text (inline-block), not the full modal width; subtle tint + a light
+   colour shift on hover, no underline (#105). */
+.im-prov-link { cursor: pointer; display: inline-block; max-width: 100%; border-radius: 7px; padding: 3px 8px; margin: 0 -8px; transition: background .14s, color .14s; outline: none; }
+.im-prov-link:hover { background: color-mix(in srgb, var(--color-primary) 6%, transparent); }
+.im-prov-link:hover .ai-prov-srcs, .im-prov-link:hover .ai-prov-srcs-lead { color: var(--color-primary); }
 .im-prov-link:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 35%, transparent); }
 
 /* "✦ = AI-generated text" legend beneath the sources line (#88). */
