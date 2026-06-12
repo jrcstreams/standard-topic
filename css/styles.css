@@ -3775,17 +3775,19 @@ html, body, #app {
 /* While open, lift above later sibling cards so the dropdown isn't painted
    over by the next story's row. */
 .news-ai.is-open { z-index: 50; }
+/* Refined, low-weight AI affordance: a faint blue chip (blue sparkle + blue
+   text) that recedes next to the bold headline at rest and fills solid blue on
+   hover/open. Speaks the same blue-sparkle language as the rest of the AI system. */
 .news-ai-trigger {
-  display: inline-flex; align-items: center; gap: 0.24rem;
-  padding: 0.34rem 0.56rem; border: none; border-radius: 999px;
-  background: #3f6cb8; color: #fff;
-  font-family: var(--font-family); font-size: 0.8rem; font-weight: 600;
-  cursor: pointer; white-space: nowrap; transition: background 0.14s, transform 0.14s, box-shadow 0.14s;
-  box-shadow: 0 1px 5px -1px rgba(28, 58, 107, 0.24);
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.28rem 0.6rem; border: 1px solid color-mix(in srgb, #1d4ed8 20%, transparent); border-radius: 999px;
+  background: color-mix(in srgb, #1d4ed8 7%, #fff); color: #1d4ed8;
+  font-family: var(--font-family); font-size: 0.75rem; font-weight: 600; letter-spacing: -0.005em;
+  cursor: pointer; white-space: nowrap; transition: background 0.14s, color 0.14s, border-color 0.14s;
 }
 .news-ai-trigger .news-ai-spark { margin-right: -0.02rem; }
 .news-ai-trigger:hover,
-.news-ai.is-open .news-ai-trigger { background: var(--color-primary); color: #fff; transform: translateY(-1px); }
+.news-ai.is-open .news-ai-trigger { background: #1d4ed8; border-color: #1d4ed8; color: #fff; }
 .news-ai-spark { flex: none; color: currentColor; }
 /* Share + Copy link — same shape as the AI Insights label but quiet grey,
    inline in the footer row. */
