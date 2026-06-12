@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp179';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp179';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp180';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp180';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -255,10 +255,17 @@ export function renderAIIntelligence(container, scope) {
     // overlays the top edge without shifting the brief. Tapping it scrolls back up.
     const stickyCtx = tabMode || scope.inModal;   // sticky sub-header in tab mode AND the modal
     const condensed = stickyCtx
-      ? `<button type="button" class="aii-condensed" aria-hidden="true">
-           <span class="aii-condensed-eyebrow">${esc(p.label || '')}</span>
-           <span class="aii-condensed-title">${esc(s.name)}</span>
-         </button>`
+      ? `<div class="aii-condensed" aria-hidden="true">
+           <button type="button" class="aii-condensed-top" data-cond-top>
+             <span class="aii-condensed-eyebrow">${esc(topicTitle)}${p.label ? ` &middot; ${esc(p.label)}` : ''}</span>
+             <span class="aii-condensed-title">${esc(s.name)}</span>
+           </button>
+           <div class="aii-condensed-acts">
+             <button type="button" class="aii-cond-act" data-acc="sources">Sources</button>
+             <button type="button" class="aii-cond-act" data-acc="explore">Ask AI</button>
+             <button type="button" class="aii-cond-act" data-acc="web">Web Search</button>
+           </div>
+         </div>`
       : '';
     const sects = (c && c.sections) || [];
     const prev = curIdx > 0 ? sects[curIdx - 1] : null;
@@ -309,6 +316,26 @@ export function renderAIIntelligence(container, scope) {
   // The deduped news items for THIS section (grounding citations first, RSS feed
   // pooled in as fallback). Shared by the "In the news" list AND the AI provenance
   // line, so the named publishers match the links shown below.
+  // AI Intelligence insight bodies arrive as a flat blob (lead prose + bullets),
+  // unlike the news brief's labelled sections. Wrap them into Summary (the lead
+  // prose) + Key Takeaways (the bullets) so each insight reads as structured
+  // intelligence with section icons + inline AI flags (#143).
+  function sectionizeInsight(body) {
+    const text = String(body || '').trim();
+    if (!text || /^[ \t]*#{2,4}\s+/m.test(text)) return text; // already has headers
+    const intro = []; const bullets = [];
+    for (const ln of text.split('\n')) {
+      if (/^\s*[*\-•]\s+/.test(ln)) bullets.push(ln);
+      else if (bullets.length) { if (ln.trim()) bullets.push(ln); }   // wrapped bullet line
+      else intro.push(ln);
+    }
+    const parts = [];
+    const introTxt = intro.join('\n').trim();
+    const bulletsTxt = bullets.join('\n').trim();
+    if (introTxt) parts.push(`### Summary\n${introTxt}`);
+    if (bulletsTxt) parts.push(`### Key Takeaways\n${bulletsTxt}`);
+    return parts.length ? parts.join('\n\n') : text;
+  }
   function sectionNewsItems() {
     const c = cache[curGroup]; if (!c) return [];
     const sections = c.sections || [];
@@ -356,10 +383,12 @@ export function renderAIIntelligence(container, scope) {
     return out;
   }
   function headlineListHTML() {
+    // Same rich rows as the News/Trend Sources & Coverage (title + publisher ·
+    // date), so the type + styling match across the family (#143).
     const rows = sectionNewsItems().map((x) =>
-      `<li class="aii-hl-row"><a class="aii-hl-link" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer">${esc(x.title)}</a>${x.meta ? `<span class="aii-hl-src">${esc(x.meta)}</span>` : ''}</li>`);
+      `<a class="im-cov-row" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span>${x.meta ? `<span class="im-cov-host">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`);
     if (!rows.length) return '';
-    return `<div class="aii-hl"><div class="aii-hl-head aii-hl-head--icon">${SOURCES_BADGE}<span>Sources &amp; Coverage</span></div><ul class="aii-hl-list">${rows.join('')}</ul></div>`;
+    return `<div class="im-coverage im-coverage--inline"><div class="im-section-title im-section-title--icon">${SOURCES_BADGE}<span>Sources &amp; Coverage</span></div><div class="im-coverage-list">${rows.join('')}</div></div>`;
   }
   // "Explore further on web" — the full Web Sources platform picker (source
   // types → platforms), searching this topic. Mirrors the Web Sources card.
@@ -484,7 +513,8 @@ export function renderAIIntelligence(container, scope) {
       }
     }, { root: scrollRoot, threshold: 0 });
     aiiObserver.observe(ov);
-    cond.addEventListener('click', () => scrollRoot.scrollTo({ top: 0, behavior: 'smooth' }));
+    const condTop = cond.querySelector('[data-cond-top]') || cond;
+    condTop.addEventListener('click', () => scrollRoot.scrollTo({ top: 0, behavior: 'smooth' }));
   }
 
   function wire() {
@@ -497,7 +527,7 @@ export function renderAIIntelligence(container, scope) {
       setTimeout(() => {
         if (stage.querySelector('.aii-content-body') !== bodyEl) return;
         bodyEl.removeAttribute('data-loading');
-        bodyEl.innerHTML = renderBriefBody(s.body, null, { aiFlag: LOGO });
+        bodyEl.innerHTML = renderBriefBody(sectionizeInsight(s.body), null, { aiFlag: LOGO });
         bodyEl.classList.add('ai-reveal');
         // Reveal the real headline links with the brief (they're not part of the
         // synthesized body, so they live in their own block below the rule).
@@ -525,24 +555,30 @@ export function renderAIIntelligence(container, scope) {
     }));
     // Sources / Ask AI / Web Search. Sources jumps to the Sources & Coverage list;
     // Ask AI + Web Search open their panel in place. Only one panel open at a time.
-    stage.querySelectorAll('.aii-actbtn, .aii-qlink-btn').forEach((btn) => btn.addEventListener('click', () => {
+    stage.querySelectorAll('.aii-actbtn, .aii-qlink-btn, .aii-cond-act').forEach((btn) => btn.addEventListener('click', (e) => {
+      e.stopPropagation();   // sticky-bar buttons must not also trigger scroll-to-top
       const name = btn.dataset.acc;
+      const fromCond = btn.classList.contains('aii-cond-act');
+      const scrollRoot = scope.inModal ? (container.closest('.aii-modal-body') || container) : stage;
       if (name === 'sources') {
         const hl = stage.querySelector('.aii-headlines');
         if (hl && hl.firstChild) hl.scrollIntoView({ behavior: 'smooth', block: 'start' });
         return;
       }
       const body = stage.querySelector(`[data-accbody="${name}"]`);
-      const willOpen = btn.getAttribute('aria-expanded') !== 'true';
-      stage.querySelectorAll('.aii-actbtn').forEach((b) => b.setAttribute('aria-expanded', 'false'));
+      // From the sticky bar the panel lives up in the (scrolled-away) overview
+      // card — always open it and jump the body back to the top so it's visible.
+      const willOpen = fromCond || btn.getAttribute('aria-expanded') !== 'true';
+      stage.querySelectorAll('.aii-actbtn, .aii-qlink-btn').forEach((b) => b.setAttribute('aria-expanded', 'false'));
       stage.querySelectorAll('.aii-acc').forEach((a) => a.classList.remove('is-open'));
       if (willOpen) {
-        btn.setAttribute('aria-expanded', 'true');
+        stage.querySelectorAll(`[data-acc="${name}"]:not(.aii-cond-act)`).forEach((b) => b.setAttribute('aria-expanded', 'true'));
         if (body && !body.dataset.ready) {
           body.innerHTML = name === 'web' ? webCatsHTML() : exploreHomeHTML();
           body.dataset.ready = '1';
         }
         body && body.classList.add('is-open');
+        if (fromCond) scrollRoot.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }));
     // "Explore further on web" is now native <details> accordions (#30) — each

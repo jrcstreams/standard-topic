@@ -14206,10 +14206,17 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    scroll container) once the overview card scrolls out (JS toggles .is-on).
    Collapsed to nothing until then so it overlays the top edge without shifting
    the brief. top:0 is the stage's scrollport top — right under the subtabs. */
-.aii-condensed { position: sticky; top: 0; z-index: 5; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; width: 100%; text-align: left; border: none; border-bottom: 1px solid var(--color-surface-border); background: var(--color-bg, #fff); padding: 0 2px; max-height: 0; overflow: hidden; opacity: 0; pointer-events: none; cursor: pointer; transition: max-height .2s ease, opacity .15s ease, padding .2s ease; }
-.aii-condensed.is-on { max-height: 64px; opacity: 1; pointer-events: auto; padding: 9px 2px 8px; }
-.aii-condensed-eyebrow { font-size: 0.62rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--color-text-light); }
-.aii-condensed-title { font-family: var(--font-display); font-size: 0.96rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-primary); line-height: 1.2; }
+/* Sticky condensed bar: topic · path + insight title on the left, the same
+   Sources / Ask AI / Web Search links on the right (#143). */
+.aii-condensed { position: sticky; top: 0; z-index: 5; display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; width: 100%; border: none; border-bottom: 1px solid var(--color-surface-border); background: var(--color-bg, #fff); padding: 0 2px; max-height: 0; overflow: hidden; opacity: 0; pointer-events: none; transition: max-height .2s ease, opacity .15s ease, padding .2s ease; }
+.aii-condensed.is-on { max-height: 60px; opacity: 1; pointer-events: auto; padding: 8px 2px; }
+.aii-condensed-top { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; min-width: 0; flex: 1 1 auto; border: none; background: none; cursor: pointer; padding: 0; text-align: left; font-family: inherit; }
+.aii-condensed-eyebrow { font-size: 0.62rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--color-text-light); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.aii-condensed-title { font-family: var(--font-display); font-size: 0.96rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-primary); line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.aii-condensed-acts { display: inline-flex; align-items: center; flex: none; }
+.aii-cond-act { background: none; border: none; font-family: var(--font-family); font-size: 0.74rem; font-weight: 600; color: #1d4ed8; cursor: pointer; padding: 2px 0; transition: color .14s; }
+.aii-cond-act:hover { text-decoration: underline; text-underline-offset: 2px; }
+.aii-cond-act:not(:last-child) { margin-right: 9px; padding-right: 9px; border-right: 1px solid var(--color-surface-border); }
 /* In tab mode the subtabs ARE the path nav, so hide the section menu's back row
    (Back to AI Intelligence + Updated pill). Drilling into a section keeps its
    own "Back to <path>" link. The section header sits directly under the tabs. */
