@@ -1506,7 +1506,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       </div>
     `;
     homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });
-    renderTrendingHome(container.querySelector('#home-trending'), { limit: 4 });
+    renderTrendingHome(container.querySelector('#home-trending'), { limit: 7 });
     const aiiHome = container.querySelector('#section-aii-home');
     if (aiiHome) {
       const homeDesc = {};
