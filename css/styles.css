@@ -13595,7 +13595,9 @@ body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; }
    type, a 2-line summary cap, and tighter rows so more trends fit at once. Scoped
    to #home-trending so the Trending modal stays comfortable. */
 #home-trending .trend-card-trigger { padding: 0.5rem 0.55rem; }
-#home-trending .trend-card-main { gap: 0.16rem; }
+/* Even vertical rhythm: the meta line sits balanced between the title and the
+   AI summary (equal gap above and below), not hugging the title. */
+#home-trending .trend-card-main { gap: 5px; }
 #home-trending .trend-card-head { gap: 0.45rem; }
 #home-trending .trend-card-icon svg { width: 16px; height: 16px; }
 #home-trending .trend-card-title { font-size: clamp(0.9rem, 0.82rem + 0.4vw, 1rem); line-height: 1.22; }
@@ -13603,7 +13605,7 @@ body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; }
    distinct from the lighter AI summary beneath it so they don't blur together. */
 #home-trending .trend-card-meta { font-size: clamp(0.68rem, 0.64rem + 0.2vw, 0.72rem); font-weight: 600; color: #5b6679; }
 #home-trending .trend-card-summary {
-  font-size: clamp(0.72rem, 0.68rem + 0.2vw, 0.76rem); line-height: 1.36; margin-top: 4px; color: #76829b;
+  font-size: clamp(0.72rem, 0.68rem + 0.2vw, 0.76rem); line-height: 1.36; margin-top: 0; color: #76829b;
   display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 #home-trending .trend-card-summary .ai-spark-mark { margin-right: 4px; vertical-align: -1px; }
