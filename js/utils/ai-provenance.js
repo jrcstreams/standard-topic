@@ -7,7 +7,7 @@
 // Two shapes:
 //   compact (trending cards, no other AI label) → "✦ AI · 5 sources"
 //   full    (brief surfaces that already say "AI Brief") → "Sources: Reuters, AP +3"
-import { resolveSource } from '../components/newsfeed.js?v=20260612-revamp167';
+import { resolveSource } from '../components/newsfeed.js?v=20260612-revamp170';
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
 
@@ -80,9 +80,9 @@ export function aiProvenanceHTML(sources, opts = {}) {
     const names = list.slice(0, 3).map((s) => esc(s.name)).join(', ');
     const extra = n > 3 ? ` +${n - 3}` : '';
     attr = `<span class="ai-prov-srcs"><span class="ai-prov-srcs-lead">Sources:</span> ${names}${extra}</span>`;
-  } else {
-    attr = '<span class="ai-prov-srcs ai-prov-srcs--feed">Based on our news feed</span>';
   }
+  // No cited sources → show nothing (the old "Based on our news feed" line was
+  // noise, #111).
   if (!badgeHTML && !attr) return '';
   return `<div class="ai-prov${compact ? ' ai-prov--compact' : ''}">${badgeHTML}${attr}</div>`;
 }

@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp167';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp167';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp170';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp170';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -454,6 +454,13 @@ function wireActions(ctx) {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const name = btn.dataset.panel;
+      // Sources is no longer an accordion — it jumps to the Sources & Coverage
+      // section at the bottom of the brief (#109).
+      if (name === 'sources') {
+        const cov = panelEl.querySelector('#im-coverage');
+        if (cov && !cov.hidden) cov.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
       const body = panelEl.querySelector(`[data-body="${name}"]`);
       // A condensed-bar trigger lives in the sticky header while its panel is
       // scrolled out of view up top — so jump the body back to the overview
@@ -466,13 +473,13 @@ function wireActions(ctx) {
       if (willOpen) {
         // Mirror the open state onto every trigger that shares this panel.
         panelEl.querySelectorAll(`[data-panel="${name}"]`).forEach(b => b.setAttribute('aria-expanded', 'true'));
-        if (name === 'sources' && body && !body.dataset.ready) { body.innerHTML = sourcesListHTML(ctx.sources, ctx.origUrl); body.dataset.ready = '1'; }
         if (name === 'explore' && explorePanel && !explorePanel.dataset.ready) { explorePanel.innerHTML = exploreHomeHTML(); explorePanel.dataset.ready = '1'; }
         if (name === 'web' && wsPanel && !wsPanel.dataset.ready) { wsPanel.innerHTML = webSourcesCategoriesHTML(ctx.webTerm || ''); wsPanel.dataset.ready = '1'; }
         body && body.classList.add('is-open');
-        const bodyEl = panelEl.querySelector('.im-body');
-        if (fromCond && bodyEl) bodyEl.scrollTo({ top: 0, behavior: 'smooth' });
-        else scrollHeaderToTop(btn);
+        // Open in place — don't scroll the body (#106), so the reader keeps
+        // context. Only a condensed-bar trigger (its panel is up at the overview,
+        // scrolled away) jumps the body back to the top.
+        if (fromCond) { const bodyEl = panelEl.querySelector('.im-body'); if (bodyEl) bodyEl.scrollTo({ top: 0, behavior: 'smooth' }); }
       }
     });
   });
@@ -582,7 +589,6 @@ function renderNews(d) {
           <button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">Ask AI</button>
           <button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">Web Search</button>
         </div>
-        <div class="im-acc" data-body="sources" id="im-sources-panel"></div>
         <div class="im-acc" data-body="explore" id="im-explore-panel"></div>
         <div class="im-acc" data-body="web" id="im-web-panel"></div>
       </section>
@@ -625,12 +631,10 @@ function renderNews(d) {
         ctx.headlines = Array.isArray(data.headlines) ? data.headlines : [];
         briefEl.innerHTML = renderBriefBody(normalizeNewsBrief(data.content), null, { aiFlag: SPARK_FILL }); briefEl.classList.add('ai-reveal');
         const prov = panelEl.querySelector('#im-prov');
-        if (prov) prov.innerHTML = aiProvenanceHTML(ctx.sources, { badge: false });
+        if (prov) { prov.innerHTML = aiProvenanceHTML(ctx.sources, { badge: false }); prov.hidden = !prov.textContent.trim(); }
       } else { briefEl.innerHTML = '<p class="im-empty">AI brief unavailable right now.</p>'; }
     } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
-    // Fill the Sources panel + the Sources & Coverage card from the citations.
-    const srcPanel = panelEl.querySelector('#im-sources-panel');
-    if (srcPanel) { srcPanel.innerHTML = sourcesListHTML(ctx.sources, ctx.origUrl); srcPanel.dataset.ready = '1'; }
+    // Fill the Sources & Coverage card from the related coverage.
     const covList = panelEl.querySelector('#im-coverage-list'), cov = panelEl.querySelector('#im-coverage');
     const covRows = coverageListHTML(ctx.headlines, ctx.sources, ctx.origUrl);
     if (cov && covRows) { covList.innerHTML = covRows; cov.hidden = false; }
