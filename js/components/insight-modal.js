@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp170';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp170';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp172';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp172';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -641,39 +641,14 @@ function renderNews(d) {
   })();
 }
 
-// "In the news" links rendered under a brief (trends/overviews). Grounding
-// citations FIRST (the live web pages the AI actually cited — broad reach), with
-// our RSS feed as a SILENT fallback only when grounding produced nothing
-// (budget exhausted / niche topic), so the list is never blank. `sources` is a
-// flat citation array or a per-section map; `headlines` is the RSS fallback.
+// "Sources & Coverage" under a trend brief — the SAME rich rows (headline +
+// publisher · date) the news modal uses, so trends match (#114). Rich coverage
+// only (no bare grounding domains); the cited publishers stay in the "Sources:"
+// line above. Hidden when we have no related coverage.
 function inTheNewsHTML(sources, headlines) {
-  // Prefer our rich related coverage (title + publisher · date); fall back to the
-  // grounding citations (publisher domain only) when we have no feed coverage.
-  let list = [];
-  if (Array.isArray(headlines) && headlines.length) list = headlines;
-  else if (Array.isArray(sources) && sources.length) list = sources;
-  else if (sources && typeof sources === 'object') { const f = Object.values(sources).flat(); if (f.length) list = f; }
-  const seen = new Set(); const rows = [];
-  for (const h of list) {
-    const uri = (h && (h.uri || h.url)) || ''; if (!uri) continue;
-    const key = uri.toLowerCase(); if (seen.has(key)) continue; seen.add(key);
-    let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
-    let title, meta;
-    if (h && (h.source || h.date)) {                 // rich RSS row
-      title = String(h.title || '').trim() || host;
-      meta = [(h.source || '').trim() || host, relTime(h.date)].filter(Boolean).join(' · ');
-    } else {                                          // grounding citation (domain only)
-      const dom = resolveSource({ title: h && h.title, uri }).domain || host;
-      title = String((h && h.title) || '').trim();
-      if (!title || /^https?:/i.test(title)) title = dom;
-      meta = (dom && dom.toLowerCase() !== title.toLowerCase()) ? dom : '';
-    }
-    if (!title) continue;
-    rows.push(`<li class="aii-hl-row"><a class="aii-hl-link" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a>${meta ? `<span class="aii-hl-src">${esc(meta)}</span>` : ''}</li>`);
-    if (rows.length >= 8) break;
-  }
-  if (!rows.length) return '';
-  return `<div class="aii-hl im-hl"><div class="aii-hl-head">Sources &amp; Coverage</div><ul class="aii-hl-list">${rows.join('')}</ul></div>`;
+  const rows = coverageListHTML(headlines, sources, '');
+  if (!rows) return '';
+  return `<div class="im-coverage im-coverage--inline"><div class="im-section-title">Sources &amp; Coverage</div><div class="im-coverage-list">${rows}</div></div>`;
 }
 
 // ---- Trend ----------------------------------------------------------------
