@@ -133,7 +133,7 @@ export function renderAIIntelligence(container, scope) {
   container.innerHTML = `
     <div class="aii${tabMode ? ' aii-tabmode' : ''}">
       <div class="aii-head">
-        <div class="aii-head-top"><span class="aii-logo">${LOGO}</span><span class="aii-brand">AI Intelligence</span></div>
+        <div class="aii-head-top"><span class="aii-logo">${LOGO}</span><span class="aii-brand">AI Intelligence</span><span class="aii-live"><span class="aii-live-dot" aria-hidden="true"></span>Live</span></div>
         <p class="aii-headsub">Pick a path and explore live AI insights.</p>
       </div>
       ${tabMode ? subtabsHTML() : ''}

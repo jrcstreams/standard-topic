@@ -14027,6 +14027,51 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
 .aii-logo svg { width: 14px; height: 14px; }
 .aii-brand { font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: var(--color-text); letter-spacing: -0.015em; }
+/* "Live" pulse — the insights are live + grounded. */
+.aii-live { display: inline-flex; align-items: center; gap: 5px; margin-left: auto; flex: none; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #1f8f6b; }
+.aii-live-dot { width: 7px; height: 7px; border-radius: 50%; background: #22a47a; box-shadow: 0 0 0 0 rgba(34, 164, 122, 0.5); animation: aii-live-pulse 2.1s infinite; }
+@keyframes aii-live-pulse { 0% { box-shadow: 0 0 0 0 rgba(34, 164, 122, 0.45); } 70% { box-shadow: 0 0 0 6px rgba(34, 164, 122, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 164, 122, 0); } }
+@media (prefers-reduced-motion: reduce) { .aii-live-dot { animation: none; } }
+
+/* ===== Featured AI Intelligence card on the desktop home — the hero feature.
+   Scoped to #section-aii-home so the topic-page + modal versions are untouched. */
+@media (min-width: 1024px) {
+  body.home-search #section-aii-home .aii {
+    border-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-surface-border));
+    box-shadow: 0 1px 2px rgba(15, 26, 46, 0.05), 0 26px 54px -28px color-mix(in srgb, var(--color-primary) 55%, transparent);
+    background:
+      radial-gradient(90% 70% at 100% -10%, color-mix(in srgb, var(--color-primary) 7%, transparent), transparent 60%),
+      linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 3.5%, #fff), #fff 42%);
+  }
+  /* White path tiles pop on the faintly-tinted surface. */
+  body.home-search #section-aii-home .aii-pathlist > .aii-pathrow { background: #fff; }
+  body.home-search #section-aii-home .aii-head {
+    padding: 17px 20px;
+    background:
+      radial-gradient(120% 180% at 100% 0%, color-mix(in srgb, var(--color-primary) 11%, transparent), transparent 55%),
+      linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 6%, #fff), color-mix(in srgb, var(--color-primary) 2.5%, #fff));
+    border-bottom-color: color-mix(in srgb, var(--color-primary) 13%, var(--color-surface-border));
+  }
+  body.home-search #section-aii-home .aii-logo {
+    width: 31px; height: 31px; border-radius: 9px;
+    box-shadow: 0 5px 16px -5px color-mix(in srgb, var(--color-primary) 65%, transparent);
+  }
+  body.home-search #section-aii-home .aii-brand { font-size: 1.24rem; }
+  body.home-search #section-aii-home .aii-headsub { font-size: 0.84rem; }
+  /* Live badge gets a soft tinted chip so it reads as a status, not a link. */
+  body.home-search #section-aii-home .aii-live {
+    padding: 3px 9px 3px 8px; border-radius: 999px;
+    background: color-mix(in srgb, #22a47a 12%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, #22a47a 26%, transparent);
+  }
+  /* Path tiles: stronger icon chip + a touch more lift on hover. */
+  body.home-search #section-aii-home .aii-pathrow-icon { width: 40px; height: 40px; border-radius: 12px; }
+  body.home-search #section-aii-home .aii-pathrow-icon svg { width: 19px; height: 19px; }
+  body.home-search #section-aii-home .aii-pathlist > .aii-pathrow:hover {
+    box-shadow: 0 14px 30px -16px rgba(31, 49, 99, 0.34);
+    transform: translateY(-3px);
+  }
+}
 .aii-headsub { margin: 0; font-size: 0.8rem; line-height: 1.45; color: var(--color-text-muted); }
 .aii-stage { padding: 14px 16px 16px; }
 /* Secondary tab bar (mobile tab mode) — the AI Intelligence paths as sub-tabs
