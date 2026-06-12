@@ -12903,9 +12903,11 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .search-panel-input {
   width: 100%; box-sizing: border-box; height: 46px; padding: 0 3rem 0 3rem;
   border: 1.5px solid #e2e6ee; border-radius: 999px; background: #fff;
-  font-family: inherit; font-size: 0.98rem; color: var(--color-text);
+  font-family: inherit; font-size: 0.98rem; font-weight: 600; color: var(--color-text);
   transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
 }
+/* The placeholder stays regular-weight; only what the user types is bold (#140). */
+.search-panel-input::placeholder { font-weight: 400; }
 @media (max-width: 640px) {
   .search-panel--inline .search-panel-input { height: 46px; font-size: 0.98rem; }
 }
