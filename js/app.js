@@ -18,7 +18,7 @@ import { initTrendingDetailModal } from './components/trending-detail-modal.js?v
 import { initInsightModal } from './components/insight-modal.js?v=20260611-revamp148';
 import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260611-revamp148';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260611-revamp121';
-import { renderWebSources } from './components/websources.js?v=20260609-revamp73';
+import { renderWebSources } from './components/websources.js?v=20260611-revamp150';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260611-revamp149';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260611-revamp149';

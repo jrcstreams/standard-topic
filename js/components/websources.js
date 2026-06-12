@@ -69,11 +69,13 @@ export function renderWebSources(container, topic) {
         <span class="ws-srcrow-text"><span class="ws-srcrow-name">${esc(s.name)}</span>${s.description ? `<span class="ws-srcrow-desc">${esc(s.description)}</span>` : ''}</span>${EXT}
       </a>`;
     }).join('');
+    // The category becomes a sticky subheader attached under the card header:
+    // back icon · respectable gap · category title + blurb. The platform list
+    // scrolls beneath it.
     return `<div class="ws-sub">
-      <button type="button" class="ws-back">${BACK}<span>Back to all web sources</span></button>
-      <div class="ws-subhead">
-        <span class="ws-subhead-icon">${catSvg(curKey)}</span>
-        <div class="ws-subhead-text"><span class="ws-subhead-name">${esc(c.label || '')}</span>${blurb ? `<span class="ws-subhead-sub">${esc(blurb)}</span>` : ''}</div>
+      <div class="ws-subbar">
+        <button type="button" class="ws-back-ic" aria-label="Back to all web sources" title="Back to all web sources">${BACK}</button>
+        <div class="ws-subbar-text"><span class="ws-subbar-name">${esc(c.label || '')}</span>${blurb ? `<span class="ws-subbar-sub">${esc(blurb)}</span>` : ''}</div>
       </div>
       <div class="ws-srclist">${rows}</div>
     </div>`;
@@ -88,7 +90,7 @@ export function renderWebSources(container, topic) {
   }
   function wire() {
     stage.querySelectorAll('.ws-pathrow').forEach((b) => b.addEventListener('click', () => { curKey = b.dataset.cat; go('sources', 'fwd'); }));
-    stage.querySelector('.ws-back')?.addEventListener('click', () => go('cats', 'back'));
+    stage.querySelector('.ws-back-ic')?.addEventListener('click', () => go('cats', 'back'));
   }
   go('cats', 'fwd');
   return { destroy() { container.innerHTML = ''; } };

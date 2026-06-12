@@ -564,6 +564,7 @@ body.custom-mode.sticky-always #content {
   .sticky-actions .sticky-settings,
   .sticky-actions .sticky-search-pill .search-bar {
     width: 36px; height: 36px; min-width: 0; padding: 0;
+    display: inline-flex; align-items: center; justify-content: center; /* center the lone icon (search hugged left) */
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: 9px;
@@ -14142,14 +14143,10 @@ body.home-search #section-shortcuts .sidebar-card-header,
   body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws-stage {
     padding-top: 0; flex: 1 1 0; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
   }
-  /* Tab mode: the drill-in category header is redundant (the "Back to all web
-     sources" link gives context) — hide it for clean word-flow, matching the
-     AI Intelligence sub-head treatment. Keep breathing room above the back link. */
-  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws-subhead {
-    display: none;
-  }
-  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws-sub > .ws-back {
-    padding-top: 14px;
+  /* Tab mode: the .ws-stage is already the scroll container, so let the sub view
+     flow within it (the sticky subbar pins to the stage top). */
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws-sub {
+    max-height: none; overflow: visible;
   }
   /* Tab mode has no enclosing card, so the row lists need their own outer
      edges: a bottom border under the LAST row (re-adding what the card setup
@@ -14717,17 +14714,19 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .ws-pathrow-sub { font-size: 0.8rem; color: var(--color-text-muted); }
 .ws-pathrow > svg:last-child { margin-left: auto; color: var(--color-text-light); flex: none; transition: transform .16s ease, color .14s; }
 .ws-pathrow:hover > svg:last-child { color: var(--color-primary); transform: translateX(3px); }
-/* Category → its sources (the next path). */
-.ws-back { display: inline-flex; align-items: center; gap: 6px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; color: #1d4ed8; padding: 12px 0 14px; }
-.ws-back svg { width: 15px; height: 15px; color: #1d4ed8; }
-.ws-back:hover { color: #1e40af; }
-.ws-back:hover span { text-decoration: underline; text-underline-offset: 2px; }
-.ws-subhead { display: flex; align-items: center; gap: 12px; margin: 0 -16px; padding: 11px 18px; background: #f3f5f9; border-top: 1px solid var(--color-surface-border); border-bottom: 1px solid var(--color-surface-border); }
-.ws-subhead-icon { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-bg-light); color: var(--color-primary); }
-.ws-subhead-icon svg { width: 16px; height: 16px; }
-.ws-subhead-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.ws-subhead-name { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: #25324a; letter-spacing: -0.012em; }
-.ws-subhead-sub { font-size: 0.8rem; color: var(--color-text-muted); }
+/* Category → its sources. The category becomes a sticky subheader attached under
+   the card header (back icon · gap · title + blurb); the platform list scrolls
+   beneath it so the subheader stays put. */
+.ws-sub { max-height: min(64vh, 460px); overflow-y: auto; overscroll-behavior: contain; margin: 0 -16px; }
+.ws-subbar { position: sticky; top: 0; z-index: 6; display: flex; align-items: center; gap: 16px; padding: 11px 18px; background: color-mix(in srgb, var(--color-primary) 3%, #fff); border-bottom: 1px solid var(--color-surface-border); }
+.ws-back-ic { flex: none; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; color: var(--color-text-muted); cursor: pointer; transition: border-color .14s, color .14s, background .14s; }
+.ws-back-ic:hover { border-color: var(--color-primary); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 5%, #fff); }
+.ws-back-ic svg { width: 16px; height: 16px; }
+.ws-subbar-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.ws-subbar-name { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: #25324a; letter-spacing: -0.012em; }
+.ws-subbar-sub { font-size: 0.8rem; line-height: 1.4; color: var(--color-text-muted); }
+/* The list is full-bleed within the now-full-bleed .ws-sub scroll area. */
+.ws-sub .ws-srclist { margin: 0; }
 .ws-srclist { display: flex; flex-direction: column; margin: 0 -16px; }
 .ws-srcrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; text-decoration: none; padding: 13px 18px; border-bottom: 1px solid var(--color-surface-border); transition: background .14s; }
 .ws-srcrow:hover { background: color-mix(in srgb, var(--color-primary) 4.5%, transparent); text-decoration: none; }
@@ -15094,12 +15093,12 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Legend pill at the top-left of the trend list body — defines the two card
    glyphs (sparkle = AI text, up-arrow = Google Trends). A faint pill; the two
    items wrap as whole units when the card is narrow. */
-.trend-legend-row { display: flex; justify-content: flex-start; padding: 10px 16px 2px; }
+.trend-legend-row { display: flex; justify-content: flex-start; padding: 10px 16px 14px; }
 /* In the Trending modal, the legend shares the category-chooser line (chooser
-   left, legend right). */
-.trend-controls-legend { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap; }
+   left, legend right), with clear breathing room before the trend grid. */
+.trend-controls-legend { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap; margin-bottom: 18px; }
 .trend-controls-legend .trend-controls { margin: 0; }
-.trend-controls-legend .trend-legend-row { padding: 0 0 2px; justify-content: flex-end; }
+.trend-controls-legend .trend-legend-row { padding: 0; justify-content: flex-end; }
 .trend-legend { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding: 5px 11px; border-radius: 999px; background: color-mix(in srgb, var(--color-text) 3.5%, #fff); border: 1px solid color-mix(in srgb, var(--color-surface-border) 55%, transparent); }
 .trend-legend-item { display: inline-flex; align-items: center; gap: 5px; font-size: 0.68rem; font-weight: 600; color: var(--color-text-muted); white-space: nowrap; }
 .trend-legend-item .ai-spark-mark svg { width: 11px; height: 11px; }
