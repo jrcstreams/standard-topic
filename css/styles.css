@@ -14604,6 +14604,9 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Clean list (not bordered buttons): hyperlinked title, publisher beneath, thin
    dividers. Title is the link; when we only have the publisher domain, that IS
    the title. */
+/* Separator above Sources & Coverage so it reads as its own block, distinct from
+   the AI Brief above it (#113). */
+.im-coverage { border-top: 1px solid var(--color-surface-border); padding-top: 18px; }
 .im-coverage-list { display: flex; flex-direction: column; }
 .im-cov-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 2px; border: none; border-radius: 0; background: none; text-decoration: none; color: var(--color-text); border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); transition: none; }
 .im-cov-row:last-child { border-bottom: none; }
