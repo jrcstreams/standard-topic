@@ -101,7 +101,8 @@ function sectionIcon(label) {
   const l = String(label || '').toLowerCase();
   const svg = (inner) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
   let inner;
-  if (/take ?away|key point|highlight|bottom line/.test(l)) inner = '<path d="M9 11l3 3 9-9"/><path d="M20.5 12.5V19a2 2 0 0 1-2 2H5.5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2H15"/>'; // check-list
+  if (/why.*trend|is this trend|trending now/.test(l)) inner = '<path d="M3 17l6-6 4 4 8-8"/><polyline points="17 7 21 7 21 11"/>'; // trend-up (Why Is This Trending)
+  else if (/take ?away|key point|highlight|bottom line/.test(l)) inner = '<path d="M9 11l3 3 9-9"/><path d="M20.5 12.5V19a2 2 0 0 1-2 2H5.5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2H15"/>'; // check-list
   else if (/timeline|chronolog|sequence|how it unfolded/.test(l)) inner = '<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/>'; // clock
   else if (/why it matter|so what|impact|implication|stakes|significan/.test(l)) inner = '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/>'; // target
   else if (/what happen|develop|latest|happening|the news|the event/.test(l)) inner = '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>'; // bolt

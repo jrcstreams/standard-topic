@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp173';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp173';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp175';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp175';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -218,10 +218,9 @@ export function renderAIIntelligence(container, scope) {
         <h3 class="aii-overview-title">${esc(s.name)}</h3>
         ${desc ? `<p class="aii-overview-sub">${esc(desc)}</p>` : ''}
       </div>
-      <div class="aii-brief-head"><span class="aii-brief-logo">${LOGO}</span><span class="aii-brief-title">AI Brief</span></div>
+      <div class="im-aiflag-legend im-aiflag-legend--lg aii-aiflag-legend">${LOGO}<span>= AI-generated text</span></div>
       <p class="aii-brief-note">The below is an AI-generated summary of the topic at hand. Please verify important details with the linked sources.</p>
       <div class="ai-prov-slot aii-prov-slot"></div>
-      <div class="im-aiflag-legend aii-aiflag-legend">${LOGO}<span>= AI-generated text</span></div>
       <div class="aii-actions aii-actions-row">
         <button type="button" class="aii-actbtn" data-acc="explore" aria-expanded="false"><span>Ask AI</span>${CHEV}</button>
         <button type="button" class="aii-actbtn" data-acc="web" aria-expanded="false"><span>Web Search</span>${CHEV}</button>

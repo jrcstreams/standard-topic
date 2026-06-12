@@ -14673,6 +14673,10 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* "✦ = AI-generated text" legend beneath the sources line (#88). */
 .im-aiflag-legend { display: flex; align-items: center; gap: 3px; margin: 6px 0 0; font-size: 0.76rem; font-weight: 600; color: var(--color-text-muted); }
 .im-aiflag-legend svg { width: 13px; height: 13px; color: #1d4ed8; flex: none; }
+/* Larger legend used at the TOP of a brief (replaces the old "AI Brief" title) —
+   the AI-generated marker now heads the section, above the disclaimer (#124). */
+.im-aiflag-legend--lg { gap: 7px; margin: 0 0 7px; font-size: 0.98rem; color: var(--color-text); }
+.im-aiflag-legend--lg svg { width: 18px; height: 18px; }
 
 /* Inline AI sparkle on the first line of each AI-generated section — the same
    blue used to flag AI-generated text everywhere else (.ai-spark-mark). */

@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp173';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp173';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp175';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp175';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -303,6 +303,7 @@ function brandHeaderHTML(condensed, opts = {}) {
       <button type="button" class="im-cond-act" data-panel="sources">Sources</button>
       <button type="button" class="im-cond-act" data-panel="explore">Ask AI</button>
       <button type="button" class="im-cond-act" data-panel="web">Web Search</button>
+      ${opts.condGoogleTrends ? `<a class="im-cond-act" href="${escAttr(opts.condGoogleTrends)}" target="_blank" rel="noopener noreferrer">Google Trends ${ARROW}</a>` : ''}
     </span>` : '';
   const cond = condensed && condensed.title ? `<div class="im-condensed">
       <div class="im-condensed-top"><span class="im-condensed-title">${esc(condensed.title)}</span></div>
@@ -593,10 +594,9 @@ function renderNews(d) {
         <div class="im-acc" data-body="web" id="im-web-panel"></div>
       </section>
       <section class="im-section im-brief-section">
-        <div class="im-brief-head" id="im-brief-head"><span class="im-brief-logo">${LOGO}</span><span class="im-brief-title">AI Brief</span></div>
+        <div class="im-aiflag-legend im-aiflag-legend--lg" id="im-brief-head">${SPARK_FILL}<span>= AI-generated text</span></div>
         <p class="im-disclaimer">An AI-generated summary of this story. Please verify important details with the linked sources.</p>
         <div class="ai-prov-slot im-prov-link" id="im-prov" role="link" tabindex="0" title="Jump to Sources &amp; Coverage"></div>
-        <div class="im-aiflag-legend">${SPARK_FILL}<span>= AI-generated text</span></div>
         <hr class="im-rule">
         ${briefSkeleton()}
       </section>
@@ -648,7 +648,7 @@ function renderNews(d) {
 function inTheNewsHTML(sources, headlines) {
   const rows = coverageListHTML(headlines, sources, '');
   if (!rows) return '';
-  return `<div class="im-coverage im-coverage--inline"><div class="im-section-title">Sources &amp; Coverage</div><div class="im-coverage-list">${rows}</div></div>`;
+  return `<div class="im-coverage im-coverage--inline" id="im-coverage"><div class="im-section-title">Sources &amp; Coverage</div><div class="im-coverage-list">${rows}</div></div>`;
 }
 
 // ---- Trend ----------------------------------------------------------------
@@ -658,25 +658,30 @@ function renderTrend(d) {
   const title = String(d.query || '').replace(/\b\w/g, c => c.toUpperCase());
   const meta = [cat ? `<span class="im-cat-pill">${esc(cat)}</span>` : '', since ? `<span class="im-when">Trending since ${esc(since)}</span>` : '']
     .filter(Boolean).join('');
+  const gtUrl = `https://trends.google.com/trends/explore?q=${encodeURIComponent(d.query || '')}&geo=US`;
   panelEl.innerHTML = `
-    ${brandHeaderHTML({ title, meta: [cat, since ? `Trending since ${since}` : ''].filter(Boolean).join(' · ') }, { brandLabel: 'Trending' })}
+    ${brandHeaderHTML({ title, meta: [cat, since ? `Trending since ${since}` : ''].filter(Boolean).join(' · '), gtUrl }, { brandLabel: 'Trending', condActions: true, condGoogleTrends: gtUrl, briefSticky: true })}
     <div class="im-body">
       ${navBarHTML(d.nav)}
       <section class="im-section im-article">
-        <div class="im-section-title">Trend Overview</div>
         <h3 class="im-article-title">${esc(title)}</h3>
-        ${meta ? `<div class="im-article-meta">${meta}</div>` : ''}
+        ${meta ? `<div class="im-article-meta im-article-meta--top">${meta}</div>` : ''}
         ${Array.isArray(d.trendBreakdown) && d.trendBreakdown.length ? `<div class="im-related">
           <span class="im-related-label">Related searches</span>
           <div class="im-related-chips">${d.trendBreakdown.slice(0, 8).map((r) => `<button type="button" class="im-related-chip" data-term="${escAttr(r)}">${esc(r)}</button>`).join('')}</div>
         </div>` : ''}
+        <div class="im-quicklinks">
+          <button type="button" class="im-qlink im-qlink-btn" data-panel="sources" aria-expanded="false">Sources</button>
+          <button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">Ask AI</button>
+          <button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">Web Search</button>
+          <a class="im-qlink" href="${escAttr(gtUrl)}" target="_blank" rel="noopener noreferrer">View on Google Trends ${ARROW}</a>
+        </div>
+        <div class="im-acc" data-body="explore" id="im-explore-panel"></div>
+        <div class="im-acc" data-body="web" id="im-web-panel"></div>
       </section>
       <section class="im-section im-brief-section">
-        <div class="im-brief-head" id="im-brief-head"><span class="im-brief-logo">${LOGO}</span><span class="im-brief-title">AI Brief</span></div>
+        <div class="im-aiflag-legend im-aiflag-legend--lg" id="im-brief-head">${SPARK_FILL}<span>= AI-generated text</span></div>
         <p class="im-disclaimer">The below is an AI-generated summary of why this is trending. Please verify important details with the linked sources.</p>
-        <div class="ai-prov-slot" id="im-prov"></div>
-        <div class="im-aiflag-legend">${SPARK_FILL}<span>= AI-generated text</span></div>
-        <div class="im-actions-slot" id="im-actions-slot"></div>
         <hr class="im-rule">
         ${briefSkeleton()}
       </section>
@@ -690,17 +695,19 @@ function renderTrend(d) {
     });
   });
   const prompt = `Explain what "${d.query}" is and why it's trending right now — what just happened, the background, and the latest developments.`;
+  // Wire the overview-card quicklinks up front (Sources jumps to coverage; Ask AI
+  // / Web Search open their panels) so they work before the brief lands.
+  const ctx = { prompt, sources: [], origUrl: '', webTerm: d.query, onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, topicName: d.query, name: 'Trending · AI', count: 1 } })) };
+  wireActions(ctx);
   (async () => {
     const t0 = Date.now();
     const briefEl = panelEl.querySelector('#im-brief');
-    let sources = [];
     try {
       const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'trend', query: d.query }) });
       const data = res.ok ? await res.json() : null;
       await holdLoader(t0);
       if (panelEl.querySelector('#im-brief') !== briefEl) return;
       if (data && data.content) {
-        sources = data.sources || [];
         const cleanSum = cleanSummary(data.summary);
         let detail = cleanTrendContent(data.content);
         // Older cached briefs stored the summary inside the content, so the
@@ -718,17 +725,16 @@ function renderTrend(d) {
             detail = rest;
           }
         }
-        const summary = cleanSum ? `<p class="im-trend-summary">${esc(cleanSum)}</p>` : '';
-        briefEl.innerHTML = `${summary}${renderBriefBody(detail, null, { aiFlag: SPARK_FILL })}${inTheNewsHTML(data.sources, data.headlines)}`; briefEl.classList.add('ai-reveal');
-        const prov = panelEl.querySelector('#im-prov');
-        if (prov) { prov.innerHTML = aiProvenanceHTML(data.sources, { badge: false }); prov.hidden = !prov.textContent.trim(); }
+        ctx.sources = data.sources || [];
+        // Two labelled sections, like the news brief: why it's trending (the
+        // one-liner) + a fuller summary — each gets its icon + inline AI flag.
+        const sectionMd = [
+          cleanSum ? `### Why Is This Trending\n${cleanSum}` : '',
+          detail ? `### Summary\n${detail}` : '',
+        ].filter(Boolean).join('\n\n');
+        briefEl.innerHTML = `${renderBriefBody(sectionMd || detail, null, { aiFlag: SPARK_FILL })}${inTheNewsHTML(data.sources, data.headlines)}`; briefEl.classList.add('ai-reveal');
       } else { briefEl.innerHTML = '<p class="im-empty">No AI brief generated for this trend yet.</p>'; }
     } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
-    const slot = panelEl.querySelector('#im-actions-slot');
-    if (slot) {
-      slot.innerHTML = actionsHTML({ sources: false }); // grounding shows as the visible "In the news" list above
-      wireActions({ prompt, sources, origUrl: '', webTerm: d.query, onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, topicName: d.query, name: 'Trending · AI', count: 1 } })) });
-    }
   })();
 }
 
@@ -757,9 +763,8 @@ function renderOverview(d) {
         <h3 class="im-article-title">${esc(topicLabel)}</h3>
       </section>
       <section class="im-section im-brief-section">
-        <div class="im-brief-head"><span class="im-brief-logo">${LOGO}</span><span class="im-brief-title">AI Brief</span></div>
+        <div class="im-aiflag-legend im-aiflag-legend--lg">${SPARK_FILL}<span>= AI-generated text</span></div>
         <p class="im-disclaimer">The below is an AI-generated ${esc(lens)} overview of ${esc(topicLabel)}, compiled from current sources. Please verify important details with the linked sources.</p>
-        <div class="im-aiflag-legend">${SPARK_FILL}<span>= AI-generated text</span></div>
         <div class="im-actions-slot" id="im-actions-slot"></div>
         <hr class="im-rule">
         <div class="im-brief im-brief-ov" id="im-brief">${genLoaderHTML(`Generating ${lens} overview…`)}</div>
