@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp180';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp180';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp181';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp181';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -674,10 +674,10 @@ function renderTrend(d) {
           <div class="im-related-chips">${d.trendBreakdown.slice(0, 8).map((r) => `<button type="button" class="im-related-chip" data-term="${escAttr(r)}">${esc(r)}</button>`).join('')}</div>
         </div>` : ''}
         <div class="im-quicklinks">
+          <a class="im-qlink" href="${escAttr(gtUrl)}" target="_blank" rel="noopener noreferrer">View on Google Trends ${ARROW}</a>
           <button type="button" class="im-qlink im-qlink-btn" data-panel="sources" aria-expanded="false">Sources</button>
           <button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">Ask AI</button>
           <button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">Web Search</button>
-          <a class="im-qlink" href="${escAttr(gtUrl)}" target="_blank" rel="noopener noreferrer">View on Google Trends ${ARROW}</a>
         </div>
         <div class="im-acc" data-body="explore" id="im-explore-panel"></div>
         <div class="im-acc" data-body="web" id="im-web-panel"></div>

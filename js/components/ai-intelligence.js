@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp180';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp180';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp181';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp181';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -197,6 +197,10 @@ export function renderAIIntelligence(container, scope) {
   }
   function go(v, dir) {
     view = v; stage.dataset.view = v;
+    // The big centered topic title is the HUB hero; on sections/content it shrinks
+    // to a compact switcher so it doesn't dominate (#146).
+    const tb = container.querySelector('.aii-topbar');
+    if (tb) tb.classList.toggle('is-compact', v !== 'paths');
     container.dataset.aiiGroup = curGroup || '';   // expose for the modal→tab hand-off (#13)
     stage.innerHTML = viewHTML();
     stage.classList.remove('aii-anim-fwd', 'aii-anim-back');
@@ -211,7 +215,8 @@ export function renderAIIntelligence(container, scope) {
   }
 
   function pathsHTML() {
-    return `<div class="aii-pathlist">${paths.map((p) => `
+    const intro = scope.inModal ? `<p class="aii-paths-intro">Choose an intelligence track</p>` : '';
+    return `${intro}<div class="aii-pathlist">${paths.map((p) => `
       <button type="button" class="aii-pathrow" data-group="${escAttr(p.group)}">
         <span class="aii-pathrow-icon aii-icon-${escAttr(p.group)}">${ICONS[p.group] || ICONS._}</span>
         <span class="aii-pathrow-text"><span class="aii-pathrow-name">${esc(p.tab || p.label)}</span><span class="aii-pathrow-sub">${esc(p.subtitle)}</span></span>

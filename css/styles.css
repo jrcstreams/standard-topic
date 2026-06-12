@@ -12742,7 +12742,7 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .aii-modal-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
 .aii-modal-title { margin: 0; font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; letter-spacing: -0.02em; color: var(--color-primary); white-space: nowrap; }
 .aii-modal-head-right { margin-left: auto; display: flex; align-items: center; min-width: 0; }
-.aii-modal-close { flex: 0 0 auto; width: 34px; height: 34px; margin-left: 0.45rem; display: inline-flex; align-items: center; justify-content: center; background: #f1f3f7; border: 1px solid #e7eaf0; border-radius: 8px; color: var(--color-text-muted); cursor: pointer; transition: background .14s, color .14s; }
+.aii-modal-close { flex: 0 0 auto; width: 34px; height: 34px; margin-left: auto; display: inline-flex; align-items: center; justify-content: center; background: #f1f3f7; border: 1px solid #e7eaf0; border-radius: 8px; color: var(--color-text-muted); cursor: pointer; transition: background .14s, color .14s; }
 .aii-modal-close:hover { background: #e8ecf2; color: var(--color-text); }
 .aii-modal-chip { display: inline-flex; align-items: center; max-width: 46vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0.32rem 0.75rem; background: color-mix(in srgb, var(--color-primary) 8%, #fff); border: 1px solid color-mix(in srgb, var(--color-primary) 20%, #fff); border-radius: 999px; font-size: 0.82rem; font-weight: 600; color: var(--color-primary); }
 .aii-modal-topic { display: inline-flex; align-items: center; gap: 0.45rem; }
@@ -14055,7 +14055,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-logo svg { width: 14px; height: 14px; }
 .aii-brand { font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: var(--color-text); letter-spacing: -0.015em; }
 /* "Live" pulse — the insights are live + grounded. */
-.aii-live { display: inline-flex; align-items: center; gap: 5px; margin-left: auto; flex: none; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #1f8f6b; }
+.aii-live { display: inline-flex; align-items: center; gap: 5px; flex: none; line-height: 1; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #1f8f6b; }
 .aii-live-dot { width: 7px; height: 7px; border-radius: 50%; background: #22a47a; box-shadow: 0 0 0 0 rgba(34, 164, 122, 0.5); animation: aii-live-pulse 2.1s infinite; }
 @keyframes aii-live-pulse { 0% { box-shadow: 0 0 0 0 rgba(34, 164, 122, 0.45); } 70% { box-shadow: 0 0 0 6px rgba(34, 164, 122, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 164, 122, 0); } }
 @media (prefers-reduced-motion: reduce) { .aii-live-dot { animation: none; } }
@@ -14155,16 +14155,37 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-topic-item.is-active { background: color-mix(in srgb, var(--color-primary) 8%, #fff); color: var(--color-primary); font-weight: 600; }
 .aii-topic-empty { padding: 14px; text-align: center; color: var(--color-text-muted); font-size: 0.88rem; }
 
-/* Intro paths as centered rounded cards. */
-.aii-modal-body .aii-stage[data-view="paths"] .aii-pathlist { max-width: 600px; margin: 6px auto 0; gap: 12px; padding: 6px 4px 4px; }
+/* Compact topic title on sections/content views — the big hero is only on the
+   path-picker hub (#146). */
+.aii-modal-body .aii-topbar.is-compact { padding: 11px 20px 3px; }
+.aii-topbar.is-compact .aii-topic-switch { font-size: 1.06rem; padding: 4px 8px 4px 11px; }
+.aii-topbar.is-compact .aii-topic-switch svg { width: 16px; height: 16px; }
+
+/* "Choose an intelligence track" — hub intro line. */
+.aii-paths-intro { margin: 0 0 14px; text-align: center; font-size: 0.92rem; font-weight: 500; color: var(--color-text-muted); }
+
+/* Path picker = a 2-up grid of "choose a path" cards (icon, name, info) (#151). */
+.aii-modal-body .aii-stage[data-view="paths"] .aii-pathlist { display: grid !important; grid-template-columns: repeat(2, 1fr); max-width: 660px; margin: 2px auto 0; gap: 12px; padding: 0 4px 6px; }
 .aii-modal-body .aii-stage[data-view="paths"] .aii-pathlist > .aii-pathrow {
-  border: 1px solid var(--color-surface-border); border-radius: 15px; padding: 16px 18px;
-  background: color-mix(in srgb, var(--color-primary) 2.5%, #fff); transition: border-color .14s, background .14s, transform .14s;
+  flex-direction: column; align-items: flex-start; gap: 12px; position: relative; min-height: 0;
+  border: 1px solid var(--color-surface-border); border-radius: 15px; padding: 18px 16px 16px;
+  background: #fff; box-shadow: 0 1px 2px rgba(15,23,42,.04);
+  transition: border-color .14s, box-shadow .16s, transform .14s;
 }
 .aii-modal-body .aii-stage[data-view="paths"] .aii-pathlist > .aii-pathrow:hover {
-  border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border));
-  background: color-mix(in srgb, var(--color-primary) 5%, #fff); transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border));
+  box-shadow: 0 12px 26px -16px rgba(31,49,99,.3); transform: translateY(-2px); background: #fff;
 }
+.aii-modal-body .aii-stage[data-view="paths"] .aii-pathrow-icon { width: 38px; height: 38px; }
+.aii-modal-body .aii-stage[data-view="paths"] .aii-pathrow-text { gap: 4px; }
+.aii-modal-body .aii-stage[data-view="paths"] .aii-pathrow-name { font-size: 1.04rem; }
+.aii-modal-body .aii-stage[data-view="paths"] .aii-pathrow-go { position: absolute; top: 16px; right: 16px; margin: 0; }
+@media (max-width: 560px) { .aii-modal-body .aii-stage[data-view="paths"] .aii-pathlist { grid-template-columns: 1fr; } }
+
+/* Sticky condensed bar: solid surface + soft shadow so it reads as a clean bar
+   over the scrolling brief (#144/#145). */
+.aii-condensed { background: #fff; }
+.aii-condensed.is-on { box-shadow: 0 6px 14px -10px rgba(15,23,42,.45); }
 
 /* Section menu = 2-column card grid. */
 .aii-menu-grid { display: grid !important; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 0 !important; }
@@ -14386,7 +14407,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-gen-bars span:nth-child(2) { width: 94%; }
 .aii-gen-bars span:nth-child(3) { width: 98%; }
 .aii-gen-bars span:nth-child(4) { width: 72%; }
-.aii-content-body .ai-result-body { font-size: clamp(0.92rem, 0.88rem + 0.28vw, 1.02rem); line-height: 1.66; color: #2c3a52; }
+.aii-content-body .ai-result-body { font-size: 0.875rem; line-height: 1.62; color: #2c3a52; }
 .aii-content-body .ai-result-sub { font-family: var(--font-display); font-size: 0.96rem; font-weight: 700; letter-spacing: -0.01em; text-transform: none; color: #122451; margin: 20px 0 9px; }
 .aii-content-body .ai-result-sub:not(:first-child) { padding-top: 18px; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 75%, transparent); }
 .aii-loading, .aii-empty { font-size: 0.9rem; color: var(--color-text-muted); padding: 14px 4px; margin: 0; }
@@ -14430,7 +14451,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
   .aii .aii-actions-row .aii-actbtn, .im-panel .im-actions-row .im-actbtn { flex: 0 1 auto; gap: 3px; padding: 7px 8px; font-size: clamp(0.62rem, 2.8vw, 0.78rem); }
 }
 .aii-content .aii-brief-head { margin: 0 0 7px; }
-.aii-brief-note { margin: 0; font-size: 0.86rem; line-height: 1.5; color: var(--color-text-muted); }
+.aii-brief-note { margin: 0 0 12px; font-size: 0.78rem; line-height: 1.5; color: var(--color-text-muted); }
 .aii-src-list { display: grid; gap: 5px; }
 .aii-src-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; text-decoration: none; color: var(--color-text); font-size: 0.82rem; transition: border-color .14s, color .14s; }
 .aii-src-row:hover { border-color: var(--color-primary); color: var(--color-primary); }
@@ -14795,7 +14816,12 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Legend pill at the top-left of the trend list body — defines the two card
    glyphs (sparkle = AI text, up-arrow = Google Trends). A faint pill; the two
    items wrap as whole units when the card is narrow. */
-.trend-legend-row { display: flex; justify-content: flex-start; padding: 11px 16px 8px; }
+.trend-legend-row { display: flex; justify-content: flex-start; padding: 13px 16px 5px; }
+/* Solo "= AI-generated text" legend — a touch bigger than the old card legend
+   (but smaller than the modal), tighter below (#166). */
+.trend-legend--solo .trend-legend-item { font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted); }
+.trend-legend--solo .ai-spark-mark svg { width: 14px; height: 14px; }
+.trend-legend--solo { padding: 5px 12px; }
 /* In the Trending modal, the legend shares the category-chooser line (chooser
    left, legend right), with clear breathing room before the trend grid. */
 .trend-controls-legend { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap; margin-bottom: 18px; }

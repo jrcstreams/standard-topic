@@ -5,7 +5,7 @@
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
 import { renderTrendExpansionBody } from './trend-expansion.js';
-import { aiSparkInline } from '../utils/ai-provenance.js?v=20260612-revamp180';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260612-revamp181';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -214,10 +214,11 @@ function trendCardsHead(fetched) {
 // blue sparkle (AI-generated text) and the trend up-arrow (via Google Trends).
 // The two items sit side by side and wrap as whole units when space is tight.
 function trendLegendRow() {
+  // Just the "✦ = AI-generated text" marker (the trend-icon "via Google Trends"
+  // reference was noise) — sized between the card and the modal legend (#166).
   return `<div class="trend-legend-row">
-    <div class="trend-legend">
-      <span class="trend-legend-item">${aiSparkInline()}<span>AI-generated text</span></span>
-      <span class="trend-legend-item"><span class="trend-legend-trend-ic">${TREND_CARD_ICON}</span><span>via Google Trends</span></span>
+    <div class="trend-legend trend-legend--solo">
+      <span class="trend-legend-item">${aiSparkInline()}<span>= AI-generated text</span></span>
     </div>
   </div>`;
 }
