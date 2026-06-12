@@ -13352,10 +13352,12 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
     background: color-mix(in srgb, var(--color-primary) 3%, #fff);
     border-radius: 16px 16px 0 0;
   }
-  /* Title on top, "Latest stories and developments." stacked below it (#74/#75);
-     search/sort stay to the right of the whole lockup. */
-  #section-newsfeed .newsfeed-card .newsfeed-headtext { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; min-width: 0; flex: 0 1 auto; }
-  #section-newsfeed .newsfeed-card .section-card-sub { display: block; flex: none; min-width: 0; white-space: normal; }
+  /* Title+icon on top, "Latest stories and developments." stacked on its OWN
+     line below (#76); search/sort sit to the right, on the title row. The text
+     block must NOT shrink — otherwise the subtext wraps/ellipsizes. It sizes to
+     its widest line (the subtext) and the filters take the remaining width. */
+  #section-newsfeed .newsfeed-card .newsfeed-headtext { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; flex: 0 0 auto; }
+  #section-newsfeed .newsfeed-card .section-card-sub { display: block; flex: none; white-space: nowrap; }
   /* Reset the legacy full-bleed title chrome (white bg + min-height + bottom
      rule) that caused the centered white box; clean inline lockup instead. */
   #section-newsfeed .newsfeed-card .newsfeed-title {
