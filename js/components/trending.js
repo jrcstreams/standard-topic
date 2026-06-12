@@ -163,12 +163,24 @@ function openTrendChat(card) {
 
 // Trend AI brief opens in the unified insight modal — with the full trend list
 // as nav context so the modal can offer Prev/Next trend + "Back to Trending".
-function showTrendBrief(card) {
-  const grid = card.closest('.trend-card-grid');
-  const cards = grid ? [...grid.querySelectorAll('.trend-card:not(.trend-card-skel)')] : [card];
+async function showTrendBrief(card) {
+  const clicked = card.dataset.query || '';
   const parseBd = (c) => { try { return JSON.parse(c.dataset.breakdown || '[]'); } catch (_) { return []; } };
-  const list = cards.map((c) => ({ type: 'trend', query: c.dataset.query || '', category: c.dataset.cat || '', startedAt: c.dataset.started || '', trendBreakdown: parseBd(c) }));
-  let index = cards.indexOf(card); if (index < 0) index = 0;
+  // Prev/Next should walk the FULL trending set, not just the few cards visible
+  // on a homepage/topic preview — so fetch the full list (cached) for the nav.
+  let list = [], index = -1;
+  try {
+    const topics = (await fetchTrending()).topics || [];
+    list = topics.map((t) => ({ type: 'trend', query: titleCase(t.query), category: (t.categories && t.categories[0]) || '', startedAt: t.startedAt || '', trendBreakdown: Array.isArray(t.trendBreakdown) ? t.trendBreakdown.slice(0, 8) : [] }));
+    index = list.findIndex((e) => e.query === clicked);
+  } catch (_) { /* fall back to the rendered grid below */ }
+  if (index < 0) {
+    // Offline / fetch failed — derive from the rendered grid.
+    const grid = card.closest('.trend-card-grid');
+    const cards = grid ? [...grid.querySelectorAll('.trend-card:not(.trend-card-skel)')] : [card];
+    list = cards.map((c) => ({ type: 'trend', query: c.dataset.query || '', category: c.dataset.cat || '', startedAt: c.dataset.started || '', trendBreakdown: parseBd(c) }));
+    index = cards.indexOf(card); if (index < 0) index = 0;
+  }
   window.dispatchEvent(new CustomEvent('open-insight-modal', { detail: {
     ...list[index],
     nav: { list, index, backLabel: 'Trending', backEvent: 'open-trending-list', itemKind: 'trend' },
@@ -195,17 +207,20 @@ function trendCardsHead(fetched) {
         <h3 class="trending-topics-title"><span>Trending</span></h3>
         ${fetched ? `<span class="trending-topics-updated">Updated ${escapeHTML(relativeTime(fetched))}</span>` : ''}
       </div>
-      <div class="trending-topics-subrow">
-        <p class="trending-topics-sub">What's being searched for right now.</p>
-        ${aiLegendHTML()}
-      </div>
+      <p class="trending-topics-sub">What's being searched for right now.</p>
     </div>`;
+}
+// Legend defining the inline blue sparkle — sits at the top of the card body
+// (just above the trend list), not in the section header.
+function trendLegendRow() {
+  return `<div class="trend-legend-row">${aiLegendHTML()}</div>`;
 }
 
 function trendCardsShell(topics, { fetched, viewAll }) {
   return `
     <div class="trending-topics">
       ${trendCardsHead(fetched)}
+      ${trendLegendRow()}
       <div class="trend-card-grid">${topics.map((t, i) => trendCardHTML(t, i)).join('')}</div>
       ${viewAll ? `<button type="button" class="trending-topics-viewall" data-action="view-all-trending">View all trending ${CHEV}</button>` : ''}
     </div>`;
@@ -254,6 +269,7 @@ export function renderTrendingTopics(container, { limit = 20, viewAll = false } 
       <div class="trending-topics">
         ${trendCardsHead(state.fetched)}
         ${controlsHTML()}
+        ${trendLegendRow()}
         <div class="trend-card-grid">${shown.map((t, i) => trendCardHTML(t, i)).join('')}</div>
         ${viewAll ? `<button type="button" class="trending-topics-viewall" data-action="view-all-trending">View all trending ${CHEV}</button>` : ''}
       </div>`;
@@ -336,10 +352,7 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
           <span class="trending-topics-logo">${ICON}</span>
           <h3 class="trending-topics-title"><span>Trending</span></h3>
         </div>
-        <div class="trending-topics-subrow">
-          <p class="trending-topics-sub">What's being searched for right now.</p>
-          ${aiLegendHTML()}
-        </div>
+        <p class="trending-topics-sub">What's being searched for right now.</p>
       </div>`;
   }
 
@@ -372,6 +385,7 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
       <div class="trending-topics trending-home">
         ${headHTML()}
         ${controlsHTML()}
+        ${trendLegendRow()}
         <div class="trend-card-grid" id="trend-home-grid"></div>
         <div class="trend-viewmore-row">
           <button type="button" class="trend-viewmore" data-action="view-all-trending">View more trending</button>

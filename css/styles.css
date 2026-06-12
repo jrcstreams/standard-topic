@@ -13937,7 +13937,7 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
 .trend-card.is-open .trend-card-trigger { background: rgba(31, 143, 107, 0.07); }
 .trend-card-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 0.16rem; }
 .trend-card-head { display: flex; align-items: center; gap: 0.4rem; min-width: 0; }
-.trend-card-icon { flex: 0 0 auto; display: inline-flex; color: #1f8f6b; }
+.trend-card-icon { flex: 0 0 auto; display: inline-flex; color: #475569; }
 .trend-card-icon svg { display: block; }
 /* Match the AI Intelligence path-button title (display font, 0.92rem, 600) —
    a touch bolder + same size as those titles (#229). */
@@ -15061,8 +15061,8 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .trend-card-summary .ai-spark-mark { margin-right: 5px; vertical-align: -2px; }
 .ai-legend { display: inline-flex; align-items: center; gap: 4px; flex: none; font-size: 0.68rem; font-weight: 600; color: var(--color-text-muted); letter-spacing: 0.01em; white-space: nowrap; }
 .ai-legend .ai-spark-mark svg { width: 11px; height: 11px; }
-.trending-topics-subrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.trending-topics-subrow .trending-topics-sub { margin: 0; }
+/* Legend at the top of the trend list body (defines the inline sparkle). */
+.trend-legend-row { display: flex; justify-content: flex-end; padding: 9px 16px 1px; }
 
 /* AI provenance — the consistent "this is AI-generated, grounded in these
    sources" marker. Full form (brief surfaces, no badge): a "Sources: A, B +N"
