@@ -213,23 +213,37 @@ function storyNavHTML(nav, compact) {
     ${hasNext ? `<button type="button" class="im-storynav-link im-storynav-link--next" data-navdir="next">Next Story<span class="im-storynav-arrow" aria-hidden="true">›</span></button>` : '<span class="im-storynav-spacer" aria-hidden="true"></span>'}
   </div>`;
 }
-// "Sources & Coverage" — the cited sources as a clean link list (same set the
-// Sources dropdown shows).
-function coverageListHTML(sources, origUrl) {
+// "Sources & Coverage" — real related articles from our feed (hyperlinked
+// headline + publisher · date). Prefers the rich RSS `headlines` (which carry a
+// title/publisher/date); falls back to the grounding citations (publisher domain
+// only) when we have no related coverage.
+function coverageRow(uri, title, metaParts) {
+  const meta = (metaParts || []).filter(Boolean).join(' · ');
+  return `<a class="im-cov-row" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(title)}</span>${meta ? `<span class="im-cov-host">${esc(meta)}</span>` : ''}</span>${ARROW}</a>`;
+}
+function coverageListHTML(headlines, sources, origUrl) {
   const seen = new Set(); const rows = [];
+  // Rich related coverage from our feed: title + publisher · date.
+  for (const h of (Array.isArray(headlines) ? headlines : [])) {
+    const uri = (h && (h.url || h.uri)) || ''; if (!uri) continue;
+    const k = uri.toLowerCase(); if (seen.has(k)) continue; seen.add(k);
+    const title = String((h && h.title) || '').trim(); if (!title || /^https?:/i.test(title)) continue;
+    let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
+    rows.push(coverageRow(uri, title, [(h.source || '').trim() || host, relTime(h.date)]));
+    if (rows.length >= 10) break;
+  }
+  if (rows.length) return rows.join('');
+  // Fallback — grounding citations (publisher domain only, no headline/date).
   for (const s of (Array.isArray(sources) ? sources : [])) {
     const uri = (s && (s.uri || s.url)) || ''; if (!uri) continue;
     const k = uri.toLowerCase(); if (seen.has(k)) continue; seen.add(k);
-    // Resolve the real publisher (grounding URIs are redirects — the host is
-    // junk; the domain lives in the title). Drop a subtitle that just repeats
-    // the link text (grounding citations have no separate headline).
     const r = resolveSource({ title: s && s.title, uri });
     const host = r.domain || '';
     let title = String((s && s.title) || '').trim();
     if (!title || /^https?:/i.test(title)) title = host;
     if (!title) continue;
     const showHost = host && host.toLowerCase() !== title.toLowerCase();
-    rows.push(`<a class="im-cov-row" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(title)}</span>${showHost ? `<span class="im-cov-host">${esc(host)}</span>` : ''}</span>${ARROW}</a>`);
+    rows.push(coverageRow(uri, title, showHost ? [host] : []));
     if (rows.length >= 12) break;
   }
   return rows.join('');
@@ -580,7 +594,7 @@ function renderNews(d) {
   // Wire the quicklink accordions immediately (triggers live in the overview
   // card now). `ctx.sources` is mutated once the brief loads, so the Sources
   // panel + the Sources & Coverage card both fill in then.
-  const ctx = { prompt, sources: [], origUrl: d.url || '', webTerm: d.title || '', onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, topicName: d.title || '', name: 'AI Insight · News', count: 1 } })) };
+  const ctx = { prompt, sources: [], headlines: [], origUrl: d.url || '', webTerm: d.title || '', onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, topicName: d.title || '', name: 'AI Insight · News', count: 1 } })) };
   wireActions(ctx);
   (async () => {
     const t0 = Date.now();
@@ -592,6 +606,7 @@ function renderNews(d) {
       if (panelEl.querySelector('#im-brief') !== briefEl) return;
       if (data && data.content) {
         ctx.sources = data.sources || [];
+        ctx.headlines = Array.isArray(data.headlines) ? data.headlines : [];
         briefEl.innerHTML = renderBriefBody(normalizeNewsBrief(data.content), null); briefEl.classList.add('ai-reveal');
         const prov = panelEl.querySelector('#im-prov');
         if (prov) prov.innerHTML = aiProvenanceHTML(ctx.sources, { badge: false });
@@ -601,7 +616,7 @@ function renderNews(d) {
     const srcPanel = panelEl.querySelector('#im-sources-panel');
     if (srcPanel) { srcPanel.innerHTML = sourcesListHTML(ctx.sources, ctx.origUrl); srcPanel.dataset.ready = '1'; }
     const covList = panelEl.querySelector('#im-coverage-list'), cov = panelEl.querySelector('#im-coverage');
-    const covRows = coverageListHTML(ctx.sources, ctx.origUrl);
+    const covRows = coverageListHTML(ctx.headlines, ctx.sources, ctx.origUrl);
     if (cov && covRows) { covList.innerHTML = covRows; cov.hidden = false; }
   })();
 }
@@ -612,20 +627,29 @@ function renderNews(d) {
 // (budget exhausted / niche topic), so the list is never blank. `sources` is a
 // flat citation array or a per-section map; `headlines` is the RSS fallback.
 function inTheNewsHTML(sources, headlines) {
+  // Prefer our rich related coverage (title + publisher · date); fall back to the
+  // grounding citations (publisher domain only) when we have no feed coverage.
   let list = [];
-  if (Array.isArray(sources) && sources.length) list = sources;
+  if (Array.isArray(headlines) && headlines.length) list = headlines;
+  else if (Array.isArray(sources) && sources.length) list = sources;
   else if (sources && typeof sources === 'object') { const f = Object.values(sources).flat(); if (f.length) list = f; }
-  if (!list.length && Array.isArray(headlines)) list = headlines;
   const seen = new Set(); const rows = [];
   for (const h of list) {
     const uri = (h && (h.uri || h.url)) || ''; if (!uri) continue;
     const key = uri.toLowerCase(); if (seen.has(key)) continue; seen.add(key);
-    const r = resolveSource({ title: h && h.title, uri });
-    const host = r.domain || '';
-    let title = String((h && h.title) || '').trim();
-    if (!title || /^https?:/i.test(title)) title = host; if (!title) continue;
-    const showHost = host && host.toLowerCase() !== title.toLowerCase();
-    rows.push(`<li class="aii-hl-row"><a class="aii-hl-link" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a>${showHost ? `<span class="aii-hl-src">${esc(host)}</span>` : ''}</li>`);
+    let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
+    let title, meta;
+    if (h && (h.source || h.date)) {                 // rich RSS row
+      title = String(h.title || '').trim() || host;
+      meta = [(h.source || '').trim() || host, relTime(h.date)].filter(Boolean).join(' · ');
+    } else {                                          // grounding citation (domain only)
+      const dom = resolveSource({ title: h && h.title, uri }).domain || host;
+      title = String((h && h.title) || '').trim();
+      if (!title || /^https?:/i.test(title)) title = dom;
+      meta = (dom && dom.toLowerCase() !== title.toLowerCase()) ? dom : '';
+    }
+    if (!title) continue;
+    rows.push(`<li class="aii-hl-row"><a class="aii-hl-link" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a>${meta ? `<span class="aii-hl-src">${esc(meta)}</span>` : ''}</li>`);
     if (rows.length >= 8) break;
   }
   if (!rows.length) return '';

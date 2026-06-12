@@ -264,33 +264,37 @@ export function renderAIIntelligence(container, scope) {
     let feed = [];
     if (hl && !Array.isArray(hl)) feed = hl[curName] || [];
     else if (Array.isArray(hl) && hl.length) feed = poolForSection(hl, sections, curIdx);
-    const list = cites.concat(feed);
+    // Prefer the rich RSS feed (title + publisher · date); grounding citations
+    // (publisher domain only) fill in behind it.
+    const list = feed.concat(cites);
     // Dedup by URL AND by normalized title — the same story often appears in both
     // the grounding citations and the RSS feed under different URLs.
     const seen = new Set(); const seenT = new Set(); const out = [];
     for (const x of list) {
       const uri = x.uri || x.url || ''; if (!uri) continue;
       const ukey = uri.toLowerCase();
-      // Real publisher, not the grounding redirect host (which is junk).
-      const r = resolveSource({ title: x.title, uri });
-      const host = r.domain || '';
-      let title = String(x.title || '').trim(); if (!title || /^https?:/i.test(title)) title = host;
+      let title, meta;
+      if (x && (x.source || x.date)) {                 // rich RSS row
+        let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
+        title = String(x.title || '').trim() || host;
+        meta = [(x.source || '').trim() || host, relTime(x.date)].filter(Boolean).join(' · ');
+      } else {                                          // grounding citation (domain only)
+        const dom = resolveSource({ title: x.title, uri }).domain || '';
+        title = String(x.title || '').trim(); if (!title || /^https?:/i.test(title)) title = dom;
+        meta = (dom && dom.toLowerCase() !== title.toLowerCase()) ? dom : '';
+      }
       if (!title) continue;
       const tkey = title.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
       if (seen.has(ukey) || (tkey && seenT.has(tkey))) continue;
       seen.add(ukey); if (tkey) seenT.add(tkey);
-      out.push({ uri, title, host });
+      out.push({ uri, title, meta });
       if (out.length >= 8) break;
     }
     return out;
   }
   function headlineListHTML() {
-    const rows = sectionNewsItems().map((x) => {
-      // Skip a subtitle that just repeats the link text (grounding citations
-      // carry no separate headline — the title IS the publisher).
-      const showHost = x.host && x.host.toLowerCase() !== x.title.toLowerCase();
-      return `<li class="aii-hl-row"><a class="aii-hl-link" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer">${esc(x.title)}</a>${showHost ? `<span class="aii-hl-src">${esc(x.host)}</span>` : ''}</li>`;
-    });
+    const rows = sectionNewsItems().map((x) =>
+      `<li class="aii-hl-row"><a class="aii-hl-link" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer">${esc(x.title)}</a>${x.meta ? `<span class="aii-hl-src">${esc(x.meta)}</span>` : ''}</li>`);
     if (!rows.length) return '';
     return `<div class="aii-hl"><div class="aii-hl-head">Sources &amp; Coverage</div><ul class="aii-hl-list">${rows.join('')}</ul></div>`;
   }

@@ -15047,10 +15047,12 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .im-coverage-list { display: flex; flex-direction: column; }
 .im-cov-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 2px; border: none; border-radius: 0; background: none; text-decoration: none; color: var(--color-text); border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); transition: none; }
 .im-cov-row:last-child { border-bottom: none; }
-.im-cov-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.im-cov-title { font-size: 0.88rem; font-weight: 600; color: #1d4ed8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.im-cov-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.im-cov-title { font-size: 0.86rem; font-weight: 600; line-height: 1.3; color: #1d4ed8; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.im-cov-row { align-items: flex-start; padding-top: 10px; padding-bottom: 10px; }
 .im-cov-row:hover .im-cov-title { text-decoration: underline; text-underline-offset: 2px; }
-.im-cov-host { font-size: 0.74rem; color: var(--color-text-muted); }
+.im-cov-host { font-size: 0.73rem; color: var(--color-text-muted); }
+.im-cov-row svg { margin-top: 2px; }
 .im-cov-row svg { flex: none; width: 13px; height: 13px; color: var(--color-text-light); }
 
 /* Sticky bar carries the affordances: prev/next chevrons + jump-up action links. */
