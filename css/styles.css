@@ -13352,10 +13352,10 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
     background: color-mix(in srgb, var(--color-primary) 3%, #fff);
     border-radius: 16px 16px 0 0;
   }
-  /* Title + "Latest stories and developments." inline (#230); search/sort stay
-     to the right of the whole lockup. */
-  #section-newsfeed .newsfeed-card .newsfeed-headtext { display: flex; flex-direction: row; align-items: center; gap: 12px; min-width: 0; flex: 0 1 auto; }
-  #section-newsfeed .newsfeed-card .section-card-sub { display: block; flex: 0 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* Title on top, "Latest stories and developments." stacked below it (#74/#75);
+     search/sort stay to the right of the whole lockup. */
+  #section-newsfeed .newsfeed-card .newsfeed-headtext { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; min-width: 0; flex: 0 1 auto; }
+  #section-newsfeed .newsfeed-card .section-card-sub { display: block; flex: none; min-width: 0; white-space: normal; }
   /* Reset the legacy full-bleed title chrome (white bg + min-height + bottom
      rule) that caused the centered white box; clean inline lockup instead. */
   #section-newsfeed .newsfeed-card .newsfeed-title {
@@ -13393,7 +13393,7 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
 .newsfeed-headtext { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
 /* Tall line-height so the title text box fills the icon-height row (no centering
    offset) — that's what makes the visual title→subtext gap match AI/Trending. */
-.newsfeed-title-main { line-height: 1.55; }
+.newsfeed-title-main { line-height: 1.25; }
 
 /* Mobile HOMEPAGE only (one-column scroll): give Trending + News Feed the same
    card + faint-header treatment as the search card and AI Intelligence. Scoped
@@ -14034,42 +14034,30 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 @media (prefers-reduced-motion: reduce) { .aii-live-dot { animation: none; } }
 
 /* ===== Featured AI Intelligence card on the desktop home — the hero feature.
-   Scoped to #section-aii-home so the topic-page + modal versions are untouched. */
+   Scoped to #section-aii-home so the topic-page + modal versions are untouched.
+   FLAT surfaces (no gradients) — a clean white card lifted by a soft shadow. */
 @media (min-width: 1024px) {
   body.home-search #section-aii-home .aii {
-    border-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-surface-border));
-    box-shadow: 0 1px 2px rgba(15, 26, 46, 0.05), 0 26px 54px -28px color-mix(in srgb, var(--color-primary) 55%, transparent);
-    background:
-      radial-gradient(90% 70% at 100% -10%, color-mix(in srgb, var(--color-primary) 7%, transparent), transparent 60%),
-      linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 3.5%, #fff), #fff 42%);
+    border-color: color-mix(in srgb, var(--color-primary) 16%, var(--color-surface-border));
+    box-shadow: 0 1px 2px rgba(15, 26, 46, 0.04), 0 22px 46px -30px color-mix(in srgb, var(--color-primary) 42%, transparent);
+    background: #fff;
   }
-  /* White path tiles pop on the faintly-tinted surface. */
-  body.home-search #section-aii-home .aii-pathlist > .aii-pathrow { background: #fff; }
   body.home-search #section-aii-home .aii-head {
-    padding: 17px 20px;
-    background:
-      radial-gradient(120% 180% at 100% 0%, color-mix(in srgb, var(--color-primary) 11%, transparent), transparent 55%),
-      linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 6%, #fff), color-mix(in srgb, var(--color-primary) 2.5%, #fff));
-    border-bottom-color: color-mix(in srgb, var(--color-primary) 13%, var(--color-surface-border));
+    padding: 16px 20px;
+    background: color-mix(in srgb, var(--color-primary) 4%, #fff);
+    border-bottom-color: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface-border));
   }
   body.home-search #section-aii-home .aii-logo {
-    width: 31px; height: 31px; border-radius: 9px;
-    box-shadow: 0 5px 16px -5px color-mix(in srgb, var(--color-primary) 65%, transparent);
+    width: 30px; height: 30px; border-radius: 9px;
+    box-shadow: 0 4px 12px -5px color-mix(in srgb, var(--color-primary) 55%, transparent);
   }
-  body.home-search #section-aii-home .aii-brand { font-size: 1.24rem; }
-  body.home-search #section-aii-home .aii-headsub { font-size: 0.84rem; }
+  body.home-search #section-aii-home .aii-brand { font-size: 1.2rem; }
+  body.home-search #section-aii-home .aii-headsub { font-size: 0.85rem; }
   /* Live badge gets a soft tinted chip so it reads as a status, not a link. */
   body.home-search #section-aii-home .aii-live {
     padding: 3px 9px 3px 8px; border-radius: 999px;
     background: color-mix(in srgb, #22a47a 12%, transparent);
     box-shadow: inset 0 0 0 1px color-mix(in srgb, #22a47a 26%, transparent);
-  }
-  /* Path tiles: stronger icon chip + a touch more lift on hover. */
-  body.home-search #section-aii-home .aii-pathrow-icon { width: 40px; height: 40px; border-radius: 12px; }
-  body.home-search #section-aii-home .aii-pathrow-icon svg { width: 19px; height: 19px; }
-  body.home-search #section-aii-home .aii-pathlist > .aii-pathrow:hover {
-    box-shadow: 0 14px 30px -16px rgba(31, 49, 99, 0.34);
-    transform: translateY(-3px);
   }
 }
 .aii-headsub { margin: 0; font-size: 0.8rem; line-height: 1.45; color: var(--color-text-muted); }
@@ -14629,7 +14617,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Legend pill at the top-left of the trend list body — defines the two card
    glyphs (sparkle = AI text, up-arrow = Google Trends). A faint pill; the two
    items wrap as whole units when the card is narrow. */
-.trend-legend-row { display: flex; justify-content: flex-start; padding: 10px 16px 14px; }
+.trend-legend-row { display: flex; justify-content: flex-start; padding: 11px 16px 20px; }
 /* In the Trending modal, the legend shares the category-chooser line (chooser
    left, legend right), with clear breathing room before the trend grid. */
 .trend-controls-legend { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap; margin-bottom: 18px; }
@@ -14926,34 +14914,49 @@ body.home-mode #sub-header.is-subnav .topic-banner {
     background: transparent; gap: 12px; margin: 0; padding: 14px 16px 16px;
   }
   body.home-search #section-aii-home .aii-pathlist > .aii-pathrow {
-    flex-direction: column; align-items: flex-start; gap: 10px; position: relative;
-    min-height: 0; padding: 16px 16px 17px;
-    background: #fff; border: 1px solid var(--color-surface-border); border-radius: 14px;
+    flex-direction: column; align-items: flex-start; gap: 13px; position: relative;
+    min-height: 0; padding: 15px 16px 16px;
+    background: #fff; border: 1px solid var(--color-surface-border); border-radius: 13px;
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
     transition: border-color .14s, box-shadow .16s, transform .14s;
   }
   body.home-search #section-aii-home .aii-pathlist > .aii-pathrow:hover {
     background: #fff;
-    border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border));
-    box-shadow: 0 10px 24px -14px rgba(31, 49, 99, 0.28);
+    border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border));
+    box-shadow: 0 12px 26px -16px rgba(31, 49, 99, 0.3);
     transform: translateY(-2px);
   }
-  /* Bigger, softer icon chip for presence in the card. */
-  body.home-search #section-aii-home .aii-pathrow-icon { width: 36px; height: 36px; border-radius: 11px; }
-  body.home-search #section-aii-home .aii-pathrow-icon svg { width: 18px; height: 18px; }
-  body.home-search #section-aii-home .aii-pathrow-name { font-size: 0.98rem; }
-  body.home-search #section-aii-home .aii-pathrow-go { position: absolute; top: 13px; right: 13px; margin: 0; }
-  body.home-search #section-aii-home .aii-pathrow-text { gap: 3px; }
+  /* Icon chip: soft tinted square, sized for presence without dominating. */
+  body.home-search #section-aii-home .aii-pathrow-icon {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: color-mix(in srgb, var(--color-primary) 7%, #fff);
+  }
+  body.home-search #section-aii-home .aii-pathrow-icon svg { width: 17px; height: 17px; }
+  body.home-search #section-aii-home .aii-pathrow-name { font-size: 0.99rem; letter-spacing: -0.012em; }
+  /* Description: comfortable line-height + a touch of breathing room from title. */
+  body.home-search #section-aii-home .aii-pathrow-text { gap: 5px; }
+  body.home-search #section-aii-home .aii-pathrow-sub { font-size: 0.82rem; line-height: 1.5; color: var(--color-text-muted); }
+  /* "Go" chevron: a quiet circular affordance, top-right, that wakes on hover. */
+  body.home-search #section-aii-home .aii-pathrow-go {
+    position: absolute; top: 12px; right: 12px; margin: 0;
+    width: 24px; height: 24px; border-radius: 50%;
+    align-items: center; justify-content: center;
+    background: color-mix(in srgb, var(--color-primary) 5%, #fff);
+    color: var(--color-text-light);
+  }
+  body.home-search #section-aii-home .aii-pathrow-go svg { width: 15px; height: 15px; }
+  body.home-search #section-aii-home .aii-pathrow:hover .aii-pathrow-go {
+    background: color-mix(in srgb, var(--color-primary) 12%, #fff); color: var(--color-primary); transform: none;
+  }
   /* Web Sources sidebar: a single vertical list, not a cramped 2-up grid. */
   body.home-search #section-websources .ws-pathlist { grid-template-columns: 1fr; }
 
-  /* Inline header lockup (#220-222): subtext sits to the RIGHT of the title, not
-     stacked below. Below 900px the heads stay stacked (homepage) / hidden behind
-     tab nav (topic pages), so the inline line never has to wrap. */
-  .aii-head, .ws-head { flex-direction: row; align-items: center; gap: 12px; }
+  /* Section header lockup: subtext ALWAYS stacks on its own line under the
+     icon+title (#75). The old inline-to-the-right layout made "AI Intelligence" /
+     "Web Sources" wrap awkwardly in the narrow topic-page sidebar. */
+  .aii-head, .ws-head { flex-direction: column; align-items: flex-start; gap: 5px; }
   .aii-headsub, .ws-headsub { margin: 0; }
-  /* Homepage: section subtext drops to its OWN line under the title (#25). */
-  body.home-search .aii-head, body.home-search .ws-head { flex-direction: column; align-items: flex-start; gap: 4px; }
+  body.home-search .aii-head, body.home-search .ws-head { gap: 5px; }
   body.home-search .aii-headsub, body.home-search .ws-headsub { margin: 0; }
   body.home-search #section-newsfeed .newsfeed-headtext { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
 
