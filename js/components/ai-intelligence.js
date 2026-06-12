@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp175';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp175';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp176';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp176';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -87,6 +87,9 @@ const ARROW = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" strok
 const BACK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
 const EXT = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>';
 const CHEV = '<svg class="aii-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+// Section-icon badge for "Sources & Coverage" (link glyph) — matches the brief
+// section glyphs + the News/Trend modals (#129).
+const SOURCES_BADGE = '<span class="ai-result-sub-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>';
 // Small inline spark for the "AI Brief" eyebrow (matches the news modal).
 const SPARK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>';
 // Paper-plane (Direct Submit — "send it off") and an eye (Review — "preview").
@@ -295,7 +298,7 @@ export function renderAIIntelligence(container, scope) {
     const rows = sectionNewsItems().map((x) =>
       `<li class="aii-hl-row"><a class="aii-hl-link" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer">${esc(x.title)}</a>${x.meta ? `<span class="aii-hl-src">${esc(x.meta)}</span>` : ''}</li>`);
     if (!rows.length) return '';
-    return `<div class="aii-hl"><div class="aii-hl-head">Sources &amp; Coverage</div><ul class="aii-hl-list">${rows.join('')}</ul></div>`;
+    return `<div class="aii-hl"><div class="aii-hl-head aii-hl-head--icon">${SOURCES_BADGE}<span>Sources &amp; Coverage</span></div><ul class="aii-hl-list">${rows.join('')}</ul></div>`;
   }
   // "Explore further on web" — the full Web Sources platform picker (source
   // types → platforms), searching this topic. Mirrors the Web Sources card.

@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp175';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp175';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp176';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp176';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -94,6 +94,9 @@ const LOGO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><p
 const NEWS_FEED_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><line x1="7" y1="8" x2="14" y2="8"/><line x1="7" y1="12" x2="14" y2="12"/><line x1="7" y1="16" x2="11" y2="16"/></svg>';
 // Right chevron — "drill into this sub-level" affordance (Web Sources → category).
 const CHEVR = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
+// Section-icon badge for "Sources & Coverage" — matches the brief section glyphs
+// (link icon = related links/sources).
+const SOURCES_BADGE = '<span class="ai-result-sub-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>';
 // Explore-further icons: paper-plane (Direct Submit) + eye (Review Prompt).
 const ICON_SEND = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2.5L11 13"/><path d="M21.5 2.5L15 21l-4-8-8-4z"/></svg>';
 const ICON_EYE = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>';
@@ -601,7 +604,7 @@ function renderNews(d) {
         ${briefSkeleton()}
       </section>
       <section class="im-section im-coverage" id="im-coverage" hidden>
-        <div class="im-section-title">Sources &amp; Coverage</div>
+        <div class="im-section-title im-section-title--icon">${SOURCES_BADGE}<span>Sources &amp; Coverage</span></div>
         <div class="im-coverage-list" id="im-coverage-list"></div>
       </section>
     </div>`;
@@ -648,7 +651,7 @@ function renderNews(d) {
 function inTheNewsHTML(sources, headlines) {
   const rows = coverageListHTML(headlines, sources, '');
   if (!rows) return '';
-  return `<div class="im-coverage im-coverage--inline" id="im-coverage"><div class="im-section-title">Sources &amp; Coverage</div><div class="im-coverage-list">${rows}</div></div>`;
+  return `<div class="im-coverage im-coverage--inline" id="im-coverage"><div class="im-section-title im-section-title--icon">${SOURCES_BADGE}<span>Sources &amp; Coverage</span></div><div class="im-coverage-list">${rows}</div></div>`;
 }
 
 // ---- Trend ----------------------------------------------------------------
