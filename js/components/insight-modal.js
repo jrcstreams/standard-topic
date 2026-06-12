@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp164';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp164';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp166';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp166';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -230,27 +230,15 @@ function coverageRow(uri, title, metaParts) {
 }
 function coverageListHTML(headlines, sources, origUrl) {
   const seen = new Set(); const rows = [];
-  // The brief's CITED sources lead the list — these are the publishers the AI
-  // actually used, so they're relevant by construction and mirror the "Sources:"
-  // line under the brief (#88). (Previously these were only a fallback, so the
-  // section filled with loosely-matched, often-irrelevant feed stories — #83.)
-  for (const s of (Array.isArray(sources) ? sources : [])) {
-    const uri = (s && (s.uri || s.url)) || ''; if (!uri) continue;
-    const k = uri.toLowerCase(); if (seen.has(k)) continue; seen.add(k);
-    const r = resolveSource({ title: s && s.title, uri });
-    const host = r.domain || '';
-    let title = String((s && s.title) || '').trim();
-    if (!title || /^https?:/i.test(title)) title = host;
-    if (!title) continue;
-    const showHost = host && host.toLowerCase() !== title.toLowerCase();
-    rows.push(coverageRow(uri, title, showHost ? [host] : []));
-    if (rows.length >= 12) break;
-  }
-  // Then rich related coverage from our own feed (title + publisher · date),
-  // now relevance-filtered server-side so only stories genuinely about THIS
-  // story appear. Deduped against the cited sources above.
+  // Rich related coverage from our own feed only — every row is a real article
+  // with a headline + publisher · date. We deliberately do NOT render the bare
+  // grounding-citation domains here: they have no headline, so they read as a
+  // wall of raw links and mix awkwardly with the rich rows (#96/#97). The cited
+  // publishers still live in the brief's "Sources:" line + the Sources panel.
+  // Relevance is enforced server-side (newsRelated term-overlap), so only stories
+  // genuinely about THIS story reach us.
   for (const h of (Array.isArray(headlines) ? headlines : [])) {
-    if (rows.length >= 14) break;
+    if (rows.length >= 12) break;
     const uri = (h && (h.url || h.uri)) || ''; if (!uri) continue;
     const k = uri.toLowerCase(); if (seen.has(k)) continue; seen.add(k);
     const title = String((h && h.title) || '').trim(); if (!title || /^https?:/i.test(title)) continue;
@@ -519,6 +507,10 @@ function wireActions(ctx) {
 
 function render() {
   if (!current) return;
+  // News briefs get a FIXED panel height so the modal doesn't shrink while the
+  // brief is generating then jump bigger when it loads — keeps Prev/Next usable
+  // (#98). Other insight types size to content.
+  panelEl.classList.toggle('im-panel--news', current.type === 'news');
   if (current.type === 'news') renderNews(current);
   else if (current.type === 'trend') renderTrend(current);
   else if (current.type === 'overview') renderOverview(current);

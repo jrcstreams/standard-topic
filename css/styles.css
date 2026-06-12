@@ -14460,6 +14460,9 @@ body.home-mode #sub-header.is-subnav .topic-banner {
   background: #fff; border-radius: 18px; box-shadow: 0 24px 64px -16px rgba(16, 24, 40, 0.4);
   animation: imPop .18s ease;
 }
+/* News briefs always fill the same height so the modal never shrinks while the
+   brief generates then grows when it loads (#98) — Prev/Next stays put. */
+.im-panel--news { height: min(86vh, 920px); }
 @keyframes imPop { from { opacity: 0; transform: translate(-50%, -48%) scale(0.98); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
 .im-head {
   flex: 0 0 auto; padding: 15px 20px 14px; border-bottom: 1px solid var(--color-surface-border);
