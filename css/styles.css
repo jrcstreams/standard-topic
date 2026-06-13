@@ -14211,14 +14211,17 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-condensed.is-on { box-shadow: 0 6px 14px -10px rgba(15,23,42,.45); }
 
 /* Section menu = 2-column card grid. */
-.aii-menu-grid { display: grid !important; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 0 !important; }
-.aii-menu-card { display: flex; flex-direction: column; align-items: flex-start; gap: 11px; text-align: left; padding: 15px 16px; border: 1px solid var(--color-surface-border); border-radius: 14px; background: #fff; cursor: pointer; font-family: var(--font-family); box-shadow: 0 1px 2px rgba(15,23,42,.04); transition: border-color .14s, box-shadow .16s, transform .14s; }
-.aii-menu-card:hover { border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border)); box-shadow: 0 10px 24px -14px rgba(31,49,99,.28); transform: translateY(-2px); }
-.aii-menu-card-ic { display: inline-flex; width: 34px; height: 34px; flex: none; align-items: center; justify-content: center; border-radius: 10px; }
-.aii-menu-card-ic svg { width: 17px; height: 17px; }
-.aii-menu-card-tx { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.aii-menu-card .aii-menu-name { font-family: var(--font-display); font-size: 0.98rem; font-weight: 600; letter-spacing: -0.01em; color: #25324a; }
-.aii-menu-card .aii-menu-desc { font-size: 0.82rem; line-height: 1.45; color: var(--color-text-muted); }
+.aii-menu-grid { display: grid !important; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 0 !important; }
+/* Compact list-style cards: icon chip INLINE with the title (not stacked above),
+   title + one-line desc beside it, tighter padding so the grid isn't a wall of
+   big blocks (#167 follow-up). */
+.aii-menu-card { display: flex; flex-direction: row; align-items: flex-start; gap: 10px; text-align: left; padding: 11px 12px; border: 1px solid var(--color-surface-border); border-radius: 12px; background: #fff; cursor: pointer; font-family: var(--font-family); box-shadow: 0 1px 2px rgba(15,23,42,.03); transition: border-color .14s, box-shadow .16s, transform .12s; }
+.aii-menu-card:hover { border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border)); box-shadow: 0 8px 18px -14px rgba(31,49,99,.26); transform: translateY(-1px); }
+.aii-menu-card-ic { display: inline-flex; width: 28px; height: 28px; flex: none; align-items: center; justify-content: center; border-radius: 8px; margin-top: 1px; }
+.aii-menu-card-ic svg { width: 15px; height: 15px; }
+.aii-menu-card-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.aii-menu-card .aii-menu-name { font-family: var(--font-display); font-size: 0.9rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3; color: #25324a; }
+.aii-menu-card .aii-menu-desc { font-size: 0.78rem; line-height: 1.4; color: var(--color-text-muted); }
 @media (max-width: 560px) { .aii-menu-grid { grid-template-columns: 1fr; } }
 
 /* Insight content page → News family layout (#136-142): a grey overview card

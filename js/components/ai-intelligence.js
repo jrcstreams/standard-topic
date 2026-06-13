@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260613-revamp189';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260613-revamp189';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260613-revamp190';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260613-revamp190';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
