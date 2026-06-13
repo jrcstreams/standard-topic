@@ -14093,19 +14093,25 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    topic-DESKTOP card no longer makes you pick a path first; it sells the feature
    (curated intro + track teaser) and drops you into the modal with one CTA. */
 .aii-launcher .aii-headsub { display: none; }
-.aii-launcher .aii-stage { padding: 17px 18px 19px; }
-.aii-promo { display: flex; flex-direction: column; align-items: flex-start; gap: 17px; }
-.aii-promo-intro { margin: 0; max-width: 580px; font-size: 1.0rem; line-height: 1.62; color: #3a4a63; }
-/* Clean filled CTA — text + a horizontal arrow that slides on hover. No chevron,
-   no leading icon: the focal action of the card (#167). */
-.aii-promo-cta { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border: none; border-radius: 12px; background: var(--color-primary); color: #fff; cursor: pointer; font-family: var(--font-family); box-shadow: 0 10px 22px -13px color-mix(in srgb, var(--color-primary) 75%, transparent); transition: transform .14s ease, box-shadow .16s ease, background .14s ease; }
-.aii-promo-cta:hover { transform: translateY(-1px); background: color-mix(in srgb, #000 7%, var(--color-primary)); box-shadow: 0 15px 28px -13px color-mix(in srgb, var(--color-primary) 85%, transparent); }
-.aii-promo-cta:active { transform: translateY(0); }
-.aii-promo-cta-tx { font-size: 0.96rem; font-weight: 650; letter-spacing: -0.01em; }
-.aii-promo-cta-arrow { display: inline-flex; transition: transform .2s ease; }
-.aii-promo-cta-arrow svg { width: 18px; height: 18px; }
-.aii-promo-cta:hover .aii-promo-cta-arrow { transform: translateX(4px); }
-@media (prefers-reduced-motion: reduce) { .aii-promo-cta-arrow { transition: none; } }
+.aii-launcher .aii-stage { padding: 14px 16px 16px; }
+.aii-promo { display: flex; flex-direction: column; gap: 12px; }
+.aii-promo-line { margin: 0 0 1px; font-size: 0.82rem; font-weight: 500; line-height: 1.4; color: var(--color-text-muted); }
+/* Track tiles — the product centerpiece (#167). Each carries its own accent
+   (icon chip tint + hover edge + reveal arrow); refined hairline border, soft
+   lift on hover. Responsive: 3-across on the wide home card, 1-col in a sidebar. */
+.aii-promo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(218px, 1fr)); gap: 10px; }
+.aii-track { position: relative; display: flex; flex-direction: column; gap: 9px; padding: 14px; border: 1px solid color-mix(in srgb, var(--color-surface-border) 82%, transparent); border-radius: 14px; background: #fff; cursor: pointer; text-align: left; font-family: var(--font-family); transition: border-color .16s ease, box-shadow .16s ease, transform .1s ease; }
+.aii-track:hover { border-color: color-mix(in srgb, var(--aii-accent) 50%, transparent); box-shadow: 0 12px 24px -16px var(--aii-accent); transform: translateY(-2px); }
+.aii-track:active { transform: translateY(0); }
+.aii-track-top { display: flex; align-items: center; justify-content: space-between; }
+.aii-track-ic { display: inline-flex; width: 38px; height: 38px; flex: none; align-items: center; justify-content: center; border-radius: 11px; background: color-mix(in srgb, var(--aii-accent) 13%, #fff); color: var(--aii-accent); }
+.aii-track-ic svg { width: 19px; height: 19px; }
+.aii-track-go { display: inline-flex; color: var(--aii-accent); opacity: 0; transform: translateX(-5px); transition: opacity .16s ease, transform .16s ease; }
+.aii-track-go svg { width: 17px; height: 17px; }
+.aii-track:hover .aii-track-go { opacity: 1; transform: translateX(0); }
+.aii-track-name { font-size: 0.95rem; font-weight: 700; letter-spacing: -0.012em; color: #1a2740; }
+.aii-track-desc { font-size: 0.78rem; line-height: 1.42; color: var(--color-text-muted); }
+@media (prefers-reduced-motion: reduce) { .aii-track, .aii-track-go { transition: none; } }
 /* Secondary tab bar (mobile tab mode) — the AI Intelligence paths as sub-tabs
    under the primary News Feed / AI Intelligence / Web Sources tabs. Same family
    as the primary tabs but pill-shaped + a touch quieter. Scrolls if it

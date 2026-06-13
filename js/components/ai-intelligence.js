@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260613-revamp188';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260613-revamp188';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260613-revamp189';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260613-revamp189';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -111,6 +111,9 @@ const ICONS = {
   'topic-specific': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15 9 22 9.3 16.5 13.9 18.5 21 12 16.8 5.5 21 7.5 13.9 2 9.3 9 9"/></svg>',
   _: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>',
 };
+// Per-track accent — gives each launcher tile its own identifiable colour
+// (icon chip tint + hover edge), so the card reads as a real product (#167).
+const AII_ACCENTS = { discover: '#2563eb', 'topic-specific': '#d97706', analyze: '#7c3aed', learn: '#0d9488', _: '#2563eb' };
 
 // scope: { topic: '<Topic Name>' | 'home', label: '<display>' }
 export function renderAIIntelligence(container, scope) {
@@ -219,22 +222,19 @@ export function renderAIIntelligence(container, scope) {
     return view === 'paths' ? pathsHTML() : view === 'sections' ? sectionsHTML() : contentHTML();
   }
 
-  // Launcher promo (#167): rather than make the user pick a path up front, the
-  // home + topic-DESKTOP card is a clean action card — a short pitch describing
-  // the coverage (latest developments / analysis / background, in general terms,
-  // NOT specific insight names) + one CTA that drops them straight into the
-  // modal's paths view.
+  // Launcher (#167): the home + topic-DESKTOP card is a polished product — a
+  // tight one-liner + the tracks themselves as the centerpiece (accent-iconed
+  // tiles, each opening the modal to that track). No big body copy, no clunky
+  // CTA: the tracks ARE the calls to action.
   function launcherPromoHTML() {
-    const topicLabel = scope.topic === 'home' ? "today's world" : (scope.label || scope.topic || 'this topic');
-    const intro = scope.topic === 'home'
-      ? `Live, AI-written intelligence on the stories shaping today's world — the latest developments, the deeper analysis behind them, and the context that ties it together. Updated continuously.`
-      : `Live, AI-written intelligence on ${esc(topicLabel)} — the latest developments, deeper analysis, and the background that puts it all in context. Updated continuously.`;
+    const tracks = paths.map((p) => `<button type="button" class="aii-track" data-group="${escAttr(p.group)}" style="--aii-accent:${AII_ACCENTS[p.group] || AII_ACCENTS._}">
+        <span class="aii-track-top"><span class="aii-track-ic">${ICONS[p.group] || ICONS._}</span><span class="aii-track-go" aria-hidden="true">${RIGHT_ARROW}</span></span>
+        <span class="aii-track-name">${esc(p.tab || p.label)}</span>
+        <span class="aii-track-desc">${esc(p.subtitle)}</span>
+      </button>`).join('');
     return `<div class="aii-promo">
-      <p class="aii-promo-intro">${intro}</p>
-      <button type="button" class="aii-promo-cta" data-promo-cta>
-        <span class="aii-promo-cta-tx">Explore AI Intelligence</span>
-        <span class="aii-promo-cta-arrow">${RIGHT_ARROW}</span>
-      </button>
+      <p class="aii-promo-line">Live, AI-written intelligence — pick a track to dive in.</p>
+      <div class="aii-promo-grid">${tracks}</div>
     </div>`;
   }
   function pathsHTML() {
@@ -716,13 +716,13 @@ export function renderAIIntelligence(container, scope) {
     container._aiiSectionHandler = (e) => { const g = e && e.detail && e.detail.group; if (g && paths.some((p) => p.group === g)) openTab(g); };
     window.addEventListener('aii-open-section', container._aiiSectionHandler);
   } else if (launcher) {
-    // Promo action card (#167): one CTA → straight into the modal's paths view.
-    // No "pick a path first" gate; track choice happens inside the modal.
+    // Product launcher (#167): each track tile opens the modal straight to that
+    // track's sections.
     stage.innerHTML = launcherPromoHTML();
-    stage.querySelector('[data-promo-cta]')?.addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: {
-      topic: scope.topic, label: scope.label,
+    stage.querySelectorAll('.aii-track').forEach((b) => b.addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: {
+      topic: scope.topic, label: scope.label, group: b.dataset.group,
       hideGroups: scope.hideGroups || [], descriptions: scope.descriptions || {},
-    } })));
+    } }))));
   } else if (scope.inModal && scope.initialGroup && paths.some((p) => p.group === scope.initialGroup)) {
     // Inside the modal, deep-link to the path the user clicked.
     curGroup = scope.initialGroup;

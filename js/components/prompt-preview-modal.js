@@ -3,7 +3,7 @@
 // focused modal, independent of how far the user has scrolled in the
 // wizard body.
 
-import { getAssembledPrompt } from './prompt-generator.js?v=20260613-revamp188';
+import { getAssembledPrompt } from './prompt-generator.js?v=20260613-revamp189';
 
 let overlayEl = null;
 
