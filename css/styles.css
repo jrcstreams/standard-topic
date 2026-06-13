@@ -14093,26 +14093,19 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    topic-DESKTOP card no longer makes you pick a path first; it sells the feature
    (curated intro + track teaser) and drops you into the modal with one CTA. */
 .aii-launcher .aii-headsub { display: none; }
-.aii-launcher .aii-stage { padding-top: 4px; }
-.aii-promo { display: flex; flex-direction: column; gap: 14px; }
-.aii-promo-intro { margin: 0; font-size: 0.95rem; line-height: 1.55; color: var(--color-text); }
-.aii-promo-tracks { display: grid; grid-template-columns: repeat(auto-fit, minmax(208px, 1fr)); gap: 9px; }
-.aii-promo-track { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border: 1px solid var(--color-surface-border); border-radius: 12px; background: #fff; cursor: pointer; text-align: left; font-family: var(--font-family); transition: border-color .14s, background .14s, transform .06s; }
-.aii-promo-track:hover { border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); background: color-mix(in srgb, var(--color-primary) 3%, #fff); }
-.aii-promo-track:active { transform: translateY(1px); }
-.aii-promo-track-ic { display: inline-flex; flex: none; width: 32px; height: 32px; align-items: center; justify-content: center; border-radius: 9px; background: color-mix(in srgb, var(--color-primary) 8%, #fff); color: var(--color-primary); }
-.aii-promo-track-ic svg { width: 16px; height: 16px; }
-.aii-promo-track-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.aii-promo-track-name { font-size: 0.9rem; font-weight: 600; color: #25324a; }
-.aii-promo-track-sub { font-size: 0.74rem; line-height: 1.35; color: var(--color-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.aii-promo-track:hover .aii-promo-track-name { color: var(--color-primary); }
-.aii-promo-cta { display: inline-flex; align-items: center; justify-content: center; gap: 9px; align-self: flex-start; padding: 11px 20px; border: none; border-radius: 11px; background: var(--color-primary); color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.95rem; font-weight: 650; letter-spacing: -0.01em; box-shadow: 0 8px 20px -10px color-mix(in srgb, var(--color-primary) 70%, transparent); transition: transform .12s, box-shadow .14s, background .14s; }
-.aii-promo-cta:hover { transform: translateY(-1px); box-shadow: 0 12px 26px -10px color-mix(in srgb, var(--color-primary) 82%, transparent); }
+.aii-launcher .aii-stage { padding: 17px 18px 19px; }
+.aii-promo { display: flex; flex-direction: column; align-items: flex-start; gap: 17px; }
+.aii-promo-intro { margin: 0; max-width: 580px; font-size: 1.0rem; line-height: 1.62; color: #3a4a63; }
+/* Clean filled CTA — text + a horizontal arrow that slides on hover. No chevron,
+   no leading icon: the focal action of the card (#167). */
+.aii-promo-cta { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border: none; border-radius: 12px; background: var(--color-primary); color: #fff; cursor: pointer; font-family: var(--font-family); box-shadow: 0 10px 22px -13px color-mix(in srgb, var(--color-primary) 75%, transparent); transition: transform .14s ease, box-shadow .16s ease, background .14s ease; }
+.aii-promo-cta:hover { transform: translateY(-1px); background: color-mix(in srgb, #000 7%, var(--color-primary)); box-shadow: 0 15px 28px -13px color-mix(in srgb, var(--color-primary) 85%, transparent); }
 .aii-promo-cta:active { transform: translateY(0); }
-.aii-promo-cta-spark { display: inline-flex; }
-.aii-promo-cta-spark svg { width: 16px; height: 16px; }
-.aii-promo-cta-arrow { display: inline-flex; }
-.aii-promo-cta-arrow svg { width: 15px; height: 15px; }
+.aii-promo-cta-tx { font-size: 0.96rem; font-weight: 650; letter-spacing: -0.01em; }
+.aii-promo-cta-arrow { display: inline-flex; transition: transform .2s ease; }
+.aii-promo-cta-arrow svg { width: 18px; height: 18px; }
+.aii-promo-cta:hover .aii-promo-cta-arrow { transform: translateX(4px); }
+@media (prefers-reduced-motion: reduce) { .aii-promo-cta-arrow { transition: none; } }
 /* Secondary tab bar (mobile tab mode) — the AI Intelligence paths as sub-tabs
    under the primary News Feed / AI Intelligence / Web Sources tabs. Same family
    as the primary tabs but pill-shaped + a touch quieter. Scrolls if it

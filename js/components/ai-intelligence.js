@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260612-revamp187';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260612-revamp187';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260613-revamp188';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260613-revamp188';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -85,6 +85,8 @@ function poolForSection(pool, sections, curIdx) {
 // filled white on the navy tile. Simple and on-brand (no glossy facets).
 const LOGO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
 const ARROW = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
+// Horizontal "go" arrow for the promo CTA (slides right on hover).
+const RIGHT_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>';
 const BACK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
 const EXT = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>';
 const CHEV = '<svg class="aii-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
@@ -218,29 +220,21 @@ export function renderAIIntelligence(container, scope) {
   }
 
   // Launcher promo (#167): rather than make the user pick a path up front, the
-  // home + topic-DESKTOP card is a single highlighted action card — a curated,
-  // evergreen intro that name-drops a couple of THIS topic's real insights, a
-  // teaser of the tracks, and one CTA that drops them straight into the modal's
-  // paths view. (Each track is also directly clickable for power users.)
+  // home + topic-DESKTOP card is a clean action card — a short pitch describing
+  // the coverage (latest developments / analysis / background, in general terms,
+  // NOT specific insight names) + one CTA that drops them straight into the
+  // modal's paths view.
   function launcherPromoHTML() {
-    const names = Object.keys(scope.descriptions || {}).filter(Boolean);
-    const picks = names.slice(0, 2);
-    const ex = picks.length === 2 ? `${esc(picks[0])} to ${esc(picks[1])}` : (picks.length === 1 ? esc(picks[0]) : '');
     const topicLabel = scope.topic === 'home' ? "today's world" : (scope.label || scope.topic || 'this topic');
-    const lead = scope.topic === 'home'
-      ? `Live, AI-written briefings on today's world`
-      : `Live, AI-written intelligence on ${esc(topicLabel)}`;
-    const intro = ex
-      ? `${lead} — from ${ex} and more. Pick a track and dive into continuously-updated analysis.`
-      : `${lead} — continuously-updated analysis across the latest moves, deeper takes, and key background. Pick a track to dive in.`;
-    const tracks = paths.map((p) => `<button type="button" class="aii-promo-track" data-group="${escAttr(p.group)}">
-        <span class="aii-promo-track-ic aii-icon-${escAttr(p.group)}">${ICONS[p.group] || ICONS._}</span>
-        <span class="aii-promo-track-tx"><span class="aii-promo-track-name">${esc(p.tab || p.label)}</span><span class="aii-promo-track-sub">${esc(p.subtitle)}</span></span>
-      </button>`).join('');
+    const intro = scope.topic === 'home'
+      ? `Live, AI-written intelligence on the stories shaping today's world — the latest developments, the deeper analysis behind them, and the context that ties it together. Updated continuously.`
+      : `Live, AI-written intelligence on ${esc(topicLabel)} — the latest developments, deeper analysis, and the background that puts it all in context. Updated continuously.`;
     return `<div class="aii-promo">
       <p class="aii-promo-intro">${intro}</p>
-      <div class="aii-promo-tracks">${tracks}</div>
-      <button type="button" class="aii-promo-cta" data-promo-cta><span class="aii-promo-cta-spark">${LOGO}</span><span class="aii-promo-cta-tx">Explore AI Intelligence</span><span class="aii-promo-cta-arrow">${ARROW}</span></button>
+      <button type="button" class="aii-promo-cta" data-promo-cta>
+        <span class="aii-promo-cta-tx">Explore AI Intelligence</span>
+        <span class="aii-promo-cta-arrow">${RIGHT_ARROW}</span>
+      </button>
     </div>`;
   }
   function pathsHTML() {
@@ -722,15 +716,13 @@ export function renderAIIntelligence(container, scope) {
     container._aiiSectionHandler = (e) => { const g = e && e.detail && e.detail.group; if (g && paths.some((p) => p.group === g)) openTab(g); };
     window.addEventListener('aii-open-section', container._aiiSectionHandler);
   } else if (launcher) {
-    // Promo action card (#167): one CTA → straight into the modal's paths view;
-    // each track teaser → that track directly. No "pick a path first" gate.
+    // Promo action card (#167): one CTA → straight into the modal's paths view.
+    // No "pick a path first" gate; track choice happens inside the modal.
     stage.innerHTML = launcherPromoHTML();
-    const openModalTo = (group) => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: {
-      topic: scope.topic, label: scope.label, group,
+    stage.querySelector('[data-promo-cta]')?.addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: {
+      topic: scope.topic, label: scope.label,
       hideGroups: scope.hideGroups || [], descriptions: scope.descriptions || {},
-    } }));
-    stage.querySelector('[data-promo-cta]')?.addEventListener('click', () => openModalTo(undefined));
-    stage.querySelectorAll('.aii-promo-track').forEach((b) => b.addEventListener('click', () => openModalTo(b.dataset.group)));
+    } })));
   } else if (scope.inModal && scope.initialGroup && paths.some((p) => p.group === scope.initialGroup)) {
     // Inside the modal, deep-link to the path the user clicked.
     curGroup = scope.initialGroup;
