@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260614-revamp191';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260614-revamp191';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260614-revamp192';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260614-revamp192';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -140,48 +140,71 @@ export function renderAIIntelligence(container, scope) {
 
   const subtabsHTML = () => `<nav class="aii-subtabs">${paths.map((p) => `<button type="button" class="aii-subtab" data-group="${escAttr(p.group)}">${esc(p.tab || p.label)}</button>`).join('')}</nav>`;
 
-  // Topic title that doubles as the switcher (#130-133): the topic name heads the
-  // body on every modal view; clicking it drops a searchable topic picker. The
-  // modal supplies scope.topics / scope.topicKey / scope.onChangeTopic.
   const topicTitle = scope.topic === 'home' ? "Today's World" : (scope.label || scope.topic || '');
-  function topicSwitcherHTML() {
-    const switchable = Array.isArray(scope.topics) && scope.topics.length && typeof scope.onChangeTopic === 'function';
-    return `<div class="aii-topbar">
-      <button type="button" class="aii-topic-switch${switchable ? '' : ' is-static'}" ${switchable ? 'data-topic-switch aria-haspopup="listbox" aria-expanded="false"' : 'disabled'}>
-        <span class="aii-topic-name">${esc(topicTitle)}</span>${switchable ? CHEV : ''}
-      </button>
-      <div class="aii-topic-pop" data-topic-pop hidden></div>
+
+  // Sticky modal header (#173): a "Back" pill, the topic title (left-aligned,
+  // click to re-pick the topic), the "Updated …" stamp to its right, and the
+  // current path/insight context row below. Rebuilt per view by updateTopbar().
+  function updateTopbar() {
+    const tb = container.querySelector('[data-topbar]');
+    if (!tb) return;
+    if (view === 'topic') { tb.hidden = true; tb.innerHTML = ''; return; }
+    tb.hidden = false;
+    const c = cache[curGroup];
+    const p = paths.find((x) => x.group === curGroup) || {};
+    const switchable = typeof scope.onChangeTopic === 'function' && Array.isArray(scope.allTopics) && scope.allTopics.length;
+    const updated = (c && c.generatedAt && (view === 'sections' || view === 'content'))
+      ? `<span class="aii-top-updated">Updated ${esc(relTime(c.generatedAt))}</span>` : '';
+    let context = '';
+    if (view === 'sections') {
+      context = `<div class="aii-top-context"><span class="aii-top-context-ic aii-icon-${escAttr(curGroup)}">${ICONS[curGroup] || ICONS._}</span><div class="aii-top-context-tx"><span class="aii-top-context-name">${esc(p.label || '')}</span>${p.subtitle ? `<span class="aii-top-context-sub">${esc(p.subtitle)}</span>` : ''}</div></div>`;
+    } else if (view === 'content') {
+      const s = (c && c.sections[curIdx]) || { name: '' };
+      context = `<div class="aii-top-context"><span class="aii-top-context-ic">${sectionIcon(s.name)}</span><div class="aii-top-context-tx"><span class="aii-top-context-name">${esc(s.name)}</span><span class="aii-top-context-sub">${esc(p.label || '')}</span></div></div>`;
+    }
+    tb.innerHTML = `
+      <button type="button" class="aii-back-pill" data-tb-back>${BACK}<span>Back</span></button>
+      <div class="aii-top-main">
+        <button type="button" class="aii-top-topic${switchable ? '' : ' is-static'}" ${switchable ? 'data-tb-topic aria-label="Change topic"' : 'disabled'}>
+          <span class="aii-top-topic-name">${esc(topicTitle)}</span>${switchable ? CHEV : ''}
+        </button>
+        ${updated}
+      </div>
+      ${context}`;
+    tb.querySelector('[data-tb-back]')?.addEventListener('click', onBack);
+    tb.querySelector('[data-tb-topic]')?.addEventListener('click', () => go('topic', 'back'));
+  }
+  function onBack() {
+    if (view === 'content') go('sections', 'back');
+    else if (view === 'sections') go('paths', 'back');
+    else if (view === 'paths') go('topic', 'back');
+  }
+
+  // Step 1 — pick a topic: search across Today's World + all 100 topics.
+  function topicChipsHTML(filter) {
+    const f = String(filter || '').toLowerCase().trim();
+    const items = (scope.allTopics || scope.topics || []).filter((t) => !f || String(t.name).toLowerCase().includes(f));
+    if (!items.length) return '<p class="aii-tp-empty">No topics found. Try another search.</p>';
+    return items.map((t) => `<button type="button" class="aii-tp-chip${t.key === scope.topicKey ? ' is-active' : ''}${t.key === 'home' ? ' aii-tp-chip--home' : ''}" data-tp-key="${escAttr(t.key)}">${esc(t.name)}</button>`).join('');
+  }
+  function topicViewHTML() {
+    return `<div class="aii-tp">
+      <div class="aii-tp-head">
+        <span class="aii-tp-step">Step 1 of 3 · Topic</span>
+        <h3 class="aii-tp-title">What do you want insights on?</h3>
+        <p class="aii-tp-sub">Pick Today's World, or search any of 100+ topics.</p>
+      </div>
+      <div class="aii-tp-searchwrap">${SEARCH_ICON}<input type="text" class="aii-tp-search" placeholder="Search topics…" aria-label="Search topics"></div>
+      <div class="aii-tp-grid" data-tp-grid>${topicChipsHTML('')}</div>
     </div>`;
   }
-  function topicPopHTML(filter) {
-    const f = String(filter || '').toLowerCase().trim();
-    const items = (scope.topics || []).filter((t) => !f || String(t.name).toLowerCase().includes(f));
-    const rows = items.map((t) => `<button type="button" class="aii-topic-item${t.key === scope.topicKey ? ' is-active' : ''}" data-topic-key="${escAttr(t.key)}">${esc(t.name)}</button>`).join('')
-      || '<p class="aii-topic-empty">No topics found.</p>';
-    return `<div class="aii-topic-searchwrap">${SEARCH_ICON}<input type="text" class="aii-topic-search" placeholder="Search topics…" value="${escAttr(filter || '')}" aria-label="Search topics"></div>
-      <div class="aii-topic-list">${rows}</div>`;
-  }
-  function wireTopicSwitcher() {
-    const btn = container.querySelector('[data-topic-switch]');
-    const pop = container.querySelector('[data-topic-pop]');
-    if (!btn || !pop) return;
-    const close = () => { pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); };
-    const fill = (filter) => {
-      pop.innerHTML = topicPopHTML(filter);
-      const search = pop.querySelector('.aii-topic-search');
-      if (search) { search.addEventListener('input', () => fill(search.value)); }
-      pop.querySelectorAll('.aii-topic-item').forEach((it) => it.addEventListener('click', () => {
-        close(); scope.onChangeTopic(it.dataset.topicKey);
-      }));
-    };
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (!pop.hidden) { close(); return; }
-      fill('');
-      pop.hidden = false; btn.setAttribute('aria-expanded', 'true');
-      const search = pop.querySelector('.aii-topic-search'); if (search) search.focus();
-    });
-    document.addEventListener('click', (e) => { if (!pop.hidden && !pop.contains(e.target) && !btn.contains(e.target)) close(); });
+  function wireTopicView() {
+    const search = stage.querySelector('.aii-tp-search');
+    const grid = stage.querySelector('[data-tp-grid]');
+    if (!grid) return;
+    const wireChips = () => grid.querySelectorAll('.aii-tp-chip').forEach((ch) => ch.addEventListener('click', () => { if (scope.onChangeTopic) scope.onChangeTopic(ch.dataset.tpKey); }));
+    if (search) search.addEventListener('input', () => { grid.innerHTML = topicChipsHTML(search.value); wireChips(); });
+    wireChips();
   }
 
   container.innerHTML = `
@@ -190,13 +213,12 @@ export function renderAIIntelligence(container, scope) {
         <div class="aii-head-top"><span class="aii-logo">${LOGO}</span><span class="aii-brand">AI Insights</span><span class="aii-live"><span class="aii-live-dot" aria-hidden="true"></span>Live</span></div>
         <p class="aii-headsub">Pick a path and explore live AI insights.</p>
       </div>
-      ${scope.inModal ? topicSwitcherHTML() : ''}
+      ${scope.inModal ? '<div class="aii-topbar" data-topbar hidden></div>' : ''}
       ${scope.inModal ? '<div class="aii-condensed aii-condensed--ext" data-cond-ext aria-hidden="true"></div>' : ''}
       ${tabMode ? subtabsHTML() : ''}
       <div class="aii-stage" data-view="paths"></div>
     </div>`;
   const stage = container.querySelector('.aii-stage');
-  if (scope.inModal) wireTopicSwitcher();
 
   function setActiveSubtab() {
     if (!tabMode) return;
@@ -204,10 +226,6 @@ export function renderAIIntelligence(container, scope) {
   }
   function go(v, dir) {
     view = v; stage.dataset.view = v;
-    // The big centered topic title is the HUB hero; on sections/content it shrinks
-    // to a compact switcher so it doesn't dominate (#146).
-    const tb = container.querySelector('.aii-topbar');
-    if (tb) tb.classList.toggle('is-compact', v !== 'paths');
     container.dataset.aiiGroup = curGroup || '';   // expose for the modal→tab hand-off (#13)
     stage.innerHTML = viewHTML();
     stage.classList.remove('aii-anim-fwd', 'aii-anim-back');
@@ -215,11 +233,12 @@ export function renderAIIntelligence(container, scope) {
     stage.classList.add(dir === 'back' ? 'aii-anim-back' : 'aii-anim-fwd');
     wire();
     setActiveSubtab();
+    updateTopbar();
     updateExtCondensed();   // modal: sync/clear the external sticky bar for this view
     if (dir === 'fwd' && view !== 'paths') ensureVisible();
   }
   function viewHTML() {
-    return view === 'paths' ? pathsHTML() : view === 'sections' ? sectionsHTML() : contentHTML();
+    return view === 'topic' ? topicViewHTML() : view === 'paths' ? pathsHTML() : view === 'sections' ? sectionsHTML() : contentHTML();
   }
 
   // Launcher (#167): the home + topic-DESKTOP card is a polished product — a
@@ -268,7 +287,9 @@ export function renderAIIntelligence(container, scope) {
       return `<button type="button" class="aii-menu-card" data-idx="${i}"><span class="aii-menu-card-ic aii-icon-${escAttr(curGroup)}">${sectionIcon(s.name)}</span><span class="aii-menu-card-tx"><span class="aii-menu-name">${esc(s.name)}</span>${desc ? `<span class="aii-menu-desc">${esc(desc)}</span>` : ''}</span></button>`;
     }).join('')}</div>`;
     const updated = c && c.generatedAt ? `<span class="aii-updated">Updated ${esc(relTime(c.generatedAt))}</span>` : '';
-    return `<div class="aii-sub">
+    // In the modal the sticky topbar owns Back + path context; tab mode keeps
+    // its own in-stage backrow + subhead.
+    const header = scope.inModal ? '' : `
       <div class="aii-backrow">
         <button type="button" class="aii-back" data-back="paths">${BACK}<span>Back</span></button>
         ${updated}
@@ -279,9 +300,8 @@ export function renderAIIntelligence(container, scope) {
           <span class="aii-subhead-name">${esc(p.label || '')}</span>
           ${p.subtitle ? `<span class="aii-subhead-sub">${esc(p.subtitle)}</span>` : ''}
         </div>
-      </div>
-      ${body}
-    </div>`;
+      </div>`;
+    return `<div class="aii-sub">${header}${body}</div>`;
   }
   // The condensed "topic · path / section" sticky bar (shared by tab mode's
   // inline copy and the modal's external persistent copy).
@@ -343,15 +363,18 @@ export function renderAIIntelligence(container, scope) {
         ${prev ? `<button type="button" class="aii-pn-btn" data-pn="prev">${BACK}<span class="aii-pn-tx"><span class="aii-pn-dir">Previous insight</span><span class="aii-pn-name">${esc(prev.name)}</span></span></button>` : '<span class="aii-pn-spacer" aria-hidden="true"></span>'}
         ${next ? `<button type="button" class="aii-pn-btn aii-pn-btn--next" data-pn="next"><span class="aii-pn-tx"><span class="aii-pn-dir">Next insight</span><span class="aii-pn-name">${esc(next.name)}</span></span>${ARROW}</button>` : '<span class="aii-pn-spacer" aria-hidden="true"></span>'}
       </div>` : '';
-    return `<div class="aii-sub aii-content">
-      ${condensed}
+    // Modal: the sticky topbar owns Back; tab mode keeps its in-stage backrow.
+    const backrow = scope.inModal ? '' : `
       <div class="aii-backrow">
         <button type="button" class="aii-back" data-back="sections">${BACK}<span>Back</span></button>
         ${updated}
-      </div>
+      </div>`;
+    return `<div class="aii-sub aii-content">
+      ${condensed}
+      ${backrow}
       ${pnBar}
       <div class="aii-overview ${stickyCtx ? 'aii-ovcard' : 'aii-overview-plain'}">
-        <div class="aii-ov-toprow">${scope.inModal ? '' : `<span class="aii-ov-topicpill">${esc(topicTitle)}</span>`}<span class="aii-ov-eyebrow">${esc(p.label || '')}</span></div>
+        <div class="aii-ov-toprow"><span class="aii-ov-topicpill">${esc(topicTitle)}</span><span class="aii-ov-eyebrow">${esc(p.label || '')}</span></div>
         <h3 class="aii-overview-title"><span class="aii-overview-title-ic">${sectionIcon(s.name)}</span>${esc(s.name)}</h3>
         ${desc ? `<p class="aii-overview-sub">${esc(desc)}</p>` : ''}
         <div class="im-quicklinks aii-quicklinks">
@@ -619,6 +642,7 @@ export function renderAIIntelligence(container, scope) {
 
   function wire() {
     setupSticky();
+    if (view === 'topic') wireTopicView();
     // Section content: briefly show the generating loader (even when cached)
     // then reveal the brief — gives the AI a moment of presence.
     const bodyEl = stage.querySelector('.aii-content-body[data-loading]');
@@ -723,6 +747,9 @@ export function renderAIIntelligence(container, scope) {
       topic: scope.topic, label: scope.label, group: b.dataset.group,
       hideGroups: scope.hideGroups || [], descriptions: scope.descriptions || {},
     } }))));
+  } else if (scope.inModal && scope.pickTopic) {
+    // Entered "anew" (bottom nav / homepage CTA) → Step 1: pick a topic.
+    go('topic', 'fwd');
   } else if (scope.inModal && scope.initialGroup && paths.some((p) => p.group === scope.initialGroup)) {
     // Inside the modal, deep-link to the path the user clicked.
     curGroup = scope.initialGroup;

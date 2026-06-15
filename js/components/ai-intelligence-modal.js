@@ -9,8 +9,8 @@
 //               AI Intelligence" handles switching PATHS.
 //
 // Participates in the global single-modal coordinator (`close-all-modals`).
-import { renderAIIntelligence } from './ai-intelligence.js?v=20260614-revamp191';
-import { getFeaturedTopics, getTopicBySlug, getShortcutsForTopic } from '../utils/data.js';
+import { renderAIIntelligence } from './ai-intelligence.js?v=20260614-revamp192';
+import { getFeaturedTopics, getAllTopics, getTopicBySlug, getShortcutsForTopic } from '../utils/data.js';
 
 let overlayEl = null;
 let panelEl = null;
@@ -66,21 +66,35 @@ export function initAIIntelligenceModal() {
 
 function isOpen() { return overlayEl && overlayEl.style.display !== 'none'; }
 
-// Topics for the in-body switcher: Today's World + every featured topic.
+// Whether THIS modal session began "anew" (bottom nav / homepage CTA) — i.e. it
+// includes the Step 1 topic picker. Drives back-to-picker availability.
+let pickerMode = false;
+
+// Topics for the in-body switcher dropdown: Today's World + every featured topic.
 function topicList() {
   return [{ key: 'home', name: "Today's World" }]
     .concat((getFeaturedTopics() || []).map((t) => ({ key: t.slug, name: t.name })));
 }
-// Re-render the modal body for a newly-picked topic key ('home' or a slug).
+// The full searchable list for the Step 1 picker — Today's World + all 100 topics.
+function allTopicsList() {
+  return [{ key: 'home', name: "Today's World", parentName: '' }]
+    .concat((getAllTopics() || [])
+      .filter((t) => t.slug !== 'home')
+      .map((t) => ({ key: t.slug, name: t.name, parentName: t.parent ? (getTopicBySlug(t.parent)?.name || '') : '' })));
+}
+// Re-render the modal body for a newly-picked topic key ('home' or a slug). This
+// is the Step 1 → Step 2 transition (lands on the path picker for that topic).
 function changeTopic(key) {
   current = { topic: key === 'home' ? 'home' : (getTopicBySlug(key)?.name || key) };
   renderBody(scopeFor(key, null, null));
 }
 
-// Build the scope object renderAIIntelligence expects for a given selection. The
-// in-body title-switcher (#130-133) drives topic changes via onChangeTopic.
-function scopeFor(topic, label, group) {
-  const shared = { inModal: true, initialGroup: group, topics: topicList(), onChangeTopic: changeTopic };
+// Build the scope object renderAIIntelligence expects for a given selection.
+function scopeFor(topic, label, group, opts) {
+  const shared = {
+    inModal: true, initialGroup: group, topics: topicList(), allTopics: allTopicsList(),
+    onChangeTopic: changeTopic, topicPicker: pickerMode, pickTopic: !!(opts && opts.pickTopic),
+  };
   if (topic === 'home') {
     const desc = {}; const icons = {};
     try { (getShortcutsForTopic('home') || []).forEach((s) => { if (s && s.name) { desc[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } }); } catch (_) {}
@@ -107,12 +121,13 @@ function open(detail) {
   // Single-modal invariant: close anything else first (search isn't this one).
   window.dispatchEvent(new CustomEvent('close-all-modals'));
 
-  // A "pick a topic" entry (bottom nav / homepage CTA) arrives with no topic —
-  // Step 1 will be the topic picker; until that's wired, fall back to home.
-  if (!detail.topic) detail = { ...detail, topic: 'home', label: "today's world" };
-  current = { topic: detail.topic, label: detail.label };
-  // Header is just the brand + close now; topic context + switching live in the
-  // body (the title-switcher), so there's one obvious control (#130-133).
+  // Two entry modes:
+  //  • "anew" (bottom nav / homepage CTA: detail.pickTopic, no topic) → Step 1
+  //    is the topic picker, then path, then insights.
+  //  • filtered (a topic page) → jump straight to that topic's path picker.
+  pickerMode = !detail.topic || !!detail.pickTopic;
+  const baseTopic = detail.topic || 'home';
+  current = { topic: baseTopic, label: detail.label };
   panelEl.innerHTML = `
     <div class="aii-modal-head">
       <div class="aii-modal-head-id"><span class="aii-modal-logo">${LOGO}</span><h2 class="aii-modal-title">AI Insights</h2></div>
@@ -122,7 +137,7 @@ function open(detail) {
 
   panelEl.querySelector('.aii-modal-close').addEventListener('click', close);
 
-  renderBody(scopeFor(detail.topic, detail.label, detail.group));
+  renderBody(scopeFor(baseTopic, detail.label, detail.group, { pickTopic: pickerMode && !detail.topic }));
 
   overlayEl.style.display = 'flex';
   document.body.style.overflow = 'hidden';
