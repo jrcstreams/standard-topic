@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260614-revamp197';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260614-revamp197';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260614-revamp198';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260614-revamp198';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -199,6 +199,28 @@ function navTo(i) {
 }
 function titleCaseIM(s) { return String(s || '').replace(/\b\w/g, (c) => c.toUpperCase()); }
 function navItemName(e) { return e && e.type === 'trend' ? titleCaseIM(e.query) : (e && e.title) || ''; }
+// Sleek single-line nav row (#trending): Back (to the originating list / stacked
+// parent) on the left + clean Prev/Next buttons on the right — no item names, no
+// bulky cards. Replaces the header "Back to …" + the big prev/next bar.
+function navRowHTML(nav) {
+  const stackBack = stack.length ? stack[stack.length - 1].label : '';
+  const backLabel = stackBack || (nav && nav.backLabel ? `Back to ${nav.backLabel}` : '');
+  const hasList = nav && Array.isArray(nav.list) && nav.list.length > 1;
+  const hasPrev = hasList && nav.index > 0;
+  const hasNext = hasList && nav.index < nav.list.length - 1;
+  if (!backLabel && !hasList) return '';
+  const kind = (nav && nav.itemKind) ? nav.itemKind : 'item';
+  const CL = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>';
+  const CR = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+  const back = backLabel
+    ? `<button type="button" class="im-navrow-back" id="im-back">${CL}<span>${esc(backLabel)}</span></button>`
+    : '<span aria-hidden="true"></span>';
+  const pn = hasList ? `<div class="im-navrow-pn">
+      <button type="button" class="im-navrow-btn" data-navdir="prev"${hasPrev ? '' : ' disabled'} aria-label="Previous ${esc(kind)}">${CL}<span>Prev</span></button>
+      <button type="button" class="im-navrow-btn" data-navdir="next"${hasNext ? '' : ' disabled'} aria-label="Next ${esc(kind)}"><span>Next</span>${CR}</button>
+    </div>` : '';
+  return `<div class="im-navrow">${back}${pn}</div>`;
+}
 // Prev/Next bar — previous on the left, next on the right, each with the item's
 // name. Hidden when there's no originating list.
 function navBarHTML(nav) {
@@ -285,7 +307,7 @@ function brandHeaderHTML(condensed, opts = {}) {
   const nav = current && current.nav;
   // Back action: a stacked parent wins; otherwise the originating list
   // ("Back to Trending" / "Back to News Feed").
-  const showBack = stack.length > 0 || !!(nav && nav.backLabel);
+  const showBack = !opts.hideBack && (stack.length > 0 || !!(nav && nav.backLabel));
   const backLabel = stack.length ? stack[stack.length - 1].label
     : (nav && nav.backLabel ? `Back to ${nav.backLabel}` : '');
   // Story Prev/Next now lives in the TOP header row (#87), freeing the body so
@@ -683,9 +705,9 @@ function renderTrend(d) {
     .filter(Boolean).join('');
   const gtUrl = `https://trends.google.com/trends/explore?q=${encodeURIComponent(d.query || '')}&geo=US`;
   panelEl.innerHTML = `
-    ${brandHeaderHTML({ title, meta: [cat, since ? `Trending since ${since}` : ''].filter(Boolean).join(' · '), gtUrl }, { brandLabel: 'Trending', condActions: true, condGoogleTrends: gtUrl, briefSticky: true })}
+    ${brandHeaderHTML({ title, meta: [cat, since ? `Trending since ${since}` : ''].filter(Boolean).join(' · '), gtUrl }, { brandLabel: 'Trending', condActions: true, condGoogleTrends: gtUrl, hideBack: true, briefSticky: true })}
     <div class="im-body">
-      ${navBarHTML(d.nav)}
+      ${navRowHTML(d.nav)}
       <section class="im-section im-article">
         <h3 class="im-article-title">${esc(title)}</h3>
         ${meta ? `<div class="im-article-meta im-article-meta--top">${meta}</div>` : ''}

@@ -14696,6 +14696,17 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 
 /* Prev/Next bar (in-modal navigation across the originating Trending list / News
    feed). Previous on the left, next on the right, each with the item's name. */
+/* Sleek single-line nav row — Back (left) + clean Prev/Next pills (right). */
+.im-navrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 16px; flex-wrap: wrap; }
+.im-navrow-back { display: inline-flex; align-items: center; gap: 5px; padding: 7px 14px 7px 10px; border: 1px solid var(--color-surface-border); border-radius: 999px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.84rem; font-weight: 600; color: var(--color-primary); transition: background .14s, border-color .14s; }
+.im-navrow-back:hover { background: color-mix(in srgb, var(--color-primary) 5%, #fff); border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); }
+.im-navrow-back svg { flex: none; }
+.im-navrow-pn { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; }
+.im-navrow-btn { display: inline-flex; align-items: center; gap: 5px; padding: 7px 13px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.84rem; font-weight: 600; color: var(--color-text); transition: background .14s, border-color .14s, color .14s; }
+.im-navrow-btn:hover:not(:disabled) { background: color-mix(in srgb, var(--color-primary) 5%, #fff); border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); color: var(--color-primary); }
+.im-navrow-btn:disabled { opacity: 0.4; cursor: default; }
+.im-navrow-btn svg { flex: none; color: var(--color-text-light); }
+.im-navrow-btn:hover:not(:disabled) svg { color: var(--color-primary); }
 .im-prevnext { display: flex; align-items: stretch; gap: 10px; margin: 2px 0 14px; }
 .im-pn {
   flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 8px;
