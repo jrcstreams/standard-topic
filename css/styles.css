@@ -14113,23 +14113,20 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-track-desc { font-size: 0.78rem; line-height: 1.42; color: var(--color-text-muted); }
 @media (prefers-reduced-motion: reduce) { .aii-track, .aii-track-go { transition: none; } }
 /* Home 3-step promo (#167): pick a topic → pick a path → get insights, + CTA.
-   Light, welcoming cards — number inline with the title, soft per-step accent
-   icon right-aligned, no navy chips. */
-.aii-promo--steps { gap: 16px; }
+   Clean neutral cards — number inline with the title (NOT a coloured marker),
+   no icons; a light outlined CTA (no heavy navy fill). */
+.aii-promo--steps { gap: 15px; }
 .aii-steps { display: flex; align-items: stretch; gap: 11px; }
-.aii-step { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 7px; padding: 15px 16px; border: 1px solid #edf1f7; border-radius: 14px; background: #f8fafc; }
-.aii-step-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.aii-step-title { font-family: var(--font-display); font-size: 0.98rem; font-weight: 700; letter-spacing: -0.01em; color: #2a3852; min-width: 0; }
-.aii-step-n { color: var(--step-accent); }
-.aii-step-ic { display: inline-flex; flex: none; width: 30px; height: 30px; align-items: center; justify-content: center; border-radius: 9px; background: color-mix(in srgb, var(--step-accent) 13%, #fff); color: var(--step-accent); }
-.aii-step-ic svg { width: 16px; height: 16px; }
+.aii-step { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 15px 16px; border: 1px solid #e9edf3; border-radius: 13px; background: #fafbfc; }
+.aii-step-title { font-family: var(--font-display); font-size: 0.98rem; font-weight: 700; letter-spacing: -0.01em; color: #25324a; }
+.aii-step-n { color: var(--color-text-light); font-weight: 600; }
 .aii-step-sub { font-size: 0.8rem; line-height: 1.45; color: var(--color-text-muted); }
-.aii-step-sep { display: flex; align-items: center; flex: none; color: #c4cdda; }
+.aii-step-sep { display: flex; align-items: center; flex: none; color: #cbd3df; }
 .aii-step-sep svg { width: 18px; height: 18px; }
-/* Refined CTA — modest filled pill, soft shadow, sliding arrow (not obnoxious). */
-.aii-promo-cta { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; padding: 10px 18px; border: none; border-radius: 10px; background: var(--color-primary); color: #fff; cursor: pointer; font-family: var(--font-family); box-shadow: 0 4px 12px -7px color-mix(in srgb, var(--color-primary) 55%, transparent); transition: transform .14s ease, box-shadow .16s ease, background .14s ease; }
-.aii-promo-cta:hover { transform: translateY(-1px); background: color-mix(in srgb, #000 6%, var(--color-primary)); box-shadow: 0 7px 16px -8px color-mix(in srgb, var(--color-primary) 60%, transparent); }
-.aii-promo-cta:active { transform: translateY(0); }
+/* CTA — a light outlined button (white, hairline border, primary label). */
+.aii-promo-cta { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; padding: 9px 16px; border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-surface-border)); border-radius: 10px; background: #fff; color: var(--color-primary); cursor: pointer; font-family: var(--font-family); transition: background .14s ease, border-color .14s ease, transform .1s ease; }
+.aii-promo-cta:hover { background: color-mix(in srgb, var(--color-primary) 4%, #fff); border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-surface-border)); }
+.aii-promo-cta:active { transform: translateY(1px); }
 .aii-promo-cta-tx { font-size: 0.9rem; font-weight: 600; letter-spacing: -0.005em; }
 .aii-promo-cta-arrow { display: inline-flex; transition: transform .2s ease; }
 .aii-promo-cta-arrow svg { width: 16px; height: 16px; }

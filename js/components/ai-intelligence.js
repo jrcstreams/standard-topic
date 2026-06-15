@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260614-revamp194';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260614-revamp194';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260614-revamp195';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260614-revamp195';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -247,15 +247,12 @@ export function renderAIIntelligence(container, scope) {
   const ICON_TOPICS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg>';
   function launcherStepsHTML() {
     const STEPS = [
-      { n: 1, name: 'Pick a topic', sub: "Today's World or 100+ subjects", ic: ICON_TOPICS, accent: '#4f6ef7' },
-      { n: 2, name: 'Pick a path', sub: 'Choose an intelligence track', ic: ICONS.discover, accent: '#8b5cf6' },
-      { n: 3, name: 'Get AI insights', sub: 'Live, grounded analysis', ic: LOGO, accent: '#13b6a4' },
+      { n: 1, name: 'Pick a topic', sub: "Today's World or 100+ subjects" },
+      { n: 2, name: 'Pick a path', sub: 'Choose an intelligence track' },
+      { n: 3, name: 'Get AI insights', sub: 'Live, grounded analysis' },
     ];
-    const steps = STEPS.map((s, i) => `<div class="aii-step" style="--step-accent:${s.accent}">
-        <div class="aii-step-head">
-          <span class="aii-step-title"><span class="aii-step-n">${s.n}.</span> ${esc(s.name)}</span>
-          <span class="aii-step-ic" aria-hidden="true">${s.ic}</span>
-        </div>
+    const steps = STEPS.map((s, i) => `<div class="aii-step">
+        <span class="aii-step-title"><span class="aii-step-n">${s.n}.</span> ${esc(s.name)}</span>
         <span class="aii-step-sub">${esc(s.sub)}</span>
       </div>${i < STEPS.length - 1 ? `<span class="aii-step-sep" aria-hidden="true">${RIGHT_ARROW}</span>` : ''}`).join('');
     return `<div class="aii-promo aii-promo--steps">
