@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260614-revamp192';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260614-revamp192';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260614-revamp193';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260614-revamp193';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -241,11 +241,29 @@ export function renderAIIntelligence(container, scope) {
     return view === 'topic' ? topicViewHTML() : view === 'paths' ? pathsHTML() : view === 'sections' ? sectionsHTML() : contentHTML();
   }
 
-  // Launcher (#167): the home + topic-DESKTOP card is a polished product — a
-  // tight one-liner + the tracks themselves as the centerpiece (accent-iconed
-  // tiles, each opening the modal to that track). No big body copy, no clunky
-  // CTA: the tracks ARE the calls to action.
+  // Launcher (#167). HOME → a 3-step promo that sells the click-through (pick a
+  // topic → pick a path → get insights) with one CTA into the modal's Step 1.
+  // TOPIC PAGES (topic already chosen) → the direct track tiles (pick a path).
+  const ICON_TOPICS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg>';
+  function launcherStepsHTML() {
+    const STEPS = [
+      { n: 1, name: 'Pick a topic', sub: "Today's World or 100+ subjects", ic: ICON_TOPICS },
+      { n: 2, name: 'Pick a path', sub: 'Choose an intelligence track', ic: ICONS.discover },
+      { n: 3, name: 'Get AI insights', sub: 'Live, grounded analysis', ic: LOGO },
+    ];
+    const steps = STEPS.map((s, i) => `<div class="aii-step">
+        <div class="aii-step-top"><span class="aii-step-num">${s.n}</span><span class="aii-step-ic">${s.ic}</span></div>
+        <span class="aii-step-name">${esc(s.name)}</span>
+        <span class="aii-step-sub">${esc(s.sub)}</span>
+      </div>${i < STEPS.length - 1 ? `<span class="aii-step-sep" aria-hidden="true">${RIGHT_ARROW}</span>` : ''}`).join('');
+    return `<div class="aii-promo aii-promo--steps">
+      <p class="aii-promo-line">Live, AI-written intelligence in three quick steps.</p>
+      <div class="aii-steps">${steps}</div>
+      <button type="button" class="aii-promo-cta" data-promo-cta><span class="aii-promo-cta-tx">Explore AI Insights</span><span class="aii-promo-cta-arrow">${RIGHT_ARROW}</span></button>
+    </div>`;
+  }
   function launcherPromoHTML() {
+    if (scope.topic === 'home') return launcherStepsHTML();
     const tracks = paths.map((p) => `<button type="button" class="aii-track" data-group="${escAttr(p.group)}" style="--aii-accent:${AII_ACCENTS[p.group] || AII_ACCENTS._}">
         <span class="aii-track-top"><span class="aii-track-ic">${ICONS[p.group] || ICONS._}</span><span class="aii-track-go" aria-hidden="true">${RIGHT_ARROW}</span></span>
         <span class="aii-track-name">${esc(p.tab || p.label)}</span>
@@ -740,9 +758,10 @@ export function renderAIIntelligence(container, scope) {
     container._aiiSectionHandler = (e) => { const g = e && e.detail && e.detail.group; if (g && paths.some((p) => p.group === g)) openTab(g); };
     window.addEventListener('aii-open-section', container._aiiSectionHandler);
   } else if (launcher) {
-    // Product launcher (#167): each track tile opens the modal straight to that
-    // track's sections.
+    // Product launcher (#167). Home: a 3-step promo whose CTA opens the modal at
+    // Step 1 (topic picker). Topic pages: track tiles → that track's sections.
     stage.innerHTML = launcherPromoHTML();
+    stage.querySelector('[data-promo-cta]')?.addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: { pickTopic: true } })));
     stage.querySelectorAll('.aii-track').forEach((b) => b.addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: {
       topic: scope.topic, label: scope.label, group: b.dataset.group,
       hideGroups: scope.hideGroups || [], descriptions: scope.descriptions || {},

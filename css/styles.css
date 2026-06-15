@@ -14112,6 +14112,33 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-track-name { font-size: 0.95rem; font-weight: 700; letter-spacing: -0.012em; color: #1a2740; }
 .aii-track-desc { font-size: 0.78rem; line-height: 1.42; color: var(--color-text-muted); }
 @media (prefers-reduced-motion: reduce) { .aii-track, .aii-track-go { transition: none; } }
+/* Home 3-step promo (#167): pick a topic → pick a path → get insights, + CTA. */
+.aii-promo--steps { gap: 14px; }
+.aii-steps { display: flex; align-items: stretch; gap: 9px; }
+.aii-step { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; padding: 13px 14px; border: 1px solid var(--color-surface-border); border-radius: 14px; background: color-mix(in srgb, var(--color-primary) 2.5%, #fff); }
+.aii-step-top { display: flex; align-items: center; gap: 9px; }
+.aii-step-num { display: inline-flex; width: 22px; height: 22px; flex: none; align-items: center; justify-content: center; border-radius: 999px; background: var(--color-primary); color: #fff; font-size: 0.72rem; font-weight: 700; }
+.aii-step-ic { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 9px; background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: var(--color-primary); }
+.aii-step-ic svg { width: 16px; height: 16px; }
+.aii-step-name { font-size: 0.92rem; font-weight: 700; letter-spacing: -0.01em; color: #1a2740; }
+.aii-step-sub { font-size: 0.76rem; line-height: 1.38; color: var(--color-text-muted); }
+.aii-step-sep { display: flex; align-items: center; flex: none; color: var(--color-text-light); }
+.aii-step-sep svg { width: 18px; height: 18px; }
+/* Primary CTA — filled pill with a sliding arrow. */
+.aii-promo-cta { display: inline-flex; align-self: flex-start; align-items: center; gap: 10px; padding: 12px 22px; border: none; border-radius: 12px; background: var(--color-primary); color: #fff; cursor: pointer; font-family: var(--font-family); box-shadow: 0 10px 22px -13px color-mix(in srgb, var(--color-primary) 75%, transparent); transition: transform .14s ease, box-shadow .16s ease, background .14s ease; }
+.aii-promo-cta:hover { transform: translateY(-1px); background: color-mix(in srgb, #000 7%, var(--color-primary)); box-shadow: 0 15px 28px -13px color-mix(in srgb, var(--color-primary) 85%, transparent); }
+.aii-promo-cta:active { transform: translateY(0); }
+.aii-promo-cta-tx { font-size: 0.96rem; font-weight: 650; letter-spacing: -0.01em; }
+.aii-promo-cta-arrow { display: inline-flex; transition: transform .2s ease; }
+.aii-promo-cta-arrow svg { width: 18px; height: 18px; }
+.aii-promo-cta:hover .aii-promo-cta-arrow { transform: translateX(4px); }
+@media (max-width: 720px) {
+  .aii-steps { flex-direction: column; gap: 8px; }
+  .aii-step { flex-direction: row; align-items: center; gap: 11px; }
+  .aii-step-top { flex: none; }
+  .aii-step-sep { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .aii-promo-cta, .aii-promo-cta-arrow { transition: none; } }
 /* Secondary tab bar (mobile tab mode) — the AI Intelligence paths as sub-tabs
    under the primary News Feed / AI Intelligence / Web Sources tabs. Same family
    as the primary tabs but pill-shaped + a touch quieter. Scrolls if it
