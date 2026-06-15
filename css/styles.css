@@ -14117,16 +14117,16 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    no icons; a light outlined CTA (no heavy navy fill). */
 .aii-promo--steps { gap: 14px; }
 .aii-steps { display: flex; align-items: stretch; gap: 11px; }
-.aii-step { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 15px 16px; border: 1px solid #e8ebf0; border-radius: 13px; background: #f6f7f9; }
-.aii-step-title { font-family: var(--font-family); font-size: 0.92rem; font-weight: 650; letter-spacing: -0.005em; color: #1f2b40; }
-.aii-step-n { color: #aab2c0; font-weight: 500; }
+.aii-step { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 5px; padding: 14px 15px; border: 1px solid #e7ebf2; border-radius: 12px; background: #fff; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03); }
+.aii-step-title { font-family: var(--font-family); font-size: 0.92rem; font-weight: 650; letter-spacing: -0.005em; color: #25324a; }
+.aii-step-n { color: var(--color-text-muted); font-weight: 500; }
 .aii-step-sub { font-size: 0.8rem; line-height: 1.45; color: var(--color-text-muted); }
-.aii-step-sep { display: flex; align-items: center; flex: none; color: #ccd3de; }
-.aii-step-sep svg { width: 18px; height: 18px; }
-/* CTA — a clean text link (no box), primary label + sliding arrow. */
-.aii-promo-cta { display: inline-flex; align-self: flex-start; align-items: center; gap: 6px; padding: 3px 2px; border: none; background: none; cursor: pointer; color: var(--color-primary); font-family: var(--font-family); transition: color .14s ease; }
-.aii-promo-cta:hover { color: color-mix(in srgb, #000 14%, var(--color-primary)); }
-.aii-promo-cta-tx { font-size: 0.88rem; font-weight: 650; letter-spacing: -0.005em; }
+.aii-step-sep { display: flex; align-items: center; flex: none; color: #cfd6e1; }
+.aii-step-sep svg { width: 17px; height: 17px; }
+/* CTA — a clear, flat primary button (no heavy shadow), sliding arrow. */
+.aii-promo-cta { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; padding: 9px 17px; border: none; border-radius: 9px; background: var(--color-primary); color: #fff; cursor: pointer; font-family: var(--font-family); transition: background .14s ease; }
+.aii-promo-cta:hover { background: color-mix(in srgb, #000 9%, var(--color-primary)); }
+.aii-promo-cta-tx { font-size: 0.88rem; font-weight: 600; letter-spacing: -0.005em; }
 .aii-promo-cta-arrow { display: inline-flex; transition: transform .2s ease; }
 .aii-promo-cta-arrow svg { width: 15px; height: 15px; }
 .aii-promo-cta:hover .aii-promo-cta-arrow { transform: translateX(3px); }
