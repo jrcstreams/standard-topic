@@ -629,7 +629,7 @@ body.custom-mode.sticky-always #content {
 @media (max-width: 899.98px) {
   #bottom-nav {
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 1150;
-    display: grid; grid-template-columns: repeat(4, 1fr);
+    display: grid; grid-template-columns: repeat(5, 1fr);
     background: #0f1a2e;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -14211,7 +14211,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-condensed.is-on { box-shadow: 0 6px 14px -10px rgba(15,23,42,.45); }
 
 /* Section menu = 2-column card grid. */
-.aii-menu-grid { display: grid !important; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 0 !important; }
+.aii-menu-grid { display: grid !important; grid-template-columns: repeat(2, 1fr); gap: 13px; margin: 4px 0 0 !important; }
 /* Compact list-style cards: icon chip INLINE with the title (not stacked above),
    title + one-line desc beside it, tighter padding so the grid isn't a wall of
    big blocks (#167 follow-up). */

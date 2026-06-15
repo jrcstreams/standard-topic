@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260613-revamp190';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260613-revamp190';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260614-revamp191';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260614-revamp191';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -187,7 +187,7 @@ export function renderAIIntelligence(container, scope) {
   container.innerHTML = `
     <div class="aii${tabMode ? ' aii-tabmode' : ''}${launcher ? ' aii-launcher' : ''}">
       <div class="aii-head">
-        <div class="aii-head-top"><span class="aii-logo">${LOGO}</span><span class="aii-brand">AI Intelligence</span><span class="aii-live"><span class="aii-live-dot" aria-hidden="true"></span>Live</span></div>
+        <div class="aii-head-top"><span class="aii-logo">${LOGO}</span><span class="aii-brand">AI Insights</span><span class="aii-live"><span class="aii-live-dot" aria-hidden="true"></span>Live</span></div>
         <p class="aii-headsub">Pick a path and explore live AI insights.</p>
       </div>
       ${scope.inModal ? topicSwitcherHTML() : ''}

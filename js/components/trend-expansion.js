@@ -2,7 +2,7 @@
 // "Web Explore" + "AI Explore" accordions (submit the term to engines/models),
 // and the full grounded brief. Reuses the news/TI building blocks so the look
 // matches AI insights elsewhere.
-import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260613-revamp190';
+import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260614-revamp191';
 import { renderTIAccordion, webSourceItem } from './ti-shortcuts.js';
 import { getExternalSearches, getExternalSearchCategories, getModels } from '../utils/data.js';
 

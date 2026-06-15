@@ -9,7 +9,7 @@
 //               AI Intelligence" handles switching PATHS.
 //
 // Participates in the global single-modal coordinator (`close-all-modals`).
-import { renderAIIntelligence } from './ai-intelligence.js?v=20260613-revamp190';
+import { renderAIIntelligence } from './ai-intelligence.js?v=20260614-revamp191';
 import { getFeaturedTopics, getTopicBySlug, getShortcutsForTopic } from '../utils/data.js';
 
 let overlayEl = null;
@@ -34,7 +34,7 @@ export function initAIIntelligenceModal() {
   panelEl.className = 'takeover-panel aii-modal-panel';
   panelEl.setAttribute('role', 'dialog');
   panelEl.setAttribute('aria-modal', 'true');
-  panelEl.setAttribute('aria-label', 'AI Intelligence');
+  panelEl.setAttribute('aria-label', 'AI Insights');
   overlayEl.appendChild(panelEl);
 
   overlayEl.addEventListener('click', (e) => { if (e.target === overlayEl) close(); });
@@ -107,12 +107,15 @@ function open(detail) {
   // Single-modal invariant: close anything else first (search isn't this one).
   window.dispatchEvent(new CustomEvent('close-all-modals'));
 
+  // A "pick a topic" entry (bottom nav / homepage CTA) arrives with no topic —
+  // Step 1 will be the topic picker; until that's wired, fall back to home.
+  if (!detail.topic) detail = { ...detail, topic: 'home', label: "today's world" };
   current = { topic: detail.topic, label: detail.label };
   // Header is just the brand + close now; topic context + switching live in the
   // body (the title-switcher), so there's one obvious control (#130-133).
   panelEl.innerHTML = `
     <div class="aii-modal-head">
-      <div class="aii-modal-head-id"><span class="aii-modal-logo">${LOGO}</span><h2 class="aii-modal-title">AI Intelligence</h2></div>
+      <div class="aii-modal-head-id"><span class="aii-modal-logo">${LOGO}</span><h2 class="aii-modal-title">AI Insights</h2></div>
       <button type="button" class="aii-modal-close" aria-label="Close">${X}</button>
     </div>
     <div class="aii-modal-body"></div>`;

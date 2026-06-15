@@ -6,26 +6,26 @@ import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './ut
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260613-revamp190';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260614-revamp191';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260613-revamp190';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260613-revamp190';
-import { initPromptModal } from './components/prompt-modal.js?v=20260613-revamp190';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260613-revamp190';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260614-revamp191';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260614-revamp191';
+import { initPromptModal } from './components/prompt-modal.js?v=20260614-revamp191';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260614-revamp191';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260613-revamp190';
-import { initInsightModal } from './components/insight-modal.js?v=20260613-revamp190';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260613-revamp190';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260613-revamp190';
-import { renderWebSources } from './components/websources.js?v=20260613-revamp190';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260613-revamp190';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260614-revamp191';
+import { initInsightModal } from './components/insight-modal.js?v=20260614-revamp191';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260614-revamp191';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260614-revamp191';
+import { renderWebSources } from './components/websources.js?v=20260614-revamp191';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260614-revamp191';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260613-revamp190';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260614-revamp191';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260613-revamp190';
-import { initSettingsModal } from './components/settings-modal.js?v=20260613-revamp190';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260614-revamp191';
+import { initSettingsModal } from './components/settings-modal.js?v=20260614-revamp191';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -393,8 +393,8 @@ function bodyTabsRow(opts = {}) {
   if (showShortcuts) {
     tabs.push(`<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">
        <svg class="tab-pill-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"/></svg>
-       <span class="tab-pill-label-long">AI Intelligence</span>
-       <span class="tab-pill-label-short">AI Intelligence</span>
+       <span class="tab-pill-label-long">AI Insights</span>
+       <span class="tab-pill-label-short">AI Insights</span>
      </button>`);
   }
   if (showWebSources) {
@@ -1379,6 +1379,10 @@ function renderBottomNav(route) {
         <span class="botnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
         <span class="botnav-label">Search</span>
       </button>
+      <button type="button" class="botnav-tab" data-tab="insights" id="botnav-insights" aria-label="AI Insights">
+        <span class="botnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg></span>
+        <span class="botnav-label">Insights</span>
+      </button>
       <button type="button" class="botnav-tab" data-tab="trending" id="botnav-trending" aria-label="Trending">
         <span class="botnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg></span>
         <span class="botnav-label">Trending</span>
@@ -1389,6 +1393,8 @@ function renderBottomNav(route) {
       </button>`;
     document.body.appendChild(nav);
     nav.querySelector('#botnav-search').addEventListener('click', () => navigate('#/search'));
+    // AI Insights: the global entry — opens the modal "anew" (topic picker first).
+    nav.querySelector('#botnav-insights').addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: { pickTopic: true } })));
     nav.querySelector('#botnav-trending').addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-trending-list')));
     nav.querySelector('#botnav-topics').addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-all-topics-modal')));
     // Home: native href handles routing; if already home, force a re-render
@@ -1869,7 +1875,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   // Search results → "Search Intelligence" with the live search term as a
   // sublabel (updated in place as the user edits the input). Everywhere else
   // (home / topic) → "Intelligence" with the topic name sublabel.
-  const panelTitle = isCustom ? 'AI Intelligence' : 'AI Intelligence';
+  const panelTitle = isCustom ? 'AI Insights' : 'AI Insights';
   // Homepage Intelligence card gets a descriptive subtext. The section icon
   // is intentionally dropped — the accordions inside carry their own icons,
   // so a header icon is redundant. Topic pages keep the topic name as the
@@ -2804,7 +2810,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   // topic pages' mobile tab bar. A tab only appears when its section returned
   // content, and the active tab persists across live-term edits.
   const SEARCH_TABS = [
-    { key: 'ai', label: 'AI Intelligence', sel: '.topic-intelligence-panel' },
+    { key: 'ai', label: 'AI Insights', sel: '.topic-intelligence-panel' },
     { key: 'web', label: 'Web Sources', sel: '.websources-section' },
     { key: 'trending', label: 'Trending', sel: '.search-trend-section' },
     { key: 'news', label: 'News', sel: '.search-news-section' },
