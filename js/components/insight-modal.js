@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp208';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp208';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp209';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp209';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -65,20 +65,6 @@ function setupModalFades() {
   if (window.MutationObserver) { const mo = new MutationObserver(update); mo.observe(body, { childList: true, subtree: true }); panelEl._imFadeMO = mo; }
   requestAnimationFrame(update); setTimeout(update, 400);
 }
-// Bring an accordion's header near the top of the scroll area when it expands.
-// Lands it BELOW the top scroll-fade (38px) so the button stays clearly
-// readable — anchoring it to the very top hid it under the fade.
-function scrollHeaderToTop(el) {
-  const body = panelEl && panelEl.querySelector('.im-body');
-  if (!body || !el) return;
-  requestAnimationFrame(() => {
-    const delta = el.getBoundingClientRect().top - body.getBoundingClientRect().top - 50;
-    // Only scroll DOWN to reveal expanded content — never yank the button up
-    // under the fade when it's already comfortably in view.
-    if (delta > 8) body.scrollTo({ top: body.scrollTop + delta, behavior: 'smooth' });
-  });
-}
-
 const SPARK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>';
 // FILLED sparkle — the exact mark used to flag AI-generated text on the homepage
 // (ai-provenance SPARK_FILL). Used for the inline section flags + the legend so
@@ -687,74 +673,69 @@ function normalizeNewsBrief(content) {
 function newsPromptFor(d) {
   return `Give me a thorough, accurate briefing on this news story — what happened, why it matters, background, a timeline, and the latest developments.\n\n"${d.title || ''}"${d.description ? `\n\n${d.description}` : ''}${d.url ? `\n\nSource: ${d.url}` : ''}`;
 }
+// Map a news brief section name to one of the shared section icons (SEC_ICON).
+function newsSecIcon(name) {
+  const n = String(name || '').toLowerCase();
+  if (/what happened/.test(n)) return 'summary';
+  if (/takeaway|key point/.test(n)) return 'takeaways';
+  if (/matters|background/.test(n)) return 'matters';
+  if (/timeline/.test(n)) return 'timeline';
+  return 'summary';
+}
 function renderNews(d) {
   const host = hostOf(d.url) || (d.source_name || '');
   const when = relTime(d.date);
-  const meta = [
-    host ? `<a class="im-pub" href="${escAttr(d.url)}" target="_blank" rel="noopener noreferrer">${esc(host)} ${ARROW}</a>` : '',
-    when ? `<span class="im-when">${esc(when)}</span>` : '',
-  ].filter(Boolean).join('<span class="im-dot">·</span>');
+  const title = d.title || 'News story';
+  // Eyebrow ABOVE the title — publisher chip + when (matches the Trending layout).
+  const metaLine = `${host ? `<span class="im-eyebrow-cat">${esc(host)}</span>` : ''}${when ? `<span class="im-eyebrow-time">${esc(when)}</span>` : ''}`;
+  // Action links — View Original (real link) + Ask AI + Web Search (icon dropdowns).
+  const actions = [
+    d.url ? `<a class="im-qlink" href="${escAttr(d.url)}" target="_blank" rel="noopener noreferrer"><span>View Original</span>${ARROW}</a>` : '',
+    `<button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span></button>`,
+    `<button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span></button>`,
+  ].filter(Boolean).join('');
   panelEl.innerHTML = `
-    ${brandHeaderHTML({ title: d.title || 'News story', meta: host, url: d.url || '' }, { brandLabel: 'News AI Insights', condActions: true, icon: NEWS_FEED_ICON, headerNav: true, briefSticky: true })}
+    ${brandHeaderHTML(null, { brandLabel: 'News Insights', icon: NEWS_FEED_ICON, hideBack: true })}
     <div class="im-body">
-      <section class="im-section im-article">
-        ${meta ? `<div class="im-article-meta im-article-meta--top">${meta}</div>` : ''}
-        <h3 class="im-article-title">${esc(d.title || 'News story')}</h3>
-        ${d.description ? `<p class="im-article-summary">${esc(d.description)}</p>` : ''}
-        <div class="im-quicklinks">
-          ${d.url ? `<a class="im-qlink" href="${escAttr(d.url)}" target="_blank" rel="noopener noreferrer">View Original ${ARROW}</a>` : ''}
-          <button type="button" class="im-qlink im-qlink-btn" data-panel="sources" aria-expanded="false">Sources</button>
-          <button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">Ask AI</button>
-          <button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">Web Search</button>
-        </div>
+      ${stickyHeadHTML({ title, metaLine, actions, nav: d.nav })}
+      <div class="im-secs">
         <div class="im-acc" data-body="explore" id="im-explore-panel"></div>
         <div class="im-acc" data-body="web" id="im-web-panel"></div>
-      </section>
-      <section class="im-section im-brief-section">
-        <div class="im-aiflag-legend im-aiflag-legend--lg" id="im-brief-head">${SPARK_FILL}<span>= AI-generated text</span></div>
-        <p class="im-disclaimer">An AI-generated summary of this story. Please verify important details with the linked sources.</p>
-        <div class="ai-prov-slot im-prov-link" id="im-prov" role="link" tabindex="0" title="Jump to Sources &amp; Coverage"></div>
-        <hr class="im-rule">
-        ${briefSkeleton()}
-      </section>
-      <section class="im-section im-coverage" id="im-coverage" hidden>
-        <div class="im-section-title im-section-title--icon">${SOURCES_BADGE}<span>Sources &amp; Coverage</span></div>
-        <div class="im-coverage-list" id="im-coverage-list"></div>
-      </section>
+        <div id="im-secs-body">${msecHTML('msec-brief', 'Brief', briefSkeleton())}</div>
+      </div>
     </div>`;
   const prompt = newsPromptFor(d);
-  // Wire the quicklink accordions immediately (triggers live in the overview
-  // card now). `ctx.sources` is mutated once the brief loads, so the Sources
-  // panel + the Sources & Coverage card both fill in then.
   const ctx = { prompt, sources: [], headlines: [], origUrl: d.url || '', webTerm: d.title || '', onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, topicName: d.title || '', name: 'AI Insight · News', count: 1 } })) };
   wireActions(ctx);
-  // "Sources:" line under the AI Brief jumps to the Sources & Coverage section (#88).
-  const provLink = panelEl.querySelector('#im-prov');
-  if (provLink) {
-    const jump = () => { const cov = panelEl.querySelector('#im-coverage'); if (cov && !cov.hidden) cov.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
-    provLink.addEventListener('click', jump);
-    provLink.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); jump(); } });
-  }
+  buildBriefNav();
   (async () => {
     const t0 = Date.now();
-    const briefEl = panelEl.querySelector('#im-brief');
+    const secsBody = panelEl.querySelector('#im-secs-body');
     try {
       const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'news', url: d.url || '', title: d.title || '', description: d.description || '', date: d.date || '' }) });
       const data = res.ok ? await res.json() : null;
       await holdLoader(t0);
-      if (panelEl.querySelector('#im-brief') !== briefEl) return;
+      if (panelEl.querySelector('#im-secs-body') !== secsBody) return;
       if (data && data.content) {
         ctx.sources = data.sources || [];
         ctx.headlines = Array.isArray(data.headlines) ? data.headlines : [];
-        briefEl.innerHTML = renderBriefBody(normalizeNewsBrief(data.content), null, { aiFlag: SPARK_FILL }); briefEl.classList.add('ai-reveal');
-        const prov = panelEl.querySelector('#im-prov');
-        if (prov) { prov.innerHTML = aiProvenanceHTML(ctx.sources, { badge: false }); prov.hidden = !prov.textContent.trim(); }
-      } else { briefEl.innerHTML = '<p class="im-empty">AI brief unavailable right now.</p>'; }
-    } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
-    // Fill the Sources & Coverage card from the related coverage.
-    const covList = panelEl.querySelector('#im-coverage-list'), cov = panelEl.querySelector('#im-coverage');
-    const covRows = coverageListHTML(ctx.headlines, ctx.sources, ctx.origUrl);
-    if (cov && covRows) { covList.innerHTML = covRows; cov.hidden = false; }
+        // Split the brief into named sections (What Happened / Key Takeaways /
+        // Why It Matters / Timeline) and render each as a scroll-spy section with
+        // an icon head + the AI sparkle on its first sentence (flagFirst).
+        const sections = splitSections(normalizeNewsBrief(data.content));
+        const secHTML = sections.length
+          ? sections.map((s, i) => {
+              const key = newsSecIcon(s.name);
+              return msecHTML(`msec-news-${i}`, s.name, secHeadHTML(key, s.name) + renderBriefBody(s.body, null, { aiFlag: SPARK_FILL, flagFirst: true }));
+            }).join('')
+          : msecHTML('msec-brief', 'Brief', secHeadHTML('summary', 'Brief') + renderBriefBody(data.content, null, { aiFlag: SPARK_FILL, flagFirst: true }));
+        const cov = coverageListHTML(ctx.headlines, ctx.sources, ctx.origUrl);
+        const covSec = cov ? msecHTML('msec-sources', 'Sources & Coverage', secHeadHTML('sources', 'Sources & Coverage') + `<div class="im-coverage-list">${cov}</div>`) : '';
+        // All sections in ONE container so :last-child (no border) is the true last.
+        secsBody.innerHTML = secHTML + covSec; secsBody.classList.add('ai-reveal');
+        buildBriefNav();
+      } else { secsBody.innerHTML = '<p class="im-empty">AI brief unavailable right now.</p>'; }
+    } catch (_) { if (panelEl.querySelector('#im-secs-body') === secsBody) secsBody.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
   })();
 }
 
@@ -888,65 +869,55 @@ function splitSections(content) {
 function renderOverview(d) {
   const lens = d.label || 'AI';
   const topicLabel = d.scopeTopic || 'this topic';
-  panelEl.innerHTML = `
-    ${brandHeaderHTML({ title: topicLabel, meta: lens })}
-    <div class="im-body">
-      <section class="im-section im-article">
-        <div class="im-section-title">${esc(lens)}</div>
-        <h3 class="im-article-title">${esc(topicLabel)}</h3>
-      </section>
-      <section class="im-section im-brief-section">
-        <div class="im-aiflag-legend im-aiflag-legend--lg">${SPARK_FILL}<span>= AI-generated text</span></div>
-        <p class="im-disclaimer">The below is an AI-generated ${esc(lens)} overview of ${esc(topicLabel)}, compiled from current sources. Please verify important details with the linked sources.</p>
-        <div class="im-actions-slot" id="im-actions-slot"></div>
-        <hr class="im-rule">
-        <div class="im-brief im-brief-ov" id="im-brief">${genLoaderHTML(`Generating ${lens} overview…`)}</div>
-      </section>
-    </div>`;
+  // Eyebrow ABOVE the title — the lens chip (matches Trending/News layout).
+  const metaLine = `<span class="im-eyebrow-cat">${esc(lens)}</span>`;
+  const actions = [
+    `<button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span></button>`,
+    `<button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span></button>`,
+  ].join('');
   const prompt = `Give me a thorough "${lens}" overview of ${topicLabel} — be specific and current.`;
+  panelEl.innerHTML = `
+    ${brandHeaderHTML(null, { brandLabel: 'AI Insights' })}
+    <div class="im-body">
+      ${stickyHeadHTML({ title: topicLabel, metaLine, actions, nav: d.nav })}
+      <div class="im-secs">
+        <div class="im-acc" data-body="explore" id="im-explore-panel"></div>
+        <div class="im-acc" data-body="web" id="im-web-panel"></div>
+        <div id="im-secs-body">${msecHTML('msec-brief', lens, briefSkeleton(`Generating ${lens} overview…`))}</div>
+      </div>
+    </div>`;
+  const ctx = { prompt, sources: [], origUrl: '', webTerm: topicLabel, onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, name: lens + ' overview', count: 1 } })) };
+  wireActions(ctx);
+  buildBriefNav();
   (async () => {
     const t0 = Date.now();
-    const briefEl = panelEl.querySelector('#im-brief');
-    let sources = [];
+    const secsBody = panelEl.querySelector('#im-secs-body');
     try {
       const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shortcut', topic: d.topic, group: d.group }) });
       const data = res.ok ? await res.json() : null;
       await holdLoader(t0);
-      if (panelEl.querySelector('#im-brief') !== briefEl) return;
+      if (panelEl.querySelector('#im-secs-body') !== secsBody) return;
       if (data && data.content) {
         // Overview sources may be a per-section map { name: [...] }; this modal
         // shows all sections together, so flatten to the de-duped union.
         const raw = data.sources || [];
-        if (Array.isArray(raw)) sources = raw;
+        if (Array.isArray(raw)) ctx.sources = raw;
         else {
           const seen = new Set();
-          sources = Object.values(raw).flat().filter((s) => s && s.uri && !seen.has(s.uri) && seen.add(s.uri));
+          ctx.sources = Object.values(raw).flat().filter((s) => s && s.uri && !seen.has(s.uri) && seen.add(s.uri));
         }
+        // Each ## sub-section becomes a scroll-spy section with an icon head +
+        // the AI sparkle on its first sentence (flagFirst).
         const sections = splitSections(data.content);
-        briefEl.innerHTML = sections.length
-          ? sections.map((s, i) => `<details class="im-ovsec"${i === 0 ? ' open' : ''}><summary class="im-ovsec-sum"><span>${esc(s.name)}</span>${CHEV}</summary><div class="im-ovsec-body">${renderBriefBody(s.body, null, { aiFlag: SPARK_FILL })}</div></details>`).join('')
-          : renderBriefBody(data.content, null, { aiFlag: SPARK_FILL });
-        briefEl.classList.add('ai-reveal');
-        wireOvsecScroll();
-      } else { briefEl.innerHTML = '<p class="im-empty">Overview is being generated — check back shortly.</p>'; }
-    } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">Overview unavailable.</p>'; }
-    // Sources + Explore sit ABOVE the section list (in the AI Brief area).
-    const slot = panelEl.querySelector('#im-actions-slot');
-    if (slot) {
-      slot.innerHTML = actionsHTML();
-      wireActions({ prompt, sources, origUrl: '', webTerm: topicLabel, onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, name: lens + ' overview', count: 1 } })) });
-    }
+        const secHTML = sections.length
+          ? sections.map((s, i) => msecHTML(`msec-ov-${i}`, s.name, secHeadHTML('summary', s.name) + renderBriefBody(s.body, null, { aiFlag: SPARK_FILL, flagFirst: true }))).join('')
+          : msecHTML('msec-brief', lens, renderBriefBody(data.content, null, { aiFlag: SPARK_FILL, flagFirst: true }));
+        // Cited sources land in a final "Sources" section (domain-only rows).
+        const srcSec = (ctx.sources && ctx.sources.length) ? msecHTML('msec-sources', 'Sources', secHeadHTML('sources', 'Sources') + sourcesListHTML(ctx.sources, '')) : '';
+        // All sections in ONE container so :last-child (no border) is the true last.
+        secsBody.innerHTML = secHTML + srcSec; secsBody.classList.add('ai-reveal');
+        buildBriefNav();
+      } else { secsBody.innerHTML = '<p class="im-empty">Overview is being generated — check back shortly.</p>'; }
+    } catch (_) { if (panelEl.querySelector('#im-secs-body') === secsBody) secsBody.innerHTML = '<p class="im-empty">Overview unavailable.</p>'; }
   })();
-}
-// When a section accordion opens, bring its header to the top of the scroll
-// area so the just-revealed content starts where the eye is. Click-based (not
-// 'toggle') so the default first-section-open never auto-scrolls on load.
-function wireOvsecScroll() {
-  panelEl.querySelectorAll('.im-ovsec').forEach((det) => {
-    const sum = det.querySelector('.im-ovsec-sum');
-    if (!sum) return;
-    sum.addEventListener('click', () => { requestAnimationFrame(() => { if (det.open) scrollHeaderToTop(sum); }); });
-  });
-  const body = panelEl.querySelector('.im-body');
-  if (body) body.scrollTop = 0;
 }
