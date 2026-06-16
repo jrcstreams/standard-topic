@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp203';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp203';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp204';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp204';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -101,6 +101,7 @@ const SOURCES_BADGE = '<span class="ai-result-sub-ic"><svg viewBox="0 0 24 24" f
 // keeps its external ↗ (ARROW). Small inline marks before each label (#213).
 const ICON_ASK = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.6 4.6a2 2 0 0 0 1.3 1.3L19.5 10l-4.6 1.6a2 2 0 0 0-1.3 1.3L12 17l-1.6-4.6a2 2 0 0 0-1.3-1.3L4.5 10l4.6-1.6a2 2 0 0 0 1.3-1.3z"/></svg>';
 const ICON_WEB = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
+const ICON_GLOBE = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>';
 // Explore-further icons: paper-plane (Direct Submit) + eye (Review Prompt).
 const ICON_SEND = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2.5L11 13"/><path d="M21.5 2.5L15 21l-4-8-8-4z"/></svg>';
 const ICON_EYE = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>';
@@ -279,11 +280,12 @@ function stickyHeadHTML({ title, metaLine, actions }) {
   return `<div class="im-stickyhead" id="im-stickyhead">
     <div class="im-overhead">
       <h2 class="im-over-title" id="im-over-title">${esc(title)}</h2>
-      <div class="im-over-meta">${metaLine || ''}${actions ? `<span class="im-over-actions"><span class="im-over-sep" aria-hidden="true"></span>${actions}</span>` : ''}</div>
+      ${metaLine ? `<div class="im-over-meta">${metaLine}</div>` : ''}
+      ${actions ? `<div class="im-over-links">${actions}</div>` : ''}
     </div>
     <div class="im-briefnav">
-      <div class="im-briefnav-notice"><span class="im-briefnav-spark">${SPARK_FILL}</span><span>= Text in this section is AI-generated.</span></div>
       <div class="im-briefnav-pills" id="im-briefnav-pills"></div>
+      <div class="im-briefnav-notice"><span class="im-briefnav-spark">${SPARK_FILL}</span><span>= Text in this section is AI-generated.</span></div>
     </div>
   </div>`;
 }
@@ -792,21 +794,22 @@ function renderTrend(d) {
   const gtUrl = `https://trends.google.com/trends/explore?q=${encodeURIComponent(d.query || '')}&geo=US`;
   const metaLine = `<span class="im-over-when">${[esc(cat), since ? `Trending since ${esc(since)}` : ''].filter(Boolean).join(' · ')}</span>`;
   const sep = '<span class="im-over-sep" aria-hidden="true"></span>';
-  const actions = [
-    `<button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span></button>`,
-    `<button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">${ICON_WEB}<span>Web Search</span></button>`,
-    `<a class="im-qlink" href="${escAttr(gtUrl)}" target="_blank" rel="noopener noreferrer"><span>Google Trends</span>${ARROW}</a>`,
-  ].join(sep);
   const relBody = (Array.isArray(d.trendBreakdown) && d.trendBreakdown.length) ? relatedSearchesHTML(d.trendBreakdown) : '';
+  const actions = [
+    relBody ? `<button type="button" class="im-qlink im-qlink-btn" data-panel="related" aria-expanded="false">${ICON_WEB}<span>Related Searches</span></button>` : '',
+    `<button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span></button>`,
+    `<button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span></button>`,
+    `<a class="im-qlink" href="${escAttr(gtUrl)}" target="_blank" rel="noopener noreferrer"><span>Google Trends</span>${ARROW}</a>`,
+  ].filter(Boolean).join(sep);
   panelEl.innerHTML = `
     ${brandHeaderHTML(null, { brandLabel: 'Trending Insights', hideBack: true })}
     <div class="im-body">
       ${pnStripHTML(d.nav)}
       ${stickyHeadHTML({ title, metaLine, actions })}
       <div class="im-secs">
+        ${relBody ? `<div class="im-acc" data-body="related" id="im-related-panel">${relBody}</div>` : ''}
         <div class="im-acc" data-body="explore" id="im-explore-panel"></div>
         <div class="im-acc" data-body="web" id="im-web-panel"></div>
-        ${relBody ? msecHTML('msec-related', 'Related Searches', secHeadHTML('related', 'Related Searches') + relBody) : ''}
         <div id="im-brief-secs">${msecHTML('msec-brief', 'Summary', briefSkeleton())}</div>
         <div id="im-cov-sec"></div>
       </div>
@@ -840,7 +843,7 @@ function renderTrend(d) {
           }
         }
         ctx.sources = data.sources || [];
-        const why = cleanSum ? msecHTML('msec-why', 'Why Is This Trending', secHeadHTML('why', 'Why Is This Trending') + renderBriefBody(cleanSum, null, { aiFlag: SPARK_FILL })) : '';
+        const why = cleanSum ? msecHTML('msec-why', "Why It's Trending", secHeadHTML('why', "Why It's Trending") + renderBriefBody(cleanSum, null, { aiFlag: SPARK_FILL })) : '';
         const sum = detail ? msecHTML('msec-summary', 'Summary', secHeadHTML('summary', 'Summary') + renderBriefBody(detail, null, { aiFlag: SPARK_FILL })) : '';
         briefSecs.innerHTML = why + sum; briefSecs.classList.add('ai-reveal');
         const cov = coverageListHTML(data.headlines, data.sources, '');

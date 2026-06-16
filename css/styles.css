@@ -14679,7 +14679,7 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 @keyframes imPop { from { opacity: 0; transform: translate(-50%, -48%) scale(0.98); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
 .im-head {
   flex: 0 0 auto; padding: 15px 20px 14px; border-bottom: 1px solid var(--color-surface-border);
-  background: color-mix(in srgb, var(--color-primary) 3.5%, #fff);
+  background: color-mix(in srgb, var(--color-primary) 8%, #fff);
 }
 .im-head-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 26px; }
 .im-eyebrow-wrap { display: inline-flex; align-items: center; gap: 7px; }
@@ -14743,13 +14743,14 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 /* ===== Unified insight-modal layout (Trending / News / AI Insights) =====
    Thin Prev/Next strip (scrolls away) + permanent sticky header (overview that
    shrinks on scroll + an AI Brief subnav of scroll-spy section pills) + sections. */
-.im-pnstrip { display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding: 6px 0 13px; flex-wrap: wrap; }
-.im-pnstrip-nav { display: inline-flex; align-items: center; gap: 8px; }
+/* Top strip: Back to the LEFT (above the title), Prev/Next grouped on the right. */
+.im-pnstrip { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 6px 0 13px; flex-wrap: wrap; }
+.im-pnstrip-nav { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; }
 .im-pnstrip-btn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 14px; border: 1px solid var(--color-surface-border); border-radius: 999px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: var(--color-text-muted); white-space: nowrap; transition: border-color .14s, color .14s, background .14s; }
 .im-pnstrip-btn:hover:not(:disabled) { border-color: var(--color-primary); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 4%, #fff); }
 .im-pnstrip-btn:disabled { opacity: 0.4; cursor: default; }
 /* Back is slightly differentiated from the item-nav pair — a faint fill. */
-.im-pnstrip-back { background: #eef1f6; color: var(--color-primary); margin-right: 4px; }
+.im-pnstrip-back { background: #eef1f6; color: var(--color-primary); }
 .im-pnstrip-back:hover { background: color-mix(in srgb, var(--color-primary) 9%, #fff); }
 .im-pnstrip-arrow { font-size: 1.05rem; line-height: 1; }
 @media (max-width: 560px) {
@@ -14757,25 +14758,27 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
   .im-pnstrip-btn { padding: 6px 11px; font-size: 0.78rem; }
 }
 
-.im-stickyhead { position: sticky; top: 0; z-index: 8; background: var(--color-bg, #fff); }
-.im-overhead { padding: 2px 0 11px; }
+/* The header zone (title + meta + links + AI Brief subnav) is one full-width
+   grey block, distinct from the white content below, with line separators. */
+.im-stickyhead { position: sticky; top: 0; z-index: 8; margin: 0 -20px; padding: 0 20px; background: #f3f5f8; border-bottom: 1px solid var(--color-surface-border); }
+.im-overhead { padding: 14px 0 12px; }
 .im-over-title { margin: 0 0 9px; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; color: var(--color-primary); line-height: 1.16; font-size: 1.7rem; transition: font-size .18s ease, margin-bottom .18s ease; }
-.im-stickyhead.is-compact .im-over-title { font-size: 1.18rem; margin-bottom: 6px; }
-.im-over-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 0; }
+.im-stickyhead.is-compact .im-over-title { font-size: 1.34rem; margin-bottom: 7px; }
+.im-over-meta { display: flex; align-items: center; flex-wrap: wrap; }
 .im-over-when { font-size: 0.84rem; font-weight: 500; color: #5b6679; }
-.im-over-actions { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 0; }
+.im-over-links { display: flex; align-items: center; flex-wrap: wrap; margin-top: 9px; }
 .im-over-sep { display: inline-block; width: 1px; height: 13px; background: var(--color-surface-border); margin: 0 14px; flex: none; }
-/* Action links: slightly lighter than the meta, with a leading icon. */
-.im-over-actions .im-qlink { font-size: 0.86rem; font-weight: 500; display: inline-flex; align-items: center; gap: 5px; }
-.im-over-actions .im-qlink svg { flex: none; }
+/* Action links: a touch lighter, each with a leading icon. */
+.im-over-links .im-qlink { font-size: 0.86rem; font-weight: 500; display: inline-flex; align-items: center; gap: 5px; }
+.im-over-links .im-qlink svg { flex: none; }
 
-/* AI Brief subnav — a full-width grey block (breaks out of the body padding):
-   an AI-generated notice over a row of scroll-spy section pills. */
-.im-briefnav { margin: 0 -20px; padding: 10px 20px 11px; background: #f3f5f8; border-top: 1px solid var(--color-surface-border); border-bottom: 1px solid var(--color-surface-border); }
-.im-briefnav-notice { display: flex; align-items: center; gap: 7px; margin-bottom: 9px; font-size: 0.86rem; font-weight: 600; color: var(--color-text); }
+/* AI Brief subnav — section pills + an AI-generated notice below them. Sits
+   inside the grey header zone, separated by a hairline. */
+.im-briefnav { padding: 11px 0 12px; border-top: 1px solid var(--color-surface-border); }
+.im-briefnav-notice { display: flex; align-items: center; gap: 7px; margin: 0; font-size: 0.84rem; font-weight: 600; color: var(--color-text); }
 .im-briefnav-spark { display: inline-flex; color: var(--color-link, #2563eb); }
 .im-briefnav-spark svg { width: 16px; height: 16px; }
-.im-briefnav-pills { display: flex; align-items: center; gap: 7px; overflow-x: auto; scrollbar-width: none; }
+.im-briefnav-pills { display: flex; align-items: center; gap: 7px; margin-bottom: 10px; overflow-x: auto; scrollbar-width: none; }
 .im-briefnav-pills::-webkit-scrollbar { display: none; }
 .im-pill { flex: none; padding: 5px 13px; border: 1px solid transparent; border-radius: 999px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; color: var(--color-text-muted); white-space: nowrap; transition: background .14s, color .14s, border-color .14s; }
 .im-pill:hover { border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); color: var(--color-primary); }
