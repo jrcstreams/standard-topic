@@ -14151,31 +14151,36 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 body.home-search #section-aii-home .aii-launcher-cta {
   cursor: pointer; position: relative; overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  /* Deep slate ink (not an AI-ey blue/purple glow). */
-  background: linear-gradient(168deg, #1d2a44 0%, #121d36 56%, #0b1324 100%);
+  /* The site's own navy (matches the header/bottom-nav) with a soft top-right
+     lift — calm + on-brand, no loud accent or AI-glow. */
+  background: radial-gradient(120% 150% at 90% -10%, #2c3c59 0%, #1a2840 40%, #0f1a2e 100%);
   box-shadow: 0 18px 40px -26px rgba(10, 18, 34, 0.7);
   transition: transform .18s ease, box-shadow .22s ease;
 }
 body.home-search #section-aii-home .aii-launcher-cta:hover { transform: translateY(-2px); box-shadow: 0 26px 54px -26px rgba(10, 18, 34, 0.82); }
 body.home-search #section-aii-home .aii-launcher-cta:active { transform: translateY(0); }
 body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: none; border-bottom-color: rgba(255, 255, 255, 0.1); position: relative; z-index: 1; }
-.aii-launcher-cta:focus-visible { outline: 2px solid #2dd4a7; outline-offset: 3px; }
+.aii-launcher-cta:focus-visible { outline: 2px solid #5b78b8; outline-offset: 3px; }
 /* A thin top sheen for depth (replaces the blue radial glow). */
-.aii-launcher-cta::after { content: ''; position: absolute; inset: 0 0 auto 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent); pointer-events: none; }
-/* Teal brand mark — the accent that gives the card identity (ties to LIVE). */
-.aii-launcher-cta .aii-logo { background: linear-gradient(135deg, #2dd4a7, #1f9e98); color: #04201a; box-shadow: none; }
+.aii-launcher-cta::after { content: ''; position: absolute; inset: 0 0 auto 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent); pointer-events: none; z-index: 1; }
+/* Faint oversized brand-spark watermark bleeding off the top-right — a signature
+   that ties to the AI Insights mark, in navy/white at very low opacity. */
+.aii-cta-spark { position: absolute; top: -50px; right: -44px; width: 280px; height: 280px; color: #fff; opacity: 0.06; pointer-events: none; z-index: 0; }
+.aii-cta-spark svg { width: 100%; height: 100%; }
+.aii-launcher-cta .aii-logo { background: rgba(255, 255, 255, 0.12); color: #fff; box-shadow: none; }
 .aii-launcher-cta .aii-brand { color: #fff; }
 .aii-launcher-cta .aii-live { color: #4ade9f; }
 .aii-launcher-cta .aii-stage { position: relative; z-index: 1; }
-.aii-launcher-cta .aii-promo-line { color: rgba(255, 255, 255, 0.6); }
+.aii-launcher-cta .aii-promo-line { color: rgba(255, 255, 255, 0.62); }
 .aii-launcher-cta .aii-promo-headline { color: #fff; }
-.aii-launcher-cta .aii-feat { color: rgba(255, 255, 255, 0.84); }
-.aii-launcher-cta .aii-feat-ic { color: rgba(255, 255, 255, 0.48); }
-/* Real teal CTA button (the whole card still opens; the button is the cue). */
-.aii-promo-btn { align-self: flex-start; display: inline-flex; align-items: center; gap: 9px; margin-top: 2px; padding: 12px 22px; border-radius: 11px; background: linear-gradient(135deg, #2dd4a7, #1f9e98); color: #04201a; font-family: var(--font-family); font-size: 0.92rem; font-weight: 700; box-shadow: 0 10px 24px -12px rgba(45, 212, 167, 0.6); transition: transform .12s ease, box-shadow .16s ease; }
+.aii-launcher-cta .aii-feat { color: rgba(255, 255, 255, 0.82); }
+.aii-launcher-cta .aii-feat-ic { color: rgba(255, 255, 255, 0.46); }
+/* White CTA button on the navy card — clean, high-contrast, not loud. */
+.aii-promo-btn { align-self: flex-start; display: inline-flex; align-items: center; gap: 9px; margin-top: 2px; padding: 12px 22px; border-radius: 11px; background: #fff; color: var(--color-primary); font-family: var(--font-family); font-size: 0.92rem; font-weight: 700; box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.6); transition: transform .12s ease, box-shadow .16s ease; }
 .aii-promo-btn svg { width: 16px; height: 16px; transition: transform .16s ease; }
-.aii-launcher-cta:hover .aii-promo-btn { transform: translateY(-1px); box-shadow: 0 14px 30px -12px rgba(45, 212, 167, 0.72); }
+.aii-launcher-cta:hover .aii-promo-btn { transform: translateY(-1px); box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.7); }
 .aii-launcher-cta:hover .aii-promo-btn svg { transform: translateX(3px); }
+@media (max-width: 560px) { .aii-cta-spark { width: 200px; height: 200px; top: -38px; right: -36px; opacity: 0.055; } }
 @media (max-width: 720px) {
   .aii-steps { flex-direction: column; gap: 10px; }
   .aii-step-sep { display: none; }
