@@ -5,7 +5,7 @@
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
 import { renderTrendExpansionBody } from './trend-expansion.js';
-import { aiSparkInline } from '../utils/ai-provenance.js?v=20260616-revamp217';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260616-revamp218';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -309,7 +309,8 @@ export function renderTrending(container) {
 // and `gridEl` (the scrolling body).
 export function renderTrendingModal(controlsEl, gridEl) {
   gridEl.innerHTML = `<div class="trend-card-grid">${Array.from({ length: 8 }, () => '<div class="trend-card trend-card-skel"></div>').join('')}</div>`;
-  const state = { all: [], category: 'all' };
+  const TLM_INITIAL = 16, TLM_STEP = 16;
+  const state = { all: [], category: 'all', shown: TLM_INITIAL };
   const catList = () => [...new Set(state.all.map(ttCatOf).filter(Boolean))]
     .sort((a, b) => (ttCatRank(a) - ttCatRank(b)) || a.localeCompare(b));
 
@@ -329,15 +330,20 @@ export function renderTrendingModal(controlsEl, gridEl) {
     return state.category === 'all' ? state.all : state.all.filter((t) => ttCatOf(t) === state.category);
   }
   function renderGrid() {
-    const shown = visible();
-    gridEl.innerHTML = shown.length
-      ? `<div class="trend-card-grid">${shown.map((t, i) => trendCardHTML(t, i)).join('')}</div>`
-      : '<p class="trending-empty">No trends in this category right now.</p>';
+    const all = visible();
+    if (!all.length) { gridEl.innerHTML = '<p class="trending-empty">No trends in this category right now.</p>'; return; }
+    const shown = all.slice(0, state.shown);
+    const more = all.length - shown.length;
+    // Cap the list to an initial batch + a "View more" button that reveals the
+    // rest (client-side) — only when more are actually available.
+    gridEl.innerHTML = `<div class="trend-card-grid">${shown.map((t, i) => trendCardHTML(t, i)).join('')}</div>${
+      more > 0 ? `<div class="trend-loadmore-row"><button type="button" class="trend-loadmore" data-loadmore>View more trends <span class="trend-loadmore-count">+${more}</span></button></div>` : ''}`;
     wireTrendCards(gridEl);
+    gridEl.querySelector('[data-loadmore]')?.addEventListener('click', () => { state.shown += TLM_STEP; renderGrid(); });
   }
   function renderControls() {
     controlsEl.innerHTML = controlsHTML();
-    controlsEl.querySelector('.trend-cat-select')?.addEventListener('change', (e) => { state.category = e.target.value; renderGrid(); });
+    controlsEl.querySelector('.trend-cat-select')?.addEventListener('change', (e) => { state.category = e.target.value; state.shown = TLM_INITIAL; renderGrid(); });
   }
 
   fetchTrending().then(({ topics }) => {

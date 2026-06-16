@@ -15069,6 +15069,12 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 .trend-legend { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding: 5px 11px; border-radius: 7px; background: color-mix(in srgb, var(--color-text) 4%, #fff); border: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); }
 .trend-legend-item { display: inline-flex; align-items: center; gap: 5px; font-size: 0.68rem; font-weight: 600; color: var(--color-text-muted); white-space: nowrap; }
 .trend-legend-item .ai-spark-mark svg { width: 11px; height: 11px; }
+/* Trending modal "View more trends" — reveals the next batch of cards. */
+.trend-loadmore-row { display: flex; justify-content: center; padding: 18px 0 6px; }
+.trend-loadmore { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 1px solid var(--color-surface-border); border-radius: 999px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.88rem; font-weight: 650; color: var(--color-primary); transition: border-color .14s, background .14s, transform .06s; }
+.trend-loadmore:hover { border-color: color-mix(in srgb, var(--color-primary) 32%, var(--color-surface-border)); background: color-mix(in srgb, var(--color-primary) 4%, #fff); }
+.trend-loadmore:active { transform: translateY(1px); }
+.trend-loadmore-count { font-size: 0.78rem; font-weight: 600; color: var(--color-text-muted); }
 .trend-legend-trend-ic { display: inline-flex; align-items: center; color: #475569; }
 .trend-legend-trend-ic svg { width: 12px; height: 12px; }
 
