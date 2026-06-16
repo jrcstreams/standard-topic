@@ -14109,6 +14109,9 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 }
 .aii-headsub { margin: 0; font-size: 0.8rem; line-height: 1.45; color: var(--color-text-muted); }
 .aii-stage { padding: 14px 16px 16px; }
+/* Topic-page track picker: a prominent heading over the colored track tiles. */
+.aii-promo--tracks { display: flex; flex-direction: column; gap: 12px; }
+.aii-tracks-head { margin: 2px 0 4px; font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; letter-spacing: -0.015em; color: var(--color-text); }
 /* ===== AI Intelligence launcher → promo / CTA action card (#167). The home +
    topic-DESKTOP card no longer makes you pick a path first; it sells the feature
    (curated intro + track teaser) and drops you into the modal with one CTA. */

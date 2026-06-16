@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp221';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp221';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp222';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp222';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -158,20 +158,18 @@ export function renderAIIntelligence(container, scope) {
   // NOT inside the modal — the modal always runs the full flip-nav (topic → path
   // → insight → brief); tab mode is only the inline AI Intelligence tab on a
   // narrow topic page. (The modal hands off + closes on resize to mobile anyway.)
+  // Mobile topic-page inline context (kept only for CSS/section sizing — it now
+  // shows the SAME track-picker launcher as desktop, not an in-body flip-nav).
   const tabMode = !scope.inModal
     && scope.topic !== 'home'
     && typeof window !== 'undefined' && window.matchMedia
     && window.matchMedia('(max-width: 899.98px)').matches;
-  // Launcher mode (#13): on the homepage + topic-page DESKTOP, the section is a
-  // launcher — clicking a path opens the AI Intelligence MODAL (the in-place
-  // flip was a shitshow on those layouts). Inside the modal (scope.inModal) we
-  // run the full flip-nav. Topic-page MOBILE stays the inline tab-mode.
-  const launcher = !tabMode && !scope.inModal;
-  // Flow mode = the full flip-nav (paths → sections → insight). Runs in the modal
-  // (desktop home / bottom-nav) AND inline in a mobile topic page's AI Insights
-  // tab — same content, different shell. Scroll container: .aii-modal-body in the
-  // modal, .aii-stage inline (tab mode).
-  const flowMode = scope.inModal || tabMode;
+  // Launcher = every NON-modal surface: the homepage promo card AND every topic
+  // page (desktop + mobile). It lists the tracks; clicking one opens the MODAL
+  // deep-linked to that topic+track. AI Insights is ALWAYS experienced in the modal.
+  const launcher = !scope.inModal;
+  // Flow mode = the full flip-nav (topic → path → insight). Runs ONLY in the modal.
+  const flowMode = scope.inModal;
   const scrollRootEl = () => container.closest('.aii-modal-body') || stage;
 
   const topicTitle = scope.topic === 'home' ? "Today's World" : (scope.label || scope.topic || '');
@@ -323,14 +321,17 @@ export function renderAIIntelligence(container, scope) {
       <span class="aii-promo-btn">Explore AI Insights ${RIGHT_ARROW}</span>
     </div>`;
   }
+  // Topic-page launcher (desktop + mobile tab): a prominent "Choose an Intelligence
+  // Track" heading + the track tiles (colored per-track icons). Each tile opens the
+  // MODAL deep-linked to that topic+track — no in-body title / back / separator.
   function launcherPromoHTML() {
     if (scope.topic === 'home') return launcherStepsHTML();
     const tracks = paths.map((p) => `<button type="button" class="aii-track" data-group="${escAttr(p.group)}">
-        <span class="aii-track-head"><span class="aii-track-ic">${ICONS[p.group] || ICONS._}</span><span class="aii-track-name">${esc(p.tab || p.label)}</span><span class="aii-track-go" aria-hidden="true">${RIGHT_ARROW}</span></span>
+        <span class="aii-track-head"><span class="aii-track-ic aii-icon-${escAttr(p.group)}">${ICONS[p.group] || ICONS._}</span><span class="aii-track-name">${esc(p.tab || p.label)}</span><span class="aii-track-go" aria-hidden="true">${RIGHT_ARROW}</span></span>
         <span class="aii-track-desc">${esc(p.subtitle)}</span>
       </button>`).join('');
-    return `<div class="aii-promo">
-      <p class="aii-promo-line">Live, AI-written intelligence — pick a track to dive in.</p>
+    return `<div class="aii-promo aii-promo--tracks">
+      <h3 class="aii-tracks-head">Choose an Intelligence Track</h3>
       <div class="aii-promo-grid">${tracks}</div>
     </div>`;
   }
@@ -947,41 +948,24 @@ export function renderAIIntelligence(container, scope) {
       } }))));
     }
   } else if (flowMode && scope.pickTopic) {
-    // Entered "anew" (bottom nav / homepage CTA) → Step 1: pick a topic.
+    // Modal entered "anew" (bottom nav / homepage CTA) → Step 1: pick a topic.
     go('topic', 'fwd');
   } else if (flowMode && scope.initialGroup && paths.some((p) => p.group === scope.initialGroup)) {
-    // Deep-link to the path the user clicked / handed off from desktop.
+    // Modal deep-linked to a specific track (clicked from a topic page) → that
+    // track's sections, with full back / change-track / prev-next inside the modal.
     openGroup(scope.initialGroup);
   } else {
-    // Flow mode (modal w/o pickTopic, OR mobile topic-page tab) → the path picker.
+    // Modal default → the path picker.
     go('paths', 'fwd');
   }
-  // Mobile topic tab: listen for a hand-off from the desktop modal (resize →
-  // mobile closes the modal and tells us which group was open) and jump to it.
-  if (tabMode) {
-    if (container._aiiSectionHandler) window.removeEventListener('aii-open-section', container._aiiSectionHandler);
-    container._aiiSectionHandler = (e) => { const g = e && e.detail && e.detail.group; if (g) openGroup(g); };
-    window.addEventListener('aii-open-section', container._aiiSectionHandler);
-  }
-  // Responsive: tabMode is fixed at render, so without this the first-render
-  // layout (desktop paths-grid OR mobile secondary-tab nav) would stick across
-  // a viewport resize. Re-render whenever the breakpoint is crossed.
+  // Responsive: tabMode is fixed at render, so re-render when the breakpoint is
+  // crossed (the track-picker layout differs slightly desktop vs mobile).
   if (typeof window !== 'undefined' && window.matchMedia && scope.topic !== 'home' && !scope.inModal) {
     if (container._aiiMq && container._aiiMqHandler) {
       container._aiiMq.removeEventListener('change', container._aiiMqHandler);
     }
     const mq = window.matchMedia('(max-width: 899.98px)');
-    const handler = (ev) => {
-      // Resized to DESKTOP while drilled into a path inline → hand the current
-      // path off to the modal so the same state appears there instantly.
-      if (ev && !ev.matches && curGroup && view !== 'paths' && view !== 'topic') {
-        window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: {
-          topic: scope.topic, label: scope.label, group: curGroup,
-          hideGroups: scope.hideGroups || [], descriptions: scope.descriptions || {},
-        } }));
-      }
-      renderAIIntelligence(container, scope);
-    };
+    const handler = () => renderAIIntelligence(container, scope);
     mq.addEventListener('change', handler);
     container._aiiMq = mq;
     container._aiiMqHandler = handler;
