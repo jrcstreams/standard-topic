@@ -13128,6 +13128,16 @@ body.home-search #section-websources {
   border-radius: 16px;
   overflow: hidden;
 }
+/* Sidebar "discovery" cards (Trending + Web Sources) get a faint grey surface so
+   they read as a group, distinct from the white News Feed + the dark AI Insights
+   hero (#167 card-system). Inner .ws chrome is flattened to avoid a double-card. */
+body.home-search #home-trending,
+body.home-search #section-websources {
+  background: #f4f6f8;
+  border-color: #e6e9ef;
+}
+body.home-search #section-websources .ws { border: none; background: none; border-radius: 0; }
+body.home-search #section-websources .ws-head { background: none; }
 
 /* Prompt Builder promo — a dark navy card with a faint constellation texture
    and a blue CTA (replaces the nav's Prompt Builder button on home). */
