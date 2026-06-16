@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp214';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp214';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp215';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp215';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -467,8 +467,11 @@ export function renderAIIntelligence(container, scope) {
         const key = aiiSecIconKey(part.name);
         return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name) + renderBriefBody(part.body, null, { aiFlag: LOGO, flagFirst: true }));
       }).join('');
-      const items = sectionNewsItems();
-      const covRows = items.map((x) => `<a class="im-cov-row" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span>${x.meta ? `<span class="im-cov-host">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`).join('');
+      // Only RICH rows (real headline + publisher · date), like the Trending/News
+      // Sources list — drop bare grounding-citation domains (e.g. "pbs.org") that
+      // give the reader no context on what they're clicking.
+      const items = sectionNewsItems().filter((x) => x.title && x.meta && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(String(x.title).trim()));
+      const covRows = items.map((x) => `<a class="im-cov-row" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span><span class="im-cov-host">${esc(x.meta)}</span></span>${EXT}</a>`).join('');
       if (covRows) html += aiiMsec('aii-msec-sources', 'Sources', aiiSecHead('sources', 'Sources') + `<div class="im-coverage-list">${covRows}</div>`);
       wrap.innerHTML = html;
       wrap.classList.add('ai-reveal');
@@ -612,9 +615,12 @@ export function renderAIIntelligence(container, scope) {
   }
   function headlineListHTML() {
     // Same rich rows as the News/Trend Sources & Coverage (title + publisher ·
-    // date), so the type + styling match across the family (#143).
-    const rows = sectionNewsItems().map((x) =>
-      `<a class="im-cov-row" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span>${x.meta ? `<span class="im-cov-host">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`);
+    // date), so the type + styling match across the family (#143). Drop bare
+    // grounding-citation domains — they give no context on what's being clicked.
+    const rows = sectionNewsItems()
+      .filter((x) => x.title && x.meta && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(String(x.title).trim()))
+      .map((x) =>
+      `<a class="im-cov-row" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span><span class="im-cov-host">${esc(x.meta)}</span></span>${EXT}</a>`);
     if (!rows.length) return '';
     return `<div class="im-coverage im-coverage--inline"><div class="im-section-title im-section-title--icon">${SOURCES_BADGE}<span>Sources</span></div><div class="im-coverage-list">${rows.join('')}</div></div>`;
   }
