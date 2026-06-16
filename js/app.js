@@ -6,26 +6,26 @@ import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './ut
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260616-revamp222';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260616-revamp224';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260616-revamp222';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260616-revamp222';
-import { initPromptModal } from './components/prompt-modal.js?v=20260616-revamp222';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260616-revamp222';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260616-revamp224';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260616-revamp224';
+import { initPromptModal } from './components/prompt-modal.js?v=20260616-revamp224';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260616-revamp224';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp222';
-import { initInsightModal } from './components/insight-modal.js?v=20260616-revamp222';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260616-revamp222';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260616-revamp222';
-import { renderWebSources } from './components/websources.js?v=20260616-revamp222';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp222';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp224';
+import { initInsightModal } from './components/insight-modal.js?v=20260616-revamp224';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260616-revamp224';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260616-revamp224';
+import { renderWebSources } from './components/websources.js?v=20260616-revamp224';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp224';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260616-revamp222';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260616-revamp224';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260616-revamp222';
-import { initSettingsModal } from './components/settings-modal.js?v=20260616-revamp222';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260616-revamp224';
+import { initSettingsModal } from './components/settings-modal.js?v=20260616-revamp224';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1247,6 +1247,16 @@ function renderStickyHeroBar(container, route) {
     </div>
     <div class="navmenu-search" id="navmenu-search-container"></div>
     <nav class="navmenu-quicklinks">
+      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-ai-insights">
+        <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/>
+        </svg>
+        <span class="navmenu-cta-label">AI Insights</span>
+        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="13 6 19 12 13 18"/>
+        </svg>
+      </button>
       <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-trending">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <polyline points="3 17 9 11 13 15 21 7"/>
@@ -1273,8 +1283,8 @@ function renderStickyHeroBar(container, route) {
       </button>
       <a href="#/prompt-generator" class="navmenu-quicklink navmenu-cta" id="navmenu-prompt-link">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/>
-          <path d="M19 3l.6 1.6L21.2 5.2 19.6 5.8 19 7.4 18.4 5.8 16.8 5.2 18.4 4.6z"/>
+          <path d="M12 20h9"/>
+          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/>
         </svg>
         <span class="navmenu-cta-label">Prompt Builder</span>
         <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1337,6 +1347,10 @@ function renderStickyHeroBar(container, route) {
     closeMenu();
     window.dispatchEvent(new CustomEvent('open-trending-list'));
   });
+  navPanel.querySelector('#navmenu-ai-insights')?.addEventListener('click', () => {
+    closeMenu();
+    window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: { pickTopic: true } }));
+  });
 
   // Mobile top-bar search icon (kept upper-right even though Search is also
   // in the bottom nav) — opens the search modal.
@@ -1384,7 +1398,7 @@ function renderBottomNav(route) {
         <span class="botnav-label">Insights</span>
       </button>
       <button type="button" class="botnav-tab" data-tab="trending" id="botnav-trending" aria-label="Trending">
-        <span class="botnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg></span>
+        <span class="botnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg></span>
         <span class="botnav-label">Trending</span>
       </button>
       <button type="button" class="botnav-tab" data-tab="topics" id="botnav-topics" aria-label="All topics">

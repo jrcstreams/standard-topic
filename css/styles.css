@@ -3842,7 +3842,9 @@ html, body, #app {
 .news-card { position: relative; display: block; }
 .news-card-link { position: static; display: block; padding: 1.1rem 0 0; }
 /* First story sits snug under the feed header — trim the extra top whitespace. */
-#section-newsfeed .news-list .news-card:first-child .news-card-link { padding-top: 0.5rem; }
+#section-newsfeed .news-list .news-card:first-child .news-card-link { padding-top: 0.95rem; }
+/* Hover/active fill spans the full row width (#265). */
+.news-card { width: 100%; box-sizing: border-box; }
 .news-card-link::after { content: ''; position: absolute; inset: 0; z-index: 0; }
 .news-card-foot {
   position: relative; z-index: 1;
@@ -13412,7 +13414,11 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
      so each story's clickable link + hover fill span edge-to-edge (no dead,
      un-clickable gutter, #244). The text inset moves onto the link/foot so titles
      still align with the header. Empty/loading states keep an inset of their own. */
-  #section-newsfeed .newsfeed-card .newsfeed-scroll-wrap { padding: 8px 0 6px; }
+  /* No top gap above the list — the first story's breathing room lives INSIDE its
+     card so the hover/active fill covers it (and isn't a dead white strip). */
+  #section-newsfeed .newsfeed-card .newsfeed-scroll-wrap { padding: 0 0 6px; }
+  /* More room under the tab bar for the first story (#264). */
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed .news-list .news-card:first-child .news-card-link { padding-top: 1.15rem; }
   #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 18px 14px; }
   #section-newsfeed .newsfeed-card .news-card-link,
   #section-newsfeed .newsfeed-card .news-card-foot,
@@ -13469,7 +13475,7 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   body.home-search #section-newsfeed .newsfeed-card .newsfeed-filters {
     margin: 11px 0 0; background: transparent; border: none; border-radius: 0; padding: 0;
   }
-  body.home-search #section-newsfeed .newsfeed-card .newsfeed-scroll-wrap { padding: 6px 14px 6px; }
+  body.home-search #section-newsfeed .newsfeed-card .newsfeed-scroll-wrap { padding: 0 14px 6px; }
   body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 14px 12px; }
 }
 
@@ -14118,7 +14124,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-launcher .aii-headsub { display: none; }
 .aii-launcher .aii-stage { padding: 14px 16px 16px; }
 .aii-promo { display: flex; flex-direction: column; gap: 12px; }
-.aii-promo-line { margin: 0; font-size: 0.92rem; font-weight: 400; line-height: 1.5; color: var(--color-text-muted); max-width: 48ch; }
+.aii-promo-line { margin: 0; font-size: 0.92rem; font-weight: 400; line-height: 1.5; color: var(--color-text-muted); max-width: 64ch; }
 /* Track tiles — the product centerpiece (#167). Each carries its own accent
    (icon chip tint + hover edge + reveal arrow); refined hairline border, soft
    lift on hover. Responsive: 3-across on the wide home card, 1-col in a sidebar. */
@@ -14140,9 +14146,10 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    compact feature row, and a footer cue. The WHOLE card is the CTA (no standalone
    button) — see the dark hero block below. */
 .aii-promo--cta { gap: 13px; }
-.aii-promo-headline { margin: 0; font-family: var(--font-display); font-size: clamp(1.5rem, 1.15rem + 1.4vw, 2.05rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; color: var(--color-text); }
-.aii-feats { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 1px 0 2px; }
-.aii-feat { display: inline-flex; align-items: center; gap: 7px; font-size: 0.82rem; font-weight: 600; color: var(--color-text); }
+.aii-promo-headline { margin: 0; font-family: var(--font-display); font-size: clamp(1.35rem, 1.05rem + 1.1vw, 1.72rem); font-weight: 700; letter-spacing: -0.028em; line-height: 1.08; color: var(--color-text); }
+.aii-feats { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 1px 0 2px; }
+.aii-feat { display: inline-flex; align-items: center; gap: 7px; font-size: 0.86rem; font-weight: 600; color: var(--color-text); }
+.aii-feat-ic svg { width: 15px; height: 15px; }
 .aii-feat-ic { display: inline-flex; color: var(--color-primary); }
 .aii-promo-cue { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; font-weight: 650; letter-spacing: -0.005em; color: var(--color-primary); }
 .aii-promo-cue-arrow { display: inline-flex; transition: transform .2s ease; }
@@ -14168,7 +14175,8 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 .aii-launcher-cta::after { content: ''; position: absolute; inset: 0 0 auto 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent); pointer-events: none; z-index: 1; }
 /* Faint oversized brand-spark watermark bleeding off the top-right — a signature
    that ties to the AI Insights mark, in navy/white at very low opacity. */
-.aii-cta-spark { position: absolute; top: -50px; right: -44px; width: 280px; height: 280px; color: #fff; opacity: 0.06; pointer-events: none; z-index: 0; }
+/* Sits BELOW the head divider (kept within the body area, not crossing the head). */
+.aii-cta-spark { position: absolute; top: 60px; right: -46px; width: 300px; height: 300px; color: #fff; opacity: 0.06; pointer-events: none; z-index: 0; }
 .aii-cta-spark svg { width: 100%; height: 100%; }
 .aii-launcher-cta .aii-logo { background: rgba(255, 255, 255, 0.12); color: #fff; box-shadow: none; }
 .aii-launcher-cta .aii-brand { color: #fff; }
@@ -14179,8 +14187,8 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 .aii-launcher-cta .aii-feat { color: rgba(255, 255, 255, 0.82); }
 .aii-launcher-cta .aii-feat-ic { color: rgba(255, 255, 255, 0.46); }
 /* White CTA button on the navy card — clean, high-contrast, not loud. */
-.aii-promo-btn { align-self: flex-start; display: inline-flex; align-items: center; gap: 9px; margin-top: 2px; padding: 12px 22px; border-radius: 11px; background: #fff; color: var(--color-primary); font-family: var(--font-family); font-size: 0.92rem; font-weight: 700; box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.6); transition: transform .12s ease, box-shadow .16s ease; }
-.aii-promo-btn svg { width: 16px; height: 16px; transition: transform .16s ease; }
+.aii-promo-btn { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; margin-top: 2px; padding: 10px 18px; border-radius: 10px; background: #fff; color: var(--color-primary); font-family: var(--font-family); font-size: 0.875rem; font-weight: 700; box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.6); transition: transform .12s ease, box-shadow .16s ease; }
+.aii-promo-btn svg { width: 15px; height: 15px; transition: transform .16s ease; }
 .aii-launcher-cta:hover .aii-promo-btn { transform: translateY(-1px); box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.7); }
 .aii-launcher-cta:hover .aii-promo-btn svg { transform: translateX(3px); }
 @media (max-width: 560px) { .aii-cta-spark { width: 200px; height: 200px; top: -38px; right: -36px; opacity: 0.055; } }
