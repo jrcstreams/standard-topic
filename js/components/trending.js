@@ -5,7 +5,7 @@
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
 import { renderTrendExpansionBody } from './trend-expansion.js';
-import { aiSparkInline } from '../utils/ai-provenance.js?v=20260615-revamp200';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260616-revamp202';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -183,7 +183,7 @@ async function showTrendBrief(card) {
   }
   window.dispatchEvent(new CustomEvent('open-insight-modal', { detail: {
     ...list[index],
-    nav: { list, index, backLabel: 'Trending', backEvent: 'open-trending-list', itemKind: 'trend' },
+    nav: { list, index, backLabel: 'All Trending', backEvent: 'open-trending-list', itemKind: 'trend' },
   } }));
 }
 

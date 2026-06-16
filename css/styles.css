@@ -14739,6 +14739,45 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 .im-navrow-btn:disabled { opacity: 0.4; cursor: default; }
 .im-navrow-btn svg { flex: none; color: var(--color-text-light); }
 .im-navrow-btn:hover:not(:disabled) svg { color: var(--color-primary); }
+
+/* ===== Unified insight-modal layout (Trending / News / AI Insights) =====
+   Thin Prev/Next strip (scrolls away) + permanent sticky header (overview that
+   shrinks on scroll + an AI Brief subnav of scroll-spy section pills) + sections. */
+.im-pnstrip { display: flex; align-items: center; gap: 10px; padding: 6px 0 12px; }
+.im-pnstrip-spacer { flex: 1 1 0; }
+.im-pnstrip-btn { display: inline-flex; align-items: center; gap: 5px; padding: 6px 13px; border: 1px solid var(--color-surface-border); border-radius: 999px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: var(--color-text-muted); transition: border-color .14s, color .14s, background .14s; }
+.im-pnstrip-btn:hover { border-color: var(--color-primary); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 4%, #fff); }
+.im-pnstrip-btn--next { margin-left: auto; }
+.im-pnstrip-arrow { font-size: 1.05rem; line-height: 1; }
+
+.im-stickyhead { position: sticky; top: 0; z-index: 8; background: var(--color-bg, #fff); }
+.im-overhead { padding: 2px 0 11px; }
+.im-over-title { margin: 0 0 8px; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; color: var(--color-primary); line-height: 1.18; font-size: 1.55rem; transition: font-size .18s ease, margin-bottom .18s ease; }
+.im-stickyhead.is-compact .im-over-title { font-size: 1.1rem; margin-bottom: 5px; }
+.im-over-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 5px 16px; }
+.im-over-when { font-size: 0.82rem; color: var(--color-text-muted); }
+.im-over-actions { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 16px; }
+
+.im-briefnav { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-top: 1px solid var(--color-surface-border); border-bottom: 1px solid var(--color-surface-border); overflow-x: auto; scrollbar-width: none; }
+.im-briefnav::-webkit-scrollbar { display: none; }
+.im-briefnav-brand { display: inline-flex; align-items: center; gap: 6px; flex: none; font-family: var(--font-display); font-size: 0.98rem; font-weight: 700; color: var(--color-primary); letter-spacing: -0.01em; }
+.im-briefnav-spark { display: inline-flex; color: var(--color-link, #2563eb); }
+.im-briefnav-spark svg { width: 17px; height: 17px; }
+.im-briefnav-pills { display: inline-flex; align-items: center; gap: 6px; flex: 1 1 auto; min-width: 0; }
+.im-pill { flex: none; padding: 5px 12px; border: none; border-radius: 999px; background: #f1f3f7; cursor: pointer; font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; color: var(--color-text-muted); white-space: nowrap; transition: background .14s, color .14s; }
+.im-pill:hover { background: #e7ebf2; color: var(--color-primary); }
+.im-pill.is-active { background: var(--color-primary); color: #fff; }
+
+.im-secs { padding-top: 2px; }
+.im-msec { padding: 18px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 60%, transparent); scroll-margin-top: 6px; }
+.im-msec:last-child { border-bottom: none; }
+.im-msec.is-empty { display: none; }
+.im-msec-head { display: flex; align-items: center; gap: 10px; margin-bottom: 11px; }
+.im-msec-ic { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: #f1f3f7; color: var(--color-primary); }
+.im-msec-ic svg { width: 17px; height: 17px; }
+.im-msec-name { margin: 0; font-family: var(--font-display); font-size: 1.06rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-primary); }
+.im-msec .im-related-label { display: none; }
+.im-msec .im-related { margin: 0; }
 .im-prevnext { display: flex; align-items: stretch; gap: 10px; margin: 2px 0 14px; }
 .im-pn {
   flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 8px;

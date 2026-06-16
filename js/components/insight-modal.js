@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260615-revamp200';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260615-revamp200';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp202';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp202';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -249,6 +249,84 @@ function storyNavHTML(nav, compact) {
     ${hasNext ? `<button type="button" class="im-storynav-link im-storynav-link--next" data-navdir="next">Next Story<span class="im-storynav-arrow" aria-hidden="true">›</span></button>` : '<span class="im-storynav-spacer" aria-hidden="true"></span>'}
   </div>`;
 }
+// ===== New unified insight layout (Trending / News / AI Insights) ==========
+// Thin Prev/Next strip at the very top of the modal body — scrolls away with the
+// content. Item names are NOT shown (just "Previous Trend" / "Next Story").
+function pnStripHTML(nav) {
+  if (!nav || !Array.isArray(nav.list) || nav.list.length < 2) return '';
+  const hasPrev = nav.index > 0, hasNext = nav.index < nav.list.length - 1;
+  if (!hasPrev && !hasNext) return '';
+  const k = nav.itemKind || 'item';
+  const kind = k.charAt(0).toUpperCase() + k.slice(1);
+  return `<div class="im-pnstrip">
+    ${hasPrev ? `<button type="button" class="im-pnstrip-btn" data-navdir="prev"><span class="im-pnstrip-arrow" aria-hidden="true">‹</span>Previous ${esc(kind)}</button>` : '<span class="im-pnstrip-spacer" aria-hidden="true"></span>'}
+    ${hasNext ? `<button type="button" class="im-pnstrip-btn im-pnstrip-btn--next" data-navdir="next">Next ${esc(kind)}<span class="im-pnstrip-arrow" aria-hidden="true">›</span></button>` : '<span class="im-pnstrip-spacer" aria-hidden="true"></span>'}
+  </div>`;
+}
+// The permanent sticky header: the item title (shrinks on scroll) + a meta line
+// with the action links, then the AI Brief subnav (colored spark + section pills).
+function stickyHeadHTML({ title, metaLine, actions }) {
+  return `<div class="im-stickyhead" id="im-stickyhead">
+    <div class="im-overhead">
+      <h2 class="im-over-title" id="im-over-title">${esc(title)}</h2>
+      <div class="im-over-meta">${metaLine || ''}${actions ? `<span class="im-over-actions">${actions}</span>` : ''}</div>
+    </div>
+    <div class="im-briefnav">
+      <span class="im-briefnav-brand"><span class="im-briefnav-spark">${SPARK_FILL}</span>AI Brief</span>
+      <div class="im-briefnav-pills" id="im-briefnav-pills"></div>
+    </div>
+  </div>`;
+}
+// One in-page section with an anchor + name (drives the subnav pills + scroll-spy).
+function msecHTML(id, name, innerHTML, empty) {
+  return `<section class="im-msec${empty ? ' is-empty' : ''}" id="${id}" data-name="${escAttr(name)}">${innerHTML}</section>`;
+}
+// (Re)build the AI Brief subnav pills from the non-empty sections, wire click-to-
+// scroll (offset by the sticky header), and start the scroll-spy that highlights
+// the section currently under the header.
+let _imScrollHandler = null;
+function buildBriefNav() {
+  const pillsEl = panelEl.querySelector('#im-briefnav-pills');
+  const body = panelEl.querySelector('.im-body');
+  const head = panelEl.querySelector('#im-stickyhead');
+  if (!pillsEl || !body) return;
+  const secs = () => [...panelEl.querySelectorAll('.im-msec')].filter((s) => !s.classList.contains('is-empty'));
+  const list = secs();
+  pillsEl.innerHTML = list.map((s) => `<button type="button" class="im-pill" data-pill="${s.id}">${esc(s.dataset.name || '')}</button>`).join('');
+  pillsEl.querySelectorAll('.im-pill').forEach((p) => p.addEventListener('click', () => {
+    const sec = document.getElementById(p.dataset.pill); if (!sec) return;
+    const off = (head ? head.offsetHeight : 0) + 10;
+    const target = body.scrollTop + (sec.getBoundingClientRect().top - body.getBoundingClientRect().top) - off;
+    body.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+  }));
+  const update = () => {
+    if (head) head.classList.toggle('is-compact', body.scrollTop > 22);
+    const limit = (head ? head.offsetHeight : 0) + body.getBoundingClientRect().top + 14;
+    const ls = secs(); let active = ls[0];
+    for (const s of ls) { if (s.getBoundingClientRect().top <= limit) active = s; }
+    if (active) pillsEl.querySelectorAll('.im-pill').forEach((p) => p.classList.toggle('is-active', p.dataset.pill === active.id));
+  };
+  if (_imScrollHandler) body.removeEventListener('scroll', _imScrollHandler);
+  let raf = 0;
+  _imScrollHandler = () => { if (raf) return; raf = requestAnimationFrame(() => { raf = 0; update(); }); };
+  body.addEventListener('scroll', _imScrollHandler, { passive: true });
+  update();
+}
+// Consistent section header (icon chip + name) for every in-page section, so
+// Related Searches / Why Trending / Summary / Sources & Coverage all match.
+const SEC_ICON = {
+  related: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+  why: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>',
+  summary: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><line x1="7" y1="8" x2="14" y2="8"/><line x1="7" y1="12" x2="14" y2="12"/><line x1="7" y1="16" x2="11" y2="16"/></svg>',
+  takeaways: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
+  matters: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/></svg>',
+  timeline: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>',
+  sources: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+};
+function secHeadHTML(key, name) {
+  return `<div class="im-msec-head"><span class="im-msec-ic">${SEC_ICON[key] || SEC_ICON.summary}</span><h3 class="im-msec-name">${esc(name)}</h3></div>`;
+}
+
 // "Sources & Coverage" — real related articles from our feed (hyperlinked
 // headline + publisher · date). Prefers the rich RSS `headlines` (which carry a
 // title/publisher/date); falls back to the grounding citations (publisher domain
@@ -701,71 +779,39 @@ function renderTrend(d) {
   const cat = d.category || (Array.isArray(d.categories) ? d.categories[0] : '') || '';
   const since = relTime(d.startedAt);
   const title = String(d.query || '').replace(/\b\w/g, c => c.toUpperCase());
-  const meta = [cat ? `<span class="im-cat-pill">${esc(cat)}</span>` : '', since ? `<span class="im-when">Trending since ${esc(since)}</span>` : '']
-    .filter(Boolean).join('');
   const gtUrl = `https://trends.google.com/trends/explore?q=${encodeURIComponent(d.query || '')}&geo=US`;
+  const metaLine = `<span class="im-over-when">${[esc(cat), since ? `Trending since ${esc(since)}` : ''].filter(Boolean).join(' · ')}</span>`;
+  const actions = `<button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">Ask AI</button><button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">Web Search</button><a class="im-qlink" href="${escAttr(gtUrl)}" target="_blank" rel="noopener noreferrer">Google Trends ${ARROW}</a>`;
+  const relBody = (Array.isArray(d.trendBreakdown) && d.trendBreakdown.length) ? relatedSearchesHTML(d.trendBreakdown) : '';
   panelEl.innerHTML = `
-    ${brandHeaderHTML({ title, meta: [cat, since ? `Trending since ${since}` : ''].filter(Boolean).join(' · '), gtUrl }, { brandLabel: 'Trending', condActions: true, condGoogleTrends: gtUrl, hideBack: true, briefSticky: true })}
+    ${brandHeaderHTML(null, { brandLabel: 'Trending Insights' })}
     <div class="im-body">
-      ${navRowHTML(d.nav)}
-      <section class="im-section im-article">
-        <h3 class="im-article-title">${esc(title)}</h3>
-        ${meta ? `<div class="im-article-meta im-article-meta--top">${meta}</div>` : ''}
-        ${relatedSearchesHTML(d.trendBreakdown)}
-        <div class="im-quicklinks">
-          <a class="im-qlink" href="${escAttr(gtUrl)}" target="_blank" rel="noopener noreferrer">View on Google Trends ${ARROW}</a>
-          <button type="button" class="im-qlink im-qlink-btn" data-panel="sources" aria-expanded="false">Sources</button>
-          <button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">Ask AI</button>
-          <button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">Web Search</button>
-        </div>
+      ${pnStripHTML(d.nav)}
+      ${stickyHeadHTML({ title, metaLine, actions })}
+      <div class="im-secs">
         <div class="im-acc" data-body="explore" id="im-explore-panel"></div>
         <div class="im-acc" data-body="web" id="im-web-panel"></div>
-      </section>
-      <section class="im-section im-brief-section">
-        <div class="im-aiflag-legend im-aiflag-legend--lg" id="im-brief-head">${SPARK_FILL}<span>= AI-generated text</span></div>
-        <p class="im-disclaimer">The below is an AI-generated summary of why this is trending. Please verify important details with the linked sources.</p>
-        <hr class="im-rule">
-        ${briefSkeleton()}
-      </section>
+        ${relBody ? msecHTML('msec-related', 'Related Searches', secHeadHTML('related', 'Related Searches') + relBody) : ''}
+        <div id="im-brief-secs">${msecHTML('msec-brief', 'Summary', briefSkeleton())}</div>
+        <div id="im-cov-sec"></div>
+      </div>
     </div>`;
-  // Related-search chips drill into that term as a new trend page IN THIS modal
-  // (stacked, so "Back to {this trend}" returns here).
-  panelEl.querySelectorAll('.im-related-chip').forEach((chip) => {
-    chip.addEventListener('click', () => {
-      const t = chip.dataset.term; if (!t) return;
-      openStacked({ type: 'trend', query: t }, `Back to ${title}`);
-    });
-  });
-  // "+N more" reveals the collapsed chips in place (and flips to "Show less").
-  const relMore = panelEl.querySelector('[data-rel-more]');
-  if (relMore) {
-    const hiddenCount = panelEl.querySelectorAll('.im-related-chip.is-extra').length;
-    relMore.addEventListener('click', () => {
-      const wrap = relMore.closest('.im-related-chips');
-      const expanded = wrap.classList.toggle('is-expanded');
-      relMore.setAttribute('aria-expanded', String(expanded));
-      relMore.textContent = expanded ? 'Show less' : `+${hiddenCount} more`;
-    });
-  }
+  wireRelatedChips(title);
   const prompt = `Explain what "${d.query}" is and why it's trending right now — what just happened, the background, and the latest developments.`;
-  // Wire the overview-card quicklinks up front (Sources jumps to coverage; Ask AI
-  // / Web Search open their panels) so they work before the brief lands.
   const ctx = { prompt, sources: [], origUrl: '', webTerm: d.query, onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, topicName: d.query, name: 'Trending · AI', count: 1 } })) };
   wireActions(ctx);
+  buildBriefNav();
   (async () => {
     const t0 = Date.now();
-    const briefEl = panelEl.querySelector('#im-brief');
+    const briefSecs = panelEl.querySelector('#im-brief-secs');
     try {
       const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'trend', query: d.query }) });
       const data = res.ok ? await res.json() : null;
       await holdLoader(t0);
-      if (panelEl.querySelector('#im-brief') !== briefEl) return;
+      if (panelEl.querySelector('#im-brief-secs') !== briefSecs) return;
       if (data && data.content) {
         const cleanSum = cleanSummary(data.summary);
         let detail = cleanTrendContent(data.content);
-        // Older cached briefs stored the summary inside the content, so the
-        // modal (summary line + detail) showed it twice. Strip a leading exact
-        // repeat of the summary from the detail.
         if (cleanSum && detail) {
           const norm = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
           const sN = norm(cleanSum);
@@ -779,16 +825,33 @@ function renderTrend(d) {
           }
         }
         ctx.sources = data.sources || [];
-        // Two labelled sections, like the news brief: why it's trending (the
-        // one-liner) + a fuller summary — each gets its icon + inline AI flag.
-        const sectionMd = [
-          cleanSum ? `### Why Is This Trending\n${cleanSum}` : '',
-          detail ? `### Summary\n${detail}` : '',
-        ].filter(Boolean).join('\n\n');
-        briefEl.innerHTML = `${renderBriefBody(sectionMd || detail, null, { aiFlag: SPARK_FILL })}${inTheNewsHTML(data.sources, data.headlines)}`; briefEl.classList.add('ai-reveal');
-      } else { briefEl.innerHTML = '<p class="im-empty">No AI brief generated for this trend yet.</p>'; }
-    } catch (_) { if (panelEl.querySelector('#im-brief') === briefEl) briefEl.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
+        const why = cleanSum ? msecHTML('msec-why', 'Why Is This Trending', secHeadHTML('why', 'Why Is This Trending') + renderBriefBody(cleanSum, null, { aiFlag: SPARK_FILL })) : '';
+        const sum = detail ? msecHTML('msec-summary', 'Summary', secHeadHTML('summary', 'Summary') + renderBriefBody(detail, null, { aiFlag: SPARK_FILL })) : '';
+        briefSecs.innerHTML = why + sum; briefSecs.classList.add('ai-reveal');
+        const cov = coverageListHTML(data.headlines, data.sources, '');
+        const covSec = panelEl.querySelector('#im-cov-sec');
+        if (covSec) covSec.innerHTML = cov ? msecHTML('msec-sources', 'Sources & Coverage', secHeadHTML('sources', 'Sources & Coverage') + `<div class="im-coverage-list">${cov}</div>`) : '';
+        buildBriefNav();
+      } else { briefSecs.innerHTML = '<p class="im-empty">No AI brief generated for this trend yet.</p>'; }
+    } catch (_) { if (panelEl.querySelector('#im-brief-secs') === briefSecs) briefSecs.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
   })();
+}
+// Related-search chips drill into that term as a new (stacked) trend page; the
+// "+N more" toggle reveals the collapsed chips.
+function wireRelatedChips(title) {
+  panelEl.querySelectorAll('.im-related-chip').forEach((chip) => {
+    chip.addEventListener('click', () => { const t = chip.dataset.term; if (t) openStacked({ type: 'trend', query: t }, `Back to ${title}`); });
+  });
+  const relMore = panelEl.querySelector('[data-rel-more]');
+  if (relMore) {
+    const hiddenCount = panelEl.querySelectorAll('.im-related-chip.is-extra').length;
+    relMore.addEventListener('click', () => {
+      const wrap = relMore.closest('.im-related-chips');
+      const expanded = wrap.classList.toggle('is-expanded');
+      relMore.setAttribute('aria-expanded', String(expanded));
+      relMore.textContent = expanded ? 'Show less' : `+${hiddenCount} more`;
+    });
+  }
 }
 
 // ---- AI Intelligence overview --------------------------------------------
