@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp224';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp224';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp225';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp225';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -252,9 +252,10 @@ export function renderAIIntelligence(container, scope) {
     return `<div class="aii-tp">
       <div class="aii-tp-head">
         <h3 class="aii-tp-title">Get AI insights on any topic</h3>
-        <p class="aii-tp-sub">Search any topic, or browse 100+ by category.</p>
+        <p class="aii-tp-sub">Search any topic or term, or browse 100+ by category.</p>
       </div>
-      <div class="aii-tp-searchwrap">${SEARCH_ICON}<input type="text" class="aii-tp-search" placeholder="Search topics…" aria-label="Search topics"></div>
+      <div class="aii-tp-searchwrap aii-tp-searchwrap--lg">${SEARCH_ICON}<input type="text" class="aii-tp-search" placeholder="Search any topic or term…" aria-label="Search any topic or term"></div>
+      <div class="aii-tp-browselabel" data-tp-browselabel>Or browse by topic</div>
       <div class="aii-tp-list" data-tp-list>${topicListHTML('')}</div>
     </div>`;
   }
@@ -262,8 +263,13 @@ export function renderAIIntelligence(container, scope) {
     const search = stage.querySelector('.aii-tp-search');
     const list = stage.querySelector('[data-tp-list]');
     if (!list) return;
+    const browseLabel = stage.querySelector('[data-tp-browselabel]');
     const wireKeys = () => list.querySelectorAll('[data-tp-key]').forEach((b) => b.addEventListener('click', () => { if (scope.onChangeTopic) scope.onChangeTopic(b.dataset.tpKey); }));
-    if (search) search.addEventListener('input', () => { list.innerHTML = topicListHTML(search.value); wireKeys(); });
+    if (search) search.addEventListener('input', () => {
+      const q = search.value.trim();
+      if (browseLabel) browseLabel.textContent = q ? 'Results' : 'Or browse by topic';
+      list.innerHTML = topicListHTML(search.value); wireKeys();
+    });
     wireKeys();
   }
 
