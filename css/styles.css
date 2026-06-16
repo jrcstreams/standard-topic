@@ -13043,11 +13043,11 @@ body.home-search.app-mode .topic-layout {
   background: radial-gradient(72% 92% at 100% 0%, rgba(47, 78, 140, 0.07), transparent 56%);
 }
 .home-search-hero .search-panel { position: relative; z-index: 1; }
-.home-search-hero .search-panel-hero-inner { padding: 0; text-align: left; }
+.home-search-hero .search-panel-hero-inner { padding: 0; text-align: center; }
 .home-search-hero .search-panel-title {
-  text-align: left; max-width: none; white-space: nowrap;
+  text-align: center; max-width: none; white-space: nowrap;
   font-size: clamp(1.15rem, 0.8rem + 1.15vw, 1.5rem); line-height: 1.15; letter-spacing: -0.022em;
-  margin: 0 0 clamp(0.85rem, 0.6rem + 0.8vw, 1.2rem);
+  margin: 0 auto clamp(0.85rem, 0.6rem + 0.8vw, 1.2rem);
 }
 .home-search-hero .search-panel-barrow { padding: 0; }
 /* Warm, elevated bar — rounded rect (not a pill), soft shadow, larger tap area. */
@@ -14224,13 +14224,18 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 .aii-back-pill { display: inline-flex; align-items: center; gap: 4px; margin: 0 0 10px; padding: 5px 13px 5px 9px; border: 1px solid var(--color-surface-border); border-radius: 999px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: var(--color-primary); transition: background .14s, border-color .14s; }
 .aii-back-pill:hover { background: color-mix(in srgb, var(--color-primary) 5%, #fff); border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); }
 .aii-back-pill svg { width: 14px; height: 14px; }
+/* Topbar back link = the discreet Trending-style head link (chevron + grey text),
+   on its own line above the title. */
+.aii-modal-body .aii-topbar .aii-tb-back { margin: 0 0 12px; }
+.aii-tophead { margin: 0; }
 .aii-top-main { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 .aii-top-topic { display: inline-flex; align-items: center; gap: 7px; min-width: 0; max-width: 100%; padding: 2px 8px 2px 4px; margin-left: -4px; border: none; background: none; cursor: pointer; border-radius: 8px; font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; color: var(--color-text); transition: background .14s; }
 .aii-top-topic:hover:not(.is-static) { background: color-mix(in srgb, var(--color-primary) 6%, transparent); }
 .aii-top-topic.is-static { cursor: default; }
-.aii-top-topic-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Plain left-aligned topic title (no dropdown-selector chevron). */
+.aii-top-topic-name { display: block; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-display); font-size: clamp(1.3rem, 1.1rem + 0.9vw, 1.6rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; color: var(--color-text); }
 .aii-top-topic svg { width: 18px; height: 18px; flex: none; color: var(--color-text-light); }
-.aii-top-updated { flex: none; font-size: 0.74rem; color: var(--color-text-muted); white-space: nowrap; }
+.aii-top-updated { display: block; margin: 0 0 5px; font-size: 0.74rem; font-weight: 500; color: var(--color-text-muted); }
 .aii-top-context { display: flex; align-items: center; gap: 10px; margin-top: 11px; }
 .aii-top-context-ic { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 9px; background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: var(--color-primary); }
 .aii-top-context-ic svg { width: 16px; height: 16px; }
@@ -14265,33 +14270,43 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 
 
 /* "Choose an intelligence track" — hub intro line. */
-.aii-paths-intro { margin: 0 0 14px; text-align: center; font-size: 0.92rem; font-weight: 500; color: var(--color-text-muted); }
+.aii-paths-intro { margin: 2px 0 12px; text-align: left; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-muted); }
 
-/* Path picker = a 2-up grid of "choose a path" cards (icon, name, info) (#151). */
-.aii-modal-body .aii-stage[data-view="paths"] .aii-pathlist { display: grid !important; grid-template-columns: repeat(2, 1fr); max-width: 660px; margin: 2px auto 0; gap: 12px; padding: 0 4px 6px; }
+/* Neutral grey icon chips across the picker (matches the content sections) —
+   no per-track colours. */
+.aii-modal-body .aii-pathrow-icon,
+.aii-modal-body .aii-menu-card-ic { background: #f1f3f7; color: var(--color-primary); }
+
+/* Path picker = a clean VERTICAL stack of track cards: icon + title on one line,
+   summary below, arrow on the right. */
+.aii-modal-body .aii-stage[data-view="paths"] .aii-pathlist { display: flex !important; flex-direction: column; grid-template-columns: none; max-width: none; margin: 4px 0 0; gap: 10px; padding: 0; }
 .aii-modal-body .aii-stage[data-view="paths"] .aii-pathlist > .aii-pathrow {
-  flex-direction: column; align-items: flex-start; gap: 12px; position: relative; min-height: 0;
-  border: 1px solid var(--color-surface-border); border-radius: 15px; padding: 18px 16px 16px;
-  background: #fff; box-shadow: 0 1px 2px rgba(15,23,42,.04);
-  transition: border-color .14s, box-shadow .16s, transform .14s;
+  flex-direction: row; align-items: center; gap: 13px; position: relative; min-height: 0;
+  border: 1px solid var(--color-surface-border); border-radius: 13px; padding: 14px 16px;
+  background: #fff; box-shadow: 0 1px 2px rgba(15,23,42,.03);
+  transition: border-color .14s, box-shadow .16s, transform .12s;
 }
 .aii-modal-body .aii-stage[data-view="paths"] .aii-pathlist > .aii-pathrow:hover {
-  border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border));
-  box-shadow: 0 12px 26px -16px rgba(31,49,99,.3); transform: translateY(-2px); background: #fff;
+  border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border));
+  box-shadow: 0 8px 18px -14px rgba(31,49,99,.26); transform: translateY(-1px); background: #fff;
 }
-.aii-modal-body .aii-stage[data-view="paths"] .aii-pathrow-icon { width: 38px; height: 38px; }
-.aii-modal-body .aii-stage[data-view="paths"] .aii-pathrow-text { gap: 4px; }
-.aii-modal-body .aii-stage[data-view="paths"] .aii-pathrow-name { font-size: 1.04rem; }
-.aii-modal-body .aii-stage[data-view="paths"] .aii-pathrow-go { position: absolute; top: 16px; right: 16px; margin: 0; }
-@media (max-width: 560px) { .aii-modal-body .aii-stage[data-view="paths"] .aii-pathlist { grid-template-columns: 1fr; } }
+.aii-modal-body .aii-stage[data-view="paths"] .aii-pathrow-icon { width: 36px; height: 36px; }
+.aii-modal-body .aii-stage[data-view="paths"] .aii-pathrow-text { gap: 3px; }
+.aii-modal-body .aii-stage[data-view="paths"] .aii-pathrow-name { font-size: 1rem; }
+.aii-modal-body .aii-stage[data-view="paths"] .aii-pathrow-go { position: static; margin-left: auto; }
 
 /* Sticky condensed bar: solid surface + soft shadow so it reads as a clean bar
    over the scrolling brief (#144/#145). */
 .aii-condensed { background: #fff; }
 .aii-condensed.is-on { box-shadow: 0 6px 14px -10px rgba(15,23,42,.45); }
 
-/* Section menu = 2-column card grid. */
-.aii-menu-grid { display: grid !important; grid-template-columns: repeat(2, 1fr); gap: 13px; margin: 4px 0 0 !important; }
+/* Section menu = a VERTICAL stack of insight cards (icon + title on one line,
+   one-line summary below) — no 2-col grid. */
+.aii-menu-grid { display: flex !important; flex-direction: column; gap: 10px; margin: 4px 0 0 !important; }
+.aii-modal-body .aii-menu-card { padding: 14px 16px; border-radius: 13px; }
+.aii-modal-body .aii-menu-card-ic { width: 36px; height: 36px; }
+.aii-modal-body .aii-menu-card-ic svg { width: 18px; height: 18px; }
+.aii-modal-body .aii-menu-card .aii-menu-name { font-size: 1rem; }
 /* Compact list-style cards: icon chip INLINE with the title (not stacked above),
    title + one-line desc beside it, tighter padding so the grid isn't a wall of
    big blocks (#167 follow-up). */
@@ -14802,7 +14817,7 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 
 /* Bottom buffer so the LAST section (Sources) can scroll up far enough to read
    fully + register as the active scroll-spy section. */
-.im-secs { padding-top: 0; padding-bottom: 30vh; }
+.im-secs { padding-top: 0; padding-bottom: 2rem; }
 .im-msec { padding: 16px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 60%, transparent); scroll-margin-top: 6px; }
 .im-msec:last-child { border-bottom: none; }
 .im-msec.is-empty { display: none; }
@@ -14828,6 +14843,11 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
    (grey/tinted chip) so it matches News + Trending exactly. */
 .aii-content--modal { padding: 0; }
 .aii-modal-body .im-stickyhead { margin: 0 -1.1rem; padding: 0 1.1rem; }
+/* Insight names are long ("Latest News and Developments") — the trending-sized
+   title is far too big here, so dial it down to a normal heading. Bump the topic
+   chip slightly so the topic reads a touch more prominent. */
+.aii-content--modal .im-over-title { font-size: clamp(1.2rem, 1.05rem + 0.55vw, 1.42rem); line-height: 1.22; }
+.aii-content--modal .im-eyebrow-cat { font-size: 0.76rem; padding: 3px 12px; }
 @media (max-width: 560px) { .aii-modal-body .im-stickyhead { margin-left: -1.1rem; margin-right: -1.1rem; padding-left: 1.1rem; padding-right: 1.1rem; } }
 .im-prevnext { display: flex; align-items: stretch; gap: 10px; margin: 2px 0 14px; }
 .im-pn {
@@ -15038,9 +15058,9 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 .trend-legend-row { display: flex; justify-content: flex-start; padding: 13px 16px 5px; }
 /* Solo "= AI-generated text" legend — a touch bigger than the old card legend
    (but smaller than the modal), tighter below (#166). */
-.trend-legend--solo .trend-legend-item { font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted); }
-.trend-legend--solo .ai-spark-mark svg { width: 14px; height: 14px; }
-.trend-legend--solo { padding: 5px 12px; }
+.trend-legend--solo .trend-legend-item { font-size: 0.68rem; font-weight: 600; color: var(--color-text-muted); }
+.trend-legend--solo .ai-spark-mark svg { width: 11px; height: 11px; }
+.trend-legend--solo { padding: 4px 10px; }
 /* In the Trending modal, the legend shares the category-chooser line (chooser
    left, legend right), with clear breathing room before the trend grid. */
 .trend-controls-legend { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap; margin-bottom: 18px; }

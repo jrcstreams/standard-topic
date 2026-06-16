@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp215';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp215';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp216';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp216';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -179,27 +179,22 @@ export function renderAIIntelligence(container, scope) {
     tb.hidden = false;
     const c = cache[curGroup];
     const p = paths.find((x) => x.group === curGroup) || {};
-    const switchable = typeof scope.onChangeTopic === 'function' && Array.isArray(scope.allTopics) && scope.allTopics.length;
-    const updated = (c && c.generatedAt && (view === 'sections' || view === 'content'))
-      ? `<span class="aii-top-updated">Updated ${esc(relTime(c.generatedAt))}</span>` : '';
+    // "Updated X" sits ABOVE the topic title (eyebrow), like Trending/News.
+    const updated = (c && c.generatedAt && view === 'sections')
+      ? `<div class="aii-top-updated">Updated ${esc(relTime(c.generatedAt))}</div>` : '';
+    // Track context (icon + name + subtitle) only on the sections view.
     let context = '';
     if (view === 'sections') {
       context = `<div class="aii-top-context"><span class="aii-top-context-ic aii-icon-${escAttr(curGroup)}">${ICONS[curGroup] || ICONS._}</span><div class="aii-top-context-tx"><span class="aii-top-context-name">${esc(p.label || '')}</span>${p.subtitle ? `<span class="aii-top-context-sub">${esc(p.subtitle)}</span>` : ''}</div></div>`;
-    } else if (view === 'content') {
-      const s = (c && c.sections[curIdx]) || { name: '' };
-      context = `<div class="aii-top-context"><span class="aii-top-context-ic">${sectionIcon(s.name)}</span><div class="aii-top-context-tx"><span class="aii-top-context-name">${esc(s.name)}</span><span class="aii-top-context-sub">${esc(p.label || '')}</span></div></div>`;
     }
     tb.innerHTML = `
-      <button type="button" class="aii-back-pill" data-tb-back>${BACK}<span>Back</span></button>
-      <div class="aii-top-main">
-        <button type="button" class="aii-top-topic${switchable ? '' : ' is-static'}" ${switchable ? 'data-tb-topic aria-label="Change topic"' : 'disabled'}>
-          <span class="aii-top-topic-name">${esc(topicTitle)}</span>${switchable ? CHEV : ''}
-        </button>
+      <button type="button" class="im-headnav-link im-headnav-back aii-tb-back" data-tb-back>${HNAV_L}Back</button>
+      <div class="aii-tophead">
         ${updated}
+        <h2 class="aii-top-topic-name">${esc(topicTitle)}</h2>
       </div>
       ${context}`;
     tb.querySelector('[data-tb-back]')?.addEventListener('click', onBack);
-    tb.querySelector('[data-tb-topic]')?.addEventListener('click', () => go('topic', 'back'));
   }
   function onBack() {
     if (view === 'content') go('sections', 'back');
@@ -778,7 +773,7 @@ export function renderAIIntelligence(container, scope) {
       if (!active) return;
       // At the very bottom, the last section (Sources) is active even if it's too
       // short to reach the header threshold.
-      if (scrollRoot.scrollTop + scrollRoot.clientHeight >= scrollRoot.scrollHeight - 4) active = ls[ls.length - 1];
+      if (scrollRoot.scrollHeight > scrollRoot.clientHeight + 8 && scrollRoot.scrollTop + scrollRoot.clientHeight >= scrollRoot.scrollHeight - 4) active = ls[ls.length - 1];
       pillsEl.querySelectorAll('.im-pill').forEach((p) => p.classList.toggle('is-active', p.dataset.pill === active.id));
       // Auto-scroll the overflowing pill rail so the active pill stays in view.
       if (active.id !== lastActive) {
@@ -864,7 +859,7 @@ export function renderAIIntelligence(container, scope) {
       go('sections', 'fwd');
       await loadGroup(curGroup);
       // Re-render the menu in place if the user is still on this path.
-      if (view === 'sections' && stage.dataset.view === 'sections') { stage.innerHTML = sectionsHTML(); wire(); }
+      if (view === 'sections' && stage.dataset.view === 'sections') { stage.innerHTML = sectionsHTML(); wire(); updateTopbar(); }
     }));
     stage.querySelectorAll('.aii-menu-row, .aii-menu-card').forEach((b) => b.addEventListener('click', () => { curIdx = Number(b.dataset.idx); go('content', 'fwd'); }));
     stage.querySelectorAll('.aii-back').forEach((b) => b.addEventListener('click', () => go(b.dataset.back, 'back')));
@@ -924,7 +919,7 @@ export function renderAIIntelligence(container, scope) {
     curGroup = group; curIdx = 0;
     go('sections', 'fwd');
     await loadGroup(curGroup);
-    if (curGroup === group && stage.dataset.view === 'sections') { stage.innerHTML = sectionsHTML(); wire(); setActiveSubtab(); }
+    if (curGroup === group && stage.dataset.view === 'sections') { stage.innerHTML = sectionsHTML(); wire(); setActiveSubtab(); updateTopbar(); }
   }
   if (tabMode) {
     container.querySelectorAll('.aii-subtab').forEach((b) => b.addEventListener('click', () => openTab(b.dataset.group)));
@@ -964,7 +959,7 @@ export function renderAIIntelligence(container, scope) {
     // Inside the modal, deep-link to the path the user clicked.
     curGroup = scope.initialGroup;
     go('sections', 'fwd');
-    loadGroup(curGroup).then(() => { if (view === 'sections' && stage.dataset.view === 'sections') { stage.innerHTML = sectionsHTML(); wire(); } });
+    loadGroup(curGroup).then(() => { if (view === 'sections' && stage.dataset.view === 'sections') { stage.innerHTML = sectionsHTML(); wire(); updateTopbar(); } });
   } else {
     go('paths', 'fwd');
   }

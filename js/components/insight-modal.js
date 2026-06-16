@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp215';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp215';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp216';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp216';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -323,7 +323,7 @@ function buildBriefNav() {
     if (!active) return;
     // At the very bottom, the last section is active even if it's too short to
     // reach the header threshold (otherwise Sources never highlights).
-    if (body.scrollTop + body.clientHeight >= body.scrollHeight - 4) active = ls[ls.length - 1];
+    if (body.scrollHeight > body.clientHeight + 8 && body.scrollTop + body.clientHeight >= body.scrollHeight - 4) active = ls[ls.length - 1];
     pillsEl.querySelectorAll('.im-pill').forEach((p) => p.classList.toggle('is-active', p.dataset.pill === active.id));
     // Keep the active pill in view: when the section under the header changes,
     // smoothly scroll the (overflowing) pill rail so the active pill is centered.

@@ -9,7 +9,7 @@
 //               AI Intelligence" handles switching PATHS.
 //
 // Participates in the global single-modal coordinator (`close-all-modals`).
-import { renderAIIntelligence } from './ai-intelligence.js?v=20260616-revamp215';
+import { renderAIIntelligence } from './ai-intelligence.js?v=20260616-revamp216';
 import { getFeaturedTopics, getAllTopics, getTopicBySlug, getShortcutsForTopic } from '../utils/data.js';
 
 let overlayEl = null;
