@@ -14112,29 +14112,51 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-track-name { font-size: 0.95rem; font-weight: 700; letter-spacing: -0.012em; color: #1a2740; }
 .aii-track-desc { font-size: 0.78rem; line-height: 1.42; color: var(--color-text-muted); }
 @media (prefers-reduced-motion: reduce) { .aii-track, .aii-track-go { transition: none; } }
-/* Home 3-step promo (#167): pick a topic → pick a path → get insights, + CTA.
-   Clean neutral cards — number inline with the title (NOT a coloured marker),
-   no icons; a light outlined CTA (no heavy navy fill). */
-.aii-promo--steps { gap: 14px; }
-.aii-steps { display: flex; align-items: stretch; gap: 11px; }
-.aii-step { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 5px; padding: 14px 15px; border: 1px solid #e7ebf2; border-radius: 12px; background: #fff; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03); }
-.aii-step-title { font-family: var(--font-family); font-size: 0.92rem; font-weight: 650; letter-spacing: -0.005em; color: #25324a; }
-.aii-step-n { color: var(--color-text-muted); font-weight: 500; }
+/* Home 3-step promo (#167): a slim numbered rail + a footer cue. The WHOLE card
+   is the CTA (no standalone button) — see the dark hero block below. */
+.aii-promo--steps { gap: 13px; }
+.aii-steps { display: flex; align-items: stretch; gap: 12px; }
+.aii-step { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 4px; padding: 2px 0; }
+.aii-step-title { display: flex; align-items: baseline; gap: 7px; font-family: var(--font-family); font-size: 0.92rem; font-weight: 650; letter-spacing: -0.005em; color: #25324a; }
+.aii-step-n { flex: none; font-size: 0.82rem; font-weight: 600; color: var(--color-text-light); }
 .aii-step-sub { font-size: 0.8rem; line-height: 1.45; color: var(--color-text-muted); }
-.aii-step-sep { display: flex; align-items: center; flex: none; color: #cfd6e1; }
+.aii-step-sep { display: flex; align-items: center; flex: none; align-self: center; color: #cfd6e1; }
 .aii-step-sep svg { width: 17px; height: 17px; }
-/* CTA — a clear, flat primary button (no heavy shadow), sliding arrow. */
-.aii-promo-cta { display: inline-flex; align-self: flex-start; align-items: center; gap: 8px; padding: 9px 17px; border: none; border-radius: 9px; background: var(--color-primary); color: #fff; cursor: pointer; font-family: var(--font-family); transition: background .14s ease; }
-.aii-promo-cta:hover { background: color-mix(in srgb, #000 9%, var(--color-primary)); }
-.aii-promo-cta-tx { font-size: 0.88rem; font-weight: 600; letter-spacing: -0.005em; }
-.aii-promo-cta-arrow { display: inline-flex; transition: transform .2s ease; }
-.aii-promo-cta-arrow svg { width: 15px; height: 15px; }
-.aii-promo-cta:hover .aii-promo-cta-arrow { transform: translateX(3px); }
+.aii-promo-cue { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; font-weight: 650; letter-spacing: -0.005em; color: var(--color-primary); }
+.aii-promo-cue-arrow { display: inline-flex; transition: transform .2s ease; }
+.aii-promo-cue-arrow svg { width: 15px; height: 15px; }
+
+/* ===== AI Insights = the dark navy HERO card (#167) — the flagship surface,
+   clearly set apart from the white News Feed + grey sidebar. The whole card is
+   the CTA. Overrides the white "hero feature" rules above. */
+body.home-search #section-aii-home .aii-launcher-cta {
+  cursor: pointer; position: relative; overflow: hidden;
+  border: 1px solid #26344c;
+  background: linear-gradient(157deg, #1e2d49 0%, #111d33 74%);
+  box-shadow: 0 18px 40px -26px rgba(10, 18, 34, 0.7);
+  transition: transform .18s ease, box-shadow .22s ease;
+}
+body.home-search #section-aii-home .aii-launcher-cta:hover { transform: translateY(-2px); box-shadow: 0 26px 54px -26px rgba(10, 18, 34, 0.82); }
+body.home-search #section-aii-home .aii-launcher-cta:active { transform: translateY(0); }
+body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: none; border-bottom-color: rgba(255, 255, 255, 0.1); position: relative; z-index: 1; }
+.aii-launcher-cta:focus-visible { outline: 2px solid #6c8cff; outline-offset: 3px; }
+.aii-launcher-cta::after { content: ''; position: absolute; top: -45%; right: -8%; width: 340px; height: 340px; background: radial-gradient(circle, rgba(96, 132, 255, 0.16), transparent 68%); pointer-events: none; }
+.aii-launcher-cta .aii-logo { background: rgba(255, 255, 255, 0.13); color: #fff; box-shadow: none; }
+.aii-launcher-cta .aii-brand { color: #fff; }
+.aii-launcher-cta .aii-live { color: #4ade9f; }
+.aii-launcher-cta .aii-stage { position: relative; z-index: 1; }
+.aii-launcher-cta .aii-promo-line { color: rgba(255, 255, 255, 0.72); }
+.aii-launcher-cta .aii-step-title { color: #fff; }
+.aii-launcher-cta .aii-step-n { color: rgba(255, 255, 255, 0.46); }
+.aii-launcher-cta .aii-step-sub { color: rgba(255, 255, 255, 0.62); }
+.aii-launcher-cta .aii-step-sep { color: rgba(255, 255, 255, 0.34); }
+.aii-launcher-cta .aii-promo-cue { color: #fff; }
+.aii-launcher-cta:hover .aii-promo-cue-arrow { transform: translateX(4px); }
 @media (max-width: 720px) {
-  .aii-steps { flex-direction: column; gap: 9px; }
+  .aii-steps { flex-direction: column; gap: 10px; }
   .aii-step-sep { display: none; }
 }
-@media (prefers-reduced-motion: reduce) { .aii-promo-cta, .aii-promo-cta-arrow { transition: none; } }
+@media (prefers-reduced-motion: reduce) { body.home-search #section-aii-home .aii-launcher-cta, .aii-promo-cue-arrow { transition: none; } }
 /* Secondary tab bar (mobile tab mode) — the AI Intelligence paths as sub-tabs
    under the primary News Feed / AI Intelligence / Web Sources tabs. Same family
    as the primary tabs but pill-shaped + a touch quieter. Scrolls if it
@@ -14437,13 +14459,13 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    the card header (back icon · gap · title + blurb); the platform list scrolls
    beneath it so the subheader stays put. */
 .ws-sub { max-height: min(64vh, 460px); overflow-y: auto; overscroll-behavior: contain; margin: 0 -16px; }
-.ws-subbar { position: sticky; top: 0; z-index: 6; display: flex; align-items: center; gap: 16px; padding: 11px 18px; background: color-mix(in srgb, var(--color-primary) 3%, #fff); border-bottom: 1px solid var(--color-surface-border); }
-.ws-back-ic { flex: none; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; color: var(--color-text-muted); cursor: pointer; transition: border-color .14s, color .14s, background .14s; }
+.ws-subbar { position: sticky; top: 0; z-index: 6; display: flex; align-items: center; gap: 12px; padding: 10px 18px; background: color-mix(in srgb, var(--color-primary) 3%, #fff); border-bottom: 1px solid var(--color-surface-border); }
+.ws-back-ic { flex: none; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--color-surface-border); border-radius: 8px; background: #fff; color: var(--color-text-muted); cursor: pointer; transition: border-color .14s, color .14s, background .14s; }
 .ws-back-ic:hover { border-color: var(--color-primary); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 5%, #fff); }
-.ws-back-ic svg { width: 16px; height: 16px; }
-.ws-subbar-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.ws-subbar-name { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: #25324a; letter-spacing: -0.012em; }
-.ws-subbar-sub { font-size: 0.8rem; line-height: 1.4; color: var(--color-text-muted); }
+.ws-back-ic svg { width: 15px; height: 15px; }
+/* Just the title, sized to sit beside the back button and not wrap at our
+   category-name lengths (even on mobile) (#161/#163). */
+.ws-subbar-name { min-width: 0; font-family: var(--font-display); font-size: 0.98rem; font-weight: 700; color: #25324a; letter-spacing: -0.012em; line-height: 1.25; }
 /* The list is full-bleed within the now-full-bleed .ws-sub scroll area. */
 .ws-sub .ws-srclist { margin: 0; }
 .ws-srclist { display: flex; flex-direction: column; margin: 0 -16px; }

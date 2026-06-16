@@ -62,20 +62,18 @@ export function renderWebSources(container, topic) {
   }
   function sourcesHTML() {
     const c = order.find((x) => x.key === curKey) || {};
-    const blurb = (CAT[curKey] || {}).blurb || '';
     const rows = itemsFor(curKey).map((s) => {
       const url = String(s.urlTemplate || '').replace(/\{query\}/g, encodeURIComponent(topicName));
       return `<a class="ws-srcrow" href="${escAttr(url)}" target="_blank" rel="noopener noreferrer">
         <span class="ws-srcrow-text"><span class="ws-srcrow-name">${esc(s.name)}</span>${s.description ? `<span class="ws-srcrow-desc">${esc(s.description)}</span>` : ''}</span>${EXT}
       </a>`;
     }).join('');
-    // The category becomes a sticky subheader attached under the card header:
-    // back icon · respectable gap · category title + blurb. The platform list
-    // scrolls beneath it.
+    // Drilled-in subheader: just the back button + the category title, side by
+    // side (no description) — clean and never wraps at our sizes (#161/#163).
     return `<div class="ws-sub">
       <div class="ws-subbar">
         <button type="button" class="ws-back-ic" aria-label="Back to all web sources" title="Back to all web sources">${BACK}</button>
-        <div class="ws-subbar-text"><span class="ws-subbar-name">${esc(c.label || '')}</span>${blurb ? `<span class="ws-subbar-sub">${esc(blurb)}</span>` : ''}</div>
+        <span class="ws-subbar-name">${esc(c.label || '')}</span>
       </div>
       <div class="ws-srclist">${rows}</div>
     </div>`;

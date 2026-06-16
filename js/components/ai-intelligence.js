@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260614-revamp198';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260614-revamp198';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260615-revamp199';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260615-revamp199';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -208,7 +208,7 @@ export function renderAIIntelligence(container, scope) {
   }
 
   container.innerHTML = `
-    <div class="aii${tabMode ? ' aii-tabmode' : ''}${launcher ? ' aii-launcher' : ''}">
+    <div class="aii${tabMode ? ' aii-tabmode' : ''}${launcher ? ' aii-launcher' : ''}${launcher && scope.topic === 'home' ? ' aii-launcher-cta' : ''}">
       <div class="aii-head">
         <div class="aii-head-top"><span class="aii-logo">${LOGO}</span><span class="aii-brand">AI Insights</span><span class="aii-live"><span class="aii-live-dot" aria-hidden="true"></span>Live</span></div>
         <p class="aii-headsub">Pick a path and explore live AI insights.</p>
@@ -252,13 +252,15 @@ export function renderAIIntelligence(container, scope) {
       { n: 3, name: 'Get AI insights', sub: 'Live, grounded analysis' },
     ];
     const steps = STEPS.map((s, i) => `<div class="aii-step">
-        <span class="aii-step-title"><span class="aii-step-n">${s.n}.</span> ${esc(s.name)}</span>
+        <span class="aii-step-title"><span class="aii-step-n">${s.n}</span>${esc(s.name)}</span>
         <span class="aii-step-sub">${esc(s.sub)}</span>
       </div>${i < STEPS.length - 1 ? `<span class="aii-step-sep" aria-hidden="true">${RIGHT_ARROW}</span>` : ''}`).join('');
+    // No standalone button — the whole card is the CTA (#167). A footer cue +
+    // the card's hover state signal that it opens.
     return `<div class="aii-promo aii-promo--steps">
       <p class="aii-promo-line">Live, AI-written intelligence in three quick steps.</p>
       <div class="aii-steps">${steps}</div>
-      <button type="button" class="aii-promo-cta" data-promo-cta><span class="aii-promo-cta-tx">Explore AI Insights</span><span class="aii-promo-cta-arrow">${RIGHT_ARROW}</span></button>
+      <span class="aii-promo-cue">Explore AI Insights <span class="aii-promo-cue-arrow">${RIGHT_ARROW}</span></span>
     </div>`;
   }
   function launcherPromoHTML() {
@@ -757,14 +759,25 @@ export function renderAIIntelligence(container, scope) {
     container._aiiSectionHandler = (e) => { const g = e && e.detail && e.detail.group; if (g && paths.some((p) => p.group === g)) openTab(g); };
     window.addEventListener('aii-open-section', container._aiiSectionHandler);
   } else if (launcher) {
-    // Product launcher (#167). Home: a 3-step promo whose CTA opens the modal at
-    // Step 1 (topic picker). Topic pages: track tiles → that track's sections.
+    // Product launcher (#167). Home: the WHOLE card is the CTA — clicking anywhere
+    // opens the modal at Step 1 (topic picker). Topic pages: track tiles → that
+    // track's sections.
     stage.innerHTML = launcherPromoHTML();
-    stage.querySelector('[data-promo-cta]')?.addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: { pickTopic: true } })));
-    stage.querySelectorAll('.aii-track').forEach((b) => b.addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: {
-      topic: scope.topic, label: scope.label, group: b.dataset.group,
-      hideGroups: scope.hideGroups || [], descriptions: scope.descriptions || {},
-    } }))));
+    if (scope.topic === 'home') {
+      const card = container.querySelector('.aii-launcher-cta');
+      if (card) {
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        const openStep1 = () => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: { pickTopic: true } }));
+        card.addEventListener('click', openStep1);
+        card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openStep1(); } });
+      }
+    } else {
+      stage.querySelectorAll('.aii-track').forEach((b) => b.addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: {
+        topic: scope.topic, label: scope.label, group: b.dataset.group,
+        hideGroups: scope.hideGroups || [], descriptions: scope.descriptions || {},
+      } }))));
+    }
   } else if (scope.inModal && scope.pickTopic) {
     // Entered "anew" (bottom nav / homepage CTA) → Step 1: pick a topic.
     go('topic', 'fwd');
