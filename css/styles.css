@@ -14819,7 +14819,6 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 .aii-content--modal { padding: 0; }
 .aii-modal-body .im-stickyhead { margin: 0 -1.1rem; padding: 0 1.1rem; }
 .im-eyebrow-topic { display: inline-flex; padding: 3px 11px; border-radius: 999px; background: var(--color-primary); color: #fff; font-size: 0.8rem; font-weight: 700; letter-spacing: -0.005em; }
-.im-eyebrow-path { font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted); }
 @media (max-width: 560px) { .aii-modal-body .im-stickyhead { margin-left: -1.1rem; margin-right: -1.1rem; padding-left: 1.1rem; padding-right: 1.1rem; } }
 .im-prevnext { display: flex; align-items: stretch; gap: 10px; margin: 2px 0 14px; }
 .im-pn {

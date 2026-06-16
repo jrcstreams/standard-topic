@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp211';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp211';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp212';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp212';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -389,9 +389,10 @@ export function renderAIIntelligence(container, scope) {
     const next = curIdx < sects.length - 1 ? sects[curIdx + 1] : null;
     const backLabel = p.tab || p.label || 'Insights';
     const updated = (c && c.generatedAt) ? `<span class="im-eyebrow-time">Updated ${esc(relTime(c.generatedAt))}</span>` : '';
-    // Identifier blends BOTH: the topic as a prominent solid chip + the path
-    // context, with the insight itself as the big title and "Updated" as the dateline.
-    const eyebrow = `<span class="im-eyebrow-topic">${esc(topicTitle)}</span>${p.label ? `<span class="im-eyebrow-path">${esc(p.label)}</span>` : ''}${updated}`;
+    // Identifier (matches Trending/News): the topic as a prominent solid chip +
+    // the "Updated" dateline on the SAME line. The path isn't repeated here — the
+    // "Back to <path>" head link already names it. The insight is the big title.
+    const eyebrow = `<span class="im-eyebrow-topic">${esc(topicTitle)}</span>${updated}`;
     const controls = `<div class="im-headnav">
         <button type="button" class="im-headnav-link im-headnav-back" data-aii-back="sections">${HNAV_L}${esc(backLabel)}</button>
         <span class="im-headnav-pn">
@@ -436,7 +437,7 @@ export function renderAIIntelligence(container, scope) {
       }).join('');
       const items = sectionNewsItems();
       const covRows = items.map((x) => `<a class="im-cov-row" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span>${x.meta ? `<span class="im-cov-host">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`).join('');
-      if (covRows) html += aiiMsec('aii-msec-sources', 'Sources & Coverage', aiiSecHead('sources', 'Sources & Coverage') + `<div class="im-coverage-list">${covRows}</div>`);
+      if (covRows) html += aiiMsec('aii-msec-sources', 'Sources', aiiSecHead('sources', 'Sources') + `<div class="im-coverage-list">${covRows}</div>`);
       wrap.innerHTML = html;
       wrap.classList.add('ai-reveal');
       buildAiiBriefNav();
@@ -528,7 +529,7 @@ export function renderAIIntelligence(container, scope) {
     const introTxt = intro.join('\n').trim();
     const bulletsTxt = bullets.join('\n').trim();
     if (introTxt) parts.push(`### Summary\n${introTxt}`);
-    if (bulletsTxt) parts.push(`### Key Takeaways\n${bulletsTxt}`);
+    if (bulletsTxt) parts.push(`### Takeaways\n${bulletsTxt}`);
     return parts.length ? parts.join('\n\n') : text;
   }
   function sectionNewsItems() {
@@ -583,7 +584,7 @@ export function renderAIIntelligence(container, scope) {
     const rows = sectionNewsItems().map((x) =>
       `<a class="im-cov-row" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span>${x.meta ? `<span class="im-cov-host">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`);
     if (!rows.length) return '';
-    return `<div class="im-coverage im-coverage--inline"><div class="im-section-title im-section-title--icon">${SOURCES_BADGE}<span>Sources &amp; Coverage</span></div><div class="im-coverage-list">${rows.join('')}</div></div>`;
+    return `<div class="im-coverage im-coverage--inline"><div class="im-section-title im-section-title--icon">${SOURCES_BADGE}<span>Sources</span></div><div class="im-coverage-list">${rows.join('')}</div></div>`;
   }
   // "Explore further on web" — the full Web Sources platform picker (source
   // types → platforms), searching this topic. Mirrors the Web Sources card.

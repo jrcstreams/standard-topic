@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp211';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp211';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp212';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp212';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -648,7 +648,7 @@ function render() {
 // with the new vocabulary + order — not just freshly-generated ones.
 const NEWS_SECTION_MAP = [
   { keys: ['what happened', 'explanation'], label: 'What Happened' },
-  { keys: ['key takeaways', 'key takeaway', 'key points'], label: 'Key Takeaways' },
+  { keys: ['key takeaways', 'key takeaway', 'key points'], label: 'Takeaways' },
   { keys: ['why it matters', 'why this matters', 'background'], label: 'Why It Matters' },
   { keys: ['timeline'], label: 'Timeline' },
 ];
@@ -734,7 +734,7 @@ function renderNews(d) {
             }).join('')
           : msecHTML('msec-brief', 'Brief', secHeadHTML('summary', 'Brief') + renderBriefBody(data.content, null, { aiFlag: SPARK_FILL, flagFirst: true }));
         const cov = coverageListHTML(ctx.headlines, ctx.sources, ctx.origUrl);
-        const covSec = cov ? msecHTML('msec-sources', 'Sources & Coverage', secHeadHTML('sources', 'Sources & Coverage') + `<div class="im-coverage-list">${cov}</div>`) : '';
+        const covSec = cov ? msecHTML('msec-sources', 'Sources', secHeadHTML('sources', 'Sources') + `<div class="im-coverage-list">${cov}</div>`) : '';
         // All sections in ONE container so :last-child (no border) is the true last.
         secsBody.innerHTML = secHTML + covSec; secsBody.classList.add('ai-reveal');
         buildBriefNav();
@@ -750,7 +750,7 @@ function renderNews(d) {
 function inTheNewsHTML(sources, headlines) {
   const rows = coverageListHTML(headlines, sources, '');
   if (!rows) return '';
-  return `<div class="im-coverage im-coverage--inline" id="im-coverage"><div class="im-section-title im-section-title--icon">${SOURCES_BADGE}<span>Sources &amp; Coverage</span></div><div class="im-coverage-list">${rows}</div></div>`;
+  return `<div class="im-coverage im-coverage--inline" id="im-coverage"><div class="im-section-title im-section-title--icon">${SOURCES_BADGE}<span>Sources</span></div><div class="im-coverage-list">${rows}</div></div>`;
 }
 
 // Related searches — show a tidy first row, collapse the rest behind a "+N more"
@@ -831,10 +831,10 @@ function renderTrend(d) {
           }
         }
         ctx.sources = data.sources || [];
-        const why = cleanSum ? msecHTML('msec-why', "Why It's Trending", secHeadHTML('why', "Why It's Trending") + renderBriefBody(cleanSum, null, { aiFlag: SPARK_FILL, flagFirst: true })) : '';
+        const why = cleanSum ? msecHTML('msec-why', 'Reasoning', secHeadHTML('why', 'Reasoning') + renderBriefBody(cleanSum, null, { aiFlag: SPARK_FILL, flagFirst: true })) : '';
         const sum = detail ? msecHTML('msec-summary', 'Summary', secHeadHTML('summary', 'Summary') + renderBriefBody(detail, null, { aiFlag: SPARK_FILL, flagFirst: true })) : '';
         const cov = coverageListHTML(data.headlines, data.sources, '');
-        const covSec = cov ? msecHTML('msec-sources', 'Sources & Coverage', secHeadHTML('sources', 'Sources & Coverage') + `<div class="im-coverage-list">${cov}</div>`) : '';
+        const covSec = cov ? msecHTML('msec-sources', 'Sources', secHeadHTML('sources', 'Sources') + `<div class="im-coverage-list">${cov}</div>`) : '';
         // All sections in ONE container so :last-child (no border) is the true last.
         secsBody.innerHTML = why + sum + covSec; secsBody.classList.add('ai-reveal');
         buildBriefNav();
