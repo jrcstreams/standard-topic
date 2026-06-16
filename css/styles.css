@@ -14111,29 +14111,28 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Track tiles — the product centerpiece (#167). Each carries its own accent
    (icon chip tint + hover edge + reveal arrow); refined hairline border, soft
    lift on hover. Responsive: 3-across on the wide home card, 1-col in a sidebar. */
-.aii-promo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(218px, 1fr)); gap: 10px; }
-.aii-track { position: relative; display: flex; flex-direction: column; gap: 9px; padding: 14px; border: 1px solid color-mix(in srgb, var(--color-surface-border) 82%, transparent); border-radius: 14px; background: #fff; cursor: pointer; text-align: left; font-family: var(--font-family); transition: border-color .16s ease, box-shadow .16s ease, transform .1s ease; }
-.aii-track:hover { border-color: color-mix(in srgb, var(--aii-accent) 50%, transparent); box-shadow: 0 12px 24px -16px var(--aii-accent); transform: translateY(-2px); }
+.aii-promo-grid { display: flex; flex-direction: column; gap: 10px; }
+/* Track card: icon + title on ONE line, summary below; neutral grey icon chip. */
+.aii-track { position: relative; display: flex; flex-direction: column; gap: 5px; padding: 14px 16px; border: 1px solid color-mix(in srgb, var(--color-surface-border) 82%, transparent); border-radius: 13px; background: #fff; cursor: pointer; text-align: left; font-family: var(--font-family); transition: border-color .16s ease, box-shadow .16s ease, transform .1s ease; }
+.aii-track:hover { border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border)); box-shadow: 0 10px 22px -16px rgba(31,49,99,.3); transform: translateY(-1px); }
 .aii-track:active { transform: translateY(0); }
-.aii-track-top { display: flex; align-items: center; justify-content: space-between; }
-.aii-track-ic { display: inline-flex; width: 38px; height: 38px; flex: none; align-items: center; justify-content: center; border-radius: 11px; background: color-mix(in srgb, var(--aii-accent) 13%, #fff); color: var(--aii-accent); }
-.aii-track-ic svg { width: 19px; height: 19px; }
-.aii-track-go { display: inline-flex; color: var(--aii-accent); opacity: 0; transform: translateX(-5px); transition: opacity .16s ease, transform .16s ease; }
+.aii-track-head { display: flex; align-items: center; gap: 11px; }
+.aii-track-ic { display: inline-flex; width: 32px; height: 32px; flex: none; align-items: center; justify-content: center; border-radius: 9px; background: #f1f3f7; color: var(--color-primary); }
+.aii-track-ic svg { width: 17px; height: 17px; }
+.aii-track-go { margin-left: auto; display: inline-flex; color: var(--color-text-light); opacity: 0; transform: translateX(-5px); transition: opacity .16s ease, transform .16s ease; }
 .aii-track-go svg { width: 17px; height: 17px; }
-.aii-track:hover .aii-track-go { opacity: 1; transform: translateX(0); }
-.aii-track-name { font-size: 0.95rem; font-weight: 700; letter-spacing: -0.012em; color: #1a2740; }
-.aii-track-desc { font-size: 0.78rem; line-height: 1.42; color: var(--color-text-muted); }
+.aii-track:hover .aii-track-go { opacity: 1; transform: translateX(0); color: var(--color-primary); }
+.aii-track-name { flex: 1 1 auto; min-width: 0; font-family: var(--font-display); font-size: 1rem; font-weight: 700; letter-spacing: -0.012em; color: #1a2740; }
+.aii-track-desc { font-size: 0.8rem; line-height: 1.42; color: var(--color-text-muted); }
 @media (prefers-reduced-motion: reduce) { .aii-track, .aii-track-go { transition: none; } }
-/* Home 3-step promo (#167): a slim numbered rail + a footer cue. The WHOLE card
-   is the CTA (no standalone button) — see the dark hero block below. */
-.aii-promo--steps { gap: 13px; }
-.aii-steps { display: flex; align-items: stretch; gap: 12px; }
-.aii-step { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 4px; padding: 2px 0; }
-.aii-step-title { display: flex; align-items: baseline; gap: 7px; font-family: var(--font-family); font-size: 0.92rem; font-weight: 650; letter-spacing: -0.005em; color: #25324a; }
-.aii-step-n { flex: none; font-size: 0.82rem; font-weight: 600; color: var(--color-text-light); }
-.aii-step-sub { font-size: 0.8rem; line-height: 1.45; color: var(--color-text-muted); }
-.aii-step-sep { display: flex; align-items: center; flex: none; align-self: center; color: #cfd6e1; }
-.aii-step-sep svg { width: 17px; height: 17px; }
+/* Home promo (#237): a clean value-prop — bold headline, one supporting line, a
+   compact feature row, and a footer cue. The WHOLE card is the CTA (no standalone
+   button) — see the dark hero block below. */
+.aii-promo--cta { gap: 11px; }
+.aii-promo-headline { margin: 0; font-family: var(--font-display); font-size: clamp(1.3rem, 1.05rem + 1.1vw, 1.7rem); font-weight: 700; letter-spacing: -0.022em; line-height: 1.12; color: var(--color-text); }
+.aii-feats { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 1px 0 2px; }
+.aii-feat { display: inline-flex; align-items: center; gap: 7px; font-size: 0.82rem; font-weight: 600; color: var(--color-text); }
+.aii-feat-ic { display: inline-flex; color: var(--color-primary); }
 .aii-promo-cue { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; font-weight: 650; letter-spacing: -0.005em; color: var(--color-primary); }
 .aii-promo-cue-arrow { display: inline-flex; transition: transform .2s ease; }
 .aii-promo-cue-arrow svg { width: 15px; height: 15px; }
@@ -14158,10 +14157,9 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 .aii-launcher-cta .aii-live { color: #4ade9f; }
 .aii-launcher-cta .aii-stage { position: relative; z-index: 1; }
 .aii-launcher-cta .aii-promo-line { color: rgba(255, 255, 255, 0.72); }
-.aii-launcher-cta .aii-step-title { color: #fff; }
-.aii-launcher-cta .aii-step-n { color: rgba(255, 255, 255, 0.46); }
-.aii-launcher-cta .aii-step-sub { color: rgba(255, 255, 255, 0.62); }
-.aii-launcher-cta .aii-step-sep { color: rgba(255, 255, 255, 0.34); }
+.aii-launcher-cta .aii-promo-headline { color: #fff; }
+.aii-launcher-cta .aii-feat { color: rgba(255, 255, 255, 0.86); }
+.aii-launcher-cta .aii-feat-ic { color: #8fb0ff; }
 .aii-launcher-cta .aii-promo-cue { color: #fff; }
 .aii-launcher-cta:hover .aii-promo-cue-arrow { transform: translateX(4px); }
 @media (max-width: 720px) {

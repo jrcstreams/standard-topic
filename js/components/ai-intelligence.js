@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp216';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp216';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp217';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp217';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -102,6 +102,10 @@ const HNAV_L = '<svg class="im-headnav-arrow" viewBox="0 0 24 24" fill="none" st
 const HNAV_R = '<svg class="im-headnav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 const ICON_ASK = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.6 4.6a2 2 0 0 0 1.3 1.3L19.5 10l-4.6 1.6a2 2 0 0 0-1.3 1.3L12 17l-1.6-4.6a2 2 0 0 0-1.3-1.3L4.5 10l4.6-1.6a2 2 0 0 0 1.3-1.3z"/></svg>';
 const ICON_GLOBE = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>';
+// Home-promo feature-row icons.
+const ICON_FEAT_GLOBE = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>';
+const ICON_FEAT_BOLT = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 4 14 11 14 11 22 20 10 13 10 13 2"/></svg>';
+const ICON_FEAT_REFRESH = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>';
 // In-page section icons (match the News/Trend modal SEC_ICON set).
 const AII_SEC_ICON = {
   summary: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><line x1="7" y1="8" x2="14" y2="8"/><line x1="7" y1="12" x2="14" y2="12"/><line x1="7" y1="16" x2="11" y2="16"/></svg>',
@@ -298,29 +302,27 @@ export function renderAIIntelligence(container, scope) {
   // topic → pick a path → get insights) with one CTA into the modal's Step 1.
   // TOPIC PAGES (topic already chosen) → the direct track tiles (pick a path).
   const ICON_TOPICS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg>';
+  // HOME promo (#237 redo): drop the 3-step strip for a clean value-prop — a bold
+  // headline, a one-line what-you-get, and a compact feature row. The whole card
+  // stays the CTA (no standalone button — the cue + hover signal it opens).
   function launcherStepsHTML() {
-    const STEPS = [
-      { n: 1, name: 'Pick a topic', sub: "Today's World or 100+ subjects" },
-      { n: 2, name: 'Pick a path', sub: 'Choose an intelligence track' },
-      { n: 3, name: 'Get AI insights', sub: 'Live, grounded analysis' },
+    const FEATURES = [
+      { ic: ICON_FEAT_GLOBE, t: '100+ topics + Today’s World' },
+      { ic: ICON_FEAT_BOLT, t: 'Live, grounded & cited' },
+      { ic: ICON_FEAT_REFRESH, t: 'Refreshed continuously' },
     ];
-    const steps = STEPS.map((s, i) => `<div class="aii-step">
-        <span class="aii-step-title"><span class="aii-step-n">${s.n}</span>${esc(s.name)}</span>
-        <span class="aii-step-sub">${esc(s.sub)}</span>
-      </div>${i < STEPS.length - 1 ? `<span class="aii-step-sep" aria-hidden="true">${RIGHT_ARROW}</span>` : ''}`).join('');
-    // No standalone button — the whole card is the CTA (#167). A footer cue +
-    // the card's hover state signal that it opens.
-    return `<div class="aii-promo aii-promo--steps">
-      <p class="aii-promo-line">Live, AI-written intelligence in three quick steps.</p>
-      <div class="aii-steps">${steps}</div>
+    const feats = FEATURES.map((f) => `<span class="aii-feat"><span class="aii-feat-ic">${f.ic}</span>${esc(f.t)}</span>`).join('');
+    return `<div class="aii-promo aii-promo--cta">
+      <p class="aii-promo-headline">Live AI intelligence on any topic.</p>
+      <p class="aii-promo-line">What’s happening, why it matters, and what’s next — written and sourced for you on demand.</p>
+      <div class="aii-feats">${feats}</div>
       <span class="aii-promo-cue">Explore AI Insights <span class="aii-promo-cue-arrow">${RIGHT_ARROW}</span></span>
     </div>`;
   }
   function launcherPromoHTML() {
     if (scope.topic === 'home') return launcherStepsHTML();
-    const tracks = paths.map((p) => `<button type="button" class="aii-track" data-group="${escAttr(p.group)}" style="--aii-accent:${AII_ACCENTS[p.group] || AII_ACCENTS._}">
-        <span class="aii-track-top"><span class="aii-track-ic">${ICONS[p.group] || ICONS._}</span><span class="aii-track-go" aria-hidden="true">${RIGHT_ARROW}</span></span>
-        <span class="aii-track-name">${esc(p.tab || p.label)}</span>
+    const tracks = paths.map((p) => `<button type="button" class="aii-track" data-group="${escAttr(p.group)}">
+        <span class="aii-track-head"><span class="aii-track-ic">${ICONS[p.group] || ICONS._}</span><span class="aii-track-name">${esc(p.tab || p.label)}</span><span class="aii-track-go" aria-hidden="true">${RIGHT_ARROW}</span></span>
         <span class="aii-track-desc">${esc(p.subtitle)}</span>
       </button>`).join('');
     return `<div class="aii-promo">
