@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp210';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp210';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp211';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp211';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -96,6 +96,25 @@ const SOURCES_BADGE = '<span class="ai-result-sub-ic"><svg viewBox="0 0 24 24" f
 // Small inline spark for the "AI Brief" eyebrow (matches the news modal).
 const SPARK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>';
 const SEARCH_ICON = '<svg class="aii-topic-search-ic" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
+// Trending-style head chevrons (sized by .im-headnav-arrow CSS) + action-link icons.
+const HNAV_L = '<svg class="im-headnav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
+const HNAV_R = '<svg class="im-headnav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
+const ICON_ASK = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.6 4.6a2 2 0 0 0 1.3 1.3L19.5 10l-4.6 1.6a2 2 0 0 0-1.3 1.3L12 17l-1.6-4.6a2 2 0 0 0-1.3-1.3L4.5 10l4.6-1.6a2 2 0 0 0 1.3-1.3z"/></svg>';
+const ICON_GLOBE = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>';
+// In-page section icons (match the News/Trend modal SEC_ICON set).
+const AII_SEC_ICON = {
+  summary: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><line x1="7" y1="8" x2="14" y2="8"/><line x1="7" y1="12" x2="14" y2="12"/><line x1="7" y1="16" x2="11" y2="16"/></svg>',
+  takeaways: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
+  sources: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+};
+function aiiSecIconKey(name) {
+  const n = String(name || '').toLowerCase();
+  if (/takeaway|key point|highlight/.test(n)) return 'takeaways';
+  if (/source|coverage/.test(n)) return 'sources';
+  return 'summary';
+}
+function aiiSecHead(key, name) { return `<div class="im-msec-head"><span class="im-msec-ic">${AII_SEC_ICON[key] || AII_SEC_ICON.summary}</span><h3 class="im-msec-name">${esc(name)}</h3></div>`; }
+function aiiMsec(id, name, inner) { return `<section class="im-msec" id="${id}" data-name="${escAttr(name)}">${inner}</section>`; }
 // Paper-plane (Direct Submit — "send it off") and an eye (Review — "preview").
 const ICON_SEND = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2.5L11 13"/><path d="M21.5 2.5L15 21l-4-8-8-4z"/></svg>';
 // Brief generating loader — spark pulse + shimmer bars (occupies the space the
@@ -126,10 +145,15 @@ export function renderAIIntelligence(container, scope) {
   let curGroup = null;
   let curIdx = 0;
   let aiiObserver = null;         // tab-mode: watches the overview card (root = .aii-stage scroller) to toggle the sticky condensed bar
+  let aiiSpyHandler = null, aiiSpyRoot = null;   // modal content view: AI Brief pill scroll-spy
   // Tab mode: on a topic page at mobile width, the paths become a secondary tab
   // bar (under the primary News Feed / AI Intelligence / Web Sources tabs)
   // instead of the flip-nav landing list.
-  const tabMode = scope.topic !== 'home'
+  // NOT inside the modal — the modal always runs the full flip-nav (topic → path
+  // → insight → brief); tab mode is only the inline AI Intelligence tab on a
+  // narrow topic page. (The modal hands off + closes on resize to mobile anyway.)
+  const tabMode = !scope.inModal
+    && scope.topic !== 'home'
     && typeof window !== 'undefined' && window.matchMedia
     && window.matchMedia('(max-width: 899.98px)').matches;
   // Launcher mode (#13): on the homepage + topic-page DESKTOP, the section is a
@@ -148,7 +172,9 @@ export function renderAIIntelligence(container, scope) {
   function updateTopbar() {
     const tb = container.querySelector('[data-topbar]');
     if (!tb) return;
-    if (view === 'topic') { tb.hidden = true; tb.innerHTML = ''; return; }
+    // The topic picker AND the content view (which now owns a Trending-style
+    // sticky head) hide this topbar; only paths/sections picker pages use it.
+    if (view === 'topic' || view === 'content') { tb.hidden = true; tb.innerHTML = ''; return; }
     tb.hidden = false;
     const c = cache[curGroup];
     const p = paths.find((x) => x.group === curGroup) || {};
@@ -344,20 +370,80 @@ export function renderAIIntelligence(container, scope) {
   // it's emptied and collapsed. Lives OUTSIDE .aii-stage so the stage's slide
   // transform never breaks its position:sticky (#158).
   function updateExtCondensed() {
+    // The modal content view now carries its own Trending-style sticky head, so
+    // the old external condensed bar is retired — always cleared/collapsed.
     if (!scope.inModal) return;
     const ext = container.querySelector('[data-cond-ext]');
     if (!ext) return;
-    if (view !== 'content') { ext.classList.remove('is-on'); ext.innerHTML = ''; ext.setAttribute('aria-hidden', 'true'); return; }
-    // condBarHTML() yields a wrapper .aii-condensed; we only want its inner markup
-    // since `ext` is itself the .aii-condensed element.
-    const tmp = document.createElement('div');
-    tmp.innerHTML = condBarHTML();
-    ext.innerHTML = tmp.firstElementChild ? tmp.firstElementChild.innerHTML : '';
-    ext.querySelectorAll('.aii-cond-act').forEach((btn) => btn.addEventListener('click', (e) => { e.stopPropagation(); openAcc(btn, true); }));
-    const condTop = ext.querySelector('[data-cond-top]');
-    if (condTop) condTop.addEventListener('click', () => { const sr = container.closest('.aii-modal-body') || container; sr.scrollTo({ top: 0, behavior: 'smooth' }); });
+    ext.classList.remove('is-on'); ext.innerHTML = ''; ext.setAttribute('aria-hidden', 'true');
+  }
+  // The MODAL insight page — built to match the Trending modal exactly: a
+  // Trending-style sticky head (Back to path / Prev·Next insight · identifier ·
+  // action links · AI Brief subnav pills) then im-msec sections + Sources &
+  // Coverage last. Reuses the shared im- classes so visual updates stay in lockstep.
+  function contentHTMLModal() {
+    const c = cache[curGroup]; const p = paths.find((x) => x.group === curGroup) || {};
+    const sects = (c && c.sections) || [];
+    const s = sects[curIdx] || { name: '', body: '' };
+    const prev = curIdx > 0 ? sects[curIdx - 1] : null;
+    const next = curIdx < sects.length - 1 ? sects[curIdx + 1] : null;
+    const backLabel = p.tab || p.label || 'Insights';
+    const updated = (c && c.generatedAt) ? `<span class="im-eyebrow-time">Updated ${esc(relTime(c.generatedAt))}</span>` : '';
+    // Identifier blends BOTH: the topic as a prominent solid chip + the path
+    // context, with the insight itself as the big title and "Updated" as the dateline.
+    const eyebrow = `<span class="im-eyebrow-topic">${esc(topicTitle)}</span>${p.label ? `<span class="im-eyebrow-path">${esc(p.label)}</span>` : ''}${updated}`;
+    const controls = `<div class="im-headnav">
+        <button type="button" class="im-headnav-link im-headnav-back" data-aii-back="sections">${HNAV_L}${esc(backLabel)}</button>
+        <span class="im-headnav-pn">
+          <button type="button" class="im-headnav-link" data-pn="prev"${prev ? '' : ' disabled'}>${HNAV_L}Previous insight</button>
+          <button type="button" class="im-headnav-link" data-pn="next"${next ? '' : ' disabled'}>Next insight${HNAV_R}</button>
+        </span>
+      </div>`;
+    const actions = `<button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span></button><button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span></button>`;
+    return `<div class="aii-sub aii-content aii-content--modal">
+      <div class="im-stickyhead">
+        ${controls}
+        <div class="im-overhead">
+          <div class="im-over-eyebrow">${eyebrow}</div>
+          <h2 class="im-over-title">${esc(s.name)}</h2>
+          <div class="im-over-links">${actions}</div>
+        </div>
+        <div class="im-briefnav">
+          <div class="im-briefnav-head"><span class="im-briefnav-title">AI Brief</span><span class="im-briefnav-hsep" aria-hidden="true"></span><span class="im-briefnav-notice"><span class="im-briefnav-spark">${LOGO}</span><span>= Text is AI-generated.</span></span></div>
+          <div class="im-briefnav-pills" data-aii-pills></div>
+        </div>
+      </div>
+      <div class="im-secs">
+        <div class="im-acc" data-accbody="explore"></div>
+        <div class="im-acc" data-accbody="web"></div>
+        <div data-aii-secs>${genLoaderHTML()}</div>
+      </div>
+    </div>`;
+  }
+  // Fill the modal content sections once the (brief) loader has shown: sectionize
+  // the insight into im-msec blocks (Summary / Key Takeaways …) + Sources & Coverage.
+  function fillAiiSecs() {
+    const wrap = stage.querySelector('[data-aii-secs]');
+    if (!wrap) return;
+    const c = cache[curGroup]; const s = (c && c.sections[curIdx]) || { body: '' };
+    setTimeout(() => {
+      if (stage.querySelector('[data-aii-secs]') !== wrap) return;
+      const parts = splitSections(sectionizeInsight(s.body));
+      const list = parts.length ? parts : [{ name: 'Summary', body: String(s.body || '') }];
+      let html = list.map((part, i) => {
+        const key = aiiSecIconKey(part.name);
+        return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name) + renderBriefBody(part.body, null, { aiFlag: LOGO, flagFirst: true }));
+      }).join('');
+      const items = sectionNewsItems();
+      const covRows = items.map((x) => `<a class="im-cov-row" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span>${x.meta ? `<span class="im-cov-host">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`).join('');
+      if (covRows) html += aiiMsec('aii-msec-sources', 'Sources & Coverage', aiiSecHead('sources', 'Sources & Coverage') + `<div class="im-coverage-list">${covRows}</div>`);
+      wrap.innerHTML = html;
+      wrap.classList.add('ai-reveal');
+      buildAiiBriefNav();
+    }, 700);
   }
   function contentHTML() {
+    if (scope.inModal) return contentHTMLModal();
     const c = cache[curGroup]; const p = paths.find((x) => x.group === curGroup) || {};
     const s = (c && c.sections[curIdx]) || { name: '', body: '' };
     const desc = (scope.descriptions && scope.descriptions[s.name]) || '';
@@ -601,22 +687,24 @@ export function renderAIIntelligence(container, scope) {
     </div>`;
   }
 
-  function teardownSticky() { if (aiiObserver) { aiiObserver.disconnect(); aiiObserver = null; } }
+  function teardownSticky() {
+    if (aiiObserver) { aiiObserver.disconnect(); aiiObserver = null; }
+    if (aiiSpyHandler && aiiSpyRoot) { aiiSpyRoot.removeEventListener('scroll', aiiSpyHandler); }
+    aiiSpyHandler = aiiSpyRoot = null;
+  }
   // Tab mode: reveal the condensed "path · section" bar once the overview card
   // scrolls out of the top of the brief. The scroll container is .aii-stage
   // (overflow:auto) — NOT the window — so the observer is rooted on it and the bar
   // is position:sticky;top:0 inside it. Tapping the bar scrolls the stage to top.
   function setupSticky() {
     teardownSticky();
-    if ((!tabMode && !scope.inModal) || view !== 'content' || typeof IntersectionObserver === 'undefined') return;
+    // Modal content now uses a real position:sticky head (no observer) — this
+    // reveal-on-scroll condensed bar is TAB MODE only.
+    if (!tabMode || view !== 'content' || typeof IntersectionObserver === 'undefined') return;
     const ov = stage.querySelector('.aii-ovcard');
-    // Tab mode: the bar is inline in the stage. Modal: it's the external,
-    // persistent bar (a sibling of the stage — outside the slide transform) (#158).
-    const cond = tabMode ? stage.querySelector('.aii-condensed') : container.querySelector('[data-cond-ext]');
+    const cond = stage.querySelector('.aii-condensed');
     if (!ov || !cond) return;
-    // Scroll container differs by context: .aii-stage in tab mode, the modal
-    // body (.aii-modal-body — the component's own container) inside the modal.
-    const scrollRoot = tabMode ? stage : (container.closest('.aii-modal-body') || container);
+    const scrollRoot = stage;
     aiiObserver = new IntersectionObserver((entries) => {
       for (const e of entries) {
         const top = e.rootBounds ? e.rootBounds.top : 0;
@@ -624,12 +712,37 @@ export function renderAIIntelligence(container, scope) {
       }
     }, { root: scrollRoot, threshold: 0 });
     aiiObserver.observe(ov);
-    // Tab mode wires the inline bar's tap-to-top here; the modal's external bar is
-    // wired in updateExtCondensed().
-    if (tabMode) {
-      const condTop = cond.querySelector('[data-cond-top]') || cond;
-      condTop.addEventListener('click', () => scrollRoot.scrollTo({ top: 0, behavior: 'smooth' }));
-    }
+    const condTop = cond.querySelector('[data-cond-top]') || cond;
+    condTop.addEventListener('click', () => scrollRoot.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
+  // Modal content view: build the AI Brief scroll-spy pills (same behavior as the
+  // Trending modal's buildBriefNav, but rooted on .aii-modal-body's scroller).
+  function buildAiiBriefNav() {
+    const pillsEl = stage.querySelector('[data-aii-pills]');
+    const head = stage.querySelector('.im-stickyhead');
+    const scrollRoot = container.closest('.aii-modal-body') || container;
+    if (!pillsEl) return;
+    const secs = () => [...stage.querySelectorAll('.im-msec')];
+    const list = secs();
+    pillsEl.innerHTML = list.map((s) => `<button type="button" class="im-pill" data-pill="${s.id}">${esc(s.dataset.name || '')}</button>`).join('');
+    pillsEl.querySelectorAll('.im-pill').forEach((p) => p.addEventListener('click', () => {
+      const sec = document.getElementById(p.dataset.pill); if (!sec) return;
+      const off = (head ? head.offsetHeight : 0) + 10;
+      const target = scrollRoot.scrollTop + (sec.getBoundingClientRect().top - scrollRoot.getBoundingClientRect().top) - off;
+      scrollRoot.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+    }));
+    const update = () => {
+      const limit = (head ? head.offsetHeight : 0) + scrollRoot.getBoundingClientRect().top + 14;
+      const ls = secs(); let active = ls[0];
+      for (const s of ls) { if (s.getBoundingClientRect().top <= limit) active = s; }
+      if (active) pillsEl.querySelectorAll('.im-pill').forEach((p) => p.classList.toggle('is-active', p.dataset.pill === active.id));
+    };
+    if (aiiSpyHandler && aiiSpyRoot) aiiSpyRoot.removeEventListener('scroll', aiiSpyHandler);
+    let raf = 0;
+    aiiSpyRoot = scrollRoot;
+    aiiSpyHandler = () => { if (raf) return; raf = requestAnimationFrame(() => { raf = 0; update(); }); };
+    scrollRoot.addEventListener('scroll', aiiSpyHandler, { passive: true });
+    update();
   }
 
   // Open one of the content-page actions. `btn` is the clicked control (a card
@@ -640,8 +753,8 @@ export function renderAIIntelligence(container, scope) {
     const name = btn.dataset.acc;
     const scrollRoot = scope.inModal ? (container.closest('.aii-modal-body') || container) : stage;
     if (name === 'sources') {
-      const hl = stage.querySelector('.aii-headlines');
-      if (hl && hl.firstChild) hl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const cov = stage.querySelector('#aii-msec-sources') || stage.querySelector('.aii-headlines');
+      if (cov && (cov.id === 'aii-msec-sources' || cov.firstChild)) cov.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
     const body = stage.querySelector(`[data-accbody="${name}"]`);
@@ -662,6 +775,19 @@ export function renderAIIntelligence(container, scope) {
   function wire() {
     setupSticky();
     if (view === 'topic') wireTopicView();
+    // Modal content view (Trending-style): fill the sections + wire the head's
+    // Back / Prev·Next insight links (the action links + pills wire below/inside).
+    if (scope.inModal && view === 'content') {
+      fillAiiSecs();
+      stage.querySelectorAll('[data-aii-back]').forEach((b) => b.addEventListener('click', () => go(b.dataset.aiiBack, 'back')));
+      stage.querySelectorAll('.im-headnav-link[data-pn]').forEach((b) => b.addEventListener('click', () => {
+        if (b.hasAttribute('disabled')) return;
+        const c = cache[curGroup]; const n = (c && c.sections.length) || 0;
+        const ni = b.dataset.pn === 'next' ? curIdx + 1 : curIdx - 1;
+        if (ni < 0 || ni >= n) return;
+        curIdx = ni; go('content', b.dataset.pn === 'next' ? 'fwd' : 'back');
+      }));
+    }
     // Section content: briefly show the generating loader (even when cached)
     // then reveal the brief — gives the AI a moment of presence.
     const bodyEl = stage.querySelector('.aii-content-body[data-loading]');
