@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp219';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp219';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp220';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp220';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -106,6 +106,7 @@ const ICON_GLOBE = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" 
 const ICON_FEAT_GLOBE = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg>';
 const ICON_FEAT_BOLT = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 4 14 11 14 11 22 20 10 13 10 13 2"/></svg>';
 const ICON_FEAT_REFRESH = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>';
+const ICON_FEAT_SEARCH = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
 // In-page section icons (match the News/Trend modal SEC_ICON set).
 const AII_SEC_ICON = {
   summary: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><line x1="7" y1="8" x2="14" y2="8"/><line x1="7" y1="12" x2="14" y2="12"/><line x1="7" y1="16" x2="11" y2="16"/></svg>',
@@ -304,21 +305,21 @@ export function renderAIIntelligence(container, scope) {
   // topic → pick a path → get insights) with one CTA into the modal's Step 1.
   // TOPIC PAGES (topic already chosen) → the direct track tiles (pick a path).
   const ICON_TOPICS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg>';
-  // HOME promo (#237 redo): drop the 3-step strip for a clean value-prop — a bold
-  // headline, a one-line what-you-get, and a compact feature row. The whole card
-  // stays the CTA (no standalone button — the cue + hover signal it opens).
+  // HOME promo (#237/#263): a value-prop on the dark flagship card — bold display
+  // headline + a DISTINCT lighter tagline, a neutral feature row, and a real teal
+  // CTA button. The whole card is still the CTA (the button is the cue).
   function launcherStepsHTML() {
     const FEATURES = [
-      { ic: ICON_FEAT_GLOBE, t: '100+ topics + Today’s World' },
-      { ic: ICON_FEAT_BOLT, t: 'Live, grounded & cited' },
-      { ic: ICON_FEAT_REFRESH, t: 'Refreshed continuously' },
+      { ic: ICON_FEAT_GLOBE, t: '100+ dedicated topics' },
+      { ic: ICON_FEAT_SEARCH, t: 'Any search term' },
+      { ic: ICON_FEAT_BOLT, t: 'Live & sourced' },
     ];
     const feats = FEATURES.map((f) => `<span class="aii-feat"><span class="aii-feat-ic">${f.ic}</span>${esc(f.t)}</span>`).join('');
     return `<div class="aii-promo aii-promo--cta">
-      <p class="aii-promo-headline">Live AI intelligence on any topic.</p>
-      <p class="aii-promo-line">What’s happening, why it matters, and what’s next — written and sourced for you on demand.</p>
+      <h3 class="aii-promo-headline">Live intelligence on any topic.</h3>
+      <p class="aii-promo-line">Grounded, cited analysis on 100+ topics — or any search term you bring.</p>
       <div class="aii-feats">${feats}</div>
-      <span class="aii-promo-cue">Explore AI Insights <span class="aii-promo-cue-arrow">${RIGHT_ARROW}</span></span>
+      <span class="aii-promo-btn">Explore AI Insights ${RIGHT_ARROW}</span>
     </div>`;
   }
   function launcherPromoHTML() {

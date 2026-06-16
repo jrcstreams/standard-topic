@@ -14115,7 +14115,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-launcher .aii-headsub { display: none; }
 .aii-launcher .aii-stage { padding: 14px 16px 16px; }
 .aii-promo { display: flex; flex-direction: column; gap: 12px; }
-.aii-promo-line { margin: 0 0 1px; font-size: 0.82rem; font-weight: 500; line-height: 1.4; color: var(--color-text-muted); }
+.aii-promo-line { margin: 0; font-size: 0.92rem; font-weight: 400; line-height: 1.5; color: var(--color-text-muted); max-width: 48ch; }
 /* Track tiles — the product centerpiece (#167). Each carries its own accent
    (icon chip tint + hover edge + reveal arrow); refined hairline border, soft
    lift on hover. Responsive: 3-across on the wide home card, 1-col in a sidebar. */
@@ -14136,8 +14136,8 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Home promo (#237): a clean value-prop — bold headline, one supporting line, a
    compact feature row, and a footer cue. The WHOLE card is the CTA (no standalone
    button) — see the dark hero block below. */
-.aii-promo--cta { gap: 11px; }
-.aii-promo-headline { margin: 0; font-family: var(--font-display); font-size: clamp(1.3rem, 1.05rem + 1.1vw, 1.7rem); font-weight: 700; letter-spacing: -0.022em; line-height: 1.12; color: var(--color-text); }
+.aii-promo--cta { gap: 13px; }
+.aii-promo-headline { margin: 0; font-family: var(--font-display); font-size: clamp(1.5rem, 1.15rem + 1.4vw, 2.05rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; color: var(--color-text); }
 .aii-feats { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 1px 0 2px; }
 .aii-feat { display: inline-flex; align-items: center; gap: 7px; font-size: 0.82rem; font-weight: 600; color: var(--color-text); }
 .aii-feat-ic { display: inline-flex; color: var(--color-primary); }
@@ -14150,26 +14150,32 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    the CTA. Overrides the white "hero feature" rules above. */
 body.home-search #section-aii-home .aii-launcher-cta {
   cursor: pointer; position: relative; overflow: hidden;
-  border: 1px solid #26344c;
-  background: linear-gradient(157deg, #1e2d49 0%, #111d33 74%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  /* Deep slate ink (not an AI-ey blue/purple glow). */
+  background: linear-gradient(168deg, #1d2a44 0%, #121d36 56%, #0b1324 100%);
   box-shadow: 0 18px 40px -26px rgba(10, 18, 34, 0.7);
   transition: transform .18s ease, box-shadow .22s ease;
 }
 body.home-search #section-aii-home .aii-launcher-cta:hover { transform: translateY(-2px); box-shadow: 0 26px 54px -26px rgba(10, 18, 34, 0.82); }
 body.home-search #section-aii-home .aii-launcher-cta:active { transform: translateY(0); }
 body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: none; border-bottom-color: rgba(255, 255, 255, 0.1); position: relative; z-index: 1; }
-.aii-launcher-cta:focus-visible { outline: 2px solid #6c8cff; outline-offset: 3px; }
-.aii-launcher-cta::after { content: ''; position: absolute; top: -45%; right: -8%; width: 340px; height: 340px; background: radial-gradient(circle, rgba(96, 132, 255, 0.16), transparent 68%); pointer-events: none; }
-.aii-launcher-cta .aii-logo { background: rgba(255, 255, 255, 0.13); color: #fff; box-shadow: none; }
+.aii-launcher-cta:focus-visible { outline: 2px solid #2dd4a7; outline-offset: 3px; }
+/* A thin top sheen for depth (replaces the blue radial glow). */
+.aii-launcher-cta::after { content: ''; position: absolute; inset: 0 0 auto 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent); pointer-events: none; }
+/* Teal brand mark — the accent that gives the card identity (ties to LIVE). */
+.aii-launcher-cta .aii-logo { background: linear-gradient(135deg, #2dd4a7, #1f9e98); color: #04201a; box-shadow: none; }
 .aii-launcher-cta .aii-brand { color: #fff; }
 .aii-launcher-cta .aii-live { color: #4ade9f; }
 .aii-launcher-cta .aii-stage { position: relative; z-index: 1; }
-.aii-launcher-cta .aii-promo-line { color: rgba(255, 255, 255, 0.72); }
+.aii-launcher-cta .aii-promo-line { color: rgba(255, 255, 255, 0.6); }
 .aii-launcher-cta .aii-promo-headline { color: #fff; }
-.aii-launcher-cta .aii-feat { color: rgba(255, 255, 255, 0.86); }
-.aii-launcher-cta .aii-feat-ic { color: #8fb0ff; }
-.aii-launcher-cta .aii-promo-cue { color: #fff; }
-.aii-launcher-cta:hover .aii-promo-cue-arrow { transform: translateX(4px); }
+.aii-launcher-cta .aii-feat { color: rgba(255, 255, 255, 0.84); }
+.aii-launcher-cta .aii-feat-ic { color: rgba(255, 255, 255, 0.48); }
+/* Real teal CTA button (the whole card still opens; the button is the cue). */
+.aii-promo-btn { align-self: flex-start; display: inline-flex; align-items: center; gap: 9px; margin-top: 2px; padding: 12px 22px; border-radius: 11px; background: linear-gradient(135deg, #2dd4a7, #1f9e98); color: #04201a; font-family: var(--font-family); font-size: 0.92rem; font-weight: 700; box-shadow: 0 10px 24px -12px rgba(45, 212, 167, 0.6); transition: transform .12s ease, box-shadow .16s ease; }
+.aii-promo-btn svg { width: 16px; height: 16px; transition: transform .16s ease; }
+.aii-launcher-cta:hover .aii-promo-btn { transform: translateY(-1px); box-shadow: 0 14px 30px -12px rgba(45, 212, 167, 0.72); }
+.aii-launcher-cta:hover .aii-promo-btn svg { transform: translateX(3px); }
 @media (max-width: 720px) {
   .aii-steps { flex-direction: column; gap: 10px; }
   .aii-step-sep { display: none; }
