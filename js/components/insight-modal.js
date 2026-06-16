@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp202';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp202';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp203';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp203';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -97,6 +97,10 @@ const CHEVR = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" strok
 // Section-icon badge for "Sources & Coverage" — matches the brief section glyphs
 // (link icon = related links/sources).
 const SOURCES_BADGE = '<span class="ai-result-sub-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>';
+// Action-link icons — Ask AI (sparkle) + Web Search (magnifier); Google Trends
+// keeps its external ↗ (ARROW). Small inline marks before each label (#213).
+const ICON_ASK = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.6 4.6a2 2 0 0 0 1.3 1.3L19.5 10l-4.6 1.6a2 2 0 0 0-1.3 1.3L12 17l-1.6-4.6a2 2 0 0 0-1.3-1.3L4.5 10l4.6-1.6a2 2 0 0 0 1.3-1.3z"/></svg>';
+const ICON_WEB = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
 // Explore-further icons: paper-plane (Direct Submit) + eye (Review Prompt).
 const ICON_SEND = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2.5L11 13"/><path d="M21.5 2.5L15 21l-4-8-8-4z"/></svg>';
 const ICON_EYE = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>';
@@ -250,29 +254,35 @@ function storyNavHTML(nav, compact) {
   </div>`;
 }
 // ===== New unified insight layout (Trending / News / AI Insights) ==========
-// Thin Prev/Next strip at the very top of the modal body — scrolls away with the
-// content. Item names are NOT shown (just "Previous Trend" / "Next Story").
+// Thin nav strip at the very top of the modal body (scrolls away). Holds the
+// "Back to …" pill (when applicable) + Previous/Next item buttons, grouped to the
+// right; Back is slightly differentiated (a faint fill) and comes first.
 function pnStripHTML(nav) {
-  if (!nav || !Array.isArray(nav.list) || nav.list.length < 2) return '';
-  const hasPrev = nav.index > 0, hasNext = nav.index < nav.list.length - 1;
-  if (!hasPrev && !hasNext) return '';
+  if (!nav) return '';
+  const hasList = Array.isArray(nav.list) && nav.list.length > 1;
+  const backLabel = nav.backLabel ? `Back to ${nav.backLabel}` : '';
+  if (!backLabel && !hasList) return '';
+  const hasPrev = hasList && nav.index > 0, hasNext = hasList && nav.index < nav.list.length - 1;
   const k = nav.itemKind || 'item';
   const kind = k.charAt(0).toUpperCase() + k.slice(1);
-  return `<div class="im-pnstrip">
-    ${hasPrev ? `<button type="button" class="im-pnstrip-btn" data-navdir="prev"><span class="im-pnstrip-arrow" aria-hidden="true">‹</span>Previous ${esc(kind)}</button>` : '<span class="im-pnstrip-spacer" aria-hidden="true"></span>'}
-    ${hasNext ? `<button type="button" class="im-pnstrip-btn im-pnstrip-btn--next" data-navdir="next">Next ${esc(kind)}<span class="im-pnstrip-arrow" aria-hidden="true">›</span></button>` : '<span class="im-pnstrip-spacer" aria-hidden="true"></span>'}
-  </div>`;
+  const back = backLabel ? `<button type="button" class="im-pnstrip-btn im-pnstrip-back" id="im-back"><span class="im-pnstrip-arrow" aria-hidden="true">‹</span>${esc(backLabel)}</button>` : '';
+  const nav2 = hasList ? `<div class="im-pnstrip-nav">
+      <button type="button" class="im-pnstrip-btn" data-navdir="prev"${hasPrev ? '' : ' disabled'}><span class="im-pnstrip-arrow" aria-hidden="true">‹</span>Previous ${esc(kind)}</button>
+      <button type="button" class="im-pnstrip-btn im-pnstrip-btn--next" data-navdir="next"${hasNext ? '' : ' disabled'}>Next ${esc(kind)}<span class="im-pnstrip-arrow" aria-hidden="true">›</span></button>
+    </div>` : '';
+  return `<div class="im-pnstrip">${back}${nav2}</div>`;
 }
 // The permanent sticky header: the item title (shrinks on scroll) + a meta line
-// with the action links, then the AI Brief subnav (colored spark + section pills).
+// with the action links, then the AI Brief subnav — a full-width grey block with
+// an "AI-generated" notice over a row of section pills (scroll-spy nav).
 function stickyHeadHTML({ title, metaLine, actions }) {
   return `<div class="im-stickyhead" id="im-stickyhead">
     <div class="im-overhead">
       <h2 class="im-over-title" id="im-over-title">${esc(title)}</h2>
-      <div class="im-over-meta">${metaLine || ''}${actions ? `<span class="im-over-actions">${actions}</span>` : ''}</div>
+      <div class="im-over-meta">${metaLine || ''}${actions ? `<span class="im-over-actions"><span class="im-over-sep" aria-hidden="true"></span>${actions}</span>` : ''}</div>
     </div>
     <div class="im-briefnav">
-      <span class="im-briefnav-brand"><span class="im-briefnav-spark">${SPARK_FILL}</span>AI Brief</span>
+      <div class="im-briefnav-notice"><span class="im-briefnav-spark">${SPARK_FILL}</span><span>= Text in this section is AI-generated.</span></div>
       <div class="im-briefnav-pills" id="im-briefnav-pills"></div>
     </div>
   </div>`;
@@ -781,10 +791,15 @@ function renderTrend(d) {
   const title = String(d.query || '').replace(/\b\w/g, c => c.toUpperCase());
   const gtUrl = `https://trends.google.com/trends/explore?q=${encodeURIComponent(d.query || '')}&geo=US`;
   const metaLine = `<span class="im-over-when">${[esc(cat), since ? `Trending since ${esc(since)}` : ''].filter(Boolean).join(' · ')}</span>`;
-  const actions = `<button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">Ask AI</button><button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">Web Search</button><a class="im-qlink" href="${escAttr(gtUrl)}" target="_blank" rel="noopener noreferrer">Google Trends ${ARROW}</a>`;
+  const sep = '<span class="im-over-sep" aria-hidden="true"></span>';
+  const actions = [
+    `<button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span></button>`,
+    `<button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">${ICON_WEB}<span>Web Search</span></button>`,
+    `<a class="im-qlink" href="${escAttr(gtUrl)}" target="_blank" rel="noopener noreferrer"><span>Google Trends</span>${ARROW}</a>`,
+  ].join(sep);
   const relBody = (Array.isArray(d.trendBreakdown) && d.trendBreakdown.length) ? relatedSearchesHTML(d.trendBreakdown) : '';
   panelEl.innerHTML = `
-    ${brandHeaderHTML(null, { brandLabel: 'Trending Insights' })}
+    ${brandHeaderHTML(null, { brandLabel: 'Trending Insights', hideBack: true })}
     <div class="im-body">
       ${pnStripHTML(d.nav)}
       ${stickyHeadHTML({ title, metaLine, actions })}
