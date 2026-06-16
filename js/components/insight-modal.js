@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp206';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp206';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp208';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp208';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -277,8 +277,8 @@ function stickyHeadHTML({ title, metaLine, actions, nav }) {
   return `<div class="im-stickyhead" id="im-stickyhead">
     ${controls}
     <div class="im-overhead">
+      ${metaLine ? `<div class="im-over-eyebrow">${metaLine}</div>` : ''}
       <h2 class="im-over-title" id="im-over-title">${esc(title)}</h2>
-      ${metaLine ? `<div class="im-over-meta">${metaLine}</div>` : ''}
       ${actions ? `<div class="im-over-links">${actions}</div>` : ''}
     </div>
     <div class="im-briefnav">
@@ -794,7 +794,7 @@ function renderTrend(d) {
   const since = relTime(d.startedAt);
   const title = String(d.query || '').replace(/\b\w/g, c => c.toUpperCase());
   const gtUrl = `https://trends.google.com/trends/explore?q=${encodeURIComponent(d.query || '')}&geo=US`;
-  const metaLine = `<span class="im-over-when">${[esc(cat), since ? `Trending since ${esc(since)}` : ''].filter(Boolean).join(' · ')}</span>`;
+  const metaLine = `${cat ? `<span class="im-eyebrow-cat">${esc(cat)}</span>` : ''}${since ? `<span class="im-eyebrow-time">Trending since ${esc(since)}</span>` : ''}`;
   const relBody = (Array.isArray(d.trendBreakdown) && d.trendBreakdown.length) ? relatedSearchesHTML(d.trendBreakdown) : '';
   const actions = [
     relBody ? `<button type="button" class="im-qlink im-qlink-btn" data-panel="related" aria-expanded="false">${ICON_WEB}<span>Related Searches</span></button>` : '',
@@ -810,8 +810,7 @@ function renderTrend(d) {
         ${relBody ? `<div class="im-acc" data-body="related" id="im-related-panel">${relBody}</div>` : ''}
         <div class="im-acc" data-body="explore" id="im-explore-panel"></div>
         <div class="im-acc" data-body="web" id="im-web-panel"></div>
-        <div id="im-brief-secs">${msecHTML('msec-brief', 'Summary', briefSkeleton())}</div>
-        <div id="im-cov-sec"></div>
+        <div id="im-secs-body">${msecHTML('msec-brief', 'Summary', briefSkeleton())}</div>
       </div>
     </div>`;
   wireRelatedChips(title);
@@ -821,12 +820,12 @@ function renderTrend(d) {
   buildBriefNav();
   (async () => {
     const t0 = Date.now();
-    const briefSecs = panelEl.querySelector('#im-brief-secs');
+    const secsBody = panelEl.querySelector('#im-secs-body');
     try {
       const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'trend', query: d.query }) });
       const data = res.ok ? await res.json() : null;
       await holdLoader(t0);
-      if (panelEl.querySelector('#im-brief-secs') !== briefSecs) return;
+      if (panelEl.querySelector('#im-secs-body') !== secsBody) return;
       if (data && data.content) {
         const cleanSum = cleanSummary(data.summary);
         let detail = cleanTrendContent(data.content);
@@ -843,15 +842,15 @@ function renderTrend(d) {
           }
         }
         ctx.sources = data.sources || [];
-        const why = cleanSum ? msecHTML('msec-why', "Why It's Trending", secHeadHTML('why', "Why It's Trending") + renderBriefBody(cleanSum, null, { aiFlag: SPARK_FILL })) : '';
-        const sum = detail ? msecHTML('msec-summary', 'Summary', secHeadHTML('summary', 'Summary') + renderBriefBody(detail, null, { aiFlag: SPARK_FILL })) : '';
-        briefSecs.innerHTML = why + sum; briefSecs.classList.add('ai-reveal');
+        const why = cleanSum ? msecHTML('msec-why', "Why It's Trending", secHeadHTML('why', "Why It's Trending") + renderBriefBody(cleanSum, null, { aiFlag: SPARK_FILL, flagFirst: true })) : '';
+        const sum = detail ? msecHTML('msec-summary', 'Summary', secHeadHTML('summary', 'Summary') + renderBriefBody(detail, null, { aiFlag: SPARK_FILL, flagFirst: true })) : '';
         const cov = coverageListHTML(data.headlines, data.sources, '');
-        const covSec = panelEl.querySelector('#im-cov-sec');
-        if (covSec) covSec.innerHTML = cov ? msecHTML('msec-sources', 'Sources & Coverage', secHeadHTML('sources', 'Sources & Coverage') + `<div class="im-coverage-list">${cov}</div>`) : '';
+        const covSec = cov ? msecHTML('msec-sources', 'Sources & Coverage', secHeadHTML('sources', 'Sources & Coverage') + `<div class="im-coverage-list">${cov}</div>`) : '';
+        // All sections in ONE container so :last-child (no border) is the true last.
+        secsBody.innerHTML = why + sum + covSec; secsBody.classList.add('ai-reveal');
         buildBriefNav();
-      } else { briefSecs.innerHTML = '<p class="im-empty">No AI brief generated for this trend yet.</p>'; }
-    } catch (_) { if (panelEl.querySelector('#im-brief-secs') === briefSecs) briefSecs.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
+      } else { secsBody.innerHTML = '<p class="im-empty">No AI brief generated for this trend yet.</p>'; }
+    } catch (_) { if (panelEl.querySelector('#im-secs-body') === secsBody) secsBody.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
   })();
 }
 // Related-search chips drill into that term as a new (stacked) trend page; the

@@ -14755,30 +14755,32 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 .im-headnav-arrow { font-size: 1rem; line-height: 1; }
 
 .im-overhead { padding: 12px 0; }
-.im-over-title { margin: 0 0 9px; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; color: var(--color-primary); line-height: 1.16; font-size: 1.7rem; transition: font-size .16s ease; }
+/* Category + trending-since sit ABOVE the title as an eyebrow (a soft category
+   chip + the time) — separates this meta from the blue link controls below. */
+.im-over-eyebrow { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; margin-bottom: 9px; }
+.im-eyebrow-cat { display: inline-flex; padding: 2px 9px; border-radius: 999px; background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: var(--color-primary); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.im-eyebrow-time { font-size: 0.8rem; font-weight: 500; color: #6b7484; }
+.im-over-title { margin: 0 0 10px; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; color: var(--color-primary); line-height: 1.16; font-size: 1.7rem; transition: font-size .16s ease; }
 .im-stickyhead.is-compact .im-over-title { font-size: 1.34rem; }
-.im-over-meta { display: flex; align-items: center; flex-wrap: wrap; }
-.im-over-when { font-size: 0.82rem; font-weight: 500; color: #6b7484; }
 .im-over-links { display: flex; align-items: center; flex-wrap: wrap; row-gap: 6px; margin-top: 9px; }
-/* Short, centered separators between the links (a pseudo-element — not a
-   full-height border, which read as "weird tall lines"). */
-.im-over-links .im-qlink { position: relative; font-size: 0.84rem; font-weight: 500; display: inline-flex; align-items: center; gap: 5px; padding: 0 14px; }
+/* Smaller, bolder links; short centered separators between them. */
+.im-over-links .im-qlink { position: relative; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; padding: 0 15px; }
 .im-over-links .im-qlink:first-child { padding-left: 0; }
-.im-over-links .im-qlink:not(:first-child)::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 1px; height: 12px; background: var(--color-surface-border); }
+.im-over-links .im-qlink:not(:first-child)::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 1px; height: 13px; background: #cdd3dd; }
 .im-over-links .im-qlink svg { flex: none; }
 
 /* AI Brief subnav — head row ("AI Brief" · "✦ = Text is AI-generated.") then
    the section pills below. */
 .im-briefnav { padding: 11px 0 12px; border-top: 1px solid var(--color-surface-border); }
 .im-briefnav-head { display: flex; align-items: center; margin-bottom: 10px; }
-.im-briefnav-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-primary); }
-.im-briefnav-hsep { display: inline-block; width: 1px; height: 14px; background: var(--color-surface-border); margin: 0 12px; flex: none; }
+.im-briefnav-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-primary); }
+.im-briefnav-hsep { display: inline-block; width: 1px; height: 17px; background: #c0c7d3; margin: 0 13px; flex: none; }
 .im-briefnav-notice { display: inline-flex; align-items: center; gap: 5px; font-size: 0.76rem; font-weight: 500; color: var(--color-text-muted); }
 .im-briefnav-spark { display: inline-flex; color: var(--color-link, #2563eb); }
 .im-briefnav-spark svg { width: 14px; height: 14px; }
 .im-briefnav-pills { display: flex; align-items: center; gap: 7px; overflow-x: auto; scrollbar-width: none; }
 .im-briefnav-pills::-webkit-scrollbar { display: none; }
-.im-pill { flex: none; padding: 5px 13px; border: 1px solid transparent; border-radius: 999px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; color: var(--color-text-muted); white-space: nowrap; transition: background .14s, color .14s, border-color .14s; }
+.im-pill { flex: none; padding: 5px 12px; border: 1px solid transparent; border-radius: 999px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.74rem; font-weight: 600; color: var(--color-text-muted); white-space: nowrap; transition: background .14s, color .14s, border-color .14s; }
 .im-pill:hover { border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); color: var(--color-primary); }
 .im-pill.is-active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
 

@@ -125,7 +125,9 @@ export function renderBriefBody(content, sources, opts = {}) {
   // Optional inline "AI-generated" sparkle on the FIRST line of each section
   // (news brief only) — flags that the section text is AI-written.
   const flagSpan = opts.aiFlag ? `<span class="ai-flag" aria-label="AI-generated" title="AI-generated text">${opts.aiFlag}</span>` : '';
-  let pendingFlag = false;
+  // Flag the first content line even when there's no section header (opts.flagFirst)
+  // — used when each section is rendered headerless (its title lives outside).
+  let pendingFlag = !!(opts.flagFirst && flagSpan);
   const lines = String(content || '').split('\n');
   let html = ''; let inList = false;
   const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
