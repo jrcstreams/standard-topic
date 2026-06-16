@@ -14248,13 +14248,19 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 .aii-tp-searchwrap .aii-topic-search-ic { position: absolute; left: 14px; color: var(--color-text-muted); pointer-events: none; }
 .aii-tp-search { width: 100%; box-sizing: border-box; padding: 11px 14px 11px 39px; border: 1px solid var(--color-surface-border); border-radius: 11px; font-size: 0.95rem; font-family: var(--font-family); color: var(--color-text); background: #fff; }
 .aii-tp-search:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 12%, transparent); }
-.aii-tp-grid { display: flex; flex-wrap: wrap; gap: 8px; max-height: 50vh; overflow-y: auto; padding: 2px; }
-.aii-tp-chip { padding: 8px 14px; border: 1px solid var(--color-surface-border); border-radius: 999px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.86rem; font-weight: 500; color: var(--color-text); transition: border-color .14s, background .14s, color .14s, transform .06s; }
-.aii-tp-chip:hover { border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-surface-border)); background: color-mix(in srgb, var(--color-primary) 4%, #fff); color: var(--color-primary); }
-.aii-tp-chip:active { transform: translateY(1px); }
-.aii-tp-chip.is-active { border-color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 10%, #fff); color: var(--color-primary); font-weight: 600; }
-.aii-tp-chip--home { background: var(--color-primary); border-color: var(--color-primary); color: #fff; font-weight: 600; }
-.aii-tp-chip--home:hover { background: color-mix(in srgb, #000 7%, var(--color-primary)); color: #fff; }
+/* Step 1 picker = the All Topics hierarchy (parent accordions → subtopics),
+   reusing the .at-* / .ti-accordion styling but as buttons that PICK a topic. */
+.aii-tp-list { display: flex; flex-direction: column; gap: 8px; max-height: 56vh; overflow-y: auto; padding: 2px; }
+.aii-tp-accs { display: flex; flex-direction: column; gap: 8px; }
+.aii-tp button.at-acc-flat { width: 100%; text-align: left; cursor: pointer; }
+.aii-tp button.at-sub { width: 100%; text-align: left; cursor: pointer; border: none; background: none; font-family: inherit; }
+/* "Today's World" featured pick — accent-bordered so it reads as the default. */
+.aii-tp-home { border-color: color-mix(in srgb, var(--color-primary) 32%, #e2e6ee) !important; background: color-mix(in srgb, var(--color-primary) 4%, #fff) !important; }
+.aii-tp-home .at-acc-flat-icon, .aii-tp-home .at-acc-flat-chev { color: var(--color-primary); }
+.aii-tp-results { display: flex; flex-direction: column; gap: 2px; }
+.aii-tp-result { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.aii-tp-result-name { font-weight: 600; color: var(--color-text); }
+.aii-tp-result-parent { flex: none; font-size: 0.76rem; color: var(--color-text-muted); }
 .aii-tp-empty { width: 100%; padding: 18px; text-align: center; color: var(--color-text-muted); font-size: 0.9rem; }
 
 

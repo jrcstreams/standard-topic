@@ -4,11 +4,12 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp213';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp213';
-import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp214';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp214';
+import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
+import { topicIconSVG } from '../utils/topic-icons.js';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -206,31 +207,62 @@ export function renderAIIntelligence(container, scope) {
     else if (view === 'paths') go('topic', 'back');
   }
 
-  // Step 1 — pick a topic: search across Today's World + all 100 topics.
-  function topicChipsHTML(filter) {
+  // Step 1 — pick a topic. Browse the SAME parent→subtopic hierarchy as the All
+  // Topics modal (accordions), or search to filter to a flat result list.
+  function topicResultBtn(key, name, parentName) {
+    return `<button type="button" class="at-sub aii-tp-result" data-tp-key="${escAttr(key)}"><span class="aii-tp-result-name">${esc(name)}</span>${parentName ? `<span class="aii-tp-result-parent">${esc(parentName)}</span>` : ''}</button>`;
+  }
+  function topicListHTML(filter) {
     const f = String(filter || '').toLowerCase().trim();
-    const items = (scope.allTopics || scope.topics || []).filter((t) => !f || String(t.name).toLowerCase().includes(f));
-    if (!items.length) return '<p class="aii-tp-empty">No topics found. Try another search.</p>';
-    return items.map((t) => `<button type="button" class="aii-tp-chip${t.key === scope.topicKey ? ' is-active' : ''}${t.key === 'home' ? ' aii-tp-chip--home' : ''}" data-tp-key="${escAttr(t.key)}">${esc(t.name)}</button>`).join('');
+    if (f) {
+      const items = (scope.allTopics || []).filter((t) => String(t.name).toLowerCase().includes(f) || String(t.parentName || '').toLowerCase().includes(f));
+      if (!items.length) return '<p class="aii-tp-empty">No topics found. Try another search.</p>';
+      return `<div class="aii-tp-results">${items.map((t) => topicResultBtn(t.key, t.name, t.parentName)).join('')}</div>`;
+    }
+    const accent = '#475569';
+    const home = `<button type="button" class="at-acc-flat aii-tp-home" data-tp-key="home" style="--ti-accent:#3261a0;">
+        <span class="at-acc-flat-icon">${topicIconSVG('globe', '')}</span>
+        <span class="at-acc-flat-name">Today's World</span>
+        <span class="at-acc-flat-chev">${ARROW}</span>
+      </button>`;
+    const accs = getTopicsGroupedByParent().map(({ parent, subtopics }) => {
+      if (!subtopics.length) {
+        return `<button type="button" class="at-acc-flat" data-tp-key="${escAttr(parent.slug)}" style="--ti-accent:${accent};">
+          <span class="at-acc-flat-icon">${topicIconSVG(parent.icon || 'globe', '')}</span>
+          <span class="at-acc-flat-name">${esc(parent.name)}</span>
+          <span class="at-acc-flat-chev">${ARROW}</span>
+        </button>`;
+      }
+      const subs = `<button type="button" class="at-sub at-sub-parent" data-tp-key="${escAttr(parent.slug)}">All ${esc(parent.name)}<span class="at-sub-arrow" aria-hidden="true">${ARROW}</span></button>`
+        + subtopics.map((s) => `<button type="button" class="at-sub" data-tp-key="${escAttr(s.slug)}">${esc(s.name)}</button>`).join('');
+      return `<details class="ti-accordion at-acc" style="--ti-accent:${accent};">
+        <summary class="ti-accordion-summary">
+          <span class="ti-accordion-icon" aria-hidden="true">${topicIconSVG(parent.icon || 'globe', '')}</span>
+          <span class="ti-accordion-title">${esc(parent.name)}</span>
+          <span class="ti-accordion-chev" aria-hidden="true">${CHEV}</span>
+        </summary>
+        <div class="ti-accordion-body"><div class="at-subs">${subs}</div></div>
+      </details>`;
+    }).join('');
+    return `${home}<div class="ti-accordions aii-tp-accs">${accs}</div>`;
   }
   function topicViewHTML() {
     return `<div class="aii-tp">
       <div class="aii-tp-head">
-        <span class="aii-tp-step">Step 1 of 3 · Topic</span>
-        <h3 class="aii-tp-title">What do you want insights on?</h3>
-        <p class="aii-tp-sub">Pick Today's World, or search any of 100+ topics.</p>
+        <h3 class="aii-tp-title">Get AI insights on any topic</h3>
+        <p class="aii-tp-sub">Search any topic, or browse 100+ by category.</p>
       </div>
       <div class="aii-tp-searchwrap">${SEARCH_ICON}<input type="text" class="aii-tp-search" placeholder="Search topics…" aria-label="Search topics"></div>
-      <div class="aii-tp-grid" data-tp-grid>${topicChipsHTML('')}</div>
+      <div class="aii-tp-list" data-tp-list>${topicListHTML('')}</div>
     </div>`;
   }
   function wireTopicView() {
     const search = stage.querySelector('.aii-tp-search');
-    const grid = stage.querySelector('[data-tp-grid]');
-    if (!grid) return;
-    const wireChips = () => grid.querySelectorAll('.aii-tp-chip').forEach((ch) => ch.addEventListener('click', () => { if (scope.onChangeTopic) scope.onChangeTopic(ch.dataset.tpKey); }));
-    if (search) search.addEventListener('input', () => { grid.innerHTML = topicChipsHTML(search.value); wireChips(); });
-    wireChips();
+    const list = stage.querySelector('[data-tp-list]');
+    if (!list) return;
+    const wireKeys = () => list.querySelectorAll('[data-tp-key]').forEach((b) => b.addEventListener('click', () => { if (scope.onChangeTopic) scope.onChangeTopic(b.dataset.tpKey); }));
+    if (search) search.addEventListener('input', () => { list.innerHTML = topicListHTML(search.value); wireKeys(); });
+    wireKeys();
   }
 
   container.innerHTML = `
@@ -396,8 +428,8 @@ export function renderAIIntelligence(container, scope) {
     const controls = `<div class="im-headnav">
         <button type="button" class="im-headnav-link im-headnav-back" data-aii-back="sections">${HNAV_L}${esc(backLabel)}</button>
         <span class="im-headnav-pn">
-          <button type="button" class="im-headnav-link" data-pn="prev"${prev ? '' : ' disabled'}>${HNAV_L}Previous insight</button>
-          <button type="button" class="im-headnav-link" data-pn="next"${next ? '' : ' disabled'}>Next insight${HNAV_R}</button>
+          <button type="button" class="im-headnav-link" data-pn="prev"${prev ? '' : ' disabled'}>${HNAV_L}Previous</button>
+          <button type="button" class="im-headnav-link" data-pn="next"${next ? '' : ' disabled'}>Next${HNAV_R}</button>
         </span>
       </div>`;
     const actions = `<button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span></button><button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span></button>`;
