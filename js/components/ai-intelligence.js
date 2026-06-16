@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp218';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp218';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp219';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp219';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -166,8 +166,12 @@ export function renderAIIntelligence(container, scope) {
   // flip was a shitshow on those layouts). Inside the modal (scope.inModal) we
   // run the full flip-nav. Topic-page MOBILE stays the inline tab-mode.
   const launcher = !tabMode && !scope.inModal;
-
-  const subtabsHTML = () => `<nav class="aii-subtabs">${paths.map((p) => `<button type="button" class="aii-subtab" data-group="${escAttr(p.group)}">${esc(p.tab || p.label)}</button>`).join('')}</nav>`;
+  // Flow mode = the full flip-nav (paths → sections → insight). Runs in the modal
+  // (desktop home / bottom-nav) AND inline in a mobile topic page's AI Insights
+  // tab — same content, different shell. Scroll container: .aii-modal-body in the
+  // modal, .aii-stage inline (tab mode).
+  const flowMode = scope.inModal || tabMode;
+  const scrollRootEl = () => container.closest('.aii-modal-body') || stage;
 
   const topicTitle = scope.topic === 'home' ? "Today's World" : (scope.label || scope.topic || '');
 
@@ -265,14 +269,12 @@ export function renderAIIntelligence(container, scope) {
   }
 
   container.innerHTML = `
-    <div class="aii${tabMode ? ' aii-tabmode' : ''}${launcher ? ' aii-launcher' : ''}${launcher && scope.topic === 'home' ? ' aii-launcher-cta' : ''}">
+    <div class="aii${tabMode ? ' aii-tabmode' : ''}${flowMode ? ' aii-flow' : ''}${launcher ? ' aii-launcher' : ''}${launcher && scope.topic === 'home' ? ' aii-launcher-cta' : ''}">
       <div class="aii-head">
         <div class="aii-head-top"><span class="aii-logo">${LOGO}</span><span class="aii-brand">AI Insights</span><span class="aii-live"><span class="aii-live-dot" aria-hidden="true"></span>Live</span></div>
         <p class="aii-headsub">Pick a path and explore live AI insights.</p>
       </div>
-      ${scope.inModal ? '<div class="aii-topbar" data-topbar hidden></div>' : ''}
-      ${scope.inModal ? '<div class="aii-condensed aii-condensed--ext" data-cond-ext aria-hidden="true"></div>' : ''}
-      ${tabMode ? subtabsHTML() : ''}
+      ${flowMode ? '<div class="aii-topbar" data-topbar hidden></div>' : ''}
       <div class="aii-stage" data-view="paths"></div>
     </div>`;
   const stage = container.querySelector('.aii-stage');
@@ -331,7 +333,7 @@ export function renderAIIntelligence(container, scope) {
     </div>`;
   }
   function pathsHTML() {
-    const intro = scope.inModal ? `<p class="aii-paths-intro">Choose an intelligence track</p>` : '';
+    const intro = flowMode ? `<p class="aii-paths-intro">Choose an intelligence track</p>` : '';
     return `${intro}<div class="aii-pathlist">${paths.map((p) => `
       <button type="button" class="aii-pathrow" data-group="${escAttr(p.group)}">
         <span class="aii-pathrow-icon aii-icon-${escAttr(p.group)}">${ICONS[p.group] || ICONS._}</span>
@@ -363,7 +365,7 @@ export function renderAIIntelligence(container, scope) {
     const updated = c && c.generatedAt ? `<span class="aii-updated">Updated ${esc(relTime(c.generatedAt))}</span>` : '';
     // In the modal the sticky topbar owns Back + path context; tab mode keeps
     // its own in-stage backrow + subhead.
-    const header = scope.inModal ? '' : `
+    const header = flowMode ? '' : `
       <div class="aii-backrow">
         <button type="button" class="aii-back" data-back="paths">${BACK}<span>Back</span></button>
         ${updated}
@@ -476,7 +478,7 @@ export function renderAIIntelligence(container, scope) {
     }, 700);
   }
   function contentHTML() {
-    if (scope.inModal) return contentHTMLModal();
+    if (flowMode) return contentHTMLModal();
     const c = cache[curGroup]; const p = paths.find((x) => x.group === curGroup) || {};
     const s = (c && c.sections[curIdx]) || { name: '', body: '' };
     const desc = (scope.descriptions && scope.descriptions[s.name]) || '';
@@ -756,7 +758,7 @@ export function renderAIIntelligence(container, scope) {
   function buildAiiBriefNav() {
     const pillsEl = stage.querySelector('[data-aii-pills]');
     const head = stage.querySelector('.im-stickyhead');
-    const scrollRoot = container.closest('.aii-modal-body') || container;
+    const scrollRoot = scrollRootEl();
     if (!pillsEl) return;
     const secs = () => [...stage.querySelectorAll('.im-msec')];
     const list = secs();
@@ -801,7 +803,7 @@ export function renderAIIntelligence(container, scope) {
   // open the panel and jump the scroller to the top to bring it into view).
   function openAcc(btn, fromCond) {
     const name = btn.dataset.acc;
-    const scrollRoot = scope.inModal ? (container.closest('.aii-modal-body') || container) : stage;
+    const scrollRoot = scrollRootEl();
     if (name === 'sources') {
       const cov = stage.querySelector('#aii-msec-sources') || stage.querySelector('.aii-headlines');
       if (cov && (cov.id === 'aii-msec-sources' || cov.firstChild)) cov.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -827,7 +829,7 @@ export function renderAIIntelligence(container, scope) {
     if (view === 'topic') wireTopicView();
     // Modal content view (Trending-style): fill the sections + wire the head's
     // Back / Prev·Next insight links (the action links + pills wire below/inside).
-    if (scope.inModal && view === 'content') {
+    if (flowMode && view === 'content') {
       fillAiiSecs();
       stage.querySelectorAll('[data-aii-back]').forEach((b) => b.addEventListener('click', () => go(b.dataset.aiiBack, 'back')));
       stage.querySelectorAll('.im-headnav-link[data-pn]').forEach((b) => b.addEventListener('click', () => {
@@ -914,27 +916,15 @@ export function renderAIIntelligence(container, scope) {
     });
   }
 
-  // Secondary tab bar (mobile tab mode): each tab opens that path's section
-  // menu directly. Wired once (the subtabs live outside the re-rendered stage).
-  async function openTab(group) {
-    if (curGroup === group && (view === 'sections' || view === 'content')) return;
+  // Jump straight into a path's sections (used by the desktop→mobile hand-off and
+  // the deep-linked flow entry).
+  function openGroup(group) {
+    if (!paths.some((p) => p.group === group)) return;
     curGroup = group; curIdx = 0;
     go('sections', 'fwd');
-    await loadGroup(curGroup);
-    if (curGroup === group && stage.dataset.view === 'sections') { stage.innerHTML = sectionsHTML(); wire(); setActiveSubtab(); updateTopbar(); }
+    loadGroup(curGroup).then(() => { if (view === 'sections' && stage.dataset.view === 'sections') { stage.innerHTML = sectionsHTML(); wire(); updateTopbar(); } });
   }
-  if (tabMode) {
-    container.querySelectorAll('.aii-subtab').forEach((b) => b.addEventListener('click', () => openTab(b.dataset.group)));
-    // Deep-link from a desktop→mobile hand-off (#13): open straight to a section.
-    if (scope.initialGroup && paths.some((p) => p.group === scope.initialGroup)) openTab(scope.initialGroup);
-    else openTab(paths[0].group);     // default to the first path's sections
-    // Listen for a hand-off from the desktop modal (resize → mobile): jump to
-    // the section the user had open. Stored on the container so re-renders /
-    // destroy can detach it (no leak).
-    if (container._aiiSectionHandler) window.removeEventListener('aii-open-section', container._aiiSectionHandler);
-    container._aiiSectionHandler = (e) => { const g = e && e.detail && e.detail.group; if (g && paths.some((p) => p.group === g)) openTab(g); };
-    window.addEventListener('aii-open-section', container._aiiSectionHandler);
-  } else if (launcher) {
+  if (launcher) {
     // Product launcher (#167). Home: the WHOLE card is the CTA — clicking anywhere
     // opens the modal at Step 1 (topic picker). Topic pages: track tiles → that
     // track's sections.
@@ -954,16 +944,22 @@ export function renderAIIntelligence(container, scope) {
         hideGroups: scope.hideGroups || [], descriptions: scope.descriptions || {},
       } }))));
     }
-  } else if (scope.inModal && scope.pickTopic) {
+  } else if (flowMode && scope.pickTopic) {
     // Entered "anew" (bottom nav / homepage CTA) → Step 1: pick a topic.
     go('topic', 'fwd');
-  } else if (scope.inModal && scope.initialGroup && paths.some((p) => p.group === scope.initialGroup)) {
-    // Inside the modal, deep-link to the path the user clicked.
-    curGroup = scope.initialGroup;
-    go('sections', 'fwd');
-    loadGroup(curGroup).then(() => { if (view === 'sections' && stage.dataset.view === 'sections') { stage.innerHTML = sectionsHTML(); wire(); updateTopbar(); } });
+  } else if (flowMode && scope.initialGroup && paths.some((p) => p.group === scope.initialGroup)) {
+    // Deep-link to the path the user clicked / handed off from desktop.
+    openGroup(scope.initialGroup);
   } else {
+    // Flow mode (modal w/o pickTopic, OR mobile topic-page tab) → the path picker.
     go('paths', 'fwd');
+  }
+  // Mobile topic tab: listen for a hand-off from the desktop modal (resize →
+  // mobile closes the modal and tells us which group was open) and jump to it.
+  if (tabMode) {
+    if (container._aiiSectionHandler) window.removeEventListener('aii-open-section', container._aiiSectionHandler);
+    container._aiiSectionHandler = (e) => { const g = e && e.detail && e.detail.group; if (g) openGroup(g); };
+    window.addEventListener('aii-open-section', container._aiiSectionHandler);
   }
   // Responsive: tabMode is fixed at render, so without this the first-render
   // layout (desktop paths-grid OR mobile secondary-tab nav) would stick across
@@ -973,7 +969,17 @@ export function renderAIIntelligence(container, scope) {
       container._aiiMq.removeEventListener('change', container._aiiMqHandler);
     }
     const mq = window.matchMedia('(max-width: 899.98px)');
-    const handler = () => renderAIIntelligence(container, scope);
+    const handler = (ev) => {
+      // Resized to DESKTOP while drilled into a path inline → hand the current
+      // path off to the modal so the same state appears there instantly.
+      if (ev && !ev.matches && curGroup && view !== 'paths' && view !== 'topic') {
+        window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: {
+          topic: scope.topic, label: scope.label, group: curGroup,
+          hideGroups: scope.hideGroups || [], descriptions: scope.descriptions || {},
+        } }));
+      }
+      renderAIIntelligence(container, scope);
+    };
     mq.addEventListener('change', handler);
     container._aiiMq = mq;
     container._aiiMqHandler = handler;

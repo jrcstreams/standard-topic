@@ -13648,6 +13648,14 @@ body.home-search #section-shortcuts .sidebar-card-header,
     padding-left: 0;
     padding-right: 0;
   }
+  /* The active AI Insights / Web Sources tab section must FILL the bounded topic
+     panel (it's flex:0 auto by default → collapses to ~content height, clipping
+     the internal stage scroller to a sliver). Grow it so the stage gets real
+     height and can scroll. */
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts,
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources {
+    flex: 1 1 0; min-height: 0;
+  }
   /* Mobile tabular navigation (topic pages, NOT the homepage): the active tab
      already labels the section, so the AI Intelligence / Web Sources CARD
      header band is redundant — hide it and drop the card chrome so the content
@@ -14191,40 +14199,40 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
    The desktop grid (≥900) turned the modal's paths into a cramped 3-up grid of
    wrapping cards, and the sections view nested a grey/boxed sub-header. In the
    modal we want ONE clean column of full-width rows. */
-.aii-modal-body .aii-pathlist {
+.aii-flow .aii-pathlist {
   display: flex !important; flex-direction: column; gap: 0; margin: 0; background: none; padding: 0;
 }
-.aii-modal-body .aii-pathlist > .aii-pathrow {
+.aii-flow .aii-pathlist > .aii-pathrow {
   flex-direction: row; align-items: center; gap: 14px; min-height: 0;
   padding: 15px 2px; background: none; border: none; border-bottom: 1px solid var(--color-surface-border);
   border-radius: 0; box-shadow: none; transform: none;
 }
-.aii-modal-body .aii-pathlist > .aii-pathrow:last-child { border-bottom: none; }
-.aii-modal-body .aii-pathlist > .aii-pathrow:hover {
+.aii-flow .aii-pathlist > .aii-pathrow:last-child { border-bottom: none; }
+.aii-flow .aii-pathlist > .aii-pathrow:hover {
   background: color-mix(in srgb, var(--color-primary) 4%, transparent);
   transform: none; box-shadow: none; border-color: var(--color-surface-border);
 }
-.aii-modal-body .aii-pathrow-icon { width: 36px; height: 36px; }
-.aii-modal-body .aii-pathrow-icon svg { width: 18px; height: 18px; }
-.aii-modal-body .aii-pathrow-go { margin-left: auto; position: static; }
+.aii-flow .aii-pathrow-icon { width: 36px; height: 36px; }
+.aii-flow .aii-pathrow-icon svg { width: 18px; height: 18px; }
+.aii-flow .aii-pathrow-go { margin-left: auto; position: static; }
 /* Sections view: plain header (drop the full-bleed grey box), tidy rows. */
-.aii-modal-body .aii-subhead { background: none; border: none; margin: 0; padding: 2px 2px 12px; }
-.aii-modal-body .aii-menu { margin: 0; }
-.aii-modal-body .aii-menu-row { padding: 15px 2px; }
+.aii-flow .aii-subhead { background: none; border: none; margin: 0; padding: 2px 2px 12px; }
+.aii-flow .aii-menu { margin: 0; }
+.aii-flow .aii-menu-row { padding: 15px 2px; }
 
 /* ===== AI Intelligence modal redesign (#130-134) ===== */
 /* Persistent topic title-switcher (heads every modal view; click to swap topic). */
 /* Sticky-family modal header (#173): a Back pill, the topic title left-aligned
    (click to re-pick the topic), "Updated …" to its right, and the current
    path/insight context row below. */
-.aii-modal-body .aii-topbar { position: relative; padding: 13px 20px 13px; border-bottom: 1px solid var(--color-surface-border); }
-.aii-modal-body .aii-topbar[hidden] { display: none; }
+.aii-flow .aii-topbar { position: relative; padding: 13px 20px 13px; border-bottom: 1px solid var(--color-surface-border); }
+.aii-flow .aii-topbar[hidden] { display: none; }
 .aii-back-pill { display: inline-flex; align-items: center; gap: 4px; margin: 0 0 10px; padding: 5px 13px 5px 9px; border: 1px solid var(--color-surface-border); border-radius: 999px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: var(--color-primary); transition: background .14s, border-color .14s; }
 .aii-back-pill:hover { background: color-mix(in srgb, var(--color-primary) 5%, #fff); border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); }
 .aii-back-pill svg { width: 14px; height: 14px; }
 /* Topbar back link = the discreet Trending-style head link (chevron + grey text),
    on its own line above the title. */
-.aii-modal-body .aii-topbar .aii-tb-back { margin: 0 0 12px; }
+.aii-flow .aii-topbar .aii-tb-back { margin: 0 0 12px; }
 .aii-tophead { margin: 0; }
 .aii-top-main { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 .aii-top-topic { display: inline-flex; align-items: center; gap: 7px; min-width: 0; max-width: 100%; padding: 2px 8px 2px 4px; margin-left: -4px; border: none; background: none; cursor: pointer; border-radius: 8px; font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; color: var(--color-text); transition: background .14s; }
@@ -14272,26 +14280,26 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 
 /* Neutral grey icon chips across the picker (matches the content sections) —
    no per-track colours. */
-.aii-modal-body .aii-pathrow-icon,
-.aii-modal-body .aii-menu-card-ic { background: #f1f3f7; color: var(--color-primary); }
+.aii-flow .aii-pathrow-icon,
+.aii-flow .aii-menu-card-ic { background: #f1f3f7; color: var(--color-primary); }
 
 /* Path picker = a clean VERTICAL stack of track cards: icon + title on one line,
    summary below, arrow on the right. */
-.aii-modal-body .aii-stage[data-view="paths"] .aii-pathlist { display: flex !important; flex-direction: column; grid-template-columns: none; max-width: none; margin: 4px 0 0; gap: 10px; padding: 0; }
-.aii-modal-body .aii-stage[data-view="paths"] .aii-pathlist > .aii-pathrow {
+.aii-flow .aii-stage[data-view="paths"] .aii-pathlist { display: flex !important; flex-direction: column; grid-template-columns: none; max-width: none; margin: 4px 0 0; gap: 10px; padding: 0; }
+.aii-flow .aii-stage[data-view="paths"] .aii-pathlist > .aii-pathrow {
   flex-direction: row; align-items: center; gap: 13px; position: relative; min-height: 0;
   border: 1px solid var(--color-surface-border); border-radius: 13px; padding: 14px 16px;
   background: #fff; box-shadow: 0 1px 2px rgba(15,23,42,.03);
   transition: border-color .14s, box-shadow .16s, transform .12s;
 }
-.aii-modal-body .aii-stage[data-view="paths"] .aii-pathlist > .aii-pathrow:hover {
+.aii-flow .aii-stage[data-view="paths"] .aii-pathlist > .aii-pathrow:hover {
   border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border));
   box-shadow: 0 8px 18px -14px rgba(31,49,99,.26); transform: translateY(-1px); background: #fff;
 }
-.aii-modal-body .aii-stage[data-view="paths"] .aii-pathrow-icon { width: 36px; height: 36px; }
-.aii-modal-body .aii-stage[data-view="paths"] .aii-pathrow-text { gap: 3px; }
-.aii-modal-body .aii-stage[data-view="paths"] .aii-pathrow-name { font-size: 1rem; }
-.aii-modal-body .aii-stage[data-view="paths"] .aii-pathrow-go { position: static; margin-left: auto; }
+.aii-flow .aii-stage[data-view="paths"] .aii-pathrow-icon { width: 36px; height: 36px; }
+.aii-flow .aii-stage[data-view="paths"] .aii-pathrow-text { gap: 3px; }
+.aii-flow .aii-stage[data-view="paths"] .aii-pathrow-name { font-size: 1rem; }
+.aii-flow .aii-stage[data-view="paths"] .aii-pathrow-go { position: static; margin-left: auto; }
 
 /* Sticky condensed bar: solid surface + soft shadow so it reads as a clean bar
    over the scrolling brief (#144/#145). */
@@ -14301,10 +14309,10 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 /* Section menu = a VERTICAL stack of insight cards (icon + title on one line,
    one-line summary below) — no 2-col grid. */
 .aii-menu-grid { display: flex !important; flex-direction: column; gap: 10px; margin: 4px 0 0 !important; }
-.aii-modal-body .aii-menu-card { padding: 14px 16px; border-radius: 13px; }
-.aii-modal-body .aii-menu-card-ic { width: 36px; height: 36px; }
-.aii-modal-body .aii-menu-card-ic svg { width: 18px; height: 18px; }
-.aii-modal-body .aii-menu-card .aii-menu-name { font-size: 1rem; }
+.aii-flow .aii-menu-card { padding: 14px 16px; border-radius: 13px; }
+.aii-flow .aii-menu-card-ic { width: 36px; height: 36px; }
+.aii-flow .aii-menu-card-ic svg { width: 18px; height: 18px; }
+.aii-flow .aii-menu-card .aii-menu-name { font-size: 1rem; }
 /* Compact list-style cards: icon chip INLINE with the title (not stacked above),
    title + one-line desc beside it, tighter padding so the grid isn't a wall of
    big blocks (#167 follow-up). */
@@ -14841,6 +14849,12 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
    (grey/tinted chip) so it matches News + Trending exactly. */
 .aii-content--modal { padding: 0; }
 .aii-modal-body .im-stickyhead { margin: 0 -1.1rem; padding: 0 1.1rem; }
+/* Mobile topic-page tab (flow mode inline): the stage (16px padding) is the
+   scroll container, so the sticky head full-bleeds to -16px and pins to its top;
+   the topbar (Back/topic) sits pinned above the scrolling stage, aligned to 16px. */
+.aii-tabmode .im-stickyhead { margin: 0 -16px; padding: 0 16px; }
+.aii-tabmode .aii-stage > .aii-content--modal { padding-top: 0; }
+.aii-tabmode .aii-topbar { padding-left: 16px; padding-right: 16px; padding-top: 12px; flex: none; }
 /* Insight names are long ("Latest News and Developments") — the trending-sized
    title is far too big here, so dial it down to a normal heading. Bump the topic
    chip slightly so the topic reads a touch more prominent. */
