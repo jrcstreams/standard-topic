@@ -12750,7 +12750,9 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .aii-modal-topic-wrap { position: relative; display: inline-flex; align-items: center; }
 .aii-modal-topic-select { appearance: none; -webkit-appearance: none; padding: 0.36rem 1.7rem 0.36rem 0.7rem; border: 1px solid var(--color-surface-border); border-radius: 8px; background: #fff; font-family: inherit; font-size: 0.82rem; font-weight: 600; color: var(--color-text); cursor: pointer; }
 .aii-modal-topic-wrap svg { position: absolute; right: 0.5rem; pointer-events: none; color: var(--color-text-muted); }
-.aii-modal-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0.2rem 1.1rem 0.6rem; }
+/* padding-top:0 so the content view's position:sticky head pins FLUSH to the top
+   — any top padding leaves a thin strip where scrolled content creeps in above it. */
+.aii-modal-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0 1.1rem 0.6rem; }
 /* The hosted component's own header duplicates the modal header — drop it, and
    let the flip-nav flow in the scrolling body (no fixed-height stage). */
 .aii-modal-body .aii-head { display: none; }
@@ -14792,7 +14794,9 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 .im-pill:hover { border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); color: var(--color-primary); }
 .im-pill.is-active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
 
-.im-secs { padding-top: 0; }
+/* Bottom buffer so the LAST section (Sources) can scroll up far enough to read
+   fully + register as the active scroll-spy section. */
+.im-secs { padding-top: 0; padding-bottom: 30vh; }
 .im-msec { padding: 16px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 60%, transparent); scroll-margin-top: 6px; }
 .im-msec:last-child { border-bottom: none; }
 .im-msec.is-empty { display: none; }
@@ -14814,11 +14818,10 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 /* First coverage row sits tight under the section header (no extra top gap). */
 .im-msec .im-coverage-list .im-cov-row:first-child { padding-top: 1px; }
 /* AI Insights MODAL content view reuses the Trending sticky head. Full-bleed it
-   to the modal-body padding (1.1rem), and give the identifier a prominent SOLID
-   topic chip (very prominent topic) + muted path + dateline. */
+   to the modal-body padding (1.1rem). The topic chip reuses .im-eyebrow-cat
+   (grey/tinted chip) so it matches News + Trending exactly. */
 .aii-content--modal { padding: 0; }
 .aii-modal-body .im-stickyhead { margin: 0 -1.1rem; padding: 0 1.1rem; }
-.im-eyebrow-topic { display: inline-flex; padding: 3px 11px; border-radius: 999px; background: var(--color-primary); color: #fff; font-size: 0.8rem; font-weight: 700; letter-spacing: -0.005em; }
 @media (max-width: 560px) { .aii-modal-body .im-stickyhead { margin-left: -1.1rem; margin-right: -1.1rem; padding-left: 1.1rem; padding-right: 1.1rem; } }
 .im-prevnext { display: flex; align-items: stretch; gap: 10px; margin: 2px 0 14px; }
 .im-pn {

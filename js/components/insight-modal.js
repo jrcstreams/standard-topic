@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp212';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp212';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp213';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp213';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -250,7 +250,7 @@ function storyNavHTML(nav, compact) {
 // The whole header is ONE sticky grey zone: discreet Back / Prev / Next text
 // links on top, then the item title (shrinks on scroll) + meta + action links,
 // then the AI Brief subnav (title · pills · a discreet AI-generated notice).
-function stickyHeadHTML({ title, metaLine, actions, nav }) {
+function stickyHeadHTML({ title, metaLine, actions, nav, accHTML }) {
   const hasList = nav && Array.isArray(nav.list) && nav.list.length > 1;
   // The ‹ arrow carries the "go back" sense, so the label is just the destination
   // ("All Trending"), not "Back to All Trending".
@@ -271,6 +271,7 @@ function stickyHeadHTML({ title, metaLine, actions, nav }) {
       ${metaLine ? `<div class="im-over-eyebrow">${metaLine}</div>` : ''}
       <h2 class="im-over-title" id="im-over-title">${esc(title)}</h2>
       ${actions ? `<div class="im-over-links">${actions}</div>` : ''}
+      ${accHTML || ''}
     </div>
     <div class="im-briefnav">
       <div class="im-briefnav-head">
@@ -285,6 +286,16 @@ function stickyHeadHTML({ title, metaLine, actions, nav }) {
 // One in-page section with an anchor + name (drives the subnav pills + scroll-spy).
 function msecHTML(id, name, innerHTML, empty) {
   return `<section class="im-msec${empty ? ' is-empty' : ''}" id="${id}" data-name="${escAttr(name)}">${innerHTML}</section>`;
+}
+// Smoothly scroll a horizontally-overflowing pill rail so the pill for `secId`
+// is centered (no-op when nothing overflows). Used by the scroll-spy so the
+// active section's pill is always visible even when it's cut off the edge.
+function centerPill(railEl, secId) {
+  const pill = railEl.querySelector(`.im-pill[data-pill="${secId}"]`);
+  if (!pill) return;
+  const c = railEl.getBoundingClientRect(), p = pill.getBoundingClientRect();
+  const target = railEl.scrollLeft + (p.left - c.left) - (c.width - p.width) / 2;
+  railEl.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
 }
 // (Re)build the AI Brief subnav pills from the non-empty sections, wire click-to-
 // scroll (offset by the sticky header), and start the scroll-spy that highlights
@@ -304,11 +315,19 @@ function buildBriefNav() {
     const target = body.scrollTop + (sec.getBoundingClientRect().top - body.getBoundingClientRect().top) - off;
     body.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
   }));
+  let lastActive = null;
   const update = () => {
     const limit = (head ? head.offsetHeight : 0) + body.getBoundingClientRect().top + 14;
     const ls = secs(); let active = ls[0];
     for (const s of ls) { if (s.getBoundingClientRect().top <= limit) active = s; }
-    if (active) pillsEl.querySelectorAll('.im-pill').forEach((p) => p.classList.toggle('is-active', p.dataset.pill === active.id));
+    if (!active) return;
+    // At the very bottom, the last section is active even if it's too short to
+    // reach the header threshold (otherwise Sources never highlights).
+    if (body.scrollTop + body.clientHeight >= body.scrollHeight - 4) active = ls[ls.length - 1];
+    pillsEl.querySelectorAll('.im-pill').forEach((p) => p.classList.toggle('is-active', p.dataset.pill === active.id));
+    // Keep the active pill in view: when the section under the header changes,
+    // smoothly scroll the (overflowing) pill rail so the active pill is centered.
+    if (active.id !== lastActive) { lastActive = active.id; centerPill(pillsEl, active.id); }
   };
   if (_imScrollHandler) body.removeEventListener('scroll', _imScrollHandler);
   let raf = 0;
@@ -701,10 +720,10 @@ function renderNews(d) {
   panelEl.innerHTML = `
     ${brandHeaderHTML(null, { brandLabel: 'News Insights', icon: NEWS_FEED_ICON, hideBack: true })}
     <div class="im-body">
-      ${stickyHeadHTML({ title, metaLine, actions, nav: d.nav })}
-      <div class="im-secs">
+      ${stickyHeadHTML({ title, metaLine, actions, nav: d.nav, accHTML: `
         <div class="im-acc" data-body="explore" id="im-explore-panel"></div>
-        <div class="im-acc" data-body="web" id="im-web-panel"></div>
+        <div class="im-acc" data-body="web" id="im-web-panel"></div>` })}
+      <div class="im-secs">
         <div id="im-secs-body">${msecHTML('msec-brief', 'Brief', briefSkeleton())}</div>
       </div>
     </div>`;
@@ -794,11 +813,11 @@ function renderTrend(d) {
   panelEl.innerHTML = `
     ${brandHeaderHTML(null, { brandLabel: 'Trending Insights', hideBack: true })}
     <div class="im-body">
-      ${stickyHeadHTML({ title, metaLine, actions, nav: d.nav })}
-      <div class="im-secs">
+      ${stickyHeadHTML({ title, metaLine, actions, nav: d.nav, accHTML: `
         ${relBody ? `<div class="im-acc" data-body="related" id="im-related-panel">${relBody}</div>` : ''}
         <div class="im-acc" data-body="explore" id="im-explore-panel"></div>
-        <div class="im-acc" data-body="web" id="im-web-panel"></div>
+        <div class="im-acc" data-body="web" id="im-web-panel"></div>` })}
+      <div class="im-secs">
         <div id="im-secs-body">${msecHTML('msec-brief', 'Summary', briefSkeleton())}</div>
       </div>
     </div>`;
@@ -887,10 +906,10 @@ function renderOverview(d) {
   panelEl.innerHTML = `
     ${brandHeaderHTML(null, { brandLabel: 'AI Insights' })}
     <div class="im-body">
-      ${stickyHeadHTML({ title: topicLabel, metaLine, actions, nav: d.nav })}
-      <div class="im-secs">
+      ${stickyHeadHTML({ title: topicLabel, metaLine, actions, nav: d.nav, accHTML: `
         <div class="im-acc" data-body="explore" id="im-explore-panel"></div>
-        <div class="im-acc" data-body="web" id="im-web-panel"></div>
+        <div class="im-acc" data-body="web" id="im-web-panel"></div>` })}
+      <div class="im-secs">
         <div id="im-secs-body">${msecHTML('msec-brief', lens, briefSkeleton(`Generating ${lens} overview…`))}</div>
       </div>
     </div>`;

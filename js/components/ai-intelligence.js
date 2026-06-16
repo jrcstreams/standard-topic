@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp212';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp212';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp213';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp213';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -392,7 +392,7 @@ export function renderAIIntelligence(container, scope) {
     // Identifier (matches Trending/News): the topic as a prominent solid chip +
     // the "Updated" dateline on the SAME line. The path isn't repeated here — the
     // "Back to <path>" head link already names it. The insight is the big title.
-    const eyebrow = `<span class="im-eyebrow-topic">${esc(topicTitle)}</span>${updated}`;
+    const eyebrow = `<span class="im-eyebrow-cat">${esc(topicTitle)}</span>${updated}`;
     const controls = `<div class="im-headnav">
         <button type="button" class="im-headnav-link im-headnav-back" data-aii-back="sections">${HNAV_L}${esc(backLabel)}</button>
         <span class="im-headnav-pn">
@@ -408,6 +408,8 @@ export function renderAIIntelligence(container, scope) {
           <div class="im-over-eyebrow">${eyebrow}</div>
           <h2 class="im-over-title">${esc(s.name)}</h2>
           <div class="im-over-links">${actions}</div>
+          <div class="im-acc" data-accbody="explore"></div>
+          <div class="im-acc" data-accbody="web"></div>
         </div>
         <div class="im-briefnav">
           <div class="im-briefnav-head"><span class="im-briefnav-title">AI Brief</span><span class="im-briefnav-hsep" aria-hidden="true"></span><span class="im-briefnav-notice"><span class="im-briefnav-spark">${LOGO}</span><span>= Text is AI-generated.</span></span></div>
@@ -415,8 +417,6 @@ export function renderAIIntelligence(container, scope) {
         </div>
       </div>
       <div class="im-secs">
-        <div class="im-acc" data-accbody="explore"></div>
-        <div class="im-acc" data-accbody="web"></div>
         <div data-aii-secs>${genLoaderHTML()}</div>
       </div>
     </div>`;
@@ -732,11 +732,25 @@ export function renderAIIntelligence(container, scope) {
       const target = scrollRoot.scrollTop + (sec.getBoundingClientRect().top - scrollRoot.getBoundingClientRect().top) - off;
       scrollRoot.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
     }));
+    let lastActive = null;
     const update = () => {
       const limit = (head ? head.offsetHeight : 0) + scrollRoot.getBoundingClientRect().top + 14;
       const ls = secs(); let active = ls[0];
       for (const s of ls) { if (s.getBoundingClientRect().top <= limit) active = s; }
-      if (active) pillsEl.querySelectorAll('.im-pill').forEach((p) => p.classList.toggle('is-active', p.dataset.pill === active.id));
+      if (!active) return;
+      // At the very bottom, the last section (Sources) is active even if it's too
+      // short to reach the header threshold.
+      if (scrollRoot.scrollTop + scrollRoot.clientHeight >= scrollRoot.scrollHeight - 4) active = ls[ls.length - 1];
+      pillsEl.querySelectorAll('.im-pill').forEach((p) => p.classList.toggle('is-active', p.dataset.pill === active.id));
+      // Auto-scroll the overflowing pill rail so the active pill stays in view.
+      if (active.id !== lastActive) {
+        lastActive = active.id;
+        const ap = pillsEl.querySelector(`.im-pill[data-pill="${active.id}"]`);
+        if (ap) {
+          const c = pillsEl.getBoundingClientRect(), p = ap.getBoundingClientRect();
+          pillsEl.scrollTo({ left: Math.max(0, pillsEl.scrollLeft + (p.left - c.left) - (c.width - p.width) / 2), behavior: 'smooth' });
+        }
+      }
     };
     if (aiiSpyHandler && aiiSpyRoot) aiiSpyRoot.removeEventListener('scroll', aiiSpyHandler);
     let raf = 0;
