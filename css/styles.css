@@ -14747,7 +14747,7 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
    with hairline separators between its rows. */
 .im-stickyhead { position: sticky; top: 0; z-index: 8; margin: 0 -20px; padding: 0 20px; background: #f3f5f8; border-bottom: 1px solid var(--color-surface-border); }
 /* Discreet Back / Prev / Next — plain dark-grey text links, not buttons. */
-.im-headnav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0 0; }
+.im-headnav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0 11px; border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); }
 .im-headnav-pn { display: inline-flex; align-items: center; gap: 18px; margin-left: auto; }
 .im-headnav-link { display: inline-flex; align-items: center; gap: 3px; padding: 0; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #6b7484; white-space: nowrap; transition: color .14s; }
 .im-headnav-link:hover:not(:disabled) { color: var(--color-primary); }
@@ -14758,21 +14758,26 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 .im-over-title { margin: 0 0 9px; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; color: var(--color-primary); line-height: 1.16; font-size: 1.7rem; transition: font-size .16s ease; }
 .im-stickyhead.is-compact .im-over-title { font-size: 1.34rem; }
 .im-over-meta { display: flex; align-items: center; flex-wrap: wrap; }
-.im-over-when { font-size: 0.84rem; font-weight: 500; color: #5b6679; }
+.im-over-when { font-size: 0.82rem; font-weight: 500; color: #6b7484; }
 .im-over-links { display: flex; align-items: center; flex-wrap: wrap; row-gap: 6px; margin-top: 9px; }
-/* Clean even separators via a left border on each link (no stray spans). */
-.im-over-links .im-qlink { font-size: 0.85rem; font-weight: 500; display: inline-flex; align-items: center; gap: 5px; padding: 0 13px; border-left: 1px solid var(--color-surface-border); }
-.im-over-links .im-qlink:first-child { padding-left: 0; border-left: none; }
+/* Short, centered separators between the links (a pseudo-element — not a
+   full-height border, which read as "weird tall lines"). */
+.im-over-links .im-qlink { position: relative; font-size: 0.84rem; font-weight: 500; display: inline-flex; align-items: center; gap: 5px; padding: 0 14px; }
+.im-over-links .im-qlink:first-child { padding-left: 0; }
+.im-over-links .im-qlink:not(:first-child)::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 1px; height: 12px; background: var(--color-surface-border); }
 .im-over-links .im-qlink svg { flex: none; }
 
-/* AI Brief subnav — title, then section pills, then a discreet AI-gen notice. */
+/* AI Brief subnav — head row ("AI Brief" · "✦ = Text is AI-generated.") then
+   the section pills below. */
 .im-briefnav { padding: 11px 0 12px; border-top: 1px solid var(--color-surface-border); }
-.im-briefnav-title { display: flex; align-items: center; gap: 6px; margin-bottom: 9px; font-family: var(--font-display); font-size: 1rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-primary); }
+.im-briefnav-head { display: flex; align-items: center; margin-bottom: 10px; }
+.im-briefnav-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-primary); }
+.im-briefnav-hsep { display: inline-block; width: 1px; height: 14px; background: var(--color-surface-border); margin: 0 12px; flex: none; }
+.im-briefnav-notice { display: inline-flex; align-items: center; gap: 5px; font-size: 0.76rem; font-weight: 500; color: var(--color-text-muted); }
 .im-briefnav-spark { display: inline-flex; color: var(--color-link, #2563eb); }
-.im-briefnav-spark svg { width: 16px; height: 16px; }
-.im-briefnav-pills { display: flex; align-items: center; gap: 7px; margin-bottom: 9px; overflow-x: auto; scrollbar-width: none; }
+.im-briefnav-spark svg { width: 14px; height: 14px; }
+.im-briefnav-pills { display: flex; align-items: center; gap: 7px; overflow-x: auto; scrollbar-width: none; }
 .im-briefnav-pills::-webkit-scrollbar { display: none; }
-.im-briefnav-notice { margin: 0; font-size: 0.76rem; font-weight: 500; color: var(--color-text-muted); }
 .im-pill { flex: none; padding: 5px 13px; border: 1px solid transparent; border-radius: 999px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; color: var(--color-text-muted); white-space: nowrap; transition: background .14s, color .14s, border-color .14s; }
 .im-pill:hover { border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); color: var(--color-primary); }
 .im-pill.is-active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
@@ -14781,6 +14786,9 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 .im-msec { padding: 16px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 60%, transparent); scroll-margin-top: 6px; }
 .im-msec:last-child { border-bottom: none; }
 .im-msec.is-empty { display: none; }
+/* Related Searches dropdown: hide the redundant inner label (the link names it). */
+.im-acc[data-body="related"] .im-related-label { display: none; }
+.im-acc[data-body="related"] .im-related { margin: 0; }
 /* Grey header zone sits flush under the modal head (no white gap) + full-bleed. */
 .im-body:has(.im-stickyhead) { padding-top: 0; }
 @media (max-width: 560px) { .im-stickyhead { margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px; } }

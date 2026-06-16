@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp205';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp205';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp206';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp206';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -282,9 +282,12 @@ function stickyHeadHTML({ title, metaLine, actions, nav }) {
       ${actions ? `<div class="im-over-links">${actions}</div>` : ''}
     </div>
     <div class="im-briefnav">
-      <div class="im-briefnav-title"><span class="im-briefnav-spark">${SPARK_FILL}</span>AI Brief</div>
+      <div class="im-briefnav-head">
+        <span class="im-briefnav-title">AI Brief</span>
+        <span class="im-briefnav-hsep" aria-hidden="true"></span>
+        <span class="im-briefnav-notice"><span class="im-briefnav-spark">${SPARK_FILL}</span><span>= Text is AI-generated.</span></span>
+      </div>
       <div class="im-briefnav-pills" id="im-briefnav-pills"></div>
-      <div class="im-briefnav-notice">= Text in this section is AI-generated.</div>
     </div>
   </div>`;
 }
