@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp204';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp204';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp205';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp205';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -38,6 +38,9 @@ async function holdLoader(t0) { const left = MIN_LOADER_MS - (Date.now() - t0); 
 function setupModalFades() {
   const body = panelEl && panelEl.querySelector('.im-body');
   if (!body) return;
+  // New unified layout owns its own sticky header + scroll behavior — the old
+  // top/bottom fade overlays + condensed-reveal toggles conflict (scroll glitch).
+  if (panelEl.querySelector('.im-stickyhead')) return;
   if (panelEl._imFadeMO) { try { panelEl._imFadeMO.disconnect(); } catch (_) {} }
   const top = document.createElement('div'); top.className = 'im-fade im-fade-top';
   const bot = document.createElement('div'); bot.className = 'im-fade im-fade-bottom';
@@ -255,37 +258,33 @@ function storyNavHTML(nav, compact) {
   </div>`;
 }
 // ===== New unified insight layout (Trending / News / AI Insights) ==========
-// Thin nav strip at the very top of the modal body (scrolls away). Holds the
-// "Back to …" pill (when applicable) + Previous/Next item buttons, grouped to the
-// right; Back is slightly differentiated (a faint fill) and comes first.
-function pnStripHTML(nav) {
-  if (!nav) return '';
-  const hasList = Array.isArray(nav.list) && nav.list.length > 1;
-  const backLabel = nav.backLabel ? `Back to ${nav.backLabel}` : '';
-  if (!backLabel && !hasList) return '';
+// The whole header is ONE sticky grey zone: discreet Back / Prev / Next text
+// links on top, then the item title (shrinks on scroll) + meta + action links,
+// then the AI Brief subnav (title · pills · a discreet AI-generated notice).
+function stickyHeadHTML({ title, metaLine, actions, nav }) {
+  const hasList = nav && Array.isArray(nav.list) && nav.list.length > 1;
+  const backLabel = nav && nav.backLabel ? `Back to ${nav.backLabel}` : '';
   const hasPrev = hasList && nav.index > 0, hasNext = hasList && nav.index < nav.list.length - 1;
-  const k = nav.itemKind || 'item';
+  const k = (nav && nav.itemKind) || 'item';
   const kind = k.charAt(0).toUpperCase() + k.slice(1);
-  const back = backLabel ? `<button type="button" class="im-pnstrip-btn im-pnstrip-back" id="im-back"><span class="im-pnstrip-arrow" aria-hidden="true">‹</span>${esc(backLabel)}</button>` : '';
-  const nav2 = hasList ? `<div class="im-pnstrip-nav">
-      <button type="button" class="im-pnstrip-btn" data-navdir="prev"${hasPrev ? '' : ' disabled'}><span class="im-pnstrip-arrow" aria-hidden="true">‹</span>Previous ${esc(kind)}</button>
-      <button type="button" class="im-pnstrip-btn im-pnstrip-btn--next" data-navdir="next"${hasNext ? '' : ' disabled'}>Next ${esc(kind)}<span class="im-pnstrip-arrow" aria-hidden="true">›</span></button>
+  const controls = (backLabel || hasList) ? `<div class="im-headnav">
+      ${backLabel ? `<button type="button" class="im-headnav-link im-headnav-back" id="im-back"><span class="im-headnav-arrow" aria-hidden="true">‹</span>${esc(backLabel)}</button>` : '<span aria-hidden="true"></span>'}
+      ${hasList ? `<span class="im-headnav-pn">
+        <button type="button" class="im-headnav-link" data-navdir="prev"${hasPrev ? '' : ' disabled'}><span class="im-headnav-arrow" aria-hidden="true">‹</span>Previous ${esc(kind)}</button>
+        <button type="button" class="im-headnav-link" data-navdir="next"${hasNext ? '' : ' disabled'}>Next ${esc(kind)}<span class="im-headnav-arrow" aria-hidden="true">›</span></button>
+      </span>` : ''}
     </div>` : '';
-  return `<div class="im-pnstrip">${back}${nav2}</div>`;
-}
-// The permanent sticky header: the item title (shrinks on scroll) + a meta line
-// with the action links, then the AI Brief subnav — a full-width grey block with
-// an "AI-generated" notice over a row of section pills (scroll-spy nav).
-function stickyHeadHTML({ title, metaLine, actions }) {
   return `<div class="im-stickyhead" id="im-stickyhead">
+    ${controls}
     <div class="im-overhead">
       <h2 class="im-over-title" id="im-over-title">${esc(title)}</h2>
       ${metaLine ? `<div class="im-over-meta">${metaLine}</div>` : ''}
       ${actions ? `<div class="im-over-links">${actions}</div>` : ''}
     </div>
     <div class="im-briefnav">
+      <div class="im-briefnav-title"><span class="im-briefnav-spark">${SPARK_FILL}</span>AI Brief</div>
       <div class="im-briefnav-pills" id="im-briefnav-pills"></div>
-      <div class="im-briefnav-notice"><span class="im-briefnav-spark">${SPARK_FILL}</span><span>= Text in this section is AI-generated.</span></div>
+      <div class="im-briefnav-notice">= Text in this section is AI-generated.</div>
     </div>
   </div>`;
 }
@@ -793,19 +792,17 @@ function renderTrend(d) {
   const title = String(d.query || '').replace(/\b\w/g, c => c.toUpperCase());
   const gtUrl = `https://trends.google.com/trends/explore?q=${encodeURIComponent(d.query || '')}&geo=US`;
   const metaLine = `<span class="im-over-when">${[esc(cat), since ? `Trending since ${esc(since)}` : ''].filter(Boolean).join(' · ')}</span>`;
-  const sep = '<span class="im-over-sep" aria-hidden="true"></span>';
   const relBody = (Array.isArray(d.trendBreakdown) && d.trendBreakdown.length) ? relatedSearchesHTML(d.trendBreakdown) : '';
   const actions = [
     relBody ? `<button type="button" class="im-qlink im-qlink-btn" data-panel="related" aria-expanded="false">${ICON_WEB}<span>Related Searches</span></button>` : '',
     `<button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span></button>`,
     `<button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span></button>`,
     `<a class="im-qlink" href="${escAttr(gtUrl)}" target="_blank" rel="noopener noreferrer"><span>Google Trends</span>${ARROW}</a>`,
-  ].filter(Boolean).join(sep);
+  ].filter(Boolean).join('');
   panelEl.innerHTML = `
     ${brandHeaderHTML(null, { brandLabel: 'Trending Insights', hideBack: true })}
     <div class="im-body">
-      ${pnStripHTML(d.nav)}
-      ${stickyHeadHTML({ title, metaLine, actions })}
+      ${stickyHeadHTML({ title, metaLine, actions, nav: d.nav })}
       <div class="im-secs">
         ${relBody ? `<div class="im-acc" data-body="related" id="im-related-panel">${relBody}</div>` : ''}
         <div class="im-acc" data-body="explore" id="im-explore-panel"></div>
