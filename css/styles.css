@@ -13479,8 +13479,6 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   body.home-search #section-newsfeed .newsfeed-card .newsfeed-filters {
     margin: 11px 0 0; background: transparent; border: none; border-radius: 0; padding: 0;
   }
-  /* No horizontal padding on the scroll area — the per-row hover fill spans the
-     full card width (story text stays flush with the section title). */
   body.home-search #section-newsfeed .newsfeed-card .newsfeed-scroll-wrap { padding: 0 0 6px; }
   body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 0 12px; }
 }
@@ -13666,9 +13664,18 @@ body.home-search #section-shortcuts .sidebar-card-header,
      height and can scroll. Also full-bleed to the viewport edges (like the tab
      bar) so the content isn't inset inside the layout's 16px gutter. */
   body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts,
-  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources,
-  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed {
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources {
     flex: 1 1 0; min-height: 0; margin-left: -16px; margin-right: -16px;
+  }
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed {
+    flex: 1 1 0; min-height: 0;
+  }
+  /* Tab-mode news rows get the same comfortable text inset as desktop (the 18px
+     rule is min-width:900 only) — otherwise text sits at the bare gutter and the
+     lines read too wide. */
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed .news-card-link,
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed .news-card-foot {
+    padding-left: 16px; padding-right: 16px;
   }
   /* Mobile tabular navigation (topic pages, NOT the homepage): the active tab
      already labels the section, so the AI Intelligence / Web Sources CARD
