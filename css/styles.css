@@ -14749,10 +14749,10 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 /* Discreet Back / Prev / Next — plain dark-grey text links, not buttons. */
 .im-headnav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0 11px; border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); }
 .im-headnav-pn { display: inline-flex; align-items: center; gap: 18px; margin-left: auto; }
-.im-headnav-link { display: inline-flex; align-items: center; gap: 3px; padding: 0; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #6b7484; white-space: nowrap; transition: color .14s; }
+.im-headnav-link { display: inline-flex; align-items: center; gap: 4px; padding: 0; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #6b7484; white-space: nowrap; transition: color .14s; }
 .im-headnav-link:hover:not(:disabled) { color: var(--color-primary); }
 .im-headnav-link:disabled { opacity: 0.38; cursor: default; }
-.im-headnav-arrow { font-size: 1rem; line-height: 1; }
+.im-headnav-arrow { flex: none; width: 13px; height: 13px; display: block; }
 
 .im-overhead { padding: 12px 0; }
 /* Category + trending-since sit ABOVE the title as an eyebrow (a soft category
@@ -14760,8 +14760,14 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 .im-over-eyebrow { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; margin-bottom: 9px; }
 .im-eyebrow-cat { display: inline-flex; padding: 2px 9px; border-radius: 999px; background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: var(--color-primary); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
 .im-eyebrow-time { font-size: 0.8rem; font-weight: 500; color: #6b7484; }
-.im-over-title { margin: 0 0 10px; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; color: var(--color-primary); line-height: 1.16; font-size: 1.7rem; transition: font-size .16s ease; }
-.im-stickyhead.is-compact .im-over-title { font-size: 1.34rem; }
+/* Discreet Google Trends link on the dateline — reads like the muted time text,
+   with a small ↗ that brightens on hover. */
+.im-eyebrow-time--link { display: inline-flex; align-items: center; gap: 3px; text-decoration: none; transition: color .14s; }
+.im-eyebrow-time--link svg { width: 11px; height: 11px; opacity: 0.6; transition: opacity .14s; }
+.im-eyebrow-time--link:hover { color: var(--color-primary); }
+.im-eyebrow-time--link:hover svg { opacity: 1; }
+/* Responsive title — scales with the viewport, NO scroll-driven transform. */
+.im-over-title { margin: 0 0 10px; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; color: var(--color-primary); line-height: 1.16; font-size: clamp(1.4rem, 1.15rem + 1.1vw, 1.85rem); }
 .im-over-links { display: flex; align-items: center; flex-wrap: wrap; row-gap: 6px; margin-top: 9px; }
 /* Smaller, bolder links; short centered separators between them. */
 .im-over-links .im-qlink { position: relative; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; padding: 0 15px; }

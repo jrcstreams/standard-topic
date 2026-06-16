@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp209';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp209';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp210';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp210';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -83,6 +83,9 @@ const LOGO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><p
 const NEWS_FEED_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><line x1="7" y1="8" x2="14" y2="8"/><line x1="7" y1="12" x2="14" y2="12"/><line x1="7" y1="16" x2="11" y2="16"/></svg>';
 // Right chevron — "drill into this sub-level" affordance (Web Sources → category).
 const CHEVR = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
+// Small left/right chevrons for the discreet Back / Prev / Next head links.
+const HNAV_L = '<svg class="im-headnav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
+const HNAV_R = '<svg class="im-headnav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 // Section-icon badge for "Sources & Coverage" — matches the brief section glyphs
 // (link icon = related links/sources).
 const SOURCES_BADGE = '<span class="ai-result-sub-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>';
@@ -249,15 +252,17 @@ function storyNavHTML(nav, compact) {
 // then the AI Brief subnav (title · pills · a discreet AI-generated notice).
 function stickyHeadHTML({ title, metaLine, actions, nav }) {
   const hasList = nav && Array.isArray(nav.list) && nav.list.length > 1;
-  const backLabel = nav && nav.backLabel ? `Back to ${nav.backLabel}` : '';
+  // The ‹ arrow carries the "go back" sense, so the label is just the destination
+  // ("All Trending"), not "Back to All Trending".
+  const backLabel = nav && nav.backLabel ? nav.backLabel : '';
   const hasPrev = hasList && nav.index > 0, hasNext = hasList && nav.index < nav.list.length - 1;
   const k = (nav && nav.itemKind) || 'item';
   const kind = k.charAt(0).toUpperCase() + k.slice(1);
   const controls = (backLabel || hasList) ? `<div class="im-headnav">
-      ${backLabel ? `<button type="button" class="im-headnav-link im-headnav-back" id="im-back"><span class="im-headnav-arrow" aria-hidden="true">‹</span>${esc(backLabel)}</button>` : '<span aria-hidden="true"></span>'}
+      ${backLabel ? `<button type="button" class="im-headnav-link im-headnav-back" id="im-back">${HNAV_L}${esc(backLabel)}</button>` : '<span aria-hidden="true"></span>'}
       ${hasList ? `<span class="im-headnav-pn">
-        <button type="button" class="im-headnav-link" data-navdir="prev"${hasPrev ? '' : ' disabled'}><span class="im-headnav-arrow" aria-hidden="true">‹</span>Previous ${esc(kind)}</button>
-        <button type="button" class="im-headnav-link" data-navdir="next"${hasNext ? '' : ' disabled'}>Next ${esc(kind)}<span class="im-headnav-arrow" aria-hidden="true">›</span></button>
+        <button type="button" class="im-headnav-link" data-navdir="prev"${hasPrev ? '' : ' disabled'}>${HNAV_L}Previous ${esc(kind)}</button>
+        <button type="button" class="im-headnav-link" data-navdir="next"${hasNext ? '' : ' disabled'}>Next ${esc(kind)}${HNAV_R}</button>
       </span>` : ''}
     </div>` : '';
   return `<div class="im-stickyhead" id="im-stickyhead">
@@ -300,7 +305,6 @@ function buildBriefNav() {
     body.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
   }));
   const update = () => {
-    if (head) head.classList.toggle('is-compact', body.scrollTop > 22);
     const limit = (head ? head.offsetHeight : 0) + body.getBoundingClientRect().top + 14;
     const ls = secs(); let active = ls[0];
     for (const s of ls) { if (s.getBoundingClientRect().top <= limit) active = s; }
@@ -775,13 +779,17 @@ function renderTrend(d) {
   const since = relTime(d.startedAt);
   const title = String(d.query || '').replace(/\b\w/g, c => c.toUpperCase());
   const gtUrl = `https://trends.google.com/trends/explore?q=${encodeURIComponent(d.query || '')}&geo=US`;
-  const metaLine = `${cat ? `<span class="im-eyebrow-cat">${esc(cat)}</span>` : ''}${since ? `<span class="im-eyebrow-time">Trending since ${esc(since)}</span>` : ''}`;
+  // Google Trends is no longer a loud action link — it's the dateline itself:
+  // "Trending since X" links out to the Google Trends explore page (discreet ↗).
+  const timeHTML = since
+    ? `<a class="im-eyebrow-time im-eyebrow-time--link" href="${escAttr(gtUrl)}" target="_blank" rel="noopener noreferrer" title="View on Google Trends">Trending since ${esc(since)}${ARROW}</a>`
+    : '';
+  const metaLine = `${cat ? `<span class="im-eyebrow-cat">${esc(cat)}</span>` : ''}${timeHTML}`;
   const relBody = (Array.isArray(d.trendBreakdown) && d.trendBreakdown.length) ? relatedSearchesHTML(d.trendBreakdown) : '';
   const actions = [
     relBody ? `<button type="button" class="im-qlink im-qlink-btn" data-panel="related" aria-expanded="false">${ICON_WEB}<span>Related Searches</span></button>` : '',
     `<button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span></button>`,
     `<button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span></button>`,
-    `<a class="im-qlink" href="${escAttr(gtUrl)}" target="_blank" rel="noopener noreferrer"><span>Google Trends</span>${ARROW}</a>`,
   ].filter(Boolean).join('');
   panelEl.innerHTML = `
     ${brandHeaderHTML(null, { brandLabel: 'Trending Insights', hideBack: true })}
