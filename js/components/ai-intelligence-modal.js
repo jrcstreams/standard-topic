@@ -9,7 +9,7 @@
 //               AI Intelligence" handles switching PATHS.
 //
 // Participates in the global single-modal coordinator (`close-all-modals`).
-import { renderAIIntelligence } from './ai-intelligence.js?v=20260616-revamp225';
+import { renderAIIntelligence } from './ai-intelligence.js?v=20260616-revamp227';
 import { getFeaturedTopics, getAllTopics, getTopicBySlug, getShortcutsForTopic } from '../utils/data.js';
 
 let overlayEl = null;
@@ -100,7 +100,12 @@ function scopeFor(topic, label, group, opts) {
     try { (getShortcutsForTopic('home') || []).forEach((s) => { if (s && s.name) { desc[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } }); } catch (_) {}
     return { ...shared, topic: 'home', label: "today's world", descriptions: desc, icons, hideGroups: ['topic-specific'], topicKey: 'home' };
   }
-  const t = getTopicBySlug(topic) || (getFeaturedTopics() || []).find((x) => x.name === (label || topic)) || null;
+  // Resolve by slug, then by name across ALL topics (not just featured) so
+  // subtopics (e.g. "Blockchain & Web3") resolve and get their shortcut
+  // descriptions — otherwise the section cards render with no summary.
+  const t = getTopicBySlug(topic)
+    || (getAllTopics() || []).find((x) => x.name === (label || topic) || x.slug === topic)
+    || null;
   const name = t ? t.name : label || topic;
   const slug = t ? t.slug : null;
   const desc = {}; const icons = {};

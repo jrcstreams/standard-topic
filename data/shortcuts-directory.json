@@ -4103,7 +4103,8 @@
       "name": "Local News Crisis Updates",
       "icon": "local-news-crisis",
       "prompt": "What's the current state of local news in the US? Cover the closure trends, news deserts, the remaining models that work, and major efforts to address the crisis.",
-      "group": "topic-specific"
+      "group": "topic-specific",
+      "description": "Local emergencies and crisis updates worth knowing"
     },
     {
       "id": "media-earnings-roundup",

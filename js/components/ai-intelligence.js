@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp225';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp225';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp227';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp227';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -146,6 +146,12 @@ export function renderAIIntelligence(container, scope) {
   // homepage, which has no topic-specific content).
   const hide = scope.hideGroups || [];
   const paths = PATHS.filter((p) => !hide.includes(p.group));
+  // Normalized description lookup: brief section headers can differ from the
+  // shortcut names by case/whitespace, so an exact map miss left cards blank.
+  const normName = (s) => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
+  const descByNorm = {};
+  Object.keys(scope.descriptions || {}).forEach((k) => { descByNorm[normName(k)] = scope.descriptions[k]; });
+  const lookupDesc = (name) => (scope.descriptions && scope.descriptions[name]) || descByNorm[normName(name)] || '';
   const cache = {};               // group -> { sections, generatedAt, sources, loading, error }
   let view = 'paths';             // 'paths' | 'sections' | 'content'
   let curGroup = null;
@@ -368,7 +374,7 @@ export function renderAIIntelligence(container, scope) {
     if (!c || c.loading) body = `<div class="aii-loading">Loading ${esc(p.label || '')}…</div>`;
     else if (c.error || !c.sections.length) body = `<p class="aii-empty">This overview is being generated — check back shortly.</p>`;
     else body = `<div class="aii-menu aii-menu-grid">${c.sections.map((s, i) => {
-      const desc = (scope.descriptions && scope.descriptions[s.name]) || '';
+      const desc = lookupDesc(s.name);
       return `<button type="button" class="aii-menu-card" data-idx="${i}"><span class="aii-menu-card-ic aii-icon-${escAttr(curGroup)}">${sectionIcon(s.name)}</span><span class="aii-menu-card-tx"><span class="aii-menu-name">${esc(s.name)}</span>${desc ? `<span class="aii-menu-desc">${esc(desc)}</span>` : ''}</span></button>`;
     }).join('')}</div>`;
     const updated = c && c.generatedAt ? `<span class="aii-updated">Updated ${esc(relTime(c.generatedAt))}</span>` : '';
@@ -490,7 +496,7 @@ export function renderAIIntelligence(container, scope) {
     if (flowMode) return contentHTMLModal();
     const c = cache[curGroup]; const p = paths.find((x) => x.group === curGroup) || {};
     const s = (c && c.sections[curIdx]) || { name: '', body: '' };
-    const desc = (scope.descriptions && scope.descriptions[s.name]) || '';
+    const desc = lookupDesc(s.name);
     // Tab mode: a condensed "path · section" bar that sticks to the top of the
     // scrolling brief (.aii-stage is the scroll container — the window doesn't
     // scroll here) once the overview card scrolls out of view. Collapsed to zero
