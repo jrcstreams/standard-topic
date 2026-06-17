@@ -9,7 +9,7 @@
 //               AI Intelligence" handles switching PATHS.
 //
 // Participates in the global single-modal coordinator (`close-all-modals`).
-import { renderAIIntelligence } from './ai-intelligence.js?v=20260616-revamp228';
+import { renderAIIntelligence } from './ai-intelligence.js?v=20260616-revamp229';
 import { getFeaturedTopics, getAllTopics, getTopicBySlug, getShortcutsForTopic } from '../utils/data.js';
 
 let overlayEl = null;
@@ -94,6 +94,7 @@ function scopeFor(topic, label, group, opts) {
   const shared = {
     inModal: true, initialGroup: group, topics: topicList(), allTopics: allTopicsList(),
     onChangeTopic: changeTopic, topicPicker: pickerMode, pickTopic: !!(opts && opts.pickTopic),
+    onView: setChrome,
   };
   if (topic === 'home') {
     const desc = {}; const icons = {};
@@ -111,6 +112,15 @@ function scopeFor(topic, label, group, opts) {
   const desc = {}; const icons = {};
   try { if (slug) (getShortcutsForTopic(slug) || []).forEach((s) => { if (s && s.name) { desc[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } }); } catch (_) {}
   return { ...shared, topic: name, label: name, descriptions: desc, icons, topicKey: slug || (topic || '') };
+}
+
+// Header chrome follows the flip-nav step: the INTRO (topic picker, view ==='topic')
+// shows a centered title + subtitle card — like the Search / Trending modals — and
+// once the user drills into a path/insight the identity collapses to the compact
+// logo + "AI Insights" in the top-left corner. Called by the component via onView.
+function setChrome(view) {
+  if (!panelEl) return;
+  panelEl.classList.toggle('is-intro', view === 'topic');
 }
 
 function renderBody(scope) {
@@ -133,14 +143,25 @@ function open(detail) {
   pickerMode = !detail.topic || !!detail.pickTopic;
   const baseTopic = detail.topic || 'home';
   current = { topic: baseTopic, label: detail.label };
+  // The head carries BOTH chromes (CSS shows one at a time via `.is-intro`):
+  //  • compact  — logo + "AI Insights" top-left (drilled into a path/insight)
+  //  • intro    — centered logo badge + title + subtitle (Step 1 topic picker),
+  //               matching the Search / Trending modal title cards.
   panelEl.innerHTML = `
     <div class="aii-modal-head">
-      <div class="aii-modal-head-id"><span class="aii-modal-logo">${LOGO}</span><h2 class="aii-modal-title">AI Insights</h2></div>
       <button type="button" class="aii-modal-close" aria-label="Close">${X}</button>
+      <div class="aii-modal-head-id"><span class="aii-modal-logo">${LOGO}</span><h2 class="aii-modal-title">AI Insights</h2></div>
+      <div class="aii-modal-introhead">
+        <span class="aii-modal-intrologo">${LOGO}</span>
+        <h2 class="aii-modal-introtitle">AI Insights</h2>
+        <p class="aii-modal-introsub">Search any topic or term, or browse 100+ by category.</p>
+      </div>
     </div>
     <div class="aii-modal-body"></div>`;
 
   panelEl.querySelector('.aii-modal-close').addEventListener('click', close);
+  // Pre-set the chrome so there's no flash before the component's first onView.
+  setChrome(pickerMode && !detail.topic ? 'topic' : 'paths');
 
   renderBody(scopeFor(baseTopic, detail.label, detail.group, { pickTopic: pickerMode && !detail.topic }));
 

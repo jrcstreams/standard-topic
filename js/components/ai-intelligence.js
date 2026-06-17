@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp228';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp228';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp229';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp229';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -270,13 +270,23 @@ export function renderAIIntelligence(container, scope) {
     const list = stage.querySelector('[data-tp-list]');
     if (!list) return;
     const browseLabel = stage.querySelector('[data-tp-browselabel]');
+    // Edge fades: hint there are more topics above/below the scroll window. Top
+    // fade only once scrolled (so the first row reads crisp at rest), bottom fade
+    // whenever the list overflows below the fold.
+    const updateFade = () => {
+      list.classList.toggle('aii-tp-list--fadetop', list.scrollTop > 4);
+      list.classList.toggle('aii-tp-list--fadebot', list.scrollTop + list.clientHeight < list.scrollHeight - 4);
+    };
     const wireKeys = () => list.querySelectorAll('[data-tp-key]').forEach((b) => b.addEventListener('click', () => { if (scope.onChangeTopic) scope.onChangeTopic(b.dataset.tpKey); }));
     if (search) search.addEventListener('input', () => {
       const q = search.value.trim();
       if (browseLabel) browseLabel.textContent = q ? 'Results' : 'Or browse by topic';
       list.innerHTML = topicListHTML(search.value); wireKeys();
+      requestAnimationFrame(updateFade);
     });
+    list.addEventListener('scroll', updateFade, { passive: true });
     wireKeys();
+    requestAnimationFrame(updateFade);
   }
 
   container.innerHTML = `
@@ -298,6 +308,8 @@ export function renderAIIntelligence(container, scope) {
   function go(v, dir) {
     view = v; stage.dataset.view = v;
     container.dataset.aiiGroup = curGroup || '';   // expose for the modal→tab hand-off (#13)
+    container.dataset.aiiView = v;                  // expose the step so the modal can swap its header chrome
+    if (scope.onView) try { scope.onView(v); } catch (_) {}
     stage.innerHTML = viewHTML();
     stage.classList.remove('aii-anim-fwd', 'aii-anim-back');
     void stage.offsetWidth;
@@ -343,7 +355,10 @@ export function renderAIIntelligence(container, scope) {
         <span class="aii-track-desc">${esc(p.subtitle)}</span>
       </button>`).join('');
     return `<div class="aii-promo aii-promo--tracks">
-      <h3 class="aii-tracks-head">Choose an Intelligence Track</h3>
+      <div class="aii-tracks-head-wrap">
+        <h3 class="aii-tracks-head">Choose an intelligence track</h3>
+        <p class="aii-tracks-sub">Grounded, cited analysis on this topic, refreshed live. <button type="button" class="aii-tracks-searchlink" data-aii-search>Or search any topic or term</button>.</p>
+      </div>
       <div class="aii-promo-grid">${tracks}</div>
     </div>`;
   }
@@ -958,6 +973,8 @@ export function renderAIIntelligence(container, scope) {
         topic: scope.topic, label: scope.label, group: b.dataset.group,
         hideGroups: scope.hideGroups || [], descriptions: scope.descriptions || {},
       } }))));
+      // "Or search any topic or term" → opens the modal at Step 1 (the picker + search).
+      stage.querySelector('[data-aii-search]')?.addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: { pickTopic: true } })));
     }
   } else if (flowMode && scope.pickTopic) {
     // Modal entered "anew" (bottom nav / homepage CTA) → Step 1: pick a topic.

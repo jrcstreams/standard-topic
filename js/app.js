@@ -6,26 +6,26 @@ import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './ut
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260616-revamp228';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260616-revamp229';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260616-revamp228';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260616-revamp228';
-import { initPromptModal } from './components/prompt-modal.js?v=20260616-revamp228';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260616-revamp228';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260616-revamp229';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260616-revamp229';
+import { initPromptModal } from './components/prompt-modal.js?v=20260616-revamp229';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260616-revamp229';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp228';
-import { initInsightModal } from './components/insight-modal.js?v=20260616-revamp228';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260616-revamp228';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260616-revamp228';
-import { renderWebSources } from './components/websources.js?v=20260616-revamp228';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp228';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp229';
+import { initInsightModal } from './components/insight-modal.js?v=20260616-revamp229';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260616-revamp229';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260616-revamp229';
+import { renderWebSources } from './components/websources.js?v=20260616-revamp229';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp229';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260616-revamp228';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260616-revamp229';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260616-revamp228';
-import { initSettingsModal } from './components/settings-modal.js?v=20260616-revamp228';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260616-revamp229';
+import { initSettingsModal } from './components/settings-modal.js?v=20260616-revamp229';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1378,6 +1378,20 @@ function renderStickyHeroBar(container, route) {
 // Mobile bottom tab bar (Home / Search / Trending / Topics). Rendered once
 // and appended to <body> so it's never clipped by header/content overflow;
 // active state is refreshed on every route render. Hidden ≥900px via CSS.
+//
+// Active state has two sources: the current route (home/search) AND any open
+// modal (Insights / Trending / Topics) — a modal opened from the bar should
+// light its tab while it's up. `botnavModalTab` wins over the route tab; it's
+// set by the open-* events and cleared when the last modal closes (every modal
+// toggles document.body.style.overflow, so its return to '' is the signal).
+let botnavModalTab = null;
+let botnavRouteTab = '';
+function applyBotnavActive() {
+  const nav = document.getElementById('bottom-nav');
+  if (!nav) return;
+  const active = botnavModalTab || botnavRouteTab;
+  nav.querySelectorAll('.botnav-tab').forEach(t => t.classList.toggle('is-active', t.dataset.tab === active));
+}
 function renderBottomNav(route) {
   let nav = document.getElementById('bottom-nav');
   if (!nav) {
@@ -1398,7 +1412,7 @@ function renderBottomNav(route) {
         <span class="botnav-label">Insights</span>
       </button>
       <button type="button" class="botnav-tab" data-tab="trending" id="botnav-trending" aria-label="Trending">
-        <span class="botnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg></span>
+        <span class="botnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>
         <span class="botnav-label">Trending</span>
       </button>
       <button type="button" class="botnav-tab" data-tab="topics" id="botnav-topics" aria-label="All topics">
@@ -1417,6 +1431,15 @@ function renderBottomNav(route) {
       const h = window.location.hash;
       if (h === '#/' || h === '' || h === '#') { e.preventDefault(); window.scrollTo(0, 0); }
     });
+    // [304] Light the matching tab while its modal is open. The open events set
+    // the forced tab; a MutationObserver on the body's style attribute clears it
+    // once the modal closes (overflow returns from 'hidden' to '').
+    window.addEventListener('open-ai-intelligence', () => { botnavModalTab = 'insights'; applyBotnavActive(); });
+    window.addEventListener('open-trending-list', () => { botnavModalTab = 'trending'; applyBotnavActive(); });
+    window.addEventListener('open-all-topics-modal', () => { botnavModalTab = 'topics'; applyBotnavActive(); });
+    new MutationObserver(() => {
+      if (document.body.style.overflow !== 'hidden' && botnavModalTab) { botnavModalTab = null; applyBotnavActive(); }
+    }).observe(document.body, { attributes: true, attributeFilter: ['style'] });
   }
   // The hash is the source of truth: search/custom open as modals over the
   // HOME layout (renderLayout runs with baseRoute=home), so check the real
@@ -1425,7 +1448,8 @@ function renderBottomNav(route) {
   const h = (window.location.hash || '').toLowerCase();
   if (h.startsWith('#/search') || h.startsWith('#/custom')) active = 'search';
   else if (route && route.type === 'home') active = 'home';
-  nav.querySelectorAll('.botnav-tab').forEach(t => t.classList.toggle('is-active', t.dataset.tab === active));
+  botnavRouteTab = active;
+  applyBotnavActive();
 }
 
 function renderHero(container, route) {
