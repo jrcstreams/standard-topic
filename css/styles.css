@@ -14596,7 +14596,7 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-bottom
 .aii-trackcard-name { grid-column: 2; grid-row: 1; font-family: var(--font-display); font-size: 1.04rem; font-weight: 600; letter-spacing: -0.018em; color: #1a2740; line-height: 1.2; min-width: 0; }
 /* Summary sits on its own row, left-aligned to the ICON's edge (col 1) — not
    indented under the title — then the preview insights follow below it. */
-.aii-trackcard-sub { grid-column: 1 / -1; grid-row: 2; margin-top: 2px; font-size: 0.83rem; line-height: 1.4; color: var(--color-text-muted); font-weight: 400; }
+.aii-trackcard-sub { grid-column: 1 / -1; grid-row: 2; margin-top: 6px; font-size: 0.83rem; line-height: 1.4; color: var(--color-text-muted); font-weight: 400; }
 .aii-trackcard-go { grid-column: 3; grid-row: 1; flex: none; display: inline-flex; color: var(--color-text-light); opacity: .5; transition: opacity .16s ease, transform .16s ease; }
 .aii-trackcard-go svg { width: 16px; height: 16px; }
 .aii-trackcard:hover .aii-trackcard-head > .aii-trackcard-go { opacity: 1; transform: translateX(2px); }
@@ -14610,6 +14610,11 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-bottom
 .aii-tcp-go svg { width: 13px; height: 13px; }
 .aii-tcp:hover .aii-tcp-name { color: var(--color-primary); }
 .aii-tcp:hover .aii-tcp-go { opacity: .85; color: var(--color-primary); }
+/* Leading dot marker so the preview insights read as a proper list of items
+   (not loose text lines). The dot sits at the row's left edge; the name indents
+   after it via the flex gap. */
+.aii-tcp::before { content: ''; flex: none; width: 5px; height: 5px; border-radius: 999px; background: #c7cedb; transition: background .14s ease; }
+.aii-tcp:hover::before { background: var(--color-primary); }
 /* Explore — a clean understated text link (no filled pill, no loud color). */
 /* Explore link — the accent-blue link colour so it clearly reads as the action
    (was near-black primary, which didn't stand out). */
@@ -14632,7 +14637,10 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-bottom
    Smaller type throughout. (Tab mode <900 keeps the bordered cards + the heading.) */
 @media (min-width: 900px) {
   .topic-side .aii-tracks-head-wrap { display: none; }
-  .topic-side .aii-trackgrid { display: flex !important; flex-direction: column; gap: 0 !important; margin: 0 !important; }
+  /* stretch (not the inherited align-items:start) so every track fills the column
+     to the SAME width — otherwise each card shrink-wraps to its own content and the
+     rows + Explore links land at different right edges (looked random). */
+  .topic-side .aii-trackgrid { display: flex !important; flex-direction: column; align-items: stretch; gap: 0 !important; margin: 0 !important; }
   .topic-side .aii-trackcard { border: none; border-radius: 0; background: none; }
   .topic-side .aii-trackcard:hover { box-shadow: none; border-color: transparent; }
   .topic-side .aii-trackcard + .aii-trackcard { border-top: 1px solid var(--color-surface-border); }
@@ -14646,7 +14654,9 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-bottom
   .topic-side .aii-trackcard-previews { border-top: none; padding-left: 2px; }
   .topic-side .aii-tcp { border-top: none; padding: 4px 2px; gap: 8px; }
   .topic-side .aii-tcp-name { font-size: 0.83rem; }
-  .topic-side .aii-trackcard-more { margin: 8px 0 13px 41px; font-size: 0.8rem; }
+  /* Explore link anchors to the same left edge as the icon, summary and preview
+     rows (was indented 41px under the title, which read as off/centered). */
+  .topic-side .aii-trackcard-more { margin: 10px 0 14px 2px; font-size: 0.8rem; }
 }
 .aii-intro { margin: 0 0 16px; font-size: 0.9rem; line-height: 1.5; color: var(--color-text-muted); }
 .aii-intro strong { font-weight: 600; color: var(--color-text); }
@@ -15728,7 +15738,7 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-bottom
 .topic-side, .topic-main { display: contents; }
 @media (min-width: 900px) {
   body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) {
-    grid-template-columns: minmax(0, 30fr) minmax(0, 70fr) !important;
+    grid-template-columns: minmax(0, 25fr) minmax(0, 75fr) !important;
     column-gap: 1.6rem; row-gap: 0; align-items: start;
   }
   body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) .topic-side {
