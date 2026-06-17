@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp237';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp237';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp238';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp238';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -276,8 +276,6 @@ function stickyHeadHTML({ title, metaLine, actions, nav, accHTML }) {
     <div class="im-briefnav">
       <div class="im-briefnav-head">
         <span class="im-briefnav-title">AI Brief</span>
-        <span class="im-briefnav-hsep" aria-hidden="true"></span>
-        <span class="im-briefnav-notice"><span class="im-briefnav-spark">${SPARK_FILL}</span><span>= Text is AI-generated.</span></span>
       </div>
       <div class="im-briefnav-pills" id="im-briefnav-pills"></div>
     </div>
@@ -347,7 +345,10 @@ const SEC_ICON = {
   sources: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
 };
 function secHeadHTML(key, name) {
-  return `<div class="im-msec-head"><span class="im-msec-ic">${SEC_ICON[key] || SEC_ICON.summary}</span><h3 class="im-msec-name">${esc(name)}</h3></div>`;
+  // Every AI-written section gets an "AI Generated Text" tag to its right — except
+  // Sources & Coverage, which are real cited links, not generated prose.
+  const tag = key === 'sources' ? '' : `<span class="im-sec-aitag">${SPARK_FILL}<span>AI Generated Text</span></span>`;
+  return `<div class="im-msec-head"><span class="im-msec-ic">${SEC_ICON[key] || SEC_ICON.summary}</span><h3 class="im-msec-name">${esc(name)}</h3>${tag}</div>`;
 }
 
 // "Sources & Coverage" — real related articles from our feed (hyperlinked
@@ -749,9 +750,9 @@ function renderNews(d) {
         const secHTML = sections.length
           ? sections.map((s, i) => {
               const key = newsSecIcon(s.name);
-              return msecHTML(`msec-news-${i}`, s.name, secHeadHTML(key, s.name) + renderBriefBody(s.body, null, { aiFlag: SPARK_FILL, flagFirst: true }));
+              return msecHTML(`msec-news-${i}`, s.name, secHeadHTML(key, s.name) + renderBriefBody(s.body, null));
             }).join('')
-          : msecHTML('msec-brief', 'Brief', secHeadHTML('summary', 'Brief') + renderBriefBody(data.content, null, { aiFlag: SPARK_FILL, flagFirst: true }));
+          : msecHTML('msec-brief', 'Brief', secHeadHTML('summary', 'Brief') + renderBriefBody(data.content, null));
         const cov = coverageListHTML(ctx.headlines, ctx.sources, ctx.origUrl);
         const covSec = cov ? msecHTML('msec-sources', 'Sources', secHeadHTML('sources', 'Sources') + `<div class="im-coverage-list">${cov}</div>`) : '';
         // All sections in ONE container so :last-child (no border) is the true last.
@@ -850,8 +851,8 @@ function renderTrend(d) {
           }
         }
         ctx.sources = data.sources || [];
-        const why = cleanSum ? msecHTML('msec-why', 'Reasoning', secHeadHTML('why', 'Reasoning') + renderBriefBody(cleanSum, null, { aiFlag: SPARK_FILL, flagFirst: true })) : '';
-        const sum = detail ? msecHTML('msec-summary', 'Summary', secHeadHTML('summary', 'Summary') + renderBriefBody(detail, null, { aiFlag: SPARK_FILL, flagFirst: true })) : '';
+        const why = cleanSum ? msecHTML('msec-why', 'Reasoning', secHeadHTML('why', 'Reasoning') + renderBriefBody(cleanSum, null)) : '';
+        const sum = detail ? msecHTML('msec-summary', 'Summary', secHeadHTML('summary', 'Summary') + renderBriefBody(detail, null)) : '';
         const cov = coverageListHTML(data.headlines, data.sources, '');
         const covSec = cov ? msecHTML('msec-sources', 'Sources', secHeadHTML('sources', 'Sources') + `<div class="im-coverage-list">${cov}</div>`) : '';
         // All sections in ONE container so :last-child (no border) is the true last.
@@ -937,8 +938,8 @@ function renderOverview(d) {
         // the AI sparkle on its first sentence (flagFirst).
         const sections = splitSections(data.content);
         const secHTML = sections.length
-          ? sections.map((s, i) => msecHTML(`msec-ov-${i}`, s.name, secHeadHTML('summary', s.name) + renderBriefBody(s.body, null, { aiFlag: SPARK_FILL, flagFirst: true }))).join('')
-          : msecHTML('msec-brief', lens, renderBriefBody(data.content, null, { aiFlag: SPARK_FILL, flagFirst: true }));
+          ? sections.map((s, i) => msecHTML(`msec-ov-${i}`, s.name, secHeadHTML('summary', s.name) + renderBriefBody(s.body, null))).join('')
+          : msecHTML('msec-brief', lens, renderBriefBody(data.content, null));
         // Cited sources land in a final "Sources" section (domain-only rows).
         const srcSec = (ctx.sources && ctx.sources.length) ? msecHTML('msec-sources', 'Sources', secHeadHTML('sources', 'Sources') + sourcesListHTML(ctx.sources, '')) : '';
         // All sections in ONE container so :last-child (no border) is the true last.

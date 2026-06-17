@@ -5,7 +5,7 @@
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
 import { renderTrendExpansionBody } from './trend-expansion.js';
-import { aiSparkInline } from '../utils/ai-provenance.js?v=20260616-revamp237';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260616-revamp238';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -224,7 +224,7 @@ function trendLegendRow() {
   // reference was noise) — sized between the card and the modal legend (#166).
   return `<div class="trend-legend-row">
     <div class="trend-legend trend-legend--solo">
-      <span class="trend-legend-item">${aiSparkInline()}<span>= AI-generated text</span></span>
+      <span class="trend-legend-item">${aiSparkInline()}<span>Trend summaries are AI-generated.</span></span>
     </div>
   </div>`;
 }
@@ -327,7 +327,7 @@ export function renderTrendingModal(controlsEl, gridEl) {
           `<option value="${escapeAttr(c)}"${state.category === c ? ' selected' : ''}>${c === 'all' ? 'All categories' : escapeHTML(c)}</option>`).join('')}</select></label>` : '';
     return `<div class="tlm-controlbar-inner">
       <div class="trend-legend trend-legend--solo">
-        <span class="trend-legend-item">${aiSparkInline()}<span>= AI-generated text</span></span>
+        <span class="trend-legend-item">${aiSparkInline()}<span>Trend summaries are AI-generated.</span></span>
       </div>
       ${catSel}
     </div>`;

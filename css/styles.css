@@ -15020,8 +15020,16 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 /* Grey header zone sits flush under the modal head (no white gap) + full-bleed. */
 .im-body:has(.im-stickyhead) { padding-top: 0; }
 @media (max-width: 560px) { .im-stickyhead { margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px; } }
-.im-msec-head { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+.im-msec-head { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; flex-wrap: wrap; }
 .im-msec-ic { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: #f1f3f7; color: var(--color-primary); }
+/* "AI Generated Text" tag — sits to the right of each generated section title (wraps
+   below on narrow widths). Replaces the old per-sentence sparkle + the brief legend. */
+.im-sec-aitag { margin-left: auto; display: inline-flex; align-items: center; gap: 5px; flex: none; padding: 3px 9px 3px 7px; border-radius: 999px; background: color-mix(in srgb, var(--color-primary) 7%, #fff); border: 1px solid color-mix(in srgb, var(--color-primary) 14%, transparent); color: var(--color-primary); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.01em; white-space: nowrap; }
+.im-sec-aitag svg { width: 12px; height: 12px; flex: none; }
+@media (max-width: 560px) {
+  .im-msec-name { flex: 1 1 auto; }
+  .im-sec-aitag { margin-left: 40px; order: 3; }
+}
 .im-msec-ic svg { width: 17px; height: 17px; }
 /* Content section headers (Why It's Trending / Summary / Sources & Coverage) —
    the clear MIDDLE tier: strong display weight, between the big title above and

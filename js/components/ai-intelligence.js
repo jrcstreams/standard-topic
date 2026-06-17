@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp237';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp237';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp238';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp238';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -121,7 +121,7 @@ function aiiSecIconKey(name) {
   if (/source|coverage/.test(n)) return 'sources';
   return 'summary';
 }
-function aiiSecHead(key, name) { return `<div class="im-msec-head"><span class="im-msec-ic">${AII_SEC_ICON[key] || AII_SEC_ICON.summary}</span><h3 class="im-msec-name">${esc(name)}</h3></div>`; }
+function aiiSecHead(key, name) { const tag = key === 'sources' ? '' : `<span class="im-sec-aitag">${LOGO}<span>AI Generated Text</span></span>`; return `<div class="im-msec-head"><span class="im-msec-ic">${AII_SEC_ICON[key] || AII_SEC_ICON.summary}</span><h3 class="im-msec-name">${esc(name)}</h3>${tag}</div>`; }
 function aiiMsec(id, name, inner) { return `<section class="im-msec" id="${id}" data-name="${escAttr(name)}">${inner}</section>`; }
 // Paper-plane (Direct Submit — "send it off") and an eye (Review — "preview").
 const ICON_SEND = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2.5L11 13"/><path d="M21.5 2.5L15 21l-4-8-8-4z"/></svg>';
@@ -525,7 +525,7 @@ export function renderAIIntelligence(container, scope) {
           <div class="im-acc" data-accbody="web"></div>
         </div>
         <div class="im-briefnav">
-          <div class="im-briefnav-head"><span class="im-briefnav-title">AI Brief</span><span class="im-briefnav-hsep" aria-hidden="true"></span><span class="im-briefnav-notice"><span class="im-briefnav-spark">${LOGO}</span><span>= Text is AI-generated.</span></span></div>
+          <div class="im-briefnav-head"><span class="im-briefnav-title">AI Brief</span></div>
           <div class="im-briefnav-pills" data-aii-pills></div>
         </div>
       </div>
@@ -546,7 +546,7 @@ export function renderAIIntelligence(container, scope) {
       const list = parts.length ? parts : [{ name: 'Summary', body: String(s.body || '') }];
       let html = list.map((part, i) => {
         const key = aiiSecIconKey(part.name);
-        return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name) + renderBriefBody(part.body, null, { aiFlag: LOGO, flagFirst: true }));
+        return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name) + renderBriefBody(part.body, null));
       }).join('');
       // Only RICH rows (real headline + publisher · date), like the Trending/News
       // Sources list — drop bare grounding-citation domains (e.g. "pbs.org") that
@@ -930,7 +930,7 @@ export function renderAIIntelligence(container, scope) {
       setTimeout(() => {
         if (stage.querySelector('.aii-content-body') !== bodyEl) return;
         bodyEl.removeAttribute('data-loading');
-        bodyEl.innerHTML = renderBriefBody(sectionizeInsight(s.body), null, { aiFlag: LOGO });
+        bodyEl.innerHTML = renderBriefBody(sectionizeInsight(s.body), null);
         bodyEl.classList.add('ai-reveal');
         // Reveal the real headline links with the brief (they're not part of the
         // synthesized body, so they live in their own block below the rule).
