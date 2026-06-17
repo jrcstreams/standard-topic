@@ -4,9 +4,9 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp229';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp229';
-import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent } from '../utils/data.js';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp230';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp230';
+import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
@@ -345,31 +345,79 @@ export function renderAIIntelligence(container, scope) {
       <span class="aii-promo-btn">Explore AI Insights ${RIGHT_ARROW}</span>
     </div>`;
   }
-  // Topic-page launcher (desktop + mobile tab): a prominent "Choose an Intelligence
-  // Track" heading + the track tiles (colored per-track icons). Each tile opens the
-  // MODAL deep-linked to that topic+track — no in-body title / back / separator.
+  // The topic SLUG for preview lookups (modal sets scope.topicKey; the in-body
+  // launcher gets it from app.js; home is its own key).
+  function topicKeyForPreviews() {
+    return scope.topicKey || (scope.topic === 'home' ? 'home' : '');
+  }
+  // A rich TRACK CARD — the shared centerpiece of every "Choose a track" surface
+  // (in-body launcher on topic pages + home, AND the modal's path picker). Shows
+  // the track identity (icon + title + tagline), up to 3 curated insight teasers
+  // that link straight in, and a "view all" action. Markup is identical across
+  // contexts; only the click wiring differs (see wireTrackCards).
+  // Preview/teaser shortcuts for a track card. Admin-curated picks first
+  // (window.__assignmentsData.featuredShortcuts, keyed `${slug}_${group}` →
+  // `${group}`), then filled from the topic's own shortcuts in that group so a
+  // card is never empty. Computed in-component (no new data.js export) to dodge
+  // the no-version data.js singleton cache.
+  function trackPreviewsFor(group) {
+    const key = topicKeyForPreviews();
+    let dir = [];
+    try { dir = getShortcutsDirectory() || []; } catch (_) {}
+    const dirMap = {};
+    dir.forEach((s) => { if (s && s.id) dirMap[s.id] = s; });
+    const featured = (typeof window !== 'undefined' && window.__assignmentsData && window.__assignmentsData.featuredShortcuts) || {};
+    const ids = featured[`${key}_${group}`] || featured[group] || [];
+    const list = ids.map((id) => dirMap[id]).filter(Boolean);
+    if (list.length < 3) {
+      const have = new Set(list.map((s) => s.id));
+      let topical = [];
+      try { topical = getShortcutsForTopic(key) || []; } catch (_) {}
+      for (const s of topical) { if (list.length >= 3) break; if (s.group === group && !have.has(s.id)) { list.push(s); have.add(s.id); } }
+    }
+    return list.slice(0, 3);
+  }
+  function trackCardHTML(p) {
+    let previews = [];
+    try { previews = trackPreviewsFor(p.group) || []; } catch (_) {}
+    const prevHTML = previews.map((s) => `
+      <button type="button" class="aii-tcp" data-group="${escAttr(p.group)}" data-shortcut="${escAttr(s.id)}">
+        <span class="aii-tcp-tx"><span class="aii-tcp-name">${esc(s.name)}</span>${s.description ? `<span class="aii-tcp-desc">${esc(s.description)}</span>` : ''}</span>
+        <span class="aii-tcp-go" aria-hidden="true">${ARROW}</span>
+      </button>`).join('');
+    return `<div class="aii-trackcard" data-group="${escAttr(p.group)}">
+      <button type="button" class="aii-trackcard-head" data-group="${escAttr(p.group)}">
+        <span class="aii-trackcard-ic aii-icon-${escAttr(p.group)}">${ICONS[p.group] || ICONS._}</span>
+        <span class="aii-trackcard-idtx"><span class="aii-trackcard-name">${esc(p.tab || p.label)}</span><span class="aii-trackcard-sub">${esc(p.subtitle)}</span></span>
+        <span class="aii-trackcard-go" aria-hidden="true">${RIGHT_ARROW}</span>
+      </button>
+      ${prevHTML ? `<div class="aii-trackcard-previews">${prevHTML}</div>` : ''}
+      <button type="button" class="aii-trackcard-more" data-group="${escAttr(p.group)}">Explore ${esc(p.tab || p.label)} ${RIGHT_ARROW}</button>
+    </div>`;
+  }
+  // Wire a grid of track cards. `open(group, shortcutId|null)` is supplied per
+  // context: the launcher opens the modal deep-linked to the track; the modal
+  // drills into that track's sections in place.
+  function wireTrackCards(root, open) {
+    root.querySelectorAll('.aii-trackcard-head, .aii-trackcard-more').forEach((b) => b.addEventListener('click', () => open(b.dataset.group, null)));
+    root.querySelectorAll('.aii-tcp').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); open(b.dataset.group, b.dataset.shortcut); }));
+  }
+  // Topic-page launcher (desktop + mobile tab): a prominent "Choose an intelligence
+  // track" heading + the rich track cards. Each card opens the MODAL deep-linked to
+  // that topic+track.
   function launcherPromoHTML() {
     if (scope.topic === 'home') return launcherStepsHTML();
-    const tracks = paths.map((p) => `<button type="button" class="aii-track" data-group="${escAttr(p.group)}">
-        <span class="aii-track-head"><span class="aii-track-ic aii-icon-${escAttr(p.group)}">${ICONS[p.group] || ICONS._}</span><span class="aii-track-name">${esc(p.tab || p.label)}</span><span class="aii-track-go" aria-hidden="true">${RIGHT_ARROW}</span></span>
-        <span class="aii-track-desc">${esc(p.subtitle)}</span>
-      </button>`).join('');
     return `<div class="aii-promo aii-promo--tracks">
       <div class="aii-tracks-head-wrap">
         <h3 class="aii-tracks-head">Choose an intelligence track</h3>
         <p class="aii-tracks-sub">Grounded, cited analysis on this topic, refreshed live. <button type="button" class="aii-tracks-searchlink" data-aii-search>Or search any topic or term</button>.</p>
       </div>
-      <div class="aii-promo-grid">${tracks}</div>
+      <div class="aii-promo-grid aii-trackgrid">${paths.map(trackCardHTML).join('')}</div>
     </div>`;
   }
   function pathsHTML() {
     const intro = flowMode ? `<p class="aii-paths-intro">Choose an intelligence track</p>` : '';
-    return `${intro}<div class="aii-pathlist">${paths.map((p) => `
-      <button type="button" class="aii-pathrow" data-group="${escAttr(p.group)}">
-        <span class="aii-pathrow-icon aii-icon-${escAttr(p.group)}">${ICONS[p.group] || ICONS._}</span>
-        <span class="aii-pathrow-text"><span class="aii-pathrow-name">${esc(p.tab || p.label)}</span><span class="aii-pathrow-sub">${esc(p.subtitle)}</span></span>
-        <span class="aii-pathrow-go">${ARROW}</span>
-      </button>`).join('')}</div>`;
+    return `${intro}<div class="aii-pathlist aii-trackgrid">${paths.map(trackCardHTML).join('')}</div>`;
   }
   // Each section card gets ITS OWN icon (the shortcut's icon from the registry),
   // falling back to the shared path glyph when the caller didn't supply an icon
@@ -888,13 +936,16 @@ export function renderAIIntelligence(container, scope) {
         if (prov) { prov.innerHTML = aiProvenanceHTML(sectionNewsItems(), { badge: false }); prov.hidden = !prov.textContent.trim(); }
       }, 1000);
     }
-    stage.querySelectorAll('.aii-pathrow').forEach((b) => b.addEventListener('click', async () => {
-      curGroup = b.dataset.group;
-      go('sections', 'fwd');
-      await loadGroup(curGroup);
-      // Re-render the menu in place if the user is still on this path.
-      if (view === 'sections' && stage.dataset.view === 'sections') { stage.innerHTML = sectionsHTML(); wire(); updateTopbar(); }
-    }));
+    if (view === 'paths') {
+      // Track cards drill into the chosen track's sections (preview teasers land
+      // on the same sections list; the live insight is one tap further in).
+      wireTrackCards(stage, async (group) => {
+        curGroup = group;
+        go('sections', 'fwd');
+        await loadGroup(curGroup);
+        if (view === 'sections' && stage.dataset.view === 'sections') { stage.innerHTML = sectionsHTML(); wire(); updateTopbar(); }
+      });
+    }
     stage.querySelectorAll('.aii-menu-row, .aii-menu-card').forEach((b) => b.addEventListener('click', () => { curIdx = Number(b.dataset.idx); go('content', 'fwd'); }));
     stage.querySelectorAll('.aii-back').forEach((b) => b.addEventListener('click', () => go(b.dataset.back, 'back')));
     // Prev/Next INSIGHT — step through the path's sections (#136).
@@ -969,10 +1020,11 @@ export function renderAIIntelligence(container, scope) {
         card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openStep1(); } });
       }
     } else {
-      stage.querySelectorAll('.aii-track').forEach((b) => b.addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: {
-        topic: scope.topic, label: scope.label, group: b.dataset.group,
+      // Track cards open the MODAL deep-linked to that topic+track.
+      wireTrackCards(stage, (group) => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: {
+        topic: scope.topic, label: scope.label, group,
         hideGroups: scope.hideGroups || [], descriptions: scope.descriptions || {},
-      } }))));
+      } })));
       // "Or search any topic or term" → opens the modal at Step 1 (the picker + search).
       stage.querySelector('[data-aii-search]')?.addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: { pickTopic: true } })));
     }

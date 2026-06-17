@@ -1168,6 +1168,35 @@
       if (!Array.isArray(data.assignments.evergreenOrder)) data.assignments.evergreenOrder = [];
       if (!data.assignments.evergreenExclusions || typeof data.assignments.evergreenExclusions !== 'object') data.assignments.evergreenExclusions = {};
     }
+    // Featured/preview shortcuts shown on the "Choose a track" cards (front-end:
+    // getTrackPreviewShortcuts). Keyed by `${group}` for the evergreen tracks
+    // (discover/analyze/learn — a global pick) or `${topicSlug}_${group}` for a
+    // per-topic override (e.g. each topic's topic-specific track). Up to 3 ids each.
+    function ensureFeaturedData() {
+      ensureEvergreenData();
+      if (!data.assignments.featuredShortcuts || typeof data.assignments.featuredShortcuts !== 'object') data.assignments.featuredShortcuts = {};
+    }
+    function featuredList(key) { ensureFeaturedData(); return data.assignments.featuredShortcuts[key] || []; }
+    function featuredRank(key, id) { return featuredList(key).indexOf(id); } // -1 if not featured
+    function toggleFeatured(key, id) {
+      ensureFeaturedData();
+      var list = (data.assignments.featuredShortcuts[key] || []).slice();
+      var i = list.indexOf(id);
+      if (i >= 0) { list.splice(i, 1); }
+      else { if (list.length >= 3) { toast('Max 3 featured — unstar one first'); return; } list.push(id); }
+      if (list.length) data.assignments.featuredShortcuts[key] = list;
+      else delete data.assignments.featuredShortcuts[key];
+      if (window.__markDirty) window.__markDirty('assignments');
+    }
+    // A ★ toggle button (shared by the Evergreen + Assignments tabs).
+    function featuredStarHTML(key, id) {
+      var r = featuredRank(key, id);
+      var on = r >= 0;
+      return '<button class="btn" data-feat-key="' + escA(key) + '" data-feat-id="' + escA(id) + '" title="' + (on ? 'Featured #' + (r + 1) + ' — click to remove' : 'Feature on the track card (max 3)') + '" style="padding:0.15rem 0.5rem;' + (on ? 'border-color:#e0a92b;color:#b8860b;background:#fff8e8;' : '') + '">' + (on ? '★ ' + (r + 1) : '☆') + '</button>';
+    }
+    function wireFeaturedStars(root, rerender) {
+      root.querySelectorAll('[data-feat-key]').forEach(function(b){ b.onclick = function(){ toggleFeatured(b.dataset.featKey, b.dataset.featId); if (rerender) rerender(); }; });
+    }
     // Topics (+ Custom Search) an evergreen can be excluded from — never home.
     function evergreenTargetTopics() {
       return getAllTopicSlugs().filter(function(t){ return t.slug !== 'home'; });
@@ -1244,7 +1273,7 @@
       var sortOpts = [['order','Section + manual order'],['name','Name'],['section','Section'],['excl','# excluded']];
       var sortCtl = '<div style="margin-bottom:0.6rem;font-size:0.82rem;display:flex;align-items:center;gap:0.35rem;flex-wrap:wrap;"><span style="color:var(--text-muted);">Sort:</span>'+
         sortOpts.map(function(o){ return '<button class="btn" data-eg-sort="'+o[0]+'"'+(egSort.key===o[0]?' style="border-color:var(--primary);color:var(--primary);"':'')+'>'+o[1]+(egSort.key===o[0]&&o[0]!=='order'?(egSort.dir>0?' ▲':' ▼'):'')+'</button>'; }).join('')+'</div>';
-      var colspan = manual ? 5 : 4;
+      var colspan = manual ? 6 : 5;
       var rows = ids.map(function(id){
         var s = dirMap[id], oi = order.indexOf(id), n = evergreenExclusionCount(id);
         var arrows = manual ?
@@ -1252,14 +1281,16 @@
         return '<tr>'+arrows+
           '<td><strong>'+esc(s.name)+'</strong><div style="font-size:0.74rem;color:var(--text-muted);">'+esc(s.description||'')+'</div></td>'+
           '<td>'+esc(groupLabel(s.group||'—'))+'</td>'+
+          '<td>'+(s.group ? featuredStarHTML(s.group, id) : '')+'</td>'+
           '<td><button class="btn" data-eg-excl="'+escA(id)+'">'+(n? 'Excluded on '+n+' topic'+(n>1?'s':'') : 'none')+' &#9662;</button></td>'+
           '<td style="white-space:nowrap;"><button class="btn" data-eg-edit="'+escA(id)+'">Edit</button> <button class="btn btn-danger" data-eg-del="'+escA(id)+'">Del</button></td>'+
         '</tr>'+
         '<tr class="eg-excl-row" id="eg-excl-'+escA(id)+'" style="display:none;"><td colspan="'+colspan+'" style="padding-top:0;"></td></tr>';
       }).join('');
       body.innerHTML = sortCtl + (ids.length ?
-        '<table><thead><tr>'+(manual?'<th></th>':'')+'<th class="sortable" data-eg-sort="name">Name</th><th class="sortable" data-eg-sort="section">Section</th><th class="sortable" data-eg-sort="excl">Excluded on</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table>'
+        '<table><thead><tr>'+(manual?'<th></th>':'')+'<th class="sortable" data-eg-sort="name">Name</th><th class="sortable" data-eg-sort="section">Section</th><th>Featured</th><th class="sortable" data-eg-sort="excl">Excluded on</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table>'
         : '<p style="color:var(--text-muted);">No evergreen shortcuts. Flag a shortcut as Evergreen in its edit form (Topic-Specific tab) to add one.</p>');
+      wireFeaturedStars(body, renderEvergreen);
       body.querySelectorAll('[data-eg-sort]').forEach(function(b){ b.onclick=function(){ var key=b.dataset.egSort; if(egSort.key===key && key!=='order') egSort.dir*=-1; else { egSort.key=key; egSort.dir=1; } renderEvergreen(); }; });
       body.querySelectorAll('[data-eg-up]').forEach(function(b){ b.onclick=function(){ swapEvergreen(b.dataset.egUp, -1); }; });
       body.querySelectorAll('[data-eg-down]').forEach(function(b){ b.onclick=function(){ swapEvergreen(b.dataset.egDown, 1); }; });
@@ -1319,7 +1350,8 @@
           '<h4 style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);font-weight:700;margin:0.65rem 0 0.4rem;padding-bottom:0.3rem;border-bottom:1px solid var(--border);">'+esc(bucketLabel)+' <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#aaa;">· '+items.length+'</span></h4>'+
           '<div class="assign-bucket" data-group="'+escA(groupId)+'">'+
             items.map(function(it){
-              return '<div class="assign-item" draggable="true" data-idx="'+it.origIdx+'" data-id="'+escA(it.shortcut.id)+'"><span class="handle">&#9776;</span><span class="name">'+esc(it.shortcut.name)+'</span>'+sectionSelectHTML(it.shortcut)+'<button class="remove" data-rm="'+escA(it.shortcut.id)+'">&times;</button></div>';
+              var fkey = groupId !== '__ungrouped__' ? (selectedTopic + '_' + groupId) : '';
+              return '<div class="assign-item" draggable="true" data-idx="'+it.origIdx+'" data-id="'+escA(it.shortcut.id)+'"><span class="handle">&#9776;</span><span class="name">'+esc(it.shortcut.name)+'</span>'+(fkey?featuredStarHTML(fkey, it.shortcut.id):'')+sectionSelectHTML(it.shortcut)+'<button class="remove" data-rm="'+escA(it.shortcut.id)+'">&times;</button></div>';
             }).join('')+
           '</div>'+
         '</div>';
@@ -1384,6 +1416,8 @@
         });
       })();
 
+      // Per-topic ★ featured toggles (preview shortcuts on this topic's track cards).
+      wireFeaturedStars(main, renderAssignments);
       // Remove
       main.querySelectorAll('.remove').forEach(function(btn){
         btn.addEventListener('click', function(){

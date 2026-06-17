@@ -157,6 +157,25 @@ export function getShortcutsForTopic(topicSlug) {
   });
 }
 
+// Preview/teaser shortcuts for a track CARD (Choose-a-track surfaces). Returns up
+// to `limit` shortcut objects for (topic, group): admin-curated picks first
+// (per-topic key `${slug}_${group}`, else the evergreen-group default `${group}`),
+// then filled from the topic's own shortcuts in that group so a card is never empty.
+export function getTrackPreviewShortcuts(topicSlug, group, limit = 3) {
+  const dir = shortcutsDirectory?.shortcuts || [];
+  const dirMap = {};
+  dir.forEach((s) => { dirMap[s.id] = s; });
+  const featured = (shortcutsAssignments && shortcutsAssignments.featuredShortcuts) || {};
+  const ids = featured[`${topicSlug}_${group}`] || featured[group] || [];
+  const list = ids.map((id) => dirMap[id]).filter(Boolean);
+  if (list.length < limit) {
+    const have = new Set(list.map((s) => s.id));
+    const inGroup = getShortcutsForTopic(topicSlug).filter((s) => s.group === group && !have.has(s.id));
+    for (const s of inGroup) { if (list.length >= limit) break; list.push(s); have.add(s.id); }
+  }
+  return list.slice(0, limit);
+}
+
 export function getEvergreenOrder() {
   return shortcutsAssignments?.evergreenOrder || [];
 }

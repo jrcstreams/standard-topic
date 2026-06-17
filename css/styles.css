@@ -1344,7 +1344,7 @@ body.hide-cta .sticky-cta { display: none !important; }
 
 #sub-header.is-subnav .topic-banner-title {
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 1.1rem;
   line-height: 1.1;
   letter-spacing: -0.02em;
   font-weight: 600;
@@ -14503,6 +14503,40 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 .aii-icon-learn { background: #eafaf1; color: #1f8f6b; }
 .aii-icon-analyze { background: #fff3e6; color: #e0892b; }
 .aii-icon-topic-specific { background: #fdecef; color: #d6455f; }
+
+/* ===== Rich track cards — the shared "Choose a track" centerpiece ==========
+   Used on every track surface (in-body topic launcher + the modal path picker).
+   Each card carries the track identity, up to 3 curated insight teasers that
+   link straight in, and a "view all" action. Responsive grid: 1 column in a
+   narrow sidebar, 2+ where there's room. */
+.aii-trackgrid { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: 12px !important; margin: 6px 0 0 !important; padding: 0 !important; max-width: none !important; align-items: start; }
+/* Beat the modal's flex-column pathlist override (equal specificity, later source). */
+.aii-flow .aii-stage[data-view="paths"] .aii-pathlist.aii-trackgrid { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)) !important; gap: 12px !important; margin: 6px 0 0 !important; }
+.aii-trackcard { display: flex; flex-direction: column; border: 1px solid color-mix(in srgb, var(--color-surface-border) 85%, transparent); border-radius: 15px; background: #fff; overflow: hidden; transition: border-color .16s ease, box-shadow .16s ease; }
+.aii-trackcard:hover { border-color: color-mix(in srgb, var(--color-primary) 24%, var(--color-surface-border)); box-shadow: 0 12px 26px -18px rgba(31, 49, 99, .34); }
+.aii-trackcard-head { display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 15px; border: none; background: none; cursor: pointer; text-align: left; font-family: var(--font-family); }
+.aii-trackcard-ic { display: inline-flex; width: 38px; height: 38px; flex: none; align-items: center; justify-content: center; border-radius: 11px; background: #f1f3f7; color: var(--color-primary); }
+.aii-trackcard-ic svg { width: 20px; height: 20px; }
+.aii-trackcard-idtx { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
+.aii-trackcard-name { font-family: var(--font-display); font-size: 1.14rem; font-weight: 600; letter-spacing: -0.018em; color: #1a2740; line-height: 1.2; }
+.aii-trackcard-sub { font-size: 0.88rem; line-height: 1.4; color: var(--color-text-muted); }
+.aii-trackcard-go { flex: none; display: inline-flex; color: var(--color-text-light); opacity: .5; transition: opacity .16s ease, transform .16s ease, color .16s ease; }
+.aii-trackcard-go svg { width: 17px; height: 17px; }
+.aii-trackcard:hover .aii-trackcard-head > .aii-trackcard-go { opacity: 1; color: var(--color-primary); transform: translateX(2px); }
+.aii-trackcard-previews { display: flex; flex-direction: column; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); }
+.aii-tcp { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 15px; border: none; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 42%, transparent); background: none; cursor: pointer; text-align: left; font-family: var(--font-family); transition: background .13s ease; }
+.aii-tcp:first-child { border-top: none; }
+.aii-tcp:hover { background: color-mix(in srgb, var(--color-primary) 4%, #fff); }
+.aii-tcp-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
+.aii-tcp-name { font-size: 0.9rem; font-weight: 600; color: #1f2a3d; line-height: 1.3; }
+.aii-tcp-desc { font-size: 0.78rem; line-height: 1.35; color: var(--color-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aii-tcp-go { flex: none; display: inline-flex; color: var(--color-text-light); opacity: 0; transform: translateX(-3px); transition: opacity .14s ease, transform .14s ease, color .14s ease; }
+.aii-tcp-go svg { width: 14px; height: 14px; }
+.aii-tcp:hover .aii-tcp-go { opacity: .85; transform: translateX(0); color: var(--color-primary); }
+.aii-trackcard-more { display: inline-flex; align-items: center; gap: 7px; align-self: flex-start; margin: 0; padding: 11px 15px 13px; border: none; background: none; color: var(--color-primary); font-family: var(--font-family); font-size: 0.84rem; font-weight: 600; cursor: pointer; }
+.aii-trackcard-more svg { width: 15px; height: 15px; }
+.aii-trackcard-more:hover { text-decoration: underline; }
+@media (prefers-reduced-motion: reduce) { .aii-trackcard, .aii-trackcard-go, .aii-tcp, .aii-tcp-go { transition: none; } }
 .aii-intro { margin: 0 0 16px; font-size: 0.9rem; line-height: 1.5; color: var(--color-text-muted); }
 .aii-intro strong { font-weight: 600; color: var(--color-text); }
 .aii-pathrow-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
@@ -15544,11 +15578,13 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 /* ═══════════════ Desktop topic-page 35/65 split (#14) ═════════════════════
    SIDEBAR (AI Intelligence → Web Sources) on the left, MAIN (News Feed →
    Related) on the right. The .topic-side / .topic-main wrappers are
-   display:contents below 1024px, so the mobile tab navigator (one section at a
-   time) and the 900–1023 single stack are untouched; at ≥1024 they become two
-   independent-height flex columns. Appended last so it wins source order. */
+   display:contents below 900px, so the mobile tab navigator (one section at a
+   time) is untouched; at ≥900 they become two independent-height flex columns.
+   Activated at 900 (was 1024) to KILL the awkward 900–1023 single-column stack
+   band — topic pages now go straight from this 2-column split to tab navigation.
+   Appended last so it wins source order. */
 .topic-side, .topic-main { display: contents; }
-@media (min-width: 1024px) {
+@media (min-width: 900px) {
   body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) {
     grid-template-columns: minmax(0, 35fr) minmax(0, 65fr) !important;
     column-gap: 1.6rem; row-gap: 0; align-items: start;

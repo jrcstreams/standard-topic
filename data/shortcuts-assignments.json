@@ -875,5 +875,10 @@
     "what-we-dont-know-yet",
     "strengths-and-limitations"
   ],
-  "evergreenExclusions": {}
+  "evergreenExclusions": {},
+  "featuredShortcuts": {
+    "discover": ["latest-news", "trends", "the-cutting-edge"],
+    "analyze": ["why-it-matters", "different-perspectives", "risks-red-flags"],
+    "learn": ["beginners-guide", "key-players", "how-it-actually-works"]
+  }
 }
