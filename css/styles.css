@@ -14339,11 +14339,14 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 .aii-top-topic-name { display: block; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-display); font-size: clamp(1.3rem, 1.1rem + 0.9vw, 1.6rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; color: var(--color-text); }
 .aii-top-topic svg { width: 18px; height: 18px; flex: none; color: var(--color-text-light); }
 .aii-top-updated { display: block; margin: 0 0 5px; font-size: 0.74rem; font-weight: 500; color: var(--color-text-muted); }
-.aii-top-context { display: flex; align-items: center; gap: 10px; margin-top: 11px; }
-.aii-top-context-ic { display: inline-flex; width: 30px; height: 30px; flex: none; align-items: center; justify-content: center; border-radius: 9px; background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: var(--color-primary); }
-.aii-top-context-ic svg { width: 16px; height: 16px; }
-.aii-top-context-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.aii-top-context-name { font-family: var(--font-display); font-size: 1.18rem; font-weight: 700; letter-spacing: -0.015em; color: var(--color-primary); line-height: 1.2; }
+/* Sections view: topic shown as a small grey pill (context), the track is the headline. */
+.aii-tophead--sections { margin: 2px 0 12px; }
+.aii-top-topic-pill { display: inline-flex; align-items: center; max-width: 100%; padding: 4px 12px; border-radius: 999px; background: #eaedf3; color: #1a2740; font-family: var(--font-display); font-size: 0.82rem; font-weight: 600; letter-spacing: -0.008em; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aii-top-context { display: flex; align-items: center; gap: 12px; margin-top: 0; }
+.aii-top-context-ic { display: inline-flex; width: 38px; height: 38px; flex: none; align-items: center; justify-content: center; border-radius: 11px; background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: var(--color-primary); }
+.aii-top-context-ic svg { width: 20px; height: 20px; }
+.aii-top-context-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.aii-top-context-name { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; color: var(--color-text); line-height: 1.15; }
 .aii-top-context-sub { font-size: 0.78rem; line-height: 1.35; color: var(--color-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* Step 1 — topic picker (searchable chips across Today's World + 100 topics). */

@@ -9,7 +9,7 @@
 //               AI Intelligence" handles switching PATHS.
 //
 // Participates in the global single-modal coordinator (`close-all-modals`).
-import { renderAIIntelligence } from './ai-intelligence.js?v=20260616-revamp236';
+import { renderAIIntelligence } from './ai-intelligence.js?v=20260616-revamp237';
 import { getFeaturedTopics, getAllTopics, getTopicBySlug, getShortcutsForTopic } from '../utils/data.js';
 
 let overlayEl = null;
@@ -92,7 +92,8 @@ function changeTopic(key) {
 // Build the scope object renderAIIntelligence expects for a given selection.
 function scopeFor(topic, label, group, opts) {
   const shared = {
-    inModal: true, initialGroup: group, topics: topicList(), allTopics: allTopicsList(),
+    inModal: true, initialGroup: group, initialInsight: (opts && opts.insight) || null,
+    topics: topicList(), allTopics: allTopicsList(),
     onChangeTopic: changeTopic, topicPicker: pickerMode, pickTopic: !!(opts && opts.pickTopic),
     onView: setChrome,
   };
@@ -163,7 +164,7 @@ function open(detail) {
   // Pre-set the chrome so there's no flash before the component's first onView.
   setChrome(pickerMode && !detail.topic ? 'topic' : 'paths');
 
-  renderBody(scopeFor(baseTopic, detail.label, detail.group, { pickTopic: pickerMode && !detail.topic }));
+  renderBody(scopeFor(baseTopic, detail.label, detail.group, { pickTopic: pickerMode && !detail.topic, insight: detail.insight }));
 
   overlayEl.style.display = 'flex';
   document.body.style.overflow = 'hidden';

@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp236';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp236';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp237';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp237';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -192,23 +192,19 @@ export function renderAIIntelligence(container, scope) {
     // sticky head) hide this topbar; only paths/sections picker pages use it.
     if (view === 'topic' || view === 'content') { tb.hidden = true; tb.innerHTML = ''; return; }
     tb.hidden = false;
-    const c = cache[curGroup];
     const p = paths.find((x) => x.group === curGroup) || {};
-    // "Updated X" sits ABOVE the topic title (eyebrow), like Trending/News.
-    const updated = (c && c.generatedAt && view === 'sections')
-      ? `<div class="aii-top-updated">Updated ${esc(relTime(c.generatedAt))}</div>` : '';
-    // Track context (icon + name + subtitle) only on the sections view.
-    let context = '';
+    const back = `<button type="button" class="im-headnav-link im-headnav-back aii-tb-back" data-tb-back>${HNAV_L}Back</button>`;
     if (view === 'sections') {
-      context = `<div class="aii-top-context"><span class="aii-top-context-ic aii-icon-${escAttr(curGroup)}">${ICONS[curGroup] || ICONS._}</span><div class="aii-top-context-tx"><span class="aii-top-context-name">${esc(p.label || '')}</span>${p.subtitle ? `<span class="aii-top-context-sub">${esc(p.subtitle)}</span>` : ''}</div></div>`;
+      // Insight picker: the TOPIC is a small grey/black pill (context, not headline),
+      // and the chosen TRACK is the prominent header. No "Updated" stamp here — that
+      // belongs on the insight page itself.
+      tb.innerHTML = `${back}
+        <div class="aii-tophead aii-tophead--sections"><span class="aii-top-topic-pill">${esc(topicTitle)}</span></div>
+        <div class="aii-top-context"><span class="aii-top-context-ic aii-icon-${escAttr(curGroup)}">${ICONS[curGroup] || ICONS._}</span><div class="aii-top-context-tx"><span class="aii-top-context-name">${esc(p.label || '')}</span>${p.subtitle ? `<span class="aii-top-context-sub">${esc(p.subtitle)}</span>` : ''}</div></div>`;
+    } else {
+      // Track picker: the topic title is the page heading.
+      tb.innerHTML = `${back}<div class="aii-tophead"><h2 class="aii-top-topic-name">${esc(topicTitle)}</h2></div>`;
     }
-    tb.innerHTML = `
-      <button type="button" class="im-headnav-link im-headnav-back aii-tb-back" data-tb-back>${HNAV_L}Back</button>
-      <div class="aii-tophead">
-        ${updated}
-        <h2 class="aii-top-topic-name">${esc(topicTitle)}</h2>
-      </div>
-      ${context}`;
     tb.querySelector('[data-tb-back]')?.addEventListener('click', onBack);
   }
   function onBack() {
@@ -386,7 +382,7 @@ export function renderAIIntelligence(container, scope) {
     // links into each track (the summary text only adds clutter when you're still
     // choosing). The blurb lives on the section page one tap further in.
     const prevHTML = previews.map((s) => `
-      <button type="button" class="aii-tcp" data-group="${escAttr(p.group)}" data-shortcut="${escAttr(s.id)}">
+      <button type="button" class="aii-tcp" data-group="${escAttr(p.group)}" data-shortcut="${escAttr(s.id)}" data-insight="${escAttr(s.name)}">
         <span class="aii-tcp-name">${esc(s.name)}</span>
         <span class="aii-tcp-go" aria-hidden="true">${OPEN_DIAG}</span>
       </button>`).join('');
@@ -400,12 +396,12 @@ export function renderAIIntelligence(container, scope) {
       <button type="button" class="aii-trackcard-more" data-group="${escAttr(p.group)}">Explore ${esc(p.tab || p.label)} ${RIGHT_ARROW}</button>
     </div>`;
   }
-  // Wire a grid of track cards. `open(group, shortcutId|null)` is supplied per
-  // context: the launcher opens the modal deep-linked to the track; the modal
-  // drills into that track's sections in place.
+  // Wire a grid of track cards. `open(group, insightName|null)` is supplied per
+  // context: the launcher opens the modal (deep-linked to the track, or straight to
+  // a specific insight when a preview is clicked); the modal drills in place.
   function wireTrackCards(root, open) {
     root.querySelectorAll('.aii-trackcard-head, .aii-trackcard-more').forEach((b) => b.addEventListener('click', () => open(b.dataset.group, null)));
-    root.querySelectorAll('.aii-tcp').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); open(b.dataset.group, b.dataset.shortcut); }));
+    root.querySelectorAll('.aii-tcp').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); open(b.dataset.group, b.dataset.insight || null); }));
   }
   // Topic-page launcher (desktop + mobile tab): a prominent "Choose an intelligence
   // track" heading + the rich track cards. Each card opens the MODAL deep-linked to
@@ -945,14 +941,9 @@ export function renderAIIntelligence(container, scope) {
       }, 1000);
     }
     if (view === 'paths') {
-      // Track cards drill into the chosen track's sections (preview teasers land
-      // on the same sections list; the live insight is one tap further in).
-      wireTrackCards(stage, async (group) => {
-        curGroup = group;
-        go('sections', 'fwd');
-        await loadGroup(curGroup);
-        if (view === 'sections' && stage.dataset.view === 'sections') { stage.innerHTML = sectionsHTML(); wire(); updateTopbar(); }
-      });
+      // Track cards drill into the chosen track. A preview teaser deep-links
+      // straight to that insight's brief; the header/Explore lands on the list.
+      wireTrackCards(stage, (group, insight) => openGroup(group, insight));
     }
     stage.querySelectorAll('.aii-menu-row, .aii-menu-card').forEach((b) => b.addEventListener('click', () => { curIdx = Number(b.dataset.idx); go('content', 'fwd'); }));
     stage.querySelectorAll('.aii-back').forEach((b) => b.addEventListener('click', () => go(b.dataset.back, 'back')));
@@ -1007,11 +998,23 @@ export function renderAIIntelligence(container, scope) {
 
   // Jump straight into a path's sections (used by the desktop→mobile hand-off and
   // the deep-linked flow entry).
-  function openGroup(group) {
+  function openGroup(group, insightName) {
     if (!paths.some((p) => p.group === group)) return;
     curGroup = group; curIdx = 0;
     go('sections', 'fwd');
-    loadGroup(curGroup).then(() => { if (view === 'sections' && stage.dataset.view === 'sections') { stage.innerHTML = sectionsHTML(); wire(); updateTopbar(); } });
+    loadGroup(curGroup).then(() => {
+      // Deep-link: a preview teaser carries its insight name — jump straight to that
+      // section's brief (not just the track's insight list). Falls back to the
+      // sections list if the brief doesn't have a matching section.
+      if (insightName) {
+        const c = cache[curGroup];
+        const norm = (s) => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
+        const target = norm(insightName);
+        const idx = ((c && c.sections) || []).findIndex((s) => norm(s.name) === target);
+        if (idx >= 0 && stage.dataset.view === 'sections') { curIdx = idx; go('content', 'fwd'); return; }
+      }
+      if (view === 'sections' && stage.dataset.view === 'sections') { stage.innerHTML = sectionsHTML(); wire(); updateTopbar(); }
+    });
   }
   if (launcher) {
     // Product launcher (#167). Home: the WHOLE card is the CTA — clicking anywhere
@@ -1028,9 +1031,10 @@ export function renderAIIntelligence(container, scope) {
         card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openStep1(); } });
       }
     } else {
-      // Track cards open the MODAL deep-linked to that topic+track.
-      wireTrackCards(stage, (group) => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: {
-        topic: scope.topic, label: scope.label, group,
+      // Track cards open the MODAL — a preview deep-links straight to that insight,
+      // the header/Explore lands on the track's insight list.
+      wireTrackCards(stage, (group, insight) => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: {
+        topic: scope.topic, label: scope.label, group, insight,
         hideGroups: scope.hideGroups || [], descriptions: scope.descriptions || {},
       } })));
       // "Or search any topic or term" → opens the modal at Step 1 (the picker + search).
@@ -1040,9 +1044,9 @@ export function renderAIIntelligence(container, scope) {
     // Modal entered "anew" (bottom nav / homepage CTA) → Step 1: pick a topic.
     go('topic', 'fwd');
   } else if (flowMode && scope.initialGroup && paths.some((p) => p.group === scope.initialGroup)) {
-    // Modal deep-linked to a specific track (clicked from a topic page) → that
-    // track's sections, with full back / change-track / prev-next inside the modal.
-    openGroup(scope.initialGroup);
+    // Modal deep-linked to a track (or straight to a specific insight when a preview
+    // was clicked) → full back / change-track / prev-next inside the modal.
+    openGroup(scope.initialGroup, scope.initialInsight);
   } else {
     // Modal default → the path picker.
     go('paths', 'fwd');
