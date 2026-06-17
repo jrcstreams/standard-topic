@@ -3,8 +3,8 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp243';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp243';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp244';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp244';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
@@ -349,6 +349,17 @@ function secHeadHTML(key, name) {
   // Sources & Coverage, which are real cited links, not generated prose.
   const tag = key === 'sources' ? '' : `<span class="im-sec-aitag">${SPARK_FILL}<span>AI Generated Text</span></span>`;
   return `<div class="im-msec-head"><span class="im-msec-ic">${SEC_ICON[key] || SEC_ICON.summary}</span><h3 class="im-msec-name">${esc(name)}</h3>${tag}</div>`;
+}
+
+// Brief failure state with a Try-again button (#2). The AI brief is generated
+// on demand, so an "unavailable" is almost always a transient API error or a
+// momentary daily-grounding-cap blip — a retry usually succeeds. `retry` re-runs
+// the same loader (which resets the skeleton first).
+function failBriefHTML(msg) {
+  return `<div class="im-empty im-brief-fail"><p>${esc(msg || 'AI brief unavailable right now.')}</p><button type="button" class="im-brief-retry">Try again</button></div>`;
+}
+function wireBriefRetry(secsBody, retry) {
+  secsBody.querySelector('.im-brief-retry')?.addEventListener('click', retry);
 }
 
 // "Sources & Coverage" — real related articles from our feed (hyperlinked
@@ -732,9 +743,13 @@ function renderNews(d) {
   const ctx = { prompt, sources: [], headlines: [], origUrl: d.url || '', webTerm: d.title || '', onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, topicName: d.title || '', name: 'AI Insight · News', count: 1 } })) };
   wireActions(ctx);
   buildBriefNav();
-  (async () => {
-    const t0 = Date.now();
+  const loadNewsBrief = () => {
     const secsBody = panelEl.querySelector('#im-secs-body');
+    if (!secsBody) return;
+    secsBody.classList.remove('ai-reveal');
+    secsBody.innerHTML = msecHTML('msec-brief', 'Brief', briefSkeleton());
+    const t0 = Date.now();
+    (async () => {
     try {
       const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'news', url: d.url || '', title: d.title || '', description: d.description || '', date: d.date || '' }) });
       const data = res.ok ? await res.json() : null;
@@ -758,9 +773,11 @@ function renderNews(d) {
         // All sections in ONE container so :last-child (no border) is the true last.
         secsBody.innerHTML = secHTML + covSec; secsBody.classList.add('ai-reveal');
         buildBriefNav();
-      } else { secsBody.innerHTML = '<p class="im-empty">AI brief unavailable right now.</p>'; }
-    } catch (_) { if (panelEl.querySelector('#im-secs-body') === secsBody) secsBody.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
-  })();
+      } else { secsBody.innerHTML = failBriefHTML('AI brief unavailable right now.'); wireBriefRetry(secsBody, loadNewsBrief); }
+    } catch (_) { if (panelEl.querySelector('#im-secs-body') === secsBody) { secsBody.innerHTML = failBriefHTML('AI brief unavailable right now.'); wireBriefRetry(secsBody, loadNewsBrief); } }
+    })();
+  };
+  loadNewsBrief();
 }
 
 // "Sources & Coverage" under a trend brief — the SAME rich rows (headline +
@@ -827,9 +844,13 @@ function renderTrend(d) {
   const ctx = { prompt, sources: [], origUrl: '', webTerm: d.query, onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, topicName: d.query, name: 'Trending · AI', count: 1 } })) };
   wireActions(ctx);
   buildBriefNav();
-  (async () => {
-    const t0 = Date.now();
+  const loadTrendBrief = () => {
     const secsBody = panelEl.querySelector('#im-secs-body');
+    if (!secsBody) return;
+    secsBody.classList.remove('ai-reveal');
+    secsBody.innerHTML = msecHTML('msec-brief', 'Summary', briefSkeleton());
+    const t0 = Date.now();
+    (async () => {
     try {
       const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'trend', query: d.query }) });
       const data = res.ok ? await res.json() : null;
@@ -858,9 +879,11 @@ function renderTrend(d) {
         // All sections in ONE container so :last-child (no border) is the true last.
         secsBody.innerHTML = why + sum + covSec; secsBody.classList.add('ai-reveal');
         buildBriefNav();
-      } else { secsBody.innerHTML = '<p class="im-empty">No AI brief generated for this trend yet.</p>'; }
-    } catch (_) { if (panelEl.querySelector('#im-secs-body') === secsBody) secsBody.innerHTML = '<p class="im-empty">AI brief unavailable.</p>'; }
-  })();
+      } else { secsBody.innerHTML = failBriefHTML('No AI brief generated for this trend yet.'); wireBriefRetry(secsBody, loadTrendBrief); }
+    } catch (_) { if (panelEl.querySelector('#im-secs-body') === secsBody) { secsBody.innerHTML = failBriefHTML('AI brief unavailable right now.'); wireBriefRetry(secsBody, loadTrendBrief); } }
+    })();
+  };
+  loadTrendBrief();
 }
 // Related-search chips drill into that term as a new (stacked) trend page; the
 // "+N more" toggle reveals the collapsed chips.
