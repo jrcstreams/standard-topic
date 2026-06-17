@@ -14863,21 +14863,24 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 }
 
 .aii-explore { display: grid; gap: 6px; }
-.aii-explore-opt { display: flex; align-items: center; gap: 11px; text-align: left; width: 100%; padding: 10px 12px; border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; cursor: pointer; font-family: var(--font-family); transition: border-color .14s, background .14s; }
+.aii-explore-opt { display: flex; align-items: center; gap: 10px; text-align: left; width: 100%; padding: 8px 11px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; cursor: pointer; font-family: var(--font-family); transition: border-color .14s, background .14s; }
 .aii-explore-opt:hover { border-color: var(--color-primary); background: #f7f9fc; }
-.aii-explore-ic { flex: none; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border-radius: 9px; background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: var(--color-primary); }
+.aii-explore-ic { flex: none; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: var(--color-primary); }
+.aii-explore-ic svg { width: 15px; height: 15px; }
 .aii-explore-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
-.aii-explore-name { font-size: 0.85rem; font-weight: 600; color: var(--color-text); }
-.aii-explore-sub { font-size: 0.74rem; color: var(--color-text-muted); }
-.aii-explore-opt > svg:last-child { flex: none; color: var(--color-text-light); }
+.aii-explore-name { font-size: 0.82rem; font-weight: 600; color: var(--color-text); }
+.aii-explore-sub { font-size: 0.72rem; color: var(--color-text-muted); }
+.aii-explore-opt > svg:last-child { flex: none; width: 14px; height: 14px; color: var(--color-text-light); }
 .aii-leave-back { display: inline-flex; align-items: center; gap: 5px; padding: 4px 4px 8px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; color: var(--color-text-muted); }
 .aii-leave-back:hover { color: var(--color-primary); }
-.aii-leave-card { padding: 13px 14px 14px; border: 1px solid var(--color-surface-border); border-radius: 11px; background: #f8fafc; }
-.aii-leave-title { margin: 0 0 5px; font-size: 0.88rem; font-weight: 700; color: var(--color-text); }
+.aii-leave-card { padding: 12px 14px 13px; border: 1px solid var(--color-surface-border); border-radius: 11px; background: #f8fafc; }
+.aii-leave-title { margin: 0 0 5px; font-size: 0.86rem; font-weight: 700; color: var(--color-text); }
 .aii-leave-body { margin: 0 0 12px; font-size: 0.79rem; line-height: 1.45; color: var(--color-text-muted); }
-.aii-leave-go { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border: none; border-radius: 999px; background: var(--color-primary); color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; transition: background .14s; }
-.aii-leave-go:hover { background: var(--color-primary-dark, #0f1a2e); }
-.aii-leave-go svg { stroke: #fff; }
+/* Continue (leaving-site) — a contained accent button, not a big dark blob: primary
+   colour, modest size, soft lift. */
+.aii-leave-go { display: inline-flex; align-items: center; gap: 7px; padding: 8px 15px; border: none; border-radius: 9px; background: var(--color-primary); color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; box-shadow: 0 6px 16px -10px color-mix(in srgb, var(--color-primary) 80%, transparent); transition: background .14s, transform .08s; }
+.aii-leave-go:hover { background: var(--color-primary-dark, #0f1a2e); transform: translateY(-1px); }
+.aii-leave-go svg { width: 13px; height: 13px; stroke: #fff; }
 @media (max-width: 560px) { .aii-pathrow { padding: 14px 18px; } }
 
 /* ===== Unified AI Insight modal ========================================= */
@@ -15385,21 +15388,22 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 
 /* Explore-further: Direct Submit / Review chooser + leaving-site confirm. */
 .im-explore { display: grid; gap: 6px; }
-.im-explore-opt { display: flex; align-items: center; gap: 11px; text-align: left; width: 100%; padding: 10px 12px; border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; cursor: pointer; font-family: var(--font-family); transition: border-color .14s, background .14s; }
+.im-explore-opt { display: flex; align-items: center; gap: 10px; text-align: left; width: 100%; padding: 8px 11px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; cursor: pointer; font-family: var(--font-family); transition: border-color .14s, background .14s; }
 .im-explore-opt:hover { border-color: var(--color-primary); background: #f7f9fc; }
-.im-explore-ic { flex: none; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border-radius: 9px; background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: var(--color-primary); }
+.im-explore-ic { flex: none; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: var(--color-primary); }
+.im-explore-ic svg { width: 15px; height: 15px; }
 .im-explore-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
-.im-explore-name { font-size: 0.85rem; font-weight: 600; color: var(--color-text); }
-.im-explore-sub { font-size: 0.74rem; color: var(--color-text-muted); }
-.im-explore-opt > svg:last-child { flex: none; color: var(--color-text-light); }
+.im-explore-name { font-size: 0.82rem; font-weight: 600; color: var(--color-text); }
+.im-explore-sub { font-size: 0.72rem; color: var(--color-text-muted); }
+.im-explore-opt > svg:last-child { flex: none; width: 14px; height: 14px; color: var(--color-text-light); }
 .im-leave-back { display: inline-flex; align-items: center; gap: 5px; padding: 0 0 8px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; color: var(--color-text-muted); }
 .im-leave-back:hover { color: var(--color-primary); }
-.im-leave-card { padding: 13px 14px 14px; border: 1px solid var(--color-surface-border); border-radius: 11px; background: #f8fafc; }
-.im-leave-title { margin: 0 0 5px; font-size: 0.88rem; font-weight: 700; color: var(--color-text); }
+.im-leave-card { padding: 12px 14px 13px; border: 1px solid var(--color-surface-border); border-radius: 11px; background: #f8fafc; }
+.im-leave-title { margin: 0 0 5px; font-size: 0.86rem; font-weight: 700; color: var(--color-text); }
 .im-leave-body { margin: 0 0 12px; font-size: 0.79rem; line-height: 1.45; color: var(--color-text-muted); }
-.im-leave-go { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border: none; border-radius: 999px; background: var(--color-primary); color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; transition: background .14s; }
-.im-leave-go:hover { background: color-mix(in srgb, var(--color-primary) 88%, #000); }
-.im-leave-go svg { stroke: #fff; }
+.im-leave-go { display: inline-flex; align-items: center; gap: 7px; padding: 8px 15px; border: none; border-radius: 9px; background: var(--color-primary); color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; box-shadow: 0 6px 16px -10px color-mix(in srgb, var(--color-primary) 80%, transparent); transition: background .14s, transform .08s; }
+.im-leave-go:hover { background: color-mix(in srgb, var(--color-primary) 88%, #000); transform: translateY(-1px); }
+.im-leave-go svg { width: 13px; height: 13px; stroke: #fff; }
 
 /* Generating state — centered, animated, occupies space the brief will fill. */
 .im-gen { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 26px 12px 30px; }
