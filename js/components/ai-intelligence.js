@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp231';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp231';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp232';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp232';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -380,9 +380,12 @@ export function renderAIIntelligence(container, scope) {
   function trackCardHTML(p) {
     let previews = [];
     try { previews = trackPreviewsFor(p.group) || []; } catch (_) {}
+    // Preview teasers are NAME-ONLY on the track-picker cards — condensed quick
+    // links into each track (the summary text only adds clutter when you're still
+    // choosing). The blurb lives on the section page one tap further in.
     const prevHTML = previews.map((s) => `
       <button type="button" class="aii-tcp" data-group="${escAttr(p.group)}" data-shortcut="${escAttr(s.id)}">
-        <span class="aii-tcp-tx"><span class="aii-tcp-name">${esc(s.name)}</span>${s.description ? `<span class="aii-tcp-desc">${esc(s.description)}</span>` : ''}</span>
+        <span class="aii-tcp-name">${esc(s.name)}</span>
         <span class="aii-tcp-go" aria-hidden="true">${ARROW}</span>
       </button>`).join('');
     return `<div class="aii-trackcard" data-group="${escAttr(p.group)}">
@@ -410,7 +413,7 @@ export function renderAIIntelligence(container, scope) {
     return `<div class="aii-promo aii-promo--tracks">
       <div class="aii-tracks-head-wrap">
         <h3 class="aii-tracks-head">Choose an intelligence track</h3>
-        <p class="aii-tracks-sub">Grounded, cited analysis on this topic, refreshed live. <button type="button" class="aii-tracks-searchlink" data-aii-search>Or search any topic or term</button>.</p>
+        <p class="aii-tracks-sub">Grounded, cited analysis on this topic, refreshed live.</p>
       </div>
       <div class="aii-promo-grid aii-trackgrid">${paths.map(trackCardHTML).join('')}</div>
     </div>`;

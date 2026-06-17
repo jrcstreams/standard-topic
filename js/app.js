@@ -6,26 +6,26 @@ import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './ut
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260616-revamp231';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260616-revamp232';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260616-revamp231';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260616-revamp231';
-import { initPromptModal } from './components/prompt-modal.js?v=20260616-revamp231';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260616-revamp231';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260616-revamp232';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260616-revamp232';
+import { initPromptModal } from './components/prompt-modal.js?v=20260616-revamp232';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260616-revamp232';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp231';
-import { initInsightModal } from './components/insight-modal.js?v=20260616-revamp231';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260616-revamp231';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260616-revamp231';
-import { renderWebSources } from './components/websources.js?v=20260616-revamp231';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp231';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp232';
+import { initInsightModal } from './components/insight-modal.js?v=20260616-revamp232';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260616-revamp232';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260616-revamp232';
+import { renderWebSources } from './components/websources.js?v=20260616-revamp232';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp232';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260616-revamp231';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260616-revamp232';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260616-revamp231';
-import { initSettingsModal } from './components/settings-modal.js?v=20260616-revamp231';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260616-revamp232';
+import { initSettingsModal } from './components/settings-modal.js?v=20260616-revamp232';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -2790,6 +2790,12 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
         <div class="search-panel-suggest" role="listbox" hidden></div>
       </div>
       <div class="search-panel-results"><div class="search-panel-results-inner"></div></div>
+      ${isModal
+        ? `<div class="search-panel-empty" aria-hidden="true">
+             <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+             <p>Search a topic, term, or headline above to explore news, web sources, and AI insights.</p>
+           </div>`
+        : ''}
     </div>`;
 
   const panelEl = container.querySelector('.search-panel');
