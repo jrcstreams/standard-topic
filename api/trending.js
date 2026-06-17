@@ -29,8 +29,12 @@ catch (e) { waitUntil = null; invalidateByTag = null; }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // Cap briefs generated per heal pass so the background work stays well inside
-// the function's maxDuration. Only ever a handful are missing at once.
+// the function's maxDuration. Only ever a handful are missing/stale at once.
 const HEAL_MAX = 8;
+// A trend's cached summary older than this (and still trending) is regenerated —
+// the term persists across days but the reason it's trending changes. ~6h keeps
+// the reason current without churning (a trend's WHY rarely flips hourly).
+const STALE_MS = Number(process.env.TREND_SUMMARY_STALE_MS || 6 * 3600 * 1000);
 
 // Geo config — single source of truth. Add 'GB','DE',… here (and only
 // here) to widen coverage; each geo is one upstream call per refresh.
@@ -72,7 +76,7 @@ module.exports = async function handler(req, res) {
       if (sql && topics.length) {
         const keys = topics.map((t) => String(t.query || '').toLowerCase());
         const rows = await sql.query(
-          `SELECT entity_key, summary, sources FROM ai_insights
+          `SELECT entity_key, summary, sources, created_at FROM ai_insights
             WHERE entity_type='trend' AND insight='brief' AND summary IS NOT NULL
               AND entity_key = ANY($1)`, [keys]);
         const byKey = new Map(rows.map((r) => [r.entity_key, r]));
@@ -80,29 +84,39 @@ module.exports = async function handler(req, res) {
           const row = byKey.get(String(t.query || '').toLowerCase());
           t.summary = (row && row.summary) || null;
           t.sources = (row && row.sources) || null; // for the AI provenance ("N sources") on the card
+          t._briefAt = (row && row.created_at) || null; // drives staleness refresh below
         });
       }
     } catch (_) { /* DB optional — render without summaries */ }
 
-    // Self-heal missing one-liners in the background (after the response is
-    // sent). Generation is idempotent — generateInsight returns cached briefs
-    // without re-charging — so even if this races the cron, nothing duplicates.
-    // Only runs on a cache MISS (~every 30 min), so it self-throttles.
+    // Self-heal in the background (after the response is sent): generate MISSING
+    // one-liners AND re-generate STALE ones — a term like "Messi" stays trending for
+    // days but the REASON changes, and a summary keyed only by query would otherwise
+    // be stuck on day-one's reason forever. A brief older than STALE_MS for a term
+    // that's STILL trending gets fully regenerated (summary + full brief + sources,
+    // one call). Rank-ordered (top trends first) and capped at HEAL_MAX so it rides
+    // the ~30-min cache-miss cadence and self-throttles — never an on-demand stampede;
+    // the grounding-budget gate still falls back to ungrounded before any cap.
     try {
-      const missing = sql && waitUntil
-        ? topics.filter((t) => !t.summary && String(t.query || '').trim()).slice(0, HEAL_MAX).map((t) => t.query)
+      const now = Date.now();
+      const isStale = (t) => t._briefAt && (now - new Date(t._briefAt).getTime() > STALE_MS);
+      const healList = sql && waitUntil
+        ? topics
+          .filter((t) => String(t.query || '').trim() && (!t.summary || isStale(t)))
+          .slice(0, HEAL_MAX)
+          .map((t) => ({ query: t.query, refresh: t.summary ? 1 : 0 }))
         : [];
-      if (missing.length) {
+      if (healList.length) {
         waitUntil((async () => {
           let made = 0;
-          for (const query of missing) {
+          for (const item of healList) {
             try {
-              const r = await generateInsight(sql, { type: 'trend', query });
+              const r = await generateInsight(sql, { type: 'trend', query: item.query, refresh: item.refresh });
               if (r && r.cached === false && r.summary) made += 1;
             } catch (_) { /* retried on a later refresh */ }
             await sleep(600);
           }
-          // Bust the list cache ONLY if we added summaries — otherwise an
+          // Bust the list cache ONLY if we changed something — otherwise an
           // un-briefable term would loop invalidate → recompute → invalidate.
           if (made > 0 && invalidateByTag) {
             try { await invalidateByTag('trending-all'); } catch (_) {}
