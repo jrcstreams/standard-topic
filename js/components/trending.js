@@ -5,7 +5,7 @@
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
 import { renderTrendExpansionBody } from './trend-expansion.js';
-import { aiSparkInline } from '../utils/ai-provenance.js?v=20260616-revamp235';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260616-revamp236';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -315,8 +315,8 @@ export function renderTrending(container) {
 // and `gridEl` (the scrolling body).
 export function renderTrendingModal(controlsEl, gridEl) {
   gridEl.innerHTML = `<div class="trend-card-grid">${Array.from({ length: 8 }, () => '<div class="trend-card trend-card-skel"></div>').join('')}</div>`;
-  const TLM_INITIAL = 16, TLM_STEP = 16, EARLIER_MAX = 9;
-  const state = { all: [], earlier: [], category: 'all', shown: TLM_INITIAL };
+  const TLM_INITIAL = 16, EARLIER_MAX = 9;
+  const state = { all: [], earlier: [], category: 'all', expanded: false };
   const catList = () => [...new Set(state.all.map(ttCatOf).filter(Boolean))]
     .sort((a, b) => (ttCatRank(a) - ttCatRank(b)) || a.localeCompare(b));
 
@@ -343,29 +343,30 @@ export function renderTrendingModal(controlsEl, gridEl) {
     const all = visible();
     const earlier = earlierVisible();
     if (!all.length && !earlier.length) { gridEl.innerHTML = '<p class="trending-empty">No trends in this category right now.</p>'; return; }
-    const shown = all.slice(0, state.shown);
-    const more = all.length - shown.length;
+    const shown = state.expanded ? all : all.slice(0, TLM_INITIAL);
+    const hiddenLive = all.length - shown.length;
     let html = '';
-    // Live (currently trending) — initial batch + client-side "View more".
-    if (all.length) {
-      html += `<div class="trend-card-grid">${shown.map((t, i) => trendCardHTML(t, i)).join('')}</div>${
-        more > 0 ? `<div class="trend-loadmore-row"><button type="button" class="trend-loadmore" data-loadmore>View more trends <span class="trend-loadmore-count">+${more}</span></button></div>` : ''}`;
-    }
-    // "Earlier" — terms that were trending in the last few days but aren't now.
-    // Clearly separated + labeled "Was trending X ago" so they never read as live.
-    if (earlier.length) {
+    if (shown.length) html += `<div class="trend-card-grid">${shown.map((t, i) => trendCardHTML(t, i)).join('')}</div>`;
+    // "Earlier" (terms that WERE trending, not now) flows in below the live grid —
+    // but ONLY once "View more" is clicked, so it's never a standalone bottom bucket.
+    if (state.expanded && earlier.length) {
       html += `<div class="trend-earlier">
         <div class="trend-earlier-head"><span class="trend-earlier-title">Earlier</span><span class="trend-earlier-sub">Recently trending, not right now</span></div>
         <div class="trend-card-grid">${earlier.map((t, i) => trendCardHTML(t, 5000 + i, { metaText: t._meta, past: true })).join('')}</div>
       </div>`;
     }
+    // A single "View more" reveals the rest of the live set AND the Earlier section.
+    const moreCount = hiddenLive + (state.expanded ? 0 : earlier.length);
+    if (!state.expanded && moreCount > 0) {
+      html += `<div class="trend-loadmore-row"><button type="button" class="trend-loadmore" data-loadmore>View more trends <span class="trend-loadmore-count">+${moreCount}</span></button></div>`;
+    }
     gridEl.innerHTML = html;
     wireTrendCards(gridEl);
-    gridEl.querySelector('[data-loadmore]')?.addEventListener('click', () => { state.shown += TLM_STEP; renderGrid(); });
+    gridEl.querySelector('[data-loadmore]')?.addEventListener('click', () => { state.expanded = true; renderGrid(); });
   }
   function renderControls() {
     controlsEl.innerHTML = controlsHTML();
-    controlsEl.querySelector('.trend-cat-select')?.addEventListener('change', (e) => { state.category = e.target.value; state.shown = TLM_INITIAL; renderGrid(); });
+    controlsEl.querySelector('.trend-cat-select')?.addEventListener('change', (e) => { state.category = e.target.value; state.expanded = false; renderGrid(); });
   }
   // Pull the last 3 days of stored trends, drop anything still live (matched by
   // query), and present the rest as "Earlier". Cross-checks against state.all so

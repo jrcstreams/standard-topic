@@ -14260,7 +14260,7 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 .aii-launcher-cta .aii-feat { color: rgba(255, 255, 255, 0.82); }
 .aii-launcher-cta .aii-feat-ic { color: rgba(255, 255, 255, 0.46); }
 /* White CTA button on the navy card — clean, high-contrast, not loud. */
-.aii-promo-btn { align-self: flex-start; display: inline-flex; align-items: center; gap: 9px; margin-top: 9px; padding: 13px 24px; border-radius: 11px; background: #fff; color: var(--color-primary); font-family: var(--font-family); font-size: 0.9rem; font-weight: 700; box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.6); transition: transform .12s ease, box-shadow .16s ease; }
+.aii-promo-btn { align-self: flex-start; display: inline-flex; align-items: center; gap: 9px; margin-top: 20px; padding: 13px 24px; border-radius: 11px; background: #fff; color: var(--color-primary); font-family: var(--font-family); font-size: 0.9rem; font-weight: 700; box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.6); transition: transform .12s ease, box-shadow .16s ease; }
 .aii-promo-btn svg { width: 15px; height: 15px; transition: transform .16s ease; }
 .aii-launcher-cta:hover .aii-promo-btn { transform: translateY(-1px); box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.7); }
 .aii-launcher-cta:hover .aii-promo-btn svg { transform: translateX(3px); }
@@ -14385,7 +14385,11 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 
 
 /* "Choose an intelligence track" — hub intro line. */
-.aii-paths-intro { margin: 4px 0 13px; text-align: left; font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; letter-spacing: -0.012em; color: var(--color-text); }
+/* Modal track-picker intro: a clear section label + summary, sized well below the
+   topic title above it (no longer competing at the same weight). */
+.aii-paths-introwrap { margin: 6px 0 14px; }
+.aii-paths-intro { margin: 0 0 3px; text-align: left; font-family: var(--font-display); font-size: 0.96rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-text); }
+.aii-paths-introsub { margin: 0; font-size: 0.86rem; line-height: 1.45; color: var(--color-text-muted); max-width: 64ch; }
 
 /* Neutral grey icon chips across the picker (matches the content sections) —
    no per-track colours. */

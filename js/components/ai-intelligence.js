@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp235';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp235';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp236';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp236';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -421,7 +421,10 @@ export function renderAIIntelligence(container, scope) {
     </div>`;
   }
   function pathsHTML() {
-    const intro = flowMode ? `<p class="aii-paths-intro">Choose an intelligence track</p>` : '';
+    const intro = flowMode ? `<div class="aii-paths-introwrap">
+      <h3 class="aii-paths-intro">Choose an intelligence track</h3>
+      <p class="aii-paths-introsub">Grounded, cited analysis on this topic, refreshed live. Pick a track, or jump straight to an insight.</p>
+    </div>` : '';
     return `${intro}<div class="aii-pathlist aii-trackgrid">${paths.map(trackCardHTML).join('')}</div>`;
   }
   // Each section card gets ITS OWN icon (the shortcut's icon from the registry),

@@ -6,26 +6,26 @@ import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './ut
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260616-revamp235';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260616-revamp236';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260616-revamp235';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260616-revamp235';
-import { initPromptModal } from './components/prompt-modal.js?v=20260616-revamp235';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260616-revamp235';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260616-revamp236';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260616-revamp236';
+import { initPromptModal } from './components/prompt-modal.js?v=20260616-revamp236';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260616-revamp236';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp235';
-import { initInsightModal } from './components/insight-modal.js?v=20260616-revamp235';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260616-revamp235';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260616-revamp235';
-import { renderWebSources } from './components/websources.js?v=20260616-revamp235';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp235';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp236';
+import { initInsightModal } from './components/insight-modal.js?v=20260616-revamp236';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260616-revamp236';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260616-revamp236';
+import { renderWebSources } from './components/websources.js?v=20260616-revamp236';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp236';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260616-revamp235';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260616-revamp236';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260616-revamp235';
-import { initSettingsModal } from './components/settings-modal.js?v=20260616-revamp235';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260616-revamp236';
+import { initSettingsModal } from './components/settings-modal.js?v=20260616-revamp236';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1144,6 +1144,9 @@ function renderStickyHeroBar(container, route) {
             </button>
           </div>
         </div>
+        <button type="button" class="sticky-settings sticky-insights" id="nav-insights" aria-label="AI Insights" title="AI Insights">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>
+        </button>
         <button type="button" class="sticky-trending" id="nav-trending" aria-label="Trending">
           <svg class="sticky-trending-icon" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="3 17 9 11 13 15 21 7"/>
@@ -1190,6 +1193,11 @@ function renderStickyHeroBar(container, route) {
   if (!route || route.type === 'home' || location.hash === '' || location.hash === '#' || location.hash === '#/') {
     document.getElementById('nav-home')?.classList.add('is-active');
   }
+
+  // AI Insights sparkle — opens the AI Insights modal at the topic picker.
+  document.getElementById('nav-insights')?.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: { pickTopic: true } }));
+  });
 
   // Trending pill — opens the global Trending modal from any page.
   document.getElementById('nav-trending')?.addEventListener('click', () => {
@@ -1538,7 +1546,6 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           <section class="layout-section home-ws-card" id="section-websources"></section>
           <a href="#/prompt-generator" class="home-promo" aria-label="Open the Prompt Builder">
             <div class="home-promo-inner">
-              <p class="home-promo-eyebrow">Prompt Builder</p>
               <h3 class="home-promo-title">Smarter prompts,<br>better answers.</h3>
               <p class="home-promo-text">Turn any topic into a structured, ready-to-run prompt for any AI assistant.</p>
               <span class="home-promo-btn">
