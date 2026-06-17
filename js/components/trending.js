@@ -5,7 +5,7 @@
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
 import { renderTrendExpansionBody } from './trend-expansion.js';
-import { aiSparkInline } from '../utils/ai-provenance.js?v=20260616-revamp239';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260616-revamp240';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -153,7 +153,7 @@ function trendCardHTML(topic, idx, opts) {
             <span class="trend-card-title">${escapeHTML(title)}</span>
           </span>
           ${meta ? `<span class="trend-card-meta">${escapeHTML(meta)}</span>` : ''}
-          ${topic.summary && cleanSummary(topic.summary) ? `<span class="trend-card-summary">${aiSparkInline()}${escapeHTML(cleanSummary(topic.summary))}</span>` : ''}
+          ${topic.summary && cleanSummary(topic.summary) ? `<span class="trend-card-summary">${escapeHTML(cleanSummary(topic.summary))}</span>` : ''}
         </span>
         <span class="trend-card-chev trend-card-open" aria-hidden="true">${OPEN_ICON}</span>
       </button>

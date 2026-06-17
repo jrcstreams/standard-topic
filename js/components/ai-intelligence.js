@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp239';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp239';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp240';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp240';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -389,8 +389,9 @@ export function renderAIIntelligence(container, scope) {
     return `<div class="aii-trackcard" data-group="${escAttr(p.group)}">
       <button type="button" class="aii-trackcard-head" data-group="${escAttr(p.group)}">
         <span class="aii-trackcard-ic aii-icon-${escAttr(p.group)}">${ICONS[p.group] || ICONS._}</span>
-        <span class="aii-trackcard-idtx"><span class="aii-trackcard-name">${esc(p.tab || p.label)}</span><span class="aii-trackcard-sub">${esc(p.subtitle)}</span></span>
+        <span class="aii-trackcard-name">${esc(p.tab || p.label)}</span>
         <span class="aii-trackcard-go" aria-hidden="true">${RIGHT_ARROW}</span>
+        <span class="aii-trackcard-sub">${esc(p.subtitle)}</span>
       </button>
       ${prevHTML ? `<div class="aii-trackcard-previews">${prevHTML}</div>` : ''}
       <button type="button" class="aii-trackcard-more" data-group="${escAttr(p.group)}">Explore ${esc(p.tab || p.label)} ${RIGHT_ARROW}</button>

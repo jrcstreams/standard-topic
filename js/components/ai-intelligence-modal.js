@@ -9,7 +9,7 @@
 //               AI Intelligence" handles switching PATHS.
 //
 // Participates in the global single-modal coordinator (`close-all-modals`).
-import { renderAIIntelligence } from './ai-intelligence.js?v=20260616-revamp239';
+import { renderAIIntelligence } from './ai-intelligence.js?v=20260616-revamp240';
 import { getFeaturedTopics, getAllTopics, getTopicBySlug, getShortcutsForTopic } from '../utils/data.js';
 
 let overlayEl = null;
@@ -153,9 +153,8 @@ function open(detail) {
       <button type="button" class="aii-modal-close" aria-label="Close">${X}</button>
       <div class="aii-modal-head-id"><span class="aii-modal-logo">${LOGO}</span><h2 class="aii-modal-title">AI Insights</h2></div>
       <div class="aii-modal-introhead">
-        <span class="aii-modal-intrologo">${LOGO}</span>
-        <h2 class="aii-modal-introtitle">AI Insights</h2>
-        <p class="aii-modal-introsub">Search any topic or term, or browse 100+ by category.</p>
+        <div class="aii-modal-introtitlerow"><span class="aii-modal-intrologo">${LOGO}</span><h2 class="aii-modal-introtitle">AI Insights</h2></div>
+        <p class="aii-modal-introsub">Search any topic or term,<br class="aii-sub-break">or browse 100+ by category.</p>
       </div>
     </div>
     <div class="aii-modal-body"></div>`;
