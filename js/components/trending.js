@@ -5,7 +5,7 @@
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
 import { renderTrendExpansionBody } from './trend-expansion.js';
-import { aiSparkInline } from '../utils/ai-provenance.js?v=20260616-revamp232';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260616-revamp233';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -132,18 +132,24 @@ export function cleanSummary(s) {
 
 // Compact 2-row card: [category · trending-for] on top, term below. Clicking
 // the card opens an attached dropdown of quick insight links (no modal).
-function trendCardHTML(topic, idx) {
+// History "clock" mark for trends that WERE trending (not active now).
+const TREND_PAST_ICON = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>`;
+
+function trendCardHTML(topic, idx, opts) {
+  opts = opts || {};
   const cat = (topic.categories && topic.categories[0]) || '';
   const dur = durationLabel(topic.startedAt);
   const title = titleCase(topic.query);
-  // Line 2: the topic/category and how long it's been trending, sentence-case.
-  const meta = [cat, dur ? `Since ${dur} ago` : ''].filter(Boolean).join(' · ');
+  // Line 2: either the live "Since X ago" or a caller-supplied label (the
+  // "Earlier" section passes "Was trending X ago").
+  const meta = opts.metaText != null ? opts.metaText : [cat, dur ? `Since ${dur} ago` : ''].filter(Boolean).join(' · ');
+  const icon = opts.past ? TREND_PAST_ICON : TREND_CARD_ICON;
   return `
-    <div class="trend-card" data-idx="${idx}" data-query="${escapeAttr(title)}" data-cat="${escapeAttr(cat)}" data-started="${escapeAttr(topic.startedAt || '')}" data-breakdown="${escapeAttr(JSON.stringify(Array.isArray(topic.trendBreakdown) ? topic.trendBreakdown.slice(0, 8) : []))}">
+    <div class="trend-card${opts.past ? ' trend-card--past' : ''}" data-idx="${idx}" data-query="${escapeAttr(title)}" data-cat="${escapeAttr(cat)}" data-started="${escapeAttr(topic.startedAt || '')}" data-breakdown="${escapeAttr(JSON.stringify(Array.isArray(topic.trendBreakdown) ? topic.trendBreakdown.slice(0, 8) : []))}">
       <button type="button" class="trend-card-trigger" aria-expanded="false" title="Quick insights on ${escapeAttr(title)}">
         <span class="trend-card-main">
           <span class="trend-card-head">
-            <span class="trend-card-icon" aria-hidden="true">${TREND_CARD_ICON}</span>
+            <span class="trend-card-icon" aria-hidden="true">${icon}</span>
             <span class="trend-card-title">${escapeHTML(title)}</span>
           </span>
           ${meta ? `<span class="trend-card-meta">${escapeHTML(meta)}</span>` : ''}
