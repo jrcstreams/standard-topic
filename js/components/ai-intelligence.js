@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp234';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp234';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260616-revamp235';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260616-revamp235';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -88,6 +88,8 @@ const LOGO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><p
 const ARROW = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 // Horizontal "go" arrow for the promo CTA (slides right on hover).
 const RIGHT_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>';
+// Diagonal "open this" affordance on each preview link — signals the row opens an insight.
+const OPEN_DIAG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>';
 const BACK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
 const EXT = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>';
 const CHEV = '<svg class="aii-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
@@ -386,7 +388,7 @@ export function renderAIIntelligence(container, scope) {
     const prevHTML = previews.map((s) => `
       <button type="button" class="aii-tcp" data-group="${escAttr(p.group)}" data-shortcut="${escAttr(s.id)}">
         <span class="aii-tcp-name">${esc(s.name)}</span>
-        <span class="aii-tcp-go" aria-hidden="true">${ARROW}</span>
+        <span class="aii-tcp-go" aria-hidden="true">${OPEN_DIAG}</span>
       </button>`).join('');
     return `<div class="aii-trackcard" data-group="${escAttr(p.group)}">
       <button type="button" class="aii-trackcard-head" data-group="${escAttr(p.group)}">
