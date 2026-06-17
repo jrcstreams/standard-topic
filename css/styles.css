@@ -695,6 +695,7 @@ body.custom-mode.sticky-always #content {
   /* Narrower cards + height capped to the space above the bar. */
   html .takeover-panel,
   html .pbm-panel,
+  html .at-modal-panel,
   html .all-topics-modal-card,
   html .tlm-panel,
   html .td-panel {
@@ -10666,7 +10667,12 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 .settings-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.55);
+  /* Match the Search / Trending / Prompt takeovers EXACTLY (same tint + frosted
+     blur) so every bottom-nav modal dims the top bar the same way — without the
+     blur this overlay left the navy header crisp/bright while the others frosted
+     it, which read as "some modals turn the top blue, some white" (#4). */
+  background: rgba(15, 26, 46, 0.5);
+  backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
   z-index: 1000;
   display: flex;
   align-items: center;
