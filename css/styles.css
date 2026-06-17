@@ -15247,6 +15247,13 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 .trend-loadmore:active { transform: translateY(1px); }
 .trend-loadmore-count { font-size: 0.78rem; font-weight: 600; color: var(--color-text-muted); }
 .trend-legend-trend-ic { display: inline-flex; align-items: center; color: #475569; }
+/* "Earlier" — recently-trending (not live). Clearly separated from the live grid;
+   past cards swap the green up-arrow for a muted clock so they don't read as live. */
+.trend-earlier { margin-top: 1.4rem; padding-top: 1.05rem; border-top: 1px solid var(--color-surface-border); }
+.trend-earlier-head { display: flex; align-items: baseline; gap: 0.55rem; flex-wrap: wrap; margin: 0 0 0.7rem; padding: 0 0.5rem; }
+.trend-earlier-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-text); }
+.trend-earlier-sub { font-size: 0.8rem; color: var(--color-text-muted); }
+.trend-card--past .trend-card-icon { color: var(--color-text-light); }
 .trend-legend-trend-ic svg { width: 12px; height: 12px; }
 
 /* AI provenance — the consistent "this is AI-generated, grounded in these

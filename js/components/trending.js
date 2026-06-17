@@ -5,7 +5,7 @@
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
 import { renderTrendExpansionBody } from './trend-expansion.js';
-import { aiSparkInline } from '../utils/ai-provenance.js?v=20260616-revamp233';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260616-revamp234';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -315,8 +315,8 @@ export function renderTrending(container) {
 // and `gridEl` (the scrolling body).
 export function renderTrendingModal(controlsEl, gridEl) {
   gridEl.innerHTML = `<div class="trend-card-grid">${Array.from({ length: 8 }, () => '<div class="trend-card trend-card-skel"></div>').join('')}</div>`;
-  const TLM_INITIAL = 16, TLM_STEP = 16;
-  const state = { all: [], category: 'all', shown: TLM_INITIAL };
+  const TLM_INITIAL = 16, TLM_STEP = 16, EARLIER_MAX = 9;
+  const state = { all: [], earlier: [], category: 'all', shown: TLM_INITIAL };
   const catList = () => [...new Set(state.all.map(ttCatOf).filter(Boolean))]
     .sort((a, b) => (ttCatRank(a) - ttCatRank(b)) || a.localeCompare(b));
 
@@ -335,15 +335,31 @@ export function renderTrendingModal(controlsEl, gridEl) {
   function visible() {
     return state.category === 'all' ? state.all : state.all.filter((t) => ttCatOf(t) === state.category);
   }
+  function earlierVisible() {
+    const list = state.category === 'all' ? state.earlier : state.earlier.filter((t) => ttCatOf(t) === state.category);
+    return list.slice(0, EARLIER_MAX);
+  }
   function renderGrid() {
     const all = visible();
-    if (!all.length) { gridEl.innerHTML = '<p class="trending-empty">No trends in this category right now.</p>'; return; }
+    const earlier = earlierVisible();
+    if (!all.length && !earlier.length) { gridEl.innerHTML = '<p class="trending-empty">No trends in this category right now.</p>'; return; }
     const shown = all.slice(0, state.shown);
     const more = all.length - shown.length;
-    // Cap the list to an initial batch + a "View more" button that reveals the
-    // rest (client-side) — only when more are actually available.
-    gridEl.innerHTML = `<div class="trend-card-grid">${shown.map((t, i) => trendCardHTML(t, i)).join('')}</div>${
-      more > 0 ? `<div class="trend-loadmore-row"><button type="button" class="trend-loadmore" data-loadmore>View more trends <span class="trend-loadmore-count">+${more}</span></button></div>` : ''}`;
+    let html = '';
+    // Live (currently trending) — initial batch + client-side "View more".
+    if (all.length) {
+      html += `<div class="trend-card-grid">${shown.map((t, i) => trendCardHTML(t, i)).join('')}</div>${
+        more > 0 ? `<div class="trend-loadmore-row"><button type="button" class="trend-loadmore" data-loadmore>View more trends <span class="trend-loadmore-count">+${more}</span></button></div>` : ''}`;
+    }
+    // "Earlier" — terms that were trending in the last few days but aren't now.
+    // Clearly separated + labeled "Was trending X ago" so they never read as live.
+    if (earlier.length) {
+      html += `<div class="trend-earlier">
+        <div class="trend-earlier-head"><span class="trend-earlier-title">Earlier</span><span class="trend-earlier-sub">Recently trending, not right now</span></div>
+        <div class="trend-card-grid">${earlier.map((t, i) => trendCardHTML(t, 5000 + i, { metaText: t._meta, past: true })).join('')}</div>
+      </div>`;
+    }
+    gridEl.innerHTML = html;
     wireTrendCards(gridEl);
     gridEl.querySelector('[data-loadmore]')?.addEventListener('click', () => { state.shown += TLM_STEP; renderGrid(); });
   }
@@ -351,12 +367,44 @@ export function renderTrendingModal(controlsEl, gridEl) {
     controlsEl.innerHTML = controlsHTML();
     controlsEl.querySelector('.trend-cat-select')?.addEventListener('change', (e) => { state.category = e.target.value; state.shown = TLM_INITIAL; renderGrid(); });
   }
+  // Pull the last 3 days of stored trends, drop anything still live (matched by
+  // query), and present the rest as "Earlier". Cross-checks against state.all so
+  // a currently-trending term is never duplicated into the past section.
+  function loadEarlier() {
+    let from, to;
+    try { const now = Date.now(); to = new Date(now).toISOString(); from = new Date(now - 3 * 24 * 3600 * 1000).toISOString(); } catch (_) { return; }
+    const liveSet = new Set(state.all.map((t) => String(t.query || '').toLowerCase().trim()));
+    fetch(`/api/trending-history?mode=range&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&sort=recent&limit=80`, { headers: { Accept: 'application/json' } })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        const items = (d && d.items) || [];
+        const mapped = []; const seen = new Set();
+        for (const it of items) {
+          const q = String(it.query || '').trim();
+          const key = q.toLowerCase();
+          if (!q || liveSet.has(key) || seen.has(key)) continue;
+          seen.add(key);
+          const ago = durationLabel(it.last_active || it.last_seen);
+          mapped.push({
+            query: q,
+            categories: it.category ? [it.category] : [],
+            startedAt: it.started_at || '',
+            trendBreakdown: [],
+            _meta: [it.category, ago ? `Was trending ${ago} ago` : ''].filter(Boolean).join(' · '),
+          });
+        }
+        state.earlier = mapped;
+        if (mapped.length) renderGrid();
+      })
+      .catch(() => {});
+  }
 
   fetchTrending().then(({ topics }) => {
     if (!topics.length) { controlsEl.innerHTML = ''; gridEl.innerHTML = '<p class="trending-empty">Trending is taking a break — check back soon.</p>'; return; }
     state.all = topics;
     renderControls();
     renderGrid();
+    loadEarlier();
   }).catch(() => { controlsEl.innerHTML = ''; gridEl.innerHTML = '<p class="trending-empty">Trending is taking a break — check back soon.</p>'; });
 }
 
