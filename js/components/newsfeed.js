@@ -601,21 +601,54 @@ function startFeed(ctx) {
     }
   }
 
-  async function runSearch(q) {
+  // Instant client-side match over the stories ALREADY loaded (the live feed),
+  // so typing a visible headline surfaces it immediately — no network wait, no
+  // Enter key. All whitespace-separated terms must appear somewhere in the
+  // title / summary / source (AND match, case-insensitive).
+  function matchLocal(q) {
+    const terms = q.toLowerCase().split(/\s+/).filter(Boolean);
+    if (!terms.length) return [];
+    const pool = state.liveCache || [];
+    return pool.filter((s) => {
+      const desc = (() => { const d = document.createElement('div'); d.innerHTML = itemDescRaw(s); return d.textContent || ''; })();
+      const host = sourceHost(itemUrl(s)) || String((s && s.source_name) || '');
+      const hay = `${s && s.title || ''} ${desc} ${host}`.toLowerCase();
+      return terms.every((t) => hay.includes(t));
+    });
+  }
+
+  // Instant pass: reset to just the locally-matched (or all, when cleared)
+  // stories and render right away — runs on every keystroke, no debounce.
+  function searchLocal(q) {
     state.q = q; state.exhausted = false; resetStories();
-    scrollWrap.innerHTML = `<div class="news-loading"><p>${q ? 'Searching…' : 'Loading news…'}</p></div>`; foot.innerHTML = '';
+    if (!q) {
+      if (state.liveCache) addStories(state.liveCache);
+      refreshSources(); renderList();
+      return;
+    }
+    const local = matchLocal(q);
+    if (local.length) { addStories(local); refreshSources(); renderList(); }
+    else { scrollWrap.innerHTML = `<div class="news-loading"><p>Searching…</p></div>`; foot.innerHTML = ''; }
+  }
+
+  // Debounced pass: augment the local hits with archive matches (older stories
+  // not in the live feed). Guarded so a stale response can't clobber a newer
+  // query. For an empty query, fall back to the full live feed.
+  async function searchArchive(q) {
+    if (!q) {
+      if (!state.liveCache) await loadLive();
+      return;
+    }
     try {
-      if (!q) {
-        if (state.liveCache) { addStories(state.liveCache); refreshSources(); renderList(); }
-        else await loadLive();
-        return;
-      }
       const { stories, nextBefore } = await fetchArchive(slug, { q, limit: 30 });
+      if (state.q !== q) return;
       addStories(stories);
       if (!nextBefore) state.exhausted = true;
       refreshSources(); renderList();
     } catch (_) {
-      scrollWrap.innerHTML = `<div class="news-error"><p>Search unavailable. Try again.</p></div>`;
+      if (state.q === q && !state.stories.length) {
+        scrollWrap.innerHTML = `<div class="news-error"><p>Search unavailable. Try again.</p></div>`;
+      }
     }
   }
 
@@ -623,7 +656,8 @@ function startFeed(ctx) {
   els.search.addEventListener('input', () => {
     clearTimeout(searchTimer);
     const q = els.search.value.trim();
-    searchTimer = setTimeout(() => runSearch(q), 300);
+    searchLocal(q);                                   // immediate
+    searchTimer = setTimeout(() => searchArchive(q), 250); // network-backed
   });
   // One combined select: Newest / Oldest (all-time direction) or a time window.
   els.sort.addEventListener('change', () => {

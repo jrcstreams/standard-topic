@@ -6,26 +6,26 @@ import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './ut
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260616-revamp240';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260616-revamp242';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260616-revamp240';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260616-revamp240';
-import { initPromptModal } from './components/prompt-modal.js?v=20260616-revamp240';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260616-revamp240';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260616-revamp242';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260616-revamp242';
+import { initPromptModal } from './components/prompt-modal.js?v=20260616-revamp242';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260616-revamp242';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp240';
-import { initInsightModal } from './components/insight-modal.js?v=20260616-revamp240';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260616-revamp240';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260616-revamp240';
-import { renderWebSources } from './components/websources.js?v=20260616-revamp240';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp240';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp242';
+import { initInsightModal } from './components/insight-modal.js?v=20260616-revamp242';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260616-revamp242';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260616-revamp242';
+import { renderWebSources } from './components/websources.js?v=20260616-revamp242';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp242';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260616-revamp240';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260616-revamp242';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260616-revamp240';
-import { initSettingsModal } from './components/settings-modal.js?v=20260616-revamp240';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260616-revamp242';
+import { initSettingsModal } from './components/settings-modal.js?v=20260616-revamp242';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -906,23 +906,28 @@ function trimOverflowLinks() {
     container.style.display = '';
     links.forEach(l => l.style.display = '');
     if (moreLink) moreLink.style.display = '';
+    if (actionLink) actionLink.style.display = '';
+    const homeAllTopicsReset = document.getElementById('subnav-all-topics-desktop');
+    if (homeAllTopicsReset) homeAllTopicsReset.style.display = '';
+    container.classList.remove('is-empty');
     const relatedBtnReset = document.getElementById('subnav-related-btn');
     if (relatedBtnReset) relatedBtnReset.style.display = 'none';
 
-    // Every chip stays visible at every viewport — the chip strip
-    // is a horizontal scroller (overflow-x: auto) with arrow
-    // affordances on hover-capable pointers, on both mobile AND
-    // desktop. Previously home-desktop went through a separate
-    // "show as many as fit + hide the rest" trim path that left
-    // "All Topics +" sitting at the right edge with the
-    // overflowing chips display:none'd, which was confusing —
-    // user expectation is a scrollable row containing every
-    // featured topic, with "All Topics +" pinned as the last
-    // item of that scroll.
-    container.classList.remove('is-empty');
-    return;
+    // Bail on a non-laid-out container. The home sticky subnav has zero width
+    // until it scrolls into view; measuring then would push every chip past a
+    // ~0 cutoff and hide them all — and (because a 0-width box rarely re-fires
+    // the observer cleanly) trap the row collapsed even after it gains width.
+    // Leaving everything visible here is the safe default; the ResizeObserver
+    // re-runs doTrim once the row actually has a width. (#383)
+    const rect = container.getBoundingClientRect();
+    if (rect.width < 1) return;
 
-    const containerRight = container.getBoundingClientRect().right;
+    // Fit-to-width (#383): show as many chips as fit, drop the rest, and keep
+    // "All Topics +" pinned in place as the "More" affordance — a half-clipped
+    // chip in a horizontal scroller (the previous behavior) reads as broken at
+    // awkward widths. When too few chips fit, collapse to no chips (just the
+    // "All Topics +" entry point) rather than show a cramped one or two.
+    const containerRight = rect.right;
     // First measure with "More +" / "All Topics +" reserved so we can
     // drop links to make room.
     const moreWidth = moreLink ? moreLink.offsetWidth + 20 : 0;
@@ -966,11 +971,11 @@ function trimOverflowLinks() {
     //   chips + More+, otherwise hide the inline row and show
     //   "Related Topics +" (handled by the relatedBtn block below).
     const isHomeRow = !!actionLink && !moreLink;
-    if (isHomeRow && links.length >= 4) {
+    if (isHomeRow && links.length >= 2) {
       const row = container.parentElement;
       const titleGroup = row?.querySelector('.topic-banner-titlegroup');
       const isWrapped = !!titleGroup && container.offsetTop > titleGroup.offsetTop + 4;
-      if (isWrapped || visibleCount < 4) {
+      if (isWrapped || visibleCount < 2) {
         links.forEach(l => l.style.display = 'none');
         visibleCount = 0;
         hiddenCount = links.length;
