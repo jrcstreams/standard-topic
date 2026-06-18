@@ -13186,7 +13186,7 @@ body.home-search.app-mode .topic-layout {
    between Search and AI (matching the mobile concept). */
 body.home-search .body-tabs { display: none !important; }
 body.home-search.app-mode .topic-layout.home-grid { display: flex; flex-direction: column; gap: 1.25rem; align-items: stretch; }
-body.home-search .home-main, body.home-search .home-side { display: contents; }
+body.home-search .home-cards, body.home-search .home-main, body.home-search .home-side { display: contents; }
 body.home-search #home-search-hero { order: 1; }
 body.home-search #home-trending    { order: 2; }
 body.home-search #section-aii-home { order: 3; }
@@ -13264,29 +13264,34 @@ body.home-search #home-trending {
 .home-promo:hover .home-promo-btn { background: #2a62d8; transform: translateY(-1px); }
 .home-promo-btn svg { flex: none; }
 @media (min-width: 1024px) {
+  /* Two rows: the three cards span the FULL width across the top, then News Feed
+     (left) + Trending (right) below — so Trending starts at the News Feed row
+     instead of climbing up beside the cards. */
   body.home-search.app-mode .topic-layout.home-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 358px;
+    grid-template-areas: "cards cards" "main side";
     align-items: start;
     column-gap: 1.5rem;
+    row-gap: 1.5rem;
   }
-  /* Main is itself a grid: a top row of three cards (Search + AI Insights equal
-     width, Prompt Builder narrower) with the News Feed spanning full width
-     beneath, so Trending in the right column can run much longer. */
-  body.home-search .home-main {
+  /* Top row: Search + AI Insights equal width, Prompt Builder narrower. */
+  body.home-search .home-cards {
+    grid-area: cards;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.72fr);
-    grid-template-areas: "search aii prompt" "news news news";
     gap: 1.5rem;
     align-items: stretch;
     min-width: 0;
-    grid-column: 1;
   }
-  body.home-search #home-search-hero { grid-area: search; }
-  body.home-search #section-aii-home { grid-area: aii; }
-  body.home-search .home-promo       { grid-area: prompt; }
-  body.home-search #section-newsfeed { grid-area: news; }
-  body.home-search .home-side { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; grid-column: 2; }
+  body.home-search .home-main { grid-area: main; display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
+  body.home-search .home-side { grid-area: side; display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
+  /* Reset the mobile-stacking `order` so the cards lay out in source order on
+     desktop (Search · AI Insights · Prompt Builder) — otherwise order:1/3 shove
+     Prompt Builder to the front and AI Insights into the narrow column. */
+  body.home-search #home-search-hero,
+  body.home-search #section-aii-home,
+  body.home-search #section-newsfeed,
   body.home-search #home-trending { order: 0; }
   /* Search becomes a compact top-row card: trim the padding, let the title wrap
      (instead of clipping at this narrow width), and center the title + bar

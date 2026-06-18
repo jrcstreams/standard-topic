@@ -1545,7 +1545,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     container.innerHTML = `
       <div class="topic-layout home-grid" id="topic-layout">
         ${bodyTabsRow({ showSearchTrends: true, showShortcuts: false })}
-        <div class="home-main">
+        <div class="home-cards">
           <div class="home-search-hero" id="home-search-hero"></div>
           <section class="layout-section" id="section-aii-home"></section>
           <a href="#/prompt-generator" class="home-promo" aria-label="Open the Prompt Builder">
@@ -1558,6 +1558,8 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               </span>
             </div>
           </a>
+        </div>
+        <div class="home-main">
           <section class="layout-section" id="section-newsfeed"></section>
         </div>
         <aside class="home-side">
