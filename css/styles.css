@@ -14669,25 +14669,36 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-top: 2
 
 /* Subtle per-track color — ONLY the icon chip carries the hue (a quiet, editorial
    tint). No accent bars, no filled pills, no colored hovers. */
-.aii-trackcard[data-group="discover"] .aii-trackcard-ic { background: #eef4ff; color: #2f6fe0; }
-.aii-trackcard[data-group="topic-specific"] .aii-trackcard-ic { background: #fdecef; color: #c2455c; }
-.aii-trackcard[data-group="analyze"] .aii-trackcard-ic { background: #fbf2e2; color: #b9791d; }
-.aii-trackcard[data-group="learn"] .aii-trackcard-ic { background: #eafaf1; color: #1f8f6b; }
-/* Per-section accent (matching the icon tint) carries to the bullet dots, the
-   row-hover title, and the Explore link — so each section reads as one
-   contained, color-coded unit (the mockup). */
+/* Per-section accent ties the whole block together: a FILLED accent icon tile
+   (white glyph), accent bullet dots, and — on hovering the header — the title +
+   arrow take the section colour (plus the Explore link), so icon · title · link
+   read as ONE connected, color-coded unit. */
+.aii-trackcard[data-group="discover"] .aii-trackcard-ic { background: #2f6fe0; color: #fff; }
 .aii-trackcard[data-group="discover"] .aii-tcp::before { background: #2f6fe0; }
+.aii-trackcard[data-group="discover"] .aii-trackcard-more,
 .aii-trackcard[data-group="discover"] .aii-tcp:hover .aii-tcp-name,
-.aii-trackcard[data-group="discover"] .aii-trackcard-more { color: #2f6fe0; }
+.aii-trackcard[data-group="discover"] .aii-trackcard-head:hover .aii-trackcard-name,
+.aii-trackcard[data-group="discover"] .aii-trackcard-head:hover .aii-trackcard-go { color: #2f6fe0; }
+.aii-trackcard[data-group="topic-specific"] .aii-trackcard-ic { background: #c2455c; color: #fff; }
 .aii-trackcard[data-group="topic-specific"] .aii-tcp::before { background: #c2455c; }
+.aii-trackcard[data-group="topic-specific"] .aii-trackcard-more,
 .aii-trackcard[data-group="topic-specific"] .aii-tcp:hover .aii-tcp-name,
-.aii-trackcard[data-group="topic-specific"] .aii-trackcard-more { color: #c2455c; }
+.aii-trackcard[data-group="topic-specific"] .aii-trackcard-head:hover .aii-trackcard-name,
+.aii-trackcard[data-group="topic-specific"] .aii-trackcard-head:hover .aii-trackcard-go { color: #c2455c; }
+.aii-trackcard[data-group="analyze"] .aii-trackcard-ic { background: #b9791d; color: #fff; }
 .aii-trackcard[data-group="analyze"] .aii-tcp::before { background: #b9791d; }
+.aii-trackcard[data-group="analyze"] .aii-trackcard-more,
 .aii-trackcard[data-group="analyze"] .aii-tcp:hover .aii-tcp-name,
-.aii-trackcard[data-group="analyze"] .aii-trackcard-more { color: #b9791d; }
+.aii-trackcard[data-group="analyze"] .aii-trackcard-head:hover .aii-trackcard-name,
+.aii-trackcard[data-group="analyze"] .aii-trackcard-head:hover .aii-trackcard-go { color: #b9791d; }
+.aii-trackcard[data-group="learn"] .aii-trackcard-ic { background: #1f8f6b; color: #fff; }
 .aii-trackcard[data-group="learn"] .aii-tcp::before { background: #1f8f6b; }
+.aii-trackcard[data-group="learn"] .aii-trackcard-more,
 .aii-trackcard[data-group="learn"] .aii-tcp:hover .aii-tcp-name,
-.aii-trackcard[data-group="learn"] .aii-trackcard-more { color: #1f8f6b; }
+.aii-trackcard[data-group="learn"] .aii-trackcard-head:hover .aii-trackcard-name,
+.aii-trackcard[data-group="learn"] .aii-trackcard-head:hover .aii-trackcard-go { color: #1f8f6b; }
+/* Header hover lifts the arrow opacity too (any section). */
+.aii-trackcard-head:hover .aii-trackcard-go { opacity: 1; }
 
 /* Desktop sidebar (≥900): the AI Insights tracks flow as ONE clean, flat list —
    no cards-within-cards. Each track is icon + label + summary, a small indented
@@ -14706,12 +14717,12 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-top: 2
   .topic-side .aii-trackcard-ic { width: 26px; height: 26px; border-radius: 7px; }
   .topic-side .aii-trackcard-ic svg { width: 15px; height: 15px; }
   .topic-side .aii-trackcard-name { font-size: 0.95rem; }
-  .topic-side .aii-trackcard-sub { font-size: 0.8rem; }
+  .topic-side .aii-trackcard-sub { font-size: 0.76rem; }
   /* Previews share the icon's left edge — everything stacks on one clean left
      margin (icon+title row → summary → insights). */
   .topic-side .aii-trackcard-previews { border-top: none; padding-left: 2px; }
   .topic-side .aii-tcp { border-top: none; padding: 4px 2px; gap: 8px; }
-  .topic-side .aii-tcp-name { font-size: 0.83rem; }
+  .topic-side .aii-tcp-name { font-size: 0.79rem; }
   /* Explore link anchors to the same left edge as the icon, summary and preview
      rows (was indented 41px under the title, which read as off/centered). */
   .topic-side .aii-trackcard-more { margin: 10px 0 14px 2px; font-size: 0.8rem; }
