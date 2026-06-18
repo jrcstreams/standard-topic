@@ -13111,9 +13111,11 @@ body.home-search.app-mode.sticky-always.has-subnav #content {
   /* More breathing room between the nav and the search card (#228). */
   padding: calc(var(--nav-h) + var(--subnav-height, 66px) + 1.15rem) 0 3rem;
 }
-/* One cohesive centered width for the whole homepage. */
+/* One cohesive centered width for the whole homepage — matches the main nav
+   (var(--max-width) + 2rem padding) so the body content lines up with the nav
+   instead of sitting ~80px narrower per side on wide screens. */
 body.home-search.app-mode .topic-layout {
-  height: auto; max-width: 1280px; margin: 0 auto; padding: 0 2rem 2rem;
+  height: auto; max-width: var(--max-width); margin: 0 auto; padding: 0 2rem 2rem;
 }
 /* Search hero + Trending live inside the full-width #section-searchtrends
    (one tab on mobile). They fill the section — strip their own max-width /
