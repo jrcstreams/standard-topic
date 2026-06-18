@@ -339,10 +339,10 @@ const SEC_ICON = {
   sources: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
 };
 function secHeadHTML(key, name) {
-  // Every AI-written section gets an "AI Generated Text" tag to its right — except
-  // Sources & Coverage, which are real cited links, not generated prose.
-  const tag = key === 'sources' ? '' : `<span class="im-sec-aitag">${SPARK_FILL}<span>AI Generated Text</span></span>`;
-  return `<div class="im-msec-head"><span class="im-msec-ic">${SEC_ICON[key] || SEC_ICON.summary}</span><h3 class="im-msec-name">${esc(name)}</h3>${tag}</div>`;
+  // No per-section "AI Generated Text" tag — the single "AI Brief" label at the
+  // top of the section stack (.im-secs::before) covers provenance once, instead
+  // of repeating a tag on every header.
+  return `<div class="im-msec-head"><span class="im-msec-ic">${SEC_ICON[key] || SEC_ICON.summary}</span><h3 class="im-msec-name">${esc(name)}</h3></div>`;
 }
 
 // Brief failure state with a Try-again button (#2). The AI brief is generated
