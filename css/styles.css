@@ -13191,16 +13191,14 @@ body.home-search #home-search-hero { order: 1; }
 body.home-search #home-trending    { order: 2; }
 body.home-search #section-aii-home { order: 3; }
 body.home-search #section-newsfeed { order: 4; }
-/* Sidebar sections (Web Sources, Prompt Builder promo) have no order otherwise,
-   so they'd default to order:0 and jump ABOVE the search hero on mobile. Pin
-   them after the main stack. On desktop they sit inside .home-side (re-flexed)
-   where these orders match their source order, so the sidebar is unaffected. */
-body.home-search #section-websources { order: 5; }
-body.home-search .home-promo          { order: 6; }
-/* Prompt Builder promo is a desktop-sidebar flourish — drop it from the stacked
-   mobile/tablet home (it just tacks a tall card onto the end of the scroll). */
+/* Prompt Builder promo is one of the three desktop top-row cards — drop it from
+   the stacked mobile/tablet home (Search → Trending → AI Insights → News). */
 @media (max-width: 1023.98px) {
   body.home-search .home-promo { display: none !important; }
+  /* The longer trending list (14) is for the tall desktop right column; on mobile
+     it sits between Search and AI Insights, so cap it to 6 to keep the scroll tight
+     ("View more trending" still opens the full list). */
+  body.home-search #home-trending .trend-card-grid .trend-card:nth-child(n+7) { display: none; }
 }
 /* Home trending is a vertical list (sidebar + mobile both read as a list). */
 body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; }
@@ -13226,23 +13224,18 @@ body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; }
    overflow:hidden clips any internal header band to the rounded corners. */
 body.home-search #home-trending,
 body.home-search #section-aii-home,
-body.home-search #section-newsfeed,
-body.home-search #section-websources {
+body.home-search #section-newsfeed {
   background: var(--color-bg, #fff);
   border: 1px solid var(--color-surface-border);
   border-radius: 16px;
   overflow: hidden;
 }
-/* Sidebar "discovery" cards (Trending + Web Sources) get a faint grey surface so
-   they read as a group, distinct from the white News Feed + the dark AI Insights
-   hero (#167 card-system). Inner .ws chrome is flattened to avoid a double-card. */
-body.home-search #home-trending,
-body.home-search #section-websources {
+/* Trending gets a faint grey surface so it reads as the discovery rail, distinct
+   from the white News Feed + the dark AI Insights / Prompt Builder cards. */
+body.home-search #home-trending {
   background: #f4f6f8;
   border-color: #e6e9ef;
 }
-body.home-search #section-websources .ws { border: none; background: none; border-radius: 0; }
-body.home-search #section-websources .ws-head { background: none; }
 
 /* Prompt Builder promo — a dark navy card with a faint constellation texture
    and a blue CTA (replaces the nav's Prompt Builder button on home). */
@@ -13277,11 +13270,35 @@ body.home-search #section-websources .ws-head { background: none; }
     align-items: start;
     column-gap: 1.5rem;
   }
-  body.home-search .home-main { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; grid-column: 1; }
+  /* Main is itself a grid: a top row of three cards (Search + AI Insights equal
+     width, Prompt Builder narrower) with the News Feed spanning full width
+     beneath, so Trending in the right column can run much longer. */
+  body.home-search .home-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.72fr);
+    grid-template-areas: "search aii prompt" "news news news";
+    gap: 1.5rem;
+    align-items: stretch;
+    min-width: 0;
+    grid-column: 1;
+  }
+  body.home-search #home-search-hero { grid-area: search; }
+  body.home-search #section-aii-home { grid-area: aii; }
+  body.home-search .home-promo       { grid-area: prompt; }
+  body.home-search #section-newsfeed { grid-area: news; }
   body.home-search .home-side { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; grid-column: 2; }
-  /* Reset the mobile `order: 2` so the sidebar follows DOM order:
-     Trending -> Web Sources -> Prompt Builder promo. */
   body.home-search #home-trending { order: 0; }
+  /* Search becomes a compact top-row card: trim the padding, let the title wrap
+     (instead of clipping at this narrow width), and center the title + bar
+     vertically so the card fills the shared row height cleanly. */
+  body.home-search .home-search-hero {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 1.4rem 1.5rem; border-radius: 16px;
+  }
+  body.home-search .home-search-hero .search-panel-title {
+    white-space: normal; font-size: 1.16rem; margin: 0 auto 0.8rem;
+  }
+  body.home-search .home-search-hero .search-panel-input { height: 50px; font-size: 0.96rem; }
 }
 /* Cards size to content + the page scrolls. */
 body.home-search .layout-section,

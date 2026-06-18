@@ -17,8 +17,8 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp245';
 import { initInsightModal } from './components/insight-modal.js?v=20260617-revamp249';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260617-revamp249';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260617-revamp249';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260617-revamp252';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260617-revamp252';
 import { renderWebSources } from './components/websources.js?v=20260616-revamp245';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp245';
 import { initDiscoverModal } from './components/discover-modal.js';
@@ -1548,11 +1548,6 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         <div class="home-main">
           <div class="home-search-hero" id="home-search-hero"></div>
           <section class="layout-section" id="section-aii-home"></section>
-          <section class="layout-section" id="section-newsfeed"></section>
-        </div>
-        <aside class="home-side">
-          <section class="home-trending" id="home-trending"></section>
-          <section class="layout-section home-ws-card" id="section-websources"></section>
           <a href="#/prompt-generator" class="home-promo" aria-label="Open the Prompt Builder">
             <div class="home-promo-inner">
               <h3 class="home-promo-title">Smarter prompts,<br>better answers.</h3>
@@ -1563,20 +1558,22 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               </span>
             </div>
           </a>
+          <section class="layout-section" id="section-newsfeed"></section>
+        </div>
+        <aside class="home-side">
+          <section class="home-trending" id="home-trending"></section>
         </aside>
       </div>
     `;
     homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });
-    renderTrendingHome(container.querySelector('#home-trending'), { limit: 7 });
+    // Trending is now the only sidebar card, so it can run much longer.
+    renderTrendingHome(container.querySelector('#home-trending'), { limit: 14 });
     const aiiHome = container.querySelector('#section-aii-home');
     if (aiiHome) {
       const homeDesc = {}; const homeIcons = {};
       try { (getShortcutsForTopic('home') || []).forEach((s) => { if (s && s.name) { homeDesc[s.name] = s.description || ''; homeIcons[s.name] = s.icon || ''; } }); } catch (_) {}
       renderAIIntelligence(aiiHome, { topic: 'home', label: "today's world", descriptions: homeDesc, icons: homeIcons, hideGroups: ['topic-specific'], topicKey: 'home' });
     }
-    // Home sidebar: Web Sources platform picker (browse mode — empty term).
-    const homeWs = container.querySelector('#section-websources');
-    if (homeWs) renderWebSources(homeWs, { name: '' });
   } else {
     // Topic pages: a desktop 35/65 split — SIDEBAR (AI Intelligence, then Web
     // Sources) + MAIN (News Feed, Related). The wrappers are display:contents

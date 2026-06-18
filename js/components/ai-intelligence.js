@@ -338,7 +338,6 @@ export function renderAIIntelligence(container, scope) {
     const feats = FEATURES.map((f) => `<span class="aii-feat"><span class="aii-feat-ic">${f.ic}</span>${esc(f.t)}</span>`).join('');
     return `<div class="aii-promo aii-promo--cta">
       <h3 class="aii-promo-headline">Live intelligence on any topic.</h3>
-      <p class="aii-promo-line">Grounded, cited analysis on the topics you follow, plus any search term you bring.</p>
       <div class="aii-feats">${feats}</div>
       <span class="aii-promo-btn">Explore AI Insights ${RIGHT_ARROW}</span>
     </div>`;
