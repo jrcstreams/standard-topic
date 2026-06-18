@@ -816,24 +816,23 @@ function renderTrend(d) {
     ? `<a class="im-eyebrow-time im-eyebrow-time--link" href="${escAttr(gtUrl)}" target="_blank" rel="noopener noreferrer" title="View on Google Trends">Trending since ${esc(since)}${ARROW}</a>`
     : '';
   const metaLine = `${cat ? `<span class="im-eyebrow-cat">${esc(cat)}</span>` : ''}${timeHTML}`;
+  // Related Searches is now its own brief section (Summary → Related → Sources),
+  // not a header dropdown.
   const relBody = (Array.isArray(d.trendBreakdown) && d.trendBreakdown.length) ? relatedSearchesHTML(d.trendBreakdown) : '';
   const actions = [
-    relBody ? `<button type="button" class="im-qlink im-qlink-btn" data-panel="related" aria-expanded="false">${ICON_WEB}<span>Related Searches</span>${CHEV}</button>` : '',
     `<button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span>${CHEV}</button>`,
     `<button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span>${CHEV}</button>`,
-  ].filter(Boolean).join('');
+  ].join('');
   panelEl.innerHTML = `
     ${brandHeaderHTML(null, { brandLabel: 'Trending Insights', hideBack: true })}
     <div class="im-body">
       ${stickyHeadHTML({ title, metaLine, actions, nav: d.nav, accHTML: `
-        ${relBody ? `<div class="im-acc" data-body="related" id="im-related-panel">${relBody}</div>` : ''}
         <div class="im-acc" data-body="explore" id="im-explore-panel"></div>
         <div class="im-acc" data-body="web" id="im-web-panel"></div>` })}
       <div class="im-secs">
         <div id="im-secs-body">${msecHTML('msec-brief', 'Summary', briefSkeleton())}</div>
       </div>
     </div>`;
-  wireRelatedChips(title);
   const prompt = `Explain what "${d.query}" is and why it's trending right now — what just happened, the background, and the latest developments.`;
   const ctx = { prompt, sources: [], origUrl: '', webTerm: d.query, onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, topicName: d.query, name: 'Trending · AI', count: 1 } })) };
   wireActions(ctx);
@@ -868,10 +867,13 @@ function renderTrend(d) {
         ctx.sources = data.sources || [];
         const why = cleanSum ? msecHTML('msec-why', 'Reasoning', secHeadHTML('why', 'Reasoning') + renderBriefBody(cleanSum, null)) : '';
         const sum = detail ? msecHTML('msec-summary', 'Summary', secHeadHTML('summary', 'Summary') + renderBriefBody(detail, null)) : '';
+        // Related Searches sits between Summary and Sources.
+        const relatedSec = relBody ? msecHTML('msec-related', 'Related Searches', secHeadHTML('related', 'Related Searches') + relBody) : '';
         const cov = coverageListHTML(data.headlines, data.sources, '');
         const covSec = cov ? msecHTML('msec-sources', 'Sources', secHeadHTML('sources', 'Sources') + `<div class="im-coverage-list">${cov}</div>`) : '';
         // All sections in ONE container so :last-child (no border) is the true last.
-        secsBody.innerHTML = why + sum + covSec; secsBody.classList.add('ai-reveal');
+        secsBody.innerHTML = why + sum + relatedSec + covSec; secsBody.classList.add('ai-reveal');
+        wireRelatedChips(title);
         buildBriefNav();
       } else { secsBody.innerHTML = failBriefHTML('No AI brief generated for this trend yet.'); wireBriefRetry(secsBody, loadTrendBrief); }
     } catch (_) { if (panelEl.querySelector('#im-secs-body') === secsBody) { secsBody.innerHTML = failBriefHTML('AI brief unavailable right now.'); wireBriefRetry(secsBody, loadTrendBrief); } }

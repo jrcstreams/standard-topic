@@ -15168,10 +15168,12 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-top: 2
    chevron read as a dropdown, and the open one fills in and takes the primary
    border. margin/border/padding are set explicitly to override the generic
    .im-qlink divider rule. */
-.im-over-links .im-qlink { box-sizing: border-box; min-height: 34px; font-size: 0.78rem; font-weight: 600; line-height: 1.1; display: inline-flex; align-items: center; gap: 6px; margin: 0; padding: 6px 12px; border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-surface-border)); border-radius: 9px; background: #fff; color: #1d4ed8; transition: background .14s, border-color .14s, color .14s; }
+/* Neutral action/accordion buttons (NOT link-blue): dark slate on white with a
+   soft border; the open one fills navy with white text + icon. */
+.im-over-links .im-qlink { box-sizing: border-box; min-height: 34px; font-size: 0.78rem; font-weight: 600; line-height: 1.1; display: inline-flex; align-items: center; gap: 6px; margin: 0; padding: 6px 12px; border: 1px solid #d7dde8; border-radius: 9px; background: #fff; color: #3a4861; transition: background .14s, border-color .14s, color .14s; }
 .im-over-links .im-qlink svg { width: 13px; height: 13px; }
-.im-over-links .im-qlink:hover { background: #f3f7ff; border-color: color-mix(in srgb, var(--color-primary) 48%, var(--color-surface-border)); text-decoration: none; }
-.im-over-links .im-qlink[aria-expanded="true"] { background: #eaf1ff; border-color: var(--color-primary); color: #1e3a8a; text-decoration: none; }
+.im-over-links .im-qlink:hover { background: #f2f5f9; border-color: #c2ccdb; text-decoration: none; }
+.im-over-links .im-qlink[aria-expanded="true"] { background: var(--color-primary); border-color: var(--color-primary); color: #fff; text-decoration: none; }
 .im-over-links .im-qlink svg { flex: none; }
 .im-over-links .im-qlink .im-chev { margin-left: 0; }
 
@@ -15197,13 +15199,15 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-top: 2
 .im-secs { padding-top: 0; padding-bottom: 2rem; }
 /* One clean "AI Brief" label heads the whole generated-section stack (replaces
    the per-section "AI Generated Text" tags). */
-.im-secs::before { content: "\2726  AI Brief"; display: block; margin: 2px 0 16px; font-family: var(--font-family); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #2563eb; }
+.im-secs::before { content: "\2726  AI Brief"; display: block; margin: 2px 0 16px; font-family: var(--font-family); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #8b95a9; }
 .im-msec { padding: 16px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 60%, transparent); scroll-margin-top: 6px; }
 .im-msec:last-child { border-bottom: none; }
 .im-msec.is-empty { display: none; }
 /* Related Searches dropdown: hide the redundant inner label (the link names it). */
-.im-acc[data-body="related"] .im-related-label { display: none; }
-.im-acc[data-body="related"] .im-related { margin: 0; }
+/* Related Searches is its own section now — its section header names it, so hide
+   the component's inner duplicate label. */
+.im-msec .im-related-label { display: none; }
+.im-msec .im-related { margin: 0; }
 /* Grey header zone sits flush under the modal head (no white gap) + full-bleed. */
 .im-body:has(.im-stickyhead) { padding-top: 0; }
 @media (max-width: 560px) { .im-stickyhead { margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px; } }
