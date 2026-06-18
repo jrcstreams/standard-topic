@@ -333,7 +333,6 @@ export function renderAIIntelligence(container, scope) {
     const FEATURES = [
       { ic: ICON_FEAT_GLOBE, t: '100+ dedicated topics' },
       { ic: ICON_FEAT_SEARCH, t: 'Any search term' },
-      { ic: ICON_FEAT_BOLT, t: 'Live & sourced' },
     ];
     const feats = FEATURES.map((f) => `<span class="aii-feat"><span class="aii-feat-ic">${f.ic}</span>${esc(f.t)}</span>`).join('');
     return `<div class="aii-promo aii-promo--cta">

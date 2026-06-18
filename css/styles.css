@@ -13164,6 +13164,13 @@ body.home-search.app-mode .topic-layout {
 /* No copy-link button cluttering the resting hero bar. */
 .home-search-hero .search-panel[data-state="collapsed"] .search-panel-copylink { display: none; }
 .home-search-hero .search-panel-results { max-width: 100%; }
+/* Popular-topic starter chips under the home search bar — makes the card an
+   actionable launchpad rather than an empty box. Hidden once a search expands. */
+.search-panel-starters { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; margin-top: 1rem; }
+.search-panel-starters-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #8895ad; margin-right: 2px; }
+.search-panel-starter { display: inline-flex; align-items: center; padding: 6px 13px; border-radius: 999px; border: 1px solid #dde3ee; background: #fff; color: #33405a; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: border-color .14s, color .14s, background .14s; }
+.search-panel-starter:hover { border-color: #2f6df0; color: #1d4ed8; background: #f4f7ff; }
+.search-panel--inline[data-state="expanded"] .search-panel-starters { display: none; }
 @media (max-width: 640px) {
   .home-search-hero { padding: 1.4rem 1.15rem 1.5rem; border-radius: 18px; }
   /* One line on phones too (#7): size down so the full tagline never wraps.

@@ -17,8 +17,8 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp245';
 import { initInsightModal } from './components/insight-modal.js?v=20260617-revamp249';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260617-revamp252';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260617-revamp252';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260617-revamp254';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260617-revamp254';
 import { renderWebSources } from './components/websources.js?v=20260616-revamp245';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp245';
 import { initDiscoverModal } from './components/discover-modal.js';
@@ -2804,6 +2804,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
         </form>
         <div class="search-panel-suggest" role="listbox" hidden></div>
       </div>
+      ${!isModal ? `<div class="search-panel-starters" aria-label="Popular topics"></div>` : ''}
       <div class="search-panel-results"><div class="search-panel-results-inner"></div></div>
       ${isModal
         ? `<div class="search-panel-empty">
@@ -2861,6 +2862,22 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       b.addEventListener('click', () => { const q = picks[i] && picks[i].query; if (q) expand(q); });
     });
   }
+
+  // Inline (home) starter chips: a few featured topics under the bar so the card
+  // is an actionable launchpad, not just an empty search box. Each links to that
+  // topic's page. Featured topics always exist, so this is reliably populated.
+  function fillStarterChips() {
+    if (isModal) return;
+    const wrap = panelEl.querySelector('.search-panel-starters');
+    if (!wrap) return;
+    let topics = [];
+    try { topics = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 6); } catch (_) {}
+    if (!topics.length) { wrap.hidden = true; return; }
+    wrap.innerHTML = `<span class="search-panel-starters-label">Popular</span>`
+      + topics.map((t) => `<a class="search-panel-starter" href="#/topic/${escapeAttr(t.slug)}">${escapeHTML(t.name)}</a>`).join('');
+    wrap.hidden = false;
+  }
+  fillStarterChips();
 
   function expand(rawTerm) {
     const t = (rawTerm || '').trim();
