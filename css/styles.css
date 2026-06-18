@@ -13347,6 +13347,11 @@ body.home-search #topic-layout { margin-top: 0.4rem; }
 @media (max-width: 1023.98px) {
   body.home-search.app-mode .topic-layout > .layout-section { flex: none; overflow: visible; min-height: 0; }
   body.home-search #section-aii-home .shortcuts-scroll-wrap { padding-top: 0.5rem; padding-bottom: 0; }
+  /* Reflow (single column): cap the search content to a comfortable centred width
+     so the bar + chips don't stretch edge-to-edge and read as sparse on the
+     full-width card. */
+  body.home-search .home-search-hero .search-panel { max-width: 660px; margin-left: auto; margin-right: auto; }
+  body.home-search .home-search-hero .search-panel-title { font-size: clamp(1.2rem, 0.95rem + 1vw, 1.45rem); }
 }
 
 /* === Phase 14: search panel refinements ============================== */
