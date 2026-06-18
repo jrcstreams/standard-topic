@@ -14237,7 +14237,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .aii-head-top { display: flex; align-items: center; gap: 11px; }
 .aii-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
 .aii-logo svg { width: 14px; height: 14px; }
-.aii-brand { font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: var(--color-text); letter-spacing: -0.015em; }
+.aii-brand { font-family: var(--font-display); font-size: 1.16rem; font-weight: 600; color: var(--color-text); letter-spacing: -0.015em; }
 /* "Live" pulse — the insights are live + grounded. */
 .aii-live { display: inline-flex; align-items: center; gap: 5px; flex: none; line-height: 1; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #1f8f6b; }
 .aii-live-dot { width: 7px; height: 7px; border-radius: 50%; background: #22a47a; box-shadow: 0 0 0 0 rgba(34, 164, 122, 0.5); animation: aii-live-pulse 2.1s infinite; }
@@ -14780,7 +14780,7 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-top: 2
 .ws-acc-body .ws-stage { padding-top: 14px; padding-bottom: 10px; }
 .ws-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
 .ws-logo svg { width: 14px; height: 14px; }
-.ws-brand { font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: var(--color-text); letter-spacing: -0.015em; }
+.ws-brand { font-family: var(--font-display); font-size: 1.16rem; font-weight: 600; color: var(--color-text); letter-spacing: -0.015em; }
 .ws-headsub { margin: 0; font-size: 0.8rem; line-height: 1.45; color: var(--color-text-muted); }
 /* Drilled into a category: the control bar carries its own title + blurb, so the
    card's generic summary is redundant — hide it for a focused view (#161/#163). */
@@ -15094,10 +15094,10 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-top: 2
    the header (col 2), col 3 balances it. Works whether or not a back link exists. */
 .im-headnav { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; padding: 11px 0 11px; border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); }
 .im-headnav-pn { display: inline-flex; align-items: center; gap: 18px; grid-column: 2; }
-.im-headnav-link { display: inline-flex; align-items: center; gap: 4px; padding: 0; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #6b7484; white-space: nowrap; transition: color .14s; }
+.im-headnav-link { display: inline-flex; align-items: center; gap: 5px; padding: 0; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.92rem; font-weight: 600; color: #6b7484; white-space: nowrap; transition: color .14s; }
 .im-headnav-link:hover:not(:disabled) { color: var(--color-primary); }
 .im-headnav-link:disabled { opacity: 0.38; cursor: default; }
-.im-headnav-arrow { flex: none; width: 13px; height: 13px; display: block; }
+.im-headnav-arrow { flex: none; width: 15px; height: 15px; display: block; }
 
 .im-overhead { padding: 12px 0; }
 /* Category + trending-since sit ABOVE the title as an eyebrow (a soft category
@@ -15119,7 +15119,8 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-top: 2
    chevron read as a dropdown, and the open one fills in and takes the primary
    border. margin/border/padding are set explicitly to override the generic
    .im-qlink divider rule. */
-.im-over-links .im-qlink { font-size: 0.78rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; margin: 0; padding: 6px 12px; border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-surface-border)); border-radius: 9px; background: #fff; color: #1d4ed8; transition: background .14s, border-color .14s, color .14s; }
+.im-over-links .im-qlink { box-sizing: border-box; min-height: 34px; font-size: 0.78rem; font-weight: 600; line-height: 1.1; display: inline-flex; align-items: center; gap: 6px; margin: 0; padding: 6px 12px; border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-surface-border)); border-radius: 9px; background: #fff; color: #1d4ed8; transition: background .14s, border-color .14s, color .14s; }
+.im-over-links .im-qlink svg { width: 13px; height: 13px; }
 .im-over-links .im-qlink:hover { background: #f3f7ff; border-color: color-mix(in srgb, var(--color-primary) 48%, var(--color-surface-border)); text-decoration: none; }
 .im-over-links .im-qlink[aria-expanded="true"] { background: #eaf1ff; border-color: var(--color-primary); color: #1e3a8a; text-decoration: none; }
 .im-over-links .im-qlink svg { flex: none; }
@@ -15310,7 +15311,7 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-top: 2
 .im-cov-row:last-child { border-bottom: none; }
 .im-cov-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 /* Muted slate-blue link (less saturated than the old royal blue, #84). */
-.im-cov-title { font-size: 0.86rem; font-weight: 600; line-height: 1.3; color: #33446b; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.im-cov-title { font-family: var(--font-family); font-size: 0.9rem; font-weight: 500; line-height: 1.4; color: #3a4a66; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .im-cov-row { align-items: flex-start; padding-top: 10px; padding-bottom: 10px; }
 /* No whole-row underline on hover (#84) — just deepen the title colour. */
 .im-cov-row:hover, .im-cov-row:hover .im-cov-title, .im-cov-row:hover .im-cov-host { text-decoration: none; }
