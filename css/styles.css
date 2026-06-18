@@ -12771,13 +12771,13 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .aii-modal-panel.is-intro .aii-modal-head-id { display: none; }
 .aii-modal-panel.is-intro .aii-modal-head {
   flex-direction: column; align-items: center; text-align: center; gap: 0;
-  padding: 1.5rem 2.6rem 1.1rem;
+  padding: 1.4rem 2.6rem 0.75rem;
 }
 .aii-modal-panel.is-intro .aii-modal-introhead { display: flex; flex-direction: column; align-items: center; gap: 0.45rem; width: 100%; }
 /* Logo sits to the LEFT of the title (one row), not stacked above it. */
 .aii-modal-introtitlerow { display: inline-flex; align-items: center; gap: 0.6rem; }
-.aii-modal-intrologo { display: inline-flex; width: 34px; height: 34px; flex: none; align-items: center; justify-content: center; border-radius: 10px; background: var(--color-primary); color: #fff; }
-.aii-modal-intrologo svg { width: 18px; height: 18px; }
+.aii-modal-intrologo { display: inline-flex; width: 28px; height: 28px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
+.aii-modal-intrologo svg { width: 15px; height: 15px; }
 .aii-modal-introtitle { margin: 0; font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; letter-spacing: -0.025em; color: var(--color-primary); }
 .aii-modal-introsub { margin: 0; font-size: 0.88rem; line-height: 1.45; color: var(--color-text-muted); max-width: 46ch; }
 /* Subtitle wraps to two lines (break after "term,") only when it would otherwise
@@ -12786,6 +12786,9 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 @media (max-width: 560px) { .aii-sub-break { display: inline; } }
 /* The picker's own in-body heading is now carried by the centered modal head. */
 .aii-modal-body .aii-tp-head { display: none; }
+/* With that heading gone, drop the picker's top padding so the search bar sits
+   snug under the modal head (no orphan gap). */
+.aii-modal-body .aii-tp { padding-top: 0; }
 .aii-modal-chip { display: inline-flex; align-items: center; max-width: 46vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0.32rem 0.75rem; background: color-mix(in srgb, var(--color-primary) 8%, #fff); border: 1px solid color-mix(in srgb, var(--color-primary) 20%, #fff); border-radius: 999px; font-size: 0.82rem; font-weight: 600; color: var(--color-primary); }
 .aii-modal-topic { display: inline-flex; align-items: center; gap: 0.45rem; }
 .aii-modal-topic-lead { font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--color-text-muted); }
@@ -15285,7 +15288,10 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-top: 2
 .im-qlink:hover { text-decoration: underline; text-underline-offset: 2px; }
 .im-qlink svg { width: 11px; height: 11px; }
 .im-qlink[aria-expanded="true"] { color: #1e3a8a; text-decoration: underline; text-underline-offset: 2px; }
-.im-qlink:not(:last-child) { margin-right: 11px; padding-right: 11px; border-right: 1px solid var(--color-surface-border); }
+/* Divider only for the text-link quicklinks (tab/search views) — NOT the
+   button-styled .im-over-links pills, where a stray border-right broke the
+   rounded shape. */
+.im-quicklinks .im-qlink:not(:last-child) { margin-right: 11px; padding-right: 11px; border-right: 1px solid var(--color-surface-border); }
 
 /* Sources & Coverage — final card listing the cited sources as a link list. */
 /* Clean list (not bordered buttons): hyperlinked title, publisher beneath, thin

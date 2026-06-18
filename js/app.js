@@ -17,8 +17,8 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp245';
 import { initInsightModal } from './components/insight-modal.js?v=20260617-revamp249';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260617-revamp254';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260617-revamp254';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260617-revamp256';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260617-revamp256';
 import { renderWebSources } from './components/websources.js?v=20260617-revamp255';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp245';
 import { initDiscoverModal } from './components/discover-modal.js';
@@ -1422,7 +1422,7 @@ function renderBottomNav(route) {
       </button>
       <button type="button" class="botnav-tab" data-tab="insights" id="botnav-insights" aria-label="AI Insights">
         <span class="botnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg></span>
-        <span class="botnav-label">Insights</span>
+        <span class="botnav-label">AI Insights</span>
       </button>
       <button type="button" class="botnav-tab" data-tab="trending" id="botnav-trending" aria-label="Trending">
         <span class="botnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>
@@ -1445,6 +1445,9 @@ function renderBottomNav(route) {
     // Home: native href handles routing; if already home, force a re-render
     // so the homepage resets to the top (mirrors the brand-link behavior).
     nav.querySelector('#botnav-home').addEventListener('click', (e) => {
+      // Close any open bar modal (Topics / Trending / AI Insights / Search) when
+      // tapping Home — otherwise the modal stays up over the homepage.
+      window.dispatchEvent(new CustomEvent('close-all-modals'));
       const h = window.location.hash;
       if (h === '#/' || h === '' || h === '#') { e.preventDefault(); window.scrollTo(0, 0); }
     });
