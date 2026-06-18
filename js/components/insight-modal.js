@@ -273,12 +273,6 @@ function stickyHeadHTML({ title, metaLine, actions, nav, accHTML }) {
       ${actions ? `<div class="im-over-links">${actions}</div>` : ''}
       ${accHTML || ''}
     </div>
-    <div class="im-briefnav">
-      <div class="im-briefnav-head">
-        <span class="im-briefnav-title">AI Brief</span>
-      </div>
-      <div class="im-briefnav-pills" id="im-briefnav-pills"></div>
-    </div>
   </div>`;
 }
 // One in-page section with an anchor + name (drives the subnav pills + scroll-spy).

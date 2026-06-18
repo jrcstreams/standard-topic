@@ -525,10 +525,6 @@ export function renderAIIntelligence(container, scope) {
           <div class="im-acc" data-accbody="explore"></div>
           <div class="im-acc" data-accbody="web"></div>
         </div>
-        <div class="im-briefnav">
-          <div class="im-briefnav-head"><span class="im-briefnav-title">AI Brief</span></div>
-          <div class="im-briefnav-pills" data-aii-pills></div>
-        </div>
       </div>
       <div class="im-secs">
         <div data-aii-secs>${genLoaderHTML()}</div>
