@@ -14,6 +14,7 @@ const LOGO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-
 const ARROW = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 const BACK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
 const EXT = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>';
+const CHEV_DOWN = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 
 // Per-category icon + one-line blurb (mirrors the old accordion meta).
 const CAT = {
@@ -39,15 +40,25 @@ export function renderWebSources(container, topic) {
   let view = 'cats';
   let curKey = null;
 
+  // The header is a toggle button: on the desktop topic sidebar the card is a
+  // one-button accordion (collapsed → click to reveal the categories). In tab
+  // mode (<900) the header is hidden and the body flows open as before (CSS).
   container.innerHTML = `
-    <div class="ws">
-      <div class="ws-head">
-        <div class="ws-head-top"><span class="ws-logo">${LOGO}</span><span class="ws-brand">Web Sources</span></div>
-        <p class="ws-headsub">Search platforms and content sources.</p>
-      </div>
-      <div class="ws-stage"></div>
+    <div class="ws ws-acc" data-open="false">
+      <button type="button" class="ws-head ws-toggle" aria-expanded="false">
+        <span class="ws-head-top"><span class="ws-logo">${LOGO}</span><span class="ws-brand">Web Sources</span></span>
+        <span class="ws-toggle-chev" aria-hidden="true">${CHEV_DOWN}</span>
+      </button>
+      <div class="ws-acc-body"><div class="ws-acc-inner"><div class="ws-stage"></div></div></div>
     </div>`;
   const stage = container.querySelector('.ws-stage');
+  const wsEl = container.querySelector('.ws');
+  const toggleBtn = container.querySelector('.ws-toggle');
+  toggleBtn.addEventListener('click', () => {
+    const open = wsEl.getAttribute('data-open') === 'true';
+    wsEl.setAttribute('data-open', String(!open));
+    toggleBtn.setAttribute('aria-expanded', String(!open));
+  });
   if (!paths.length) { stage.innerHTML = '<p class="ws-empty">No web sources available.</p>'; return { destroy() { container.innerHTML = ''; } }; }
 
   function catsHTML() {

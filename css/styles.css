@@ -13830,6 +13830,13 @@ body.home-search #section-shortcuts .sidebar-card-header,
   body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws-head {
     display: none;
   }
+  /* Tab mode keeps Web Sources fully open (no accordion): the toggle header is
+     hidden above, and the accordion wrappers go display:contents so .ws-stage
+     flows/scrolls as a direct flex child of .ws (as it did before). */
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws-acc-body,
+  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws-acc-inner {
+    display: contents;
+  }
   body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts .aii-stage,
   body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources .ws-stage {
     padding-top: 18px; flex: 1 1 0; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
@@ -14313,15 +14320,17 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 body.home-search #section-aii-home .aii-launcher-cta {
   cursor: pointer; position: relative; overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  /* The site's own navy (matches the header/bottom-nav) with a soft top-right
-     lift — calm + on-brand, no loud accent or AI-glow. */
-  background: radial-gradient(120% 150% at 90% -10%, #2c3c59 0%, #1a2840 40%, #0f1a2e 100%);
+  /* Same navy gradient as the Prompt Builder card so the two read as a matched
+     pair (the sparkle watermark + white CTA differentiate this one). */
+  background: linear-gradient(180deg, #223150 0%, #18243d 100%);
   box-shadow: 0 18px 40px -26px rgba(10, 18, 34, 0.7);
   transition: transform .18s ease, box-shadow .22s ease;
 }
 body.home-search #section-aii-home .aii-launcher-cta:hover { transform: translateY(-2px); box-shadow: 0 26px 54px -26px rgba(10, 18, 34, 0.82); }
 body.home-search #section-aii-home .aii-launcher-cta:active { transform: translateY(0); }
-body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: none; border-bottom-color: rgba(255, 255, 255, 0.1); position: relative; z-index: 1; }
+/* Drop the "AI Insights · LIVE" header on the home card — it goes straight into
+   the headline + features + CTA, matching the headerless Prompt Builder card. */
+body.home-search #section-aii-home .aii-head { display: none; }
 .aii-launcher-cta:focus-visible { outline: 2px solid #5b78b8; outline-offset: 3px; }
 /* A thin top sheen for depth (replaces the blue radial glow). */
 .aii-launcher-cta::after { content: ''; position: absolute; inset: 0 0 auto 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent); pointer-events: none; z-index: 1; }
@@ -14335,13 +14344,13 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-head { background: non
 .aii-launcher-cta .aii-live { color: #4ade9f; }
 .aii-launcher-cta .aii-stage { position: relative; z-index: 1; }
 .aii-launcher-cta .aii-promo-line { color: rgba(255, 255, 255, 0.62); }
-.aii-launcher-cta .aii-promo-headline { color: #fff; font-size: 1.12rem; font-weight: 600; letter-spacing: -0.012em; line-height: 1.3; }
+.aii-launcher-cta .aii-promo-headline { color: #fff; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.13; }
 .aii-launcher-cta .aii-feat { color: rgba(255, 255, 255, 0.82); }
 .aii-launcher-cta .aii-feat-ic { color: rgba(255, 255, 255, 0.46); }
 /* White CTA button on the navy card — clean, high-contrast, not loud. */
 .aii-promo-btn { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; margin: 12px 0 4px; padding: 11px 20px; border-radius: 10px; background: #fff; color: var(--color-primary); font-family: var(--font-family); font-size: 0.85rem; font-weight: 700; box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.6); transition: transform .12s ease, box-shadow .16s ease; }
 /* Balanced breathing room below the CTA button (was flush to the card bottom). */
-body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-bottom: 20px; }
+body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-top: 22px; padding-bottom: 22px; }
 .aii-promo-btn svg { width: 15px; height: 15px; transition: transform .16s ease; }
 .aii-launcher-cta:hover .aii-promo-btn { transform: translateY(-1px); box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.7); }
 .aii-launcher-cta:hover .aii-promo-btn svg { transform: translateX(3px); }
@@ -14749,8 +14758,23 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-bottom
 
 /* ===== Web Sources card (same flip-nav + card treatment as AI Intelligence) */
 .ws { border: 1px solid var(--color-surface-border); border-radius: 16px; background: #fff; overflow: hidden; }
-.ws-head { display: flex; flex-direction: column; gap: 7px; padding: 15px 18px; border-bottom: 1px solid var(--color-surface-border); background: color-mix(in srgb, var(--color-primary) 3%, #fff); }
-.ws-head-top { display: flex; align-items: center; gap: 11px; }
+/* The header is the accordion TOGGLE button: a clean single row (logo + brand +
+   chevron). Divider/body appear only when open. */
+.ws-head { display: flex; flex-direction: row; align-items: center; gap: 11px; width: 100%; padding: 14px 16px; border: none; background: color-mix(in srgb, var(--color-primary) 3%, #fff); cursor: pointer; font-family: var(--font-family); text-align: left; transition: background .14s; }
+.ws-head:hover { background: color-mix(in srgb, var(--color-primary) 6%, #fff); }
+.ws-head-top { display: flex; align-items: center; gap: 11px; flex: 1 1 auto; min-width: 0; }
+.ws-toggle-chev { flex: none; display: inline-flex; color: var(--color-text-light); transition: transform .22s cubic-bezier(.4, 0, .2, 1); }
+.ws-toggle-chev svg { width: 18px; height: 18px; }
+.ws-acc[data-open="true"] .ws-toggle-chev { transform: rotate(180deg); }
+.ws-acc[data-open="true"] .ws-head { border-bottom: 1px solid var(--color-surface-border); }
+/* Collapsible body — grid-rows 0fr → 1fr, like the brief accordions. */
+.ws-acc-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .28s cubic-bezier(.4, 0, .2, 1); }
+.ws-acc[data-open="true"] .ws-acc-body { grid-template-rows: 1fr; }
+.ws-acc-body > * { overflow: hidden; min-height: 0; }
+/* The clip wrapper must have no padding (or it shows as a gap when collapsed);
+   the open-state spacing lives on the stage, inside the clipped region. */
+.ws-acc-inner { padding: 0; }
+.ws-acc-body .ws-stage { padding-top: 14px; padding-bottom: 10px; }
 .ws-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
 .ws-logo svg { width: 14px; height: 14px; }
 .ws-brand { font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: var(--color-text); letter-spacing: -0.015em; }
@@ -15063,8 +15087,10 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-bottom
    with hairline separators between its rows. */
 .im-stickyhead { position: sticky; top: 0; z-index: 8; margin: 0 -20px; padding: 0 20px; background: #f3f5f8; border-bottom: 1px solid var(--color-surface-border); }
 /* Discreet Back / Prev / Next — plain dark-grey text links, not buttons. */
-.im-headnav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0 11px; border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); }
-.im-headnav-pn { display: inline-flex; align-items: center; gap: 18px; margin-left: auto; }
+/* 3-column grid: back link pinned left (col 1), the Prev/Next pager centered in
+   the header (col 2), col 3 balances it. Works whether or not a back link exists. */
+.im-headnav { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; padding: 11px 0 11px; border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); }
+.im-headnav-pn { display: inline-flex; align-items: center; gap: 18px; grid-column: 2; }
 .im-headnav-link { display: inline-flex; align-items: center; gap: 4px; padding: 0; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #6b7484; white-space: nowrap; transition: color .14s; }
 .im-headnav-link:hover:not(:disabled) { color: var(--color-primary); }
 .im-headnav-link:disabled { opacity: 0.38; cursor: default; }
@@ -15083,7 +15109,7 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-bottom
 .im-eyebrow-time--link:hover { color: var(--color-primary); }
 .im-eyebrow-time--link:hover svg { opacity: 1; }
 /* Responsive title — scales with the viewport, NO scroll-driven transform. */
-.im-over-title { margin: 0 0 10px; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; color: var(--color-primary); line-height: 1.16; font-size: clamp(1.4rem, 1.15rem + 1.1vw, 1.85rem); }
+.im-over-title { margin: 0 0 10px; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; color: var(--color-primary); line-height: 1.18; font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.45rem); }
 .im-over-links { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 /* Discreet dropdown buttons under the title — clearly interactive (not loose blue
    text links). White face + a soft blue-tinted border; the leading icon + trailing

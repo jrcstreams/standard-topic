@@ -19,7 +19,7 @@ import { initTrendingDetailModal } from './components/trending-detail-modal.js?v
 import { initInsightModal } from './components/insight-modal.js?v=20260617-revamp249';
 import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260617-revamp254';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260617-revamp254';
-import { renderWebSources } from './components/websources.js?v=20260616-revamp245';
+import { renderWebSources } from './components/websources.js?v=20260617-revamp255';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp245';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260616-revamp245';
