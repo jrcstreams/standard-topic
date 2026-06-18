@@ -17,8 +17,8 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp245';
 import { initInsightModal } from './components/insight-modal.js?v=20260617-revamp257';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260617-revamp259';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260617-revamp259';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260617-revamp261';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260617-revamp261';
 import { renderWebSources } from './components/websources.js?v=20260617-revamp255';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp245';
 import { initDiscoverModal } from './components/discover-modal.js';
@@ -1554,7 +1554,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           <a href="#/prompt-generator" class="home-promo" aria-label="Open the Prompt Builder">
             <div class="home-promo-inner">
               <h3 class="home-promo-title">Smarter prompts,<br>better answers.</h3>
-              <p class="home-promo-text">Turn any topic into a structured, ready-to-run prompt for any AI assistant.</p>
+              <p class="home-promo-text">Turn any topic into a ready-to-run prompt for ChatGPT, Claude, or any AI.</p>
               <span class="home-promo-btn">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>
                 Open Prompt Builder
@@ -2847,6 +2847,8 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     if (input.value.trim() && panelEl.dataset.state !== 'expanded') refreshSuggestions();
     // Seed the empty-state "trending now" starter chips (modal only).
     fillEmptyChips();
+    // Home inline card: now that live trends are in, add the Trending group.
+    fillStarterChips();
   }).catch(() => {});
 
   // Empty-state starter chips (#6): tappable live-trending terms that nudge the
@@ -2866,19 +2868,24 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     });
   }
 
-  // Inline (home) starter chips: a few featured topics under the bar so the card
-  // is an actionable launchpad, not just an empty search box. Each links to that
-  // topic's page. Featured topics always exist, so this is reliably populated.
+  // Inline (home) starter chips under the bar — two quick-launch groups so the
+  // card is an actionable launchpad: a few POPULAR topics (link to the topic page)
+  // and a few TRENDING terms (run the search). Re-run once live trends land.
   function fillStarterChips() {
     if (isModal) return;
     const wrap = panelEl.querySelector('.search-panel-starters');
     if (!wrap) return;
     let topics = [];
-    try { topics = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 6); } catch (_) {}
-    if (!topics.length) { wrap.hidden = true; return; }
-    wrap.innerHTML = `<span class="search-panel-starters-label">Popular</span>`
-      + topics.map((t) => `<a class="search-panel-starter" href="#/topic/${escapeAttr(t.slug)}">${escapeHTML(t.name)}</a>`).join('');
+    try { topics = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 5); } catch (_) {}
+    const trends = (trendSuggest || []).slice(0, 4);
+    if (!topics.length && !trends.length) { wrap.hidden = true; return; }
+    const group = (label, chips) => `<div class="sp-starter-group"><span class="sp-starter-label">${label}</span><div class="sp-starter-chips">${chips}</div></div>`;
+    const topicChips = topics.map((t) => `<a class="sp-chip" href="#/topic/${escapeAttr(t.slug)}">${escapeHTML(t.name)}</a>`).join('');
+    const trendChips = trends.map((t) => `<button type="button" class="sp-chip sp-chip--trend" data-q="${escapeAttr(t.query)}">${SP_TREND_ICON}<span>${escapeHTML(t.query)}</span></button>`).join('');
+    wrap.innerHTML = (topics.length ? group('Popular topics', topicChips) : '')
+      + (trends.length ? group('Trending now', trendChips) : '');
     wrap.hidden = false;
+    wrap.querySelectorAll('.sp-chip--trend').forEach((b) => b.addEventListener('click', () => { const q = b.dataset.q; if (q) expand(q); }));
   }
   fillStarterChips();
 

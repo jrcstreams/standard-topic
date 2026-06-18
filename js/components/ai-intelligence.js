@@ -329,15 +329,9 @@ export function renderAIIntelligence(container, scope) {
   // headline + a DISTINCT lighter tagline, a neutral feature row, and a real teal
   // CTA button. The whole card is still the CTA (the button is the cue).
   function launcherStepsHTML() {
-    const FEATURES = [
-      { ic: ICON_FEAT_GLOBE, t: '100+ dedicated topics' },
-      { ic: ICON_FEAT_SEARCH, t: 'Any search term' },
-    ];
-    const feats = FEATURES.map((f) => `<span class="aii-feat"><span class="aii-feat-ic">${f.ic}</span>${esc(f.t)}</span>`).join('');
     return `<div class="aii-promo aii-promo--cta">
-      <h3 class="aii-promo-headline">Live intelligence on any topic.</h3>
-      <p class="aii-promo-line">Grounded, cited analysis on the topics you follow, plus any search term you bring.</p>
-      <div class="aii-feats">${feats}</div>
+      <h3 class="aii-promo-headline">Understand any topic, fast.</h3>
+      <p class="aii-promo-line">Pick a topic or search anything — get a clear, plain-English rundown of what's happening and why it matters.</p>
       <span class="aii-promo-btn">Explore AI Insights ${RIGHT_ARROW}</span>
     </div>`;
   }
