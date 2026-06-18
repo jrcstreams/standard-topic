@@ -2798,7 +2798,8 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
         ${isModal
           ? `<h2 class="search-panel-title">Search</h2>
              <p class="search-panel-tagline">News, Resources and AI Knowledge</p>`
-          : `<h2 class="search-panel-title">News, Resources and AI Knowledge</h2>`}
+          : `<h2 class="search-panel-title">What do you want to know?</h2>
+             <p class="search-panel-tagline">News, resources &amp; AI insights on any topic.</p>`}
       </div></div>
       <div class="search-panel-barrow">
         <form class="search-panel-form" role="search" autocomplete="off">

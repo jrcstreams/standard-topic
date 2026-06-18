@@ -13138,15 +13138,16 @@ body.home-search.app-mode .topic-layout {
   position: relative;
   max-width: none; margin: 0;
   padding: clamp(1.1rem, 0.7rem + 1.2vw, 1.55rem) clamp(1.4rem, 0.8rem + 2vw, 2.4rem) clamp(1.5rem, 0.9rem + 1.8vw, 2.1rem);
-  /* Cleaner, editorial surface (#7): flat cool off-white + a single soft
-     corner glow — no repeating dotted texture (that read as "AI-generated"). */
-  background: #f6f8fc;
-  border: 1px solid #e4e9f2;
+  /* Soft blue-tinted gradient + a real lift shadow so the card has presence
+     (was a flat pale panel). The corner glow adds depth on top. */
+  background: linear-gradient(150deg, #ffffff 0%, #e9f0fb 100%);
+  border: 1px solid #dbe4f2;
   border-radius: 20px;
+  box-shadow: 0 22px 54px -34px rgba(31, 49, 99, 0.42);
 }
 .home-search-hero::after {
   content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; overflow: hidden;
-  background: radial-gradient(72% 92% at 100% 0%, rgba(47, 78, 140, 0.07), transparent 56%);
+  background: radial-gradient(72% 92% at 100% 0%, rgba(47, 78, 140, 0.11), transparent 58%);
 }
 .home-search-hero .search-panel { position: relative; z-index: 1; }
 .home-search-hero .search-panel-hero-inner { padding: 0; text-align: center; }
@@ -13278,6 +13279,7 @@ body.home-search #home-trending {
   box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.55);
   transition: background 0.14s, transform 0.14s;
 }
+.home-promo:hover { text-decoration: none; }
 .home-promo:hover .home-promo-btn { background: #eaf1ff; transform: translateY(-1px); }
 .home-promo-btn svg { flex: none; }
 @media (min-width: 1024px) {
@@ -13325,7 +13327,10 @@ body.home-search #home-trending {
      edge (cleaner than a centered title over left chips). */
   body.home-search .home-search-hero .search-panel-hero-inner { text-align: left; }
   body.home-search .home-search-hero .search-panel-title {
-    white-space: normal; text-align: left; font-size: 1.18rem; line-height: 1.25; margin: 0 0 0.95rem;
+    white-space: normal; text-align: left; font-size: 1.3rem; line-height: 1.2; margin: 0 0 0.3rem;
+  }
+  body.home-search .home-search-hero .search-panel-tagline {
+    text-align: left; margin: 0 0 1.05rem; font-size: 0.92rem;
   }
   body.home-search .home-search-hero .search-panel-input { height: 50px; font-size: 0.96rem; }
   /* Balance the row: vertically center the dark cards' content so they don't
@@ -14376,14 +14381,14 @@ body.home-search #section-aii-home .aii-head { display: none; }
 /* White CTA button on the navy card — clean, high-contrast, not loud. */
 .aii-promo-btn { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; margin: 12px 0 4px; padding: 11px 20px; border-radius: 10px; background: #fff; color: var(--color-primary); font-family: var(--font-family); font-size: 0.85rem; font-weight: 700; box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.6); transition: transform .12s ease, box-shadow .16s ease; }
 /* Balanced breathing room below the CTA button (was flush to the card bottom). */
-body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-top: 13px; padding-bottom: 13px; }
+body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-top: 19px; padding-bottom: 17px; }
 /* Compact the home dark cards so the stacked AI Insights + Prompt Builder column
    matches the condensed search card height (no tall, empty cards). */
 body.home-search .aii-launcher-cta .aii-promo--cta { gap: 8px; }
 body.home-search .aii-launcher-cta .aii-promo-headline { font-size: 1.12rem; line-height: 1.15; }
 body.home-search .aii-launcher-cta .aii-promo-line { font-size: 0.84rem; line-height: 1.4; }
 body.home-search .aii-launcher-cta .aii-promo-btn { margin: 9px 0 0; padding: 8px 15px; font-size: 0.82rem; box-shadow: 0 8px 18px -12px rgba(0,0,0,.6); }
-body.home-search .home-promo-inner { padding: 1rem 1.25rem 1.05rem; }
+body.home-search .home-promo-inner { padding: 1.25rem 1.3rem 1.2rem; }
 body.home-search .home-promo-title { font-size: 1.12rem; line-height: 1.18; margin-bottom: 0.3rem; }
 body.home-search .home-promo-text { font-size: 0.84rem; line-height: 1.4; margin-bottom: 0.7rem; }
 body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; box-shadow: 0 8px 18px -12px rgba(0,0,0,.5); }
