@@ -13201,7 +13201,7 @@ body.home-search.app-mode .topic-layout {
    between Search and AI (matching the mobile concept). */
 body.home-search .body-tabs { display: none !important; }
 body.home-search.app-mode .topic-layout.home-grid { display: flex; flex-direction: column; gap: 1.25rem; align-items: stretch; }
-body.home-search .home-cards, body.home-search .home-main, body.home-search .home-side { display: contents; }
+body.home-search .home-cards, body.home-search .home-cards-stack, body.home-search .home-main, body.home-search .home-side { display: contents; }
 body.home-search #home-search-hero { order: 1; }
 body.home-search #home-trending    { order: 2; }
 body.home-search #section-aii-home { order: 3; }
@@ -13258,7 +13258,9 @@ body.home-search #home-trending {
 .home-promo {
   display: block; text-decoration: none; position: relative; overflow: hidden;
   border-radius: 16px;
-  background: linear-gradient(180deg, #223150 0%, #18243d 100%);
+  /* Vivid royal blue — a distinct identity from the navy AI Insights card so the
+     two stacked cards don't read as twins. */
+  background: linear-gradient(160deg, #2c5cb0 0%, #19386f 100%);
 }
 .home-promo::after {
   content: ''; position: absolute; inset: 0;
@@ -13268,15 +13270,15 @@ body.home-search #home-trending {
 .home-promo-inner { position: relative; z-index: 1; padding: 1.45rem 1.4rem 1.55rem; }
 .home-promo-eyebrow { margin: 0 0 0.55rem; font-size: 0.67rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #7d93c4; }
 .home-promo-title { margin: 0 0 0.5rem; font-family: var(--font-display); font-size: 1.3rem; line-height: 1.13; letter-spacing: -0.02em; color: #fff; font-weight: 700; }
-.home-promo-text { margin: 0 0 1.15rem; font-size: 0.855rem; line-height: 1.5; color: #aab6cf; }
+.home-promo-text { margin: 0 0 1.15rem; font-size: 0.855rem; line-height: 1.5; color: #cfdcf4; }
 .home-promo-btn {
   display: inline-flex; align-items: center; gap: 0.45rem;
   padding: 0.6rem 1rem; border-radius: 10px;
-  background: #2f6df0; color: #fff; font-size: 0.85rem; font-weight: 600;
-  box-shadow: 0 8px 20px -8px rgba(47, 109, 240, 0.6);
+  background: #fff; color: #1e3f86; font-size: 0.85rem; font-weight: 700;
+  box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.55);
   transition: background 0.14s, transform 0.14s;
 }
-.home-promo:hover .home-promo-btn { background: #2a62d8; transform: translateY(-1px); }
+.home-promo:hover .home-promo-btn { background: #eaf1ff; transform: translateY(-1px); }
 .home-promo-btn svg { flex: none; }
 @media (min-width: 1024px) {
   /* Two rows: the three cards span the FULL width across the top, then News Feed
@@ -13294,11 +13296,15 @@ body.home-search #home-trending {
   body.home-search .home-cards {
     grid-area: cards;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.72fr);
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
     gap: 1.5rem;
     align-items: stretch;
     min-width: 0;
   }
+  /* The 40% column stacks AI Insights over Prompt Builder; each fills half so the
+     stack's height matches the 60% search card for an even row. */
+  body.home-search .home-cards-stack { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
+  body.home-search .home-cards-stack > * { flex: 1; }
   body.home-search .home-main { grid-area: main; display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
   body.home-search .home-side { grid-area: side; display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
   /* Reset the mobile-stacking `order` so the cards lay out in source order on

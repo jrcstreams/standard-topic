@@ -1550,17 +1550,19 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         ${bodyTabsRow({ showSearchTrends: true, showShortcuts: false })}
         <div class="home-cards">
           <div class="home-search-hero" id="home-search-hero"></div>
-          <section class="layout-section" id="section-aii-home"></section>
-          <a href="#/prompt-generator" class="home-promo" aria-label="Open the Prompt Builder">
-            <div class="home-promo-inner">
-              <h3 class="home-promo-title">Smarter prompts,<br>better answers.</h3>
-              <p class="home-promo-text">Turn any topic into a ready-to-run prompt for ChatGPT, Claude, or any AI.</p>
-              <span class="home-promo-btn">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>
-                Open Prompt Builder
-              </span>
-            </div>
-          </a>
+          <div class="home-cards-stack">
+            <section class="layout-section" id="section-aii-home"></section>
+            <a href="#/prompt-generator" class="home-promo" aria-label="Open the Prompt Builder">
+              <div class="home-promo-inner">
+                <h3 class="home-promo-title">Smarter prompts,<br>better answers.</h3>
+                <p class="home-promo-text">Turn any topic into a ready-to-run prompt for ChatGPT, Claude, or any AI.</p>
+                <span class="home-promo-btn">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>
+                  Open Prompt Builder
+                </span>
+              </div>
+            </a>
+          </div>
         </div>
         <div class="home-main">
           <section class="layout-section" id="section-newsfeed"></section>
@@ -2835,8 +2837,10 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   // a hot suggestion (#77). fetchTrending() is session-cached, so this is one
   // shared request across the home hero + nav modal. Warm it on panel creation.
   let trendSuggest = [];   // [{query, category, queryLc}]
+  let trendTopicsRaw = []; // full trend objects (for opening the trend modal)
   const spTitleCase = (s) => String(s || '').replace(/\b\w/g, (c) => c.toUpperCase());
   fetchTrending().then(({ topics }) => {
+    trendTopicsRaw = topics || [];
     trendSuggest = (topics || [])
       .map((t) => {
         const query = spTitleCase(t.query);
@@ -2885,7 +2889,14 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     wrap.innerHTML = (topics.length ? group('Popular topics', topicChips) : '')
       + (trends.length ? group('Trending now', trendChips) : '');
     wrap.hidden = false;
-    wrap.querySelectorAll('.sp-chip--trend').forEach((b) => b.addEventListener('click', () => { const q = b.dataset.q; if (q) expand(q); }));
+    // A trend chip opens that trend's insight modal (NOT a search of the card) —
+    // same as clicking it in the Trending list (full trend list as Prev/Next nav).
+    wrap.querySelectorAll('.sp-chip--trend').forEach((b) => b.addEventListener('click', () => {
+      const list = (trendTopicsRaw || []).map((t) => ({ type: 'trend', query: spTitleCase(t.query), category: (t.categories && t.categories[0]) || '', startedAt: t.startedAt || '', trendBreakdown: Array.isArray(t.trendBreakdown) ? t.trendBreakdown.slice(0, 8) : [] }));
+      let index = list.findIndex((e) => e.query === b.dataset.q);
+      if (index < 0) { if (!list.length) return; index = 0; }
+      window.dispatchEvent(new CustomEvent('open-insight-modal', { detail: { ...list[index], nav: { list, index, backLabel: 'All Trending', backEvent: 'open-trending-list', itemKind: 'trend' } } }));
+    }));
   }
   fillStarterChips();
 
