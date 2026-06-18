@@ -720,8 +720,8 @@ function renderNews(d) {
   // Action links — View Original (real link) + Ask AI + Web Search (icon dropdowns).
   const actions = [
     d.url ? `<a class="im-qlink" href="${escAttr(d.url)}" target="_blank" rel="noopener noreferrer"><span>View Original</span>${ARROW}</a>` : '',
-    `<button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span></button>`,
-    `<button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span></button>`,
+    `<button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span>${CHEV}</button>`,
+    `<button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span>${CHEV}</button>`,
   ].filter(Boolean).join('');
   panelEl.innerHTML = `
     ${brandHeaderHTML(null, { brandLabel: 'News Insights', icon: NEWS_FEED_ICON, hideBack: true })}
@@ -818,9 +818,9 @@ function renderTrend(d) {
   const metaLine = `${cat ? `<span class="im-eyebrow-cat">${esc(cat)}</span>` : ''}${timeHTML}`;
   const relBody = (Array.isArray(d.trendBreakdown) && d.trendBreakdown.length) ? relatedSearchesHTML(d.trendBreakdown) : '';
   const actions = [
-    relBody ? `<button type="button" class="im-qlink im-qlink-btn" data-panel="related" aria-expanded="false">${ICON_WEB}<span>Related Searches</span></button>` : '',
-    `<button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span></button>`,
-    `<button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span></button>`,
+    relBody ? `<button type="button" class="im-qlink im-qlink-btn" data-panel="related" aria-expanded="false">${ICON_WEB}<span>Related Searches</span>${CHEV}</button>` : '',
+    `<button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span>${CHEV}</button>`,
+    `<button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span>${CHEV}</button>`,
   ].filter(Boolean).join('');
   panelEl.innerHTML = `
     ${brandHeaderHTML(null, { brandLabel: 'Trending Insights', hideBack: true })}
@@ -917,8 +917,8 @@ function renderOverview(d) {
   // Eyebrow ABOVE the title — the lens chip (matches Trending/News layout).
   const metaLine = `<span class="im-eyebrow-cat">${esc(lens)}</span>`;
   const actions = [
-    `<button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span></button>`,
-    `<button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span></button>`,
+    `<button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span>${CHEV}</button>`,
+    `<button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span>${CHEV}</button>`,
   ].join('');
   const prompt = `Give me a thorough "${lens}" overview of ${topicLabel} — be specific and current.`;
   panelEl.innerHTML = `

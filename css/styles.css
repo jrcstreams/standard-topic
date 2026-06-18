@@ -14803,9 +14803,12 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-bottom
 .aii-actbtn:hover { border-color: var(--color-primary); color: var(--color-primary); background: #eaedf3; }
 .aii-actbtn .aii-chev { transition: transform .18s; }
 .aii-actbtn[aria-expanded="true"] .aii-chev { transform: rotate(180deg); }
-.aii-acc { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .24s ease; }
-.aii-acc.is-open { grid-template-rows: 1fr; padding-top: 10px; }
-.aii-acc > * { overflow: hidden; }
+/* Same expand affordance on the AI Insights header action links. */
+.aii-qlink-btn .aii-chev { transition: transform .26s cubic-bezier(.4, 0, .2, 1); opacity: .7; }
+.aii-qlink-btn[aria-expanded="true"] .aii-chev { transform: rotate(180deg); opacity: 1; }
+.aii-acc { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .28s cubic-bezier(.4, 0, .2, 1), padding-top .28s cubic-bezier(.4, 0, .2, 1), opacity .2s ease; }
+.aii-acc.is-open { grid-template-rows: 1fr; opacity: 1; padding-top: 10px; }
+.aii-acc > * { overflow: hidden; min-height: 0; }
 .aii-rule { border: none; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); margin: 14px 0 14px; }
 /* Centered content-view layout (mockup): the overview drops its card and
    centers; the action buttons sit in a centered row above the AI Brief; a
@@ -15417,15 +15420,21 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-bottom
 .im-actbtn-primary:hover { color: var(--color-primary); border-color: var(--color-primary); background: #eaedf3; }
 .im-actbtn .im-chev { transition: transform .18s; }
 .im-actbtn[aria-expanded="true"] .im-chev { transform: rotate(180deg); }
+/* Expand affordance on the header action links (Ask AI / Web Search / Related) —
+   a small down-chevron that rotates as the panel opens. */
+.im-qlink-btn .im-chev { transition: transform .26s cubic-bezier(.4, 0, .2, 1); opacity: .7; }
+.im-qlink-btn[aria-expanded="true"] .im-chev { transform: rotate(180deg); opacity: 1; }
 /* Three action chips on ONE line (matches the AI Intelligence card) — equal
    width, font scales down responsively, label ellipsizes before wrapping. */
 .im-actions-row { flex-wrap: nowrap; gap: 6px; }
 .im-actions-row .im-actbtn { flex: 1 1 0; min-width: 0; justify-content: center; gap: 4px; padding: 8px 10px; font-size: clamp(0.7rem, 1.6vw, 0.8rem); white-space: nowrap; overflow: hidden; }
 .im-actions-row .im-actbtn span { overflow: hidden; text-overflow: ellipsis; }
 .im-actions-row .im-actbtn .im-chev { flex: none; }
-.im-acc { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .24s ease; }
-.im-acc.is-open { grid-template-rows: 1fr; padding-top: 10px; }
-.im-acc > * { overflow: hidden; }
+/* Clean expand: animate the grid row AND the top padding together (the padding
+   used to snap in) and fade the body in, so the panel grows smoothly. */
+.im-acc { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .28s cubic-bezier(.4, 0, .2, 1), padding-top .28s cubic-bezier(.4, 0, .2, 1), opacity .2s ease; }
+.im-acc.is-open { grid-template-rows: 1fr; opacity: 1; padding-top: 10px; }
+.im-acc > * { overflow: hidden; min-height: 0; }
 .im-source-list { display: grid; gap: 5px; }
 .im-source-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; text-decoration: none; color: var(--color-text); font-size: 0.82rem; transition: border-color .14s, color .14s; }
 .im-source-row, .im-source-row:hover { text-decoration: none; }

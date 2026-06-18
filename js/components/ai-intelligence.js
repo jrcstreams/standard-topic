@@ -514,7 +514,7 @@ export function renderAIIntelligence(container, scope) {
           <button type="button" class="im-headnav-link" data-pn="next"${next ? '' : ' disabled'}>Next${HNAV_R}</button>
         </span>
       </div>`;
-    const actions = `<button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span></button><button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span></button>`;
+    const actions = `<button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span>${CHEV}</button><button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span>${CHEV}</button>`;
     return `<div class="aii-sub aii-content aii-content--modal">
       <div class="im-stickyhead">
         ${controls}
@@ -598,8 +598,8 @@ export function renderAIIntelligence(container, scope) {
         ${desc ? `<p class="aii-overview-sub">${esc(desc)}</p>` : ''}
         <div class="im-quicklinks aii-quicklinks">
           <button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="sources">Sources</button>
-          <button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="explore" aria-expanded="false">Ask AI</button>
-          <button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="web" aria-expanded="false">Web Search</button>
+          <button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="explore" aria-expanded="false"><span>Ask AI</span>${CHEV}</button>
+          <button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="web" aria-expanded="false"><span>Web Search</span>${CHEV}</button>
         </div>
         <div class="aii-acc" data-accbody="explore"></div>
         <div class="aii-acc" data-accbody="web"></div>
