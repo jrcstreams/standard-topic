@@ -17,8 +17,8 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp245';
 import { initInsightModal } from './components/insight-modal.js?v=20260617-revamp264';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260617-revamp261';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260617-revamp261';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260617-revamp265';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260617-revamp265';
 import { renderWebSources } from './components/websources.js?v=20260617-revamp255';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp245';
 import { initDiscoverModal } from './components/discover-modal.js';
@@ -1554,8 +1554,8 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
             <section class="layout-section" id="section-aii-home"></section>
             <a href="#/prompt-generator" class="home-promo" aria-label="Open the Prompt Builder">
               <div class="home-promo-inner">
-                <h3 class="home-promo-title">Smarter prompts,<br>better answers.</h3>
-                <p class="home-promo-text">Turn any topic into a ready-to-run prompt for ChatGPT, Claude, or any AI.</p>
+                <h3 class="home-promo-title">Smarter prompts, better answers.</h3>
+                <p class="home-promo-text">Turn any topic into a well crafted ready-to-run prompt.</p>
                 <span class="home-promo-btn">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>
                   Open Prompt Builder

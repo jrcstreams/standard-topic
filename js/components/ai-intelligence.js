@@ -331,7 +331,7 @@ export function renderAIIntelligence(container, scope) {
   function launcherStepsHTML() {
     return `<div class="aii-promo aii-promo--cta">
       <h3 class="aii-promo-headline">Understand any topic, fast.</h3>
-      <p class="aii-promo-line">Pick a topic or search anything — get a clear, plain-English rundown of what's happening and why it matters.</p>
+      <p class="aii-promo-line">Pick a topic or search anything and get AI-generated insights.</p>
       <span class="aii-promo-btn">Explore AI Insights ${RIGHT_ARROW}</span>
     </div>`;
   }

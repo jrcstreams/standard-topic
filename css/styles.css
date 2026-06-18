@@ -13318,8 +13318,8 @@ body.home-search #home-trending {
      (instead of clipping at this narrow width), and center the title + bar
      vertically so the card fills the shared row height cleanly. */
   body.home-search .home-search-hero {
-    display: flex; flex-direction: column; justify-content: center;
-    padding: 1.7rem 1.6rem; border-radius: 16px;
+    display: flex; flex-direction: column; justify-content: flex-start;
+    padding: 1.5rem 1.6rem; border-radius: 16px;
   }
   /* Left-aligned launchpad: title, bar and the chip groups all share one left
      edge (cleaner than a centered title over left chips). */
@@ -14376,7 +14376,17 @@ body.home-search #section-aii-home .aii-head { display: none; }
 /* White CTA button on the navy card — clean, high-contrast, not loud. */
 .aii-promo-btn { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; margin: 12px 0 4px; padding: 11px 20px; border-radius: 10px; background: #fff; color: var(--color-primary); font-family: var(--font-family); font-size: 0.85rem; font-weight: 700; box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.6); transition: transform .12s ease, box-shadow .16s ease; }
 /* Balanced breathing room below the CTA button (was flush to the card bottom). */
-body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-top: 22px; padding-bottom: 22px; }
+body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-top: 13px; padding-bottom: 13px; }
+/* Compact the home dark cards so the stacked AI Insights + Prompt Builder column
+   matches the condensed search card height (no tall, empty cards). */
+body.home-search .aii-launcher-cta .aii-promo--cta { gap: 8px; }
+body.home-search .aii-launcher-cta .aii-promo-headline { font-size: 1.12rem; line-height: 1.15; }
+body.home-search .aii-launcher-cta .aii-promo-line { font-size: 0.84rem; line-height: 1.4; }
+body.home-search .aii-launcher-cta .aii-promo-btn { margin: 9px 0 0; padding: 8px 15px; font-size: 0.82rem; box-shadow: 0 8px 18px -12px rgba(0,0,0,.6); }
+body.home-search .home-promo-inner { padding: 1rem 1.25rem 1.05rem; }
+body.home-search .home-promo-title { font-size: 1.12rem; line-height: 1.18; margin-bottom: 0.3rem; }
+body.home-search .home-promo-text { font-size: 0.84rem; line-height: 1.4; margin-bottom: 0.7rem; }
+body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; box-shadow: 0 8px 18px -12px rgba(0,0,0,.5); }
 .aii-promo-btn svg { width: 15px; height: 15px; transition: transform .16s ease; }
 .aii-launcher-cta:hover .aii-promo-btn { transform: translateY(-1px); box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.7); }
 .aii-launcher-cta:hover .aii-promo-btn svg { transform: translateX(3px); }
