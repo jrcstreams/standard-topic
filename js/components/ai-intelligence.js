@@ -290,7 +290,7 @@ export function renderAIIntelligence(container, scope) {
   container.innerHTML = `
     <div class="aii${tabMode ? ' aii-tabmode' : ''}${flowMode ? ' aii-flow' : ''}${launcher ? ' aii-launcher' : ''}${launcher && scope.topic === 'home' ? ' aii-launcher-cta' : ''}">
       <div class="aii-head">
-        <div class="aii-head-top"><span class="aii-logo">${LOGO}</span><span class="aii-brand">AI Insights</span><span class="aii-live"><span class="aii-live-dot" aria-hidden="true"></span>Live</span></div>
+        <div class="aii-head-top"><span class="aii-logo">${LOGO}</span><span class="aii-brand">AI Insights</span></div>
         <p class="aii-headsub">Pick a path and explore live AI insights.</p>
       </div>
       ${flowMode ? '<div class="aii-topbar" data-topbar hidden></div>' : ''}

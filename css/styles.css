@@ -14673,6 +14673,21 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-top: 2
 .aii-trackcard[data-group="topic-specific"] .aii-trackcard-ic { background: #fdecef; color: #c2455c; }
 .aii-trackcard[data-group="analyze"] .aii-trackcard-ic { background: #fbf2e2; color: #b9791d; }
 .aii-trackcard[data-group="learn"] .aii-trackcard-ic { background: #eafaf1; color: #1f8f6b; }
+/* Per-section accent (matching the icon tint) carries to the bullet dots, the
+   row-hover title, and the Explore link — so each section reads as one
+   contained, color-coded unit (the mockup). */
+.aii-trackcard[data-group="discover"] .aii-tcp::before { background: #2f6fe0; }
+.aii-trackcard[data-group="discover"] .aii-tcp:hover .aii-tcp-name,
+.aii-trackcard[data-group="discover"] .aii-trackcard-more { color: #2f6fe0; }
+.aii-trackcard[data-group="topic-specific"] .aii-tcp::before { background: #c2455c; }
+.aii-trackcard[data-group="topic-specific"] .aii-tcp:hover .aii-tcp-name,
+.aii-trackcard[data-group="topic-specific"] .aii-trackcard-more { color: #c2455c; }
+.aii-trackcard[data-group="analyze"] .aii-tcp::before { background: #b9791d; }
+.aii-trackcard[data-group="analyze"] .aii-tcp:hover .aii-tcp-name,
+.aii-trackcard[data-group="analyze"] .aii-trackcard-more { color: #b9791d; }
+.aii-trackcard[data-group="learn"] .aii-tcp::before { background: #1f8f6b; }
+.aii-trackcard[data-group="learn"] .aii-tcp:hover .aii-tcp-name,
+.aii-trackcard[data-group="learn"] .aii-trackcard-more { color: #1f8f6b; }
 
 /* Desktop sidebar (≥900): the AI Insights tracks flow as ONE clean, flat list —
    no cards-within-cards. Each track is icon + label + summary, a small indented
