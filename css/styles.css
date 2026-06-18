@@ -15053,12 +15053,17 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-bottom
 .im-eyebrow-time--link:hover svg { opacity: 1; }
 /* Responsive title — scales with the viewport, NO scroll-driven transform. */
 .im-over-title { margin: 0 0 10px; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; color: var(--color-primary); line-height: 1.16; font-size: clamp(1.4rem, 1.15rem + 1.1vw, 1.85rem); }
-.im-over-links { display: flex; align-items: center; flex-wrap: wrap; row-gap: 6px; margin-top: 9px; }
-/* Smaller, bolder links; short centered separators between them. */
-.im-over-links .im-qlink { position: relative; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; padding: 0 15px; }
-.im-over-links .im-qlink:first-child { padding-left: 0; }
-.im-over-links .im-qlink:not(:first-child)::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 1px; height: 11px; background: #dfe3ea; }
+.im-over-links { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+/* Discreet dropdown buttons under the title — clearly interactive (not loose blue
+   text links). White face + a soft blue-tinted border; the leading icon + trailing
+   chevron read as a dropdown, and the open one fills in and takes the primary
+   border. margin/border/padding are set explicitly to override the generic
+   .im-qlink divider rule. */
+.im-over-links .im-qlink { font-size: 0.78rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; margin: 0; padding: 6px 12px; border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-surface-border)); border-radius: 9px; background: #fff; color: #1d4ed8; transition: background .14s, border-color .14s, color .14s; }
+.im-over-links .im-qlink:hover { background: #f3f7ff; border-color: color-mix(in srgb, var(--color-primary) 48%, var(--color-surface-border)); text-decoration: none; }
+.im-over-links .im-qlink[aria-expanded="true"] { background: #eaf1ff; border-color: var(--color-primary); color: #1e3a8a; text-decoration: none; }
 .im-over-links .im-qlink svg { flex: none; }
+.im-over-links .im-qlink .im-chev { margin-left: 0; }
 
 /* AI Brief subnav — head row ("AI Brief" · "✦ = Text is AI-generated.") then
    the section pills below. */
