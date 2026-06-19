@@ -14764,25 +14764,22 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
   /* stretch (not the inherited align-items:start) so every track fills the column
      to the SAME width — otherwise each card shrink-wraps to its own content and the
      rows + Explore links land at different right edges (looked random). */
-  .topic-side .aii-trackgrid { display: flex !important; flex-direction: column; align-items: stretch; gap: 0 !important; margin: 0 !important; }
-  .topic-side .aii-trackcard { border: none; border-radius: 0; background: none; }
-  .topic-side .aii-trackcard:hover { box-shadow: none; border-color: transparent; }
-  .topic-side .aii-trackcard + .aii-trackcard { border-top: 1px solid var(--color-surface-border); }
-  .topic-side .aii-trackcard-head { padding: 13px 2px 8px; column-gap: 10px; align-items: center; }
+  /* Each section is its OWN contained card (border + radius + gap), not a
+     hairline-separated row — so they read as distinct, self-contained units. */
+  .topic-side .aii-trackgrid { display: flex !important; flex-direction: column; align-items: stretch; gap: 10px !important; margin: 0 !important; }
+  .topic-side .aii-trackcard { border: 1px solid var(--color-surface-border); border-radius: 12px; background: #fff; overflow: hidden; transition: border-color .14s ease, box-shadow .14s ease; }
+  .topic-side .aii-trackcard:hover { border-color: color-mix(in srgb, var(--color-primary) 20%, var(--color-surface-border)); box-shadow: 0 8px 22px -16px rgba(15, 23, 42, .28); }
+  .topic-side .aii-trackcard-head { padding: 12px 14px 8px; column-gap: 10px; align-items: center; }
   .topic-side .aii-trackcard-ic { width: 26px; height: 26px; border-radius: 7px; }
   .topic-side .aii-trackcard-ic svg { width: 15px; height: 15px; }
   .topic-side .aii-trackcard-name { font-size: 0.95rem; }
-  /* Drop the summary line under each section title in the desktop sidebar —
-     the title + preview list carry it. */
+  /* No summary line — the title + preview list carry it. */
   .topic-side .aii-trackcard-sub { display: none; }
-  /* Previews share the icon's left edge — everything stacks on one clean left
-     margin (icon+title row → summary → insights). */
-  .topic-side .aii-trackcard-previews { border-top: none; padding-left: 2px; }
-  .topic-side .aii-tcp { border-top: none; padding: 4px 2px; gap: 8px; }
+  /* Previews + Explore sit inside the card padding (aligned under the icon). */
+  .topic-side .aii-trackcard-previews { border-top: none; padding: 0 14px; }
+  .topic-side .aii-tcp { border-top: none; padding: 4px 0; gap: 8px; }
   .topic-side .aii-tcp-name { font-size: 0.79rem; }
-  /* Explore link anchors to the same left edge as the icon, summary and preview
-     rows (was indented 41px under the title, which read as off/centered). */
-  .topic-side .aii-trackcard-more { margin: 10px 0 14px 2px; font-size: 0.8rem; }
+  .topic-side .aii-trackcard-more { margin: 8px 14px 13px; font-size: 0.8rem; }
 }
 .aii-intro { margin: 0 0 16px; font-size: 0.9rem; line-height: 1.5; color: var(--color-text-muted); }
 .aii-intro strong { font-weight: 600; color: var(--color-text); }
