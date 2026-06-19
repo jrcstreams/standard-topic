@@ -14805,7 +14805,9 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-sec-inner { overflow: hidden; min-height: 0; }
 /* Insight links — plain text, no bullet, no arrow; indented under the label.
    NO hover fill / focus box — just a colour shift (the box looked terrible). */
-.aii-sec-items { display: flex; flex-direction: column; padding: 2px 16px 14px 34px; }
+.aii-sec-items { display: flex; flex-direction: column; padding: 2px 16px 0 34px; }
+/* No "View more" → the items list closes the section, so it owns the bottom gap. */
+.aii-sec-items:last-child { padding-bottom: 8px; }
 .aii-sec .aii-tcp { border: none; padding: 6px 0; gap: 0; transition: color .12s ease; }
 .aii-sec .aii-tcp::before { display: none; }
 .aii-sec .aii-tcp-go { display: none; }
@@ -14813,7 +14815,7 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-sec .aii-tcp:focus-visible { outline: none; }
 .aii-sec .aii-tcp:focus-visible .aii-tcp-name { text-decoration: underline; }
 .aii-sec .aii-tcp-name { font-size: 0.86rem; font-weight: 400; color: #5b6675; line-height: 1.35; }
-.aii-sec-more { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; margin: 1px 16px 14px 34px; padding: 0; border: none; background: none; color: var(--color-text-muted); font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+.aii-sec-more { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; margin: 6px 16px 13px 34px; padding: 0; border: none; background: none; color: var(--color-text-muted); font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; cursor: pointer; }
 .aii-sec-more svg { width: 14px; height: 14px; transition: transform .14s ease; }
 .aii-sec-more:hover { text-decoration: underline; }
 .aii-sec-more:hover svg { transform: translateX(2px); }
