@@ -14703,29 +14703,29 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 
 /* Subtle per-track color — ONLY the icon chip carries the hue (a quiet, editorial
    tint). No accent bars, no filled pills, no colored hovers. */
-/* Per-section accent ties the whole block together: a FILLED accent icon tile
-   (white glyph), accent bullet dots, and — on hovering the header — the title +
-   arrow take the section colour (plus the Explore link), so icon · title · link
-   read as ONE connected, color-coded unit. */
-.aii-trackcard[data-group="discover"] .aii-trackcard-ic { background: #2f6fe0; color: #fff; }
+/* Per-section accent ties the whole block together. Icons match the custom-search
+   lens style: a faint accent-tint chip with a subtle accent border and the glyph
+   in the accent colour (not a solid fill). Dots + Explore + hover title share the
+   hue too. */
+.aii-trackcard[data-group="discover"] .aii-trackcard-ic { background: color-mix(in srgb, #2f6fe0 9%, #fff); border: 1px solid color-mix(in srgb, #2f6fe0 22%, #e2e6ee); color: #2f6fe0; }
 .aii-trackcard[data-group="discover"] .aii-tcp::before { background: #2f6fe0; }
 .aii-trackcard[data-group="discover"] .aii-trackcard-more,
 .aii-trackcard[data-group="discover"] .aii-tcp:hover .aii-tcp-name,
 .aii-trackcard[data-group="discover"] .aii-trackcard-head:hover .aii-trackcard-name,
 .aii-trackcard[data-group="discover"] .aii-trackcard-head:hover .aii-trackcard-go { color: #2f6fe0; }
-.aii-trackcard[data-group="topic-specific"] .aii-trackcard-ic { background: #c2455c; color: #fff; }
+.aii-trackcard[data-group="topic-specific"] .aii-trackcard-ic { background: color-mix(in srgb, #c2455c 9%, #fff); border: 1px solid color-mix(in srgb, #c2455c 22%, #e2e6ee); color: #c2455c; }
 .aii-trackcard[data-group="topic-specific"] .aii-tcp::before { background: #c2455c; }
 .aii-trackcard[data-group="topic-specific"] .aii-trackcard-more,
 .aii-trackcard[data-group="topic-specific"] .aii-tcp:hover .aii-tcp-name,
 .aii-trackcard[data-group="topic-specific"] .aii-trackcard-head:hover .aii-trackcard-name,
 .aii-trackcard[data-group="topic-specific"] .aii-trackcard-head:hover .aii-trackcard-go { color: #c2455c; }
-.aii-trackcard[data-group="analyze"] .aii-trackcard-ic { background: #b9791d; color: #fff; }
+.aii-trackcard[data-group="analyze"] .aii-trackcard-ic { background: color-mix(in srgb, #b9791d 9%, #fff); border: 1px solid color-mix(in srgb, #b9791d 22%, #e2e6ee); color: #b9791d; }
 .aii-trackcard[data-group="analyze"] .aii-tcp::before { background: #b9791d; }
 .aii-trackcard[data-group="analyze"] .aii-trackcard-more,
 .aii-trackcard[data-group="analyze"] .aii-tcp:hover .aii-tcp-name,
 .aii-trackcard[data-group="analyze"] .aii-trackcard-head:hover .aii-trackcard-name,
 .aii-trackcard[data-group="analyze"] .aii-trackcard-head:hover .aii-trackcard-go { color: #b9791d; }
-.aii-trackcard[data-group="learn"] .aii-trackcard-ic { background: #1f8f6b; color: #fff; }
+.aii-trackcard[data-group="learn"] .aii-trackcard-ic { background: color-mix(in srgb, #1f8f6b 9%, #fff); border: 1px solid color-mix(in srgb, #1f8f6b 22%, #e2e6ee); color: #1f8f6b; }
 .aii-trackcard[data-group="learn"] .aii-tcp::before { background: #1f8f6b; }
 .aii-trackcard[data-group="learn"] .aii-trackcard-more,
 .aii-trackcard[data-group="learn"] .aii-tcp:hover .aii-tcp-name,
@@ -14751,7 +14751,9 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
   .topic-side .aii-trackcard-ic { width: 26px; height: 26px; border-radius: 7px; }
   .topic-side .aii-trackcard-ic svg { width: 15px; height: 15px; }
   .topic-side .aii-trackcard-name { font-size: 0.95rem; }
-  .topic-side .aii-trackcard-sub { font-size: 0.76rem; }
+  /* Drop the summary line under each section title in the desktop sidebar —
+     the title + preview list carry it. */
+  .topic-side .aii-trackcard-sub { display: none; }
   /* Previews share the icon's left edge — everything stacks on one clean left
      margin (icon+title row → summary → insights). */
   .topic-side .aii-trackcard-previews { border-top: none; padding-left: 2px; }

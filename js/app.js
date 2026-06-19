@@ -25,7 +25,6 @@ import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260616-revamp245';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
 import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260616-revamp245';
-import { initSettingsModal } from './components/settings-modal.js?v=20260616-revamp245';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -44,7 +43,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   initAllTopicsModal();
   initRelatedTopicsModal();
   initPromptPreviewModal();
-  initSettingsModal();
   initSearchOverlay();
   initSearchPageModal();
   initPromptBuilderModal();
@@ -1160,12 +1158,6 @@ function renderStickyHeroBar(container, route) {
           <span class="sticky-trending-full">Trending</span>
           <span class="sticky-trending-short">Trends</span>
         </button>
-        <button type="button" class="sticky-settings" id="nav-settings" aria-label="Settings">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-          </svg>
-        </button>
         <button type="button" class="sticky-topics" id="nav-topics" aria-label="All topics" aria-haspopup="dialog">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/>
@@ -1176,11 +1168,6 @@ function renderStickyHeroBar(container, route) {
     </div>
 
   `;
-
-  // Settings gear in the main nav — opens the Settings modal.
-  document.getElementById('nav-settings')?.addEventListener('click', () => {
-    window.dispatchEvent(new CustomEvent('open-settings-modal'));
-  });
 
   // "More" in the desktop topic nav + the "Topics" action pill both open
   // the full All Topics modal.
@@ -1250,12 +1237,6 @@ function renderStickyHeroBar(container, route) {
             <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
           </svg>
         </a>
-        <button type="button" class="navmenu-home navmenu-settings" id="navmenu-settings-head" aria-label="Settings">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-          </svg>
-        </button>
       </div>
     </div>
     <div class="navmenu-search" id="navmenu-search-container"></div>
@@ -1322,13 +1303,6 @@ function renderStickyHeroBar(container, route) {
     </div>
   `;
   renderSearchBar(document.getElementById('navmenu-search-container'), route, { variant: 'search' });
-
-  // Settings gear in the navmenu head — closes the menu, opens
-  // the Settings modal.
-  document.getElementById('navmenu-settings-head')?.addEventListener('click', () => {
-    document.body.classList.remove('navmenu-open');
-    window.dispatchEvent(new CustomEvent('open-settings-modal'));
-  });
 
   const scrollEl = navPanel.querySelector('.navmenu-scroll');
   const updateScrollOverflow = () => {
@@ -3321,8 +3295,8 @@ function renderPage(route) {
             <li><strong>Send an AI prompt</strong> — click any Topic Intelligence card and it opens in your preferred model (ChatGPT, Claude, Gemini, Perplexity, Copilot, or Google AI Mode) with the prompt already filled in.</li>
             <li><strong>Build your own prompt</strong> — open Prompt Builder to compose a custom prompt with topics, scope, output style, and citations, then send it where you want.</li>
           </ul>
-          <h4 class="about-sub-heading">Your settings, your defaults</h4>
-          <p>Open Settings (gear icon, top right) to pick your default AI model and how deep you want responses to go — Brief, Standard, Detailed, or Deep. Choices stay on your device for the session.</p>
+          <h4 class="about-sub-heading">Your model, your choice</h4>
+          <p>When you open Ask AI on any insight, pick the model you want — ChatGPT, Claude, Gemini, Perplexity, Copilot, or Google AI Mode. Your choice stays on your device for the session.</p>
           <h4 class="about-sub-heading">Open source</h4>
           <p>The whole site is open source. View the code, see what's planned, or fork it on GitHub.</p>
           <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer" class="about-cta-link">
