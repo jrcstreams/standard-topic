@@ -419,15 +419,17 @@ export function newsCardHTML(item) {
       <div class="news-card-foot">
         <div class="news-card-meta">
           ${metaParts.join('')}
-          <button type="button" class="news-action news-share-toggle" aria-expanded="false" aria-label="Share this story" title="Share">${SHARE_SVG}</button>
+          <span class="news-share-wrap">
+            <button type="button" class="news-action news-share-toggle" aria-expanded="false" aria-label="Share this story" title="Share">${SHARE_SVG}</button>
+            <div class="news-share-panel" aria-hidden="true">
+              <div class="news-share-panel-inner">
+                <button type="button" class="news-share-opt" data-act="copy">${LINK_SVG}<span>Copy Link</span></button>
+                <button type="button" class="news-share-opt" data-act="share">${SHARE_SVG}<span>Share via</span></button>
+              </div>
+            </div>
+          </span>
         </div>
         ${newsAIHTML()}
-      </div>
-      <div class="news-share-panel" aria-hidden="true">
-        <div class="news-share-panel-inner">
-          <button type="button" class="news-share-opt" data-act="copy">${LINK_SVG}<span>Copy Link</span></button>
-          <button type="button" class="news-share-opt" data-act="share">${SHARE_SVG}<span>Share via</span></button>
-        </div>
       </div>
     </article>
   `;

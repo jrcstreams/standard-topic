@@ -8894,7 +8894,7 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
   }
 }
 .wiz-action-bar-inner {
-  justify-content: flex-start;
+  justify-content: center;
 }
 
 .wiz-action-btn {
@@ -8913,8 +8913,9 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
   transition: background 0.12s, opacity 0.12s;
   white-space: nowrap;
   min-height: 46px;
-  /* Primary action fills the row; the quiet "Clear" sits beside it. */
-  flex: 1 1 auto;
+  /* Auto-width (content-sized), centered with Clear beside it — not a full-width
+     grey block. */
+  flex: 0 1 auto;
   min-width: 0;
   gap: 0.45rem;
 }
@@ -13966,7 +13967,9 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Share accordion under a news card (Copy Link / Share via). */
 /* Share popover — absolute (out of the card's flex flow) so it never steals
    row width; anchored top-right under the share icon. */
-.news-share-panel { position: absolute; bottom: 2.9rem; right: 0; z-index: 25; display: grid; grid-template-rows: 0fr; transition: grid-template-rows .2s ease; }
+/* Anchored to the share button (in .news-share-wrap) — opens just above it. */
+.news-share-wrap { position: relative; display: inline-flex; }
+.news-share-panel { position: absolute; bottom: calc(100% + 8px); left: 0; z-index: 25; display: grid; grid-template-rows: 0fr; transition: grid-template-rows .2s ease; }
 .news-share-panel.is-open { grid-template-rows: 1fr; }
 .news-share-panel-inner { overflow: hidden; display: flex; gap: 6px; }
 .news-share-panel.is-open .news-share-panel-inner { padding: 7px; background: #fff; border: 1px solid #e7ecf3; border-radius: 10px; box-shadow: 0 12px 30px -12px rgba(15, 26, 46, 0.28); }
@@ -15866,13 +15869,13 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
   /* Web Sources sidebar: a single vertical list, not a cramped 2-up grid. */
   body.home-search #section-websources .ws-pathlist { grid-template-columns: 1fr; }
 
-  /* Section header lockup: subtext ALWAYS stacks on its own line under the
-     icon+title (#75). The old inline-to-the-right layout made "AI Intelligence" /
-     "Web Sources" wrap awkwardly in the narrow topic-page sidebar. */
-  .aii-head, .ws-head { flex-direction: column; align-items: flex-start; gap: 5px; }
-  .aii-headsub, .ws-headsub { margin: 0; }
-  body.home-search .aii-head, body.home-search .ws-head { gap: 8px; }
-  body.home-search .aii-headsub, body.home-search .ws-headsub { margin: 0; }
+  /* Section header lockup: subtext stacks under the icon+title (#75). NB: .ws-head
+     is now the accordion toggle (logo + brand + chevron on ONE row) — excluded so
+     the chevron stays inline, not on a second line. */
+  .aii-head { flex-direction: column; align-items: flex-start; gap: 5px; }
+  .aii-headsub { margin: 0; }
+  body.home-search .aii-head { gap: 8px; }
+  body.home-search .aii-headsub { margin: 0; }
   body.home-search #section-newsfeed .newsfeed-headtext { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
 
   /* Drill-in "Back to AI Intelligence" row: vertically center the link with the
