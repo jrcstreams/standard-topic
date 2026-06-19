@@ -330,6 +330,7 @@ export function renderAIIntelligence(container, scope) {
   // CTA button. The whole card is still the CTA (the button is the cue).
   function launcherStepsHTML() {
     return `<div class="aii-promo aii-promo--cta">
+      <span class="aii-promo-ic" aria-hidden="true">${LOGO}</span>
       <h3 class="aii-promo-headline">Understand any topic, fast.</h3>
       <p class="aii-promo-line">Pick a topic or search anything and get AI-generated insights.</p>
       <span class="aii-promo-btn">Explore AI Insights ${RIGHT_ARROW}</span>

@@ -13331,9 +13331,25 @@ body.home-search #home-trending {
   body.home-search .home-search-hero .search-panel-starters { display: none; }
   /* Balance the row: vertically center the dark cards' content so they don't
      leave empty space when shorter than the taller search card. */
+  /* Both cards share the same vertical structure so their elements line up: a
+     top icon, headline, sentence, then the button pinned to the bottom. */
   body.home-search .home-promo,
-  body.home-search #section-aii-home .aii-launcher-cta { display: flex; flex-direction: column; justify-content: center; }
+  body.home-search #section-aii-home .aii-launcher-cta { display: flex; flex-direction: column; }
+  body.home-search #section-aii-home .aii-launcher-cta .aii-stage,
+  body.home-search #section-aii-home .aii-launcher-cta .aii-promo,
+  body.home-search .home-promo .home-promo-inner { flex: 1; display: flex; flex-direction: column; }
+  body.home-search .aii-launcher-cta .aii-promo-btn,
+  body.home-search .home-promo .home-promo-btn { margin-top: auto; }
 }
+/* Matching header icon chip on both dark cards (AI sparkle / build glyph). */
+body.home-search .aii-promo-ic,
+body.home-search .home-promo-ic {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; flex: none; border-radius: 9px;
+  background: rgba(255, 255, 255, 0.12); color: #fff; margin: 0 0 0.7rem;
+}
+body.home-search .aii-promo-ic svg,
+body.home-search .home-promo-ic svg { width: 16px; height: 16px; }
 /* Cards size to content + the page scrolls. */
 body.home-search .layout-section,
 body.home-search .shortcuts-sidebar,
@@ -14383,7 +14399,7 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-top: 1
 body.home-search .aii-launcher-cta .aii-promo--cta { gap: 8px; }
 body.home-search .aii-launcher-cta .aii-promo-headline { font-size: 1.12rem; line-height: 1.15; }
 body.home-search .aii-launcher-cta .aii-promo-line { font-size: 0.84rem; line-height: 1.4; }
-body.home-search .aii-launcher-cta .aii-promo-btn { margin: 9px 0 0; padding: 8px 15px; font-size: 0.82rem; box-shadow: 0 8px 18px -12px rgba(0,0,0,.6); }
+body.home-search .aii-launcher-cta .aii-promo-btn { margin: auto 0 0; padding: 8px 15px; font-size: 0.82rem; box-shadow: 0 8px 18px -12px rgba(0,0,0,.6); }
 body.home-search .home-promo-inner { padding: 1.25rem 1.3rem 1.2rem; }
 body.home-search .home-promo-title { font-size: 1.12rem; line-height: 1.18; margin-bottom: 0.3rem; }
 body.home-search .home-promo-text { font-size: 0.84rem; line-height: 1.4; margin-bottom: 0.7rem; }
