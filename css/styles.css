@@ -14782,18 +14782,17 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
   .topic-side .aii-trackcard-more { margin: 8px 14px 13px; font-size: 0.8rem; }
 }
 
-/* ===== Desktop AI Insights sidebar — collapsible sections =================
-   The ≥900 topic sidebar is a stack of self-contained, collapsible sections —
-   one per track (Live / Research / Analysis / Learn), plus a folded-in Sources
-   section. Open by default; the header toggles each. Light contained-card look,
-   matching the old track cards. (Tab mode <900 keeps the bordered card grid.) */
-.aii-secs { display: flex; flex-direction: column; gap: 10px; }
-.aii-sec { border: 1px solid var(--color-surface-border); border-radius: 12px; background: #fff; overflow: hidden; transition: border-color .14s ease, box-shadow .14s ease; }
-.aii-sec:hover { border-color: color-mix(in srgb, var(--color-primary) 18%, var(--color-surface-border)); }
-.aii-sec-head { display: flex; align-items: center; gap: 10px; width: 100%; padding: 11px 13px; border: none; background: none; cursor: pointer; text-align: left; font-family: var(--font-family); }
-.aii-sec-ic { display: inline-flex; flex: none; width: 26px; height: 26px; align-items: center; justify-content: center; border-radius: 7px; }
-.aii-sec-ic svg { width: 15px; height: 15px; }
-.aii-sec-name { flex: 1 1 auto; min-width: 0; font-size: 0.95rem; font-weight: 600; color: var(--color-text); letter-spacing: -0.01em; }
+/* ===== Desktop AI Insights sidebar — ONE panel, flat sections =============
+   The ≥900 topic sidebar is a SINGLE panel (the .aii card): a stack of sections
+   (Live / Research / Analysis / Learn + Sources) divided by hairlines — each a
+   small COLOURED DOT + an UPPERCASE label + a chevron, over plain-text insight
+   links (no icons, no bullets, no per-section card). Open by default; the header
+   toggles each. (Tab mode <900 keeps the bordered track-card grid.) */
+.aii-secs { display: flex; flex-direction: column; margin: -14px -16px -16px; }
+.aii-sec + .aii-sec { border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 72%, transparent); }
+.aii-sec-head { display: flex; align-items: center; gap: 10px; width: 100%; padding: 14px 16px 9px; border: none; background: none; cursor: pointer; text-align: left; font-family: var(--font-family); }
+.aii-sec-dot { flex: none; width: 8px; height: 8px; border-radius: 999px; background: var(--color-text-light); }
+.aii-sec-name { flex: 1 1 auto; min-width: 0; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text); }
 .aii-sec-chev { flex: none; display: inline-flex; color: var(--color-text-light); transition: transform .2s ease, color .14s ease; }
 .aii-sec-chev svg { display: block; width: 15px; height: 15px; }
 .aii-sec[data-open="false"] .aii-sec-chev { transform: rotate(-90deg); }
@@ -14802,37 +14801,42 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-sec-body { display: grid; grid-template-rows: 1fr; transition: grid-template-rows .24s ease; }
 .aii-sec[data-open="false"] .aii-sec-body { grid-template-rows: 0fr; }
 .aii-sec-inner { overflow: hidden; min-height: 0; }
-.aii-sec-items { display: flex; flex-direction: column; padding: 0 13px; }
-.aii-sec-items:last-child { padding-bottom: 12px; }
-.aii-sec .aii-tcp { border-top: none; padding: 4px 0; gap: 8px; }
-.aii-sec .aii-tcp:first-child { border-top: none; }
-.aii-sec .aii-tcp-name { font-size: 0.82rem; }
-.aii-sec-more { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; margin: 6px 13px 12px; padding: 0; border: none; background: none; color: #2563eb; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; letter-spacing: -0.004em; cursor: pointer; }
+/* Insight links — plain text, no bullet, no arrow; indented under the label. */
+.aii-sec-items { display: flex; flex-direction: column; padding: 0 16px 13px 34px; }
+.aii-sec .aii-tcp { border: none; padding: 5px 0; gap: 0; }
+.aii-sec .aii-tcp::before { display: none; }
+.aii-sec .aii-tcp-go { display: none; }
+.aii-sec .aii-tcp-name { font-size: 0.86rem; font-weight: 400; color: #5b6675; line-height: 1.35; }
+.aii-sec-more { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; margin: 1px 16px 14px 34px; padding: 0; border: none; background: none; color: var(--color-text-muted); font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; cursor: pointer; }
 .aii-sec-more svg { width: 14px; height: 14px; transition: transform .14s ease; }
 .aii-sec-more:hover { text-decoration: underline; }
 .aii-sec-more:hover svg { transform: translateX(2px); }
-.aii-sec-empty { margin: 0; padding: 2px 13px 12px; font-size: 0.8rem; line-height: 1.4; color: var(--color-text-muted); }
-/* Per-section accent — bullet dots + links + hover names take the track colour. */
-.aii-sec-discover .aii-tcp::before { background: #2f6fe0; }
-.aii-sec-discover .aii-sec-more,
-.aii-sec-discover .aii-tcp:hover .aii-tcp-name,
-.aii-sec-discover .aii-tcp:hover .aii-tcp-go { color: #2f6fe0; }
-.aii-sec-topic-specific .aii-tcp::before { background: #c2455c; }
-.aii-sec-topic-specific .aii-sec-more,
-.aii-sec-topic-specific .aii-tcp:hover .aii-tcp-name,
-.aii-sec-topic-specific .aii-tcp:hover .aii-tcp-go { color: #c2455c; }
-.aii-sec-analyze .aii-tcp::before { background: #b9791d; }
-.aii-sec-analyze .aii-sec-more,
-.aii-sec-analyze .aii-tcp:hover .aii-tcp-name,
-.aii-sec-analyze .aii-tcp:hover .aii-tcp-go { color: #b9791d; }
-.aii-sec-learn .aii-tcp::before { background: #1f8f6b; }
-.aii-sec-learn .aii-sec-more,
-.aii-sec-learn .aii-tcp:hover .aii-tcp-name,
-.aii-sec-learn .aii-tcp:hover .aii-tcp-go { color: #1f8f6b; }
-.aii-icon-sources { background: #f3edff; color: #7c3aed; }
-/* Sources section body — the category dropdowns (webCatsHTML) inset lightly. */
-.aii-sec-inner--sources { padding: 4px 11px 11px; }
-.aii-sec-inner--sources .aii-web-acc { display: grid; gap: 7px; }
+.aii-sec-empty { margin: 0; padding: 0 16px 13px 34px; font-size: 0.82rem; line-height: 1.4; color: var(--color-text-muted); }
+/* Per-section accent — the dot, plus link/view-more hover, take the track colour. */
+.aii-dot-discover { background: #ef4444; }
+.aii-sec-discover .aii-tcp:hover .aii-tcp-name, .aii-sec-discover .aii-sec-more:hover { color: #ef4444; }
+.aii-dot-topic-specific { background: #3b82f6; }
+.aii-sec-topic-specific .aii-tcp:hover .aii-tcp-name, .aii-sec-topic-specific .aii-sec-more:hover { color: #3b82f6; }
+.aii-dot-analyze { background: #f59e0b; }
+.aii-sec-analyze .aii-tcp:hover .aii-tcp-name, .aii-sec-analyze .aii-sec-more:hover { color: #f59e0b; }
+.aii-dot-learn { background: #22c55e; }
+.aii-sec-learn .aii-tcp:hover .aii-tcp-name, .aii-sec-learn .aii-sec-more:hover { color: #22c55e; }
+.aii-dot-sources { background: #a855f7; }
+/* Sources — categories as plain-text rows (like the insight links) that expand
+   IN PLACE to their source links. No bordered boxes, matching the flat look. */
+.aii-sec-inner--sources { padding: 0 16px 11px 34px; }
+.aii-sec-inner--sources .aii-web-acc { display: block; }
+.aii-sec-sources .aii-web-cat { border: none; border-radius: 0; background: none; }
+.aii-sec-sources .aii-web-cat-sum { padding: 5px 0; font-size: 0.86rem; font-weight: 400; color: #5b6675; }
+.aii-sec-sources .aii-web-cat-sum:hover { color: #a855f7; background: none; }
+.aii-sec-sources .aii-web-cat-sum .aii-chev { width: 13px; height: 13px; }
+.aii-sec-sources .aii-web-cat[open] > .aii-web-cat-sum { border-bottom: none; color: #a855f7; }
+.aii-sec-sources .aii-web-rows { padding: 0 0 6px 12px; gap: 0; }
+.aii-sec-sources .aii-web-row { border: none; border-radius: 0; background: none; padding: 4px 0; }
+.aii-sec-sources .aii-web-row:hover { border: none; }
+.aii-sec-sources .aii-web-row-name { font-size: 0.8rem; font-weight: 400; color: #6b7688; }
+.aii-sec-sources .aii-web-row:hover .aii-web-row-name { color: #a855f7; }
+.aii-sec-sources .aii-web-row svg { color: var(--color-text-light); }
 @media (prefers-reduced-motion: reduce) { .aii-sec-body, .aii-sec-chev, .aii-sec-more svg { transition: none; } }
 
 /* Desktop folds Web Sources INTO the AI Insights sidebar (the Sources section),

@@ -436,7 +436,7 @@ export function renderAIIntelligence(container, scope) {
       : '<p class="aii-sec-empty">Insights are being generated — check back shortly.</p>';
     return `<div class="aii-sec aii-sec-${escAttr(p.group)}" data-group="${escAttr(p.group)}" data-open="true">
       <button type="button" class="aii-sec-head" aria-expanded="true">
-        <span class="aii-sec-ic aii-icon-${escAttr(p.group)}">${ICONS[p.group] || ICONS._}</span>
+        <span class="aii-sec-dot aii-dot-${escAttr(p.group)}" aria-hidden="true"></span>
         <span class="aii-sec-name">${esc(p.tab || p.label)}</span>
         <span class="aii-sec-chev" aria-hidden="true">${CHEV}</span>
       </button>
@@ -445,11 +445,10 @@ export function renderAIIntelligence(container, scope) {
   }
   // Sources section — the old Web Sources card, folded in. Body is the same
   // category accordion (webCatsHTML) so each category keeps its own dropdown.
-  const SOURCES_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg>';
   function sidebarSourcesHTML() {
     return `<div class="aii-sec aii-sec-sources" data-open="true">
       <button type="button" class="aii-sec-head" aria-expanded="true">
-        <span class="aii-sec-ic aii-icon-sources">${SOURCES_ICON}</span>
+        <span class="aii-sec-dot aii-dot-sources" aria-hidden="true"></span>
         <span class="aii-sec-name">Sources</span>
         <span class="aii-sec-chev" aria-hidden="true">${CHEV}</span>
       </button>
