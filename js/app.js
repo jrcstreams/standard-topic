@@ -17,8 +17,8 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp245';
 import { initInsightModal } from './components/insight-modal.js?v=20260617-revamp264';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260617-revamp269';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260617-revamp269';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260617-revamp270';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260617-revamp270';
 import { renderWebSources } from './components/websources.js?v=20260617-revamp255';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp245';
 import { initDiscoverModal } from './components/discover-modal.js';
@@ -1527,8 +1527,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           <section class="layout-section" id="section-aii-home"></section>
           <a href="#/prompt-generator" class="home-promo" aria-label="Open the Prompt Builder">
             <div class="home-promo-inner">
-              <span class="home-promo-ic" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2 2.6-2.6z"/></svg></span>
-              <h3 class="home-promo-title">Smarter prompts, better answers.</h3>
+              <div class="home-promo-head"><span class="home-promo-ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2 2.6-2.6z"/></svg></span><h3 class="home-promo-title">Smarter prompts, better answers.</h3></div>
               <p class="home-promo-text">Turn any topic into a well crafted ready-to-run prompt.</p>
               <span class="home-promo-btn">
                 Open Prompt Builder
