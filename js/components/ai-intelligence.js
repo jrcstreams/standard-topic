@@ -449,7 +449,7 @@ export function renderAIIntelligence(container, scope) {
     return `<div class="aii-sec aii-sec-sources" data-open="true">
       <button type="button" class="aii-sec-head" aria-expanded="true">
         <span class="aii-sec-dot aii-dot-sources" aria-hidden="true"></span>
-        <span class="aii-sec-name">Sources</span>
+        <span class="aii-sec-name">Web Sources</span>
         <span class="aii-sec-chev" aria-hidden="true">${CHEV}</span>
       </button>
       <div class="aii-sec-body"><div class="aii-sec-inner aii-sec-inner--sources">${webCatsHTML()}</div></div>
@@ -484,9 +484,9 @@ export function renderAIIntelligence(container, scope) {
         <div class="aii-promo-grid aii-trackgrid">${paths.map(trackCardHTML).join('')}</div>
       </div>`;
     }
-    // Desktop sidebar: collapsible sections (open by default) + a folded-in
-    // Sources section at the bottom.
-    return `<div class="aii-secs">${paths.map(sidebarSecHTML).join('')}${sidebarSourcesHTML()}</div>`;
+    // Desktop sidebar: Web Sources first, then the collapsible insight sections
+    // (all open by default).
+    return `<div class="aii-secs">${sidebarSourcesHTML()}${paths.map(sidebarSecHTML).join('')}</div>`;
   }
   function pathsHTML() {
     const intro = flowMode ? `<div class="aii-paths-introwrap">

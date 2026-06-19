@@ -14797,15 +14797,21 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-sec-chev svg { display: block; width: 15px; height: 15px; }
 .aii-sec[data-open="false"] .aii-sec-chev { transform: rotate(-90deg); }
 .aii-sec-head:hover .aii-sec-chev { color: var(--color-text-muted); }
+.aii-sec-head:focus-visible { outline: none; }
+.aii-sec-head:focus-visible .aii-sec-name { text-decoration: underline; text-underline-offset: 3px; }
 /* CSS-grid accordion: 1fr open → 0fr closed (smooth height collapse). */
 .aii-sec-body { display: grid; grid-template-rows: 1fr; transition: grid-template-rows .24s ease; }
 .aii-sec[data-open="false"] .aii-sec-body { grid-template-rows: 0fr; }
 .aii-sec-inner { overflow: hidden; min-height: 0; }
-/* Insight links — plain text, no bullet, no arrow; indented under the label. */
-.aii-sec-items { display: flex; flex-direction: column; padding: 0 16px 13px 34px; }
-.aii-sec .aii-tcp { border: none; padding: 5px 0; gap: 0; }
+/* Insight links — plain text, no bullet, no arrow; indented under the label.
+   NO hover fill / focus box — just a colour shift (the box looked terrible). */
+.aii-sec-items { display: flex; flex-direction: column; padding: 2px 16px 14px 34px; }
+.aii-sec .aii-tcp { border: none; padding: 6px 0; gap: 0; transition: color .12s ease; }
 .aii-sec .aii-tcp::before { display: none; }
 .aii-sec .aii-tcp-go { display: none; }
+.aii-sec .aii-tcp:hover, .aii-sec .aii-tcp:active { background: none; }
+.aii-sec .aii-tcp:focus-visible { outline: none; }
+.aii-sec .aii-tcp:focus-visible .aii-tcp-name { text-decoration: underline; }
 .aii-sec .aii-tcp-name { font-size: 0.86rem; font-weight: 400; color: #5b6675; line-height: 1.35; }
 .aii-sec-more { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; margin: 1px 16px 14px 34px; padding: 0; border: none; background: none; color: var(--color-text-muted); font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; cursor: pointer; }
 .aii-sec-more svg { width: 14px; height: 14px; transition: transform .14s ease; }
@@ -14824,17 +14830,20 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-dot-sources { background: #a855f7; }
 /* Sources — categories as plain-text rows (like the insight links) that expand
    IN PLACE to their source links. No bordered boxes, matching the flat look. */
-.aii-sec-inner--sources { padding: 0 16px 11px 34px; }
+.aii-sec-inner--sources { padding: 2px 16px 12px 34px; }
 .aii-sec-inner--sources .aii-web-acc { display: block; }
 .aii-sec-sources .aii-web-cat { border: none; border-radius: 0; background: none; }
-.aii-sec-sources .aii-web-cat-sum { padding: 5px 0; font-size: 0.86rem; font-weight: 400; color: #5b6675; }
+.aii-sec-sources .aii-web-cat-sum { padding: 6px 0; font-size: 0.86rem; font-weight: 400; color: #5b6675; }
 .aii-sec-sources .aii-web-cat-sum:hover { color: #a855f7; background: none; }
+.aii-sec-sources .aii-web-cat-sum:focus, .aii-sec-sources .aii-web-cat-sum:focus-visible { outline: none; box-shadow: none; }
 .aii-sec-sources .aii-web-cat-sum .aii-chev { width: 13px; height: 13px; }
 .aii-sec-sources .aii-web-cat[open] > .aii-web-cat-sum { border-bottom: none; color: #a855f7; }
-.aii-sec-sources .aii-web-rows { padding: 0 0 6px 12px; gap: 0; }
-.aii-sec-sources .aii-web-row { border: none; border-radius: 0; background: none; padding: 4px 0; }
-.aii-sec-sources .aii-web-row:hover { border: none; }
-.aii-sec-sources .aii-web-row-name { font-size: 0.8rem; font-weight: 400; color: #6b7688; }
+/* Source rows: name only — no description summary, no boxes (#63). */
+.aii-sec-sources .aii-web-rows { padding: 1px 0 6px 12px; gap: 0; }
+.aii-sec-sources .aii-web-row { border: none; border-radius: 0; background: none; padding: 5px 0; }
+.aii-sec-sources .aii-web-row:hover, .aii-sec-sources .aii-web-row:focus-visible { border: none; outline: none; background: none; }
+.aii-sec-sources .aii-web-row-desc { display: none; }
+.aii-sec-sources .aii-web-row-name { font-size: 0.82rem; font-weight: 400; color: #6b7688; }
 .aii-sec-sources .aii-web-row:hover .aii-web-row-name { color: #a855f7; }
 .aii-sec-sources .aii-web-row svg { color: var(--color-text-light); }
 @media (prefers-reduced-motion: reduce) { .aii-sec-body, .aii-sec-chev, .aii-sec-more svg { transition: none; } }
