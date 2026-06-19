@@ -1550,19 +1550,17 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         ${bodyTabsRow({ showSearchTrends: true, showShortcuts: false })}
         <div class="home-cards">
           <div class="home-search-hero" id="home-search-hero"></div>
-          <div class="home-cards-stack">
-            <section class="layout-section" id="section-aii-home"></section>
-            <a href="#/prompt-generator" class="home-promo" aria-label="Open the Prompt Builder">
-              <div class="home-promo-inner">
-                <h3 class="home-promo-title">Smarter prompts, better answers.</h3>
-                <p class="home-promo-text">Turn any topic into a well crafted ready-to-run prompt.</p>
-                <span class="home-promo-btn">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>
-                  Open Prompt Builder
-                </span>
-              </div>
-            </a>
-          </div>
+          <section class="layout-section" id="section-aii-home"></section>
+          <a href="#/prompt-generator" class="home-promo" aria-label="Open the Prompt Builder">
+            <div class="home-promo-inner">
+              <h3 class="home-promo-title">Smarter prompts, better answers.</h3>
+              <p class="home-promo-text">Turn any topic into a well crafted ready-to-run prompt.</p>
+              <span class="home-promo-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>
+                Open Prompt Builder
+              </span>
+            </div>
+          </a>
         </div>
         <div class="home-main">
           <section class="layout-section" id="section-newsfeed"></section>

@@ -13202,7 +13202,7 @@ body.home-search.app-mode .topic-layout {
    between Search and AI (matching the mobile concept). */
 body.home-search .body-tabs { display: none !important; }
 body.home-search.app-mode .topic-layout.home-grid { display: flex; flex-direction: column; gap: 1.25rem; align-items: stretch; }
-body.home-search .home-cards, body.home-search .home-cards-stack, body.home-search .home-main, body.home-search .home-side { display: contents; }
+body.home-search .home-cards, body.home-search .home-main, body.home-search .home-side { display: contents; }
 body.home-search #home-search-hero { order: 1; }
 body.home-search #home-trending    { order: 2; }
 body.home-search #section-aii-home { order: 3; }
@@ -13294,19 +13294,20 @@ body.home-search #home-trending {
     column-gap: 1.5rem;
     row-gap: 1.5rem;
   }
-  /* Top row: Search + AI Insights equal width, Prompt Builder narrower. */
+  /* Search spans the full width on top; AI Insights + Prompt Builder sit in a
+     50/50 row beneath it (AI Insights first/left). */
   body.home-search .home-cards {
     grid-area: cards;
     display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "search search" "aii prompt";
     gap: 1.5rem;
     align-items: stretch;
     min-width: 0;
   }
-  /* The 40% column stacks AI Insights over Prompt Builder; each fills half so the
-     stack's height matches the 60% search card for an even row. */
-  body.home-search .home-cards-stack { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
-  body.home-search .home-cards-stack > * { flex: 1; }
+  body.home-search #home-search-hero { grid-area: search; }
+  body.home-search #section-aii-home { grid-area: aii; }
+  body.home-search .home-promo { grid-area: prompt; }
   body.home-search .home-main { grid-area: main; display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
   body.home-search .home-side { grid-area: side; display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
   /* Reset the mobile-stacking `order` so the cards lay out in source order on
@@ -13316,23 +13317,18 @@ body.home-search #home-trending {
   body.home-search #section-aii-home,
   body.home-search #section-newsfeed,
   body.home-search #home-trending { order: 0; }
-  /* Search becomes a compact top-row card: trim the padding, let the title wrap
-     (instead of clipping at this narrow width), and center the title + bar
-     vertically so the card fills the shared row height cleanly. */
-  body.home-search .home-search-hero {
-    display: flex; flex-direction: column; justify-content: flex-start;
-    padding: 1.5rem 1.6rem; border-radius: 16px;
-  }
-  /* Left-aligned launchpad: title, bar and the chip groups all share one left
-     edge (cleaner than a centered title over left chips). */
-  body.home-search .home-search-hero .search-panel-hero-inner { text-align: left; }
+  /* Full-width centered search hero (no chips). Content capped + centered so the
+     bar isn't edge-to-edge across the whole row. */
+  body.home-search .home-search-hero { display: block; padding: 2rem 1.6rem; border-radius: 16px; text-align: center; }
+  body.home-search .home-search-hero .search-panel { max-width: 720px; margin: 0 auto; }
+  body.home-search .home-search-hero .search-panel-hero-inner { text-align: center; }
   body.home-search .home-search-hero .search-panel-title {
-    white-space: normal; text-align: left; font-size: 1.3rem; line-height: 1.2; margin: 0 0 0.3rem;
+    white-space: normal; text-align: center; font-size: 1.5rem; line-height: 1.18; margin: 0 auto 0.4rem;
   }
-  body.home-search .home-search-hero .search-panel-tagline {
-    text-align: left; margin: 0 0 1.05rem; font-size: 0.92rem;
-  }
-  body.home-search .home-search-hero .search-panel-input { height: 50px; font-size: 0.96rem; }
+  body.home-search .home-search-hero .search-panel-tagline { text-align: center; margin: 0 auto 1.2rem; font-size: 0.95rem; }
+  body.home-search .home-search-hero .search-panel-input { height: 52px; font-size: 1rem; }
+  /* Topic/trend chips dropped from the desktop search card. */
+  body.home-search .home-search-hero .search-panel-starters { display: none; }
   /* Balance the row: vertically center the dark cards' content so they don't
      leave empty space when shorter than the taller search card. */
   body.home-search .home-promo,
