@@ -16,10 +16,10 @@ import { topicIconSVG } from '../utils/topic-icons.js';
 // holds the refresh class). Kept inline so the component never depends on a
 // freshly-changed data.js (the no-version singleton).
 const PATHS = [
-  { group: 'discover',       label: "What's Happening Now",   tab: "What's Happening", subtitle: 'The latest news, moves, and developments.' },
-  { group: 'topic-specific', label: 'Topic-Specific Insights', tab: 'Topic Insights',   subtitle: 'Go deeper on what makes this topic tick.' },
-  { group: 'analyze',        label: 'Analysis',                tab: 'Analysis',         subtitle: 'Deeper lenses, tradeoffs, and what it all means.' },
-  { group: 'learn',          label: 'Learn',                   tab: 'Learn',            subtitle: 'Background, fundamentals, and key context.' },
+  { group: 'discover',       label: "What's Happening Now",   tab: 'Live',     subtitle: 'The latest news, moves, and developments.' },
+  { group: 'topic-specific', label: 'Topic-Specific Insights', tab: 'Research', subtitle: 'Go deeper on what makes this topic tick.' },
+  { group: 'analyze',        label: 'Analysis',                tab: 'Analysis', subtitle: 'Deeper lenses, tradeoffs, and what it all means.' },
+  { group: 'learn',          label: 'Learn',                   tab: 'Learn',    subtitle: 'Background, fundamentals, and key context.' },
 ];
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
@@ -396,18 +396,98 @@ export function renderAIIntelligence(container, scope) {
     root.querySelectorAll('.aii-trackcard-head, .aii-trackcard-more').forEach((b) => b.addEventListener('click', () => open(b.dataset.group, null)));
     root.querySelectorAll('.aii-tcp').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); open(b.dataset.group, b.dataset.insight || null); }));
   }
+
+  // ===== Desktop sidebar (≥900): collapsible sections =======================
+  // The desktop topic sidebar is a stack of collapsible sections — one per track
+  // (Live / Research / Analysis / Learn), plus a "Sources" section that folds the
+  // old Web Sources card in. All open by default; the header toggles each open/shut.
+  // The FULL set of a track's insight shortcuts (no slice) so we can show the
+  // first few and offer "View more" when there are extras.
+  function trackItemsFor(group) {
+    const key = topicKeyForPreviews();
+    let dir = [];
+    try { dir = getShortcutsDirectory() || []; } catch (_) {}
+    const dirMap = {};
+    dir.forEach((s) => { if (s && s.id) dirMap[s.id] = s; });
+    const featured = (typeof window !== 'undefined' && window.__assignmentsData && window.__assignmentsData.featuredShortcuts) || {};
+    const ids = featured[`${key}_${group}`] || featured[group] || [];
+    const list = ids.map((id) => dirMap[id]).filter(Boolean);
+    const have = new Set(list.map((s) => s.id));
+    let topical = [];
+    try { topical = getShortcutsForTopic(key) || []; } catch (_) {}
+    for (const s of topical) { if (s.group === group && !have.has(s.id)) { list.push(s); have.add(s.id); } }
+    return list;
+  }
+  const SIDEBAR_PREVIEW = 4;   // items shown before "View more"
+  function sidebarSecHTML(p) {
+    let items = [];
+    try { items = trackItemsFor(p.group) || []; } catch (_) {}
+    const shown = items.slice(0, SIDEBAR_PREVIEW);
+    const itemsHTML = shown.map((s) => `
+      <button type="button" class="aii-tcp" data-group="${escAttr(p.group)}" data-shortcut="${escAttr(s.id)}" data-insight="${escAttr(s.name)}">
+        <span class="aii-tcp-name">${esc(s.name)}</span>
+        <span class="aii-tcp-go" aria-hidden="true">${OPEN_DIAG}</span>
+      </button>`).join('');
+    const more = items.length > shown.length
+      ? `<button type="button" class="aii-sec-more" data-group="${escAttr(p.group)}">View more ${RIGHT_ARROW}</button>`
+      : '';
+    const body = itemsHTML
+      ? `<div class="aii-sec-items">${itemsHTML}</div>${more}`
+      : '<p class="aii-sec-empty">Insights are being generated — check back shortly.</p>';
+    return `<div class="aii-sec aii-sec-${escAttr(p.group)}" data-group="${escAttr(p.group)}" data-open="true">
+      <button type="button" class="aii-sec-head" aria-expanded="true">
+        <span class="aii-sec-ic aii-icon-${escAttr(p.group)}">${ICONS[p.group] || ICONS._}</span>
+        <span class="aii-sec-name">${esc(p.tab || p.label)}</span>
+        <span class="aii-sec-chev" aria-hidden="true">${CHEV}</span>
+      </button>
+      <div class="aii-sec-body"><div class="aii-sec-inner">${body}</div></div>
+    </div>`;
+  }
+  // Sources section — the old Web Sources card, folded in. Body is the same
+  // category accordion (webCatsHTML) so each category keeps its own dropdown.
+  const SOURCES_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg>';
+  function sidebarSourcesHTML() {
+    return `<div class="aii-sec aii-sec-sources" data-open="true">
+      <button type="button" class="aii-sec-head" aria-expanded="true">
+        <span class="aii-sec-ic aii-icon-sources">${SOURCES_ICON}</span>
+        <span class="aii-sec-name">Sources</span>
+        <span class="aii-sec-chev" aria-hidden="true">${CHEV}</span>
+      </button>
+      <div class="aii-sec-body"><div class="aii-sec-inner aii-sec-inner--sources">${webCatsHTML()}</div></div>
+    </div>`;
+  }
+  function wireSidebarSecs(root, open) {
+    // Header → toggle the section open/shut.
+    root.querySelectorAll('.aii-sec > .aii-sec-head').forEach((b) => b.addEventListener('click', () => {
+      const sec = b.closest('.aii-sec');
+      const isOpen = sec.getAttribute('data-open') === 'true';
+      sec.setAttribute('data-open', String(!isOpen));
+      b.setAttribute('aria-expanded', String(!isOpen));
+    }));
+    // Preview item → open the modal at that specific insight.
+    root.querySelectorAll('.aii-tcp').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); open(b.dataset.group, b.dataset.insight || null); }));
+    // "View more" → open the modal at that track's full insight list.
+    root.querySelectorAll('.aii-sec-more').forEach((b) => b.addEventListener('click', () => open(b.dataset.group, null)));
+    // The Sources category dropdowns are native <details> — no JS needed.
+  }
   // Topic-page launcher (desktop + mobile tab): a prominent "Choose an intelligence
   // track" heading + the rich track cards. Each card opens the MODAL deep-linked to
   // that topic+track.
   function launcherPromoHTML() {
     if (scope.topic === 'home') return launcherStepsHTML();
-    return `<div class="aii-promo aii-promo--tracks">
-      <div class="aii-tracks-head-wrap">
-        <h3 class="aii-tracks-head">Choose an intelligence track</h3>
-        <p class="aii-tracks-sub">Grounded, cited analysis on this topic, refreshed live.</p>
-      </div>
-      <div class="aii-promo-grid aii-trackgrid">${paths.map(trackCardHTML).join('')}</div>
-    </div>`;
+    // Tabular (mobile, <900) keeps the track-picker card grid unchanged.
+    if (tabMode) {
+      return `<div class="aii-promo aii-promo--tracks">
+        <div class="aii-tracks-head-wrap">
+          <h3 class="aii-tracks-head">Choose an intelligence track</h3>
+          <p class="aii-tracks-sub">Grounded, cited analysis on this topic, refreshed live.</p>
+        </div>
+        <div class="aii-promo-grid aii-trackgrid">${paths.map(trackCardHTML).join('')}</div>
+      </div>`;
+    }
+    // Desktop sidebar: collapsible sections (open by default) + a folded-in
+    // Sources section at the bottom.
+    return `<div class="aii-secs">${paths.map(sidebarSecHTML).join('')}${sidebarSourcesHTML()}</div>`;
   }
   function pathsHTML() {
     const intro = flowMode ? `<div class="aii-paths-introwrap">
@@ -1020,12 +1100,15 @@ export function renderAIIntelligence(container, scope) {
         card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openStep1(); } });
       }
     } else {
-      // Track cards open the MODAL — a preview deep-links straight to that insight,
-      // the header/Explore lands on the track's insight list.
-      wireTrackCards(stage, (group, insight) => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: {
+      // Track surfaces open the MODAL — a preview deep-links straight to that
+      // insight, the header/Explore/View-more lands on the track's insight list.
+      const openTrack = (group, insight) => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: {
         topic: scope.topic, label: scope.label, group, insight,
         hideGroups: scope.hideGroups || [], descriptions: scope.descriptions || {},
-      } })));
+      } }));
+      // Desktop sidebar = collapsible sections; tab mode = the track-card grid.
+      if (tabMode) wireTrackCards(stage, openTrack);
+      else wireSidebarSecs(stage, openTrack);
       // "Or search any topic or term" → opens the modal at Step 1 (the picker + search).
       stage.querySelector('[data-aii-search]')?.addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: { pickTopic: true } })));
     }
