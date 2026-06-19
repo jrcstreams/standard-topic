@@ -381,6 +381,20 @@ function coverageListHTML(headlines, sources, origUrl) {
     let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
     rows.push(coverageRow(uri, title, [(h.source || '').trim() || host, relTime(h.date)]));
   }
+  // Fallback: no rich related coverage (common on single news stories) — list the
+  // AI's cited grounding sources so the brief always shows where it came from.
+  if (!rows.length) {
+    for (const s of (Array.isArray(sources) ? sources : [])) {
+      if (rows.length >= 10) break;
+      const uri = (s && (s.url || s.uri)) || (typeof s === 'string' ? s : ''); if (!uri) continue;
+      const k = uri.toLowerCase(); if (seen.has(k)) continue; seen.add(k);
+      let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
+      const title = String((s && s.title) || '').trim();
+      const label = (title && !/^https?:/i.test(title)) ? title : host;
+      if (!label) continue;
+      rows.push(coverageRow(uri, label, (title && host && title !== host) ? [host] : []));
+    }
+  }
   return rows.join('');
 }
 function close() {
