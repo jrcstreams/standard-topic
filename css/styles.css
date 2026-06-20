@@ -2325,9 +2325,9 @@ body.hide-cta .sticky-cta { display: none !important; }
   }
   #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
   #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
-    font-size: 1.05rem;
+    font-size: 1.22rem;
     line-height: 1.15;
-    font-weight: 600;
+    font-weight: 700;
   }
   #sub-header.is-subnav .topic-banner-icon,
   #sub-header.is-home-subnav .topic-banner-icon {
@@ -2363,7 +2363,7 @@ body.hide-cta .sticky-cta { display: none !important; }
 @media (max-width: 400px) {
   #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
   #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
   #sub-header.is-subnav .topic-banner-icon,
   #sub-header.is-home-subnav .topic-banner-icon {
@@ -5528,47 +5528,54 @@ body.app-mode .topic-layout {
   body.app-mode .topic-layout:not(.is-custom) > .body-tabs:has(.tab-pill-related) {
     grid-template-columns: 1fr 1fr 1fr;
   }
-  /* Underline tabs: plain text, no box/border/fill. The active tab is marked
-     by a thick accent underline sitting on the band's bottom rail + bolder,
-     darker text — concise and far less heavy than the old pill buttons (#66). */
+  /* Underline tabs: plain text, no box/border/fill. The active tab is marked by
+     a crisp rounded accent underline (a pseudo-element, so it can be rounded and
+     inset cleanly) sitting flush on the band's bottom rail + bolder, darker text.
+     Far less heavy than the old pill buttons, and not choppy (#66/#67). */
   .body-tabs .tab-pill {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     background: none;
     border: none;
-    border-bottom: 2px solid transparent;
     border-radius: 0;
-    padding: 0.5rem 0.4rem 0.55rem;
-    margin: 0 0 -1px;
+    padding: 0.62rem 0.15rem 0.66rem;
+    margin: 0;
     font-family: var(--font-display);
-    font-size: 0.86rem;
+    font-size: 0.9rem;
     font-weight: 600;
-    letter-spacing: -0.008em;
+    letter-spacing: -0.01em;
     line-height: 1.2;
     color: #66718a;
     cursor: pointer;
     white-space: nowrap;
-    transition: color 0.14s, border-color 0.14s;
+    transition: color 0.15s ease;
   }
-  .body-tabs .tab-pill:hover {
-    color: #1e2d44;
-    border-bottom-color: #c4ccda;
+  /* The underline — spans the label, rounded top, sits ON the 1px rail. */
+  .body-tabs .tab-pill::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2.5px;
+    border-radius: 3px 3px 0 0;
+    background: transparent;
+    transition: background 0.15s ease;
   }
-  .body-tabs .tab-pill.active {
-    background: none;
-    color: #14305c;
-    border-bottom-color: #1c3a6b;
-  }
-  .body-tabs .tab-pill.active:hover {
-    color: #14305c;
-    border-bottom-color: #1c3a6b;
-  }
+  .body-tabs .tab-pill:hover { color: #1e2d44; }
+  .body-tabs .tab-pill:hover::after { background: #ccd3df; }
+  /* Override the legacy filled-pill active style (colored bg + white text +
+     shadow) — underline tabs are flat: just navy text + the underline pseudo. */
+  .body-tabs .tab-pill.active { color: #14305c; background: none; box-shadow: none; }
+  .body-tabs .tab-pill.active::after,
+  .body-tabs .tab-pill.active:hover::after { background: #1c3a6b; }
   @media (max-width: 500px) {
-    .body-tabs .tab-pill { font-size: 0.84rem; padding: 0.5rem 0.3rem 0.55rem; }
+    .body-tabs .tab-pill { font-size: 0.88rem; }
   }
   @media (max-width: 380px) {
-    .body-tabs .tab-pill { font-size: 0.8rem; padding: 0.5rem 0.2rem 0.55rem; }
+    .body-tabs .tab-pill { font-size: 0.84rem; }
   }
   /* Drop the topic-layout's top padding on mobile — the body-tabs
      hugs the very top of the panel area, immediately below the
@@ -13154,12 +13161,15 @@ body.home-search.app-mode .topic-layout {
   background: radial-gradient(72% 92% at 100% 0%, rgba(47, 78, 140, 0.11), transparent 58%);
 }
 .home-search-hero .search-panel { position: relative; z-index: 1; }
-.home-search-hero .search-panel-hero-inner { padding: 0; text-align: center; }
+/* Balanced hero spacing (#75): a tight title→tagline gap and a deliberate,
+   equal-ish tagline→search-bar gap (was unbalanced — 16px above, 0 below). */
+.home-search-hero .search-panel-hero-inner { padding: 0 0 0.7rem; text-align: center; }
 .home-search-hero .search-panel-title {
   text-align: center; max-width: none; white-space: nowrap;
   font-size: clamp(1.15rem, 0.8rem + 1.15vw, 1.5rem); line-height: 1.15; letter-spacing: -0.022em;
-  margin: 0 auto clamp(0.85rem, 0.6rem + 0.8vw, 1.2rem);
+  margin: 0 auto 0.4rem;
 }
+.home-search-hero .search-panel-tagline { margin-top: 0; }
 .home-search-hero .search-panel-barrow { padding: 0; }
 /* Warm, elevated bar — rounded rect (not a pill), soft shadow, larger tap area. */
 .home-search-hero .search-panel-input {
@@ -13577,9 +13587,10 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   /* Reset the legacy full-bleed title chrome (white bg + min-height + bottom
      rule) that caused the centered white box; clean inline lockup instead. */
   #section-newsfeed .newsfeed-card .newsfeed-title {
-    display: inline-flex; flex-direction: row; align-items: center; justify-content: flex-start; align-self: flex-start; gap: 0.6rem;
+    display: inline-flex; flex-direction: row; align-items: center; justify-content: flex-start; align-self: flex-start; gap: 0.7rem;
     background: transparent; min-height: 0; border-bottom: none; padding: 0; margin: 0;
-    font-size: 1.16rem; font-weight: 700; letter-spacing: -0.015em; color: var(--color-text);
+    /* Exactly match the AI Insights header (.aii-brand): 1.16rem / 600. */
+    font-size: 1.16rem; font-weight: 600; letter-spacing: -0.015em; color: var(--color-text);
   }
   /* Filters sit naked in the header band (just the search field + sort) — no
      wrapping box (the box-in-box looked heavy). To the right of the title. */

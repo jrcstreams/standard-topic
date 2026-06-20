@@ -6,13 +6,13 @@ import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './ut
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260617-revamp271';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260620-revamp279';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js?v=20260616-revamp245';
 import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260616-revamp245';
 import { initPromptModal } from './components/prompt-modal.js?v=20260616-revamp245';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260616-revamp245';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260620-revamp279';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp245';
@@ -920,6 +920,16 @@ function trimOverflowLinks() {
     const rect = container.getBoundingClientRect();
     if (rect.width < 1) return;
 
+    // TOPIC subnav (related-topic chips): no "All Topics +" action link and no
+    // "More +" link — so trimming would just hide the overflow chips with NO
+    // affordance to reach them. Instead, leave EVERY chip in place and let the
+    // strip scroll horizontally (arrows + edge fade are wired by
+    // wireChipStripScrollEnd). Show all subtopics on every viewport (#67/#69).
+    if (!actionLink && !moreLink) {
+      container.classList.remove('is-empty');
+      return;
+    }
+
     // Fit-to-width (#383): show as many chips as fit, drop the rest, and keep
     // "All Topics +" pinned in place as the "More" affordance — a half-clipped
     // chip in a horizontal scroller (the previous behavior) reads as broken at
@@ -1058,6 +1068,49 @@ function trimOverflowLinks() {
 // Responsive nav: CSS handles breakpoints, JS just sets up the class
 function setupResponsiveNav() {
   // No JS measurement needed — CSS media queries handle all breakpoints
+}
+
+// Main-bar topic nav (.sticky-nav-topics) fit-to-width. The row is flex:1 with
+// overflow:hidden, so without trimming the tail topic + the "More" button get
+// half-clipped at narrow desktop widths (#74). Show as many whole topic links as
+// fit, hide the rest, and keep "More" visible whenever anything was hidden.
+let stickyNavTrimHandler = null;
+function trimStickyNav() {
+  const nav = document.querySelector('.sticky-nav-topics');
+  if (!nav) return;
+  const moreBtn = nav.querySelector('.sticky-nav-more');
+  const links = [...nav.querySelectorAll('.sticky-nav-topic')];
+  if (!links.length) return;
+
+  const run = () => {
+    // Reset to all-visible before measuring.
+    links.forEach((l) => { l.style.display = ''; });
+    if (moreBtn) moreBtn.style.display = '';
+    const avail = nav.clientWidth;
+    if (avail < 1) return;                       // not laid out yet
+    const gap = parseFloat(getComputedStyle(nav).columnGap || getComputedStyle(nav).gap) || 18;
+    const moreW = moreBtn ? moreBtn.offsetWidth + gap : 0;
+
+    // Walk the links; once one (plus the reserved "More") would overflow,
+    // hide it and every link after it (no half-clipped tail chip).
+    let used = 0;
+    let hideRest = false;
+    links.forEach((l, i) => {
+      if (hideRest) { l.style.display = 'none'; return; }
+      const next = used + (i ? gap : 0) + l.offsetWidth;
+      if (next + moreW > avail) { l.style.display = 'none'; hideRest = true; }
+      else used = next;
+    });
+
+    // "More" only earns its place when something was actually hidden.
+    if (moreBtn) moreBtn.style.display = hideRest ? '' : 'none';
+  };
+
+  requestAnimationFrame(run);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => requestAnimationFrame(run));
+  if (stickyNavTrimHandler) window.removeEventListener('resize', stickyNavTrimHandler);
+  stickyNavTrimHandler = () => requestAnimationFrame(run);
+  window.addEventListener('resize', stickyNavTrimHandler, { passive: true });
 }
 
 // theScore-style mobile top bar: the page label shown next to the back
@@ -1360,6 +1413,9 @@ function renderStickyHeroBar(container, route) {
       window.location.hash = '#/';
     }
   });
+
+  // Fit the main-bar topic row so the tail topic + "More" never half-clip (#74).
+  trimStickyNav();
 }
 
 // Mobile bottom tab bar (Home / Search / Trending / Topics). Rendered once

@@ -258,12 +258,8 @@ export function renderTrendingTopics(container, { limit = 20, viewAll = false } 
     .sort((a, b) => (ttCatRank(a) - ttCatRank(b)) || a.localeCompare(b));
 
   function controlsHTML() {
-    const cats = catList();
-    if (!cats.length) return '';
-    const opts = ['all'].concat(cats).map(c =>
-      `<option value="${escapeAttr(c)}"${state.category === c ? ' selected' : ''}>${c === 'all' ? 'All categories' : escapeHTML(c)}</option>`).join('');
-    return `<div class="trend-controls trend-controls-grid"><label class="trend-select-field"><span class="trend-select-label">Category</span>
-        <select class="trend-select trend-cat-select" aria-label="Filter by category">${opts}</select></label></div>`;
+    // Category filter removed (#73).
+    return '';
   }
   function visible() {
     const items = state.category === 'all' ? state.all : state.all.filter(t => ttCatOf(t) === state.category);
@@ -321,15 +317,11 @@ export function renderTrendingModal(controlsEl, gridEl) {
     .sort((a, b) => (ttCatRank(a) - ttCatRank(b)) || a.localeCompare(b));
 
   function controlsHTML() {
-    const cats = catList();
-    const catSel = cats.length ? `<label class="tlm-catfield"><span class="tlm-catfield-label">Category</span>
-        <select class="trend-select trend-cat-select" aria-label="Filter by category">${['all'].concat(cats).map((c) =>
-          `<option value="${escapeAttr(c)}"${state.category === c ? ' selected' : ''}>${c === 'all' ? 'All categories' : escapeHTML(c)}</option>`).join('')}</select></label>` : '';
+    // Category filter removed (#73) — just the AI-generated legend.
     return `<div class="tlm-controlbar-inner">
       <div class="trend-legend trend-legend--solo">
         <span class="trend-legend-item">${aiSparkInline()}<span>Trend summaries are AI-generated.</span></span>
       </div>
-      ${catSel}
     </div>`;
   }
   function visible() {

@@ -654,15 +654,16 @@ function startFeed(ctx) {
     }
   }
 
+  // Search + sort controls were removed (#72) — the feed just shows newest-first.
+  // Listeners are guarded since the elements no longer exist.
   let searchTimer = null;
-  els.search.addEventListener('input', () => {
+  els.search?.addEventListener('input', () => {
     clearTimeout(searchTimer);
     const q = els.search.value.trim();
     searchLocal(q);                                   // immediate
     searchTimer = setTimeout(() => searchArchive(q), 250); // network-backed
   });
-  // One combined select: Newest / Oldest (all-time direction) or a time window.
-  els.sort.addEventListener('change', () => {
+  els.sort?.addEventListener('change', () => {
     const v = els.sort.value;
     if (v === 'oldest') { state.sort = 'oldest'; state.time = 'all'; }
     else if (v === 'newest') { state.sort = 'newest'; state.time = 'all'; }
@@ -677,13 +678,13 @@ export function renderNewsFeed(container, topic, isHome) {
   const slug = isHome ? 'home' : (topic && topic.slug);
   const label = isHome ? '' : ((topic && topic.name) || '');
   const FEED_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2.5"/><line x1="8" y1="9.5" x2="16" y2="9.5"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="16.5" x2="13" y2="16.5"/></svg>';
+  // Header = icon + "News Feed" only — matches the AI Insights header lockup.
+  // No subtext, no search/sort controls (#71/#72).
   const headHTML = `
     <div class="newsfeed-head section-card-head">
       <div class="newsfeed-headtext">
         <h3 class="newsfeed-title section-card-title"><span class="newsfeed-logo">${FEED_ICON}</span><span class="newsfeed-title-main">News Feed</span></h3>
-        <p class="section-card-sub">Latest stories and developments.</p>
       </div>
-      ${filterBarHTML(label)}
     </div>`;
 
   container.innerHTML = `
