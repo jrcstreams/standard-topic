@@ -16,10 +16,10 @@ import { topicIconSVG } from '../utils/topic-icons.js';
 // holds the refresh class). Kept inline so the component never depends on a
 // freshly-changed data.js (the no-version singleton).
 const PATHS = [
-  { group: 'discover',       label: "What's Happening Now",   tab: 'Live',     subtitle: 'The latest news, moves, and developments.' },
-  { group: 'topic-specific', label: 'Topic-Specific Insights', tab: 'Research', subtitle: 'Go deeper on what makes this topic tick.' },
-  { group: 'analyze',        label: 'Analysis',                tab: 'Analysis', subtitle: 'Deeper lenses, tradeoffs, and what it all means.' },
-  { group: 'learn',          label: 'Learn',                   tab: 'Learn',    subtitle: 'Background, fundamentals, and key context.' },
+  { group: 'discover',       label: "What's Happening Now",   tab: 'Get Caught Up', subtitle: 'The latest news, moves, and developments.' },
+  { group: 'topic-specific', label: 'Topic-Specific Insights', tab: 'Deep Dive',     subtitle: 'Go deeper on what makes this topic tick.' },
+  { group: 'analyze',        label: 'Analysis',                tab: 'Analysis',      subtitle: 'Deeper lenses, tradeoffs, and what it all means.' },
+  { group: 'learn',          label: 'Learn',                   tab: '101 Resources', subtitle: 'Background, fundamentals, and key context.' },
 ];
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
