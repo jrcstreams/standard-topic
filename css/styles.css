@@ -2325,7 +2325,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   }
   #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
   #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
-    font-size: 1.22rem;
+    font-size: 1.32rem;
     line-height: 1.15;
     font-weight: 700;
   }
@@ -2363,7 +2363,7 @@ body.hide-cta .sticky-cta { display: none !important; }
 @media (max-width: 400px) {
   #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
   #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
-    font-size: 1.1rem;
+    font-size: 1.18rem;
   }
   #sub-header.is-subnav .topic-banner-icon,
   #sub-header.is-home-subnav .topic-banner-icon {
@@ -5540,10 +5540,10 @@ body.app-mode .topic-layout {
     background: none;
     border: none;
     border-radius: 0;
-    padding: 0.62rem 0.15rem 0.66rem;
+    padding: 0.58rem 0.15rem 0.62rem;
     margin: 0;
     font-family: var(--font-display);
-    font-size: 0.9rem;
+    font-size: 0.84rem;
     font-weight: 600;
     letter-spacing: -0.01em;
     line-height: 1.2;
@@ -5572,10 +5572,10 @@ body.app-mode .topic-layout {
   .body-tabs .tab-pill.active::after,
   .body-tabs .tab-pill.active:hover::after { background: #1c3a6b; }
   @media (max-width: 500px) {
-    .body-tabs .tab-pill { font-size: 0.88rem; }
+    .body-tabs .tab-pill { font-size: 0.82rem; }
   }
   @media (max-width: 380px) {
-    .body-tabs .tab-pill { font-size: 0.84rem; }
+    .body-tabs .tab-pill { font-size: 0.79rem; }
   }
   /* Drop the topic-layout's top padding on mobile — the body-tabs
      hugs the very top of the panel area, immediately below the
@@ -6302,6 +6302,22 @@ body.app-mode .topic-layout {
    the edges — there's nothing to stack against because the chips
    ARE the gradient at that edge. The subnav band background
    (#f7f8fa) shows through. Arrows sit above naturally. */
+/* Base fade — applies at ALL widths (incl. mobile/touch, which has no scroll
+   arrows) so the chip strip visibly softens at any scrollable edge (#69/#70).
+   A modest ~26px ramp is enough to signal "more, scroll →". Desktop hover
+   widens this below to clear the arrow chips. */
+.subnav-chip-wrap.can-scroll-right .subnav-topics-inline {
+  mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 26px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 26px), transparent 100%);
+}
+.subnav-chip-wrap.can-scroll-left .subnav-topics-inline {
+  mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 26px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 26px), transparent 100%);
+}
+.subnav-chip-wrap.can-scroll-left.can-scroll-right .subnav-topics-inline {
+  mask-image: linear-gradient(to right, transparent 0%, #000 26px, #000 calc(100% - 26px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 26px, #000 calc(100% - 26px), transparent 100%);
+}
 /* Desktop fade — wide three-stop gradient because the hover-only
    scroll arrow needs ~50px of fully-transparent area to sit on top
    of without chip text bleeding through. Only kicks in at

@@ -920,12 +920,12 @@ function trimOverflowLinks() {
     const rect = container.getBoundingClientRect();
     if (rect.width < 1) return;
 
-    // TOPIC subnav (related-topic chips): no "All Topics +" action link and no
-    // "More +" link — so trimming would just hide the overflow chips with NO
-    // affordance to reach them. Instead, leave EVERY chip in place and let the
-    // strip scroll horizontally (arrows + edge fade are wired by
-    // wireChipStripScrollEnd). Show all subtopics on every viewport (#67/#69).
-    if (!actionLink && !moreLink) {
+    // Both the TOPIC subnav (related-topic chips) and the HOME subnav (featured
+    // topics + "All Topics +") are horizontal scrollers now — trimming would
+    // just hide the overflow with no affordance. Leave EVERY chip in place and
+    // let the strip scroll (arrows + edge fade wired by wireChipStripScrollEnd).
+    // Neither has a "More +" link, so this guard covers both (#69/#70).
+    if (!moreLink) {
       container.classList.remove('is-empty');
       return;
     }
@@ -1455,7 +1455,7 @@ function renderBottomNav(route) {
         <span class="botnav-label">AI Insights</span>
       </button>
       <button type="button" class="botnav-tab" data-tab="trending" id="botnav-trending" aria-label="Trending">
-        <span class="botnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>
+        <span class="botnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg></span>
         <span class="botnav-label">Trending</span>
       </button>
       <button type="button" class="botnav-tab" data-tab="topics" id="botnav-topics" aria-label="All topics">
