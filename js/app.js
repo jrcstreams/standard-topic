@@ -153,6 +153,31 @@ function observeSubnavHeight() {
   subnavResizeObs.observe(sub);
 }
 
+// Mobile/tabular topic hero condense (#92): when the active tab panel scrolls,
+// collapse the tall hero (icon + big title + description + Related) into a slim
+// sticky bar (icon + title + tabs). The app scrolls INSIDE each panel
+// (.aii-stage / .newsfeed-scroll-wrap), so a single capturing scroll listener
+// on document catches whichever panel is scrolling. CSS does the visual collapse
+// under body.topic-hero-condensed; --subnav-height (ResizeObserver) keeps the
+// content padding in lockstep as the band shrinks.
+let topicHeroScrollHandler = null;
+function wireTopicHeroCondense() {
+  if (topicHeroScrollHandler) document.removeEventListener('scroll', topicHeroScrollHandler, true);
+  topicHeroScrollHandler = (e) => {
+    const t = e.target;
+    if (!t || t.nodeType !== 1 || typeof t.closest !== 'function') return;
+    // Only react to scrolls inside the topic content area.
+    if (!t.closest('#content')) return;
+    const st = t.scrollTop || 0;
+    // Hysteresis so it doesn't flicker at the boundary.
+    const condensed = document.body.classList.contains('topic-hero-condensed');
+    if (!condensed && st > 36) document.body.classList.add('topic-hero-condensed');
+    else if (condensed && st < 12) document.body.classList.remove('topic-hero-condensed');
+  };
+  document.addEventListener('scroll', topicHeroScrollHandler, true);
+  document.body.classList.remove('topic-hero-condensed');
+}
+
 function renderLayout(route) {
   const siteHeader = document.getElementById('site-header');
   const subHeader = document.getElementById('sub-header');
@@ -329,6 +354,7 @@ function renderLayout(route) {
     setupResponsiveNav();
     wireChipStripScrollEnd();
     wireSubnavCompactMeasure();
+    wireTopicHeroCondense();
   }
 
   if (route.type === 'about' || route.type === 'terms') {
@@ -459,6 +485,8 @@ function setupGlobalTabPillDelegation() {
     document.querySelectorAll('.body-tabs .tab-pill, #sub-header .tab-pill').forEach(p =>
       p.classList.toggle('active', p.dataset.tab === tab)
     );
+    // The newly-shown panel starts at the top, so re-expand the topic hero.
+    document.body.classList.remove('topic-hero-condensed');
     // Update the URL (without re-rendering) so refresh / shared links
     // preserve the active tab. News tab is the default — no extra
     // path segment for it. Shortcuts / Related get appended.

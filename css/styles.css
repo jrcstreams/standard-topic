@@ -6374,6 +6374,32 @@ body.app-mode .topic-layout {
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill.active { color: #14305c; }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill.active::after { background: #1c3a6b; }
   @media (hover: hover) { body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill:hover { color: #2c3b57; } }
+
+  /* ── Condensed (on scroll): collapse the hero into a slim bar — icon + title
+     on one row, tabs below; description + Related hidden (#92). body.topic-hero-
+     condensed is toggled by wireTopicHeroCondense(). ─────────────────────────── */
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner { transition: padding .18s ease; }
+  body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-banner {
+    padding-top: 0.5rem !important;
+  }
+  body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-banner-row {
+    flex-direction: row !important; flex-wrap: wrap !important; align-items: center !important;
+  }
+  body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-hero-ico {
+    width: 26px; height: 26px; border-radius: 7px; margin: 0 0.6rem 0 0;
+  }
+  body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-hero-ico-svg { width: 15px; height: 15px; }
+  body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-banner-title {
+    font-size: 1.12rem !important;
+  }
+  body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-banner-desc,
+  body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .subnav-lead-label,
+  body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .subnav-chip-wrap {
+    display: none !important;
+  }
+  body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .subnav-tabs {
+    width: 100%; margin-top: 0.55rem;
+  }
 }
 
 /* Mobile / tabbed-nav widths: the chip strip is now flush in the
