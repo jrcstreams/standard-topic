@@ -6358,11 +6358,18 @@ body.app-mode .topic-layout {
     -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
     mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
   }
+  /* Sleek soft-filled chips (no outline) — lighter, more modern than the bordered
+     pills. Subtle tint, rounded-rect, quiet text. */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topic-link {
-    padding: 0.28rem 0.65rem !important; border: 1px solid #d7dfea; border-radius: 999px;
-    background: #fff; font-family: var(--font-display); font-size: 0.78rem !important; font-weight: 600;
-    color: #46526b !important; white-space: nowrap; text-decoration: none;
+    padding: 0.36rem 0.72rem !important; border: none !important; border-radius: 9px;
+    background: #e8edf5; font-family: var(--font-display); font-size: 0.78rem !important; font-weight: 600;
+    letter-spacing: -0.006em; color: #44506a !important; white-space: nowrap; text-decoration: none;
+    transition: background .14s ease, color .14s ease;
   }
+  @media (hover: hover) {
+    body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topic-link:hover { background: #dbe3ef; color: #1c3a6b !important; }
+  }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topic-link:active { background: #d0dbeb; }
   /* Section tabs — a DISTINCT white bar full-bleed across the bottom of the hero,
      flush with the white content below, separated from the grey hero by a rule. */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs {
@@ -6370,20 +6377,23 @@ body.app-mode .topic-layout {
     margin: 0.9rem -1rem 0; padding: 0 1rem; background: #fff;
     border-top: 1px solid #e3e7ef;
   }
+  /* Editorial monochrome tabs (no blue accent): muted grey at rest, near-black +
+     a crisp near-black underline when active. Clean, original, not "AI". */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill {
     position: relative; display: inline-flex; align-items: center; justify-content: center;
     flex: 0 0 auto; background: none; border: none; border-radius: 0; cursor: pointer;
-    padding: 0.78rem 0; margin: 0 1.5rem 0 0;
+    padding: 0.8rem 0; margin: 0 1.6rem 0 0;
     font-family: var(--font-display); font-size: 0.88rem; font-weight: 600;
-    letter-spacing: -0.012em; line-height: 1; white-space: nowrap; color: #6a7488;
+    letter-spacing: -0.014em; line-height: 1; white-space: nowrap; color: #8a93a3;
+    transition: color .14s ease;
   }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill::after {
     content: ''; position: absolute; left: 0; right: 0; bottom: -1px;
-    height: 2.5px; border-radius: 3px 3px 0 0; background: transparent; transition: background .14s ease;
+    height: 2px; background: transparent; transition: background .14s ease;
   }
-  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill.active { color: #14305c; }
-  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill.active::after { background: #1c3a6b; }
-  @media (hover: hover) { body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill:hover { color: #2c3b57; } }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill.active { color: #131a26; font-weight: 700; }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill.active::after { background: #131a26; }
+  @media (hover: hover) { body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill:hover { color: #44506a; } }
 
   /* ── Condensed (on scroll): slim bar — icon + title on one centered row, the
      white tab bar below; description + Related hidden (#92/#97). ────────────── */
