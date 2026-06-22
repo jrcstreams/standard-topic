@@ -6345,26 +6345,23 @@ body.app-mode .topic-layout {
       transparent 0%, #000 72px,
       #000 calc(100% - 72px), transparent 100%);
   }
-  /* Desktop banner has 2rem horizontal padding, so the arrow is
-     further inset. Widen the transparent zone accordingly. */
+  /* Desktop: a MODEST ~50px edge fade — just enough to seat the small scroll
+     arrow over softened text. (The old 210px/66px zone swallowed an entire edge
+     chip — "Business & Finance" vanished mid-scroll, #73/#74.) */
   @media (min-width: 900px) {
     .subnav-chip-wrap.can-scroll-right .subnav-topics-inline {
-      mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 210px), transparent calc(100% - 66px), transparent 100%);
-      -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 210px), transparent calc(100% - 66px), transparent 100%);
+      mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 50px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 50px), transparent 100%);
     }
     .subnav-chip-wrap.can-scroll-left .subnav-topics-inline {
-      mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 210px), transparent calc(100% - 66px), transparent 100%);
-      -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 210px), transparent calc(100% - 66px), transparent 100%);
+      mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 50px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 50px), transparent 100%);
     }
     .subnav-chip-wrap.can-scroll-left.can-scroll-right .subnav-topics-inline {
       mask-image: linear-gradient(to right,
-        transparent 0%, transparent 66px,
-        #000 210px, #000 calc(100% - 210px),
-        transparent calc(100% - 66px), transparent 100%);
+        transparent 0%, #000 50px, #000 calc(100% - 50px), transparent 100%);
       -webkit-mask-image: linear-gradient(to right,
-        transparent 0%, transparent 66px,
-        #000 210px, #000 calc(100% - 210px),
-        transparent calc(100% - 66px), transparent 100%);
+        transparent 0%, #000 50px, #000 calc(100% - 50px), transparent 100%);
     }
   }
 }
