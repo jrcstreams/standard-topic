@@ -1134,6 +1134,16 @@ function pageLabelFor(route) {
 function renderStickyHeroBar(container, route) {
   const featured = getFeaturedTopics();
   const NAVMENU_CHEV = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+  // Mobile/tabular header page-name panel (#79/#80): the current page name +,
+  // for topics, its icon. Empty on home (panel hidden). Built once here so the
+  // header markup stays tidy.
+  const pgLabel = pageLabelFor(route);
+  let pgIcon = '';
+  if (route && route.type === 'topic') {
+    const _t = getTopicBySlug(route.slug);
+    if (_t) pgIcon = topicIconSVG(_t.icon || 'globe', 'sticky-page-ico');
+  }
+  const pgNameHTML = pgLabel ? `${pgIcon}<span class="sticky-page-text">${escapeHTML(pgLabel)}</span>` : '';
   // Each featured parent is an accordion: tap the row to reveal its subtopics
   // (so every topic is reachable from the menu); the parent itself is reachable
   // via a prominent "All {name}" link at the top of the nested list. Parents
@@ -1168,7 +1178,7 @@ function renderStickyHeroBar(container, route) {
       <a href="#/" class="sticky-brand" id="sticky-brand-link">
         <span class="sticky-title">Standard Topic</span>
       </a>
-      <span class="sticky-page-name">${escapeHTML(pageLabelFor(route))}</span>
+      <span class="sticky-page-name">${pgNameHTML}</span>
       <button type="button" class="nav-search-mobile" id="nav-search-mobile" aria-label="Search">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </button>
