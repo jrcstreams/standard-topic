@@ -6319,13 +6319,13 @@ body.app-mode .topic-layout {
     grid-template-areas: "ico title" "desc desc" "lead lead" "rel rel" "tabs tabs" !important;
     align-items: center; column-gap: 0.7rem; row-gap: 0; width: 100%; overflow: visible;
   }
-  /* Hero icon — brand-navy chip, beside the title. */
+  /* Hero icon — small brand-navy chip beside the title. */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-hero-ico {
     grid-area: ico; display: inline-flex !important; align-items: center; justify-content: center;
-    width: 36px; height: 36px; flex: none; border-radius: 10px;
+    width: 26px; height: 26px; flex: none; border-radius: 8px;
     background: var(--color-primary); color: #fff; margin: 0;
   }
-  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-hero-ico-svg { width: 20px; height: 20px; }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-hero-ico-svg { width: 15px; height: 15px; }
   /* Title — beside the icon, a notch smaller. */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-titlegroup {
     grid-area: title; display: flex !important; flex: none !important; min-width: 0; max-width: 100%;
@@ -6339,8 +6339,8 @@ body.app-mode .topic-layout {
   }
   /* One-sentence description. */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-desc {
-    grid-area: desc; display: block !important; margin: 0.55rem 0 0; max-width: 56ch;
-    font-family: var(--font-family); font-size: 0.88rem; line-height: 1.4; color: #5a6678;
+    grid-area: desc; display: block !important; margin: 0.5rem 0 0; max-width: 56ch;
+    font-family: var(--font-family); font-size: 0.81rem; line-height: 1.4; color: #6a7488;
   }
   /* "Related" label + chips (tighter pills, horizontal scroll with edge fade). */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-lead-label {
@@ -6358,18 +6358,19 @@ body.app-mode .topic-layout {
     -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
     mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
   }
-  /* Sleek soft-filled chips (no outline) — lighter, more modern than the bordered
-     pills. Subtle tint, rounded-rect, quiet text. */
-  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topic-link {
-    padding: 0.36rem 0.72rem !important; border: none !important; border-radius: 9px;
-    background: #e8edf5; font-family: var(--font-display); font-size: 0.78rem !important; font-weight: 600;
-    letter-spacing: -0.006em; color: #44506a !important; white-space: nowrap; text-decoration: none;
+  /* Sleek soft-filled chips (no outline). Compact, centered text, light tint. */
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topic-link,
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topics-inline > .subnav-topic-link:first-child {
+    display: inline-flex !important; align-items: center; justify-content: center;
+    padding: 0.32rem 0.7rem !important; margin: 0 !important; border: none !important; border-radius: 8px;
+    background: #eef1f7; font-family: var(--font-display); font-size: 0.77rem !important; font-weight: 600;
+    letter-spacing: -0.006em; color: #475167 !important; white-space: nowrap; text-decoration: none;
     transition: background .14s ease, color .14s ease;
   }
   @media (hover: hover) {
-    body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topic-link:hover { background: #dbe3ef; color: #1c3a6b !important; }
+    body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topic-link:hover { background: #e0e6f0; color: #1c3a6b !important; }
   }
-  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topic-link:active { background: #d0dbeb; }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topic-link:active { background: #d6deec; }
   /* Section tabs — a DISTINCT white bar full-bleed across the bottom of the hero,
      flush with the white content below, separated from the grey hero by a rule. */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs {
@@ -6417,6 +6418,20 @@ body.app-mode .topic-layout {
   }
   body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .subnav-tabs {
     margin-top: 0.6rem;
+  }
+
+  /* Hide the internal scrollbars on the topic tab panels — on desktop browsers
+     their gutters read as stray vertical "lines" flanking the content (#100);
+     real phones use overlay scrollbars anyway. */
+  body.app-mode:not(.home-search) #section-newsfeed .newsfeed-scroll-wrap,
+  body.app-mode:not(.home-search) #section-shortcuts .aii-stage,
+  body.app-mode:not(.home-search) #section-websources .aii-stage {
+    scrollbar-width: none;
+  }
+  body.app-mode:not(.home-search) #section-newsfeed .newsfeed-scroll-wrap::-webkit-scrollbar,
+  body.app-mode:not(.home-search) #section-shortcuts .aii-stage::-webkit-scrollbar,
+  body.app-mode:not(.home-search) #section-websources .aii-stage::-webkit-scrollbar {
+    display: none;
   }
 }
 
