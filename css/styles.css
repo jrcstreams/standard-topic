@@ -6305,66 +6305,76 @@ body.app-mode .topic-layout {
    own featured-chip layout). A left-aligned hero: icon, big title, one-sentence
    description, Related chips, then the section tabs. Brand colors, grey band. */
 @media (max-width: 899.98px) {
+  /* Grid hero: [icon | title] on row 1 (icon vertically centered with the title),
+     description row 2, Related label + chips rows 3-4, then a distinct white tab
+     bar full-bleed across the bottom. */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner {
     display: block !important; overflow: visible !important;
-    padding: 0.95rem 1rem 0 !important; background: #f3f5f9; min-height: 0;
+    padding: 0.85rem 1rem 0 !important; background: #f3f5f9; min-height: 0;
+    transition: padding .18s ease;
   }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-row {
-    display: flex !important; flex-direction: column !important; align-items: stretch !important;
-    grid-template-areas: none !important; grid-template-columns: none !important;
-    gap: 0 !important; width: 100%; overflow: visible;
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) !important;
+    grid-template-areas: "ico title" "desc desc" "lead lead" "rel rel" "tabs tabs" !important;
+    align-items: center; column-gap: 0.7rem; row-gap: 0; width: 100%; overflow: visible;
   }
-  /* Hero icon — brand-navy chip, its own line above the title. */
+  /* Hero icon — brand-navy chip, beside the title. */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-hero-ico {
-    display: inline-flex !important; align-items: center; justify-content: center;
-    width: 40px; height: 40px; flex: none; border-radius: 11px;
-    background: var(--color-primary); color: #fff; margin: 0 0 0.6rem;
+    grid-area: ico; display: inline-flex !important; align-items: center; justify-content: center;
+    width: 36px; height: 36px; flex: none; border-radius: 10px;
+    background: var(--color-primary); color: #fff; margin: 0;
   }
-  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-hero-ico-svg { width: 22px; height: 22px; }
-  /* Title group → just the big title. */
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-hero-ico-svg { width: 20px; height: 20px; }
+  /* Title — beside the icon, a notch smaller. */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-titlegroup {
-    display: flex !important; flex: none !important; min-width: 0; max-width: 100%;
-    grid-area: auto !important; margin: 0 !important; padding: 0 !important; border: none !important;
+    grid-area: title; display: flex !important; flex: none !important; min-width: 0; max-width: 100%;
+    margin: 0 !important; padding: 0 !important; border: none !important;
   }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-titleinner { min-width: 0; max-width: 100%; }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-kind { display: none !important; }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-title {
-    font-size: 1.7rem !important; font-weight: 800; letter-spacing: -0.03em; line-height: 1.08; color: #14213d;
+    font-size: 1.4rem !important; font-weight: 800; letter-spacing: -0.028em; line-height: 1.1; color: #14213d;
     min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   /* One-sentence description. */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-desc {
-    display: block !important; margin: 0.45rem 0 0; max-width: 52ch;
-    font-family: var(--font-family); font-size: 0.92rem; line-height: 1.42; color: #5a6678;
+    grid-area: desc; display: block !important; margin: 0.55rem 0 0; max-width: 56ch;
+    font-family: var(--font-family); font-size: 0.88rem; line-height: 1.4; color: #5a6678;
   }
-  /* "Related" label + chips (the chips keep the horizontal scroll, styled as pills). */
+  /* "Related" label + chips (tighter pills, horizontal scroll with edge fade). */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-lead-label {
-    display: block !important; grid-area: auto !important; margin: 0.9rem 0 0.5rem !important;
+    grid-area: lead; display: block !important; margin: 0.85rem 0 0.45rem !important;
     padding: 0 !important; border: none !important;
-    font-family: var(--font-family); font-size: 0.7rem; font-weight: 700;
-    letter-spacing: 0.06em; text-transform: uppercase; color: #98a2b4;
+    font-family: var(--font-family); font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.07em; text-transform: uppercase; color: #98a2b4;
   }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-chip-wrap {
-    grid-area: auto !important; margin: 0 -1rem 0 0 !important; min-width: 0;
+    grid-area: rel; margin: 0 -1rem 0 0 !important; min-width: 0;
   }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topics-inline {
-    padding: 0 1rem 0 0 !important; gap: 0.5rem !important;
+    padding: 0.1rem 1.5rem 0.1rem 0 !important; gap: 0.4rem !important;
+    /* Always-on right-edge fade so the last (often clipped) chip signals "more". */
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
   }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topic-link {
-    padding: 0.34rem 0.75rem !important; border: 1px solid #d7dfea; border-radius: 999px;
-    background: #fff; font-family: var(--font-display); font-size: 0.8rem !important; font-weight: 600;
+    padding: 0.28rem 0.65rem !important; border: 1px solid #d7dfea; border-radius: 999px;
+    background: #fff; font-family: var(--font-display); font-size: 0.78rem !important; font-weight: 600;
     color: #46526b !important; white-space: nowrap; text-decoration: none;
   }
-  /* Section tabs — full-width underline tabs across the bottom of the hero. */
+  /* Section tabs — a DISTINCT white bar full-bleed across the bottom of the hero,
+     flush with the white content below, separated from the grey hero by a rule. */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs {
-    display: flex !important; align-items: stretch; gap: 0; margin: 0.95rem 0 0;
-    border-top: 1px solid #dde3ec;
+    grid-area: tabs; display: flex !important; align-items: stretch; gap: 0;
+    margin: 0.9rem -1rem 0; padding: 0 1rem; background: #fff;
+    border-top: 1px solid #e3e7ef;
   }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill {
     position: relative; display: inline-flex; align-items: center; justify-content: center;
     flex: 0 0 auto; background: none; border: none; border-radius: 0; cursor: pointer;
-    padding: 0.65rem 0; margin: 0 1.3rem 0 0;
-    font-family: var(--font-display); font-size: 0.86rem; font-weight: 600;
+    padding: 0.78rem 0; margin: 0 1.5rem 0 0;
+    font-family: var(--font-display); font-size: 0.88rem; font-weight: 600;
     letter-spacing: -0.012em; line-height: 1; white-space: nowrap; color: #6a7488;
   }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill::after {
@@ -6375,22 +6385,20 @@ body.app-mode .topic-layout {
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill.active::after { background: #1c3a6b; }
   @media (hover: hover) { body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill:hover { color: #2c3b57; } }
 
-  /* ── Condensed (on scroll): collapse the hero into a slim bar — icon + title
-     on one row, tabs below; description + Related hidden (#92). body.topic-hero-
-     condensed is toggled by wireTopicHeroCondense(). ─────────────────────────── */
-  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner { transition: padding .18s ease; }
+  /* ── Condensed (on scroll): slim bar — icon + title on one centered row, the
+     white tab bar below; description + Related hidden (#92/#97). ────────────── */
   body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-banner {
     padding-top: 0.5rem !important;
   }
   body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-banner-row {
-    flex-direction: row !important; flex-wrap: wrap !important; align-items: center !important;
+    grid-template-areas: "ico title" "tabs tabs" !important; align-items: center !important;
   }
   body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-hero-ico {
-    width: 26px; height: 26px; border-radius: 7px; margin: 0 0.6rem 0 0;
+    width: 28px; height: 28px; border-radius: 8px;
   }
-  body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-hero-ico-svg { width: 15px; height: 15px; }
+  body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-hero-ico-svg { width: 16px; height: 16px; }
   body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-banner-title {
-    font-size: 1.12rem !important;
+    font-size: 1.15rem !important;
   }
   body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-banner-desc,
   body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .subnav-lead-label,
@@ -6398,7 +6406,7 @@ body.app-mode .topic-layout {
     display: none !important;
   }
   body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .subnav-tabs {
-    width: 100%; margin-top: 0.55rem;
+    margin-top: 0.6rem;
   }
 }
 
