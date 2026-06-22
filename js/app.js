@@ -17,7 +17,7 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp245';
 import { initInsightModal } from './components/insight-modal.js?v=20260617-revamp272';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260620-revamp280';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260622-revamp290';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260620-revamp280';
 import { renderWebSources } from './components/websources.js?v=20260617-revamp255';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp245';
@@ -308,6 +308,11 @@ function renderLayout(route) {
               ${relatedLinksHTML}
             </div>
           ` : ''}
+          <nav class="subnav-tabs" aria-label="Section navigation">
+            <button type="button" class="tab-pill tab-pill-newsfeed" data-tab="newsfeed">News Feed</button>
+            <button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">AI Insights</button>
+            <button type="button" class="tab-pill tab-pill-related" data-tab="related">Related</button>
+          </nav>
         </div>
       </div>
     `;
@@ -1138,13 +1143,11 @@ function renderStickyHeroBar(container, route) {
   // Mobile/tabular header page-name panel (#79/#80): the current page name +,
   // for topics, its icon. Empty on home (panel hidden). Built once here so the
   // header markup stays tidy.
-  const pgLabel = pageLabelFor(route);
-  let pgIcon = '';
-  if (route && route.type === 'topic') {
-    const _t = getTopicBySlug(route.slug);
-    if (_t) pgIcon = topicIconSVG(_t.icon || 'globe', 'sticky-page-ico');
-  }
-  const pgNameHTML = pgLabel ? `${pgIcon}<span class="sticky-page-text">${escapeHTML(pgLabel)}</span>` : '';
+  // Topic pages no longer use the header panel on mobile — the topic title +
+  // inline tabs live in the subnav instead (#91). Identity-only pages
+  // (About/Terms/Prompt) keep the header panel; home stays brand-only.
+  const pgLabel = (route && route.type === 'topic') ? '' : pageLabelFor(route);
+  const pgNameHTML = pgLabel ? `<span class="sticky-page-text">${escapeHTML(pgLabel)}</span>` : '';
   // Desktop main-nav topic links — render the FULL featured set (not a hardcoded
   // six) so wide screens show as many as fit; trimStickyNav fits-to-width and
   // keeps "More" so the rest stay reachable (#88).
@@ -1631,10 +1634,8 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // time) is unaffected; at ≥1024 they become the two columns (#14).
     container.innerHTML = `
       <div class="topic-layout" id="topic-layout">
-        ${bodyTabsRow({ showRelated: false, showWebSources: true })}
         <div class="topic-side">
           <section class="layout-section" id="section-shortcuts"></section>
-          <section class="layout-section" id="section-websources"></section>
         </div>
         <div class="topic-main">
           <section class="layout-section" id="section-newsfeed"></section>
@@ -1646,7 +1647,6 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
 
   const trendingSection = container.querySelector('#section-trending');
   const shortcutsSection = container.querySelector('#section-shortcuts');
-  const websourcesSection = container.querySelector('#section-websources');
   const feedSection = container.querySelector('#section-newsfeed');
   const relatedSection = container.querySelector('#section-related');
 
@@ -1663,7 +1663,6 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       renderShortcutsSidebar(shortcutsSection, route, isHome, isCustom, customTerm);
     }
   }
-  if (websourcesSection && topic) renderWebSources(websourcesSection, topic);
   if (feedSection) {
     renderNewsFeed(feedSection, topic, isHome);
   }

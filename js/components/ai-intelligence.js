@@ -474,18 +474,9 @@ export function renderAIIntelligence(container, scope) {
   // that topic+track.
   function launcherPromoHTML() {
     if (scope.topic === 'home') return launcherStepsHTML();
-    // Tabular (mobile, <900) keeps the track-picker card grid unchanged.
-    if (tabMode) {
-      return `<div class="aii-promo aii-promo--tracks">
-        <div class="aii-tracks-head-wrap">
-          <h3 class="aii-tracks-head">Choose an intelligence track</h3>
-          <p class="aii-tracks-sub">Grounded, cited analysis on this topic, refreshed live.</p>
-        </div>
-        <div class="aii-promo-grid aii-trackgrid">${paths.map(trackCardHTML).join('')}</div>
-      </div>`;
-    }
-    // Desktop sidebar: Web Sources first, then the collapsible insight sections
-    // (all open by default).
+    // Topic pages — desktop sidebar AND mobile/tabular (#91) — both render the
+    // collapsible sections: Web Sources first, then the insight tracks (all open
+    // by default). Web Sources is folded in here, so it's no longer its own tab.
     return `<div class="aii-secs">${sidebarSourcesHTML()}${paths.map(sidebarSecHTML).join('')}</div>`;
   }
   function pathsHTML() {
@@ -1105,9 +1096,9 @@ export function renderAIIntelligence(container, scope) {
         topic: scope.topic, label: scope.label, group, insight,
         hideGroups: scope.hideGroups || [], descriptions: scope.descriptions || {},
       } }));
-      // Desktop sidebar = collapsible sections; tab mode = the track-card grid.
-      if (tabMode) wireTrackCards(stage, openTrack);
-      else wireSidebarSecs(stage, openTrack);
+      // Topic pages (desktop sidebar AND mobile/tabular) render the collapsible
+      // sections now (#91), so wire those — track-card wiring is retired here.
+      wireSidebarSecs(stage, openTrack);
       // "Or search any topic or term" → opens the modal at Step 1 (the picker + search).
       stage.querySelector('[data-aii-search]')?.addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: { pickTopic: true } })));
     }

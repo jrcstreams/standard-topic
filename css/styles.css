@@ -718,6 +718,9 @@ body.custom-mode.sticky-always #content {
    in the subnav). Hidden by default; shown inside the ≤899 block. */
 .sticky-page-name { display: none; }
 .subnav-lead-label { display: none; }
+/* Inline section tabs in the topic subnav are mobile/tabular-only (≥900 keeps
+   the title + related chips). Hidden by default; shown inside the ≤899 block. */
+.subnav-tabs { display: none; }
 @media (max-width: 899.98px) {
   .nav-back, .nav-pagelabel { display: none !important; }   /* retired on mobile */
   .sticky-hero-inner .nav-hamburger { order: 1; margin-left: 0; }
@@ -742,7 +745,7 @@ body.custom-mode.sticky-always #content {
     padding: 0.4rem 0 0.4rem 1rem; min-height: 0;
   }
   body.has-subnav:not(.home-mode) #sub-header .topic-banner-row {
-    flex-direction: row; align-items: center; gap: 0; flex: 1; min-width: 0;
+    flex-direction: row; align-items: center; gap: 0; flex: 1; min-width: 0; overflow: hidden;
   }
   body.has-subnav:not(.home-mode) #sub-header .topic-banner-titlegroup {
     display: flex; flex: 0 0 auto;
@@ -788,20 +791,59 @@ body.custom-mode.sticky-always #content {
      lives in the bottom nav, and it left dead space on the panel (#89). */
   .sticky-hero-inner .sticky-page-name:not(:empty) ~ .nav-search-mobile { display: none; }
 
-  /* Pinned "Related:" / "Featured:" lead label — takes the old title's spot. */
-  #sub-header.is-subnav .subnav-lead-label {
+  /* HOME keeps the pinned "Featured" lead label + the featured-topic chips
+     (no colon — the divider separates, #84/#85). */
+  body.home-mode #sub-header.is-subnav .subnav-lead-label {
     display: inline-flex; align-items: center; flex: 0 0 auto;
     margin: 0 0.7rem 0 0; padding: 1px 0.7rem 1px 0;
     border-right: 1px solid #c5cdd9;
     font-family: var(--font-display); font-size: 0.86rem; font-weight: 700;
     letter-spacing: 0.005em; color: #6b7689; white-space: nowrap;
   }
-  /* No colon — the vertical divider after the label does the separating (#84/#85). */
-  /* Hide the in-subnav title (it lives in the header now). */
-  body.has-subnav:not(.home-mode) #sub-header.is-subnav .topic-banner-titlegroup { display: none; }
-  /* Identity-only pages (About / Terms / Prompt Builder) have no chips — the
-     name is in the header, so the otherwise-empty subnav band is hidden. */
-  #sub-header.is-subnav:not(:has(.subnav-topics-inline)) { display: none; }
+
+  /* ── TOPIC pages (#91): title (bigger) left + inline section tabs right; NO
+     related-chip scroll, NO separate body-tabs line. ───────────────────────── */
+  body.has-subnav:not(.home-mode) #sub-header.is-subnav .topic-banner-titlegroup {
+    display: flex; flex: 0 1 auto; min-width: 0;
+  }
+  body.has-subnav:not(.home-mode) #sub-header.is-subnav .topic-banner-titleinner {
+    min-width: 0;   /* let the title ellipsize so the tabs always fit */
+  }
+  body.has-subnav:not(.home-mode) #sub-header.is-subnav .topic-banner-title {
+    font-size: 1.08rem; font-weight: 700; letter-spacing: -0.02em;
+    min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  /* The related topics moved into the "Related Topics" tab — hide the chip
+     scroll + its lead label on topic pages. */
+  body.has-subnav:not(.home-mode) #sub-header.is-subnav .subnav-lead-label,
+  body.has-subnav:not(.home-mode) #sub-header.is-subnav .subnav-chip-wrap,
+  body.has-subnav:not(.home-mode) #sub-header.is-subnav .subnav-topics-inline {
+    display: none !important;
+  }
+  /* Inline tabs, right-aligned, full subnav height (underline rides the band's
+     bottom edge). Tabs never shrink — a long title ellipsizes instead. */
+  #sub-header.is-subnav .subnav-tabs {
+    display: flex; flex: 0 0 auto; margin-left: auto; align-self: stretch;
+    align-items: stretch; gap: 0;
+  }
+  #sub-header.is-subnav .subnav-tabs .tab-pill {
+    position: relative; display: inline-flex; align-items: center; justify-content: center;
+    background: none; border: none; border-radius: 0; cursor: pointer;
+    padding: 0 0.34rem; margin: 0;
+    font-family: var(--font-display); font-size: 0.74rem; font-weight: 600;
+    letter-spacing: -0.014em; line-height: 1; white-space: nowrap; color: #6a7488;
+  }
+  #sub-header.is-subnav .subnav-tabs .tab-pill::after {
+    content: ''; position: absolute; left: 0.24rem; right: 0.24rem; bottom: 0;
+    height: 2.5px; border-radius: 3px 3px 0 0; background: transparent; transition: background .14s ease;
+  }
+  #sub-header.is-subnav .subnav-tabs .tab-pill.active { color: #14305c; }
+  #sub-header.is-subnav .subnav-tabs .tab-pill.active::after { background: #1c3a6b; }
+  @media (hover: hover) { #sub-header.is-subnav .subnav-tabs .tab-pill:hover { color: #2c3b57; } }
+
+  /* Identity-only pages (About / Terms / Prompt Builder) have no chips and no
+     tabs — the name is in the header, so the empty subnav band is hidden. */
+  #sub-header.is-subnav:not(:has(.subnav-topics-inline)):not(:has(.subnav-tabs)) { display: none; }
 }
 
 /* Search pill — opens the Topics modal with input focused. Mirrors
