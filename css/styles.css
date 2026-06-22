@@ -725,6 +725,10 @@ body.custom-mode.sticky-always #content {
    (desktop keeps the compact identity line). */
 .topic-hero-ico { display: none; }
 .topic-banner-desc { display: none; }
+/* The Related wrapper is transparent by default so its children (lead label +
+   chip strip) participate in the desktop legacy subnav grid as if direct
+   children; the mobile hero overrides it to a flex row (label + divider + chips). */
+.topic-hero-related { display: contents; }
 @media (max-width: 899.98px) {
   .nav-back, .nav-pagelabel { display: none !important; }   /* retired on mobile */
   .sticky-hero-inner .nav-hamburger { order: 1; margin-left: 0; }
@@ -6316,17 +6320,20 @@ body.app-mode .topic-layout {
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-row {
     display: grid !important;
     grid-template-columns: auto minmax(0, 1fr) !important;
-    grid-template-areas: "ico title" "desc desc" "lead lead" "rel rel" "tabs tabs" !important;
-    align-items: center; column-gap: 0.7rem; row-gap: 0; width: 100%; overflow: visible;
+    grid-template-areas: "ico title" "desc desc" "rel rel" "tabs tabs" !important;
+    align-items: center; column-gap: 0.6rem; row-gap: 0; width: 100%; overflow: visible;
   }
-  /* Hero icon — small brand-navy chip beside the title. */
+  /* Hero icon — small brand-navy chip beside the title (glyph dead-centered). */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-hero-ico {
     grid-area: ico; display: inline-flex !important; align-items: center; justify-content: center;
-    width: 26px; height: 26px; flex: none; border-radius: 8px;
+    width: 26px; height: 26px; flex: none; border-radius: 8px; line-height: 0;
     background: var(--color-primary); color: #fff; margin: 0;
   }
-  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-hero-ico-svg { width: 15px; height: 15px; }
-  /* Title — beside the icon, a notch smaller. */
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-hero-ico-svg,
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-hero-ico svg {
+    width: 15px !important; height: 15px !important; display: block; margin: 0;
+  }
+  /* Title — beside the icon, smaller. */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-titlegroup {
     grid-area: title; display: flex !important; flex: none !important; min-width: 0; max-width: 100%;
     margin: 0 !important; padding: 0 !important; border: none !important;
@@ -6334,37 +6341,45 @@ body.app-mode .topic-layout {
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-titleinner { min-width: 0; max-width: 100%; }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-kind { display: none !important; }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-title {
-    font-size: 1.4rem !important; font-weight: 800; letter-spacing: -0.028em; line-height: 1.1; color: #14213d;
+    font-size: 1.25rem !important; font-weight: 800; letter-spacing: -0.026em; line-height: 1.1; color: #14213d;
     min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   /* One-sentence description. */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-desc {
-    grid-area: desc; display: block !important; margin: 0.5rem 0 0; max-width: 56ch;
+    grid-area: desc; display: block !important; margin: 0.45rem 0 0; max-width: 56ch;
     font-family: var(--font-family); font-size: 0.81rem; line-height: 1.4; color: #6a7488;
   }
-  /* "Related" label + chips (tighter pills, horizontal scroll with edge fade). */
+  /* Related row — "RELATED" label + a divider + the chips, all on ONE line. */
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-hero-related {
+    grid-area: rel; display: flex !important; align-items: center; min-width: 0; margin: 0.8rem 0 0;
+  }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-lead-label {
-    grid-area: lead; display: block !important; margin: 0.85rem 0 0.45rem !important;
-    padding: 0 !important; border: none !important;
-    font-family: var(--font-family); font-size: 0.68rem; font-weight: 700;
-    letter-spacing: 0.07em; text-transform: uppercase; color: #98a2b4;
+    display: inline-flex !important; flex: 0 0 auto; align-items: center;
+    margin: 0 0.6rem 0 0 !important; padding: 0 0.6rem 0 0 !important;
+    border: none !important; border-right: 1px solid #ccd5e2 !important;
+    font-family: var(--font-family); font-size: 0.66rem; font-weight: 700;
+    letter-spacing: 0.07em; text-transform: uppercase; color: #97a1b3;
   }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-chip-wrap {
-    grid-area: rel; margin: 0 -1rem 0 0 !important; min-width: 0;
+    flex: 1 1 auto; min-width: 0; margin: 0 -1rem 0 0 !important;
   }
+  /* Hide the hover scroll-arrow on the hero chips — the edge fade is the only
+     affordance here (the arrow circle overlapped a half-chip, #101). */
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-chip-arrow { display: none !important; }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topics-inline {
-    padding: 0.1rem 1.5rem 0.1rem 0 !important; gap: 0.4rem !important;
-    /* Always-on right-edge fade so the last (often clipped) chip signals "more". */
-    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
-    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+    padding: 0.1rem 1.4rem 0.1rem 0.1rem !important; gap: 0.4rem !important;
+    /* Clean right-edge fade — wide enough that the next chip fully dissolves
+       (no half-chip peeking, #101). */
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent calc(100% - 6px));
+    mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent calc(100% - 6px));
   }
   /* Sleek soft-filled chips (no outline). Compact, centered text, light tint. */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topic-link,
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topics-inline > .subnav-topic-link:first-child {
     display: inline-flex !important; align-items: center; justify-content: center;
     padding: 0.32rem 0.7rem !important; margin: 0 !important; border: none !important; border-radius: 8px;
-    background: #eef1f7; font-family: var(--font-display); font-size: 0.77rem !important; font-weight: 600;
-    letter-spacing: -0.006em; color: #475167 !important; white-space: nowrap; text-decoration: none;
+    background: #dde4f0; font-family: var(--font-display); font-size: 0.77rem !important; font-weight: 600;
+    letter-spacing: -0.006em; color: #3c485e !important; white-space: nowrap; text-decoration: none;
     transition: background .14s ease, color .14s ease;
   }
   @media (hover: hover) {
@@ -6412,8 +6427,7 @@ body.app-mode .topic-layout {
     font-size: 1.15rem !important;
   }
   body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-banner-desc,
-  body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .subnav-lead-label,
-  body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .subnav-chip-wrap {
+  body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-hero-related {
     display: none !important;
   }
   body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .subnav-tabs {

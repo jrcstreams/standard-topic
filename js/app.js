@@ -335,9 +335,11 @@ function renderLayout(route) {
           ${titleGroup(topic.icon || 'globe', topic.name, 'Topic')}
           ${topicDesc ? `<p class="topic-banner-desc">${escapeHTML(topicDesc)}</p>` : ''}
           ${related.length > 0 ? `
-            <span class="subnav-lead-label" aria-hidden="true">Related</span>
-            <div class="subnav-topics-inline">
-              ${relatedLinksHTML}
+            <div class="topic-hero-related">
+              <span class="subnav-lead-label" aria-hidden="true">Related</span>
+              <div class="subnav-topics-inline">
+                ${relatedLinksHTML}
+              </div>
             </div>
           ` : ''}
           <nav class="subnav-tabs" aria-label="Section navigation">
