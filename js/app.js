@@ -5,6 +5,7 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260622-revamp294';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
 import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260620-revamp279';
 import { renderShortcuts } from './components/shortcuts.js';
@@ -17,9 +18,9 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp245';
 import { initInsightModal } from './components/insight-modal.js?v=20260617-revamp272';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260622-revamp290';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260622-revamp294';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260620-revamp280';
-import { renderWebSources } from './components/websources.js?v=20260617-revamp255';
+import { renderWebSources } from './components/websources.js?v=20260622-revamp294';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp245';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260616-revamp245';
@@ -297,7 +298,6 @@ function renderLayout(route) {
     const relatedLinksHTML = related.map(t =>
       `<a href="#/topic/${t.slug}" class="subnav-topic-link">${escapeHTML(t.name)}</a>`
     ).join('');
-
     subHeader.innerHTML = `
       <div class="topic-banner">
         <div class="topic-banner-row">
@@ -308,11 +308,6 @@ function renderLayout(route) {
               ${relatedLinksHTML}
             </div>
           ` : ''}
-          <nav class="subnav-tabs" aria-label="Section navigation">
-            <button type="button" class="tab-pill tab-pill-newsfeed" data-tab="newsfeed">News Feed</button>
-            <button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">AI Insights</button>
-            <button type="button" class="tab-pill tab-pill-related" data-tab="related">Related</button>
-          </nav>
         </div>
       </div>
     `;
@@ -1634,12 +1629,13 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // time) is unaffected; at ≥1024 they become the two columns (#14).
     container.innerHTML = `
       <div class="topic-layout" id="topic-layout">
+        ${bodyTabsRow({ showRelated: false, showWebSources: true })}
         <div class="topic-side">
           <section class="layout-section" id="section-shortcuts"></section>
+          <section class="layout-section" id="section-websources"></section>
         </div>
         <div class="topic-main">
           <section class="layout-section" id="section-newsfeed"></section>
-          <section class="layout-section" id="section-related"></section>
         </div>
       </div>
     `;
@@ -1647,8 +1643,8 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
 
   const trendingSection = container.querySelector('#section-trending');
   const shortcutsSection = container.querySelector('#section-shortcuts');
+  const websourcesSection = container.querySelector('#section-websources');
   const feedSection = container.querySelector('#section-newsfeed');
-  const relatedSection = container.querySelector('#section-related');
 
   if (trendingSection) renderTrending(trendingSection);
   if (shortcutsSection) {
@@ -1663,11 +1659,11 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       renderShortcutsSidebar(shortcutsSection, route, isHome, isCustom, customTerm);
     }
   }
+  // Web Sources is its own panel now — a separate sidebar section below AI
+  // Insights on desktop, and its own tab on mobile (#92/#93).
+  if (websourcesSection && topic && !isHome && !isCustom) renderWebSources(websourcesSection, topic);
   if (feedSection) {
     renderNewsFeed(feedSection, topic, isHome);
-  }
-  if (relatedSection && topic) {
-    renderRelatedSection(relatedSection, topic);
   }
 
   // Wire mobile tab pills (no-op when the pills aren't rendered, e.g.

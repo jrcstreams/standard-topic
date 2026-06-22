@@ -721,6 +721,10 @@ body.custom-mode.sticky-always #content {
 /* Inline section tabs in the topic subnav are mobile/tabular-only (≥900 keeps
    the title + related chips). Hidden by default; shown inside the ≤899 block. */
 .subnav-tabs { display: none; }
+/* The mobile-hero icon + one-sentence description are mobile/tabular-only too
+   (desktop keeps the compact identity line). */
+.topic-hero-ico { display: none; }
+.topic-banner-desc { display: none; }
 @media (max-width: 899.98px) {
   .nav-back, .nav-pagelabel { display: none !important; }   /* retired on mobile */
   .sticky-hero-inner .nav-hamburger { order: 1; margin-left: 0; }
@@ -737,112 +741,39 @@ body.custom-mode.sticky-always #content {
   .sticky-hero-inner .nav-search-mobile:active { background: rgba(255, 255, 255, 0.12); }
   .sticky-hero-inner .nav-search-mobile svg { display: block; }
 
-  /* Sub-header is the ESPN identity line: topic name (small + bold) · vertical
-     separator · related-topics horizontal scroll to its RIGHT, fading at the
-     edge. One tidy row — much shorter than the old stacked version. */
-  body.has-subnav:not(.home-mode) #sub-header.is-subnav .topic-banner {
-    flex-direction: row; align-items: center;
-    padding: 0.4rem 0 0.4rem 1rem; min-height: 0;
-  }
-  body.has-subnav:not(.home-mode) #sub-header .topic-banner-row {
-    flex-direction: row; align-items: center; gap: 0; flex: 1; min-width: 0; overflow: hidden;
-  }
-  body.has-subnav:not(.home-mode) #sub-header .topic-banner-titlegroup {
-    display: flex; flex: 0 0 auto;
-    padding: 1px 0.7rem 1px 0; margin: 0 0.7rem 0 0;
-    border-right: 1px solid #c5cdd9; border-bottom: none;
-  }
-  body.has-subnav:not(.home-mode) #sub-header .topic-banner-kind { display: none; }
-  body.has-subnav:not(.home-mode) #sub-header .topic-banner-title {
-    font-size: 0.86rem; font-weight: 700; letter-spacing: -0.01em; color: #1e2d44; white-space: nowrap;
-  }
-  /* (Legacy mobile-topic-only 86% scroll mask removed — the unified chip-scroll
-     fade handles every context identically now.) */
+  /* (The mobile TOPIC hero — big title + description + scroll-collapse, #92/#93 —
+     is being built as a dedicated pass; the topic subnav currently uses the
+     legacy title + related-chip strip, with section tabs in the body-tab row.) */
 
-  /* ── Mobile/tabular: page identity → header; "Related/Featured" lead label →
-     scroll row (#79). The header splits dark brand (left) / light page-name
-     panel (right); the subnav drops its title and leads with the label. ───── */
+  /* ── About/Terms/Prompt keep the dark→light header page-name panel (#79); only
+     TOPIC pages moved the name into the hero above. ───────────────────────── */
   .sticky-hero-inner { position: relative; }
   .sticky-hero-inner .sticky-page-name:not(:empty) {
     order: 3; display: inline-flex; align-items: center; gap: 0.6rem; align-self: stretch;
-    /* Content-width — shrink-wraps to icon+name so there's NO trailing white
-       space; ellipsizes a very long name rather than ballooning (#89). */
     flex: 0 1 auto; min-width: 0; max-width: 64vw;
     margin-left: 0; padding: 0 1.5rem;
-    /* Full-height light panel flush with the nav (no angled container, #81/#82):
-       a soft gradient + a hairline left divider against the dark brand. */
     background: linear-gradient(180deg, #f7f9fc 0%, #eaf0f8 100%);
     border-left: 1px solid rgba(255, 255, 255, 0.14);
     box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.55), inset 0 -1px 0 rgba(15, 26, 46, 0.06);
-    color: #14213d;
-    font-family: var(--font-display);
-    white-space: nowrap; overflow: hidden;
+    color: #14213d; font-family: var(--font-display); white-space: nowrap; overflow: hidden;
   }
-  /* Topic icon chip leading the name. */
-  .sticky-hero-inner .sticky-page-ico {
-    flex: none; width: 22px; height: 22px; color: #3257a0;
-  }
-  .sticky-hero-inner .sticky-page-ico svg { width: 100%; height: 100%; display: block; }
   .sticky-hero-inner .sticky-page-text {
     min-width: 0; overflow: hidden; text-overflow: ellipsis;
     font-size: 1.15rem; font-weight: 700; letter-spacing: -0.022em; line-height: 1;
   }
-  /* Drop the top-bar search icon whenever the page-name panel shows — search
-     lives in the bottom nav, and it left dead space on the panel (#89). */
   .sticky-hero-inner .sticky-page-name:not(:empty) ~ .nav-search-mobile { display: none; }
 
-  /* HOME keeps the pinned "Featured" lead label + the featured-topic chips
-     (no colon — the divider separates, #84/#85). */
+  /* HOME keeps the pinned "Featured" lead label + the featured-topic chips. */
   body.home-mode #sub-header.is-subnav .subnav-lead-label {
     display: inline-flex; align-items: center; flex: 0 0 auto;
     margin: 0 0.7rem 0 0; padding: 1px 0.7rem 1px 0;
     border-right: 1px solid #c5cdd9;
     font-family: var(--font-display); font-size: 0.86rem; font-weight: 700;
-    letter-spacing: 0.005em; color: #6b7689; white-space: nowrap;
+    letter-spacing: 0.005em; color: #6b7689; white-space: nowrap; text-transform: none;
   }
 
-  /* ── TOPIC pages (#91): title (bigger) left + inline section tabs right; NO
-     related-chip scroll, NO separate body-tabs line. ───────────────────────── */
-  body.has-subnav:not(.home-mode) #sub-header.is-subnav .topic-banner-titlegroup {
-    display: flex; flex: 0 1 auto; min-width: 0;
-  }
-  body.has-subnav:not(.home-mode) #sub-header.is-subnav .topic-banner-titleinner {
-    min-width: 0;   /* let the title ellipsize so the tabs always fit */
-  }
-  body.has-subnav:not(.home-mode) #sub-header.is-subnav .topic-banner-title {
-    font-size: 1.08rem; font-weight: 700; letter-spacing: -0.02em;
-    min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  /* The related topics moved into the "Related Topics" tab — hide the chip
-     scroll + its lead label on topic pages. */
-  body.has-subnav:not(.home-mode) #sub-header.is-subnav .subnav-lead-label,
-  body.has-subnav:not(.home-mode) #sub-header.is-subnav .subnav-chip-wrap,
-  body.has-subnav:not(.home-mode) #sub-header.is-subnav .subnav-topics-inline {
-    display: none !important;
-  }
-  /* Inline tabs, right-aligned, full subnav height (underline rides the band's
-     bottom edge). Tabs never shrink — a long title ellipsizes instead. */
-  #sub-header.is-subnav .subnav-tabs {
-    display: flex; flex: 0 0 auto; margin-left: auto; align-self: stretch;
-    align-items: stretch; gap: 0;
-  }
-  #sub-header.is-subnav .subnav-tabs .tab-pill {
-    position: relative; display: inline-flex; align-items: center; justify-content: center;
-    background: none; border: none; border-radius: 0; cursor: pointer;
-    padding: 0 0.34rem; margin: 0;
-    font-family: var(--font-display); font-size: 0.74rem; font-weight: 600;
-    letter-spacing: -0.014em; line-height: 1; white-space: nowrap; color: #6a7488;
-  }
-  #sub-header.is-subnav .subnav-tabs .tab-pill::after {
-    content: ''; position: absolute; left: 0.24rem; right: 0.24rem; bottom: 0;
-    height: 2.5px; border-radius: 3px 3px 0 0; background: transparent; transition: background .14s ease;
-  }
-  #sub-header.is-subnav .subnav-tabs .tab-pill.active { color: #14305c; }
-  #sub-header.is-subnav .subnav-tabs .tab-pill.active::after { background: #1c3a6b; }
-  @media (hover: hover) { #sub-header.is-subnav .subnav-tabs .tab-pill:hover { color: #2c3b57; } }
-
-  /* Identity-only pages (About / Terms / Prompt Builder) have no chips and no
-     tabs — the name is in the header, so the empty subnav band is hidden. */
+  /* Identity-only pages (About / Terms / Prompt Builder) — no chips, no tabs —
+     the name is in the header, so the empty subnav band is hidden. */
   #sub-header.is-subnav:not(:has(.subnav-topics-inline)):not(:has(.subnav-tabs)) { display: none; }
 }
 
@@ -14890,11 +14821,17 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-sec-sources .aii-web-row svg { color: var(--color-text-light); }
 @media (prefers-reduced-motion: reduce) { .aii-sec-body, .aii-sec-chev, .aii-sec-more svg { transition: none; } }
 
-/* Desktop folds Web Sources INTO the AI Insights sidebar (the Sources section),
-   so the standalone card is redundant here. Mobile keeps it as its own tab. */
-@media (min-width: 900px) {
-  body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-websources { display: none; }
-}
+/* Web Sources is its OWN panel now (#92/#93): a separate sidebar card below AI
+   Insights on desktop (shown), and its own tab on mobile. It reuses the .aii
+   panel + .aii-sec collapsible-section look, one section per source category. */
+.ws-panel .aii-sec.ws-cat-sec { /* categories collapse like dropdowns */ }
+.ws-panel .ws-dot { background: #5a708f; }                 /* brand slate accent */
+.ws-panel .ws-src { text-decoration: none; }
+.ws-panel .ws-src .aii-tcp-name { color: #46526b; font-weight: 500; }
+.ws-panel .ws-src:hover .aii-tcp-name { color: var(--color-primary); }
+.ws-panel .ws-src-ext { flex: none; display: inline-flex; color: var(--color-text-light); }
+.ws-panel .ws-src:hover .ws-src-ext { color: var(--color-primary); }
+.ws-panel .ws-srcs { padding-bottom: 6px; }
 
 .aii-intro { margin: 0 0 16px; font-size: 0.9rem; line-height: 1.5; color: var(--color-text-muted); }
 .aii-intro strong { font-weight: 600; color: var(--color-text); }
@@ -16032,11 +15969,10 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
   body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) .topic-main > .layout-section {
     grid-column: auto; order: 0; width: 100%; margin: 0;
   }
-  /* Sidebar order (#333): Web Sources sits ABOVE AI Insights in the left column.
-     Specificity matches the single-column stack rule (which sets shortcuts:1 /
-     websources:2) and adds .topic-side to win, flipping the two. */
-  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) .topic-side > #section-websources { order: 1; }
-  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) .topic-side > #section-shortcuts { order: 2; }
+  /* Sidebar order (#92/#93): AI Insights on top, Web Sources as its own section
+     BELOW it. */
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) .topic-side > #section-shortcuts { order: 1; }
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) .topic-side > #section-websources { order: 2; margin-top: 1.25rem; }
   /* In the narrow sidebar the AI/Web-Sources path tiles become a single-column
      list (the full-width 3–4-up grid is far too cramped at 35%). */
   body.app-mode:not(.home-mode) .topic-side .aii-pathlist,

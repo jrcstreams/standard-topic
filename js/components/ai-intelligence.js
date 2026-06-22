@@ -474,10 +474,10 @@ export function renderAIIntelligence(container, scope) {
   // that topic+track.
   function launcherPromoHTML() {
     if (scope.topic === 'home') return launcherStepsHTML();
-    // Topic pages — desktop sidebar AND mobile/tabular (#91) — both render the
-    // collapsible sections: Web Sources first, then the insight tracks (all open
-    // by default). Web Sources is folded in here, so it's no longer its own tab.
-    return `<div class="aii-secs">${sidebarSourcesHTML()}${paths.map(sidebarSecHTML).join('')}</div>`;
+    // Topic pages — desktop sidebar AND mobile/tabular — render the collapsible
+    // insight-track sections (all open by default). Web Sources is now its OWN
+    // panel/tab (renderWebSources), no longer folded in here (#92/#93).
+    return `<div class="aii-secs">${paths.map(sidebarSecHTML).join('')}</div>`;
   }
   function pathsHTML() {
     const intro = flowMode ? `<div class="aii-paths-introwrap">
