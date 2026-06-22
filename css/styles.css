@@ -761,9 +761,11 @@ body.custom-mode.sticky-always #content {
      panel (right); the subnav drops its title and leads with the label. ───── */
   .sticky-hero-inner { position: relative; }
   .sticky-hero-inner .sticky-page-name:not(:empty) {
-    order: 3; display: flex; align-items: center; gap: 0.6rem; align-self: stretch;
-    flex: 1 1 auto; min-width: 0;
-    margin-left: 0; padding: 0 3rem 0 1.5rem;
+    order: 3; display: inline-flex; align-items: center; gap: 0.6rem; align-self: stretch;
+    /* Content-width — shrink-wraps to icon+name so there's NO trailing white
+       space; ellipsizes a very long name rather than ballooning (#89). */
+    flex: 0 1 auto; min-width: 0; max-width: 64vw;
+    margin-left: 0; padding: 0 1.5rem;
     /* Full-height light panel flush with the nav (no angled container, #81/#82):
        a soft gradient + a hairline left divider against the dark brand. */
     background: linear-gradient(180deg, #f7f9fc 0%, #eaf0f8 100%);
@@ -775,26 +777,16 @@ body.custom-mode.sticky-always #content {
   }
   /* Topic icon chip leading the name. */
   .sticky-hero-inner .sticky-page-ico {
-    flex: none; width: 21px; height: 21px; color: #3257a0;
+    flex: none; width: 22px; height: 22px; color: #3257a0;
   }
   .sticky-hero-inner .sticky-page-ico svg { width: 100%; height: 100%; display: block; }
   .sticky-hero-inner .sticky-page-text {
     min-width: 0; overflow: hidden; text-overflow: ellipsis;
-    font-size: 1.12rem; font-weight: 700; letter-spacing: -0.022em; line-height: 1;
+    font-size: 1.15rem; font-weight: 700; letter-spacing: -0.022em; line-height: 1;
   }
-  /* With the light panel present the search icon rides it → ink button, right. */
-  .sticky-hero-inner .sticky-page-name:not(:empty) ~ .nav-search-mobile {
-    position: absolute; right: 0.55rem; top: 50%; transform: translateY(-50%);
-    margin-left: 0; width: 34px; height: 34px; border-radius: 9px; color: #2c3b57;
-  }
-  .sticky-hero-inner .sticky-page-name:not(:empty) ~ .nav-search-mobile:active {
-    background: rgba(15, 26, 46, 0.08);
-  }
-  @media (hover: hover) {
-    .sticky-hero-inner .sticky-page-name:not(:empty) ~ .nav-search-mobile:hover {
-      background: rgba(15, 26, 46, 0.07);
-    }
-  }
+  /* Drop the top-bar search icon whenever the page-name panel shows — search
+     lives in the bottom nav, and it left dead space on the panel (#89). */
+  .sticky-hero-inner .sticky-page-name:not(:empty) ~ .nav-search-mobile { display: none; }
 
   /* Pinned "Related:" / "Featured:" lead label — takes the old title's spot. */
   #sub-header.is-subnav .subnav-lead-label {

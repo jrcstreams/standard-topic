@@ -1104,8 +1104,9 @@ function trimStickyNav() {
       else used = next;
     });
 
-    // "More" only earns its place when something was actually hidden.
-    if (moreBtn) moreBtn.style.display = hideRest ? '' : 'none';
+    // "More" stays visible always — it opens the full topic list, so even when
+    // every featured link fits, the rest of the catalog is one click away (#88).
+    if (moreBtn) moreBtn.style.display = '';
   };
 
   requestAnimationFrame(run);
@@ -1144,6 +1145,12 @@ function renderStickyHeroBar(container, route) {
     if (_t) pgIcon = topicIconSVG(_t.icon || 'globe', 'sticky-page-ico');
   }
   const pgNameHTML = pgLabel ? `${pgIcon}<span class="sticky-page-text">${escapeHTML(pgLabel)}</span>` : '';
+  // Desktop main-nav topic links — render the FULL featured set (not a hardcoded
+  // six) so wide screens show as many as fit; trimStickyNav fits-to-width and
+  // keeps "More" so the rest stay reachable (#88).
+  const navTopicLinksHTML = featured
+    .map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="sticky-nav-topic">${escapeHTML(t.name)}</a>`)
+    .join('');
   // Each featured parent is an accordion: tap the row to reveal its subtopics
   // (so every topic is reachable from the menu); the parent itself is reachable
   // via a prominent "All {name}" link at the top of the nested list. Parents
@@ -1183,12 +1190,7 @@ function renderStickyHeroBar(container, route) {
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </button>
       <nav class="sticky-nav-topics" aria-label="Top topics">
-        <a href="#/topic/world" class="sticky-nav-topic">World</a>
-        <a href="#/topic/politics" class="sticky-nav-topic">Politics</a>
-        <a href="#/topic/business-finance" class="sticky-nav-topic">Business &amp; Finance</a>
-        <a href="#/topic/technology" class="sticky-nav-topic">Technology</a>
-        <a href="#/topic/sports" class="sticky-nav-topic">Sports</a>
-        <a href="#/topic/science" class="sticky-nav-topic">Science</a>
+        ${navTopicLinksHTML}
         <button type="button" class="sticky-nav-more" id="sticky-nav-more" aria-haspopup="dialog">More
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
