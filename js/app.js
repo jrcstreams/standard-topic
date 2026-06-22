@@ -298,16 +298,28 @@ function renderLayout(route) {
     const relatedLinksHTML = related.map(t =>
       `<a href="#/topic/${t.slug}" class="subnav-topic-link">${escapeHTML(t.name)}</a>`
     ).join('');
+    const topicDesc = getTopicDescription(topic.slug);
+    // Mobile/tabular renders this markup as a hero (icon + big title +
+    // one-sentence description + Related chips + section tabs); desktop styles it
+    // as the compact identity line (title + chips). The hero icon, description,
+    // and inline tabs are mobile-only (CSS).
     subHeader.innerHTML = `
       <div class="topic-banner">
         <div class="topic-banner-row">
+          <span class="topic-hero-ico" aria-hidden="true">${topicIconSVG(topic.icon || 'globe', 'topic-hero-ico-svg')}</span>
           ${titleGroup(topic.icon || 'globe', topic.name, 'Topic')}
+          ${topicDesc ? `<p class="topic-banner-desc">${escapeHTML(topicDesc)}</p>` : ''}
           ${related.length > 0 ? `
             <span class="subnav-lead-label" aria-hidden="true">Related</span>
             <div class="subnav-topics-inline">
               ${relatedLinksHTML}
             </div>
           ` : ''}
+          <nav class="subnav-tabs" aria-label="Section navigation">
+            <button type="button" class="tab-pill tab-pill-newsfeed" data-tab="newsfeed">News Feed</button>
+            <button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">AI Insights</button>
+            <button type="button" class="tab-pill tab-pill-websources" data-tab="websources">Web Sources</button>
+          </nav>
         </div>
       </div>
     `;
@@ -1629,7 +1641,6 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // time) is unaffected; at ≥1024 they become the two columns (#14).
     container.innerHTML = `
       <div class="topic-layout" id="topic-layout">
-        ${bodyTabsRow({ showRelated: false, showWebSources: true })}
         <div class="topic-side">
           <section class="layout-section" id="section-shortcuts"></section>
           <section class="layout-section" id="section-websources"></section>

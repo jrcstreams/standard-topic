@@ -6300,6 +6300,82 @@ body.app-mode .topic-layout {
 .subnav-chip-arrow-left  { left: 0.5rem; }
 .subnav-chip-arrow-right { right: 0.5rem; }
 
+/* ════════════ Mobile/tabular TOPIC hero (#92/#93) ════════════════════════════
+   Overrides the legacy grid subnav (above) for TOPIC pages only (home keeps its
+   own featured-chip layout). A left-aligned hero: icon, big title, one-sentence
+   description, Related chips, then the section tabs. Brand colors, grey band. */
+@media (max-width: 899.98px) {
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner {
+    display: block !important; overflow: visible !important;
+    padding: 0.95rem 1rem 0 !important; background: #f3f5f9; min-height: 0;
+  }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-row {
+    display: flex !important; flex-direction: column !important; align-items: stretch !important;
+    grid-template-areas: none !important; grid-template-columns: none !important;
+    gap: 0 !important; width: 100%; overflow: visible;
+  }
+  /* Hero icon — brand-navy chip, its own line above the title. */
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-hero-ico {
+    display: inline-flex !important; align-items: center; justify-content: center;
+    width: 40px; height: 40px; flex: none; border-radius: 11px;
+    background: var(--color-primary); color: #fff; margin: 0 0 0.6rem;
+  }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-hero-ico-svg { width: 22px; height: 22px; }
+  /* Title group → just the big title. */
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-titlegroup {
+    display: flex !important; flex: none !important; min-width: 0; max-width: 100%;
+    grid-area: auto !important; margin: 0 !important; padding: 0 !important; border: none !important;
+  }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-titleinner { min-width: 0; max-width: 100%; }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-kind { display: none !important; }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-title {
+    font-size: 1.7rem !important; font-weight: 800; letter-spacing: -0.03em; line-height: 1.08; color: #14213d;
+    min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  /* One-sentence description. */
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-desc {
+    display: block !important; margin: 0.45rem 0 0; max-width: 52ch;
+    font-family: var(--font-family); font-size: 0.92rem; line-height: 1.42; color: #5a6678;
+  }
+  /* "Related" label + chips (the chips keep the horizontal scroll, styled as pills). */
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-lead-label {
+    display: block !important; grid-area: auto !important; margin: 0.9rem 0 0.5rem !important;
+    padding: 0 !important; border: none !important;
+    font-family: var(--font-family); font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase; color: #98a2b4;
+  }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-chip-wrap {
+    grid-area: auto !important; margin: 0 -1rem 0 0 !important; min-width: 0;
+  }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topics-inline {
+    padding: 0 1rem 0 0 !important; gap: 0.5rem !important;
+  }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topic-link {
+    padding: 0.34rem 0.75rem !important; border: 1px solid #d7dfea; border-radius: 999px;
+    background: #fff; font-family: var(--font-display); font-size: 0.8rem !important; font-weight: 600;
+    color: #46526b !important; white-space: nowrap; text-decoration: none;
+  }
+  /* Section tabs — full-width underline tabs across the bottom of the hero. */
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs {
+    display: flex !important; align-items: stretch; gap: 0; margin: 0.95rem 0 0;
+    border-top: 1px solid #dde3ec;
+  }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill {
+    position: relative; display: inline-flex; align-items: center; justify-content: center;
+    flex: 0 0 auto; background: none; border: none; border-radius: 0; cursor: pointer;
+    padding: 0.65rem 0; margin: 0 1.3rem 0 0;
+    font-family: var(--font-display); font-size: 0.86rem; font-weight: 600;
+    letter-spacing: -0.012em; line-height: 1; white-space: nowrap; color: #6a7488;
+  }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: -1px;
+    height: 2.5px; border-radius: 3px 3px 0 0; background: transparent; transition: background .14s ease;
+  }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill.active { color: #14305c; }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill.active::after { background: #1c3a6b; }
+  @media (hover: hover) { body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill:hover { color: #2c3b57; } }
+}
+
 /* Mobile / tabbed-nav widths: the chip strip is now flush in the
    middle row of the subnav grid, so no negative-margin
    compensation is needed for the arrow vertical centering — its
