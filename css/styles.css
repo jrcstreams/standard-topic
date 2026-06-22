@@ -6318,49 +6318,17 @@ body.app-mode .topic-layout {
   mask-image: linear-gradient(to right, transparent 0%, #000 26px, #000 calc(100% - 26px), transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 26px, #000 calc(100% - 26px), transparent 100%);
 }
-/* Desktop fade — wide three-stop gradient because the hover-only
-   scroll arrow needs ~50px of fully-transparent area to sit on top
-   of without chip text bleeding through. Only kicks in at
-   (hover: hover) widths where the arrows actually render. */
+/* Hover/mouse mode: the arrows flank the chips in a reserved gutter, so the edge
+   fade is unnecessary here — and the fade hid the partially-clipped next chip,
+   leaving it stranded in a wide faded gap beside the arrow (#78). Drop the fade
+   in hover mode; the gutter + arrow provide the separation. (Touch keeps the
+   fade below — it has no arrows.) */
 @media (hover: hover) and (pointer: fine) {
-  /* Long, prominent fade that ends right where the arrow chip
-     sits (arrows are 1rem/2rem in from the edge, ~22px wide, so
-     the arrow's outer edge is ~38–54px from the wrap edge). We
-     ramp the gradient from fully opaque to transparent over a
-     wide region so chip text clearly softens as it approaches
-     the arrow — no hard cliff. */
-  .subnav-chip-wrap.can-scroll-right .subnav-topics-inline {
-    mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 72px), transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 72px), transparent 100%);
-  }
-  .subnav-chip-wrap.can-scroll-left .subnav-topics-inline {
-    mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 72px), transparent 100%);
-    -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 72px), transparent 100%);
-  }
+  .subnav-chip-wrap.can-scroll-left .subnav-topics-inline,
+  .subnav-chip-wrap.can-scroll-right .subnav-topics-inline,
   .subnav-chip-wrap.can-scroll-left.can-scroll-right .subnav-topics-inline {
-    mask-image: linear-gradient(to right,
-      transparent 0%, #000 72px,
-      #000 calc(100% - 72px), transparent 100%);
-    -webkit-mask-image: linear-gradient(to right,
-      transparent 0%, #000 72px,
-      #000 calc(100% - 72px), transparent 100%);
-  }
-  /* Desktop: a clean ~34px edge fade (no arrows to clear anymore). */
-  @media (min-width: 900px) {
-    .subnav-chip-wrap.can-scroll-right .subnav-topics-inline {
-      mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 34px), transparent 100%);
-      -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 34px), transparent 100%);
-    }
-    .subnav-chip-wrap.can-scroll-left .subnav-topics-inline {
-      mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 34px), transparent 100%);
-      -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 34px), transparent 100%);
-    }
-    .subnav-chip-wrap.can-scroll-left.can-scroll-right .subnav-topics-inline {
-      mask-image: linear-gradient(to right,
-        transparent 0%, #000 34px, #000 calc(100% - 34px), transparent 100%);
-      -webkit-mask-image: linear-gradient(to right,
-        transparent 0%, #000 34px, #000 calc(100% - 34px), transparent 100%);
-    }
+    mask-image: none;
+    -webkit-mask-image: none;
   }
 }
 
