@@ -18,7 +18,7 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp245';
 import { initInsightModal } from './components/insight-modal.js?v=20260617-revamp272';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260622-revamp307';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260622-revamp308';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260622-revamp307';
 import { renderWebSources } from './components/websources.js?v=20260622-revamp294';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp245';

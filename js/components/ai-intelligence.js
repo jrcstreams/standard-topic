@@ -716,8 +716,12 @@ export function renderAIIntelligence(container, scope) {
   function furtherInsightsHTML() {
     const list = groupShortcuts(curGroup);
     if (!list.length) return '';
+    // Shortcut prompts carry a {TOPIC} token (substituted server-side at
+    // generation); interpolate it with the topic name for the client explore.
+    const topicName = scope.label || scope.topic || '';
+    const fiPrompt = (s) => String(s.prompt || `Give me a thorough, current briefing on "${s.name}" for ${topicName}. Be specific and cite sources.`).replace(/\{TOPIC\}/g, topicName);
     const rows = list.map((s) => `
-      <button type="button" class="aii-fi-row" data-fi-name="${escAttr(s.name)}" data-fi-prompt="${escAttr(s.prompt || `Give me a thorough, current briefing on "${s.name}" for ${scope.label}. Be specific and cite sources.`)}">
+      <button type="button" class="aii-fi-row" data-fi-name="${escAttr(s.name)}" data-fi-prompt="${escAttr(fiPrompt(s))}">
         <span class="aii-fi-tx"><span class="aii-fi-name">${esc(s.name)}</span>${s.description ? `<span class="aii-fi-desc">${esc(s.description)}</span>` : ''}</span>
         <span class="aii-fi-go" aria-hidden="true">${ICON_ASK}<span>Ask AI</span></span>
       </button>`).join('');
