@@ -713,6 +713,11 @@ body.custom-mode.sticky-always #content {
 .nav-back { display: none; }
 .nav-pagelabel { display: none; }
 .nav-search-mobile { display: none; }
+/* The header page-name panel + the subnav "Related/Featured" lead label are a
+   mobile/tabular-only treatment (≥900 keeps topic links in the nav + the title
+   in the subnav). Hidden by default; shown inside the ≤899 block. */
+.sticky-page-name { display: none; }
+.subnav-lead-label { display: none; }
 @media (max-width: 899.98px) {
   .nav-back, .nav-pagelabel { display: none !important; }   /* retired on mobile */
   .sticky-hero-inner .nav-hamburger { order: 1; margin-left: 0; }
@@ -758,6 +763,44 @@ body.custom-mode.sticky-always #content {
     -webkit-mask-image: linear-gradient(to right, #000 86%, transparent);
     mask-image: linear-gradient(to right, #000 86%, transparent);
   }
+
+  /* ── Mobile/tabular: page identity → header; "Related/Featured" lead label →
+     scroll row (#79). The header splits dark brand (left) / light page-name
+     panel (right); the subnav drops its title and leads with the label. ───── */
+  .sticky-hero-inner { position: relative; }
+  .sticky-hero-inner .sticky-page-name:not(:empty) {
+    order: 3; display: flex; align-items: center; align-self: stretch;
+    flex: 1 1 auto; min-width: 0;
+    margin-left: 0.7rem; padding: 0 2.9rem 0 1.05rem;
+    background: #eef1f6; color: #16223b;
+    font-family: var(--font-display); font-size: 1.02rem; font-weight: 700;
+    letter-spacing: -0.015em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    /* Angled left edge — the dark bar shows through the slant (mockup split). */
+    clip-path: polygon(15px 0, 100% 0, 100% 100%, 0 100%);
+  }
+  /* With the light panel present the search icon rides it → ink, pinned right. */
+  .sticky-hero-inner .sticky-page-name:not(:empty) ~ .nav-search-mobile {
+    position: absolute; right: 0.6rem; top: 50%; transform: translateY(-50%);
+    margin-left: 0; color: #2c3b57;
+  }
+  .sticky-hero-inner .sticky-page-name:not(:empty) ~ .nav-search-mobile:active {
+    background: rgba(15, 26, 46, 0.08);
+  }
+
+  /* Pinned "Related:" / "Featured:" lead label — takes the old title's spot. */
+  #sub-header.is-subnav .subnav-lead-label {
+    display: inline-flex; align-items: center; flex: 0 0 auto;
+    margin: 0 0.7rem 0 0; padding: 1px 0.7rem 1px 0;
+    border-right: 1px solid #c5cdd9;
+    font-family: var(--font-display); font-size: 0.86rem; font-weight: 700;
+    letter-spacing: 0.005em; color: #6b7689; white-space: nowrap;
+  }
+  #sub-header.is-subnav .subnav-lead-label::after { content: ':'; }
+  /* Hide the in-subnav title (it lives in the header now). */
+  body.has-subnav:not(.home-mode) #sub-header.is-subnav .topic-banner-titlegroup { display: none; }
+  /* Identity-only pages (About / Terms / Prompt Builder) have no chips — the
+     name is in the header, so the otherwise-empty subnav band is hidden. */
+  #sub-header.is-subnav:not(:has(.subnav-topics-inline)) { display: none; }
 }
 
 /* Search pill — opens the Topics modal with input focused. Mirrors

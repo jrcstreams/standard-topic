@@ -237,6 +237,7 @@ function renderLayout(route) {
     subHeader.innerHTML = `
       <div class="topic-banner">
         <div class="topic-banner-row topic-banner-row--home-topics-only">
+          <span class="subnav-lead-label" aria-hidden="true">Featured</span>
           <div class="subnav-topics-inline home-subnav-topics">
             ${topicsHTML}
             <a href="#" class="subnav-action-link subnav-all-topics-link" id="subnav-all-topics-desktop">All Topics +</a>
@@ -302,6 +303,7 @@ function renderLayout(route) {
         <div class="topic-banner-row">
           ${titleGroup(topic.icon || 'globe', topic.name, 'Topic')}
           ${related.length > 0 ? `
+            <span class="subnav-lead-label" aria-hidden="true">Related</span>
             <div class="subnav-topics-inline">
               ${relatedLinksHTML}
             </div>
@@ -1166,6 +1168,7 @@ function renderStickyHeroBar(container, route) {
       <a href="#/" class="sticky-brand" id="sticky-brand-link">
         <span class="sticky-title">Standard Topic</span>
       </a>
+      <span class="sticky-page-name">${escapeHTML(pageLabelFor(route))}</span>
       <button type="button" class="nav-search-mobile" id="nav-search-mobile" aria-label="Search">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </button>
