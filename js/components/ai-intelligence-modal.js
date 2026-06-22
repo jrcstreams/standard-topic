@@ -9,7 +9,7 @@
 //               AI Intelligence" handles switching PATHS.
 //
 // Participates in the global single-modal coordinator (`close-all-modals`).
-import { renderAIIntelligence } from './ai-intelligence.js?v=20260622-revamp294';
+import { renderAIIntelligence } from './ai-intelligence.js?v=20260622-revamp307';
 import { getFeaturedTopics, getAllTopics, getTopicBySlug, getShortcutsForTopic } from '../utils/data.js';
 
 let overlayEl = null;
@@ -93,14 +93,15 @@ function changeTopic(key) {
 function scopeFor(topic, label, group, opts) {
   const shared = {
     inModal: true, initialGroup: group, initialInsight: (opts && opts.insight) || null,
+    initialBuilder: !!(opts && opts.builder),
     topics: topicList(), allTopics: allTopicsList(),
     onChangeTopic: changeTopic, topicPicker: pickerMode, pickTopic: !!(opts && opts.pickTopic),
     onView: setChrome,
   };
   if (topic === 'home') {
-    const desc = {}; const icons = {};
-    try { (getShortcutsForTopic('home') || []).forEach((s) => { if (s && s.name) { desc[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } }); } catch (_) {}
-    return { ...shared, topic: 'home', label: "today's world", descriptions: desc, icons, hideGroups: ['topic-specific'], topicKey: 'home' };
+    const desc = {}; const icons = {}; let shortcuts = [];
+    try { shortcuts = getShortcutsForTopic('home') || []; shortcuts.forEach((s) => { if (s && s.name) { desc[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } }); } catch (_) {}
+    return { ...shared, topic: 'home', label: "today's world", descriptions: desc, icons, shortcuts, hideGroups: ['topic-specific'], topicKey: 'home' };
   }
   // Resolve by slug, then by name across ALL topics (not just featured) so
   // subtopics (e.g. "Blockchain & Web3") resolve and get their shortcut
@@ -110,9 +111,9 @@ function scopeFor(topic, label, group, opts) {
     || null;
   const name = t ? t.name : label || topic;
   const slug = t ? t.slug : null;
-  const desc = {}; const icons = {};
-  try { if (slug) (getShortcutsForTopic(slug) || []).forEach((s) => { if (s && s.name) { desc[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } }); } catch (_) {}
-  return { ...shared, topic: name, label: name, descriptions: desc, icons, topicKey: slug || (topic || '') };
+  const desc = {}; const icons = {}; let shortcuts = [];
+  try { if (slug) { shortcuts = getShortcutsForTopic(slug) || []; shortcuts.forEach((s) => { if (s && s.name) { desc[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } }); } } catch (_) {}
+  return { ...shared, topic: name, label: name, descriptions: desc, icons, shortcuts, topicKey: slug || (topic || '') };
 }
 
 // Header chrome follows the flip-nav step: the INTRO (topic picker, view ==='topic')
@@ -163,7 +164,7 @@ function open(detail) {
   // Pre-set the chrome so there's no flash before the component's first onView.
   setChrome(pickerMode && !detail.topic ? 'topic' : 'paths');
 
-  renderBody(scopeFor(baseTopic, detail.label, detail.group, { pickTopic: pickerMode && !detail.topic, insight: detail.insight }));
+  renderBody(scopeFor(baseTopic, detail.label, detail.group, { pickTopic: pickerMode && !detail.topic, insight: detail.insight, builder: detail.builder }));
 
   overlayEl.style.display = 'flex';
   document.body.style.overflow = 'hidden';
