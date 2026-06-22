@@ -753,34 +753,25 @@ body.custom-mode.sticky-always #content {
   body.has-subnav:not(.home-mode) #sub-header .topic-banner-title {
     font-size: 0.86rem; font-weight: 700; letter-spacing: -0.01em; color: #1e2d44; white-space: nowrap;
   }
-  /* The strip fades at its right edge ONLY when it actually overflows and can
-     scroll (#383) — trim-to-fit normally drops the overflow, so a permanent
-     fade would just clip the last visible chip and read as a cutoff. */
-  body.has-subnav:not(.home-mode) #sub-header .subnav-topics-inline {
-    padding-right: 1rem;
-  }
-  body.has-subnav:not(.home-mode) #sub-header .subnav-chip-wrap.has-scroll .subnav-topics-inline {
-    -webkit-mask-image: linear-gradient(to right, #000 86%, transparent);
-    mask-image: linear-gradient(to right, #000 86%, transparent);
-  }
+  /* (Legacy mobile-topic-only 86% scroll mask removed — the unified chip-scroll
+     fade handles every context identically now.) */
 
   /* ── Mobile/tabular: page identity → header; "Related/Featured" lead label →
      scroll row (#79). The header splits dark brand (left) / light page-name
      panel (right); the subnav drops its title and leads with the label. ───── */
   .sticky-hero-inner { position: relative; }
   .sticky-hero-inner .sticky-page-name:not(:empty) {
-    order: 3; display: flex; align-items: center; gap: 0.55rem; align-self: stretch;
+    order: 3; display: flex; align-items: center; gap: 0.6rem; align-self: stretch;
     flex: 1 1 auto; min-width: 0;
     margin-left: 0; padding: 0 3rem 0 1.5rem;
-    /* Soft, airy panel (was flat dull grey) with a crisp inner highlight at the
-       slant so the dark→light transition reads as an intentional edge (#80). */
-    background: linear-gradient(180deg, #f6f8fc 0%, #e8eef7 100%);
-    box-shadow: inset 1.5px 0 0 rgba(255, 255, 255, 0.65);
+    /* Full-height light panel flush with the nav (no angled container, #81/#82):
+       a soft gradient + a hairline left divider against the dark brand. */
+    background: linear-gradient(180deg, #f7f9fc 0%, #eaf0f8 100%);
+    border-left: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.55), inset 0 -1px 0 rgba(15, 26, 46, 0.06);
     color: #14213d;
     font-family: var(--font-display);
     white-space: nowrap; overflow: hidden;
-    /* Angled left edge — the dark bar shows through the slant (mockup split). */
-    clip-path: polygon(20px 0, 100% 0, 100% 100%, 0 100%);
   }
   /* Topic icon chip leading the name. */
   .sticky-hero-inner .sticky-page-ico {
@@ -813,7 +804,7 @@ body.custom-mode.sticky-always #content {
     font-family: var(--font-display); font-size: 0.86rem; font-weight: 700;
     letter-spacing: 0.005em; color: #6b7689; white-space: nowrap;
   }
-  #sub-header.is-subnav .subnav-lead-label::after { content: ':'; }
+  /* No colon — the vertical divider after the label does the separating (#84/#85). */
   /* Hide the in-subnav title (it lives in the header now). */
   body.has-subnav:not(.home-mode) #sub-header.is-subnav .topic-banner-titlegroup { display: none; }
   /* Identity-only pages (About / Terms / Prompt Builder) have no chips — the
@@ -6339,16 +6330,10 @@ body.app-mode .topic-layout {
   transform: translate(0, -50%) scale(1.04);
 }
 .subnav-chip-arrow:active { transform: translate(0, calc(-50% + 1px)); }
-.subnav-chip-arrow-left  { left: 1rem; }
-.subnav-chip-arrow-right { right: 1rem; }
-/* Desktop banner has wider (2rem) horizontal padding, but the
-   arrows sit slightly inside the chip area (not aligned to the
-   page-padding edge) so the strip visually extends further right
-   before fading into the arrow. */
-@media (min-width: 900px) {
-  .subnav-chip-arrow-left  { left: 0.5rem; }
-  .subnav-chip-arrow-right { right: 0.5rem; }
-}
+/* Sit the chevron within the 34px edge-fade so the softened chip never reads as
+   "covered" — consistent at every width. */
+.subnav-chip-arrow-left  { left: 0.5rem; }
+.subnav-chip-arrow-right { right: 0.5rem; }
 
 /* Mobile / tabbed-nav widths: the chip strip is now flush in the
    middle row of the subnav grid, so no negative-margin
@@ -6363,70 +6348,31 @@ body.app-mode .topic-layout {
    the edges — there's nothing to stack against because the chips
    ARE the gradient at that edge. The subnav band background
    (#f7f8fa) shows through. Arrows sit above naturally. */
-/* Base fade — applies at ALL widths (incl. mobile/touch, which has no scroll
-   arrows) so the chip strip visibly softens at any scrollable edge (#69/#70).
-   A modest ~26px ramp is enough to signal "more, scroll →". Desktop hover
-   widens this below to clear the arrow chips. */
+/* ═══════════════ Unified chip-scroll system (home + topic, every width) ═══
+   ONE behavior everywhere — no per-context (.home-mode vs not) or per-pointer
+   branches that drift out of sync (the source of the inconsistency, #83/#86/#87):
+   • The strip scrolls horizontally.
+   • A consistent ~34px edge fade softens whichever edge can scroll, so the next
+     chip peeks + fades = a clear "more →" cue. NO gutter (it hid the peek and
+     stranded a chip, #78).
+   • On hover-capable pointers a small chevron sits over the faded edge for
+     click-scroll; the fade keeps the chip beneath it soft so it never reads as
+     "covering" text. Touch just swipes (chevrons hidden). */
 .subnav-chip-wrap.can-scroll-right .subnav-topics-inline {
-  mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 26px), transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 26px), transparent 100%);
+  mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 34px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 34px), transparent 100%);
 }
 .subnav-chip-wrap.can-scroll-left .subnav-topics-inline {
-  mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 26px), transparent 100%);
-  -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 26px), transparent 100%);
+  mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 34px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 34px), transparent 100%);
 }
 .subnav-chip-wrap.can-scroll-left.can-scroll-right .subnav-topics-inline {
-  mask-image: linear-gradient(to right, transparent 0%, #000 26px, #000 calc(100% - 26px), transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 26px, #000 calc(100% - 26px), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 34px, #000 calc(100% - 34px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 34px, #000 calc(100% - 34px), transparent 100%);
 }
-/* Hover/mouse mode: the arrows flank the chips in a reserved gutter, so the edge
-   fade is unnecessary here — and the fade hid the partially-clipped next chip,
-   leaving it stranded in a wide faded gap beside the arrow (#78). Drop the fade
-   in hover mode; the gutter + arrow provide the separation. (Touch keeps the
-   fade below — it has no arrows.) */
-@media (hover: hover) and (pointer: fine) {
-  .subnav-chip-wrap.can-scroll-left .subnav-topics-inline,
-  .subnav-chip-wrap.can-scroll-right .subnav-topics-inline,
-  .subnav-chip-wrap.can-scroll-left.can-scroll-right .subnav-topics-inline {
-    mask-image: none;
-    -webkit-mask-image: none;
-  }
-}
-
-/* Mobile / touch fade — much narrower (24px linear ramp) because
-   there's no scroll arrow to camouflage. The fade just hints
-   "more scrollable content" without sandwiching the entire chip
-   list when the user is mid-scroll with content on both sides.
-   Activates whenever the device lacks a hover-capable pointer
-   (phones, tablets, touch-only laptops). */
-@media (pointer: coarse), (hover: none) {
-  .subnav-chip-wrap.can-scroll-right .subnav-topics-inline {
-    mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 24px), transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 24px), transparent 100%);
-  }
-  .subnav-chip-wrap.can-scroll-left .subnav-topics-inline {
-    mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 24px), transparent 100%);
-    -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 24px), transparent 100%);
-  }
-  .subnav-chip-wrap.can-scroll-left.can-scroll-right .subnav-topics-inline {
-    mask-image: linear-gradient(to right,
-      transparent 0%, #000 24px, #000 calc(100% - 24px), transparent 100%);
-    -webkit-mask-image: linear-gradient(to right,
-      transparent 0%, #000 24px, #000 calc(100% - 24px), transparent 100%);
-  }
-}
-
-/* Arrows revealed only on hover-capable pointers and only when the
-   strip has scroll headroom in that direction. */
-/* Scroll arrows FLANK the strip (never overlap chips, #75/#76/#77): when the
-   strip can scroll in a direction, the wrap reserves a gutter on that side and
-   the arrow sits in it — the chips inset to clear it instead of hiding under it.
-   Hover-capable (mouse) only; touch swipes. */
 @media (hover: hover) and (pointer: fine) {
   .subnav-chip-wrap.can-scroll-left  .subnav-chip-arrow-left  { display: inline-flex; }
   .subnav-chip-wrap.can-scroll-right .subnav-chip-arrow-right { display: inline-flex; }
-  .subnav-chip-wrap.can-scroll-left  { padding-left: 38px; }
-  .subnav-chip-wrap.can-scroll-right { padding-right: 38px; }
 }
 
 /* Desktop (≥900px): chip wrap fills the available space between the
