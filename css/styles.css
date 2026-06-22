@@ -6389,10 +6389,16 @@ body.app-mode .topic-layout {
 
 /* Arrows revealed only on hover-capable pointers and only when the
    strip has scroll headroom in that direction. */
-/* Scroll arrows removed (#75/#76): the overlay circles sat ON TOP of the edge
-   chips ('World' / 'All Topics' got covered). The edge fade alone signals
-   scrollability now; the strip scrolls via trackpad/touch swipe. */
-.subnav-chip-arrow { display: none !important; }
+/* Scroll arrows FLANK the strip (never overlap chips, #75/#76/#77): when the
+   strip can scroll in a direction, the wrap reserves a gutter on that side and
+   the arrow sits in it — the chips inset to clear it instead of hiding under it.
+   Hover-capable (mouse) only; touch swipes. */
+@media (hover: hover) and (pointer: fine) {
+  .subnav-chip-wrap.can-scroll-left  .subnav-chip-arrow-left  { display: inline-flex; }
+  .subnav-chip-wrap.can-scroll-right .subnav-chip-arrow-right { display: inline-flex; }
+  .subnav-chip-wrap.can-scroll-left  { padding-left: 38px; }
+  .subnav-chip-wrap.can-scroll-right { padding-right: 38px; }
+}
 
 /* Desktop (≥900px): chip wrap fills the available space between the
    title group and the (hidden) tab pills on the same row. The chip
