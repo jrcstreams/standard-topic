@@ -14929,7 +14929,7 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* ===== Builder modal redesign: tabs + AI Brief + per-section explore ======== */
 /* Sticky top: topic name + tab row (replaces Back / Prev / Next / All Insights). */
 .aii-builder-topbar { position: sticky; top: 0; z-index: 9; margin: 0 -1.1rem; padding: 12px 1.1rem 0; background: #f3f5f8; border-bottom: 1px solid var(--color-surface-border); }
-.aii-builder-topic { margin: 0 0 9px; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; color: var(--color-primary); font-size: clamp(1.4rem, 1.1rem + 1vw, 1.8rem); line-height: 1.12; }
+.aii-builder-topic { margin: 0 0 8px; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.018em; color: var(--color-primary); font-size: clamp(1.2rem, 1.05rem + 0.5vw, 1.45rem); line-height: 1.12; }
 .aii-builder-topic--btn { display: inline-flex; align-items: center; gap: 6px; border: none; background: none; cursor: pointer; padding: 0; }
 .aii-builder-topic--btn svg { width: 18px; height: 18px; color: var(--color-text-light); }
 .aii-builder-topic--btn:hover { color: #1f2d4d; }
@@ -14943,34 +14943,47 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-tab:focus-visible span { text-decoration: underline; text-underline-offset: 3px; }
 
 /* AI Brief header — prominent label, summary beneath, updated stamp at right. */
-.aii-brief-head { padding: 16px 0 2px; }
-.aii-brief-toprow { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.aii-brief-label { display: inline-flex; align-items: center; gap: 7px; color: var(--color-primary); font-weight: 800; font-size: 1.04rem; letter-spacing: 0.01em; }
-.aii-brief-label svg { width: 18px; height: 18px; }
-.aii-brief-meta, .aii-brief-updated { font-size: 0.76rem; color: var(--color-text-light); white-space: nowrap; }
-.aii-brief-sum { margin: 7px 0 0; font-size: 0.95rem; color: var(--color-text-muted); line-height: 1.45; }
-.aii-brief-actions { margin-top: 13px; }
+.aii-builder-secs { padding-top: 0; padding-bottom: 2rem; }
+/* AI Brief header: prominent label, summary beneath, actions to the right. */
+.aii-bhead { padding: 16px 0 6px; }
+.aii-bhead-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.aii-bhead-lead { min-width: 0; flex: 1 1 240px; }
+.aii-brief-label { display: inline-flex; align-items: center; gap: 7px; color: var(--color-primary); font-weight: 800; font-size: 1.05rem; letter-spacing: 0.01em; white-space: nowrap; }
+.aii-brief-label svg { width: 17px; height: 17px; }
+.aii-brief-sum { margin: 6px 0 0; font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.45; }
+.aii-brief-meta, .aii-brief-updated { display: block; margin-top: 5px; font-size: 0.74rem; color: var(--color-text-light); }
+.aii-brief-actions { flex: none; margin-top: 2px; }
 
-/* Per-section "explore this further" pill. */
-.aii-sec-explore-row { margin-top: 11px; }
+/* Per-section "Explore this further" — toggles an inline dropdown in place. */
+.aii-sec-explore-row { margin-top: 12px; }
 .aii-sec-explore { display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px; border: 1px solid var(--color-surface-border); border-radius: 999px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: var(--color-primary); transition: border-color .14s ease, background .14s ease; }
-.aii-sec-explore:hover { border-color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 5%, #fff); }
-.aii-sec-explore svg:first-of-type { width: 14px; height: 14px; }
-.aii-sec-explore svg:last-of-type { width: 13px; height: 13px; color: var(--color-text-light); }
+.aii-sec-explore:hover, .aii-sec-explore[aria-expanded="true"] { border-color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 6%, #fff); }
+.aii-sec-explore > svg:first-child { width: 14px; height: 14px; }
+.aii-sec-explore-chev { display: inline-flex; transition: transform .2s ease; }
+.aii-sec-explore-chev svg { width: 13px; height: 13px; }
+.aii-sec-explore[aria-expanded="true"] .aii-sec-explore-chev { transform: rotate(180deg); }
 .aii-sec-explore:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
 
-/* Further Insights — a 2-col grid of compact cards. */
-.aii-fi-intro { margin: 2px 0 12px; font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.4; }
-.aii-fi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
-@media (max-width: 600px) { .aii-fi-grid { grid-template-columns: 1fr; } }
-.aii-fi-card { display: flex; align-items: flex-start; gap: 10px; padding: 12px 13px; border: 1px solid var(--color-surface-border); border-radius: 11px; background: #fff; cursor: pointer; text-align: left; font-family: var(--font-family); transition: border-color .14s ease, background .14s ease, box-shadow .14s ease; }
-.aii-fi-card:hover { border-color: var(--color-primary); background: #f7f9fc; box-shadow: 0 2px 8px rgba(37,99,235,0.08); }
-.aii-fi-card:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
-.aii-fi-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
-.aii-fi-name { font-size: 0.88rem; font-weight: 600; color: var(--color-text); }
-.aii-fi-desc { font-size: 0.76rem; color: var(--color-text-muted); line-height: 1.35; }
-.aii-fi-go { flex: none; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; border-radius: 7px; background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: var(--color-primary); }
-.aii-fi-go svg { width: 14px; height: 14px; }
+/* Inline explore-menu host (per-section + Further Insights) — drops in place. */
+.aii-emenu-host { display: none; }
+.aii-emenu-host.is-open { display: block; margin-top: 10px; padding: 13px; border: 1px solid var(--color-surface-border); border-radius: 11px; background: #fff; }
+
+/* Further Insights — sleek, text-based accordion list. */
+.aii-fi-intro { margin: 2px 0 10px; font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.4; }
+.aii-fi-acclist { display: flex; flex-direction: column; }
+.aii-fi-acc { border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 72%, transparent); }
+.aii-fi-acc:last-child { border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 72%, transparent); }
+.aii-fi-accsum { display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 2px; border: none; background: none; cursor: pointer; text-align: left; font-family: var(--font-family); }
+.aii-fi-acc-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
+.aii-fi-acc-name { font-size: 0.9rem; font-weight: 600; color: var(--color-text); transition: color .14s ease; }
+.aii-fi-acc-desc { font-size: 0.78rem; color: var(--color-text-muted); line-height: 1.35; }
+.aii-fi-acc-chev { flex: none; display: inline-flex; color: var(--color-text-light); transition: transform .2s ease; }
+.aii-fi-acc-chev svg { width: 16px; height: 16px; }
+.aii-fi-accsum[aria-expanded="true"] .aii-fi-acc-chev { transform: rotate(180deg); }
+.aii-fi-accsum:hover .aii-fi-acc-name, .aii-fi-accsum[aria-expanded="true"] .aii-fi-acc-name { color: var(--color-primary); }
+.aii-fi-accsum:focus-visible { outline: none; }
+.aii-fi-accsum:focus-visible .aii-fi-acc-name { text-decoration: underline; text-underline-offset: 3px; }
+.aii-fi-acc .aii-emenu-host.is-open { margin: 0 0 13px; }
 
 /* Sources — collapsed accordion at the bottom of the insight. */
 .aii-sources-acc { margin-top: 18px; border-top: 1px solid var(--color-surface-border); }

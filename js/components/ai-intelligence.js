@@ -159,7 +159,6 @@ export function renderAIIntelligence(container, scope) {
   let view = 'paths';             // 'paths' | 'sections' | 'content' | 'builder'
   let curGroup = null;
   let curIdx = 0;
-  let curExplore = null;          // Further Insights override for the Ask-AI panel: { name, prompt }
   let aiiObserver = null;         // tab-mode: watches the overview card (root = .aii-stage scroller) to toggle the sticky condensed bar
   let aiiSpyHandler = null, aiiSpyRoot = null;   // modal content view: AI Brief pill scroll-spy
   // Tab mode: on a topic page at mobile width, the paths become a secondary tab
@@ -299,6 +298,7 @@ export function renderAIIntelligence(container, scope) {
       <div class="aii-stage" data-view="paths"></div>
     </div>`;
   const stage = container.querySelector('.aii-stage');
+  if (flowMode) setupExploreDelegation();   // one-time: handles head + inline explore menus
 
   function setActiveSubtab() {
     if (!tabMode) return;
@@ -661,14 +661,16 @@ export function renderAIIntelligence(container, scope) {
         ${topicEl}
         <div class="aii-tabs" role="tablist">${tabs}</div>
       </div>
-      <div class="im-secs aii-builder-secs">
-        <div class="aii-brief-head">
-          <div class="aii-brief-toprow">
-            <div class="aii-brief-label">${SPARK}<span>AI Brief</span></div>
-            <div class="aii-brief-meta" data-brief-meta>${updated}</div>
+      <div class="aii-builder-secs">
+        <div class="aii-bhead">
+          <div class="aii-bhead-row">
+            <div class="aii-bhead-lead">
+              <div class="aii-brief-label">${SPARK}<span>AI Brief</span></div>
+              <p class="aii-brief-sum" data-brief-sum>${esc(p.subtitle || '')}</p>
+              <div class="aii-brief-meta" data-brief-meta>${updated}</div>
+            </div>
+            <div class="im-over-links aii-brief-actions">${actions}</div>
           </div>
-          <p class="aii-brief-sum" data-brief-sum>${esc(p.subtitle || '')}</p>
-          <div class="im-over-links aii-brief-actions">${actions}</div>
           <div class="im-acc" data-accbody="explore"></div>
           <div class="im-acc" data-accbody="web"></div>
         </div>
@@ -680,7 +682,7 @@ export function renderAIIntelligence(container, scope) {
   // only the brief summary, updated stamp, and content body swap.
   function switchBuilder(group) {
     if (!group || group === curGroup || !paths.some((x) => x.group === group)) return;
-    curGroup = group; curExplore = null;
+    curGroup = group;
     if (!builderCache[group]) loadBuilder(group);
     const p = paths.find((x) => x.group === group) || {};
     stage.querySelectorAll('.aii-tab').forEach((t) => { const on = t.dataset.tabGroup === group; t.classList.toggle('is-active', on); t.setAttribute('aria-selected', String(on)); });
@@ -728,9 +730,12 @@ export function renderAIIntelligence(container, scope) {
     const list = uniqParts.length ? uniqParts : [{ name: 'Overview', body: String(bc.content) }];
     let html = list.map((part, i) => {
       const key = aiiSecIconKey(part.name);
-      // Per-section "explore this further" → opens the Ask-AI menu seeded for this section.
+      // Per-section "explore this further" → drops the Ask-AI menu in place (inline).
       const prompt = `Go deeper on "${part.name}" as it relates to ${topicName}. Be specific and current, and cite sources.`;
-      const explore = `<div class="aii-sec-explore-row"><button type="button" class="aii-sec-explore" data-sec-name="${escAttr(part.name)}" data-sec-prompt="${escAttr(prompt)}">${ICON_ASK}<span>Explore this further</span>${ARROW}</button></div>`;
+      const explore = `<div class="aii-sec-explore-row">
+        <button type="button" class="aii-sec-explore" aria-expanded="false">${ICON_ASK}<span>Explore this further</span><span class="aii-sec-explore-chev">${CHEV}</span></button>
+        <div class="aii-emenu-host" data-explore-prompt="${escAttr(prompt)}" data-explore-name="${escAttr(part.name)}"></div>
+      </div>`;
       return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name) + renderBriefBody(part.body, null) + explore);
     }).join('');
     html += furtherInsightsHTML();
@@ -755,33 +760,38 @@ export function renderAIIntelligence(container, scope) {
     const topicName = scope.label || scope.topic || '';
     const fiPrompt = (s) => String(s.prompt || `Give me a thorough, current briefing on "${s.name}" for ${topicName}. Be specific and cite sources.`).replace(/\{TOPIC\}/g, topicName);
     const rows = list.map((s) => `
-      <button type="button" class="aii-fi-card" data-fi-name="${escAttr(s.name)}" data-fi-prompt="${escAttr(fiPrompt(s))}">
-        <span class="aii-fi-tx"><span class="aii-fi-name">${esc(s.name)}</span>${s.description ? `<span class="aii-fi-desc">${esc(s.description)}</span>` : ''}</span>
-        <span class="aii-fi-go" aria-hidden="true">${ICON_ASK}</span>
-      </button>`).join('');
+      <div class="aii-fi-acc">
+        <button type="button" class="aii-fi-accsum" aria-expanded="false">
+          <span class="aii-fi-acc-tx"><span class="aii-fi-acc-name">${esc(s.name)}</span>${s.description ? `<span class="aii-fi-acc-desc">${esc(s.description)}</span>` : ''}</span>
+          <span class="aii-fi-acc-chev">${CHEV}</span>
+        </button>
+        <div class="aii-emenu-host" data-explore-prompt="${escAttr(fiPrompt(s))}" data-explore-name="${escAttr(s.name)}"></div>
+      </div>`).join('');
     return aiiMsec('aii-msec-further', 'Further Insights',
       `<div class="im-msec-head"><span class="im-msec-ic">${AII_SEC_ICON.takeaways}</span><h3 class="im-msec-name">Further Insights</h3></div>
        <p class="aii-fi-intro">Dig into a specific angle — pick one to explore in the AI model of your choice.</p>
-       <div class="aii-fi-grid">${rows}</div>`);
+       <div class="aii-fi-acclist">${rows}</div>`);
   }
-  // Builder explore triggers — a per-section "explore this" button OR a Further-
-  // Insights card — seed the Ask-AI menu with that context and open it (the panel
-  // lives in the brief head; opening scrolls it into view under the sticky tabs).
+  // Inline explore — a per-section "Explore this further" button OR a Further-
+  // Insights accordion row toggles its OWN Ask-AI menu (model picker / Direct /
+  // Review) dropped in place, no scroll-jump. The menu's actions are handled by a
+  // single stage-level delegation (setupExploreDelegation) that reads the prompt
+  // from the host's data attributes.
   function wireBuilderExplore() {
-    const seedOpen = (name, prompt) => {
-      curExplore = { name: name || '', prompt: prompt || '' };
-      const head = stage.querySelector('.aii-brief-head [data-acc="explore"]');
-      const body = stage.querySelector('[data-accbody="explore"]');
-      if (body) body.removeAttribute('data-ready');
-      if (head) openAcc(head, true);
+    const toggle = (btn) => {
+      const host = btn.parentElement.querySelector('.aii-emenu-host');
+      if (!host) return;
+      const willOpen = !host.classList.contains('is-open');
+      if (willOpen && !host.dataset.ready) { host.innerHTML = exploreHomeHTML(); host.dataset.ready = '1'; }
+      host.classList.toggle('is-open', willOpen);
+      btn.setAttribute('aria-expanded', String(willOpen));
     };
-    stage.querySelectorAll('.aii-fi-card').forEach((b) => b.addEventListener('click', () => seedOpen(b.dataset.fiName, b.dataset.fiPrompt)));
-    stage.querySelectorAll('.aii-sec-explore').forEach((b) => b.addEventListener('click', () => seedOpen(b.dataset.secName, b.dataset.secPrompt)));
+    stage.querySelectorAll('.aii-sec-explore, .aii-fi-accsum').forEach((b) => b.addEventListener('click', () => toggle(b)));
   }
   // Open a group straight to its builder insight (the new default entry).
   function openBuilder(group, dir) {
     if (!paths.some((p) => p.group === group)) return;
-    curGroup = group; curIdx = 0; curExplore = null;
+    curGroup = group; curIdx = 0;
     if (!builderCache[group]) loadBuilder(group);
     go('builder', dir || 'fwd');
   }
@@ -1011,9 +1021,9 @@ export function renderAIIntelligence(container, scope) {
     return builderCache[group];
   }
 
+  // Generic explore prompt for the head "Ask AI" (no specific section). Per-section
+  // / Further-Insights menus carry their own prompt via the host's data attributes.
   function explorePrompt() {
-    // A Further-Insights row seeds the panel with that original shortcut's prompt.
-    if (curExplore && curExplore.prompt) return curExplore.prompt;
     if (view === 'builder') {
       const p = paths.find((x) => x.group === curGroup) || {};
       return `Give me a thorough, current "${p.tab || p.label || ''}" briefing on ${scope.label}. Be specific and cite sources.`;
@@ -1022,10 +1032,48 @@ export function renderAIIntelligence(container, scope) {
     return `Give me a thorough, current briefing on "${s.name || ''}" for ${scope.label}. Be specific and cite sources.`;
   }
   function curSectionName() {
-    if (curExplore && curExplore.name) return curExplore.name;
     if (view === 'builder') { const p = paths.find((x) => x.group === curGroup) || {}; return p.tab || p.label || ''; }
     const c = cache[curGroup]; const s = (c && c.sections[curIdx]) || {};
     return s.name || '';
+  }
+  // Resolve the prompt/name for an explore action from the nearest host's data
+  // attributes (per-section / Further-Insights), falling back to the generic
+  // head prompt. Plus the host element whose innerHTML the Direct→Leave step swaps.
+  function exploreCtxOf(el) {
+    const c = el && el.closest('[data-explore-prompt]');
+    if (c) return { prompt: c.getAttribute('data-explore-prompt') || '', name: c.getAttribute('data-explore-name') || '' };
+    return { prompt: explorePrompt(), name: curSectionName() };
+  }
+  function exploreHostOf(el) { return el.closest('.aii-emenu-host') || el.closest('[data-accbody="explore"]'); }
+  // ONE stage-level delegation for every explore menu (head panel + all inline
+  // dropdowns) — attached once (stage persists across view renders).
+  function setupExploreDelegation() {
+    stage.addEventListener('change', (e) => {
+      const sel = e.target.closest('.aii-explore-select'); if (!sel) return;
+      setPreferredModelId(sel.value);
+      const m = preferredModel(); const host = exploreHostOf(sel);
+      const mn = host && host.querySelector('.aii-explore-mn'); if (mn && m) mn.textContent = m.name;
+    });
+    stage.addEventListener('click', (e) => {
+      const trigger = e.target.closest('.aii-explore-opt, .aii-leave-back, .aii-leave-go');
+      if (!trigger) return;
+      const host = exploreHostOf(trigger); const ctx = exploreCtxOf(trigger);
+      if (trigger.classList.contains('aii-explore-opt')) {
+        if (trigger.dataset.opt === 'review') {
+          window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: ctx.prompt, topicName: scope.label, name: ctx.name, count: 1 } }));
+        } else {
+          // Direct Submit → "leaving the site" confirm. Copy now so Continue can
+          // open the model synchronously (no popup block).
+          copyPrompt(ctx.prompt);
+          if (host) host.innerHTML = exploreLeaveHTML();
+        }
+      } else if (trigger.classList.contains('aii-leave-back')) {
+        if (host) host.innerHTML = exploreHomeHTML();
+      } else { // aii-leave-go
+        const model = preferredModel(); if (!model) return;
+        openModel(model, ctx.prompt);
+      }
+    });
   }
   // The model a Direct Submit goes to (the user's preferred / site default).
   function preferredModel() {
@@ -1040,9 +1088,7 @@ export function renderAIIntelligence(container, scope) {
   }
   function exploreHomeHTML() {
     const m = preferredModel();
-    const ctx = curExplore && curExplore.name ? `<p class="aii-explore-ctx">Explore <strong>${esc(curExplore.name)}</strong> further</p>` : '';
     return `<div class="aii-explore" data-step="home">
-      ${ctx}
       <label class="aii-explore-model"><span class="aii-explore-model-lead">Send to</span>
         <span class="aii-explore-select-wrap"><select class="aii-explore-select" aria-label="Choose AI model">${modelOptionsHTML()}</select>${CHEV}</span></label>
       <button type="button" class="aii-explore-opt" data-opt="direct">
@@ -1229,45 +1275,10 @@ export function renderAIIntelligence(container, scope) {
     // Ask AI + Web Search open their panel in place. Only one panel open at a time.
     stage.querySelectorAll('.aii-actbtn, .aii-qlink-btn, .aii-cond-act').forEach((btn) => btn.addEventListener('click', (e) => {
       e.stopPropagation();   // sticky-bar buttons must not also trigger scroll-to-top
-      // Clicking the head's own Ask AI = a generic explore for this view; clear any
-      // Further-Insights seed + force the panel to rebuild without the seeded context.
-      if (btn.dataset.acc === 'explore') { curExplore = null; const eb = stage.querySelector('[data-accbody="explore"]'); if (eb) eb.removeAttribute('data-ready'); }
       openAcc(btn, btn.classList.contains('aii-cond-act'));
     }));
-    // "Explore further on web" is now native <details> accordions (#30) — each
-    // source type drops its platforms down in place, no JS wiring needed.
-    const exBody = stage.querySelector('[data-accbody="explore"]');
-    // Model choice persists (Direct Submit + Review both honor it).
-    if (exBody) exBody.addEventListener('change', (e) => {
-      const sel = e.target.closest('.aii-explore-select'); if (!sel) return;
-      setPreferredModelId(sel.value);
-      const m = preferredModel();
-      const mn = exBody.querySelector('.aii-explore-mn');
-      if (mn && m) mn.textContent = m.name;
-    });
-    if (exBody) exBody.addEventListener('click', (e) => {
-      const opt = e.target.closest('.aii-explore-opt');
-      const back = e.target.closest('.aii-leave-back');
-      const go = e.target.closest('.aii-leave-go');
-      if (opt) {
-        if (opt.dataset.opt === 'review') {
-          // Hand off to the full Review & Submit takeover modal.
-          window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: {
-            basePrompt: explorePrompt(), topicName: scope.label, name: curSectionName(), count: 1,
-          } }));
-        } else {
-          // Direct Submit → confirm leaving the site. Copy now so the later
-          // Continue click can open the model synchronously (no popup block).
-          copyPrompt(explorePrompt());
-          exBody.innerHTML = exploreLeaveHTML();
-        }
-      } else if (back) {
-        exBody.innerHTML = exploreHomeHTML();
-      } else if (go) {
-        const model = preferredModel(); if (!model) return;
-        openModel(model, explorePrompt());
-      }
-    });
+    // Explore-menu interactions (model select + Direct/Review/Continue) are handled
+    // ONCE by setupExploreDelegation() for the head panel AND every inline dropdown.
   }
 
   // Jump straight into a path's sections (used by the desktop→mobile hand-off and
