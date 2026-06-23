@@ -694,12 +694,14 @@ export function renderAIIntelligence(container, scope) {
       return;
     }
     const parts = splitSections(bc.content);
-    // Drop repeated sections — the model occasionally restarts and re-writes
-    // earlier sections, leaving duplicate headings. Keep the first of each.
+    // Drop repeated sections (model occasionally re-writes earlier ones → dup
+    // headings) AND empty-body sections (a generation truncated at the token cap
+    // leaves a trailing heading with no body). Keep the first of each heading.
     const seenSec = new Set();
     const uniqParts = parts.filter((p) => {
       const n = String(p.name || '').toLowerCase().replace(/\s+/g, ' ').trim();
       if (!n || seenSec.has(n)) return false;
+      if (!String(p.body || '').trim()) return false;
       seenSec.add(n); return true;
     });
     const list = uniqParts.length ? uniqParts : [{ name: 'Overview', body: String(bc.content) }];
