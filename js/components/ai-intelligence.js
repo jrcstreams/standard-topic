@@ -649,7 +649,11 @@ export function renderAIIntelligence(container, scope) {
     const bc = builderCache[curGroup];
     const updated = (bc && bc.generatedAt) ? `<span class="aii-brief-updated">Updated ${esc(relTime(bc.generatedAt))}</span>` : '';
     // Tabular nav across the 4 builders — replaces Back / Prev / Next / All Insights.
-    const tabs = paths.map((x) => `<button type="button" class="aii-tab${x.group === curGroup ? ' is-active' : ''}" role="tab" aria-selected="${x.group === curGroup}" data-tab-group="${escAttr(x.group)}">${esc(x.tab || x.label)}</button>`).join('');
+    // Each tab carries its group's colored icon + accent; active = a soft tinted pill.
+    const tabs = paths.map((x) => {
+      const accent = AII_ACCENTS[x.group] || AII_ACCENTS._;
+      return `<button type="button" class="aii-tab${x.group === curGroup ? ' is-active' : ''}" role="tab" aria-selected="${x.group === curGroup}" data-tab-group="${escAttr(x.group)}" style="--tab-accent:${accent}"><span class="aii-tab-ic aii-icon-${escAttr(x.group)}">${ICONS[x.group] || ICONS._}</span><span class="aii-tab-tx">${esc(x.tab || x.label)}</span></button>`;
+    }).join('');
     // The topic name heads the panel; in the "anew" picker flow it re-opens the picker.
     const topicEl = scope.topicPicker
       ? `<button type="button" class="aii-builder-topic aii-builder-topic--btn" data-repick>${esc(topicTitle)}${CHEV}</button>`

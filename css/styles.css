@@ -14933,14 +14933,18 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-builder-topic--btn { display: inline-flex; align-items: center; gap: 6px; border: none; background: none; cursor: pointer; padding: 0; }
 .aii-builder-topic--btn svg { width: 18px; height: 18px; color: var(--color-text-light); }
 .aii-builder-topic--btn:hover { color: #1f2d4d; }
-.aii-tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+.aii-tabs { display: flex; gap: 5px; overflow-x: auto; scrollbar-width: none; padding-bottom: 11px; }
 .aii-tabs::-webkit-scrollbar { display: none; }
-.aii-tab { flex: none; position: relative; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.92rem; font-weight: 600; color: var(--color-text-muted); padding: 9px 12px 13px; white-space: nowrap; transition: color .14s ease; }
+.aii-tab { flex: none; display: inline-flex; align-items: center; gap: 8px; border: 1px solid transparent; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.88rem; font-weight: 600; color: var(--color-text-muted); padding: 6px 13px 6px 7px; border-radius: 999px; white-space: nowrap; transition: color .14s ease, background .14s ease, border-color .14s ease; }
+.aii-tab-ic { flex: none; width: 25px; height: 25px; display: inline-flex; align-items: center; justify-content: center; border-radius: 7px; transition: filter .14s ease, opacity .14s ease; }
+.aii-tab-ic svg { width: 15px; height: 15px; }
+/* Inactive tabs: muted, desaturated icon. Active: accent text + soft tinted pill. */
+.aii-tab:not(.is-active) .aii-tab-ic { filter: saturate(0.65); opacity: 0.82; }
 .aii-tab:hover { color: var(--color-text); }
-.aii-tab.is-active { color: var(--color-primary); }
-.aii-tab.is-active::after { content: ''; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2.5px; border-radius: 2px 2px 0 0; background: var(--color-primary); }
-.aii-tab:focus-visible { outline: none; }
-.aii-tab:focus-visible span { text-decoration: underline; text-underline-offset: 3px; }
+.aii-tab:hover:not(.is-active) { background: color-mix(in srgb, var(--color-surface-border) 32%, transparent); }
+.aii-tab:hover .aii-tab-ic { filter: none; opacity: 1; }
+.aii-tab.is-active { color: var(--tab-accent); background: color-mix(in srgb, var(--tab-accent) 11%, #fff); border-color: color-mix(in srgb, var(--tab-accent) 24%, transparent); }
+.aii-tab:focus-visible { outline: 2px solid var(--tab-accent); outline-offset: 2px; }
 
 /* AI Brief header — prominent label, summary beneath, updated stamp at right. */
 .aii-builder-secs { padding-top: 0; padding-bottom: 2rem; }
