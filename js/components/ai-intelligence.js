@@ -694,7 +694,15 @@ export function renderAIIntelligence(container, scope) {
       return;
     }
     const parts = splitSections(bc.content);
-    const list = parts.length ? parts : [{ name: 'Overview', body: String(bc.content) }];
+    // Drop repeated sections — the model occasionally restarts and re-writes
+    // earlier sections, leaving duplicate headings. Keep the first of each.
+    const seenSec = new Set();
+    const uniqParts = parts.filter((p) => {
+      const n = String(p.name || '').toLowerCase().replace(/\s+/g, ' ').trim();
+      if (!n || seenSec.has(n)) return false;
+      seenSec.add(n); return true;
+    });
+    const list = uniqParts.length ? uniqParts : [{ name: 'Overview', body: String(bc.content) }];
     let html = list.map((part, i) => {
       const key = aiiSecIconKey(part.name);
       return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name) + renderBriefBody(part.body, null));
