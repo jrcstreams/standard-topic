@@ -95,22 +95,32 @@ module.exports = async function handler(req, res) {
 
   // type=purge — drop cached insights so they regenerate from scratch. scope
   // defaults to overviews; pass scope=all to also clear trend + news briefs.
+  //   scope=legacy → drop ONLY the retired per-section overview rows (shortcut
+  //   rows whose insight is a bare group, NOT a `<group>:b` builder), leaving the
+  //   live builders intact. Use to clean up after the builder migration.
   if (which === 'purge') {
     const sql2 = sql;
     const scope = (req.query.scope || 'overviews').trim();
-    const types = scope === 'all'
-      ? ['shortcut', 'trend', 'news']
-      : (scope === 'trends' ? ['trend'] : (scope === 'news' ? ['news'] : ['shortcut']));
     let purged = 0;
     try {
+      if (scope === 'legacy') {
+        const r = await sql2.query(
+          `WITH d AS (DELETE FROM ai_insights WHERE entity_type='shortcut' AND insight NOT LIKE '%:b' RETURNING 1)
+           SELECT count(*)::int AS n FROM d`);
+        purged = (r[0] && r[0].n) || 0;
+        return res.status(200).json({ ok: true, purged, scope: 'legacy' });
+      }
+      const types = scope === 'all'
+        ? ['shortcut', 'trend', 'news']
+        : (scope === 'trends' ? ['trend'] : (scope === 'news' ? ['news'] : ['shortcut']));
       const r = await sql2.query(
         `WITH d AS (DELETE FROM ai_insights WHERE entity_type = ANY($1) RETURNING 1)
          SELECT count(*)::int AS n FROM d`, [types]);
       purged = (r[0] && r[0].n) || 0;
+      return res.status(200).json({ ok: true, purged, types });
     } catch (e) {
       return res.status(500).json({ error: String((e && e.message) || e) });
     }
-    return res.status(200).json({ ok: true, purged, types });
   }
 
   // type=status — read-only rollout tracker. Reports how many briefs have been
