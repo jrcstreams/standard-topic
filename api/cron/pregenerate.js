@@ -110,6 +110,21 @@ module.exports = async function handler(req, res) {
         purged = (r[0] && r[0].n) || 0;
         return res.status(200).json({ ok: true, purged, scope: 'legacy' });
       }
+      // scope=ungrounded → drop SOURCELESS builder rows (generated ungrounded when
+      // the search budget was spent, so they may state stale facts as current).
+      // They regenerate grounded on next view / cron pass. Builders are now
+      // ground-or-skip, so this is a one-time cleanup of pre-fix rows.
+      if (scope === 'ungrounded') {
+        const r = await sql2.query(
+          `WITH d AS (DELETE FROM ai_insights
+              WHERE entity_type='shortcut' AND insight LIKE '%:b'
+                AND (sources IS NULL OR sources='[]'::jsonb OR sources='{}'::jsonb
+                     OR (jsonb_typeof(sources)='array' AND jsonb_array_length(sources)=0))
+              RETURNING 1)
+           SELECT count(*)::int AS n FROM d`);
+        purged = (r[0] && r[0].n) || 0;
+        return res.status(200).json({ ok: true, purged, scope: 'ungrounded' });
+      }
       const types = scope === 'all'
         ? ['shortcut', 'trend', 'news']
         : (scope === 'trends' ? ['trend'] : (scope === 'news' ? ['news'] : ['shortcut']));
