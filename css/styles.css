@@ -14926,21 +14926,66 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-bcard-go svg { width: 17px; height: 17px; }
 .aii-bcard:hover .aii-bcard-go { color: var(--aii-accent, #2563eb); transform: translateX(3px); }
 
-/* Further Insights — the original shortcuts surfaced under a builder insight. */
-.aii-fi-intro { margin: 2px 0 11px; font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.4; }
-.aii-fi-list { display: flex; flex-direction: column; gap: 8px; }
-.aii-fi-row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 11px 13px; border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; cursor: pointer; text-align: left; font-family: var(--font-family); transition: border-color .14s ease, background .14s ease; }
-.aii-fi-row:hover { border-color: var(--color-primary); background: #f7f9fc; }
-.aii-fi-row:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+/* ===== Builder modal redesign: tabs + AI Brief + per-section explore ======== */
+/* Sticky top: topic name + tab row (replaces Back / Prev / Next / All Insights). */
+.aii-builder-topbar { position: sticky; top: 0; z-index: 9; margin: 0 -1.1rem; padding: 12px 1.1rem 0; background: #f3f5f8; border-bottom: 1px solid var(--color-surface-border); }
+.aii-builder-topic { margin: 0 0 9px; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; color: var(--color-primary); font-size: clamp(1.4rem, 1.1rem + 1vw, 1.8rem); line-height: 1.12; }
+.aii-builder-topic--btn { display: inline-flex; align-items: center; gap: 6px; border: none; background: none; cursor: pointer; padding: 0; }
+.aii-builder-topic--btn svg { width: 18px; height: 18px; color: var(--color-text-light); }
+.aii-builder-topic--btn:hover { color: #1f2d4d; }
+.aii-tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+.aii-tabs::-webkit-scrollbar { display: none; }
+.aii-tab { flex: none; position: relative; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.92rem; font-weight: 600; color: var(--color-text-muted); padding: 9px 12px 13px; white-space: nowrap; transition: color .14s ease; }
+.aii-tab:hover { color: var(--color-text); }
+.aii-tab.is-active { color: var(--color-primary); }
+.aii-tab.is-active::after { content: ''; position: absolute; left: 8px; right: 8px; bottom: 0; height: 2.5px; border-radius: 2px 2px 0 0; background: var(--color-primary); }
+.aii-tab:focus-visible { outline: none; }
+.aii-tab:focus-visible span { text-decoration: underline; text-underline-offset: 3px; }
+
+/* AI Brief header — prominent label, summary beneath, updated stamp at right. */
+.aii-brief-head { padding: 16px 0 2px; }
+.aii-brief-toprow { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.aii-brief-label { display: inline-flex; align-items: center; gap: 7px; color: var(--color-primary); font-weight: 800; font-size: 1.04rem; letter-spacing: 0.01em; }
+.aii-brief-label svg { width: 18px; height: 18px; }
+.aii-brief-meta, .aii-brief-updated { font-size: 0.76rem; color: var(--color-text-light); white-space: nowrap; }
+.aii-brief-sum { margin: 7px 0 0; font-size: 0.95rem; color: var(--color-text-muted); line-height: 1.45; }
+.aii-brief-actions { margin-top: 13px; }
+
+/* Per-section "explore this further" pill. */
+.aii-sec-explore-row { margin-top: 11px; }
+.aii-sec-explore { display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px; border: 1px solid var(--color-surface-border); border-radius: 999px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: var(--color-primary); transition: border-color .14s ease, background .14s ease; }
+.aii-sec-explore:hover { border-color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 5%, #fff); }
+.aii-sec-explore svg:first-of-type { width: 14px; height: 14px; }
+.aii-sec-explore svg:last-of-type { width: 13px; height: 13px; color: var(--color-text-light); }
+.aii-sec-explore:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+
+/* Further Insights — a 2-col grid of compact cards. */
+.aii-fi-intro { margin: 2px 0 12px; font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.4; }
+.aii-fi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+@media (max-width: 600px) { .aii-fi-grid { grid-template-columns: 1fr; } }
+.aii-fi-card { display: flex; align-items: flex-start; gap: 10px; padding: 12px 13px; border: 1px solid var(--color-surface-border); border-radius: 11px; background: #fff; cursor: pointer; text-align: left; font-family: var(--font-family); transition: border-color .14s ease, background .14s ease, box-shadow .14s ease; }
+.aii-fi-card:hover { border-color: var(--color-primary); background: #f7f9fc; box-shadow: 0 2px 8px rgba(37,99,235,0.08); }
+.aii-fi-card:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
 .aii-fi-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
 .aii-fi-name { font-size: 0.88rem; font-weight: 600; color: var(--color-text); }
 .aii-fi-desc { font-size: 0.76rem; color: var(--color-text-muted); line-height: 1.35; }
-.aii-fi-go { flex: none; display: inline-flex; align-items: center; gap: 5px; font-size: 0.76rem; font-weight: 600; color: var(--color-primary); }
+.aii-fi-go { flex: none; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; border-radius: 7px; background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: var(--color-primary); }
 .aii-fi-go svg { width: 14px; height: 14px; }
+
+/* Sources — collapsed accordion at the bottom of the insight. */
+.aii-sources-acc { margin-top: 18px; border-top: 1px solid var(--color-surface-border); }
+.aii-sources-sum { display: flex; align-items: center; gap: 9px; padding: 14px 2px; cursor: pointer; list-style: none; font-family: var(--font-display); font-weight: 700; color: var(--color-primary); }
+.aii-sources-sum::-webkit-details-marker { display: none; }
+.aii-sources-name { font-size: 1rem; }
+.aii-sources-count { font-size: 0.73rem; font-weight: 600; color: var(--color-text-muted); background: color-mix(in srgb, var(--color-surface-border) 50%, #fff); border-radius: 999px; padding: 1px 8px; }
+.aii-sources-chev { margin-left: auto; display: inline-flex; color: var(--color-text-light); transition: transform .2s ease; }
+.aii-sources-chev svg { width: 16px; height: 16px; }
+.aii-sources-acc[open] .aii-sources-chev { transform: rotate(180deg); }
+.aii-sources-list { padding-bottom: 10px; }
+
 /* Seeded-explore context line in the Ask-AI panel. */
 .aii-explore-ctx { margin: 0 0 2px; font-size: 0.8rem; color: var(--color-text-muted); }
 .aii-explore-ctx strong { color: var(--color-text); font-weight: 600; }
-/* Builder head subtitle under the title. */
 .im-over-desc { margin: -4px 0 10px; font-size: 0.86rem; color: var(--color-text-muted); line-height: 1.4; }
 .aii-sec + .aii-sec { border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 72%, transparent); }
 .aii-sec-head { display: flex; align-items: center; gap: 10px; width: 100%; padding: 14px 16px 9px; border: none; background: none; cursor: pointer; text-align: left; font-family: var(--font-family); }

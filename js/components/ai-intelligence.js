@@ -192,7 +192,7 @@ export function renderAIIntelligence(container, scope) {
     if (!tb) return;
     // The topic picker AND the content view (which now owns a Trending-style
     // sticky head) hide this topbar; only paths/sections picker pages use it.
-    if (view === 'topic' || view === 'content') { tb.hidden = true; tb.innerHTML = ''; return; }
+    if (view === 'topic' || view === 'content' || view === 'builder') { tb.hidden = true; tb.innerHTML = ''; return; }
     tb.hidden = false;
     const p = paths.find((x) => x.group === curGroup) || {};
     const back = `<button type="button" class="im-headnav-link im-headnav-back aii-tb-back" data-tb-back>${HNAV_L}Back</button>`;
@@ -646,36 +646,54 @@ export function renderAIIntelligence(container, scope) {
   // shortcuts → pick a model + explore), then Sources.
   function builderHTML() {
     const p = paths.find((x) => x.group === curGroup) || {};
-    const gi = paths.findIndex((x) => x.group === curGroup);
-    const prev = gi > 0 ? paths[gi - 1] : null;
-    const next = gi >= 0 && gi < paths.length - 1 ? paths[gi + 1] : null;
     const bc = builderCache[curGroup];
-    const updated = (bc && bc.generatedAt) ? `<span class="im-eyebrow-time">Updated ${esc(relTime(bc.generatedAt))}</span>` : '';
-    const eyebrow = `<span class="im-eyebrow-cat">${esc(topicTitle)}</span>${updated}`;
-    const controls = `<div class="im-headnav">
-        <button type="button" class="im-headnav-link im-headnav-back" data-aii-back="paths">${HNAV_L}All Insights</button>
-        <span class="im-headnav-pn">
-          <button type="button" class="im-headnav-link" data-bpn="prev"${prev ? '' : ' disabled'}>${HNAV_L}Previous</button>
-          <button type="button" class="im-headnav-link" data-bpn="next"${next ? '' : ' disabled'}>Next${HNAV_R}</button>
-        </span>
-      </div>`;
+    const updated = (bc && bc.generatedAt) ? `<span class="aii-brief-updated">Updated ${esc(relTime(bc.generatedAt))}</span>` : '';
+    // Tabular nav across the 4 builders — replaces Back / Prev / Next / All Insights.
+    const tabs = paths.map((x) => `<button type="button" class="aii-tab${x.group === curGroup ? ' is-active' : ''}" role="tab" aria-selected="${x.group === curGroup}" data-tab-group="${escAttr(x.group)}">${esc(x.tab || x.label)}</button>`).join('');
+    // The topic name heads the panel; in the "anew" picker flow it re-opens the picker.
+    const topicEl = scope.topicPicker
+      ? `<button type="button" class="aii-builder-topic aii-builder-topic--btn" data-repick>${esc(topicTitle)}${CHEV}</button>`
+      : `<h2 class="aii-builder-topic">${esc(topicTitle)}</h2>`;
+    // Primary Ask AI / Web Search — kept as-is for now (to be reworked later).
     const actions = `<button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span>${CHEV}</button><button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span>${CHEV}</button>`;
     return `<div class="aii-sub aii-content aii-content--modal aii-builder">
-      <div class="im-stickyhead">
-        ${controls}
-        <div class="im-overhead">
-          <div class="im-over-eyebrow">${eyebrow}</div>
-          <h2 class="im-over-title">${esc(p.tab || p.label)}</h2>
-          ${p.subtitle ? `<p class="im-over-desc">${esc(p.subtitle)}</p>` : ''}
-          <div class="im-over-links">${actions}</div>
+      <div class="aii-builder-topbar">
+        ${topicEl}
+        <div class="aii-tabs" role="tablist">${tabs}</div>
+      </div>
+      <div class="im-secs aii-builder-secs">
+        <div class="aii-brief-head">
+          <div class="aii-brief-toprow">
+            <div class="aii-brief-label">${SPARK}<span>AI Brief</span></div>
+            <div class="aii-brief-meta" data-brief-meta>${updated}</div>
+          </div>
+          <p class="aii-brief-sum" data-brief-sum>${esc(p.subtitle || '')}</p>
+          <div class="im-over-links aii-brief-actions">${actions}</div>
           <div class="im-acc" data-accbody="explore"></div>
           <div class="im-acc" data-accbody="web"></div>
         </div>
-      </div>
-      <div class="im-secs">
         <div data-aii-builder>${genLoaderHTML()}</div>
       </div>
     </div>`;
+  }
+  // Switch builder via the tabs WITHOUT re-rendering the whole view (tabs stay put);
+  // only the brief summary, updated stamp, and content body swap.
+  function switchBuilder(group) {
+    if (!group || group === curGroup || !paths.some((x) => x.group === group)) return;
+    curGroup = group; curExplore = null;
+    if (!builderCache[group]) loadBuilder(group);
+    const p = paths.find((x) => x.group === group) || {};
+    stage.querySelectorAll('.aii-tab').forEach((t) => { const on = t.dataset.tabGroup === group; t.classList.toggle('is-active', on); t.setAttribute('aria-selected', String(on)); });
+    const sum = stage.querySelector('[data-brief-sum]'); if (sum) sum.textContent = p.subtitle || '';
+    const bc = builderCache[group]; const meta = stage.querySelector('[data-brief-meta]');
+    if (meta) meta.innerHTML = (bc && bc.generatedAt) ? `<span class="aii-brief-updated">Updated ${esc(relTime(bc.generatedAt))}</span>` : '';
+    // Close any open Ask AI / Web Search panel.
+    stage.querySelectorAll('.aii-qlink-btn').forEach((b) => b.setAttribute('aria-expanded', 'false'));
+    stage.querySelectorAll('.im-acc, .aii-acc').forEach((a) => a.classList.remove('is-open'));
+    const wrap = stage.querySelector('[data-aii-builder]');
+    if (wrap) { wrap.classList.remove('ai-reveal'); wrap.innerHTML = genLoaderHTML(); }
+    fillAiiBuilder();
+    scrollRootEl().scrollTo({ top: 0 });
   }
   // Fill the builder body once loaded (kick off the fetch if needed). Shows the
   // generating loader until the insight resolves, then reveals it.
@@ -689,10 +707,13 @@ export function renderAIIntelligence(container, scope) {
   }
   function renderBuilderInto(wrap) {
     const bc = builderCache[curGroup] || {};
+    const meta = stage.querySelector('[data-brief-meta]');
+    if (meta) meta.innerHTML = bc.generatedAt ? `<span class="aii-brief-updated">Updated ${esc(relTime(bc.generatedAt))}</span>` : '';
     if (bc.error || !bc.content) {
       wrap.innerHTML = '<p class="aii-empty">This insight is being generated — check back shortly.</p>';
       return;
     }
+    const topicName = scope.label || scope.topic || '';
     const parts = splitSections(bc.content);
     // Drop repeated sections (model occasionally re-writes earlier ones → dup
     // headings) AND empty-body sections (a generation truncated at the token cap
@@ -707,16 +728,19 @@ export function renderAIIntelligence(container, scope) {
     const list = uniqParts.length ? uniqParts : [{ name: 'Overview', body: String(bc.content) }];
     let html = list.map((part, i) => {
       const key = aiiSecIconKey(part.name);
-      return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name) + renderBriefBody(part.body, null));
+      // Per-section "explore this further" → opens the Ask-AI menu seeded for this section.
+      const prompt = `Go deeper on "${part.name}" as it relates to ${topicName}. Be specific and current, and cite sources.`;
+      const explore = `<div class="aii-sec-explore-row"><button type="button" class="aii-sec-explore" data-sec-name="${escAttr(part.name)}" data-sec-prompt="${escAttr(prompt)}">${ICON_ASK}<span>Explore this further</span>${ARROW}</button></div>`;
+      return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name) + renderBriefBody(part.body, null) + explore);
     }).join('');
     html += furtherInsightsHTML();
+    // Sources → a collapsed accordion at the very bottom of the insight.
     const items = builderNewsItems().filter((x) => x.title && x.meta && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(String(x.title).trim()));
     const covRows = items.map((x) => `<a class="im-cov-row" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span><span class="im-cov-host">${esc(x.meta)}</span></span>${EXT}</a>`).join('');
-    if (covRows) html += aiiMsec('aii-msec-sources', 'Sources', aiiSecHead('sources', 'Sources') + `<div class="im-coverage-list">${covRows}</div>`);
+    if (covRows) html += `<details class="aii-sources-acc"><summary class="aii-sources-sum">${SOURCES_BADGE}<span class="aii-sources-name">Sources</span><span class="aii-sources-count">${items.length}</span><span class="aii-sources-chev">${CHEV}</span></summary><div class="im-coverage-list aii-sources-list">${covRows}</div></details>`;
     wrap.innerHTML = html;
     wrap.classList.add('ai-reveal');
-    buildAiiBriefNav();
-    wireFurtherInsights();
+    wireBuilderExplore();
   }
   // The original per-shortcut prompts for a group — now surfaced as optional
   // "Further Insights" the reader can explore in the AI model of their choice.
@@ -731,25 +755,28 @@ export function renderAIIntelligence(container, scope) {
     const topicName = scope.label || scope.topic || '';
     const fiPrompt = (s) => String(s.prompt || `Give me a thorough, current briefing on "${s.name}" for ${topicName}. Be specific and cite sources.`).replace(/\{TOPIC\}/g, topicName);
     const rows = list.map((s) => `
-      <button type="button" class="aii-fi-row" data-fi-name="${escAttr(s.name)}" data-fi-prompt="${escAttr(fiPrompt(s))}">
+      <button type="button" class="aii-fi-card" data-fi-name="${escAttr(s.name)}" data-fi-prompt="${escAttr(fiPrompt(s))}">
         <span class="aii-fi-tx"><span class="aii-fi-name">${esc(s.name)}</span>${s.description ? `<span class="aii-fi-desc">${esc(s.description)}</span>` : ''}</span>
-        <span class="aii-fi-go" aria-hidden="true">${ICON_ASK}<span>Ask AI</span></span>
+        <span class="aii-fi-go" aria-hidden="true">${ICON_ASK}</span>
       </button>`).join('');
     return aiiMsec('aii-msec-further', 'Further Insights',
       `<div class="im-msec-head"><span class="im-msec-ic">${AII_SEC_ICON.takeaways}</span><h3 class="im-msec-name">Further Insights</h3></div>
        <p class="aii-fi-intro">Dig into a specific angle — pick one to explore in the AI model of your choice.</p>
-       <div class="aii-fi-list">${rows}</div>`);
+       <div class="aii-fi-grid">${rows}</div>`);
   }
-  // A Further-Insights row seeds the head's Ask-AI panel with that shortcut's prompt
-  // and opens it (the panel lives in the sticky head, so it's always in view).
-  function wireFurtherInsights() {
-    stage.querySelectorAll('.aii-fi-row').forEach((b) => b.addEventListener('click', () => {
-      curExplore = { name: b.dataset.fiName || '', prompt: b.dataset.fiPrompt || '' };
-      const head = stage.querySelector('.im-stickyhead [data-acc="explore"]');
+  // Builder explore triggers — a per-section "explore this" button OR a Further-
+  // Insights card — seed the Ask-AI menu with that context and open it (the panel
+  // lives in the brief head; opening scrolls it into view under the sticky tabs).
+  function wireBuilderExplore() {
+    const seedOpen = (name, prompt) => {
+      curExplore = { name: name || '', prompt: prompt || '' };
+      const head = stage.querySelector('.aii-brief-head [data-acc="explore"]');
       const body = stage.querySelector('[data-accbody="explore"]');
       if (body) body.removeAttribute('data-ready');
       if (head) openAcc(head, true);
-    }));
+    };
+    stage.querySelectorAll('.aii-fi-card').forEach((b) => b.addEventListener('click', () => seedOpen(b.dataset.fiName, b.dataset.fiPrompt)));
+    stage.querySelectorAll('.aii-sec-explore').forEach((b) => b.addEventListener('click', () => seedOpen(b.dataset.secName, b.dataset.secPrompt)));
   }
   // Open a group straight to its builder insight (the new default entry).
   function openBuilder(group, dir) {
@@ -1163,14 +1190,8 @@ export function renderAIIntelligence(container, scope) {
     // wire the head's Back / Prev·Next BUILDER links.
     if (flowMode && view === 'builder') {
       fillAiiBuilder();
-      stage.querySelectorAll('[data-aii-back]').forEach((b) => b.addEventListener('click', () => go(b.dataset.aiiBack, 'back')));
-      stage.querySelectorAll('.im-headnav-link[data-bpn]').forEach((b) => b.addEventListener('click', () => {
-        if (b.hasAttribute('disabled')) return;
-        const gi = paths.findIndex((x) => x.group === curGroup);
-        const ni = b.dataset.bpn === 'next' ? gi + 1 : gi - 1;
-        if (ni < 0 || ni >= paths.length) return;
-        openBuilder(paths[ni].group, b.dataset.bpn === 'next' ? 'fwd' : 'back');
-      }));
+      stage.querySelectorAll('.aii-tab').forEach((t) => t.addEventListener('click', () => switchBuilder(t.dataset.tabGroup)));
+      stage.querySelector('[data-repick]')?.addEventListener('click', () => go('topic', 'back'));
     }
     // Section content: briefly show the generating loader (even when cached)
     // then reveal the brief — gives the AI a moment of presence.
@@ -1304,6 +1325,10 @@ export function renderAIIntelligence(container, scope) {
     // builder insight; the legacy per-section flow remains for old deep-links.
     if (scope.initialBuilder) openBuilder(scope.initialGroup);
     else openGroup(scope.initialGroup, scope.initialInsight);
+  } else if (flowMode) {
+    // Modal default (incl. after picking a topic in the "anew" flow) → straight
+    // into the first builder; the tabs handle switching from here.
+    openBuilder((paths[0] && paths[0].group) || 'discover');
   } else {
     // Modal default → the path picker.
     go('paths', 'fwd');
