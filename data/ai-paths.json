@@ -2,40 +2,43 @@
   "paths": [
     {
       "group": "discover",
-      "label": "What's Happening Now",
+      "label": "Get Caught Up",
       "subtitle": "What's happening right now.",
       "order": 1,
-      "refreshClass": "live"
+      "refreshClass": "daily"
     },
     {
       "group": "topic-specific",
-      "label": "Topic-Specific Insights",
-      "subtitle": "Insights tailored to this topic.",
+      "label": "Deep Dive",
+      "subtitle": "Go deeper on the key current developments.",
       "order": 2,
-      "refreshClass": "live"
+      "refreshClass": "weekly"
     },
     {
       "group": "analyze",
       "label": "Analysis",
-      "subtitle": "Deeper analytical lenses and tradeoffs.",
+      "subtitle": "Tensions, trade-offs, and what it all means.",
       "order": 3,
-      "refreshClass": "slow"
+      "refreshClass": "biweekly"
     },
     {
       "group": "learn",
-      "label": "Learn",
+      "label": "101 Resources",
       "subtitle": "Background, fundamentals, and context.",
       "order": 4,
       "refreshClass": "evergreen"
     }
   ],
   "windows": {
+    "daily": 24,
+    "weekly": 168,
+    "biweekly": 336,
+    "evergreen": 720,
     "live": {
       "1": 1,
       "2": 4,
       "3": 8
     },
-    "slow": 168,
-    "evergreen": 720
+    "slow": 168
   }
 }

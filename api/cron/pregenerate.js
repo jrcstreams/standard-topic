@@ -8,13 +8,13 @@
 //   - Trends: the current snapshot's top terms without a 'brief'.
 //   - News: recent stories (48h, newest first) without a 'brief' — sub-budget
 //     NEWS_PER_RUN so news volume can't starve the rest.
-//   - Group overviews: home + every topic × non-empty AI lens group
-//     (discover/learn/analyze/topic-specific) without an overview.
+//   - Insight Builders: home + every topic × the 4 builder groups (stored under
+//     `<group>:b`); home hides Deep Dive. ~400 total.
 //   Refresh (stalest first, via generateInsight refresh flag):
-//   - discover/topic-specific overviews older than 72h, analyze older than
-//     168h/1wk, learn older than 336h/2wk (evergreen — slow cadence). Windows are long on
-//     purpose: each refresh is a fresh grounded generation, and re-grounding
-//     slow-changing briefs is the main thing that burns Google-Search quota.
+//   - Builder windows from data/ai-paths.json (so cron + on-view agree):
+//     discover 24h (daily), topic-specific 168h (weekly), analyze 336h
+//     (biweekly), learn 720h (monthly). Windows are long on purpose: each
+//     refresh is a fresh grounded generation, the main Google-Search-quota cost.
 //   - any lens row whose content lacks "## " sections (one-time migration of
 //     pre-overview prose briefs, learn included),
 //   - trend briefs still in the current US snapshot, older than 24h.
@@ -31,8 +31,15 @@
 
 const { getSql } = require('../../lib/db');
 const { generateInsight, groundingHeadroom } = require('../../lib/insight-core');
-const { resolveSections, AI_LENSES } = require('../../lib/shortcut-sections');
+const { AI_LENSES } = require('../../lib/shortcut-sections');
+const { effectiveWindowHours } = require('../../lib/ai-freshness');
 const topicsData = require('../../data/topics.json');
+
+// The 4 "Insight Builders" are stored under a `<group>:b` insight key (see
+// lib/insight-core.js generateInsight builder branch). Home hides Deep Dive
+// (topic-specific) just like the UI's hideGroups.
+const BUILDER_SUFFIX = ':b';
+const HOME_HIDE = ['topic-specific'];
 
 const NEWS_PER_RUN = 10;
 // Per-run cap on healing sourceless briefs (re-grounding ones that cached with
@@ -49,21 +56,22 @@ try {
   invalidateByTag = null;
 }
 
-// Every (scope, group) that should have an overview: home + each topic, AI
-// lens groups only, skipping groups with no shortcuts on that page.
+// Every (scope, group) builder that should exist: home + each topic × the 4
+// Insight Builder groups (home hides Deep Dive, matching the UI). `insight` is
+// the `<group>:b` cache key; `topic` is what the frontend passes (NAME, or
+// 'home'); generateInsight keys by lower(topic).
 function overviewCandidates() {
   const scopes = ['home'].concat(
     (topicsData.topics || []).filter((t) => t.slug && t.slug !== 'home').map((t) => t.slug));
   const out = [];
   for (const scope of scopes) {
+    const hide = scope === 'home' ? HOME_HIDE : [];
     for (const group of AI_LENSES) {
-      const sections = resolveSections(scope, group);
-      if (sections && sections.length) {
-        // generateInsight keys by lower(topic input) — pass what the frontend
-        // passes: 'home' for home, the topic NAME for topics.
-        const t = (topicsData.topics || []).find((x) => x.slug === scope);
-        out.push({ topic: scope === 'home' ? 'home' : t.name, group });
-      }
+      if (hide.includes(group)) continue;
+      const t = (topicsData.topics || []).find((x) => x.slug === scope);
+      const topic = scope === 'home' ? 'home' : (t && t.name);
+      if (!topic) continue;
+      out.push({ topic, group, insight: `${group}${BUILDER_SUFFIX}` });
     }
   }
   return out;
@@ -147,7 +155,7 @@ module.exports = async function handler(req, res) {
     // Built once and reused by the overview-fill, heal, and refresh phases:
     // every (scope, group) overview that should exist, keyed for lookup.
     const candidates = overviewCandidates();
-    const byKey = new Map(candidates.map((c) => [`${c.topic.toLowerCase()}|${c.group}`, c]));
+    const byKey = new Map(candidates.map((c) => [`${c.topic.toLowerCase()}|${c.insight}`, c]));
 
     // Heal sourceless briefs: re-ground cached briefs that stored NO grounding
     // citations (typically generated on a day the grounding budget was spent).
@@ -173,6 +181,7 @@ module.exports = async function handler(req, res) {
                    OR (jsonb_typeof(ai.sources)='array' AND jsonb_array_length(ai.sources)=0))
               AND ai.entity_type IN ('news','trend','shortcut')
               AND (ai.entity_type <> 'news' OR ns.url IS NOT NULL)
+              AND (ai.entity_type <> 'shortcut' OR ai.insight LIKE '%:b')
             ORDER BY ai.created_at ASC
             LIMIT $1`, [limit]);
       } catch (_) { return 0; }
@@ -182,7 +191,7 @@ module.exports = async function handler(req, res) {
         let payload = null;
         if (r.entity_type === 'trend') payload = { type: 'trend', query: r.entity_key, refresh: 1 };
         else if (r.entity_type === 'news') payload = { type: 'news', url: r.entity_key, title: r.title || '', description: r.description || '', date: r.date || '', refresh: 1 };
-        else { const c = byKey.get(`${r.entity_key}|${r.insight}`); if (c) payload = { type: 'shortcut', topic: c.topic, group: c.group, refresh: 1 }; }
+        else { const c = byKey.get(`${r.entity_key}|${r.insight}`); if (c) payload = { type: 'shortcut', topic: c.topic, group: c.group, builder: 1, refresh: 1 }; }
         if (payload && await call(payload)) n++;
         await sleep(600);
       }
@@ -228,14 +237,14 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    // 3. Group overviews missing (home first in candidate order).
+    // 3. Builder insights missing (home first in candidate order).
     if ((which === 'all' || which === 'shortcuts') && budget > 0) {
-      const existing = await sql.query(`SELECT entity_key, insight FROM ai_insights WHERE entity_type='shortcut'`);
+      const existing = await sql.query(`SELECT entity_key, insight FROM ai_insights WHERE entity_type='shortcut' AND insight LIKE '%:b'`);
       const have = new Set(existing.map((r) => `${r.entity_key}|${r.insight}`));
       for (const c of candidates) {
         if (budget <= 0 || !timeLeft()) break;
-        if (have.has(`${c.topic.toLowerCase()}|${c.group}`)) continue;
-        if (await call({ type: 'shortcut', topic: c.topic, group: c.group })) overviews++;
+        if (have.has(`${c.topic.toLowerCase()}|${c.insight}`)) continue;
+        if (await call({ type: 'shortcut', topic: c.topic, group: c.group, builder: 1 })) overviews++;
         budget--;
         await sleep(600);
       }
@@ -254,12 +263,20 @@ module.exports = async function handler(req, res) {
     //    Keeps Discover/trends current without ever blocking a user read.
     //    The "content lacks '## '" arm migrates pre-overview prose briefs once.
     if ((which === 'all' || which === 'refresh') && budget > 0) {
-      // force=1 → re-ground every overview + current trend regardless of age
-      // (flush after a prompt change). Otherwise only the stale ones.
+      // Per-builder freshness windows (hours), from data/ai-paths.json so the
+      // cron and the on-view refresh agree: discover 24h, topic-specific 168h,
+      // analyze 336h, learn 720h. Non-live classes ignore tier.
+      const winFor = (g) => effectiveWindowHours(g, 3);
+      const wDiscover = winFor('discover');
+      const wTopic = winFor('topic-specific');
+      const wAnalyze = winFor('analyze');
+      const wLearn = winFor('learn');
+      // force=1 → re-ground every builder + current trend regardless of age
+      // (flush after a prompt change). Otherwise only the stale ones, by window.
       const stale = force
         ? await sql.query(
             `SELECT entity_type, entity_key, insight FROM ai_insights ai
-              WHERE entity_type='shortcut'
+              WHERE (entity_type='shortcut' AND insight LIKE '%:b')
                  OR (entity_type='trend' AND insight='brief'
                      AND EXISTS (
                        SELECT 1 FROM trending_items ti
@@ -269,14 +286,10 @@ module.exports = async function handler(req, res) {
               LIMIT $1`, [budget])
         : await sql.query(
         `SELECT entity_type, entity_key, insight FROM ai_insights ai
-          WHERE (entity_type='shortcut' AND insight IN ('discover','topic-specific')
-                 AND created_at < now() - interval '72 hours')
-             OR (entity_type='shortcut' AND insight='analyze'
-                 AND created_at < now() - interval '168 hours')
-             OR (entity_type='shortcut' AND insight='learn'
-                 AND created_at < now() - interval '336 hours')
-             OR (entity_type='shortcut' AND insight IN ('discover','learn','analyze','topic-specific')
-                 AND content NOT LIKE '%## %')
+          WHERE (entity_type='shortcut' AND insight='discover:b'       AND created_at < now() - make_interval(hours => $2))
+             OR (entity_type='shortcut' AND insight='topic-specific:b' AND created_at < now() - make_interval(hours => $3))
+             OR (entity_type='shortcut' AND insight='analyze:b'        AND created_at < now() - make_interval(hours => $4))
+             OR (entity_type='shortcut' AND insight='learn:b'          AND created_at < now() - make_interval(hours => $5))
              OR (entity_type='trend' AND insight='brief'
                  AND created_at < now() - interval '24 hours'
                  AND EXISTS (
@@ -284,14 +297,14 @@ module.exports = async function handler(req, res) {
                     WHERE ti.geo='US' AND lower(ti.query) = ai.entity_key
                       AND ti.snapshot_at = (SELECT max(snapshot_at) FROM trending_items WHERE geo='US')))
           ORDER BY created_at ASC
-          LIMIT $1`, [budget]);
+          LIMIT $1`, [budget, wDiscover, wTopic, wAnalyze, wLearn]);
       for (const r of stale) {
         if (budget <= 0 || !timeLeft()) break;
         let payload = null;
         if (r.entity_type === 'trend') payload = { type: 'trend', query: r.entity_key, refresh: 1 };
         else {
           const c = byKey.get(`${r.entity_key}|${r.insight}`);
-          if (c) payload = { type: 'shortcut', topic: c.topic, group: c.group, refresh: 1 };
+          if (c) payload = { type: 'shortcut', topic: c.topic, group: c.group, builder: 1, refresh: 1 };
         }
         if (payload && await call(payload)) refreshed++;
         budget--;
@@ -318,7 +331,7 @@ module.exports = async function handler(req, res) {
           AND NOT EXISTS (SELECT 1 FROM ai_insights ai WHERE ai.entity_type='news' AND ai.entity_key=ns.url AND ai.insight='brief')`);
     const overviewHave = await sql.query(
       `SELECT count(*)::int AS n FROM ai_insights
-        WHERE entity_type='shortcut' AND insight IN ('discover','learn','analyze','topic-specific')`);
+        WHERE entity_type='shortcut' AND insight LIKE '%:b'`);
 
     return res.status(200).json({
       ok: true, trends, news, overviews, healed, refreshed,
