@@ -16229,47 +16229,62 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
    GRID. Single stacked scroll on mobile (no section tabs).
    ========================================================================== */
 
-/* AI Insights launcher: a 2×2 grid of "choose-a-path" headline cards — bold name +
-   one-line summary + small colored icon, no arrows. Lighter and less rigid than the
-   old full-width rows. */
-.topic-band #section-shortcuts .aii-bcards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+/* AI Insights launcher: a clean 2×2 of "choose-a-path" tiles — small colored icon +
+   bold name + one-line summary, no arrows. Soft tinted tiles (NOT bordered cards, so
+   no card-in-card); hover lifts each tile into its path's accent. */
+.topic-band #section-shortcuts .aii-bcards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .topic-band #section-shortcuts .aii-bcard {
-  align-items: flex-start; gap: 11px; padding: 14px; border-radius: 12px;
-  border: 1px solid color-mix(in srgb, var(--color-surface-border) 78%, transparent);
-  background: #fff; box-shadow: none !important; transition: border-color .14s ease, background .14s ease, box-shadow .14s ease, transform .14s ease;
+  align-items: flex-start; gap: 11px; padding: 12px 13px; border: 1px solid transparent !important;
+  border-radius: 11px; background: color-mix(in srgb, var(--color-surface-border) 16%, #fff) !important;
+  box-shadow: none !important; transform: none !important; transition: background .14s ease, color .14s ease;
 }
-.topic-band #section-shortcuts .aii-bcard:hover {
-  border-color: color-mix(in srgb, var(--aii-accent, #2563eb) 48%, var(--color-surface-border));
-  background: color-mix(in srgb, var(--aii-accent, #2563eb) 4%, #fff);
-  box-shadow: 0 3px 14px color-mix(in srgb, var(--aii-accent, #2563eb) 13%, transparent) !important; transform: translateY(-1px);
-}
-.topic-band #section-shortcuts .aii-bcard-name { font-size: 0.98rem; }
+.topic-band #section-shortcuts .aii-bcard:hover { background: color-mix(in srgb, var(--aii-accent, #2563eb) 9%, #fff) !important; }
+.topic-band #section-shortcuts .aii-bcard-ic { width: 30px; height: 30px; border-radius: 8px; }
+.topic-band #section-shortcuts .aii-bcard-ic svg { width: 16px; height: 16px; }
+.topic-band #section-shortcuts .aii-bcard-tx { gap: 3px; }
+.topic-band #section-shortcuts .aii-bcard-name { font-size: 0.92rem; }
 .topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-name { color: var(--aii-accent, #2563eb); }
-.topic-band #section-shortcuts .aii-bcard-go { display: none; }   /* headline-style: drop the arrow */
+.topic-band #section-shortcuts .aii-bcard-sub { font-size: 0.78rem; }
+.topic-band #section-shortcuts .aii-bcard-go { display: none; }
 @media (max-width: 540px) { .topic-band #section-shortcuts .aii-bcards { grid-template-columns: 1fr; } }
 
-/* Web Sources: match the AI Insights 2×2 — category cards as clickable headlines
-   that expand their source links in place. */
-.topic-band #section-websources .ws-secs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+/* Web Sources: a single column (4-down) of accordion dropdowns — each category
+   row expands to list its source links. Hairline-separated, clean. */
+.topic-band #section-websources .ws-secs { display: flex; flex-direction: column; }
 .topic-band #section-websources .ws-cat-sec {
-  border: 1px solid color-mix(in srgb, var(--color-surface-border) 78%, transparent); border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 78%, transparent) !important;
-  border-radius: 12px; background: #fff; overflow: hidden; transition: border-color .14s ease, box-shadow .14s ease;
+  border: none !important; border-radius: 0; background: none; overflow: hidden;
+  border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 68%, transparent) !important;
 }
-.topic-band #section-websources .ws-cat-sec:hover { border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-surface-border)); box-shadow: 0 3px 14px rgba(15,26,46,0.06); }
-.topic-band #section-websources .ws-cat-sec .aii-sec-head { padding: 14px; }
-.topic-band #section-websources .ws-cat-sec .aii-sec-name { text-transform: none; letter-spacing: 0; font-size: 0.95rem; font-weight: 600; color: var(--color-text); }
-@media (max-width: 540px) { .topic-band #section-websources .ws-secs { grid-template-columns: 1fr; } }
+.topic-band #section-websources .ws-secs > .ws-cat-sec:first-child { border-top: none !important; }
+.topic-band #section-websources .ws-cat-sec .aii-sec-head { padding: 13px 4px; }
+.topic-band #section-websources .ws-cat-sec .aii-sec-name { text-transform: none; letter-spacing: 0; font-size: 0.92rem; font-weight: 600; color: var(--color-text); }
+.topic-band #section-websources .ws-cat-sec:hover .aii-sec-name { color: var(--color-primary); }
 
-/* News feed: responsive 2→1 grid of story cards inside the band. */
-.topic-band #section-newsfeed .news-list { display: grid; grid-template-columns: 1fr; gap: 12px; }
+/* News feed: a responsive 2→1 grid of clean, equal-height story cards. The base
+   .news-card is a divider-ROW (edge-to-edge, no chrome); in the grid we override it
+   into a real card — reset the row's internal padding (it doubled with the card
+   padding) and pin the footer to the bottom so cards in a row align. */
+.topic-band #section-newsfeed .news-list { display: grid; grid-template-columns: 1fr; gap: 14px; padding: 0 0 0.5rem; }
 @media (min-width: 720px) {
-  .topic-band #section-newsfeed .news-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
+  .topic-band #section-newsfeed .news-list { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; }
 }
 .topic-band #section-newsfeed .news-card {
-  border: 1px solid var(--color-surface-border); border-bottom: 1px solid var(--color-surface-border);
-  border-radius: 12px; background: #fff; padding: 14px 16px;
+  display: flex; flex-direction: column; border: 1px solid var(--color-surface-border) !important;
+  border-radius: 14px; background: #fff; padding: 17px 19px 13px;
+  transition: border-color .14s ease, box-shadow .14s ease, transform .14s ease;
 }
-.topic-band #section-newsfeed .news-card:hover { border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-surface-border)); box-shadow: 0 2px 10px rgba(15,26,46,0.05); }
+.topic-band #section-newsfeed .news-card:hover {
+  background: #fff; border-color: color-mix(in srgb, var(--color-primary) 32%, var(--color-surface-border));
+  box-shadow: 0 4px 16px rgba(15,26,46,0.07); transform: translateY(-1px);
+}
+.topic-band #section-newsfeed .news-card-link { padding: 0 !important; }
+.topic-band #section-newsfeed .news-card:has(.news-ai) .news-card-link { padding-bottom: 0 !important; }
+.topic-band #section-newsfeed .news-card-title { font-size: 1.02rem; }
+.topic-band #section-newsfeed .news-card-desc { margin-top: 0.5rem; }
+.topic-band #section-newsfeed .news-card-foot {
+  margin-top: auto; padding: 0.8rem 0 0 !important; gap: 0.45rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 55%, transparent);
+}
 
 /* ── Desktop (≥900): band = AI Insights (wider) | Web Sources (narrower), then a
    full-width news grid below. Force the layout to block so the leftover 2-col
