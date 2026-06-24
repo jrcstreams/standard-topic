@@ -16255,12 +16255,19 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 }
 .topic-band #section-newsfeed .news-card:hover { border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-surface-border)); box-shadow: 0 2px 10px rgba(15,26,46,0.05); }
 
-/* ── Desktop (≥900): band = AI Insights (wider) | Web Sources (narrower) ── */
+/* ── Desktop (≥900): band = AI Insights (wider) | Web Sources (narrower), then a
+   full-width news grid below. Force the layout to block so the leftover 2-col
+   grid template on .topic-layout (and the old #section-newsfeed grid-column:1)
+   no longer apply — the band + feed simply stack full-width. ── */
 @media (min-width: 900px) {
+  body.app-mode .topic-layout.topic-band { display: block !important; }
+  body.app-mode .topic-layout.topic-band > .layout-section,
+  body.app-mode .topic-layout.topic-band > .topic-intel-band { width: 100%; max-width: none; }
+  body.app-mode .topic-layout.topic-band > #section-newsfeed { margin-top: 1.8rem; }
   .topic-band .topic-intel-band { display: flex; gap: 1.5rem; align-items: flex-start; }
   .topic-band .topic-intel-band > .layout-section { min-width: 0; display: block; }
   .topic-band .topic-intel-band > #section-shortcuts { flex: 1.5 1 0; }
-  .topic-band .topic-intel-band > #section-websources { flex: 1 1 0; position: sticky; top: 0; }
+  .topic-band .topic-intel-band > #section-websources { flex: 1 1 0; }
 }
 
 /* ── Mobile (<900): single stacked scroll, no section tabs ── */
