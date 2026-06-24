@@ -16222,3 +16222,59 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
   body.app-mode:not(.home-mode) .topic-side .aii-pathlist,
   body.app-mode:not(.home-mode) .topic-side .ws-pathlist { grid-template-columns: 1fr !important; }
 }
+
+/* ============================================================================
+   Topic-page layout revamp (#layout-revamp): an "intelligence band" on top —
+   AI Insights (flat shortcut links) beside Web Sources — over a full-width news
+   GRID. Single stacked scroll on mobile (no section tabs).
+   ========================================================================== */
+
+/* AI Insights launcher: flatten the builder cards into a clean shortcut LINK
+   list (no card-in-card). The .aii element stays the callout; rows are hairline-
+   separated, not bordered tiles. */
+.topic-band #section-shortcuts .aii-bcards { gap: 0; }
+.topic-band #section-shortcuts .aii-bcard {
+  border: none; border-radius: 0; background: none; box-shadow: none !important;
+  padding: 13px 6px; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent);
+}
+.topic-band #section-shortcuts .aii-bcards > .aii-bcard:first-child { border-top: none; }
+.topic-band #section-shortcuts .aii-bcard:hover { background: color-mix(in srgb, var(--aii-accent, #2563eb) 5%, transparent); border-radius: 9px; transform: none; }
+.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-go { transform: translateX(3px); }
+
+/* Web Sources panel: collapsible on mobile (one accordion). */
+.ws-panel .aii-head { cursor: default; }
+
+/* News feed: responsive 2→1 grid of story cards inside the band. */
+.topic-band #section-newsfeed .news-list { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 720px) {
+  .topic-band #section-newsfeed .news-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
+}
+.topic-band #section-newsfeed .news-card {
+  border: 1px solid var(--color-surface-border); border-bottom: 1px solid var(--color-surface-border);
+  border-radius: 12px; background: #fff; padding: 14px 16px;
+}
+.topic-band #section-newsfeed .news-card:hover { border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-surface-border)); box-shadow: 0 2px 10px rgba(15,26,46,0.05); }
+
+/* ── Desktop (≥900): band = AI Insights (wider) | Web Sources (narrower) ── */
+@media (min-width: 900px) {
+  .topic-band .topic-intel-band { display: flex; gap: 1.5rem; align-items: flex-start; }
+  .topic-band .topic-intel-band > .layout-section { min-width: 0; display: block; }
+  .topic-band .topic-intel-band > #section-shortcuts { flex: 1.5 1 0; }
+  .topic-band .topic-intel-band > #section-websources { flex: 1 1 0; position: sticky; top: 0; }
+}
+
+/* ── Mobile (<900): single stacked scroll, no section tabs ── */
+@media (max-width: 899.98px) {
+  body.app-mode .topic-layout.topic-band { display: flex; flex-direction: column; gap: 1rem; }
+  /* Override the tab-gating: show ALL sections, natural height. */
+  body.app-mode .topic-layout.topic-band #section-shortcuts,
+  body.app-mode .topic-layout.topic-band #section-websources,
+  body.app-mode .topic-layout.topic-band #section-newsfeed {
+    display: block !important; flex: none !important; overflow: visible !important; min-height: 0 !important;
+  }
+  .topic-band .topic-intel-band { display: flex; flex-direction: column; gap: 1rem; }
+  /* No section tabs in the subnav — it's one scroll now. */
+  .topic-banner .subnav-tabs, body.app-mode .subnav-tabs { display: none !important; }
+  /* News grid back to a single column. */
+  .topic-band #section-newsfeed .news-list { grid-template-columns: 1fr; }
+}

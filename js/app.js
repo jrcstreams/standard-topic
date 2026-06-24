@@ -1669,15 +1669,16 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // Sources) + MAIN (News Feed, Related). The wrappers are display:contents
     // below 1024px, so the mobile tab navigator (which shows ONE section at a
     // time) is unaffected; at ≥1024 they become the two columns (#14).
+    // Intelligence band on top — AI Insights (shortcut links) beside Web Sources —
+    // then the News Feed full-width below as a responsive grid. On mobile this is a
+    // single stacked scroll (no section tabs). (#layout-revamp)
     container.innerHTML = `
-      <div class="topic-layout" id="topic-layout">
-        <div class="topic-side">
+      <div class="topic-layout topic-band" id="topic-layout">
+        <div class="topic-intel-band">
           <section class="layout-section" id="section-shortcuts"></section>
           <section class="layout-section" id="section-websources"></section>
         </div>
-        <div class="topic-main">
-          <section class="layout-section" id="section-newsfeed"></section>
-        </div>
+        <section class="layout-section" id="section-newsfeed"></section>
       </div>
     `;
   }
