@@ -16229,20 +16229,36 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
    GRID. Single stacked scroll on mobile (no section tabs).
    ========================================================================== */
 
-/* AI Insights launcher: flatten the builder cards into a clean shortcut LINK
-   list (no card-in-card). The .aii element stays the callout; rows are hairline-
-   separated, not bordered tiles. */
-.topic-band #section-shortcuts .aii-bcards { gap: 0; }
+/* AI Insights launcher: a 2×2 grid of "choose-a-path" headline cards — bold name +
+   one-line summary + small colored icon, no arrows. Lighter and less rigid than the
+   old full-width rows. */
+.topic-band #section-shortcuts .aii-bcards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .topic-band #section-shortcuts .aii-bcard {
-  border: none; border-radius: 0; background: none; box-shadow: none !important;
-  padding: 13px 6px; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent);
+  align-items: flex-start; gap: 11px; padding: 14px; border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--color-surface-border) 78%, transparent);
+  background: #fff; box-shadow: none !important; transition: border-color .14s ease, background .14s ease, box-shadow .14s ease, transform .14s ease;
 }
-.topic-band #section-shortcuts .aii-bcards > .aii-bcard:first-child { border-top: none; }
-.topic-band #section-shortcuts .aii-bcard:hover { background: color-mix(in srgb, var(--aii-accent, #2563eb) 5%, transparent); border-radius: 9px; transform: none; }
-.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-go { transform: translateX(3px); }
+.topic-band #section-shortcuts .aii-bcard:hover {
+  border-color: color-mix(in srgb, var(--aii-accent, #2563eb) 48%, var(--color-surface-border));
+  background: color-mix(in srgb, var(--aii-accent, #2563eb) 4%, #fff);
+  box-shadow: 0 3px 14px color-mix(in srgb, var(--aii-accent, #2563eb) 13%, transparent) !important; transform: translateY(-1px);
+}
+.topic-band #section-shortcuts .aii-bcard-name { font-size: 0.98rem; }
+.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-name { color: var(--aii-accent, #2563eb); }
+.topic-band #section-shortcuts .aii-bcard-go { display: none; }   /* headline-style: drop the arrow */
+@media (max-width: 540px) { .topic-band #section-shortcuts .aii-bcards { grid-template-columns: 1fr; } }
 
-/* Web Sources panel: collapsible on mobile (one accordion). */
-.ws-panel .aii-head { cursor: default; }
+/* Web Sources: match the AI Insights 2×2 — category cards as clickable headlines
+   that expand their source links in place. */
+.topic-band #section-websources .ws-secs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+.topic-band #section-websources .ws-cat-sec {
+  border: 1px solid color-mix(in srgb, var(--color-surface-border) 78%, transparent); border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 78%, transparent) !important;
+  border-radius: 12px; background: #fff; overflow: hidden; transition: border-color .14s ease, box-shadow .14s ease;
+}
+.topic-band #section-websources .ws-cat-sec:hover { border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-surface-border)); box-shadow: 0 3px 14px rgba(15,26,46,0.06); }
+.topic-band #section-websources .ws-cat-sec .aii-sec-head { padding: 14px; }
+.topic-band #section-websources .ws-cat-sec .aii-sec-name { text-transform: none; letter-spacing: 0; font-size: 0.95rem; font-weight: 600; color: var(--color-text); }
+@media (max-width: 540px) { .topic-band #section-websources .ws-secs { grid-template-columns: 1fr; } }
 
 /* News feed: responsive 2→1 grid of story cards inside the band. */
 .topic-band #section-newsfeed .news-list { display: grid; grid-template-columns: 1fr; gap: 12px; }
@@ -16324,3 +16340,9 @@ body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs { display: none
   .topic-band #section-websources .ws-head-chev { display: inline-flex; }
   .topic-band #section-websources .ws-panel.ws-collapsed .aii-stage { display: none !important; }
 }
+
+/* Modal primary actions (Ask AI / Web Search): clean, clearly SECONDARY pills —
+   per-section "Explore this further" + Further Insights are the main exploration
+   path now, so these whole-topic shortcuts sit quietly at the top-right. */
+.aii-brief-actions { display: flex; gap: 8px; flex: none; align-self: flex-start; }
+.aii-brief-actions .im-qlink-btn { padding: 6px 11px; font-size: 0.78rem; border-radius: 8px; background: #fff; }
