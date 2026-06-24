@@ -44,13 +44,29 @@ export function renderWebSources(container, topic) {
     ? `<div class="aii-secs ws-secs">${sectionsHTML}</div>`
     : '<p class="aii-empty">No web sources available.</p>';
 
+  // On mobile the whole panel is ONE accordion (collapsed by default) so it stays
+  // compact in the single-scroll layout; tap the header to reveal the categories.
+  const isMobile = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 899.98px)').matches;
   container.innerHTML = `
-    <div class="aii ws-panel">
-      <div class="aii-head">
+    <div class="aii ws-panel${isMobile ? ' ws-collapsed' : ''}">
+      <div class="aii-head ws-head" role="button" tabindex="0" aria-expanded="${isMobile ? 'false' : 'true'}">
         <div class="aii-head-top"><span class="aii-logo">${LOGO}</span><span class="aii-brand">Web Sources</span></div>
+        <span class="ws-head-chev" aria-hidden="true">${CHEV}</span>
       </div>
       <div class="aii-stage">${body}</div>
     </div>`;
+
+  // Panel-level toggle (the header): collapses/expands the whole category list.
+  const panel = container.querySelector('.ws-panel');
+  const head = container.querySelector('.ws-head');
+  const togglePanel = () => {
+    const collapsed = panel.classList.toggle('ws-collapsed');
+    head.setAttribute('aria-expanded', String(!collapsed));
+  };
+  if (head) {
+    head.addEventListener('click', togglePanel);
+    head.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); togglePanel(); } });
+  }
 
   // Collapse/expand each category section (native click toggle on the head).
   container.querySelectorAll('.ws-cat-sec > .aii-sec-head').forEach((b) => {

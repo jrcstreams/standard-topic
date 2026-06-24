@@ -16312,3 +16312,15 @@ body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs { display: none
   .topic-band #section-websources .aii-head,
   .topic-band #section-websources .ws-head { display: flex !important; }
 }
+
+/* Web Sources: one collapsible accordion. Header toggles the whole category list;
+   chevron shows only where it's collapsible (mobile). The collapse rule carries the
+   #section-websources id so it beats the band-mobile "show everything" override. */
+.ws-head { cursor: pointer; flex-direction: row; align-items: center; justify-content: space-between; }
+.ws-head-chev { display: none; flex: none; color: var(--color-text-light); transition: transform .2s ease; }
+.ws-head-chev svg { width: 18px; height: 18px; }
+.ws-panel:not(.ws-collapsed) .ws-head-chev { transform: rotate(180deg); }
+@media (max-width: 899.98px) {
+  .topic-band #section-websources .ws-head-chev { display: inline-flex; }
+  .topic-band #section-websources .ws-panel.ws-collapsed .aii-stage { display: none !important; }
+}
