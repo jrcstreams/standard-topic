@@ -16288,3 +16288,27 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
    every width) — hide them on topic pages. Specificity matches the rule that
    forces them visible (line ~6391); placed later so it wins at all widths. */
 body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs { display: none !important; }
+
+/* Band mobile: undo the old tab-mode clamps (the "mobile tabular navigation"
+   block ~13979 was built for one-section-at-a-time tabs). In the single-scroll
+   band, panels need natural height, visible overflow, restored card chrome, and
+   their headers shown. These have no !important upstream, so !important wins. */
+@media (max-width: 899.98px) {
+  .topic-band #section-shortcuts .aii,
+  .topic-band #section-shortcuts .aii-stage,
+  .topic-band #section-websources .ws,
+  .topic-band #section-websources .aii,
+  .topic-band #section-websources .aii-stage,
+  .topic-band #section-newsfeed .newsfeed-card,
+  .topic-band #section-newsfeed .newsfeed-scroll-wrap {
+    height: auto !important; max-height: none !important; min-height: 0 !important; overflow: visible !important; display: block !important;
+  }
+  .topic-band #section-shortcuts .aii,
+  .topic-band #section-websources .ws,
+  .topic-band #section-websources .aii {
+    border: 1px solid var(--color-surface-border) !important; border-radius: 14px !important; background: #fff !important;
+  }
+  .topic-band #section-shortcuts .aii-head,
+  .topic-band #section-websources .aii-head,
+  .topic-band #section-websources .ws-head { display: flex !important; }
+}
