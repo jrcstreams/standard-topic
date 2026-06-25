@@ -16578,3 +16578,19 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
 @media (max-width: 899.98px) {
   body.app-mode .topic-layout.topic-band > #section-shortcuts { margin-top: 0.6rem; }
 }
+
+/* ── Trending "Explore Further" accordions (#186) — Ask AI → "External AI Model
+   Insights" + "Web Search", relocated below Related Searches as in-section
+   accordions. */
+.im-ef { display: flex; flex-direction: column; gap: 8px; }
+.im-ef-acc { border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; overflow: hidden; }
+.im-ef-trigger { width: 100%; display: flex; align-items: center; gap: 9px; padding: 12px 14px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.88rem; font-weight: 600; color: var(--color-text); }
+.im-ef-trigger-ic { flex: none; display: inline-flex; align-items: center; color: var(--color-primary); }
+.im-ef-trigger-ic svg { width: 16px; height: 16px; }
+.im-ef-trigger-tx { flex: 1 1 auto; text-align: left; min-width: 0; }
+.im-ef-chev { flex: none; display: inline-flex; align-items: center; color: var(--color-text-muted); transition: transform .18s ease; }
+.im-ef-chev svg { width: 15px; height: 15px; }
+.im-ef-trigger[aria-expanded="true"] .im-ef-chev { transform: rotate(180deg); }
+.im-ef-trigger:hover { background: color-mix(in srgb, var(--color-primary) 3.5%, #fff); }
+.im-ef-acc .im-acc { margin: 0; }
+.im-ef-acc .im-acc.is-open { border-top: 1px solid var(--color-surface-border); }

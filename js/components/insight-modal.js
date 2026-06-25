@@ -597,7 +597,7 @@ function exploreLeaveHTML() {
 function wireActions(ctx) {
   const explorePanel = panelEl.querySelector('#im-explore-panel');
   const wsPanel = panelEl.querySelector('#im-web-panel');
-  const TRIGGERS = '.im-actbtn, .im-qlink-btn, .im-cond-act';
+  const TRIGGERS = '.im-actbtn, .im-qlink-btn, .im-cond-act, .im-ef-trigger';
   panelEl.querySelectorAll(TRIGGERS).forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -834,16 +834,12 @@ function renderTrend(d) {
   // Related Searches is now its own brief section (Summary → Related → Sources),
   // not a header dropdown.
   const relBody = (Array.isArray(d.trendBreakdown) && d.trendBreakdown.length) ? relatedSearchesHTML(d.trendBreakdown) : '';
-  const actions = [
-    `<button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span>${CHEV}</button>`,
-    `<button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span>${CHEV}</button>`,
-  ].join('');
+  // Ask AI / Web Search are no longer header buttons — they live in an "Explore
+  // Further" section below Related Searches as two accordions (#186).
   panelEl.innerHTML = `
     ${brandHeaderHTML(null, { brandLabel: 'Trending Insights', hideBack: true })}
     <div class="im-body">
-      ${stickyHeadHTML({ title, metaLine, actions, nav: d.nav, accHTML: `
-        <div class="im-acc" data-body="explore" id="im-explore-panel"></div>
-        <div class="im-acc" data-body="web" id="im-web-panel"></div>` })}
+      ${stickyHeadHTML({ title, metaLine, actions: '', nav: d.nav })}
       <div class="im-secs">
         <div id="im-secs-body">${msecHTML('msec-brief', 'Summary', briefSkeleton())}</div>
       </div>
@@ -886,9 +882,25 @@ function renderTrend(d) {
         const relatedSec = relBody ? msecHTML('msec-related', 'Related Searches', secHeadHTML('related', 'Related Searches') + relBody) : '';
         const cov = coverageListHTML(data.headlines, data.sources, '');
         const covSec = cov ? msecHTML('msec-sources', 'Sources', secHeadHTML('sources', 'Sources') + `<div class="im-coverage-list">${cov}</div>`) : '';
+        // "Explore Further" (#186): Ask AI → "External AI Model Insights" + "Web
+        // Search" as two in-section accordions, below Related Searches.
+        const exploreFurther = `<section class="im-msec im-ef-sec" id="msec-explore" data-name="Explore Further">
+          <div class="im-msec-head"><span class="im-msec-ic">${SEC_ICON.matters}</span><h3 class="im-msec-name">Explore Further</h3></div>
+          <div class="im-ef">
+            <div class="im-ef-acc">
+              <button type="button" class="im-ef-trigger" data-panel="explore" aria-expanded="false"><span class="im-ef-trigger-ic">${ICON_ASK}</span><span class="im-ef-trigger-tx">External AI Model Insights</span><span class="im-ef-chev">${CHEV}</span></button>
+              <div class="im-acc" data-body="explore" id="im-explore-panel"></div>
+            </div>
+            <div class="im-ef-acc">
+              <button type="button" class="im-ef-trigger" data-panel="web" aria-expanded="false"><span class="im-ef-trigger-ic">${ICON_GLOBE}</span><span class="im-ef-trigger-tx">Web Search</span><span class="im-ef-chev">${CHEV}</span></button>
+              <div class="im-acc" data-body="web" id="im-web-panel"></div>
+            </div>
+          </div>
+        </section>`;
         // All sections in ONE container so :last-child (no border) is the true last.
-        secsBody.innerHTML = why + sum + relatedSec + covSec; secsBody.classList.add('ai-reveal');
+        secsBody.innerHTML = why + sum + relatedSec + exploreFurther + covSec; secsBody.classList.add('ai-reveal');
         wireRelatedChips(title);
+        wireActions(ctx);   // re-wire the relocated Explore-Further accordions + panels
         buildBriefNav();
       } else { secsBody.innerHTML = failBriefHTML('No AI brief generated for this trend yet.'); wireBriefRetry(secsBody, loadTrendBrief); }
     } catch (_) { if (panelEl.querySelector('#im-secs-body') === secsBody) { secsBody.innerHTML = failBriefHTML('AI brief unavailable right now.'); wireBriefRetry(secsBody, loadTrendBrief); } }
