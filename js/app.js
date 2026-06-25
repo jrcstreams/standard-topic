@@ -13,11 +13,11 @@ import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js?v=20260616-revamp245';
 import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260616-revamp245';
 import { initPromptModal } from './components/prompt-modal.js?v=20260616-revamp245';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260620-revamp279';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260622-revamp333';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp245';
-import { initInsightModal } from './components/insight-modal.js?v=20260617-revamp272';
+import { initInsightModal } from './components/insight-modal.js?v=20260622-revamp333';
 import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260622-revamp332';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260622-revamp332';
 import { renderWebSources } from './components/websources.js?v=20260622-revamp322';
@@ -2972,7 +2972,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       const list = (trendTopicsRaw || []).map((t) => ({ type: 'trend', query: spTitleCase(t.query), category: (t.categories && t.categories[0]) || '', startedAt: t.startedAt || '', trendBreakdown: Array.isArray(t.trendBreakdown) ? t.trendBreakdown.slice(0, 8) : [] }));
       let index = list.findIndex((e) => e.query === b.dataset.q);
       if (index < 0) { if (!list.length) return; index = 0; }
-      window.dispatchEvent(new CustomEvent('open-insight-modal', { detail: { ...list[index], nav: { list, index, backLabel: 'All Trending', backEvent: 'open-trending-list', itemKind: 'trend' } } }));
+      window.dispatchEvent(new CustomEvent('open-insight-modal', { detail: { ...list[index], nav: { list, index, backLabel: 'View All Trending', backEvent: 'open-trending-list', itemKind: 'trend' } } }));
     }));
   }
   fillStarterChips();

@@ -189,7 +189,7 @@ async function showTrendBrief(card) {
   }
   window.dispatchEvent(new CustomEvent('open-insight-modal', { detail: {
     ...list[index],
-    nav: { list, index, backLabel: 'All Trending', backEvent: 'open-trending-list', itemKind: 'trend' },
+    nav: { list, index, backLabel: 'View All Trending', backEvent: 'open-trending-list', itemKind: 'trend' },
   } }));
 }
 

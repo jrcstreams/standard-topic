@@ -15571,6 +15571,9 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .im-headnav-link { display: inline-flex; align-items: center; gap: 5px; padding: 0; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.92rem; font-weight: 600; color: #6b7484; white-space: nowrap; transition: color .14s; }
 .im-headnav-link:hover:not(:disabled) { color: var(--color-primary); }
 .im-headnav-link:disabled { opacity: 0.38; cursor: default; }
+/* "View All Trending" is a DISCREET back link — smaller + lighter than the
+   Previous/Next links so the three don't read as one undifferentiated row (#185). */
+.im-headnav-back { font-size: 0.8rem; font-weight: 600; color: var(--color-text-light); }
 .im-headnav-arrow { flex: none; width: 15px; height: 15px; display: block; }
 
 .im-overhead { padding: 12px 0; }
@@ -15586,7 +15589,7 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .im-eyebrow-time--link:hover { color: var(--color-primary); }
 .im-eyebrow-time--link:hover svg { opacity: 1; }
 /* Responsive title — scales with the viewport, NO scroll-driven transform. */
-.im-over-title { margin: 0 0 10px; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; color: var(--color-primary); line-height: 1.18; font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.45rem); }
+.im-over-title { margin: 0 0 10px; font-family: var(--font-display); font-weight: 600; letter-spacing: -0.018em; color: var(--color-primary); line-height: 1.18; font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.45rem); }
 .im-over-links { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 /* Discreet dropdown buttons under the title — clearly interactive (not loose blue
    text links). White face + a soft blue-tinted border; the leading icon + trailing
@@ -15624,7 +15627,9 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .im-secs { padding-top: 0; padding-bottom: 2rem; }
 /* One clean "AI Brief" label heads the whole generated-section stack (replaces
    the per-section "AI Generated Text" tags). */
-.im-secs::before { content: "\2726  AI Brief"; display: block; margin: 18px 0 20px; font-family: var(--font-family); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #8b95a9; }
+/* "AI Brief" label removed (#183/#184) — provenance is carried by the per-section
+   "AI Generated Text" tags instead. */
+.im-secs::before { content: none; display: none; }
 .im-msec { padding: 22px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 95%, transparent); scroll-margin-top: 6px; }
 .im-msec:last-child { border-bottom: none; }
 .im-msec:first-child { padding-top: 16px; }
