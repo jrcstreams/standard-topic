@@ -291,7 +291,7 @@ export function renderAIIntelligence(container, scope) {
       ${backLink}
       <div class="aii-tp-head">
         <h3 class="aii-tp-title">Get AI insights on any topic</h3>
-        <p class="aii-tp-sub">Search any topic or term, or browse 100+ by category.</p>
+        <p class="aii-tp-sub">Search any term or browse by topic.</p>
       </div>
       <div class="aii-tp-field">
         <span class="aii-tp-fieldlabel">Search</span>
@@ -331,6 +331,18 @@ export function renderAIIntelligence(container, scope) {
       if (browseLabel) browseLabel.textContent = q ? 'Results' : 'Browse by Topic';
       list.innerHTML = topicListHTML(search.value); wireKeys(); wireCustom();
       requestAnimationFrame(updateFade);
+    });
+    // Enter runs the typed term as a custom search (or opens the first matching
+    // topic if there's an exact-ish match) — #225.
+    if (search) search.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      const term = search.value.trim(); if (!term) return;
+      e.preventDefault();
+      const firstKey = list.querySelector('[data-tp-key]')?.dataset.tpKey;
+      const exact = (scope.allTopics || []).find((t) => String(t.name).toLowerCase() === term.toLowerCase());
+      if (exact && scope.onChangeTopic) { scope.onChangeTopic(exact.key); return; }
+      window.dispatchEvent(new CustomEvent('close-all-modals'));
+      window.location.hash = '#/custom/' + encodeURIComponent(term);
     });
     list.addEventListener('scroll', updateFade, { passive: true });
     wireKeys();

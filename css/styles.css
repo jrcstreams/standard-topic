@@ -13520,10 +13520,10 @@ body.home-search #topic-layout { margin-top: 0.4rem; }
 @media (max-width: 1023.98px) {
   body.home-search.app-mode .topic-layout > .layout-section { flex: none; overflow: visible; min-height: 0; }
   body.home-search #section-aii-home .shortcuts-scroll-wrap { padding-top: 0.5rem; padding-bottom: 0; }
-  /* Reflow (single column): cap the search content to a comfortable centred width
-     so the bar + chips don't stretch edge-to-edge and read as sparse on the
-     full-width card. */
-  body.home-search .home-search-hero .search-panel { max-width: 660px; margin-left: auto; margin-right: auto; }
+  /* Reflow (single column, <1024 = "smaller screens"): the search content fills the
+     full-width card (no narrow cap — #222/#228). On ≥1024 the grid layout caps the
+     hero at 1080 / panel at 940 ("reasonable, non-obnoxious" on big screens). */
+  body.home-search .home-search-hero .search-panel { max-width: none; margin-left: auto; margin-right: auto; }
   body.home-search .home-search-hero .search-panel-title { font-size: clamp(1.2rem, 0.95rem + 1vw, 1.45rem); }
 }
 
@@ -16645,52 +16645,20 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
   body.app-mode #sub-header.is-subnav .subnav-chip-wrap.can-scroll-right .subnav-chip-arrow-right { display: inline-flex !important; }
 }
 
-/* #216/#217 — keep the main-nav control icons on the bar down to 640px (tablets),
-   not just ≥900. They render as the same translucent icon pills; Topics drops its
-   label (icon-only). Below 640 (phones) they hide and the bottom nav is the nav.
-   (The bottom nav still appears 640–900 as a fallback.) */
-@media (min-width: 640px) and (max-width: 899.98px) {
-  body.app-mode .sticky-hero-inner .sticky-actions { display: flex !important; align-items: center; gap: 0.4rem; }
-  body.app-mode .sticky-actions .sticky-home,
-  body.app-mode .sticky-actions .sticky-search-pill,
-  body.app-mode .sticky-actions .sticky-trending,
-  body.app-mode .sticky-actions .sticky-settings,
-  body.app-mode .sticky-actions .sticky-topics { display: inline-flex !important; }
-  body.app-mode .sticky-actions .sticky-home,
-  body.app-mode .sticky-actions .sticky-trending,
-  body.app-mode .sticky-actions .sticky-settings,
-  body.app-mode .sticky-actions .sticky-topics,
-  body.app-mode .sticky-actions .sticky-search-pill .search-bar {
-    width: 34px; height: 34px; min-width: 0; padding: 0; gap: 0;
-    align-items: center; justify-content: center;
-    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16);
-    border-radius: 9px; color: rgba(255,255,255,0.92);
-  }
-  body.app-mode .sticky-actions .sticky-search-pill .search-bar-label,
-  body.app-mode .sticky-actions .sticky-trending-full,
-  body.app-mode .sticky-actions .sticky-trending-short,
-  body.app-mode .sticky-actions .sticky-topics .sticky-topics-label { display: none !important; }
-  body.app-mode .sticky-actions .sticky-search-pill .search-bar-icon { color: rgba(255,255,255,0.92) !important; }
-  body.app-mode .sticky-actions .sticky-home svg,
-  body.app-mode .sticky-actions .sticky-trending svg,
-  body.app-mode .sticky-actions .sticky-settings svg,
-  body.app-mode .sticky-actions .sticky-search-pill .search-bar-icon,
-  body.app-mode .sticky-actions .sticky-topics svg { width: 17px !important; height: 17px !important; stroke-width: 1.9 !important; }
-}
-
-/* In the 640–900 range the control pills include Search, so hide the standalone
-   mobile search icon to avoid two search affordances (#216). */
-@media (min-width: 640px) and (max-width: 899.98px) {
-  body.app-mode .sticky-hero-inner .nav-search-mobile { display: none !important; }
-}
+/* #216/#217 REVERTED — un-hiding the main-nav control pills in 640–900 broke the
+   mobile top-bar flex order (brand shoved to the right, #227). The mobile top bar
+   stays minimal (hamburger + brand + search icon) with the bottom nav for nav;
+   revisit tablet-persistent controls as a proper layout pass later. */
 
 /* #223 — AI Insights + News Feed section-header titles are the SAME size on the
    topic band (they were rendering at slightly different sizes). */
 .topic-band #section-shortcuts .aii-brand,
-.topic-band #section-newsfeed .newsfeed-title { font-size: 1.18rem !important; letter-spacing: -0.01em !important; }
+.topic-band #section-newsfeed .newsfeed-title,
+.topic-band #section-newsfeed .newsfeed-title-main { font-size: 1.18rem !important; line-height: 1.2 !important; font-weight: 600 !important; letter-spacing: -0.01em !important; }
 @media (max-width: 899.98px) {
   .topic-band #section-shortcuts .aii-brand,
-  .topic-band #section-newsfeed .newsfeed-title { font-size: 1.06rem !important; }
+  .topic-band #section-newsfeed .newsfeed-title,
+  .topic-band #section-newsfeed .newsfeed-title-main { font-size: 1.06rem !important; }
 }
 
 /* #221 — "Search <term>" custom CTA in the AI Insights topic picker (run any term,
