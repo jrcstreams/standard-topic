@@ -14064,13 +14064,25 @@ body.home-search #section-shortcuts .sidebar-card-header,
    the pills sat lower and far-right. Force it back to a single centred flex row so
    the label, divider, and pills read as one line. High specificity beats the
    inherited grid !important. */
-@media (max-width: 899.98px) {
+/* Apply from the moment the main-nav featured topics drop off (<1024), not just
+   ≤900 — otherwise 900–1023 is a broken intermediate with no FEATURED label and a
+   misaligned grid row (#211–215). */
+@media (max-width: 1023.98px) {
   body.app-mode.home-mode #sub-header.is-subnav .topic-banner-row.topic-banner-row--home-topics-only {
     display: flex !important; grid-template-columns: none !important; grid-template-areas: none !important;
     grid-template-rows: none !important; align-items: center !important; flex-wrap: nowrap !important; gap: 0 !important;
   }
   body.app-mode.home-mode #sub-header.is-subnav .topic-banner-row--home-topics-only > .subnav-chip-wrap {
     flex: 1 1 auto !important; min-width: 0 !important;
+  }
+  /* Show the "FEATURED" lead label across the whole <1024 range (it was gated ≤900),
+     so the bar is consistently "FEATURED | pills" the instant it drops off the nav. */
+  body.home-mode #sub-header.is-subnav .subnav-lead-label {
+    display: inline-flex !important; align-items: center; flex: 0 0 auto;
+    margin: 0 0.7rem 0 0; padding: 1px 0.7rem 1px 0;
+    border-right: 1px solid #c5cdd9;
+    font-family: var(--font-display); font-size: 0.86rem; font-weight: 700;
+    letter-spacing: 0.005em; color: #6b7689; white-space: nowrap; text-transform: none;
   }
 }
 /* The home subnav holds only the featured-topic scroll (no Home title/icon),
