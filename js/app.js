@@ -19,7 +19,7 @@ import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, T
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp245';
 import { initInsightModal } from './components/insight-modal.js?v=20260622-revamp335';
 import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260622-revamp336';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260622-revamp336';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260622-revamp338';
 import { renderWebSources } from './components/websources.js?v=20260622-revamp322';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp245';
 import { initDiscoverModal } from './components/discover-modal.js';

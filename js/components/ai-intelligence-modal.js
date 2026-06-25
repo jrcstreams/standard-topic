@@ -43,25 +43,9 @@ export function initAIIntelligenceModal() {
   window.addEventListener('open-ai-intelligence', (e) => open(e.detail || {}));
   window.addEventListener('close-all-modals', close);
 
-  // Desktop ⇄ mobile hand-off (#13): if the viewport drops to tab-width while
-  // the modal is open for a TOPIC, close the modal and hand the current section
-  // to the topic page's inline tab so the transition is seamless.
-  if (window.matchMedia) {
-    mq = window.matchMedia('(max-width: 899.98px)');
-    mq.addEventListener('change', (ev) => {
-      if (!isOpen()) return;
-      if (ev.matches && current && current.topic !== 'home') {
-        const group = (panelEl.querySelector('.aii-modal-body')?.firstElementChild?.dataset.aiiGroup) || '';
-        close();
-        // The topic page re-renders to tab-mode on the same resize; tell its AI
-        // Intelligence tab which section to open once it's ready.
-        if (group) requestAnimationFrame(() => window.dispatchEvent(new CustomEvent('aii-open-section', { detail: { group } })));
-      } else {
-        // Home, or going back to desktop — just close so we don't strand a modal.
-        close();
-      }
-    });
-  }
+  // NB: the modal stays open across viewport resizes (#218) — it's responsive, so
+  // there's no need to close + hand off on a breakpoint cross (that was closing the
+  // modal whenever the window was nudged across 900px, which users hit constantly).
 }
 
 function isOpen() { return overlayEl && overlayEl.style.display !== 'none'; }

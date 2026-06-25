@@ -3807,9 +3807,9 @@ html, body, #app {
    hover/open. Speaks the same blue-sparkle language as the rest of the AI system. */
 .news-ai-trigger {
   display: inline-flex; align-items: center; gap: 0.3rem;
-  padding: 0.28rem 0.6rem; border: 1px solid color-mix(in srgb, #1d4ed8 20%, transparent); border-radius: 999px;
+  padding: 0.24rem 0.55rem; border: 1px solid color-mix(in srgb, #1d4ed8 20%, transparent); border-radius: 999px;
   background: color-mix(in srgb, #1d4ed8 7%, #fff); color: #1d4ed8;
-  font-family: var(--font-family); font-size: 0.75rem; font-weight: 600; letter-spacing: -0.005em;
+  font-family: var(--font-family); font-size: 0.72rem; font-weight: 600; letter-spacing: -0.005em;
   cursor: pointer; white-space: nowrap; transition: background 0.14s, color 0.14s, border-color 0.14s;
 }
 .news-ai-trigger .news-ai-spark { margin-right: -0.02rem; }
@@ -13277,8 +13277,9 @@ body.home-search.app-mode .topic-layout {
      is kept inside the rounded corners by giving the ::after its own radius. */
   position: relative;
   /* A search card doesn't need the full container width on big screens — cap it and
-     centre it. It stays full-width as the viewport scales down below the cap (#155). */
-  max-width: 840px; margin: 0 auto;
+     centre it (comfortably wide, not full-width or microscopic). Full-width as the
+     viewport scales below the cap (#155/#207). */
+  max-width: 1080px; margin: 0 auto;
   /* Mobile (lower clamp bounds) was perfect; desktop maxed out too tall/wide — trim
      the upper bounds, esp. vertical. */
   padding: clamp(1.1rem, 0.7rem + 0.8vw, 1.25rem) clamp(1.4rem, 0.9rem + 1.4vw, 1.9rem) clamp(1.2rem, 0.8rem + 0.9vw, 1.4rem);
@@ -16354,17 +16355,16 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* AI Insights launcher: a clean 2-column LIST (1-col mobile) — a discreet monochrome
    icon, the track name, a small one-line summary, and a quiet arrow. Hairline row
    dividers, no tinted tiles / card-in-card (content-led, not blocky). */
-.topic-band #section-shortcuts .aii-bcards { display: grid; grid-template-columns: 1fr 1fr; gap: 0 2rem; }
+.topic-band #section-shortcuts .aii-bcards { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 14px; }
 .topic-band #section-shortcuts .aii-bcard {
-  align-items: center; gap: 12px; padding: 13px 4px; border: none !important; border-radius: 0;
+  align-items: center; gap: 12px; padding: 12px 12px; border: none !important; border-radius: 10px;
   background: none !important; box-shadow: none !important; transform: none !important;
-  border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 60%, transparent) !important;
-  transition: background .12s ease, color .12s ease;
+  transition: background .13s ease, color .13s ease;
 }
-/* top row in each column carries no divider */
-.topic-band #section-shortcuts .aii-bcard:nth-child(1),
-.topic-band #section-shortcuts .aii-bcard:nth-child(2) { border-top: none !important; }
-.topic-band #section-shortcuts .aii-bcard:hover { background: color-mix(in srgb, var(--color-primary) 4%, transparent) !important; }
+/* Clean rounded hover — a contained highlight (inset from the card edges via the
+   stage padding, padded inside so it never crowds the arrow), no full-bleed band
+   and no divider lines (#197/#198). */
+.topic-band #section-shortcuts .aii-bcard:hover { background: color-mix(in srgb, var(--color-primary) 5%, #fff) !important; }
 .topic-band #section-shortcuts .aii-bcard-ic {
   width: 28px; height: 28px; border-radius: 7px; background: color-mix(in srgb, var(--color-surface-border) 28%, #fff) !important;
   color: var(--color-text-muted) !important;
@@ -16398,26 +16398,32 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
    .news-card is a divider-ROW (edge-to-edge, no chrome); in the grid we override it
    into a real card — reset the row's internal padding (it doubled with the card
    padding) and pin the footer to the bottom so cards in a row align. */
-.topic-band #section-newsfeed .news-list { display: grid; grid-template-columns: 1fr; gap: 12px; padding: 0.25rem 0 0.5rem; }
+/* News Feed = a bordered card matching the AI Insights card (#199/#200); story
+   items are clean borderless rows INSIDE it (no card-in-card), inset from the
+   container edges so nothing rides the border. */
+.topic-band #section-newsfeed .newsfeed-card { border: 1px solid var(--color-surface-border); border-radius: 16px; background: #fff; overflow: hidden; }
+.topic-band #section-newsfeed .news-list { display: grid; grid-template-columns: 1fr; gap: 0 30px; padding: 0.4rem 18px 0.5rem; }
 @media (min-width: 720px) {
   .topic-band #section-newsfeed .news-list { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; }
 }
 .topic-band #section-newsfeed .news-card {
-  display: flex; flex-direction: column; border: 1px solid var(--color-surface-border) !important;
-  border-radius: 9px; background: #fff; padding: 15px 16px 12px;
-  transition: border-color .14s ease, box-shadow .14s ease, transform .14s ease;
+  display: flex; flex-direction: column; border: none !important; border-radius: 0;
+  background: none !important; box-shadow: none !important; transform: none !important; padding: 15px 0 14px;
+  border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 55%, transparent) !important;
+  transition: none;
 }
-.topic-band #section-newsfeed .news-card:hover {
-  background: #fff; border-color: color-mix(in srgb, var(--color-primary) 32%, var(--color-surface-border));
-  box-shadow: 0 4px 16px rgba(15,26,46,0.07); transform: translateY(-1px);
-}
+/* first row of each column has no top divider */
+.topic-band #section-newsfeed .news-list .news-card:nth-child(1),
+.topic-band #section-newsfeed .news-list .news-card:nth-child(2) { border-top: none !important; }
+.topic-band #section-newsfeed .news-card:hover { background: none !important; box-shadow: none !important; transform: none !important; }
+.topic-band #section-newsfeed .news-card:hover .news-card-title { color: var(--color-primary); }
 .topic-band #section-newsfeed .news-card-link { padding: 0 !important; }
 .topic-band #section-newsfeed .news-card:has(.news-ai) .news-card-link { padding-bottom: 0 !important; }
-.topic-band #section-newsfeed .news-card-title { font-size: 1.02rem; }
-.topic-band #section-newsfeed .news-card-desc { margin-top: 0.5rem; }
+.topic-band #section-newsfeed .news-card-title { font-size: 1rem; }
+.topic-band #section-newsfeed .news-card-desc { margin-top: 0.4rem; font-size: 0.85rem; }
 .topic-band #section-newsfeed .news-card-foot {
-  margin-top: auto; padding: 0.8rem 0 0 !important; gap: 0.45rem;
-  border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 55%, transparent);
+  margin-top: 11px; padding: 0 !important; gap: 0.45rem;
+  border-top: none;
 }
 
 /* ── Desktop (≥900): band = AI Insights (wider) | Web Sources (narrower), then a
@@ -16485,7 +16491,7 @@ body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs { display: none
 @media (max-width: 899.98px) {
   body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #section-newsfeed .newsfeed-head { display: flex !important; }
   body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #section-newsfeed .newsfeed-title { display: block !important; }
-  .topic-band #section-newsfeed .news-list { display: block !important; padding: 0 !important; }
+  .topic-band #section-newsfeed .news-list { display: block !important; padding: 0 16px 4px !important; }
   .topic-band #section-newsfeed .news-card {
     display: block !important; border: none !important; border-radius: 0 !important; background: none !important;
     box-shadow: none !important; transform: none !important; padding: 0 !important;
@@ -16554,7 +16560,7 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
    guarantee a clean gap between the chip and "News Feed". */
 .topic-band #section-newsfeed .newsfeed-head {
   border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent) !important;
-  margin: 0 0 0.85rem !important; padding: 0 0 0.7rem !important;
+  margin: 0 0 0.4rem !important; padding: 15px 18px 0.7rem !important;
 }
 .topic-band #section-newsfeed .newsfeed-title { gap: 0.55rem !important; align-items: center !important; }
 
@@ -16567,11 +16573,11 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
    The launcher rows were indented past the "AI Insights" header and (on mobile)
    rode the card's side borders. Inset the whole list to the SAME left edge as the
    header chip, and give it side room inside the card (#158/#165). */
-/* The .aii-stage already insets content 16px; the header pads 18px. Add a 2px
-   offset so the row icon column lands at the SAME left edge as the header chip
-   (#165), and the stage inset keeps rows off the card border on mobile (#158). */
-.topic-band #section-shortcuts .aii-bcards { padding: 0 2px !important; }
-.topic-band #section-shortcuts .aii-bcard { padding-left: 0 !important; padding-right: 0 !important; align-items: center !important; }
+/* Tighten the stage inset to 6px so the rounded hover sits a clean 6px off the card
+   edge; with the row's own 12px padding the icon lands at 18px — aligned with the
+   header chip (#165) — and the highlight never touches the card border (#158/#197). */
+.topic-band #section-shortcuts .aii-stage { padding-left: 6px !important; padding-right: 6px !important; }
+.topic-band #section-shortcuts .aii-bcards { padding: 4px 0 !important; }
 .topic-band #section-shortcuts .aii-bcard-go { align-self: center !important; }
 
 /* ── Mobile: don't let the first band card ride the subnav on load (#157) ─────── */
@@ -16600,3 +16606,31 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
 .aii-tp-back svg { flex: none; }
 .aii-tp-back:hover { color: var(--color-primary); }
 .aii-modal-body .aii-tp:has(.aii-tp-back) { padding-top: 2px; }
+
+/* ════════ revamp338 — modal consistency + topic-page polish ════════ */
+
+/* #201 — Load More clears the stories above it. */
+.topic-band #section-newsfeed .newsfeed-foot { padding: 22px 0 18px !important; }
+
+/* #204 — more breathing room between the topic title row and the tab pills. */
+.aii-tabs { margin-top: 20px !important; }
+
+/* #205/#206/#208 — the three modal in-body titles (AI Insights section name,
+   Trending trend name, News story name) share ONE sized-down treatment. */
+.aii-sectitle-name,
+.im-over-title { font-family: var(--font-display); font-weight: 600 !important; letter-spacing: -0.015em; color: #14213d; line-height: 1.2; font-size: clamp(1.1rem, 1rem + 0.4vw, 1.28rem) !important; }
+.aii-content--modal .im-over-title { font-size: clamp(1.1rem, 1rem + 0.4vw, 1.28rem) !important; }
+
+/* #209 — "AI Generated Text" tag: lighter, less rounded, more gap above it. */
+.im-sec-aitag-row { margin: 4px 0 12px !important; }
+.im-sec-aitag { border-radius: 7px !important; font-weight: 600 !important; }
+
+/* #210 — Related Searches + Explore Further: more gap between the section title
+   and its content; Explore-Further accordion button titles a touch lighter. */
+.im-msec.aii-ef-sec .im-msec-head,
+#msec-related .im-msec-head,
+#msec-explore .im-msec-head { margin-bottom: 14px !important; }
+.im-ef-trigger { font-weight: 550 !important; }
+
+/* #220 — "Search" label clears the modal-header separator above it. */
+.aii-modal-body .aii-tp-field { margin-top: 16px !important; }
