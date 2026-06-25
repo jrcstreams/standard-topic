@@ -16526,16 +16526,14 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
    The launcher rows were indented past the "AI Insights" header and (on mobile)
    rode the card's side borders. Inset the whole list to the SAME left edge as the
    header chip, and give it side room inside the card (#158/#165). */
-.topic-band #section-shortcuts .aii-bcards { padding: 0 18px !important; }
+/* The .aii-stage already insets content 16px; the header pads 18px. Add a 2px
+   offset so the row icon column lands at the SAME left edge as the header chip
+   (#165), and the stage inset keeps rows off the card border on mobile (#158). */
+.topic-band #section-shortcuts .aii-bcards { padding: 0 2px !important; }
 .topic-band #section-shortcuts .aii-bcard { padding-left: 0 !important; padding-right: 0 !important; align-items: center !important; }
 .topic-band #section-shortcuts .aii-bcard-go { align-self: center !important; }
-/* The header already pads 18px; match it so the chips column lines up. */
-.topic-band #section-shortcuts .aii-head { padding-left: 18px !important; padding-right: 18px !important; }
 
 /* ── Mobile: don't let the first band card ride the subnav on load (#157) ─────── */
 @media (max-width: 899.98px) {
-  body.app-mode .topic-layout.topic-band > #section-shortcuts { margin-top: 0.5rem; }
-  /* The AI Insights card keeps clear side padding so content never touches the
-     card border on mobile (#158). */
-  .topic-band #section-shortcuts .aii-bcards { padding: 0 16px !important; }
+  body.app-mode .topic-layout.topic-band > #section-shortcuts { margin-top: 0.6rem; }
 }
