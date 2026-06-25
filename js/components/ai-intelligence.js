@@ -276,8 +276,11 @@ export function renderAIIntelligence(container, scope) {
         <h3 class="aii-tp-title">Get AI insights on any topic</h3>
         <p class="aii-tp-sub">Search any topic or term, or browse 100+ by category.</p>
       </div>
-      <div class="aii-tp-searchwrap aii-tp-searchwrap--lg">${SEARCH_ICON}<input type="text" class="aii-tp-search" placeholder="Search any topic or term…" aria-label="Search any topic or term"></div>
-      <div class="aii-tp-browselabel" data-tp-browselabel>Or browse by topic</div>
+      <div class="aii-tp-field">
+        <span class="aii-tp-fieldlabel">Search</span>
+        <div class="aii-tp-searchwrap aii-tp-searchwrap--lg">${SEARCH_ICON}<input type="text" class="aii-tp-search" placeholder="Search any topic or term…" aria-label="Search any topic or term"></div>
+      </div>
+      <div class="aii-tp-browselabel" data-tp-browselabel>Browse by Topic</div>
       <div class="aii-tp-list" data-tp-list>${topicListHTML('')}</div>
     </div>`;
   }
@@ -296,7 +299,7 @@ export function renderAIIntelligence(container, scope) {
     const wireKeys = () => list.querySelectorAll('[data-tp-key]').forEach((b) => b.addEventListener('click', () => { if (scope.onChangeTopic) scope.onChangeTopic(b.dataset.tpKey); }));
     if (search) search.addEventListener('input', () => {
       const q = search.value.trim();
-      if (browseLabel) browseLabel.textContent = q ? 'Results' : 'Or browse by topic';
+      if (browseLabel) browseLabel.textContent = q ? 'Results' : 'Browse by Topic';
       list.innerHTML = topicListHTML(search.value); wireKeys();
       requestAnimationFrame(updateFade);
     });
