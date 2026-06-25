@@ -16361,3 +16361,13 @@ body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs { display: none
    path now, so these whole-topic shortcuts sit quietly at the top-right. */
 .aii-brief-actions { display: flex; gap: 8px; flex: none; align-self: flex-start; }
 .aii-brief-actions .im-qlink-btn { padding: 6px 11px; font-size: 0.78rem; border-radius: 8px; background: #fff; }
+
+/* CRITICAL FIX: topic-band is a single tall scroll, but on mobile #content is
+   overflow:hidden (the old tabbed layout scrolled INSIDE each section). Let the
+   #content scroll the band on mobile, and release the topic-layout's fixed height. */
+@media (max-width: 899.98px) {
+  body.app-mode #content:has(.topic-layout.topic-band) {
+    overflow-y: auto !important; overflow-x: hidden !important; -webkit-overflow-scrolling: touch;
+  }
+  body.app-mode .topic-layout.topic-band { height: auto !important; min-height: 0; }
+}
