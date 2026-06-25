@@ -13518,9 +13518,11 @@ body.home-search #topic-layout { margin-top: 0.4rem; }
 @media (max-width: 1023.98px) {
   body.home-search.app-mode .topic-layout > .layout-section { flex: none; overflow: visible; min-height: 0; }
   body.home-search #section-aii-home .shortcuts-scroll-wrap { padding-top: 0.5rem; padding-bottom: 0; }
-  /* Reflow (single column, <1024 = "smaller screens"): the search content fills the
-     full-width card (no narrow cap — #222/#228). On ≥1024 the grid layout caps the
-     hero at 1080 / panel at 940 ("reasonable, non-obnoxious" on big screens). */
+  /* Reflow (single column / tabular, <1024 = "smaller screens"): the search card is
+     FULL-WIDTH, matching the Trending/News cards below it (#233/#234/#235). The hero
+     is a grid item (its parent is display:contents), so force it to stretch — auto
+     side-margins would shrink it to its content. ≥1024 keeps the centred 820 cap. */
+  body.home-search .home-search-hero { width: auto !important; max-width: none !important; margin: 0 !important; justify-self: stretch !important; }
   body.home-search .home-search-hero .search-panel { max-width: none; margin-left: auto; margin-right: auto; }
   body.home-search .home-search-hero .search-panel-title { font-size: clamp(1.2rem, 0.95rem + 1vw, 1.45rem); }
 }
