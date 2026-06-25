@@ -14042,6 +14042,21 @@ body.home-search #section-shortcuts .sidebar-card-header,
 .topic-banner-row--home-topics-only { gap: 0; }
 .topic-banner-row--home-topics-only .subnav-chip-wrap { flex: 1 1 0; }
 .topic-banner-row--home-topics-only .subnav-chip-wrap::before { display: none !important; }
+/* Mobile home "Featured | pills" bar (#150): the row was inheriting the topic-page
+   grid template (ico/title/desc/rel/tabs), which auto-placed the "Featured" label
+   and the chip strip into DIFFERENT grid rows → the label floated high-left while
+   the pills sat lower and far-right. Force it back to a single centred flex row so
+   the label, divider, and pills read as one line. High specificity beats the
+   inherited grid !important. */
+@media (max-width: 899.98px) {
+  body.app-mode.home-mode #sub-header.is-subnav .topic-banner-row.topic-banner-row--home-topics-only {
+    display: flex !important; grid-template-columns: none !important; grid-template-areas: none !important;
+    grid-template-rows: none !important; align-items: center !important; flex-wrap: nowrap !important; gap: 0 !important;
+  }
+  body.app-mode.home-mode #sub-header.is-subnav .topic-banner-row--home-topics-only > .subnav-chip-wrap {
+    flex: 1 1 auto !important; min-width: 0 !important;
+  }
+}
 /* The home subnav holds only the featured-topic scroll (no Home title/icon),
    so it needs less height than topic pages — tighten + vertically center the
    names with symmetric padding. */
