@@ -13465,7 +13465,9 @@ body.home-search #home-trending {
   body.home-search #home-trending { order: 0; }
   /* Full-width centered search hero (no chips). Content capped + centered so the
      bar isn't edge-to-edge across the whole row. */
-  body.home-search .home-search-hero { display: block; padding: 2rem 1.6rem; border-radius: 16px; text-align: center; max-width: 1080px; margin: 0 auto; }
+  /* The hero is a GRID ITEM spanning "search search"; auto side-margins would shrink
+     it to its content, so centre with justify-self + a min() width instead (#222/#231). */
+  body.home-search .home-search-hero { display: block; padding: 2rem 1.6rem; border-radius: 16px; text-align: center; width: min(100%, 1080px); max-width: none; margin: 0; justify-self: center; }
   body.home-search .home-search-hero .search-panel { max-width: 940px; margin: 0 auto; }
   body.home-search .home-search-hero .search-panel-hero-inner { text-align: center; }
   body.home-search .home-search-hero .search-panel-title {
