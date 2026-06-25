@@ -136,6 +136,7 @@ const ICONS = {
   learn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v15a2 2 0 0 0-2-1.5H2z"/><path d="M22 5a2 2 0 0 0-2-2h-6a2 2 0 0 0-2 2v15a2 2 0 0 1 2-1.5h8z"/></svg>',
   analyze: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="13"/><line x1="12" y1="20" x2="12" y2="8"/><line x1="18" y1="20" x2="18" y2="4"/></svg>',
   'topic-specific': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15 9 22 9.3 16.5 13.9 18.5 21 12 16.8 5.5 21 7.5 13.9 2 9.3 9 9"/></svg>',
+  external: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>',
   _: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>',
 };
 // Per-track accent — gives each launcher tile its own identifiable colour
@@ -148,6 +149,11 @@ export function renderAIIntelligence(container, scope) {
   // homepage, which has no topic-specific content).
   const hide = scope.hideGroups || [];
   const paths = PATHS.filter((p) => !hide.includes(p.group));
+  // The "External Tools & Resources" tab/tile (first) — Further Insights (the
+  // original shortcut prompts) + Web Sources, consolidated into one place.
+  const EXTERNAL_GROUP = 'external';
+  const externalTab = { group: EXTERNAL_GROUP, tab: 'External Tools & Resources', subtitle: 'Curated insights and resources to explore this topic further.' };
+  const builderTabs = () => [externalTab].concat(paths);
   // Normalized description lookup: brief section headers can differ from the
   // shortcut names by case/whitespace, so an exact map miss left cards blank.
   const normName = (s) => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
@@ -496,9 +502,9 @@ export function renderAIIntelligence(container, scope) {
   // that topic+track.
   function launcherPromoHTML() {
     if (scope.topic === 'home') return launcherStepsHTML();
-    // Topic pages — desktop sidebar AND mobile/tabular — render the 4 builder
-    // cards. Web Sources is its OWN panel/tab (renderWebSources), not folded in.
-    return `<div class="aii-bcards">${paths.map(builderCardHTML).join('')}</div>`;
+    // Topic pages: an "External Tools & Resources" card FIRST (full-width), then the
+    // 4 builder cards. Each opens the modal to that tab.
+    return `<div class="aii-bcards">${[externalTab].concat(paths).map(builderCardHTML).join('')}</div>`;
   }
   function pathsHTML() {
     const intro = flowMode ? `<div class="aii-paths-introwrap">
@@ -648,14 +654,13 @@ export function renderAIIntelligence(container, scope) {
     const p = paths.find((x) => x.group === curGroup) || {};
     const bc = builderCache[curGroup];
     const updated = (bc && bc.generatedAt) ? `<span class="aii-brief-updated">Updated ${esc(relTime(bc.generatedAt))}</span>` : '';
-    // Tabular nav across the 4 builders. Monochrome in the modal (no per-group
-    // accent colours) — clean editorial tabs, active = dark text + underline.
-    const tabs = paths.map((x) => `<button type="button" class="aii-tab${x.group === curGroup ? ' is-active' : ''}" role="tab" aria-selected="${x.group === curGroup}" data-tab-group="${escAttr(x.group)}"><span class="aii-tab-ic">${ICONS[x.group] || ICONS._}</span><span class="aii-tab-tx">${esc(x.tab || x.label)}</span></button>`).join('');
-    // The topic name heads the panel as the editorial hero title, with a caret to
-    // switch topics quickly (opens the topic picker).
+    // Tabs: an "External Tools & Resources" tab FIRST (Further Insights + Web
+    // Sources), then the 4 builders. Monochrome editorial tabs; active is emphasised.
+    const isExternal = curGroup === EXTERNAL_GROUP;
+    const tabs = builderTabs().map((x) => `<button type="button" class="aii-tab${x.group === curGroup ? ' is-active' : ''}${x.group === EXTERNAL_GROUP ? ' aii-tab--ext' : ''}" role="tab" aria-selected="${x.group === curGroup}" data-tab-group="${escAttr(x.group)}"><span class="aii-tab-ic">${ICONS[x.group] || ICONS._}</span><span class="aii-tab-tx">${esc(x.tab || x.label)}</span></button>`).join('');
+    // Topic name = editorial hero title + a caret to switch topics.
     const topicEl = `<button type="button" class="aii-builder-topic aii-builder-topic--btn" data-repick aria-label="Change topic"><span class="aii-builder-topic-tx">${esc(topicTitle)}</span><span class="aii-topic-caret" aria-hidden="true">${CHEV}</span></button>`;
-    // Primary Ask AI / Web Search — kept as-is for now (to be reworked later).
-    const actions = `<button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span>${CHEV}</button><button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span>${CHEV}</button>`;
+    const exPrompt = explorePrompt();
     return `<div class="aii-sub aii-content aii-content--modal aii-builder">
       <div class="aii-builder-topbar">
         ${topicEl}
@@ -663,16 +668,12 @@ export function renderAIIntelligence(container, scope) {
       </div>
       <div class="aii-builder-secs">
         <div class="aii-bhead">
-          <div class="aii-bhead-row">
-            <div class="aii-bhead-lead">
-              <div class="aii-brief-label">${SPARK}<span>AI Brief</span></div>
-              <p class="aii-brief-sum" data-brief-sum>${esc(p.subtitle || '')}</p>
-              <div class="aii-brief-meta" data-brief-meta>${updated}</div>
-            </div>
-            <div class="im-over-links aii-brief-actions">${actions}</div>
+          <p class="aii-brief-sum" data-brief-sum>${esc(p.subtitle || '')}</p>
+          <div class="aii-brief-meta" data-brief-meta>${isExternal ? '' : updated}</div>
+          <div class="aii-brief-explore-wrap"${isExternal ? ' hidden' : ''} data-explore-wrap>
+            <button type="button" class="aii-brief-explore" data-explore-toggle aria-expanded="false">${ICON_ASK}<span>Explore further with external AI models</span>${CHEV}</button>
+            <div class="aii-emenu-host" data-explore-prompt="${escAttr(exPrompt)}" data-explore-name="${escAttr(curSectionName())}"></div>
           </div>
-          <div class="im-acc" data-accbody="explore"></div>
-          <div class="im-acc" data-accbody="web"></div>
         </div>
         <div data-aii-builder>${genLoaderHTML()}</div>
       </div>
@@ -681,19 +682,25 @@ export function renderAIIntelligence(container, scope) {
   // Switch builder via the tabs WITHOUT re-rendering the whole view (tabs stay put);
   // only the brief summary, updated stamp, and content body swap.
   function switchBuilder(group) {
-    if (!group || group === curGroup || !paths.some((x) => x.group === group)) return;
+    if (!group || group === curGroup || !builderTabs().some((x) => x.group === group)) return;
     curGroup = group;
-    if (!builderCache[group]) loadBuilder(group);
-    const p = paths.find((x) => x.group === group) || {};
+    const isExternal = group === EXTERNAL_GROUP;
+    if (!isExternal && !builderCache[group]) loadBuilder(group);
+    const p = builderTabs().find((x) => x.group === group) || {};
     stage.querySelectorAll('.aii-tab').forEach((t) => { const on = t.dataset.tabGroup === group; t.classList.toggle('is-active', on); t.setAttribute('aria-selected', String(on)); });
     const sum = stage.querySelector('[data-brief-sum]'); if (sum) sum.textContent = p.subtitle || '';
     const bc = builderCache[group]; const meta = stage.querySelector('[data-brief-meta]');
-    if (meta) meta.innerHTML = (bc && bc.generatedAt) ? `<span class="aii-brief-updated">Updated ${esc(relTime(bc.generatedAt))}</span>` : '';
-    // Close any open Ask AI / Web Search panel.
-    stage.querySelectorAll('.aii-qlink-btn').forEach((b) => b.setAttribute('aria-expanded', 'false'));
-    stage.querySelectorAll('.im-acc, .aii-acc').forEach((a) => a.classList.remove('is-open'));
+    if (meta) meta.innerHTML = (!isExternal && bc && bc.generatedAt) ? `<span class="aii-brief-updated">Updated ${esc(relTime(bc.generatedAt))}</span>` : '';
+    // Explore-further link: shown on builder tabs, hidden on the External tab.
+    const exWrap = stage.querySelector('[data-explore-wrap]');
+    if (exWrap) {
+      exWrap.hidden = isExternal;
+      const host = exWrap.querySelector('.aii-emenu-host');
+      if (host) { host.classList.remove('is-open'); host.removeAttribute('data-ready'); host.setAttribute('data-explore-prompt', explorePrompt()); host.setAttribute('data-explore-name', curSectionName()); }
+      const tog = exWrap.querySelector('[data-explore-toggle]'); if (tog) tog.setAttribute('aria-expanded', 'false');
+    }
     const wrap = stage.querySelector('[data-aii-builder]');
-    if (wrap) { wrap.classList.remove('ai-reveal'); wrap.innerHTML = genLoaderHTML(); }
+    if (wrap) { wrap.classList.remove('ai-reveal'); wrap.innerHTML = isExternal ? '' : genLoaderHTML(); }
     fillAiiBuilder();
     scrollRootEl().scrollTo({ top: 0 });
   }
@@ -702,6 +709,8 @@ export function renderAIIntelligence(container, scope) {
   function fillAiiBuilder() {
     const wrap = stage.querySelector('[data-aii-builder]');
     if (!wrap) return;
+    // External Tools & Resources tab → static content (no AI generation).
+    if (curGroup === EXTERNAL_GROUP) { renderExternalInto(wrap); return; }
     const reveal = () => { if (stage.querySelector('[data-aii-builder]') === wrap && view === 'builder') renderBuilderInto(wrap); };
     const bc = builderCache[curGroup];
     if (bc && !bc.loading) setTimeout(reveal, 600);   // cached → brief loader moment, then reveal
@@ -715,11 +724,10 @@ export function renderAIIntelligence(container, scope) {
       wrap.innerHTML = '<p class="aii-empty">This insight is being generated — check back shortly.</p>';
       return;
     }
-    const topicName = scope.label || scope.topic || '';
     const parts = splitSections(bc.content);
     // Drop repeated sections (model occasionally re-writes earlier ones → dup
-    // headings) AND empty-body sections (a generation truncated at the token cap
-    // leaves a trailing heading with no body). Keep the first of each heading.
+    // headings) AND empty-body sections (truncated at the token cap = a trailing
+    // heading with no body). Keep the first of each heading.
     const seenSec = new Set();
     const uniqParts = parts.filter((p) => {
       const n = String(p.name || '').toLowerCase().replace(/\s+/g, ' ').trim();
@@ -728,35 +736,38 @@ export function renderAIIntelligence(container, scope) {
       seenSec.add(n); return true;
     });
     const list = uniqParts.length ? uniqParts : [{ name: 'Overview', body: String(bc.content) }];
+    // Each section is a clamped PREVIEW with a Show more / less toggle (long
+    // insights stay scannable). Further Insights + Ask AI now live in the
+    // External Tools tab, so sections carry only their body.
     let html = list.map((part, i) => {
       const key = aiiSecIconKey(part.name);
-      // Per-section "explore this further" → drops the Ask-AI menu in place (inline).
-      const prompt = `Go deeper on "${part.name}" as it relates to ${topicName}. Be specific and current, and cite sources.`;
-      const explore = `<div class="aii-sec-explore-row">
-        <button type="button" class="aii-sec-explore" aria-expanded="false">${ICON_ASK}<span>Explore this further</span><span class="aii-sec-explore-chev">${CHEV}</span></button>
-        <div class="aii-emenu-host" data-explore-prompt="${escAttr(prompt)}" data-explore-name="${escAttr(part.name)}"></div>
-      </div>`;
-      return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name) + renderBriefBody(part.body, null) + explore);
+      const body = `<div class="aii-sec-clamp" data-sec-clamp>${renderBriefBody(part.body, null)}</div>
+        <button type="button" class="aii-sec-more" data-sec-more hidden><span class="aii-sec-more-tx">Show more</span><span class="aii-sec-more-chev">${CHEV}</span></button>`;
+      return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name) + body);
     }).join('');
-    html += furtherInsightsHTML();
     // Sources → a collapsed accordion at the very bottom of the insight.
     const items = builderNewsItems().filter((x) => x.title && x.meta && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(String(x.title).trim()));
     const covRows = items.map((x) => `<a class="im-cov-row" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span><span class="im-cov-host">${esc(x.meta)}</span></span>${EXT}</a>`).join('');
     if (covRows) html += `<details class="aii-sources-acc"><summary class="aii-sources-sum">${SOURCES_BADGE}<span class="aii-sources-name">Sources</span><span class="aii-sources-count">${items.length}</span><span class="aii-sources-chev">${CHEV}</span></summary><div class="im-coverage-list aii-sources-list">${covRows}</div></details>`;
     wrap.innerHTML = html;
     wrap.classList.add('ai-reveal');
-    wireBuilderExplore();
+    wireSectionClamps();
   }
-  // The original per-shortcut prompts for a group — now surfaced as optional
-  // "Further Insights" the reader can explore in the AI model of their choice.
-  function groupShortcuts(group) {
-    return (scope.shortcuts || []).filter((s) => s && s.group === group && (s.prompt || s.name));
+  // External Tools & Resources tab — Further Insights (the topic's shortcut prompts)
+  // + the Web Sources platform picker, consolidated.
+  function renderExternalInto(wrap) {
+    const fi = furtherInsightsHTML((scope.shortcuts || []).filter((s) => s && (s.prompt || s.name)));
+    const ws = `<div class="aii-ext-block aii-ext-ws">
+      <div class="im-msec-head"><span class="im-msec-ic">${AII_SEC_ICON.sources}</span><h3 class="im-msec-name">Web Sources</h3></div>
+      <p class="aii-fi-intro">Search this topic across the web's primary sources and platforms.</p>
+      ${webCatsHTML()}</div>`;
+    wrap.innerHTML = (fi || '') + ws;
+    wrap.classList.add('ai-reveal');
+    wireBuilderContent();
   }
-  function furtherInsightsHTML() {
-    const list = groupShortcuts(curGroup);
-    if (!list.length) return '';
-    // Shortcut prompts carry a {TOPIC} token (substituted server-side at
-    // generation); interpolate it with the topic name for the client explore.
+  // Further Insights — the original shortcut prompts as an accordion explore list.
+  function furtherInsightsHTML(list) {
+    if (!list || !list.length) return '';
     const topicName = scope.label || scope.topic || '';
     const fiPrompt = (s) => String(s.prompt || `Give me a thorough, current briefing on "${s.name}" for ${topicName}. Be specific and cite sources.`).replace(/\{TOPIC\}/g, topicName);
     const rows = list.map((s) => `
@@ -767,32 +778,47 @@ export function renderAIIntelligence(container, scope) {
         </button>
         <div class="aii-emenu-host" data-explore-prompt="${escAttr(fiPrompt(s))}" data-explore-name="${escAttr(s.name)}"></div>
       </div>`).join('');
-    return aiiMsec('aii-msec-further', 'Further Insights',
-      `<div class="im-msec-head"><span class="im-msec-ic">${AII_SEC_ICON.takeaways}</span><h3 class="im-msec-name">Further Insights</h3></div>
-       <p class="aii-fi-intro">Dig into a specific angle — pick one to explore in the AI model of your choice.</p>
-       <div class="aii-fi-acclist">${rows}</div>`);
+    return `<div class="aii-ext-block aii-fi">
+      <div class="im-msec-head"><span class="im-msec-ic">${AII_SEC_ICON.takeaways}</span><h3 class="im-msec-name">Further Insights</h3></div>
+      <p class="aii-fi-intro">Dig into a specific angle — pick one to explore in the AI model of your choice.</p>
+      <div class="aii-fi-acclist">${rows}</div></div>`;
   }
-  // Inline explore — a per-section "Explore this further" button OR a Further-
-  // Insights accordion row toggles its OWN Ask-AI menu (model picker / Direct /
-  // Review) dropped in place, no scroll-jump. The menu's actions are handled by a
-  // single stage-level delegation (setupExploreDelegation) that reads the prompt
-  // from the host's data attributes.
-  function wireBuilderExplore() {
-    const toggle = (btn) => {
-      const host = btn.parentElement.querySelector('.aii-emenu-host');
-      if (!host) return;
-      const willOpen = !host.classList.contains('is-open');
-      if (willOpen && !host.dataset.ready) { host.innerHTML = exploreHomeHTML(); host.dataset.ready = '1'; }
-      host.classList.toggle('is-open', willOpen);
-      btn.setAttribute('aria-expanded', String(willOpen));
-    };
-    stage.querySelectorAll('.aii-sec-explore, .aii-fi-accsum').forEach((b) => b.addEventListener('click', () => toggle(b)));
+  // Inline-toggle for an emenu (discreet explore link, Further-Insights row): opens
+  // its OWN Ask-AI menu (model picker / Direct / Review) in place. Actions handled
+  // by setupExploreDelegation (reads the prompt from the host's data attributes).
+  function toggleEmenu(btn) {
+    const host = btn.parentElement.querySelector('.aii-emenu-host');
+    if (!host) return;
+    const willOpen = !host.classList.contains('is-open');
+    if (willOpen && !host.dataset.ready) { host.innerHTML = exploreHomeHTML(); host.dataset.ready = '1'; }
+    host.classList.toggle('is-open', willOpen);
+    btn.setAttribute('aria-expanded', String(willOpen));
   }
-  // Open a group straight to its builder insight (the new default entry).
+  // Wire the content area after a render: Further-Insights accordions + section
+  // Show-more toggles. (The discreet brief-head explore link is wired in wire().)
+  function wireBuilderContent() {
+    stage.querySelectorAll('.aii-fi-accsum').forEach((b) => b.addEventListener('click', () => toggleEmenu(b)));
+    wireSectionClamps();
+  }
+  // Clamp long section bodies to a preview; show a "Show more / less" toggle only
+  // when the body actually overflows the clamp.
+  function wireSectionClamps() {
+    stage.querySelectorAll('.aii-sec-more').forEach((btn) => {
+      const msec = btn.closest('.im-msec'); const clamp = msec && msec.querySelector('[data-sec-clamp]');
+      if (!clamp) return;
+      // Reveal the toggle only if clamped content overflows.
+      requestAnimationFrame(() => { if (clamp.scrollHeight > clamp.clientHeight + 6) btn.hidden = false; });
+      btn.addEventListener('click', () => {
+        const expanded = msec.classList.toggle('is-expanded');
+        const tx = btn.querySelector('.aii-sec-more-tx'); if (tx) tx.textContent = expanded ? 'Show less' : 'Show more';
+      });
+    });
+  }
+  // Open a builder tab (or the External Tools tab) straight into the modal view.
   function openBuilder(group, dir) {
-    if (!paths.some((p) => p.group === group)) return;
+    if (!builderTabs().some((p) => p.group === group)) return;
     curGroup = group; curIdx = 0;
-    if (!builderCache[group]) loadBuilder(group);
+    if (group !== EXTERNAL_GROUP && !builderCache[group]) loadBuilder(group);
     go('builder', dir || 'fwd');
   }
 
@@ -1238,6 +1264,9 @@ export function renderAIIntelligence(container, scope) {
       fillAiiBuilder();
       stage.querySelectorAll('.aii-tab').forEach((t) => t.addEventListener('click', () => switchBuilder(t.dataset.tabGroup)));
       stage.querySelector('[data-repick]')?.addEventListener('click', () => go('topic', 'back'));
+      // Discreet "Explore further with external AI models" link (brief head) → opens
+      // its Ask-AI menu in place.
+      stage.querySelector('[data-explore-toggle]')?.addEventListener('click', (e) => toggleEmenu(e.currentTarget));
     }
     // Section content: briefly show the generating loader (even when cached)
     // then reveal the brief — gives the AI a moment of presence.
@@ -1331,7 +1360,7 @@ export function renderAIIntelligence(container, scope) {
   } else if (flowMode && scope.pickTopic) {
     // Modal entered "anew" (bottom nav / homepage CTA) → Step 1: pick a topic.
     go('topic', 'fwd');
-  } else if (flowMode && scope.initialGroup && paths.some((p) => p.group === scope.initialGroup)) {
+  } else if (flowMode && scope.initialGroup && builderTabs().some((p) => p.group === scope.initialGroup)) {
     // Modal deep-linked to a track. The new default opens straight to that group's
     // builder insight; the legacy per-section flow remains for old deep-links.
     if (scope.initialBuilder) openBuilder(scope.initialGroup);

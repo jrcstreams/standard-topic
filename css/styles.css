@@ -14934,14 +14934,15 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* ===== Builder modal redesign: tabs + AI Brief + per-section explore ======== */
 /* Sticky top: topic name + tab row (replaces Back / Prev / Next / All Insights). */
 .aii-builder-topbar { position: sticky; top: 0; z-index: 9; margin: 0 -1.1rem; padding: 12px 1.1rem 0; background: #f3f5f8; border-bottom: 1px solid var(--color-surface-border); }
-/* Editorial hero topic title + a caret that opens the topic switcher. */
-.aii-builder-topic { margin: 0 0 11px; font-family: var(--font-display); font-weight: 600; letter-spacing: -0.022em; color: #14213d; font-size: clamp(1.5rem, 1.2rem + 1vw, 1.95rem); line-height: 1.07; }
-.aii-builder-topic--btn { display: inline-flex; align-items: center; gap: 9px; border: none; background: none; cursor: pointer; padding: 0; font-family: var(--font-display); }
+/* Editorial hero topic title (moderate size) + a caret that opens the topic switcher. */
+.aii-builder-topic { margin: 0 0 12px; font-family: var(--font-display); font-weight: 600; letter-spacing: -0.02em; color: #14213d; font-size: clamp(1.3rem, 1.1rem + 0.6vw, 1.55rem); line-height: 1.1; }
+.aii-builder-topic--btn { display: inline-flex; align-items: center; gap: 8px; border: none; background: none; cursor: pointer; padding: 0; font-family: var(--font-display); }
 .aii-builder-topic-tx { min-width: 0; }
-.aii-topic-caret { flex: none; display: inline-flex; width: 26px; height: 26px; align-items: center; justify-content: center; border-radius: 8px; background: color-mix(in srgb, var(--color-text-muted) 11%, transparent); color: var(--color-text-muted); transition: background .14s ease, color .14s ease; }
-.aii-topic-caret svg { width: 16px; height: 16px; }
-.aii-builder-topic--btn:hover .aii-topic-caret { background: color-mix(in srgb, var(--color-primary) 13%, transparent); color: var(--color-primary); }
-/* Monochrome editorial tabs — muted at rest, dark text + underline when active. */
+.aii-topic-caret { flex: none; display: inline-flex; width: 21px; height: 21px; align-items: center; justify-content: center; border-radius: 6px; background: color-mix(in srgb, var(--color-text-muted) 12%, transparent); color: var(--color-text-muted); transition: background .14s ease, color .14s ease; }
+.aii-topic-caret svg { width: 13px; height: 13px; }
+.aii-builder-topic--btn:hover .aii-topic-caret { background: color-mix(in srgb, var(--color-primary) 14%, transparent); color: var(--color-primary); }
+/* Editorial tabs — muted at rest; ACTIVE is emphasised (brand colour + bold + a
+   thicker brand underline) so the section the user is on clearly stands out. */
 .aii-tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
 .aii-tabs::-webkit-scrollbar { display: none; }
 .aii-tab { flex: none; position: relative; display: inline-flex; align-items: center; gap: 7px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.9rem; font-weight: 500; color: var(--color-text-muted); padding: 9px 11px 13px; white-space: nowrap; transition: color .14s ease; }
@@ -14949,24 +14950,39 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-tab-ic svg { width: 15px; height: 15px; }
 .aii-tab:hover { color: var(--color-text); }
 .aii-tab:hover .aii-tab-ic { color: var(--color-text-muted); }
-.aii-tab.is-active { color: #14213d; font-weight: 600; }
-.aii-tab.is-active .aii-tab-ic { color: #14213d; }
-.aii-tab.is-active::after { content: ''; position: absolute; left: 9px; right: 9px; bottom: 0; height: 2.5px; border-radius: 2px 2px 0 0; background: #14213d; }
+.aii-tab.is-active { color: var(--color-primary); font-weight: 700; }
+.aii-tab.is-active .aii-tab-ic { color: var(--color-primary); }
+.aii-tab.is-active::after { content: ''; position: absolute; left: 9px; right: 9px; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: var(--color-primary); }
 .aii-tab:focus-visible { outline: none; }
 .aii-tab:focus-visible .aii-tab-tx { text-decoration: underline; text-underline-offset: 3px; }
 
-/* AI Brief header — prominent label, summary beneath, updated stamp at right. */
+/* Brief head — summary leads (no AI Brief label), updated stamp + a discreet
+   "explore with external AI" link below it (Ask AI/Web Search now in the
+   External Tools tab). */
 .aii-builder-secs { padding-top: 0; padding-bottom: 2rem; }
-/* AI Brief header: prominent label, summary beneath, actions to the right. */
-.aii-bhead { padding: 16px 0 6px; }
-.aii-bhead-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-.aii-bhead-lead { min-width: 0; flex: 1 1 240px; }
-/* Editorial kicker — a quiet uppercase section label under the hero topic title. */
-.aii-brief-label { display: inline-flex; align-items: center; gap: 6px; color: var(--color-text-light); font-weight: 700; font-size: 0.7rem; letter-spacing: 0.11em; text-transform: uppercase; white-space: nowrap; }
-.aii-brief-label svg { width: 13px; height: 13px; color: var(--color-primary); }
-.aii-brief-sum { margin: 7px 0 0; font-size: 0.95rem; color: var(--color-text); line-height: 1.45; }
-.aii-brief-meta, .aii-brief-updated { display: block; margin-top: 5px; font-size: 0.74rem; color: var(--color-text-light); }
-.aii-brief-actions { flex: none; margin-top: 2px; }
+.aii-bhead { padding: 16px 0 8px; }
+.aii-brief-sum { margin: 0; font-size: 1rem; color: var(--color-text); line-height: 1.5; }
+.aii-brief-meta, .aii-brief-updated { display: block; margin-top: 6px; font-size: 0.75rem; color: var(--color-text-light); }
+.aii-brief-explore-wrap { margin-top: 13px; }
+.aii-brief-explore { display: inline-flex; align-items: center; gap: 6px; padding: 0; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: var(--color-primary); }
+.aii-brief-explore svg:first-of-type { width: 14px; height: 14px; }
+.aii-brief-explore svg:last-of-type { width: 13px; height: 13px; transition: transform .2s ease; }
+.aii-brief-explore[aria-expanded="true"] svg:last-of-type { transform: rotate(180deg); }
+.aii-brief-explore:hover span { text-decoration: underline; text-underline-offset: 3px; }
+.aii-brief-explore-wrap .aii-emenu-host.is-open { margin-top: 11px; }
+
+/* Section preview clamp — long bodies show a fade + Show more / less. */
+.aii-sec-clamp { max-height: 13em; overflow: hidden; -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent); mask-image: linear-gradient(to bottom, #000 80%, transparent); }
+.im-msec.is-expanded .aii-sec-clamp { max-height: none; -webkit-mask-image: none; mask-image: none; }
+.aii-sec-more { display: inline-flex; align-items: center; gap: 5px; margin-top: 9px; padding: 0; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: var(--color-primary); }
+.aii-sec-more-chev { display: inline-flex; transition: transform .2s ease; }
+.aii-sec-more-chev svg { width: 14px; height: 14px; }
+.im-msec.is-expanded .aii-sec-more .aii-sec-more-chev { transform: rotate(180deg); }
+.aii-sec-more:hover .aii-sec-more-tx { text-decoration: underline; text-underline-offset: 3px; }
+
+/* External Tools tab content blocks. */
+.aii-ext-block { margin: 0 0 24px; }
+.aii-ext-block:last-child { margin-bottom: 0; }
 
 /* Per-section "Explore this further" — toggles an inline dropdown in place. */
 .aii-sec-explore-row { margin-top: 12px; }
@@ -16390,3 +16406,9 @@ body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs { display: none
 /* Band AI Insights header matches the News Feed / Web Sources lockup — drop the
    redundant "pick a path" subhead (the four tiles are self-evident). */
 body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts .aii-headsub { display: none; }
+
+/* External Tools & Resources — neutral icon chip + full-width tile (first) atop the
+   2×2 builder tiles on the topic-page band. */
+.aii-icon-external { background: #eaeef5; color: #475569; }
+.topic-band #section-shortcuts .aii-bcard-external { grid-column: 1 / -1; }
+.aii-tab--ext .aii-tab-tx { font-weight: 600; }
