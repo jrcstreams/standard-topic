@@ -6413,13 +6413,15 @@ body.app-mode .topic-layout {
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill.active::after { background: #131a26; }
   @media (hover: hover) { body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs .tab-pill:hover { color: #44506a; } }
 
-  /* ── Condensed (on scroll): slim bar — icon + title on one centered row, the
-     white tab bar below; description + Related hidden (#92/#97). ────────────── */
+  /* ── Condensed (on scroll): slim bar — icon + title on one row, the Related chip
+     strip kept below it. We drop the one-line DESCRIPTION on scroll (not Related):
+     the related topics are the useful navigation, the summary is the throwaway
+     (#152). ──────────────────────────────────────────────────────────────────── */
   body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-banner {
     padding-top: 0.5rem !important;
   }
   body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-banner-row {
-    grid-template-areas: "ico title" "tabs tabs" !important; align-items: center !important;
+    grid-template-areas: "ico title" "rel rel" !important; align-items: center !important;
   }
   body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-hero-ico {
     width: 28px; height: 28px; border-radius: 8px;
@@ -6428,8 +6430,11 @@ body.app-mode .topic-layout {
   body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-banner-title {
     font-size: 1.15rem !important;
   }
-  body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-banner-desc,
+  /* Tighter Related row when condensed (less top margin than the expanded hero). */
   body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-hero-related {
+    margin-top: 0.55rem !important;
+  }
+  body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .topic-banner-desc {
     display: none !important;
   }
   body.app-mode.topic-hero-condensed #sub-header.is-subnav:not(.home-mode) .subnav-tabs {
@@ -16437,3 +16442,24 @@ body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs { display: none
 body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts .aii-headsub { display: none; }
 
 .aii-tab--ext .aii-tab-tx { font-weight: 600; }
+
+/* Section-header hierarchy (#154): on topic pages the "AI Insights" / "News Feed"
+   section headers were reading like topic-page titles (both used the solid-navy icon
+   chip). Give SECTIONS a soft tinted chip (navy on a light navy wash) instead of the
+   solid-navy chip the topic title owns, and take a little weight/size off the section
+   title — so the page title clearly outranks the section labels. */
+.topic-band #section-shortcuts .aii-logo,
+.topic-band #section-newsfeed .newsfeed-logo {
+  background: color-mix(in srgb, var(--color-primary) 11%, #fff) !important;
+  color: var(--color-primary) !important;
+}
+.topic-band #section-shortcuts .aii-brand,
+.topic-band #section-newsfeed .newsfeed-title { font-weight: 600 !important; letter-spacing: -0.005em; }
+@media (max-width: 899.98px) {
+  .topic-band #section-shortcuts .aii-brand,
+  .topic-band #section-newsfeed .newsfeed-title { font-size: 1.04rem !important; }
+  .topic-band #section-shortcuts .aii-logo,
+  .topic-band #section-newsfeed .newsfeed-logo { width: 24px !important; height: 24px !important; }
+  .topic-band #section-shortcuts .aii-logo svg,
+  .topic-band #section-newsfeed .newsfeed-logo svg { width: 13px !important; height: 13px !important; }
+}
