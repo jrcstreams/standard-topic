@@ -16642,3 +16642,42 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
   body.app-mode #sub-header.is-subnav .subnav-chip-wrap.can-scroll-left .subnav-chip-arrow-left,
   body.app-mode #sub-header.is-subnav .subnav-chip-wrap.can-scroll-right .subnav-chip-arrow-right { display: inline-flex !important; }
 }
+
+/* #216/#217 — keep the main-nav control icons on the bar down to 640px (tablets),
+   not just ≥900. They render as the same translucent icon pills; Topics drops its
+   label (icon-only). Below 640 (phones) they hide and the bottom nav is the nav.
+   (The bottom nav still appears 640–900 as a fallback.) */
+@media (min-width: 640px) and (max-width: 899.98px) {
+  body.app-mode .sticky-hero-inner .sticky-actions { display: flex !important; align-items: center; gap: 0.4rem; }
+  body.app-mode .sticky-actions .sticky-home,
+  body.app-mode .sticky-actions .sticky-search-pill,
+  body.app-mode .sticky-actions .sticky-trending,
+  body.app-mode .sticky-actions .sticky-settings,
+  body.app-mode .sticky-actions .sticky-topics { display: inline-flex !important; }
+  body.app-mode .sticky-actions .sticky-home,
+  body.app-mode .sticky-actions .sticky-trending,
+  body.app-mode .sticky-actions .sticky-settings,
+  body.app-mode .sticky-actions .sticky-topics,
+  body.app-mode .sticky-actions .sticky-search-pill .search-bar {
+    width: 34px; height: 34px; min-width: 0; padding: 0; gap: 0;
+    align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 9px; color: rgba(255,255,255,0.92);
+  }
+  body.app-mode .sticky-actions .sticky-search-pill .search-bar-label,
+  body.app-mode .sticky-actions .sticky-trending-full,
+  body.app-mode .sticky-actions .sticky-trending-short,
+  body.app-mode .sticky-actions .sticky-topics .sticky-topics-label { display: none !important; }
+  body.app-mode .sticky-actions .sticky-search-pill .search-bar-icon { color: rgba(255,255,255,0.92) !important; }
+  body.app-mode .sticky-actions .sticky-home svg,
+  body.app-mode .sticky-actions .sticky-trending svg,
+  body.app-mode .sticky-actions .sticky-settings svg,
+  body.app-mode .sticky-actions .sticky-search-pill .search-bar-icon,
+  body.app-mode .sticky-actions .sticky-topics svg { width: 17px !important; height: 17px !important; stroke-width: 1.9 !important; }
+}
+
+/* In the 640–900 range the control pills include Search, so hide the standalone
+   mobile search icon to avoid two search affordances (#216). */
+@media (min-width: 640px) and (max-width: 899.98px) {
+  body.app-mode .sticky-hero-inner .nav-search-mobile { display: none !important; }
+}
