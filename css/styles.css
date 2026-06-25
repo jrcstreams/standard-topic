@@ -13261,7 +13261,9 @@ body.home-search.app-mode .topic-layout {
      must be allowed to spill past the card's bottom edge (#77). The corner glow
      is kept inside the rounded corners by giving the ::after its own radius. */
   position: relative;
-  max-width: none; margin: 0;
+  /* A search card doesn't need the full container width on big screens — cap it and
+     centre it. It stays full-width as the viewport scales down below the cap (#155). */
+  max-width: 840px; margin: 0 auto;
   /* Mobile (lower clamp bounds) was perfect; desktop maxed out too tall/wide — trim
      the upper bounds, esp. vertical. */
   padding: clamp(1.1rem, 0.7rem + 0.8vw, 1.25rem) clamp(1.4rem, 0.9rem + 1.4vw, 1.9rem) clamp(1.2rem, 0.8rem + 0.9vw, 1.4rem);
@@ -14955,7 +14957,7 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* Sticky top: topic name + tab row (replaces Back / Prev / Next / All Insights). */
 .aii-builder-topbar { position: sticky; top: 0; z-index: 9; margin: 0 -1.1rem; padding: 12px 1.1rem 0; background: #f3f5f8; border-bottom: 1px solid var(--color-surface-border); }
 /* Editorial hero topic title (moderate size) + a caret that opens the topic switcher. */
-.aii-builder-topic { margin: 0 0 12px; font-family: var(--font-display); font-weight: 600; letter-spacing: -0.02em; color: #14213d; font-size: clamp(1.3rem, 1.1rem + 0.6vw, 1.55rem); line-height: 1.1; }
+.aii-builder-topic { margin: 0; font-family: var(--font-display); font-weight: 600; letter-spacing: -0.02em; color: #14213d; font-size: clamp(1.3rem, 1.1rem + 0.6vw, 1.55rem); line-height: 1.1; }
 .aii-builder-topic--btn { display: inline-flex; align-items: center; gap: 8px; border: none; background: none; cursor: pointer; padding: 0; font-family: var(--font-display); }
 .aii-builder-topic-tx { min-width: 0; }
 .aii-topic-caret { flex: none; display: inline-flex; width: 21px; height: 21px; align-items: center; justify-content: center; border-radius: 6px; background: color-mix(in srgb, var(--color-text-muted) 12%, transparent); color: var(--color-text-muted); transition: background .14s ease, color .14s ease; }
@@ -14963,25 +14965,36 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-builder-topic--btn:hover .aii-topic-caret { background: color-mix(in srgb, var(--color-primary) 14%, transparent); color: var(--color-primary); }
 /* Editorial tabs — muted at rest; ACTIVE is emphasised (brand colour + bold + a
    thicker brand underline) so the section the user is on clearly stands out. */
-.aii-tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
-.aii-tabs::-webkit-scrollbar { display: none; }
-.aii-tab { flex: none; position: relative; display: inline-flex; align-items: center; gap: 7px; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.9rem; font-weight: 500; color: var(--color-text-muted); padding: 9px 11px 13px; white-space: nowrap; transition: color .14s ease; }
-.aii-tab-ic { flex: none; display: inline-flex; align-items: center; justify-content: center; color: var(--color-text-light); transition: color .14s ease; }
-.aii-tab-ic svg { width: 15px; height: 15px; }
-.aii-tab:hover { color: var(--color-text); }
-.aii-tab:hover .aii-tab-ic { color: var(--color-text-muted); }
-.aii-tab.is-active { color: var(--color-primary); font-weight: 700; }
-.aii-tab.is-active .aii-tab-ic { color: var(--color-primary); }
-.aii-tab.is-active::after { content: ''; position: absolute; left: 9px; right: 9px; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: var(--color-primary); }
-.aii-tab:focus-visible { outline: none; }
-.aii-tab:focus-visible .aii-tab-tx { text-decoration: underline; text-underline-offset: 3px; }
+/* Tab selector = compact pills that WRAP, so every tab is always visible (no
+   horizontal scroll / cut-off). Active = a clean filled navy pill (a real selected
+   state — not an underline accent, and visually distinct from the topic title). */
+.aii-tabs { display: flex; flex-wrap: wrap; gap: 7px; padding: 2px 0 0; }
+.aii-tab { flex: 0 0 auto; position: relative; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--color-surface-border); border-radius: 8px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: var(--color-text-muted); padding: 7px 12px; white-space: nowrap; transition: background .14s ease, color .14s ease, border-color .14s ease; }
+.aii-tab:hover { color: var(--color-text); border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); }
+.aii-tab.is-active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; font-weight: 700; }
+.aii-tab.is-active:hover { color: #fff; }
+.aii-tab.is-active::after { display: none; }
+.aii-tab:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+
+/* In-body section header (the prominent label of the section you're viewing): a
+   clean icon chip + the section name, above the summary. The tab pill shows you're
+   IN this section; this header names it prominently. */
+.aii-sectitle { display: flex; align-items: center; gap: 10px; margin: 18px 0 8px; }
+.aii-sectitle-ic { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 8px; background: color-mix(in srgb, var(--color-primary) 8%, #fff); color: var(--color-primary); }
+.aii-sectitle-ic svg { width: 17px; height: 17px; }
+.aii-sectitle-name { margin: 0; font-family: var(--font-display); font-size: 1.18rem; font-weight: 700; letter-spacing: -0.015em; color: #14213d; line-height: 1.15; }
+/* Discreet "View Topic Page" link, opposite the topic name. */
+.aii-builder-toprow { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.aii-view-topic { display: inline-flex; align-items: center; gap: 4px; flex: none; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; color: var(--color-text-muted); padding: 0; white-space: nowrap; }
+.aii-view-topic svg { width: 14px; height: 14px; }
+.aii-view-topic:hover { color: var(--color-primary); }
 
 /* Brief head — summary leads (no AI Brief label), updated stamp + a discreet
    "explore with external AI" link below it (Ask AI/Web Search now in the
    External Tools tab). */
 .aii-builder-secs { padding-top: 0; padding-bottom: 2rem; }
-.aii-bhead { padding: 16px 0 8px; }
-.aii-brief-sum { margin: 0; font-size: 1rem; color: var(--color-text); line-height: 1.5; }
+.aii-bhead { padding: 2px 0 14px; margin-bottom: 2px; border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); }
+.aii-brief-sum { margin: 0; font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.45; }
 .aii-brief-meta, .aii-brief-updated { display: block; margin-top: 6px; font-size: 0.75rem; color: var(--color-text-light); }
 .aii-brief-explore-wrap { margin-top: 13px; }
 .aii-brief-explore { display: inline-flex; align-items: center; gap: 6px; padding: 0; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: var(--color-primary); }
@@ -15080,6 +15093,24 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-sec-more svg { width: 14px; height: 14px; transition: transform .14s ease; }
 .aii-sec-more:hover { text-decoration: underline; }
 .aii-sec-more:hover svg { transform: translateX(2px); }
+/* Builder section "Show more / less": flush-left (the attribute selector out-ranks
+   the legacy indented "View more" rule above) — #175. */
+.aii-sec-more[data-sec-more] { align-self: flex-start; margin: 12px 0 2px; color: var(--color-primary); }
+
+/* Sources — condensed, always-open list (no accordion). Smaller header + rows; the
+   link icon is muted (no clashing blue), source titles read as quiet links. */
+.aii-sources-sec .im-msec-head { align-items: center; gap: 9px; margin-bottom: 10px; }
+.aii-sources-ic { width: 24px !important; height: 24px !important; margin-top: 0 !important; background: #eef1f6 !important; color: var(--color-text-muted) !important; }
+.aii-sources-ic svg { width: 13px !important; height: 13px !important; }
+.aii-sources-title { font-size: 0.92rem !important; font-weight: 700 !important; color: var(--color-text) !important; }
+.aii-sources-count { font-size: 0.74rem; font-weight: 700; color: var(--color-text-light); }
+.aii-sources-list { display: flex; flex-direction: column; }
+.aii-sources-list .im-cov-row { display: flex; align-items: flex-start; gap: 8px; padding: 8px 0; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 55%, transparent); }
+.aii-sources-list .im-cov-row:first-child { border-top: none; }
+.aii-sources-list .im-cov-title { font-size: 0.85rem; font-weight: 600; color: var(--color-text); line-height: 1.35; }
+.aii-sources-list .im-cov-host { font-size: 0.74rem; color: var(--color-text-light); }
+.aii-sources-list .im-cov-row > svg { flex: none; width: 14px; height: 14px; margin-top: 2px; color: var(--color-text-light); }
+.aii-sources-list .im-cov-row:hover .im-cov-title { color: var(--color-primary); }
 .aii-sec-empty { margin: 0; padding: 0 16px 13px 34px; font-size: 0.82rem; line-height: 1.4; color: var(--color-text-muted); }
 /* Per-section accent — the dot, plus link/view-more hover, take the track colour. */
 .aii-dot-discover { background: #ef4444; }
@@ -15573,8 +15604,9 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* One clean "AI Brief" label heads the whole generated-section stack (replaces
    the per-section "AI Generated Text" tags). */
 .im-secs::before { content: "\2726  AI Brief"; display: block; margin: 18px 0 20px; font-family: var(--font-family); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #8b95a9; }
-.im-msec { padding: 16px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 60%, transparent); scroll-margin-top: 6px; }
+.im-msec { padding: 22px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 95%, transparent); scroll-margin-top: 6px; }
 .im-msec:last-child { border-bottom: none; }
+.im-msec:first-child { padding-top: 16px; }
 .im-msec.is-empty { display: none; }
 /* Related Searches dropdown: hide the redundant inner label (the link names it). */
 /* Related Searches is its own section now — its section header names it, so hide
@@ -15584,21 +15616,24 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* Grey header zone sits flush under the modal head (no white gap) + full-bleed. */
 .im-body:has(.im-stickyhead) { padding-top: 0; }
 @media (max-width: 560px) { .im-stickyhead { margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px; } }
-.im-msec-head { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; flex-wrap: wrap; }
-.im-msec-ic { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 7px; background: #f1f3f7; color: var(--color-primary); }
+/* ACROSS-THE-BOARD RULE: an icon directly beside a text label is top-aligned with
+   the FIRST line and the label wraps in its OWN column — it never wraps under the
+   icon. (Applies to every im-msec-head: builder sections, news/trend insights.) */
+.im-msec-head { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+.im-msec-ic { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 7px; background: #f1f3f7; color: var(--color-primary); margin-top: 1px; }
 /* "AI Generated Text" tag — sits immediately to the RIGHT of each generated
    section title (left-aligned beside it, not pushed to the far edge), wrapping
    below on narrow widths. Replaces the old per-sentence sparkle + brief legend. */
-.im-sec-aitag { display: inline-flex; align-items: center; gap: 5px; flex: none; padding: 3px 9px 3px 7px; border-radius: 999px; background: color-mix(in srgb, var(--color-primary) 7%, #fff); border: 1px solid color-mix(in srgb, var(--color-primary) 14%, transparent); color: var(--color-primary); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.01em; white-space: nowrap; }
-.im-sec-aitag svg { width: 12px; height: 12px; flex: none; color: #2563eb; }
-@media (max-width: 560px) {
-  .im-sec-aitag { margin-left: 40px; order: 3; }
-}
+/* "AI Generated Text" tag is ALWAYS on its own line, flush-left below the section
+   head — never inline with the title. */
+.im-sec-aitag-row { margin: 0 0 11px; }
+.im-sec-aitag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px 3px 7px; border-radius: 999px; background: color-mix(in srgb, var(--color-primary) 7%, #fff); border: 1px solid color-mix(in srgb, var(--color-primary) 14%, transparent); color: var(--color-primary); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.01em; white-space: nowrap; }
+.im-sec-aitag svg { width: 12px; height: 12px; flex: none; color: var(--color-primary); }
 .im-msec-ic svg { width: 15px; height: 15px; }
 /* Content section headers (Why It's Trending / Summary / Sources & Coverage) —
    the clear MIDDLE tier: strong display weight, between the big title above and
    the small "AI Brief" label. */
-.im-msec-name { margin: 0; font-family: var(--font-display); font-size: 1.02rem; font-weight: 700; letter-spacing: -0.012em; color: var(--color-primary); }
+.im-msec-name { flex: 1 1 auto; min-width: 0; margin: 0; font-family: var(--font-display); font-size: 1.06rem; font-weight: 600; letter-spacing: -0.012em; color: var(--color-primary); line-height: 1.3; }
 .im-msec .im-related-label { display: none; }
 .im-msec .im-related { margin: 0; }
 /* First coverage row sits tight under the section header (no extra top gap). */
@@ -16458,23 +16493,49 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
 
 .aii-tab--ext .aii-tab-tx { font-weight: 600; }
 
-/* Section-header hierarchy (#154): on topic pages the "AI Insights" / "News Feed"
-   section headers were reading like topic-page titles (both used the solid-navy icon
-   chip). Give SECTIONS a soft tinted chip (navy on a light navy wash) instead of the
-   solid-navy chip the topic title owns, and take a little weight/size off the section
-   title — so the page title clearly outranks the section labels. */
+/* ── REUSABLE SECTION HEADER (AI Insights / News Feed on topic pages) ──────────
+   One clean lockup, consistent everywhere: a solid-navy icon chip with a WHITE
+   glyph + the label. (Drops the muddy grey-chip/dark-icon mismatch — #161/162/163.)
+   The topic-page TITLE still outranks these via its larger display size, so the
+   section title stays lighter/smaller. */
 .topic-band #section-shortcuts .aii-logo,
 .topic-band #section-newsfeed .newsfeed-logo {
-  background: color-mix(in srgb, var(--color-primary) 11%, #fff) !important;
-  color: var(--color-primary) !important;
+  width: 28px !important; height: 28px !important; border-radius: 8px !important;
+  background: var(--color-primary) !important; color: #fff !important;
 }
+.topic-band #section-shortcuts .aii-logo svg,
+.topic-band #section-newsfeed .newsfeed-logo svg { width: 15px !important; height: 15px !important; color: #fff !important; }
 .topic-band #section-shortcuts .aii-brand,
-.topic-band #section-newsfeed .newsfeed-title { font-weight: 600 !important; letter-spacing: -0.005em; }
+.topic-band #section-newsfeed .newsfeed-title { font-weight: 600 !important; letter-spacing: -0.01em; }
+
+/* News Feed header in the band: kill the heavy #d6dae2 separator (the "weird line"
+   under the title — #159), use the same soft hairline as the rest of the band, and
+   guarantee a clean gap between the chip and "News Feed". */
+.topic-band #section-newsfeed .newsfeed-head {
+  border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent) !important;
+  margin: 0 0 0.85rem !important; padding: 0 0 0.7rem !important;
+}
+.topic-band #section-newsfeed .newsfeed-title { gap: 0.55rem !important; align-items: center !important; }
+
 @media (max-width: 899.98px) {
   .topic-band #section-shortcuts .aii-brand,
-  .topic-band #section-newsfeed .newsfeed-title { font-size: 1.04rem !important; }
-  .topic-band #section-shortcuts .aii-logo,
-  .topic-band #section-newsfeed .newsfeed-logo { width: 24px !important; height: 24px !important; }
-  .topic-band #section-shortcuts .aii-logo svg,
-  .topic-band #section-newsfeed .newsfeed-logo svg { width: 13px !important; height: 13px !important; }
+  .topic-band #section-newsfeed .newsfeed-title { font-size: 1.06rem !important; }
+}
+
+/* ── Topic-page AI Insights card: align the list with the header + breathe ──────
+   The launcher rows were indented past the "AI Insights" header and (on mobile)
+   rode the card's side borders. Inset the whole list to the SAME left edge as the
+   header chip, and give it side room inside the card (#158/#165). */
+.topic-band #section-shortcuts .aii-bcards { padding: 0 18px !important; }
+.topic-band #section-shortcuts .aii-bcard { padding-left: 0 !important; padding-right: 0 !important; align-items: center !important; }
+.topic-band #section-shortcuts .aii-bcard-go { align-self: center !important; }
+/* The header already pads 18px; match it so the chips column lines up. */
+.topic-band #section-shortcuts .aii-head { padding-left: 18px !important; padding-right: 18px !important; }
+
+/* ── Mobile: don't let the first band card ride the subnav on load (#157) ─────── */
+@media (max-width: 899.98px) {
+  body.app-mode .topic-layout.topic-band > #section-shortcuts { margin-top: 0.5rem; }
+  /* The AI Insights card keeps clear side padding so content never touches the
+     card border on mobile (#158). */
+  .topic-band #section-shortcuts .aii-bcards { padding: 0 16px !important; }
 }

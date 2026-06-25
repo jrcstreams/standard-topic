@@ -121,7 +121,13 @@ function aiiSecIconKey(name) {
   if (/source|coverage/.test(n)) return 'sources';
   return 'summary';
 }
-function aiiSecHead(key, name) { const tag = key === 'sources' ? '' : `<span class="im-sec-aitag">${LOGO}<span>AI Generated Text</span></span>`; return `<div class="im-msec-head"><span class="im-msec-ic">${AII_SEC_ICON[key] || AII_SEC_ICON.summary}</span><h3 class="im-msec-name">${esc(name)}</h3>${tag}</div>`; }
+function aiiSecHead(key, name) {
+  // Icon sits inline-left of the title (top-aligned; title wraps in its own column,
+  // never under the icon). The "AI Generated Text" tag is ALWAYS on its own line,
+  // left-aligned, below the head — never inline with the title.
+  const tag = key === 'sources' ? '' : `<div class="im-sec-aitag-row"><span class="im-sec-aitag">${LOGO}<span>AI Generated Text</span></span></div>`;
+  return `<div class="im-msec-head"><span class="im-msec-ic">${AII_SEC_ICON[key] || AII_SEC_ICON.summary}</span><h3 class="im-msec-name">${esc(name)}</h3></div>${tag}`;
+}
 function aiiMsec(id, name, inner) { return `<section class="im-msec" id="${id}" data-name="${escAttr(name)}">${inner}</section>`; }
 // Paper-plane (Direct Submit — "send it off") and an eye (Review — "preview").
 const ICON_SEND = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2.5L11 13"/><path d="M21.5 2.5L15 21l-4-8-8-4z"/></svg>';
@@ -661,17 +667,26 @@ export function renderAIIntelligence(container, scope) {
     // Tabs: the 4 builders, then "Web Search" + "External Insights" (last) — the
     // two static (non-AI) tabs. Monochrome editorial tabs; active is emphasised.
     const isStatic = isStaticGroup(curGroup);
-    const tabs = builderTabs().map((x) => `<button type="button" class="aii-tab${x.group === curGroup ? ' is-active' : ''}${isStaticGroup(x.group) ? ' aii-tab--ext' : ''}" role="tab" aria-selected="${x.group === curGroup}" data-tab-group="${escAttr(x.group)}"><span class="aii-tab-ic">${ICONS[x.group] || ICONS._}</span><span class="aii-tab-tx">${esc(x.tab || x.label)}</span></button>`).join('');
-    // Topic name = editorial hero title + a caret to switch topics.
+    // Tab selector: compact PILLS that WRAP so every tab is always visible (no
+    // horizontal scroll / cut-off). No per-tab icon — the icon now lives in the
+    // in-body section header below, which keeps the selector condensed.
+    const tabs = builderTabs().map((x) => `<button type="button" class="aii-tab${x.group === curGroup ? ' is-active' : ''}" role="tab" aria-selected="${x.group === curGroup}" data-tab-group="${escAttr(x.group)}"><span class="aii-tab-tx">${esc(x.tab || x.label)}</span></button>`).join('');
+    // Topic name = editorial hero title + a caret to switch topics; a discreet
+    // right-aligned "View Topic Page" link sits opposite it.
     const topicEl = `<button type="button" class="aii-builder-topic aii-builder-topic--btn" data-repick aria-label="Change topic"><span class="aii-builder-topic-tx">${esc(topicTitle)}</span><span class="aii-topic-caret" aria-hidden="true">${CHEV}</span></button>`;
+    const viewLink = scope.topicKey ? `<button type="button" class="aii-view-topic" data-view-topic>View Topic Page${RIGHT_ARROW}</button>` : '';
     const exPrompt = explorePrompt();
     return `<div class="aii-sub aii-content aii-content--modal aii-builder">
       <div class="aii-builder-topbar">
-        ${topicEl}
-        <div class="aii-tabs" role="tablist">${tabs}</div>
+        <div class="aii-builder-toprow">
+          ${topicEl}
+          ${viewLink}
+        </div>
+        <div class="aii-tabs aii-tabs--pills" role="tablist">${tabs}</div>
       </div>
       <div class="aii-builder-secs">
         <div class="aii-bhead">
+          <div class="aii-sectitle"><span class="aii-sectitle-ic" data-sec-title-ic>${ICONS[curGroup] || ICONS._}</span><h2 class="aii-sectitle-name" data-sec-title-name>${esc(p.tab || p.label || '')}</h2></div>
           <p class="aii-brief-sum" data-brief-sum>${esc(p.subtitle || '')}</p>
           <div class="aii-brief-meta" data-brief-meta>${isStatic ? '' : updated}</div>
           <div class="aii-brief-explore-wrap"${isStatic ? ' hidden' : ''} data-explore-wrap>
@@ -692,6 +707,9 @@ export function renderAIIntelligence(container, scope) {
     if (!isStatic && !builderCache[group]) loadBuilder(group);
     const p = builderTabs().find((x) => x.group === group) || {};
     stage.querySelectorAll('.aii-tab').forEach((t) => { const on = t.dataset.tabGroup === group; t.classList.toggle('is-active', on); t.setAttribute('aria-selected', String(on)); });
+    // In-body section header (name + icon) reflects the active tab.
+    const stName = stage.querySelector('[data-sec-title-name]'); if (stName) stName.textContent = p.tab || p.label || '';
+    const stIc = stage.querySelector('[data-sec-title-ic]'); if (stIc) stIc.innerHTML = ICONS[group] || ICONS._;
     const sum = stage.querySelector('[data-brief-sum]'); if (sum) sum.textContent = p.subtitle || '';
     const bc = builderCache[group]; const meta = stage.querySelector('[data-brief-meta]');
     if (meta) meta.innerHTML = (!isStatic && bc && bc.generatedAt) ? `<span class="aii-brief-updated">Updated ${esc(relTime(bc.generatedAt))}</span>` : '';
@@ -751,10 +769,12 @@ export function renderAIIntelligence(container, scope) {
         <button type="button" class="aii-sec-more" data-sec-more hidden><span class="aii-sec-more-tx">Show more</span><span class="aii-sec-more-chev">${CHEV}</span></button>`;
       return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name) + body);
     }).join('');
-    // Sources → a collapsed accordion at the very bottom of the insight.
+    // Sources → an always-open, condensed list at the very bottom of the insight
+    // (no accordion). Rendered as a normal section so it inherits the single
+    // inter-section divider (no more double separator).
     const items = builderNewsItems().filter((x) => x.title && x.meta && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(String(x.title).trim()));
     const covRows = items.map((x) => `<a class="im-cov-row" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span><span class="im-cov-host">${esc(x.meta)}</span></span>${EXT}</a>`).join('');
-    if (covRows) html += `<details class="aii-sources-acc"><summary class="aii-sources-sum">${SOURCES_BADGE}<span class="aii-sources-name">Sources</span><span class="aii-sources-count">${items.length}</span><span class="aii-sources-chev">${CHEV}</span></summary><div class="im-coverage-list aii-sources-list">${covRows}</div></details>`;
+    if (covRows) html += `<section class="im-msec aii-sources-sec"><div class="im-msec-head aii-sources-head"><span class="im-msec-ic aii-sources-ic">${SOURCES_BADGE}</span><h3 class="im-msec-name aii-sources-title">Sources</h3><span class="aii-sources-count">${items.length}</span></div><div class="im-coverage-list aii-sources-list">${covRows}</div></section>`;
     wrap.innerHTML = html;
     wrap.classList.add('ai-reveal');
     wireSectionClamps();
@@ -1272,6 +1292,12 @@ export function renderAIIntelligence(container, scope) {
       fillAiiBuilder();
       stage.querySelectorAll('.aii-tab').forEach((t) => t.addEventListener('click', () => switchBuilder(t.dataset.tabGroup)));
       stage.querySelector('[data-repick]')?.addEventListener('click', () => go('topic', 'back'));
+      // Discreet "View Topic Page" link → close the modal onto that topic's page.
+      stage.querySelector('[data-view-topic]')?.addEventListener('click', () => {
+        const key = scope.topicKey; if (!key) return;
+        window.dispatchEvent(new CustomEvent('close-all-modals'));
+        window.location.hash = key === 'home' ? '#/' : ('#/topic/' + key);
+      });
       // Discreet "Explore further with external AI models" link (brief head) → opens
       // its Ask-AI menu in place.
       stage.querySelector('[data-explore-toggle]')?.addEventListener('click', (e) => toggleEmenu(e.currentTarget));
