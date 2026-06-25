@@ -13469,8 +13469,8 @@ body.home-search #home-trending {
   body.home-search #home-trending { order: 0; }
   /* Full-width centered search hero (no chips). Content capped + centered so the
      bar isn't edge-to-edge across the whole row. */
-  body.home-search .home-search-hero { display: block; padding: 2rem 1.6rem; border-radius: 16px; text-align: center; }
-  body.home-search .home-search-hero .search-panel { max-width: 720px; margin: 0 auto; }
+  body.home-search .home-search-hero { display: block; padding: 2rem 1.6rem; border-radius: 16px; text-align: center; max-width: 1080px; margin: 0 auto; }
+  body.home-search .home-search-hero .search-panel { max-width: 940px; margin: 0 auto; }
   body.home-search .home-search-hero .search-panel-hero-inner { text-align: center; }
   body.home-search .home-search-hero .search-panel-title {
     white-space: normal; text-align: center; font-size: 1.5rem; line-height: 1.18; margin: 0 auto 0.4rem;
@@ -16407,15 +16407,17 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
   .topic-band #section-newsfeed .news-list { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; }
 }
 .topic-band #section-newsfeed .news-card {
-  display: flex; flex-direction: column; border: none !important; border-radius: 0;
-  background: none !important; box-shadow: none !important; transform: none !important; padding: 15px 0 14px;
+  display: flex; flex-direction: column; border: none !important; border-radius: 9px;
+  background: none !important; box-shadow: none !important; transform: none !important; padding: 15px 12px 14px;
+  margin: 0 -12px;
   border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 55%, transparent) !important;
-  transition: none;
+  transition: background .13s ease;
 }
 /* first row of each column has no top divider */
 .topic-band #section-newsfeed .news-list .news-card:nth-child(1),
 .topic-band #section-newsfeed .news-list .news-card:nth-child(2) { border-top: none !important; }
-.topic-band #section-newsfeed .news-card:hover { background: none !important; box-shadow: none !important; transform: none !important; }
+/* #224 — clear hover on each story (a clean rounded row tint, inset within the gap). */
+.topic-band #section-newsfeed .news-card:hover { background: color-mix(in srgb, var(--color-primary) 4%, #fff) !important; border-top-color: transparent !important; }
 .topic-band #section-newsfeed .news-card:hover .news-card-title { color: var(--color-primary); }
 .topic-band #section-newsfeed .news-card-link { padding: 0 !important; }
 .topic-band #section-newsfeed .news-card:has(.news-ai) .news-card-link { padding-bottom: 0 !important; }
@@ -16681,3 +16683,23 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
 @media (min-width: 640px) and (max-width: 899.98px) {
   body.app-mode .sticky-hero-inner .nav-search-mobile { display: none !important; }
 }
+
+/* #223 — AI Insights + News Feed section-header titles are the SAME size on the
+   topic band (they were rendering at slightly different sizes). */
+.topic-band #section-shortcuts .aii-brand,
+.topic-band #section-newsfeed .newsfeed-title { font-size: 1.18rem !important; letter-spacing: -0.01em !important; }
+@media (max-width: 899.98px) {
+  .topic-band #section-shortcuts .aii-brand,
+  .topic-band #section-newsfeed .newsfeed-title { font-size: 1.06rem !important; }
+}
+
+/* #221 — "Search <term>" custom CTA in the AI Insights topic picker (run any term,
+   not just known topics). */
+.aii-tp-custom { display: flex; align-items: center; gap: 11px; width: 100%; margin-top: 10px; padding: 13px 14px; border: 1px dashed color-mix(in srgb, var(--color-primary) 32%, var(--color-surface-border)); border-radius: 11px; background: color-mix(in srgb, var(--color-primary) 4%, #fff); cursor: pointer; font-family: var(--font-family); text-align: left; transition: background .14s, border-color .14s; }
+.aii-tp-custom:hover { background: color-mix(in srgb, var(--color-primary) 8%, #fff); border-color: var(--color-primary); }
+.aii-tp-custom-badge { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 7px; background: var(--color-primary); color: #fff; font-size: 1.05rem; font-weight: 600; line-height: 1; }
+.aii-tp-custom-tx { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.aii-tp-custom-action { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-text-muted); }
+.aii-tp-custom-term { font-size: 0.95rem; font-weight: 600; color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.aii-tp-custom > svg { flex: none; width: 15px; height: 15px; color: var(--color-text-muted); }
+.aii-tp-custom:hover > svg { color: var(--color-primary); }

@@ -242,9 +242,19 @@ export function renderAIIntelligence(container, scope) {
   function topicListHTML(filter) {
     const f = String(filter || '').toLowerCase().trim();
     if (f) {
+      const term = String(filter).trim();
       const items = (scope.allTopics || []).filter((t) => String(t.name).toLowerCase().includes(f) || String(t.parentName || '').toLowerCase().includes(f));
-      if (!items.length) return '<p class="aii-tp-empty">No topics found. Try another search.</p>';
-      return `<div class="aii-tp-results">${items.map((t) => topicResultBtn(t.key, t.name, t.parentName)).join('')}</div>`;
+      // ALWAYS offer to run the typed term as a custom search (so any term works,
+      // not just known topics) — #221.
+      const customCta = `<button type="button" class="aii-tp-custom" data-tp-custom="${escAttr(term)}">
+        <span class="aii-tp-custom-badge" aria-hidden="true">+</span>
+        <span class="aii-tp-custom-tx"><span class="aii-tp-custom-action">Search</span><span class="aii-tp-custom-term">${esc(term)}</span></span>
+        ${ARROW}
+      </button>`;
+      const list = items.length
+        ? `<div class="aii-tp-results">${items.map((t) => topicResultBtn(t.key, t.name, t.parentName)).join('')}</div>`
+        : '<p class="aii-tp-empty">No matching topic — search it as a custom term:</p>';
+      return list + customCta;
     }
     const accent = '#475569';
     const home = `<button type="button" class="at-acc-flat aii-tp-home" data-tp-key="home" style="--ti-accent:#3261a0;">
@@ -299,6 +309,13 @@ export function renderAIIntelligence(container, scope) {
       const g = pickerReturnGroup; pickerReturnGroup = null;
       if (g) { curGroup = g; go('builder', 'back'); }
     });
+    // "Search <term>" → run the typed term as a custom search (#221).
+    const wireCustom = () => stage.querySelectorAll('[data-tp-custom]').forEach((b) => b.addEventListener('click', () => {
+      const term = b.dataset.tpCustom; if (!term) return;
+      window.dispatchEvent(new CustomEvent('close-all-modals'));
+      window.location.hash = '#/custom/' + encodeURIComponent(term);
+    }));
+    wireCustom();
     if (!list) return;
     const browseLabel = stage.querySelector('[data-tp-browselabel]');
     // Edge fades: hint there are more topics above/below the scroll window. Top
@@ -312,7 +329,7 @@ export function renderAIIntelligence(container, scope) {
     if (search) search.addEventListener('input', () => {
       const q = search.value.trim();
       if (browseLabel) browseLabel.textContent = q ? 'Results' : 'Browse by Topic';
-      list.innerHTML = topicListHTML(search.value); wireKeys();
+      list.innerHTML = topicListHTML(search.value); wireKeys(); wireCustom();
       requestAnimationFrame(updateFade);
     });
     list.addEventListener('scroll', updateFade, { passive: true });
