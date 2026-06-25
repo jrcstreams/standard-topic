@@ -16634,3 +16634,11 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
 
 /* #220 — "Search" label clears the modal-header separator above it. */
 .aii-modal-body .aii-tp-field { margin-top: 16px !important; }
+
+/* #219 — show the horizontal scroll-affordance arrows on TOUCH / mobile too (they
+   were gated to hover+fine-pointer only, and force-hidden on topic pages), so the
+   featured (home) and related (topic) chip rows get a clear scroll affordance. */
+@media (max-width: 899.98px) {
+  body.app-mode #sub-header.is-subnav .subnav-chip-wrap.can-scroll-left .subnav-chip-arrow-left,
+  body.app-mode #sub-header.is-subnav .subnav-chip-wrap.can-scroll-right .subnav-chip-arrow-right { display: inline-flex !important; }
+}
