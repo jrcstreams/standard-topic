@@ -686,9 +686,8 @@ export function renderAIIntelligence(container, scope) {
       </div>
       <div class="aii-builder-secs">
         <div class="aii-bhead">
-          <div class="aii-sectitle"><span class="aii-sectitle-ic" data-sec-title-ic>${ICONS[curGroup] || ICONS._}</span><h2 class="aii-sectitle-name" data-sec-title-name>${esc(p.tab || p.label || '')}</h2></div>
+          <div class="aii-sectitle"><span class="aii-sectitle-ic" data-sec-title-ic>${ICONS[curGroup] || ICONS._}</span><h2 class="aii-sectitle-name" data-sec-title-name>${esc(p.tab || p.label || '')}</h2><span class="aii-brief-meta" data-brief-meta>${isStatic ? '' : updated}</span></div>
           <p class="aii-brief-sum" data-brief-sum>${esc(p.subtitle || '')}</p>
-          <div class="aii-brief-meta" data-brief-meta>${isStatic ? '' : updated}</div>
           <div class="aii-brief-explore-wrap"${isStatic ? ' hidden' : ''} data-explore-wrap>
             <button type="button" class="aii-brief-explore" data-explore-toggle aria-expanded="false">${ICON_ASK}<span>Explore further with external AI models</span>${CHEV}</button>
             <div class="aii-emenu-host" data-explore-prompt="${escAttr(exPrompt)}" data-explore-name="${escAttr(curSectionName())}"></div>
