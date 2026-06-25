@@ -67,6 +67,17 @@ export function renderWebSources(container, topic) {
     head.addEventListener('click', togglePanel);
     head.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); togglePanel(); } });
   }
+  // Resize-reactive: collapse on mobile / expand on desktop as the breakpoint is
+  // crossed (so it's never left collapsed on a desktop resize, or open on mobile).
+  let mql = null, onMq = null;
+  if (typeof window !== 'undefined' && window.matchMedia) {
+    mql = window.matchMedia('(max-width: 899.98px)');
+    onMq = (e) => {
+      panel.classList.toggle('ws-collapsed', e.matches);
+      if (head) head.setAttribute('aria-expanded', String(!e.matches));
+    };
+    mql.addEventListener('change', onMq);
+  }
 
   // Collapse/expand each category section (native click toggle on the head).
   container.querySelectorAll('.ws-cat-sec > .aii-sec-head').forEach((b) => {
@@ -78,5 +89,5 @@ export function renderWebSources(container, topic) {
     });
   });
 
-  return { destroy() { container.innerHTML = ''; } };
+  return { destroy() { if (mql && onMq) mql.removeEventListener('change', onMq); container.innerHTML = ''; } };
 }

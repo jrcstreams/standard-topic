@@ -6314,7 +6314,9 @@ body.app-mode .topic-layout {
      bar full-bleed across the bottom. */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner {
     display: block !important; overflow: visible !important;
-    padding: 0.85rem 1rem 0 !important; background: #f3f5f9; min-height: 0;
+    /* Bottom padding restores the breathing room the (now-hidden) section-tab bar
+       used to provide under the Related pills. */
+    padding: 0.85rem 1rem 0.9rem !important; background: #f3f5f9; min-height: 0;
     transition: padding .18s ease;
   }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-row {
@@ -13254,7 +13256,9 @@ body.home-search.app-mode .topic-layout {
      is kept inside the rounded corners by giving the ::after its own radius. */
   position: relative;
   max-width: none; margin: 0;
-  padding: clamp(1.1rem, 0.7rem + 1.2vw, 1.55rem) clamp(1.4rem, 0.8rem + 2vw, 2.4rem) clamp(1.5rem, 0.9rem + 1.8vw, 2.1rem);
+  /* Mobile (lower clamp bounds) was perfect; desktop maxed out too tall/wide — trim
+     the upper bounds, esp. vertical. */
+  padding: clamp(1.1rem, 0.7rem + 0.8vw, 1.25rem) clamp(1.4rem, 0.9rem + 1.4vw, 1.9rem) clamp(1.2rem, 0.8rem + 0.9vw, 1.4rem);
   /* Soft blue-tinted gradient + a real lift shadow so the card has presence
      (was a flat pale panel). The corner glow adds depth on top. */
   background: linear-gradient(150deg, #ffffff 0%, #e9f0fb 100%);

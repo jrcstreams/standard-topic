@@ -20,7 +20,7 @@ import { initTrendingDetailModal } from './components/trending-detail-modal.js?v
 import { initInsightModal } from './components/insight-modal.js?v=20260617-revamp272';
 import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260622-revamp313';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260622-revamp307';
-import { renderWebSources } from './components/websources.js?v=20260622-revamp318';
+import { renderWebSources } from './components/websources.js?v=20260622-revamp322';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp245';
 import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260616-revamp245';
@@ -1349,6 +1349,19 @@ function renderStickyHeroBar(container, route) {
     </div>
     <div class="navmenu-search" id="navmenu-search-container"></div>
     <nav class="navmenu-quicklinks">
+      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-all-topics">
+        <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        <span class="navmenu-cta-label">View All Topics</span>
+        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="13 6 19 12 13 18"/>
+        </svg>
+      </button>
       <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-ai-insights">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/>
@@ -1365,19 +1378,6 @@ function renderStickyHeroBar(container, route) {
           <polyline points="15 7 21 7 21 13"/>
         </svg>
         <span class="navmenu-cta-label">Trending</span>
-        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="5" y1="12" x2="19" y2="12"/>
-          <polyline points="13 6 19 12 13 18"/>
-        </svg>
-      </button>
-      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-all-topics">
-        <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <rect x="3" y="3" width="7" height="7" rx="1"/>
-          <rect x="14" y="3" width="7" height="7" rx="1"/>
-          <rect x="3" y="14" width="7" height="7" rx="1"/>
-          <rect x="14" y="14" width="7" height="7" rx="1"/>
-        </svg>
-        <span class="navmenu-cta-label">View All Topics</span>
         <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <line x1="5" y1="12" x2="19" y2="12"/>
           <polyline points="13 6 19 12 13 18"/>
