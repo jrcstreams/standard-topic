@@ -648,16 +648,12 @@ export function renderAIIntelligence(container, scope) {
     const p = paths.find((x) => x.group === curGroup) || {};
     const bc = builderCache[curGroup];
     const updated = (bc && bc.generatedAt) ? `<span class="aii-brief-updated">Updated ${esc(relTime(bc.generatedAt))}</span>` : '';
-    // Tabular nav across the 4 builders — replaces Back / Prev / Next / All Insights.
-    // Each tab carries its group's colored icon + accent; active = a soft tinted pill.
-    const tabs = paths.map((x) => {
-      const accent = AII_ACCENTS[x.group] || AII_ACCENTS._;
-      return `<button type="button" class="aii-tab${x.group === curGroup ? ' is-active' : ''}" role="tab" aria-selected="${x.group === curGroup}" data-tab-group="${escAttr(x.group)}" style="--tab-accent:${accent}"><span class="aii-tab-ic aii-icon-${escAttr(x.group)}">${ICONS[x.group] || ICONS._}</span><span class="aii-tab-tx">${esc(x.tab || x.label)}</span></button>`;
-    }).join('');
-    // The topic name heads the panel; in the "anew" picker flow it re-opens the picker.
-    const topicEl = scope.topicPicker
-      ? `<button type="button" class="aii-builder-topic aii-builder-topic--btn" data-repick>${esc(topicTitle)}${CHEV}</button>`
-      : `<h2 class="aii-builder-topic">${esc(topicTitle)}</h2>`;
+    // Tabular nav across the 4 builders. Monochrome in the modal (no per-group
+    // accent colours) — clean editorial tabs, active = dark text + underline.
+    const tabs = paths.map((x) => `<button type="button" class="aii-tab${x.group === curGroup ? ' is-active' : ''}" role="tab" aria-selected="${x.group === curGroup}" data-tab-group="${escAttr(x.group)}"><span class="aii-tab-ic">${ICONS[x.group] || ICONS._}</span><span class="aii-tab-tx">${esc(x.tab || x.label)}</span></button>`).join('');
+    // The topic name heads the panel as the editorial hero title, with a caret to
+    // switch topics quickly (opens the topic picker).
+    const topicEl = `<button type="button" class="aii-builder-topic aii-builder-topic--btn" data-repick aria-label="Change topic"><span class="aii-builder-topic-tx">${esc(topicTitle)}</span><span class="aii-topic-caret" aria-hidden="true">${CHEV}</span></button>`;
     // Primary Ask AI / Web Search — kept as-is for now (to be reworked later).
     const actions = `<button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span>${CHEV}</button><button type="button" class="im-qlink im-qlink-btn aii-qlink-btn" data-acc="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span>${CHEV}</button>`;
     return `<div class="aii-sub aii-content aii-content--modal aii-builder">
