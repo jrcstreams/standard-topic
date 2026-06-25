@@ -165,6 +165,9 @@ export function renderAIIntelligence(container, scope) {
   const externalTab = { group: EXTERNAL_GROUP, tab: 'External Insights', subtitle: 'Curated AI prompts to dig into this topic in the model of your choice.' };
   const isStaticGroup = (g) => g === EXTERNAL_GROUP || g === WEBSEARCH_GROUP;
   const builderTabs = () => paths.concat([webSearchTab, externalTab]);
+  // When the topic-picker is opened FROM a builder (via the topic caret), remember
+  // which builder so the picker can offer a "Back" link to return to it (#172).
+  let pickerReturnGroup = null;
   // Normalized description lookup: brief section headers can differ from the
   // shortcut names by case/whitespace, so an exact map miss left cards blank.
   const normName = (s) => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
@@ -271,7 +274,11 @@ export function renderAIIntelligence(container, scope) {
     return `${home}<div class="ti-accordions aii-tp-accs">${accs}</div>`;
   }
   function topicViewHTML() {
+    // "Back" link — only when we arrived here from a builder (the topic caret), so
+    // the user can return to the insight they were reading (#172).
+    const backLink = pickerReturnGroup ? `<button type="button" class="aii-tp-back" data-tp-back><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg><span>Back</span></button>` : '';
     return `<div class="aii-tp">
+      ${backLink}
       <div class="aii-tp-head">
         <h3 class="aii-tp-title">Get AI insights on any topic</h3>
         <p class="aii-tp-sub">Search any topic or term, or browse 100+ by category.</p>
@@ -287,6 +294,11 @@ export function renderAIIntelligence(container, scope) {
   function wireTopicView() {
     const search = stage.querySelector('.aii-tp-search');
     const list = stage.querySelector('[data-tp-list]');
+    // "Back" → return to the builder we came from (#172).
+    stage.querySelector('[data-tp-back]')?.addEventListener('click', () => {
+      const g = pickerReturnGroup; pickerReturnGroup = null;
+      if (g) { curGroup = g; go('builder', 'back'); }
+    });
     if (!list) return;
     const browseLabel = stage.querySelector('[data-tp-browselabel]');
     // Edge fades: hint there are more topics above/below the scroll window. Top
@@ -1293,7 +1305,7 @@ export function renderAIIntelligence(container, scope) {
     if (flowMode && view === 'builder') {
       fillAiiBuilder();
       stage.querySelectorAll('.aii-tab').forEach((t) => t.addEventListener('click', () => switchBuilder(t.dataset.tabGroup)));
-      stage.querySelector('[data-repick]')?.addEventListener('click', () => go('topic', 'back'));
+      stage.querySelector('[data-repick]')?.addEventListener('click', () => { pickerReturnGroup = curGroup; go('topic', 'back'); });
       // Discreet "View Topic Page" link → close the modal onto that topic's page.
       stage.querySelector('[data-view-topic]')?.addEventListener('click', () => {
         const key = scope.topicKey; if (!key) return;

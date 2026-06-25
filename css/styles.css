@@ -16594,3 +16594,9 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
 .im-ef-trigger:hover { background: color-mix(in srgb, var(--color-primary) 3.5%, #fff); }
 .im-ef-acc .im-acc { margin: 0; }
 .im-ef-acc .im-acc.is-open { border-top: 1px solid var(--color-surface-border); }
+
+/* Topic-picker "Back" link — returns to the builder you came from (#172). */
+.aii-tp-back { display: inline-flex; align-items: center; gap: 5px; margin: 0 0 14px; padding: 0; border: none; background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: var(--color-text-muted); }
+.aii-tp-back svg { flex: none; }
+.aii-tp-back:hover { color: var(--color-primary); }
+.aii-modal-body .aii-tp:has(.aii-tp-back) { padding-top: 2px; }
