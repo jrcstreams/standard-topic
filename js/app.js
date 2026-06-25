@@ -2890,10 +2890,19 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       <div class="search-panel-results"><div class="search-panel-results-inner"></div></div>
       ${isModal
         ? `<div class="search-panel-empty">
-             <span class="search-panel-empty-badge" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-             <h3 class="search-panel-empty-title">Search anything</h3>
-             <p class="search-panel-empty-text">Type a topic, term, or headline above and we'll pull together the latest news, web sources, and AI insights.</p>
-             <div class="search-panel-empty-chips" role="list" hidden></div>
+             <div class="search-panel-empty-head">
+               <span class="search-panel-empty-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+               <h3 class="search-panel-empty-title">Search anything</h3>
+             </div>
+             <p class="search-panel-empty-text">Type a topic, term, or headline and we'll pull together the latest news, web sources, and AI insights.</p>
+             <div class="search-panel-empty-sec" data-empty-trending hidden>
+               <div class="search-panel-empty-sechead"><span class="search-panel-empty-seclabel">Trending</span><button type="button" class="search-panel-empty-more" data-view-trending>View more trending<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></button></div>
+               <div class="search-panel-empty-chips" role="list"></div>
+             </div>
+             <div class="search-panel-empty-sec" data-empty-featured hidden>
+               <div class="search-panel-empty-sechead"><span class="search-panel-empty-seclabel">Featured Topics</span></div>
+               <div class="search-panel-empty-topics"></div>
+             </div>
            </div>`
         : ''}
     </div>`;
@@ -2936,17 +2945,35 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   // user to search. Falls back silently to hidden if no trends are available.
   function fillEmptyChips() {
     if (!isModal) return;
+    const sec = panelEl.querySelector('[data-empty-trending]');
     const wrap = panelEl.querySelector('.search-panel-empty-chips');
-    if (!wrap) return;
+    if (!wrap || !sec) return;
     const picks = trendSuggest.slice(0, 6);
-    if (!picks.length) { wrap.hidden = true; return; }
+    if (!picks.length) { sec.hidden = true; return; }
     wrap.innerHTML = picks.map((t) =>
       `<button type="button" class="search-panel-empty-chip" role="listitem">${SP_TREND_ICON}<span>${escapeHTML(t.query)}</span></button>`
     ).join('');
-    wrap.hidden = false;
+    sec.hidden = false;
     wrap.querySelectorAll('.search-panel-empty-chip').forEach((b, i) => {
       b.addEventListener('click', () => { const q = picks[i] && picks[i].query; if (q) expand(q); });
     });
+    // "View more trending" → open the Trending list (closes this search modal).
+    sec.querySelector('[data-view-trending]')?.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('close-all-modals'));
+      window.dispatchEvent(new CustomEvent('open-trending-list'));
+    });
+  }
+  // Empty-state "Featured Topics" — the parent topics, each linking to its page.
+  function fillEmptyFeatured() {
+    if (!isModal) return;
+    const sec = panelEl.querySelector('[data-empty-featured]');
+    const wrap = panelEl.querySelector('.search-panel-empty-topics');
+    if (!wrap || !sec) return;
+    let topics = [];
+    try { topics = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home'); } catch (_) {}
+    if (!topics.length) { sec.hidden = true; return; }
+    wrap.innerHTML = topics.map((t) => `<a class="search-panel-empty-topic" href="#/topic/${escapeAttr(t.slug)}">${escapeHTML(t.name)}</a>`).join('');
+    sec.hidden = false;
   }
 
   // Inline (home) starter chips under the bar — two quick-launch groups so the
@@ -2976,6 +3003,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     }));
   }
   fillStarterChips();
+  fillEmptyFeatured();
 
   function expand(rawTerm) {
     const t = (rawTerm || '').trim();
