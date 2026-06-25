@@ -3004,27 +3004,28 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   // Web Sources / Trending / News), styled to the search card and mirroring the
   // topic pages' mobile tab bar. A tab only appears when its section returned
   // content, and the active tab persists across live-term edits.
+  // AI Insights + Web Sources are ONE combined tab now (#156); Trending + News stay
+  // separate. A tab's `sel` can be a list of section selectors it owns.
   const SEARCH_TABS = [
-    { key: 'ai', label: 'AI Insights', sel: '.topic-intelligence-panel' },
-    { key: 'web', label: 'Web Sources', sel: '.websources-section' },
+    { key: 'ai', label: 'AI Insights & Web Sources', sel: ['.topic-intelligence-panel', '.websources-section'] },
     { key: 'trending', label: 'Trending', sel: '.search-trend-section' },
     { key: 'news', label: 'News', sel: '.search-news-section' },
   ];
+  const tabSels = (t) => (Array.isArray(t.sel) ? t.sel : [t.sel]);
   let activeTab = null;
   function searchTabsHTML() {
     return `<nav class="search-tabs" aria-label="Search results" hidden></nav>`;
   }
   function availableTabKeys() {
     return SEARCH_TABS
-      .filter((t) => { const el = resultsInner.querySelector(t.sel); return el && el.textContent.trim().length > 0; })
+      .filter((t) => tabSels(t).some((s) => { const el = resultsInner.querySelector(s); return el && el.textContent.trim().length > 0; }))
       .map((t) => t.key);
   }
   // Show only the active tab's section; hide the others (and the Trending/News
   // wrapper unless one of those is the active tab).
   function applyTabVisibility() {
     SEARCH_TABS.forEach((t) => {
-      const el = resultsInner.querySelector(t.sel);
-      if (el) el.hidden = t.key !== activeTab;
+      tabSels(t).forEach((s) => { const el = resultsInner.querySelector(s); if (el) el.hidden = t.key !== activeTab; });
     });
     const content = resultsInner.querySelector('.search-panel-content');
     if (content) content.hidden = !(activeTab === 'trending' || activeTab === 'news');
