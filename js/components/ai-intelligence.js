@@ -199,7 +199,7 @@ export function renderAIIntelligence(container, scope) {
   const launcher = !scope.inModal;
   // Flow mode = the full flip-nav (topic → path → insight). Runs ONLY in the modal.
   const flowMode = scope.inModal;
-  const scrollRootEl = () => container.closest('.aii-modal-body') || stage;
+  const scrollRootEl = () => container.closest('.aii-modal-body, .search-panel-results') || stage;
 
   const topicTitle = scope.topic === 'home' ? "Today's World" : (scope.label || scope.topic || '');
 
@@ -717,7 +717,11 @@ export function renderAIIntelligence(container, scope) {
     const tabs = builderTabs().map((x) => `<button type="button" class="aii-tab${x.group === curGroup ? ' is-active' : ''}" role="tab" aria-selected="${x.group === curGroup}" data-tab-group="${escAttr(x.group)}"><span class="aii-tab-tx">${esc(x.tab || x.label)}</span></button>`).join('');
     // Topic name = editorial hero title + a caret to switch topics; a discreet
     // right-aligned "View Topic Page" link sits opposite it.
-    const topicEl = `<button type="button" class="aii-builder-topic aii-builder-topic--btn" data-repick aria-label="Change topic"><span class="aii-builder-topic-tx">${esc(topicTitle)}</span><span class="aii-topic-caret" aria-hidden="true">${CHEV}</span></button>`;
+    // scope.lockTopic (custom search): the term is fixed by the search bar above
+    // the card, so render the topic name plain — no re-pick caret/picker.
+    const topicEl = scope.lockTopic
+      ? `<div class="aii-builder-topic aii-builder-topic--locked"><span class="aii-builder-topic-tx">${esc(topicTitle)}</span></div>`
+      : `<button type="button" class="aii-builder-topic aii-builder-topic--btn" data-repick aria-label="Change topic"><span class="aii-builder-topic-tx">${esc(topicTitle)}</span><span class="aii-topic-caret" aria-hidden="true">${CHEV}</span></button>`;
     const viewLink = scope.topicKey ? `<button type="button" class="aii-view-topic" data-view-topic>View Topic Page${RIGHT_ARROW}</button>` : '';
     const exPrompt = explorePrompt();
     return `<div class="aii-sub aii-content aii-content--modal aii-builder">

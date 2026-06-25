@@ -16683,3 +16683,23 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
 .aii-tp-custom-term { font-size: 0.95rem; font-weight: 600; color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .aii-tp-custom > svg { flex: none; width: 15px; height: 15px; color: var(--color-text-muted); }
 .aii-tp-custom:hover > svg { color: var(--color-primary); }
+
+/* ── Custom-search AI Insights card (revamp348) ──────────────────────────────
+   Custom (typed-term) search now hosts the SAME builder/pill-tab AI Insights
+   experience as the AI Insights modal — Get Caught Up / Deep Dive / Analysis /
+   101 Resources / Web Search / External Insights — rendered straight into the
+   search results' "AI Insights" tab. The component is styled by .aii-flow +
+   the global builder rules; these replicate the modal-body container resets so
+   it sits flush in the search column (no nested card border/scroll, no redundant
+   "AI Insights" head — the results tab already labels it). */
+.search-aii-host .aii-head { display: none; }
+.search-aii-host .aii,
+.search-aii-host .aii-stage { height: auto; overflow: visible; }
+.search-aii-host .aii { border: none; border-radius: 0; background: none; }
+.search-aii-host .aii-stage { padding: 0; }
+/* The builder topbar full-bleeds + sticks in the modal (negative margins against
+   the modal body's padding); in the search column it's a plain, flush header —
+   the results' own tab bar above already provides the sticky top-level nav. */
+.search-aii-host .aii-builder-topbar { position: static; margin: 0; padding: 0 0 14px; background: transparent; }
+.search-aii-host .aii-builder-secs { padding-bottom: 0; }
+.search-aii-host .aii-builder-topic--locked { display: inline-flex; align-items: center; min-width: 0; }

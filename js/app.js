@@ -18,8 +18,8 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp245';
 import { initInsightModal } from './components/insight-modal.js?v=20260622-revamp335';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260622-revamp342';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260622-revamp342';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260622-revamp348';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260622-revamp348';
 import { renderWebSources } from './components/websources.js?v=20260622-revamp322';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp245';
 import { initDiscoverModal } from './components/discover-modal.js';
@@ -3005,14 +3005,43 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   fillStarterChips();
   fillEmptyFeatured();
 
+  // The AI Insights card for a searched term — the SAME builder (pill-tab)
+  // experience as the AI Insights modal (Get Caught Up / Deep Dive / Analysis /
+  // 101 Resources / Web Search / External Insights), scoped to the term. Briefs
+  // generate live for any term (no library lookup). The term is fixed by the
+  // search bar above, so the in-card topic re-pick is locked off.
+  let aiiSearchCtl = null;
+  function customAiiScope(t) {
+    const desc = {}; const icons = {}; let shortcuts = [];
+    try {
+      shortcuts = getShortcutsForTopic('_custom') || [];
+      shortcuts.forEach((s) => { if (s && s.name) { desc[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } });
+    } catch (_) {}
+    return {
+      inModal: true,            // flowMode → the builder (pill-tab) experience
+      initialBuilder: true,
+      initialGroup: 'discover', // land on "Get Caught Up"
+      lockTopic: true,
+      topic: t, label: t,
+      descriptions: desc, icons, shortcuts,
+    };
+  }
+  function destroyAii() {
+    if (aiiSearchCtl && aiiSearchCtl.destroy) { try { aiiSearchCtl.destroy(); } catch (_) {} }
+    aiiSearchCtl = null;
+  }
   function expand(rawTerm) {
     const t = (rawTerm || '').trim();
     if (!t) return;
     currentTerm = t;
     input.value = t;
     hideSuggest();
+    destroyAii();
     resultsInner.innerHTML = '';
-    renderShortcutsSidebar(resultsInner, { type: 'custom', term: t, tab: 'shortcuts' }, false, true, t);
+    const aiHost = document.createElement('div');
+    aiHost.className = 'search-aii-host';
+    resultsInner.appendChild(aiHost);
+    aiiSearchCtl = renderAIIntelligence(aiHost, customAiiScope(t));
     if (isModal) { resultsInner.insertAdjacentHTML('afterbegin', searchTabsHTML()); wireSearchTabs(); }
     loadContentResults(t);
     panelEl.dataset.state = 'expanded';
@@ -3024,6 +3053,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     input.value = '';
     panelEl.dataset.state = 'collapsed';
     hideSuggest();
+    destroyAii();
     resultsInner.innerHTML = '';
     syncClear();
     ctl.onCollapse && ctl.onCollapse();
@@ -3035,7 +3065,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   // AI Insights + Web Sources are ONE combined tab now (#156); Trending + News stay
   // separate. A tab's `sel` can be a list of section selectors it owns.
   const SEARCH_TABS = [
-    { key: 'ai', label: 'AI Insights & Web Sources', sel: ['.topic-intelligence-panel', '.websources-section'] },
+    { key: 'ai', label: 'AI Insights', sel: '.search-aii-host' },
     { key: 'trending', label: 'Trending', sel: '.search-trend-section' },
     { key: 'news', label: 'News', sel: '.search-news-section' },
   ];
