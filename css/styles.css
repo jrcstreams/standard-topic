@@ -16255,24 +16255,36 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
    GRID. Single stacked scroll on mobile (no section tabs).
    ========================================================================== */
 
-/* AI Insights launcher: a clean 2×2 of "choose-a-path" tiles — small colored icon +
-   bold name + one-line summary, no arrows. Soft tinted tiles (NOT bordered cards, so
-   no card-in-card); hover lifts each tile into its path's accent. */
-.topic-band #section-shortcuts .aii-bcards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+/* AI Insights launcher: a clean 2-column LIST (1-col mobile) — a discreet monochrome
+   icon, the track name, a small one-line summary, and a quiet arrow. Hairline row
+   dividers, no tinted tiles / card-in-card (content-led, not blocky). */
+.topic-band #section-shortcuts .aii-bcards { display: grid; grid-template-columns: 1fr 1fr; gap: 0 2rem; }
 .topic-band #section-shortcuts .aii-bcard {
-  align-items: flex-start; gap: 11px; padding: 12px 13px; border: 1px solid transparent !important;
-  border-radius: 11px; background: color-mix(in srgb, var(--color-surface-border) 16%, #fff) !important;
-  box-shadow: none !important; transform: none !important; transition: background .14s ease, color .14s ease;
+  align-items: center; gap: 12px; padding: 13px 4px; border: none !important; border-radius: 0;
+  background: none !important; box-shadow: none !important; transform: none !important;
+  border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 60%, transparent) !important;
+  transition: background .12s ease, color .12s ease;
 }
-.topic-band #section-shortcuts .aii-bcard:hover { background: color-mix(in srgb, var(--aii-accent, #2563eb) 9%, #fff) !important; }
-.topic-band #section-shortcuts .aii-bcard-ic { width: 30px; height: 30px; border-radius: 8px; }
-.topic-band #section-shortcuts .aii-bcard-ic svg { width: 16px; height: 16px; }
-.topic-band #section-shortcuts .aii-bcard-tx { gap: 3px; }
-.topic-band #section-shortcuts .aii-bcard-name { font-size: 0.92rem; }
-.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-name { color: var(--aii-accent, #2563eb); }
-.topic-band #section-shortcuts .aii-bcard-sub { font-size: 0.78rem; }
-.topic-band #section-shortcuts .aii-bcard-go { display: none; }
-@media (max-width: 540px) { .topic-band #section-shortcuts .aii-bcards { grid-template-columns: 1fr; } }
+/* top row in each column carries no divider */
+.topic-band #section-shortcuts .aii-bcard:nth-child(1),
+.topic-band #section-shortcuts .aii-bcard:nth-child(2) { border-top: none !important; }
+.topic-band #section-shortcuts .aii-bcard:hover { background: color-mix(in srgb, var(--color-primary) 4%, transparent) !important; }
+.topic-band #section-shortcuts .aii-bcard-ic {
+  width: 28px; height: 28px; border-radius: 7px; background: color-mix(in srgb, var(--color-surface-border) 28%, #fff) !important;
+  color: var(--color-text-muted) !important;
+}
+.topic-band #section-shortcuts .aii-bcard-ic svg { width: 15px; height: 15px; }
+.topic-band #section-shortcuts .aii-bcard-tx { gap: 1px; }
+.topic-band #section-shortcuts .aii-bcard-name { font-size: 0.9rem; font-weight: 600; }
+.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-name { color: var(--color-primary); }
+.topic-band #section-shortcuts .aii-bcard-sub { font-size: 0.74rem; color: var(--color-text-light); }
+.topic-band #section-shortcuts .aii-bcard-go { display: inline-flex; color: var(--color-text-light); }
+.topic-band #section-shortcuts .aii-bcard-go svg { width: 15px; height: 15px; }
+.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-go { color: var(--color-primary); transform: translateX(2px); }
+@media (max-width: 640px) {
+  .topic-band #section-shortcuts .aii-bcards { grid-template-columns: 1fr; }
+  .topic-band #section-shortcuts .aii-bcard:nth-child(2) { border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 60%, transparent) !important; }
+}
 
 /* Web Sources: a single column (4-down) of accordion dropdowns — each category
    row expands to list its source links. Hairline-separated, clean. */
@@ -16290,13 +16302,13 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
    .news-card is a divider-ROW (edge-to-edge, no chrome); in the grid we override it
    into a real card — reset the row's internal padding (it doubled with the card
    padding) and pin the footer to the bottom so cards in a row align. */
-.topic-band #section-newsfeed .news-list { display: grid; grid-template-columns: 1fr; gap: 14px; padding: 0 0 0.5rem; }
+.topic-band #section-newsfeed .news-list { display: grid; grid-template-columns: 1fr; gap: 12px; padding: 0.25rem 0 0.5rem; }
 @media (min-width: 720px) {
   .topic-band #section-newsfeed .news-list { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; }
 }
 .topic-band #section-newsfeed .news-card {
   display: flex; flex-direction: column; border: 1px solid var(--color-surface-border) !important;
-  border-radius: 14px; background: #fff; padding: 17px 19px 13px;
+  border-radius: 9px; background: #fff; padding: 15px 16px 12px;
   transition: border-color .14s ease, box-shadow .14s ease, transform .14s ease;
 }
 .topic-band #section-newsfeed .news-card:hover {
@@ -16370,6 +16382,23 @@ body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs { display: none
   .topic-band #section-websources .ws-head { display: flex !important; }
 }
 
+/* Band mobile: News Feed is a TRADITIONAL single-column list (no bordered cards) —
+   like the homepage feed — and its section header is restored (the old tab layout
+   hid it at line ~6162 because the active tab labelled the panel; there are no tabs
+   now). Revert the desktop grid-card chrome back to the base divider row. */
+@media (max-width: 899.98px) {
+  body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #section-newsfeed .newsfeed-head { display: flex !important; }
+  body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #section-newsfeed .newsfeed-title { display: block !important; }
+  .topic-band #section-newsfeed .news-list { display: block !important; padding: 0 !important; }
+  .topic-band #section-newsfeed .news-card {
+    display: block !important; border: none !important; border-radius: 0 !important; background: none !important;
+    box-shadow: none !important; transform: none !important; padding: 0 !important;
+    border-bottom: 1px solid #eef0f3 !important; border-top: none !important;
+  }
+  .topic-band #section-newsfeed .news-card-link { padding: 1.05rem 0 0 !important; }
+  .topic-band #section-newsfeed .news-card-foot { margin-top: 0; padding: 0.7rem 0 1.05rem !important; border-top: none !important; }
+}
+
 /* Web Sources: one collapsible accordion. Header toggles the whole category list;
    chevron shows only where it's collapsible (mobile). The collapse rule carries the
    #section-websources id so it beats the band-mobile "show everything" override. */
@@ -16407,8 +16436,4 @@ body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs { display: none
    redundant "pick a path" subhead (the four tiles are self-evident). */
 body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts .aii-headsub { display: none; }
 
-/* External Tools & Resources — neutral icon chip + full-width tile (first) atop the
-   2×2 builder tiles on the topic-page band. */
-.aii-icon-external { background: #eaeef5; color: #475569; }
-.topic-band #section-shortcuts .aii-bcard-external { grid-column: 1 / -1; }
 .aii-tab--ext .aii-tab-tx { font-weight: 600; }

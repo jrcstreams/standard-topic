@@ -137,6 +137,7 @@ const ICONS = {
   analyze: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="13"/><line x1="12" y1="20" x2="12" y2="8"/><line x1="18" y1="20" x2="18" y2="4"/></svg>',
   'topic-specific': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15 9 22 9.3 16.5 13.9 18.5 21 12 16.8 5.5 21 7.5 13.9 2 9.3 9 9"/></svg>',
   external: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>',
+  websearch: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>',
   _: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>',
 };
 // Per-track accent — gives each launcher tile its own identifiable colour
@@ -149,11 +150,15 @@ export function renderAIIntelligence(container, scope) {
   // homepage, which has no topic-specific content).
   const hide = scope.hideGroups || [];
   const paths = PATHS.filter((p) => !hide.includes(p.group));
-  // The "External Tools & Resources" tab/tile (first) — Further Insights (the
-  // original shortcut prompts) + Web Sources, consolidated into one place.
+  // Two static (non-AI) tabs/tiles folded into the AI Insights card, after the
+  // builders: "Web Search" (the web platform picker) and "External Insights" (the
+  // shortcut prompts to explore in an external model). External Insights is LAST.
   const EXTERNAL_GROUP = 'external';
-  const externalTab = { group: EXTERNAL_GROUP, tab: 'External Tools & Resources', subtitle: 'Curated insights and resources to explore this topic further.' };
-  const builderTabs = () => [externalTab].concat(paths);
+  const WEBSEARCH_GROUP = 'websearch';
+  const webSearchTab = { group: WEBSEARCH_GROUP, tab: 'Web Search', subtitle: "Search this topic across the web's primary sources and platforms." };
+  const externalTab = { group: EXTERNAL_GROUP, tab: 'External Insights', subtitle: 'Curated AI prompts to dig into this topic in the model of your choice.' };
+  const isStaticGroup = (g) => g === EXTERNAL_GROUP || g === WEBSEARCH_GROUP;
+  const builderTabs = () => paths.concat([webSearchTab, externalTab]);
   // Normalized description lookup: brief section headers can differ from the
   // shortcut names by case/whitespace, so an exact map miss left cards blank.
   const normName = (s) => String(s || '').toLowerCase().replace(/\s+/g, ' ').trim();
@@ -461,7 +466,7 @@ export function renderAIIntelligence(container, scope) {
     return `<div class="aii-sec aii-sec-sources" data-open="true">
       <button type="button" class="aii-sec-head" aria-expanded="true">
         <span class="aii-sec-dot aii-dot-sources" aria-hidden="true"></span>
-        <span class="aii-sec-name">Web Sources</span>
+        <span class="aii-sec-name">Web Search</span>
         <span class="aii-sec-chev" aria-hidden="true">${CHEV}</span>
       </button>
       <div class="aii-sec-body"><div class="aii-sec-inner aii-sec-inner--sources">${webCatsHTML()}</div></div>
@@ -471,9 +476,8 @@ export function renderAIIntelligence(container, scope) {
   // Analysis / 101 Resources). The WHOLE card opens the modal straight to that
   // group's master-prompt insight — no track→section picker.
   function builderCardHTML(p) {
-    const accent = AII_ACCENTS[p.group] || AII_ACCENTS._;
-    return `<button type="button" class="aii-bcard aii-bcard-${escAttr(p.group)}" data-builder-open data-group="${escAttr(p.group)}" style="--aii-accent:${accent}">
-      <span class="aii-bcard-ic aii-icon-${escAttr(p.group)}">${ICONS[p.group] || ICONS._}</span>
+    return `<button type="button" class="aii-bcard aii-bcard-${escAttr(p.group)}" data-builder-open data-group="${escAttr(p.group)}">
+      <span class="aii-bcard-ic">${ICONS[p.group] || ICONS._}</span>
       <span class="aii-bcard-tx">
         <span class="aii-bcard-name">${esc(p.tab || p.label)}</span>
         ${p.subtitle ? `<span class="aii-bcard-sub">${esc(p.subtitle)}</span>` : ''}
@@ -502,9 +506,9 @@ export function renderAIIntelligence(container, scope) {
   // that topic+track.
   function launcherPromoHTML() {
     if (scope.topic === 'home') return launcherStepsHTML();
-    // Topic pages: an "External Tools & Resources" card FIRST (full-width), then the
-    // 4 builder cards. Each opens the modal to that tab.
-    return `<div class="aii-bcards">${[externalTab].concat(paths).map(builderCardHTML).join('')}</div>`;
+    // Topic pages: the 4 builder cards, then Web Search + External Insights (last).
+    // Each row opens the modal straight to that tab.
+    return `<div class="aii-bcards">${builderTabs().map(builderCardHTML).join('')}</div>`;
   }
   function pathsHTML() {
     const intro = flowMode ? `<div class="aii-paths-introwrap">
@@ -651,13 +655,13 @@ export function renderAIIntelligence(container, scope) {
   // insight body as im-msec sections, a "Further Insights" drill-down (the original
   // shortcuts → pick a model + explore), then Sources.
   function builderHTML() {
-    const p = paths.find((x) => x.group === curGroup) || {};
+    const p = builderTabs().find((x) => x.group === curGroup) || {};
     const bc = builderCache[curGroup];
     const updated = (bc && bc.generatedAt) ? `<span class="aii-brief-updated">Updated ${esc(relTime(bc.generatedAt))}</span>` : '';
-    // Tabs: an "External Tools & Resources" tab FIRST (Further Insights + Web
-    // Sources), then the 4 builders. Monochrome editorial tabs; active is emphasised.
-    const isExternal = curGroup === EXTERNAL_GROUP;
-    const tabs = builderTabs().map((x) => `<button type="button" class="aii-tab${x.group === curGroup ? ' is-active' : ''}${x.group === EXTERNAL_GROUP ? ' aii-tab--ext' : ''}" role="tab" aria-selected="${x.group === curGroup}" data-tab-group="${escAttr(x.group)}"><span class="aii-tab-ic">${ICONS[x.group] || ICONS._}</span><span class="aii-tab-tx">${esc(x.tab || x.label)}</span></button>`).join('');
+    // Tabs: the 4 builders, then "Web Search" + "External Insights" (last) — the
+    // two static (non-AI) tabs. Monochrome editorial tabs; active is emphasised.
+    const isStatic = isStaticGroup(curGroup);
+    const tabs = builderTabs().map((x) => `<button type="button" class="aii-tab${x.group === curGroup ? ' is-active' : ''}${isStaticGroup(x.group) ? ' aii-tab--ext' : ''}" role="tab" aria-selected="${x.group === curGroup}" data-tab-group="${escAttr(x.group)}"><span class="aii-tab-ic">${ICONS[x.group] || ICONS._}</span><span class="aii-tab-tx">${esc(x.tab || x.label)}</span></button>`).join('');
     // Topic name = editorial hero title + a caret to switch topics.
     const topicEl = `<button type="button" class="aii-builder-topic aii-builder-topic--btn" data-repick aria-label="Change topic"><span class="aii-builder-topic-tx">${esc(topicTitle)}</span><span class="aii-topic-caret" aria-hidden="true">${CHEV}</span></button>`;
     const exPrompt = explorePrompt();
@@ -669,8 +673,8 @@ export function renderAIIntelligence(container, scope) {
       <div class="aii-builder-secs">
         <div class="aii-bhead">
           <p class="aii-brief-sum" data-brief-sum>${esc(p.subtitle || '')}</p>
-          <div class="aii-brief-meta" data-brief-meta>${isExternal ? '' : updated}</div>
-          <div class="aii-brief-explore-wrap"${isExternal ? ' hidden' : ''} data-explore-wrap>
+          <div class="aii-brief-meta" data-brief-meta>${isStatic ? '' : updated}</div>
+          <div class="aii-brief-explore-wrap"${isStatic ? ' hidden' : ''} data-explore-wrap>
             <button type="button" class="aii-brief-explore" data-explore-toggle aria-expanded="false">${ICON_ASK}<span>Explore further with external AI models</span>${CHEV}</button>
             <div class="aii-emenu-host" data-explore-prompt="${escAttr(exPrompt)}" data-explore-name="${escAttr(curSectionName())}"></div>
           </div>
@@ -684,23 +688,23 @@ export function renderAIIntelligence(container, scope) {
   function switchBuilder(group) {
     if (!group || group === curGroup || !builderTabs().some((x) => x.group === group)) return;
     curGroup = group;
-    const isExternal = group === EXTERNAL_GROUP;
-    if (!isExternal && !builderCache[group]) loadBuilder(group);
+    const isStatic = isStaticGroup(group);
+    if (!isStatic && !builderCache[group]) loadBuilder(group);
     const p = builderTabs().find((x) => x.group === group) || {};
     stage.querySelectorAll('.aii-tab').forEach((t) => { const on = t.dataset.tabGroup === group; t.classList.toggle('is-active', on); t.setAttribute('aria-selected', String(on)); });
     const sum = stage.querySelector('[data-brief-sum]'); if (sum) sum.textContent = p.subtitle || '';
     const bc = builderCache[group]; const meta = stage.querySelector('[data-brief-meta]');
-    if (meta) meta.innerHTML = (!isExternal && bc && bc.generatedAt) ? `<span class="aii-brief-updated">Updated ${esc(relTime(bc.generatedAt))}</span>` : '';
-    // Explore-further link: shown on builder tabs, hidden on the External tab.
+    if (meta) meta.innerHTML = (!isStatic && bc && bc.generatedAt) ? `<span class="aii-brief-updated">Updated ${esc(relTime(bc.generatedAt))}</span>` : '';
+    // Explore-further link: shown on builder tabs, hidden on the static tabs.
     const exWrap = stage.querySelector('[data-explore-wrap]');
     if (exWrap) {
-      exWrap.hidden = isExternal;
+      exWrap.hidden = isStatic;
       const host = exWrap.querySelector('.aii-emenu-host');
       if (host) { host.classList.remove('is-open'); host.removeAttribute('data-ready'); host.setAttribute('data-explore-prompt', explorePrompt()); host.setAttribute('data-explore-name', curSectionName()); }
       const tog = exWrap.querySelector('[data-explore-toggle]'); if (tog) tog.setAttribute('aria-expanded', 'false');
     }
     const wrap = stage.querySelector('[data-aii-builder]');
-    if (wrap) { wrap.classList.remove('ai-reveal'); wrap.innerHTML = isExternal ? '' : genLoaderHTML(); }
+    if (wrap) { wrap.classList.remove('ai-reveal'); wrap.innerHTML = isStatic ? '' : genLoaderHTML(); }
     fillAiiBuilder();
     scrollRootEl().scrollTo({ top: 0 });
   }
@@ -709,7 +713,9 @@ export function renderAIIntelligence(container, scope) {
   function fillAiiBuilder() {
     const wrap = stage.querySelector('[data-aii-builder]');
     if (!wrap) return;
-    // External Tools & Resources tab → static content (no AI generation).
+    // Static tabs → no AI generation. Web Search = web platform picker;
+    // External Insights = the topic's shortcut prompts.
+    if (curGroup === WEBSEARCH_GROUP) { renderWebSearchInto(wrap); return; }
     if (curGroup === EXTERNAL_GROUP) { renderExternalInto(wrap); return; }
     const reveal = () => { if (stage.querySelector('[data-aii-builder]') === wrap && view === 'builder') renderBuilderInto(wrap); };
     const bc = builderCache[curGroup];
@@ -753,17 +759,20 @@ export function renderAIIntelligence(container, scope) {
     wrap.classList.add('ai-reveal');
     wireSectionClamps();
   }
-  // External Tools & Resources tab — Further Insights (the topic's shortcut prompts)
-  // + the Web Sources platform picker, consolidated.
+  // External Insights tab — the topic's shortcut prompts as an explore accordion.
   function renderExternalInto(wrap) {
     const fi = furtherInsightsHTML((scope.shortcuts || []).filter((s) => s && (s.prompt || s.name)));
-    const ws = `<div class="aii-ext-block aii-ext-ws">
-      <div class="im-msec-head"><span class="im-msec-ic">${AII_SEC_ICON.sources}</span><h3 class="im-msec-name">Web Sources</h3></div>
-      <p class="aii-fi-intro">Search this topic across the web's primary sources and platforms.</p>
-      ${webCatsHTML()}</div>`;
-    wrap.innerHTML = (fi || '') + ws;
+    wrap.innerHTML = fi || '<p class="aii-empty">No further insights available for this topic.</p>';
     wrap.classList.add('ai-reveal');
     wireBuilderContent();
+  }
+  // Web Search tab — the web platform picker (search types → platforms), folded in
+  // from the old standalone Web Sources card.
+  function renderWebSearchInto(wrap) {
+    wrap.innerHTML = `<div class="aii-ext-block aii-ext-ws">
+      <p class="aii-fi-intro">Pick a source type, then choose a platform to open your search there.</p>
+      ${webCatsHTML()}</div>`;
+    wrap.classList.add('ai-reveal');
   }
   // Further Insights — the original shortcut prompts as an accordion explore list.
   function furtherInsightsHTML(list) {
@@ -779,7 +788,6 @@ export function renderAIIntelligence(container, scope) {
         <div class="aii-emenu-host" data-explore-prompt="${escAttr(fiPrompt(s))}" data-explore-name="${escAttr(s.name)}"></div>
       </div>`).join('');
     return `<div class="aii-ext-block aii-fi">
-      <div class="im-msec-head"><span class="im-msec-ic">${AII_SEC_ICON.takeaways}</span><h3 class="im-msec-name">Further Insights</h3></div>
       <p class="aii-fi-intro">Dig into a specific angle — pick one to explore in the AI model of your choice.</p>
       <div class="aii-fi-acclist">${rows}</div></div>`;
   }
@@ -818,7 +826,7 @@ export function renderAIIntelligence(container, scope) {
   function openBuilder(group, dir) {
     if (!builderTabs().some((p) => p.group === group)) return;
     curGroup = group; curIdx = 0;
-    if (group !== EXTERNAL_GROUP && !builderCache[group]) loadBuilder(group);
+    if (!isStaticGroup(group) && !builderCache[group]) loadBuilder(group);
     go('builder', dir || 'fwd');
   }
 

@@ -18,8 +18,8 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp245';
 import { initInsightModal } from './components/insight-modal.js?v=20260617-revamp272';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260622-revamp325';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260622-revamp307';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260622-revamp326';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260622-revamp326';
 import { renderWebSources } from './components/websources.js?v=20260622-revamp322';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp245';
 import { initDiscoverModal } from './components/discover-modal.js';
@@ -345,7 +345,7 @@ function renderLayout(route) {
           <nav class="subnav-tabs" aria-label="Section navigation">
             <button type="button" class="tab-pill tab-pill-newsfeed" data-tab="newsfeed">News Feed</button>
             <button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">AI Insights</button>
-            <button type="button" class="tab-pill tab-pill-websources" data-tab="websources">Web Sources</button>
+            <button type="button" class="tab-pill tab-pill-websources" data-tab="websources">Web Search</button>
           </nav>
         </div>
       </div>
@@ -439,8 +439,8 @@ function bodyTabsRow(opts = {}) {
   }
   if (showWebSources) {
     tabs.push(`<button type="button" class="tab-pill tab-pill-websources" data-tab="websources">
-       <span class="tab-pill-label-long">Web Sources</span>
-       <span class="tab-pill-label-short">Web Sources</span>
+       <span class="tab-pill-label-long">Web Search</span>
+       <span class="tab-pill-label-short">Web Search</span>
      </button>`);
   }
   if (showRelated) {
@@ -1669,15 +1669,13 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // Sources) + MAIN (News Feed, Related). The wrappers are display:contents
     // below 1024px, so the mobile tab navigator (which shows ONE section at a
     // time) is unaffected; at ≥1024 they become the two columns (#14).
-    // Intelligence band on top — AI Insights (shortcut links) beside Web Sources —
+    // AI Insights (full-width) on top — Web Search + External Insights are now
+    // folded into it as tabs, so there's no longer a separate Web Sources card —
     // then the News Feed full-width below as a responsive grid. On mobile this is a
     // single stacked scroll (no section tabs). (#layout-revamp)
     container.innerHTML = `
       <div class="topic-layout topic-band" id="topic-layout">
-        <div class="topic-intel-band">
-          <section class="layout-section" id="section-shortcuts"></section>
-          <section class="layout-section" id="section-websources"></section>
-        </div>
+        <section class="layout-section" id="section-shortcuts"></section>
         <section class="layout-section" id="section-newsfeed"></section>
       </div>
     `;
@@ -1685,7 +1683,6 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
 
   const trendingSection = container.querySelector('#section-trending');
   const shortcutsSection = container.querySelector('#section-shortcuts');
-  const websourcesSection = container.querySelector('#section-websources');
   const feedSection = container.querySelector('#section-newsfeed');
 
   if (trendingSection) renderTrending(trendingSection);
@@ -1701,9 +1698,8 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       renderShortcutsSidebar(shortcutsSection, route, isHome, isCustom, customTerm);
     }
   }
-  // Web Sources is its own panel now — a separate sidebar section below AI
-  // Insights on desktop, and its own tab on mobile (#92/#93).
-  if (websourcesSection && topic && !isHome && !isCustom) renderWebSources(websourcesSection, topic);
+  // Web Search is no longer a standalone topic-page card — it's folded into the AI
+  // Insights component as a tab. (renderWebSources is still used elsewhere.)
   if (feedSection) {
     renderNewsFeed(feedSection, topic, isHome);
   }
