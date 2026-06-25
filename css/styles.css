@@ -4725,7 +4725,8 @@ html, body, #app {
 
 /* Model info body */
 .pm-modelinfo-head { margin-bottom: 4px; }
-.pm-meta-link { font-size: 0.85rem; font-weight: 700; color: #1d4ed8; text-decoration: none; }
+.pm-meta-link { display: inline-flex; align-items: center; gap: 5px; font-size: 0.85rem; font-weight: 700; color: #3268b3; text-decoration: none; }
+.pm-meta-link-ic { flex: none; }
 .pm-meta-link:hover { text-decoration: underline; }
 .pm-modelinfo-text { margin: 3px 0 0; font-size: 0.8rem; line-height: 1.5; color: var(--color-text-muted); }
 .pm-modelinfo-method strong { color: var(--color-text); font-weight: 600; }
@@ -4737,7 +4738,21 @@ html, body, #app {
 .pm-submit:disabled { opacity: 0.45; cursor: not-allowed; }
 .pm-submit svg { flex: none; }
 .pm-copied-note { margin: 18px 0 0; padding: 12px 14px; border-radius: 11px; background: color-mix(in srgb, #2f8f63 8%, #fff); border: 1px solid color-mix(in srgb, #2f8f63 22%, transparent); font-size: 0.84rem; font-weight: 600; line-height: 1.45; color: #1f6e4b; text-align: center; }
-.pm-disclaimer { margin: 10px 2px 0; font-size: 0.74rem; line-height: 1.5; color: var(--color-text-muted); text-align: center; }
+.pm-disclaimer { margin: 10px 2px 0; font-size: 0.74rem; line-height: 1.5; color: var(--color-text-muted); text-align: left; }
+
+/* Hierarchy (#188): MODEL CHOICE ("Send to") is the primary control — a clear
+   eyebrow label + a prominent select. Model info + Advanced settings are SECONDARY
+   — quieter accordions with smaller, tighter content. */
+.pm-sendto { flex-direction: column; align-items: stretch; gap: 6px; }
+.pm-sendto-lead { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-muted); }
+.pm-sendto .pm-select { font-size: 0.95rem; font-weight: 700; padding-top: 11px; padding-bottom: 11px; border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border)); }
+.pm-acc { background: color-mix(in srgb, var(--color-surface-border) 12%, #fff); }
+.pm-acc-sum { font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted); }
+.pm-acc[open] > .pm-acc-sum { color: var(--color-text); }
+.pm-adv .pm-flabel { font-size: 0.66rem; }
+.pm-adv .pm-input { font-size: 0.82rem; padding-top: 8px; padding-bottom: 8px; }
+.pm-adv .pm-field-grid { gap: 8px 10px; }
+.pm-adv .pm-field { gap: 4px; }
 
 @media (max-width: 640px) {
   .pm-head { padding: 13px 15px; }
