@@ -16381,3 +16381,12 @@ body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs { display: none
   }
   body.app-mode .topic-layout.topic-band { height: auto !important; min-height: 0; }
 }
+
+/* Desktop topic subnav: breathing room below the title/related row now that the
+   section-tab bar (which used to sit beneath it) is hidden. */
+@media (min-width: 900px) {
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner { padding-bottom: 0.65rem; }
+}
+/* Band AI Insights header matches the News Feed / Web Sources lockup — drop the
+   redundant "pick a path" subhead (the four tiles are self-evident). */
+body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts .aii-headsub { display: none; }
