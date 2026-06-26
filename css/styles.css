@@ -16481,34 +16481,35 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
   border-top: none;
 }
 
-/* ── Desktop (≥900): band = AI Insights (wider) | Web Sources (narrower), then a
-   full-width news grid below. Force the layout to block so the leftover 2-col
-   grid template on .topic-layout (and the old #section-newsfeed grid-column:1)
-   no longer apply — the band + feed simply stack full-width. ── */
-@media (min-width: 900px) {
-  body.app-mode .topic-layout.topic-band { display: block !important; }
-  body.app-mode .topic-layout.topic-band > .layout-section,
-  body.app-mode .topic-layout.topic-band > .topic-intel-band { width: 100%; max-width: none; }
-  body.app-mode .topic-layout.topic-band > #section-newsfeed { margin-top: 1.8rem; }
-  .topic-band .topic-intel-band { display: flex; gap: 1.5rem; align-items: flex-start; }
-  .topic-band .topic-intel-band > .layout-section { min-width: 0; display: block; }
-  .topic-band .topic-intel-band > #section-shortcuts { flex: 1.5 1 0; }
-  .topic-band .topic-intel-band > #section-websources { flex: 1 1 0; }
+/* ── Topic page layout (revamp360): 2-column on WIDE screens — News Feed in the
+   MAIN column + AI Insights in a 340px SIDEBAR — and stacked on narrow /
+   bottom-nav (AI Insights on top → News Feed). ── */
+@media (min-width: 1024px) {
+  body.app-mode .topic-layout.topic-band {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 1.6rem;
+    align-items: start;
+  }
+  body.app-mode .topic-layout.topic-band .topic-main,
+  body.app-mode .topic-layout.topic-band .topic-side { display: block !important; min-width: 0; }
+  /* AI launcher in the narrow sidebar → single column of cards. */
+  body.app-mode .topic-layout.topic-band .topic-side #section-shortcuts .aii-bcards { grid-template-columns: 1fr !important; }
+  body.app-mode .topic-layout.topic-band .topic-side #section-shortcuts .aii-bcard:nth-child(n+2) { border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 60%, transparent) !important; }
 }
-
-/* ── Mobile (<900): single stacked scroll, no section tabs ── */
-@media (max-width: 899.98px) {
-  body.app-mode .topic-layout.topic-band { display: flex; flex-direction: column; gap: 1rem; }
-  /* Override the tab-gating: show ALL sections, natural height. */
+@media (max-width: 1023.98px) {
+  body.app-mode .topic-layout.topic-band { display: flex !important; flex-direction: column; gap: 1.1rem; }
+  body.app-mode .topic-layout.topic-band .topic-main,
+  body.app-mode .topic-layout.topic-band .topic-side { display: contents; }
+  body.app-mode .topic-layout.topic-band #section-shortcuts { order: 1; }   /* AI Insights on top */
+  body.app-mode .topic-layout.topic-band #section-newsfeed { order: 2; }
   body.app-mode .topic-layout.topic-band #section-shortcuts,
-  body.app-mode .topic-layout.topic-band #section-websources,
   body.app-mode .topic-layout.topic-band #section-newsfeed {
     display: block !important; flex: none !important; overflow: visible !important; min-height: 0 !important;
   }
-  .topic-band .topic-intel-band { display: flex; flex-direction: column; gap: 1rem; }
-  /* News grid back to a single column. */
-  .topic-band #section-newsfeed .news-list { grid-template-columns: 1fr; }
 }
+/* News Feed reads as a single column on topic pages now. */
+.topic-band #section-newsfeed .news-list { grid-template-columns: 1fr !important; }
 
 /* The subnav section tabs are redundant now (everything is one scroll/band at
    every width) — hide them on topic pages. Specificity matches the rule that
@@ -16789,29 +16790,5 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
   .aii-sec-card-title { font-size: 1.18rem; }
 }
 
-/* ── Topic page: News Feed main + AI Insights sidebar (revamp360) ─────────────
-   Stacked on mobile / bottom-nav (AI Insights on top → News Feed); 2-column on
-   wide screens (News Feed in the MAIN column + AI Insights in a 340px SIDEBAR).
-   .topic-main / .topic-side are display:contents below 1024 (sections stack +
-   reorder via `order`), real grid columns at ≥1024. */
-.topic-layout.topic-band .topic-main,
-.topic-layout.topic-band .topic-side { display: contents; }
-.topic-layout.topic-band #section-shortcuts { order: 1; }   /* AI Insights on top when stacked */
-.topic-layout.topic-band #section-newsfeed { order: 2; }
-/* News Feed reads as a single column on topic pages now (#268/#269). */
-.topic-band #section-newsfeed .news-list { grid-template-columns: 1fr !important; }
-@media (min-width: 1024px) {
-  body.app-mode .topic-layout.topic-band {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 340px;
-    gap: 1.6rem;
-    align-items: start;
-  }
-  .topic-layout.topic-band .topic-main,
-  .topic-layout.topic-band .topic-side { display: block; min-width: 0; }
-  /* AI launcher in the narrow sidebar → single column of cards. */
-  .topic-band .topic-side #section-shortcuts .aii-bcards { grid-template-columns: 1fr !important; }
-  .topic-band .topic-side #section-shortcuts .aii-bcard:nth-child(n+2) { border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 60%, transparent) !important; }
-}
 /* Tighten the gap between the AI Insights card header and its first listing. */
 .topic-band #section-shortcuts .aii-stage { padding-top: 10px; }
