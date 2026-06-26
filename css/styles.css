@@ -13928,7 +13928,9 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
 
 /* Trending modal hosts the same cards (full list, plain — no section card). */
 .tlm-body .trending-topics { background: none; border: none; padding: 0; }
-.tlm-body .trend-card-grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+/* Cap at TWO columns regardless of width — 3+ shrinks each card too far, forcing
+   ugly multi-line breaks on term names (#249). */
+.tlm-body .trend-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (max-width: 560px) {
   .tlm-body .trend-card-grid { grid-template-columns: 1fr; }
 }
