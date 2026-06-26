@@ -787,9 +787,10 @@ export function renderAIIntelligence(container, scope) {
           <span class="aii-sec-card-ic" data-sec-title-ic>${builderTabIcon(curGroup)}</span>
           <div class="aii-sec-card-tx">
             <div class="aii-sec-card-titlerow">
-              <h2 class="aii-sec-card-title" data-sec-card-title>${esc(p.cardTitle || p.tab || p.label || '')}</h2>
+              <h2 class="aii-sec-card-title" data-sec-card-title>${esc(p.tab || p.label || '')}</h2>
               <span class="aii-brief-meta" data-brief-meta>${updated}</span>
             </div>
+            ${p.cardTitle ? `<p class="aii-sec-card-tag">${esc(p.cardTitle)}</p>` : ''}
             <p class="aii-sec-card-sub" data-brief-sum>${esc(p.subtitle || '')}</p>
             ${exploreWrap}
           </div>
