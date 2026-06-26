@@ -16481,23 +16481,11 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
   border-top: none;
 }
 
-/* ── Topic page layout (revamp360): 2-column on WIDE screens — News Feed in the
-   MAIN column + AI Insights in a 340px SIDEBAR — and stacked on narrow /
-   bottom-nav (AI Insights on top → News Feed). ── */
-@media (min-width: 1024px) {
-  body.app-mode .topic-layout.topic-band {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) 340px;
-    gap: 1.6rem;
-    align-items: start;
-  }
-  body.app-mode .topic-layout.topic-band .topic-main,
-  body.app-mode .topic-layout.topic-band .topic-side { display: block !important; min-width: 0; }
-  /* AI launcher in the narrow sidebar → single column of cards. */
-  body.app-mode .topic-layout.topic-band .topic-side #section-shortcuts .aii-bcards { grid-template-columns: 1fr !important; }
-  body.app-mode .topic-layout.topic-band .topic-side #section-shortcuts .aii-bcard:nth-child(n+2) { border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 60%, transparent) !important; }
-}
-@media (max-width: 1023.98px) {
+/* ── Topic page layout (revamp361): the WIDE 2-column (AI Insights sidebar left +
+   News Feed main right) is handled by the #14 split block above (≥900, now
+   activated by the .topic-main/.topic-side wrappers). Below 900 (bottom-nav) it
+   stacks with AI Insights on TOP → News Feed. ── */
+@media (max-width: 899.98px) {
   body.app-mode .topic-layout.topic-band { display: flex !important; flex-direction: column; gap: 1.1rem; }
   body.app-mode .topic-layout.topic-band .topic-main,
   body.app-mode .topic-layout.topic-band .topic-side { display: contents; }
@@ -16508,8 +16496,12 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
     display: block !important; flex: none !important; overflow: visible !important; min-height: 0 !important;
   }
 }
-/* News Feed reads as a single column on topic pages now. */
+/* News Feed reads as a single reading column on topic pages. */
 .topic-band #section-newsfeed .news-list { grid-template-columns: 1fr !important; }
+/* AI launcher builder cards → single column in the narrow sidebar (≥900). */
+@media (min-width: 900px) {
+  body.app-mode:not(.home-mode) .topic-side #section-shortcuts .aii-bcards { grid-template-columns: 1fr !important; }
+}
 
 /* The subnav section tabs are redundant now (everything is one scroll/band at
    every width) — hide them on topic pages. Specificity matches the rule that
