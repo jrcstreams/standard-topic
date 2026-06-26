@@ -16784,3 +16784,14 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
 
 /* Tighten the gap between the AI Insights card header and its first listing. */
 .topic-band #section-shortcuts .aii-stage { padding-top: 10px; }
+
+/* ── Mobile topic page: AI Insights ↔ News Feed width parity + news inset (#272/#273/#274) ── */
+@media (max-width: 899.98px) {
+  /* #272: the AI Insights card was full-bleed (margin: 0 -16px) while News Feed
+     sat inset — align both to the same inset so the two cards are equal width. */
+  body.app-mode .topic-layout.topic-band #section-shortcuts { margin-left: 0 !important; margin-right: 0 !important; }
+  /* #273/#274: news stories were pulled flush-left by the desktop 2-col negative
+     margin — give them a comfortable horizontal inset + a clean rounded hover. */
+  .topic-band #section-newsfeed .news-list { padding-left: 6px !important; padding-right: 6px !important; }
+  .topic-band #section-newsfeed .news-card { margin: 0 !important; padding-left: 12px !important; padding-right: 12px !important; border-radius: 10px; }
+}
