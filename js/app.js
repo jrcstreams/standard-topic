@@ -1675,10 +1675,19 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // folded into it as tabs, so there's no longer a separate Web Sources card —
     // then the News Feed full-width below as a responsive grid. On mobile this is a
     // single stacked scroll (no section tabs). (#layout-revamp)
+    // Topic pages: 2-column on wide screens — News Feed in the MAIN column, AI
+    // Insights in a SIDEBAR — and stacked on narrow/bottom-nav (AI Insights on
+    // top, then News Feed). The .topic-main / .topic-side wrappers are
+    // display:contents below 1024 (so the sections stack + reorder), real grid
+    // columns at ≥1024.
     container.innerHTML = `
       <div class="topic-layout topic-band" id="topic-layout">
-        <section class="layout-section" id="section-shortcuts"></section>
-        <section class="layout-section" id="section-newsfeed"></section>
+        <div class="topic-main">
+          <section class="layout-section" id="section-newsfeed"></section>
+        </div>
+        <aside class="topic-side">
+          <section class="layout-section" id="section-shortcuts"></section>
+        </aside>
       </div>
     `;
   }

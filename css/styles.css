@@ -16788,3 +16788,30 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
   .aii-sec-card-ic svg { width: 19px; height: 19px; }
   .aii-sec-card-title { font-size: 1.18rem; }
 }
+
+/* ── Topic page: News Feed main + AI Insights sidebar (revamp360) ─────────────
+   Stacked on mobile / bottom-nav (AI Insights on top → News Feed); 2-column on
+   wide screens (News Feed in the MAIN column + AI Insights in a 340px SIDEBAR).
+   .topic-main / .topic-side are display:contents below 1024 (sections stack +
+   reorder via `order`), real grid columns at ≥1024. */
+.topic-layout.topic-band .topic-main,
+.topic-layout.topic-band .topic-side { display: contents; }
+.topic-layout.topic-band #section-shortcuts { order: 1; }   /* AI Insights on top when stacked */
+.topic-layout.topic-band #section-newsfeed { order: 2; }
+/* News Feed reads as a single column on topic pages now (#268/#269). */
+.topic-band #section-newsfeed .news-list { grid-template-columns: 1fr !important; }
+@media (min-width: 1024px) {
+  body.app-mode .topic-layout.topic-band {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 1.6rem;
+    align-items: start;
+  }
+  .topic-layout.topic-band .topic-main,
+  .topic-layout.topic-band .topic-side { display: block; min-width: 0; }
+  /* AI launcher in the narrow sidebar → single column of cards. */
+  .topic-band .topic-side #section-shortcuts .aii-bcards { grid-template-columns: 1fr !important; }
+  .topic-band .topic-side #section-shortcuts .aii-bcard:nth-child(n+2) { border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 60%, transparent) !important; }
+}
+/* Tighten the gap between the AI Insights card header and its first listing. */
+.topic-band #section-shortcuts .aii-stage { padding-top: 10px; }
