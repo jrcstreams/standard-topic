@@ -2791,7 +2791,9 @@ body.subnav-title-shrunk-2 #sub-header.is-home-subnav .topic-banner-titleinner {
    separator so a lone vertical bar doesn't dangle). */
 @media (max-width: 1440px) {
   .sticky-tagline { display: none !important; }
-  .sticky-brand::after { display: none !important; }
+  /* NB: the brand separator is no longer tied to the tagline — it now pairs with
+     the main-nav topic links (topic pages, ≥1024). Its visibility is controlled
+     by the home/≤1023 rules near the separator definition, NOT here. */
 }
 
 /* Mobile: hero-C reverts to centered stacked layout */
