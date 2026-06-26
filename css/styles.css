@@ -876,7 +876,10 @@ body.hide-cta .sticky-cta { display: none !important; }
   display: flex;
   flex-direction: column;
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
+  /* The WHOLE drawer scrolls as one (Search + Navigate + Topics together); the
+     head pins to the top and the footer to the bottom (see below). */
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 .navmenu-panel.is-open { transform: translateX(0); }
 
@@ -884,11 +887,10 @@ body.hide-cta .sticky-cta { display: none !important; }
    remaining height between the fixed top (head/search/prompt) and the
    sticky bottom (View All + footer links), and scrolls when overflowing. */
 .navmenu-scroll {
-  flex: 1 1 auto;
+  /* No longer a self-scrolling region — the whole panel scrolls now, so this is
+     just the topics block in normal flow. */
+  flex: 0 0 auto;
   min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  transition: -webkit-mask-image 0.18s, mask-image 0.18s;
 }
 /* When the topic list overflows below the visible area, fade the
    bottom-most ~50px of the scroll viewport. Hints that more topics
@@ -908,7 +910,9 @@ body.hide-cta .sticky-cta { display: none !important; }
   background: var(--color-bg-light);
   border-top: 1px solid var(--color-border);
   padding: 0.7rem 1rem;
-  position: relative;
+  /* Pin to the bottom of the drawer while the body scrolls. */
+  position: sticky;
+  bottom: 0;
 }
 
 .navmenu-head {
@@ -918,6 +922,11 @@ body.hide-cta .sticky-cta { display: none !important; }
   padding: 1.1rem 1.1rem 1rem;
   border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
+  /* Pin the head (close/brand/home) while the panel body scrolls beneath it. */
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--color-bg);
 }
 .navmenu-brand {
   display: flex;
@@ -995,8 +1004,9 @@ body.hide-cta .sticky-cta { display: none !important; }
 
 .navmenu-search {
   /* Tight top so the "Search" label sits as close to the bar as the "Navigate"
-     label sits to its buttons (the label now supplies the top spacing). */
-  padding: 0.35rem 1.25rem 0.85rem;
+     label sits to its buttons; bottom matched to the quicklinks so the
+     Search→Navigate gap equals the Navigate→Topics gap. */
+  padding: 0.35rem 1.25rem 0.5rem;
 }
 .navmenu-search .search-bar {
   width: 100%;
@@ -1170,24 +1180,10 @@ body.hide-cta .sticky-cta { display: none !important; }
   .ti-item:hover { border-color: transparent; }
   .at-acc-flat:hover { border-color: #e2e6ee; box-shadow: none; }
 }
-/* Sticky inside the scroll container: keeps "Featured Topics" pinned
-   to the top of the scrollable region while the list scrolls beneath
-   it. A subtle gradient below softens content that scrolls past. */
+/* The whole panel scrolls now (the head pins instead), so the "Topics" label
+   scrolls with its list — no longer sticky (would collide with the pinned head). */
 .navmenu-scroll > .navmenu-featured-label {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  background: var(--color-bg);
-}
-.navmenu-scroll > .navmenu-featured-label::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -14px;
-  height: 14px;
-  background: linear-gradient(to bottom, var(--color-bg) 0%, rgba(255, 255, 255, 0) 100%);
-  pointer-events: none;
+  position: static;
 }
 
 .navmenu-topics {
@@ -4969,15 +4965,18 @@ html, body, #app {
    the featured topics. */
 .home-subnav-topics .subnav-action-link,
 .subnav-all-topics-link {
-  padding: 0.45rem 0.9rem;
+  display: inline-flex;
+  align-items: center;     /* align with the chips (was a plain inline <a> → sat off-baseline, #260) */
+  padding: 0.42rem 0.55rem;
   margin: 0;
   background: transparent;
   border: none;
   border-radius: 8px;
   color: #6c7a91;
   font-family: var(--font-display);
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.82rem;
+  font-weight: 500;        /* lighter — was too heavy next to the topic links (#260) */
+  letter-spacing: -0.004em;
   text-decoration: none;
   white-space: nowrap;
 }
@@ -11646,14 +11645,14 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
    uppercase + letter-spaced treatment without feeling heavy. */
 #sub-header .subnav-topic-link {
   color: #4a6a8a;
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);  /* a touch more weight (#263) */
 }
 /* Hover styles only on devices with a true hover capability so the
    :hover state never sticks after a tap on touch devices (which
    otherwise carries the highlight to whatever sits at the same x/y
    on the page the tap navigated to). */
 @media (hover: hover) {
-  #sub-header .subnav-topic-link:hover { color: var(--color-primary-dark, #0f1a2e); }
+  #sub-header .subnav-topic-link:hover { color: var(--color-primary-dark, #0f1a2e); background: #e4ebf4; }
 }
 
 /* === Main nav: vertical separator between brand and tagline ============ */
@@ -11673,6 +11672,13 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 @media (max-width: 640px) {
   .sticky-brand::after { display: none; }
   .sticky-tagline { margin-left: 0; }
+}
+/* The separator divides the brand from the main-nav topic links — which only
+   exist on TOPIC pages (≥1024). Drop it on the homepage (no main-nav topics) and
+   wherever the topic links aren't shown. */
+body.home-search .sticky-brand::after { display: none; }
+@media (max-width: 1023.98px) {
+  .sticky-brand::after { display: none; }
 }
 .sticky-tagline {
   margin-left: 1.15rem;
@@ -13669,11 +13675,12 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   body.home-search #home-search-hero + #home-trending { margin-top: 0; }
   body.home-search #home-trending { margin-top: 0; }
 }
-/* Desktop home (subnav hidden): seat the cards just under the main nav — don't
-   reserve the hidden subnav's height — and zero Trending's base margin so its
-   top aligns with the Search card across the two columns. */
+/* Desktop home now shows the "Featured | …" subnav (fixed under the main nav),
+   so reserve its height + a gap so the search card clears it (was: subnav hidden,
+   main-nav carried the topics). Zero Trending's base margin so its top aligns
+   with the Search card across the two columns. */
 @media (min-width: 1024px) {
-  body.home-search.app-mode.sticky-always.has-subnav #content { padding-top: calc(var(--nav-h) + 1.9rem); }
+  body.home-search.app-mode.sticky-always.has-subnav #content { padding-top: calc(var(--nav-h) + var(--subnav-height, 66px) + 1rem); }
   body.home-search #home-trending { margin-top: 0; }
 }
 /* On the homepage the whole section sits in a soft card to set it apart. */
