@@ -339,12 +339,12 @@ body.custom-mode.sticky-always #content {
 }
 .sticky-nav-more { display: inline-flex; align-items: center; gap: 3px; }
 .sticky-nav-more svg { opacity: 0.85; }
-/* Desktop home: the main-bar topic nav replaces the old subnav chip strip, so
-   hide the redundant second row and reclaim its reserved content padding. */
+/* Desktop home: the featured topics live in the SUBNAV ("Featured | …"), NOT in
+   the main bar — so drop the main-bar topic nav entirely on home and keep the
+   subnav visible at every width (was: main-bar topics replaced a hidden subnav). */
 @media (min-width: 1024px) {
-  body.home-search.sticky-always #sub-header { display: none !important; }
-  body.home-search.sticky-always.has-subnav #content { padding-top: calc(var(--nav-h) + 1.5rem); }
-  /* Icon-only Search + Trending in the nav (the topic links carry the labels). */
+  body.home-search .sticky-nav-topics { display: none !important; }
+  /* Icon-only Search + Trending in the nav. */
   body.home-search .sticky-actions .search-bar-label,
   body.home-search .sticky-trending-full,
   body.home-search .sticky-trending-short { display: none; }
@@ -994,7 +994,9 @@ body.hide-cta .sticky-cta { display: none !important; }
 .navmenu-home svg { display: block; }
 
 .navmenu-search {
-  padding: 1.1rem 1.25rem 0.85rem;
+  /* Tight top so the "Search" label sits as close to the bar as the "Navigate"
+     label sits to its buttons (the label now supplies the top spacing). */
+  padding: 0.35rem 1.25rem 0.85rem;
 }
 .navmenu-search .search-bar {
   width: 100%;
@@ -1245,7 +1247,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   padding: 0.4rem 0.6rem; font-size: 0.82rem; font-weight: 500;
   color: #4a5568; text-decoration: none; border-radius: 4px; transition: background 0.1s, color 0.1s;
 }
-.navmenu-subtopic-link:hover { background: var(--color-bg-light); color: var(--color-text); text-decoration: none; }
+.navmenu-subtopic-link:hover { background: color-mix(in srgb, var(--color-primary) 8%, #fff); color: var(--color-primary); text-decoration: none; }
 /* Prominent parent link at the top of the nested list — accent colour, with a
    chevron so it reads clearly as a navigable link (not just a header). */
 .navmenu-subtopic-parent { display: flex; align-items: center; gap: 4px; color: #2f6fe0; font-weight: 700; }
@@ -6391,19 +6393,21 @@ body.app-mode .topic-layout {
     -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent calc(100% - 6px));
     mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent calc(100% - 6px));
   }
-  /* Sleek soft-filled chips (no outline). Compact, centered text, light tint. */
+  /* Plain text links (transparent at rest, subtle hover) — NOT filled pills, so
+     the related-topics row reads the same as the wide-desktop style at every
+     width (#250/#251 → #252). */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topic-link,
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topics-inline > .subnav-topic-link:first-child {
     display: inline-flex !important; align-items: center; justify-content: center;
-    padding: 0.32rem 0.7rem !important; margin: 0 !important; border: none !important; border-radius: 8px;
-    background: #dde4f0; font-family: var(--font-display); font-size: 0.77rem !important; font-weight: 600;
-    letter-spacing: -0.006em; color: #3c485e !important; white-space: nowrap; text-decoration: none;
+    padding: 0.3rem 0.55rem !important; margin: 0 !important; border: none !important; border-radius: 8px;
+    background: transparent !important; font-family: var(--font-display); font-size: 0.78rem !important; font-weight: 600;
+    letter-spacing: -0.006em; color: #4a6a8a !important; white-space: nowrap; text-decoration: none;
     transition: background .14s ease, color .14s ease;
   }
   @media (hover: hover) {
-    body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topic-link:hover { background: #e0e6f0; color: #1c3a6b !important; }
+    body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topic-link:hover { background: #eef1f6 !important; color: #1c3a6b !important; }
   }
-  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topic-link:active { background: #d6deec; }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-topic-link:active { background: #e6ebf3; }
   /* Section tabs — a DISTINCT white bar full-bleed across the bottom of the hero,
      flush with the white content below, separated from the grey hero by a rule. */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .subnav-tabs {
@@ -13170,6 +13174,11 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .search-panel-suggest-go { margin-left: auto; flex: none; display: inline-flex; align-items: center; color: var(--color-primary); }
 .search-panel-suggest-row.is-custom:hover .search-panel-suggest-go { transform: translateX(2px); transition: transform 0.14s; }
 
+/* Tighten the home subnav "Featured │" separator → first-topic gap — there was
+   too much air between the divider and "World" (#254). */
+body.home-mode #sub-header.is-subnav .subnav-lead-label { margin-right: 0.5rem !important; }
+body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:first-child { padding-left: 0.2rem !important; }
+
 /* Tools (copy link) — shown only in expanded state. */
 .search-panel-tools { display: flex; align-items: center; gap: 0.6rem; padding: 0.7rem 0.4rem 0.2rem; }
 .search-panel-tools[hidden] { display: none; }
@@ -13381,7 +13390,7 @@ body.home-search #section-newsfeed { order: 4; }
   /* The longer trending list (14) is for the tall desktop right column; on mobile
      it sits between Search and AI Insights, so cap it to 6 to keep the scroll tight
      ("View more trending" still opens the full list). */
-  body.home-search #home-trending .trend-card-grid .trend-card:nth-child(n+7) { display: none; }
+  body.home-search #home-trending .trend-card-grid .trend-card:nth-child(n+4) { display: none; }
 }
 /* Home trending is a vertical list (sidebar + mobile both read as a list). */
 body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; }
