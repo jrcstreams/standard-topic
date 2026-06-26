@@ -18,8 +18,8 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp245';
 import { initInsightModal } from './components/insight-modal.js?v=20260622-revamp335';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260622-revamp348';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260622-revamp348';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260622-revamp349';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260622-revamp349';
 import { renderWebSources } from './components/websources.js?v=20260622-revamp322';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp245';
 import { initDiscoverModal } from './components/discover-modal.js';
@@ -2836,35 +2836,8 @@ function spRel(iso) {
   return new Date(iso).toLocaleDateString();
 }
 function spTitleCase(s) { return String(s || '').toLowerCase().replace(/\b([a-z])/g, (m, c) => c.toUpperCase()); }
-function spNewsHTML(stories) {
-  // Reuse the desktop news cards verbatim (publisher · time, AI Insights,
-  // Share) — minus the topic name. wireNewsAI() is called after insertion.
-  return `<section class="search-news-section">
-    <div class="search-news-header">
-      <h3 class="search-news-head-title"><span>News Feed</span></h3>
-      <p class="search-news-head-sub">Stories from across your topics</p>
-    </div>
-    ${newsListHTML(stories)}
-  </section>`;
-}
+// Trending-row mark (line graph) — shared by the search-results Trending tab.
 const SP_TREND_ICON = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>';
-function spTrendHTML(items) {
-  const rows = items.map(it => {
-    const term = it.query || '';
-    const cat = it.category || '';
-    return `<button type="button" class="search-trend-row" data-trend="${escapeAttr(term)}" data-cat="${escapeAttr(cat)}">
-      <span class="search-trend-mark" aria-hidden="true">${SP_TREND_ICON}</span>
-      <span class="search-trend-text"><span class="search-trend-name">${escapeHTML(spTitleCase(term))}</span>${cat ? `<span class="search-trend-cat">${escapeHTML(cat)}</span>` : ''}</span>
-    </button>`;
-  }).join('');
-  return `<section class="search-trend-section">
-    <div class="search-news-header">
-      <h3 class="search-news-head-title"><span>Trending</span></h3>
-      <p class="search-news-head-sub">Related trending searches</p>
-    </div>
-    <div class="search-trend-list">${rows}</div>
-  </section>`;
-}
 
 function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   const isModal = mode === 'modal';
@@ -3024,11 +2997,27 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       lockTopic: true,
       topic: t, label: t,
       descriptions: desc, icons, shortcuts,
+      // News + Trending fold into the same pill-tab row (after the AI tabs,
+      // before Web Search + External Insights).
+      extraTabs: [
+        { group: 'news', tab: 'News', subtitle: 'Latest stories matching your search.', icon: SP_NEWS_ICON, render: (wrap) => renderSearchNewsInto(wrap, t) },
+        { group: 'trending', tab: 'Trending', subtitle: 'Trending searches related to your term.', icon: SP_TREND_SEC_ICON, render: (wrap) => renderSearchTrendingInto(wrap, t) },
+      ],
     };
   }
   function destroyAii() {
     if (aiiSearchCtl && aiiSearchCtl.destroy) { try { aiiSearchCtl.destroy(); } catch (_) {} }
     aiiSearchCtl = null;
+  }
+  // (Re)render the results for a term — the AI Insights card (builder pill tabs,
+  // with News + Trending folded in). Shared by expand() and the live-edit handler.
+  function renderResults(t) {
+    destroyAii();
+    resultsInner.innerHTML = '';
+    const aiHost = document.createElement('div');
+    aiHost.className = 'search-aii-host';
+    resultsInner.appendChild(aiHost);
+    aiiSearchCtl = renderAIIntelligence(aiHost, customAiiScope(t));
   }
   function expand(rawTerm) {
     const t = (rawTerm || '').trim();
@@ -3036,14 +3025,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     currentTerm = t;
     input.value = t;
     hideSuggest();
-    destroyAii();
-    resultsInner.innerHTML = '';
-    const aiHost = document.createElement('div');
-    aiHost.className = 'search-aii-host';
-    resultsInner.appendChild(aiHost);
-    aiiSearchCtl = renderAIIntelligence(aiHost, customAiiScope(t));
-    if (isModal) { resultsInner.insertAdjacentHTML('afterbegin', searchTabsHTML()); wireSearchTabs(); }
-    loadContentResults(t);
+    renderResults(t);
     panelEl.dataset.state = 'expanded';
     syncClear();
     ctl.onExpand && ctl.onExpand(t);
@@ -3058,96 +3040,64 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     syncClear();
     ctl.onCollapse && ctl.onCollapse();
   }
-  // Search results tabular navigation — one section per tab (AI Intelligence /
-  // Web Sources / Trending / News), styled to the search card and mirroring the
-  // topic pages' mobile tab bar. A tab only appears when its section returned
-  // content, and the active tab persists across live-term edits.
-  // AI Insights + Web Sources are ONE combined tab now (#156); Trending + News stay
-  // separate. A tab's `sel` can be a list of section selectors it owns.
-  const SEARCH_TABS = [
-    { key: 'ai', label: 'AI Insights', sel: '.search-aii-host' },
-    { key: 'trending', label: 'Trending', sel: '.search-trend-section' },
-    { key: 'news', label: 'News', sel: '.search-news-section' },
-  ];
-  const tabSels = (t) => (Array.isArray(t.sel) ? t.sel : [t.sel]);
-  let activeTab = null;
-  function searchTabsHTML() {
-    return `<nav class="search-tabs" aria-label="Search results" hidden></nav>`;
-  }
-  function availableTabKeys() {
-    return SEARCH_TABS
-      .filter((t) => tabSels(t).some((s) => { const el = resultsInner.querySelector(s); return el && el.textContent.trim().length > 0; }))
-      .map((t) => t.key);
-  }
-  // Show only the active tab's section; hide the others (and the Trending/News
-  // wrapper unless one of those is the active tab).
-  function applyTabVisibility() {
-    SEARCH_TABS.forEach((t) => {
-      tabSels(t).forEach((s) => { const el = resultsInner.querySelector(s); if (el) el.hidden = t.key !== activeTab; });
-    });
-    const content = resultsInner.querySelector('.search-panel-content');
-    if (content) content.hidden = !(activeTab === 'trending' || activeTab === 'news');
-    const nav = resultsInner.querySelector('.search-tabs');
-    if (nav) nav.querySelectorAll('.search-tab').forEach((b) => b.classList.toggle('is-active', b.dataset.stab === activeTab));
-  }
-  function showTab(key) {
-    activeTab = key;
-    applyTabVisibility();
-    const scroller = panelEl.querySelector('.search-panel-results');
-    if (scroller) scroller.scrollTop = 0;
-  }
-  function wireSearchTabs() { refreshSearchTabs(); }
-  // (Re)build the tab buttons for whichever sections currently have content,
-  // preserving the active tab when it's still present (else default to first).
-  function refreshSearchTabs() {
-    const nav = resultsInner.querySelector('.search-tabs');
-    if (!nav) return;
-    const keys = availableTabKeys();
-    nav.innerHTML = SEARCH_TABS.filter((t) => keys.includes(t.key))
-      .map((t) => `<button type="button" class="search-tab" data-stab="${escapeAttr(t.key)}">${escapeHTML(t.label)}</button>`).join('');
-    nav.hidden = keys.length === 0;
-    nav.querySelectorAll('.search-tab').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.stab)));
-    if (!activeTab || !keys.includes(activeTab)) activeTab = keys[0] || null;
-    applyTabVisibility();
-  }
-
-  // Stored News + Trending results, appended under "AI Intelligence".
-  // Re-run on expand and on every live term change (renderShortcutsSidebar
-  // replaces resultsInner, so this re-appends each time).
-  async function loadContentResults(term) {
-    let block = resultsInner.querySelector('.search-panel-content');
-    if (!block) { block = document.createElement('div'); block.className = 'search-panel-content'; resultsInner.appendChild(block); }
-    block.innerHTML = `<div class="search-content"><div class="search-content-loading">Searching news &amp; trends…</div></div>`;
-    if (isModal) applyTabVisibility(); // keep the loading block hidden unless a content tab is active
-    let news = [], trends = [];
+  // News + Trending are folded into the AI Insights card's pill-tab row (as extra
+  // tabs) — there's no separate outer tab bar. Each renders lazily into the builder
+  // body when its tab is clicked; results cache per term so re-clicking doesn't
+  // refetch. The icons + section title are supplied by the builder card itself.
+  const SP_NEWS_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><line x1="7" y1="8" x2="14" y2="8"/><line x1="7" y1="12" x2="14" y2="12"/><line x1="7" y1="16" x2="11" y2="16"/></svg>';
+  const SP_TREND_SEC_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>';
+  const spContentCache = {};   // term -> { news: [...]|null, trends: [...]|null }
+  async function spFetchNews(term) {
+    if (spContentCache[term] && spContentCache[term].news) return spContentCache[term].news;
+    let stories = [];
     try {
-      const [nr, tr] = await Promise.all([
-        fetch(`/api/news-search?q=${encodeURIComponent(term)}&limit=6`, { headers: { Accept: 'application/json' } }).then(r => r.ok ? r.json() : null).catch(() => null),
-        fetch(`/api/trending-history?mode=search&q=${encodeURIComponent(term)}&limit=10`, { headers: { Accept: 'application/json' } }).then(r => r.ok ? r.json() : null).catch(() => null),
-      ]);
-      news = (nr && nr.stories) || [];
-      trends = (tr && tr.items) || [];
-    } catch (_) { /* leave empty */ }
-    if (input.value.trim() !== term) return; // stale
-    const live = resultsInner.querySelector('.search-panel-content');
-    if (!live) return;
-    const parts = [];
-    if (trends.length) parts.push(spTrendHTML(trends)); // Trending before News
-    if (news.length) parts.push(spNewsHTML(news));
-    live.innerHTML = parts.length ? `<div class="search-content">${parts.join('')}</div>` : '';
-    // Trend click → open the NEW unified AI Insights modal (type: trend), the
-    // same one used everywhere else — NOT the old trending-detail modal (which
-    // opened behind the search overlay).
-    live.querySelectorAll('[data-trend]').forEach(b => b.addEventListener('click', () => {
-      const t = b.dataset.trend; if (!t) return;
-      const cat = b.dataset.cat || '';
-      window.dispatchEvent(new CustomEvent('open-insight-modal', {
-        detail: { type: 'trend', query: t, category: cat, categories: cat ? [cat] : [] },
-      }));
+      const nr = await fetch(`/api/news-search?q=${encodeURIComponent(term)}&limit=12`, { headers: { Accept: 'application/json' } }).then(r => r.ok ? r.json() : null).catch(() => null);
+      stories = (nr && nr.stories) || [];
+    } catch (_) { stories = []; }
+    spContentCache[term] = Object.assign(spContentCache[term] || {}, { news: stories });
+    return stories;
+  }
+  async function spFetchTrends(term) {
+    if (spContentCache[term] && spContentCache[term].trends) return spContentCache[term].trends;
+    let items = [];
+    try {
+      const tr = await fetch(`/api/trending-history?mode=search&q=${encodeURIComponent(term)}&limit=12`, { headers: { Accept: 'application/json' } }).then(r => r.ok ? r.json() : null).catch(() => null);
+      items = (tr && tr.items) || [];
+    } catch (_) { items = []; }
+    spContentCache[term] = Object.assign(spContentCache[term] || {}, { trends: items });
+    return items;
+  }
+  // News tab body — the builder card already supplies the "News" title/icon, so
+  // render just the story cards (no inner "News Feed" header).
+  async function renderSearchNewsInto(wrap, term) {
+    wrap.innerHTML = `<div class="search-content"><div class="search-content-loading">Searching news…</div></div>`;
+    const stories = await spFetchNews(term);
+    if (!wrap.isConnected) return;
+    wrap.innerHTML = stories.length
+      ? `<section class="search-news-section search-news-section--builder">${newsListHTML(stories)}</section>`
+      : '<p class="aii-empty">No recent news for this search.</p>';
+    wireNewsAI(wrap);
+  }
+  // Trending tab body — related trending searches; a row opens the unified trend
+  // insight modal (same as everywhere else).
+  async function renderSearchTrendingInto(wrap, term) {
+    wrap.innerHTML = `<div class="search-content"><div class="search-content-loading">Searching trends…</div></div>`;
+    const items = await spFetchTrends(term);
+    if (!wrap.isConnected) return;
+    const rows = items.map((it) => {
+      const q = it.query || ''; const cat = it.category || '';
+      return `<button type="button" class="search-trend-row" data-trend="${escapeAttr(q)}" data-cat="${escapeAttr(cat)}">
+        <span class="search-trend-mark" aria-hidden="true">${SP_TREND_ICON}</span>
+        <span class="search-trend-text"><span class="search-trend-name">${escapeHTML(spTitleCase(q))}</span>${cat ? `<span class="search-trend-cat">${escapeHTML(cat)}</span>` : ''}</span>
+      </button>`;
+    }).join('');
+    wrap.innerHTML = rows
+      ? `<section class="search-trend-section search-trend-section--builder"><div class="search-trend-list">${rows}</div></section>`
+      : '<p class="aii-empty">No trending searches for this term.</p>';
+    wrap.querySelectorAll('[data-trend]').forEach((b) => b.addEventListener('click', () => {
+      const q = b.dataset.trend; if (!q) return;
+      window.dispatchEvent(new CustomEvent('open-insight-modal', { detail: { type: 'trend', query: q, category: b.dataset.cat || '', categories: b.dataset.cat ? [b.dataset.cat] : [] } }));
     }));
-    // Wire the desktop news cards' AI Insights + Share controls.
-    wireNewsAI(live);
-    if (isModal) refreshSearchTabs();
   }
   function hideSuggest() { suggestEl.hidden = true; suggestEl.innerHTML = ''; suggestItems = []; activeIdx = -1; }
   function refreshSuggestions() {
@@ -3228,9 +3178,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
         const t = input.value.trim();
         if (t && t !== currentTerm) {
           currentTerm = t;
-          renderShortcutsSidebar(resultsInner, { type: 'custom', term: t, tab: 'shortcuts' }, false, true, t);
-          if (isModal) { resultsInner.insertAdjacentHTML('afterbegin', searchTabsHTML()); wireSearchTabs(); }
-          loadContentResults(t);
+          renderResults(t);
         }
       }, 350);
     } else {

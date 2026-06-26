@@ -163,8 +163,20 @@ export function renderAIIntelligence(container, scope) {
   const WEBSEARCH_GROUP = 'websearch';
   const webSearchTab = { group: WEBSEARCH_GROUP, tab: 'Web Search', subtitle: "Search this topic across the web's primary sources and platforms." };
   const externalTab = { group: EXTERNAL_GROUP, tab: 'External Insights', subtitle: 'Curated AI prompts to dig into this topic in the model of your choice.' };
-  const isStaticGroup = (g) => g === EXTERNAL_GROUP || g === WEBSEARCH_GROUP;
-  const builderTabs = () => paths.concat([webSearchTab, externalTab]);
+  // Caller-supplied EXTRA tabs (custom search folds News + Trending in here):
+  // each { group, tab, subtitle, icon (svg string), render(wrapEl) } is a static
+  // (non-AI) tab whose body the caller renders. Inserted after the AI paths and
+  // before Web Search + External Insights (External Insights stays LAST).
+  const extraTabs = (Array.isArray(scope.extraTabs) ? scope.extraTabs : []).filter((t) => t && t.group);
+  const extraGroups = new Set(extraTabs.map((t) => t.group));
+  const isStaticGroup = (g) => g === EXTERNAL_GROUP || g === WEBSEARCH_GROUP || extraGroups.has(g);
+  const builderTabs = () => paths.concat(extraTabs).concat([webSearchTab, externalTab]);
+  // Section-header icon for a builder tab — caller's extra-tab icon first, then the
+  // path glyph, then the generic fallback.
+  function builderTabIcon(group) {
+    const e = extraTabs.find((x) => x.group === group);
+    return (e && e.icon) || ICONS[group] || ICONS._;
+  }
   // When the topic-picker is opened FROM a builder (via the topic caret), remember
   // which builder so the picker can offer a "Back" link to return to it (#172).
   let pickerReturnGroup = null;
@@ -734,7 +746,7 @@ export function renderAIIntelligence(container, scope) {
       </div>
       <div class="aii-builder-secs">
         <div class="aii-bhead">
-          <div class="aii-sectitle"><span class="aii-sectitle-ic" data-sec-title-ic>${ICONS[curGroup] || ICONS._}</span><h2 class="aii-sectitle-name" data-sec-title-name>${esc(p.tab || p.label || '')}</h2><span class="aii-brief-meta" data-brief-meta>${isStatic ? '' : updated}</span></div>
+          <div class="aii-sectitle"><span class="aii-sectitle-ic" data-sec-title-ic>${builderTabIcon(curGroup)}</span><h2 class="aii-sectitle-name" data-sec-title-name>${esc(p.tab || p.label || '')}</h2><span class="aii-brief-meta" data-brief-meta>${isStatic ? '' : updated}</span></div>
           <p class="aii-brief-sum" data-brief-sum>${esc(p.subtitle || '')}</p>
           <div class="aii-brief-explore-wrap"${isStatic ? ' hidden' : ''} data-explore-wrap>
             <button type="button" class="aii-brief-explore" data-explore-toggle aria-expanded="false">${ICON_ASK}<span>Explore further with external AI models</span>${CHEV}</button>
@@ -756,7 +768,7 @@ export function renderAIIntelligence(container, scope) {
     stage.querySelectorAll('.aii-tab').forEach((t) => { const on = t.dataset.tabGroup === group; t.classList.toggle('is-active', on); t.setAttribute('aria-selected', String(on)); });
     // In-body section header (name + icon) reflects the active tab.
     const stName = stage.querySelector('[data-sec-title-name]'); if (stName) stName.textContent = p.tab || p.label || '';
-    const stIc = stage.querySelector('[data-sec-title-ic]'); if (stIc) stIc.innerHTML = ICONS[group] || ICONS._;
+    const stIc = stage.querySelector('[data-sec-title-ic]'); if (stIc) stIc.innerHTML = builderTabIcon(group);
     const sum = stage.querySelector('[data-brief-sum]'); if (sum) sum.textContent = p.subtitle || '';
     const bc = builderCache[group]; const meta = stage.querySelector('[data-brief-meta]');
     if (meta) meta.innerHTML = (!isStatic && bc && bc.generatedAt) ? `<span class="aii-brief-updated">Updated ${esc(relTime(bc.generatedAt))}</span>` : '';
@@ -782,6 +794,10 @@ export function renderAIIntelligence(container, scope) {
     // External Insights = the topic's shortcut prompts.
     if (curGroup === WEBSEARCH_GROUP) { renderWebSearchInto(wrap); return; }
     if (curGroup === EXTERNAL_GROUP) { renderExternalInto(wrap); return; }
+    // Caller-supplied extra tab (e.g. custom search's News / Trending): the caller
+    // renders the body (and manages its own loading/empty state).
+    const extra = extraTabs.find((x) => x.group === curGroup);
+    if (extra && extra.render) { try { extra.render(wrap); } catch (_) { wrap.innerHTML = ''; } wrap.classList.add('ai-reveal'); return; }
     const reveal = () => { if (stage.querySelector('[data-aii-builder]') === wrap && view === 'builder') renderBuilderInto(wrap); };
     const bc = builderCache[curGroup];
     if (bc && !bc.loading) setTimeout(reveal, 600);   // cached → brief loader moment, then reveal
