@@ -1347,7 +1347,9 @@ function renderStickyHeroBar(container, route) {
         </a>
       </div>
     </div>
+    <div class="navmenu-featured-label navmenu-section-label">Search</div>
     <div class="navmenu-search" id="navmenu-search-container"></div>
+    <div class="navmenu-featured-label navmenu-section-label">Navigate</div>
     <nav class="navmenu-quicklinks">
       <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-all-topics">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -3130,7 +3132,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     // Topic matches, minus any that a trend row already covers (avoid dupes).
     const topics = searchTopics(q).filter((t) => !trendNames.has(String(t.name).toLowerCase())).slice(0, 4);
     suggestItems = trends.map((t) => ({ type: 'trend', query: t.query, category: t.category }))
-      .concat(topics.map((t) => ({ type: 'topic', slug: t.slug, name: t.name, parent: t.parentName })))
+      .concat(topics.map((t) => ({ type: 'topic', slug: t.slug, name: t.name, icon: t.icon })))
       .concat([{ type: 'custom', term: q }]);
     activeIdx = -1;
     suggestEl.innerHTML = suggestItems.map((it, i) => {
@@ -3138,9 +3140,13 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
         return `<button type="button" class="search-panel-suggest-row is-trend" data-i="${i}" role="option"><span class="search-panel-suggest-ic" aria-hidden="true">${SP_TREND_ICON}</span><span class="search-panel-suggest-name">${escapeHTML(it.query)}</span><span class="search-panel-suggest-tag">Trending${it.category ? ` &middot; ${escapeHTML(it.category)}` : ''}</span></button>`;
       }
       if (it.type === 'topic') {
-        return `<button type="button" class="search-panel-suggest-row" data-i="${i}" role="option"><span class="search-panel-suggest-name">${escapeHTML(it.name)}</span>${it.parent ? `<span class="search-panel-suggest-parent">${escapeHTML(it.parent)}</span>` : ''}</button>`;
+        // Topic row: a grey icon chip on the left (matching the trend row) + a grey
+        // "Topic" pill on the right. No parent name — just the type marker.
+        return `<button type="button" class="search-panel-suggest-row is-topic" data-i="${i}" role="option"><span class="search-panel-suggest-ic" aria-hidden="true">${topicIconSVG(it.icon || 'globe', '')}</span><span class="search-panel-suggest-name">${escapeHTML(it.name)}</span><span class="search-panel-suggest-tag search-panel-suggest-tag--topic">Topic</span></button>`;
       }
-      return `<button type="button" class="search-panel-suggest-row is-custom" data-i="${i}" role="option"><span class="search-panel-suggest-name">Search "${escapeHTML(it.term)}" &rarr;</span></button>`;
+      // Custom "search this term" — a distinct ACTION row (divider above + primary
+      // accent + leading search chip + trailing arrow), not another plain result.
+      return `<button type="button" class="search-panel-suggest-row is-custom" data-i="${i}" role="option"><span class="search-panel-suggest-ic search-panel-suggest-ic--go" aria-hidden="true">${SEARCH_ICON_SVG}</span><span class="search-panel-suggest-name">Search “${escapeHTML(it.term)}”</span><span class="search-panel-suggest-go" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span></button>`;
     }).join('');
     suggestEl.hidden = false;
     suggestEl.querySelectorAll('.search-panel-suggest-row').forEach(row => {

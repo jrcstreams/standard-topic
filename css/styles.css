@@ -1077,6 +1077,7 @@ body.hide-cta .sticky-cta { display: none !important; }
     border-color: #95a8c5;
     background: #f5f8fd;
     color: var(--color-primary-dark);
+    text-decoration: none;  /* Prompt Builder is an <a> — kill the global a:hover underline */
   }
   .navmenu-cta:hover .navmenu-cta-arrow {
     color: var(--color-primary);
@@ -13153,6 +13154,21 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .search-panel-suggest-ic svg { width: 13px; height: 13px; }
 .search-panel-suggest-row.is-trend .search-panel-suggest-name { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .search-panel-suggest-tag { margin-left: auto; flex: none; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #1f8f6b; background: color-mix(in srgb, #22a47a 11%, transparent); padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+/* Topic typeahead rows: same icon-chip + name + right-pill shape as the trend
+   rows, but the type pill is a neutral GREY "Topic" (vs the green Trending). The
+   topic's own glyph sits in the left chip (matches the trend chip styling). */
+.search-panel-suggest-row.is-topic { align-items: center; }
+.search-panel-suggest-row.is-topic .search-panel-suggest-name { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.search-panel-suggest-tag--topic { color: var(--color-text-muted); background: color-mix(in srgb, var(--color-text-muted) 14%, transparent); }
+/* Custom "search this term" — a distinct ACTION at the foot of the list: a hairline
+   divider sets it off from the results above, a primary search chip + arrow read it
+   as "run a full search," not another result row. */
+.search-panel-suggest-row.is-custom { align-items: center; margin-top: 4px; padding-top: 0.65rem; border-top: 1px solid #eef1f6; border-radius: 0; }
+.search-panel-suggest-row.is-custom:hover, .search-panel-suggest-row.is-custom.is-active { background: color-mix(in srgb, var(--color-primary) 7%, #fff); }
+.search-panel-suggest-row.is-custom .search-panel-suggest-name { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.search-panel-suggest-ic--go { background: color-mix(in srgb, var(--color-primary) 12%, #fff); color: var(--color-primary); }
+.search-panel-suggest-go { margin-left: auto; flex: none; display: inline-flex; align-items: center; color: var(--color-primary); }
+.search-panel-suggest-row.is-custom:hover .search-panel-suggest-go { transform: translateX(2px); transition: transform 0.14s; }
 
 /* Tools (copy link) — shown only in expanded state. */
 .search-panel-tools { display: flex; align-items: center; gap: 0.6rem; padding: 0.7rem 0.4rem 0.2rem; }
@@ -13272,6 +13288,11 @@ body.home-search.app-mode .topic-layout {
      must be allowed to spill past the card's bottom edge (#77). The corner glow
      is kept inside the rounded corners by giving the ::after its own radius. */
   position: relative;
+  /* Sit above the row-2 promo cards so the typeahead dropdown (which spills past
+     the hero's bottom edge into that row) paints OVER them instead of behind —
+     fixes the dropdown rendering under the promo buttons + the resulting hover
+     flicker as the cards intercepted pointer events. */
+  z-index: 20;
   /* A search card doesn't need the full container width on big screens — cap it and
      centre it (comfortably wide, not full-width or microscopic). Full-width as the
      viewport scales below the cap (#155/#207). */
