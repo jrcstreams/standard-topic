@@ -18,8 +18,8 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp245';
 import { initInsightModal } from './components/insight-modal.js?v=20260622-revamp335';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260622-revamp349';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260622-revamp349';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260622-revamp350';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260622-revamp350';
 import { renderWebSources } from './components/websources.js?v=20260622-revamp322';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp245';
 import { initDiscoverModal } from './components/discover-modal.js';
@@ -2978,46 +2978,59 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   fillStarterChips();
   fillEmptyFeatured();
 
-  // The AI Insights card for a searched term — the SAME builder (pill-tab)
-  // experience as the AI Insights modal (Get Caught Up / Deep Dive / Analysis /
-  // 101 Resources / Web Search / External Insights), scoped to the term. Briefs
-  // generate live for any term (no library lookup). The term is fixed by the
-  // search bar above, so the in-card topic re-pick is locked off.
+  // The custom-search results card — the SAME pill-tab shell as the AI Insights
+  // modal, but NO on-demand AI generation. Tabs: External Insights (the curated
+  // external-model shortcuts — primary, landed on first), then News + Trending
+  // (ONLY when they have items), then Web Search. The term is fixed by the search
+  // bar above, so the in-card topic re-pick is locked off.
   let aiiSearchCtl = null;
-  function customAiiScope(t) {
+  function customAiiScope(t, opts) {
+    opts = opts || {};
     const desc = {}; const icons = {}; let shortcuts = [];
     try {
       shortcuts = getShortcutsForTopic('_custom') || [];
       shortcuts.forEach((s) => { if (s && s.name) { desc[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } });
     } catch (_) {}
+    const extraTabs = [];
+    const order = ['external'];   // External Insights = the shortcuts (primary tab)
+    if (opts.news) { extraTabs.push({ group: 'news', tab: 'News', subtitle: 'Latest stories matching your search.', icon: SP_NEWS_ICON, render: (wrap) => renderSearchNewsInto(wrap, t) }); order.push('news'); }
+    if (opts.trends) { extraTabs.push({ group: 'trending', tab: 'Trending', subtitle: 'Trending searches related to your term.', icon: SP_TREND_SEC_ICON, render: (wrap) => renderSearchTrendingInto(wrap, t) }); order.push('trending'); }
+    order.push('websearch');      // Web Search last
     return {
-      inModal: true,            // flowMode → the builder (pill-tab) experience
+      inModal: true,              // flowMode → the builder (pill-tab) shell
       initialBuilder: true,
-      initialGroup: 'discover', // land on "Get Caught Up"
+      initialGroup: 'external',   // land on the external-model shortcuts
       lockTopic: true,
       topic: t, label: t,
       descriptions: desc, icons, shortcuts,
-      // News + Trending fold into the same pill-tab row (after the AI tabs,
-      // before Web Search + External Insights).
-      extraTabs: [
-        { group: 'news', tab: 'News', subtitle: 'Latest stories matching your search.', icon: SP_NEWS_ICON, render: (wrap) => renderSearchNewsInto(wrap, t) },
-        { group: 'trending', tab: 'Trending', subtitle: 'Trending searches related to your term.', icon: SP_TREND_SEC_ICON, render: (wrap) => renderSearchTrendingInto(wrap, t) },
-      ],
+      hideGroups: ['discover', 'topic-specific', 'analyze', 'learn'],  // no AI-generation tabs
+      extraTabs,
+      builderTabOrder: order,
     };
   }
   function destroyAii() {
     if (aiiSearchCtl && aiiSearchCtl.destroy) { try { aiiSearchCtl.destroy(); } catch (_) {} }
     aiiSearchCtl = null;
   }
-  // (Re)render the results for a term — the AI Insights card (builder pill tabs,
-  // with News + Trending folded in). Shared by expand() and the live-edit handler.
-  function renderResults(t) {
+  function mountAii(t, opts) {
     destroyAii();
     resultsInner.innerHTML = '';
     const aiHost = document.createElement('div');
     aiHost.className = 'search-aii-host';
     resultsInner.appendChild(aiHost);
-    aiiSearchCtl = renderAIIntelligence(aiHost, customAiiScope(t));
+    aiiSearchCtl = renderAIIntelligence(aiHost, customAiiScope(t, opts));
+  }
+  // (Re)render the results for a term. External Insights + Web Search are always
+  // present; News + Trending tabs are added only when they have items, so we fetch
+  // both first (cached per term), then mount the card with the right tab set.
+  // Shared by expand() and the live-edit handler.
+  function renderResults(t) {
+    destroyAii();
+    resultsInner.innerHTML = `<div class="search-content"><div class="search-content-loading">Searching…</div></div>`;
+    Promise.all([spFetchNews(t), spFetchTrends(t)]).then(([news, trends]) => {
+      if (currentTerm !== t) return;   // term changed mid-fetch — a newer render owns the DOM
+      mountAii(t, { news: !!(news && news.length), trends: !!(trends && trends.length) });
+    });
   }
   function expand(rawTerm) {
     const t = (rawTerm || '').trim();

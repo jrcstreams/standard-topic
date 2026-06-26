@@ -170,7 +170,23 @@ export function renderAIIntelligence(container, scope) {
   const extraTabs = (Array.isArray(scope.extraTabs) ? scope.extraTabs : []).filter((t) => t && t.group);
   const extraGroups = new Set(extraTabs.map((t) => t.group));
   const isStaticGroup = (g) => g === EXTERNAL_GROUP || g === WEBSEARCH_GROUP || extraGroups.has(g);
-  const builderTabs = () => paths.concat(extraTabs).concat([webSearchTab, externalTab]);
+  // Resolve a group key to its tab descriptor (AI path / built-in static / extra).
+  function tabByGroup(g) {
+    return paths.find((p) => p.group === g)
+      || (g === WEBSEARCH_GROUP ? webSearchTab : (g === EXTERNAL_GROUP ? externalTab : null))
+      || extraTabs.find((e) => e.group === g)
+      || null;
+  }
+  // Default tab set: the AI paths, then any caller extra tabs, then Web Search +
+  // External Insights (External stays LAST). A caller can override the exact set
+  // AND order via scope.builderTabOrder (a list of group keys) — e.g. custom
+  // search drops the AI-generation tabs and leads with External Insights.
+  const builderTabs = () => {
+    if (Array.isArray(scope.builderTabOrder) && scope.builderTabOrder.length) {
+      return scope.builderTabOrder.map(tabByGroup).filter(Boolean);
+    }
+    return paths.concat(extraTabs).concat([webSearchTab, externalTab]);
+  };
   // Section-header icon for a builder tab — caller's extra-tab icon first, then the
   // path glyph, then the generic fallback.
   function builderTabIcon(group) {
