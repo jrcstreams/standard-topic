@@ -16795,3 +16795,7 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
   .topic-band #section-newsfeed .news-list { padding-left: 6px !important; padding-right: 6px !important; }
   .topic-band #section-newsfeed .news-card { margin: 0 !important; padding-left: 12px !important; padding-right: 12px !important; border-radius: 10px; }
 }
+
+/* #277: center the home "Featured" topics row in the subnav band — the banner had
+   asymmetric padding (top 0.45rem / bottom ~0.65rem) so the row sat slightly high. */
+body.home-mode #sub-header.is-subnav .topic-banner { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
