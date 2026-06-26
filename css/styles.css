@@ -14185,10 +14185,10 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    row width; anchored top-right under the share icon. */
 /* Anchored to the share button (in .news-share-wrap) — opens just above it. */
 .news-share-wrap { position: relative; display: inline-flex; }
-.news-share-panel { position: absolute; bottom: calc(100% + 8px); left: 0; z-index: 25; display: grid; grid-template-rows: 0fr; transition: grid-template-rows .2s ease; }
-.news-share-panel.is-open { grid-template-rows: 1fr; }
-.news-share-panel-inner { overflow: hidden; display: flex; gap: 6px; }
-.news-share-panel.is-open .news-share-panel-inner { padding: 7px; background: #fff; border: 1px solid #e7ecf3; border-radius: 10px; box-shadow: 0 12px 30px -12px rgba(15, 26, 46, 0.28); }
+.news-share-panel { position: absolute; bottom: calc(100% + 8px); left: 0; z-index: 25; width: max-content; opacity: 0; visibility: hidden; transform: translateY(4px); transition: opacity .16s ease, transform .16s ease, visibility .16s; }
+.news-share-panel.is-open { opacity: 1; visibility: visible; transform: none; }
+.news-share-panel-inner { display: flex; gap: 6px; padding: 7px; background: #fff; border: 1px solid #e7ecf3; border-radius: 10px; box-shadow: 0 12px 30px -12px rgba(15, 26, 46, 0.28); }
+.news-share-opt { white-space: nowrap; }
 .news-share-opt {
   display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px;
   border: 1px solid var(--color-surface-border); border-radius: 8px; background: #fff; cursor: pointer;
@@ -16602,11 +16602,11 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
    stays lighter/smaller. (The navy chip is kept only on the modal header.) */
 .topic-band #section-shortcuts .aii-logo,
 .topic-band #section-newsfeed .newsfeed-logo {
-  width: auto !important; height: auto !important; border-radius: 0 !important;
-  background: transparent !important; color: var(--color-primary) !important; box-shadow: none !important;
+  width: 28px !important; height: 28px !important; border-radius: 8px !important;
+  background: var(--color-primary) !important; color: #fff !important; box-shadow: none !important;
 }
 .topic-band #section-shortcuts .aii-logo svg,
-.topic-band #section-newsfeed .newsfeed-logo svg { width: 20px !important; height: 20px !important; color: var(--color-primary) !important; }
+.topic-band #section-newsfeed .newsfeed-logo svg { width: 15px !important; height: 15px !important; color: #fff !important; }
 .topic-band #section-shortcuts .aii-brand,
 .topic-band #section-newsfeed .newsfeed-title { font-weight: 600 !important; letter-spacing: -0.01em; }
 

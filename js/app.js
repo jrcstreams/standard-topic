@@ -1512,7 +1512,7 @@ function renderBottomNav(route) {
         <span class="botnav-label">AI Insights</span>
       </button>
       <button type="button" class="botnav-tab" data-tab="trending" id="botnav-trending" aria-label="Trending">
-        <span class="botnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg></span>
+        <span class="botnav-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
         <span class="botnav-label">Trending</span>
       </button>
       <button type="button" class="botnav-tab" data-tab="topics" id="botnav-topics" aria-label="All topics">
