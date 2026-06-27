@@ -16907,3 +16907,107 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
   .topic-band #section-newsfeed .nf-search-wrap { flex: 1 1 auto; max-width: none; }
   .topic-band #section-newsfeed .news-list { padding-left: 0 !important; padding-right: 0 !important; }
 }
+
+/* ═══ Mobile subnav topic picker (revamp373) ═════════════════════════════════
+   Replaces the related-topic chip strip on small screens (≤899.98 — phones +
+   iPad portrait) with a smooth dropdown/accordion: tap the current topic to
+   reveal its family (parent "Overview" + sibling/subtopic list, active row
+   highlighted) plus a prominent "View all topics" action. Desktop (≥900) is
+   untouched — the picker is display:none and the inline chip strip shows. */
+.topic-subnav-picker { display: none; }
+
+@media (max-width: 899.98px) {
+  /* Swap: hide the title group + hero icon + chip strip; the picker becomes the
+     band's identity-and-selector control. */
+  body.app-mode #sub-header.is-subnav .topic-hero-ico,
+  body.app-mode #sub-header.is-subnav .topic-banner-titlegroup,
+  body.app-mode #sub-header.is-subnav .topic-hero-related { display: none !important; }
+
+  /* Row → single block so the picker spans the band; allow the dropdown to
+     overflow the band instead of being clipped. */
+  body.app-mode #sub-header.is-subnav .topic-banner-row:has(.topic-subnav-picker) {
+    display: block !important; grid-template-columns: none !important; position: relative;
+  }
+  body.app-mode #sub-header.is-subnav .topic-banner { padding: 0.5rem 1rem !important; overflow: visible !important; }
+  body.app-mode #sub-header.is-subnav { overflow: visible !important; }
+
+  .topic-subnav-picker { display: block; position: relative; }
+
+  /* Trigger — the current topic shown as a selector value. */
+  .tsp-btn {
+    display: flex; align-items: center; gap: 0.6rem; width: 100%;
+    padding: 0.46rem 0.6rem; border: 1px solid var(--color-surface-border); border-radius: 12px;
+    background: #fff; cursor: pointer; font-family: var(--font-family); text-align: left;
+    box-shadow: 0 1px 2px rgba(15,23,42,.04); transition: border-color .14s, box-shadow .14s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tsp-btn:hover, .topic-subnav-picker.is-open .tsp-btn { border-color: #aab6c9; }
+  .topic-subnav-picker.is-open .tsp-btn { box-shadow: 0 2px 8px -4px rgba(15,23,42,.18); }
+  .tsp-btn-lead { display: flex; align-items: center; gap: 0.55rem; min-width: 0; flex: 1 1 auto; }
+  .tsp-btn-ico {
+    flex: none; width: 30px; height: 30px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
+    background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: var(--color-primary);
+  }
+  .tsp-btn-ico .tsp-ic-svg { width: 17px; height: 17px; }
+  .tsp-btn-name {
+    font-family: var(--font-display); font-size: 1.08rem; font-weight: 600; letter-spacing: -0.01em;
+    color: #14213d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+  }
+  .tsp-chev { flex: none; color: var(--color-text-muted); transition: transform .3s cubic-bezier(.4,0,.2,1); }
+  .topic-subnav-picker.is-open .tsp-chev { transform: rotate(180deg); }
+
+  /* Dropdown panel — absolute overlay; height + fade + slide animated for an
+     extremely smooth open. */
+  .tsp-panelwrap {
+    position: absolute; top: calc(100% + 7px); left: 0; right: 0; z-index: 60;
+    display: grid; grid-template-rows: 0fr;
+    opacity: 0; pointer-events: none; transform: translateY(-5px);
+    transition: grid-template-rows .3s cubic-bezier(.4,0,.2,1), opacity .2s ease, transform .3s cubic-bezier(.4,0,.2,1);
+  }
+  .topic-subnav-picker.is-open .tsp-panelwrap {
+    grid-template-rows: 1fr; opacity: 1; pointer-events: auto; transform: translateY(0);
+  }
+  .tsp-panel {
+    overflow: hidden; min-height: 0; border: 1px solid var(--color-surface-border); border-radius: 14px;
+    background: #fff; box-shadow: 0 20px 44px -20px rgba(15,23,42,.45), 0 6px 16px -10px rgba(15,23,42,.25);
+  }
+  .tsp-panel-inner { padding: 7px; }
+
+  /* Family rows */
+  .tsp-item {
+    display: flex; align-items: center; gap: 0.6rem; padding: 0.58rem 0.6rem; border-radius: 10px;
+    text-decoration: none; color: var(--color-text); transition: background .12s; position: relative;
+  }
+  .tsp-item:hover { background: var(--color-bg-light); }
+  .tsp-item-ico {
+    flex: none; width: 28px; height: 28px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
+    background: var(--color-bg-light); color: var(--color-text-muted);
+  }
+  .tsp-item-ico .tsp-ic-svg { width: 16px; height: 16px; }
+  .tsp-item-name { flex: 1 1 auto; min-width: 0; font-size: 0.95rem; font-weight: 500; }
+  .tsp-item.is-active { background: color-mix(in srgb, var(--color-primary) 8%, #fff); }
+  .tsp-item.is-active .tsp-item-name { color: var(--color-primary); font-weight: 600; }
+  .tsp-item.is-active .tsp-item-ico { background: color-mix(in srgb, var(--color-primary) 14%, #fff); color: var(--color-primary); }
+  .tsp-item-check { flex: none; color: var(--color-primary); display: inline-flex; }
+
+  /* Parent "Overview" row + its label tag */
+  .tsp-tag {
+    flex: none; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;
+    color: var(--color-text-muted); background: var(--color-bg-light); padding: 0.12rem 0.4rem; border-radius: 5px;
+  }
+  .tsp-list {
+    margin-top: 4px; padding-top: 5px;
+    border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent);
+    display: flex; flex-direction: column; gap: 1px;
+  }
+
+  /* Prominent "View all topics" action */
+  .tsp-all {
+    display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin-top: 6px;
+    padding: 0.62rem; border-radius: 10px; background: var(--color-primary); color: #fff;
+    font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: background .14s;
+  }
+  .tsp-all:hover { background: color-mix(in srgb, var(--color-primary) 88%, #000); }
+  .tsp-all-arrow { transition: transform .14s; }
+  .tsp-all:hover .tsp-all-arrow { transform: translateX(3px); }
+}

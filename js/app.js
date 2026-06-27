@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initPromptBuilderModal();
   initAIIntelligenceModal();
   setupGlobalTabPillDelegation();
+  wireSubnavPickerOutsideClose();
 
   onRoute((route) => {
     // Search (#/search) and Custom (#/custom/{term}) routes don't render
@@ -176,6 +177,92 @@ function wireTopicHeroCondense() {
   };
   document.addEventListener('scroll', topicHeroScrollHandler, true);
   document.body.classList.remove('topic-hero-condensed');
+}
+
+// ── Mobile subnav topic picker (revamp373) ───────────────────────────────────
+// A compact dropdown/accordion that REPLACES the related-topic chip strip on
+// small screens (<900): tap the current topic name to reveal its family —
+// the parent (as an "Overview" link) over the sibling/subtopic list with the
+// active topic highlighted — plus a prominent "View all topics" action. Desktop
+// keeps the inline chip strip untouched (this element is display:none ≥900).
+function subnavPickerHTML(topic) {
+  const isParent = !topic.parent;
+  const parent = isParent ? topic : (getTopicBySlug(topic.parent) || topic);
+  // Family = the group's children: a parent's subtopics, or (for a child) the
+  // parent's subtopics — i.e. this topic plus its siblings.
+  const family = getSubtopics(parent.slug);
+  const CHEV = '<svg class="tsp-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+  const itemHTML = (t, kind) => {
+    const active = t.slug === topic.slug;
+    const tag = kind === 'parent' ? '<span class="tsp-tag">Overview</span>' : '';
+    return `<a href="#/topic/${t.slug}" class="tsp-item${kind === 'parent' ? ' tsp-parent' : ''}${active ? ' is-active' : ''}"${active ? ' aria-current="page"' : ''}>
+        <span class="tsp-item-ico">${topicIconSVG(t.icon || 'globe', 'tsp-ic-svg')}</span>
+        <span class="tsp-item-name">${escapeHTML(t.name)}</span>
+        ${tag}
+        ${active ? '<span class="tsp-item-check" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>' : ''}
+      </a>`;
+  };
+  const familyHTML = family.map(t => itemHTML(t, 'child')).join('');
+  return `
+    <div class="topic-subnav-picker" data-topic-picker>
+      <button type="button" class="tsp-btn" aria-expanded="false" aria-controls="tsp-panel">
+        <span class="tsp-btn-lead">
+          <span class="tsp-btn-ico">${topicIconSVG(topic.icon || 'globe', 'tsp-ic-svg')}</span>
+          <span class="tsp-btn-name">${escapeHTML(topic.name)}</span>
+        </span>
+        ${CHEV}
+      </button>
+      <div class="tsp-panelwrap">
+        <div class="tsp-panel" id="tsp-panel" role="region" aria-label="Browse related topics">
+          <div class="tsp-panel-inner">
+            ${itemHTML(parent, 'parent')}
+            ${familyHTML ? `<div class="tsp-list">${familyHTML}</div>` : ''}
+            <a href="#" class="tsp-all" data-tsp-all>View all topics<span class="tsp-all-arrow" aria-hidden="true">→</span></a>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function wireSubnavPicker(root) {
+  const picker = root.querySelector('[data-topic-picker]');
+  if (!picker) return;
+  const btn = picker.querySelector('.tsp-btn');
+  const setOpen = (on) => {
+    picker.classList.toggle('is-open', on);
+    btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+  };
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setOpen(!picker.classList.contains('is-open'));
+  });
+  picker.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { setOpen(false); btn.focus(); }
+  });
+  // Navigating to a family topic closes the panel before the route re-renders
+  // (the re-render rebuilds a fresh, collapsed picker anyway).
+  picker.querySelectorAll('.tsp-item').forEach(a =>
+    a.addEventListener('click', () => setOpen(false)));
+  picker.querySelector('[data-tsp-all]')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    setOpen(false);
+    window.dispatchEvent(new CustomEvent('open-all-topics-modal'));
+  });
+}
+
+// One-time: clicking anywhere outside an open picker collapses it. Delegated so
+// it survives subnav re-renders without accumulating per-render listeners.
+let subnavPickerOutsideWired = false;
+function wireSubnavPickerOutsideClose() {
+  if (subnavPickerOutsideWired) return;
+  subnavPickerOutsideWired = true;
+  document.addEventListener('click', (e) => {
+    const open = document.querySelector('.topic-subnav-picker.is-open');
+    if (open && !open.contains(e.target)) {
+      open.classList.remove('is-open');
+      open.querySelector('.tsp-btn')?.setAttribute('aria-expanded', 'false');
+    }
+  });
 }
 
 function renderLayout(route) {
@@ -342,6 +429,7 @@ function renderLayout(route) {
               </div>
             </div>
           ` : ''}
+          ${subnavPickerHTML(topic)}
           <nav class="subnav-tabs" aria-label="Section navigation">
             <button type="button" class="tab-pill tab-pill-newsfeed" data-tab="newsfeed">News Feed</button>
             <button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">AI Insights</button>
@@ -357,6 +445,7 @@ function renderLayout(route) {
     wireChipStripScrollEnd();
     wireSubnavCompactMeasure();
     wireTopicHeroCondense();
+    wireSubnavPicker(subHeader);
   }
 
   if (route.type === 'about' || route.type === 'terms') {
