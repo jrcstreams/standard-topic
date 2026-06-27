@@ -16364,39 +16364,22 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
   .ws-pathlist:has(> :nth-child(4)) { grid-template-columns: repeat(4, 1fr); }
 }
 
-/* ═══════════════ Desktop topic-page 35/65 split (#14) ═════════════════════
-   SIDEBAR (AI Intelligence → Web Sources) on the left, MAIN (News Feed →
-   Related) on the right. The .topic-side / .topic-main wrappers are
-   display:contents below 900px, so the mobile tab navigator (one section at a
-   time) is untouched; at ≥900 they become two independent-height flex columns.
-   Activated at 900 (was 1024) to KILL the awkward 900–1023 single-column stack
-   band — topic pages now go straight from this 2-column split to tab navigation.
-   Appended last so it wins source order. */
-.topic-side, .topic-main { display: contents; }
+/* ═══════════════ Desktop topic-page FULL-WIDTH stack (#14, revamp370) ════════
+   AI Insights & Resources is now a full-width card on TOP, News Feed full-width
+   BELOW it (Phase-1 redesign — moved OFF the old left sidebar). The .topic-band
+   is a single-column block at every width; sections simply stack. The legacy
+   .topic-side/.topic-main wrappers were removed from the markup, so their rules
+   are gone. Appended last so it wins source order. */
 @media (min-width: 900px) {
   body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) {
-    grid-template-columns: minmax(0, 25fr) minmax(0, 75fr) !important;
-    column-gap: 1.6rem; row-gap: 0; align-items: start;
+    display: block !important;
+    grid-template-columns: none !important;
+    column-gap: 0; row-gap: 0;
   }
-  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) .topic-side {
-    display: flex; flex-direction: column; gap: 1.5rem; grid-column: 1; min-width: 0;
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > .layout-section {
+    width: 100%; margin: 0;
   }
-  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) .topic-main {
-    display: flex; flex-direction: column; gap: 1.5rem; grid-column: 2; grid-row: 1; min-width: 0;
-  }
-  /* Sections inside the columns are plain stacked blocks (no grid placement). */
-  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) .topic-side > .layout-section,
-  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) .topic-main > .layout-section {
-    grid-column: auto; order: 0; width: 100%; margin: 0;
-  }
-  /* Sidebar order (#92/#93): AI Insights on top, Web Sources as its own section
-     BELOW it. */
-  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) .topic-side > #section-shortcuts { order: 1; }
-  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) .topic-side > #section-websources { order: 2; margin-top: 1.25rem; }
-  /* In the narrow sidebar the AI/Web-Sources path tiles become a single-column
-     list (the full-width 3–4-up grid is far too cramped at 35%). */
-  body.app-mode:not(.home-mode) .topic-side .aii-pathlist,
-  body.app-mode:not(.home-mode) .topic-side .ws-pathlist { grid-template-columns: 1fr !important; }
+  body.app-mode:not(.home-mode) .topic-layout:not(.is-custom) > #section-newsfeed { margin-top: 1.5rem; }
 }
 
 /* ============================================================================
