@@ -162,7 +162,7 @@ export function renderAIIntelligence(container, scope) {
   const EXTERNAL_GROUP = 'external';
   const WEBSEARCH_GROUP = 'websearch';
   const webSearchTab = { group: WEBSEARCH_GROUP, tab: 'Web Search', subtitle: "Search this topic across the web's primary sources and platforms." };
-  const externalTab = { group: EXTERNAL_GROUP, tab: 'External Insights', subtitle: 'Curated AI prompts to dig into this topic in the model of your choice.' };
+  const externalTab = { group: EXTERNAL_GROUP, tab: 'Prompt Library', subtitle: 'Ready-made prompts to run this topic in the AI model of your choice.' };
   // Caller-supplied EXTRA tabs (custom search folds News + Trending in here):
   // each { group, tab, subtitle, icon (svg string), render(wrapEl) } is a static
   // (non-AI) tab whose body the caller renders. Inserted after the AI paths and
@@ -757,7 +757,7 @@ export function renderAIIntelligence(container, scope) {
       // MAIN nav (underlined text tabs): AI Brief / External Insights / Web Search.
       const mainActive = onBrief ? 'brief' : curGroup;   // 'external' | 'websearch'
       const mainTab = (key, label) => `<button type="button" class="aii-mtab${mainActive === key ? ' is-active' : ''}" role="tab" aria-selected="${mainActive === key}" data-main="${key}"><span class="aii-mtab-tx">${esc(label)}</span></button>`;
-      const mainNav = mainTab('brief', 'AI Brief') + mainTab('external', 'External Insights') + mainTab('websearch', 'Web Search');
+      const mainNav = mainTab('brief', 'AI Brief') + mainTab('external', 'Prompt Library') + mainTab('websearch', 'Web Search');
       // SUBNAV (brief sections) — shown only when AI Brief is active.
       const subNav = paths.map((pp) => `<button type="button" class="aii-stab${curGroup === pp.group ? ' is-active' : ''}" data-tab-group="${escAttr(pp.group)}">${esc(pp.tab || pp.label)}</button>`).join('');
       navHTML = `<nav class="aii-mainnav" role="tablist">${mainNav}</nav>
@@ -920,7 +920,6 @@ export function renderAIIntelligence(container, scope) {
         <div class="aii-emenu-host" data-explore-prompt="${escAttr(fiPrompt(s))}" data-explore-name="${escAttr(s.name)}"></div>
       </div>`).join('');
     return `<div class="aii-ext-block aii-fi">
-      <p class="aii-fi-intro">Dig into a specific angle — pick one to explore in the AI model of your choice.</p>
       <div class="aii-fi-acclist">${rows}</div></div>`;
   }
   // Inline-toggle for an emenu (discreet explore link, Further-Insights row): opens
