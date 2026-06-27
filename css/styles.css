@@ -16815,32 +16815,43 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
 }
 .topic-band #section-shortcuts .aii-headsub { display: none !important; }
 
-/* Paths grid (no top border — the head's border-bottom is the single separator) */
+/* Remove the outer card container — AI Insights reads as an OPEN section (header
+   + separator + tiles), like the News Feed. (revamp381) */
+.topic-band #section-shortcuts .aii {
+  border: none !important; border-radius: 0 !important; background: none !important; overflow: visible !important;
+}
+.topic-band #section-shortcuts .aii-stage { padding: 0 !important; }
+
+/* Paths grid → individual polished tiles (the container is gone, so each path is
+   its own clean card). (revamp381) */
 .topic-band #section-shortcuts .aii-bcards {
-  display: grid !important; grid-template-columns: repeat(5, 1fr) !important; gap: 0 !important;
-  border-top: none;
+  display: grid !important; grid-template-columns: repeat(5, 1fr) !important; gap: 12px !important;
+  border-top: none; padding: 16px 0 2px !important;
 }
 .topic-band #section-shortcuts .aii-bcard {
   display: flex !important; flex-direction: column; align-items: stretch; gap: 0;
-  padding: 16px 16px 38px !important; margin: 0 !important; border: none !important; border-radius: 0 !important;
-  border-left: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent) !important;
-  background: none !important; box-shadow: none !important; text-align: left; cursor: pointer; position: relative;
-  transition: background .13s ease;
+  padding: 16px 15px 42px !important; margin: 0 !important;
+  border: 1px solid var(--color-surface-border) !important; border-radius: 14px !important; border-left: 1px solid var(--color-surface-border) !important;
+  background: #fff !important; box-shadow: 0 1px 2px rgba(15,23,42,.03) !important; text-align: left; cursor: pointer; position: relative;
+  transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
 }
-.topic-band #section-shortcuts .aii-bcard:first-child { border-left: none !important; }
-.topic-band #section-shortcuts .aii-bcard:hover { background: color-mix(in srgb, var(--color-primary) 4%, #fff) !important; }
-.topic-band #section-shortcuts .aii-bcard-head { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.topic-band #section-shortcuts .aii-bcard:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 38%, var(--color-surface-border)) !important;
+  box-shadow: 0 12px 26px -16px rgba(15,23,42,.32) !important; transform: translateY(-2px);
+}
+.topic-band #section-shortcuts .aii-bcard-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .topic-band #section-shortcuts .aii-bcard-ic {
-  flex: none; width: 28px; height: 28px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
-  background: color-mix(in srgb, var(--color-primary) 7%, #fff); color: var(--color-primary);
+  flex: none; width: 32px; height: 32px; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--color-primary) 10%, #fff); color: var(--color-primary); transition: background .15s ease;
 }
-.topic-band #section-shortcuts .aii-bcard-ic svg { width: 16px; height: 16px; }
-.topic-band #section-shortcuts .aii-bcard-name { font-size: 0.92rem; font-weight: 600; color: #14213d; letter-spacing: -0.01em; line-height: 1.2; }
+.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-ic { background: color-mix(in srgb, var(--color-primary) 16%, #fff); }
+.topic-band #section-shortcuts .aii-bcard-ic svg { width: 17px; height: 17px; }
+.topic-band #section-shortcuts .aii-bcard-name { font-size: 0.95rem; font-weight: 600; color: #14213d; letter-spacing: -0.01em; line-height: 1.2; }
 .topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-name { color: var(--color-primary); }
-.topic-band #section-shortcuts .aii-bcard-sub { display: block; margin-top: 7px; font-size: 0.78rem; line-height: 1.4; color: var(--color-text-light); }
-.topic-band #section-shortcuts .aii-bcard-go { position: absolute; left: 16px; bottom: 14px; display: inline-flex; color: var(--color-text-light); transition: transform .14s, color .14s; }
+.topic-band #section-shortcuts .aii-bcard-sub { display: block; margin-top: 9px; font-size: 0.79rem; line-height: 1.45; color: var(--color-text-light); }
+.topic-band #section-shortcuts .aii-bcard-go { position: absolute; left: 15px; bottom: 15px; display: inline-flex; color: var(--color-text-light); transition: transform .14s, color .14s; }
 .topic-band #section-shortcuts .aii-bcard-go svg { width: 15px; height: 15px; }
-.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-go { color: var(--color-primary); transform: translateX(2px); }
+.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-go { color: var(--color-primary); transform: translateX(3px); }
 
 /* Mobile (<900): condensed ICON GRID — icon over a short label, no summaries. */
 @media (max-width: 899.98px) {
@@ -16880,7 +16891,14 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
   position: static !important; min-height: 0 !important;
 }
 .topic-band #section-newsfeed .newsfeed-headtext { flex: 0 0 auto; }
-.topic-band #section-newsfeed .newsfeed-logo { display: none !important; }
+/* Soft-blue icon chip matching the AI Insights & Resources header (revamp381). */
+.topic-band #section-newsfeed .newsfeed-title { gap: 0.65rem !important; }
+.topic-band #section-newsfeed .newsfeed-logo {
+  display: inline-flex !important; align-items: center; justify-content: center; flex: none;
+  width: 34px !important; height: 34px !important; border-radius: 9px !important;
+  background: color-mix(in srgb, #2563eb 13%, #fff) !important; color: #2563eb !important; box-shadow: none !important;
+}
+.topic-band #section-newsfeed .newsfeed-logo svg { width: 18px !important; height: 18px !important; color: #2563eb !important; }
 .topic-band #section-newsfeed .newsfeed-title,
 .topic-band #section-newsfeed .newsfeed-title-main {
   display: flex !important; flex-direction: row !important; align-items: center !important;
@@ -16997,11 +17015,12 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
   body.app-mode #sub-header.is-subnav:not(.home-mode) { overflow: visible !important; }
   .topic-subnav-picker { display: block; }
   .tsp-btn {
-    display: flex; align-items: center; gap: 0.55rem; width: 100%; padding: 0.4rem 0.15rem;
+    display: flex; align-items: center; justify-content: flex-start; gap: 0.45rem; width: 100%; padding: 0.4rem 0.15rem;
     border: none; background: none; box-shadow: none; cursor: pointer; text-align: left;
     font-family: var(--font-family); -webkit-tap-highlight-color: transparent;
   }
-  .tsp-btn-lead { display: flex; align-items: center; gap: 0.55rem; min-width: 0; flex: 1 1 auto; }
+  /* Chevron sits directly next to the name (not pushed to the far right). */
+  .tsp-btn-lead { display: flex; align-items: center; gap: 0.55rem; min-width: 0; flex: 0 1 auto; }
   .tsp-btn-ico {
     flex: none; width: 30px; height: 30px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
     background: var(--color-bg-light); color: var(--color-text);
@@ -17060,8 +17079,8 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
   .topic-bodyhead { display: block; position: relative; margin: 0 0 1.4rem; }
   .tbh-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
   .tbh-title {
-    margin: 0; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.03em; color: #14213d;
-    font-size: clamp(2rem, 1.4rem + 1.6vw, 2.5rem); line-height: 1.04;
+    margin: 0; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.028em; color: #14213d;
+    font-size: clamp(1.75rem, 1.3rem + 1.1vw, 2.05rem); line-height: 1.05;
   }
   .tbh-toggle {
     flex: none; width: 40px; height: 40px; border-radius: 11px; border: 1px solid var(--color-surface-border);

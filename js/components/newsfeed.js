@@ -677,13 +677,13 @@ function startFeed(ctx) {
 export function renderNewsFeed(container, topic, isHome) {
   const slug = isHome ? 'home' : (topic && topic.slug);
   const label = isHome ? '' : ((topic && topic.name) || '');
-  // Header (revamp376): a bigger, straightforward "News Feed" title — NO icon,
-  // NO card-in-card, NO search/sort controls (dropped per #303). The feed shows
-  // newest-first; archive paging continues via the "Load more" foot.
+  // Header (revamp381): big "News Feed" title with a soft-blue icon chip matching
+  // the AI Insights & Resources header. No card-in-card, no search/sort controls.
+  const FEED_ICON = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>';
   const headHTML = `
     <div class="newsfeed-head section-card-head">
       <div class="newsfeed-headtext">
-        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">News Feed</span></h3>
+        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-logo">${FEED_ICON}</span><span class="newsfeed-title-main">News Feed</span></h3>
       </div>
     </div>`;
 
