@@ -16838,10 +16838,10 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
 }
 .topic-band #section-shortcuts .aii-bcard-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .topic-band #section-shortcuts .aii-bcard-ic {
-  flex: none; width: 32px; height: 32px; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center;
-  background: color-mix(in srgb, var(--aii-accent, #2563eb) 11%, #fff); color: var(--aii-accent, #2563eb); transition: background .15s ease;
+  flex: none; width: 32px !important; height: 32px !important; border-radius: 9px !important; display: inline-flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--aii-accent, #2563eb) 11%, #fff) !important; color: var(--aii-accent, #2563eb) !important; transition: background .15s ease;
 }
-.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-ic { background: color-mix(in srgb, var(--aii-accent, #2563eb) 17%, #fff); }
+.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-ic { background: color-mix(in srgb, var(--aii-accent, #2563eb) 17%, #fff) !important; }
 .topic-band #section-shortcuts .aii-bcard-ic svg { width: 17px; height: 17px; }
 /* Per-track accent colors on the tile icons (#317). */
 .topic-band #section-shortcuts .aii-bcard-discover { --aii-accent: #2563eb; }
