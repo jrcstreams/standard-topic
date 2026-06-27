@@ -17127,6 +17127,14 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
 
 /* "View Topic Page" — subtle, pinned to the top-right of the sticky topbar. */
 .aii-modal-body .aii-view-topic { position: absolute; top: 12px; right: 0; }
+/* On narrow screens it would collide with the centered topic title — drop it
+   below the nav as a small centered link instead. */
+@media (max-width: 620px) {
+  .aii-modal-body .aii-view-topic { position: static; display: inline-flex; margin: 11px auto 0; }
+  .aii-modal-body .aii-builder-topbar { display: flex; flex-direction: column; align-items: center; }
+  .aii-modal-body .aii-builder-toprow,
+  .aii-modal-body .aii-flatnav { width: 100%; }
+}
 
 /* Body content: explore link + updated stamp at the TOP, no intro card. */
 .aii-brief-top { display: flex; align-items: center; gap: 1rem; padding: 14px 0 2px; flex-wrap: wrap; }
