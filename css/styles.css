@@ -16799,3 +16799,9 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
 /* #277: center the home "Featured" topics row in the subnav band — the banner had
    asymmetric padding (top 0.45rem / bottom ~0.65rem) so the row sat slightly high. */
 body.home-mode #sub-header.is-subnav .topic-banner { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+
+/* #284: subnav cleanup — drop the topic summary line (the description under the
+   title, shown in the mobile/tablet hero) and the "Featured" / "Related" lead
+   labels before the chip strip (home + topic subnavs). */
+#sub-header.is-subnav .topic-banner-desc { display: none !important; }
+#sub-header.is-subnav .subnav-lead-label { display: none !important; }
