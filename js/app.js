@@ -18,8 +18,8 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260616-revamp245';
 import { initInsightModal } from './components/insight-modal.js?v=20260622-revamp335';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260622-revamp366';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260622-revamp366';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260622-revamp369';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260622-revamp369';
 import { renderWebSources } from './components/websources.js?v=20260622-revamp322';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260616-revamp245';
 import { initDiscoverModal } from './components/discover-modal.js';
@@ -1675,19 +1675,13 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // folded into it as tabs, so there's no longer a separate Web Sources card —
     // then the News Feed full-width below as a responsive grid. On mobile this is a
     // single stacked scroll (no section tabs). (#layout-revamp)
-    // Topic pages: 2-column on wide screens — News Feed in the MAIN column, AI
-    // Insights in a SIDEBAR — and stacked on narrow/bottom-nav (AI Insights on
-    // top, then News Feed). The .topic-main / .topic-side wrappers are
-    // display:contents below 1024 (so the sections stack + reorder), real grid
-    // columns at ≥1024.
+    // Topic pages: a full-width stack — the AI Insights & Resources card on top,
+    // then the News Feed — at every width (#285). Direct sections (no sidebar
+    // wrappers) so the band reads as one continuous column.
     container.innerHTML = `
       <div class="topic-layout topic-band" id="topic-layout">
-        <div class="topic-main">
-          <section class="layout-section" id="section-newsfeed"></section>
-        </div>
-        <aside class="topic-side">
-          <section class="layout-section" id="section-shortcuts"></section>
-        </aside>
+        <section class="layout-section" id="section-shortcuts"></section>
+        <section class="layout-section" id="section-newsfeed"></section>
       </div>
     `;
   }

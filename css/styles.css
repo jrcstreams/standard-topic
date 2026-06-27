@@ -16806,3 +16806,70 @@ body.home-mode #sub-header.is-subnav .topic-banner { padding-top: 0.5rem !import
 body.app-mode #sub-header.is-subnav .topic-banner .topic-banner-desc { display: none !important; }
 body.app-mode #sub-header.is-subnav .topic-banner .subnav-lead-label,
 body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display: none !important; }
+
+/* ═══ AI Insights & Resources card redesign (revamp369) ═══════════════════════
+   Full-width card on top of the topic band: blue-sparkle header + "How it works",
+   then the 5 paths as a HORIZONTAL row on desktop (icon inline with title,
+   summary below, arrow) and a condensed ICON GRID on mobile (icon over a short
+   label, no summaries). */
+/* Header */
+.topic-band #section-shortcuts .aii-head { padding: 15px 20px 13px; }
+.topic-band #section-shortcuts .aii-head-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.topic-band #section-shortcuts .aii-logo {
+  width: 30px !important; height: 30px !important; border-radius: 9px !important;
+  background: color-mix(in srgb, #2563eb 13%, #fff) !important; color: #2563eb !important; box-shadow: none !important;
+}
+.topic-band #section-shortcuts .aii-logo svg { width: 17px !important; height: 17px !important; color: #2563eb !important; }
+.topic-band #section-shortcuts .aii-brand { color: #14213d !important; }
+.topic-band #section-shortcuts .aii-headsub { display: block !important; margin: 5px 0 0 !important; font-size: 0.86rem; color: var(--color-text-muted); }
+.aii-howto { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; padding: 6px 12px; border: 1px solid var(--color-surface-border); border-radius: 999px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.77rem; font-weight: 600; color: var(--color-text-muted); transition: border-color .14s, color .14s; }
+.aii-howto:hover { border-color: #95a8c5; color: var(--color-primary); }
+.aii-howto-panel { margin: 9px 0 0; padding: 11px 13px; border-radius: 10px; background: color-mix(in srgb, var(--color-primary) 4%, #fff); font-size: 0.84rem; line-height: 1.5; color: var(--color-text-muted); }
+.aii-howto-panel[hidden] { display: none; }
+
+/* Paths grid */
+.topic-band #section-shortcuts .aii-bcards {
+  display: grid !important; grid-template-columns: repeat(5, 1fr) !important; gap: 0 !important;
+  border-top: 1px solid var(--color-surface-border);
+}
+.topic-band #section-shortcuts .aii-bcard {
+  display: flex !important; flex-direction: column; align-items: stretch; gap: 0;
+  padding: 16px 16px 38px !important; margin: 0 !important; border: none !important; border-radius: 0 !important;
+  border-left: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent) !important;
+  background: none !important; box-shadow: none !important; text-align: left; cursor: pointer; position: relative;
+  transition: background .13s ease;
+}
+.topic-band #section-shortcuts .aii-bcard:first-child { border-left: none !important; }
+.topic-band #section-shortcuts .aii-bcard:hover { background: color-mix(in srgb, var(--color-primary) 4%, #fff) !important; }
+.topic-band #section-shortcuts .aii-bcard-head { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.topic-band #section-shortcuts .aii-bcard-ic {
+  flex: none; width: 28px; height: 28px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--color-primary) 7%, #fff); color: var(--color-primary);
+}
+.topic-band #section-shortcuts .aii-bcard-ic svg { width: 16px; height: 16px; }
+.topic-band #section-shortcuts .aii-bcard-name { font-size: 0.92rem; font-weight: 600; color: #14213d; letter-spacing: -0.01em; line-height: 1.2; }
+.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-name { color: var(--color-primary); }
+.topic-band #section-shortcuts .aii-bcard-sub { display: block; margin-top: 7px; font-size: 0.78rem; line-height: 1.4; color: var(--color-text-light); }
+.topic-band #section-shortcuts .aii-bcard-go { position: absolute; left: 16px; bottom: 14px; display: inline-flex; color: var(--color-text-light); transition: transform .14s, color .14s; }
+.topic-band #section-shortcuts .aii-bcard-go svg { width: 15px; height: 15px; }
+.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-go { color: var(--color-primary); transform: translateX(2px); }
+
+/* Mobile (<900): condensed ICON GRID — icon over a short label, no summaries. */
+@media (max-width: 899.98px) {
+  .topic-band #section-shortcuts .aii-head { padding: 13px 15px 11px; }
+  .topic-band #section-shortcuts .aii-bcards {
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)) !important;
+    gap: 8px !important; border-top: none; padding: 2px 13px 15px;
+  }
+  .topic-band #section-shortcuts .aii-bcard {
+    align-items: center !important; padding: 13px 8px !important;
+    border: 1px solid var(--color-surface-border) !important; border-radius: 12px !important;
+    min-height: 0;
+  }
+  .topic-band #section-shortcuts .aii-bcard-head { flex-direction: column; align-items: center; gap: 7px; text-align: center; }
+  .topic-band #section-shortcuts .aii-bcard-ic { width: 34px; height: 34px; border-radius: 10px; }
+  .topic-band #section-shortcuts .aii-bcard-ic svg { width: 18px; height: 18px; }
+  .topic-band #section-shortcuts .aii-bcard-name { font-size: 0.78rem; text-align: center; line-height: 1.2; }
+  .topic-band #section-shortcuts .aii-bcard-sub { display: none !important; }
+  .topic-band #section-shortcuts .aii-bcard-go { display: none !important; }
+}

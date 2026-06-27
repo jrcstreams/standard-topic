@@ -389,8 +389,12 @@ export function renderAIIntelligence(container, scope) {
   container.innerHTML = `
     <div class="aii${tabMode ? ' aii-tabmode' : ''}${flowMode ? ' aii-flow' : ''}${launcher ? ' aii-launcher' : ''}${launcher && scope.topic === 'home' ? ' aii-launcher-cta' : ''}">
       <div class="aii-head">
-        <div class="aii-head-top"><span class="aii-logo">${LOGO}</span><span class="aii-brand">AI Insights</span></div>
-        <p class="aii-headsub">Pick a path and explore live AI insights.</p>
+        <div class="aii-head-row">
+          <div class="aii-head-top"><span class="aii-logo">${LOGO}</span><span class="aii-brand">AI Insights &amp; Resources</span></div>
+          ${launcher && scope.topic !== 'home' ? `<button type="button" class="aii-howto" data-aii-howto aria-expanded="false"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span>How it works</span></button>` : ''}
+        </div>
+        <p class="aii-headsub">Get the perspectives and tools you need to stay ahead.</p>
+        <div class="aii-howto-panel" data-aii-howto-panel hidden>Pick a path below to open a grounded, AI-generated brief on this topic — refreshed regularly and cited to real sources. <strong>Prompt Library</strong> gives you ready-made prompts to run in your own AI model, and <strong>Web Search</strong> jumps you to the topic across the web's primary sources.</div>
       </div>
       ${flowMode ? '<div class="aii-topbar" data-topbar hidden></div>' : ''}
       <div class="aii-stage" data-view="paths"></div>
@@ -563,12 +567,12 @@ export function renderAIIntelligence(container, scope) {
   // Analysis / 101 Resources). The WHOLE card opens the modal straight to that
   // group's master-prompt insight — no track→section picker.
   function builderCardHTML(p) {
+    // Icon sits INLINE with the title (head row); the summary sits BELOW. Desktop
+    // = a horizontal row of these; mobile = a condensed icon grid (icon over the
+    // label, summary hidden) — both driven by CSS off this one markup.
     return `<button type="button" class="aii-bcard aii-bcard-${escAttr(p.group)}" data-builder-open data-group="${escAttr(p.group)}">
-      <span class="aii-bcard-ic">${ICONS[p.group] || ICONS._}</span>
-      <span class="aii-bcard-tx">
-        <span class="aii-bcard-name">${esc(p.tab || p.label)}</span>
-        ${p.subtitle ? `<span class="aii-bcard-sub">${esc(p.subtitle)}</span>` : ''}
-      </span>
+      <span class="aii-bcard-head"><span class="aii-bcard-ic">${ICONS[p.group] || ICONS._}</span><span class="aii-bcard-name">${esc(p.tab || p.label)}</span></span>
+      ${p.subtitle ? `<span class="aii-bcard-sub">${esc(p.subtitle)}</span>` : ''}
       <span class="aii-bcard-go" aria-hidden="true">${RIGHT_ARROW}</span>
     </button>`;
   }
@@ -1504,6 +1508,14 @@ export function renderAIIntelligence(container, scope) {
       // "Or search any topic or term" → opens the modal at Step 1 (the picker + search).
       stage.querySelector('[data-aii-search]')?.addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: { pickTopic: true } })));
     }
+    // "How it works" toggle (topic launcher head) — reveals a one-paragraph explainer.
+    const howBtn = container.querySelector('[data-aii-howto]');
+    const howPanel = container.querySelector('[data-aii-howto-panel]');
+    if (howBtn && howPanel) howBtn.addEventListener('click', () => {
+      const open = howPanel.hasAttribute('hidden');
+      if (open) howPanel.removeAttribute('hidden'); else howPanel.setAttribute('hidden', '');
+      howBtn.setAttribute('aria-expanded', String(open));
+    });
   } else if (flowMode && scope.pickTopic) {
     // Modal entered "anew" (bottom nav / homepage CTA) → Step 1: pick a topic.
     go('topic', 'fwd');
