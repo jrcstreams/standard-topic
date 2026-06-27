@@ -9,7 +9,7 @@
 //               AI Intelligence" handles switching PATHS.
 //
 // Participates in the global single-modal coordinator (`close-all-modals`).
-import { renderAIIntelligence } from './ai-intelligence.js?v=20260627-revamp378';
+import { renderAIIntelligence } from './ai-intelligence.js?v=20260627-revamp379';
 import { getFeaturedTopics, getAllTopics, getTopicBySlug, getShortcutsForTopic } from '../utils/data.js';
 
 let overlayEl = null;
@@ -106,7 +106,12 @@ function scopeFor(topic, label, group, opts) {
 // logo + "AI Insights" in the top-left corner. Called by the component via onView.
 function setChrome(view) {
   if (!panelEl) return;
-  panelEl.classList.toggle('is-intro', view === 'topic');
+  const isPicker = view === 'topic';
+  panelEl.classList.toggle('is-intro', isPicker);
+  const sub = panelEl.querySelector('[data-modal-sub]');
+  if (sub) sub.textContent = isPicker
+    ? 'Search any term or browse by topic.'
+    : 'Get the perspectives and tools you need to stay ahead.';
 }
 
 function renderBody(scope) {
@@ -129,22 +134,25 @@ function open(detail) {
   pickerMode = !detail.topic || !!detail.pickTopic;
   const baseTopic = detail.topic || 'home';
   current = { topic: baseTopic, label: detail.label };
-  // The head carries BOTH chromes (CSS shows one at a time via `.is-intro`):
-  //  • compact  — logo + "AI Insights" top-left (drilled into a path/insight)
-  //  • intro    — centered logo badge + title + subtitle (Step 1 topic picker),
-  //               matching the Search / Trending modal title cards.
+  // Single CENTERED identity (revamp379): "AI Insights" + a one-line description,
+  // like the All Topics modal. The topic switcher + flat nav live in the body
+  // (the component). On scroll the description condenses away (.is-scrolled).
   panelEl.innerHTML = `
     <div class="aii-modal-head">
       <button type="button" class="aii-modal-close" aria-label="Close">${X}</button>
-      <div class="aii-modal-head-id"><span class="aii-modal-logo">${LOGO}</span><h2 class="aii-modal-title">AI Insights</h2></div>
-      <div class="aii-modal-introhead">
-        <div class="aii-modal-introtitlerow"><span class="aii-modal-intrologo">${LOGO}</span><h2 class="aii-modal-introtitle">AI Insights</h2></div>
-        <p class="aii-modal-introsub">Search any term or browse by topic.</p>
+      <div class="aii-modal-id">
+        <div class="aii-modal-id-row"><span class="aii-modal-logo">${LOGO}</span><h2 class="aii-modal-title">AI Insights</h2></div>
+        <p class="aii-modal-sub" data-modal-sub>Get the perspectives and tools you need to stay ahead.</p>
       </div>
     </div>
     <div class="aii-modal-body"></div>`;
 
   panelEl.querySelector('.aii-modal-close').addEventListener('click', close);
+  // Condense the head (drop the description) once the body scrolls — smooth.
+  const bodyScroll = panelEl.querySelector('.aii-modal-body');
+  bodyScroll.addEventListener('scroll', () => {
+    panelEl.classList.toggle('is-scrolled', bodyScroll.scrollTop > 8);
+  }, { passive: true });
   // Pre-set the chrome so there's no flash before the component's first onView.
   setChrome(pickerMode && !detail.topic ? 'topic' : 'paths');
 

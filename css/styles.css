@@ -17077,3 +17077,59 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
   /* body-header panel drops from the toggle, right-aligned */
   .topic-bodyhead .tsp-panelwrap { left: auto; right: 0; width: 340px; top: calc(100% + 4px); }
 }
+
+/* ═══ AI Insights modal redesign (revamp379) ═════════════════════════════════
+   Centered identity (like the All Topics modal): "AI Insights" + a one-line
+   description on top, then a centered topic switcher + a FLAT nav of the five
+   destinations (no "AI Brief" grouping), then the section content (no intro
+   card). On scroll the description condenses away. */
+.aii-modal-head {
+  flex-direction: column !important; align-items: center !important; text-align: center; gap: 0 !important;
+  padding: 1.3rem 2.8rem 1rem !important;
+}
+.aii-modal-id { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; width: 100%; }
+.aii-modal-id-row { display: inline-flex; align-items: center; gap: 0.55rem; }
+.aii-modal-head .aii-modal-logo { width: 28px !important; height: 28px !important; border-radius: 8px !important; }
+.aii-modal-head .aii-modal-logo svg { width: 15px; height: 15px; }
+.aii-modal-head .aii-modal-title {
+  font-size: 1.32rem !important; font-weight: 700 !important; letter-spacing: -0.025em !important;
+  color: var(--color-primary) !important; transition: font-size .24s ease;
+}
+.aii-modal-sub {
+  margin: 0; font-size: 0.88rem; line-height: 1.45; color: var(--color-text-muted); max-width: 48ch;
+  transition: max-height .26s ease, opacity .18s ease, margin .26s ease; max-height: 3rem;
+}
+/* Scroll-condense */
+.aii-modal-panel.is-scrolled .aii-modal-head { padding-top: 0.72rem !important; padding-bottom: 0.72rem !important; }
+.aii-modal-panel.is-scrolled .aii-modal-sub { max-height: 0; opacity: 0; margin: 0; overflow: hidden; pointer-events: none; }
+.aii-modal-panel.is-scrolled .aii-modal-head .aii-modal-title { font-size: 1.04rem !important; }
+
+/* Body topbar: centered topic switcher + flat nav. */
+.aii-modal-body .aii-builder-topbar { text-align: center; }
+.aii-modal-body .aii-builder-toprow { justify-content: center !important; }
+.aii-modal-body .aii-builder-topic { font-size: clamp(1.4rem, 1.1rem + 1vw, 1.7rem) !important; }
+.aii-modal-body .aii-builder-topic--btn { justify-content: center; }
+
+/* Flat nav — a clean tab row (left by default; centered in the modal). */
+.aii-flatnav { display: flex; flex-wrap: wrap; gap: 0.3rem 1.5rem; margin-top: 14px; }
+.aii-modal-body .aii-flatnav { justify-content: center; }
+.aii-ftab {
+  border: none; background: none; cursor: pointer; font-family: var(--font-family);
+  font-size: 0.95rem; font-weight: 600; color: var(--color-text-muted); padding: 4px 2px 10px;
+  position: relative; transition: color .14s; white-space: nowrap;
+}
+.aii-ftab:hover { color: var(--color-text); }
+.aii-ftab.is-active { color: var(--color-primary); }
+.aii-ftab.is-active::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
+  background: var(--color-primary); border-radius: 2px;
+}
+
+/* "View Topic Page" — subtle, pinned to the top-right of the sticky topbar. */
+.aii-modal-body .aii-view-topic { position: absolute; top: 12px; right: 0; }
+
+/* Body content: explore link + updated stamp at the TOP, no intro card. */
+.aii-brief-top { display: flex; align-items: center; gap: 1rem; padding: 14px 0 2px; flex-wrap: wrap; }
+.aii-brief-top .aii-brief-explore-wrap { margin: 0; }
+.aii-brief-top .aii-brief-meta { font-size: 0.78rem; color: var(--color-text-light); margin-left: auto; white-space: nowrap; }
+.aii-brief-top:empty { display: none; }

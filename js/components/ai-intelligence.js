@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260627-revamp378';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260627-revamp378';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260627-revamp379';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260627-revamp379';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -744,73 +744,35 @@ export function renderAIIntelligence(container, scope) {
   // insight body as im-msec sections, a "Further Insights" drill-down (the original
   // shortcuts → pick a model + explore), then Sources.
   function builderHTML() {
-    const p = builderTabs().find((x) => x.group === curGroup) || {};
-    const bc = builderCache[curGroup];
-    const updated = (bc && bc.generatedAt) ? `<span class="aii-brief-updated">Updated ${esc(relTime(bc.generatedAt))}</span>` : '';
-    // Tabs: the 4 builders, then "Web Search" + "External Insights" (last) — the
-    // two static (non-AI) tabs. Monochrome editorial tabs; active is emphasised.
     const isStatic = isStaticGroup(curGroup);
-    const onBrief = isBriefGroup(curGroup);
     const exPrompt = explorePrompt();
-    // ── Navigation ──────────────────────────────────────────────────────────
-    let navHTML;
-    if (twoLevelNav()) {
-      // MAIN nav (underlined text tabs): AI Brief / External Insights / Web Search.
-      const mainActive = onBrief ? 'brief' : curGroup;   // 'external' | 'websearch'
-      const mainTab = (key, label) => `<button type="button" class="aii-mtab${mainActive === key ? ' is-active' : ''}" role="tab" aria-selected="${mainActive === key}" data-main="${key}"><span class="aii-mtab-tx">${esc(label)}</span></button>`;
-      const mainNav = mainTab('brief', 'AI Brief') + mainTab('external', 'Prompt Library') + mainTab('websearch', 'Web Search');
-      // SUBNAV (brief sections) — shown only when AI Brief is active.
-      const subNav = paths.map((pp) => `<button type="button" class="aii-stab${curGroup === pp.group ? ' is-active' : ''}" data-tab-group="${escAttr(pp.group)}">${esc(pp.tab || pp.label)}</button>`).join('');
-      navHTML = `<nav class="aii-mainnav" role="tablist">${mainNav}</nav>
-        <nav class="aii-subnav"${onBrief ? '' : ' hidden'} data-subnav role="tablist">${subNav}</nav>`;
-    } else {
-      // Custom search etc.: flat single-row pill tabs (no AI-brief grouping).
-      const tabs = builderTabs().map((x) => `<button type="button" class="aii-tab${x.group === curGroup ? ' is-active' : ''}" role="tab" aria-selected="${x.group === curGroup}" data-tab-group="${escAttr(x.group)}"><span class="aii-tab-tx">${esc(x.tab || x.label)}</span></button>`).join('');
-      navHTML = `<div class="aii-tabs aii-tabs--pills" role="tablist">${tabs}</div>`;
-    }
-    // Topic name = editorial hero title + a caret to switch topics; a discreet
-    // right-aligned "View Topic Page" link sits opposite it.
-    // scope.lockTopic (custom search): the term is fixed by the search bar above
-    // the card, so render the topic name plain — no re-pick caret/picker.
+    // ── FLAT nav (revamp379): every destination in one row — Get Caught Up,
+    // Deep Dive, 101 Resources, Web Search, Prompt Library. No "AI Brief" group. ─
+    const tabs = builderTabs().map((x) => `<button type="button" class="aii-ftab${x.group === curGroup ? ' is-active' : ''}" role="tab" aria-selected="${x.group === curGroup}" data-tab-group="${escAttr(x.group)}">${esc(x.tab || x.label)}</button>`).join('');
+    const navHTML = `<nav class="aii-flatnav" role="tablist">${tabs}</nav>`;
+    // Centered topic switcher (caret opens the topic picker). Locked for custom search.
     const topicEl = scope.lockTopic
       ? `<div class="aii-builder-topic aii-builder-topic--locked"><span class="aii-builder-topic-tx">${esc(topicTitle)}</span></div>`
       : `<button type="button" class="aii-builder-topic aii-builder-topic--btn" data-repick aria-label="Change topic"><span class="aii-builder-topic-tx">${esc(topicTitle)}</span><span class="aii-topic-caret" aria-hidden="true">${CHEV}</span></button>`;
     const viewLink = scope.topicKey ? `<button type="button" class="aii-view-topic" data-view-topic>View Topic Page${RIGHT_ARROW}</button>` : '';
-    // ── Section card / intro ────────────────────────────────────────────────
-    const exploreWrap = `<div class="aii-brief-explore-wrap"${isStatic ? ' hidden' : ''} data-explore-wrap>
-        <button type="button" class="aii-brief-explore" data-explore-toggle aria-expanded="false">${ICON_ASK}<span>Explore further with external AI models</span>${CHEV}</button>
-        <div class="aii-emenu-host" data-explore-prompt="${escAttr(exPrompt)}" data-explore-name="${escAttr(curSectionName())}"></div>
-      </div>`;
-    // Brief sections get the rich card/intro (icon chip + eyebrow + tagline title +
-    // description + explore). External/Web Search + custom keep the compact header.
-    const headHTML = (twoLevelNav() && onBrief)
-      ? `<div class="aii-sec-card" data-sec-card>
-          <span class="aii-sec-card-ic" data-sec-title-ic>${builderTabIcon(curGroup)}</span>
-          <div class="aii-sec-card-tx">
-            <div class="aii-sec-card-titlerow">
-              <h2 class="aii-sec-card-title" data-sec-card-title>${esc(p.tab || p.label || '')}</h2>
-              <span class="aii-brief-meta" data-brief-meta>${updated}</span>
-            </div>
-            ${p.cardTitle ? `<p class="aii-sec-card-tag">${esc(p.cardTitle)}</p>` : ''}
-            <p class="aii-sec-card-sub" data-brief-sum>${esc(p.subtitle || '')}</p>
-            ${exploreWrap}
-          </div>
-        </div>`
-      : `<div class="aii-bhead">
-          <div class="aii-sectitle"><span class="aii-sectitle-ic" data-sec-title-ic>${builderTabIcon(curGroup)}</span><h2 class="aii-sectitle-name" data-sec-title-name>${esc(p.tab || p.label || '')}</h2><span class="aii-brief-meta" data-brief-meta>${isStatic ? '' : updated}</span></div>
-          <p class="aii-brief-sum" data-brief-sum>${esc(p.subtitle || '')}</p>
-          ${exploreWrap}
-        </div>`;
-    return `<div class="aii-sub aii-content aii-content--modal aii-builder${twoLevelNav() ? ' aii-builder--2lvl' : ''}">
-      <div class="aii-builder-topbar">
-        <div class="aii-builder-toprow">
-          ${topicEl}
-          ${viewLink}
+    // No per-section intro card anymore — the nav supplies the section identity and
+    // the top summary describes the modal. "Explore further" moves to the TOP of the
+    // body (brief groups only), above the first section.
+    const briefTop = isStatic ? '' : `<div class="aii-brief-top">
+        <div class="aii-brief-explore-wrap" data-explore-wrap>
+          <button type="button" class="aii-brief-explore" data-explore-toggle aria-expanded="false">${ICON_ASK}<span>Explore further with external AI models</span>${CHEV}</button>
+          <div class="aii-emenu-host" data-explore-prompt="${escAttr(exPrompt)}" data-explore-name="${escAttr(curSectionName())}"></div>
         </div>
+        <span class="aii-brief-meta" data-brief-meta></span>
+      </div>`;
+    return `<div class="aii-sub aii-content aii-content--modal aii-builder aii-builder--flat">
+      <div class="aii-builder-topbar">
+        <div class="aii-builder-toprow">${topicEl}</div>
         ${navHTML}
+        ${viewLink}
       </div>
       <div class="aii-builder-secs">
-        ${headHTML}
+        ${briefTop}
         <div data-aii-builder>${genLoaderHTML()}</div>
       </div>
     </div>`;
@@ -1402,10 +1364,8 @@ export function renderAIIntelligence(container, scope) {
     // wire the head's Back / Prev·Next BUILDER links.
     if (flowMode && view === 'builder') {
       fillAiiBuilder();
-      // Flat tabs (custom search) + subnav tabs (two-level) share data-tab-group.
-      stage.querySelectorAll('.aii-tab, .aii-stab').forEach((t) => t.addEventListener('click', () => switchBuilder(t.dataset.tabGroup)));
-      // Main nav (two-level): AI Brief / External Insights / Web Search.
-      stage.querySelectorAll('.aii-mtab').forEach((t) => t.addEventListener('click', () => switchMain(t.dataset.main)));
+      // Flat nav tabs (revamp379) — every destination switches the builder directly.
+      stage.querySelectorAll('.aii-ftab, .aii-tab, .aii-stab').forEach((t) => t.addEventListener('click', () => switchBuilder(t.dataset.tabGroup)));
       stage.querySelector('[data-repick]')?.addEventListener('click', () => { pickerReturnGroup = curGroup; go('topic', 'back'); });
       // Discreet "View Topic Page" link → close the modal onto that topic's page.
       stage.querySelector('[data-view-topic]')?.addEventListener('click', () => {
