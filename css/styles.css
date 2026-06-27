@@ -16803,5 +16803,6 @@ body.home-mode #sub-header.is-subnav .topic-banner { padding-top: 0.5rem !import
 /* #284: subnav cleanup — drop the topic summary line (the description under the
    title, shown in the mobile/tablet hero) and the "Featured" / "Related" lead
    labels before the chip strip (home + topic subnavs). */
-#sub-header.is-subnav .topic-banner-desc { display: none !important; }
-#sub-header.is-subnav .subnav-lead-label { display: none !important; }
+body.app-mode #sub-header.is-subnav .topic-banner .topic-banner-desc { display: none !important; }
+body.app-mode #sub-header.is-subnav .topic-banner .subnav-lead-label,
+body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display: none !important; }
