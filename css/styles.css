@@ -16918,18 +16918,20 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
 
 @media (max-width: 899.98px) {
   /* Swap: hide the title group + hero icon + chip strip; the picker becomes the
-     band's identity-and-selector control. */
-  body.app-mode #sub-header.is-subnav .topic-hero-ico,
-  body.app-mode #sub-header.is-subnav .topic-banner-titlegroup,
-  body.app-mode #sub-header.is-subnav .topic-hero-related { display: none !important; }
+     band's identity-and-selector control. The :not(.home-mode) raises specificity
+     to (1,4,1) to beat the existing flex/show rules at that weight (later source
+     order then wins). */
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-hero-ico,
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-titlegroup,
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-hero-related { display: none !important; }
 
   /* Row → single block so the picker spans the band; allow the dropdown to
      overflow the band instead of being clipped. */
-  body.app-mode #sub-header.is-subnav .topic-banner-row:has(.topic-subnav-picker) {
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-row:has(.topic-subnav-picker) {
     display: block !important; grid-template-columns: none !important; position: relative;
   }
-  body.app-mode #sub-header.is-subnav .topic-banner { padding: 0.5rem 1rem !important; overflow: visible !important; }
-  body.app-mode #sub-header.is-subnav { overflow: visible !important; }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner { padding: 0.5rem 1rem !important; overflow: visible !important; }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) { overflow: visible !important; }
 
   .topic-subnav-picker { display: block; position: relative; }
 
