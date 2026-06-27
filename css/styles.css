@@ -16914,114 +16914,162 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
   .topic-band #section-newsfeed .news-list { padding-left: 0 !important; padding-right: 0 !important; }
 }
 
-/* ═══ Mobile subnav topic picker (revamp373) ═════════════════════════════════
-   Replaces the related-topic chip strip on small screens (≤899.98 — phones +
-   iPad portrait) with a smooth dropdown/accordion: tap the current topic to
-   reveal its family (parent "Overview" + sibling/subtopic list, active row
-   highlighted) plus a prominent "View all topics" action. Desktop (≥900) is
-   untouched — the picker is display:none and the inline chip strip shows. */
-.topic-subnav-picker { display: none; }
+/* ═══ Topic picker + desktop body header (revamp377) ═════════════════════════
+   The topic identity is no longer a bordered "bubble" button — the band/header
+   IS the control. Two surfaces share one dropdown panel (Home + View All Topics
+   + the topic family):
+     • MOBILE (<900): the subnav band button (icon + title + chevron).
+     • DESKTOP (≥900): a prominent BODY header (big title + subtopic links +
+       chevron) at the top of the page; the top subnav band is hidden until you
+       scroll, when it slides in as a compact sticky picker bar. */
+.topic-subnav-picker { position: relative; }
+.tsp-chev { flex: none; color: var(--color-text-muted); transition: transform .3s cubic-bezier(.4,0,.2,1); }
+.topic-subnav-picker.is-open .tsp-chev { transform: rotate(180deg); }
 
+/* ── Shared dropdown panel ─────────────────────────────────────────────────── */
+.tsp-panelwrap {
+  position: absolute; top: calc(100% + 7px); left: 0; right: 0; z-index: 60;
+  display: grid; grid-template-rows: 0fr;
+  opacity: 0; pointer-events: none; transform: translateY(-5px);
+  transition: grid-template-rows .3s cubic-bezier(.4,0,.2,1), opacity .2s ease, transform .3s cubic-bezier(.4,0,.2,1);
+}
+.topic-subnav-picker.is-open .tsp-panelwrap { grid-template-rows: 1fr; opacity: 1; pointer-events: auto; transform: translateY(0); }
+.tsp-panel {
+  overflow: hidden; min-height: 0; border: 1px solid var(--color-surface-border); border-radius: 14px;
+  background: #fff; box-shadow: 0 20px 44px -20px rgba(15,23,42,.45), 0 6px 16px -10px rgba(15,23,42,.25);
+}
+.tsp-panel-inner {
+  padding: 8px; max-height: min(64vh, calc(100dvh - 150px));
+  overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+}
+/* Home + View All Topics action buttons */
+.tsp-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 9px; }
+.tsp-action {
+  display: flex; align-items: center; justify-content: center; gap: 0.45rem; padding: 0.62rem 0.5rem; border-radius: 10px;
+  border: 1px solid var(--color-surface-border); background: var(--color-bg-light); color: var(--color-text);
+  font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; text-decoration: none;
+  transition: border-color .14s, background .14s, color .14s; -webkit-tap-highlight-color: transparent;
+}
+.tsp-action svg { flex: none; color: var(--color-text-muted); transition: color .14s; }
+.tsp-action:hover { border-color: #aab6c9; background: #fff; color: var(--color-primary); }
+.tsp-action:hover svg { color: var(--color-primary); }
+/* Family hierarchy: parent "Overview" header over indented children with a rail */
+.tsp-item {
+  display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.6rem; border-radius: 10px;
+  text-decoration: none; color: var(--color-text); transition: background .12s; position: relative;
+}
+.tsp-item:hover { background: var(--color-bg-light); }
+.tsp-item-ico {
+  flex: none; width: 28px; height: 28px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
+  background: var(--color-bg-light); color: var(--color-text-muted);
+}
+.tsp-item-ico .tsp-ic-svg { width: 16px; height: 16px; }
+.tsp-item-name { flex: 1 1 auto; min-width: 0; font-size: 0.95rem; font-weight: 500; }
+.tsp-tag {
+  flex: none; font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;
+  color: var(--color-text-muted); background: var(--color-bg-light); padding: 0.12rem 0.4rem; border-radius: 5px;
+}
+.tsp-item-check { flex: none; color: var(--color-primary); display: inline-flex; }
+.tsp-item.is-active { background: color-mix(in srgb, var(--color-primary) 8%, #fff); }
+.tsp-item.is-active .tsp-item-name { color: var(--color-primary); font-weight: 600; }
+.tsp-item.is-active .tsp-item-ico { background: color-mix(in srgb, var(--color-primary) 14%, #fff); color: var(--color-primary); }
+.tsp-parent .tsp-item-name { font-weight: 700; }
+.tsp-list {
+  margin-top: 3px; padding-top: 4px; padding-left: 16px; position: relative;
+  border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent);
+  display: flex; flex-direction: column; gap: 1px;
+}
+.tsp-list::before {
+  content: ''; position: absolute; left: 21px; top: 8px; bottom: 8px; width: 2px;
+  background: color-mix(in srgb, var(--color-surface-border) 85%, transparent); border-radius: 2px;
+}
+
+/* ── MOBILE (<900): band IS the button — no bubble. Body header hidden. ─────── */
 @media (max-width: 899.98px) {
-  /* Swap: hide the title group + hero icon + chip strip; the picker becomes the
-     band's identity-and-selector control. The :not(.home-mode) raises specificity
-     to (1,4,1) to beat the existing flex/show rules at that weight (later source
-     order then wins). */
+  .topic-bodyhead { display: none !important; }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-hero-ico,
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-titlegroup,
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-hero-related { display: none !important; }
-
-  /* Row → single block so the picker spans the band; allow the dropdown to
-     overflow the band instead of being clipped. */
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-row:has(.topic-subnav-picker) {
     display: block !important; grid-template-columns: none !important; position: relative;
   }
-  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner { padding: 0.5rem 1rem !important; overflow: visible !important; }
+  body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner { padding: 0.42rem 1rem !important; overflow: visible !important; }
   body.app-mode #sub-header.is-subnav:not(.home-mode) { overflow: visible !important; }
-
-  .topic-subnav-picker { display: block; position: relative; }
-
-  /* Trigger — the current topic shown as a selector value. */
+  .topic-subnav-picker { display: block; }
   .tsp-btn {
-    display: flex; align-items: center; gap: 0.6rem; width: 100%;
-    padding: 0.46rem 0.6rem; border: 1px solid var(--color-surface-border); border-radius: 12px;
-    background: #fff; cursor: pointer; font-family: var(--font-family); text-align: left;
-    box-shadow: 0 1px 2px rgba(15,23,42,.04); transition: border-color .14s, box-shadow .14s;
-    -webkit-tap-highlight-color: transparent;
+    display: flex; align-items: center; gap: 0.55rem; width: 100%; padding: 0.4rem 0.15rem;
+    border: none; background: none; box-shadow: none; cursor: pointer; text-align: left;
+    font-family: var(--font-family); -webkit-tap-highlight-color: transparent;
   }
-  .tsp-btn:hover, .topic-subnav-picker.is-open .tsp-btn { border-color: #aab6c9; }
-  .topic-subnav-picker.is-open .tsp-btn { box-shadow: 0 2px 8px -4px rgba(15,23,42,.18); }
   .tsp-btn-lead { display: flex; align-items: center; gap: 0.55rem; min-width: 0; flex: 1 1 auto; }
   .tsp-btn-ico {
     flex: none; width: 30px; height: 30px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
-    background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: var(--color-primary);
+    background: var(--color-bg-light); color: var(--color-text);
   }
   .tsp-btn-ico .tsp-ic-svg { width: 17px; height: 17px; }
   .tsp-btn-name {
-    font-family: var(--font-display); font-size: 1.08rem; font-weight: 600; letter-spacing: -0.01em;
+    font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; letter-spacing: -0.015em;
     color: #14213d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
   }
-  .tsp-chev { flex: none; color: var(--color-text-muted); transition: transform .3s cubic-bezier(.4,0,.2,1); }
-  .topic-subnav-picker.is-open .tsp-chev { transform: rotate(180deg); }
+}
 
-  /* Dropdown panel — absolute overlay; height + fade + slide animated for an
-     extremely smooth open. */
-  .tsp-panelwrap {
-    position: absolute; top: calc(100% + 7px); left: 0; right: 0; z-index: 60;
-    display: grid; grid-template-rows: 0fr;
-    opacity: 0; pointer-events: none; transform: translateY(-5px);
-    transition: grid-template-rows .3s cubic-bezier(.4,0,.2,1), opacity .2s ease, transform .3s cubic-bezier(.4,0,.2,1);
-  }
-  .topic-subnav-picker.is-open .tsp-panelwrap {
-    grid-template-rows: 1fr; opacity: 1; pointer-events: auto; transform: translateY(0);
-  }
-  .tsp-panel {
-    overflow: hidden; min-height: 0; border: 1px solid var(--color-surface-border); border-radius: 14px;
-    background: #fff; box-shadow: 0 20px 44px -20px rgba(15,23,42,.45), 0 6px 16px -10px rgba(15,23,42,.25);
-  }
-  /* Cap the panel so a large topic family stays inside the viewport (above the
-     bottom nav) and scrolls internally — the "View all topics" CTA stays
-     reachable instead of running off-screen. */
-  .tsp-panel-inner {
-    padding: 7px; max-height: min(64vh, calc(100dvh - 150px));
-    overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
-  }
+/* ── DESKTOP (≥900): body topic header + scroll-in sticky picker bar ────────── */
+@media (min-width: 900px) {
+  /* No reserved subnav space — the body header leads the page (the band is fixed
+     + hidden by default, so don't pad content for it). */
+  body.app-mode:not(.home-mode).has-subnav #content { padding-top: calc(var(--nav-h) + 1.4rem) !important; }
 
-  /* Family rows */
-  .tsp-item {
-    display: flex; align-items: center; gap: 0.6rem; padding: 0.58rem 0.6rem; border-radius: 10px;
-    text-decoration: none; color: var(--color-text); transition: background .12s; position: relative;
+  /* The subnav band: hidden by default, slides in as a sticky bar on scroll. */
+  body.app-mode:not(.home-mode) #sub-header.is-subnav {
+    transform: translateY(-101%); opacity: 0; pointer-events: none;
+    transition: transform .26s cubic-bezier(.4,0,.2,1), opacity .2s ease;
   }
-  .tsp-item:hover { background: var(--color-bg-light); }
-  .tsp-item-ico {
-    flex: none; width: 28px; height: 28px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
-    background: var(--color-bg-light); color: var(--color-text-muted);
+  body.app-mode:not(.home-mode).topic-hero-condensed #sub-header.is-subnav {
+    transform: translateY(0); opacity: 1; pointer-events: auto;
   }
-  .tsp-item-ico .tsp-ic-svg { width: 16px; height: 16px; }
-  .tsp-item-name { flex: 1 1 auto; min-width: 0; font-size: 0.95rem; font-weight: 500; }
-  .tsp-item.is-active { background: color-mix(in srgb, var(--color-primary) 8%, #fff); }
-  .tsp-item.is-active .tsp-item-name { color: var(--color-primary); font-weight: 600; }
-  .tsp-item.is-active .tsp-item-ico { background: color-mix(in srgb, var(--color-primary) 14%, #fff); color: var(--color-primary); }
-  .tsp-item-check { flex: none; color: var(--color-primary); display: inline-flex; }
+  /* In the sticky band show ONLY the compact picker — hide chips/title/tabs. */
+  body.app-mode:not(.home-mode) #sub-header.is-subnav .topic-banner-titlegroup,
+  body.app-mode:not(.home-mode) #sub-header.is-subnav .topic-hero-related,
+  body.app-mode:not(.home-mode) #sub-header.is-subnav .topic-hero-ico,
+  body.app-mode:not(.home-mode) #sub-header.is-subnav .subnav-tabs { display: none !important; }
+  body.app-mode:not(.home-mode) #sub-header.is-subnav .topic-banner-row { display: block !important; position: relative; }
+  body.app-mode:not(.home-mode) #sub-header.is-subnav .topic-banner { padding: 0.42rem 2rem !important; overflow: visible !important; }
+  body.app-mode:not(.home-mode) #sub-header.is-subnav { overflow: visible !important; }
+  body.app-mode:not(.home-mode) #sub-header.is-subnav .topic-subnav-picker { display: block; }
+  body.app-mode:not(.home-mode) #sub-header.is-subnav .tsp-btn {
+    display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0; border: none; background: none;
+    box-shadow: none; cursor: pointer; text-align: left; font-family: var(--font-family);
+  }
+  body.app-mode:not(.home-mode) #sub-header.is-subnav .tsp-btn-lead { display: flex; align-items: center; gap: 0.5rem; min-width: 0; }
+  body.app-mode:not(.home-mode) #sub-header.is-subnav .tsp-btn-ico {
+    flex: none; width: 27px; height: 27px; border-radius: 7px; display: inline-flex; align-items: center; justify-content: center;
+    background: var(--color-bg-light); color: var(--color-text);
+  }
+  body.app-mode:not(.home-mode) #sub-header.is-subnav .tsp-btn-ico .tsp-ic-svg { width: 15px; height: 15px; }
+  body.app-mode:not(.home-mode) #sub-header.is-subnav .tsp-btn-name {
+    font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; letter-spacing: -0.015em; color: #14213d; white-space: nowrap;
+  }
+  /* sticky-bar panel anchors under the button, fixed width */
+  body.app-mode:not(.home-mode) #sub-header.is-subnav .tsp-panelwrap { left: 0; right: auto; width: 340px; }
 
-  /* Parent "Overview" row + its label tag */
-  .tsp-tag {
-    flex: none; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;
-    color: var(--color-text-muted); background: var(--color-bg-light); padding: 0.12rem 0.4rem; border-radius: 5px;
+  /* Body topic header (in the page body, top of the topic band). */
+  .topic-bodyhead { display: block; position: relative; margin: 0 0 1.4rem; }
+  .tbh-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+  .tbh-title {
+    margin: 0; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.03em; color: #14213d;
+    font-size: clamp(2rem, 1.4rem + 1.6vw, 2.5rem); line-height: 1.04;
   }
-  .tsp-list {
-    margin-top: 4px; padding-top: 5px;
-    border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent);
-    display: flex; flex-direction: column; gap: 1px;
+  .tbh-toggle {
+    flex: none; width: 40px; height: 40px; border-radius: 11px; border: 1px solid var(--color-surface-border);
+    background: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+    color: var(--color-text-muted); transition: border-color .14s, color .14s, background .14s;
   }
-
-  /* Prominent "View all topics" action */
-  .tsp-all {
-    display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin-top: 6px;
-    padding: 0.62rem; border-radius: 10px; background: var(--color-primary); color: #fff;
-    font-size: 0.9rem; font-weight: 600; text-decoration: none; transition: background .14s;
-  }
-  .tsp-all:hover { background: color-mix(in srgb, var(--color-primary) 88%, #000); }
-  .tsp-all-arrow { transition: transform .14s; }
-  .tsp-all:hover .tsp-all-arrow { transform: translateX(3px); }
+  .tbh-toggle:hover, .topic-bodyhead.is-open .tbh-toggle { border-color: #aab6c9; color: var(--color-primary); }
+  .tbh-toggle .tsp-chev { width: 20px; height: 20px; }
+  .tbh-subs { display: flex; flex-wrap: wrap; gap: 0.35rem 1.15rem; margin-top: 0.8rem; }
+  .tbh-sub { font-size: 0.95rem; font-weight: 500; color: var(--color-text-muted); text-decoration: none; transition: color .12s; }
+  .tbh-sub:hover { color: var(--color-primary); }
+  .tbh-sub-parent { color: var(--color-text); font-weight: 600; }
+  /* body-header panel drops from the toggle, right-aligned */
+  .topic-bodyhead .tsp-panelwrap { left: auto; right: 0; width: 340px; top: calc(100% + 4px); }
 }
