@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260627-revamp371';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260627-revamp371';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260627-revamp376';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260627-revamp376';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -391,10 +391,8 @@ export function renderAIIntelligence(container, scope) {
       <div class="aii-head">
         <div class="aii-head-row">
           <div class="aii-head-top"><span class="aii-logo">${LOGO}</span><span class="aii-brand">AI Insights &amp; Resources</span></div>
-          ${launcher && scope.topic !== 'home' ? `<button type="button" class="aii-howto" data-aii-howto aria-expanded="false"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span>How it works</span></button>` : ''}
         </div>
         <p class="aii-headsub">Get the perspectives and tools you need to stay ahead.</p>
-        <div class="aii-howto-panel" data-aii-howto-panel hidden>Pick a path below to open a grounded, AI-generated brief on this topic — refreshed regularly and cited to real sources. <strong>Prompt Library</strong> gives you ready-made prompts to run in your own AI model, and <strong>Web Search</strong> jumps you to the topic across the web's primary sources.</div>
       </div>
       ${flowMode ? '<div class="aii-topbar" data-topbar hidden></div>' : ''}
       <div class="aii-stage" data-view="paths"></div>
@@ -1508,14 +1506,6 @@ export function renderAIIntelligence(container, scope) {
       // "Or search any topic or term" → opens the modal at Step 1 (the picker + search).
       stage.querySelector('[data-aii-search]')?.addEventListener('click', () => window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: { pickTopic: true } })));
     }
-    // "How it works" toggle (topic launcher head) — reveals a one-paragraph explainer.
-    const howBtn = container.querySelector('[data-aii-howto]');
-    const howPanel = container.querySelector('[data-aii-howto-panel]');
-    if (howBtn && howPanel) howBtn.addEventListener('click', () => {
-      const open = howPanel.hasAttribute('hidden');
-      if (open) howPanel.removeAttribute('hidden'); else howPanel.setAttribute('hidden', '');
-      howBtn.setAttribute('aria-expanded', String(open));
-    });
   } else if (flowMode && scope.pickTopic) {
     // Modal entered "anew" (bottom nav / homepage CTA) → Step 1: pick a topic.
     go('topic', 'fwd');

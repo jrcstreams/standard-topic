@@ -677,14 +677,14 @@ function startFeed(ctx) {
 export function renderNewsFeed(container, topic, isHome) {
   const slug = isHome ? 'home' : (topic && topic.slug);
   const label = isHome ? '' : ((topic && topic.name) || '');
-  // Header (revamp371): a bigger, straightforward "News Feed" title — NO icon,
-  // NO card-in-card — with the search + sort/filter controls on the right.
+  // Header (revamp376): a bigger, straightforward "News Feed" title — NO icon,
+  // NO card-in-card, NO search/sort controls (dropped per #303). The feed shows
+  // newest-first; archive paging continues via the "Load more" foot.
   const headHTML = `
     <div class="newsfeed-head section-card-head">
       <div class="newsfeed-headtext">
         <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">News Feed</span></h3>
       </div>
-      ${filterBarHTML(label)}
     </div>`;
 
   container.innerHTML = `

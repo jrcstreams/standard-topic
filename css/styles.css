@@ -16795,25 +16795,30 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
    then the 5 paths as a HORIZONTAL row on desktop (icon inline with title,
    summary below, arrow) and a condensed ICON GRID on mobile (icon over a short
    label, no summaries). */
-/* Header */
-.topic-band #section-shortcuts .aii-head { padding: 15px 20px 13px; }
-.topic-band #section-shortcuts .aii-head-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+/* Header (revamp376): match the News Feed title — sparkle icon + big display
+   title + a hairline separator below, then the path cards. No "How it works",
+   no summary line. */
+.topic-band #section-shortcuts .aii-head {
+  display: block !important; padding: 4px 2px 13px !important; margin: 0 !important;
+  background: none !important; border-bottom: 1px solid var(--color-surface-border) !important;
+}
+.topic-band #section-shortcuts .aii-head-row,
+.topic-band #section-shortcuts .aii-head-top { display: flex !important; align-items: center !important; gap: 11px !important; }
 .topic-band #section-shortcuts .aii-logo {
-  width: 30px !important; height: 30px !important; border-radius: 9px !important;
+  width: 34px !important; height: 34px !important; border-radius: 9px !important; flex: none !important;
   background: color-mix(in srgb, #2563eb 13%, #fff) !important; color: #2563eb !important; box-shadow: none !important;
 }
-.topic-band #section-shortcuts .aii-logo svg { width: 17px !important; height: 17px !important; color: #2563eb !important; }
-.topic-band #section-shortcuts .aii-brand { color: #14213d !important; }
-.topic-band #section-shortcuts .aii-headsub { display: block !important; margin: 5px 0 0 !important; font-size: 0.86rem; color: var(--color-text-muted); }
-.aii-howto { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; padding: 6px 12px; border: 1px solid var(--color-surface-border); border-radius: 999px; background: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.77rem; font-weight: 600; color: var(--color-text-muted); transition: border-color .14s, color .14s; }
-.aii-howto:hover { border-color: #95a8c5; color: var(--color-primary); }
-.aii-howto-panel { margin: 9px 0 0; padding: 11px 13px; border-radius: 10px; background: color-mix(in srgb, var(--color-primary) 4%, #fff); font-size: 0.84rem; line-height: 1.5; color: var(--color-text-muted); }
-.aii-howto-panel[hidden] { display: none; }
+.topic-band #section-shortcuts .aii-logo svg { width: 18px !important; height: 18px !important; color: #2563eb !important; }
+.topic-band #section-shortcuts .aii-brand {
+  font-family: var(--font-display) !important; font-size: 1.55rem !important; line-height: 1.1 !important;
+  font-weight: 600 !important; letter-spacing: -0.022em !important; color: #14213d !important;
+}
+.topic-band #section-shortcuts .aii-headsub { display: none !important; }
 
-/* Paths grid */
+/* Paths grid (no top border — the head's border-bottom is the single separator) */
 .topic-band #section-shortcuts .aii-bcards {
   display: grid !important; grid-template-columns: repeat(5, 1fr) !important; gap: 0 !important;
-  border-top: 1px solid var(--color-surface-border);
+  border-top: none;
 }
 .topic-band #section-shortcuts .aii-bcard {
   display: flex !important; flex-direction: column; align-items: stretch; gap: 0;
@@ -16839,10 +16844,11 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
 
 /* Mobile (<900): condensed ICON GRID — icon over a short label, no summaries. */
 @media (max-width: 899.98px) {
-  .topic-band #section-shortcuts .aii-head { padding: 13px 15px 11px; }
+  .topic-band #section-shortcuts .aii-head { padding: 2px 2px 11px !important; }
+  .topic-band #section-shortcuts .aii-brand { font-size: 1.3rem !important; }
   .topic-band #section-shortcuts .aii-bcards {
     grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)) !important;
-    gap: 8px !important; border-top: none; padding: 2px 13px 15px;
+    gap: 8px !important; border-top: none; padding: 12px 2px 4px;
   }
   .topic-band #section-shortcuts .aii-bcard {
     align-items: center !important; padding: 13px 8px !important;
