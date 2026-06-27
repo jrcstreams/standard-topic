@@ -17,8 +17,7 @@ import { topicIconSVG } from '../utils/topic-icons.js';
 // freshly-changed data.js (the no-version singleton).
 const PATHS = [
   { group: 'discover',       label: "What's Happening Now",   tab: 'Get Caught Up', subtitle: 'The latest news, moves, and developments.', cardTitle: 'The big picture, quickly' },
-  { group: 'topic-specific', label: 'Topic-Specific Insights', tab: 'Deep Dive',     subtitle: 'Go deeper on what makes this topic tick.',   cardTitle: 'Go a level deeper' },
-  { group: 'analyze',        label: 'Analysis',                tab: 'Analysis',      subtitle: 'Deeper lenses, tradeoffs, and what it all means.', cardTitle: 'Read between the lines' },
+  { group: 'topic-specific', label: 'Deep Dive',              tab: 'Deep Dive',     subtitle: 'The key developments in depth — plus the tradeoffs and what they mean.', cardTitle: 'Go beneath the headlines' },
   { group: 'learn',          label: 'Learn',                   tab: '101 Resources', subtitle: 'Background, fundamentals, and key context.',  cardTitle: 'Start from the basics' },
 ];
 

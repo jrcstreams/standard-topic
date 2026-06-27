@@ -294,7 +294,6 @@ module.exports = async function handler(req, res) {
       const winFor = (g) => effectiveWindowHours(g, 3);
       const wDiscover = winFor('discover');
       const wTopic = winFor('topic-specific');
-      const wAnalyze = winFor('analyze');
       const wLearn = winFor('learn');
       // force=1 → re-ground every builder + current trend regardless of age
       // (flush after a prompt change). Otherwise only the stale ones, by window.
@@ -313,8 +312,7 @@ module.exports = async function handler(req, res) {
         `SELECT entity_type, entity_key, insight FROM ai_insights ai
           WHERE (entity_type='shortcut' AND insight='discover:b'       AND created_at < now() - make_interval(hours => $2))
              OR (entity_type='shortcut' AND insight='topic-specific:b' AND created_at < now() - make_interval(hours => $3))
-             OR (entity_type='shortcut' AND insight='analyze:b'        AND created_at < now() - make_interval(hours => $4))
-             OR (entity_type='shortcut' AND insight='learn:b'          AND created_at < now() - make_interval(hours => $5))
+             OR (entity_type='shortcut' AND insight='learn:b'          AND created_at < now() - make_interval(hours => $4))
              OR (entity_type='trend' AND insight='brief'
                  AND created_at < now() - interval '24 hours'
                  AND EXISTS (
@@ -322,7 +320,7 @@ module.exports = async function handler(req, res) {
                     WHERE ti.geo='US' AND lower(ti.query) = ai.entity_key
                       AND ti.snapshot_at = (SELECT max(snapshot_at) FROM trending_items WHERE geo='US')))
           ORDER BY created_at ASC
-          LIMIT $1`, [budget, wDiscover, wTopic, wAnalyze, wLearn]);
+          LIMIT $1`, [budget, wDiscover, wTopic, wLearn]);
       for (const r of stale) {
         if (budget <= 0 || !timeLeft()) break;
         let payload = null;
