@@ -17015,9 +17015,13 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
 
 /* ── DESKTOP (≥900): body topic header + scroll-in sticky picker bar ────────── */
 @media (min-width: 900px) {
-  /* No reserved subnav space — the body header leads the page (the band is fixed
-     + hidden by default, so don't pad content for it). */
-  body.app-mode:not(.home-mode).has-subnav #content { padding-top: calc(var(--nav-h) + 1.4rem) !important; }
+  /* The app shell fixes #content below nav + subnav; since the subnav band is
+     hidden by default on desktop topic pages, reclaim that reserved strip so the
+     body header sits just below the main nav (no big empty gap). */
+  body.app-mode:not(.home-mode):not(.home-search) #content {
+    top: var(--nav-h) !important;
+    height: calc(100dvh - var(--nav-h)) !important;
+  }
 
   /* The subnav band: hidden by default, slides in as a sticky bar on scroll. */
   body.app-mode:not(.home-mode) #sub-header.is-subnav {

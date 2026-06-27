@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260627-revamp377';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260627-revamp378';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260627-revamp377';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260627-revamp378';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260627-revamp377';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260627-revamp377';
-import { initPromptModal } from './components/prompt-modal.js?v=20260627-revamp377';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260627-revamp377';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260627-revamp378';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260627-revamp378';
+import { initPromptModal } from './components/prompt-modal.js?v=20260627-revamp378';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260627-revamp378';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260627-revamp377';
-import { initInsightModal } from './components/insight-modal.js?v=20260627-revamp377';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260627-revamp377';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260627-revamp377';
-import { renderWebSources } from './components/websources.js?v=20260627-revamp377';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260627-revamp377';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260627-revamp378';
+import { initInsightModal } from './components/insight-modal.js?v=20260627-revamp378';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260627-revamp378';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260627-revamp378';
+import { renderWebSources } from './components/websources.js?v=20260627-revamp378';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260627-revamp378';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260627-revamp377';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260627-revamp378';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260627-revamp377';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260627-revamp378';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -170,10 +170,18 @@ function wireTopicHeroCondense() {
     // Only react to scrolls inside the topic content area.
     if (!t.closest('#content')) return;
     const st = t.scrollTop || 0;
+    // Threshold: on desktop the sticky picker should only appear once the BODY
+    // topic header (title + subtopics) has mostly scrolled away — so derive it
+    // from that header's height. On mobile the header is display:none (height 0)
+    // so it falls back to the small hero-condense threshold.
+    const bh = document.querySelector('.topic-bodyhead');
+    const bhH = bh ? bh.offsetHeight : 0;
+    const onThresh = Math.max(36, bhH - 24);
+    const offThresh = Math.max(12, bhH - 64);
     // Hysteresis so it doesn't flicker at the boundary.
     const condensed = document.body.classList.contains('topic-hero-condensed');
-    if (!condensed && st > 36) document.body.classList.add('topic-hero-condensed');
-    else if (condensed && st < 12) document.body.classList.remove('topic-hero-condensed');
+    if (!condensed && st > onThresh) document.body.classList.add('topic-hero-condensed');
+    else if (condensed && st < offThresh) document.body.classList.remove('topic-hero-condensed');
   };
   document.addEventListener('scroll', topicHeroScrollHandler, true);
   document.body.classList.remove('topic-hero-condensed');
