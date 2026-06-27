@@ -16897,8 +16897,13 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
 .topic-band #section-newsfeed .news-list { padding: 2px 2px 4px !important; }
 @media (max-width: 899.98px) {
   .topic-band #section-newsfeed .newsfeed-title,
-  .topic-band #section-newsfeed .newsfeed-title-main { font-size: 1.3rem !important; }
-  .topic-band #section-newsfeed .newsfeed-head { padding: 2px 0 12px !important; }
+  .topic-band #section-newsfeed .newsfeed-title-main { font-size: 1.3rem !important; justify-content: flex-start !important; text-align: left !important; }
+  /* Stack: left-aligned title, then full-width controls below */
+  .topic-band #section-newsfeed .newsfeed-head {
+    flex-direction: column !important; align-items: stretch !important; gap: 11px !important; padding: 2px 0 12px !important;
+  }
+  .topic-band #section-newsfeed .newsfeed-headtext { align-self: stretch !important; }
+  .topic-band #section-newsfeed .newsfeed-filters { justify-content: flex-start !important; }
   .topic-band #section-newsfeed .nf-search-wrap { flex: 1 1 auto; max-width: none; }
   .topic-band #section-newsfeed .news-list { padding-left: 0 !important; padding-right: 0 !important; }
 }
