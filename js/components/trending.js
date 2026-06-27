@@ -5,7 +5,7 @@
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
 import { renderTrendExpansionBody } from './trend-expansion.js';
-import { aiSparkInline } from '../utils/ai-provenance.js?v=20260627-revamp381';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260627-revamp383';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -213,7 +213,6 @@ function trendCardsHead(fetched) {
         <h3 class="trending-topics-title"><span>Trending</span></h3>
         ${fetched ? `<span class="trending-topics-updated">Updated ${escapeHTML(relativeTime(fetched))}</span>` : ''}
       </div>
-      <p class="trending-topics-sub">What's being searched for right now.</p>
     </div>`;
 }
 // Legend pill (upper-left of the card body): defines the two card glyphs — the
@@ -456,7 +455,6 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
           <span class="trending-topics-logo">${ICON}</span>
           <h3 class="trending-topics-title"><span>Trending</span></h3>
         </div>
-        <p class="trending-topics-sub">What's being searched for right now.</p>
       </div>`;
   }
 

@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260627-revamp381';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260627-revamp383';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260627-revamp381';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260627-revamp383';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260627-revamp381';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260627-revamp381';
-import { initPromptModal } from './components/prompt-modal.js?v=20260627-revamp381';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260627-revamp381';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260627-revamp383';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260627-revamp383';
+import { initPromptModal } from './components/prompt-modal.js?v=20260627-revamp383';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260627-revamp383';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260627-revamp381';
-import { initInsightModal } from './components/insight-modal.js?v=20260627-revamp381';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260627-revamp381';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260627-revamp381';
-import { renderWebSources } from './components/websources.js?v=20260627-revamp381';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260627-revamp381';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260627-revamp383';
+import { initInsightModal } from './components/insight-modal.js?v=20260627-revamp383';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260627-revamp383';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260627-revamp383';
+import { renderWebSources } from './components/websources.js?v=20260627-revamp383';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260627-revamp383';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260627-revamp381';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260627-revamp383';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260627-revamp381';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260627-revamp383';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -258,9 +258,36 @@ function topicBodyHeadHTML(topic) {
         <h1 class="tbh-title">${escapeHTML(topic.name)}</h1>
         <button type="button" class="tbh-toggle tsp-btn" aria-expanded="false" aria-controls="tsp-panel-body" aria-label="Change topic">${TSP_CHEV}</button>
       </div>
-      ${subsHTML ? `<div class="tbh-subs">${subsHTML}</div>` : ''}
+      ${subsHTML ? `<div class="tbh-subswrap">
+        <div class="tbh-subs">${subsHTML}</div>
+        <button type="button" class="tbh-more" data-tbh-more aria-expanded="false" hidden>More</button>
+      </div>` : ''}
       ${topicPickerPanelHTML(topic, 'tsp-panel-body')}
     </div>`;
+}
+
+// Show the subtopics "More" toggle only when the row overflows one line (desktop);
+// wire expand/collapse. No-op on mobile (the body header is display:none → 0 height).
+function wireSubtopicsMore(root) {
+  const wrap = root.querySelector('.tbh-subswrap');
+  if (!wrap) return;
+  const subs = wrap.querySelector('.tbh-subs');
+  const more = wrap.querySelector('[data-tbh-more]');
+  if (!subs || !more) return;
+  const sync = () => {
+    if (wrap.classList.contains('is-open')) return;      // don't re-hide while expanded
+    const overflowing = subs.scrollHeight > subs.clientHeight + 3;
+    more.hidden = !overflowing;
+  };
+  more.addEventListener('click', () => {
+    const open = !wrap.classList.contains('is-open');
+    wrap.classList.toggle('is-open', open);
+    more.setAttribute('aria-expanded', String(open));
+    more.textContent = open ? 'Less' : 'More';
+  });
+  requestAnimationFrame(sync);
+  setTimeout(sync, 250);
+  window.addEventListener('resize', sync, { passive: true });
 }
 
 function closeAllPickers(except) {
@@ -1826,7 +1853,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         <section class="layout-section" id="section-newsfeed"></section>
       </div>
     `;
-    if (topic) wireSubnavPicker(container);
+    if (topic) { wireSubnavPicker(container); wireSubtopicsMore(container); }
   }
 
   const trendingSection = container.querySelector('#section-trending');

@@ -16804,11 +16804,8 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
 }
 .topic-band #section-shortcuts .aii-head-row,
 .topic-band #section-shortcuts .aii-head-top { display: flex !important; align-items: center !important; gap: 11px !important; }
-.topic-band #section-shortcuts .aii-logo {
-  width: 34px !important; height: 34px !important; border-radius: 9px !important; flex: none !important;
-  background: color-mix(in srgb, #2563eb 13%, #fff) !important; color: #2563eb !important; box-shadow: none !important;
-}
-.topic-band #section-shortcuts .aii-logo svg { width: 18px !important; height: 18px !important; color: #2563eb !important; }
+/* Header icon dropped (#316) — section title is plain near-black text. */
+.topic-band #section-shortcuts .aii-logo { display: none !important; }
 .topic-band #section-shortcuts .aii-brand {
   font-family: var(--font-display) !important; font-size: 1.55rem !important; line-height: 1.1 !important;
   font-weight: 600 !important; letter-spacing: -0.022em !important; color: #14213d !important;
@@ -16836,27 +16833,33 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
   transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
 }
 .topic-band #section-shortcuts .aii-bcard:hover {
-  border-color: color-mix(in srgb, var(--color-primary) 38%, var(--color-surface-border)) !important;
+  border-color: color-mix(in srgb, var(--aii-accent, #2563eb) 42%, var(--color-surface-border)) !important;
   box-shadow: 0 12px 26px -16px rgba(15,23,42,.32) !important; transform: translateY(-2px);
 }
 .topic-band #section-shortcuts .aii-bcard-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .topic-band #section-shortcuts .aii-bcard-ic {
   flex: none; width: 32px; height: 32px; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center;
-  background: color-mix(in srgb, var(--color-primary) 10%, #fff); color: var(--color-primary); transition: background .15s ease;
+  background: color-mix(in srgb, var(--aii-accent, #2563eb) 11%, #fff); color: var(--aii-accent, #2563eb); transition: background .15s ease;
 }
-.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-ic { background: color-mix(in srgb, var(--color-primary) 16%, #fff); }
+.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-ic { background: color-mix(in srgb, var(--aii-accent, #2563eb) 17%, #fff); }
 .topic-band #section-shortcuts .aii-bcard-ic svg { width: 17px; height: 17px; }
+/* Per-track accent colors on the tile icons (#317). */
+.topic-band #section-shortcuts .aii-bcard-discover { --aii-accent: #2563eb; }
+.topic-band #section-shortcuts .aii-bcard-topic-specific { --aii-accent: #d97706; }
+.topic-band #section-shortcuts .aii-bcard-learn { --aii-accent: #0d9488; }
+.topic-band #section-shortcuts .aii-bcard-websearch { --aii-accent: #7c3aed; }
+.topic-band #section-shortcuts .aii-bcard-external { --aii-accent: #4f46e5; }
 .topic-band #section-shortcuts .aii-bcard-name { font-size: 0.95rem; font-weight: 600; color: #14213d; letter-spacing: -0.01em; line-height: 1.2; }
-.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-name { color: var(--color-primary); }
+.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-name { color: var(--aii-accent, #2563eb); }
 .topic-band #section-shortcuts .aii-bcard-sub { display: block; margin-top: 9px; font-size: 0.79rem; line-height: 1.45; color: var(--color-text-light); }
 .topic-band #section-shortcuts .aii-bcard-go { position: absolute; left: 15px; bottom: 15px; display: inline-flex; color: var(--color-text-light); transition: transform .14s, color .14s; }
 .topic-band #section-shortcuts .aii-bcard-go svg { width: 15px; height: 15px; }
-.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-go { color: var(--color-primary); transform: translateX(3px); }
+.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-go { color: var(--aii-accent, #2563eb); transform: translateX(3px); }
 
 /* Mobile (<900): condensed ICON GRID — icon over a short label, no summaries. */
 @media (max-width: 899.98px) {
   .topic-band #section-shortcuts .aii-head { padding: 2px 2px 11px !important; }
-  .topic-band #section-shortcuts .aii-brand { font-size: 1.3rem !important; }
+  .topic-band #section-shortcuts .aii-brand { font-size: 1.16rem !important; }
   .topic-band #section-shortcuts .aii-bcards {
     grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)) !important;
     gap: 8px !important; border-top: none; padding: 12px 2px 4px;
@@ -16926,7 +16929,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .topic-band #section-newsfeed .news-list { padding: 2px 2px 4px !important; }
 @media (max-width: 899.98px) {
   .topic-band #section-newsfeed .newsfeed-title,
-  .topic-band #section-newsfeed .newsfeed-title-main { font-size: 1.3rem !important; justify-content: flex-start !important; text-align: left !important; }
+  .topic-band #section-newsfeed .newsfeed-title-main { font-size: 1.16rem !important; justify-content: flex-start !important; text-align: left !important; }
   /* Stack: left-aligned title, then full-width controls below */
   .topic-band #section-newsfeed .newsfeed-head {
     flex-direction: column !important; align-items: stretch !important; gap: 11px !important; padding: 2px 0 12px !important;
@@ -17033,7 +17036,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   .tsp-btn-ico .tsp-ic-svg { width: 17px; height: 17px; }
   .tsp-btn-name {
     font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; letter-spacing: -0.015em;
-    color: #14213d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+    color: #1d4ed8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
   }
 }
 
@@ -17075,31 +17078,44 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   }
   body.app-mode:not(.home-mode) #sub-header.is-subnav .tsp-btn-ico .tsp-ic-svg { width: 15px; height: 15px; }
   body.app-mode:not(.home-mode) #sub-header.is-subnav .tsp-btn-name {
-    font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; letter-spacing: -0.015em; color: #14213d; white-space: nowrap;
+    font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; letter-spacing: -0.015em; color: #1d4ed8; white-space: nowrap;
   }
   /* sticky-bar panel anchors under the button, fixed width */
   body.app-mode:not(.home-mode) #sub-header.is-subnav .tsp-panelwrap { left: 0; right: auto; width: 340px; }
 
   /* Body topic header (in the page body, top of the topic band). */
   .topic-bodyhead { display: block; position: relative; margin: 0 0 1.4rem; }
-  .tbh-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+  /* Title + chevron sit together, left-aligned (revamp383). Topic name in a
+     deep blue to differentiate it from the near-black section headers. */
+  .tbh-row { display: flex; align-items: center; justify-content: flex-start; gap: 0.55rem; }
   .tbh-title {
-    margin: 0; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.028em; color: #14213d;
-    font-size: clamp(1.75rem, 1.3rem + 1.1vw, 2.05rem); line-height: 1.05;
+    margin: 0; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.028em; color: #1d4ed8;
+    font-size: clamp(1.7rem, 1.25rem + 1.05vw, 2rem); line-height: 1.05;
   }
   .tbh-toggle {
-    flex: none; width: 40px; height: 40px; border-radius: 11px; border: 1px solid var(--color-surface-border);
+    flex: none; width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--color-surface-border);
     background: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
     color: var(--color-text-muted); transition: border-color .14s, color .14s, background .14s;
   }
-  .tbh-toggle:hover, .topic-bodyhead.is-open .tbh-toggle { border-color: #aab6c9; color: var(--color-primary); }
-  .tbh-toggle .tsp-chev { width: 20px; height: 20px; }
-  .tbh-subs { display: flex; flex-wrap: wrap; gap: 0.35rem 1.15rem; margin-top: 0.8rem; }
-  .tbh-sub { font-size: 0.95rem; font-weight: 500; color: var(--color-text-muted); text-decoration: none; transition: color .12s; }
-  .tbh-sub:hover { color: var(--color-primary); }
+  .tbh-toggle:hover, .topic-bodyhead.is-open .tbh-toggle { border-color: #9bb0d6; color: #1d4ed8; }
+  .tbh-toggle .tsp-chev { width: 18px; height: 18px; }
+  /* Subtopics clamp to one line; a "More" toggle expands when they overflow. */
+  .tbh-subswrap { display: flex; align-items: flex-start; gap: 0.9rem; margin-top: 0.7rem; }
+  .tbh-subs {
+    flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; gap: 0.4rem 1.15rem;
+    max-height: 1.75em; overflow: hidden; transition: max-height .26s ease;
+  }
+  .tbh-subswrap.is-open .tbh-subs { max-height: 16em; }
+  .tbh-sub { font-size: 0.95rem; font-weight: 500; color: var(--color-text-muted); text-decoration: none; transition: color .12s; white-space: nowrap; }
+  .tbh-sub:hover { color: #1d4ed8; }
   .tbh-sub-parent { color: var(--color-text); font-weight: 600; }
-  /* body-header panel drops from the toggle, right-aligned */
-  .topic-bodyhead .tsp-panelwrap { left: auto; right: 0; width: 340px; top: calc(100% + 4px); }
+  .tbh-more {
+    flex: none; align-self: flex-start; border: none; background: none; cursor: pointer; padding: 0;
+    font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; color: #1d4ed8; white-space: nowrap;
+  }
+  .tbh-more:hover { text-decoration: underline; }
+  /* body-header panel drops from the title/chevron, left-aligned */
+  .topic-bodyhead .tsp-panelwrap { left: 0; right: auto; width: 340px; top: calc(100% + 4px); }
 }
 
 /* ═══ AI Insights modal redesign (revamp379) ═════════════════════════════════
