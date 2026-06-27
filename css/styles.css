@@ -16891,7 +16891,12 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
   position: static !important; min-height: 0 !important;
 }
 .topic-band #section-newsfeed .newsfeed-headtext { flex: 0 0 auto; }
-/* Soft-blue icon chip matching the AI Insights & Resources header (revamp381). */
+/* Soft-blue icon chip matching the AI Insights & Resources header (revamp381).
+   The high-specificity rule (#284) forces the title to display:block — match it
+   so the icon + title sit inline. */
+body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #section-newsfeed .newsfeed-title {
+  display: flex !important; flex-direction: row !important; align-items: center !important; gap: 0.65rem !important;
+}
 .topic-band #section-newsfeed .newsfeed-title { gap: 0.65rem !important; }
 .topic-band #section-newsfeed .newsfeed-logo {
   display: inline-flex !important; align-items: center; justify-content: center; flex: none;
