@@ -16856,3 +16856,49 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
   .topic-band #section-shortcuts .aii-bcard-sub { display: none !important; }
   .topic-band #section-shortcuts .aii-bcard-go { display: none !important; }
 }
+
+/* ═══ News Feed redesign (revamp371) ══════════════════════════════════════════
+   No card-in-card: strip the outer .newsfeed-card chrome so the feed reads as a
+   straightforward section — a BIGGER "News Feed" headline (no icon) with the
+   search + sort controls inline on the right, a hairline rule, then clean
+   standalone story rows flush to the section edge (no inner box, no images).
+   Topic band only (desktop + the <900 single-scroll). */
+.topic-band #section-newsfeed .newsfeed-card {
+  border: none !important; border-radius: 0 !important; background: none !important; overflow: visible !important;
+}
+/* Header row: title left, controls right, hairline below */
+.topic-band #section-newsfeed .newsfeed-head {
+  display: flex !important; align-items: center !important; justify-content: space-between !important;
+  flex-wrap: wrap; gap: 12px 16px; padding: 4px 2px 13px !important; margin: 0 0 4px !important;
+  border-bottom: 1px solid var(--color-surface-border) !important; background: none !important;
+  position: static !important; min-height: 0 !important;
+}
+.topic-band #section-newsfeed .newsfeed-headtext { flex: 0 0 auto; }
+.topic-band #section-newsfeed .newsfeed-logo { display: none !important; }
+.topic-band #section-newsfeed .newsfeed-title,
+.topic-band #section-newsfeed .newsfeed-title-main {
+  display: flex !important; flex-direction: row !important; align-items: center !important;
+  font-family: var(--font-display) !important; font-size: 1.55rem !important; line-height: 1.1 !important;
+  font-weight: 600 !important; letter-spacing: -0.022em !important; color: #14213d !important;
+  border-bottom: none !important; padding: 0 !important; margin: 0 !important; min-height: 0 !important;
+  background: none !important;
+}
+/* Filter bar: drop the tinted pill — inline, right-aligned controls */
+.topic-band #section-newsfeed .newsfeed-filters {
+  flex: 1 1 auto; flex-wrap: nowrap; justify-content: flex-end; align-items: center;
+  margin: 0 !important; padding: 0 !important; background: none !important; border: none !important;
+  max-width: none !important; gap: 9px;
+}
+.topic-band #section-newsfeed .nf-search-wrap { flex: 0 1 260px; max-width: 260px; }
+.topic-band #section-newsfeed .nf-search { padding-top: 7px; padding-bottom: 7px; }
+.topic-band #section-newsfeed .nf-select { padding-top: 7px; padding-bottom: 7px; }
+/* Story rows: flush to the section edge (no inner card padding) */
+.topic-band #section-newsfeed .newsfeed-scroll-wrap { padding-bottom: 0 !important; }
+.topic-band #section-newsfeed .news-list { padding: 2px 2px 4px !important; }
+@media (max-width: 899.98px) {
+  .topic-band #section-newsfeed .newsfeed-title,
+  .topic-band #section-newsfeed .newsfeed-title-main { font-size: 1.3rem !important; }
+  .topic-band #section-newsfeed .newsfeed-head { padding: 2px 0 12px !important; }
+  .topic-band #section-newsfeed .nf-search-wrap { flex: 1 1 auto; max-width: none; }
+  .topic-band #section-newsfeed .news-list { padding-left: 0 !important; padding-right: 0 !important; }
+}

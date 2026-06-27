@@ -654,8 +654,8 @@ function startFeed(ctx) {
     }
   }
 
-  // Search + sort controls were removed (#72) — the feed just shows newest-first.
-  // Listeners are guarded since the elements no longer exist.
+  // Search + sort controls (restored revamp371). Listeners stay guarded so the
+  // feed still works in any context that omits the filter bar.
   let searchTimer = null;
   els.search?.addEventListener('input', () => {
     clearTimeout(searchTimer);
@@ -677,14 +677,14 @@ function startFeed(ctx) {
 export function renderNewsFeed(container, topic, isHome) {
   const slug = isHome ? 'home' : (topic && topic.slug);
   const label = isHome ? '' : ((topic && topic.name) || '');
-  const FEED_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2.5"/><line x1="8" y1="9.5" x2="16" y2="9.5"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="16.5" x2="13" y2="16.5"/></svg>';
-  // Header = icon + "News Feed" only — matches the AI Insights header lockup.
-  // No subtext, no search/sort controls (#71/#72).
+  // Header (revamp371): a bigger, straightforward "News Feed" title — NO icon,
+  // NO card-in-card — with the search + sort/filter controls on the right.
   const headHTML = `
     <div class="newsfeed-head section-card-head">
       <div class="newsfeed-headtext">
-        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-logo">${FEED_ICON}</span><span class="newsfeed-title-main">News Feed</span></h3>
+        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">News Feed</span></h3>
       </div>
+      ${filterBarHTML(label)}
     </div>`;
 
   container.innerHTML = `
