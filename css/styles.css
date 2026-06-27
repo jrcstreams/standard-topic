@@ -16856,25 +16856,31 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
 .topic-band #section-shortcuts .aii-bcard-go svg { width: 15px; height: 15px; }
 .topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-go { color: var(--aii-accent, #2563eb); transform: translateX(3px); }
 
-/* Mobile (<900): condensed ICON GRID — icon over a short label, no summaries. */
+/* Mobile (<900): a clean single-column stack of BUTTONS — colored icon chip +
+   label + arrow (revamp385). Never cramped, always one line per row. */
 @media (max-width: 899.98px) {
+  /* More breathing room between the subnav band and the AI section (#325). */
+  .topic-band #section-shortcuts { margin-top: 14px; }
   .topic-band #section-shortcuts .aii-head { padding: 2px 2px 11px !important; }
   .topic-band #section-shortcuts .aii-brand { font-size: 1.16rem !important; }
   .topic-band #section-shortcuts .aii-bcards {
-    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)) !important;
-    gap: 8px !important; border-top: none; padding: 12px 2px 4px;
+    display: flex !important; flex-direction: column; grid-template-columns: none !important;
+    gap: 8px !important; border-top: none; padding: 12px 0 2px !important;
   }
   .topic-band #section-shortcuts .aii-bcard {
-    align-items: center !important; padding: 13px 8px !important;
-    border: 1px solid var(--color-surface-border) !important; border-radius: 12px !important;
-    min-height: 0;
+    flex-direction: row !important; align-items: center !important; gap: 12px; padding: 12px 14px !important;
+    border: 1px solid var(--color-surface-border) !important; border-radius: 12px !important; min-height: 0;
   }
-  .topic-band #section-shortcuts .aii-bcard-head { flex-direction: column; align-items: center; gap: 7px; text-align: center; }
-  .topic-band #section-shortcuts .aii-bcard-ic { width: 34px; height: 34px; border-radius: 10px; }
+  .topic-band #section-shortcuts .aii-bcard-head { flex-direction: row !important; align-items: center; gap: 12px; flex: 1 1 auto; min-width: 0; text-align: left; }
+  .topic-band #section-shortcuts .aii-bcard-ic { width: 34px !important; height: 34px !important; border-radius: 9px !important; }
   .topic-band #section-shortcuts .aii-bcard-ic svg { width: 18px; height: 18px; }
-  .topic-band #section-shortcuts .aii-bcard-name { font-size: 0.78rem; text-align: center; line-height: 1.2; }
+  .topic-band #section-shortcuts .aii-bcard-name { font-size: 0.96rem; text-align: left; line-height: 1.2; }
   .topic-band #section-shortcuts .aii-bcard-sub { display: none !important; }
-  .topic-band #section-shortcuts .aii-bcard-go { display: none !important; }
+  /* Arrow restored at the far right as a clear button affordance. */
+  .topic-band #section-shortcuts .aii-bcard-go {
+    display: inline-flex !important; position: static !important; left: auto !important; bottom: auto !important;
+    margin-left: auto; color: var(--color-text-light);
+  }
 }
 
 /* ═══ News Feed redesign (revamp371) ══════════════════════════════════════════
@@ -17031,12 +17037,12 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   .tsp-btn-lead { display: flex; align-items: center; gap: 0.55rem; min-width: 0; flex: 0 1 auto; }
   .tsp-btn-ico {
     flex: none; width: 30px; height: 30px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
-    background: var(--color-bg-light); color: var(--color-text);
+    background: color-mix(in srgb, #1e40af 12%, #fff); color: #1e40af;
   }
   .tsp-btn-ico .tsp-ic-svg { width: 17px; height: 17px; }
   .tsp-btn-name {
     font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; letter-spacing: -0.015em;
-    color: #1d4ed8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+    color: #1e40af; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
   }
 }
 
@@ -17078,7 +17084,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   }
   body.app-mode:not(.home-mode) #sub-header.is-subnav .tsp-btn-ico .tsp-ic-svg { width: 15px; height: 15px; }
   body.app-mode:not(.home-mode) #sub-header.is-subnav .tsp-btn-name {
-    font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; letter-spacing: -0.015em; color: #1d4ed8; white-space: nowrap;
+    font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; letter-spacing: -0.015em; color: #1e40af; white-space: nowrap;
   }
   /* sticky-bar panel anchors under the button, fixed width */
   body.app-mode:not(.home-mode) #sub-header.is-subnav .tsp-panelwrap { left: 0; right: auto; width: 340px; }
@@ -17089,7 +17095,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
      deep blue to differentiate it from the near-black section headers. */
   .tbh-row { display: flex; align-items: center; justify-content: flex-start; gap: 0.55rem; }
   .tbh-title {
-    margin: 0; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.028em; color: #1d4ed8;
+    margin: 0; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.028em; color: #1e40af;
     font-size: clamp(1.7rem, 1.25rem + 1.05vw, 2rem); line-height: 1.05;
   }
   .tbh-toggle {
@@ -17097,7 +17103,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
     background: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
     color: var(--color-text-muted); transition: border-color .14s, color .14s, background .14s;
   }
-  .tbh-toggle:hover, .topic-bodyhead.is-open .tbh-toggle { border-color: #9bb0d6; color: #1d4ed8; }
+  .tbh-toggle:hover, .topic-bodyhead.is-open .tbh-toggle { border-color: #9bb0d6; color: #1e40af; }
   .tbh-toggle .tsp-chev { width: 18px; height: 18px; }
   /* Subtopics clamp to one line; a "More" toggle expands when they overflow. */
   .tbh-subswrap { display: flex; align-items: flex-start; gap: 0.9rem; margin-top: 0.7rem; }
@@ -17107,11 +17113,11 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   }
   .tbh-subswrap.is-open .tbh-subs { max-height: 16em; }
   .tbh-sub { font-size: 0.95rem; font-weight: 500; color: var(--color-text-muted); text-decoration: none; transition: color .12s; white-space: nowrap; }
-  .tbh-sub:hover { color: #1d4ed8; }
+  .tbh-sub:hover { color: #1e40af; }
   .tbh-sub-parent { color: var(--color-text); font-weight: 600; }
   .tbh-more {
     flex: none; align-self: flex-start; border: none; background: none; cursor: pointer; padding: 0;
-    font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; color: #1d4ed8; white-space: nowrap;
+    font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; color: #1e40af; white-space: nowrap;
   }
   .tbh-more:hover { text-decoration: underline; }
   /* body-header panel drops from the title/chevron, left-aligned */
