@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260628-revamp390';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260628-revamp393';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260628-revamp390';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260628-revamp393';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260628-revamp390';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260628-revamp390';
-import { initPromptModal } from './components/prompt-modal.js?v=20260628-revamp390';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260628-revamp390';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260628-revamp393';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260628-revamp393';
+import { initPromptModal } from './components/prompt-modal.js?v=20260628-revamp393';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260628-revamp393';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260628-revamp390';
-import { initInsightModal } from './components/insight-modal.js?v=20260628-revamp390';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260628-revamp390';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260628-revamp390';
-import { renderWebSources } from './components/websources.js?v=20260628-revamp390';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260628-revamp390';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260628-revamp393';
+import { initInsightModal } from './components/insight-modal.js?v=20260628-revamp393';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260628-revamp393';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260628-revamp393';
+import { renderWebSources } from './components/websources.js?v=20260628-revamp393';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260628-revamp393';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260628-revamp390';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260628-revamp393';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260628-revamp390';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260628-revamp393';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1433,11 +1433,11 @@ function renderStickyHeroBar(container, route) {
         </button>
         <button type="button" class="navbtn navbtn-ai" id="nav-insights" aria-label="AI Insights">
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg></span>
-          <span class="navbtn-label">AI Insights</span>
+          <span class="navbtn-label"><span class="nl-full">AI Insights</span><span class="nl-short">Insights</span></span>
         </button>
         <button type="button" class="navbtn" id="nav-trending" aria-label="Trending">
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
-          <span class="navbtn-label">Trending</span>
+          <span class="navbtn-label"><span class="nl-full">Trending</span><span class="nl-short">Trends</span></span>
         </button>
         <button type="button" class="navbtn" id="nav-topics" aria-label="Topics" aria-haspopup="dialog">
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>

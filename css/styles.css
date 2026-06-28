@@ -17249,14 +17249,27 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   .sticky-hero-inner .sticky-title { font-size: 1.08rem; }
   .sticky-hero-inner { gap: 0.5rem; }
 }
-/* Hide the brand text early so the labeled buttons keep their room far longer. */
-@media (max-width: 540px) {
-  .sticky-hero-inner .sticky-title { display: none; }
-  .navbtn { min-width: 0; padding: 5px 6px; }
+/* The site title ALWAYS stays. When space gets tight, shorten the two long
+   labels (AI Insights→Insights, Trending→Trends) and shrink the title +
+   hamburger to make room (revamp393). */
+.nl-short { display: none; }
+@media (max-width: 440px) {
+  .nl-full { display: none; }
+  .nl-short { display: inline; }
+  .sticky-hero-inner .sticky-title { font-size: 0.98rem; letter-spacing: -0.03em; }
+  .sticky-hero-inner .nav-hamburger { width: 18px; gap: 3px; }
+  .navbtn { min-width: 0; padding: 5px 5px; }
   .sticky-hero-inner { gap: 0.3rem; }
 }
-/* Only on the smallest phones do labels drop to icon-only. */
 @media (max-width: 360px) {
+  .sticky-hero-inner .sticky-title { font-size: 0.9rem; }
+  .sticky-hero-inner .nav-hamburger { width: 16px; }
+  .navbtn-label { font-size: 0.55rem; }
+  .navbtn-ico svg { width: 16px; height: 16px; }
+  .navbtn { padding: 5px 4px; }
+  .sticky-hero-inner { gap: 0.2rem; }
+}
+/* Absolute last resort on the tiniest screens — icon-only (title stays). */
+@media (max-width: 320px) {
   .navbtn-label { display: none; }
-  .navbtn { padding: 6px 7px; }
 }
