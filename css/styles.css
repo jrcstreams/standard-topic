@@ -17235,6 +17235,9 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .navbtn-label { font-size: 0.64rem; font-weight: 600; letter-spacing: -0.005em; white-space: nowrap; line-height: 1; }
 
 @media (max-width: 899.98px) {
+  /* Keep brand on the left, buttons on the right (the mobile header uses flex
+     `order`; navbtns need an explicit order past the brand). */
+  .sticky-hero-inner .sticky-actions { order: 6; margin-left: auto !important; }
   /* Content no longer reserves space for the (removed) bottom bar. */
   html body.home-search.app-mode.sticky-always.has-subnav #content,
   html body.home-search.app-mode #content { padding-bottom: 1.1rem !important; }
