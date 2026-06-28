@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260628-revamp388';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260628-revamp389';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260628-revamp388';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260628-revamp389';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260628-revamp388';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260628-revamp388';
-import { initPromptModal } from './components/prompt-modal.js?v=20260628-revamp388';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260628-revamp388';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260628-revamp389';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260628-revamp389';
+import { initPromptModal } from './components/prompt-modal.js?v=20260628-revamp389';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260628-revamp389';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260628-revamp388';
-import { initInsightModal } from './components/insight-modal.js?v=20260628-revamp388';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260628-revamp388';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260628-revamp388';
-import { renderWebSources } from './components/websources.js?v=20260628-revamp388';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260628-revamp388';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260628-revamp389';
+import { initInsightModal } from './components/insight-modal.js?v=20260628-revamp389';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260628-revamp389';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260628-revamp389';
+import { renderWebSources } from './components/websources.js?v=20260628-revamp389';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260628-revamp389';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260628-revamp388';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260628-revamp389';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260628-revamp388';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260628-revamp389';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -196,34 +196,42 @@ function wireTopicHeroCondense() {
 const TSP_CHEV = '<svg class="tsp-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 
 // The shared dropdown panel (wrap + inner). `panelId` keeps aria-controls unique.
+// Layout (revamp389): a quiet actions row (Home · All Topics, with an X to close),
+// the parent "Overview" landing, then the subtopics as a responsive GRID (no rail).
 function topicPickerPanelHTML(topic, panelId) {
   const parent = topic.parent ? (getTopicBySlug(topic.parent) || topic) : topic;
   const family = getSubtopics(parent.slug);   // parent's children = this topic + siblings (or its own subtopics)
-  const itemHTML = (t, kind) => {
+  const parentActive = parent.slug === topic.slug;
+  const CHECK = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+  const cellHTML = (t) => {
     const active = t.slug === topic.slug;
-    const tag = kind === 'parent' ? '<span class="tsp-tag">Overview</span>' : '';
-    return `<a href="#/topic/${t.slug}" class="tsp-item${kind === 'parent' ? ' tsp-parent' : ''}${active ? ' is-active' : ''}"${active ? ' aria-current="page"' : ''}>
-        <span class="tsp-item-ico">${topicIconSVG(t.icon || 'globe', 'tsp-ic-svg')}</span>
-        <span class="tsp-item-name">${escapeHTML(t.name)}</span>
-        ${tag}
-        ${active ? '<span class="tsp-item-check" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>' : ''}
+    return `<a href="#/topic/${t.slug}" class="tsp-cell${active ? ' is-active' : ''}"${active ? ' aria-current="page"' : ''}>
+        <span class="tsp-cell-ic">${topicIconSVG(t.icon || 'globe', 'tsp-ic-svg')}</span>
+        <span class="tsp-cell-name">${escapeHTML(t.name)}</span>
+        ${active ? `<span class="tsp-cell-check" aria-hidden="true">${CHECK}</span>` : ''}
       </a>`;
   };
-  const HOME_IC = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg>';
-  const GRID_IC = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
-  const familyHTML = family.map(t => itemHTML(t, 'child')).join('');
+  const HOME_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg>';
+  const GRID_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
+  const X_IC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   return `
     <div class="tsp-panelwrap">
       <div class="tsp-panel" id="${escapeHTML(panelId)}" role="region" aria-label="Browse topics">
         <div class="tsp-panel-inner">
-          <div class="tsp-actions">
-            <a href="#/" class="tsp-action" data-tsp-home>${HOME_IC}<span>Home</span></a>
-            <a href="#" class="tsp-action" data-tsp-all>${GRID_IC}<span>View All Topics</span></a>
+          <div class="tsp-bar">
+            <span class="tsp-bar-actions">
+              <a href="#/" class="tsp-action" data-tsp-home>${HOME_IC}<span>Home</span></a>
+              <a href="#" class="tsp-action" data-tsp-all>${GRID_IC}<span>All Topics</span></a>
+            </span>
+            <button type="button" class="tsp-close" data-tsp-close aria-label="Close">${X_IC}</button>
           </div>
-          <div class="tsp-fam">
-            ${itemHTML(parent, 'parent')}
-            ${familyHTML ? `<div class="tsp-list">${familyHTML}</div>` : ''}
-          </div>
+          <a href="#/topic/${parent.slug}" class="tsp-parent-row${parentActive ? ' is-active' : ''}"${parentActive ? ' aria-current="page"' : ''}>
+            <span class="tsp-parent-ic">${topicIconSVG(parent.icon || 'globe', 'tsp-ic-svg')}</span>
+            <span class="tsp-parent-name">${escapeHTML(parent.name)}</span>
+            <span class="tsp-parent-kicker">Overview</span>
+            ${parentActive ? `<span class="tsp-cell-check" aria-hidden="true">${CHECK}</span>` : ''}
+          </a>
+          ${family.length ? `<div class="tsp-grid">${family.map(cellHTML).join('')}</div>` : ''}
         </div>
       </div>
     </div>`;
@@ -304,8 +312,17 @@ function wireSubnavPicker(root) {
   root.querySelectorAll('[data-topic-picker]').forEach((picker) => {
     const btn = picker.querySelector('.tsp-btn');
     if (!btn) return;
+    const isBodyHead = picker.classList.contains('topic-bodyhead');
+    const panelwrap = picker.querySelector('.tsp-panelwrap');
     const setOpen = (on) => {
       if (on) closeAllPickers(picker);
+      // Desktop body header: drop the full-width card so it overlays (covers) the
+      // inline subtopics row — measured BEFORE the open class hides that row.
+      if (on && isBodyHead && panelwrap) {
+        const subs = picker.querySelector('.tbh-subswrap');
+        if (subs && window.matchMedia('(min-width: 900px)').matches) panelwrap.style.top = subs.offsetTop + 'px';
+        else panelwrap.style.top = '';
+      }
       picker.classList.toggle('is-open', on);
       btn.setAttribute('aria-expanded', on ? 'true' : 'false');
     };
@@ -316,9 +333,11 @@ function wireSubnavPicker(root) {
     picker.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') { setOpen(false); btn.focus(); }
     });
-    // Navigating (a family topic, or Home) closes the panel before the route
-    // re-renders (the re-render rebuilds a fresh, collapsed picker anyway).
-    picker.querySelectorAll('.tsp-item, [data-tsp-home]').forEach((a) =>
+    // Explicit X close.
+    picker.querySelector('[data-tsp-close]')?.addEventListener('click', (e) => { e.stopPropagation(); setOpen(false); btn.focus(); });
+    // Navigating (a topic cell, the parent row, or Home) closes the panel before
+    // the route re-renders (the re-render rebuilds a fresh, collapsed picker).
+    picker.querySelectorAll('.tsp-cell, .tsp-parent-row, [data-tsp-home]').forEach((a) =>
       a.addEventListener('click', () => setOpen(false)));
     picker.querySelector('[data-tsp-all]')?.addEventListener('click', (e) => {
       e.preventDefault();

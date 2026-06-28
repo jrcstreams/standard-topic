@@ -16957,72 +16957,70 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .tsp-chev { flex: none; color: var(--color-text-muted); transition: transform .3s cubic-bezier(.4,0,.2,1); }
 .topic-subnav-picker.is-open .tsp-chev { transform: rotate(180deg); }
 
-/* ── Shared dropdown panel ─────────────────────────────────────────────────── */
+/* ── Shared dropdown panel (revamp389): quiet actions + X, parent "Overview"
+   landing, then a clean responsive GRID of subtopics (no rail). ──────────────── */
 .tsp-panelwrap {
   position: absolute; top: calc(100% + 7px); left: 0; right: 0; z-index: 60;
   display: grid; grid-template-rows: 0fr;
   opacity: 0; pointer-events: none; transform: translateY(-5px);
-  transition: grid-template-rows .3s cubic-bezier(.4,0,.2,1), opacity .2s ease, transform .3s cubic-bezier(.4,0,.2,1);
+  transition: grid-template-rows .28s cubic-bezier(.4,0,.2,1), opacity .18s ease, transform .28s cubic-bezier(.4,0,.2,1);
 }
 .topic-subnav-picker.is-open .tsp-panelwrap { grid-template-rows: 1fr; opacity: 1; pointer-events: auto; transform: translateY(0); }
 .tsp-panel {
-  overflow: hidden; min-height: 0; border: 1px solid var(--color-surface-border); border-radius: 14px;
-  background: #fff; box-shadow: 0 20px 44px -20px rgba(15,23,42,.45), 0 6px 16px -10px rgba(15,23,42,.25);
+  overflow: hidden; min-height: 0; border: 1px solid var(--color-surface-border); border-radius: 16px;
+  background: #fff; box-shadow: 0 24px 50px -22px rgba(15,23,42,.5), 0 8px 18px -12px rgba(15,23,42,.22);
 }
 .tsp-panel-inner {
-  padding: 8px; max-height: min(64vh, calc(100dvh - 150px));
+  padding: 14px; max-height: min(70vh, calc(100dvh - 130px));
   overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
 }
-/* Home + View All Topics action buttons */
-.tsp-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 9px; }
+/* Quiet actions row (Home · All Topics) on the left, X close on the right. */
+.tsp-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.tsp-bar-actions { display: flex; align-items: center; gap: 6px; min-width: 0; flex-wrap: wrap; }
 .tsp-action {
-  display: flex; align-items: center; justify-content: center; gap: 0.45rem; padding: 0.62rem 0.5rem; border-radius: 10px;
-  border: 1px solid var(--color-surface-border); background: var(--color-bg-light); color: var(--color-text);
-  font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; text-decoration: none;
-  transition: border-color .14s, background .14s, color .14s; -webkit-tap-highlight-color: transparent;
+  display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.38rem 0.7rem; border-radius: 999px;
+  border: 1px solid var(--color-surface-border); background: #fff; color: var(--color-text-muted);
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; text-decoration: none;
+  transition: border-color .14s, color .14s; -webkit-tap-highlight-color: transparent;
 }
-.tsp-action svg { flex: none; color: var(--color-text-muted); transition: color .14s; }
-.tsp-action:hover { border-color: #aab6c9; background: #fff; color: var(--color-primary); }
-.tsp-action:hover svg { color: var(--color-primary); }
-/* Family hierarchy: parent "Overview" header over indented children with a rail */
-.tsp-item {
-  display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.6rem; border-radius: 10px;
-  text-decoration: none; color: var(--color-text); transition: background .12s; position: relative;
+.tsp-action svg { flex: none; }
+.tsp-action:hover { border-color: #9bb0d6; color: #26375a; }
+.tsp-close {
+  flex: none; width: 30px; height: 30px; border-radius: 8px; border: none; background: var(--color-bg-light);
+  color: var(--color-text-muted); display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+  transition: background .14s, color .14s; -webkit-tap-highlight-color: transparent;
 }
-.tsp-item:hover { background: var(--color-bg-light); }
-.tsp-item-ico {
-  flex: none; width: 28px; height: 28px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
-  background: var(--color-bg-light); color: var(--color-text-muted);
+.tsp-close:hover { background: #e6eaf1; color: var(--color-text); }
+/* Parent "Overview" landing row. */
+.tsp-parent-row {
+  display: flex; align-items: center; gap: 0.65rem; padding: 0.58rem 0.65rem; border-radius: 11px;
+  text-decoration: none; color: var(--color-text); margin-bottom: 6px; transition: background .12s;
 }
-.tsp-item-ico .tsp-ic-svg { width: 16px; height: 16px; }
-.tsp-item-name { flex: 1 1 auto; min-width: 0; font-size: 0.95rem; font-weight: 500; }
-.tsp-tag {
-  flex: none; font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;
-  color: var(--color-text-muted); background: var(--color-bg-light); padding: 0.12rem 0.4rem; border-radius: 5px;
+.tsp-parent-row:hover { background: var(--color-bg-light); }
+.tsp-parent-ic {
+  flex: none; width: 30px; height: 30px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, #26375a 9%, #fff); color: #26375a;
 }
-.tsp-item-check { flex: none; color: var(--color-primary); display: inline-flex; }
-.tsp-item.is-active { background: color-mix(in srgb, var(--color-primary) 8%, #fff); }
-.tsp-item.is-active .tsp-item-name { color: var(--color-primary); font-weight: 600; }
-.tsp-item.is-active .tsp-item-ico { background: color-mix(in srgb, var(--color-primary) 14%, #fff); color: var(--color-primary); }
-.tsp-parent .tsp-item-name { font-weight: 700; }
-/* Cleaner family list (revamp386): children read as a simple indented tree — no
-   boxy icon chips, flat muted glyphs, a hairline rail, tighter rows. */
-.tsp-list {
-  margin-top: 2px; padding-top: 4px; padding-left: 14px; position: relative;
-  border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent);
-  display: flex; flex-direction: column; gap: 0;
+.tsp-parent-ic .tsp-ic-svg { width: 17px; height: 17px; }
+.tsp-parent-name { flex: 1 1 auto; min-width: 0; font-family: var(--font-display); font-size: 1.02rem; font-weight: 700; letter-spacing: -0.01em; color: #1a2740; }
+.tsp-parent-kicker { flex: none; font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--color-text-light); background: var(--color-bg-light); padding: 0.15rem 0.45rem; border-radius: 5px; }
+.tsp-parent-row.is-active { background: color-mix(in srgb, #26375a 6%, #fff); }
+.tsp-parent-row.is-active .tsp-parent-name { color: #26375a; }
+.tsp-cell-check { flex: none; color: #26375a; display: inline-flex; }
+/* Subtopics grid — single column by default; widens to multi-column where there's
+   room (desktop full-width card sets the column count). */
+.tsp-grid { display: grid; grid-template-columns: 1fr; gap: 2px; }
+.tsp-cell {
+  display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.6rem; border-radius: 9px;
+  text-decoration: none; color: var(--color-text); transition: background .12s;
 }
-.tsp-list::before {
-  content: ''; position: absolute; left: 18px; top: 7px; bottom: 7px; width: 1.5px;
-  background: color-mix(in srgb, var(--color-surface-border) 70%, transparent); border-radius: 2px;
-}
-.tsp-list .tsp-item { padding: 0.46rem 0.55rem; gap: 0.55rem; }
-.tsp-list .tsp-item-ico {
-  width: 22px; height: 22px; border-radius: 0; background: none !important; color: var(--color-text-light);
-}
-.tsp-list .tsp-item-ico .tsp-ic-svg { width: 15px; height: 15px; }
-.tsp-list .tsp-item.is-active .tsp-item-ico { background: none !important; color: var(--aii-accent, var(--color-primary)); }
-.tsp-list .tsp-item-name { font-weight: 500; }
+.tsp-cell:hover { background: var(--color-bg-light); }
+.tsp-cell-ic { flex: none; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; color: var(--color-text-light); }
+.tsp-cell-ic .tsp-ic-svg { width: 16px; height: 16px; }
+.tsp-cell-name { flex: 1 1 auto; min-width: 0; font-size: 0.92rem; font-weight: 500; }
+.tsp-cell.is-active { background: color-mix(in srgb, #26375a 7%, #fff); }
+.tsp-cell.is-active .tsp-cell-name { color: #26375a; font-weight: 600; }
+.tsp-cell.is-active .tsp-cell-ic { color: #26375a; }
 
 /* ── MOBILE (<900): band IS the button — no bubble. Body header hidden. ─────── */
 @media (max-width: 899.98px) {
@@ -17106,13 +17104,14 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
     margin: 0; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.028em; color: #26375a;
     font-size: clamp(1.7rem, 1.25rem + 1.05vw, 2rem); line-height: 1.05;
   }
+  /* Small, refined chevron — borderless with a subtle hover wash (#336). */
   .tbh-toggle {
-    flex: none; width: 26px; height: 26px; border-radius: 7px; border: 1px solid var(--color-surface-border);
-    background: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
-    color: var(--color-text-muted); transition: border-color .14s, color .14s, background .14s;
+    flex: none; width: 24px; height: 24px; border-radius: 6px; border: none; background: none;
+    display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+    color: var(--color-text-light); transition: background .14s, color .14s;
   }
-  .tbh-toggle:hover, .topic-bodyhead.is-open .tbh-toggle { border-color: #9bb0d6; color: #26375a; }
-  .tbh-toggle .tsp-chev { width: 15px; height: 15px; }
+  .tbh-toggle:hover, .topic-bodyhead.is-open .tbh-toggle { background: var(--color-bg-light); color: #26375a; }
+  .tbh-toggle .tsp-chev { width: 16px; height: 16px; }
   /* Subtopics clamp to one line; a "More" toggle expands when they overflow. */
   /* Subtopics sit in their own bracketed band (hairline above + below) — a
      discreet, clearly-delineated navigation strip under the topic name. */
@@ -17138,8 +17137,15 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   }
   .tbh-more:hover { border-color: #9bb0d6; color: #26375a; }
   .tbh-more .tsp-chev { width: 14px; height: 14px; }
-  /* body-header panel drops from the title/chevron, left-aligned */
-  .topic-bodyhead .tsp-panelwrap { left: 0; right: auto; width: 340px; top: calc(100% + 4px); }
+  /* Body-header dropdown = a FULL-WIDTH card that overlays (covers) the subtopics
+     row (its `top` is set in JS to the subtopics' offset). The subtopics hide
+     underneath so there are no dupes. (#334/#335) */
+  .topic-bodyhead .tsp-panelwrap { left: 0; right: 0; width: auto; }
+  .topic-bodyhead.is-open .tbh-subswrap { visibility: hidden; }
+  .topic-bodyhead .tsp-panel-inner { padding: 16px; max-height: min(72vh, calc(100dvh - 150px)); }
+  /* Multi-column subtopics grid on the wide card; collapses with available space. */
+  .topic-bodyhead .tsp-grid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 2px 10px; }
+  .topic-bodyhead .tsp-cell { padding: 0.55rem 0.7rem; }
 }
 
 /* ═══ AI Insights modal redesign (revamp379) ═════════════════════════════════
