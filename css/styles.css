@@ -17114,20 +17114,30 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   .tbh-toggle:hover, .topic-bodyhead.is-open .tbh-toggle { border-color: #9bb0d6; color: #26375a; }
   .tbh-toggle .tsp-chev { width: 15px; height: 15px; }
   /* Subtopics clamp to one line; a "More" toggle expands when they overflow. */
-  .tbh-subswrap { display: flex; align-items: flex-start; gap: 0.9rem; margin-top: 0.7rem; }
+  /* Subtopics sit in their own bracketed band (hairline above + below) — a
+     discreet, clearly-delineated navigation strip under the topic name. */
+  .tbh-subswrap {
+    display: flex; align-items: center; gap: 0.9rem; margin: 0.85rem 0 0; padding: 0.62rem 0;
+    border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 75%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 75%, transparent);
+  }
   .tbh-subs {
-    flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; gap: 0.4rem 1.15rem;
-    max-height: 1.75em; overflow: hidden; transition: max-height .26s ease;
+    flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; gap: 0.35rem 1.1rem;
+    max-height: 1.7em; overflow: hidden;
   }
-  .tbh-subswrap.is-open .tbh-subs { max-height: 16em; }
-  .tbh-sub { font-size: 0.95rem; font-weight: 500; color: var(--color-text-muted); text-decoration: none; transition: color .12s; white-space: nowrap; }
+  .tbh-sub { font-size: 0.86rem; font-weight: 500; color: var(--color-text-light); text-decoration: none; transition: color .12s; white-space: nowrap; }
   .tbh-sub:hover { color: #26375a; }
-  .tbh-sub-parent { color: var(--color-text); font-weight: 600; }
+  .tbh-sub-parent { color: var(--color-text-muted); font-weight: 600; }
+  /* "More" → a clear dropdown trigger (label + chevron) that opens the full list. */
   .tbh-more {
-    flex: none; align-self: flex-start; border: none; background: none; cursor: pointer; padding: 0;
-    font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; color: #26375a; white-space: nowrap;
+    flex: none; display: inline-flex; align-items: center; gap: 4px; align-self: center;
+    border: 1px solid var(--color-surface-border); background: #fff; cursor: pointer;
+    padding: 4px 10px; border-radius: 999px; font-family: var(--font-family);
+    font-size: 0.82rem; font-weight: 600; color: var(--color-text-muted); white-space: nowrap;
+    transition: border-color .14s, color .14s;
   }
-  .tbh-more:hover { text-decoration: underline; }
+  .tbh-more:hover { border-color: #9bb0d6; color: #26375a; }
+  .tbh-more .tsp-chev { width: 14px; height: 14px; }
   /* body-header panel drops from the title/chevron, left-aligned */
   .topic-bodyhead .tsp-panelwrap { left: 0; right: auto; width: 340px; top: calc(100% + 4px); }
 }
