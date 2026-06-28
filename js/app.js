@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260628-revamp389';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260628-revamp390';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260628-revamp389';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260628-revamp390';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260628-revamp389';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260628-revamp389';
-import { initPromptModal } from './components/prompt-modal.js?v=20260628-revamp389';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260628-revamp389';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260628-revamp390';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260628-revamp390';
+import { initPromptModal } from './components/prompt-modal.js?v=20260628-revamp390';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260628-revamp390';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260628-revamp389';
-import { initInsightModal } from './components/insight-modal.js?v=20260628-revamp389';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260628-revamp389';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260628-revamp389';
-import { renderWebSources } from './components/websources.js?v=20260628-revamp389';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260628-revamp389';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260628-revamp390';
+import { initInsightModal } from './components/insight-modal.js?v=20260628-revamp390';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260628-revamp390';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260628-revamp390';
+import { renderWebSources } from './components/websources.js?v=20260628-revamp390';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260628-revamp390';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260628-revamp389';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260628-revamp390';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260628-revamp389';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260628-revamp390';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1422,42 +1422,26 @@ function renderStickyHeroBar(container, route) {
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
       </nav>
-      <div class="sticky-actions">
-        <a href="#/" class="sticky-home" id="nav-home" aria-label="Home">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/>
-            <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          </svg>
+      <div class="sticky-actions navbtns">
+        <a href="#/" class="navbtn" id="nav-home" aria-label="Home">
+          <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
+          <span class="navbtn-label">Home</span>
         </a>
-        <div class="sticky-search sticky-search-pill" id="sticky-search-pill-container">
-          <div class="search-bar-wrapper">
-            <button class="search-bar is-compact search-bar-search-variant" type="button" id="nav-search" aria-label="Search topics">
-              <svg class="search-bar-icon" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="7"/>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              </svg>
-              <span class="search-bar-label">
-                <span class="search-bar-label-full">Search</span>
-              </span>
-            </button>
-          </div>
-        </div>
-        <button type="button" class="sticky-settings sticky-insights" id="nav-insights" aria-label="AI Insights" title="AI Insights">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>
+        <button type="button" class="navbtn" id="nav-search" aria-label="Search">
+          <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+          <span class="navbtn-label">Search</span>
         </button>
-        <button type="button" class="sticky-trending" id="nav-trending" aria-label="Trending">
-          <svg class="sticky-trending-icon" aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="3 17 9 11 13 15 21 7"/>
-            <polyline points="15 7 21 7 21 13"/>
-          </svg>
-          <span class="sticky-trending-full">Trending</span>
-          <span class="sticky-trending-short">Trends</span>
+        <button type="button" class="navbtn navbtn-ai" id="nav-insights" aria-label="AI Insights">
+          <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg></span>
+          <span class="navbtn-label">AI Insights</span>
         </button>
-        <button type="button" class="sticky-topics" id="nav-topics" aria-label="All topics" aria-haspopup="dialog">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/>
-          </svg>
-          <span class="sticky-topics-label">Topics</span>
+        <button type="button" class="navbtn" id="nav-trending" aria-label="Trending">
+          <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
+          <span class="navbtn-label">Trending</span>
+        </button>
+        <button type="button" class="navbtn" id="nav-topics" aria-label="Topics" aria-haspopup="dialog">
+          <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>
+          <span class="navbtn-label">Topics</span>
         </button>
       </div>
     </div>
@@ -1680,6 +1664,11 @@ function applyBotnavActive() {
   nav.querySelectorAll('.botnav-tab').forEach(t => t.classList.toggle('is-active', t.dataset.tab === active));
 }
 function renderBottomNav(route) {
+  // Bottom nav removed entirely (revamp390) — the main nav now carries Home /
+  // Search / AI Insights / Trending / Topics as labeled buttons at every width.
+  document.getElementById('bottom-nav')?.remove();
+  return;
+  // eslint-disable-next-line no-unreachable
   let nav = document.getElementById('bottom-nav');
   if (!nav) {
     nav = document.createElement('nav');

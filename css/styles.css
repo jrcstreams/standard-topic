@@ -17211,3 +17211,45 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .aii-brief-top .aii-brief-explore-wrap { margin: 0; }
 .aii-brief-top .aii-brief-meta { font-size: 0.78rem; color: var(--color-text-light); margin-left: auto; white-space: nowrap; }
 .aii-brief-top:empty { display: none; }
+
+/* ═══ Phase 1 (revamp390): bottom nav removed — main nav carries Home / Search /
+   AI Insights / Trending / Topics as labeled buttons at EVERY width. ══════════ */
+@media (max-width: 899.98px) { :root { --nav-h: 62px; } }
+
+#bottom-nav { display: none !important; }
+.nav-search-mobile { display: none !important; }
+.sticky-hero-inner .sticky-page-name { display: none !important; }
+
+/* The 5 nav buttons — icon over a small sublabel; shown at all widths. */
+.sticky-actions.navbtns { display: flex !important; align-items: stretch; gap: 2px; flex: 0 0 auto; margin-left: auto; }
+.navbtn {
+  display: flex !important; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  min-width: 54px; padding: 5px 10px; border: none; background: none; cursor: pointer;
+  color: rgba(255,255,255,0.82); text-decoration: none; border-radius: 10px;
+  font-family: var(--font-family); transition: background .14s, color .14s; -webkit-tap-highlight-color: transparent;
+}
+.navbtn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.navbtn.is-active { background: rgba(255,255,255,0.14); color: #fff; }
+.navbtn-ico { display: inline-flex; }
+.navbtn-ico svg { width: 20px; height: 20px; display: block; }
+.navbtn-label { font-size: 0.64rem; font-weight: 600; letter-spacing: -0.005em; white-space: nowrap; line-height: 1; }
+
+@media (max-width: 899.98px) {
+  /* Content no longer reserves space for the (removed) bottom bar. */
+  html body.home-search.app-mode.sticky-always.has-subnav #content,
+  html body.home-search.app-mode #content { padding-bottom: 1.1rem !important; }
+  body.app-mode.sticky-always.has-subnav:not(.home-search) #content,
+  body.app-mode:not(.home-search) #content {
+    height: calc(100dvh - var(--nav-h) - var(--subnav-height, 66px)) !important;
+  }
+  .sticky-hero-inner .sticky-title { font-size: 1.08rem; }
+}
+/* Too small for labels → icon-only buttons (the requested fallback). */
+@media (max-width: 560px) {
+  .navbtn-label { display: none; }
+  .navbtn { min-width: 0; padding: 6px 7px; }
+  .sticky-hero-inner { gap: 0.4rem; }
+}
+@media (max-width: 380px) {
+  .sticky-hero-inner .sticky-title { display: none; }
+}
