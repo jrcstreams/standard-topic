@@ -17557,7 +17557,7 @@ body.home-search #section-newsfeed .news-card-desc { margin-top: 0.45rem; font-s
 .aiidd-topic-ic .tsp-ic-svg { width: 17px; height: 17px; }
 .aiidd-topic-parent .aiidd-topic-name { font-weight: 800; }
 
-.aiidd-chips { display: flex; flex-wrap: wrap; gap: 6px; flex: 1 1 280px; }
+.aiidd-chips { display: flex; flex-wrap: wrap; align-items: flex-start; align-content: flex-start; gap: 6px; flex: 1 1 280px; }
 .aiidd-chip {
   font-size: 0.78rem; font-weight: 600; color: #334155;
   background: #fff; border: 1px solid var(--color-surface-border); border-radius: 999px;
@@ -17570,5 +17570,8 @@ body.home-search #section-newsfeed .news-card-desc { margin-top: 0.45rem; font-s
   .aii-nav-dd-inner { padding: 0 0.85rem; }
   .aiidd-topic { flex-direction: column; align-items: stretch; gap: 8px; }
   .aiidd-topic-name { min-width: 0; }
-  .aiidd-chip { font-size: 0.74rem; padding: 5px 10px; }
+  /* In the column layout the flex-basis would land on the cross (height) axis
+     and balloon the row — pin it to content height instead. */
+  .aiidd-chips { flex: 0 0 auto; }
+  .aiidd-chip { font-size: 0.74rem; padding: 6px 11px; }
 }
