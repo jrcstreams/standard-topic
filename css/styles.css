@@ -17502,6 +17502,9 @@ body.home-search #section-newsfeed .news-card-desc { margin-top: 0.45rem; font-s
 }
 .aii-nav-dd-close:hover { background: #f1f5f9; color: #1e293b; }
 
+.aii-nav-dd-subbar { flex: 0 0 auto; padding: 10px 2px 4px; }
+.aii-nav-dd-subbar .tlm-controlbar { margin: 0; }
+
 .aii-nav-dd-scrollwrap { position: relative; flex: 1 1 auto; min-height: 0; }
 .aii-nav-dd-scroll {
   height: 100%; max-height: calc(100dvh - var(--nav-h) - 78px);
