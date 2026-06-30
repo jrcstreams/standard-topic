@@ -17566,6 +17566,28 @@ body.home-search #section-newsfeed .news-card-desc { margin-top: 0.45rem; font-s
 }
 .aiidd-chip:hover { background: #2563eb; border-color: #2563eb; color: #fff; }
 
+/* Topics dropdown (Phase 5): plain topic links instead of track chips. */
+.aiidd-parent-flat {
+  display: flex; align-items: center; gap: 11px; width: 100%;
+  padding: 14px 6px; text-decoration: none;
+  font-size: 1rem; font-weight: 700; color: var(--color-primary, #1e293b);
+}
+.aiidd-parent-flat:hover { color: #2563eb; }
+.aiidd-parent-flat .aiidd-parent-name { flex: 1 1 auto; }
+.aiidd-flat-arrow { color: #cbd5e1; display: inline-flex; transform: rotate(-90deg); }
+.aiidd-tlinks { display: flex; flex-wrap: wrap; gap: 7px; padding: 2px 8px 14px 36px; }
+.aiidd-tlink {
+  font-size: 0.86rem; font-weight: 600; color: #334155; text-decoration: none;
+  background: #f8fafc; border: 1px solid var(--color-surface-border); border-radius: 999px;
+  padding: 6px 13px; transition: background .14s ease, color .14s ease, border-color .14s ease;
+}
+.aiidd-tlink:hover { background: #2563eb; border-color: #2563eb; color: #fff; }
+.aiidd-tlink-all { background: #eef2ff; border-color: #c7d2fe; color: #3730a3; font-weight: 700; }
+.aiidd-tlink-all:hover { background: #4f46e5; border-color: #4f46e5; color: #fff; }
+@media (max-width: 640px) {
+  .aiidd-tlinks { padding-left: 14px; }
+}
+
 @media (max-width: 640px) {
   .aii-nav-dd-inner { padding: 0 0.85rem; }
   .aiidd-topic { flex-direction: column; align-items: stretch; gap: 8px; }
