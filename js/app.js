@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp402';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp404';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp402';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp404';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp402';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp402';
-import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp402';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260630-revamp402';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp404';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp404';
+import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp404';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260630-revamp404';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp402';
-import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp402';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp402';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp402';
-import { renderWebSources } from './components/websources.js?v=20260630-revamp402';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp402';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp404';
+import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp404';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp404';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp404';
+import { renderWebSources } from './components/websources.js?v=20260630-revamp404';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp404';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp402';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp404';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp402';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp404';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -349,20 +349,35 @@ function wireSubtopicsMore(root) {
 // the AI Insights builder for that section, with its own nav/topic-switcher
 // hidden (the page tiles ARE the nav). One open at a time.
 function wireTopicAiiInline(section, topic, descriptions, icons) {
-  const stage = section.querySelector('.aii-stage');
-  if (!stage) return;
-  let panel = stage.querySelector('.aii-inline-panel');
-  if (!panel) { panel = document.createElement('div'); panel.className = 'aii-inline-panel'; panel.hidden = true; stage.appendChild(panel); }
+  // IMPORTANT: the AI component re-renders its OWN innards (rebuilding `.aii-stage`
+  // and wiping anything we appended) whenever the 899.98px breakpoint is crossed —
+  // which on a real phone fires on address-bar show/hide + orientation. So we must
+  // (a) attach the intercept to the STABLE `section` element (never replaced), and
+  // (b) look up the current stage + (re)create the inline panel FRESH on each open.
   let activeGroup = null; let ctl = null;
-  const clearTiles = () => stage.querySelectorAll('.aii-bcard.is-active').forEach((b) => { b.classList.remove('is-active'); b.setAttribute('aria-expanded', 'false'); });
-  const close = () => {
-    activeGroup = null; panel.hidden = true;
-    if (ctl && ctl.destroy) { try { ctl.destroy(); } catch (_) {} }
-    ctl = null; panel.innerHTML = ''; clearTiles();
+  const getStage = () => section.querySelector('.aii-stage');
+  const getPanel = (create) => {
+    const stage = getStage();
+    if (!stage) return null;
+    let panel = stage.querySelector('.aii-inline-panel');
+    if (!panel && create) { panel = document.createElement('div'); panel.className = 'aii-inline-panel'; panel.hidden = true; stage.appendChild(panel); }
+    return panel;
   };
+  const clearTiles = () => section.querySelectorAll('.aii-bcard.is-active').forEach((b) => { b.classList.remove('is-active'); b.setAttribute('aria-expanded', 'false'); });
+  const close = () => {
+    activeGroup = null;
+    if (ctl && ctl.destroy) { try { ctl.destroy(); } catch (_) {} }
+    ctl = null;
+    const panel = getPanel(false);
+    if (panel) { panel.hidden = true; panel.innerHTML = ''; }
+    clearTiles();
+  };
+  const isOpen = () => { const p = getPanel(false); return !!(p && !p.hidden); };
   const openGroup = (group, tile) => {
-    if (activeGroup === group) { close(); return; }
+    if (activeGroup === group && isOpen()) { close(); return; }
     close();
+    const panel = getPanel(true);
+    if (!panel) return;
     activeGroup = group; panel.hidden = false;
     if (tile) { tile.classList.add('is-active'); tile.setAttribute('aria-expanded', 'true'); }
     ctl = renderAIIntelligence(panel, {
@@ -379,11 +394,12 @@ function wireTopicAiiInline(section, topic, descriptions, icons) {
     }
     requestAnimationFrame(() => panel.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
   };
-  // Capture-phase: intercept the tile click BEFORE the component's modal-open
-  // handler, and open the section inline instead.
-  stage.addEventListener('click', (e) => {
+  // Capture-phase on the STABLE section: intercept the tile click BEFORE the
+  // component's own modal-open handler (and before any post-re-render rewire),
+  // and open the section inline instead.
+  section.addEventListener('click', (e) => {
     const tile = e.target.closest && e.target.closest('.aii-bcard[data-builder-open]');
-    if (!tile || !stage.contains(tile)) return;
+    if (!tile || !section.contains(tile)) return;
     e.stopPropagation(); e.preventDefault();
     openGroup(tile.dataset.group, tile);
   }, true);
