@@ -10,7 +10,7 @@
 // newsCardHTML/wireNewsAI/listHTML are exported so the Search modal can reuse
 // the exact same card + AI-insight behavior for archive results.
 
-import { getModels } from '../utils/data.js';
+import { getModels, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt } from '../utils/ai-models.js';
 
 function escapeHTML(str) {
@@ -309,12 +309,60 @@ function flashCopied(btn, msg) {
 }
 
 // Wire the AI Insights dropdown triggers + option buttons within a list.
+// Close any open inline news panel within `root` (one open at a time).
+function closeNewsPanels(root, except) {
+  root.querySelectorAll('.news-card--open').forEach((card) => {
+    if (card === except) return;
+    card.classList.remove('news-card--open');
+    const p = card.querySelector('[data-news-panel-body]');
+    if (p) { p.hidden = true; p.innerHTML = ''; p.dataset.kind = ''; }
+    card.querySelectorAll('.news-act[aria-expanded="true"]').forEach((b) => b.setAttribute('aria-expanded', 'false'));
+  });
+}
+// One-time: as the user scrolls, close an open panel once its card leaves view.
+let newsPanelScrollWired = false;
+function wireNewsPanelScrollClose() {
+  if (newsPanelScrollWired) return;
+  newsPanelScrollWired = true;
+  let raf = 0;
+  const onScroll = () => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      const open = document.querySelector('.news-card--open');
+      if (!open) return;
+      const r = open.getBoundingClientRect();
+      // Closed once the card's header has scrolled well out of view.
+      if (r.bottom < 80 || r.top > (window.innerHeight || 800) - 40) {
+        open.classList.remove('news-card--open');
+        const p = open.querySelector('[data-news-panel-body]');
+        if (p) { p.hidden = true; p.innerHTML = ''; p.dataset.kind = ''; }
+        open.querySelectorAll('.news-act[aria-expanded="true"]').forEach((b) => b.setAttribute('aria-expanded', 'false'));
+      }
+    });
+  };
+  document.addEventListener('scroll', onScroll, { capture: true, passive: true });
+}
+
 export function wireNewsAI(root) {
-  root.querySelectorAll('.news-ai-trigger').forEach(trigger => {
-    trigger.addEventListener('click', (e) => {
+  wireNewsPanelScrollClose();
+  // AI Insights / Web Search → toggle a clean inline dropdown under the card.
+  root.querySelectorAll('.news-act[data-news-panel]').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const card = trigger.closest('.news-card');
-      if (card) showNewsBrief(card);
+      const card = btn.closest('.news-card');
+      const panel = card?.querySelector('[data-news-panel-body]');
+      if (!panel) return;
+      const kind = btn.dataset.newsPanel;                       // 'ai' | 'web'
+      const sameOpen = !panel.hidden && panel.dataset.kind === kind;
+      closeNewsPanels(root);                                    // only one open at a time
+      if (sameOpen) return;                                     // clicking the open one closes it
+      panel.dataset.kind = kind;
+      panel.hidden = false;
+      card.classList.add('news-card--open');
+      btn.setAttribute('aria-expanded', 'true');
+      if (kind === 'ai') renderNewsBriefInto(panel, card);
+      else renderNewsWebInto(panel, card);
     });
   });
   // Share — one button toggles a smooth accordion with Copy Link + Share via.
@@ -360,8 +408,118 @@ export function wireNewsAI(root) {
   });
 }
 
-function newsAIHTML() {
-  return `<div class="news-ai"><button type="button" class="news-ai-trigger">${AI_SPARK_SVG}<span>AI Insights</span></button></div>`;
+// ── Inline News Insights (Phase 2b, revamp400) ───────────────────────────────
+// "AI Insights" / "Web Search" open as clean dropdowns RIGHT under the card
+// (no modal). The AI Insights dropdown shows just the brief — What Happened
+// downwards (no story title / publisher / web-search inside it).
+const NI_VIEW_SVG = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>';
+const NI_GLOBE_SVG = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg>';
+const NI_ARROW_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>';
+const NI_SEC_ICON = {
+  summary: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><line x1="7" y1="8" x2="14" y2="8"/><line x1="7" y1="12" x2="14" y2="12"/><line x1="7" y1="16" x2="11" y2="16"/></svg>',
+  takeaways: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
+  matters: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/></svg>',
+  timeline: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>',
+  sources: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+};
+const NEWS_SEC_MAP = [
+  { keys: ['what happened', 'explanation'], label: 'What Happened' },
+  { keys: ['key takeaways', 'key takeaway', 'key points', 'takeaways'], label: 'Takeaways' },
+  { keys: ['why it matters', 'why this matters', 'background'], label: 'Why It Matters' },
+  { keys: ['timeline'], label: 'Timeline' },
+];
+function niNormalize(content) {
+  const text = String(content || '');
+  const re = /^#{1,4}\s+(.+?)\s*$/gm;
+  const heads = []; let m;
+  while ((m = re.exec(text))) heads.push({ title: m[1].trim(), start: m.index, contentStart: re.lastIndex });
+  if (!heads.length) return text;
+  const sections = heads.map((h, i) => ({ title: h.title, body: text.slice(h.contentStart, i + 1 < heads.length ? heads[i + 1].start : text.length).replace(/^\n+/, '').replace(/\s+$/, '') }));
+  const norm = (t) => t.toLowerCase().replace(/[^a-z ]/g, '').replace(/\s+/g, ' ').trim();
+  const buckets = NEWS_SEC_MAP.map(() => null); const extras = [];
+  for (const s of sections) {
+    const n = norm(s.title);
+    const idx = NEWS_SEC_MAP.findIndex((g) => g.keys.includes(n));
+    if (idx >= 0 && !buckets[idx]) buckets[idx] = { label: NEWS_SEC_MAP[idx].label, body: s.body };
+    else extras.push({ label: s.title, body: s.body });
+  }
+  const ordered = buckets.filter(Boolean).concat(extras);
+  return ordered.length ? ordered.map((s) => `### ${s.label}\n${s.body}`).join('\n\n') : text;
+}
+function niSplit(content) {
+  const text = String(content || '');
+  const re = /^[ \t]*(?:\*\*)?#{2,3}\s+(.+?)\s*$/gm;
+  const idx = []; let m;
+  while ((m = re.exec(text))) { const name = m[1].replace(/\*\*/g, '').replace(/[:#\s]+$/, '').trim(); idx.push({ name, start: m.index, headEnd: m.index + m[0].length }); }
+  if (!idx.length) return [];
+  return idx.map((s, i) => ({ name: s.name, body: text.slice(s.headEnd, i + 1 < idx.length ? idx[i + 1].start : text.length).trim() }));
+}
+function niSecIconKey(name) {
+  const n = String(name || '').toLowerCase();
+  if (/what happened/.test(n)) return 'summary';
+  if (/takeaway|key point/.test(n)) return 'takeaways';
+  if (/matters|background/.test(n)) return 'matters';
+  if (/timeline/.test(n)) return 'timeline';
+  return 'summary';
+}
+function niSecHead(name) {
+  const key = niSecIconKey(name);
+  return `<div class="ni-sec-head"><span class="ni-sec-ic">${NI_SEC_ICON[key] || NI_SEC_ICON.summary}</span><h4 class="ni-sec-name">${escapeHTML(name)}</h4></div>
+    <div class="ni-aitag-row"><span class="ni-aitag">${AI_SPARK_SVG}<span>AI Generated Text</span></span></div>`;
+}
+function niSourcesHTML(headlines, sources, origUrl) {
+  const rows = [];
+  if (origUrl) rows.push(`<a class="ni-source-row ni-source-row--orig" href="${escapeAttr(origUrl)}" target="_blank" rel="noopener noreferrer"><span>View original article</span>${NI_ARROW_SVG}</a>`);
+  const items = (Array.isArray(headlines) && headlines.length ? headlines : (sources || [])).map((x) => ({ uri: x.uri || x.url || '', label: (x.title && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(x.title)) ? x.title : (sourceHost(x.uri || x.url) || x.title || 'source') }));
+  const seen = new Set();
+  for (const it of items) { const k = (it.label || '').toLowerCase(); if (!k || !it.uri || seen.has(k)) continue; seen.add(k); rows.push(`<a class="ni-source-row" href="${escapeAttr(it.uri)}" target="_blank" rel="noopener noreferrer"><span>${escapeHTML(it.label)}</span>${NI_ARROW_SVG}</a>`); }
+  return rows.length ? `<section class="ni-sec ni-sec-sources"><div class="ni-sec-head"><span class="ni-sec-ic">${NI_SEC_ICON.sources}</span><h4 class="ni-sec-name">Sources</h4></div><div class="ni-source-list">${rows.join('')}</div></section>` : '';
+}
+function niWebHTML(term) {
+  const cats = getExternalSearchCategories() || [];
+  const searches = getExternalSearches() || [];
+  const avail = cats.filter((c) => searches.some((s) => s.category === c.key));
+  if (!avail.length) return '<p class="ni-empty">No web sources available.</p>';
+  return `<div class="ni-web">${avail.map((c) => {
+    const rows = searches.filter((s) => s.category === c.key).map((s) => {
+      const url = String(s.urlTemplate || '').replace(/\{query\}/g, encodeURIComponent(term || ''));
+      return `<a class="ni-source-row" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer"><span class="ni-source-tx"><span class="ni-source-name">${escapeHTML(s.name)}</span>${s.description ? `<span class="ni-source-desc">${escapeHTML(s.description)}</span>` : ''}</span>${NI_ARROW_SVG}</a>`;
+    }).join('');
+    return `<details class="ni-webcat" name="ni-webcat"><summary class="ni-webcat-sum"><span>${escapeHTML(c.label)}</span>${AI_CHEV_SVG}</summary><div class="ni-source-list">${rows}</div></details>`;
+  }).join('')}</div>`;
+}
+function niLoaderHTML() {
+  return `<div class="ni-loader"><span class="ni-spark">${AI_SPARK_SVG}</span><span class="ni-loader-tx">Generating insights…</span><span class="ni-skel"></span><span class="ni-skel"></span><span class="ni-skel ni-skel-short"></span></div>`;
+}
+function niFailHTML() {
+  return `<div class="ni-fail"><p>AI insights unavailable right now.</p><button type="button" class="ni-retry" data-ni-retry>Try again</button></div>`;
+}
+async function renderNewsBriefInto(panel, card) {
+  panel.innerHTML = `<div class="ni-inner">${niLoaderHTML()}</div>`;
+  const d = { url: card.dataset.url || '', title: card.dataset.title || '', description: card.dataset.desc || '', date: card.dataset.date || '' };
+  const t0 = Date.now();
+  try {
+    const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'news', ...d }) });
+    const data = res.ok ? await res.json() : null;
+    const left = 500 - (Date.now() - t0); if (left > 0) await new Promise((r) => setTimeout(r, left));
+    if (panel.dataset.kind !== 'ai' || panel.hidden) return;            // closed/switched mid-flight
+    if (data && data.content) {
+      const secs = niSplit(niNormalize(data.content));
+      const secHTML = secs.length
+        ? secs.map((s) => `<section class="ni-sec">${niSecHead(s.name)}${renderBriefBody(s.body, null)}</section>`).join('')
+        : `<section class="ni-sec">${niSecHead('Brief')}${renderBriefBody(data.content, null)}</section>`;
+      panel.innerHTML = `<div class="ni-inner ai-reveal">${secHTML}${niSourcesHTML(data.headlines, data.sources, d.url)}</div>`;
+    } else {
+      panel.innerHTML = `<div class="ni-inner">${niFailHTML()}</div>`;
+      panel.querySelector('[data-ni-retry]')?.addEventListener('click', () => renderNewsBriefInto(panel, card));
+    }
+  } catch (_) {
+    panel.innerHTML = `<div class="ni-inner">${niFailHTML()}</div>`;
+    panel.querySelector('[data-ni-retry]')?.addEventListener('click', () => renderNewsBriefInto(panel, card));
+  }
+}
+function renderNewsWebInto(panel, card) {
+  panel.innerHTML = `<div class="ni-inner">${niWebHTML(card.dataset.title || '')}</div>`;
 }
 
 // Field accessors that work for BOTH rss.app live items and stored archive
@@ -429,8 +587,13 @@ export function newsCardHTML(item) {
             </div>
           </span>
         </div>
-        ${newsAIHTML()}
       </div>
+      <div class="news-card-actions">
+        ${url ? `<a class="news-act" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">${NI_VIEW_SVG}<span>View Story</span></a>` : ''}
+        <button type="button" class="news-act news-act-ai" data-news-panel="ai" aria-expanded="false">${AI_SPARK_SVG}<span>AI Insights</span>${AI_CHEV_SVG}</button>
+        <button type="button" class="news-act news-act-web" data-news-panel="web" aria-expanded="false">${NI_GLOBE_SVG}<span>Web Search</span>${AI_CHEV_SVG}</button>
+      </div>
+      <div class="news-panel" data-news-panel-body hidden></div>
     </article>
   `;
 }
