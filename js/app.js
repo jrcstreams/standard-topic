@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp396';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp398';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp396';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp398';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp396';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp396';
-import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp396';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260630-revamp396';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp398';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp398';
+import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp398';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260630-revamp398';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp396';
-import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp396';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp396';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp396';
-import { renderWebSources } from './components/websources.js?v=20260630-revamp396';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp396';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp398';
+import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp398';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp398';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp398';
+import { renderWebSources } from './components/websources.js?v=20260630-revamp398';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp398';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp396';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp398';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp396';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp398';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -303,36 +303,45 @@ function topicBodyHeadHTML(topic) {
         <h1 class="tbh-title">${escapeHTML(topic.name)}</h1>
         <button type="button" class="tbh-toggle tsp-btn" aria-expanded="false" aria-controls="tsp-panel-body" aria-label="Change topic">${TSP_CHEV}</button>
       </div>
-      ${subsHTML ? `<div class="tbh-subswrap">
-        <div class="tbh-subs">${subsHTML}</div>
-        <button type="button" class="tbh-more" data-tbh-more hidden><span>More</span>${TSP_CHEV}</button>
-      </div>` : ''}
+      ${subsHTML ? `<div class="tbh-subs">${subsHTML}<button type="button" class="tbh-more" data-tbh-more hidden>More${TSP_CHEV}</button></div>` : ''}
       ${topicPickerPanelHTML(topic, 'tsp-panel-body')}
     </div>`;
 }
 
-// Show the subtopics "More" dropdown trigger only when the row overflows one line
-// (desktop); clicking it opens the full topic picker (same as the chevron on the
-// topic name). No-op on mobile (the body header is display:none → 0 height).
+// Subtopics show inline under the title; "More" is an INLINE continuation of the
+// links that appears ONLY when some subtopics don't fit one line (then trailing
+// links are hidden so "More" sits right after the last visible one). Clicking it
+// opens the full topic picker. No-op on mobile (the body header is display:none).
 function wireSubtopicsMore(root) {
-  const wrap = root.querySelector('.tbh-subswrap');
-  if (!wrap) return;
-  const subs = wrap.querySelector('.tbh-subs');
-  const more = wrap.querySelector('[data-tbh-more]');
+  const subs = root.querySelector('.tbh-subs');
   const picker = root.querySelector('[data-topic-picker]');
-  if (!subs || !more || !picker) return;
-  const sync = () => {
-    const overflowing = subs.scrollHeight > subs.clientHeight + 3;
-    more.hidden = !overflowing;
-  };
-  // "More" → open the topic picker dropdown (full list), like the name chevron.
+  if (!subs || !picker) return;
+  const more = subs.querySelector('[data-tbh-more]');
+  if (!more) return;
+  const links = [...subs.querySelectorAll('.tbh-sub')];
   more.addEventListener('click', (e) => {
     e.stopPropagation();
     picker.querySelector('.tsp-btn')?.click();
   });
-  requestAnimationFrame(sync);
-  setTimeout(sync, 250);
-  window.addEventListener('resize', sync, { passive: true });
+  const fit = () => {
+    links.forEach((l) => { l.style.display = ''; });
+    more.hidden = true;
+    if (!links.length || !links[0].offsetParent) return;          // hidden (mobile) → skip
+    const top0 = links[0].offsetTop;
+    const linksWrap = links.some((l) => l.offsetTop > top0 + 2);
+    if (!linksWrap) return;                                        // all fit → no "More"
+    more.hidden = false;
+    // Hide trailing links until "More" + the visible links all sit on line one.
+    for (let i = links.length - 1; i >= 0; i--) {
+      const fits = more.offsetTop <= top0 + 2 &&
+        !links.some((l) => l.style.display !== 'none' && l.offsetTop > top0 + 2);
+      if (fits) break;
+      links[i].style.display = 'none';
+    }
+  };
+  requestAnimationFrame(fit);
+  setTimeout(fit, 250);
+  window.addEventListener('resize', () => requestAnimationFrame(fit), { passive: true });
 }
 
 function closeAllPickers(except) {
@@ -356,7 +365,7 @@ function wireSubnavPicker(root) {
       // Desktop body header: drop the full-width card so it overlays (covers) the
       // inline subtopics row — measured BEFORE the open class hides that row.
       if (on && isBodyHead && panelwrap) {
-        const subs = picker.querySelector('.tbh-subswrap');
+        const subs = picker.querySelector('.tbh-subs');
         if (subs && window.matchMedia('(min-width: 900px)').matches) panelwrap.style.top = subs.offsetTop + 'px';
         else panelwrap.style.top = '';
       }
