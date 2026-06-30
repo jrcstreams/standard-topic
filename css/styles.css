@@ -17299,3 +17299,38 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 /* Let the dropdown overflow the home band instead of being clipped. */
 body.home-mode #sub-header.is-subnav,
 body.home-mode #sub-header.is-subnav .topic-banner { overflow: visible !important; }
+
+/* ═══ News Feed — single-column individual cards (revamp399, Phase 2a) ═══════
+   Every feed (topic + home) is one column; each story is its own bordered card
+   with clear spacing. Overrides the old hairline-divider rows. */
+.topic-band #section-newsfeed .news-list,
+body.home-search #section-newsfeed .news-list {
+  display: flex !important; flex-direction: column !important; grid-template-columns: none !important;
+  gap: 12px !important; padding: 14px 0 6px !important;
+}
+.topic-band #section-newsfeed .news-card,
+body.home-search #section-newsfeed .news-card {
+  display: flex !important; flex-direction: column; margin: 0 !important;
+  border: 1px solid var(--color-surface-border) !important; border-radius: 14px !important;
+  background: #fff !important; box-shadow: 0 1px 2px rgba(15,23,42,.04) !important;
+  padding: 17px 18px !important; transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+/* cards 1–2 had their top divider removed for the old row look — restore full border */
+.topic-band #section-newsfeed .news-list .news-card:nth-child(1),
+.topic-band #section-newsfeed .news-list .news-card:nth-child(2) { border-top: 1px solid var(--color-surface-border) !important; }
+.topic-band #section-newsfeed .news-card:hover,
+body.home-search #section-newsfeed .news-card:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)) !important;
+  box-shadow: 0 12px 26px -16px rgba(15,23,42,.3) !important; transform: translateY(-1px);
+  background: #fff !important;
+}
+.topic-band #section-newsfeed .news-card .news-card-link,
+body.home-search #section-newsfeed .news-card .news-card-link { padding: 0 !important; }
+.topic-band #section-newsfeed .news-card .news-card-foot,
+body.home-search #section-newsfeed .news-card .news-card-foot {
+  margin-top: 13px !important; padding: 0 !important; border-top: none !important;
+}
+.topic-band #section-newsfeed .news-card-title,
+body.home-search #section-newsfeed .news-card-title { font-size: 1.02rem; }
+.topic-band #section-newsfeed .news-card-desc,
+body.home-search #section-newsfeed .news-card-desc { margin-top: 0.45rem; font-size: 0.88rem; }
