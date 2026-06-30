@@ -17427,8 +17427,9 @@ body.home-search #section-newsfeed .news-card-desc { margin-top: 0.45rem; font-s
    are the nav, so the mounted builder's own brand/nav/topic-switcher are hidden. */
 .aii-inline-panel[hidden] { display: none !important; }
 .aii-inline-panel { margin-top: 14px; border-top: 1px solid var(--color-surface-border); position: relative; }
-.aii-inline-panel .aii-head { display: none !important; }
-.aii-inline-panel .aii-builder-topbar { display: none !important; }
+/* Scoped with #section-shortcuts so it beats the launcher's own head-show rule. */
+.topic-band #section-shortcuts .aii-inline-panel .aii-head { display: none !important; }
+.topic-band #section-shortcuts .aii-inline-panel .aii-builder-topbar { display: none !important; }
 .aii-inline-panel .aii { border: none !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; overflow: visible !important; height: auto !important; }
 .aii-inline-panel .aii-stage,
 .aii-inline-panel .aii-content--modal { padding: 0 !important; }
