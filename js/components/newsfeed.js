@@ -509,6 +509,7 @@ async function renderNewsBriefInto(panel, card) {
         ? secs.map((s) => `<section class="ni-sec">${niSecHead(s.name)}${renderBriefBody(s.body, null)}</section>`).join('')
         : `<section class="ni-sec">${niSecHead('Brief')}${renderBriefBody(data.content, null)}</section>`;
       panel.innerHTML = `<div class="ni-inner ai-reveal">${secHTML}${niSourcesHTML(data.headlines, data.sources, d.url)}</div>`;
+      wireScrollFades(panel.querySelector('.ni-inner'));
     } else {
       panel.innerHTML = `<div class="ni-inner">${niFailHTML()}</div>`;
       panel.querySelector('[data-ni-retry]')?.addEventListener('click', () => renderNewsBriefInto(panel, card));
@@ -520,6 +521,23 @@ async function renderNewsBriefInto(panel, card) {
 }
 function renderNewsWebInto(panel, card) {
   panel.innerHTML = `<div class="ni-inner">${niWebHTML(card.dataset.title || '')}</div>`;
+  wireScrollFades(panel.querySelector('.ni-inner'));
+}
+// Clean top/bottom fades on a capped scroll area — show ONLY when there's hidden
+// content above/below (host gets .fade-top/.fade-bot; CSS draws the gradients).
+function wireScrollFades(scrollEl) {
+  const host = scrollEl && scrollEl.closest('.news-panel');
+  if (!host) return;
+  host.classList.add('has-fade');
+  const update = () => {
+    const top = scrollEl.scrollTop;
+    const max = scrollEl.scrollHeight - scrollEl.clientHeight;
+    host.classList.toggle('fade-top', top > 4);
+    host.classList.toggle('fade-bot', max > 6 && top < max - 4);
+  };
+  scrollEl.addEventListener('scroll', update, { passive: true });
+  requestAnimationFrame(update);
+  setTimeout(update, 260);
 }
 
 // Field accessors that work for BOTH rss.app live items and stored archive

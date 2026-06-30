@@ -17406,3 +17406,18 @@ body.home-search #section-newsfeed .news-card-desc { margin-top: 0.45rem; font-s
 .ni-fail p { margin: 0 0 8px; color: var(--color-text-muted); }
 .ni-retry { border: 1px solid var(--color-surface-border); background: #fff; border-radius: 8px; padding: 6px 12px; font-weight: 600; cursor: pointer; color: var(--color-primary); font-family: var(--font-family); }
 .ni-empty { color: var(--color-text-muted); font-size: 0.9rem; }
+
+/* ═══ Dropdown scroll fades (revamp401, #89) — subtle top/bottom gradient hints
+   shown ONLY when there's hidden content above/below the capped scroll area. ══ */
+.news-panel.has-fade, .tsp-panel.has-fade { position: relative; }
+.news-panel.has-fade::before, .news-panel.has-fade::after,
+.tsp-panel.has-fade::before, .tsp-panel.has-fade::after {
+  content: ''; position: absolute; left: 1px; right: 1px; height: 30px; pointer-events: none;
+  opacity: 0; transition: opacity .16s ease; z-index: 4;
+}
+.news-panel.has-fade::before, .tsp-panel.has-fade::before { top: 0; background: linear-gradient(#fff, rgba(255,255,255,0)); }
+.news-panel.has-fade::after,  .tsp-panel.has-fade::after  { bottom: 0; background: linear-gradient(rgba(255,255,255,0), #fff); }
+.news-panel.has-fade.fade-top::before, .tsp-panel.has-fade.fade-top::before { opacity: 1; }
+.news-panel.has-fade.fade-bot::after,  .tsp-panel.has-fade.fade-bot::after  { opacity: 1; }
+.tsp-panel.has-fade::before { border-radius: 16px 16px 0 0; }
+.tsp-panel.has-fade::after  { border-radius: 0 0 16px 16px; }

@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp400';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp401';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp400';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp401';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp400';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp400';
-import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp400';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260630-revamp400';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp401';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp401';
+import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp401';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260630-revamp401';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp400';
-import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp400';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp400';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp400';
-import { renderWebSources } from './components/websources.js?v=20260630-revamp400';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp400';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp401';
+import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp401';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp401';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp401';
+import { renderWebSources } from './components/websources.js?v=20260630-revamp401';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp401';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp400';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp401';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp400';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp401';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -352,6 +352,18 @@ function closeAllPickers(except) {
   });
 }
 
+// Toggle the topic-picker panel's top/bottom scroll fades (host = .tsp-panel).
+function updatePickerFades(picker) {
+  const inner = picker.querySelector('.tsp-panel-inner');
+  const host = picker.querySelector('.tsp-panel');
+  if (!inner || !host) return;
+  host.classList.add('has-fade');
+  const top = inner.scrollTop;
+  const max = inner.scrollHeight - inner.clientHeight;
+  host.classList.toggle('fade-top', top > 4);
+  host.classList.toggle('fade-bot', max > 6 && top < max - 4);
+}
+
 // Wire EVERY picker found in `root` (a topic page now has two — the desktop body
 // header + the subnav-band button; CSS shows one at a time per width/scroll).
 function wireSubnavPicker(root) {
@@ -371,7 +383,12 @@ function wireSubnavPicker(root) {
       }
       picker.classList.toggle('is-open', on);
       btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+      if (on) requestAnimationFrame(() => updatePickerFades(picker));
     };
+    // Top/bottom fades on the (capped) panel scroll area — shown only when there's
+    // hidden content above/below.
+    const inner = picker.querySelector('.tsp-panel-inner');
+    if (inner) inner.addEventListener('scroll', () => updatePickerFades(picker), { passive: true });
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       setOpen(!picker.classList.contains('is-open'));
