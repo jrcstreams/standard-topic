@@ -17421,3 +17421,33 @@ body.home-search #section-newsfeed .news-card-desc { margin-top: 0.45rem; font-s
 .news-panel.has-fade.fade-bot::after,  .tsp-panel.has-fade.fade-bot::after  { opacity: 1; }
 .tsp-panel.has-fade::before { border-radius: 16px 16px 0 0; }
 .tsp-panel.has-fade::after  { border-radius: 0 0 16px 16px; }
+
+/* ═══ Topic-page AI Insights — inline section dropdowns (revamp402, Phase 4) ══
+   A path tile opens its section's content inline under the tiles; the page tiles
+   are the nav, so the mounted builder's own brand/nav/topic-switcher are hidden. */
+.aii-inline-panel[hidden] { display: none !important; }
+.aii-inline-panel { margin-top: 14px; border-top: 1px solid var(--color-surface-border); position: relative; }
+.aii-inline-panel .aii-head { display: none !important; }
+.aii-inline-panel .aii-builder-topbar { display: none !important; }
+.aii-inline-panel .aii { border: none !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; overflow: visible !important; height: auto !important; }
+.aii-inline-panel .aii-stage,
+.aii-inline-panel .aii-content--modal { padding: 0 !important; }
+.aii-inline-panel .aii-builder-secs {
+  padding: 16px 2px 6px !important; max-height: min(66vh, calc(100dvh - 220px));
+  overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+}
+/* Active tile while its section dropdown is open. */
+.topic-band #section-shortcuts .aii-bcard.is-active {
+  border-color: color-mix(in srgb, var(--aii-accent, #2563eb) 55%, var(--color-surface-border)) !important;
+  background: color-mix(in srgb, var(--aii-accent, #2563eb) 6%, #fff) !important;
+}
+.topic-band #section-shortcuts .aii-bcard.is-active .aii-bcard-name { color: var(--aii-accent, #2563eb); }
+/* Scroll fades (#89) for the inline section panel. */
+.aii-inline-panel.has-fade::before, .aii-inline-panel.has-fade::after {
+  content: ''; position: absolute; left: 1px; right: 1px; height: 30px; pointer-events: none;
+  opacity: 0; transition: opacity .16s ease; z-index: 4;
+}
+.aii-inline-panel.has-fade::before { top: 0; background: linear-gradient(#fff, rgba(255,255,255,0)); }
+.aii-inline-panel.has-fade::after { bottom: 0; background: linear-gradient(rgba(255,255,255,0), #fff); }
+.aii-inline-panel.has-fade.fade-top::before { opacity: 1; }
+.aii-inline-panel.has-fade.fade-bot::after { opacity: 1; }

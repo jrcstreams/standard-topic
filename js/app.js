@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp401';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp402';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp401';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp402';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp401';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp401';
-import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp401';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260630-revamp401';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp402';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp402';
+import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp402';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260630-revamp402';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp401';
-import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp401';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp401';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp401';
-import { renderWebSources } from './components/websources.js?v=20260630-revamp401';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp401';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp402';
+import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp402';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp402';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp402';
+import { renderWebSources } from './components/websources.js?v=20260630-revamp402';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp402';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp401';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp402';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp401';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp402';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -342,6 +342,51 @@ function wireSubtopicsMore(root) {
   requestAnimationFrame(fit);
   setTimeout(fit, 250);
   window.addEventListener('resize', () => requestAnimationFrame(fit), { passive: true });
+}
+
+// Phase 4: topic-page AI Insights sections open as INLINE dropdowns on the page
+// (no modal). Each path tile toggles a panel right under the tiles that mounts
+// the AI Insights builder for that section, with its own nav/topic-switcher
+// hidden (the page tiles ARE the nav). One open at a time.
+function wireTopicAiiInline(section, topic, descriptions, icons) {
+  const stage = section.querySelector('.aii-stage');
+  if (!stage) return;
+  let panel = stage.querySelector('.aii-inline-panel');
+  if (!panel) { panel = document.createElement('div'); panel.className = 'aii-inline-panel'; panel.hidden = true; stage.appendChild(panel); }
+  let activeGroup = null; let ctl = null;
+  const clearTiles = () => stage.querySelectorAll('.aii-bcard.is-active').forEach((b) => { b.classList.remove('is-active'); b.setAttribute('aria-expanded', 'false'); });
+  const close = () => {
+    activeGroup = null; panel.hidden = true;
+    if (ctl && ctl.destroy) { try { ctl.destroy(); } catch (_) {} }
+    ctl = null; panel.innerHTML = ''; clearTiles();
+  };
+  const openGroup = (group, tile) => {
+    if (activeGroup === group) { close(); return; }
+    close();
+    activeGroup = group; panel.hidden = false;
+    if (tile) { tile.classList.add('is-active'); tile.setAttribute('aria-expanded', 'true'); }
+    ctl = renderAIIntelligence(panel, {
+      inModal: true, initialBuilder: true, initialGroup: group, lockTopic: true,
+      topic: topic.name, label: topic.name, descriptions, icons, topicKey: topic.slug,
+    });
+    // Capped scroll area gets the same clean top/bottom fades (#89).
+    const sc = panel.querySelector('.aii-builder-secs');
+    if (sc) {
+      panel.classList.add('has-fade');
+      const upd = () => { const t = sc.scrollTop, m = sc.scrollHeight - sc.clientHeight; panel.classList.toggle('fade-top', t > 4); panel.classList.toggle('fade-bot', m > 6 && t < m - 4); };
+      sc.addEventListener('scroll', upd, { passive: true });
+      [0, 450, 1400].forEach((d) => setTimeout(upd, d));
+    }
+    requestAnimationFrame(() => panel.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
+  };
+  // Capture-phase: intercept the tile click BEFORE the component's modal-open
+  // handler, and open the section inline instead.
+  stage.addEventListener('click', (e) => {
+    const tile = e.target.closest && e.target.closest('.aii-bcard[data-builder-open]');
+    if (!tile || !stage.contains(tile)) return;
+    e.stopPropagation(); e.preventDefault();
+    openGroup(tile.dataset.group, tile);
+  }, true);
 }
 
 function closeAllPickers(except) {
@@ -1921,6 +1966,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       const descriptions = {}; const icons = {};
       try { (getShortcutsForTopic(topic.slug) || []).forEach((s) => { if (s && s.name) { descriptions[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } }); } catch (_) {}
       renderAIIntelligence(shortcutsSection, { topic: topic.name, label: topic.name, descriptions, icons, topicKey: topic.slug });
+      wireTopicAiiInline(shortcutsSection, topic, descriptions, icons);
     } else {
       renderShortcutsSidebar(shortcutsSection, route, isHome, isCustom, customTerm);
     }
