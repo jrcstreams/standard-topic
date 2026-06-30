@@ -777,8 +777,9 @@ body.custom-mode.sticky-always #content {
   }
 
   /* Identity-only pages (About / Terms / Prompt Builder) — no chips, no tabs —
-     the name is in the header, so the empty subnav band is hidden. */
-  #sub-header.is-subnav:not(:has(.subnav-topics-inline)):not(:has(.subnav-tabs)) { display: none; }
+     the name is in the header, so the empty subnav band is hidden. The home
+     "Home" dropdown picker is NOT empty, so keep it shown (#88). */
+  #sub-header.is-subnav:not(:has(.subnav-topics-inline)):not(:has(.subnav-tabs)):not(:has(.topic-subnav-picker)) { display: none; }
 }
 
 /* Search pill — opens the Topics modal with input focused. Mirrors
