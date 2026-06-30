@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp404';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp405';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp404';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp405';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp404';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp404';
-import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp404';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260630-revamp404';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp405';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp405';
+import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp405';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260630-revamp405';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp404';
-import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp404';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp404';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp404';
-import { renderWebSources } from './components/websources.js?v=20260630-revamp404';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp404';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp405';
+import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp405';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp405';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp405';
+import { renderWebSources } from './components/websources.js?v=20260630-revamp405';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp405';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp404';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp405';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp404';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp405';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -51,7 +51,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupGlobalTabPillDelegation();
   wireSubnavPickerOutsideClose();
 
+  // Esc closes the AI Insights nav dropdown.
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAiInsightsNavDropdown();
+  });
+
   onRoute((route) => {
+    // The AI Insights topic-tree dropdown is a transient overlay — always close
+    // it on any navigation (its own links route through here).
+    closeAiInsightsNavDropdown();
     // Search (#/search) and Custom (#/custom/{term}) routes don't render
     // their own page — they open the Search modal over the home layout.
     const isSearchRoute = route.type === 'search' || route.type === 'custom';
@@ -348,6 +356,155 @@ function wireSubtopicsMore(root) {
 // (no modal). Each path tile toggles a panel right under the tiles that mounts
 // the AI Insights builder for that section, with its own nav/topic-switcher
 // hidden (the page tiles ARE the nav). One open at a time.
+// The five AI Insights tracks, in display order — shared by the topic-page
+// tiles and the main-nav "AI Insights" topic-tree dropdown (Phase 3). The group
+// ids match the AI component's builder groups.
+const AII_NAV_GROUPS = [
+  { group: 'discover',       label: 'Get Caught Up' },
+  { group: 'topic-specific', label: 'Deep Dive' },
+  { group: 'learn',          label: '101 Resources' },
+  { group: 'websearch',      label: 'Web Search' },
+  { group: 'external',       label: 'Prompt Library' },
+];
+
+// Deep-link into a topic page's inline AI section. If we're already on that
+// topic, open it in place (the inline wiring listens on the window); otherwise
+// stash the request and navigate — wireTopicAiiInline consumes it on render.
+let pendingInlineAii = null;
+function openTopicInsightInline(slug, group) {
+  const cur = getCurrentRoute();
+  if (cur && cur.type === 'topic' && cur.slug === slug) {
+    window.dispatchEvent(new CustomEvent('aii-inline-open', { detail: { slug, group } }));
+  } else {
+    pendingInlineAii = { slug, group };
+    navigate('#/topic/' + slug);
+  }
+}
+
+// ── Phase 3: the main-nav "AI Insights" topic-tree dropdown ──────────────────
+// A full-width panel that drops below the header: every parent topic is an
+// accordion; expanding shows the parent + its subtopics, each with the five
+// AI tracks as chips. Clicking a chip routes to that topic page and opens the
+// matching inline section (openTopicInsightInline); the topic name navigates.
+function aiInsightsTopicTreeHTML() {
+  const groups = getTopicsGroupedByParent() || [];
+  const chipsFor = (t) => `<div class="aiidd-chips">${AII_NAV_GROUPS.map((g) =>
+    `<button type="button" class="aiidd-chip" data-aiidd-go data-slug="${escapeHTML(t.slug)}" data-group="${escapeHTML(g.group)}">${escapeHTML(g.label)}</button>`
+  ).join('')}</div>`;
+  const topicRow = (t, isParent) => `
+    <div class="aiidd-topic${isParent ? ' aiidd-topic-parent' : ''}">
+      <a href="#/topic/${t.slug}" class="aiidd-topic-name" data-aiidd-topic>
+        <span class="aiidd-topic-ic">${topicIconSVG(t.icon || 'globe', 'tsp-ic-svg')}</span>
+        <span class="aiidd-topic-tx">${escapeHTML(t.name)}</span>
+      </a>
+      ${chipsFor(t)}
+    </div>`;
+  const block = ({ parent, subtopics }) => {
+    const subs = subtopics || [];
+    return `<section class="aiidd-parent" data-open="false">
+      <button type="button" class="aiidd-parent-head" data-aiidd-toggle aria-expanded="false">
+        <span class="aiidd-parent-ic">${topicIconSVG(parent.icon || 'globe', 'tsp-ic-svg')}</span>
+        <span class="aiidd-parent-name">${escapeHTML(parent.name)}</span>
+        ${subs.length ? `<span class="aiidd-parent-count">${subs.length}</span>` : ''}
+        ${TSP_CHEV}
+      </button>
+      <div class="aiidd-parent-body">
+        ${topicRow(parent, true)}
+        ${subs.map((t) => topicRow(t, false)).join('')}
+      </div>
+    </section>`;
+  };
+  return `<div class="aiidd-tree">${groups.map(block).join('')}</div>`;
+}
+
+function ensureAiInsightsNavDropdown() {
+  let overlay = document.getElementById('aii-nav-overlay');
+  let panel = document.getElementById('aii-nav-panel');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.className = 'aii-nav-overlay'; overlay.id = 'aii-nav-overlay';
+    document.body.appendChild(overlay);
+  }
+  if (!panel) {
+    panel = document.createElement('div');
+    panel.className = 'aii-nav-dd'; panel.id = 'aii-nav-panel';
+    panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'AI Insights'); panel.setAttribute('aria-modal', 'false');
+    document.body.appendChild(panel);
+  }
+  return { overlay, panel };
+}
+
+function closeAiInsightsNavDropdown() {
+  const overlay = document.getElementById('aii-nav-overlay');
+  const panel = document.getElementById('aii-nav-panel');
+  if (panel) panel.classList.remove('is-open');
+  if (overlay) overlay.classList.remove('is-open');
+  document.getElementById('nav-insights')?.setAttribute('aria-expanded', 'false');
+}
+
+function openAiInsightsNavDropdown() {
+  const { overlay, panel } = ensureAiInsightsNavDropdown();
+  const X_IC = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  panel.innerHTML = `
+    <div class="aii-nav-dd-inner">
+      <div class="aii-nav-dd-head">
+        <div class="aii-nav-dd-titles">
+          <div class="aii-nav-dd-title"><span class="aii-nav-dd-spark">✦</span> AI Insights</div>
+          <div class="aii-nav-dd-sub">Pick a topic, then the kind of intelligence you want.</div>
+        </div>
+        <button type="button" class="aii-nav-dd-close" data-aiidd-close aria-label="Close">${X_IC}</button>
+      </div>
+      <div class="aii-nav-dd-scrollwrap has-fade">
+        <div class="aii-nav-dd-scroll" data-aiidd-scroll>
+          ${aiInsightsTopicTreeHTML()}
+        </div>
+      </div>
+    </div>`;
+
+  // Accordion toggles.
+  panel.querySelectorAll('[data-aiidd-toggle]').forEach((btn) => btn.addEventListener('click', () => {
+    const sec = btn.closest('.aiidd-parent');
+    const open = sec.getAttribute('data-open') === 'true';
+    sec.setAttribute('data-open', String(!open));
+    btn.setAttribute('aria-expanded', String(!open));
+    requestAnimationFrame(updateAiiNavFades);
+  }));
+  // Track chip → route + open the inline section.
+  panel.querySelectorAll('[data-aiidd-go]').forEach((chip) => chip.addEventListener('click', (e) => {
+    e.preventDefault();
+    closeAiInsightsNavDropdown();
+    openTopicInsightInline(chip.dataset.slug, chip.dataset.group);
+  }));
+  // Topic name → just go to the topic page.
+  panel.querySelectorAll('[data-aiidd-topic]').forEach((a) => a.addEventListener('click', () => closeAiInsightsNavDropdown()));
+  panel.querySelector('[data-aiidd-close]')?.addEventListener('click', closeAiInsightsNavDropdown);
+  overlay.onclick = closeAiInsightsNavDropdown;
+
+  // Scroll fades (#89).
+  const sc = panel.querySelector('[data-aiidd-scroll]');
+  if (sc) { sc.addEventListener('scroll', updateAiiNavFades, { passive: true }); }
+
+  panel.classList.add('is-open');
+  overlay.classList.add('is-open');
+  document.getElementById('nav-insights')?.setAttribute('aria-expanded', 'true');
+  requestAnimationFrame(updateAiiNavFades);
+}
+
+function updateAiiNavFades() {
+  const host = document.querySelector('#aii-nav-panel .aii-nav-dd-scrollwrap');
+  const sc = document.querySelector('#aii-nav-panel [data-aiidd-scroll]');
+  if (!host || !sc) return;
+  const t = sc.scrollTop, m = sc.scrollHeight - sc.clientHeight;
+  host.classList.toggle('fade-top', t > 4);
+  host.classList.toggle('fade-bot', m > 6 && t < m - 4);
+}
+
+function toggleAiInsightsNavDropdown() {
+  const panel = document.getElementById('aii-nav-panel');
+  if (panel && panel.classList.contains('is-open')) closeAiInsightsNavDropdown();
+  else openAiInsightsNavDropdown();
+}
+
 function wireTopicAiiInline(section, topic, descriptions, icons) {
   // IMPORTANT: the AI component re-renders its OWN innards (rebuilding `.aii-stage`
   // and wiping anything we appended) whenever the 899.98px breakpoint is crossed —
@@ -403,6 +560,26 @@ function wireTopicAiiInline(section, topic, descriptions, icons) {
     e.stopPropagation(); e.preventDefault();
     openGroup(tile.dataset.group, tile);
   }, true);
+
+  // Deep-link support (Phase 3): open a given track by group id, locating its
+  // tile so it highlights. Used by both the same-page event and the pending
+  // post-navigation request.
+  const openByGroup = (group) => {
+    const tile = section.querySelector(`.aii-bcard[data-group="${group}"]`);
+    openGroup(group, tile);
+  };
+  // Same-page deep-links arrive as a window event (the picker is on the nav,
+  // not in this section). Re-register on the window each render, dropping the
+  // prior page's handler so we never stack duplicates.
+  if (window.__aiiInlineHandler) window.removeEventListener('aii-inline-open', window.__aiiInlineHandler);
+  window.__aiiInlineHandler = (e) => { if (e.detail && e.detail.slug === topic.slug) openByGroup(e.detail.group); };
+  window.addEventListener('aii-inline-open', window.__aiiInlineHandler);
+  // Cross-page deep-link: a nav-dropdown click stashed a request then navigated
+  // here. Consume it once the tiles exist (next frame).
+  if (pendingInlineAii && pendingInlineAii.slug === topic.slug) {
+    const g = pendingInlineAii.group; pendingInlineAii = null;
+    requestAnimationFrame(() => openByGroup(g));
+  }
 }
 
 function closeAllPickers(except) {
@@ -1570,10 +1747,15 @@ function renderStickyHeroBar(container, route) {
     document.getElementById('nav-home')?.classList.add('is-active');
   }
 
-  // AI Insights sparkle — opens the AI Insights modal at the topic picker.
-  document.getElementById('nav-insights')?.addEventListener('click', () => {
-    window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: { pickTopic: true } }));
-  });
+  // AI Insights — opens the full-width topic-tree dropdown (Phase 3): pick a
+  // topic, then a track, and we route to that topic page with its inline
+  // section open. No modal.
+  const navInsightsBtn = document.getElementById('nav-insights');
+  if (navInsightsBtn) {
+    navInsightsBtn.setAttribute('aria-haspopup', 'dialog');
+    navInsightsBtn.setAttribute('aria-expanded', 'false');
+    navInsightsBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleAiInsightsNavDropdown(); });
+  }
 
   // Trending pill — opens the global Trending modal from any page.
   document.getElementById('nav-trending')?.addEventListener('click', () => {
@@ -1722,7 +1904,7 @@ function renderStickyHeroBar(container, route) {
   });
   navPanel.querySelector('#navmenu-ai-insights')?.addEventListener('click', () => {
     closeMenu();
-    window.dispatchEvent(new CustomEvent('open-ai-intelligence', { detail: { pickTopic: true } }));
+    openAiInsightsNavDropdown();
   });
 
   // Mobile top-bar search icon (kept upper-right even though Search is also
