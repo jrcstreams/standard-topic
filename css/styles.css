@@ -17047,7 +17047,8 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   }
   .tsp-btn-ico .tsp-ic-svg { width: 17px; height: 17px; }
   .tsp-btn-name {
-    font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; letter-spacing: -0.015em;
+    font-family: var(--font-display); font-weight: 700; letter-spacing: -0.015em;
+    font-size: clamp(0.98rem, 0.82rem + 1vw, 1.18rem);   /* scales down on smaller screens / long names */
     color: #26375a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
   }
 }
@@ -17274,3 +17275,31 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   .sticky-hero-inner .nav-hamburger { width: 19px; }
   .navbtn { padding: 6px 5px; }
 }
+
+/* ═══ Homepage "Home" dropdown picker (revamp396, #88) ════════════════════════
+   Replaces the featured-topics chip row. Works at ALL widths (the home subnav
+   band shows on desktop too), so its button is styled outside the mobile-only
+   .tsp-btn block. */
+.topic-banner-row--home-picker { display: flex; align-items: center; width: 100%; }
+.is-home-picker { display: block; position: relative; width: 100%; }
+.is-home-picker .tsp-btn {
+  display: flex; align-items: center; gap: 0.55rem; padding: 0.25rem 0; border: none; background: none;
+  cursor: pointer; text-align: left; font-family: var(--font-family); -webkit-tap-highlight-color: transparent;
+}
+.is-home-picker .tsp-btn-lead { display: flex; align-items: center; gap: 0.55rem; min-width: 0; }
+.is-home-picker .tsp-btn-ico {
+  flex: none; width: 30px; height: 30px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, #26375a 12%, #fff); color: #26375a;
+}
+.is-home-picker .tsp-btn-ico .tsp-ic-svg { width: 17px; height: 17px; }
+.is-home-picker .tsp-btn-name {
+  font-family: var(--font-display); font-weight: 700; letter-spacing: -0.015em; color: #26375a;
+  font-size: clamp(0.98rem, 0.82rem + 1vw, 1.18rem);
+}
+.is-home-picker .tsp-chev { flex: none; color: var(--color-text-muted); }
+/* Multi-column featured-topics grid on wide; single column as space narrows. */
+.is-home-picker .tsp-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 2px 10px; }
+.is-home-picker .tsp-cell { padding: 0.55rem 0.7rem; }
+/* Let the dropdown overflow the home band instead of being clipped. */
+body.home-mode #sub-header.is-subnav,
+body.home-mode #sub-header.is-subnav .topic-banner { overflow: visible !important; }

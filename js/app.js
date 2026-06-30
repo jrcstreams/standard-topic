@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260628-revamp393';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp396';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260628-revamp393';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp396';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260628-revamp393';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260628-revamp393';
-import { initPromptModal } from './components/prompt-modal.js?v=20260628-revamp393';
-import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260628-revamp393';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp396';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp396';
+import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp396';
+import { renderTrending, renderTrendingTopics, renderTrendingHome } from './components/trending.js?v=20260630-revamp396';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260628-revamp393';
-import { initInsightModal } from './components/insight-modal.js?v=20260628-revamp393';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260628-revamp393';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260628-revamp393';
-import { renderWebSources } from './components/websources.js?v=20260628-revamp393';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260628-revamp393';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp396';
+import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp396';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp396';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp396';
+import { renderWebSources } from './components/websources.js?v=20260630-revamp396';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp396';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260628-revamp393';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp396';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260628-revamp393';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp396';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -252,6 +252,43 @@ function subnavPickerHTML(topic) {
     </div>`;
 }
 
+// Homepage subnav picker (#88): "Home" label + a dropdown of the featured topics.
+// Same component family as the topic picker, but the dropdown OMITS the Home
+// quick-action (you're already home) and has no parent "Overview" row.
+function homeSubnavPickerHTML() {
+  const featured = getFeaturedTopics() || [];
+  const HOME_IC = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg>';
+  const GRID_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
+  const X_IC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  const cellHTML = (t) => `<a href="#/topic/${t.slug}" class="tsp-cell">
+      <span class="tsp-cell-ic">${topicIconSVG(t.icon || 'globe', 'tsp-ic-svg')}</span>
+      <span class="tsp-cell-name">${escapeHTML(t.name)}</span>
+    </a>`;
+  return `
+    <div class="topic-subnav-picker is-home-picker" data-topic-picker>
+      <button type="button" class="tsp-btn" aria-expanded="false" aria-controls="tsp-panel-home">
+        <span class="tsp-btn-lead">
+          <span class="tsp-btn-ico">${HOME_IC}</span>
+          <span class="tsp-btn-name">Home</span>
+        </span>
+        ${TSP_CHEV}
+      </button>
+      <div class="tsp-panelwrap">
+        <div class="tsp-panel" id="tsp-panel-home" role="region" aria-label="Browse topics">
+          <div class="tsp-panel-inner">
+            <div class="tsp-bar">
+              <span class="tsp-bar-actions">
+                <a href="#" class="tsp-action" data-tsp-all>${GRID_IC}<span>All Topics</span></a>
+              </span>
+              <button type="button" class="tsp-close" data-tsp-close aria-label="Close">${X_IC}</button>
+            </div>
+            <div class="tsp-grid">${featured.map(cellHTML).join('')}</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
 // Desktop body topic-header (#70): big topic title + subtopic links row, with a
 // chevron that opens the same picker panel. Lives at the top of the topic body;
 // scrolls away as the sticky subnav picker takes over.
@@ -440,39 +477,20 @@ function renderLayout(route) {
     document.body.classList.add('home-mode', 'has-subnav');
     subHeader.classList.add('is-subnav');
 
-    const allParents = getFeaturedTopics();
-    const topicsHTML = allParents.map(t =>
-      `<a href="#/topic/${t.slug}" class="subnav-topic-link">${escapeHTML(t.name)}</a>`
-    ).join('');
-
+    // Homepage now uses the SAME dropdown picker as topic pages (#88) — a "Home"
+    // label whose dropdown lists the featured topics (replaces the old chip row).
     subHeader.innerHTML = `
       <div class="topic-banner">
-        <div class="topic-banner-row topic-banner-row--home-topics-only">
-          <span class="subnav-lead-label" aria-hidden="true">Featured</span>
-          <div class="subnav-topics-inline home-subnav-topics">
-            ${topicsHTML}
-            <a href="#" class="subnav-action-link subnav-all-topics-link" id="subnav-all-topics-desktop">All Topics +</a>
-          </div>
+        <div class="topic-banner-row topic-banner-row--home-picker">
+          ${homeSubnavPickerHTML()}
         </div>
       </div>
     `;
-
-    // Two "All Topics +" elements share the same behavior — desktop
-    // copy lives inside the chips row, mobile copy lives inside the
-    // tab-pill group. Wire both with the same handler.
-    subHeader.querySelectorAll('#subnav-all-topics, #subnav-all-topics-desktop').forEach(el => {
-      el.addEventListener('click', (e) => {
-        e.preventDefault();
-        window.dispatchEvent(new CustomEvent('open-all-topics-modal'));
-      });
-    });
+    wireSubnavPicker(subHeader);
 
     if (heroEl) heroEl.innerHTML = '';
 
-    trimOverflowLinks();
     setupResponsiveNav();
-
-    wireChipStripScrollEnd();
     wireSubnavCompactMeasure();
     return;
   }
