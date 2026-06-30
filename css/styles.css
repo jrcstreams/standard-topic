@@ -17237,10 +17237,14 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .nl-short { display: none; }
 
 @media (max-width: 899.98px) {
-  /* Keep brand on the left, buttons on the right; comfortable hamburger↔title gap. */
+  /* Mobile/medium: a COMPACT tier — smaller icons + labels, tighter spacing, a
+     slightly smaller title, buttons flush to the right edge (revamp395). */
   .sticky-hero-inner .sticky-actions { order: 6; margin-left: auto !important; }
-  .sticky-hero-inner { gap: 0.7rem; }
-  .sticky-hero-inner .sticky-title { font-size: 1.2rem; }
+  .sticky-hero-inner { gap: 0.6rem; padding-right: 0.75rem; }
+  .sticky-hero-inner .sticky-title { font-size: 1.1rem; }
+  .navbtn { gap: 4px; min-width: 44px; padding: 5px 7px; }
+  .navbtn-ico svg { width: 19px; height: 19px; }
+  .navbtn-label { font-size: 0.62rem; }
   /* Content no longer reserves space for the (removed) bottom bar. */
   html body.home-search.app-mode.sticky-always.has-subnav #content,
   html body.home-search.app-mode #content { padding-bottom: 1.1rem !important; }
