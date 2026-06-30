@@ -17220,25 +17220,27 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .nav-search-mobile { display: none !important; }
 .sticky-hero-inner .sticky-page-name { display: none !important; }
 
-/* The 5 nav buttons — icon over a small sublabel; shown at all widths. Compact
-   so the labels survive down to small phones (revamp392). */
-.sticky-actions.navbtns { display: flex !important; align-items: stretch; gap: 2px; flex: 0 0 auto; margin-left: auto; }
+/* The 5 nav buttons — icon over a sublabel; COMFORTABLE sizes at all widths.
+   Labels drop progressively only when space truly demands it (revamp394). */
+.sticky-actions.navbtns { display: flex !important; align-items: stretch; gap: 3px; flex: 0 0 auto; margin-left: auto; }
 .navbtn {
-  display: flex !important; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
-  min-width: 46px; padding: 5px 7px; border: none; background: none; cursor: pointer;
-  color: rgba(255,255,255,0.82); text-decoration: none; border-radius: 9px;
+  display: flex !important; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  min-width: 52px; padding: 6px 9px; border: none; background: none; cursor: pointer;
+  color: rgba(255,255,255,0.82); text-decoration: none; border-radius: 10px;
   font-family: var(--font-family); transition: background .14s, color .14s; -webkit-tap-highlight-color: transparent;
 }
 .navbtn:hover { background: rgba(255,255,255,0.12); color: #fff; }
 .navbtn.is-active { background: rgba(255,255,255,0.14); color: #fff; }
 .navbtn-ico { display: inline-flex; }
-.navbtn-ico svg { width: 18px; height: 18px; display: block; }
-.navbtn-label { font-size: 0.6rem; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; line-height: 1; }
+.navbtn-ico svg { width: 21px; height: 21px; display: block; }
+.navbtn-label { font-size: 0.67rem; font-weight: 600; letter-spacing: -0.004em; white-space: nowrap; line-height: 1; }
+.nl-short { display: none; }
 
 @media (max-width: 899.98px) {
-  /* Keep brand on the left, buttons on the right (the mobile header uses flex
-     `order`; navbtns need an explicit order past the brand). */
+  /* Keep brand on the left, buttons on the right; comfortable hamburger↔title gap. */
   .sticky-hero-inner .sticky-actions { order: 6; margin-left: auto !important; }
+  .sticky-hero-inner { gap: 0.7rem; }
+  .sticky-hero-inner .sticky-title { font-size: 1.2rem; }
   /* Content no longer reserves space for the (removed) bottom bar. */
   html body.home-search.app-mode.sticky-always.has-subnav #content,
   html body.home-search.app-mode #content { padding-bottom: 1.1rem !important; }
@@ -17246,30 +17248,25 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   body.app-mode:not(.home-search) #content {
     height: calc(100dvh - var(--nav-h) - var(--subnav-height, 66px)) !important;
   }
-  .sticky-hero-inner .sticky-title { font-size: 1.08rem; }
-  .sticky-hero-inner { gap: 0.5rem; }
 }
-/* The site title ALWAYS stays. When space gets tight, shorten the two long
-   labels (AI Insights→Insights, Trending→Trends) and shrink the title +
-   hamburger to make room (revamp393). */
-.nl-short { display: none; }
-@media (max-width: 440px) {
+/* Step 1 — shorten the two long labels (AI Insights→Insights, Trending→Trends). */
+@media (max-width: 480px) {
   .nl-full { display: none; }
   .nl-short { display: inline; }
-  .sticky-hero-inner .sticky-title { font-size: 0.98rem; letter-spacing: -0.03em; }
-  .sticky-hero-inner .nav-hamburger { width: 18px; gap: 3px; }
-  .navbtn { min-width: 0; padding: 5px 5px; }
-  .sticky-hero-inner { gap: 0.3rem; }
+  .navbtn { min-width: 46px; padding: 6px 7px; }
 }
-@media (max-width: 360px) {
-  .sticky-hero-inner .sticky-title { font-size: 0.9rem; }
-  .sticky-hero-inner .nav-hamburger { width: 16px; }
-  .navbtn-label { font-size: 0.55rem; }
-  .navbtn-ico svg { width: 16px; height: 16px; }
-  .navbtn { padding: 5px 4px; }
-  .sticky-hero-inner { gap: 0.2rem; }
+/* Step 2 — Home & Search icons read fine on their own; drop THEIR labels first. */
+@media (max-width: 430px) {
+  #nav-home .navbtn-label, #nav-search .navbtn-label { display: none; }
+  .navbtn { min-width: 0; padding: 6px 6px; }
+  .sticky-hero-inner { gap: 0.55rem; }
 }
-/* Absolute last resort on the tiniest screens — icon-only (title stays). */
-@media (max-width: 320px) {
+/* Step 3 — very tight: all labels off (icons only). The site title stays. */
+@media (max-width: 380px) {
   .navbtn-label { display: none; }
+}
+@media (max-width: 340px) {
+  .sticky-hero-inner .sticky-title { font-size: 1.04rem; }
+  .sticky-hero-inner .nav-hamburger { width: 19px; }
+  .navbtn { padding: 6px 5px; }
 }
