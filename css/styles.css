@@ -17765,8 +17765,9 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 /* Inside a tab: hide the mounted AI builder's own chrome + the news feed's own
    header (the sticky tab header replaces them); let content flow the page. */
 .topic-tab-body .aii-head,
-.topic-tab-body .aii-builder-topbar,
-.topic-tab-body .newsfeed-head { display: none !important; }
+.topic-tab-body .aii-builder-topbar { display: none !important; }
+/* 2 IDs to beat the high-specificity topic newsfeed-head show rule. */
+#topic-tab-body #section-newsfeed .newsfeed-head { display: none !important; }
 .topic-tab-body .aii { border: none !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; overflow: visible !important; height: auto !important; }
 .topic-tab-body .aii-stage,
 .topic-tab-body .aii-content--modal { padding: 0 !important; }
