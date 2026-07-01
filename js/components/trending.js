@@ -4,8 +4,8 @@
 // fixed-height scroll area with top/bottom fade + chevron affordances
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
-import { renderTrendExpansionBody } from './trend-expansion.js?v=20260630-revamp412';
-import { aiSparkInline } from '../utils/ai-provenance.js?v=20260630-revamp412';
+import { renderTrendExpansionBody } from './trend-expansion.js?v=20260630-revamp413';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260630-revamp413';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -354,7 +354,10 @@ export function renderTrending(container) {
 // STICKY header (always visible) and only the card grid scrolls in the body. The
 // modal passes two mount points — `controlsEl` (in the header, under the subtext)
 // and `gridEl` (the scrolling body).
-export function renderTrendingModal(controlsEl, gridEl) {
+export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
+  // opts.inline → trend cards expand their brief IN PLACE (Phase-5 dropdown),
+  // instead of opening the retired detail modal.
+  const wireCards = opts.inline ? wireTrendCardsInline : wireTrendCards;
   gridEl.innerHTML = `<div class="trend-card-grid">${Array.from({ length: 8 }, () => '<div class="trend-card trend-card-skel"></div>').join('')}</div>`;
   const TLM_INITIAL = 16, EARLIER_MAX = 9;
   const state = { all: [], earlier: [], category: 'all', expanded: false };
@@ -398,7 +401,7 @@ export function renderTrendingModal(controlsEl, gridEl) {
       html += `<div class="trend-loadmore-row"><button type="button" class="trend-loadmore" data-loadmore>View more trends <span class="trend-loadmore-count">+${moreCount}</span></button></div>`;
     }
     gridEl.innerHTML = html;
-    wireTrendCards(gridEl);
+    wireCards(gridEl);
     gridEl.querySelector('[data-loadmore]')?.addEventListener('click', () => { state.expanded = true; renderGrid(); });
   }
   function renderControls() {

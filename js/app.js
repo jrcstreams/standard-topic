@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp412';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp413';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp412';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp413';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp412';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp412';
-import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp412';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp412';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp413';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp413';
+import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp413';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp413';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp412';
-import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp412';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp412';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp412';
-import { renderWebSources } from './components/websources.js?v=20260630-revamp412';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp412';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp413';
+import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp413';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp413';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp413';
+import { renderWebSources } from './components/websources.js?v=20260630-revamp413';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp413';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp412';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp413';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp412';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp413';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -39,7 +39,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   initScrollFades();
   initTrendingDetailModal();
   initInsightModal();
-  initTrendingListModal();
+  // Trending list modal retired (Phase-5 follow-up) — "View more trending" /
+  // open-trending-list now open the Trending nav dropdown instead (see below).
   initDiscoverModal();
   initAllTopicsModal();
   initRelatedTopicsModal();
@@ -50,6 +51,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   initAIIntelligenceModal();
   setupGlobalTabPillDelegation();
   wireSubnavPickerOutsideClose();
+
+  // Trending is a dropdown now: every "View more trending" / open-trending-list
+  // (and the retired detail modal's "back") opens the Trending nav dropdown.
+  window.addEventListener('open-trending-list', () => openTrendingNavDropdown());
 
   // Esc closes the open nav dropdown (search/prompt also reset their deep-link
   // route). Skip when the Review & Submit dropdown is stacked on top — it
@@ -625,12 +630,12 @@ function toggleTopicsNavDropdown() {
 }
 
 // ── Phase 5: the main-nav "Trending" dropdown ────────────────────────────────
-// Hosts the same renderTrendingModal() the old modal used: an AI-legend sub-bar
-// + the live trend-card grid (which scrolls inside the shell). Clicking a card
-// opens its detail view (still a takeover) and closes the dropdown.
-function toggleTrendingNavDropdown() {
-  toggleNavDropdown({
-    key: 'trending', triggerId: 'nav-trending',
+// Hosts renderTrendingModal (AI-legend sub-bar + live trend-card grid). Cards
+// expand their brief IN PLACE inside the dropdown (inline:true) — no detail
+// modal. "View more trending" everywhere routes here (open-trending-list).
+function trendingNavDdCfg() {
+  return {
+    key: 'trending', triggerId: 'nav-trending', className: 'aii-nav-dd-trending',
     title: 'Trending', ariaLabel: 'Trending now',
     subtitle: "What's being searched for right now.",
     subBarHTML: '<div class="tlm-controlbar" data-trend-controls></div>',
@@ -638,15 +643,16 @@ function toggleTrendingNavDropdown() {
     wire: (panel) => {
       const controls = panel.querySelector('[data-trend-controls]');
       const grid = panel.querySelector('[data-trend-grid]');
-      try { renderTrendingModal(controls, grid); } catch (_) {}
-      // A trend card opens its detail takeover — close the dropdown behind it.
-      grid.addEventListener('click', (e) => {
-        if (e.target.closest && e.target.closest('.trend-card:not(.trend-card-skel)')) closeNavDropdown();
-      });
-      // Refresh the scroll fades once the async trend load paints.
+      try { renderTrendingModal(controls, grid, { inline: true }); } catch (_) {}
+      grid.addEventListener('click', () => { [60, 260].forEach((d) => setTimeout(updateNavDdFades, d)); });
       [350, 900, 1800].forEach((d) => setTimeout(updateNavDdFades, d));
     },
-  });
+  };
+}
+function toggleTrendingNavDropdown() { toggleNavDropdown(trendingNavDdCfg()); }
+function openTrendingNavDropdown() {
+  if (navDdOpen && navDdOpen.key === 'trending') return;
+  openNavDropdown(trendingNavDdCfg());
 }
 
 // ── Phase 6: the Prompt Builder dropdown ─────────────────────────────────────

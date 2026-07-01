@@ -3781,7 +3781,13 @@ html, body, #app {
   line-height: 1.4;
   text-transform: lowercase;
   white-space: nowrap;
+  text-decoration: none;
+  transition: background .14s ease, color .14s ease;
 }
+/* The source label links to the story — give it a clear hover/press affordance. */
+a.news-card-source { cursor: pointer; }
+a.news-card-source:hover { background: color-mix(in srgb, #2563eb 12%, #f4f6f9); color: #1d4ed8; }
+a.news-card-source:active { background: color-mix(in srgb, #2563eb 20%, #f4f6f9); }
 .news-card-meta-sep { display: none; }
 .news-card-time {
   font-variant-numeric: tabular-nums;
@@ -13428,11 +13434,13 @@ body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; }
    overflow:hidden clips any internal header band to the rounded corners. */
 body.home-search #home-trending,
 body.home-search #section-aii-home,
+/* Homepage News Feed has NO outer container — it reads as a clean list of story
+   cards (the search hero, Trending, and promo carry the boxed look instead). */
 body.home-search #section-newsfeed {
-  background: var(--color-bg, #fff);
-  border: 1px solid var(--color-surface-border);
-  border-radius: 16px;
-  overflow: hidden;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
 }
 /* Trending gets a faint grey surface so it reads as the discovery rail, distinct
    from the white News Feed + the dark AI Insights / Prompt Builder cards. */
@@ -17154,13 +17162,18 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   /* Subtopics — a discreet bracketed band (hairline above + below) under the
      title; clamped to one line. "More" appears INLINE only when links overflow. */
   .tbh-subs {
-    display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 1.1rem;
-    margin: 0.85rem 0 0; padding: 0.62rem 0; max-height: 2.6rem; overflow: hidden;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 1.15rem;
+    margin: 0.85rem 0 0; padding: 0; height: 2.9rem; overflow: hidden;
     border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 75%, transparent);
     border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 75%, transparent);
   }
-  .tbh-sub { font-size: 0.86rem; font-weight: 500; color: var(--color-text-light); text-decoration: none; transition: color .12s; white-space: nowrap; }
-  .tbh-sub:hover { color: #26375a; }
+  .tbh-sub {
+    font-size: 0.86rem; font-weight: 500; color: var(--color-text-light);
+    text-decoration: none; white-space: nowrap; line-height: 1;
+    padding: 3px 0; transition: color .12s ease;
+    border-bottom: 2px solid transparent;
+  }
+  .tbh-sub:hover { color: #26375a; border-bottom-color: #2563eb; }
   .tbh-sub-parent { color: var(--color-text-muted); font-weight: 600; }
   /* "More" is a natural inline continuation of the links (not a pill). */
   .tbh-more {
@@ -17387,9 +17400,9 @@ body.home-search #section-newsfeed .news-card-desc { margin-top: 0.45rem; font-s
 }
 .news-act svg { flex: none; }
 .news-act:hover { border-color: #9bb0d6; color: var(--color-primary); }
-.news-act-ai { color: #1d4ed8; border-color: color-mix(in srgb, #1d4ed8 24%, var(--color-surface-border)); }
-.news-act-ai:hover { background: color-mix(in srgb, #1d4ed8 6%, #fff); color: #1d4ed8; }
-.news-act-ai .news-ai-spark { color: #1d4ed8; }
+/* AI Insights: neutral pill (like the others) — the FILLED blue sparkle carries
+   the AI branding, not a fully-blue button. */
+.news-act-ai .news-ai-spark-filled { flex: none; }
 .news-act .news-ai-chev { transition: transform .2s ease; }
 .news-act[aria-expanded="true"] .news-ai-chev { transform: rotate(180deg); }
 
@@ -17549,6 +17562,10 @@ body.home-search #section-newsfeed .news-card-desc { margin-top: 0.45rem; font-s
 
 /* Prompt Builder hosted in the dropdown — constrain to a comfortable column. */
 .aii-nav-dd-prompt .pb-navdd-host { width: 100%; max-width: 820px; margin: 0 auto; }
+
+/* Trending dropdown: cap at 2 columns (1 on narrow screens). */
+.aii-nav-dd-trending .trend-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.35rem 1.4rem; }
+@media (max-width: 640px) { .aii-nav-dd-trending .trend-card-grid { grid-template-columns: 1fr; } }
 
 .aii-nav-dd-subbar { flex: 0 0 auto; padding: 10px 2px 4px; }
 .aii-nav-dd-subbar .tlm-controlbar { margin: 0; }
