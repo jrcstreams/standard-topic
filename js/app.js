@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp416';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp417';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp416';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp417';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp416';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp416';
-import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp416';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp416';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp417';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp417';
+import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp417';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp417';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp416';
-import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp416';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp416';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp416';
-import { renderWebSources } from './components/websources.js?v=20260630-revamp416';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp416';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp417';
+import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp417';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp417';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp417';
+import { renderWebSources } from './components/websources.js?v=20260630-revamp417';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp417';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp416';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp417';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp416';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp417';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -716,7 +716,15 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
   const renderContent = (key) => {
     destroyCtl();
     body.innerHTML = '';
-    if (key === 'news') { renderNewsFeed(body, topic, false); return; }
+    if (key === 'news') {
+      // Render into a real #section-newsfeed so all the existing topic news-card
+      // styling applies unchanged.
+      const sec = document.createElement('section');
+      sec.id = 'section-newsfeed'; sec.className = 'layout-section';
+      body.appendChild(sec);
+      renderNewsFeed(sec, topic, false);
+      return;
+    }
     // An AI path → mount that single group's builder (chrome hidden via CSS).
     ctl = renderAIIntelligence(body, {
       inModal: true, initialBuilder: true, initialGroup: key, lockTopic: true,

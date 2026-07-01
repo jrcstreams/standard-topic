@@ -17170,7 +17170,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
      title; clamped to one line. "More" appears INLINE only when links overflow. */
   .tbh-subs {
     display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 1.15rem;
-    margin: 0.85rem 0 0; padding: 0; height: 2.9rem; overflow: hidden;
+    margin: 0.85rem 0 0; padding: 0; min-height: 2.9rem; overflow: hidden;
     border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 75%, transparent);
     border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 75%, transparent);
   }
