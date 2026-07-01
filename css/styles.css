@@ -17022,8 +17022,13 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   overflow: hidden; min-height: 0; border: 1px solid var(--color-surface-border); border-radius: 16px;
   background: #fff; box-shadow: 0 24px 50px -22px rgba(15,23,42,.5), 0 8px 18px -12px rgba(15,23,42,.22);
 }
+/* Page-takeover feel: the open panel casts a full-viewport scrim (huge shadow
+   spread) so the topic picker reads like the main-nav dropdowns. */
+.topic-subnav-picker.is-open .tsp-panel {
+  box-shadow: 0 24px 50px -22px rgba(15,23,42,.4), 0 8px 18px -12px rgba(15,23,42,.18), 0 0 0 100vmax rgba(15,23,42,.28);
+}
 .tsp-panel-inner {
-  padding: 14px; max-height: min(70vh, calc(100dvh - 130px));
+  padding: 18px 18px 20px; max-height: min(70vh, calc(100dvh - 130px));
   overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
 }
 /* Quiet actions row (Home · All Topics) on the left, X close on the right. */
@@ -17063,10 +17068,11 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
    room (desktop full-width card sets the column count). */
 .tsp-grid { display: grid; grid-template-columns: 1fr; gap: 2px; }
 .tsp-cell {
-  display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.6rem; border-radius: 9px;
-  text-decoration: none; color: var(--color-text); transition: background .12s;
+  display: flex; align-items: center; gap: 0.65rem; padding: 0.62rem 0.7rem; border-radius: 10px;
+  text-decoration: none; color: var(--color-text); transition: background .12s, color .12s;
 }
-.tsp-cell:hover { background: var(--color-bg-light); }
+.tsp-cell:hover { background: color-mix(in srgb, #2563eb 7%, #fff); color: #1d4ed8; }
+.tsp-cell:hover .tsp-cell-ic { color: #2563eb; }
 .tsp-cell-ic { flex: none; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; color: var(--color-text-light); }
 .tsp-cell-ic .tsp-ic-svg { width: 16px; height: 16px; }
 .tsp-cell-name { flex: 1 1 auto; min-width: 0; font-size: 0.92rem; font-weight: 500; }
@@ -17195,10 +17201,10 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
      underneath so there are no dupes. (#334/#335) */
   .topic-bodyhead .tsp-panelwrap { left: 0; right: 0; width: auto; }
   .topic-bodyhead.is-open .tbh-subs { visibility: hidden; }
-  .topic-bodyhead .tsp-panel-inner { padding: 16px; max-height: min(72vh, calc(100dvh - 150px)); }
+  .topic-bodyhead .tsp-panel-inner { padding: 20px 22px 22px; max-height: min(72vh, calc(100dvh - 150px)); }
   /* Multi-column subtopics grid on the wide card; collapses with available space. */
-  .topic-bodyhead .tsp-grid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 2px 10px; }
-  .topic-bodyhead .tsp-cell { padding: 0.55rem 0.7rem; }
+  .topic-bodyhead .tsp-grid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 4px 16px; }
+  .topic-bodyhead .tsp-cell { padding: 0.62rem 0.7rem; }
 }
 
 /* ═══ AI Insights modal redesign (revamp379) ═════════════════════════════════
