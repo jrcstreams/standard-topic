@@ -16867,42 +16867,47 @@ body.home-mode #sub-header.is-subnav .topic-banner .subnav-lead-label { display:
 }
 .topic-band #section-shortcuts .aii-stage { padding: 0 !important; }
 
-/* Paths grid → individual polished tiles (the container is gone, so each path is
-   its own clean card). (revamp381) */
+/* Accordion (#94): tracks are a single-column stack of full-width cards; each
+   expands its section INLINE directly below itself (like news/trend cards), so
+   the desktop 5-up "block" grid is retired. Icon + name + sub on the left, a
+   chevron on the right that flips when the card's panel is open. */
 .topic-band #section-shortcuts .aii-bcards {
-  display: grid !important; grid-template-columns: repeat(5, 1fr) !important; gap: 12px !important;
-  border-top: none; padding: 16px 0 2px !important;
+  display: flex !important; flex-direction: column; grid-template-columns: none !important;
+  gap: 8px !important; border-top: none; padding: 16px 0 2px !important;
 }
 .topic-band #section-shortcuts .aii-bcard {
-  display: flex !important; flex-direction: column; align-items: stretch; gap: 0;
-  padding: 16px 15px 42px !important; margin: 0 !important;
-  border: 1px solid var(--color-surface-border) !important; border-radius: 14px !important; border-left: 1px solid var(--color-surface-border) !important;
+  display: flex !important; flex-direction: row !important; align-items: center; gap: 13px;
+  padding: 14px 16px !important; margin: 0 !important;
+  border: 1px solid var(--color-surface-border) !important; border-radius: 12px !important;
   background: #fff !important; box-shadow: 0 1px 2px rgba(15,23,42,.03) !important; text-align: left; cursor: pointer; position: relative;
-  transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
 }
 .topic-band #section-shortcuts .aii-bcard:hover {
   border-color: color-mix(in srgb, var(--aii-accent, #2563eb) 42%, var(--color-surface-border)) !important;
-  box-shadow: 0 12px 26px -16px rgba(15,23,42,.32) !important; transform: translateY(-2px);
+  box-shadow: 0 6px 18px -14px rgba(15,23,42,.3) !important;
 }
-.topic-band #section-shortcuts .aii-bcard-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.topic-band #section-shortcuts .aii-bcard-head { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 0; flex: 1 1 auto; order: 2; }
 .topic-band #section-shortcuts .aii-bcard-ic {
-  flex: none; width: 32px !important; height: 32px !important; border-radius: 9px !important; display: inline-flex; align-items: center; justify-content: center;
+  flex: none; order: 1; width: 34px !important; height: 34px !important; border-radius: 9px !important; display: inline-flex; align-items: center; justify-content: center;
   background: color-mix(in srgb, var(--aii-accent, #2563eb) 11%, #fff) !important; color: var(--aii-accent, #2563eb) !important; transition: background .15s ease;
 }
 .topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-ic { background: color-mix(in srgb, var(--aii-accent, #2563eb) 17%, #fff) !important; }
-.topic-band #section-shortcuts .aii-bcard-ic svg { width: 17px; height: 17px; }
+.topic-band #section-shortcuts .aii-bcard-ic svg { width: 18px; height: 18px; }
 /* Per-track accent colors on the tile icons (#317). */
 .topic-band #section-shortcuts .aii-bcard-discover { --aii-accent: #2563eb; }
 .topic-band #section-shortcuts .aii-bcard-topic-specific { --aii-accent: #d97706; }
 .topic-band #section-shortcuts .aii-bcard-learn { --aii-accent: #0d9488; }
 .topic-band #section-shortcuts .aii-bcard-websearch { --aii-accent: #7c3aed; }
 .topic-band #section-shortcuts .aii-bcard-external { --aii-accent: #db2777; }
-.topic-band #section-shortcuts .aii-bcard-name { font-size: 0.95rem; font-weight: 600; color: #14213d; letter-spacing: -0.01em; line-height: 1.2; }
-.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-name { color: var(--aii-accent, #2563eb); }
-.topic-band #section-shortcuts .aii-bcard-sub { display: block; margin-top: 9px; font-size: 0.79rem; line-height: 1.45; color: var(--color-text-light); }
-.topic-band #section-shortcuts .aii-bcard-go { position: absolute; left: 15px; bottom: 15px; display: inline-flex; color: var(--color-text-light); transition: transform .14s, color .14s; }
-.topic-band #section-shortcuts .aii-bcard-go svg { width: 15px; height: 15px; }
-.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-go { color: var(--aii-accent, #2563eb); transform: translateX(3px); }
+.topic-band #section-shortcuts .aii-bcard-name { font-size: 0.96rem; font-weight: 600; color: #14213d; letter-spacing: -0.01em; line-height: 1.2; }
+.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-name,
+.topic-band #section-shortcuts .aii-bcard.is-active .aii-bcard-name { color: var(--aii-accent, #2563eb); }
+.topic-band #section-shortcuts .aii-bcard-sub { display: block; margin-top: 1px; font-size: 0.79rem; line-height: 1.4; color: var(--color-text-light); }
+/* The "go" glyph becomes a right-anchored chevron that rotates when open. */
+.topic-band #section-shortcuts .aii-bcard-go { order: 3; flex: none; margin-left: auto; display: inline-flex; color: var(--color-text-light); transition: transform .18s ease, color .14s ease; }
+.topic-band #section-shortcuts .aii-bcard-go svg { width: 17px; height: 17px; }
+.topic-band #section-shortcuts .aii-bcard:hover .aii-bcard-go { color: var(--aii-accent, #2563eb); }
+.topic-band #section-shortcuts .aii-bcard.is-active .aii-bcard-go { color: var(--aii-accent, #2563eb); transform: rotate(90deg); }
 
 /* Mobile (<900): a clean single-column stack of BUTTONS — colored icon chip +
    label + arrow (revamp385). Never cramped, always one line per row. */
