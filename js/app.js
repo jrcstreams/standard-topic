@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp408';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp409';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp408';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp409';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp408';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp408';
-import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp408';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp408';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp409';
+import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp409';
+import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp409';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp409';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp408';
-import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp408';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp408';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp408';
-import { renderWebSources } from './components/websources.js?v=20260630-revamp408';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp408';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp409';
+import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp409';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp409';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp409';
+import { renderWebSources } from './components/websources.js?v=20260630-revamp409';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp409';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp408';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp409';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp408';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp409';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -51,15 +51,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupGlobalTabPillDelegation();
   wireSubnavPickerOutsideClose();
 
-  // Esc closes the AI Insights nav dropdown.
+  // Esc closes the open nav dropdown (search also resets its deep-link route).
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeAiInsightsNavDropdown();
+    if (e.key === 'Escape' && navDdOpen) userCloseNavDropdown();
   });
 
   onRoute((route) => {
-    // The AI Insights topic-tree dropdown is a transient overlay — always close
-    // it on any navigation (its own links route through here).
-    closeAiInsightsNavDropdown();
+    // Nav dropdowns are transient overlays — close on any navigation. EXCEPTION:
+    // the Search dropdown IS route-driven (#/search, #/custom) and updates its
+    // own URL as the term changes, so keep it open across search routes.
+    const isSearchNav = (route.type === 'search' || route.type === 'custom');
+    if (!(isSearchNav && navDdOpen && navDdOpen.key === 'search')) closeNavDropdown();
     // Search (#/search) and Custom (#/custom/{term}) routes don't render
     // their own page — they open the Search modal over the home layout.
     const isSearchRoute = route.type === 'search' || route.type === 'custom';
@@ -430,7 +432,20 @@ function updateNavDdFades() {
   host.classList.toggle('fade-bot', m > 6 && t < m - 4);
 }
 
-// cfg: { key, triggerId, title, subtitle, spark, ariaLabel, subBarHTML, contentHTML, wire(panel) }
+// A route-aware user close: search resets its deep-link route back home; other
+// dropdowns just close. Wired to the close button, overlay click, and Esc.
+function userCloseNavDropdown() {
+  if (navDdOpen && navDdOpen.key === 'search') {
+    const hash = window.location.hash || '';
+    const onSearchRoute = hash.startsWith('#/custom/') || hash === '#/search';
+    closeNavDropdown();
+    if (onSearchRoute) navigate('#/');
+    return;
+  }
+  closeNavDropdown();
+}
+
+// cfg: { key, triggerId, title, subtitle, spark, ariaLabel, bareHead, className, subBarHTML, contentHTML, wire(panel) }
 function openNavDropdown(cfg) {
   const { overlay, panel } = ensureNavDropdown();
   // Close any open modal first (the nav dropdown is the single top-level layer).
@@ -439,22 +454,27 @@ function openNavDropdown(cfg) {
   window.dispatchEvent(new CustomEvent('close-all-modals'));
   navDdSuppressClose = false;
   panel.setAttribute('aria-label', cfg.ariaLabel || cfg.title || '');
-  panel.innerHTML = `
-    <div class="aii-nav-dd-inner">
-      <div class="aii-nav-dd-head">
+  panel.className = 'aii-nav-dd' + (cfg.className ? ' ' + cfg.className : '');
+  const head = cfg.bareHead
+    ? `<div class="aii-nav-dd-head aii-nav-dd-head-bare"><button type="button" class="aii-nav-dd-close" data-navdd-close aria-label="Close">${X_IC_NAVDD}</button></div>`
+    : `<div class="aii-nav-dd-head">
         <div class="aii-nav-dd-titles">
           <div class="aii-nav-dd-title">${cfg.spark ? '<span class="aii-nav-dd-spark">✦</span> ' : ''}${escapeHTML(cfg.title || '')}</div>
           ${cfg.subtitle ? `<div class="aii-nav-dd-sub">${escapeHTML(cfg.subtitle)}</div>` : ''}
         </div>
         <button type="button" class="aii-nav-dd-close" data-navdd-close aria-label="Close">${X_IC_NAVDD}</button>
-      </div>
+      </div>`;
+  panel.innerHTML = `
+    <div class="aii-nav-dd-inner">
+      ${head}
       ${cfg.subBarHTML ? `<div class="aii-nav-dd-subbar">${cfg.subBarHTML}</div>` : ''}
       <div class="aii-nav-dd-scrollwrap has-fade">
         <div class="aii-nav-dd-scroll" data-navdd-scroll>${cfg.contentHTML || ''}</div>
       </div>
     </div>`;
-  panel.querySelector('[data-navdd-close]')?.addEventListener('click', closeNavDropdown);
-  overlay.onclick = closeNavDropdown;
+  const closeFn = cfg.onClose || closeNavDropdown;
+  panel.querySelector('[data-navdd-close]')?.addEventListener('click', closeFn);
+  overlay.onclick = closeFn;
   const sc = panel.querySelector('[data-navdd-scroll]');
   if (sc) sc.addEventListener('scroll', updateNavDdFades, { passive: true });
   if (typeof cfg.wire === 'function') cfg.wire(panel);
@@ -1877,13 +1897,18 @@ function renderStickyHeroBar(container, route) {
     navTrendingBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleTrendingNavDropdown(); });
   }
 
-  // Magnify icon — opens the Topics modal with the search input
-  // focused so the user lands ready to type. Same modal as the
-  // "Choose Topics" pill earlier in the nav, but the icon signals
-  // "search" specifically rather than "browse".
-  document.getElementById('nav-search')?.addEventListener('click', () => {
-    navigate('#/search');
-  });
+  // Search — toggles the full-width Search dropdown (Phase 5). Route-driven so
+  // deep-links (#/search, #/custom) + copy-link still work; clicking while open
+  // closes it (and resets the search route).
+  const navSearchBtn = document.getElementById('nav-search');
+  if (navSearchBtn) {
+    navSearchBtn.setAttribute('aria-haspopup', 'dialog');
+    navSearchBtn.setAttribute('aria-expanded', 'false');
+    navSearchBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (isSearchModalOpen()) userCloseSearchModal(); else navigate('#/search');
+    });
+  }
 
   // Nav menu panel — appended to body so it's not clipped by header overflow
   let navOverlay = document.getElementById('navmenu-overlay');
@@ -3854,69 +3879,44 @@ function setupHomeHeroFade(heroEl) {
   window.addEventListener('scroll', homeHeroScrollHandler, { passive: true });
 }
 
-function initSearchPageModal() {
-  searchModalOverlay = document.createElement('div');
-  searchModalOverlay.className = 'takeover-overlay search-page-overlay';
-  searchModalOverlay.style.display = 'none';
-  document.body.appendChild(searchModalOverlay);
-
-  searchModalPanel = document.createElement('div');
-  searchModalPanel.className = 'takeover-panel search-page-panel';
-  searchModalPanel.setAttribute('role', 'dialog');
-  searchModalPanel.setAttribute('aria-modal', 'true');
-  searchModalPanel.setAttribute('aria-label', 'Search any topic');
-  searchModalOverlay.appendChild(searchModalPanel);
-
-  searchModalOverlay.addEventListener('click', (e) => {
-    if (e.target === searchModalOverlay) userCloseSearchModal();
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && isSearchModalOpen()) userCloseSearchModal();
-  });
-  // Single-modal coordinator: another modal opening closes search + clears
-  // its deep-link route. Guarded so search's OWN open (which dispatches
-  // close-all) doesn't tear itself down.
-  window.addEventListener('close-all-modals', () => {
-    if (isSearchModalOpen()) userCloseSearchModal();
-  });
-}
+// Phase 5: Search now lives in the shared full-width nav dropdown (not a
+// takeover). All the search logic + routes + deep-links are unchanged — only
+// the host element differs (the dropdown scroll area instead of the modal
+// panel). The dropdown's own overlay/Esc/close-all wiring handles dismissal.
+function initSearchPageModal() { /* no takeover to build — see openSearchPageModal */ }
 
 function isSearchModalOpen() {
-  return searchModalOverlay && searchModalOverlay.style.display !== 'none';
+  const panel = document.getElementById('st-nav-panel');
+  return !!(panel && panel.classList.contains('is-open') && navDdOpen && navDdOpen.key === 'search');
 }
 
 function openSearchPageModal(term) {
-  if (!searchModalOverlay) return;
   const t = (term || '').trim();
-  // Already open — expand/collapse the live panel so the URL update from a
-  // submit doesn't replace the animating panel with a fresh render.
+  // Already open — expand/collapse the live panel in place (a term change from a
+  // submit routes through here) rather than rebuilding the whole dropdown.
   if (isSearchModalOpen() && searchPanelModalCtl) {
     if (t) searchPanelModalCtl.expand(t); else searchPanelModalCtl.collapse();
     return;
   }
-  // Fresh open — close any other top-level modal first (search isn't open yet,
-  // so its own close-all listener no-ops here).
-  window.dispatchEvent(new CustomEvent('close-all-modals'));
   searchModalTerm = t;
-  renderSearchModalBody(t);
-  searchModalOverlay.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-  searchModalPanel.classList.remove('is-in');
-  void searchModalPanel.offsetWidth;
-  searchModalPanel.classList.add('is-in');
+  openNavDropdown({
+    key: 'search', triggerId: 'nav-search', bareHead: true, className: 'aii-nav-dd-search',
+    ariaLabel: 'Search any topic',
+    contentHTML: '<div class="search-navdd-host" data-search-host></div>',
+    onClose: userCloseSearchModal,
+    wire: (panel) => renderSearchModalBody(panel.querySelector('[data-search-host]'), t),
+  });
 }
 
 function closeSearchPageModal(opts = {}) {
   if (!isSearchModalOpen()) return;
-  searchModalOverlay.style.display = 'none';
-  searchModalPanel.classList.remove('is-in');
-  searchModalPanel.innerHTML = '';
   searchModalTerm = '';
-  document.body.style.overflow = '';
+  searchPanelModalCtl = null;
+  closeNavDropdown();
 }
 
 // ✕ / overlay / Esc: close and, if we're on a #/search or #/custom deep-link,
-// return to home so the URL reflects the dismissed modal.
+// return to home so the URL reflects the dismissed search.
 function userCloseSearchModal() {
   const hash = window.location.hash || '';
   const onModalRoute = hash.startsWith('#/custom/') || hash === '#/search';
@@ -3924,29 +3924,21 @@ function userCloseSearchModal() {
   if (onModalRoute) navigate('#/');
 }
 
-function renderSearchModalBody(term) {
-  searchPanelModalCtl = renderSearchPanel(searchModalPanel, { mode: 'modal', term });
-  // Corner close — appended to the modal PANEL (not the centered hero) so it
-  // sits at the modal's true top-right corner. Resets when expanded, closes
-  // when already empty.
-  const cc = document.createElement('button');
-  cc.type = 'button';
-  cc.className = 'search-panel-corner-close';
-  cc.setAttribute('aria-label', 'Close');
-  cc.innerHTML = X_ICON_SVG;
-  cc.addEventListener('click', () => searchPanelModalCtl.close());
-  searchModalPanel.appendChild(cc);
+function renderSearchModalBody(host, term) {
+  searchPanelModalCtl = renderSearchPanel(host, { mode: 'modal', term });
   // Modal submit keeps the URL shareable; the openSearchPageModal guard makes
   // the resulting route change expand the live panel rather than rebuild it.
   searchPanelModalCtl.onExpand = (t) => {
     const target = '#/custom/' + encodeURIComponent(t);
     if (window.location.hash !== target) navigate(target);
   };
-  // Clearing inside the modal drops back to the empty-search route.
+  // Clearing inside the panel drops back to the empty-search route.
   searchPanelModalCtl.onCollapse = () => {
     if ((window.location.hash || '').startsWith('#/custom/')) navigate('#/search');
   };
-  if (!term || !term.trim()) setTimeout(() => searchPanelModalCtl.focus(), 60);
+  // Refresh the shell scroll-fades as results paint; focus the empty search.
+  [200, 700, 1500].forEach((d) => setTimeout(updateNavDdFades, d));
+  if (!term || !term.trim()) setTimeout(() => { try { searchPanelModalCtl.focus(); } catch (_) {} }, 80);
 }
 
 function renderPage(route) {
