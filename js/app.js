@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp413';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp414';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp413';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp414';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp413';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp413';
-import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp413';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp413';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp414';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp414';
+import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp414';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp414';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp413';
-import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp413';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp413';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp413';
-import { renderWebSources } from './components/websources.js?v=20260630-revamp413';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp413';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp414';
+import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp414';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp414';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp414';
+import { renderWebSources } from './components/websources.js?v=20260630-revamp414';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp414';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp413';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp414';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp413';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp414';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -525,68 +525,71 @@ function wireNavDdAccordions(panel) {
 // Every parent topic is an accordion; expanding shows the parent + its
 // subtopics, each with the five AI tracks as chips. Clicking a chip routes to
 // that topic page and opens the matching inline section.
+const AIIDD_ARROW = '<svg class="aiidd-arrow" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>';
 function aiInsightsTopicTreeHTML() {
   const groups = getTopicsGroupedByParent() || [];
   const chipsFor = (t) => `<div class="aiidd-chips">${AII_NAV_GROUPS.map((g) =>
     `<button type="button" class="aiidd-chip" data-aiidd-go data-slug="${escapeHTML(t.slug)}" data-group="${escapeHTML(g.group)}">${escapeHTML(g.label)}</button>`
   ).join('')}</div>`;
-  const topicRow = (t, isParent) => `
-    <div class="aiidd-topic${isParent ? ' aiidd-topic-parent' : ''}">
-      <a href="#/topic/${t.slug}" class="aiidd-topic-name" data-aiidd-topic>
-        <span class="aiidd-topic-ic">${topicIconSVG(t.icon || 'globe', 'tsp-ic-svg')}</span>
-        <span class="aiidd-topic-tx">${escapeHTML(t.name)}</span>
-      </a>
-      ${chipsFor(t)}
+  const openLink = (t) => `<a href="#/topic/${t.slug}" class="aiidd-openpage" data-aiidd-topic>Open ${escapeHTML(t.name)} page ${AIIDD_ARROW}</a>`;
+  // Subtopic = a nested drill-in: click its name to reveal ITS shortcuts.
+  const subBlock = (s) => `
+    <div class="aiidd-sub" data-open="false">
+      <button type="button" class="aiidd-sub-head" data-aiidd-subtoggle aria-expanded="false">
+        <span class="aiidd-sub-ic">${topicIconSVG(s.icon || 'globe', 'tsp-ic-svg')}</span>
+        <span class="aiidd-sub-name">${escapeHTML(s.name)}</span>
+        ${TSP_CHEV}
+      </button>
+      <div class="aiidd-sub-body">${chipsFor(s)}${openLink(s)}</div>
     </div>`;
+  // Parent = click its name → its OWN shortcuts show immediately, then its
+  // subtopics are listed below (each a further drill-in).
   const block = ({ parent, subtopics }) => {
     const subs = subtopics || [];
     return `<section class="aiidd-parent" data-open="false">
       <button type="button" class="aiidd-parent-head" data-aiidd-toggle aria-expanded="false">
         <span class="aiidd-parent-ic">${topicIconSVG(parent.icon || 'globe', 'tsp-ic-svg')}</span>
         <span class="aiidd-parent-name">${escapeHTML(parent.name)}</span>
-        ${subs.length ? `<span class="aiidd-parent-count">${subs.length}</span>` : ''}
         ${TSP_CHEV}
       </button>
       <div class="aiidd-parent-body">
-        ${topicRow(parent, true)}
-        ${subs.map((t) => topicRow(t, false)).join('')}
+        <div class="aiidd-parent-shortcuts">${chipsFor(parent)}${openLink(parent)}</div>
+        ${subs.length ? `<div class="aiidd-subs"><div class="aiidd-subs-label">Subtopics</div>${subs.map(subBlock).join('')}</div>` : ''}
       </div>
     </section>`;
   };
   return `<div class="aiidd-tree">${groups.map(block).join('')}</div>`;
 }
 
-function openAiInsightsNavDropdown() {
-  openNavDropdown({
+// Shared wiring for the AI Insights drill-in dropdown: parent accordions,
+// subtopic drill-ins, track chips → inline section, topic links.
+function wireAiInsightsTree(panel) {
+  wireNavDdAccordions(panel);
+  panel.querySelectorAll('[data-aiidd-subtoggle]').forEach((btn) => btn.addEventListener('click', () => {
+    const sub = btn.closest('.aiidd-sub');
+    const open = sub.getAttribute('data-open') === 'true';
+    sub.setAttribute('data-open', String(!open));
+    btn.setAttribute('aria-expanded', String(!open));
+    requestAnimationFrame(updateNavDdFades);
+  }));
+  panel.querySelectorAll('[data-aiidd-go]').forEach((chip) => chip.addEventListener('click', (e) => {
+    e.preventDefault();
+    closeNavDropdown();
+    openTopicInsightInline(chip.dataset.slug, chip.dataset.group);
+  }));
+  panel.querySelectorAll('[data-aiidd-topic]').forEach((a) => a.addEventListener('click', () => closeNavDropdown()));
+}
+function aiInsightsNavDdCfg() {
+  return {
     key: 'insights', triggerId: 'nav-insights', spark: true,
     title: 'AI Insights', ariaLabel: 'AI Insights',
     subtitle: 'Pick a topic, then the kind of intelligence you want.',
     contentHTML: aiInsightsTopicTreeHTML(),
-    wire: (panel) => {
-      wireNavDdAccordions(panel);
-      panel.querySelectorAll('[data-aiidd-go]').forEach((chip) => chip.addEventListener('click', (e) => {
-        e.preventDefault();
-        closeNavDropdown();
-        openTopicInsightInline(chip.dataset.slug, chip.dataset.group);
-      }));
-      panel.querySelectorAll('[data-aiidd-topic]').forEach((a) => a.addEventListener('click', () => closeNavDropdown()));
-    },
-  });
+    wire: wireAiInsightsTree,
+  };
 }
-function toggleAiInsightsNavDropdown() {
-  toggleNavDropdown({ key: 'insights', triggerId: 'nav-insights', spark: true,
-    title: 'AI Insights', ariaLabel: 'AI Insights',
-    subtitle: 'Pick a topic, then the kind of intelligence you want.',
-    contentHTML: aiInsightsTopicTreeHTML(),
-    wire: (panel) => {
-      wireNavDdAccordions(panel);
-      panel.querySelectorAll('[data-aiidd-go]').forEach((chip) => chip.addEventListener('click', (e) => {
-        e.preventDefault(); closeNavDropdown(); openTopicInsightInline(chip.dataset.slug, chip.dataset.group);
-      }));
-      panel.querySelectorAll('[data-aiidd-topic]').forEach((a) => a.addEventListener('click', () => closeNavDropdown()));
-    },
-  });
-}
+function openAiInsightsNavDropdown() { openNavDropdown(aiInsightsNavDdCfg()); }
+function toggleAiInsightsNavDropdown() { toggleNavDropdown(aiInsightsNavDdCfg()); }
 
 // ── Phase 5: the main-nav "Topics" topic-tree dropdown ───────────────────────
 // Same accordion shell, but the rows are plain topic links (no AI track chips):
@@ -695,31 +698,31 @@ function wireTopicAiiInline(section, topic, descriptions, icons) {
   // (a) attach the intercept to the STABLE `section` element (never replaced), and
   // (b) look up the current stage + (re)create the inline panel FRESH on each open.
   let activeGroup = null; let ctl = null;
-  const getStage = () => section.querySelector('.aii-stage');
-  const getPanel = (create) => {
-    const stage = getStage();
-    if (!stage) return null;
-    let panel = stage.querySelector('.aii-inline-panel');
-    if (!panel && create) { panel = document.createElement('div'); panel.className = 'aii-inline-panel'; panel.hidden = true; stage.appendChild(panel); }
-    return panel;
-  };
+  // Accordion behaviour (#94): the section content expands DIRECTLY BELOW the
+  // clicked card (like news/trend cards), not in one panel at the bottom. So the
+  // panel is inserted as the tile's next sibling and removed on close.
+  const getPanel = () => section.querySelector('.aii-inline-panel');
   const clearTiles = () => section.querySelectorAll('.aii-bcard.is-active').forEach((b) => { b.classList.remove('is-active'); b.setAttribute('aria-expanded', 'false'); });
   const close = () => {
     activeGroup = null;
     if (ctl && ctl.destroy) { try { ctl.destroy(); } catch (_) {} }
     ctl = null;
-    const panel = getPanel(false);
-    if (panel) { panel.hidden = true; panel.innerHTML = ''; }
+    const panel = getPanel();
+    if (panel) panel.remove();
     clearTiles();
   };
-  const isOpen = () => { const p = getPanel(false); return !!(p && !p.hidden); };
+  const isOpen = () => !!getPanel();
   const openGroup = (group, tile) => {
     if (activeGroup === group && isOpen()) { close(); return; }
     close();
-    const panel = getPanel(true);
-    if (!panel) return;
-    activeGroup = group; panel.hidden = false;
-    if (tile) { tile.classList.add('is-active'); tile.setAttribute('aria-expanded', 'true'); }
+    if (!tile) return;
+    const panel = document.createElement('div');
+    panel.className = 'aii-inline-panel';
+    // Match the card's per-track accent (the sibling panel won't inherit it).
+    try { const a = getComputedStyle(tile).getPropertyValue('--aii-accent').trim(); if (a) panel.style.setProperty('--aii-accent', a); } catch (_) {}
+    tile.after(panel);   // content drops in right under the clicked card
+    activeGroup = group;
+    tile.classList.add('is-active'); tile.setAttribute('aria-expanded', 'true');
     ctl = renderAIIntelligence(panel, {
       inModal: true, initialBuilder: true, initialGroup: group, lockTopic: true,
       topic: topic.name, label: topic.name, descriptions, icons, topicKey: topic.slug,

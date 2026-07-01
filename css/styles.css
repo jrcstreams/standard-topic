@@ -16436,7 +16436,9 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* AI Insights launcher: a clean 2-column LIST (1-col mobile) — a discreet monochrome
    icon, the track name, a small one-line summary, and a quiet arrow. Hairline row
    dividers, no tinted tiles / card-in-card (content-led, not blocky). */
-.topic-band #section-shortcuts .aii-bcards { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 14px; }
+/* Single-column accordion (#94): each card's insights expand directly below it,
+   so the tiles stack full-width (no 2-col grid). */
+.topic-band #section-shortcuts .aii-bcards { display: flex; flex-direction: column; gap: 8px; }
 .topic-band #section-shortcuts .aii-bcard {
   align-items: center; gap: 12px; padding: 12px 12px; border: none !important; border-radius: 10px;
   background: none !important; box-shadow: none !important; transform: none !important;
@@ -17384,6 +17386,20 @@ body.home-search #section-newsfeed .news-card-title { font-size: 1.02rem; }
 .topic-band #section-newsfeed .news-card-desc,
 body.home-search #section-newsfeed .news-card-desc { margin-top: 0.45rem; font-size: 0.88rem; }
 
+/* Homepage: no container at all — news cards are a clean borderless list with a
+   hairline divider between rows (topic pages keep the boxed cards). */
+body.home-search #section-newsfeed .news-card {
+  border: none !important; border-radius: 0 !important; background: transparent !important;
+  box-shadow: none !important; padding: 15px 2px !important;
+  border-bottom: 1px solid var(--color-surface-border) !important;
+}
+body.home-search #section-newsfeed .news-card:last-child { border-bottom: none !important; }
+body.home-search #section-newsfeed .news-card:hover {
+  border-color: transparent !important; box-shadow: none !important; transform: none !important;
+  background: transparent !important; border-bottom-color: var(--color-surface-border) !important;
+}
+body.home-search #section-newsfeed .news-list { gap: 0 !important; }
+
 /* ═══ News card actions + inline News Insights dropdown (revamp400, Phase 2b) ══
    The whole card is no longer a link — explicit View Story / AI Insights / Web
    Search buttons, with AI Insights + Web Search opening clean inline dropdowns. */
@@ -17476,6 +17492,17 @@ body.home-search #section-newsfeed .news-card-desc { margin-top: 0.45rem; font-s
    are the nav, so the mounted builder's own brand/nav/topic-switcher are hidden. */
 .aii-inline-panel[hidden] { display: none !important; }
 .aii-inline-panel { margin-top: 14px; border-top: 1px solid var(--color-surface-border); position: relative; }
+/* Accordion style (#94): the panel sits directly under its card as a connected
+   dropdown body — a tinted, bordered box indented to read as "belongs to the
+   card above it". */
+.topic-band #section-shortcuts .aii-inline-panel {
+  margin: -2px 0 4px; padding: 6px 14px 10px;
+  border: 1px solid color-mix(in srgb, var(--aii-accent, #2563eb) 32%, var(--color-surface-border));
+  border-top: none; border-radius: 0 0 12px 12px;
+  background: color-mix(in srgb, var(--aii-accent, #2563eb) 4%, #fff);
+}
+/* Active card squares its bottom corners so it fuses with the panel below. */
+.topic-band #section-shortcuts .aii-bcard.is-active { border-bottom-left-radius: 0 !important; border-bottom-right-radius: 0 !important; }
 /* Scoped with #section-shortcuts so it beats the launcher's own head-show rule. */
 .topic-band #section-shortcuts .aii-inline-panel .aii-head { display: none !important; }
 .topic-band #section-shortcuts .aii-inline-panel .aii-builder-topbar { display: none !important; }
@@ -17633,6 +17660,39 @@ body.home-search #section-newsfeed .news-card-desc { margin-top: 0.45rem; font-s
   transition: background .14s ease, color .14s ease, border-color .14s ease;
 }
 .aiidd-chip:hover { background: #2563eb; border-color: #2563eb; color: #fff; }
+
+/* Drill-in redesign (#93): parent body shows the parent's own shortcuts first,
+   then subtopics as nested drill-ins. */
+.aiidd-parent-body { padding: 4px 0 14px 6px; }
+.aiidd-parent-shortcuts { padding: 4px 8px 10px; }
+.aiidd-openpage {
+  display: inline-flex; align-items: center; gap: 5px; margin-top: 9px;
+  font-size: 0.8rem; font-weight: 600; color: #2563eb; text-decoration: none;
+}
+.aiidd-openpage:hover { text-decoration: underline; }
+.aiidd-openpage .aiidd-arrow { transition: transform .14s ease; }
+.aiidd-openpage:hover .aiidd-arrow { transform: translateX(2px); }
+
+.aiidd-subs { margin-top: 4px; border-top: 1px dashed var(--color-surface-border); padding-top: 8px; }
+.aiidd-subs-label {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: #94a3b8; padding: 2px 8px 6px;
+}
+.aiidd-sub { border-radius: 10px; }
+.aiidd-sub-head {
+  width: 100%; display: flex; align-items: center; gap: 9px;
+  padding: 9px 8px; background: none; border: none; cursor: pointer;
+  font-size: 0.9rem; font-weight: 600; color: #334155; text-align: left;
+}
+.aiidd-sub-head:hover { color: #2563eb; }
+.aiidd-sub-ic { flex: 0 0 auto; width: 18px; height: 18px; display: grid; place-items: center; color: #64748b; }
+.aiidd-sub-ic .tsp-ic-svg { width: 16px; height: 16px; }
+.aiidd-sub-name { flex: 1 1 auto; }
+.aiidd-sub-head .tsp-chev { flex: 0 0 auto; width: 15px; height: 15px; color: #94a3b8; transition: transform .2s ease; }
+.aiidd-sub[data-open="true"] .aiidd-sub-head .tsp-chev { transform: rotate(180deg); }
+.aiidd-sub-body { display: none; padding: 2px 8px 10px 35px; }
+.aiidd-sub[data-open="true"] .aiidd-sub-body { display: block; }
+.aiidd-sub[data-open="true"] { background: #f8fafc; }
 
 /* Topics dropdown (Phase 5): plain topic links instead of track chips. */
 .aiidd-parent-flat {
