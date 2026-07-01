@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp415';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp416';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp415';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp416';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp415';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp415';
-import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp415';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp415';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp416';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp416';
+import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp416';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp416';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp415';
-import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp415';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp415';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp415';
-import { renderWebSources } from './components/websources.js?v=20260630-revamp415';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp415';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp416';
+import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp416';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp416';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp416';
+import { renderWebSources } from './components/websources.js?v=20260630-revamp416';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp416';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp415';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp416';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp415';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp416';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -374,11 +374,11 @@ function wireSubtopicsMore(root) {
 // tiles and the main-nav "AI Insights" topic-tree dropdown (Phase 3). The group
 // ids match the AI component's builder groups.
 const AII_NAV_GROUPS = [
-  { group: 'discover',       label: 'Get Caught Up' },
+  { group: 'discover',       label: 'Catch Up' },
   { group: 'topic-specific', label: 'Deep Dive' },
-  { group: 'learn',          label: '101 Resources' },
+  { group: 'learn',          label: '101 Info' },
   { group: 'websearch',      label: 'Web Search' },
-  { group: 'external',       label: 'Prompt Library' },
+  { group: 'external',       label: 'Prompts' },
 ];
 
 // Deep-link into a topic page's inline AI section. If we're already on that
@@ -691,81 +691,63 @@ function userClosePromptBuilder() {
   if (onRoute) navigate('#/');
 }
 
-function wireTopicAiiInline(section, topic, descriptions, icons) {
-  // IMPORTANT: the AI component re-renders its OWN innards (rebuilding `.aii-stage`
-  // and wiping anything we appended) whenever the 899.98px breakpoint is crossed —
-  // which on a real phone fires on address-bar show/hide + orientation. So we must
-  // (a) attach the intercept to the STABLE `section` element (never replaced), and
-  // (b) look up the current stage + (re)create the inline panel FRESH on each open.
-  let activeGroup = null; let ctl = null;
-  // Accordion behaviour (#94): the section content expands DIRECTLY BELOW the
-  // clicked card (like news/trend cards), not in one panel at the bottom. So the
-  // panel is inserted as the tile's next sibling and removed on close.
-  const getPanel = () => section.querySelector('.aii-inline-panel');
-  const clearTiles = () => section.querySelectorAll('.aii-bcard.is-active').forEach((b) => { b.classList.remove('is-active'); b.setAttribute('aria-expanded', 'false'); });
-  const close = () => {
-    activeGroup = null;
-    if (ctl && ctl.destroy) { try { ctl.destroy(); } catch (_) {} }
-    ctl = null;
-    const panel = getPanel();
-    if (panel) panel.remove();
-    clearTiles();
-  };
-  const isOpen = () => !!getPanel();
-  const openGroup = (group, tile) => {
-    if (activeGroup === group && isOpen()) { close(); return; }
-    close();
-    if (!tile) return;
-    const panel = document.createElement('div');
-    panel.className = 'aii-inline-panel';
-    // Match the card's per-track accent (the sibling panel won't inherit it).
-    try { const a = getComputedStyle(tile).getPropertyValue('--aii-accent').trim(); if (a) panel.style.setProperty('--aii-accent', a); } catch (_) {}
-    tile.after(panel);   // content drops in right under the clicked card
-    activeGroup = group;
-    tile.classList.add('is-active'); tile.setAttribute('aria-expanded', 'true');
-    ctl = renderAIIntelligence(panel, {
-      inModal: true, initialBuilder: true, initialGroup: group, lockTopic: true,
+// The topic page's tabbed "Paths" package: News first, then the five AI tracks.
+const TOPIC_PATH_TABS = [
+  { key: 'news',          label: 'News' },
+  { key: 'discover',      label: 'Catch Up' },
+  { key: 'topic-specific', label: 'Deep Dive' },
+  { key: 'learn',         label: '101 Info' },
+  { key: 'websearch',     label: 'Web Search' },
+  { key: 'external',      label: 'Prompts' },
+];
+
+// Wire the topic-page tab strip: switching a tab renders that path's content
+// into the shared panel body (News → the news feed; a path → the AI builder for
+// that single group), sets the sticky per-tab header, and drives the deep-links
+// from the AI Insights nav dropdown.
+function wireTopicPathTabs(container, topic, descriptions, icons) {
+  const nav = container.querySelector('#topic-paths-nav');
+  const header = container.querySelector('#topic-tab-header');
+  const body = container.querySelector('#topic-tab-body');
+  if (!nav || !header || !body) return;
+  let active = null; let ctl = null;
+
+  const destroyCtl = () => { if (ctl && ctl.destroy) { try { ctl.destroy(); } catch (_) {} } ctl = null; };
+  const renderContent = (key) => {
+    destroyCtl();
+    body.innerHTML = '';
+    if (key === 'news') { renderNewsFeed(body, topic, false); return; }
+    // An AI path → mount that single group's builder (chrome hidden via CSS).
+    ctl = renderAIIntelligence(body, {
+      inModal: true, initialBuilder: true, initialGroup: key, lockTopic: true,
       topic: topic.name, label: topic.name, descriptions, icons, topicKey: topic.slug,
     });
-    // Capped scroll area gets the same clean top/bottom fades (#89).
-    const sc = panel.querySelector('.aii-builder-secs');
-    if (sc) {
-      panel.classList.add('has-fade');
-      const upd = () => { const t = sc.scrollTop, m = sc.scrollHeight - sc.clientHeight; panel.classList.toggle('fade-top', t > 4); panel.classList.toggle('fade-bot', m > 6 && t < m - 4); };
-      sc.addEventListener('scroll', upd, { passive: true });
-      [0, 450, 1400].forEach((d) => setTimeout(upd, d));
-    }
-    requestAnimationFrame(() => panel.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
   };
-  // Capture-phase on the STABLE section: intercept the tile click BEFORE the
-  // component's own modal-open handler (and before any post-re-render rewire),
-  // and open the section inline instead.
-  section.addEventListener('click', (e) => {
-    const tile = e.target.closest && e.target.closest('.aii-bcard[data-builder-open]');
-    if (!tile || !section.contains(tile)) return;
-    e.stopPropagation(); e.preventDefault();
-    openGroup(tile.dataset.group, tile);
-  }, true);
+  const selectTab = (key) => {
+    if (!TOPIC_PATH_TABS.some((t) => t.key === key)) key = 'news';
+    if (active === key) return;
+    active = key;
+    const meta = TOPIC_PATH_TABS.find((t) => t.key === key);
+    nav.querySelectorAll('.ptab').forEach((b) => {
+      const on = b.dataset.ptab === key;
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-selected', String(on));
+    });
+    header.innerHTML = `<h2 class="topic-tab-title">${escapeHTML(meta.label)}</h2>`;
+    renderContent(key);
+    requestAnimationFrame(() => { try { window.scrollTo({ top: 0 }); } catch (_) {} });
+  };
+  nav.querySelectorAll('.ptab').forEach((b) => b.addEventListener('click', () => selectTab(b.dataset.ptab)));
 
-  // Deep-link support (Phase 3): open a given track by group id, locating its
-  // tile so it highlights. Used by both the same-page event and the pending
-  // post-navigation request.
-  const openByGroup = (group) => {
-    const tile = section.querySelector(`.aii-bcard[data-group="${group}"]`);
-    openGroup(group, tile);
-  };
-  // Same-page deep-links arrive as a window event (the picker is on the nav,
-  // not in this section). Re-register on the window each render, dropping the
-  // prior page's handler so we never stack duplicates.
+  // Deep-link from the AI Insights nav dropdown (same-page event + cross-page
+  // pending request) → open the matching path tab.
   if (window.__aiiInlineHandler) window.removeEventListener('aii-inline-open', window.__aiiInlineHandler);
-  window.__aiiInlineHandler = (e) => { if (e.detail && e.detail.slug === topic.slug) openByGroup(e.detail.group); };
+  window.__aiiInlineHandler = (e) => { if (e.detail && e.detail.slug === topic.slug) selectTab(e.detail.group); };
   window.addEventListener('aii-inline-open', window.__aiiInlineHandler);
-  // Cross-page deep-link: a nav-dropdown click stashed a request then navigated
-  // here. Consume it once the tiles exist (next frame).
-  if (pendingInlineAii && pendingInlineAii.slug === topic.slug) {
-    const g = pendingInlineAii.group; pendingInlineAii = null;
-    requestAnimationFrame(() => openByGroup(g));
-  }
+
+  let initial = 'news';
+  if (pendingInlineAii && pendingInlineAii.slug === topic.slug) { initial = pendingInlineAii.group; pendingInlineAii = null; }
+  selectTab(initial);
 }
 
 function closeAllPickers(except) {
@@ -2324,26 +2306,36 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       try { (getShortcutsForTopic('home') || []).forEach((s) => { if (s && s.name) { homeDesc[s.name] = s.description || ''; homeIcons[s.name] = s.icon || ''; } }); } catch (_) {}
       renderAIIntelligence(aiiHome, { topic: 'home', label: "today's world", descriptions: homeDesc, icons: homeIcons, hideGroups: ['topic-specific'], topicKey: 'home' });
     }
+  } else if (topic && !isCustom) {
+    // Topic pages: ONE cohesive tabbed "Paths" package at every width. A second
+    // subnav (tab strip) below the title — News · Catch Up · Deep Dive · 101 Info
+    // · Web Search · Prompts — with a sticky per-tab body header + scrolling
+    // content. News is the default tab.
+    container.innerHTML = `
+      <div class="topic-layout topic-band topic-tabbed" id="topic-layout">
+        ${topicBodyHeadHTML(topic)}
+        <div class="topic-paths-nav" role="tablist" id="topic-paths-nav">
+          ${TOPIC_PATH_TABS.map((t, i) => `<button type="button" class="ptab${i === 0 ? ' is-active' : ''}" role="tab" data-ptab="${t.key}" aria-selected="${i === 0 ? 'true' : 'false'}">${escapeHTML(t.label)}</button>`).join('')}
+        </div>
+        <div class="topic-tabpanel" role="tabpanel">
+          <div class="topic-tab-header" id="topic-tab-header"></div>
+          <div class="topic-tab-body layout-section" id="topic-tab-body"></div>
+        </div>
+      </div>
+    `;
+    wireSubnavPicker(container); wireSubtopicsMore(container);
+    const descriptions = {}; const icons = {};
+    try { (getShortcutsForTopic(topic.slug) || []).forEach((s) => { if (s && s.name) { descriptions[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } }); } catch (_) {}
+    wireTopicPathTabs(container, topic, descriptions, icons);
+    return;
   } else {
-    // Topic pages: a desktop 35/65 split — SIDEBAR (AI Intelligence, then Web
-    // Sources) + MAIN (News Feed, Related). The wrappers are display:contents
-    // below 1024px, so the mobile tab navigator (which shows ONE section at a
-    // time) is unaffected; at ≥1024 they become the two columns (#14).
-    // AI Insights (full-width) on top — Web Search + External Insights are now
-    // folded into it as tabs, so there's no longer a separate Web Sources card —
-    // then the News Feed full-width below as a responsive grid. On mobile this is a
-    // single stacked scroll (no section tabs). (#layout-revamp)
-    // Topic pages: a full-width stack — the AI Insights & Resources card on top,
-    // then the News Feed — at every width (#285). Direct sections (no sidebar
-    // wrappers) so the band reads as one continuous column.
+    // Custom-search pages keep the stacked shortcuts + news layout.
     container.innerHTML = `
       <div class="topic-layout topic-band" id="topic-layout">
-        ${topic ? topicBodyHeadHTML(topic) : ''}
         <section class="layout-section" id="section-shortcuts"></section>
         <section class="layout-section" id="section-newsfeed"></section>
       </div>
     `;
-    if (topic) { wireSubnavPicker(container); wireSubtopicsMore(container); }
   }
 
   const trendingSection = container.querySelector('#section-trending');

@@ -17730,3 +17730,48 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
   .aiidd-chips { flex: 0 0 auto; }
   .aiidd-chip { font-size: 0.74rem; padding: 6px 11px; }
 }
+
+/* ── Topic page tabbed "Paths" package (all widths) ──────────────────────────
+   A second subnav (tab strip) below the title, a sticky per-tab header, and
+   scrolling content. One cohesive package: News + the five AI paths. */
+.topic-tabbed .topic-paths-nav {
+  display: flex; gap: 2px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none;
+  margin: 12px 0 0; padding: 2px 0 0;
+  border-bottom: 1px solid var(--color-surface-border);
+  position: sticky; top: calc(var(--nav-h) + var(--subnav-height, 0px)); z-index: 30;
+  background: var(--color-bg, #fff);
+}
+.topic-tabbed .topic-paths-nav::-webkit-scrollbar { display: none; }
+.ptab {
+  flex: 0 0 auto; padding: 10px 15px; border: none; background: none; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; color: var(--color-text-muted, #64748b);
+  border-bottom: 2px solid transparent; white-space: nowrap; margin-bottom: -1px;
+  transition: color .14s ease, border-color .14s ease;
+}
+.ptab:hover { color: var(--color-text); }
+.ptab.is-active { color: var(--color-primary, #14213d); border-bottom-color: #2563eb; }
+
+.topic-tabbed .topic-tab-header {
+  position: sticky; top: calc(var(--nav-h) + var(--subnav-height, 0px) + 45px); z-index: 25;
+  background: var(--color-bg, #fff); padding: 18px 0 11px; margin: 0;
+  border-bottom: 1px solid var(--color-surface-border);
+}
+.topic-tab-title {
+  margin: 0; font-family: var(--font-display); font-size: 1.4rem; font-weight: 700;
+  color: #14213d; letter-spacing: -0.02em; line-height: 1.1;
+}
+.topic-tab-body { padding-top: 14px; min-height: 40vh; }
+
+/* Inside a tab: hide the mounted AI builder's own chrome + the news feed's own
+   header (the sticky tab header replaces them); let content flow the page. */
+.topic-tab-body .aii-head,
+.topic-tab-body .aii-builder-topbar,
+.topic-tab-body .newsfeed-head { display: none !important; }
+.topic-tab-body .aii { border: none !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; overflow: visible !important; height: auto !important; }
+.topic-tab-body .aii-stage,
+.topic-tab-body .aii-content--modal { padding: 0 !important; }
+.topic-tab-body .aii-builder-secs { max-height: none !important; overflow: visible !important; padding: 0 !important; }
+
+/* The old in-subheader section tabs (News Feed / AI Insights / Web Search) are
+   superseded by the new topic-page tab strip — hide them. */
+#sub-header .subnav-tabs { display: none !important; }

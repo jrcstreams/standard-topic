@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260630-revamp415';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260630-revamp415';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260630-revamp416';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260630-revamp416';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -16,9 +16,9 @@ import { topicIconSVG } from '../utils/topic-icons.js';
 // holds the refresh class). Kept inline so the component never depends on a
 // freshly-changed data.js (the no-version singleton).
 const PATHS = [
-  { group: 'discover',       label: "What's Happening Now",   tab: 'Get Caught Up', subtitle: 'The latest news, moves, and developments.', cardTitle: 'The big picture, quickly' },
+  { group: 'discover',       label: "What's Happening Now",   tab: 'Catch Up', subtitle: 'The latest news, moves, and developments.', cardTitle: 'The big picture, quickly' },
   { group: 'topic-specific', label: 'Deep Dive',              tab: 'Deep Dive',     subtitle: 'The key developments in depth — plus the tradeoffs and what they mean.', cardTitle: 'Go beneath the headlines' },
-  { group: 'learn',          label: 'Learn',                   tab: '101 Resources', subtitle: 'Background, fundamentals, and key context.',  cardTitle: 'Start from the basics' },
+  { group: 'learn',          label: 'Learn',                   tab: '101 Info', subtitle: 'Background, fundamentals, and key context.',  cardTitle: 'Start from the basics' },
 ];
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
@@ -161,7 +161,7 @@ export function renderAIIntelligence(container, scope) {
   const EXTERNAL_GROUP = 'external';
   const WEBSEARCH_GROUP = 'websearch';
   const webSearchTab = { group: WEBSEARCH_GROUP, tab: 'Web Search', subtitle: "Search this topic across the web's primary sources and platforms." };
-  const externalTab = { group: EXTERNAL_GROUP, tab: 'Prompt Library', subtitle: 'Ready-made prompts to run this topic in the AI model of your choice.' };
+  const externalTab = { group: EXTERNAL_GROUP, tab: 'Prompts', subtitle: 'Ready-made prompts to run this topic in the AI model of your choice.' };
   // Caller-supplied EXTRA tabs (custom search folds News + Trending in here):
   // each { group, tab, subtitle, icon (svg string), render(wrapEl) } is a static
   // (non-AI) tab whose body the caller renders. Inserted after the AI paths and
