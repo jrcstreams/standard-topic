@@ -17736,9 +17736,11 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
    scrolling content. One cohesive package: News + the five AI paths. */
 .topic-tabbed .topic-paths-nav {
   display: flex; gap: 2px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none;
-  margin: 12px 0 0; padding: 2px 0 0;
+  margin: 12px 0 0; padding: 6px 0 0;
   border-bottom: 1px solid var(--color-surface-border);
-  position: sticky; top: calc(var(--nav-h) + var(--subnav-height, 0px)); z-index: 30;
+  /* #content is the scroll container (fixed below the nav), so sticky tops are
+     relative to it — pin the strip to the container's top. */
+  position: sticky; top: 0; z-index: 30;
   background: var(--color-bg, #fff);
 }
 .topic-tabbed .topic-paths-nav::-webkit-scrollbar { display: none; }
@@ -17752,7 +17754,7 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 .ptab.is-active { color: var(--color-primary, #14213d); border-bottom-color: #2563eb; }
 
 .topic-tabbed .topic-tab-header {
-  position: sticky; top: calc(var(--nav-h) + var(--subnav-height, 0px) + 45px); z-index: 25;
+  position: sticky; top: 44px; z-index: 25;
   background: var(--color-bg, #fff); padding: 18px 0 11px; margin: 0;
   border-bottom: 1px solid var(--color-surface-border);
 }
