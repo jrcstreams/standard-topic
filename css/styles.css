@@ -17149,7 +17149,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   body.app-mode:not(.home-mode) #sub-header.is-subnav .tsp-panelwrap { left: 0; right: auto; width: 340px; }
 
   /* Body topic header (in the page body, top of the topic band). */
-  .topic-bodyhead { display: block; position: relative; margin: 0 0 1.4rem; }
+  .topic-bodyhead { display: block; position: relative; margin: 0 0 0.7rem; }
   /* Title + chevron sit together, left-aligned (revamp383). Topic name in a
      deep blue to differentiate it from the near-black section headers. */
   .tbh-row { display: flex; align-items: center; justify-content: flex-start; gap: 0.55rem; }
@@ -17734,29 +17734,31 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 /* ── Topic page tabbed "Paths" package (all widths) ──────────────────────────
    A second subnav (tab strip) below the title, a sticky per-tab header, and
    scrolling content. One cohesive package: News + the five AI paths. */
+/* Path nav = a clean 3×2 grid of buttons, lower in hierarchy than the topic
+   title and tucked close beneath it. Even, justified spacing. Not sticky — a
+   calm launcher; the per-tab header keeps context on scroll. */
 .topic-tabbed .topic-paths-nav {
-  display: flex; gap: 2px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none;
-  margin: 12px 0 0; padding: 6px 0 0;
-  border-bottom: 1px solid var(--color-surface-border);
-  /* #content is the scroll container (fixed below the nav) and the condensed
-     topic title bar (#sub-header, ~--subnav-height tall) is fixed over its top —
-     so the tab strip pins just BELOW that title subnav. */
-  position: sticky; top: var(--subnav-height, 49px); z-index: 30;
-  background: var(--color-bg, #fff);
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  margin: 6px 0 0; padding: 0; border-bottom: none;
 }
-.topic-tabbed .topic-paths-nav::-webkit-scrollbar { display: none; }
 .ptab {
-  flex: 0 0 auto; padding: 10px 15px; border: none; background: none; cursor: pointer;
-  font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; color: var(--color-text-muted, #64748b);
-  border-bottom: 2px solid transparent; white-space: nowrap; margin-bottom: -1px;
-  transition: color .14s ease, border-color .14s ease;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  padding: 12px 10px; border: 1px solid var(--color-surface-border); border-radius: 11px;
+  background: #fff; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.88rem; font-weight: 550; color: var(--color-text-light, #475569);
+  white-space: nowrap; transition: color .14s ease, border-color .14s ease, background .14s ease, box-shadow .14s ease;
 }
-.ptab:hover { color: var(--color-text); }
-.ptab.is-active { color: var(--color-primary, #14213d); border-bottom-color: #2563eb; }
+.ptab:hover { color: var(--color-primary, #14213d); border-color: #b8c4da; }
+.ptab.is-active {
+  color: #2563eb; font-weight: 650;
+  border-color: color-mix(in srgb, #2563eb 45%, var(--color-surface-border));
+  background: color-mix(in srgb, #2563eb 5%, #fff);
+  box-shadow: 0 1px 2px rgba(37,99,235,.08);
+}
 
 .topic-tabbed .topic-tab-header {
-  position: sticky; top: calc(var(--subnav-height, 49px) + 44px); z-index: 25;
-  background: var(--color-bg, #fff); padding: 18px 0 11px; margin: 0;
+  position: sticky; top: var(--subnav-height, 49px); z-index: 25;
+  background: var(--color-bg, #fff); padding: 16px 0 11px; margin: 14px 0 0;
   border-bottom: 1px solid var(--color-surface-border);
 }
 .topic-tab-title {
