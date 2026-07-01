@@ -4,23 +4,17 @@
 // the Search modal). The builder UI itself is the existing renderPromptGenerator
 // wizard, rendered into the modal body.
 
-import { renderPromptGenerator } from './prompt-generator.js?v=20260630-revamp410';
+import { renderPromptGenerator } from './prompt-generator.js?v=20260630-revamp411';
 import { navigate } from '../utils/router.js';
 
 let overlayEl = null;
 
 const X = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 
-export function initPromptBuilderModal() {
-  overlayEl = document.createElement('div');
-  overlayEl.className = 'pbm-overlay';
-  overlayEl.style.display = 'none';
-  document.body.appendChild(overlayEl);
-  overlayEl.addEventListener('click', (e) => { if (e.target === overlayEl) userClose(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isOpen()) userClose(); });
-  // Single-modal coordinator: another modal opening closes this + clears its route.
-  window.addEventListener('close-all-modals', () => { if (isOpen()) userClose(); });
-}
+// Phase 6: the Prompt Builder now runs in the shared full-width nav dropdown
+// (see openPromptBuilderNavDropdown in app.js), not this takeover. Kept as a
+// no-op so the import site stays stable; the old modal is retired.
+export function initPromptBuilderModal() { /* retired — builder lives in the nav dropdown */ }
 
 function isOpen() { return overlayEl && overlayEl.style.display !== 'none'; }
 

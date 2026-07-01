@@ -4612,56 +4612,59 @@ html, body, #app {
      .prompt-modal-overlay  flex-centered translucent backdrop
      .prompt-modal-panel    centered card with internal sections
    ====================================================================*/
+/* Phase 6: Review & Submit is now a full-width TOP dropdown (not a centered
+   modal) — same visual language as the nav dropdowns. It's opened from inside
+   other overlays, so it keeps its high z-index and full-screen dim. */
 .prompt-modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(15, 26, 46, 0.5);
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
-  /* Above the insight modal (z 1200/1201) — Review Prompt is opened FROM
-     inside it, so it must sit on top, not behind. */
   z-index: 1300;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 1rem;
+  padding: 0;
   opacity: 0;
   transition: opacity 0.18s ease-out;
 }
 .prompt-modal-overlay.is-open { opacity: 1; }
 
-.prompt-modal-panel { /* centered review-and-submit card */
+.prompt-modal-panel { /* full-width review-and-submit dropdown */
   position: relative;
   z-index: 1301;
   width: 100%;
-  max-width: 640px;
-  max-height: 88vh;
+  max-width: 760px;
+  max-height: calc(100dvh - var(--nav-h) - 8px);
+  margin-top: var(--nav-h);
   background: var(--color-surface);
   border: 1px solid rgba(15, 23, 42, 0.06);
-  border-radius: 16px;
+  border-top: none;
+  border-radius: 0 0 18px 18px;
   box-shadow:
     0 30px 80px -18px rgba(15, 23, 42, 0.42),
     0 10px 24px -10px rgba(15, 23, 42, 0.2);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transform: scale(0.97);
+  transform: translateY(-14px);
   opacity: 0;
   transition:
     opacity 0.16s ease-out,
-    transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.05);
+    transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform, opacity;
 }
 .prompt-modal-panel.is-open {
-  transform: scale(1);
+  transform: translateY(0);
   opacity: 1;
 }
 .prompt-modal-panel.is-closing {
-  transform: scale(0.985);
+  transform: translateY(-10px);
   opacity: 0;
 }
 @media (max-width: 640px) {
-  .prompt-modal-panel { max-width: 100%; max-height: 90vh; border-radius: 14px; }
+  .prompt-modal-panel { max-width: 100%; max-height: calc(100dvh - var(--nav-h)); border-radius: 0 0 14px 14px; }
 }
 
 /* ===== Review & Submit modal — same visual language as the AI Insights modal === */
@@ -17543,6 +17546,9 @@ body.home-search #section-newsfeed .news-card-desc { margin-top: 0.45rem; font-s
 .aii-nav-dd-search .search-panel { width: 100%; }
 /* The panel's own corner-close is redundant with the shell's bare-head close. */
 .aii-nav-dd-search .search-panel-corner-close { display: none; }
+
+/* Prompt Builder hosted in the dropdown — constrain to a comfortable column. */
+.aii-nav-dd-prompt .pb-navdd-host { width: 100%; max-width: 820px; margin: 0 auto; }
 
 .aii-nav-dd-subbar { flex: 0 0 auto; padding: 10px 2px 4px; }
 .aii-nav-dd-subbar .tlm-controlbar { margin: 0; }

@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp410';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp411';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp410';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp411';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp410';
-import { initPromptBuilderModal, openPromptBuilderModal, closePromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp410';
-import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp410';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp410';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp411';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp411';
+import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp411';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp411';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp410';
-import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp410';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp410';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp410';
-import { renderWebSources } from './components/websources.js?v=20260630-revamp410';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp410';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp411';
+import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp411';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp411';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp411';
+import { renderWebSources } from './components/websources.js?v=20260630-revamp411';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp411';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp410';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp411';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp410';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp411';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -59,9 +59,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   onRoute((route) => {
     // Nav dropdowns are transient overlays — close on any navigation. EXCEPTION:
     // the Search dropdown IS route-driven (#/search, #/custom) and updates its
-    // own URL as the term changes, so keep it open across search routes.
-    const isSearchNav = (route.type === 'search' || route.type === 'custom');
-    if (!(isSearchNav && navDdOpen && navDdOpen.key === 'search')) closeNavDropdown();
+    // own URL as the term changes, so keep it open across search routes. The
+    // Prompt Builder dropdown is likewise route-driven (#/prompt-generator) and
+    // may re-fire the route from a child picker — keep it too.
+    const keepSearch = (route.type === 'search' || route.type === 'custom') && navDdOpen && navDdOpen.key === 'search';
+    const keepPrompt = route.type === 'prompt-generator' && navDdOpen && navDdOpen.key === 'prompt';
+    if (!keepSearch && !keepPrompt) closeNavDropdown();
     // Search (#/search) and Custom (#/custom/{term}) routes don't render
     // their own page — they open the Search modal over the home layout.
     const isSearchRoute = route.type === 'search' || route.type === 'custom';
@@ -89,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       closeSearchPageModal({ silent: true });
     }
-    if (isPromptRoute) openPromptBuilderModal(); else closePromptBuilderModal();
+    if (isPromptRoute) openPromptBuilderNavDropdown(); else closePromptBuilderNavDropdown();
 
     // Always refresh the bottom-nav active tab from the REAL route — overlay
     // routes (search/custom) skip renderLayout, so its internal call is missed.
@@ -435,11 +438,17 @@ function updateNavDdFades() {
 // A route-aware user close: search resets its deep-link route back home; other
 // dropdowns just close. Wired to the close button, overlay click, and Esc.
 function userCloseNavDropdown() {
+  const hash = window.location.hash || '';
   if (navDdOpen && navDdOpen.key === 'search') {
-    const hash = window.location.hash || '';
     const onSearchRoute = hash.startsWith('#/custom/') || hash === '#/search';
     closeNavDropdown();
     if (onSearchRoute) navigate('#/');
+    return;
+  }
+  if (navDdOpen && navDdOpen.key === 'prompt') {
+    const onPromptRoute = hash.startsWith('#/prompt-generator');
+    closeNavDropdown();
+    if (onPromptRoute) navigate('#/');
     return;
   }
   closeNavDropdown();
@@ -634,6 +643,39 @@ function toggleTrendingNavDropdown() {
       [350, 900, 1800].forEach((d) => setTimeout(updateNavDdFades, d));
     },
   });
+}
+
+// ── Phase 6: the Prompt Builder dropdown ─────────────────────────────────────
+// Route-driven (#/prompt-generator), like Search: hosts the existing
+// renderPromptGenerator wizard inside the shared full-width dropdown instead of
+// a centered takeover. No dedicated nav button — launched from the hamburger /
+// homepage links / the route.
+function isPromptBuilderOpen() {
+  const panel = document.getElementById('st-nav-panel');
+  return !!(panel && panel.classList.contains('is-open') && navDdOpen && navDdOpen.key === 'prompt');
+}
+function openPromptBuilderNavDropdown() {
+  // Route can re-fire while already open (a child picker navigates) — don't tear
+  // down the in-progress builder.
+  if (isPromptBuilderOpen()) return;
+  openNavDropdown({
+    key: 'prompt', triggerId: null, className: 'aii-nav-dd-prompt',
+    title: 'Prompt Builder', ariaLabel: 'Prompt Builder',
+    subtitle: 'Build a knowledge prompt and send it to your AI model.',
+    contentHTML: '<div class="pb-navdd-host" data-pb-host></div>',
+    onClose: userClosePromptBuilder,
+    wire: (panel) => {
+      renderPromptGenerator(panel.querySelector('[data-pb-host]'));
+      [200, 700, 1500].forEach((d) => setTimeout(updateNavDdFades, d));
+    },
+  });
+}
+function closePromptBuilderNavDropdown() { if (isPromptBuilderOpen()) closeNavDropdown(); }
+// ✕ / overlay / Esc: close and, on the #/prompt-generator deep-link, return home.
+function userClosePromptBuilder() {
+  const onRoute = (window.location.hash || '').startsWith('#/prompt-generator');
+  closePromptBuilderNavDropdown();
+  if (onRoute) navigate('#/');
 }
 
 function wireTopicAiiInline(section, topic, descriptions, icons) {
