@@ -4,8 +4,8 @@
 // fixed-height scroll area with top/bottom fade + chevron affordances
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
-import { renderTrendExpansionBody } from './trend-expansion.js';
-import { aiSparkInline } from '../utils/ai-provenance.js?v=20260630-revamp409';
+import { renderTrendExpansionBody } from './trend-expansion.js?v=20260630-revamp410';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260630-revamp410';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -200,6 +200,52 @@ function wireTrendCards(container) {
     card.querySelector('.trend-card-trigger')?.addEventListener('click', (e) => {
       e.stopPropagation();
       showTrendBrief(card);
+    });
+  });
+}
+
+const TREND_EXP_CLOSE = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+
+// Homepage variant (Phase 5): clicking a trend card EXPANDS its grounded brief
+// INLINE (accordion) instead of opening a modal. The expanded card spans the
+// full grid width; one card open at a time; a Close (or re-click) collapses it.
+function wireTrendCardsInline(container) {
+  const collapse = (card) => {
+    card.classList.remove('is-expanded');
+    card.querySelector('.trend-card-trigger')?.setAttribute('aria-expanded', 'false');
+    card.querySelector('.trend-card-exp')?.remove();
+  };
+  const openCard = async (card) => {
+    container.querySelectorAll('.trend-card.is-expanded').forEach((c) => { if (c !== card) collapse(c); });
+    const term = card.dataset.query || '';
+    card.classList.add('is-expanded');
+    card.querySelector('.trend-card-trigger')?.setAttribute('aria-expanded', 'true');
+    let exp = card.querySelector('.trend-card-exp');
+    if (!exp) { exp = document.createElement('div'); exp.className = 'trend-card-exp'; card.appendChild(exp); }
+    exp.innerHTML = `<div class="trend-exp-loading"><span class="trend-exp-spin" aria-hidden="true"></span>Gathering the latest on <strong>${escapeHTML(term)}</strong>…</div>`;
+    try {
+      const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'trend', query: term }) });
+      const data = res.ok ? await res.json() : null;
+      if (!data || data.unavailable || !data.content) {
+        exp.innerHTML = `<div class="trend-exp-fail">This brief is still being generated — check back shortly. <button type="button" class="trend-exp-retry">Try again</button></div>`;
+        exp.querySelector('.trend-exp-retry')?.addEventListener('click', () => openCard(card));
+        return;
+      }
+      // Still the expanded card? (user may have collapsed while fetching)
+      if (!card.classList.contains('is-expanded')) return;
+      exp.innerHTML = `<button type="button" class="trend-exp-close" aria-label="Close">${TREND_EXP_CLOSE}</button>${renderTrendExpansionBody(term, data)}`;
+      exp.querySelector('.trend-exp-close')?.addEventListener('click', (e) => { e.stopPropagation(); collapse(card); });
+    } catch (_) {
+      exp.innerHTML = `<div class="trend-exp-fail">Couldn't load this brief. <button type="button" class="trend-exp-retry">Try again</button></div>`;
+      exp.querySelector('.trend-exp-retry')?.addEventListener('click', () => openCard(card));
+    }
+  };
+  container.querySelectorAll('.trend-card').forEach((card) => {
+    if (card.classList.contains('trend-card-skel')) return;
+    card.querySelector('.trend-card-trigger')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (card.classList.contains('is-expanded')) collapse(card);
+      else openCard(card);
     });
   });
 }
@@ -479,7 +525,8 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
     items = primary.concat(extra).slice(0, limit);
     if (!items.length) { grid.innerHTML = `<p class="trending-empty">No trends ${state.mode === 'over' ? 'in this window yet' : 'right now'}.</p>`; return; }
     grid.innerHTML = items.map((t, i) => trendCardHTML(t, i)).join('');
-    wireTrendCards(grid);
+    // Homepage trends expand their brief inline (Phase 5), no modal.
+    wireTrendCardsInline(grid);
   }
 
   function renderShell() {

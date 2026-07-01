@@ -13858,6 +13858,39 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
 .home-trending .trend-card-grid { grid-template-columns: 1fr; }
 .trend-card { position: relative; }
 .trend-card.is-open { z-index: 50; }
+
+/* Homepage trend inline expansion (Phase 5) — the clicked card grows to a full
+   grid row and drops its grounded brief in place; no modal. */
+.trend-card.is-expanded { grid-column: 1 / -1; }
+.trend-card.is-expanded .trend-card-open { transform: rotate(90deg); transition: transform .18s ease; }
+.trend-card-exp {
+  margin-top: 8px; padding: 14px 14px 16px; position: relative;
+  border: 1px solid var(--color-surface-border); border-radius: 12px;
+  background: #f8fafc;
+  animation: trendExpIn .2s ease;
+}
+@keyframes trendExpIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.trend-exp-close {
+  position: absolute; top: 8px; right: 8px; width: 30px; height: 30px;
+  display: grid; place-items: center; border-radius: 8px;
+  border: 1px solid var(--color-surface-border); background: #fff; color: #475569; cursor: pointer;
+}
+.trend-exp-close:hover { background: #eef2f7; color: #1e293b; }
+.trend-exp-loading, .trend-exp-fail {
+  display: flex; align-items: center; gap: 9px;
+  font-size: 0.9rem; color: var(--color-text-muted, #64748b); padding: 6px 40px 6px 2px;
+}
+.trend-exp-spin {
+  width: 15px; height: 15px; flex: 0 0 auto; border-radius: 50%;
+  border: 2px solid #cbd5e1; border-top-color: #2563eb; animation: trendExpSpin .7s linear infinite;
+}
+@keyframes trendExpSpin { to { transform: rotate(360deg); } }
+.trend-exp-retry {
+  margin-left: 4px; font-size: 0.84rem; font-weight: 600; color: #2563eb;
+  background: none; border: none; cursor: pointer; text-decoration: underline;
+}
+.trend-exp-sources { margin-bottom: 12px; }
+.trend-exp-explore { margin-bottom: 12px; }
 /* No bordered "card" and no hairline dividers (they read as disconnected
    segments across the grid gaps). Each trend is a clean two-line row — icon +
    term, then topic · trending-for — with a soft rounded hover fill. */
