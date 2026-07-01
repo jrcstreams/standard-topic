@@ -17741,11 +17741,14 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
    A second subnav (tab strip) below the title, a sticky per-tab header, and
    scrolling content. One cohesive package: News + the five AI paths. */
 /* Path nav = a clean 3×2 grid of buttons, lower in hierarchy than the topic
-   title and tucked close beneath it. Even, justified spacing. Not sticky — a
-   calm launcher; the per-tab header keeps context on scroll. */
+   title and tucked close beneath it. Even, justified spacing. Sticky below the
+   title bar so the tabs stay one-tap reachable; the per-tab header pins below
+   it (offset by the measured grid height --paths-grid-h). */
 .topic-tabbed .topic-paths-nav {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-  margin: 6px 0 0; padding: 0; border-bottom: none;
+  margin: 6px 0 0; padding: 6px 0 8px; border-bottom: none;
+  position: sticky; top: var(--subnav-height, 49px); z-index: 30;
+  background: var(--color-bg, #fff);
 }
 .ptab {
   display: flex; align-items: center; justify-content: center; text-align: center;
@@ -17763,8 +17766,8 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 }
 
 .topic-tabbed .topic-tab-header {
-  position: sticky; top: var(--subnav-height, 49px); z-index: 25;
-  background: var(--color-bg, #fff); padding: 16px 0 11px; margin: 14px 0 0;
+  position: sticky; top: calc(var(--subnav-height, 49px) + var(--paths-grid-h, 96px)); z-index: 25;
+  background: var(--color-bg, #fff); padding: 14px 0 11px; margin: 6px 0 0;
   border-bottom: 1px solid var(--color-surface-border);
 }
 .topic-tab-title {
