@@ -2,7 +2,7 @@
 // "Web Explore" + "AI Explore" accordions (submit the term to engines/models),
 // and the full grounded brief. Reuses the news/TI building blocks so the look
 // matches AI insights elsewhere.
-import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260630-revamp423';
+import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260630-revamp424';
 import { renderTIAccordion, webSourceItem } from './ti-shortcuts.js';
 import { getExternalSearches, getExternalSearchCategories, getModels } from '../utils/data.js';
 
@@ -44,7 +44,7 @@ function webExploreHTML(term) {
     const heading = cat.label ? `<li class="ti-subhead" aria-hidden="true">${escapeHTML(cat.label)}</li>` : '';
     return `<ul class="ti-item-list ti-item-list-grouped">${heading}${items.map((s) => webSourceItem(s, term)).join('')}</ul>`;
   }).join('');
-  return renderTIAccordion({ key: 'websources', label: 'Web Explore', open: false, bodyHTML: `<div class="ti-source-groups">${groupsHTML}</div>` });
+  return renderTIAccordion({ key: 'websources', label: 'Web Search', open: false, bodyHTML: `<div class="ti-source-groups">${groupsHTML}</div>` });
 }
 
 // AI Explore: each AI model opened with the trend term as its prompt.
@@ -58,16 +58,92 @@ function aiExploreHTML(term) {
   const models = getModels() || [];
   if (!models.length) return '';
   const list = `<ul class="ti-item-list">${models.map((m) => aiModelItem(m, term)).join('')}</ul>`;
-  return renderTIAccordion({ key: 'discover', label: 'AI Explore', open: false, bodyHTML: list });
+  return renderTIAccordion({ key: 'discover', label: 'External AI Model Insights', open: false, bodyHTML: list });
 }
 
-// Full expanded body. `brief` = { content, sources } from /api/insight.
+// ── Rich brief layout (matches the retired trend detail modal) ───────────────
+const SPARK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>';
+const TE_ARROW = '<svg class="im-cov-arrow" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>';
+const TE_SEC_ICON = {
+  why: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>',
+  summary: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><line x1="7" y1="8" x2="14" y2="8"/><line x1="7" y1="12" x2="14" y2="12"/><line x1="7" y1="16" x2="11" y2="16"/></svg>',
+  matters: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/></svg>',
+  sources: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+};
+function teRelTime(iso) {
+  if (!iso) return '';
+  const then = new Date(iso).getTime(); if (Number.isNaN(then)) return '';
+  const mins = Math.max(0, Math.round((Date.now() - then) / 60000));
+  if (mins < 60) return `${mins || 1}m ago`;
+  const hrs = Math.round(mins / 60); if (hrs < 24) return `${hrs}h ago`;
+  return `${Math.round(hrs / 24)}d ago`;
+}
+// Strip the leaked "SUMMARY:/DETAIL:" scaffold; keep the label-free one-liner.
+function teCleanSummary(s) {
+  let t = String(s || '').replace(/[*_]+/g, '').trim();
+  const m = t.match(/summary\s*:\s*([\s\S]*?)(?:\s*detail\s*:|$)/i);
+  if (m) t = m[1];
+  return t.replace(/^\s*(summary|detail)\s*:\s*/i, '').replace(/\s+/g, ' ').trim();
+}
+function teCleanContent(s) {
+  let t = String(s || '');
+  const di = t.search(/[*_]*\s*detail\s*[*_]*\s*:/i);
+  if (di !== -1) t = t.slice(di).replace(/^[*_\s]*detail\s*[*_]*\s*:\s*[*_]*/i, '');
+  t = t.replace(/[*_]*\s*summary\s*[*_]*\s*:[\s\S]*?(?:\n\n|$)/i, '').replace(/^[\s*_]+/, '').trim();
+  return t || String(s || '');
+}
+function teSecHead(key, name, aiTag) {
+  const tag = aiTag ? `<div class="im-sec-aitag-row"><span class="im-sec-aitag">${SPARK}<span>AI Generated Text</span></span></div>` : '';
+  return `<div class="im-msec-head"><span class="im-msec-ic">${TE_SEC_ICON[key] || TE_SEC_ICON.summary}</span><h3 class="im-msec-name">${escapeHTML(name)}</h3></div>${tag}`;
+}
+function teSourcesHTML(headlines, sources) {
+  const seen = new Set(); const rows = [];
+  const row = (uri, title, meta) => `<a class="im-cov-row" href="${escapeAttr(uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${escapeHTML(title)}</span>${meta ? `<span class="im-cov-host">${escapeHTML(meta)}</span>` : ''}</span>${TE_ARROW}</a>`;
+  for (const h of (Array.isArray(headlines) ? headlines : [])) {
+    if (rows.length >= 12) break;
+    const uri = (h && (h.url || h.uri)) || ''; if (!uri) continue;
+    const k = uri.toLowerCase(); if (seen.has(k)) continue; seen.add(k);
+    const title = String((h && h.title) || '').trim(); if (!title || /^https?:/i.test(title)) continue;
+    let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
+    rows.push(row(uri, title, [(h.source || '').trim() || host, teRelTime(h.date)].filter(Boolean).join(' · ')));
+  }
+  if (!rows.length) {
+    for (const s of (Array.isArray(sources) ? sources : [])) {
+      if (rows.length >= 10) break;
+      const uri = (s && (s.url || s.uri)) || (typeof s === 'string' ? s : ''); if (!uri) continue;
+      const k = uri.toLowerCase(); if (seen.has(k)) continue; seen.add(k);
+      let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
+      const title = String((s && s.title) || '').trim();
+      const label = (title && !/^https?:/i.test(title)) ? title : host; if (!label) continue;
+      rows.push(row(uri, label, (title && host && title !== host) ? host : ''));
+    }
+  }
+  return rows.length ? `<div class="im-coverage-list">${rows.join('')}</div>` : '';
+}
+
+// Full expanded body — the retired detail modal's layout: Reasoning + Summary
+// (AI Generated Text) → Explore Further (External AI Model Insights + Web
+// Search) → Sources. `brief` = { content, summary, sources, headlines }.
 export function renderTrendExpansionBody(term, brief) {
-  const content = (brief && brief.content) || '';
-  const sources = (brief && brief.sources) || [];
-  return [
-    sourcesBar(sources),
-    `<div class="trend-exp-explore">${webExploreHTML(term)}${aiExploreHTML(term)}</div>`,
-    `<div class="trend-exp-full">${renderBriefBody(content, [])}</div>`,
-  ].join('');
+  const b = brief || {};
+  const why = teCleanSummary(b.summary);
+  let detail = teCleanContent(b.content || '');
+  // Drop the summary sentence if the detail repeats it up front (like the modal).
+  if (why && detail) {
+    const norm = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    const sN = norm(why);
+    for (let i = 0; i < 4; i++) {
+      const fsm = detail.match(/^.*?[.!?](?=\s|$)/); const fs = fsm ? fsm[0] : '';
+      if (!fs || norm(fs) !== sN) break;
+      const rest = detail.slice(fs.length).replace(/^[\s).,:;–—-]+/, '').trim();
+      if (!rest) break; detail = rest;
+    }
+  }
+  const secs = [];
+  if (why) secs.push(`<section class="im-msec">${teSecHead('why', 'Reasoning', true)}${renderBriefBody(why, null)}</section>`);
+  if (detail) secs.push(`<section class="im-msec">${teSecHead('summary', 'Summary', true)}${renderBriefBody(detail, null)}</section>`);
+  secs.push(`<section class="im-msec">${teSecHead('matters', 'Explore Further', false)}<div class="trend-exp-explore">${aiExploreHTML(term)}${webExploreHTML(term)}</div></section>`);
+  const src = teSourcesHTML(b.headlines, b.sources);
+  if (src) secs.push(`<section class="im-msec">${teSecHead('sources', 'Sources', false)}${src}</section>`);
+  return `<div class="trend-exp im-secs">${secs.join('')}</div>`;
 }

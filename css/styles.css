@@ -17745,16 +17745,21 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
    title bar so the tabs stay one-tap reachable; the per-tab header pins below
    it (offset by the measured grid height --paths-grid-h). */
 .topic-tabbed .topic-paths-nav {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
   margin: 6px 0 0; padding: 6px 0 8px; border-bottom: none;
   position: sticky; top: var(--subnav-height, 49px); z-index: 30;
   background: var(--color-bg, #fff);
 }
+/* Where the topic title sits in the body (≥900px), the paths fit one 6-across
+   row; below that (title in the sub-nav / mobile) it's a condensed 3×2. */
+@media (min-width: 900px) {
+  .topic-tabbed .topic-paths-nav { grid-template-columns: repeat(6, 1fr); gap: 8px; }
+}
 .ptab {
   display: flex; align-items: center; justify-content: center; text-align: center;
-  padding: 12px 10px; border: 1px solid var(--color-surface-border); border-radius: 11px;
+  padding: 9px 8px; border: 1px solid var(--color-surface-border); border-radius: 10px;
   background: #fff; cursor: pointer;
-  font-family: var(--font-family); font-size: 0.88rem; font-weight: 550; color: var(--color-text-light, #475569);
+  font-family: var(--font-family); font-size: 0.83rem; font-weight: 550; color: var(--color-text-light, #475569);
   white-space: nowrap; transition: color .14s ease, border-color .14s ease, background .14s ease, box-shadow .14s ease;
 }
 .ptab:hover { color: var(--color-primary, #14213d); border-color: #b8c4da; }
