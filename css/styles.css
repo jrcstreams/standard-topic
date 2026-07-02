@@ -17148,55 +17148,33 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   /* sticky-bar panel anchors under the button, fixed width */
   body.app-mode:not(.home-mode) #sub-header.is-subnav .tsp-panelwrap { left: 0; right: auto; width: 340px; }
 
-  /* Body topic header (in the page body, top of the topic band). */
-  .topic-bodyhead { display: block; position: relative; margin: 0 0 0.7rem; }
-  /* Title + chevron sit together, left-aligned (revamp383). Topic name in a
-     deep blue to differentiate it from the near-black section headers. */
-  .tbh-row { display: flex; align-items: center; justify-content: flex-start; gap: 0.55rem; }
-  .tbh-title {
-    margin: 0; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.028em; color: #26375a;
-    font-size: clamp(1.7rem, 1.25rem + 1.05vw, 2rem); line-height: 1.05;
+  /* Body topic header (#386-388): the SAME compact subnav bar as mobile — an
+     icon + topic name + chevron in a soft bar; subtopics live in its dropdown. */
+  .topic-bodyhead { display: block; position: relative; margin: 0 0 4px; }
+  .tbh-bar {
+    display: flex; align-items: center; gap: 0.7rem; width: 100%; padding: 0.62rem 0.9rem;
+    border: 1px solid var(--color-surface-border); border-radius: 12px; background: var(--color-bg-light, #f4f6f8);
+    cursor: pointer; text-align: left; font-family: var(--font-family); -webkit-tap-highlight-color: transparent;
+    transition: background .14s, border-color .14s;
   }
-  /* Arrow next to the topic name — a clear, clean affordance: a subtle filled
-     chip with a blue chevron (more noticeable than borderless) (#358/#359). */
-  .tbh-toggle {
-    flex: none; width: 30px; height: 30px; border-radius: 8px; border: none;
-    background: var(--color-bg-light); display: inline-flex; align-items: center; justify-content: center;
-    cursor: pointer; color: #26375a; transition: background .14s, color .14s;
+  .tbh-bar:hover, .topic-bodyhead.is-open .tbh-bar {
+    background: color-mix(in srgb, #26375a 6%, #f4f6f8); border-color: color-mix(in srgb, #26375a 22%, var(--color-surface-border));
   }
-  .tbh-toggle:hover, .topic-bodyhead.is-open .tbh-toggle { background: color-mix(in srgb, #26375a 13%, #fff); }
-  .tbh-toggle .tsp-chev { width: 18px; height: 18px; }
-  /* Subtopics — a discreet bracketed band (hairline above + below) under the
-     title; clamped to one line. "More" appears INLINE only when links overflow. */
-  .tbh-subs {
-    display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 1.15rem;
-    margin: 0.85rem 0 0; padding: 0; min-height: 2.9rem; overflow: hidden;
-    border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 75%, transparent);
-    border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 75%, transparent);
+  .tbh-bar .tsp-btn-lead { display: flex; align-items: center; gap: 0.6rem; min-width: 0; flex: 1 1 auto; }
+  .tbh-bar .tsp-btn-ico {
+    flex: none; width: 34px; height: 34px; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center;
+    background: color-mix(in srgb, #26375a 11%, #fff); color: #26375a;
   }
-  .tbh-sub {
-    font-size: 0.86rem; font-weight: 500; color: var(--color-text-light);
-    text-decoration: none; white-space: nowrap; line-height: 1;
-    padding: 3px 0; transition: color .12s ease;
-    border-bottom: 2px solid transparent;
+  .tbh-bar .tsp-btn-ico .tsp-ic-svg { width: 19px; height: 19px; }
+  .tbh-bar .tsp-btn-name {
+    font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; color: #26375a;
+    font-size: clamp(1.15rem, 0.9rem + 0.8vw, 1.5rem); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
   }
-  .tbh-sub:hover { color: #26375a; border-bottom-color: #2563eb; }
-  .tbh-sub-parent { color: var(--color-text-muted); font-weight: 600; }
-  /* "More" is a natural inline continuation of the links (not a pill). */
-  .tbh-more {
-    display: inline-flex; align-items: center; gap: 2px; border: none; background: none; cursor: pointer; padding: 0;
-    font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; color: #26375a; white-space: nowrap;
-  }
-  .tbh-more:hover { text-decoration: underline; }
-  .tbh-more .tsp-chev { width: 14px; height: 14px; color: #26375a; }
-  .tbh-more[hidden] { display: none !important; }
-  /* Body-header dropdown = a FULL-WIDTH card that overlays (covers) the subtopics
-     row (its `top` is set in JS to the subtopics' offset). The subtopics hide
-     underneath so there are no dupes. (#334/#335) */
-  .topic-bodyhead .tsp-panelwrap { left: 0; right: 0; width: auto; }
-  .topic-bodyhead.is-open .tbh-subs { visibility: hidden; }
-  .topic-bodyhead .tsp-panel-inner { padding: 20px 22px 22px; max-height: min(72vh, calc(100dvh - 150px)); }
-  /* Multi-column subtopics grid on the wide card; collapses with available space. */
+  .tbh-bar .tsp-chev { flex: none; margin-left: auto; width: 20px; height: 20px; color: #64748b; transition: transform .2s ease; }
+  .topic-bodyhead.is-open .tbh-bar .tsp-chev { transform: rotate(180deg); }
+  /* Dropdown drops directly below the bar. */
+  .topic-bodyhead .tsp-panelwrap { left: 0; right: 0; width: auto; top: calc(100% + 8px); }
+  .topic-bodyhead .tsp-panel-inner { padding: 18px 20px 20px; max-height: min(72vh, calc(100dvh - 150px)); }
   .topic-bodyhead .tsp-grid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 4px 16px; }
   .topic-bodyhead .tsp-cell { padding: 0.62rem 0.7rem; }
 }

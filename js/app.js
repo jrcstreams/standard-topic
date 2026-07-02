@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp429';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp430';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp429';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp430';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp429';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp429';
-import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp429';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp429';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp430';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp430';
+import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp430';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp430';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp429';
-import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp429';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp429';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp429';
-import { renderWebSources } from './components/websources.js?v=20260630-revamp429';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp429';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp430';
+import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp430';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp430';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp430';
+import { renderWebSources } from './components/websources.js?v=20260630-revamp430';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp430';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp429';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp430';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp429';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp430';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -315,21 +315,20 @@ function homeSubnavPickerHTML() {
     </div>`;
 }
 
-// Desktop body topic-header (#70): big topic title + subtopic links row, with a
-// chevron that opens the same picker panel. Lives at the top of the topic body;
-// scrolls away as the sticky subnav picker takes over.
+// Desktop body topic-header: the SAME compact subnav bar the mobile sticky
+// header uses — an icon + topic name + chevron in a soft bar, whose dropdown
+// holds the subtopics. No big title, no inline subtopic links (those live in the
+// dropdown). The path controls sit in their own row below.
 function topicBodyHeadHTML(topic) {
-  const related = getRelatedTopics(topic) || [];
-  const subsHTML = related.map(t =>
-    `<a href="#/topic/${t.slug}" class="tbh-sub${t.isParent ? ' tbh-sub-parent' : ''}">${escapeHTML(t.name)}</a>`
-  ).join('');
   return `
     <div class="topic-bodyhead topic-subnav-picker" data-topic-picker>
-      <div class="tbh-row">
-        <h1 class="tbh-title">${escapeHTML(topic.name)}</h1>
-        <button type="button" class="tbh-toggle tsp-btn" aria-expanded="false" aria-controls="tsp-panel-body" aria-label="Change topic">${TSP_CHEV}</button>
-      </div>
-      ${subsHTML ? `<div class="tbh-subs">${subsHTML}<button type="button" class="tbh-more" data-tbh-more hidden>More${TSP_CHEV}</button></div>` : ''}
+      <button type="button" class="tsp-btn tbh-bar" aria-expanded="false" aria-controls="tsp-panel-body" aria-label="Change topic">
+        <span class="tsp-btn-lead">
+          <span class="tsp-btn-ico">${topicIconSVG(topic.icon || 'globe', 'tsp-ic-svg')}</span>
+          <span class="tsp-btn-name">${escapeHTML(topic.name)}</span>
+        </span>
+        ${TSP_CHEV}
+      </button>
       ${topicPickerPanelHTML(topic, 'tsp-panel-body')}
     </div>`;
 }
