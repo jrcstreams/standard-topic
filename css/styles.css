@@ -17830,30 +17830,37 @@ button.aiidd-vlink { align-self: flex-start; }
 .prompts-topic-host .aii-content--modal { padding: 0 !important; }
 .prompts-topic-host .aii-builder-secs { max-height: none !important; overflow: visible !important; padding: 0 !important; }
 
+/* When any nav dropdown is open, ONLY that button lights — dim the active-page
+   pill so you never see two lit at once (#409). */
+.navbtns:has(.navbtn[aria-expanded="true"]) .navbtn.is-active:not([aria-expanded="true"]) {
+  background: none !important; color: rgba(255, 255, 255, 0.82) !important;
+}
+
 /* ── Mobile nav: two rows — the hamburger sits IN LINE with the centered site
-   title (row 1), then the nav icons spaced out across their own line (row 2),
-   with a hairline separator + a little breathing room between them (#397/IMG_4206).
-   Only kicks in on narrow screens where the single row gets cramped. --nav-h is
-   taller so the app-mode content offset clears both rows. ────────────────────── */
-@media (max-width: 700px) {
-  :root { --nav-h: 88px; }
+   title (row 1), then the nav icons spread across their own line (row 2), with a
+   hairline separator + a little breathing room (#397/#404-407). Only kicks in on
+   genuinely narrow phones (≤560); --nav-h grows so the app content clears both
+   rows without overriding the topic sub-header. ─────────────────────────────── */
+@media (max-width: 560px) {
+  :root { --nav-h: 78px; }
   .sticky-hero-inner {
     display: grid !important;
     grid-template-columns: 1fr auto 1fr;
     grid-template-areas: "burger brand end" "nav nav nav";
-    align-items: center; column-gap: 0.5rem; row-gap: 9px;
-    padding: 8px 0.9rem 9px !important; min-height: 0;
+    align-items: center; column-gap: 0.5rem; row-gap: 5px;
+    padding: 7px 0.9rem 5px !important; min-height: 0;
   }
   /* Row 1 — hamburger left, brand truly centered (equal 1fr columns flank it). */
   .sticky-hero-inner .nav-hamburger { grid-area: burger; justify-self: start; margin: 0; }
   .sticky-hero-inner .sticky-brand { grid-area: brand; justify-self: center; margin: 0; }
-  .sticky-hero-inner .sticky-title { font-size: 0.97rem; letter-spacing: -0.02em; }
-  /* Row 2 — the nav icons spread evenly across the full width, sitting under a
-     faint divider with a touch of breathing room above. */
+  .sticky-hero-inner .sticky-title { font-size: 1.1rem; letter-spacing: -0.02em; }
+  /* Row 2 — the nav icons spread evenly, under a faint divider; tightened so the
+     icons don't carry so much dead vertical space. */
   .sticky-hero-inner .sticky-actions.navbtns {
-    grid-area: nav; margin: 0 !important; justify-content: space-between;
-    padding-top: 9px; border-top: 1px solid rgba(255, 255, 255, 0.11);
+    grid-area: nav; margin: 0 !important; justify-content: space-around;
+    padding-top: 5px; border-top: 1px solid rgba(255, 255, 255, 0.11);
   }
+  .sticky-hero-inner .sticky-actions.navbtns .navbtn { padding: 3px 6px; gap: 3px; }
   /* Redundant single-purpose mobile bits are folded into the icon row now. */
   .sticky-hero-inner .nav-search-mobile { display: none !important; }
   .sticky-hero-inner .sticky-page-name { display: none !important; }
