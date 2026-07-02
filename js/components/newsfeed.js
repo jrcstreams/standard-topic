@@ -497,15 +497,34 @@ function niLoaderHTML() {
 function niFailHTML() {
   return `<div class="ni-fail"><p>AI insights unavailable right now.</p><button type="button" class="ni-retry" data-ni-retry>Try again</button></div>`;
 }
-async function renderNewsBriefInto(panel, card) {
-  panel.innerHTML = `<div class="ni-inner">${niLoaderHTML()}</div>`;
+// News briefs are generated ON DEMAND, so an "unavailable" is almost always a
+// transient blip (a momentary grounding/rate cap) that clears within a second —
+// a retry usually succeeds. So we auto-retry a couple times (loader stays up)
+// BEFORE ever showing the fail state, which cuts the visible failure rate a lot.
+const NI_MAX_RETRIES = 2;
+async function renderNewsBriefInto(panel, card, attempt = 0) {
+  if (attempt === 0) panel.innerHTML = `<div class="ni-inner">${niLoaderHTML()}</div>`;
+  const stillOpen = () => panel.dataset.kind === 'ai' && !panel.hidden;
   const d = { url: card.dataset.url || '', title: card.dataset.title || '', description: card.dataset.desc || '', date: card.dataset.date || '' };
   const t0 = Date.now();
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const showFail = () => {
+    panel.innerHTML = `<div class="ni-inner">${niFailHTML()}</div>`;
+    panel.querySelector('[data-ni-retry]')?.addEventListener('click', () => renderNewsBriefInto(panel, card, 0));
+  };
+  const retryOrFail = async () => {
+    if (attempt < NI_MAX_RETRIES) {
+      await sleep(700 + attempt * 700);         // brief backoff; loader stays up
+      if (!stillOpen()) return;
+      return renderNewsBriefInto(panel, card, attempt + 1);
+    }
+    if (stillOpen()) showFail();
+  };
   try {
     const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'news', ...d }) });
     const data = res.ok ? await res.json() : null;
-    const left = 500 - (Date.now() - t0); if (left > 0) await new Promise((r) => setTimeout(r, left));
-    if (panel.dataset.kind !== 'ai' || panel.hidden) return;            // closed/switched mid-flight
+    const left = 500 - (Date.now() - t0); if (left > 0) await sleep(left);
+    if (!stillOpen()) return;                    // closed/switched mid-flight
     if (data && data.content) {
       const secs = niSplit(niNormalize(data.content));
       const secHTML = secs.length
@@ -513,13 +532,11 @@ async function renderNewsBriefInto(panel, card) {
         : `<section class="ni-sec">${niSecHead('Brief')}${renderBriefBody(data.content, null)}</section>`;
       panel.innerHTML = `<div class="ni-inner ai-reveal">${secHTML}${niSourcesHTML(data.headlines, data.sources, d.url)}</div>`;
       wireScrollFades(panel.querySelector('.ni-inner'));
-    } else {
-      panel.innerHTML = `<div class="ni-inner">${niFailHTML()}</div>`;
-      panel.querySelector('[data-ni-retry]')?.addEventListener('click', () => renderNewsBriefInto(panel, card));
+      return;
     }
+    await retryOrFail();                          // unavailable / no content
   } catch (_) {
-    panel.innerHTML = `<div class="ni-inner">${niFailHTML()}</div>`;
-    panel.querySelector('[data-ni-retry]')?.addEventListener('click', () => renderNewsBriefInto(panel, card));
+    if (stillOpen()) await retryOrFail();
   }
 }
 function renderNewsWebInto(panel, card) {

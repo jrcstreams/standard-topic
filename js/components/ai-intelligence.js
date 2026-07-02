@@ -4,8 +4,8 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260630-revamp431';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260630-revamp431';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260630-revamp432';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260630-revamp432';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
@@ -1136,16 +1136,26 @@ export function renderAIIntelligence(container, scope) {
   // Load the NEW master-prompt "builder" insight for a group (one in-depth grounded
   // generation, not the old per-shortcut sections). Kept in its own cache so the
   // legacy per-section flow is untouched.
-  async function loadBuilder(group) {
-    if (builderCache[group] && !builderCache[group].loading) return builderCache[group];
+  async function loadBuilder(group, attempt = 0) {
+    if (attempt === 0 && builderCache[group] && !builderCache[group].loading && !builderCache[group].error) return builderCache[group];
     builderCache[group] = { loading: true };
+    // Briefs generate on demand — an empty/failed response is usually a transient
+    // rate/grounding blip, so auto-retry a couple times before marking it errored.
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     try {
       const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shortcut', topic: scope.topic, group, builder: 1 }) });
       const data = res.ok ? await res.json() : null;
-      builderCache[group] = data && data.content
-        ? { content: data.content, generatedAt: data.generatedAt, sources: data.sources || [], headlines: data.headlines || [], loading: false }
-        : { loading: false, error: true };
-    } catch (_) { builderCache[group] = { loading: false, error: true }; }
+      if (data && data.content) {
+        builderCache[group] = { content: data.content, generatedAt: data.generatedAt, sources: data.sources || [], headlines: data.headlines || [], loading: false };
+      } else if (attempt < 2) {
+        await sleep(700 + attempt * 700); return loadBuilder(group, attempt + 1);
+      } else {
+        builderCache[group] = { loading: false, error: true };
+      }
+    } catch (_) {
+      if (attempt < 2) { await sleep(700 + attempt * 700); return loadBuilder(group, attempt + 1); }
+      builderCache[group] = { loading: false, error: true };
+    }
     return builderCache[group];
   }
 

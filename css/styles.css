@@ -17723,34 +17723,29 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 /* ── Topic page tabbed "Paths" package (all widths) ──────────────────────────
    A second subnav (tab strip) below the title, a sticky per-tab header, and
    scrolling content. One cohesive package: News + the five AI paths. */
-/* Path nav = a clean 3×2 grid of buttons, lower in hierarchy than the topic
-   title and tucked close beneath it. Even, justified spacing. Sticky below the
-   title bar so the tabs stay one-tap reachable; the per-tab header pins below
-   it (offset by the measured grid height --paths-grid-h). */
+/* Path controls = a TRUE subnav that matches the topic subnav bar: a soft grey
+   bar holding the paths as SEGMENTS (no chunky boxed buttons); the active
+   segment is a clean white pill. 6-across at ≥900, 3×2 on mobile. Sticky below
+   the title bar; the per-tab header pins below it (offset by --paths-grid-h). */
 .topic-tabbed .topic-paths-nav {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
-  margin: 6px 0 0; padding: 6px 0 8px; border-bottom: none;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px;
+  margin: 6px 0 0; padding: 4px; border-radius: 12px;
+  background: var(--color-bg-light, #f4f6f8); border: 1px solid var(--color-surface-border);
   position: sticky; top: var(--subnav-height, 49px); z-index: 30;
-  background: var(--color-bg, #fff);
 }
-/* Where the topic title sits in the body (≥900px), the paths fit one 6-across
-   row; below that (title in the sub-nav / mobile) it's a condensed 3×2. */
 @media (min-width: 900px) {
-  .topic-tabbed .topic-paths-nav { grid-template-columns: repeat(6, 1fr); gap: 8px; }
+  .topic-tabbed .topic-paths-nav { grid-template-columns: repeat(6, 1fr); }
 }
 .ptab {
   display: flex; align-items: center; justify-content: center; text-align: center;
-  padding: 9px 8px; border: 1px solid var(--color-surface-border); border-radius: 10px;
-  background: #fff; cursor: pointer;
-  font-family: var(--font-family); font-size: 0.83rem; font-weight: 550; color: var(--color-text-light, #475569);
-  white-space: nowrap; transition: color .14s ease, border-color .14s ease, background .14s ease, box-shadow .14s ease;
+  padding: 9px 8px; border: none; border-radius: 8px; background: none; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.85rem; font-weight: 550; color: var(--color-text-light, #475569);
+  white-space: nowrap; transition: color .14s ease, background .14s ease, box-shadow .14s ease;
 }
-.ptab:hover { color: var(--color-primary, #14213d); border-color: #b8c4da; }
+.ptab:hover { color: var(--color-primary, #14213d); background: rgba(255,255,255,.55); }
 .ptab.is-active {
-  color: #2563eb; font-weight: 650;
-  border-color: color-mix(in srgb, #2563eb 45%, var(--color-surface-border));
-  background: color-mix(in srgb, #2563eb 5%, #fff);
-  box-shadow: 0 1px 2px rgba(37,99,235,.08);
+  color: #2563eb; font-weight: 650; background: #fff;
+  box-shadow: 0 1px 2px rgba(15,23,42,.09), 0 0 0 1px rgba(15,23,42,.03);
 }
 
 .topic-tabbed .topic-tab-header {
@@ -17826,20 +17821,30 @@ button.aiidd-vlink { align-self: flex-start; }
 .prompts-topic-host .aii-content--modal { padding: 0 !important; }
 .prompts-topic-host .aii-builder-secs { max-height: none !important; overflow: visible !important; padding: 0 !important; }
 
-/* ── Mobile nav: two rows — centered small brand ABOVE the hamburger + nav icons
-   (#397). Taller --nav-h so the app-mode content offset clears both rows. ───── */
-@media (max-width: 640px) {
-  :root { --nav-h: 80px; }
+/* ── Mobile nav: two rows — the hamburger sits IN LINE with the centered site
+   title (row 1), then the nav icons spaced out across their own line (row 2),
+   with a hairline separator + a little breathing room between them (#397/IMG_4206).
+   Only kicks in on narrow screens where the single row gets cramped. --nav-h is
+   taller so the app-mode content offset clears both rows. ────────────────────── */
+@media (max-width: 700px) {
+  :root { --nav-h: 88px; }
   .sticky-hero-inner {
-    flex-wrap: wrap; row-gap: 2px; column-gap: 0.5rem;
-    padding: 7px 0.9rem 9px !important; min-height: 0; align-items: center;
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-areas: "burger brand end" "nav nav nav";
+    align-items: center; column-gap: 0.5rem; row-gap: 9px;
+    padding: 8px 0.9rem 9px !important; min-height: 0;
   }
-  /* Row 1 — centered brand, small. */
-  .sticky-hero-inner .sticky-brand { order: 1; flex: 1 1 100%; justify-content: center; margin: 0; }
-  .sticky-hero-inner .sticky-title { font-size: 0.95rem; letter-spacing: -0.02em; }
-  /* Row 2 — hamburger (left) + nav icons (right). */
-  .sticky-hero-inner .nav-hamburger { order: 2; margin: 0; flex: 0 0 auto; }
-  .sticky-hero-inner .sticky-actions.navbtns { order: 3; flex: 1 1 auto; margin-left: auto !important; justify-content: flex-end; }
+  /* Row 1 — hamburger left, brand truly centered (equal 1fr columns flank it). */
+  .sticky-hero-inner .nav-hamburger { grid-area: burger; justify-self: start; margin: 0; }
+  .sticky-hero-inner .sticky-brand { grid-area: brand; justify-self: center; margin: 0; }
+  .sticky-hero-inner .sticky-title { font-size: 0.97rem; letter-spacing: -0.02em; }
+  /* Row 2 — the nav icons spread evenly across the full width, sitting under a
+     faint divider with a touch of breathing room above. */
+  .sticky-hero-inner .sticky-actions.navbtns {
+    grid-area: nav; margin: 0 !important; justify-content: space-between;
+    padding-top: 9px; border-top: 1px solid rgba(255, 255, 255, 0.11);
+  }
   /* Redundant single-purpose mobile bits are folded into the icon row now. */
   .sticky-hero-inner .nav-search-mobile { display: none !important; }
   .sticky-hero-inner .sticky-page-name { display: none !important; }
