@@ -17825,3 +17825,22 @@ button.aiidd-vlink { align-self: flex-start; }
 .prompts-topic-host .aii-stage,
 .prompts-topic-host .aii-content--modal { padding: 0 !important; }
 .prompts-topic-host .aii-builder-secs { max-height: none !important; overflow: visible !important; padding: 0 !important; }
+
+/* ── Mobile nav: two rows — centered small brand ABOVE the hamburger + nav icons
+   (#397). Taller --nav-h so the app-mode content offset clears both rows. ───── */
+@media (max-width: 640px) {
+  :root { --nav-h: 80px; }
+  .sticky-hero-inner {
+    flex-wrap: wrap; row-gap: 2px; column-gap: 0.5rem;
+    padding: 7px 0.9rem 9px !important; min-height: 0; align-items: center;
+  }
+  /* Row 1 — centered brand, small. */
+  .sticky-hero-inner .sticky-brand { order: 1; flex: 1 1 100%; justify-content: center; margin: 0; }
+  .sticky-hero-inner .sticky-title { font-size: 0.95rem; letter-spacing: -0.02em; }
+  /* Row 2 — hamburger (left) + nav icons (right). */
+  .sticky-hero-inner .nav-hamburger { order: 2; margin: 0; flex: 0 0 auto; }
+  .sticky-hero-inner .sticky-actions.navbtns { order: 3; flex: 1 1 auto; margin-left: auto !important; justify-content: flex-end; }
+  /* Redundant single-purpose mobile bits are folded into the icon row now. */
+  .sticky-hero-inner .nav-search-mobile { display: none !important; }
+  .sticky-hero-inner .sticky-page-name { display: none !important; }
+}
