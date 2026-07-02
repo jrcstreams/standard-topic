@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp425';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp426';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp425';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp426';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp425';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp425';
-import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp425';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp425';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp426';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp426';
+import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp426';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp426';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp425';
-import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp425';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp425';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp425';
-import { renderWebSources } from './components/websources.js?v=20260630-revamp425';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp425';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp426';
+import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp426';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp426';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp426';
+import { renderWebSources } from './components/websources.js?v=20260630-revamp426';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp426';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp425';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp426';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp425';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp426';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1942,17 +1942,17 @@ function renderStickyHeroBar(container, route) {
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
           <span class="navbtn-label">Search</span>
         </button>
-        <button type="button" class="navbtn" id="nav-prompts" aria-label="Prompts" aria-haspopup="dialog" aria-expanded="false">
-          <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
-          <span class="navbtn-label">Prompts</span>
+        <button type="button" class="navbtn" id="nav-topics" aria-label="Topics" aria-haspopup="dialog">
+          <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>
+          <span class="navbtn-label">Topics</span>
         </button>
         <button type="button" class="navbtn" id="nav-trending" aria-label="Trending">
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
           <span class="navbtn-label"><span class="nl-full">Trending</span><span class="nl-short">Trends</span></span>
         </button>
-        <button type="button" class="navbtn" id="nav-topics" aria-label="Topics" aria-haspopup="dialog">
-          <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>
-          <span class="navbtn-label">Topics</span>
+        <button type="button" class="navbtn" id="nav-prompts" aria-label="Prompts" aria-haspopup="dialog" aria-expanded="false">
+          <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+          <span class="navbtn-label">Prompts</span>
         </button>
       </div>
     </div>
