@@ -17024,23 +17024,19 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   padding: 18px 18px 20px; max-height: min(70vh, calc(100dvh - 130px));
   overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
 }
-/* Quiet actions row (Home · All Topics) on the left, X close on the right. */
-.tsp-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
-.tsp-bar-actions { display: flex; align-items: center; gap: 6px; min-width: 0; flex-wrap: wrap; }
-.tsp-action {
-  display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.38rem 0.7rem; border-radius: 999px;
-  border: 1px solid var(--color-surface-border); background: #fff; color: var(--color-text-muted);
-  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; text-decoration: none;
-  transition: border-color .14s, color .14s; -webkit-tap-highlight-color: transparent;
+/* Quiet footer links (Home · All Topics) below the topic list — a menu foot, not
+   a modal title-bar. No X close: the dropdown closes on outside-click / re-tap. */
+.tsp-foot {
+  display: flex; align-items: center; gap: 4px; margin-top: 8px; padding-top: 8px;
+  border-top: 1px solid var(--color-surface-border);
 }
-.tsp-action svg { flex: none; }
-.tsp-action:hover { border-color: #9bb0d6; color: #26375a; }
-.tsp-close {
-  flex: none; width: 30px; height: 30px; border-radius: 8px; border: none; background: var(--color-bg-light);
-  color: var(--color-text-muted); display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
-  transition: background .14s, color .14s; -webkit-tap-highlight-color: transparent;
+.tsp-foot-link {
+  display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.6rem; border-radius: 8px;
+  color: var(--color-text-muted); font-family: var(--font-family); font-size: 0.82rem; font-weight: 600;
+  text-decoration: none; transition: background .12s, color .12s; -webkit-tap-highlight-color: transparent;
 }
-.tsp-close:hover { background: #e6eaf1; color: var(--color-text); }
+.tsp-foot-link svg { flex: none; }
+.tsp-foot-link:hover { background: var(--color-bg-light); color: #26375a; }
 /* Parent "Overview" landing row. */
 .tsp-parent-row {
   display: flex; align-items: center; gap: 0.65rem; padding: 0.58rem 0.65rem; border-radius: 11px;
@@ -17173,10 +17169,11 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   }
   .tbh-bar .tsp-chev { flex: none; margin-left: auto; width: 20px; height: 20px; color: #64748b; transition: transform .2s ease; }
   .topic-bodyhead.is-open .tbh-bar .tsp-chev { transform: rotate(180deg); }
-  /* Dropdown drops directly below the bar. */
-  .topic-bodyhead .tsp-panelwrap { left: 0; right: 0; width: auto; top: calc(100% + 8px); }
-  .topic-bodyhead .tsp-panel-inner { padding: 18px 20px 20px; max-height: min(72vh, calc(100dvh - 150px)); }
-  .topic-bodyhead .tsp-grid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 4px 16px; }
+  /* Dropdown drops directly below the bar — a left-anchored menu (max ~460px), not
+     a full-width sheet, so it reads as a dropdown rather than a modal. */
+  .topic-bodyhead .tsp-panelwrap { left: 0; right: auto; width: min(460px, 100%); top: calc(100% + 6px); }
+  .topic-bodyhead .tsp-panel-inner { padding: 12px 12px 12px; max-height: min(66vh, calc(100dvh - 160px)); }
+  .topic-bodyhead .tsp-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 2px 12px; }
   .topic-bodyhead .tsp-cell { padding: 0.62rem 0.7rem; }
 }
 
@@ -17842,7 +17839,7 @@ button.aiidd-vlink { align-self: flex-start; }
    genuinely narrow phones (≤560); --nav-h grows so the app content clears both
    rows without overriding the topic sub-header. ─────────────────────────────── */
 @media (max-width: 560px) {
-  :root { --nav-h: 78px; }
+  :root { --nav-h: 86px; }
   .sticky-hero-inner {
     display: grid !important;
     grid-template-columns: 1fr auto 1fr;

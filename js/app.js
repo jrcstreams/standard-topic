@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp434';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260702-revamp435';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp434';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260702-revamp435';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp434';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp434';
-import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp434';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp434';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260702-revamp435';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260702-revamp435';
+import { initPromptModal } from './components/prompt-modal.js?v=20260702-revamp435';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260702-revamp435';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp434';
-import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp434';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp434';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp434';
-import { renderWebSources } from './components/websources.js?v=20260630-revamp434';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp434';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260702-revamp435';
+import { initInsightModal } from './components/insight-modal.js?v=20260702-revamp435';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260702-revamp435';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260702-revamp435';
+import { renderWebSources } from './components/websources.js?v=20260702-revamp435';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260702-revamp435';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp434';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260702-revamp435';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp434';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260702-revamp435';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -244,13 +244,6 @@ function topicPickerPanelHTML(topic, panelId) {
     <div class="tsp-panelwrap">
       <div class="tsp-panel" id="${escapeHTML(panelId)}" role="region" aria-label="Browse topics">
         <div class="tsp-panel-inner">
-          <div class="tsp-bar">
-            <span class="tsp-bar-actions">
-              <a href="#/" class="tsp-action" data-tsp-home>${HOME_IC}<span>Home</span></a>
-              <a href="#" class="tsp-action" data-tsp-all>${GRID_IC}<span>All Topics</span></a>
-            </span>
-            <button type="button" class="tsp-close" data-tsp-close aria-label="Close">${X_IC}</button>
-          </div>
           <a href="#/topic/${parent.slug}" class="tsp-parent-row${parentActive ? ' is-active' : ''}"${parentActive ? ' aria-current="page"' : ''}>
             <span class="tsp-parent-ic">${topicIconSVG(parent.icon || 'globe', 'tsp-ic-svg')}</span>
             <span class="tsp-parent-name">${escapeHTML(parent.name)}</span>
@@ -258,6 +251,10 @@ function topicPickerPanelHTML(topic, panelId) {
             ${parentActive ? `<span class="tsp-cell-check" aria-hidden="true">${CHECK}</span>` : ''}
           </a>
           ${family.length ? `<div class="tsp-grid">${family.map(cellHTML).join('')}</div>` : ''}
+          <div class="tsp-foot">
+            <a href="#/" class="tsp-foot-link" data-tsp-home>${HOME_IC}<span>Home</span></a>
+            <a href="#" class="tsp-foot-link" data-tsp-all>${GRID_IC}<span>All Topics</span></a>
+          </div>
         </div>
       </div>
     </div>`;
@@ -302,13 +299,10 @@ function homeSubnavPickerHTML() {
       <div class="tsp-panelwrap">
         <div class="tsp-panel" id="tsp-panel-home" role="region" aria-label="Browse topics">
           <div class="tsp-panel-inner">
-            <div class="tsp-bar">
-              <span class="tsp-bar-actions">
-                <a href="#" class="tsp-action" data-tsp-all>${GRID_IC}<span>All Topics</span></a>
-              </span>
-              <button type="button" class="tsp-close" data-tsp-close aria-label="Close">${X_IC}</button>
-            </div>
             <div class="tsp-grid">${featured.map(cellHTML).join('')}</div>
+            <div class="tsp-foot">
+              <a href="#" class="tsp-foot-link" data-tsp-all>${GRID_IC}<span>All Topics</span></a>
+            </div>
           </div>
         </div>
       </div>
@@ -2041,19 +2035,31 @@ function renderStickyHeroBar(container, route) {
       <a href="#/" class="navmenu-brand" id="navmenu-brand-link">
         <span class="navmenu-title">Standard Topic</span>
       </a>
-      <div class="navmenu-head-actions">
-        <a href="#/" class="navmenu-home" id="navmenu-home" aria-label="Home">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/>
-            <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-          </svg>
-        </a>
-      </div>
     </div>
-    <div class="navmenu-featured-label navmenu-section-label">Search</div>
-    <div class="navmenu-search" id="navmenu-search-container"></div>
     <div class="navmenu-featured-label navmenu-section-label">Navigate</div>
     <nav class="navmenu-quicklinks">
+      <a href="#/" class="navmenu-quicklink navmenu-cta" id="navmenu-home-link">
+        <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/>
+          <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        </svg>
+        <span class="navmenu-cta-label">Home</span>
+        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="13 6 19 12 13 18"/>
+        </svg>
+      </a>
+      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-search">
+        <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <span class="navmenu-cta-label">Search</span>
+        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="13 6 19 12 13 18"/>
+        </svg>
+      </button>
       <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-all-topics">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="3" y="3" width="7" height="7" rx="1"/>
@@ -2062,16 +2068,6 @@ function renderStickyHeroBar(container, route) {
           <rect x="14" y="14" width="7" height="7" rx="1"/>
         </svg>
         <span class="navmenu-cta-label">View All Topics</span>
-        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="5" y1="12" x2="19" y2="12"/>
-          <polyline points="13 6 19 12 13 18"/>
-        </svg>
-      </button>
-      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-prompts">
-        <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/>
-        </svg>
-        <span class="navmenu-cta-label">Prompts</span>
         <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <line x1="5" y1="12" x2="19" y2="12"/>
           <polyline points="13 6 19 12 13 18"/>
@@ -2088,17 +2084,16 @@ function renderStickyHeroBar(container, route) {
           <polyline points="13 6 19 12 13 18"/>
         </svg>
       </button>
-      <a href="#/prompt-generator" class="navmenu-quicklink navmenu-cta" id="navmenu-prompt-link">
+      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-prompts">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M12 20h9"/>
-          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/>
+          <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/>
         </svg>
-        <span class="navmenu-cta-label">Prompt Builder</span>
+        <span class="navmenu-cta-label">Prompts</span>
         <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <line x1="5" y1="12" x2="19" y2="12"/>
           <polyline points="13 6 19 12 13 18"/>
         </svg>
-      </a>
+      </button>
     </nav>
     <div class="navmenu-scroll">
       <div class="navmenu-featured-label">Topics</div>
@@ -2115,7 +2110,6 @@ function renderStickyHeroBar(container, route) {
       </div>
     </div>
   `;
-  renderSearchBar(document.getElementById('navmenu-search-container'), route, { variant: 'search' });
 
   const scrollEl = navPanel.querySelector('.navmenu-scroll');
   const updateScrollOverflow = () => {
@@ -2150,6 +2144,10 @@ function renderStickyHeroBar(container, route) {
   navPanel.querySelector('#navmenu-prompts')?.addEventListener('click', () => {
     closeMenu();
     openPromptsNavDropdown();
+  });
+  navPanel.querySelector('#navmenu-search')?.addEventListener('click', () => {
+    closeMenu();
+    navigate('#/search');
   });
 
   // Mobile top-bar search icon (kept upper-right even though Search is also
