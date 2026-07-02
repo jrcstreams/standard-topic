@@ -3721,12 +3721,9 @@ html, body, #app {
 .news-card-title {
   font-family: var(--font-display);
   font-size: 1.07rem;
-  /* True medium weight (500) with a 0.15px currentColor
-     text-shadow — the smallest visible glyph-edge thickening
-     trick we use anywhere. Adds a hair of body to story
-     headlines without crossing into the "feels bold" zone. */
-  font-weight: 500;
-  text-shadow: 0 0 0.15px currentColor;
+  /* Semibold — story headlines carry more weight than the (now lighter) action
+     pills below them (#395). */
+  font-weight: 650;
   -webkit-font-smoothing: antialiased;
   line-height: 1.25;
   letter-spacing: -0.02em;
@@ -17019,13 +17016,10 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 }
 .topic-subnav-picker.is-open .tsp-panelwrap { grid-template-rows: 1fr; opacity: 1; pointer-events: auto; transform: translateY(0); }
 .tsp-panel {
-  overflow: hidden; min-height: 0; border: 1px solid var(--color-surface-border); border-radius: 16px;
-  background: #fff; box-shadow: 0 24px 50px -22px rgba(15,23,42,.5), 0 8px 18px -12px rgba(15,23,42,.22);
-}
-/* Page-takeover feel: the open panel casts a full-viewport scrim (huge shadow
-   spread) so the topic picker reads like the main-nav dropdowns. */
-.topic-subnav-picker.is-open .tsp-panel {
-  box-shadow: 0 24px 50px -22px rgba(15,23,42,.4), 0 8px 18px -12px rgba(15,23,42,.18), 0 0 0 100vmax rgba(15,23,42,.28);
+  overflow: hidden; min-height: 0; border: 1px solid var(--color-surface-border); border-radius: 14px;
+  background: #fff;
+  /* A clean, softly-elevated dropdown — NOT a modal. No page scrim. */
+  box-shadow: 0 14px 30px -18px rgba(15,23,42,.28), 0 4px 10px -6px rgba(15,23,42,.12);
 }
 .tsp-panel-inner {
   padding: 18px 18px 20px; max-height: min(70vh, calc(100dvh - 130px));
@@ -17289,7 +17283,9 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   font-family: var(--font-family); transition: background .14s, color .14s; -webkit-tap-highlight-color: transparent;
 }
 .navbtn:hover { background: rgba(255,255,255,0.12); color: #fff; }
-.navbtn.is-active { background: rgba(255,255,255,0.14); color: #fff; }
+/* Active page OR an open dropdown lights the button. */
+.navbtn.is-active,
+.navbtn[aria-expanded="true"] { background: rgba(255,255,255,0.16); color: #fff; }
 .navbtn-ico { display: inline-flex; }
 .navbtn-ico svg { width: 21px; height: 21px; display: block; }
 .navbtn-label { font-size: 0.67rem; font-weight: 600; letter-spacing: -0.004em; white-space: nowrap; line-height: 1; }
@@ -17420,13 +17416,16 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 
 .news-card-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 13px; }
 .news-act {
-  display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 999px;
-  border: 1px solid var(--color-surface-border); background: #fff; color: var(--color-text); cursor: pointer;
-  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
+  border: 1px solid var(--color-surface-border); background: #fff; color: var(--color-text-light, #475569); cursor: pointer;
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 550; text-decoration: none !important;
   transition: border-color .14s, color .14s, background .14s; -webkit-tap-highlight-color: transparent;
 }
 .news-act svg { flex: none; }
-.news-act:hover { border-color: #9bb0d6; color: var(--color-primary); }
+/* Clean pill hover — a light tint, NO underline (the anchor default underline
+   read as broken). */
+.news-act:hover, .news-act:hover span { text-decoration: none !important; }
+.news-act:hover { border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border)); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 4%, #fff); }
 /* AI Insights: neutral pill (like the others) — the FILLED blue sparkle carries
    the AI branding, not a fully-blue button. */
 .news-act-ai .news-ai-spark-filled { flex: none; }
@@ -17778,14 +17777,17 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 
 .topic-tabbed .topic-tab-header {
   position: sticky; top: calc(var(--subnav-height, 49px) + var(--paths-grid-h, 96px)); z-index: 25;
-  background: var(--color-bg, #fff); padding: 14px 0 11px; margin: 6px 0 0;
-  border-bottom: 1px solid var(--color-surface-border);
+  background: var(--color-bg, #fff); padding: 14px 0 13px; margin: 8px 0 0;
+  border-bottom: 1.5px solid var(--color-surface-border);
+  /* A soft drop shadow so scrolling content reads as clearly beneath the sticky
+     header (stronger separation than a hairline alone). */
+  box-shadow: 0 8px 12px -10px rgba(15, 23, 42, 0.18);
 }
 .topic-tab-title {
   margin: 0; font-family: var(--font-display); font-size: 1.4rem; font-weight: 700;
   color: #14213d; letter-spacing: -0.02em; line-height: 1.1;
 }
-.topic-tab-body { padding-top: 14px; min-height: 40vh; }
+.topic-tab-body { padding-top: 20px; min-height: 40vh; }
 
 /* Inside a tab: hide the mounted AI builder's own chrome + the news feed's own
    header (the sticky tab header replaces them); let content flow the page. */
