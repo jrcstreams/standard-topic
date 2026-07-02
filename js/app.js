@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp424';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp425';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp424';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp425';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp424';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp424';
-import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp424';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp424';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp425';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp425';
+import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp425';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp425';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp424';
-import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp424';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp424';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp424';
-import { renderWebSources } from './components/websources.js?v=20260630-revamp424';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp424';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp425';
+import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp425';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp425';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp425';
+import { renderWebSources } from './components/websources.js?v=20260630-revamp425';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp425';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp424';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp425';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp424';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp425';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -521,29 +521,21 @@ function wireNavDdAccordions(panel) {
   }));
 }
 
-// ── Phase 3: the main-nav "AI Insights" topic-tree dropdown ──────────────────
-// Every parent topic is an accordion; expanding shows the parent + its
-// subtopics, each with the five AI tracks as chips. Clicking a chip routes to
-// that topic page and opens the matching inline section.
 const AIIDD_ARROW = '<svg class="aiidd-arrow" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>';
-function aiInsightsTopicTreeHTML() {
+
+// ── The main-nav "Prompts" dropdown ──────────────────────────────────────────
+// Two paths: "Build a Custom Prompt" (the prompt builder, inline) and "Prompt
+// Library" (pick a topic → its ready-made prompts). Replaces the AI Insights
+// nav dropdown — topic pages + custom search now cover AI Insights.
+const PROMPTS_BACK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
+const PROMPTS_BUILD_IC = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
+const PROMPTS_LIB_IC = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>';
+
+// Prompt Library topic tree — accordions whose rows SELECT a topic (show its
+// prompts inline) instead of navigating.
+function promptLibTreeHTML() {
   const groups = getTopicsGroupedByParent() || [];
-  const chipsFor = (t) => `<div class="aiidd-chips">${AII_NAV_GROUPS.map((g) =>
-    `<button type="button" class="aiidd-chip" data-aiidd-go data-slug="${escapeHTML(t.slug)}" data-group="${escapeHTML(g.group)}">${escapeHTML(g.label)}</button>`
-  ).join('')}</div>`;
-  const openLink = (t) => `<a href="#/topic/${t.slug}" class="aiidd-openpage" data-aiidd-topic>Open ${escapeHTML(t.name)} page ${AIIDD_ARROW}</a>`;
-  // Subtopic = a nested drill-in: click its name to reveal ITS shortcuts.
-  const subBlock = (s) => `
-    <div class="aiidd-sub" data-open="false">
-      <button type="button" class="aiidd-sub-head" data-aiidd-subtoggle aria-expanded="false">
-        <span class="aiidd-sub-ic">${topicIconSVG(s.icon || 'globe', 'tsp-ic-svg')}</span>
-        <span class="aiidd-sub-name">${escapeHTML(s.name)}</span>
-        ${TSP_CHEV}
-      </button>
-      <div class="aiidd-sub-body">${chipsFor(s)}${openLink(s)}</div>
-    </div>`;
-  // Parent = click its name → its OWN shortcuts show immediately, then its
-  // subtopics are listed below (each a further drill-in).
+  const row = (t, all) => `<button type="button" class="${all ? 'aiidd-vall' : 'aiidd-vlink'} prompts-lib-topic" data-lib-topic data-slug="${escapeAttr(t.slug)}" data-name="${escapeAttr(t.name)}">${all ? `All ${escapeHTML(t.name)}${AIIDD_CHEV_R}` : escapeHTML(t.name)}</button>`;
   const block = ({ parent, subtopics }) => {
     const subs = subtopics || [];
     return `<section class="aiidd-parent" data-open="false">
@@ -552,48 +544,97 @@ function aiInsightsTopicTreeHTML() {
         <span class="aiidd-parent-name">${escapeHTML(parent.name)}</span>
         ${TSP_CHEV}
       </button>
-      <div class="aiidd-parent-body">
-        <div class="aiidd-parent-shortcuts">${chipsFor(parent)}${openLink(parent)}</div>
-        ${subs.length ? `<div class="aiidd-subs"><div class="aiidd-subs-label">Subtopics</div>${subs.map(subBlock).join('')}</div>` : ''}
-      </div>
+      <div class="aiidd-parent-body"><div class="aiidd-vlist">${row(parent, true)}${subs.map((s) => row(s, false)).join('')}</div></div>
     </section>`;
   };
   return `<div class="aiidd-tree">${groups.map(block).join('')}</div>`;
 }
 
-// Shared wiring for the AI Insights drill-in dropdown: parent accordions,
-// subtopic drill-ins, track chips → inline section, topic links.
-function wireAiInsightsTree(panel) {
-  wireNavDdAccordions(panel);
-  panel.querySelectorAll('[data-aiidd-subtoggle]').forEach((btn) => btn.addEventListener('click', () => {
-    const sub = btn.closest('.aiidd-sub');
-    const open = sub.getAttribute('data-open') === 'true';
-    sub.setAttribute('data-open', String(!open));
-    btn.setAttribute('aria-expanded', String(!open));
+function wirePromptsDropdown(panel) {
+  const root = panel.querySelector('[data-prompts-root]');
+  if (!root) return;
+  let ctl = null;
+  const destroyCtl = () => { if (ctl && ctl.destroy) { try { ctl.destroy(); } catch (_) {} } ctl = null; };
+  const setSub = (txt) => { const s = panel.querySelector('.aii-nav-dd-sub'); if (s) s.textContent = txt; };
+  const fades = () => [200, 700, 1500].forEach((d) => setTimeout(updateNavDdFades, d));
+  const backBtn = (label) => `<button type="button" class="prompts-back" data-prompts-back>${PROMPTS_BACK}<span>${escapeHTML(label)}</span></button>`;
+
+  const showLanding = () => {
+    destroyCtl();
+    setSub('Build your own or browse the ready-made library.');
+    root.innerHTML = `
+      <div class="prompts-landing">
+        <button type="button" class="prompts-opt" data-prompt-build>
+          <span class="prompts-opt-ic">${PROMPTS_BUILD_IC}</span>
+          <span class="prompts-opt-tx"><span class="prompts-opt-name">Build a Custom Prompt</span><span class="prompts-opt-desc">Craft a knowledge prompt and send it to your AI model.</span></span>
+          <span class="prompts-opt-go">${AIIDD_ARROW}</span>
+        </button>
+        <button type="button" class="prompts-opt" data-prompt-library>
+          <span class="prompts-opt-ic">${PROMPTS_LIB_IC}</span>
+          <span class="prompts-opt-tx"><span class="prompts-opt-name">Prompt Library</span><span class="prompts-opt-desc">Browse ready-made prompts across every topic.</span></span>
+          <span class="prompts-opt-go">${AIIDD_ARROW}</span>
+        </button>
+      </div>`;
+    root.querySelector('[data-prompt-build]').addEventListener('click', showBuild);
+    root.querySelector('[data-prompt-library]').addEventListener('click', showLibrary);
     requestAnimationFrame(updateNavDdFades);
-  }));
-  panel.querySelectorAll('[data-aiidd-go]').forEach((chip) => chip.addEventListener('click', (e) => {
-    e.preventDefault();
-    closeNavDropdown();
-    openTopicInsightInline(chip.dataset.slug, chip.dataset.group);
-  }));
-  panel.querySelectorAll('[data-aiidd-topic]').forEach((a) => a.addEventListener('click', () => closeNavDropdown()));
+  };
+
+  const showBuild = () => {
+    destroyCtl();
+    setSub('Build a knowledge prompt and send it to your AI model.');
+    root.innerHTML = `${backBtn('Prompts')}<div class="prompts-view-head">Build a Custom Prompt</div><div class="pb-navdd-host" data-pb-host></div>`;
+    root.querySelector('[data-prompts-back]').addEventListener('click', showLanding);
+    try { renderPromptGenerator(root.querySelector('[data-pb-host]')); } catch (_) {}
+    fades();
+  };
+
+  const showLibrary = () => {
+    destroyCtl();
+    setSub('Pick a topic to see its ready-made prompts.');
+    root.innerHTML = `${backBtn('Prompts')}<div class="prompts-view-head">Prompt Library</div><div class="prompts-lib" data-lib>${promptLibTreeHTML()}</div>`;
+    root.querySelector('[data-prompts-back]').addEventListener('click', showLanding);
+    const lib = root.querySelector('[data-lib]');
+    wireNavDdAccordions(lib);
+    lib.querySelectorAll('[data-lib-topic]').forEach((b) => b.addEventListener('click', () => showTopicPrompts(b.dataset.slug, b.dataset.name)));
+    requestAnimationFrame(updateNavDdFades);
+  };
+
+  const showTopicPrompts = (slug, name) => {
+    destroyCtl();
+    setSub(`Ready-made prompts for ${name}.`);
+    root.innerHTML = `${backBtn('Prompt Library')}<div class="prompts-view-head">${escapeHTML(name)} · Prompts</div><div class="pb-navdd-host" data-pb-host></div>`;
+    root.querySelector('[data-prompts-back]').addEventListener('click', showLibrary);
+    let shortcuts = []; try { shortcuts = getShortcutsForTopic(slug) || []; } catch (_) {}
+    const descriptions = {}; const icons = {};
+    try { shortcuts.forEach((s) => { if (s && s.name) { descriptions[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } }); } catch (_) {}
+    const t = getTopicBySlug(slug); const label = t ? t.name : name;
+    ctl = renderAIIntelligence(root.querySelector('[data-pb-host]'), {
+      inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
+      topic: label, label, descriptions, icons, shortcuts, topicKey: slug,
+    });
+    fades();
+  };
+
+  showLanding();
 }
-function aiInsightsNavDdCfg() {
+
+function promptsNavDdCfg() {
   return {
-    key: 'insights', triggerId: 'nav-insights', spark: true,
-    title: 'AI Insights', ariaLabel: 'AI Insights',
-    subtitle: 'Pick a topic, then the kind of intelligence you want.',
-    contentHTML: aiInsightsTopicTreeHTML(),
-    wire: wireAiInsightsTree,
+    key: 'prompts', triggerId: 'nav-prompts',
+    title: 'Prompts', ariaLabel: 'Prompts',
+    subtitle: 'Build your own or browse the ready-made library.',
+    contentHTML: '<div class="prompts-dd" data-prompts-root></div>',
+    wire: wirePromptsDropdown,
   };
 }
-function openAiInsightsNavDropdown() { openNavDropdown(aiInsightsNavDdCfg()); }
-function toggleAiInsightsNavDropdown() { toggleNavDropdown(aiInsightsNavDdCfg()); }
+function openPromptsNavDropdown() { openNavDropdown(promptsNavDdCfg()); }
+function togglePromptsNavDropdown() { toggleNavDropdown(promptsNavDdCfg()); }
 
 // ── Phase 5: the main-nav "Topics" topic-tree dropdown ───────────────────────
 // Same accordion shell, but the rows are plain topic links (no AI track chips):
 // a flat "All {parent}" link + each subtopic. Replaces the All Topics modal.
+const AIIDD_CHEV_R = '<svg class="aiidd-vall-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>';
 function topicsTreeHTML() {
   const groups = getTopicsGroupedByParent() || [];
   const block = ({ parent, subtopics }) => {
@@ -605,16 +646,17 @@ function topicsTreeHTML() {
         <span class="aiidd-flat-arrow" aria-hidden="true">${TSP_CHEV}</span>
       </a>`;
     }
-    const links = `<a href="#/topic/${parent.slug}" class="aiidd-tlink aiidd-tlink-all" data-aiidd-link>All ${escapeHTML(parent.name)}</a>`
-      + subs.map((s) => `<a href="#/topic/${s.slug}" class="aiidd-tlink" data-aiidd-link>${escapeHTML(s.name)}</a>`).join('');
+    // Clean vertical list: a prominent "All {Parent} ›" link, then each subtopic
+    // on its own row. No count badge.
+    const links = `<a href="#/topic/${parent.slug}" class="aiidd-vall" data-aiidd-link>All ${escapeHTML(parent.name)}${AIIDD_CHEV_R}</a>`
+      + subs.map((s) => `<a href="#/topic/${s.slug}" class="aiidd-vlink" data-aiidd-link>${escapeHTML(s.name)}</a>`).join('');
     return `<section class="aiidd-parent" data-open="false">
       <button type="button" class="aiidd-parent-head" data-aiidd-toggle aria-expanded="false">
         <span class="aiidd-parent-ic">${topicIconSVG(parent.icon || 'globe', 'tsp-ic-svg')}</span>
         <span class="aiidd-parent-name">${escapeHTML(parent.name)}</span>
-        <span class="aiidd-parent-count">${subs.length}</span>
         ${TSP_CHEV}
       </button>
-      <div class="aiidd-parent-body"><div class="aiidd-tlinks">${links}</div></div>
+      <div class="aiidd-parent-body"><div class="aiidd-vlist">${links}</div></div>
     </section>`;
   };
   return `<div class="aiidd-tree">${groups.map(block).join('')}</div>`;
@@ -734,9 +776,12 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
       return;
     }
     // An AI path → mount that single group's builder (chrome hidden via CSS).
+    // The Prompts (external) tab needs `shortcuts` to build the prompt library.
+    let shortcuts = [];
+    try { shortcuts = getShortcutsForTopic(topic.slug) || []; } catch (_) {}
     ctl = renderAIIntelligence(body, {
       inModal: true, initialBuilder: true, initialGroup: key, lockTopic: true,
-      topic: topic.name, label: topic.name, descriptions, icons, topicKey: topic.slug,
+      topic: topic.name, label: topic.name, descriptions, icons, shortcuts, topicKey: topic.slug,
     });
   };
   const selectTab = (key) => {
@@ -1897,9 +1942,9 @@ function renderStickyHeroBar(container, route) {
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
           <span class="navbtn-label">Search</span>
         </button>
-        <button type="button" class="navbtn navbtn-ai" id="nav-insights" aria-label="AI Insights">
-          <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg></span>
-          <span class="navbtn-label"><span class="nl-full">AI Insights</span><span class="nl-short">Insights</span></span>
+        <button type="button" class="navbtn" id="nav-prompts" aria-label="Prompts" aria-haspopup="dialog" aria-expanded="false">
+          <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+          <span class="navbtn-label">Prompts</span>
         </button>
         <button type="button" class="navbtn" id="nav-trending" aria-label="Trending">
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
@@ -1931,15 +1976,10 @@ function renderStickyHeroBar(container, route) {
     document.getElementById('nav-home')?.classList.add('is-active');
   }
 
-  // AI Insights — opens the full-width topic-tree dropdown (Phase 3): pick a
-  // topic, then a track, and we route to that topic page with its inline
-  // section open. No modal.
-  const navInsightsBtn = document.getElementById('nav-insights');
-  if (navInsightsBtn) {
-    navInsightsBtn.setAttribute('aria-haspopup', 'dialog');
-    navInsightsBtn.setAttribute('aria-expanded', 'false');
-    navInsightsBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleAiInsightsNavDropdown(); });
-  }
+  // Prompts — opens a dropdown with two paths: Build a Custom Prompt (the prompt
+  // builder inline) and Prompt Library (pick a topic → its ready-made prompts).
+  // (AI Insights is no longer a nav section — topic pages + custom search cover it.)
+  document.getElementById('nav-prompts')?.addEventListener('click', (e) => { e.stopPropagation(); togglePromptsNavDropdown(); });
 
   // Trending — opens the full-width Trending dropdown (Phase 5 — replaces the
   // modal) with the live trend-card grid.
@@ -2015,11 +2055,11 @@ function renderStickyHeroBar(container, route) {
           <polyline points="13 6 19 12 13 18"/>
         </svg>
       </button>
-      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-ai-insights">
+      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-prompts">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/>
+          <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/>
         </svg>
-        <span class="navmenu-cta-label">AI Insights</span>
+        <span class="navmenu-cta-label">Prompts</span>
         <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <line x1="5" y1="12" x2="19" y2="12"/>
           <polyline points="13 6 19 12 13 18"/>
@@ -2095,9 +2135,9 @@ function renderStickyHeroBar(container, route) {
     closeMenu();
     toggleTrendingNavDropdown();
   });
-  navPanel.querySelector('#navmenu-ai-insights')?.addEventListener('click', () => {
+  navPanel.querySelector('#navmenu-prompts')?.addEventListener('click', () => {
     closeMenu();
-    openAiInsightsNavDropdown();
+    openPromptsNavDropdown();
   });
 
   // Mobile top-bar search icon (kept upper-right even though Search is also

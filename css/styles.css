@@ -17714,17 +17714,23 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 .aiidd-parent-flat:hover { color: #2563eb; }
 .aiidd-parent-flat .aiidd-parent-name { flex: 1 1 auto; }
 .aiidd-flat-arrow { color: #cbd5e1; display: inline-flex; transform: rotate(-90deg); }
-.aiidd-tlinks { display: flex; flex-wrap: wrap; gap: 7px; padding: 2px 8px 14px 36px; }
-.aiidd-tlink {
-  font-size: 0.86rem; font-weight: 600; color: #334155; text-decoration: none;
-  background: #f8fafc; border: 1px solid var(--color-surface-border); border-radius: 999px;
-  padding: 6px 13px; transition: background .14s ease, color .14s ease, border-color .14s ease;
+/* Clean vertical subtopic list (like the sidebar picker): prominent "All {Parent}
+   ›" link, then one subtopic per row. */
+.aiidd-vlist { display: flex; flex-direction: column; padding: 2px 8px 12px 40px; }
+.aiidd-vall {
+  display: inline-flex; align-items: center; gap: 3px; align-self: flex-start;
+  font-size: 0.95rem; font-weight: 700; color: #2563eb; text-decoration: none;
+  padding: 8px 0 9px;
 }
-.aiidd-tlink:hover { background: #2563eb; border-color: #2563eb; color: #fff; }
-.aiidd-tlink-all { background: #eef2ff; border-color: #c7d2fe; color: #3730a3; font-weight: 700; }
-.aiidd-tlink-all:hover { background: #4f46e5; border-color: #4f46e5; color: #fff; }
+.aiidd-vall:hover { color: #1d4ed8; }
+.aiidd-vall .aiidd-vall-chev { margin-top: 1px; }
+.aiidd-vlink {
+  font-size: 0.94rem; font-weight: 500; color: #334155; text-decoration: none;
+  padding: 8px 0; transition: color .12s ease;
+}
+.aiidd-vlink:hover { color: #2563eb; }
 @media (max-width: 640px) {
-  .aiidd-tlinks { padding-left: 14px; }
+  .aiidd-vlist { padding-left: 30px; }
 }
 
 @media (max-width: 640px) {
@@ -17795,3 +17801,32 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 /* The old in-subheader section tabs (News Feed / AI Insights / Web Search) are
    superseded by the new topic-page tab strip — hide them. */
 #sub-header .subnav-tabs { display: none !important; }
+
+/* ── Prompts nav dropdown ────────────────────────────────────────────────── */
+.prompts-dd { padding: 6px 2px 4px; }
+.prompts-landing { display: flex; flex-direction: column; gap: 12px; padding: 10px 4px 6px; }
+.prompts-opt {
+  display: flex; align-items: center; gap: 15px; width: 100%; text-align: left;
+  padding: 18px 18px; border: 1px solid var(--color-surface-border); border-radius: 14px;
+  background: #fff; cursor: pointer; transition: border-color .14s ease, box-shadow .14s ease, background .14s ease;
+}
+.prompts-opt:hover { border-color: color-mix(in srgb, #2563eb 45%, var(--color-surface-border)); box-shadow: 0 6px 18px -12px rgba(37,99,235,.35); background: color-mix(in srgb, #2563eb 3%, #fff); }
+.prompts-opt-ic { flex: 0 0 auto; width: 44px; height: 44px; border-radius: 11px; display: grid; place-items: center; background: color-mix(in srgb, #2563eb 10%, #fff); color: #2563eb; }
+.prompts-opt-tx { flex: 1 1 auto; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.prompts-opt-name { font-size: 1.02rem; font-weight: 700; color: var(--color-primary, #14213d); letter-spacing: -0.01em; }
+.prompts-opt-desc { font-size: 0.85rem; color: var(--color-text-muted, #64748b); line-height: 1.4; }
+.prompts-opt-go { flex: 0 0 auto; color: #94a3b8; transition: transform .14s ease, color .14s ease; }
+.prompts-opt:hover .prompts-opt-go { color: #2563eb; transform: translateX(3px); }
+
+.prompts-back {
+  display: inline-flex; align-items: center; gap: 5px; margin: 2px 0 6px; padding: 6px 10px 6px 6px;
+  border: none; background: none; cursor: pointer; border-radius: 8px;
+  font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; color: #2563eb;
+}
+.prompts-back:hover { background: color-mix(in srgb, #2563eb 8%, #fff); }
+.prompts-view-head { font-size: 1.12rem; font-weight: 800; color: var(--color-primary, #14213d); letter-spacing: -0.01em; padding: 2px 4px 12px; }
+
+/* Prompt Library topic rows are buttons — reset to look like the vertical links. */
+button.aiidd-vall, button.aiidd-vlink { border: none; background: none; cursor: pointer; font-family: var(--font-family); text-align: left; width: auto; }
+button.aiidd-vlink { align-self: flex-start; }
+.prompts-dd .pb-navdd-host { width: 100%; max-width: 820px; margin: 0 auto; }
