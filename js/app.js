@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp428';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp429';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp428';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp429';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp428';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp428';
-import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp428';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp428';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp429';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp429';
+import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp429';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp429';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp428';
-import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp428';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp428';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp428';
-import { renderWebSources } from './components/websources.js?v=20260630-revamp428';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp428';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp429';
+import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp429';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp429';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp429';
+import { renderWebSources } from './components/websources.js?v=20260630-revamp429';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp429';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp428';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp429';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp428';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp429';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -559,13 +559,18 @@ function wirePromptsDropdown(panel) {
   if (!root) return;
   let ctl = null;
   const destroyCtl = () => { if (ctl && ctl.destroy) { try { ctl.destroy(); } catch (_) {} } ctl = null; };
-  const setSub = (txt) => { const s = panel.querySelector('.aii-nav-dd-sub'); if (s) s.textContent = txt; };
+  // The shell head IS the view header — update its title + subtitle per view so
+  // there's no duplicate heading inside the body.
+  const setHead = (title, sub) => {
+    const t = panel.querySelector('.aii-nav-dd-title'); if (t) t.textContent = title;
+    const s = panel.querySelector('.aii-nav-dd-sub'); if (s) s.textContent = sub;
+  };
   const fades = () => [200, 700, 1500].forEach((d) => setTimeout(updateNavDdFades, d));
-  const backBtn = (label) => `<button type="button" class="prompts-back" data-prompts-back>${PROMPTS_BACK}<span>${escapeHTML(label)}</span></button>`;
+  const backBtn = (label) => `<button type="button" class="prompts-back" data-prompts-back>${PROMPTS_BACK}<span>Back to ${escapeHTML(label)}</span></button>`;
 
   const showLanding = () => {
     destroyCtl();
-    setSub('Build your own or browse the ready-made library.');
+    setHead('Prompts', 'Build your own or browse the ready-made library.');
     root.innerHTML = `
       <div class="prompts-landing">
         <button type="button" class="prompts-opt" data-prompt-build>
@@ -586,8 +591,8 @@ function wirePromptsDropdown(panel) {
 
   const showBuild = () => {
     destroyCtl();
-    setSub('Build a knowledge prompt and send it to your AI model.');
-    root.innerHTML = `${backBtn('Prompts')}<div class="prompts-view-head">Build a Custom Prompt</div><div class="pb-navdd-host" data-pb-host></div>`;
+    setHead('Build a Custom Prompt', 'Craft a knowledge prompt and send it to your AI model.');
+    root.innerHTML = `${backBtn('Prompts')}<div class="pb-navdd-host" data-pb-host></div>`;
     root.querySelector('[data-prompts-back]').addEventListener('click', showLanding);
     try { renderPromptGenerator(root.querySelector('[data-pb-host]')); } catch (_) {}
     fades();
@@ -595,8 +600,8 @@ function wirePromptsDropdown(panel) {
 
   const showLibrary = () => {
     destroyCtl();
-    setSub('Pick a topic to see its ready-made prompts.');
-    root.innerHTML = `${backBtn('Prompts')}<div class="prompts-view-head">Prompt Library</div><div class="prompts-lib" data-lib>${promptLibTreeHTML()}</div>`;
+    setHead('Prompt Library', 'Pick a topic to see its ready-made prompts.');
+    root.innerHTML = `${backBtn('Prompts')}<div class="prompts-lib" data-lib>${promptLibTreeHTML()}</div>`;
     root.querySelector('[data-prompts-back]').addEventListener('click', showLanding);
     const lib = root.querySelector('[data-lib]');
     wireNavDdAccordions(lib);
@@ -606,8 +611,10 @@ function wirePromptsDropdown(panel) {
 
   const showTopicPrompts = (slug, name) => {
     destroyCtl();
-    setSub(`Ready-made prompts for ${name}.`);
-    root.innerHTML = `${backBtn('Prompt Library')}<div class="prompts-view-head">${escapeHTML(name)} · Prompts</div><div class="pb-navdd-host" data-pb-host></div>`;
+    setHead(`${name} · Prompts`, 'Ready-made prompts — pick one to expand and copy.');
+    // prompts-topic-host → CSS hides the mounted AI component's own chrome so ONLY
+    // the clean prompt list shows.
+    root.innerHTML = `${backBtn('Prompt Library')}<div class="pb-navdd-host prompts-topic-host" data-pb-host></div>`;
     root.querySelector('[data-prompts-back]').addEventListener('click', showLibrary);
     let shortcuts = []; try { shortcuts = getShortcutsForTopic(slug) || []; } catch (_) {}
     const descriptions = {}; const icons = {};
