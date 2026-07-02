@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp426';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp427';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp426';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp427';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp426';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp426';
-import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp426';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp426';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp427';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp427';
+import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp427';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp427';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp426';
-import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp426';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp426';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp426';
-import { renderWebSources } from './components/websources.js?v=20260630-revamp426';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp426';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp427';
+import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp427';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp427';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp427';
+import { renderWebSources } from './components/websources.js?v=20260630-revamp427';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp427';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp426';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp427';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp426';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp427';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -42,7 +42,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Trending list modal retired (Phase-5 follow-up) — "View more trending" /
   // open-trending-list now open the Trending nav dropdown instead (see below).
   initDiscoverModal();
-  initAllTopicsModal();
+  // All Topics modal retired — every "All Topics" entry (picker action, search)
+  // now opens the single clean Topics nav dropdown (see the listener below).
   initRelatedTopicsModal();
   initPromptPreviewModal();
   initSearchOverlay();
@@ -55,6 +56,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Trending is a dropdown now: every "View more trending" / open-trending-list
   // (and the retired detail modal's "back") opens the Trending nav dropdown.
   window.addEventListener('open-trending-list', () => openTrendingNavDropdown());
+  // All Topics is a dropdown now: every open-all-topics-modal dispatch (picker
+  // "All Topics", search) opens the single clean Topics nav dropdown.
+  window.addEventListener('open-all-topics-modal', () => openTopicsNavDropdown());
 
   // Esc closes the open nav dropdown (search/prompt also reset their deep-link
   // route). Skip when the Review & Submit dropdown is stacked on top — it
@@ -661,8 +665,8 @@ function topicsTreeHTML() {
   };
   return `<div class="aiidd-tree">${groups.map(block).join('')}</div>`;
 }
-function toggleTopicsNavDropdown() {
-  toggleNavDropdown({
+function topicsNavDdCfg() {
+  return {
     key: 'topics', triggerId: 'nav-topics',
     title: 'All Topics', ariaLabel: 'All topics',
     subtitle: 'Browse every topic and its subtopics.',
@@ -671,8 +675,10 @@ function toggleTopicsNavDropdown() {
       wireNavDdAccordions(panel);
       panel.querySelectorAll('[data-aiidd-link]').forEach((a) => a.addEventListener('click', () => closeNavDropdown()));
     },
-  });
+  };
 }
+function toggleTopicsNavDropdown() { toggleNavDropdown(topicsNavDdCfg()); }
+function openTopicsNavDropdown() { if (!(navDdOpen && navDdOpen.key === 'topics')) openNavDropdown(topicsNavDdCfg()); }
 
 // ── Phase 5: the main-nav "Trending" dropdown ────────────────────────────────
 // Hosts renderTrendingModal (AI-legend sub-bar + live trend-card grid). Cards
