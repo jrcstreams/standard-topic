@@ -3721,9 +3721,8 @@ html, body, #app {
 .news-card-title {
   font-family: var(--font-display);
   font-size: 1.07rem;
-  /* Semibold — story headlines carry more weight than the (now lighter) action
-     pills below them (#395). */
-  font-weight: 650;
+  /* Medium — enough presence without reading as heavy/bold (#401). */
+  font-weight: 560;
   -webkit-font-smoothing: antialiased;
   line-height: 1.25;
   letter-spacing: -0.02em;
@@ -17150,10 +17149,12 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 
   /* Body topic header (#386-388): the SAME compact subnav bar as mobile — an
      icon + topic name + chevron in a soft bar; subtopics live in its dropdown. */
-  .topic-bodyhead { display: block; position: relative; margin: 0 0 4px; }
+  /* Connected to the controls below (one subnav unit): rounded top only, flush
+     bottom. */
+  .topic-bodyhead { display: block; position: relative; margin: 0; }
   .tbh-bar {
     display: flex; align-items: center; gap: 0.7rem; width: 100%; padding: 0.62rem 0.9rem;
-    border: 1px solid var(--color-surface-border); border-radius: 12px; background: var(--color-bg-light, #f4f6f8);
+    border: 1px solid var(--color-surface-border); border-bottom: none; border-radius: 12px 12px 0 0; background: var(--color-bg-light, #f4f6f8);
     cursor: pointer; text-align: left; font-family: var(--font-family); -webkit-tap-highlight-color: transparent;
     transition: background .14s, border-color .14s;
   }
@@ -17394,16 +17395,16 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 
 .news-card-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 13px; }
 .news-act {
-  display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
-  border: 1px solid var(--color-surface-border); background: #fff; color: var(--color-text-light, #475569); cursor: pointer;
-  font-family: var(--font-family); font-size: 0.8rem; font-weight: 550; text-decoration: none !important;
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 13px; border-radius: 999px;
+  border: 1px solid #cdd5e1; background: #fff; color: #334155; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; text-decoration: none !important;
   transition: border-color .14s, color .14s, background .14s; -webkit-tap-highlight-color: transparent;
 }
 .news-act svg { flex: none; }
 /* Clean pill hover — a light tint, NO underline (the anchor default underline
    read as broken). */
 .news-act:hover, .news-act:hover span { text-decoration: none !important; }
-.news-act:hover { border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border)); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 4%, #fff); }
+.news-act:hover { border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-surface-border)); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 5%, #fff); }
 /* AI Insights: neutral pill (like the others) — the FILLED blue sparkle carries
    the AI branding, not a fully-blue button. */
 .news-act-ai .news-ai-spark-filled { flex: none; }
@@ -17723,29 +17724,35 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 /* ── Topic page tabbed "Paths" package (all widths) ──────────────────────────
    A second subnav (tab strip) below the title, a sticky per-tab header, and
    scrolling content. One cohesive package: News + the five AI paths. */
-/* Path controls = a TRUE subnav that matches the topic subnav bar: a soft grey
-   bar holding the paths as SEGMENTS (no chunky boxed buttons); the active
-   segment is a clean white pill. 6-across at ≥900, 3×2 on mobile. Sticky below
-   the title bar; the per-tab header pins below it (offset by --paths-grid-h). */
+/* Path controls = a second tier of the SAME subnav unit — flush under the topic
+   name bar (connected, no gap), a lighter segmented row of tab links (active =
+   clean white pill). 6-across at ≥900, 3×2 on mobile. Sticky below the title
+   bar; a clear gap separates it from the section header below. */
 .topic-tabbed .topic-paths-nav {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px;
-  margin: 6px 0 0; padding: 4px; border-radius: 12px;
-  background: var(--color-bg-light, #f4f6f8); border: 1px solid var(--color-surface-border);
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+  margin: 0 0 16px; padding: 4px; border-radius: 0 0 12px 12px;
+  background: var(--color-bg-light, #f4f6f8);
+  border: 1px solid var(--color-surface-border); border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 60%, transparent);
   position: sticky; top: var(--subnav-height, 49px); z-index: 30;
+}
+/* On mobile the topic name bar lives in the sticky sub-header, so the controls
+   are their own rounded bar (all corners). */
+@media (max-width: 899.98px) {
+  .topic-tabbed .topic-paths-nav { border-radius: 12px; border-top: 1px solid var(--color-surface-border); margin-top: 8px; }
 }
 @media (min-width: 900px) {
   .topic-tabbed .topic-paths-nav { grid-template-columns: repeat(6, 1fr); }
 }
 .ptab {
   display: flex; align-items: center; justify-content: center; text-align: center;
-  padding: 9px 8px; border: none; border-radius: 8px; background: none; cursor: pointer;
-  font-family: var(--font-family); font-size: 0.85rem; font-weight: 550; color: var(--color-text-light, #475569);
+  padding: 8px 8px; border: none; border-radius: 7px; background: none; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.85rem; font-weight: 550; color: var(--color-text-muted, #64748b);
   white-space: nowrap; transition: color .14s ease, background .14s ease, box-shadow .14s ease;
 }
-.ptab:hover { color: var(--color-primary, #14213d); background: rgba(255,255,255,.55); }
+.ptab:hover { color: var(--color-primary, #14213d); background: rgba(255,255,255,.5); }
 .ptab.is-active {
   color: #2563eb; font-weight: 650; background: #fff;
-  box-shadow: 0 1px 2px rgba(15,23,42,.09), 0 0 0 1px rgba(15,23,42,.03);
+  box-shadow: 0 1px 2px rgba(15,23,42,.08);
 }
 
 .topic-tabbed .topic-tab-header {
@@ -17778,8 +17785,10 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 #sub-header .subnav-tabs { display: none !important; }
 
 /* ── Prompts nav dropdown ────────────────────────────────────────────────── */
+/* A taller dropdown with a more considered landing (#410). */
+.aii-nav-dd-prompts .aii-nav-dd-inner { min-height: min(520px, calc(100dvh - var(--nav-h) - 20px)); }
 .prompts-dd { padding: 4px 2px 4px; }
-.prompts-landing { display: flex; flex-direction: column; gap: 10px; padding: 8px 2px 4px; }
+.prompts-landing { display: flex; flex-direction: column; gap: 12px; padding: 22px 2px 8px; }
 /* Cleaner option rows (#389) — lighter, roomier, less boxed-in. */
 .prompts-opt {
   display: flex; align-items: center; gap: 14px; width: 100%; text-align: left;

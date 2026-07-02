@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp432';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260630-revamp433';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp432';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260630-revamp433';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp432';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp432';
-import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp432';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp432';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260630-revamp433';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260630-revamp433';
+import { initPromptModal } from './components/prompt-modal.js?v=20260630-revamp433';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260630-revamp433';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp432';
-import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp432';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp432';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp432';
-import { renderWebSources } from './components/websources.js?v=20260630-revamp432';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp432';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260630-revamp433';
+import { initInsightModal } from './components/insight-modal.js?v=20260630-revamp433';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260630-revamp433';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260630-revamp433';
+import { renderWebSources } from './components/websources.js?v=20260630-revamp433';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260630-revamp433';
 import { initDiscoverModal } from './components/discover-modal.js';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp432';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260630-revamp433';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp432';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260630-revamp433';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -610,7 +610,7 @@ function wirePromptsDropdown(panel) {
 
   const showTopicPrompts = (slug, name) => {
     destroyCtl();
-    setHead(`${name} · Prompts`, 'Ready-made prompts — pick one to expand and copy.');
+    setHead(`${name} Prompts`, 'Ready-made prompts for this topic. Pick one to expand and copy it.');
     // prompts-topic-host → CSS hides the mounted AI component's own chrome so ONLY
     // the clean prompt list shows.
     root.innerHTML = `${backBtn('Prompt Library')}<div class="pb-navdd-host prompts-topic-host" data-pb-host></div>`;
@@ -631,7 +631,7 @@ function wirePromptsDropdown(panel) {
 
 function promptsNavDdCfg() {
   return {
-    key: 'prompts', triggerId: 'nav-prompts',
+    key: 'prompts', triggerId: 'nav-prompts', className: 'aii-nav-dd-prompts',
     title: 'Prompts', ariaLabel: 'Prompts',
     subtitle: 'Build your own or browse the ready-made library.',
     contentHTML: '<div class="prompts-dd" data-prompts-root></div>',
