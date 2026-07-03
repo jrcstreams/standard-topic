@@ -17457,7 +17457,9 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 
 .news-panel[hidden] { display: none !important; }
 .news-panel { margin-top: 13px; border-top: 1px solid var(--color-surface-border); }
-.ni-inner { padding-top: 14px; max-height: 62vh; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; animation: niReveal .22s ease; }
+/* No nested scroll: the AI insight flows inline as part of the news-feed's own
+   scroll, so it reads as one cohesive story (not a scroll-box within a scroll-box). */
+.ni-inner { padding-top: 14px; animation: niReveal .22s ease; }
 @keyframes niReveal { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
 
 /* Brief sections */
@@ -17590,7 +17592,9 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 .aii-nav-dd-inner {
   width: 100%; max-width: 1000px; margin: 0 auto;
   display: flex; flex-direction: column; min-height: 0;
-  padding: 0 1.25rem;
+  /* A little air at the top so the content doesn't ride hard against the nav
+     icons above the dropdown (#img9). */
+  padding: 8px 1.25rem 0;
 }
 .aii-nav-dd-head {
   flex: 0 0 auto;
@@ -17613,7 +17617,7 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 
 /* Bare head (Search) — just a floating close button, no title block; the
    hosted panel provides its own hero. */
-.aii-nav-dd-head-bare { border-bottom: none; padding: 8px 2px 0; display: flex; justify-content: flex-end; }
+.aii-nav-dd-head-bare { border-bottom: none; padding: 10px 2px 0; display: flex; justify-content: flex-end; }
 .aii-nav-dd-search .aii-nav-dd-scroll { padding: 0 2px 22px; }
 .aii-nav-dd-search .search-navdd-host { width: 100%; max-width: 760px; margin: 0 auto; }
 .aii-nav-dd-search .search-panel { width: 100%; }
@@ -17931,9 +17935,11 @@ button.aiidd-vlink { align-self: flex-start; }
     padding: 12px 0.9rem 7px !important; min-height: 0;
   }
   /* Row 1 — hamburger left, brand truly centered (equal 1fr columns flank it). */
-  .sticky-hero-inner .nav-hamburger { grid-area: burger; justify-self: start; margin: 0; }
-  .sticky-hero-inner .sticky-brand { grid-area: brand; justify-self: center; margin: 0; }
-  .sticky-hero-inner .sticky-title { font-size: 1.1rem; letter-spacing: -0.02em; }
+  .sticky-hero-inner .nav-hamburger { grid-area: burger; justify-self: start; align-self: center; margin: 0; }
+  .sticky-hero-inner .sticky-brand { grid-area: brand; justify-self: center; align-self: center; margin: 0; display: flex; align-items: center; }
+  /* line-height:1 so the title's text box has no extra top/bottom slack — it
+     sits truly centered on row 1 (#img6). */
+  .sticky-hero-inner .sticky-title { font-size: 1.1rem; letter-spacing: -0.02em; line-height: 1; }
   /* Row 2 — the nav icons spread evenly, under a faint divider; tightened so the
      icons don't carry so much dead vertical space. */
   .sticky-hero-inner .sticky-actions.navbtns {

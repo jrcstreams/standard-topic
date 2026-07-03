@@ -825,6 +825,22 @@ function closeAllPickers(except) {
   });
 }
 
+// Home reset — used by the site title + the Home nav icon. Navigates home and
+// tears down every open overlay (nav dropdown, modals, topic pickers) so home is
+// always a clean slate (#img10).
+function resetToHome(e) {
+  if (e) e.preventDefault();
+  window.dispatchEvent(new CustomEvent('close-all-modals'));
+  try { closeNavDropdown(); } catch (_) {}
+  try { closeAllPickers(); } catch (_) {}
+  const h = window.location.hash || '';
+  if (h === '#/' || h === '' || h === '#') {
+    try { window.scrollTo(0, 0); } catch (_) {}
+  } else {
+    navigate('#/');
+  }
+}
+
 // Toggle the topic-picker panel's top/bottom scroll fades (host = .tsp-panel).
 function updatePickerFades(picker) {
   const inner = picker.querySelector('.tsp-panel-inner');
@@ -2154,23 +2170,11 @@ function renderStickyHeroBar(container, route) {
   // in the bottom nav) — opens the search modal.
   container.querySelector('#nav-search-mobile')?.addEventListener('click', () => navigate('#/search'));
 
-  // Clicking logo/title always goes home with News Feed active —
-  // even if already on #/, force re-render so mobile tab resets.
-  container.querySelector('#sticky-brand-link')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (window.location.hash === '#/' || window.location.hash === '' || window.location.hash === '#') {
-      // Already on home — force re-render with newsfeed tab
-      ['searchtrends', 'newsfeed', 'trending', 'shortcuts', 'websources', 'related'].forEach(t =>
-        document.body.classList.remove(`active-tab-${t}`));
-      document.body.classList.add('active-tab-newsfeed');
-      document.querySelectorAll('#sub-header .tab-pill').forEach(p => {
-        p.classList.toggle('active', p.dataset.tab === 'newsfeed');
-      });
-      window.scrollTo(0, 0);
-    } else {
-      window.location.hash = '#/';
-    }
-  });
+  // Clicking the logo/title OR the Home icon is a COMPLETE reset — go to the
+  // homepage AND close any open dropdown / modal / topic picker. That's the whole
+  // point of the home affordances (#img10).
+  container.querySelector('#sticky-brand-link')?.addEventListener('click', resetToHome);
+  container.querySelector('#nav-home')?.addEventListener('click', resetToHome);
 
   // Fit the main-bar topic row so the tail topic + "More" never half-clip (#74).
   trimStickyNav();
