@@ -17864,23 +17864,30 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 
 /* ── Prompts nav dropdown ────────────────────────────────────────────────── */
 /* A taller dropdown with a more considered landing (#410). */
-.aii-nav-dd-prompts .aii-nav-dd-inner { min-height: min(520px, calc(100dvh - var(--nav-h) - 20px)); }
+/* Prompts dropdown always runs the full page height — it's the entry to a lot of
+   options (#img51). */
+.aii-nav-dd-prompts .aii-nav-dd-inner { min-height: calc(100dvh - var(--nav-h)); }
 .prompts-dd { padding: 4px 2px 4px; }
-.prompts-landing { display: flex; flex-direction: column; gap: 12px; padding: 22px 2px 8px; }
-/* Cleaner option rows (#389) — lighter, roomier, less boxed-in. */
+/* The two entry options are big BLOCK cards (icon over title, subtext below) that
+   take over the dropdown on landing — side by side when there's room, stacked on
+   phones (#img43). */
+.prompts-landing { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 30px 2px; }
+@media (min-width: 620px) { .prompts-landing { grid-template-columns: 1fr 1fr; } }
 .prompts-opt {
-  display: flex; align-items: center; gap: 14px; width: 100%; text-align: left;
-  padding: 15px 16px; border: 1px solid var(--color-surface-border); border-radius: 13px;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 18px; width: 100%; text-align: left;
+  padding: 26px 24px; min-height: 200px; justify-content: flex-start;
+  border: 1px solid var(--color-surface-border); border-radius: 18px;
   background: #fff; cursor: pointer; transition: border-color .14s ease, box-shadow .14s ease, background .14s ease;
 }
-.prompts-opt:hover { border-color: color-mix(in srgb, #2563eb 40%, var(--color-surface-border)); box-shadow: 0 4px 14px -10px rgba(37,99,235,.3); background: color-mix(in srgb, #2563eb 2.5%, #fff); }
-.prompts-opt-ic { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; background: color-mix(in srgb, #2563eb 9%, #fff); color: #2563eb; }
-.prompts-opt-ic svg { width: 19px; height: 19px; }
-.prompts-opt-tx { flex: 1 1 auto; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.prompts-opt-name { font-size: 0.98rem; font-weight: 650; color: var(--color-primary, #14213d); letter-spacing: -0.01em; }
-.prompts-opt-desc { font-size: 0.84rem; color: var(--color-text-muted, #64748b); line-height: 1.4; }
-.prompts-opt-go { flex: 0 0 auto; color: #cbd5e1; transition: transform .14s ease, color .14s ease; }
-.prompts-opt:hover .prompts-opt-go { color: #2563eb; transform: translateX(3px); }
+.prompts-opt:hover { border-color: color-mix(in srgb, #2563eb 45%, var(--color-surface-border)); box-shadow: 0 10px 26px -14px rgba(37,99,235,.32); background: color-mix(in srgb, #2563eb 2.5%, #fff); }
+.prompts-opt-ic { flex: 0 0 auto; width: 50px; height: 50px; border-radius: 13px; display: grid; place-items: center; background: color-mix(in srgb, #2563eb 10%, #fff); color: #2563eb; }
+.prompts-opt-ic svg { width: 24px; height: 24px; }
+.prompts-opt-tx { flex: 0 1 auto; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.prompts-opt-name { font-size: 1.16rem; font-weight: 700; color: var(--color-primary, #14213d); letter-spacing: -0.015em; }
+.prompts-opt-desc { font-size: 0.9rem; color: var(--color-text-muted, #64748b); line-height: 1.45; }
+/* Arrow sits at the bottom-left of the block. */
+.prompts-opt-go { flex: 0 0 auto; margin-top: auto; color: #93a4c4; transition: transform .14s ease, color .14s ease; }
+.prompts-opt:hover .prompts-opt-go { color: #2563eb; transform: translateX(4px); }
 
 /* Cleaner back control (#390) — a subtle pill. */
 .prompts-back {
@@ -18084,3 +18091,15 @@ body.home-search #section-newsfeed .newsfeed-title-main { font-size: 1.5rem !imp
 .im-sec-aitag svg { color: #1d4ed8 !important; }
 /* Drop the intro subtext in the inline Build-a-Custom-Prompt (#img52/#img53). */
 .pb-inline .wiz-intro { display: none !important; }
+
+/* Web-search category rows are <details> — show a chevron so they clearly read as
+   expandable dropdowns, not plaintext buttons (#img55). */
+.ni-webcat-sum .news-ai-chev { display: block !important; }
+.ni-webcat-sum { gap: 10px; }
+/* Bordered story cards kept a leftover `border-top-color: transparent` on hover
+   from the old row design, which made the top edge look broken when a panel was
+   open (#img54). Keep the full border on hover. */
+.topic-band #section-newsfeed .news-card:hover,
+body.home-search #section-newsfeed .news-card:hover {
+  border-top-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)) !important;
+}
