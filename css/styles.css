@@ -17043,18 +17043,24 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 
 /* ── Shared dropdown panel (revamp389): quiet actions + X, parent "Overview"
    landing, then a clean responsive GRID of subtopics (no rail). ──────────────── */
+/* The picker dropdown hangs FLUSH off the topic-name bar — like the main-nav
+   dropdowns — spanning the bar's full width. No floating gap, no all-round
+   "bubble" corners: square at the top (attached to the bar), rounded only at the
+   bottom (#img8). */
 .tsp-panelwrap {
-  position: absolute; top: calc(100% + 7px); left: 0; right: 0; z-index: 60;
+  position: absolute; top: 100%; left: 0; right: 0; z-index: 60;
   display: grid; grid-template-rows: 0fr;
-  opacity: 0; pointer-events: none; transform: translateY(-5px);
-  transition: grid-template-rows .28s cubic-bezier(.4,0,.2,1), opacity .18s ease, transform .28s cubic-bezier(.4,0,.2,1);
+  opacity: 0; pointer-events: none;
+  transition: grid-template-rows .26s cubic-bezier(.4,0,.2,1), opacity .16s ease;
 }
-.topic-subnav-picker.is-open .tsp-panelwrap { grid-template-rows: 1fr; opacity: 1; pointer-events: auto; transform: translateY(0); }
+.topic-subnav-picker.is-open .tsp-panelwrap { grid-template-rows: 1fr; opacity: 1; pointer-events: auto; }
 .tsp-panel {
-  overflow: hidden; min-height: 0; border: 1px solid var(--color-surface-border); border-radius: 14px;
+  overflow: hidden; min-height: 0;
+  border: 1px solid var(--color-surface-border); border-top: none;
+  border-radius: 0 0 14px 14px;
   background: #fff;
   /* A clean, softly-elevated dropdown — NOT a modal. No page scrim. */
-  box-shadow: 0 14px 30px -18px rgba(15,23,42,.28), 0 4px 10px -6px rgba(15,23,42,.12);
+  box-shadow: 0 20px 34px -20px rgba(15,23,42,.30), 0 6px 12px -8px rgba(15,23,42,.12);
 }
 .tsp-panel-inner {
   padding: 18px 18px 20px; max-height: min(70vh, calc(100dvh - 130px));
@@ -17205,10 +17211,12 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   }
   .tbh-bar .tsp-chev { flex: none; margin-left: auto; width: 20px; height: 20px; color: #64748b; transition: transform .2s ease; }
   .topic-bodyhead.is-open .tbh-bar .tsp-chev { transform: rotate(180deg); }
-  /* Dropdown drops directly below the bar — a left-anchored menu (max ~460px), not
-     a full-width sheet, so it reads as a dropdown rather than a modal. */
-  .topic-bodyhead .tsp-panelwrap { left: 0; right: auto; width: min(460px, 100%); top: calc(100% + 6px); }
-  .topic-bodyhead .tsp-panel-inner { padding: 12px 12px 12px; max-height: min(66vh, calc(100dvh - 160px)); }
+  /* Dropdown hangs FLUSH off the full width of the title bar — a clean attached
+     dropdown like the main-nav ones, not a narrow floating menu (#img2/#img8). */
+  .topic-bodyhead .tsp-panelwrap { left: 0; right: 0; width: auto; top: 100%; }
+  .topic-bodyhead .tsp-panel-inner { padding: 14px 16px 16px; max-height: min(66vh, calc(100dvh - 160px)); }
+  /* Two-column subtopics grid in the wide desktop dropdown. */
+  .topic-bodyhead .tsp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 14px; }
   .topic-bodyhead .tsp-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 2px 12px; }
   .topic-bodyhead .tsp-cell { padding: 0.62rem 0.7rem; }
 }
@@ -17774,39 +17782,47 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 /* ── Topic page tabbed "Paths" package (all widths) ──────────────────────────
    A second subnav (tab strip) below the title, a sticky per-tab header, and
    scrolling content. One cohesive package: News + the five AI paths. */
-/* Path controls = a second tier of the SAME subnav unit — flush under the topic
-   name bar (connected, no gap), a lighter segmented row of tab links (active =
-   clean white pill). 6-across at ≥900, 3×2 on mobile. Sticky below the title
-   bar; a clear gap separates it from the section header below. */
+/* Path controls = the second tier of the SAME subnav unit — a CLEAN underline
+   tab strip that reads as part of the topic-name bar above it, NOT a chunky
+   boxed segmented control. One row at every width: it spreads evenly on desktop
+   and scrolls horizontally on phones. Active = blue label + blue underline.
+   Sticky right below the title bar. (#img1-5) */
 .topic-tabbed .topic-paths-nav {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
-  margin: 0 0 16px; padding: 4px; border-radius: 0 0 12px 12px;
-  background: var(--color-bg-light, #f4f6f8);
-  border: 1px solid var(--color-surface-border); border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 60%, transparent);
+  display: flex; gap: 2px; align-items: stretch;
+  margin: 0 0 4px; padding: 0 2px;
+  background: var(--color-bg, #fff);
+  border: none; border-bottom: 1px solid var(--color-surface-border);
+  border-radius: 0;
   position: sticky; top: var(--subnav-height, 49px); z-index: 30;
+  overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none;
 }
-/* On mobile the topic name bar lives in the sticky sub-header, so the controls
-   are their own rounded bar (all corners). */
+.topic-tabbed .topic-paths-nav::-webkit-scrollbar { display: none; }
+/* Phones: tabs keep their natural width and scroll if they overflow. */
 @media (max-width: 899.98px) {
-  .topic-tabbed .topic-paths-nav { border-radius: 12px; border-top: 1px solid var(--color-surface-border); margin-top: 8px; }
+  .topic-tabbed .topic-paths-nav { margin-top: 0; }
+  .ptab { flex: 0 0 auto; }
 }
+/* Desktop: spread the tabs evenly across the full width. */
 @media (min-width: 900px) {
-  .topic-tabbed .topic-paths-nav { grid-template-columns: repeat(6, 1fr); }
+  .topic-tabbed .topic-paths-nav { overflow: visible; }
+  .ptab { flex: 1 1 0; }
 }
 .ptab {
-  display: flex; align-items: center; justify-content: center; text-align: center;
-  padding: 8px 8px; border: none; border-radius: 7px; background: none; cursor: pointer;
-  font-family: var(--font-family); font-size: 0.85rem; font-weight: 550; color: var(--color-text-muted, #64748b);
-  white-space: nowrap; transition: color .14s ease, background .14s ease, box-shadow .14s ease;
+  display: inline-flex; align-items: center; justify-content: center; text-align: center;
+  padding: 13px 18px; border: none; border-radius: 0; background: none; cursor: pointer;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  font-family: var(--font-family); font-size: 0.9rem; font-weight: 550; color: var(--color-text-muted, #64748b);
+  white-space: nowrap; transition: color .14s ease, border-color .14s ease;
+  -webkit-tap-highlight-color: transparent;
 }
-.ptab:hover { color: var(--color-primary, #14213d); background: rgba(255,255,255,.5); }
+.ptab:hover { color: var(--color-primary, #14213d); background: none; }
 .ptab.is-active {
-  color: #2563eb; font-weight: 650; background: #fff;
-  box-shadow: 0 1px 2px rgba(15,23,42,.08);
+  color: #2563eb; font-weight: 700; background: none; box-shadow: none;
+  border-bottom-color: #2563eb;
 }
 
 .topic-tabbed .topic-tab-header {
-  position: sticky; top: calc(var(--subnav-height, 49px) + var(--paths-grid-h, 96px)); z-index: 25;
+  position: sticky; top: calc(var(--subnav-height, 49px) + var(--paths-grid-h, 48px)); z-index: 25;
   background: var(--color-bg, #fff); padding: 14px 0 13px; margin: 8px 0 0;
   border-bottom: 1.5px solid var(--color-surface-border);
   /* A soft drop shadow so scrolling content reads as clearly beneath the sticky
