@@ -10,8 +10,8 @@ import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './compone
 import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260702-revamp435';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260702-revamp435';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260702-revamp435';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260703-revamp437';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260703-revamp437';
 import { initPromptModal } from './components/prompt-modal.js?v=20260702-revamp435';
 import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260702-revamp435';
 import { fetchTrending } from './utils/trending.js';
@@ -587,7 +587,7 @@ function wirePromptsDropdown(panel) {
     setHead('Build a Custom Prompt', 'Craft a knowledge prompt and send it to your AI model.');
     root.innerHTML = `${backBtn('Prompts')}<div class="pb-navdd-host" data-pb-host></div>`;
     root.querySelector('[data-prompts-back]').addEventListener('click', showLanding);
-    try { renderPromptGenerator(root.querySelector('[data-pb-host]')); } catch (_) {}
+    try { renderPromptGenerator(root.querySelector('[data-pb-host]'), { inline: true }); } catch (_) {}
     fades();
   };
 
@@ -726,7 +726,7 @@ function openPromptBuilderNavDropdown() {
     contentHTML: '<div class="pb-navdd-host" data-pb-host></div>',
     onClose: userClosePromptBuilder,
     wire: (panel) => {
-      renderPromptGenerator(panel.querySelector('[data-pb-host]'));
+      renderPromptGenerator(panel.querySelector('[data-pb-host]'), { inline: true });
       [200, 700, 1500].forEach((d) => setTimeout(updateNavDdFades, d));
     },
   });

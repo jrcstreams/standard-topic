@@ -49,6 +49,43 @@ let modelsData = null;
 let stepDefs = [];
 let containerEl = null;
 
+// ── Inline (dropdown) mode ───────────────────────────────────────────────────
+// When the builder is mounted inside the Prompts nav dropdown, its picker + submit
+// steps render as in-panel "buffer" views (a back-button stack) INSTEAD of the
+// centered, body-level modal overlays used on the full-page builder — so the whole
+// flow stays inside the dropdown. `pbInlineHost` is the dropdown host element;
+// `pbInlineStack` holds the view renderers, with [0] = the card grid (render()).
+let pbInlineHost = null;
+let pbInlineStack = [];
+const PB_BACK_SVG = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
+
+function pbInlineGo(renderFn) { pbInlineStack.push(renderFn); renderFn(); }
+function pbInlineBack() {
+  if (pbInlineStack.length > 1) pbInlineStack.pop();
+  const top = pbInlineStack[pbInlineStack.length - 1];
+  if (top) top();
+}
+// Render the shared buffer chrome (Back + title + body + optional Cancel/Done
+// footer) into the inline host; returns the body element to fill. `onCancel`
+// runs on Back/Cancel (before popping); `onDone` runs on Done (before popping).
+function pbInlineChrome({ title, footer = true, doneLabel = 'Done', onDone, onCancel }) {
+  pbInlineHost.innerHTML = `
+    <div class="pb-inline-view">
+      <button type="button" class="prompts-back pb-inline-back" data-pb-back>${PB_BACK_SVG}<span>Back</span></button>
+      ${title ? `<h2 class="pb-inline-title">${escapeHTML(title)}</h2>` : ''}
+      <div class="pb-inline-body" data-pb-body></div>
+      ${footer ? `<div class="pb-inline-foot">
+        <button type="button" class="pb-inline-ghost" data-pb-cancel>Cancel</button>
+        <button type="button" class="pb-inline-cta" data-pb-done>${escapeHTML(doneLabel)}</button>
+      </div>` : ''}
+    </div>`;
+  const back = () => { if (onCancel) onCancel(); pbInlineBack(); };
+  pbInlineHost.querySelector('[data-pb-back]').addEventListener('click', back);
+  pbInlineHost.querySelector('[data-pb-cancel]')?.addEventListener('click', back);
+  pbInlineHost.querySelector('[data-pb-done]')?.addEventListener('click', () => { if (onDone) onDone(); pbInlineBack(); });
+  return pbInlineHost.querySelector('[data-pb-body]');
+}
+
 // Exposed for the live-preview modal so it can pull the current prompt
 // at open time without depending on hidden DOM.
 export function getAssembledPrompt() {
@@ -70,10 +107,16 @@ function ensureSubnavStepsPresent() {
 
 // ---------- Public entry point ----------
 
-export function renderPromptGenerator(container) {
+export function renderPromptGenerator(container, opts = {}) {
   pgData = getPromptGenData();
   modelsData = getModels();
   containerEl = container;
+
+  // Inline (dropdown) mode: pickers + submit render as in-panel buffer views.
+  pbInlineHost = opts.inline ? container : null;
+  pbInlineStack = opts.inline ? [render] : [];
+  submitInlineEl = null;   // drop any stale inline submit target from a prior mount
+  if (pbInlineHost) container.classList.add('pb-inline');
 
   state.step = 0;
   state.values = {};
@@ -477,6 +520,11 @@ function openPbCardModal(key) {
   const card = PB_CARDS.find(c => c.key === key);
   if (!card) return;
 
+  // Inline (dropdown) mode: render the card config as an in-panel buffer view.
+  // Snapshot ONCE here (not per re-render) so Cancel reverts everything done in
+  // this card session — including changes made in a nested picker.
+  if (pbInlineHost) { const snap = snapshotState(); return pbInlineGo(() => renderCardBuffer(card, snap)); }
+
   // Build the buffer-modal overlay for every card. Different bodies
   // for different cards: topics uses its own chip-list sections that
   // delegate to the existing topic-picker overlay; other cards
@@ -524,6 +572,13 @@ function openPbCardModal(key) {
   overlay.querySelector('.pb-modal-cancel').addEventListener('click', cancel);
   overlay.addEventListener('click', (e) => { if (e.target === overlay) cancel(); });
 
+  fillPbCardBody(card, body);
+}
+
+// Shared per-card body population, used by both the overlay modal (full page) and
+// the inline buffer view (dropdown). Fills `body` with the card's picker fields.
+function fillPbCardBody(card, body) {
+  const key = card.key;
   if (key === 'topics') {
     renderTopicsModalBody(body);
     return;
@@ -557,6 +612,18 @@ function openPbCardModal(key) {
     const extras = body.querySelector(`[data-extras-field="${f}"]`);
     if (extras) renderExtraInputs(extras, f);
   });
+}
+
+// Inline card config buffer (dropdown mode): the same fields as the overlay modal,
+// rendered as an in-panel view with Back/Cancel (revert) and Done (keep). Both
+// return to the card grid via the buffer stack.
+function renderCardBuffer(card, snap) {
+  const body = pbInlineChrome({
+    title: card.label,
+    onCancel: () => restoreState(snap),
+    onDone: () => {},
+  });
+  fillPbCardBody(card, body);
 }
 
 // Topics card buffer modal — two sections (Primary + Secondary)
@@ -649,17 +716,23 @@ function accCheckHTML(isChecked) {
 // reflow after a node swap.
 let accordionPickerEl = null;
 function openAccordionTopicPicker(label, initialSelected, onConfirm) {
-  if (accordionPickerEl) { accordionPickerEl.remove(); accordionPickerEl = null; }
-  accordionPickerEl = document.createElement('div');
-  accordionPickerEl.className = 'pb-modal-overlay pb-accordion-overlay';
-  document.body.appendChild(accordionPickerEl);
+  const inline = !!pbInlineHost;
+  if (!inline && accordionPickerEl) { accordionPickerEl.remove(); accordionPickerEl = null; }
 
   const selected = new Set(initialSelected || []);
   let expandedSlug = null;
   let query = '';
+  // Assigned per mount (inline buffer vs overlay) below.
+  let contentEl, bodyEl, searchInput;
 
-  const close = () => { accordionPickerEl?.remove(); accordionPickerEl = null; };
-  const confirm = () => { onConfirm(Array.from(selected)); close(); };
+  const close = () => {
+    if (inline) { pbInlineBack(); return; }
+    accordionPickerEl?.remove(); accordionPickerEl = null;
+  };
+  const confirm = () => {
+    onConfirm(Array.from(selected));
+    close();
+  };
   const toggle = (name) => {
     const t = (name || '').trim();
     if (!t) return;
@@ -755,37 +828,15 @@ function openAccordionTopicPicker(label, initialSelected, onConfirm) {
     `;
   }
 
-  // Build outer scaffolding ONCE. Search input + chrome stay mounted;
-  // only `.pb-acc-content` is rewritten on each render so the input
-  // never loses focus and the mobile soft-keyboard stays put.
-  accordionPickerEl.innerHTML = `
-    <div class="pb-modal-card pb-accordion-card">
-      <header class="pb-modal-head">
-        <button type="button" class="pb-modal-close" aria-label="Close">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="6" y1="6" x2="18" y2="18"/>
-            <line x1="18" y1="6" x2="6" y2="18"/>
-          </svg>
-        </button>
-        <h2 class="pb-modal-title">${escapeHTML(label)}</h2>
-      </header>
-      <div class="pb-modal-body pb-accordion-body">
-        <div class="pb-acc-search">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="search" class="pb-acc-search-input" placeholder="Search a topic or type your own..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
-        </div>
-        <div class="pb-acc-content"></div>
-      </div>
-      <footer class="pb-modal-foot">
-        <button type="button" class="pb-modal-cancel">Cancel</button>
-        <button type="button" class="pb-modal-done">Done</button>
-      </footer>
+  // Search-bar + content shell, shared by the overlay (full page) and the inline
+  // buffer (dropdown). Only `.pb-acc-content` is rewritten on each render so the
+  // search input keeps focus and the mobile soft-keyboard stays put.
+  const ACC_INNER = `
+    <div class="pb-acc-search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" class="pb-acc-search-input" placeholder="Search a topic or type your own..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
     </div>
-  `;
-
-  const contentEl = accordionPickerEl.querySelector('.pb-acc-content');
-  const bodyEl = accordionPickerEl.querySelector('.pb-modal-body');
-  const searchInput = accordionPickerEl.querySelector('.pb-acc-search-input');
+    <div class="pb-acc-content"></div>`;
 
   function renderContent() {
     // Preserve scroll position across re-renders so toggling an item
@@ -820,34 +871,75 @@ function openAccordionTopicPicker(label, initialSelected, onConfirm) {
     });
   }
 
-  accordionPickerEl.querySelector('.pb-modal-close').addEventListener('click', close);
-  accordionPickerEl.querySelector('.pb-modal-done').addEventListener('click', confirm);
-  accordionPickerEl.querySelector('.pb-modal-cancel').addEventListener('click', close);
-  accordionPickerEl.addEventListener('click', (e) => {
-    if (e.target === accordionPickerEl) close();
-  });
-  searchInput.addEventListener('input', (e) => {
-    query = e.target.value;
-    renderContent();
-  });
-  // Enter adds the current query as a custom topic (no need to
-  // hunt for the "+ Add as custom" CTA).
-  searchInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      const t = (query || '').trim();
-      if (!t) return;
-      if (!selected.has(t)) selected.add(t);
-      query = '';
-      searchInput.value = '';
-      renderContent();
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      close();
+  // Mount the picker — either as a body-level overlay (full page) or as an
+  // in-panel buffer view inside the dropdown (inline). Both share ACC_INNER +
+  // renderContent; only the surrounding chrome + wiring differ.
+  function mountAndWire() {
+    if (inline) {
+      const body = pbInlineChrome({
+        title: label, doneLabel: 'Done',
+        onDone: () => onConfirm(Array.from(selected)),
+        onCancel: () => {},
+      });
+      body.classList.add('pb-accordion-body');
+      body.innerHTML = ACC_INNER;
+      bodyEl = body;
+    } else {
+      accordionPickerEl = document.createElement('div');
+      accordionPickerEl.className = 'pb-modal-overlay pb-accordion-overlay';
+      document.body.appendChild(accordionPickerEl);
+      accordionPickerEl.innerHTML = `
+        <div class="pb-modal-card pb-accordion-card">
+          <header class="pb-modal-head">
+            <button type="button" class="pb-modal-close" aria-label="Close">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="6" y1="6" x2="18" y2="18"/>
+                <line x1="18" y1="6" x2="6" y2="18"/>
+              </svg>
+            </button>
+            <h2 class="pb-modal-title">${escapeHTML(label)}</h2>
+          </header>
+          <div class="pb-modal-body pb-accordion-body">${ACC_INNER}</div>
+          <footer class="pb-modal-foot">
+            <button type="button" class="pb-modal-cancel">Cancel</button>
+            <button type="button" class="pb-modal-done">Done</button>
+          </footer>
+        </div>`;
+      bodyEl = accordionPickerEl.querySelector('.pb-modal-body');
+      accordionPickerEl.querySelector('.pb-modal-close').addEventListener('click', close);
+      accordionPickerEl.querySelector('.pb-modal-done').addEventListener('click', confirm);
+      accordionPickerEl.querySelector('.pb-modal-cancel').addEventListener('click', close);
+      accordionPickerEl.addEventListener('click', (e) => { if (e.target === accordionPickerEl) close(); });
     }
-  });
+    contentEl = bodyEl.querySelector('.pb-acc-content');
+    searchInput = bodyEl.querySelector('.pb-acc-search-input');
+    searchInput.addEventListener('input', (e) => {
+      query = e.target.value;
+      renderContent();
+    });
+    // Enter adds the current query as a custom topic (no need to
+    // hunt for the "+ Add as custom" CTA).
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const t = (query || '').trim();
+        if (!t) return;
+        if (!selected.has(t)) selected.add(t);
+        query = '';
+        searchInput.value = '';
+        renderContent();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        close();
+      }
+    });
+    renderContent();
+  }
 
-  renderContent();
+  // Inline: push onto the buffer stack so Back returns to the topics view, not
+  // the card grid. Overlay: just mount over the page.
+  if (inline) pbInlineGo(mountAndWire);
+  else mountAndWire();
 }
 
 function getFieldLabel(fieldKey) {
@@ -919,6 +1011,11 @@ function render() {
   });
 
   updatePreview();
+
+  // Inline (dropdown) mode: the action bar sits in normal flow at the bottom of
+  // the dropdown content — skip the viewport-fixed placement + footer-dodge that
+  // only make sense on the full-page builder.
+  if (pbInlineHost) return;
 
   // Bump action bar up when footer scrolls into view
   setupFooterDodge();
@@ -1624,21 +1721,22 @@ function populateChipGrid(host, fieldKey) {
 // keystroke. Same checkbox-in-bullet indicator, same navy Done.
 let fieldPickerEl = null;
 function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
-  if (fieldPickerEl) { fieldPickerEl.remove(); fieldPickerEl = null; }
-  fieldPickerEl = document.createElement('div');
-  fieldPickerEl.className = 'pb-modal-overlay pb-accordion-overlay';
-  document.body.appendChild(fieldPickerEl);
+  const inline = !!pbInlineHost;
+  if (!inline && fieldPickerEl) { fieldPickerEl.remove(); fieldPickerEl = null; }
 
   const field = getField(fieldKey);
   const label = field?.label || fieldKey;
   const description = field?.description || '';
 
   let query = '';
+  // Assigned per mount (inline buffer vs overlay) below.
+  let contentEl, bodyEl, searchInput;
 
   // Snapshot state on open so Cancel can revert the toggles + custom
   // additions the user made during this picker session.
   const snap = snapshotState();
   const close = () => {
+    if (inline) { onDone(); pbInlineBack(); return; }
     fieldPickerEl?.remove();
     fieldPickerEl = null;
     onDone();
@@ -1677,8 +1775,7 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
       return;
     }
     query = '';
-    const inputEl = fieldPickerEl.querySelector('.pb-acc-search-input');
-    if (inputEl) inputEl.value = '';
+    if (searchInput) searchInput.value = '';
     renderContent();
   };
 
@@ -1752,40 +1849,15 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
     return html;
   }
 
-  // Build outer scaffolding ONCE. Only `.pb-acc-content` rewrites on
-  // input/toggle so the search input stays mounted and mobile
-  // keyboard doesn't thrash.
-  fieldPickerEl.innerHTML = `
-    <div class="pb-modal-card pb-accordion-card">
-      <header class="pb-modal-head">
-        <button type="button" class="pb-modal-close" aria-label="Close">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="6" y1="6" x2="18" y2="18"/>
-            <line x1="18" y1="6" x2="6" y2="18"/>
-          </svg>
-        </button>
-        <div class="pb-modal-title-block">
-          <h2 class="pb-modal-title">${escapeHTML(label)}</h2>
-          ${description ? `<p class="pb-modal-subtitle">${escapeHTML(description)}</p>` : ''}
-        </div>
-      </header>
-      <div class="pb-modal-body pb-accordion-body">
-        <div class="pb-acc-search">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="search" class="pb-acc-search-input" placeholder="${allowCustom ? 'Search or type to add custom…' : 'Search options…'}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
-        </div>
-        <div class="pb-acc-content"></div>
-      </div>
-      <footer class="pb-modal-foot">
-        <button type="button" class="pb-modal-cancel">Cancel</button>
-        <button type="button" class="pb-modal-done">Done</button>
-      </footer>
+  // Search-bar + content shell, shared by the overlay (full page) and the inline
+  // buffer (dropdown). Only `.pb-acc-content` rewrites on input/toggle so the
+  // search input stays mounted and the mobile keyboard doesn't thrash.
+  const FP_INNER = `
+    <div class="pb-acc-search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" class="pb-acc-search-input" placeholder="${allowCustom ? 'Search or type to add custom…' : 'Search options…'}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
     </div>
-  `;
-
-  const contentEl = fieldPickerEl.querySelector('.pb-acc-content');
-  const bodyEl = fieldPickerEl.querySelector('.pb-modal-body');
-  const searchInput = fieldPickerEl.querySelector('.pb-acc-search-input');
+    <div class="pb-acc-content"></div>`;
 
   function renderContent() {
     const scrollY = bodyEl.scrollTop;
@@ -1811,28 +1883,68 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
     if (addCustomBtn) addCustomBtn.addEventListener('click', addCustomFromInput);
   }
 
-  fieldPickerEl.querySelector('.pb-modal-close').addEventListener('click', cancel);
-  fieldPickerEl.querySelector('.pb-modal-done').addEventListener('click', close);
-  fieldPickerEl.querySelector('.pb-modal-cancel').addEventListener('click', cancel);
-  fieldPickerEl.addEventListener('click', (e) => {
-    if (e.target === fieldPickerEl) cancel();
-  });
-
-  searchInput.addEventListener('input', () => {
-    query = searchInput.value;
-    renderContent();
-  });
-  searchInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addCustomFromInput();
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      close();
+  // Mount as a body-level overlay (full page) or an in-panel buffer (inline).
+  function mountAndWire() {
+    if (inline) {
+      const body = pbInlineChrome({
+        title: label, doneLabel: 'Done',
+        onDone: () => { onDone(); },
+        onCancel: () => { restoreState(snap); onDone(); },
+      });
+      body.classList.add('pb-accordion-body');
+      body.innerHTML = FP_INNER;
+      bodyEl = body;
+    } else {
+      fieldPickerEl = document.createElement('div');
+      fieldPickerEl.className = 'pb-modal-overlay pb-accordion-overlay';
+      document.body.appendChild(fieldPickerEl);
+      fieldPickerEl.innerHTML = `
+        <div class="pb-modal-card pb-accordion-card">
+          <header class="pb-modal-head">
+            <button type="button" class="pb-modal-close" aria-label="Close">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="6" y1="6" x2="18" y2="18"/>
+                <line x1="18" y1="6" x2="6" y2="18"/>
+              </svg>
+            </button>
+            <div class="pb-modal-title-block">
+              <h2 class="pb-modal-title">${escapeHTML(label)}</h2>
+              ${description ? `<p class="pb-modal-subtitle">${escapeHTML(description)}</p>` : ''}
+            </div>
+          </header>
+          <div class="pb-modal-body pb-accordion-body">${FP_INNER}</div>
+          <footer class="pb-modal-foot">
+            <button type="button" class="pb-modal-cancel">Cancel</button>
+            <button type="button" class="pb-modal-done">Done</button>
+          </footer>
+        </div>`;
+      bodyEl = fieldPickerEl.querySelector('.pb-modal-body');
+      fieldPickerEl.querySelector('.pb-modal-close').addEventListener('click', cancel);
+      fieldPickerEl.querySelector('.pb-modal-done').addEventListener('click', close);
+      fieldPickerEl.querySelector('.pb-modal-cancel').addEventListener('click', cancel);
+      fieldPickerEl.addEventListener('click', (e) => { if (e.target === fieldPickerEl) cancel(); });
     }
-  });
+    contentEl = bodyEl.querySelector('.pb-acc-content');
+    searchInput = bodyEl.querySelector('.pb-acc-search-input');
+    searchInput.addEventListener('input', () => {
+      query = searchInput.value;
+      renderContent();
+    });
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        addCustomFromInput();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        close();
+      }
+    });
+    renderContent();
+  }
 
-  renderContent();
+  // Inline: push onto the buffer stack so Back returns to the card view.
+  if (inline) pbInlineGo(mountAndWire);
+  else mountAndWire();
 }
 
 // Shared click handlers — uses EVENT DELEGATION on the host so that
@@ -2000,6 +2112,9 @@ function updateNextEnabled() {
 // so the panel centers itself in the viewport.
 let submitOverlayEl = null;
 let submitPanelEl = null;
+// When set, the Preview/Submit panel renders into this inline element (dropdown
+// buffer view) instead of the centered body-level modal.
+let submitInlineEl = null;
 let submitPositionRaf = null;
 let submitPositionListenersBound = false;
 const SUBMIT_PANEL_PAD = 12;
@@ -2008,7 +2123,15 @@ const SUBMIT_PANEL_MAX = 720;
 // fixed minimum width pushed the panel outside the viewport (left
 // edge negative + right edge past viewport).
 
+// Inline (dropdown) Preview/Submit — renders the same panel as a buffer view.
+function renderSubmitBuffer() {
+  const body = pbInlineChrome({ title: '', footer: false, onCancel: () => { submitInlineEl = null; } });
+  submitInlineEl = body;
+  renderSubmitPanel();
+}
+
 function openPromptSubmitModal() {
+  if (pbInlineHost) { pbInlineGo(renderSubmitBuffer); return; }
   if (!submitOverlayEl) {
     submitOverlayEl = document.createElement('div');
     submitOverlayEl.className = 'prompt-modal-overlay';
@@ -2097,6 +2220,7 @@ function positionSubmitPanel() {
 }
 
 function renderSubmitPanel() {
+  const el = submitInlineEl || submitPanelEl;
   const prompt = (state.editedPrompt ?? assemblePrompt()).trim();
   const models = getModels();
   const isEmpty = !prompt;
@@ -2112,7 +2236,7 @@ function renderSubmitPanel() {
     </button>
   `).join('');
 
-  submitPanelEl.innerHTML = `
+  el.innerHTML = `
     <div class="pm-header">
       <div class="pm-title">
         <span class="pm-title-icon" aria-hidden="true">
@@ -2185,12 +2309,16 @@ function renderSubmitPanel() {
 }
 
 function bindSubmitPanelEvents() {
-  submitPanelEl.querySelector('#wiz-submit-close').addEventListener('click', closeSubmitModal);
+  const el = submitInlineEl || submitPanelEl;
+  // Inline mode has no overlay to tear down — "close"/after-submit just pops the
+  // buffer view back to the builder.
+  const onClose = submitInlineEl ? () => { submitInlineEl = null; pbInlineBack(); } : closeSubmitModal;
+  el.querySelector('#wiz-submit-close').addEventListener('click', onClose);
 
-  submitPanelEl.querySelector('#wiz-submit-copy').addEventListener('click', async (e) => {
+  el.querySelector('#wiz-submit-copy').addEventListener('click', async (e) => {
     e.stopPropagation();
     const text = state.isEditingPrompt
-      ? submitPanelEl.querySelector('#wiz-submit-textarea')?.value ?? ''
+      ? el.querySelector('#wiz-submit-textarea')?.value ?? ''
       : (state.editedPrompt ?? assemblePrompt()).trim();
     // Try the modern async clipboard API first. Falls back to the
     // legacy document.execCommand('copy') flow, which works on
@@ -2231,10 +2359,10 @@ function bindSubmitPanelEvents() {
     setTimeout(() => btn.classList.remove('is-copied'), 1400);
   });
 
-  submitPanelEl.querySelector('#wiz-submit-edit').addEventListener('click', (e) => {
+  el.querySelector('#wiz-submit-edit').addEventListener('click', (e) => {
     e.stopPropagation();
     if (state.isEditingPrompt) {
-      const ta = submitPanelEl.querySelector('#wiz-submit-textarea');
+      const ta = el.querySelector('#wiz-submit-textarea');
       if (ta) state.editedPrompt = ta.value;
       state.isEditingPrompt = false;
     } else {
@@ -2243,7 +2371,7 @@ function bindSubmitPanelEvents() {
     renderSubmitPanel();
   });
 
-  const preview = submitPanelEl.querySelector('#wiz-submit-preview');
+  const preview = el.querySelector('#wiz-submit-preview');
   if (preview) {
     preview.addEventListener('click', () => {
       if (state.isEditingPrompt) return;
@@ -2259,12 +2387,12 @@ function bindSubmitPanelEvents() {
     });
   }
 
-  submitPanelEl.querySelector('#wiz-submit-reset')?.addEventListener('click', () => {
+  el.querySelector('#wiz-submit-reset')?.addEventListener('click', () => {
     state.editedPrompt = null;
     renderSubmitPanel();
   });
 
-  submitPanelEl.querySelector('#wiz-submit-models').addEventListener('click', (e) => {
+  el.querySelector('#wiz-submit-models').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-model-id]');
     if (!btn) return;
     state.modelId = btn.dataset.modelId;
@@ -2272,11 +2400,11 @@ function bindSubmitPanelEvents() {
     renderSubmitPanel();
   });
 
-  submitPanelEl.querySelector('#wiz-submit-go')?.addEventListener('click', async () => {
+  el.querySelector('#wiz-submit-go')?.addEventListener('click', async () => {
     const model = getModelById(state.modelId);
     if (!model) return;
     const finalPrompt = state.isEditingPrompt
-      ? submitPanelEl.querySelector('#wiz-submit-textarea')?.value
+      ? el.querySelector('#wiz-submit-textarea')?.value
       : (state.editedPrompt ?? assemblePrompt());
     track('prompt_builder_submit', {
       model: model.id,
@@ -2284,7 +2412,7 @@ function bindSubmitPanelEvents() {
       length: finalPrompt.trim().length,
     });
     await submitPrompt(model, finalPrompt.trim());
-    closeSubmitModal();
+    onClose();
   });
 
 }

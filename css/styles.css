@@ -17876,6 +17876,39 @@ button.aiidd-vlink { align-self: flex-start; }
 .prompts-topic-host .aii-content--modal { padding: 0 !important; }
 .prompts-topic-host .aii-builder-secs { max-height: none !important; overflow: visible !important; padding: 0 !important; }
 
+/* ═══ Prompt Builder inline in the dropdown (revamp437) ═══════════════════════
+   "Build a Custom Prompt" now runs entirely INSIDE the Prompts dropdown: the
+   card configs, the topic picker, and the Preview/Submit step render as in-panel
+   "buffer" views (Back button → previous view) instead of body-level modals. */
+.pb-inline { display: block; width: 100%; }
+/* Action bar sits in normal flow at the bottom of the dropdown content — undo the
+   full-page builder's viewport-fixed placement + its spacer. */
+.pb-inline .wiz-action-bar { position: static !important; transform: none !important; box-shadow: none; padding: 14px 0 4px; background: none; border: none; }
+.pb-inline .wiz-action-bar-spacer { display: none !important; }
+.pb-inline .wiz-intro { padding-top: 4px; }
+
+/* Buffer view: Back + title + body + Cancel/Done footer. */
+.pb-inline-view { display: flex; flex-direction: column; padding: 4px 2px 6px; }
+.pb-inline-back { align-self: flex-start; }
+.pb-inline-title { margin: 2px 0 12px; font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; letter-spacing: -0.015em; color: var(--color-primary, #14213d); }
+.pb-inline-body { min-width: 0; }
+/* Keep the topic-picker search bar in view while the list scrolls in the dropdown. */
+.pb-inline-body.pb-accordion-body .pb-acc-search { position: sticky; top: 0; z-index: 2; background: #fff; }
+/* The Preview/Submit panel was built for the fixed modal — let it flow + scroll
+   with the dropdown instead. */
+.pb-inline-body .pm-body { max-height: none !important; overflow: visible !important; }
+.pb-inline-body .pm-header { padding-top: 0; }
+
+.pb-inline-foot { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--color-surface-border); }
+.pb-inline-ghost, .pb-inline-cta {
+  font-family: var(--font-family); font-size: 0.88rem; font-weight: 650; cursor: pointer;
+  padding: 9px 18px; border-radius: 10px; transition: background .14s ease, border-color .14s ease, color .14s ease;
+}
+.pb-inline-ghost { border: 1px solid var(--color-surface-border); background: #fff; color: #475569; }
+.pb-inline-ghost:hover { background: var(--color-bg-light, #f4f6f8); color: #26375a; }
+.pb-inline-cta { border: 1px solid #2563eb; background: #2563eb; color: #fff; }
+.pb-inline-cta:hover { background: #1d4ed8; border-color: #1d4ed8; }
+
 /* When any nav dropdown is open, ONLY that button lights — dim the active-page
    pill so you never see two lit at once (#409). */
 .navbtns:has(.navbtn[aria-expanded="true"]) .navbtn.is-active:not([aria-expanded="true"]) {
