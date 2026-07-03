@@ -876,8 +876,10 @@ function renderTrend(d) {
           }
         }
         ctx.sources = data.sources || [];
-        const why = cleanSum ? msecHTML('msec-why', 'Reasoning', secHeadHTML('why', 'Reasoning') + renderBriefBody(cleanSum, null)) : '';
-        const sum = detail ? msecHTML('msec-summary', 'Summary', secHeadHTML('summary', 'Summary') + renderBriefBody(detail, null)) : '';
+        // ONE "Summary" section — the reasoning one-liner (already shown on the
+        // trend card) is folded away; the grounded detail IS the summary.
+        const summaryBody = detail || cleanSum;
+        const sum = summaryBody ? msecHTML('msec-summary', 'Summary', secHeadHTML('summary', 'Summary') + renderBriefBody(summaryBody, null)) : '';
         // Related Searches sits between Summary and Sources.
         const relatedSec = relBody ? msecHTML('msec-related', 'Related Searches', secHeadHTML('related', 'Related Searches') + relBody) : '';
         const cov = coverageListHTML(data.headlines, data.sources, '');
@@ -898,7 +900,7 @@ function renderTrend(d) {
           </div>
         </section>`;
         // All sections in ONE container so :last-child (no border) is the true last.
-        secsBody.innerHTML = why + sum + relatedSec + exploreFurther + covSec; secsBody.classList.add('ai-reveal');
+        secsBody.innerHTML = sum + relatedSec + exploreFurther + covSec; secsBody.classList.add('ai-reveal');
         wireRelatedChips(title);
         wireActions(ctx);   // re-wire the relocated Explore-Further accordions + panels
         buildBriefNav();
