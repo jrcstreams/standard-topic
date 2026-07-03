@@ -840,8 +840,8 @@ export function renderAIIntelligence(container, scope) {
     // External Tools tab, so sections carry only their body.
     let html = list.map((part, i) => {
       const key = aiiSecIconKey(part.name);
-      const body = `<div class="aii-sec-clamp" data-sec-clamp>${renderBriefBody(part.body, null)}</div>
-        <button type="button" class="aii-sec-more" data-sec-more hidden><span class="aii-sec-more-tx">Show more</span><span class="aii-sec-more-chev">${CHEV}</span></button>`;
+      // Show the FULL section text by default — no "Show more" clamp (#img46).
+      const body = `<div class="aii-sec-body">${renderBriefBody(part.body, null)}</div>`;
       return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name) + body);
     }).join('');
     // Sources → an always-open, condensed list at the very bottom of the insight
@@ -849,7 +849,8 @@ export function renderAIIntelligence(container, scope) {
     // inter-section divider (no more double separator).
     const items = builderNewsItems().filter((x) => x.title && x.meta && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(String(x.title).trim()));
     const covRows = items.map((x) => `<a class="im-cov-row" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span><span class="im-cov-host">${esc(x.meta)}</span></span>${EXT}</a>`).join('');
-    if (covRows) html += `<section class="im-msec aii-sources-sec"><div class="im-msec-head aii-sources-head"><span class="im-msec-ic aii-sources-ic">${SOURCES_BADGE}</span><h3 class="im-msec-name aii-sources-title">Sources</h3><span class="aii-sources-count">${items.length}</span></div><div class="im-coverage-list aii-sources-list">${covRows}</div></section>`;
+    // Sources → a COLLAPSED drawer at the bottom (not a long list by default, #img47).
+    if (covRows) html += `<details class="im-msec aii-sources-sec aii-drawer"><summary class="im-msec-head aii-sources-head aii-drawer-sum"><span class="im-msec-ic aii-sources-ic">${SOURCES_BADGE}</span><h3 class="im-msec-name aii-sources-title">Sources</h3><span class="aii-sources-count">${items.length}</span><span class="aii-drawer-chev">${CHEV}</span></summary><div class="im-coverage-list aii-sources-list">${covRows}</div></details>`;
     wrap.innerHTML = html;
     wrap.classList.add('ai-reveal');
     wireSectionClamps();

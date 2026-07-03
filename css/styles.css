@@ -18119,3 +18119,11 @@ body.home-search #section-newsfeed .news-card:hover {
 .trend-exp-explore { display: flex; flex-direction: column; gap: 6px; }
 .trend-exp-explore .ti-accordion { border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; box-shadow: none; }
 .trend-exp-explore .ti-accordion-summary { padding: 12px 13px; }
+
+/* Topic AI-insight Sources → a collapsed drawer (#img47). */
+.aii-drawer { }
+.aii-drawer > .aii-drawer-sum { cursor: pointer; list-style: none; -webkit-tap-highlight-color: transparent; }
+.aii-drawer > .aii-drawer-sum::-webkit-details-marker { display: none; }
+.aii-drawer .aii-sources-count { margin-left: auto; }
+.aii-drawer .aii-drawer-chev { margin-left: 8px; flex: none; color: var(--color-text-muted); transition: transform .2s ease; }
+.aii-drawer[open] .aii-drawer-chev { transform: rotate(180deg); }
