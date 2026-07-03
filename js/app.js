@@ -10,8 +10,8 @@ import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './compone
 import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260703-revamp440';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260703-revamp437';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260703-revamp437';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260703-revamp447';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260703-revamp447';
 import { initPromptModal } from './components/prompt-modal.js?v=20260702-revamp435';
 import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260703-revamp445';
 import { fetchTrending } from './utils/trending.js';

@@ -677,18 +677,35 @@ function renderTopicsModalBody(body) {
       re();
     });
   });
-  // Wire browse — opens the accordion-card topic picker.
+  // Wire browse — opens the accordion topic picker. Inside an expanded card
+  // (accordion mode) it expands INLINE right below the button (nested, no view
+  // swap); otherwise it opens the buffer/overlay picker.
+  const inCard = !!(pbInlineHost && containerEl && containerEl.querySelector('.pb-card.is-expanded'));
   body.querySelectorAll('.pb-topic-browse').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const key = btn.dataset.browse;
       const initial = key === 'primaryTopic' ? getPrimaryTopics() : getSecondaryTopics();
       const label = key === 'primaryTopic' ? 'Add Primary Topics' : 'Add Secondary Topics';
-      openAccordionTopicPicker(label, initial, (values) => {
+      const apply = (values) => {
         state.values[key] = values;
         if (values.length === 0) delete state.values[key];
         re();
-      });
+      };
+      if (inCard) {
+        const section = btn.closest('.pb-modal-section');
+        const existing = section.querySelector('.pb-nested-picker');
+        // Toggle: re-clicking the open one closes it.
+        body.querySelectorAll('.pb-nested-picker').forEach((n) => n.remove());
+        if (existing) return;
+        const nested = document.createElement('div');
+        nested.className = 'pb-nested-picker';
+        section.appendChild(nested);
+        openAccordionTopicPicker(label, initial, apply, { container: nested, onClose: () => re() });
+        requestAnimationFrame(() => { try { nested.scrollIntoView({ block: 'nearest' }); } catch (_) {} });
+      } else {
+        openAccordionTopicPicker(label, initial, apply);
+      }
     });
   });
 }
@@ -715,9 +732,13 @@ function accCheckHTML(isChecked) {
 // focus-jump flash that hits whenever the soft keyboard tries to
 // reflow after a node swap.
 let accordionPickerEl = null;
-function openAccordionTopicPicker(label, initialSelected, onConfirm) {
-  const inline = !!pbInlineHost;
-  if (!inline && accordionPickerEl) { accordionPickerEl.remove(); accordionPickerEl = null; }
+function openAccordionTopicPicker(label, initialSelected, onConfirm, opts) {
+  // Three mounts: opts.container = render INLINE into that element (nested picker
+  // inside an expanded card, #img49); pbInlineHost = a buffer view; else overlay.
+  const nestedEl = opts && opts.container;
+  const inline = !nestedEl && !!pbInlineHost;
+
+  if (!inline && !nestedEl && accordionPickerEl) { accordionPickerEl.remove(); accordionPickerEl = null; }
 
   const selected = new Set(initialSelected || []);
   let expandedSlug = null;
@@ -726,6 +747,7 @@ function openAccordionTopicPicker(label, initialSelected, onConfirm) {
   let contentEl, bodyEl, searchInput;
 
   const close = () => {
+    if (nestedEl) { if (opts && opts.onClose) opts.onClose(); return; }
     if (inline) { pbInlineBack(); return; }
     accordionPickerEl?.remove(); accordionPickerEl = null;
   };
@@ -875,7 +897,13 @@ function openAccordionTopicPicker(label, initialSelected, onConfirm) {
   // in-panel buffer view inside the dropdown (inline). Both share ACC_INNER +
   // renderContent; only the surrounding chrome + wiring differ.
   function mountAndWire() {
-    if (inline) {
+    if (nestedEl) {
+      // Nested inline picker inside an expanded card — no chrome, live Done/Close.
+      nestedEl.classList.add('pb-accordion-body', 'pb-nested-body');
+      nestedEl.innerHTML = `${ACC_INNER}<div class="pb-nested-foot"><button type="button" class="pb-nested-done">Done</button></div>`;
+      bodyEl = nestedEl;
+      nestedEl.querySelector('.pb-nested-done').addEventListener('click', confirm);
+    } else if (inline) {
       const body = pbInlineChrome({
         title: label, doneLabel: 'Done',
         onDone: () => onConfirm(Array.from(selected)),
@@ -936,15 +964,52 @@ function openAccordionTopicPicker(label, initialSelected, onConfirm) {
     renderContent();
   }
 
-  // Inline: push onto the buffer stack so Back returns to the topics view, not
-  // the card grid. Overlay: just mount over the page.
-  if (inline) pbInlineGo(mountAndWire);
+  // Nested: render in place. Inline: push onto the buffer stack. Overlay: mount over the page.
+  if (nestedEl) mountAndWire();
+  else if (inline) pbInlineGo(mountAndWire);
   else mountAndWire();
 }
 
 function getFieldLabel(fieldKey) {
   const field = pgData.fields?.find(f => f.key === fieldKey);
   return field?.label || fieldKey;
+}
+
+// ── Inline card accordion (dropdown builder) ─────────────────────────────────
+// A card expands IN PLACE (accordion) to reveal its picker — no view swap — with
+// a sticky Done/Cancel always in view. Only one card open at a time.
+function collapsePbCard() {
+  if (!containerEl) return;
+  containerEl.querySelectorAll('.pb-card.is-expanded').forEach((el) => {
+    el.classList.remove('is-expanded');
+    el.querySelector('.pb-card-config')?.remove();
+  });
+}
+function expandPbCard(cardEl, key) {
+  const card = PB_CARDS.find((c) => c.key === key);
+  if (!card) return;
+  collapsePbCard();
+  const snap = snapshotState();
+  cardEl.classList.add('is-expanded');
+  const cfg = document.createElement('div');
+  cfg.className = 'pb-card-config';
+  cfg.innerHTML = `
+    <div class="pb-card-config-body" data-cfg-body></div>
+    <div class="pb-card-config-foot">
+      <button type="button" class="pb-cfg-ghost" data-cfg-cancel>Cancel</button>
+      <button type="button" class="pb-cfg-cta" data-cfg-done>Done</button>
+    </div>`;
+  cardEl.appendChild(cfg);
+  // Clicks inside the config must NOT bubble to the card head (which toggles).
+  cfg.addEventListener('click', (e) => e.stopPropagation());
+  fillPbCardBody(card, cfg.querySelector('[data-cfg-body]'));
+  cfg.querySelector('[data-cfg-cancel]').addEventListener('click', () => { restoreState(snap); collapsePbCard(); refreshPbCards(); updatePreview(); updateActionBar(); });
+  cfg.querySelector('[data-cfg-done]').addEventListener('click', () => { collapsePbCard(); refreshPbCards(); updatePreview(); updateActionBar(); });
+  requestAnimationFrame(() => { try { cfg.scrollIntoView({ block: 'nearest' }); } catch (_) {} });
+}
+function togglePbCardInline(cardEl, key) {
+  if (cardEl.classList.contains('is-expanded')) collapsePbCard();
+  else expandPbCard(cardEl, key);
 }
 
 function render() {
@@ -988,10 +1053,13 @@ function render() {
     </div>
   `;
 
-  // Card grid click handlers — each card opens the matching picker
-  // modal (or, for the Topics card, the existing openTopicPicker).
+  // Card grid click handlers — inline (dropdown) mode expands the card in place
+  // as an accordion; full-page mode opens the picker modal.
   containerEl.querySelectorAll('.pb-card').forEach(card => {
-    card.addEventListener('click', () => openPbCardModal(card.dataset.pbCard));
+    card.addEventListener('click', () => {
+      if (pbInlineHost) togglePbCardInline(card, card.dataset.pbCard);
+      else openPbCardModal(card.dataset.pbCard);
+    });
   });
 
   // Open the unified preview+submit modal
@@ -1699,13 +1767,25 @@ function populateChipGrid(host, fieldKey) {
     });
   });
 
-  // Open picker on add button or container click
+  // Open picker on add button or container click. Inside an expanded card
+  // (accordion mode) it expands INLINE right below the field; otherwise it opens
+  // the buffer/overlay picker.
+  const refresh = () => { populateChipGrid(host, fieldKey); updatePreview(); updateActionBar(); };
+  const inCard = !!(pbInlineHost && containerEl && containerEl.querySelector('.pb-card.is-expanded'));
   const openPicker = () => {
-    openFieldPicker(fieldKey, opts, customMap, allowCustom, () => {
-      populateChipGrid(host, fieldKey);
-      updatePreview();
-      updateActionBar();
-    });
+    if (inCard) {
+      const sec = host.closest('.pb-modal-section') || host;
+      const existing = sec.querySelector('.pb-nested-picker');
+      sec.parentElement?.querySelectorAll('.pb-nested-picker').forEach((n) => n.remove());
+      if (existing) return;
+      const nested = document.createElement('div');
+      nested.className = 'pb-nested-picker';
+      sec.appendChild(nested);
+      openFieldPicker(fieldKey, opts, customMap, allowCustom, refresh, { container: nested, onClose: () => { nested.remove(); refresh(); } });
+      requestAnimationFrame(() => { try { nested.scrollIntoView({ block: 'nearest' }); } catch (_) {} });
+    } else {
+      openFieldPicker(fieldKey, opts, customMap, allowCustom, refresh);
+    }
   };
   host.querySelector(`#wiz-field-add-${fieldKey}`)?.addEventListener('click', openPicker);
   host.querySelector(`#wiz-field-chips-${fieldKey}`)?.addEventListener('click', (e) => {
@@ -1720,9 +1800,10 @@ function populateChipGrid(host, fieldKey) {
 // stays mounted and the mobile keyboard doesn't reflow on every
 // keystroke. Same checkbox-in-bullet indicator, same navy Done.
 let fieldPickerEl = null;
-function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
-  const inline = !!pbInlineHost;
-  if (!inline && fieldPickerEl) { fieldPickerEl.remove(); fieldPickerEl = null; }
+function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone, mountOpts) {
+  const nestedEl = mountOpts && mountOpts.container;
+  const inline = !nestedEl && !!pbInlineHost;
+  if (!inline && !nestedEl && fieldPickerEl) { fieldPickerEl.remove(); fieldPickerEl = null; }
 
   const field = getField(fieldKey);
   const label = field?.label || fieldKey;
@@ -1736,6 +1817,7 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
   // additions the user made during this picker session.
   const snap = snapshotState();
   const close = () => {
+    if (nestedEl) { onDone(); if (mountOpts.onClose) mountOpts.onClose(); return; }
     if (inline) { onDone(); pbInlineBack(); return; }
     fieldPickerEl?.remove();
     fieldPickerEl = null;
@@ -1883,9 +1965,15 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
     if (addCustomBtn) addCustomBtn.addEventListener('click', addCustomFromInput);
   }
 
-  // Mount as a body-level overlay (full page) or an in-panel buffer (inline).
+  // Mount as a nested in-card picker, a body-level overlay (full page), or an
+  // in-panel buffer (inline).
   function mountAndWire() {
-    if (inline) {
+    if (nestedEl) {
+      nestedEl.classList.add('pb-accordion-body', 'pb-nested-body');
+      nestedEl.innerHTML = `${FP_INNER}<div class="pb-nested-foot"><button type="button" class="pb-nested-done">Done</button></div>`;
+      bodyEl = nestedEl;
+      nestedEl.querySelector('.pb-nested-done').addEventListener('click', close);
+    } else if (inline) {
       const body = pbInlineChrome({
         title: label, doneLabel: 'Done',
         onDone: () => { onDone(); },
@@ -1942,8 +2030,9 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone) {
     renderContent();
   }
 
-  // Inline: push onto the buffer stack so Back returns to the card view.
-  if (inline) pbInlineGo(mountAndWire);
+  // Nested: render in place. Inline: push onto the buffer stack. Overlay: mount over the page.
+  if (nestedEl) mountAndWire();
+  else if (inline) pbInlineGo(mountAndWire);
   else mountAndWire();
 }
 
