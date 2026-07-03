@@ -43,7 +43,7 @@
   /* Main-nav (sticky hero) height. Desktop 64px; mobile shrinks it (#1) — every
      fixed-layout offset that reserves the nav reads this var instead of a literal
      64px, so the trim cascades correctly. */
-  --nav-h: 64px;
+  --nav-h: 72px;
 }
 @media (max-width: 899.98px) { :root { --nav-h: 54px; } }
 
@@ -296,7 +296,7 @@ body.custom-mode.sticky-always #content {
 
 .sticky-title {
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: white;
   letter-spacing: -0.028em;
@@ -828,15 +828,14 @@ body.custom-mode.sticky-always #content {
    logo image — the menu trigger is the only "pre-title" element. */
 .nav-hamburger {
   display: flex;
-  width: 22px;
-  height: 22px;
-  padding: 3px 1px;
+  width: 24px;
+  height: 18px;
+  padding: 0;
   background: none;
   border: none;
   cursor: pointer;
   flex-direction: column;
-  justify-content: center;
-  gap: 4px;
+  justify-content: space-between;
   flex-shrink: 0;
   opacity: 0.85;
   transition: opacity 0.12s;
@@ -17484,7 +17483,11 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 .ni-sec-head { display: flex; align-items: center; gap: 9px; }
 .ni-sec-ic { flex: none; width: 28px; height: 28px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; background: var(--color-bg-light); color: var(--color-text-muted); }
 .ni-sec-ic svg { width: 16px; height: 16px; }
-.ni-sec-name { margin: 0; font-family: var(--font-display); font-size: 1rem; font-weight: 700; letter-spacing: -0.01em; color: #14213d; }
+/* Lighter section titles — they were reading too heavy (#img33/#img34). */
+.ni-sec-name { margin: 0; font-family: var(--font-display); font-size: 0.92rem; font-weight: 600; letter-spacing: -0.01em; color: #14213d; }
+/* Trend brief section titles were the heaviest — bring them in line. */
+.trend-card-exp .im-msec-name { font-size: 0.95rem !important; font-weight: 600 !important; }
+.trend-card-exp .im-msec-ic { width: 24px !important; height: 24px !important; }
 .ni-aitag-row { margin: 8px 0 10px; }
 .ni-aitag { display: inline-flex; align-items: center; gap: 5px; font-size: 0.7rem; font-weight: 600; color: var(--color-text-muted); background: var(--color-bg-light); border-radius: 6px; padding: 3px 8px; }
 .ni-aitag svg { width: 12px; height: 12px; color: #1d4ed8; }
@@ -18015,7 +18018,7 @@ button.aiidd-vlink { align-self: flex-start; }
   border: none !important; background: none !important; border-radius: 0 !important; box-shadow: none !important;
   cursor: pointer; text-align: left; font-family: var(--font-family); -webkit-tap-highlight-color: transparent;
 }
-.topic-subnav-inner .tsp-btn-lead { display: flex; align-items: center; gap: 0.6rem; min-width: 0; flex: 1 1 auto; }
+.topic-subnav-inner .tsp-btn-lead { display: flex; align-items: center; gap: 0.6rem; min-width: 0; flex: 0 1 auto; }
 .topic-subnav-inner .tsp-btn-ico {
   flex: none; width: 34px; height: 34px; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center;
   background: color-mix(in srgb, #26375a 11%, #fff) !important; color: #26375a !important; box-shadow: none !important;
@@ -18026,19 +18029,52 @@ button.aiidd-vlink { align-self: flex-start; }
   font-size: clamp(1.18rem, 0.95rem + 0.7vw, 1.5rem) !important;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
 }
-.topic-subnav-inner .tsp-btn .tsp-chev { flex: none; margin-left: auto; width: 20px; height: 20px; color: #64748b; }
-/* Row 2 — path tabs: clean underline strip, full width, scrolls on narrow phones. */
+/* Chevron sits right next to the topic name, not shoved to the far right (#img28). */
+.topic-subnav-inner .tsp-btn .tsp-chev { flex: none; margin-left: 0.4rem; width: 20px; height: 20px; color: #64748b; }
+/* Row 2 — path tabs: a clean GRID (no horizontal scroll) — 3×2 on phones, one
+   row of 6 on desktop. Active = a prominent blue pill (#img29). */
 .topic-subnav-inner .topic-paths-nav {
-  display: flex !important; gap: 2px; align-items: stretch; margin: 0 !important; padding: 0 !important;
+  display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 2px 4px;
+  margin: 0 !important; padding: 6px 0 4px !important;
   border: none !important; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 55%, transparent) !important;
   border-radius: 0 !important; background: none !important; position: static !important;
-  overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  overflow: visible !important;
 }
-.topic-subnav-inner .topic-paths-nav::-webkit-scrollbar { display: none; }
-.topic-subnav-inner .ptab { flex: 0 0 auto; }
-@media (min-width: 900px) { .topic-subnav-inner .ptab { flex: 1 1 0; } }
+@media (min-width: 900px) { .topic-subnav-inner .topic-paths-nav { grid-template-columns: repeat(6, 1fr); } }
+.topic-subnav-inner .ptab {
+  flex: none; width: 100%; padding: 9px 8px !important; border: none !important;
+  border-radius: 9px !important; background: none !important;
+  font-size: 0.9rem; font-weight: 550; color: var(--color-text-muted, #64748b);
+}
+.topic-subnav-inner .ptab:hover { color: var(--color-primary, #14213d); background: color-mix(in srgb, #26375a 4%, #fff) !important; }
+.topic-subnav-inner .ptab.is-active {
+  color: #1d4ed8 !important; font-weight: 700 !important;
+  background: color-mix(in srgb, #2563eb 11%, #fff) !important; border-bottom-color: transparent !important;
+}
 /* Picker dropdown — flush off the FULL width of the subnav bar. */
 .topic-subnav-inner .tsp-panelwrap { left: 0 !important; right: 0 !important; width: auto !important; top: 100% !important; }
 @media (min-width: 900px) {
   .topic-subnav-inner .tsp-grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 2px 14px; }
+}
+
+/* ── Desktop (≥900): the unified subnav is ALWAYS visible now (it IS the topic
+   header, not a scroll-in bar). Undo the old hide-by-default + reserve its strip
+   below the main nav so the content clears it (fixes the blank desktop subnav,
+   #img27). ─────────────────────────────────────────────────────────────────── */
+@media (min-width: 900px) {
+  body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-inner) {
+    transform: none !important; opacity: 1 !important; pointer-events: auto !important; transition: none !important;
+  }
+  body.app-mode:not(.home-mode):not(.home-search) #content {
+    top: calc(var(--nav-h) + var(--subnav-height, 104px)) !important;
+    height: calc(100dvh - var(--nav-h) - var(--subnav-height, 104px)) !important;
+  }
+}
+/* Tighten the gap between the subnav and the first content row (#img30). */
+.topic-tabbed .topic-tab-body { padding-top: 8px; }
+/* Phones: keep the 3×2 tab grid compact so it doesn't eat the viewport. */
+@media (max-width: 899.98px) {
+  .topic-subnav-inner .topic-paths-nav { padding: 4px 0 4px !important; gap: 2px; }
+  .topic-subnav-inner .ptab { padding: 7px 6px !important; font-size: 0.82rem; }
+  .topic-subnav-inner .tsp-btn { padding: 0.5rem 0.15rem 0.45rem !important; }
 }
