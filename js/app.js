@@ -2317,7 +2317,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           <a href="#/" class="layout-section home-promo home-promo--topics" id="section-aii-home" data-explore-topics aria-label="Explore all topics">
             <div class="home-promo-inner">
               <div class="home-promo-head"><span class="home-promo-ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span><h3 class="home-promo-title">Explore every topic</h3></div>
-              <p class="home-promo-text">Dedicated topic pages pull together the latest news, curated resources, and AI insights — all in one place.</p>
+              <p class="home-promo-text">Dedicated topic pages pull together the latest news, curated resources, and AI insights.</p>
               <span class="home-promo-btn">
                 Explore topics
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>
