@@ -17079,6 +17079,11 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 }
 .tsp-foot-link svg { flex: none; }
 .tsp-foot-link:hover { background: var(--color-bg-light); color: #26375a; }
+/* "All Topics" reads as a blue CTA callout with a trailing arrow (#img22). */
+.tsp-foot-cta { color: #1d4ed8; font-weight: 700; margin-left: auto; }
+.tsp-foot-cta .tsp-foot-arrow { flex: none; transition: transform .14s ease; }
+.tsp-foot-cta:hover { background: color-mix(in srgb, #2563eb 7%, #fff); color: #1d4ed8; }
+.tsp-foot-cta:hover .tsp-foot-arrow { transform: translateX(3px); }
 /* Parent "Overview" landing row. */
 .tsp-parent-row {
   display: flex; align-items: center; gap: 0.65rem; padding: 0.58rem 0.65rem; border-radius: 11px;
@@ -17448,8 +17453,8 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 .news-card-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 13px; }
 .news-act {
   display: inline-flex; align-items: center; gap: 6px; padding: 6px 13px; border-radius: 999px;
-  border: 1px solid #cdd5e1; background: #fff; color: #334155; cursor: pointer;
-  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; text-decoration: none !important;
+  border: 1px solid #cdd5e1; background: #fff; color: #475569; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 500; text-decoration: none !important;
   transition: border-color .14s, color .14s, background .14s; -webkit-tap-highlight-color: transparent;
 }
 .news-act svg { flex: none; }
@@ -17486,11 +17491,12 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 
 /* Sources + web rows */
 .ni-source-list { display: flex; flex-direction: column; gap: 1px; margin-top: 6px; }
-.ni-source-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 10px; border-radius: 9px; text-decoration: none; color: var(--color-text); transition: background .12s; }
+/* Sources read a touch smaller than the brief body (#img20). */
+.ni-source-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 7px 10px; border-radius: 9px; text-decoration: none; color: var(--color-text); font-size: 0.82rem; line-height: 1.4; transition: background .12s; }
 .ni-source-row:hover { background: var(--color-bg-light); }
 .ni-source-row--orig { color: #1d4ed8; font-weight: 600; }
 .ni-source-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.ni-source-name { font-size: 0.9rem; font-weight: 600; }
+.ni-source-name { font-size: 0.82rem; font-weight: 600; }
 .ni-source-desc { font-size: 0.78rem; color: var(--color-text-muted); }
 .ni-source-row > svg { flex: none; color: var(--color-text-light); }
 
@@ -17505,6 +17511,8 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 
 /* Loader + fail */
 .ni-loader { display: flex; flex-direction: column; gap: 9px; padding: 4px 0 8px; }
+/* Spark + "Generating insights…" share ONE line (#img19). */
+.ni-loader-head { display: flex; align-items: center; gap: 7px; }
 .ni-loader-tx { font-size: 0.85rem; color: var(--color-text-muted); font-weight: 600; }
 .ni-spark { color: #1d4ed8; display: inline-flex; }
 .ni-skel { height: 12px; border-radius: 5px; background: linear-gradient(90deg, #eef1f6, #f6f8fb, #eef1f6); background-size: 200% 100%; animation: niShimmer 1.2s infinite; }
@@ -17643,6 +17651,13 @@ body.home-search #section-newsfeed .news-list { gap: 0 !important; }
 .aii-nav-dd-subbar .tlm-controlbar { margin: 0; }
 /* Left-align the "Trend summaries are AI-generated" legend in the dropdown (#431). */
 .aii-nav-dd-subbar .tlm-controlbar-inner { justify-content: flex-start; }
+/* Trending dropdown: fold the AI-generated legend UP into the sticky header (no
+   divider between the title block and the legend), then a STRONGER separator
+   before the trend list (#img23/#img24). */
+.aii-nav-dd-trending .aii-nav-dd-head { border-bottom: none; padding-bottom: 6px; }
+.aii-nav-dd-trending .aii-nav-dd-subbar {
+  padding: 4px 2px 12px; border-bottom: 2px solid var(--color-surface-border); margin-bottom: 2px;
+}
 
 .aii-nav-dd-scrollwrap { position: relative; flex: 1 1 auto; min-height: 0; }
 .aii-nav-dd-scroll {
@@ -17901,6 +17916,11 @@ button.aiidd-vlink { align-self: flex-start; }
    card configs, the topic picker, and the Preview/Submit step render as in-panel
    "buffer" views (Back button → previous view) instead of body-level modals. */
 .pb-inline { display: block; width: 100%; }
+/* Left-align the inline builder with the dropdown's Back button (it was centered
+   in an 820px column, so it read as indented, #img26). */
+.pb-navdd-host.pb-inline { max-width: none !important; margin: 0 !important; }
+.pb-inline .wiz-two-panel, .pb-inline .wiz-fields, .pb-inline .wiz-intro { max-width: none; margin-left: 0; margin-right: 0; text-align: left; }
+.pb-inline .wiz-intro-text { text-align: left; }
 /* Action bar sits in normal flow at the bottom of the dropdown content — undo the
    full-page builder's viewport-fixed placement + its spacer. */
 .pb-inline .wiz-action-bar { position: static !important; transform: none !important; box-shadow: none; padding: 14px 0 4px; background: none; border: none; }
@@ -17970,4 +17990,52 @@ button.aiidd-vlink { align-self: flex-start; }
   /* Redundant single-purpose mobile bits are folded into the icon row now. */
   .sticky-hero-inner .nav-search-mobile { display: none !important; }
   .sticky-hero-inner .sticky-page-name { display: none !important; }
+}
+
+/* ═══ Unified topic subnav (revamp440) ═══════════════════════════════════════
+   The topic-name picker bar + the path tabs are ONE clean sticky subnav inside
+   the fixed #sub-header, at EVERY width — a real subnav under the main nav, not
+   a boxed section floating in the body. Content scrolls beneath it. ══════════ */
+#sub-header.is-subnav:has(.topic-subnav-inner) {
+  background: #fff; border-bottom: 1px solid var(--color-surface-border);
+  box-shadow: 0 3px 10px -7px rgba(15, 26, 46, 0.16); overflow: visible;
+}
+.topic-subnav-inner {
+  max-width: var(--max-width, 1280px); margin: 0 auto;
+  padding: 0 clamp(1rem, 3vw, 2rem); display: flex; flex-direction: column;
+}
+/* Row 1 — topic-name picker button (full width; the dropdown drops off it). */
+.topic-subnav-inner .topic-subnav-picker { position: relative; display: block; width: 100%; }
+.topic-subnav-inner .tsp-btn {
+  display: flex !important; align-items: center; gap: 0.6rem; width: 100%;
+  padding: 0.6rem 0.15rem 0.55rem !important; margin: 0 !important;
+  border: none !important; background: none !important; border-radius: 0 !important; box-shadow: none !important;
+  cursor: pointer; text-align: left; font-family: var(--font-family); -webkit-tap-highlight-color: transparent;
+}
+.topic-subnav-inner .tsp-btn-lead { display: flex; align-items: center; gap: 0.6rem; min-width: 0; flex: 1 1 auto; }
+.topic-subnav-inner .tsp-btn-ico {
+  flex: none; width: 34px; height: 34px; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, #26375a 11%, #fff) !important; color: #26375a !important; box-shadow: none !important;
+}
+.topic-subnav-inner .tsp-btn-ico .tsp-ic-svg { width: 19px !important; height: 19px !important; }
+.topic-subnav-inner .tsp-btn-name {
+  font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; color: #26375a !important;
+  font-size: clamp(1.18rem, 0.95rem + 0.7vw, 1.5rem) !important;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+}
+.topic-subnav-inner .tsp-btn .tsp-chev { flex: none; margin-left: auto; width: 20px; height: 20px; color: #64748b; }
+/* Row 2 — path tabs: clean underline strip, full width, scrolls on narrow phones. */
+.topic-subnav-inner .topic-paths-nav {
+  display: flex !important; gap: 2px; align-items: stretch; margin: 0 !important; padding: 0 !important;
+  border: none !important; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 55%, transparent) !important;
+  border-radius: 0 !important; background: none !important; position: static !important;
+  overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.topic-subnav-inner .topic-paths-nav::-webkit-scrollbar { display: none; }
+.topic-subnav-inner .ptab { flex: 0 0 auto; }
+@media (min-width: 900px) { .topic-subnav-inner .ptab { flex: 1 1 0; } }
+/* Picker dropdown — flush off the FULL width of the subnav bar. */
+.topic-subnav-inner .tsp-panelwrap { left: 0 !important; right: 0 !important; width: auto !important; top: 100% !important; }
+@media (min-width: 900px) {
+  .topic-subnav-inner .tsp-grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 2px 14px; }
 }

@@ -492,7 +492,7 @@ function niWebHTML(term) {
   }).join('')}</div>`;
 }
 function niLoaderHTML() {
-  return `<div class="ni-loader"><span class="ni-spark">${AI_SPARK_SVG}</span><span class="ni-loader-tx">Generating insights…</span><span class="ni-skel"></span><span class="ni-skel"></span><span class="ni-skel ni-skel-short"></span></div>`;
+  return `<div class="ni-loader"><div class="ni-loader-head"><span class="ni-spark">${AI_SPARK_SVG}</span><span class="ni-loader-tx">Generating insights…</span></div><span class="ni-skel"></span><span class="ni-skel"></span><span class="ni-skel ni-skel-short"></span></div>`;
 }
 function niFailHTML() {
   return `<div class="ni-fail"><p>AI insights unavailable right now.</p><button type="button" class="ni-retry" data-ni-retry>Try again</button></div>`;

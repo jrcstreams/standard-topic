@@ -7,7 +7,7 @@ import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
 import { getTopicDescription } from './utils/topic-descriptions.js?v=20260702-revamp435';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260702-revamp435';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260703-revamp440';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js?v=20260703-revamp437';
@@ -253,7 +253,7 @@ function topicPickerPanelHTML(topic, panelId) {
           ${family.length ? `<div class="tsp-grid">${family.map(cellHTML).join('')}</div>` : ''}
           <div class="tsp-foot">
             <a href="#/" class="tsp-foot-link" data-tsp-home>${HOME_IC}<span>Home</span></a>
-            <a href="#" class="tsp-foot-link" data-tsp-all>${GRID_IC}<span>All Topics</span></a>
+            <a href="#" class="tsp-foot-link tsp-foot-cta" data-tsp-all>${GRID_IC}<span>All Topics</span><svg class="tsp-foot-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></a>
           </div>
         </div>
       </div>
@@ -301,7 +301,7 @@ function homeSubnavPickerHTML() {
           <div class="tsp-panel-inner">
             <div class="tsp-grid">${featured.map(cellHTML).join('')}</div>
             <div class="tsp-foot">
-              <a href="#" class="tsp-foot-link" data-tsp-all>${GRID_IC}<span>All Topics</span></a>
+              <a href="#" class="tsp-foot-link tsp-foot-cta" data-tsp-all>${GRID_IC}<span>All Topics</span><svg class="tsp-foot-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
         </div>
@@ -754,19 +754,11 @@ const TOPIC_PATH_TABS = [
 // that single group), sets the sticky per-tab header, and drives the deep-links
 // from the AI Insights nav dropdown.
 function wireTopicPathTabs(container, topic, descriptions, icons) {
-  const nav = container.querySelector('#topic-paths-nav');
-  const header = container.querySelector('#topic-tab-header');
+  // The path tabs live in the fixed #sub-header now; the content lives in the body.
+  const nav = document.getElementById('topic-paths-nav');
   const body = container.querySelector('#topic-tab-body');
-  if (!nav || !header || !body) return;
+  if (!nav || !body) return;
   let active = null; let ctl = null;
-
-  // The grid + header both stick; the header pins BELOW the grid, so publish the
-  // grid's measured height as --paths-grid-h for the header's sticky offset.
-  const layout = container.querySelector('#topic-layout') || container;
-  const syncGridH = () => { const h = nav.offsetHeight; if (h > 0) layout.style.setProperty('--paths-grid-h', h + 'px'); };
-  requestAnimationFrame(syncGridH);
-  if (typeof ResizeObserver !== 'undefined') { try { new ResizeObserver(syncGridH).observe(nav); } catch (_) {} }
-  window.addEventListener('resize', syncGridH, { passive: true });
 
   const destroyCtl = () => { if (ctl && ctl.destroy) { try { ctl.destroy(); } catch (_) {} } ctl = null; };
   const renderContent = (key) => {
@@ -800,7 +792,6 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
       b.classList.toggle('is-active', on);
       b.setAttribute('aria-selected', String(on));
     });
-    header.innerHTML = `<h2 class="topic-tab-title">${escapeHTML(meta.label)}</h2>`;
     renderContent(key);
     requestAnimationFrame(() => { try { window.scrollTo({ top: 0 }); } catch (_) {} });
   };
@@ -1037,45 +1028,21 @@ function renderLayout(route) {
 
     const topic = getTopicBySlug(route.slug);
     if (!topic) return;
-    const related = getRelatedTopics(topic);
-    const relatedLinksHTML = related.map(t =>
-      `<a href="#/topic/${t.slug}" class="subnav-topic-link">${escapeHTML(t.name)}</a>`
-    ).join('');
-    const topicDesc = getTopicDescription(topic.slug);
-    // Mobile/tabular renders this markup as a hero (icon + big title +
-    // one-sentence description + Related chips + section tabs); desktop styles it
-    // as the compact identity line (title + chips). The hero icon, description,
-    // and inline tabs are mobile-only (CSS).
+    // The topic subnav is ONE cohesive sticky unit at every width (revamp440):
+    // the topic-name picker bar on top, then the path tabs (News · Catch Up · …)
+    // directly below it — both living in the fixed #sub-header so they read as a
+    // true subnav under the main nav (not a boxed section floating in the body).
     subHeader.innerHTML = `
-      <div class="topic-banner">
-        <div class="topic-banner-row">
-          <span class="topic-hero-ico" aria-hidden="true">${topicIconSVG(topic.icon || 'globe', 'topic-hero-ico-svg')}</span>
-          ${titleGroup(topic.icon || 'globe', topic.name, 'Topic')}
-          ${topicDesc ? `<p class="topic-banner-desc">${escapeHTML(topicDesc)}</p>` : ''}
-          ${related.length > 0 ? `
-            <div class="topic-hero-related">
-              <span class="subnav-lead-label" aria-hidden="true">Related</span>
-              <div class="subnav-topics-inline">
-                ${relatedLinksHTML}
-              </div>
-            </div>
-          ` : ''}
-          ${subnavPickerHTML(topic)}
-          <nav class="subnav-tabs" aria-label="Section navigation">
-            <button type="button" class="tab-pill tab-pill-newsfeed" data-tab="newsfeed">News Feed</button>
-            <button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">AI Insights</button>
-            <button type="button" class="tab-pill tab-pill-websources" data-tab="websources">Web Search</button>
-          </nav>
-        </div>
+      <div class="topic-subnav-inner">
+        ${subnavPickerHTML(topic)}
+        <nav class="topic-paths-nav" role="tablist" id="topic-paths-nav" aria-label="Topic sections">
+          ${TOPIC_PATH_TABS.map((t, i) => `<button type="button" class="ptab${i === 0 ? ' is-active' : ''}" role="tab" data-ptab="${escapeAttr(t.key)}" aria-selected="${i === 0 ? 'true' : 'false'}">${escapeHTML(t.label)}</button>`).join('')}
+        </nav>
       </div>
     `;
 
     observeSubnavHeight();
-    trimOverflowLinks();
     setupResponsiveNav();
-    wireChipStripScrollEnd();
-    wireSubnavCompactMeasure();
-    wireTopicHeroCondense();
     wireSubnavPicker(subHeader);
   }
 
@@ -2357,12 +2324,12 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               </span>
             </div>
           </a>
-          <a href="#/prompt-generator" class="home-promo" aria-label="Open the Prompt Builder">
+          <a href="#/prompt-generator" class="home-promo" data-explore-prompts aria-label="Explore prompts">
             <div class="home-promo-inner">
-              <div class="home-promo-head"><span class="home-promo-ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2 2.6-2.6z"/></svg></span><h3 class="home-promo-title">Smarter prompts, better answers.</h3></div>
-              <p class="home-promo-text">Turn any topic into a well crafted ready-to-run prompt.</p>
+              <div class="home-promo-head"><span class="home-promo-ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2 2.6-2.6z"/></svg></span><h3 class="home-promo-title">Ready-to-run AI prompts.</h3></div>
+              <p class="home-promo-text">Browse the ready-made prompt library or build your own custom prompt for any topic.</p>
               <span class="home-promo-btn">
-                Open Prompt Builder
+                Explore prompts
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>
               </span>
             </div>
@@ -2385,24 +2352,28 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       e.preventDefault();
       window.dispatchEvent(new CustomEvent('open-all-topics-modal'));
     });
+    // Prompts promo (#img15) — opens the Prompts dropdown (Build a Custom Prompt +
+    // Prompt Library) rather than jumping straight to the builder.
+    container.querySelector('[data-explore-prompts]')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      openPromptsNavDropdown();
+    });
   } else if (topic && !isCustom) {
     // Topic pages: ONE cohesive tabbed "Paths" package at every width. A second
     // subnav (tab strip) below the title — News · Catch Up · Deep Dive · 101 Info
     // · Web Search · Prompts — with a sticky per-tab body header + scrolling
     // content. News is the default tab.
+    // The topic-name bar + path tabs live in the fixed #sub-header now (built in
+    // renderSubHeader) — the body is JUST the active tab's content, which scrolls
+    // under the sticky subnav. No per-tab section title (the active tab already
+    // names the section, #img14).
     container.innerHTML = `
       <div class="topic-layout topic-band topic-tabbed" id="topic-layout">
-        ${topicBodyHeadHTML(topic)}
-        <div class="topic-paths-nav" role="tablist" id="topic-paths-nav">
-          ${TOPIC_PATH_TABS.map((t, i) => `<button type="button" class="ptab${i === 0 ? ' is-active' : ''}" role="tab" data-ptab="${t.key}" aria-selected="${i === 0 ? 'true' : 'false'}">${escapeHTML(t.label)}</button>`).join('')}
-        </div>
         <div class="topic-tabpanel" role="tabpanel">
-          <div class="topic-tab-header" id="topic-tab-header"></div>
           <div class="topic-tab-body layout-section" id="topic-tab-body"></div>
         </div>
       </div>
     `;
-    wireSubnavPicker(container); wireSubtopicsMore(container);
     const descriptions = {}; const icons = {};
     try { (getShortcutsForTopic(topic.slug) || []).forEach((s) => { if (s && s.name) { descriptions[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } }); } catch (_) {}
     wireTopicPathTabs(container, topic, descriptions, icons);
