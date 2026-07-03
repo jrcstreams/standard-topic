@@ -2343,7 +2343,16 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         ${bodyTabsRow({ showSearchTrends: true, showShortcuts: false })}
         <div class="home-cards">
           <div class="home-search-hero" id="home-search-hero"></div>
-          <section class="layout-section" id="section-aii-home"></section>
+          <a href="#/" class="layout-section home-promo home-promo--topics" id="section-aii-home" data-explore-topics aria-label="Explore all topics">
+            <div class="home-promo-inner">
+              <div class="home-promo-head"><span class="home-promo-ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span><h3 class="home-promo-title">Explore every topic</h3></div>
+              <p class="home-promo-text">Dedicated topic pages pull together the latest news, curated resources, and AI insights — all in one place.</p>
+              <span class="home-promo-btn">
+                Explore topics
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>
+              </span>
+            </div>
+          </a>
           <a href="#/prompt-generator" class="home-promo" aria-label="Open the Prompt Builder">
             <div class="home-promo-inner">
               <div class="home-promo-head"><span class="home-promo-ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2 2.6-2.6z"/></svg></span><h3 class="home-promo-title">Smarter prompts, better answers.</h3></div>
@@ -2366,12 +2375,12 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });
     // Trending is now the only sidebar card, so it can run much longer.
     renderTrendingHome(container.querySelector('#home-trending'), { limit: 14 });
-    const aiiHome = container.querySelector('#section-aii-home');
-    if (aiiHome) {
-      const homeDesc = {}; const homeIcons = {};
-      try { (getShortcutsForTopic('home') || []).forEach((s) => { if (s && s.name) { homeDesc[s.name] = s.description || ''; homeIcons[s.name] = s.icon || ''; } }); } catch (_) {}
-      renderAIIntelligence(aiiHome, { topic: 'home', label: "today's world", descriptions: homeDesc, icons: homeIcons, hideGroups: ['topic-specific'], topicKey: 'home' });
-    }
+    // The Topics promo card (replaces the home AI Insights card, #424) — opens the
+    // full All-Topics dropdown so visitors can jump into a dedicated topic page.
+    container.querySelector('[data-explore-topics]')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent('open-all-topics-modal'));
+    });
   } else if (topic && !isCustom) {
     // Topic pages: ONE cohesive tabbed "Paths" package at every width. A second
     // subnav (tab strip) below the title — News · Catch Up · Deep Dive · 101 Info
