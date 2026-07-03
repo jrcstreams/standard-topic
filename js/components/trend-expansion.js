@@ -44,7 +44,7 @@ function webExploreHTML(term) {
     const heading = cat.label ? `<li class="ti-subhead" aria-hidden="true">${escapeHTML(cat.label)}</li>` : '';
     return `<ul class="ti-item-list ti-item-list-grouped">${heading}${items.map((s) => webSourceItem(s, term)).join('')}</ul>`;
   }).join('');
-  return renderTIAccordion({ key: 'websources', label: 'Web Search', open: false, bodyHTML: `<div class="ti-source-groups">${groupsHTML}</div>` });
+  return renderTIAccordion({ key: 'websources', label: 'Web Search', open: false, blurb: '', bodyHTML: `<div class="ti-source-groups">${groupsHTML}</div>` });
 }
 
 // AI Explore: each AI model opened with the trend term as its prompt.
@@ -58,7 +58,7 @@ function aiExploreHTML(term) {
   const models = getModels() || [];
   if (!models.length) return '';
   const list = `<ul class="ti-item-list">${models.map((m) => aiModelItem(m, term)).join('')}</ul>`;
-  return renderTIAccordion({ key: 'discover', label: 'External AI Model Insights', open: false, bodyHTML: list });
+  return renderTIAccordion({ key: 'discover', label: 'Explore with External AI Models', open: false, blurb: '', bodyHTML: list });
 }
 
 // ── Rich brief layout (matches the retired trend detail modal) ───────────────
@@ -139,11 +139,22 @@ export function renderTrendExpansionBody(term, brief) {
       if (!rest) break; detail = rest;
     }
   }
+  // ONE "Summary" section — the reasoning one-liner (already shown on the trend
+  // card above) is folded away; the grounded detail IS the summary (#img36/#img37).
+  const summaryBody = detail || why;
   const secs = [];
-  if (why) secs.push(`<section class="im-msec">${teSecHead('why', 'Reasoning', true)}${renderBriefBody(why, null)}</section>`);
-  if (detail) secs.push(`<section class="im-msec">${teSecHead('summary', 'Summary', true)}${renderBriefBody(detail, null)}</section>`);
-  secs.push(`<section class="im-msec">${teSecHead('matters', 'Explore Further', false)}<div class="trend-exp-explore">${aiExploreHTML(term)}${webExploreHTML(term)}</div></section>`);
+  if (summaryBody) secs.push(`<section class="im-msec">${teSecHead('summary', 'Summary', true)}${renderBriefBody(summaryBody, null)}</section>`);
+  // Explore Further — a collapsed drawer (its two options stay hidden until opened).
+  secs.push(teDrawerHTML('matters', 'Explore Further', `<div class="trend-exp-explore">${aiExploreHTML(term)}${webExploreHTML(term)}</div>`));
+  // Sources — a collapsed drawer too (not a long list by default).
   const src = teSourcesHTML(b.headlines, b.sources);
-  if (src) secs.push(`<section class="im-msec">${teSecHead('sources', 'Sources', false)}${src}</section>`);
+  if (src) secs.push(teDrawerHTML('sources', 'Sources', src));
   return `<div class="trend-exp im-secs">${secs.join('')}</div>`;
+}
+
+// A clean collapsible drawer (Explore Further / Sources) — icon + title + chevron
+// summary, collapsed by default, matching the news/topic AI-insight drawers.
+const TE_DRAWER_CHEV = '<svg class="te-drawer-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+function teDrawerHTML(iconKey, label, bodyHTML) {
+  return `<details class="te-drawer"><summary class="te-drawer-sum"><span class="te-drawer-ic">${TE_SEC_ICON[iconKey] || TE_SEC_ICON.summary}</span><span class="te-drawer-title">${escapeHTML(label)}</span>${TE_DRAWER_CHEV}</summary><div class="te-drawer-body">${bodyHTML}</div></details>`;
 }

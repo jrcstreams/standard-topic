@@ -18103,3 +18103,19 @@ body.home-search #section-newsfeed .newsfeed-title-main { font-size: 1.5rem !imp
 body.home-search #section-newsfeed .news-card:hover {
   border-top-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)) !important;
 }
+
+/* ═══ Trend / AI-insight drawers (revamp445) — Explore Further + Sources are now
+   collapsible drawers; combined single Summary above them. ═══════════════════ */
+.te-drawer { border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 75%, transparent); }
+.te-drawer-sum { display: flex; align-items: center; gap: 10px; padding: 15px 2px; cursor: pointer; list-style: none; -webkit-tap-highlight-color: transparent; }
+.te-drawer-sum::-webkit-details-marker { display: none; }
+.te-drawer-ic { flex: none; width: 26px; height: 26px; border-radius: 7px; display: inline-flex; align-items: center; justify-content: center; background: #f1f3f7; color: var(--color-primary); }
+.te-drawer-ic svg { width: 15px; height: 15px; }
+.te-drawer-title { flex: 1 1 auto; font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em; color: var(--color-primary); }
+.te-drawer-chev { flex: none; color: var(--color-text-muted); transition: transform .2s ease; }
+.te-drawer[open] .te-drawer-chev { transform: rotate(180deg); }
+.te-drawer-body { padding: 0 0 14px; }
+/* The two options inside Explore Further: clean light accordions, not heavy cards. */
+.trend-exp-explore { display: flex; flex-direction: column; gap: 6px; }
+.trend-exp-explore .ti-accordion { border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; box-shadow: none; }
+.trend-exp-explore .ti-accordion-summary { padding: 12px 13px; }

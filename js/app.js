@@ -13,7 +13,7 @@ import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js?v=20260703-revamp437';
 import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260703-revamp437';
 import { initPromptModal } from './components/prompt-modal.js?v=20260702-revamp435';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260702-revamp435';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260703-revamp445';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260702-revamp435';
