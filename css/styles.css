@@ -296,7 +296,7 @@ body.custom-mode.sticky-always #content {
 
 .sticky-title {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 600;
   color: white;
   letter-spacing: -0.028em;
@@ -13903,22 +13903,29 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
 
 /* Homepage trend inline expansion (Phase 5) — the clicked card grows to a full
    grid row and drops its grounded brief in place; no modal. */
-.trend-card.is-expanded { grid-column: 1 / -1; }
-.trend-card.is-expanded .trend-card-open { transform: rotate(90deg); transition: transform .18s ease; }
-/* The trend brief flows inline right off the trend — a hairline separator, then
-   clean content — NOT a detached boxed card (#img18/#img25), matching how the
-   news-story AI insight expands. */
+/* An expanded trend becomes a bounded CONTAINER (soft surface + border) so the
+   trend + its brief read as one clearly-delimited group — you can tell where it
+   starts and ends, and where the next trend begins (#img74). */
+.trend-card.is-expanded {
+  grid-column: 1 / -1; position: relative;
+  background: #f7f9fc; border: 1px solid var(--color-surface-border); border-radius: 14px;
+  padding: 4px 14px 12px; margin: 4px 0;
+}
+/* The X closes it, so hide the header's expand arrow while open. */
+.trend-card.is-expanded .trend-card-open { display: none; }
+/* Inside the container the brief flows off the trend with a hairline separator. */
 .trend-card-exp {
-  margin-top: 12px; padding: 14px 2px 6px; position: relative;
+  margin-top: 10px; padding: 14px 2px 4px;
   border: none; border-radius: 0; background: none;
   border-top: 1px solid var(--color-surface-border);
   animation: trendExpIn .2s ease;
 }
 @keyframes trendExpIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+/* Close X pinned to the container's top-right, aligned with the trend header. */
 .trend-exp-close {
-  position: absolute; top: 14px; right: 0; width: 28px; height: 28px;
+  position: absolute; top: 12px; right: 12px; width: 28px; height: 28px;
   display: grid; place-items: center; border-radius: 8px;
-  border: 1px solid var(--color-surface-border); background: #fff; color: #475569; cursor: pointer;
+  border: 1px solid var(--color-surface-border); background: #fff; color: #475569; cursor: pointer; z-index: 2;
 }
 .trend-exp-close:hover { background: #eef2f7; color: #1e293b; }
 .trend-exp-loading, .trend-exp-fail {
@@ -13950,7 +13957,7 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
 .trend-card.is-open .trend-card-trigger { background: rgba(31, 143, 107, 0.07); }
 .trend-card-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 0.16rem; }
 .trend-card-head { display: flex; align-items: center; gap: 0.4rem; min-width: 0; }
-.trend-card-icon { flex: 0 0 auto; display: inline-flex; color: #475569; }
+.trend-card-icon { flex: 0 0 auto; display: inline-flex; color: #16a34a; }
 .trend-card-icon svg { display: block; }
 /* Match the AI Intelligence path-button title (display font, 0.92rem, 600) —
    a touch bolder + same size as those titles (#229). */
@@ -15113,6 +15120,10 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* ===== Builder modal redesign: tabs + AI Brief + per-section explore ======== */
 /* Sticky top: topic name + tab row (replaces Back / Prev / Next / All Insights). */
 .aii-builder-topbar { position: sticky; top: 0; z-index: 9; margin: 0 -1.1rem; padding: 12px 1.1rem 0; background: #f3f5f8; border-bottom: 1px solid var(--color-surface-border); }
+/* Custom-search results shouldn't ride right against the tab-strip divider (#img61-63). */
+.aii-modal-body .aii-builder-secs { padding-top: 14px; }
+.aii-modal-body .aii-brief-top:empty + [data-aii-builder],
+.aii-modal-body [data-aii-builder] { padding-top: 2px; }
 /* Editorial hero topic title (moderate size) + a caret that opens the topic switcher. */
 .aii-builder-topic { margin: 0; font-family: var(--font-display); font-weight: 600; letter-spacing: -0.018em; color: #14213d; font-size: clamp(1.15rem, 1rem + 0.5vw, 1.35rem); line-height: 1.1; }
 /* Clear separator between the modal top-header section (title + tabs) and the body
@@ -15793,7 +15804,7 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* ACROSS-THE-BOARD RULE: an icon directly beside a text label is VERTICALLY CENTERED
    with it, and the label wraps in its OWN column — never under the icon. (Applies to
    every im-msec-head: builder sections, news/trend insights.) (#194) */
-.im-msec-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.im-msec-head { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
 .im-msec-ic { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 7px; background: #f1f3f7; color: var(--color-primary); }
 /* "AI Generated Text" tag — sits immediately to the RIGHT of each generated
    section title (left-aligned beside it, not pushed to the far edge), wrapping
@@ -15801,13 +15812,14 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* "AI Generated Text" tag is ALWAYS on its own line, flush-left below the section
    head — never inline with the title. */
 .im-sec-aitag-row { margin: 0 0 11px; }
-.im-sec-aitag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px 3px 7px; border-radius: 999px; background: color-mix(in srgb, var(--color-primary) 7%, #fff); border: 1px solid color-mix(in srgb, var(--color-primary) 14%, transparent); color: var(--color-primary); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.01em; white-space: nowrap; }
+/* Discreet grey chip matching the news-feed "AI Generated Text" label (#img66/#img75). */
+.im-sec-aitag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 6px; background: var(--color-bg-light); border: none; color: var(--color-text-muted); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.01em; white-space: nowrap; }
 .im-sec-aitag svg { width: 12px; height: 12px; flex: none; color: var(--color-primary); }
 .im-msec-ic svg { width: 15px; height: 15px; }
 /* Content section headers (Why It's Trending / Summary / Sources & Coverage) —
    the clear MIDDLE tier: strong display weight, between the big title above and
    the small "AI Brief" label. */
-.im-msec-name { flex: 1 1 auto; min-width: 0; margin: 0; font-family: var(--font-display); font-size: 1.06rem; font-weight: 600; letter-spacing: -0.012em; color: var(--color-primary); line-height: 1.3; }
+.im-msec-name { flex: 1 1 auto; min-width: 0; margin: 0; font-family: var(--font-display); font-size: 1rem; font-weight: 550; letter-spacing: -0.012em; color: var(--color-primary); line-height: 1.3; }
 .im-msec .im-related-label { display: none; }
 .im-msec .im-related { margin: 0; }
 /* First coverage row sits tight under the section header (no extra top gap). */
@@ -17471,18 +17483,20 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 /* Brief sections */
 .ni-sec { padding: 2px 0 16px; }
 .ni-sec ~ .ni-sec { border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); padding-top: 16px; }
-.ni-sec-head { display: flex; align-items: center; gap: 9px; }
+.ni-sec-head { display: flex; align-items: center; gap: 6px; }
 .ni-sec-ic { flex: none; width: 28px; height: 28px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; background: var(--color-bg-light); color: var(--color-text-muted); }
 .ni-sec-ic svg { width: 16px; height: 16px; }
 /* Lighter section titles — they were reading too heavy (#img33/#img34). */
-.ni-sec-name { margin: 0; font-family: var(--font-display); font-size: 0.92rem; font-weight: 600; letter-spacing: -0.01em; color: #14213d; }
+/* Lighter than the story title (which is 700) so the section head reads as a
+   sub-level, and sits closer to its icon (#img69/#img70). */
+.ni-sec-name { margin: 0; font-family: var(--font-display); font-size: 0.9rem; font-weight: 550; letter-spacing: -0.01em; color: #1c2b45; }
 /* Trend brief section titles were the heaviest — bring them in line. */
 .trend-card-exp .im-msec-name { font-size: 0.95rem !important; font-weight: 600 !important; }
 .trend-card-exp .im-msec-ic { width: 24px !important; height: 24px !important; }
 .ni-aitag-row { margin: 8px 0 10px; }
 .ni-aitag { display: inline-flex; align-items: center; gap: 5px; font-size: 0.7rem; font-weight: 600; color: var(--color-text-muted); background: var(--color-bg-light); border-radius: 6px; padding: 3px 8px; }
 .ni-aitag svg { width: 12px; height: 12px; color: #1d4ed8; }
-.ni-sec .ai-result-body { font-size: 0.9rem; line-height: 1.55; color: var(--color-text); }
+.ni-sec .ai-result-body { font-size: 0.85rem; line-height: 1.55; color: var(--color-text); }
 .ni-sec .ai-result-body p { margin: 0 0 0.7rem; }
 .ni-sec .ai-result-body p:last-child { margin-bottom: 0; }
 
@@ -17660,7 +17674,8 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .aii-nav-dd-scroll {
   height: 100%; max-height: calc(100dvh - var(--nav-h) - 78px);
   overflow-y: auto; overscroll-behavior: contain;
-  padding: 14px 2px 20px;
+  /* Less top gap so the first list item sits closer to the header divider (#img64). */
+  padding: 8px 2px 20px;
 }
 /* Clean top/bottom scroll fades (#89). */
 .aii-nav-dd-scrollwrap.has-fade::before,
@@ -18127,6 +18142,18 @@ body.home-search #section-newsfeed .news-card:hover {
 .aii-drawer .aii-sources-count { margin-left: auto; }
 .aii-drawer .aii-drawer-chev { margin-left: 8px; flex: none; color: var(--color-text-muted); transition: transform .2s ease; }
 .aii-drawer[open] .aii-drawer-chev { transform: rotate(180deg); }
+/* Explore Further drawer (External AI Models + Web Search) — clean nested
+   accordions, mirroring trending (#img46). */
+.aii-ef-body { display: flex; flex-direction: column; gap: 6px; padding-bottom: 4px; }
+.aii-ef-opt { border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; }
+.aii-ef-trigger { display: flex; align-items: center; gap: 8px; width: 100%; padding: 12px 13px; background: none; border: none; cursor: pointer; font-family: var(--font-family); font-size: 0.9rem; font-weight: 550; color: var(--color-primary); list-style: none; -webkit-tap-highlight-color: transparent; }
+.aii-ef-trigger::-webkit-details-marker { display: none; }
+.aii-ef-trigger > svg:first-child { flex: none; color: var(--color-text-muted); }
+.aii-ef-trigger .aii-chev { margin-left: auto; flex: none; transition: transform .2s ease; }
+.aii-ef-opt [data-explore-toggle][aria-expanded="true"] .aii-chev,
+.aii-ef-web[open] > .aii-ef-trigger .aii-chev { transform: rotate(180deg); }
+.aii-ef-webbody { padding: 0 10px 10px; }
+.aii-ef-drawer .aii-emenu-host { padding: 0 10px; }
 
 /* ═══ Inline Build-a-Custom-Prompt: cards expand IN PLACE (accordion) with a
    sticky Done/Cancel (revamp447, #img49/#img50). ═════════════════════════════ */

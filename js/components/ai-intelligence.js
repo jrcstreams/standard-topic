@@ -95,6 +95,7 @@ const CHEV = '<svg class="aii-chev" viewBox="0 0 24 24" width="15" height="15" f
 // Section-icon badge for "Sources & Coverage" (link glyph) — matches the brief
 // section glyphs + the News/Trend modals (#129).
 const SOURCES_BADGE = '<span class="ai-result-sub-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>';
+const EXPLORE_BADGE = '<span class="ai-result-sub-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/></svg></span>';
 // Small inline spark for the "AI Brief" eyebrow (matches the news modal).
 const SPARK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>';
 const SEARCH_ICON = '<svg class="aii-topic-search-ic" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
@@ -758,11 +759,9 @@ export function renderAIIntelligence(container, scope) {
     // No per-section intro card anymore — the nav supplies the section identity and
     // the top summary describes the modal. "Explore further" moves to the TOP of the
     // body (brief groups only), above the first section.
+    // "Explore further" now lives in its own collapsed drawer above Sources (built
+    // in renderInsightInto) — the head keeps just the freshness meta.
     const briefTop = isStatic ? '' : `<div class="aii-brief-top">
-        <div class="aii-brief-explore-wrap" data-explore-wrap>
-          <button type="button" class="aii-brief-explore" data-explore-toggle aria-expanded="false">${ICON_ASK}<span>Explore further with external AI models</span>${CHEV}</button>
-          <div class="aii-emenu-host" data-explore-prompt="${escAttr(exPrompt)}" data-explore-name="${escAttr(curSectionName())}"></div>
-        </div>
         <span class="aii-brief-meta" data-brief-meta></span>
       </div>`;
     return `<div class="aii-sub aii-content aii-content--modal aii-builder aii-builder--flat">
@@ -849,10 +848,22 @@ export function renderAIIntelligence(container, scope) {
     // inter-section divider (no more double separator).
     const items = builderNewsItems().filter((x) => x.title && x.meta && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(String(x.title).trim()));
     const covRows = items.map((x) => `<a class="im-cov-row" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span><span class="im-cov-host">${esc(x.meta)}</span></span>${EXT}</a>`).join('');
+    // Explore Further → a COLLAPSED drawer (External AI Models + Web Search) above
+    // Sources — mirrors the trending dropdown (#img46).
+    const efP = explorePrompt();
+    html += `<details class="im-msec aii-drawer aii-ef-drawer"><summary class="im-msec-head aii-drawer-sum"><span class="im-msec-ic">${EXPLORE_BADGE}</span><h3 class="im-msec-name">Explore Further</h3><span class="aii-drawer-chev">${CHEV}</span></summary><div class="aii-ef-body">
+      <div class="aii-ef-opt">
+        <button type="button" class="aii-ef-trigger" data-explore-toggle aria-expanded="false">${ICON_ASK}<span>Explore with External AI Models</span>${CHEV}</button>
+        <div class="aii-emenu-host" data-explore-prompt="${escAttr(efP)}" data-explore-name="${escAttr(curSectionName())}"></div>
+      </div>
+      <details class="aii-ef-opt aii-ef-web"><summary class="aii-ef-trigger">${ICON_GLOBE}<span>Web Search</span>${CHEV}</summary><div class="aii-ef-webbody">${webCatsHTML()}</div></details>
+    </div></details>`;
     // Sources → a COLLAPSED drawer at the bottom (not a long list by default, #img47).
     if (covRows) html += `<details class="im-msec aii-sources-sec aii-drawer"><summary class="im-msec-head aii-sources-head aii-drawer-sum"><span class="im-msec-ic aii-sources-ic">${SOURCES_BADGE}</span><h3 class="im-msec-name aii-sources-title">Sources</h3><span class="aii-sources-count">${items.length}</span><span class="aii-drawer-chev">${CHEV}</span></summary><div class="im-coverage-list aii-sources-list">${covRows}</div></details>`;
     wrap.innerHTML = html;
     wrap.classList.add('ai-reveal');
+    // Wire the drawer's "External AI Models" toggle (rendered after wire()).
+    wrap.querySelector('.aii-ef-drawer [data-explore-toggle]')?.addEventListener('click', (e) => { e.stopPropagation(); toggleEmenu(e.currentTarget); });
     wireSectionClamps();
   }
   // External Insights tab — the topic's shortcut prompts as an explore accordion.
