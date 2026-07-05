@@ -254,12 +254,10 @@ function topicPickerPanelHTML(topic, panelId) {
           <a href="#/topic/${parent.slug}" class="tsp-parent-row${parentActive ? ' is-active' : ''}"${parentActive ? ' aria-current="page"' : ''}>
             <span class="tsp-parent-ic">${topicIconSVG(parent.icon || 'globe', 'tsp-ic-svg')}</span>
             <span class="tsp-parent-name">${escapeHTML(parent.name)}</span>
-            <span class="tsp-parent-kicker">Overview</span>
-            ${parentActive ? `<span class="tsp-cell-check" aria-hidden="true">${CHECK}</span>` : ''}
+            ${parentActive ? `<span class="tsp-cell-check tsp-parent-check" aria-hidden="true">${CHECK}</span>` : ''}
           </a>
           ${family.length ? `<div class="tsp-grid">${family.map(cellHTML).join('')}</div>` : ''}
           <div class="tsp-foot">
-            <a href="#/" class="tsp-foot-link" data-tsp-home>${HOME_IC}<span>Home</span></a>
             <a href="#" class="tsp-foot-link tsp-foot-cta" data-tsp-all>${GRID_IC}<span>All Topics</span><svg class="tsp-foot-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></a>
           </div>
         </div>

@@ -17126,8 +17126,12 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .tsp-foot-cta:hover { background: color-mix(in srgb, #2563eb 7%, #fff); color: #1d4ed8; }
 .tsp-foot-cta:hover .tsp-foot-arrow { transform: translateX(3px); }
 /* Parent "Overview" landing row. */
+/* The parent-topic row hugs its content (icon + name + check) — the highlight is
+   NO longer a full-width bar that runs under the X close, and the "Overview"
+   kicker is gone (#img103). */
 .tsp-parent-row {
-  display: flex; align-items: center; gap: 0.65rem; padding: 0.58rem 0.65rem; border-radius: 11px;
+  display: flex; align-items: center; gap: 0.65rem; padding: 0.5rem 0.65rem; border-radius: 11px;
+  width: fit-content; max-width: calc(100% - 3.5rem);
   text-decoration: none; color: var(--color-text); margin-bottom: 6px; transition: background .12s;
 }
 .tsp-parent-row:hover { background: var(--color-bg-light); }
@@ -17136,11 +17140,11 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   background: color-mix(in srgb, #26375a 9%, #fff); color: #26375a;
 }
 .tsp-parent-ic .tsp-ic-svg { width: 17px; height: 17px; }
-.tsp-parent-name { flex: 1 1 auto; min-width: 0; font-family: var(--font-display); font-size: 1.02rem; font-weight: 700; letter-spacing: -0.01em; color: #1a2740; }
-.tsp-parent-kicker { flex: none; font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; color: var(--color-text-light); background: var(--color-bg-light); padding: 0.15rem 0.45rem; border-radius: 5px; }
+.tsp-parent-name { flex: 0 1 auto; min-width: 0; font-family: var(--font-display); font-size: 1.02rem; font-weight: 700; letter-spacing: -0.01em; color: #1a2740; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tsp-parent-row.is-active { background: color-mix(in srgb, #26375a 6%, #fff); }
 .tsp-parent-row.is-active .tsp-parent-name { color: #26375a; }
 .tsp-cell-check { flex: none; color: #26375a; display: inline-flex; }
+.tsp-parent-check { margin-left: 0.15rem; }
 /* Subtopics grid — single column by default; widens to multi-column where there's
    room (desktop full-width card sets the column count). */
 .tsp-grid { display: grid; grid-template-columns: 1fr; gap: 2px; }
@@ -18089,7 +18093,9 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 .topic-subnav-controls {
   width: 100%; background: #fff;
   border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent);
-  box-shadow: inset 0 -2px 0 0 color-mix(in srgb, var(--color-surface-border) 92%, transparent);
+  /* A single clean hairline under the whole bar — the active tab's underline sits
+     flush on it (#img105). */
+  border-bottom: 1px solid var(--color-surface-border);
 }
 .topic-subnav-controls .topic-paths-nav {
   max-width: var(--max-width, 1280px); margin: 0 auto !important;
@@ -18101,15 +18107,17 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* Clean underline tabs — the active label is a blue underline that hugs the text
    and sits flush on the control bar's bottom border (#img102). */
 .topic-subnav-controls .ptab {
-  flex: 0 0 auto; width: auto; padding: 11px 0 !important; margin-bottom: -2px;
+  flex: 0 0 auto; width: auto; padding: 11px 0 !important; margin-bottom: -1px;
   border: none !important; border-bottom: 2px solid transparent !important; border-radius: 0 !important;
   background: none !important; font-size: 0.9rem; font-weight: 550; color: var(--color-text-muted, #64748b);
   white-space: nowrap;
 }
 .topic-subnav-controls .ptab:hover { color: var(--color-primary) !important; background: none !important; }
+/* Active = a muted NAVY underline (not the bright blue used by the deeper subnavs,
+   so the hierarchy reads top-down) that sits flush on the bar's hairline (#img105). */
 .topic-subnav-controls .ptab.is-active {
-  color: #1d4ed8 !important; font-weight: 700 !important;
-  background: none !important; border-bottom-color: #2563eb !important;
+  color: #26375a !important; font-weight: 700 !important;
+  background: none !important; border-bottom-color: #26375a !important;
 }
 
 /* Picker dropdown hangs off the GREY bar bottom (overlays the control bar). */
