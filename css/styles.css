@@ -18210,3 +18210,24 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
   #section-newsfeed .news-act, .news-act { padding: 5px 10px; font-size: 0.74rem; gap: 5px; }
   #section-newsfeed .news-act svg, .news-act svg { width: 13px; height: 13px; }
 }
+
+/* ═══ Shared insight tabs (revamp452) — Summary / Explore Further / Sources ════
+   Used by the trending expansion, news-story AI Insights, and topic AI Insights. */
+.ins-tabnav { display: flex; gap: 22px; border-bottom: 1px solid var(--color-surface-border); margin-bottom: 14px; overflow-x: auto; scrollbar-width: none; }
+.ins-tabnav::-webkit-scrollbar { display: none; }
+.ins-tab {
+  flex: none; padding: 9px 0; margin-bottom: -1px; border: none; border-bottom: 2px solid transparent;
+  background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.9rem; font-weight: 550;
+  color: var(--color-text-muted); white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;
+  -webkit-tap-highlight-color: transparent;
+}
+.ins-tab:hover { color: var(--color-primary); }
+.ins-tab.is-active { color: #1d4ed8; font-weight: 700; border-bottom-color: #2563eb; }
+.ins-tab-count { font-size: 0.7rem; font-weight: 600; color: var(--color-text-muted); background: var(--color-bg-light); border-radius: 6px; padding: 1px 6px; }
+.ins-tab.is-active .ins-tab-count { color: #1d4ed8; background: color-mix(in srgb, #2563eb 10%, #fff); }
+/* Explore Further tab body = a clean flat list of option accordions (External AI
+   Models first, then the web-search categories). */
+.ins-explore { display: flex; flex-direction: column; gap: 6px; }
+.ins-explore .ti-accordion, .ins-explore .ni-webcat, .ins-explore .aii-web-cat, .ins-explore .aii-ef-opt {
+  border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; box-shadow: none;
+}

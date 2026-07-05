@@ -4,7 +4,8 @@
 // fixed-height scroll area with top/bottom fade + chevron affordances
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
-import { renderTrendExpansionBody } from './trend-expansion.js?v=20260703-revamp448';
+import { renderTrendExpansionBody } from './trend-expansion.js?v=20260705-revamp452';
+import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260705-revamp452';
 import { aiSparkInline } from '../utils/ai-provenance.js?v=20260630-revamp434';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
@@ -235,6 +236,7 @@ function wireTrendCardsInline(container) {
       if (!card.classList.contains('is-expanded')) return;
       exp.innerHTML = `<button type="button" class="trend-exp-close" aria-label="Close">${TREND_EXP_CLOSE}</button>${renderTrendExpansionBody(term, data)}`;
       exp.querySelector('.trend-exp-close')?.addEventListener('click', (e) => { e.stopPropagation(); collapse(card); });
+      wireInsightTabs(exp);
     } catch (_) {
       exp.innerHTML = `<div class="trend-exp-fail">Couldn't load this brief. <button type="button" class="trend-exp-retry">Try again</button></div>`;
       exp.querySelector('.trend-exp-retry')?.addEventListener('click', () => openCard(card));

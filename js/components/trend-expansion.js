@@ -5,6 +5,28 @@
 import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260630-revamp434';
 import { renderTIAccordion, webSourceItem } from './ti-shortcuts.js';
 import { getExternalSearches, getExternalSearchCategories, getModels } from '../utils/data.js';
+import { insightTabsHTML } from '../utils/insight-tabs.js?v=20260705-revamp452';
+
+// Explore Further list: a FLAT list of option accordions — "Explore with External
+// AI Models" FIRST, then each web-search category as its own accordion (no "Web
+// Search" wrapper label). Shared shape across trending / news / topic insights.
+function exploreListHTML(term) {
+  const models = getModels() || [];
+  const aiAcc = models.length
+    ? renderTIAccordion({ key: 'discover', label: 'Explore with External AI Models', open: false, blurb: '', bodyHTML: `<ul class="ti-item-list">${models.map((m) => aiModelItem(m, term)).join('')}</ul>` })
+    : '';
+  const cats = getExternalSearchCategories() || [];
+  const searches = getExternalSearches() || [];
+  const known = new Set(cats.map((c) => c.key));
+  const order = cats.slice();
+  if (searches.some((s) => !known.has(s.category))) order.push({ key: '__other', label: 'Other' });
+  const catAccs = order.map((cat) => {
+    const items = cat.key === '__other' ? searches.filter((s) => !known.has(s.category)) : searches.filter((s) => s.category === cat.key);
+    if (!items.length) return '';
+    return renderTIAccordion({ key: 'websources', label: cat.label, open: false, blurb: '', bodyHTML: `<ul class="ti-item-list ti-item-list-grouped">${items.map((s) => webSourceItem(s, term)).join('')}</ul>` });
+  }).join('');
+  return `<div class="ins-explore">${aiAcc}${catAccs}</div>`;
+}
 
 function escapeAttr(str) {
   return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -139,17 +161,18 @@ export function renderTrendExpansionBody(term, brief) {
       if (!rest) break; detail = rest;
     }
   }
-  // ONE "Summary" section — the reasoning one-liner (already shown on the trend
-  // card above) is folded away; the grounded detail IS the summary (#img36/#img37).
+  // Split into 3 TABS: Summary (default) / Explore Further / Sources. The reasoning
+  // one-liner (already on the trend card) is folded into the grounded summary.
   const summaryBody = detail || why;
-  const secs = [];
-  if (summaryBody) secs.push(`<section class="im-msec">${teSecHead('summary', 'Summary', true)}${renderBriefBody(summaryBody, null)}</section>`);
-  // Explore Further — a collapsed drawer (its two options stay hidden until opened).
-  secs.push(teDrawerHTML('matters', 'Explore Further', `<div class="trend-exp-explore">${aiExploreHTML(term)}${webExploreHTML(term)}</div>`));
-  // Sources — a collapsed drawer too (not a long list by default).
+  const AITAG = `<div class="im-sec-aitag-row"><span class="im-sec-aitag">${SPARK}<span>AI Generated Text</span></span></div>`;
+  const summaryHTML = summaryBody ? `${AITAG}${renderBriefBody(summaryBody, null)}` : '<p class="ins-empty">No summary yet.</p>';
   const src = teSourcesHTML(b.headlines, b.sources);
-  if (src) secs.push(teDrawerHTML('sources', 'Sources', src));
-  return `<div class="trend-exp im-secs">${secs.join('')}</div>`;
+  const tabs = [
+    { key: 'summary', label: 'Summary', html: summaryHTML },
+    { key: 'explore', label: 'Explore Further', html: exploreListHTML(term) },
+  ];
+  if (src) tabs.push({ key: 'sources', label: 'Sources', html: src });
+  return `<div class="trend-exp im-secs">${insightTabsHTML(tabs, 'trend-exp-tabs')}</div>`;
 }
 
 // A clean collapsible drawer (Explore Further / Sources) — icon + title + chevron
