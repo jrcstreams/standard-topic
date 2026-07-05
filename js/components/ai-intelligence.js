@@ -10,6 +10,7 @@ import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExt
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260705-revamp452';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -837,33 +838,36 @@ export function renderAIIntelligence(container, scope) {
     // Each section is a clamped PREVIEW with a Show more / less toggle (long
     // insights stay scannable). Further Insights + Ask AI now live in the
     // External Tools tab, so sections carry only their body.
-    let html = list.map((part, i) => {
+    // Summary tab = the AI-generated sections (full text, no clamp).
+    const summaryHTML = list.map((part, i) => {
       const key = aiiSecIconKey(part.name);
-      // Show the FULL section text by default — no "Show more" clamp (#img46).
       const body = `<div class="aii-sec-body">${renderBriefBody(part.body, null)}</div>`;
       return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name) + body);
     }).join('');
-    // Sources → an always-open, condensed list at the very bottom of the insight
-    // (no accordion). Rendered as a normal section so it inherits the single
-    // inter-section divider (no more double separator).
     const items = builderNewsItems().filter((x) => x.title && x.meta && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(String(x.title).trim()));
     const covRows = items.map((x) => `<a class="im-cov-row" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span><span class="im-cov-host">${esc(x.meta)}</span></span>${EXT}</a>`).join('');
-    // Explore Further → a COLLAPSED drawer (External AI Models + Web Search) above
-    // Sources — mirrors the trending dropdown (#img46).
+    // Explore Further tab = a FLAT list — "Explore with External AI Models" first
+    // (rich Ask-AI emenu), then each web-search category (webCatsHTML already emits
+    // one accordion per category).
     const efP = explorePrompt();
-    html += `<details class="im-msec aii-drawer aii-ef-drawer"><summary class="im-msec-head aii-drawer-sum"><span class="im-msec-ic">${EXPLORE_BADGE}</span><h3 class="im-msec-name">Explore Further</h3><span class="aii-drawer-chev">${CHEV}</span></summary><div class="aii-ef-body">
+    const exploreHTML = `<div class="ins-explore">
       <div class="aii-ef-opt">
         <button type="button" class="aii-ef-trigger" data-explore-toggle aria-expanded="false">${ICON_ASK}<span>Explore with External AI Models</span>${CHEV}</button>
         <div class="aii-emenu-host" data-explore-prompt="${escAttr(efP)}" data-explore-name="${escAttr(curSectionName())}"></div>
       </div>
-      <details class="aii-ef-opt aii-ef-web"><summary class="aii-ef-trigger">${ICON_GLOBE}<span>Web Search</span>${CHEV}</summary><div class="aii-ef-webbody">${webCatsHTML()}</div></details>
-    </div></details>`;
-    // Sources → a COLLAPSED drawer at the bottom (not a long list by default, #img47).
-    if (covRows) html += `<details class="im-msec aii-sources-sec aii-drawer"><summary class="im-msec-head aii-sources-head aii-drawer-sum"><span class="im-msec-ic aii-sources-ic">${SOURCES_BADGE}</span><h3 class="im-msec-name aii-sources-title">Sources</h3><span class="aii-sources-count">${items.length}</span><span class="aii-drawer-chev">${CHEV}</span></summary><div class="im-coverage-list aii-sources-list">${covRows}</div></details>`;
-    wrap.innerHTML = html;
+      ${webCatsHTML()}
+    </div>`;
+    // Split into 3 TABS: Summary (default) / Explore Further / Sources.
+    const tabs = [
+      { key: 'summary', label: 'Summary', html: summaryHTML },
+      { key: 'explore', label: 'Explore Further', html: exploreHTML },
+    ];
+    if (covRows) tabs.push({ key: 'sources', label: 'Sources', html: `<div class="im-coverage-list aii-sources-list">${covRows}</div>`, count: items.length });
+    wrap.innerHTML = insightTabsHTML(tabs, 'aii-instabs');
     wrap.classList.add('ai-reveal');
-    // Wire the drawer's "External AI Models" toggle (rendered after wire()).
-    wrap.querySelector('.aii-ef-drawer [data-explore-toggle]')?.addEventListener('click', (e) => { e.stopPropagation(); toggleEmenu(e.currentTarget); });
+    wireInsightTabs(wrap);
+    // Wire the Explore Further "External AI Models" emenu toggle.
+    wrap.querySelector('.aii-ef-opt [data-explore-toggle]')?.addEventListener('click', (e) => { e.stopPropagation(); toggleEmenu(e.currentTarget); });
     wireSectionClamps();
   }
   // External Insights tab — the topic's shortcut prompts as an explore accordion.

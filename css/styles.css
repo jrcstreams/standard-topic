@@ -17066,7 +17066,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
    capped + centered, an X close, no floating bubble (#img76/#img77). */
 .tsp-panelwrap {
   position: fixed; left: 0; right: 0; width: 100%; z-index: 60;
-  top: calc(var(--nav-h) + var(--subnav-height, 60px));
+  top: calc(var(--nav-h) + var(--subnav-title-h, var(--subnav-height, 60px)));
   display: grid; grid-template-rows: 0fr;
   opacity: 0; pointer-events: none;
   transition: grid-template-rows .26s cubic-bezier(.4,0,.2,1), opacity .16s ease;
@@ -18033,63 +18033,81 @@ button.aiidd-vlink { align-self: flex-start; }
   border-bottom: 2px solid #cdd3dd;
   box-shadow: 0 3px 10px -7px rgba(15, 26, 46, 0.16); overflow: visible;
 }
+/* ── Topic subnav (revamp453): a GREY identity bar (topic icon + name + arrow —
+   styled like the homepage bar) + a connected WHITE control bar (News Feed | AI
+   Insights) below it. The name-picker dropdown hangs off the grey bar and OVERLAYS
+   the control bar (controls are lower in hierarchy). #img85/#img87. ───────────── */
+.topic-subnav-title { width: 100%; }   /* shows the grey #sub-header fill */
+/* Match the homepage identity bar's grey fill (#img85). */
+body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
+  background: #e7ecf3 !important; border-bottom: 1px solid #cdd2d9 !important; box-shadow: 0 2px 8px rgba(15,26,46,.06) !important;
+}
 .topic-subnav-inner {
   max-width: var(--max-width, 1280px); margin: 0 auto;
-  padding: 0 clamp(1rem, 3vw, 2rem); display: flex; flex-direction: column;
+  padding: 0 clamp(1rem, 3vw, 2rem);
 }
-/* Row 1 — topic-name picker button (full width; the dropdown drops off it).
-   Comfortable vertical breathing room so the title + icon aren't squished
-   (#img39/#img57). */
 .topic-subnav-inner .topic-subnav-picker { position: relative; display: block; width: 100%; }
 .topic-subnav-inner .tsp-btn {
-  display: flex !important; align-items: center; gap: 0.55rem; width: 100%;
-  padding: 0.9rem 0.15rem 0.85rem !important; margin: 0 !important;
+  display: flex !important; align-items: center; gap: 0.5rem; width: 100%;
+  padding: 0.7rem 0.15rem 0.65rem !important; margin: 0 !important;
   border: none !important; background: none !important; border-radius: 0 !important; box-shadow: none !important;
   cursor: pointer; text-align: left; font-family: var(--font-family); -webkit-tap-highlight-color: transparent;
 }
-.topic-subnav-inner .tsp-btn-lead { display: flex; align-items: center; gap: 0.55rem; min-width: 0; flex: 0 1 auto; }
-/* Smaller, tidier icon chip (was an oversized grey box, #img39). */
+.topic-subnav-inner .tsp-btn-lead { display: flex; align-items: center; gap: 0.5rem; min-width: 0; flex: 0 1 auto; }
 .topic-subnav-inner .tsp-btn-ico {
-  flex: none; width: 30px; height: 30px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
+  flex: none; width: 28px; height: 28px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;
   background: color-mix(in srgb, #26375a 10%, #fff) !important; color: #26375a !important; box-shadow: none !important;
 }
-.topic-subnav-inner .tsp-btn-ico .tsp-ic-svg { width: 17px !important; height: 17px !important; }
+.topic-subnav-inner .tsp-btn-ico .tsp-ic-svg { width: 16px !important; height: 16px !important; }
+/* Title size matches the homepage identity bar (#img85). */
 .topic-subnav-inner .tsp-btn-name {
   font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; color: #26375a !important;
-  font-size: clamp(1.18rem, 0.95rem + 0.7vw, 1.5rem) !important; line-height: 1;
+  font-size: 1.35rem !important; line-height: 1.1;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
 }
-/* Chevron sits right next to the name AND vertically centered on it (#img28/#img40). */
-.topic-subnav-inner .tsp-btn .tsp-chev { flex: none; align-self: center; margin-left: 0.35rem; width: 19px; height: 19px; color: #64748b; }
-/* Row 2 — path tabs: a clean GRID (no horizontal scroll) — 3×2 on phones, one
-   row of 6 on desktop. Active = a prominent blue pill (#img29). Comfortable
-   padding so the rows aren't squished against the borders (#img41). */
-.topic-subnav-inner .topic-paths-nav {
-  display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 3px 4px;
-  margin: 0 !important; padding: 9px 0 10px !important;
-  border: none !important; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 60%, transparent) !important;
-  border-radius: 0 !important; background: none !important; position: static !important;
-  overflow: visible !important;
+.topic-subnav-inner .tsp-btn .tsp-chev { flex: none; align-self: center; margin-left: 0.3rem; width: 18px; height: 18px; color: #64748b; }
+
+/* White control bar — connected below the grey bar, with a prominent bottom border. */
+.topic-subnav-controls {
+  width: 100%; background: #fff;
+  border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent);
+  box-shadow: inset 0 -2px 0 0 color-mix(in srgb, var(--color-surface-border) 92%, transparent);
 }
-@media (min-width: 900px) { .topic-subnav-inner .topic-paths-nav { grid-template-columns: repeat(6, 1fr); } }
-.topic-subnav-inner .ptab {
-  flex: none; width: 100%; padding: 10px 8px !important; border: none !important;
-  border-radius: 9px !important; background: none !important;
-  font-size: 0.9rem; font-weight: 550; color: var(--color-text-muted, #64748b);
+.topic-subnav-controls .topic-paths-nav {
+  max-width: var(--max-width, 1280px); margin: 0 auto !important;
+  display: flex !important; gap: 6px; align-items: stretch;
+  padding: 0 clamp(1rem, 3vw, 2rem) !important;
+  border: none !important; border-radius: 0 !important; background: none !important;
+  position: static !important; overflow: visible !important;
 }
-.topic-subnav-inner .ptab:hover { color: var(--color-primary, #14213d); background: color-mix(in srgb, #26375a 4%, #fff) !important; }
-.topic-subnav-inner .ptab.is-active {
+.topic-subnav-controls .ptab {
+  flex: 0 0 auto; width: auto; padding: 12px 16px !important; margin-bottom: -2px;
+  border: none !important; border-bottom: 2px solid transparent !important; border-radius: 0 !important;
+  background: none !important; font-size: 0.95rem; font-weight: 550; color: var(--color-text-muted, #64748b);
+}
+.topic-subnav-controls .ptab:hover { color: var(--color-primary) !important; background: none !important; }
+.topic-subnav-controls .ptab.is-active {
   color: #1d4ed8 !important; font-weight: 700 !important;
-  background: color-mix(in srgb, #2563eb 11%, #fff) !important; border-bottom-color: transparent !important;
+  background: none !important; border-bottom-color: #2563eb !important;
 }
-/* Picker dropdown — flush off the FULL width of the subnav bar. */
-/* Full-width fixed dropdown (from .tsp-panelwrap base) — attach at the subnav bottom. */
-.topic-subnav-inner .tsp-panelwrap { left: 0 !important; right: 0 !important; width: 100% !important; top: calc(var(--nav-h) + var(--subnav-height, 100px)) !important; }
-/* Subtopic grid inside the wide panel: multi-column. */
+
+/* Picker dropdown hangs off the GREY bar bottom (overlays the control bar). */
+.topic-subnav-inner .tsp-panelwrap { left: 0 !important; right: 0 !important; width: 100% !important; top: calc(var(--nav-h) + var(--subnav-title-h, 60px)) !important; z-index: 70 !important; }
 .topic-subnav-inner .tsp-panel-inner .tsp-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 2px 16px; }
 @media (min-width: 900px) {
   .topic-subnav-inner .tsp-grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 2px 14px; }
 }
+
+/* AI Insights second-level sub-nav (Catch Up / Deep Dive / 101 Info / Prompts) —
+   at the top of the body content, below the control bar. */
+.topic-ai-subnav { display: flex; flex-wrap: wrap; gap: 20px; border-bottom: 1px solid var(--color-surface-border); margin: 2px 0 16px; }
+.tai-tab {
+  flex: none; padding: 9px 0; margin-bottom: -1px; border: none; border-bottom: 2px solid transparent;
+  background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.92rem; font-weight: 550;
+  color: var(--color-text-muted); white-space: nowrap; -webkit-tap-highlight-color: transparent;
+}
+.tai-tab:hover { color: var(--color-primary); }
+.tai-tab.is-active { color: #1d4ed8; font-weight: 700; border-bottom-color: #2563eb; }
 
 /* ── Desktop (≥900): the unified subnav is ALWAYS visible now (it IS the topic
    header, not a scroll-in bar). Undo the old hide-by-default + reserve its strip
@@ -18106,11 +18124,13 @@ button.aiidd-vlink { align-self: flex-start; }
 }
 /* Tighten the gap between the subnav and the first content row (#img30). */
 .topic-tabbed .topic-tab-body { padding-top: 8px; }
-/* Phones: keep the 3×2 tab grid reasonably compact — but NOT squished (#img41). */
+/* Phones: compact bars. */
 @media (max-width: 899.98px) {
-  .topic-subnav-inner .topic-paths-nav { padding: 8px 0 9px !important; gap: 3px; }
-  .topic-subnav-inner .ptab { padding: 9px 6px !important; font-size: 0.85rem; }
-  .topic-subnav-inner .tsp-btn { padding: 0.75rem 0.15rem 0.7rem !important; }
+  .topic-subnav-controls .topic-paths-nav { gap: 2px; }
+  .topic-subnav-controls .ptab { padding: 11px 12px !important; font-size: 0.9rem; }
+  .topic-subnav-inner .tsp-btn { padding: 0.6rem 0.15rem 0.55rem !important; }
+  .topic-subnav-inner .tsp-btn-name { font-size: 1.2rem !important; }
+  .topic-ai-subnav { gap: 16px; }
 }
 
 /* Homepage "News Feed" header a bit bigger (#img44). */
@@ -18213,6 +18233,7 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 
 /* ═══ Shared insight tabs (revamp452) — Summary / Explore Further / Sources ════
    Used by the trending expansion, news-story AI Insights, and topic AI Insights. */
+.ins-tabs { display: block; width: 100%; }
 .ins-tabnav { display: flex; gap: 22px; border-bottom: 1px solid var(--color-surface-border); margin-bottom: 14px; overflow-x: auto; scrollbar-width: none; }
 .ins-tabnav::-webkit-scrollbar { display: none; }
 .ins-tab {

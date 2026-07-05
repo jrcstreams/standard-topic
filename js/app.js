@@ -18,7 +18,7 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260702-revamp435';
 import { initInsightModal } from './components/insight-modal.js?v=20260703-revamp448';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260703-revamp450';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260705-revamp453';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260702-revamp435';
 import { renderWebSources } from './components/websources.js?v=20260702-revamp435';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260702-revamp435';
@@ -166,6 +166,12 @@ function setSubnavHeightVar() {
   if (!sub) return;
   const h = sub.offsetHeight;
   if (h > 0) document.documentElement.style.setProperty('--subnav-height', `${h}px`);
+  // The grey identity bar height (topic page). The name-picker dropdown hangs off
+  // THIS bar's bottom so it overlays the (lower-hierarchy) control tabs. Falls back
+  // to the whole subnav where there's no separate control bar (home).
+  const title = sub.querySelector('.topic-subnav-title');
+  const th = title ? title.offsetHeight : h;
+  if (th > 0) document.documentElement.style.setProperty('--subnav-title-h', `${th}px`);
 }
 
 // Observe the subnav for any size change (CSS transitions, content
@@ -742,65 +748,95 @@ function userClosePromptBuilder() {
 }
 
 // The topic page's tabbed "Paths" package: News first, then the five AI tracks.
+// Topic page: a TWO-item control subnav (revamp453). "AI Insights & Resources"
+// then reveals four sub-options in its own strip.
 const TOPIC_PATH_TABS = [
-  { key: 'news',          label: 'News' },
-  { key: 'discover',      label: 'Catch Up' },
-  { key: 'topic-specific', label: 'Deep Dive' },
-  { key: 'learn',         label: '101 Info' },
-  { key: 'websearch',     label: 'Web Search' },
-  { key: 'external',      label: 'Prompts' },
+  { key: 'news', label: 'News Feed' },
+  { key: 'ai',   label: 'AI Insights & Resources' },
 ];
+// Sub-options under "AI Insights & Resources" (Web Search is dropped — it's folded
+// into each insight's Explore Further tab).
+const TOPIC_AI_GROUPS = [
+  { key: 'discover',       label: 'Catch Up' },
+  { key: 'topic-specific', label: 'Deep Dive' },
+  { key: 'learn',          label: '101 Info' },
+  { key: 'external',       label: 'Prompts' },
+];
+const TOPIC_AI_GROUP_KEYS = new Set(TOPIC_AI_GROUPS.map((g) => g.key));
 
-// Wire the topic-page tab strip: switching a tab renders that path's content
-// into the shared panel body (News → the news feed; a path → the AI builder for
-// that single group), sets the sticky per-tab header, and drives the deep-links
-// from the AI Insights nav dropdown.
+// Wire the topic-page control subnav: News Feed → the news feed; AI Insights &
+// Resources → a second-level sub-strip (Catch Up / Deep Dive / 101 Info / Prompts),
+// each mounting that group's builder. Also drives deep-links from the nav dropdown.
 function wireTopicPathTabs(container, topic, descriptions, icons) {
-  // The path tabs live in the fixed #sub-header now; the content lives in the body.
   const nav = document.getElementById('topic-paths-nav');
   const body = container.querySelector('#topic-tab-body');
   if (!nav || !body) return;
-  let active = null; let ctl = null;
+  let active = null; let ctl = null; let subGroup = 'discover';
 
   const destroyCtl = () => { if (ctl && ctl.destroy) { try { ctl.destroy(); } catch (_) {} } ctl = null; };
+  const mountGroup = (subBody, gkey) => {
+    destroyCtl();
+    subBody.innerHTML = '';
+    let shortcuts = [];
+    try { shortcuts = getShortcutsForTopic(topic.slug) || []; } catch (_) {}
+    ctl = renderAIIntelligence(subBody, {
+      inModal: true, initialBuilder: true, initialGroup: gkey, lockTopic: true,
+      topic: topic.name, label: topic.name, descriptions, icons, shortcuts, topicKey: topic.slug,
+    });
+  };
+  const renderAI = () => {
+    body.innerHTML = `<div class="topic-ai-wrap">
+      <nav class="topic-ai-subnav" role="tablist" aria-label="AI Insights sections">${TOPIC_AI_GROUPS.map((g) => `<button type="button" class="tai-tab${g.key === subGroup ? ' is-active' : ''}" role="tab" data-tai="${escapeAttr(g.key)}" aria-selected="${g.key === subGroup ? 'true' : 'false'}">${escapeHTML(g.label)}</button>`).join('')}</nav>
+      <div class="topic-ai-body" id="topic-ai-body"></div>
+    </div>`;
+    const subBody = body.querySelector('#topic-ai-body');
+    const subNav = body.querySelector('.topic-ai-subnav');
+    const selectSub = (gkey) => {
+      if (!TOPIC_AI_GROUP_KEYS.has(gkey)) gkey = 'discover';
+      subGroup = gkey;
+      subNav.querySelectorAll('.tai-tab').forEach((b) => { const on = b.dataset.tai === gkey; b.classList.toggle('is-active', on); b.setAttribute('aria-selected', String(on)); });
+      mountGroup(subBody, gkey);
+      requestAnimationFrame(() => { try { window.scrollTo({ top: 0 }); } catch (_) {} });
+    };
+    subNav.querySelectorAll('.tai-tab').forEach((b) => b.addEventListener('click', () => selectSub(b.dataset.tai)));
+    selectSub(subGroup);
+  };
   const renderContent = (key) => {
     destroyCtl();
     body.innerHTML = '';
     if (key === 'news') {
-      // Render into a real #section-newsfeed so all the existing topic news-card
-      // styling applies unchanged.
       const sec = document.createElement('section');
       sec.id = 'section-newsfeed'; sec.className = 'layout-section';
       body.appendChild(sec);
       renderNewsFeed(sec, topic, false);
       return;
     }
-    // An AI path → mount that single group's builder (chrome hidden via CSS).
-    // The Prompts (external) tab needs `shortcuts` to build the prompt library.
-    let shortcuts = [];
-    try { shortcuts = getShortcutsForTopic(topic.slug) || []; } catch (_) {}
-    ctl = renderAIIntelligence(body, {
-      inModal: true, initialBuilder: true, initialGroup: key, lockTopic: true,
-      topic: topic.name, label: topic.name, descriptions, icons, shortcuts, topicKey: topic.slug,
-    });
+    renderAI();
   };
   const selectTab = (key) => {
+    // A group key (from a deep-link) opens AI Insights on that sub-group.
+    if (TOPIC_AI_GROUP_KEYS.has(key)) { subGroup = key; key = 'ai'; }
+    else if (key === 'websearch') { subGroup = 'discover'; key = 'ai'; }
     if (!TOPIC_PATH_TABS.some((t) => t.key === key)) key = 'news';
-    if (active === key) return;
+    const reselect = active === key;
     active = key;
-    const meta = TOPIC_PATH_TABS.find((t) => t.key === key);
     nav.querySelectorAll('.ptab').forEach((b) => {
       const on = b.dataset.ptab === key;
       b.classList.toggle('is-active', on);
       b.setAttribute('aria-selected', String(on));
     });
+    // Re-selecting AI (e.g. a deep-link to another sub-group) just swaps the group.
+    if (reselect && key === 'ai') {
+      const subNav = body.querySelector('.topic-ai-subnav');
+      if (subNav) { subNav.querySelectorAll('.tai-tab').forEach((b) => b.classList.toggle('is-active', b.dataset.tai === subGroup)); mountGroup(body.querySelector('#topic-ai-body'), subGroup); return; }
+    } else if (reselect) { return; }
     renderContent(key);
     requestAnimationFrame(() => { try { window.scrollTo({ top: 0 }); } catch (_) {} });
   };
   nav.querySelectorAll('.ptab').forEach((b) => b.addEventListener('click', () => selectTab(b.dataset.ptab)));
 
   // Deep-link from the AI Insights nav dropdown (same-page event + cross-page
-  // pending request) → open the matching path tab.
+  // pending request) → open the matching sub-group.
   if (window.__aiiInlineHandler) window.removeEventListener('aii-inline-open', window.__aiiInlineHandler);
   window.__aiiInlineHandler = (e) => { if (e.detail && e.detail.slug === topic.slug) selectTab(e.detail.group); };
   window.addEventListener('aii-inline-open', window.__aiiInlineHandler);
@@ -1034,9 +1070,15 @@ function renderLayout(route) {
     // the topic-name picker bar on top, then the path tabs (News · Catch Up · …)
     // directly below it — both living in the fixed #sub-header so they read as a
     // true subnav under the main nav (not a boxed section floating in the body).
+    // Two connected bars (revamp453): a GREY identity bar (topic icon + name +
+    // dropdown arrow — styled like the homepage bar) on top, then a WHITE control
+    // bar (News Feed | AI Insights) below it. The name-picker dropdown hangs off
+    // the grey bar and OVERLAYS the control bar (controls are lower in hierarchy).
     subHeader.innerHTML = `
-      <div class="topic-subnav-inner">
-        ${subnavPickerHTML(topic)}
+      <div class="topic-subnav-title">
+        <div class="topic-subnav-inner">${subnavPickerHTML(topic)}</div>
+      </div>
+      <div class="topic-subnav-controls">
         <nav class="topic-paths-nav" role="tablist" id="topic-paths-nav" aria-label="Topic sections">
           ${TOPIC_PATH_TABS.map((t, i) => `<button type="button" class="ptab${i === 0 ? ' is-active' : ''}" role="tab" data-ptab="${escapeAttr(t.key)}" aria-selected="${i === 0 ? 'true' : 'false'}">${escapeHTML(t.label)}</button>`).join('')}
         </nav>
