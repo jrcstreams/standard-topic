@@ -379,10 +379,11 @@ body.custom-mode.sticky-always #content {
   .sticky-hero-inner .navbtn { padding: 3px 8px; }
   .sticky-hero-inner .navbtn-label { font-size: 0.63rem; }
 }
-/* 900–1023 (icons right-aligned): the title read too small and the hamburger too
-   big relative to it — bump the title up, trim the hamburger (#img107). */
+/* 900–1023 (icons right-aligned): NOT the jumbo 1.5rem title (that in-between size
+   looked wrong) — a moderate title, only a touch bigger than the ≥1024 slim, plus
+   the trimmed hamburger (#img109/#img113). */
 @media (min-width: 900px) and (max-width: 1023.98px) {
-  .sticky-hero-inner .sticky-title { font-size: 1.5rem; }
+  .sticky-hero-inner .sticky-title { font-size: 1.34rem; }
   .sticky-hero-inner .nav-hamburger { width: 20px; height: 15px; }
 }
 
