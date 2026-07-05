@@ -12,6 +12,7 @@
 
 import { getModels, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt } from '../utils/ai-models.js';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260705-revamp452';
 
 function escapeHTML(str) {
   const div = document.createElement('div');
@@ -491,6 +492,40 @@ function niWebHTML(term) {
     return `<details class="ni-webcat" name="ni-webcat"><summary class="ni-webcat-sum"><span>${escapeHTML(c.label)}</span>${AI_CHEV_SVG}</summary><div class="ni-source-list">${rows}</div></details>`;
   }).join('')}</div>`;
 }
+// Explore Further tab (news): a FLAT list of option accordions — "Explore with
+// External AI Models" first (model links carry the story briefing prompt), then
+// each web-search category. Matches the trending / topic Explore Further shape.
+function niModelRow(model, prompt) {
+  const url = String(model.urlTemplate || model.chatUrl || '').replace(/\{prompt\}/g, encodeURIComponent(prompt));
+  return `<a class="ni-source-row" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer"><span class="ni-source-tx"><span class="ni-source-name">${escapeHTML(model.name)}</span>${model.description ? `<span class="ni-source-desc">${escapeHTML(model.description)}</span>` : ''}</span>${NI_ARROW_SVG}</a>`;
+}
+function niExploreListHTML(card) {
+  const prompt = newsStoryPrompt(card);
+  const term = card.dataset.title || '';
+  const models = getModels() || [];
+  const aiAcc = models.length
+    ? `<details class="ni-webcat" name="ni-explore" open><summary class="ni-webcat-sum"><span>Explore with External AI Models</span>${AI_CHEV_SVG}</summary><div class="ni-source-list">${models.map((m) => niModelRow(m, prompt)).join('')}</div></details>`
+    : '';
+  const cats = getExternalSearchCategories() || [];
+  const searches = getExternalSearches() || [];
+  const catAccs = cats.filter((c) => searches.some((s) => s.category === c.key)).map((c) => {
+    const rows = searches.filter((s) => s.category === c.key).map((s) => {
+      const url = String(s.urlTemplate || '').replace(/\{query\}/g, encodeURIComponent(term));
+      return `<a class="ni-source-row" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer"><span class="ni-source-tx"><span class="ni-source-name">${escapeHTML(s.name)}</span>${s.description ? `<span class="ni-source-desc">${escapeHTML(s.description)}</span>` : ''}</span>${NI_ARROW_SVG}</a>`;
+    }).join('');
+    return `<details class="ni-webcat" name="ni-explore"><summary class="ni-webcat-sum"><span>${escapeHTML(c.label)}</span>${AI_CHEV_SVG}</summary><div class="ni-source-list">${rows}</div></details>`;
+  }).join('');
+  return `<div class="ni-web ins-explore">${aiAcc}${catAccs}</div>`;
+}
+// Sources tab body (news) — just the rows (the "Sources" label is the tab).
+function niSourcesListHTML(headlines, sources, origUrl) {
+  const rows = [];
+  if (origUrl) rows.push(`<a class="ni-source-row ni-source-row--orig" href="${escapeAttr(origUrl)}" target="_blank" rel="noopener noreferrer"><span>View original article</span>${NI_ARROW_SVG}</a>`);
+  const items = (Array.isArray(headlines) && headlines.length ? headlines : (sources || [])).map((x) => ({ uri: x.uri || x.url || '', label: (x.title && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(x.title)) ? x.title : (sourceHost(x.uri || x.url) || x.title || 'source') }));
+  const seen = new Set();
+  for (const it of items) { const k = (it.label || '').toLowerCase(); if (!k || !it.uri || seen.has(k)) continue; seen.add(k); rows.push(`<a class="ni-source-row" href="${escapeAttr(it.uri)}" target="_blank" rel="noopener noreferrer"><span>${escapeHTML(it.label)}</span>${NI_ARROW_SVG}</a>`); }
+  return rows.length ? `<div class="ni-source-list">${rows.join('')}</div>` : '';
+}
 function niLoaderHTML() {
   return `<div class="ni-loader"><div class="ni-loader-head"><span class="ni-spark">${AI_SPARK_SVG}</span><span class="ni-loader-tx">Generating insights…</span></div><span class="ni-skel"></span><span class="ni-skel"></span><span class="ni-skel ni-skel-short"></span></div>`;
 }
@@ -530,7 +565,16 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
       const secHTML = secs.length
         ? secs.map((s) => `<section class="ni-sec">${niSecHead(s.name)}${renderBriefBody(s.body, null)}</section>`).join('')
         : `<section class="ni-sec">${niSecHead('Brief')}${renderBriefBody(data.content, null)}</section>`;
-      panel.innerHTML = `<div class="ni-inner ai-reveal">${secHTML}${niSourcesHTML(data.headlines, data.sources, d.url)}</div>`;
+      // 3 TABS: Summary (the AI sections) / Explore Further (External AI Models +
+      // web categories) / Sources.
+      const sourcesInner = niSourcesListHTML(data.headlines, data.sources, d.url);
+      const tabs = [
+        { key: 'summary', label: 'Summary', html: secHTML },
+        { key: 'explore', label: 'Explore Further', html: niExploreListHTML(card) },
+      ];
+      if (sourcesInner) tabs.push({ key: 'sources', label: 'Sources', html: sourcesInner });
+      panel.innerHTML = `<div class="ni-inner ai-reveal">${insightTabsHTML(tabs, 'ni-tabs')}</div>`;
+      wireInsightTabs(panel.querySelector('.ni-inner'));
       wireScrollFades(panel.querySelector('.ni-inner'));
       return;
     }
@@ -630,7 +674,6 @@ export function newsCardHTML(item) {
       </div>
       <div class="news-card-actions">
         ${url ? `<a class="news-act" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer"><span>View Story</span>${NI_VIEW_SVG}</a>` : ''}
-        <button type="button" class="news-act news-act-web" data-news-panel="web" aria-expanded="false">${NI_GLOBE_SVG}<span>Web Search</span>${AI_CHEV_SVG}</button>
         <button type="button" class="news-act news-act-ai" data-news-panel="ai" aria-expanded="false">${AI_SPARK_FILLED_SVG}<span>AI Insights</span>${AI_CHEV_SVG}</button>
       </div>
       <div class="news-panel" data-news-panel-body hidden></div>
