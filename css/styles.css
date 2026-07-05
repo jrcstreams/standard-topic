@@ -363,6 +363,14 @@ body.custom-mode.sticky-always #content {
   flex: 0 0 auto;
   margin-left: auto;
 }
+/* Wide screens (≥1024 — where the home Trending sidebar sits beside the feed):
+   the main-nav icons sit right after the site title (padded off it), not buried at
+   the far right. The topic links (if any) fill the space to their right. Below
+   1024 they revert to right-aligned (#img92-#img95). */
+@media (min-width: 1024px) {
+  .sticky-hero-inner .sticky-actions.navbtns { order: 1; margin-left: 1.75rem !important; margin-right: 0; }
+  .sticky-hero-inner .sticky-nav-topics { order: 2; margin: 0 0 0 1.75rem; }
+}
 
 /* Search Topics + Prompt Builder share the same white-pill CTA
    style and sit side-by-side on the right of the dark nav. The
@@ -13909,7 +13917,8 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
 .trend-card.is-expanded {
   grid-column: 1 / -1; position: relative;
   background: #f7f9fc; border: 1px solid var(--color-surface-border); border-radius: 14px;
-  padding: 4px 14px 12px; margin: 4px 0;
+  /* More breathing room above the trend title to the card's top edge (#img96). */
+  padding: 12px 14px 14px; margin: 4px 0;
 }
 /* The X closes it, so hide the header's expand arrow while open. */
 .trend-card.is-expanded .trend-card-open { display: none; }
@@ -13953,8 +13962,13 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
   font-family: inherit; color: var(--color-text); cursor: pointer;
   transition: background 0.14s;
 }
-.trend-card-trigger:hover,
-.trend-card.is-open .trend-card-trigger { background: rgba(31, 143, 107, 0.07); }
+/* Green tint on HOVER only — it must NOT stay lit after the trend is opened
+   (the open state already has its own container styling, #img96/#img98). */
+.trend-card-trigger:hover { background: rgba(31, 143, 107, 0.07); }
+.trend-card.is-expanded .trend-card-trigger,
+.trend-card.is-open .trend-card-trigger { background: transparent; }
+.trend-card.is-expanded .trend-card-trigger:hover,
+.trend-card.is-open .trend-card-trigger:hover { background: rgba(31, 143, 107, 0.07); }
 .trend-card-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 0.16rem; }
 .trend-card-head { display: flex; align-items: center; gap: 0.4rem; min-width: 0; }
 .trend-card-icon { flex: 0 0 auto; display: inline-flex; color: #16a34a; }
@@ -17074,7 +17088,9 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .topic-subnav-picker.is-open .tsp-panelwrap { grid-template-rows: 1fr; opacity: 1; pointer-events: auto; }
 .tsp-panel {
   overflow: hidden; min-height: 0;
-  border: none; border-bottom: 1px solid var(--color-surface-border);
+  /* No bottom border — the soft shadow alone defines the bottom edge (a hairline
+     border there read as a stray line inside the body, #img88). */
+  border: none;
   border-radius: 0 0 16px 16px;
   background: #fff;
   box-shadow: 0 22px 42px -20px rgba(15,23,42,.28), 0 8px 16px -10px rgba(15,23,42,.12);
@@ -17628,11 +17644,12 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .aii-nav-dd.is-open { transform: translateY(0); opacity: 1; pointer-events: auto; }
 
 .aii-nav-dd-inner {
-  width: 100%; max-width: 1000px; margin: 0 auto;
+  /* Match the main nav's max-width + 2rem side padding so the dropdown's content
+     left edge lines up with the site title, not centered in a narrow column
+     (#img89/#img91). */
+  width: 100%; max-width: var(--max-width, 1280px); margin: 0 auto;
   display: flex; flex-direction: column; min-height: 0;
-  /* A little air at the top so the content doesn't ride hard against the nav
-     icons above the dropdown (#img9). */
-  padding: 8px 1.25rem 0;
+  padding: 8px 2rem 0;
 }
 .aii-nav-dd-head {
   flex: 0 0 auto;
