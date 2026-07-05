@@ -817,8 +817,11 @@ export function renderAIIntelligence(container, scope) {
   }
   function renderBuilderInto(wrap) {
     const bc = builderCache[curGroup] || {};
+    // The "Updated …" stamp moves OUT of the head and INTO the Summary tab, above
+    // the first section (#img115).
     const meta = stage.querySelector('[data-brief-meta]');
-    if (meta) meta.innerHTML = bc.generatedAt ? `<span class="aii-brief-updated">Updated ${esc(relTime(bc.generatedAt))}</span>` : '';
+    if (meta) meta.innerHTML = '';
+    const updatedHTML = bc.generatedAt ? `<div class="aii-updated-row"><span class="aii-brief-updated">Updated ${esc(relTime(bc.generatedAt))}</span></div>` : '';
     if (bc.error || !bc.content) {
       wrap.innerHTML = '<p class="aii-empty">This insight is being generated — check back shortly.</p>';
       return;
@@ -838,8 +841,8 @@ export function renderAIIntelligence(container, scope) {
     // Each section is a clamped PREVIEW with a Show more / less toggle (long
     // insights stay scannable). Further Insights + Ask AI now live in the
     // External Tools tab, so sections carry only their body.
-    // Summary tab = the AI-generated sections (full text, no clamp).
-    const summaryHTML = list.map((part, i) => {
+    // Summary tab = the "Updated" stamp, then the AI-generated sections (full text).
+    const summaryHTML = updatedHTML + list.map((part, i) => {
       const key = aiiSecIconKey(part.name);
       const body = `<div class="aii-sec-body">${renderBriefBody(part.body, null)}</div>`;
       return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name) + body);
@@ -862,7 +865,7 @@ export function renderAIIntelligence(container, scope) {
       { key: 'summary', label: 'Summary', html: summaryHTML },
       { key: 'explore', label: 'Explore Further', html: exploreHTML },
     ];
-    if (covRows) tabs.push({ key: 'sources', label: 'Sources', html: `<div class="im-coverage-list aii-sources-list">${covRows}</div>`, count: items.length });
+    if (covRows) tabs.push({ key: 'sources', label: 'Sources', html: `<div class="im-coverage-list aii-sources-list">${covRows}</div>` });
     wrap.innerHTML = insightTabsHTML(tabs, 'aii-instabs');
     wrap.classList.add('ai-reveal');
     wireInsightTabs(wrap);
