@@ -244,6 +244,7 @@ function topicPickerPanelHTML(topic, panelId) {
     <div class="tsp-panelwrap">
       <div class="tsp-panel" id="${escapeHTML(panelId)}" role="region" aria-label="Browse topics">
         <div class="tsp-panel-inner">
+          <button type="button" class="tsp-close" data-tsp-close aria-label="Close">${X_IC}</button>
           <a href="#/topic/${parent.slug}" class="tsp-parent-row${parentActive ? ' is-active' : ''}"${parentActive ? ' aria-current="page"' : ''}>
             <span class="tsp-parent-ic">${topicIconSVG(parent.icon || 'globe', 'tsp-ic-svg')}</span>
             <span class="tsp-parent-name">${escapeHTML(parent.name)}</span>
@@ -299,9 +300,10 @@ function homeSubnavPickerHTML() {
       <div class="tsp-panelwrap">
         <div class="tsp-panel" id="tsp-panel-home" role="region" aria-label="Browse topics">
           <div class="tsp-panel-inner">
+            <button type="button" class="tsp-close" data-tsp-close aria-label="Close">${X_IC}</button>
             <div class="tsp-grid">${featured.map(cellHTML).join('')}</div>
             <div class="tsp-foot">
-              <a href="#" class="tsp-foot-link tsp-foot-cta" data-tsp-all>${GRID_IC}<span>All Topics</span><svg class="tsp-foot-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></a>
+              <a href="#" class="tsp-foot-link tsp-foot-cta" data-tsp-all>${GRID_IC}<span>All Topics</span><svg class="tsp-foot-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
           </div>
         </div>

@@ -17061,8 +17061,12 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
    dropdowns — spanning the bar's full width. No floating gap, no all-round
    "bubble" corners: square at the top (attached to the bar), rounded only at the
    bottom (#img8). */
+/* The picker dropdown is a FULL-WIDTH panel that hangs off the BOTTOM of the whole
+   subnav (never overlapping it), exactly like the main-nav dropdowns — content
+   capped + centered, an X close, no floating bubble (#img76/#img77). */
 .tsp-panelwrap {
-  position: absolute; top: 100%; left: 0; right: 0; z-index: 60;
+  position: fixed; left: 0; right: 0; width: 100%; z-index: 60;
+  top: calc(var(--nav-h) + var(--subnav-height, 60px));
   display: grid; grid-template-rows: 0fr;
   opacity: 0; pointer-events: none;
   transition: grid-template-rows .26s cubic-bezier(.4,0,.2,1), opacity .16s ease;
@@ -17070,31 +17074,38 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .topic-subnav-picker.is-open .tsp-panelwrap { grid-template-rows: 1fr; opacity: 1; pointer-events: auto; }
 .tsp-panel {
   overflow: hidden; min-height: 0;
-  border: 1px solid var(--color-surface-border); border-top: none;
-  border-radius: 0 0 14px 14px;
+  border: none; border-bottom: 1px solid var(--color-surface-border);
+  border-radius: 0 0 16px 16px;
   background: #fff;
-  /* A clean, softly-elevated dropdown — NOT a modal. No page scrim. */
-  box-shadow: 0 20px 34px -20px rgba(15,23,42,.30), 0 6px 12px -8px rgba(15,23,42,.12);
+  box-shadow: 0 22px 42px -20px rgba(15,23,42,.28), 0 8px 16px -10px rgba(15,23,42,.12);
 }
 .tsp-panel-inner {
-  padding: 18px 18px 20px; max-height: min(70vh, calc(100dvh - 130px));
+  position: relative;
+  max-width: var(--max-width, 1280px); margin: 0 auto;
+  padding: 22px clamp(1.25rem, 4vw, 2.5rem) 20px;
+  max-height: min(74vh, calc(100dvh - var(--nav-h) - var(--subnav-height, 60px) - 24px));
   overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
 }
-/* Quiet footer links (Home · All Topics) below the topic list — a menu foot, not
-   a modal title-bar. No X close: the dropdown closes on outside-click / re-tap. */
+/* X close, top-right of the panel. */
+.tsp-close {
+  position: absolute; top: 12px; right: clamp(1.25rem, 4vw, 2.5rem);
+  width: 34px; height: 34px; display: grid; place-items: center; border-radius: 9px;
+  border: 1px solid var(--color-surface-border); background: #fff; color: #475569; cursor: pointer; z-index: 3;
+}
+.tsp-close:hover { background: #f1f5f9; color: #1e293b; }
+/* Footer: "All Topics" is a LEFT-aligned, slightly bigger blue CTA (#img76/#img77). */
 .tsp-foot {
-  display: flex; align-items: center; gap: 4px; margin-top: 8px; padding-top: 8px;
+  display: flex; align-items: center; gap: 4px; margin-top: 12px; padding-top: 12px;
   border-top: 1px solid var(--color-surface-border);
 }
 .tsp-foot-link {
-  display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.4rem 0.6rem; border-radius: 8px;
+  display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.5rem 0.6rem; border-radius: 8px;
   color: var(--color-text-muted); font-family: var(--font-family); font-size: 0.82rem; font-weight: 600;
   text-decoration: none; transition: background .12s, color .12s; -webkit-tap-highlight-color: transparent;
 }
 .tsp-foot-link svg { flex: none; }
 .tsp-foot-link:hover { background: var(--color-bg-light); color: #26375a; }
-/* "All Topics" reads as a blue CTA callout with a trailing arrow (#img22). */
-.tsp-foot-cta { color: #1d4ed8; font-weight: 700; margin-left: auto; }
+.tsp-foot-cta { color: #1d4ed8; font-weight: 700; font-size: 0.95rem; margin-left: 0; }
 .tsp-foot-cta .tsp-foot-arrow { flex: none; transition: transform .14s ease; }
 .tsp-foot-cta:hover { background: color-mix(in srgb, #2563eb 7%, #fff); color: #1d4ed8; }
 .tsp-foot-cta:hover .tsp-foot-arrow { transform: translateX(3px); }
@@ -17202,7 +17213,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
     font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; letter-spacing: -0.015em; color: #26375a; white-space: nowrap;
   }
   /* sticky-bar panel anchors under the button, fixed width */
-  body.app-mode:not(.home-mode) #sub-header.is-subnav .tsp-panelwrap { left: 0; right: auto; width: 340px; }
+  body.app-mode:not(.home-mode) #sub-header.is-subnav .tsp-panelwrap { left: 0; right: 0; width: 100%; }
 
   /* Body topic header (#386-388): the SAME compact subnav bar as mobile — an
      icon + topic name + chevron in a soft bar; subtopics live in its dropdown. */
@@ -18072,7 +18083,10 @@ button.aiidd-vlink { align-self: flex-start; }
   background: color-mix(in srgb, #2563eb 11%, #fff) !important; border-bottom-color: transparent !important;
 }
 /* Picker dropdown — flush off the FULL width of the subnav bar. */
-.topic-subnav-inner .tsp-panelwrap { left: 0 !important; right: 0 !important; width: auto !important; top: 100% !important; }
+/* Full-width fixed dropdown (from .tsp-panelwrap base) — attach at the subnav bottom. */
+.topic-subnav-inner .tsp-panelwrap { left: 0 !important; right: 0 !important; width: 100% !important; top: calc(var(--nav-h) + var(--subnav-height, 100px)) !important; }
+/* Subtopic grid inside the wide panel: multi-column. */
+.topic-subnav-inner .tsp-panel-inner .tsp-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 2px 16px; }
 @media (min-width: 900px) {
   .topic-subnav-inner .tsp-grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 2px 14px; }
 }
@@ -18116,6 +18130,13 @@ body.home-search #section-newsfeed .newsfeed-title-main { font-size: 1.5rem !imp
    open (#img54). Keep the full border on hover. */
 .topic-band #section-newsfeed .news-card:hover,
 body.home-search #section-newsfeed .news-card:hover {
+  border-top-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)) !important;
+}
+/* The first two cards have a higher-specificity nth-child rule that restores their
+   top border — it was overriding the hover colour, leaving a mismatched top edge
+   (#img78). Match the hover colour with an equally-specific hover rule. */
+.topic-band #section-newsfeed .news-list .news-card:nth-child(-n+2):hover,
+body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
   border-top-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)) !important;
 }
 
@@ -18181,3 +18202,11 @@ body.home-search #section-newsfeed .news-card:hover {
 .pb-nested-foot { display: flex; justify-content: flex-end; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--color-surface-border); }
 .pb-nested-done { font-family: var(--font-family); padding: 8px 20px; border-radius: 9px; border: 1px solid #2563eb; background: #2563eb; color: #fff; font-weight: 650; font-size: 0.86rem; cursor: pointer; }
 .pb-nested-done:hover { background: #1d4ed8; border-color: #1d4ed8; }
+
+/* Smaller news-story action buttons on phones so View Story / Web Search / AI
+   Insights fit on one line (#img79). */
+@media (max-width: 560px) {
+  .news-card-actions { gap: 6px; margin-top: 11px; }
+  #section-newsfeed .news-act, .news-act { padding: 5px 10px; font-size: 0.74rem; gap: 5px; }
+  #section-newsfeed .news-act svg, .news-act svg { width: 13px; height: 13px; }
+}
