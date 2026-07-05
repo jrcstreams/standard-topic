@@ -13,6 +13,7 @@
 import { getModels, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt } from '../utils/ai-models.js';
 import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260705-revamp452';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260705-revamp458';
 
 function escapeHTML(str) {
   const div = document.createElement('div');
@@ -570,11 +571,12 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
       const sourcesInner = niSourcesListHTML(data.headlines, data.sources, d.url);
       const tabs = [
         { key: 'summary', label: 'Summary', html: secHTML },
-        { key: 'explore', label: 'Explore Further', html: niExploreListHTML(card) },
+        { key: 'explore', label: 'Explore Further', html: exploreFurtherHTML({ prompt: newsStoryPrompt(card), webTerm: card.dataset.title || '', name: card.dataset.title || 'this story' }) },
       ];
       if (sourcesInner) tabs.push({ key: 'sources', label: 'Sources', html: sourcesInner });
       panel.innerHTML = `<div class="ni-inner ai-reveal">${insightTabsHTML(tabs, 'ni-tabs')}</div>`;
       wireInsightTabs(panel.querySelector('.ni-inner'));
+      wireExploreFurther(panel.querySelector('.ni-inner'));
       wireScrollFades(panel.querySelector('.ni-inner'));
       return;
     }

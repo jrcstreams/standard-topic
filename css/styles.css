@@ -18310,3 +18310,46 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 .ins-explore .ti-accordion, .ins-explore .ni-webcat, .ins-explore .aii-web-cat, .ins-explore .aii-ef-opt {
   border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; box-shadow: none;
 }
+
+/* ═══ Shared "Explore Further" — clean dropdown accordions (revamp458, #img120) ══
+   Used by trending / news / topic AI Insights. "Explore with External AI Models"
+   offers Send-to / Direct Submit / Review (#img121), not a direct open. */
+.xf-list { display: flex; flex-direction: column; gap: 8px; }
+.xf-acc { border: 1px solid var(--color-surface-border); border-radius: 12px; background: #fff; overflow: hidden; transition: border-color .14s, box-shadow .14s; }
+.xf-acc:hover { border-color: color-mix(in srgb, #2563eb 28%, var(--color-surface-border)); }
+.xf-acc[open] { border-color: color-mix(in srgb, #2563eb 34%, var(--color-surface-border)); box-shadow: 0 8px 22px -14px rgba(37,99,235,.24); }
+.xf-sum { display: flex; align-items: center; gap: 11px; padding: 14px 16px; cursor: pointer; list-style: none; -webkit-tap-highlight-color: transparent; }
+.xf-sum::-webkit-details-marker { display: none; }
+.xf-sum-ic { flex: none; width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; background: color-mix(in srgb, #2563eb 8%, #fff); color: #2563eb; }
+.xf-sum-name { flex: 1 1 auto; min-width: 0; font-family: var(--font-display); font-size: 0.98rem; font-weight: 650; color: var(--color-primary, #14213d); letter-spacing: -0.01em; }
+.xf-sum .xf-chev { flex: none; color: var(--color-text-muted); transition: transform .2s ease; }
+.xf-acc[open] > .xf-sum .xf-chev { transform: rotate(180deg); }
+.xf-panel { padding: 6px 12px 12px; border-top: 1px solid var(--color-surface-border); }
+.xf-web-panel { display: flex; flex-direction: column; padding-top: 4px; }
+.xf-web-row { display: flex; align-items: center; gap: 10px; padding: 10px 8px; border-radius: 8px; text-decoration: none; color: var(--color-text); transition: background .12s; }
+.xf-web-row:hover { background: var(--color-bg-light); }
+.xf-web-tx { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.xf-web-name { font-size: 0.9rem; font-weight: 600; color: var(--color-primary); }
+.xf-web-desc { font-size: 0.8rem; color: var(--color-text-muted); }
+.xf-web-row > svg { flex: none; color: #93a4c4; }
+.xf-emenu { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; }
+.xf-emenu-model { display: flex; align-items: center; gap: 10px; padding: 2px 2px 6px; }
+.xf-emenu-lead { font-size: 0.85rem; font-weight: 600; color: var(--color-text-muted); }
+.xf-select-wrap { position: relative; display: inline-flex; align-items: center; }
+.xf-select { appearance: none; -webkit-appearance: none; padding: 7px 32px 7px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; font-family: var(--font-family); font-size: 0.88rem; font-weight: 600; color: var(--color-primary); cursor: pointer; }
+.xf-select-wrap .xf-chev { position: absolute; right: 9px; pointer-events: none; color: var(--color-text-muted); }
+.xf-opt { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 1px solid var(--color-surface-border); border-radius: 11px; background: #fff; cursor: pointer; text-align: left; font-family: var(--font-family); transition: border-color .12s, background .12s; }
+.xf-opt:hover { border-color: color-mix(in srgb, #2563eb 40%, var(--color-surface-border)); background: color-mix(in srgb, #2563eb 3%, #fff); }
+.xf-opt-ic { flex: none; width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; background: color-mix(in srgb, #2563eb 9%, #fff); color: #2563eb; }
+.xf-opt-tx { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.xf-opt-name { font-size: 0.92rem; font-weight: 650; color: var(--color-primary); }
+.xf-opt-sub { font-size: 0.8rem; color: var(--color-text-muted); }
+.xf-opt .xf-arrow { flex: none; color: #93a4c4; transition: transform .14s; }
+.xf-opt:hover .xf-arrow { color: #2563eb; transform: translateX(3px); }
+.xf-leave { display: flex; flex-direction: column; gap: 8px; padding: 4px 2px; }
+.xf-leave-back { align-self: flex-start; display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px 5px 7px; border: 1px solid var(--color-surface-border); background: #fff; border-radius: 999px; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #475569; }
+.xf-leave-back:hover { background: var(--color-bg-light); }
+.xf-leave-title { font-size: 0.95rem; font-weight: 700; color: var(--color-primary); margin: 4px 0 0; }
+.xf-leave-body { font-size: 0.84rem; color: var(--color-text-muted); line-height: 1.5; margin: 0; }
+.xf-leave-go { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; padding: 9px 16px; border: none; border-radius: 10px; background: #2563eb; color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.88rem; font-weight: 650; }
+.xf-leave-go:hover { background: #1d4ed8; }

@@ -4,13 +4,14 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260705-revamp452';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260705-revamp458';
 import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260630-revamp434';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
 import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260705-revamp452';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260705-revamp458';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -849,17 +850,10 @@ export function renderAIIntelligence(container, scope) {
     }).join('');
     const items = builderNewsItems().filter((x) => x.title && x.meta && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(String(x.title).trim()));
     const covRows = items.map((x) => `<a class="im-cov-row" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span><span class="im-cov-host">${esc(x.meta)}</span></span>${EXT}</a>`).join('');
-    // Explore Further tab = a FLAT list — "Explore with External AI Models" first
-    // (rich Ask-AI emenu), then each web-search category (webCatsHTML already emits
-    // one accordion per category).
+    // Explore Further tab = the shared clean-dropdown component (External AI Models
+    // with Send-to / Direct Submit / Review, then web categories).
     const efP = explorePrompt();
-    const exploreHTML = `<div class="ins-explore">
-      <div class="aii-ef-opt">
-        <button type="button" class="aii-ef-trigger" data-explore-toggle aria-expanded="false">${ICON_ASK}<span>Explore with External AI Models</span>${CHEV}</button>
-        <div class="aii-emenu-host" data-explore-prompt="${escAttr(efP)}" data-explore-name="${escAttr(curSectionName())}"></div>
-      </div>
-      ${webCatsHTML()}
-    </div>`;
+    const exploreHTML = exploreFurtherHTML({ prompt: efP, webTerm: scope.label || scope.topic || '', name: curSectionName() });
     // Split into 3 TABS: Summary (default) / Explore Further / Sources.
     const tabs = [
       { key: 'summary', label: 'Summary', html: summaryHTML },
@@ -869,8 +863,7 @@ export function renderAIIntelligence(container, scope) {
     wrap.innerHTML = insightTabsHTML(tabs, 'aii-instabs');
     wrap.classList.add('ai-reveal');
     wireInsightTabs(wrap);
-    // Wire the Explore Further "External AI Models" emenu toggle.
-    wrap.querySelector('.aii-ef-opt [data-explore-toggle]')?.addEventListener('click', (e) => { e.stopPropagation(); toggleEmenu(e.currentTarget); });
+    wireExploreFurther(wrap);
     wireSectionClamps();
   }
   // External Insights tab — the topic's shortcut prompts as an explore accordion.

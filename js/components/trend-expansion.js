@@ -2,30 +2,17 @@
 // "Web Explore" + "AI Explore" accordions (submit the term to engines/models),
 // and the full grounded brief. Reuses the news/TI building blocks so the look
 // matches AI insights elsewhere.
-import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260705-revamp452';
+import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260705-revamp458';
 import { renderTIAccordion, webSourceItem } from './ti-shortcuts.js';
 import { getExternalSearches, getExternalSearchCategories, getModels } from '../utils/data.js';
 import { insightTabsHTML } from '../utils/insight-tabs.js?v=20260705-revamp452';
+import { exploreFurtherHTML } from '../utils/explore-further.js?v=20260705-revamp458';
 
-// Explore Further list: a FLAT list of option accordions — "Explore with External
-// AI Models" FIRST, then each web-search category as its own accordion (no "Web
-// Search" wrapper label). Shared shape across trending / news / topic insights.
+// The Explore Further tab uses the shared clean-dropdown component (with the
+// Direct Submit / Review flow), consistent across trending / news / topic.
 function exploreListHTML(term) {
-  const models = getModels() || [];
-  const aiAcc = models.length
-    ? renderTIAccordion({ key: 'discover', label: 'Explore with External AI Models', open: false, blurb: '', bodyHTML: `<ul class="ti-item-list">${models.map((m) => aiModelItem(m, term)).join('')}</ul>` })
-    : '';
-  const cats = getExternalSearchCategories() || [];
-  const searches = getExternalSearches() || [];
-  const known = new Set(cats.map((c) => c.key));
-  const order = cats.slice();
-  if (searches.some((s) => !known.has(s.category))) order.push({ key: '__other', label: 'Other' });
-  const catAccs = order.map((cat) => {
-    const items = cat.key === '__other' ? searches.filter((s) => !known.has(s.category)) : searches.filter((s) => s.category === cat.key);
-    if (!items.length) return '';
-    return renderTIAccordion({ key: 'websources', label: cat.label, open: false, blurb: '', bodyHTML: `<ul class="ti-item-list ti-item-list-grouped">${items.map((s) => webSourceItem(s, term)).join('')}</ul>` });
-  }).join('');
-  return `<div class="ins-explore">${aiAcc}${catAccs}</div>`;
+  const prompt = `Explain what "${term}" is and why it's trending right now — what just happened and brief context.`;
+  return exploreFurtherHTML({ prompt, webTerm: term, name: term });
 }
 
 function escapeAttr(str) {
