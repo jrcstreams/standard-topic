@@ -482,6 +482,7 @@ function openNavDropdown(cfg) {
         <div class="aii-nav-dd-titles">
           <div class="aii-nav-dd-title">${cfg.spark ? '<span class="aii-nav-dd-spark">✦</span> ' : ''}${escapeHTML(cfg.title || '')}</div>
           ${cfg.subtitle ? `<div class="aii-nav-dd-sub">${escapeHTML(cfg.subtitle)}</div>` : ''}
+          ${cfg.headLink ? `<a href="${escapeAttr(cfg.headLink.href)}" class="aii-nav-dd-headlink" data-navdd-headlink><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>${escapeHTML(cfg.headLink.label)}</span></a>` : ''}
         </div>
         <button type="button" class="aii-nav-dd-close" data-navdd-close aria-label="Close">${X_IC_NAVDD}</button>
       </div>`;
@@ -676,10 +677,11 @@ function topicsNavDdCfg() {
     key: 'topics', triggerId: 'nav-topics',
     title: 'All Topics', ariaLabel: 'All topics',
     subtitle: 'Browse every topic and its subtopics.',
+    headLink: { label: 'Search any topic', href: '#/search' },
     contentHTML: topicsTreeHTML(),
     wire: (panel) => {
       wireNavDdAccordions(panel);
-      panel.querySelectorAll('[data-aiidd-link]').forEach((a) => a.addEventListener('click', () => closeNavDropdown()));
+      panel.querySelectorAll('[data-aiidd-link], [data-navdd-headlink]').forEach((a) => a.addEventListener('click', () => closeNavDropdown()));
     },
   };
 }
@@ -2358,7 +2360,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           <div class="home-search-hero" id="home-search-hero"></div>
           <a href="#/" class="layout-section home-promo home-promo--topics" id="section-aii-home" data-explore-topics aria-label="Explore all topics">
             <div class="home-promo-inner">
-              <div class="home-promo-head"><span class="home-promo-ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span><h3 class="home-promo-title">Explore every topic</h3></div>
+              <div class="home-promo-head"><span class="home-promo-ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span><h3 class="home-promo-title">Explore any topic</h3></div>
               <p class="home-promo-text">Dedicated topic pages pull together the latest news, curated resources, and AI insights.</p>
               <span class="home-promo-btn">
                 Explore topics
