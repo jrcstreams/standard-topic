@@ -318,13 +318,9 @@ body.custom-mode.sticky-always #content {
 /* Desktop topic nav in the main bar — light links on the navy band, the active
    top-level topic underlined. Takes the middle (flex:1) like the old tagline.
    Hidden below 1024px (mobile gets a bottom tab nav). */
-.sticky-nav-topics { display: none; }
-@media (min-width: 1024px) {
-  .sticky-nav-topics {
-    display: flex; align-items: center; gap: 1.15rem;
-    flex: 1 1 auto; min-width: 0; margin: 0 0.5rem 0 1.25rem; overflow: hidden;
-  }
-}
+/* Featured-topic links are no longer shown in the main nav at ANY width — the nav
+   is just the brand + the app icons (#img140). */
+.sticky-nav-topics { display: none !important; }
 .sticky-nav-topic, .sticky-nav-more {
   position: relative; white-space: nowrap; flex: 0 0 auto;
   font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; letter-spacing: -0.004em;
@@ -369,7 +365,6 @@ body.custom-mode.sticky-always #content {
    1024 they revert to right-aligned (#img92-#img95). */
 @media (min-width: 1024px) {
   .sticky-hero-inner .sticky-actions.navbtns { order: 1; margin-left: 1.75rem !important; margin-right: 0; }
-  .sticky-hero-inner .sticky-nav-topics { order: 2; margin: 0 0 0 1.75rem; }
   /* Icons tucked beside the title read chunky at full size — slim the whole bar:
      smaller icons, hamburger, title, and a shorter nav (#img106). */
   :root { --nav-h: 62px; }
@@ -383,7 +378,8 @@ body.custom-mode.sticky-always #content {
    looked wrong) — a moderate title, only a touch bigger than the ≥1024 slim, plus
    the trimmed hamburger (#img109/#img113). */
 @media (min-width: 900px) and (max-width: 1023.98px) {
-  .sticky-hero-inner .sticky-title { font-size: 1.42rem; }
+  .sticky-hero-inner .sticky-title { font-size: 1.32rem; }
+  .sticky-hero-inner .sticky-brand { margin-left: 0.5rem; }
   .sticky-hero-inner .nav-hamburger { width: 20px; height: 15px; }
 }
 
@@ -17392,7 +17388,9 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
      shrinks into an in-between size (#img128/#img129). ≤560 goes two-row below. */
   .sticky-hero-inner .sticky-actions { order: 6; margin-left: auto !important; }
   .sticky-hero-inner { gap: 0.6rem; padding-right: 0.75rem; }
-  .sticky-hero-inner .sticky-title { font-size: 1.42rem; }
+  /* Not too big, and a clear gap off the hamburger (#img142). */
+  .sticky-hero-inner .sticky-title { font-size: 1.32rem; }
+  .sticky-hero-inner .sticky-brand { margin-left: 0.5rem; }
   .navbtn { gap: 4px; min-width: 44px; padding: 5px 7px; }
   .navbtn-ico svg { width: 19px; height: 19px; }
   .navbtn-label { font-size: 0.62rem; }
@@ -18031,34 +18029,31 @@ button.aiidd-vlink { align-self: flex-start; }
    genuinely narrow phones (≤560); --nav-h grows so the app content clears both
    rows without overriding the topic sub-header. ─────────────────────────────── */
 @media (max-width: 560px) {
-  :root { --nav-h: 96px; }
+  :root { --nav-h: 82px; }
   .sticky-hero-inner {
     display: grid !important;
     grid-template-columns: 1fr auto 1fr;
     grid-template-areas: "burger brand end" "nav nav nav";
-    /* A little less dead height in the two-row icon nav (#img130). */
-    align-items: center; column-gap: 0.5rem; row-gap: 10px;
-    padding: 13px 0.9rem 5px !important; min-height: 0;
+    /* Compact two-row nav — the icon row was carrying way too much dead height
+       (#img141). Tight top pad, small row gap. */
+    align-items: center; column-gap: 0.5rem; row-gap: 5px;
+    padding: 8px 0.9rem 0 !important; min-height: 0;
   }
-  /* Row 1 — hamburger left, brand truly centered (equal 1fr columns flank it). */
   .sticky-hero-inner .nav-hamburger { grid-area: burger; justify-self: start; align-self: center; margin: 0; width: 21px; height: 15px; }
-  /* Slightly thicker hamburger bars (#img38). */
   .sticky-hero-inner .nav-hamburger span { height: 2.5px; }
   .sticky-hero-inner .sticky-brand { grid-area: brand; justify-self: center; align-self: center; margin: 0; display: flex; align-items: center; }
-  /* Bigger centered site title (#img38); line-height:1 keeps it vertically centered. */
-  .sticky-hero-inner .sticky-title { font-size: 1.3rem; letter-spacing: -0.02em; line-height: 1; }
-  /* Row 2 — the nav icons spread evenly, under a faint divider; tightened so the
-     icons don't carry so much dead vertical space. */
+  .sticky-hero-inner .sticky-title { font-size: 1.22rem; letter-spacing: -0.02em; line-height: 1; }
   .sticky-hero-inner .sticky-actions.navbtns {
     grid-area: nav; justify-content: space-around;
-    /* Bleed past the inner's 0.9rem side padding so the hairline separator runs
-       edge-to-edge instead of stopping short on each side (#429). */
     margin: 0 -0.9rem !important;
-    /* A touch more room above + below the icons (#429). */
-    padding: 8px 0.9rem 2px; border-top: 1px solid rgba(255, 255, 255, 0.12);
+    /* Even top/bottom room so the active icon isn't flush to the nav's bottom edge
+       (was cutting into the subnav below, #img143). */
+    padding: 5px 0.9rem 6px; border-top: 1px solid rgba(255, 255, 255, 0.12);
   }
-  .sticky-hero-inner .sticky-actions.navbtns .navbtn { padding: 5px 6px; gap: 3px; }
-  /* Redundant single-purpose mobile bits are folded into the icon row now. */
+  .sticky-hero-inner .sticky-actions.navbtns .navbtn { padding: 4px 6px; gap: 2px; }
+  /* Two-row nav has room for ALL labels — undo the single-row progressive hiding
+     (Home/Search were losing their labels) so every icon is labelled + aligned. */
+  .sticky-hero-inner .sticky-actions.navbtns .navbtn-label { display: block !important; }
   .sticky-hero-inner .nav-search-mobile { display: none !important; }
   .sticky-hero-inner .sticky-page-name { display: none !important; }
 }
@@ -18121,25 +18116,23 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 }
 .topic-subnav-controls .topic-paths-nav {
   max-width: var(--max-width, 1280px); margin: 0 auto !important;
-  display: flex !important; gap: 26px; align-items: stretch;
-  padding: 0 clamp(1rem, 3vw, 2rem) !important;
+  display: flex !important; gap: 8px; align-items: center;
+  padding: 8px clamp(1rem, 3vw, 2rem) !important;
   border: none !important; border-radius: 0 !important; background: none !important;
   position: static !important; overflow: visible !important;
 }
-/* Clean underline tabs — the active label is a blue underline that hugs the text
-   and sits flush on the control bar's bottom border (#img102). */
+/* Level 1 (News Feed | AI Insights) = PILL / bubble tabs — the most prominent nav
+   level (#img148). */
 .topic-subnav-controls .ptab {
-  flex: 0 0 auto; width: auto; padding: 11px 0 !important; margin-bottom: -1px;
-  border: none !important; border-bottom: 2px solid transparent !important; border-radius: 0 !important;
-  background: none !important; font-size: 0.9rem; font-weight: 550; color: var(--color-text-muted, #64748b);
-  white-space: nowrap;
+  flex: 0 0 auto; width: auto; padding: 8px 16px !important; margin: 0 !important;
+  border: 1px solid transparent !important; border-radius: 999px !important;
+  background: none !important; font-size: 0.94rem; font-weight: 600; color: var(--color-text-muted, #64748b);
+  white-space: nowrap; transition: background .12s, color .12s;
 }
-.topic-subnav-controls .ptab:hover { color: var(--color-primary) !important; background: none !important; }
-/* Active = a muted NAVY underline (not the bright blue used by the deeper subnavs,
-   so the hierarchy reads top-down) that sits flush on the bar's hairline (#img105). */
+.topic-subnav-controls .ptab:hover { color: var(--color-primary) !important; background: var(--color-bg-light) !important; }
 .topic-subnav-controls .ptab.is-active {
-  color: #26375a !important; font-weight: 700 !important;
-  background: none !important; border-bottom-color: #26375a !important;
+  color: #1d4ed8 !important; font-weight: 700 !important;
+  background: color-mix(in srgb, #2563eb 10%, #fff) !important; border-color: color-mix(in srgb, #2563eb 22%, transparent) !important;
 }
 
 /* Picker dropdown hangs off the GREY bar bottom (overlays the control bar). */
@@ -18155,19 +18148,22 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    distinct shape from the underline tabs above (News Feed | AI Insights) and below
    (Summary | Explore | Sources) so the three nav levels read as a clear hierarchy
    instead of three identical tab rows (#img114). */
-/* The pill row is pulled left by the pill's own padding so the FIRST pill's text
-   lines up with the tabs above (News Feed) and below (Summary); smaller font than
-   the level-1 tabs; and only a small gap down to the view tabs (#img132/#img134). */
-.topic-ai-subnav { display: flex; flex-wrap: wrap; gap: 6px; border-bottom: none; margin: 2px 0 2px -13px; }
+/* Level 2 (Catch Up / Deep Dive / 101 Info / Prompts) = UNDERLINE tabs, left-
+   aligned at the container edge (no clip, #img146), with a PROMINENT (3px) active
+   underline — heavier than the level-3 view tabs below (#img148). */
+.topic-ai-subnav { display: flex; flex-wrap: wrap; gap: 22px; border-bottom: 1px solid var(--color-surface-border); margin: 4px 0 4px; }
 .tai-tab {
-  flex: none; padding: 6px 13px; margin: 0; border: 1px solid transparent; border-radius: 999px;
-  background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600;
-  color: var(--color-text-muted); white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: background .12s, color .12s;
+  flex: none; padding: 9px 0; margin: 0 0 -1px; border: none; border-bottom: 3px solid transparent; border-radius: 0;
+  background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.88rem; font-weight: 600;
+  color: var(--color-text-muted); white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: color .12s;
 }
-.tai-tab:hover { color: var(--color-primary); background: var(--color-bg-light); }
-.tai-tab.is-active { color: #1d4ed8; font-weight: 700; background: color-mix(in srgb, #2563eb 10%, #fff); border-color: color-mix(in srgb, #2563eb 22%, transparent); }
-/* Level 3 (view: Summary / Explore / Sources) — the quietest, smallest tabs. */
-.aii-instabs .ins-tab { font-size: 0.84rem; }
+.tai-tab:hover { color: var(--color-primary); }
+.tai-tab.is-active { color: #1d4ed8; font-weight: 700; border-bottom-color: #2563eb; }
+/* Level 3 (Summary / Explore Further / Sources) = the quietest tabs — lighter
+   weight, a GREY (not blue) thin underline, so it clearly sits below level 2 (#img148). */
+.aii-instabs .ins-tabnav { margin-top: 6px; }
+.aii-instabs .ins-tab { font-size: 0.82rem; font-weight: 500; }
+.aii-instabs .ins-tab.is-active { color: #475569; font-weight: 600; border-bottom-color: #94a3b8; }
 /* "Updated …" stamp — left-aligned and tight to the first section below it (#img133). */
 .aii-updated-row { display: flex; justify-content: flex-start; font-size: 0.76rem; color: var(--color-text-light); margin: 0 0 2px; }
 
@@ -18188,14 +18184,13 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    topic-layout's 1.6rem top padding pushed the feed too far down. */
 body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 .topic-tabbed .topic-tab-body { padding-top: 4px; }
-/* Phones: match the desktop subnav spacing (#img117/#img118) — same tab padding,
-   title-bar padding, and pill gap; no compact overrides. */
+/* Phones: same subnav spacing as desktop (#img117/#img118). */
 @media (max-width: 899.98px) {
-  .topic-subnav-controls .topic-paths-nav { gap: 22px; }
-  .topic-subnav-controls .ptab { padding: 11px 0 !important; font-size: 0.9rem; }
+  .topic-subnav-controls .topic-paths-nav { gap: 6px; }
+  .topic-subnav-controls .ptab { padding: 7px 14px !important; font-size: 0.9rem; }
   .topic-subnav-inner .tsp-btn { padding: 0.78rem 0.15rem !important; }
   .topic-subnav-inner .tsp-btn-name { font-size: 1.18rem !important; }
-  .topic-ai-subnav { gap: 8px; }
+  .topic-ai-subnav { gap: 18px; }
 }
 
 /* Homepage "News Feed" header a bit bigger (#img44). */
