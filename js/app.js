@@ -127,7 +127,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (nowMobile !== lastMobile) {
       lastMobile = nowMobile;
       const route = getCurrentRoute();
-      if (route) renderLayout(route);
+      // Re-render the FULL page, not just the chrome. renderLayout alone rebuilds
+      // the sub-header (fresh path-tabs with no click handlers) while the old body
+      // stays put — leaving the tabs dead and the wrong one lit (#132/#137). Also
+      // refresh the subnav-height var after the DOM settles.
+      if (route) { renderLayout(route); renderPage(route); requestAnimationFrame(setSubnavHeightVar); }
     }
   }, { passive: true });
 });
@@ -804,32 +808,45 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
   const renderContent = (key) => {
     destroyCtl();
     body.innerHTML = '';
-    if (key === 'news') {
-      const sec = document.createElement('section');
-      sec.id = 'section-newsfeed'; sec.className = 'layout-section';
-      body.appendChild(sec);
-      renderNewsFeed(sec, topic, false);
-      return;
+    try {
+      if (key === 'news') {
+        const sec = document.createElement('section');
+        sec.id = 'section-newsfeed'; sec.className = 'layout-section';
+        body.appendChild(sec);
+        renderNewsFeed(sec, topic, false);
+        return;
+      }
+      renderAI();
+    } catch (err) {
+      // A render throw must never leave a blank/broken tab (was the "nothing
+      // occurs" #137). Show a retry instead so a re-click always re-renders.
+      console.error('topic tab render failed', err);
+      body.innerHTML = '<div class="aii-empty" style="padding:26px 4px;color:var(--color-text-muted);">Couldn’t load this section. Tap the tab again to retry.</div>';
     }
-    renderAI();
   };
   const selectTab = (key) => {
     // A group key (from a deep-link) opens AI Insights on that sub-group.
     if (TOPIC_AI_GROUP_KEYS.has(key)) { subGroup = key; key = 'ai'; }
     else if (key === 'websearch') { subGroup = 'discover'; key = 'ai'; }
     if (!TOPIC_PATH_TABS.some((t) => t.key === key)) key = 'news';
-    const reselect = active === key;
-    active = key;
     nav.querySelectorAll('.ptab').forEach((b) => {
       const on = b.dataset.ptab === key;
       b.classList.toggle('is-active', on);
       b.setAttribute('aria-selected', String(on));
     });
-    // Re-selecting AI (e.g. a deep-link to another sub-group) just swaps the group.
-    if (reselect && key === 'ai') {
-      const subNav = body.querySelector('.topic-ai-subnav');
-      if (subNav) { subNav.querySelectorAll('.tai-tab').forEach((b) => b.classList.toggle('is-active', b.dataset.tai === subGroup)); mountGroup(body.querySelector('#topic-ai-body'), subGroup); return; }
-    } else if (reselect) { return; }
+    // Is this tab's content ACTUALLY present? (Not just "we set active last time" —
+    // a prior render may have failed, leaving it blank.) Only skip the re-render
+    // when the content is really there.
+    const present = key === 'news' ? body.querySelector('#section-newsfeed') : body.querySelector('.topic-ai-wrap');
+    const same = active === key;
+    active = key;
+    if (same && present) {
+      if (key === 'ai') {
+        const subNav = body.querySelector('.topic-ai-subnav');
+        if (subNav) { subNav.querySelectorAll('.tai-tab').forEach((b) => b.classList.toggle('is-active', b.dataset.tai === subGroup)); mountGroup(body.querySelector('#topic-ai-body'), subGroup); }
+      }
+      return;
+    }
     renderContent(key);
     requestAnimationFrame(() => { try { window.scrollTo({ top: 0 }); } catch (_) {} });
   };
