@@ -17374,12 +17374,11 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
    (that stray box was the "weird highlighting", #426). */
 .navbtn:focus { outline: none; }
 .navbtn:focus-visible { outline: 2px solid rgba(255,255,255,0.72); outline-offset: 2px; }
-/* Active page OR an open dropdown lights the button. */
-.navbtn.is-active,
+/* Only an OPEN dropdown lights its button. The active page does NOT get a
+   persistent pill — the page label in the subnav ("Home ⌄") already shows where
+   you are, so a highlight on the nav icon is redundant and looked off (#img108).
+   The active button still hovers like the others via the base .navbtn:hover. */
 .navbtn[aria-expanded="true"] { background: rgba(255,255,255,0.16); color: #fff; }
-/* The active page (e.g. Home on the homepage) still responds to hover — otherwise
-   it reads as "dead" next to the tabs that light up (#428). */
-.navbtn.is-active:hover,
 .navbtn[aria-expanded="true"]:hover { background: rgba(255,255,255,0.24); color: #fff; }
 .navbtn-ico { display: inline-flex; }
 .navbtn-ico svg { width: 21px; height: 21px; display: block; }
