@@ -359,28 +359,21 @@ body.custom-mode.sticky-always #content {
   flex: 0 0 auto;
   margin-left: auto;
 }
-/* Wide screens (≥1024 — where the home Trending sidebar sits beside the feed):
-   the main-nav icons sit right after the site title (padded off it), not buried at
-   the far right. The topic links (if any) fill the space to their right. Below
-   1024 they revert to right-aligned (#img92-#img95). */
-@media (min-width: 1024px) {
+/* ONE single-row nav design for EVERY width above the two-row breakpoint (≥561):
+   hamburger + site title + a separator, then the app icons sit right after the
+   title (padded off it), left-grouped — NOT buried at the far right. This is the
+   only design between the widest screens and the point where the hamburger/title
+   move to their own row above the icons (≤560). No in-between breakpoint variants
+   (#img157/#img158). */
+@media (min-width: 561px) {
   .sticky-hero-inner .sticky-actions.navbtns { order: 1; margin-left: 1.75rem !important; margin-right: 0; }
-  /* Icons tucked beside the title read chunky at full size — slim the whole bar:
-     smaller icons, hamburger, title, and a shorter nav (#img106). */
+  /* Slim, compact bar — small icons, hamburger, title, short height (#img157). */
   :root { --nav-h: 62px; }
   .sticky-hero-inner .sticky-title { font-size: 1.28rem; }
   .sticky-hero-inner .nav-hamburger { width: 20px; height: 15px; }
   .sticky-hero-inner .navbtn-ico svg { width: 18px; height: 18px; }
   .sticky-hero-inner .navbtn { padding: 3px 8px; }
   .sticky-hero-inner .navbtn-label { font-size: 0.63rem; }
-}
-/* 900–1023 (icons right-aligned): NOT the jumbo 1.5rem title (that in-between size
-   looked wrong) — a moderate title, only a touch bigger than the ≥1024 slim, plus
-   the trimmed hamburger (#img109/#img113). */
-@media (min-width: 900px) and (max-width: 1023.98px) {
-  .sticky-hero-inner .sticky-title { font-size: 1.32rem; }
-  .sticky-hero-inner .sticky-brand { margin-left: 0.5rem; }
-  .sticky-hero-inner .nav-hamburger { width: 20px; height: 15px; }
 }
 
 /* Search Topics + Prompt Builder share the same white-pill CTA
@@ -750,19 +743,13 @@ body.custom-mode.sticky-always #content {
 .topic-hero-related { display: contents; }
 @media (max-width: 899.98px) {
   .nav-back, .nav-pagelabel { display: none !important; }   /* retired on mobile */
-  .sticky-hero-inner .nav-hamburger { order: 1; margin-left: 0; }
-  .sticky-hero-inner .sticky-brand { order: 2; display: flex; }
-  .sticky-hero-inner .sticky-actions { display: none; }
-  .sticky-hero-inner .nav-search-mobile {
-    order: 10; margin-left: auto; display: inline-flex;
-    width: 36px; height: 36px; align-items: center; justify-content: center;
-    background: none; border: none; border-radius: 9px;
-    color: rgba(255, 255, 255, 0.9); cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    transition: background .14s;
-  }
-  .sticky-hero-inner .nav-search-mobile:active { background: rgba(255, 255, 255, 0.12); }
-  .sticky-hero-inner .nav-search-mobile svg { display: block; }
+  /* The old single-search-icon mobile nav (hamburger + brand + a lone search icon,
+     actions hidden) is fully retired: 561–899 now uses the SAME single-row icons-
+     after-title design as wider screens, and ≤560 uses the two-row grid. So NO
+     hamburger/brand order or actions display overrides here — they fought the
+     icons-after-title layout and shoved the brand to the far right (#img157). The
+     standalone mobile search icon stays hidden at every width now. */
+  .sticky-hero-inner .nav-search-mobile { display: none !important; }
 
   /* (The mobile TOPIC hero — big title + description + scroll-collapse, #92/#93 —
      is being built as a dedicated pass; the topic subnav currently uses the
@@ -11695,16 +11682,13 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   height: 22px;
   background: rgba(255, 255, 255, 0.32);
 }
-@media (max-width: 640px) {
+/* The separator sits after the site title, dividing it from the app icons that
+   follow — so it shows on EVERY single-row width (≥561, home + topic alike,
+   #img157). It's hidden only in the two-row layout where the title is centered on
+   its own line above the icons (≤560, #img158). */
+@media (max-width: 560px) {
   .sticky-brand::after { display: none; }
   .sticky-tagline { margin-left: 0; }
-}
-/* The separator divides the brand from the main-nav topic links — which only
-   exist on TOPIC pages (≥1024). Drop it on the homepage (no main-nav topics) and
-   wherever the topic links aren't shown. */
-body.home-search .sticky-brand::after { display: none; }
-@media (max-width: 1023.98px) {
-  .sticky-brand::after { display: none; }
 }
 .sticky-tagline {
   margin-left: 1.15rem;
@@ -17391,17 +17375,9 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .nl-short { display: none; }
 
 @media (max-width: 899.98px) {
-  /* Medium/tablet (561–899, still single-row, icons right): compact icons + labels,
-     but the SAME prominent title as the 900–1023 range so the site title never
-     shrinks into an in-between size (#img128/#img129). ≤560 goes two-row below. */
-  .sticky-hero-inner .sticky-actions { order: 6; margin-left: auto !important; }
-  .sticky-hero-inner { gap: 0.6rem; padding-right: 0.75rem; }
-  /* Not too big, and a clear gap off the hamburger (#img142). */
-  .sticky-hero-inner .sticky-title { font-size: 1.32rem; }
-  .sticky-hero-inner .sticky-brand { margin-left: 0.5rem; }
-  .navbtn { gap: 4px; min-width: 44px; padding: 5px 7px; }
-  .navbtn-ico svg { width: 19px; height: 19px; }
-  .navbtn-label { font-size: 0.62rem; }
+  /* 561–899 uses the SAME single-row icons-after-title design as the wider screens
+     (see the ≥561 block above) — no separate tablet layout. Just the content-height
+     bookkeeping for the (removed) bottom bar lives here. */
   /* Content no longer reserves space for the (removed) bottom bar. */
   html body.home-search.app-mode.sticky-always.has-subnav #content,
   html body.home-search.app-mode #content { padding-bottom: 1.1rem !important; }
