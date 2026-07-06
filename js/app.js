@@ -15,14 +15,13 @@ import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=2
 import { initPromptModal } from './components/prompt-modal.js?v=20260702-revamp435';
 import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260705-revamp465';
 import { fetchTrending } from './utils/trending.js';
-import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem, TI_SECTION_META } from './components/ti-shortcuts.js';
+import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260702-revamp435';
-import { initInsightModal } from './components/insight-modal.js?v=20260703-revamp448';
+import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp468';
 import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260705-revamp465';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260702-revamp435';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp468';
 import { renderWebSources } from './components/websources.js?v=20260702-revamp435';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260702-revamp435';
-import { initDiscoverModal } from './components/discover-modal.js';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260702-revamp435';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
 import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260702-revamp435';
@@ -41,7 +40,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   initInsightModal();
   // Trending list modal retired (Phase-5 follow-up) — "View more trending" /
   // open-trending-list now open the Trending nav dropdown instead (see below).
-  initDiscoverModal();
   // All Topics modal retired — every "All Topics" entry (picker action, search)
   // now opens the single clean Topics nav dropdown (see the listener below).
   initRelatedTopicsModal();
@@ -2573,10 +2571,6 @@ function attachTabPanelHandlers() {
 
 // ---------- Sidebar renderers (compact vertical lists) ----------
 
-// Groups that get an AI overview brief (per topic), and the spark icon.
-const TI_AI_LENSES = new Set(['discover', 'learn', 'analyze', 'topic-specific']);
-const TI_AI_LABELS = { discover: 'Discover', learn: 'Learn', analyze: 'Analysis', 'topic-specific': 'Topic Insights' };
-
 // Prompt templates for "explore deeper" / "run full overview" — admin-tunable
 // in data/insight-templates.json (lazy-loaded, with safe fallbacks).
 let __insightTemplates = null;
@@ -2618,85 +2612,6 @@ function splitOverviewSections(content) {
     sections.push({ name: p.slice(0, nl).trim(), body: p.slice(nl + 1).trim() });
   }
   return sections;
-}
-
-// Group AI overview — auto-loaded when a Discover/Learn/Analyze/Topic-Insights
-// accordion opens (home + topic pages; custom pages keep plain shortcut rows).
-// One pre-generated overview per group, sectioned per shortcut; each section
-// can be explored deeper in a model via the prompt modal.
-async function loadGroupOverview(el, topicArg, group, items, scopeLabel) {
-  if (!el || el.dataset.state === 'loading' || el.dataset.state === 'done') return;
-  el.dataset.state = 'loading';
-  const label = TI_AI_LABELS[group] || 'AI';
-  el.innerHTML = `<div class="ti-overview-loading" aria-hidden="true">${'<div class="ti-overview-skel"></div>'.repeat(3)}</div>`;
-  let data = null;
-  try {
-    const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shortcut', topic: topicArg, group }) });
-    data = res.ok ? await res.json() : null;
-  } catch (_) { data = null; }
-  const tpl = await getInsightTemplates();
-  if (!data || !data.content) {
-    el.innerHTML = `<p class="ti-overview-unavailable">Overview is being generated — check back shortly.</p>`;
-    el.dataset.state = 'error'; // allow retry on next open
-    return;
-  }
-
-  const byName = new Map(items.map((s) => [s.name.trim().toLowerCase(), s]));
-  const sectionNames = items.map((s) => `- ${s.name}`).join('\n');
-  const fullPrompt = String(tpl.overviewRun || '')
-    .replace('{groupLabel}', label)
-    .replace('{scopeLabel}', scopeLabel)
-    .replace('{sectionNames}', sectionNames);
-  const ago = timeAgoLabel(data.generatedAt);
-  const sections = splitOverviewSections(data.content);
-
-  let html = `<div class="ti-overview-head">
-    <span class="ai-result-label">${escapeHTML(label)} overview</span><span class="ai-result-badge">AI</span>
-    ${ago ? `<span class="ti-overview-ago">${escapeHTML(ago)}</span>` : ''}
-    <button type="button" class="ti-overview-run">Run full overview ↗</button>
-  </div>`;
-  if (sections.length) {
-    // Each section is its own mini-accordion — the user clicks through the
-    // briefing (e.g. Beginner's Guide, Glossary) and expands what they want.
-    html += `<div class="ti-ov-minis">` + sections.map((sec, i) => `
-      <details class="ti-ov-mini"${i === 0 ? ' open' : ''}>
-        <summary class="ti-ov-mini-summary">
-          <span class="ti-ov-mini-name">${escapeHTML(sec.name)}</span>
-          <svg class="ti-ov-mini-chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-        </summary>
-        <div class="ti-ov-mini-body">
-          ${renderBriefBody(sec.body, null)}
-          ${byName.has(sec.name.trim().toLowerCase()) ? `<button type="button" class="ai-result-deeper ti-ov-deeper" data-name="${escapeAttr(sec.name)}">Explore further with AI ↗</button>` : ''}
-        </div>
-      </details>`).join('') + `</div>`;
-  } else {
-    // Legacy (pre-section) cached brief — single block until the cron migrates it.
-    html += `<div class="ti-ov-section is-active">${renderBriefBody(data.content, null)}</div>`;
-  }
-  if (data.sources && data.sources.length) html += renderBriefBody('', data.sources, { noFavicons: true }); // text-only source links
-  el.innerHTML = html;
-  el.dataset.state = 'done';
-
-  el.querySelector('.ti-overview-run')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    window.dispatchEvent(new CustomEvent('open-prompt-modal', {
-      detail: { basePrompt: fullPrompt, name: `${label} overview · ${scopeLabel}`, count: 1 },
-    }));
-  });
-  el.querySelectorAll('.ti-ov-deeper').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const sc = byName.get(String(btn.dataset.name || '').trim().toLowerCase());
-      const sec = sections.find((s) => s.name === btn.dataset.name);
-      if (!sc) return;
-      const deeper = String(tpl.sectionDeeper || '')
-        .replace('{shortcutPrompt}', sc.prompt)
-        .replace('{sectionContent}', (sec && sec.body) || '');
-      window.dispatchEvent(new CustomEvent('open-prompt-modal', {
-        detail: { basePrompt: deeper, name: sc.name, iconKey: sc.icon || '', count: 1 },
-      }));
-    });
-  });
 }
 
 // Per-category icon + summary blurb for the Web Sources accordions.
@@ -2878,31 +2793,19 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       { key: 'analyze', label: 'Analysis' },
       { key: 'more', label: 'More' },
     ];
-    // AI lens groups (home + topic pages) render as a generated GROUP
-    // OVERVIEW — the shortcuts are its sections, not separate rows. Custom
-    // pages keep plain rows: their query space is unbounded, so we never
-    // generate/cache intelligence per custom term (rows send users out to
-    // models/web sources instead).
-    const hasOverview = (key) => !isCustom && TI_AI_LENSES.has(key);
+    // Shortcut groups render as plain accordions of rows (rows send users out to
+    // external models / web sources). The old "lens row → generated group
+    // OVERVIEW" path (a legacy per-section Gemini generation) was retired — AI
+    // insights are now the topic-page Insight Builders only.
     groupOrder.forEach(g => {
       const items = groups[g.key];
       if (!items || items.length === 0) return;
-      if (hasOverview(g.key)) {
-        // Lens rows OPEN the AI insight modal (not an inline accordion).
-        const meta = TI_SECTION_META[g.key] || TI_SECTION_META.more;
-        html += `<button type="button" class="ti-lens-row" data-overview-group="${escapeAttr(g.key)}" style="--ti-accent: ${meta.accent};">
-            <span class="ti-lens-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${meta.icon}</svg></span>
-            <span class="ti-lens-text"><span class="ti-lens-title">${escapeHTML(g.label)}</span><span class="ti-lens-blurb">${escapeHTML(meta.blurb || '')}</span></span>
-            <span class="ti-lens-open" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg></span>
-          </button>`;
-      } else {
-        html += renderTIAccordion({
-          key: g.key,
-          label: g.label,
-          open: false,
-          bodyHTML: `<ul class="ti-item-list ti-item-list-shortcuts" data-group="${escapeAttr(g.key)}">${items.map(s => tiShortcutItem(s, topicName, g.key)).join('')}</ul>`,
-        });
-      }
+      html += renderTIAccordion({
+        key: g.key,
+        label: g.label,
+        open: false,
+        bodyHTML: `<ul class="ti-item-list ti-item-list-shortcuts" data-group="${escapeAttr(g.key)}">${items.map(s => tiShortcutItem(s, topicName, g.key)).join('')}</ul>`,
+      });
     });
   }
   html += `</div>`; /* close .ti-accordions */
@@ -2911,20 +2814,6 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   html += `</div>`; /* close .shortcuts-sidebar */
   html += webSourcesCardHTML; /* Web Sources as its own sibling section */
   container.innerHTML = html;
-
-  // Lens rows open the unified AI insight modal (overview type).
-  if (!isCustom) {
-    const overviewTopicArg = isHome ? 'home' : topicName;
-    const scopeTopic = isHome ? "today's world" : topicName;
-    container.querySelectorAll('[data-overview-group]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const group = btn.dataset.overviewGroup;
-        window.dispatchEvent(new CustomEvent('open-insight-modal', {
-          detail: { type: 'overview', topic: overviewTopicArg, group, label: TI_AI_LABELS[group] || 'AI', scopeTopic },
-        }));
-      });
-    });
-  }
 
   // Quick Links: track clicks for analytics, and intercept clicks
   // while multi-select is on to surface a transient toast (the link

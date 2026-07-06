@@ -54,17 +54,16 @@ function isOpen() { return overlayEl && overlayEl.style.display !== 'none'; }
 // includes the Step 1 topic picker. Drives back-to-picker availability.
 let pickerMode = false;
 
-// Topics for the in-body switcher dropdown: Today's World + every featured topic.
+// Topics for the in-body switcher dropdown: every featured topic. (AI insights are
+// a TOPIC-PAGE feature only — the home "Today's World" scope was retired.)
 function topicList() {
-  return [{ key: 'home', name: "Today's World" }]
-    .concat((getFeaturedTopics() || []).map((t) => ({ key: t.slug, name: t.name })));
+  return (getFeaturedTopics() || []).map((t) => ({ key: t.slug, name: t.name }));
 }
-// The full searchable list for the Step 1 picker — Today's World + all 100 topics.
+// The full searchable list for the Step 1 picker — all topics (no home scope).
 function allTopicsList() {
-  return [{ key: 'home', name: "Today's World", parentName: '' }]
-    .concat((getAllTopics() || [])
-      .filter((t) => t.slug !== 'home')
-      .map((t) => ({ key: t.slug, name: t.name, parentName: t.parent ? (getTopicBySlug(t.parent)?.name || '') : '' })));
+  return (getAllTopics() || [])
+    .filter((t) => t.slug !== 'home')
+    .map((t) => ({ key: t.slug, name: t.name, parentName: t.parent ? (getTopicBySlug(t.parent)?.name || '') : '' }));
 }
 // Re-render the modal body for a newly-picked topic key ('home' or a slug). This
 // is the Step 1 → Step 2 transition (lands on the path picker for that topic).

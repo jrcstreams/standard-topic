@@ -672,7 +672,6 @@ function render() {
   panelEl.classList.toggle('im-panel--news', current.type === 'news');
   if (current.type === 'news') renderNews(current);
   else if (current.type === 'trend') renderTrend(current);
-  else if (current.type === 'overview') renderOverview(current);
   else renderNews(current);
   panelEl.querySelector('#im-close')?.addEventListener('click', close);
   panelEl.querySelector('#im-back')?.addEventListener('click', goBack);
@@ -941,59 +940,4 @@ function splitSections(content) {
   }
   if (!idx.length) return [];
   return idx.map((s, i) => ({ name: s.name, body: text.slice(s.headEnd, i + 1 < idx.length ? idx[i + 1].start : text.length).trim() }));
-}
-function renderOverview(d) {
-  const lens = d.label || 'AI';
-  const topicLabel = d.scopeTopic || 'this topic';
-  // Eyebrow ABOVE the title — the lens chip (matches Trending/News layout).
-  const metaLine = `<span class="im-eyebrow-cat">${esc(lens)}</span>`;
-  const actions = [
-    `<button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span>${CHEV}</button>`,
-    `<button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span>${CHEV}</button>`,
-  ].join('');
-  const prompt = `Give me a thorough "${lens}" overview of ${topicLabel} — be specific and current.`;
-  panelEl.innerHTML = `
-    ${brandHeaderHTML(null, { brandLabel: 'AI Insights' })}
-    <div class="im-body">
-      ${stickyHeadHTML({ title: topicLabel, metaLine, actions, nav: d.nav, accHTML: `
-        <div class="im-acc" data-body="explore" id="im-explore-panel"></div>
-        <div class="im-acc" data-body="web" id="im-web-panel"></div>` })}
-      <div class="im-secs">
-        <div id="im-secs-body">${msecHTML('msec-brief', lens, briefSkeleton(`Generating ${lens} overview…`))}</div>
-      </div>
-    </div>`;
-  const ctx = { prompt, sources: [], origUrl: '', webTerm: topicLabel, onReview: () => window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, name: lens + ' overview', count: 1 } })) };
-  wireActions(ctx);
-  buildBriefNav();
-  (async () => {
-    const t0 = Date.now();
-    const secsBody = panelEl.querySelector('#im-secs-body');
-    try {
-      const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shortcut', topic: d.topic, group: d.group }) });
-      const data = res.ok ? await res.json() : null;
-      await holdLoader(t0);
-      if (panelEl.querySelector('#im-secs-body') !== secsBody) return;
-      if (data && data.content) {
-        // Overview sources may be a per-section map { name: [...] }; this modal
-        // shows all sections together, so flatten to the de-duped union.
-        const raw = data.sources || [];
-        if (Array.isArray(raw)) ctx.sources = raw;
-        else {
-          const seen = new Set();
-          ctx.sources = Object.values(raw).flat().filter((s) => s && s.uri && !seen.has(s.uri) && seen.add(s.uri));
-        }
-        // Each ## sub-section becomes a scroll-spy section with an icon head +
-        // the AI sparkle on its first sentence (flagFirst).
-        const sections = splitSections(data.content);
-        const secHTML = sections.length
-          ? sections.map((s, i) => msecHTML(`msec-ov-${i}`, s.name, secHeadHTML('summary', s.name) + renderBriefBody(s.body, null))).join('')
-          : msecHTML('msec-brief', lens, renderBriefBody(data.content, null));
-        // Cited sources land in a final "Sources" section (domain-only rows).
-        const srcSec = (ctx.sources && ctx.sources.length) ? msecHTML('msec-sources', 'Sources', secHeadHTML('sources', 'Sources') + sourcesListHTML(ctx.sources, '')) : '';
-        // All sections in ONE container so :last-child (no border) is the true last.
-        secsBody.innerHTML = secHTML + srcSec; secsBody.classList.add('ai-reveal');
-        buildBriefNav();
-      } else { secsBody.innerHTML = '<p class="im-empty">Overview is being generated — check back shortly.</p>'; }
-    } catch (_) { if (panelEl.querySelector('#im-secs-body') === secsBody) secsBody.innerHTML = '<p class="im-empty">Overview unavailable.</p>'; }
-  })();
 }

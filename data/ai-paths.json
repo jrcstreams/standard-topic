@@ -15,24 +15,16 @@
       "refreshClass": "weekly"
     },
     {
-      "group": "analyze",
-      "label": "Analysis",
-      "subtitle": "Tensions, trade-offs, and what it all means.",
-      "order": 3,
-      "refreshClass": "biweekly"
-    },
-    {
       "group": "learn",
       "label": "101 Resources",
       "subtitle": "Background, fundamentals, and context.",
-      "order": 4,
+      "order": 3,
       "refreshClass": "evergreen"
     }
   ],
   "windows": {
     "daily": 24,
     "weekly": 168,
-    "biweekly": 336,
     "evergreen": 720,
     "live": {
       "1": 1,

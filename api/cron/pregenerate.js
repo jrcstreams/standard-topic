@@ -35,11 +35,9 @@ const { AI_LENSES } = require('../../lib/shortcut-sections');
 const { effectiveWindowHours } = require('../../lib/ai-freshness');
 const topicsData = require('../../data/topics.json');
 
-// The 4 "Insight Builders" are stored under a `<group>:b` insight key (see
-// lib/insight-core.js generateInsight builder branch). Home hides Deep Dive
-// (topic-specific) just like the UI's hideGroups.
+// The Insight Builders are stored under a `<group>:b` insight key (see
+// lib/insight-core.js generateInsight builder branch).
 const BUILDER_SUFFIX = ':b';
-const HOME_HIDE = ['topic-specific'];
 
 const NEWS_PER_RUN = 10;
 // Per-run cap on healing sourceless briefs (re-grounding ones that cached with
@@ -56,20 +54,20 @@ try {
   invalidateByTag = null;
 }
 
-// Every (scope, group) builder that should exist: home + each topic × the 4
-// Insight Builder groups (home hides Deep Dive, matching the UI). `insight` is
-// the `<group>:b` cache key; `topic` is what the frontend passes (NAME, or
-// 'home'); generateInsight keys by lower(topic).
+// Every (topic, group) builder that should exist: each TOPIC × the Insight
+// Builder groups (discover/topic-specific/learn). AI insights are a TOPIC-PAGE
+// feature only — the home page has no AI-insight surface, so 'home' is NOT
+// generated. `insight` is the `<group>:b` cache key; `topic` is the topic NAME
+// the frontend passes; generateInsight keys by lower(topic).
 function overviewCandidates() {
-  const scopes = ['home'].concat(
-    (topicsData.topics || []).filter((t) => t.slug && t.slug !== 'home').map((t) => t.slug));
+  const scopes = (topicsData.topics || [])
+    .filter((t) => t.slug && t.slug !== 'home')
+    .map((t) => t.slug);
   const out = [];
   for (const scope of scopes) {
-    const hide = scope === 'home' ? HOME_HIDE : [];
     for (const group of AI_LENSES) {
-      if (hide.includes(group)) continue;
       const t = (topicsData.topics || []).find((x) => x.slug === scope);
-      const topic = scope === 'home' ? 'home' : (t && t.name);
+      const topic = t && t.name;
       if (!topic) continue;
       out.push({ topic, group, insight: `${group}${BUILDER_SUFFIX}` });
     }
@@ -290,7 +288,7 @@ module.exports = async function handler(req, res) {
     if ((which === 'all' || which === 'refresh') && budget > 0) {
       // Per-builder freshness windows (hours), from data/ai-paths.json so the
       // cron and the on-view refresh agree: discover 24h, topic-specific 168h,
-      // analyze 336h, learn 720h. Non-live classes ignore tier.
+      // learn 720h. Non-live classes ignore tier.
       const winFor = (g) => effectiveWindowHours(g, 3);
       const wDiscover = winFor('discover');
       const wTopic = winFor('topic-specific');
