@@ -368,12 +368,13 @@ body.custom-mode.sticky-always #content {
    (#img157/#img158). */
 @media (min-width: 561px) {
   .sticky-hero-inner .sticky-actions.navbtns { order: 1; margin-left: 1.75rem !important; margin-right: 0; }
-  /* Slim, compact bar — small icons, hamburger, title, short height (#img157). */
-  :root { --nav-h: 62px; }
+  /* Compact bar, but the icon buttons get real vertical room so the active/open
+     pill has breathing space above the icon + below the label (#img191). */
+  :root { --nav-h: 70px; }
   .sticky-hero-inner .sticky-title { font-size: 1.28rem; }
   .sticky-hero-inner .nav-hamburger { width: 20px; height: 15px; }
   .sticky-hero-inner .navbtn-ico svg { width: 18px; height: 18px; }
-  .sticky-hero-inner .navbtn { padding: 3px 8px; }
+  .sticky-hero-inner .navbtn { padding: 6px 10px; }
   .sticky-hero-inner .navbtn-label { font-size: 0.63rem; }
 }
 
@@ -13923,7 +13924,7 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
 .trend-card.is-expanded .trend-card-open { display: none; }
 /* Inside the container the brief flows off the trend with a hairline separator. */
 .trend-card-exp {
-  margin-top: 10px; padding: 14px 2px 4px;
+  margin-top: 10px; padding: 9px 2px 4px;
   border: none; border-radius: 0; background: none;
   border-top: 1px solid var(--color-surface-border);
   animation: trendExpIn .2s ease;
@@ -13961,13 +13962,14 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
   font-family: inherit; color: var(--color-text); cursor: pointer;
   transition: background 0.14s;
 }
-/* Green tint on HOVER only — it must NOT stay lit after the trend is opened
-   (the open state already has its own container styling, #img96/#img98). */
+/* Green tint on HOVER only — and ONLY while collapsed. Once the trend is open it
+   has its own container styling, so the header shows no hover fill at all (the
+   green tint on the open trend read as noise, #img188). */
 .trend-card-trigger:hover { background: rgba(31, 143, 107, 0.07); }
 .trend-card.is-expanded .trend-card-trigger,
-.trend-card.is-open .trend-card-trigger { background: transparent; }
+.trend-card.is-open .trend-card-trigger,
 .trend-card.is-expanded .trend-card-trigger:hover,
-.trend-card.is-open .trend-card-trigger:hover { background: rgba(31, 143, 107, 0.07); }
+.trend-card.is-open .trend-card-trigger:hover { background: transparent; }
 .trend-card-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 0.16rem; }
 .trend-card-head { display: flex; align-items: center; gap: 0.4rem; min-width: 0; }
 .trend-card-icon { flex: 0 0 auto; display: inline-flex; color: #16a34a; }
@@ -15824,9 +15826,11 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
    below on narrow widths. Replaces the old per-sentence sparkle + brief legend. */
 /* "AI Generated Text" tag is ALWAYS on its own line, flush-left below the section
    head — never inline with the title. */
-.im-sec-aitag-row { margin: 0 0 11px; }
-/* Discreet grey chip matching the news-feed "AI Generated Text" label (#img66/#img75). */
-.im-sec-aitag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 6px; background: var(--color-bg-light); border: none; color: var(--color-text-muted); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.01em; white-space: nowrap; }
+.im-sec-aitag-row { margin: 0 0 7px; }
+/* A soft blue-tinted chip (was a flat grey that blended into the light-grey card) —
+   the light blue + hairline border makes the "AI Generated Text" label read as a
+   distinct pill, and it sits tight to the body text below (#img188). */
+.im-sec-aitag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 6px; background: color-mix(in srgb, #2563eb 9%, #fff); border: 1px solid color-mix(in srgb, #2563eb 16%, transparent); color: #475d80; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.01em; white-space: nowrap; }
 .im-sec-aitag svg { width: 12px; height: 12px; flex: none; color: var(--color-primary); }
 .im-msec-ic svg { width: 15px; height: 15px; }
 /* Content section headers (Why It's Trending / Summary / Sources & Coverage) —
@@ -17518,7 +17522,7 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .news-panel { margin-top: 13px; border-top: 1px solid var(--color-surface-border); }
 /* No nested scroll: the AI insight flows inline as part of the news-feed's own
    scroll, so it reads as one cohesive story (not a scroll-box within a scroll-box). */
-.ni-inner { padding-top: 14px; animation: niReveal .22s ease; }
+.ni-inner { padding-top: 9px; animation: niReveal .22s ease; }
 @keyframes niReveal { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
 
 /* Brief sections */
@@ -18026,7 +18030,7 @@ button.aiidd-vlink { align-self: flex-start; }
    genuinely narrow phones (≤560); --nav-h grows so the app content clears both
    rows without overriding the topic sub-header. ─────────────────────────────── */
 @media (max-width: 560px) {
-  :root { --nav-h: 96px; }
+  :root { --nav-h: 112px; }
   .sticky-hero-inner {
     display: grid !important;
     grid-template-columns: 1fr auto 1fr;
@@ -18045,12 +18049,12 @@ button.aiidd-vlink { align-self: flex-start; }
   .sticky-hero-inner .sticky-actions.navbtns {
     grid-area: nav; justify-content: space-around;
     margin: 0 -0.9rem !important;
-    /* Compact icon strip — trimmed so the whole nav lands at --nav-h (96px); if it
-       overran, the subnav + nav dropdowns (positioned at top:var(--nav-h)) cut up
-       into the icon row (#img179-182). */
-    padding: 3px 0.9rem 4px; border-top: 1px solid rgba(255, 255, 255, 0.12);
+    /* Real vertical room around the icons + labels so the strip doesn't feel cut
+       off (#img194). --nav-h is bumped to match the taller strip so the subnav +
+       nav dropdowns (positioned at top:var(--nav-h)) still clear it (#img179-182). */
+    padding: 7px 0.9rem 8px; border-top: 1px solid rgba(255, 255, 255, 0.12);
   }
-  .sticky-hero-inner .sticky-actions.navbtns .navbtn { padding: 2px 6px; gap: 2px; }
+  .sticky-hero-inner .sticky-actions.navbtns .navbtn { padding: 5px 6px; gap: 3px; }
   /* Two-row nav has room for ALL labels — undo the single-row progressive hiding
      (Home/Search were losing their labels) so every icon is labelled + aligned. */
   .sticky-hero-inner .sticky-actions.navbtns .navbtn-label { display: block !important; }
@@ -18188,9 +18192,10 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    weight, a LIGHTER grey than the Catch Up row above, GREY (not blue) thin active
    underline, so it clearly sits below level 2 (#img148/#img152). Tucked close under
    the Catch Up row (#img153). */
+/* Topic-page L3 uses the SAME segmented control as trending/news now — the segmented
+   bar itself reads as a clear sub-level below the Catch Up/Deep Dive underline tabs,
+   so no separate quiet-underline styling is needed (#img196). */
 .aii-instabs .ins-tabnav { margin-top: 8px; }
-.aii-instabs .ins-tab { font-size: 0.82rem; font-weight: 500; color: #94a3b8; }
-.aii-instabs .ins-tab.is-active { color: #475569; font-weight: 600; border-bottom-color: #94a3b8; }
 /* "Updated …" stamp — left-aligned and tight to the first section below it (#img154).
    The first section carries a 22px top padding for inter-section spacing; collapse it
    right after the stamp so "Updated …" sits a smidge above the section title. */
@@ -18324,26 +18329,32 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 /* ═══ Shared insight tabs (revamp452) — Summary / Explore Further / Sources ════
    Used by the trending expansion, news-story AI Insights, and topic AI Insights. */
 .ins-tabs { display: block; width: 100%; }
-/* Only ever 3 short tabs (Summary / Explore Further / Sources) — they always fit,
-   so no scroll region (the old overflow-x:auto left a tiny nuisance scroll, #img166/
-   #img167). */
-.ins-tabnav { display: flex; gap: 20px; border-bottom: 1px solid var(--color-surface-border); margin-bottom: 14px; overflow-x: visible; scrollbar-width: none; }
+/* Summary / Explore Further / Sources render as a SEGMENTED CONTROL bar — a soft
+   grey track holding pill segments, active = a white pill (neutral grey/off-black
+   system, no blue). Only ever 3 short tabs, so the bar sizes to its content:
+   left-aligned on wide screens, centered on mobile (#img196). */
+.ins-tabnav {
+  display: flex; width: fit-content; gap: 2px; margin: 0 0 14px;
+  background: #eceff4; border: 1px solid #e2e6ec; border-radius: 11px; padding: 3px;
+  overflow-x: visible; scrollbar-width: none;
+}
 .ins-tabnav::-webkit-scrollbar { display: none; }
 .ins-tab {
-  flex: none; padding: 9px 0; margin-bottom: -1px; border: none; border-bottom: 2px solid transparent;
-  background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.9rem; font-weight: 550;
-  color: var(--color-text-muted); white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;
-  -webkit-tap-highlight-color: transparent;
+  flex: 0 0 auto; padding: 6px 15px; border: none; border-radius: 8px;
+  background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600;
+  color: #64748b; white-space: nowrap; text-align: center;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  transition: background .12s, color .12s, box-shadow .12s; -webkit-tap-highlight-color: transparent;
 }
-.ins-tab:hover { color: var(--color-primary); }
-.ins-tab.is-active { color: #1d4ed8; font-weight: 700; border-bottom-color: #2563eb; }
-.ins-tab-count { font-size: 0.7rem; font-weight: 600; color: var(--color-text-muted); background: var(--color-bg-light); border-radius: 6px; padding: 1px 6px; }
-.ins-tab.is-active .ins-tab-count { color: #1d4ed8; background: color-mix(in srgb, #2563eb 10%, #fff); }
-/* News-story insight tabs: a more prominent active underline than the default —
-   thicker (3px) so the current view reads clearly on the news card (#img168).
-   (Topic-page L3 keeps its quiet grey underline via .aii-instabs.) */
-.ni-tabs .ins-tab { border-bottom-width: 3px; }
-.ni-tabs .ins-tab.is-active { color: #1d4ed8; border-bottom-color: #2563eb; }
+.ins-tab:hover { color: #1e293b; background: rgba(15, 23, 42, 0.05); }
+.ins-tab.is-active, .ins-tab.is-active:hover {
+  color: #1e293b; font-weight: 650;
+  background: #fff; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.10), 0 0 0 1px rgba(15, 23, 42, 0.03);
+}
+.ins-tab-count { font-size: 0.68rem; font-weight: 600; color: var(--color-text-muted); background: rgba(15, 23, 42, 0.06); border-radius: 5px; padding: 1px 6px; }
+.ins-tab.is-active .ins-tab-count { color: #334155; background: rgba(15, 23, 42, 0.08); }
+/* Center the bar on phones; keep it left-aligned (fit-content) on wider screens. */
+@media (max-width: 640px) { .ins-tabnav { margin-left: auto; margin-right: auto; } }
 /* Explore Further tab body = a clean flat list of option accordions (External AI
    Models first, then the web-search categories). */
 .ins-explore { display: flex; flex-direction: column; gap: 6px; }
@@ -18369,12 +18380,16 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 .xf-acc[open] > .xf-sum .xf-chev { transform: rotate(180deg); }
 .xf-sum:hover .xf-sum-name, .xf-acc[open] > .xf-sum .xf-sum-name { color: var(--color-primary); }
 .xf-panel { padding: 0 2px 12px; border-top: none; }
-.xf-web-panel { display: flex; flex-direction: column; padding-top: 4px; }
-.xf-web-row { display: flex; align-items: center; gap: 10px; padding: 10px 8px; border-radius: 8px; text-decoration: none; color: var(--color-text); transition: background .12s; }
+/* Child sites (DuckDuckGo, Google News, Wikipedia…) are SUBORDINATE to their
+   parent category header (Search & Reference) — lighter weight + smaller + a left
+   rail/indent so the nesting reads as a hierarchy, not a flat repeat of the parent
+   style (#img188/#img189/#img190). */
+.xf-web-panel { display: flex; flex-direction: column; padding: 2px 0 4px; margin-left: 4px; border-left: 2px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); }
+.xf-web-row { display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 14px; border-radius: 0 8px 8px 0; text-decoration: none; color: var(--color-text); transition: background .12s; }
 .xf-web-row:hover { background: var(--color-bg-light); }
 .xf-web-tx { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-.xf-web-name { font-size: 0.9rem; font-weight: 600; color: var(--color-primary); }
-.xf-web-desc { font-size: 0.8rem; color: var(--color-text-muted); }
+.xf-web-name { font-size: 0.85rem; font-weight: 500; color: var(--color-text); }
+.xf-web-desc { font-size: 0.76rem; color: var(--color-text-muted); }
 .xf-web-row > svg { flex: none; color: #93a4c4; }
 .xf-emenu { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; }
 .xf-emenu-model { display: flex; align-items: center; gap: 10px; padding: 2px 2px 6px; }

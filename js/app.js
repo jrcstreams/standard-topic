@@ -684,14 +684,14 @@ function topicsNavDdCfg() {
     wire: (panel) => {
       wireNavDdAccordions(panel);
       panel.querySelectorAll('[data-aiidd-link]').forEach((a) => a.addEventListener('click', () => closeNavDropdown()));
-      // "Search any topic" — close this dropdown and open Search explicitly via the
-      // router (a raw hash-link sometimes didn't fire the Search modal on mobile,
-      // #img177). preventDefault so the two don't race.
+      // "Search any topic" — open Search reliably (same hash-independent path as the
+      // Search nav icon). navigate('#/search') alone was a no-op when the hash was
+      // already #/search — e.g. Search had been opened then this Topics dropdown
+      // switched in over it, leaving the hash stuck at #/search (#img177/#img193).
       const headlink = panel.querySelector('[data-navdd-headlink]');
       if (headlink) headlink.addEventListener('click', (e) => {
         e.preventDefault();
-        closeNavDropdown();
-        navigate(headlink.getAttribute('href') || '#/search');
+        openSearchFromNav();
       });
     },
   };
@@ -2056,7 +2056,7 @@ function renderStickyHeroBar(container, route) {
     navSearchBtn.setAttribute('aria-expanded', 'false');
     navSearchBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      if (isSearchModalOpen()) userCloseSearchModal(); else navigate('#/search');
+      openSearchFromNav();
     });
   }
 
@@ -3962,6 +3962,24 @@ function openSearchPageModal(term) {
     onClose: userCloseSearchModal,
     wire: (panel) => renderSearchModalBody(panel.querySelector('[data-search-host]'), t),
   });
+}
+
+// Open Search RELIABLY from a nav click, regardless of the current hash. The
+// naive `navigate('#/search')` is a no-op when the hash is ALREADY a search/custom
+// route — which happens whenever you open Search, switch to another dropdown (that
+// closes the search panel but leaves the hash at #/search), then click Search
+// again. In that case no hashchange fires and the route handler never opens search.
+// So: if the hash already reads search/custom, open the panel directly; otherwise
+// navigate (which renders home underneath + opens search). Either path guarantees
+// the search modal opens on every click.
+function openSearchFromNav() {
+  if (isSearchModalOpen()) { userCloseSearchModal(); return; }
+  const h = window.location.hash || '';
+  if (h === '#/search' || h === '#/custom' || h.startsWith('#/custom/')) {
+    openSearchPageModal(h.startsWith('#/custom/') ? decodeURIComponent(h.slice('#/custom/'.length)) : '');
+  } else {
+    navigate('#/search');
+  }
 }
 
 function closeSearchPageModal(opts = {}) {
