@@ -129,7 +129,21 @@ document.addEventListener('DOMContentLoaded', async () => {
       // the sub-header (fresh path-tabs with no click handlers) while the old body
       // stays put — leaving the tabs dead and the wrong one lit (#132/#137). Also
       // refresh the subnav-height var after the DOM settles.
-      if (route) { renderLayout(route); renderPage(route); requestAnimationFrame(setSubnavHeightVar); }
+      if (route) {
+        // Search / Custom / Prompt are OVERLAY routes with no page of their own —
+        // rendering them directly as a page gives "Page not found" (#img211). Render
+        // the base (home) beneath, exactly like the main route handler, then re-open
+        // the overlay on top.
+        const isOverlay = route.type === 'search' || route.type === 'custom' || route.type === 'prompt-generator';
+        const base = isOverlay ? { type: 'home', slug: 'home', tab: 'newsfeed' } : route;
+        renderLayout(base); renderPage(base);
+        if (route.type === 'search' || route.type === 'custom') {
+          openSearchPageModal(route.type === 'custom' ? decodeURIComponent(route.term || '') : '');
+        } else if (route.type === 'prompt-generator') {
+          openPromptBuilderNavDropdown();
+        }
+        requestAnimationFrame(setSubnavHeightVar);
+      }
     }
   }, { passive: true });
 });
@@ -434,8 +448,15 @@ function closeNavDropdown() {
   const panel = document.getElementById('st-nav-panel');
   if (panel) panel.classList.remove('is-open');
   if (overlay) overlay.classList.remove('is-open');
-  if (navDdOpen && navDdOpen.triggerId) document.getElementById(navDdOpen.triggerId)?.setAttribute('aria-expanded', 'false');
+  resetNavTriggers();
   navDdOpen = null;
+}
+// The nav dropdown triggers whose lit "active" pill must be mutually exclusive —
+// exactly one (the open dropdown) lit at a time. Reset them ALL, not just the last
+// tracked one, so no switch path can leave two pills lit (#img206/#img207).
+const NAV_TRIGGER_IDS = ['nav-search', 'nav-topics', 'nav-trending', 'nav-prompts', 'sticky-nav-more'];
+function resetNavTriggers() {
+  NAV_TRIGGER_IDS.forEach((id) => document.getElementById(id)?.setAttribute('aria-expanded', 'false'));
 }
 // Back-compat alias used by the route-change/Esc handlers.
 function closeAiInsightsNavDropdown() { closeNavDropdown(); }
@@ -505,6 +526,10 @@ function openNavDropdown(cfg) {
   panel.classList.add('is-open');
   overlay.classList.add('is-open');
   navDdOpen = { key: cfg.key, triggerId: cfg.triggerId };
+  // Clear every trigger first (a direct open — e.g. the Search fix — doesn't route
+  // through closeNavDropdown, so the previously-open trigger could stay lit), then
+  // light only this one.
+  resetNavTriggers();
   if (cfg.triggerId) document.getElementById(cfg.triggerId)?.setAttribute('aria-expanded', 'true');
   requestAnimationFrame(updateNavDdFades);
 }

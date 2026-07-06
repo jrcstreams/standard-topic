@@ -18187,7 +18187,9 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
   color: #475569; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: color .12s;
 }
 .tai-tab:hover { color: var(--color-primary); }
-.tai-tab.is-active { color: #1d4ed8; font-weight: 700; border-bottom-color: #2563eb; }
+/* Active = the SAME deep blue as the News Feed / AI Insights pill above, so the two
+   nav levels share one accent colour (#img204/#img205). */
+.tai-tab.is-active { color: #33517f; font-weight: 700; border-bottom-color: #33517f; }
 /* Level 3 (Summary / Explore Further / Sources) = the quietest tabs — lighter
    weight, a LIGHTER grey than the Catch Up row above, GREY (not blue) thin active
    underline, so it clearly sits below level 2 (#img148/#img152). Tucked close under
@@ -18195,7 +18197,7 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* Topic-page L3 uses the SAME segmented control as trending/news now — the segmented
    bar itself reads as a clear sub-level below the Catch Up/Deep Dive underline tabs,
    so no separate quiet-underline styling is needed (#img196). */
-.aii-instabs .ins-tabnav { margin-top: 8px; }
+.aii-instabs .ins-tabnav { margin-top: 16px; }
 /* "Updated …" stamp — left-aligned and tight to the first section below it (#img154).
    The first section carries a 22px top padding for inter-section spacing; collapse it
    right after the stamp so "Updated …" sits a smidge above the section title. */
@@ -18340,7 +18342,7 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 }
 .ins-tabnav::-webkit-scrollbar { display: none; }
 .ins-tab {
-  flex: 0 0 auto; padding: 6px 15px; border: none; border-radius: 8px;
+  flex: 0 0 auto; padding: 8px 15px; border: none; border-radius: 8px;
   background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600;
   color: #64748b; white-space: nowrap; text-align: center;
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
@@ -18384,11 +18386,15 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
    parent category header (Search & Reference) — lighter weight + smaller + a left
    rail/indent so the nesting reads as a hierarchy, not a flat repeat of the parent
    style (#img188/#img189/#img190). */
-.xf-web-panel { display: flex; flex-direction: column; padding: 2px 0 4px; margin-left: 4px; border-left: 2px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); }
-.xf-web-row { display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 14px; border-radius: 0 8px 8px 0; text-decoration: none; color: var(--color-text); transition: background .12s; }
-.xf-web-row:hover { background: var(--color-bg-light); }
+/* No left rail/line (#img208) — the lighter weight + small indent already read as
+   subordinate. Hover is a soft background fill, NOT an underline (the anchor's
+   default underline looked broken, #img210). */
+.xf-web-panel { display: flex; flex-direction: column; padding: 2px 0 6px; }
+.xf-web-row { display: flex; align-items: center; gap: 10px; padding: 9px 10px 9px 12px; border-radius: 9px; text-decoration: none !important; color: var(--color-text); transition: background .12s, color .12s; }
+.xf-web-row:hover, .xf-web-row:focus-visible { background: color-mix(in srgb, #33517f 7%, #fff); }
+.xf-web-row:hover .xf-web-name { color: var(--color-primary); }
 .xf-web-tx { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-.xf-web-name { font-size: 0.85rem; font-weight: 500; color: var(--color-text); }
+.xf-web-name { font-size: 0.85rem; font-weight: 500; color: var(--color-text); transition: color .12s; }
 .xf-web-desc { font-size: 0.76rem; color: var(--color-text-muted); }
 .xf-web-row > svg { flex: none; color: #93a4c4; }
 .xf-emenu { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; }
