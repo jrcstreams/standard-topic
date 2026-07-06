@@ -32,9 +32,11 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // the function's maxDuration. Only ever a handful are missing/stale at once.
 const HEAL_MAX = 8;
 // A trend's cached summary older than this (and still trending) is regenerated —
-// the term persists across days but the reason it's trending changes. ~6h keeps
-// the reason current without churning (a trend's WHY rarely flips hourly).
-const STALE_MS = Number(process.env.TREND_SUMMARY_STALE_MS || 6 * 3600 * 1000);
+// the term persists across days but the reason it's trending changes. 3h keeps
+// the "why" current for fast-moving trends (a stale reason was a common
+// complaint) while still aligning to the ~2h SerpAPI snapshot cron and not
+// churning every hour. Env-overridable; raise to slow refresh.
+const STALE_MS = Number(process.env.TREND_SUMMARY_STALE_MS || 3 * 3600 * 1000);
 
 // Geo config — single source of truth. Add 'GB','DE',… here (and only
 // here) to widen coverage; each geo is one upstream call per refresh.
