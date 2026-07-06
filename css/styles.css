@@ -17451,6 +17451,11 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 /* Multi-column featured-topics grid on wide; single column as space narrows. */
 .is-home-picker .tsp-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 2px 10px; }
 .is-home-picker .tsp-cell { padding: 0.55rem 0.7rem; }
+/* Home identity bar must read the SAME grey as the topic identity bars (#img150/
+   #img151). The legacy `:not(.home-mode)` sat on #sub-header (home-mode is a BODY
+   class), so the home .topic-banner was wrongly getting the lighter #f3f5f9 fill.
+   Make it transparent so the sub-header's #e7ecf3 shows through, matching topic. */
+body.home-mode #sub-header.is-subnav .topic-banner { background: transparent !important; }
 /* Let the dropdown overflow the home band instead of being clipped. */
 body.home-mode #sub-header.is-subnav,
 body.home-mode #sub-header.is-subnav .topic-banner { overflow: visible !important; }
@@ -18032,15 +18037,16 @@ button.aiidd-vlink { align-self: flex-start; }
    genuinely narrow phones (≤560); --nav-h grows so the app content clears both
    rows without overriding the topic sub-header. ─────────────────────────────── */
 @media (max-width: 560px) {
-  :root { --nav-h: 82px; }
+  :root { --nav-h: 88px; }
   .sticky-hero-inner {
     display: grid !important;
     grid-template-columns: 1fr auto 1fr;
     grid-template-areas: "burger brand end" "nav nav nav";
     /* Compact two-row nav — the icon row was carrying way too much dead height
-       (#img141). Tight top pad, small row gap. */
-    align-items: center; column-gap: 0.5rem; row-gap: 5px;
-    padding: 8px 0.9rem 0 !important; min-height: 0;
+       (#img141). Tight-ish, but the title row (row 1) needs enough breathing room
+       so the hamburger + title don't feel cramped against the top edge (#img149). */
+    align-items: center; column-gap: 0.5rem; row-gap: 7px;
+    padding: 12px 0.9rem 0 !important; min-height: 0;
   }
   .sticky-hero-inner .nav-hamburger { grid-area: burger; justify-self: start; align-self: center; margin: 0; width: 21px; height: 15px; }
   .sticky-hero-inner .nav-hamburger span { height: 2.5px; }
@@ -18131,13 +18137,17 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 .topic-subnav-controls .ptab {
   flex: 0 0 auto; width: auto; padding: 8px 16px !important; margin: 0 !important;
   border: 1px solid transparent !important; border-radius: 999px !important;
-  background: none !important; font-size: 0.94rem; font-weight: 600; color: var(--color-text-muted, #64748b);
+  background: none !important; font-size: 0.9rem; font-weight: 600; color: var(--color-text-muted, #64748b);
   white-space: nowrap; transition: background .12s, color .12s;
 }
-.topic-subnav-controls .ptab:hover { color: var(--color-primary) !important; background: var(--color-bg-light) !important; }
-.topic-subnav-controls .ptab.is-active {
-  color: #1d4ed8 !important; font-weight: 700 !important;
-  background: color-mix(in srgb, #2563eb 10%, #fff) !important; border-color: color-mix(in srgb, #2563eb 22%, transparent) !important;
+/* Active/hover = a deep, filled blue pill — slightly lighter than the topic title
+   navy (#26375a) so it stays in the same family but reads as the loudest nav level,
+   clearly above the Catch Up (L2) + Summary (L3) rows below (#img152). */
+.topic-subnav-controls .ptab:hover { color: #33517f !important; background: color-mix(in srgb, #33517f 9%, #fff) !important; }
+.topic-subnav-controls .ptab.is-active,
+.topic-subnav-controls .ptab.is-active:hover {
+  color: #fff !important; font-weight: 700 !important;
+  background: #33517f !important; border-color: #33517f !important;
 }
 
 /* Picker dropdown hangs off the GREY bar bottom (overlays the control bar). */
@@ -18156,21 +18166,30 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* Level 2 (Catch Up / Deep Dive / 101 Info / Prompts) = UNDERLINE tabs, left-
    aligned at the container edge (no clip, #img146), with a PROMINENT (3px) active
    underline — heavier than the level-3 view tabs below (#img148). */
-.topic-ai-subnav { display: flex; flex-wrap: wrap; gap: 22px; border-bottom: 1px solid var(--color-surface-border); margin: 4px 0 4px; }
+/* Pull the Catch Up row up tight under the News Feed | AI Insights control bar
+   (#img153). */
+.topic-ai-subnav { display: flex; flex-wrap: wrap; gap: 22px; border-bottom: 1px solid var(--color-surface-border); margin: 0 0 2px; }
 .tai-tab {
   flex: none; padding: 9px 0; margin: 0 0 -1px; border: none; border-bottom: 3px solid transparent; border-radius: 0;
   background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.88rem; font-weight: 600;
-  color: var(--color-text-muted); white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: color .12s;
+  /* Inactive = a DARKER grey than the Summary (L3) row below, so the hierarchy
+     reads top-down even when nothing's hovered (#img152). */
+  color: #475569; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: color .12s;
 }
 .tai-tab:hover { color: var(--color-primary); }
 .tai-tab.is-active { color: #1d4ed8; font-weight: 700; border-bottom-color: #2563eb; }
 /* Level 3 (Summary / Explore Further / Sources) = the quietest tabs — lighter
-   weight, a GREY (not blue) thin underline, so it clearly sits below level 2 (#img148). */
-.aii-instabs .ins-tabnav { margin-top: 6px; }
-.aii-instabs .ins-tab { font-size: 0.82rem; font-weight: 500; }
+   weight, a LIGHTER grey than the Catch Up row above, GREY (not blue) thin active
+   underline, so it clearly sits below level 2 (#img148/#img152). Tucked close under
+   the Catch Up row (#img153). */
+.aii-instabs .ins-tabnav { margin-top: 2px; }
+.aii-instabs .ins-tab { font-size: 0.82rem; font-weight: 500; color: #94a3b8; }
 .aii-instabs .ins-tab.is-active { color: #475569; font-weight: 600; border-bottom-color: #94a3b8; }
-/* "Updated …" stamp — left-aligned and tight to the first section below it (#img133). */
-.aii-updated-row { display: flex; justify-content: flex-start; font-size: 0.76rem; color: var(--color-text-light); margin: 0 0 2px; }
+/* "Updated …" stamp — left-aligned and tight to the first section below it (#img154).
+   The first section carries a 22px top padding for inter-section spacing; collapse it
+   right after the stamp so "Updated …" sits a smidge above the section title. */
+.aii-updated-row { display: flex; justify-content: flex-start; font-size: 0.76rem; color: var(--color-text-light); margin: 4px 0 0; }
+.aii-updated-row + .im-msec { padding-top: 6px !important; }
 
 /* ── Desktop (≥900): the unified subnav is ALWAYS visible now (it IS the topic
    header, not a scroll-in bar). Undo the old hide-by-default + reserve its strip
@@ -18188,7 +18207,7 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* Tighten the gap between the control bar and the first story (#img102) — the
    topic-layout's 1.6rem top padding pushed the feed too far down. */
 body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
-.topic-tabbed .topic-tab-body { padding-top: 4px; }
+.topic-tabbed .topic-tab-body { padding-top: 0; }
 /* Phones: same subnav spacing as desktop (#img117/#img118). */
 @media (max-width: 899.98px) {
   .topic-subnav-controls .topic-paths-nav { gap: 6px; }
