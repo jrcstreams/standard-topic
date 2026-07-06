@@ -18116,7 +18116,7 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* Level 1 (News Feed | AI Insights) = PILL / bubble tabs — the most prominent nav
    level (#img148). */
 .topic-subnav-controls .ptab {
-  flex: 0 0 auto; width: auto; padding: 8px 16px !important; margin: 0 !important;
+  flex: 0 0 auto; width: auto; padding: 6px 16px !important; margin: 0 !important;
   border: 1px solid transparent !important; border-radius: 999px !important;
   background: none !important; font-size: 0.86rem; font-weight: 600; color: var(--color-text-muted, #64748b);
   white-space: nowrap; transition: background .12s, color .12s;
@@ -18192,7 +18192,7 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 /* Phones: same subnav spacing as desktop (#img117/#img118). */
 @media (max-width: 899.98px) {
   .topic-subnav-controls .topic-paths-nav { gap: 6px; }
-  .topic-subnav-controls .ptab { padding: 7px 14px !important; font-size: 0.86rem; }
+  .topic-subnav-controls .ptab { padding: 5px 14px !important; font-size: 0.86rem; }
   .topic-subnav-inner .tsp-btn { padding: 0.92rem 0.15rem !important; }
   .topic-subnav-inner .tsp-btn-name { font-size: 1.18rem !important; }
   .topic-ai-subnav { gap: 18px; }
