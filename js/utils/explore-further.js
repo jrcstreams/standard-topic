@@ -53,12 +53,22 @@ function emenuLeaveHTML() {
   </div>`;
 }
 
+// Short subtitles so each category reads as a clean, self-explaining listing (the
+// Prompts-style flat list), keyed by category key with a sensible fallback.
+const CAT_DESC = {
+  search: 'Google, Wikipedia & reference sites',
+  noai: 'Search engines without AI answers',
+  social: 'Reddit, X, forums & blogs',
+  media: 'YouTube, podcasts & video',
+  __other: 'More places to search',
+};
+
 // opts: { prompt, webTerm, name, openFirst }
 export function exploreFurtherHTML(opts = {}) {
   const { prompt = '', webTerm = '', openFirst = false } = opts;
   const models = getModels() || [];
   const aiAcc = models.length
-    ? `<details class="xf-acc"${openFirst ? ' open' : ''}><summary class="xf-sum"><span class="xf-sum-ic">${SPARK}</span><span class="xf-sum-name">Explore with External AI Models</span>${CHEV}</summary><div class="xf-panel" data-xf-emenu data-xf-prompt="${escAttr(prompt)}" data-xf-name="${escAttr(opts.name || '')}">${emenuHomeHTML()}</div></details>`
+    ? `<details class="xf-acc"${openFirst ? ' open' : ''}><summary class="xf-sum"><span class="xf-sum-tx"><span class="xf-sum-name">Explore with External AI Models</span><span class="xf-sum-desc">Send this prompt to ChatGPT, Claude, Gemini &amp; more</span></span>${CHEV}</summary><div class="xf-panel" data-xf-emenu data-xf-prompt="${escAttr(prompt)}" data-xf-name="${escAttr(opts.name || '')}">${emenuHomeHTML()}</div></details>`
     : '';
   const cats = getExternalSearchCategories() || [];
   const searches = getExternalSearches() || [];
@@ -72,7 +82,8 @@ export function exploreFurtherHTML(opts = {}) {
       const url = String(s.urlTemplate || '').replace(/\{query\}/g, encodeURIComponent(webTerm || ''));
       return `<a class="xf-web-row" href="${escAttr(url)}" target="_blank" rel="noopener noreferrer"><span class="xf-web-tx"><span class="xf-web-name">${esc(s.name)}</span>${s.description ? `<span class="xf-web-desc">${esc(s.description)}</span>` : ''}</span>${EXT}</a>`;
     }).join('');
-    return `<details class="xf-acc"><summary class="xf-sum"><span class="xf-sum-ic">${GLOBE}</span><span class="xf-sum-name">${esc(cat.label)}</span>${CHEV}</summary><div class="xf-panel xf-web-panel">${rows}</div></details>`;
+    const desc = CAT_DESC[cat.key] || '';
+    return `<details class="xf-acc"><summary class="xf-sum"><span class="xf-sum-tx"><span class="xf-sum-name">${esc(cat.label)}</span>${desc ? `<span class="xf-sum-desc">${esc(desc)}</span>` : ''}</span>${CHEV}</summary><div class="xf-panel xf-web-panel">${rows}</div></details>`;
   }).join('');
   return `<div class="xf-list">${aiAcc}${webAccs}</div>`;
 }

@@ -4,9 +4,9 @@
 // fixed-height scroll area with top/bottom fade + chevron affordances
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
-import { renderTrendExpansionBody } from './trend-expansion.js?v=20260705-revamp458';
+import { renderTrendExpansionBody } from './trend-expansion.js?v=20260705-revamp465';
 import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260705-revamp452';
-import { wireExploreFurther } from '../utils/explore-further.js?v=20260705-revamp458';
+import { wireExploreFurther } from '../utils/explore-further.js?v=20260705-revamp465';
 import { aiSparkInline } from '../utils/ai-provenance.js?v=20260630-revamp434';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }

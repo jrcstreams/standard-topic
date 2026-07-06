@@ -11,7 +11,7 @@ import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from 
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
 import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260705-revamp452';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260705-revamp458';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260705-revamp465';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also

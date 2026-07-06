@@ -18312,7 +18312,10 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 /* ═══ Shared insight tabs (revamp452) — Summary / Explore Further / Sources ════
    Used by the trending expansion, news-story AI Insights, and topic AI Insights. */
 .ins-tabs { display: block; width: 100%; }
-.ins-tabnav { display: flex; gap: 22px; border-bottom: 1px solid var(--color-surface-border); margin-bottom: 14px; overflow-x: auto; scrollbar-width: none; }
+/* Only ever 3 short tabs (Summary / Explore Further / Sources) — they always fit,
+   so no scroll region (the old overflow-x:auto left a tiny nuisance scroll, #img166/
+   #img167). */
+.ins-tabnav { display: flex; gap: 20px; border-bottom: 1px solid var(--color-surface-border); margin-bottom: 14px; overflow-x: visible; scrollbar-width: none; }
 .ins-tabnav::-webkit-scrollbar { display: none; }
 .ins-tab {
   flex: none; padding: 9px 0; margin-bottom: -1px; border: none; border-bottom: 2px solid transparent;
@@ -18324,6 +18327,11 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 .ins-tab.is-active { color: #1d4ed8; font-weight: 700; border-bottom-color: #2563eb; }
 .ins-tab-count { font-size: 0.7rem; font-weight: 600; color: var(--color-text-muted); background: var(--color-bg-light); border-radius: 6px; padding: 1px 6px; }
 .ins-tab.is-active .ins-tab-count { color: #1d4ed8; background: color-mix(in srgb, #2563eb 10%, #fff); }
+/* News-story insight tabs: a more prominent active underline than the default —
+   thicker (3px) so the current view reads clearly on the news card (#img168).
+   (Topic-page L3 keeps its quiet grey underline via .aii-instabs.) */
+.ni-tabs .ins-tab { border-bottom-width: 3px; }
+.ni-tabs .ins-tab.is-active { color: #1d4ed8; border-bottom-color: #2563eb; }
 /* Explore Further tab body = a clean flat list of option accordions (External AI
    Models first, then the web-search categories). */
 .ins-explore { display: flex; flex-direction: column; gap: 6px; }
@@ -18334,17 +18342,21 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 /* ═══ Shared "Explore Further" — clean dropdown accordions (revamp458, #img120) ══
    Used by trending / news / topic AI Insights. "Explore with External AI Models"
    offers Send-to / Direct Submit / Review (#img121), not a direct open. */
-.xf-list { display: flex; flex-direction: column; gap: 8px; }
-.xf-acc { border: 1px solid var(--color-surface-border); border-radius: 12px; background: #fff; overflow: hidden; transition: border-color .14s, box-shadow .14s; }
-.xf-acc:hover { border-color: color-mix(in srgb, #2563eb 28%, var(--color-surface-border)); }
-.xf-acc[open] { border-color: color-mix(in srgb, #2563eb 34%, var(--color-surface-border)); box-shadow: 0 8px 22px -14px rgba(37,99,235,.24); }
-.xf-sum { display: flex; align-items: center; gap: 11px; padding: 14px 16px; cursor: pointer; list-style: none; -webkit-tap-highlight-color: transparent; }
+/* Explore Further = a clean, basic Prompts-style list — flat rows with a title +
+   subtitle and a dropdown chevron, separated by thin hairlines. No heavy bordered
+   cards or icon chips (#img169-#img176). Mirrors the .aii-fi-acc Prompts listing. */
+.xf-list { display: flex; flex-direction: column; }
+.xf-acc { border: none; border-radius: 0; background: none; overflow: visible; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 72%, transparent); }
+.xf-acc:last-child { border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 72%, transparent); }
+.xf-sum { display: flex; align-items: center; gap: 12px; padding: 13px 2px; cursor: pointer; list-style: none; -webkit-tap-highlight-color: transparent; }
 .xf-sum::-webkit-details-marker { display: none; }
-.xf-sum-ic { flex: none; width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; background: color-mix(in srgb, #2563eb 8%, #fff); color: #2563eb; }
-.xf-sum-name { flex: 1 1 auto; min-width: 0; font-family: var(--font-display); font-size: 0.98rem; font-weight: 650; color: var(--color-primary, #14213d); letter-spacing: -0.01em; }
-.xf-sum .xf-chev { flex: none; color: var(--color-text-muted); transition: transform .2s ease; }
+.xf-sum-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
+.xf-sum-name { font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; color: var(--color-text); letter-spacing: 0; transition: color .14s ease; }
+.xf-sum-desc { font-size: 0.78rem; color: var(--color-text-muted); line-height: 1.35; }
+.xf-sum .xf-chev { flex: none; color: var(--color-text-light); transition: transform .2s ease; }
 .xf-acc[open] > .xf-sum .xf-chev { transform: rotate(180deg); }
-.xf-panel { padding: 6px 12px 12px; border-top: 1px solid var(--color-surface-border); }
+.xf-sum:hover .xf-sum-name, .xf-acc[open] > .xf-sum .xf-sum-name { color: var(--color-primary); }
+.xf-panel { padding: 0 2px 12px; border-top: none; }
 .xf-web-panel { display: flex; flex-direction: column; padding-top: 4px; }
 .xf-web-row { display: flex; align-items: center; gap: 10px; padding: 10px 8px; border-radius: 8px; text-decoration: none; color: var(--color-text); transition: background .12s; }
 .xf-web-row:hover { background: var(--color-bg-light); }
