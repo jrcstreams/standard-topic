@@ -13121,6 +13121,9 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .search-panel-tagline { margin: 0.1rem auto 0; max-width: 40rem; font-family: var(--font-display); font-size: 1rem; font-weight: 450; letter-spacing: -0.012em; color: #6b7689; }
 @media (max-width: 560px) { .search-panel-tagline { font-size: 0.9rem; max-width: 26rem; } }
 .search-panel--modal .search-panel-hero-inner { text-align: center; }
+/* Pull the "Search" title up so it sits near the X close instead of floating far
+   below it (#img144). */
+.search-panel--modal .search-panel-hero { margin-top: -1.6rem; }
 @media (max-width: 640px) {
   .search-panel--modal .search-panel-tagline { font-size: 0.88rem; font-weight: 450; }
 }
@@ -17431,7 +17434,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .topic-banner-row--home-picker { display: flex; align-items: center; width: 100%; }
 .is-home-picker { display: block; position: relative; width: 100%; }
 .is-home-picker .tsp-btn {
-  display: flex; align-items: center; gap: 0.55rem; padding: 0.25rem 0; border: none; background: none;
+  display: flex; align-items: center; gap: 0.55rem; padding: 0.5rem 0; border: none; background: none;
   cursor: pointer; text-align: left; font-family: var(--font-family); -webkit-tap-highlight-color: transparent;
 }
 .is-home-picker .tsp-btn-lead { display: flex; align-items: center; gap: 0.55rem; min-width: 0; }
@@ -18089,7 +18092,9 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    icon chip, title size, chevron (#img99-#img101). */
 .topic-subnav-inner .tsp-btn {
   display: flex !important; align-items: center; gap: 0.55rem; width: 100%;
-  padding: 0.78rem 0.15rem !important; margin: 0 !important;
+  /* Comfortable identity-bar height (the smaller no-square icon had shrunk it) —
+     consistent across every breakpoint (#img138/#img139/#img145). */
+  padding: 0.92rem 0.15rem !important; margin: 0 !important;
   border: none !important; background: none !important; border-radius: 0 !important; box-shadow: none !important;
   cursor: pointer; text-align: left; font-family: var(--font-family); -webkit-tap-highlight-color: transparent;
 }
@@ -18188,7 +18193,7 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 @media (max-width: 899.98px) {
   .topic-subnav-controls .topic-paths-nav { gap: 6px; }
   .topic-subnav-controls .ptab { padding: 7px 14px !important; font-size: 0.9rem; }
-  .topic-subnav-inner .tsp-btn { padding: 0.78rem 0.15rem !important; }
+  .topic-subnav-inner .tsp-btn { padding: 0.92rem 0.15rem !important; }
   .topic-subnav-inner .tsp-btn-name { font-size: 1.18rem !important; }
   .topic-ai-subnav { gap: 18px; }
 }
