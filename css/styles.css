@@ -14288,7 +14288,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .news-share-wrap { position: relative; display: inline-flex; }
 .news-share-panel { position: absolute; bottom: calc(100% + 8px); left: 0; z-index: 25; width: max-content; opacity: 0; visibility: hidden; transform: translateY(4px); transition: opacity .16s ease, transform .16s ease, visibility .16s; }
 .news-share-panel.is-open { opacity: 1; visibility: visible; transform: none; }
-.news-share-panel-inner { display: flex; gap: 6px; padding: 7px; background: #fff; border: 1px solid #e7ecf3; border-radius: 10px; box-shadow: 0 12px 30px -12px rgba(15, 26, 46, 0.28); }
+.news-share-panel-inner { display: flex; gap: 8px; padding: 8px 13px; background: #fff; border: 1px solid #e7ecf3; border-radius: 12px; box-shadow: 0 12px 30px -12px rgba(15, 26, 46, 0.28); }
 .news-share-opt { white-space: nowrap; }
 .news-share-opt {
   display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px;
@@ -15169,8 +15169,11 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* In-body section header (the prominent label of the section you're viewing): a
    clean icon chip + the section name + the "Updated …" stamp right-aligned (#189).
    Icon is VERTICALLY CENTERED with the title (#194). */
-.aii-sectitle { display: flex; align-items: center; gap: 10px; margin: 16px 0 7px; }
-.aii-sectitle-ic { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 8px; background: color-mix(in srgb, var(--color-primary) 8%, #fff); color: var(--color-primary); }
+/* The icon is a lead-in to the title's FIRST line — top-align it so a title that
+   wraps to 2+ lines keeps the icon beside line 1, not centered on the middle line
+   (#img234/#img235). The -3px nudge centers the icon box on line 1. */
+.aii-sectitle { display: flex; align-items: flex-start; gap: 10px; margin: 16px 0 7px; }
+.aii-sectitle-ic { flex: none; margin-top: -3px; display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 8px; background: color-mix(in srgb, var(--color-primary) 8%, #fff); color: var(--color-primary); }
 .aii-sectitle-ic svg { width: 16px; height: 16px; }
 .aii-sectitle-name { margin: 0; font-family: var(--font-display); font-size: 1.12rem; font-weight: 600; letter-spacing: -0.012em; color: #14213d; line-height: 1.2; }
 .aii-sectitle .aii-brief-meta { margin: 0 0 0 auto; flex: none; font-size: 0.73rem; color: var(--color-text-light); white-space: nowrap; }
@@ -17939,24 +17942,26 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .prompts-landing { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 30px 2px; }
 @media (min-width: 620px) { .prompts-landing { grid-template-columns: 1fr 1fr; } }
 .prompts-opt {
-  display: flex; flex-direction: column; align-items: flex-start; gap: 18px; width: 100%; text-align: left;
-  padding: 26px 24px; min-height: 200px; justify-content: flex-start;
-  border: 1px solid var(--color-surface-border); border-radius: 18px;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%; text-align: left;
+  padding: 20px 20px; justify-content: flex-start;
+  border: 1px solid var(--color-surface-border); border-radius: 16px;
   background: #fff; cursor: pointer; transition: border-color .14s ease, box-shadow .14s ease, background .14s ease;
 }
 .prompts-opt:hover { border-color: color-mix(in srgb, #2563eb 45%, var(--color-surface-border)); box-shadow: 0 10px 26px -14px rgba(37,99,235,.32); background: color-mix(in srgb, #2563eb 2.5%, #fff); }
-.prompts-opt-ic { flex: 0 0 auto; width: 50px; height: 50px; border-radius: 13px; display: grid; place-items: center; background: color-mix(in srgb, #2563eb 10%, #fff); color: #2563eb; }
-.prompts-opt-ic svg { width: 24px; height: 24px; }
-.prompts-opt-tx { flex: 0 1 auto; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.prompts-opt-name { font-size: 1.16rem; font-weight: 700; color: var(--color-primary, #14213d); letter-spacing: -0.015em; }
-.prompts-opt-desc { font-size: 0.9rem; color: var(--color-text-muted, #64748b); line-height: 1.45; }
-/* Arrow sits at the bottom-left of the block. */
-.prompts-opt-go { flex: 0 0 auto; margin-top: auto; color: #93a4c4; transition: transform .14s ease, color .14s ease; }
-.prompts-opt:hover .prompts-opt-go { color: #2563eb; transform: translateX(4px); }
+/* Icon is a small lead-in INLINE with the title on one line (#img221). */
+.prompts-opt-head { display: flex; align-items: center; gap: 10px; }
+.prompts-opt-ic { flex: 0 0 auto; width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; background: color-mix(in srgb, #2563eb 10%, #fff); color: #2563eb; }
+.prompts-opt-ic svg { width: 17px; height: 17px; }
+.prompts-opt-name { font-size: 1.05rem; font-weight: 700; color: var(--color-primary, #14213d); letter-spacing: -0.015em; }
+.prompts-opt-desc { font-size: 0.88rem; color: var(--color-text-muted, #64748b); line-height: 1.45; }
+/* CTA button replaces the bare arrow. */
+.prompts-opt-cta { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; padding: 8px 16px; border-radius: 10px; background: #33517f; color: #fff; font-size: 0.86rem; font-weight: 650; transition: background .14s ease, transform .14s ease; }
+.prompts-opt-cta svg { width: 15px; height: 15px; }
+.prompts-opt:hover .prompts-opt-cta { background: #26375a; }
 
-/* Cleaner back control (#390) — a subtle pill. */
+/* Cleaner back control (#390) — a subtle pill; sits ABOVE the view title in the head. */
 .prompts-back {
-  display: inline-flex; align-items: center; gap: 5px; margin: 0 0 12px; padding: 6px 12px 6px 9px;
+  display: inline-flex; align-items: center; gap: 5px; margin: 0 0 10px; padding: 6px 12px 6px 9px;
   border: 1px solid var(--color-surface-border); background: #fff; cursor: pointer; border-radius: 999px;
   font-family: var(--font-family); font-size: 0.83rem; font-weight: 600; color: #475569;
   transition: background .14s ease, border-color .14s ease, color .14s ease;
@@ -18033,18 +18038,20 @@ button.aiidd-vlink { align-self: flex-start; }
   :root { --nav-h: 112px; }
   .sticky-hero-inner {
     display: grid !important;
-    grid-template-columns: 1fr auto 1fr;
-    grid-template-areas: "burger brand end" "nav nav nav";
+    /* Hamburger + site title LEFT-aligned together on row 1 (title next to the
+       hamburger, not centered, #img213); the icon strip spans row 2. */
+    grid-template-columns: auto 1fr;
+    grid-template-areas: "burger brand" "nav nav";
     /* Row 1 (hamburger + site title) gets a comfortable fixed height so it doesn't
        feel cramped/short; row 2 is the icon strip. Both rows vertically center
        their contents (#img163/#img164). */
     grid-template-rows: 40px auto;
-    align-items: center; column-gap: 0.5rem; row-gap: 4px;
+    align-items: center; column-gap: 0.6rem; row-gap: 4px;
     padding: 6px 0.9rem 0 !important; min-height: 0;
   }
   .sticky-hero-inner .nav-hamburger { grid-area: burger; justify-self: start; align-self: center; margin: 0; width: 21px; height: 15px; }
   .sticky-hero-inner .nav-hamburger span { height: 2.5px; }
-  .sticky-hero-inner .sticky-brand { grid-area: brand; justify-self: center; align-self: center; margin: 0; display: flex; align-items: center; }
+  .sticky-hero-inner .sticky-brand { grid-area: brand; justify-self: start; align-self: center; margin: 0; display: flex; align-items: center; }
   .sticky-hero-inner .sticky-title { font-size: 1.22rem; letter-spacing: -0.02em; line-height: 1; }
   .sticky-hero-inner .sticky-actions.navbtns {
     grid-area: nav; justify-content: space-around;
@@ -18178,10 +18185,13 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    underline — heavier than the level-3 view tabs below (#img148). */
 /* Pull the Catch Up row up tight under the News Feed | AI Insights control bar
    (#img153). */
-.topic-ai-subnav { display: flex; flex-wrap: wrap; gap: 22px; border-bottom: 1px solid var(--color-surface-border); margin: 0 0 2px; }
+/* Indented ~16px so "Catch Up" lines up with the "News Feed" pill TEXT above it
+   (the pill is inset by its rounded padding), and a smidge smaller (#img228). The
+   segmented Summary bar below is indented to match (see .aii-instabs). */
+.topic-ai-subnav { display: flex; flex-wrap: wrap; gap: 20px; border-bottom: 1px solid var(--color-surface-border); margin: 0 0 2px; padding-left: 16px; }
 .tai-tab {
   flex: none; padding: 9px 0; margin: 0 0 -1px; border: none; border-bottom: 3px solid transparent; border-radius: 0;
-  background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.88rem; font-weight: 600;
+  background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.84rem; font-weight: 600;
   /* Inactive = a DARKER grey than the Summary (L3) row below, so the hierarchy
      reads top-down even when nothing's hovered (#img152). */
   color: #475569; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: color .12s;
@@ -18197,7 +18207,7 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* Topic-page L3 uses the SAME segmented control as trending/news now — the segmented
    bar itself reads as a clear sub-level below the Catch Up/Deep Dive underline tabs,
    so no separate quiet-underline styling is needed (#img196). */
-.aii-instabs .ins-tabnav { margin-top: 16px; }
+.aii-instabs .ins-tabnav { margin-top: 16px; margin-left: 16px; }
 /* "Updated …" stamp — left-aligned and tight to the first section below it (#img154).
    The first section carries a 22px top padding for inter-section spacing; collapse it
    right after the stamp so "Updated …" sits a smidge above the section title. */
@@ -18355,8 +18365,7 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 }
 .ins-tab-count { font-size: 0.68rem; font-weight: 600; color: var(--color-text-muted); background: rgba(15, 23, 42, 0.06); border-radius: 5px; padding: 1px 6px; }
 .ins-tab.is-active .ins-tab-count { color: #334155; background: rgba(15, 23, 42, 0.08); }
-/* Center the bar on phones; keep it left-aligned (fit-content) on wider screens. */
-@media (max-width: 640px) { .ins-tabnav { margin-left: auto; margin-right: auto; } }
+/* Left-aligned (fit-content) at every width, matching desktop (#img220). */
 /* Explore Further tab body = a clean flat list of option accordions (External AI
    Models first, then the web-search categories). */
 .ins-explore { display: flex; flex-direction: column; gap: 6px; }

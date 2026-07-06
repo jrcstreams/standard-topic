@@ -593,22 +593,35 @@ function wirePromptsDropdown(panel) {
     const s = panel.querySelector('.aii-nav-dd-sub'); if (s) s.textContent = sub;
   };
   const fades = () => [200, 700, 1500].forEach((d) => setTimeout(updateNavDdFades, d));
-  const backBtn = (label) => `<button type="button" class="prompts-back" data-prompts-back>${PROMPTS_BACK}<span>Back to ${escapeHTML(label)}</span></button>`;
+  // Back button lives ABOVE the view title (in the head), not below it in the body
+  // (#img222/#img223/#img224). Pass null to remove it (the landing view).
+  const setBack = (label, onClick) => {
+    const titles = panel.querySelector('.aii-nav-dd-titles');
+    if (!titles) return;
+    titles.querySelector('[data-prompts-back]')?.remove();
+    if (!label) return;
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'prompts-back'; b.setAttribute('data-prompts-back', '');
+    b.innerHTML = `${PROMPTS_BACK}<span>Back to ${escapeHTML(label)}</span>`;
+    b.addEventListener('click', onClick);
+    titles.insertBefore(b, titles.firstChild);
+  };
 
   const showLanding = () => {
     destroyCtl();
     setHead('Prompts', 'Build your own or browse the ready-made library.');
+    setBack(null);
     root.innerHTML = `
       <div class="prompts-landing">
         <button type="button" class="prompts-opt" data-prompt-build>
-          <span class="prompts-opt-ic">${PROMPTS_BUILD_IC}</span>
-          <span class="prompts-opt-tx"><span class="prompts-opt-name">Build a Custom Prompt</span><span class="prompts-opt-desc">Craft a knowledge prompt and send it to your AI model.</span></span>
-          <span class="prompts-opt-go">${AIIDD_ARROW}</span>
+          <span class="prompts-opt-head"><span class="prompts-opt-ic">${PROMPTS_BUILD_IC}</span><span class="prompts-opt-name">Build a Custom Prompt</span></span>
+          <span class="prompts-opt-desc">Craft a knowledge prompt and send it to your AI model.</span>
+          <span class="prompts-opt-cta">Build prompt ${AIIDD_ARROW}</span>
         </button>
         <button type="button" class="prompts-opt" data-prompt-library>
-          <span class="prompts-opt-ic">${PROMPTS_LIB_IC}</span>
-          <span class="prompts-opt-tx"><span class="prompts-opt-name">Prompt Library</span><span class="prompts-opt-desc">Browse ready-made prompts across every topic.</span></span>
-          <span class="prompts-opt-go">${AIIDD_ARROW}</span>
+          <span class="prompts-opt-head"><span class="prompts-opt-ic">${PROMPTS_LIB_IC}</span><span class="prompts-opt-name">Prompt Library</span></span>
+          <span class="prompts-opt-desc">Browse ready-made prompts across every topic.</span>
+          <span class="prompts-opt-cta">View Prompt Library ${AIIDD_ARROW}</span>
         </button>
       </div>`;
     root.querySelector('[data-prompt-build]').addEventListener('click', showBuild);
@@ -619,8 +632,8 @@ function wirePromptsDropdown(panel) {
   const showBuild = () => {
     destroyCtl();
     setHead('Build a Custom Prompt', 'Craft a knowledge prompt and send it to your AI model.');
-    root.innerHTML = `${backBtn('Prompts')}<div class="pb-navdd-host" data-pb-host></div>`;
-    root.querySelector('[data-prompts-back]').addEventListener('click', showLanding);
+    setBack('Prompts Overview', showLanding);
+    root.innerHTML = `<div class="pb-navdd-host" data-pb-host></div>`;
     try { renderPromptGenerator(root.querySelector('[data-pb-host]'), { inline: true }); } catch (_) {}
     fades();
   };
@@ -628,8 +641,8 @@ function wirePromptsDropdown(panel) {
   const showLibrary = () => {
     destroyCtl();
     setHead('Prompt Library', 'Pick a topic to see its ready-made prompts.');
-    root.innerHTML = `${backBtn('Prompts')}<div class="prompts-lib" data-lib>${promptLibTreeHTML()}</div>`;
-    root.querySelector('[data-prompts-back]').addEventListener('click', showLanding);
+    setBack('Prompts Overview', showLanding);
+    root.innerHTML = `<div class="prompts-lib" data-lib>${promptLibTreeHTML()}</div>`;
     const lib = root.querySelector('[data-lib]');
     wireNavDdAccordions(lib);
     lib.querySelectorAll('[data-lib-topic]').forEach((b) => b.addEventListener('click', () => showTopicPrompts(b.dataset.slug, b.dataset.name)));
@@ -641,8 +654,8 @@ function wirePromptsDropdown(panel) {
     setHead(`${name} Prompts`, 'Ready-made prompts for this topic. Pick one to expand and copy it.');
     // prompts-topic-host → CSS hides the mounted AI component's own chrome so ONLY
     // the clean prompt list shows.
-    root.innerHTML = `${backBtn('Prompt Library')}<div class="pb-navdd-host prompts-topic-host" data-pb-host></div>`;
-    root.querySelector('[data-prompts-back]').addEventListener('click', showLibrary);
+    setBack('Prompt Library', showLibrary);
+    root.innerHTML = `<div class="pb-navdd-host prompts-topic-host" data-pb-host></div>`;
     let shortcuts = []; try { shortcuts = getShortcutsForTopic(slug) || []; } catch (_) {}
     const descriptions = {}; const icons = {};
     try { shortcuts.forEach((s) => { if (s && s.name) { descriptions[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } }); } catch (_) {}
