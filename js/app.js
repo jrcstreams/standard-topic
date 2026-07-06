@@ -131,6 +131,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       // stays put — leaving the tabs dead and the wrong one lit (#132/#137). Also
       // refresh the subnav-height var after the DOM settles.
       if (route) {
+        // Capture an OPEN news-story AI Insights panel (card URL + active tab) so we
+        // can re-open it after the re-render — otherwise crossing the breakpoint
+        // silently closed it (#img230).
+        let openNews = null;
+        try {
+          const oc = document.querySelector('#section-newsfeed .news-card--open[data-url]');
+          if (oc) openNews = { url: oc.dataset.url, tab: oc.querySelector('[data-news-panel-body] .ins-tab.is-active')?.textContent?.trim() || '' };
+        } catch (_) {}
         // Search / Custom / Prompt are OVERLAY routes with no page of their own —
         // rendering them directly as a page gives "Page not found" (#img211). Render
         // the base (home) beneath, exactly like the main route handler, then re-open
@@ -142,6 +150,21 @@ document.addEventListener('DOMContentLoaded', async () => {
           openSearchPageModal(route.type === 'custom' ? decodeURIComponent(route.term || '') : '');
         } else if (route.type === 'prompt-generator') {
           openPromptBuilderNavDropdown();
+        }
+        if (openNews) {
+          // Re-open after the fresh news feed settles; then restore the active tab.
+          setTimeout(() => {
+            let card = null;
+            try { card = document.querySelector(`#section-newsfeed .news-card[data-url="${(window.CSS && CSS.escape) ? CSS.escape(openNews.url) : openNews.url}"]`); } catch (_) {}
+            const aiBtn = card && card.querySelector('.news-act[data-news-panel="ai"]');
+            if (aiBtn && card.dataset.url) {
+              aiBtn.click();
+              if (openNews.tab) setTimeout(() => {
+                const t = [...card.querySelectorAll('.ins-tab')].find((x) => x.textContent.trim() === openNews.tab);
+                if (t && !t.classList.contains('is-active')) t.click();
+              }, 450);
+            }
+          }, 250);
         }
         requestAnimationFrame(setSubnavHeightVar);
       }
@@ -3575,12 +3598,14 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
              </div>
              <p class="search-panel-empty-text">Type a topic, term, or headline and we'll pull together the latest news, web sources, and AI insights.</p>
              <div class="search-panel-empty-sec" data-empty-trending hidden>
-               <div class="search-panel-empty-sechead"><span class="search-panel-empty-seclabel">Trending</span><button type="button" class="search-panel-empty-more" data-view-trending>View more trending<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></button></div>
+               <div class="search-panel-empty-sechead"><span class="search-panel-empty-seclabel">Trending</span></div>
                <div class="search-panel-empty-chips" role="list"></div>
+               <button type="button" class="search-panel-empty-more" data-view-trending>View more trending<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></button>
              </div>
              <div class="search-panel-empty-sec" data-empty-featured hidden>
                <div class="search-panel-empty-sechead"><span class="search-panel-empty-seclabel">Featured Topics</span></div>
                <div class="search-panel-empty-topics"></div>
+               <button type="button" class="search-panel-empty-more" data-view-topics>View all topics<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></button>
              </div>
            </div>`
         : ''}
@@ -3653,6 +3678,11 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     if (!topics.length) { sec.hidden = true; return; }
     wrap.innerHTML = topics.map((t) => `<a class="search-panel-empty-topic" href="#/topic/${escapeAttr(t.slug)}">${escapeHTML(t.name)}</a>`).join('');
     sec.hidden = false;
+    // "View all topics" → open the Topics dropdown (closes this search modal).
+    sec.querySelector('[data-view-topics]')?.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('close-all-modals'));
+      window.dispatchEvent(new CustomEvent('open-all-topics-modal'));
+    });
   }
 
   // Inline (home) starter chips under the bar — two quick-launch groups so the
