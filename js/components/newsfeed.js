@@ -351,6 +351,19 @@ function wireNewsPanelScrollClose() {
 
 export function wireNewsAI(root) {
   wireNewsPanelScrollClose();
+  // The whole card reads as one clickable unit (it has a card-level hover), so a
+  // click on any non-interactive area opens the story — same as the title link /
+  // View Story button. This keeps the cursor consistently a pointer instead of
+  // flickering between pointer (over the title) and default (over the meta) (#img183).
+  root.querySelectorAll('.news-card[data-url]').forEach((card) => {
+    card.addEventListener('click', (e) => {
+      // Let real interactive elements (links, buttons, the open insights panel,
+      // the share popover) handle their own clicks.
+      if (e.target.closest('a, button, [data-news-panel-body], .news-share-wrap')) return;
+      const url = card.dataset.url;
+      if (url) window.open(url, '_blank', 'noopener');
+    });
+  });
   // AI Insights / Web Search → toggle a clean inline dropdown under the card.
   root.querySelectorAll('.news-act[data-news-panel]').forEach((btn) => {
     btn.addEventListener('click', (e) => {

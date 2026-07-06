@@ -202,7 +202,11 @@ body.home-mode #content {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 100;
+  /* Above the nav-dropdown overlay (480) + panel (481) so a click on any nav icon
+     always reaches the icon — never gets swallowed by the dim overlay — letting you
+     switch dropdowns freely while one is open (#img178). Still below full takeover
+     modals (1000+). */
+  z-index: 490;
   background: var(--color-primary-dark);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   opacity: 0;
@@ -17482,8 +17486,15 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
    The whole card is no longer a link — explicit View Story / AI Insights / Web
    Search buttons, with AI Insights + Web Search opening clean inline dropdowns. */
 #section-newsfeed .news-card-link::after { display: none !important; }
-#section-newsfeed .news-card-link { cursor: default; }
-#section-newsfeed .news-card-title, #section-newsfeed .news-card-desc { cursor: pointer; }
+/* The whole card is clickable (a card-level handler opens the story), so keep the
+   cursor a consistent pointer everywhere instead of flickering pointer↔default as
+   the mouse crosses the title vs the meta margins (#img183). The open insights
+   panel resets to the normal cursor since its own content isn't "open the story". */
+#section-newsfeed .news-card { cursor: pointer; }
+#section-newsfeed .news-card-link,
+#section-newsfeed .news-card-title,
+#section-newsfeed .news-card-desc { cursor: pointer; }
+#section-newsfeed [data-news-panel-body] { cursor: auto; }
 
 .news-card-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 13px; }
 .news-act {
@@ -18034,11 +18045,12 @@ button.aiidd-vlink { align-self: flex-start; }
   .sticky-hero-inner .sticky-actions.navbtns {
     grid-area: nav; justify-content: space-around;
     margin: 0 -0.9rem !important;
-    /* Even top/bottom room so the active icon isn't flush to the nav's bottom edge
-       (was cutting into the subnav below, #img143). */
-    padding: 5px 0.9rem 6px; border-top: 1px solid rgba(255, 255, 255, 0.12);
+    /* Compact icon strip — trimmed so the whole nav lands at --nav-h (96px); if it
+       overran, the subnav + nav dropdowns (positioned at top:var(--nav-h)) cut up
+       into the icon row (#img179-182). */
+    padding: 3px 0.9rem 4px; border-top: 1px solid rgba(255, 255, 255, 0.12);
   }
-  .sticky-hero-inner .sticky-actions.navbtns .navbtn { padding: 4px 6px; gap: 2px; }
+  .sticky-hero-inner .sticky-actions.navbtns .navbtn { padding: 2px 6px; gap: 2px; }
   /* Two-row nav has room for ALL labels — undo the single-row progressive hiding
      (Home/Search were losing their labels) so every icon is labelled + aligned. */
   .sticky-hero-inner .sticky-actions.navbtns .navbtn-label { display: block !important; }
