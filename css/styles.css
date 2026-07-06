@@ -17323,6 +17323,21 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
   background: var(--color-primary); border-radius: 2px;
 }
+/* Custom Search (Prompts | News | Explore Further) tabs render as the SEGMENTED
+   CONTROL, left-aligned, matching trending / AI insights (#img217). */
+.search-aii-host .aii-flatnav {
+  display: inline-flex; width: fit-content; flex-wrap: nowrap; gap: 2px; margin-top: 6px; justify-content: flex-start;
+  background: #eceff4; border: 1px solid #e2e6ec; border-radius: 11px; padding: 3px;
+}
+.search-aii-host .aii-ftab { padding: 8px 15px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; color: #64748b; }
+.search-aii-host .aii-ftab:hover { color: #1e293b; background: rgba(15, 23, 42, 0.05); }
+.search-aii-host .aii-ftab.is-active { color: #1e293b; background: #fff; box-shadow: 0 1px 2px rgba(15, 23, 42, 0.10), 0 0 0 1px rgba(15, 23, 42, 0.03); }
+.search-aii-host .aii-ftab.is-active::after { display: none; }
+/* "Results for ‘term’" header (#img218) — a bit of space above it off the input. */
+.search-aii-host .aii-topbar { padding-top: 6px; }
+.search-aii-host .aii-builder-topic--resultsfor { font-size: 1.16rem; font-weight: 700; margin-bottom: 4px; }
+.search-aii-host .aii-builder-resultsfor { color: var(--color-text-muted); font-weight: 600; }
+.search-aii-host .aii-builder-topic--resultsfor .aii-builder-topic-tx { color: #14213d; }
 
 /* "View Topic Page" — subtle, pinned to the top-right of the sticky topbar. */
 .aii-modal-body .aii-view-topic { position: absolute; top: 12px; right: 0; }
@@ -17473,6 +17488,15 @@ body.home-search #section-newsfeed .news-card:hover {
   box-shadow: 0 12px 26px -16px rgba(15,23,42,.3) !important; transform: translateY(-1px);
   background: #fff !important;
 }
+/* Custom Search news results = the same bordered, spaced cards as the home/topic
+   feed (they weren't scoped to #section-newsfeed, so they rode against the top +
+   each other, #img225). */
+.search-news-section .news-list { display: flex !important; flex-direction: column !important; grid-template-columns: none !important; gap: 12px !important; padding: 4px 0 6px !important; }
+.search-news-section .news-card { display: flex !important; flex-direction: column; margin: 0 !important; border: 1px solid var(--color-surface-border) !important; border-radius: 14px !important; background: #fff !important; box-shadow: 0 1px 2px rgba(15,23,42,.04) !important; padding: 16px 18px !important; cursor: pointer; transition: border-color .15s ease, box-shadow .15s ease; }
+.search-news-section .news-card:hover { border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)) !important; box-shadow: 0 12px 26px -16px rgba(15,23,42,.3) !important; }
+.search-news-section .news-card .news-card-link { padding: 0 !important; cursor: pointer; }
+.search-news-section .news-card .news-card-foot { margin-top: 13px !important; padding: 0 !important; border-top: none !important; }
+
 .topic-band #section-newsfeed .news-card .news-card-link,
 body.home-search #section-newsfeed .news-card .news-card-link { padding: 0 !important; }
 .topic-band #section-newsfeed .news-card .news-card-foot,

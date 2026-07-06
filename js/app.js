@@ -18,7 +18,8 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260702-revamp435';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp468';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260705-revamp465';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp472';
+import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260705-revamp465';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp468';
 import { renderWebSources } from './components/websources.js?v=20260702-revamp435';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260702-revamp435';
@@ -3697,15 +3698,25 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       shortcuts.forEach((s) => { if (s && s.name) { desc[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } });
     } catch (_) {}
     const extraTabs = [];
-    const order = ['external'];   // External Insights = the shortcuts (primary tab)
+    const order = ['external'];   // Prompts = the external-model shortcuts (primary tab)
     if (opts.news) { extraTabs.push({ group: 'news', tab: 'News', subtitle: 'Latest stories matching your search.', icon: SP_NEWS_ICON, render: (wrap) => renderSearchNewsInto(wrap, t) }); order.push('news'); }
-    if (opts.trends) { extraTabs.push({ group: 'trending', tab: 'Trending', subtitle: 'Trending searches related to your term.', icon: SP_TREND_SEC_ICON, render: (wrap) => renderSearchTrendingInto(wrap, t) }); order.push('trending'); }
-    order.push('websearch');      // Web Search last
+    // "Explore Further" — the SAME shared component used on trending / news / topic
+    // insights (Explore with External AI Models first, then the web categories),
+    // replacing the old bare "Web Search" tab. Trending is no longer a tab (#img215).
+    extraTabs.push({
+      group: 'explore', tab: 'Explore Further', subtitle: 'Send this to an AI model, or open it in web sources.', icon: SP_TREND_SEC_ICON,
+      render: (wrap) => {
+        wrap.innerHTML = `<div class="search-xf">${exploreFurtherHTML({ prompt: `Explain "${t}" and give me the latest, most important information on it. Be specific and cite sources.`, webTerm: t, name: t })}</div>`;
+        try { wireExploreFurther(wrap.querySelector('.search-xf')); } catch (_) {}
+      },
+    });
+    order.push('explore');
     return {
       inModal: true,              // flowMode → the builder (pill-tab) shell
       initialBuilder: true,
       initialGroup: 'external',   // land on the external-model shortcuts
       lockTopic: true,
+      resultsFor: true,           // header reads "Results for ‘term’" (#img218)
       topic: t, label: t,
       descriptions: desc, icons, shortcuts,
       hideGroups: ['discover', 'topic-specific', 'analyze', 'learn'],  // no AI-generation tabs

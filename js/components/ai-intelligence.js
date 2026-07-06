@@ -755,7 +755,7 @@ export function renderAIIntelligence(container, scope) {
     const navHTML = `<nav class="aii-flatnav" role="tablist">${tabs}</nav>`;
     // Centered topic switcher (caret opens the topic picker). Locked for custom search.
     const topicEl = scope.lockTopic
-      ? `<div class="aii-builder-topic aii-builder-topic--locked"><span class="aii-builder-topic-tx">${esc(topicTitle)}</span></div>`
+      ? `<div class="aii-builder-topic aii-builder-topic--locked${scope.resultsFor ? ' aii-builder-topic--resultsfor' : ''}">${scope.resultsFor ? '<span class="aii-builder-resultsfor">Results for </span>' : ''}<span class="aii-builder-topic-tx">${scope.resultsFor ? `‘${esc(topicTitle)}’` : esc(topicTitle)}</span></div>`
       : `<button type="button" class="aii-builder-topic aii-builder-topic--btn" data-repick aria-label="Change topic"><span class="aii-builder-topic-tx">${esc(topicTitle)}</span><span class="aii-topic-caret" aria-hidden="true">${CHEV}</span></button>`;
     const viewLink = scope.topicKey ? `<button type="button" class="aii-view-topic" data-view-topic>View Topic Page${RIGHT_ARROW}</button>` : '';
     // No per-section intro card anymore — the nav supplies the section identity and
