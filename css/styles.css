@@ -18541,20 +18541,24 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 .xf-web-name { font-size: 0.85rem; font-weight: 500; color: var(--color-text); transition: color .12s; }
 .xf-web-desc { font-size: 0.76rem; color: var(--color-text-muted); }
 .xf-web-row > svg { flex: none; color: #93a4c4; }
-.xf-emenu { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; }
-.xf-emenu-model { display: flex; align-items: center; gap: 10px; padding: 2px 2px 6px; }
-.xf-emenu-lead { font-size: 0.85rem; font-weight: 600; color: var(--color-text-muted); }
-.xf-select-wrap { position: relative; display: inline-flex; align-items: center; }
-.xf-select { appearance: none; -webkit-appearance: none; padding: 7px 32px 7px 12px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; font-family: var(--font-family); font-size: 0.88rem; font-weight: 600; color: var(--color-primary); cursor: pointer; }
+/* Same clean square treatment as the topic Prompts menu: grey square container,
+   flat line-separated option rows, compact Send-to (#img284/#img286). */
+.xf-panel[data-xf-emenu] { background: #f4f6f9; border-radius: 0; padding: 12px 14px 14px; margin-top: 4px; }
+.xf-emenu { display: flex; flex-direction: column; gap: 0; padding-top: 0; }
+.xf-emenu-model { display: flex; align-items: center; gap: 10px; padding: 2px 2px 12px; }
+.xf-emenu-lead { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-text-muted); }
+.xf-select-wrap { position: relative; display: inline-flex; align-items: center; flex: 0 0 auto; min-width: 200px; max-width: 280px; }
+.xf-select { appearance: none; -webkit-appearance: none; width: 100%; padding: 8px 32px 8px 12px; border: 1px solid var(--color-surface-border); border-radius: 8px; background: #fff; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; color: var(--color-text); cursor: pointer; }
 .xf-select-wrap .xf-chev { position: absolute; right: 9px; pointer-events: none; color: var(--color-text-muted); }
-.xf-opt { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 1px solid var(--color-surface-border); border-radius: 11px; background: #fff; cursor: pointer; text-align: left; font-family: var(--font-family); transition: border-color .12s, background .12s; }
-.xf-opt:hover { border-color: color-mix(in srgb, #2563eb 40%, var(--color-surface-border)); background: color-mix(in srgb, #2563eb 3%, #fff); }
-.xf-opt-ic { flex: none; width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; background: color-mix(in srgb, #2563eb 9%, #fff); color: #2563eb; }
-.xf-opt-tx { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.xf-opt-name { font-size: 0.92rem; font-weight: 650; color: var(--color-primary); }
-.xf-opt-sub { font-size: 0.8rem; color: var(--color-text-muted); }
-.xf-opt .xf-arrow { flex: none; color: #93a4c4; transition: transform .14s; }
-.xf-opt:hover .xf-arrow { color: #2563eb; transform: translateX(3px); }
+.xf-opt { display: flex; align-items: center; gap: 11px; width: 100%; padding: 12px 2px; border: none; border-top: 1px solid #e1e6ee; border-radius: 0; background: none; cursor: pointer; text-align: left; font-family: var(--font-family); transition: background .12s; }
+.xf-opt:hover { background: color-mix(in srgb, #33517f 6%, transparent); }
+.xf-opt-ic { flex: none; width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: var(--color-primary); }
+.xf-opt-ic svg { width: 15px; height: 15px; }
+.xf-opt-tx { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.xf-opt-name { font-size: 0.85rem; font-weight: 600; color: var(--color-text); }
+.xf-opt-sub { font-size: 0.75rem; color: var(--color-text-muted); }
+.xf-opt .xf-arrow { flex: none; width: 14px; height: 14px; color: var(--color-text-light); transition: transform .14s; }
+.xf-opt:hover .xf-arrow { color: var(--color-primary); transform: translateX(2px); }
 .xf-leave { display: flex; flex-direction: column; gap: 8px; padding: 4px 2px; }
 .xf-leave-back { align-self: flex-start; display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px 5px 7px; border: 1px solid var(--color-surface-border); background: #fff; border-radius: 999px; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #475569; }
 .xf-leave-back:hover { background: var(--color-bg-light); }
