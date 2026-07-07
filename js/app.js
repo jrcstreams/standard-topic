@@ -13,7 +13,7 @@ import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js?v=20260703-revamp447';
 import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260703-revamp447';
 import { initPromptModal } from './components/prompt-modal.js?v=20260702-revamp435';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260705-revamp465';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp481';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260702-revamp435';
@@ -22,7 +22,7 @@ import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706
 import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260705-revamp465';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp468';
 import { renderWebSources } from './components/websources.js?v=20260702-revamp435';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260702-revamp435';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp481';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260702-revamp435';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
 import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260702-revamp435';
@@ -138,6 +138,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
           const oc = document.querySelector('#section-newsfeed .news-card--open[data-url]');
           if (oc) openNews = { url: oc.dataset.url, tab: oc.querySelector('[data-news-panel-body] .ins-tab.is-active')?.textContent?.trim() || '' };
+        } catch (_) {}
+        // Preserve the topic page's active tab across the re-render: if the AI
+        // Insights tab (+ a sub-group like Catch Up) is showing, seed pendingInlineAii
+        // so the fresh render reopens it instead of snapping back to News Feed
+        // (#img271/#img272). Only the AI tab needs this — News Feed is the default.
+        try {
+          if (route.type === 'topic' && route.slug) {
+            const activePtab = document.querySelector('#topic-paths-nav .ptab.is-active');
+            if (activePtab && activePtab.dataset.ptab === 'ai') {
+              const sub = document.querySelector('.topic-ai-subnav .tai-tab.is-active');
+              pendingInlineAii = { slug: route.slug, group: (sub && sub.dataset.tai) || 'discover' };
+            }
+          }
         } catch (_) {}
         // Search / Custom / Prompt are OVERLAY routes with no page of their own —
         // rendering them directly as a page gives "Page not found" (#img211). Render

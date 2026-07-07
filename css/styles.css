@@ -17983,7 +17983,7 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 /* The two entry options are big BLOCK cards (icon over title, subtext below) that
    take over the dropdown on landing — side by side when there's room, stacked on
    phones (#img43). */
-.prompts-landing { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 30px 2px; }
+.prompts-landing { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 14px 2px 30px; }
 @media (min-width: 620px) { .prompts-landing { grid-template-columns: 1fr 1fr; } }
 .prompts-opt {
   display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%; text-align: left;
@@ -17999,9 +17999,11 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .prompts-opt-name { font-size: 1.05rem; font-weight: 700; color: var(--color-primary, #14213d); letter-spacing: -0.015em; }
 .prompts-opt-desc { font-size: 0.88rem; color: var(--color-text-muted, #64748b); line-height: 1.45; }
 /* CTA button replaces the bare arrow. */
-.prompts-opt-cta { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; padding: 8px 16px; border-radius: 10px; background: #33517f; color: #fff; font-size: 0.86rem; font-weight: 650; transition: background .14s ease, transform .14s ease; }
+/* Softer, friendlier CTA — a light blue tint with blue text instead of a heavy
+   dark-navy fill (#img275). */
+.prompts-opt-cta { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; padding: 8px 15px; border-radius: 10px; background: color-mix(in srgb, #2563eb 11%, #fff); color: #2563eb; font-size: 0.85rem; font-weight: 600; transition: background .14s ease, color .14s ease; }
 .prompts-opt-cta svg { width: 15px; height: 15px; }
-.prompts-opt:hover .prompts-opt-cta { background: #26375a; }
+.prompts-opt:hover .prompts-opt-cta { background: color-mix(in srgb, #2563eb 18%, #fff); color: #1d4ed8; }
 
 /* Cleaner back control (#390) — a subtle pill; sits ABOVE the view title in the head. */
 .prompts-back {

@@ -363,7 +363,7 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
   // instead of opening the retired detail modal.
   const wireCards = opts.inline ? wireTrendCardsInline : wireTrendCards;
   gridEl.innerHTML = `<div class="trend-card-grid">${Array.from({ length: 8 }, () => '<div class="trend-card trend-card-skel"></div>').join('')}</div>`;
-  const TLM_INITIAL = 16, EARLIER_MAX = 9;
+  const TLM_INITIAL = 16, EARLIER_MAX = 24;
   const state = { all: [], earlier: [], category: 'all', expanded: false };
   const catList = () => [...new Set(state.all.map(ttCatOf).filter(Boolean))]
     .sort((a, b) => (ttCatRank(a) - ttCatRank(b)) || a.localeCompare(b));
@@ -429,15 +429,24 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
           const key = q.toLowerCase();
           if (!q || liveSet.has(key) || seen.has(key)) continue;
           seen.add(key);
-          const ago = durationLabel(it.last_active || it.last_seen);
+          // Use the term's OWN started_at (Google's per-term "trending since") for
+          // the label — last_seen is the shared batch-snapshot time, so it made
+          // every Earlier row read the same "35m ago" (#img262). started_at varies
+          // per term and reads as roughly when it was hot.
+          const stamp = it.started_at || it.last_active || it.last_seen;
+          const ago = durationLabel(stamp);
           mapped.push({
             query: q,
             categories: it.category ? [it.category] : [],
             startedAt: it.started_at || '',
             trendBreakdown: [],
+            _startedAt: stamp || '',
             _meta: [it.category, ago ? `Was trending ${ago} ago` : ''].filter(Boolean).join(' · '),
           });
         }
+        // Order by trend recency (most-recently-started first) — the server sorts
+        // by the uniform last_seen, which leaves same-batch rows effectively random.
+        mapped.sort((a, b) => new Date(b._startedAt || 0).getTime() - new Date(a._startedAt || 0).getTime());
         state.earlier = mapped;
         if (mapped.length) renderGrid();
       })
