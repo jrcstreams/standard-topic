@@ -68,17 +68,13 @@ function xfSecondaryClauseTpl() { const pg = getPromptGenData() || {}; return pg
 function xfReviewDisc(m) { return `Opens ${m ? m.name : 'the AI model'} in a new tab — the prompt auto-fills or is copied to your clipboard. Standard Topic isn’t responsible for actions taken once you leave the site.`; }
 function xfReviewHTML(prompt) {
   const m = preferredModel();
-  const modelOpts = (getModels() || []).map((x) => `<option value="${escAttr(x.id)}"${m && x.id === m.id ? ' selected' : ''}>${esc(x.name)}</option>`).join('');
   const reasoningOpts = REASONING_LEVELS.map((l) => `<option value="${escAttr(l.id)}"${l.id === 'standard' ? ' selected' : ''}>${esc(l.name)}</option>`).join('');
   const otOpts = '<option value="">None</option>' + xfSimpleOutputOptions().map((o) => `<option value="${escAttr(o.value)}">${esc(o.label)}</option>`).join('');
-  return `<div class="xf-emenu aii-review" data-step="review">
-    <button type="button" class="aii-review-back" data-xfr-back>${BACK}<span>Back</span></button>
+  return `<div class="aii-review" data-step="review">
     <div class="aii-review-field">
-      <div class="aii-review-lblrow"><span class="aii-review-lbl">Prompt</span><button type="button" class="aii-review-reset" data-xfr-reset hidden>Reset</button></div>
+      <div class="aii-review-lblrow"><span class="aii-review-lbl">Prompt Preview</span><button type="button" class="aii-review-reset" data-xfr-reset hidden>Reset</button></div>
       <div class="aii-review-tawrap"><textarea class="aii-review-ta" data-xfr-ta aria-label="Prompt — editable">${esc(prompt)}</textarea><button type="button" class="aii-review-copy" data-xfr-copy aria-label="Copy prompt" title="Copy">${ICON_COPY_MINI}</button></div>
     </div>
-    <label class="xf-emenu-model aii-review-sendto"><span class="xf-emenu-lead">Send to</span>
-      <span class="xf-select-wrap"><select class="xf-select" data-xfr-model aria-label="Choose AI model">${modelOpts}</select>${CHEV}</span></label>
     <details class="aii-review-acc" data-xfr-adv>
       <summary class="aii-review-accsum"><span class="aii-review-acc-title">Advanced settings</span><span class="aii-review-acc-hint">Reasoning, format, custom instructions</span>${CHEV}</summary>
       <div class="aii-review-accbody">
@@ -110,24 +106,13 @@ function wireXfReview(host, base) {
   ta && ta.addEventListener('input', () => { edited = (ta.value === assembled()) ? null : ta.value; if (resetBtn) resetBtn.hidden = (edited == null); });
   resetBtn && resetBtn.addEventListener('click', regen);
   host.querySelector('[data-xfr-copy]')?.addEventListener('click', async (e) => { e.stopPropagation(); try { await navigator.clipboard.writeText(ta ? ta.value : base); } catch (_) {} });
-  host.querySelector('[data-xfr-back]')?.addEventListener('click', () => { host.innerHTML = emenuHomeHTML(); });
-  const modelSel = host.querySelector('[data-xfr-model]');
-  const submitLabel = host.querySelector('[data-xfr-submitlabel]');
-  const disc = host.querySelector('[data-xfr-disc]');
   const submitBtn = host.querySelector('[data-xfr-submit]');
-  modelSel && modelSel.addEventListener('change', () => {
-    setPreferredModelId(modelSel.value);
-    const m = getModelById(modelSel.value);
-    if (submitLabel && m) submitLabel.textContent = `Submit to ${m.name}`;
-    if (disc) disc.textContent = xfReviewDisc(m);
-    if (submitBtn) submitBtn.disabled = !m;
-  });
   host.querySelector('[data-xfr-reasoning]')?.addEventListener('change', (e) => { ps.reasoning = e.target.value; regen(); });
   host.querySelector('[data-xfr-output]')?.addEventListener('change', (e) => { ps.outputType = e.target.value; regen(); });
   host.querySelector('[data-xfr-secondary]')?.addEventListener('input', (e) => { ps.secondaryTopic = e.target.value; regen(); });
   host.querySelector('[data-xfr-custom]')?.addEventListener('input', (e) => { ps.customInstructions = e.target.value; regen(); });
   submitBtn && submitBtn.addEventListener('click', () => {
-    const m = getModelById(modelSel && modelSel.value) || preferredModel();
+    const m = preferredModel();
     if (!m) return;
     const prompt = ta ? ta.value : assembled();
     openModel(m, prompt); copyPrompt(prompt);
@@ -185,6 +170,9 @@ export function wireExploreFurther(root) {
     const m = preferredModel();
     const mn = host && host.querySelector('.xf-mn');
     if (mn && m) mn.textContent = m.name;
+    // Keep an open inline review's Submit label in sync with the shared Send-to.
+    const rl = host && host.querySelector('[data-xfr-submitlabel]'); if (rl && m) rl.textContent = `Submit to ${m.name}`;
+    const rd = host && host.querySelector('[data-xfr-disc]'); if (rd) rd.textContent = xfReviewDisc(m);
   });
   root.addEventListener('click', (e) => {
     const opt = e.target.closest('.xf-opt, .xf-leave-back, .xf-leave-go');
@@ -195,9 +183,18 @@ export function wireExploreFurther(root) {
     const prompt = host.getAttribute('data-xf-prompt') || '';
     if (opt.classList.contains('xf-opt')) {
       if (opt.dataset.opt === 'review') {
-        // Inline review — expand in place instead of the old modal.
-        host.innerHTML = xfReviewHTML(prompt);
-        wireXfReview(host, prompt);
+        // Inline review — nested panel WITHIN the open menu, toggled by re-clicking.
+        const open = host.querySelector('.aii-review-panel');
+        if (open) { open.remove(); opt.classList.remove('is-active'); }
+        else {
+          const panel = document.createElement('div');
+          panel.className = 'aii-review-panel';
+          panel.innerHTML = xfReviewHTML(prompt);
+          host.appendChild(panel);
+          wireXfReview(panel, prompt);
+          opt.classList.add('is-active');
+          try { panel.querySelector('[data-xfr-ta]').focus(); } catch (_) {}
+        }
       } else {
         copyPrompt(prompt);              // copy now so Continue opens synchronously
         host.innerHTML = emenuLeaveHTML();

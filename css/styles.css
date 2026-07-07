@@ -15274,15 +15274,17 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* Send to — compact row, select sized to content, NOT full-width (#img287). */
 .aii-review-sendto { display: flex; align-items: center; gap: 10px; margin: 0; padding: 0; }
 .aii-review-sendto .aii-explore-select-wrap, .aii-review-sendto .xf-select-wrap { flex: 0 0 auto; width: auto; min-width: 200px; max-width: 280px; }
-/* Advanced settings — an inline toggle + fields under a hairline, not a boxed card. */
-.aii-review-acc { border: none; border-top: 1px solid #e3e8ef; border-radius: 0; background: none; }
-.aii-review-accsum { display: flex; align-items: center; gap: 8px; padding: 11px 2px; cursor: pointer; list-style: none; font-family: var(--font-family); }
+/* Advanced settings — a clear bordered toggle (reads as a button), fields inside. */
+.aii-review-acc { border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; }
+.aii-review-accsum { display: flex; align-items: center; gap: 8px; padding: 11px 12px; cursor: pointer; list-style: none; font-family: var(--font-family); border-radius: 9px; transition: background .12s ease; }
+.aii-review-accsum:hover { background: #f7f9fc; }
 .aii-review-accsum::-webkit-details-marker { display: none; }
 .aii-review-acc-title { font-size: 0.84rem; font-weight: 600; color: var(--color-text); }
 .aii-review-acc-hint { font-size: 0.75rem; color: var(--color-text-muted); }
-.aii-review-accsum .aii-chev, .aii-review-accsum .xf-chev { margin-left: auto; transition: transform .18s ease; }
+.aii-review-accsum .aii-chev, .aii-review-accsum .xf-chev { margin-left: auto; color: var(--color-text-muted); transition: transform .18s ease; }
 .aii-review-acc[open] .aii-review-accsum .aii-chev, .aii-review-acc[open] .aii-review-accsum .xf-chev { transform: rotate(180deg); }
-.aii-review-accbody { display: grid; gap: 10px; padding: 0 2px 12px; }
+.aii-review-acc[open] .aii-review-accsum { border-bottom: 1px solid var(--color-surface-border); border-radius: 9px 9px 0 0; }
+.aii-review-accbody { display: grid; gap: 10px; padding: 12px; }
 .aii-review-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 @media (max-width: 560px) { .aii-review-grid { grid-template-columns: 1fr; } }
 .aii-review-fld { display: grid; gap: 4px; }
@@ -15293,13 +15295,17 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-review-reasoning, .aii-review-output { -webkit-appearance: none; appearance: none; padding-right: 30px; cursor: pointer; }
 .aii-review-custom { resize: vertical; line-height: 1.45; }
 .aii-review-fld .aii-explore-select-wrap, .aii-review-fld .xf-select-wrap { width: 100%; }
-/* Submit — content-sized, NOT a full-width blob (#img287). */
-.aii-review-submit { justify-self: start; display: inline-flex; align-items: center; gap: 8px; width: auto; padding: 10px 20px; border: none; border-radius: 9px; background: var(--color-primary, #14213d); color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; transition: background .14s ease; }
+/* Submit — content-sized, NOT a full-width blob (#img287), with room around it. */
+.aii-review-submit { justify-self: start; display: inline-flex; align-items: center; gap: 8px; width: auto; margin-top: 2px; padding: 11px 22px; border: none; border-radius: 9px; background: var(--color-primary, #14213d); color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.88rem; font-weight: 600; transition: background .14s ease; }
 .aii-review-submit:hover { background: color-mix(in srgb, var(--color-primary) 88%, #000); }
 .aii-review-submit:disabled { opacity: 0.5; cursor: default; }
 .aii-review-submit svg { width: 15px; height: 15px; }
-.aii-review-disc { margin: 0; font-size: 0.72rem; line-height: 1.45; color: var(--color-text-light); }
+.aii-review-disc { margin: 2px 0 0; font-size: 0.72rem; line-height: 1.45; color: var(--color-text-light); }
 .aii-review-done { margin: 2px 0 0; font-size: 0.82rem; font-weight: 600; color: #15803d; }
+/* Nested review panel — sits below Send-to / Direct / Review within the menu,
+   separated by a hairline, so it reads as an in-place dropdown (#img299/#img300). */
+.aii-review-panel { margin-top: 4px; padding-top: 14px; border-top: 1px solid #e1e6ee; }
+.aii-explore-opt.is-active, .xf-opt.is-active { background: color-mix(in srgb, #33517f 8%, transparent); }
 
 /* Further Insights — sleek, text-based accordion list. */
 .aii-fi-intro { margin: 2px 0 10px; font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.4; }

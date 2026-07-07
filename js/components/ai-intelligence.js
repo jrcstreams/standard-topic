@@ -4,16 +4,16 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp485';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp485';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp489';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp489';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp485';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp485';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp489';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp489';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -1206,6 +1206,9 @@ export function renderAIIntelligence(container, scope) {
       setPreferredModelId(sel.value);
       const m = preferredModel(); const host = exploreHostOf(sel);
       const mn = host && host.querySelector('.aii-explore-mn'); if (mn && m) mn.textContent = m.name;
+      // Keep an open inline review's Submit label in sync with the shared Send-to.
+      const rl = host && host.querySelector('[data-review-submitlabel]'); if (rl && m) rl.textContent = `Submit to ${m.name}`;
+      const rd = host && host.querySelector('[data-review-disc]'); if (rd) rd.textContent = reviewDiscText(m);
     });
     stage.addEventListener('click', (e) => {
       const trigger = e.target.closest('.aii-explore-opt, .aii-leave-back, .aii-leave-go');
@@ -1213,8 +1216,21 @@ export function renderAIIntelligence(container, scope) {
       const host = exploreHostOf(trigger); const ctx = exploreCtxOf(trigger);
       if (trigger.classList.contains('aii-explore-opt')) {
         if (trigger.dataset.opt === 'review') {
-          // Inline review — expand in place instead of opening the old modal.
-          if (host) { host.innerHTML = exploreReviewHTML(ctx); wireExploreReview(host, ctx); }
+          // Inline review — expands as a nested panel WITHIN the open menu (keeps
+          // Send-to / Direct / Review visible), toggled by re-clicking Review.
+          if (host) {
+            const open = host.querySelector('.aii-review-panel');
+            if (open) { open.remove(); trigger.classList.remove('is-active'); }
+            else {
+              const panel = document.createElement('div');
+              panel.className = 'aii-review-panel';
+              panel.innerHTML = exploreReviewHTML(ctx);
+              host.appendChild(panel);
+              wireExploreReview(panel, ctx);
+              trigger.classList.add('is-active');
+              try { panel.querySelector('[data-review-ta]').focus(); } catch (_) {}
+            }
+          }
         } else {
           // Direct Submit → "leaving the site" confirm. Copy now so Continue can
           // open the model synchronously (no popup block).
@@ -1283,17 +1299,13 @@ export function renderAIIntelligence(container, scope) {
   function reviewDiscText(m) { return `Opens ${m ? m.name : 'the AI model'} in a new tab — the prompt auto-fills or is copied to your clipboard. Standard Topic isn’t responsible for actions taken once you leave the site.`; }
   function exploreReviewHTML(ctx) {
     const m = preferredModel();
-    const modelOpts = (getModels() || []).map((x) => `<option value="${escAttr(x.id)}"${m && x.id === m.id ? ' selected' : ''}>${esc(x.name)}</option>`).join('');
     const reasoningOpts = REASONING_LEVELS.map((l) => `<option value="${escAttr(l.id)}"${l.id === 'standard' ? ' selected' : ''}>${esc(l.name)}</option>`).join('');
     const otOpts = '<option value="">None</option>' + simpleOutputOptions().map((o) => `<option value="${escAttr(o.value)}">${esc(o.label)}</option>`).join('');
-    return `<div class="aii-explore aii-review" data-step="review">
-      <button type="button" class="aii-review-back" data-review-back>${BACK}<span>Back</span></button>
+    return `<div class="aii-review" data-step="review">
       <div class="aii-review-field">
-        <div class="aii-review-lblrow"><span class="aii-review-lbl">Prompt</span><button type="button" class="aii-review-reset" data-review-reset hidden>Reset</button></div>
+        <div class="aii-review-lblrow"><span class="aii-review-lbl">Prompt Preview</span><button type="button" class="aii-review-reset" data-review-reset hidden>Reset</button></div>
         <div class="aii-review-tawrap"><textarea class="aii-review-ta" data-review-ta aria-label="Prompt — editable">${esc(ctx.prompt)}</textarea><button type="button" class="aii-review-copy" data-review-copy aria-label="Copy prompt" title="Copy">${ICON_COPY_MINI}</button></div>
       </div>
-      <label class="aii-explore-model aii-review-sendto"><span class="aii-explore-model-lead">Send to</span>
-        <span class="aii-explore-select-wrap"><select class="aii-explore-select" data-review-model aria-label="Choose AI model">${modelOpts}</select>${CHEV}</span></label>
       <details class="aii-review-acc" data-review-adv>
         <summary class="aii-review-accsum"><span class="aii-review-acc-title">Advanced settings</span><span class="aii-review-acc-hint">Reasoning, format, custom instructions</span>${CHEV}</summary>
         <div class="aii-review-accbody">
@@ -1326,24 +1338,13 @@ export function renderAIIntelligence(container, scope) {
     ta && ta.addEventListener('input', () => { edited = (ta.value === assembled()) ? null : ta.value; if (resetBtn) resetBtn.hidden = (edited == null); });
     resetBtn && resetBtn.addEventListener('click', regen);
     host.querySelector('[data-review-copy]')?.addEventListener('click', async (e) => { e.stopPropagation(); try { await navigator.clipboard.writeText(ta ? ta.value : base); } catch (_) {} });
-    host.querySelector('[data-review-back]')?.addEventListener('click', () => { host.innerHTML = exploreHomeHTML(); });
-    const modelSel = host.querySelector('[data-review-model]');
-    const submitLabel = host.querySelector('[data-review-submitlabel]');
-    const disc = host.querySelector('[data-review-disc]');
     const submitBtn = host.querySelector('[data-review-submit]');
-    modelSel && modelSel.addEventListener('change', () => {
-      setPreferredModelId(modelSel.value);
-      const m = getModelById(modelSel.value);
-      if (submitLabel && m) submitLabel.textContent = `Submit to ${m.name}`;
-      if (disc) disc.textContent = reviewDiscText(m);
-      if (submitBtn) submitBtn.disabled = !m;
-    });
     host.querySelector('.aii-review-reasoning')?.addEventListener('change', (e) => { ps.reasoning = e.target.value; regen(); });
     host.querySelector('.aii-review-output')?.addEventListener('change', (e) => { ps.outputType = e.target.value; regen(); });
     host.querySelector('.aii-review-secondary')?.addEventListener('input', (e) => { ps.secondaryTopic = e.target.value; regen(); });
     host.querySelector('.aii-review-custom')?.addEventListener('input', (e) => { ps.customInstructions = e.target.value; regen(); });
     submitBtn && submitBtn.addEventListener('click', () => {
-      const m = getModelById(modelSel && modelSel.value) || preferredModel();
+      const m = preferredModel();
       if (!m) return;
       const prompt = ta ? ta.value : assembled();
       openModel(m, prompt); copyPrompt(prompt);
