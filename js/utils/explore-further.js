@@ -3,8 +3,12 @@
 // three look and behave identically. "Explore with External AI Models" comes first
 // and offers the Send-to / Direct Submit / Review-Prompt flow (NOT a direct open);
 // then each web-search category.
-import { getModels, getExternalSearches, getExternalSearchCategories } from './data.js';
+import { getModels, getExternalSearches, getExternalSearchCategories, getModelById, getPromptGenData } from './data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from './ai-models.js';
+import { assemblePrompt } from './prompt-assembly.js';
+import { REASONING_LEVELS } from './settings.js';
+
+const ICON_COPY_MINI = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="8" height="9" rx="1.2"/><path d="M9.5 3.5V2.5a1 1 0 0 0-1-1h-5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1"/></svg>';
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
 function escAttr(s) { return String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
@@ -51,6 +55,87 @@ function emenuLeaveHTML() {
       <button type="button" class="xf-leave-go">Continue ${ARROW}</button>
     </div>
   </div>`;
+}
+
+// ── Inline "Review Prompt" — same as the topic Prompts flow, replacing the modal
+//    on every surface that uses this component (news / trending / Explore Further).
+function xfSimpleOutputOptions() {
+  const pg = getPromptGenData() || {};
+  const f = (pg.fields || []).find((x) => x.key === 'outputType') || { options: [] };
+  return (f.options || []).filter((o) => !o.requiresInput);
+}
+function xfSecondaryClauseTpl() { const pg = getPromptGenData() || {}; return pg.secondaryTopicClause || ''; }
+function xfReviewDisc(m) { return `Opens ${m ? m.name : 'the AI model'} in a new tab — the prompt auto-fills or is copied to your clipboard. Standard Topic isn’t responsible for actions taken once you leave the site.`; }
+function xfReviewHTML(prompt) {
+  const m = preferredModel();
+  const modelOpts = (getModels() || []).map((x) => `<option value="${escAttr(x.id)}"${m && x.id === m.id ? ' selected' : ''}>${esc(x.name)}</option>`).join('');
+  const reasoningOpts = REASONING_LEVELS.map((l) => `<option value="${escAttr(l.id)}"${l.id === 'standard' ? ' selected' : ''}>${esc(l.name)}</option>`).join('');
+  const otOpts = '<option value="">None</option>' + xfSimpleOutputOptions().map((o) => `<option value="${escAttr(o.value)}">${esc(o.label)}</option>`).join('');
+  return `<div class="xf-emenu aii-review" data-step="review">
+    <button type="button" class="aii-review-back" data-xfr-back>${BACK}<span>Back</span></button>
+    <div class="aii-review-field">
+      <div class="aii-review-lblrow"><span class="aii-review-lbl">Prompt</span><button type="button" class="aii-review-reset" data-xfr-reset hidden>Reset</button></div>
+      <div class="aii-review-tawrap"><textarea class="aii-review-ta" data-xfr-ta aria-label="Prompt — editable">${esc(prompt)}</textarea><button type="button" class="aii-review-copy" data-xfr-copy aria-label="Copy prompt" title="Copy">${ICON_COPY_MINI}</button></div>
+    </div>
+    <label class="xf-emenu-model aii-review-sendto"><span class="xf-emenu-lead">Send to</span>
+      <span class="xf-select-wrap"><select class="xf-select" data-xfr-model aria-label="Choose AI model">${modelOpts}</select>${CHEV}</span></label>
+    <details class="aii-review-acc" data-xfr-adv>
+      <summary class="aii-review-accsum"><span class="aii-review-acc-title">Advanced settings</span><span class="aii-review-acc-hint">Reasoning, format, custom instructions</span>${CHEV}</summary>
+      <div class="aii-review-accbody">
+        <div class="aii-review-grid">
+          <label class="aii-review-fld"><span class="aii-review-flbl">Reasoning level</span><span class="xf-select-wrap"><select class="aii-review-reasoning" data-xfr-reasoning>${reasoningOpts}</select>${CHEV}</span></label>
+          <label class="aii-review-fld"><span class="aii-review-flbl">Output type</span><span class="xf-select-wrap"><select class="aii-review-output" data-xfr-output>${otOpts}</select>${CHEV}</span></label>
+        </div>
+        <label class="aii-review-fld"><span class="aii-review-flbl">Secondary topics</span><input type="text" class="aii-review-secondary" data-xfr-secondary placeholder="e.g. trade policy"></label>
+        <label class="aii-review-fld"><span class="aii-review-flbl">Custom instructions <span class="aii-review-flbl-note">— this submission only</span></span><textarea class="aii-review-custom" data-xfr-custom rows="2" placeholder="A one-off instruction for this prompt"></textarea></label>
+      </div>
+    </details>
+    <button type="button" class="aii-review-submit" data-xfr-submit${m ? '' : ' disabled'}>${ICON_SEND}<span data-xfr-submitlabel>${esc(m ? `Submit to ${m.name}` : 'Submit prompt')}</span></button>
+    <p class="aii-review-disc" data-xfr-disc>${esc(xfReviewDisc(m))}</p>
+  </div>`;
+}
+function wireXfReview(host, base) {
+  base = base || '';
+  const ps = { reasoning: 'standard', outputType: '', secondaryTopic: '', customInstructions: '' };
+  let edited = null;
+  const ta = host.querySelector('[data-xfr-ta]');
+  const resetBtn = host.querySelector('[data-xfr-reset]');
+  const advOpts = () => {
+    const r = REASONING_LEVELS.find((l) => l.id === ps.reasoning);
+    const ot = xfSimpleOutputOptions().find((o) => o.value === ps.outputType);
+    return { reasoningHint: r && r.hint ? r.hint : '', outputClause: ot ? ot.clause : '', secondaryTopic: ps.secondaryTopic.trim(), secondaryClauseTpl: xfSecondaryClauseTpl(), customInstructions: ps.customInstructions.trim(), topicName: '' };
+  };
+  const assembled = () => assemblePrompt(base, advOpts());
+  const regen = () => { edited = null; if (ta) ta.value = assembled(); if (resetBtn) resetBtn.hidden = true; };
+  ta && ta.addEventListener('input', () => { edited = (ta.value === assembled()) ? null : ta.value; if (resetBtn) resetBtn.hidden = (edited == null); });
+  resetBtn && resetBtn.addEventListener('click', regen);
+  host.querySelector('[data-xfr-copy]')?.addEventListener('click', async (e) => { e.stopPropagation(); try { await navigator.clipboard.writeText(ta ? ta.value : base); } catch (_) {} });
+  host.querySelector('[data-xfr-back]')?.addEventListener('click', () => { host.innerHTML = emenuHomeHTML(); });
+  const modelSel = host.querySelector('[data-xfr-model]');
+  const submitLabel = host.querySelector('[data-xfr-submitlabel]');
+  const disc = host.querySelector('[data-xfr-disc]');
+  const submitBtn = host.querySelector('[data-xfr-submit]');
+  modelSel && modelSel.addEventListener('change', () => {
+    setPreferredModelId(modelSel.value);
+    const m = getModelById(modelSel.value);
+    if (submitLabel && m) submitLabel.textContent = `Submit to ${m.name}`;
+    if (disc) disc.textContent = xfReviewDisc(m);
+    if (submitBtn) submitBtn.disabled = !m;
+  });
+  host.querySelector('[data-xfr-reasoning]')?.addEventListener('change', (e) => { ps.reasoning = e.target.value; regen(); });
+  host.querySelector('[data-xfr-output]')?.addEventListener('change', (e) => { ps.outputType = e.target.value; regen(); });
+  host.querySelector('[data-xfr-secondary]')?.addEventListener('input', (e) => { ps.secondaryTopic = e.target.value; regen(); });
+  host.querySelector('[data-xfr-custom]')?.addEventListener('input', (e) => { ps.customInstructions = e.target.value; regen(); });
+  submitBtn && submitBtn.addEventListener('click', () => {
+    const m = getModelById(modelSel && modelSel.value) || preferredModel();
+    if (!m) return;
+    const prompt = ta ? ta.value : assembled();
+    openModel(m, prompt); copyPrompt(prompt);
+    const note = document.createElement('p');
+    note.className = 'aii-review-done';
+    note.textContent = `Opened ${m.name} · prompt copied to your clipboard — paste it in if it didn’t auto-fill.`;
+    submitBtn.replaceWith(note);
+  });
 }
 
 // Short subtitles so each category reads as a clean, self-explaining listing (the
@@ -110,7 +195,9 @@ export function wireExploreFurther(root) {
     const prompt = host.getAttribute('data-xf-prompt') || '';
     if (opt.classList.contains('xf-opt')) {
       if (opt.dataset.opt === 'review') {
-        window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: prompt, name: host.getAttribute('data-xf-name') || 'Explore', count: 1 } }));
+        // Inline review — expand in place instead of the old modal.
+        host.innerHTML = xfReviewHTML(prompt);
+        wireXfReview(host, prompt);
       } else {
         copyPrompt(prompt);              // copy now so Continue opens synchronously
         host.innerHTML = emenuLeaveHTML();

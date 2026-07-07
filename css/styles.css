@@ -13948,13 +13948,17 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
   min-width: 0; max-width: 100%; box-sizing: border-box;
 }
 .trend-card-exp * { min-width: 0; }
-/* The card is a grid item — without min-width:0 it grows to its content's
-   min-width (the fit-content tab control) and spills past its 1fr track. */
-#home-trending .trend-card-grid, #home-trending .trend-card { min-width: 0; }
-/* The segmented control scrolls sideways in a too-narrow column instead of pushing
-   the whole card past the edge. */
-.trend-card-exp .ins-tabnav { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
-.trend-card-exp .ins-tabnav::-webkit-scrollbar { display: none; }
+/* GENERAL guard (every trend surface — homepage sidebar, nav dropdown, news):
+   the card is a grid/flex item, so without min-width:0 it grows to its content's
+   min-width (the fit-content Summary/Explore/Sources control) and spills past its
+   track and off-screen (#img282/#img289). overflow-x:clip is the backstop —
+   nothing can ever paint past the card's own box. */
+.trend-card-grid { min-width: 0; }
+.trend-card { min-width: 0; max-width: 100%; box-sizing: border-box; overflow-x: clip; }
+.trend-card-main, .trend-card-head, .trend-card-trigger { min-width: 0; max-width: 100%; }
+/* In a too-narrow column the Summary/Explore/Sources control WRAPS to keep all
+   three visible and inside the card, instead of forcing the card wider. */
+.trend-card-exp .ins-tabnav { max-width: 100%; flex-wrap: wrap; }
 @keyframes trendExpIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 /* Close X pinned to the container's top-right, aligned with the trend header. */
 .trend-exp-close {
