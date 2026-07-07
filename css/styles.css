@@ -2354,7 +2354,7 @@ body.hide-cta .sticky-cta { display: none !important; }
   #sub-header.is-subnav .topic-banner-titleinner .topic-banner-title,
   #sub-header.is-home-subnav .topic-banner-titleinner .topic-banner-title {
     font-size: 1.32rem;
-    line-height: 1.15;
+    line-height: 1.35;
     font-weight: 700;
   }
   #sub-header.is-subnav .topic-banner-icon,
@@ -6375,7 +6375,9 @@ body.app-mode .topic-layout {
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-titleinner { min-width: 0; max-width: 100%; }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-kind { display: none !important; }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-title {
-    font-size: 1.25rem !important; font-weight: 800; letter-spacing: -0.026em; line-height: 1.1; color: #14213d;
+    /* line-height 1.35 (was 1.1) so the overflow:hidden ellipsis box doesn't clip
+       descenders like the "g" in Technology (#img323/#img324). */
+    font-size: 1.25rem !important; font-weight: 800; letter-spacing: -0.026em; line-height: 1.35; color: #14213d;
     min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   /* One-sentence description. */
@@ -17264,7 +17266,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   background: color-mix(in srgb, #26375a 9%, #fff); color: #26375a;
 }
 .tsp-parent-ic .tsp-ic-svg { width: 17px; height: 17px; }
-.tsp-parent-name { flex: 0 1 auto; min-width: 0; font-family: var(--font-display); font-size: 1.02rem; font-weight: 700; letter-spacing: -0.01em; color: #1a2740; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tsp-parent-name { flex: 0 1 auto; min-width: 0; font-family: var(--font-display); font-size: 1.02rem; font-weight: 700; line-height: 1.35; letter-spacing: -0.01em; color: #1a2740; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tsp-parent-row.is-active { background: color-mix(in srgb, #26375a 6%, #fff); }
 .tsp-parent-row.is-active .tsp-parent-name { color: #26375a; }
 .tsp-cell-check { flex: none; color: #26375a; display: inline-flex; }
@@ -17312,7 +17314,8 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   .tsp-btn-name {
     font-family: var(--font-display); font-weight: 700; letter-spacing: -0.015em;
     font-size: clamp(0.98rem, 0.82rem + 1vw, 1.18rem);   /* scales down on smaller screens / long names */
-    color: #26375a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+    /* line-height room so overflow:hidden doesn't clip descenders (#img323/#img324). */
+    line-height: 1.35; color: #26375a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
   }
 }
 
@@ -18283,7 +18286,8 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 .topic-subnav-inner .tsp-btn-ico .tsp-ic-svg { width: 17px !important; height: 17px !important; }
 .topic-subnav-inner .tsp-btn-name {
   font-family: var(--font-display); font-weight: 700; letter-spacing: -0.015em; color: #26375a !important;
-  font-size: clamp(0.98rem, 0.82rem + 1vw, 1.18rem) !important; line-height: 1.15;
+  /* line-height 1.4 so overflow:hidden doesn't clip the descenders (#img323/#img324). */
+  font-size: clamp(0.98rem, 0.82rem + 1vw, 1.18rem) !important; line-height: 1.4;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
 }
 .topic-subnav-inner .tsp-btn .tsp-chev { flex: none; align-self: center; margin-left: 0.3rem; width: 18px; height: 18px; color: var(--color-text-muted); }
