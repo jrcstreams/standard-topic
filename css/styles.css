@@ -11681,7 +11681,9 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   right: -1.15rem;
   transform: translateY(-50%);
   width: 1px;
-  height: 22px;
+  /* As tall as the icon+label nav row so the divider evens the two sides out
+     (#img243/#img244). */
+  height: 40px;
   background: rgba(255, 255, 255, 0.32);
 }
 /* The separator sits after the site title, dividing it from the app icons that
@@ -13112,6 +13114,8 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 /* Pull the "Search" title up so it sits near the X close instead of floating far
    below it (#img144). */
 .search-panel--modal .search-panel-hero { margin-top: -1.6rem; }
+/* Left-align the modal tagline (the base rule centers it via margin auto). */
+.search-panel--modal .search-panel-tagline { margin-left: 0; margin-right: 0; }
 @media (max-width: 640px) {
   .search-panel--modal .search-panel-tagline { font-size: 0.88rem; font-weight: 450; }
 }
@@ -13225,7 +13229,7 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
 .search-panel--modal[data-state="collapsed"] .search-panel-empty {
   display: flex; flex: 1 1 auto; min-height: 0; flex-direction: column;
   align-items: stretch; justify-content: flex-start; gap: 20px;
-  padding: 0.4rem 1.6rem 2.5rem; text-align: left;
+  padding: 0.4rem 2px 2.5rem; text-align: left;
 }
 .search-panel-empty-head { display: flex; align-items: center; gap: 9px; }
 .search-panel-empty-ic {
@@ -13278,11 +13282,11 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
    below). */
 /* No line under the search bar — the Jump-to nav's full-width bar is the only
    separator between the search area and the results. */
-.search-panel--modal .search-panel-barrow { flex-shrink: 0; padding: 0.55rem 1.15rem 0.5rem; border-bottom: none; }
-.search-panel--modal .search-panel-results { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0 1.15rem 1.2rem; }
+.search-panel--modal .search-panel-barrow { flex-shrink: 0; padding: 0.55rem 2px 0.5rem; border-bottom: none; }
+.search-panel--modal .search-panel-results { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0 2px 1.2rem; }
 .search-panel--modal .search-panel-close { top: 0.5rem; right: 0.5rem; }
 /* Tighter title→tagline→bar rhythm so it matches the homepage hero card. */
-.search-panel--modal .search-panel-hero-inner { padding: 1.3rem 1rem 0.6rem; }
+.search-panel--modal .search-panel-hero-inner { padding: 1.3rem 2px 0.6rem; }
 /* Search results: separate the Web Sources card from AI Intelligence above it,
    and pull its accordions up under the divider (they were stranded ~32px below). */
 .search-panel-results-inner .websources-section { margin-top: 1.6rem; }
@@ -17728,7 +17732,9 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
    hosted panel provides its own hero. */
 .aii-nav-dd-head-bare { border-bottom: none; padding: 10px 2px 0; display: flex; justify-content: flex-end; }
 .aii-nav-dd-search .aii-nav-dd-scroll { padding: 0 2px 22px; }
-.aii-nav-dd-search .search-navdd-host { width: 100%; max-width: 760px; margin: 0 auto; }
+/* Fill the shell column (left-aligned), matching the Topics/Trending dropdowns —
+   NOT centered in a narrow 760px column (#img239/#img241/#img242). */
+.aii-nav-dd-search .search-navdd-host { width: 100%; max-width: none; margin: 0; }
 .aii-nav-dd-search .search-panel { width: 100%; }
 /* The panel's own corner-close is redundant with the shell's bare-head close. */
 .aii-nav-dd-search .search-panel-corner-close { display: none; }
