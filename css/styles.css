@@ -13445,9 +13445,9 @@ body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; }
 /* Category · timeframe — a clear structural meta line (medium-weight slate),
    distinct from the lighter AI summary beneath it so they don't blur together. */
 #home-trending .trend-card-meta { font-size: clamp(0.68rem, 0.64rem + 0.2vw, 0.72rem); font-weight: 600; color: #5b6679; }
+/* Show the full "why it's trending" summary — no 2-line clamp/ellipsis (#img290). */
 #home-trending .trend-card-summary {
-  font-size: clamp(0.72rem, 0.68rem + 0.2vw, 0.76rem); line-height: 1.36; margin-top: 0; color: #76829b;
-  display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  font-size: clamp(0.72rem, 0.68rem + 0.2vw, 0.76rem); line-height: 1.4; margin-top: 0; color: #76829b;
 }
 #home-trending .trend-card-summary .ai-spark-mark { margin-right: 4px; vertical-align: -1px; }
 /* Each major section reads as its own distinct white card (matching the mockup).
@@ -13956,9 +13956,10 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
 .trend-card-grid { min-width: 0; }
 .trend-card { min-width: 0; max-width: 100%; box-sizing: border-box; overflow-x: clip; }
 .trend-card-main, .trend-card-head, .trend-card-trigger { min-width: 0; max-width: 100%; }
-/* In a too-narrow column the Summary/Explore/Sources control WRAPS to keep all
-   three visible and inside the card, instead of forcing the card wider. */
-.trend-card-exp .ins-tabnav { max-width: 100%; flex-wrap: wrap; }
+/* Fit the Summary/Explore/Sources control on ONE line in the narrow card by
+   shrinking it (smaller text/padding) rather than wrapping to two rows (#img290). */
+.trend-card-exp .ins-tabnav { max-width: 100%; flex-wrap: nowrap; gap: 3px; padding: 3px 4px; overflow: hidden; }
+.trend-card-exp .ins-tab { padding: 7px 9px; font-size: 0.74rem; }
 @keyframes trendExpIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 /* Close X pinned to the container's top-right, aligned with the trend header. */
 .trend-exp-close {
@@ -15253,47 +15254,52 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 
 /* Inline explore-menu host (per-section + Further Insights) — drops in place. */
 .aii-emenu-host { display: none; }
-/* The expanded area is a soft GREY container (no white card-in-card) — the grey
-   fill itself is the container the options sit on (#img266). */
-.aii-emenu-host.is-open { display: block; margin-top: 10px; padding: 13px; border: none; border-radius: 12px; background: #f4f6f9; }
+/* Square grey container (no rounded bubble) — the fill groups the options, which
+   are flat line-separated rows, not white cards (#img284/#img286). */
+.aii-emenu-host.is-open { display: block; margin-top: 8px; padding: 12px 14px 14px; border: none; border-radius: 0; background: #f4f6f9; }
 
-/* ── Inline Review Prompt (replaces the Review & Submit modal) ─────────────── */
-.aii-review { display: grid; gap: 11px; }
-.aii-review-back { justify-self: start; display: inline-flex; align-items: center; gap: 4px; border: none; background: none; padding: 2px 2px; margin: -2px 0 0; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #64748b; }
+/* ── Inline Review Prompt (replaces the modal) — clean, compact, line-based ──── */
+.aii-review { display: grid; gap: 12px; }
+.aii-review-back { justify-self: start; display: inline-flex; align-items: center; gap: 4px; border: none; background: none; padding: 0; margin: 0; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #64748b; }
 .aii-review-back:hover { color: var(--color-primary); }
-.aii-review-field { display: grid; gap: 5px; }
+.aii-review-field { display: grid; gap: 6px; }
 .aii-review-lblrow { display: flex; align-items: baseline; justify-content: space-between; }
-.aii-review-lbl { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; color: #64748b; }
+.aii-review-lbl { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #7a869a; }
 .aii-review-reset { border: none; background: none; padding: 0; cursor: pointer; font-family: var(--font-family); font-size: 0.76rem; font-weight: 600; color: #3268b3; }
 .aii-review-tawrap { position: relative; }
-.aii-review-ta { width: 100%; box-sizing: border-box; min-height: 118px; resize: vertical; padding: 11px 34px 11px 12px; border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; font-family: var(--font-family); font-size: 0.86rem; line-height: 1.5; color: var(--color-text); }
+.aii-review-ta { width: 100%; box-sizing: border-box; min-height: 104px; resize: vertical; padding: 11px 34px 11px 12px; border: 1px solid var(--color-surface-border); border-radius: 8px; background: #fff; font-family: var(--font-family); font-size: 0.86rem; line-height: 1.5; color: var(--color-text); }
 .aii-review-ta:focus { outline: none; border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-surface-border)); }
-.aii-review-copy { position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--color-surface-border); border-radius: 7px; background: #fff; color: #64748b; cursor: pointer; }
+.aii-review-copy { position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--color-surface-border); border-radius: 6px; background: #fff; color: #64748b; cursor: pointer; }
 .aii-review-copy:hover { color: var(--color-primary); border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-surface-border)); }
-.aii-review-sendto { margin: 0; }
-.aii-review-acc { border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; overflow: hidden; }
-.aii-review-accsum { display: flex; align-items: center; gap: 8px; padding: 10px 12px; cursor: pointer; list-style: none; font-family: var(--font-family); }
+/* Send to — compact row, select sized to content, NOT full-width (#img287). */
+.aii-review-sendto { display: flex; align-items: center; gap: 10px; margin: 0; padding: 0; }
+.aii-review-sendto .aii-explore-select-wrap, .aii-review-sendto .xf-select-wrap { flex: 0 0 auto; width: auto; min-width: 200px; max-width: 280px; }
+/* Advanced settings — an inline toggle + fields under a hairline, not a boxed card. */
+.aii-review-acc { border: none; border-top: 1px solid #e3e8ef; border-radius: 0; background: none; }
+.aii-review-accsum { display: flex; align-items: center; gap: 8px; padding: 11px 2px; cursor: pointer; list-style: none; font-family: var(--font-family); }
 .aii-review-accsum::-webkit-details-marker { display: none; }
 .aii-review-acc-title { font-size: 0.84rem; font-weight: 600; color: var(--color-text); }
 .aii-review-acc-hint { font-size: 0.75rem; color: var(--color-text-muted); }
-.aii-review-accsum .aii-chev { margin-left: auto; transition: transform .18s ease; }
-.aii-review-acc[open] .aii-review-accsum .aii-chev { transform: rotate(180deg); }
-.aii-review-accbody { display: grid; gap: 10px; padding: 2px 12px 13px; }
+.aii-review-accsum .aii-chev, .aii-review-accsum .xf-chev { margin-left: auto; transition: transform .18s ease; }
+.aii-review-acc[open] .aii-review-accsum .aii-chev, .aii-review-acc[open] .aii-review-accsum .xf-chev { transform: rotate(180deg); }
+.aii-review-accbody { display: grid; gap: 10px; padding: 0 2px 12px; }
 .aii-review-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 @media (max-width: 560px) { .aii-review-grid { grid-template-columns: 1fr; } }
 .aii-review-fld { display: grid; gap: 4px; }
 .aii-review-flbl { font-size: 0.76rem; font-weight: 600; color: #475569; }
 .aii-review-flbl-note { font-weight: 400; color: var(--color-text-muted); }
-.aii-review-fld input, .aii-review-custom, .aii-review-reasoning, .aii-review-output { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid var(--color-surface-border); border-radius: 8px; background: #fff; font-family: var(--font-family); font-size: 0.83rem; color: var(--color-text); }
+.aii-review-fld input, .aii-review-custom, .aii-review-reasoning, .aii-review-output { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid var(--color-surface-border); border-radius: 7px; background: #fff; font-family: var(--font-family); font-size: 0.83rem; color: var(--color-text); }
+/* Selects: hide the native arrow so it doesn't double up with the CHEV (#img287). */
+.aii-review-reasoning, .aii-review-output { -webkit-appearance: none; appearance: none; padding-right: 30px; cursor: pointer; }
 .aii-review-custom { resize: vertical; line-height: 1.45; }
-.aii-review-fld .aii-explore-select-wrap { width: 100%; }
-.aii-review-fld select { width: 100%; }
-.aii-review-submit { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px 16px; border: none; border-radius: 11px; background: var(--color-primary, #14213d); color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.92rem; font-weight: 650; transition: background .14s ease; }
+.aii-review-fld .aii-explore-select-wrap, .aii-review-fld .xf-select-wrap { width: 100%; }
+/* Submit — content-sized, NOT a full-width blob (#img287). */
+.aii-review-submit { justify-self: start; display: inline-flex; align-items: center; gap: 8px; width: auto; padding: 10px 20px; border: none; border-radius: 9px; background: var(--color-primary, #14213d); color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; transition: background .14s ease; }
 .aii-review-submit:hover { background: color-mix(in srgb, var(--color-primary) 88%, #000); }
 .aii-review-submit:disabled { opacity: 0.5; cursor: default; }
-.aii-review-submit svg { width: 16px; height: 16px; }
+.aii-review-submit svg { width: 15px; height: 15px; }
 .aii-review-disc { margin: 0; font-size: 0.72rem; line-height: 1.45; color: var(--color-text-light); }
-.aii-review-done { margin: 4px 0 0; font-size: 0.82rem; font-weight: 600; color: #15803d; }
+.aii-review-done { margin: 2px 0 0; font-size: 0.82rem; font-weight: 600; color: #15803d; }
 
 /* Further Insights — sleek, text-based accordion list. */
 .aii-fi-intro { margin: 2px 0 10px; font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.4; }
@@ -15303,11 +15309,10 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
    top border doubled it up (#img258/#img259). */
 .aii-fi-acclist > .aii-fi-acc:first-child { border-top: none; }
 .aii-fi-acc:last-child { border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 72%, transparent); }
-/* Clean full-row hover (#img265): a soft tinted fill that reaches slightly past
-   the text on each side (negative margin keeps the text aligned), plus the name +
-   chevron warming to the primary colour. */
-.aii-fi-accsum { display: flex; align-items: center; gap: 12px; width: calc(100% + 24px); margin: 0 -12px; padding: 13px 12px; border: none; background: none; border-radius: 10px; cursor: pointer; text-align: left; font-family: var(--font-family); transition: background .14s ease; }
-.aii-fi-accsum:hover { background: color-mix(in srgb, #33517f 6%, #fff); }
+/* Square, straight-edge rows separated by the .aii-fi-acc hairlines — no rounded
+   "bubble" hover (#img284). A flat full-width tint on hover, name + chevron warm. */
+.aii-fi-accsum { display: flex; align-items: center; gap: 12px; width: 100%; margin: 0; padding: 13px 4px; border: none; background: none; border-radius: 0; cursor: pointer; text-align: left; font-family: var(--font-family); transition: background .12s ease; }
+.aii-fi-accsum:hover { background: #f6f8fb; }
 .aii-fi-accsum:hover .aii-fi-acc-chev { color: var(--color-primary); }
 .aii-fi-acc-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
 .aii-fi-acc-name { font-size: 0.9rem; font-weight: 600; color: var(--color-text); transition: color .14s ease; }
@@ -15715,9 +15720,14 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
   position: absolute; right: 10px; pointer-events: none; color: var(--color-text-muted); width: 14px; height: 14px;
 }
 
-.aii-explore { display: grid; gap: 6px; }
-.aii-explore-opt { display: flex; align-items: center; gap: 10px; text-align: left; width: 100%; padding: 8px 11px; border: 1px solid var(--color-surface-border); border-radius: 9px; background: #fff; cursor: pointer; font-family: var(--font-family); transition: border-color .14s, background .14s; }
-.aii-explore-opt:hover { border-color: var(--color-primary); background: #f7f9fc; }
+/* Send to — compact select, not full-width (#img284). Scoped to the option menu +
+   review so the news/trend explore menus keep their own widths. */
+.aii-explore-model .aii-explore-select-wrap { flex: 0 0 auto; width: auto; min-width: 200px; max-width: 280px; }
+/* Options = square rows separated by hairlines on the grey container, no white
+   rounded cards (#img284/#img286). */
+.aii-explore { display: block; }
+.aii-explore-opt { display: flex; align-items: center; gap: 11px; text-align: left; width: 100%; padding: 12px 2px; border: none; border-top: 1px solid #e1e6ee; border-radius: 0; background: none; cursor: pointer; font-family: var(--font-family); transition: background .12s; }
+.aii-explore-opt:hover { background: color-mix(in srgb, #33517f 6%, transparent); }
 .aii-explore-ic { flex: none; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: var(--color-primary); }
 .aii-explore-ic svg { width: 15px; height: 15px; }
 .aii-explore-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
