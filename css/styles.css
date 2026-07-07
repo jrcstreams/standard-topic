@@ -15249,7 +15249,47 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 
 /* Inline explore-menu host (per-section + Further Insights) — drops in place. */
 .aii-emenu-host { display: none; }
-.aii-emenu-host.is-open { display: block; margin-top: 10px; padding: 13px; border: 1px solid var(--color-surface-border); border-radius: 11px; background: #fff; }
+/* The expanded area is a soft GREY container (no white card-in-card) — the grey
+   fill itself is the container the options sit on (#img266). */
+.aii-emenu-host.is-open { display: block; margin-top: 10px; padding: 13px; border: none; border-radius: 12px; background: #f4f6f9; }
+
+/* ── Inline Review Prompt (replaces the Review & Submit modal) ─────────────── */
+.aii-review { display: grid; gap: 11px; }
+.aii-review-back { justify-self: start; display: inline-flex; align-items: center; gap: 4px; border: none; background: none; padding: 2px 2px; margin: -2px 0 0; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #64748b; }
+.aii-review-back:hover { color: var(--color-primary); }
+.aii-review-field { display: grid; gap: 5px; }
+.aii-review-lblrow { display: flex; align-items: baseline; justify-content: space-between; }
+.aii-review-lbl { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; color: #64748b; }
+.aii-review-reset { border: none; background: none; padding: 0; cursor: pointer; font-family: var(--font-family); font-size: 0.76rem; font-weight: 600; color: #3268b3; }
+.aii-review-tawrap { position: relative; }
+.aii-review-ta { width: 100%; box-sizing: border-box; min-height: 118px; resize: vertical; padding: 11px 34px 11px 12px; border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; font-family: var(--font-family); font-size: 0.86rem; line-height: 1.5; color: var(--color-text); }
+.aii-review-ta:focus { outline: none; border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-surface-border)); }
+.aii-review-copy { position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--color-surface-border); border-radius: 7px; background: #fff; color: #64748b; cursor: pointer; }
+.aii-review-copy:hover { color: var(--color-primary); border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-surface-border)); }
+.aii-review-sendto { margin: 0; }
+.aii-review-acc { border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; overflow: hidden; }
+.aii-review-accsum { display: flex; align-items: center; gap: 8px; padding: 10px 12px; cursor: pointer; list-style: none; font-family: var(--font-family); }
+.aii-review-accsum::-webkit-details-marker { display: none; }
+.aii-review-acc-title { font-size: 0.84rem; font-weight: 600; color: var(--color-text); }
+.aii-review-acc-hint { font-size: 0.75rem; color: var(--color-text-muted); }
+.aii-review-accsum .aii-chev { margin-left: auto; transition: transform .18s ease; }
+.aii-review-acc[open] .aii-review-accsum .aii-chev { transform: rotate(180deg); }
+.aii-review-accbody { display: grid; gap: 10px; padding: 2px 12px 13px; }
+.aii-review-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 560px) { .aii-review-grid { grid-template-columns: 1fr; } }
+.aii-review-fld { display: grid; gap: 4px; }
+.aii-review-flbl { font-size: 0.76rem; font-weight: 600; color: #475569; }
+.aii-review-flbl-note { font-weight: 400; color: var(--color-text-muted); }
+.aii-review-fld input, .aii-review-custom, .aii-review-reasoning, .aii-review-output { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid var(--color-surface-border); border-radius: 8px; background: #fff; font-family: var(--font-family); font-size: 0.83rem; color: var(--color-text); }
+.aii-review-custom { resize: vertical; line-height: 1.45; }
+.aii-review-fld .aii-explore-select-wrap { width: 100%; }
+.aii-review-fld select { width: 100%; }
+.aii-review-submit { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px 16px; border: none; border-radius: 11px; background: var(--color-primary, #14213d); color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.92rem; font-weight: 650; transition: background .14s ease; }
+.aii-review-submit:hover { background: color-mix(in srgb, var(--color-primary) 88%, #000); }
+.aii-review-submit:disabled { opacity: 0.5; cursor: default; }
+.aii-review-submit svg { width: 16px; height: 16px; }
+.aii-review-disc { margin: 0; font-size: 0.72rem; line-height: 1.45; color: var(--color-text-light); }
+.aii-review-done { margin: 4px 0 0; font-size: 0.82rem; font-weight: 600; color: #15803d; }
 
 /* Further Insights — sleek, text-based accordion list. */
 .aii-fi-intro { margin: 2px 0 10px; font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.4; }

@@ -6,8 +6,10 @@
 // path loads, hopping between its sections is instant.
 import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260705-revamp458';
 import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260630-revamp434';
-import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory } from '../utils/data.js';
+import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
+import { assemblePrompt } from '../utils/prompt-assembly.js';
+import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
 import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260705-revamp452';
@@ -139,6 +141,7 @@ function genLoaderHTML() {
   return `<div class="aii-gen"><div class="aii-gen-spark">${SPARK}</div><div class="aii-gen-label">Generating AI insights…</div><div class="aii-gen-bars"><span></span><span></span><span></span><span></span></div></div>`;
 }
 const ICON_EYES = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+const ICON_COPY_MINI = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="8" height="9" rx="1.2"/><path d="M9.5 3.5V2.5a1 1 0 0 0-1-1h-5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1"/></svg>';
 const ICONS = {
   discover: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="15.5 8.5 10.5 10.5 8.5 15.5 13.5 13.5"/></svg>',
   learn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v15a2 2 0 0 0-2-1.5H2z"/><path d="M22 5a2 2 0 0 0-2-2h-6a2 2 0 0 0-2 2v15a2 2 0 0 1 2-1.5h8z"/></svg>',
@@ -1210,7 +1213,8 @@ export function renderAIIntelligence(container, scope) {
       const host = exploreHostOf(trigger); const ctx = exploreCtxOf(trigger);
       if (trigger.classList.contains('aii-explore-opt')) {
         if (trigger.dataset.opt === 'review') {
-          window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: ctx.prompt, topicName: scope.label, name: ctx.name, count: 1 } }));
+          // Inline review — expand in place instead of opening the old modal.
+          if (host) { host.innerHTML = exploreReviewHTML(ctx); wireExploreReview(host, ctx); }
         } else {
           // Direct Submit → "leaving the site" confirm. Copy now so Continue can
           // open the model synchronously (no popup block).
@@ -1265,6 +1269,89 @@ export function renderAIIntelligence(container, scope) {
         <button type="button" class="aii-leave-go">Continue ${ARROW}</button>
       </div>
     </div>`;
+  }
+
+  // ── Inline "Review Prompt" (replaces the old Review & Submit MODAL) ──────────
+  // Expands IN the explore dropdown so the user edits the prompt + picks options
+  // right here (#img266-#img270). Advanced settings mirror the retired modal.
+  function simpleOutputOptions() {
+    const pg = getPromptGenData() || {};
+    const f = (pg.fields || []).find((x) => x.key === 'outputType') || { options: [] };
+    return (f.options || []).filter((o) => !o.requiresInput);
+  }
+  function secondaryClauseTpl() { const pg = getPromptGenData() || {}; return pg.secondaryTopicClause || ''; }
+  function reviewDiscText(m) { return `Opens ${m ? m.name : 'the AI model'} in a new tab — the prompt auto-fills or is copied to your clipboard. Standard Topic isn’t responsible for actions taken once you leave the site.`; }
+  function exploreReviewHTML(ctx) {
+    const m = preferredModel();
+    const modelOpts = (getModels() || []).map((x) => `<option value="${escAttr(x.id)}"${m && x.id === m.id ? ' selected' : ''}>${esc(x.name)}</option>`).join('');
+    const reasoningOpts = REASONING_LEVELS.map((l) => `<option value="${escAttr(l.id)}"${l.id === 'standard' ? ' selected' : ''}>${esc(l.name)}</option>`).join('');
+    const otOpts = '<option value="">None</option>' + simpleOutputOptions().map((o) => `<option value="${escAttr(o.value)}">${esc(o.label)}</option>`).join('');
+    return `<div class="aii-explore aii-review" data-step="review">
+      <button type="button" class="aii-review-back" data-review-back>${BACK}<span>Back</span></button>
+      <div class="aii-review-field">
+        <div class="aii-review-lblrow"><span class="aii-review-lbl">Prompt</span><button type="button" class="aii-review-reset" data-review-reset hidden>Reset</button></div>
+        <div class="aii-review-tawrap"><textarea class="aii-review-ta" data-review-ta aria-label="Prompt — editable">${esc(ctx.prompt)}</textarea><button type="button" class="aii-review-copy" data-review-copy aria-label="Copy prompt" title="Copy">${ICON_COPY_MINI}</button></div>
+      </div>
+      <label class="aii-explore-model aii-review-sendto"><span class="aii-explore-model-lead">Send to</span>
+        <span class="aii-explore-select-wrap"><select class="aii-explore-select" data-review-model aria-label="Choose AI model">${modelOpts}</select>${CHEV}</span></label>
+      <details class="aii-review-acc" data-review-adv>
+        <summary class="aii-review-accsum"><span class="aii-review-acc-title">Advanced settings</span><span class="aii-review-acc-hint">Reasoning, format, custom instructions</span>${CHEV}</summary>
+        <div class="aii-review-accbody">
+          <div class="aii-review-grid">
+            <label class="aii-review-fld"><span class="aii-review-flbl">Reasoning level</span><span class="aii-explore-select-wrap"><select class="aii-review-reasoning">${reasoningOpts}</select>${CHEV}</span></label>
+            <label class="aii-review-fld"><span class="aii-review-flbl">Output type</span><span class="aii-explore-select-wrap"><select class="aii-review-output">${otOpts}</select>${CHEV}</span></label>
+          </div>
+          <label class="aii-review-fld"><span class="aii-review-flbl">Secondary topics</span><input type="text" class="aii-review-secondary" placeholder="e.g. trade policy"></label>
+          <label class="aii-review-fld"><span class="aii-review-flbl">Custom instructions <span class="aii-review-flbl-note">— this submission only</span></span><textarea class="aii-review-custom" rows="2" placeholder="A one-off instruction for this prompt"></textarea></label>
+        </div>
+      </details>
+      <button type="button" class="aii-review-submit" data-review-submit${m ? '' : ' disabled'}>${ICON_SEND}<span data-review-submitlabel>${esc(m ? `Submit to ${m.name}` : 'Submit prompt')}</span></button>
+      <p class="aii-review-disc" data-review-disc>${esc(reviewDiscText(m))}</p>
+    </div>`;
+  }
+  function wireExploreReview(host, ctx) {
+    const base = ctx.prompt || '';
+    const topicName = scope.label || scope.topic || '';
+    const ps = { reasoning: 'standard', outputType: '', secondaryTopic: '', customInstructions: '' };
+    let edited = null;
+    const ta = host.querySelector('[data-review-ta]');
+    const resetBtn = host.querySelector('[data-review-reset]');
+    const advOpts = () => {
+      const r = REASONING_LEVELS.find((l) => l.id === ps.reasoning);
+      const ot = simpleOutputOptions().find((o) => o.value === ps.outputType);
+      return { reasoningHint: r && r.hint ? r.hint : '', outputClause: ot ? ot.clause : '', secondaryTopic: ps.secondaryTopic.trim(), secondaryClauseTpl: secondaryClauseTpl(), customInstructions: ps.customInstructions.trim(), topicName };
+    };
+    const assembled = () => assemblePrompt(base, advOpts());
+    const regen = () => { edited = null; if (ta) ta.value = assembled(); if (resetBtn) resetBtn.hidden = true; };
+    ta && ta.addEventListener('input', () => { edited = (ta.value === assembled()) ? null : ta.value; if (resetBtn) resetBtn.hidden = (edited == null); });
+    resetBtn && resetBtn.addEventListener('click', regen);
+    host.querySelector('[data-review-copy]')?.addEventListener('click', async (e) => { e.stopPropagation(); try { await navigator.clipboard.writeText(ta ? ta.value : base); } catch (_) {} });
+    host.querySelector('[data-review-back]')?.addEventListener('click', () => { host.innerHTML = exploreHomeHTML(); });
+    const modelSel = host.querySelector('[data-review-model]');
+    const submitLabel = host.querySelector('[data-review-submitlabel]');
+    const disc = host.querySelector('[data-review-disc]');
+    const submitBtn = host.querySelector('[data-review-submit]');
+    modelSel && modelSel.addEventListener('change', () => {
+      setPreferredModelId(modelSel.value);
+      const m = getModelById(modelSel.value);
+      if (submitLabel && m) submitLabel.textContent = `Submit to ${m.name}`;
+      if (disc) disc.textContent = reviewDiscText(m);
+      if (submitBtn) submitBtn.disabled = !m;
+    });
+    host.querySelector('.aii-review-reasoning')?.addEventListener('change', (e) => { ps.reasoning = e.target.value; regen(); });
+    host.querySelector('.aii-review-output')?.addEventListener('change', (e) => { ps.outputType = e.target.value; regen(); });
+    host.querySelector('.aii-review-secondary')?.addEventListener('input', (e) => { ps.secondaryTopic = e.target.value; regen(); });
+    host.querySelector('.aii-review-custom')?.addEventListener('input', (e) => { ps.customInstructions = e.target.value; regen(); });
+    submitBtn && submitBtn.addEventListener('click', () => {
+      const m = getModelById(modelSel && modelSel.value) || preferredModel();
+      if (!m) return;
+      const prompt = ta ? ta.value : assembled();
+      openModel(m, prompt); copyPrompt(prompt);
+      const note = document.createElement('p');
+      note.className = 'aii-review-done';
+      note.textContent = `Opened ${m.name} · prompt copied to your clipboard — paste it in if it didn’t auto-fill.`;
+      submitBtn.replaceWith(note);
+    });
   }
 
   function teardownSticky() {
