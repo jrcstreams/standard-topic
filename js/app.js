@@ -13,7 +13,7 @@ import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js?v=20260703-revamp447';
 import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260703-revamp447';
 import { initPromptModal } from './components/prompt-modal.js?v=20260702-revamp435';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp481';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp482';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260702-revamp435';
@@ -22,7 +22,7 @@ import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706
 import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260705-revamp465';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp468';
 import { renderWebSources } from './components/websources.js?v=20260702-revamp435';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp481';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp482';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260702-revamp435';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
 import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260702-revamp435';
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Trending is a dropdown now: every "View more trending" / open-trending-list
   // (and the retired detail modal's "back") opens the Trending nav dropdown.
-  window.addEventListener('open-trending-list', () => openTrendingNavDropdown());
+  window.addEventListener('open-trending-list', (e) => openTrendingNavDropdown(e && e.detail && e.detail.expand));
   // All Topics is a dropdown now: every open-all-topics-modal dispatch (picker
   // "All Topics", search) opens the single clean Topics nav dropdown.
   window.addEventListener('open-all-topics-modal', () => openTopicsNavDropdown());
@@ -778,7 +778,7 @@ function openTopicsNavDropdown() { if (!(navDdOpen && navDdOpen.key === 'topics'
 // Hosts renderTrendingModal (AI-legend sub-bar + live trend-card grid). Cards
 // expand their brief IN PLACE inside the dropdown (inline:true) — no detail
 // modal. "View more trending" everywhere routes here (open-trending-list).
-function trendingNavDdCfg() {
+function trendingNavDdCfg(expandQuery) {
   return {
     key: 'trending', triggerId: 'nav-trending', className: 'aii-nav-dd-trending',
     title: 'Trending', ariaLabel: 'Trending now',
@@ -788,16 +788,16 @@ function trendingNavDdCfg() {
     wire: (panel) => {
       const controls = panel.querySelector('[data-trend-controls]');
       const grid = panel.querySelector('[data-trend-grid]');
-      try { renderTrendingModal(controls, grid, { inline: true }); } catch (_) {}
+      try { renderTrendingModal(controls, grid, { inline: true, expandQuery }); } catch (_) {}
       grid.addEventListener('click', () => { [60, 260].forEach((d) => setTimeout(updateNavDdFades, d)); });
       [350, 900, 1800].forEach((d) => setTimeout(updateNavDdFades, d));
     },
   };
 }
 function toggleTrendingNavDropdown() { toggleNavDropdown(trendingNavDdCfg()); }
-function openTrendingNavDropdown() {
-  if (navDdOpen && navDdOpen.key === 'trending') return;
-  openNavDropdown(trendingNavDdCfg());
+function openTrendingNavDropdown(expandQuery) {
+  if (navDdOpen && navDdOpen.key === 'trending' && !expandQuery) return;
+  openNavDropdown(trendingNavDdCfg(expandQuery));
 }
 
 // ── Phase 6: the Prompt Builder dropdown ─────────────────────────────────────
@@ -3588,7 +3588,8 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       <div class="search-panel-hero"><div class="search-panel-hero-inner">
         ${isModal
           ? `<h2 class="search-panel-title">Search</h2>
-             <p class="search-panel-tagline">News, Resources and AI Knowledge</p>`
+             <p class="search-panel-tagline">News, Resources and AI Knowledge</p>
+             <p class="search-panel-herohint">Type a topic, term, or headline and we'll pull together the latest news, web sources, and AI insights.</p>`
           : `<h2 class="search-panel-title">What do you want to know?</h2>
              <p class="search-panel-tagline">News, resources &amp; AI insights on any topic.</p>`}
       </div></div>
@@ -3605,11 +3606,6 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       <div class="search-panel-results"><div class="search-panel-results-inner"></div></div>
       ${isModal
         ? `<div class="search-panel-empty">
-             <div class="search-panel-empty-head">
-               <span class="search-panel-empty-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-               <h3 class="search-panel-empty-title">Search anything</h3>
-             </div>
-             <p class="search-panel-empty-text">Type a topic, term, or headline and we'll pull together the latest news, web sources, and AI insights.</p>
              <div class="search-panel-empty-sec" data-empty-trending hidden>
                <div class="search-panel-empty-sechead"><span class="search-panel-empty-seclabel">Trending</span></div>
                <div class="search-panel-empty-chips" role="list"></div>
@@ -3671,8 +3667,14 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       `<button type="button" class="search-panel-empty-chip" role="listitem">${SP_TREND_ICON}<span>${escapeHTML(t.query)}</span></button>`
     ).join('');
     sec.hidden = false;
+    // A trend chip opens that trend inside the Trending dropdown (auto-expanded),
+    // NOT a custom search for the term (#img281).
     wrap.querySelectorAll('.search-panel-empty-chip').forEach((b, i) => {
-      b.addEventListener('click', () => { const q = picks[i] && picks[i].query; if (q) expand(q); });
+      b.addEventListener('click', () => {
+        const q = picks[i] && picks[i].query; if (!q) return;
+        window.dispatchEvent(new CustomEvent('close-all-modals'));
+        window.dispatchEvent(new CustomEvent('open-trending-list', { detail: { expand: q } }));
+      });
     });
     // "View more trending" → open the Trending list (closes this search modal).
     sec.querySelector('[data-view-trending]')?.addEventListener('click', () => {

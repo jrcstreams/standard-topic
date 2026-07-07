@@ -459,6 +459,14 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
     renderControls();
     renderGrid();
     loadEarlier();
+    // Auto-open a specific trend when launched from the Search dropdown (#img281).
+    if (opts.inline && opts.expandQuery) {
+      const want = String(opts.expandQuery).toLowerCase().trim();
+      requestAnimationFrame(() => {
+        const card = [...gridEl.querySelectorAll('.trend-card')].find((c) => (c.dataset.query || '').toLowerCase().trim() === want);
+        if (card) { card.querySelector('.trend-card-trigger')?.click(); try { card.scrollIntoView({ block: 'nearest' }); } catch (_) {} }
+      });
+    }
   }).catch(() => { controlsEl.innerHTML = ''; gridEl.innerHTML = '<p class="trending-empty">Trending is taking a break — check back soon.</p>'; });
 }
 

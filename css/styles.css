@@ -11681,9 +11681,9 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   right: -1.15rem;
   transform: translateY(-50%);
   width: 1px;
-  /* As tall as the icon+label nav row so the divider evens the two sides out
-     (#img243/#img244). */
-  height: 40px;
+  /* A touch taller than the original 22px, but not the full icon-row height —
+     40px overdid it (#img277/#img278). */
+  height: 30px;
   background: rgba(255, 255, 255, 0.32);
 }
 /* The separator sits after the site title, dividing it from the app icons that
@@ -13114,10 +13114,14 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 /* Pull the "Search" title up so it sits near the X close instead of floating far
    below it (#img144). */
 .search-panel--modal .search-panel-hero { margin-top: -1.6rem; }
-/* Left-align the modal tagline (the base rule centers it via margin auto). */
-.search-panel--modal .search-panel-tagline { margin-left: 0; margin-right: 0; }
+/* Left-align the modal tagline (the base rule centers it via margin auto), with a
+   little more weight/darkness as the primary descriptor (#img279). */
+.search-panel--modal .search-panel-tagline { margin-left: 0; margin-right: 0; font-weight: 550; color: #475569; }
+/* The "Type a topic…" hint now lives under the tagline, above the input. */
+.search-panel-herohint { margin: 7px 0 0; max-width: 46rem; font-size: 0.9rem; line-height: 1.5; color: var(--color-text-muted); }
 @media (max-width: 640px) {
-  .search-panel--modal .search-panel-tagline { font-size: 0.88rem; font-weight: 450; }
+  .search-panel--modal .search-panel-tagline { font-size: 0.9rem; font-weight: 550; }
+  .search-panel-herohint { font-size: 0.85rem; }
 }
 /* Compact the homepage hero further on phones — it was eating too much of the
    first screen. */
@@ -13242,8 +13246,8 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
 .search-panel-empty-text { margin: -14px 0 0; font-size: 0.86rem; line-height: 1.5; color: var(--color-text-muted); }
 .search-panel-empty-sec { display: flex; flex-direction: column; align-items: flex-start; gap: 11px; }
 .search-panel-empty-sechead { display: flex; align-items: baseline; gap: 12px; }
-/* More prominent (but not huge) section headers than the old tiny uppercase ones. */
-.search-panel-empty-seclabel { font-family: var(--font-display); font-size: 0.98rem; font-weight: 700; letter-spacing: -0.01em; color: #1e293b; }
+/* Section headers — a touch lighter than before (#img280). */
+.search-panel-empty-seclabel { font-family: var(--font-display); font-size: 0.94rem; font-weight: 600; letter-spacing: -0.01em; color: #334155; }
 /* Left-aligned link BELOW its section (moved out of the header row, #img226/#img227). */
 .search-panel-empty-more { align-self: flex-start; margin-top: 2px; display: inline-flex; align-items: center; gap: 3px; border: none; background: none; padding: 0; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #3268b3; }
 .search-panel-empty-more svg { flex: none; }
@@ -13256,7 +13260,8 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
   font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #2b3852;
   transition: border-color .14s, color .14s, background .14s;
 }
-.search-panel-empty-chip svg { width: 13px; height: 13px; flex: none; color: var(--color-primary); opacity: 0.8; }
+/* Green trending arrow, matching the trend cards elsewhere (#img280). */
+.search-panel-empty-chip svg { width: 14px; height: 14px; flex: none; color: #16a34a; opacity: 1; }
 .search-panel-empty-chip:hover { border-color: color-mix(in srgb, var(--color-primary) 45%, transparent); color: var(--color-primary); }
 /* Featured topics — clean chip links. */
 .search-panel-empty-topics { display: flex; flex-wrap: wrap; gap: 8px; }
