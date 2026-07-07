@@ -17991,8 +17991,9 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 }
 .aiidd-vlink:hover { color: #2563eb; }
 /* Subtopic icons in the Topics nav dropdown — matches the topic-page picker (#img315). */
-.aiidd-vlink-ic, .aiidd-vall .aiidd-vlink-ic { flex: none; display: inline-flex; align-items: center; justify-content: center; color: #64748b; }
-.aiidd-vlink-ic svg { width: 17px; height: 17px; }
+.aiidd-vlink-ic, .aiidd-vall .aiidd-vlink-ic { flex: none; display: grid; place-items: center; width: 20px; height: 20px; color: #64748b; }
+/* display:block drops the inline baseline gap that pushed the icon high (#img317). */
+.aiidd-vlink-ic svg { display: block; width: 17px; height: 17px; }
 .aiidd-vlink-name { flex: 1 1 auto; min-width: 0; }
 .aiidd-vlink:hover .aiidd-vlink-ic { color: #2563eb; }
 .aiidd-vall .aiidd-vlink-ic { color: currentColor; }
