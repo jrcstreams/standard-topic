@@ -18226,6 +18226,11 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* margin-left (NOT padding-left) so the row's grey bottom-border starts at "Catch
    Up", not 16px to the left of it (#img249/#img250/#img251). */
 .topic-ai-subnav { display: flex; flex-wrap: wrap; gap: 20px; border-bottom: 1px solid var(--color-surface-border); margin: 0 0 2px 16px; }
+/* The body content (segmented Summary bar, "Updated", section titles, paragraphs)
+   sits 16px in so it shares Catch Up's left edge (which is inset to line up with
+   the News Feed pill text). Without this the whole insight column sat 16px left of
+   Catch Up (#img252/#img254). */
+.topic-ai-body { padding-left: 16px; }
 .tai-tab {
   flex: none; padding: 9px 0; margin: 0 0 -1px; border: none; border-bottom: 3px solid transparent; border-radius: 0;
   background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.84rem; font-weight: 600;
