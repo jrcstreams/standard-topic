@@ -4,10 +4,10 @@
 // fixed-height scroll area with top/bottom fade + chevron affordances
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
-import { renderTrendExpansionBody } from './trend-expansion.js?v=20260706-revamp494';
-import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp494';
-import { wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp494';
-import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp494';
+import { renderTrendExpansionBody } from './trend-expansion.js?v=20260706-revamp496';
+import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp496';
+import { wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp496';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp496';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -364,7 +364,12 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
   const wireCards = opts.inline ? wireTrendCardsInline : wireTrendCards;
   gridEl.innerHTML = `<div class="trend-card-grid">${Array.from({ length: 8 }, () => '<div class="trend-card trend-card-skel"></div>').join('')}</div>`;
   const TLM_INITIAL = 16, EARLIER_MAX = 24;
-  const state = { all: [], earlier: [], category: 'all', expanded: false };
+  const state = { all: [], earlier: [], category: 'all', expanded: false,
+    // Trend to auto-open when launched from the Search dropdown (#img319). Kept for
+    // a short window so it survives loadEarlier()'s re-render, which was collapsing
+    // it right after it opened.
+    autoExpand: (opts.inline && opts.expandQuery) ? String(opts.expandQuery).toLowerCase().trim() : null };
+  if (state.autoExpand) setTimeout(() => { state.autoExpand = null; }, 2500);
   const catList = () => [...new Set(state.all.map(ttCatOf).filter(Boolean))]
     .sort((a, b) => (ttCatRank(a) - ttCatRank(b)) || a.localeCompare(b));
 
@@ -407,6 +412,18 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
     gridEl.innerHTML = html;
     wireCards(gridEl);
     gridEl.querySelector('[data-loadmore]')?.addEventListener('click', () => { state.expanded = true; renderGrid(); });
+    // Re-apply the Search-launched auto-open on EVERY render (survives loadEarlier's
+    // re-render); if it's not in the shown set, reveal the rest first (#img319).
+    if (state.autoExpand) {
+      let card = [...gridEl.querySelectorAll('.trend-card')].find((c) => (c.dataset.query || '').toLowerCase().trim() === state.autoExpand);
+      if (!card && !state.expanded && (hiddenLive || earlier.length)) { state.expanded = true; renderGrid(); return; }
+      if (card && !card.classList.contains('is-expanded')) {
+        requestAnimationFrame(() => {
+          card = [...gridEl.querySelectorAll('.trend-card')].find((c) => (c.dataset.query || '').toLowerCase().trim() === state.autoExpand);
+          if (card && !card.classList.contains('is-expanded')) { card.querySelector('.trend-card-trigger')?.click(); try { card.scrollIntoView({ block: 'nearest' }); } catch (_) {} }
+        });
+      }
+    }
   }
   function renderControls() {
     controlsEl.innerHTML = controlsHTML();
@@ -457,16 +474,8 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
     if (!topics.length) { controlsEl.innerHTML = ''; gridEl.innerHTML = '<p class="trending-empty">Trending is taking a break — check back soon.</p>'; return; }
     state.all = topics;
     renderControls();
-    renderGrid();
+    renderGrid();   // renderGrid applies state.autoExpand (survives loadEarlier re-render)
     loadEarlier();
-    // Auto-open a specific trend when launched from the Search dropdown (#img281).
-    if (opts.inline && opts.expandQuery) {
-      const want = String(opts.expandQuery).toLowerCase().trim();
-      requestAnimationFrame(() => {
-        const card = [...gridEl.querySelectorAll('.trend-card')].find((c) => (c.dataset.query || '').toLowerCase().trim() === want);
-        if (card) { card.querySelector('.trend-card-trigger')?.click(); try { card.scrollIntoView({ block: 'nearest' }); } catch (_) {} }
-      });
-    }
   }).catch(() => { controlsEl.innerHTML = ''; gridEl.innerHTML = '<p class="trending-empty">Trending is taking a break — check back soon.</p>'; });
 }
 

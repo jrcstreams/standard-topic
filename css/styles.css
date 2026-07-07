@@ -18200,7 +18200,8 @@ button.aiidd-vlink { align-self: flex-start; }
        feel cramped/short; row 2 is the icon strip. Both rows vertically center
        their contents (#img163/#img164). */
     grid-template-rows: 40px auto;
-    align-items: center; column-gap: 0.6rem; row-gap: 4px;
+    /* More breathing room between the hamburger and the site title (#img322). */
+    align-items: center; column-gap: 1.1rem; row-gap: 4px;
     padding: 6px 0.9rem 0 !important; min-height: 0;
   }
   .sticky-hero-inner .nav-hamburger { grid-area: burger; justify-self: start; align-self: center; margin: 0; width: 21px; height: 15px; }
