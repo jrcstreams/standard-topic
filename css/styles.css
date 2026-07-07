@@ -15238,6 +15238,9 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-fi-intro { margin: 2px 0 10px; font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.4; }
 .aii-fi-acclist { display: flex; flex-direction: column; }
 .aii-fi-acc { border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 72%, transparent); }
+/* The Prompts tab's nav already draws a divider above the list, so the first row's
+   top border doubled it up (#img258/#img259). */
+.aii-fi-acclist > .aii-fi-acc:first-child { border-top: none; }
 .aii-fi-acc:last-child { border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 72%, transparent); }
 .aii-fi-accsum { display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 2px; border: none; background: none; cursor: pointer; text-align: left; font-family: var(--font-family); }
 .aii-fi-acc-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
@@ -16775,8 +16778,9 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
 .im-over-title { font-family: var(--font-display); font-weight: 600 !important; letter-spacing: -0.015em; color: #14213d; line-height: 1.2; font-size: clamp(1.1rem, 1rem + 0.4vw, 1.28rem) !important; }
 .aii-content--modal .im-over-title { font-size: clamp(1.1rem, 1rem + 0.4vw, 1.28rem) !important; }
 
-/* #209 — "AI Generated Text" tag: lighter, less rounded, more gap above it. */
-.im-sec-aitag-row { margin: 4px 0 12px !important; }
+/* #209 — "AI Generated Text" tag: lighter, less rounded. Even gap above (section
+   title) and below (body) so it sits centered between them (#img257). */
+.im-sec-aitag-row { margin: 10px 0 10px !important; }
 .im-sec-aitag { border-radius: 7px !important; font-weight: 600 !important; }
 
 /* #210 — Related Searches + Explore Further: more gap between the section title
@@ -18252,12 +18256,14 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* The segmented bar's container is already indented to match Catch Up + the body
    content, so NO extra left margin (it was over-indenting the bar 16px past the
    content below it, #img252/#img253). */
-.aii-instabs .ins-tabnav { margin-top: 16px; }
+.aii-instabs .ins-tabnav { margin-top: 16px; margin-bottom: 10px; }
 /* "Updated …" stamp — left-aligned and tight to the first section below it (#img154).
    The first section carries a 22px top padding for inter-section spacing; collapse it
    right after the stamp so "Updated …" sits a smidge above the section title. */
-.aii-updated-row { display: flex; justify-content: flex-start; font-size: 0.76rem; color: var(--color-text-light); margin: 4px 0 0; }
-.aii-updated-row + .im-msec { padding-top: 6px !important; }
+/* "Updated x ago" sits centered between the segmented bar above and the first
+   section title below — even ~10px gaps on each side (#img256). */
+.aii-updated-row { display: flex; justify-content: flex-start; font-size: 0.76rem; color: var(--color-text-light); margin: 0; }
+.aii-updated-row + .im-msec { padding-top: 10px !important; }
 
 /* ── Desktop (≥900): the unified subnav is ALWAYS visible now (it IS the topic
    header, not a scroll-in bar). Undo the old hide-by-default + reserve its strip
