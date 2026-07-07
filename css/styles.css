@@ -18244,7 +18244,10 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* Topic-page L3 uses the SAME segmented control as trending/news now — the segmented
    bar itself reads as a clear sub-level below the Catch Up/Deep Dive underline tabs,
    so no separate quiet-underline styling is needed (#img196). */
-.aii-instabs .ins-tabnav { margin-top: 16px; margin-left: 16px; }
+/* The segmented bar's container is already indented to match Catch Up + the body
+   content, so NO extra left margin (it was over-indenting the bar 16px past the
+   content below it, #img252/#img253). */
+.aii-instabs .ins-tabnav { margin-top: 16px; }
 /* "Updated …" stamp — left-aligned and tight to the first section below it (#img154).
    The first section carries a 22px top padding for inter-section spacing; collapse it
    right after the stamp so "Updated …" sits a smidge above the section title. */
