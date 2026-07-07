@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp493';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp494';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp493';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp494';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp493';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp493';
-import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp493';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp493';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp494';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp494';
+import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp494';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp494';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp493';
-import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp493';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp493';
-import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp493';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp493';
-import { renderWebSources } from './components/websources.js?v=20260706-revamp493';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp493';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp493';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp494';
+import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp494';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp494';
+import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp494';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp494';
+import { renderWebSources } from './components/websources.js?v=20260706-revamp494';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp494';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp494';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp493';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp494';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -736,8 +736,8 @@ function topicsTreeHTML() {
     }
     // Clean vertical list: a prominent "All {Parent} ›" link, then each subtopic
     // on its own row. No count badge.
-    const links = `<a href="#/topic/${parent.slug}" class="aiidd-vall" data-aiidd-link>All ${escapeHTML(parent.name)}${AIIDD_CHEV_R}</a>`
-      + subs.map((s) => `<a href="#/topic/${s.slug}" class="aiidd-vlink" data-aiidd-link>${escapeHTML(s.name)}</a>`).join('');
+    const links = `<a href="#/topic/${parent.slug}" class="aiidd-vall" data-aiidd-link><span class="aiidd-vlink-ic" aria-hidden="true">${topicIconSVG(parent.icon || 'globe', '')}</span><span class="aiidd-vlink-name">All ${escapeHTML(parent.name)}</span>${AIIDD_CHEV_R}</a>`
+      + subs.map((s) => `<a href="#/topic/${s.slug}" class="aiidd-vlink" data-aiidd-link><span class="aiidd-vlink-ic" aria-hidden="true">${topicIconSVG(s.icon || 'globe', '')}</span><span class="aiidd-vlink-name">${escapeHTML(s.name)}</span></a>`).join('');
     return `<section class="aiidd-parent" data-open="false">
       <button type="button" class="aiidd-parent-head" data-aiidd-toggle aria-expanded="false">
         <span class="aiidd-parent-ic">${topicIconSVG(parent.icon || 'globe', 'tsp-ic-svg')}</span>
