@@ -38,10 +38,18 @@ function emenuHomeHTML() {
       <span class="xf-select-wrap"><select class="xf-select" aria-label="Choose AI model">${modelOptionsHTML()}</select>${CHEV}</span></label>
     <button type="button" class="xf-opt" data-opt="direct">
       <span class="xf-opt-ic">${ICON_SEND}</span>
-      <span class="xf-opt-tx"><span class="xf-opt-name">Direct Submit</span><span class="xf-opt-sub">Open <span class="xf-mn">${esc(m ? m.name : 'the model')}</span> with this prompt</span></span>${ARROW}</button>
+      <span class="xf-opt-tx"><span class="xf-opt-name">Direct Submit</span><span class="xf-opt-sub">Open <span class="xf-mn">${esc(m ? m.name : 'the model')}</span> with this prompt</span></span><span class="xf-opt-chev">${CHEV}</span></button>
     <button type="button" class="xf-opt" data-opt="review">
       <span class="xf-opt-ic">${ICON_EYE}</span>
-      <span class="xf-opt-tx"><span class="xf-opt-name">Review Prompt</span><span class="xf-opt-sub">Preview &amp; tweak it before you send</span></span>${ARROW}</button>
+      <span class="xf-opt-tx"><span class="xf-opt-name">Review Prompt</span><span class="xf-opt-sub">Preview &amp; tweak it before you send</span></span><span class="xf-opt-chev">${CHEV}</span></button>
+  </div>`;
+}
+function emenuLeaveInlineHTML() {
+  const m = preferredModel();
+  const name = m ? m.name : 'the AI model';
+  return `<div class="aii-leave-inline">
+    <p class="aii-leave-body">Continue opens <strong>${esc(name)}</strong> in a new tab. If the prompt doesn't auto-fill, it's copied to your clipboard — just paste it in.</p>
+    <button type="button" class="xf-leave-go">Continue ${ARROW}</button>
   </div>`;
 }
 function emenuLeaveHTML() {
@@ -175,45 +183,35 @@ export function wireExploreFurther(root) {
     const rd = host && host.querySelector('[data-xfr-disc]'); if (rd) rd.textContent = xfReviewDisc(m);
   });
   root.addEventListener('click', (e) => {
-    const opt = e.target.closest('.xf-opt, .xf-leave-back, .xf-leave-go');
+    const opt = e.target.closest('.xf-opt, .xf-leave-go');
     if (!opt) return;
     e.stopPropagation();
     const host = opt.closest('[data-xf-emenu]');
     if (!host) return;
     const prompt = host.getAttribute('data-xf-prompt') || '';
     if (opt.classList.contains('xf-opt')) {
+      // Accordion: the panel drops DIRECTLY beneath the clicked option row and its
+      // chevron rotates; mutually exclusive; re-click closes (#img309/#img310).
+      const wasActive = opt.classList.contains('is-active');
+      host.querySelectorAll('.aii-review-panel, .aii-leave-panel').forEach((p) => p.remove());
+      host.querySelectorAll('.xf-opt.is-active').forEach((o) => o.classList.remove('is-active'));
+      if (wasActive) return;
       if (opt.dataset.opt === 'review') {
-        // Inline review — nested panel WITHIN the open menu, toggled by re-clicking.
-        const open = host.querySelector('.aii-review-panel');
-        if (open) { open.remove(); opt.classList.remove('is-active'); }
-        else {
-          const panel = document.createElement('div');
-          panel.className = 'aii-review-panel';
-          panel.innerHTML = xfReviewHTML(prompt);
-          host.appendChild(panel);
-          wireXfReview(panel, prompt);
-          opt.classList.add('is-active');
-          try { panel.querySelector('[data-xfr-ta]').focus(); } catch (_) {}
-        }
+        const panel = document.createElement('div');
+        panel.className = 'aii-review-panel';
+        panel.innerHTML = xfReviewHTML(prompt);
+        opt.insertAdjacentElement('afterend', panel);
+        wireXfReview(panel, prompt);
+        opt.classList.add('is-active');
+        try { panel.querySelector('[data-xfr-ta]').focus(); } catch (_) {}
       } else {
-        // Direct Submit → INLINE confirm below the options, not a separate screen.
         copyPrompt(prompt);              // copy now so Continue opens synchronously
-        const open = host.querySelector('.aii-leave-panel');
-        if (open) { open.remove(); opt.classList.remove('is-active'); }
-        else {
-          host.querySelector('.aii-review-panel')?.remove();
-          host.querySelectorAll('.xf-opt.is-active').forEach((o) => o.classList.remove('is-active'));
-          const panel = document.createElement('div');
-          panel.className = 'aii-leave-panel';
-          panel.innerHTML = emenuLeaveHTML();
-          host.appendChild(panel);
-          opt.classList.add('is-active');
-        }
+        const panel = document.createElement('div');
+        panel.className = 'aii-leave-panel';
+        panel.innerHTML = emenuLeaveInlineHTML();
+        opt.insertAdjacentElement('afterend', panel);
+        opt.classList.add('is-active');
       }
-    } else if (opt.classList.contains('xf-leave-back')) {
-      const p = opt.closest('.aii-leave-panel');
-      if (p) { p.remove(); host.querySelectorAll('.xf-opt.is-active').forEach((o) => o.classList.remove('is-active')); }
-      else host.innerHTML = emenuHomeHTML();
     } else {                             // xf-leave-go
       const m = preferredModel();
       if (m) openModel(m, prompt);

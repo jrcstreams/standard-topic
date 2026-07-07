@@ -42,8 +42,8 @@ function open() {
         <span class="at-acc-flat-chev">${CHEV}</span>
       </a>`;
     }
-    const subs = `<a href="#/topic/${parent.slug}" class="at-sub at-sub-parent">All ${escapeHTML(parent.name)}<span class="at-sub-arrow" aria-hidden="true">${ARROW}</span></a>`
-      + subtopics.map(s => `<a href="#/topic/${s.slug}" class="at-sub">${escapeHTML(s.name)}</a>`).join('');
+    const subs = `<a href="#/topic/${parent.slug}" class="at-sub at-sub-parent"><span class="at-sub-icon" aria-hidden="true">${topicIconSVG(parent.icon || 'globe', '')}</span><span class="at-sub-name">All ${escapeHTML(parent.name)}</span><span class="at-sub-arrow" aria-hidden="true">${ARROW}</span></a>`
+      + subtopics.map(s => `<a href="#/topic/${s.slug}" class="at-sub"><span class="at-sub-icon" aria-hidden="true">${topicIconSVG(s.icon || 'globe', '')}</span><span class="at-sub-name">${escapeHTML(s.name)}</span></a>`).join('');
     return `<details class="ti-accordion at-acc" style="--ti-accent: ${accent};">
       <summary class="ti-accordion-summary">
         <span class="ti-accordion-icon" aria-hidden="true">${topicIconSVG(parent.icon || 'globe', '')}</span>

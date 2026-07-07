@@ -12,8 +12,8 @@
 
 import { getModels, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt } from '../utils/ai-models.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp491';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp491';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp493';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp493';
 
 function escapeHTML(str) {
   const div = document.createElement('div');

@@ -11196,14 +11196,20 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
 /* Subtopics inside an open accordion. */
 .at-subs { display: flex; flex-direction: column; padding-top: 0.1rem; }
 .at-sub {
-  display: block; padding: 0.5rem 0.7rem; border-radius: 7px;
+  display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.7rem; border-radius: 7px;
   font-size: 0.85rem; font-weight: 500; color: #4a5568; text-decoration: none;
   transition: background 0.12s, color 0.12s;
 }
 .at-sub:hover { background: color-mix(in srgb, var(--ti-accent, #3261a0) 9%, #fff); color: #1e2d44; text-decoration: none; }
+/* Subtopic icon — matches the topic-page picker's small leading glyph (#img307). */
+.at-sub-icon { flex: none; display: inline-flex; align-items: center; justify-content: center; color: #64748b; }
+.at-sub-icon svg { width: 17px; height: 17px; }
+.at-sub-name { flex: 1 1 auto; min-width: 0; }
+.at-sub:hover .at-sub-icon { color: var(--ti-accent, #2f6fe0); }
 /* Prominent parent link at the top of the nested list — accent colour, with a
    trailing arrow so it reads as a (clickable) link to the parent topic page. */
-.at-sub-parent { display: flex; align-items: center; gap: 0.4rem; color: var(--ti-accent, #2f6fe0); font-weight: 700; }
+.at-sub-parent { gap: 0.6rem; color: var(--ti-accent, #2f6fe0); font-weight: 700; }
+.at-sub-parent .at-sub-icon { color: var(--ti-accent, #2f6fe0); }
 .at-sub-parent:hover { color: var(--ti-accent, #1f5fd0); }
 .at-sub-arrow { flex: none; display: inline-flex; color: currentColor; transition: transform 0.14s; }
 .at-sub-arrow svg { display: block; }
@@ -15304,8 +15310,20 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-review-done { margin: 2px 0 0; font-size: 0.82rem; font-weight: 600; color: #15803d; }
 /* Nested review panel — sits below Send-to / Direct / Review within the menu,
    separated by a hairline, so it reads as an in-place dropdown (#img299/#img300). */
-.aii-review-panel, .aii-leave-panel { margin-top: 4px; padding-top: 14px; border-top: 1px solid #e1e6ee; }
-.aii-explore-opt.is-active, .xf-opt.is-active { background: color-mix(in srgb, #33517f 8%, transparent); }
+/* The panel drops flush beneath its option row (no gap) so the active row's fill
+   meets the panel's top divider (#img313/#img314). */
+.aii-review-panel, .aii-leave-panel { margin-top: 0; padding: 13px 2px 4px; border-top: 1px solid #dfe4ec; }
+.aii-explore-opt.is-active, .xf-opt.is-active { background: #e8ecf3; }
+/* The option chevron turns like an accordion when its panel is open. */
+.aii-explore-chev, .xf-opt-chev { flex: none; display: inline-flex; color: var(--color-text-light); transition: transform .18s ease, color .18s ease; }
+.aii-explore-chev svg, .xf-opt-chev svg { display: block; width: 15px; height: 15px; }
+.aii-explore-opt.is-active .aii-explore-chev, .xf-opt.is-active .xf-opt-chev { transform: rotate(180deg); color: var(--color-primary); }
+/* Flat inline "leaving the site" confirm (no card/back). */
+.aii-leave-inline { display: grid; gap: 11px; }
+.aii-leave-inline .aii-leave-body { margin: 0; font-size: 0.8rem; line-height: 1.5; color: var(--color-text-muted); }
+.aii-leave-inline .aii-leave-go { justify-self: start; display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px; border: none; border-radius: 9px; background: var(--color-primary, #14213d); color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; transition: background .14s ease; }
+.aii-leave-inline .aii-leave-go:hover { background: color-mix(in srgb, var(--color-primary) 88%, #000); }
+.aii-leave-inline .aii-leave-go svg { width: 14px; height: 14px; }
 
 /* Further Insights — sleek, text-based accordion list. */
 .aii-fi-intro { margin: 2px 0 10px; font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.4; }
@@ -15332,9 +15350,9 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-fi-accsum:focus-visible .aii-fi-acc-name { text-decoration: none; }
 /* No gap below the open menu — the grey reaches the row's bottom divider (#img303). */
 .aii-fi-acc .aii-emenu-host.is-open { margin: 0; }
-/* The open prompt's title/summary keeps the parent (white) background so it reads
-   as the header, more prominent than the grey menu below it (#img301). */
-.aii-fi-accsum[aria-expanded="true"], .aii-fi-accsum[aria-expanded="true"]:hover { background: transparent; }
+/* The open prompt's title/summary gets a DARKER header fill so it reads as the
+   prominent parent above the lighter grey menu below it (#img311/#img312). */
+.aii-fi-accsum[aria-expanded="true"], .aii-fi-accsum[aria-expanded="true"]:hover { background: #e6eaf2; }
 
 /* Sources — collapsed accordion at the bottom of the insight. */
 .aii-sources-acc { margin-top: 18px; border-top: 1px solid var(--color-surface-border); }

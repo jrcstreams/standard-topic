@@ -4,16 +4,16 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp491';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp491';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp493';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp493';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp491';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp491';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp493';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp493';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -1211,50 +1211,36 @@ export function renderAIIntelligence(container, scope) {
       const rd = host && host.querySelector('[data-review-disc]'); if (rd) rd.textContent = reviewDiscText(m);
     });
     stage.addEventListener('click', (e) => {
-      const trigger = e.target.closest('.aii-explore-opt, .aii-leave-back, .aii-leave-go');
+      const trigger = e.target.closest('.aii-explore-opt, .aii-leave-go');
       if (!trigger) return;
       const host = exploreHostOf(trigger); const ctx = exploreCtxOf(trigger);
       if (trigger.classList.contains('aii-explore-opt')) {
+        // Each option (Direct Submit / Review Prompt) is an accordion: clicking it
+        // drops its panel DIRECTLY beneath that row, rotates its chevron, and stays
+        // mutually exclusive with the other (#img309/#img310).
+        if (!host) return;
+        const wasActive = trigger.classList.contains('is-active');
+        host.querySelectorAll('.aii-review-panel, .aii-leave-panel').forEach((p) => p.remove());
+        host.querySelectorAll('.aii-explore-opt.is-active').forEach((o) => o.classList.remove('is-active'));
+        if (wasActive) return;   // re-click closes
         if (trigger.dataset.opt === 'review') {
-          // Inline review — expands as a nested panel WITHIN the open menu (keeps
-          // Send-to / Direct / Review visible), toggled by re-clicking Review.
-          if (host) {
-            const open = host.querySelector('.aii-review-panel');
-            if (open) { open.remove(); trigger.classList.remove('is-active'); }
-            else {
-              const panel = document.createElement('div');
-              panel.className = 'aii-review-panel';
-              panel.innerHTML = exploreReviewHTML(ctx);
-              host.appendChild(panel);
-              wireExploreReview(panel, ctx);
-              trigger.classList.add('is-active');
-              try { panel.querySelector('[data-review-ta]').focus(); } catch (_) {}
-            }
-          }
+          const panel = document.createElement('div');
+          panel.className = 'aii-review-panel';
+          panel.innerHTML = exploreReviewHTML(ctx);
+          trigger.insertAdjacentElement('afterend', panel);
+          wireExploreReview(panel, ctx);
+          trigger.classList.add('is-active');
+          try { panel.querySelector('[data-review-ta]').focus(); } catch (_) {}
         } else {
-          // Direct Submit → an INLINE "leaving the site" confirm below the options
-          // (not a separate replaced screen, #img304). Copy now so Continue opens
-          // the model synchronously (no popup block).
-          copyPrompt(ctx.prompt);
-          if (host) {
-            const open = host.querySelector('.aii-leave-panel');
-            if (open) { open.remove(); trigger.classList.remove('is-active'); }
-            else {
-              host.querySelector('.aii-review-panel')?.remove();
-              host.querySelectorAll('.aii-explore-opt.is-active').forEach((o) => o.classList.remove('is-active'));
-              const panel = document.createElement('div');
-              panel.className = 'aii-leave-panel';
-              panel.innerHTML = exploreLeaveHTML();
-              host.appendChild(panel);
-              trigger.classList.add('is-active');
-            }
-          }
+          // Direct Submit → an INLINE "leaving the site" confirm right below it.
+          copyPrompt(ctx.prompt);   // copy now so Continue opens synchronously
+          const panel = document.createElement('div');
+          panel.className = 'aii-leave-panel';
+          panel.innerHTML = exploreLeaveInlineHTML();
+          trigger.insertAdjacentElement('afterend', panel);
+          trigger.classList.add('is-active');
         }
-      } else if (trigger.classList.contains('aii-leave-back')) {
-        const p = trigger.closest('.aii-leave-panel');
-        if (p) { p.remove(); host && host.querySelectorAll('.aii-explore-opt.is-active').forEach((o) => o.classList.remove('is-active')); }
-        else if (host) host.innerHTML = exploreHomeHTML();
-      } else { // aii-leave-go
+      } else if (trigger.classList.contains('aii-leave-go')) {
         const model = preferredModel(); if (!model) return;
         openModel(model, ctx.prompt);
       }
@@ -1279,26 +1265,22 @@ export function renderAIIntelligence(container, scope) {
       <button type="button" class="aii-explore-opt" data-opt="direct">
         <span class="aii-explore-ic">${ICON_SEND}</span>
         <span class="aii-explore-tx"><span class="aii-explore-name">Direct Submit</span><span class="aii-explore-sub">Open <span class="aii-explore-mn">${esc(m ? m.name : 'an AI model')}</span> with this prompt</span></span>
-        ${ARROW}
+        <span class="aii-explore-chev">${CHEV}</span>
       </button>
       <button type="button" class="aii-explore-opt" data-opt="review">
         <span class="aii-explore-ic">${ICON_EYES}</span>
         <span class="aii-explore-tx"><span class="aii-explore-name">Review Prompt</span><span class="aii-explore-sub">Preview &amp; tweak it before you send</span></span>
-        ${ARROW}
+        <span class="aii-explore-chev">${CHEV}</span>
       </button>
     </div>`;
   }
-  // Explore-further panel, step 2 (Direct Submit): "leaving the site" confirm.
-  function exploreLeaveHTML() {
+  // Direct Submit → an inline "leaving the site" confirm (flat, no card/back).
+  function exploreLeaveInlineHTML() {
     const m = preferredModel();
     const name = m ? m.name : 'the AI model';
-    return `<div class="aii-explore" data-step="leave">
-      <div class="aii-leave-card">
-        <button type="button" class="aii-leave-back">${BACK}<span>Back</span></button>
-        <p class="aii-leave-title">You're leaving Standard Topic</p>
-        <p class="aii-leave-body">Continue opens <strong>${esc(name)}</strong> in a new tab. If the prompt doesn't auto-fill, it's copied to your clipboard — just paste it in. You may need to be signed in.</p>
-        <button type="button" class="aii-leave-go">Continue ${ARROW}</button>
-      </div>
+    return `<div class="aii-leave-inline">
+      <p class="aii-leave-body">Continue opens <strong>${esc(name)}</strong> in a new tab. If the prompt doesn't auto-fill, it's copied to your clipboard — just paste it in.</p>
+      <button type="button" class="aii-leave-go">Continue ${ARROW}</button>
     </div>`;
   }
 
