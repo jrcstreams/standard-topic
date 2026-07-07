@@ -18381,8 +18381,10 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
    system, no blue). Only ever 3 short tabs, so the bar sizes to its content:
    left-aligned on wide screens, centered on mobile (#img196). */
 .ins-tabnav {
-  display: flex; width: fit-content; gap: 2px; margin: 0 0 14px;
-  background: #eceff4; border: 1px solid #e2e6ec; border-radius: 11px; padding: 3px;
+  /* Breathing room: a real gap BETWEEN the segments + padding inside the track so
+     the pills don't butt against the grey border on the edges (#img247/#img248). */
+  display: flex; width: fit-content; gap: 6px; margin: 0 0 14px;
+  background: #eceff4; border: 1px solid #e2e6ec; border-radius: 12px; padding: 5px 7px;
   overflow-x: visible; scrollbar-width: none;
 }
 .ins-tabnav::-webkit-scrollbar { display: none; }
