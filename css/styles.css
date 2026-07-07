@@ -13942,7 +13942,19 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
   border: none; border-radius: 0; background: none;
   border-top: 1px solid var(--color-surface-border);
   animation: trendExpIn .2s ease;
+  /* Never let the brief force the card wider than its column — the Summary/Explore/
+     Sources control is fit-content and was overflowing the narrow homepage sidebar
+     (#img282/#img283). */
+  min-width: 0; max-width: 100%; box-sizing: border-box;
 }
+.trend-card-exp * { min-width: 0; }
+/* The card is a grid item — without min-width:0 it grows to its content's
+   min-width (the fit-content tab control) and spills past its 1fr track. */
+#home-trending .trend-card-grid, #home-trending .trend-card { min-width: 0; }
+/* The segmented control scrolls sideways in a too-narrow column instead of pushing
+   the whole card past the edge. */
+.trend-card-exp .ins-tabnav { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.trend-card-exp .ins-tabnav::-webkit-scrollbar { display: none; }
 @keyframes trendExpIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 /* Close X pinned to the container's top-right, aligned with the trend header. */
 .trend-exp-close {
