@@ -15242,7 +15242,12 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
    top border doubled it up (#img258/#img259). */
 .aii-fi-acclist > .aii-fi-acc:first-child { border-top: none; }
 .aii-fi-acc:last-child { border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 72%, transparent); }
-.aii-fi-accsum { display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 2px; border: none; background: none; cursor: pointer; text-align: left; font-family: var(--font-family); }
+/* Clean full-row hover (#img265): a soft tinted fill that reaches slightly past
+   the text on each side (negative margin keeps the text aligned), plus the name +
+   chevron warming to the primary colour. */
+.aii-fi-accsum { display: flex; align-items: center; gap: 12px; width: calc(100% + 24px); margin: 0 -12px; padding: 13px 12px; border: none; background: none; border-radius: 10px; cursor: pointer; text-align: left; font-family: var(--font-family); transition: background .14s ease; }
+.aii-fi-accsum:hover { background: color-mix(in srgb, #33517f 6%, #fff); }
+.aii-fi-accsum:hover .aii-fi-acc-chev { color: var(--color-primary); }
 .aii-fi-acc-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
 .aii-fi-acc-name { font-size: 0.9rem; font-weight: 600; color: var(--color-text); transition: color .14s ease; }
 .aii-fi-acc-desc { font-size: 0.78rem; color: var(--color-text-muted); line-height: 1.35; }
@@ -18262,7 +18267,11 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    right after the stamp so "Updated …" sits a smidge above the section title. */
 /* "Updated x ago" sits centered between the segmented bar above and the first
    section title below — even ~10px gaps on each side (#img256). */
-.aii-updated-row { display: flex; justify-content: flex-start; font-size: 0.76rem; color: var(--color-text-light); margin: 0; }
+.aii-updated-row { display: flex; align-items: center; justify-content: flex-start; font-size: 0.76rem; color: var(--color-text-light); margin: 0; }
+/* The shared .aii-brief-updated adds a 6px top margin that pushed the visible text
+   low in its box (18px gap above vs 13 below) — zero it here so the TEXT is what
+   sits centered between the bar and the section title (#img263/#img264). */
+.aii-updated-row .aii-brief-updated { margin-top: 0; }
 .aii-updated-row + .im-msec { padding-top: 10px !important; }
 
 /* ── Desktop (≥900): the unified subnav is ALWAYS visible now (it IS the topic
