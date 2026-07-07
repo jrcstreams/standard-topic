@@ -15256,7 +15256,7 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-emenu-host { display: none; }
 /* Square grey container (no rounded bubble) — the fill groups the options, which
    are flat line-separated rows, not white cards (#img284/#img286). */
-.aii-emenu-host.is-open { display: block; margin-top: 8px; padding: 12px 14px 14px; border: none; border-radius: 0; background: #f4f6f9; }
+.aii-emenu-host.is-open { display: block; margin-top: 8px; padding: 12px 12px 14px; border: none; border-radius: 0; background: #f4f6f9; }
 
 /* ── Inline Review Prompt (replaces the modal) — clean, compact, line-based ──── */
 .aii-review { display: grid; gap: 12px; }
@@ -15311,7 +15311,7 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-fi-acc:last-child { border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 72%, transparent); }
 /* Square, straight-edge rows separated by the .aii-fi-acc hairlines — no rounded
    "bubble" hover (#img284). A flat full-width tint on hover, name + chevron warm. */
-.aii-fi-accsum { display: flex; align-items: center; gap: 12px; width: 100%; margin: 0; padding: 13px 4px; border: none; background: none; border-radius: 0; cursor: pointer; text-align: left; font-family: var(--font-family); transition: background .12s ease; }
+.aii-fi-accsum { display: flex; align-items: center; gap: 12px; width: 100%; margin: 0; padding: 13px 12px; border: none; background: none; border-radius: 0; cursor: pointer; text-align: left; font-family: var(--font-family); transition: background .12s ease; }
 .aii-fi-accsum:hover { background: #f6f8fb; }
 .aii-fi-accsum:hover .aii-fi-acc-chev { color: var(--color-primary); }
 .aii-fi-acc-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
@@ -15322,7 +15322,8 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-fi-accsum[aria-expanded="true"] .aii-fi-acc-chev { transform: rotate(180deg); }
 .aii-fi-accsum:hover .aii-fi-acc-name, .aii-fi-accsum[aria-expanded="true"] .aii-fi-acc-name { color: var(--color-primary); }
 .aii-fi-accsum:focus-visible { outline: none; }
-.aii-fi-accsum:focus-visible .aii-fi-acc-name { text-decoration: underline; text-underline-offset: 3px; }
+/* No underline on focus/click — it lingered after engaging a prompt (#img295). */
+.aii-fi-accsum:focus-visible .aii-fi-acc-name { text-decoration: none; }
 .aii-fi-acc .aii-emenu-host.is-open { margin: 0 0 13px; }
 
 /* Sources — collapsed accordion at the bottom of the insight. */
