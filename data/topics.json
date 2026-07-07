@@ -543,7 +543,7 @@
       "parent": "sports",
       "rssFeedId": "_Hemhe2RoP8joBxxT",
       "webhookEnabled": false,
-      "icon": "trophy",
+      "icon": "soccer-ball",
       "tier": 3
     },
     {
@@ -552,7 +552,7 @@
       "parent": "sports",
       "rssFeedId": "trlEIJifkAjanb2O",
       "webhookEnabled": false,
-      "icon": "trophy",
+      "icon": "baseball",
       "tier": 3
     },
     {
@@ -561,7 +561,7 @@
       "parent": "sports",
       "rssFeedId": "tZrWjUGaxQEcchuV",
       "webhookEnabled": false,
-      "icon": "trophy",
+      "icon": "basketball",
       "tier": 3
     },
     {
@@ -570,7 +570,7 @@
       "parent": "sports",
       "rssFeedId": "tYoYlXYzvpRodKvY",
       "webhookEnabled": false,
-      "icon": "trophy",
+      "icon": "football",
       "tier": 3
     },
     {
@@ -579,7 +579,7 @@
       "parent": "sports",
       "rssFeedId": "tr3w5eM5F3Og1pAE",
       "webhookEnabled": false,
-      "icon": "trophy",
+      "icon": "hockey",
       "tier": 3
     },
     {
@@ -588,7 +588,7 @@
       "parent": "sports",
       "rssFeedId": "t8DoGZe0J8HK0pV9",
       "webhookEnabled": false,
-      "icon": "trophy",
+      "icon": "basketball",
       "tier": 3
     },
     {
@@ -597,7 +597,7 @@
       "parent": "sports",
       "rssFeedId": "tiMrCvxDa6N6ZHDO",
       "webhookEnabled": false,
-      "icon": "trophy",
+      "icon": "football",
       "tier": 3
     },
     {

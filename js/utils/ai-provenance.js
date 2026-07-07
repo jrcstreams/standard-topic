@@ -7,7 +7,7 @@
 // Two shapes:
 //   compact (trending cards, no other AI label) → "✦ AI · 5 sources"
 //   full    (brief surfaces that already say "AI Brief") → "Sources: Reuters, AP +3"
-import { resolveSource } from '../components/newsfeed.js?v=20260706-revamp490';
+import { resolveSource } from '../components/newsfeed.js?v=20260706-revamp491';
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
 
