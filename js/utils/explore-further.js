@@ -196,11 +196,24 @@ export function wireExploreFurther(root) {
           try { panel.querySelector('[data-xfr-ta]').focus(); } catch (_) {}
         }
       } else {
+        // Direct Submit → INLINE confirm below the options, not a separate screen.
         copyPrompt(prompt);              // copy now so Continue opens synchronously
-        host.innerHTML = emenuLeaveHTML();
+        const open = host.querySelector('.aii-leave-panel');
+        if (open) { open.remove(); opt.classList.remove('is-active'); }
+        else {
+          host.querySelector('.aii-review-panel')?.remove();
+          host.querySelectorAll('.xf-opt.is-active').forEach((o) => o.classList.remove('is-active'));
+          const panel = document.createElement('div');
+          panel.className = 'aii-leave-panel';
+          panel.innerHTML = emenuLeaveHTML();
+          host.appendChild(panel);
+          opt.classList.add('is-active');
+        }
       }
     } else if (opt.classList.contains('xf-leave-back')) {
-      host.innerHTML = emenuHomeHTML();
+      const p = opt.closest('.aii-leave-panel');
+      if (p) { p.remove(); host.querySelectorAll('.xf-opt.is-active').forEach((o) => o.classList.remove('is-active')); }
+      else host.innerHTML = emenuHomeHTML();
     } else {                             // xf-leave-go
       const m = preferredModel();
       if (m) openModel(m, prompt);

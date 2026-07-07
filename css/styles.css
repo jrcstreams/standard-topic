@@ -15304,7 +15304,7 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-review-done { margin: 2px 0 0; font-size: 0.82rem; font-weight: 600; color: #15803d; }
 /* Nested review panel — sits below Send-to / Direct / Review within the menu,
    separated by a hairline, so it reads as an in-place dropdown (#img299/#img300). */
-.aii-review-panel { margin-top: 4px; padding-top: 14px; border-top: 1px solid #e1e6ee; }
+.aii-review-panel, .aii-leave-panel { margin-top: 4px; padding-top: 14px; border-top: 1px solid #e1e6ee; }
 .aii-explore-opt.is-active, .xf-opt.is-active { background: color-mix(in srgb, #33517f 8%, transparent); }
 
 /* Further Insights — sleek, text-based accordion list. */
@@ -15330,7 +15330,11 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-fi-accsum:focus-visible { outline: none; }
 /* No underline on focus/click — it lingered after engaging a prompt (#img295). */
 .aii-fi-accsum:focus-visible .aii-fi-acc-name { text-decoration: none; }
-.aii-fi-acc .aii-emenu-host.is-open { margin: 0 0 13px; }
+/* No gap below the open menu — the grey reaches the row's bottom divider (#img303). */
+.aii-fi-acc .aii-emenu-host.is-open { margin: 0; }
+/* The open prompt's title/summary keeps the parent (white) background so it reads
+   as the header, more prominent than the grey menu below it (#img301). */
+.aii-fi-accsum[aria-expanded="true"], .aii-fi-accsum[aria-expanded="true"]:hover { background: transparent; }
 
 /* Sources — collapsed accordion at the bottom of the insight. */
 .aii-sources-acc { margin-top: 18px; border-top: 1px solid var(--color-surface-border); }
@@ -18314,7 +18318,7 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    segmented Summary bar below is indented to match (see .aii-instabs). */
 /* margin-left (NOT padding-left) so the row's grey bottom-border starts at "Catch
    Up", not 16px to the left of it (#img249/#img250/#img251). */
-.topic-ai-subnav { display: flex; flex-wrap: wrap; gap: 20px; border-bottom: 1px solid var(--color-surface-border); margin: 0 0 2px 16px; }
+.topic-ai-subnav { display: flex; flex-wrap: wrap; gap: 20px; border-bottom: 1px solid var(--color-surface-border); margin: 0 0 0 16px; }
 /* The body content (segmented Summary bar, "Updated", section titles, paragraphs)
    sits 16px in so it shares Catch Up's left edge (which is inset to line up with
    the News Feed pill text). Without this the whole insight column sat 16px left of

@@ -4,16 +4,16 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp489';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp489';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp490';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp490';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp489';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp489';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp490';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp490';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -1232,13 +1232,28 @@ export function renderAIIntelligence(container, scope) {
             }
           }
         } else {
-          // Direct Submit → "leaving the site" confirm. Copy now so Continue can
-          // open the model synchronously (no popup block).
+          // Direct Submit → an INLINE "leaving the site" confirm below the options
+          // (not a separate replaced screen, #img304). Copy now so Continue opens
+          // the model synchronously (no popup block).
           copyPrompt(ctx.prompt);
-          if (host) host.innerHTML = exploreLeaveHTML();
+          if (host) {
+            const open = host.querySelector('.aii-leave-panel');
+            if (open) { open.remove(); trigger.classList.remove('is-active'); }
+            else {
+              host.querySelector('.aii-review-panel')?.remove();
+              host.querySelectorAll('.aii-explore-opt.is-active').forEach((o) => o.classList.remove('is-active'));
+              const panel = document.createElement('div');
+              panel.className = 'aii-leave-panel';
+              panel.innerHTML = exploreLeaveHTML();
+              host.appendChild(panel);
+              trigger.classList.add('is-active');
+            }
+          }
         }
       } else if (trigger.classList.contains('aii-leave-back')) {
-        if (host) host.innerHTML = exploreHomeHTML();
+        const p = trigger.closest('.aii-leave-panel');
+        if (p) { p.remove(); host && host.querySelectorAll('.aii-explore-opt.is-active').forEach((o) => o.classList.remove('is-active')); }
+        else if (host) host.innerHTML = exploreHomeHTML();
       } else { // aii-leave-go
         const model = preferredModel(); if (!model) return;
         openModel(model, ctx.prompt);
