@@ -9055,8 +9055,20 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
   }
 }
 .wiz-action-bar-inner {
-  justify-content: center;
+  /* Left-aligned Submit / Clear (were centered) (#img364). */
+  justify-content: flex-start;
 }
+/* Primary-topic-required modal (#img365). */
+.pb-required-overlay { position: fixed; inset: 0; z-index: 4000; display: flex; align-items: center; justify-content: center; padding: 1.25rem; background: rgba(15,23,42,.45); backdrop-filter: blur(2px); }
+.pb-required-card { width: 100%; max-width: 380px; background: #fff; border-radius: 16px; padding: 22px 22px 18px; box-shadow: 0 20px 50px -12px rgba(15,23,42,.35); text-align: left; }
+.pb-required-ic { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 11px; background: color-mix(in srgb, #26375a 8%, #fff); color: #26375a; margin-bottom: 12px; }
+.pb-required-title { margin: 0 0 6px; font-family: var(--font-display); font-size: 1.12rem; font-weight: 700; color: #14213d; }
+.pb-required-body { margin: 0 0 18px; font-size: 0.9rem; line-height: 1.5; color: #54627a; }
+.pb-required-foot { display: flex; align-items: center; gap: 10px; }
+.pb-required-go { padding: 10px 18px; border: none; border-radius: 10px; background: #2563eb; color: #fff; font-family: var(--font-family); font-size: 0.9rem; font-weight: 650; cursor: pointer; transition: background .14s ease; }
+.pb-required-go:hover { background: #1d4ed8; }
+.pb-required-dismiss { padding: 10px 14px; border: none; border-radius: 10px; background: none; color: #64748b; font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+.pb-required-dismiss:hover { color: #26375a; }
 
 .wiz-action-btn {
   flex: 0 0 auto;

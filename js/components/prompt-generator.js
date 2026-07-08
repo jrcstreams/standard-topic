@@ -348,11 +348,13 @@ function updateActionBar() {
     && Object.keys(state.customValues || {}).length === 0
     && Object.keys(state.extraInputs || {}).length === 0
     && !state.editedPrompt;
-  submitBtn.disabled = isEmpty;
-  submitBtn.classList.toggle('is-empty', isEmpty);
-  submitBtn.classList.toggle('is-ready', !isEmpty);
+  // Always "Submit Prompt" + enabled — a missing primary topic is caught on click
+  // with a clean modal, rather than a disabled/renamed button (#img364/365).
+  submitBtn.disabled = false;
+  submitBtn.classList.remove('is-empty');
+  submitBtn.classList.add('is-ready');
   const labelEl = submitBtn.querySelector('span');
-  if (labelEl) labelEl.textContent = isEmpty ? 'Add Topic(s) to Submit' : 'Preview Prompt and Submit';
+  if (labelEl) labelEl.textContent = 'Submit Prompt';
   clearBtn.disabled = isPristine;
 }
 
@@ -1031,8 +1033,8 @@ function render() {
 
       <div class="wiz-action-bar">
         <div class="wiz-action-bar-inner">
-          <button type="button" class="wiz-action-btn ${isEmpty ? 'is-empty' : 'is-ready'}" id="wiz-open-preview" ${isEmpty ? 'disabled' : ''}>
-            <span>${isEmpty ? 'Add Topic(s) to Submit' : 'Preview Prompt and Submit'}</span>
+          <button type="button" class="wiz-action-btn is-ready" id="wiz-open-preview">
+            <span>Submit Prompt</span>
           </button>
           <button type="button" class="wiz-action-restart" id="wiz-restart" ${isPristine ? 'disabled' : ''}>Clear Prompt</button>
         </div>
@@ -1050,8 +1052,9 @@ function render() {
     });
   });
 
-  // Open the unified preview+submit modal
+  // Open the unified preview+submit modal — but a primary topic is required first.
   document.getElementById('wiz-open-preview')?.addEventListener('click', () => {
+    if (getPrimaryTopics().length === 0) { openPrimaryRequiredModal(); return; }
     openPromptSubmitModal();
   });
 
@@ -2199,6 +2202,45 @@ const SUBMIT_PANEL_MAX = 720;
 // No hard "min" floor — narrow phones drop below 480px wide, and a
 // fixed minimum width pushed the panel outside the viewport (left
 // edge negative + right edge past viewport).
+
+// Clean "primary topic required" modal shown when Submit is clicked with no primary
+// topic. Offers a direct link that opens the Topics card + Primary picker (#img365).
+function openPrimaryRequiredModal() {
+  document.querySelector('.pb-required-overlay')?.remove();
+  const ov = document.createElement('div');
+  ov.className = 'pb-required-overlay';
+  ov.innerHTML = `
+    <div class="pb-required-card" role="dialog" aria-modal="true" aria-label="Primary topic required">
+      <span class="pb-required-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg></span>
+      <h3 class="pb-required-title">Add a primary topic first</h3>
+      <p class="pb-required-body">A prompt needs at least one <strong>primary topic</strong> before you can submit it — that's what the AI focuses on.</p>
+      <div class="pb-required-foot">
+        <button type="button" class="pb-required-go">Choose a primary topic</button>
+        <button type="button" class="pb-required-dismiss">Not now</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  const close = () => ov.remove();
+  ov.addEventListener('click', (e) => { if (e.target === ov) close(); });
+  ov.querySelector('.pb-required-dismiss').addEventListener('click', close);
+  ov.querySelector('.pb-required-go').addEventListener('click', () => { close(); jumpToPrimaryTopicPicker(); });
+}
+
+// Expand the Topics card and pop open the Primary-topic picker inline.
+function jumpToPrimaryTopicPicker() {
+  const root = containerEl || document;
+  const card = root.querySelector('.pb-card[data-pb-card="topics"]');
+  if (!card) { if (!pbInlineHost) openPbCardModal('topics'); return; }
+  if (!card.classList.contains('is-expanded')) {
+    if (pbInlineHost) togglePbCardInline(card, 'topics'); else { openPbCardModal('topics'); return; }
+  }
+  try { card.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (_) {}
+  // Give the expanded body a beat to render, then open the Primary "+ Select".
+  setTimeout(() => {
+    const bar = root.querySelector('#pb-topicbar-primaryTopic');
+    (bar?.querySelector('.wiz-topic-add-inline') || bar)?.click();
+  }, 90);
+}
 
 // Inline (dropdown) Preview/Submit — renders the same panel as a buffer view.
 function renderSubmitBuffer() {
