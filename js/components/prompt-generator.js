@@ -397,6 +397,10 @@ function removeTopic(key, value) {
 // Inline Lucide-style SVG icons. Stroke-only, currentColor — picks
 // up the navy in .pb-card-icon. Sized 22x22 via the wrapper.
 const PB_ICONS = {
+  model:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="M12 2l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 10.5l-4.4 1.85a2 2 0 0 0-1.25 1.25L12 19l-2.9-5.4a2 2 0 0 0-1.25-1.25L3.45 10.5l4.4-1.85a2 2 0 0 0 1.25-1.25z"/>' +
+    '</svg>',
   topics:
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
       '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>' +
@@ -426,6 +430,9 @@ const PB_ICONS = {
 };
 
 const PB_CARDS = [
+  { key: 'model',   label: 'Choose Model',
+    desc: 'The AI model this prompt will be sent to.',
+    fields: [] },
   { key: 'topics',  label: 'Topics',
     desc: 'What this prompt should focus on.',
     fields: ['primaryTopic', 'secondaryTopic'], required: true },
@@ -452,6 +459,11 @@ function pbOptionLabel(fieldKey, valueKey) {
 
 function pbCardSummaryItems(card) {
   const items = [];
+  if (card.key === 'model') {
+    const m = getModelById(state.modelId);
+    if (m) items.push(m.name);
+    return items;
+  }
   for (const f of card.fields) {
     if (f === 'primaryTopic') {
       getPrimaryTopics().forEach(t => items.push(t));
@@ -585,6 +597,10 @@ function openPbCardModal(key) {
 // the inline buffer view (dropdown). Fills `body` with the card's picker fields.
 function fillPbCardBody(card, body) {
   const key = card.key;
+  if (key === 'model') {
+    renderModelCardBody(body);
+    return;
+  }
   if (key === 'topics') {
     renderTopicsModalBody(body);
     return;
@@ -631,6 +647,25 @@ function renderCardBuffer(card, snap) {
     onDone: () => {},
   });
   fillPbCardBody(card, body);
+}
+
+// "Choose Model" card body — the same pill-chip model chooser as the preview
+// drawer; selecting keeps state.modelId in sync everywhere (#img385).
+function renderModelCardBody(body) {
+  const models = getModels() || [];
+  const chips = models.map((m) => `<button class="pm-model" type="button" data-model-id="${escapeAttr(m.id)}" aria-pressed="${m.id === state.modelId ? 'true' : 'false'}"><span class="pm-model-name">${escapeHTML(m.name)}</span></button>`).join('');
+  body.innerHTML = `<section class="pb-modal-section"><h3 class="pb-modal-section-title">Choose AI Model</h3><div class="pm-models">${chips}</div></section>`;
+  body.querySelector('.pm-models')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-model-id]');
+    if (!btn) return;
+    state.modelId = btn.dataset.modelId;
+    setPreferredModelId(state.modelId);
+    body.querySelectorAll('.pm-model').forEach((b) => b.setAttribute('aria-pressed', b.dataset.modelId === state.modelId ? 'true' : 'false'));
+    refreshSubmitDisc();
+    // Keep an open preview drawer's chooser + Send label in sync.
+    const drawer = document.getElementById('wiz-preview-drawer');
+    if (drawer && !drawer.hidden && submitInlineEl === drawer) renderSubmitPanel();
+  });
 }
 
 // Topics card buffer modal — two sections (Primary + Secondary)

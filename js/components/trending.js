@@ -4,10 +4,10 @@
 // fixed-height scroll area with top/bottom fade + chevron affordances
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
-import { renderTrendExpansionBody } from './trend-expansion.js?v=20260706-revamp515';
-import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp515';
-import { wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp515';
-import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp515';
+import { renderTrendExpansionBody } from './trend-expansion.js?v=20260706-revamp516';
+import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp516';
+import { wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp516';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp516';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
