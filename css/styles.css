@@ -18375,10 +18375,11 @@ button.aiidd-vlink { align-self: flex-start; }
 
 /* ── Mobile nav: two rows — the hamburger sits IN LINE with the centered site
    title (row 1), then the nav icons spread across their own line (row 2), with a
-   hairline separator + a little breathing room (#397/#404-407). Only kicks in on
-   genuinely narrow phones (≤560); --nav-h grows so the app content clears both
-   rows without overriding the topic sub-header. ─────────────────────────────── */
-@media (max-width: 560px) {
+   hairline separator + a little breathing room (#397/#404-407). Kicks in at ≤640
+   so the cramped single-row state (hamburger shoved left before the break) is gone —
+   still above tablet portrait (768px), so tablets keep the single row (#img408-411);
+   --nav-h grows so the app content clears both rows. ─────────────────────────── */
+@media (max-width: 640px) {
   :root { --nav-h: 112px; }
   .sticky-hero-inner {
     display: grid !important;
