@@ -434,7 +434,7 @@
       "parent": "world",
       "rssFeedId": "tEPQq5ll7jfGkK14",
       "webhookEnabled": false,
-      "icon": "map",
+      "icon": "acacia",
       "tier": 3
     },
     {
@@ -443,7 +443,7 @@
       "parent": "world",
       "rssFeedId": "tyFeGFYM70OfKRqS",
       "webhookEnabled": false,
-      "icon": "map",
+      "icon": "mountain",
       "tier": 3
     },
     {
@@ -452,7 +452,7 @@
       "parent": "world",
       "rssFeedId": "tjfSAGLMzyQ2hmw6",
       "webhookEnabled": false,
-      "icon": "map",
+      "icon": "maple-leaf",
       "tier": 3
     },
     {
@@ -461,7 +461,7 @@
       "parent": "world",
       "rssFeedId": "tBBcerUAHu1dzXmv",
       "webhookEnabled": false,
-      "icon": "map",
+      "icon": "lantern",
       "tier": 3
     },
     {
@@ -470,7 +470,7 @@
       "parent": "world",
       "rssFeedId": "tyx4MVQtNYiZAGK2",
       "webhookEnabled": false,
-      "icon": "map",
+      "icon": "flag",
       "tier": 3
     },
     {
@@ -479,7 +479,7 @@
       "parent": "world",
       "rssFeedId": "tkBkFNSGr5XvwhLl",
       "webhookEnabled": false,
-      "icon": "map",
+      "icon": "landmark",
       "tier": 3
     },
     {
@@ -488,7 +488,7 @@
       "parent": "world",
       "rssFeedId": "tJ40EG7JBWc0uVvm",
       "webhookEnabled": false,
-      "icon": "map",
+      "icon": "sun",
       "tier": 3
     },
     {
@@ -497,7 +497,7 @@
       "parent": "world",
       "rssFeedId": "t4IF35h0XwrLPinz",
       "webhookEnabled": false,
-      "icon": "map",
+      "icon": "palm-tree",
       "tier": 3
     },
     {
@@ -506,7 +506,7 @@
       "parent": "world",
       "rssFeedId": "txvVbIuwrlOgFxHg",
       "webhookEnabled": false,
-      "icon": "map",
+      "icon": "crescent-moon",
       "tier": 3
     },
     {
@@ -515,7 +515,7 @@
       "parent": "world",
       "rssFeedId": "tBn6njP0aIebVKKb",
       "webhookEnabled": false,
-      "icon": "map",
+      "icon": "waves",
       "tier": 3
     },
     {
@@ -524,7 +524,7 @@
       "parent": "world",
       "rssFeedId": "t7t0YprIOLLn60Fm",
       "webhookEnabled": false,
-      "icon": "map",
+      "icon": "snowflake",
       "tier": 3
     },
     {

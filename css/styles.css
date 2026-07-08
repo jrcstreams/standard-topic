@@ -17484,7 +17484,9 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .search-aii-host .aii-ftab.is-active::after { display: none; }
 /* "Results for ‘term’" header (#img218) — a bit of space above it off the input. */
 .search-aii-host .aii-topbar { padding-top: 6px; }
-.search-aii-host .aii-builder-topic--resultsfor { font-size: 1.16rem; font-weight: 700; margin-bottom: 4px; }
+/* Smaller, calmer "Results for ‘term’" line with a real gap between the two spans
+   and clear breathing room above (input) and below (the Prompts/News tabs) (#img335). */
+.search-aii-host .aii-builder-topic--resultsfor { font-size: 1rem; font-weight: 600; gap: 0.32em; margin: 8px 0 16px; }
 .search-aii-host .aii-builder-resultsfor { color: var(--color-text-muted); font-weight: 600; }
 .search-aii-host .aii-builder-topic--resultsfor .aii-builder-topic-tx { color: #14213d; }
 

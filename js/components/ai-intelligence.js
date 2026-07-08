@@ -4,16 +4,16 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp503';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp503';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp504';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp504';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp503';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp503';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp504';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp504';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -759,7 +759,7 @@ export function renderAIIntelligence(container, scope) {
     const navHTML = `<nav class="aii-flatnav" role="tablist">${tabs}</nav>`;
     // Centered topic switcher (caret opens the topic picker). Locked for custom search.
     const topicEl = scope.lockTopic
-      ? `<div class="aii-builder-topic aii-builder-topic--locked${scope.resultsFor ? ' aii-builder-topic--resultsfor' : ''}">${scope.resultsFor ? '<span class="aii-builder-resultsfor">Results for </span>' : ''}<span class="aii-builder-topic-tx">${scope.resultsFor ? `‘${esc(topicTitle)}’` : esc(topicTitle)}</span></div>`
+      ? `<div class="aii-builder-topic aii-builder-topic--locked${scope.resultsFor ? ' aii-builder-topic--resultsfor' : ''}">${scope.resultsFor ? '<span class="aii-builder-resultsfor">Results for</span>' : ''}<span class="aii-builder-topic-tx">${scope.resultsFor ? `‘${esc(topicTitle)}’` : esc(topicTitle)}</span></div>`
       : `<button type="button" class="aii-builder-topic aii-builder-topic--btn" data-repick aria-label="Change topic"><span class="aii-builder-topic-tx">${esc(topicTitle)}</span><span class="aii-topic-caret" aria-hidden="true">${CHEV}</span></button>`;
     const viewLink = scope.topicKey ? `<button type="button" class="aii-view-topic" data-view-topic>View Topic Page${RIGHT_ARROW}</button>` : '';
     // No per-section intro card anymore — the nav supplies the section identity and
