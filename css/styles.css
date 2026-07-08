@@ -8075,7 +8075,7 @@ body.app-mode .topic-layout {
   gap: 0.5rem;
   align-items: stretch;
   width: 100%;
-  padding: 1rem 2.6rem 1.1rem 1.1rem; /* reserve right room for the trailing chevron */
+  padding: 1rem 1.1rem 1.1rem; /* chevron now sits in the head row, no reserved gutter */
   background: var(--color-bg);
   border: 1px solid #e6e8ec;
   border-radius: 14px;
@@ -8174,12 +8174,12 @@ body.app-mode .topic-layout {
   white-space: nowrap;
   transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.06s;
 }
-/* Trailing chevron — replaces the Add+/Edit pill (#img424). Rotates when open. */
+/* Trailing chevron — replaces the Add+/Edit pill (#img424). Sits in the head row
+   (flex, margin-left auto) so it stays aligned with the title and does NOT float to
+   the vertical center of an expanded card (#img432-435). Rotates when open. */
 .pb-card-chev {
-  position: absolute;
-  top: 50%;
-  right: 1.1rem;
-  transform: translateY(-50%);
+  margin-left: auto;
+  flex: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -8190,7 +8190,7 @@ body.app-mode .topic-layout {
 }
 .pb-card-chev svg { width: 18px; height: 18px; display: block; }
 .pb-card:hover .pb-card-chev { color: #2c4467; }
-.pb-card.is-expanded .pb-card-chev { transform: translateY(-50%) rotate(180deg); color: #2c4467; }
+.pb-card.is-expanded .pb-card-chev { transform: rotate(180deg); color: #2c4467; }
 .pb-card.has-items .pb-card-action {
   background: var(--color-bg);
   border-color: rgba(44, 68, 103, 0.22);
@@ -8222,12 +8222,21 @@ body.app-mode .topic-layout {
 /* Row 3: chip summary or "+ Add" CTA — flush-left under the head. */
 .pb-card-summary {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem;
-  align-items: center;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
   padding-left: 0;
-  margin-top: 0.15rem;
+  margin-top: 0.35rem;
 }
+/* Labelled summary rows: "Primary topic(s): Banking" etc. (#img428/429). */
+.pb-card-sumrow { font-family: var(--font-family); font-size: 0.83rem; line-height: 1.45; color: #1e2d44; }
+.pb-card-sumlabel { font-weight: 700; color: #64748b; }
+.pb-card-sumvals, .pb-card-sumtext { color: #1e2d44; }
+.pb-card-sumrow--list { display: block; }
+.pb-card-sumlist { margin: 3px 0 0; padding-left: 1.15rem; list-style: disc; }
+.pb-card-sumlist li { color: #1e2d44; margin: 1px 0; }
+.pb-card-sum-more { color: #2563eb; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.pb-card-sum-more:hover { text-decoration: underline; }
 .pb-card-chip {
   display: inline-flex;
   align-items: center;
@@ -18710,8 +18719,12 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 
 /* Nested picker inside an expanded card (Browse topics / Select field, #img49). */
 .pb-nested-picker { margin: 12px 0 6px; border: 1px solid var(--color-surface-border); border-radius: 12px; padding: 12px 12px 10px; background: #fbfcfe; }
-.pb-nested-picker .pb-acc-content { max-height: 320px; overflow-y: auto; overscroll-behavior: contain; }
-.pb-nested-foot { display: flex; justify-content: flex-start; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--color-surface-border); }
+/* Show the FULL parent list (expand subtopics inline) — no internal scroll; the page
+   scrolls instead (#img436). */
+.pb-nested-picker .pb-acc-content { max-height: none; overflow: visible; }
+/* Done bar sticks to the bottom of the (now full-height) picker so it stays reachable
+   while scrolling the list (#img436). */
+.pb-nested-foot { position: sticky; bottom: 0; display: flex; justify-content: flex-start; gap: 10px; margin: 10px -10px 0; padding: 10px 12px; border-top: 1px solid var(--color-surface-border); background: color-mix(in srgb, var(--color-bg) 92%, transparent); backdrop-filter: blur(4px); border-radius: 0 0 10px 10px; z-index: 2; }
 .pb-nested-done { font-family: var(--font-family); padding: 7px 15px; border-radius: 9px; border: 1px solid #2563eb; background: #2563eb; color: #fff; font-weight: 650; font-size: 0.82rem; cursor: pointer; }
 .pb-nested-done:hover { background: #1d4ed8; border-color: #1d4ed8; }
 

@@ -487,15 +487,55 @@ function pbCardSummaryItems(card) {
   return items;
 }
 
+function pbFieldLabel(fieldKey) {
+  return pgData.fields?.find(f => f.key === fieldKey)?.label || fieldKey;
+}
+// Labelled summary groups for a collapsed card: [{ label, values[] }] or a custom
+// group { label, custom: text } for the free-text instructions (#img428/429).
+function pbCardSummaryGroups(card) {
+  const groups = [];
+  if (card.key === 'model') {
+    const m = getModelById(state.modelId);
+    if (m) groups.push({ label: 'Selected model', values: [m.name] });
+    return groups;
+  }
+  for (const f of card.fields) {
+    if (f === 'primaryTopic') {
+      const t = getPrimaryTopics(); if (t.length) groups.push({ label: 'Primary topic(s)', values: t.slice() });
+    } else if (f === 'secondaryTopic') {
+      const t = getSecondaryTopics(); if (t.length) groups.push({ label: 'Secondary topic(s)', values: t.slice() });
+    } else if (f === 'customizations') {
+      const t = (state.customizations || '').trim();
+      if (t) groups.push({ label: 'Custom instructions', custom: t });
+    } else {
+      const vals = state.values?.[f];
+      const arr = Array.isArray(vals) ? vals : (vals ? [vals] : []);
+      if (arr.length) groups.push({ label: pbFieldLabel(f), values: arr.map(v => pbOptionLabel(f, v)) });
+    }
+  }
+  return groups;
+}
+function pbSummaryRowHTML(g) {
+  const label = `<span class="pb-card-sumlabel">${escapeHTML(g.label)}:</span>`;
+  if (g.custom) {
+    const cut = g.custom.length > 150;
+    const preview = escapeHTML(cut ? g.custom.slice(0, 150).trimEnd() + '…' : g.custom);
+    const more = cut ? ` <span class="pb-card-sum-more">view more</span>` : '';
+    return `<div class="pb-card-sumrow pb-card-sumrow--custom">${label} <span class="pb-card-sumtext">${preview}${more}</span></div>`;
+  }
+  if (g.values.length === 1) {
+    return `<div class="pb-card-sumrow">${label} <span class="pb-card-sumvals">${escapeHTML(g.values[0])}</span></div>`;
+  }
+  return `<div class="pb-card-sumrow pb-card-sumrow--list">${label}<ul class="pb-card-sumlist">${g.values.map(v => `<li>${escapeHTML(v)}</li>`).join('')}</ul></div>`;
+}
+
 function renderPbCardsHTML() {
   return PB_CARDS.map(card => {
-    const items = pbCardSummaryItems(card);
-    const summaryHTML = items.length
-      ? `<div class="pb-card-summary">${
-          items.slice(0, 5).map(s => `<span class="pb-card-chip">${escapeHTML(s)}</span>`).join('') +
-          (items.length > 5 ? `<span class="pb-card-more">+${items.length - 5} more</span>` : '')
-        }</div>`
+    const groups = pbCardSummaryGroups(card);
+    const summaryHTML = groups.length
+      ? `<div class="pb-card-summary">${groups.map(pbSummaryRowHTML).join('')}</div>`
       : '';
+    const items = groups;
     // Trailing chevron (no more "Add +/Edit" pill) — each card is a stacked,
     // full-width section that expands in place; the chevron rotates open (#img424).
     return `
