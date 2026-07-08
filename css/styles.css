@@ -18145,7 +18145,9 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .prompts-opt:hover { border-color: color-mix(in srgb, #2563eb 45%, var(--color-surface-border)); box-shadow: 0 10px 26px -14px rgba(37,99,235,.32); background: color-mix(in srgb, #2563eb 2.5%, #fff); }
 /* Icon is a small lead-in INLINE with the title on one line (#img221). */
 .prompts-opt-head { display: flex; align-items: center; gap: 10px; }
-.prompts-opt-ic { flex: 0 0 auto; width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; background: color-mix(in srgb, #2563eb 10%, #fff); color: #2563eb; }
+/* Dark navy icon on a neutral grey chip — matches the topic-page icon rather than
+   the blue accent (#img337/#img338). */
+.prompts-opt-ic { flex: 0 0 auto; width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; background: color-mix(in srgb, #26375a 8%, #fff); color: #26375a; }
 .prompts-opt-ic svg { width: 17px; height: 17px; }
 .prompts-opt-name { font-size: 1.05rem; font-weight: 700; color: var(--color-primary, #14213d); letter-spacing: -0.015em; }
 .prompts-opt-desc { font-size: 0.88rem; color: var(--color-text-muted, #64748b); line-height: 1.45; }
