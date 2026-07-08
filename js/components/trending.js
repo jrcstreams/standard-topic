@@ -4,10 +4,10 @@
 // fixed-height scroll area with top/bottom fade + chevron affordances
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
-import { renderTrendExpansionBody } from './trend-expansion.js?v=20260706-revamp516';
-import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp516';
-import { wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp516';
-import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp516';
+import { renderTrendExpansionBody } from './trend-expansion.js?v=20260706-revamp518';
+import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp518';
+import { wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp518';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp518';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -297,6 +297,17 @@ function trendCardsSkeleton() {
 const TT_CAT_ORDER = ['Politics', 'Entertainment', 'Sports', 'Law and Government'];
 function ttCatRank(c) { const i = TT_CAT_ORDER.indexOf(c); if (i !== -1) return i; return c === 'Other' ? 999 : 500; }
 function ttCatOf(t) { return (t.categories && t.categories[0]) || ''; }
+// Sports-exclude preference (Trending dropdown only). Default = include sports.
+function isExcludeSports() { try { return localStorage.getItem('st-trend-exclude-sports') === '1'; } catch (_) { return false; } }
+function setExcludeSports(v) { try { localStorage.setItem('st-trend-exclude-sports', v ? '1' : '0'); } catch (_) {} }
+function ttIsSports(t) { return /^sports$/i.test(ttCatOf(t) || ''); }
+const TREND_SPORTS_TOGGLE_HTML = () => {
+  const inc = !isExcludeSports();
+  return `<button type="button" class="trend-sports-toggle" data-trend-sports-toggle role="switch" aria-checked="${inc ? 'true' : 'false'}" title="Show or hide sports trends">
+    <span class="trend-sports-toggle-label">Include sports</span>
+    <span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span>
+  </button>`;
+};
 
 // Render the "Trending Topics" card grid with a Category filter. limit caps how
 // many cards; viewAll adds a "View all trending →" button (opens the modal).
@@ -374,18 +385,22 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
     .sort((a, b) => (ttCatRank(a) - ttCatRank(b)) || a.localeCompare(b));
 
   function controlsHTML() {
-    // Category filter removed (#73) — just the AI-generated legend.
+    // AI-generated legend + the sports include/exclude toggle (dropdown only).
     return `<div class="tlm-controlbar-inner">
       <div class="trend-legend trend-legend--solo">
         <span class="trend-legend-item">${aiSparkInline()}<span>Trend summaries are AI-generated.</span></span>
       </div>
+      ${TREND_SPORTS_TOGGLE_HTML()}
     </div>`;
   }
   function visible() {
-    return state.category === 'all' ? state.all : state.all.filter((t) => ttCatOf(t) === state.category);
+    let list = state.category === 'all' ? state.all : state.all.filter((t) => ttCatOf(t) === state.category);
+    if (isExcludeSports()) list = list.filter((t) => !ttIsSports(t));
+    return list;
   }
   function earlierVisible() {
-    const list = state.category === 'all' ? state.earlier : state.earlier.filter((t) => ttCatOf(t) === state.category);
+    let list = state.category === 'all' ? state.earlier : state.earlier.filter((t) => ttCatOf(t) === state.category);
+    if (isExcludeSports()) list = list.filter((t) => !ttIsSports(t));
     return list.slice(0, EARLIER_MAX);
   }
   function renderGrid() {
@@ -428,6 +443,14 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
   function renderControls() {
     controlsEl.innerHTML = controlsHTML();
     controlsEl.querySelector('.trend-cat-select')?.addEventListener('change', (e) => { state.category = e.target.value; state.expanded = false; renderGrid(); });
+    // Sports include/exclude toggle — filters the live + Earlier lists and backfills
+    // the shown set with non-sports trends; the reveal count resets so it re-fills.
+    controlsEl.querySelector('[data-trend-sports-toggle]')?.addEventListener('click', () => {
+      setExcludeSports(!isExcludeSports());
+      state.expanded = false;
+      renderControls();
+      renderGrid();
+    });
   }
   // Pull the last 3 days of stored trends, drop anything still live (matched by
   // query), and present the rest as "Earlier". Cross-checks against state.all so

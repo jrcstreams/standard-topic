@@ -17964,7 +17964,15 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .aii-nav-dd-subbar { flex: 0 0 auto; padding: 10px 2px 4px; }
 .aii-nav-dd-subbar .tlm-controlbar { margin: 0; }
 /* Left-align the "Trend summaries are AI-generated" legend in the dropdown (#431). */
-.aii-nav-dd-subbar .tlm-controlbar-inner { justify-content: flex-start; }
+.aii-nav-dd-subbar .tlm-controlbar-inner { justify-content: space-between; width: 100%; }
+/* Sports include/exclude toggle in the Trending dropdown's sticky sub-header. */
+.trend-sports-toggle { display: inline-flex; align-items: center; gap: 8px; padding: 4px 6px; border: none; background: none; cursor: pointer; font-family: var(--font-family); flex: none; }
+.trend-sports-toggle-label { font-size: 0.75rem; font-weight: 600; color: var(--color-text-muted); white-space: nowrap; }
+.trend-sports-toggle[aria-checked="true"] .trend-sports-toggle-label { color: #26375a; }
+.trend-sports-toggle-track { position: relative; width: 34px; height: 19px; border-radius: 999px; background: #cbd5e1; transition: background .16s ease; flex: none; }
+.trend-sports-toggle[aria-checked="true"] .trend-sports-toggle-track { background: #2f8f63; }
+.trend-sports-toggle-thumb { position: absolute; top: 2px; left: 2px; width: 15px; height: 15px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(15,23,42,.25); transition: transform .16s ease; }
+.trend-sports-toggle[aria-checked="true"] .trend-sports-toggle-thumb { transform: translateX(15px); }
 /* Trending dropdown: fold the AI-generated legend UP into the sticky header (no
    divider between the title block and the legend), then a STRONGER separator
    before the trend list (#img23/#img24). */
