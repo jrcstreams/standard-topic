@@ -493,7 +493,6 @@ function renderPbCardsHTML() {
         <div class="pb-card-head">
           <span class="pb-card-icon" aria-hidden="true">${PB_ICONS[card.key] || ''}</span>
           <span class="pb-card-title">${escapeHTML(card.label)}</span>
-          ${card.required ? '<span class="pb-card-req">Required</span>' : ''}
           <span class="pb-card-action" aria-hidden="true">${actionLabel}</span>
         </div>
         <p class="pb-card-desc">${escapeHTML(card.desc)}</p>

@@ -8282,8 +8282,11 @@ body.app-mode .topic-layout {
   padding: 1rem 1.15rem;
 }
 .pb-modal-section + .pb-modal-section {
-  margin-top: 1.25rem;
-  padding-top: 1.25rem;
+  /* Even spacing around every section divider: 18px above, 15px below (the ~3px
+     less compensates the title's line-leading so the gap reads equal top+bottom)
+     (#img376-380). Standardised with .pb-card-config + .pb-card-config-foot. */
+  margin-top: 1.15rem;
+  padding-top: 0.95rem;
   border-top: 1px solid #eef0f4;
 }
 .pb-modal-section-title {
@@ -8292,6 +8295,7 @@ body.app-mode .topic-layout {
   /* Scaled down from 0.95rem/700 — the subsection headers read too heavy (#img347/#img355). */
   font-size: 0.84rem;
   font-weight: 600;
+  line-height: 1.2; /* tighter leading so the header sits evenly below its divider */
   color: #1e2d44;
   letter-spacing: -0.01em;
 }
@@ -8645,17 +8649,22 @@ body.app-mode .topic-layout {
 .pb-req-tag, .pb-optional-tag {
   display: inline-flex;
   align-items: center;
-  padding: 0.1rem 0.4rem;
+  /* More height/width so it isn't squished (#img375). */
+  padding: 0.24rem 0.55rem;
   border-radius: 999px;
   font-family: var(--font-family);
-  font-size: 0.6rem;
+  font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   line-height: 1;
-  margin-left: 0.4rem;
-  vertical-align: middle;
+  margin-left: 0.5rem;
+  position: relative;
+  top: -1px; /* optical-center against the display-font title */
 }
+/* When a section title sits directly above its field (no description, e.g. the
+   Topics Primary/Secondary bars), give the field breathing room (#img375). */
+.pb-modal-section-title + [data-field] { margin-top: 0.55rem; }
 .pb-req-tag { background: rgba(194, 65, 12, 0.1); color: #c2410c; }
 .pb-optional-tag { background: rgba(15, 26, 46, 0.06); color: var(--color-text-muted); }
 
@@ -9075,17 +9084,18 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem 1.5rem;
+  /* Smaller (#img381). */
+  padding: 0.6rem 1.25rem;
   border: none;
   border-radius: 10px;
   background: var(--color-primary);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: var(--font-weight-bold);
   color: white;
   cursor: pointer;
   transition: background 0.12s, opacity 0.12s;
   white-space: nowrap;
-  min-height: 46px;
+  min-height: 40px;
   /* Auto-width (content-sized), centered with Clear beside it — not a full-width
      grey block. */
   flex: 0 1 auto;
@@ -9113,31 +9123,33 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.7rem 0.95rem;
-  background: transparent;
-  border: 1px solid var(--color-surface-border);
+  /* Smaller + a proper filled-grey secondary button instead of the ghosty outline
+     that "sucked" (#img381). */
+  padding: 0.6rem 1.05rem;
+  background: #eef1f6;
+  border: 1px solid #e1e6ee;
   border-radius: 10px;
-  color: var(--color-text-muted);
+  color: #475569;
   font-family: var(--font-family);
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
   text-decoration: none;
   transition: border-color 0.12s, color 0.12s, background 0.12s, opacity 0.12s;
-  min-height: 46px;
+  min-height: 40px;
 }
 .wiz-action-restart:hover:not(:disabled) {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 5%, #fff);
+  border-color: #cdd6e3;
+  color: #26375a;
+  background: #e4e9f1;
 }
 .wiz-action-restart:disabled {
-  opacity: 0.4;
+  opacity: 0.55;
   cursor: not-allowed;
-  border-color: var(--color-border-light);
-  color: var(--color-text-light);
-  background: transparent;
+  border-color: #e1e6ee;
+  color: #94a3b8;
+  background: #f4f6f9;
 }
 
 @media (max-width: 640px) {
@@ -18542,14 +18554,15 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
    sticky Done/Cancel (revamp447, #img49/#img50). ═════════════════════════════ */
 .pb-inline .pb-card { cursor: pointer; }
 .pb-inline .pb-card.is-expanded { grid-column: 1 / -1; border-color: color-mix(in srgb, #2563eb 35%, var(--color-surface-border)); box-shadow: 0 8px 22px -14px rgba(37,99,235,.28); }
-.pb-card-config { margin-top: 14px; border-top: 1px solid var(--color-surface-border); padding-top: 14px; }
+/* Head→first-section divider: same rhythm as the section dividers (#img376-380). */
+.pb-card-config { margin-top: 1.15rem; border-top: 1px solid var(--color-surface-border); padding-top: 0.95rem; }
 .pb-card-config-body { min-width: 0; }
 .pb-card-config-foot {
   /* Simple in-flow footer — a top divider + the buttons, with the card's own
      padding-bottom giving clean space below so the card border never gets clipped
      or cramped (#img373/374). No negative margins (those pulled it past the edge). */
   display: flex; justify-content: flex-start; gap: 10px;
-  margin-top: 16px; padding-top: 14px;
+  margin-top: 1.15rem; padding-top: 1rem;
   border-top: 1px solid var(--color-surface-border);
 }
 /* Hide the lingering Add/Edit pill once a card is expanded, and reclaim the right
