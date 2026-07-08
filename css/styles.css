@@ -17737,6 +17737,10 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
    The whole card is no longer a link — explicit View Story / AI Insights / Web
    Search buttons, with AI Insights + Web Search opening clean inline dropdowns. */
 #section-newsfeed .news-card-link::after { display: none !important; }
+/* Custom-search news cards use the same card-level JS click handler, so kill the
+   stretched-link overlay here too — otherwise it sits ON TOP of the AI Insights /
+   View Story buttons and a real mouse click opens the story instead (#img389). */
+.search-news-section .news-card-link::after { display: none !important; }
 /* The whole card is clickable (a card-level handler opens the story), so keep the
    cursor a consistent pointer everywhere instead of flickering pointer↔default as
    the mouse crosses the title vs the meta margins (#img183). The open insights
