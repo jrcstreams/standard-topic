@@ -16093,7 +16093,9 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* A soft blue-tinted chip (was a flat grey that blended into the light-grey card) —
    the light blue + hairline border makes the "AI Generated Text" label read as a
    distinct pill, and it sits tight to the body text below (#img188). */
-.im-sec-aitag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 6px; background: color-mix(in srgb, #2563eb 9%, #fff); border: 1px solid color-mix(in srgb, #2563eb 16%, transparent); color: #475d80; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.01em; white-space: nowrap; }
+/* Match the discreet news-story "AI Generated Text" tag: plain grey chip, no blue
+   border/tint (#img418/419). */
+.im-sec-aitag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 6px; background: var(--color-bg-light); border: none; color: var(--color-text-muted); font-size: 0.7rem; font-weight: 600; letter-spacing: 0.01em; white-space: nowrap; }
 .im-sec-aitag svg { width: 12px; height: 12px; flex: none; color: var(--color-primary); }
 .im-msec-ic svg { width: 15px; height: 15px; }
 /* Content section headers (Why It's Trending / Summary / Sources & Coverage) —
@@ -17781,9 +17783,9 @@ body.home-search #section-newsfeed .news-card-desc { margin-top: 0.45rem; font-s
 /* Cap the story blurb + headline to a comfortable reading measure so on wide
    screens they wrap to a tidy two lines instead of stretching into one long line. */
 .topic-band #section-newsfeed .news-card-desc,
-body.home-search #section-newsfeed .news-card-desc { max-width: 68ch; }
+body.home-search #section-newsfeed .news-card-desc { max-width: 90ch; }
 .topic-band #section-newsfeed .news-card-title,
-body.home-search #section-newsfeed .news-card-title { max-width: 60ch; }
+body.home-search #section-newsfeed .news-card-title { max-width: 82ch; }
 
 /* Homepage news feed uses the SAME bordered story cards as topic pages (#img45)
    — the borderless-hairline treatment was reverted. The revamp399 bordered-card
