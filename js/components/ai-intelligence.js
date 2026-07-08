@@ -4,16 +4,16 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp525';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp525';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp526';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp526';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp525';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp525';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp526';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp526';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -139,6 +139,16 @@ const ICON_SEND = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" s
 // brief will fill). Shown briefly on section open even when cached.
 function genLoaderHTML() {
   return `<div class="aii-gen"><div class="aii-gen-spark">${SPARK}</div><div class="aii-gen-label">Generating AI insights…</div><div class="aii-gen-bars"><span></span><span></span><span></span><span></span></div></div>`;
+}
+// Loading shell for brief groups — keeps the Summary/Explore Further/Sources sub-tab
+// bar visible and shows the generating loader in the BODY beneath it, instead of a
+// full-section takeover that blanks the tabs (#img406).
+function builderLoadingHTML() {
+  return insightTabsHTML([
+    { key: 'summary', label: 'Summary', html: genLoaderHTML() },
+    { key: 'explore', label: 'Explore Further', html: '' },
+    { key: 'sources', label: 'Sources', html: '' },
+  ], 'aii-instabs');
 }
 const ICON_EYES = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>';
 const ICON_COPY_MINI = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="8" height="9" rx="1.2"/><path d="M9.5 3.5V2.5a1 1 0 0 0-1-1h-5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1"/></svg>';
@@ -778,7 +788,7 @@ export function renderAIIntelligence(container, scope) {
       </div>
       <div class="aii-builder-secs">
         ${briefTop}
-        <div data-aii-builder>${genLoaderHTML()}</div>
+        <div data-aii-builder>${isStatic ? genLoaderHTML() : builderLoadingHTML()}</div>
       </div>
     </div>`;
   }
@@ -817,7 +827,7 @@ export function renderAIIntelligence(container, scope) {
     if (extra && extra.render) { try { extra.render(wrap); } catch (_) { wrap.innerHTML = ''; } wrap.classList.add('ai-reveal'); return; }
     const reveal = () => { if (stage.querySelector('[data-aii-builder]') === wrap && view === 'builder') renderBuilderInto(wrap); };
     const bc = builderCache[curGroup];
-    if (bc && !bc.loading) setTimeout(reveal, 600);   // cached → brief loader moment, then reveal
+    if (bc && !bc.loading) reveal();   // cached → reveal immediately (no loader flash, #img406)
     else loadBuilder(curGroup).then(reveal);
   }
   function renderBuilderInto(wrap) {
