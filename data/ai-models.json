@@ -68,6 +68,46 @@
       "urlTemplate": "https://claude.ai/new?q={prompt}",
       "chatUrl": "https://claude.ai/new",
       "submissionMethod": "paste"
+    },
+    {
+      "id": "grok",
+      "name": "Grok",
+      "description": "xAI's real-time assistant with live X/web data.",
+      "icon": "grok",
+      "urlTemplate": "https://grok.com/?q={prompt}",
+      "chatUrl": "https://grok.com/",
+      "copyOnOpen": true,
+      "submissionMethod": "direct"
+    },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek",
+      "description": "Strong open reasoning model, free to use.",
+      "icon": "deepseek",
+      "urlTemplate": "https://chat.deepseek.com/",
+      "chatUrl": "https://chat.deepseek.com/",
+      "copyOnOpen": true,
+      "submissionMethod": "paste"
+    },
+    {
+      "id": "meta-ai",
+      "name": "Meta AI",
+      "description": "Meta's assistant built on Llama.",
+      "icon": "meta",
+      "urlTemplate": "https://www.meta.ai/?q={prompt}",
+      "chatUrl": "https://www.meta.ai/",
+      "copyOnOpen": true,
+      "submissionMethod": "populates"
+    },
+    {
+      "id": "mistral",
+      "name": "Mistral (Le Chat)",
+      "description": "Mistral's European AI assistant.",
+      "icon": "mistral",
+      "urlTemplate": "https://chat.mistral.ai/chat",
+      "chatUrl": "https://chat.mistral.ai/chat",
+      "copyOnOpen": true,
+      "submissionMethod": "paste"
     }
   ],
   "defaultModel": "chatgpt",

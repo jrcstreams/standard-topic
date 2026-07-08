@@ -9,6 +9,10 @@
       "label": "No AI Web Sources"
     },
     {
+      "key": "factcheck",
+      "label": "Media Bias & Fact-Check"
+    },
+    {
       "key": "social",
       "label": "Social, Discussion & Writing"
     },
@@ -129,6 +133,90 @@
       "icon": "medium",
       "category": "social",
       "urlTemplate": "https://medium.com/search?q={query}"
+    },
+    {
+      "name": "Google Scholar",
+      "description": "Academic papers and citations.",
+      "icon": "google-scholar",
+      "category": "search",
+      "urlTemplate": "https://scholar.google.com/scholar?q={query}"
+    },
+    {
+      "name": "Google",
+      "description": "Standard Google web search.",
+      "icon": "google",
+      "category": "search",
+      "urlTemplate": "https://www.google.com/search?q={query}"
+    },
+    {
+      "name": "Brave Search",
+      "description": "Independent index, privacy-first.",
+      "icon": "brave",
+      "category": "search",
+      "urlTemplate": "https://search.brave.com/search?q={query}"
+    },
+    {
+      "name": "Startpage",
+      "description": "Google results, no AI, no tracking.",
+      "icon": "startpage",
+      "category": "noai",
+      "urlTemplate": "https://www.startpage.com/sp/search?query={query}"
+    },
+    {
+      "name": "Mojeek",
+      "description": "Fully independent index, no AI.",
+      "icon": "mojeek",
+      "category": "noai",
+      "urlTemplate": "https://www.mojeek.com/search?q={query}"
+    },
+    {
+      "name": "Ground News",
+      "description": "Multi-outlet coverage with bias ratings.",
+      "icon": "ground-news",
+      "category": "factcheck",
+      "urlTemplate": "https://ground.news/search?q={query}"
+    },
+    {
+      "name": "AllSides",
+      "description": "Left/center/right coverage side by side.",
+      "icon": "allsides",
+      "category": "factcheck",
+      "urlTemplate": "https://www.allsides.com/search?search={query}"
+    },
+    {
+      "name": "Snopes",
+      "description": "Fact-checking of claims and rumors.",
+      "icon": "snopes",
+      "category": "factcheck",
+      "urlTemplate": "https://www.snopes.com/?s={query}"
+    },
+    {
+      "name": "PolitiFact",
+      "description": "Fact-checks of political claims.",
+      "icon": "politifact",
+      "category": "factcheck",
+      "urlTemplate": "https://www.politifact.com/search/?q={query}"
+    },
+    {
+      "name": "Threads",
+      "description": "Real-time posts, the X alternative.",
+      "icon": "threads",
+      "category": "social",
+      "urlTemplate": "https://www.threads.net/search?q={query}"
+    },
+    {
+      "name": "Vimeo",
+      "description": "Video search results.",
+      "icon": "vimeo",
+      "category": "media",
+      "urlTemplate": "https://vimeo.com/search?q={query}"
+    },
+    {
+      "name": "Twitch",
+      "description": "Live streams and clips.",
+      "icon": "twitch",
+      "category": "media",
+      "urlTemplate": "https://www.twitch.tv/search?term={query}"
     }
   ]
 }
