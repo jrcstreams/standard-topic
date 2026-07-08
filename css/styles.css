@@ -17489,6 +17489,10 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .search-aii-host .aii-builder-topic--resultsfor { font-size: 1rem; font-weight: 600; gap: 0.32em; margin: 8px 0 16px; }
 .search-aii-host .aii-builder-resultsfor { color: var(--color-text-muted); font-weight: 600; }
 .search-aii-host .aii-builder-topic--resultsfor .aii-builder-topic-tx { color: #14213d; }
+/* Left-align the result section rows with the header / input / "Results for" line —
+   they were the only elements inset (12px accordion padding) so the whole list read
+   as misaligned even though the top block is flush (#img336). */
+.search-aii-host .aii-fi-accsum { padding-left: 0; }
 
 /* "View Topic Page" — subtle, pinned to the top-right of the sticky topbar. */
 .aii-modal-body .aii-view-topic { position: absolute; top: 12px; right: 0; }
