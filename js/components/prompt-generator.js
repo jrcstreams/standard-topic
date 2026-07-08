@@ -1037,11 +1037,14 @@ function render() {
 
       <div class="wiz-action-bar">
         <div class="wiz-action-bar-inner">
-          <button type="button" class="wiz-action-btn is-ready" id="wiz-open-preview">
+          <button type="button" class="wiz-action-btn is-ready" id="wiz-submit-prompt">
             <span>Submit Prompt</span>
           </button>
+          <button type="button" class="wiz-action-preview" id="wiz-open-preview">Preview Prompt</button>
           <button type="button" class="wiz-action-restart" id="wiz-restart" ${isPristine ? 'disabled' : ''}>Clear Prompt</button>
         </div>
+        <div class="wiz-preview-drawer" id="wiz-preview-drawer" hidden></div>
+        <p class="wiz-submit-disc" id="wiz-submit-disc"></p>
       </div>
       <div class="wiz-action-bar-spacer"></div>
     </div>
@@ -1056,11 +1059,22 @@ function render() {
     });
   });
 
-  // Open the unified preview+submit modal — but a primary topic is required first.
+  // Submit Prompt — send straight to the chosen model (primary topic required).
+  document.getElementById('wiz-submit-prompt')?.addEventListener('click', async () => {
+    if (getPrimaryTopics().length === 0) { openPrimaryRequiredModal(); return; }
+    const model = getModelById(state.modelId);
+    if (!model) { togglePreviewDrawer(true); return; }   // no model picked → open preview to choose
+    const finalPrompt = (state.editedPrompt ?? assemblePrompt()).trim();
+    if (!finalPrompt) return;
+    track('prompt_builder_submit', { model: model.id, edited: state.editedPrompt != null, length: finalPrompt.length });
+    await submitPrompt(model, finalPrompt);
+  });
+  // Preview Prompt — toggle the inline preview/edit/model dropdown below the buttons.
   document.getElementById('wiz-open-preview')?.addEventListener('click', () => {
     if (getPrimaryTopics().length === 0) { openPrimaryRequiredModal(); return; }
-    openPromptSubmitModal();
+    togglePreviewDrawer();
   });
+  refreshSubmitDisc();
 
   // Restart
   document.getElementById('wiz-restart')?.addEventListener('click', () => {
@@ -2246,6 +2260,40 @@ function jumpToPrimaryTopicPicker() {
   }, 90);
 }
 
+// Inline preview drawer — the preview/edit/model panel drops in below the action
+// buttons (no separate "page"). Toggled by the Preview Prompt button.
+function togglePreviewDrawer(forceOpen) {
+  const drawer = document.getElementById('wiz-preview-drawer');
+  const btn = document.getElementById('wiz-open-preview');
+  if (!drawer) return;
+  const willOpen = forceOpen != null ? forceOpen : drawer.hidden;
+  if (willOpen) {
+    drawer.hidden = false;
+    btn && btn.classList.add('is-open');
+    submitInlineEl = drawer;
+    renderSubmitPanel();
+    try { drawer.scrollIntoView({ block: 'nearest' }); } catch (_) {}
+  } else {
+    drawer.hidden = true;
+    btn && btn.classList.remove('is-open');
+    submitInlineEl = null;
+    drawer.innerHTML = '';
+  }
+  refreshSubmitDisc();
+}
+
+// The model-info + disclaimer line lives below the three action buttons (pushed
+// down when the preview drawer opens), keyed to the chosen model.
+function refreshSubmitDisc() {
+  const el = document.getElementById('wiz-submit-disc');
+  if (!el) return;
+  const m = getModelById(state.modelId);
+  const methods = m ? (getSubmissionMethods?.() ?? {}) : {};
+  const meta = methods[(m && m.submissionMethod) || 'direct'] || {};
+  const info = (m && meta.description) ? `Model info: ${m.name} — ${meta.description.replace(/\{model\}/g, m.name)} ` : '';
+  el.textContent = `${info}Disclaimer: You'll be redirected to a third-party AI platform. Standard Topic isn't responsible for actions taken once you leave this site.`;
+}
+
 // Inline (dropdown) Preview/Submit — renders the same panel as a buffer view.
 function renderSubmitBuffer() {
   const body = pbInlineChrome({ title: '', footer: false, onCancel: () => { submitInlineEl = null; } });
@@ -2368,7 +2416,7 @@ function renderSubmitPanel() {
             <path d="M19 3l.6 1.6L21.2 5.2 19.6 5.8 19 7.4 18.4 5.8 16.8 5.2 18.4 4.6z"/>
           </svg>
         </span>
-        <h3 class="pm-title-name">Preview and Submit Prompt</h3>
+        <h3 class="pm-title-name">Preview Prompt</h3>
       </div>
       <button type="button" class="pm-close" id="wiz-submit-close" aria-label="Close">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M3 3l8 8M11 3l-8 8"/></svg>
@@ -2377,10 +2425,7 @@ function renderSubmitPanel() {
 
     <div class="pm-body">
       <section class="pm-section">
-        <div class="pm-section-head">
-          <span class="pm-section-label">Prompt</span>
-          ${isEdited ? '<button type="button" class="pm-reset" id="wiz-submit-reset">Reset to generated</button>' : ''}
-        </div>
+        ${isEdited ? '<div class="pm-section-head"><button type="button" class="pm-reset" id="wiz-submit-reset">Reset to generated</button></div>' : ''}
         <div class="pm-preview-wrap ${state.isEditingPrompt ? 'is-editing' : ''}">
           ${state.isEditingPrompt
             ? `<textarea class="pm-textarea" id="wiz-submit-textarea">${escapeHTML(prompt)}</textarea>`
@@ -2402,40 +2447,30 @@ function renderSubmitPanel() {
       </section>
 
       <section class="pm-section">
-        <div class="pm-section-label">AI Model</div>
+        <div class="pm-section-label">Choose AI Model</div>
         <div class="pm-models" id="wiz-submit-models">${modelBtnsHTML}</div>
       </section>
 
       <section class="pm-submit-area">
-        <div class="pm-section-label">Prompt Submission</div>
         <div class="pm-actions">
-          <button class="pm-submit" id="wiz-submit-go" type="button" ${isEmpty ? 'disabled' : ''}>${escapeHTML(getSubmitLabel())}</button>
+          <button class="pm-submit pm-submit--sm" id="wiz-submit-go" type="button" ${isEmpty ? 'disabled' : ''}>${escapeHTML(getSubmitLabel())}</button>
         </div>
-        ${model ? `
-          <div class="pm-meta">
-            ${meta.description ? `<div class="pm-meta-line">
-              <span class="pm-meta-label">Model info:</span>
-              <a href="${model.chatUrl || model.urlTemplate.replace('{prompt}', '')}" target="_blank" rel="noopener noreferrer" class="pm-meta-link">${escapeHTML(model.name)}</a>
-              <span class="pm-meta-text">— ${escapeHTML(meta.description.replace(/\{model\}/g, model.name))}</span>
-            </div>` : ''}
-            <div class="pm-meta-line">
-              <span class="pm-meta-label">Disclaimer:</span>
-              <span class="pm-meta-text">You'll be redirected to a third-party AI platform. Standard Topic isn't responsible for actions taken once you leave this site.</span>
-            </div>
-          </div>
-        ` : ''}
       </section>
     </div>
   `;
 
   bindSubmitPanelEvents();
+  refreshSubmitDisc();
 }
 
 function bindSubmitPanelEvents() {
   const el = submitInlineEl || submitPanelEl;
   // Inline mode has no overlay to tear down — "close"/after-submit just pops the
   // buffer view back to the builder.
-  const onClose = submitInlineEl ? () => { submitInlineEl = null; pbInlineBack(); } : closeSubmitModal;
+  const isDrawer = submitInlineEl && submitInlineEl.id === 'wiz-preview-drawer';
+  const onClose = isDrawer ? () => togglePreviewDrawer(false)
+    : submitInlineEl ? () => { submitInlineEl = null; pbInlineBack(); }
+    : closeSubmitModal;
   el.querySelector('#wiz-submit-close').addEventListener('click', onClose);
 
   el.querySelector('#wiz-submit-copy').addEventListener('click', async (e) => {

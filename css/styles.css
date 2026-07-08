@@ -4721,8 +4721,20 @@ a.news-card-source:active { background: color-mix(in srgb, #2563eb 20%, #f4f6f9)
 .pm-copy-btn:hover, .pm-icon-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
 .pm-copy-btn.is-copied { border-color: #2f8f63; color: #2f8f63; }
 .pm-submit-area { margin-top: 6px; }
+/* Send Prompt — content-sized + left-aligned in the drawer (#img384). */
+.pm-submit--sm { width: auto !important; margin-top: 0 !important; padding: 10px 20px; font-size: 0.88rem; }
 /* The inline buffer already has a Back — drop the redundant panel close. */
 .pb-inline-body .pm-close { display: none; }
+/* Preview Prompt button + its inline drawer (#img383/384). */
+.wiz-action-preview { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 0.6rem 1.15rem; border: 1px solid #d6dce6; border-radius: 10px; background: #fff; color: #33517f; font-family: var(--font-family); font-size: 0.9rem; font-weight: 650; cursor: pointer; transition: background .14s, border-color .14s, color .14s; }
+.wiz-action-preview:hover { background: #f4f6f9; border-color: #c8d3e3; }
+.wiz-action-preview.is-open { background: #eef1f6; border-color: #b9c4da; color: #26375a; }
+.wiz-preview-drawer { margin-top: 14px; padding: 16px 18px; border: 1px solid var(--color-surface-border); border-radius: 14px; background: #fbfcfe; }
+.wiz-preview-drawer[hidden] { display: none; }
+.wiz-preview-drawer .pm-header { margin-bottom: 14px; }
+.wiz-preview-drawer .pm-body { padding: 0; overflow: visible; }
+.wiz-submit-disc { margin: 12px 0 0; font-size: 0.78rem; line-height: 1.5; color: var(--color-text-light); max-width: 64ch; }
+.wiz-submit-disc:empty { display: none; }
 .pm-copy { position: absolute; top: 9px; right: 9px; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--color-surface-border); border-radius: 8px; background: #fff; color: var(--color-text-muted); cursor: pointer; transition: border-color .14s, color .14s; }
 .pm-copy:hover { border-color: var(--color-primary); color: var(--color-primary); }
 .pm-copy.is-copied { border-color: #2f8f63; color: #2f8f63; }
