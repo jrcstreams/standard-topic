@@ -12,8 +12,8 @@
 
 import { getModels, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt } from '../utils/ai-models.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp501';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp501';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp503';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp503';
 
 function escapeHTML(str) {
   const div = document.createElement('div');
@@ -486,12 +486,21 @@ function niSecHead(name) {
     <div class="ni-aitag-row"><span class="ni-aitag">${AI_SPARK_SVG}<span>AI Generated Text</span></span></div>`;
 }
 function niSourcesHTML(headlines, sources, origUrl) {
+  // Reuse the shared .ai-ins-source-row styling (trends / topic AI Insights) so
+  // the News Sources list looks consistent across surfaces (#img332). "View
+  // original article" keeps its arrow INLINE next to the text, not right-aligned.
   const rows = [];
-  if (origUrl) rows.push(`<a class="ni-source-row ni-source-row--orig" href="${escapeAttr(origUrl)}" target="_blank" rel="noopener noreferrer"><span>View original article</span>${NI_ARROW_SVG}</a>`);
-  const items = (Array.isArray(headlines) && headlines.length ? headlines : (sources || [])).map((x) => ({ uri: x.uri || x.url || '', label: (x.title && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(x.title)) ? x.title : (sourceHost(x.uri || x.url) || x.title || 'source') }));
+  if (origUrl) rows.push(`<a class="ai-ins-source-row ai-ins-source-row--orig" href="${escapeAttr(origUrl)}" target="_blank" rel="noopener noreferrer"><span class="ai-ins-source-name">View original article ${ARROW_SM}</span></a>`);
+  const list = (Array.isArray(headlines) && headlines.length ? headlines : (sources || []));
   const seen = new Set();
-  for (const it of items) { const k = (it.label || '').toLowerCase(); if (!k || !it.uri || seen.has(k)) continue; seen.add(k); rows.push(`<a class="ni-source-row" href="${escapeAttr(it.uri)}" target="_blank" rel="noopener noreferrer"><span>${escapeHTML(it.label)}</span>${NI_ARROW_SVG}</a>`); }
-  return rows.length ? `<section class="ni-sec ni-sec-sources"><div class="ni-sec-head"><span class="ni-sec-ic">${NI_SEC_ICON.sources}</span><h4 class="ni-sec-name">Sources</h4></div><div class="ni-source-list">${rows.join('')}</div></section>` : '';
+  for (const s of list) {
+    const r = resolveSource(s);
+    const key = (r.label || '').toLowerCase();
+    if (!key || !r.uri || seen.has(key)) continue;
+    seen.add(key);
+    rows.push(`<a class="ai-ins-source-row" href="${escapeAttr(r.uri)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(r.title || r.label)}"><span class="ai-ins-source-name">${escapeHTML(r.label)}</span>${ARROW_SM}</a>`);
+  }
+  return rows.length ? `<section class="ni-sec ni-sec-sources"><div class="ni-sec-head"><span class="ni-sec-ic">${NI_SEC_ICON.sources}</span><h4 class="ni-sec-name">Sources</h4></div><div class="ai-ins-source-list">${rows.join('')}</div></section>` : '';
 }
 function niWebHTML(term) {
   const cats = getExternalSearchCategories() || [];
@@ -533,12 +542,20 @@ function niExploreListHTML(card) {
 }
 // Sources tab body (news) — just the rows (the "Sources" label is the tab).
 function niSourcesListHTML(headlines, sources, origUrl) {
+  // Shared .ai-ins-source-row styling (trends / topic AI Insights) for a
+  // consistent look (#img332). "View original article" keeps its arrow INLINE.
   const rows = [];
-  if (origUrl) rows.push(`<a class="ni-source-row ni-source-row--orig" href="${escapeAttr(origUrl)}" target="_blank" rel="noopener noreferrer"><span>View original article</span>${NI_ARROW_SVG}</a>`);
-  const items = (Array.isArray(headlines) && headlines.length ? headlines : (sources || [])).map((x) => ({ uri: x.uri || x.url || '', label: (x.title && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(x.title)) ? x.title : (sourceHost(x.uri || x.url) || x.title || 'source') }));
+  if (origUrl) rows.push(`<a class="ai-ins-source-row ai-ins-source-row--orig" href="${escapeAttr(origUrl)}" target="_blank" rel="noopener noreferrer"><span class="ai-ins-source-name">View original article ${ARROW_SM}</span></a>`);
+  const list = (Array.isArray(headlines) && headlines.length ? headlines : (sources || []));
   const seen = new Set();
-  for (const it of items) { const k = (it.label || '').toLowerCase(); if (!k || !it.uri || seen.has(k)) continue; seen.add(k); rows.push(`<a class="ni-source-row" href="${escapeAttr(it.uri)}" target="_blank" rel="noopener noreferrer"><span>${escapeHTML(it.label)}</span>${NI_ARROW_SVG}</a>`); }
-  return rows.length ? `<div class="ni-source-list">${rows.join('')}</div>` : '';
+  for (const s of list) {
+    const r = resolveSource(s);
+    const key = (r.label || '').toLowerCase();
+    if (!key || !r.uri || seen.has(key)) continue;
+    seen.add(key);
+    rows.push(`<a class="ai-ins-source-row" href="${escapeAttr(r.uri)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(r.title || r.label)}"><span class="ai-ins-source-name">${escapeHTML(r.label)}</span>${ARROW_SM}</a>`);
+  }
+  return rows.length ? `<div class="ai-ins-source-list">${rows.join('')}</div>` : '';
 }
 function niLoaderHTML() {
   return `<div class="ni-loader"><div class="ni-loader-head"><span class="ni-spark">${AI_SPARK_SVG}</span><span class="ni-loader-tx">Generating insights…</span></div><span class="ni-skel"></span><span class="ni-skel"></span><span class="ni-skel ni-skel-short"></span></div>`;
@@ -584,7 +601,7 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
       const sourcesInner = niSourcesListHTML(data.headlines, data.sources, d.url);
       const tabs = [
         { key: 'summary', label: 'Summary', html: secHTML },
-        { key: 'explore', label: 'Explore Further', html: exploreFurtherHTML({ prompt: newsStoryPrompt(card), webTerm: card.dataset.title || '', name: card.dataset.title || 'this story' }) },
+        { key: 'explore', label: 'Explore Further', html: exploreFurtherHTML({ prompt: newsStoryPrompt(card), webTerm: card.dataset.title || '', name: card.dataset.title || 'this story', subDesc: 'Dig deeper into this story with ChatGPT, Claude, Gemini & more' }) },
       ];
       if (sourcesInner) tabs.push({ key: 'sources', label: 'Sources', html: sourcesInner });
       panel.innerHTML = `<div class="ni-inner ai-reveal">${insightTabsHTML(tabs, 'ni-tabs')}</div>`;

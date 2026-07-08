@@ -14589,6 +14589,13 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 }
 .ai-ins-source-row:hover { border-color: var(--color-primary); color: var(--color-primary); }
 .ai-ins-source-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ai-ins-source-row > svg { flex: none; color: var(--color-text-light); }
+.ai-ins-source-row:hover > svg { color: var(--color-primary); }
+/* "View original article" — primary-tinted, with the arrow INLINE right after the
+   text (not pushed to the far right like the other rows) (#img332). */
+.ai-ins-source-row--orig { color: var(--color-primary); font-weight: 600; border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-surface-border)); background: color-mix(in srgb, var(--color-primary) 4%, #fff); }
+.ai-ins-source-row--orig .ai-ins-source-name { display: inline-flex; align-items: center; gap: 6px; overflow: visible; }
+.ai-ins-source-row--orig .ai-ins-source-name svg { flex: none; }
 .ai-ins-empty { font-size: 0.82rem; color: var(--color-text-muted); margin: 0; }
 .ai-ins-subhead { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-muted); margin: 0 0 8px; }
 .ai-ins-model-list { display: grid; gap: 5px; }
@@ -15320,10 +15327,12 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-review-submit:disabled { opacity: 0.5; cursor: default; }
 .aii-review-submit svg { width: 15px; height: 15px; }
 .aii-review-disc { margin: 6px 0 0; font-size: 0.72rem; line-height: 1.45; color: var(--color-text-light); }
-/* iOS zooms the viewport when focusing an input whose font-size < 16px — keep the
-   review textarea + fields at 16px on phones so it doesn't jump/zoom (#img329). */
+/* Mobile: keep the text a comfortable, compact size (16px read as huge, #img331),
+   but bump the zoom-triggering fields to 16px ON FOCUS so iOS Safari doesn't zoom
+   the viewport when they're tapped. Selects open a native picker (no zoom). */
 @media (max-width: 640px) {
-  .aii-review-ta, .aii-review-fld input, .aii-review-custom, .aii-review-reasoning, .aii-review-output { font-size: 16px; }
+  .aii-review-ta, .aii-review-fld input, .aii-review-custom, .aii-review-reasoning, .aii-review-output { font-size: 14px; }
+  .aii-review-ta:focus, .aii-review-fld input:focus, .aii-review-custom:focus { font-size: 16px; }
 }
 .aii-review-done { margin: 2px 0 0; font-size: 0.82rem; font-weight: 600; color: #15803d; }
 /* Nested review panel — sits below Send-to / Direct / Review within the menu,

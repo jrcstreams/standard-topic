@@ -150,12 +150,15 @@ const CAT_DESC = {
   __other: 'More places to search',
 };
 
-// opts: { prompt, webTerm, name, openFirst }
+// opts: { prompt, webTerm, name, openFirst, subDesc }
 export function exploreFurtherHTML(opts = {}) {
-  const { prompt = '', webTerm = '', openFirst = false } = opts;
+  const { prompt = '', webTerm = '', openFirst = false, subDesc = '' } = opts;
+  // Context-specific tagline — "Send this prompt…" only fits the topic prompts;
+  // trends/news/search feed a title or term to the model, not a preset prompt.
+  const efSub = subDesc || 'Send this prompt to ChatGPT, Claude, Gemini & more';
   const models = getModels() || [];
   const aiAcc = models.length
-    ? `<details class="xf-acc"${openFirst ? ' open' : ''}><summary class="xf-sum"><span class="xf-sum-tx"><span class="xf-sum-name">Explore with External AI Models</span><span class="xf-sum-desc">Send this prompt to ChatGPT, Claude, Gemini &amp; more</span></span>${CHEV}</summary><div class="xf-panel" data-xf-emenu data-xf-prompt="${escAttr(prompt)}" data-xf-name="${escAttr(opts.name || '')}">${emenuHomeHTML()}</div></details>`
+    ? `<details class="xf-acc"${openFirst ? ' open' : ''}><summary class="xf-sum"><span class="xf-sum-tx"><span class="xf-sum-name">Explore with External AI Models</span><span class="xf-sum-desc">${esc(efSub)}</span></span>${CHEV}</summary><div class="xf-panel" data-xf-emenu data-xf-prompt="${escAttr(prompt)}" data-xf-name="${escAttr(opts.name || '')}">${emenuHomeHTML()}</div></details>`
     : '';
   const cats = getExternalSearchCategories() || [];
   const searches = getExternalSearches() || [];
@@ -212,7 +215,8 @@ export function wireExploreFurther(root) {
         opt.insertAdjacentElement('afterend', panel);
         wireXfReview(panel, prompt);
         opt.classList.add('is-active');
-        try { panel.querySelector('[data-xfr-ta]').focus(); } catch (_) {}
+        // No auto-focus — avoids forcing the field to its focused (larger) size +
+        // popping the keyboard on open on mobile; user taps to edit (#img331).
       } else {
         copyPrompt(prompt);              // copy now so Continue opens synchronously
         const panel = document.createElement('div');

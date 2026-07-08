@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp501';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp503';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp501';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp503';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp501';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp501';
-import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp501';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp501';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp503';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp503';
+import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp503';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp503';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp501';
-import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp501';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp501';
-import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp501';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp501';
-import { renderWebSources } from './components/websources.js?v=20260706-revamp501';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp501';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp501';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp503';
+import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp503';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp503';
+import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp503';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp503';
+import { renderWebSources } from './components/websources.js?v=20260706-revamp503';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp503';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp503';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp501';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp503';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -3751,7 +3751,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     extraTabs.push({
       group: 'explore', tab: 'Explore Further', subtitle: 'Send this to an AI model, or open it in web sources.', icon: SP_TREND_SEC_ICON,
       render: (wrap) => {
-        wrap.innerHTML = `<div class="search-xf">${exploreFurtherHTML({ prompt: `Explain "${t}" and give me the latest, most important information on it. Be specific and cite sources.`, webTerm: t, name: t })}</div>`;
+        wrap.innerHTML = `<div class="search-xf">${exploreFurtherHTML({ prompt: `Explain "${t}" and give me the latest, most important information on it. Be specific and cite sources.`, webTerm: t, name: t, subDesc: 'Explore this search with ChatGPT, Claude, Gemini & more' })}</div>`;
         try { wireExploreFurther(wrap.querySelector('.search-xf')); } catch (_) {}
       },
     });

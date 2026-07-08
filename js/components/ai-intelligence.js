@@ -4,16 +4,16 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp501';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp501';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp503';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp503';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp501';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp501';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp503';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp503';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -1231,7 +1231,8 @@ export function renderAIIntelligence(container, scope) {
           trigger.insertAdjacentElement('afterend', panel);
           wireExploreReview(panel, ctx);
           trigger.classList.add('is-active');
-          try { panel.querySelector('[data-review-ta]').focus(); } catch (_) {}
+          // No auto-focus — on mobile it forces the field to its focused (larger)
+          // size + pops the keyboard on open; let the user tap to edit (#img331).
         } else {
           // Direct Submit → an INLINE "leaving the site" confirm right below it.
           copyPrompt(ctx.prompt);   // copy now so Continue opens synchronously

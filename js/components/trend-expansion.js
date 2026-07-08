@@ -2,17 +2,17 @@
 // "Web Explore" + "AI Explore" accordions (submit the term to engines/models),
 // and the full grounded brief. Reuses the news/TI building blocks so the look
 // matches AI insights elsewhere.
-import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260706-revamp501';
+import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260706-revamp503';
 import { renderTIAccordion, webSourceItem } from './ti-shortcuts.js';
 import { getExternalSearches, getExternalSearchCategories, getModels } from '../utils/data.js';
-import { insightTabsHTML } from '../utils/insight-tabs.js?v=20260706-revamp501';
-import { exploreFurtherHTML } from '../utils/explore-further.js?v=20260706-revamp501';
+import { insightTabsHTML } from '../utils/insight-tabs.js?v=20260706-revamp503';
+import { exploreFurtherHTML } from '../utils/explore-further.js?v=20260706-revamp503';
 
 // The Explore Further tab uses the shared clean-dropdown component (with the
 // Direct Submit / Review flow), consistent across trending / news / topic.
 function exploreListHTML(term) {
   const prompt = `Explain what "${term}" is and why it's trending right now — what just happened and brief context.`;
-  return exploreFurtherHTML({ prompt, webTerm: term, name: term });
+  return exploreFurtherHTML({ prompt, webTerm: term, name: term, subDesc: 'Explore this trend with ChatGPT, Claude, Gemini & more' });
 }
 
 function escapeAttr(str) {
