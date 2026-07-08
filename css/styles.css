@@ -8309,14 +8309,14 @@ body.app-mode .topic-layout {
 }
 .pb-modal-textarea {
   width: 100%;
-  min-height: 160px;
+  min-height: 150px;
   padding: 0.8rem 0.95rem;
   background: #f5f6f9;
   border: 1px solid #e1e6ee;
   border-radius: 10px;
   font-family: var(--font-family);
-  /* 16px floor prevents iOS auto-zoom on focus. */
-  font-size: 16px;
+  /* Smaller resting text (#img362/363); bumps to 16px on focus so iOS doesn't zoom. */
+  font-size: 0.9rem;
   color: var(--color-text);
   resize: vertical;
   line-height: 1.5;
@@ -8327,6 +8327,7 @@ body.app-mode .topic-layout {
   background: var(--color-bg);
   border-color: #95a8c5;
   box-shadow: 0 0 0 3px rgba(74, 124, 201, 0.22);
+  font-size: 16px; /* iOS zoom floor only while focused */
 }
 /* Accordion-card topic picker (opened from "Browse topics" inside
    the Topics buffer modal). Matches the site's Topics modal:

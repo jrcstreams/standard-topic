@@ -607,8 +607,9 @@ function fillPbCardBody(card, body) {
   card.fields.forEach(f => {
     const host = body.querySelector(`[data-field="${f}"]`);
     if (!host) return;
-    if (f === 'outputType') populateCardGrid(host, f);
-    else populateChipGrid(host, f);
+    // Output Type used a big box-grid; now uses the same "+ Select" bar + dropdown
+    // as Format/Length/etc. for a consistent, compact card (#img348/351/352).
+    populateChipGrid(host, f);
     const extras = body.querySelector(`[data-extras-field="${f}"]`);
     if (extras) renderExtraInputs(extras, f);
   });
@@ -633,79 +634,66 @@ function renderCardBuffer(card, snap) {
 // of the site uses).
 function renderTopicsModalBody(body) {
   const re = () => renderTopicsModalBody(body);
-  const sectionHTML = (titleHTML, descHTML, items, keyClass) => `
+  // Same "+ Select" bar + dropdown pattern as the Output Style fields — chips for
+  // what's picked, "+ Select"/"+ Add more" opens the accordion topic picker inline.
+  // No subtexts under the headers (#img341/343/344/349/350).
+  const sectionHTML = (titleHTML, items, keyClass) => `
     <section class="pb-modal-section">
       <h3 class="pb-modal-section-title">${titleHTML}</h3>
-      <p class="pb-modal-section-desc">${descHTML}</p>
-      <div class="pb-topic-chips" data-pb-topic-key="${keyClass}">
+      <div class="wiz-topic-chips" data-pb-topic-key="${keyClass}" id="pb-topicbar-${keyClass}">
         ${items.map(t => `
-          <span class="pb-topic-chip">
+          <span class="wiz-inline-chip" data-remove="${escapeAttr(t)}">
             ${escapeHTML(t)}
-            <button type="button" class="pb-topic-chip-x" data-remove="${escapeAttr(t)}" aria-label="Remove">×</button>
+            <button type="button" class="wiz-inline-chip-x" aria-label="Remove">×</button>
           </span>
         `).join('')}
-        <button type="button" class="pb-topic-browse" data-browse="${keyClass}">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="12" y1="5" x2="12" y2="19"/>
-            <line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
-          ${items.length ? 'Add more' : 'Browse topics'}
-        </button>
+        <button type="button" class="wiz-topic-add-inline" data-browse="${keyClass}">${items.length ? '+ Add more' : '+ Select'}</button>
       </div>
     </section>
   `;
   body.innerHTML = `
-    ${sectionHTML(
-      'Primary Topic(s) <span class="pb-req-tag">Required</span>',
-      'What this prompt should focus on.',
-      getPrimaryTopics(),
-      'primaryTopic'
-    )}
-    ${sectionHTML(
-      'Secondary Topic(s) <span class="pb-optional-tag">Optional</span>',
-      'Related topics to weave in for context.',
-      getSecondaryTopics(),
-      'secondaryTopic'
-    )}
+    ${sectionHTML('Primary Topic(s) <span class="pb-req-tag">Required</span>', getPrimaryTopics(), 'primaryTopic')}
+    ${sectionHTML('Secondary Topic(s) <span class="pb-optional-tag">Optional</span>', getSecondaryTopics(), 'secondaryTopic')}
   `;
-  // Wire chip-remove (× on each selected chip)
-  body.querySelectorAll('.pb-topic-chip-x').forEach(btn => {
+  // Chip remove (× on each selected chip).
+  body.querySelectorAll('.wiz-inline-chip-x').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const key = btn.closest('.pb-topic-chips').dataset.pbTopicKey;
-      removeTopic(key, btn.dataset.remove);
+      const chip = btn.closest('.wiz-inline-chip');
+      const key = chip.closest('.wiz-topic-chips').dataset.pbTopicKey;
+      removeTopic(key, chip.dataset.remove);
       re();
     });
   });
-  // Wire browse — opens the accordion topic picker. Inside an expanded card
-  // (accordion mode) it expands INLINE right below the button (nested, no view
-  // swap); otherwise it opens the buffer/overlay picker.
+  // Open the accordion picker on bar / "+ Select" click. Inside an expanded card
+  // it drops INLINE beneath the bar (nested); otherwise the overlay picker.
   const inCard = !!(pbInlineHost && containerEl && containerEl.querySelector('.pb-card.is-expanded'));
-  body.querySelectorAll('.pb-topic-browse').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const key = btn.dataset.browse;
-      const initial = key === 'primaryTopic' ? getPrimaryTopics() : getSecondaryTopics();
-      const label = key === 'primaryTopic' ? 'Add Primary Topics' : 'Add Secondary Topics';
-      const apply = (values) => {
-        state.values[key] = values;
-        if (values.length === 0) delete state.values[key];
-        re();
-      };
-      if (inCard) {
-        const section = btn.closest('.pb-modal-section');
-        const existing = section.querySelector('.pb-nested-picker');
-        // Toggle: re-clicking the open one closes it.
-        body.querySelectorAll('.pb-nested-picker').forEach((n) => n.remove());
-        if (existing) return;
-        const nested = document.createElement('div');
-        nested.className = 'pb-nested-picker';
-        section.appendChild(nested);
-        openAccordionTopicPicker(label, initial, apply, { container: nested, onClose: () => re() });
-        requestAnimationFrame(() => { try { nested.scrollIntoView({ block: 'nearest' }); } catch (_) {} });
-      } else {
-        openAccordionTopicPicker(label, initial, apply);
-      }
+  const openFor = (key) => {
+    const initial = key === 'primaryTopic' ? getPrimaryTopics() : getSecondaryTopics();
+    const label = key === 'primaryTopic' ? 'Add Primary Topics' : 'Add Secondary Topics';
+    const apply = (values) => {
+      state.values[key] = values;
+      if (values.length === 0) delete state.values[key];
+      re();
+    };
+    if (inCard) {
+      const section = body.querySelector(`#pb-topicbar-${key}`).closest('.pb-modal-section');
+      const existing = section.querySelector('.pb-nested-picker');
+      body.querySelectorAll('.pb-nested-picker').forEach((n) => n.remove());
+      if (existing) return;
+      const nested = document.createElement('div');
+      nested.className = 'pb-nested-picker';
+      section.appendChild(nested);
+      openAccordionTopicPicker(label, initial, apply, { container: nested, onClose: () => re() });
+      requestAnimationFrame(() => { try { nested.scrollIntoView({ block: 'nearest' }); } catch (_) {} });
+    } else {
+      openAccordionTopicPicker(label, initial, apply);
+    }
+  };
+  body.querySelectorAll('.wiz-topic-chips').forEach(bar => {
+    bar.addEventListener('click', (e) => {
+      if (e.target.closest('.wiz-inline-chip-x')) return;
+      openFor(bar.dataset.pbTopicKey);
     });
   });
 }
