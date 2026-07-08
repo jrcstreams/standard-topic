@@ -18545,11 +18545,12 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 .pb-card-config { margin-top: 14px; border-top: 1px solid var(--color-surface-border); padding-top: 14px; }
 .pb-card-config-body { min-width: 0; }
 .pb-card-config-foot {
-  /* In-flow (was sticky) so it sits at the bottom of the card content instead of
-     overlapping it (#img370/372). */
+  /* Simple in-flow footer — a top divider + the buttons, with the card's own
+     padding-bottom giving clean space below so the card border never gets clipped
+     or cramped (#img373/374). No negative margins (those pulled it past the edge). */
   display: flex; justify-content: flex-start; gap: 10px;
-  margin: 14px -18px -14px; padding: 12px 18px;
-  background: #fff; border-top: 1px solid var(--color-surface-border); border-radius: 0 0 13px 13px;
+  margin-top: 16px; padding-top: 14px;
+  border-top: 1px solid var(--color-surface-border);
 }
 /* Hide the lingering Add/Edit pill once a card is expanded, and reclaim the right
    padding it reserved so the config + border use the full width (#img341/346/356). */
