@@ -12,8 +12,8 @@
 
 import { getModels, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt } from '../utils/ai-models.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp522';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp522';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp523';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp523';
 
 function escapeHTML(str) {
   const div = document.createElement('div');
@@ -542,20 +542,24 @@ function niExploreListHTML(card) {
 }
 // Sources tab body (news) — just the rows (the "Sources" label is the tab).
 function niSourcesListHTML(headlines, sources, origUrl) {
-  // Shared .ai-ins-source-row styling (trends / topic AI Insights) for a
-  // consistent look (#img332). "View original article" keeps its arrow INLINE.
+  // "View original article" is a blue LINK at the top, then the cited sources as a
+  // clean formatted list beneath it (#img407). Headlines/sources may carry `url`
+  // OR `uri` — normalise so they aren't dropped (that was the "no sources" bug).
   const rows = [];
-  if (origUrl) rows.push(`<a class="ai-ins-source-row ai-ins-source-row--orig" href="${escapeAttr(origUrl)}" target="_blank" rel="noopener noreferrer"><span class="ai-ins-source-name">View original article ${ARROW_SM}</span></a>`);
   const list = (Array.isArray(headlines) && headlines.length ? headlines : (sources || []));
   const seen = new Set();
   for (const s of list) {
-    const r = resolveSource(s);
+    const uri = s.uri || s.url || '';
+    if (!uri) continue;
+    const r = resolveSource({ uri, title: s.title });
     const key = (r.label || '').toLowerCase();
-    if (!key || !r.uri || seen.has(key)) continue;
+    if (!key || seen.has(key)) continue;
     seen.add(key);
-    rows.push(`<a class="ai-ins-source-row" href="${escapeAttr(r.uri)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(r.title || r.label)}"><span class="ai-ins-source-name">${escapeHTML(r.label)}</span>${ARROW_SM}</a>`);
+    rows.push(`<a class="ai-ins-source-row" href="${escapeAttr(uri)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(r.title || r.label)}"><span class="ai-ins-source-name">${escapeHTML(r.label)}</span>${ARROW_SM}</a>`);
   }
-  return rows.length ? `<div class="ai-ins-source-list">${rows.join('')}</div>` : '';
+  const orig = origUrl ? `<a class="ni-source-orig" href="${escapeAttr(origUrl)}" target="_blank" rel="noopener noreferrer">View original article ${ARROW_SM}</a>` : '';
+  const listHTML = rows.length ? `<div class="ai-ins-source-list">${rows.join('')}</div>` : '';
+  return (orig || listHTML) ? `${orig}${listHTML}` : '';
 }
 function niLoaderHTML() {
   return `<div class="ni-loader"><div class="ni-loader-head"><span class="ni-spark">${AI_SPARK_SVG}</span><span class="ni-loader-tx">Generating insights…</span></div><span class="ni-skel"></span><span class="ni-skel"></span><span class="ni-skel ni-skel-short"></span></div>`;

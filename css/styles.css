@@ -14555,7 +14555,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 }
 .trend-select:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 14%, transparent); }
 /* Discreet text link (blue + arrow) that opens the full trending modal. */
-.trend-viewmore-row { display: flex; justify-content: center; margin-top: 10px; }
+.trend-viewmore-row { display: flex; justify-content: center; margin-top: 20px; }
 /* Subtle, clearly-clickable button (not a bare link) — light bordered pill. */
 .trend-viewmore {
   display: inline-flex; align-items: center; gap: 6px;
@@ -14678,6 +14678,10 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 }
 .ai-ins-source-row:hover { border-color: var(--color-primary); color: var(--color-primary); }
 .ai-ins-source-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* "View original article" — a blue link above the news source list (#img407). */
+.ni-source-orig { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 12px; font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; color: #2563eb; text-decoration: none; }
+.ni-source-orig:hover { text-decoration: underline; text-underline-offset: 2px; }
+.ni-source-orig svg { width: 13px; height: 13px; flex: none; }
 .ai-ins-source-row > svg { flex: none; color: var(--color-text-light); }
 .ai-ins-source-row:hover > svg { color: var(--color-primary); }
 /* "View original article" — primary-tinted, with the arrow INLINE right after the
@@ -17575,7 +17579,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .search-aii-host .aii-topbar { padding-top: 6px; }
 /* Smaller, calmer "Results for ‘term’" line with a real gap between the two spans
    and clear breathing room above (input) and below (the Prompts/News tabs) (#img335). */
-.search-aii-host .aii-builder-topic--resultsfor { font-size: 0.98rem; font-weight: 550; gap: 0.32em; margin: 16px 0 22px; }
+.search-aii-host .aii-builder-topic--resultsfor { font-size: 0.98rem; font-weight: 550; gap: 0.32em; margin: 10px 0 16px; }
 .search-aii-host .aii-builder-resultsfor { color: var(--color-text-muted); font-weight: 600; }
 .search-aii-host .aii-builder-topic--resultsfor .aii-builder-topic-tx { color: #14213d; }
 /* Left-align the result section rows with the header / input / "Results for" line —
