@@ -4,10 +4,10 @@
 // fixed-height scroll area with top/bottom fade + chevron affordances
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
-import { renderTrendExpansionBody } from './trend-expansion.js?v=20260706-revamp528';
-import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp528';
-import { wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp528';
-import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp528';
+import { renderTrendExpansionBody } from './trend-expansion.js?v=20260706-revamp529';
+import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp529';
+import { wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp529';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp529';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -304,7 +304,7 @@ function ttIsSports(t) { return /^sports$/i.test(ttCatOf(t) || ''); }
 const TREND_SPORTS_TOGGLE_HTML = () => {
   const inc = !isExcludeSports();
   return `<button type="button" class="trend-sports-toggle" data-trend-sports-toggle role="switch" aria-checked="${inc ? 'true' : 'false'}" title="Show or hide sports trends">
-    <span class="trend-sports-toggle-label">Include sports</span>
+    <span class="trend-sports-toggle-label">Include Sports Trends</span>
     <span class="trend-sports-toggle-track"><span class="trend-sports-toggle-thumb"></span></span>
   </button>`;
 };
