@@ -18228,8 +18228,8 @@ button.aiidd-vlink { align-self: flex-start; }
 
 .pb-inline-foot { display: flex; justify-content: flex-start; gap: 10px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--color-surface-border); }
 .pb-inline-ghost, .pb-inline-cta {
-  font-family: var(--font-family); font-size: 0.88rem; font-weight: 650; cursor: pointer;
-  padding: 9px 18px; border-radius: 10px; transition: background .14s ease, border-color .14s ease, color .14s ease;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 650; cursor: pointer;
+  padding: 7px 15px; border-radius: 9px; transition: background .14s ease, border-color .14s ease, color .14s ease;
 }
 .pb-inline-ghost { border: 1px solid var(--color-surface-border); background: #fff; color: #475569; }
 .pb-inline-ghost:hover { background: var(--color-bg-light, #f4f6f8); color: #26375a; }
@@ -18545,7 +18545,9 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 .pb-card-config { margin-top: 14px; border-top: 1px solid var(--color-surface-border); padding-top: 14px; }
 .pb-card-config-body { min-width: 0; }
 .pb-card-config-foot {
-  position: sticky; bottom: 0; z-index: 6; display: flex; justify-content: flex-start; gap: 10px;
+  /* In-flow (was sticky) so it sits at the bottom of the card content instead of
+     overlapping it (#img370/372). */
+  display: flex; justify-content: flex-start; gap: 10px;
   margin: 14px -18px -14px; padding: 12px 18px;
   background: #fff; border-top: 1px solid var(--color-surface-border); border-radius: 0 0 13px 13px;
 }
@@ -18554,8 +18556,9 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 .pb-inline .pb-card.is-expanded .pb-card-action { display: none !important; }
 .pb-inline .pb-card.is-expanded { padding-right: 1.1rem; overflow: visible; }
 .pb-cfg-ghost, .pb-cfg-cta {
-  font-family: var(--font-family); font-size: 0.88rem; font-weight: 650; cursor: pointer;
-  padding: 9px 20px; border-radius: 10px; transition: background .14s ease, border-color .14s ease, color .14s ease;
+  /* Smaller across the builder dropdowns (#img372). */
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 650; cursor: pointer;
+  padding: 7px 15px; border-radius: 9px; transition: background .14s ease, border-color .14s ease, color .14s ease;
 }
 .pb-cfg-ghost { border: 1px solid var(--color-surface-border); background: #fff; color: #475569; }
 .pb-cfg-ghost:hover { background: var(--color-bg-light, #f4f6f8); color: #26375a; }
@@ -18566,7 +18569,7 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 .pb-nested-picker { margin: 12px 0 6px; border: 1px solid var(--color-surface-border); border-radius: 12px; padding: 12px 12px 10px; background: #fbfcfe; }
 .pb-nested-picker .pb-acc-content { max-height: 320px; overflow-y: auto; overscroll-behavior: contain; }
 .pb-nested-foot { display: flex; justify-content: flex-start; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--color-surface-border); }
-.pb-nested-done { font-family: var(--font-family); padding: 8px 20px; border-radius: 9px; border: 1px solid #2563eb; background: #2563eb; color: #fff; font-weight: 650; font-size: 0.86rem; cursor: pointer; }
+.pb-nested-done { font-family: var(--font-family); padding: 7px 15px; border-radius: 9px; border: 1px solid #2563eb; background: #2563eb; color: #fff; font-weight: 650; font-size: 0.82rem; cursor: pointer; }
 .pb-nested-done:hover { background: #1d4ed8; border-color: #1d4ed8; }
 
 /* Smaller news-story action buttons on phones so View Story / Web Search / AI

@@ -506,9 +506,14 @@ function renderPbCardsHTML() {
 function refreshPbCards() {
   const grid = document.getElementById('pb-card-grid');
   if (grid) grid.innerHTML = renderPbCardsHTML();
-  // Re-bind clicks (innerHTML wipes them).
+  // Re-bind clicks (innerHTML wipes them). MUST mirror render()'s binding — in
+  // inline (dropdown) mode expand the card in place; NEVER open the buffer
+  // "separate page", which this used to do after any refresh (#img371).
   document.querySelectorAll('.pb-card').forEach(card => {
-    card.addEventListener('click', () => openPbCardModal(card.dataset.pbCard));
+    card.addEventListener('click', () => {
+      if (pbInlineHost) togglePbCardInline(card, card.dataset.pbCard);
+      else openPbCardModal(card.dataset.pbCard);
+    });
   });
   updatePreview();
   // CRITICAL: the bottom action bar lives on the main wiz panel and
