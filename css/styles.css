@@ -8063,8 +8063,10 @@ body.app-mode .topic-layout {
      ellipsize. Bumping the floor to 360px means each card has
      enough room for its full label before the grid drops to 2-up.
      Mobile media query below further drops it to 1-up. */
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  gap: 0.85rem;
+  /* Single stacked column at every width — full-width sections, no 2/3-up grid
+     (#img424). */
+  grid-template-columns: 1fr;
+  gap: 0.7rem;
 }
 .pb-card {
   position: relative;
@@ -8073,7 +8075,7 @@ body.app-mode .topic-layout {
   gap: 0.5rem;
   align-items: stretch;
   width: 100%;
-  padding: 1rem 5.25rem 1.1rem 1.1rem; /* reserve right room for the vertically-centered Add pill */
+  padding: 1rem 2.6rem 1.1rem 1.1rem; /* reserve right room for the trailing chevron */
   background: var(--color-bg);
   border: 1px solid #e6e8ec;
   border-radius: 14px;
@@ -8172,6 +8174,23 @@ body.app-mode .topic-layout {
   white-space: nowrap;
   transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.06s;
 }
+/* Trailing chevron — replaces the Add+/Edit pill (#img424). Rotates when open. */
+.pb-card-chev {
+  position: absolute;
+  top: 50%;
+  right: 1.1rem;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: #64748b;
+  transition: transform 0.16s ease, color 0.14s;
+}
+.pb-card-chev svg { width: 18px; height: 18px; display: block; }
+.pb-card:hover .pb-card-chev { color: #2c4467; }
+.pb-card.is-expanded .pb-card-chev { transform: translateY(-50%) rotate(180deg); color: #2c4467; }
 .pb-card.has-items .pb-card-action {
   background: var(--color-bg);
   border-color: rgba(44, 68, 103, 0.22);
@@ -9112,7 +9131,11 @@ body.pb-action-bar-inline .wiz-action-bar {
   transform: none !important;
   margin-top: 1.25rem;
 }
-body.pb-action-bar-inline .wiz-action-bar-inner {
+body.pb-action-bar-inline .wiz-action-bar-inner,
+.pb-inline .wiz-action-bar-inner {
+  /* Zero the 32px inset so the action buttons align with the cards' left edge —
+     the prompts nav-dropdown host uses .pb-inline, not body.pb-action-bar-inline
+     (#img423). */
   padding: 0;
   padding-bottom: 0;
 }
@@ -18290,6 +18313,16 @@ button.aiidd-vlink { align-self: flex-start; }
 .prompts-topic-host .aii-brand,
 .prompts-topic-host .aii-headsub { display: none !important; }
 .prompts-topic-host .aii { border: none !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; overflow: visible !important; height: auto !important; }
+/* The prompt list was centered in a reading-width column while the "… Prompts"
+   header sat full-width left — left-align + full-width the whole list (#img425). */
+.prompts-topic-host,
+.prompts-topic-host .aii,
+.prompts-topic-host .aii-flow,
+.prompts-topic-host .aii-stage,
+.prompts-topic-host .aii-content,
+.prompts-topic-host .aii-content--modal,
+.prompts-topic-host .aii-builder-secs,
+.prompts-topic-host .aii-pathlist { max-width: none !important; margin-left: 0 !important; margin-right: 0 !important; }
 .prompts-topic-host .aii-stage,
 .prompts-topic-host .aii-content--modal { padding: 0 !important; }
 .prompts-topic-host .aii-builder-secs { max-height: none !important; overflow: visible !important; padding: 0 !important; }

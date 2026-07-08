@@ -396,6 +396,7 @@ function removeTopic(key, value) {
 
 // Inline Lucide-style SVG icons. Stroke-only, currentColor — picks
 // up the navy in .pb-card-icon. Sized 22x22 via the wrapper.
+const PB_CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 const PB_ICONS = {
   model:
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
@@ -495,17 +496,14 @@ function renderPbCardsHTML() {
           (items.length > 5 ? `<span class="pb-card-more">+${items.length - 5} more</span>` : '')
         }</div>`
       : '';
-    // The trailing action chip replaces both the old ">" arrow and
-    // the separate "+ Add" CTA — one element doing both jobs in the
-    // space the chevron used to waste. Label flips between "Add +"
-    // (empty card) and "Edit" (has selections).
-    const actionLabel = items.length ? 'Edit' : 'Add +';
+    // Trailing chevron (no more "Add +/Edit" pill) — each card is a stacked,
+    // full-width section that expands in place; the chevron rotates open (#img424).
     return `
       <button type="button" class="pb-card${items.length ? ' has-items' : ''}" data-pb-card="${card.key}">
         <div class="pb-card-head">
           <span class="pb-card-icon" aria-hidden="true">${PB_ICONS[card.key] || ''}</span>
           <span class="pb-card-title">${escapeHTML(card.label)}</span>
-          <span class="pb-card-action" aria-hidden="true">${actionLabel}</span>
+          <span class="pb-card-chev" aria-hidden="true">${PB_CHEV}</span>
         </div>
         <p class="pb-card-desc">${escapeHTML(card.desc)}</p>
         ${summaryHTML}
