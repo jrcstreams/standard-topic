@@ -18269,7 +18269,9 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
      clamp made the subnav creep left as the window narrowed (#img160). */
   padding: 0 2rem;
 }
-@media (max-width: 560px) { .topic-subnav-inner { padding: 0 1rem; } }
+/* Drop to 1rem at ≤640 (not ≤560) so the topic name lines up with the main nav +
+   news content, which both switch to 1rem at 640 (#img327). */
+@media (max-width: 640px) { .topic-subnav-inner { padding: 0 1rem; } }
 .topic-subnav-inner .topic-subnav-picker { position: relative; display: block; width: 100%; }
 /* Identity bar sizing MATCHES the homepage picker exactly — same button padding,
    icon chip, title size, chevron (#img99-#img101). */
@@ -18310,7 +18312,9 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
   border: none !important; border-radius: 0 !important; background: none !important;
   position: static !important; overflow: visible !important;
 }
-@media (max-width: 560px) { .topic-subnav-controls .topic-paths-nav { padding: 8px 1rem !important; } }
+/* Match the nav/content 1rem switch at ≤640 (was ≤560) so the News Feed / AI
+   Insights pills line up with the topic name + news cards (#img327). */
+@media (max-width: 640px) { .topic-subnav-controls .topic-paths-nav { padding: 8px 1rem !important; } }
 /* Level 1 (News Feed | AI Insights) = PILL / bubble tabs — the most prominent nav
    level (#img148). */
 .topic-subnav-controls .ptab {
