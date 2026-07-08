@@ -17280,8 +17280,11 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 }
 .tsp-cell:hover { background: color-mix(in srgb, #2563eb 7%, #fff); color: #1d4ed8; }
 .tsp-cell:hover .tsp-cell-ic { color: #2563eb; }
-.tsp-cell-ic { flex: none; width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; color: var(--color-text-light); }
-.tsp-cell-ic .tsp-ic-svg { width: 16px; height: 16px; }
+.tsp-cell-ic { flex: none; width: 24px; height: 24px; display: grid; place-items: center; color: var(--color-text-light); }
+/* place-items + display:block drop the inline baseline gap that pushed the icon
+   high above the subtopic name (#img325/#img326). */
+.tsp-cell-ic .tsp-ic-svg { width: 16px; height: 16px; display: grid; place-items: center; }
+.tsp-cell-ic svg { display: block; width: 16px; height: 16px; }
 .tsp-cell-name { flex: 1 1 auto; min-width: 0; font-size: 0.92rem; font-weight: 500; }
 .tsp-cell.is-active { background: color-mix(in srgb, #26375a 7%, #fff); }
 .tsp-cell.is-active .tsp-cell-name { color: #26375a; font-weight: 600; }
