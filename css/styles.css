@@ -17964,7 +17964,12 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .aii-nav-dd-subbar { flex: 0 0 auto; padding: 10px 2px 4px; }
 .aii-nav-dd-subbar .tlm-controlbar { margin: 0; }
 /* Left-align the "Trend summaries are AI-generated" legend in the dropdown (#431). */
-.aii-nav-dd-subbar .tlm-controlbar-inner { justify-content: space-between; width: 100%; }
+/* Wide screens: group the sports toggle next to the AI-legend (left), not pinned to
+   the far right. Narrow screens: pin it right (space-between) for a cleaner fit. */
+.aii-nav-dd-subbar .tlm-controlbar-inner { justify-content: flex-start; gap: 8px 16px; width: 100%; }
+@media (max-width: 560px) {
+  .aii-nav-dd-subbar .tlm-controlbar-inner { justify-content: space-between; }
+}
 /* Sports include/exclude toggle in the Trending dropdown's sticky sub-header. */
 .trend-sports-toggle { display: inline-flex; align-items: center; gap: 8px; padding: 4px 6px; border: none; background: none; cursor: pointer; font-family: var(--font-family); flex: none; }
 .trend-sports-toggle-label { font-size: 0.75rem; font-weight: 600; color: var(--color-text-muted); white-space: nowrap; }
