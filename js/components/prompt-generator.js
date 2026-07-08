@@ -1072,14 +1072,15 @@ function render() {
 
       <div class="wiz-action-bar">
         <div class="wiz-action-bar-inner">
-          <button type="button" class="wiz-action-btn is-ready" id="wiz-submit-prompt">
-            <span>Submit Prompt</span>
-          </button>
-          <button type="button" class="wiz-action-preview" id="wiz-open-preview">Preview Prompt</button>
-          <button type="button" class="wiz-action-restart" id="wiz-restart" ${isPristine ? 'disabled' : ''}>Clear Prompt</button>
+          <div class="wiz-action-buttons">
+            <button type="button" class="wiz-action-btn is-ready" id="wiz-submit-prompt">
+              <span>Submit Prompt</span>
+            </button>
+            <button type="button" class="wiz-action-preview" id="wiz-open-preview">Preview Prompt</button>
+            <button type="button" class="wiz-action-restart" id="wiz-restart" ${isPristine ? 'disabled' : ''}>Clear Prompt</button>
+          </div>
+          <div class="wiz-preview-drawer" id="wiz-preview-drawer" hidden></div>
         </div>
-        <div class="wiz-preview-drawer" id="wiz-preview-drawer" hidden></div>
-        <p class="wiz-submit-disc" id="wiz-submit-disc"></p>
       </div>
       <div class="wiz-action-bar-spacer"></div>
     </div>
@@ -2490,12 +2491,17 @@ function renderSubmitPanel() {
         <div class="pm-actions">
           <button class="pm-submit pm-submit--sm" id="wiz-submit-go" type="button" ${isEmpty ? 'disabled' : ''}>${escapeHTML(getSubmitLabel())}</button>
         </div>
+        ${model ? `
+          <div class="pm-meta">
+            ${meta.description ? `<div class="pm-meta-block"><span class="pm-meta-h">Model info</span><p class="pm-meta-t">${escapeHTML(model.name)} — ${escapeHTML(meta.description.replace(/\{model\}/g, model.name))}</p></div>` : ''}
+            <div class="pm-meta-block"><span class="pm-meta-h">Disclaimer</span><p class="pm-meta-t">You'll be redirected to a third-party AI platform. Standard Topic isn't responsible for actions taken once you leave this site.</p></div>
+          </div>
+        ` : ''}
       </section>
     </div>
   `;
 
   bindSubmitPanelEvents();
-  refreshSubmitDisc();
 }
 
 function bindSubmitPanelEvents() {

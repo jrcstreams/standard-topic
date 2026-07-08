@@ -4723,6 +4723,11 @@ a.news-card-source:active { background: color-mix(in srgb, #2563eb 20%, #f4f6f9)
 .pm-submit-area { margin-top: 6px; }
 /* Send Prompt — content-sized + left-aligned in the drawer (#img384). */
 .pm-submit--sm { width: auto !important; margin-top: 0 !important; padding: 10px 20px; font-size: 0.88rem; }
+/* Model info + Disclaimer, labelled, inside the preview drawer (#img394/403). */
+.pm-meta { margin-top: 16px; display: grid; gap: 12px; }
+.pm-meta-block { display: grid; gap: 3px; }
+.pm-meta-h { font-family: var(--font-family); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #64748b; }
+.pm-meta-t { margin: 0; font-size: 0.8rem; line-height: 1.5; color: var(--color-text-muted); }
 /* The inline buffer already has a Back — drop the redundant panel close. */
 .pb-inline-body .pm-close { display: none; }
 /* Preview Prompt button + its inline drawer (#img383/384). */
@@ -8698,6 +8703,9 @@ body.app-mode .topic-layout {
 /* When a section title sits directly above its field (no description, e.g. the
    Topics Primary/Secondary bars), give the field breathing room (#img375). */
 .pb-modal-section-title + [data-field] { margin-top: 0.55rem; }
+/* Same breathing room for the Topics Primary/Secondary "+ Select" bars, which sit
+   directly under their label (no [data-field] wrapper) (#img397). */
+.pb-modal-section-title + .wiz-topic-chips { margin-top: 0.6rem; }
 .pb-req-tag { background: rgba(194, 65, 12, 0.1); color: #c2410c; }
 .pb-optional-tag { background: rgba(15, 26, 46, 0.06); color: var(--color-text-muted); }
 
@@ -9061,10 +9069,17 @@ body.app-mode .topic-layout {
   margin: 0 auto;
   padding: 0.75rem 2rem;
   padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  /* Stack the button row + the preview drawer (drawer is full width beneath the
+     buttons) — was a flex ROW which pushed the drawer/disclaimer into side columns
+     and caused mobile side-scroll (#img394/401/402). */
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  min-width: 0;
 }
+.wiz-action-buttons { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; justify-content: flex-start; }
+.wiz-action-buttons .wiz-action-btn, .wiz-action-buttons .wiz-action-preview, .wiz-action-buttons .wiz-action-restart { flex: 0 0 auto; }
 .wiz-action-bar-spacer {
   height: 70px;
 }
@@ -9178,11 +9193,12 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
   background: #e4e9f1;
 }
 .wiz-action-restart:disabled {
-  opacity: 0.55;
+  /* Still clearly a button when nothing's added — just a touch muted (#img394). */
+  opacity: 1;
   cursor: not-allowed;
   border-color: #e1e6ee;
-  color: #94a3b8;
-  background: #f4f6f9;
+  color: #64748b;
+  background: #eef1f6;
 }
 
 @media (max-width: 640px) {
@@ -18605,7 +18621,8 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 .pb-inline .pb-card { cursor: pointer; }
 .pb-inline .pb-card.is-expanded { grid-column: 1 / -1; border-color: color-mix(in srgb, #2563eb 35%, var(--color-surface-border)); box-shadow: 0 8px 22px -14px rgba(37,99,235,.28); }
 /* Head→first-section divider: same rhythm as the section dividers (#img376-380). */
-.pb-card-config { margin-top: 1.15rem; border-top: 1px solid var(--color-surface-border); padding-top: 0.95rem; }
+/* Tighter gap between the card head description and the first divider (#img398-400). */
+.pb-card-config { margin-top: 0.55rem; border-top: 1px solid var(--color-surface-border); padding-top: 0.95rem; }
 .pb-card-config-body { min-width: 0; }
 .pb-card-config-foot {
   /* Simple in-flow footer — a top divider + the buttons, with the card's own
