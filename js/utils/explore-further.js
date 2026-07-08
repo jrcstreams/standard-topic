@@ -20,6 +20,7 @@ const ARROW = '<svg class="xf-arrow" viewBox="0 0 24 24" width="15" height="15" 
 const EXT = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>';
 const BACK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
 const ICON_SEND = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
+const ICON_GEAR = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
 const ICON_EYE = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
 
 function preferredModel() {
@@ -83,18 +84,18 @@ function xfReviewHTML(prompt) {
       <div class="aii-review-lblrow"><span class="aii-review-lbl">Prompt Preview</span><button type="button" class="aii-review-reset" data-xfr-reset hidden>Reset</button></div>
       <div class="aii-review-tawrap"><textarea class="aii-review-ta" data-xfr-ta aria-label="Prompt — editable">${esc(prompt)}</textarea><button type="button" class="aii-review-copy" data-xfr-copy aria-label="Copy prompt" title="Copy">${ICON_COPY_MINI}</button></div>
     </div>
-    <details class="aii-review-acc" data-xfr-adv>
-      <summary class="aii-review-accsum"><span class="aii-review-acc-title">Advanced settings</span><span class="aii-review-acc-hint">Reasoning, format, custom instructions</span>${CHEV}</summary>
-      <div class="aii-review-accbody">
-        <div class="aii-review-grid">
-          <label class="aii-review-fld"><span class="aii-review-flbl">Reasoning level</span><span class="xf-select-wrap"><select class="aii-review-reasoning" data-xfr-reasoning>${reasoningOpts}</select>${CHEV}</span></label>
-          <label class="aii-review-fld"><span class="aii-review-flbl">Output type</span><span class="xf-select-wrap"><select class="aii-review-output" data-xfr-output>${otOpts}</select>${CHEV}</span></label>
-        </div>
-        <label class="aii-review-fld"><span class="aii-review-flbl">Secondary topics</span><input type="text" class="aii-review-secondary" data-xfr-secondary placeholder="e.g. trade policy"></label>
-        <label class="aii-review-fld"><span class="aii-review-flbl">Custom instructions <span class="aii-review-flbl-note">— this submission only</span></span><textarea class="aii-review-custom" data-xfr-custom rows="2" placeholder="A one-off instruction for this prompt"></textarea></label>
+    <div class="aii-review-adv" data-xfr-adv hidden>
+      <div class="aii-review-grid">
+        <label class="aii-review-fld"><span class="aii-review-flbl">Reasoning level</span><span class="xf-select-wrap"><select class="aii-review-reasoning" data-xfr-reasoning>${reasoningOpts}</select>${CHEV}</span></label>
+        <label class="aii-review-fld"><span class="aii-review-flbl">Output type</span><span class="xf-select-wrap"><select class="aii-review-output" data-xfr-output>${otOpts}</select>${CHEV}</span></label>
       </div>
-    </details>
-    <button type="button" class="aii-review-submit" data-xfr-submit${m ? '' : ' disabled'}>${ICON_SEND}<span data-xfr-submitlabel>${esc(m ? `Submit to ${m.name}` : 'Submit prompt')}</span></button>
+      <label class="aii-review-fld"><span class="aii-review-flbl">Secondary topics</span><input type="text" class="aii-review-secondary" data-xfr-secondary placeholder="e.g. trade policy"></label>
+      <label class="aii-review-fld"><span class="aii-review-flbl">Custom instructions <span class="aii-review-flbl-note">— this submission only</span></span><textarea class="aii-review-custom" data-xfr-custom rows="2" placeholder="A one-off instruction for this prompt"></textarea></label>
+    </div>
+    <div class="aii-review-footer">
+      <button type="button" class="aii-review-editbtn" data-xfr-edit aria-expanded="false">${ICON_GEAR}<span>Edit Settings</span></button>
+      <button type="button" class="aii-review-submit" data-xfr-submit${m ? '' : ' disabled'}>${ICON_SEND}<span data-xfr-submitlabel>${esc(m ? `Submit to ${m.name}` : 'Submit prompt')}</span></button>
+    </div>
     <p class="aii-review-disc" data-xfr-disc>${esc(xfReviewDisc(m))}</p>
   </div>`;
 }
@@ -115,6 +116,14 @@ function wireXfReview(host, base) {
   resetBtn && resetBtn.addEventListener('click', regen);
   host.querySelector('[data-xfr-copy]')?.addEventListener('click', async (e) => { e.stopPropagation(); try { await navigator.clipboard.writeText(ta ? ta.value : base); } catch (_) {} });
   const submitBtn = host.querySelector('[data-xfr-submit]');
+  const editBtn = host.querySelector('[data-xfr-edit]');
+  const adv = host.querySelector('[data-xfr-adv]');
+  editBtn && editBtn.addEventListener('click', () => {
+    const open = adv && adv.hidden;
+    if (adv) adv.hidden = !open;
+    editBtn.classList.toggle('is-open', !!open);
+    editBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
   host.querySelector('[data-xfr-reasoning]')?.addEventListener('change', (e) => { ps.reasoning = e.target.value; regen(); });
   host.querySelector('[data-xfr-output]')?.addEventListener('change', (e) => { ps.outputType = e.target.value; regen(); });
   host.querySelector('[data-xfr-secondary]')?.addEventListener('input', (e) => { ps.secondaryTopic = e.target.value; regen(); });
@@ -127,7 +136,7 @@ function wireXfReview(host, base) {
     const note = document.createElement('p');
     note.className = 'aii-review-done';
     note.textContent = `Opened ${m.name} · prompt copied to your clipboard — paste it in if it didn’t auto-fill.`;
-    submitBtn.replaceWith(note);
+    (host.querySelector('.aii-review-footer') || submitBtn).replaceWith(note);
   });
 }
 

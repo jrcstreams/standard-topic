@@ -4,16 +4,16 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp496';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp496';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp501';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp501';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp496';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp496';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp501';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp501';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -142,6 +142,7 @@ function genLoaderHTML() {
 }
 const ICON_EYES = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>';
 const ICON_COPY_MINI = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="8" height="9" rx="1.2"/><path d="M9.5 3.5V2.5a1 1 0 0 0-1-1h-5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1"/></svg>';
+const ICON_GEAR = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>';
 const ICONS = {
   discover: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="15.5 8.5 10.5 10.5 8.5 15.5 13.5 13.5"/></svg>',
   learn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v15a2 2 0 0 0-2-1.5H2z"/><path d="M22 5a2 2 0 0 0-2-2h-6a2 2 0 0 0-2 2v15a2 2 0 0 1 2-1.5h8z"/></svg>',
@@ -1303,18 +1304,18 @@ export function renderAIIntelligence(container, scope) {
         <div class="aii-review-lblrow"><span class="aii-review-lbl">Prompt Preview</span><button type="button" class="aii-review-reset" data-review-reset hidden>Reset</button></div>
         <div class="aii-review-tawrap"><textarea class="aii-review-ta" data-review-ta aria-label="Prompt — editable">${esc(ctx.prompt)}</textarea><button type="button" class="aii-review-copy" data-review-copy aria-label="Copy prompt" title="Copy">${ICON_COPY_MINI}</button></div>
       </div>
-      <details class="aii-review-acc" data-review-adv>
-        <summary class="aii-review-accsum"><span class="aii-review-acc-title">Advanced settings</span><span class="aii-review-acc-hint">Reasoning, format, custom instructions</span>${CHEV}</summary>
-        <div class="aii-review-accbody">
-          <div class="aii-review-grid">
-            <label class="aii-review-fld"><span class="aii-review-flbl">Reasoning level</span><span class="aii-explore-select-wrap"><select class="aii-review-reasoning">${reasoningOpts}</select>${CHEV}</span></label>
-            <label class="aii-review-fld"><span class="aii-review-flbl">Output type</span><span class="aii-explore-select-wrap"><select class="aii-review-output">${otOpts}</select>${CHEV}</span></label>
-          </div>
-          <label class="aii-review-fld"><span class="aii-review-flbl">Secondary topics</span><input type="text" class="aii-review-secondary" placeholder="e.g. trade policy"></label>
-          <label class="aii-review-fld"><span class="aii-review-flbl">Custom instructions <span class="aii-review-flbl-note">— this submission only</span></span><textarea class="aii-review-custom" rows="2" placeholder="A one-off instruction for this prompt"></textarea></label>
+      <div class="aii-review-adv" data-review-adv hidden>
+        <div class="aii-review-grid">
+          <label class="aii-review-fld"><span class="aii-review-flbl">Reasoning level</span><span class="aii-explore-select-wrap"><select class="aii-review-reasoning">${reasoningOpts}</select>${CHEV}</span></label>
+          <label class="aii-review-fld"><span class="aii-review-flbl">Output type</span><span class="aii-explore-select-wrap"><select class="aii-review-output">${otOpts}</select>${CHEV}</span></label>
         </div>
-      </details>
-      <button type="button" class="aii-review-submit" data-review-submit${m ? '' : ' disabled'}>${ICON_SEND}<span data-review-submitlabel>${esc(m ? `Submit to ${m.name}` : 'Submit prompt')}</span></button>
+        <label class="aii-review-fld"><span class="aii-review-flbl">Secondary topics</span><input type="text" class="aii-review-secondary" placeholder="e.g. trade policy"></label>
+        <label class="aii-review-fld"><span class="aii-review-flbl">Custom instructions <span class="aii-review-flbl-note">— this submission only</span></span><textarea class="aii-review-custom" rows="2" placeholder="A one-off instruction for this prompt"></textarea></label>
+      </div>
+      <div class="aii-review-footer">
+        <button type="button" class="aii-review-editbtn" data-review-edit aria-expanded="false">${ICON_GEAR}<span>Edit Settings</span></button>
+        <button type="button" class="aii-review-submit" data-review-submit${m ? '' : ' disabled'}>${ICON_SEND}<span data-review-submitlabel>${esc(m ? `Submit to ${m.name}` : 'Submit prompt')}</span></button>
+      </div>
       <p class="aii-review-disc" data-review-disc>${esc(reviewDiscText(m))}</p>
     </div>`;
   }
@@ -1336,6 +1337,15 @@ export function renderAIIntelligence(container, scope) {
     resetBtn && resetBtn.addEventListener('click', regen);
     host.querySelector('[data-review-copy]')?.addEventListener('click', async (e) => { e.stopPropagation(); try { await navigator.clipboard.writeText(ta ? ta.value : base); } catch (_) {} });
     const submitBtn = host.querySelector('[data-review-submit]');
+    // Edit Settings toggles the advanced fields (reasoning/format/custom) inline.
+    const editBtn = host.querySelector('[data-review-edit]');
+    const adv = host.querySelector('[data-review-adv]');
+    editBtn && editBtn.addEventListener('click', () => {
+      const open = adv && adv.hidden;
+      if (adv) adv.hidden = !open;
+      editBtn.classList.toggle('is-open', !!open);
+      editBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
     host.querySelector('.aii-review-reasoning')?.addEventListener('change', (e) => { ps.reasoning = e.target.value; regen(); });
     host.querySelector('.aii-review-output')?.addEventListener('change', (e) => { ps.outputType = e.target.value; regen(); });
     host.querySelector('.aii-review-secondary')?.addEventListener('input', (e) => { ps.secondaryTopic = e.target.value; regen(); });
@@ -1348,7 +1358,7 @@ export function renderAIIntelligence(container, scope) {
       const note = document.createElement('p');
       note.className = 'aii-review-done';
       note.textContent = `Opened ${m.name} · prompt copied to your clipboard — paste it in if it didn’t auto-fill.`;
-      submitBtn.replaceWith(note);
+      (host.querySelector('.aii-review-footer') || submitBtn).replaceWith(note);
     });
   }
 

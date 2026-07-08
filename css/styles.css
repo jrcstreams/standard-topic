@@ -15303,12 +15303,28 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-review-reasoning, .aii-review-output { -webkit-appearance: none; appearance: none; padding-right: 30px; cursor: pointer; }
 .aii-review-custom { resize: vertical; line-height: 1.45; }
 .aii-review-fld .aii-explore-select-wrap, .aii-review-fld .xf-select-wrap { width: 100%; }
-/* Submit — content-sized, NOT a full-width blob (#img287), with room around it. */
-.aii-review-submit { justify-self: start; display: inline-flex; align-items: center; gap: 8px; width: auto; margin-top: 2px; padding: 11px 22px; border: none; border-radius: 9px; background: var(--color-primary, #14213d); color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.88rem; font-weight: 600; transition: background .14s ease; }
-.aii-review-submit:hover { background: color-mix(in srgb, var(--color-primary) 88%, #000); }
+/* Advanced fields collapse — toggled inline by the Edit Settings button (#img329). */
+.aii-review-adv { display: grid; gap: 10px; padding: 2px 0 4px; }
+.aii-review-adv[hidden] { display: none; }
+/* Edit Settings + Submit share one row (#img329). */
+.aii-review-footer { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 2px; }
+/* Edit Settings — the secondary, offset-colour action (soft slate, gear icon). */
+.aii-review-editbtn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 15px; border: 1px solid #d6dce6; border-radius: 9px; background: #eef1f6; color: #3d4a5f; cursor: pointer; font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; transition: background .14s ease, border-color .14s ease; }
+.aii-review-editbtn:hover { background: #e4e9f1; border-color: #c6cede; }
+.aii-review-editbtn.is-open { background: #e2e8f3; border-color: #b9c4da; color: #26375a; }
+.aii-review-editbtn svg { width: 15px; height: 15px; transition: transform .2s ease; }
+.aii-review-editbtn.is-open svg { transform: rotate(35deg); }
+/* Submit — content-sized (#img287), lightened from the near-black navy (#img329). */
+.aii-review-submit { display: inline-flex; align-items: center; gap: 8px; width: auto; padding: 10px 20px; border: none; border-radius: 9px; background: #33517f; color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.88rem; font-weight: 600; transition: background .14s ease; }
+.aii-review-submit:hover { background: #2b466e; }
 .aii-review-submit:disabled { opacity: 0.5; cursor: default; }
 .aii-review-submit svg { width: 15px; height: 15px; }
-.aii-review-disc { margin: 2px 0 0; font-size: 0.72rem; line-height: 1.45; color: var(--color-text-light); }
+.aii-review-disc { margin: 6px 0 0; font-size: 0.72rem; line-height: 1.45; color: var(--color-text-light); }
+/* iOS zooms the viewport when focusing an input whose font-size < 16px — keep the
+   review textarea + fields at 16px on phones so it doesn't jump/zoom (#img329). */
+@media (max-width: 640px) {
+  .aii-review-ta, .aii-review-fld input, .aii-review-custom, .aii-review-reasoning, .aii-review-output { font-size: 16px; }
+}
 .aii-review-done { margin: 2px 0 0; font-size: 0.82rem; font-weight: 600; color: #15803d; }
 /* Nested review panel — sits below Send-to / Direct / Review within the menu,
    separated by a hairline, so it reads as an in-place dropdown (#img299/#img300). */
@@ -15337,7 +15353,7 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-fi-acc:last-child { border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 72%, transparent); }
 /* Square, straight-edge rows separated by the .aii-fi-acc hairlines — no rounded
    "bubble" hover (#img284). A flat full-width tint on hover, name + chevron warm. */
-.aii-fi-accsum { display: flex; align-items: center; gap: 12px; width: 100%; margin: 0; padding: 13px 12px; border: none; background: none; border-radius: 0; cursor: pointer; text-align: left; font-family: var(--font-family); transition: background .12s ease; }
+.aii-fi-accsum { display: flex; align-items: center; gap: 12px; width: 100%; margin: 0; padding: 13px 18px 13px 12px; border: none; background: none; border-radius: 0; cursor: pointer; text-align: left; font-family: var(--font-family); transition: background .12s ease; }
 .aii-fi-accsum:hover { background: #f6f8fb; }
 .aii-fi-accsum:hover .aii-fi-acc-chev { color: var(--color-primary); }
 .aii-fi-acc-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
@@ -15757,7 +15773,7 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* Options = square rows separated by hairlines on the grey container, no white
    rounded cards (#img284/#img286). */
 .aii-explore { display: block; }
-.aii-explore-opt { display: flex; align-items: center; gap: 11px; text-align: left; width: 100%; padding: 12px 2px; border: none; border-top: 1px solid #e1e6ee; border-radius: 0; background: none; cursor: pointer; font-family: var(--font-family); transition: background .12s; }
+.aii-explore-opt { display: flex; align-items: center; gap: 11px; text-align: left; width: 100%; padding: 12px 6px 12px 2px; border: none; border-top: 1px solid #e1e6ee; border-radius: 0; background: none; cursor: pointer; font-family: var(--font-family); transition: background .12s; }
 .aii-explore-opt:hover { background: color-mix(in srgb, #33517f 6%, transparent); }
 .aii-explore-ic { flex: none; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: var(--color-primary); }
 .aii-explore-ic svg { width: 15px; height: 15px; }
