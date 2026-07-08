@@ -17533,7 +17533,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .search-aii-host .aii-topbar { padding-top: 6px; }
 /* Smaller, calmer "Results for ‘term’" line with a real gap between the two spans
    and clear breathing room above (input) and below (the Prompts/News tabs) (#img335). */
-.search-aii-host .aii-builder-topic--resultsfor { font-size: 1rem; font-weight: 600; gap: 0.32em; margin: 8px 0 16px; }
+.search-aii-host .aii-builder-topic--resultsfor { font-size: 0.98rem; font-weight: 550; gap: 0.32em; margin: 16px 0 22px; }
 .search-aii-host .aii-builder-resultsfor { color: var(--color-text-muted); font-weight: 600; }
 .search-aii-host .aii-builder-topic--resultsfor .aii-builder-topic-tx { color: #14213d; }
 /* Left-align the result section rows with the header / input / "Results for" line —
@@ -17693,7 +17693,7 @@ body.home-search #section-newsfeed .news-card:hover {
 /* Custom Search news results = the same bordered, spaced cards as the home/topic
    feed (they weren't scoped to #section-newsfeed, so they rode against the top +
    each other, #img225). */
-.search-news-section .news-list { display: flex !important; flex-direction: column !important; grid-template-columns: none !important; gap: 12px !important; padding: 4px 0 6px !important; }
+.search-news-section .news-list { display: flex !important; flex-direction: column !important; grid-template-columns: none !important; gap: 12px !important; padding: 14px 0 6px !important; }
 .search-news-section .news-card { display: flex !important; flex-direction: column; margin: 0 !important; border: 1px solid var(--color-surface-border) !important; border-radius: 14px !important; background: #fff !important; box-shadow: 0 1px 2px rgba(15,23,42,.04) !important; padding: 16px 18px !important; cursor: pointer; transition: border-color .15s ease, box-shadow .15s ease; }
 .search-news-section .news-card:hover { border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)) !important; box-shadow: 0 12px 26px -16px rgba(15,23,42,.3) !important; }
 .search-news-section .news-card .news-card-link { padding: 0 !important; cursor: pointer; }

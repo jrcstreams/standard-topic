@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp512';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp514';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp512';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp514';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp512';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp512';
-import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp512';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp512';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp514';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp514';
+import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp514';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp514';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp512';
-import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp512';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp512';
-import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp512';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp512';
-import { renderWebSources } from './components/websources.js?v=20260706-revamp512';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp512';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp512';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp514';
+import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp514';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp514';
+import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp514';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp514';
+import { renderWebSources } from './components/websources.js?v=20260706-revamp514';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp514';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp514';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp512';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp514';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -3796,6 +3796,10 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   function expand(rawTerm) {
     const t = (rawTerm || '').trim();
     if (!t) return;
+    // Homepage inline panel: open the search dropdown/modal (same as mobile + the
+    // nav Search) instead of rendering results inside the hero card. Every entry
+    // point (Enter, a suggestion row, a trend chip) routes through here.
+    if (!isModal) { hideSuggest(); navigate('#/custom/' + encodeURIComponent(t)); return; }
     currentTerm = t;
     input.value = t;
     hideSuggest();
