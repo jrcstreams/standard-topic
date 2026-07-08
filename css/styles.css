@@ -8289,8 +8289,9 @@ body.app-mode .topic-layout {
 .pb-modal-section-title {
   margin: 0 0 0.2rem;
   font-family: var(--font-display);
-  font-size: 0.95rem;
-  font-weight: 700;
+  /* Scaled down from 0.95rem/700 — the subsection headers read too heavy (#img347/#img355). */
+  font-size: 0.84rem;
+  font-weight: 600;
   color: #1e2d44;
   letter-spacing: -0.01em;
 }
@@ -18212,7 +18213,7 @@ button.aiidd-vlink { align-self: flex-start; }
 .pb-inline-body .pm-body { max-height: none !important; overflow: visible !important; }
 .pb-inline-body .pm-header { padding-top: 0; }
 
-.pb-inline-foot { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--color-surface-border); }
+.pb-inline-foot { display: flex; justify-content: flex-start; gap: 10px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--color-surface-border); }
 .pb-inline-ghost, .pb-inline-cta {
   font-family: var(--font-family); font-size: 0.88rem; font-weight: 650; cursor: pointer;
   padding: 9px 18px; border-radius: 10px; transition: background .14s ease, border-color .14s ease, color .14s ease;
@@ -18531,10 +18532,14 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 .pb-card-config { margin-top: 14px; border-top: 1px solid var(--color-surface-border); padding-top: 14px; }
 .pb-card-config-body { min-width: 0; }
 .pb-card-config-foot {
-  position: sticky; bottom: 0; z-index: 6; display: flex; justify-content: flex-end; gap: 10px;
+  position: sticky; bottom: 0; z-index: 6; display: flex; justify-content: flex-start; gap: 10px;
   margin: 14px -18px -14px; padding: 12px 18px;
-  background: #fff; border-top: 1px solid var(--color-surface-border);
+  background: #fff; border-top: 1px solid var(--color-surface-border); border-radius: 0 0 13px 13px;
 }
+/* Hide the lingering Add/Edit pill once a card is expanded, and reclaim the right
+   padding it reserved so the config + border use the full width (#img341/346/356). */
+.pb-inline .pb-card.is-expanded .pb-card-action { display: none !important; }
+.pb-inline .pb-card.is-expanded { padding-right: 1.1rem; overflow: visible; }
 .pb-cfg-ghost, .pb-cfg-cta {
   font-family: var(--font-family); font-size: 0.88rem; font-weight: 650; cursor: pointer;
   padding: 9px 20px; border-radius: 10px; transition: background .14s ease, border-color .14s ease, color .14s ease;
@@ -18547,7 +18552,7 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 /* Nested picker inside an expanded card (Browse topics / Select field, #img49). */
 .pb-nested-picker { margin: 12px 0 6px; border: 1px solid var(--color-surface-border); border-radius: 12px; padding: 12px 12px 10px; background: #fbfcfe; }
 .pb-nested-picker .pb-acc-content { max-height: 320px; overflow-y: auto; overscroll-behavior: contain; }
-.pb-nested-foot { display: flex; justify-content: flex-end; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--color-surface-border); }
+.pb-nested-foot { display: flex; justify-content: flex-start; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--color-surface-border); }
 .pb-nested-done { font-family: var(--font-family); padding: 8px 20px; border-radius: 9px; border: 1px solid #2563eb; background: #2563eb; color: #fff; font-weight: 650; font-size: 0.86rem; cursor: pointer; }
 .pb-nested-done:hover { background: #1d4ed8; border-color: #1d4ed8; }
 
