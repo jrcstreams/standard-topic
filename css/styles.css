@@ -8547,6 +8547,20 @@ body.app-mode .topic-layout {
 .pb-acc-sub:hover { background: rgba(15, 26, 46, 0.04); color: #2c4467; }
 .pb-acc-sub.is-selected { color: #2c4467; font-weight: 600; }
 .pb-acc-sub-name { flex: 1; min-width: 0; }
+/* Condensed topic picker — ONLY the prompt-builder inline dropdown (#img395/396).
+   Smaller fonts/rows than the site-wide topic listings; cleaner + tighter. */
+.pb-nested-picker { padding: 10px 10px 8px; }
+.pb-nested-picker .pb-acc-search-input { font-size: 0.85rem; }
+.pb-nested-picker .pb-modal-section-desc { font-size: 0.74rem; margin-bottom: 0.45rem; }
+.pb-nested-picker .pb-acc-content { display: grid; gap: 6px; }
+.pb-nested-picker .pb-acc-card { border-radius: 8px; }
+.pb-nested-picker .pb-acc-head { padding: 0.42rem 0.55rem; gap: 0.5rem; font-size: 0.85rem; }
+.pb-nested-picker .pb-acc-icon { width: 22px; height: 22px; }
+.pb-nested-picker .pb-acc-icon svg { width: 15px; height: 15px; }
+.pb-nested-picker .pb-acc-chev { width: 22px; height: 22px; }
+.pb-nested-picker .pb-acc-body { padding: 0 0.55rem 0.5rem; }
+.pb-nested-picker .pb-acc-sub { padding: 0.3rem 0.3rem; font-size: 0.82rem; gap: 0.5rem; }
+.pb-nested-picker .pb-acc-sub-parent { font-size: 0.82rem; }
 /* Checkbox indicator sits where the bullet was. Same fixed size in
    both states so toggling doesn't shift the row. */
 .pb-acc-check {

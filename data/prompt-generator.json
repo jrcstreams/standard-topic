@@ -319,6 +319,36 @@
       ]
     },
     {
+      "key": "reasoning",
+      "label": "Reasoning Level",
+      "row": 3,
+      "multiSelect": false,
+      "allowCustom": false,
+      "description": "How much reasoning and depth to apply.",
+      "options": [
+        {
+          "value": "brief",
+          "label": "Brief",
+          "clause": "Keep your response concise — a tight summary in just a few sentences"
+        },
+        {
+          "value": "standard",
+          "label": "Standard",
+          "clause": ""
+        },
+        {
+          "value": "detailed",
+          "label": "Detailed",
+          "clause": "Provide a thorough response with clear structure and supporting context"
+        },
+        {
+          "value": "deep",
+          "label": "Deep",
+          "clause": "Provide an in-depth analysis covering nuances, edge cases, counter-arguments, and underlying assumptions"
+        }
+      ]
+    },
+    {
       "key": "geographic",
       "label": "Geographic Focus",
       "row": 4,
