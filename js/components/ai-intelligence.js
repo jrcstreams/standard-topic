@@ -4,16 +4,16 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp535';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp535';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp536';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp536';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp535';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp535';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp536';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp536';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -158,10 +158,11 @@ function attributeItemsToSections(items, sections) {
   }
   return { buckets, unmatched };
 }
-function secSourcesHTML(items, label) {
+function secSourcesHTML(items, hideLabel) {
   if (!items || !items.length) return '';
   const rows = items.map((x) => `<a class="aii-sec-src" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer" title="${escAttr(x.title)}"><span class="aii-sec-src-tx"><span class="aii-sec-src-title">${esc(x.title)}</span>${x.meta ? `<span class="aii-sec-src-host">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`).join('');
-  return `<div class="aii-sec-sources"><div class="aii-sec-sources-label">${esc(label || 'Sources')}</div>${rows}</div>`;
+  const label = hideLabel ? '' : '<div class="aii-sec-sources-label">Sources</div>';
+  return `<div class="aii-sec-sources">${label}${rows}</div>`;
 }
 // Paper-plane (Direct Submit — "send it off") and an eye (Review — "preview").
 const ICON_SEND = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2.5L11 13"/><path d="M21.5 2.5L15 21l-4-8-8-4z"/></svg>';
@@ -894,7 +895,7 @@ export function renderAIIntelligence(container, scope) {
       const key = aiiSecIconKey(part.name);
       const body = `<div class="aii-sec-body">${renderBriefBody(part.body, null)}</div>`;
       return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name) + body + secSourcesHTML(buckets[i]));
-    }).join('') + (unmatched.length ? aiiMsec('aii-msec-related', 'Related coverage', secSourcesHTML(unmatched, 'Related coverage')) : '');
+    }).join('') + (unmatched.length ? aiiMsec('aii-msec-related', 'Related coverage', aiiSecHead('sources', 'Related coverage') + secSourcesHTML(unmatched, true)) : '');
     // Explore Further tab = the shared clean-dropdown component (External AI Models
     // with Send-to / Direct Submit / Review, then web categories).
     const efP = explorePrompt();
@@ -905,7 +906,8 @@ export function renderAIIntelligence(container, scope) {
       { key: 'explore', label: 'Explore Further', html: exploreHTML },
     ];
     wrap.innerHTML = insightTabsHTML(tabs, 'aii-instabs');
-    wrap.classList.add('ai-reveal');
+    // No reveal animation on tab switches — the 0.4s fade read as a glitchy flash
+    // between Catch Up/Deep Dive/101 (#img442/452). Instant swap = smooth.
     wireInsightTabs(wrap);
     wireExploreFurther(wrap);
     wireSectionClamps();
@@ -914,7 +916,6 @@ export function renderAIIntelligence(container, scope) {
   function renderExternalInto(wrap) {
     const fi = furtherInsightsHTML((scope.shortcuts || []).filter((s) => s && (s.prompt || s.name)));
     wrap.innerHTML = fi || '<p class="aii-empty">No further insights available for this topic.</p>';
-    wrap.classList.add('ai-reveal');
     wireBuilderContent();
   }
   // Web Search tab — the web platform picker (search types → platforms), folded in
@@ -923,7 +924,6 @@ export function renderAIIntelligence(container, scope) {
     wrap.innerHTML = `<div class="aii-ext-block aii-ext-ws">
       <p class="aii-fi-intro">Pick a source type, then choose a platform to open your search there.</p>
       ${webCatsHTML()}</div>`;
-    wrap.classList.add('ai-reveal');
   }
   // Further Insights — the original shortcut prompts as an accordion explore list.
   function furtherInsightsHTML(list) {

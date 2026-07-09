@@ -12,8 +12,8 @@
 
 import { getModels, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt } from '../utils/ai-models.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp535';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp535';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp536';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp536';
 
 function escapeHTML(str) {
   const div = document.createElement('div');
@@ -552,10 +552,16 @@ function niSourcesListHTML(headlines, sources, origUrl) {
     const uri = s.uri || s.url || '';
     if (!uri) continue;
     const r = resolveSource({ uri, title: s.title });
-    const key = (r.label || '').toLowerCase();
+    // Prefer a real article title; fall back to the domain only when the title IS a
+    // bare domain (grounding sources). Formatted title + source·time like the topic
+    // AI Insights sections (#img452).
+    const isDomainTitle = /^[a-z0-9.-]+\.[a-z]{2,}$/i.test(String(s.title || '').trim());
+    const title = (s.title && !isDomainTitle) ? s.title : r.label;
+    const key = (title || '').toLowerCase();
     if (!key || seen.has(key)) continue;
     seen.add(key);
-    rows.push(`<a class="ai-ins-source-row" href="${escapeAttr(uri)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(r.title || r.label)}"><span class="ai-ins-source-name">${escapeHTML(r.label)}</span>${ARROW_SM}</a>`);
+    const meta = [s.source || r.domain || '', s.date ? relativeTime(s.date) : ''].filter(Boolean).join(' · ');
+    rows.push(`<a class="aii-sec-src" href="${escapeAttr(uri)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(title)}"><span class="aii-sec-src-tx"><span class="aii-sec-src-title">${escapeHTML(title)}</span>${meta ? `<span class="aii-sec-src-host">${escapeHTML(meta)}</span>` : ''}</span>${ARROW_SM}</a>`);
   }
   const orig = origUrl ? `<a class="ni-source-orig" href="${escapeAttr(origUrl)}" target="_blank" rel="noopener noreferrer">View original article ${ARROW_SM}</a>` : '';
   const listHTML = rows.length ? `<div class="ai-ins-source-list">${rows.join('')}</div>` : '';
