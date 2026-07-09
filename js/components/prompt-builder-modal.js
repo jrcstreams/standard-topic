@@ -4,7 +4,7 @@
 // the Search modal). The builder UI itself is the existing renderPromptGenerator
 // wizard, rendered into the modal body.
 
-import { renderPromptGenerator } from './prompt-generator.js?v=20260706-revamp533b';
+import { renderPromptGenerator } from './prompt-generator.js?v=20260706-revamp534b';
 import { navigate } from '../utils/router.js';
 
 let overlayEl = null;

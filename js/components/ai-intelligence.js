@@ -4,16 +4,16 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp533b';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp533b';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp534b';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp534b';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp533b';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp533b';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp534b';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp534b';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -788,7 +788,7 @@ export function renderAIIntelligence(container, scope) {
       </div>
       <div class="aii-builder-secs">
         ${briefTop}
-        <div data-aii-builder>${isStatic ? genLoaderHTML() : builderLoadingHTML()}</div>
+        <div data-aii-builder>${isStatic ? genLoaderHTML() : ((builderCache[curGroup] && !builderCache[curGroup].loading) ? '' : builderLoadingHTML())}</div>
       </div>
     </div>`;
   }
