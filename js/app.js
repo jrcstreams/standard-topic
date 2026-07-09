@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp537';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp538';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp537';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp538';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp537';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp537';
-import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp537';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp537';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp538';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp538';
+import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp538';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp538';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp537';
-import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp537';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp537';
-import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp537';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp537';
-import { renderWebSources } from './components/websources.js?v=20260706-revamp537';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp537';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp537';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp538';
+import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp538';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp538';
+import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp538';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp538';
+import { renderWebSources } from './components/websources.js?v=20260706-revamp538';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp538';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp538';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp537';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp538';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -3602,7 +3602,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       <div class="search-panel-barrow">
         <form class="search-panel-form" role="search" autocomplete="off">
           <span class="search-panel-icon" aria-hidden="true">${SEARCH_ICON_SVG}</span>
-          <input class="search-panel-input" type="search" placeholder="Search any topic…" aria-label="Search any topic" value="${escapeAttr(term)}">
+          <input class="search-panel-input" type="search" placeholder="Search any topic, headline or question for insights…" aria-label="Search any topic" value="${escapeAttr(term)}">
           <button type="button" class="search-panel-copylink" aria-label="Copy a shareable link to this search" title="Copy link to this search">${LINK_ICON_SVG}</button>
           <button type="button" class="search-panel-clear" aria-label="Clear search" hidden>${X_ICON_SVG}</button>
         </form>
