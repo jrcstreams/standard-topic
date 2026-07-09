@@ -4,10 +4,10 @@
 // fixed-height scroll area with top/bottom fade + chevron affordances
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
-import { renderTrendExpansionBody } from './trend-expansion.js?v=20260706-revamp536';
-import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp536';
-import { wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp536';
-import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp536';
+import { renderTrendExpansionBody } from './trend-expansion.js?v=20260706-revamp537';
+import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp537';
+import { wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp537';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp537';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -224,12 +224,12 @@ function wireTrendCardsInline(container) {
     card.querySelector('.trend-card-trigger')?.setAttribute('aria-expanded', 'true');
     let exp = card.querySelector('.trend-card-exp');
     if (!exp) { exp = document.createElement('div'); exp.className = 'trend-card-exp'; card.appendChild(exp); }
-    exp.innerHTML = `<div class="trend-exp-loading"><span class="trend-exp-spin" aria-hidden="true"></span>Gathering the latest on <strong>${escapeHTML(term)}</strong>…</div>`;
+    exp.innerHTML = `<div class="trend-exp-loading"><span class="trend-exp-spin" aria-hidden="true"></span><span class="trend-exp-tx">Gathering the latest on <strong>${escapeHTML(term)}</strong>…</span></div>`;
     try {
       const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'trend', query: term }) });
       const data = res.ok ? await res.json() : null;
       if (!data || data.unavailable || !data.content) {
-        exp.innerHTML = `<div class="trend-exp-fail">This brief is still being generated — check back shortly. <button type="button" class="trend-exp-retry">Try again</button></div>`;
+        exp.innerHTML = `<div class="trend-exp-fail"><span class="trend-exp-tx">This brief is still being generated — check back shortly.</span> <button type="button" class="trend-exp-retry">Try again</button></div>`;
         exp.querySelector('.trend-exp-retry')?.addEventListener('click', () => openCard(card));
         return;
       }
@@ -240,7 +240,7 @@ function wireTrendCardsInline(container) {
       wireInsightTabs(exp);
       wireExploreFurther(exp);
     } catch (_) {
-      exp.innerHTML = `<div class="trend-exp-fail">Couldn't load this brief. <button type="button" class="trend-exp-retry">Try again</button></div>`;
+      exp.innerHTML = `<div class="trend-exp-fail"><span class="trend-exp-tx">Couldn't load this brief.</span> <button type="button" class="trend-exp-retry">Try again</button></div>`;
       exp.querySelector('.trend-exp-retry')?.addEventListener('click', () => openCard(card));
     }
   };

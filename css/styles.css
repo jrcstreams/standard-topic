@@ -14098,11 +14098,16 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
 }
 .trend-exp-close:hover { background: #eef2f7; color: #1e293b; }
 .trend-exp-loading, .trend-exp-fail {
-  display: flex; align-items: center; gap: 9px;
-  font-size: 0.9rem; color: var(--color-text-muted, #64748b); padding: 6px 40px 6px 2px;
+  /* flex-start + a single text span so the term ("Kellyanne Conway") stays part of
+     one flowing sentence that wraps cleanly instead of splitting into its own
+     column on narrow cards (#img4487). */
+  display: flex; align-items: flex-start; gap: 9px; flex-wrap: wrap;
+  font-size: 0.9rem; line-height: 1.4; color: var(--color-text-muted, #64748b); padding: 6px 12px 6px 2px;
 }
+.trend-exp-tx { flex: 1 1 auto; min-width: 0; }
+.trend-exp-tx strong { font-weight: 650; color: #334155; }
 .trend-exp-spin {
-  width: 15px; height: 15px; flex: 0 0 auto; border-radius: 50%;
+  width: 15px; height: 15px; flex: 0 0 auto; margin-top: 2px; border-radius: 50%;
   border: 2px solid #cbd5e1; border-top-color: #2563eb; animation: trendExpSpin .7s linear infinite;
 }
 @keyframes trendExpSpin { to { transform: rotate(360deg); } }
