@@ -2,11 +2,11 @@
 // "Web Explore" + "AI Explore" accordions (submit the term to engines/models),
 // and the full grounded brief. Reuses the news/TI building blocks so the look
 // matches AI insights elsewhere.
-import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260706-revamp532';
+import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260706-revamp533b';
 import { renderTIAccordion, webSourceItem } from './ti-shortcuts.js';
 import { getExternalSearches, getExternalSearchCategories, getModels } from '../utils/data.js';
-import { insightTabsHTML } from '../utils/insight-tabs.js?v=20260706-revamp532';
-import { exploreFurtherHTML } from '../utils/explore-further.js?v=20260706-revamp532';
+import { insightTabsHTML } from '../utils/insight-tabs.js?v=20260706-revamp533b';
+import { exploreFurtherHTML } from '../utils/explore-further.js?v=20260706-revamp533b';
 
 // The Explore Further tab uses the shared clean-dropdown component (with the
 // Direct Submit / Review flow), consistent across trending / news / topic.

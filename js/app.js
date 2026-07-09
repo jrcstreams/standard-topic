@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp532';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp533b';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp532';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp533b';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp532';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp532';
-import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp532';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp532';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp533b';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp533b';
+import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp533b';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp533b';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp532';
-import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp532';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp532';
-import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp532';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp532';
-import { renderWebSources } from './components/websources.js?v=20260706-revamp532';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp532';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp532';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp533b';
+import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp533b';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp533b';
+import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp533b';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp533b';
+import { renderWebSources } from './components/websources.js?v=20260706-revamp533b';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp533b';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp533b';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp532';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp533b';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -360,7 +360,9 @@ function homeSubnavPickerHTML() {
         <div class="tsp-panel" id="tsp-panel-home" role="region" aria-label="Browse topics">
           <div class="tsp-panel-inner">
             <button type="button" class="tsp-close" data-tsp-close aria-label="Close">${X_IC}</button>
-            <div class="tsp-grid">${featured.map(cellHTML).join('')}</div>
+            <div class="tsp-scroll">
+              <div class="tsp-grid">${featured.map(cellHTML).join('')}</div>
+            </div>
             <div class="tsp-foot">
               <a href="#" class="tsp-foot-link tsp-foot-cta" data-tsp-all>${GRID_IC}<span>All Topics</span><svg class="tsp-foot-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></a>
             </div>
@@ -971,16 +973,16 @@ function resetToHome(e) {
   }
 }
 
-// Toggle the topic-picker panel's top/bottom scroll fades (host = .tsp-panel).
+// Toggle the topic-picker panel's bottom scroll hint. The scroll area is .tsp-scroll
+// (the subtopic list); .has-more drives the faint down-arrow above the sticky footer.
 function updatePickerFades(picker) {
+  const scroll = picker.querySelector('.tsp-scroll');
   const inner = picker.querySelector('.tsp-panel-inner');
-  const host = picker.querySelector('.tsp-panel');
-  if (!inner || !host) return;
-  host.classList.add('has-fade');
-  const top = inner.scrollTop;
-  const max = inner.scrollHeight - inner.clientHeight;
-  host.classList.toggle('fade-top', top > 4);
-  host.classList.toggle('fade-bot', max > 6 && top < max - 4);
+  if (!scroll || !inner) return;
+  const top = scroll.scrollTop;
+  const max = scroll.scrollHeight - scroll.clientHeight;
+  inner.classList.toggle('has-more', max > 6 && top < max - 4);
+  inner.classList.toggle('scrolled', top > 4);
 }
 
 // Wire EVERY picker found in `root` (a topic page now has two — the desktop body
@@ -1002,12 +1004,14 @@ function wireSubnavPicker(root) {
       }
       picker.classList.toggle('is-open', on);
       btn.setAttribute('aria-expanded', on ? 'true' : 'false');
-      if (on) requestAnimationFrame(() => updatePickerFades(picker));
+      // Re-check after the open (grid-rows) transition settles — at rAF the panel
+      // isn't laid out yet, so the scroll height reads 0 and the arrow never shows.
+      if (on) { requestAnimationFrame(() => updatePickerFades(picker)); setTimeout(() => updatePickerFades(picker), 320); }
     };
     // Top/bottom fades on the (capped) panel scroll area — shown only when there's
     // hidden content above/below.
-    const inner = picker.querySelector('.tsp-panel-inner');
-    if (inner) inner.addEventListener('scroll', () => updatePickerFades(picker), { passive: true });
+    const scrollEl = picker.querySelector('.tsp-scroll');
+    if (scrollEl) scrollEl.addEventListener('scroll', () => updatePickerFades(picker), { passive: true });
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       setOpen(!picker.classList.contains('is-open'));
