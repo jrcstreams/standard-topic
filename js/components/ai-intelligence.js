@@ -4,16 +4,16 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp534b';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp534b';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp535';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp535';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp534b';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp534b';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp535';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp535';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -133,6 +133,36 @@ function aiiSecHead(key, name) {
   return `<div class="im-msec-head"><span class="im-msec-ic">${AII_SEC_ICON[key] || AII_SEC_ICON.summary}</span><h3 class="im-msec-name">${esc(name)}</h3></div>${tag}`;
 }
 function aiiMsec(id, name, inner) { return `<section class="im-msec" id="${id}" data-name="${escAttr(name)}">${inner}</section>`; }
+// Attribute the builder's source headlines to the section whose text they best
+// overlap — token match on the headline title vs each section's name + body. Purely
+// client-side (the headlines already ship with the insight), so the Sources tab can
+// be dropped in favour of inline per-section sources (#img443-448).
+const ATTR_STOP = new Set('the a an and or of to in on for with at by from as is are was were be been has have had will would can could new news update updates report reports announce announced announces major minor how why what who one two day days year years season amid after over into out up down off more most top big best major first last next this that its it'.split(' '));
+function attrTokens(s) {
+  const set = new Set();
+  String(s || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).forEach((w) => { if (w.length > 2 && !ATTR_STOP.has(w)) set.add(w); });
+  return set;
+}
+function attributeItemsToSections(items, sections) {
+  const secToks = sections.map((p) => attrTokens((p.name || '') + ' ' + (p.body || '')));
+  const buckets = sections.map(() => []);
+  const unmatched = [];
+  for (const it of items) {
+    const t = attrTokens(it.title);
+    let best = -1, bestScore = 0;
+    for (let i = 0; i < secToks.length; i++) {
+      let score = 0; t.forEach((w) => { if (secToks[i].has(w)) score++; });
+      if (score > bestScore) { bestScore = score; best = i; }
+    }
+    if (best >= 0 && bestScore >= 2) buckets[best].push(it); else unmatched.push(it);
+  }
+  return { buckets, unmatched };
+}
+function secSourcesHTML(items, label) {
+  if (!items || !items.length) return '';
+  const rows = items.map((x) => `<a class="aii-sec-src" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer" title="${escAttr(x.title)}"><span class="aii-sec-src-tx"><span class="aii-sec-src-title">${esc(x.title)}</span>${x.meta ? `<span class="aii-sec-src-host">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`).join('');
+  return `<div class="aii-sec-sources"><div class="aii-sec-sources-label">${esc(label || 'Sources')}</div>${rows}</div>`;
+}
 // Paper-plane (Direct Submit — "send it off") and an eye (Review — "preview").
 const ICON_SEND = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2.5L11 13"/><path d="M21.5 2.5L15 21l-4-8-8-4z"/></svg>';
 // Brief generating loader — spark pulse + shimmer bars (occupies the space the
@@ -145,9 +175,8 @@ function genLoaderHTML() {
 // full-section takeover that blanks the tabs (#img406).
 function builderLoadingHTML() {
   return insightTabsHTML([
-    { key: 'summary', label: 'Summary', html: genLoaderHTML() },
+    { key: 'summary', label: 'AI Summary', html: genLoaderHTML() },
     { key: 'explore', label: 'Explore Further', html: '' },
-    { key: 'sources', label: 'Sources', html: '' },
   ], 'aii-instabs');
 }
 const ICON_EYES = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>';
@@ -857,23 +886,24 @@ export function renderAIIntelligence(container, scope) {
     // insights stay scannable). Further Insights + Ask AI now live in the
     // External Tools tab, so sections carry only their body.
     // Summary tab = the "Updated" stamp, then the AI-generated sections (full text).
+    // Sources now render INLINE under the section they belong to (no more Sources
+    // tab): attribute each headline to its best-matching section (#img443-448).
+    const items = builderNewsItems().filter((x) => x.title && x.meta && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(String(x.title).trim()));
+    const { buckets, unmatched } = attributeItemsToSections(items, list);
     const summaryHTML = updatedHTML + list.map((part, i) => {
       const key = aiiSecIconKey(part.name);
       const body = `<div class="aii-sec-body">${renderBriefBody(part.body, null)}</div>`;
-      return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name) + body);
-    }).join('');
-    const items = builderNewsItems().filter((x) => x.title && x.meta && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(String(x.title).trim()));
-    const covRows = items.map((x) => `<a class="im-cov-row" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span><span class="im-cov-host">${esc(x.meta)}</span></span>${EXT}</a>`).join('');
+      return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name) + body + secSourcesHTML(buckets[i]));
+    }).join('') + (unmatched.length ? aiiMsec('aii-msec-related', 'Related coverage', secSourcesHTML(unmatched, 'Related coverage')) : '');
     // Explore Further tab = the shared clean-dropdown component (External AI Models
     // with Send-to / Direct Submit / Review, then web categories).
     const efP = explorePrompt();
     const exploreHTML = exploreFurtherHTML({ prompt: efP, webTerm: scope.label || scope.topic || '', name: curSectionName() });
-    // Split into 3 TABS: Summary (default) / Explore Further / Sources.
+    // Two TABS now: AI Summary (default, sources inline) / Explore Further.
     const tabs = [
-      { key: 'summary', label: 'Summary', html: summaryHTML },
+      { key: 'summary', label: 'AI Summary', html: summaryHTML },
       { key: 'explore', label: 'Explore Further', html: exploreHTML },
     ];
-    if (covRows) tabs.push({ key: 'sources', label: 'Sources', html: `<div class="im-coverage-list aii-sources-list">${covRows}</div>` });
     wrap.innerHTML = insightTabsHTML(tabs, 'aii-instabs');
     wrap.classList.add('ai-reveal');
     wireInsightTabs(wrap);

@@ -14715,6 +14715,16 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .ni-source-orig:hover { text-decoration: underline; text-underline-offset: 2px; }
 .ni-source-orig svg { width: 13px; height: 13px; flex: none; }
 .ai-ins-source-row > svg { flex: none; color: var(--color-text-light); }
+/* Inline per-section sources on the topic AI Insights (replaces the Sources tab) —
+   a small labelled list under each section's body (#img443-448). */
+.aii-sec-sources { margin: 14px 0 0; padding-top: 12px; border-top: 1px dashed color-mix(in srgb, var(--color-surface-border) 80%, transparent); display: grid; gap: 4px; }
+.aii-sec-sources-label { font-family: var(--font-family); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #94a3b8; margin-bottom: 2px; }
+.aii-sec-src { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; padding: 5px 0; }
+.aii-sec-src-tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.aii-sec-src-title { font-size: 0.86rem; font-weight: 550; color: #1e2d44; line-height: 1.35; }
+.aii-sec-src:hover .aii-sec-src-title { color: #2563eb; text-decoration: underline; text-underline-offset: 2px; }
+.aii-sec-src-host { font-size: 0.72rem; color: var(--color-text-muted); }
+.aii-sec-src > svg { flex: none; color: var(--color-text-light); }
 .ai-ins-source-row:hover > svg { color: var(--color-primary); }
 /* "View original article" — primary-tinted, with the arrow INLINE right after the
    text (not pushed to the far right like the other rows) (#img332). */
