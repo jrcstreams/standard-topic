@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp530';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp531';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp530';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp531';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp530';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp530';
-import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp530';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp530';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp531';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp531';
+import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp531';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp531';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp530';
-import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp530';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp530';
-import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp530';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp530';
-import { renderWebSources } from './components/websources.js?v=20260706-revamp530';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp530';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp530';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp531';
+import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp531';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp531';
+import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp531';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp531';
+import { renderWebSources } from './components/websources.js?v=20260706-revamp531';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp531';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp531';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp530';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp531';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -304,12 +304,14 @@ function topicPickerPanelHTML(topic, panelId) {
       <div class="tsp-panel" id="${escapeHTML(panelId)}" role="region" aria-label="Browse topics">
         <div class="tsp-panel-inner">
           <button type="button" class="tsp-close" data-tsp-close aria-label="Close">${X_IC}</button>
-          <a href="#/topic/${parent.slug}" class="tsp-parent-row${parentActive ? ' is-active' : ''}"${parentActive ? ' aria-current="page"' : ''}>
-            <span class="tsp-parent-ic">${topicIconSVG(parent.icon || 'globe', 'tsp-ic-svg')}</span>
-            <span class="tsp-parent-name">${escapeHTML(parent.name)}</span>
-            ${parentActive ? `<span class="tsp-cell-check tsp-parent-check" aria-hidden="true">${CHECK}</span>` : ''}
-          </a>
-          ${family.length ? `<div class="tsp-grid">${family.map(cellHTML).join('')}</div>` : ''}
+          <div class="tsp-scroll">
+            <a href="#/topic/${parent.slug}" class="tsp-parent-row${parentActive ? ' is-active' : ''}"${parentActive ? ' aria-current="page"' : ''}>
+              <span class="tsp-parent-ic">${topicIconSVG(parent.icon || 'globe', 'tsp-ic-svg')}</span>
+              <span class="tsp-parent-name">${escapeHTML(parent.name)}</span>
+              ${parentActive ? `<span class="tsp-cell-check tsp-parent-check" aria-hidden="true">${CHECK}</span>` : ''}
+            </a>
+            ${family.length ? `<div class="tsp-grid">${family.map(cellHTML).join('')}</div>` : ''}
+          </div>
           <div class="tsp-foot">
             <a href="#" class="tsp-foot-link tsp-foot-cta" data-tsp-all>${GRID_IC}<span>All Topics</span><svg class="tsp-foot-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></a>
           </div>

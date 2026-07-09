@@ -199,7 +199,7 @@
     },
     {
       "name": "Threads",
-      "description": "Real-time posts, the X alternative.",
+      "description": "Real-time posts and conversations.",
       "icon": "threads",
       "category": "social",
       "urlTemplate": "https://www.threads.net/search?q={query}"

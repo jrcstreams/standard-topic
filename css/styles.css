@@ -17376,9 +17376,17 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .tsp-panel-inner {
   position: relative;
   max-width: var(--max-width, 1280px); margin: 0 auto;
-  padding: 22px clamp(1.25rem, 4vw, 2.5rem) 20px;
+  padding: 22px clamp(1.25rem, 4vw, 2.5rem) 0;
   max-height: min(74vh, calc(100dvh - var(--nav-h) - var(--subnav-height, 60px) - 24px));
+  /* Column: the subtopic list scrolls; the "All Topics" footer is pinned at the
+     bottom (always visible). Short content → no scroll, panel stays compact
+     (scroll flex-shrinks, doesn't grow) (#img441). */
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.tsp-scroll {
+  flex: 0 1 auto; min-height: 0;
   overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px; /* scroll room so the last subtopic clears the fade/footer */
 }
 /* X close, top-right of the panel. */
 .tsp-close {
@@ -17389,8 +17397,17 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .tsp-close:hover { background: #f1f5f9; color: #1e293b; }
 /* Footer: "All Topics" is a LEFT-aligned, slightly bigger blue CTA (#img76/#img77). */
 .tsp-foot {
-  display: flex; align-items: center; gap: 4px; margin-top: 12px; padding-top: 12px;
+  flex: none; position: relative; z-index: 1;
+  display: flex; align-items: center; gap: 4px;
+  margin-top: 0; padding: 12px 0 20px;
   border-top: 1px solid var(--color-surface-border);
+  background: var(--color-bg);
+}
+/* Fade so scrolled subtopics dissolve into the pinned footer (only reads when the
+   list actually overflows) (#img441). */
+.tsp-foot::before {
+  content: ''; position: absolute; left: 0; right: 0; top: -22px; height: 22px;
+  background: linear-gradient(to top, var(--color-bg), transparent); pointer-events: none;
 }
 .tsp-foot-link {
   display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.5rem 0.6rem; border-radius: 8px;

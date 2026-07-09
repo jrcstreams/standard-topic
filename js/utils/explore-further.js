@@ -145,6 +145,7 @@ function wireXfReview(host, base) {
 const CAT_DESC = {
   search: 'Google, Wikipedia & reference sites',
   noai: 'Search engines without AI answers',
+  factcheck: 'Ground News, AllSides & fact-checkers',
   social: 'Reddit, X, forums & blogs',
   media: 'YouTube, podcasts & video',
   __other: 'More places to search',

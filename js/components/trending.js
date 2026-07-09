@@ -4,10 +4,10 @@
 // fixed-height scroll area with top/bottom fade + chevron affordances
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
-import { renderTrendExpansionBody } from './trend-expansion.js?v=20260706-revamp530';
-import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp530';
-import { wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp530';
-import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp530';
+import { renderTrendExpansionBody } from './trend-expansion.js?v=20260706-revamp531';
+import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp531';
+import { wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp531';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp531';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -297,9 +297,12 @@ function trendCardsSkeleton() {
 const TT_CAT_ORDER = ['Politics', 'Entertainment', 'Sports', 'Law and Government'];
 function ttCatRank(c) { const i = TT_CAT_ORDER.indexOf(c); if (i !== -1) return i; return c === 'Other' ? 999 : 500; }
 function ttCatOf(t) { return (t.categories && t.categories[0]) || ''; }
-// Sports-exclude preference (Trending dropdown only). Default = include sports.
-function isExcludeSports() { try { return localStorage.getItem('st-trend-exclude-sports') === '1'; } catch (_) { return false; } }
-function setExcludeSports(v) { try { localStorage.setItem('st-trend-exclude-sports', v ? '1' : '0'); } catch (_) {} }
+// Sports-exclude state (Trending dropdown only). In-memory, NOT persisted — every
+// fresh load defaults to sports INCLUDED; toggling off applies only for the session
+// so "Include Sports Trends" is reliably on by default (#img437/438).
+let sportsExcluded = false;
+function isExcludeSports() { return sportsExcluded; }
+function setExcludeSports(v) { sportsExcluded = !!v; }
 function ttIsSports(t) { return /^sports$/i.test(ttCatOf(t) || ''); }
 const TREND_SPORTS_TOGGLE_HTML = () => {
   const inc = !isExcludeSports();
