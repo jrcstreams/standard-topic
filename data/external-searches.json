@@ -9,16 +9,16 @@
       "label": "No AI Web Sources"
     },
     {
-      "key": "factcheck",
-      "label": "Media Bias & Fact-Check"
-    },
-    {
       "key": "social",
       "label": "Social, Discussion & Writing"
     },
     {
       "key": "media",
       "label": "Audio & Video"
+    },
+    {
+      "key": "factcheck",
+      "label": "Media Bias & Fact-Check"
     }
   ],
   "searches": [
