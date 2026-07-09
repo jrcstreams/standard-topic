@@ -18554,6 +18554,10 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 
 /* Picker dropdown hangs off the GREY bar bottom (overlays the control bar). */
 .topic-subnav-inner .tsp-panelwrap { left: 0 !important; right: 0 !important; width: 100% !important; top: calc(var(--nav-h) + var(--subnav-title-h, 60px)) !important; z-index: 70 !important; }
+/* Full available height below the subnav so long subtopic lists show many rows before
+   scrolling (the base rule over-subtracted --subnav-height + 24, capping it short) —
+   the panel starts at nav-h + subnav-title-h, so match that (#img4482-4484). */
+.topic-subnav-inner .tsp-panel-inner { max-height: calc(100dvh - var(--nav-h) - var(--subnav-title-h, 56px) - 10px); }
 .topic-subnav-inner .tsp-panel-inner .tsp-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 2px 16px; }
 @media (min-width: 900px) {
   .topic-subnav-inner .tsp-grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 2px 14px; }
@@ -18736,12 +18740,12 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 
 /* Nested picker inside an expanded card (Browse topics / Select field, #img49). */
 .pb-nested-picker { margin: 12px 0 6px; border: 1px solid var(--color-surface-border); border-radius: 12px; padding: 12px 12px 10px; background: #fbfcfe; }
-/* Show the FULL parent list (expand subtopics inline) — no internal scroll; the page
-   scrolls instead (#img436). */
+/* Show the FULL parent list (expand subtopics inline) — NO internal scroll; the card
+   grows and the dropdown/page scrolls (no scroll-within-scroll) (#img436/4484). */
+.pb-nested-picker { max-height: none !important; overflow: visible !important; }
 .pb-nested-picker .pb-acc-content { max-height: none; overflow: visible; }
-/* Done bar sticks to the bottom of the (now full-height) picker so it stays reachable
-   while scrolling the list (#img436). */
-.pb-nested-foot { position: sticky; bottom: 0; display: flex; justify-content: flex-start; gap: 10px; margin: 10px -10px 0; padding: 10px 12px; border-top: 1px solid var(--color-surface-border); background: color-mix(in srgb, var(--color-bg) 92%, transparent); backdrop-filter: blur(4px); border-radius: 0 0 10px 10px; z-index: 2; }
+/* Plain (non-sticky) Done footer at the end of the full list (#img4484). */
+.pb-nested-foot { position: static; display: flex; justify-content: flex-start; gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--color-surface-border); background: none; backdrop-filter: none; }
 .pb-nested-done { font-family: var(--font-family); padding: 7px 15px; border-radius: 9px; border: 1px solid #2563eb; background: #2563eb; color: #fff; font-weight: 650; font-size: 0.82rem; cursor: pointer; }
 .pb-nested-done:hover { background: #1d4ed8; border-color: #1d4ed8; }
 
