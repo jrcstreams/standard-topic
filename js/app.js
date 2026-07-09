@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp538';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp539';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp538';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp539';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp538';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp538';
-import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp538';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp538';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp539';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp539';
+import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp539';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp539';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp538';
-import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp538';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp538';
-import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp538';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp538';
-import { renderWebSources } from './components/websources.js?v=20260706-revamp538';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp538';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp538';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp539';
+import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp539';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp539';
+import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp539';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp539';
+import { renderWebSources } from './components/websources.js?v=20260706-revamp539';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp539';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp539';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp538';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp539';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -3634,6 +3634,16 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   const resultsInner = panelEl.querySelector('.search-panel-results-inner');
   const copyLinkBtn = panelEl.querySelector('.search-panel-copylink');
   function syncClear() { if (clearBtn) clearBtn.hidden = !input.value; }
+  // Placeholder shortens on narrower screens so it doesn't get cut off (#img459).
+  function syncPlaceholder() {
+    const w = window.innerWidth;
+    input.placeholder = w <= 560 ? 'Search for insights…'
+      : w <= 900 ? 'Search a topic for insights…'
+      : 'Search any topic, headline or question for insights…';
+  }
+  syncPlaceholder();
+  const onSpResize = () => { if (!document.contains(input)) { window.removeEventListener('resize', onSpResize); return; } syncPlaceholder(); };
+  window.addEventListener('resize', onSpResize);
   let currentTerm = '';
   let suggestItems = [];   // [{type:'topic'…} | {type:'trend', query, category} | {type:'custom', term}]
   let activeIdx = -1;

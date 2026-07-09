@@ -11816,10 +11816,10 @@ h1, h2, h3, h4, .header-title, .footer-title, .section-header h2 {
   background: rgba(255, 255, 255, 0.32);
 }
 /* The separator sits after the site title, dividing it from the app icons that
-   follow — so it shows on EVERY single-row width (≥561, home + topic alike,
-   #img157). It's hidden only in the two-row layout where the title is centered on
-   its own line above the icons (≤560, #img158). */
-@media (max-width: 560px) {
+   follow — so it shows on every single-row width. Hidden in the two-row layout where
+   the title sits on its own line above the icons — that breakpoint is now ≤640 (see
+   the two-row nav block), so the divider must hide there too, not ≤560 (#img462/463). */
+@media (max-width: 640px) {
   .sticky-brand::after { display: none; }
   .sticky-tagline { margin-left: 0; }
 }
@@ -13249,7 +13249,7 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 /* The "Type a topic…" hint now lives under the tagline, above the input. */
 .search-panel-herohint { margin: 7px 0 0; max-width: 46rem; font-size: 0.9rem; line-height: 1.5; color: var(--color-text-muted); }
 @media (max-width: 640px) {
-  .search-panel--modal .search-panel-tagline { font-size: 0.9rem; font-weight: 550; }
+  .search-panel--modal .search-panel-tagline { font-size: 1rem; font-weight: 550; }
   .search-panel-herohint { font-size: 0.85rem; }
 }
 /* Compact the homepage hero further on phones — it was eating too much of the
@@ -18557,13 +18557,13 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 .topic-subnav-controls .topic-paths-nav {
   max-width: var(--max-width, 1280px); margin: 0 auto !important;
   display: flex !important; gap: 8px; align-items: center;
-  padding: 8px 2rem !important;
+  padding: 12px 2rem !important;
   border: none !important; border-radius: 0 !important; background: none !important;
   position: static !important; overflow: visible !important;
 }
 /* Match the nav/content 1rem switch at ≤640 (was ≤560) so the News Feed / AI
    Insights pills line up with the topic name + news cards (#img327). */
-@media (max-width: 640px) { .topic-subnav-controls .topic-paths-nav { padding: 8px 1rem !important; } }
+@media (max-width: 640px) { .topic-subnav-controls .topic-paths-nav { padding: 12px 1rem !important; } }
 /* Level 1 (News Feed | AI Insights) = PILL / bubble tabs — the most prominent nav
    level (#img148). */
 .topic-subnav-controls .ptab {
