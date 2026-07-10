@@ -15497,30 +15497,29 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-leave-inline .aii-leave-go:hover { background: color-mix(in srgb, var(--color-primary) 88%, #000); }
 .aii-leave-inline .aii-leave-go svg { width: 14px; height: 14px; }
 
-/* Further Insights — sleek, text-based accordion list. */
+/* ── Prompt Library (revamp) — ruled section headers + bordered accordion CARDS ── */
 .aii-fi-intro { margin: 2px 0 10px; font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.4; }
-.aii-fi-acclist { display: flex; flex-direction: column; }
-.aii-fi-acc { border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 72%, transparent); }
-/* The Prompts tab's nav already draws a divider above the list, so the first row's
-   top border doubled it up (#img258/#img259). */
-.aii-fi-acclist > .aii-fi-acc:first-child { border-top: none; }
-.aii-fi-acc:last-child { border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 72%, transparent); }
-/* Square, straight-edge rows separated by the .aii-fi-acc hairlines — no rounded
-   "bubble" hover (#img284). A flat full-width tint on hover, name + chevron warm. */
-.aii-fi-accsum { display: flex; align-items: center; gap: 12px; width: 100%; margin: 0; padding: 13px 18px 13px 12px; border: none; background: none; border-radius: 0; cursor: pointer; text-align: left; font-family: var(--font-family); transition: background .12s ease; }
-.aii-fi-accsum:hover { background: #f6f8fb; }
+/* Section headers: no icon — just title + subtext over a rule a touch heavier /
+   darker than the site hairlines, so each reads as a clear divider. */
+.aii-fi-sec + .aii-fi-sec { margin-top: 30px; }
+.aii-fi-sechead { padding: 0 2px 11px; margin-bottom: 14px; border-bottom: 1.5px solid #ccd4e0; }
+.aii-fi-sectitle { margin: 0; font-family: var(--font-display); font-size: 1.04rem; font-weight: 700; letter-spacing: -0.012em; color: var(--color-primary); }
+.aii-fi-secsub { margin: 3px 0 0; font-size: 0.83rem; line-height: 1.4; color: var(--color-text-muted); }
+/* Each prompt is its own tappable CARD: small gap between cards, subtle rounded
+   corners, hover lifts the border + a soft shadow, open state warms the border. */
+.aii-fi-acclist { display: flex; flex-direction: column; gap: 9px; }
+.aii-fi-acc { border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; transition: border-color .15s ease, box-shadow .15s ease; }
+.aii-fi-acc:hover { border-color: #ccd5e2; box-shadow: 0 2px 8px rgba(30, 45, 68, 0.06); }
+.aii-fi-acc.is-open { border-color: color-mix(in srgb, var(--color-primary) 34%, var(--color-surface-border)); box-shadow: 0 3px 12px rgba(30, 45, 68, 0.07); }
+.aii-fi-accsum { display: flex; align-items: center; gap: 12px; width: 100%; margin: 0; padding: 13px 16px 13px 14px; border: none; background: none; border-radius: 10px; cursor: pointer; text-align: left; font-family: var(--font-family); transition: background .12s ease; }
+.aii-fi-accsum:hover { background: #f8fafd; }
 .aii-fi-accsum:hover .aii-fi-acc-chev { color: var(--color-primary); }
+/* Open card: summary keeps only the top corners (the body squares off the bottom)
+   and takes a light tint so it reads as the header of the expanded card. */
+.aii-fi-acc.is-open .aii-fi-accsum, .aii-fi-acc.is-open .aii-fi-accsum:hover { background: #f2f5fa; border-radius: 10px 10px 0 0; }
 .aii-fi-acc-ic { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; color: #475569; }
 .aii-fi-acc-ic svg { width: 19px; height: 19px; display: block; }
 .aii-fi-accsum[aria-expanded="true"] .aii-fi-acc-ic, .aii-fi-accsum:hover .aii-fi-acc-ic { color: #2c4467; }
-/* Prompt Library sections: Topic-Specific + Evergreen, each with an icon'd header. */
-.aii-fi-sec + .aii-fi-sec { margin-top: 28px; }
-.aii-fi-sechead { display: flex; align-items: flex-start; gap: 11px; padding: 0 2px 12px; }
-.aii-fi-sec-ic { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 9px; background: color-mix(in srgb, #26375a 8%, #fff); color: #26375a; }
-.aii-fi-sec-ic svg { width: 18px; height: 18px; }
-.aii-fi-sec-tx { min-width: 0; padding-top: 1px; }
-.aii-fi-sectitle { margin: 0; font-family: var(--font-display); font-size: 1.04rem; font-weight: 700; letter-spacing: -0.012em; color: var(--color-primary); }
-.aii-fi-secsub { margin: 3px 0 0; font-size: 0.83rem; line-height: 1.4; color: var(--color-text-muted); }
 .aii-fi-acc-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
 .aii-fi-acc-name { font-size: 0.9rem; font-weight: 600; color: var(--color-text); transition: color .14s ease; }
 .aii-fi-acc-desc { font-size: 0.78rem; color: var(--color-text-muted); line-height: 1.35; }
@@ -15531,11 +15530,49 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-fi-accsum:focus-visible { outline: none; }
 /* No underline on focus/click — it lingered after engaging a prompt (#img295). */
 .aii-fi-accsum:focus-visible .aii-fi-acc-name { text-decoration: none; }
-/* No gap below the open menu — the grey reaches the row's bottom divider (#img303). */
-.aii-fi-acc .aii-emenu-host.is-open { margin: 0; }
-/* The open prompt's title/summary gets a DARKER header fill so it reads as the
-   prominent parent above the lighter grey menu below it (#img311/#img312). */
-.aii-fi-accsum[aria-expanded="true"], .aii-fi-accsum[aria-expanded="true"]:hover { background: #e6eaf2; }
+/* Expanded card body: lives INSIDE the card under a hairline, on a near-white
+   wash, finishing the card's rounded bottom corners. */
+.aii-fi-acc .aii-emenu-host.is-open { margin: 0; padding: 14px 16px 15px; background: #fbfcfe; border-top: 1px solid var(--color-surface-border); border-radius: 0 0 10px 10px; }
+
+/* Prompt-card body: Prompt Preview excerpt + Submit / Change model / Settings. */
+.aii-pc { display: grid; gap: 13px; }
+.aii-pc-lbl { display: block; margin-bottom: 6px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #7a869a; }
+/* The preview reads as a quoted excerpt: navy left rule, small muted type,
+   clamped to 3 lines with an ellipsis for long prompts. */
+.aii-pc-preview { margin: 0; padding: 2px 2px 2px 12px; border-left: 3px solid color-mix(in srgb, var(--color-primary) 32%, #dde4ee); font-size: 0.8rem; line-height: 1.55; color: #5b6780; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.aii-pc-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+/* Primary: matches the site's lightened-navy submit (.aii-review-submit). */
+.aii-pc-submit { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border: none; border-radius: 9px; background: #33517f; color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; transition: background .14s ease; }
+.aii-pc-submit:hover { background: #2b466e; }
+.aii-pc-submit:disabled { opacity: 0.5; cursor: default; }
+.aii-pc-submit svg { width: 15px; height: 15px; }
+/* Secondary: quiet white-bordered pills beside the navy primary. */
+.aii-pc-btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 14px; border: 1px solid #d6dce6; border-radius: 9px; background: #fff; color: #3d4a5f; cursor: pointer; font-family: var(--font-family); font-size: 0.84rem; font-weight: 600; transition: background .14s ease, border-color .14s ease, color .14s ease; }
+.aii-pc-btn:hover { background: #f6f8fc; border-color: #bcc7d8; }
+.aii-pc-btn.is-open, .aii-pc-btn[aria-expanded="true"] { background: #e9edf5; border-color: #b9c4da; color: #26375a; }
+.aii-pc-btn > svg { width: 15px; height: 15px; }
+.aii-pc-btn[data-pc-settings] svg { transition: transform .2s ease; }
+.aii-pc-btn[data-pc-settings].is-open svg { transform: rotate(35deg); }
+.aii-pc-btn-chev { display: inline-flex; margin: 0 -2px 0 -1px; color: var(--color-text-light); transition: transform .18s ease; }
+.aii-pc-btn-chev svg { width: 13px; height: 13px; }
+.aii-pc-btn[aria-expanded="true"] .aii-pc-btn-chev { transform: rotate(180deg); color: currentColor; }
+/* Change-model dropdown: rounded panel off the button; hover rows, check on active. */
+.aii-pc-modelwrap { position: relative; display: inline-flex; }
+.aii-pc-menu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 40; min-width: 208px; padding: 6px; border: 1px solid #d9e0ea; border-radius: 11px; background: #fff; box-shadow: 0 10px 28px rgba(20, 30, 50, 0.14); }
+.aii-pc-menu[hidden] { display: none; }
+.aii-pc-menu-opt { display: flex; align-items: center; gap: 9px; width: 100%; padding: 8px 10px; border: none; border-radius: 7px; background: none; cursor: pointer; text-align: left; font-family: var(--font-family); font-size: 0.84rem; font-weight: 500; color: var(--color-text); transition: background .12s ease; }
+.aii-pc-menu-opt:hover { background: #f2f5fa; }
+.aii-pc-menu-opt.is-active { font-weight: 600; color: #26375a; }
+.aii-pc-menu-check { flex: none; display: inline-flex; width: 14px; color: #26375a; visibility: hidden; }
+.aii-pc-menu-opt.is-active .aii-pc-menu-check { visibility: visible; }
+/* Inline Settings panel: reuses the review field styles under a hairline. */
+.aii-pc-set { display: grid; gap: 10px; padding: 12px 0 2px; border-top: 1px solid #e3e8f0; }
+.aii-pc-set[hidden] { display: none; }
+.aii-pc-note { margin: 0; font-size: 0.72rem; line-height: 1.45; color: var(--color-text-light); }
+/* Very narrow phones: the primary takes its own full row; secondaries share one. */
+@media (max-width: 480px) {
+  .aii-pc-submit { width: 100%; justify-content: center; }
+}
 
 /* Sources — collapsed accordion at the bottom of the insight. */
 .aii-sources-acc { margin-top: 18px; border-top: 1px solid var(--color-surface-border); }

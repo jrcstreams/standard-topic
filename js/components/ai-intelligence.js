@@ -4,16 +4,16 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp543';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp543';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp544';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp544';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp543';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp543';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp544';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp544';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -948,25 +948,32 @@ export function renderAIIntelligence(container, scope) {
     const specific = all.filter((s) => !s.evergreen);
     const evergreen = all.filter((s) => s.evergreen);
     const topicLabel = scope.label || scope.topic || 'this topic';
-    const IC_SPECIFIC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>';
-    const IC_EVERGREEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>';
-    const sec = (title, sub, iconSVG, listHTML) => listHTML
-      ? `<section class="aii-fi-sec"><div class="aii-fi-sechead"><span class="aii-fi-sec-ic" aria-hidden="true">${iconSVG}</span><span class="aii-fi-sec-tx"><h3 class="aii-fi-sectitle">${esc(title)}</h3><p class="aii-fi-secsub">${esc(sub)}</p></span></div>${listHTML}</section>`
+    // No section icons (revamp): headers are just title + subtext over a rule
+    // slightly heavier than the site hairlines, so each reads as a clear divider.
+    const sec = (title, sub, listHTML) => listHTML
+      ? `<section class="aii-fi-sec"><div class="aii-fi-sechead"><h3 class="aii-fi-sectitle">${esc(title)}</h3><p class="aii-fi-secsub">${esc(sub)}</p></div>${listHTML}</section>`
       : '';
-    const html = sec('Topic-Specific Prompts', `Ready-made prompts tuned to ${topicLabel}.`, IC_SPECIFIC, furtherInsightsHTML(specific))
-      + sec('Evergreen Prompts', 'Timeless prompts that work across any topic.', IC_EVERGREEN, furtherInsightsHTML(evergreen));
+    const html = sec('Topic-Specific Prompts', `Ready-made prompts tuned to ${topicLabel}.`, furtherInsightsHTML(specific))
+      + sec('Evergreen Prompts', 'Timeless prompts that work across any topic.', furtherInsightsHTML(evergreen));
     return html || '<p class="aii-empty">No prompts available for this topic.</p>';
   }
-  // Inline-toggle for an emenu (discreet explore link, Further-Insights row): opens
-  // its OWN Ask-AI menu (model picker / Direct / Review) in place. Actions handled
-  // by setupExploreDelegation (reads the prompt from the host's data attributes).
+  // Inline-toggle for a prompt-library accordion card: lazily builds the card body
+  // (Prompt Preview + Submit / Change model / Settings) from the host's
+  // data-explore-prompt / data-explore-name, then wires it (wirePromptCard).
   function toggleEmenu(btn) {
     const host = btn.parentElement.querySelector('.aii-emenu-host');
     if (!host) return;
     const willOpen = !host.classList.contains('is-open');
-    if (willOpen && !host.dataset.ready) { host.innerHTML = exploreHomeHTML(); host.dataset.ready = '1'; }
+    if (willOpen && !host.dataset.ready) {
+      const ctx = exploreCtxOf(host);
+      host.innerHTML = promptCardBodyHTML(ctx);
+      wirePromptCard(host, ctx);
+      host.dataset.ready = '1';
+    }
     host.classList.toggle('is-open', willOpen);
     btn.setAttribute('aria-expanded', String(willOpen));
+    const card = btn.closest('.aii-fi-acc');
+    if (card) card.classList.toggle('is-open', willOpen);
   }
   // Wire the content area after a render: Further-Insights accordions + section
   // Show-more toggles. (The discreet brief-head explore link is wired in wire().)
@@ -1417,6 +1424,122 @@ export function renderAIIntelligence(container, scope) {
       note.textContent = `Opened ${m.name} · prompt copied to your clipboard — paste it in if it didn’t auto-fill.`;
       (host.querySelector('.aii-review-footer') || submitBtn).replaceWith(note);
     });
+  }
+
+  // ── Prompt-library card body (revamp): Prompt Preview + three direct actions ──
+  // Replaces the old Send-to / Direct Submit / Review Prompt menu inside each
+  // prompt accordion card: a clamped blockquote preview of the prompt, then
+  // Submit to {Model} (primary) / Change model (dropdown) / Settings (inline
+  // panel reusing the Review-Prompt regeneration logic).
+  const ICON_SWAP = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>';
+  const ICON_CHECK_MINI = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+  function pcNoteText(m) { return `Opens ${m ? m.name : 'the AI model'} in a new tab — the prompt auto-fills or is copied to your clipboard.`; }
+  function promptCardBodyHTML(ctx) {
+    const m = preferredModel();
+    const reasoningOpts = REASONING_LEVELS.map((l) => `<option value="${escAttr(l.id)}"${l.id === 'standard' ? ' selected' : ''}>${esc(l.name)}</option>`).join('');
+    const otOpts = '<option value="">None</option>' + simpleOutputOptions().map((o) => `<option value="${escAttr(o.value)}">${esc(o.label)}</option>`).join('');
+    const modelOpts = (getModels() || []).map((x) => {
+      const on = !!(m && x.id === m.id);
+      return `<button type="button" class="aii-pc-menu-opt${on ? ' is-active' : ''}" role="menuitemradio" aria-checked="${on}" data-model-id="${escAttr(x.id)}"><span class="aii-pc-menu-check" aria-hidden="true">${ICON_CHECK_MINI}</span><span>${esc(x.name)}</span></button>`;
+    }).join('');
+    return `<div class="aii-pc">
+      <div class="aii-pc-prevwrap">
+        <span class="aii-pc-lbl">Prompt Preview</span>
+        <blockquote class="aii-pc-preview" data-pc-preview>${esc(ctx.prompt)}</blockquote>
+      </div>
+      <div class="aii-pc-actions">
+        <button type="button" class="aii-pc-submit" data-pc-submit${m ? '' : ' disabled'}>${ICON_SEND}<span>Submit to <span data-pc-mn>${esc(m ? m.name : 'AI')}</span></span></button>
+        <span class="aii-pc-modelwrap">
+          <button type="button" class="aii-pc-btn" data-pc-model aria-haspopup="menu" aria-expanded="false">${ICON_SWAP}<span>Change model</span><span class="aii-pc-btn-chev" aria-hidden="true">${CHEV}</span></button>
+          <div class="aii-pc-menu" data-pc-menu role="menu" aria-label="Choose AI model" hidden>${modelOpts}</div>
+        </span>
+        <button type="button" class="aii-pc-btn" data-pc-settings aria-expanded="false">${ICON_GEAR}<span>Settings</span></button>
+      </div>
+      <div class="aii-pc-set" data-pc-set hidden>
+        <div class="aii-review-grid">
+          <label class="aii-review-fld"><span class="aii-review-flbl">Reasoning level</span><span class="aii-explore-select-wrap"><select class="aii-review-reasoning">${reasoningOpts}</select>${CHEV}</span></label>
+          <label class="aii-review-fld"><span class="aii-review-flbl">Output type</span><span class="aii-explore-select-wrap"><select class="aii-review-output">${otOpts}</select>${CHEV}</span></label>
+        </div>
+        <label class="aii-review-fld"><span class="aii-review-flbl">Secondary topics</span><input type="text" class="aii-review-secondary" placeholder="e.g. trade policy"></label>
+        <label class="aii-review-fld"><span class="aii-review-flbl">Custom instructions <span class="aii-review-flbl-note">— this submission only</span></span><textarea class="aii-review-custom" rows="2" placeholder="A one-off instruction for this prompt"></textarea></label>
+      </div>
+      <p class="aii-pc-note" data-pc-note>${esc(pcNoteText(m))}</p>
+    </div>`;
+  }
+  // The preferred model is global — after a change, refresh EVERY built prompt
+  // card on the stage (submit label, footnote, dropdown checkmarks).
+  function syncPromptCards() {
+    const m = preferredModel();
+    stage.querySelectorAll('.aii-pc').forEach((pc) => {
+      pc.querySelectorAll('[data-pc-mn]').forEach((el) => { el.textContent = m ? m.name : 'AI'; });
+      const note = pc.querySelector('[data-pc-note]'); if (note) note.textContent = pcNoteText(m);
+      const sb = pc.querySelector('[data-pc-submit]'); if (sb) sb.disabled = !m;
+      pc.querySelectorAll('.aii-pc-menu-opt').forEach((o) => {
+        const on = !!(m && o.dataset.modelId === m.id);
+        o.classList.toggle('is-active', on);
+        o.setAttribute('aria-checked', String(on));
+      });
+    });
+  }
+  function wirePromptCard(host, ctx) {
+    const base = ctx.prompt || '';
+    const topicName = scope.label || scope.topic || '';
+    const ps = { reasoning: 'standard', outputType: '', secondaryTopic: '', customInstructions: '' };
+    const advOpts = () => {
+      const r = REASONING_LEVELS.find((l) => l.id === ps.reasoning);
+      const ot = simpleOutputOptions().find((o) => o.value === ps.outputType);
+      return { reasoningHint: r && r.hint ? r.hint : '', outputClause: ot ? ot.clause : '', secondaryTopic: ps.secondaryTopic.trim(), secondaryClauseTpl: secondaryClauseTpl(), customInstructions: ps.customInstructions.trim(), topicName };
+    };
+    const assembled = () => assemblePrompt(base, advOpts());
+    const preview = host.querySelector('[data-pc-preview]');
+    const refreshPreview = () => { if (preview) preview.textContent = assembled(); };
+    // Submit to {Model} — synchronous open (popup-block safe) + clipboard fallback.
+    host.querySelector('[data-pc-submit]')?.addEventListener('click', () => {
+      const m = preferredModel(); if (!m) return;
+      const prompt = assembled();
+      openModel(m, prompt);
+      copyPrompt(prompt);
+    });
+    // Change model — a clean dropdown off the button; picking one persists the
+    // preference and live-updates every built card (syncPromptCards).
+    const modelBtn = host.querySelector('[data-pc-model]');
+    const menu = host.querySelector('[data-pc-menu]');
+    const mwrap = host.querySelector('.aii-pc-modelwrap');
+    const closeMenu = () => {
+      if (!menu || menu.hidden) return;
+      menu.hidden = true;
+      modelBtn && modelBtn.setAttribute('aria-expanded', 'false');
+      document.removeEventListener('click', onDocClick, true);
+    };
+    const onDocClick = (e) => { if (mwrap && !mwrap.contains(e.target)) closeMenu(); };
+    modelBtn && modelBtn.addEventListener('click', () => {
+      if (!menu) return;
+      if (menu.hidden) {
+        menu.hidden = false;
+        modelBtn.setAttribute('aria-expanded', 'true');
+        document.addEventListener('click', onDocClick, true);
+      } else closeMenu();
+    });
+    menu && menu.addEventListener('click', (e) => {
+      const opt = e.target.closest('.aii-pc-menu-opt'); if (!opt) return;
+      setPreferredModelId(opt.dataset.modelId);
+      syncPromptCards();
+      closeMenu();
+    });
+    // Settings — toggles the inline panel; every change regenerates the prompt
+    // (assemblePrompt), which updates both the preview and what Submit sends.
+    const setBtn = host.querySelector('[data-pc-settings]');
+    const panel = host.querySelector('[data-pc-set]');
+    setBtn && setBtn.addEventListener('click', () => {
+      const open = !!(panel && panel.hidden);
+      if (panel) panel.hidden = !open;
+      setBtn.classList.toggle('is-open', open);
+      setBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    host.querySelector('.aii-review-reasoning')?.addEventListener('change', (e) => { ps.reasoning = e.target.value; refreshPreview(); });
+    host.querySelector('.aii-review-output')?.addEventListener('change', (e) => { ps.outputType = e.target.value; refreshPreview(); });
+    host.querySelector('.aii-review-secondary')?.addEventListener('input', (e) => { ps.secondaryTopic = e.target.value; refreshPreview(); });
+    host.querySelector('.aii-review-custom')?.addEventListener('input', (e) => { ps.customInstructions = e.target.value; refreshPreview(); });
   }
 
   function teardownSticky() {
