@@ -4712,9 +4712,13 @@ a.news-card-source:active { background: color-mix(in srgb, #2563eb 20%, #f4f6f9)
 .pm-title-icon { flex: none; display: inline-flex; align-items: center; color: #2563eb; }
 .pm-section-label { display: block; font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; color: var(--color-text-muted); margin-bottom: 9px; }
 .pm-models { display: flex; flex-wrap: wrap; gap: 8px; }
-.pm-model { display: inline-flex; align-items: center; padding: 8px 14px; border: 1px solid var(--color-surface-border); border-radius: 999px; background: #fff; color: #334155; font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: border-color .14s, background .14s, color .14s; }
+.pm-model { display: inline-flex; align-items: center; gap: 0; padding: 8px 14px; border: 1px solid var(--color-surface-border); border-radius: 999px; background: #fff; color: #334155; font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: border-color .14s, background .14s, color .14s; }
 .pm-model:hover { border-color: #c8d3e3; background: #f6f8fb; }
 .pm-model[aria-pressed="true"] { border-color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 8%, #fff); color: var(--color-primary); }
+/* The check only shows on the selected chip, and slides its width in so the row
+   doesn't jump — a clean, obvious "this is your model" state. */
+.pm-model-check { flex: none; width: 0; opacity: 0; margin-right: 0; transition: width .14s, opacity .14s, margin-right .14s; overflow: hidden; }
+.pm-model[aria-pressed="true"] .pm-model-check { width: 14px; opacity: 1; margin-right: 6px; }
 .pm-preview-actions { display: flex; gap: 8px; padding: 8px 12px; border-top: 1px solid var(--color-surface-border); }
 .pm-copy-btn, .pm-icon-btn { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 11px; border: 1px solid var(--color-surface-border); border-radius: 8px; background: #fff; color: var(--color-text-muted); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: border-color .14s, color .14s; }
 .pm-icon-btn { width: 32px; padding: 0; justify-content: center; }
@@ -9120,8 +9124,12 @@ body.app-mode .topic-layout {
   gap: 0;
   min-width: 0;
 }
-.wiz-action-buttons { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; justify-content: flex-start; }
-.wiz-action-buttons .wiz-action-btn, .wiz-action-buttons .wiz-action-preview, .wiz-action-buttons .wiz-action-restart { flex: 0 0 auto; }
+.wiz-action-buttons { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; justify-content: flex-start; }
+.wiz-action-buttons .wiz-action-btn, .wiz-action-buttons .wiz-action-2nd, .wiz-action-buttons .wiz-action-restart { flex: 0 0 auto; }
+/* Clear sits apart from the do-something actions — pushed to the row's right end. */
+.wiz-action-buttons .wiz-action-restart { margin-left: auto; }
+/* Every action button gives its icon consistent sizing + spacing. */
+.wiz-action-btn svg, .wiz-action-2nd svg, .wiz-action-restart svg { flex: none; }
 .wiz-action-bar-spacer {
   height: 70px;
 }
@@ -9212,11 +9220,38 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
 /* Hide legacy indicator dot if any old markup lingers */
 .wiz-action-indicator { display: none !important; }
 
+/* Secondary actions — Preview + Export. Clean white outline pills with an icon,
+   visually a tier below the navy Submit, matched to each other. */
+.wiz-action-2nd {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-height: 40px;
+  padding: 0.6rem 1.1rem;
+  border: 1px solid #d6dce6;
+  border-radius: 10px;
+  background: #fff;
+  color: #33517f;
+  font-family: var(--font-family);
+  font-size: 0.88rem;
+  font-weight: 650;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .14s, border-color .14s, color .14s;
+}
+.wiz-action-2nd:hover:not(:disabled) { background: #f4f6f9; border-color: #c8d3e3; color: #26375a; }
+.wiz-action-2nd.is-open { background: #eef1f6; border-color: #b9c4da; color: #26375a; }
+.wiz-action-2nd.is-done { border-color: #7db98c; color: #2f8a45; background: color-mix(in srgb, #34a853 8%, #fff); }
+.wiz-action-2nd:disabled { opacity: 1; cursor: not-allowed; color: #98a3b5; border-color: #e6eaf1; background: #fafbfc; }
+
 .wiz-action-restart {
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.4rem;
   /* Smaller + a proper filled-grey secondary button instead of the ghosty outline
      that "sucked" (#img381). */
   padding: 0.6rem 1.05rem;
@@ -9248,8 +9283,12 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
 }
 
 @media (max-width: 640px) {
-  .wiz-action-btn { flex: 0 0 auto; padding: 0.65rem 1rem; font-size: 0.88rem; min-width: 240px; }
-  .wiz-action-restart { padding: 0.6rem 0.85rem; font-size: 0.8rem; }
+  /* Clean stacked layout: Submit full-width up top, Preview + Export split the next
+     row 50/50, Clear full-width beneath — no cramped wrapping. */
+  .wiz-action-buttons { gap: 8px; }
+  .wiz-action-btn { flex: 1 1 100%; width: 100%; min-width: 0; padding: 0.7rem 1rem; font-size: 0.9rem; order: 1; }
+  .wiz-action-2nd { flex: 1 1 0; min-width: 0; padding: 0.6rem 0.5rem; font-size: 0.85rem; order: 2; }
+  .wiz-action-buttons .wiz-action-restart { flex: 1 1 100%; width: 100%; margin-left: 0; padding: 0.55rem 0.85rem; font-size: 0.82rem; order: 3; }
 }
 
 @media (max-width: 640px) {
@@ -15550,7 +15589,9 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
    bar spans label + text together (::before on the wrapper), so the eyebrow and
    the excerpt read as a single tasteful pull-quote, not two disconnected bits. */
 .aii-pc-prevwrap { position: relative; padding: 12px 16px 14px; background: color-mix(in srgb, var(--color-primary) 4%, #fff); border: 1px solid color-mix(in srgb, var(--color-primary) 11%, #e9eef5); border-radius: 10px; }
-.aii-pc-prevhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 7px; }
+/* Edit sits just to the RIGHT of the "Prompt Preview" label (left-grouped, healthy
+   gap) — not pushed to the far edge (#img494). */
+.aii-pc-prevhead { display: flex; align-items: center; justify-content: flex-start; gap: 14px; margin-bottom: 7px; }
 .aii-pc-lbl { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #5f7196; }
 /* Edit toggles the preview into an editable field (Edit ↔ Done). */
 .aii-pc-edit { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border: none; background: none; border-radius: 7px; color: #5f7196; font-family: var(--font-family); font-size: 0.74rem; font-weight: 600; cursor: pointer; transition: background .12s ease, color .12s ease; }
@@ -15559,6 +15600,8 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-pc-edit.is-editing { color: #2563eb; }
 .aii-pc-preview { margin: 0; padding: 0; font-size: 0.8rem; line-height: 1.6; color: #55617a; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .aii-pc-preview[contenteditable="true"] { display: block; -webkit-line-clamp: unset; overflow: visible; white-space: pre-wrap; outline: none; background: #fff; border-radius: 8px; box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary) 22%, transparent); padding: 9px 11px; margin: 1px -2px 0; }
+/* 16px while editing on phones stops iOS Safari from auto-zooming the field (#img495). */
+@media (max-width: 640px) { .aii-pc-preview[contenteditable="true"] { font-size: 16px; } }
 .aii-pc-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
 /* Primary: the site's lightened navy (.aii-review-submit) with a whisper of
    depth; same 40px height as the secondaries so the row sits on one clean line. */
@@ -17959,6 +18002,28 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .news-act-ai .news-ai-spark-filled { flex: none; }
 .news-act .news-ai-chev { transition: transform .2s ease; }
 .news-act[aria-expanded="true"] .news-ai-chev { transform: rotate(180deg); }
+/* Open state → clearer close CTA: the label flips to "Close AI Insights" and the
+   pill lights up so it's obviously the thing to click to close. */
+.news-act-ai .news-act-ai-close { display: none; }
+.news-act-ai[aria-expanded="true"] .news-act-ai-open { display: none; }
+.news-act-ai[aria-expanded="true"] .news-act-ai-close { display: inline; }
+.news-act-ai[aria-expanded="true"] {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-surface-border));
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 7%, #fff);
+  font-weight: 600;
+}
+/* A quiet closer at the very bottom of the brief — a full-width, centered ghost
+   button that reads as the natural end of the section. */
+.ni-closefoot { margin-top: 4px; padding: 12px 0 4px; display: flex; justify-content: center; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); }
+.ni-close-btn {
+  display: inline-flex; align-items: center; gap: 7px; padding: 8px 18px; border-radius: 999px;
+  border: 1px solid var(--color-surface-border); background: #fff; color: var(--color-text-muted);
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  transition: border-color .14s, color .14s, background .14s;
+}
+.ni-close-btn svg { flex: none; }
+.ni-close-btn:hover { border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-surface-border)); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 5%, #fff); }
 
 .news-panel[hidden] { display: none !important; }
 .news-panel { margin-top: 13px; border-top: 1px solid var(--color-surface-border); }
@@ -18437,7 +18502,7 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 
 /* Cleaner back control (#390) — a subtle pill; sits ABOVE the view title in the head. */
 .prompts-back {
-  display: inline-flex; align-items: center; gap: 5px; margin: 0 0 10px; padding: 6px 12px 6px 9px;
+  display: inline-flex; align-items: center; gap: 5px; margin: 0 0 16px; padding: 6px 12px 6px 9px;
   border: 1px solid var(--color-surface-border); background: #fff; cursor: pointer; border-radius: 999px;
   font-family: var(--font-family); font-size: 0.83rem; font-weight: 600; color: #475569;
   transition: background .14s ease, border-color .14s ease, color .14s ease;
@@ -18760,6 +18825,9 @@ body.home-search #section-newsfeed .newsfeed-title-main { font-size: 1.5rem !imp
 .im-sec-aitag svg { color: #1d4ed8 !important; }
 /* Drop the intro subtext in the inline Build-a-Custom-Prompt (#img52/#img53). */
 .pb-inline .wiz-intro { display: none !important; }
+/* With the intro hidden, the first card butted right against the header separator
+   — give the card grid breathing room below the head (#img502). */
+.pb-inline .wiz-fields { padding-top: 16px; }
 
 /* Web-search category rows are <details> — show a chevron so they clearly read as
    expandable dropdowns, not plaintext buttons (#img55). */

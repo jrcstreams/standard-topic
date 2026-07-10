@@ -4,16 +4,16 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp548';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp548';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp549';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp549';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp548';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp548';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp549';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp549';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -1457,9 +1457,9 @@ export function renderAIIntelligence(container, scope) {
         <blockquote class="aii-pc-preview" data-pc-preview>${esc(ctx.prompt)}</blockquote>
       </div>
       <div class="aii-pc-actions">
-        <button type="button" class="aii-pc-submit" data-pc-submit${m ? '' : ' disabled'}>${ICON_SEND}<span>Submit to <span data-pc-mn>${esc(m ? m.name : 'AI')}</span></span></button>
+        <button type="button" class="aii-pc-submit" data-pc-submit${m ? '' : ' disabled'}>${ICON_SEND}<span>Submit Prompt</span></button>
         <span class="aii-pc-modelwrap">
-          <button type="button" class="aii-pc-btn" data-pc-model aria-haspopup="menu" aria-expanded="false">${ICON_SWAP}<span>Change model</span><span class="aii-pc-btn-chev" aria-hidden="true">${CHEV}</span></button>
+          <button type="button" class="aii-pc-btn aii-pc-modelbtn" data-pc-model aria-haspopup="menu" aria-expanded="false">${ICON_SWAP}<span>Model: <span data-pc-mn>${esc(m ? m.name : 'AI')}</span></span><span class="aii-pc-btn-chev" aria-hidden="true">${CHEV}</span></button>
           <div class="aii-pc-menu" data-pc-menu role="menu" aria-label="Choose AI model" hidden>${modelOpts}</div>
         </span>
         <button type="button" class="aii-pc-btn" data-pc-settings aria-expanded="false">${ICON_GEAR}<span>Settings</span></button>

@@ -338,24 +338,20 @@ function schedulePreview() {
 // Called on every state mutation so the buttons track reality without
 // requiring a full re-render.
 function updateActionBar() {
-  const submitBtn = document.getElementById('wiz-open-preview');
   const clearBtn = document.getElementById('wiz-restart');
-  if (!submitBtn || !clearBtn) return;
-  const prompt = assemblePrompt();
-  const isEmpty = !prompt;
+  if (!clearBtn) return;
   const isPristine = Object.keys(state.values || {}).length === 0
     && !state.customizations
     && Object.keys(state.customValues || {}).length === 0
     && Object.keys(state.extraInputs || {}).length === 0
     && !state.editedPrompt;
-  // Always "Submit Prompt" + enabled — a missing primary topic is caught on click
-  // with a clean modal, rather than a disabled/renamed button (#img364/365).
-  submitBtn.disabled = false;
-  submitBtn.classList.remove('is-empty');
-  submitBtn.classList.add('is-ready');
-  const labelEl = submitBtn.querySelector('span');
-  if (labelEl) labelEl.textContent = 'Submit Prompt';
+  // Submit stays always-enabled — a missing primary topic is caught on click with a
+  // clean modal (#img364/365). Clear + Export mirror the "has anything" state.
+  const submitBtn = document.getElementById('wiz-submit-prompt');
+  if (submitBtn) { submitBtn.disabled = false; submitBtn.classList.remove('is-empty'); submitBtn.classList.add('is-ready'); }
   clearBtn.disabled = isPristine;
+  const exportBtn = document.getElementById('wiz-export-prompt');
+  if (exportBtn) exportBtn.disabled = isPristine;
 }
 
 // Primary/secondary topics are stored as arrays of plain strings.
@@ -400,7 +396,7 @@ const PB_CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 const PB_ICONS = {
   model:
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-      '<path d="M12 2l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 10.5l-4.4 1.85a2 2 0 0 0-1.25 1.25L12 19l-2.9-5.4a2 2 0 0 0-1.25-1.25L3.45 10.5l4.4-1.85a2 2 0 0 0 1.25-1.25z"/>' +
+      '<path d="M12 3l2.2 6.3a2 2 0 0 0 1.3 1.3L21.8 12l-6.3 2.2a2 2 0 0 0-1.3 1.3L12 21l-2.2-6.3a2 2 0 0 0-1.3-1.3L2.2 12l6.3-2.2a2 2 0 0 0 1.3-1.3z"/>' +
     '</svg>',
   topics:
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
@@ -428,6 +424,14 @@ const PB_ICONS = {
       '<path d="M12 20h9"/>' +
       '<path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>' +
     '</svg>',
+};
+
+// Action-bar glyphs (stroke, currentColor) — used on the 4 bottom buttons.
+const PB_ACT_ICONS = {
+  send: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg>',
+  eye: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>',
+  download: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+  clear: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>',
 };
 
 const PB_CARDS = [
@@ -691,8 +695,11 @@ function renderCardBuffer(card, snap) {
 // drawer; selecting keeps state.modelId in sync everywhere (#img385).
 function renderModelCardBody(body) {
   const models = getModels() || [];
-  const chips = models.map((m) => `<button class="pm-model" type="button" data-model-id="${escapeAttr(m.id)}" aria-pressed="${m.id === state.modelId ? 'true' : 'false'}"><span class="pm-model-name">${escapeHTML(m.name)}</span></button>`).join('');
-  body.innerHTML = `<section class="pb-modal-section"><h3 class="pb-modal-section-title">Choose AI Model</h3><div class="pm-models">${chips}</div></section>`;
+  const check = '<svg class="pm-model-check" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+  const chips = models.map((m) => `<button class="pm-model" type="button" data-model-id="${escapeAttr(m.id)}" aria-pressed="${m.id === state.modelId ? 'true' : 'false'}">${check}<span class="pm-model-name">${escapeHTML(m.name)}</span></button>`).join('');
+  // No inner heading — the "Choose Model" card head already labels this. Just the
+  // chip grid, with a small hint. Selected chip shows a check + filled state.
+  body.innerHTML = `<div class="pm-models pm-models--pick">${chips}</div>`;
   body.querySelector('.pm-models')?.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-model-id]');
     if (!btn) return;
@@ -1112,10 +1119,11 @@ function render() {
         <div class="wiz-action-bar-inner">
           <div class="wiz-action-buttons">
             <button type="button" class="wiz-action-btn is-ready" id="wiz-submit-prompt">
-              <span>Submit Prompt</span>
+              ${PB_ACT_ICONS.send}<span>Submit Prompt</span>
             </button>
-            <button type="button" class="wiz-action-preview" id="wiz-open-preview">Preview Prompt</button>
-            <button type="button" class="wiz-action-restart" id="wiz-restart" ${isPristine ? 'disabled' : ''}>Clear Prompt</button>
+            <button type="button" class="wiz-action-2nd" id="wiz-open-preview">${PB_ACT_ICONS.eye}<span>Preview</span></button>
+            <button type="button" class="wiz-action-2nd" id="wiz-export-prompt">${PB_ACT_ICONS.download}<span>Export</span></button>
+            <button type="button" class="wiz-action-restart" id="wiz-restart" ${isPristine ? 'disabled' : ''}>${PB_ACT_ICONS.clear}<span>Clear</span></button>
           </div>
           <div class="wiz-preview-drawer" id="wiz-preview-drawer" hidden></div>
         </div>
@@ -1147,6 +1155,11 @@ function render() {
   document.getElementById('wiz-open-preview')?.addEventListener('click', () => {
     if (getPrimaryTopics().length === 0) { openPrimaryRequiredModal(); return; }
     togglePreviewDrawer();
+  });
+  // Export Prompt — download the built prompt as a formatted Markdown file.
+  document.getElementById('wiz-export-prompt')?.addEventListener('click', () => {
+    if (getPrimaryTopics().length === 0) { openPrimaryRequiredModal(); return; }
+    exportPromptMarkdown();
   });
   refreshSubmitDisc();
 
@@ -2366,6 +2379,71 @@ function refreshSubmitDisc() {
   const meta = methods[(m && m.submissionMethod) || 'direct'] || {};
   const info = (m && meta.description) ? `Model info: ${m.name} — ${meta.description.replace(/\{model\}/g, m.name)} ` : '';
   el.textContent = `${info}Disclaimer: You'll be redirected to a third-party AI platform. Standard Topic isn't responsible for actions taken once you leave this site.`;
+}
+
+// ---------- Export prompt → Markdown ----------
+// Turns the current build (model + every configured card + the assembled prompt)
+// into a cleanly formatted .md file and triggers a download. The configuration is
+// derived from the same summary groups the collapsed cards show, so the export
+// always mirrors exactly what the user built.
+function buildPromptMarkdown() {
+  const model = getModelById(state.modelId);
+  const primary = getPrimaryTopics();
+  const title = primary.length ? primary.join(', ') : 'Custom Knowledge Prompt';
+  const out = [];
+  out.push(`# ${title} — Knowledge Prompt`, '');
+  out.push('_Built with the Standard Topic Prompt Builder._', '');
+  if (model) out.push(`**Model:** ${model.name}`, '');
+
+  // Configuration — one subsection per configured card (skip Choose Model; it's the
+  // Model line above).
+  const cfg = [];
+  for (const card of PB_CARDS) {
+    if (card.key === 'model') continue;
+    const groups = pbCardSummaryGroups(card);
+    if (!groups.length) continue;
+    cfg.push(`### ${card.label}`, '');
+    for (const g of groups) {
+      if (g.custom) { cfg.push(`**${g.label}:**`, '', g.custom, ''); }
+      else if (g.values.length === 1) { cfg.push(`- **${g.label}:** ${g.values[0]}`); }
+      else { cfg.push(`- **${g.label}:**`); g.values.forEach((v) => cfg.push(`  - ${v}`)); }
+    }
+    cfg.push('');
+  }
+  if (cfg.length) { out.push('## Configuration', ''); out.push(...cfg); }
+
+  // The assembled (or user-edited) prompt itself, in a fenced block for clean copy.
+  const prompt = (state.editedPrompt ?? assemblePrompt()).trim();
+  out.push('## Prompt', '', '```text', prompt || '(empty)', '```', '');
+  return out.join('\n');
+}
+function exportPromptMarkdown() {
+  const md = buildPromptMarkdown();
+  const primary = getPrimaryTopics();
+  const base = (primary[0] || 'custom-prompt')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'custom-prompt';
+  const d = new Date();
+  const stamp = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
+  const filename = `standard-topic-prompt-${base}-${stamp}.md`;
+  try {
+    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  } catch (_) { return; }
+  try { track('prompt_builder_export', { model: state.modelId || '', topics: primary.length, length: md.length }); } catch (_) {}
+  // Brief "Exported ✓" confirmation on the button.
+  const btn = document.getElementById('wiz-export-prompt');
+  const lbl = btn && btn.querySelector('span');
+  if (btn && lbl && !btn.dataset.flashing) {
+    btn.dataset.flashing = '1';
+    const prev = lbl.textContent;
+    lbl.textContent = 'Exported ✓';
+    btn.classList.add('is-done');
+    setTimeout(() => { lbl.textContent = prev; btn.classList.remove('is-done'); delete btn.dataset.flashing; }, 1600);
+  }
 }
 
 // Inline (dropdown) Preview/Submit — renders the same panel as a buffer view.
