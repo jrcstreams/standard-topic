@@ -4,16 +4,16 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp550';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp550';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp551';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp551';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp550';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp550';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp551';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp551';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -927,8 +927,11 @@ export function renderAIIntelligence(container, scope) {
   // Further Insights — the original shortcut prompts as an accordion explore list.
   function furtherInsightsHTML(list) {
     if (!list || !list.length) return '';
-    const topicName = scope.label || scope.topic || '';
-    const fiPrompt = (s) => String(s.prompt || `Give me a thorough, current briefing on "${s.name}" for ${topicName}. Be specific and cite sources.`).replace(/\{TOPIC\}/g, topicName);
+    const topicName = scope.label || scope.topic || 'this topic';
+    // Substitute the {topic} placeholder (any case — data mixes {topic}/{TOPIC})
+    // with the real topic name so evergreen prompts read naturally in the preview
+    // AND when submitted/copied.
+    const fiPrompt = (s) => String(s.prompt || `Give me a thorough, current briefing on "${s.name}" for ${topicName}. Be specific and cite sources.`).replace(/\{topic\}/gi, topicName);
     const rows = list.map((s) => `
       <div class="aii-fi-acc">
         <button type="button" class="aii-fi-accsum" aria-expanded="false">

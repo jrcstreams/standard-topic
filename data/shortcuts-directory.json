@@ -172,7 +172,7 @@
       "id": "latest-news",
       "name": "Latest News and Developments",
       "icon": "latest-news",
-      "prompt": "What's the latest news on the topic of: {TOPIC}? Cover the most significant developments from the past week or so. For each: what happened, why it matters, and what to watch next. Skip noise and prioritize stories with real significance. Organize by significance, not chronology.",
+      "prompt": "What's the latest news on the topic of: {topic}? Cover the most significant developments from the past week or so. For each: what happened, why it matters, and what to watch next. Skip noise and prioritize stories with real significance. Organize by significance, not chronology.",
       "description": "Recent updates worth knowing about",
       "group": "discover",
       "evergreen": true
@@ -181,7 +181,7 @@
       "id": "trends",
       "name": "Trends to Watch",
       "icon": "trends",
-      "prompt": "What are the most important trends right now and over the next year or two shaping the topic of: {TOPIC}? For each trend: what's driving it, who's leading or being affected, and how to tell if it's playing out.",
+      "prompt": "What are the most important trends right now and over the next year or two shaping the topic of: {topic}? For each trend: what's driving it, who's leading or being affected, and how to tell if it's playing out.",
       "description": "Emerging patterns worth following",
       "group": "discover",
       "evergreen": true
@@ -190,7 +190,7 @@
       "id": "risks-red-flags",
       "name": "Risks and Red Flags",
       "icon": "risks-red-flags",
-      "prompt": "What are the biggest risks, warning signs, and red flags right now on the topic of: {TOPIC}? Cover what could go wrong, where vulnerabilities are building, and what credible observers are worried about. Distinguish real risks from hype.",
+      "prompt": "What are the biggest risks, warning signs, and red flags right now on the topic of: {topic}? Cover what could go wrong, where vulnerabilities are building, and what credible observers are worried about. Distinguish real risks from hype.",
       "description": "Risks and warning signs to watch",
       "group": "analyze",
       "evergreen": true
@@ -199,7 +199,7 @@
       "id": "key-players",
       "name": "Key Players to Know",
       "icon": "key-players",
-      "prompt": "Who are the most important people, companies, organizations, or institutions right now on the topic of: {TOPIC}? For each: who they are, why they matter, and what to know about their current position. Cover both the obvious heavyweights and rising names worth tracking.",
+      "prompt": "Who are the most important people, companies, organizations, or institutions right now on the topic of: {topic}? For each: who they are, why they matter, and what to know about their current position. Cover both the obvious heavyweights and rising names worth tracking.",
       "description": "The people and groups shaping this space",
       "group": "learn",
       "evergreen": true
@@ -208,7 +208,7 @@
       "id": "glossary-key-terms",
       "name": "Glossary of Key Terms",
       "icon": "glossary-key-terms",
-      "prompt": "Give me a glossary of the most important terms, acronyms, and jargon used on the topic of: {TOPIC}. Define each clearly and note any terms that are commonly misused or contested.",
+      "prompt": "Give me a glossary of the most important terms, acronyms, and jargon used on the topic of: {topic}. Define each clearly and note any terms that are commonly misused or contested.",
       "description": "Key terms used in this space, plain-language",
       "group": "learn",
       "evergreen": true
@@ -217,7 +217,7 @@
       "id": "industry-deep-dive",
       "name": "Industry Deep Dive",
       "icon": "industry-deep-dive",
-      "prompt": "Give me a current state-of-the-industry overview for the topic of: {TOPIC}. Cover the major players, the competitive dynamics, recent disruptions, regulatory environment, and what to watch over the next 12 months.",
+      "prompt": "Give me a current state-of-the-industry overview for the topic of: {topic}. Cover the major players, the competitive dynamics, recent disruptions, regulatory environment, and what to watch over the next 12 months.",
       "description": "A closer look at how the industry actually works",
       "group": "learn",
       "evergreen": true
@@ -290,7 +290,7 @@
       "id": "beginners-guide",
       "name": "Beginner's Guide",
       "icon": "beginners-guide",
-      "prompt": "Give me a clear, practical beginner's guide to the topic of: {TOPIC}. Cover the foundational concepts, what to learn first, why it matters, who the major players are, the key concepts I need to understand to follow the conversation, common starting mistakes, and the most useful next steps to go deeper. Don't oversimplify.",
+      "prompt": "Give me a clear, practical beginner's guide to the topic of: {topic}. Cover the foundational concepts, what to learn first, why it matters, who the major players are, the key concepts I need to understand to follow the conversation, common starting mistakes, and the most useful next steps to go deeper. Don't oversimplify.",
       "description": "Background for someone starting out",
       "group": "learn",
       "evergreen": true
@@ -347,7 +347,7 @@
       "id": "different-perspectives",
       "name": "Different Perspectives",
       "icon": "different-perspectives",
-      "prompt": "What are the main perspectives, schools of thought, or sides in current debates around the topic of: {TOPIC}? For each: who holds the view, their core argument, the strongest evidence in their favor, and where they tend to disagree with others. Be even-handed.",
+      "prompt": "What are the main perspectives, schools of thought, or sides in current debates around the topic of: {topic}? For each: who holds the view, their core argument, the strongest evidence in their favor, and where they tend to disagree with others. Be even-handed.",
       "description": "Where the major sides actually disagree",
       "group": "analyze",
       "evergreen": true
@@ -524,7 +524,7 @@
       "id": "where-to-follow",
       "name": "Where to Follow This Best",
       "icon": "where-to-follow",
-      "prompt": "What are the best sources to follow for staying current on the topic of: {TOPIC}? Cover newsletters, podcasts, journalists, analysts, websites, and any other sources worth subscribing to. Note who's best for what (breaking news, analysis, deep dives, contrarian takes, etc.).",
+      "prompt": "What are the best sources to follow for staying current on the topic of: {topic}? Cover newsletters, podcasts, journalists, analysts, websites, and any other sources worth subscribing to. Note who's best for what (breaking news, analysis, deep dives, contrarian takes, etc.).",
       "description": "Sources worth following for ongoing coverage",
       "group": "learn",
       "evergreen": true
@@ -1149,7 +1149,7 @@
       "id": "how-we-got-here",
       "name": "How We Got Here",
       "icon": "how-we-got-here",
-      "prompt": "Walk me through how the topic of {TOPIC} got to where it is today. Cover the major turning points, key decisions, and historical context that explain the current landscape. Note any historical patterns worth knowing about.",
+      "prompt": "Walk me through how the topic of {topic} got to where it is today. Cover the major turning points, key decisions, and historical context that explain the current landscape. Note any historical patterns worth knowing about.",
       "description": "How the current situation actually formed",
       "group": "learn",
       "evergreen": true
@@ -4374,7 +4374,7 @@
       "id": "timeline-key-dates",
       "name": "Timeline of Key Dates",
       "icon": "timeline-key-dates",
-      "prompt": "Give me a timeline of the key dates and milestones in the topic of: {TOPIC}. Cover the most consequential events that shaped this space — when each happened, what it was, and why it mattered. Include both the historical foundations and recent inflection points. Organize chronologically.",
+      "prompt": "Give me a timeline of the key dates and milestones in the topic of: {topic}. Cover the most consequential events that shaped this space — when each happened, what it was, and why it mattered. Include both the historical foundations and recent inflection points. Organize chronologically.",
       "description": "Key moments that shaped this space",
       "group": "learn",
       "evergreen": true
@@ -4383,7 +4383,7 @@
       "id": "latest-research-reports",
       "name": "Latest Research and Reports",
       "icon": "latest-research-reports",
-      "prompt": "What's the latest serious research, reports, and studies on the topic of: {TOPIC}? Cover peer-reviewed papers, industry reports, government findings, and credible analysis published recently. For each: what it found, who published it, and why it matters. Skip blog posts and press releases.",
+      "prompt": "What's the latest serious research, reports, and studies on the topic of: {topic}? Cover peer-reviewed papers, industry reports, government findings, and credible analysis published recently. For each: what it found, who published it, and why it matters. Skip blog posts and press releases.",
       "description": "Recent serious studies and analysis",
       "group": "discover",
       "evergreen": true
