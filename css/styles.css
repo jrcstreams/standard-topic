@@ -18890,8 +18890,22 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 .pb-inline .pb-card.is-expanded { grid-column: 1 / -1; border-color: color-mix(in srgb, #2563eb 35%, var(--color-surface-border)); box-shadow: 0 8px 22px -14px rgba(37,99,235,.28); }
 /* Head→first-section divider: same rhythm as the section dividers (#img376-380). */
 /* Tighter gap between the card head description and the first divider (#img398-400). */
-.pb-card-config { margin-top: 0.55rem; border-top: 1px solid var(--color-surface-border); padding-top: 0.95rem; }
+.pb-card-config { margin-top: 0.55rem; border-top: 1px solid var(--color-surface-border); padding-top: 0.95rem; animation: pbCfgOpen .22s ease; }
+/* The panel visibly drops open beneath the header the user clicked (#img505/506). */
+@keyframes pbCfgOpen { from { opacity: 0; transform: translateY(-7px); } to { opacity: 1; transform: none; } }
+/* When an accordion opens we scroll its header near the top — keep a little gap. */
+.pb-card { scroll-margin-top: 14px; }
 .pb-card-config-body { min-width: 0; }
+/* Choose Model: instant-select, so the foot is just a subtle "Reset to default"
+   link (no Cancel/Done) (#img504). */
+.pm-models--pick { margin-bottom: 2px; }
+.pm-model-foot { margin-top: 0.9rem; padding-top: 0.85rem; border-top: 1px solid var(--color-surface-border); }
+.pm-reset {
+  display: inline-flex; align-items: center; padding: 4px 2px; border: none; background: none;
+  color: #64748b; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 2px; text-decoration-color: #cbd5e1; transition: color .14s;
+}
+.pm-reset:hover { color: var(--color-primary); text-decoration-color: currentColor; }
 .pb-card-config-foot {
   /* Simple in-flow footer — a top divider + the buttons, with the card's own
      padding-bottom giving clean space below so the card border never gets clipped

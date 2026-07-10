@@ -691,25 +691,50 @@ function renderCardBuffer(card, snap) {
   fillPbCardBody(card, body);
 }
 
+// Live-update the collapsed "Selected model: X" summary on the Choose Model card
+// head (there's no Done step for this card — picks apply instantly).
+function refreshModelCardSummary() {
+  const card = document.querySelector('.pb-card[data-pb-card="model"]');
+  if (!card) return;
+  const groups = pbCardSummaryGroups(PB_CARDS.find((c) => c.key === 'model'));
+  const html = groups.length ? groups.map(pbSummaryRowHTML).join('') : '';
+  let sum = card.querySelector('.pb-card-summary');
+  if (sum) { sum.innerHTML = html; }
+  else if (html) {
+    sum = document.createElement('div');
+    sum.className = 'pb-card-summary';
+    sum.innerHTML = html;
+    card.insertBefore(sum, card.querySelector('.pb-card-config') || null);
+  }
+}
 // "Choose Model" card body — the same pill-chip model chooser as the preview
-// drawer; selecting keeps state.modelId in sync everywhere (#img385).
+// drawer. Selection is INSTANT (no Cancel/Done): clicking a chip applies + persists
+// immediately and syncs everywhere. A "Reset to default" link restores the default
+// model (ChatGPT, per ai-models.json's defaultModel) (#img504).
 function renderModelCardBody(body) {
   const models = getModels() || [];
   const check = '<svg class="pm-model-check" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
   const chips = models.map((m) => `<button class="pm-model" type="button" data-model-id="${escapeAttr(m.id)}" aria-pressed="${m.id === state.modelId ? 'true' : 'false'}">${check}<span class="pm-model-name">${escapeHTML(m.name)}</span></button>`).join('');
-  // No inner heading — the "Choose Model" card head already labels this. Just the
-  // chip grid, with a small hint. Selected chip shows a check + filled state.
-  body.innerHTML = `<div class="pm-models pm-models--pick">${chips}</div>`;
-  body.querySelector('.pm-models')?.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-model-id]');
-    if (!btn) return;
-    state.modelId = btn.dataset.modelId;
-    setPreferredModelId(state.modelId);
-    body.querySelectorAll('.pm-model').forEach((b) => b.setAttribute('aria-pressed', b.dataset.modelId === state.modelId ? 'true' : 'false'));
+  // No inner heading — the "Choose Model" card head already labels this. Chip grid,
+  // then a subtle "Reset to default" link (instead of Cancel/Done).
+  body.innerHTML = `<div class="pm-models pm-models--pick">${chips}</div><div class="pm-model-foot"><button type="button" class="pm-reset" data-pm-reset>Reset to default</button></div>`;
+  const apply = (id) => {
+    if (!id) return;
+    state.modelId = id;
+    setPreferredModelId(id);
+    body.querySelectorAll('.pm-model').forEach((b) => b.setAttribute('aria-pressed', b.dataset.modelId === id ? 'true' : 'false'));
     refreshSubmitDisc();
+    refreshModelCardSummary();
     // Keep an open preview drawer's chooser + Send label in sync.
     const drawer = document.getElementById('wiz-preview-drawer');
     if (drawer && !drawer.hidden && submitInlineEl === drawer) renderSubmitPanel();
+    updatePreview();
+    updateActionBar();
+  };
+  body.addEventListener('click', (e) => {
+    const chip = e.target.closest('[data-model-id]');
+    if (chip) { apply(chip.dataset.modelId); return; }
+    if (e.target.closest('[data-pm-reset]')) apply(getDefaultModelId());
   });
 }
 
@@ -1067,19 +1092,30 @@ function expandPbCard(cardEl, key) {
   cardEl.classList.add('is-expanded');
   const cfg = document.createElement('div');
   cfg.className = 'pb-card-config';
-  cfg.innerHTML = `
-    <div class="pb-card-config-body" data-cfg-body></div>
+  // Choose Model applies instantly (no snapshot/commit) — so it skips the
+  // Cancel/Done footer and instead offers a "Reset to default" link in its body.
+  const foot = card.key === 'model' ? '' : `
     <div class="pb-card-config-foot">
       <button type="button" class="pb-cfg-ghost" data-cfg-cancel>Cancel</button>
       <button type="button" class="pb-cfg-cta" data-cfg-done>Done</button>
     </div>`;
+  cfg.innerHTML = `<div class="pb-card-config-body" data-cfg-body></div>${foot}`;
   cardEl.appendChild(cfg);
   // Clicks inside the config must NOT bubble to the card head (which toggles).
   cfg.addEventListener('click', (e) => e.stopPropagation());
   fillPbCardBody(card, cfg.querySelector('[data-cfg-body]'));
-  cfg.querySelector('[data-cfg-cancel]').addEventListener('click', () => { restoreState(snap); collapsePbCard(); refreshPbCards(); updatePreview(); updateActionBar(); });
-  cfg.querySelector('[data-cfg-done]').addEventListener('click', () => { collapsePbCard(); refreshPbCards(); updatePreview(); updateActionBar(); });
-  requestAnimationFrame(() => { try { cfg.scrollIntoView({ block: 'nearest' }); } catch (_) {} });
+  cfg.querySelector('[data-cfg-cancel]')?.addEventListener('click', () => { restoreState(snap); collapsePbCard(); refreshPbCards(); updatePreview(); updateActionBar(); });
+  cfg.querySelector('[data-cfg-done]')?.addEventListener('click', () => { collapsePbCard(); refreshPbCards(); updatePreview(); updateActionBar(); });
+  // Bring the CLICKED accordion header up near the top so the panel visibly drops
+  // open beneath it — instead of scrolling the (often tall) body into view, which
+  // dumped the user into the middle of the content with the header off-screen
+  // (#img505/506). scroll-margin-top (CSS) keeps a little breathing room.
+  requestAnimationFrame(() => {
+    try {
+      const r = cardEl.getBoundingClientRect();
+      if (r.top < 4 || r.top > 140) cardEl.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    } catch (_) {}
+  });
 }
 function togglePbCardInline(cardEl, key) {
   if (cardEl.classList.contains('is-expanded')) collapsePbCard();
