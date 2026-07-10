@@ -15503,7 +15503,9 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
    darker than the site hairlines, so each reads as a clear divider. */
 .aii-fi-sec + .aii-fi-sec { margin-top: 30px; }
 .aii-fi-sechead { padding: 0 2px 11px; margin-bottom: 14px; border-bottom: 1.5px solid #ccd4e0; }
-.aii-fi-sectitle { margin: 0; font-family: var(--font-display); font-size: 1.04rem; font-weight: 700; letter-spacing: -0.012em; color: var(--color-primary); }
+/* Lighter than the page/main header (which is 800): a calm section label, not a
+   heavy dense title (#img483-485). */
+.aii-fi-sectitle { margin: 0; font-family: var(--font-display); font-size: 1rem; font-weight: 600; letter-spacing: -0.004em; color: #33517f; }
 .aii-fi-secsub { margin: 3px 0 0; font-size: 0.83rem; line-height: 1.4; color: var(--color-text-muted); }
 /* Each prompt is its own tappable CARD: small gap between cards, subtle rounded
    corners, hover lifts the border + a soft shadow, open state warms the border. */
