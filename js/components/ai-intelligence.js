@@ -4,16 +4,16 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp545';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp545';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp546';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp546';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp545';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp545';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp546';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp546';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -953,6 +953,11 @@ export function renderAIIntelligence(container, scope) {
     const sec = (title, sub, listHTML) => listHTML
       ? `<section class="aii-fi-sec"><div class="aii-fi-sechead"><h3 class="aii-fi-sectitle">${esc(title)}</h3><p class="aii-fi-secsub">${esc(sub)}</p></div>${listHTML}</section>`
       : '';
+    // With only ONE group (e.g. a custom search = all evergreen), the section label is
+    // redundant — just show the accordions with no header/separator (#img486).
+    if (!specific.length || !evergreen.length) {
+      return furtherInsightsHTML(specific.length ? specific : evergreen) || '<p class="aii-empty">No prompts available for this topic.</p>';
+    }
     const html = sec('Topic-Specific Prompts', `Ready-made prompts tuned to ${topicLabel}.`, furtherInsightsHTML(specific))
       + sec('Evergreen Prompts', 'Timeless prompts that work across any topic.', furtherInsightsHTML(evergreen));
     return html || '<p class="aii-empty">No prompts available for this topic.</p>';

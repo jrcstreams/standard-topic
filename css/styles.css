@@ -18088,8 +18088,10 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .aii-nav-dd-head {
   flex: 0 0 auto;
   display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
-  padding: 18px 2px 14px;
-  border-bottom: 1px solid var(--color-surface-border);
+  padding: 18px 2px 12px;
+  /* Slightly more prominent than the site hairlines so the header reads as a clear
+     divider above the list (#img487/488). */
+  border-bottom: 1.5px solid #d3d9e4;
 }
 .aii-nav-dd-title {
   font-size: 1.18rem; font-weight: 800; color: var(--color-primary, #1e293b);
@@ -18163,8 +18165,8 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .aii-nav-dd-scroll {
   height: 100%; max-height: calc(100dvh - var(--nav-h) - 78px);
   overflow-y: auto; overscroll-behavior: contain;
-  /* Less top gap so the first list item sits closer to the header divider (#img64). */
-  padding: 8px 2px 20px;
+  /* Less top gap so the first list item sits closer to the header divider (#img487/488). */
+  padding: 2px 2px 20px;
 }
 /* Clean top/bottom scroll fades (#89). */
 .aii-nav-dd-scrollwrap.has-fade::before,
