@@ -4,16 +4,16 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp540';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp540';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp542';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp542';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp540';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp540';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp542';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp542';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -914,8 +914,7 @@ export function renderAIIntelligence(container, scope) {
   }
   // External Insights tab — the topic's shortcut prompts as an explore accordion.
   function renderExternalInto(wrap) {
-    const fi = furtherInsightsHTML((scope.shortcuts || []).filter((s) => s && (s.prompt || s.name)));
-    wrap.innerHTML = fi || '<p class="aii-empty">No further insights available for this topic.</p>';
+    wrap.innerHTML = promptLibraryHTML();
     wireBuilderContent();
   }
   // Web Search tab — the web platform picker (search types → platforms), folded in
@@ -933,6 +932,7 @@ export function renderAIIntelligence(container, scope) {
     const rows = list.map((s) => `
       <div class="aii-fi-acc">
         <button type="button" class="aii-fi-accsum" aria-expanded="false">
+          <span class="aii-fi-acc-ic" aria-hidden="true">${sectionIcon(s.name)}</span>
           <span class="aii-fi-acc-tx"><span class="aii-fi-acc-name">${esc(s.name)}</span>${s.description ? `<span class="aii-fi-acc-desc">${esc(s.description)}</span>` : ''}</span>
           <span class="aii-fi-acc-chev">${CHEV}</span>
         </button>
@@ -940,6 +940,22 @@ export function renderAIIntelligence(container, scope) {
       </div>`).join('');
     return `<div class="aii-ext-block aii-fi">
       <div class="aii-fi-acclist">${rows}</div></div>`;
+  }
+  // The topic's prompts split into two labelled sections — Topic-Specific + Evergreen
+  // — each with a header + subtext, then the icon'd accordions (#img469-473).
+  function promptLibraryHTML() {
+    const all = (scope.shortcuts || []).filter((s) => s && (s.prompt || s.name));
+    const specific = all.filter((s) => !s.evergreen);
+    const evergreen = all.filter((s) => s.evergreen);
+    const topicLabel = scope.label || scope.topic || 'this topic';
+    const IC_SPECIFIC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>';
+    const IC_EVERGREEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>';
+    const sec = (title, sub, iconSVG, listHTML) => listHTML
+      ? `<section class="aii-fi-sec"><div class="aii-fi-sechead"><span class="aii-fi-sec-ic" aria-hidden="true">${iconSVG}</span><span class="aii-fi-sec-tx"><h3 class="aii-fi-sectitle">${esc(title)}</h3><p class="aii-fi-secsub">${esc(sub)}</p></span></div>${listHTML}</section>`
+      : '';
+    const html = sec('Topic-Specific Prompts', `Ready-made prompts tuned to ${topicLabel}.`, IC_SPECIFIC, furtherInsightsHTML(specific))
+      + sec('Evergreen Prompts', 'Timeless prompts that work across any topic.', IC_EVERGREEN, furtherInsightsHTML(evergreen));
+    return html || '<p class="aii-empty">No prompts available for this topic.</p>';
   }
   // Inline-toggle for an emenu (discreet explore link, Further-Insights row): opens
   // its OWN Ask-AI menu (model picker / Direct / Review) in place. Actions handled

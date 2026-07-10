@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp540';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp542';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp540';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp542';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp540';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp540';
-import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp540';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp540';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp542';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp542';
+import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp542';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp542';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp540';
-import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp540';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp540';
-import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp540';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp540';
-import { renderWebSources } from './components/websources.js?v=20260706-revamp540';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp540';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp540';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp542';
+import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp542';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp542';
+import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp542';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp542';
+import { renderWebSources } from './components/websources.js?v=20260706-revamp542';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp542';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp542';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp540';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp542';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -842,15 +842,14 @@ function userClosePromptBuilder() {
 // then reveals four sub-options in its own strip.
 const TOPIC_PATH_TABS = [
   { key: 'news', label: 'News Feed' },
-  { key: 'ai',   label: 'AI Insights & Resources' },
+  { key: 'ai',   label: 'AI Insights' },
+  { key: 'prompts', label: 'Prompt Library' },
 ];
-// Sub-options under "AI Insights & Resources" (Web Search is dropped — it's folded
-// into each insight's Explore Further tab).
+// Sub-options under "AI Insights" (Prompts moved out to its own top-level tab).
 const TOPIC_AI_GROUPS = [
   { key: 'discover',       label: 'Catch Up' },
   { key: 'topic-specific', label: 'Deep Dive' },
   { key: 'learn',          label: '101 Info' },
-  { key: 'external',       label: 'Prompts' },
 ];
 const TOPIC_AI_GROUP_KEYS = new Set(TOPIC_AI_GROUPS.map((g) => g.key));
 
@@ -902,6 +901,21 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
         renderNewsFeed(sec, topic, false);
         return;
       }
+      if (key === 'prompts') {
+        // Prompt Library tab: the topic's ready-made prompts split into Topic-Specific
+        // + Evergreen accordions. Reuses the AI component's external (prompts) group;
+        // the host class hides its builder chrome so only the clean library shows.
+        const host = document.createElement('div');
+        host.className = 'topic-prompt-lib-host prompts-topic-host';
+        body.appendChild(host);
+        let shortcuts = [];
+        try { shortcuts = getShortcutsForTopic(topic.slug) || []; } catch (_) {}
+        ctl = renderAIIntelligence(host, {
+          inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
+          topic: topic.name, label: topic.name, descriptions, icons, shortcuts, topicKey: topic.slug,
+        });
+        return;
+      }
       renderAI();
     } catch (err) {
       // A render throw must never leave a blank/broken tab (was the "nothing
@@ -911,8 +925,10 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
     }
   };
   const selectTab = (key) => {
+    // Prompts moved to its own top-level tab — route the old 'external' group there.
+    if (key === 'external') key = 'prompts';
     // A group key (from a deep-link) opens AI Insights on that sub-group.
-    if (TOPIC_AI_GROUP_KEYS.has(key)) { subGroup = key; key = 'ai'; }
+    else if (TOPIC_AI_GROUP_KEYS.has(key)) { subGroup = key; key = 'ai'; }
     else if (key === 'websearch') { subGroup = 'discover'; key = 'ai'; }
     if (!TOPIC_PATH_TABS.some((t) => t.key === key)) key = 'news';
     nav.querySelectorAll('.ptab').forEach((b) => {
@@ -923,7 +939,9 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
     // Is this tab's content ACTUALLY present? (Not just "we set active last time" —
     // a prior render may have failed, leaving it blank.) Only skip the re-render
     // when the content is really there.
-    const present = key === 'news' ? body.querySelector('#section-newsfeed') : body.querySelector('.topic-ai-wrap');
+    const present = key === 'news' ? body.querySelector('#section-newsfeed')
+      : key === 'prompts' ? body.querySelector('.topic-prompt-lib-host')
+      : body.querySelector('.topic-ai-wrap');
     const same = active === key;
     active = key;
     if (same && present) {

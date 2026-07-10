@@ -15510,6 +15510,17 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-fi-accsum { display: flex; align-items: center; gap: 12px; width: 100%; margin: 0; padding: 13px 18px 13px 12px; border: none; background: none; border-radius: 0; cursor: pointer; text-align: left; font-family: var(--font-family); transition: background .12s ease; }
 .aii-fi-accsum:hover { background: #f6f8fb; }
 .aii-fi-accsum:hover .aii-fi-acc-chev { color: var(--color-primary); }
+.aii-fi-acc-ic { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; color: #475569; }
+.aii-fi-acc-ic svg { width: 19px; height: 19px; display: block; }
+.aii-fi-accsum[aria-expanded="true"] .aii-fi-acc-ic, .aii-fi-accsum:hover .aii-fi-acc-ic { color: #2c4467; }
+/* Prompt Library sections: Topic-Specific + Evergreen, each with an icon'd header. */
+.aii-fi-sec + .aii-fi-sec { margin-top: 28px; }
+.aii-fi-sechead { display: flex; align-items: flex-start; gap: 11px; padding: 0 2px 12px; }
+.aii-fi-sec-ic { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 9px; background: color-mix(in srgb, #26375a 8%, #fff); color: #26375a; }
+.aii-fi-sec-ic svg { width: 18px; height: 18px; }
+.aii-fi-sec-tx { min-width: 0; padding-top: 1px; }
+.aii-fi-sectitle { margin: 0; font-family: var(--font-display); font-size: 1.04rem; font-weight: 700; letter-spacing: -0.012em; color: var(--color-primary); }
+.aii-fi-secsub { margin: 3px 0 0; font-size: 0.83rem; line-height: 1.4; color: var(--color-text-muted); }
 .aii-fi-acc-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
 .aii-fi-acc-name { font-size: 0.9rem; font-weight: 600; color: var(--color-text); transition: color .14s ease; }
 .aii-fi-acc-desc { font-size: 0.78rem; color: var(--color-text-muted); line-height: 1.35; }
