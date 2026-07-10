@@ -15533,47 +15533,60 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* No underline on focus/click — it lingered after engaging a prompt (#img295). */
 .aii-fi-accsum:focus-visible .aii-fi-acc-name { text-decoration: none; }
 /* Expanded card body: lives INSIDE the card under a hairline, on a near-white
-   wash, finishing the card's rounded bottom corners. */
-.aii-fi-acc .aii-emenu-host.is-open { margin: 0; padding: 14px 16px 15px; background: #fbfcfe; border-top: 1px solid var(--color-surface-border); border-radius: 0 0 10px 10px; }
+   wash, finishing the card's rounded bottom corners. Roomy padding — the open
+   body is the hero interaction, it shouldn't feel crammed under the summary. */
+.aii-fi-acc .aii-emenu-host.is-open { margin: 0; padding: 16px 16px 18px; background: #fbfcfe; border-top: 1px solid var(--color-surface-border); border-radius: 0 0 10px 10px; }
 
 /* Prompt-card body: Prompt Preview excerpt + Submit / Change model / Settings. */
-.aii-pc { display: grid; gap: 13px; }
-.aii-pc-lbl { display: block; margin-bottom: 6px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #7a869a; }
-/* The preview reads as a quoted excerpt: navy left rule, small muted type,
-   clamped to 3 lines with an ellipsis for long prompts. */
-.aii-pc-preview { margin: 0; padding: 2px 2px 2px 12px; border-left: 3px solid color-mix(in srgb, var(--color-primary) 32%, #dde4ee); font-size: 0.8rem; line-height: 1.55; color: #5b6780; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.aii-pc-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
-/* Primary: matches the site's lightened-navy submit (.aii-review-submit). */
-.aii-pc-submit { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border: none; border-radius: 9px; background: #33517f; color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; transition: background .14s ease; }
-.aii-pc-submit:hover { background: #2b466e; }
-.aii-pc-submit:disabled { opacity: 0.5; cursor: default; }
+.aii-pc { display: grid; gap: 15px; }
+/* The preview is ONE unit — a soft navy-washed excerpt card. The rounded accent
+   bar spans label + text together (::before on the wrapper), so the eyebrow and
+   the excerpt read as a single tasteful pull-quote, not two disconnected bits. */
+.aii-pc-prevwrap { position: relative; padding: 12px 16px 13px 19px; background: color-mix(in srgb, var(--color-primary) 4%, #fff); border: 1px solid color-mix(in srgb, var(--color-primary) 11%, #e9eef5); border-radius: 10px; }
+.aii-pc-prevwrap::before { content: ""; position: absolute; left: 8px; top: 13px; bottom: 13px; width: 3px; border-radius: 999px; background: color-mix(in srgb, var(--color-primary) 52%, #c3cfe2); }
+.aii-pc-lbl { display: block; margin-bottom: 7px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #5f7196; }
+.aii-pc-preview { margin: 0; padding: 0; font-size: 0.8rem; line-height: 1.6; color: #55617a; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.aii-pc-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+/* Primary: the site's lightened navy (.aii-review-submit) with a whisper of
+   depth; same 40px height as the secondaries so the row sits on one clean line. */
+.aii-pc-submit { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 8px 19px; border: none; border-radius: 10px; background: #33517f; color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; box-shadow: 0 1px 2px rgba(28, 42, 66, 0.16); transition: background .14s ease, box-shadow .14s ease; }
+.aii-pc-submit:hover { background: #2b466e; box-shadow: 0 2px 6px rgba(28, 42, 66, 0.22); }
+.aii-pc-submit:active { background: #26375a; box-shadow: 0 1px 2px rgba(28, 42, 66, 0.16); }
+.aii-pc-submit:disabled { opacity: 0.5; cursor: default; box-shadow: none; }
 .aii-pc-submit svg { width: 15px; height: 15px; }
 /* Secondary: quiet white-bordered pills beside the navy primary. */
-.aii-pc-btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 14px; border: 1px solid #d6dce6; border-radius: 9px; background: #fff; color: #3d4a5f; cursor: pointer; font-family: var(--font-family); font-size: 0.84rem; font-weight: 600; transition: background .14s ease, border-color .14s ease, color .14s ease; }
-.aii-pc-btn:hover { background: #f6f8fc; border-color: #bcc7d8; }
+.aii-pc-btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 40px; padding: 8px 15px; border: 1px solid #d6dce6; border-radius: 10px; background: #fff; color: #3d4a5f; cursor: pointer; font-family: var(--font-family); font-size: 0.84rem; font-weight: 600; transition: background .14s ease, border-color .14s ease, color .14s ease; }
+.aii-pc-btn:hover { background: #f6f8fc; border-color: #b9c4d8; color: #26375a; }
 .aii-pc-btn.is-open, .aii-pc-btn[aria-expanded="true"] { background: #e9edf5; border-color: #b9c4da; color: #26375a; }
 .aii-pc-btn > svg { width: 15px; height: 15px; }
 .aii-pc-btn[data-pc-settings] svg { transition: transform .2s ease; }
 .aii-pc-btn[data-pc-settings].is-open svg { transform: rotate(35deg); }
+.aii-pc-submit:focus-visible, .aii-pc-btn:focus-visible { outline: 2px solid color-mix(in srgb, var(--color-primary) 55%, #fff); outline-offset: 2px; }
 .aii-pc-btn-chev { display: inline-flex; margin: 0 -2px 0 -1px; color: var(--color-text-light); transition: transform .18s ease; }
 .aii-pc-btn-chev svg { width: 13px; height: 13px; }
 .aii-pc-btn[aria-expanded="true"] .aii-pc-btn-chev { transform: rotate(180deg); color: currentColor; }
-/* Change-model dropdown: rounded panel off the button; hover rows, check on active. */
+/* Change-model dropdown: rounded panel off the button; hover rows, check on
+   active, a small fade-drop entrance so it feels placed rather than popped. */
 .aii-pc-modelwrap { position: relative; display: inline-flex; }
-.aii-pc-menu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 40; min-width: 208px; padding: 6px; border: 1px solid #d9e0ea; border-radius: 11px; background: #fff; box-shadow: 0 10px 28px rgba(20, 30, 50, 0.14); }
+.aii-pc-menu { position: absolute; top: calc(100% + 7px); left: 0; z-index: 40; min-width: 212px; padding: 6px; border: 1px solid #d9e0ea; border-radius: 12px; background: #fff; box-shadow: 0 10px 28px rgba(20, 30, 50, 0.14); animation: aii-pc-menu-in .15s ease; }
 .aii-pc-menu[hidden] { display: none; }
-.aii-pc-menu-opt { display: flex; align-items: center; gap: 9px; width: 100%; padding: 8px 10px; border: none; border-radius: 7px; background: none; cursor: pointer; text-align: left; font-family: var(--font-family); font-size: 0.84rem; font-weight: 500; color: var(--color-text); transition: background .12s ease; }
+@keyframes aii-pc-menu-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.aii-pc-menu-opt { display: flex; align-items: center; gap: 9px; width: 100%; padding: 8px 10px; border: none; border-radius: 8px; background: none; cursor: pointer; text-align: left; font-family: var(--font-family); font-size: 0.84rem; font-weight: 500; color: var(--color-text); transition: background .12s ease; }
 .aii-pc-menu-opt:hover { background: #f2f5fa; }
 .aii-pc-menu-opt.is-active { font-weight: 600; color: #26375a; }
 .aii-pc-menu-check { flex: none; display: inline-flex; width: 14px; color: #26375a; visibility: hidden; }
 .aii-pc-menu-opt.is-active .aii-pc-menu-check { visibility: visible; }
-/* Inline Settings panel: reuses the review field styles under a hairline. */
-.aii-pc-set { display: grid; gap: 10px; padding: 12px 0 2px; border-top: 1px solid #e3e8f0; }
+/* Inline Settings panel: a proper white card (matching the preview card family)
+   so the review fields sit on a defined surface, not dangling on the wash. */
+.aii-pc-set { display: grid; gap: 12px; padding: 14px; background: #fff; border: 1px solid #e2e8f1; border-radius: 10px; }
 .aii-pc-set[hidden] { display: none; }
-.aii-pc-note { margin: 0; font-size: 0.72rem; line-height: 1.45; color: var(--color-text-light); }
-/* Very narrow phones: the primary takes its own full row; secondaries share one. */
+.aii-pc-note { margin: 0; padding: 0 2px; font-size: 0.73rem; line-height: 1.5; color: var(--color-text-light); }
+/* Narrow phones: the primary takes its own full row; the two secondaries split
+   the next row evenly so nothing rags. */
 @media (max-width: 480px) {
-  .aii-pc-submit { width: 100%; justify-content: center; }
+  .aii-pc-submit { width: 100%; }
+  .aii-pc-modelwrap, .aii-pc-btn { flex: 1 1 0; }
+  .aii-pc-modelwrap > .aii-pc-btn { width: 100%; }
 }
 
 /* Sources — collapsed accordion at the bottom of the insight. */
