@@ -4,16 +4,16 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp547';
-import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp547';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp548';
+import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp548';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp547';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp547';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp548';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp548';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -1438,6 +1438,7 @@ export function renderAIIntelligence(container, scope) {
   // panel reusing the Review-Prompt regeneration logic).
   const ICON_SWAP = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>';
   const ICON_CHECK_MINI = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+  const ICON_PENCIL = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
   function pcNoteText(m) { return `Opens ${m ? m.name : 'the AI model'} in a new tab — the prompt auto-fills or is copied to your clipboard.`; }
   function promptCardBodyHTML(ctx) {
     const m = preferredModel();
@@ -1449,7 +1450,10 @@ export function renderAIIntelligence(container, scope) {
     }).join('');
     return `<div class="aii-pc">
       <div class="aii-pc-prevwrap">
-        <span class="aii-pc-lbl">Prompt Preview</span>
+        <div class="aii-pc-prevhead">
+          <span class="aii-pc-lbl">Prompt Preview</span>
+          <button type="button" class="aii-pc-edit" data-pc-edit>${ICON_PENCIL}<span data-pc-edit-tx>Edit</span></button>
+        </div>
         <blockquote class="aii-pc-preview" data-pc-preview>${esc(ctx.prompt)}</blockquote>
       </div>
       <div class="aii-pc-actions">
@@ -1495,16 +1499,38 @@ export function renderAIIntelligence(container, scope) {
       const ot = simpleOutputOptions().find((o) => o.value === ps.outputType);
       return { reasoningHint: r && r.hint ? r.hint : '', outputClause: ot ? ot.clause : '', secondaryTopic: ps.secondaryTopic.trim(), secondaryClauseTpl: secondaryClauseTpl(), customInstructions: ps.customInstructions.trim(), topicName };
     };
+    let userEdited = false;   // the user hand-edited the preview → use that verbatim
     const assembled = () => assemblePrompt(base, advOpts());
     const preview = host.querySelector('[data-pc-preview]');
-    const refreshPreview = () => { if (preview) preview.textContent = assembled(); };
+    const getPrompt = () => (userEdited && preview) ? (preview.textContent || '') : assembled();
+    // Settings changes regenerate from the base — that discards a manual edit.
+    const refreshPreview = () => { userEdited = false; if (preview) preview.textContent = assembled(); };
     // Submit to {Model} — synchronous open (popup-block safe) + clipboard fallback.
     host.querySelector('[data-pc-submit]')?.addEventListener('click', () => {
       const m = preferredModel(); if (!m) return;
-      const prompt = assembled();
+      const prompt = getPrompt();
       openModel(m, prompt);
       copyPrompt(prompt);
     });
+    // Edit — make the preview directly editable (toggle "Edit" ↔ "Done").
+    const editBtn = host.querySelector('[data-pc-edit]');
+    const editTx = host.querySelector('[data-pc-edit-tx]');
+    editBtn && editBtn.addEventListener('click', () => {
+      if (!preview) return;
+      const editing = preview.getAttribute('contenteditable') === 'true';
+      if (editing) {
+        preview.removeAttribute('contenteditable');
+        editBtn.classList.remove('is-editing');
+        if (editTx) editTx.textContent = 'Edit';
+      } else {
+        preview.setAttribute('contenteditable', 'true');
+        editBtn.classList.add('is-editing');
+        if (editTx) editTx.textContent = 'Done';
+        preview.focus();
+        try { const r = document.createRange(); r.selectNodeContents(preview); r.collapse(false); const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); } catch (_) {}
+      }
+    });
+    preview && preview.addEventListener('input', () => { userEdited = true; });
     // Change model — a clean dropdown off the button; picking one persists the
     // preference and live-updates every built card (syncPromptCards).
     const modelBtn = host.querySelector('[data-pc-model]');

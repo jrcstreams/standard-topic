@@ -15501,8 +15501,15 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-fi-intro { margin: 2px 0 10px; font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.4; }
 /* Section headers: no icon — just title + subtext over a rule a touch heavier /
    darker than the site hairlines, so each reads as a clear divider. */
+/* Air above the first section header (space from the header divider above it), and a
+   LIGHTER rule below each header than before (#img492). */
+.aii-fi-sec { margin-top: 22px; }
 .aii-fi-sec + .aii-fi-sec { margin-top: 30px; }
-.aii-fi-sechead { padding: 0 2px 11px; margin-bottom: 14px; border-bottom: 1.5px solid #ccd4e0; }
+.aii-fi-sechead { padding: 0 2px 11px; margin-bottom: 14px; border-bottom: 1px solid #e3e7ef; }
+/* Standalone prompt list (custom search = no section header): give the first card
+   room below the tab-bar separator (#img493). In a section, the header handles it. */
+.aii-fi { margin-top: 14px; }
+.aii-fi-sec .aii-fi { margin-top: 0; }
 /* Lighter than the page/main header (which is 800): a calm section label, not a
    heavy dense title (#img483-485). */
 .aii-fi-sectitle { margin: 0; font-family: var(--font-display); font-size: 1rem; font-weight: 600; letter-spacing: -0.004em; color: #33517f; }
@@ -15542,23 +15549,29 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* The preview is ONE unit — a soft navy-washed excerpt card. The rounded accent
    bar spans label + text together (::before on the wrapper), so the eyebrow and
    the excerpt read as a single tasteful pull-quote, not two disconnected bits. */
-.aii-pc-prevwrap { position: relative; padding: 12px 16px 13px 19px; background: color-mix(in srgb, var(--color-primary) 4%, #fff); border: 1px solid color-mix(in srgb, var(--color-primary) 11%, #e9eef5); border-radius: 10px; }
-.aii-pc-prevwrap::before { content: ""; position: absolute; left: 8px; top: 13px; bottom: 13px; width: 3px; border-radius: 999px; background: color-mix(in srgb, var(--color-primary) 52%, #c3cfe2); }
-.aii-pc-lbl { display: block; margin-bottom: 7px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #5f7196; }
+.aii-pc-prevwrap { position: relative; padding: 12px 16px 14px; background: color-mix(in srgb, var(--color-primary) 4%, #fff); border: 1px solid color-mix(in srgb, var(--color-primary) 11%, #e9eef5); border-radius: 10px; }
+.aii-pc-prevhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 7px; }
+.aii-pc-lbl { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #5f7196; }
+/* Edit toggles the preview into an editable field (Edit ↔ Done). */
+.aii-pc-edit { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border: none; background: none; border-radius: 7px; color: #5f7196; font-family: var(--font-family); font-size: 0.74rem; font-weight: 600; cursor: pointer; transition: background .12s ease, color .12s ease; }
+.aii-pc-edit:hover { background: color-mix(in srgb, var(--color-primary) 7%, #fff); color: #26375a; }
+.aii-pc-edit svg { width: 13px; height: 13px; }
+.aii-pc-edit.is-editing { color: #2563eb; }
 .aii-pc-preview { margin: 0; padding: 0; font-size: 0.8rem; line-height: 1.6; color: #55617a; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.aii-pc-preview[contenteditable="true"] { display: block; -webkit-line-clamp: unset; overflow: visible; white-space: pre-wrap; outline: none; background: #fff; border-radius: 8px; box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary) 22%, transparent); padding: 9px 11px; margin: 1px -2px 0; }
 .aii-pc-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
 /* Primary: the site's lightened navy (.aii-review-submit) with a whisper of
    depth; same 40px height as the secondaries so the row sits on one clean line. */
-.aii-pc-submit { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 8px 19px; border: none; border-radius: 10px; background: #33517f; color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; box-shadow: 0 1px 2px rgba(28, 42, 66, 0.16); transition: background .14s ease, box-shadow .14s ease; }
+.aii-pc-submit { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 34px; padding: 6px 14px; border: none; border-radius: 9px; background: #33517f; color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; box-shadow: 0 1px 2px rgba(28, 42, 66, 0.16); transition: background .14s ease, box-shadow .14s ease; }
 .aii-pc-submit:hover { background: #2b466e; box-shadow: 0 2px 6px rgba(28, 42, 66, 0.22); }
 .aii-pc-submit:active { background: #26375a; box-shadow: 0 1px 2px rgba(28, 42, 66, 0.16); }
 .aii-pc-submit:disabled { opacity: 0.5; cursor: default; box-shadow: none; }
-.aii-pc-submit svg { width: 15px; height: 15px; }
+.aii-pc-submit svg { width: 14px; height: 14px; }
 /* Secondary: quiet white-bordered pills beside the navy primary. */
-.aii-pc-btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 40px; padding: 8px 15px; border: 1px solid #d6dce6; border-radius: 10px; background: #fff; color: #3d4a5f; cursor: pointer; font-family: var(--font-family); font-size: 0.84rem; font-weight: 600; transition: background .14s ease, border-color .14s ease, color .14s ease; }
+.aii-pc-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 34px; padding: 6px 12px; border: 1px solid #d6dce6; border-radius: 9px; background: #fff; color: #3d4a5f; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; transition: background .14s ease, border-color .14s ease, color .14s ease; }
 .aii-pc-btn:hover { background: #f6f8fc; border-color: #b9c4d8; color: #26375a; }
 .aii-pc-btn.is-open, .aii-pc-btn[aria-expanded="true"] { background: #e9edf5; border-color: #b9c4da; color: #26375a; }
-.aii-pc-btn > svg { width: 15px; height: 15px; }
+.aii-pc-btn > svg { width: 14px; height: 14px; }
 .aii-pc-btn[data-pc-settings] svg { transition: transform .2s ease; }
 .aii-pc-btn[data-pc-settings].is-open svg { transform: rotate(35deg); }
 .aii-pc-submit:focus-visible, .aii-pc-btn:focus-visible { outline: 2px solid color-mix(in srgb, var(--color-primary) 55%, #fff); outline-offset: 2px; }
