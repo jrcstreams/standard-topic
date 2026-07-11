@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp555';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp556';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp555';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp556';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp555';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp555';
-import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp555';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp555';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp556';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp556';
+import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp556';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp556';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp555';
-import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp555';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp555';
-import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp555';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp555';
-import { renderWebSources } from './components/websources.js?v=20260706-revamp555';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp555';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp555';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp556';
+import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp556';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp556';
+import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp556';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp556';
+import { renderWebSources } from './components/websources.js?v=20260706-revamp556';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp556';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp556';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp555';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp556';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -279,6 +279,9 @@ function wireTopicHeroCondense() {
 //   • the mobile subnav button (default <900),
 //   • the DESKTOP body topic-header chevron + the on-scroll sticky bar (#70).
 const TSP_CHEV = '<svg class="tsp-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+// Small chevron for the "Change Topic" control (distinct class so it isn't hidden
+// by the topic-name chevron's ≤560 rule).
+const CHANGE_CHEV = '<svg class="tcb-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 
 // The shared dropdown panel (wrap + inner). `panelId` keeps aria-controls unique.
 // Layout (revamp389): a quiet actions row (Home · All Topics, with an X to close),
@@ -1199,7 +1202,7 @@ function renderLayout(route) {
     // the grey bar and OVERLAYS the control bar (controls are lower in hierarchy).
     subHeader.innerHTML = `
       <div class="topic-subnav-title">
-        <div class="topic-subnav-inner">${subnavPickerHTML(topic)}</div>
+        <div class="topic-subnav-inner">${subnavPickerHTML(topic)}<button type="button" class="topic-change-btn" data-change-topic aria-label="Change topic"><span>Change Topic</span>${CHANGE_CHEV}</button></div>
       </div>
       <div class="topic-subnav-controls">
         <nav class="topic-paths-nav" role="tablist" id="topic-paths-nav" aria-label="Topic sections">
@@ -1211,6 +1214,12 @@ function renderLayout(route) {
     observeSubnavHeight();
     setupResponsiveNav();
     wireSubnavPicker(subHeader);
+    // "Change Topic" opens the same picker dropdown as the topic-name button.
+    // stopPropagation so the outside-click closer doesn't immediately shut it.
+    subHeader.querySelector('[data-change-topic]')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      subHeader.querySelector('.topic-subnav-inner .topic-subnav-picker .tsp-btn')?.click();
+    });
   }
 
   if (route.type === 'about' || route.type === 'terms') {
