@@ -12,8 +12,8 @@
 
 import { getModels, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt } from '../utils/ai-models.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp552';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp552';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp555';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp555';
 
 function escapeHTML(str) {
   const div = document.createElement('div');
@@ -383,6 +383,17 @@ export function wireNewsAI(root) {
       else renderNewsWebInto(panel, card);
     });
   });
+  // Prefetch-on-intent: warm the AI brief on hover (after a short delay so a quick
+  // pass-over doesn't trigger it) or on the pointerdown that precedes a tap. The
+  // click then reuses the in-flight request, so the panel opens near-instantly.
+  root.querySelectorAll('.news-act-ai[data-news-panel="ai"]').forEach((btn) => {
+    const card = btn.closest('.news-card');
+    if (!card || !card.dataset.url) return;
+    let hoverTimer = 0;
+    btn.addEventListener('mouseenter', () => { hoverTimer = setTimeout(() => niPrefetchBrief(card), 120); });
+    btn.addEventListener('mouseleave', () => { clearTimeout(hoverTimer); });
+    btn.addEventListener('pointerdown', () => niPrefetchBrief(card), { passive: true });
+  });
   // Share — one button toggles a smooth accordion with Copy Link + Share via.
   root.querySelectorAll('.news-share-toggle').forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -584,6 +595,27 @@ function niFailHTML() {
 // a retry usually succeeds. So we auto-retry a couple times (loader stays up)
 // BEFORE ever showing the fail state, which cuts the visible failure rate a lot.
 const NI_MAX_RETRIES = 2;
+// Memoized per-card brief fetch. Prefetch-on-intent (hover/touch) and the click
+// share ONE in-flight request — so when the user clicks "AI Insights" the brief is
+// usually already generated + cached server-side, making the open feel instant
+// instead of waiting out a cold generation (#img507). Cleared on failure/empty so a
+// later attempt re-fetches; kept on success so re-opening is instant.
+function niFetchBrief(card) {
+  if (card.__niBrief) return card.__niBrief;
+  const d = { type: 'news', url: card.dataset.url || '', title: card.dataset.title || '', description: card.dataset.desc || '', date: card.dataset.date || '' };
+  const p = fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) })
+    .then((res) => (res.ok ? res.json() : null))
+    .then((data) => { if (!(data && data.content)) card.__niBrief = null; return data; })
+    .catch(() => { card.__niBrief = null; return null; });
+  card.__niBrief = p;
+  return p;
+}
+// Warm the cache the moment the user shows intent (hover with a short delay, or the
+// pointerdown that precedes a tap/click). Fire-and-forget — the click reuses it.
+function niPrefetchBrief(card) {
+  if (!card || !card.dataset || !card.dataset.url) return;
+  try { niFetchBrief(card); } catch (_) {}
+}
 async function renderNewsBriefInto(panel, card, attempt = 0) {
   if (attempt === 0) panel.innerHTML = `<div class="ni-inner">${niLoaderHTML()}</div>`;
   const stillOpen = () => panel.dataset.kind === 'ai' && !panel.hidden;
@@ -603,8 +635,7 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
     if (stillOpen()) showFail();
   };
   try {
-    const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'news', ...d }) });
-    const data = res.ok ? await res.json() : null;
+    const data = await niFetchBrief(card);       // shared with hover/touch prefetch
     const left = 500 - (Date.now() - t0); if (left > 0) await sleep(left);
     if (!stillOpen()) return;                    // closed/switched mid-flight
     if (data && data.content) {

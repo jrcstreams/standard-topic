@@ -13539,8 +13539,13 @@ body.home-search.app-mode .topic-layout {
 }
 /* Tagline sits centered between the headline and the bar; a touch more air below
    the bar too (#430). */
-.home-search-hero .search-panel-tagline { margin-top: 0; }
+.home-search-hero .search-panel-tagline { margin-top: 0; line-height: 1.35; }
 .home-search-hero .search-panel-barrow { padding: 0 0 0.3rem; }
+/* On larger screens the tagline→search-bar gap read as far too airy — tighten it
+   (mobile keeps its own spacing) (#img516). */
+@media (min-width: 700px) {
+  .home-search-hero .search-panel-hero-inner { padding-bottom: 0.2rem; }
+}
 /* Warm, elevated bar — rounded rect (not a pill), soft shadow, larger tap area. */
 .home-search-hero .search-panel-input {
   height: 56px; border-radius: 14px; border: 1px solid #d7e0ef;
@@ -13593,11 +13598,11 @@ body.home-search #home-search-hero { order: 1; }
 body.home-search #home-trending    { order: 2; }
 body.home-search #section-aii-home { order: 3; }
 body.home-search #section-newsfeed { order: 4; }
-/* Prompt Builder promo is one of the three desktop top-row cards — drop it from
-   the stacked mobile/tablet home (Search → Trending → Topics → News). The Topics
-   promo (#424) is NOT dropped — it replaces the old AI Insights card in the flow. */
+/* The promo cards (Prompt Builder + Explore Topics) are desktop top-row cards —
+   drop BOTH from the stacked mobile/tablet home (Search → Trending → News) so the
+   phone layout stays tight (#507-followup). */
 @media (max-width: 1023.98px) {
-  body.home-search .home-promo:not(.home-promo--topics) { display: none !important; }
+  body.home-search .home-promo { display: none !important; }
   /* The longer trending list (14) is for the tall desktop right column; on mobile
      it sits between Search and AI Insights, so cap it to 6 to keep the scroll tight
      ("View more trending" still opens the full list). */
