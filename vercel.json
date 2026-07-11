@@ -3,7 +3,8 @@
     { "path": "/api/cron/trending", "schedule": "0 */2 * * *" },
     { "path": "/api/cron/news", "schedule": "0 */6 * * *" },
     { "path": "/api/cron/embed", "schedule": "30 */2 * * *" },
-    { "path": "/api/cron/pregenerate", "schedule": "15 */3 * * *" }
+    { "path": "/api/cron/pregenerate", "schedule": "15 */3 * * *" },
+    { "path": "/api/cron/pregenerate?type=news&n=20&newsMax=20", "schedule": "45 */3 * * *" }
   ],
   "functions": {
     "api/cron/news.js": { "maxDuration": 300 },

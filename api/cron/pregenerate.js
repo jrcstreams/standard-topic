@@ -85,6 +85,12 @@ module.exports = async function handler(req, res) {
 
   const total = Math.min(Math.max(parseInt(req.query.n, 10) || 30, 1), 120);
   const which = (req.query.type || 'all').trim();
+  // Per-run news cap. Defaults to NEWS_PER_RUN (keeps the shared-budget `type=all`
+  // run from letting news starve the freshness-refresh pass). The dedicated
+  // news-warming cron (`type=news`) overrides it via ?newsMax= to warm MORE recent
+  // stories per run — it runs alone, so it has the whole time budget and never
+  // competes with refresh. Still bounded by the daily grounding guard → stays $0.
+  const newsMax = Math.min(Math.max(parseInt(req.query.newsMax, 10) || NEWS_PER_RUN, 1), 60);
   // force=1 makes the refresh pass ignore the staleness windows and re-ground
   // EVERY overview/trend (stalest first) — use after a prompt change to flush
   // old-dated briefs. type=purge deletes cached rows outright so each one
@@ -251,7 +257,7 @@ module.exports = async function handler(req, res) {
               SELECT 1 FROM ai_insights ai
                WHERE ai.entity_type='news' AND ai.entity_key = ns.url AND ai.insight='brief')
           ORDER BY coalesce(published_at, fetched_at) DESC
-          LIMIT $1`, [Math.min(budget, NEWS_PER_RUN)]);
+          LIMIT $1`, [Math.min(budget, newsMax)]);
       for (const r of rows) {
         if (budget <= 0 || !timeLeft()) break;
         if (await call({ type: 'news', url: r.url, title: r.title, description: r.description || '', date: r.date || '' })) news++;
