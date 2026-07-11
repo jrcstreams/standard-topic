@@ -17782,10 +17782,9 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .search-aii-host .aii-builder-topic--resultsfor { font-size: 0.98rem; font-weight: 550; gap: 0.32em; margin: 10px 0 16px; }
 .search-aii-host .aii-builder-resultsfor { color: var(--color-text-muted); font-weight: 600; }
 .search-aii-host .aii-builder-topic--resultsfor .aii-builder-topic-tx { color: #14213d; }
-/* Left-align the result section rows with the header / input / "Results for" line —
-   they were the only elements inset (12px accordion padding) so the whole list read
-   as misaligned even though the top block is flush (#img336). */
-.search-aii-host .aii-fi-accsum { padding-left: 0; }
+/* Prompt cards here use the SAME inset icon + padding as the topic-page Prompt
+   Library so the icons/rows align cleanly inside each card (#img513/515). The card
+   border sits flush with the header; the icon is inset like everywhere else. */
 
 /* "View Topic Page" — subtle, pinned to the top-right of the sticky topbar. */
 .aii-modal-body .aii-view-topic { position: absolute; top: 12px; right: 0; }
@@ -18075,12 +18074,29 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 /* Loader + fail */
 .ni-loader { display: flex; flex-direction: column; gap: 9px; padding: 4px 0 8px; }
 /* Spark + "Generating insights…" share ONE line (#img19). */
-.ni-loader-head { display: flex; align-items: center; gap: 7px; }
+.ni-loader-head { display: flex; align-items: center; gap: 8px; }
 .ni-loader-tx { font-size: 0.85rem; color: var(--color-text-muted); font-weight: 600; }
-.ni-spark { color: #1d4ed8; display: inline-flex; }
-.ni-skel { height: 12px; border-radius: 5px; background: linear-gradient(90deg, #eef1f6, #f6f8fb, #eef1f6); background-size: 200% 100%; animation: niShimmer 1.2s infinite; }
+/* The brand sparkle now twinkles continuously (scale + quarter-turn + a pulsing
+   glow) so the loader reads as "AI is actively working" instead of sitting static
+   (#img507). */
+.ni-spark { color: #1d4ed8; display: inline-flex; transform-origin: center; animation: niSparkTwinkle 1.5s ease-in-out infinite; }
+.ni-spark svg { width: 18px; height: 18px; filter: drop-shadow(0 0 2px rgba(29, 78, 216, 0.35)); }
+@keyframes niSparkTwinkle {
+  0%, 100% { transform: scale(0.82) rotate(0deg); opacity: 0.6; }
+  50% { transform: scale(1.16) rotate(90deg); opacity: 1; }
+}
+/* Animated "…" trailing the label. */
+.ni-dots::after { content: ''; animation: niDots 1.4s steps(1, end) infinite; }
+@keyframes niDots { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75%, 100% { content: '...'; } }
+@media (prefers-reduced-motion: reduce) {
+  .ni-spark { animation: none; opacity: 1; }
+  .ni-dots::after { content: '…'; animation: none; }
+}
+.ni-skel { height: 12px; border-radius: 5px; background: linear-gradient(90deg, #eef1f6, #dfe6f2 30%, #f6f8fb 50%, #dfe6f2 70%, #eef1f6); background-size: 220% 100%; animation: niShimmer 1.25s linear infinite; }
+.ni-skel:nth-child(2) { animation-delay: .08s; }
+.ni-skel:nth-child(3) { animation-delay: .16s; }
 .ni-skel-short { width: 60%; }
-@keyframes niShimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+@keyframes niShimmer { from { background-position: 220% 0; } to { background-position: -220% 0; } }
 .ni-fail { padding: 10px 0; }
 .ni-fail p { margin: 0 0 8px; color: var(--color-text-muted); }
 .ni-retry { border: 1px solid var(--color-surface-border); background: #fff; border-radius: 8px; padding: 6px 12px; font-weight: 600; cursor: pointer; color: var(--color-primary); font-family: var(--font-family); }
@@ -18987,21 +19003,27 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 /* ═══ Shared "Explore Further" — clean dropdown accordions (revamp458, #img120) ══
    Used by trending / news / topic AI Insights. "Explore with External AI Models"
    offers Send-to / Direct Submit / Review (#img121), not a direct open. */
-/* Explore Further = a clean, basic Prompts-style list — flat rows with a title +
-   subtitle and a dropdown chevron, separated by thin hairlines. No heavy bordered
-   cards or icon chips (#img169-#img176). Mirrors the .aii-fi-acc Prompts listing. */
-.xf-list { display: flex; flex-direction: column; }
-.xf-acc { border: none; border-radius: 0; background: none; overflow: visible; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 72%, transparent); }
-.xf-acc:last-child { border-bottom: 1px solid color-mix(in srgb, var(--color-surface-border) 72%, transparent); }
-.xf-sum { display: flex; align-items: center; gap: 12px; padding: 13px 2px; cursor: pointer; list-style: none; -webkit-tap-highlight-color: transparent; }
+/* Explore Further = the SAME bordered accordion cards as the Prompts library
+   (.aii-fi-acc): icon · title/desc · chevron, each in its own rounded card that
+   lights up on open (#img512). */
+.xf-list { display: flex; flex-direction: column; gap: 8px; }
+.xf-acc { border: 1px solid var(--color-surface-border); border-radius: 10px; background: #fff; overflow: hidden; transition: border-color .15s ease, box-shadow .15s ease; }
+.xf-acc:hover { border-color: #ccd5e2; box-shadow: 0 2px 8px rgba(30, 45, 68, 0.06); }
+.xf-acc[open] { border-color: color-mix(in srgb, var(--color-primary) 34%, var(--color-surface-border)); box-shadow: 0 3px 12px rgba(30, 45, 68, 0.07); }
+.xf-sum { display: flex; align-items: center; gap: 12px; padding: 13px 16px 13px 14px; cursor: pointer; list-style: none; -webkit-tap-highlight-color: transparent; border-radius: 10px; transition: background .12s ease; }
 .xf-sum::-webkit-details-marker { display: none; }
+.xf-sum:hover { background: #f8fafd; }
+.xf-acc[open] > .xf-sum { background: #f2f5fa; border-radius: 10px 10px 0 0; }
+.xf-sum-ic { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; color: #475569; }
+.xf-sum-ic svg { width: 19px; height: 19px; display: block; }
+.xf-sum:hover .xf-sum-ic, .xf-acc[open] > .xf-sum .xf-sum-ic { color: #2c4467; }
 .xf-sum-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
 .xf-sum-name { font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; color: var(--color-text); letter-spacing: 0; transition: color .14s ease; }
 .xf-sum-desc { font-size: 0.78rem; color: var(--color-text-muted); line-height: 1.35; }
 .xf-sum .xf-chev { flex: none; color: var(--color-text-light); transition: transform .2s ease; }
 .xf-acc[open] > .xf-sum .xf-chev { transform: rotate(180deg); }
 .xf-sum:hover .xf-sum-name, .xf-acc[open] > .xf-sum .xf-sum-name { color: var(--color-primary); }
-.xf-panel { padding: 0 2px 12px; border-top: none; }
+.xf-panel { padding: 8px 12px 12px; border-top: 1px solid var(--color-surface-border); background: #fbfcfe; }
 /* Child sites (DuckDuckGo, Google News, Wikipedia…) are SUBORDINATE to their
    parent category header (Search & Reference) — lighter weight + smaller + a left
    rail/indent so the nesting reads as a hierarchy, not a flat repeat of the parent
@@ -19009,7 +19031,7 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 /* No left rail/line (#img208) — the lighter weight + small indent already read as
    subordinate. Hover is a soft background fill, NOT an underline (the anchor's
    default underline looked broken, #img210). */
-.xf-web-panel { display: flex; flex-direction: column; padding: 2px 0 6px; }
+.xf-web-panel { display: flex; flex-direction: column; padding: 6px 6px 8px; }
 .xf-web-row { display: flex; align-items: center; gap: 10px; padding: 9px 10px 9px 12px; border-radius: 9px; text-decoration: none !important; color: var(--color-text); transition: background .12s, color .12s; }
 .xf-web-row:hover, .xf-web-row:focus-visible { background: color-mix(in srgb, #33517f 7%, #fff); }
 .xf-web-row:hover .xf-web-name { color: var(--color-primary); }
@@ -19019,7 +19041,7 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 .xf-web-row > svg { flex: none; color: #93a4c4; }
 /* Same clean square treatment as the topic Prompts menu: grey square container,
    flat line-separated option rows, compact Send-to (#img284/#img286). */
-.xf-panel[data-xf-emenu] { background: #f4f6f9; border-radius: 0; padding: 12px 14px 14px; margin-top: 4px; }
+.xf-panel[data-xf-emenu] { background: #f4f6f9; border-radius: 0; padding: 12px 14px 14px; margin-top: 0; }
 .xf-emenu { display: flex; flex-direction: column; gap: 0; padding-top: 0; }
 .xf-emenu-model { display: flex; align-items: center; gap: 10px; padding: 2px 2px 12px; }
 .xf-emenu-lead { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-text-muted); }

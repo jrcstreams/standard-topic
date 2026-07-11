@@ -150,6 +150,16 @@ const CAT_DESC = {
   media: 'YouTube, podcasts & video',
   __other: 'More places to search',
 };
+// A leading icon per category so Explore Further reads as the prompt-library
+// accordion cards (icon · title/desc · chevron). Lucide-style, currentColor.
+const CAT_ICON = {
+  search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+  noai: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+  social: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+  media: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>',
+  factcheck: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="3" x2="12" y2="21"/><path d="M6 8l-4 6a4 4 0 0 0 8 0z"/><path d="M18 8l-4 6a4 4 0 0 0 8 0z"/><line x1="4" y1="7" x2="20" y2="7"/></svg>',
+  __other: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg>',
+};
 
 // opts: { prompt, webTerm, name, openFirst, subDesc }
 export function exploreFurtherHTML(opts = {}) {
@@ -159,7 +169,7 @@ export function exploreFurtherHTML(opts = {}) {
   const efSub = subDesc || 'Send this prompt to ChatGPT, Claude, Gemini & more';
   const models = getModels() || [];
   const aiAcc = models.length
-    ? `<details class="xf-acc"${openFirst ? ' open' : ''}><summary class="xf-sum"><span class="xf-sum-tx"><span class="xf-sum-name">Explore with External AI Models</span><span class="xf-sum-desc">${esc(efSub)}</span></span>${CHEV}</summary><div class="xf-panel" data-xf-emenu data-xf-prompt="${escAttr(prompt)}" data-xf-name="${escAttr(opts.name || '')}">${emenuHomeHTML()}</div></details>`
+    ? `<details class="xf-acc"${openFirst ? ' open' : ''}><summary class="xf-sum"><span class="xf-sum-ic">${SPARK}</span><span class="xf-sum-tx"><span class="xf-sum-name">Explore with External AI Models</span><span class="xf-sum-desc">${esc(efSub)}</span></span>${CHEV}</summary><div class="xf-panel" data-xf-emenu data-xf-prompt="${escAttr(prompt)}" data-xf-name="${escAttr(opts.name || '')}">${emenuHomeHTML()}</div></details>`
     : '';
   const cats = getExternalSearchCategories() || [];
   const searches = getExternalSearches() || [];
@@ -174,7 +184,8 @@ export function exploreFurtherHTML(opts = {}) {
       return `<a class="xf-web-row" href="${escAttr(url)}" target="_blank" rel="noopener noreferrer"><span class="xf-web-tx"><span class="xf-web-name">${esc(s.name)}</span>${s.description ? `<span class="xf-web-desc">${esc(s.description)}</span>` : ''}</span>${EXT}</a>`;
     }).join('');
     const desc = CAT_DESC[cat.key] || '';
-    return `<details class="xf-acc"><summary class="xf-sum"><span class="xf-sum-tx"><span class="xf-sum-name">${esc(cat.label)}</span>${desc ? `<span class="xf-sum-desc">${esc(desc)}</span>` : ''}</span>${CHEV}</summary><div class="xf-panel xf-web-panel">${rows}</div></details>`;
+    const icon = CAT_ICON[cat.key] || CAT_ICON.__other;
+    return `<details class="xf-acc"><summary class="xf-sum"><span class="xf-sum-ic">${icon}</span><span class="xf-sum-tx"><span class="xf-sum-name">${esc(cat.label)}</span>${desc ? `<span class="xf-sum-desc">${esc(desc)}</span>` : ''}</span>${CHEV}</summary><div class="xf-panel xf-web-panel">${rows}</div></details>`;
   }).join('');
   return `<div class="xf-list">${aiAcc}${webAccs}</div>`;
 }
