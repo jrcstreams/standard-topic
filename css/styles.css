@@ -14066,6 +14066,38 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   }
 }
 
+/* Trend "View AI Insights" button — the mobile affordance; hidden on desktop where
+   the whole card row is the trigger. Matches the news-card AI Insights pill, with
+   an open-state "Close AI Insights" label swap (#img519/520). */
+.trend-card-actions { display: none; }
+.trend-card-aibtn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 13px; border-radius: 999px; border: 1px solid #cdd5e1; background: #fff; color: #475569; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 500; transition: border-color .14s, color .14s, background .14s; -webkit-tap-highlight-color: transparent; }
+.trend-card-aibtn svg { flex: none; }
+.trend-card-aibtn:hover { border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-surface-border)); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 5%, #fff); }
+.trend-card-aibtn-close { display: none; }
+.trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-open { display: none; }
+.trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-close { display: inline; }
+.trend-card-aibtn[aria-expanded="true"] { border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-surface-border)); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 7%, #fff); font-weight: 600; }
+
+/* Mobile stacked home: Trending reads like the News Feed — no grey container, a
+   simple bold header + separator, and each trend a clean news-style card with one
+   "View AI Insights" button (#img520). Desktop (≥1024 sidebar) is untouched. */
+@media (max-width: 1023.98px) {
+  body.home-search #home-trending .trending-topics { background: transparent !important; border: none !important; border-radius: 0 !important; padding: 0 !important; overflow: visible !important; }
+  body.home-search #home-trending .trending-topics-logo { display: none; }
+  body.home-search #home-trending .trending-topics-head { margin: 0 0 0.85rem !important; padding: 0 0 0.7rem !important; border-bottom: 1px solid #d6dae2 !important; background: transparent !important; }
+  body.home-search #home-trending .trending-topics-title { font-size: 1.3rem; color: #1c3a6b; font-weight: 600; }
+  body.home-search #home-trending .trend-legend-row { padding: 2px 0; }
+  body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; gap: 10px; padding: 6px 0 !important; }
+  body.home-search #home-trending .trend-card { border: 1px solid var(--color-surface-border); border-radius: 12px; background: #fff; padding: 14px 15px; }
+  body.home-search #home-trending .trend-card.is-expanded { border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); }
+  body.home-search #home-trending .trend-card-trigger { padding: 0 !important; cursor: pointer; }
+  body.home-search #home-trending .trend-card-chev { display: none; }
+  body.home-search #home-trending .trend-card-title { font-size: 1rem !important; font-weight: 700 !important; color: var(--color-text) !important; }
+  body.home-search #home-trending .trend-card-summary { color: #55617a !important; }
+  body.home-search #home-trending .trend-card-actions { display: flex; margin-top: 12px; }
+  body.home-search #home-trending .trend-viewmore-row { padding: 6px 0 8px !important; }
+}
+
 /* ═══ Homepage News Feed = the topic-page feed (#425) ═════════════════════════
    Match how news reads on topic pages: NO outer container box, a plain "News
    Feed" header with a hairline underneath, then clean standalone story cards
@@ -17887,7 +17919,15 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
    Replaces the featured-topics chip row. Works at ALL widths (the home subnav
    band shows on desktop too), so its button is styled outside the mobile-only
    .tsp-btn block. */
-.topic-banner-row--home-picker { display: flex; align-items: center; width: 100%; }
+.topic-banner-row--home-picker { display: flex; align-items: center; width: 100%; gap: 14px; }
+/* Home identity picker flexes; "Change Topic" pins right — mirrors topic pages (#img518). */
+.topic-banner-row--home-picker .is-home-picker { flex: 1 1 auto; width: auto; min-width: 0; }
+.topic-banner-row--home-picker:has(.topic-subnav-picker.is-open) .topic-change-btn .tcb-chev { transform: rotate(180deg); }
+/* At ≤560 (nav icons on their own row) drop the chevron next to "Home" — the
+   adjacent "Change Topic" chevron is close enough (#img518). */
+@media (max-width: 560px) {
+  .topic-banner-row--home-picker .is-home-picker .tsp-chev { display: none; }
+}
 .is-home-picker { display: block; position: relative; width: 100%; }
 .is-home-picker .tsp-btn {
   display: flex; align-items: center; gap: 0.55rem; padding: 0.5rem 0; border: none; background: none;

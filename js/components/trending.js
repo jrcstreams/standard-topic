@@ -4,10 +4,10 @@
 // fixed-height scroll area with top/bottom fade + chevron affordances
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
-import { renderTrendExpansionBody } from './trend-expansion.js?v=20260706-revamp556';
-import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp556';
-import { wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp556';
-import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp556';
+import { renderTrendExpansionBody } from './trend-expansion.js?v=20260706-revamp558';
+import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp558';
+import { wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp558';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp558';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -115,6 +115,15 @@ const TREND_CARD_ICON = `<svg viewBox="0 0 24 24" width="14" height="14" fill="n
 // AI Insights spark — same mark/branding as the News Feed AI Insights label,
 // reused as the mini-header inside each trend's insight dropdown.
 const AI_SPARK_SVG = `<svg class="trend-ai-spark" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>`;
+// Filled blue sparkle for the mobile "View AI Insights" button (matches the news
+// card's AI Insights pill).
+const AI_SPARK_FILLED = `<svg viewBox="0 0 24 24" width="15" height="15" fill="#2563eb" aria-hidden="true"><path d="M12 2l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 10.5l-4.4 1.85a2 2 0 0 0-1.25 1.25L12 19l-2.9-5.4a2 2 0 0 0-1.25-1.25L3.45 10.5l4.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>`;
+// The SAME animated loader the news-card AI Insights use (twinkling sparkle +
+// animated dots + shimmer skeletons) — shared via the global .ni-loader CSS so
+// trending "generating insights" reads identically (#img520). No per-term text.
+function niStyleLoaderHTML() {
+  return `<div class="ni-loader"><div class="ni-loader-head"><span class="ni-spark">${AI_SPARK_SVG}</span><span class="ni-loader-tx">Generating insights<span class="ni-dots" aria-hidden="true"></span></span></div><span class="ni-skel"></span><span class="ni-skel"></span><span class="ni-skel ni-skel-short"></span></div>`;
+}
 
 // Google returns trend queries lowercase ("jalen brunson") — title-case them.
 function titleCase(s) {
@@ -159,6 +168,9 @@ function trendCardHTML(topic, idx, opts) {
         </span>
         <span class="trend-card-chev trend-card-open" aria-hidden="true">${OPEN_ICON}</span>
       </button>
+      <div class="trend-card-actions">
+        <button type="button" class="trend-card-aibtn" data-trend-ai aria-expanded="false">${AI_SPARK_FILLED}<span class="trend-card-aibtn-open">View AI Insights</span><span class="trend-card-aibtn-close">Close AI Insights</span></button>
+      </div>
     </div>`;
 }
 
@@ -215,6 +227,7 @@ function wireTrendCardsInline(container) {
   const collapse = (card) => {
     card.classList.remove('is-expanded');
     card.querySelector('.trend-card-trigger')?.setAttribute('aria-expanded', 'false');
+    card.querySelector('[data-trend-ai]')?.setAttribute('aria-expanded', 'false');
     card.querySelector('.trend-card-exp')?.remove();
   };
   const openCard = async (card) => {
@@ -222,9 +235,10 @@ function wireTrendCardsInline(container) {
     const term = card.dataset.query || '';
     card.classList.add('is-expanded');
     card.querySelector('.trend-card-trigger')?.setAttribute('aria-expanded', 'true');
+    card.querySelector('[data-trend-ai]')?.setAttribute('aria-expanded', 'true');
     let exp = card.querySelector('.trend-card-exp');
     if (!exp) { exp = document.createElement('div'); exp.className = 'trend-card-exp'; card.appendChild(exp); }
-    exp.innerHTML = `<div class="trend-exp-loading"><span class="trend-exp-spin" aria-hidden="true"></span><span class="trend-exp-tx">Gathering the latest on <strong>${escapeHTML(term)}</strong>…</span></div>`;
+    exp.innerHTML = `<div class="ni-inner">${niStyleLoaderHTML()}</div>`;
     try {
       const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'trend', query: term }) });
       const data = res.ok ? await res.json() : null;
@@ -246,11 +260,15 @@ function wireTrendCardsInline(container) {
   };
   container.querySelectorAll('.trend-card').forEach((card) => {
     if (card.classList.contains('trend-card-skel')) return;
-    card.querySelector('.trend-card-trigger')?.addEventListener('click', (e) => {
+    const toggle = (e) => {
       e.stopPropagation();
       if (card.classList.contains('is-expanded')) collapse(card);
       else openCard(card);
-    });
+    };
+    // Desktop: the whole card row is the trigger. Mobile: the explicit
+    // "View AI Insights" button is the affordance. Both toggle the same brief.
+    card.querySelector('.trend-card-trigger')?.addEventListener('click', toggle);
+    card.querySelector('[data-trend-ai]')?.addEventListener('click', toggle);
   });
 }
 

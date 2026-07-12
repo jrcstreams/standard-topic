@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp556';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp558';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp556';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp558';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp556';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp556';
-import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp556';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp556';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp558';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp558';
+import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp558';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp558';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp556';
-import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp556';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp556';
-import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp556';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp556';
-import { renderWebSources } from './components/websources.js?v=20260706-revamp556';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp556';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp556';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp558';
+import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp558';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp558';
+import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp558';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp558';
+import { renderWebSources } from './components/websources.js?v=20260706-revamp558';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp558';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp558';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp556';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp558';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1153,10 +1153,16 @@ function renderLayout(route) {
       <div class="topic-banner">
         <div class="topic-banner-row topic-banner-row--home-picker">
           ${homeSubnavPickerHTML()}
+          <button type="button" class="topic-change-btn" data-change-topic aria-label="Change topic"><span>Change Topic</span>${CHANGE_CHEV}</button>
         </div>
       </div>
     `;
     wireSubnavPicker(subHeader);
+    // "Change Topic" opens the same featured-topics dropdown as the "Home" button.
+    subHeader.querySelector('[data-change-topic]')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      subHeader.querySelector('.topic-subnav-picker .tsp-btn')?.click();
+    });
 
     if (heroEl) heroEl.innerHTML = '';
 
