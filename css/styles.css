@@ -14087,7 +14087,7 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
      title (1.5rem/700) + hairline separator (#img525/527). */
   body.home-search #home-trending .trending-topics-head { margin: 0 0 0.85rem !important; padding: 0 0 0.7rem !important; border-bottom: 1px solid #d6dae2 !important; background: transparent !important; }
   body.home-search #home-trending .trending-topics-titlerow { gap: 0.6rem; }
-  body.home-search #home-trending .trending-topics-title { font-size: 1.5rem; color: #2d3748; font-weight: 700; letter-spacing: -0.015em; }
+  body.home-search #home-trending .trending-topics-title { font-size: 1.2rem; color: #2d3748; font-weight: 700; letter-spacing: -0.015em; }
   body.home-search #home-trending .trend-legend-row { padding: 2px 0; }
   body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; gap: 10px; padding: 6px 0 !important; }
   body.home-search #home-trending .trend-card { border: 1px solid var(--color-surface-border); border-radius: 12px; background: #fff; padding: 14px 15px; }
@@ -14110,13 +14110,13 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
 body.home-search #section-newsfeed .newsfeed-title { gap: 0.6rem; }
 body.home-search #section-newsfeed .newsfeed-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
 body.home-search #section-newsfeed .newsfeed-logo svg { width: 14px; height: 14px; display: block; }
-/* Desktop Trending header font matches the News Feed header exactly (#img528). */
-body.home-search #home-trending .trending-topics-title { font-size: 1.5rem; font-weight: 700; color: #2d3748; letter-spacing: -0.015em; }
+/* Desktop Trending header font matches the News Feed header exactly (#img528/529). */
+body.home-search #home-trending .trending-topics-title { font-size: 1.2rem; font-weight: 700; color: #2d3748; letter-spacing: -0.015em; }
 /* The icon-chip box centers already align with the title box, but General Sans
    glyphs sit slightly high in their line box — nudge the title text down a hair so
    it reads as optically centered with the chip (#img528). */
 body.home-search #home-trending .trending-topics-title,
-body.home-search #section-newsfeed .newsfeed-title-main { display: inline-block; transform: translateY(1.5px); }
+body.home-search #section-newsfeed .newsfeed-title-main { display: inline-block; transform: translateY(2px); }
 
 /* ═══ Homepage News Feed = the topic-page feed (#425) ═════════════════════════
    Match how news reads on topic pages: NO outer container box, a plain "News
@@ -18924,7 +18924,7 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 
 /* Homepage "News Feed" header a bit bigger (#img44). */
 body.home-search #section-newsfeed .newsfeed-title,
-body.home-search #section-newsfeed .newsfeed-title-main { font-size: 1.5rem !important; font-weight: 700 !important; }
+body.home-search #section-newsfeed .newsfeed-title-main { font-size: 1.2rem !important; font-weight: 700 !important; }
 /* Trend "AI Generated Text" label gets the same blue sparkle as the news one (#img56). */
 .im-sec-aitag svg { color: #1d4ed8 !important; }
 /* Drop the intro subtext in the inline Build-a-Custom-Prompt (#img52/#img53). */
