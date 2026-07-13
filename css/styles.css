@@ -14083,9 +14083,11 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
    "View AI Insights" button (#img520). Desktop (≥1024 sidebar) is untouched. */
 @media (max-width: 1023.98px) {
   body.home-search #home-trending .trending-topics { background: transparent !important; border: none !important; border-radius: 0 !important; padding: 0 !important; overflow: visible !important; }
-  body.home-search #home-trending .trending-topics-logo { display: none; }
+  /* Header matches the homepage News Feed header EXACTLY — icon chip + bold navy
+     title (1.5rem/700) + hairline separator (#img525/527). */
   body.home-search #home-trending .trending-topics-head { margin: 0 0 0.85rem !important; padding: 0 0 0.7rem !important; border-bottom: 1px solid #d6dae2 !important; background: transparent !important; }
-  body.home-search #home-trending .trending-topics-title { font-size: 1.3rem; color: #1c3a6b; font-weight: 600; }
+  body.home-search #home-trending .trending-topics-titlerow { gap: 0.6rem; }
+  body.home-search #home-trending .trending-topics-title { font-size: 1.5rem; color: #2d3748; font-weight: 700; letter-spacing: -0.015em; }
   body.home-search #home-trending .trend-legend-row { padding: 2px 0; }
   body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; gap: 10px; padding: 6px 0 !important; }
   body.home-search #home-trending .trend-card { border: 1px solid var(--color-surface-border); border-radius: 12px; background: #fff; padding: 14px 15px; }
@@ -14095,8 +14097,19 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   body.home-search #home-trending .trend-card-title { font-size: 1rem !important; font-weight: 700 !important; color: var(--color-text) !important; }
   body.home-search #home-trending .trend-card-summary { color: #55617a !important; }
   body.home-search #home-trending .trend-card-actions { display: flex; margin-top: 12px; }
-  body.home-search #home-trending .trend-viewmore-row { padding: 6px 0 8px !important; }
+  /* Match the mobile news-story "View AI Insights" pill size exactly. */
+  body.home-search #home-trending .trend-card-aibtn { padding: 5px 10px; font-size: 0.74rem; gap: 5px; }
+  body.home-search #home-trending .trend-card-aibtn svg { width: 13px; height: 13px; }
+  /* A touch more air between the last trend card and "View more trending" (#img526). */
+  body.home-search #home-trending .trend-viewmore-row { margin-top: 8px; padding: 6px 0 8px !important; }
 }
+/* News Feed section header on the homepage gets a matching icon chip (like the
+   Trending logo) — desktop + mobile. Hidden everywhere else (topic pages keep
+   their own plain header) (#img527). */
+.newsfeed-logo { display: none; }
+body.home-search #section-newsfeed .newsfeed-title { gap: 0.6rem; }
+body.home-search #section-newsfeed .newsfeed-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
+body.home-search #section-newsfeed .newsfeed-logo svg { width: 14px; height: 14px; display: block; }
 
 /* ═══ Homepage News Feed = the topic-page feed (#425) ═════════════════════════
    Match how news reads on topic pages: NO outer container box, a plain "News
@@ -17923,10 +17936,13 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 /* Home identity picker flexes; "Change Topic" pins right — mirrors topic pages (#img518). */
 .topic-banner-row--home-picker .is-home-picker { flex: 1 1 auto; width: auto; min-width: 0; }
 .topic-banner-row--home-picker:has(.topic-subnav-picker.is-open) .topic-change-btn .tcb-chev { transform: rotate(180deg); }
-/* At ≤560 (nav icons on their own row) drop the chevron next to "Home" — the
-   adjacent "Change Topic" chevron is close enough (#img518). */
-@media (max-width: 560px) {
-  .topic-banner-row--home-picker .is-home-picker .tsp-chev { display: none; }
+/* Keep the picker + "Change Topic" on ONE row on mobile. A topic-page rule
+   (#sub-header.is-subnav:not(.home-mode) …:has(.topic-subnav-picker){display:block})
+   wrongly matches home — `home-mode` lives on <body>, not #sub-header — and stacked
+   "Change Topic" onto a 2nd line (#img523). Force flex back for the home bar. The
+   chevron next to "Home" stays at every width. */
+@media (max-width: 899.98px) {
+  body.home-search.home-mode #sub-header.is-subnav .topic-banner-row.topic-banner-row--home-picker:has(.topic-subnav-picker) { display: flex !important; align-items: center; }
 }
 .is-home-picker { display: block; position: relative; width: 100%; }
 .is-home-picker .tsp-btn {

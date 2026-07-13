@@ -12,8 +12,8 @@
 
 import { getModels, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt } from '../utils/ai-models.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp558';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp558';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp560';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp560';
 
 function escapeHTML(str) {
   const div = document.createElement('div');
@@ -762,7 +762,7 @@ export function newsCardHTML(item) {
       </div>
       <div class="news-card-actions">
         ${url ? `<a class="news-act" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer"><span>View Story</span>${NI_VIEW_SVG}</a>` : ''}
-        <button type="button" class="news-act news-act-ai" data-news-panel="ai" aria-expanded="false">${AI_SPARK_FILLED_SVG}<span class="news-act-ai-open">AI Insights</span><span class="news-act-ai-close">Close AI Insights</span>${AI_CHEV_SVG}</button>
+        <button type="button" class="news-act news-act-ai" data-news-panel="ai" aria-expanded="false">${AI_SPARK_FILLED_SVG}<span class="news-act-ai-open">View AI Insights</span><span class="news-act-ai-close">Close AI Insights</span>${AI_CHEV_SVG}</button>
       </div>
       <div class="news-panel" data-news-panel-body hidden></div>
     </article>
@@ -1016,7 +1016,7 @@ export function renderNewsFeed(container, topic, isHome) {
   const headHTML = `
     <div class="newsfeed-head section-card-head">
       <div class="newsfeed-headtext">
-        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">News Feed</span></h3>
+        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><line x1="8" y1="8" x2="15" y2="8"/><line x1="8" y1="12" x2="15" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg></span><span class="newsfeed-title-main">News Feed</span></h3>
       </div>
     </div>`;
 
