@@ -14110,6 +14110,13 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
 body.home-search #section-newsfeed .newsfeed-title { gap: 0.6rem; }
 body.home-search #section-newsfeed .newsfeed-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
 body.home-search #section-newsfeed .newsfeed-logo svg { width: 14px; height: 14px; display: block; }
+/* Desktop Trending header font matches the News Feed header exactly (#img528). */
+body.home-search #home-trending .trending-topics-title { font-size: 1.5rem; font-weight: 700; color: #2d3748; letter-spacing: -0.015em; }
+/* The icon-chip box centers already align with the title box, but General Sans
+   glyphs sit slightly high in their line box — nudge the title text down a hair so
+   it reads as optically centered with the chip (#img528). */
+body.home-search #home-trending .trending-topics-title,
+body.home-search #section-newsfeed .newsfeed-title-main { display: inline-block; transform: translateY(1.5px); }
 
 /* ═══ Homepage News Feed = the topic-page feed (#425) ═════════════════════════
    Match how news reads on topic pages: NO outer container box, a plain "News
