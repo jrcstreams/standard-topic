@@ -5,27 +5,27 @@ import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js';
-import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp563';
+import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp565';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260607-polish50';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp563';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp565';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp563';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp563';
-import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp563';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp563';
+import { renderPromptGenerator } from './components/prompt-generator.js?v=20260706-revamp565';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260706-revamp565';
+import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp565';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260706-revamp565';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
-import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp563';
-import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp563';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp563';
-import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp563';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp563';
-import { renderWebSources } from './components/websources.js?v=20260706-revamp563';
-import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp563';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp563';
+import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp565';
+import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp565';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp565';
+import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp565';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp565';
+import { renderWebSources } from './components/websources.js?v=20260706-revamp565';
+import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp565';
+import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp565';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
-import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp563';
+import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260706-revamp565';
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -658,12 +658,14 @@ function wirePromptsDropdown(panel) {
     root.innerHTML = `
       <div class="prompts-landing">
         <button type="button" class="prompts-opt" data-prompt-build>
-          <span class="prompts-opt-head"><span class="prompts-opt-ic">${PROMPTS_BUILD_IC}</span><span class="prompts-opt-name">Build a Custom Prompt</span></span>
+          <span class="prompts-opt-ic">${PROMPTS_BUILD_IC}</span>
+          <span class="prompts-opt-name">Build a Custom Prompt</span>
           <span class="prompts-opt-desc">Craft a knowledge prompt and send it to your AI model.</span>
           <span class="prompts-opt-cta">Build prompt ${AIIDD_ARROW}</span>
         </button>
         <button type="button" class="prompts-opt" data-prompt-library>
-          <span class="prompts-opt-head"><span class="prompts-opt-ic">${PROMPTS_LIB_IC}</span><span class="prompts-opt-name">Prompt Library</span></span>
+          <span class="prompts-opt-ic">${PROMPTS_LIB_IC}</span>
+          <span class="prompts-opt-name">Prompt Library</span>
           <span class="prompts-opt-desc">Browse ready-made prompts across every topic.</span>
           <span class="prompts-opt-cta">View Prompt Library ${AIIDD_ARROW}</span>
         </button>

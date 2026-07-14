@@ -14110,8 +14110,16 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
 body.home-search #section-newsfeed .newsfeed-title { gap: 0.6rem; }
 body.home-search #section-newsfeed .newsfeed-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
 body.home-search #section-newsfeed .newsfeed-logo svg { width: 14px; height: 14px; display: block; }
-/* Desktop Trending header font matches the News Feed header exactly (#img528/529). */
-body.home-search #home-trending .trending-topics-title { font-size: 1.2rem; font-weight: 700; color: #2d3748; letter-spacing: -0.015em; }
+/* Desktop Trending header font matches the News Feed header exactly (#img528/529).
+   line-height matches News Feed too so the shared optical nudge below centers both. */
+body.home-search #home-trending .trending-topics-title { font-size: 1.2rem; font-weight: 700; color: #2d3748; letter-spacing: -0.015em; line-height: 1.15; }
+/* Desktop: the grey Trending card needs top breathing room for its header, which
+   pushed its separator below the (card-less) News Feed separator. Pull the whole
+   card up so the two column separators line up — the card top rides a bit above the
+   News Feed icon, as intended (#img530). */
+@media (min-width: 1024px) {
+  body.home-search #home-trending .trending-topics { margin-top: -16px; }
+}
 /* The icon-chip box centers already align with the title box, but General Sans
    glyphs sit slightly high in their line box — nudge the title text down a hair so
    it reads as optically centered with the chip (#img528). */
@@ -18560,27 +18568,23 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 /* The two entry options are big BLOCK cards (icon over title, subtext below) that
    take over the dropdown on landing — side by side when there's room, stacked on
    phones (#img43). */
-.prompts-landing { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 14px 2px 30px; }
+/* Two-choice picker: square-ish cards with stacked, centered content — side by
+   side when there's room, stacked on mobile (#img532). */
+.prompts-landing { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 16px 2px 30px; max-width: 620px; margin: 0 auto; }
 @media (min-width: 620px) { .prompts-landing { grid-template-columns: 1fr 1fr; } }
 .prompts-opt {
-  display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%; text-align: left;
-  padding: 20px 20px; justify-content: flex-start;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  width: 100%; text-align: center; min-height: 258px; padding: 30px 24px;
   border: 1px solid var(--color-surface-border); border-radius: 16px;
   background: #fff; cursor: pointer; transition: border-color .14s ease, box-shadow .14s ease, background .14s ease;
 }
 .prompts-opt:hover { border-color: color-mix(in srgb, #2563eb 45%, var(--color-surface-border)); box-shadow: 0 10px 26px -14px rgba(37,99,235,.32); background: color-mix(in srgb, #2563eb 2.5%, #fff); }
-/* Icon is a small lead-in INLINE with the title on one line (#img221). */
-.prompts-opt-head { display: flex; align-items: center; gap: 10px; }
-/* Dark navy icon on a neutral grey chip — matches the topic-page icon rather than
-   the blue accent (#img337/#img338). */
-.prompts-opt-ic { flex: 0 0 auto; width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; background: color-mix(in srgb, #26375a 8%, #fff); color: #26375a; }
-.prompts-opt-ic svg { width: 17px; height: 17px; }
-.prompts-opt-name { font-size: 1.05rem; font-weight: 700; color: var(--color-primary, #14213d); letter-spacing: -0.015em; }
-.prompts-opt-desc { font-size: 0.88rem; color: var(--color-text-muted, #64748b); line-height: 1.45; }
-/* CTA button replaces the bare arrow. */
-/* Softer, friendlier CTA — a light blue tint with blue text instead of a heavy
-   dark-navy fill (#img275). */
-.prompts-opt-cta { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; padding: 8px 15px; border-radius: 10px; background: color-mix(in srgb, #2563eb 11%, #fff); color: #2563eb; font-size: 0.85rem; font-weight: 600; transition: background .14s ease, color .14s ease; }
+/* Stacked: icon chip on top, then title, description, CTA. */
+.prompts-opt-ic { flex: 0 0 auto; width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; background: color-mix(in srgb, #26375a 8%, #fff); color: #26375a; margin-bottom: 2px; }
+.prompts-opt-ic svg { width: 23px; height: 23px; }
+.prompts-opt-name { font-size: 1.08rem; font-weight: 700; color: var(--color-primary, #14213d); letter-spacing: -0.015em; }
+.prompts-opt-desc { font-size: 0.88rem; color: var(--color-text-muted, #64748b); line-height: 1.45; max-width: 30ch; }
+.prompts-opt-cta { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; padding: 8px 16px; border-radius: 10px; background: color-mix(in srgb, #2563eb 11%, #fff); color: #2563eb; font-size: 0.85rem; font-weight: 600; transition: background .14s ease, color .14s ease; }
 .prompts-opt-cta svg { width: 15px; height: 15px; }
 .prompts-opt:hover .prompts-opt-cta { background: color-mix(in srgb, #2563eb 18%, #fff); color: #1d4ed8; }
 
