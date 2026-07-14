@@ -14124,7 +14124,7 @@ body.home-search #home-trending .trending-topics-title { font-size: 1.2rem; font
    glyphs sit slightly high in their line box — nudge the title text down a hair so
    it reads as optically centered with the chip (#img528). */
 body.home-search #home-trending .trending-topics-title,
-body.home-search #section-newsfeed .newsfeed-title-main { display: inline-block; transform: translateY(2px); }
+body.home-search #section-newsfeed .newsfeed-title-main { display: inline-block; transform: translateY(4px); }
 
 /* ═══ Homepage News Feed = the topic-page feed (#425) ═════════════════════════
    Match how news reads on topic pages: NO outer container box, a plain "News
@@ -18062,9 +18062,9 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 
 .news-card-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 13px; }
 .news-act {
-  display: inline-flex; align-items: center; gap: 6px; padding: 6px 13px; border-radius: 999px;
+  display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 999px;
   border: 1px solid #cdd5e1; background: #fff; color: #475569; cursor: pointer;
-  font-family: var(--font-family); font-size: 0.82rem; font-weight: 500; text-decoration: none !important;
+  font-family: var(--font-family); font-size: 0.77rem; font-weight: 500; text-decoration: none !important;
   transition: border-color .14s, color .14s, background .14s; -webkit-tap-highlight-color: transparent;
 }
 .news-act svg { flex: none; }
