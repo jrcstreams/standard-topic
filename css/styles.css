@@ -14090,8 +14090,10 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   body.home-search #home-trending .trending-topics-title { font-size: 1.2rem; color: #2d3748; font-weight: 700; letter-spacing: -0.015em; }
   body.home-search #home-trending .trend-legend-row { padding: 2px 0; }
   body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; gap: 10px; padding: 6px 0 !important; }
-  body.home-search #home-trending .trend-card { border: 1px solid var(--color-surface-border); border-radius: 12px; background: #fff; padding: 14px 15px; }
-  body.home-search #home-trending .trend-card.is-expanded { border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); }
+  /* Mobile keeps the grey trending-card effect — a light grey card (lighter than the
+     old #f4f6f8) with a soft border; expands to white when its brief opens. */
+  body.home-search #home-trending .trend-card { border: 1px solid #e9edf3; border-radius: 12px; background: #f8fafc; padding: 14px 15px; }
+  body.home-search #home-trending .trend-card.is-expanded { background: #fff; border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); }
   body.home-search #home-trending .trend-card-trigger { padding: 0 !important; cursor: pointer; }
   body.home-search #home-trending .trend-card-chev { display: none; }
   body.home-search #home-trending .trend-card-title { font-size: 1rem !important; font-weight: 700 !important; color: var(--color-text) !important; }
@@ -14103,30 +14105,24 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   /* A touch more air between the last trend card and "View more trending" (#img526). */
   body.home-search #home-trending .trend-viewmore-row { margin-top: 8px; padding: 6px 0 8px !important; }
 }
-/* Desktop: the sidebar trends read as INDIVIDUAL grey cards (each with the "View AI
-   Insights" button) rather than flat rows inside one big grey container (#img536).
-   Header + separator alignment (revamp564) is preserved. */
+/* Desktop: the sidebar trends are a clean FLAT LIST (no grey container, no per-card
+   boxes) — each trend a row separated by a hairline, whole row clickable. The grey
+   trending-card treatment is now MOBILE-ONLY. Header + separator alignment preserved. */
 @media (min-width: 1024px) {
   body.home-search #home-trending .trending-topics { background: transparent !important; border: none !important; border-radius: 0 !important; padding: 0 !important; overflow: visible !important; }
   /* Header matches the News Feed header — NO tinted band, transparent, hairline
      separator, minimal top padding (#img537). */
   body.home-search #home-trending .trending-topics-head { background: transparent !important; margin: 0 0 6px !important; padding: 2px 0 13px !important; border-bottom: 1px solid #d6dae2 !important; }
-  /* More breathing room around the "Trend summaries are AI-generated" line (#img540). */
-  body.home-search #home-trending .trend-legend-row { padding: 12px 0 15px !important; }
-  body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; gap: 10px; padding: 0 !important; }
-  body.home-search #home-trending .trend-card { border: 1px solid #e4e8ef; border-radius: 12px; background: #f4f6f8; padding: 13px 14px; transition: border-color .14s ease, background .14s ease; }
-  body.home-search #home-trending .trend-card:hover { border-color: #ccd5e2; }
-  body.home-search #home-trending .trend-card.is-expanded { border-color: color-mix(in srgb, var(--color-primary) 30%, #e4e8ef); background: #fff; }
-  body.home-search #home-trending .trend-card-trigger { padding: 0 !important; cursor: pointer; }
-  body.home-search #home-trending .trend-card-chev { display: none; }
-  body.home-search #home-trending .trend-card-title { font-size: 0.98rem !important; font-weight: 700 !important; color: var(--color-text) !important; }
+  /* Breathing room around the "Trend summaries are AI-generated" line (#img540). */
+  body.home-search #home-trending .trend-legend-row { padding: 12px 0 4px !important; }
+  body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; gap: 0; padding: 0 !important; }
+  /* Flat rows: no border/bg/button, a hairline divider between them, whole row clickable. */
+  body.home-search #home-trending .trend-card { border: none; background: none; border-bottom: 1px solid #eef1f5; border-radius: 0; }
+  body.home-search #home-trending .trend-card:last-child { border-bottom: none; }
+  body.home-search #home-trending .trend-card-trigger { padding: 11px 2px !important; cursor: pointer; }
+  body.home-search #home-trending .trend-card-actions { display: none; }
+  body.home-search #home-trending .trend-card-title { font-size: 0.96rem !important; font-weight: 700 !important; color: var(--color-text) !important; }
   body.home-search #home-trending .trend-card-summary { color: #55617a !important; }
-  body.home-search #home-trending .trend-card-actions { display: flex; margin-top: 10px; }
-  body.home-search #home-trending .trend-card-aibtn { padding: 5px 11px; font-size: 0.76rem; gap: 5px; }
-  body.home-search #home-trending .trend-card-aibtn svg { width: 13px; height: 13px; }
-  /* Soften the button so it sits INTO the grey card rather than popping as stark
-     white — a hair of the card's tint + a lighter border (#img541). */
-  body.home-search #home-trending .trend-card-aibtn { background: color-mix(in srgb, #f4f6f8 55%, #fff); border-color: #dbe1ea; }
 }
 /* News Feed section header on the homepage gets a matching icon chip (like the
    Trending logo) — desktop + mobile. Hidden everywhere else (topic pages keep
