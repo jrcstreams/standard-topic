@@ -4,10 +4,10 @@
 // fixed-height scroll area with top/bottom fade + chevron affordances
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
-import { renderTrendExpansionBody } from './trend-expansion.js?v=20260706-revamp570';
-import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp570';
-import { wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp570';
-import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp570';
+import { renderTrendExpansionBody } from './trend-expansion.js?v=20260706-revamp571';
+import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp571';
+import { wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp571';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp571';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -169,7 +169,7 @@ function trendCardHTML(topic, idx, opts) {
         <span class="trend-card-chev trend-card-open" aria-hidden="true">${OPEN_ICON}</span>
       </button>
       <div class="trend-card-actions">
-        <button type="button" class="trend-card-aibtn" data-trend-ai aria-expanded="false">${AI_SPARK_FILLED}<span class="trend-card-aibtn-open">View AI Insights</span><span class="trend-card-aibtn-close">Close AI Insights</span></button>
+        <button type="button" class="trend-card-aibtn" data-trend-ai aria-expanded="false">${AI_SPARK_FILLED}<span class="trend-card-aibtn-open">View AI Insights</span><span class="trend-card-aibtn-close">Close AI Insights</span><svg class="trend-card-aibtn-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
       </div>
     </div>`;
 }
@@ -249,8 +249,8 @@ function wireTrendCardsInline(container) {
       }
       // Still the expanded card? (user may have collapsed while fetching)
       if (!card.classList.contains('is-expanded')) return;
-      exp.innerHTML = `<button type="button" class="trend-exp-close" aria-label="Close">${TREND_EXP_CLOSE}</button>${renderTrendExpansionBody(term, data)}`;
-      exp.querySelector('.trend-exp-close')?.addEventListener('click', (e) => { e.stopPropagation(); collapse(card); });
+      exp.innerHTML = `<button type="button" class="trend-exp-close" aria-label="Close">${TREND_EXP_CLOSE}</button>${renderTrendExpansionBody(term, data)}<div class="trend-exp-closefoot"><button type="button" class="trend-exp-closelink" data-trend-closefoot>${TREND_EXP_CLOSE}<span>Close</span></button></div>`;
+      exp.querySelectorAll('.trend-exp-close, [data-trend-closefoot]').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); collapse(card); try { card.querySelector('.trend-card-trigger')?.scrollIntoView({ block: 'nearest' }); } catch (_) {} }));
       wireInsightTabs(exp);
       wireExploreFurther(exp);
     } catch (_) {

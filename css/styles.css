@@ -14074,6 +14074,8 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
 .trend-card-aibtn svg { flex: none; }
 .trend-card-aibtn:hover { border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-surface-border)); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 5%, #fff); }
 .trend-card-aibtn-close { display: none; }
+/* Dropdown chevron only shows in the desktop LINK style (not the mobile pill). */
+.trend-card-aibtn-chev { display: none; }
 .trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-open { display: none; }
 .trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-close { display: inline; }
 .trend-card-aibtn[aria-expanded="true"] { border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-surface-border)); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 7%, #fff); font-weight: 600; }
@@ -14105,24 +14107,32 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   /* A touch more air between the last trend card and "View more trending" (#img526). */
   body.home-search #home-trending .trend-viewmore-row { margin-top: 8px; padding: 6px 0 8px !important; }
 }
-/* Desktop: the sidebar trends are a clean FLAT LIST (no grey container, no per-card
-   boxes) — each trend a row separated by a hairline, whole row clickable. The grey
-   trending-card treatment is now MOBILE-ONLY. Header + separator alignment preserved. */
+/* Desktop: the Trending sidebar is a GREY CONTAINER rail holding flat trend rows.
+   Each row ditches the ↗ arrow and instead has a small blue "View AI Insights" LINK
+   under its summary (sparkle + dropdown chevron) — clearly clickable but not a heavy
+   button, since the cards are meant to be quickly scanned (#img542). */
 @media (min-width: 1024px) {
-  body.home-search #home-trending .trending-topics { background: transparent !important; border: none !important; border-radius: 0 !important; padding: 0 !important; overflow: visible !important; }
-  /* Header matches the News Feed header — NO tinted band, transparent, hairline
-     separator, minimal top padding (#img537). */
-  body.home-search #home-trending .trending-topics-head { background: transparent !important; margin: 0 0 6px !important; padding: 2px 0 13px !important; border-bottom: 1px solid #d6dae2 !important; }
-  /* Breathing room around the "Trend summaries are AI-generated" line (#img540). */
-  body.home-search #home-trending .trend-legend-row { padding: 12px 0 4px !important; }
-  body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; gap: 0; padding: 0 !important; }
-  /* Flat rows: no border/bg/button, a hairline divider between them, whole row clickable. */
-  body.home-search #home-trending .trend-card { border: none; background: none; border-bottom: 1px solid #eef1f5; border-radius: 0; }
+  body.home-search #home-trending .trending-topics { background: #f4f6f8 !important; border: 1px solid #e6e9ef !important; border-radius: 16px !important; padding: 0 !important; overflow: hidden !important; }
+  /* Header on the grey rail — no extra tinted band, just a hairline separator. */
+  body.home-search #home-trending .trending-topics-head { background: transparent !important; margin: 0 !important; padding: 14px 16px !important; border-bottom: 1px solid #e1e5ee !important; }
+  body.home-search #home-trending .trend-legend-row { padding: 12px 14px 2px !important; }
+  body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; gap: 0; padding: 2px 6px 8px !important; }
+  /* Flat rows inside the rail, hairline divider between them. */
+  body.home-search #home-trending .trend-card { border: none; background: none; border-bottom: 1px solid #e6e9ef; border-radius: 0; }
   body.home-search #home-trending .trend-card:last-child { border-bottom: none; }
-  body.home-search #home-trending .trend-card-trigger { padding: 11px 2px !important; cursor: pointer; }
-  body.home-search #home-trending .trend-card-actions { display: none; }
+  body.home-search #home-trending .trend-card-trigger { padding: 11px 8px 3px !important; cursor: pointer; }
+  /* Ditch the ↗ open-arrow at the row's end (#img542). */
+  body.home-search #home-trending .trend-card-chev { display: none !important; }
   body.home-search #home-trending .trend-card-title { font-size: 0.96rem !important; font-weight: 700 !important; color: var(--color-text) !important; }
   body.home-search #home-trending .trend-card-summary { color: #55617a !important; }
+  /* "View AI Insights" as a small BLUE LINK: sparkle · label · dropdown chevron. No
+     pill/border/bg so it doesn't dominate the compact card. */
+  body.home-search #home-trending .trend-card-actions { display: flex; padding: 0 8px 12px; }
+  body.home-search #home-trending .trend-card-aibtn { background: none !important; border: none !important; padding: 4px 0 !important; color: #2563eb !important; font-size: 0.78rem !important; font-weight: 600 !important; gap: 5px !important; min-height: 0 !important; }
+  body.home-search #home-trending .trend-card-aibtn:hover { color: #1d4ed8 !important; background: none !important; text-decoration: underline; text-underline-offset: 2px; }
+  body.home-search #home-trending .trend-card-aibtn svg { width: 13px; height: 13px; }
+  body.home-search #home-trending .trend-card-aibtn .trend-card-aibtn-chev { display: inline-flex; margin-left: 1px; transition: transform .2s ease; }
+  body.home-search #home-trending .trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-chev { transform: rotate(180deg); }
 }
 /* News Feed section header on the homepage gets a matching icon chip (like the
    Trending logo) — desktop + mobile. Hidden everywhere else (topic pages keep
@@ -14235,6 +14245,12 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
   border: 1px solid var(--color-surface-border); background: #fff; color: #475569; cursor: pointer; z-index: 2;
 }
 .trend-exp-close:hover { background: #eef2f7; color: #1e293b; }
+/* Discreet "Close" at the very bottom of a trend brief — mirrors the top X, fills
+   the trailing gap before the next trend, and reads as the natural end (#img543). */
+.trend-exp-closefoot { display: flex; justify-content: center; margin-top: 6px; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); }
+.trend-exp-closelink { display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border: none; background: none; color: var(--color-text-muted); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; border-radius: 8px; transition: color .14s ease, background .14s ease; }
+.trend-exp-closelink:hover { color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 6%, #fff); }
+.trend-exp-closelink svg { width: 14px; height: 14px; flex: none; }
 .trend-exp-loading, .trend-exp-fail {
   /* flex-start + a single text span so the term ("Kellyanne Conway") stays part of
      one flowing sentence that wraps cleanly instead of splitting into its own

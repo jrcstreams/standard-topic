@@ -4,7 +4,7 @@
 // Updated" meta, and the fade-scrolled list whose rows open the trending
 // detail modal. Sits BELOW the detail modal (z 150) so a clicked term
 // stacks its detail view on top.
-import { renderTrendingModal } from './trending.js?v=20260706-revamp570';
+import { renderTrendingModal } from './trending.js?v=20260706-revamp571';
 
 let overlayEl = null;
 let panelEl = null;
