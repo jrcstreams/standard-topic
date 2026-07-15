@@ -30,16 +30,16 @@ catch (e) { waitUntil = null; invalidateByTag = null; }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // Cap briefs generated per heal pass so the background work stays well inside
 // the function's maxDuration. Only ever a handful are missing/stale at once.
-const HEAL_MAX = 12;
+const HEAL_MAX = 10;
 // A trend's cached summary older than this (and still trending) is regenerated —
 // the term persists across days but the reason it's trending changes (an "opening
 // match" becomes a "semi-final"), and a summary keyed only by the query string
-// would otherwise stay frozen on day-one's reason. 90 min keeps the "why" genuinely
-// current for fast-moving sports/breaking terms — the common complaint was a stale
-// reason, so we reassess ~2x more often than the old 3h. With HEAL_MAX=12 per
-// ~30-min cache-miss pass the heal comfortably keeps the full ~20-item list current.
-// Env-overridable; raise to slow refresh.
-const STALE_MS = Number(process.env.TREND_SUMMARY_STALE_MS || 90 * 60 * 1000);
+// would otherwise stay frozen on day-one's reason (now also fixed at the storage
+// layer). 2h keeps the "why" current for fast-moving terms and aligns with the ~2h
+// SerpAPI snapshot cron — modestly fresher than the old 3h WITHOUT doubling grounded
+// trend calls (which would cannibalize the day's shared grounding budget and push
+// other briefs into ungrounded hallucination). Env-overridable; raise to slow refresh.
+const STALE_MS = Number(process.env.TREND_SUMMARY_STALE_MS || 2 * 3600 * 1000);
 
 // Geo config — single source of truth. Add 'GB','DE',… here (and only
 // here) to widen coverage; each geo is one upstream call per refresh.
