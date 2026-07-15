@@ -12,8 +12,8 @@
 
 import { getModels, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
 import { openModel, copyPrompt } from '../utils/ai-models.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp571';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp571';
+import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp574';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp574';
 
 function escapeHTML(str) {
   const div = document.createElement('div');
@@ -444,11 +444,11 @@ export function wireNewsAI(root) {
 const NI_VIEW_SVG = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>';
 const NI_GLOBE_SVG = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg>';
 const NI_ARROW_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>';
-const NI_CLOSEUP_SVG = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>';
-// A quiet "Close AI Insights" affordance at the very bottom of the brief — reads
-// as the natural end of the section (we also auto-close on scroll).
+const NI_X_SVG = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+// A quiet "Close AI Insights" affordance at the very bottom of the brief — an X,
+// vertically centered in the gap below the last section (we also auto-close on scroll).
 function niCloseFootHTML() {
-  return `<div class="ni-closefoot"><button type="button" class="ni-close-btn" data-ni-close>${NI_CLOSEUP_SVG}<span>Close AI Insights</span></button></div>`;
+  return `<div class="ni-closefoot"><button type="button" class="ni-close-btn" data-ni-close>${NI_X_SVG}<span>Close AI Insights</span></button></div>`;
 }
 const NI_SEC_ICON = {
   summary: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><line x1="7" y1="8" x2="14" y2="8"/><line x1="7" y1="12" x2="14" y2="12"/><line x1="7" y1="16" x2="11" y2="16"/></svg>',
@@ -762,7 +762,7 @@ export function newsCardHTML(item) {
       </div>
       <div class="news-card-actions">
         ${url ? `<a class="news-act" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer"><span>View Story</span>${NI_VIEW_SVG}</a>` : ''}
-        <button type="button" class="news-act news-act-ai" data-news-panel="ai" aria-expanded="false">${AI_SPARK_FILLED_SVG}<span class="news-act-ai-open">View AI Insights</span><span class="news-act-ai-close">Close AI Insights</span>${AI_CHEV_SVG}</button>
+        <button type="button" class="news-act news-act-ai" data-news-panel="ai" aria-expanded="false">${AI_SPARK_FILLED_SVG}<span class="news-act-ai-open">View AI Insights</span><span class="news-act-ai-close">Close AI Insights</span>${AI_CHEV_SVG}<svg class="news-act-ai-x" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       </div>
       <div class="news-panel" data-news-panel-body hidden></div>
     </article>

@@ -14116,19 +14116,24 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   /* Header on the grey rail — no extra tinted band, just a hairline separator. */
   body.home-search #home-trending .trending-topics-head { background: transparent !important; margin: 0 !important; padding: 14px 16px !important; border-bottom: 1px solid #e1e5ee !important; }
   body.home-search #home-trending .trend-legend-row { padding: 12px 14px 2px !important; }
-  body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; gap: 0; padding: 2px 6px 8px !important; }
-  /* Flat rows inside the rail, hairline divider between them. */
-  body.home-search #home-trending .trend-card { border: none; background: none; border-bottom: 1px solid #e6e9ef; border-radius: 0; }
-  body.home-search #home-trending .trend-card:last-child { border-bottom: none; }
-  body.home-search #home-trending .trend-card-trigger { padding: 11px 8px 3px !important; cursor: pointer; }
+  body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; gap: 0; padding: 4px 6px 8px !important; }
+  /* Each trend is a row. Hover = a soft rounded highlight over the WHOLE row (incl the
+     "View AI Insights" link), inset so it never rides the divider lines (#img544/545).
+     Dividers are INSET hairlines between rows (#img549). */
+  body.home-search #home-trending .trend-card { position: relative; border: none; background: none; border-radius: 0; }
+  body.home-search #home-trending .trend-card:not(:last-child)::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: 0; height: 1px; background: #e3e7ee; }
+  body.home-search #home-trending .trend-card:hover::before { content: ''; position: absolute; inset: 2px 3px 5px; border-radius: 10px; background: color-mix(in srgb, var(--color-primary) 5%, transparent); z-index: 0; }
+  body.home-search #home-trending .trend-card > * { position: relative; z-index: 1; }
+  body.home-search #home-trending .trend-card-trigger,
+  body.home-search #home-trending .trend-card-trigger:hover { background: transparent !important; padding: 11px 10px 3px !important; cursor: pointer; }
   /* Ditch the ↗ open-arrow at the row's end (#img542). */
   body.home-search #home-trending .trend-card-chev { display: none !important; }
   body.home-search #home-trending .trend-card-title { font-size: 0.96rem !important; font-weight: 700 !important; color: var(--color-text) !important; }
   body.home-search #home-trending .trend-card-summary { color: #55617a !important; }
   /* "View AI Insights" as a small BLUE LINK: sparkle · label · dropdown chevron. No
-     pill/border/bg so it doesn't dominate the compact card. */
-  body.home-search #home-trending .trend-card-actions { display: flex; padding: 0 8px 12px; }
-  body.home-search #home-trending .trend-card-aibtn { background: none !important; border: none !important; padding: 4px 0 !important; color: #2563eb !important; font-size: 0.78rem !important; font-weight: 600 !important; gap: 5px !important; min-height: 0 !important; }
+     pill/border/bg so it doesn't dominate the compact card. Tiny size + light weight. */
+  body.home-search #home-trending .trend-card-actions { display: flex; padding: 0 10px 12px; }
+  body.home-search #home-trending .trend-card-aibtn { background: none !important; border: none !important; padding: 4px 0 !important; color: #2563eb !important; font-size: 0.75rem !important; font-weight: 550 !important; gap: 5px !important; min-height: 0 !important; }
   body.home-search #home-trending .trend-card-aibtn:hover { color: #1d4ed8 !important; background: none !important; text-decoration: underline; text-underline-offset: 2px; }
   body.home-search #home-trending .trend-card-aibtn svg { width: 13px; height: 13px; }
   body.home-search #home-trending .trend-card-aibtn .trend-card-aibtn-chev { display: inline-flex; margin-left: 1px; transition: transform .2s ease; }
@@ -14141,15 +14146,22 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
 body.home-search #section-newsfeed .newsfeed-title { gap: 0.6rem; }
 body.home-search #section-newsfeed .newsfeed-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
 body.home-search #section-newsfeed .newsfeed-logo svg { width: 14px; height: 14px; display: block; }
-/* Desktop Trending header font matches the News Feed header exactly (#img528/529).
-   line-height matches News Feed too so the shared optical nudge below centers both. */
+/* Desktop: bump BOTH homepage section headers (icon chip + title) to be more
+   prominent — a clear step up, not huge (#img555). */
+@media (min-width: 1024px) {
+  body.home-search #section-newsfeed .newsfeed-title, body.home-search #section-newsfeed .newsfeed-title-main,
+  body.home-search #home-trending .trending-topics-title { font-size: 1.34rem !important; }
+  body.home-search #section-newsfeed .newsfeed-logo, body.home-search #home-trending .trending-topics-logo { width: 30px !important; height: 30px !important; border-radius: 9px !important; }
+  body.home-search #section-newsfeed .newsfeed-logo svg, body.home-search #home-trending .trending-topics-logo svg { width: 16px !important; height: 16px !important; }
+}
+/* Desktop Trending header font matches the News Feed header exactly (#img528/529). */
 body.home-search #home-trending .trending-topics-title { font-size: 1.2rem; font-weight: 700; color: #2d3748; letter-spacing: -0.015em; }
 /* Desktop: the grey Trending card needs top breathing room for its header, which
    pushed its separator below the (card-less) News Feed separator. Pull the whole
    card up so the two column separators line up — the card top rides a bit above the
    News Feed icon, as intended (#img530). */
 @media (min-width: 1024px) {
-  body.home-search #home-trending .trending-topics { margin-top: 0; }
+  body.home-search #home-trending .trending-topics { margin-top: -14px; }
 }
 /* Robustly center the display-font titles with their icon chips on EVERY screen
    size: text-box-trim shrinks the line box to the cap height, so align-items:center
@@ -14247,7 +14259,8 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
 .trend-exp-close:hover { background: #eef2f7; color: #1e293b; }
 /* Discreet "Close" at the very bottom of a trend brief — mirrors the top X, fills
    the trailing gap before the next trend, and reads as the natural end (#img543). */
-.trend-exp-closefoot { display: flex; justify-content: center; margin-top: 6px; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); }
+/* Close sits right at the end of the brief — no separator line, minimal gap (#img547/548). */
+.trend-exp-closefoot { display: flex; justify-content: center; margin-top: 0; padding-top: 2px; border-top: none; }
 .trend-exp-closelink { display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border: none; background: none; color: var(--color-text-muted); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; border-radius: 8px; transition: color .14s ease, background .14s ease; }
 .trend-exp-closelink:hover { color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 6%, #fff); }
 .trend-exp-closelink svg { width: 14px; height: 14px; flex: none; }
@@ -14607,10 +14620,10 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .news-share-wrap { position: relative; display: inline-flex; }
 .news-share-panel { position: absolute; bottom: calc(100% + 8px); left: 0; z-index: 25; width: max-content; opacity: 0; visibility: hidden; transform: translateY(4px); transition: opacity .16s ease, transform .16s ease, visibility .16s; }
 .news-share-panel.is-open { opacity: 1; visibility: visible; transform: none; }
-.news-share-panel-inner { display: flex; gap: 8px; padding: 8px 13px; background: #fff; border: 1px solid #e7ecf3; border-radius: 12px; box-shadow: 0 12px 30px -12px rgba(15, 26, 46, 0.28); }
+.news-share-panel-inner { display: flex; gap: 10px; padding: 10px; background: #fff; border: 1px solid #e7ecf3; border-radius: 13px; box-shadow: 0 12px 30px -12px rgba(15, 26, 46, 0.28); }
 .news-share-opt { white-space: nowrap; }
 .news-share-opt {
-  display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px;
+  display: inline-flex; align-items: center; gap: 7px; padding: 8px 15px;
   border: 1px solid var(--color-surface-border); border-radius: 8px; background: #fff; cursor: pointer;
   font-family: var(--font-family); font-size: 0.79rem; font-weight: var(--font-weight-medium); color: var(--color-text);
   transition: border-color .14s, color .14s;
@@ -18122,20 +18135,23 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .news-act-ai .news-ai-spark-filled { flex: none; }
 .news-act .news-ai-chev { transition: transform .2s ease; }
 .news-act[aria-expanded="true"] .news-ai-chev { transform: rotate(180deg); }
-/* Open state → clearer close CTA: the label flips to "Close AI Insights" and the
-   pill lights up so it's obviously the thing to click to close. */
+/* Open state → clearer close CTA: the label flips to "Close AI Insights", the pill
+   lights up, and the trailing dropdown chevron swaps for an X close glyph (#img550). */
 .news-act-ai .news-act-ai-close { display: none; }
+.news-act-ai-x { display: none; }
 .news-act-ai[aria-expanded="true"] .news-act-ai-open { display: none; }
 .news-act-ai[aria-expanded="true"] .news-act-ai-close { display: inline; }
+.news-act-ai[aria-expanded="true"] .news-ai-chev { display: none; }
+.news-act-ai[aria-expanded="true"] .news-act-ai-x { display: inline-flex; transform: none; }
 .news-act-ai[aria-expanded="true"] {
   border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-surface-border));
   color: var(--color-primary);
   background: color-mix(in srgb, var(--color-primary) 7%, #fff);
   font-weight: 600;
 }
-/* A quiet closer at the very bottom of the brief — a full-width, centered ghost
-   button that reads as the natural end of the section. */
-.ni-closefoot { margin-top: 4px; padding: 12px 0 4px; display: flex; justify-content: center; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); }
+/* A quiet closer at the very bottom of the brief — an X + label, vertically centered
+   in the gap between the last section's separator and the card's bottom (#img552). */
+.ni-closefoot { margin-top: 6px; padding: 16px 0; display: flex; justify-content: center; align-items: center; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); }
 .ni-close-btn {
   display: inline-flex; align-items: center; gap: 7px; padding: 8px 18px; border-radius: 999px;
   border: 1px solid var(--color-surface-border); background: #fff; color: var(--color-text-muted);
@@ -18618,17 +18634,19 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .prompts-landing { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 16px 2px 30px; max-width: 620px; margin: 0 auto; }
 @media (min-width: 620px) { .prompts-landing { grid-template-columns: 1fr 1fr; } }
 .prompts-opt {
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
-  width: 100%; text-align: center; min-height: 258px; padding: 30px 24px;
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 11px;
+  width: 100%; text-align: left; min-height: 246px; padding: 26px 26px;
   border: 1px solid var(--color-surface-border); border-radius: 16px;
   background: #fff; cursor: pointer; transition: border-color .14s ease, box-shadow .14s ease, background .14s ease;
 }
 .prompts-opt:hover { border-color: color-mix(in srgb, #2563eb 45%, var(--color-surface-border)); box-shadow: 0 10px 26px -14px rgba(37,99,235,.32); background: color-mix(in srgb, #2563eb 2.5%, #fff); }
-/* Stacked: icon chip on top, then title, description, CTA. */
-.prompts-opt-ic { flex: 0 0 auto; width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; background: color-mix(in srgb, #26375a 8%, #fff); color: #26375a; margin-bottom: 2px; }
-.prompts-opt-ic svg { width: 23px; height: 23px; }
+/* Stacked + LEFT-aligned: icon chip on top, then title, description, then CTA pinned
+   to the bottom-left (#img559). */
+.prompts-opt-ic { flex: 0 0 auto; width: 50px; height: 50px; border-radius: 14px; display: grid; place-items: center; background: color-mix(in srgb, #26375a 8%, #fff); color: #26375a; margin-bottom: 4px; }
+.prompts-opt-ic svg { width: 25px; height: 25px; }
 .prompts-opt-name { font-size: 1.08rem; font-weight: 700; color: var(--color-primary, #14213d); letter-spacing: -0.015em; }
-.prompts-opt-desc { font-size: 0.88rem; color: var(--color-text-muted, #64748b); line-height: 1.45; max-width: 30ch; }
+.prompts-opt-desc { font-size: 0.88rem; color: var(--color-text-muted, #64748b); line-height: 1.45; }
+.prompts-opt-cta { margin-top: auto !important; }
 .prompts-opt-cta { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; padding: 8px 16px; border-radius: 10px; background: color-mix(in srgb, #2563eb 11%, #fff); color: #2563eb; font-size: 0.85rem; font-weight: 600; transition: background .14s ease, color .14s ease; }
 .prompts-opt-cta svg { width: 15px; height: 15px; }
 .prompts-opt:hover .prompts-opt-cta { background: color-mix(in srgb, #2563eb 18%, #fff); color: #1d4ed8; }
@@ -18884,9 +18902,13 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    scrolling (the base rule over-subtracted --subnav-height + 24, capping it short) —
    the panel starts at nav-h + subnav-title-h, so match that (#img4482-4484). */
 .topic-subnav-inner .tsp-panel-inner { max-height: calc(100dvh - var(--nav-h) - var(--subnav-title-h, 56px) - 10px); }
-.topic-subnav-inner .tsp-panel-inner .tsp-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 2px 16px; }
+/* Subtopics pack to their NATURAL width and wrap responsively (based on label length
+   + available width) instead of being stretched into equal 1fr columns that spread a
+   handful of short subtopics uncomfortably far apart (#img556-558). */
+.topic-subnav-inner .tsp-panel-inner .tsp-grid { display: flex; flex-wrap: wrap; grid-template-columns: none; gap: 2px 10px; }
+.topic-subnav-inner .tsp-panel-inner .tsp-cell { flex: 0 1 auto; min-width: 0; }
 @media (min-width: 900px) {
-  .topic-subnav-inner .tsp-grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 2px 14px; }
+  .topic-subnav-inner .tsp-panel-inner .tsp-cell { padding-right: 1.1rem; }
 }
 
 /* AI Insights second-level sub-nav (Catch Up / Deep Dive / 101 Info / Prompts) —
@@ -18974,6 +18996,11 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 /* Homepage "News Feed" header a bit bigger (#img44). */
 body.home-search #section-newsfeed .newsfeed-title,
 body.home-search #section-newsfeed .newsfeed-title-main { font-size: 1.2rem !important; font-weight: 700 !important; }
+/* Desktop: bump the News Feed header to match the bumped Trending header (#img555). */
+@media (min-width: 1024px) {
+  body.home-search #section-newsfeed .newsfeed-title,
+  body.home-search #section-newsfeed .newsfeed-title-main { font-size: 1.34rem !important; }
+}
 /* Trend "AI Generated Text" label gets the same blue sparkle as the news one (#img56). */
 .im-sec-aitag svg { color: #1d4ed8 !important; }
 /* Drop the intro subtext in the inline Build-a-Custom-Prompt (#img52/#img53). */
