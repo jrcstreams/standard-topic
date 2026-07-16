@@ -13517,10 +13517,10 @@ body.home-search.app-mode .topic-layout {
   /* Mobile (lower clamp bounds) was perfect; desktop maxed out too tall/wide — trim
      the upper bounds, esp. vertical. */
   padding: clamp(1.1rem, 0.7rem + 0.8vw, 1.25rem) clamp(1.4rem, 0.9rem + 1.4vw, 1.9rem) clamp(1.2rem, 0.8rem + 0.9vw, 1.4rem);
-  /* FLAT editorial card (#img616) — plain white, hairline border, whisper of a
-     shadow. No gradients, no corner glow. */
-  background: #fff;
-  border: 1px solid #e3e8f1;
+  /* FLAT editorial card (#img616/#img617) — a soft SOLID blue-grey tint (no
+     gradient, no corner glow) so the hero doesn't read as bare white. */
+  background: #f3f6fb;
+  border: 1px solid #dde5f0;
   border-radius: 20px;
   box-shadow: 0 1px 2px rgba(15, 26, 46, 0.05);
 }
@@ -13650,32 +13650,32 @@ body.home-search #home-trending .trending-topics {
 /* Prompt Builder promo — a dark navy card with a faint constellation texture
    and a blue CTA (replaces the nav's Prompt Builder button on home). */
 /* Clean brand-navy card with a subtle top sheen — crisp, not the muddy glow. */
-/* FLAT white promo cards (#img616) — hairline border, dark editorial type, a
-   solid navy button. No gradients, no dark fills. */
+/* Promo cards: SOLID flat brand fills (#img617) — real color, zero gradients.
+   Prompts = royal blue, Topics = deep navy. */
 .home-promo {
   display: block; text-decoration: none; position: relative; overflow: hidden;
   border-radius: 16px;
-  background: #fff;
-  border: 1px solid #e3e8f1;
-  box-shadow: 0 1px 2px rgba(15, 26, 46, 0.05);
-  transition: border-color .16s, box-shadow .16s;
+  background: #2c5cb0;
+  transition: background .16s;
 }
-.home-promo:hover { border-color: #c8d3e5; box-shadow: 0 6px 18px -12px rgba(15, 26, 46, 0.25); }
+.home-promo:hover { background: #2a55a3; }
 .home-promo::after { content: none; }
 .home-promo-inner { position: relative; z-index: 1; padding: 1.45rem 1.4rem 1.55rem; }
-.home-promo-eyebrow { margin: 0 0 0.55rem; font-size: 0.67rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8a97ad; }
-.home-promo-title { margin: 0 0 0.5rem; font-family: var(--font-display); font-size: 1.3rem; line-height: 1.13; letter-spacing: -0.02em; color: #1e2a44; font-weight: 700; }
-.home-promo-text { margin: 0 0 1.15rem; font-size: 0.855rem; line-height: 1.5; color: #5b6880; }
+.home-promo-eyebrow { margin: 0 0 0.55rem; font-size: 0.67rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #9db4dd; }
+.home-promo-title { margin: 0 0 0.5rem; font-family: var(--font-display); font-size: 1.3rem; line-height: 1.13; letter-spacing: -0.02em; color: #fff; font-weight: 700; }
+.home-promo-text { margin: 0 0 1.15rem; font-size: 0.855rem; line-height: 1.5; color: #d5e0f5; }
 .home-promo-btn {
   display: inline-flex; align-items: center; gap: 0.45rem;
   padding: 0.6rem 1rem; border-radius: 10px;
-  background: #26375a; color: #fff; font-size: 0.85rem; font-weight: 700;
+  background: #fff; color: #1e3f86; font-size: 0.85rem; font-weight: 700;
   transition: background 0.14s, transform 0.14s;
 }
 .home-promo:hover { text-decoration: none; }
-.home-promo:hover .home-promo-btn { background: #33517f; transform: translateY(-1px); }
+.home-promo:hover .home-promo-btn { background: #eaf1ff; transform: translateY(-1px); }
 .home-promo-btn svg { flex: none; }
-.home-promo--topics .home-promo-btn { background: #26375a; }
+.home-promo--topics { background: #26375a; }
+.home-promo--topics:hover { background: #22314f; }
+.home-promo--topics .home-promo-btn { color: #26375a; }
 @media (min-width: 1024px) {
   /* Two rows: the three cards span the FULL width across the top, then News Feed
      (left) + Trending (right) below — so Trending starts at the News Feed row
@@ -13745,7 +13745,7 @@ body.home-search .aii-promo-ic,
 body.home-search .home-promo-ic {
   display: inline-flex; align-items: center; justify-content: center;
   width: 30px; height: 30px; flex: none; border-radius: 9px;
-  background: #eef2f9; color: #26375a;
+  background: rgba(255, 255, 255, 0.14); color: #fff;
 }
 body.home-search .aii-promo-ic svg,
 body.home-search .home-promo-ic svg { width: 16px; height: 16px; }
