@@ -13779,22 +13779,26 @@ body.home-search #topic-layout { margin-top: 0.4rem; }
   body.home-search .home-search-hero .search-panel { max-width: none; margin-left: auto; margin-right: auto; }
   body.home-search .home-search-hero .search-panel-title { font-size: clamp(1.2rem, 0.95rem + 1vw, 1.45rem); }
 }
-/* Stacked mid-range (561–1023 — nav icons still on the title row): the search
+/* Stacked mid-range (641–1023 — nav icons still on the title row): the search
    card KEEPS the centred desktop cap + the desktop title/tagline/bar formatting,
    so resizing below 1024 doesn't snap it to an edge-to-edge bar (#img580). */
-@media (min-width: 561px) and (max-width: 1023.98px) {
+@media (min-width: 641px) and (max-width: 1023.98px) {
   body.home-search .home-search-hero {
     width: min(100%, 820px); max-width: none; margin: 0 auto;
     padding: 2rem 1.6rem; border-radius: 16px; text-align: center;
   }
   body.home-search .home-search-hero .search-panel-tagline { margin: 0 auto 1.2rem; font-size: 0.95rem; }
+  /* Same tagline→bar gap as desktop across the WHOLE mid-range — the base 1rem
+     hero-inner padding-bottom only tightened to 0.2rem at ≥700, leaving 641–699
+     with a visibly airier gap (#img584). */
+  body.home-search .home-search-hero .search-panel-hero-inner { padding-bottom: 0.2rem; }
   body.home-search .home-search-hero .search-panel-input { height: 52px; font-size: 1rem; }
 }
-/* Only once the main nav breaks to two rows (≤560) does the search card go
+/* Only once the main nav breaks to two rows (≤640) does the search card go
    FULL-WIDTH, matching the Trending/News cards below it (#233/#234/#235). The
    hero is a grid item (its parent is display:contents), so force it to stretch —
    auto side-margins would shrink it to its content. */
-@media (max-width: 560px) {
+@media (max-width: 640px) {
   body.home-search .home-search-hero { width: auto !important; max-width: none !important; margin: 0 !important; justify-self: stretch !important; }
 }
 
@@ -14923,10 +14927,13 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    a small labelled list under each section's body (#img443-448). */
 .aii-sec-sources { margin: 14px 0 0; padding-top: 12px; border-top: 1px dashed color-mix(in srgb, var(--color-surface-border) 80%, transparent); display: grid; gap: 4px; }
 .aii-sec-sources-label { font-family: var(--font-family); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #94a3b8; margin-bottom: 2px; }
-.aii-sec-src { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; padding: 5px 0; }
+.aii-sec-src { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; padding: 6px 9px; margin: 0 -9px; border-radius: 8px; transition: background 0.13s; }
+/* Hover = a soft row wash + blue title — NO underline (the global a:hover
+   underline was striking through the title AND byline, #img583). */
+.aii-sec-src:hover { text-decoration: none; background: #f1f5fb; }
 .aii-sec-src-tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .aii-sec-src-title { font-size: 0.82rem; font-weight: 500; color: #1e2d44; line-height: 1.35; }
-.aii-sec-src:hover .aii-sec-src-title { color: #2563eb; text-decoration: underline; text-underline-offset: 2px; }
+.aii-sec-src:hover .aii-sec-src-title { color: #2563eb; }
 .aii-sec-src-host { font-size: 0.72rem; color: var(--color-text-muted); }
 .aii-sec-src > svg { flex: none; color: var(--color-text-light); }
 .ai-ins-source-row:hover > svg { color: var(--color-primary); }
@@ -17911,7 +17918,10 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .aii-modal-body .aii-flatnav { justify-content: center; }
 .aii-ftab {
   border: none; background: none; cursor: pointer; font-family: var(--font-family);
-  font-size: 0.95rem; font-weight: 600; color: var(--color-text-muted); padding: 4px 2px 10px;
+  /* L2 (Catch Up / Deep Dive / 101 Info) sits a step above the L1 pills in type
+     size (it's plain text vs their filled pill) — responsive so the bump holds
+     across widths (#img585). */
+  font-size: clamp(1rem, 0.92rem + 0.4vw, 1.12rem); font-weight: 600; color: var(--color-text-muted); padding: 4px 2px 10px;
   position: relative; transition: color .14s; white-space: nowrap;
 }
 .aii-ftab:hover { color: var(--color-text); }
@@ -18771,6 +18781,11 @@ button.aiidd-vlink { align-self: flex-start; }
    --nav-h grows so the app content clears both rows. ─────────────────────────── */
 @media (max-width: 640px) {
   :root { --nav-h: 112px; }
+  /* The two-row grid renders a few px SHORTER than --nav-h (content-driven ~108px),
+     while the subnav is pinned at top:112px — scrolling content peeked through the
+     see-through strip between them (#img582). Pin the header's own height to
+     --nav-h so its dark background always meets the subnav flush. */
+  #site-header.is-sticky-hero { height: var(--nav-h); }
   .sticky-hero-inner {
     display: grid !important;
     /* Hamburger + site title LEFT-aligned together on row 1 (title next to the
@@ -18913,9 +18928,11 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* Level 1 (News Feed | AI Insights) = PILL / bubble tabs — the most prominent nav
    level (#img148). */
 .topic-subnav-controls .ptab {
-  flex: 0 0 auto; width: auto; padding: 6px 16px !important; margin: 0 !important;
+  flex: 0 0 auto; width: auto; padding: 7px 18px !important; margin: 0 !important;
   border: 1px solid transparent !important; border-radius: 999px !important;
-  background: none !important; font-size: 0.86rem; font-weight: 600; color: var(--color-text-muted, #64748b);
+  /* L1 reads bigger than it did (0.86rem) at every width — scales with the
+     viewport so the hierarchy holds on phones AND desktop (#img585). */
+  background: none !important; font-size: clamp(0.95rem, 0.88rem + 0.3vw, 1.05rem); font-weight: 600; color: var(--color-text-muted, #64748b);
   white-space: nowrap; transition: background .12s, color .12s;
 }
 /* Active/hover = a deep, filled blue pill — slightly lighter than the topic title
@@ -18967,7 +18984,9 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 .topic-ai-body { padding-left: 16px; }
 .tai-tab {
   flex: none; padding: 9px 0; margin: 0 0 -1px; border: none; border-bottom: 3px solid transparent; border-radius: 0;
-  background: none; cursor: pointer; font-family: var(--font-family); font-size: 0.84rem; font-weight: 600;
+  /* L2 steps up from its old 0.84rem — responsive, one notch under the L1 pills
+     so the ladder reads L1 > L2 > L3 at every width (#img585). */
+  background: none; cursor: pointer; font-family: var(--font-family); font-size: clamp(0.92rem, 0.86rem + 0.3vw, 1rem); font-weight: 600;
   /* Inactive = a DARKER grey than the Summary (L3) row below, so the hierarchy
      reads top-down even when nothing's hovered (#img152). */
   color: #475569; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: color .12s;
@@ -18987,6 +19006,10 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    content, so NO extra left margin (it was over-indenting the bar 16px past the
    content below it, #img252/#img253). */
 .aii-instabs .ins-tabnav { margin-top: 16px; margin-bottom: 10px; }
+/* L3 (AI Summary / Explore Further) steps DOWN — smaller type + a slimmer track
+   so the segmented control stops competing with the L1/L2 nav above it (#img585). */
+.aii-instabs .ins-tabnav { gap: 4px; padding: 4px 5px; border-radius: 10px; }
+.aii-instabs .ins-tab { font-size: 0.76rem; padding: 6px 12px; border-radius: 7px; }
 /* "Updated …" stamp — left-aligned and tight to the first section below it (#img154).
    The first section carries a 22px top padding for inter-section spacing; collapse it
    right after the stamp so "Updated …" sits a smidge above the section title. */
@@ -19019,7 +19042,7 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 /* Phones: same subnav spacing as desktop (#img117/#img118). */
 @media (max-width: 899.98px) {
   .topic-subnav-controls .topic-paths-nav { gap: 6px; }
-  .topic-subnav-controls .ptab { padding: 5px 14px !important; font-size: 0.86rem; }
+  .topic-subnav-controls .ptab { padding: 6px 15px !important; font-size: 0.95rem; }
   .topic-subnav-inner .tsp-btn { padding: 0.92rem 0.15rem !important; }
   .topic-subnav-inner .tsp-btn-name { font-size: 1.18rem !important; }
   .topic-ai-subnav { gap: 18px; }
