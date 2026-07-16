@@ -130,3 +130,19 @@ ALTER TABLE ai_usage ADD COLUMN IF NOT EXISTS grounded INTEGER NOT NULL DEFAULT 
 ALTER TABLE ai_usage ADD COLUMN IF NOT EXISTS searches INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE ai_usage ADD COLUMN IF NOT EXISTS in_tok   BIGINT  NOT NULL DEFAULT 0;
 ALTER TABLE ai_usage ADD COLUMN IF NOT EXISTS out_tok  BIGINT  NOT NULL DEFAULT 0;
+
+-- ai_usage_surface — the SAME per-day accounting as ai_usage, but split by
+-- SURFACE, so we can see where grounded searches actually go (fast-moving
+-- trends vs news vs the evergreen topic-page overviews/builders) and tune the
+-- grounding reservation + evergreen throttle to real data instead of a guess.
+-- surface: 'trend' | 'news' | 'overview:<group>' | 'builder:<group>'.
+CREATE TABLE IF NOT EXISTS ai_usage_surface (
+  day      DATE    NOT NULL,
+  surface  TEXT    NOT NULL,
+  calls    INTEGER NOT NULL DEFAULT 0,
+  grounded INTEGER NOT NULL DEFAULT 0,
+  searches INTEGER NOT NULL DEFAULT 0,
+  in_tok   BIGINT  NOT NULL DEFAULT 0,
+  out_tok  BIGINT  NOT NULL DEFAULT 0,
+  PRIMARY KEY (day, surface)
+);
