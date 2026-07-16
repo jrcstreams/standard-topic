@@ -14118,13 +14118,17 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; gap: 10px; padding: 6px 0 !important; }
   /* Mobile keeps the grey trending-card effect — a light grey card (lighter than the
      old #f4f6f8) with a soft border; expands to white when its brief opens. */
-  body.home-search #home-trending .trend-card { border: 1px solid #e9edf3; border-radius: 12px; background: #f8fafc; padding: 14px 15px; }
+  body.home-search #home-trending .trend-card { border: 1px solid #e9edf3; border-radius: 12px; background: #f8fafc; padding: 14px 15px; transition: border-color .14s, background .14s; }
+  /* Whole-card hover = the clickable affordance (replaces the old green text-only
+     wash, #img600). Expanded cards keep their open styling instead. */
+  body.home-search #home-trending .trend-card:not(.is-expanded):hover { background: #f2f6fb; border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border)); }
   body.home-search #home-trending .trend-card.is-expanded { background: #fff; border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); }
   body.home-search #home-trending .trend-card-trigger { padding: 0 !important; cursor: pointer; }
   body.home-search #home-trending .trend-card-chev { display: none; }
   body.home-search #home-trending .trend-card-title { font-size: 1rem !important; font-weight: 700 !important; color: var(--color-text) !important; }
   body.home-search #home-trending .trend-card-summary { color: #55617a !important; }
-  body.home-search #home-trending .trend-card-actions { display: flex; margin-top: 12px; }
+  /* "View AI Insights" hugs the summary text above it (#img600). */
+  body.home-search #home-trending .trend-card-actions { display: flex; margin-top: 3px; }
   /* A touch more air between the last trend card and "View more trending" (#img526). */
   body.home-search #home-trending .trend-viewmore-row { margin-top: 8px; padding: 6px 0 8px !important; }
 }
@@ -14339,10 +14343,10 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
   font-family: inherit; color: var(--color-text); cursor: pointer;
   transition: background 0.14s;
 }
-/* Green tint on HOVER only — and ONLY while collapsed. Once the trend is open it
-   has its own container styling, so the header shows no hover fill at all (the
-   green tint on the open trend read as noise, #img188). */
-.trend-card-trigger:hover { background: rgba(31, 143, 107, 0.07); }
+/* No trigger-only hover fill — the legacy green wash highlighted just the text
+   block and read as broken on the card surfaces (#img600). Card-based trend
+   surfaces highlight the WHOLE card on hover instead (see their scopes). */
+.trend-card-trigger:hover { background: none; }
 .trend-card.is-expanded .trend-card-trigger,
 .trend-card.is-open .trend-card-trigger,
 .trend-card.is-expanded .trend-card-trigger:hover,
@@ -14435,7 +14439,8 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
 }
 /* Trending dropdown rows are CARDS now — same grey rounded card + blue
    "View AI Insights" link as the homepage mobile trending list (#img591). */
-.tlm-body .trend-card { border: 1px solid #e9edf3; border-radius: 12px; background: #f8fafc; padding: 14px 15px; display: flex; flex-direction: column; }
+.tlm-body .trend-card { border: 1px solid #e9edf3; border-radius: 12px; background: #f8fafc; padding: 14px 15px; display: flex; flex-direction: column; transition: border-color .14s, background .14s; }
+.tlm-body .trend-card:not(.is-expanded):hover { background: #f2f6fb; border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border)); }
 .tlm-body .trend-card.is-expanded { background: #fff; border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); }
 .tlm-body .trend-card-trigger, .tlm-body .trend-card-trigger:hover { background: transparent; padding: 0; cursor: pointer; }
 .tlm-body .trend-card-chev { display: none; }
@@ -18453,7 +18458,8 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 /* Cards in a 2-col row STRETCH to the row's tallest card (grid default), with the
    "View AI Insights" link pinned to each card's bottom so short cards don't leave
    a ragged hole under their neighbour (#img596). */
-.aii-nav-dd-trending .trend-card { border: 1px solid #e9edf3; border-radius: 12px; background: #f8fafc; padding: 14px 15px; display: flex; flex-direction: column; }
+.aii-nav-dd-trending .trend-card { border: 1px solid #e9edf3; border-radius: 12px; background: #f8fafc; padding: 14px 15px; display: flex; flex-direction: column; transition: border-color .14s, background .14s; }
+.aii-nav-dd-trending .trend-card:not(.is-expanded):hover { background: #f2f6fb; border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border)); }
 .aii-nav-dd-trending .trend-card.is-expanded { background: #fff; border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); }
 .aii-nav-dd-trending .trend-card-trigger, .aii-nav-dd-trending .trend-card-trigger:hover { background: transparent; padding: 0; cursor: pointer; }
 .aii-nav-dd-trending .trend-card-chev { display: none; }
@@ -18971,25 +18977,28 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* Match the nav/content 1rem switch at ≤640 (was ≤560) so the News Feed / AI
    Insights pills line up with the topic name + news cards (#img327). */
 @media (max-width: 640px) { .topic-subnav-controls .topic-paths-nav { padding: 12px 1rem !important; } }
-/* Level 1 (News Feed | AI Insights) = PILL / bubble tabs — the most prominent nav
-   level (#img148). */
+/* Level 1 (News Feed | AI Insights | Prompt Library) = UNDERLINE tabs (#img598):
+   plain text with a single sliding indicator bar (.ptab-underline, positioned by
+   JS) that animates between tabs on selection. */
+.topic-subnav-controls .topic-paths-nav { position: relative !important; gap: 26px; }
 .topic-subnav-controls .ptab {
-  flex: 0 0 auto; width: auto; padding: 7px 18px !important; margin: 0 !important;
-  border: 1px solid transparent !important; border-radius: 999px !important;
+  flex: 0 0 auto; width: auto; padding: 10px 2px 14px !important; margin: 0 !important;
+  border: none !important; border-radius: 0 !important;
   /* L1 reads bigger than it did (0.86rem) at every width — scales with the
-     viewport so the hierarchy holds on phones AND desktop (#img585); walked back
-     a notch from the first bump, which ran hot on desktop (#img586). */
+     viewport so the hierarchy holds on phones AND desktop (#img585/#img586). */
   background: none !important; font-size: clamp(0.9rem, 0.85rem + 0.25vw, 0.98rem); font-weight: 600; color: var(--color-text-muted, #64748b);
-  white-space: nowrap; transition: background .12s, color .12s;
+  white-space: nowrap; transition: color .12s;
 }
-/* Active/hover = a deep, filled blue pill — slightly lighter than the topic title
-   navy (#26375a) so it stays in the same family but reads as the loudest nav level,
-   clearly above the Catch Up (L2) + Summary (L3) rows below (#img152). */
-.topic-subnav-controls .ptab:hover { color: #33517f !important; background: color-mix(in srgb, #33517f 9%, #fff) !important; }
+.topic-subnav-controls .ptab:hover { color: #33517f !important; background: none !important; }
 .topic-subnav-controls .ptab.is-active,
 .topic-subnav-controls .ptab.is-active:hover {
-  color: #fff !important; font-weight: 700 !important;
-  background: #33517f !important; border-color: #33517f !important;
+  color: #26375a !important; font-weight: 700 !important; background: none !important;
+}
+/* The sliding indicator — sits flush on the control bar's bottom hairline. */
+.topic-paths-nav .ptab-underline {
+  position: absolute; bottom: 0; left: 0; width: 0; height: 3px;
+  border-radius: 3px 3px 0 0; background: #33517f;
+  transition: left .28s cubic-bezier(.4, 0, .2, 1), width .28s cubic-bezier(.4, 0, .2, 1);
 }
 
 /* Picker dropdown hangs off the GREY bar bottom (overlays the control bar). */
@@ -19023,31 +19032,28 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    segmented Summary bar below is indented to match (see .aii-instabs). */
 /* margin-left (NOT padding-left) so the row's grey bottom-border starts at "Catch
    Up", not 16px to the left of it (#img249/#img250/#img251). */
-/* CONNECTED control (topic pages, #img593): the active Catch Up/Deep Dive/101
-   tab is a grey FOLDER TAB that fuses into the grey shelf below it — and that
-   shelf IS the AI Summary/Explore Further segmented track. Two nav levels read
-   as one physical control instead of two floating rows. */
-.topic-ai-subnav { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 4px; border-bottom: none; margin: 14px 0 0 16px; position: relative; z-index: 1; }
+/* Level 2 (Catch Up | Deep Dive | 101 Info) = the PILL row now (#img598): filled
+   blue pill on the active option, STICKY under the fixed headers while scrolling
+   AI Insights, with a faint separator drawing the line under it. */
+.topic-ai-subnav {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  margin: 0; padding: 10px 16px 12px;
+  border-bottom: 1px solid #eef1f5;
+  position: sticky; top: 0; background: #fff; z-index: 30;
+}
 /* The body content (segmented Summary bar, "Updated", section titles, paragraphs)
    sits 16px in so it shares Catch Up's left edge (which is inset to line up with
    the News Feed pill text). Without this the whole insight column sat 16px left of
    Catch Up (#img252/#img254). */
 .topic-ai-body { padding-left: 16px; }
 .tai-tab {
-  flex: none; padding: 10px 16px 13px; margin: 0; border: none; border-radius: 10px 10px 0 0;
-  /* L2 steps up from its old 0.84rem — responsive, one notch under the L1 pills
-     so the ladder reads L1 > L2 > L3 at every width (#img585). Lighter weight than
-     the L1 pills so the two rows read as different levels, not siblings (#img587) —
-     but 500, not 400: full-light read as washed out (#img597). */
-  background: none; cursor: pointer; font-family: var(--font-family); font-size: clamp(0.92rem, 0.86rem + 0.3vw, 1rem); font-weight: 500;
-  /* Inactive = a DARKER grey than the Summary (L3) row below, so the hierarchy
-     reads top-down even when nothing's hovered (#img152). */
-  color: #475569; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: color .12s;
+  flex: none; padding: 6px 16px; margin: 0; border: 1px solid transparent; border-radius: 999px;
+  background: none; cursor: pointer; font-family: var(--font-family); font-size: clamp(0.88rem, 0.84rem + 0.2vw, 0.95rem); font-weight: 600;
+  color: var(--color-text-muted, #64748b); white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: background .12s, color .12s;
 }
-.tai-tab:hover { color: var(--color-primary); background: color-mix(in srgb, #eceff4 55%, transparent); }
-/* Active = the grey folder tab, fused to the shelf below (same #eceff4). Deep
-   blue text keeps the shared accent with the L1 pills (#img204/#img205). */
-.tai-tab.is-active, .tai-tab.is-active:hover { color: #33517f; font-weight: 650; background: #eceff4; }
+.tai-tab:hover { color: #33517f; background: color-mix(in srgb, #33517f 9%, #fff); }
+/* Active = the deep filled blue pill the L1 row used to carry (#img598). */
+.tai-tab.is-active, .tai-tab.is-active:hover { color: #fff; font-weight: 700; background: #33517f; border-color: #33517f; }
 /* Level 3 (Summary / Explore Further / Sources) = the quietest tabs — lighter
    weight, a LIGHTER grey than the Catch Up row above, GREY (not blue) thin active
    underline, so it clearly sits below level 2 (#img148/#img152). Tucked close under
@@ -19058,25 +19064,44 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* The segmented bar's container is already indented to match Catch Up + the body
    content, so NO extra left margin (it was over-indenting the bar 16px past the
    content below it, #img252/#img253). */
-.aii-instabs .ins-tabnav { margin-top: 16px; margin-bottom: 10px; }
-/* L3 (AI Summary / Explore Further) steps DOWN — smaller type + a slimmer track
-   so the segmented control stops competing with the L1/L2 nav above it (#img585). */
-.aii-instabs .ins-tabnav { gap: 4px; padding: 4px 5px; border-radius: 10px; }
-.aii-instabs .ins-tab { font-size: 0.76rem; padding: 6px 12px; border-radius: 7px; }
-/* Topic pages: the segmented track becomes the SHELF the active folder tab sits
-   on — flush to the tabs above (no gap), borderless, squared top-left where it
-   meets the first tab, and wide enough to always run beneath whichever of the
-   three tabs is active (#img593). */
-.topic-ai-body .aii-instabs .ins-tabnav {
-  margin-top: 0; border: none; background: #eceff4;
-  border-radius: 0 12px 12px 12px;
-  /* Only as wide as it needs to be: --shelf-min is set by JS to the active tab's
-     right edge, so the shelf reaches exactly under Catch Up/Deep Dive/101 Info —
-     no arbitrary fixed run-off past Explore Further (#img597). */
-  min-width: min(100%, var(--shelf-min, 0px));
-  max-width: 100%;
-  padding: 6px 7px;
+/* ── Builder control row (#img598): the AI Summary/Explore Further tabs are GONE.
+   A light row under the sticky Catch Up pills holds the "Updated …" data pill and
+   an "Explore this Further" pill (grey pill, blue link text + sparkle) that swaps
+   the summary for the explore view — where it reads as a Back button. ────────── */
+.aii-ctlrow { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 14px 0 6px; }
+.aii-updated-pill {
+  display: inline-flex; align-items: center; padding: 5px 12px; border-radius: 999px;
+  background: #eef1f5; color: #3f4a5c; font-size: 0.75rem; font-weight: 600; white-space: nowrap;
 }
+.aii-explore-pill {
+  display: inline-flex; align-items: center; padding: 5px 13px; border-radius: 999px;
+  border: none; background: #eef1f5; color: #2563eb; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; white-space: nowrap;
+  transition: background .13s, color .13s;
+}
+.aii-explore-pill:hover { background: #e3e9f3; color: #1d4ed8; }
+.aii-explore-pill svg { width: 13px; height: 13px; flex: none; }
+.aii-explore-pill-open, .aii-explore-pill-back { display: inline-flex; align-items: center; gap: 6px; }
+.aii-explore-pill-back { display: none; }
+.aii-ctlrow.is-explore .aii-explore-pill-open { display: none; }
+.aii-ctlrow.is-explore .aii-explore-pill-back { display: inline-flex; }
+.aii-ctlrow.is-explore .aii-updated-pill { display: none; }
+/* ── Insight sections as grey bordered CARDS (#img599). ─────────────────────── */
+.aii-bview-summary .im-msec {
+  background: #f8fafc; border: 1px solid #e9edf3; border-radius: 12px;
+  padding: 18px 20px; margin: 0 0 14px;
+}
+.aii-bview-summary .im-msec:first-child { padding-top: 18px; }
+.aii-bview-summary .im-msec:last-child { border-bottom: 1px solid #e9edf3; }
+.aii-bview-summary .im-msec .im-msec-ic { background: #fff; border: 1px solid #e9edf3; }
+/* Per-section source expander: first 2 sources show, the rest reveal on demand. */
+.aii-sec-src-rest { display: grid; gap: 4px; }
+.aii-sec-src-rest[hidden] { display: none; }
+.aii-sec-src-morebtn {
+  justify-self: start; margin-top: 2px; padding: 3px 0; border: none; background: none;
+  color: #2563eb; font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer;
+}
+.aii-sec-src-morebtn:hover { color: #1d4ed8; text-decoration: underline; text-underline-offset: 2px; }
 /* "Updated …" stamp — left-aligned and tight to the first section below it (#img154).
    The first section carries a 22px top padding for inter-section spacing; collapse it
    right after the stamp so "Updated …" sits a smidge above the section title. */
@@ -19108,11 +19133,11 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 .topic-tabbed .topic-tab-body { padding-top: 0; }
 /* Phones: same subnav spacing as desktop (#img117/#img118). */
 @media (max-width: 899.98px) {
-  .topic-subnav-controls .topic-paths-nav { gap: 6px; }
-  .topic-subnav-controls .ptab { padding: 6px 15px !important; font-size: 0.95rem; }
+  .topic-subnav-controls .topic-paths-nav { gap: 20px; }
+  .topic-subnav-controls .ptab { padding: 8px 2px 12px !important; font-size: 0.92rem; }
   .topic-subnav-inner .tsp-btn { padding: 0.92rem 0.15rem !important; }
   .topic-subnav-inner .tsp-btn-name { font-size: 1.18rem !important; }
-  .topic-ai-subnav { gap: 3px; }
+  .topic-ai-subnav { gap: 6px; }
 }
 
 /* Homepage "News Feed" header a bit bigger (#img44). */

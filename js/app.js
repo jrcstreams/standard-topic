@@ -18,9 +18,9 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260706-revamp574';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260716-revamp584';
 import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp574';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260706-revamp574';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260716-revamp584';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp574';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp574';
@@ -867,6 +867,21 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
   if (!nav || !body) return;
   let active = null; let ctl = null; let subGroup = 'discover';
 
+  // L1 active indicator: a single underline BAR that slides between News Feed /
+  // AI Insights / Prompt Library on selection (instead of a filled pill, #img598).
+  const ptabBar = document.createElement('span');
+  ptabBar.className = 'ptab-underline';
+  ptabBar.setAttribute('aria-hidden', 'true');
+  nav.appendChild(ptabBar);
+  const placePtabBar = () => {
+    const act = nav.querySelector('.ptab.is-active');
+    if (!act) { ptabBar.style.width = '0px'; return; }
+    ptabBar.style.left = `${act.offsetLeft}px`;
+    ptabBar.style.width = `${act.offsetWidth}px`;
+  };
+  window.addEventListener('resize', placePtabBar);
+  requestAnimationFrame(placePtabBar);
+
   const destroyCtl = () => { if (ctl && ctl.destroy) { try { ctl.destroy(); } catch (_) {} } ctl = null; };
   const mountGroup = (subBody, gkey) => {
     destroyCtl();
@@ -889,11 +904,6 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
       if (!TOPIC_AI_GROUP_KEYS.has(gkey)) gkey = 'discover';
       subGroup = gkey;
       subNav.querySelectorAll('.tai-tab').forEach((b) => { const on = b.dataset.tai === gkey; b.classList.toggle('is-active', on); b.setAttribute('aria-selected', String(on)); });
-      // The AI Summary/Explore Further "shelf" must reach exactly under the active
-      // folder tab so they read as one connected control — measure the tab's right
-      // edge and hand it to CSS (min-width: var(--shelf-min)).
-      const act = subNav.querySelector('.tai-tab.is-active');
-      if (act) subBody.style.setProperty('--shelf-min', `${Math.ceil(act.getBoundingClientRect().right - subNav.getBoundingClientRect().left)}px`);
       mountGroup(subBody, gkey);
       requestAnimationFrame(() => { try { window.scrollTo({ top: 0 }); } catch (_) {} });
     };
@@ -946,6 +956,7 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
       b.classList.toggle('is-active', on);
       b.setAttribute('aria-selected', String(on));
     });
+    placePtabBar();
     // Is this tab's content ACTUALLY present? (Not just "we set active last time" —
     // a prior render may have failed, leaving it blank.) Only skip the re-render
     // when the content is really there.

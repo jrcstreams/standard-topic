@@ -12,7 +12,6 @@ import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp574';
 import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp574';
 
 // Display metadata for the paths (the navigation categories). Each `group`
@@ -160,9 +159,16 @@ function attributeItemsToSections(items, sections) {
 }
 function secSourcesHTML(items, hideLabel) {
   if (!items || !items.length) return '';
-  const rows = items.map((x) => `<a class="aii-sec-src" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer" title="${escAttr(x.title)}"><span class="aii-sec-src-tx"><span class="aii-sec-src-title">${esc(x.title)}</span>${x.meta ? `<span class="aii-sec-src-host">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`).join('');
+  const row = (x) => `<a class="aii-sec-src" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer" title="${escAttr(x.title)}"><span class="aii-sec-src-tx"><span class="aii-sec-src-title">${esc(x.title)}</span>${x.meta ? `<span class="aii-sec-src-host">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`;
+  // Show the first 2 sources; the rest tuck behind a "View N more sources"
+  // expander so long source lists don't dominate the section card (#img599).
+  const shown = items.slice(0, 2).map(row).join('');
+  const rest = items.slice(2);
+  const more = rest.length
+    ? `<div class="aii-sec-src-rest" hidden>${rest.map(row).join('')}</div><button type="button" class="aii-sec-src-morebtn" data-src-more>View ${rest.length} more source${rest.length > 1 ? 's' : ''}</button>`
+    : '';
   const label = hideLabel ? '' : '<div class="aii-sec-sources-label">Sources</div>';
-  return `<div class="aii-sec-sources">${label}${rows}</div>`;
+  return `<div class="aii-sec-sources">${label}${shown}${more}</div>`;
 }
 // Paper-plane (Direct Submit — "send it off") and an eye (Review — "preview").
 const ICON_SEND = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2.5L11 13"/><path d="M21.5 2.5L15 21l-4-8-8-4z"/></svg>';
@@ -175,10 +181,9 @@ function genLoaderHTML() {
 // bar visible and shows the generating loader in the BODY beneath it, instead of a
 // full-section takeover that blanks the tabs (#img406).
 function builderLoadingHTML() {
-  return insightTabsHTML([
-    { key: 'summary', label: 'AI Summary', html: genLoaderHTML() },
-    { key: 'explore', label: 'Explore Further', html: '' },
-  ], 'aii-instabs');
+  // No control chrome while loading — just the generating loader (the Updated/
+  // Explore pill row renders with the real content, #img598).
+  return genLoaderHTML();
 }
 const ICON_EYES = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>';
 const ICON_COPY_MINI = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="8" height="9" rx="1.2"/><path d="M9.5 3.5V2.5a1 1 0 0 0-1-1h-5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1"/></svg>';
@@ -866,7 +871,6 @@ export function renderAIIntelligence(container, scope) {
     // the first section (#img115).
     const meta = stage.querySelector('[data-brief-meta]');
     if (meta) meta.innerHTML = '';
-    const updatedHTML = bc.generatedAt ? `<div class="aii-updated-row"><span class="aii-brief-updated">Updated ${esc(relTime(bc.generatedAt))}</span></div>` : '';
     if (bc.error || !bc.content) {
       wrap.innerHTML = '<p class="aii-empty">This insight is being generated — check back shortly.</p>';
       return;
@@ -891,24 +895,47 @@ export function renderAIIntelligence(container, scope) {
     // tab): attribute each headline to its best-matching section (#img443-448).
     const items = builderNewsItems().filter((x) => x.title && x.meta && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(String(x.title).trim()));
     const { buckets, unmatched } = attributeItemsToSections(items, list);
-    const summaryHTML = updatedHTML + list.map((part, i) => {
+    const summaryHTML = list.map((part, i) => {
       const key = aiiSecIconKey(part.name);
       const body = `<div class="aii-sec-body">${renderBriefBody(part.body, null)}</div>`;
       return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name) + body + secSourcesHTML(buckets[i]));
     }).join('') + (unmatched.length ? aiiMsec('aii-msec-related', 'Related coverage', aiiSecHead('sources', 'Related coverage') + secSourcesHTML(unmatched, true)) : '');
-    // Explore Further tab = the shared clean-dropdown component (External AI Models
+    // Explore Further view = the shared clean-dropdown component (External AI Models
     // with Send-to / Direct Submit / Review, then web categories).
     const efP = explorePrompt();
     const exploreHTML = exploreFurtherHTML({ prompt: efP, webTerm: scope.label || scope.topic || '', name: curSectionName() });
-    // Two TABS now: AI Summary (default, sources inline) / Explore Further.
-    const tabs = [
-      { key: 'summary', label: 'AI Summary', html: summaryHTML },
-      { key: 'explore', label: 'Explore Further', html: exploreHTML },
-    ];
-    wrap.innerHTML = insightTabsHTML(tabs, 'aii-instabs');
-    // No reveal animation on tab switches — the 0.4s fade read as a glitchy flash
-    // between Catch Up/Deep Dive/101 (#img442/452). Instant swap = smooth.
-    wireInsightTabs(wrap);
+    // No more AI Summary/Explore Further TABS (one nav level too many, #img598):
+    // a control row holds the "Updated …" data pill + an "Explore this Further"
+    // pill that swaps to the explore view (and reads as Back while there).
+    const BACK_ARROW = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>';
+    wrap.innerHTML = `
+      <div class="aii-ctlrow">
+        ${bc.generatedAt ? `<span class="aii-updated-pill">Updated ${esc(relTime(bc.generatedAt))}</span>` : ''}
+        <button type="button" class="aii-explore-pill" data-aii-explore aria-expanded="false">
+          <span class="aii-explore-pill-open">${SPARK}<span>Explore this Further</span></span>
+          <span class="aii-explore-pill-back">${BACK_ARROW}<span>Back</span></span>
+        </button>
+      </div>
+      <div class="aii-bview aii-bview-summary">${summaryHTML}</div>
+      <div class="aii-bview aii-bview-explore" hidden>${exploreHTML}</div>`;
+    const ctlrow = wrap.querySelector('.aii-ctlrow');
+    const vSummary = wrap.querySelector('.aii-bview-summary');
+    const vExplore = wrap.querySelector('.aii-bview-explore');
+    wrap.querySelector('[data-aii-explore]')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const toExplore = vExplore.hidden;
+      vExplore.hidden = !toExplore;
+      vSummary.hidden = toExplore;
+      ctlrow.classList.toggle('is-explore', toExplore);
+      e.currentTarget.setAttribute('aria-expanded', String(toExplore));
+    });
+    // "View N more sources" expanders (per section).
+    wrap.querySelectorAll('[data-src-more]').forEach((btn) => btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const rest = btn.parentElement.querySelector('.aii-sec-src-rest');
+      if (rest) rest.hidden = false;
+      btn.remove();
+    }));
     wireExploreFurther(wrap);
     wireSectionClamps();
   }
