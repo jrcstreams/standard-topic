@@ -13776,13 +13776,26 @@ body.home-search #topic-layout { margin-top: 0.4rem; }
 @media (max-width: 1023.98px) {
   body.home-search.app-mode .topic-layout > .layout-section { flex: none; overflow: visible; min-height: 0; }
   body.home-search #section-aii-home .shortcuts-scroll-wrap { padding-top: 0.5rem; padding-bottom: 0; }
-  /* Reflow (single column / tabular, <1024 = "smaller screens"): the search card is
-     FULL-WIDTH, matching the Trending/News cards below it (#233/#234/#235). The hero
-     is a grid item (its parent is display:contents), so force it to stretch — auto
-     side-margins would shrink it to its content. ≥1024 keeps the centred 820 cap. */
-  body.home-search .home-search-hero { width: auto !important; max-width: none !important; margin: 0 !important; justify-self: stretch !important; }
   body.home-search .home-search-hero .search-panel { max-width: none; margin-left: auto; margin-right: auto; }
   body.home-search .home-search-hero .search-panel-title { font-size: clamp(1.2rem, 0.95rem + 1vw, 1.45rem); }
+}
+/* Stacked mid-range (561–1023 — nav icons still on the title row): the search
+   card KEEPS the centred desktop cap + the desktop title/tagline/bar formatting,
+   so resizing below 1024 doesn't snap it to an edge-to-edge bar (#img580). */
+@media (min-width: 561px) and (max-width: 1023.98px) {
+  body.home-search .home-search-hero {
+    width: min(100%, 820px); max-width: none; margin: 0 auto;
+    padding: 2rem 1.6rem; border-radius: 16px; text-align: center;
+  }
+  body.home-search .home-search-hero .search-panel-tagline { margin: 0 auto 1.2rem; font-size: 0.95rem; }
+  body.home-search .home-search-hero .search-panel-input { height: 52px; font-size: 1rem; }
+}
+/* Only once the main nav breaks to two rows (≤560) does the search card go
+   FULL-WIDTH, matching the Trending/News cards below it (#233/#234/#235). The
+   hero is a grid item (its parent is display:contents), so force it to stretch —
+   auto side-margins would shrink it to its content. */
+@media (max-width: 560px) {
+  body.home-search .home-search-hero { width: auto !important; max-width: none !important; margin: 0 !important; justify-self: stretch !important; }
 }
 
 /* === Phase 14: search panel refinements ============================== */
