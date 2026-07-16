@@ -117,7 +117,10 @@ const TREND_CARD_ICON = `<svg viewBox="0 0 24 24" width="14" height="14" fill="n
 const AI_SPARK_SVG = `<svg class="trend-ai-spark" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>`;
 // Filled blue sparkle for the mobile "View AI Insights" button (matches the news
 // card's AI Insights pill).
-const AI_SPARK_FILLED = `<svg viewBox="0 0 24 24" width="15" height="15" fill="#2563eb" aria-hidden="true"><path d="M12 2l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 10.5l-4.4 1.85a2 2 0 0 0-1.25 1.25L12 19l-2.9-5.4a2 2 0 0 0-1.25-1.25L3.45 10.5l4.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>`;
+const AI_SPARK_FILLED = `<svg class="trend-card-aibtn-spark" viewBox="0 0 24 24" width="15" height="15" fill="#2563eb" aria-hidden="true"><path d="M12 2l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 10.5l-4.4 1.85a2 2 0 0 0-1.25 1.25L12 19l-2.9-5.4a2 2 0 0 0-1.25-1.25L3.45 10.5l4.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>`;
+// Weighted X shown in the sparkle's place while the insights are OPEN — matches
+// the "Close AI Insights" label so the whole link reads as a close action.
+const AI_CLOSE_X = `<svg class="trend-card-aibtn-xic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>`;
 // The SAME animated loader the news-card AI Insights use (twinkling sparkle +
 // animated dots + shimmer skeletons) — shared via the global .ni-loader CSS so
 // trending "generating insights" reads identically (#img520). No per-term text.
@@ -169,7 +172,7 @@ function trendCardHTML(topic, idx, opts) {
         <span class="trend-card-chev trend-card-open" aria-hidden="true">${OPEN_ICON}</span>
       </button>
       <div class="trend-card-actions">
-        <button type="button" class="trend-card-aibtn" data-trend-ai aria-expanded="false">${AI_SPARK_FILLED}<span class="trend-card-aibtn-open">View AI Insights</span><span class="trend-card-aibtn-close">Close AI Insights</span><svg class="trend-card-aibtn-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <button type="button" class="trend-card-aibtn" data-trend-ai aria-expanded="false">${AI_SPARK_FILLED}${AI_CLOSE_X}<span class="trend-card-aibtn-open">View AI Insights</span><span class="trend-card-aibtn-close">Close AI Insights</span><svg class="trend-card-aibtn-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
       </div>
     </div>`;
 }

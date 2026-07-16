@@ -14094,6 +14094,10 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
 .trend-card-aibtn svg { flex: none; }
 .trend-card-aibtn:hover { border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-surface-border)); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 5%, #fff); }
 .trend-card-aibtn-close { display: none; }
+/* Sparkle while closed ↔ weighted X while open, matching the label swap (#img590). */
+.trend-card-aibtn-xic { display: none; }
+.trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-spark { display: none; }
+.trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-xic { display: inline; }
 /* Dropdown chevron only shows in the desktop LINK style (not the mobile pill). */
 .trend-card-aibtn-chev { display: none; }
 .trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-open { display: none; }
@@ -14263,7 +14267,9 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
 .trend-card.is-expanded .trend-card-open { display: none; }
 /* Inside the container the brief flows off the trend with a hairline separator. */
 .trend-card-exp {
-  margin-top: 10px; padding: 9px 2px 4px;
+  /* Tight to the "Close AI Insights" line above — the old 10+9px stack left a
+     big dead band before the Summary bar (#img588). */
+  margin-top: 4px; padding: 5px 2px 4px;
   border: none; border-radius: 0; background: none;
   border-top: 1px solid var(--color-surface-border);
   animation: trendExpIn .2s ease;
@@ -14297,6 +14303,9 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
    the trailing gap before the next trend, and reads as the natural end (#img543). */
 /* Close sits right at the end of the brief — no separator line, minimal gap (#img547/548). */
 .trend-exp-closefoot { display: flex; justify-content: center; margin-top: 0; padding-top: 2px; border-top: none; }
+/* The wrapper inherits .im-secs' global 2rem bottom padding, which shoved the
+   footer Close ~32px below the last line of copy — kill it here (#img589). */
+.trend-card-exp .trend-exp.im-secs { padding-bottom: 4px; }
 .trend-exp-closelink { display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border: none; background: none; color: var(--color-text-muted); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; border-radius: 8px; transition: color .14s ease, background .14s ease; }
 .trend-exp-closelink:hover { color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 6%, #fff); }
 .trend-exp-closelink svg { width: 14px; height: 14px; flex: none; }
@@ -14417,10 +14426,24 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
 .tlm-body .trending-topics { background: none; border: none; padding: 0; }
 /* Cap at TWO columns regardless of width — 3+ shrinks each card too far, forcing
    ugly multi-line breaks on term names (#249). */
-.tlm-body .trend-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.tlm-body .trend-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 560px) {
   .tlm-body .trend-card-grid { grid-template-columns: 1fr; }
 }
+/* Trending dropdown rows are CARDS now — same grey rounded card + blue
+   "View AI Insights" link as the homepage mobile trending list (#img591). */
+.tlm-body .trend-card { border: 1px solid #e9edf3; border-radius: 12px; background: #f8fafc; padding: 14px 15px; align-self: start; }
+.tlm-body .trend-card.is-expanded { background: #fff; border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); }
+.tlm-body .trend-card-trigger, .tlm-body .trend-card-trigger:hover { background: transparent; padding: 0; cursor: pointer; }
+.tlm-body .trend-card-chev { display: none; }
+.tlm-body .trend-card-title { font-size: 1rem; font-weight: 700; color: var(--color-text); }
+.tlm-body .trend-card-summary { color: #55617a; }
+.tlm-body .trend-card-actions { display: flex; margin-top: 12px; }
+.tlm-body .trend-card-aibtn { background: none; border: none; border-radius: 0; padding: 4px 0; color: #2563eb; font-size: 0.78rem; font-weight: 500; gap: 5px; }
+.tlm-body .trend-card-aibtn:hover { color: #1d4ed8; background: none; box-shadow: 0 1px 0 0 currentColor; }
+.tlm-body .trend-card-aibtn svg { width: 13px; height: 13px; }
+.tlm-body .trend-card-aibtn .trend-card-aibtn-chev { display: inline-flex; margin-left: 1px; transition: transform .2s ease; }
+.tlm-body .trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-chev { transform: rotate(180deg); }
 
 /* Tighten the homepage's trailing space (kills the big bottom gap). */
 body.home-search.app-mode #content { padding-bottom: 1.5rem; }
@@ -15713,8 +15736,8 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-fi-sec .aii-fi { margin-top: 0; }
 /* Lighter than the page/main header (which is 800): a calm section label, not a
    heavy dense title (#img483-485). */
-.aii-fi-sectitle { margin: 0; font-family: var(--font-display); font-size: 1rem; font-weight: 600; letter-spacing: -0.004em; color: #33517f; }
-.aii-fi-secsub { margin: 3px 0 0; font-size: 0.83rem; line-height: 1.4; color: var(--color-text-muted); }
+.aii-fi-sectitle { margin: 0; font-family: var(--font-display); font-size: clamp(1.08rem, 1rem + 0.35vw, 1.22rem); font-weight: 600; letter-spacing: -0.004em; color: #33517f; }
+.aii-fi-secsub { margin: 3px 0 0; font-size: clamp(0.88rem, 0.84rem + 0.2vw, 0.95rem); line-height: 1.4; color: var(--color-text-muted); }
 /* Each prompt is its own tappable CARD: small gap between cards, subtle rounded
    corners, hover lifts the border + a soft shadow, open state warms the border. */
 .aii-fi-acclist { display: flex; flex-direction: column; gap: 9px; }
@@ -17921,11 +17944,11 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   /* L2 (Catch Up / Deep Dive / 101 Info) sits a step above the L1 pills in type
      size (it's plain text vs their filled pill) — responsive so the bump holds
      across widths (#img585). */
-  font-size: clamp(1rem, 0.92rem + 0.4vw, 1.12rem); font-weight: 600; color: var(--color-text-muted); padding: 4px 2px 10px;
+  font-size: clamp(1rem, 0.92rem + 0.4vw, 1.12rem); font-weight: 400; color: var(--color-text-muted); padding: 4px 2px 10px;
   position: relative; transition: color .14s; white-space: nowrap;
 }
 .aii-ftab:hover { color: var(--color-text); }
-.aii-ftab.is-active { color: var(--color-primary); }
+.aii-ftab.is-active { color: var(--color-primary); font-weight: 650; }
 .aii-ftab.is-active::after {
   content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
   background: var(--color-primary); border-radius: 2px;
@@ -18419,8 +18442,22 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .aii-nav-dd-prompt .pb-navdd-host { width: 100%; max-width: 820px; margin: 0 auto; }
 
 /* Trending dropdown: cap at 2 columns (1 on narrow screens). */
-.aii-nav-dd-trending .trend-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.35rem 1.4rem; }
+.aii-nav-dd-trending .trend-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 14px; }
 @media (max-width: 640px) { .aii-nav-dd-trending .trend-card-grid { grid-template-columns: 1fr; } }
+/* Trending dropdown rows are CARDS now — same grey rounded card + blue
+   "View AI Insights" link as the homepage mobile trending list (#img591). */
+.aii-nav-dd-trending .trend-card { border: 1px solid #e9edf3; border-radius: 12px; background: #f8fafc; padding: 14px 15px; align-self: start; }
+.aii-nav-dd-trending .trend-card.is-expanded { background: #fff; border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); }
+.aii-nav-dd-trending .trend-card-trigger, .aii-nav-dd-trending .trend-card-trigger:hover { background: transparent; padding: 0; cursor: pointer; }
+.aii-nav-dd-trending .trend-card-chev { display: none; }
+.aii-nav-dd-trending .trend-card-title { font-size: 1rem; font-weight: 700; color: var(--color-text); }
+.aii-nav-dd-trending .trend-card-summary { color: #55617a; }
+.aii-nav-dd-trending .trend-card-actions { display: flex; margin-top: 12px; }
+.aii-nav-dd-trending .trend-card-aibtn { background: none; border: none; border-radius: 0; padding: 4px 0; color: #2563eb; font-size: 0.78rem; font-weight: 500; gap: 5px; }
+.aii-nav-dd-trending .trend-card-aibtn:hover { color: #1d4ed8; background: none; box-shadow: 0 1px 0 0 currentColor; }
+.aii-nav-dd-trending .trend-card-aibtn svg { width: 13px; height: 13px; }
+.aii-nav-dd-trending .trend-card-aibtn .trend-card-aibtn-chev { display: inline-flex; margin-left: 1px; transition: transform .2s ease; }
+.aii-nav-dd-trending .trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-chev { transform: rotate(180deg); }
 
 .aii-nav-dd-subbar { flex: 0 0 auto; padding: 10px 2px 4px; }
 .aii-nav-dd-subbar .tlm-controlbar { margin: 0; }
@@ -18931,8 +18968,9 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
   flex: 0 0 auto; width: auto; padding: 7px 18px !important; margin: 0 !important;
   border: 1px solid transparent !important; border-radius: 999px !important;
   /* L1 reads bigger than it did (0.86rem) at every width — scales with the
-     viewport so the hierarchy holds on phones AND desktop (#img585). */
-  background: none !important; font-size: clamp(0.95rem, 0.88rem + 0.3vw, 1.05rem); font-weight: 600; color: var(--color-text-muted, #64748b);
+     viewport so the hierarchy holds on phones AND desktop (#img585); walked back
+     a notch from the first bump, which ran hot on desktop (#img586). */
+  background: none !important; font-size: clamp(0.9rem, 0.85rem + 0.25vw, 0.98rem); font-weight: 600; color: var(--color-text-muted, #64748b);
   white-space: nowrap; transition: background .12s, color .12s;
 }
 /* Active/hover = a deep, filled blue pill — slightly lighter than the topic title
@@ -18985,8 +19023,9 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 .tai-tab {
   flex: none; padding: 9px 0; margin: 0 0 -1px; border: none; border-bottom: 3px solid transparent; border-radius: 0;
   /* L2 steps up from its old 0.84rem — responsive, one notch under the L1 pills
-     so the ladder reads L1 > L2 > L3 at every width (#img585). */
-  background: none; cursor: pointer; font-family: var(--font-family); font-size: clamp(0.92rem, 0.86rem + 0.3vw, 1rem); font-weight: 600;
+     so the ladder reads L1 > L2 > L3 at every width (#img585). Lighter weight than
+     the L1 pills so the two rows read as different levels, not siblings (#img587). */
+  background: none; cursor: pointer; font-family: var(--font-family); font-size: clamp(0.92rem, 0.86rem + 0.3vw, 1rem); font-weight: 400;
   /* Inactive = a DARKER grey than the Summary (L3) row below, so the hierarchy
      reads top-down even when nothing's hovered (#img152). */
   color: #475569; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: color .12s;
@@ -18994,7 +19033,7 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 .tai-tab:hover { color: var(--color-primary); }
 /* Active = the SAME deep blue as the News Feed / AI Insights pill above, so the two
    nav levels share one accent colour (#img204/#img205). */
-.tai-tab.is-active { color: #33517f; font-weight: 700; border-bottom-color: #33517f; }
+.tai-tab.is-active { color: #33517f; font-weight: 650; border-bottom-color: #33517f; }
 /* Level 3 (Summary / Explore Further / Sources) = the quietest tabs — lighter
    weight, a LIGHTER grey than the Catch Up row above, GREY (not blue) thin active
    underline, so it clearly sits below level 2 (#img148/#img152). Tucked close under
