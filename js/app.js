@@ -18,9 +18,9 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260716-revamp584';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260716-revamp585';
 import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp574';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260716-revamp584';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260716-revamp585';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp574';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260706-revamp574';
@@ -878,6 +878,8 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
     if (!act) { ptabBar.style.width = '0px'; return; }
     ptabBar.style.left = `${act.offsetLeft}px`;
     ptabBar.style.width = `${act.offsetWidth}px`;
+    // Hug the WORD (a true text underline), not the row's bottom edge (#img602).
+    ptabBar.style.top = `${act.offsetTop + act.offsetHeight - 4}px`;
   };
   window.addEventListener('resize', placePtabBar);
   requestAnimationFrame(placePtabBar);

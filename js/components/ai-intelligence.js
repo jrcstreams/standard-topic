@@ -912,12 +912,15 @@ export function renderAIIntelligence(container, scope) {
       <div class="aii-ctlrow">
         ${bc.generatedAt ? `<span class="aii-updated-pill">Updated ${esc(relTime(bc.generatedAt))}</span>` : ''}
         <button type="button" class="aii-explore-pill" data-aii-explore aria-expanded="false">
-          <span class="aii-explore-pill-open">${SPARK}<span>Explore this Further</span></span>
+          <span class="aii-explore-pill-open">${SPARK}<span>Explore Further</span></span>
           <span class="aii-explore-pill-back">${BACK_ARROW}<span>Back</span></span>
         </button>
       </div>
       <div class="aii-bview aii-bview-summary">${summaryHTML}</div>
-      <div class="aii-bview aii-bview-explore" hidden>${exploreHTML}</div>`;
+      <div class="aii-bview aii-bview-explore" hidden>
+        <div class="aii-fi-sechead aii-explore-sechead"><h3 class="aii-fi-sectitle">Explore Further</h3><p class="aii-fi-secsub">Send this to an AI model or explore the web's best sources on ${esc(scope.label || scope.topic || 'this topic')}.</p></div>
+        ${exploreHTML}
+      </div>`;
     const ctlrow = wrap.querySelector('.aii-ctlrow');
     const vSummary = wrap.querySelector('.aii-bview-summary');
     const vExplore = wrap.querySelector('.aii-bview-explore');

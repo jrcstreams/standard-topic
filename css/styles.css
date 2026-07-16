@@ -14099,7 +14099,8 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
 .trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-spark { display: none; }
 .trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-xic { display: inline; }
 /* Dropdown chevron only shows in the desktop LINK style (not the mobile pill). */
-.trend-card-aibtn-chev { display: none; }
+/* No dropdown chevron on View/Close AI Insights — any surface, any state (#img605). */
+.trend-card-aibtn-chev { display: none !important; }
 .trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-open { display: none; }
 .trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-close { display: inline; }
 .trend-card-aibtn[aria-expanded="true"] { border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-surface-border)); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 7%, #fff); font-weight: 600; }
@@ -14272,10 +14273,10 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
 /* Inside the container the brief flows off the trend with a hairline separator. */
 .trend-card-exp {
   /* Tight to the "Close AI Insights" line above — the old 10+9px stack left a
-     big dead band before the Summary bar (#img588). */
+     big dead band before the Summary bar (#img588). No separator line between
+     the toggle link and the brief (#img605). */
   margin-top: 4px; padding: 5px 2px 4px;
   border: none; border-radius: 0; background: none;
-  border-top: 1px solid var(--color-surface-border);
   animation: trendExpIn .2s ease;
   /* Never let the brief force the card wider than its column — the Summary/Explore/
      Sources control is fit-content and was overflowing the narrow homepage sidebar
@@ -18980,13 +18981,12 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* Level 1 (News Feed | AI Insights | Prompt Library) = UNDERLINE tabs (#img598):
    plain text with a single sliding indicator bar (.ptab-underline, positioned by
    JS) that animates between tabs on selection. */
-.topic-subnav-controls .topic-paths-nav { position: relative !important; gap: 26px; }
+.topic-subnav-controls .topic-paths-nav { position: relative !important; gap: 26px; padding: 8px 2rem 9px !important; }
 .topic-subnav-controls .ptab {
-  flex: 0 0 auto; width: auto; padding: 10px 2px 14px !important; margin: 0 !important;
+  flex: 0 0 auto; width: auto; padding: 4px 2px 8px !important; margin: 0 !important;
   border: none !important; border-radius: 0 !important;
-  /* L1 reads bigger than it did (0.86rem) at every width — scales with the
-     viewport so the hierarchy holds on phones AND desktop (#img585/#img586). */
-  background: none !important; font-size: clamp(0.9rem, 0.85rem + 0.25vw, 0.98rem); font-weight: 600; color: var(--color-text-muted, #64748b);
+  /* L1 is the BIGGEST nav level — a clear step above the Catch Up pills (#img602). */
+  background: none !important; font-size: clamp(1rem, 0.94rem + 0.35vw, 1.12rem); font-weight: 600; color: var(--color-text-muted, #64748b);
   white-space: nowrap; transition: color .12s;
 }
 .topic-subnav-controls .ptab:hover { color: #33517f !important; background: none !important; }
@@ -18994,10 +18994,10 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 .topic-subnav-controls .ptab.is-active:hover {
   color: #26375a !important; font-weight: 700 !important; background: none !important;
 }
-/* The sliding indicator — sits flush on the control bar's bottom hairline. */
+/* The sliding indicator — hugs the active WORD (top set by JS), slides on switch. */
 .topic-paths-nav .ptab-underline {
-  position: absolute; bottom: 0; left: 0; width: 0; height: 3px;
-  border-radius: 3px 3px 0 0; background: #33517f;
+  position: absolute; top: 0; left: 0; width: 0; height: 2.5px;
+  border-radius: 2px; background: #33517f;
   transition: left .28s cubic-bezier(.4, 0, .2, 1), width .28s cubic-bezier(.4, 0, .2, 1);
 }
 
@@ -19007,14 +19007,12 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    scrolling (the base rule over-subtracted --subnav-height + 24, capping it short) —
    the panel starts at nav-h + subnav-title-h, so match that (#img4482-4484). */
 .topic-subnav-inner .tsp-panel-inner { max-height: calc(100dvh - var(--nav-h) - var(--subnav-title-h, 56px) - 10px); }
-/* Subtopics pack to their NATURAL width and wrap responsively (based on label length
-   + available width) instead of being stretched into equal 1fr columns that spread a
-   handful of short subtopics uncomfortably far apart (#img556-558). */
-.topic-subnav-inner .tsp-panel-inner .tsp-grid { display: flex; flex-wrap: wrap; grid-template-columns: none; gap: 2px 10px; }
-.topic-subnav-inner .tsp-panel-inner .tsp-cell { flex: 0 1 auto; min-width: 0; }
-@media (min-width: 900px) {
-  .topic-subnav-inner .tsp-panel-inner .tsp-cell { padding-right: 1.1rem; }
-}
+/* Subtopics use a UNIFORM aligned grid: fixed-minimum columns that condense (more
+   columns) as space allows — the same layout for every topic, columns lined up
+   across rows (the natural-width flex wrap left ragged, misaligned columns,
+   #img606). */
+.topic-subnav-inner .tsp-panel-inner .tsp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 2px 14px; }
+.topic-subnav-inner .tsp-panel-inner .tsp-cell { min-width: 0; }
 
 /* AI Insights second-level sub-nav (Catch Up / Deep Dive / 101 Info / Prompts) —
    at the top of the body content, below the control bar. */
@@ -19037,7 +19035,11 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    AI Insights, with a faint separator drawing the line under it. */
 .topic-ai-subnav {
   display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
-  margin: 0; padding: 10px 16px 12px;
+  /* Full-bleed: the row + its faint separator run ALL the way across the page,
+     not just the content column (#img603) — negative side margins out to the
+     viewport edge, padding brings the pills back to the content line. */
+  margin: 0 calc(50% - 50vw);
+  padding: 8px calc(50vw - 50% + 16px) 9px;
   border-bottom: 1px solid #eef1f5;
   position: sticky; top: 0; background: #fff; z-index: 30;
 }
@@ -19068,7 +19070,10 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    A light row under the sticky Catch Up pills holds the "Updated …" data pill and
    an "Explore this Further" pill (grey pill, blue link text + sparkle) that swaps
    the summary for the explore view — where it reads as a Back button. ────────── */
-.aii-ctlrow { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 14px 0 6px; }
+.aii-ctlrow { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 14px 0 18px; }
+/* Explore view header (matches the Prompt Library section headers) — sits below
+   the Back pill with real air between them (#img604). */
+.aii-explore-sechead { margin-top: 2px; }
 .aii-updated-pill {
   display: inline-flex; align-items: center; padding: 5px 12px; border-radius: 999px;
   background: #eef1f5; color: #3f4a5c; font-size: 0.75rem; font-weight: 600; white-space: nowrap;
@@ -19134,7 +19139,7 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 /* Phones: same subnav spacing as desktop (#img117/#img118). */
 @media (max-width: 899.98px) {
   .topic-subnav-controls .topic-paths-nav { gap: 20px; }
-  .topic-subnav-controls .ptab { padding: 8px 2px 12px !important; font-size: 0.92rem; }
+  .topic-subnav-controls .ptab { padding: 4px 2px 8px !important; font-size: 1rem; }
   .topic-subnav-inner .tsp-btn { padding: 0.92rem 0.15rem !important; }
   .topic-subnav-inner .tsp-btn-name { font-size: 1.18rem !important; }
   .topic-ai-subnav { gap: 6px; }
