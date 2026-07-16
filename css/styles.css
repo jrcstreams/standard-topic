@@ -13693,7 +13693,10 @@ body.home-search #home-trending .trending-topics {
     grid-template-areas: "cards cards" "main side";
     align-items: start;
     column-gap: 1.5rem;
-    row-gap: 1.5rem;
+    /* Extra breathing room under the promo cards row before News Feed / Trending
+       (#img6) — the row-gap is the only thing separating the cards from the
+       content columns, so bump it well past the inter-card gap. */
+    row-gap: 2.75rem;
   }
   /* Search spans the full width on top; AI Insights + Prompt Builder sit in a
      50/50 row beneath it (AI Insights first/left). */
@@ -14145,14 +14148,22 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
 .newsfeed-logo { display: none; }
 body.home-search #section-newsfeed .newsfeed-title { gap: 0.6rem; }
 body.home-search #section-newsfeed .newsfeed-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
-body.home-search #section-newsfeed .newsfeed-logo svg { width: 14px; height: 14px; display: block; }
+/* The News Feed glyph is a document that draws SMALL within its 24-unit viewBox,
+   so at the SAME pixel size it reads visibly smaller/lighter than the Trending
+   up-arrow (which fills its box). Bump the homepage News Feed icon a step and
+   match the arrow's heavier stroke so the two section headers read at the same
+   visual size (#img6/7). */
+body.home-search #section-newsfeed .newsfeed-logo svg { width: 16px; height: 16px; display: block; stroke-width: 2.4; }
 /* Desktop: bump BOTH homepage section headers (icon chip + title) to be more
    prominent — a clear step up, not huge (#img555). */
 @media (min-width: 1024px) {
   body.home-search #section-newsfeed .newsfeed-title, body.home-search #section-newsfeed .newsfeed-title-main,
   body.home-search #home-trending .trending-topics-title { font-size: 1.34rem !important; }
   body.home-search #section-newsfeed .newsfeed-logo, body.home-search #home-trending .trending-topics-logo { width: 30px !important; height: 30px !important; border-radius: 9px !important; }
-  body.home-search #section-newsfeed .newsfeed-logo svg, body.home-search #home-trending .trending-topics-logo svg { width: 16px !important; height: 16px !important; }
+  body.home-search #home-trending .trending-topics-logo svg { width: 16px !important; height: 16px !important; }
+  /* News Feed glyph rendered a touch larger + heavier so the document icon
+     matches the Trending arrow's visual size in the 30px chip (#img6/7). */
+  body.home-search #section-newsfeed .newsfeed-logo svg { width: 19px !important; height: 19px !important; stroke-width: 2.4 !important; }
 }
 /* Desktop Trending header font matches the News Feed header exactly (#img528/529). */
 body.home-search #home-trending .trending-topics-title { font-size: 1.2rem; font-weight: 700; color: #2d3748; letter-spacing: -0.015em; }
