@@ -10,7 +10,7 @@
 
 import { getPromptGenData, getModels, getDefaultModelId, getModelById, getParentTopics, getFeaturedTopics, getAllTopics, searchTopics, getSubmissionMethods, getTopicsGroupedByParent } from '../utils/data.js';
 import { getPreferredModelId, setPreferredModelId, submitPrompt, isUrlTooLong, shouldCopyOnOpen } from '../utils/ai-models.js';
-import { topicIconSVG } from '../utils/topic-icons.js';
+import { topicIconSVG } from '../utils/topic-icons.js?v=20260716-revamp588';
 import { track } from '../utils/analytics.js';
 
 const state = {

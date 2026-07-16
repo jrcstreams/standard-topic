@@ -7,7 +7,7 @@
 // the featured ones to every parent topic in the catalog.
 
 import { getTopicsGroupedByParent, getFeaturedTopics, searchTopics } from '../utils/data.js';
-import { topicIconSVG } from '../utils/topic-icons.js';
+import { topicIconSVG } from '../utils/topic-icons.js?v=20260716-revamp588';
 import { navigate } from '../utils/router.js';
 
 let overlayEl = null;

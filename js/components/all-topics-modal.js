@@ -3,7 +3,7 @@
 // reveal its subtopics, with a prominent "All {parent}" link at the top.
 
 import { getTopicsGroupedByParent } from '../utils/data.js';
-import { topicIconSVG } from '../utils/topic-icons.js';
+import { topicIconSVG } from '../utils/topic-icons.js?v=20260716-revamp588';
 
 let overlayEl = null;
 

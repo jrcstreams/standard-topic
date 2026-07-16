@@ -11,7 +11,7 @@ import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from 
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
-import { topicIconSVG } from '../utils/topic-icons.js';
+import { topicIconSVG } from '../utils/topic-icons.js?v=20260716-revamp588';
 import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp574';
 
 // Display metadata for the paths (the navigation categories). Each `group`

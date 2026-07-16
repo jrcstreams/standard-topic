@@ -40,6 +40,22 @@ const ICONS = {
   'lantern': '<path d="M12 2v2" /> <path d="M8 4h8" /> <path d="M6 12c0-3.4 2.7-6 6-6s6 2.6 6 6-2.7 6-6 6-6-2.6-6-6z" /> <path d="M9.4 6.3C9 8 9 10 9 12s0 4 .4 5.7M14.6 6.3C15 8 15 10 15 12s0 4-.4 5.7" /> <path d="M8 18h8" /> <path d="M12 18v3" />',
   'palm-tree': '<path d="M13 8c1.6-1.2 4.3-1 5.8.6M13 8c-1.6-1.2-4.3-1-5.8.6M13 8c.4-2.1 2.5-3.6 4.6-3.4M13 8c-.4-2.1-2.5-3.6-4.6-3.4M13 8c2 .3 3.4 2 3.4 4.2" /> <path d="M13 8v13" /> <path d="M10 21h6" />',
   'acacia': '<path d="M12 21v-8.5" /> <path d="M3.5 11C5 7.8 8.3 6 12 6s7 1.8 8.5 5" /> <path d="M8.3 13.2 12 10.5l3.7 2.7" /> <path d="M6 11h12" />',
+  // World subtopics: filled REGION SILHOUETTES (hand-drawn, #img614) — each shape
+  // exaggerates its region's identifying geography so it stays recognizable at
+  // list size (flat 49th-parallel top = US, flat border bottom + Hudson Bay = Canada,
+  // Cape York + Tasmania = Australia, Sri Lanka dot = India, etc.). Paths carry
+  // fill="currentColor" stroke="none" so they render solid inside the stroke wrapper.
+  'map-africa': '<path fill="currentColor" stroke="none" d="M7 3.5 L14.5 3 L15.5 5.5 L18 6.5 L21 8.5 L17.5 10.5 L16.5 14 L14 18.5 L12.5 21 L10.5 16.5 L9.5 13.5 L6.5 12.5 L4 8.5 L5.5 7.5 L5 4.5 Z"/>',
+  'map-latam': '<path fill="currentColor" stroke="none" d="M5.5 2.5 L8.5 4 L11 5.5 L14.5 6 L17.5 8 L18.5 11 L16 14 L13.5 16.5 L12.5 20 L11 21.5 L10 18 L10.5 14.5 L8.5 11 L8 8 L6 6 L4.5 4 Z"/>',
+  'map-oceania': '<path fill="currentColor" stroke="none" d="M14.5 4 L15.5 8 L18.5 9 L20.5 12 L19.5 15.5 L15.5 17 L10 17.5 L5.5 15.5 L3.5 12 L5 9.5 L9 8.5 L11.5 9.5 L12.5 7 Z"/><circle fill="currentColor" stroke="none" cx="17.3" cy="20.3" r="1.4"/>',
+  'map-india': '<path fill="currentColor" stroke="none" d="M6 4 L10.5 3.5 L13 5.5 L17.5 6 L16.5 9.5 L13.5 12 L12 16 L10.8 19.5 L8.5 15 L6.5 11 L4.5 7.5 L6.5 6.5 Z"/><circle fill="currentColor" stroke="none" cx="13.6" cy="20.6" r="1.3"/>',
+  'map-us': '<path fill="currentColor" stroke="none" d="M3 7 L21 7 L20.5 10 L19 12.5 L18 14.5 L19.5 17.5 L17.5 16.5 L16 14.5 L13 15 L10.5 16.5 L8 15.5 L7 13.5 L4.5 12 L3.5 9.5 Z"/>',
+  'map-canada': '<path fill="currentColor" stroke="none" d="M3 17 L3 10 C3 7 5 4.5 8 4.5 C10.5 4.5 12.5 6 13 8.5 C13.2 9.8 13.4 11 14.2 11 C15 11 15.2 9.6 15.6 8.2 C16.1 6.4 17.6 5.2 19 5.8 C20.7 6.6 21 9 20.7 11.5 L19.8 17 Z"/>',
+  'map-europe': '<path fill="currentColor" stroke="none" d="M4 15 L4.5 11.5 L8 9.5 L12 9 L13 6.5 C13.6 4.6 15.8 3.4 17.6 4.4 C19.3 5.4 19.2 7.8 17.6 8.8 L16.2 9.5 L18.8 11 L19.2 13 L16 14 L15.6 15.8 L14.2 18.6 L13.2 15.4 L12.4 13.8 L10.2 14.4 L9.6 16.8 L5.2 16.4 Z"/>',
+  'map-asia': '<path fill="currentColor" stroke="none" d="M3.5 8 L7 4.5 L13 3.5 L18.5 5 L21 8 L19.5 11 L17 12.5 L16.5 16.5 L14.5 13.5 L12.5 17.5 L11.5 13.5 L8.5 16 L7 11.5 L4.5 10.5 Z"/><circle fill="currentColor" stroke="none" cx="20.7" cy="13" r="1.1"/><circle fill="currentColor" stroke="none" cx="19.7" cy="16" r="1.1"/>',
+  'map-china': '<path fill="currentColor" stroke="none" d="M3.5 9 L7 6.5 L11.5 6 L14 4 L16.5 3.5 L16 6.5 L19.5 7 L20.5 10 L17.5 12.5 L16 15.5 L13.5 17 L11.5 15.5 L8.5 14.5 L5.5 13 L4 11 Z"/><circle fill="currentColor" stroke="none" cx="13.9" cy="19.6" r="1.3"/>',
+  'map-mideast': '<path fill="currentColor" stroke="none" d="M5 6.5 L8.5 4 L11 6 L14.5 6.5 L14 9 L17 9.5 L19.5 12 L15.5 14 L13 17.5 L11.5 20 L8 15 L6 10.5 Z"/>',
+  'map-russia': '<path fill="currentColor" stroke="none" d="M2 11.5 L3.5 8 L7.5 6.5 L12 7 L16 6 L20 7 L22 9 L20.5 11.5 L21.5 13 L20 16.5 L19 13.5 L17.5 11.5 L15 12.5 L11.5 12 L8 13.5 L4.5 13.5 Z"/>',
   'flame': '<path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4" />',
   'flask-conical': '<path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" /> <path d="M6.453 15h11.094" /> <path d="M8.5 2h7" />',
   'globe': '<circle cx="12" cy="12" r="10" /> <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /> <path d="M2 12h20" />',

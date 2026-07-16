@@ -13517,17 +13517,14 @@ body.home-search.app-mode .topic-layout {
   /* Mobile (lower clamp bounds) was perfect; desktop maxed out too tall/wide — trim
      the upper bounds, esp. vertical. */
   padding: clamp(1.1rem, 0.7rem + 0.8vw, 1.25rem) clamp(1.4rem, 0.9rem + 1.4vw, 1.9rem) clamp(1.2rem, 0.8rem + 0.9vw, 1.4rem);
-  /* Soft blue-tinted gradient + a real lift shadow so the card has presence
-     (was a flat pale panel). The corner glow adds depth on top. */
-  background: linear-gradient(150deg, #ffffff 0%, #e9f0fb 100%);
-  border: 1px solid #dbe4f2;
+  /* FLAT editorial card (#img616) — plain white, hairline border, whisper of a
+     shadow. No gradients, no corner glow. */
+  background: #fff;
+  border: 1px solid #e3e8f1;
   border-radius: 20px;
-  box-shadow: 0 22px 54px -34px rgba(31, 49, 99, 0.42);
+  box-shadow: 0 1px 2px rgba(15, 26, 46, 0.05);
 }
-.home-search-hero::after {
-  content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; overflow: hidden;
-  background: radial-gradient(72% 92% at 100% 0%, rgba(47, 78, 140, 0.11), transparent 58%);
-}
+.home-search-hero::after { content: none; }
 .home-search-hero .search-panel { position: relative; z-index: 1; }
 /* Balanced hero spacing (#75): a tight title→tagline gap and a deliberate,
    equal-ish tagline→search-bar gap (was unbalanced — 16px above, 0 below). */
@@ -13653,36 +13650,32 @@ body.home-search #home-trending .trending-topics {
 /* Prompt Builder promo — a dark navy card with a faint constellation texture
    and a blue CTA (replaces the nav's Prompt Builder button on home). */
 /* Clean brand-navy card with a subtle top sheen — crisp, not the muddy glow. */
+/* FLAT white promo cards (#img616) — hairline border, dark editorial type, a
+   solid navy button. No gradients, no dark fills. */
 .home-promo {
   display: block; text-decoration: none; position: relative; overflow: hidden;
   border-radius: 16px;
-  /* Vivid royal blue — a distinct identity from the navy AI Insights card so the
-     two stacked cards don't read as twins. */
-  background: linear-gradient(160deg, #2c5cb0 0%, #19386f 100%);
+  background: #fff;
+  border: 1px solid #e3e8f1;
+  box-shadow: 0 1px 2px rgba(15, 26, 46, 0.05);
+  transition: border-color .16s, box-shadow .16s;
 }
-.home-promo::after {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), transparent 34%);
-  pointer-events: none;
-}
+.home-promo:hover { border-color: #c8d3e5; box-shadow: 0 6px 18px -12px rgba(15, 26, 46, 0.25); }
+.home-promo::after { content: none; }
 .home-promo-inner { position: relative; z-index: 1; padding: 1.45rem 1.4rem 1.55rem; }
-.home-promo-eyebrow { margin: 0 0 0.55rem; font-size: 0.67rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #7d93c4; }
-.home-promo-title { margin: 0 0 0.5rem; font-family: var(--font-display); font-size: 1.3rem; line-height: 1.13; letter-spacing: -0.02em; color: #fff; font-weight: 700; }
-.home-promo-text { margin: 0 0 1.15rem; font-size: 0.855rem; line-height: 1.5; color: #cfdcf4; }
+.home-promo-eyebrow { margin: 0 0 0.55rem; font-size: 0.67rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8a97ad; }
+.home-promo-title { margin: 0 0 0.5rem; font-family: var(--font-display); font-size: 1.3rem; line-height: 1.13; letter-spacing: -0.02em; color: #1e2a44; font-weight: 700; }
+.home-promo-text { margin: 0 0 1.15rem; font-size: 0.855rem; line-height: 1.5; color: #5b6880; }
 .home-promo-btn {
   display: inline-flex; align-items: center; gap: 0.45rem;
   padding: 0.6rem 1rem; border-radius: 10px;
-  background: #fff; color: #1e3f86; font-size: 0.85rem; font-weight: 700;
-  box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.55);
+  background: #26375a; color: #fff; font-size: 0.85rem; font-weight: 700;
   transition: background 0.14s, transform 0.14s;
 }
 .home-promo:hover { text-decoration: none; }
-.home-promo:hover .home-promo-btn { background: #eaf1ff; transform: translateY(-1px); }
+.home-promo:hover .home-promo-btn { background: #33517f; transform: translateY(-1px); }
 .home-promo-btn svg { flex: none; }
-/* Topics promo (#424) — a deep-navy identity, distinct from the royal-blue
-   Prompt Builder card beside it. */
-.home-promo--topics { background: linear-gradient(160deg, #2a4571 0%, #14213d 100%); }
-.home-promo--topics .home-promo-btn { color: #1c3a73; }
+.home-promo--topics .home-promo-btn { background: #26375a; }
 @media (min-width: 1024px) {
   /* Two rows: the three cards span the FULL width across the top, then News Feed
      (left) + Trending (right) below — so Trending starts at the News Feed row
@@ -13752,7 +13745,7 @@ body.home-search .aii-promo-ic,
 body.home-search .home-promo-ic {
   display: inline-flex; align-items: center; justify-content: center;
   width: 30px; height: 30px; flex: none; border-radius: 9px;
-  background: rgba(255, 255, 255, 0.12); color: #fff;
+  background: #eef2f9; color: #26375a;
 }
 body.home-search .aii-promo-ic svg,
 body.home-search .home-promo-ic svg { width: 16px; height: 16px; }
@@ -14957,7 +14950,10 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 .ai-ins-source-row > svg { flex: none; color: var(--color-text-light); }
 /* Inline per-section sources on the topic AI Insights (replaces the Sources tab) —
    a small labelled list under each section's body (#img443-448). */
-.aii-sec-sources { margin: 14px 0 0; padding-top: 12px; border-top: 1px dashed color-mix(in srgb, var(--color-surface-border) 80%, transparent); display: grid; gap: 4px; }
+/* Faint SOLID rule above Sources (dashed read as noise, #img615); the Related
+   coverage section is nothing but sources, so no rule under its header at all. */
+.aii-sec-sources { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid #edf0f5; display: grid; gap: 4px; }
+#aii-msec-related .aii-sec-sources { border-top: none; margin-top: 6px; padding-top: 0; }
 .aii-sec-sources-label { font-family: var(--font-family); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #94a3b8; margin-bottom: 2px; }
 .aii-sec-src { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; padding: 5px 0; }
 /* Hover = blue title only — no underline (the global a:hover underline was
@@ -15109,36 +15105,34 @@ body.home-mode #sub-header.is-subnav .topic-banner {
    the CTA. Overrides the white "hero feature" rules above. */
 body.home-search #section-aii-home .aii-launcher-cta {
   cursor: pointer; position: relative; overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  /* Same navy gradient as the Prompt Builder card so the two read as a matched
-     pair (the sparkle watermark + white CTA differentiate this one). */
-  background: linear-gradient(180deg, #223150 0%, #18243d 100%);
-  box-shadow: 0 18px 40px -26px rgba(10, 18, 34, 0.7);
-  transition: transform .18s ease, box-shadow .22s ease;
+  /* FLAT white card matching the Prompt Builder card (#img616) — no navy fill,
+     no gradient. The sparkle watermark stays as a faint navy signature. */
+  border: 1px solid #e3e8f1;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 26, 46, 0.05);
+  transition: border-color .16s ease, box-shadow .16s ease;
 }
-body.home-search #section-aii-home .aii-launcher-cta:hover { transform: translateY(-2px); box-shadow: 0 26px 54px -26px rgba(10, 18, 34, 0.82); }
-body.home-search #section-aii-home .aii-launcher-cta:active { transform: translateY(0); }
+body.home-search #section-aii-home .aii-launcher-cta:hover { border-color: #c8d3e5; box-shadow: 0 6px 18px -12px rgba(15, 26, 46, 0.25); }
+body.home-search #section-aii-home .aii-launcher-cta:active { box-shadow: 0 1px 2px rgba(15, 26, 46, 0.05); }
 /* Drop the "AI Insights · LIVE" header on the home card — it goes straight into
    the headline + features + CTA, matching the headerless Prompt Builder card. */
 body.home-search #section-aii-home .aii-head { display: none; }
 .aii-launcher-cta:focus-visible { outline: 2px solid #5b78b8; outline-offset: 3px; }
-/* A thin top sheen for depth (replaces the blue radial glow). */
-.aii-launcher-cta::after { content: ''; position: absolute; inset: 0 0 auto 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent); pointer-events: none; z-index: 1; }
-/* Faint oversized brand-spark watermark bleeding off the top-right — a signature
-   that ties to the AI Insights mark, in navy/white at very low opacity. */
-/* Sits BELOW the head divider (kept within the body area, not crossing the head). */
-.aii-cta-spark { position: absolute; top: 54px; right: 22px; width: 210px; height: 210px; color: #fff; opacity: 0.08; pointer-events: none; z-index: 0; }
+.aii-launcher-cta::after { content: none; }
+/* Faint oversized brand-spark watermark bleeding off the top-right — now a soft
+   navy signature on the white card. */
+.aii-cta-spark { position: absolute; top: 54px; right: 22px; width: 210px; height: 210px; color: #26375a; opacity: 0.05; pointer-events: none; z-index: 0; }
 .aii-cta-spark svg { width: 100%; height: 100%; }
-.aii-launcher-cta .aii-logo { background: rgba(255, 255, 255, 0.12); color: #fff; box-shadow: none; }
-.aii-launcher-cta .aii-brand { color: #fff; font-size: 1.5rem; }
-.aii-launcher-cta .aii-live { color: #4ade9f; }
+.aii-launcher-cta .aii-logo { background: #eef2f9; color: #26375a; box-shadow: none; }
+.aii-launcher-cta .aii-brand { color: #1e2a44; font-size: 1.5rem; }
+.aii-launcher-cta .aii-live { color: #15803d; }
 .aii-launcher-cta .aii-stage { position: relative; z-index: 1; }
-.aii-launcher-cta .aii-promo-line { color: rgba(255, 255, 255, 0.62); }
-.aii-launcher-cta .aii-promo-headline { color: #fff; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.13; }
-.aii-launcher-cta .aii-feat { color: rgba(255, 255, 255, 0.82); }
-.aii-launcher-cta .aii-feat-ic { color: rgba(255, 255, 255, 0.46); }
-/* White CTA button on the navy card — clean, high-contrast, not loud. */
-.aii-promo-btn { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; margin: 12px 0 4px; padding: 11px 20px; border-radius: 10px; background: #fff; color: var(--color-primary); font-family: var(--font-family); font-size: 0.85rem; font-weight: 700; box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.6); transition: transform .12s ease, box-shadow .16s ease; }
+.aii-launcher-cta .aii-promo-line { color: #8a97ad; }
+.aii-launcher-cta .aii-promo-headline { color: #1e2a44; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.13; }
+.aii-launcher-cta .aii-feat { color: #5b6880; }
+.aii-launcher-cta .aii-feat-ic { color: #8a97ad; }
+/* Solid navy CTA on the white card — matches the Prompt card button. */
+.aii-promo-btn { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; margin: 12px 0 4px; padding: 11px 20px; border-radius: 10px; background: #26375a; color: #fff; font-family: var(--font-family); font-size: 0.85rem; font-weight: 700; transition: background .14s ease, transform .12s ease; }
 /* Balanced breathing room below the CTA button (was flush to the card bottom). */
 body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-top: 19px; padding-bottom: 17px; }
 /* Compact the home dark cards so the stacked AI Insights + Prompt Builder column
@@ -15146,13 +15140,13 @@ body.home-search #section-aii-home .aii-launcher-cta .aii-stage { padding-top: 1
 body.home-search .aii-launcher-cta .aii-promo--cta { gap: 8px; }
 body.home-search .aii-launcher-cta .aii-promo-headline { font-size: 1.12rem; line-height: 1.15; }
 body.home-search .aii-launcher-cta .aii-promo-line { font-size: 0.84rem; line-height: 1.4; }
-body.home-search .aii-launcher-cta .aii-promo-btn { margin: auto 0 0; padding: 8px 15px; font-size: 0.82rem; box-shadow: 0 8px 18px -12px rgba(0,0,0,.6); }
+body.home-search .aii-launcher-cta .aii-promo-btn { margin: auto 0 0; padding: 8px 15px; font-size: 0.82rem; }
 body.home-search .home-promo-inner { padding: 1.25rem 1.3rem 1.2rem; }
 body.home-search .home-promo-title { font-size: 1.12rem; line-height: 1.18; margin-bottom: 0.3rem; }
 body.home-search .home-promo-text { font-size: 0.84rem; line-height: 1.4; margin-bottom: 0.7rem; }
 body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; box-shadow: 0 8px 18px -12px rgba(0,0,0,.5); }
 .aii-promo-btn svg { width: 15px; height: 15px; transition: transform .16s ease; }
-.aii-launcher-cta:hover .aii-promo-btn { transform: translateY(-1px); box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.7); }
+.aii-launcher-cta:hover .aii-promo-btn { transform: translateY(-1px); background: #33517f; }
 .aii-launcher-cta:hover .aii-promo-btn svg { transform: translateX(3px); }
 @media (max-width: 560px) { .aii-cta-spark { width: 140px; height: 140px; top: 8px; right: 12px; opacity: 0.07; } }
 @media (max-width: 720px) {

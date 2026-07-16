@@ -434,7 +434,7 @@
       "parent": "world",
       "rssFeedId": "tEPQq5ll7jfGkK14",
       "webhookEnabled": false,
-      "icon": "acacia",
+      "icon": "map-africa",
       "tier": 3
     },
     {
@@ -443,7 +443,7 @@
       "parent": "world",
       "rssFeedId": "tyFeGFYM70OfKRqS",
       "webhookEnabled": false,
-      "icon": "mountain",
+      "icon": "map-asia",
       "tier": 3
     },
     {
@@ -452,7 +452,7 @@
       "parent": "world",
       "rssFeedId": "tjfSAGLMzyQ2hmw6",
       "webhookEnabled": false,
-      "icon": "maple-leaf",
+      "icon": "map-canada",
       "tier": 3
     },
     {
@@ -461,7 +461,7 @@
       "parent": "world",
       "rssFeedId": "tBBcerUAHu1dzXmv",
       "webhookEnabled": false,
-      "icon": "lantern",
+      "icon": "map-china",
       "tier": 3
     },
     {
@@ -470,7 +470,7 @@
       "parent": "world",
       "rssFeedId": "tyx4MVQtNYiZAGK2",
       "webhookEnabled": false,
-      "icon": "flag",
+      "icon": "map-us",
       "tier": 3
     },
     {
@@ -479,7 +479,7 @@
       "parent": "world",
       "rssFeedId": "tkBkFNSGr5XvwhLl",
       "webhookEnabled": false,
-      "icon": "landmark",
+      "icon": "map-europe",
       "tier": 3
     },
     {
@@ -488,7 +488,7 @@
       "parent": "world",
       "rssFeedId": "tJ40EG7JBWc0uVvm",
       "webhookEnabled": false,
-      "icon": "sun",
+      "icon": "map-india",
       "tier": 3
     },
     {
@@ -497,7 +497,7 @@
       "parent": "world",
       "rssFeedId": "t4IF35h0XwrLPinz",
       "webhookEnabled": false,
-      "icon": "palm-tree",
+      "icon": "map-latam",
       "tier": 3
     },
     {
@@ -506,7 +506,7 @@
       "parent": "world",
       "rssFeedId": "txvVbIuwrlOgFxHg",
       "webhookEnabled": false,
-      "icon": "crescent-moon",
+      "icon": "map-mideast",
       "tier": 3
     },
     {
@@ -515,7 +515,7 @@
       "parent": "world",
       "rssFeedId": "tBn6njP0aIebVKKb",
       "webhookEnabled": false,
-      "icon": "waves",
+      "icon": "map-oceania",
       "tier": 3
     },
     {
@@ -524,7 +524,7 @@
       "parent": "world",
       "rssFeedId": "t7t0YprIOLLn60Fm",
       "webhookEnabled": false,
-      "icon": "snowflake",
+      "icon": "map-russia",
       "tier": 3
     },
     {
