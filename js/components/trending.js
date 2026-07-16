@@ -157,7 +157,7 @@ function trendCardHTML(topic, idx, opts) {
   const icon = opts.past ? TREND_PAST_ICON : TREND_CARD_ICON;
   return `
     <div class="trend-card${opts.past ? ' trend-card--past' : ''}" data-idx="${idx}" data-query="${escapeAttr(title)}" data-cat="${escapeAttr(cat)}" data-started="${escapeAttr(topic.startedAt || '')}" data-breakdown="${escapeAttr(JSON.stringify(Array.isArray(topic.trendBreakdown) ? topic.trendBreakdown.slice(0, 8) : []))}">
-      <button type="button" class="trend-card-trigger" aria-expanded="false" title="Quick insights on ${escapeAttr(title)}">
+      <button type="button" class="trend-card-trigger" aria-expanded="false" aria-label="Quick insights on ${escapeAttr(title)}">
         <span class="trend-card-main">
           <span class="trend-card-head">
             <span class="trend-card-icon" aria-hidden="true">${icon}</span>

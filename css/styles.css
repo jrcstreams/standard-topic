@@ -14104,9 +14104,6 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   body.home-search #home-trending .trend-card-title { font-size: 1rem !important; font-weight: 700 !important; color: var(--color-text) !important; }
   body.home-search #home-trending .trend-card-summary { color: #55617a !important; }
   body.home-search #home-trending .trend-card-actions { display: flex; margin-top: 12px; }
-  /* Match the mobile news-story "View AI Insights" pill size exactly. */
-  body.home-search #home-trending .trend-card-aibtn { padding: 5px 10px; font-size: 0.74rem; gap: 5px; }
-  body.home-search #home-trending .trend-card-aibtn svg { width: 13px; height: 13px; }
   /* A touch more air between the last trend card and "View more trending" (#img526). */
   body.home-search #home-trending .trend-viewmore-row { margin-top: 8px; padding: 6px 0 8px !important; }
 }
@@ -14125,12 +14122,14 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
      Dividers are INSET hairlines between rows (#img549). Rows get real breathing room
      from the dividers above/below and from the container's left/right edges (#img1–4). */
   body.home-search #home-trending .trend-card { position: relative; border: none; background: none; border-radius: 0; }
-  body.home-search #home-trending .trend-card:not(:last-child)::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: 0; height: 1px; background: #e3e7ee; }
+  /* Dividers span the SAME inset as the row content, so text and hairlines share
+     one left/right edge, clearly inside the grey container (#img7–9). */
+  body.home-search #home-trending .trend-card:not(:last-child)::after { content: ''; position: absolute; left: 20px; right: 20px; bottom: 0; height: 1px; background: #e3e7ee; }
   body.home-search #home-trending .trend-card:hover::before { content: ''; position: absolute; inset: 7px 3px 9px; border-radius: 10px; background: color-mix(in srgb, var(--color-primary) 5%, transparent); z-index: 0; }
   body.home-search #home-trending .trend-card:first-child:hover::before { top: 2px; }
   body.home-search #home-trending .trend-card > * { position: relative; z-index: 1; }
   body.home-search #home-trending .trend-card-trigger,
-  body.home-search #home-trending .trend-card-trigger:hover { background: transparent !important; padding: 16px 16px 3px !important; cursor: pointer; }
+  body.home-search #home-trending .trend-card-trigger:hover { background: transparent !important; padding: 16px 20px 3px !important; cursor: pointer; }
   /* No divider above the FIRST row, so it keeps the tighter original top padding. */
   body.home-search #home-trending .trend-card:first-child .trend-card-trigger { padding-top: 11px !important; }
   /* Ditch the ↗ open-arrow at the row's end (#img542). */
@@ -14139,13 +14138,18 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   body.home-search #home-trending .trend-card-summary { color: #55617a !important; }
   /* "View AI Insights" as a small BLUE LINK: sparkle · label · dropdown chevron. No
      pill/border/bg so it doesn't dominate the compact card. Tiny size + light weight. */
-  body.home-search #home-trending .trend-card-actions { display: flex; padding: 0 16px 16px; }
-  body.home-search #home-trending .trend-card-aibtn { background: none !important; border: none !important; padding: 4px 0 !important; color: #2563eb !important; font-size: 0.75rem !important; font-weight: 550 !important; gap: 5px !important; min-height: 0 !important; }
-  body.home-search #home-trending .trend-card-aibtn:hover { color: #1d4ed8 !important; background: none !important; text-decoration: underline; text-underline-offset: 2px; }
-  body.home-search #home-trending .trend-card-aibtn svg { width: 13px; height: 13px; }
-  body.home-search #home-trending .trend-card-aibtn .trend-card-aibtn-chev { display: inline-flex; margin-left: 1px; transition: transform .2s ease; }
-  body.home-search #home-trending .trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-chev { transform: rotate(180deg); }
+  body.home-search #home-trending .trend-card-actions { display: flex; padding: 0 20px 16px; }
 }
+/* Homepage trend "View AI Insights" is a small BLUE LINK on BOTH breakpoints —
+   sparkle · label · dropdown chevron, no pill/border/bg (mobile previously kept the
+   pill; now it matches the desktop sidebar link, #img11–13). Hover draws the
+   underline as a bottom hairline across the WHOLE link — sparkle included — instead
+   of text-decoration, which skips the icon (#img15/16). */
+body.home-search #home-trending .trend-card-aibtn { background: none !important; border: none !important; border-radius: 0; padding: 4px 0 !important; color: #2563eb !important; font-size: 0.75rem !important; font-weight: 500 !important; gap: 5px !important; min-height: 0 !important; }
+body.home-search #home-trending .trend-card-aibtn:hover { color: #1d4ed8 !important; background: none !important; box-shadow: 0 1px 0 0 currentColor; }
+body.home-search #home-trending .trend-card-aibtn svg { width: 13px; height: 13px; }
+body.home-search #home-trending .trend-card-aibtn .trend-card-aibtn-chev { display: inline-flex; margin-left: 1px; transition: transform .2s ease; }
+body.home-search #home-trending .trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-chev { transform: rotate(180deg); }
 /* News Feed section header on the homepage gets a matching icon chip (like the
    Trending logo) — desktop + mobile. Hidden everywhere else (topic pages keep
    their own plain header) (#img527). */
