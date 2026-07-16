@@ -912,7 +912,7 @@ export function renderAIIntelligence(container, scope) {
       <div class="aii-ctlrow">
         ${bc.generatedAt ? `<span class="aii-updated-pill">Updated ${esc(relTime(bc.generatedAt))}</span>` : ''}
         <button type="button" class="aii-explore-pill" data-aii-explore aria-expanded="false">
-          <span class="aii-explore-pill-open">${SPARK}<span>Explore Further</span></span>
+          <span class="aii-explore-pill-open">${SPARK}<span>Explore Further</span><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
           <span class="aii-explore-pill-back">${BACK_ARROW}<span>Back</span></span>
         </button>
       </div>
@@ -1492,9 +1492,10 @@ export function renderAIIntelligence(container, scope) {
       <div class="aii-pc-actions">
         <button type="button" class="aii-pc-submit" data-pc-submit${m ? '' : ' disabled'}>${ICON_SEND}<span>Submit Prompt</span></button>
         <span class="aii-pc-modelwrap">
-          <button type="button" class="aii-pc-btn aii-pc-modelbtn" data-pc-model aria-haspopup="menu" aria-expanded="false">${ICON_SWAP}<span>Model: <span data-pc-mn>${esc(m ? m.name : 'AI')}</span></span><span class="aii-pc-btn-chev" aria-hidden="true">${CHEV}</span></button>
+          <button type="button" class="aii-pc-btn aii-pc-modelbtn" data-pc-model aria-haspopup="menu" aria-expanded="false">${SPARK}<span>Model: <span data-pc-mn>${esc(m ? m.name : 'AI')}</span></span><span class="aii-pc-btn-chev" aria-hidden="true">${CHEV}</span></button>
           <div class="aii-pc-menu" data-pc-menu role="menu" aria-label="Choose AI model" hidden>${modelOpts}</div>
         </span>
+        <button type="button" class="aii-pc-btn" data-pc-copy>${ICON_COPY_MINI}<span data-pc-copy-tx>Copy Prompt</span></button>
         <button type="button" class="aii-pc-btn" data-pc-settings aria-expanded="false">${ICON_GEAR}<span>Settings</span></button>
       </div>
       <div class="aii-pc-set" data-pc-set hidden>
@@ -1544,6 +1545,17 @@ export function renderAIIntelligence(container, scope) {
       const prompt = getPrompt();
       openModel(m, prompt);
       copyPrompt(prompt);
+    });
+    // Copy Prompt — clipboard only, with a brief "Copied!" confirmation.
+    const copyBtn = host.querySelector('[data-pc-copy]');
+    copyBtn && copyBtn.addEventListener('click', () => {
+      copyPrompt(getPrompt());
+      const tx = copyBtn.querySelector('[data-pc-copy-tx]');
+      if (tx) {
+        tx.textContent = 'Copied!';
+        copyBtn.classList.add('is-copied');
+        setTimeout(() => { tx.textContent = 'Copy Prompt'; copyBtn.classList.remove('is-copied'); }, 1400);
+      }
     });
     // Edit — make the preview directly editable (toggle "Edit" ↔ "Done").
     const editBtn = host.querySelector('[data-pc-edit]');

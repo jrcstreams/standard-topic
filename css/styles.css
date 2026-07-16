@@ -18730,7 +18730,9 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 @media (min-width: 620px) { .prompts-landing { grid-template-columns: 1fr 1fr; } }
 .prompts-opt {
   display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 11px;
-  width: 100%; text-align: left; min-height: 246px; padding: 26px 26px;
+  /* Content-sized — the old 246px min-height stranded the CTA far below the
+     one-line description (#img610). Grid row stretch still equalizes the pair. */
+  width: 100%; text-align: left; padding: 24px 26px;
   border: 1px solid var(--color-surface-border); border-radius: 16px;
   background: #fff; cursor: pointer; transition: border-color .14s ease, box-shadow .14s ease, background .14s ease;
 }
@@ -18986,8 +18988,11 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
   flex: 0 0 auto; width: auto; padding: 4px 2px 8px !important; margin: 0 !important;
   border: none !important; border-radius: 0 !important;
   /* L1 is the BIGGEST nav level — a clear step above the Catch Up pills, but a
-     notch below the first cut, which ran hot (#img602/#img607). */
-  background: none !important; font-size: clamp(0.95rem, 0.9rem + 0.3vw, 1.05rem); font-weight: 600; color: var(--color-text-muted, #64748b);
+     notch below the first cut, which ran hot (#img602/#img607). The DISPLAY face
+     (same as page titles) sets L1 typographically apart from the sans-serif L2
+     pills — real hierarchy, not just a size delta (#img609). */
+  background: none !important; font-family: var(--font-display); letter-spacing: -0.015em;
+  font-size: clamp(0.95rem, 0.9rem + 0.3vw, 1.05rem); font-weight: 600; color: var(--color-text-muted, #64748b);
   white-space: nowrap; transition: color .12s;
 }
 .topic-subnav-controls .ptab:hover { color: #33517f !important; background: none !important; }
@@ -19071,21 +19076,26 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    A light row under the sticky Catch Up pills holds the "Updated …" data pill and
    an "Explore this Further" pill (grey pill, blue link text + sparkle) that swaps
    the summary for the explore view — where it reads as a Back button. ────────── */
-.aii-ctlrow { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 14px 0 18px; }
+/* Plain-text control row (no pills, #img613): the date reads as a faint data
+   label, Explore Further as a blue LINK with a trailing arrow. */
+.aii-ctlrow { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; margin: 14px 0 18px; }
 /* Explore view header (matches the Prompt Library section headers) — sits below
-   the Back pill with real air between them (#img604). */
-.aii-explore-sechead { margin-top: 2px; }
+   the Back link with real air between them (#img604). */
+.aii-explore-sechead { margin-top: 6px; }
 .aii-updated-pill {
-  display: inline-flex; align-items: center; padding: 5px 12px; border-radius: 999px;
-  background: #eef1f5; color: #3f4a5c; font-size: 0.75rem; font-weight: 600; white-space: nowrap;
+  display: inline-flex; align-items: center; padding: 0; border-radius: 0;
+  background: none; color: #94a1b5; font-size: 0.74rem; font-weight: 600;
+  letter-spacing: 0.02em; white-space: nowrap;
 }
 .aii-explore-pill {
-  display: inline-flex; align-items: center; padding: 5px 13px; border-radius: 999px;
-  border: none; background: #eef1f5; color: #2563eb; cursor: pointer;
-  font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; white-space: nowrap;
-  transition: background .13s, color .13s;
+  display: inline-flex; align-items: center; padding: 0; border-radius: 0;
+  border: none; background: none; color: #2563eb; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; white-space: nowrap;
+  transition: color .13s;
 }
-.aii-explore-pill:hover { background: #e3e9f3; color: #1d4ed8; }
+.aii-explore-pill:hover { background: none; color: #1d4ed8; }
+.aii-explore-pill:hover .aii-explore-pill-open > span,
+.aii-explore-pill:hover .aii-explore-pill-back > span { text-decoration: underline; text-underline-offset: 3px; }
 .aii-explore-pill svg { width: 13px; height: 13px; flex: none; }
 .aii-explore-pill-open, .aii-explore-pill-back { display: inline-flex; align-items: center; gap: 6px; }
 .aii-explore-pill-back { display: none; }
@@ -19095,8 +19105,13 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* ── Insight sections as grey bordered CARDS (#img599). ─────────────────────── */
 .aii-bview-summary .im-msec {
   background: #f8fafc; border: 1px solid #e9edf3; border-radius: 12px;
-  padding: 18px 20px; margin: 0 0 14px;
+  padding: 18px 20px; margin: 0 0 20px;
 }
+/* On the grey card the default light-grey AI tag vanished — a touch darker so it
+   reads as a real label (#img611). */
+.aii-bview-summary .im-msec .im-sec-aitag { background: #e7ecf3; color: #4b586c; }
+/* "SOURCES" gets a touch more visual weight on the cards (#img612). */
+.aii-bview-summary .aii-sec-sources-label { color: #71809b; }
 .aii-bview-summary .im-msec:first-child { padding-top: 18px; }
 .aii-bview-summary .im-msec:last-child { border-bottom: 1px solid #e9edf3; }
 .aii-bview-summary .im-msec .im-msec-ic { background: #fff; border: 1px solid #e9edf3; }
@@ -19108,6 +19123,8 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
   color: #2563eb; font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer;
 }
 .aii-sec-src-morebtn:hover { color: #1d4ed8; text-decoration: underline; text-underline-offset: 2px; }
+/* Copy Prompt confirmation state. */
+.aii-pc-btn.is-copied { color: #15803d; border-color: #bbf7d0; background: #f0fdf4; }
 /* "Updated …" stamp — left-aligned and tight to the first section below it (#img154).
    The first section carries a 22px top padding for inter-section spacing; collapse it
    right after the stamp so "Updated …" sits a smidge above the section title. */
@@ -19136,7 +19153,10 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* Tighten the gap between the control bar and the first story (#img102) — the
    topic-layout's 1.6rem top padding pushed the feed too far down. */
 body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
-.topic-tabbed .topic-tab-body { padding-top: 0; }
+/* overflow:visible — the tab body carries .layout-section's global
+   overflow:hidden, which traps position:sticky (the Catch Up row could never
+   pin, #img608). #content (the real scroll container) still clips X-overflow. */
+.topic-tabbed .topic-tab-body { padding-top: 0; overflow: visible; }
 /* Phones: same subnav spacing as desktop (#img117/#img118). */
 @media (max-width: 899.98px) {
   .topic-subnav-controls .topic-paths-nav { gap: 20px; }
