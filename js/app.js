@@ -889,6 +889,11 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
       if (!TOPIC_AI_GROUP_KEYS.has(gkey)) gkey = 'discover';
       subGroup = gkey;
       subNav.querySelectorAll('.tai-tab').forEach((b) => { const on = b.dataset.tai === gkey; b.classList.toggle('is-active', on); b.setAttribute('aria-selected', String(on)); });
+      // The AI Summary/Explore Further "shelf" must reach exactly under the active
+      // folder tab so they read as one connected control — measure the tab's right
+      // edge and hand it to CSS (min-width: var(--shelf-min)).
+      const act = subNav.querySelector('.tai-tab.is-active');
+      if (act) subBody.style.setProperty('--shelf-min', `${Math.ceil(act.getBoundingClientRect().right - subNav.getBoundingClientRect().left)}px`);
       mountGroup(subBody, gkey);
       requestAnimationFrame(() => { try { window.scrollTo({ top: 0 }); } catch (_) {} });
     };

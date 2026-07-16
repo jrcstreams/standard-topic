@@ -19027,18 +19027,19 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    tab is a grey FOLDER TAB that fuses into the grey shelf below it — and that
    shelf IS the AI Summary/Explore Further segmented track. Two nav levels read
    as one physical control instead of two floating rows. */
-.topic-ai-subnav { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 4px; border-bottom: none; margin: 0 0 0 16px; position: relative; z-index: 1; }
+.topic-ai-subnav { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 4px; border-bottom: none; margin: 14px 0 0 16px; position: relative; z-index: 1; }
 /* The body content (segmented Summary bar, "Updated", section titles, paragraphs)
    sits 16px in so it shares Catch Up's left edge (which is inset to line up with
    the News Feed pill text). Without this the whole insight column sat 16px left of
    Catch Up (#img252/#img254). */
 .topic-ai-body { padding-left: 16px; }
 .tai-tab {
-  flex: none; padding: 9px 15px 10px; margin: 0; border: none; border-radius: 10px 10px 0 0;
+  flex: none; padding: 10px 16px 13px; margin: 0; border: none; border-radius: 10px 10px 0 0;
   /* L2 steps up from its old 0.84rem — responsive, one notch under the L1 pills
      so the ladder reads L1 > L2 > L3 at every width (#img585). Lighter weight than
-     the L1 pills so the two rows read as different levels, not siblings (#img587). */
-  background: none; cursor: pointer; font-family: var(--font-family); font-size: clamp(0.92rem, 0.86rem + 0.3vw, 1rem); font-weight: 400;
+     the L1 pills so the two rows read as different levels, not siblings (#img587) —
+     but 500, not 400: full-light read as washed out (#img597). */
+  background: none; cursor: pointer; font-family: var(--font-family); font-size: clamp(0.92rem, 0.86rem + 0.3vw, 1rem); font-weight: 500;
   /* Inactive = a DARKER grey than the Summary (L3) row below, so the hierarchy
      reads top-down even when nothing's hovered (#img152). */
   color: #475569; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: color .12s;
@@ -19069,8 +19070,12 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 .topic-ai-body .aii-instabs .ins-tabnav {
   margin-top: 0; border: none; background: #eceff4;
   border-radius: 0 12px 12px 12px;
-  min-width: min(100%, 27rem);
-  padding: 5px 6px;
+  /* Only as wide as it needs to be: --shelf-min is set by JS to the active tab's
+     right edge, so the shelf reaches exactly under Catch Up/Deep Dive/101 Info —
+     no arbitrary fixed run-off past Explore Further (#img597). */
+  min-width: min(100%, var(--shelf-min, 0px));
+  max-width: 100%;
+  padding: 6px 7px;
 }
 /* "Updated …" stamp — left-aligned and tight to the first section below it (#img154).
    The first section carries a 22px top padding for inter-section spacing; collapse it
