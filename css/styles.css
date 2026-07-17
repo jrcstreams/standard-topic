@@ -19058,7 +19058,7 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
   margin: 0 calc(50% - 50vw);
   /* Flush with the container edge so the first pill lines up with the L1 tabs
      and the insight cards (#img623). */
-  padding: 8px calc(50vw - 50%) 10px;
+  padding: 11px calc(50vw - 50%) 13px;
   /* A real seam under the sticky bar — hairline + soft drop so it reads as nav
      over content, not a floating row (#img624). */
   border-bottom: 1px solid #e3e8f0;
@@ -19080,7 +19080,7 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 .topic-ai-wrap { margin-top: -0.4rem; }
 .tai-tab {
   flex: none; padding: 5px 15px; margin: 0; border: 1px solid transparent; border-radius: 999px;
-  background: none; cursor: pointer; font-family: var(--font-family); font-size: clamp(0.84rem, 0.81rem + 0.18vw, 0.9rem); font-weight: 600;
+  background: none; cursor: pointer; font-family: var(--font-family); font-size: clamp(0.8rem, 0.78rem + 0.15vw, 0.86rem); font-weight: 600;
   color: var(--color-text-muted, #64748b); white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: background .12s, color .12s;
 }
 .tai-tab:hover { color: #33517f; background: color-mix(in srgb, #33517f 9%, #fff); }
