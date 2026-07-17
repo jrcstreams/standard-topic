@@ -15732,7 +15732,9 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* Air above the first section header (space from the header divider above it), and a
    LIGHTER rule below each header than before (#img492). */
 .aii-fi-sec { margin-top: 22px; }
-.aii-fi-sec + .aii-fi-sec { margin-top: 30px; }
+.aii-fi-sec + .aii-fi-sec { margin-top: 24px; }
+/* Topic Prompts tab: the first section header hugs the tab bar (#img631). */
+.topic-prompt-lib-host .aii-fi-sec:first-child { margin-top: 6px; }
 .aii-fi-sechead { padding: 0 2px 11px; margin-bottom: 14px; border-bottom: 1px solid #e3e7ef; }
 /* Standalone prompt list (custom search = no section header): give the first card
    room below the tab-bar separator (#img493). In a section, the header handles it. */
@@ -18859,7 +18861,10 @@ button.aiidd-vlink { align-self: flex-start; }
   .sticky-hero-inner .sticky-brand { grid-area: brand; justify-self: start; align-self: center; margin: 0; display: flex; align-items: center; }
   .sticky-hero-inner .sticky-title { font-size: 1.22rem; letter-spacing: -0.02em; line-height: 1; }
   .sticky-hero-inner .sticky-actions.navbtns {
-    grid-area: nav; justify-content: space-around;
+    /* LEFT-aligned icon strip (#img630) — buttons keep a steady comfortable gap
+       from the left edge (aligned with the title above); leftover space just
+       trails off to the right. */
+    grid-area: nav; justify-content: flex-start; gap: 1.15rem;
     margin: 0 -0.9rem !important;
     /* Real vertical room around the icons + labels so the strip doesn't feel cut
        off (#img194). --nav-h is bumped to match the taller strip so the subnav +
@@ -19068,6 +19073,11 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* Cards flush with the container edge (align with the L1 tabs + pill row,
    #img623) + real air below the sticky bar (#img624). */
 .topic-ai-body { padding: 16px 0 0; }
+/* Cancel the layout's 0.4rem top padding above the sticky pill row — it made
+   the bar travel those ~6px before pinning ("the sticky moves a little",
+   #img628). Starting flush at the scroll container's top = zero travel; the
+   row's own padding provides the visual air. */
+.topic-ai-wrap { margin-top: -0.4rem; }
 .tai-tab {
   flex: none; padding: 5px 15px; margin: 0; border: 1px solid transparent; border-radius: 999px;
   background: none; cursor: pointer; font-family: var(--font-family); font-size: clamp(0.84rem, 0.81rem + 0.18vw, 0.9rem); font-weight: 600;
@@ -19183,7 +19193,8 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
    moved into each section card (#img621) — the control row has nothing left to
    show on topic pages (the AI modal keeps its Explore pill). */
 .topic-tab-body .aii-ctlrow { display: none !important; }
-.topic-explore-host { padding: 16px 16px 0; }
+/* Flush left with the L1 tabs/content edge, like the insight cards (#img629). */
+.topic-explore-host { padding: 16px 0 0; }
 /* Phones: same subnav spacing as desktop (#img117/#img118). */
 @media (max-width: 899.98px) {
   .topic-subnav-controls .topic-paths-nav { gap: 20px; }
