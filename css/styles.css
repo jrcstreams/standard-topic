@@ -15744,6 +15744,11 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
    heavy dense title (#img483-485). */
 .aii-fi-sectitle { margin: 0; font-family: var(--font-display); font-size: clamp(1.08rem, 1rem + 0.35vw, 1.22rem); font-weight: 600; letter-spacing: -0.004em; color: #33517f; }
 .aii-fi-secsub { margin: 3px 0 0; font-size: clamp(0.88rem, 0.84rem + 0.2vw, 0.95rem); line-height: 1.4; color: var(--color-text-muted); }
+/* Small phones: the prompt-group headers ran a bit large (#img633). */
+@media (max-width: 640px) {
+  .aii-fi-sectitle { font-size: 1rem; }
+  .aii-fi-secsub { font-size: 0.84rem; }
+}
 /* Each prompt is its own tappable CARD: small gap between cards, subtle rounded
    corners, hover lifts the border + a soft shadow, open state warms the border. */
 .aii-fi-acclist { display: flex; flex-direction: column; gap: 9px; }
@@ -18403,7 +18408,8 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .aii-nav-dd-head {
   flex: 0 0 auto;
   display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
-  padding: 18px 2px 12px;
+  /* Same nav→header gap as the Search dropdown (#img634). */
+  padding: 13px 2px 12px;
   /* Slightly more prominent than the site hairlines so the header reads as a clear
      divider above the list (#img487/488). */
   border-bottom: 1.5px solid #d3d9e4;
@@ -18861,17 +18867,16 @@ button.aiidd-vlink { align-self: flex-start; }
   .sticky-hero-inner .sticky-brand { grid-area: brand; justify-self: start; align-self: center; margin: 0; display: flex; align-items: center; }
   .sticky-hero-inner .sticky-title { font-size: 1.22rem; letter-spacing: -0.02em; line-height: 1; }
   .sticky-hero-inner .sticky-actions.navbtns {
-    /* LEFT-aligned icon strip (#img630) — buttons keep a steady comfortable gap
-       from the left edge (aligned with the title above); leftover space just
-       trails off to the right. */
-    grid-area: nav; justify-content: flex-start; gap: 1.15rem;
+    /* CENTERED icon strip with faint separators between the buttons (#img632). */
+    grid-area: nav; justify-content: center; gap: 0;
     margin: 0 -0.9rem !important;
     /* Real vertical room around the icons + labels so the strip doesn't feel cut
        off (#img194). --nav-h is bumped to match the taller strip so the subnav +
        nav dropdowns (positioned at top:var(--nav-h)) still clear it (#img179-182). */
     padding: 7px 0.9rem 8px; border-top: 1px solid rgba(255, 255, 255, 0.12);
   }
-  .sticky-hero-inner .sticky-actions.navbtns .navbtn { padding: 5px 6px; gap: 3px; }
+  .sticky-hero-inner .sticky-actions.navbtns .navbtn { padding: 5px 14px; gap: 3px; }
+  .sticky-hero-inner .sticky-actions.navbtns .navbtn + .navbtn { border-left: 1px solid rgba(255, 255, 255, 0.12); border-radius: 0; }
   /* Two-row nav has room for ALL labels — undo the single-row progressive hiding
      (Home/Search were losing their labels) so every icon is labelled + aligned. */
   .sticky-hero-inner .sticky-actions.navbtns .navbtn-label { display: block !important; }
