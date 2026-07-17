@@ -18463,7 +18463,8 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
    little breathing room from the top) instead of the X owning its own row (#img415/416). */
 .aii-nav-dd-search .aii-nav-dd-head-bare { position: absolute; top: 16px; right: 16px; padding: 0; z-index: 6; }
 .aii-nav-dd-search .search-panel--modal .search-panel-hero { margin-top: 0; }
-.aii-nav-dd-search .search-panel-hero-inner { padding-top: 0.95rem; padding-right: 3rem; }
+/* Same 22px nav→header gap as the other dropdowns (#img638). */
+.aii-nav-dd-search .search-panel-hero-inner { padding-top: 22px; padding-right: 3rem; }
 
 /* Prompt Builder hosted in the dropdown — constrain to a comfortable column. */
 .aii-nav-dd-prompt .pb-navdd-host { width: 100%; max-width: 820px; margin: 0 auto; }
