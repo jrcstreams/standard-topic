@@ -4,7 +4,7 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260706-revamp574';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260717-revamp591';
 import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp574';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
@@ -12,7 +12,7 @@ import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js?v=20260716-revamp588';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260706-revamp574';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260717-revamp591';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -265,6 +265,7 @@ export function renderAIIntelligence(container, scope) {
   const lookupDesc = (name) => (scope.descriptions && scope.descriptions[name]) || descByNorm[normName(name)] || '';
   const cache = {};               // group -> { sections, generatedAt, sources, loading, error }
   const builderCache = {};        // group -> { content, generatedAt, sources, headlines, loading, error } (the new master-prompt insight)
+  const builderRepolled = {};     // group -> true once the stale-refresh re-poll has fired (#img620)
   let view = 'paths';             // 'paths' | 'sections' | 'content' | 'builder'
   let curGroup = null;
   let curIdx = 0;
@@ -1264,6 +1265,27 @@ export function renderAIIntelligence(container, scope) {
       const data = res.ok ? await res.json() : null;
       if (data && data.content) {
         builderCache[group] = { content: data.content, generatedAt: data.generatedAt, sources: data.sources || [], headlines: data.headlines || [], loading: false };
+        // The API serves a STALE cached brief instantly and regenerates in the
+        // background — without this, the fresh version only appears on the next
+        // page load (#img620). If what we got is old, re-poll once after the
+        // regen has had time to land and swap it in place.
+        const ageH = data.generatedAt ? (Date.now() - new Date(data.generatedAt).getTime()) / 36e5 : 0;
+        if (ageH > 12 && !builderRepolled[group]) {
+          builderRepolled[group] = true;
+          setTimeout(async () => {
+            try {
+              const r2 = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shortcut', topic: scope.topic, group, builder: 1 }) });
+              const d2 = r2.ok ? await r2.json() : null;
+              if (d2 && d2.content && d2.generatedAt && d2.generatedAt !== data.generatedAt) {
+                builderCache[group] = { content: d2.content, generatedAt: d2.generatedAt, sources: d2.sources || [], headlines: d2.headlines || [], loading: false };
+                if (view === 'builder' && curGroup === group) {
+                  const wrap = stage.querySelector('[data-aii-builder]');
+                  if (wrap) renderBuilderInto(wrap);
+                }
+              }
+            } catch (_) {}
+          }, 30000);
+        }
       } else if (attempt < 2) {
         await sleep(700 + attempt * 700); return loadBuilder(group, attempt + 1);
       } else {

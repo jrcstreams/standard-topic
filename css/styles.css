@@ -19154,6 +19154,10 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
    overflow:hidden, which traps position:sticky (the Catch Up row could never
    pin, #img608). #content (the real scroll container) still clips X-overflow. */
 .topic-tabbed .topic-tab-body { padding-top: 0; overflow: visible; }
+/* Explore Further lives in the L1 tab row now (#img619) — no pill/link in the
+   builder control row on topic pages (the AI modal keeps its own). */
+.topic-tab-body .aii-explore-pill { display: none !important; }
+.topic-explore-host { padding: 16px 16px 0; }
 /* Phones: same subnav spacing as desktop (#img117/#img118). */
 @media (max-width: 899.98px) {
   .topic-subnav-controls .topic-paths-nav { gap: 20px; }

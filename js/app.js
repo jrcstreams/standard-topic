@@ -7,20 +7,20 @@ import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js?v=20260716-revamp588';
 import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp574';
 import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260716-revamp588';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260706-revamp574';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260717-revamp591';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js?v=20260716-revamp588';
 import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260716-revamp588';
 import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp574';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260716-revamp581';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260717-revamp591';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260716-revamp588';
-import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260706-revamp574';
-import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260716-revamp588';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260717-revamp591';
+import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260717-revamp591';
+import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260717-revamp591';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp574';
 import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260716-revamp588';
@@ -848,7 +848,8 @@ function userClosePromptBuilder() {
 const TOPIC_PATH_TABS = [
   { key: 'news', label: 'News Feed' },
   { key: 'ai',   label: 'AI Insights' },
-  { key: 'prompts', label: 'Prompt Library' },
+  { key: 'prompts', label: 'Prompts' },
+  { key: 'explore', label: 'Explore Further' },
 ];
 // Sub-options under "AI Insights" (Prompts moved out to its own top-level tab).
 const TOPIC_AI_GROUPS = [
@@ -923,6 +924,17 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
         renderNewsFeed(sec, topic, false);
         return;
       }
+      if (key === 'explore') {
+        // Explore Further is a first-class L1 tab now (#img619) — the shared
+        // AI-models + web-sources explorer, headed like the Prompt Library sections.
+        const host = document.createElement('div');
+        host.className = 'topic-explore-host';
+        body.appendChild(host);
+        const efPrompt = `Give me a thorough, current briefing on ${topic.name}. Be specific and cite sources.`;
+        host.innerHTML = `<div class="aii-fi-sechead aii-explore-sechead"><h3 class="aii-fi-sectitle">Explore Further</h3><p class="aii-fi-secsub">Send this to an AI model or explore the web's best sources on ${escapeHTML(topic.name)}.</p></div>${exploreFurtherHTML({ prompt: efPrompt, webTerm: topic.name, name: topic.name })}`;
+        wireExploreFurther(host);
+        return;
+      }
       if (key === 'prompts') {
         // Prompt Library tab: the topic's ready-made prompts split into Topic-Specific
         // + Evergreen accordions. Reuses the AI component's external (prompts) group;
@@ -964,6 +976,7 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
     // when the content is really there.
     const present = key === 'news' ? body.querySelector('#section-newsfeed')
       : key === 'prompts' ? body.querySelector('.topic-prompt-lib-host')
+      : key === 'explore' ? body.querySelector('.topic-explore-host')
       : body.querySelector('.topic-ai-wrap');
     const same = active === key;
     active = key;
