@@ -14440,7 +14440,7 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
 .tlm-body .trend-card-chev { display: none; }
 .tlm-body .trend-card-title { font-size: 1rem; font-weight: 700; color: var(--color-text); }
 .tlm-body .trend-card-summary { color: #55617a; }
-.tlm-body .trend-card-actions { display: flex; margin-top: auto; padding-top: 12px; }
+.tlm-body .trend-card-actions { display: flex; margin-top: 0; padding-top: 10px; }
 .tlm-body .trend-card-aibtn { background: none; border: none; border-radius: 0; padding: 4px 0; color: #2563eb; font-size: 0.78rem; font-weight: 500; gap: 5px; }
 .tlm-body .trend-card-aibtn:hover { color: #1d4ed8; background: none; box-shadow: 0 1px 0 0 currentColor; }
 .tlm-body .trend-card-aibtn svg { width: 13px; height: 13px; }
@@ -18460,7 +18460,10 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .aii-nav-dd-trending .trend-card-chev { display: none; }
 .aii-nav-dd-trending .trend-card-title { font-size: 1rem; font-weight: 700; color: var(--color-text); }
 .aii-nav-dd-trending .trend-card-summary { color: #55617a; }
-.aii-nav-dd-trending .trend-card-actions { display: flex; margin-top: auto; padding-top: 12px; }
+/* Link follows the description (next line-ish), NOT bottom-pinned — the cards
+   still stretch to matched row heights, shorter ones just carry the slack
+   below the link (#img618). */
+.aii-nav-dd-trending .trend-card-actions { display: flex; margin-top: 0; padding-top: 10px; }
 .aii-nav-dd-trending .trend-card-aibtn { background: none; border: none; border-radius: 0; padding: 4px 0; color: #2563eb; font-size: 0.78rem; font-weight: 500; gap: 5px; }
 .aii-nav-dd-trending .trend-card-aibtn:hover { color: #1d4ed8; background: none; box-shadow: 0 1px 0 0 currentColor; }
 .aii-nav-dd-trending .trend-card-aibtn svg { width: 13px; height: 13px; }
