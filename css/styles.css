@@ -19107,6 +19107,14 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* On the grey card the default light-grey AI tag vanished — a touch darker so it
    reads as a real label (#img611). */
 .aii-bview-summary .im-msec .im-sec-aitag { background: #e7ecf3; color: #4b586c; }
+/* "Updated X ago" data pill beside the AI tag (#img621) — same shape, quieter. */
+.im-sec-aitag-row { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+.im-sec-updated {
+  display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 6px;
+  background: #eef1f6; color: #74839c; font-size: 0.7rem; font-weight: 600;
+  letter-spacing: 0.01em; white-space: nowrap;
+}
+.aii-bview-summary .im-msec .im-sec-updated { background: #e7ecf3; color: #67768f; }
 /* "SOURCES" gets a touch more visual weight on the cards (#img612). */
 .aii-bview-summary .aii-sec-sources-label { color: #71809b; }
 .aii-bview-summary .im-msec:first-child { padding-top: 18px; }
@@ -19154,9 +19162,10 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
    overflow:hidden, which traps position:sticky (the Catch Up row could never
    pin, #img608). #content (the real scroll container) still clips X-overflow. */
 .topic-tabbed .topic-tab-body { padding-top: 0; overflow: visible; }
-/* Explore Further lives in the L1 tab row now (#img619) — no pill/link in the
-   builder control row on topic pages (the AI modal keeps its own). */
-.topic-tab-body .aii-explore-pill { display: none !important; }
+/* Explore Further lives in the L1 tab row now (#img619), and the Updated date
+   moved into each section card (#img621) — the control row has nothing left to
+   show on topic pages (the AI modal keeps its Explore pill). */
+.topic-tab-body .aii-ctlrow { display: none !important; }
 .topic-explore-host { padding: 16px 16px 0; }
 /* Phones: same subnav spacing as desktop (#img117/#img118). */
 @media (max-width: 899.98px) {

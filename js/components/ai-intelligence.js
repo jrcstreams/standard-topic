@@ -124,11 +124,13 @@ function aiiSecIconKey(name) {
   if (/source|coverage/.test(n)) return 'sources';
   return 'summary';
 }
-function aiiSecHead(key, name) {
+function aiiSecHead(key, name, updatedLbl) {
   // Icon sits inline-left of the title (top-aligned; title wraps in its own column,
   // never under the icon). The "AI Generated Text" tag is ALWAYS on its own line,
-  // left-aligned, below the head — never inline with the title.
-  const tag = key === 'sources' ? '' : `<div class="im-sec-aitag-row"><span class="im-sec-aitag">${LOGO}<span>AI Generated Text</span></span></div>`;
+  // left-aligned, below the head — never inline with the title. The "Updated X ago"
+  // data label sits as a sibling pill next to it (#img621).
+  const upd = updatedLbl ? `<span class="im-sec-updated">${esc(updatedLbl)}</span>` : '';
+  const tag = key === 'sources' ? '' : `<div class="im-sec-aitag-row"><span class="im-sec-aitag">${LOGO}<span>AI Generated Text</span></span>${upd}</div>`;
   return `<div class="im-msec-head"><span class="im-msec-ic">${AII_SEC_ICON[key] || AII_SEC_ICON.summary}</span><h3 class="im-msec-name">${esc(name)}</h3></div>${tag}`;
 }
 function aiiMsec(id, name, inner) { return `<section class="im-msec" id="${id}" data-name="${escAttr(name)}">${inner}</section>`; }
@@ -896,10 +898,11 @@ export function renderAIIntelligence(container, scope) {
     // tab): attribute each headline to its best-matching section (#img443-448).
     const items = builderNewsItems().filter((x) => x.title && x.meta && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(String(x.title).trim()));
     const { buckets, unmatched } = attributeItemsToSections(items, list);
+    const updatedLbl = bc.generatedAt ? `Updated ${relTime(bc.generatedAt)}` : '';
     const summaryHTML = list.map((part, i) => {
       const key = aiiSecIconKey(part.name);
       const body = `<div class="aii-sec-body">${renderBriefBody(part.body, null)}</div>`;
-      return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name) + body + secSourcesHTML(buckets[i]));
+      return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name, updatedLbl) + body + secSourcesHTML(buckets[i]));
     }).join('') + (unmatched.length ? aiiMsec('aii-msec-related', 'Related coverage', aiiSecHead('sources', 'Related coverage') + secSourcesHTML(unmatched, true)) : '');
     // Explore Further view = the shared clean-dropdown component (External AI Models
     // with Send-to / Direct Submit / Review, then web categories).
@@ -911,7 +914,6 @@ export function renderAIIntelligence(container, scope) {
     const BACK_ARROW = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>';
     wrap.innerHTML = `
       <div class="aii-ctlrow">
-        ${bc.generatedAt ? `<span class="aii-updated-pill">Updated ${esc(relTime(bc.generatedAt))}</span>` : ''}
         <button type="button" class="aii-explore-pill" data-aii-explore aria-expanded="false">
           <span class="aii-explore-pill-open">${SPARK}<span>Explore Further</span><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
           <span class="aii-explore-pill-back">${BACK_ARROW}<span>Back</span></span>
