@@ -149,6 +149,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (activePtab && activePtab.dataset.ptab === 'ai') {
               const sub = document.querySelector('.topic-ai-subnav .tai-tab.is-active');
               pendingInlineAii = { slug: route.slug, group: (sub && sub.dataset.tai) || 'discover' };
+            } else if (activePtab && activePtab.dataset.ptab && activePtab.dataset.ptab !== 'news') {
+              // Prompts / Explore Further survive the breakpoint crossing too —
+              // only News Feed (the default) needs no seeding (#img626).
+              pendingInlineAii = { slug: route.slug, group: activePtab.dataset.ptab };
             }
           }
         } catch (_) {}
@@ -882,8 +886,25 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
     // Hug the WORD (a true text underline), not the row's bottom edge (#img602).
     ptabBar.style.top = `${act.offsetTop + act.offsetHeight - 4}px`;
   };
-  window.addEventListener('resize', placePtabBar);
-  requestAnimationFrame(placePtabBar);
+  // Tight-fit fallback (#img625): when the four tabs overflow the row, first
+  // drop the type a notch (.ptabs-compact), then shorten "News Feed"→"News",
+  // and worst-case "Explore Further"→"Explore". Fully reversible on resize.
+  const PTAB_FULL = { news: 'News Feed', explore: 'Explore Further' };
+  const PTAB_SHORT = { news: 'News', explore: 'Explore' };
+  const fitPtabs = () => {
+    nav.classList.remove('ptabs-compact');
+    Object.keys(PTAB_FULL).forEach((k) => {
+      const b = nav.querySelector(`.ptab[data-ptab="${k}"]`);
+      if (b && b.textContent !== PTAB_FULL[k]) b.textContent = PTAB_FULL[k];
+    });
+    const fits = () => nav.scrollWidth <= nav.clientWidth + 1;
+    if (!fits()) nav.classList.add('ptabs-compact');
+    if (!fits()) { const b = nav.querySelector('.ptab[data-ptab="news"]'); if (b) b.textContent = PTAB_SHORT.news; }
+    if (!fits()) { const b = nav.querySelector('.ptab[data-ptab="explore"]'); if (b) b.textContent = PTAB_SHORT.explore; }
+    placePtabBar();
+  };
+  window.addEventListener('resize', fitPtabs);
+  requestAnimationFrame(fitPtabs);
 
   const destroyCtl = () => { if (ctl && ctl.destroy) { try { ctl.destroy(); } catch (_) {} } ctl = null; };
   const mountGroup = (subBody, gkey) => {
@@ -931,7 +952,7 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
         host.className = 'topic-explore-host';
         body.appendChild(host);
         const efPrompt = `Give me a thorough, current briefing on ${topic.name}. Be specific and cite sources.`;
-        host.innerHTML = `<div class="aii-fi-sechead aii-explore-sechead"><h3 class="aii-fi-sectitle">Explore Further</h3><p class="aii-fi-secsub">Send this to an AI model or explore the web's best sources on ${escapeHTML(topic.name)}.</p></div>${exploreFurtherHTML({ prompt: efPrompt, webTerm: topic.name, name: topic.name })}`;
+        host.innerHTML = exploreFurtherHTML({ prompt: efPrompt, webTerm: topic.name, name: topic.name });
         wireExploreFurther(host);
         return;
       }

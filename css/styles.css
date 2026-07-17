@@ -18407,8 +18407,10 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
   border-bottom: 1.5px solid #d3d9e4;
 }
 .aii-nav-dd-title {
-  font-size: 1.18rem; font-weight: 800; color: var(--color-primary, #1e293b);
-  letter-spacing: -0.01em; display: flex; align-items: center; gap: 8px;
+  /* Same header face as the Search dropdown title (#img627). */
+  font-family: var(--font-display);
+  font-size: 1.35rem; font-weight: 700; color: var(--color-primary, #1e293b);
+  letter-spacing: -0.025em; display: flex; align-items: center; gap: 8px;
 }
 .aii-nav-dd-spark { color: #2563eb; font-size: 1rem; }
 .aii-nav-dd-sub { margin-top: 3px; font-size: 0.86rem; color: var(--color-text-muted, #64748b); }
@@ -18979,7 +18981,11 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* Level 1 (News Feed | AI Insights | Prompt Library) = UNDERLINE tabs (#img598):
    plain text with a single sliding indicator bar (.ptab-underline, positioned by
    JS) that animates between tabs on selection. */
-.topic-subnav-controls .topic-paths-nav { position: relative !important; gap: 26px; padding: 8px 2rem 9px !important; }
+.topic-subnav-controls .topic-paths-nav { position: relative !important; flex-wrap: nowrap !important; gap: 26px; padding: 8px 2rem 9px !important; }
+/* Tight-fit fallback (#img625): JS adds .ptabs-compact when the four tabs
+   overflow, dropping the type a notch (labels shorten in JS if still tight). */
+.topic-paths-nav.ptabs-compact { gap: 16px !important; }
+.topic-paths-nav.ptabs-compact .ptab { font-size: 0.85rem !important; }
 /* Match the content's 1rem side padding on small screens — the 2rem base was
    shoving the tab row right of the topic title/cards (#img622). Placed AFTER
    the base rule so it actually wins the !important cascade. */
@@ -19045,18 +19051,26 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
      not just the content column (#img603) — negative side margins out to the
      viewport edge, padding brings the pills back to the content line. */
   margin: 0 calc(50% - 50vw);
-  padding: 8px calc(50vw - 50% + 16px) 9px;
-  border-bottom: 1px solid #eef1f5;
+  /* Flush with the container edge so the first pill lines up with the L1 tabs
+     and the insight cards (#img623). */
+  padding: 8px calc(50vw - 50%) 10px;
+  /* A real seam under the sticky bar — hairline + soft drop so it reads as nav
+     over content, not a floating row (#img624). */
+  border-bottom: 1px solid #e3e8f0;
+  box-shadow: 0 5px 12px -8px rgba(15, 26, 46, 0.14);
   position: sticky; top: 0; background: #fff; z-index: 30;
 }
+.tai-tab { line-height: 1.2; }
 /* The body content (segmented Summary bar, "Updated", section titles, paragraphs)
    sits 16px in so it shares Catch Up's left edge (which is inset to line up with
    the News Feed pill text). Without this the whole insight column sat 16px left of
    Catch Up (#img252/#img254). */
-.topic-ai-body { padding-left: 16px; }
+/* Cards flush with the container edge (align with the L1 tabs + pill row,
+   #img623) + real air below the sticky bar (#img624). */
+.topic-ai-body { padding: 16px 0 0; }
 .tai-tab {
-  flex: none; padding: 6px 16px; margin: 0; border: 1px solid transparent; border-radius: 999px;
-  background: none; cursor: pointer; font-family: var(--font-family); font-size: clamp(0.88rem, 0.84rem + 0.2vw, 0.95rem); font-weight: 600;
+  flex: none; padding: 5px 15px; margin: 0; border: 1px solid transparent; border-radius: 999px;
+  background: none; cursor: pointer; font-family: var(--font-family); font-size: clamp(0.84rem, 0.81rem + 0.18vw, 0.9rem); font-weight: 600;
   color: var(--color-text-muted, #64748b); white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: background .12s, color .12s;
 }
 .tai-tab:hover { color: #33517f; background: color-mix(in srgb, #33517f 9%, #fff); }
