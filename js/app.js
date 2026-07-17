@@ -3700,14 +3700,18 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       ${isModal
         ? `<div class="search-panel-empty">
              <div class="search-panel-empty-sec" data-empty-trending hidden>
-               <div class="search-panel-empty-sechead"><span class="search-panel-empty-seclabel">Trending</span></div>
+               <div class="search-panel-empty-sechead">
+                 <span class="search-panel-empty-seclabel"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>Trending</span>
+                 <button type="button" class="search-panel-empty-more" data-view-trending>View more<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></button>
+               </div>
                <div class="search-panel-empty-chips" role="list"></div>
-               <button type="button" class="search-panel-empty-more" data-view-trending>View more trending<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></button>
              </div>
              <div class="search-panel-empty-sec" data-empty-featured hidden>
-               <div class="search-panel-empty-sechead"><span class="search-panel-empty-seclabel">Featured Topics</span></div>
+               <div class="search-panel-empty-sechead">
+                 <span class="search-panel-empty-seclabel"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>Featured Topics</span>
+                 <button type="button" class="search-panel-empty-more" data-view-topics>View all<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></button>
+               </div>
                <div class="search-panel-empty-topics"></div>
-               <button type="button" class="search-panel-empty-more" data-view-topics>View all topics<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></button>
              </div>
            </div>`
         : ''}
@@ -3794,7 +3798,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     let topics = [];
     try { topics = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home'); } catch (_) {}
     if (!topics.length) { sec.hidden = true; return; }
-    wrap.innerHTML = topics.map((t) => `<a class="search-panel-empty-topic" href="#/topic/${escapeAttr(t.slug)}">${escapeHTML(t.name)}</a>`).join('');
+    wrap.innerHTML = topics.map((t) => `<a class="search-panel-empty-topic" href="#/topic/${escapeAttr(t.slug)}">${topicIconSVG(t.icon || 'globe', 'search-panel-empty-topic-ic')}<span>${escapeHTML(t.name)}</span></a>`).join('');
     sec.hidden = false;
     // "View all topics" → open the Topics dropdown (closes this search modal).
     sec.querySelector('[data-view-topics]')?.addEventListener('click', () => {

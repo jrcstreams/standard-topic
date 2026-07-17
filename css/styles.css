@@ -13412,28 +13412,40 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
 .search-panel-empty-ic svg { width: 15px; height: 15px; }
 .search-panel-empty-title { margin: 0; font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; letter-spacing: -0.015em; color: var(--color-primary); }
 .search-panel-empty-text { margin: -14px 0 0; font-size: 0.86rem; line-height: 1.5; color: var(--color-text-muted); }
-.search-panel-empty-sec { display: flex; flex-direction: column; align-items: flex-start; gap: 11px; }
-.search-panel-empty-sechead { display: flex; align-items: baseline; gap: 12px; }
-/* Section headers — a touch lighter than before (#img280). */
-.search-panel-empty-seclabel { font-family: var(--font-display); font-size: 0.94rem; font-weight: 600; letter-spacing: -0.01em; color: #334155; }
-/* Left-aligned link BELOW its section (moved out of the header row, #img226/#img227). */
-.search-panel-empty-more { align-self: flex-start; margin-top: 2px; display: inline-flex; align-items: center; gap: 3px; border: none; background: none; padding: 0; cursor: pointer; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #3268b3; }
+.search-panel-empty-sec { display: flex; flex-direction: column; align-items: stretch; gap: 12px; width: 100%; }
+/* Redesigned empty-state sections (#img637): a structured header ROW — small
+   uppercase eyebrow label (with mark) left, quiet "View more →" link right,
+   hairline underneath — then the chip field. */
+.search-panel-empty-sechead {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding-bottom: 9px; border-bottom: 1px solid #edf0f5;
+}
+.search-panel-empty-seclabel {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--font-family); font-size: 0.73rem; font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase; color: #64748b;
+}
+.search-panel-empty-seclabel svg { flex: none; color: #33517f; }
+[data-empty-trending] .search-panel-empty-seclabel svg { color: #16a34a; }
+.search-panel-empty-more { display: inline-flex; align-items: center; gap: 3px; border: none; background: none; padding: 0; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #3268b3; }
 .search-panel-empty-more svg { flex: none; }
 .search-panel-empty-more:hover { color: var(--color-primary); }
+/* Trending terms: soft grey card-chips (same family as the trend cards). */
 .search-panel-empty-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .search-panel-empty-chip {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 7px 13px 7px 11px; border-radius: 999px; cursor: pointer;
-  border: 1px solid var(--color-surface-border); background: #fff;
-  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #2b3852;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 14px 8px 12px; border-radius: 10px; cursor: pointer;
+  border: 1px solid #e6ebf2; background: #f6f8fb;
+  font-family: var(--font-family); font-size: 0.83rem; font-weight: 600; color: #2b3852;
   transition: border-color .14s, color .14s, background .14s;
 }
-/* Green trending arrow, matching the trend cards elsewhere (#img280). */
 .search-panel-empty-chip svg { width: 14px; height: 14px; flex: none; color: #16a34a; opacity: 1; }
-.search-panel-empty-chip:hover { border-color: color-mix(in srgb, var(--color-primary) 45%, transparent); color: var(--color-primary); }
-/* Featured topics — clean chip links. */
+.search-panel-empty-chip:hover { background: #fff; border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-surface-border)); color: var(--color-primary); }
+/* Featured topics: white pills with each topic's own mark. */
 .search-panel-empty-topics { display: flex; flex-wrap: wrap; gap: 8px; }
-.search-panel-empty-topic { display: inline-flex; align-items: center; padding: 7px 13px; border-radius: 999px; border: 1px solid var(--color-surface-border); background: #fff; font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #2b3852; text-decoration: none; transition: border-color .14s, color .14s, background .14s; }
+.search-panel-empty-topic { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px 8px 12px; border-radius: 999px; border: 1px solid #dfe5ee; background: #fff; font-family: var(--font-family); font-size: 0.83rem; font-weight: 600; color: #2b3852; text-decoration: none; transition: border-color .14s, color .14s, background .14s; }
+.search-panel-empty-topic .search-panel-empty-topic-ic { display: inline-flex; }
+.search-panel-empty-topic .search-panel-empty-topic-ic svg { width: 14px; height: 14px; display: block; color: #33517f; }
 .search-panel-empty-topic:hover { border-color: color-mix(in srgb, var(--color-primary) 45%, transparent); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 4%, #fff); }
 /* Inset the results block by the same 0.2rem the .search-panel-barrow
    carries, so the "Search Intelligence" header (and accordions) line up
@@ -18408,8 +18420,9 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .aii-nav-dd-head {
   flex: 0 0 auto;
   display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
-  /* Same nav→header gap as the Search dropdown (#img634). */
-  padding: 13px 2px 12px;
+  /* A little MORE air between the main nav and the dropdown header/X — all
+     dropdowns share the same gap, Search included (#img636). */
+  padding: 22px 2px 12px;
   /* Slightly more prominent than the site hairlines so the header reads as a clear
      divider above the list (#img487/488). */
   border-bottom: 1.5px solid #d3d9e4;
@@ -18867,16 +18880,16 @@ button.aiidd-vlink { align-self: flex-start; }
   .sticky-hero-inner .sticky-brand { grid-area: brand; justify-self: start; align-self: center; margin: 0; display: flex; align-items: center; }
   .sticky-hero-inner .sticky-title { font-size: 1.22rem; letter-spacing: -0.02em; line-height: 1; }
   .sticky-hero-inner .sticky-actions.navbtns {
-    /* CENTERED icon strip with faint separators between the buttons (#img632). */
-    grid-area: nav; justify-content: center; gap: 0;
+    /* Justified/spread icon strip (#img635) — the original space-around layout,
+       no separators. */
+    grid-area: nav; justify-content: space-around;
     margin: 0 -0.9rem !important;
     /* Real vertical room around the icons + labels so the strip doesn't feel cut
        off (#img194). --nav-h is bumped to match the taller strip so the subnav +
        nav dropdowns (positioned at top:var(--nav-h)) still clear it (#img179-182). */
     padding: 7px 0.9rem 8px; border-top: 1px solid rgba(255, 255, 255, 0.12);
   }
-  .sticky-hero-inner .sticky-actions.navbtns .navbtn { padding: 5px 14px; gap: 3px; }
-  .sticky-hero-inner .sticky-actions.navbtns .navbtn + .navbtn { border-left: 1px solid rgba(255, 255, 255, 0.12); border-radius: 0; }
+  .sticky-hero-inner .sticky-actions.navbtns .navbtn { padding: 5px 6px; gap: 3px; }
   /* Two-row nav has room for ALL labels — undo the single-row progressive hiding
      (Home/Search were losing their labels) so every icon is labelled + aligned. */
   .sticky-hero-inner .sticky-actions.navbtns .navbtn-label { display: block !important; }
