@@ -62,18 +62,54 @@ module.exports = async function handler(req, res) {
   const apiKey = process.env.SERPAPI_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'Server misconfiguration' });
 
-  const fetched = new Date().toISOString();
+  let fetched = new Date().toISOString();
   try {
-    const results = await Promise.all(GEOS.map(async (geo) => {
-      const url = `${SERP_BASE}?engine=google_trends_trending_now&geo=${encodeURIComponent(geo)}&hours=${TREND_HOURS}&api_key=${encodeURIComponent(apiKey)}`;
-      const r = await fetch(url, { headers: { Accept: 'application/json' } });
-      if (!r.ok) throw new Error(`SerpAPI ${r.status}`);
-      return { geo, data: await r.json() };
-    }));
-
-    const topics = normalizeTrending(results, LIMIT);
-
     const sql = getSql();
+    // SERVE FROM THE DB SNAPSHOT (#serpburn budget architecture): the 2h capture
+    // cron is the ONE consumer of SerpAPI's trending_now — this live endpoint
+    // reads its latest snapshot instead of burning a search per cache miss
+    // (~2×/hr ≈ 1,000+/mo on its own, which alone exceeded the Starter plan).
+    // Freshness = the cron cadence. SerpAPI fallback only if the DB is empty.
+    let topics = [];
+    if (sql) {
+      try {
+        const rows = await sql.query(
+          `SELECT snapshot_at, geo, rank, query, categories, search_volume, increase_percent,
+                  started_at, active, trend_breakdown
+             FROM trending_items
+            WHERE snapshot_at = (SELECT max(snapshot_at) FROM trending_items)
+            ORDER BY rank ASC LIMIT $1`, [LIMIT]);
+        if (rows && rows.length) {
+          fetched = new Date(rows[0].snapshot_at).toISOString();
+          const seen = new Set();
+          topics = rows.filter((r) => {
+            const k = String(r.query || '').toLowerCase().trim();
+            if (!k || seen.has(k)) return false;
+            seen.add(k); return true;
+          }).map((r) => ({
+            query: r.query,
+            categories: Array.isArray(r.categories) ? r.categories : [],
+            startedAt: r.started_at ? new Date(r.started_at).toISOString() : null,
+            region: r.geo || 'US',
+            searchVolume: Number(r.search_volume) > 0 ? Number(r.search_volume) : null,
+            increasePercent: Number(r.increase_percent) > 0 ? Number(r.increase_percent) : null,
+            active: r.active !== false,
+            trendBreakdown: Array.isArray(r.trend_breakdown) ? r.trend_breakdown.filter(Boolean).map((s) => String(s)) : [],
+            googleTrendsUrl: `https://trends.google.com/trends/explore?q=${encodeURIComponent(r.query)}&geo=${encodeURIComponent(r.geo || 'US')}`,
+          }));
+        }
+      } catch (_) { topics = []; }
+    }
+    if (!topics.length) {
+      // Cold-start fallback only (fresh DB / snapshot table empty).
+      const results = await Promise.all(GEOS.map(async (geo) => {
+        const url = `${SERP_BASE}?engine=google_trends_trending_now&geo=${encodeURIComponent(geo)}&hours=${TREND_HOURS}&api_key=${encodeURIComponent(apiKey)}`;
+        const r = await fetch(url, { headers: { Accept: 'application/json' } });
+        if (!r.ok) throw new Error(`SerpAPI ${r.status}`);
+        return { geo, data: await r.json() };
+      }));
+      topics = normalizeTrending(results, LIMIT);
+    }
 
     // Attach the stored one-liner ("why it's trending") for any trend we've
     // already briefed. One lookup keyed by lower(query); absent => no summary.
