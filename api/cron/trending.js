@@ -60,6 +60,36 @@ function mapItem(t, geo, rank, snapshotAt) {
   ];
 }
 
+// FREE fallback source: Google Trends' own RSS feed (no key). Items map onto the
+// same shape mapItem() consumes; fields the RSS lacks stay null/empty.
+async function rssTrendingFallback(geo) {
+  try {
+    const r = await fetch(`https://trends.google.com/trending/rss?geo=${encodeURIComponent(geo)}`, { headers: { Accept: 'application/rss+xml, application/xml, text/xml' } });
+    if (!r.ok) return [];
+    const xml = await r.text();
+    const items = [];
+    for (const block of xml.split('<item>').slice(1)) {
+      const pick = (tag) => { const m = block.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)</${tag}>`, 'i')); return m ? m[1].trim() : ''; };
+      const query = pick('title').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').trim();
+      if (!query) continue;
+      const traffic = pick('ht:approx_traffic').replace(/[^0-9]/g, '');
+      const pub = Date.parse(pick('pubDate'));
+      items.push({
+        query,
+        categories: [],
+        search_volume: traffic ? Number(traffic) : null,
+        increase_percentage: null,
+        start_timestamp: Number.isFinite(pub) ? Math.floor(pub / 1000) : null,
+        end_timestamp: null,
+        active: true,
+        trend_breakdown: [],
+        _src: 'google-trends-rss',
+      });
+    }
+    return items;
+  } catch (_) { return []; }
+}
+
 module.exports = async function handler(req, res) {
   const secret = process.env.CRON_SECRET;
   if (secret && req.headers.authorization !== `Bearer ${secret}`) {
@@ -76,15 +106,30 @@ module.exports = async function handler(req, res) {
   let inserted = 0;
   try {
     for (const geo of GEOS) {
-      const url = `${SERP_BASE}?engine=google_trends_trending_now&geo=${encodeURIComponent(geo)}&api_key=${encodeURIComponent(apiKey)}`;
-      const r = await fetch(url, { headers: { Accept: 'application/json' } });
-      if (!r.ok) throw new Error(`SerpAPI ${r.status}`);
-      const data = await r.json();
-      const list = Array.isArray(data.trending_searches) ? data.trending_searches : [];
+      // SerpAPI FIRST, always — the free Google Trends RSS below is STRICTLY a
+      // fallback for when SerpAPI fails (exhausted monthly quota, outage). The
+      // moment the billing cycle resets and SerpAPI answers again, it is
+      // automatically primary — no flag to flip (#serpburn). RSS tradeoffs:
+      // no categories / no increase% / no related-searches breakdown, and
+      // approx_traffic is coarser than search_volume.
+      let list = [];
+      let viaRss = false;
+      try {
+        const url = `${SERP_BASE}?engine=google_trends_trending_now&geo=${encodeURIComponent(geo)}&api_key=${encodeURIComponent(apiKey)}`;
+        const r = await fetch(url, { headers: { Accept: 'application/json' } });
+        if (!r.ok) throw new Error(`SerpAPI ${r.status}`);
+        const data = await r.json();
+        list = Array.isArray(data.trending_searches) ? data.trending_searches : [];
+      } catch (serpErr) {
+        list = await rssTrendingFallback(geo);
+        viaRss = true;
+        if (!list.length) throw serpErr;
+      }
       const rows = list
         .slice(0, LIMIT)
         .map((t, i) => mapItem(t, geo, i + 1, snapshotAt))
         .filter(Boolean);
+      if (viaRss && rows.length) console.log(`trending cron: SerpAPI failed, snapshot for ${geo} captured via Trends RSS fallback (${rows.length} rows)`);
       inserted += await bulkInsert(sql, 'trending_items', TRENDING_COLS, rows, {
         jsonbCols: ['categories', 'trend_breakdown', 'raw'],
       });
