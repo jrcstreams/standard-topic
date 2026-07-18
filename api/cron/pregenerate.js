@@ -208,7 +208,10 @@ module.exports = async function handler(req, res) {
              LEFT JOIN news_stories ns ON ai.entity_type='news' AND ns.url = ai.entity_key
             WHERE (ai.sources IS NULL OR ai.sources='[]'::jsonb OR ai.sources='{}'::jsonb
                    OR (jsonb_typeof(ai.sources)='array' AND jsonb_array_length(ai.sources)=0))
-              AND ai.entity_type IN ('news','trend','shortcut')
+              /* NO 'trend' here: trend briefs are RAG — sourceless means the
+                 relevance gate found no on-topic coverage, and re-healing just
+                 burns a SerpAPI search per sweep forever (#serpburn). */
+              AND ai.entity_type IN ('news','shortcut')
               AND (ai.entity_type <> 'news' OR ns.url IS NOT NULL)
               AND (ai.entity_type <> 'shortcut' OR ai.insight LIKE '%:b')
             ORDER BY ai.created_at ASC

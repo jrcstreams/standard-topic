@@ -66,7 +66,13 @@ module.exports = async function handler(req, res) {
         const windowH = effectiveWindowHours(input.group, tierForTopic(input.topic));
         if (Number.isFinite(ageH) && ageH >= windowH) doRefresh = true;
       }
-      if (!doRefresh && sourcesEmpty(out.sources) && await groundingHeadroom(sql)) doRefresh = true;
+      // Sources-heal is for GROUNDED briefs (news/overviews) whose citations were
+      // lost to a spent grounding budget. Trend briefs are RAG: their sources come
+      // from retrieval, and a trend whose coverage fails the relevance gate will
+      // KEEP coming back sourceless — healing it on every view just re-burns a
+      // SerpAPI search each time, forever (this loop exhausted the SerpAPI plan,
+      // #serpburn). Never sources-heal trends.
+      if (!doRefresh && input.type !== 'trend' && sourcesEmpty(out.sources) && await groundingHeadroom(sql)) doRefresh = true;
       if (doRefresh) {
         waitUntil((async () => { try { await generateInsight(sql, { ...input, refresh: 1 }); } catch (_) {} })());
       }
