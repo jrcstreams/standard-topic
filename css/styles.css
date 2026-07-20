@@ -19221,7 +19221,34 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
    show on topic pages (the AI modal keeps its Explore pill). */
 .topic-tab-body .aii-ctlrow { display: none !important; }
 /* Flush left with the L1 tabs/content edge, like the insight cards (#img629). */
-.topic-explore-host { padding: 16px 0 0; }
+/* ── Topic-page Explore Further: ONE connected flat list (#img641) — square
+   corners, rows share hairlines, hanging directly off the L1 subnav. Dropdown
+   behavior unchanged. ─────────────────────────────────────────────────────── */
+.topic-explore-host { padding: 0; }
+.topic-explore-host .xf-list { gap: 0; }
+.topic-explore-host .xf-acc { border-radius: 0; border-top-width: 0; }
+.topic-explore-host .xf-acc:first-child { border-top-width: 1px; }
+.topic-explore-host .xf-acc:hover { box-shadow: none; border-color: #d7dee9; }
+.topic-explore-host .xf-acc[open] { border-color: #d7dee9; box-shadow: none; }
+.topic-explore-host .xf-acc[open] > .xf-sum { border-radius: 0; }
+/* ── Topic-page Prompts: same connected list, with compact GREY BAND section
+   headers fused to their rows (#img641). ─────────────────────────────────── */
+.topic-prompt-lib-host .aii-fi-sec:first-child { margin-top: 10px; }
+.topic-prompt-lib-host .aii-fi-sec + .aii-fi-sec { margin-top: 22px; }
+.topic-prompt-lib-host .aii-fi-sechead {
+  margin-bottom: 0; padding: 8px 14px 9px;
+  border: 1px solid #d7dee9; border-bottom: none;
+  background: #f4f6f9;
+}
+.topic-prompt-lib-host .aii-fi-sectitle { font-size: 0.84rem; }
+.topic-prompt-lib-host .aii-fi-secsub { font-size: 0.76rem; margin-top: 1px; }
+.topic-prompt-lib-host .aii-fi-acclist { gap: 0; }
+.topic-prompt-lib-host .aii-fi-acc { border-radius: 0; }
+.topic-prompt-lib-host .aii-fi-acc + .aii-fi-acc { border-top: none; }
+.topic-prompt-lib-host .aii-fi-acc:hover { box-shadow: none; border-color: #d7dee9; }
+.topic-prompt-lib-host .aii-fi-acc.is-open { border-color: #d7dee9; box-shadow: none; }
+.topic-prompt-lib-host .aii-fi-acc.is-open > .aii-fi-accsum { background: #f8fafd; }
+.topic-prompt-lib-host .aii-fi-accsum { border-radius: 0; }
 /* Phones: same subnav spacing as desktop (#img117/#img118). */
 @media (max-width: 899.98px) {
   .topic-subnav-controls .topic-paths-nav { gap: 20px; }
