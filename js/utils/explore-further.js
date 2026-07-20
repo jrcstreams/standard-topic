@@ -169,7 +169,7 @@ export function exploreFurtherHTML(opts = {}) {
   const efSub = subDesc || 'Send this prompt to ChatGPT, Claude, Gemini & more';
   const models = getModels() || [];
   const aiAcc = models.length
-    ? `<details class="xf-acc"${openFirst ? ' open' : ''}><summary class="xf-sum"><span class="xf-sum-ic">${SPARK}</span><span class="xf-sum-tx"><span class="xf-sum-name">Explore with External AI Models</span><span class="xf-sum-desc">${esc(efSub)}</span></span>${CHEV}</summary><div class="xf-panel" data-xf-emenu data-xf-prompt="${escAttr(prompt)}" data-xf-name="${escAttr(opts.name || '')}">${emenuHomeHTML()}</div></details>`
+    ? `<details class="xf-acc"${openFirst ? ' open' : ''}><summary class="xf-sum"><span class="xf-sum-ic">${SPARK}</span><span class="xf-sum-tx"><span class="xf-sum-name">Explore with External AI Models</span></span>${CHEV}</summary><div class="xf-panel" data-xf-emenu data-xf-prompt="${escAttr(prompt)}" data-xf-name="${escAttr(opts.name || '')}"><p class="xf-panel-desc">${esc(efSub)}</p>${emenuHomeHTML()}</div></details>`
     : '';
   const cats = getExternalSearchCategories() || [];
   const searches = getExternalSearches() || [];
@@ -185,7 +185,7 @@ export function exploreFurtherHTML(opts = {}) {
     }).join('');
     const desc = CAT_DESC[cat.key] || '';
     const icon = CAT_ICON[cat.key] || CAT_ICON.__other;
-    return `<details class="xf-acc"><summary class="xf-sum"><span class="xf-sum-ic">${icon}</span><span class="xf-sum-tx"><span class="xf-sum-name">${esc(cat.label)}</span>${desc ? `<span class="xf-sum-desc">${esc(desc)}</span>` : ''}</span>${CHEV}</summary><div class="xf-panel xf-web-panel">${rows}</div></details>`;
+    return `<details class="xf-acc"><summary class="xf-sum"><span class="xf-sum-ic">${icon}</span><span class="xf-sum-tx"><span class="xf-sum-name">${esc(cat.label)}</span></span>${CHEV}</summary><div class="xf-panel xf-web-panel">${desc ? `<p class="xf-panel-desc">${esc(desc)}</p>` : ''}${rows}</div></details>`;
   }).join('');
   return `<div class="xf-list">${aiAcc}${webAccs}</div>`;
 }

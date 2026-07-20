@@ -13,13 +13,13 @@ import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js?v=20260716-revamp588';
 import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260716-revamp588';
 import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp574';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260717-revamp591';
+import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260720-revamp609';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260717-revamp592';
-import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260717-revamp591';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260720-revamp609';
+import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260720-revamp609';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260717-revamp592';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp574';
@@ -952,7 +952,10 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
         host.className = 'topic-explore-host';
         body.appendChild(host);
         const efPrompt = `Give me a thorough, current briefing on ${topic.name}. Be specific and cite sources.`;
-        host.innerHTML = exploreFurtherHTML({ prompt: efPrompt, webTerm: topic.name, name: topic.name });
+        // Grey-band section header, matching the Prompts tab's Topic-Specific /
+        // Evergreen headers, so the tab reads as one on-topic collection (#img642).
+        const efHead = `<section class="aii-fi-sec"><div class="aii-fi-sechead"><h3 class="aii-fi-sectitle">Explore ${escapeHTML(topic.name)} Further</h3><p class="aii-fi-secsub">Send this topic to an AI model, or dig into the web's best sources — search, social, video, reference &amp; fact-checkers.</p></div></section>`;
+        host.innerHTML = efHead + exploreFurtherHTML({ prompt: efPrompt, webTerm: topic.name, name: topic.name });
         wireExploreFurther(host);
         return;
       }

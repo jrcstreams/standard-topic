@@ -6,7 +6,7 @@ import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=2026
 import { renderTIAccordion, webSourceItem } from './ti-shortcuts.js';
 import { getExternalSearches, getExternalSearchCategories, getModels } from '../utils/data.js';
 import { insightTabsHTML } from '../utils/insight-tabs.js?v=20260706-revamp574';
-import { exploreFurtherHTML } from '../utils/explore-further.js?v=20260717-revamp591';
+import { exploreFurtherHTML } from '../utils/explore-further.js?v=20260720-revamp609';
 
 // The Explore Further tab uses the shared clean-dropdown component (with the
 // Direct Submit / Review flow), consistent across trending / news / topic.

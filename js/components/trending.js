@@ -6,7 +6,7 @@
 import { fetchTrending } from '../utils/trending.js';
 import { renderTrendExpansionBody } from './trend-expansion.js?v=20260717-revamp591';
 import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp574';
-import { wireExploreFurther } from '../utils/explore-further.js?v=20260717-revamp591';
+import { wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
 import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp574';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }

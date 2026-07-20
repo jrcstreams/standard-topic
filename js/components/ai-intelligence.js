@@ -12,7 +12,7 @@ import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
 import { topicIconSVG } from '../utils/topic-icons.js?v=20260716-revamp588';
-import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260717-revamp591';
+import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
 
 // Display metadata for the paths (the navigation categories). Each `group`
 // matches a shortcut group + the server-side data/ai-paths.json (which also
@@ -101,6 +101,9 @@ const SOURCES_BADGE = '<span class="ai-result-sub-ic"><svg viewBox="0 0 24 24" f
 const EXPLORE_BADGE = '<span class="ai-result-sub-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/></svg></span>';
 // Small inline spark for the "AI Brief" eyebrow (matches the news modal).
 const SPARK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>';
+// Model-button AI mark — a "sparkles" glyph (big + small star) sized + stroked to
+// match the Copy/Settings icons so the three buttons read as a set (#img646).
+const SPARK_MINI = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 3l1.4 4a2 2 0 0 0 1.3 1.3L17.7 9.7l-4 1.4a2 2 0 0 0-1.3 1.3L11 16.4l-1.4-4a2 2 0 0 0-1.3-1.3L4.3 9.7l4-1.4a2 2 0 0 0 1.3-1.3z"/><path d="M18 14l.6 1.7a1 1 0 0 0 .7.7L21 17l-1.7.6a1 1 0 0 0-.7.7L18 20l-.6-1.7a1 1 0 0 0-.7-.7L15 17l1.7-.6a1 1 0 0 0 .7-.7z"/></svg>';
 const SEARCH_ICON = '<svg class="aii-topic-search-ic" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
 // Trending-style head chevrons (sized by .im-headnav-arrow CSS) + action-link icons.
 const HNAV_L = '<svg class="im-headnav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
@@ -969,10 +972,10 @@ export function renderAIIntelligence(container, scope) {
       <div class="aii-fi-acc">
         <button type="button" class="aii-fi-accsum" aria-expanded="false">
           <span class="aii-fi-acc-ic" aria-hidden="true">${sectionIcon(s.name)}</span>
-          <span class="aii-fi-acc-tx"><span class="aii-fi-acc-name">${esc(s.name)}</span>${s.description ? `<span class="aii-fi-acc-desc">${esc(s.description)}</span>` : ''}</span>
+          <span class="aii-fi-acc-tx"><span class="aii-fi-acc-name">${esc(s.name)}</span></span>
           <span class="aii-fi-acc-chev">${CHEV}</span>
         </button>
-        <div class="aii-emenu-host" data-explore-prompt="${escAttr(fiPrompt(s))}" data-explore-name="${escAttr(s.name)}"></div>
+        <div class="aii-emenu-host" data-explore-prompt="${escAttr(fiPrompt(s))}" data-explore-name="${escAttr(s.name)}" data-explore-desc="${escAttr(s.description || '')}"></div>
       </div>`).join('');
     return `<div class="aii-ext-block aii-fi">
       <div class="aii-fi-acclist">${rows}</div></div>`;
@@ -1320,8 +1323,8 @@ export function renderAIIntelligence(container, scope) {
   // head prompt. Plus the host element whose innerHTML the Direct→Leave step swaps.
   function exploreCtxOf(el) {
     const c = el && el.closest('[data-explore-prompt]');
-    if (c) return { prompt: c.getAttribute('data-explore-prompt') || '', name: c.getAttribute('data-explore-name') || '' };
-    return { prompt: explorePrompt(), name: curSectionName() };
+    if (c) return { prompt: c.getAttribute('data-explore-prompt') || '', name: c.getAttribute('data-explore-name') || '', desc: c.getAttribute('data-explore-desc') || '' };
+    return { prompt: explorePrompt(), name: curSectionName(), desc: '' };
   }
   function exploreHostOf(el) { return el.closest('.aii-emenu-host') || el.closest('[data-accbody="explore"]'); }
   // ONE stage-level delegation for every explore menu (head panel + all inline
@@ -1506,6 +1509,7 @@ export function renderAIIntelligence(container, scope) {
       return `<button type="button" class="aii-pc-menu-opt${on ? ' is-active' : ''}" role="menuitemradio" aria-checked="${on}" data-model-id="${escAttr(x.id)}"><span class="aii-pc-menu-check" aria-hidden="true">${ICON_CHECK_MINI}</span><span>${esc(x.name)}</span></button>`;
     }).join('');
     return `<div class="aii-pc">
+      ${ctx.desc ? `<p class="aii-pc-desc">${esc(ctx.desc)}</p>` : ''}
       <div class="aii-pc-prevwrap">
         <div class="aii-pc-prevhead">
           <span class="aii-pc-lbl">Prompt Preview</span>
@@ -1516,10 +1520,10 @@ export function renderAIIntelligence(container, scope) {
       <div class="aii-pc-actions">
         <button type="button" class="aii-pc-submit" data-pc-submit${m ? '' : ' disabled'}>${ICON_SEND}<span>Submit Prompt</span></button>
         <span class="aii-pc-modelwrap">
-          <button type="button" class="aii-pc-btn aii-pc-modelbtn" data-pc-model aria-haspopup="menu" aria-expanded="false">${SPARK}<span>Model: <span data-pc-mn>${esc(m ? m.name : 'AI')}</span></span><span class="aii-pc-btn-chev" aria-hidden="true">${CHEV}</span></button>
+          <button type="button" class="aii-pc-btn aii-pc-modelbtn" data-pc-model aria-haspopup="menu" aria-expanded="false">${SPARK_MINI}<span><span class="aii-pc-model-pre">Model: </span><span data-pc-mn>${esc(m ? m.name : 'AI')}</span></span><span class="aii-pc-btn-chev" aria-hidden="true">${CHEV}</span></button>
           <div class="aii-pc-menu" data-pc-menu role="menu" aria-label="Choose AI model" hidden>${modelOpts}</div>
         </span>
-        <button type="button" class="aii-pc-btn" data-pc-copy>${ICON_COPY_MINI}<span data-pc-copy-tx>Copy Prompt</span></button>
+        <button type="button" class="aii-pc-btn" data-pc-copy>${ICON_COPY_MINI}<span data-pc-copy-tx>Copy<span class="aii-pc-btn-word"> Prompt</span></span></button>
         <button type="button" class="aii-pc-btn" data-pc-settings aria-expanded="false">${ICON_GEAR}<span>Settings</span></button>
       </div>
       <div class="aii-pc-set" data-pc-set hidden>
@@ -1578,7 +1582,9 @@ export function renderAIIntelligence(container, scope) {
       if (tx) {
         tx.textContent = 'Copied!';
         copyBtn.classList.add('is-copied');
-        setTimeout(() => { tx.textContent = 'Copy Prompt'; copyBtn.classList.remove('is-copied'); }, 1400);
+        // Restore the label WITH its responsive " Prompt" span so the ≤380px
+        // "Copy" collapse still works after a copy (#img646).
+        setTimeout(() => { tx.innerHTML = 'Copy<span class="aii-pc-btn-word"> Prompt</span>'; copyBtn.classList.remove('is-copied'); }, 1400);
       }
     });
     // Edit — make the preview directly editable (toggle "Edit" ↔ "Done").

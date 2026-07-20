@@ -47,6 +47,12 @@
 }
 @media (max-width: 899.98px) { :root { --nav-h: 54px; } }
 
+/* Form controls (button/input/select/textarea) do NOT inherit font-family from
+   the document — the UA stylesheet forces a platform system font, so any control
+   without an explicit font rendered in Segoe UI on Windows / San Francisco on Mac
+   instead of Inter (#img648). One global inherit fixes the whole class site-wide. */
+button, input, select, textarea, optgroup { font-family: inherit; font-size: inherit; }
+
 body {
   font-family: var(--font-family);
   color: var(--color-text);
@@ -14176,11 +14182,16 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
    pill; now it matches the desktop sidebar link, #img11–13). Hover draws the
    underline as a bottom hairline across the WHOLE link — sparkle included — instead
    of text-decoration, which skips the icon (#img15/16). */
-body.home-search #home-trending .trend-card-aibtn { background: none !important; border: none !important; border-radius: 0; padding: 4px 0 !important; color: #2563eb !important; font-size: 0.75rem !important; font-weight: 500 !important; gap: 5px !important; min-height: 0 !important; }
-body.home-search #home-trending .trend-card-aibtn:hover { color: #1d4ed8 !important; background: none !important; box-shadow: 0 1px 0 0 currentColor; }
+/* Faint NEUTRAL nudge, not a loud blue link (#img644): grey text + a trailing
+   chevron (leading sparkle/X hidden below). */
+body.home-search #home-trending .trend-card-aibtn { background: none !important; border: none !important; border-radius: 0; padding: 4px 0 !important; color: #64748b !important; font-size: 0.75rem !important; font-weight: 600 !important; gap: 4px !important; min-height: 0 !important; }
+body.home-search #home-trending .trend-card-aibtn:hover { color: #334155 !important; background: none !important; }
 body.home-search #home-trending .trend-card-aibtn svg { width: 13px; height: 13px; }
-body.home-search #home-trending .trend-card-aibtn .trend-card-aibtn-chev { display: inline-flex; margin-left: 1px; transition: transform .2s ease; }
+body.home-search #home-trending .trend-card-aibtn .trend-card-aibtn-chev { display: inline-flex !important; margin-left: 1px; transition: transform .2s ease; color: #94a3b8; }
+body.home-search #home-trending .trend-card-aibtn:hover .trend-card-aibtn-chev { color: #64748b; }
 body.home-search #home-trending .trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-chev { transform: rotate(180deg); }
+body.home-search #home-trending .trend-card-aibtn .trend-card-aibtn-spark,
+body.home-search #home-trending .trend-card-aibtn .trend-card-aibtn-xic { display: none !important; }
 /* News Feed section header on the homepage gets a matching icon chip (like the
    Trending logo) — desktop + mobile. Hidden everywhere else (topic pages keep
    their own plain header) (#img527). */
@@ -14453,11 +14464,14 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
 .tlm-body .trend-card-title { font-size: 1rem; font-weight: 700; color: var(--color-text); }
 .tlm-body .trend-card-summary { color: #55617a; }
 .tlm-body .trend-card-actions { display: flex; margin-top: 0; padding-top: 10px; }
-.tlm-body .trend-card-aibtn { background: none; border: none; border-radius: 0; padding: 4px 0; color: #2563eb; font-size: 0.78rem; font-weight: 500; gap: 5px; }
-.tlm-body .trend-card-aibtn:hover { color: #1d4ed8; background: none; box-shadow: 0 1px 0 0 currentColor; }
+.tlm-body .trend-card-aibtn { background: none; border: none; border-radius: 0; padding: 4px 0; color: #64748b; font-size: 0.78rem; font-weight: 600; gap: 4px; }
+.tlm-body .trend-card-aibtn:hover { color: #334155; background: none; }
 .tlm-body .trend-card-aibtn svg { width: 13px; height: 13px; }
-.tlm-body .trend-card-aibtn .trend-card-aibtn-chev { display: inline-flex; margin-left: 1px; transition: transform .2s ease; }
+.tlm-body .trend-card-aibtn .trend-card-aibtn-chev { display: inline-flex !important; margin-left: 1px; transition: transform .2s ease; color: #94a3b8; }
+.tlm-body .trend-card-aibtn:hover .trend-card-aibtn-chev { color: #64748b; }
 .tlm-body .trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-chev { transform: rotate(180deg); }
+.tlm-body .trend-card-aibtn .trend-card-aibtn-spark,
+.tlm-body .trend-card-aibtn .trend-card-aibtn-xic { display: none !important; }
 
 /* Tighten the homepage's trailing space (kills the big bottom gap). */
 body.home-search.app-mode #content { padding-bottom: 1.5rem; }
@@ -15845,12 +15859,23 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-pc-set { display: grid; gap: 12px; padding: 14px; background: #fff; border: 1px solid #e2e8f1; border-radius: 10px; }
 .aii-pc-set[hidden] { display: none; }
 .aii-pc-note { margin: 0; padding: 0 2px; font-size: 0.73rem; line-height: 1.5; color: var(--color-text-light); }
-/* Narrow phones: the primary takes its own full row; the two secondaries split
-   the next row evenly so nothing rags. */
-@media (max-width: 480px) {
-  .aii-pc-submit { width: 100%; }
-  .aii-pc-modelwrap, .aii-pc-btn { flex: 1 1 0; }
+.aii-pc-model-pre { /* responsive prefix, hidden on the tightest phones below */ }
+/* Phones: TWO tidy rows (#img645). Row 1 = Submit (grows) + Settings (~2/5);
+   row 2 = Model + Copy split evenly. Flex `order` reshuffles the DOM (Submit,
+   Model, Copy, Settings) into that visual order; flex-basis picks the wrap. */
+@media (max-width: 560px) {
+  .aii-pc-actions { gap: 8px; }
+  .aii-pc-submit  { order: 1; flex: 1 1 56%; }
+  .aii-pc-btn[data-pc-settings] { order: 2; flex: 1 1 32%; }
+  .aii-pc-modelwrap { order: 3; flex: 1 1 46%; }
   .aii-pc-modelwrap > .aii-pc-btn { width: 100%; }
+  .aii-pc-btn[data-pc-copy] { order: 4; flex: 1 1 46%; }
+}
+/* Tightest phones only: drop the "Model:" prefix + the " Prompt" word so both
+   row-2 buttons keep their label on one line (#img646). Mid-size phones (375/390)
+   have room, so keep the full labels there. */
+@media (max-width: 360px) {
+  .aii-pc-model-pre, .aii-pc-btn-word { display: none; }
 }
 
 /* Sources — collapsed accordion at the bottom of the insight. */
@@ -18456,6 +18481,11 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
    hosted panel provides its own hero. */
 .aii-nav-dd-head-bare { border-bottom: none; padding: 10px 2px 0; display: flex; justify-content: flex-end; }
 .aii-nav-dd-search .aii-nav-dd-scroll { padding: 0 2px 22px; }
+/* The search dropdown's header is absolutely-positioned (just the X), so it does
+   NOT consume layout height like the other dropdowns' headers — the shared
+   `- 78px` cap shrank the scroll area 78px short, leaving a dead gap below the
+   list that read as a cutoff (#img645). Let it fill the full dropdown height. */
+.aii-nav-dd-search .aii-nav-dd-scroll { max-height: calc(100dvh - var(--nav-h)); }
 /* Fill the shell column (left-aligned), matching the Topics/Trending dropdowns —
    NOT centered in a narrow 760px column (#img239/#img241/#img242). */
 .aii-nav-dd-search .search-navdd-host { width: 100%; max-width: none; margin: 0; }
@@ -18496,11 +18526,14 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
    still stretch to matched row heights, shorter ones just carry the slack
    below the link (#img618). */
 .aii-nav-dd-trending .trend-card-actions { display: flex; margin-top: 0; padding-top: 10px; }
-.aii-nav-dd-trending .trend-card-aibtn { background: none; border: none; border-radius: 0; padding: 4px 0; color: #2563eb; font-size: 0.78rem; font-weight: 500; gap: 5px; }
-.aii-nav-dd-trending .trend-card-aibtn:hover { color: #1d4ed8; background: none; box-shadow: 0 1px 0 0 currentColor; }
+.aii-nav-dd-trending .trend-card-aibtn { background: none; border: none; border-radius: 0; padding: 4px 0; color: #64748b; font-size: 0.78rem; font-weight: 600; gap: 4px; }
+.aii-nav-dd-trending .trend-card-aibtn:hover { color: #334155; background: none; }
 .aii-nav-dd-trending .trend-card-aibtn svg { width: 13px; height: 13px; }
-.aii-nav-dd-trending .trend-card-aibtn .trend-card-aibtn-chev { display: inline-flex; margin-left: 1px; transition: transform .2s ease; }
+.aii-nav-dd-trending .trend-card-aibtn .trend-card-aibtn-chev { display: inline-flex !important; margin-left: 1px; transition: transform .2s ease; color: #94a3b8; }
+.aii-nav-dd-trending .trend-card-aibtn:hover .trend-card-aibtn-chev { color: #64748b; }
 .aii-nav-dd-trending .trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-chev { transform: rotate(180deg); }
+.aii-nav-dd-trending .trend-card-aibtn .trend-card-aibtn-spark,
+.aii-nav-dd-trending .trend-card-aibtn .trend-card-aibtn-xic { display: none !important; }
 
 .aii-nav-dd-subbar { flex: 0 0 auto; padding: 10px 2px 4px; }
 .aii-nav-dd-subbar .tlm-controlbar { margin: 0; }
@@ -19231,17 +19264,22 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 .topic-explore-host .xf-acc:hover { box-shadow: none; border-color: #d7dee9; }
 .topic-explore-host .xf-acc[open] { border-color: #d7dee9; box-shadow: none; }
 .topic-explore-host .xf-acc[open] > .xf-sum { border-radius: 0; }
-/* ── Topic-page Prompts: same connected list, with compact GREY BAND section
-   headers fused to their rows (#img641). ─────────────────────────────────── */
-.topic-prompt-lib-host .aii-fi-sec:first-child { margin-top: 10px; }
+/* ── Topic-page Prompts + Explore: connected list with GREY BAND section headers
+   fused to their rows (#img641/#img642). Header type sits a clear step ABOVE the
+   accordion button titles. ────────────────────────────────────────────────── */
+.topic-prompt-lib-host .aii-fi-sec:first-child,
+.topic-explore-host .aii-fi-sec:first-child { margin-top: 10px; }
 .topic-prompt-lib-host .aii-fi-sec + .aii-fi-sec { margin-top: 22px; }
-.topic-prompt-lib-host .aii-fi-sechead {
-  margin-bottom: 0; padding: 8px 14px 9px;
+.topic-prompt-lib-host .aii-fi-sechead,
+.topic-explore-host .aii-fi-sechead {
+  margin-bottom: 0; padding: 11px 16px 12px;
   border: 1px solid #d7dee9; border-bottom: none;
   background: #f4f6f9;
 }
-.topic-prompt-lib-host .aii-fi-sectitle { font-size: 0.84rem; }
-.topic-prompt-lib-host .aii-fi-secsub { font-size: 0.76rem; margin-top: 1px; }
+.topic-prompt-lib-host .aii-fi-sectitle,
+.topic-explore-host .aii-fi-sectitle { font-size: 1.1rem; }
+.topic-prompt-lib-host .aii-fi-secsub,
+.topic-explore-host .aii-fi-secsub { font-size: 0.88rem; margin-top: 2px; }
 .topic-prompt-lib-host .aii-fi-acclist { gap: 0; }
 .topic-prompt-lib-host .aii-fi-acc { border-radius: 0; }
 .topic-prompt-lib-host .aii-fi-acc + .aii-fi-acc { border-top: none; }
@@ -19249,6 +19287,41 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 .topic-prompt-lib-host .aii-fi-acc.is-open { border-color: #d7dee9; box-shadow: none; }
 .topic-prompt-lib-host .aii-fi-acc.is-open > .aii-fi-accsum { background: #f8fafd; }
 .topic-prompt-lib-host .aii-fi-accsum { border-radius: 0; }
+/* Explore host: the section header wraps the connected accordion list below it. */
+.topic-explore-host .aii-fi-sec { margin: 0; }
+/* ── Custom-search results: same connected flat list as the topic tabs (#img647). */
+.search-aii-host .aii-fi-acclist,
+.search-aii-host .xf-list { gap: 0; }
+.search-aii-host .aii-fi-acc,
+.search-aii-host .xf-acc { border-radius: 0; }
+.search-aii-host .aii-fi-acc + .aii-fi-acc,
+.search-aii-host .xf-acc + .xf-acc { border-top: none; }
+.search-aii-host .aii-fi-acc:hover,
+.search-aii-host .xf-acc:hover { box-shadow: none; border-color: #d7dee9; }
+.search-aii-host .aii-fi-acc.is-open,
+.search-aii-host .xf-acc[open] { border-color: #d7dee9; box-shadow: none; }
+.search-aii-host .aii-fi-accsum,
+.search-aii-host .aii-fi-acc.is-open > .aii-fi-accsum,
+.search-aii-host .xf-sum { border-radius: 0; }
+.search-aii-host .aii-fi-accsum,
+.search-aii-host .xf-sum { padding-top: 15px; padding-bottom: 15px; align-items: center; }
+.search-aii-host .aii-fi-acc-name,
+.search-aii-host .xf-sum-name { font-size: 0.98rem; }
+/* Taller accordion rows + a bigger icon on BOTH tabs — the button title is the
+   only line now (desc moved into the open panel), so center it with the icon and
+   give the row more presence (#img643). */
+.topic-prompt-lib-host .aii-fi-accsum,
+.topic-explore-host .xf-sum { padding-top: 15px; padding-bottom: 15px; align-items: center; }
+.topic-prompt-lib-host .aii-fi-acc-ic { width: 28px; height: 28px; }
+.topic-prompt-lib-host .aii-fi-acc-ic svg { width: 21px; height: 21px; }
+.topic-prompt-lib-host .aii-fi-acc-name { font-size: 0.95rem; }
+.topic-explore-host .xf-sum-ic svg { width: 21px; height: 21px; }
+.topic-explore-host .xf-sum-name { font-size: 0.95rem; }
+/* Description that moved OUT of the accordion button INTO the open panel, sitting
+   above the prompt preview / source list (#img643). */
+.aii-pc-desc, .xf-panel-desc {
+  margin: 0 0 12px; font-size: 0.86rem; line-height: 1.45; color: var(--color-text-muted);
+}
 /* Phones: same subnav spacing as desktop (#img117/#img118). */
 @media (max-width: 899.98px) {
   .topic-subnav-controls .topic-paths-nav { gap: 20px; }
