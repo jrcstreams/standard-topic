@@ -14323,7 +14323,8 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
 /* Discreet "Close" at the very bottom of a trend brief — mirrors the top X, fills
    the trailing gap before the next trend, and reads as the natural end (#img543). */
 /* Close sits right at the end of the brief — no separator line, minimal gap (#img547/548). */
-.trend-exp-closefoot { display: flex; justify-content: center; margin-top: 0; padding-top: 2px; border-top: none; }
+/* More separation from the accordion list above so Close isn't crammed (#img666). */
+.trend-exp-closefoot { display: flex; justify-content: center; margin-top: 0; padding-top: 16px; border-top: none; }
 /* The wrapper inherits .im-secs' global 2rem bottom padding, which shoved the
    footer Close ~32px below the last line of copy — kill it here (#img589). */
 .trend-card-exp .trend-exp.im-secs { padding-bottom: 4px; }
@@ -19365,6 +19366,12 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 /* Nav-dropdown Prompt Library has its own header (setHead), so hide the built-in
    page header the section-accordion mode adds (#img663). */
 .pb-navdd-host .aii-tabhead { display: none; }
+/* With the header hidden, add space between the dropdown separator and the first
+   section accordion (#img665). */
+.pb-navdd-host .aii-tabhead + .aii-secacc { margin-top: 18px; }
+/* The builder content sits 4px inside the dropdown separator (scroll padding);
+   pull the section accordions out to full width so they align with it (#img665). */
+.pb-navdd-host .aii-secacc { margin-left: -4px; margin-right: -4px; }
 .topic-explore-host .xf-sum-ic svg { width: 21px; height: 21px; }
 .topic-explore-host .xf-sum-name { font-size: 0.95rem; }
 /* Description that moved OUT of the accordion button INTO the open panel, sitting
