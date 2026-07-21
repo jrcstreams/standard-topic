@@ -19262,7 +19262,9 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
    corners, rows share hairlines, hanging directly off the L1 subnav. Dropdown
    behavior unchanged. ─────────────────────────────────────────────────────── */
 .topic-explore-host { padding: 0; }
-.topic-explore-host .xf-list { gap: 0; }
+/* The connected list is ONE rounded card — round the whole block's outer corners
+   and a tiny bit more air below the header separator (#img657). */
+.topic-explore-host .xf-list { gap: 0; margin-top: 8px; border-radius: 12px; overflow: hidden; }
 .topic-explore-host .xf-acc { border-radius: 0; border-top-width: 0; }
 .topic-explore-host .xf-acc:first-child { border-top-width: 1px; }
 .topic-explore-host .xf-acc:hover { box-shadow: none; border-color: #d7dee9; }
@@ -19299,7 +19301,6 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 .aii-secacc-tx { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .aii-secacc-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; letter-spacing: -0.006em; color: #33517f; }
 .aii-secacc-sub { font-size: 0.86rem; line-height: 1.4; color: var(--color-text-muted); }
-.aii-secacc-count { flex: none; display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 20px; padding: 0 7px; border-radius: 999px; background: color-mix(in srgb, var(--color-primary) 9%, #fff); color: #33517f; font-size: 0.72rem; font-weight: 700; }
 .aii-secacc-chev { flex: none; display: inline-flex; color: var(--color-text-light); transition: transform .2s ease; }
 .aii-secacc-chev svg { width: 17px; height: 17px; }
 .aii-secacc[open] > .aii-secacc-sum .aii-secacc-chev { transform: rotate(180deg); }
@@ -19343,10 +19344,15 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 .topic-explore-host .xf-sum-ic svg { width: 21px; height: 21px; }
 .topic-explore-host .xf-sum-name { font-size: 0.95rem; }
 /* Description that moved OUT of the accordion button INTO the open panel, sitting
-   above the prompt preview / source list (#img643). */
+   above the prompt preview / source list (#img643). A touch darker + 500 weight
+   so it reads as a real panel descriptor, not a faint aside (#img658). */
 .aii-pc-desc, .xf-panel-desc {
-  margin: 0 0 12px; font-size: 0.86rem; line-height: 1.45; color: var(--color-text-muted);
+  margin: 0 0 11px; font-size: 0.85rem; font-weight: 500; line-height: 1.45; color: #4a5568;
 }
+/* In a web-category panel, left-align the descriptor with the source-row TEXT
+   (rows are inset 12px inside the 6px panel padding) + a bit more breathing room
+   above and below it (#img658). */
+.xf-web-panel .xf-panel-desc { margin: 3px 0 9px; padding: 0 12px; }
 /* Phones: same subnav spacing as desktop (#img117/#img118). */
 @media (max-width: 899.98px) {
   .topic-subnav-controls .topic-paths-nav { gap: 20px; }
