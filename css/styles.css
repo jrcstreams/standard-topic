@@ -19119,12 +19119,14 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
   /* Flush with the container edge so the first pill lines up with the L1 tabs
      and the insight cards (#img623). */
   padding: 11px calc(50vw - 50%) 13px;
-  /* A real seam under the sticky bar — hairline + soft drop so it reads as nav
-     over content, not a floating row (#img624). */
-  border-bottom: 1px solid #e3e8f0;
-  box-shadow: 0 5px 12px -8px rgba(15, 26, 46, 0.14);
+  /* A faint hairline seam always; the soft drop shadow appears ONLY while the row
+     is actually stuck (header scrolled out, JS toggles .is-stuck) and fades in/out
+     so pinning reads smooth, not a hard snap (#img651). */
+  border-bottom: 1px solid #eef1f5;
   position: sticky; top: 0; background: #fff; z-index: 30;
+  transition: box-shadow .2s ease, border-color .2s ease;
 }
+.topic-ai-subnav.is-stuck { border-bottom-color: #e3e8f0; box-shadow: 0 5px 12px -8px rgba(15, 26, 46, 0.14); }
 .tai-tab { line-height: 1.2; }
 /* The body content (segmented Summary bar, "Updated", section titles, paragraphs)
    sits 16px in so it shares Catch Up's left edge (which is inset to line up with
@@ -19133,11 +19135,9 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* Cards flush with the container edge (align with the L1 tabs + pill row,
    #img623) + real air below the sticky bar (#img624). */
 .topic-ai-body { padding: 16px 0 0; }
-/* Cancel the layout's 0.4rem top padding above the sticky pill row — it made
-   the bar travel those ~6px before pinning ("the sticky moves a little",
-   #img628). Starting flush at the scroll container's top = zero travel; the
-   row's own padding provides the visual air. */
-.topic-ai-wrap { margin-top: -0.4rem; }
+/* The Catch Up row now lives BELOW the AI Insights page header, so it SHOULD
+   travel up before pinning (that's the requested behavior, #img651) — no
+   negative-margin zero-travel hack anymore. */
 .tai-tab {
   flex: none; padding: 5px 15px; margin: 0; border: 1px solid transparent; border-radius: 999px;
   background: none; cursor: pointer; font-family: var(--font-family); font-size: clamp(0.8rem, 0.78rem + 0.15vw, 0.86rem); font-weight: 600;
@@ -19264,13 +19264,20 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 .topic-explore-host .xf-acc:hover { box-shadow: none; border-color: #d7dee9; }
 .topic-explore-host .xf-acc[open] { border-color: #d7dee9; box-shadow: none; }
 .topic-explore-host .xf-acc[open] > .xf-sum { border-radius: 0; }
-/* ── Topic-page Prompts + Explore: PAGE HEADER (main title / topic subheader /
-   subtext) matching the Search-dropdown header, then the content below (#img650). */
-.topic-prompt-lib-host .aii-tabhead,
-.topic-explore-host .aii-tabhead { padding: 2px 2px 18px; }
+/* ── Topic-page PAGE HEADER (main title / topic subheader / subtext) matching the
+   Search-dropdown header — shared by all four L1 tabs (#img650/#img651). More top
+   gap from the subnav; subheader a touch bigger + tighter to the title; subtext
+   tighter to the subheader. */
+.aii-tabhead { padding: 15px 2px 18px; }
 .aii-tabhead-title { margin: 0; font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: -0.022em; color: var(--color-primary); }
-.aii-tabhead-sub { margin: 4px 0 0; font-family: var(--font-display); font-size: 1rem; font-weight: 550; letter-spacing: -0.01em; color: #475569; }
-.aii-tabhead-tx { margin: 7px 0 0; font-size: 0.9rem; line-height: 1.5; color: var(--color-text-muted); }
+.aii-tabhead-sub { margin: 2px 0 0; font-family: var(--font-display); font-size: 1.12rem; font-weight: 550; letter-spacing: -0.01em; color: #475569; }
+.aii-tabhead-tx { margin: 5px 0 0; font-size: 0.9rem; line-height: 1.5; color: var(--color-text-muted); }
+/* AI Insights: the header sits ABOVE the sticky Catch Up row inside the same
+   scroll flow; no extra bottom padding so the row hugs it. */
+.topic-ai-head { padding-bottom: 14px; }
+/* News tab: full-width column so the header stacks above the news content
+   (#topic-tab-body is a flex row, #img652). */
+.topic-news-wrap { width: 100%; min-width: 0; display: flex; flex-direction: column; }
 /* ── Section ACCORDIONS (Topic-Specific / Evergreen): a grey-band header (no icon)
    that collapses the nested prompt list (#img650). */
 .aii-secacc { border: 1px solid #d7dee9; border-radius: 12px; overflow: hidden; margin-bottom: 18px; background: #fff; }

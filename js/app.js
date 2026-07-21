@@ -919,11 +919,29 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
   };
   const renderAI = () => {
     body.innerHTML = `<div class="topic-ai-wrap">
+      <div class="aii-tabhead topic-ai-head">
+        <h2 class="aii-tabhead-title">AI Insights</h2>
+        <p class="aii-tabhead-sub">${escapeHTML(topic.name)}</p>
+        <p class="aii-tabhead-tx">AI-written briefings on ${escapeHTML(topic.name)}. Get caught up, go deeper, or start with the basics.</p>
+      </div>
       <nav class="topic-ai-subnav" role="tablist" aria-label="AI Insights sections">${TOPIC_AI_GROUPS.map((g) => `<button type="button" class="tai-tab${g.key === subGroup ? ' is-active' : ''}" role="tab" data-tai="${escapeAttr(g.key)}" aria-selected="${g.key === subGroup ? 'true' : 'false'}">${escapeHTML(g.label)}</button>`).join('')}</nav>
       <div class="topic-ai-body" id="topic-ai-body"></div>
     </div>`;
     const subBody = body.querySelector('#topic-ai-body');
     const subNav = body.querySelector('.topic-ai-subnav');
+    // Sticky Catch Up row: the header scrolls away and the row pins on the way
+    // down; on the way back up it un-sticks natively as the header returns. Cast
+    // the drop shadow ONLY while stuck (header out of view) and fade it, so the
+    // transition in/out reads smooth rather than a hard snap (#img651).
+    const aiHead = body.querySelector('.topic-ai-head');
+    try { if (window.__aiHeadIO) window.__aiHeadIO.disconnect(); } catch (_) {}
+    const aiScroller = document.querySelector('#content');
+    if (aiHead && subNav && aiScroller && 'IntersectionObserver' in window) {
+      window.__aiHeadIO = new IntersectionObserver(([e]) => {
+        subNav.classList.toggle('is-stuck', e.intersectionRatio <= 0.01);
+      }, { root: aiScroller, threshold: [0, 0.01, 1] });
+      window.__aiHeadIO.observe(aiHead);
+    }
     const selectSub = (gkey) => {
       if (!TOPIC_AI_GROUP_KEYS.has(gkey)) gkey = 'discover';
       subGroup = gkey;
@@ -939,9 +957,19 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
     body.innerHTML = '';
     try {
       if (key === 'news') {
+        // Column wrapper so the page header stacks ABOVE the news content —
+        // #topic-tab-body is a flex row, so a bare header + section would sit
+        // side by side (#img652).
+        const wrap = document.createElement('div');
+        wrap.className = 'topic-news-wrap';
+        const head = document.createElement('div');
+        head.className = 'aii-tabhead topic-news-head';
+        head.innerHTML = `<h2 class="aii-tabhead-title">News Feed</h2><p class="aii-tabhead-sub">${escapeHTML(topic.name)}</p><p class="aii-tabhead-tx">The latest stories and headlines on ${escapeHTML(topic.name)}, refreshed throughout the day.</p>`;
+        wrap.appendChild(head);
         const sec = document.createElement('section');
         sec.id = 'section-newsfeed'; sec.className = 'layout-section';
-        body.appendChild(sec);
+        wrap.appendChild(sec);
+        body.appendChild(wrap);
         renderNewsFeed(sec, topic, false);
         return;
       }
