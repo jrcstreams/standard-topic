@@ -987,6 +987,24 @@ export function renderAIIntelligence(container, scope) {
     const specific = all.filter((s) => !s.evergreen);
     const evergreen = all.filter((s) => s.evergreen);
     const topicLabel = scope.label || scope.topic || 'this topic';
+    // Topic-page Prompts tab (scope.sectionAccordions): a page header + COLLAPSIBLE
+    // section accordions holding the nested prompt list (#img650). Everywhere else
+    // (nav-dropdown Prompt Library, custom search) keeps the flat static sections.
+    if (scope.sectionAccordions) {
+      const head = `<div class="aii-tabhead"><h2 class="aii-tabhead-title">Prompts</h2><p class="aii-tabhead-sub">${esc(topicLabel)}</p><p class="aii-tabhead-tx">Choose a ready-made prompt and send it to the AI model of your choice.</p></div>`;
+      // Section accordion — grey band header (no icon), title + subtext + count +
+      // chevron; the nested prompt accordions live inside, indented.
+      const secAcc = (title, sub, count, listHTML, open) => listHTML
+        ? `<details class="aii-secacc"${open ? ' open' : ''}><summary class="aii-secacc-sum"><span class="aii-secacc-tx"><span class="aii-secacc-title">${esc(title)}</span><span class="aii-secacc-sub">${esc(sub)}</span></span>${count ? `<span class="aii-secacc-count">${count}</span>` : ''}<span class="aii-secacc-chev">${CHEV}</span></summary><div class="aii-secacc-body">${listHTML}</div></details>`
+        : '';
+      if (!specific.length || !evergreen.length) {
+        const only = specific.length ? specific : evergreen;
+        return head + (furtherInsightsHTML(only) || '<p class="aii-empty">No prompts available for this topic.</p>');
+      }
+      return head
+        + secAcc('Topic-Specific Prompts', `Ready-made prompts tuned to ${topicLabel}.`, specific.length, furtherInsightsHTML(specific), true)
+        + secAcc('Evergreen Prompts', 'Timeless prompts that work across any topic.', evergreen.length, furtherInsightsHTML(evergreen), false);
+    }
     // No section icons (revamp): headers are just title + subtext over a rule
     // slightly heavier than the site hairlines, so each reads as a clear divider.
     const sec = (title, sub, listHTML) => listHTML

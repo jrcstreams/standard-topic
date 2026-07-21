@@ -18,7 +18,7 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260720-revamp609';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260720-revamp610';
 import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260720-revamp609';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260717-revamp592';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
@@ -952,9 +952,9 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
         host.className = 'topic-explore-host';
         body.appendChild(host);
         const efPrompt = `Give me a thorough, current briefing on ${topic.name}. Be specific and cite sources.`;
-        // Grey-band section header, matching the Prompts tab's Topic-Specific /
-        // Evergreen headers, so the tab reads as one on-topic collection (#img642).
-        const efHead = `<section class="aii-fi-sec"><div class="aii-fi-sechead"><h3 class="aii-fi-sectitle">Explore ${escapeHTML(topic.name)} Further</h3><p class="aii-fi-secsub">Send this topic to an AI model, or dig into the web's best sources — search, social, video, reference &amp; fact-checkers.</p></div></section>`;
+        // Page header (main = tab title, subheader = topic, subtext), matching the
+        // Prompts tab (#img650). Subtext rewritten without the em-dash.
+        const efHead = `<div class="aii-tabhead"><h2 class="aii-tabhead-title">Explore Further</h2><p class="aii-tabhead-sub">${escapeHTML(topic.name)}</p><p class="aii-tabhead-tx">Send this topic to an AI model, or dig into the web's best sources across search, social, video, reference and fact-checkers.</p></div>`;
         host.innerHTML = efHead + exploreFurtherHTML({ prompt: efPrompt, webTerm: topic.name, name: topic.name });
         wireExploreFurther(host);
         return;
@@ -970,6 +970,7 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
         try { shortcuts = getShortcutsForTopic(topic.slug) || []; } catch (_) {}
         ctl = renderAIIntelligence(host, {
           inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
+          sectionAccordions: true,
           topic: topic.name, label: topic.name, descriptions, icons, shortcuts, topicKey: topic.slug,
         });
         return;
