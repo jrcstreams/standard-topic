@@ -18270,7 +18270,9 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 }
 /* A quiet closer at the very bottom of the brief — an X + label, vertically centered
    in the gap between the last section's separator and the card's bottom (#img552). */
-.ni-closefoot { margin-top: 6px; padding: 16px 0; display: flex; justify-content: center; align-items: center; border-top: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); }
+/* No separator line above the Close button — just appropriate space from the end
+   of the accordions (#img662). */
+.ni-closefoot { margin-top: 4px; padding: 18px 0 4px; display: flex; justify-content: center; align-items: center; }
 .ni-close-btn {
   display: inline-flex; align-items: center; gap: 7px; padding: 8px 18px; border-radius: 999px;
   border: 1px solid var(--color-surface-border); background: #fff; color: var(--color-text-muted);
@@ -19267,13 +19269,23 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
    BOTTOM directly (each .xf-acc already has overflow:hidden, so the border +
    inner bg clip cleanly) — NOT a list-level clip, which mangled the corners
    against the inner square borders (#img659). */
-.topic-explore-host .xf-list { gap: 0; margin-top: 8px; }
-.topic-explore-host .xf-acc { border-radius: 0; border-top-width: 0; }
-.topic-explore-host .xf-acc:first-child { border-top-width: 1px; border-radius: 12px 12px 0 0; }
-.topic-explore-host .xf-acc:last-child { border-radius: 0 0 12px 12px; }
-.topic-explore-host .xf-acc:hover { box-shadow: none; border-color: #d7dee9; }
-.topic-explore-host .xf-acc[open] { border-color: #d7dee9; box-shadow: none; }
-.topic-explore-host .xf-acc[open] > .xf-sum { border-radius: 0; }
+/* The SAME connected list on the news-story + trending Explore Further panels
+   (.ins-tabpanel[data-ins-panel=explore]) as the topic page (#img662). */
+.topic-explore-host .xf-list,
+.ins-tabpanel[data-ins-panel="explore"] .xf-list { gap: 0; }
+.topic-explore-host .xf-list { margin-top: 8px; }
+.topic-explore-host .xf-acc,
+.ins-tabpanel[data-ins-panel="explore"] .xf-acc { border-radius: 0; border-top-width: 0; }
+.topic-explore-host .xf-acc:first-child,
+.ins-tabpanel[data-ins-panel="explore"] .xf-acc:first-child { border-top-width: 1px; border-radius: 12px 12px 0 0; }
+.topic-explore-host .xf-acc:last-child,
+.ins-tabpanel[data-ins-panel="explore"] .xf-acc:last-child { border-radius: 0 0 12px 12px; }
+.topic-explore-host .xf-acc:hover,
+.ins-tabpanel[data-ins-panel="explore"] .xf-acc:hover { box-shadow: none; border-color: #d7dee9; }
+.topic-explore-host .xf-acc[open],
+.ins-tabpanel[data-ins-panel="explore"] .xf-acc[open] { border-color: #d7dee9; box-shadow: none; }
+.topic-explore-host .xf-acc[open] > .xf-sum,
+.ins-tabpanel[data-ins-panel="explore"] .xf-acc[open] > .xf-sum { border-radius: 0; }
 /* ── Topic-page PAGE HEADER (main title / topic subheader / subtext) matching the
    Search-dropdown header — shared by all four L1 tabs (#img650/#img651). More top
    gap from the subnav; subheader a touch bigger + tighter to the title; subtext
@@ -19295,6 +19307,8 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 /* News tab: full-width column so the header stacks above the news content
    (#topic-tab-body is a flex row, #img652). */
 .topic-news-wrap { width: 100%; min-width: 0; display: flex; flex-direction: column; }
+/* First story sits a touch closer to the header separator (#img664). */
+.topic-news-head { margin-bottom: 9px; }
 /* ── Section ACCORDIONS (Topic-Specific / Evergreen): a grey-band header (no icon)
    that collapses the nested prompt list (#img650). */
 .aii-secacc { border: 1px solid #d7dee9; border-radius: 12px; overflow: hidden; margin-bottom: 18px; background: #fff; }
@@ -19340,11 +19354,17 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 /* Taller accordion rows + a bigger icon on BOTH tabs — the button title is the
    only line now (desc moved into the open panel), so center it with the icon and
    give the row more presence (#img643). */
-.topic-prompt-lib-host .aii-fi-accsum,
-.topic-explore-host .xf-sum { padding-top: 15px; padding-bottom: 15px; align-items: center; }
-.topic-prompt-lib-host .aii-fi-acc-ic { width: 28px; height: 28px; }
-.topic-prompt-lib-host .aii-fi-acc-ic svg { width: 21px; height: 21px; }
-.topic-prompt-lib-host .aii-fi-acc-name { font-size: 0.95rem; }
+/* Prompt rows scoped to .prompts-topic-host so BOTH the topic Prompts tab AND the
+   nav-dropdown Prompt Library get the same treatment (#img663). */
+.prompts-topic-host .aii-fi-accsum,
+.topic-explore-host .xf-sum,
+.ins-tabpanel[data-ins-panel="explore"] .xf-sum { padding-top: 15px; padding-bottom: 15px; align-items: center; }
+.prompts-topic-host .aii-fi-acc-ic { width: 28px; height: 28px; }
+.prompts-topic-host .aii-fi-acc-ic svg { width: 21px; height: 21px; }
+.prompts-topic-host .aii-fi-acc-name { font-size: 0.95rem; }
+/* Nav-dropdown Prompt Library has its own header (setHead), so hide the built-in
+   page header the section-accordion mode adds (#img663). */
+.pb-navdd-host .aii-tabhead { display: none; }
 .topic-explore-host .xf-sum-ic svg { width: 21px; height: 21px; }
 .topic-explore-host .xf-sum-name { font-size: 0.95rem; }
 /* Description that moved OUT of the accordion button INTO the open panel, sitting

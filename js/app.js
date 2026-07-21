@@ -18,7 +18,7 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260721-revamp615';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260721-revamp618';
 import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260720-revamp609';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260717-revamp592';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
@@ -712,6 +712,7 @@ function wirePromptsDropdown(panel) {
     const t = getTopicBySlug(slug); const label = t ? t.name : name;
     ctl = renderAIIntelligence(root.querySelector('[data-pb-host]'), {
       inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
+      sectionAccordions: true,
       topic: label, label, descriptions, icons, shortcuts, topicKey: slug,
     });
     fades();
