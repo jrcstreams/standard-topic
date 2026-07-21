@@ -19262,11 +19262,15 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
    corners, rows share hairlines, hanging directly off the L1 subnav. Dropdown
    behavior unchanged. ─────────────────────────────────────────────────────── */
 .topic-explore-host { padding: 0; }
-/* The connected list is ONE rounded card — round the whole block's outer corners
-   and a tiny bit more air below the header separator (#img657). */
-.topic-explore-host .xf-list { gap: 0; margin-top: 8px; border-radius: 12px; overflow: hidden; }
+/* Connected list, a touch more air below the header separator (#img657). The
+   OUTER corners round on the first accordion's TOP and the last accordion's
+   BOTTOM directly (each .xf-acc already has overflow:hidden, so the border +
+   inner bg clip cleanly) — NOT a list-level clip, which mangled the corners
+   against the inner square borders (#img659). */
+.topic-explore-host .xf-list { gap: 0; margin-top: 8px; }
 .topic-explore-host .xf-acc { border-radius: 0; border-top-width: 0; }
-.topic-explore-host .xf-acc:first-child { border-top-width: 1px; }
+.topic-explore-host .xf-acc:first-child { border-top-width: 1px; border-radius: 12px 12px 0 0; }
+.topic-explore-host .xf-acc:last-child { border-radius: 0 0 12px 12px; }
 .topic-explore-host .xf-acc:hover { box-shadow: none; border-color: #d7dee9; }
 .topic-explore-host .xf-acc[open] { border-color: #d7dee9; box-shadow: none; }
 .topic-explore-host .xf-acc[open] > .xf-sum { border-radius: 0; }
@@ -19346,13 +19350,13 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 /* Description that moved OUT of the accordion button INTO the open panel, sitting
    above the prompt preview / source list (#img643). A touch darker + 500 weight
    so it reads as a real panel descriptor, not a faint aside (#img658). */
-.aii-pc-desc, .xf-panel-desc {
-  margin: 0 0 11px; font-size: 0.85rem; font-weight: 500; line-height: 1.45; color: #4a5568;
-}
-/* In a web-category panel, left-align the descriptor with the source-row TEXT
-   (rows are inset 12px inside the 6px panel padding) + a bit more breathing room
-   above and below it (#img658). */
-.xf-web-panel .xf-panel-desc { margin: 3px 0 9px; padding: 0 12px; }
+.aii-pc-desc { margin: 0 0 11px; font-size: 0.85rem; font-weight: 500; line-height: 1.45; color: #4a5568; }
+/* Explore-panel descriptor reads as a real header: dark blue, 600, a hair bigger
+   (#img660). */
+.xf-panel-desc { margin: 0 0 11px; font-size: 0.88rem; font-weight: 600; line-height: 1.45; color: #33517f; }
+/* Web-category panel: align the descriptor with the source-row TEXT (12px inset)
+   and give it clear breathing room from the panel's top border (#img658/#img660). */
+.xf-web-panel .xf-panel-desc { margin: 9px 0 11px; padding: 0 12px; }
 /* Phones: same subnav spacing as desktop (#img117/#img118). */
 @media (max-width: 899.98px) {
   .topic-subnav-controls .topic-paths-nav { gap: 20px; }
