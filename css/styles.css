@@ -19354,9 +19354,10 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 /* Explore-panel descriptor reads as a real header: dark blue, 600, a hair bigger
    (#img660). */
 .xf-panel-desc { margin: 0 0 11px; font-size: 0.88rem; font-weight: 600; line-height: 1.45; color: #33517f; }
-/* Web-category panel: align the descriptor with the source-row TEXT (12px inset)
-   and give it clear breathing room from the panel's top border (#img658/#img660). */
-.xf-web-panel .xf-panel-desc { margin: 9px 0 11px; padding: 0 12px; }
+/* Web-category panel: the descriptor is a header zone — text aligned with the
+   source rows (12px inset) and VERTICALLY CENTERED between the panel's top border
+   and the first row's separator (equal top/bottom padding, #img661). */
+.xf-web-panel .xf-panel-desc { margin: 0; padding: 13px 12px; }
 /* Phones: same subnav spacing as desktop (#img117/#img118). */
 @media (max-width: 899.98px) {
   .topic-subnav-controls .topic-paths-nav { gap: 20px; }
@@ -19568,8 +19569,10 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 /* No left rail/line (#img208) — the lighter weight + small indent already read as
    subordinate. Hover is a soft background fill, NOT an underline (the anchor's
    default underline looked broken, #img210). */
-.xf-web-panel { display: flex; flex-direction: column; padding: 6px 6px 8px; }
-.xf-web-row { display: flex; align-items: center; gap: 10px; padding: 9px 10px 9px 12px; border-radius: 9px; text-decoration: none !important; color: var(--color-text); transition: background .12s, color .12s; }
+.xf-web-panel { display: flex; flex-direction: column; padding: 0 6px 8px; }
+/* Faint separator lines between the straightforward source rows; each row's
+   border-top divides it from the row (or descriptor) above (#img661). */
+.xf-web-row { display: flex; align-items: center; gap: 10px; padding: 11px 10px 11px 12px; border-top: 1px solid #eef1f6; border-radius: 0; text-decoration: none !important; color: var(--color-text); transition: background .12s, color .12s; }
 .xf-web-row:hover, .xf-web-row:focus-visible { background: color-mix(in srgb, #33517f 7%, #fff); }
 .xf-web-row:hover .xf-web-name { color: var(--color-primary); }
 .xf-web-tx { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
