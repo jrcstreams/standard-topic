@@ -19112,21 +19112,25 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    AI Insights, with a faint separator drawing the line under it. */
 .topic-ai-subnav {
   display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
-  /* Full-bleed: the row + its faint separator run ALL the way across the page,
-     not just the content column (#img603) — negative side margins out to the
-     viewport edge, padding brings the pills back to the content line. */
-  margin: 0 calc(50% - 50vw);
-  /* Flush with the container edge so the first pill lines up with the L1 tabs
-     and the insight cards (#img623). */
-  padding: 11px calc(50vw - 50%) 13px;
-  /* A faint hairline seam always; the soft drop shadow appears ONLY while the row
-     is actually stuck (header scrolled out, JS toggles .is-stuck) and fades in/out
-     so pinning reads smooth, not a hard snap (#img651). */
-  border-bottom: 1px solid #eef1f5;
+  /* NORMAL flow: content-width row with a PROMINENT content-width separator that
+     matches the header rules on the other tabs (#img653). Pills align at the
+     content-left edge (flush with the L1 tabs + cards). */
+  margin: 0;
+  padding: 11px 0 13px;
+  border-bottom: 1px solid #d3dae6;
   position: sticky; top: 0; background: #fff; z-index: 30;
   transition: box-shadow .2s ease, border-color .2s ease;
 }
-.topic-ai-subnav.is-stuck { border-bottom-color: #e3e8f0; box-shadow: 0 5px 12px -8px rgba(15, 26, 46, 0.14); }
+/* STUCK: becomes the full-bleed sticky bar — the row + its faint separator run
+   ALL the way across, plus a soft drop shadow (the style kept from before,
+   #img651). Negative margins expand it; padding brings the pills back so they
+   don't move horizontally. */
+.topic-ai-subnav.is-stuck {
+  margin: 0 calc(50% - 50vw);
+  padding: 11px calc(50vw - 50%) 13px;
+  border-bottom-color: #eef1f5;
+  box-shadow: 0 5px 12px -8px rgba(15, 26, 46, 0.14);
+}
 .tai-tab { line-height: 1.2; }
 /* The body content (segmented Summary bar, "Updated", section titles, paragraphs)
    sits 16px in so it shares Catch Up's left edge (which is inset to line up with
@@ -19268,13 +19272,18 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
    Search-dropdown header — shared by all four L1 tabs (#img650/#img651). More top
    gap from the subnav; subheader a touch bigger + tighter to the title; subtext
    tighter to the subheader. */
-.aii-tabhead { padding: 15px 2px 18px; }
-.aii-tabhead-title { margin: 0; font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: -0.022em; color: var(--color-primary); }
-.aii-tabhead-sub { margin: 2px 0 0; font-family: var(--font-display); font-size: 1.12rem; font-weight: 550; letter-spacing: -0.01em; color: #475569; }
-.aii-tabhead-tx { margin: 5px 0 0; font-size: 0.9rem; line-height: 1.5; color: var(--color-text-muted); }
-/* AI Insights: the header sits ABOVE the sticky Catch Up row inside the same
-   scroll flow; no extra bottom padding so the row hugs it. */
-.topic-ai-head { padding-bottom: 14px; }
+/* A prominent content-width rule under the header on EVERY tab (#img653) —
+   News Feed, Prompts, Explore Further. (AI Insights overrides this below: its
+   rule lives under the Catch Up row instead.) */
+.aii-tabhead { padding: 15px 2px 16px; margin-bottom: 16px; border-bottom: 1px solid #d3dae6; }
+/* Tight title line-height so the topic-name subheader sits CLOSE to the main
+   header (the inherited 1.6 body leading was pushing it far down, #img654). */
+.aii-tabhead-title { margin: 0; font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: -0.022em; line-height: 1.12; color: var(--color-primary); }
+.aii-tabhead-sub { margin: 3px 0 0; font-family: var(--font-display); font-size: 1.12rem; font-weight: 550; letter-spacing: -0.01em; line-height: 1.2; color: #475569; }
+.aii-tabhead-tx { margin: 6px 0 0; font-size: 0.9rem; line-height: 1.5; color: var(--color-text-muted); }
+/* AI Insights: the header flows straight into the sticky Catch Up row (that row
+   carries the separator, not the header). */
+.topic-ai-head { padding-bottom: 14px; margin-bottom: 0; border-bottom: none; }
 /* News tab: full-width column so the header stacks above the news content
    (#topic-tab-body is a flex row, #img652). */
 .topic-news-wrap { width: 100%; min-width: 0; display: flex; flex-direction: column; }
