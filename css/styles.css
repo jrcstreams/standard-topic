@@ -8821,7 +8821,9 @@ body.app-mode .topic-layout {
      desc/summary so each card uses less vertical real estate and
      more of the screen is usable without scrolling. */
   .pb-card-grid { grid-template-columns: 1fr; gap: 0.55rem; }
-  .pb-card { padding: 0.7rem 4.4rem 0.8rem 0.85rem; gap: 0.3rem; }
+  /* No reserved right gutter — the chevron now lives in the head row (margin-left
+     auto), so it sits neatly at the padding edge, centred on the title (#img12). */
+  .pb-card { padding: 0.7rem 0.9rem 0.8rem 0.85rem; gap: 0.3rem; }
   .pb-card-action { right: 0.85rem; }
   .pb-card-icon { width: 19px; height: 19px; }
   .pb-card-icon svg { width: 18px; height: 18px; }
@@ -9289,12 +9291,12 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
 }
 
 @media (max-width: 640px) {
-  /* Clean stacked layout: Submit full-width up top, Preview + Export split the next
-     row 50/50, Clear full-width beneath — no cramped wrapping. */
+  /* Submit full-width up top, then Clear · Preview · Export share the next row as
+     equal thirds (Clear first) — no cramped wrapping (#img12). */
   .wiz-action-buttons { gap: 8px; }
   .wiz-action-btn { flex: 1 1 100%; width: 100%; min-width: 0; padding: 0.7rem 1rem; font-size: 0.9rem; order: 1; }
-  .wiz-action-2nd { flex: 1 1 0; min-width: 0; padding: 0.6rem 0.5rem; font-size: 0.85rem; order: 2; }
-  .wiz-action-buttons .wiz-action-restart { flex: 1 1 100%; width: 100%; margin-left: 0; padding: 0.55rem 0.85rem; font-size: 0.82rem; order: 3; }
+  .wiz-action-buttons .wiz-action-restart { flex: 1 1 0; width: auto; min-width: 0; margin-left: 0; padding: 0.6rem 0.5rem; font-size: 0.82rem; order: 2; }
+  .wiz-action-2nd { flex: 1 1 0; min-width: 0; padding: 0.6rem 0.5rem; font-size: 0.85rem; order: 3; }
 }
 
 @media (max-width: 640px) {
