@@ -921,7 +921,7 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
   const renderAI = () => {
     body.innerHTML = `<div class="topic-ai-wrap">
       <div class="aii-tabhead topic-ai-head">
-        <p class="aii-tabhead-tx">AI-written briefings on ${escapeHTML(topic.name)}. Get caught up, go deeper, or start with the basics.</p>
+        <p class="aii-tabhead-tx">AI-generated briefings to get caught up, go deeper or start with the basics.</p>
       </div>
       <nav class="topic-ai-subnav" role="tablist" aria-label="AI Insights sections">${TOPIC_AI_GROUPS.map((g) => `<button type="button" class="tai-tab${g.key === subGroup ? ' is-active' : ''}" role="tab" data-tai="${escapeAttr(g.key)}" aria-selected="${g.key === subGroup ? 'true' : 'false'}">${escapeHTML(g.label)}</button>`).join('')}</nav>
       <div class="topic-ai-body" id="topic-ai-body"></div>

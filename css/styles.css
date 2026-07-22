@@ -18804,14 +18804,20 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .prompts-opt:hover { border-color: color-mix(in srgb, #2563eb 45%, var(--color-surface-border)); box-shadow: 0 10px 26px -14px rgba(37,99,235,.32); background: color-mix(in srgb, #2563eb 2.5%, #fff); }
 /* Stacked + LEFT-aligned: icon chip on top, then title, description, then CTA pinned
    to the bottom-left (#img559). */
-.prompts-opt-ic { flex: 0 0 auto; width: 50px; height: 50px; border-radius: 14px; display: grid; place-items: center; background: color-mix(in srgb, #26375a 8%, #fff); color: #26375a; margin-bottom: 4px; }
+/* Icon chip: a soft blue-tinted gradient with a hairline ring so it reads as a
+   crafted badge rather than a flat grey square (#img11). Deepens on card hover. */
+.prompts-opt-ic { flex: 0 0 auto; width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center; background: linear-gradient(150deg, color-mix(in srgb, #2563eb 13%, #fff), color-mix(in srgb, #26375a 7%, #fff)); box-shadow: inset 0 0 0 1px rgba(37,99,235,.12); color: #1f3557; margin-bottom: 4px; transition: box-shadow .14s ease, background .14s ease; }
 .prompts-opt-ic svg { width: 25px; height: 25px; }
-.prompts-opt-name { font-size: 1.08rem; font-weight: 700; color: var(--color-primary, #14213d); letter-spacing: -0.015em; }
+.prompts-opt:hover .prompts-opt-ic { background: linear-gradient(150deg, color-mix(in srgb, #2563eb 20%, #fff), color-mix(in srgb, #26375a 9%, #fff)); box-shadow: inset 0 0 0 1px rgba(37,99,235,.22); }
+.prompts-opt-name { font-size: 1.12rem; font-weight: 700; color: var(--color-primary, #14213d); letter-spacing: -0.018em; }
 .prompts-opt-desc { font-size: 0.88rem; color: var(--color-text-muted, #64748b); line-height: 1.45; }
 .prompts-opt-cta { margin-top: auto !important; }
-.prompts-opt-cta { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; padding: 8px 16px; border-radius: 10px; background: color-mix(in srgb, #2563eb 11%, #fff); color: #2563eb; font-size: 0.85rem; font-weight: 600; transition: background .14s ease, color .14s ease; }
-.prompts-opt-cta svg { width: 15px; height: 15px; }
-.prompts-opt:hover .prompts-opt-cta { background: color-mix(in srgb, #2563eb 18%, #fff); color: #1d4ed8; }
+/* Solid filled-blue CTA — a real button, not a faint chip (#img11). Lifts + darkens
+   on card hover, arrow nudges right. */
+.prompts-opt-cta { display: inline-flex; align-items: center; gap: 7px; margin-top: 8px; padding: 9px 18px; border-radius: 10px; background: #2563eb; color: #fff; font-size: 0.86rem; font-weight: 650; box-shadow: 0 6px 15px -7px rgba(37,99,235,.55); transition: background .14s ease, box-shadow .14s ease; }
+.prompts-opt-cta svg { width: 15px; height: 15px; transition: transform .14s ease; }
+.prompts-opt:hover .prompts-opt-cta { background: #1d4ed8; box-shadow: 0 10px 20px -7px rgba(37,99,235,.62); }
+.prompts-opt:hover .prompts-opt-cta svg { transform: translateX(2px); }
 
 /* Cleaner back control (#390) — a subtle pill; sits ABOVE the view title in the head. */
 .prompts-back {
@@ -19130,9 +19136,12 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    don't move horizontally. */
 .topic-ai-subnav.is-stuck {
   margin: 0 calc(50% - 50vw);
-  padding: 11px calc(50vw - 50%) 13px;
-  border-bottom-color: #eef1f5;
-  box-shadow: 0 5px 12px -8px rgba(15, 26, 46, 0.14);
+  padding: 11px calc(50vw - 50%) 12px;
+  /* Pinned bar earns real prominence: a solid divider + a deeper drop shadow so it
+     reads as a floating toolbar over the scrolling content, not a faint hairline
+     (#img10). */
+  border-bottom-color: #d0d8e4;
+  box-shadow: 0 8px 18px -10px rgba(15, 26, 46, 0.28);
 }
 .tai-tab { line-height: 1.2; }
 /* The body content (segmented Summary bar, "Updated", section titles, paragraphs)
@@ -19295,14 +19304,17 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
    News Feed, Prompts, Explore Further. (AI Insights overrides this below: its
    rule lives under the Catch Up row instead.) */
 /* Header is now just the subtext (title + topic-name subheader dropped, #img670):
-   subtext sits CLOSE above a FAINTER separator, with MORE air below the line to the
-   accordion/content. */
-.aii-tabhead { padding: 13px 2px 9px; margin-bottom: 24px; border-bottom: 1px solid #e7ecf3; }
+   subtext sits with BALANCED air above (to the L1 tab bar) and below (to the FAINTER
+   separator) so it reads vertically centred in the zone (#img7), with MORE air below
+   the line to the accordion/content. */
+.aii-tabhead { padding: 12px 2px 12px; margin-bottom: 24px; border-bottom: 1px solid #e7ecf3; }
 /* Tight title line-height so the topic-name subheader sits CLOSE to the main
    header (the inherited 1.6 body leading was pushing it far down, #img654). */
 .aii-tabhead-title { margin: 0; font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: -0.022em; line-height: 1.12; color: var(--color-primary); }
 .aii-tabhead-sub { margin: 3px 0 0; font-family: var(--font-display); font-size: 1.12rem; font-weight: 550; letter-spacing: -0.01em; line-height: 1.2; color: #475569; }
-.aii-tabhead-tx { margin: 6px 0 0; font-size: 0.9rem; line-height: 1.5; color: var(--color-text-muted); }
+/* Subtext carries a touch more weight + a darker slate so it reads as a real
+   descriptor, not a faint aside (#img6/#img7/#img9). */
+.aii-tabhead-tx { margin: 0; font-size: 0.9rem; line-height: 1.5; font-weight: 500; color: #475569; }
 /* AI Insights: the header flows straight into the sticky Catch Up row (that row
    carries the separator, not the header). */
 /* Tight bottom padding pulls the Catch Up row UP close to the subtext in the
@@ -19312,7 +19324,7 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
    (#topic-tab-body is a flex row, #img652). */
 /* News Feed has no page header now (#img670) — a small top pad keeps the first
    story off the L1 tab bar. */
-.topic-news-wrap { width: 100%; min-width: 0; display: flex; flex-direction: column; padding-top: 14px; }
+.topic-news-wrap { width: 100%; min-width: 0; display: flex; flex-direction: column; padding-top: 6px; }
 /* ── Section ACCORDIONS (Topic-Specific / Evergreen): a grey-band header (no icon)
    that collapses the nested prompt list (#img650). */
 .aii-secacc { border: 1px solid #d7dee9; border-radius: 12px; overflow: hidden; margin-bottom: 18px; background: #fff; }
