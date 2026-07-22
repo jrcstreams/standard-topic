@@ -977,7 +977,7 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
         const efPrompt = `Give me a thorough, current briefing on ${topic.name}. Be specific and cite sources.`;
         // Page header (main = tab title, subheader = topic, subtext), matching the
         // Prompts tab (#img650). Subtext rewritten without the em-dash.
-        const efHead = `<div class="aii-tabhead"><p class="aii-tabhead-tx">Send this topic to an AI model, or dig into the web's best sources across search, social, video, reference and fact-checkers.</p></div>`;
+        const efHead = `<div class="aii-tabhead"><p class="aii-tabhead-tx">Send this topic to an AI model, or dig into the web sources across search, social, video and more.</p></div>`;
         host.innerHTML = efHead + exploreFurtherHTML({ prompt: efPrompt, webTerm: topic.name, name: topic.name });
         wireExploreFurther(host);
         return;
