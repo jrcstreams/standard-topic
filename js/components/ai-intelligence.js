@@ -991,7 +991,7 @@ export function renderAIIntelligence(container, scope) {
     // section accordions holding the nested prompt list (#img650). Everywhere else
     // (nav-dropdown Prompt Library, custom search) keeps the flat static sections.
     if (scope.sectionAccordions) {
-      const head = `<div class="aii-tabhead"><h2 class="aii-tabhead-title">Prompts</h2><p class="aii-tabhead-sub">${esc(topicLabel)}</p><p class="aii-tabhead-tx">Choose a ready-made prompt and send it to the AI model of your choice.</p></div>`;
+      const head = `<div class="aii-tabhead"><p class="aii-tabhead-tx">Choose a ready-made prompt and send it to the AI model of your choice.</p></div>`;
       // Section accordion — grey band header (no icon), title + subtext + chevron;
       // the nested prompt accordions live inside, indented. (No count badge, #img656.)
       const secAcc = (title, sub, listHTML, open) => listHTML

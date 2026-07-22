@@ -19119,8 +19119,8 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
      matches the header rules on the other tabs (#img653). Pills align at the
      content-left edge (flush with the L1 tabs + cards). */
   margin: 0;
-  padding: 11px 0 13px;
-  border-bottom: 1px solid #d3dae6;
+  padding: 11px 0 10px;
+  border-bottom: 1px solid #e7ecf3;
   position: sticky; top: 0; background: #fff; z-index: 30;
   transition: box-shadow .2s ease, border-color .2s ease;
 }
@@ -19141,7 +19141,7 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    Catch Up (#img252/#img254). */
 /* Cards flush with the container edge (align with the L1 tabs + pill row,
    #img623) + real air below the sticky bar (#img624). */
-.topic-ai-body { padding: 16px 0 0; }
+.topic-ai-body { padding: 24px 0 0; }
 /* The Catch Up row now lives BELOW the AI Insights page header, so it SHOULD
    travel up before pinning (that's the requested behavior, #img651) — no
    negative-margin zero-travel hack anymore. */
@@ -19294,7 +19294,10 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 /* A prominent content-width rule under the header on EVERY tab (#img653) —
    News Feed, Prompts, Explore Further. (AI Insights overrides this below: its
    rule lives under the Catch Up row instead.) */
-.aii-tabhead { padding: 15px 2px 16px; margin-bottom: 16px; border-bottom: 1px solid #d3dae6; }
+/* Header is now just the subtext (title + topic-name subheader dropped, #img670):
+   subtext sits CLOSE above a FAINTER separator, with MORE air below the line to the
+   accordion/content. */
+.aii-tabhead { padding: 13px 2px 9px; margin-bottom: 24px; border-bottom: 1px solid #e7ecf3; }
 /* Tight title line-height so the topic-name subheader sits CLOSE to the main
    header (the inherited 1.6 body leading was pushing it far down, #img654). */
 .aii-tabhead-title { margin: 0; font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: -0.022em; line-height: 1.12; color: var(--color-primary); }
@@ -19307,9 +19310,9 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 .topic-ai-head { padding-bottom: 4px; margin-bottom: 0; border-bottom: none; }
 /* News tab: full-width column so the header stacks above the news content
    (#topic-tab-body is a flex row, #img652). */
-.topic-news-wrap { width: 100%; min-width: 0; display: flex; flex-direction: column; }
-/* First story sits a touch closer to the header separator (#img664). */
-.topic-news-head { margin-bottom: 9px; }
+/* News Feed has no page header now (#img670) — a small top pad keeps the first
+   story off the L1 tab bar. */
+.topic-news-wrap { width: 100%; min-width: 0; display: flex; flex-direction: column; padding-top: 14px; }
 /* ── Section ACCORDIONS (Topic-Specific / Evergreen): a grey-band header (no icon)
    that collapses the nested prompt list (#img650). */
 .aii-secacc { border: 1px solid #d7dee9; border-radius: 12px; overflow: hidden; margin-bottom: 18px; background: #fff; }
