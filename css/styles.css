@@ -18101,35 +18101,16 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
     height: calc(100dvh - var(--nav-h) - var(--subnav-height, 66px)) !important;
   }
 }
-/* Progressive DROP (revamp — icon+label pairs stay intact; whole items are removed
-   as space runs out, NOT their labels). Order: drop Prompts, then drop Home, then
-   shorten Trending's label + shrink the title only when truly cramped (#img28-nav).
-   Prompts + Home remain reachable via the hamburger menu. */
-/* Step 1 — drop Prompts (the two-row wrap used to trigger here). */
-@media (max-width: 640px) { #nav-prompts { display: none !important; } }
-/* Step 2 — drop Home. */
-@media (max-width: 500px) { #nav-home { display: none !important; } }
-/* Step 3 — tight: shorten Trending→"Trends", tighten the remaining 3 items, and let
-   the site title start giving up size. */
-@media (max-width: 430px) {
-  .nl-full { display: none; }
-  .nl-short { display: inline; }
-  .navbtn { min-width: 44px; padding: 6px 6px; }
-  .sticky-hero-inner { gap: 0.55rem; }
-  .sticky-hero-inner .sticky-title { font-size: 1.14rem; }
-}
-/* Step 4 — smallest phones: shrink the title + hamburger a touch more so the three
-   remaining items keep their labels without overflowing. */
-@media (max-width: 360px) {
-  .sticky-hero-inner .sticky-title { font-size: 1.02rem; }
-  .sticky-hero-inner .nav-hamburger { width: 19px; }
-  .navbtn { padding: 6px 5px; }
-  .sticky-hero-inner { gap: 0.45rem; }
-}
-@media (max-width: 330px) {
-  .sticky-hero-inner .sticky-title { font-size: 0.92rem; }
-  .navbtn { padding: 6px 4px; }
-}
+/* Progressive DROP — MEASURED, not guessed. fitNav() (js/app.js) watches the real
+   nav row: it keeps every item until the row would actually overflow, then peels
+   back the least-important thing first by toggling these classes. Order: shorten
+   Trending→"Trends" (keeps all items), then drop Prompts, then drop Home, then shrink
+   the title. Prompts + Home stay reachable via the hamburger. (#img29/#img30) */
+.sticky-hero-inner.nav-short-trending .nl-full { display: none; }
+.sticky-hero-inner.nav-short-trending .nl-short { display: inline; }
+.sticky-hero-inner.nav-drop-prompts #nav-prompts { display: none !important; }
+.sticky-hero-inner.nav-drop-home #nav-home { display: none !important; }
+.sticky-hero-inner.nav-tiny-title .sticky-title { font-size: 1.04rem; }
 
 /* ═══ Homepage "Home" dropdown picker (revamp396, #88) ════════════════════════
    Replaces the featured-topics chip row. Works at ALL widths (the home subnav
@@ -18485,14 +18466,14 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .aii-nav-dd-headlink svg { flex: none; }
 /* Topics dropdown head action buttons — Homepage (quiet) + Search Custom Topic
    (primary, deep blue). Sit as a pair under the subtitle. */
-.aii-nav-dd-headbtns { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; }
+.aii-nav-dd-headbtns { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin-top: 12px; }
 .aii-nav-dd-headbtn {
-  display: inline-flex; align-items: center; gap: 7px; padding: 8px 15px; border-radius: 999px;
-  font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; text-decoration: none;
   border: 1px solid #d6ddea; background: #fff; color: #33517f;
   transition: background .14s ease, border-color .14s ease, color .14s ease;
 }
-.aii-nav-dd-headbtn svg { flex: none; }
+.aii-nav-dd-headbtn svg { flex: none; width: 14px; height: 14px; }
 .aii-nav-dd-headbtn:hover { background: #f4f6fb; border-color: #c3cde0; color: #26375a; text-decoration: none; }
 .aii-nav-dd-headbtn.is-primary { background: #2f4d9e; border-color: #2f4d9e; color: #fff; }
 .aii-nav-dd-headbtn.is-primary:hover { background: #26407f; border-color: #26407f; color: #fff; }
@@ -18936,11 +18917,16 @@ button.aiidd-vlink { align-self: flex-start; }
     gap: 0.85rem; padding: 0.5rem 1rem !important; min-height: var(--nav-h);
   }
   .sticky-hero-inner .nav-hamburger { margin: 0; width: 21px; height: 15px; flex: none; }
-  .sticky-hero-inner .sticky-brand { margin: 0; display: flex; align-items: center; flex: 0 1 auto; min-width: 0; }
-  .sticky-hero-inner .sticky-title { font-size: 1.22rem; letter-spacing: -0.02em; line-height: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* Brand + title never shrink/clip — the row stays overflow-measurable so fitNav
+     drops items instead of squishing the title (the 'p' in "Topic" was clipping,
+     #img34). */
+  .sticky-hero-inner .sticky-brand { margin: 0; display: flex; align-items: center; flex: none; }
+  .sticky-hero-inner .sticky-title { font-size: 1.22rem; letter-spacing: -0.02em; line-height: 1.15; white-space: nowrap; }
   /* Icons stay on the title's line, grouped to the right edge. */
   .sticky-hero-inner .sticky-actions.navbtns { order: 1; margin-left: auto !important; flex: none; }
   .sticky-hero-inner .sticky-actions.navbtns .navbtn { padding: 6px 7px; gap: 4px; }
+  /* Keep icons the SAME compact size as ≥561 — no jump bigger below 561 (#img32). */
+  .sticky-hero-inner .navbtn-ico svg { width: 18px; height: 18px; }
   /* Keep every VISIBLE item's label — we drop items, not labels. */
   .sticky-hero-inner .sticky-actions.navbtns .navbtn-label { display: block !important; }
   .sticky-hero-inner .nav-search-mobile { display: none !important; }

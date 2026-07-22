@@ -985,7 +985,7 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
         const efPrompt = `Give me a thorough, current briefing on ${topic.name}. Be specific and cite sources.`;
         // Page header (main = tab title, subheader = topic, subtext), matching the
         // Prompts tab (#img650). Subtext rewritten without the em-dash.
-        const efHead = `<div class="aii-tabhead"><p class="aii-tabhead-tx">Send this topic to an AI model, or dig into the web sources across search, social, video and more.</p></div>`;
+        const efHead = `<div class="aii-tabhead"><p class="aii-tabhead-tx">Send this topic to an AI model, or dig into web sources across search, social, video and more.</p></div>`;
         host.innerHTML = efHead + exploreFurtherHTML({ prompt: efPrompt, webTerm: topic.name, name: topic.name });
         wireExploreFurther(host);
         return;
@@ -2132,6 +2132,21 @@ function pageLabelFor(route) {
   }
 }
 
+// Measured main-nav fit (mirrors fitPtabs for the topic tabs): keep EVERY item
+// until the row would truly overflow, then peel back the least-important thing —
+// shorten Trending→"Trends", then drop Prompts, then Home, then shrink the title.
+// Reading scrollWidth forces a sync reflow so each step re-measures. Reversible.
+function fitMainNav() {
+  const inner = document.querySelector('.sticky-hero-inner');
+  if (!inner) return;
+  inner.classList.remove('nav-short-trending', 'nav-drop-prompts', 'nav-drop-home', 'nav-tiny-title');
+  const fits = () => inner.scrollWidth <= inner.clientWidth + 1;
+  if (!fits()) inner.classList.add('nav-short-trending');
+  if (!fits()) inner.classList.add('nav-drop-prompts');
+  if (!fits()) inner.classList.add('nav-drop-home');
+  if (!fits()) inner.classList.add('nav-tiny-title');
+}
+
 function renderStickyHeroBar(container, route) {
   const featured = getFeaturedTopics();
   const NAVMENU_CHEV = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
@@ -2262,6 +2277,13 @@ function renderStickyHeroBar(container, route) {
       openSearchFromNav();
     });
   }
+
+  // Fit the nav to the row: drop items only when they'd actually overflow.
+  if (!window.__navFitBound) {
+    window.addEventListener('resize', () => requestAnimationFrame(fitMainNav));
+    window.__navFitBound = true;
+  }
+  requestAnimationFrame(fitMainNav);
 
   // Nav menu panel — appended to body so it's not clipped by header overflow
   let navOverlay = document.getElementById('navmenu-overlay');
