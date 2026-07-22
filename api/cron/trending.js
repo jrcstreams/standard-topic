@@ -24,11 +24,19 @@ const GEOS = ['US'];
 const LIMIT = 100;
 const SERP_BASE = 'https://serpapi.com/search.json';
 
+// NOTE: `raw` (the verbatim SerpAPI item) is deliberately NOT stored — no read
+// path ever used it and it was the biggest per-row blob on this append-only table
+// (#storage-trim 2026-07-22). `trend_breakdown` (which IS read) is kept.
 const TRENDING_COLS = [
   'snapshot_at', 'geo', 'rank', 'query', 'category', 'categories',
   'search_volume', 'increase_percent', 'started_at', 'ended_at',
-  'active', 'trend_breakdown', 'raw',
+  'active', 'trend_breakdown',
 ];
+
+// Retention: this table is append-only and has no dedup, so without a window it
+// grows ~2k rows/day forever. The live endpoint only ever reads the newest
+// snapshot; history views look back at most a few weeks. Keep 30 days.
+const RETENTION_DAYS = 30;
 
 function tsToISO(value) {
   const n = Number(value);
@@ -56,7 +64,6 @@ function mapItem(t, geo, rank, snapshotAt) {
     tsToISO(t.end_timestamp),
     typeof t.active === 'boolean' ? t.active : null,
     JSON.stringify(Array.isArray(t.trend_breakdown) ? t.trend_breakdown : []),
-    JSON.stringify(t),
   ];
 }
 
@@ -131,10 +138,19 @@ module.exports = async function handler(req, res) {
         .filter(Boolean);
       if (viaRss && rows.length) console.log(`trending cron: SerpAPI failed, snapshot for ${geo} captured via Trends RSS fallback (${rows.length} rows)`);
       inserted += await bulkInsert(sql, 'trending_items', TRENDING_COLS, rows, {
-        jsonbCols: ['categories', 'trend_breakdown', 'raw'],
+        jsonbCols: ['categories', 'trend_breakdown'],
       });
     }
-    return res.status(200).json({ ok: true, snapshotAt, inserted });
+    // Self-prune each run so the append-only table stays bounded (#storage-trim).
+    let pruned = 0;
+    try {
+      const del = await sql.query(
+        `DELETE FROM trending_items WHERE snapshot_at < now() - make_interval(days => $1) RETURNING 1`,
+        [RETENTION_DAYS]
+      );
+      pruned = (Array.isArray(del) ? del : (del && del.rows) || []).length;
+    } catch (_) { /* pruning is best-effort; never fail the snapshot on it */ }
+    return res.status(200).json({ ok: true, snapshotAt, inserted, pruned });
   } catch (err) {
     return res.status(500).json({ error: String((err && err.message) || err) });
   }

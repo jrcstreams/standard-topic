@@ -25,9 +25,11 @@ const FETCH_LIMIT = 100;        // articles pulled per feed (rss.app ceiling)
 const KEEP_PER_TOPIC = 1000;    // retained history per topic
 const ROTATE_MS = 6 * 60 * 60 * 1000; // matches the 6h cron cadence
 
+// `raw` (verbatim rss.app item) is NOT stored — no read path used it and it was
+// dead weight on a ~100k-row table (#storage-trim 2026-07-22).
 const NEWS_COLS = [
   'topic_id', 'external_id', 'url', 'title', 'description',
-  'source_name', 'source_url', 'image_url', 'published_at', 'raw',
+  'source_name', 'source_url', 'image_url', 'published_at',
 ];
 
 function firstString(...vals) {
@@ -64,7 +66,6 @@ function mapStory(topicId, item) {
     firstString(item.source_url) || (url ? `https://${hostOf(url)}` : null),
     firstString(item.image, item.image_url, item.thumbnail),
     parseDate(item.date_published || item.pub_date || item.published_at || item.date),
-    JSON.stringify(item),
   ];
 }
 
@@ -115,7 +116,6 @@ module.exports = async function handler(req, res) {
       const rows = items.map((it) => mapStory(topic.id, it)).filter(Boolean);
 
       inserted += await bulkInsert(sql, 'news_stories', NEWS_COLS, rows, {
-        jsonbCols: ['raw'],
         conflict: 'ON CONFLICT (topic_id, external_id) DO NOTHING',
       });
 

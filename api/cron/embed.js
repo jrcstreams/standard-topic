@@ -24,23 +24,17 @@ module.exports = async function handler(req, res) {
   const n = Math.min(Math.max(parseInt(req.query.n, 10) || 64, 1), 100);
 
   try {
-    const remRows = await sql`SELECT
-        (SELECT count(*) FROM news_stories   WHERE embedding IS NULL) AS news,
-        (SELECT count(*) FROM trending_items WHERE embedding IS NULL) AS trends`;
-    const remaining = { news: Number(remRows[0].news), trends: Number(remRows[0].trends) };
+    // Only news_stories embeddings are queried (semantic search in api/news-search).
+    // trending_items.embedding was written but NEVER read — no longer embedded, and
+    // the column is dropped in the storage-trim migration (#storage-trim 2026-07-22).
+    const remRows = await sql`SELECT count(*) AS news FROM news_stories WHERE embedding IS NULL`;
+    const remaining = { news: Number(remRows[0].news) };
 
-    let table = 'news_stories';
-    let rows = await sql.query(
+    const table = 'news_stories';
+    const rows = await sql.query(
       `SELECT id, coalesce(title,'') || ' ' || coalesce(description,'') AS text
          FROM news_stories WHERE embedding IS NULL ORDER BY id DESC LIMIT ${n}`
     );
-    if (!rows.length) {
-      table = 'trending_items';
-      rows = await sql.query(
-        `SELECT id, coalesce(query,'') || ' ' || coalesce(category,'') AS text
-           FROM trending_items WHERE embedding IS NULL ORDER BY id DESC LIMIT ${n}`
-      );
-    }
     if (!rows.length) return res.status(200).json({ ok: true, embedded: 0, remaining, done: true });
 
     let embedded = 0;

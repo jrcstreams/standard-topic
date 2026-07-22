@@ -31,7 +31,6 @@ CREATE TABLE IF NOT EXISTS news_stories (
   image_url     TEXT,
   published_at  TIMESTAMPTZ,
   fetched_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
-  raw           JSONB,
   search_vector TSVECTOR GENERATED ALWAYS AS (
     to_tsvector('english', coalesce(title, '') || ' ' || coalesce(description, ''))
   ) STORED
@@ -63,8 +62,7 @@ CREATE TABLE IF NOT EXISTS trending_items (
   started_at       TIMESTAMPTZ,
   ended_at         TIMESTAMPTZ,
   active           BOOLEAN,
-  trend_breakdown  JSONB,
-  raw              JSONB
+  trend_breakdown  JSONB
 );
 
 CREATE INDEX IF NOT EXISTS trending_snapshot_geo_idx
@@ -103,14 +101,16 @@ CREATE TABLE IF NOT EXISTS ai_usage (
 );
 
 -- ---------------------------------------------------------------------------
--- Semantic search (pgvector). Embeddings (Gemini text-embedding-004 = 768-dim)
--- live alongside each story/trend; HNSW cosine index powers nearest-neighbor
--- "meaning" search so e.g. "horse" surfaces Kentucky Derby coverage.
--- Backfilled + kept current by /api/cron/embed.
+-- Semantic search (pgvector). Embeddings (Gemini gemini-embedding-001, 256-dim
+-- Matryoshka truncation) live alongside each NEWS story; an HNSW cosine index
+-- powers nearest-neighbor "meaning" search so e.g. "horse" surfaces Kentucky
+-- Derby coverage. Backfilled + kept current by /api/cron/embed.
+-- NOTE: only news_stories is embedded — trending_items had an embedding column
+-- that no read path ever queried, so it was dropped (#storage-trim 2026-07-22).
+-- Dim MUST match lib/gemini.js GEMINI_EMBED_DIM default (256).
 -- ---------------------------------------------------------------------------
 CREATE EXTENSION IF NOT EXISTS vector;
-ALTER TABLE news_stories   ADD COLUMN IF NOT EXISTS embedding vector(768);
-ALTER TABLE trending_items ADD COLUMN IF NOT EXISTS embedding vector(768);
+ALTER TABLE news_stories ADD COLUMN IF NOT EXISTS embedding vector(256);
 CREATE INDEX IF NOT EXISTS news_embedding_idx
   ON news_stories USING hnsw (embedding vector_cosine_ops);
 
