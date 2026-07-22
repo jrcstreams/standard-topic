@@ -553,6 +553,9 @@ function openNavDropdown(cfg) {
         <div class="aii-nav-dd-titles">
           <div class="aii-nav-dd-title">${cfg.spark ? '<span class="aii-nav-dd-spark">✦</span> ' : ''}${escapeHTML(cfg.title || '')}</div>
           ${cfg.subtitle ? `<div class="aii-nav-dd-sub">${escapeHTML(cfg.subtitle)}</div>` : ''}
+          ${Array.isArray(cfg.headButtons) && cfg.headButtons.length
+            ? `<div class="aii-nav-dd-headbtns">${cfg.headButtons.map((b, i) => `<a href="${escapeAttr(b.href || '#')}" class="aii-nav-dd-headbtn${b.primary ? ' is-primary' : ''}" data-navdd-headbtn="${i}">${b.icon || ''}<span>${escapeHTML(b.label)}</span></a>`).join('')}</div>`
+            : ''}
           ${cfg.headLink ? `<a href="${escapeAttr(cfg.headLink.href)}" class="aii-nav-dd-headlink" data-navdd-headlink><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>${escapeHTML(cfg.headLink.label)}</span></a>` : ''}
         </div>
         <button type="button" class="aii-nav-dd-close" data-navdd-close aria-label="Close">${X_IC_NAVDD}</button>
@@ -567,6 +570,13 @@ function openNavDropdown(cfg) {
     </div>`;
   const closeFn = cfg.onClose || closeNavDropdown;
   panel.querySelector('[data-navdd-close]')?.addEventListener('click', closeFn);
+  // Head action buttons (e.g. Topics: Homepage · Search Custom Topic).
+  if (Array.isArray(cfg.headButtons)) {
+    panel.querySelectorAll('[data-navdd-headbtn]').forEach((el) => {
+      const b = cfg.headButtons[Number(el.dataset.navddHeadbtn)];
+      if (b && typeof b.onClick === 'function') el.addEventListener('click', (e) => { e.preventDefault(); b.onClick(); });
+    });
+  }
   overlay.onclick = closeFn;
   const sc = panel.querySelector('[data-navdd-scroll]');
   if (sc) sc.addEventListener('scroll', updateNavDdFades, { passive: true });
@@ -601,6 +611,9 @@ function wireNavDdAccordions(panel) {
 }
 
 const AIIDD_ARROW = '<svg class="aiidd-arrow" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>';
+// Icons for the Topics-dropdown head buttons (Homepage · Search Custom Topic).
+const NAVDD_HOME_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>';
+const NAVDD_SEARCH_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
 
 // ── The main-nav "Prompts" dropdown ──────────────────────────────────────────
 // Two paths: "Build a Custom Prompt" (the prompt builder, inline) and "Prompt
@@ -768,20 +781,15 @@ function topicsNavDdCfg() {
     key: 'topics', triggerId: 'nav-topics',
     title: 'All Topics', ariaLabel: 'All topics',
     subtitle: 'Browse every topic and its subtopics.',
-    headLink: { label: 'Search any topic', href: '#/search' },
+    // Two head buttons: Homepage (left) + Search Custom Topic (right, primary).
+    headButtons: [
+      { label: 'Homepage', href: '#/', icon: NAVDD_HOME_IC, onClick: () => { closeNavDropdown(); navigate('#/'); } },
+      { label: 'Search Custom Topic', href: '#/search', primary: true, icon: NAVDD_SEARCH_IC, onClick: () => { openSearchFromNav(); } },
+    ],
     contentHTML: topicsTreeHTML(),
     wire: (panel) => {
       wireNavDdAccordions(panel);
       panel.querySelectorAll('[data-aiidd-link]').forEach((a) => a.addEventListener('click', () => closeNavDropdown()));
-      // "Search any topic" — open Search reliably (same hash-independent path as the
-      // Search nav icon). navigate('#/search') alone was a no-op when the hash was
-      // already #/search — e.g. Search had been opened then this Topics dropdown
-      // switched in over it, leaving the hash stuck at #/search (#img177/#img193).
-      const headlink = panel.querySelector('[data-navdd-headlink]');
-      if (headlink) headlink.addEventListener('click', (e) => {
-        e.preventDefault();
-        openSearchFromNav();
-      });
     },
   };
 }
@@ -2371,7 +2379,13 @@ function renderStickyHeroBar(container, route) {
   }
 
   const closeMenu = () => { navPanel.classList.remove('is-open'); navOverlay.classList.remove('is-open'); document.body.style.overflow = ''; };
-  const openMenu = () => { navPanel.classList.add('is-open'); navOverlay.classList.add('is-open'); document.body.style.overflow = 'hidden'; requestAnimationFrame(updateScrollOverflow); };
+  // Always open to the DEFAULT view: collapse any expanded topic accordion and
+  // reset the scroll position so it never reopens where you left off (#img26).
+  const resetMenu = () => {
+    navPanel.querySelectorAll('.navmenu-topic-acc[open]').forEach((d) => { d.open = false; });
+    if (scrollEl) scrollEl.scrollTop = 0;
+  };
+  const openMenu = () => { resetMenu(); navPanel.classList.add('is-open'); navOverlay.classList.add('is-open'); document.body.style.overflow = 'hidden'; requestAnimationFrame(updateScrollOverflow); };
 
   container.querySelector('#nav-hamburger').addEventListener('click', openMenu);
   navOverlay.addEventListener('click', closeMenu);

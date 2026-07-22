@@ -1260,8 +1260,8 @@ body.hide-cta .sticky-cta { display: none !important; }
 .navmenu-subtopic-link:hover { background: color-mix(in srgb, var(--color-primary) 8%, #fff); color: var(--color-primary); text-decoration: none; }
 /* Prominent parent link at the top of the nested list — accent colour, with a
    chevron so it reads clearly as a navigable link (not just a header). */
-.navmenu-subtopic-parent { display: flex; align-items: center; gap: 4px; color: #2f6fe0; font-weight: 700; }
-.navmenu-subtopic-parent:hover { color: #1f5fd0; background: #eef3ff; }
+.navmenu-subtopic-parent { display: flex; align-items: center; gap: 4px; color: #2f4d9e; font-weight: 700; }
+.navmenu-subtopic-parent:hover { color: #26407f; background: #eef2fb; }
 .navmenu-subtopic-arrow { flex: none; transition: transform .14s; }
 .navmenu-subtopic-parent:hover .navmenu-subtopic-arrow { transform: translateX(2px); }
 
@@ -18101,26 +18101,34 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
     height: calc(100dvh - var(--nav-h) - var(--subnav-height, 66px)) !important;
   }
 }
-/* Step 1 — shorten the two long labels (AI Insights→Insights, Trending→Trends). */
-@media (max-width: 480px) {
+/* Progressive DROP (revamp — icon+label pairs stay intact; whole items are removed
+   as space runs out, NOT their labels). Order: drop Prompts, then drop Home, then
+   shorten Trending's label + shrink the title only when truly cramped (#img28-nav).
+   Prompts + Home remain reachable via the hamburger menu. */
+/* Step 1 — drop Prompts (the two-row wrap used to trigger here). */
+@media (max-width: 640px) { #nav-prompts { display: none !important; } }
+/* Step 2 — drop Home. */
+@media (max-width: 500px) { #nav-home { display: none !important; } }
+/* Step 3 — tight: shorten Trending→"Trends", tighten the remaining 3 items, and let
+   the site title start giving up size. */
+@media (max-width: 430px) {
   .nl-full { display: none; }
   .nl-short { display: inline; }
-  .navbtn { min-width: 46px; padding: 6px 7px; }
-}
-/* Step 2 — Home & Search icons read fine on their own; drop THEIR labels first. */
-@media (max-width: 430px) {
-  #nav-home .navbtn-label, #nav-search .navbtn-label { display: none; }
-  .navbtn { min-width: 0; padding: 6px 6px; }
+  .navbtn { min-width: 44px; padding: 6px 6px; }
   .sticky-hero-inner { gap: 0.55rem; }
+  .sticky-hero-inner .sticky-title { font-size: 1.14rem; }
 }
-/* Step 3 — very tight: all labels off (icons only). The site title stays. */
-@media (max-width: 380px) {
-  .navbtn-label { display: none; }
-}
-@media (max-width: 340px) {
-  .sticky-hero-inner .sticky-title { font-size: 1.04rem; }
+/* Step 4 — smallest phones: shrink the title + hamburger a touch more so the three
+   remaining items keep their labels without overflowing. */
+@media (max-width: 360px) {
+  .sticky-hero-inner .sticky-title { font-size: 1.02rem; }
   .sticky-hero-inner .nav-hamburger { width: 19px; }
   .navbtn { padding: 6px 5px; }
+  .sticky-hero-inner { gap: 0.45rem; }
+}
+@media (max-width: 330px) {
+  .sticky-hero-inner .sticky-title { font-size: 0.92rem; }
+  .navbtn { padding: 6px 4px; }
 }
 
 /* ═══ Homepage "Home" dropdown picker (revamp396, #88) ════════════════════════
@@ -18475,6 +18483,19 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .aii-nav-dd-headlink { display: inline-flex; align-items: center; gap: 6px; margin-top: 9px; color: #1d4ed8; font-size: 0.86rem; font-weight: 600; text-decoration: none; }
 .aii-nav-dd-headlink:hover { color: #1e40af; text-decoration: underline; }
 .aii-nav-dd-headlink svg { flex: none; }
+/* Topics dropdown head action buttons — Homepage (quiet) + Search Custom Topic
+   (primary, deep blue). Sit as a pair under the subtitle. */
+.aii-nav-dd-headbtns { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; }
+.aii-nav-dd-headbtn {
+  display: inline-flex; align-items: center; gap: 7px; padding: 8px 15px; border-radius: 999px;
+  font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; text-decoration: none;
+  border: 1px solid #d6ddea; background: #fff; color: #33517f;
+  transition: background .14s ease, border-color .14s ease, color .14s ease;
+}
+.aii-nav-dd-headbtn svg { flex: none; }
+.aii-nav-dd-headbtn:hover { background: #f4f6fb; border-color: #c3cde0; color: #26375a; text-decoration: none; }
+.aii-nav-dd-headbtn.is-primary { background: #2f4d9e; border-color: #2f4d9e; color: #fff; }
+.aii-nav-dd-headbtn.is-primary:hover { background: #26407f; border-color: #26407f; color: #fff; }
 .aii-nav-dd-close {
   flex: 0 0 auto; width: 36px; height: 36px; border-radius: 10px;
   border: 1px solid var(--color-surface-border); background: #fff; color: #475569;
@@ -18679,10 +18700,12 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .aiidd-vlist { display: flex; flex-direction: column; padding: 2px 8px 12px 16px; }
 .aiidd-vall {
   display: inline-flex; align-items: center; gap: 0.6rem; align-self: flex-start;
-  font-size: 0.95rem; font-weight: 700; color: #2563eb; text-decoration: none;
+  /* Deeper, richer blue (not neon) — sits between the old bright royal and the
+     app's dark navy (#img28). */
+  font-size: 0.95rem; font-weight: 700; color: #2f4d9e; text-decoration: none;
   padding: 8px 0 9px;
 }
-.aiidd-vall:hover { color: #1d4ed8; }
+.aiidd-vall:hover { color: #26407f; }
 .aiidd-vall .aiidd-vall-chev { margin: 1px 0 0 -0.3rem; }
 .aiidd-vlink {
   display: flex; align-items: center; gap: 0.6rem;
@@ -18901,50 +18924,24 @@ button.aiidd-vlink { align-self: flex-start; }
   background: none !important; color: rgba(255, 255, 255, 0.82) !important;
 }
 
-/* ── Mobile nav: two rows — the hamburger sits IN LINE with the centered site
-   title (row 1), then the nav icons spread across their own line (row 2), with a
-   hairline separator + a little breathing room (#397/#404-407). Kicks in at ≤640
-   so the cramped single-row state (hamburger shoved left before the break) is gone —
-   still above tablet portrait (768px), so tablets keep the single row (#img408-411);
-   --nav-h grows so the app content clears both rows. ─────────────────────────── */
+/* ── Mobile nav: STAY single-row (no two-row wrap, #img28-nav). The hamburger +
+   site title + the icon strip all share one line at every width; as space runs out
+   we DROP whole items (Prompts first, then Home — see the drop steps above) rather
+   than wrapping the icons to a second row. Height stays the SAME as the 561–899
+   single row (--nav-h = 62px), so the bar never grows. ────────────────────────── */
 @media (max-width: 640px) {
-  :root { --nav-h: 112px; }
-  /* The two-row grid renders a few px SHORTER than --nav-h (content-driven ~108px),
-     while the subnav is pinned at top:112px — scrolling content peeked through the
-     see-through strip between them (#img582). Pin the header's own height to
-     --nav-h so its dark background always meets the subnav flush. */
   #site-header.is-sticky-hero { height: var(--nav-h); }
   .sticky-hero-inner {
-    display: grid !important;
-    /* Hamburger + site title LEFT-aligned together on row 1 (title next to the
-       hamburger, not centered, #img213); the icon strip spans row 2. */
-    grid-template-columns: auto 1fr;
-    grid-template-areas: "burger brand" "nav nav";
-    /* Row 1 (hamburger + site title) gets a comfortable fixed height so it doesn't
-       feel cramped/short; row 2 is the icon strip. Both rows vertically center
-       their contents (#img163/#img164). */
-    grid-template-rows: 40px auto;
-    /* More breathing room between the hamburger and the site title (#img322). */
-    align-items: center; column-gap: 1.1rem; row-gap: 4px;
-    padding: 6px 0.9rem 0 !important; min-height: 0;
+    display: flex !important; flex-wrap: nowrap; align-items: center;
+    gap: 0.85rem; padding: 0.5rem 1rem !important; min-height: var(--nav-h);
   }
-  .sticky-hero-inner .nav-hamburger { grid-area: burger; justify-self: start; align-self: center; margin: 0; width: 21px; height: 15px; }
-  .sticky-hero-inner .nav-hamburger span { height: 2.5px; }
-  .sticky-hero-inner .sticky-brand { grid-area: brand; justify-self: start; align-self: center; margin: 0; display: flex; align-items: center; }
-  .sticky-hero-inner .sticky-title { font-size: 1.22rem; letter-spacing: -0.02em; line-height: 1; }
-  .sticky-hero-inner .sticky-actions.navbtns {
-    /* Justified/spread icon strip (#img635) — the original space-around layout,
-       no separators. */
-    grid-area: nav; justify-content: space-around;
-    margin: 0 -0.9rem !important;
-    /* Real vertical room around the icons + labels so the strip doesn't feel cut
-       off (#img194). --nav-h is bumped to match the taller strip so the subnav +
-       nav dropdowns (positioned at top:var(--nav-h)) still clear it (#img179-182). */
-    padding: 7px 0.9rem 8px; border-top: 1px solid rgba(255, 255, 255, 0.12);
-  }
-  .sticky-hero-inner .sticky-actions.navbtns .navbtn { padding: 5px 6px; gap: 3px; }
-  /* Two-row nav has room for ALL labels — undo the single-row progressive hiding
-     (Home/Search were losing their labels) so every icon is labelled + aligned. */
+  .sticky-hero-inner .nav-hamburger { margin: 0; width: 21px; height: 15px; flex: none; }
+  .sticky-hero-inner .sticky-brand { margin: 0; display: flex; align-items: center; flex: 0 1 auto; min-width: 0; }
+  .sticky-hero-inner .sticky-title { font-size: 1.22rem; letter-spacing: -0.02em; line-height: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* Icons stay on the title's line, grouped to the right edge. */
+  .sticky-hero-inner .sticky-actions.navbtns { order: 1; margin-left: auto !important; flex: none; }
+  .sticky-hero-inner .sticky-actions.navbtns .navbtn { padding: 6px 7px; gap: 4px; }
+  /* Keep every VISIBLE item's label — we drop items, not labels. */
   .sticky-hero-inner .sticky-actions.navbtns .navbtn-label { display: block !important; }
   .sticky-hero-inner .nav-search-mobile { display: none !important; }
   .sticky-hero-inner .sticky-page-name { display: none !important; }
