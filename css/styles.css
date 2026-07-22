@@ -19074,13 +19074,15 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
      (same as page titles) sets L1 typographically apart from the sans-serif L2
      pills — real hierarchy, not just a size delta (#img609). */
   background: none !important; font-family: var(--font-display); letter-spacing: -0.015em;
-  font-size: clamp(0.92rem, 0.89rem + 0.2vw, 0.99rem); font-weight: 600; color: var(--color-text-muted, #64748b);
+  /* A touch lighter than before (600→500) so the row reads calmer; the active tab
+     still steps up to 600 for clear active/inactive differentiation (#img15). */
+  font-size: clamp(0.92rem, 0.89rem + 0.2vw, 0.99rem); font-weight: 500; color: var(--color-text-muted, #64748b);
   white-space: nowrap; transition: color .12s;
 }
 .topic-subnav-controls .ptab:hover { color: #33517f !important; background: none !important; }
 .topic-subnav-controls .ptab.is-active,
 .topic-subnav-controls .ptab.is-active:hover {
-  color: #26375a !important; font-weight: 700 !important; background: none !important;
+  color: #26375a !important; font-weight: 600 !important; background: none !important;
 }
 /* The sliding indicator — hugs the active WORD (top set by JS), slides on switch. */
 .topic-paths-nav .ptab-underline {
@@ -19127,7 +19129,10 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
      matches the header rules on the other tabs (#img653). Pills align at the
      content-left edge (flush with the L1 tabs + cards). */
   margin: 0;
-  padding: 11px 0 10px;
+  /* Balanced vertical rhythm: the pill row sits centred between the subtext above
+     and the separator below (#img14). Same vertical padding as the stuck state so
+     the bar doesn't change height when it pins. */
+  padding: 12px 0 13px;
   border-bottom: 1px solid #e7ecf3;
   position: sticky; top: 0; background: #fff; z-index: 30;
   transition: box-shadow .2s ease, border-color .2s ease;
@@ -19138,7 +19143,7 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    don't move horizontally. */
 .topic-ai-subnav.is-stuck {
   margin: 0 calc(50% - 50vw);
-  padding: 11px calc(50vw - 50%) 12px;
+  padding: 12px calc(50vw - 50%) 13px;
   /* Pinned bar earns real prominence: a solid divider + a deeper drop shadow so it
      reads as a floating toolbar over the scrolling content, not a faint hairline
      (#img10). */
@@ -19321,7 +19326,7 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
    carries the separator, not the header). */
 /* Tight bottom padding pulls the Catch Up row UP close to the subtext in the
    load state (#img655); the row's own padding (its sticky height) is untouched. */
-.topic-ai-head { padding-bottom: 4px; margin-bottom: 0; border-bottom: none; }
+.topic-ai-head { padding-bottom: 2px; margin-bottom: 0; border-bottom: none; }
 /* News tab: full-width column so the header stacks above the news content
    (#topic-tab-body is a flex row, #img652). */
 /* News Feed has no page header now (#img670) — a small top pad keeps the first
