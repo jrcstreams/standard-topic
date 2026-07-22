@@ -1,48 +1,59 @@
 -- Storage trim — one-time migration to get back under the 0.5 GB Neon free tier.
--- Run this ONCE in the Neon SQL editor (or `npm run db:migrate` after wiring it in).
--- Pairs with the code changes in api/cron/{trending,news,embed}.js + lib/gemini.js
--- that stop WRITING the dropped columns and self-prune trending going forward.
+-- Run in the Neon SQL Editor in THREE steps (copy each block, Run, then the next).
+-- Pairs with code in api/cron/{trending,news,embed}.js + lib/gemini.js that stops
+-- WRITING the dropped columns and self-prunes trending going forward.
 --
 -- Decisions (2026-07-22): keep semantic search but at 256-dim; 30-day trend
 -- retention; stay on the free tier.
 --
--- Postgres does NOT shrink files on DELETE / DROP COLUMN — the VACUUM FULL at the
--- end is what actually reclaims the space Neon bills for. Each VACUUM FULL briefly
--- rewrites (and exclusively locks) its table; fine for this low-traffic app.
+-- WHY three steps: dropping the HNSW index (STEP 2) frees its space immediately,
+-- giving headroom before the VACUUMs. VACUUM FULL (STEP 3) is what actually
+-- reclaims the rest — but it CANNOT run in the same batch as other statements, so
+-- it's isolated. Run STEP 3's lines one at a time if the editor complains.
 
--- 0) OPTIONAL — see sizes before/after:
---   SELECT relname, pg_size_pretty(pg_total_relation_size(c.oid)) total
---   FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
---   WHERE n.nspname='public' AND c.relkind='r'
---   ORDER BY pg_total_relation_size(c.oid) DESC;
 
--- 1) TRENDING — apply 30-day retention (append-only, was unbounded).
-DELETE FROM trending_items
- WHERE snapshot_at < now() - interval '30 days';
+-- =========================================================================
+-- STEP 1 — see current sizes (optional, for before/after comparison)
+-- =========================================================================
+SELECT relname AS object,
+       pg_size_pretty(pg_total_relation_size(c.oid)) AS total,
+       pg_size_pretty(pg_indexes_size(c.oid))         AS indexes
+FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
+WHERE n.nspname='public' AND c.relkind='r'
+ORDER BY pg_total_relation_size(c.oid) DESC;
 
--- 2) TRENDING — drop the two dead columns: embedding was never queried by any
---    endpoint; raw (verbatim SerpAPI item) was never read.
+
+-- =========================================================================
+-- STEP 2 — trim data + drop dead objects (run this whole block together)
+-- =========================================================================
+
+-- 30-day retention on the append-only trending table.
+DELETE FROM trending_items WHERE snapshot_at < now() - interval '30 days';
+
+-- Drop the big HNSW vector index FIRST — its space is freed immediately.
+DROP INDEX IF EXISTS news_embedding_idx;
+
+-- Drop dead columns (no read path ever used any of these).
 ALTER TABLE trending_items DROP COLUMN IF EXISTS embedding;
 ALTER TABLE trending_items DROP COLUMN IF EXISTS raw;
+ALTER TABLE news_stories   DROP COLUMN IF EXISTS raw;
 
--- 3) NEWS — drop raw (verbatim rss.app item); no read path ever used it.
-ALTER TABLE news_stories DROP COLUMN IF EXISTS raw;
-
--- 4) NEWS — shrink embeddings 768 -> 256 dims (3x smaller). This clears existing
---    news vectors; /api/cron/embed refills them at 256 over the next days. The
---    hybrid search endpoint falls back to keyword FTS in the meantime.
-DROP INDEX IF EXISTS news_embedding_idx;
+-- Shrink news embeddings 768 -> 256 dims. Clears existing news vectors; the embed
+-- cron refills at 256 over the next days (search falls back to keyword meanwhile).
 ALTER TABLE news_stories DROP COLUMN IF EXISTS embedding;
 ALTER TABLE news_stories ADD COLUMN embedding vector(256);
 CREATE INDEX news_embedding_idx
   ON news_stories USING hnsw (embedding vector_cosine_ops);
 
--- 5) OPTIONAL — clear AI-insight rows orphaned by news pruning (keyed by story URL).
+-- OPTIONAL — clear AI-insight rows orphaned by news pruning (keyed by story URL):
 -- DELETE FROM ai_insights
---  WHERE entity_type = 'news'
---    AND entity_key NOT IN (SELECT url FROM news_stories);
+--  WHERE entity_type = 'news' AND entity_key NOT IN (SELECT url FROM news_stories);
 
--- 6) RECLAIM — the step that actually frees Neon-billed bytes.
+
+-- =========================================================================
+-- STEP 3 — reclaim the freed space (run these THREE lines by themselves;
+--          if one errors, run each on its own). Do trending first.
+-- =========================================================================
 VACUUM FULL trending_items;
 VACUUM FULL news_stories;
 VACUUM FULL ai_insights;
