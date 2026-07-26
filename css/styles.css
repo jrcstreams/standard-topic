@@ -19116,6 +19116,10 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
      and the separator below (#img14). Same vertical padding as the stuck state so
      the bar doesn't change height when it pins. */
   padding: 12px 0 13px;
+  /* A matching faint separator ABOVE the pills too (between the subtext and the row),
+     so the pill row reads as a bracketed band (#img36). Hidden when pinned (the
+     subtext has scrolled away by then). */
+  border-top: 1px solid #e7ecf3;
   border-bottom: 1px solid #e7ecf3;
   position: sticky; top: 0; background: #fff; z-index: 30;
   transition: box-shadow .2s ease, border-color .2s ease;
@@ -19129,7 +19133,8 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
   padding: 12px calc(50vw - 50%) 13px;
   /* Pinned bar earns real prominence: a solid divider + a deeper drop shadow so it
      reads as a floating toolbar over the scrolling content, not a faint hairline
-     (#img10). */
+     (#img10). The top separator is dropped when pinned (no subtext above it). */
+  border-top-color: transparent;
   border-bottom-color: #d0d8e4;
   box-shadow: 0 8px 18px -10px rgba(15, 26, 46, 0.28);
 }
@@ -19309,7 +19314,7 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
    carries the separator, not the header). */
 /* Tight bottom padding pulls the Catch Up row UP close to the subtext in the
    load state (#img655); the row's own padding (its sticky height) is untouched. */
-.topic-ai-head { padding-bottom: 2px; margin-bottom: 0; border-bottom: none; }
+.topic-ai-head { padding-bottom: 12px; margin-bottom: 0; border-bottom: none; }
 /* News tab: full-width column so the header stacks above the news content
    (#topic-tab-body is a flex row, #img652). */
 /* News Feed has no page header now (#img670) — a small top pad keeps the first
