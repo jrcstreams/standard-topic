@@ -19378,6 +19378,10 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 .prompts-topic-host .aii-fi-acc-ic { width: 28px; height: 28px; }
 .prompts-topic-host .aii-fi-acc-ic svg { width: 21px; height: 21px; }
 .prompts-topic-host .aii-fi-acc-name { font-size: 0.95rem; }
+/* Indent the prompt summary so it lines up under the accordion TITLE text (past the
+   icon), not hanging out to the left of it (#img41). Matches the header's
+   icon(28) + gap(12) + row/panel padding delta. */
+.prompts-topic-host .aii-pc-desc { padding-left: 50px; }
 /* Nav-dropdown Prompt Library has its own header (setHead), so hide the built-in
    page header the section-accordion mode adds (#img663). */
 .pb-navdd-host .aii-tabhead { display: none; }
