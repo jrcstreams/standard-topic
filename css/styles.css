@@ -19380,10 +19380,10 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 .prompts-topic-host .aii-fi-acc-ic { width: 28px; height: 28px; }
 .prompts-topic-host .aii-fi-acc-ic svg { width: 21px; height: 21px; }
 .prompts-topic-host .aii-fi-acc-name { font-size: 0.95rem; }
-/* Prompt summary sits FLUSH-LEFT with the rest of the panel column — the PROMPT
-   PREVIEW box, Submit button + note are all at the same left edge, so the summary
-   lines up with them (no inward padding, #img42). */
-.prompts-topic-host .aii-pc-desc { padding-left: 0; }
+/* Prompt summary aligns with the READABLE text column — the PROMPT PREVIEW label +
+   prompt text sit ~17px in from the box border, so match that (flush with the box
+   border read a hair too far left, #img45). */
+.prompts-topic-host .aii-pc-desc { padding-left: 17px; }
 /* Nav-dropdown Prompt Library has its own header (setHead), so hide the built-in
    page header the section-accordion mode adds (#img663). */
 .pb-navdd-host .aii-tabhead { display: none; }
