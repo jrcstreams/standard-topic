@@ -19398,6 +19398,10 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 .ins-tabpanel[data-ins-panel="explore"] .xf-acc + .xf-acc { border-top: 1px solid #eef1f6 !important; }
 .topic-explore-host .xf-acc[open] > .xf-sum,
 .ins-tabpanel[data-ins-panel="explore"] .xf-acc[open] > .xf-sum { border-radius: 0 !important; }
+/* Explore Further wrapped in the Prompts-style grey-band section header: the
+   .aii-secacc card supplies the single frame, so the inner .xf-list drops its own
+   border/radius/margin and just contributes the flush accordion rows (#img). */
+.topic-explore-host .ef-secacc .xf-list { border: none; border-radius: 0; margin-top: 0; }
 /* ── Topic-page PAGE HEADER (main title / topic subheader / subtext) matching the
    Search-dropdown header — shared by all four L1 tabs (#img650/#img651). More top
    gap from the subnav; subheader a touch bigger + tighter to the title; subtext

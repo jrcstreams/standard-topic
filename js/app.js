@@ -986,10 +986,12 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
         // Page header (main = tab title, subheader = topic, subtext), matching the
         // Prompts tab (#img650). Subtext rewritten without the em-dash.
         const efHead = `<div class="aii-tabhead"><p class="aii-tabhead-tx">Send this topic to an AI model, or dig into web sources across search, social, video and more.</p></div>`;
-        // A section title over the accordion group so it reads as a labelled block,
-        // not a bare list (#img64).
-        const efSecHead = `<h3 class="ef-tab-sectitle">AI Models &amp; Web Sources</h3>`;
-        host.innerHTML = efHead + efSecHead + exploreFurtherHTML({ prompt: efPrompt, webTerm: topic.name, name: topic.name });
+        // Grey-band section header matching the Prompts tab (.aii-secacc): title +
+        // subtext atop the clipped accordion card, open by default and collapsible.
+        const EF_CHEV = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+        const efBody = exploreFurtherHTML({ prompt: efPrompt, webTerm: topic.name, name: topic.name });
+        const efSec = `<details class="aii-secacc ef-secacc" open><summary class="aii-secacc-sum"><span class="aii-secacc-tx"><span class="aii-secacc-title">AI Models &amp; Web Sources</span><span class="aii-secacc-sub">External AI models plus web sources across search, social, video and fact-checking.</span></span><span class="aii-secacc-chev">${EF_CHEV}</span></summary><div class="aii-secacc-body">${efBody}</div></details>`;
+        host.innerHTML = efHead + efSec;
         wireExploreFurther(host);
         return;
       }
