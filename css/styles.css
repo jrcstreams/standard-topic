@@ -13513,7 +13513,10 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
    centred content column (#img22). */
 .search-panel--modal .search-panel-topfold::before {
   content: ''; position: absolute; top: 0; bottom: 0;
-  left: calc(50% - 50vw); width: 100vw;
+  /* Symmetric over-extension (not 100vw): covers the viewport edge-to-edge without
+     depending on centering, so a page scrollbar can't leave a gap on one side. The
+     over-extension is contained by the scroll's overflow-clip-margin. */
+  left: -50vw; right: -50vw;
   background: linear-gradient(180deg, #f6f8fc 0%, #e9eef6 100%);
   border-bottom: 1px solid #e2e8f2;
   z-index: -1; pointer-events: none;
