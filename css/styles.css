@@ -13469,7 +13469,7 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
 .search-panel-empty-chip:hover, .search-panel-empty-topic:hover {
   background: #fbfcfe; border-color: #c7d3e6; box-shadow: 0 6px 16px -12px rgba(15,26,46,.35); transform: translateY(-1px);
 }
-.search-panel-empty-chip svg { width: 17px; height: 17px; flex: none; color: #33517f; opacity: 1; }
+.search-panel-empty-chip svg { width: 17px; height: 17px; flex: none; color: #1a9553; opacity: 1; }
 .search-panel-empty-topic .search-panel-empty-topic-ic { display: inline-flex; flex: none; }
 .search-panel-empty-topic .search-panel-empty-topic-ic svg { width: 18px; height: 18px; display: block; color: #33517f; }
 .search-panel-empty-chip span, .search-panel-empty-topic span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
