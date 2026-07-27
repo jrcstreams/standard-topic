@@ -19829,3 +19829,19 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 .xf-leave-body { font-size: 0.84rem; color: var(--color-text-muted); line-height: 1.5; margin: 0; }
 .xf-leave-go { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; padding: 9px 16px; border: none; border-radius: 10px; background: #2563eb; color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.88rem; font-weight: 650; }
 .xf-leave-go:hover { background: #1d4ed8; }
+
+/* ═══ Homepage News Feed + Trending headers — align to the takeover-modal title
+   standard (.at-modal-title: 1.35rem / 700 / -0.025em / primary), keeping their navy
+   icon chips, so the two homepage columns read the same as All Topics / Prompts /
+   Trending modal headers. Appended last to win over the many earlier size overrides. */
+body.home-search #section-newsfeed .newsfeed-card .newsfeed-title,
+body.home-search #section-newsfeed .newsfeed-card .newsfeed-title-main,
+body.home-search #home-trending .trending-topics-title {
+  font-size: 1.35rem !important; font-weight: 700 !important;
+  letter-spacing: -0.025em !important; color: var(--color-primary) !important;
+}
+@media (max-width: 640px) {
+  body.home-search #section-newsfeed .newsfeed-card .newsfeed-title,
+  body.home-search #section-newsfeed .newsfeed-card .newsfeed-title-main,
+  body.home-search #home-trending .trending-topics-title { font-size: 1.2rem !important; }
+}
