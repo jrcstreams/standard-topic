@@ -13408,8 +13408,11 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
    left summary, then Trending (with a view-more link) and Featured Topics sections. */
 .search-panel--modal[data-state="collapsed"] .search-panel-empty {
   display: flex; flex: 1 1 auto; min-height: 0; flex-direction: column;
-  align-items: stretch; justify-content: flex-start; gap: 20px;
-  padding: 0.4rem 2px 2.5rem; text-align: left;
+  align-items: stretch; justify-content: flex-start; gap: 26px;
+  /* Real air below the grey top-fold before Trending; content capped + left-aligned
+     so the columns sit close together and the View-more links land at the list's
+     right edge instead of the far panel edge (#img52/#img54/#img55). */
+  max-width: 820px; padding: 22px 2px 2.5rem; text-align: left;
 }
 .search-panel-empty-head { display: flex; align-items: center; gap: 9px; }
 .search-panel-empty-ic {
@@ -13421,6 +13424,9 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
 .search-panel-empty-title { margin: 0; font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; letter-spacing: -0.015em; color: var(--color-primary); }
 .search-panel-empty-text { margin: -14px 0 0; font-size: 0.86rem; line-height: 1.5; color: var(--color-text-muted); }
 .search-panel-empty-sec { display: flex; flex-direction: column; align-items: stretch; gap: 12px; width: 100%; }
+/* Trending (2 cols, short terms) caps narrower than Featured (3 cols) so its two
+   columns sit close and its "View more" lands at the list edge (#img54/#img55). */
+[data-empty-trending] { max-width: 600px; }
 /* Redesigned empty-state sections (#img637): a structured header ROW — small
    uppercase eyebrow label (with mark) left, quiet "View more →" link right,
    hairline underneath — then the chip field. */
@@ -13435,7 +13441,8 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
   letter-spacing: 0.06em; text-transform: uppercase; color: #64748b;
 }
 .search-panel-empty-seclabel svg { flex: none; width: 16px; height: 16px; color: #33517f; }
-[data-empty-trending] .search-panel-empty-seclabel svg { color: #16a34a; }
+/* Section-header icon stays the calm off-blue (was green) — the GREEN reads only on
+   the individual trending list-item arrows (#img53). */
 .search-panel-empty-more { display: inline-flex; align-items: center; gap: 3px; border: none; background: none; padding: 0; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #3268b3; }
 .search-panel-empty-more svg { flex: none; }
 .search-panel-empty-more:hover { color: var(--color-primary); }
@@ -13493,8 +13500,8 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
    edges via the standard 50vw break-out; the content stays in the centred column. */
 .search-panel--modal .search-panel-topfold {
   flex: 0 0 auto;
-  margin: 0 calc(50% - 50vw) 4px;
-  padding: 0 calc(50vw - 50%) 14px;
+  margin: 0 calc(50% - 50vw);
+  padding: 2px calc(50vw - 50%) 20px;
   background: linear-gradient(180deg, #f6f8fc 0%, #e9eef6 100%);
   border-bottom: 1px solid #e2e8f2;
 }
@@ -18506,8 +18513,10 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 }
 .aii-nav-dd-headbtn svg { flex: none; width: 14px; height: 14px; }
 .aii-nav-dd-headbtn:hover { background: #f4f6fb; border-color: #c3cde0; color: #26375a; text-decoration: none; }
-.aii-nav-dd-headbtn.is-primary { background: #2f4d9e; border-color: #2f4d9e; color: #fff; }
-.aii-nav-dd-headbtn.is-primary:hover { background: #26407f; border-color: #26407f; color: #fff; }
+/* Filled + prominent, but a calmer, less-saturated navy so it doesn't shout next to
+   the quiet Homepage button (#img58). */
+.aii-nav-dd-headbtn.is-primary { background: #3a5285; border-color: #3a5285; color: #fff; }
+.aii-nav-dd-headbtn.is-primary:hover { background: #2f4570; border-color: #2f4570; color: #fff; }
 .aii-nav-dd-close {
   flex: 0 0 auto; width: 36px; height: 36px; border-radius: 10px;
   border: 1px solid var(--color-surface-border); background: #fff; color: #475569;
