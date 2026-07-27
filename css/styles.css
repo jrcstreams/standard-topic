@@ -13440,22 +13440,39 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
 .search-panel-empty-more svg { flex: none; }
 .search-panel-empty-more:hover { color: var(--color-primary); }
 /* Trending terms: soft grey card-chips (same family as the trend cards). */
-.search-panel-empty-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+/* Trending + Featured render as multi-column LISTS (a data display), not a wall of
+   pills — cleaner to scan when Search opens (#img49). Icons kept. */
+.search-panel-empty-chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; }
 .search-panel-empty-chip {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 8px 14px 8px 12px; border-radius: 10px; cursor: pointer;
-  border: 1px solid #e6ebf2; background: #f6f8fb;
-  font-family: var(--font-family); font-size: 0.83rem; font-weight: 600; color: #2b3852;
-  transition: border-color .14s, color .14s, background .14s;
+  display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
+  padding: 9px 8px; border: none; border-radius: 8px; background: none; cursor: pointer;
+  border-bottom: 1px solid #eef1f6;
+  font-family: var(--font-family); font-size: 0.9rem; font-weight: 500; color: #2b3852;
+  transition: background .12s, color .12s;
 }
-.search-panel-empty-chip svg { width: 14px; height: 14px; flex: none; color: #16a34a; opacity: 1; }
-.search-panel-empty-chip:hover { background: #fff; border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-surface-border)); color: var(--color-primary); }
-/* Featured topics: white pills with each topic's own mark. */
-.search-panel-empty-topics { display: flex; flex-wrap: wrap; gap: 8px; }
-.search-panel-empty-topic { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px 8px 12px; border-radius: 999px; border: 1px solid #dfe5ee; background: #fff; font-family: var(--font-family); font-size: 0.83rem; font-weight: 600; color: #2b3852; text-decoration: none; transition: border-color .14s, color .14s, background .14s; }
-.search-panel-empty-topic .search-panel-empty-topic-ic { display: inline-flex; }
-.search-panel-empty-topic .search-panel-empty-topic-ic svg { width: 14px; height: 14px; display: block; color: #33517f; }
-.search-panel-empty-topic:hover { border-color: color-mix(in srgb, var(--color-primary) 45%, transparent); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 4%, #fff); }
+.search-panel-empty-chip svg { width: 16px; height: 16px; flex: none; color: #16a34a; opacity: 1; }
+.search-panel-empty-chip span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.search-panel-empty-chip:hover { background: #f4f6fb; color: var(--color-primary); }
+/* Featured topics: same list treatment, one more column (short labels). */
+.search-panel-empty-topics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 24px; }
+.search-panel-empty-topic {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 9px 8px; border: none; border-radius: 8px; background: none; text-decoration: none;
+  border-bottom: 1px solid #eef1f6;
+  font-family: var(--font-family); font-size: 0.9rem; font-weight: 500; color: #2b3852;
+  transition: background .12s, color .12s;
+}
+.search-panel-empty-topic .search-panel-empty-topic-ic { display: inline-flex; flex: none; }
+.search-panel-empty-topic .search-panel-empty-topic-ic svg { width: 17px; height: 17px; display: block; color: #33517f; }
+.search-panel-empty-topic span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.search-panel-empty-topic:hover { background: #f4f6fb; color: var(--color-primary); }
+@media (max-width: 720px) {
+  .search-panel-empty-chips { grid-template-columns: 1fr; }
+  .search-panel-empty-topics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 460px) {
+  .search-panel-empty-topics { grid-template-columns: 1fr; }
+}
 /* Inset the results block by the same 0.2rem the .search-panel-barrow
    carries, so the "Search Intelligence" header (and accordions) line up
    with the search bar's left edge instead of sitting 0.2rem outside it. */
@@ -13470,6 +13487,19 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
    with a light separator; the search bar stays fixed; results scroll under. */
 .search-page-panel.takeover-panel { overflow: hidden; padding: 0; height: min(86vh, 680px); }
 .search-panel--modal { min-height: 0; display: flex; flex-direction: column; height: 100%; }
+/* Top fold: the header (title + subtitle + input) sits on a soft off-grey band (the
+   subnav colour) while the trending/featured lists + results below stay white — the
+   search entry reads as its own zone (#img49/#img50). Full-bleed to the dropdown
+   edges via the standard 50vw break-out; the content stays in the centred column. */
+.search-panel--modal .search-panel-topfold {
+  flex: 0 0 auto;
+  margin: 0 calc(50% - 50vw) 4px;
+  padding: 0 calc(50vw - 50%) 14px;
+  background: linear-gradient(180deg, #f6f8fc 0%, #e9eef6 100%);
+  border-bottom: 1px solid #e2e8f2;
+}
+/* Contain the full-bleed band so it never triggers a horizontal scrollbar. */
+.aii-nav-dd-search .aii-nav-dd-scroll { overflow-x: clip; }
 .search-panel--modal .search-panel-hero { flex-shrink: 0; }
 /* Search bar sits in the fixed top section; a full-width divider beneath it
    separates the bar from the scrolling results (bar above the line, results

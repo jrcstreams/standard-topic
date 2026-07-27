@@ -3741,6 +3741,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   const isModal = mode === 'modal';
   container.innerHTML = `
     <div class="search-panel search-panel--${mode}" data-state="collapsed">
+      ${isModal ? '<div class="search-panel-topfold">' : ''}
       <div class="search-panel-hero"><div class="search-panel-hero-inner">
         ${isModal
           ? `<h2 class="search-panel-title">Search</h2>
@@ -3758,6 +3759,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
         </form>
         <div class="search-panel-suggest" role="listbox" hidden></div>
       </div>
+      ${isModal ? '</div>' : ''}
       ${!isModal ? `<div class="search-panel-starters" aria-label="Popular topics"></div>` : ''}
       <div class="search-panel-results"><div class="search-panel-results-inner"></div></div>
       ${isModal
