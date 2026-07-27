@@ -4272,6 +4272,7 @@ function closeSearchPageModal(opts = {}) {
   if (!isSearchModalOpen()) return;
   searchModalTerm = '';
   searchPanelModalCtl = null;
+  if (searchBandCleanup) { searchBandCleanup(); searchBandCleanup = null; }
   closeNavDropdown();
 }
 
@@ -4299,6 +4300,36 @@ function renderSearchModalBody(host, term) {
   // Refresh the shell scroll-fades as results paint; focus the empty search.
   [200, 700, 1500].forEach((d) => setTimeout(updateNavDdFades, d));
   if (!term || !term.trim()) setTimeout(() => { try { searchPanelModalCtl.focus(); } catch (_) {} }, 80);
+  // Sync the full-width grey header band (painted on the dropdown root) to the header's
+  // live position/height — the band can't bleed from inside the clipping scroll column.
+  wireSearchHeaderBand(host);
+}
+
+let searchBandCleanup = null;
+function syncSearchHeaderBand() {
+  const root = document.querySelector('.aii-nav-dd-search');
+  const tf = root && root.querySelector('.search-panel-topfold');
+  if (!root || !tf) return;
+  const rr = root.getBoundingClientRect();
+  const tr = tf.getBoundingClientRect();
+  root.style.setProperty('--sp-band-top', (tr.top - rr.top) + 'px');
+  root.style.setProperty('--sp-band-h', tr.height + 'px');
+  root.classList.add('sp-band-ready');
+}
+function wireSearchHeaderBand(host) {
+  const root = host && host.closest('.aii-nav-dd-search');
+  const tf = host && host.querySelector('.search-panel-topfold');
+  if (!root || !tf) return;
+  if (searchBandCleanup) { searchBandCleanup(); searchBandCleanup = null; }
+  syncSearchHeaderBand();
+  requestAnimationFrame(syncSearchHeaderBand);
+  const ro = ('ResizeObserver' in window) ? new ResizeObserver(syncSearchHeaderBand) : null;
+  if (ro) ro.observe(tf);
+  window.addEventListener('resize', syncSearchHeaderBand);
+  searchBandCleanup = () => {
+    if (ro) ro.disconnect();
+    window.removeEventListener('resize', syncSearchHeaderBand);
+  };
 }
 
 function renderPage(route) {
