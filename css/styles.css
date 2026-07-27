@@ -19219,6 +19219,9 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* Explore view header (matches the Prompt Library section headers) — sits below
    the Back link with real air between them (#img604). */
 .aii-explore-sechead { margin-top: 6px; }
+/* Explore Further tab: a borderless section title over the accordion group (the
+   tab subtext already carries the separator above it, #img64). */
+.ef-tab-sectitle { margin: 0 2px 14px; font-family: var(--font-display); font-size: 1.14rem; font-weight: 600; letter-spacing: -0.006em; color: #33517f; }
 .aii-updated-pill {
   display: inline-flex; align-items: center; padding: 0; border-radius: 0;
   background: none; color: #94a1b5; font-size: 0.74rem; font-weight: 600;
@@ -19263,6 +19266,38 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 .aii-bview-summary .im-msec:first-child { padding-top: 18px; }
 .aii-bview-summary .im-msec:last-child { border-bottom: 1px solid #d3dbe8; }
 .aii-bview-summary .im-msec .im-msec-ic { background: #eef2fb; border: 1px solid #dbe3f2; color: #33517f; }
+/* Numbered card marker (01, 02…) in the icon slot — rhythm/structure over repeated
+   identical icons (#img59). */
+.im-msec-ic--num { font-family: var(--font-display); font-size: 0.82rem; font-weight: 700; letter-spacing: -0.01em; color: #33517f; }
+/* Bold LEAD sentence — a scannable hook above the (clamped) body. */
+.aii-bview-summary .aii-sec-lead { margin: 0 0 8px; font-size: 1rem; font-weight: 600; line-height: 1.5; color: #1e2d44; letter-spacing: -0.006em; }
+.aii-bview-summary .aii-sec-lead + .aii-sec-body { color: var(--color-text-muted); }
+/* Clamp the body to a short PREVIEW (~5 lines) with a soft fade; Show more expands. */
+.aii-bview-summary .aii-sec-clamp { max-height: 8.5em; overflow: hidden; -webkit-mask-image: linear-gradient(to bottom, #000 68%, transparent); mask-image: linear-gradient(to bottom, #000 68%, transparent); }
+.aii-bview-summary .im-msec.is-expanded .aii-sec-clamp { max-height: none; -webkit-mask-image: none; mask-image: none; }
+/* Collapsible SOURCES — a quiet toggle chip; the list drops open below it. */
+.aii-sec-sources--collapsible { margin-top: 14px; }
+.aii-sec-srctoggle {
+  display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px 6px 10px; border-radius: 999px;
+  border: 1px solid #dbe3f2; background: #f4f7fc; cursor: pointer; font-family: var(--font-family);
+  font-size: 0.78rem; font-weight: 600; color: #4b586c; transition: background .12s, border-color .12s, color .12s;
+}
+.aii-sec-srctoggle:hover { background: #eaf0fb; border-color: #c9d5ea; color: #33517f; }
+.aii-sec-srctoggle .ai-result-sub-ic svg { width: 14px; height: 14px; display: block; }
+.aii-srctoggle-chev { display: inline-flex; transition: transform .18s ease; }
+.aii-srctoggle-chev svg { width: 14px; height: 14px; }
+.aii-sec-sources--collapsible[data-open="true"] .aii-srctoggle-chev { transform: rotate(180deg); }
+.aii-sec-srclist { display: grid; gap: 4px; margin-top: 12px; }
+/* "Show N more insights" — a full-width quiet button that reveals the rest of the cards. */
+.aii-more-secs-btn {
+  display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%;
+  margin: 2px 0 4px; padding: 12px; border: 1px dashed #cdd7e6; border-radius: 12px; background: #fbfcfe;
+  cursor: pointer; font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; color: #33517f;
+  transition: background .12s, border-color .12s;
+}
+.aii-more-secs-btn:hover { background: #f2f6fc; border-color: #b7c5dd; }
+.aii-more-secs-chev { display: inline-flex; }
+.aii-more-secs-chev svg { width: 15px; height: 15px; }
 /* Per-section source expander: first 2 sources show, the rest reveal on demand. */
 .aii-sec-src-rest { display: grid; gap: 4px; }
 .aii-sec-src-rest[hidden] { display: none; }

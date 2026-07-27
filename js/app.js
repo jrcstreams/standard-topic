@@ -18,7 +18,7 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260722-revamp620';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260726-revamp639';
 import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260720-revamp609';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260717-revamp592';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
@@ -986,7 +986,10 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
         // Page header (main = tab title, subheader = topic, subtext), matching the
         // Prompts tab (#img650). Subtext rewritten without the em-dash.
         const efHead = `<div class="aii-tabhead"><p class="aii-tabhead-tx">Send this topic to an AI model, or dig into web sources across search, social, video and more.</p></div>`;
-        host.innerHTML = efHead + exploreFurtherHTML({ prompt: efPrompt, webTerm: topic.name, name: topic.name });
+        // A section title over the accordion group so it reads as a labelled block,
+        // not a bare list (#img64).
+        const efSecHead = `<h3 class="ef-tab-sectitle">AI Models &amp; Web Sources</h3>`;
+        host.innerHTML = efHead + efSecHead + exploreFurtherHTML({ prompt: efPrompt, webTerm: topic.name, name: topic.name });
         wireExploreFurther(host);
         return;
       }

@@ -127,14 +127,30 @@ function aiiSecIconKey(name) {
   if (/source|coverage/.test(n)) return 'sources';
   return 'summary';
 }
-function aiiSecHead(key, name, updatedLbl) {
+function aiiSecHead(key, name, updatedLbl, num) {
   // Icon sits inline-left of the title (top-aligned; title wraps in its own column,
   // never under the icon). The "AI Generated Text" tag is ALWAYS on its own line,
   // left-aligned, below the head — never inline with the title. The "Updated X ago"
   // data label sits as a sibling pill next to it (#img621).
+  // When a `num` is given, the icon slot shows a 2-digit index (01, 02…) so the
+  // stacked briefings read with rhythm/structure instead of the same repeated icon.
   const upd = updatedLbl ? `<span class="im-sec-updated">${esc(updatedLbl)}</span>` : '';
   const tag = key === 'sources' ? '' : `<div class="im-sec-aitag-row"><span class="im-sec-aitag">${LOGO}<span>AI Generated Text</span></span>${upd}</div>`;
-  return `<div class="im-msec-head"><span class="im-msec-ic">${AII_SEC_ICON[key] || AII_SEC_ICON.summary}</span><h3 class="im-msec-name">${esc(name)}</h3></div>${tag}`;
+  const mark = num ? `<span class="im-msec-num">${String(num).padStart(2, '0')}</span>` : (AII_SEC_ICON[key] || AII_SEC_ICON.summary);
+  return `<div class="im-msec-head"><span class="im-msec-ic${num ? ' im-msec-ic--num' : ''}">${mark}</span><h3 class="im-msec-name">${esc(name)}</h3></div>${tag}`;
+}
+// Pull the first sentence off a briefing body to use as a scannable LEAD/standout —
+// purely client-side (no extra Gemini call). Only when the body starts with prose
+// (not a bullet/heading) and the sentence is a reasonable hook length.
+function inlineFmt(s) { return esc(String(s || '')).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); }
+function splitLead(body) {
+  const txt = String(body || '').trim();
+  if (!txt || /^[#\-*•>\d]/.test(txt)) return { lead: '', rest: txt };
+  const m = txt.match(/^(.+?[.!?])(\s|$)/s);
+  if (!m) return { lead: '', rest: txt };
+  const lead = m[1].trim();
+  if (lead.length < 24 || lead.length > 220 || lead.length >= txt.length - 8) return { lead: '', rest: txt };
+  return { lead, rest: txt.slice(m[0].length).trim() };
 }
 function aiiMsec(id, name, inner) { return `<section class="im-msec" id="${id}" data-name="${escAttr(name)}">${inner}</section>`; }
 // Attribute the builder's source headlines to the section whose text they best
@@ -162,11 +178,19 @@ function attributeItemsToSections(items, sections) {
   }
   return { buckets, unmatched };
 }
-function secSourcesHTML(items, hideLabel) {
+function secSourcesHTML(items, hideLabel, collapsible) {
   if (!items || !items.length) return '';
   const row = (x) => `<a class="aii-sec-src" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer" title="${escAttr(x.title)}"><span class="aii-sec-src-tx"><span class="aii-sec-src-title">${esc(x.title)}</span>${x.meta ? `<span class="aii-sec-src-host">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`;
-  // Show the first 2 sources; the rest tuck behind a "View N more sources"
-  // expander so long source lists don't dominate the section card (#img599).
+  // Collapsible: the WHOLE sources block hides behind a "N sources ⌄" toggle so it
+  // adds no height to the card on load (#img59). Expands to the full list.
+  if (collapsible) {
+    const n = items.length;
+    return `<div class="aii-sec-sources aii-sec-sources--collapsible" data-open="false">
+      <button type="button" class="aii-sec-srctoggle" data-src-toggle aria-expanded="false">${SOURCES_BADGE}<span>${n} source${n > 1 ? 's' : ''}</span><span class="aii-srctoggle-chev">${CHEV}</span></button>
+      <div class="aii-sec-srclist" hidden>${items.map(row).join('')}</div>
+    </div>`;
+  }
+  // Show the first 2 sources; the rest tuck behind a "View N more sources" expander.
   const shown = items.slice(0, 2).map(row).join('');
   const rest = items.slice(2);
   const more = rest.length
@@ -902,11 +926,26 @@ export function renderAIIntelligence(container, scope) {
     const items = builderNewsItems().filter((x) => x.title && x.meta && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(String(x.title).trim()));
     const { buckets, unmatched } = attributeItemsToSections(items, list);
     const updatedLbl = bc.generatedAt ? `Updated ${relTime(bc.generatedAt)}` : '';
-    const summaryHTML = list.map((part, i) => {
+    // Each card: numbered header, a bold LEAD sentence (client-side, no extra API),
+    // the body CLAMPED to a preview with Show more, and its sources COLLAPSED behind
+    // a toggle — so the tab is scannable on load, not a wall of text (#img59/#img63).
+    const N_VISIBLE = 3;
+    const cardHTML = (part, i, num) => {
       const key = aiiSecIconKey(part.name);
-      const body = `<div class="aii-sec-body">${renderBriefBody(part.body, null)}</div>`;
-      return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name, updatedLbl) + body + secSourcesHTML(buckets[i]));
-    }).join('') + (unmatched.length ? aiiMsec('aii-msec-related', 'Related coverage', aiiSecHead('sources', 'Related coverage') + secSourcesHTML(unmatched, true)) : '');
+      const { lead, rest } = splitLead(part.body);
+      const leadHTML = lead ? `<p class="aii-sec-lead">${inlineFmt(lead)}</p>` : '';
+      const bodyInner = `${leadHTML}<div class="aii-sec-body">${renderBriefBody(rest || part.body, null)}</div>`;
+      const clamp = `<div class="aii-sec-clamp" data-sec-clamp>${bodyInner}</div><button type="button" class="aii-sec-more" hidden><span class="aii-sec-more-tx">Show more</span><span class="aii-sec-more-chev">${CHEV}</span></button>`;
+      return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name, updatedLbl, num) + clamp + secSourcesHTML(buckets[i], false, true));
+    };
+    const cards = list.map((part, i) => cardHTML(part, i, i + 1));
+    const relatedCard = unmatched.length ? aiiMsec('aii-msec-related', 'Related coverage', aiiSecHead('sources', 'Related coverage') + secSourcesHTML(unmatched, true, true)) : '';
+    const restCards = cards.slice(N_VISIBLE);
+    const hiddenCount = restCards.length + (relatedCard ? 1 : 0);
+    const hiddenBlock = hiddenCount
+      ? `<div class="aii-more-secs" hidden>${restCards.join('')}${relatedCard}</div><button type="button" class="aii-more-secs-btn" data-more-secs><span>Show ${hiddenCount} more insight${hiddenCount > 1 ? 's' : ''}</span><span class="aii-more-secs-chev">${CHEV}</span></button>`
+      : '';
+    const summaryHTML = cards.slice(0, N_VISIBLE).join('') + hiddenBlock;
     // Explore Further view = the shared clean-dropdown component (External AI Models
     // with Send-to / Direct Submit / Review, then web categories).
     const efP = explorePrompt();
@@ -945,6 +984,21 @@ export function renderAIIntelligence(container, scope) {
       if (rest) rest.hidden = false;
       btn.remove();
     }));
+    // Collapsible SOURCES blocks — toggle the whole list open/closed.
+    wrap.querySelectorAll('[data-src-toggle]').forEach((btn) => btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const box = btn.closest('.aii-sec-sources'); const list = box && box.querySelector('.aii-sec-srclist');
+      if (!list) return;
+      const open = list.hidden; list.hidden = !open;
+      box.setAttribute('data-open', String(open)); btn.setAttribute('aria-expanded', String(open));
+    }));
+    // "Show N more insights" — reveal the hidden cards, then wire their clamps.
+    const moreSecsBtn = wrap.querySelector('[data-more-secs]');
+    if (moreSecsBtn) moreSecsBtn.addEventListener('click', () => {
+      const box = wrap.querySelector('.aii-more-secs'); if (box) box.hidden = false;
+      moreSecsBtn.remove();
+      wireSectionClamps();
+    });
     wireExploreFurther(wrap);
     wireSectionClamps();
   }
@@ -1048,6 +1102,8 @@ export function renderAIIntelligence(container, scope) {
   // when the body actually overflows the clamp.
   function wireSectionClamps() {
     stage.querySelectorAll('.aii-sec-more').forEach((btn) => {
+      if (btn.dataset.clampWired) return;   // idempotent — safe to re-run after "Show more insights"
+      btn.dataset.clampWired = '1';
       const msec = btn.closest('.im-msec'); const clamp = msec && msec.querySelector('[data-sec-clamp]');
       if (!clamp) return;
       // Reveal the toggle only if clamped content overflows.
