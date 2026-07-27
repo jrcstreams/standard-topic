@@ -19288,6 +19288,7 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 .aii-srctoggle-chev svg { width: 14px; height: 14px; }
 .aii-sec-sources--collapsible[data-open="true"] .aii-srctoggle-chev { transform: rotate(180deg); }
 .aii-sec-srclist { display: grid; gap: 4px; margin-top: 12px; }
+.aii-sec-srclist[hidden] { display: none; }   /* class display must not defeat the hidden attr */
 /* "Show N more insights" — a full-width quiet button that reveals the rest of the cards. */
 .aii-more-secs-btn {
   display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%;
@@ -19678,16 +19679,21 @@ body.home-search #section-newsfeed .news-list .news-card:nth-child(-n+2):hover {
 .xf-sum { display: flex; align-items: center; gap: 12px; padding: 13px 16px 13px 14px; cursor: pointer; list-style: none; -webkit-tap-highlight-color: transparent; border-radius: 10px; transition: background .12s ease; }
 .xf-sum::-webkit-details-marker { display: none; }
 .xf-sum:hover { background: #f8fafd; }
-.xf-acc[open] > .xf-sum { background: #f2f5fa; border-radius: 10px 10px 0 0; }
+/* Open accordion reads clearly ACTIVE — a blue-tinted band with blue title/icon/chev,
+   matching the topic-page prompt accordions (#img70/#img71). */
+.xf-acc[open] > .xf-sum { background: #eaf0fb; border-radius: 10px 10px 0 0; }
 .xf-sum-ic { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; color: #475569; }
 .xf-sum-ic svg { width: 19px; height: 19px; display: block; }
-.xf-sum:hover .xf-sum-ic, .xf-acc[open] > .xf-sum .xf-sum-ic { color: #2c4467; }
+.xf-sum:hover .xf-sum-ic { color: #2c4467; }
+.xf-acc[open] > .xf-sum .xf-sum-ic { color: #2f4d9e; }
+.xf-acc[open] > .xf-sum .xf-chev { color: #2f4d9e; }
 .xf-sum-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
 .xf-sum-name { font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; color: var(--color-text); letter-spacing: 0; transition: color .14s ease; }
 .xf-sum-desc { font-size: 0.78rem; color: var(--color-text-muted); line-height: 1.35; }
 .xf-sum .xf-chev { flex: none; color: var(--color-text-light); transition: transform .2s ease; }
 .xf-acc[open] > .xf-sum .xf-chev { transform: rotate(180deg); }
-.xf-sum:hover .xf-sum-name, .xf-acc[open] > .xf-sum .xf-sum-name { color: var(--color-primary); }
+.xf-sum:hover .xf-sum-name { color: var(--color-primary); }
+.xf-acc[open] > .xf-sum .xf-sum-name { color: #2f4d9e; font-weight: 700; }
 .xf-panel { padding: 8px 12px 12px; border-top: 1px solid var(--color-surface-border); background: #fbfcfe; }
 /* Child sites (DuckDuckGo, Google News, Wikipedia…) are SUBORDINATE to their
    parent category header (Search & Reference) — lighter weight + smaller + a left
