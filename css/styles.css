@@ -18052,11 +18052,13 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
    face, active word underlined, hairline seam under the whole row. */
 .search-aii-host .aii-ftab {
   padding: 4px 2px 10px; border-radius: 0; background: none;
+  /* Match the topic-page L1 tab weights: lighter inactive (500), heavier active
+     (600) for clear active/inactive differentiation (#img60/#img61). */
   font-family: var(--font-display); letter-spacing: -0.015em;
-  font-size: clamp(0.92rem, 0.88rem + 0.2vw, 1rem); font-weight: 600; color: #64748b;
+  font-size: clamp(0.92rem, 0.88rem + 0.2vw, 1rem); font-weight: 500; color: #64748b;
 }
 .search-aii-host .aii-ftab:hover { color: #33517f; background: none; }
-.search-aii-host .aii-ftab.is-active { color: #26375a; font-weight: 700; background: none; box-shadow: none; }
+.search-aii-host .aii-ftab.is-active { color: #26375a; font-weight: 600; background: none; box-shadow: none; }
 .search-aii-host .aii-ftab.is-active::after { display: block; height: 2.5px; border-radius: 2px; background: #33517f; }
 /* "Results for ‘term’" header (#img218) — a bit of space above it off the input. */
 .search-aii-host .aii-topbar { padding-top: 6px; }
