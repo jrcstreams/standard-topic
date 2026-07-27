@@ -13524,7 +13524,10 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
 /* clip (not hidden) + a generous clip-margin so the header band can bleed to the
    full viewport width past the centred content column without a horizontal scrollbar. */
 .aii-nav-dd-search .aii-nav-dd-scroll { overflow-x: clip; overflow-clip-margin: 1500px; }
-.aii-nav-dd-search .aii-nav-dd-inner { padding-left: 0; padding-right: 0; }
+.aii-nav-dd-search .aii-nav-dd-inner { padding-left: 0; padding-right: 0; position: relative; }
+/* Anchor the close X to the centred content column's top-right (not the far viewport
+   edge) on mega-wide screens (#img26). */
+.aii-nav-dd-search .aii-nav-dd-head-bare { position: absolute; top: 14px; right: 2px; }
 .aii-nav-dd-search .aii-nav-dd-scroll { padding-left: 0; padding-right: 0; }
 .aii-nav-dd-search .search-navdd-host { padding-left: 2rem; padding-right: 2rem; }
 @media (max-width: 640px) {
@@ -13538,6 +13541,12 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
 /* No line under the search bar — the Jump-to nav's full-width bar is the only
    separator between the search area and the results. */
 .search-panel--modal .search-panel-barrow { flex-shrink: 0; padding: 0.55rem 2px 0.5rem; border-bottom: none; }
+/* On mega-wide screens the header content (title/subtext/input) caps to the same
+   column as the Trending/Featured content below — the input must not stretch the full
+   band width. Left-aligned so it lines up with the content (#img26). The grey band
+   itself still spans full width (painted on the root). */
+.search-panel--modal .search-panel-hero,
+.search-panel--modal .search-panel-barrow { width: 100%; max-width: 820px; align-self: flex-start; box-sizing: border-box; }
 .search-panel--modal .search-panel-results { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0 2px 1.2rem; }
 /* Collapsed (empty state): drop the results container entirely so the Trending
    section sits close under the input instead of leaving ~40px of dead space (the
