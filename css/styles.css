@@ -13500,15 +13500,25 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
    subnav colour) while the trending/featured lists + results below stay white — the
    search entry reads as its own zone (#img49/#img50). Full-bleed to the dropdown
    edges via the standard 50vw break-out; the content stays in the centred column. */
+/* Full-width grey header band. The search dropdown zeroes its inner + scroll side
+   padding and insets the CONTENT via .search-navdd-host instead, so the top-fold can
+   bleed out of that host padding (margin: 0 -2rem) to the true screen edges, then
+   re-inset its own content to line up with the results below (#img79). */
 .search-panel--modal .search-panel-topfold {
   flex: 0 0 auto;
-  margin: 0 calc(50% - 50vw);
-  padding: 2px calc(50vw - 50%) 20px;
+  margin: 0 -2rem;
+  padding: 2px 2rem 20px;
   background: linear-gradient(180deg, #f6f8fc 0%, #e9eef6 100%);
   border-bottom: 1px solid #e2e8f2;
 }
-/* Contain the full-bleed band so it never triggers a horizontal scrollbar. */
 .aii-nav-dd-search .aii-nav-dd-scroll { overflow-x: clip; }
+.aii-nav-dd-search .aii-nav-dd-inner { padding-left: 0; padding-right: 0; }
+.aii-nav-dd-search .aii-nav-dd-scroll { padding-left: 0; padding-right: 0; }
+.aii-nav-dd-search .search-navdd-host { padding-left: 2rem; padding-right: 2rem; }
+@media (max-width: 640px) {
+  .aii-nav-dd-search .search-navdd-host { padding-left: 1rem; padding-right: 1rem; }
+  .search-panel--modal .search-panel-topfold { margin: 0 -1rem; padding: 2px 1rem 18px; }
+}
 .search-panel--modal .search-panel-hero { flex-shrink: 0; }
 /* Search bar sits in the fixed top section; a full-width divider beneath it
    separates the bar from the scrolling results (bar above the line, results
@@ -18048,7 +18058,10 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
    CONTROL, left-aligned, matching trending / AI insights (#img217). */
 .search-aii-host .aii-flatnav {
   display: flex; width: 100%; flex-wrap: nowrap; gap: 24px; margin-top: 8px; justify-content: flex-start;
-  background: none; border: none; border-bottom: 1px solid #e8ecf2; border-radius: 0; padding: 0;
+  /* No full-width baseline under the tabs — it doubled up with the results
+     container's top border right below (#img79). The active-tab underline + the
+     bordered container are enough. */
+  background: none; border: none; border-radius: 0; padding: 0;
 }
 /* Search-results tabs = the topic-page L1 UNDERLINE style (#img640): display
    face, active word underlined, hairline seam under the whole row. */
@@ -18066,7 +18079,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .search-aii-host .aii-topbar { padding-top: 6px; }
 /* Smaller, calmer "Results for ‘term’" line with a real gap between the two spans
    and clear breathing room above (input) and below (the Prompts/News tabs) (#img335). */
-.search-aii-host .aii-builder-topic--resultsfor { font-size: 0.98rem; font-weight: 550; gap: 0.32em; margin: 10px 0 16px; }
+.search-aii-host .aii-builder-topic--resultsfor { font-size: 0.98rem; font-weight: 550; gap: 0.32em; margin: 20px 0 18px; }
 .search-aii-host .aii-builder-resultsfor { color: var(--color-text-muted); font-weight: 600; }
 .search-aii-host .aii-builder-topic--resultsfor .aii-builder-topic-tx { color: #14213d; }
 /* Prompt cards here use the SAME inset icon + padding as the topic-page Prompt
@@ -18539,7 +18552,7 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 /* Bare head (Search) — just a floating close button, no title block; the
    hosted panel provides its own hero. */
 .aii-nav-dd-head-bare { border-bottom: none; padding: 10px 2px 0; display: flex; justify-content: flex-end; }
-.aii-nav-dd-search .aii-nav-dd-scroll { padding: 0 2px 22px; }
+.aii-nav-dd-search .aii-nav-dd-scroll { padding: 0 0 22px; }
 /* The search dropdown's header is absolutely-positioned (just the X), so it does
    NOT consume layout height like the other dropdowns' headers — the shared
    `- 78px` cap shrank the scroll area 78px short, leaving a dead gap below the
