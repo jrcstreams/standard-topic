@@ -930,15 +930,20 @@ export function renderAIIntelligence(container, scope) {
     // the body CLAMPED to a preview with Show more, and its sources COLLAPSED behind
     // a toggle — so the tab is scannable on load, not a wall of text (#img59/#img63).
     const N_VISIBLE = 3;
-    const cardHTML = (part, i, num) => {
-      const key = aiiSecIconKey(part.name);
+    const cardHTML = (part, i) => {
       const { lead, rest } = splitLead(part.body);
       const leadHTML = lead ? `<p class="aii-sec-lead">${inlineFmt(lead)}</p>` : '';
       const bodyInner = `${leadHTML}<div class="aii-sec-body">${renderBriefBody(rest || part.body, null)}</div>`;
       const clamp = `<div class="aii-sec-clamp" data-sec-clamp>${bodyInner}</div><button type="button" class="aii-sec-more" hidden><span class="aii-sec-more-tx">Show more</span><span class="aii-sec-more-chev">${CHEV}</span></button>`;
-      return aiiMsec(`aii-msec-${i}`, part.name, aiiSecHead(key, part.name, updatedLbl, num) + clamp + secSourcesHTML(buckets[i], false, true));
+      // Card = a HEADER band (headline + provenance labels) over a divider, then the
+      // BODY (summary lead + text + sources). The header carries its own tint so it
+      // reads as a distinct header zone, not the start of the running copy (#img7).
+      const upd = updatedLbl ? `<span class="im-sec-updated">${esc(updatedLbl)}</span>` : '';
+      const header = `<header class="im-msec-header"><h3 class="im-msec-name">${esc(part.name)}</h3><div class="im-sec-aitag-row"><span class="im-sec-aitag">${LOGO}<span>AI Generated Text</span></span>${upd}</div></header>`;
+      const body = `<div class="im-msec-body">${clamp}${secSourcesHTML(buckets[i], false, true)}</div>`;
+      return aiiMsec(`aii-msec-${i}`, part.name, header + body);
     };
-    const cards = list.map((part, i) => cardHTML(part, i, i + 1));
+    const cards = list.map((part, i) => cardHTML(part, i));
     const relatedCard = unmatched.length ? aiiMsec('aii-msec-related', 'Related coverage', aiiSecHead('sources', 'Related coverage') + secSourcesHTML(unmatched, true, true)) : '';
     const restCards = cards.slice(N_VISIBLE);
     const hiddenCount = restCards.length + (relatedCard ? 1 : 0);

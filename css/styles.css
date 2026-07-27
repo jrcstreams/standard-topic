@@ -19275,6 +19275,23 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
   box-shadow: 0 2px 12px -8px rgba(15, 26, 46, 0.14);
   padding: 20px 22px; margin: 0 0 18px;
 }
+/* Cards with a header band: the band + body carry the padding, so zero the shell
+   and clip it so the tinted header rounds into the top corners (#img4/#img7). */
+.aii-bview-summary .im-msec:has(.im-msec-header) { padding: 0; overflow: hidden; }
+.aii-bview-summary .im-msec:has(.im-msec-header):first-child { padding-top: 0; }
+/* HEADER zone — faint blue tint + a divider under it. Holds the headline title and
+   the AI-generated / updated provenance labels; everything below the divider is body. */
+.im-msec-header { padding: 15px 22px 14px; background: #f4f7fc; border-bottom: 1px solid #e3e9f3; }
+.im-msec-header .im-msec-name {
+  margin: 0; font-family: var(--font-display); font-size: 1.26rem; font-weight: 700;
+  letter-spacing: -0.02em; line-height: 1.24; color: #26375a;
+}
+.im-msec-header .im-sec-aitag-row { margin: 11px 0 0 !important; }
+.im-msec-body { padding: 17px 22px 19px; }
+/* Show more sits as a clean deep-blue link inside the body (not the greyed, indented
+   nav variant). */
+.aii-bview-summary .im-msec-body .aii-sec-more { margin: 13px 0 0; color: var(--color-primary); font-weight: 600; }
+.aii-bview-summary .im-msec-body .aii-sec-more:hover { color: #26375a; }
 /* On the grey card the default light-grey AI tag vanished — a touch darker so it
    reads as a real label (#img611). */
 .aii-bview-summary .im-msec .im-sec-aitag { background: #e7ecf3; color: #4b586c; }
@@ -19294,11 +19311,12 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* Numbered card marker (01, 02…) in the icon slot — rhythm/structure over repeated
    identical icons (#img59). */
 .im-msec-ic--num { font-family: var(--font-display); font-size: 0.82rem; font-weight: 700; letter-spacing: -0.01em; color: #33517f; }
-/* Bold LEAD sentence — a scannable hook above the (clamped) body. */
-.aii-bview-summary .aii-sec-lead { margin: 0 0 8px; font-size: 1rem; font-weight: 600; line-height: 1.5; color: #1e2d44; letter-spacing: -0.006em; }
+/* Bold LEAD sentence — the summary that opens the card body. */
+.aii-bview-summary .aii-sec-lead { margin: 0 0 10px; font-size: 1.05rem; font-weight: 600; line-height: 1.5; color: #1e2d44; letter-spacing: -0.008em; }
 .aii-bview-summary .aii-sec-lead + .aii-sec-body { color: var(--color-text-muted); }
-/* Clamp the body to a short PREVIEW (~5 lines) with a soft fade; Show more expands. */
-.aii-bview-summary .aii-sec-clamp { max-height: 8.5em; overflow: hidden; -webkit-mask-image: linear-gradient(to bottom, #000 68%, transparent); mask-image: linear-gradient(to bottom, #000 68%, transparent); }
+/* Clamp the body to a taller PREVIEW with a gentle fade only at the very bottom, so it
+   reads as "more below" instead of being cut off mid-card (#img6). Show more expands. */
+.aii-bview-summary .aii-sec-clamp { max-height: 11em; overflow: hidden; -webkit-mask-image: linear-gradient(to bottom, #000 87%, transparent); mask-image: linear-gradient(to bottom, #000 87%, transparent); }
 .aii-bview-summary .im-msec.is-expanded .aii-sec-clamp { max-height: none; -webkit-mask-image: none; mask-image: none; }
 /* Collapsible SOURCES — a quiet toggle chip; the list drops open below it. */
 .aii-sec-sources--collapsible { margin-top: 14px; }
