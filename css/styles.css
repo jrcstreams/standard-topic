@@ -13428,53 +13428,52 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
 .search-panel-empty-sec { display: flex; flex-direction: column; align-items: stretch; gap: 12px; width: 100%; }
 /* Trending (2 cols, short terms) caps narrower than Featured (3 cols) so its two
    columns sit close and its "View more" lands at the list edge (#img54/#img55). */
-[data-empty-trending] { max-width: 600px; }
 /* Redesigned empty-state sections (#img637): a structured header ROW — small
    uppercase eyebrow label (with mark) left, quiet "View more →" link right,
    hairline underneath — then the chip field. */
+/* Section header: an icon CHIP + a real display-font title (not a tiny eyebrow), with
+   the "View more/all" as a quiet pill on the right, over a hairline. Matches the
+   section identity used across the app. */
 .search-panel-empty-sechead {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding-bottom: 9px; border-bottom: 1px solid #edf0f5;
+  padding-bottom: 12px; margin-bottom: 4px; border-bottom: 1px solid #e6ebf2;
 }
-.search-panel-empty-seclabel {
-  display: inline-flex; align-items: center; gap: 8px;
-  /* A touch bigger header + icon (#img47). */
-  font-family: var(--font-family); font-size: 0.82rem; font-weight: 700;
-  letter-spacing: 0.06em; text-transform: uppercase; color: #64748b;
+.search-panel-empty-seclabel { display: inline-flex; align-items: center; gap: 11px; }
+.sp-sec-ic {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 30px; height: 30px; border-radius: 9px; background: var(--color-primary); color: #fff;
 }
-.search-panel-empty-seclabel svg { flex: none; width: 16px; height: 16px; color: #33517f; }
-/* Section-header icon stays the calm off-blue (was green) — the GREEN reads only on
-   the individual trending list-item arrows (#img53). */
-.search-panel-empty-more { display: inline-flex; align-items: center; gap: 3px; border: none; background: none; padding: 0; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #3268b3; }
+.sp-sec-ic--trend { background: #17603a; }
+.sp-sec-ic svg { width: 15px; height: 15px; }
+.sp-sec-tx {
+  font-family: var(--font-display); font-size: 1.12rem; font-weight: 700;
+  letter-spacing: -0.017em; color: var(--color-primary);
+}
+.search-panel-empty-more {
+  display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border: 1px solid #dbe3f0;
+  border-radius: 999px; background: #f4f7fc; cursor: pointer; font-family: var(--font-family);
+  font-size: 0.8rem; font-weight: 600; color: #33517f; transition: background .12s, border-color .12s, color .12s;
+}
 .search-panel-empty-more svg { flex: none; }
-.search-panel-empty-more:hover { color: var(--color-primary); }
-/* Trending terms: soft grey card-chips (same family as the trend cards). */
-/* Trending + Featured render as multi-column LISTS (a data display), not a wall of
-   pills — cleaner to scan when Search opens (#img49). Icons kept. */
-.search-panel-empty-chips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; }
-.search-panel-empty-chip {
-  display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;
-  padding: 9px 8px; border: none; border-radius: 8px; background: none; cursor: pointer;
-  border-bottom: 1px solid #eef1f6;
-  font-family: var(--font-family); font-size: 0.9rem; font-weight: 500; color: #2b3852;
-  transition: background .12s, color .12s;
+.search-panel-empty-more:hover { background: #e8eff8; border-color: #c7d3e6; color: var(--color-primary); }
+/* Trending + Featured render as a grid of bordered TILES that read as clickable cards
+   — a clear, tappable field rather than a bare divided list. */
+.search-panel-empty-chips, .search-panel-empty-topics {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px;
 }
-.search-panel-empty-chip svg { width: 16px; height: 16px; flex: none; color: #16a34a; opacity: 1; }
-.search-panel-empty-chip span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.search-panel-empty-chip:hover { background: #f4f6fb; color: var(--color-primary); }
-/* Featured topics: same list treatment, one more column (short labels). */
-.search-panel-empty-topics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 24px; }
-.search-panel-empty-topic {
-  display: flex; align-items: center; gap: 10px; width: 100%;
-  padding: 9px 8px; border: none; border-radius: 8px; background: none; text-decoration: none;
-  border-bottom: 1px solid #eef1f6;
-  font-family: var(--font-family); font-size: 0.9rem; font-weight: 500; color: #2b3852;
-  transition: background .12s, color .12s;
+.search-panel-empty-chip, .search-panel-empty-topic {
+  display: flex; align-items: center; gap: 11px; width: 100%; text-align: left;
+  padding: 11px 13px; border: 1px solid #e2e7f0; border-radius: 11px; background: #fff; cursor: pointer;
+  text-decoration: none; font-family: var(--font-family); font-size: 0.92rem; font-weight: 550; color: #263349;
+  transition: background .12s ease, border-color .12s ease, box-shadow .12s ease, transform .12s ease;
 }
+.search-panel-empty-chip:hover, .search-panel-empty-topic:hover {
+  background: #fbfcfe; border-color: #c7d3e6; box-shadow: 0 6px 16px -12px rgba(15,26,46,.35); transform: translateY(-1px);
+}
+.search-panel-empty-chip svg { width: 17px; height: 17px; flex: none; color: #1a9553; opacity: 1; }
 .search-panel-empty-topic .search-panel-empty-topic-ic { display: inline-flex; flex: none; }
-.search-panel-empty-topic .search-panel-empty-topic-ic svg { width: 17px; height: 17px; display: block; color: #33517f; }
-.search-panel-empty-topic span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.search-panel-empty-topic:hover { background: #f4f6fb; color: var(--color-primary); }
+.search-panel-empty-topic .search-panel-empty-topic-ic svg { width: 18px; height: 18px; display: block; color: #33517f; }
+.search-panel-empty-chip span, .search-panel-empty-topic span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (max-width: 720px) {
   .search-panel-empty-chips { grid-template-columns: 1fr; }
   .search-panel-empty-topics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -18247,7 +18246,7 @@ body.home-search #section-newsfeed .news-card:hover {
    feed (they weren't scoped to #section-newsfeed, so they rode against the top +
    each other, #img225). */
 .search-news-section .news-list { display: flex !important; flex-direction: column !important; grid-template-columns: none !important; gap: 12px !important; padding: 14px 0 6px !important; }
-.search-news-section .news-card { display: flex !important; flex-direction: column; margin: 0 !important; border: 1px solid var(--color-surface-border) !important; border-radius: 14px !important; background: #fff !important; box-shadow: 0 1px 2px rgba(15,23,42,.04) !important; padding: 16px 18px !important; cursor: pointer; transition: border-color .15s ease, box-shadow .15s ease; }
+.search-news-section .news-card { display: flex !important; flex-direction: column; margin: 0 !important; border: 1px solid #d5dae2 !important; border-radius: 14px !important; background: #fff !important; box-shadow: 0 1px 2px rgba(15,23,42,.05) !important; padding: 16px 18px !important; cursor: pointer; transition: border-color .15s ease, box-shadow .15s ease; }
 .search-news-section .news-card:hover { border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)) !important; box-shadow: 0 12px 26px -16px rgba(15,23,42,.3) !important; }
 .search-news-section .news-card .news-card-link { padding: 0 !important; cursor: pointer; }
 .search-news-section .news-card .news-card-foot { margin-top: 13px !important; padding: 0 !important; border-top: none !important; }
@@ -19281,13 +19280,26 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 .aii-bview-summary .im-msec:has(.im-msec-header):first-child { padding-top: 0; }
 /* HEADER zone — faint blue tint + a divider under it. Holds the headline title and
    the AI-generated / updated provenance labels; everything below the divider is body. */
-.im-msec-header { padding: 15px 22px 14px; background: #f4f7fc; border-bottom: 1px solid #e3e9f3; }
+/* Header content is vertically centred in the band: the title's own line-box leading
+   makes an equal 15/15 look top-heavy, so the padding is trimmed to 14/13 and the
+   title uses a tight line-height, balancing the space above the title against the
+   space below the labels down to the divider. */
+.im-msec-header { padding: 14px 22px 13px; background: #f4f7fc; border-bottom: 1px solid #e3e9f3; }
 .im-msec-header .im-msec-name {
   margin: 0; font-family: var(--font-display); font-size: 1.26rem; font-weight: 700;
-  letter-spacing: -0.02em; line-height: 1.24; color: #26375a;
+  letter-spacing: -0.02em; line-height: 1.2; color: #26375a;
 }
-.im-msec-header .im-sec-aitag-row { margin: 11px 0 0 !important; }
+.im-msec-header .im-sec-aitag-row { margin: 10px 0 0 !important; }
 .im-msec-body { padding: 17px 22px 19px; }
+/* Body renders as one continuous block (no bold lead-in) — a readable slate for the
+   whole briefing, a touch softer than the near-black headline (#img11). */
+.aii-bview-summary .aii-sec-body { color: #47536a; }
+/* Mobile: scale the card headline down a smidge so long titles don't dominate. */
+@media (max-width: 600px) {
+  .im-msec-header .im-msec-name { font-size: 1.12rem; }
+  .im-msec-header { padding: 13px 18px 12px; }
+  .im-msec-body { padding: 15px 18px 17px; }
+}
 /* Show more is a quiet pill inside the body — reads as a deliberate control, not a
    bare link, and never underlines on hover. */
 .aii-bview-summary .im-msec-body .aii-sec-more {

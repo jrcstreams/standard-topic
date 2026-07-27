@@ -930,11 +930,10 @@ export function renderAIIntelligence(container, scope) {
     // a toggle — so the tab is scannable on load, not a wall of text (#img59/#img63).
     const N_VISIBLE = 3;
     const cardHTML = (part, i) => {
-      const { lead, rest } = splitLead(part.body);
-      const leadHTML = lead ? `<p class="aii-sec-lead">${inlineFmt(lead)}</p>` : '';
-      // Sources live INSIDE the clamp, after the body, so they sit below the preview
-      // fold and only reveal when the card is expanded via "Show more" (#img10).
-      const bodyInner = `${leadHTML}<div class="aii-sec-body">${renderBriefBody(rest || part.body, null)}</div>${secSourcesHTML(buckets[i], false, false)}`;
+      // Body renders as one continuous block (no bold lead-in sentence). Sources live
+      // INSIDE the clamp, after the body, so they sit below the preview fold and only
+      // reveal when the card is expanded via "Show more" (#img10/#img11).
+      const bodyInner = `<div class="aii-sec-body">${renderBriefBody(part.body, null)}</div>${secSourcesHTML(buckets[i], false, false)}`;
       const clamp = `<div class="aii-sec-clamp" data-sec-clamp>${bodyInner}</div><button type="button" class="aii-sec-more" hidden><span class="aii-sec-more-tx">Show more</span><span class="aii-sec-more-chev">${CHEV}</span></button>`;
       // Card = a HEADER band (headline + provenance labels) over a divider, then the
       // BODY (summary lead + text, with sources tucked below the fold). The header

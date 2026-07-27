@@ -18,7 +18,7 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260726-revamp648';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260726-revamp649';
 import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260720-revamp609';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260717-revamp592';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
@@ -3782,15 +3782,15 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
         ? `<div class="search-panel-empty">
              <div class="search-panel-empty-sec" data-empty-trending hidden>
                <div class="search-panel-empty-sechead">
-                 <span class="search-panel-empty-seclabel"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>Trending</span>
-                 <button type="button" class="search-panel-empty-more" data-view-trending>View more<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></button>
+                 <span class="search-panel-empty-seclabel"><span class="sp-sec-ic sp-sec-ic--trend"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg></span><span class="sp-sec-tx">Trending</span></span>
+                 <button type="button" class="search-panel-empty-more" data-view-trending><span>View more</span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></button>
                </div>
                <div class="search-panel-empty-chips" role="list"></div>
              </div>
              <div class="search-panel-empty-sec" data-empty-featured hidden>
                <div class="search-panel-empty-sechead">
-                 <span class="search-panel-empty-seclabel"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>Featured Topics</span>
-                 <button type="button" class="search-panel-empty-more" data-view-topics>View all<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></button>
+                 <span class="search-panel-empty-seclabel"><span class="sp-sec-ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span><span class="sp-sec-tx">Featured Topics</span></span>
+                 <button type="button" class="search-panel-empty-more" data-view-topics><span>View all</span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></button>
                </div>
                <div class="search-panel-empty-topics"></div>
              </div>
