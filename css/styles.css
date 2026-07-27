@@ -380,8 +380,10 @@ body.custom-mode.sticky-always #content {
   .sticky-hero-inner .sticky-title { font-size: 1.28rem; }
   .sticky-hero-inner .nav-hamburger { width: 20px; height: 15px; }
   .sticky-hero-inner .navbtn-ico svg { width: 18px; height: 18px; }
-  .sticky-hero-inner .navbtn { padding: 6px 10px; }
-  .sticky-hero-inner .navbtn-label { font-size: 0.63rem; }
+  /* Compact padding/label only in the STACKED fallback — horizontal buttons keep
+     their roomier padding + readable inline label. */
+  .sticky-hero-inner.nav-stacked .navbtn { padding: 6px 10px; }
+  .sticky-hero-inner.nav-stacked .navbtn-label { font-size: 0.63rem; }
 }
 
 /* Search Topics + Prompt Builder share the same white-pill CTA
@@ -18104,12 +18106,18 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 /* The 5 nav buttons — icon over a sublabel; COMFORTABLE sizes at all widths.
    Labels drop progressively only when space truly demands it (revamp394). */
 .sticky-actions.navbtns { display: flex !important; align-items: stretch; gap: 3px; flex: 0 0 auto; margin-left: auto; }
+/* Default = HORIZONTAL buttons (icon left of label) like regular nav links; on
+   narrower screens fitMainNav() adds .nav-stacked to switch to icon-over-label, then
+   peels back items (#img65/#img66). */
 .navbtn {
-  display: flex !important; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
-  min-width: 52px; padding: 6px 9px; border: none; background: none; cursor: pointer;
+  display: flex !important; flex-direction: row; align-items: center; justify-content: center; gap: 8px;
+  padding: 8px 13px; border: none; background: none; cursor: pointer;
   color: rgba(255,255,255,0.82); text-decoration: none; border-radius: 10px;
   font-family: var(--font-family); transition: background .14s, color .14s; -webkit-tap-highlight-color: transparent;
 }
+/* Stacked fallback — icon over a small label. */
+.sticky-hero-inner.nav-stacked .navbtn { flex-direction: column; gap: 4px; min-width: 52px; padding: 6px 9px; }
+.sticky-hero-inner.nav-stacked .navbtn-label { font-size: 0.63rem; }
 .navbtn:hover { background: rgba(255,255,255,0.12); color: #fff; text-decoration: none; }
 /* Home is an <a> — kill the anchor underline the global a:hover would add so it
    reads like the sibling <button> tabs (#428). */
@@ -18126,7 +18134,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .navbtn[aria-expanded="true"]:hover { background: rgba(255,255,255,0.24); color: #fff; }
 .navbtn-ico { display: inline-flex; }
 .navbtn-ico svg { width: 21px; height: 21px; display: block; }
-.navbtn-label { font-size: 0.67rem; font-weight: 600; letter-spacing: -0.004em; white-space: nowrap; line-height: 1; }
+.navbtn-label { font-size: 0.85rem; font-weight: 600; letter-spacing: -0.004em; white-space: nowrap; line-height: 1; }
 .nl-short { display: none; }
 
 @media (max-width: 899.98px) {
@@ -18966,7 +18974,9 @@ button.aiidd-vlink { align-self: flex-start; }
   .sticky-hero-inner .sticky-title { font-size: 1.22rem; letter-spacing: -0.02em; line-height: 1.15; white-space: nowrap; }
   /* Icons stay on the title's line, grouped to the right edge. */
   .sticky-hero-inner .sticky-actions.navbtns { order: 1; margin-left: auto !important; flex: none; }
-  .sticky-hero-inner .sticky-actions.navbtns .navbtn { padding: 6px 7px; gap: 4px; }
+  /* Always stacked on phones (icon over label) — even before fitMainNav runs. */
+  .sticky-hero-inner .sticky-actions.navbtns .navbtn { flex-direction: column; gap: 4px; padding: 6px 7px; min-width: 52px; }
+  .sticky-hero-inner .sticky-actions.navbtns .navbtn-label { font-size: 0.63rem; }
   /* Keep icons the SAME compact size as ≥561 — no jump bigger below 561 (#img32). */
   .sticky-hero-inner .navbtn-ico svg { width: 18px; height: 18px; }
   /* Keep every VISIBLE item's label — we drop items, not labels. */

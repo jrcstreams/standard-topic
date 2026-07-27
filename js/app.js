@@ -2142,8 +2142,11 @@ function pageLabelFor(route) {
 function fitMainNav() {
   const inner = document.querySelector('.sticky-hero-inner');
   if (!inner) return;
-  inner.classList.remove('nav-short-trending', 'nav-drop-prompts', 'nav-drop-home', 'nav-tiny-title');
+  inner.classList.remove('nav-stacked', 'nav-short-trending', 'nav-drop-prompts', 'nav-drop-home', 'nav-tiny-title');
   const fits = () => inner.scrollWidth <= inner.clientWidth + 1;
+  // Buttons start HORIZONTAL (icon+label inline). If that overflows, first STACK them
+  // (icon over label — narrower), then peel back items.
+  if (!fits()) inner.classList.add('nav-stacked');
   if (!fits()) inner.classList.add('nav-short-trending');
   if (!fits()) inner.classList.add('nav-drop-prompts');
   if (!fits()) inner.classList.add('nav-drop-home');
