@@ -98,6 +98,8 @@ const CHEV = '<svg class="aii-chev" viewBox="0 0 24 24" width="15" height="15" f
 // Section-icon badge for "Sources & Coverage" (link glyph) — matches the brief
 // section glyphs + the News/Trend modals (#129).
 const SOURCES_BADGE = '<span class="ai-result-sub-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>';
+// Leading link glyph for a source citation row (chain link, currentColor).
+const SRC_LINK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
 const EXPLORE_BADGE = '<span class="ai-result-sub-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4"/></svg></span>';
 // Small inline spark for the "AI Brief" eyebrow (matches the news modal).
 const SPARK = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.4a2 2 0 0 0 1.25 1.25L20.55 11.5l-5.4 1.85a2 2 0 0 0-1.25 1.25L12 20l-1.9-5.4a2 2 0 0 0-1.25-1.25L3.45 11.5l5.4-1.85a2 2 0 0 0 1.25-1.25z"/></svg>';
@@ -180,7 +182,7 @@ function attributeItemsToSections(items, sections) {
 }
 function secSourcesHTML(items, hideLabel, collapsible) {
   if (!items || !items.length) return '';
-  const row = (x) => `<a class="aii-sec-src" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer" title="${escAttr(x.title)}"><span class="aii-sec-src-tx"><span class="aii-sec-src-title">${esc(x.title)}</span>${x.meta ? `<span class="aii-sec-src-host">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`;
+  const row = (x) => `<a class="aii-sec-src" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer" title="${escAttr(x.title)}"><span class="aii-sec-src-ic">${SRC_LINK}</span><span class="aii-sec-src-tx"><span class="aii-sec-src-title">${esc(x.title)}</span>${x.meta ? `<span class="aii-sec-src-host">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`;
   // Collapsible: the WHOLE sources block hides behind a "N sources ⌄" toggle so it
   // adds no height to the card on load (#img59). Expands to the full list.
   if (collapsible) {
@@ -940,7 +942,7 @@ export function renderAIIntelligence(container, scope) {
       // reads as a distinct header zone, not the start of the running copy (#img7).
       const upd = updatedLbl ? `<span class="im-sec-updated">${esc(updatedLbl)}</span>` : '';
       const header = `<header class="im-msec-header"><h3 class="im-msec-name">${esc(part.name)}</h3><div class="im-sec-aitag-row"><span class="im-sec-aitag">${LOGO}<span>AI Generated Text</span></span>${upd}</div></header>`;
-      const body = `<div class="im-msec-body">${clamp}${secSourcesHTML(buckets[i], false, true)}</div>`;
+      const body = `<div class="im-msec-body">${clamp}${secSourcesHTML(buckets[i], false, false)}</div>`;
       return aiiMsec(`aii-msec-${i}`, part.name, header + body);
     };
     const cards = list.map((part, i) => cardHTML(part, i));

@@ -19288,10 +19288,14 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 }
 .im-msec-header .im-sec-aitag-row { margin: 11px 0 0 !important; }
 .im-msec-body { padding: 17px 22px 19px; }
-/* Show more sits as a clean deep-blue link inside the body (not the greyed, indented
-   nav variant). */
-.aii-bview-summary .im-msec-body .aii-sec-more { margin: 13px 0 0; color: var(--color-primary); font-weight: 600; }
-.aii-bview-summary .im-msec-body .aii-sec-more:hover { color: #26375a; }
+/* Show more is a quiet pill inside the body — reads as a deliberate control, not a
+   bare link, and never underlines on hover. */
+.aii-bview-summary .im-msec-body .aii-sec-more {
+  margin: 14px 0 0; padding: 6px 13px; border-radius: 999px; background: #eef2f9;
+  color: #33517f; font-size: 0.82rem; font-weight: 600; transition: background .12s ease;
+}
+.aii-bview-summary .im-msec-body .aii-sec-more:hover { background: #e2e9f5; color: #26375a; text-decoration: none; }
+.aii-bview-summary .im-msec-body .aii-sec-more:hover .aii-sec-more-tx { text-decoration: none; }
 /* On the grey card the default light-grey AI tag vanished — a touch darker so it
    reads as a real label (#img611). */
 .aii-bview-summary .im-msec .im-sec-aitag { background: #e7ecf3; color: #4b586c; }
@@ -19350,6 +19354,27 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
   color: #2563eb; font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer;
 }
 .aii-sec-src-morebtn:hover { color: #1d4ed8; text-decoration: underline; text-underline-offset: 2px; }
+/* ── Open SOURCES section on the AI-Insight cards: a labelled block under the body,
+   each source a clean citation row (link chip · title · host) that highlights on hover. */
+.aii-bview-summary .aii-sec-sources { margin-top: 16px; padding-top: 14px; border-top: 1px solid #e7ecf3; gap: 2px; }
+.aii-bview-summary .aii-sec-sources-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.09em; color: #8593a8; margin-bottom: 5px; }
+.aii-bview-summary .aii-sec-src { align-items: center; gap: 11px; padding: 8px 10px; margin: 0 -6px; border-radius: 10px; transition: background .12s ease; }
+.aii-bview-summary .aii-sec-src:hover { background: #f4f7fc; }
+.aii-sec-src-ic {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 28px; height: 28px; border-radius: 8px; background: #eef2fb; border: 1px solid #dde6f4; color: #5f7096;
+}
+.aii-sec-src-ic svg { width: 15px; height: 15px; }
+.aii-bview-summary .aii-sec-src:hover .aii-sec-src-ic { background: #e4ecfa; border-color: #cdd9ee; color: #33517f; }
+.aii-bview-summary .aii-sec-src-title { font-size: 0.86rem; font-weight: 550; color: #1e2d44; }
+.aii-bview-summary .aii-sec-src:hover .aii-sec-src-title { color: #2f4d9e; }
+.aii-bview-summary .aii-sec-src-host { font-size: 0.72rem; color: #8593a8; }
+/* Reveal the trailing external-link arrow, quiet until the row is hovered. */
+.aii-bview-summary .aii-sec-src > svg { display: inline-flex; flex: none; margin-left: auto; color: #b3bed0; opacity: 0; transition: opacity .12s ease; }
+.aii-bview-summary .aii-sec-src:hover > svg { opacity: 1; color: #6b7a95; }
+/* "View N more sources" as a quiet inline link under the shown rows. */
+.aii-bview-summary .aii-sec-src-morebtn { margin: 6px 0 0 4px; color: #33517f; }
+.aii-bview-summary .aii-sec-src-morebtn:hover { color: #26375a; }
 /* Copy Prompt confirmation state. */
 .aii-pc-btn.is-copied { color: #15803d; border-color: #bbf7d0; background: #f0fdf4; }
 /* "Updated …" stamp — left-aligned and tight to the first section below it (#img154).
