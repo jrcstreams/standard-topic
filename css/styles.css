@@ -19321,7 +19321,8 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* Clamp the body to a taller PREVIEW with a gentle fade only at the very bottom, so it
    reads as "more below" instead of being cut off mid-card (#img6). Show more expands. */
 .aii-bview-summary .aii-sec-clamp { max-height: 11em; overflow: hidden; -webkit-mask-image: linear-gradient(to bottom, #000 87%, transparent); mask-image: linear-gradient(to bottom, #000 87%, transparent); }
-.aii-bview-summary .im-msec.is-expanded .aii-sec-clamp { max-height: none; -webkit-mask-image: none; mask-image: none; }
+.aii-bview-summary .im-msec.is-expanded .aii-sec-clamp,
+.aii-bview-summary .im-msec.is-noclamp .aii-sec-clamp { max-height: none; -webkit-mask-image: none; mask-image: none; }
 /* Collapsible SOURCES — a quiet toggle chip; the list drops open below it. */
 .aii-sec-sources--collapsible { margin-top: 14px; }
 .aii-sec-srctoggle {

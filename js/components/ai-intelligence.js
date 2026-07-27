@@ -192,14 +192,11 @@ function secSourcesHTML(items, hideLabel, collapsible) {
       <div class="aii-sec-srclist" hidden>${items.map(row).join('')}</div>
     </div>`;
   }
-  // Show the first 2 sources; the rest tuck behind a "View N more sources" expander.
-  const shown = items.slice(0, 2).map(row).join('');
-  const rest = items.slice(2);
-  const more = rest.length
-    ? `<div class="aii-sec-src-rest" hidden>${rest.map(row).join('')}</div><button type="button" class="aii-sec-src-morebtn" data-src-more>View ${rest.length} more source${rest.length > 1 ? 's' : ''}</button>`
-    : '';
+  // Open list — every source shown. On the insight cards this block lives INSIDE the
+  // clamped body, so it's tucked below the "Show more" fold and only appears once the
+  // card is expanded (no separate per-source expander needed).
   const label = hideLabel ? '' : '<div class="aii-sec-sources-label">Sources</div>';
-  return `<div class="aii-sec-sources">${label}${shown}${more}</div>`;
+  return `<div class="aii-sec-sources">${label}${items.map(row).join('')}</div>`;
 }
 // Paper-plane (Direct Submit — "send it off") and an eye (Review — "preview").
 const ICON_SEND = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2.5L11 13"/><path d="M21.5 2.5L15 21l-4-8-8-4z"/></svg>';
@@ -935,14 +932,16 @@ export function renderAIIntelligence(container, scope) {
     const cardHTML = (part, i) => {
       const { lead, rest } = splitLead(part.body);
       const leadHTML = lead ? `<p class="aii-sec-lead">${inlineFmt(lead)}</p>` : '';
-      const bodyInner = `${leadHTML}<div class="aii-sec-body">${renderBriefBody(rest || part.body, null)}</div>`;
+      // Sources live INSIDE the clamp, after the body, so they sit below the preview
+      // fold and only reveal when the card is expanded via "Show more" (#img10).
+      const bodyInner = `${leadHTML}<div class="aii-sec-body">${renderBriefBody(rest || part.body, null)}</div>${secSourcesHTML(buckets[i], false, false)}`;
       const clamp = `<div class="aii-sec-clamp" data-sec-clamp>${bodyInner}</div><button type="button" class="aii-sec-more" hidden><span class="aii-sec-more-tx">Show more</span><span class="aii-sec-more-chev">${CHEV}</span></button>`;
       // Card = a HEADER band (headline + provenance labels) over a divider, then the
-      // BODY (summary lead + text + sources). The header carries its own tint so it
-      // reads as a distinct header zone, not the start of the running copy (#img7).
+      // BODY (summary lead + text, with sources tucked below the fold). The header
+      // carries its own tint so it reads as a distinct header zone (#img7).
       const upd = updatedLbl ? `<span class="im-sec-updated">${esc(updatedLbl)}</span>` : '';
       const header = `<header class="im-msec-header"><h3 class="im-msec-name">${esc(part.name)}</h3><div class="im-sec-aitag-row"><span class="im-sec-aitag">${LOGO}<span>AI Generated Text</span></span>${upd}</div></header>`;
-      const body = `<div class="im-msec-body">${clamp}${secSourcesHTML(buckets[i], false, false)}</div>`;
+      const body = `<div class="im-msec-body">${clamp}</div>`;
       return aiiMsec(`aii-msec-${i}`, part.name, header + body);
     };
     const cards = list.map((part, i) => cardHTML(part, i));
@@ -1113,8 +1112,13 @@ export function renderAIIntelligence(container, scope) {
       btn.dataset.clampWired = '1';
       const msec = btn.closest('.im-msec'); const clamp = msec && msec.querySelector('[data-sec-clamp]');
       if (!clamp) return;
-      // Reveal the toggle only if clamped content overflows.
-      requestAnimationFrame(() => { if (clamp.scrollHeight > clamp.clientHeight + 6) btn.hidden = false; });
+      // Reveal the toggle only if clamped content overflows; otherwise drop the clamp
+      // entirely (short card = no fade, sources just show) so we never fade a card
+      // that had nothing hidden below the fold.
+      requestAnimationFrame(() => {
+        if (clamp.scrollHeight > clamp.clientHeight + 6) btn.hidden = false;
+        else msec.classList.add('is-noclamp');
+      });
       btn.addEventListener('click', () => {
         const expanded = msec.classList.toggle('is-expanded');
         const tx = btn.querySelector('.aii-sec-more-tx'); if (tx) tx.textContent = expanded ? 'Show less' : 'Show more';
