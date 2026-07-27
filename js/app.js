@@ -2144,9 +2144,17 @@ function fitMainNav() {
   if (!inner) return;
   inner.classList.remove('nav-stacked', 'nav-short-trending', 'nav-drop-prompts', 'nav-drop-home', 'nav-tiny-title');
   const fits = () => inner.scrollWidth <= inner.clientWidth + 1;
-  // Buttons start HORIZONTAL (icon+label inline). If that overflows, first STACK them
-  // (icon over label — narrower), then peel back items.
-  if (!fits()) inner.classList.add('nav-stacked');
+  // Buttons start HORIZONTAL (icon+label inline, left-grouped after the title). Break
+  // to STACKED (icon over label, right-aligned) EARLY — before the horizontal row
+  // crowds the title — by stacking once the buttons come within BUFFER px of the
+  // container's right edge, not only at hard overflow (#img76).
+  const navbtns = inner.querySelector('.sticky-actions.navbtns');
+  if (navbtns) {
+    const cs = getComputedStyle(inner);
+    const innerRight = inner.getBoundingClientRect().right - (parseFloat(cs.paddingRight) || 0);
+    if (navbtns.getBoundingClientRect().right > innerRight - 44) inner.classList.add('nav-stacked');
+  }
+  if (!inner.classList.contains('nav-stacked') && !fits()) inner.classList.add('nav-stacked');
   if (!fits()) inner.classList.add('nav-short-trending');
   if (!fits()) inner.classList.add('nav-drop-prompts');
   if (!fits()) inner.classList.add('nav-drop-home');

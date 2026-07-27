@@ -18115,9 +18115,11 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   color: rgba(255,255,255,0.82); text-decoration: none; border-radius: 10px;
   font-family: var(--font-family); transition: background .14s, color .14s; -webkit-tap-highlight-color: transparent;
 }
-/* Stacked fallback — icon over a small label. */
+/* Stacked fallback — icon over a small label, RIGHT-aligned (skip any left-grouped
+   intermediate so it jumps straight to this layout, #img77/#img78). */
 .sticky-hero-inner.nav-stacked .navbtn { flex-direction: column; gap: 4px; min-width: 52px; padding: 6px 9px; }
 .sticky-hero-inner.nav-stacked .navbtn-label { font-size: 0.63rem; }
+.sticky-hero-inner.nav-stacked .sticky-actions.navbtns { margin-left: auto !important; }
 .navbtn:hover { background: rgba(255,255,255,0.12); color: #fff; text-decoration: none; }
 /* Home is an <a> — kill the anchor underline the global a:hover would add so it
    reads like the sibling <button> tabs (#428). */
