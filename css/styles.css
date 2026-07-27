@@ -19237,10 +19237,13 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 .aii-ctlrow.is-explore .aii-explore-pill-open { display: none; }
 .aii-ctlrow.is-explore .aii-explore-pill-back { display: inline-flex; }
 .aii-ctlrow.is-explore .aii-updated-pill { display: none; }
-/* ── Insight sections as grey bordered CARDS (#img599). ─────────────────────── */
+/* ── Insight sections as bordered CARDS (#img599). Stronger border + a soft shadow
+   so each briefing reads as a discrete card and the tab feels less like one wall of
+   text on load (#img59). ─────────────────────────────────────────────────────── */
 .aii-bview-summary .im-msec {
-  background: #f8fafc; border: 1px solid #e9edf3; border-radius: 12px;
-  padding: 18px 20px; margin: 0 0 20px;
+  background: #fff; border: 1px solid #d3dbe8; border-radius: 14px;
+  box-shadow: 0 2px 12px -8px rgba(15, 26, 46, 0.14);
+  padding: 20px 22px; margin: 0 0 18px;
 }
 /* On the grey card the default light-grey AI tag vanished — a touch darker so it
    reads as a real label (#img611). */
@@ -19256,8 +19259,8 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 /* "SOURCES" gets a touch more visual weight on the cards (#img612). */
 .aii-bview-summary .aii-sec-sources-label { color: #71809b; }
 .aii-bview-summary .im-msec:first-child { padding-top: 18px; }
-.aii-bview-summary .im-msec:last-child { border-bottom: 1px solid #e9edf3; }
-.aii-bview-summary .im-msec .im-msec-ic { background: #fff; border: 1px solid #e9edf3; }
+.aii-bview-summary .im-msec:last-child { border-bottom: 1px solid #d3dbe8; }
+.aii-bview-summary .im-msec .im-msec-ic { background: #eef2fb; border: 1px solid #dbe3f2; color: #33517f; }
 /* Per-section source expander: first 2 sources show, the rest reveal on demand. */
 .aii-sec-src-rest { display: grid; gap: 4px; }
 .aii-sec-src-rest[hidden] { display: none; }
