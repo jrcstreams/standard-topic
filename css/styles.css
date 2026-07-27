@@ -13429,11 +13429,12 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
   padding-bottom: 9px; border-bottom: 1px solid #edf0f5;
 }
 .search-panel-empty-seclabel {
-  display: inline-flex; align-items: center; gap: 7px;
-  font-family: var(--font-family); font-size: 0.73rem; font-weight: 700;
-  letter-spacing: 0.07em; text-transform: uppercase; color: #64748b;
+  display: inline-flex; align-items: center; gap: 8px;
+  /* A touch bigger header + icon (#img47). */
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: #64748b;
 }
-.search-panel-empty-seclabel svg { flex: none; color: #33517f; }
+.search-panel-empty-seclabel svg { flex: none; width: 16px; height: 16px; color: #33517f; }
 [data-empty-trending] .search-panel-empty-seclabel svg { color: #16a34a; }
 .search-panel-empty-more { display: inline-flex; align-items: center; gap: 3px; border: none; background: none; padding: 0; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #3268b3; }
 .search-panel-empty-more svg { flex: none; }
