@@ -13443,7 +13443,6 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
   display: inline-flex; align-items: center; justify-content: center; flex: none;
   width: 30px; height: 30px; border-radius: 9px; background: var(--color-primary); color: #fff;
 }
-.sp-sec-ic--trend { background: #17603a; }
 .sp-sec-ic svg { width: 15px; height: 15px; }
 .sp-sec-tx {
   font-family: var(--font-display); font-size: 1.12rem; font-weight: 700;
@@ -13470,7 +13469,7 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
 .search-panel-empty-chip:hover, .search-panel-empty-topic:hover {
   background: #fbfcfe; border-color: #c7d3e6; box-shadow: 0 6px 16px -12px rgba(15,26,46,.35); transform: translateY(-1px);
 }
-.search-panel-empty-chip svg { width: 17px; height: 17px; flex: none; color: #1a9553; opacity: 1; }
+.search-panel-empty-chip svg { width: 17px; height: 17px; flex: none; color: #33517f; opacity: 1; }
 .search-panel-empty-topic .search-panel-empty-topic-ic { display: inline-flex; flex: none; }
 .search-panel-empty-topic .search-panel-empty-topic-ic svg { width: 18px; height: 18px; display: block; color: #33517f; }
 .search-panel-empty-chip span, .search-panel-empty-topic span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -13506,7 +13505,7 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
 .search-panel--modal .search-panel-topfold {
   flex: 0 0 auto;
   margin: 0 -2rem;
-  padding: 2px 2rem 20px;
+  padding: 2px 2rem 12px;
   background: linear-gradient(180deg, #f6f8fc 0%, #e9eef6 100%);
   border-bottom: 1px solid #e2e8f2;
 }
@@ -13530,7 +13529,7 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
    section sits close under the input instead of leaving ~40px of dead space (the
    container's bottom padding) (#img456). */
 .search-panel--modal[data-state="collapsed"] .search-panel-results { display: none; }
-.search-panel--modal[data-state="collapsed"] .search-panel-empty { padding-top: 0; }
+.search-panel--modal[data-state="collapsed"] .search-panel-empty { padding-top: 22px; }
 .search-panel--modal .search-panel-close { top: 0.5rem; right: 0.5rem; }
 /* Tighter title→tagline→bar rhythm so it matches the homepage hero card. */
 .search-panel--modal .search-panel-hero-inner { padding: 1.3rem 2px 0.6rem; }
@@ -13885,7 +13884,7 @@ body.home-search #topic-layout { margin-top: 0.4rem; }
 .search-panel--inline[data-state="collapsed"] .search-panel-close { display: none; }
 /* Modal empty hero: keep the close X inline at the right of the bar, and
    give the search bar breathing room beneath it (Image #17). */
-.search-panel--modal[data-state="collapsed"] .search-panel-barrow { margin-bottom: 1.25rem; border-bottom: none; }
+.search-panel--modal[data-state="collapsed"] .search-panel-barrow { margin-bottom: 0; border-bottom: none; }
 
 /* Search results header: rename is in JS ("Search Intelligence"); here make
    it smaller, give room above (below the bar) and tighten it to the
