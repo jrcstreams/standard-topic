@@ -19367,21 +19367,22 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
    against the inner square borders (#img659). */
 /* The SAME connected list on the news-story + trending Explore Further panels
    (.ins-tabpanel[data-ins-panel=explore]) as the topic page (#img662). */
+/* The flush accordion list is ONE clipped container (border + radius + overflow),
+   with borderless rows separated by hairlines. The container clips the outer corners
+   cleanly, so open rows can stay perfectly square with NO corner artifacts — the fix
+   the per-item radius approach never nailed (#img67-69). Same for the custom-search
+   Explore Further + Prompts lists below. */
 .topic-explore-host .xf-list,
-.ins-tabpanel[data-ins-panel="explore"] .xf-list { gap: 0; }
+.ins-tabpanel[data-ins-panel="explore"] .xf-list {
+  gap: 0; border: 1px solid #d7dee9; border-radius: 12px; overflow: hidden;
+}
 .topic-explore-host .xf-list { margin-top: 8px; }
 .topic-explore-host .xf-acc,
-.ins-tabpanel[data-ins-panel="explore"] .xf-acc { border-radius: 0; border-top-width: 0; }
-.topic-explore-host .xf-acc:first-child,
-.ins-tabpanel[data-ins-panel="explore"] .xf-acc:first-child { border-top-width: 1px; border-radius: 12px 12px 0 0; }
-.topic-explore-host .xf-acc:last-child,
-.ins-tabpanel[data-ins-panel="explore"] .xf-acc:last-child { border-radius: 0 0 12px 12px; }
-.topic-explore-host .xf-acc:hover,
-.ins-tabpanel[data-ins-panel="explore"] .xf-acc:hover { box-shadow: none; border-color: #d7dee9; }
-.topic-explore-host .xf-acc[open],
-.ins-tabpanel[data-ins-panel="explore"] .xf-acc[open] { border-color: #d7dee9; box-shadow: none; }
+.ins-tabpanel[data-ins-panel="explore"] .xf-acc { border: none !important; border-radius: 0 !important; box-shadow: none !important; }
+.topic-explore-host .xf-acc + .xf-acc,
+.ins-tabpanel[data-ins-panel="explore"] .xf-acc + .xf-acc { border-top: 1px solid #eef1f6 !important; }
 .topic-explore-host .xf-acc[open] > .xf-sum,
-.ins-tabpanel[data-ins-panel="explore"] .xf-acc[open] > .xf-sum { border-radius: 0; }
+.ins-tabpanel[data-ins-panel="explore"] .xf-acc[open] > .xf-sum { border-radius: 0 !important; }
 /* ── Topic-page PAGE HEADER (main title / topic subheader / subtext) matching the
    Search-dropdown header — shared by all four L1 tabs (#img650/#img651). More top
    gap from the subnav; subheader a touch bigger + tighter to the title; subtext
@@ -19442,20 +19443,26 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 .aii-secacc-body .aii-fi-acc.is-open > .aii-fi-accsum .aii-fi-acc-chev { color: #2f4d9e; }
 /* The prompt-card panel inside a nested accordion keeps the same indent. */
 .aii-secacc-body .aii-emenu-host { padding-left: 12px; }
-/* ── Custom-search results: same connected flat list as the topic tabs (#img647). */
+/* ── Custom-search results: same CLIPPED-container flat list as the topic tabs, for
+   BOTH the Prompts (.aii-fi-acclist) and Explore Further (.xf-list) lists (#img67-69). */
 .search-aii-host .aii-fi-acclist,
-.search-aii-host .xf-list { gap: 0; }
+.search-aii-host .xf-list {
+  gap: 0; border: 1px solid #d7dee9; border-radius: 12px; overflow: hidden;
+}
 .search-aii-host .aii-fi-acc,
-.search-aii-host .xf-acc { border-radius: 0; }
+.search-aii-host .xf-acc { border: none !important; border-radius: 0 !important; box-shadow: none !important; }
 .search-aii-host .aii-fi-acc + .aii-fi-acc,
-.search-aii-host .xf-acc + .xf-acc { border-top: none; }
-.search-aii-host .aii-fi-acc:hover,
-.search-aii-host .xf-acc:hover { box-shadow: none; border-color: #d7dee9; }
-.search-aii-host .aii-fi-acc.is-open,
-.search-aii-host .xf-acc[open] { border-color: #d7dee9; box-shadow: none; }
+.search-aii-host .xf-acc + .xf-acc { border-top: 1px solid #eef1f6 !important; }
 .search-aii-host .aii-fi-accsum,
 .search-aii-host .aii-fi-acc.is-open > .aii-fi-accsum,
-.search-aii-host .xf-sum { border-radius: 0; }
+.search-aii-host .xf-sum,
+.search-aii-host .xf-acc[open] > .xf-sum { border-radius: 0 !important; }
+/* Custom-search PROMPTS open row reads active in blue too (the .xf-acc[open] blue is
+   already global) — matching the topic-page prompt accordions (#img72). */
+.search-aii-host .aii-fi-acc.is-open > .aii-fi-accsum { background: #eaf0fb; }
+.search-aii-host .aii-fi-acc.is-open > .aii-fi-accsum .aii-fi-acc-name,
+.search-aii-host .aii-fi-acc.is-open > .aii-fi-accsum .aii-fi-acc-ic,
+.search-aii-host .aii-fi-acc.is-open > .aii-fi-accsum .aii-fi-acc-chev { color: #2f4d9e; }
 .search-aii-host .aii-fi-accsum,
 .search-aii-host .xf-sum { padding-top: 15px; padding-bottom: 15px; align-items: center; }
 .search-aii-host .aii-fi-acc-name,
