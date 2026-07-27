@@ -13504,12 +13504,23 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
    re-inset its own content to line up with the results below (#img79). */
 .search-panel--modal .search-panel-topfold {
   flex: 0 0 auto;
+  position: relative;
   margin: 0 -2rem;
   padding: 2px 2rem 12px;
+}
+/* Grey header band painted as a full-viewport-width layer BEHIND the header content,
+   so the band spans edge-to-edge on wide screens while the title/input stay in the
+   centred content column (#img22). */
+.search-panel--modal .search-panel-topfold::before {
+  content: ''; position: absolute; top: 0; bottom: 0;
+  left: calc(50% - 50vw); width: 100vw;
   background: linear-gradient(180deg, #f6f8fc 0%, #e9eef6 100%);
   border-bottom: 1px solid #e2e8f2;
+  z-index: -1; pointer-events: none;
 }
-.aii-nav-dd-search .aii-nav-dd-scroll { overflow-x: clip; }
+/* clip (not hidden) + a generous clip-margin so the header band can bleed to the
+   full viewport width past the centred content column without a horizontal scrollbar. */
+.aii-nav-dd-search .aii-nav-dd-scroll { overflow-x: clip; overflow-clip-margin: 1500px; }
 .aii-nav-dd-search .aii-nav-dd-inner { padding-left: 0; padding-right: 0; }
 .aii-nav-dd-search .aii-nav-dd-scroll { padding-left: 0; padding-right: 0; }
 .aii-nav-dd-search .search-navdd-host { padding-left: 2rem; padding-right: 2rem; }
