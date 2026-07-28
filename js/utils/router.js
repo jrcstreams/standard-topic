@@ -44,10 +44,10 @@ function parseRoute(hash) {
   }
 
   if (segments[0] === 'topic' && segments[1]) {
-    const tab = segments[2] === 'shortcuts' ? 'shortcuts'
-              : segments[2] === 'websources' ? 'websources'
-              : segments[2] === 'related' ? 'related'
-              : 'newsfeed';
+    // L1 tab deep-links (#/topic/{slug}/{tab}): ai-insights / prompts / explore open
+    // that tab directly; legacy segments (shortcuts/websources/related) still parse.
+    const TAB_SEGS = ['ai-insights', 'prompts', 'explore', 'shortcuts', 'websources', 'related'];
+    const tab = TAB_SEGS.includes(segments[2]) ? segments[2] : 'newsfeed';
     return { type: 'topic', slug: segments[1], tab };
   }
 

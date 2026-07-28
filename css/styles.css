@@ -18141,13 +18141,15 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 
 /* The 5 nav buttons — icon over a sublabel; COMFORTABLE sizes at all widths.
    Labels drop progressively only when space truly demands it (revamp394). */
-.sticky-actions.navbtns { display: flex !important; align-items: stretch; gap: 3px; flex: 0 0 auto; margin-left: auto; }
+/* 6px gap so a hovered pill never kisses an adjacent active pill (#img28/#img33 —
+   the pill IS the button box, so padding tweaks don't add space; the container gap does). */
+.sticky-actions.navbtns { display: flex !important; align-items: stretch; gap: 6px; flex: 0 0 auto; margin-left: auto; }
 /* Default = HORIZONTAL buttons (icon left of label) like regular nav links; on
    narrower screens fitMainNav() adds .nav-stacked to switch to icon-over-label, then
    peels back items (#img65/#img66). */
 .navbtn {
   display: flex !important; flex-direction: row; align-items: center; justify-content: center; gap: 8px;
-  padding: 8px 11px; border: none; background: none; cursor: pointer;
+  padding: 8px 13px; border: none; background: none; cursor: pointer;
   color: rgba(255,255,255,0.82); text-decoration: none; border-radius: 10px;
   font-family: var(--font-family); transition: background .14s, color .14s; -webkit-tap-highlight-color: transparent;
 }

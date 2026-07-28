@@ -1,4 +1,4 @@
-import { initRouter, onRoute, getCurrentRoute } from './utils/router.js';
+import { initRouter, onRoute, getCurrentRoute } from './utils/router.js?v=20260728-revamp660';
 import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getSubtopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, searchTopics, getModels, getDefaultModelId, getModelById } from './utils/data.js';
 import { getPreferredModelId, setPreferredModelId, submitPrompt, openModel, copyPrompt } from './utils/ai-models.js?v=20260605-polish30';
 import { assemblePrompt } from './utils/prompt-assembly.js';
@@ -1051,17 +1051,37 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
     renderContent(key);
     requestAnimationFrame(() => { try { window.scrollTo({ top: 0 }); } catch (_) {} });
   };
-  nav.querySelectorAll('.ptab').forEach((b) => b.addEventListener('click', () => selectTab(b.dataset.ptab)));
+  // Keep the URL in sync with the active L1 tab so each tab is deep-linkable:
+  // #/topic/{slug} (News Feed, the default) · /ai-insights · /prompts · /explore.
+  // replaceState (no hashchange) so tab clicks don't re-render the page.
+  const TAB_URL_SEG = { ai: 'ai-insights', prompts: 'prompts', explore: 'explore' };
+  const syncTabHash = (key) => {
+    if (!(window.location.hash || '').startsWith('#/topic/')) return;
+    const seg = TAB_URL_SEG[key];
+    const newHash = seg ? `#/topic/${topic.slug}/${seg}` : `#/topic/${topic.slug}`;
+    if (window.location.hash !== newHash) {
+      try { history.replaceState(null, '', newHash); } catch (_) {}
+      const r = getCurrentRoute();
+      if (r && r.type === 'topic') r.tab = seg || 'newsfeed';
+    }
+  };
+  const selectTabAndSync = (key) => { selectTab(key); syncTabHash(active); };
+  nav.querySelectorAll('.ptab').forEach((b) => b.addEventListener('click', () => selectTabAndSync(b.dataset.ptab)));
 
   // Deep-link from the AI Insights nav dropdown (same-page event + cross-page
   // pending request) → open the matching sub-group.
   if (window.__aiiInlineHandler) window.removeEventListener('aii-inline-open', window.__aiiInlineHandler);
-  window.__aiiInlineHandler = (e) => { if (e.detail && e.detail.slug === topic.slug) selectTab(e.detail.group); };
+  window.__aiiInlineHandler = (e) => { if (e.detail && e.detail.slug === topic.slug) selectTabAndSync(e.detail.group); };
   window.addEventListener('aii-inline-open', window.__aiiInlineHandler);
 
+  // Initial tab: a URL deep-link (#/topic/{slug}/{ai-insights|prompts|explore})
+  // seeds it; a pending in-app deep-link (nav dropdown / breakpoint re-render) wins.
+  const URL_SEG_TAB = { 'ai-insights': 'ai', prompts: 'prompts', explore: 'explore' };
   let initial = 'news';
+  const curRoute = getCurrentRoute();
+  if (curRoute && curRoute.type === 'topic' && curRoute.slug === topic.slug && URL_SEG_TAB[curRoute.tab]) initial = URL_SEG_TAB[curRoute.tab];
   if (pendingInlineAii && pendingInlineAii.slug === topic.slug) { initial = pendingInlineAii.group; pendingInlineAii = null; }
-  selectTab(initial);
+  selectTabAndSync(initial);
 }
 
 function closeAllPickers(except) {
