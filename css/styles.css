@@ -9204,28 +9204,12 @@ h1, h2, h3, h4, .section-header h2 {
    otherwise carries the highlight to whatever sits at the same x/y
    on the page the tap navigated to). */
 
-/* === Main nav: vertical separator between brand and tagline ============ */
+/* === Main nav: brand ==================================================== */
+/* The vertical separator after the site title was removed (revamp669) — with the app
+   icons right-aligned, there's a wide gap between the brand and the icons, so the
+   divider right after the title read as orphaned. */
 .sticky-brand {
   position: relative;
-}
-.sticky-brand::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  right: -1.15rem;
-  transform: translateY(-50%);
-  width: 1px;
-  /* A touch taller than the original 22px, but not the full icon-row height —
-     40px overdid it (#img277/#img278). */
-  height: 30px;
-  background: rgba(255, 255, 255, 0.32);
-}
-/* The separator sits after the site title, dividing it from the app icons that
-   follow — so it shows on every single-row width. Hidden in the two-row layout where
-   the title sits on its own line above the icons — that breakpoint is now ≤640 (see
-   the two-row nav block), so the divider must hide there too, not ≤560 (#img462/463). */
-@media (max-width: 640px) {
-  .sticky-brand::after { display: none; }
 }
 
 /* === Topic Intelligence — control-panel module ====================
