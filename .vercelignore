@@ -11,3 +11,9 @@ home-mobile.png
 # Working/status docs — kept in git for reference but not part of
 # the live site.
 docs/
+
+# Server/dev-only — kept in git, never served publicly (db schema, tooling, tests).
+db/
+tools/
+scripts/
+test/

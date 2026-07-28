@@ -11,8 +11,11 @@
 //
 //   503 — { error }   (database not configured)
 //
-// CORS-open (aggregate counts only, no secrets) so admin.html can read it
-// cross-origin when opened locally / from Pages.
+// AUTH: requires `Authorization: Bearer ${CRON_SECRET}` (B1.6). Exposes live spend
+// / run-rate / cached-brief inventory — useful recon for a cost-exhaustion attack,
+// so it's no longer public. admin.html sends the stored CRON secret. CORS stays
+// permissive (the token, not the origin, is what protects the data) with the
+// Authorization header allow-listed for the cross-origin preflight.
 
 const { getSql } = require('../lib/db');
 
@@ -20,8 +23,14 @@ const GROUNDING_FREE = parseInt(process.env.GEMINI_GROUNDING_FREE || '1500', 10)
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
   res.setHeader('Cache-Control', 'no-store');
   if (req.method === 'OPTIONS') return res.status(204).end();
+
+  const secret = process.env.CRON_SECRET;
+  if (!secret || req.headers.authorization !== `Bearer ${secret}`) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
 
   const sql = getSql();
   if (!sql) return res.status(503).json({ error: 'Database not configured' });

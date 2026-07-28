@@ -608,8 +608,16 @@
       if (!host || _usageLoading) return;
       _usageLoading = true;
       host.innerHTML = '<p style="color:var(--text-muted);">Loading…</p>';
-      fetch(API_BASE + '/ai-usage?days=30', { cache: 'no-store' })
-        .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      // /api/ai-usage now requires the CRON secret (B1.6). Reuse the same
+      // localStorage token as the purge action; prompt once if not stored.
+      var usageSecret = '';
+      try { usageSecret = localStorage.getItem('st_cron_secret') || ''; } catch (e) {}
+      if (!usageSecret) {
+        usageSecret = window.prompt('CRON secret (Vercel env CRON_SECRET) — required to read AI usage:', '') || '';
+        if (usageSecret) { try { localStorage.setItem('st_cron_secret', usageSecret); } catch (e) {} }
+      }
+      fetch(API_BASE + '/ai-usage?days=30', { cache: 'no-store', headers: { 'Authorization': 'Bearer ' + usageSecret } })
+        .then(function(r){ if (r.status === 401) { try { localStorage.removeItem('st_cron_secret'); } catch (e) {} throw new Error('401 — wrong/missing CRON secret; reload to re-enter'); } if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
         .then(function(d){
           _usageLoading = false;
           var days = (d && d.days) || [];
