@@ -4,7 +4,7 @@
 // matches AI insights elsewhere.
 import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260717-revamp591';
 import { renderTIAccordion, webSourceItem } from './ti-shortcuts.js';
-import { getExternalSearches, getExternalSearchCategories, getModels } from '../utils/data.js';
+import { getExternalSearches, getExternalSearchCategories, getModels, safeUrl } from '../utils/data.js';
 import { insightTabsHTML } from '../utils/insight-tabs.js?v=20260706-revamp574';
 import { exploreFurtherHTML } from '../utils/explore-further.js?v=20260720-revamp609';
 
@@ -107,7 +107,7 @@ function teSecHead(key, name, aiTag) {
 }
 function teSourcesHTML(headlines, sources) {
   const seen = new Set(); const rows = [];
-  const row = (uri, title, meta) => `<a class="im-cov-row" href="${escapeAttr(uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${escapeHTML(title)}</span>${meta ? `<span class="im-cov-host">${escapeHTML(meta)}</span>` : ''}</span>${TE_ARROW}</a>`;
+  const row = (uri, title, meta) => `<a class="im-cov-row" href="${escapeAttr(safeUrl(uri))}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${escapeHTML(title)}</span>${meta ? `<span class="im-cov-host">${escapeHTML(meta)}</span>` : ''}</span>${TE_ARROW}</a>`;
   for (const h of (Array.isArray(headlines) ? headlines : [])) {
     if (rows.length >= 12) break;
     const uri = (h && (h.url || h.uri)) || ''; if (!uri) continue;

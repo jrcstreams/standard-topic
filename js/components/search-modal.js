@@ -6,7 +6,7 @@
 // A "View all topics" link expands the visible parent set from just
 // the featured ones to every parent topic in the catalog.
 
-import { getTopicsGroupedByParent, getFeaturedTopics, searchTopics, fetchWithTimeout } from '../utils/data.js';
+import { getTopicsGroupedByParent, getFeaturedTopics, searchTopics, fetchWithTimeout, safeUrl } from '../utils/data.js';
 import { topicIconSVG } from '../utils/topic-icons.js?v=20260716-revamp588';
 import { navigate } from '../utils/router.js';
 
@@ -326,7 +326,7 @@ function renderNewsResults(stories) {
     const meta = [host, when].filter(Boolean).map(escapeHTML).join(' · ');
     const topic = s.topic_name ? `<span class="search-news-topic">${escapeHTML(s.topic_name)}</span>` : '';
     return `
-      <a class="search-news-item" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">
+      <a class="search-news-item" href="${escapeAttr(safeUrl(url))}" target="_blank" rel="noopener noreferrer">
         <span class="search-news-title">${escapeHTML(s.title || '')}</span>
         <span class="search-news-meta">${meta}${topic ? ` · ${topic}` : ''}</span>
       </a>`;

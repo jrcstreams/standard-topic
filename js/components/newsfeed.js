@@ -10,7 +10,7 @@
 // newsCardHTML/wireNewsAI/listHTML are exported so the Search modal can reuse
 // the exact same card + AI-insight behavior for archive results.
 
-import { getModels, getExternalSearches, getExternalSearchCategories, fetchWithTimeout } from '../utils/data.js';
+import { getModels, getExternalSearches, getExternalSearchCategories, fetchWithTimeout, safeUrl } from '../utils/data.js';
 import { openModel, copyPrompt } from '../utils/ai-models.js';
 import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp574';
 import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
@@ -97,7 +97,7 @@ export function sourceChip(r, opts = {}) {
     ? `<img class="ai-source-favicon" src="https://www.google.com/s2/favicons?domain=${escapeAttr(r.domain)}&sz=64" alt="" width="14" height="14" loading="lazy" referrerpolicy="no-referrer">`
     : SRC_GLOBE_SVG);
   const cls = opts.noFavicons ? 'ai-source-chip ai-source-chip--plain' : 'ai-source-chip';
-  return `<a class="${cls}" href="${escapeAttr(r.uri)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(r.title || r.label)}">${fav}<span>${escapeHTML(r.label)}</span></a>`;
+  return `<a class="${cls}" href="${escapeAttr(safeUrl(r.uri))}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(r.title || r.label)}">${fav}<span>${escapeHTML(r.label)}</span></a>`;
 }
 // A small glyph that represents each brief section, so a brief reads as packaged
 // intelligence (What Happened ⚡ / Key Takeaways ✔ / Why It Matters ◎ / Timeline ◷ …).
@@ -191,7 +191,7 @@ function renderInsightSources(sources) {
     const key = (r.label || '').toLowerCase();
     if (!key || seen.has(key)) continue;
     seen.add(key);
-    rows.push(`<a class="ai-ins-source-row" href="${escapeAttr(r.uri)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(r.title || r.label)}"><span class="ai-ins-source-name">${escapeHTML(r.label)}</span>${ARROW_SM}</a>`);
+    rows.push(`<a class="ai-ins-source-row" href="${escapeAttr(safeUrl(r.uri))}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(r.title || r.label)}"><span class="ai-ins-source-name">${escapeHTML(r.label)}</span>${ARROW_SM}</a>`);
   }
   return rows.length ? `<div class="ai-ins-source-list">${rows.join('')}</div>` : '<p class="ai-ins-empty">No sources cited.</p>';
 }
@@ -361,7 +361,7 @@ export function wireNewsAI(root) {
       // the share popover) handle their own clicks.
       if (e.target.closest('a, button, [data-news-panel-body], .news-share-wrap')) return;
       const url = card.dataset.url;
-      if (url) window.open(url, '_blank', 'noopener');
+      if (url) window.open(safeUrl(url), '_blank', 'noopener');
     });
   });
   // AI Insights / Web Search → toggle a clean inline dropdown under the card.
@@ -507,7 +507,7 @@ function niSourcesHTML(headlines, sources, origUrl) {
   // the News Sources list looks consistent across surfaces (#img332). "View
   // original article" keeps its arrow INLINE next to the text, not right-aligned.
   const rows = [];
-  if (origUrl) rows.push(`<a class="ai-ins-source-row ai-ins-source-row--orig" href="${escapeAttr(origUrl)}" target="_blank" rel="noopener noreferrer"><span class="ai-ins-source-name">View original article ${ARROW_SM}</span></a>`);
+  if (origUrl) rows.push(`<a class="ai-ins-source-row ai-ins-source-row--orig" href="${escapeAttr(safeUrl(origUrl))}" target="_blank" rel="noopener noreferrer"><span class="ai-ins-source-name">View original article ${ARROW_SM}</span></a>`);
   const list = (Array.isArray(headlines) && headlines.length ? headlines : (sources || []));
   const seen = new Set();
   for (const s of list) {
@@ -515,7 +515,7 @@ function niSourcesHTML(headlines, sources, origUrl) {
     const key = (r.label || '').toLowerCase();
     if (!key || !r.uri || seen.has(key)) continue;
     seen.add(key);
-    rows.push(`<a class="ai-ins-source-row" href="${escapeAttr(r.uri)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(r.title || r.label)}"><span class="ai-ins-source-name">${escapeHTML(r.label)}</span>${ARROW_SM}</a>`);
+    rows.push(`<a class="ai-ins-source-row" href="${escapeAttr(safeUrl(r.uri))}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(r.title || r.label)}"><span class="ai-ins-source-name">${escapeHTML(r.label)}</span>${ARROW_SM}</a>`);
   }
   return rows.length ? `<section class="ni-sec ni-sec-sources"><div class="ni-sec-head"><span class="ni-sec-ic">${NI_SEC_ICON.sources}</span><h4 class="ni-sec-name">Sources</h4></div><div class="ai-ins-source-list">${rows.join('')}</div></section>` : '';
 }
@@ -527,7 +527,7 @@ function niWebHTML(term) {
   return `<div class="ni-web">${avail.map((c) => {
     const rows = searches.filter((s) => s.category === c.key).map((s) => {
       const url = String(s.urlTemplate || '').replace(/\{query\}/g, encodeURIComponent(term || ''));
-      return `<a class="ni-source-row" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer"><span class="ni-source-tx"><span class="ni-source-name">${escapeHTML(s.name)}</span>${s.description ? `<span class="ni-source-desc">${escapeHTML(s.description)}</span>` : ''}</span>${NI_ARROW_SVG}</a>`;
+      return `<a class="ni-source-row" href="${escapeAttr(safeUrl(url))}" target="_blank" rel="noopener noreferrer"><span class="ni-source-tx"><span class="ni-source-name">${escapeHTML(s.name)}</span>${s.description ? `<span class="ni-source-desc">${escapeHTML(s.description)}</span>` : ''}</span>${NI_ARROW_SVG}</a>`;
     }).join('');
     return `<details class="ni-webcat" name="ni-webcat"><summary class="ni-webcat-sum"><span>${escapeHTML(c.label)}</span>${AI_CHEV_SVG}</summary><div class="ni-source-list">${rows}</div></details>`;
   }).join('')}</div>`;
@@ -537,7 +537,7 @@ function niWebHTML(term) {
 // each web-search category. Matches the trending / topic Explore Further shape.
 function niModelRow(model, prompt) {
   const url = String(model.urlTemplate || model.chatUrl || '').replace(/\{prompt\}/g, encodeURIComponent(prompt));
-  return `<a class="ni-source-row" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer"><span class="ni-source-tx"><span class="ni-source-name">${escapeHTML(model.name)}</span>${model.description ? `<span class="ni-source-desc">${escapeHTML(model.description)}</span>` : ''}</span>${NI_ARROW_SVG}</a>`;
+  return `<a class="ni-source-row" href="${escapeAttr(safeUrl(url))}" target="_blank" rel="noopener noreferrer"><span class="ni-source-tx"><span class="ni-source-name">${escapeHTML(model.name)}</span>${model.description ? `<span class="ni-source-desc">${escapeHTML(model.description)}</span>` : ''}</span>${NI_ARROW_SVG}</a>`;
 }
 function niExploreListHTML(card) {
   const prompt = newsStoryPrompt(card);
@@ -551,7 +551,7 @@ function niExploreListHTML(card) {
   const catAccs = cats.filter((c) => searches.some((s) => s.category === c.key)).map((c) => {
     const rows = searches.filter((s) => s.category === c.key).map((s) => {
       const url = String(s.urlTemplate || '').replace(/\{query\}/g, encodeURIComponent(term));
-      return `<a class="ni-source-row" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer"><span class="ni-source-tx"><span class="ni-source-name">${escapeHTML(s.name)}</span>${s.description ? `<span class="ni-source-desc">${escapeHTML(s.description)}</span>` : ''}</span>${NI_ARROW_SVG}</a>`;
+      return `<a class="ni-source-row" href="${escapeAttr(safeUrl(url))}" target="_blank" rel="noopener noreferrer"><span class="ni-source-tx"><span class="ni-source-name">${escapeHTML(s.name)}</span>${s.description ? `<span class="ni-source-desc">${escapeHTML(s.description)}</span>` : ''}</span>${NI_ARROW_SVG}</a>`;
     }).join('');
     return `<details class="ni-webcat" name="ni-explore"><summary class="ni-webcat-sum"><span>${escapeHTML(c.label)}</span>${AI_CHEV_SVG}</summary><div class="ni-source-list">${rows}</div></details>`;
   }).join('');
@@ -578,9 +578,9 @@ function niSourcesListHTML(headlines, sources, origUrl) {
     if (!key || seen.has(key)) continue;
     seen.add(key);
     const meta = [s.source || r.domain || '', s.date ? relativeTime(s.date) : ''].filter(Boolean).join(' · ');
-    rows.push(`<a class="aii-sec-src" href="${escapeAttr(uri)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(title)}"><span class="aii-sec-src-tx"><span class="aii-sec-src-title">${escapeHTML(title)}</span>${meta ? `<span class="aii-sec-src-host">${escapeHTML(meta)}</span>` : ''}</span>${ARROW_SM}</a>`);
+    rows.push(`<a class="aii-sec-src" href="${escapeAttr(safeUrl(uri))}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(title)}"><span class="aii-sec-src-tx"><span class="aii-sec-src-title">${escapeHTML(title)}</span>${meta ? `<span class="aii-sec-src-host">${escapeHTML(meta)}</span>` : ''}</span>${ARROW_SM}</a>`);
   }
-  const orig = origUrl ? `<a class="ni-source-orig" href="${escapeAttr(origUrl)}" target="_blank" rel="noopener noreferrer">View original article ${ARROW_SM}</a>` : '';
+  const orig = origUrl ? `<a class="ni-source-orig" href="${escapeAttr(safeUrl(origUrl))}" target="_blank" rel="noopener noreferrer">View original article ${ARROW_SM}</a>` : '';
   const listHTML = rows.length ? `<div class="ai-ins-source-list">${rows.join('')}</div>` : '';
   return (orig || listHTML) ? `${orig}${listHTML}` : '';
 }
@@ -727,7 +727,7 @@ export function newsCardHTML(item) {
 
   const metaParts = [];
   if (host) metaParts.push(url
-    ? `<a class="news-card-source" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer" title="Open on ${escapeHTML(host)}">${escapeHTML(host)}</a>`
+    ? `<a class="news-card-source" href="${escapeAttr(safeUrl(url))}" target="_blank" rel="noopener noreferrer" title="Open on ${escapeAttr(host)}">${escapeHTML(host)}</a>`
     : `<span class="news-card-source">${escapeHTML(host)}</span>`);
   if (host && rel) metaParts.push(`<span class="news-card-meta-sep" aria-hidden="true">·</span>`);
   if (rel) metaParts.push(`<time class="news-card-time">${escapeHTML(rel)}</time>`);
@@ -740,7 +740,7 @@ export function newsCardHTML(item) {
   return `
     <article class="news-card" data-title="${escapeAttr(title)}" data-desc="${escapeAttr(descText.slice(0, 500))}" data-url="${escapeAttr(url)}" data-date="${escapeAttr(pubDate)}">
       <a class="news-card-link"
-         href="${escapeAttr(url)}"
+         href="${escapeAttr(safeUrl(url))}"
          target="_blank"
          rel="noopener noreferrer">
         <h4 class="news-card-title">${escapeHTML(title)}</h4>
@@ -761,7 +761,7 @@ export function newsCardHTML(item) {
         </div>
       </div>
       <div class="news-card-actions">
-        ${url ? `<a class="news-act" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer"><span>View Story</span>${NI_VIEW_SVG}</a>` : ''}
+        ${url ? `<a class="news-act" href="${escapeAttr(safeUrl(url))}" target="_blank" rel="noopener noreferrer"><span>View Story</span>${NI_VIEW_SVG}</a>` : ''}
         <button type="button" class="news-act news-act-ai" data-news-panel="ai" aria-expanded="false">${AI_SPARK_FILLED_SVG}<span class="news-act-ai-open">View AI Insights</span><span class="news-act-ai-close">Close AI Insights</span>${AI_CHEV_SVG}<svg class="news-act-ai-x" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       </div>
       <div class="news-panel" data-news-panel-body hidden></div>

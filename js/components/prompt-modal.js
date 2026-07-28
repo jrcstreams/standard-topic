@@ -13,7 +13,7 @@
 // the card but enforces a usable minimum and shifts horizontally to
 // stay on-screen.
 
-import { getModels, getDefaultModelId, getModelById, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
+import { getModels, getDefaultModelId, getModelById, getSubmissionMethods, getPromptGenData, safeUrl } from '../utils/data.js';
 import {
   getPreferredModelId,
   setPreferredModelId,
@@ -369,7 +369,7 @@ function buildModelInfoBody() {
   const modelHomeUrl = model.chatUrl || (model.urlTemplate || '').replace('{prompt}', '');
   body.innerHTML = `
     <div class="pm-modelinfo-head">
-      <a href="${modelHomeUrl}" target="_blank" rel="noopener noreferrer" class="pm-meta-link">${escapeHTML(model.name)}<svg class="pm-meta-link-ic" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a>
+      <a href="${escapeAttr(safeUrl(modelHomeUrl))}" target="_blank" rel="noopener noreferrer" class="pm-meta-link">${escapeHTML(model.name)}<svg class="pm-meta-link-ic" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a>
     </div>
     ${model.description ? `<p class="pm-modelinfo-text">${escapeHTML(model.description)}</p>` : ''}
     ${helper ? `<p class="pm-modelinfo-text pm-modelinfo-method">${methodLabel ? `<strong>${escapeHTML(methodLabel)}.</strong> ` : ''}${escapeHTML(helper)}</p>` : ''}
@@ -412,5 +412,5 @@ function escapeHTML(str) {
   return div.innerHTML;
 }
 function escapeAttr(str) {
-  return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+  return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;');
 }

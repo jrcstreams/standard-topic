@@ -5,7 +5,7 @@
 // Opened via `open-trending-detail` with the full trending item. Shortcut
 // clicks reuse the existing prompt modal (`open-prompt-modal`). A history
 // stack lets related-term views offer a "← back" link.
-import { getTrending101, getTrendingIntelligenceShortcuts, getExternalSearches, getExternalSearchCategories, fetchWithTimeout } from '../utils/data.js';
+import { getTrending101, getTrendingIntelligenceShortcuts, getExternalSearches, getExternalSearchCategories, fetchWithTimeout, safeUrl } from '../utils/data.js';
 import { groupShortcuts, renderTIAccordion, webSourceItem } from './ti-shortcuts.js';
 import { renderBriefBody } from './newsfeed.js';
 
@@ -39,7 +39,7 @@ function inTheNewsHTML(sources, headlines) {
     const key = uri.toLowerCase(); if (seen.has(key)) continue; seen.add(key);
     let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
     let title = (h && h.title) || ''; if (!title) title = host; if (!title) continue;
-    rows.push(`<li class="aii-hl-row"><a class="aii-hl-link" href="${escapeAttr(uri)}" target="_blank" rel="noopener noreferrer">${escapeHTML(title)}</a>${host ? `<span class="aii-hl-src">${escapeHTML(host)}</span>` : ''}</li>`);
+    rows.push(`<li class="aii-hl-row"><a class="aii-hl-link" href="${escapeAttr(safeUrl(uri))}" target="_blank" rel="noopener noreferrer">${escapeHTML(title)}</a>${host ? `<span class="aii-hl-src">${escapeHTML(host)}</span>` : ''}</li>`);
     if (rows.length >= 6) break;
   }
   if (!rows.length) return '';

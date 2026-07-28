@@ -5,7 +5,7 @@
 // stacking: opening one from inside another keeps a "← Back to …" action.
 import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260717-revamp591';
 import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp574';
-import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, fetchWithTimeout } from '../utils/data.js';
+import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, fetchWithTimeout, safeUrl } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
 let overlayEl = null;
@@ -14,7 +14,7 @@ let stack = [];      // [{ entry, label }] — previous modals for the back acti
 let current = null;  // active entry { type, ... }
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
-function escAttr(s) { return String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
+function escAttr(s) { return String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;'); }
 function relTime(iso) {
   if (!iso) return '';
   const t = new Date(iso).getTime();
@@ -363,7 +363,7 @@ function wireBriefRetry(secsBody, retry) {
 // only) when we have no related coverage.
 function coverageRow(uri, title, metaParts) {
   const meta = (metaParts || []).filter(Boolean).join(' · ');
-  return `<a class="im-cov-row" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(title)}</span>${meta ? `<span class="im-cov-host">${esc(meta)}</span>` : ''}</span>${ARROW}</a>`;
+  return `<a class="im-cov-row" href="${escAttr(safeUrl(uri))}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(title)}</span>${meta ? `<span class="im-cov-host">${esc(meta)}</span>` : ''}</span>${ARROW}</a>`;
 }
 function coverageListHTML(headlines, sources, origUrl) {
   const seen = new Set(); const rows = [];
@@ -445,7 +445,7 @@ function brandHeaderHTML(condensed, opts = {}) {
   // condensed = { title, meta } — a compact title bar that fades in once the
   // overview card scrolls out of view. NO prev/next arrows now (#85); the title
   // is left-aligned and the actions sit next to "View original" (#86).
-  const condMeta = condensed && (condensed.meta || condensed.url) ? `<span class="im-condensed-meta">${condensed.meta ? `<span class="im-condensed-pub">${esc(condensed.meta)}</span>` : ''}${condensed.url ? `<a class="im-condensed-link" href="${escAttr(condensed.url)}" target="_blank" rel="noopener noreferrer">View original ${ARROW}</a>` : ''}</span>` : '';
+  const condMeta = condensed && (condensed.meta || condensed.url) ? `<span class="im-condensed-meta">${condensed.meta ? `<span class="im-condensed-pub">${esc(condensed.meta)}</span>` : ''}${condensed.url ? `<a class="im-condensed-link" href="${escAttr(safeUrl(condensed.url))}" target="_blank" rel="noopener noreferrer">View original ${ARROW}</a>` : ''}</span>` : '';
   const condActs = opts.condActions ? `<span class="im-condensed-acts">
       <button type="button" class="im-cond-act" data-panel="sources">Sources</button>
       <button type="button" class="im-cond-act" data-panel="explore">Ask AI</button>
@@ -506,7 +506,7 @@ function actionsHTML({ sources = true } = {}) {
 function sourcesListHTML(sources, origUrl) {
   const rows = [];
   if (origUrl) {
-    rows.push(`<a class="im-source-row im-source-row--orig" href="${escAttr(origUrl)}" target="_blank" rel="noopener noreferrer"><span>View original article</span>${ARROW}</a>`);
+    rows.push(`<a class="im-source-row im-source-row--orig" href="${escAttr(safeUrl(origUrl))}" target="_blank" rel="noopener noreferrer"><span>View original article</span>${ARROW}</a>`);
   }
   const seen = new Set();
   for (const s of (sources || [])) {
@@ -515,7 +515,7 @@ function sourcesListHTML(sources, origUrl) {
     const key = label.toLowerCase();
     if (!key || seen.has(key)) continue;
     seen.add(key);
-    rows.push(`<a class="im-source-row" href="${escAttr(uri)}" target="_blank" rel="noopener noreferrer"><span>${esc(label)}</span>${ARROW}</a>`);
+    rows.push(`<a class="im-source-row" href="${escAttr(safeUrl(uri))}" target="_blank" rel="noopener noreferrer"><span>${esc(label)}</span>${ARROW}</a>`);
   }
   return rows.length ? `<div class="im-source-list">${rows.join('')}</div>` : '<p class="im-empty">No sources cited for this brief.</p>';
 }
@@ -733,7 +733,7 @@ function renderNews(d) {
   const metaLine = `${host ? `<span class="im-eyebrow-cat">${esc(host)}</span>` : ''}${when ? `<span class="im-eyebrow-time">${esc(when)}</span>` : ''}`;
   // Action links — View Original (real link) + Ask AI + Web Search (icon dropdowns).
   const actions = [
-    d.url ? `<a class="im-qlink" href="${escAttr(d.url)}" target="_blank" rel="noopener noreferrer"><span>View Original</span>${ARROW}</a>` : '',
+    d.url ? `<a class="im-qlink" href="${escAttr(safeUrl(d.url))}" target="_blank" rel="noopener noreferrer"><span>View Original</span>${ARROW}</a>` : '',
     `<button type="button" class="im-qlink im-qlink-btn" data-panel="explore" aria-expanded="false">${ICON_ASK}<span>Ask AI</span>${CHEV}</button>`,
     `<button type="button" class="im-qlink im-qlink-btn" data-panel="web" aria-expanded="false">${ICON_GLOBE}<span>Web Search</span>${CHEV}</button>`,
   ].filter(Boolean).join('');

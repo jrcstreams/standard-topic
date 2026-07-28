@@ -6,7 +6,7 @@
 // path loads, hopping between its sections is instant.
 import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260717-revamp591';
 import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp574';
-import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData, fetchWithTimeout } from '../utils/data.js';
+import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData, fetchWithTimeout, safeUrl } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
@@ -25,7 +25,7 @@ const PATHS = [
 ];
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s ?? ''; return d.innerHTML; }
-function escAttr(s) { return String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
+function escAttr(s) { return String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;'); }
 function relTime(iso) {
   if (!iso) return '';
   const t = new Date(iso).getTime();
@@ -182,7 +182,7 @@ function attributeItemsToSections(items, sections) {
 }
 function secSourcesHTML(items, hideLabel, collapsible) {
   if (!items || !items.length) return '';
-  const row = (x) => `<a class="aii-sec-src" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer" title="${escAttr(x.title)}"><span class="aii-sec-src-ic">${SRC_LINK}</span><span class="aii-sec-src-tx"><span class="aii-sec-src-title">${esc(x.title)}</span>${x.meta ? `<span class="aii-sec-src-host">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`;
+  const row = (x) => `<a class="aii-sec-src" href="${escAttr(safeUrl(x.uri))}" target="_blank" rel="noopener noreferrer" title="${escAttr(x.title)}"><span class="aii-sec-src-ic">${SRC_LINK}</span><span class="aii-sec-src-tx"><span class="aii-sec-src-title">${esc(x.title)}</span>${x.meta ? `<span class="aii-sec-src-host">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`;
   // Collapsible: the WHOLE sources block hides behind a "N sources ⌄" toggle so it
   // adds no height to the card on load (#img59). Expands to the full list.
   if (collapsible) {
@@ -812,7 +812,7 @@ export function renderAIIntelligence(container, scope) {
       // Sources list — drop bare grounding-citation domains (e.g. "pbs.org") that
       // give the reader no context on what they're clicking.
       const items = sectionNewsItems().filter((x) => x.title && x.meta && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(String(x.title).trim()));
-      const covRows = items.map((x) => `<a class="im-cov-row" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span><span class="im-cov-host">${esc(x.meta)}</span></span>${EXT}</a>`).join('');
+      const covRows = items.map((x) => `<a class="im-cov-row" href="${escAttr(safeUrl(x.uri))}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span><span class="im-cov-host">${esc(x.meta)}</span></span>${EXT}</a>`).join('');
       if (covRows) html += aiiMsec('aii-msec-sources', 'Sources', aiiSecHead('sources', 'Sources') + `<div class="im-coverage-list">${covRows}</div>`);
       wrap.innerHTML = html;
       wrap.classList.add('ai-reveal');
@@ -1286,7 +1286,7 @@ export function renderAIIntelligence(container, scope) {
     const rows = sectionNewsItems()
       .filter((x) => x.title && x.meta && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(String(x.title).trim()))
       .map((x) =>
-      `<a class="im-cov-row" href="${escAttr(x.uri)}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span><span class="im-cov-host">${esc(x.meta)}</span></span>${EXT}</a>`);
+      `<a class="im-cov-row" href="${escAttr(safeUrl(x.uri))}" target="_blank" rel="noopener noreferrer"><span class="im-cov-text"><span class="im-cov-title">${esc(x.title)}</span><span class="im-cov-host">${esc(x.meta)}</span></span>${EXT}</a>`);
     if (!rows.length) return '';
     return `<div class="im-coverage im-coverage--inline"><div class="im-section-title im-section-title--icon">${SOURCES_BADGE}<span>Sources</span></div><div class="im-coverage-list">${rows.join('')}</div></div>`;
   }

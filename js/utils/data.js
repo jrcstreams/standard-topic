@@ -72,6 +72,18 @@ async function fetchJSON(path) {
 // Shared fetch with a hard timeout — the API functions allow 60–120s wall clock,
 // and without an abort a hung function means a spinner for minutes. Callers'
 // existing retry/error paths treat the AbortError like any network failure.
+// URL-scheme allowlist for any href/window.open built from REMOTE data (AI
+// citation URIs, RSS story links, API results). Entity-escaping alone still
+// lets a `javascript:` URI through as a live XSS link — this closes that.
+// Relative URLs resolve against the site origin and pass. Unknown schemes → '#'.
+export function safeUrl(u) {
+  try {
+    const base = (typeof window !== 'undefined' && window.location) ? window.location.origin : 'https://www.standardtopic.com';
+    const p = new URL(String(u || ''), base);
+    return (p.protocol === 'http:' || p.protocol === 'https:' || p.protocol === 'mailto:') ? p.href : '#';
+  } catch (_) { return '#'; }
+}
+
 // Pass { timeoutMs } in opts to override (insight generations legitimately run
 // 20–40s on a cache miss — those sites use 60000; reads default to 15000).
 export function fetchWithTimeout(url, opts = {}) {
