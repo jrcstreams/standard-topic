@@ -5,7 +5,7 @@
 // wizard, rendered into the modal body.
 
 import { renderPromptGenerator } from './prompt-generator.js?v=20260716-revamp588';
-import { navigate } from '../utils/router.js';
+import { navigate, routeHash } from '../utils/router.js?v=20260728-revamp667';
 
 let overlayEl = null;
 
@@ -50,7 +50,7 @@ export function closePromptBuilderModal() {
 // ✕ / overlay / Esc: close and, if we're on the #/prompt-generator deep-link,
 // return home so the URL reflects the dismissed modal.
 function userClose() {
-  const onRoute = (window.location.hash || '').startsWith('#/prompt-generator');
+  const onRoute = routeHash().startsWith('#/prompt-generator');
   closePromptBuilderModal();
   if (onRoute) navigate('#/');
 }

@@ -11,6 +11,7 @@ import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from 
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
+import { navigate } from '../utils/router.js?v=20260728-revamp667';
 import { topicIconSVG } from '../utils/topic-icons.js?v=20260716-revamp588';
 import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
 
@@ -431,7 +432,7 @@ export function renderAIIntelligence(container, scope) {
     const wireCustom = () => stage.querySelectorAll('[data-tp-custom]').forEach((b) => b.addEventListener('click', () => {
       const term = b.dataset.tpCustom; if (!term) return;
       window.dispatchEvent(new CustomEvent('close-all-modals'));
-      window.location.hash = '#/custom/' + encodeURIComponent(term);
+      navigate('#/custom/' + encodeURIComponent(term));
     }));
     wireCustom();
     if (!list) return;
@@ -460,7 +461,7 @@ export function renderAIIntelligence(container, scope) {
       const exact = (scope.allTopics || []).find((t) => String(t.name).toLowerCase() === term.toLowerCase());
       if (exact && scope.onChangeTopic) { scope.onChangeTopic(exact.key); return; }
       window.dispatchEvent(new CustomEvent('close-all-modals'));
-      window.location.hash = '#/custom/' + encodeURIComponent(term);
+      navigate('#/custom/' + encodeURIComponent(term));
     });
     list.addEventListener('scroll', updateFade, { passive: true });
     wireKeys();
@@ -1859,7 +1860,7 @@ export function renderAIIntelligence(container, scope) {
       stage.querySelector('[data-view-topic]')?.addEventListener('click', () => {
         const key = scope.topicKey; if (!key) return;
         window.dispatchEvent(new CustomEvent('close-all-modals'));
-        window.location.hash = key === 'home' ? '#/' : ('#/topic/' + key);
+        navigate(key === 'home' ? '#/' : ('#/topic/' + key));
       });
       // Discreet "Explore further with external AI models" link (brief head) → opens
       // its Ask-AI menu in place.

@@ -1,4 +1,4 @@
-import { initRouter, onRoute, getCurrentRoute } from './utils/router.js?v=20260728-revamp661';
+import { initRouter, onRoute, getCurrentRoute, navigate as routerNavigate, routeHash, replaceRoute } from './utils/router.js?v=20260728-revamp667';
 import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getSubtopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, searchTopics, getModels, getDefaultModelId, getModelById, fetchWithTimeout } from './utils/data.js';
 import { getPreferredModelId, setPreferredModelId, submitPrompt, openModel, copyPrompt } from './utils/ai-models.js?v=20260605-polish30';
 import { assemblePrompt } from './utils/prompt-assembly.js';
@@ -6,19 +6,19 @@ import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './ut
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js?v=20260716-revamp588';
 import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp574';
-import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260716-revamp588';
+import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260728-revamp667';
 import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260717-revamp591';
 import { renderShortcuts } from './components/shortcuts.js';
 import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js?v=20260716-revamp588';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260716-revamp588';
+import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260728-revamp667';
 import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp574';
 import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260720-revamp609';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260726-revamp649';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260728-revamp667';
 import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260720-revamp609';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260717-revamp592';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderBottomNav(route);
 
     // Fire GA4 page_view after the DOM has the right document.title.
-    trackPageView(window.location.hash || '#/', document.title);
+    trackPageView(routeHash() || '#/', document.title);
   });
 
   window.addEventListener('resize', setSubnavHeightVar, { passive: true });
@@ -592,7 +592,7 @@ function updateNavDdFades() {
 // A route-aware user close: search resets its deep-link route back home; other
 // dropdowns just close. Wired to the close button, overlay click, and Esc.
 function userCloseNavDropdown() {
-  const hash = window.location.hash || '';
+  const hash = routeHash() || '';
   if (navDdOpen && navDdOpen.key === 'search') {
     const onSearchRoute = hash.startsWith('#/custom/') || hash === '#/search';
     closeNavDropdown();
@@ -728,10 +728,10 @@ function wirePromptsDropdown(panel, initialView) {
   // Keep the URL in step with the visible view (#/prompts · /build · /library) when
   // the dropdown is route-driven — replaceState so view switches don't re-render.
   const syncViewHash = (seg) => {
-    const h = window.location.hash || '';
+    const h = routeHash() || '';
     if (!(h === '#/prompts' || h.startsWith('#/prompts/'))) return;
     const target = seg ? `#/prompts/${seg}` : '#/prompts';
-    if (h !== target) { try { history.replaceState(null, '', target); } catch (_) {} }
+    if (h !== target) { try { replaceRoute(target); } catch (_) {} }
   };
   let ctl = null;
   const destroyCtl = () => { if (ctl && ctl.destroy) { try { ctl.destroy(); } catch (_) {} } ctl = null; };
@@ -851,13 +851,13 @@ function openPromptsNavDropdown(view) {
 function navDdRouteToggle(key, openFn) {
   if (navDdOpen && navDdOpen.key === key) { userCloseNavDropdown(); return; }
   const target = '#/' + key;
-  const h = window.location.hash || '';
+  const h = routeHash() || '';
   if (h === target || h.startsWith(target + '/')) openFn();
   else navigate(target);
 }
 function togglePromptsNavDropdown() {
   navDdRouteToggle('prompts', () => {
-    const h = window.location.hash || '';
+    const h = routeHash() || '';
     openPromptsNavDropdown(h.startsWith('#/prompts/') ? h.slice('#/prompts/'.length) : null);
   });
 }
@@ -968,7 +968,7 @@ function openPromptBuilderNavDropdown() {
 function closePromptBuilderNavDropdown() { if (isPromptBuilderOpen()) closeNavDropdown(); }
 // ✕ / overlay / Esc: close and, on the #/prompt-generator deep-link, return home.
 function userClosePromptBuilder() {
-  const onRoute = (window.location.hash || '').startsWith('#/prompt-generator');
+  const onRoute = (routeHash() || '').startsWith('#/prompt-generator');
   closePromptBuilderNavDropdown();
   if (onRoute) navigate('#/');
 }
@@ -1174,11 +1174,11 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
   // replaceState (no hashchange) so tab clicks don't re-render the page.
   const TAB_URL_SEG = { ai: 'ai-insights', prompts: 'prompts', explore: 'explore' };
   const syncTabHash = (key) => {
-    if (!(window.location.hash || '').startsWith('#/topic/')) return;
+    if (!(routeHash() || '').startsWith('#/topic/')) return;
     const seg = TAB_URL_SEG[key];
     const newHash = seg ? `#/topic/${topic.slug}/${seg}` : `#/topic/${topic.slug}`;
-    if (window.location.hash !== newHash) {
-      try { history.replaceState(null, '', newHash); } catch (_) {}
+    if (routeHash() !== newHash) {
+      try { replaceRoute(newHash); } catch (_) {}
       const r = getCurrentRoute();
       if (r && r.type === 'topic') r.tab = seg || 'newsfeed';
       // Keep the <title> in step with the active tab (SEO 2a).
@@ -1220,7 +1220,7 @@ function resetToHome(e) {
   window.dispatchEvent(new CustomEvent('close-all-modals'));
   try { closeNavDropdown(); } catch (_) {}
   try { closeAllPickers(); } catch (_) {}
-  const h = window.location.hash || '';
+  const h = routeHash() || '';
   if (h === '#/' || h === '' || h === '#') {
     try { window.scrollTo(0, 0); } catch (_) {}
   } else {
@@ -1605,8 +1605,8 @@ function setupGlobalTabPillDelegation() {
         ? `#/topic/${route.slug}`
         : `#/topic/${route.slug}/${tab}`;
     }
-    if (newHash && newHash !== window.location.hash) {
-      history.replaceState(null, '', newHash);
+    if (newHash && newHash !== routeHash()) {
+      replaceRoute(newHash);
       // Keep currentRoute.tab in sync without re-firing the router,
       // so a subsequent click reads the right "current" state.
       route.tab = tab;
@@ -1715,8 +1715,8 @@ function wireCustomSearchInput(container, initialTerm) {
   const liveUpdate = (q) => {
     const trimmed = q.trim();
     const newHash = trimmed ? `#/custom/${encodeURIComponent(trimmed)}` : '#/';
-    if (window.location.hash !== newHash && trimmed) {
-      history.replaceState(null, '', newHash);
+    if (routeHash() !== newHash && trimmed) {
+      replaceRoute(newHash);
     }
     const shortcutsSection = document.querySelector('#section-shortcuts');
     if (shortcutsSection) {
@@ -1788,7 +1788,7 @@ function wireCustomSearchInput(container, initialTerm) {
     updateClearVisible();
     dropdown.hidden = true;
     input.focus();
-    history.replaceState(null, '', '#/');
+    replaceRoute('#/');
     // Re-render shortcuts section as empty/home state.
     const shortcutsSection = document.querySelector('#section-shortcuts');
     if (shortcutsSection) {
@@ -1813,10 +1813,10 @@ function highlightCustomMatch(name, query) {
   return `${escapeHTML(before)}<strong>${escapeHTML(match)}</strong>${escapeHTML(after)}`;
 }
 
-// navigate helper — uses router's hash navigation so the route handler
-// fires and the layout updates accordingly.
+// navigate helper — delegates to the router's History-API navigation so the route
+// handler fires and the layout updates. Accepts "#/x" (legacy) or "/x" targets.
 function navigate(hash) {
-  window.location.hash = hash;
+  routerNavigate(hash);
 }
 
 // Unified subnav renderer for custom search pages. When a `prefix` is
@@ -2432,7 +2432,7 @@ function renderStickyHeroBar(container, route) {
     document.querySelector(`.sticky-nav-topic[href="#/topic/${route.slug}"]`)?.classList.add('is-active');
   }
   // Home icon shows the solid white "active page" pill on the homepage.
-  if (!route || route.type === 'home' || location.hash === '' || location.hash === '#' || location.hash === '#/') {
+  if (!route || route.type === 'home' || routeHash() === '' || routeHash() === '#' || routeHash() === '#/') {
     document.getElementById('nav-home')?.classList.add('is-active');
   }
 
@@ -2696,7 +2696,7 @@ function renderBottomNav(route) {
       // Close any open bar modal (Topics / Trending / AI Insights / Search) when
       // tapping Home — otherwise the modal stays up over the homepage.
       window.dispatchEvent(new CustomEvent('close-all-modals'));
-      const h = window.location.hash;
+      const h = routeHash();
       if (h === '#/' || h === '' || h === '#') { e.preventDefault(); window.scrollTo(0, 0); }
     });
     // [304] Light the matching tab while its modal is open. The open events set
@@ -2713,7 +2713,7 @@ function renderBottomNav(route) {
   // HOME layout (renderLayout runs with baseRoute=home), so check the real
   // route from the hash BEFORE the home fallback.
   let active = '';
-  const h = (window.location.hash || '').toLowerCase();
+  const h = (routeHash() || '').toLowerCase();
   if (h.startsWith('#/search') || h.startsWith('#/custom')) active = 'search';
   else if (route && route.type === 'home') active = 'home';
   botnavRouteTab = active;
@@ -2993,7 +2993,7 @@ let __insightTemplates = null;
 async function getInsightTemplates() {
   if (__insightTemplates) return __insightTemplates;
   try {
-    const res = await fetch('data/insight-templates.json');
+    const res = await fetch('/data/insight-templates.json');
     __insightTemplates = res.ok ? await res.json() : {};
   } catch (_) { __insightTemplates = {}; }
   __insightTemplates = Object.assign({
@@ -3302,7 +3302,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       } else if (go) {
         const model = tiPreferredModel(); if (!model) return;
         const full = assembleFor(basePrompt);
-        track('shortcut_submit', { model: model.id, route: window.location.hash || '#/' });
+        track('shortcut_submit', { model: model.id, route: routeHash() || '#/' });
         openModel(model, full); copyPrompt(full);
         closeAllTIShortcuts(null);
       }
@@ -3317,7 +3317,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
   container.querySelectorAll('.quick-link-pill').forEach(link => {
     link.addEventListener('click', () => {
       const name = link.dataset.name || '';
-      track('content_shortcut_click', { name, route: window.location.hash || '#/' });
+      track('content_shortcut_click', { name, route: routeHash() || '#/' });
     });
   });
 
@@ -3364,7 +3364,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
       customInstructions: getCustomInstructions(),
       topicName,
     });
-    track('direct_submit', { model: model.id, count: sub.count, route: window.location.hash || '#/' });
+    track('direct_submit', { model: model.id, count: sub.count, route: routeHash() || '#/' });
     try { await submitPrompt(model, prompt); } catch (err) { console.error('Direct submit failed', err); }
   });
 
@@ -3457,7 +3457,7 @@ function renderShortcutsSidebar(container, route, isHome, isCustom = false, cust
     if (!sub) return;
     track(sub.count === 1 ? 'shortcut_click' : 'multi_shortcut_submit', {
       [sub.count === 1 ? 'shortcut_name' : 'count']: sub.count === 1 ? sub.name : sub.count,
-      route: window.location.hash || '#/',
+      route: routeHash() || '#/',
     });
     window.dispatchEvent(new CustomEvent('open-prompt-modal', {
       detail: {
@@ -4429,7 +4429,7 @@ function openSearchPageModal(term) {
 // the search modal opens on every click.
 function openSearchFromNav() {
   if (isSearchModalOpen()) { userCloseSearchModal(); return; }
-  const h = window.location.hash || '';
+  const h = routeHash() || '';
   if (h === '#/search' || h === '#/custom' || h.startsWith('#/custom/')) {
     openSearchPageModal(h.startsWith('#/custom/') ? decodeURIComponent(h.slice('#/custom/'.length)) : '');
   } else {
@@ -4448,7 +4448,7 @@ function closeSearchPageModal(opts = {}) {
 // ✕ / overlay / Esc: close and, if we're on a #/search or #/custom deep-link,
 // return to home so the URL reflects the dismissed search.
 function userCloseSearchModal() {
-  const hash = window.location.hash || '';
+  const hash = routeHash() || '';
   const onModalRoute = hash.startsWith('#/custom/') || hash === '#/search';
   closeSearchPageModal();
   if (onModalRoute) navigate('#/');
@@ -4460,11 +4460,11 @@ function renderSearchModalBody(host, term) {
   // the resulting route change expand the live panel rather than rebuild it.
   searchPanelModalCtl.onExpand = (t) => {
     const target = '#/custom/' + encodeURIComponent(t);
-    if (window.location.hash !== target) navigate(target);
+    if (routeHash() !== target) navigate(target);
   };
   // Clearing inside the panel drops back to the empty-search route.
   searchPanelModalCtl.onCollapse = () => {
-    if ((window.location.hash || '').startsWith('#/custom/')) navigate('#/search');
+    if ((routeHash() || '').startsWith('#/custom/')) navigate('#/search');
   };
   // Refresh the shell scroll-fades as results paint; focus the empty search.
   [200, 700, 1500].forEach((d) => setTimeout(updateNavDdFades, d));

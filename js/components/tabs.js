@@ -1,6 +1,6 @@
 // Tab pills component (News Feed / AI Shortcuts / Related Topics)
 
-import { navigate } from '../utils/router.js';
+import { navigate } from '../utils/router.js?v=20260728-revamp667';
 
 const TAB_CONFIGS = {
   home: [

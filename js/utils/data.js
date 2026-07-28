@@ -14,13 +14,13 @@ let specificShortcuts = null;
 
 export async function loadAllData() {
   const [topics, directory, assignments, models, promptGen, externalSearches, trending101] = await Promise.all([
-    fetchJSON('data/topics.json'),
-    fetchJSON('data/shortcuts-directory.json'),
-    fetchJSON('data/shortcuts-assignments.json'),
-    fetchJSON('data/ai-models.json'),
-    fetchJSON('data/prompt-generator.json'),
-    fetchJSON('data/external-searches.json').catch(() => ({ searches: [] })),
-    fetchJSON('data/shortcuts-trending101.json').catch(() => ({ shortcuts: [] })),
+    fetchJSON('/data/topics.json'),
+    fetchJSON('/data/shortcuts-directory.json'),
+    fetchJSON('/data/shortcuts-assignments.json'),
+    fetchJSON('/data/ai-models.json'),
+    fetchJSON('/data/prompt-generator.json'),
+    fetchJSON('/data/external-searches.json').catch(() => ({ searches: [] })),
+    fetchJSON('/data/shortcuts-trending101.json').catch(() => ({ shortcuts: [] })),
   ]);
   topicsData = topics;
   shortcutsDirectory = directory;

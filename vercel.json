@@ -8,6 +8,9 @@
     { "path": "/api/cron/pregenerate", "schedule": "15 */3 * * *" },
     { "path": "/api/cron/pregenerate?type=news&n=20&newsMax=20", "schedule": "45 */3 * * *" }
   ],
+  "rewrites": [
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ],
   "functions": {
     "api/cron/news.js": { "maxDuration": 300 },
     "api/cron/trending.js": { "maxDuration": 60 },
