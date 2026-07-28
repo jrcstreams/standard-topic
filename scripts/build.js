@@ -83,10 +83,25 @@ async function run() {
     fs.writeFileSync(p, html);
   }
 
+  // ---- SEO: real sitemap.xml from data/topics.json (all real /topic/<slug> URLs) ----
+  const topics = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/topics.json'), 'utf8')).topics || [];
+  const real = topics.filter((t) => t.slug && t.slug !== 'home');
+  const today = new Date().toISOString().slice(0, 10);
+  const url = (loc, prio, freq) =>
+    `  <url>\n    <loc>https://www.standardtopic.com${loc}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${freq}</changefreq>\n    <priority>${prio}</priority>\n  </url>`;
+  const urls = [url('/', '1.0', 'daily')];
+  for (const t of real) {
+    const prio = t.parent ? '0.6' : '0.8'; // parents rank above subtopics
+    urls.push(url(`/topic/${t.slug}`, prio, 'daily'));
+  }
+  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`;
+  fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), sitemap);
+
   const kb = (n) => (n / 1024).toFixed(1) + 'KB';
   console.log(`build ok:`);
   console.log(`  dist/${jsName}   ${kb(jsBuf.length)}  (from ${kb(sumDir(path.join(ROOT, 'js')))} of source)`);
   console.log(`  dist/${cssName}  ${kb(cssBuf.length)}  (from ${kb(fs.statSync(path.join(ROOT, 'css/styles.css')).size)})`);
+  console.log(`  sitemap.xml      ${urls.length} URLs (home + ${real.length} topics)`);
 }
 
 function sumDir(dir) {
