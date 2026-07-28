@@ -15,5 +15,16 @@
     "api/cron/pregenerate.js": { "maxDuration": 300 },
     "api/trending.js": { "maxDuration": 120 },
     "api/insight.js": { "maxDuration": 60 }
-  }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Content-Security-Policy-Report-Only", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://cdn.fontshare.com; img-src 'self' https: data:; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://api.fontshare.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'" }
+      ]
+    }
+  ]
 }
