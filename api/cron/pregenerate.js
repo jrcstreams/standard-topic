@@ -30,6 +30,7 @@
 //   200 — { ok, trends, news, overviews, healed, refreshed, remaining }
 
 const { getSql } = require('../../lib/db');
+const { withHealthcheck } = require('../../lib/healthcheck');
 const { generateInsight, groundingHeadroom } = require('../../lib/insight-core');
 const { AI_LENSES } = require('../../lib/shortcut-sections');
 const { effectiveWindowHours } = require('../../lib/ai-freshness');
@@ -75,9 +76,9 @@ function overviewCandidates() {
   return out;
 }
 
-module.exports = async function handler(req, res) {
+module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(req, res) {
   const secret = process.env.CRON_SECRET;
-  if (secret && req.headers.authorization !== `Bearer ${secret}`) {
+  if (!secret || req.headers.authorization !== `Bearer ${secret}`) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   const sql = getSql();
@@ -374,4 +375,4 @@ module.exports = async function handler(req, res) {
   } catch (err) {
     return res.status(500).json({ error: String((err && err.message) || err) });
   }
-};
+});

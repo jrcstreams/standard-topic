@@ -11,11 +11,12 @@
 //   200 — { ok, table, embedded, remaining, error? , done? }
 
 const { getSql } = require('../../lib/db');
+const { withHealthcheck } = require('../../lib/healthcheck');
 const { embed, toVector } = require('../../lib/gemini');
 
-module.exports = async function handler(req, res) {
+module.exports = withHealthcheck('HC_PING_EMBED', async function handler(req, res) {
   const secret = process.env.CRON_SECRET;
-  if (secret && req.headers.authorization !== `Bearer ${secret}`) {
+  if (!secret || req.headers.authorization !== `Bearer ${secret}`) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   const sql = getSql();
@@ -68,4 +69,4 @@ module.exports = async function handler(req, res) {
   } catch (err) {
     return res.status(500).json({ error: String((err && err.message) || err) });
   }
-};
+});

@@ -18,6 +18,7 @@
 
 const crypto = require('crypto');
 const { getSql, bulkInsert } = require('../../lib/db');
+const { withHealthcheck } = require('../../lib/healthcheck');
 
 const RSSAPP_BASE = 'https://api.rss.app/v1/feeds';
 const BATCH_SIZE = 25;          // feeds fetched per run
@@ -69,9 +70,9 @@ function mapStory(topicId, item) {
   ];
 }
 
-module.exports = async function handler(req, res) {
+module.exports = withHealthcheck('HC_PING_NEWS', async function handler(req, res) {
   const secret = process.env.CRON_SECRET;
-  if (secret && req.headers.authorization !== `Bearer ${secret}`) {
+  if (!secret || req.headers.authorization !== `Bearer ${secret}`) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
@@ -138,4 +139,4 @@ module.exports = async function handler(req, res) {
   } catch (err) {
     return res.status(500).json({ error: String((err && err.message) || err) });
   }
-};
+});
