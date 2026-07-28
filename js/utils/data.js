@@ -62,7 +62,23 @@ export function getExternalSearchCategories() {
 
 async function fetchJSON(path) {
   const res = await fetch(path);
+  // A 404/500 (bad deploy, CDN hiccup) used to fall through to res.json() and
+  // blow up with an opaque parse error — or worse, parse an HTML error page.
+  // Fail loudly with the path so the boot fallback can report something useful.
+  if (!res.ok) throw new Error(`fetch ${path} → HTTP ${res.status}`);
   return res.json();
+}
+
+// Shared fetch with a hard timeout — the API functions allow 60–120s wall clock,
+// and without an abort a hung function means a spinner for minutes. Callers'
+// existing retry/error paths treat the AbortError like any network failure.
+// Pass { timeoutMs } in opts to override (insight generations legitimately run
+// 20–40s on a cache miss — those sites use 60000; reads default to 15000).
+export function fetchWithTimeout(url, opts = {}) {
+  const { timeoutMs = 15000, ...init } = opts;
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), timeoutMs);
+  return fetch(url, { ...init, signal: ctl.signal }).finally(() => clearTimeout(timer));
 }
 
 export function getAllTopics() {

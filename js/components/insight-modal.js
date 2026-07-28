@@ -5,7 +5,7 @@
 // stacking: opening one from inside another keeps a "← Back to …" action.
 import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260717-revamp591';
 import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp574';
-import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
+import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, fetchWithTimeout } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 
 let overlayEl = null;
@@ -759,7 +759,7 @@ function renderNews(d) {
     const t0 = Date.now();
     (async () => {
     try {
-      const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'news', url: d.url || '', title: d.title || '', description: d.description || '', date: d.date || '' }) });
+      const res = await fetchWithTimeout('/api/insight', { timeoutMs: 60000, method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'news', url: d.url || '', title: d.title || '', description: d.description || '', date: d.date || '' }) });
       const data = res.ok ? await res.json() : null;
       await holdLoader(t0);
       if (panelEl.querySelector('#im-secs-body') !== secsBody) return;
@@ -855,7 +855,7 @@ function renderTrend(d) {
     const t0 = Date.now();
     (async () => {
     try {
-      const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'trend', query: d.query }) });
+      const res = await fetchWithTimeout('/api/insight', { timeoutMs: 60000, method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'trend', query: d.query }) });
       const data = res.ok ? await res.json() : null;
       await holdLoader(t0);
       if (panelEl.querySelector('#im-secs-body') !== secsBody) return;

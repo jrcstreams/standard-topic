@@ -10,7 +10,7 @@
 // newsCardHTML/wireNewsAI/listHTML are exported so the Search modal can reuse
 // the exact same card + AI-insight behavior for archive results.
 
-import { getModels, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
+import { getModels, getExternalSearches, getExternalSearchCategories, fetchWithTimeout } from '../utils/data.js';
 import { openModel, copyPrompt } from '../utils/ai-models.js';
 import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp574';
 import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
@@ -603,7 +603,7 @@ const NI_MAX_RETRIES = 2;
 function niFetchBrief(card) {
   if (card.__niBrief) return card.__niBrief;
   const d = { type: 'news', url: card.dataset.url || '', title: card.dataset.title || '', description: card.dataset.desc || '', date: card.dataset.date || '' };
-  const p = fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) })
+  const p = fetchWithTimeout('/api/insight', { timeoutMs: 60000, method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) })
     .then((res) => (res.ok ? res.json() : null))
     .then((data) => { if (!(data && data.content)) card.__niBrief = null; return data; })
     .catch(() => { card.__niBrief = null; return null; });
@@ -803,7 +803,7 @@ function filterBarHTML(label) {
 }
 
 async function fetchLiveFeed(slug) {
-  const res = await fetch(`/api/feeds/${encodeURIComponent(slug)}`, { headers: { Accept: 'application/json' } });
+  const res = await fetchWithTimeout(`/api/feeds/${encodeURIComponent(slug)}`, { headers: { Accept: 'application/json' } });
   if (!res.ok) {
     if (res.status === 404) return { items: [] };
     throw new Error(`API ${res.status}`);
@@ -818,7 +818,7 @@ async function fetchArchive(slug, { q = '', before = '', limit = 30 } = {}) {
   if (q) params.set('q', q);
   if (before) params.set('before', before);
   params.set('limit', String(limit));
-  const res = await fetch(`/api/news/${encodeURIComponent(slug)}?${params.toString()}`, { headers: { Accept: 'application/json' } });
+  const res = await fetchWithTimeout(`/api/news/${encodeURIComponent(slug)}?${params.toString()}`, { headers: { Accept: 'application/json' } });
   if (!res.ok) throw new Error(`API ${res.status}`);
   const p = await res.json();
   return { stories: Array.isArray(p && p.stories) ? p.stories : [], nextBefore: (p && p.nextBefore) || null };

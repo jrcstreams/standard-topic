@@ -5,7 +5,7 @@
 // Opened via `open-trending-detail` with the full trending item. Shortcut
 // clicks reuse the existing prompt modal (`open-prompt-modal`). A history
 // stack lets related-term views offer a "← back" link.
-import { getTrending101, getTrendingIntelligenceShortcuts, getExternalSearches, getExternalSearchCategories } from '../utils/data.js';
+import { getTrending101, getTrendingIntelligenceShortcuts, getExternalSearches, getExternalSearchCategories, fetchWithTimeout } from '../utils/data.js';
 import { groupShortcuts, renderTIAccordion, webSourceItem } from './ti-shortcuts.js';
 import { renderBriefBody } from './newsfeed.js';
 
@@ -190,7 +190,7 @@ function render() {
     const briefEl = panelEl.querySelector('#td-ai-brief');
     if (!briefEl) return;
     try {
-      const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'trend', query: term }) });
+      const res = await fetchWithTimeout('/api/insight', { timeoutMs: 60000, method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'trend', query: term }) });
       const data = res.ok ? await res.json() : null;
       if (panelEl.querySelector('#td-ai-brief') !== briefEl) return; // a newer render replaced it
       if (data && data.content) {

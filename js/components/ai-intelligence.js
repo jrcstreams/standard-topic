@@ -6,7 +6,7 @@
 // path loads, hopping between its sections is instant.
 import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260717-revamp591';
 import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp574';
-import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData } from '../utils/data.js';
+import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData, fetchWithTimeout } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
@@ -1333,7 +1333,7 @@ export function renderAIIntelligence(container, scope) {
     if (cache[group] && !cache[group].loading) return cache[group];
     cache[group] = { sections: [], loading: true };
     try {
-      const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shortcut', topic: scope.topic, group }) });
+      const res = await fetchWithTimeout('/api/insight', { timeoutMs: 60000, method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shortcut', topic: scope.topic, group }) });
       const data = res.ok ? await res.json() : null;
       cache[group] = data && data.content
         ? { sections: keepCurrentSections(splitSections(data.content)), generatedAt: data.generatedAt, sources: data.sources || [], headlines: data.headlines || [], loading: false }
@@ -1351,7 +1351,7 @@ export function renderAIIntelligence(container, scope) {
     // rate/grounding blip, so auto-retry a couple times before marking it errored.
     const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     try {
-      const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shortcut', topic: scope.topic, group, builder: 1 }) });
+      const res = await fetchWithTimeout('/api/insight', { timeoutMs: 60000, method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shortcut', topic: scope.topic, group, builder: 1 }) });
       const data = res.ok ? await res.json() : null;
       if (data && data.content) {
         builderCache[group] = { content: data.content, generatedAt: data.generatedAt, sources: data.sources || [], headlines: data.headlines || [], loading: false };
@@ -1364,7 +1364,7 @@ export function renderAIIntelligence(container, scope) {
           builderRepolled[group] = true;
           setTimeout(async () => {
             try {
-              const r2 = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shortcut', topic: scope.topic, group, builder: 1 }) });
+              const r2 = await fetchWithTimeout('/api/insight', { timeoutMs: 60000, method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shortcut', topic: scope.topic, group, builder: 1 }) });
               const d2 = r2.ok ? await r2.json() : null;
               if (d2 && d2.content && d2.generatedAt && d2.generatedAt !== data.generatedAt) {
                 builderCache[group] = { content: d2.content, generatedAt: d2.generatedAt, sources: d2.sources || [], headlines: d2.headlines || [], loading: false };

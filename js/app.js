@@ -1,5 +1,5 @@
 import { initRouter, onRoute, getCurrentRoute } from './utils/router.js?v=20260728-revamp661';
-import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getSubtopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, searchTopics, getModels, getDefaultModelId, getModelById } from './utils/data.js';
+import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getSubtopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, searchTopics, getModels, getDefaultModelId, getModelById, fetchWithTimeout } from './utils/data.js';
 import { getPreferredModelId, setPreferredModelId, submitPrompt, openModel, copyPrompt } from './utils/ai-models.js?v=20260605-polish30';
 import { assemblePrompt } from './utils/prompt-assembly.js';
 import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './utils/settings.js';
@@ -29,7 +29,23 @@ import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=2
 import { trackPageView, track } from './utils/analytics.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  await loadAllData();
+  // Boot must never leave a silent blank page: if the core data fetches fail
+  // (bad deploy, CDN hiccup, offline), show a minimal reload fallback instead.
+  try {
+    await loadAllData();
+  } catch (err) {
+    console.error('boot: loadAllData failed', err);
+    try { track('client_error', { where: 'boot', message: String(err && err.message || err).slice(0, 150) }); } catch (_) {}
+    const content = document.getElementById('content') || document.body;
+    content.innerHTML = `
+      <div style="max-width:420px;margin:18vh auto 0;padding:0 24px;text-align:center;font-family:system-ui,sans-serif;">
+        <h1 style="font-size:1.3rem;color:#1e2d44;margin-bottom:10px;">Something went wrong loading Standard Topic</h1>
+        <p style="color:#718096;font-size:0.95rem;line-height:1.5;margin-bottom:20px;">A network hiccup stopped the site from starting. It's usually momentary.</p>
+        <button type="button" id="boot-retry" style="padding:11px 26px;border:none;border-radius:999px;background:#1e2d44;color:#fff;font-size:0.95rem;font-weight:600;cursor:pointer;">Reload</button>
+      </div>`;
+    document.getElementById('boot-retry')?.addEventListener('click', () => window.location.reload());
+    return;
+  }
   // Apply per-group accent colors from data.assignments.groups so
   // admin-managed colors take effect at render time.
   applyGroupAccentColors();
@@ -4137,7 +4153,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     if (spContentCache[term] && spContentCache[term].news) return spContentCache[term].news;
     let stories = [];
     try {
-      const nr = await fetch(`/api/news-search?q=${encodeURIComponent(term)}&limit=12`, { headers: { Accept: 'application/json' } }).then(r => r.ok ? r.json() : null).catch(() => null);
+      const nr = await fetchWithTimeout(`/api/news-search?q=${encodeURIComponent(term)}&limit=12`, { headers: { Accept: 'application/json' } }).then(r => r.ok ? r.json() : null).catch(() => null);
       stories = (nr && nr.stories) || [];
     } catch (_) { stories = []; }
     spContentCache[term] = Object.assign(spContentCache[term] || {}, { news: stories });
@@ -4147,7 +4163,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     if (spContentCache[term] && spContentCache[term].trends) return spContentCache[term].trends;
     let items = [];
     try {
-      const tr = await fetch(`/api/trending-history?mode=search&q=${encodeURIComponent(term)}&limit=12`, { headers: { Accept: 'application/json' } }).then(r => r.ok ? r.json() : null).catch(() => null);
+      const tr = await fetchWithTimeout(`/api/trending-history?mode=search&q=${encodeURIComponent(term)}&limit=12`, { headers: { Accept: 'application/json' } }).then(r => r.ok ? r.json() : null).catch(() => null);
       items = (tr && tr.items) || [];
     } catch (_) { items = []; }
     spContentCache[term] = Object.assign(spContentCache[term] || {}, { trends: items });

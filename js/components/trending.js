@@ -4,6 +4,7 @@
 // fixed-height scroll area with top/bottom fade + chevron affordances
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
+import { fetchWithTimeout } from '../utils/data.js';
 import { renderTrendExpansionBody } from './trend-expansion.js?v=20260717-revamp591';
 import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp574';
 import { wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
@@ -243,7 +244,7 @@ function wireTrendCardsInline(container) {
     if (!exp) { exp = document.createElement('div'); exp.className = 'trend-card-exp'; card.appendChild(exp); }
     exp.innerHTML = `<div class="ni-inner">${niStyleLoaderHTML()}</div>`;
     try {
-      const res = await fetch('/api/insight', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'trend', query: term }) });
+      const res = await fetchWithTimeout('/api/insight', { timeoutMs: 60000, method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'trend', query: term }) });
       const data = res.ok ? await res.json() : null;
       if (!data || data.unavailable || !data.content) {
         exp.innerHTML = `<div class="trend-exp-fail"><span class="trend-exp-tx">This brief is still being generated — check back shortly.</span> <button type="button" class="trend-exp-retry">Try again</button></div>`;
@@ -483,7 +484,7 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
     let from, to;
     try { const now = Date.now(); to = new Date(now).toISOString(); from = new Date(now - 3 * 24 * 3600 * 1000).toISOString(); } catch (_) { return; }
     const liveSet = new Set(state.all.map((t) => String(t.query || '').toLowerCase().trim()));
-    fetch(`/api/trending-history?mode=range&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&sort=recent&limit=80`, { headers: { Accept: 'application/json' } })
+    fetchWithTimeout(`/api/trending-history?mode=range&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&sort=recent&limit=80`, { headers: { Accept: 'application/json' } })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         const items = (d && d.items) || [];
@@ -563,7 +564,7 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
       } else {
         const to = new Date().toISOString();
         const from = new Date(Date.now() - 7 * 864e5).toISOString();
-        const res = await fetch(`/api/trending-history?mode=range&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&sort=${encodeURIComponent(state.sort)}&limit=60`, { headers: { Accept: 'application/json' } });
+        const res = await fetchWithTimeout(`/api/trending-history?mode=range&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&sort=${encodeURIComponent(state.sort)}&limit=60`, { headers: { Accept: 'application/json' } });
         const data = res.ok ? await res.json() : { items: [] };
         state.items = normOver(data.items);
       }

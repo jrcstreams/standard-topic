@@ -6,7 +6,7 @@
 // A "View all topics" link expands the visible parent set from just
 // the featured ones to every parent topic in the catalog.
 
-import { getTopicsGroupedByParent, getFeaturedTopics, searchTopics } from '../utils/data.js';
+import { getTopicsGroupedByParent, getFeaturedTopics, searchTopics, fetchWithTimeout } from '../utils/data.js';
 import { topicIconSVG } from '../utils/topic-icons.js?v=20260716-revamp588';
 import { navigate } from '../utils/router.js';
 
@@ -298,9 +298,9 @@ async function runContentSearch(q) {
   let trends = [];
   try {
     const [nr, tr] = await Promise.all([
-      fetch(`/api/news-search?q=${encodeURIComponent(q)}&limit=6`, { headers: { Accept: 'application/json' } })
+      fetchWithTimeout(`/api/news-search?q=${encodeURIComponent(q)}&limit=6`, { headers: { Accept: 'application/json' } })
         .then(r => (r.ok ? r.json() : null)).catch(() => null),
-      fetch(`/api/trending-history?mode=search&q=${encodeURIComponent(q)}&limit=10`, { headers: { Accept: 'application/json' } })
+      fetchWithTimeout(`/api/trending-history?mode=search&q=${encodeURIComponent(q)}&limit=10`, { headers: { Accept: 'application/json' } })
         .then(r => (r.ok ? r.json() : null)).catch(() => null),
     ]);
     news = (nr && nr.stories) || [];

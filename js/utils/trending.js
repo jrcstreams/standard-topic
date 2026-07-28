@@ -1,3 +1,4 @@
+import { fetchWithTimeout } from './data.js';
 // Client fetch for /api/trending. Caches the in-flight/resolved promise
 // for the page session so repeated renders share one request.
 let cached = null;
@@ -5,7 +6,7 @@ let cached = null;
 export function fetchTrending() {
   if (cached) return cached;
   cached = (async () => {
-    const res = await fetch('/api/trending', { headers: { Accept: 'application/json' } });
+    const res = await fetchWithTimeout('/api/trending', { headers: { Accept: 'application/json' } });
     if (!res.ok) throw new Error(`trending ${res.status}`);
     const payload = await res.json();
     return {
