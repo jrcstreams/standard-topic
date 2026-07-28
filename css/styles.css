@@ -13504,8 +13504,13 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
    re-inset its own content to line up with the results below (#img79). */
 .search-panel--modal .search-panel-topfold {
   flex: 0 0 auto;
+  /* Pinned header: stays put while results/trending scroll beneath it. Its own opaque
+     grey bg (column-width) hides content scrolling under it; the full-width root band
+     extends the same grey into the dead space on wide screens (#img29). */
+  position: sticky; top: 0; z-index: 3;
   margin: 0 -2rem;
   padding: 2px 2rem 12px;
+  background: linear-gradient(180deg, #f6f8fc 0%, #e9eef6 100%);
 }
 /* Grey header band: the header content is deep inside a horizontally-clipping scroll
    column, so the band can't bleed from there. Instead paint it on the full-width
@@ -13525,9 +13530,6 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
    full viewport width past the centred content column without a horizontal scrollbar. */
 .aii-nav-dd-search .aii-nav-dd-scroll { overflow-x: clip; overflow-clip-margin: 1500px; }
 .aii-nav-dd-search .aii-nav-dd-inner { padding-left: 0; padding-right: 0; position: relative; }
-/* Anchor the close X to the centred content column's top-right (not the far viewport
-   edge) on mega-wide screens (#img26). */
-.aii-nav-dd-search .aii-nav-dd-head-bare { position: absolute; top: 14px; right: 2px; }
 .aii-nav-dd-search .aii-nav-dd-scroll { padding-left: 0; padding-right: 0; }
 .aii-nav-dd-search .search-navdd-host { padding-left: 2rem; padding-right: 2rem; }
 @media (max-width: 640px) {
@@ -18590,7 +18592,9 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .aii-nav-dd-search .aii-nav-dd-inner { min-height: calc(100dvh - var(--nav-h)); }
 /* Float the close so the "Search" header sits on the SAME line as the X (both with a
    little breathing room from the top) instead of the X owning its own row (#img415/416). */
-.aii-nav-dd-search .aii-nav-dd-head-bare { position: absolute; top: 16px; right: 16px; padding: 0; z-index: 6; }
+/* Close X anchored to the CAPPED content column's top-right (aligned with the input /
+   "View more" edge), clamped to the panel edge on narrow screens (#img28). */
+.aii-nav-dd-search .aii-nav-dd-head-bare { position: absolute; top: 14px; left: auto; right: max(4px, calc(100% - 2rem - 820px)); padding: 0; z-index: 6; }
 .aii-nav-dd-search .search-panel--modal .search-panel-hero { margin-top: 0; }
 /* Same VISUAL nav→header gap as the other dropdowns — the search title's tighter
    line-height (1.14 vs the dd-title's normal leading) means its glyphs sit higher
