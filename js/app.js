@@ -1512,8 +1512,10 @@ function initScrollFades() {
 }
 
 function bodyTabsRow(opts = {}) {
-  const { showRelated = false, showTrending = false, showSearchTrends = false, showWebSources = false, showShortcuts = true } = opts;
-  // Order: (Search & Trends) → News Feed → (Trending) → Intelligence → (Related).
+  const { showSearchTrends = false } = opts;
+  // Home body tabs: (Search & Trends) → News Feed. The retired Trending / AI-Insights /
+  // Web-Search / Related pill branches were removed (B4.6) — no caller ever enabled them
+  // (topic pages use a separate tab system). Output is identical to before.
   const tabs = [];
   if (showSearchTrends) {
     tabs.push(`<button type="button" class="tab-pill tab-pill-searchtrends" data-tab="searchtrends">
@@ -1528,28 +1530,6 @@ function bodyTabsRow(opts = {}) {
        <span class="tab-pill-label-short">News Feed</span>
      </button>`,
   );
-  if (showTrending) {
-    tabs.push(`<button type="button" class="tab-pill tab-pill-trending" data-tab="trending">
-       <span class="tab-pill-label-long">Trending</span>
-       <span class="tab-pill-label-short">Trending</span>
-     </button>`);
-  }
-  if (showShortcuts) {
-    tabs.push(`<button type="button" class="tab-pill tab-pill-shortcuts" data-tab="shortcuts">
-       <svg class="tab-pill-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"/></svg>
-       <span class="tab-pill-label-long">AI Insights</span>
-       <span class="tab-pill-label-short">AI Insights</span>
-     </button>`);
-  }
-  if (showWebSources) {
-    tabs.push(`<button type="button" class="tab-pill tab-pill-websources" data-tab="websources">
-       <span class="tab-pill-label-long">Web Search</span>
-       <span class="tab-pill-label-short">Web Search</span>
-     </button>`);
-  }
-  if (showRelated) {
-    tabs.push(`<button type="button" class="tab-pill tab-pill-related" data-tab="related">Related</button>`);
-  }
   return `<nav class="body-tabs" aria-label="Section navigation">${tabs.join('')}</nav>`;
 }
 
@@ -2796,7 +2776,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // full-width search hero + trending (2-up on desktop), then News Feed.
     container.innerHTML = `
       <div class="topic-layout home-grid" id="topic-layout">
-        ${bodyTabsRow({ showSearchTrends: true, showShortcuts: false })}
+        ${bodyTabsRow({ showSearchTrends: true })}
         <div class="home-cards">
           <div class="home-search-hero" id="home-search-hero"></div>
           <a href="#/" class="layout-section home-promo home-promo--topics" id="section-aii-home" data-explore-topics aria-label="Explore all topics">
