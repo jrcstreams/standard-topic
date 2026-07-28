@@ -9,6 +9,8 @@
     { "path": "/api/cron/pregenerate?type=news&n=20&newsMax=20", "schedule": "45 */3 * * *" }
   ],
   "rewrites": [
+    { "source": "/topic/:slug", "destination": "/prerender/:slug.html" },
+    { "source": "/topic/:slug/:tab", "destination": "/prerender/:slug.html" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "functions": {
@@ -24,6 +26,12 @@
       "source": "/dist/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/topic/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
       ]
     },
     {

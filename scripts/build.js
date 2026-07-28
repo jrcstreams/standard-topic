@@ -97,8 +97,71 @@ async function run() {
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`;
   fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), sitemap);
 
+  // ---- SEO: prerendered per-topic HTML (crawlers/social scrapers get real title/
+  //      meta/OG/H1/content; the SPA boots on top and replaces #content) ----
+  const { TOPIC_DESCRIPTIONS } = await import('../js/utils/topic-descriptions.js');
+  const esc = (s) => String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  const bySlug = new Map(real.map((t) => [t.slug, t]));
+  const childrenOf = (slug) => real.filter((t) => t.parent === slug);
+  const SUFFIX = 'Standard Topic';
+  const shell = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const PRE = path.join(ROOT, 'prerender');
+  fs.rmSync(PRE, { recursive: true, force: true });
+  fs.mkdirSync(PRE, { recursive: true });
+
+  const setMeta = (html, attr, value) => {
+    const re = new RegExp(`(<meta\\s+${attr}\\s+content=")[\\s\\S]*?(">)`, 'i');
+    return re.test(html) ? html.replace(re, `$1${esc(value)}$2`) : html;
+  };
+  let count = 0;
+  for (const t of real) {
+    const name = t.name;
+    const desc = TOPIC_DESCRIPTIONS[t.slug]
+      || `Latest news, resources, and AI insights on ${name} — curated and updated on Standard Topic.`;
+    const title = `${name} — News, Resources & AI Insights | ${SUFFIX}`;
+    const loc = `https://www.standardtopic.com/topic/${t.slug}`;
+    const parent = t.parent ? bySlug.get(t.parent) : null;
+    const kids = childrenOf(t.slug);
+
+    let links = '';
+    if (kids.length) {
+      links = `<nav aria-label="Subtopics"><h2>Explore ${esc(name)}</h2><ul>` +
+        kids.map((k) => `<li><a href="/topic/${k.slug}">${esc(k.name)}</a></li>`).join('') +
+        `</ul></nav>`;
+    } else if (parent) {
+      const sibs = childrenOf(parent.slug).filter((s) => s.slug !== t.slug).slice(0, 12);
+      links = `<nav aria-label="Related topics"><p>Part of <a href="/topic/${parent.slug}">${esc(parent.name)}</a>.</p>` +
+        (sibs.length ? `<ul>` + sibs.map((s) => `<li><a href="/topic/${s.slug}">${esc(s.name)}</a></li>`).join('') + `</ul>` : '') +
+        `</nav>`;
+    }
+    const content =
+      `<article class="prerender-seo">` +
+      `<h1>${esc(name)}</h1>` +
+      `<p>${esc(desc)}</p>` +
+      links +
+      `<p><a href="/">Standard Topic</a> — curated news feeds, resources, and AI-powered insights on ${esc(name)} and every major topic.</p>` +
+      `</article>`;
+
+    let html = shell;
+    html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${esc(title)}</title>`);
+    html = setMeta(html, 'name="description"', desc);
+    html = setMeta(html, 'property="og:title"', title);
+    html = setMeta(html, 'property="og:description"', desc);
+    html = setMeta(html, 'property="og:url"', loc);
+    html = setMeta(html, 'name="twitter:title"', title);
+    html = setMeta(html, 'name="twitter:description"', desc);
+    html = setMeta(html, 'name="twitter:url"', loc);
+    html = html.replace(/(<link rel="canonical" href=")[^"]*(">)/i, `$1${loc}$2`);
+    html = html.replace(/<main id="content">\s*<\/main>/i, `<main id="content">${content}</main>`);
+    fs.writeFileSync(path.join(PRE, `${t.slug}.html`), html);
+    count++;
+  }
+
   const kb = (n) => (n / 1024).toFixed(1) + 'KB';
   console.log(`build ok:`);
+  console.log(`  prerender/       ${count} topic pages`);
   console.log(`  dist/${jsName}   ${kb(jsBuf.length)}  (from ${kb(sumDir(path.join(ROOT, 'js')))} of source)`);
   console.log(`  dist/${cssName}  ${kb(cssBuf.length)}  (from ${kb(fs.statSync(path.join(ROOT, 'css/styles.css')).size)})`);
   console.log(`  sitemap.xml      ${urls.length} URLs (home + ${real.length} topics)`);
