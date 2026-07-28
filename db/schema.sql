@@ -42,6 +42,9 @@ CREATE INDEX IF NOT EXISTS news_topic_published_idx
   ON news_stories (topic_id, published_at DESC);
 CREATE INDEX IF NOT EXISTS news_search_idx
   ON news_stories USING GIN (search_vector);
+-- Exact-URL lookup for the /api/insight generation gate (B1.1): validates that a
+-- news brief request targets a real stored story before spending an AI call.
+CREATE INDEX IF NOT EXISTS news_url_idx ON news_stories (url);
 
 -- ---------------------------------------------------------------------------
 -- trending_items — append-only snapshots of Google Trends "trending now".
@@ -121,6 +124,9 @@ ALTER TABLE ai_insights ADD COLUMN IF NOT EXISTS sources JSONB;
 -- same grounded generation as `content`. Only trend rows populate it; surfaced
 -- on the homepage/modal trend list via /api/trending.
 ALTER TABLE ai_insights ADD COLUMN IF NOT EXISTS summary TEXT;
+-- Refresh stampede lock (B1.11): the request that flips this wins the background
+-- regeneration; concurrent viewers skip. 10-min self-expiring claim.
+ALTER TABLE ai_insights ADD COLUMN IF NOT EXISTS refreshing_until TIMESTAMPTZ;
 
 -- ai_usage extra accounting (added later) — split out grounded-call count and
 -- raw token volume so the admin AI Usage panel can show real run-rate, not just

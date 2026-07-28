@@ -222,8 +222,8 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
       for (const r of rows) {
         if (!timeLeft()) break;
         let payload = null;
-        if (r.entity_type === 'trend') payload = { type: 'trend', query: r.entity_key, refresh: 1 };
-        else if (r.entity_type === 'news') payload = { type: 'news', url: r.entity_key, title: r.title || '', description: r.description || '', date: r.date || '', refresh: 1 };
+        if (r.entity_type === 'trend') payload = { type: 'trend', query: r.entity_key, refresh: 1, internal: 1 };
+        else if (r.entity_type === 'news') payload = { type: 'news', url: r.entity_key, title: r.title || '', description: r.description || '', date: r.date || '', refresh: 1, internal: 1 };
         else { const c = byKey.get(`${r.entity_key}|${r.insight}`); if (c) payload = { type: 'shortcut', topic: c.topic, group: c.group, builder: 1, refresh: 1 }; }
         if (payload && await call(payload)) n++;
         await sleep(600);
@@ -244,7 +244,7 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
           LIMIT $1`, [Math.min(budget, 40)]);
       for (const r of rows) {
         if (budget <= 0 || !timeLeft()) break;
-        if (await call({ type: 'trend', query: r.query })) trends++;
+        if (await call({ type: 'trend', query: r.query, internal: 1 })) trends++;
         budget--;
         await sleep(600);
       }
@@ -264,7 +264,7 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
           LIMIT $1`, [Math.min(budget, newsMax)]);
       for (const r of rows) {
         if (budget <= 0 || !timeLeft()) break;
-        if (await call({ type: 'news', url: r.url, title: r.title, description: r.description || '', date: r.date || '' })) news++;
+        if (await call({ type: 'news', url: r.url, title: r.title, description: r.description || '', date: r.date || '', internal: 1 })) news++;
         budget--;
         await sleep(600);
       }
@@ -332,7 +332,7 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
       for (const r of stale) {
         if (budget <= 0 || !timeLeft()) break;
         let payload = null;
-        if (r.entity_type === 'trend') payload = { type: 'trend', query: r.entity_key, refresh: 1 };
+        if (r.entity_type === 'trend') payload = { type: 'trend', query: r.entity_key, refresh: 1, internal: 1 };
         else {
           const c = byKey.get(`${r.entity_key}|${r.insight}`);
           if (c) payload = { type: 'shortcut', topic: c.topic, group: c.group, builder: 1, refresh: 1 };
