@@ -69,6 +69,14 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* iOS: focusing a field whose font-size is under 16px auto-zooms the page — and a
+   zoomed viewport un-pins fixed/sticky chrome, which read as "the search header
+   scrolls / weird gap above it" on phones (#img37). Floor every field at 16px on
+   touch widths so the zoom never triggers. */
+@media (max-width: 767px) {
+  input, select, textarea { font-size: max(16px, 1em) !important; }
+}
+
 a {
   color: var(--color-primary);
   text-decoration: none;
@@ -13532,7 +13540,9 @@ body.home-mode #sub-header.is-subnav .home-subnav-topics > .subnav-topic-link:fi
 /* clip (not hidden) + a generous clip-margin so the header band can bleed to the
    full viewport width past the centred content column without a horizontal scrollbar. */
 .aii-nav-dd-search .aii-nav-dd-scroll { overflow-x: clip; overflow-clip-margin: 1500px; }
-.aii-nav-dd-search .aii-nav-dd-inner { padding-left: 0; padding-right: 0; position: relative; }
+/* padding-top 0 too: the inner's 8px top padding left a white sliver between the
+   navbar and the grey header band (#img37 "weird gap above the search header"). */
+.aii-nav-dd-search .aii-nav-dd-inner { padding-left: 0; padding-right: 0; padding-top: 0; position: relative; }
 .aii-nav-dd-search .aii-nav-dd-scroll { padding-left: 0; padding-right: 0; }
 .aii-nav-dd-search .search-navdd-host { padding-left: 2rem; padding-right: 2rem; }
 @media (max-width: 640px) {
@@ -17906,7 +17916,9 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 }
 @media (hover: hover) { .tsp-cell:hover { background: color-mix(in srgb, #2563eb 7%, #fff); color: #1d4ed8; } }
 @media (hover: hover) { .tsp-cell:hover .tsp-cell-ic { color: #2563eb; } }
-.tsp-cell-ic { flex: none; width: 24px; height: 24px; display: grid; place-items: center; color: var(--color-text-light); }
+/* Same dark-slate icon colour as the main-nav Topics dropdown (.aiidd-parent-ic),
+   instead of the washed-out light grey (#img38/#img39). */
+.tsp-cell-ic { flex: none; width: 24px; height: 24px; display: grid; place-items: center; color: #475569; }
 /* place-items + display:block drop the inline baseline gap that pushed the icon
    high above the subtopic name (#img325/#img326). */
 .tsp-cell-ic .tsp-ic-svg { width: 16px; height: 16px; display: grid; place-items: center; }
