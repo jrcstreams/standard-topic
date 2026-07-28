@@ -403,10 +403,9 @@ function topicPickerPanelHTML(topic, panelId) {
 function subnavPickerHTML(topic) {
   return `
     <div class="topic-subnav-picker" data-topic-picker>
-      <button type="button" class="tsp-btn" aria-expanded="false" aria-controls="tsp-panel-nav">
+      <button type="button" class="tsp-btn tsp-btn-browse" aria-expanded="false" aria-controls="tsp-panel-nav" aria-label="Change topic">
         <span class="tsp-btn-lead">
-          <span class="tsp-btn-ico">${topicIconSVG(topic.icon || 'globe', 'tsp-ic-svg')}</span>
-          <span class="tsp-btn-name">${escapeHTML(topic.name)}</span>
+          <span class="tsp-btn-name">Change Topic</span>
         </span>
         ${TSP_CHEV}
       </button>
@@ -1441,7 +1440,14 @@ function renderLayout(route) {
     // the grey bar and OVERLAYS the control bar (controls are lower in hierarchy).
     subHeader.innerHTML = `
       <div class="topic-subnav-title">
-        <div class="topic-subnav-inner">${subnavPickerHTML(topic)}<button type="button" class="topic-change-btn" data-change-topic aria-label="Change topic"><span>Change Topic</span>${CHANGE_CHEV}</button></div>
+        <div class="topic-subnav-inner">
+          <div class="subnav-ident">
+            <span class="subnav-ident-ico">${topicIconSVG(topic.icon || 'globe', '')}</span>
+            <span class="subnav-ident-name">${escapeHTML(topic.name)}</span>
+          </div>
+          <span class="subnav-ident-sep" aria-hidden="true"></span>
+          ${subnavPickerHTML(topic)}
+        </div>
       </div>
       <div class="topic-subnav-controls">
         <nav class="topic-paths-nav" role="tablist" id="topic-paths-nav" aria-label="Topic sections">
@@ -1453,12 +1459,6 @@ function renderLayout(route) {
     observeSubnavHeight();
     setupResponsiveNav();
     wireSubnavPicker(subHeader);
-    // "Change Topic" opens the same picker dropdown as the topic-name button.
-    // stopPropagation so the outside-click closer doesn't immediately shut it.
-    subHeader.querySelector('[data-change-topic]')?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      subHeader.querySelector('.topic-subnav-inner .topic-subnav-picker .tsp-btn')?.click();
-    });
   }
 
   if (route.type === 'about' || route.type === 'terms') {

@@ -14776,16 +14776,16 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .subnav-ident-ico { flex: none; display: inline-flex; align-items: center; color: #26375a; }
 .subnav-ident-name {
   font-family: var(--font-display); font-weight: 700; letter-spacing: -0.015em; color: #26375a;
-  font-size: clamp(0.98rem, 0.82rem + 1vw, 1.18rem); white-space: nowrap;
+  font-size: clamp(0.98rem, 0.82rem + 1vw, 1.18rem); line-height: 1.4; white-space: nowrap;
 }
-.subnav-ident-sep { flex: none; width: 1px; height: 20px; background: #d3dae6; border-radius: 1px; }
-/* "Browse Topics" — a clean text control (prominence comes from its placement right
-   after the identity, not a background). Muted by default, deep-blue on hover/open. */
+.subnav-ident-sep { flex: none; width: 1px; height: 18px; background: #cdd4e0; border-radius: 1px; }
+/* The dropdown trigger ("Browse Topics" on home, "Change Topic" on topics) — a clean
+   text control matching the old Change-Topic link size/color; deep-blue on hover/open. */
 .tsp-btn-browse { gap: 0.3rem !important; padding: 0.3rem 0 !important; }
-.tsp-btn-browse .tsp-btn-name { font-family: var(--font-family) !important; font-weight: 600 !important; font-size: 0.95rem !important; color: var(--color-text-muted); transition: color .15s ease; }
-.tsp-btn-browse .tsp-chev { width: 15px; height: 15px; color: var(--color-text-muted); transition: color .15s ease; }
-@media (hover: hover) { .tsp-btn-browse:hover .tsp-btn-name, .tsp-btn-browse:hover .tsp-chev { color: #26375a; } }
-.is-home-picker.is-open .tsp-btn-browse .tsp-btn-name, .is-home-picker.is-open .tsp-btn-browse .tsp-chev { color: #26375a; }
+.tsp-btn-browse .tsp-btn-name { font-family: var(--font-family) !important; font-weight: 600 !important; font-size: 0.82rem !important; color: #5a6b86 !important; letter-spacing: 0 !important; transition: color .15s ease; }
+.tsp-btn-browse .tsp-chev { width: 14px; height: 14px; color: #5a6b86 !important; transition: color .15s ease; }
+@media (hover: hover) { .tsp-btn-browse:hover .tsp-btn-name, .tsp-btn-browse:hover .tsp-chev { color: #26375a !important; } }
+.topic-subnav-picker.is-open .tsp-btn-browse .tsp-btn-name, .topic-subnav-picker.is-open .tsp-btn-browse .tsp-chev { color: #26375a !important; }
 @media (max-width: 640px) {
   .subnav-ident-sep { display: none; }
   .topic-banner-row--home-picker .is-home-picker { margin-left: auto; }
@@ -15591,14 +15591,28 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
   max-width: var(--max-width, 1280px); margin: 0 auto;
   /* Flat 2rem to match the main nav at every single-row width — the old fluid
      clamp made the subnav creep left as the window narrowed (#img160). */
-  padding: 0 2rem;
-  /* Topic name (left, flexes) + a "Change Topic" control (right) on one row. */
-  display: flex; align-items: center; gap: 14px;
+  padding: 0.42rem 2rem;
+  /* Identity (icon + name) · separator · "Change Topic" dropdown on one row (revamp669). */
+  display: flex; align-items: center; gap: 12px;
 }
 /* Drop to 1rem at ≤640 (not ≤560) so the topic name lines up with the main nav +
    news content, which both switch to 1rem at 640 (#img327). */
-@media (max-width: 640px) { .topic-subnav-inner { padding: 0 1rem; } }
-.topic-subnav-inner .topic-subnav-picker { position: relative; display: block; flex: 1 1 auto; width: auto; min-width: 0; }
+@media (max-width: 640px) { .topic-subnav-inner { padding: 0.42rem 1rem; } }
+.topic-subnav-inner .topic-subnav-picker { position: relative; display: block; flex: none; width: auto; min-width: 0; }
+/* Topic subnav = identity (icon+name) + separator + "Change Topic" dropdown — the SAME
+   pattern as home (revamp669). The old topic-name-as-trigger styles below are overridden
+   for the compact "Change Topic" link. */
+.subnav-ident-ico svg { width: 18px; height: 18px; }
+.topic-subnav-inner .subnav-ident { flex: none; }
+.topic-subnav-inner .tsp-btn.tsp-btn-browse { width: auto !important; padding: 0.3rem 0 !important; }
+.topic-subnav-inner .tsp-btn.tsp-btn-browse .tsp-btn-name { font-family: var(--font-family) !important; font-weight: 600 !important; font-size: 0.82rem !important; color: #5a6b86 !important; letter-spacing: 0 !important; }
+.topic-subnav-inner .topic-subnav-picker.is-open .tsp-btn.tsp-btn-browse .tsp-btn-name { color: #26375a !important; }
+.topic-subnav-inner .tsp-btn.tsp-btn-browse .tsp-chev { display: inline-flex !important; }
+@media (hover: hover) { .topic-subnav-inner .tsp-btn.tsp-btn-browse:hover .tsp-btn-name { color: #26375a !important; } }
+@media (max-width: 640px) {
+  .topic-subnav-inner .subnav-ident-sep { display: none; }
+  .topic-subnav-inner .topic-subnav-picker { margin-left: auto; }
+}
 /* "Change Topic" — a quiet text link + chevron on the right of the identity bar;
    opens the same topic picker dropdown as the name button (#img517). */
 .topic-change-btn {
