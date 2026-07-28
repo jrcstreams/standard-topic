@@ -4325,9 +4325,17 @@ function wireSearchHeaderBand(host) {
   requestAnimationFrame(syncSearchHeaderBand);
   const ro = ('ResizeObserver' in window) ? new ResizeObserver(syncSearchHeaderBand) : null;
   if (ro) ro.observe(tf);
+  // The header sits inside the scrolling column, so the band (painted on the root)
+  // must follow it as the column scrolls — otherwise content scrolls OVER a band
+  // stuck at the top. rAF-throttled so scrolling stays smooth.
+  const scroller = root.querySelector('[data-navdd-scroll]');
+  let rafId = 0;
+  const onScroll = () => { if (rafId) return; rafId = requestAnimationFrame(() => { rafId = 0; syncSearchHeaderBand(); }); };
+  if (scroller) scroller.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', syncSearchHeaderBand);
   searchBandCleanup = () => {
     if (ro) ro.disconnect();
+    if (scroller) scroller.removeEventListener('scroll', onScroll);
     window.removeEventListener('resize', syncSearchHeaderBand);
   };
 }

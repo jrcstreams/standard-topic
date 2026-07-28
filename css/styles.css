@@ -18145,7 +18145,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
    peels back items (#img65/#img66). */
 .navbtn {
   display: flex !important; flex-direction: row; align-items: center; justify-content: center; gap: 8px;
-  padding: 8px 13px; border: none; background: none; cursor: pointer;
+  padding: 8px 11px; border: none; background: none; cursor: pointer;
   color: rgba(255,255,255,0.82); text-decoration: none; border-radius: 10px;
   font-family: var(--font-family); transition: background .14s, color .14s; -webkit-tap-highlight-color: transparent;
 }
