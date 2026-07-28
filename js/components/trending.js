@@ -253,7 +253,7 @@ function wireTrendCardsInline(container) {
       }
       // Still the expanded card? (user may have collapsed while fetching)
       if (!card.classList.contains('is-expanded')) return;
-      exp.innerHTML = `<button type="button" class="trend-exp-close" aria-label="Close">${TREND_EXP_CLOSE}</button>${renderTrendExpansionBody(term, data)}<div class="trend-exp-closefoot"><button type="button" class="trend-exp-closelink" data-trend-closefoot>${TREND_EXP_CLOSE}<span>Close</span></button></div>`;
+      exp.innerHTML = `${renderTrendExpansionBody(term, data)}<div class="trend-exp-closefoot"><button type="button" class="trend-exp-closelink" data-trend-closefoot>${TREND_EXP_CLOSE}<span>Close</span></button></div>`;
       exp.querySelectorAll('.trend-exp-close, [data-trend-closefoot]').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); collapse(card); try { card.querySelector('.trend-card-trigger')?.scrollIntoView({ block: 'nearest' }); } catch (_) {} }));
       wireInsightTabs(exp);
       wireExploreFurther(exp);
