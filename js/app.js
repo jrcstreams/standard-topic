@@ -85,13 +85,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   // navigation, so deploys land invisibly and the tab keeps running old CSS/JS
   // (the source of several "still broken" mysteries). Poll index.html for a newer
   // asset version and surface a one-tap refresh pill when this tab is outdated.
-  const runningV = ((document.querySelector('script[src*="app.js?v="]') || {}).src || '').match(/v=([\w-]+)/)?.[1];
+  // Version = the hashed bundle name (/dist/app.<hash>.js) post-B3.2, or the legacy
+  // /js/app.js?v=<ver> form if serving unbundled. Match either.
+  const _src = ((document.querySelector('script[type="module"]') || {}).src || '');
+  const runningV = _src.match(/app\.([a-f0-9]{6,})\.js/)?.[1] || _src.match(/app\.js\?v=([\w-]+)/)?.[1];
   const checkForNewVersion = async () => {
     if (!runningV || document.getElementById('st-update-pill')) return;
     try {
       const res = await fetch('/index.html', { cache: 'no-store' });
       if (!res.ok) return;
-      const v = (await res.text()).match(/app\.js\?v=([\w-]+)/)?.[1];
+      const _html = await res.text();
+      const v = _html.match(/dist\/app\.([a-f0-9]{6,})\.js/)?.[1] || _html.match(/app\.js\?v=([\w-]+)/)?.[1];
       if (v && v !== runningV) {
         const b = document.createElement('button');
         b.id = 'st-update-pill'; b.type = 'button';
