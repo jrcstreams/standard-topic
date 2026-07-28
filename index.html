@@ -52,15 +52,9 @@
     <meta name="theme-color" content="#1e2d44">
     <meta name="msapplication-TileColor" content="#1e2d44">
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
-    <link rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-    <link rel="stylesheet"
-      href="https://api.fontshare.com/v2/css?f[]=general-sans@300,400,500,600,700&display=swap">
+    <!-- Fonts: self-hosted woff2 (@font-face in styles.css) — no third-party requests.
+         Preload the body font (Inter latin, used on every page) to cut swap flash. -->
+    <link rel="preload" href="/assets/fonts/inter-var-latin.woff2" as="font" type="font/woff2" crossorigin>
 
     <!-- Google Analytics (GA4) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y2M7NL8RFE"></script>
@@ -80,7 +74,7 @@
     </script>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="/css/styles.css?v=20260728-revamp663">
+    <link rel="stylesheet" href="/css/styles.css?v=20260728-revamp668">
 
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -92,7 +86,7 @@
     "description": "News, Resources and AI Knowledge on any topic. Curated RSS feeds, AI-powered shortcuts, and a custom knowledge prompt builder.",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://www.standardtopic.com/#/custom/{search_term_string}",
+      "target": "https://www.standardtopic.com/custom/{search_term_string}",
       "query-input": "required name=search_term_string"
     }
   }
