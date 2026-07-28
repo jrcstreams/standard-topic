@@ -40,21 +40,31 @@ async function run() {
   fs.rmSync(DIST, { recursive: true, force: true });
   fs.mkdirSync(DIST, { recursive: true });
 
-  // ---- JS: bundle the whole graph from js/app.js into one minified ESM file ----
+  // ---- JS: bundle js/app.js with code-splitting. dynamic import()s (B3.4: the
+  //      prompt-generator wizard) become separate chunks loaded on demand, keeping
+  //      them out of the initial bundle. esbuild content-hashes the entry + chunks and
+  //      wires the entry's import() references to the chunk names automatically. ----
   const js = await esbuild.build({
-    entryPoints: [path.join(ROOT, 'js/app.js')],
+    entryPoints: { app: path.join(ROOT, 'js/app.js') },
     bundle: true,
     minify: true,
     format: 'esm',
     target: ['es2020'],
+    splitting: true,
+    outdir: DIST,
+    entryNames: '[name].[hash]',
+    chunkNames: 'chunk.[hash]',
     legalComments: 'none',
     plugins: [stripQuery],
     write: false,
     logLevel: 'warning',
   });
-  const jsBuf = Buffer.from(js.outputFiles[0].contents);
-  const jsName = `app.${hash(jsBuf)}.js`;
-  fs.writeFileSync(path.join(DIST, jsName), jsBuf);
+  let jsName = null;
+  for (const f of js.outputFiles) {
+    const base = path.basename(f.path);
+    fs.writeFileSync(path.join(DIST, base), Buffer.from(f.contents));
+    if (/^app\.[^.]+\.js$/.test(base)) jsName = base; // the entry (chunks are chunk.*.js)
+  }
 
   // ---- CSS: minify styles.css (no bundle → url('/assets/...') refs left untouched) ----
   const css = await esbuild.build({
@@ -162,7 +172,8 @@ async function run() {
   const kb = (n) => (n / 1024).toFixed(1) + 'KB';
   console.log(`build ok:`);
   console.log(`  prerender/       ${count} topic pages`);
-  console.log(`  dist/${jsName}   ${kb(jsBuf.length)}  (from ${kb(sumDir(path.join(ROOT, 'js')))} of source)`);
+  const chunkCount = fs.readdirSync(DIST).filter((f) => /^chunk\..*\.js$/.test(f)).length;
+  console.log(`  dist/${jsName}   ${kb(fs.statSync(path.join(DIST, jsName)).size)}  (entry; + ${chunkCount} lazy chunk${chunkCount === 1 ? '' : 's'})`);
   console.log(`  dist/${cssName}  ${kb(cssBuf.length)}  (from ${kb(fs.statSync(path.join(ROOT, 'css/styles.css')).size)})`);
   console.log(`  sitemap.xml      ${urls.length} URLs (home + ${real.length} topics)`);
 }

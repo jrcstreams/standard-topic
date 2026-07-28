@@ -3,7 +3,8 @@
 // focused modal, independent of how far the user has scrolled in the
 // wizard body.
 
-import { getAssembledPrompt } from './prompt-generator.js?v=20260716-revamp588';
+// getAssembledPrompt is pulled from the lazy prompt-generator chunk (B3.4). The preview
+// only opens while the builder is already open, so the chunk is already loaded (instant).
 
 let overlayEl = null;
 
@@ -24,7 +25,8 @@ export function initPromptPreviewModal() {
   });
 }
 
-function open() {
+async function open() {
+  const { getAssembledPrompt } = await import('./prompt-generator.js');
   const prompt = getAssembledPrompt();
   const isEmpty = !prompt;
 

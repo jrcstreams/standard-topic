@@ -8,8 +8,9 @@ import { topicIconSVG } from './utils/topic-icons.js?v=20260716-revamp588';
 import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp574';
 import { renderSearchBar, initSearchOverlay } from './components/search-modal.js?v=20260728-revamp668';
 import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260717-revamp591';
-import { renderPromptGenerator } from './components/prompt-generator.js?v=20260716-revamp588';
-import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260728-revamp667';
+// prompt-generator (~127KB, Prompts flows only) is lazy-loaded via loadPromptGen() so it
+// splits out of the initial bundle — see B3.4. (prompt-builder-modal.js was a retired
+// no-op takeover; removed.)
 import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp574';
 import { renderTrending, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260720-revamp609';
 import { fetchTrending } from './utils/trending.js';
@@ -24,6 +25,14 @@ import { initTrendingListModal } from './components/trending-list-modal.js?v=202
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
 import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260716-revamp588';
 import { trackPageView, track } from './utils/analytics.js';
+
+// Lazy-load the prompt-generator wizard (~127KB) only when a Prompts flow first opens,
+// so esbuild splits it into its own chunk instead of the initial bundle (B3.4). The
+// module is a singleton, so the import promise is cached after the first load.
+let _promptGenModule = null;
+function loadPromptGen() {
+  return _promptGenModule || (_promptGenModule = import('./components/prompt-generator.js'));
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
   // Boot must never leave a silent blank page: if the core data fetches fail
@@ -60,7 +69,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   initPromptPreviewModal();
   initSearchOverlay();
   initSearchPageModal();
-  initPromptBuilderModal();
   initAIIntelligenceModal();
   setupGlobalTabPillDelegation();
   wireSubnavPickerOutsideClose();
@@ -88,14 +96,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Version = the hashed bundle name (/dist/app.<hash>.js) post-B3.2, or the legacy
   // /js/app.js?v=<ver> form if serving unbundled. Match either.
   const _src = ((document.querySelector('script[type="module"]') || {}).src || '');
-  const runningV = _src.match(/app\.([a-f0-9]{6,})\.js/)?.[1] || _src.match(/app\.js\?v=([\w-]+)/)?.[1];
+  const runningV = _src.match(/app\.([A-Za-z0-9]{6,})\.js/)?.[1] || _src.match(/app\.js\?v=([\w-]+)/)?.[1];
   const checkForNewVersion = async () => {
     if (!runningV || document.getElementById('st-update-pill')) return;
     try {
       const res = await fetch('/index.html', { cache: 'no-store' });
       if (!res.ok) return;
       const _html = await res.text();
-      const v = _html.match(/dist\/app\.([a-f0-9]{6,})\.js/)?.[1] || _html.match(/app\.js\?v=([\w-]+)/)?.[1];
+      const v = _html.match(/dist\/app\.([A-Za-z0-9]{6,})\.js/)?.[1] || _html.match(/app\.js\?v=([\w-]+)/)?.[1];
       if (v && v !== runningV) {
         const b = document.createElement('button');
         b.id = 'st-update-pill'; b.type = 'button';
@@ -785,7 +793,7 @@ function wirePromptsDropdown(panel, initialView) {
     setHead('Build a Custom Prompt', 'Craft a knowledge prompt and send it to your AI model.');
     setBack('Prompts Overview', showLanding);
     root.innerHTML = `<div class="pb-navdd-host" data-pb-host></div>`;
-    try { renderPromptGenerator(root.querySelector('[data-pb-host]'), { inline: true }); } catch (_) {}
+    loadPromptGen().then((m) => m.renderPromptGenerator(root.querySelector('[data-pb-host]'), { inline: true })).catch(() => {});
     syncViewHash('build');
     fades();
   };
@@ -959,7 +967,7 @@ function openPromptBuilderNavDropdown() {
     contentHTML: '<div class="pb-navdd-host" data-pb-host></div>',
     onClose: userClosePromptBuilder,
     wire: (panel) => {
-      renderPromptGenerator(panel.querySelector('[data-pb-host]'), { inline: true });
+      loadPromptGen().then((m) => m.renderPromptGenerator(panel.querySelector('[data-pb-host]'), { inline: true }));
       [200, 700, 1500].forEach((d) => setTimeout(updateNavDdFades, d));
     },
   });
@@ -4526,7 +4534,7 @@ function renderPage(route) {
   }
 
   if (route.type === 'prompt-generator') {
-    renderPromptGenerator(content);
+    loadPromptGen().then((m) => m.renderPromptGenerator(content));
     return;
   }
 
