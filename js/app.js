@@ -428,10 +428,9 @@ function homeSubnavPickerHTML() {
     </a>`;
   return `
     <div class="topic-subnav-picker is-home-picker" data-topic-picker>
-      <button type="button" class="tsp-btn" aria-expanded="false" aria-controls="tsp-panel-home">
+      <button type="button" class="tsp-btn tsp-btn-browse" aria-expanded="false" aria-controls="tsp-panel-home">
         <span class="tsp-btn-lead">
-          <span class="tsp-btn-ico">${HOME_IC}</span>
-          <span class="tsp-btn-name">Home</span>
+          <span class="tsp-btn-name">Browse Topics</span>
         </span>
         ${TSP_CHEV}
       </button>
@@ -1387,17 +1386,16 @@ function renderLayout(route) {
     subHeader.innerHTML = `
       <div class="topic-banner">
         <div class="topic-banner-row topic-banner-row--home-picker">
+          <div class="subnav-ident">
+            <span class="subnav-ident-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg></span>
+            <span class="subnav-ident-name">Home</span>
+          </div>
+          <span class="subnav-ident-sep" aria-hidden="true"></span>
           ${homeSubnavPickerHTML()}
-          <button type="button" class="topic-change-btn" data-change-topic aria-label="Change topic"><span>Change Topic</span>${CHANGE_CHEV}</button>
         </div>
       </div>
     `;
     wireSubnavPicker(subHeader);
-    // "Change Topic" opens the same featured-topics dropdown as the "Home" button.
-    subHeader.querySelector('[data-change-topic]')?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      subHeader.querySelector('.topic-subnav-picker .tsp-btn')?.click();
-    });
 
     if (heroEl) heroEl.innerHTML = '';
 

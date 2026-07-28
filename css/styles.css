@@ -14768,10 +14768,28 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
    Replaces the featured-topics chip row. Works at ALL widths (the home subnav
    band shows on desktop too), so its button is styled outside the mobile-only
    .tsp-btn block. */
-.topic-banner-row--home-picker { display: flex; align-items: center; width: 100%; gap: 14px; }
-/* Home identity picker flexes; "Change Topic" pins right — mirrors topic pages (#img518). */
-.topic-banner-row--home-picker .is-home-picker { flex: 1 1 auto; width: auto; min-width: 0; }
-.topic-banner-row--home-picker:has(.topic-subnav-picker.is-open) .topic-change-btn .tcb-chev { transform: rotate(180deg); }
+.topic-banner-row--home-picker { display: flex; align-items: center; width: 100%; gap: 12px; }
+/* revamp669: identity label ("Home") + separator + "Browse Topics" dropdown, left-grouped.
+   On narrow screens the separator drops and the dropdown right-aligns. */
+.topic-banner-row--home-picker .is-home-picker { flex: none; width: auto; min-width: 0; }
+.subnav-ident { display: flex; align-items: center; gap: 0.5rem; flex: none; min-width: 0; }
+.subnav-ident-ico { flex: none; display: inline-flex; align-items: center; color: #26375a; }
+.subnav-ident-name {
+  font-family: var(--font-display); font-weight: 700; letter-spacing: -0.015em; color: #26375a;
+  font-size: clamp(0.98rem, 0.82rem + 1vw, 1.18rem); white-space: nowrap;
+}
+.subnav-ident-sep { flex: none; width: 1px; height: 20px; background: #d3dae6; border-radius: 1px; }
+/* "Browse Topics" — a clean text control (prominence comes from its placement right
+   after the identity, not a background). Muted by default, deep-blue on hover/open. */
+.tsp-btn-browse { gap: 0.3rem !important; padding: 0.3rem 0 !important; }
+.tsp-btn-browse .tsp-btn-name { font-family: var(--font-family) !important; font-weight: 600 !important; font-size: 0.95rem !important; color: var(--color-text-muted); transition: color .15s ease; }
+.tsp-btn-browse .tsp-chev { width: 15px; height: 15px; color: var(--color-text-muted); transition: color .15s ease; }
+@media (hover: hover) { .tsp-btn-browse:hover .tsp-btn-name, .tsp-btn-browse:hover .tsp-chev { color: #26375a; } }
+.is-home-picker.is-open .tsp-btn-browse .tsp-btn-name, .is-home-picker.is-open .tsp-btn-browse .tsp-chev { color: #26375a; }
+@media (max-width: 640px) {
+  .subnav-ident-sep { display: none; }
+  .topic-banner-row--home-picker .is-home-picker { margin-left: auto; }
+}
 /* Keep the picker + "Change Topic" on ONE row on mobile. A topic-page rule
    (#sub-header.is-subnav:not(.home-mode) …:has(.topic-subnav-picker){display:block})
    wrongly matches home — `home-mode` lives on <body>, not #sub-header — and stacked
@@ -14780,7 +14798,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 @media (max-width: 899.98px) {
   body.home-search.home-mode #sub-header.is-subnav .topic-banner-row.topic-banner-row--home-picker:has(.topic-subnav-picker) { display: flex !important; align-items: center; }
 }
-.is-home-picker { display: block; position: relative; width: 100%; }
+.is-home-picker { display: block; position: relative; width: auto; }
 .is-home-picker .tsp-btn {
   display: flex; align-items: center; gap: 0.55rem; padding: 0.5rem 0; border: none; background: none;
   cursor: pointer; text-align: left; font-family: var(--font-family); -webkit-tap-highlight-color: transparent;
