@@ -14206,7 +14206,7 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
 
 /* #277: center the home "Featured" topics row in the subnav band — the banner had
    asymmetric padding (top 0.45rem / bottom ~0.65rem) so the row sat slightly high. */
-body.home-mode #sub-header.is-subnav .topic-banner { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+body.home-mode #sub-header.is-subnav .topic-banner { padding-top: 0.92rem !important; padding-bottom: 0.92rem !important; }
 
 /* #284: subnav cleanup — drop the topic summary line (the description under the
    title, shown in the mobile/tablet hero) and the "Featured" / "Related" lead
@@ -15591,13 +15591,13 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
   max-width: var(--max-width, 1280px); margin: 0 auto;
   /* Flat 2rem to match the main nav at every single-row width — the old fluid
      clamp made the subnav creep left as the window narrowed (#img160). */
-  padding: 0.42rem 2rem;
+  padding: 0.92rem 2rem;
   /* Identity (icon + name) · separator · "Change Topic" dropdown on one row (revamp669). */
   display: flex; align-items: center; gap: 12px;
 }
 /* Drop to 1rem at ≤640 (not ≤560) so the topic name lines up with the main nav +
    news content, which both switch to 1rem at 640 (#img327). */
-@media (max-width: 640px) { .topic-subnav-inner { padding: 0.42rem 1rem; } }
+@media (max-width: 640px) { .topic-subnav-inner { padding: 0.92rem 1rem; } }
 .topic-subnav-inner .topic-subnav-picker { position: relative; display: block; flex: none; width: auto; min-width: 0; }
 /* Topic subnav = identity (icon+name) + separator + "Change Topic" dropdown — the SAME
    pattern as home (revamp669). The old topic-name-as-trigger styles below are overridden
