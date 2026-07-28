@@ -6,14 +6,12 @@ import { REASONING_LEVELS, getReasoningLevel, getCustomInstructions } from './ut
 import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js?v=20260716-revamp588';
 import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp574';
-import { renderSearchBar, initSearchOverlay, openSearchOverlay } from './components/search-modal.js?v=20260728-revamp667';
+import { renderSearchBar, initSearchOverlay } from './components/search-modal.js?v=20260728-revamp668';
 import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260717-revamp591';
-import { renderShortcuts } from './components/shortcuts.js';
-import { renderRelatedTopics } from './components/related-topics.js';
 import { renderPromptGenerator } from './components/prompt-generator.js?v=20260716-revamp588';
 import { initPromptBuilderModal } from './components/prompt-builder-modal.js?v=20260728-revamp667';
 import { initPromptModal } from './components/prompt-modal.js?v=20260706-revamp574';
-import { renderTrending, renderTrendingTopics, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260720-revamp609';
+import { renderTrending, renderTrendingHome, renderTrendingModal } from './components/trending.js?v=20260720-revamp609';
 import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
@@ -23,7 +21,6 @@ import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260717-revamp592';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp574';
-import { initAllTopicsModal } from './components/all-topics-modal.js?v=20260716-revamp588';
 import { initRelatedTopicsModal } from './components/related-topics-modal.js';
 import { initPromptPreviewModal } from './components/prompt-preview-modal.js?v=20260716-revamp588';
 import { trackPageView, track } from './utils/analytics.js';

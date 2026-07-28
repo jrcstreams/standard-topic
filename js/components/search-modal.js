@@ -181,10 +181,6 @@ function isOpen() {
   return overlayEl && overlayEl.style.display === 'flex';
 }
 
-export function openSearchOverlay(opts = {}) {
-  openOverlay(opts);
-}
-
 function openOverlay(opts = {}) {
   if (!overlayEl) initSearchOverlay();
   overlayEl.style.display = 'flex';
