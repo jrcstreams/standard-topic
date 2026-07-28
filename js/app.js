@@ -1386,7 +1386,9 @@ function renderLayout(route) {
 
   if (isHome) {
     document.body.classList.add('home-mode', 'has-subnav');
-    subHeader.classList.add('is-subnav');
+    // home-mode also on #sub-header so the many `#sub-header...:not(.home-mode)` topic
+    // rules (which check the class on the wrong element) correctly skip the home subnav.
+    subHeader.classList.add('is-subnav', 'home-mode');
 
     // Homepage now uses the SAME dropdown picker as topic pages (#88) — a "Home"
     // label whose dropdown lists the featured topics (replaces the old chip row).
