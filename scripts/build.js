@@ -6,8 +6,10 @@
  * manual ?v= bump chore goes away.
  *
  * Deliberately NOT wired to a Vercel build command — Vercel keeps serving the repo
- * statically exactly as before (zero pipeline risk). Run `npm run build` locally and
- * commit the dist/ output + the rewritten HTML before every JS/CSS change that ships.
+ * statically exactly as before (zero pipeline risk). The npm script is named `bundle`
+ * (NOT `build`) on purpose: Vercel auto-runs a `build` script on deploy, which would
+ * fail here since scripts/ is .vercelignore'd. Run `npm run bundle` locally and commit
+ * the dist/ output + the rewritten HTML before every JS/CSS change that ships.
  * The unbundled js/ + css/ stay in the repo as a fallback (rollback = revert the HTML).
  */
 const esbuild = require('esbuild');
