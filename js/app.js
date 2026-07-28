@@ -123,6 +123,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   }, { passive: true, capture: true });
 
   onRoute((route) => {
+    // Per-route <title> (SEO 2a) — set before trackPageView so GA4 gets it too.
+    try { document.title = documentTitleFor(route); } catch (_) {}
     // Nav dropdowns are transient overlays — close on any navigation. EXCEPTION:
     // the Search dropdown IS route-driven (#/search, #/custom) and updates its
     // own URL as the term changes, so keep it open across search routes. The
@@ -1179,6 +1181,8 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
       try { history.replaceState(null, '', newHash); } catch (_) {}
       const r = getCurrentRoute();
       if (r && r.type === 'topic') r.tab = seg || 'newsfeed';
+      // Keep the <title> in step with the active tab (SEO 2a).
+      try { document.title = documentTitleFor({ type: 'topic', slug: topic.slug, tab: seg || 'newsfeed' }); } catch (_) {}
     }
   };
   const selectTabAndSync = (key) => { selectTab(key); syncTabHash(active); };
@@ -2270,6 +2274,35 @@ function pageLabelFor(route) {
     case 'search': return 'Search';
     case 'custom': return route.term ? `“${route.term}”` : 'Search';
     default: return '';
+  }
+}
+
+// Per-route <title> so each surface has a distinct, descriptive title (SEO 2a) —
+// crawlers, browser tabs, shared links, and GA4 page_view (which reads
+// document.title) all get the right one instead of the static homepage title.
+const SITE_TITLE_SUFFIX = 'Standard Topic';
+const TOPIC_TAB_LABEL = { 'ai-insights': 'AI Insights', prompts: 'Prompts', explore: 'Explore Further' };
+function documentTitleFor(route) {
+  if (!route) return `${SITE_TITLE_SUFFIX} — News, Resources and AI Knowledge on Any Topic`;
+  switch (route.type) {
+    case 'home': return `${SITE_TITLE_SUFFIX} — News, Resources and AI Knowledge on Any Topic`;
+    case 'topic': {
+      const t = getTopicBySlug(route.slug);
+      if (!t) return `${SITE_TITLE_SUFFIX}`;
+      const tab = TOPIC_TAB_LABEL[route.tab];
+      return tab
+        ? `${t.name} ${tab} — ${SITE_TITLE_SUFFIX}`
+        : `${t.name} — News, Resources & AI Insights | ${SITE_TITLE_SUFFIX}`;
+    }
+    case 'custom': return route.term ? `${route.term} — Search | ${SITE_TITLE_SUFFIX}` : `Search | ${SITE_TITLE_SUFFIX}`;
+    case 'search': return `Search | ${SITE_TITLE_SUFFIX}`;
+    case 'trending': return `Trending | ${SITE_TITLE_SUFFIX}`;
+    case 'topics': return `All Topics | ${SITE_TITLE_SUFFIX}`;
+    case 'prompts': return `Prompts | ${SITE_TITLE_SUFFIX}`;
+    case 'prompt-generator': return `Prompt Builder | ${SITE_TITLE_SUFFIX}`;
+    case 'about': return `About | ${SITE_TITLE_SUFFIX}`;
+    case 'terms': return `Terms | ${SITE_TITLE_SUFFIX}`;
+    default: return `${SITE_TITLE_SUFFIX} — News, Resources and AI Knowledge on Any Topic`;
   }
 }
 
