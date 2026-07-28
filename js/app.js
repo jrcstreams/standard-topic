@@ -1,4 +1,4 @@
-import { initRouter, onRoute, getCurrentRoute } from './utils/router.js?v=20260728-revamp660';
+import { initRouter, onRoute, getCurrentRoute } from './utils/router.js?v=20260728-revamp661';
 import { loadAllData, getTopicBySlug, getParentTopics, getFeaturedTopics, getSubtopics, getShortcutsForTopic, getRelatedTopics, getTopicsGroupedByParent, getAllShortcutIconKeys, getExternalSearches, getExternalSearchCategories, searchTopics, getModels, getDefaultModelId, getModelById } from './utils/data.js';
 import { getPreferredModelId, setPreferredModelId, submitPrompt, openModel, copyPrompt } from './utils/ai-models.js?v=20260605-polish30';
 import { assemblePrompt } from './utils/prompt-assembly.js';
@@ -68,6 +68,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     userCloseNavDropdown();
   });
 
+  // Touch: clear lingering focus visuals after a tap. A tapped button/link keeps
+  // :focus styling until the NEXT tap, which reads as a "phantom pressed" control
+  // carrying over across views. Touch taps only — keyboard/mouse focus untouched,
+  // and form fields are exempt so the on-screen keyboard never closes.
+  document.addEventListener('pointerup', (e) => {
+    if (e.pointerType !== 'touch') return;
+    setTimeout(() => {
+      const el = document.activeElement;
+      if (el && el !== document.body && !el.matches('input, textarea, select, [contenteditable=""], [contenteditable="true"]')) {
+        try { el.blur(); } catch (_) {}
+      }
+    }, 150);
+  }, { passive: true, capture: true });
+
   onRoute((route) => {
     // Nav dropdowns are transient overlays — close on any navigation. EXCEPTION:
     // the Search dropdown IS route-driven (#/search, #/custom) and updates its
@@ -76,13 +90,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     // may re-fire the route from a child picker — keep it too.
     const keepSearch = (route.type === 'search' || route.type === 'custom') && navDdOpen && navDdOpen.key === 'search';
     const keepPrompt = route.type === 'prompt-generator' && navDdOpen && navDdOpen.key === 'prompt';
-    if (!keepSearch && !keepPrompt) closeNavDropdown();
+    // Topics / Trending / Prompts dropdowns are route-driven too (#/topics,
+    // #/trending, #/prompts[/view]) — keep each open across its own route (the
+    // Prompts dropdown re-fires the route as its view changes).
+    const keepDd = navDdOpen && route.type === navDdOpen.key && ['topics', 'trending', 'prompts'].includes(route.type);
+    if (!keepSearch && !keepPrompt && !keepDd) closeNavDropdown();
     // Search (#/search) and Custom (#/custom/{term}) routes don't render
     // their own page — they open the Search modal over the home layout.
     const isSearchRoute = route.type === 'search' || route.type === 'custom';
     const isPromptRoute = route.type === 'prompt-generator';
+    const isDdRoute = ['topics', 'trending', 'prompts'].includes(route.type);
     // These routes don't render their own page — they open a modal over home.
-    const isOverlayRoute = isSearchRoute || isPromptRoute;
+    const isOverlayRoute = isSearchRoute || isPromptRoute || isDdRoute;
     const baseRoute = isOverlayRoute ? { type: 'home', slug: 'home', tab: 'newsfeed' } : route;
 
     // Only (re)render the underlying page when the base actually changes, so
@@ -105,6 +124,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       closeSearchPageModal({ silent: true });
     }
     if (isPromptRoute) openPromptBuilderNavDropdown(); else closePromptBuilderNavDropdown();
+    // Route-driven nav dropdowns (stale ones were already closed above).
+    if (route.type === 'topics') openTopicsNavDropdown();
+    else if (route.type === 'trending') openTrendingNavDropdown();
+    else if (route.type === 'prompts') openPromptsNavDropdown(route.view);
 
     // Always refresh the bottom-nav active tab from the REAL route — overlay
     // routes (search/custom) skip renderLayout, so its internal call is missed.
@@ -160,13 +183,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         // rendering them directly as a page gives "Page not found" (#img211). Render
         // the base (home) beneath, exactly like the main route handler, then re-open
         // the overlay on top.
-        const isOverlay = route.type === 'search' || route.type === 'custom' || route.type === 'prompt-generator';
+        const isOverlay = ['search', 'custom', 'prompt-generator', 'topics', 'trending', 'prompts'].includes(route.type);
         const base = isOverlay ? { type: 'home', slug: 'home', tab: 'newsfeed' } : route;
         renderLayout(base); renderPage(base);
         if (route.type === 'search' || route.type === 'custom') {
           openSearchPageModal(route.type === 'custom' ? decodeURIComponent(route.term || '') : '');
         } else if (route.type === 'prompt-generator') {
           openPromptBuilderNavDropdown();
+        } else if (route.type === 'topics') {
+          openTopicsNavDropdown();
+        } else if (route.type === 'trending') {
+          openTrendingNavDropdown();
+        } else if (route.type === 'prompts') {
+          openPromptsNavDropdown(route.view);
         }
         if (openNews) {
           // Re-open after the fresh news feed settles; then restore the active tab.
@@ -534,6 +563,15 @@ function userCloseNavDropdown() {
     if (onPromptRoute) navigate('#/');
     return;
   }
+  // Topics / Trending / Prompts: route-driven the same way — closing while on the
+  // dropdown's own route returns home so the URL reflects the dismissal.
+  if (navDdOpen && ['topics', 'trending', 'prompts'].includes(navDdOpen.key)) {
+    const pfx = '#/' + navDdOpen.key;
+    const onDdRoute = hash === pfx || hash.startsWith(pfx + '/');
+    closeNavDropdown();
+    if (onDdRoute) navigate('#/');
+    return;
+  }
   closeNavDropdown();
 }
 
@@ -642,9 +680,17 @@ function promptLibTreeHTML() {
   return `<div class="aiidd-tree">${groups.map(block).join('')}</div>`;
 }
 
-function wirePromptsDropdown(panel) {
+function wirePromptsDropdown(panel, initialView) {
   const root = panel.querySelector('[data-prompts-root]');
   if (!root) return;
+  // Keep the URL in step with the visible view (#/prompts · /build · /library) when
+  // the dropdown is route-driven — replaceState so view switches don't re-render.
+  const syncViewHash = (seg) => {
+    const h = window.location.hash || '';
+    if (!(h === '#/prompts' || h.startsWith('#/prompts/'))) return;
+    const target = seg ? `#/prompts/${seg}` : '#/prompts';
+    if (h !== target) { try { history.replaceState(null, '', target); } catch (_) {} }
+  };
   let ctl = null;
   const destroyCtl = () => { if (ctl && ctl.destroy) { try { ctl.destroy(); } catch (_) {} } ctl = null; };
   // The shell head IS the view header — update its title + subtitle per view so
@@ -689,6 +735,7 @@ function wirePromptsDropdown(panel) {
       </div>`;
     root.querySelector('[data-prompt-build]').addEventListener('click', showBuild);
     root.querySelector('[data-prompt-library]').addEventListener('click', showLibrary);
+    syncViewHash(null);
     requestAnimationFrame(updateNavDdFades);
   };
 
@@ -698,6 +745,7 @@ function wirePromptsDropdown(panel) {
     setBack('Prompts Overview', showLanding);
     root.innerHTML = `<div class="pb-navdd-host" data-pb-host></div>`;
     try { renderPromptGenerator(root.querySelector('[data-pb-host]'), { inline: true }); } catch (_) {}
+    syncViewHash('build');
     fades();
   };
 
@@ -709,6 +757,7 @@ function wirePromptsDropdown(panel) {
     const lib = root.querySelector('[data-lib]');
     wireNavDdAccordions(lib);
     lib.querySelectorAll('[data-lib-topic]').forEach((b) => b.addEventListener('click', () => showTopicPrompts(b.dataset.slug, b.dataset.name)));
+    syncViewHash('library');
     requestAnimationFrame(updateNavDdFades);
   };
 
@@ -731,20 +780,45 @@ function wirePromptsDropdown(panel) {
     fades();
   };
 
-  showLanding();
+  // Expose the view switcher for route changes while mounted, then show the
+  // requested initial view (a #/prompts/build|library deep-link) or the landing.
+  promptsDdShowView = (v) => { if (v === 'build') showBuild(); else if (v === 'library') showLibrary(); else showLanding(); };
+  promptsDdShowView(initialView || null);
 }
 
-function promptsNavDdCfg() {
+function promptsNavDdCfg(view) {
   return {
     key: 'prompts', triggerId: 'nav-prompts', className: 'aii-nav-dd-prompts',
     title: 'Prompts', ariaLabel: 'Prompts',
     subtitle: 'Build your own or browse the ready-made library.',
     contentHTML: '<div class="prompts-dd" data-prompts-root></div>',
-    wire: wirePromptsDropdown,
+    onClose: userCloseNavDropdown,
+    wire: (panel) => wirePromptsDropdown(panel, view),
   };
 }
-function openPromptsNavDropdown() { openNavDropdown(promptsNavDdCfg()); }
-function togglePromptsNavDropdown() { toggleNavDropdown(promptsNavDdCfg()); }
+// View switcher exposed while the Prompts dropdown is mounted, so a route change
+// (#/prompts ↔ /build ↔ /library, e.g. via back/forward) swaps views in place.
+let promptsDdShowView = null;
+function openPromptsNavDropdown(view) {
+  if (navDdOpen && navDdOpen.key === 'prompts') { if (promptsDdShowView) promptsDdShowView(view || null); return; }
+  openNavDropdown(promptsNavDdCfg(view || null));
+}
+// Route-driven toggle shared by the three deep-linkable dropdowns: open → close
+// (returning home if on the route); closed → navigate to the route (or open
+// directly when the hash is already there, where navigate() would no-op).
+function navDdRouteToggle(key, openFn) {
+  if (navDdOpen && navDdOpen.key === key) { userCloseNavDropdown(); return; }
+  const target = '#/' + key;
+  const h = window.location.hash || '';
+  if (h === target || h.startsWith(target + '/')) openFn();
+  else navigate(target);
+}
+function togglePromptsNavDropdown() {
+  navDdRouteToggle('prompts', () => {
+    const h = window.location.hash || '';
+    openPromptsNavDropdown(h.startsWith('#/prompts/') ? h.slice('#/prompts/'.length) : null);
+  });
+}
 
 // ── Phase 5: the main-nav "Topics" topic-tree dropdown ───────────────────────
 // Same accordion shell, but the rows are plain topic links (no AI track chips):
@@ -787,13 +861,14 @@ function topicsNavDdCfg() {
       { label: 'Search Custom Topic', href: '#/search', primary: true, icon: NAVDD_SEARCH_IC, onClick: () => { openSearchFromNav(); } },
     ],
     contentHTML: topicsTreeHTML(),
+    onClose: userCloseNavDropdown,
     wire: (panel) => {
       wireNavDdAccordions(panel);
       panel.querySelectorAll('[data-aiidd-link]').forEach((a) => a.addEventListener('click', () => closeNavDropdown()));
     },
   };
 }
-function toggleTopicsNavDropdown() { toggleNavDropdown(topicsNavDdCfg()); }
+function toggleTopicsNavDropdown() { navDdRouteToggle('topics', openTopicsNavDropdown); }
 function openTopicsNavDropdown() { if (!(navDdOpen && navDdOpen.key === 'topics')) openNavDropdown(topicsNavDdCfg()); }
 
 // ── Phase 5: the main-nav "Trending" dropdown ────────────────────────────────
@@ -807,6 +882,7 @@ function trendingNavDdCfg(expandQuery) {
     subtitle: "What's being searched for right now.",
     subBarHTML: '<div class="tlm-controlbar" data-trend-controls></div>',
     contentHTML: '<div data-trend-grid></div>',
+    onClose: userCloseNavDropdown,
     wire: (panel) => {
       const controls = panel.querySelector('[data-trend-controls]');
       const grid = panel.querySelector('[data-trend-grid]');
@@ -816,7 +892,7 @@ function trendingNavDdCfg(expandQuery) {
     },
   };
 }
-function toggleTrendingNavDropdown() { toggleNavDropdown(trendingNavDdCfg()); }
+function toggleTrendingNavDropdown() { navDdRouteToggle('trending', () => openTrendingNavDropdown()); }
 function openTrendingNavDropdown(expandQuery) {
   if (navDdOpen && navDdOpen.key === 'trending' && !expandQuery) return;
   openNavDropdown(trendingNavDdCfg(expandQuery));
