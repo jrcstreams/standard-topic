@@ -19893,3 +19893,16 @@ body.home-search #home-trending .trending-topics-title {
   body.home-search #section-newsfeed .newsfeed-card .newsfeed-title-main,
   body.home-search #home-trending .trending-topics-title { font-size: 1.2rem !important; }
 }
+
+/* ═══ Stale-tab update pill: shown when a long-lived tab is running assets older
+   than the current deploy — one tap reloads. Fixed bottom-centre, above all UI. */
+#st-update-pill {
+  position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%);
+  z-index: 12000; padding: 11px 20px; border: none; border-radius: 999px;
+  background: var(--color-primary); color: #fff; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.9rem; font-weight: 650;
+  box-shadow: 0 12px 32px -10px rgba(15, 26, 46, 0.55);
+  animation: st-update-in .3s ease;
+}
+@media (hover: hover) { #st-update-pill:hover { background: #2c3f61; } }
+@keyframes st-update-in { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }

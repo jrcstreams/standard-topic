@@ -68,6 +68,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     userCloseNavDropdown();
   });
 
+  // Stale-tab guard: a long-lived SPA tab never refetches assets on hash
+  // navigation, so deploys land invisibly and the tab keeps running old CSS/JS
+  // (the source of several "still broken" mysteries). Poll index.html for a newer
+  // asset version and surface a one-tap refresh pill when this tab is outdated.
+  const runningV = ((document.querySelector('script[src*="app.js?v="]') || {}).src || '').match(/v=([\w-]+)/)?.[1];
+  const checkForNewVersion = async () => {
+    if (!runningV || document.getElementById('st-update-pill')) return;
+    try {
+      const res = await fetch('/index.html', { cache: 'no-store' });
+      if (!res.ok) return;
+      const v = (await res.text()).match(/app\.js\?v=([\w-]+)/)?.[1];
+      if (v && v !== runningV) {
+        const b = document.createElement('button');
+        b.id = 'st-update-pill'; b.type = 'button';
+        b.textContent = 'Site updated — tap to refresh';
+        b.addEventListener('click', () => window.location.reload());
+        document.body.appendChild(b);
+      }
+    } catch (_) {}
+  };
+  setInterval(checkForNewVersion, 5 * 60 * 1000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) checkForNewVersion(); });
+  setTimeout(checkForNewVersion, 20 * 1000);
+
   // Touch: clear lingering focus visuals after a tap. A tapped button/link keeps
   // :focus styling until the NEXT tap, which reads as a "phantom pressed" control
   // carrying over across views. Touch taps only — keyboard/mouse focus untouched,
