@@ -119,7 +119,7 @@
     <button class="btn" id="open-datafiles" title="Advanced: edit any raw JSON file directly" style="margin-top:0.1rem;">⚙ Data Files (raw JSON)</button>
   </div>
   <div class="tabs" id="tabs"></div>
-  <div class="tab-content active" id="tab-topics"><div class="toolbar"><h2>Manage Topics</h2><button class="btn btn-primary" id="add-topic">+ Add Topic</button></div><div id="webhook-status-panel" style="background:var(--bg-light);border:1px solid var(--border);border-radius:6px;padding:0.85rem 1rem;margin-bottom:1rem;"></div><div id="featured-order-panel" style="background:var(--bg-light);border:1px solid var(--border);border-radius:6px;padding:0.85rem 1rem;margin-bottom:1rem;"></div><table><thead><tr><th>Name</th><th>Slug</th><th>Parent</th><th>RSS Feed ID</th><th>Icon</th><th>Featured</th><th>Live</th><th>Actions</th></tr></thead><tbody id="topics-body"></tbody></table></div>
+  <div class="tab-content active" id="tab-topics"><div class="toolbar"><h2>Manage Topics</h2><button class="btn btn-primary" id="add-topic">+ Add Topic</button></div><div id="webhook-status-panel" style="background:var(--bg-light);border:1px solid var(--border);border-radius:6px;padding:0.85rem 1rem;margin-bottom:1rem;"></div><div id="featured-order-panel" style="background:var(--bg-light);border:1px solid var(--border);border-radius:6px;padding:0.85rem 1rem;margin-bottom:1rem;"></div><table><thead><tr><th>Name</th><th>Slug</th><th>Parent</th><th>rss.app Bundle ID</th><th>Icon</th><th>Featured</th><th>Live</th><th>Actions</th></tr></thead><tbody id="topics-body"></tbody></table></div>
   <div class="tab-content" id="tab-directory"><div class="toolbar"><h2>Topic-Specific Shortcuts</h2><button class="btn btn-primary" id="add-shortcut">+ Add Shortcut</button></div><p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.6rem;">Shortcuts assigned to specific topics (i.e. <strong>not</strong> evergreen — those live in the Evergreen tab). The <strong>Assigned topics</strong> column shows the topic slugs each appears on; manage assignments in <em>Topics → Topic Assignments</em>. Click a column header to sort.</p><table><thead><tr><th class="sortable" data-dir-sort="name">Name</th><th class="sortable" data-dir-sort="id">ID</th><th class="sortable" data-dir-sort="group">Group</th><th class="sortable" data-dir-sort="topics">Assigned topics</th><th>Actions</th></tr></thead><tbody id="dir-body"></tbody></table></div>
   <div class="tab-content" id="tab-evergreen">
     <div class="toolbar"><h2>Evergreen Shortcuts</h2></div>
@@ -143,8 +143,18 @@
   <div class="tab-content" id="tab-usage">
     <div class="toolbar"><h2>AI Usage &amp; Spend</h2><div style="display:flex;gap:0.5rem;"><button class="btn" id="trends-purge" title="Delete every cached trend brief so each regenerates fresh (full-length, date-anchored) on its next view or cron pass. Needs the CRON secret.">Force-refresh trends</button><button class="btn" id="insights-purge" title="Delete every cached AI overview so each regenerates fresh (with the current, date-anchored prompt) on its next view or cron pass. Needs the CRON secret.">Force-refresh AI overviews</button><button class="btn" id="usage-refresh">Refresh</button></div></div>
     <div id="insights-purge-status" style="display:none;font-size:0.82rem;margin-bottom:0.75rem;"></div>
-    <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Live per-UTC-day Gemini spend, written by the insight pipeline on every generated brief (cached reads cost nothing, so they don't appear here). <strong>Est. $</strong> sums token cost (gemini-2.5-flash-lite list pricing) plus any Google-Search grounding fee — billed per <strong>search query</strong> (one grounded call can fire several) at ~$0.035 each, but <strong>free up to 1,500/day on paid Tier 1</strong> (confirmed via the Cloud Console "search query gemini 2.5 free" SKU), so at these volumes grounding costs $0 and the estimate is essentially token cost. Embedding backfill (<code>cron/embed</code>) is negligible and not tracked here. Read live from <code>/api/ai-usage</code>.</p>
+    <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Live per-UTC-day Gemini spend, written by the insight pipeline on every generated brief (cached reads cost nothing, so they don't appear here). <strong>Est. $</strong> sums token cost (gemini-2.5-flash-lite list pricing) plus any Google-Search grounding fee — billed per <strong>search query</strong> (one grounded call can fire several) at ~$0.035 each, but <strong>free up to 1,500/day on paid Tier 1</strong> (confirmed via the Cloud Console "search query gemini 2.5 free" SKU), so at these volumes grounding costs $0 and the estimate is essentially token cost. Embedding backfill (<code>cron/embed</code>) is negligible and not tracked here. The Phase-6 <strong>junk gate</strong> (cron/news) logs its Flash batch calls into <code>calls</code>/<code>in_tok</code> too. Read live from <code>/api/ai-usage</code>.</p>
     <div id="usage-body"><p style="color:var(--text-muted);">Loading…</p></div>
+  </div>
+  <div class="tab-content" id="tab-hygiene">
+    <div class="toolbar"><h2>Feed Hygiene</h2><button class="btn" id="hygiene-refresh">Refresh</button></div>
+    <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">The Phase-6 pipeline flags <strong>duplicate coverage</strong> (embedding similarity, same topic, ±48h) and <strong>junk</strong> (AI-graded at ingest: press releases, CAGR spam, how-to-watch chum). Flags hide stories from the site but never delete them — use <strong>Unflag</strong> below to reverse any false positive (it restores the story everywhere). Tuning: <code>DEDUP_SIM_THRESHOLD</code> env (default 0.90) · junk prompt in <code>api/cron/news.js</code>.</p>
+    <div id="hygiene-body"><p style="color:var(--text-muted);">Loading…</p></div>
+  </div>
+  <div class="tab-content" id="tab-rssfeeds">
+    <div class="toolbar"><h2>RSS Feeds (rss.app)</h2><button class="btn" id="rssfeeds-refresh">Refresh</button></div>
+    <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:0.75rem;">Live view of the rss.app account joined to the site's topics — every topic is a <strong>bundle</strong> (2026-07 overhaul), so you can add/remove member feeds in the rss.app dashboard anytime with zero code changes. <strong>topicId feeds can only be created in the dashboard</strong> — the wishlist of candidates lives in <code>docs/rss-full-implementation.md</code> (each mapped to its bundle ID). This view is read-only; the site picks up membership changes within ~15 min (edge cache).</p>
+    <div id="rssfeeds-body"><p style="color:var(--text-muted);">Loading…</p></div>
   </div>
   <div class="tab-content" id="tab-datafiles">
     <div class="toolbar"><h2>Data Files</h2><div style="display:flex;gap:0.5rem;"><button class="btn" id="df-revert">Revert</button><button class="btn btn-primary" id="df-download">Download this file</button><button class="btn btn-success" id="df-apply">Apply JSON</button></div></div>
@@ -159,6 +169,8 @@
         <option value="models">ai-models.json — AI models + default + submission methods</option>
         <option value="promptgen">prompt-generator.json — prompt generator config</option>
         <option value="trending101">shortcuts-trending101.json — Trending Now modal shortcuts</option>
+        <option value="insighttmpl">insight-templates.json — AI Insights master prompt templates</option>
+        <option value="aipaths">ai-paths.json — AI Insights builder paths + refresh windows (shared with crons)</option>
       </select>
       <span id="df-status" style="color:var(--text-muted);font-size:0.78rem;"></span>
     </div>
@@ -174,7 +186,9 @@
       searches: { searches: [] },
       models: { models: [], defaultModel: 'chatgpt', submissionMethods: {} },
       promptgen: {},
-      trending101: { shortcuts: [] }
+      trending101: { shortcuts: [] },
+      insighttmpl: {},
+      aipaths: { paths: [] }
     };
 
     var fileMap = {
@@ -184,7 +198,9 @@
       'external-searches.json': 'searches',
       'ai-models.json': 'models',
       'prompt-generator.json': 'promptgen',
-      'shortcuts-trending101.json': 'trending101'
+      'shortcuts-trending101.json': 'trending101',
+      'insight-templates.json': 'insighttmpl',
+      'ai-paths.json': 'aipaths'
     };
 
     var selectedTopic = 'home';
@@ -215,7 +231,8 @@
       { id: 'g-websources', label: 'Web Sources',      tabs: [ {id:'searches', label:'Web Sources'} ] },
       { id: 'g-models',     label: 'AI Models',        tabs: [ {id:'models', label:'AI Models'} ] },
       { id: 'g-promptgen',  label: 'Prompt Generator', tabs: [ {id:'promptgen', label:'Prompt Generator'} ] },
-      { id: 'g-usage',      label: 'AI Usage',         tabs: [ {id:'usage', label:'AI Usage'} ] }
+      { id: 'g-usage',      label: 'AI Usage',         tabs: [ {id:'usage', label:'AI Usage'} ] },
+      { id: 'g-pipeline',   label: 'News Pipeline',    tabs: [ {id:'hygiene', label:'Feed Hygiene'}, {id:'rssfeeds', label:'RSS Feeds'} ] }
     ];
     var activeGroupId = TAB_GROUPS[0].id;
 
@@ -225,6 +242,8 @@
       if (tabId === 'trending101') renderTrending101();
       if (tabId === 'groups') renderGroups();
       if (tabId === 'usage') renderUsage();
+      if (tabId === 'hygiene') renderHygiene();
+      if (tabId === 'rssfeeds') renderRssStatus();
       if (tabId === 'datafiles' && typeof dfLoadCurrent === 'function') dfLoadCurrent();
     }
     function showTab(tabId) {
@@ -935,7 +954,7 @@
       var opts = parents.map(function(p){return '<option value="'+escA(p.slug)+'" '+(topic&&topic.parent===p.slug?'selected':'')+'>'+esc(p.name)+'</option>';}).join('');
       var relatedVal = topic && Array.isArray(topic.relatedParents) ? topic.relatedParents.join(', ') : '';
       var webhookChecked = topic && topic.webhookEnabled === true ? ' checked' : '';
-      document.getElementById('modal').innerHTML = '<div class="form-overlay" id="overlay"><div class="form-modal"><h3>'+(isNew?'Add':'Edit')+' Topic</h3><div class="fg"><label>Name</label><input id="f-name" value="'+escA(topic?topic.name:'')+'"></div><div class="fg"><label>Slug</label><input id="f-slug" value="'+escA(topic?topic.slug:'')+'" '+(isNew?'':'readonly style="background:var(--bg-light)"')+'></div><div class="fg"><label>Parent</label><select id="f-parent"><option value="">None (parent)</option>'+opts+'</select></div><div class="fg"><label>RSS Feed ID</label><input id="f-rss" value="'+escA(topic?topic.rssFeedId:'')+'"></div><div class="fg"><label>Icon key</label><input id="f-icon" value="'+escA(topic?topic.icon:'')+'" placeholder="e.g. home, globe, briefcase"></div><div class="fg"><label>Featured (shown in main-nav featured list)</label><select id="f-featured"><option value="false">No</option><option value="true" '+(topic&&topic.featured?'selected':'')+'>Yes</option></select></div><div class="fg"><label>Live updates (rss.app webhook)</label><div style="display:flex;align-items:center;gap:0.5rem;"><input type="checkbox" id="f-webhook"'+webhookChecked+' style="width:16px;height:16px;cursor:pointer;"><span style="font-size:0.78rem;color:var(--text-muted);">When on, news appears within seconds of an rss.app publish. Limit: '+WEBHOOK_CAP+' across all topics. Configure the webhook at rss.app dashboard after saving.</span></div></div><div class="fg"><label>Related Parents (comma-separated slugs)</label><input id="f-related" value="'+escA(relatedVal)+'" placeholder="e.g. technology, business-and-finance"></div><div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
+      document.getElementById('modal').innerHTML = '<div class="form-overlay" id="overlay"><div class="form-modal"><h3>'+(isNew?'Add':'Edit')+' Topic</h3><div class="fg"><label>Name</label><input id="f-name" value="'+escA(topic?topic.name:'')+'"></div><div class="fg"><label>Slug</label><input id="f-slug" value="'+escA(topic?topic.slug:'')+'" '+(isNew?'':'readonly style="background:var(--bg-light)"')+'></div><div class="fg"><label>Parent</label><select id="f-parent"><option value="">None (parent)</option>'+opts+'</select></div><div class="fg"><label>rss.app Bundle / Feed ID</label><input id="f-rss" value="'+escA(topic?topic.rssFeedId:'')+'"></div><div class="fg"><label>Icon key</label><input id="f-icon" value="'+escA(topic?topic.icon:'')+'" placeholder="e.g. home, globe, briefcase"></div><div class="fg"><label>Featured (shown in main-nav featured list)</label><select id="f-featured"><option value="false">No</option><option value="true" '+(topic&&topic.featured?'selected':'')+'>Yes</option></select></div><div class="fg"><label>Live updates (rss.app webhook)</label><div style="display:flex;align-items:center;gap:0.5rem;"><input type="checkbox" id="f-webhook"'+webhookChecked+' style="width:16px;height:16px;cursor:pointer;"><span style="font-size:0.78rem;color:var(--text-muted);">When on, news appears within seconds of an rss.app publish. Limit: '+WEBHOOK_CAP+' across all topics. Configure the webhook at rss.app dashboard after saving.</span></div></div><div class="fg"><label>Related Parents (comma-separated slugs)</label><input id="f-related" value="'+escA(relatedVal)+'" placeholder="e.g. technology, business-and-finance"></div><div class="form-actions"><button class="btn" id="f-cancel">Cancel</button><button class="btn btn-primary" id="f-save">Save</button></div></div></div>';
       document.getElementById('f-cancel').addEventListener('click', closeModal);
       document.getElementById('overlay').addEventListener('click', function(e){if(e.target===e.currentTarget)closeModal();});
       document.getElementById('f-save').addEventListener('click', function() {
@@ -1860,7 +1879,9 @@
       searches: 'external-searches.json',
       models: 'ai-models.json',
       promptgen: 'prompt-generator.json',
-      trending101: 'shortcuts-trending101.json'
+      trending101: 'shortcuts-trending101.json',
+      insighttmpl: 'insight-templates.json',
+      aipaths: 'ai-paths.json'
     };
     function dfLoadCurrent() {
       var key = document.getElementById('df-picker').value;
@@ -1913,10 +1934,122 @@
       markClean();
     });
 
+    // ===== News Pipeline tabs (Feed Hygiene + RSS Feeds) =====
+    // Same auth convention as AI Usage: Bearer CRON_SECRET from localStorage.
+    function getCronSecret() {
+      var s = '';
+      try { s = localStorage.getItem('st_cron_secret') || ''; } catch (e) {}
+      if (!s) {
+        s = window.prompt('CRON secret (Vercel env CRON_SECRET) — required for pipeline views:', '') || '';
+        if (s) { try { localStorage.setItem('st_cron_secret', s); } catch (e) {} }
+      }
+      return s;
+    }
+    function pipeFetch(path, opts) {
+      var secret = getCronSecret();
+      opts = opts || {};
+      opts.headers = Object.assign({ 'Authorization': 'Bearer ' + secret }, opts.headers || {});
+      opts.cache = 'no-store';
+      return fetch(API_BASE + path, opts).then(function(r){
+        if (r.status === 401) { try { localStorage.removeItem('st_cron_secret'); } catch (e) {} throw new Error('401 — wrong/missing CRON secret; retry to re-enter'); }
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      });
+    }
+
+    var _hygLoading = false;
+    function renderHygiene() {
+      var host = document.getElementById('hygiene-body');
+      if (!host || _hygLoading) return;
+      _hygLoading = true;
+      host.innerHTML = '<p style="color:var(--text-muted);">Loading…</p>';
+      pipeFetch('/feed-hygiene').then(function(j){
+        _hygLoading = false;
+        if (j.pending) { host.innerHTML = '<p style="color:var(--text-muted);">' + esc(j.note || 'Migration pending.') + '</p>'; return; }
+        var s = j.summary || {};
+        var card = function(label, val, sub){ return '<div style="flex:1;min-width:130px;background:var(--bg-light);border:1px solid var(--border);border-radius:6px;padding:0.7rem 0.9rem;"><div style="font-size:1.35rem;font-weight:700;">' + val + '</div><div style="font-size:0.78rem;color:var(--text-muted);">' + label + (sub ? ' <span style="opacity:0.8">(' + sub + ')</span>' : '') + '</div></div>'; };
+        var html = '<div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:1rem;">'
+          + card('Dupes flagged', s.dupes || 0, (s.dupes_7d || 0) + ' in 7d')
+          + card('Junk flagged', s.junk || 0, (s.junk_7d || 0) + ' in 7d')
+          + card('Graded OK', s.ok || 0)
+          + card('Ungraded (shown)', s.ungraded || 0)
+          + card('New stories 7d', s.new_7d || 0)
+          + '</div>';
+        var bt = j.byTopic || [];
+        if (bt.length) {
+          html += '<h3 style="font-size:0.95rem;margin:0 0 0.4rem;">Flags by topic (last 7 days)</h3><table><thead><tr><th>Topic</th><th>Dupes</th><th>Junk</th><th>New stories</th><th>Flag rate</th></tr></thead><tbody>';
+          bt.forEach(function(r){
+            var rate = r.stories ? Math.round(100 * (r.dupes + r.junk) / r.stories) : 0;
+            html += '<tr><td>' + esc(r.name) + '</td><td>' + r.dupes + '</td><td>' + r.junk + '</td><td>' + r.stories + '</td><td>' + rate + '%</td></tr>';
+          });
+          html += '</tbody></table>';
+        } else {
+          html += '<p style="color:var(--text-muted);font-size:0.85rem;">No flags in the last 7 days yet — the crons flag new arrivals only (embed cron ~2h, news cron ~6h).</p>';
+        }
+        var rec = j.recent || [];
+        if (rec.length) {
+          html += '<h3 style="font-size:0.95rem;margin:1.1rem 0 0.4rem;">Recently flagged — false-positive review</h3><div>';
+          rec.forEach(function(r){
+            var badge = r.kind === 'junk'
+              ? '<span style="background:#fde8e8;color:#b42318;border-radius:4px;padding:0.1rem 0.45rem;font-size:0.72rem;font-weight:700;">JUNK</span>'
+              : '<span style="background:#e8f0fd;color:#1d4ed8;border-radius:4px;padding:0.1rem 0.45rem;font-size:0.72rem;font-weight:700;">DUP</span>';
+            html += '<div style="display:flex;gap:0.6rem;align-items:flex-start;padding:0.5rem 0.2rem;border-bottom:1px solid var(--border);font-size:0.83rem;">'
+              + '<div style="flex:none;padding-top:0.1rem;">' + badge + '</div>'
+              + '<div style="flex:1;min-width:0;"><a href="' + escA(r.url) + '" target="_blank" rel="noopener" style="font-weight:600;">' + esc(r.title) + '</a>'
+              + '<div style="color:var(--text-muted);font-size:0.75rem;">' + esc(r.slug) + ' · ' + esc(r.source_name || '') + (r.canonical_title ? ' · dup of: “' + esc(r.canonical_title.slice(0, 70)) + '”' : '') + '</div></div>'
+              + '<button class="btn" style="flex:none;font-size:0.72rem;padding:0.25rem 0.6rem;" data-unflag="' + r.id + '">Unflag</button>'
+              + '</div>';
+          });
+          html += '</div>';
+        }
+        host.innerHTML = html;
+        host.querySelectorAll('[data-unflag]').forEach(function(btn){
+          btn.addEventListener('click', function(){
+            btn.disabled = true;
+            pipeFetch('/feed-hygiene', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: parseInt(btn.getAttribute('data-unflag'), 10), action: 'unflag' }) })
+              .then(function(){ toast('Unflagged — story restored'); btn.closest('div[style*="border-bottom"]').style.opacity = '0.35'; })
+              .catch(function(e){ btn.disabled = false; alert('Unflag failed: ' + e.message); });
+          });
+        });
+      }).catch(function(e){ _hygLoading = false; host.innerHTML = '<p style="color:#b42318;">' + esc(e.message) + '</p>'; });
+    }
+    document.getElementById('hygiene-refresh').addEventListener('click', function(){ _hygLoading = false; renderHygiene(); });
+
+    var _rssLoading = false;
+    function renderRssStatus() {
+      var host = document.getElementById('rssfeeds-body');
+      if (!host || _rssLoading) return;
+      _rssLoading = true;
+      host.innerHTML = '<p style="color:var(--text-muted);">Loading (queries rss.app live)…</p>';
+      pipeFetch('/rss-status').then(function(j){
+        _rssLoading = false;
+        var chip = function(m){
+          var color = m.type === 'publisher' ? '#e6f4ea;color:#1e7e34' : m.type === 'topicId' ? '#e8f0fd;color:#1d4ed8' : m.type === 'keyword' ? '#fff4e5;color:#b25e09' : '#eee;color:#666';
+          return '<span title="' + escA(m.id) + '" style="display:inline-block;background:' + color + ';border-radius:4px;padding:0.08rem 0.42rem;font-size:0.7rem;font-weight:600;margin:0.1rem 0.15rem 0.1rem 0;">' + esc(m.title) + '</span>';
+        };
+        var html = '<p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.6rem;">Account: <strong>' + j.totals.feeds + '</strong> feeds · <strong>' + j.totals.bundles + '</strong> bundles. Member types: <span style="color:#1e7e34;">publisher</span> · <span style="color:#1d4ed8;">topicId</span> · <span style="color:#b25e09;">keyword</span>. Hover a chip for its feed id.</p>';
+        html += '<table><thead><tr><th>Topic</th><th>Bundle</th><th style="width:52%;">Members</th></tr></thead><tbody>';
+        (j.topics || []).forEach(function(t){
+          var name = t.parent ? t.name : '<strong>' + esc(t.name) + '</strong>';
+          var bundle = t.kind === 'bundle' ? esc(t.bundleName || '') + ' <span style="color:var(--text-muted);font-size:0.7rem;">' + esc(t.rssFeedId) + '</span>'
+            : t.kind === 'feed' ? '<span style="color:#b25e09;">single feed (no bundle)</span>'
+            : '<span style="color:#b42318;">MISSING mapping</span>';
+          html += '<tr><td>' + (t.parent ? esc(t.name) : name) + '</td><td>' + bundle + '</td><td>' + (t.members || []).map(chip).join('') + '</td></tr>';
+        });
+        html += '</tbody></table>';
+        var orph = j.orphans || [];
+        if (orph.length) {
+          html += '<h3 style="font-size:0.95rem;margin:1.1rem 0 0.4rem;">Orphan feeds (on the account, mapped to nothing)</h3><p style="font-size:0.78rem;color:var(--text-muted);">Safe to delete in the rss.app dashboard, or adopt into a bundle.</p><div>' + orph.map(chip).join('') + '</div>';
+        }
+        host.innerHTML = html;
+      }).catch(function(e){ _rssLoading = false; host.innerHTML = '<p style="color:#b42318;">' + esc(e.message) + '</p>'; });
+    }
+    document.getElementById('rssfeeds-refresh').addEventListener('click', function(){ _rssLoading = false; renderRssStatus(); });
+
     // Auto-load the live /data/ files so the admin opens populated (no manual
     // Import). Works when served over http (same-origin fetch); falls back to
     // the empty state + manual Import when opened as a file:// page.
-    var DATA_KEYS = ['topics','directory','assignments','searches','models','promptgen','trending101'];
+    var DATA_KEYS = ['topics','directory','assignments','searches','models','promptgen','trending101','insighttmpl','aipaths'];
     function autoLoad() {
       var status = document.getElementById('autoload-status');
       if (status) status.textContent = 'Loading live data…';
