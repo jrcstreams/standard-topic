@@ -2486,6 +2486,8 @@ function renderStickyHeroBar(container, route) {
         <span class="navmenu-title">Standard Topic</span>
       </a>
     </div>
+    <!-- navmenu-title font-size is synced to the main nav's .sticky-title at runtime
+         (see syncNavmenuTitleSize) so the two always match at every viewport width. -->
     <div class="navmenu-featured-label navmenu-section-label">Navigate</div>
     <nav class="navmenu-quicklinks">
       <a href="#/" class="navmenu-quicklink navmenu-cta" id="navmenu-home-link">
@@ -2581,7 +2583,21 @@ function renderStickyHeroBar(container, route) {
     navPanel.querySelectorAll('.navmenu-topic-acc[open]').forEach((d) => { d.open = false; });
     if (scrollEl) scrollEl.scrollTop = 0;
   };
-  const openMenu = () => { resetMenu(); navPanel.classList.add('is-open'); navOverlay.classList.add('is-open'); document.body.style.overflow = 'hidden'; requestAnimationFrame(updateScrollOverflow); };
+  // Match the menu title to the MAIN NAV title's computed size at the current
+  // viewport (the sticky-title size varies across ~6 breakpoints — copying the
+  // computed value keeps the two in lockstep without duplicating those rules).
+  const syncNavmenuTitleSize = () => {
+    const src = container.querySelector('.sticky-title');
+    const dst = navPanel.querySelector('.navmenu-title');
+    if (src && dst) {
+      const cs = getComputedStyle(src);
+      dst.style.fontSize = cs.fontSize;
+      dst.style.letterSpacing = cs.letterSpacing;
+    }
+  };
+  window.addEventListener('resize', () => { if (navPanel.classList.contains('is-open')) syncNavmenuTitleSize(); }, { passive: true });
+
+  const openMenu = () => { resetMenu(); syncNavmenuTitleSize(); navPanel.classList.add('is-open'); navOverlay.classList.add('is-open'); document.body.style.overflow = 'hidden'; requestAnimationFrame(updateScrollOverflow); };
 
   container.querySelector('#nav-hamburger').addEventListener('click', openMenu);
   navOverlay.addEventListener('click', closeMenu);
