@@ -47,14 +47,20 @@ module.exports = async function handler(req, res) {
     }
     params.push(limit);
 
-    const stories = await sql.query(
+    // Phase 6: hide flagged stories (semantic dupes + AI-graded junk). Ungraded
+    // (NULL) always shows. Falls back to the unfiltered query pre-migration.
+    let stories;
+    const baseSelect =
       `SELECT id, url, title, description, source_name, source_url, image_url, published_at, fetched_at
          FROM news_stories
-        WHERE ${where.join(' AND ')}
-        ORDER BY published_at DESC NULLS LAST, id DESC
-        LIMIT $${params.length}`,
-      params
-    );
+        WHERE ${where.join(' AND ')}`;
+    const tail = ` ORDER BY published_at DESC NULLS LAST, id DESC LIMIT $${params.length}`;
+    try {
+      stories = await sql.query(
+        `${baseSelect} AND dup_of IS NULL AND quality IS DISTINCT FROM 'junk'${tail}`, params);
+    } catch (_) {
+      stories = await sql.query(`${baseSelect}${tail}`, params);
+    }
 
     const last = stories[stories.length - 1];
     const nextBefore = stories.length === limit && last && last.published_at ? last.published_at : null;

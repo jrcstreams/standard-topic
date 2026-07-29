@@ -152,3 +152,9 @@ CREATE TABLE IF NOT EXISTS ai_usage_surface (
   out_tok  BIGINT  NOT NULL DEFAULT 0,
   PRIMARY KEY (day, surface)
 );
+
+-- Phase 6 (2026-07-29): semantic dedup + AI junk gate (see migration 2026-07-29-dedup-junk.sql).
+-- dup_of: duplicate of story <id> (embedding cosine ≥ threshold, same topic, 48h window).
+-- quality: 'ok' | 'junk' (Flash-graded at ingest) | NULL = ungraded (shown).
+-- ALTER TABLE news_stories ADD COLUMN dup_of INTEGER REFERENCES news_stories(id) ON DELETE SET NULL;
+-- ALTER TABLE news_stories ADD COLUMN quality TEXT;

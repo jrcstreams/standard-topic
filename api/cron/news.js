@@ -19,6 +19,7 @@
 const crypto = require('crypto');
 const { getSql, bulkInsert } = require('../../lib/db');
 const { withHealthcheck } = require('../../lib/healthcheck');
+const { generate } = require('../../lib/gemini');
 
 const RSSAPP_BASE = 'https://api.rss.app/v1/feeds';
 const BATCH_SIZE = 25;          // feeds fetched per run
@@ -105,6 +106,7 @@ module.exports = withHealthcheck('HC_PING_NEWS', async function handler(req, res
     const slice = all ? topics : topics.slice(batch * BATCH_SIZE, batch * BATCH_SIZE + BATCH_SIZE);
 
     let inserted = 0;
+    const newIds = []; // Phase 6: ids of genuinely-new stories, graded by the junk gate below
     const auth = `Bearer ${apiKey}:${apiSecret}`;
     for (const topic of slice) {
       const feedId = encodeURIComponent(topic.rss_app_feed_id);
@@ -116,9 +118,12 @@ module.exports = withHealthcheck('HC_PING_NEWS', async function handler(req, res
       const items = Array.isArray(payload && payload.items) ? payload.items : [];
       const rows = items.map((it) => mapStory(topic.id, it)).filter(Boolean);
 
-      inserted += await bulkInsert(sql, 'news_stories', NEWS_COLS, rows, {
+      const ids = await bulkInsert(sql, 'news_stories', NEWS_COLS, rows, {
         conflict: 'ON CONFLICT (topic_id, external_id) DO NOTHING',
+        returnIds: true,
       });
+      inserted += ids.length;
+      newIds.push(...ids);
 
       // Prune to the newest KEEP_PER_TOPIC for this topic.
       await sql.query(
@@ -135,8 +140,64 @@ module.exports = withHealthcheck('HC_PING_NEWS', async function handler(req, res
       );
     }
 
-    return res.status(200).json({ ok: true, batch, topics: slice.length, inserted, fetched });
+    // Phase 6 junk gate: grade the NEW stories only (title+description) with Flash in
+    // batches, flag quality='junk'|'ok'. NULL (ungraded) is always shown, so any
+    // failure here — no GEMINI key, pre-migration column, rate limit — fails open.
+    const junk = await gradeJunk(sql, newIds);
+
+    return res.status(200).json({ ok: true, batch, topics: slice.length, inserted, fetched, junk });
   } catch (err) {
     return res.status(500).json({ error: String((err && err.message) || err) });
   }
 });
+
+// ── Phase 6: AI junk gate ────────────────────────────────────────────────────
+// One Flash call per chunk of 40 stories; strict JSON verdicts; conservative
+// prompt (only clear non-news is junk). Capped per run to bound cost/time.
+const JUNK_CHUNK = 40;
+const JUNK_GRADE_CAP = 400;
+
+async function gradeJunk(sql, ids) {
+  if (!ids.length || !process.env.GEMINI_API_KEY) return { graded: 0, junk: 0 };
+  let graded = 0, flagged = 0, tokens = 0;
+  try {
+    const capped = ids.slice(0, JUNK_GRADE_CAP);
+    const rows = await sql.query(
+      `SELECT id, title, coalesce(description,'') AS description FROM news_stories WHERE id = ANY($1::int[])`,
+      [capped]
+    );
+    for (let i = 0; i < rows.length; i += JUNK_CHUNK) {
+      const chunk = rows.slice(i, i + JUNK_CHUNK);
+      const listing = chunk.map((r, idx) =>
+        `${idx}. ${String(r.title).slice(0, 140)} — ${String(r.description).slice(0, 160)}`).join('\n');
+      const prompt =
+`You are a strict news-quality gate for a news aggregator. For each numbered item below (title — description), decide if it is JUNK. JUNK means clearly NOT genuine news reporting: press releases / PR-wire announcements ("X Named a Leader in...", "X Launches/Partners/Appoints..."), market-research CAGR/forecast spam, SEO listicles and evergreen how-to content, "how to watch/stream" chum, affiliate deals/coupons, event/webinar promos, horoscopes, content-free stubs. Genuine reporting, analysis, features, interviews, reviews, and live coverage are NOT junk — when unsure, NOT junk.
+Reply with ONLY a JSON array of the numbers that are junk, e.g. [0,3,17]. If none: []
+${listing}`;
+      try {
+        const out = await generate(prompt, { maxTokens: 200, temperature: 0 });
+        tokens += (out.inTok || 0) + (out.outTok || 0);
+        const m = String(out.text || '').match(/\[[\d,\s]*\]/);
+        if (!m) continue;
+        const junkIdx = new Set(JSON.parse(m[0]).filter((n) => Number.isInteger(n) && n >= 0 && n < chunk.length));
+        const junkIds = chunk.filter((_, idx) => junkIdx.has(idx)).map((r) => r.id);
+        const okIds = chunk.filter((_, idx) => !junkIdx.has(idx)).map((r) => r.id);
+        if (junkIds.length) await sql.query(`UPDATE news_stories SET quality='junk' WHERE id = ANY($1::int[])`, [junkIds]);
+        if (okIds.length) await sql.query(`UPDATE news_stories SET quality='ok' WHERE id = ANY($1::int[])`, [okIds]);
+        graded += chunk.length; flagged += junkIds.length;
+      } catch (_) { /* one bad chunk (429, parse, pre-migration) → stories stay NULL/shown */ }
+    }
+    // Best-effort usage accounting into the existing day-keyed ai_usage row.
+    try {
+      const day = new Date().toISOString().slice(0, 10);
+      const calls = Math.ceil(graded / JUNK_CHUNK);
+      await sql.query(
+        `INSERT INTO ai_usage (day, calls, grounded, searches, in_tok, out_tok, est_cost_micros)
+           VALUES ($1,$2,0,0,$3,0,0)
+         ON CONFLICT (day) DO UPDATE SET calls = ai_usage.calls + $2, in_tok = ai_usage.in_tok + $3`,
+        [day, calls, tokens]
+      );
+    } catch (_) {}
+  } catch (_) { /* fail open */ }
+  return { graded, junk: flagged };
+}

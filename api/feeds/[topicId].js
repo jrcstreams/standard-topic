@@ -21,6 +21,7 @@
 //         (auth credentials missing in env)
 
 const topicsData = require('../../data/topics.json');
+const { getSql } = require('../../lib/db');
 
 const RSSAPP_BASE = 'https://api.rss.app/v1/feeds';
 // Edge cache window: 15 minutes fresh, 1 hour stale-while-revalidate.
@@ -105,7 +106,27 @@ module.exports = async function handler(req, res) {
     // through as-is so the client can render whatever fields
     // (title, url, description, pub_date, image_url, etc.) it
     // chooses. Defensive default to [] in case the shape changes.
-    const items = Array.isArray(payload?.items) ? payload.items : [];
+    let items = Array.isArray(payload?.items) ? payload.items : [];
+
+    // Phase 6: drop stories the pipeline has flagged (semantic dupes / AI junk).
+    // One indexed lookup against news_stories by url; stories not yet ingested/
+    // graded pass through (grading catches up within hours and the 15-min edge
+    // cache re-filters on refresh). Any error → serve unfiltered (fail open).
+    try {
+      const sql = getSql();
+      const urls = items.map((it) => it && (it.url || it.link)).filter(Boolean);
+      if (sql && urls.length) {
+        const flagged = await sql.query(
+          `SELECT url FROM news_stories
+            WHERE url = ANY($1::text[]) AND (dup_of IS NOT NULL OR quality = 'junk')`,
+          [urls]
+        );
+        if (flagged.length) {
+          const bad = new Set(flagged.map((r) => r.url));
+          items = items.filter((it) => !bad.has(it && (it.url || it.link)));
+        }
+      }
+    } catch (_) { /* pre-migration / transient — unfiltered is fine */ }
 
     res.setHeader('Cache-Control', CACHE_HEADER);
     res.setHeader('Vercel-Cache-Tag', cacheTags(topic.slug));
