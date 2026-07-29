@@ -187,14 +187,18 @@ ${listing}`;
         graded += chunk.length; flagged += junkIds.length;
       } catch (_) { /* one bad chunk (429, parse, pre-migration) → stories stay NULL/shown */ }
     }
-    // Best-effort usage accounting into the existing day-keyed ai_usage row.
+    // Best-effort usage accounting — into ai_usage_surface (surface='junk-gate'),
+    // NOT ai_usage: ai_usage.calls is the counter the insight pipeline's daily
+    // ABS_CAP checks, and grading calls must not eat the insight-generation budget
+    // (they briefly did — that inflated the cap during the post-overhaul cold start).
     try {
       const day = new Date().toISOString().slice(0, 10);
       const calls = Math.ceil(graded / JUNK_CHUNK);
       await sql.query(
-        `INSERT INTO ai_usage (day, calls, grounded, searches, in_tok, out_tok, est_cost_micros)
-           VALUES ($1,$2,0,0,$3,0,0)
-         ON CONFLICT (day) DO UPDATE SET calls = ai_usage.calls + $2, in_tok = ai_usage.in_tok + $3`,
+        `INSERT INTO ai_usage_surface (day, surface, calls, grounded, searches, in_tok, out_tok)
+           VALUES ($1,'junk-gate',$2,0,0,$3,0)
+         ON CONFLICT (day, surface) DO UPDATE
+           SET calls = ai_usage_surface.calls + $2, in_tok = ai_usage_surface.in_tok + $3`,
         [day, calls, tokens]
       );
     } catch (_) {}
