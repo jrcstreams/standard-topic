@@ -12,7 +12,7 @@
       "slug": "business-finance",
       "name": "Business & Finance",
       "parent": null,
-      "rssFeedId": "tQkP30e9iGRGGNbg",
+      "rssFeedId": "_kZkFaljmg10MQaf4",
       "webhookEnabled": false,
       "icon": "briefcase",
       "featured": true,
@@ -94,7 +94,7 @@
       "slug": "markets",
       "name": "Markets",
       "parent": "business-finance",
-      "rssFeedId": "tKX6LemKjPxattr6",
+      "rssFeedId": "_sBKji3wYHDRlZ52N",
       "webhookEnabled": false,
       "icon": "trending-up",
       "tier": 3
@@ -131,7 +131,7 @@
       "slug": "artificial-intelligence",
       "name": "Artificial Intelligence",
       "parent": "technology",
-      "rssFeedId": "tDF2yoZwRu1xVZLo",
+      "rssFeedId": "_8jzF02HttCpLy5ce",
       "webhookEnabled": false,
       "icon": "sparkles",
       "tier": 3
@@ -422,7 +422,7 @@
       "slug": "world",
       "name": "World",
       "parent": null,
-      "rssFeedId": "t9HpyZWWa7cHQtC9",
+      "rssFeedId": "_Wf3vA7s08Z7qrYFZ",
       "webhookEnabled": false,
       "icon": "globe",
       "featured": true,
@@ -522,7 +522,7 @@
       "slug": "russia-eastern-europe",
       "name": "Russia & Eastern Europe",
       "parent": "world",
-      "rssFeedId": "t7t0YprIOLLn60Fm",
+      "rssFeedId": "_qR8YWZWOp4eBZWxB",
       "webhookEnabled": false,
       "icon": "map-russia",
       "tier": 3
@@ -678,7 +678,7 @@
       "slug": "gaming-streaming",
       "name": "Gaming & Streaming",
       "parent": "entertainment",
-      "rssFeedId": "tq6X232EPyVdLHCe",
+      "rssFeedId": "_aC6ygh6vtv9PXZ6C",
       "webhookEnabled": false,
       "icon": "tv",
       "tier": 3
@@ -899,7 +899,7 @@
       "slug": "history",
       "name": "History",
       "parent": "ideas-opinion-more",
-      "rssFeedId": "tBgaXKYYrGRwoqoJ",
+      "rssFeedId": "_JOErjKoUH43T0MM1",
       "webhookEnabled": false,
       "icon": "calendar",
       "tier": 3
