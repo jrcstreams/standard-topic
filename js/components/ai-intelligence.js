@@ -189,7 +189,7 @@ function secSourcesHTML(items, hideLabel, collapsible) {
   if (collapsible) {
     const n = items.length;
     return `<div class="aii-sec-sources aii-sec-sources--collapsible" data-open="false">
-      <button type="button" class="aii-sec-srctoggle" data-src-toggle aria-expanded="false">${SOURCES_BADGE}<span>${n} source${n > 1 ? 's' : ''}</span><span class="aii-srctoggle-chev">${CHEV}</span></button>
+      <button type="button" class="aii-sec-srctoggle" data-src-toggle aria-expanded="false" title="${n} source${n > 1 ? 's' : ''}">${SOURCES_BADGE}<span>Sources</span><span class="aii-srctoggle-chev">${CHEV}</span></button>
       <div class="aii-sec-srclist" hidden>${items.map(row).join('')}</div>
     </div>`;
   }
@@ -941,13 +941,19 @@ export function renderAIIntelligence(container, scope) {
       return aiiMsec(`aii-msec-${i}`, part.name, header + body);
     };
     const cards = list.map((part, i) => cardHTML(part, i));
-    const relatedCard = unmatched.length ? aiiMsec('aii-msec-related', 'Related coverage', aiiSecHead('sources', 'Related coverage') + secSourcesHTML(unmatched, true, true)) : '';
-    const restCards = cards.slice(N_VISIBLE);
-    const hiddenCount = restCards.length + (relatedCard ? 1 : 0);
-    const hiddenBlock = hiddenCount
-      ? `<div class="aii-more-secs" hidden>${restCards.join('')}${relatedCard}</div><button type="button" class="aii-more-secs-btn" data-more-secs><span>Show ${hiddenCount} more insight${hiddenCount > 1 ? 's' : ''}</span><span class="aii-more-secs-chev">${CHEV}</span></button>`
+    // All cards render on load (the "Show N more insights" fold is retired, #img79).
+    // Related coverage = a flat HEADER section (title + subtext + separator, like the
+    // dropdown headers) over the open source list — no accordion.
+    const relatedFlat = unmatched.length
+      ? `<section class="aii-related-flat" id="aii-msec-related" data-name="Related coverage">
+          <div class="aii-related-head">
+            <h3 class="aii-related-title">Related Coverage</h3>
+            <p class="aii-related-sub">More recent stories on this topic, beyond the insights above.</p>
+          </div>
+          ${secSourcesHTML(unmatched, true, false)}
+        </section>`
       : '';
-    const summaryHTML = cards.slice(0, N_VISIBLE).join('') + hiddenBlock;
+    const summaryHTML = cards.join('') + relatedFlat;
     // Explore Further view = the shared clean-dropdown component (External AI Models
     // with Send-to / Direct Submit / Review, then web categories).
     const efP = explorePrompt();
@@ -1047,7 +1053,8 @@ export function renderAIIntelligence(container, scope) {
     // section accordions holding the nested prompt list (#img650). Everywhere else
     // (nav-dropdown Prompt Library, custom search) keeps the flat static sections.
     if (scope.sectionAccordions) {
-      const head = `<div class="aii-tabhead"><p class="aii-tabhead-tx">Choose a ready-made prompt and send it to the AI model of your choice.</p></div>`;
+      // Intro text + separator dropped (#img75) — spacer keeps the gap to the subnav.
+      const head = `<div class="aii-tabhead-spacer"></div>`;
       // Section accordion — grey band header (no icon), title + subtext + chevron;
       // the nested prompt accordions live inside, indented. (No count badge, #img656.)
       const secAcc = (title, sub, listHTML, open) => listHTML

@@ -392,15 +392,18 @@ function topicPickerPanelHTML(topic, panelId) {
         <div class="tsp-panel-inner">
           <button type="button" class="tsp-close" data-tsp-close aria-label="Close">${X_IC}</button>
           <div class="tsp-scroll">
-            <a href="#/topic/${parent.slug}" class="tsp-parent-row${parentActive ? ' is-active' : ''}"${parentActive ? ' aria-current="page"' : ''}>
-              <span class="tsp-parent-ic">${topicIconSVG(parent.icon || 'globe', 'tsp-ic-svg')}</span>
-              <span class="tsp-parent-name">${escapeHTML(parent.name)}</span>
-              ${parentActive ? `<span class="tsp-cell-check tsp-parent-check" aria-hidden="true">${CHECK}</span>` : ''}
-            </a>
+            <div class="tsp-parent-head${parentActive ? ' is-active' : ''}"${parentActive ? ' aria-current="page"' : ''}>
+              <span class="tsp-parent-ic tsp-parent-ic--plain">${topicIconSVG(parent.icon || 'globe', 'tsp-ic-svg')}</span>
+              <span class="tsp-parent-tx">
+                <span class="tsp-parent-name">${escapeHTML(parent.name)}${parentActive ? `<span class="tsp-cell-check tsp-parent-check" aria-hidden="true">${CHECK}</span>` : ''}</span>
+                <a href="#/topic/${parent.slug}" class="tsp-parent-hub">View Hub Page<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></a>
+              </span>
+            </div>
             ${family.length ? `<div class="tsp-grid">${family.map(cellHTML).join('')}</div>` : ''}
           </div>
-          <div class="tsp-foot">
-            <a href="#" class="tsp-foot-link tsp-foot-cta" data-tsp-all>${GRID_IC}<span>All Topics</span><svg class="tsp-foot-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></a>
+          <div class="tsp-foot tsp-foot--btns">
+            <a href="#" class="tsp-foot-btn" data-tsp-all>${GRID_IC}<span>View All Topics</span></a>
+            <a href="#/search" class="tsp-foot-btn tsp-foot-btn--primary" data-tsp-search><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Search Custom Topic</span></a>
           </div>
         </div>
       </div>
@@ -448,8 +451,9 @@ function homeSubnavPickerHTML() {
             <div class="tsp-scroll">
               <div class="tsp-grid">${featured.map(cellHTML).join('')}</div>
             </div>
-            <div class="tsp-foot">
-              <a href="#" class="tsp-foot-link tsp-foot-cta" data-tsp-all>${GRID_IC}<span>All Topics</span><svg class="tsp-foot-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></a>
+            <div class="tsp-foot tsp-foot--btns">
+              <a href="#" class="tsp-foot-btn" data-tsp-all>${GRID_IC}<span>View All Topics</span></a>
+              <a href="#/search" class="tsp-foot-btn tsp-foot-btn--primary" data-tsp-search><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Search Custom Topic</span></a>
             </div>
           </div>
         </div>
@@ -904,9 +908,9 @@ function topicsNavDdCfg() {
     key: 'topics', triggerId: 'nav-topics',
     title: 'All Topics', ariaLabel: 'All topics',
     subtitle: 'Browse every topic and its subtopics.',
-    // Two head buttons: Homepage (left) + Search Custom Topic (right, primary).
+    // One head button: Search Custom Topic (the Homepage button was dropped — the
+    // brand/Home nav already covers it, #img77).
     headButtons: [
-      { label: 'Homepage', href: '#/', icon: NAVDD_HOME_IC, onClick: () => { closeNavDropdown(); navigate('#/'); } },
       { label: 'Search Custom Topic', href: '#/search', primary: true, icon: NAVDD_SEARCH_IC, onClick: () => { openSearchFromNav(); } },
     ],
     contentHTML: topicsTreeHTML(),
@@ -1110,7 +1114,9 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
         const efPrompt = `Give me a thorough, current briefing on ${topic.name}. Be specific and cite sources.`;
         // Page header (main = tab title, subheader = topic, subtext), matching the
         // Prompts tab (#img650). Subtext rewritten without the em-dash.
-        const efHead = `<div class="aii-tabhead"><p class="aii-tabhead-tx">Send this topic to an AI model, or dig into web sources across search, social, video and more.</p></div>`;
+        // Intro text + separator dropped (#img74): the accordion headers carry the
+        // explanation; a top spacer keeps breathing room below the subnav.
+        const efHead = `<div class="aii-tabhead-spacer"></div>`;
         // Grey-band section header matching the Prompts tab (.aii-secacc): title +
         // subtext atop the clipped accordion card, open by default and collapsible.
         const EF_CHEV = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
@@ -1285,12 +1291,17 @@ function wireSubnavPicker(root) {
     picker.querySelector('[data-tsp-close]')?.addEventListener('click', (e) => { e.stopPropagation(); setOpen(false); btn.focus(); });
     // Navigating (a topic cell, the parent row, or Home) closes the panel before
     // the route re-renders (the re-render rebuilds a fresh, collapsed picker).
-    picker.querySelectorAll('.tsp-cell, .tsp-parent-row, [data-tsp-home]').forEach((a) =>
+    picker.querySelectorAll('.tsp-cell, .tsp-parent-row, .tsp-parent-hub, [data-tsp-home]').forEach((a) =>
       a.addEventListener('click', () => setOpen(false)));
     picker.querySelector('[data-tsp-all]')?.addEventListener('click', (e) => {
       e.preventDefault();
       setOpen(false);
       window.dispatchEvent(new CustomEvent('open-all-topics-modal'));
+    });
+    picker.querySelector('[data-tsp-search]')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      setOpen(false);
+      navigate('#/search');
     });
   });
 }

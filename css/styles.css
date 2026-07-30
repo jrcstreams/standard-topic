@@ -11256,39 +11256,12 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
 .trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-close { display: inline; }
 .trend-card-aibtn[aria-expanded="true"] { border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-surface-border)); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 7%, #fff); font-weight: 600; }
 
-/* Mobile stacked home: Trending reads like the News Feed — no grey container, a
-   simple bold header + separator, and each trend a clean news-style card with one
-   "View AI Insights" button (#img520). Desktop (≥1024 sidebar) is untouched. */
-@media (max-width: 1023.98px) {
-  body.home-search #home-trending .trending-topics { background: transparent !important; border: none !important; border-radius: 0 !important; padding: 0 !important; overflow: visible !important; }
-  /* Header matches the homepage News Feed header EXACTLY — icon chip + bold navy
-     title (1.5rem/700) + hairline separator (#img525/527). */
-  body.home-search #home-trending .trending-topics-head { margin: 0 0 0.85rem !important; padding: 0 0 0.7rem !important; border-bottom: 1px solid #d6dae2 !important; background: transparent !important; }
-  body.home-search #home-trending .trending-topics-titlerow { gap: 0.6rem; }
-  body.home-search #home-trending .trending-topics-title { font-size: 1.2rem; color: #2d3748; font-weight: 700; letter-spacing: -0.015em; }
-  body.home-search #home-trending .trend-legend-row { padding: 2px 0; }
-  body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; gap: 10px; padding: 6px 0 !important; }
-  /* Mobile keeps the grey trending-card effect — a light grey card (lighter than the
-     old #f4f6f8) with a soft border; expands to white when its brief opens. */
-  body.home-search #home-trending .trend-card { border: 1px solid #e9edf3; border-radius: 12px; background: #f8fafc; padding: 14px 15px; transition: border-color .14s, background .14s; }
-  /* Whole-card hover = the clickable affordance (replaces the old green text-only
-     wash, #img600). Expanded cards keep their open styling instead. */
-  @media (hover: hover) { body.home-search #home-trending .trend-card:not(.is-expanded):hover { background: #f2f6fb; border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border)); } }
-  body.home-search #home-trending .trend-card.is-expanded { background: #fff; border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); }
-  body.home-search #home-trending .trend-card-trigger { padding: 0 !important; cursor: pointer; }
-  body.home-search #home-trending .trend-card-chev { display: none; }
-  body.home-search #home-trending .trend-card-title { font-size: 1rem !important; font-weight: 700 !important; color: var(--color-text) !important; }
-  body.home-search #home-trending .trend-card-summary { color: #55617a !important; }
-  /* "View AI Insights" hugs the summary text above it (#img600). */
-  body.home-search #home-trending .trend-card-actions { display: flex; margin-top: 3px; }
-  /* A touch more air between the last trend card and "View more trending" (#img526). */
-  body.home-search #home-trending .trend-viewmore-row { margin-top: 8px; padding: 6px 0 8px !important; }
-}
 /* Desktop: the Trending sidebar is a GREY CONTAINER rail holding flat trend rows.
    Each row ditches the ↗ arrow and instead has a small blue "View AI Insights" LINK
    under its summary (sparkle + dropdown chevron) — clearly clickable but not a heavy
-   button, since the cards are meant to be quickly scanned (#img542). */
-@media (min-width: 1024px) {
+   button, since the cards are meant to be quickly scanned (#img542).
+   revamp673: applies at EVERY width now — the stacked (<1024) home keeps the same
+   grey-container rail instead of flattening to a News-Feed-style section (#img82). */
   body.home-search #home-trending .trending-topics { background: #f4f6f8 !important; border: 1px solid #e6e9ef !important; border-radius: 16px !important; padding: 0 !important; overflow: hidden !important; }
   /* Header on the grey rail — no extra tinted band, just a hairline separator. */
   body.home-search #home-trending .trending-topics-head { background: transparent !important; margin: 0 !important; padding: 14px 16px !important; border-bottom: 1px solid #e1e5ee !important; }
@@ -11316,7 +11289,6 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   /* "View AI Insights" as a small BLUE LINK: sparkle · label · dropdown chevron. No
      pill/border/bg so it doesn't dominate the compact card. Tiny size + light weight. */
   body.home-search #home-trending .trend-card-actions { display: flex; padding: 0 20px 16px; }
-}
 /* Homepage trend "View AI Insights" is a small BLUE LINK on BOTH breakpoints —
    sparkle · label · dropdown chevron, no pill/border/bg (mobile previously kept the
    pill; now it matches the desktop sidebar link, #img11–13). Hover draws the
@@ -14466,6 +14438,36 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .tsp-parent-name { flex: 0 1 auto; min-width: 0; font-family: var(--font-display); font-size: 1.02rem; font-weight: 700; line-height: 1.35; letter-spacing: -0.01em; color: #1a2740; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tsp-parent-row.is-active { background: color-mix(in srgb, #26375a 6%, #fff); }
 .tsp-parent-row.is-active .tsp-parent-name { color: #26375a; }
+/* Parent as a HEADER (#img71): plain icon (no chip background), slightly larger name,
+   and a small blue "View Hub Page →" link beneath. Highlighted when the parent IS the
+   active topic. */
+.tsp-parent-head {
+  display: flex; align-items: flex-start; gap: 0.65rem; padding: 0.5rem 0.65rem; border-radius: 11px;
+  width: fit-content; max-width: calc(100% - 3.5rem); margin-bottom: 8px;
+}
+.tsp-parent-head.is-active { background: color-mix(in srgb, #26375a 6%, #fff); }
+.tsp-parent-ic--plain { background: none !important; width: 26px !important; height: 26px !important; border-radius: 0 !important; margin-top: 2px; }
+.tsp-parent-ic--plain .tsp-ic-svg { width: 20px !important; height: 20px !important; }
+.tsp-parent-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tsp-parent-head .tsp-parent-name { font-size: 1.12rem; display: inline-flex; align-items: center; gap: 0.35rem; }
+.tsp-parent-hub {
+  display: inline-flex; align-items: center; gap: 4px; width: fit-content;
+  font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; color: #1d4ed8; text-decoration: none;
+}
+.tsp-parent-hub svg { transition: transform .14s ease; }
+@media (hover: hover) { .tsp-parent-hub:hover { text-decoration: underline; } .tsp-parent-hub:hover svg { transform: translateX(2px); } }
+/* Footer: two pill buttons (grey "View All Topics" + primary "Search Custom Topic"),
+   matching the main-nav All Topics dropdown's head buttons (#img77). */
+.tsp-foot--btns { gap: 10px; }
+.tsp-foot-btn {
+  display: inline-flex; align-items: center; gap: 7px; padding: 8px 16px; border-radius: 999px;
+  font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; text-decoration: none;
+  background: #eef1f6; color: #26375a; border: 1px solid #dde3ee; transition: background .13s, border-color .13s;
+}
+@media (hover: hover) { .tsp-foot-btn:hover { background: #e3e9f4; border-color: #ccd6e8; } }
+.tsp-foot-btn svg { flex: none; }
+.tsp-foot-btn--primary { background: #3b4c6e; color: #fff; border-color: #3b4c6e; }
+@media (hover: hover) { .tsp-foot-btn--primary:hover { background: #2e3d5c; border-color: #2e3d5c; } }
 .tsp-cell-check { flex: none; color: #26375a; display: inline-flex; }
 .tsp-parent-check { margin-left: 0.15rem; }
 /* Subtopics grid — single column by default; widens to multi-column where there's
@@ -15864,8 +15866,8 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
    space below the labels down to the divider. */
 .im-msec-header { padding: 14px 22px 13px; background: #f4f7fc; border-bottom: 1px solid #e3e9f3; }
 .im-msec-header .im-msec-name {
-  margin: 0; font-family: var(--font-display); font-size: 1.26rem; font-weight: 700;
-  letter-spacing: -0.02em; line-height: 1.2; color: #26375a;
+  margin: 0; font-family: var(--font-display); font-size: 1.12rem; font-weight: 700;
+  letter-spacing: -0.018em; line-height: 1.25; color: #26375a;
 }
 .im-msec-header .im-sec-aitag-row { margin: 10px 0 0 !important; }
 /* Provenance row moved INTO the card body (#img66): sits above the text with a
@@ -15916,8 +15918,10 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 .aii-bview-summary .aii-sec-clamp { max-height: 11em; overflow: hidden; -webkit-mask-image: linear-gradient(to bottom, #000 87%, transparent); mask-image: linear-gradient(to bottom, #000 87%, transparent); }
 .aii-bview-summary .im-msec.is-expanded .aii-sec-clamp,
 .aii-bview-summary .im-msec.is-noclamp .aii-sec-clamp { max-height: none; -webkit-mask-image: none; mask-image: none; }
-/* Collapsible SOURCES — a quiet toggle chip; the list drops open below it. */
-.aii-sec-sources--collapsible { margin-top: 14px; }
+/* Collapsible SOURCES — a quiet toggle chip; the list drops open below it.
+   display:block (not the base grid) so the chip keeps its natural width instead of
+   stretching full-width across the card (#img73). */
+.aii-sec-sources--collapsible { margin-top: 14px; display: block; }
 .aii-sec-srctoggle {
   display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px 6px 10px; border-radius: 999px;
   border: 1px solid #dbe3f2; background: #f4f7fc; cursor: pointer; font-family: var(--font-family);
@@ -16051,6 +16055,9 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
    separator) so it reads vertically centred in the zone (#img7), with MORE air below
    the line to the accordion/content. */
 .aii-tabhead { padding: 12px 2px 12px; margin-bottom: 24px; border-bottom: 1px solid #e7ecf3; }
+/* Prompts + Explore Further dropped their intro text/separator (#img74/75) — this
+   spacer preserves the gap between the tab subnav and the first accordion header. */
+.aii-tabhead-spacer { height: 20px; }
 /* Tight title line-height so the topic-name subheader sits CLOSE to the main
    header (the inherited 1.6 body leading was pushing it far down, #img654). */
 .aii-tabhead-title { margin: 0; font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: -0.022em; line-height: 1.12; color: var(--color-primary); }
