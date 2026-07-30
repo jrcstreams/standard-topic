@@ -236,7 +236,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         // the overlay on top.
         const isOverlay = ['search', 'custom', 'prompt-generator', 'topics', 'trending', 'prompts'].includes(route.type);
         const base = isOverlay ? { type: 'home', slug: 'home', tab: 'newsfeed' } : route;
+        // Preserve an OPEN subnav topic-picker across the breakpoint crossing — the
+        // full re-render rebuilds the sub-header, which silently closed it (#img75).
+        const pickerWasOpen = !!document.querySelector('#sub-header .topic-subnav-picker.is-open');
         renderLayout(base); renderPage(base);
+        if (pickerWasOpen) {
+          requestAnimationFrame(() => document.querySelector('#sub-header .topic-subnav-picker .tsp-btn')?.click());
+        }
         if (route.type === 'search' || route.type === 'custom') {
           openSearchPageModal(route.type === 'custom' ? decodeURIComponent(route.term || '') : '');
         } else if (route.type === 'prompt-generator') {
@@ -386,24 +392,22 @@ function topicPickerPanelHTML(topic, panelId) {
   const HOME_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg>';
   const GRID_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
   const X_IC = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  // Layout (#img71-74): actions row on TOP (View All Topics + Search Custom Topic,
+  // left; ✕ right) over a faint separator, then a "{Parent} Topics" group label
+  // (side-menu header style), then the grid with the PARENT PAGE FIRST followed by
+  // its subtopics. No footer / bottom separator.
   return `
     <div class="tsp-panelwrap">
       <div class="tsp-panel" id="${escapeHTML(panelId)}" role="region" aria-label="Browse topics">
         <div class="tsp-panel-inner">
-          <button type="button" class="tsp-close" data-tsp-close aria-label="Close">${X_IC}</button>
-          <div class="tsp-scroll">
-            <div class="tsp-parent-head${parentActive ? ' is-active' : ''}"${parentActive ? ' aria-current="page"' : ''}>
-              <span class="tsp-parent-ic tsp-parent-ic--plain">${topicIconSVG(parent.icon || 'globe', 'tsp-ic-svg')}</span>
-              <span class="tsp-parent-tx">
-                <span class="tsp-parent-name">${escapeHTML(parent.name)}${parentActive ? `<span class="tsp-cell-check tsp-parent-check" aria-hidden="true">${CHECK}</span>` : ''}</span>
-                <a href="#/topic/${parent.slug}" class="tsp-parent-hub">View Hub Page<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></a>
-              </span>
-            </div>
-            ${family.length ? `<div class="tsp-grid">${family.map(cellHTML).join('')}</div>` : ''}
-          </div>
-          <div class="tsp-foot tsp-foot--btns">
+          <div class="tsp-actions">
             <a href="#" class="tsp-foot-btn" data-tsp-all>${GRID_IC}<span>View All Topics</span></a>
             <a href="#/search" class="tsp-foot-btn tsp-foot-btn--primary" data-tsp-search><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Search Custom Topic</span></a>
+            <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${X_IC}</button>
+          </div>
+          <div class="tsp-scroll">
+            <div class="tsp-group-label">${escapeHTML(parent.name)} Topics</div>
+            <div class="tsp-grid">${[parent, ...family.filter((t) => t.slug !== parent.slug)].map(cellHTML).join('')}</div>
           </div>
         </div>
       </div>
@@ -447,13 +451,14 @@ function homeSubnavPickerHTML() {
       <div class="tsp-panelwrap">
         <div class="tsp-panel" id="tsp-panel-home" role="region" aria-label="Browse topics">
           <div class="tsp-panel-inner">
-            <button type="button" class="tsp-close" data-tsp-close aria-label="Close">${X_IC}</button>
-            <div class="tsp-scroll">
-              <div class="tsp-grid">${featured.map(cellHTML).join('')}</div>
-            </div>
-            <div class="tsp-foot tsp-foot--btns">
+            <div class="tsp-actions">
               <a href="#" class="tsp-foot-btn" data-tsp-all>${GRID_IC}<span>View All Topics</span></a>
               <a href="#/search" class="tsp-foot-btn tsp-foot-btn--primary" data-tsp-search><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Search Custom Topic</span></a>
+              <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${X_IC}</button>
+            </div>
+            <div class="tsp-scroll">
+              <div class="tsp-group-label">Featured Topics</div>
+              <div class="tsp-grid">${featured.map(cellHTML).join('')}</div>
             </div>
           </div>
         </div>
@@ -1274,12 +1279,30 @@ function wireSubnavPicker(root) {
       btn.setAttribute('aria-expanded', on ? 'true' : 'false');
       // Re-check after the open (grid-rows) transition settles — at rAF the panel
       // isn't laid out yet, so the scroll height reads 0 and the arrow never shows.
-      if (on) { requestAnimationFrame(() => updatePickerFades(picker)); setTimeout(() => updatePickerFades(picker), 320); }
+      if (on) { requestAnimationFrame(() => { updatePickerFades(picker); fitGridCols(); }); setTimeout(() => { updatePickerFades(picker); fitGridCols(); }, 320); }
     };
     // Top/bottom fades on the (capped) panel scroll area — shown only when there's
     // hidden content above/below.
     const scrollEl = picker.querySelector('.tsp-scroll');
     if (scrollEl) scrollEl.addEventListener('scroll', () => updatePickerFades(picker), { passive: true });
+    // Responsive column control with an overflow layer (#img75): topic names stay on
+    // ONE line (nowrap). Start from the CSS-derived column count, then drop columns
+    // until no name overflows its cell — so long names trigger the next column
+    // breakpoint EARLIER than the width breakpoints alone would.
+    const fitGridCols = () => {
+      const grid = picker.querySelector('.tsp-grid');
+      if (!grid || !grid.offsetParent) return;
+      grid.style.gridTemplateColumns = '';                       // reset → CSS decides base count
+      let cols = (getComputedStyle(grid).gridTemplateColumns || '').split(' ').filter(Boolean).length || 1;
+      const overflows = () => [...grid.querySelectorAll('.tsp-cell-name')]
+        .some((n) => n.scrollWidth > n.clientWidth + 1);
+      let guard = 8;
+      while (cols > 1 && overflows() && guard--) {
+        cols -= 1;
+        grid.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+      }
+    };
+    window.addEventListener('resize', () => { if (picker.classList.contains('is-open')) requestAnimationFrame(fitGridCols); }, { passive: true });
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       setOpen(!picker.classList.contains('is-open'));

@@ -14459,6 +14459,22 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 /* Footer: two pill buttons (grey "View All Topics" + primary "Search Custom Topic"),
    matching the main-nav All Topics dropdown's head buttons (#img77). */
 .tsp-foot--btns { gap: 10px; }
+/* Actions row at the TOP of the picker (#img71): the two buttons left, ✕ right, over
+   a faint separator. Replaces the old footer (and its bottom separator, #img74). */
+.tsp-actions {
+  flex: none; display: flex; align-items: center; gap: 10px;
+  padding: 14px 0 14px; margin-bottom: 12px;
+  border-bottom: 1px solid #eef1f6;
+}
+.tsp-close--row { position: static !important; top: auto; right: auto; margin-left: auto; flex: none; }
+/* "{Parent} Topics" group label — mirrors the side-menu Navigate/Topics headers. */
+.tsp-group-label {
+  font-family: var(--font-display); font-size: 1.05rem; font-weight: 700;
+  color: var(--color-primary); margin: 2px 0 10px; padding: 0 0.65rem;
+}
+/* Topic names never wrap — the fit logic drops a column instead (#img75). */
+.tsp-cell-name { white-space: nowrap; }
+.tsp-cell { min-width: 0; }
 .tsp-foot-btn {
   display: inline-flex; align-items: center; gap: 7px; padding: 8px 16px; border-radius: 999px;
   font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; text-decoration: none;
