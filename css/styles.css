@@ -14366,7 +14366,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .tsp-panel-inner {
   position: relative;
   max-width: var(--max-width, 1280px); margin: 0 auto;
-  padding: 22px clamp(1.25rem, 4vw, 2.5rem) 0;
+  padding: 10px clamp(1.25rem, 4vw, 2.5rem) 0;
   max-height: min(74vh, calc(100dvh - var(--nav-h) - var(--subnav-height, 60px) - 24px));
   /* Column: the subtopic list scrolls; the "All Topics" footer is pinned at the
      bottom (always visible). Short content → no scroll, panel stays compact
@@ -14376,7 +14376,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .tsp-scroll {
   flex: 0 1 auto; min-height: 0;
   overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
-  padding-bottom: 8px; /* scroll room so the last subtopic clears the fade/footer */
+  padding-bottom: 26px; /* breathing room between the last topic row and the dropdown edge (#img77) */
 }
 /* X close, top-right of the panel. */
 .tsp-close {
@@ -14462,11 +14462,11 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 /* Actions row at the TOP of the picker (#img71): the two buttons left, ✕ right, over
    a faint separator. Replaces the old footer (and its bottom separator, #img74). */
 .tsp-actions {
-  flex: none; display: flex; align-items: center; gap: 10px;
-  padding: 14px 0 14px; margin-bottom: 12px;
+  flex: none; display: flex; align-items: center; gap: 8px;
+  padding: 2px 0 12px; margin-bottom: 12px;
   border-bottom: 1px solid #eef1f6;
 }
-.tsp-close--row { position: static !important; top: auto; right: auto; margin-left: auto; flex: none; }
+.tsp-close--row { position: static !important; top: auto; right: auto; margin-left: auto; flex: none; width: 30px; height: 30px; }
 /* "{Parent} Topics" group label — mirrors the side-menu Navigate/Topics headers. */
 .tsp-group-label {
   font-family: var(--font-display); font-size: 1.05rem; font-weight: 700;
@@ -14476,8 +14476,8 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .tsp-cell-name { white-space: nowrap; }
 .tsp-cell { min-width: 0; }
 .tsp-foot-btn {
-  display: inline-flex; align-items: center; gap: 7px; padding: 8px 16px; border-radius: 999px;
-  font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 13px; border-radius: 999px;
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; text-decoration: none;
   background: #eef1f6; color: #26375a; border: 1px solid #dde3ee; transition: background .13s, border-color .13s;
 }
 @media (hover: hover) { .tsp-foot-btn:hover { background: #e3e9f4; border-color: #ccd6e8; } }
