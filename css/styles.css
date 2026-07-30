@@ -14482,8 +14482,9 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 }
 @media (hover: hover) { .tsp-foot-btn:hover { background: #e3e9f4; border-color: #ccd6e8; } }
 .tsp-foot-btn svg { flex: none; }
-.tsp-foot-btn--primary { background: #3b4c6e; color: #fff; border-color: #3b4c6e; }
-@media (hover: hover) { .tsp-foot-btn--primary:hover { background: #2e3d5c; border-color: #2e3d5c; } }
+/* Search Custom Topic matches the grey View All Topics button (#img81/82). */
+.tsp-foot-btn--primary { background: #eef1f6; color: #26375a; border-color: #dde3ee; }
+@media (hover: hover) { .tsp-foot-btn--primary:hover { background: #e3e9f4; border-color: #ccd6e8; } }
 .tsp-cell-check { flex: none; color: #26375a; display: inline-flex; }
 .tsp-parent-check { margin-left: 0.15rem; }
 /* Subtopics grid — single column by default; widens to multi-column where there's
@@ -15172,8 +15173,9 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 @media (hover: hover) { .aii-nav-dd-headbtn:hover { background: #f4f6fb; border-color: #c3cde0; color: #26375a; text-decoration: none; } }
 /* Filled + prominent, but a calmer, less-saturated navy so it doesn't shout next to
    the quiet Homepage button (#img58). */
-.aii-nav-dd-headbtn.is-primary { background: #3a5285; border-color: #3a5285; color: #fff; }
-@media (hover: hover) { .aii-nav-dd-headbtn.is-primary:hover { background: #2f4570; border-color: #2f4570; color: #fff; } }
+/* Grey to match the picker buttons (#img81/82) — no navy primary variant. */
+.aii-nav-dd-headbtn.is-primary { background: #eef1f6; border-color: #dde3ee; color: #26375a; }
+@media (hover: hover) { .aii-nav-dd-headbtn.is-primary:hover { background: #e3e9f4; border-color: #ccd6e8; color: #26375a; } }
 .aii-nav-dd-close {
   flex: 0 0 auto; width: 36px; height: 36px; border-radius: 10px;
   border: 1px solid var(--color-surface-border); background: #fff; color: #475569;
