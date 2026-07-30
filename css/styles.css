@@ -14366,7 +14366,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .tsp-panel-inner {
   position: relative;
   max-width: var(--max-width, 1280px); margin: 0 auto;
-  padding: 10px clamp(1.25rem, 4vw, 2.5rem) 0;
+  padding: 17px clamp(1.25rem, 4vw, 2.5rem) 0;
   max-height: min(74vh, calc(100dvh - var(--nav-h) - var(--subnav-height, 60px) - 24px));
   /* Column: the subtopic list scrolls; the "All Topics" footer is pinned at the
      bottom (always visible). Short content → no scroll, panel stays compact
