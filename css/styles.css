@@ -14757,9 +14757,10 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
    On narrow screens the separator drops and the dropdown right-aligns. */
 .topic-banner-row--home-picker .is-home-picker { flex: none; width: auto; min-width: 0; }
 .subnav-ident { display: flex; align-items: center; gap: 0.5rem; flex: none; min-width: 0; }
-/* Nudge the icon down ~3px: centered on the name's line-box it read as sitting too
-   high vs the text's visual (cap-height) center. */
-.subnav-ident-ico { flex: none; display: inline-flex; align-items: center; color: #26375a; transform: translateY(2.5px); }
+.subnav-ident-ico { flex: none; display: inline-flex; align-items: center; color: #26375a; }
+/* TOPIC pages only: the icon read ~3px too high vs the name's visual center there
+   (different container metrics than home, which is already centered — #img61). */
+.topic-subnav-inner .subnav-ident-ico { transform: translateY(2.5px); }
 .subnav-ident-name {
   font-family: var(--font-display); font-weight: 700; letter-spacing: -0.015em; color: #26375a;
   font-size: clamp(0.98rem, 0.82rem + 1vw, 1.18rem); line-height: 1.4; white-space: nowrap;
