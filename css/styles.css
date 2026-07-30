@@ -652,6 +652,21 @@ body.custom-mode.sticky-always #content {
   mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 56px), rgba(0, 0, 0, 0.2) 100%);
 }
 
+/* "View All Topics" — balanced-blue link under the Topics list (replaces the old
+   Navigate-row button, #img87/88). Same blue family as .navmenu-subtopic-parent. */
+.navmenu-viewall {
+  display: flex; align-items: center; gap: 0.6rem;
+  margin: 0.4rem 0.5rem 0.3rem; padding: 0.55rem 0.75rem; border-radius: 8px;
+  font-family: var(--font-family); font-size: 0.88rem; font-weight: 650;
+  color: #2f4d9e; text-decoration: none; transition: background 0.12s, color 0.12s;
+}
+.navmenu-viewall svg { flex: none; }
+.navmenu-viewall .navmenu-viewall-arrow { margin-left: 1px; transition: transform 0.14s ease; }
+@media (hover: hover) {
+  .navmenu-viewall:hover { background: #eef2fb; color: #26407f; text-decoration: none; }
+  .navmenu-viewall:hover .navmenu-viewall-arrow { transform: translateX(3px); }
+}
+
 /* Sticky bottom group — About / Terms / GitHub links. Pinned to the
    bottom of the drawer regardless of featured-topics list length, with
    a discreet light-grey backdrop and a top border for clean separation
@@ -730,6 +745,32 @@ body.custom-mode.sticky-always #content {
   gap: 0.35rem;
   margin-left: auto;
 }
+/* ⓘ button right of the brand title — round, darker-blue tint (#img94). */
+.navmenu-info {
+  margin-left: auto; flex-shrink: 0;
+  width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%; cursor: pointer;
+  background: color-mix(in srgb, #26375a 8%, #fff);
+  border: 1px solid #d7deea; color: #26375a;
+  transition: background 0.14s, border-color 0.14s;
+}
+@media (hover: hover) { .navmenu-info:hover { background: color-mix(in srgb, #26375a 14%, #fff); border-color: #c2cde0; } }
+.navmenu-info[aria-expanded="true"] { background: #26375a; border-color: #26375a; color: #fff; }
+/* Mini dropdown under the ⓘ — About / Terms / GitHub (#img94). */
+.navmenu-info-pop {
+  position: absolute; right: 1rem; top: calc(100% - 8px);
+  min-width: 170px; padding: 6px; display: none; z-index: 30;
+  background: #fff; border: 1px solid #e3e8f0; border-radius: 12px;
+  box-shadow: 0 16px 32px -16px rgba(15, 23, 42, 0.28), 0 4px 10px -6px rgba(15, 23, 42, 0.12);
+}
+.navmenu-info-pop.is-open { display: block; }
+.navmenu-info-pop a {
+  display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 8px;
+  font-family: var(--font-family); font-size: 0.85rem; font-weight: 600;
+  color: #33415c; text-decoration: none; transition: background 0.12s, color 0.12s;
+}
+.navmenu-info-pop a svg { flex: none; color: #5a6b86; }
+@media (hover: hover) { .navmenu-info-pop a:hover { background: #f4f6fb; color: #26375a; } .navmenu-info-pop a:hover svg { color: #26375a; } }
 .navmenu-close { color: var(--color-text-muted, #6b7280); }
 .navmenu-home  { color: #2c4467; }
 @media (hover: hover) { .navmenu-close:hover {
@@ -784,7 +825,8 @@ body.custom-mode.sticky-always #content {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  padding: 0.4rem 1.25rem 0.5rem;
+  /* More head-room now that the "Navigate" label above is gone (#img89). */
+  padding: 1.1rem 1.25rem 0.5rem;
   align-items: stretch;
 }
 /* CTA-style menu link — bordered pill that reads as a clear action,
@@ -965,7 +1007,9 @@ body.custom-mode.sticky-always #content {
   margin: 0; padding: 0.05rem 0.5rem 0.4rem 1.9rem;
 }
 .navmenu-subtopic-link {
-  padding: 0.4rem 0.6rem; font-size: 0.82rem; font-weight: 500;
+  /* 0.85rem — a touch bigger when the accordion is expanded, still under the
+     parent row's 0.88rem (#img86). */
+  padding: 0.4rem 0.6rem; font-size: 0.85rem; font-weight: 500;
   color: #4a5568; text-decoration: none; border-radius: 4px; transition: background 0.1s, color 0.1s;
 }
 @media (hover: hover) { .navmenu-subtopic-link:hover { background: color-mix(in srgb, var(--color-primary) 8%, #fff); color: var(--color-primary); text-decoration: none; } }
@@ -6280,9 +6324,9 @@ body.app-mode .topic-layout {
      enough room for its full label before the grid drops to 2-up.
      Mobile media query below further drops it to 1-up. */
   /* Single stacked column at every width — full-width sections, no 2/3-up grid
-     (#img424). */
+     (#img424). Roomier gap between the accordions (#img101). */
   grid-template-columns: 1fr;
-  gap: 0.7rem;
+  gap: 1.05rem;
 }
 .pb-card {
   position: relative;
@@ -6423,8 +6467,8 @@ body.app-mode .topic-layout {
   border-color: rgba(44, 68, 103, 0.4);
 } }
 
-/* Row 2: description sub-text under the head. Indent matches icon
-   width + gap so it aligns with the title text above. */
+/* Row 2: description sub-text under the head — indented by icon width (20px) +
+   head gap (0.6rem) so it left-aligns with the TITLE, not the icon (#img102). */
 .pb-card-desc {
   font-family: var(--font-family);
   font-size: 0.84rem;
@@ -6432,7 +6476,7 @@ body.app-mode .topic-layout {
   font-weight: 500;
   line-height: 1.4;
   margin: 0;
-  padding-left: 0;
+  padding-left: calc(20px + 0.6rem);
 }
 
 /* Row 3: chip summary or "+ Add" CTA — flush-left under the head. */
@@ -7222,7 +7266,8 @@ body.app-mode .topic-layout {
 .wiz-action-buttons { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; justify-content: flex-start; }
 .wiz-action-buttons .wiz-action-btn, .wiz-action-buttons .wiz-action-2nd, .wiz-action-buttons .wiz-action-restart { flex: 0 0 auto; }
 /* Clear sits apart from the do-something actions — pushed to the row's right end. */
-.wiz-action-buttons .wiz-action-restart { margin-left: auto; }
+/* Clear sits WITH the other actions, not stranded at the far right (#img99). */
+.wiz-action-buttons .wiz-action-restart { margin-left: 0; }
 /* Every action button gives its icon consistent sizing + spacing. */
 .wiz-action-btn svg, .wiz-action-2nd svg, .wiz-action-restart svg { flex: none; }
 .wiz-action-bar-spacer {
@@ -8577,29 +8622,28 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
 }
 
 /* === About Page === */
+/* Static pages (About / Terms) — restyled to match the current site language
+   (#img90-93/97): the subnav carries the page title, so content opens with a
+   lead line; deep-navy display headers; grey pill buttons like the pickers. */
 .about-page {
-  max-width: 680px;
-}
-.about-hero {
-  margin-bottom: 2rem;
-}
-.about-title {
-  font-family: var(--font-display);
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: #1e1e1e;
-  letter-spacing: -0.02em;
-  margin-bottom: 0.5rem;
+  max-width: 720px;
+  padding-top: 0.35rem;
 }
 .about-lead {
-  font-size: 0.95rem;
-  color: var(--color-text-muted);
-  line-height: 1.6;
+  font-size: 1.02rem;
+  color: #33415c;
+  line-height: 1.65;
+  margin: 0 0 0.6rem;
 }
+.about-updated {
+  font-size: 0.78rem; font-weight: 600; color: var(--color-text-muted);
+  margin: 0 0 1.4rem;
+}
+.about-page > .about-lead:last-of-type { margin-bottom: 1.8rem; }
 .about-section {
-  margin-bottom: 1.75rem;
-  padding-bottom: 1.75rem;
-  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 1.6rem;
+  padding-bottom: 1.6rem;
+  border-bottom: 1px solid #e9edf3;
 }
 .about-section:last-child {
   border-bottom: none;
@@ -8607,15 +8651,16 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
 }
 .about-section h3 {
   font-family: var(--font-display);
-  font-size: 1.05rem;
+  font-size: 1.12rem;
   font-weight: 700;
-  color: #1e1e1e;
+  color: #1a2740;
+  letter-spacing: -0.01em;
   margin-bottom: 0.6rem;
 }
 .about-section p {
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   line-height: 1.7;
-  color: var(--color-text);
+  color: #33415c;
   margin: 0 0 0.85rem;
 }
 .about-section p:last-child { margin-bottom: 0; }
@@ -8623,12 +8668,14 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
 .about-section p + p { margin-top: 0; }
 .about-section ul {
   padding-left: 1.15rem;
-  font-size: 0.88rem;
-  line-height: 1.75;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #33415c;
   list-style: none;
+  margin: 0 0 0.85rem;
 }
 .about-section li {
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.45rem;
   position: relative;
   padding-left: 0.15rem;
 }
@@ -8636,21 +8683,18 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
   content: '';
   position: absolute;
   left: -1rem;
-  top: 0.6em;
+  top: 0.62em;
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--color-text-light);
+  background: #8fa3c4;
 }
-/* Sub-headings within sections */
-.about-sub-heading {
-  font-family: var(--font-display);
-  font-size: 0.92rem;
-  font-weight: 700;
-  color: #1e1e1e;
-  margin: 1.25rem 0 0.5rem;
-}
-/* CTA button links (Portfolio, LinkedIn, GitHub) */
+.about-section li strong,
+.about-section p strong { color: #1a2740; }
+.about-section a { color: #1d4ed8; font-weight: 600; text-decoration: none; }
+@media (hover: hover) { .about-section a:hover { text-decoration: underline; } }
+/* CTA button links (Portfolio, LinkedIn, GitHub) — same grey pill family as the
+   topic-picker buttons. */
 .about-cta-row {
   display: flex;
   gap: 0.5rem;
@@ -8661,27 +8705,35 @@ body.pb-action-bar-inline .wiz-action-bar-spacer {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  margin-top: 0.65rem;
-  padding: 0.45rem 0.85rem;
-  border: 1px solid var(--color-border);
-  border-radius: 5px;
-  font-size: 0.84rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text);
-  text-decoration: none;
-  transition: border-color 0.12s, background 0.12s;
+  margin-top: 0.5rem;
+  padding: 7px 14px;
+  background: #eef1f6;
+  border: 1px solid #dde3ee;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #26375a !important;
+  text-decoration: none !important;
+  transition: background 0.13s, border-color 0.13s;
 }
 @media (hover: hover) { .about-cta-link:hover {
-  border-color: var(--color-text);
-  background: var(--color-bg-light);
-  text-decoration: none;
+  background: #e3e9f4;
+  border-color: #ccd6e8;
+  text-decoration: none !important;
 } }
 .about-cta-row .about-cta-link { margin-top: 0; }
-/* Disclaimer */
+/* Closing note — soft card instead of another plain section. Class doubled so it
+   out-ranks .about-section:last-child's padding-bottom reset. */
+.about-section.about-disclaimer {
+  background: #f7f9fc;
+  border: 1px solid #e6ebf3;
+  border-radius: 12px;
+  padding: 1rem 1.15rem;
+}
 .about-disclaimer p {
-  font-size: 0.82rem;
-  color: var(--color-text-muted);
-  line-height: 1.6;
+  font-size: 0.86rem;
+  color: #4a5a75;
+  line-height: 1.65;
 }
 
 /* === Not Found === */
@@ -14366,13 +14418,17 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .tsp-panel-inner {
   position: relative;
   max-width: var(--max-width, 1280px); margin: 0 auto;
-  padding: 17px clamp(1.25rem, 4vw, 2.5rem) 0;
+  /* Flat 2rem gutter to MATCH the subnav inner (0.92rem 2rem) at every width — the
+     old fluid clamp only lined the actions row up with the subnav icon at exactly
+     800px wide (#img83). Drops to 1rem at ≤640 alongside the subnav. */
+  padding: 17px 2rem 0;
   max-height: min(74vh, calc(100dvh - var(--nav-h) - var(--subnav-height, 60px) - 24px));
   /* Column: the subtopic list scrolls; the "All Topics" footer is pinned at the
      bottom (always visible). Short content → no scroll, panel stays compact
      (scroll flex-shrinks, doesn't grow) (#img441). */
   display: flex; flex-direction: column; overflow: hidden;
 }
+@media (max-width: 640px) { .tsp-panel-inner { padding-left: 1rem; padding-right: 1rem; } }
 .tsp-scroll {
   flex: 0 1 auto; min-height: 0;
   overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
@@ -14503,7 +14559,9 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
    high above the subtopic name (#img325/#img326). */
 .tsp-cell-ic .tsp-ic-svg { width: 16px; height: 16px; display: grid; place-items: center; }
 .tsp-cell-ic svg { display: block; width: 16px; height: 16px; }
-.tsp-cell-name { flex: 1 1 auto; min-width: 0; font-size: 0.92rem; font-weight: 500; }
+/* 550 (Inter is variable) — a touch more weight than plain 500 without jumping to
+   the active row's 600 (#img86). */
+.tsp-cell-name { flex: 1 1 auto; min-width: 0; font-size: 0.92rem; font-weight: 550; }
 .tsp-cell.is-active { background: color-mix(in srgb, #26375a 7%, #fff); }
 .tsp-cell.is-active .tsp-cell-name { color: #26375a; font-weight: 600; }
 .tsp-cell.is-active .tsp-cell-ic { color: #26375a; }
@@ -15454,22 +15512,22 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
   border: 1px solid var(--color-surface-border); border-radius: 16px;
   background: #fff; cursor: pointer; transition: border-color .14s ease, box-shadow .14s ease, background .14s ease;
 }
-@media (hover: hover) { .prompts-opt:hover { border-color: color-mix(in srgb, #2563eb 45%, var(--color-surface-border)); box-shadow: 0 10px 26px -14px rgba(37,99,235,.32); background: color-mix(in srgb, #2563eb 2.5%, #fff); } }
+@media (hover: hover) { .prompts-opt:hover { border-color: color-mix(in srgb, #26375a 35%, var(--color-surface-border)); box-shadow: 0 10px 26px -14px rgba(26,39,64,.28); background: color-mix(in srgb, #26375a 2.5%, #fff); } }
 /* Stacked + LEFT-aligned: icon chip on top, then title, description, then CTA pinned
    to the bottom-left (#img559). */
 /* Icon chip: a soft blue-tinted gradient with a hairline ring so it reads as a
    crafted badge rather than a flat grey square (#img11). Deepens on card hover. */
-.prompts-opt-ic { flex: 0 0 auto; width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center; background: linear-gradient(150deg, color-mix(in srgb, #2563eb 13%, #fff), color-mix(in srgb, #26375a 7%, #fff)); box-shadow: inset 0 0 0 1px rgba(37,99,235,.12); color: #1f3557; margin-bottom: 4px; transition: box-shadow .14s ease, background .14s ease; }
+.prompts-opt-ic { flex: 0 0 auto; width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center; background: color-mix(in srgb, #26375a 8%, #fff); box-shadow: inset 0 0 0 1px rgba(38,55,90,.14); color: #26375a; margin-bottom: 4px; transition: box-shadow .14s ease, background .14s ease; }
 .prompts-opt-ic svg { width: 25px; height: 25px; }
-@media (hover: hover) { .prompts-opt:hover .prompts-opt-ic { background: linear-gradient(150deg, color-mix(in srgb, #2563eb 20%, #fff), color-mix(in srgb, #26375a 9%, #fff)); box-shadow: inset 0 0 0 1px rgba(37,99,235,.22); } }
+@media (hover: hover) { .prompts-opt:hover .prompts-opt-ic { background: color-mix(in srgb, #26375a 13%, #fff); box-shadow: inset 0 0 0 1px rgba(38,55,90,.24); } }
 .prompts-opt-name { font-size: 1.12rem; font-weight: 700; color: var(--color-primary, #14213d); letter-spacing: -0.018em; }
 .prompts-opt-desc { font-size: 0.88rem; color: var(--color-text-muted, #64748b); line-height: 1.45; }
 .prompts-opt-cta { margin-top: auto !important; }
-/* Solid filled-blue CTA — a real button, not a faint chip (#img11). Lifts + darkens
-   on card hover, arrow nudges right. */
-.prompts-opt-cta { display: inline-flex; align-items: center; gap: 7px; margin-top: 8px; padding: 9px 18px; border-radius: 10px; background: #2563eb; color: #fff; font-size: 0.86rem; font-weight: 650; box-shadow: 0 6px 15px -7px rgba(37,99,235,.55); transition: background .14s ease, box-shadow .14s ease; }
+/* Navy pill CTA — the site's primary-button language (Submit Prompt), replacing the
+   old bright-blue block (#img98). Deepens on card hover, arrow nudges right. */
+.prompts-opt-cta { display: inline-flex; align-items: center; gap: 7px; margin-top: 8px; padding: 8px 17px; border-radius: 999px; background: #26375a; color: #fff; font-size: 0.85rem; font-weight: 650; transition: background .14s ease; }
 .prompts-opt-cta svg { width: 15px; height: 15px; transition: transform .14s ease; }
-@media (hover: hover) { .prompts-opt:hover .prompts-opt-cta { background: #1d4ed8; box-shadow: 0 10px 20px -7px rgba(37,99,235,.62); } }
+@media (hover: hover) { .prompts-opt:hover .prompts-opt-cta { background: #1a2740; } }
 @media (hover: hover) { .prompts-opt:hover .prompts-opt-cta svg { transform: translateX(2px); } }
 
 /* Cleaner back control (#390) — a subtle pill; sits ABOVE the view title in the head. */
@@ -15612,7 +15670,8 @@ button.aiidd-vlink { align-self: flex-start; }
    the control bar (controls are lower in hierarchy). #img85/#img87. ───────────── */
 .topic-subnav-title { width: 100%; }   /* shows the grey #sub-header fill */
 /* Match the homepage identity bar's grey fill (#img85). */
-body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
+body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title),
+#sub-header.is-subnav.static-page:has(.topic-subnav-title) {
   background: #e7ecf3 !important; border-bottom: 1px solid #cdd2d9 !important; box-shadow: 0 2px 8px rgba(15,26,46,.06) !important;
 }
 .topic-subnav-inner {

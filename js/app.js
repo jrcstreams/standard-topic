@@ -1507,16 +1507,26 @@ function renderLayout(route) {
 
   if (route.type === 'about' || route.type === 'terms') {
     document.body.classList.add('has-subnav');
-    subHeader.classList.add('is-subnav');
+    // static-page: opts the grey identity-bar styling in without app-mode's
+    // viewport lock (these are long-scroll pages).
+    subHeader.classList.add('is-subnav', 'static-page');
     const title = route.type === 'about' ? 'About' : 'Terms & Conditions';
-    const icon = route.type === 'about' ? 'book-open' : 'scroll-text';
+    const iconSvg = route.type === 'about'
+      ? '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>'
+      : '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>';
+    // Same identity-bar pattern as topic pages (icon + name, grey fill) so the
+    // static pages' subnav matches the rest of the site (#img93/97).
     subHeader.innerHTML = `
-      <div class="topic-banner">
-        <div class="topic-banner-row">
-          ${titleGroup(icon, title)}
+      <div class="topic-subnav-title">
+        <div class="topic-subnav-inner">
+          <div class="subnav-ident">
+            <span class="subnav-ident-ico">${iconSvg}</span>
+            <span class="subnav-ident-name">${title}</span>
+          </div>
         </div>
       </div>
     `;
+    observeSubnavHeight();
   }
 
   if (route.type === 'prompt-generator' || route.type === 'about' || route.type === 'terms') {
@@ -2519,10 +2529,28 @@ function renderStickyHeroBar(container, route) {
       <a href="#/" class="navmenu-brand" id="navmenu-brand-link">
         <span class="navmenu-title">Standard Topic</span>
       </a>
+      <button type="button" class="navmenu-info" id="navmenu-info" aria-label="About this site" aria-haspopup="true" aria-expanded="false">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+        </svg>
+      </button>
+      <div class="navmenu-info-pop" id="navmenu-info-pop">
+        <a href="#/about">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+          About
+        </a>
+        <a href="#/terms">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+          Terms
+        </a>
+        <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
     </div>
     <!-- navmenu-title font-size is synced to the main nav's .sticky-title at runtime
          (see syncNavmenuTitleSize) so the two always match at every viewport width. -->
-    <div class="navmenu-featured-label navmenu-section-label">Navigate</div>
     <nav class="navmenu-quicklinks">
       <a href="#/" class="navmenu-quicklink navmenu-cta" id="navmenu-home-link">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -2541,19 +2569,6 @@ function renderStickyHeroBar(container, route) {
           <line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
         <span class="navmenu-cta-label">Search</span>
-        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="5" y1="12" x2="19" y2="12"/>
-          <polyline points="13 6 19 12 13 18"/>
-        </svg>
-      </button>
-      <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-all-topics">
-        <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <rect x="3" y="3" width="7" height="7" rx="1"/>
-          <rect x="14" y="3" width="7" height="7" rx="1"/>
-          <rect x="3" y="14" width="7" height="7" rx="1"/>
-          <rect x="14" y="14" width="7" height="7" rx="1"/>
-        </svg>
-        <span class="navmenu-cta-label">View All Topics</span>
         <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <line x1="5" y1="12" x2="19" y2="12"/>
           <polyline points="13 6 19 12 13 18"/>
@@ -2584,6 +2599,19 @@ function renderStickyHeroBar(container, route) {
     <div class="navmenu-scroll">
       <div class="navmenu-featured-label">Topics</div>
       <div class="navmenu-topics">${featuredLinksHTML}</div>
+      <a href="#" class="navmenu-viewall" id="navmenu-all-topics">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        <span>View All Topics</span>
+        <svg class="navmenu-viewall-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="13 6 19 12 13 18"/>
+        </svg>
+      </a>
     </div>
     <div class="navmenu-footer-sticky">
       <div class="navmenu-footer-links">
@@ -2610,7 +2638,11 @@ function renderStickyHeroBar(container, route) {
     }
   }
 
-  const closeMenu = () => { navPanel.classList.remove('is-open'); navOverlay.classList.remove('is-open'); document.body.style.overflow = ''; };
+  const closeMenu = () => {
+    navPanel.classList.remove('is-open'); navOverlay.classList.remove('is-open'); document.body.style.overflow = '';
+    navPanel.querySelector('#navmenu-info-pop')?.classList.remove('is-open');
+    navPanel.querySelector('#navmenu-info')?.setAttribute('aria-expanded', 'false');
+  };
   // Always open to the DEFAULT view: collapse any expanded topic accordion and
   // reset the scroll position so it never reopens where you left off (#img26).
   const resetMenu = () => {
@@ -2639,9 +2671,23 @@ function renderStickyHeroBar(container, route) {
   navPanel.querySelectorAll('a, #navmenu-all-topics').forEach(link => {
     link.addEventListener('click', closeMenu);
   });
-  navPanel.querySelector('#navmenu-all-topics')?.addEventListener('click', () => {
+  navPanel.querySelector('#navmenu-all-topics')?.addEventListener('click', (e) => {
+    e.preventDefault();
     closeMenu();
     toggleTopicsNavDropdown();
+  });
+
+  // Info popover (ⓘ next to the title): mini dropdown with About / Terms / GitHub.
+  const infoBtn = navPanel.querySelector('#navmenu-info');
+  const infoPop = navPanel.querySelector('#navmenu-info-pop');
+  const closeInfoPop = () => { infoPop?.classList.remove('is-open'); infoBtn?.setAttribute('aria-expanded', 'false'); };
+  infoBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = infoPop.classList.toggle('is-open');
+    infoBtn.setAttribute('aria-expanded', String(open));
+  });
+  navPanel.addEventListener('click', (e) => {
+    if (!e.target.closest('#navmenu-info') && !e.target.closest('#navmenu-info-pop')) closeInfoPop();
   });
   navPanel.querySelector('#navmenu-trending')?.addEventListener('click', () => {
     closeMenu();
@@ -4593,34 +4639,46 @@ function renderPage(route) {
   if (route.type === 'about') {
     content.innerHTML = `
       <div class="about-page">
-        <div class="about-hero">
-          <h2 class="about-title">About Standard Topic</h2>
-          <p class="about-lead">One place to read the news, run AI prompts, and explore any topic — organized so you actually find what you came for.</p>
+        <p class="about-lead">Standard Topic is a topic-first way to stay informed: live news, AI-generated briefings, and ready-to-run prompts for 100 curated topics — or any topic you search.</p>
+
+        <div class="about-section">
+          <h3>What's on a topic page</h3>
+          <p>Every topic page organizes coverage around the subject, not the outlet. Each one combines:</p>
+          <ul>
+            <li><strong>News Feed</strong> — a live feed aggregated from established publishers, refreshed throughout the day and sorted newest-first.</li>
+            <li><strong>AI Insights</strong> — briefings generated for each topic (Get Caught Up, Deep Dive, Analysis, and 101 Resources), refreshed on a schedule so they stay current, with the sources they draw from listed alongside.</li>
+            <li><strong>Prompts</strong> — ready-made prompts that open in the AI model of your choice, plus a Prompt Builder for composing your own with topics, scope, output style, and citations.</li>
+          </ul>
+          <p>If a subject isn't in the library, use Search to build a page around any term — news results, external searches, and prompts included.</p>
         </div>
 
         <div class="about-section">
-          <h3>What This Site Does</h3>
-          <p>Every topic page combines three things side by side: a live news feed pulled from real publishers, a panel of pre-built AI prompts you can fire off in one click, and a set of quick links out to Google News, Reddit, X, YouTube, and DuckDuckGo. If a topic isn't in the library, type it into Search and the site builds the same panel around your term.</p>
-          <h4 class="about-sub-heading">The four things you can do</h4>
+          <h3>How AI is used here</h3>
+          <p>Two kinds of AI appear on the site, and both are clearly labeled:</p>
           <ul>
-            <li><strong>Browse topics</strong> — pick from the topic library, or open Search and type your own.</li>
-            <li><strong>Read the news</strong> — every topic page has its own live feed, sorted newest-first.</li>
-            <li><strong>Send an AI prompt</strong> — click any Topic Intelligence card and it opens in your preferred model (ChatGPT, Claude, Gemini, Perplexity, Copilot, or Google AI Mode) with the prompt already filled in.</li>
-            <li><strong>Build your own prompt</strong> — open Prompt Builder to compose a custom prompt with topics, scope, output style, and citations, then send it where you want.</li>
+            <li><strong>Generated on the site</strong> — AI Insights, the homepage news brief, and trending briefs are produced by Standard Topic using Google's Gemini models with live web grounding. Generated content carries a "✦ AI" label and lists its sources.</li>
+            <li><strong>Opens in your model</strong> — prompt cards and the Prompt Builder compose a prompt and open it in the platform you choose: ChatGPT, Claude, Gemini, Perplexity, Copilot, or Google AI Mode. Those responses come from that platform, not from this site.</li>
           </ul>
-          <h4 class="about-sub-heading">Your model, your choice</h4>
-          <p>When you open Ask AI on any insight, pick the model you want — ChatGPT, Claude, Gemini, Perplexity, Copilot, or Google AI Mode. Your choice stays on your device for the session.</p>
-          <h4 class="about-sub-heading">Open source</h4>
-          <p>The whole site is open source. View the code, see what's planned, or fork it on GitHub.</p>
+          <p>AI-generated content can be incomplete or inaccurate. Sources are listed on every generated briefing so you can verify — for anything that matters, click through to the reporting itself.</p>
+        </div>
+
+        <div class="about-section">
+          <h3>Your model, your choice</h3>
+          <p>Wherever a prompt leaves the site, you pick the destination. Your selected model and preferences are saved in your browser only — there are no accounts and no profiles.</p>
+        </div>
+
+        <div class="about-section">
+          <h3>Open source</h3>
+          <p>The full source code is public. Read it, follow what's planned, or fork it.</p>
           <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer" class="about-cta-link">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
             <span>View on GitHub</span>
           </a>
         </div>
 
         <div class="about-section about-creator">
           <h3>Created by</h3>
-          <p>Standard Topic was built by <strong>John Choudhari</strong> — a builder with over a decade in digital media and communications, currently focused on how AI changes the way people read, search, and learn.</p>
+          <p>Standard Topic was built by <strong>John Choudhari</strong>, a builder with over a decade in digital media and communications, focused on how AI is changing the way people read, search, and learn.</p>
           <div class="about-cta-row">
             <a href="https://johnchoud.com" target="_blank" rel="noopener noreferrer" class="about-cta-link">Portfolio</a>
             <a href="https://www.linkedin.com/in/johnchoudhari/" target="_blank" rel="noopener noreferrer" class="about-cta-link">LinkedIn</a>
@@ -4628,9 +4686,8 @@ function renderPage(route) {
         </div>
 
         <div class="about-section about-disclaimer">
-          <h3>A quick note on AI output</h3>
-          <p>AI prompts on Standard Topic open in third-party platforms (ChatGPT, Claude, Gemini, Perplexity, and others). The site doesn't generate, host, or vouch for any of the responses you see there — that's between you and the platform.</p>
-          <p>The full <a href="#/terms">Terms &amp; Conditions</a> cover the rest.</p>
+          <h3>Terms &amp; contact</h3>
+          <p>The <a href="#/terms">Terms &amp; Conditions</a> cover data practices, analytics, third-party services, and acceptable use. For questions, corrections, or feedback, reach out via <a href="https://johnchoud.com" target="_blank" rel="noopener noreferrer">johnchoud.com</a>.</p>
         </div>
       </div>
     `;
@@ -4640,120 +4697,110 @@ function renderPage(route) {
   if (route.type === 'terms') {
     content.innerHTML = `
       <div class="about-page">
-        <div class="about-hero">
-          <h2 class="about-title">Terms &amp; Conditions</h2>
-          <p class="about-lead">Plain-English rules for using Standard Topic. Read once and you're set.</p>
-          <p class="about-lead" style="font-size:0.9rem;opacity:0.7;">Last updated: May 2026</p>
+        <p class="about-lead">The rules for using Standard Topic, written to be read.</p>
+        <p class="about-updated">Last updated: July 2026</p>
+
+        <div class="about-section">
+          <h3>1. Agreement</h3>
+          <p>By accessing or using Standard Topic (the "Site"), you agree to these Terms. If you do not agree with them, please do not use the Site.</p>
         </div>
 
         <div class="about-section">
-          <h3>1. Using the Site</h3>
-          <p>By using Standard Topic (the "Site"), you agree to these terms. Don't agree? Don't use it. That's all this section is.</p>
-        </div>
-
-        <div class="about-section">
-          <h3>2. What the Site Does</h3>
-          <p>Standard Topic is a free, non-commercial, open-source tool that organizes public information by topic. It does four things:</p>
+          <h3>2. What the Site Provides</h3>
+          <p>Standard Topic is a free, non-commercial, open-source service that organizes public information by topic:</p>
           <ul>
-            <li><strong>Topic pages</strong> — curated panels of links, news, and AI shortcuts for a subject.</li>
-            <li><strong>News feeds</strong> — articles aggregated from publicly available RSS sources via the rss.app API. The Site fetches and renders the items itself, with no rss.app widget or tracker loaded in your browser.</li>
-            <li><strong>AI Shortcuts</strong> — preset prompts that open in a third-party AI service (ChatGPT, Claude, Gemini, Perplexity, Copilot, Google AI Mode) in a new tab.</li>
-            <li><strong>Prompt Builder</strong> — a tool to compose a custom prompt in your browser and send it to the AI service of your choice.</li>
+            <li><strong>Topic pages</strong> — curated pages combining news, AI-generated briefings, prompts, and reference links for a subject.</li>
+            <li><strong>News feeds</strong> — headlines aggregated server-side from publicly available RSS sources via the rss.app API. The Site stores headlines, summaries, and links in its own database to power feeds, search, and history; no rss.app widget or tracker loads in your browser.</li>
+            <li><strong>AI-generated briefings</strong> — topic briefings, news summaries, and trending summaries generated by the Site using Google's Gemini models with live web grounding. Generated content is labeled "✦ AI" and lists its sources.</li>
+            <li><strong>AI shortcuts and Prompt Builder</strong> — preset or custom prompts that open in a third-party AI platform of your choice (ChatGPT, Claude, Gemini, Perplexity, Copilot, Google AI Mode) in a new tab. Responses from those platforms come from the platform, not from the Site.</li>
           </ul>
-          <p>The Site doesn't host news content, doesn't run any AI model, and doesn't process your queries on its own server. The AI responses you see come from the third-party platform you sent the prompt to.</p>
         </div>
 
         <div class="about-section">
-          <h3>3. No Accounts, No Personal Data</h3>
-          <p>There's no sign-up. The Site doesn't ask for your name, email, or anything else. It doesn't set advertising cookies and doesn't sell or share data with ad networks.</p>
-          <p>The Site's servers don't receive your prompts, your searches, or your browsing activity. Vercel (which hosts the Site) and any third-party platform you interact with may keep their own logs — those are covered by their policies, not these terms.</p>
+          <h3>3. Accounts and Personal Data</h3>
+          <p>There is no sign-up. The Site does not ask for your name, email address, or other personal details, does not set advertising cookies, and does not sell or share data with ad networks.</p>
+          <p>Some features — news feeds, generated briefings, news search — are served by the Site's backend. Those requests are not tied to accounts or identity profiles. Vercel (the hosting provider) and any third-party platform you interact with may keep standard technical logs under their own policies.</p>
         </div>
 
         <div class="about-section">
           <h3>4. Analytics</h3>
-          <p>The Site uses Google Analytics 4 to count things in aggregate — page views, which AI models people pick, how often shortcuts get used. It's there to improve the Site, not to identify you.</p>
-          <p>Analytics is configured with privacy defaults turned on: IP anonymization, Google Signals off, ad-personalization off. The Site doesn't log prompt text, Prompt Builder input, or anything else that could identify you. Block analytics with a privacy extension if you want; everything else still works.</p>
+          <p>The Site uses Google Analytics 4 for aggregate usage measurement — page views, feature usage, and which AI models are selected. It is configured with privacy defaults enabled: IP anonymization, Google Signals off, and ad personalization off. The Site does not log prompt text, Prompt Builder input, or anything else intended to identify you. Blocking analytics with a browser extension does not affect the Site's functionality.</p>
         </div>
 
         <div class="about-section">
           <h3>5. Local Browser Storage</h3>
-          <p>Your browser's <code>localStorage</code> holds a few interface preferences — like your chosen default AI model and reasoning depth. It stays on your device. The Site never sees it. Clear it via your browser settings at any time.</p>
+          <p>Your browser's <code>localStorage</code> holds a small number of interface preferences, such as your default AI model. This data stays on your device and can be cleared through your browser settings at any time.</p>
         </div>
 
         <div class="about-section">
           <h3>6. Third-Party Services</h3>
-          <p>The Site links out to plenty of third parties:</p>
+          <p>The Site relies on or links to services operated by third parties:</p>
           <ul>
-            <li><strong>AI providers</strong> — OpenAI (ChatGPT), Anthropic (Claude), Google (Gemini, Google AI Mode), Microsoft (Copilot), Perplexity.</li>
-            <li><strong>News source</strong> — articles fetched server-side from the rss.app API.</li>
-            <li><strong>Search and reference</strong> — Google News, DuckDuckGo, Reddit, X (Twitter), YouTube.</li>
-            <li><strong>Fonts</strong> — Google Fonts (<code>fonts.googleapis.com</code>, <code>fonts.gstatic.com</code>).</li>
-            <li><strong>Hosting</strong> — GitHub hosts the source code; Vercel serves the deployed Site.</li>
+            <li><strong>AI platforms</strong> — OpenAI (ChatGPT), Anthropic (Claude), Google (Gemini, Google AI Mode), Microsoft (Copilot), and Perplexity, for prompts you choose to send.</li>
+            <li><strong>AI generation</strong> — Google's Gemini API, used server-side to produce the Site's generated briefings.</li>
+            <li><strong>News aggregation</strong> — the rss.app API, used server-side to collect publisher headlines.</li>
+            <li><strong>Search and reference links</strong> — Google News, DuckDuckGo, Reddit, X, YouTube.</li>
+            <li><strong>Hosting</strong> — Vercel serves the Site; GitHub hosts the source code.</li>
           </ul>
-          <p>Standard Topic isn't affiliated with, endorsed by, or sponsored by any of them. Trademarks and logos belong to their owners. When you click out or send a prompt, you leave this Site — their terms and privacy policies apply, not ours.</p>
+          <p>Standard Topic is not affiliated with, endorsed by, or sponsored by any of these services. Trademarks belong to their owners. When you follow an external link or send a prompt to a third-party platform, that platform's terms and privacy policy apply.</p>
         </div>
 
         <div class="about-section">
-          <h3>7. AI Output</h3>
-          <p>AI Shortcuts and Prompt Builder send text to a third-party AI service you pick. The response comes back from that service, not from Standard Topic. We don't control the output and accept no responsibility for:</p>
+          <h3>7. AI-Generated Content on the Site</h3>
+          <p>Briefings and summaries generated by the Site are produced automatically, refreshed on a schedule, and labeled as AI-generated with their sources listed. Despite grounding in live sources, generated content can be incomplete, outdated, or inaccurate, and may not reflect every development on a topic.</p>
+          <p>Generated content is provided for general information only and is not professional advice. Do not rely on it for medical, legal, financial, safety-critical, or otherwise consequential decisions — verify significant claims against the listed sources or other primary reporting.</p>
+        </div>
+
+        <div class="about-section">
+          <h3>8. AI Output from Third-Party Platforms</h3>
+          <p>Prompts you send through AI shortcuts or the Prompt Builder are processed by the third-party platform you select. The Site does not control and accepts no responsibility for the accuracy, completeness, or character of those responses, or for how the platform handles or stores your prompt. The same no-professional-advice caution in Section 7 applies.</p>
+        </div>
+
+        <div class="about-section">
+          <h3>9. News Content</h3>
+          <p>Headlines, summaries, and articles belong to their originating publishers. The Site displays headlines and links and does not write, edit, or endorse individual stories. For corrections or copyright concerns about an article, contact the publisher; publishers or rights holders who want a feed removed from the Site can use the contact route in Section 16.</p>
+        </div>
+
+        <div class="about-section">
+          <h3>10. Intellectual Property</h3>
+          <p>The source code is open source at <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer">github.com/jrcstreams/standard-topic</a>; reuse is governed by the repository's license. The Standard Topic name, written copy, and original design belong to the Site's creator. Third-party names and marks appear for identification only.</p>
+        </div>
+
+        <div class="about-section">
+          <h3>11. Acceptable Use</h3>
+          <p>Use the Site for lawful, personal, informational purposes. You agree not to:</p>
           <ul>
-            <li>whether it's accurate, complete, or up to date;</li>
-            <li>output that's wrong, biased, offensive, or harmful;</li>
-            <li>how the AI provider handles or stores your prompt and response.</li>
-          </ul>
-          <p>AI responses are not professional advice. Don't rely on them for medical, legal, financial, safety-critical, or otherwise consequential decisions. Verify anything important with a real source.</p>
-        </div>
-
-        <div class="about-section">
-          <h3>8. News &amp; RSS Feeds</h3>
-          <p>News content comes from third-party publishers via rss.app. The Site fetches and renders the items as plain links — no scripts, widgets, or trackers run on news pages. Standard Topic doesn't write, edit, select, or endorse any individual story. Headlines, summaries, and links belong to the originating publishers. For copyright concerns or corrections, contact the publisher directly.</p>
-        </div>
-
-        <div class="about-section">
-          <h3>9. Intellectual Property</h3>
-          <p>The source code is open source and lives at <a href="https://github.com/jrcstreams/standard-topic" target="_blank" rel="noopener noreferrer">github.com/jrcstreams/standard-topic</a>. Any reuse is subject to the license in that repository.</p>
-          <p>The Standard Topic name, written copy, and original design belong to the Site's creator. Third-party names, logos, and marks belong to their respective owners and appear here for identification only.</p>
-        </div>
-
-        <div class="about-section">
-          <h3>10. Acceptable Use</h3>
-          <p>Use the Site for lawful, personal, informational purposes. Don't:</p>
-          <ul>
-            <li>use it to break the law or trample on someone else's rights;</li>
-            <li>try to disrupt, overload, or game the Site or the services it links to;</li>
-            <li>scrape, mirror, or repackage the Site as your own;</li>
-            <li>use AI Shortcuts or Prompt Builder to generate content that's illegal, harmful, harassing, or that violates the receiving AI provider's terms.</li>
+            <li>use the Site to violate the law or the rights of others;</li>
+            <li>disrupt, overload, or attempt to abuse the Site or its backend services;</li>
+            <li>scrape, mirror, or republish the Site as your own;</li>
+            <li>use AI shortcuts or the Prompt Builder to produce content that is illegal, harmful, or in violation of the receiving platform's terms.</li>
           </ul>
         </div>
 
         <div class="about-section">
-          <h3>11. No Warranties</h3>
-          <p>The Site is provided "as is" and "as available," with no warranties of any kind, express or implied — including merchantability, fitness for a purpose, accuracy, or non-infringement. The Site might break, go down, or have bugs. There's no promise it'll be fixed.</p>
+          <h3>12. No Warranties</h3>
+          <p>The Site is provided "as is" and "as available," without warranties of any kind, express or implied — including merchantability, fitness for a particular purpose, accuracy, and non-infringement. Availability and features may change or be interrupted at any time.</p>
         </div>
 
         <div class="about-section">
-          <h3>12. Limitation of Liability</h3>
-          <p>To the fullest extent allowed by law, Standard Topic and its creator aren't liable for any indirect, incidental, special, consequential, or punitive damages — or lost data, revenue, or profits — from your use of the Site, any third-party service it links to, or any content (including AI output) you get through it. The Site is free; any direct liability is limited to what you paid to use it, which is nothing.</p>
+          <h3>13. Limitation of Liability</h3>
+          <p>To the fullest extent permitted by law, Standard Topic and its creator are not liable for indirect, incidental, special, consequential, or punitive damages, or for lost data, revenue, or profits, arising from use of the Site, any linked third-party service, or any content (including AI-generated content) obtained through it. Total direct liability is limited to the amount you paid to use the Site.</p>
         </div>
 
         <div class="about-section">
-          <h3>13. Changes to These Terms</h3>
-          <p>These terms can change. The "Last updated" date at the top reflects the current version. Continuing to use the Site after a change means you're good with the new version. Big changes get noted here — check back occasionally if you care.</p>
+          <h3>14. Changes to These Terms</h3>
+          <p>These Terms may be updated from time to time; the "Last updated" date above reflects the current version. Continued use of the Site after an update constitutes acceptance of the revised Terms.</p>
         </div>
 
         <div class="about-section">
-          <h3>14. Stopping Use</h3>
-          <p>No account, so "termination" just means you close the tab. The Site can be modified, paused, or shut down at any time, for any reason, without notice.</p>
+          <h3>15. Termination</h3>
+          <p>There are no accounts, so ending use simply means no longer visiting the Site. The Site may be modified, suspended, or discontinued at any time without notice.</p>
         </div>
 
         <div class="about-section">
-          <h3>15. Governing Law</h3>
-          <p>These terms are governed by the laws applicable at the Site creator's place of residence, without regard to conflict-of-law rules. If any section turns out to be unenforceable, the rest still stands.</p>
-        </div>
-
-        <div class="about-section">
-          <h3>16. Get in Touch</h3>
-          <p>Questions about these terms, bug reports, or anything else about the Site — reach out through the creator's portfolio at <a href="https://johnchoud.com" target="_blank" rel="noopener noreferrer">johnchoud.com</a>.</p>
+          <h3>16. Governing Law and Contact</h3>
+          <p>These Terms are governed by the laws applicable at the Site creator's place of residence, without regard to conflict-of-law rules. If any provision is found unenforceable, the remainder stays in effect.</p>
+          <p>Questions about these Terms, corrections, or removal requests: reach out via <a href="https://johnchoud.com" target="_blank" rel="noopener noreferrer">johnchoud.com</a>.</p>
         </div>
       </div>
     `;

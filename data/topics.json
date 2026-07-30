@@ -24,7 +24,7 @@
       "parent": "business-finance",
       "rssFeedId": "_gwmxDXRtCwy9EJmV",
       "webhookEnabled": false,
-      "icon": "landmark",
+      "icon": "banknote",
       "tier": 3
     },
     {
@@ -78,7 +78,7 @@
       "parent": "business-finance",
       "rssFeedId": "_J2JqjxI7K86rB5A7",
       "webhookEnabled": false,
-      "icon": "house",
+      "icon": "key-round",
       "tier": 3
     },
     {
@@ -87,7 +87,7 @@
       "parent": "business-finance",
       "rssFeedId": "_OHjHmY7Ii47dUhpH",
       "webhookEnabled": false,
-      "icon": "briefcase",
+      "icon": "hard-hat",
       "tier": 3
     },
     {
@@ -142,7 +142,7 @@
       "parent": "technology",
       "rssFeedId": "_2LOlZvJ46s2akfiR",
       "webhookEnabled": false,
-      "icon": "sparkles",
+      "icon": "gavel",
       "tier": 3
     },
     {
@@ -151,7 +151,7 @@
       "parent": "technology",
       "rssFeedId": "_3VTY2CCwnynTAvg2",
       "webhookEnabled": false,
-      "icon": "bitcoin",
+      "icon": "link",
       "tier": 3
     },
     {
@@ -196,7 +196,7 @@
       "parent": "technology",
       "rssFeedId": "_S3TbrZB1adpfxULB",
       "webhookEnabled": false,
-      "icon": "rocket",
+      "icon": "zap",
       "tier": 3
     },
     {
@@ -241,7 +241,7 @@
       "parent": "technology",
       "rssFeedId": "_OWnm5k1xOJp5F2Bd",
       "webhookEnabled": false,
-      "icon": "code",
+      "icon": "app-window",
       "tier": 3
     },
     {
@@ -259,7 +259,7 @@
       "parent": null,
       "rssFeedId": "_duWpBv2YcGwlsqac",
       "webhookEnabled": false,
-      "icon": "atom",
+      "icon": "orbit",
       "featured": true,
       "tier": 1
     },
@@ -269,7 +269,7 @@
       "parent": "science",
       "rssFeedId": "_ZaXTQ7UyH5Nh4Bje",
       "webhookEnabled": false,
-      "icon": "rocket",
+      "icon": "telescope",
       "tier": 3
     },
     {
@@ -333,7 +333,7 @@
       "parent": "health-wellness",
       "rssFeedId": "_Galu2Ul3BqVr8bL1",
       "webhookEnabled": false,
-      "icon": "utensils",
+      "icon": "apple",
       "tier": 3
     },
     {
@@ -351,7 +351,7 @@
       "parent": "health-wellness",
       "rssFeedId": "_ZB2claHKziDhEXka",
       "webhookEnabled": false,
-      "icon": "heart-pulse",
+      "icon": "shield-plus",
       "tier": 3
     },
     {
@@ -379,7 +379,7 @@
       "parent": "politics",
       "rssFeedId": "_36Rys4qKjQCLjsmL",
       "webhookEnabled": false,
-      "icon": "landmark",
+      "icon": "scroll-text",
       "tier": 3
     },
     {
@@ -397,7 +397,7 @@
       "parent": "politics",
       "rssFeedId": "_UfFeXwMw6wf1UkKC",
       "webhookEnabled": false,
-      "icon": "scroll-text",
+      "icon": "radar",
       "tier": 3
     },
     {
@@ -406,7 +406,7 @@
       "parent": "politics",
       "rssFeedId": "_RYCjbUKLhvpMLI6e",
       "webhookEnabled": false,
-      "icon": "globe",
+      "icon": "earth",
       "tier": 3
     },
     {
@@ -415,7 +415,7 @@
       "parent": "politics",
       "rssFeedId": "_jZ0GzUNf99Mvs2ib",
       "webhookEnabled": false,
-      "icon": "landmark",
+      "icon": "flag",
       "tier": 3
     },
     {
@@ -588,7 +588,7 @@
       "parent": "sports",
       "rssFeedId": "_yaSvMDh9IKeFVCIl",
       "webhookEnabled": false,
-      "icon": "basketball",
+      "icon": "basketball-hoop",
       "tier": 3
     },
     {
@@ -597,7 +597,7 @@
       "parent": "sports",
       "rssFeedId": "_Ie8adRQoWtdCUTpq",
       "webhookEnabled": false,
-      "icon": "football",
+      "icon": "goal-post",
       "tier": 3
     },
     {
@@ -643,7 +643,7 @@
       "parent": "climate-environment",
       "rssFeedId": "_d1gtBazxaBFdKzJQ",
       "webhookEnabled": false,
-      "icon": "scroll-text",
+      "icon": "thermometer",
       "tier": 3
     },
     {
@@ -689,7 +689,7 @@
       "parent": "entertainment",
       "rssFeedId": "_gq5KsClgitS9nPcw",
       "webhookEnabled": false,
-      "icon": "film",
+      "icon": "clapperboard",
       "tier": 3
     },
     {
@@ -735,7 +735,7 @@
       "parent": "arts-culture",
       "rssFeedId": "_vubMENXzmfk3lfoH",
       "webhookEnabled": false,
-      "icon": "book-open",
+      "icon": "library",
       "tier": 3
     },
     {
@@ -762,7 +762,7 @@
       "parent": null,
       "rssFeedId": "_7ozicaxZLArE3Mca",
       "webhookEnabled": false,
-      "icon": "sparkles",
+      "icon": "coffee",
       "featured": true,
       "tier": 1
     },
@@ -808,7 +808,7 @@
       "parent": "lifestyle",
       "rssFeedId": "_4Gjd1buCAsYPY9Tm",
       "webhookEnabled": false,
-      "icon": "briefcase",
+      "icon": "id-card",
       "tier": 3
     },
     {
@@ -817,7 +817,7 @@
       "parent": null,
       "rssFeedId": "_j4copAxkzYjIqDfx",
       "webhookEnabled": false,
-      "icon": "newspaper",
+      "icon": "radio-tower",
       "featured": true,
       "tier": 1
     },
@@ -845,7 +845,7 @@
       "parent": "media",
       "rssFeedId": "_RbqlLtnGiYiB2UPJ",
       "webhookEnabled": false,
-      "icon": "newspaper",
+      "icon": "monitor-play",
       "tier": 3
     },
     {
@@ -864,7 +864,7 @@
       "parent": "education",
       "rssFeedId": "_EQUeiUfBlkxu9BtF",
       "webhookEnabled": false,
-      "icon": "graduation-cap",
+      "icon": "school",
       "tier": 3
     },
     {
@@ -892,7 +892,7 @@
       "parent": "ideas-opinion-more",
       "rssFeedId": "_09T1X6220qLiXGno",
       "webhookEnabled": false,
-      "icon": "lightbulb",
+      "icon": "brain",
       "tier": 3
     },
     {

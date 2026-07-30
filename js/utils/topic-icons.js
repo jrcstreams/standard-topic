@@ -40,22 +40,50 @@ const ICONS = {
   'lantern': '<path d="M12 2v2" /> <path d="M8 4h8" /> <path d="M6 12c0-3.4 2.7-6 6-6s6 2.6 6 6-2.7 6-6 6-6-2.6-6-6z" /> <path d="M9.4 6.3C9 8 9 10 9 12s0 4 .4 5.7M14.6 6.3C15 8 15 10 15 12s0 4-.4 5.7" /> <path d="M8 18h8" /> <path d="M12 18v3" />',
   'palm-tree': '<path d="M13 8c1.6-1.2 4.3-1 5.8.6M13 8c-1.6-1.2-4.3-1-5.8.6M13 8c.4-2.1 2.5-3.6 4.6-3.4M13 8c-.4-2.1-2.5-3.6-4.6-3.4M13 8c2 .3 3.4 2 3.4 4.2" /> <path d="M13 8v13" /> <path d="M10 21h6" />',
   'acacia': '<path d="M12 21v-8.5" /> <path d="M3.5 11C5 7.8 8.3 6 12 6s7 1.8 8.5 5" /> <path d="M8.3 13.2 12 10.5l3.7 2.7" /> <path d="M6 11h12" />',
-  // World subtopics: filled REGION SILHOUETTES (hand-drawn, #img614) — each shape
-  // exaggerates its region's identifying geography so it stays recognizable at
-  // list size (flat 49th-parallel top = US, flat border bottom + Hudson Bay = Canada,
-  // Cape York + Tasmania = Australia, Sri Lanka dot = India, etc.). Paths carry
-  // fill="currentColor" stroke="none" so they render solid inside the stroke wrapper.
-  'map-africa': '<path fill="currentColor" stroke="none" d="M7 3.5 L14.5 3 L15.5 5.5 L18 6.5 L21 8.5 L17.5 10.5 L16.5 14 L14 18.5 L12.5 21 L10.5 16.5 L9.5 13.5 L6.5 12.5 L4 8.5 L5.5 7.5 L5 4.5 Z"/>',
-  'map-latam': '<path fill="currentColor" stroke="none" d="M5.5 2.5 L8.5 4 L11 5.5 L14.5 6 L17.5 8 L18.5 11 L16 14 L13.5 16.5 L12.5 20 L11 21.5 L10 18 L10.5 14.5 L8.5 11 L8 8 L6 6 L4.5 4 Z"/>',
-  'map-oceania': '<path fill="currentColor" stroke="none" d="M14.5 4 L15.5 8 L18.5 9 L20.5 12 L19.5 15.5 L15.5 17 L10 17.5 L5.5 15.5 L3.5 12 L5 9.5 L9 8.5 L11.5 9.5 L12.5 7 Z"/><circle fill="currentColor" stroke="none" cx="17.3" cy="20.3" r="1.4"/>',
-  'map-india': '<path fill="currentColor" stroke="none" d="M6 4 L10.5 3.5 L13 5.5 L17.5 6 L16.5 9.5 L13.5 12 L12 16 L10.8 19.5 L8.5 15 L6.5 11 L4.5 7.5 L6.5 6.5 Z"/><circle fill="currentColor" stroke="none" cx="13.6" cy="20.6" r="1.3"/>',
-  'map-us': '<path fill="currentColor" stroke="none" d="M3 7 L21 7 L20.5 10 L19 12.5 L18 14.5 L19.5 17.5 L17.5 16.5 L16 14.5 L13 15 L10.5 16.5 L8 15.5 L7 13.5 L4.5 12 L3.5 9.5 Z"/>',
-  'map-canada': '<path fill="currentColor" stroke="none" d="M3 17 L3 10 C3 7 5 4.5 8 4.5 C10.5 4.5 12.5 6 13 8.5 C13.2 9.8 13.4 11 14.2 11 C15 11 15.2 9.6 15.6 8.2 C16.1 6.4 17.6 5.2 19 5.8 C20.7 6.6 21 9 20.7 11.5 L19.8 17 Z"/>',
-  'map-europe': '<path fill="currentColor" stroke="none" d="M4 15 L4.5 11.5 L8 9.5 L12 9 L13 6.5 C13.6 4.6 15.8 3.4 17.6 4.4 C19.3 5.4 19.2 7.8 17.6 8.8 L16.2 9.5 L18.8 11 L19.2 13 L16 14 L15.6 15.8 L14.2 18.6 L13.2 15.4 L12.4 13.8 L10.2 14.4 L9.6 16.8 L5.2 16.4 Z"/>',
-  'map-asia': '<path fill="currentColor" stroke="none" d="M3.5 8 L7 4.5 L13 3.5 L18.5 5 L21 8 L19.5 11 L17 12.5 L16.5 16.5 L14.5 13.5 L12.5 17.5 L11.5 13.5 L8.5 16 L7 11.5 L4.5 10.5 Z"/><circle fill="currentColor" stroke="none" cx="20.7" cy="13" r="1.1"/><circle fill="currentColor" stroke="none" cx="19.7" cy="16" r="1.1"/>',
-  'map-china': '<path fill="currentColor" stroke="none" d="M3.5 9 L7 6.5 L11.5 6 L14 4 L16.5 3.5 L16 6.5 L19.5 7 L20.5 10 L17.5 12.5 L16 15.5 L13.5 17 L11.5 15.5 L8.5 14.5 L5.5 13 L4 11 Z"/><circle fill="currentColor" stroke="none" cx="13.9" cy="19.6" r="1.3"/>',
-  'map-mideast': '<path fill="currentColor" stroke="none" d="M5 6.5 L8.5 4 L11 6 L14.5 6.5 L14 9 L17 9.5 L19.5 12 L15.5 14 L13 17.5 L11.5 20 L8 15 L6 10.5 Z"/>',
-  'map-russia': '<path fill="currentColor" stroke="none" d="M2 11.5 L3.5 8 L7.5 6.5 L12 7 L16 6 L20 7 L22 9 L20.5 11.5 L21.5 13 L20 16.5 L19 13.5 L17.5 11.5 L15 12.5 L11.5 12 L8 13.5 L4.5 13.5 Z"/>',
+  // World subtopics: OUTLINE region shapes (hand-drawn, #img84) — stroke-based like
+  // the rest of the set (the old filled silhouettes read as blobs at list size).
+  // Each shape is drawn near full-viewBox and keeps 1-2 signature geographic cues
+  // (flat 49th-parallel top + Florida/Texas points = US, Cape York + Tasmania dot =
+  // Australia, Sri Lanka dot = India, Kamchatka dangle = Russia...). Canada is a
+  // maple leaf and Europe the Eiffel Tower — the two shapes no silhouette rescues
+  // at 17px, swapped for their most-recognized symbols. Island dots stay filled.
+  'map-africa': '<path d="M8.5 2.5 L15 3 L16 6.5 L21.5 8 L17 10.5 L15.5 14.5 L12.5 21.5 L10 15 L6 12 L3.5 8.5 L6 5.5 L5.5 4 Z"/>',
+  'map-latam': '<path d="M7 3 L12.5 2.5 L17 4.5 L21.5 8.5 L18.5 13 L14.5 16 L12.5 21.5 L10 17 L10 12.5 L6.5 9.5 L4 6.5 Z"/>',
+  'map-oceania': '<path d="M14.5 2.5 L15.5 8 L19.5 9 L21.5 12.5 L19.5 16 L14.5 17.5 L9 17.5 L4 15.5 L2.5 11.5 L4.5 9 L9 8 L11.5 9.5 L12.5 5.5 Z"/><circle cx="17.5" cy="20.8" r="1.4" fill="currentColor" stroke="none"/>',
+  'map-india': '<path d="M4.5 4.5 L9.5 2.5 L13.5 4.5 L19.5 5.5 L17.5 9.5 L14 12.5 L11.5 21 L8 14.5 L5.5 10 L3 7 Z"/><circle cx="14.3" cy="21.3" r="1.3" fill="currentColor" stroke="none"/>',
+  'map-us': '<path d="M2.5 6.5 L21.5 6.5 L20.5 10 L18.5 12.5 L18.5 14.5 L20.5 18.5 L17.5 15.5 L14 15.5 L12 18 L10 15.5 L6.5 15 L4.5 12.5 L2.5 9.5 Z"/>',
+  'map-canada': '<path d="M12 21.5v-5"/><path d="M12 16.5 L6.5 17.3 L7.9 14.4 L3 13.2 L5.2 11 L2.5 8 L7 8.6 L6.6 5.4 L9.9 6.9 L12 3 L14.1 6.9 L17.4 5.4 L17 8.6 L21.5 8 L18.8 11 L21 13.2 L16.1 14.4 L17.5 17.3 Z"/>',
+  'map-europe': '<path d="M9.9 3.5C9.9 10 8.2 15.5 4.5 21"/><path d="M14.1 3.5C14.1 10 15.8 15.5 19.5 21"/><path d="M9.9 3.5h4.2"/><path d="M8.9 9.5h6.2"/><path d="M6.6 15.5h10.8"/><path d="M8.5 21c1-3.5 6-3.5 7 0"/>',
+  'map-asia': '<path d="M2.5 9.5 L7 4.5 L13 2.5 L19 4.5 L21.5 8 L18 11.5 L15.5 12.5 L13.5 17.5 L11 13 L7.5 12.5 L4 11.5 Z"/><circle cx="21" cy="12.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="19.6" cy="15.7" r="1.2" fill="currentColor" stroke="none"/>',
+  'map-china': '<path d="M2.5 10 L6.5 6.5 L11 6 L13.5 3 L17 2.5 L16.5 6 L20.5 7 L21.5 10 L18.5 13 L16.5 16.5 L13.5 18 L10.5 16 L6.5 14.5 L3.5 12.5 Z"/><circle cx="14.3" cy="20.5" r="1.3" fill="currentColor" stroke="none"/>',
+  'map-mideast': '<path d="M4.5 6 L9 2.5 L12 5.5 L16.5 6.5 L21.5 11.5 L17 13.5 L11.5 21.5 L7.5 14.5 L4.5 9.5 Z"/>',
+  'map-russia': '<path d="M2.5 12 L4.5 7 L9.5 5 L14.5 6.5 L18.5 4.5 L21.5 6.5 L19.5 9.5 L21.5 12 L19 16.5 L18.5 12 L15 12.5 L10.5 12 L7 14.5 L4 14 Z"/>',
+  // Dedupe set (#img86): every topic gets a globally unique icon. Lucide-fetched
+  // (same wrapper contract) + two hand-drawn sports (hoop, goalpost).
+  'banknote': '<rect width="20" height="12" x="2" y="6" rx="2" /> <circle cx="12" cy="12" r="2" /> <path d="M6 12h.01M18 12h.01" />',
+  'hard-hat': '<path d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5" /> <path d="M14 6a6 6 0 0 1 6 6v3" /> <path d="M4 15v-3a6 6 0 0 1 6-6" /> <rect x="2" y="15" width="20" height="4" rx="1" />',
+  'id-card': '<path d="M16 10h2" /> <path d="M16 14h2" /> <path d="M6.17 15a3 3 0 0 1 5.66 0" /> <circle cx="9" cy="11" r="2" /> <rect x="2" y="5" width="20" height="14" rx="2" />',
+  'gavel': '<path d="m14 13-8.381 8.38a1 1 0 0 1-3.001-3l8.384-8.381" /> <path d="m16 16 6-6" /> <path d="m21.5 10.5-8-8" /> <path d="m8 8 6-6" /> <path d="m8.5 7.5 8 8" />',
+  'coffee': '<path d="M10 2v2" /> <path d="M14 2v2" /> <path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1" /> <path d="M6 2v2" />',
+  'telescope': '<path d="m10.065 12.493-6.18 1.318a.934.934 0 0 1-1.108-.702l-.537-2.15a1.07 1.07 0 0 1 .691-1.265l13.504-4.44" /> <path d="m13.56 11.747 4.332-.924" /> <path d="m16 21-3.105-6.21" /> <path d="M16.485 5.94a2 2 0 0 1 1.455-2.425l1.09-.272a1 1 0 0 1 1.212.727l1.515 6.06a1 1 0 0 1-.727 1.213l-1.09.272a2 2 0 0 1-2.425-1.455z" /> <path d="m6.158 8.633 1.114 4.456" /> <path d="m8 21 3.105-6.21" /> <circle cx="12" cy="13" r="2" />',
+  'zap': '<path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z" />',
+  'radio-tower': '<path d="M4.9 16.1C1 12.2 1 5.8 4.9 1.9" /> <path d="M7.8 4.7a6.14 6.14 0 0 0-.8 7.5" /> <circle cx="12" cy="9" r="2" /> <path d="M16.2 4.8c2 2 2.26 5.11.8 7.47" /> <path d="M19.1 1.9a9.96 9.96 0 0 1 0 14.1" /> <path d="M9.5 18h5" /> <path d="m8 22 4-11 4 11" />',
+  'monitor-play': '<path d="M15.033 9.44a.647.647 0 0 1 0 1.12l-4.065 2.352a.645.645 0 0 1-.968-.56V7.648a.645.645 0 0 1 .967-.56z" /> <path d="M12 17v4" /> <path d="M8 21h8" /> <rect x="2" y="3" width="20" height="14" rx="2" />',
+  'key-round': '<path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z" /> <circle cx="16.5" cy="7.5" r=".5" fill="currentColor" />',
+  'link': '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /> <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />',
+  'app-window': '<rect x="2" y="4" width="20" height="16" rx="2" /> <path d="M10 4v4" /> <path d="M2 8h20" /> <path d="M6 4v4" />',
+  'orbit': '<path d="M20.341 6.484A10 10 0 0 1 10.266 21.85" /> <path d="M3.659 17.516A10 10 0 0 1 13.74 2.152" /> <circle cx="12" cy="12" r="3" /> <circle cx="19" cy="5" r="2" /> <circle cx="5" cy="19" r="2" />',
+  'shield-plus': '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /> <path d="M9 12h6" /> <path d="M12 9v6" />',
+  'apple': '<path d="M12 6.528V3a1 1 0 0 1 1-1h0" /> <path d="M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10 3 3 0 0 0 3.648.648 5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21" />',
+  'radar': '<path d="M19.07 4.93A10 10 0 0 0 6.99 3.34" /> <path d="M4 6h.01" /> <path d="M2.29 9.62A10 10 0 1 0 21.31 8.35" /> <path d="M16.24 7.76A6 6 0 1 0 8.23 16.67" /> <path d="M12 18h.01" /> <path d="M17.99 11.66A6 6 0 0 1 15.77 16.67" /> <circle cx="12" cy="12" r="2" /> <path d="m13.41 10.59 5.66-5.66" />',
+  'thermometer': '<path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z" />',
+  'earth': '<path d="M21.54 15H17a2 2 0 0 0-2 2v4.54" /> <path d="M7 3.34V5a3 3 0 0 0 3 3a2 2 0 0 1 2 2c0 1.1.9 2 2 2a2 2 0 0 0 2-2c0-1.1.9-2 2-2h3.17" /> <path d="M11 21.95V18a2 2 0 0 0-2-2a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05" /> <circle cx="12" cy="12" r="10" />',
+  'clapperboard': '<path d="m12.296 3.464 3.02 3.956" /> <path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3z" /> <path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /> <path d="m6.18 5.276 3.1 3.899" />',
+  'library': '<path d="m16 6 4 14" /> <path d="M12 6v14" /> <path d="M8 8v12" /> <path d="M4 4v16" />',
+  'school': '<path d="M14 21v-3a2 2 0 0 0-4 0v3" /> <path d="M18 4.933V21" /> <path d="m4 6 7.106-3.79a2 2 0 0 1 1.788 0L20 6" /> <path d="m6 11-3.52 2.147a1 1 0 0 0-.48.854V19a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a1 1 0 0 0-.48-.853L18 11" /> <path d="M6 4.933V21" /> <circle cx="12" cy="9" r="2" />',
+  'brain': '<path d="M12 18V5" /> <path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /> <path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" /> <path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" /> <path d="M18 18a4 4 0 0 0 2-7.464" /> <path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" /> <path d="M6 18a4 4 0 0 1-2-7.464" /> <path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" />',
+  'basketball-hoop': '<rect x="5.5" y="2.5" width="13" height="8.5" rx="1"/><rect x="9.5" y="6.5" width="5" height="4.5"/><path d="M8.5 13.5h7"/><path d="M9 13.5 10.5 19.5"/><path d="M15 13.5 13.5 19.5"/><path d="M10.5 19.5h3"/><path d="M9.9 16.5h4.4"/>',
+  'goal-post': '<path d="M6 12V3"/><path d="M18 12V3"/><path d="M6 12h12"/><path d="M12 12v9"/><path d="M9.5 21h5"/>',
   'flame': '<path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4" />',
   'flask-conical': '<path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2" /> <path d="M6.453 15h11.094" /> <path d="M8.5 2h7" />',
   'globe': '<circle cx="12" cy="12" r="10" /> <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /> <path d="M2 12h20" />',
