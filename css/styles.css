@@ -1963,6 +1963,10 @@ body.custom-mode.sticky-always #content {
    never sees. Title font down ~1rem, icon kept punchy, padding
    tightened, title group and icon vertically centered. */
 @media (max-width: 899.98px) {
+  /* The subnav + page content compress their side gutter to ~1rem below 900, but
+     the main nav kept 2rem until 640 — an in-between band where the hamburger sat
+     RIGHT of the subnav icon / content edge (#img69). Match the nav to the gutter. */
+  .sticky-hero-inner { padding-left: 1rem; padding-right: 1rem; }
   #sub-header.is-subnav {
     top: var(--nav-h);
   }
