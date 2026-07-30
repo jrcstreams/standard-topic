@@ -931,17 +931,13 @@ export function renderAIIntelligence(container, scope) {
     // a toggle — so the tab is scannable on load, not a wall of text (#img59/#img63).
     const N_VISIBLE = 3;
     const cardHTML = (part, i) => {
-      // Body renders as one continuous block (no bold lead-in sentence). Sources live
-      // INSIDE the clamp, after the body, so they sit below the preview fold and only
-      // reveal when the card is expanded via "Show more" (#img10/#img11).
-      const bodyInner = `<div class="aii-sec-body">${renderBriefBody(part.body, null)}</div>${secSourcesHTML(buckets[i], false, false)}`;
-      const clamp = `<div class="aii-sec-clamp" data-sec-clamp>${bodyInner}</div><button type="button" class="aii-sec-more" hidden><span class="aii-sec-more-tx">Show more</span><span class="aii-sec-more-chev">${CHEV}</span></button>`;
-      // Card = a HEADER band (headline + provenance labels) over a divider, then the
-      // BODY (summary lead + text, with sources tucked below the fold). The header
-      // carries its own tint so it reads as a distinct header zone (#img7).
+      // Card layout (#img66-68): HEADER band = headline only; BODY opens with the
+      // provenance row (AI tag + Updated), then the FULL text (no clamp / Show more),
+      // then a compact "N sources ⌄" dropdown toggle at the bottom.
       const upd = updatedLbl ? `<span class="im-sec-updated">${esc(updatedLbl)}</span>` : '';
-      const header = `<header class="im-msec-header"><h3 class="im-msec-name">${esc(part.name)}</h3><div class="im-sec-aitag-row"><span class="im-sec-aitag">${LOGO}<span>AI Generated Text</span></span>${upd}</div></header>`;
-      const body = `<div class="im-msec-body">${clamp}</div>`;
+      const provenance = `<div class="im-sec-aitag-row im-sec-aitag-row--inbody"><span class="im-sec-aitag">${LOGO}<span>AI Generated Text</span></span>${upd}</div>`;
+      const header = `<header class="im-msec-header"><h3 class="im-msec-name">${esc(part.name)}</h3></header>`;
+      const body = `<div class="im-msec-body">${provenance}<div class="aii-sec-body">${renderBriefBody(part.body, null)}</div>${secSourcesHTML(buckets[i], true, true)}</div>`;
       return aiiMsec(`aii-msec-${i}`, part.name, header + body);
     };
     const cards = list.map((part, i) => cardHTML(part, i));

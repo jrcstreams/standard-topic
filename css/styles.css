@@ -15864,6 +15864,9 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
   letter-spacing: -0.02em; line-height: 1.2; color: #26375a;
 }
 .im-msec-header .im-sec-aitag-row { margin: 10px 0 0 !important; }
+/* Provenance row moved INTO the card body (#img66): sits above the text with a
+   little separation, below the header band. */
+.im-sec-aitag-row--inbody { margin: 0 0 14px !important; }
 .im-msec-body { padding: 17px 22px 19px; }
 /* Body renders as one continuous block (no bold lead-in) — a readable slate for the
    whole briefing, a touch softer than the near-black headline (#img11). */
