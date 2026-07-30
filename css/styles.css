@@ -15933,6 +15933,13 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title) {
 .aii-srctoggle-chev svg { width: 14px; height: 14px; }
 .aii-sec-sources--collapsible[data-open="true"] .aii-srctoggle-chev { transform: rotate(180deg); }
 .aii-sec-srclist { display: grid; gap: 4px; margin-top: 12px; }
+/* Related Coverage — flat header section (title + subtext + hairline, like the
+   dropdown headers, #img79-81) over an OPEN source list. Not a card, no accordion. */
+.aii-related-flat { margin-top: 30px; }
+.aii-related-head { padding: 0 2px 12px; border-bottom: 1px solid #e7ecf3; margin-bottom: 4px; }
+.aii-related-title { margin: 0; font-family: var(--font-display); font-size: 1.28rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; color: var(--color-primary); }
+.aii-related-sub { margin: 4px 0 0; font-size: 0.9rem; line-height: 1.5; font-weight: 500; color: #475569; }
+.aii-related-flat .aii-sec-sources { border-top: none; margin-top: 10px; padding-top: 0; }
 .aii-sec-srclist[hidden] { display: none; }   /* class display must not defeat the hidden attr */
 /* "Show N more insights" — a full-width quiet button that reveals the rest of the cards. */
 .aii-more-secs-btn {
