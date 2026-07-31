@@ -10809,7 +10809,14 @@ body.home-search #home-trending .trending-topics {
 .featstrip-title { font-family: var(--font-display); font-size: 0.98rem; font-weight: 700; letter-spacing: -0.012em; color: #1a2740; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .featstrip-sub { font-family: var(--font-family); font-size: 0.79rem; font-weight: 500; color: #5a6b86; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .featstrip-arrow { flex: none; margin-left: auto; display: inline-flex; color: #8fa3c4; transition: transform 0.14s ease, color 0.14s ease; }
-/* Stack to rows when three-up gets cramped — condensed: no subtext, icon inline
+/* Stacked home (<1024): lighter titles, and Trending Now leaves the strip — the
+   full Trending card sits right below it (#img127/128). Two items → two columns. */
+@media (max-width: 1023.98px) {
+  .featstrip-title { font-weight: 600; }
+  .featstrip-item[data-explore-trending] { display: none; }
+  .home-featstrip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+/* Stack to rows when even two-up gets cramped — condensed: no subtext, icon inline
    with the title, tighter rows (#img117). */
 @media (max-width: 820px) {
   .home-featstrip { grid-template-columns: 1fr; }
@@ -11289,6 +11296,19 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-actions { pa
   body.home-search #home-trending .trend-card.is-expanded .trend-card-trigger,
   body.home-search #home-trending .trend-card.is-expanded .trend-card-trigger:hover { padding-bottom: 4px !important; }
   body.home-search #home-trending .trend-card-grid { padding-top: 2px !important; }
+  /* Lighter title-row weight once stacked (#img127) — 700 reads heavy without the
+     summary beneath it. */
+  body.home-search #home-trending .trend-card-title { font-weight: 600 !important; }
+}
+/* In-between stacked width (641–1023.98): SIX trends in TWO columns instead of a
+   3-row list (#img127). An expanded brief spans both columns. First-row cells both
+   drop the tighter first-child top padding for an even grid. */
+@media (min-width: 641px) and (max-width: 1023.98px) {
+  body.home-search #home-trending .trend-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 6px; }
+  body.home-search #home-trending .trend-card-grid .trend-card:nth-child(-n+6) { display: block; }
+  body.home-search #home-trending .trend-card-grid .trend-card:nth-child(n+7) { display: none; }
+  body.home-search #home-trending .trend-card:first-child .trend-card-trigger { padding-top: 14px !important; }
+  body.home-search #home-trending .trend-card.is-expanded { grid-column: 1 / -1; }
 }
 /* News Feed section header on the homepage gets a matching icon chip (like the
    Trending logo) — desktop + mobile. Hidden everywhere else (topic pages keep
