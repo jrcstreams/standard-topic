@@ -171,7 +171,7 @@ async function gradeJunk(sql, ids) {
       const listing = chunk.map((r, idx) =>
         `${idx}. ${String(r.title).slice(0, 140)} — ${String(r.description).slice(0, 160)}`).join('\n');
       const prompt =
-`You are a strict news-quality gate for a news aggregator. For each numbered item below (title — description), decide if it is JUNK. JUNK means clearly NOT genuine news reporting: press releases / PR-wire announcements ("X Named a Leader in...", "X Launches/Partners/Appoints..."), market-research CAGR/forecast spam, SEO listicles and evergreen how-to content, "how to watch/stream" chum, affiliate deals/coupons, event/webinar promos, horoscopes, content-free stubs. Genuine reporting, analysis, features, interviews, reviews, and live coverage are NOT junk — when unsure, NOT junk.
+`You are a strict news-quality gate for a news aggregator. For each numbered item below (title — description), decide if it is JUNK. JUNK means clearly NOT genuine news reporting: press releases / PR-wire announcements ("X Named a Leader in...", "X Launches/Partners/Appoints..."), market-research CAGR/forecast spam, SEO listicles and evergreen how-to content, "how to watch/stream" chum, affiliate deals/coupons, event/webinar promos, horoscopes, reader-submission callouts ("Tell us about it", "Share your story"), content-free stubs. Genuine reporting, analysis, features, interviews, reviews, and live coverage are NOT junk — when unsure, NOT junk.
 Reply with ONLY a JSON array of the numbers that are junk, e.g. [0,3,17]. If none: []
 ${listing}`;
       try {

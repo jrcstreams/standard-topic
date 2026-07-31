@@ -10823,7 +10823,9 @@ body.home-search #home-trending .trending-topics {
     /* Extra breathing room under the promo cards row before News Feed / Trending
        (#img6) — the row-gap is the only thing separating the cards from the
        content columns, so bump it well past the inter-card gap. */
-    row-gap: 2.75rem;
+    /* Bumped again so the strip sits clearly apart from News Feed / Trending
+       below (#img113). */
+    row-gap: 3.6rem;
   }
   /* Search spans the full width on top; the feature strip runs full width under it. */
   body.home-search .home-cards {
