@@ -14717,9 +14717,12 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
    and clear breathing room above (input) and below (the Prompts/News tabs) (#img335). */
 /* De-emphasized (#img126): a quiet context line, clearly lighter than the tab nav
    below — regular-weight label, medium term. */
-.search-aii-host .aii-builder-topic--resultsfor { font-size: 0.88rem; font-weight: 400; gap: 0.32em; margin: 20px 0 16px; }
+.search-aii-host .aii-builder-topic--resultsfor { font-size: 0.93rem; font-weight: 400; gap: 0.32em; margin: 20px 0 16px; }
 .search-aii-host .aii-builder-resultsfor { color: #8794a8; font-weight: 450; }
 .search-aii-host .aii-builder-topic--resultsfor .aii-builder-topic-tx { color: #33415c; font-weight: 550; }
+/* A touch more air between the tab nav's separator and the content beneath it —
+   the prompt accordions were riding the line (#img140). */
+.search-aii-host .ins-tabnav { margin-bottom: 21px; }
 /* Prompt cards here use the SAME inset icon + padding as the topic-page Prompt
    Library so the icons/rows align cleanly inside each card (#img513/515). The card
    border sits flush with the header; the icon is inset like everywhere else. */
