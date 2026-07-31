@@ -51,10 +51,15 @@ function hostOf(url) {
   try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return null; }
 }
 
+// Rolling live-blog pages are dropped at ingest (mirrored in /api/feeds for the
+// live path) — a "live updates" page is a container, not a story.
+const LIVE_BLOG_RE = /(\blive updates?\b|\blive blog\b|\blive\s*:|\bas it happened\b)/i;
+
 function mapStory(topicId, item) {
   const url = firstString(item.url, item.link);
   const title = firstString(item.title);
   if (!url || !title) return null;
+  if (LIVE_BLOG_RE.test(title)) return null;
   const externalId = firstString(item.id, item.guid) || crypto.createHash('sha1').update(url).digest('hex');
   const description = firstString(item.description_text, item.content_text, item.description, item.summary);
   const source = firstString(item.source_name, item.authors && item.authors[0] && item.authors[0].name) || hostOf(url);
@@ -171,7 +176,7 @@ async function gradeJunk(sql, ids) {
       const listing = chunk.map((r, idx) =>
         `${idx}. ${String(r.title).slice(0, 140)} — ${String(r.description).slice(0, 160)}`).join('\n');
       const prompt =
-`You are a strict news-quality gate for a news aggregator. For each numbered item below (title — description), decide if it is JUNK. JUNK means clearly NOT genuine news reporting: press releases / PR-wire announcements ("X Named a Leader in...", "X Launches/Partners/Appoints..."), market-research CAGR/forecast spam, SEO listicles and evergreen how-to content, "how to watch/stream" chum, affiliate deals/coupons, event/webinar promos, horoscopes, reader-submission callouts ("Tell us about it", "Share your story"), content-free stubs. Genuine reporting, analysis, features, interviews, reviews, and live coverage are NOT junk — when unsure, NOT junk.
+`You are a strict news-quality gate for a news aggregator. For each numbered item below (title — description), decide if it is JUNK. JUNK means clearly NOT genuine news reporting: press releases / PR-wire announcements ("X Named a Leader in...", "X Launches/Partners/Appoints..."), market-research CAGR/forecast spam, SEO listicles and evergreen how-to content, "how to watch/stream" chum, affiliate deals/coupons, event/webinar promos, horoscopes, reader-submission callouts ("Tell us about it", "Share your story"), rolling live-blog container pages ("live updates", "as it happened"), content-free stubs. Genuine reporting, analysis, features, interviews, and reviews are NOT junk — when unsure, NOT junk.
 Reply with ONLY a JSON array of the numbers that are junk, e.g. [0,3,17]. If none: []
 ${listing}`;
       try {

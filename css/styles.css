@@ -11253,6 +11253,10 @@ body.home-search #home-trending .trend-card-aibtn .trend-card-aibtn-chev { displ
 body.home-search #home-trending .trend-card-aibtn[aria-expanded="true"] .trend-card-aibtn-chev { transform: rotate(180deg); }
 body.home-search #home-trending .trend-card-aibtn .trend-card-aibtn-spark,
 body.home-search #home-trending .trend-card-aibtn .trend-card-aibtn-xic { display: none !important; }
+/* Even breathing room for "View more trending": the last row's inset divider sits
+   8px (grid pad) + 8px (row pad) above the button, and the card's bottom edge 16px
+   below — equal 16px both sides (#img114). Overrides both breakpoint variants. */
+body.home-search #home-trending .trend-viewmore-row { margin-top: 0; padding: 8px 20px 16px; }
 /* News Feed section header on the homepage gets a matching icon chip (like the
    Trending logo) — desktop + mobile. Hidden everywhere else (topic pages keep
    their own plain header) (#img527). */
@@ -11804,21 +11808,22 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 @media (hover: hover) { .trend-mode-btn:hover:not(.is-active) { color: var(--color-text); } }
 /* Trending controls: labeled select dropdowns under the separator. */
 .trend-controls { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin: 6px 0 14px; }
-/* Discreet text link (blue + arrow) that opens the full trending modal. */
+/* Opens the full trending modal. */
 .trend-viewmore-row { display: flex; justify-content: center; margin-top: 20px; }
-/* Subtle, clearly-clickable button (not a bare link) — light bordered pill. */
+/* Quiet navy pill matching the site's button language — the old white/bright-blue
+   chip looked pasted onto the grey rail (#img114). */
 .trend-viewmore {
   display: inline-flex; align-items: center; gap: 6px;
-  border: 1px solid var(--color-surface-border); background: #fff; border-radius: 9px;
-  padding: 8px 16px; cursor: pointer;
-  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #2563eb;
+  border: 1px solid #dde3ee; background: #fff; border-radius: 999px;
+  padding: 7px 15px; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #26375a;
   transition: background .14s, border-color .14s, color .14s, gap .14s;
 }
 .trend-viewmore::after { content: "→"; font-size: 0.9em; }
 @media (hover: hover) { .trend-viewmore:hover {
-  background: color-mix(in srgb, var(--color-primary) 4%, #fff);
-  border-color: color-mix(in srgb, var(--color-primary) 32%, var(--color-surface-border));
-  color: #1d4ed8; gap: 9px;
+  background: #f4f7fc;
+  border-color: #c8d3e3;
+  color: #1a2740; gap: 9px;
 } }
 
 /* ===== Inline AI insight result — news + trend cards (Phase 4) =========== */
@@ -13445,8 +13450,9 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .trend-controls-legend .trend-legend-row { padding: 0; justify-content: flex-end; }
 /* A squared-off label block (not a pill) so it reads as an info marker about the
    list below, not a tappable control (#80). */
-.trend-legend { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding: 5px 11px; border-radius: 7px; background: color-mix(in srgb, var(--color-text) 4%, #fff); border: 1px solid color-mix(in srgb, var(--color-surface-border) 70%, transparent); }
-.trend-legend-item { display: inline-flex; align-items: center; gap: 5px; font-size: 0.68rem; font-weight: 600; color: var(--color-text-muted); white-space: nowrap; }
+/* A touch darker than before so the provenance pill reads at a glance (#img115). */
+.trend-legend { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding: 5px 11px; border-radius: 7px; background: color-mix(in srgb, var(--color-text) 6.5%, #fff); border: 1px solid color-mix(in srgb, var(--color-surface-border) 95%, transparent); }
+.trend-legend-item { display: inline-flex; align-items: center; gap: 5px; font-size: 0.68rem; font-weight: 600; color: #4a5a75; white-space: nowrap; }
 .trend-legend-item .ai-spark-mark svg { width: 11px; height: 11px; }
 /* Trending modal "View more trends" — reveals the next batch of cards. */
 .trend-loadmore-row { display: flex; justify-content: center; padding: 18px 0 6px; }

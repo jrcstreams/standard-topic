@@ -108,6 +108,12 @@ module.exports = async function handler(req, res) {
     // chooses. Defensive default to [] in case the shape changes.
     let items = Array.isArray(payload?.items) ? payload.items : [];
 
+    // Rolling live-blog pages ("Middle East crisis live: …", "… Live Updates:",
+    // "as it happened") read as noise in a headline feed — deterministic title
+    // filter, mirrored at ingest in api/cron/news.js.
+    const LIVE_BLOG_RE = /(\blive updates?\b|\blive blog\b|\blive\s*:|\bas it happened\b)/i;
+    items = items.filter((it) => !LIVE_BLOG_RE.test(String((it && it.title) || '')));
+
     // Phase 6: drop stories the pipeline has flagged (semantic dupes / AI junk).
     // One indexed lookup against news_stories by url; stories not yet ingested/
     // graded pass through (grading catches up within hours and the 15-min edge
