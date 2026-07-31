@@ -11285,6 +11285,9 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-actions { pa
 /* Never show the browser focus ring on trend rows — it reads as a stuck "selected"
    outline after any click (#img138). */
 .trend-card-trigger:focus, .trend-card-trigger:focus-visible { outline: none !important; box-shadow: none !important; }
+/* Head must be a FLEX row for the accordion marker's margin-left:auto to right-align
+   it (the scope's base head is display:block, #img135). */
+body.home-search #home-trending .trend-card-head { display: flex; align-items: center; width: 100%; }
 
 /* ── Open-state redesign (#img129-138): the trigger becomes a tinted ACTIVE HEADER
    (title · since-time · X, right-aligned) clearly distinct from the brief below;
