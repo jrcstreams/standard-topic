@@ -2883,26 +2883,23 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         ${bodyTabsRow({ showSearchTrends: true })}
         <div class="home-cards">
           <div class="home-search-hero" id="home-search-hero"></div>
-          <a href="#/" class="layout-section home-promo home-promo--topics" id="section-aii-home" data-explore-topics aria-label="Explore all topics">
-            <div class="home-promo-inner">
-              <div class="home-promo-head"><span class="home-promo-ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span><h3 class="home-promo-title">Explore any topic</h3></div>
-              <p class="home-promo-text">Dedicated topic pages pull together the latest news, curated resources, and AI insights.</p>
-              <span class="home-promo-btn">
-                Explore topics
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>
-              </span>
-            </div>
-          </a>
-          <a href="#/prompt-generator" class="home-promo" data-explore-prompts aria-label="Explore prompts">
-            <div class="home-promo-inner">
-              <div class="home-promo-head"><span class="home-promo-ic" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2 2.6-2.6z"/></svg></span><h3 class="home-promo-title">Ready-to-run AI prompts.</h3></div>
-              <p class="home-promo-text">Browse the ready-made prompt library or build your own custom prompt for any topic.</p>
-              <span class="home-promo-btn">
-                Explore prompts
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>
-              </span>
-            </div>
-          </a>
+          <nav class="home-featstrip" aria-label="Explore Standard Topic">
+            <a href="#/" class="featstrip-item" data-explore-topics aria-label="Explore all topics">
+              <span class="featstrip-ic" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>
+              <span class="featstrip-tx"><span class="featstrip-title">Explore Topics</span><span class="featstrip-sub">Browse 100 topic hubs</span></span>
+              <span class="featstrip-arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
+            </a>
+            <a href="#/prompt-generator" class="featstrip-item" data-explore-prompts aria-label="Open the prompt library">
+              <span class="featstrip-ic" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+              <span class="featstrip-tx"><span class="featstrip-title">Prompt Library</span><span class="featstrip-sub">Ready-made for every topic</span></span>
+              <span class="featstrip-arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
+            </a>
+            <a href="#/" class="featstrip-item" data-explore-trending aria-label="See what's trending now">
+              <span class="featstrip-ic" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg></span>
+              <span class="featstrip-tx"><span class="featstrip-title">Trending Now</span><span class="featstrip-sub">See what's hot right now</span></span>
+              <span class="featstrip-arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
+            </a>
+          </nav>
         </div>
         <div class="home-main">
           <section class="layout-section" id="section-newsfeed"></section>
@@ -2926,6 +2923,11 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     container.querySelector('[data-explore-prompts]')?.addEventListener('click', (e) => {
       e.preventDefault();
       openPromptsNavDropdown();
+    });
+    // Trending strip item — opens the full Trending dropdown (#img108).
+    container.querySelector('[data-explore-trending]')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent('open-trending-list'));
     });
   } else if (topic && !isCustom) {
     // Topic pages: ONE cohesive tabbed "Paths" package at every width. A second
@@ -4032,24 +4034,6 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       ${isModal ? '</div>' : ''}
       ${!isModal ? `<div class="search-panel-starters" aria-label="Popular topics"></div>` : ''}
       <div class="search-panel-results"><div class="search-panel-results-inner"></div></div>
-      ${isModal
-        ? `<div class="search-panel-empty">
-             <div class="search-panel-empty-sec" data-empty-trending hidden>
-               <div class="search-panel-empty-sechead">
-                 <span class="search-panel-empty-seclabel"><span class="sp-sec-ic sp-sec-ic--trend"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg></span><span class="sp-sec-tx">Trending</span></span>
-                 <button type="button" class="search-panel-empty-more" data-view-trending><span>View more</span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></button>
-               </div>
-               <div class="search-panel-empty-chips" role="list"></div>
-             </div>
-             <div class="search-panel-empty-sec" data-empty-featured hidden>
-               <div class="search-panel-empty-sechead">
-                 <span class="search-panel-empty-seclabel"><span class="sp-sec-ic"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></span><span class="sp-sec-tx">Featured Topics</span></span>
-                 <button type="button" class="search-panel-empty-more" data-view-topics><span>View all</span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg></button>
-               </div>
-               <div class="search-panel-empty-topics"></div>
-             </div>
-           </div>`
-        : ''}
     </div>`;
 
   const panelEl = container.querySelector('.search-panel');
@@ -4090,57 +4074,9 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       .filter((t) => t.query);
     // If the user is already mid-type when trends land, refresh the dropdown.
     if (input.value.trim() && panelEl.dataset.state !== 'expanded') refreshSuggestions();
-    // Seed the empty-state "trending now" starter chips (modal only).
-    fillEmptyChips();
     // Home inline card: now that live trends are in, add the Trending group.
     fillStarterChips();
   }).catch(() => {});
-
-  // Empty-state starter chips (#6): tappable live-trending terms that nudge the
-  // user to search. Falls back silently to hidden if no trends are available.
-  function fillEmptyChips() {
-    if (!isModal) return;
-    const sec = panelEl.querySelector('[data-empty-trending]');
-    const wrap = panelEl.querySelector('.search-panel-empty-chips');
-    if (!wrap || !sec) return;
-    const picks = trendSuggest.slice(0, 6);
-    if (!picks.length) { sec.hidden = true; return; }
-    wrap.innerHTML = picks.map((t) =>
-      `<button type="button" class="search-panel-empty-chip" role="listitem">${SP_TREND_ICON}<span>${escapeHTML(t.query)}</span></button>`
-    ).join('');
-    sec.hidden = false;
-    // A trend chip opens that trend inside the Trending dropdown (auto-expanded),
-    // NOT a custom search for the term (#img281).
-    wrap.querySelectorAll('.search-panel-empty-chip').forEach((b, i) => {
-      b.addEventListener('click', () => {
-        const q = picks[i] && picks[i].query; if (!q) return;
-        window.dispatchEvent(new CustomEvent('close-all-modals'));
-        window.dispatchEvent(new CustomEvent('open-trending-list', { detail: { expand: q } }));
-      });
-    });
-    // "View more trending" → open the Trending list (closes this search modal).
-    sec.querySelector('[data-view-trending]')?.addEventListener('click', () => {
-      window.dispatchEvent(new CustomEvent('close-all-modals'));
-      window.dispatchEvent(new CustomEvent('open-trending-list'));
-    });
-  }
-  // Empty-state "Featured Topics" — the parent topics, each linking to its page.
-  function fillEmptyFeatured() {
-    if (!isModal) return;
-    const sec = panelEl.querySelector('[data-empty-featured]');
-    const wrap = panelEl.querySelector('.search-panel-empty-topics');
-    if (!wrap || !sec) return;
-    let topics = [];
-    try { topics = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home'); } catch (_) {}
-    if (!topics.length) { sec.hidden = true; return; }
-    wrap.innerHTML = topics.map((t) => `<a class="search-panel-empty-topic" href="#/topic/${escapeAttr(t.slug)}">${topicIconSVG(t.icon || 'globe', 'search-panel-empty-topic-ic')}<span>${escapeHTML(t.name)}</span></a>`).join('');
-    sec.hidden = false;
-    // "View all topics" → open the Topics dropdown (closes this search modal).
-    sec.querySelector('[data-view-topics]')?.addEventListener('click', () => {
-      window.dispatchEvent(new CustomEvent('close-all-modals'));
-      window.dispatchEvent(new CustomEvent('open-all-topics-modal'));
-    });
-  }
 
   // Inline (home) starter chips under the bar — two quick-launch groups so the
   // card is an actionable launchpad: a few POPULAR topics (link to the topic page)
@@ -4169,7 +4105,6 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     }));
   }
   fillStarterChips();
-  fillEmptyFeatured();
 
   // The custom-search results card — the SAME pill-tab shell as the AI Insights
   // modal, but NO on-demand AI generation. Tabs: External Insights (the curated
@@ -4526,7 +4461,6 @@ function closeSearchPageModal(opts = {}) {
   if (!isSearchModalOpen()) return;
   searchModalTerm = '';
   searchPanelModalCtl = null;
-  if (searchBandCleanup) { searchBandCleanup(); searchBandCleanup = null; }
   closeNavDropdown();
 }
 
@@ -4554,44 +4488,6 @@ function renderSearchModalBody(host, term) {
   // Refresh the shell scroll-fades as results paint; focus the empty search.
   [200, 700, 1500].forEach((d) => setTimeout(updateNavDdFades, d));
   if (!term || !term.trim()) setTimeout(() => { try { searchPanelModalCtl.focus(); } catch (_) {} }, 80);
-  // Sync the full-width grey header band (painted on the dropdown root) to the header's
-  // live position/height — the band can't bleed from inside the clipping scroll column.
-  wireSearchHeaderBand(host);
-}
-
-let searchBandCleanup = null;
-function syncSearchHeaderBand() {
-  const root = document.querySelector('.aii-nav-dd-search');
-  const tf = root && root.querySelector('.search-panel-topfold');
-  if (!root || !tf) return;
-  const rr = root.getBoundingClientRect();
-  const tr = tf.getBoundingClientRect();
-  root.style.setProperty('--sp-band-top', (tr.top - rr.top) + 'px');
-  root.style.setProperty('--sp-band-h', tr.height + 'px');
-  root.classList.add('sp-band-ready');
-}
-function wireSearchHeaderBand(host) {
-  const root = host && host.closest('.aii-nav-dd-search');
-  const tf = host && host.querySelector('.search-panel-topfold');
-  if (!root || !tf) return;
-  if (searchBandCleanup) { searchBandCleanup(); searchBandCleanup = null; }
-  syncSearchHeaderBand();
-  requestAnimationFrame(syncSearchHeaderBand);
-  const ro = ('ResizeObserver' in window) ? new ResizeObserver(syncSearchHeaderBand) : null;
-  if (ro) ro.observe(tf);
-  // The header sits inside the scrolling column, so the band (painted on the root)
-  // must follow it as the column scrolls — otherwise content scrolls OVER a band
-  // stuck at the top. rAF-throttled so scrolling stays smooth.
-  const scroller = root.querySelector('[data-navdd-scroll]');
-  let rafId = 0;
-  const onScroll = () => { if (rafId) return; rafId = requestAnimationFrame(() => { rafId = 0; syncSearchHeaderBand(); }); };
-  if (scroller) scroller.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', syncSearchHeaderBand);
-  searchBandCleanup = () => {
-    if (ro) ro.disconnect();
-    if (scroller) scroller.removeEventListener('scroll', onScroll);
-    window.removeEventListener('resize', syncSearchHeaderBand);
-  };
 }
 
 function renderPage(route) {
