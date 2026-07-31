@@ -11275,9 +11275,34 @@ body.home-search #home-trending .trend-viewmore-row { margin-top: 0; padding: 8p
    (it was spilling to the card edges), and hugs the Close AI Insights line (#img118). */
 body.home-search #home-trending .trend-card-exp { margin-top: 0; padding: 2px 20px 14px; }
 body.home-search #home-trending .trend-card.is-expanded .trend-card-actions { padding-bottom: 2px; }
-/* Accordion chevron on the title row — hidden by default (desktop rows keep the
-   plain scan-list look), shown on the condensed stacked home below. */
-.trend-card-acc { display: none; flex: none; margin-left: auto; color: #b6c0d2; transition: transform .2s ease, color .14s ease; }
+/* Accordion marker on the title row — chevron closed, X open. Hidden by default
+   (desktop rows keep the plain scan-list look until opened); right-aligned via
+   margin-left:auto in a full-width head. */
+.trend-card-acc { display: none; flex: none; margin-left: auto; color: #b6c0d2; transition: color .14s ease; }
+.trend-card-acc .trend-acc-x { display: none; }
+.trend-card.is-expanded .trend-card-acc .trend-acc-chev { display: none; }
+.trend-card.is-expanded .trend-card-acc .trend-acc-x { display: inline; }
+/* Never show the browser focus ring on trend rows — it reads as a stuck "selected"
+   outline after any click (#img138). */
+.trend-card-trigger:focus, .trend-card-trigger:focus-visible { outline: none !important; box-shadow: none !important; }
+
+/* ── Open-state redesign (#img129-138): the trigger becomes a tinted ACTIVE HEADER
+   (title · since-time · X, right-aligned) clearly distinct from the brief below;
+   the duplicative card summary and the "Close AI Insights" label are gone; no
+   hover treatment while open. All widths of the home rail. ─────────────────── */
+body.home-search #home-trending .trend-card.is-expanded .trend-card-summary { display: none !important; }
+body.home-search #home-trending .trend-card.is-expanded .trend-card-actions { display: none !important; }
+body.home-search #home-trending .trend-card.is-expanded .trend-card-meta { display: block !important; }
+body.home-search #home-trending .trend-card.is-expanded .trend-card-acc { display: inline-flex; color: #64748b; }
+body.home-search #home-trending .trend-card.is-expanded .trend-card-head { width: 100%; }
+body.home-search #home-trending .trend-card.is-expanded .trend-card-main { width: 100%; }
+body.home-search #home-trending .trend-card.is-expanded .trend-card-trigger,
+body.home-search #home-trending .trend-card.is-expanded .trend-card-trigger:hover {
+  background: color-mix(in srgb, var(--color-primary) 7%, #fff) !important;
+  padding: 12px 20px !important;
+}
+body.home-search #home-trending .trend-card.is-expanded:hover::before { content: none !important; }
+body.home-search #home-trending .trend-card.is-expanded .trend-card-exp { padding-top: 12px; }
 /* Condensed stacked-home trending (#img118): title-only rows with a faint accordion
    chevron — no summary, no meta, no View-AI-Insights link, no AI legend. The row
    itself is the toggle; the Close AI Insights label returns while a brief is open. */
@@ -11293,12 +11318,16 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-actions { pa
   body.home-search #home-trending .trend-card-trigger,
   body.home-search #home-trending .trend-card-trigger:hover { padding: 14px 20px !important; }
   body.home-search #home-trending .trend-card:first-child .trend-card-trigger { padding-top: 12px !important; }
-  body.home-search #home-trending .trend-card.is-expanded .trend-card-trigger,
-  body.home-search #home-trending .trend-card.is-expanded .trend-card-trigger:hover { padding-bottom: 4px !important; }
   body.home-search #home-trending .trend-card-grid { padding-top: 2px !important; }
   /* Lighter title-row weight once stacked (#img127) — 700 reads heavy without the
      summary beneath it. */
   body.home-search #home-trending .trend-card-title { font-weight: 600 !important; }
+  /* Full-width, hard-edged hover — highlight the whole row between its divider
+     lines instead of a floating rounded chip (#img135/136). */
+  body.home-search #home-trending .trend-card:hover::before { inset: 0 !important; border-radius: 0 !important; top: 0 !important; }
+  /* Make the head span the row so the accordion marker truly right-aligns (#img135). */
+  body.home-search #home-trending .trend-card-main,
+  body.home-search #home-trending .trend-card-head { width: 100%; }
 }
 /* In-between stacked width (641–1023.98): SIX trends in TWO columns instead of a
    3-row list (#img127). An expanded brief spans both columns. First-row cells both

@@ -273,7 +273,7 @@ ${u.body}`).join(`
           <span class="trend-card-head">
             <span class="trend-card-icon" aria-hidden="true">${c}</span>
             <span class="trend-card-title">${Pa(i)}</span>
-            <span class="trend-card-acc" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+            <span class="trend-card-acc" aria-hidden="true"><svg class="trend-acc-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg><svg class="trend-acc-x" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
           </span>
           ${r?`<span class="trend-card-meta">${Pa(r)}</span>`:""}
           ${e.summary&&Ti(e.summary)?`<span class="trend-card-summary">${Pa(Ti(e.summary))}</span>`:""}
