@@ -10775,15 +10775,13 @@ body.home-search #section-newsfeed {
   border-radius: 0;
   overflow: visible;
 }
-/* Trending gets a faint grey surface so it reads as the discovery rail, distinct
-   from the white News Feed + the dark AI Insights / Prompt Builder cards. The
-   surface + border live on the ROUNDED .trending-topics card, not the square
-   section wrapper — otherwise the square grey peeks past the card's rounded
-   corners as four grey triangles (#423). */
+/* Trending is a WHITE contained card (#img151) — same surface language as the
+   News Feed cards (tinted header band + white body), so the expansion content
+   (Explore Further rows, briefs) sits seamlessly on it. */
 body.home-search #home-trending { background: transparent; border-color: transparent; }
 body.home-search #home-trending .trending-topics {
-  background: #f4f6f8 !important;
-  border-color: #e6e9ef !important;
+  background: #fff !important;
+  border-color: var(--color-surface-border) !important;
 }
 
 /* Feature strip (#img108, Option D): one quiet promo bar under the search hero —
@@ -11225,9 +11223,10 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
    button, since the cards are meant to be quickly scanned (#img542).
    revamp673: applies at EVERY width now — the stacked (<1024) home keeps the same
    grey-container rail instead of flattening to a News-Feed-style section (#img82). */
-  body.home-search #home-trending .trending-topics { background: #f4f6f8 !important; border: 1px solid #e6e9ef !important; border-radius: 16px !important; padding: 0 !important; overflow: hidden !important; }
-  /* Header on the grey rail — no extra tinted band, just a hairline separator. */
-  body.home-search #home-trending .trending-topics-head { background: transparent !important; margin: 0 !important; padding: 14px 16px !important; border-bottom: 1px solid #e1e5ee !important; }
+  body.home-search #home-trending .trending-topics { background: #fff !important; border: 1px solid var(--color-surface-border) !important; border-radius: 16px !important; padding: 0 !important; overflow: hidden !important; }
+  /* Header band matches the News Feed card head — faint primary tint over a
+     hairline (#img151). */
+  body.home-search #home-trending .trending-topics-head { background: color-mix(in srgb, var(--color-primary) 3%, #fff) !important; margin: 0 !important; padding: 14px 16px !important; border-bottom: 1px solid var(--color-surface-border) !important; }
   body.home-search #home-trending .trend-legend-row { padding: 12px 14px 2px !important; }
   body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; gap: 0; padding: 4px 6px 8px !important; }
   /* Each trend is a row. Hover = a soft rounded highlight over the WHOLE row (incl the
@@ -11462,8 +11461,9 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
 .trend-card { min-width: 0; max-width: 100%; box-sizing: border-box; overflow-x: clip; }
 .trend-card-main, .trend-card-head, .trend-card-trigger { min-width: 0; max-width: 100%; }
 /* Fit the Summary/Explore/Sources nav on ONE line in the narrow card by
-   tightening it rather than wrapping to two rows (#img290). */
-.trend-card-exp .ins-tabnav { max-width: 100%; flex-wrap: nowrap; gap: 15px; overflow-x: auto; }
+   tightening it rather than wrapping to two rows (#img290). NOT scrollable —
+   the pannable nav read as broken (#img148). */
+.trend-card-exp .ins-tabnav { max-width: 100%; flex-wrap: nowrap; gap: 15px; overflow: visible; }
 .trend-card-exp .ins-tab { padding: 2px 1px 8px; font-size: 0.78rem; }
 @keyframes trendExpIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 /* Close X pinned to the container's top-right, aligned with the trend header. */
@@ -15286,8 +15286,9 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 /* Cards in a 2-col row STRETCH to the row's tallest card (grid default), with the
    "View AI Insights" link pinned to each card's bottom so short cards don't leave
    a ragged hole under their neighbour (#img596). */
-.aii-nav-dd-trending .trend-card { border: 1px solid #e9edf3; border-radius: 12px; background: #f8fafc; padding: 14px 15px; display: flex; flex-direction: column; transition: border-color .14s, background .14s; }
-@media (hover: hover) { .aii-nav-dd-trending .trend-card:not(.is-expanded):hover { background: #f2f6fb; border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border)); } }
+/* WHITE cards, same surface language as news cards (#img152). */
+.aii-nav-dd-trending .trend-card { border: 1px solid var(--color-surface-border); border-radius: 14px; background: #fff; padding: 14px 15px; display: flex; flex-direction: column; transition: border-color .14s, background .14s, box-shadow .14s; }
+@media (hover: hover) { .aii-nav-dd-trending .trend-card:not(.is-expanded):hover { background: #fff; border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border)); box-shadow: 0 4px 14px rgba(15, 26, 46, 0.07); } }
 .aii-nav-dd-trending .trend-card.is-expanded { background: #fff; border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); }
 .aii-nav-dd-trending .trend-card-trigger { background: transparent; padding: 0; cursor: pointer; }
 @media (hover: hover) { .aii-nav-dd-trending .trend-card-trigger:hover { background: transparent; padding: 0; cursor: pointer; } }
