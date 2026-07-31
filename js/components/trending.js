@@ -166,6 +166,7 @@ function trendCardHTML(topic, idx, opts) {
           <span class="trend-card-head">
             <span class="trend-card-icon" aria-hidden="true">${icon}</span>
             <span class="trend-card-title">${escapeHTML(title)}</span>
+            <span class="trend-card-acc" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
           </span>
           ${meta ? `<span class="trend-card-meta">${escapeHTML(meta)}</span>` : ''}
           ${topic.summary && cleanSummary(topic.summary) ? `<span class="trend-card-summary">${escapeHTML(cleanSummary(topic.summary))}</span>` : ''}

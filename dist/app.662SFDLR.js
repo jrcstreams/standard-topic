@@ -273,6 +273,7 @@ ${u.body}`).join(`
           <span class="trend-card-head">
             <span class="trend-card-icon" aria-hidden="true">${c}</span>
             <span class="trend-card-title">${Pa(i)}</span>
+            <span class="trend-card-acc" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
           </span>
           ${r?`<span class="trend-card-meta">${Pa(r)}</span>`:""}
           ${e.summary&&Ti(e.summary)?`<span class="trend-card-summary">${Pa(Ti(e.summary))}</span>`:""}
@@ -785,7 +786,7 @@ ${w}`),g.length?g.join(`
           </div>
           <div class="tsp-scroll">
             <div class="tsp-group-label">${P(a.name)} Topics</div>
-            <div class="tsp-grid">${[a,...n.filter(u=>u.slug!==a.slug)].map(r).join("")}</div>
+            <div class="tsp-grid">${(()=>{let u=n.filter(f=>f.slug!==a.slug&&f.slug!==e.slug);return(s?[a]:[e,a]).concat(u).map(r).join("")})()}</div>
           </div>
         </div>
       </div>
@@ -1109,7 +1110,6 @@ ${w}`),g.length?g.join(`
     </nav>
     <div class="navmenu-scroll">
       <div class="navmenu-featured-label">Topics</div>
-      <div class="navmenu-topics">${c}</div>
       <a href="#" class="navmenu-viewall" id="navmenu-all-topics">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="3" y="3" width="7" height="7" rx="1"/>
@@ -1123,6 +1123,7 @@ ${w}`),g.length?g.join(`
           <polyline points="13 6 19 12 13 18"/>
         </svg>
       </a>
+      <div class="navmenu-topics">${c}</div>
     </div>
     <div class="navmenu-footer-sticky">
       <div class="navmenu-footer-links">
@@ -1155,14 +1156,14 @@ ${w}`),g.length?g.join(`
         <div class="home-cards">
           <div class="home-search-hero" id="home-search-hero"></div>
           <nav class="home-featstrip" aria-label="Explore Standard Topic">
-            <a href="#/" class="featstrip-item" data-explore-trending aria-label="See what's trending now">
-              <span class="featstrip-ic" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg></span>
-              <span class="featstrip-tx"><span class="featstrip-title">Trending Now</span><span class="featstrip-sub">See what's hot right now</span></span>
-              <span class="featstrip-arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
-            </a>
             <a href="#/" class="featstrip-item" data-explore-topics aria-label="Explore all topics">
               <span class="featstrip-ic" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>
               <span class="featstrip-tx"><span class="featstrip-title">Explore Topics</span><span class="featstrip-sub">Browse 100 topic hubs</span></span>
+              <span class="featstrip-arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
+            </a>
+            <a href="#/" class="featstrip-item" data-explore-trending aria-label="See what's trending now">
+              <span class="featstrip-ic" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg></span>
+              <span class="featstrip-tx"><span class="featstrip-title">Trending Now</span><span class="featstrip-sub">See what's hot right now</span></span>
               <span class="featstrip-arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
             </a>
             <a href="#/prompt-generator" class="featstrip-item" data-explore-prompts aria-label="Open the prompt library">
