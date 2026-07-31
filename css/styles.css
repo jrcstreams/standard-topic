@@ -10539,10 +10539,12 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
    values are the animation (flex centering isn't animatable, padding is). */
 .search-panel--modal .search-panel-topfold {
   flex: 0 0 auto;
-  /* Pinned while results scroll beneath (opaque white cover, full-bleed). */
+  /* Pinned while results scroll beneath (opaque white cover, full-bleed). Real
+     air between the main nav and the "Search" header in the pushed-up state
+     (#img124 — it was hugging the nav at 14px). */
   position: sticky; top: 0; z-index: 3;
   margin: 0 -2rem;
-  padding: 14px 2rem 10px;
+  padding: 30px 2rem 10px;
   background: #fff;
   display: flex; flex-direction: column; align-items: center;
   transition: padding 0.55s cubic-bezier(0.22, 0.61, 0.21, 1);
@@ -14664,9 +14666,11 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .search-aii-host .aii-topbar { padding-top: 6px; }
 /* Smaller, calmer "Results for ‘term’" line with a real gap between the two spans
    and clear breathing room above (input) and below (the Prompts/News tabs) (#img335). */
-.search-aii-host .aii-builder-topic--resultsfor { font-size: 0.98rem; font-weight: 550; gap: 0.32em; margin: 20px 0 18px; }
-.search-aii-host .aii-builder-resultsfor { color: var(--color-text-muted); font-weight: 600; }
-.search-aii-host .aii-builder-topic--resultsfor .aii-builder-topic-tx { color: #14213d; }
+/* De-emphasized (#img126): a quiet context line, clearly lighter than the tab nav
+   below — regular-weight label, medium term. */
+.search-aii-host .aii-builder-topic--resultsfor { font-size: 0.88rem; font-weight: 400; gap: 0.32em; margin: 20px 0 16px; }
+.search-aii-host .aii-builder-resultsfor { color: #8794a8; font-weight: 450; }
+.search-aii-host .aii-builder-topic--resultsfor .aii-builder-topic-tx { color: #33415c; font-weight: 550; }
 /* Prompt cards here use the SAME inset icon + padding as the topic-page Prompt
    Library so the icons/rows align cleanly inside each card (#img513/515). The card
    border sits flush with the header; the icon is inset like everywhere else. */
@@ -15193,9 +15197,10 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 /* Full height by default so switching Prompts/News/Explore Further doesn't resize
    the dropdown (#img413/414). */
 .aii-nav-dd-search .aii-nav-dd-inner { min-height: calc(100dvh - var(--nav-h)); }
-/* Close X pinned to the dropdown's top-right — the hero is centered now, so the X
-   just holds the corner (above the sticky topfold, #img104). */
-.aii-nav-dd-search .aii-nav-dd-head-bare { position: absolute; top: 14px; left: auto; right: 1.25rem; padding: 0; z-index: 6; }
+/* Close X anchored to the CENTERED content column's right edge (not the far
+   viewport corner, #img125), clamped to a 1.25rem inset on narrow screens. The
+   column is the 760px hero/bar stack. */
+.aii-nav-dd-search .aii-nav-dd-head-bare { position: absolute; top: 22px; left: auto; right: max(1.25rem, calc(50% - 380px)); padding: 0; z-index: 6; }
 .aii-nav-dd-search .search-panel--modal .search-panel-hero { margin-top: 0; }
 .aii-nav-dd-search .search-panel-hero-inner { padding-top: 0; }
 
