@@ -11325,9 +11325,12 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-exp { paddin
   /* Lighter title-row weight once stacked (#img127) — 700 reads heavy without the
      summary beneath it. */
   body.home-search #home-trending .trend-card-title { font-weight: 600 !important; }
-  /* Full-width, hard-edged hover — highlight the whole row between its divider
-     lines instead of a floating rounded chip (#img135/136). */
-  body.home-search #home-trending .trend-card:hover::before { inset: 0 !important; border-radius: 0 !important; top: 0 !important; }
+  /* Full-height, hard-edged hover — highlight the row exactly BETWEEN its divider
+     ends (20px inset, matching the hairlines) instead of a floating rounded chip
+     or a band that overshoots the lines (#img135/136/146). */
+  body.home-search #home-trending .trend-card:hover::before { inset: 0 20px !important; border-radius: 0 !important; top: 0 !important; }
+  /* Pull the accordion marker in from the hover edge so it isn't riding it. */
+  body.home-search #home-trending .trend-card-acc { margin-right: 8px; }
   /* Make the head span the row so the accordion marker truly right-aligns (#img135). */
   body.home-search #home-trending .trend-card-main,
   body.home-search #home-trending .trend-card-head { width: 100%; }
@@ -11478,6 +11481,19 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2p
 /* The wrapper inherits .im-secs' global 2rem bottom padding, which shoved the
    footer Close ~32px below the last line of copy — kill it here (#img589). */
 .trend-card-exp .trend-exp.im-secs { padding-bottom: 4px; }
+/* Explore Further INSIDE a trend expansion — flat connected rows matching the
+   quiet expansion (the bordered white card read as a foreign object, #img141-143):
+   no outer frame, hairline separators, compact titles/rows. */
+.trend-card-exp .ins-tabpanel[data-ins-panel="explore"] .xf-list { border: none; border-radius: 0; overflow: visible; }
+.trend-card-exp .ins-tabpanel[data-ins-panel="explore"] .xf-sum { padding: 10px 4px 10px 2px; }
+.trend-card-exp .ins-tabpanel[data-ins-panel="explore"] .xf-sum-name { font-size: 0.85rem; }
+.trend-card-exp .ins-tabpanel[data-ins-panel="explore"] .xf-sum-ic svg { width: 16px; height: 16px; }
+.trend-card-exp .ins-tabpanel[data-ins-panel="explore"] .xf-acc[open] > .xf-sum { border-radius: 8px 8px 0 0; }
+/* Sources tab in a trend expansion: smaller headline titles (the meta line is
+   right-sized), and the first row hugs the tab nav (#img144/145). */
+.trend-card-exp .im-cov-title { font-size: 0.84rem; }
+.trend-card-exp .ins-tabpanel[data-ins-panel="sources"] .im-coverage-list .im-cov-row:first-child { padding-top: 0; }
+.trend-card-exp .ins-tabnav { margin-bottom: 10px; }
 .trend-exp-closelink { display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border: none; background: none; color: var(--color-text-muted); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; border-radius: 8px; transition: color .14s ease, background .14s ease; }
 @media (hover: hover) { .trend-exp-closelink:hover { color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 6%, #fff); } }
 .trend-exp-closelink svg { width: 14px; height: 14px; flex: none; }
@@ -15281,7 +15297,8 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 /* Link follows the description (next line-ish), NOT bottom-pinned — the cards
    still stretch to matched row heights, shorter ones just carry the slack
    below the link (#img618). */
-.aii-nav-dd-trending .trend-card-actions { display: flex; margin-top: 0; padding-top: 10px; }
+/* Tighter to the summary above it (#img147). */
+.aii-nav-dd-trending .trend-card-actions { display: flex; margin-top: 0; padding-top: 4px; }
 .aii-nav-dd-trending .trend-card-aibtn { background: none; border: none; border-radius: 0; padding: 4px 0; color: #64748b; font-size: 0.78rem; font-weight: 600; gap: 4px; }
 @media (hover: hover) { .aii-nav-dd-trending .trend-card-aibtn:hover { color: #334155; background: none; } }
 .aii-nav-dd-trending .trend-card-aibtn svg { width: 13px; height: 13px; }
