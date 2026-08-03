@@ -15621,6 +15621,85 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 @media (hover: hover) { .prompts-opt:hover .prompts-opt-cta { background: #1a2740; } }
 @media (hover: hover) { .prompts-opt:hover .prompts-opt-cta svg { transform: translateX(2px); } }
 
+/* ═══ Prompts landing rebuild (#img216-220): hero + Build card + Prompt Library
+   (Featured picks, Card View / Flatten Topics toggle). ═══════════════════════ */
+.prompts-home { padding: 4px 2px 30px; }
+.ph-hero { display: flex; align-items: center; gap: 2rem; padding: 6px 0 20px; }
+.ph-hero-tx { flex: 1 1 auto; min-width: 0; }
+.ph-title { margin: 0 0 0.5rem; font-family: var(--font-display); font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2rem); font-weight: 700; letter-spacing: -0.028em; color: #16233d; }
+.ph-sub { margin: 0; max-width: 46rem; font-size: 0.98rem; line-height: 1.55; color: #4a5a75; }
+.ph-hero-art { flex: none; width: 200px; }
+.ph-hero-art svg { display: block; width: 100%; height: auto; overflow: visible; }
+.ph-arc { stroke: #c5cde0; stroke-width: 1.6; stroke-dasharray: 1.5 7; stroke-linecap: round; fill: none; }
+.ph-node { fill: #c5cde0; }
+.ph-chip { filter: drop-shadow(0 6px 12px rgba(15, 26, 46, 0.18)); }
+@media (max-width: 720px) { .ph-hero { gap: 1rem; } .ph-hero-art { width: 130px; } }
+.prompts-home .ph-build { width: 100%; margin-bottom: 26px; text-align: left; cursor: pointer; }
+.ph-lib-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding-bottom: 12px; border-bottom: 1px solid #e4e8f0; margin-bottom: 16px; }
+.ph-lib-title { margin: 0; font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: #1a2740; letter-spacing: -0.015em; }
+.ph-lib-sub { margin: 3px 0 0; font-size: 0.8rem; font-weight: 500; color: var(--color-text-muted); }
+/* Card View | Flatten Topics — quiet segmented toggle. */
+.ph-viewtoggle { display: inline-flex; gap: 4px; padding: 4px; background: #eef1f6; border: 1px solid #e2e6ee; border-radius: 10px; }
+.ph-viewtoggle button {
+  border: none; background: none; cursor: pointer; border-radius: 7px; padding: 6px 13px;
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #5a6b86;
+  transition: background .12s, color .12s;
+}
+.ph-viewtoggle button.is-active { background: #fff; color: #26375a; box-shadow: 0 1px 2px rgba(15,23,42,.1); }
+/* Featured Prompts */
+.ph-featured { margin-bottom: 22px; }
+.ph-sec-label { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-display); font-size: 0.98rem; font-weight: 700; color: #26375a; margin-bottom: 12px; }
+.ph-feat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 920px) { .ph-feat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .ph-feat-grid { grid-template-columns: 1fr; } }
+.ph-feat-card {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0;
+  padding: 14px 15px; text-align: left; cursor: pointer;
+  background: #fff; border: 1px solid var(--color-surface-border); border-radius: 13px;
+  box-shadow: 0 1px 2px rgba(15,26,46,.04);
+  transition: border-color .14s, box-shadow .14s, transform .14s;
+}
+@media (hover: hover) { .ph-feat-card:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border));
+  box-shadow: 0 10px 24px -16px rgba(15,26,46,.3);
+} }
+.ph-feat-topic { display: inline-flex; align-items: center; gap: 6px; font-size: 0.72rem; font-weight: 650; color: #5a6b86; text-transform: none; }
+.ph-feat-topic .ph-feat-topic-ic { display: inline-flex; }
+.ph-feat-topic .ph-feat-topic-ic svg { width: 14px; height: 14px; }
+.ph-feat-name { font-family: var(--font-display); font-size: 0.99rem; font-weight: 700; color: #1a2740; letter-spacing: -0.01em; }
+.ph-feat-desc { font-size: 0.8rem; line-height: 1.4; color: #5a6b86; }
+/* Topic preview cards */
+.ph-topic-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 980px) { .ph-topic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .ph-topic-grid { grid-template-columns: 1fr; } }
+.ph-topic-card {
+  display: flex; flex-direction: column; min-width: 0; padding: 13px 14px 10px;
+  background: #fff; border: 1px solid var(--color-surface-border); border-radius: 13px;
+  box-shadow: 0 1px 2px rgba(15,26,46,.04);
+}
+.ph-card-head { display: flex; align-items: center; gap: 8px; padding-bottom: 8px; border-bottom: 1px solid #eef1f6; margin-bottom: 4px; }
+.ph-card-ic { display: inline-flex; color: #26375a; }
+.ph-card-ic svg { width: 17px; height: 17px; }
+.ph-card-name { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: #1a2740; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ph-card-list { display: flex; flex-direction: column; }
+.ph-card-prompt {
+  display: flex; align-items: center; gap: 7px; min-width: 0; width: 100%;
+  padding: 7px 4px; border: none; background: none; cursor: pointer; text-align: left; border-radius: 7px;
+  font-family: var(--font-family); font-size: 0.83rem; font-weight: 550; color: #33415c;
+  transition: background .12s, color .12s;
+}
+.ph-card-prompt .ph-spark { flex: none; }
+.ph-card-prompt span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (hover: hover) { .ph-card-prompt:hover { background: #f4f6fb; color: #1d4ed8; } }
+.ph-card-more {
+  display: inline-flex; align-items: center; gap: 5px; align-self: flex-start;
+  margin-top: 6px; padding: 5px 4px; border: none; background: none; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.78rem; font-weight: 650; color: #2f4d9e; border-radius: 6px;
+}
+@media (hover: hover) { .ph-card-more:hover { color: #1d4ed8; } .ph-card-more:hover .aiidd-arrow { transform: translateX(2px); } }
+.ph-card-more .aiidd-arrow { transition: transform .14s; }
+
 /* Cleaner back control (#390) — a subtle pill; sits ABOVE the view title in the head. */
 .prompts-back {
   display: inline-flex; align-items: center; gap: 5px; margin: 0 0 16px; padding: 6px 12px 6px 9px;

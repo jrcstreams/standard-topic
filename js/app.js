@@ -724,6 +724,7 @@ const NAVDD_SEARCH_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="n
 const PROMPTS_BACK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
 const PROMPTS_BUILD_IC = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
 const PROMPTS_LIB_IC = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>';
+const AI_SPARK_INLINE = '<svg class="ph-spark" viewBox="0 0 24 24" width="13" height="13" fill="#2563eb" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
 
 // Prompt Library topic tree — accordions whose rows SELECT a topic (show its
 // prompts inline) instead of navigating.
@@ -778,27 +779,139 @@ function wirePromptsDropdown(panel, initialView) {
     titles.insertBefore(b, titles.firstChild);
   };
 
+  // Fire a ready-made prompt (featured card or a topic-card preview row) in the
+  // prompt modal — same event path the rest of the site uses.
+  const openShortcutPrompt = (s, topicName) => {
+    if (!s || !s.prompt) return;
+    window.dispatchEvent(new CustomEvent('open-prompt-modal', {
+      detail: { basePrompt: s.prompt, topicName: topicName || '', name: s.name || 'Prompt', count: 1 },
+    }));
+  };
+
+  // Per-topic preview cards (Card View): icon + name, first 3 prompts, View all.
+  const topicCardsHTML = () => {
+    const groups = getTopicsGroupedByParent() || [];
+    const flat = [];
+    groups.forEach(({ parent, subtopics }) => { flat.push(parent, ...(subtopics || [])); });
+    const cards = flat.map((t) => {
+      let sc = []; try { sc = (getShortcutsForTopic(t.slug) || []).filter((s) => s && s.name && s.prompt); } catch (_) {}
+      if (!sc.length) return '';
+      const rows = sc.slice(0, 3).map((s, i) =>
+        `<button type="button" class="ph-card-prompt" data-ph-prompt data-slug="${escapeAttr(t.slug)}" data-i="${i}">${AI_SPARK_INLINE}<span>${escapeHTML(s.name)}</span></button>`).join('');
+      return `<div class="ph-topic-card">
+        <div class="ph-card-head"><span class="ph-card-ic">${topicIconSVG(t.icon || 'globe', 'tsp-ic-svg')}</span><span class="ph-card-name">${escapeHTML(t.name)}</span></div>
+        <div class="ph-card-list">${rows}</div>
+        <button type="button" class="ph-card-more" data-ph-more data-slug="${escapeAttr(t.slug)}" data-name="${escapeAttr(t.name)}">View all ${sc.length} prompts ${AIIDD_ARROW}</button>
+      </div>`;
+    }).join('');
+    return `<div class="ph-topic-grid">${cards}</div>`;
+  };
+
   const showLanding = () => {
     destroyCtl();
-    setHead('Prompts', 'Build your own or browse the ready-made library.');
+    setHead('Prompts', 'Ready-made prompts for every topic — or build your own.');
     setBack(null);
+    const view = (localStorage.getItem('st_promptlib_view') === 'flat') ? 'flat' : 'cards';
     root.innerHTML = `
-      <div class="prompts-landing">
-        <button type="button" class="prompts-opt" data-prompt-build>
-          <span class="prompts-opt-ic">${PROMPTS_BUILD_IC}</span>
-          <span class="prompts-opt-name">Build a Custom Prompt</span>
-          <span class="prompts-opt-desc">Craft a knowledge prompt and send it to your AI model.</span>
-          <span class="prompts-opt-cta">Build prompt ${AIIDD_ARROW}</span>
+      <div class="prompts-home">
+        <div class="ph-hero">
+          <div class="ph-hero-tx">
+            <h2 class="ph-title">Ask better questions.</h2>
+            <p class="ph-sub">Expert-built prompts for 100+ topics, ready to run in ChatGPT, Claude, Gemini and more — or compose your own from scratch.</p>
+          </div>
+          <div class="ph-hero-art" aria-hidden="true">
+            <svg viewBox="0 0 220 150" fill="none">
+              <path class="ph-arc" d="M28 128 C 52 84, 92 62, 138 58"/>
+              <path class="ph-arc" d="M138 58 C 168 56, 190 72, 198 96"/>
+              <circle class="ph-node" cx="28" cy="128" r="3.4"/>
+              <circle class="ph-node" cx="198" cy="96" r="3.4"/>
+              <g transform="translate(138,58)"><g class="ph-chip">
+                <rect x="-30" y="-30" width="60" height="60" rx="16" fill="#26375a"/>
+                <path d="M0 -14 L3.6 -3.9 14 0 3.6 3.9 0 14 -3.6 3.9 -14 0 -3.6 -3.9 Z" fill="#fff"/>
+              </g></g>
+              <g transform="translate(64,96)"><circle r="14" fill="#8b87f3"/><path transform="translate(-6,-6.5)" d="M6.8 1.1 1.6 7.4h4.5l-.6 4.8 5.2-6.3H6.2z" fill="#fff"/></g>
+              <g transform="translate(190,40)"><circle r="11" fill="#f2a33c"/><g transform="translate(-5,-6)" stroke="#fff" stroke-width="1.5" stroke-linecap="round"><path d="M1.5 1h5.5a1.4 1.4 0 0 1 1.4 1.4v7.8a1.4 1.4 0 0 1-1.4 1.4H2.9a1.4 1.4 0 0 1-1.4-1.4z"/><line x1="3" y1="3.6" x2="7" y2="3.6"/><line x1="3" y1="5.9" x2="7" y2="5.9"/><line x1="3" y1="8.2" x2="5.6" y2="8.2"/></g></g>
+            </svg>
+          </div>
+        </div>
+        <button type="button" class="featstrip-item ph-build" data-prompt-build>
+          <span class="featstrip-ic">${PROMPTS_BUILD_IC}</span>
+          <span class="featstrip-tx"><span class="featstrip-title">Build a Custom Prompt</span><span class="featstrip-sub">Compose your own — topics, scope, output style &amp; citations</span></span>
+          <span class="featstrip-arrow" aria-hidden="true">${AIIDD_ARROW}</span>
         </button>
-        <button type="button" class="prompts-opt" data-prompt-library>
-          <span class="prompts-opt-ic">${PROMPTS_LIB_IC}</span>
-          <span class="prompts-opt-name">Prompt Library</span>
-          <span class="prompts-opt-desc">Browse ready-made prompts across every topic.</span>
-          <span class="prompts-opt-cta">View Prompt Library ${AIIDD_ARROW}</span>
-        </button>
+        <div class="ph-lib">
+          <div class="ph-lib-head">
+            <div class="ph-lib-titles"><h3 class="ph-lib-title">Prompt Library</h3><p class="ph-lib-sub">Ready-made prompts across every topic.</p></div>
+            <div class="ph-viewtoggle" role="tablist" aria-label="Library view">
+              <button type="button" data-ph-view="cards" class="${view === 'cards' ? 'is-active' : ''}">Card View</button>
+              <button type="button" data-ph-view="flat" class="${view === 'flat' ? 'is-active' : ''}">Flatten Topics</button>
+            </div>
+          </div>
+          <div class="ph-featured" data-ph-featured hidden>
+            <div class="ph-sec-label">${AI_SPARK_INLINE}<span>Featured Prompts</span></div>
+            <div class="ph-feat-grid" data-ph-feat-grid></div>
+          </div>
+          <div class="ph-body" data-ph-body></div>
+        </div>
       </div>`;
     root.querySelector('[data-prompt-build]').addEventListener('click', showBuild);
-    root.querySelector('[data-prompt-library]').addEventListener('click', showLibrary);
+
+    // Featured picks — data/featured-prompts.json (admin-editable), resolved
+    // against the live shortcut assignments; missing names skip silently.
+    fetchWithTimeout('/data/featured-prompts.json', { headers: { Accept: 'application/json' } })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((cfg) => {
+        const wrap = root.querySelector('[data-ph-feat-grid]');
+        const sec = root.querySelector('[data-ph-featured]');
+        if (!wrap || !sec || !cfg || !Array.isArray(cfg.featured)) return;
+        const cards = cfg.featured.map((f, idx) => {
+          const t = getTopicBySlug(f.topic); if (!t) return '';
+          let sc = []; try { sc = getShortcutsForTopic(f.topic) || []; } catch (_) { return ''; }
+          const s = sc.find((x) => x && x.name === f.name);
+          if (!s || !s.prompt) return '';
+          return `<button type="button" class="ph-feat-card" data-ph-feat="${idx}">
+            <span class="ph-feat-topic">${topicIconSVG(t.icon || 'globe', 'ph-feat-topic-ic')}<span>${escapeHTML(t.name)}</span></span>
+            <span class="ph-feat-name">${escapeHTML(s.name)}</span>
+            ${s.description ? `<span class="ph-feat-desc">${escapeHTML(s.description)}</span>` : ''}
+          </button>`;
+        }).join('');
+        if (!cards) return;
+        wrap.innerHTML = cards;
+        sec.hidden = false;
+        wrap.querySelectorAll('[data-ph-feat]').forEach((b) => b.addEventListener('click', () => {
+          const f = cfg.featured[Number(b.dataset.phFeat)]; if (!f) return;
+          const t = getTopicBySlug(f.topic);
+          let sc = []; try { sc = getShortcutsForTopic(f.topic) || []; } catch (_) {}
+          openShortcutPrompt(sc.find((x) => x && x.name === f.name), t ? t.name : '');
+        }));
+        requestAnimationFrame(updateNavDdFades);
+      }).catch(() => {});
+
+    // Library body — Card View / Flatten Topics toggle (persisted).
+    const body = root.querySelector('[data-ph-body]');
+    const renderView = (v) => {
+      if (v === 'flat') {
+        body.innerHTML = `<div class="prompts-lib" data-lib>${promptLibTreeHTML()}</div>`;
+        const lib = body.querySelector('[data-lib]');
+        wireNavDdAccordions(lib);
+        lib.querySelectorAll('[data-lib-topic]').forEach((b) => b.addEventListener('click', () => showTopicPrompts(b.dataset.slug, b.dataset.name)));
+      } else {
+        body.innerHTML = topicCardsHTML();
+        body.querySelectorAll('[data-ph-prompt]').forEach((b) => b.addEventListener('click', () => {
+          let sc = []; try { sc = (getShortcutsForTopic(b.dataset.slug) || []).filter((s) => s && s.name && s.prompt); } catch (_) {}
+          const t = getTopicBySlug(b.dataset.slug);
+          openShortcutPrompt(sc[Number(b.dataset.i)], t ? t.name : '');
+        }));
+        body.querySelectorAll('[data-ph-more]').forEach((b) => b.addEventListener('click', () => showTopicPrompts(b.dataset.slug, b.dataset.name)));
+      }
+      requestAnimationFrame(updateNavDdFades);
+    };
+    root.querySelectorAll('[data-ph-view]').forEach((b) => b.addEventListener('click', () => {
+      root.querySelectorAll('[data-ph-view]').forEach((x) => x.classList.toggle('is-active', x === b));
+      try { localStorage.setItem('st_promptlib_view', b.dataset.phView); } catch (_) {}
+      renderView(b.dataset.phView);
+    }));
+    renderView(view);
     syncViewHash(null);
     requestAnimationFrame(updateNavDdFades);
   };

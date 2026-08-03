@@ -170,6 +170,7 @@
         <option value="promptgen">prompt-generator.json — prompt generator config</option>
         <option value="trending101">shortcuts-trending101.json — Trending Now modal shortcuts</option>
         <option value="insighttmpl">insight-templates.json — AI Insights master prompt templates</option>
+        <option value="featprompts">featured-prompts.json — Prompt Library featured picks</option>
         <option value="aipaths">ai-paths.json — AI Insights builder paths + refresh windows (shared with crons)</option>
       </select>
       <span id="df-status" style="color:var(--text-muted);font-size:0.78rem;"></span>
@@ -188,6 +189,7 @@
       promptgen: {},
       trending101: { shortcuts: [] },
       insighttmpl: {},
+      featprompts: {},
       aipaths: { paths: [] }
     };
 
@@ -200,6 +202,7 @@
       'prompt-generator.json': 'promptgen',
       'shortcuts-trending101.json': 'trending101',
       'insight-templates.json': 'insighttmpl',
+      'featured-prompts.json': 'featprompts',
       'ai-paths.json': 'aipaths'
     };
 
@@ -1881,6 +1884,7 @@
       promptgen: 'prompt-generator.json',
       trending101: 'shortcuts-trending101.json',
       insighttmpl: 'insight-templates.json',
+      featprompts: 'featured-prompts.json',
       aipaths: 'ai-paths.json'
     };
     function dfLoadCurrent() {
@@ -2049,7 +2053,7 @@
     // Auto-load the live /data/ files so the admin opens populated (no manual
     // Import). Works when served over http (same-origin fetch); falls back to
     // the empty state + manual Import when opened as a file:// page.
-    var DATA_KEYS = ['topics','directory','assignments','searches','models','promptgen','trending101','insighttmpl','aipaths'];
+    var DATA_KEYS = ['topics','directory','assignments','searches','models','promptgen','trending101','insighttmpl','featprompts','aipaths'];
     function autoLoad() {
       var status = document.getElementById('autoload-status');
       if (status) status.textContent = 'Loading live data…';
