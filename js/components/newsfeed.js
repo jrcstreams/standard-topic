@@ -134,6 +134,14 @@ export function renderBriefBody(content, sources, opts = {}) {
   // — used when each section is rendered headerless (its title lives outside).
   let pendingFlag = !!(opts.flagFirst && flagSpan);
   const lines = String(content || '').split('\n');
+  // Cached briefs generated under the old token cap can end in a cut-off bullet
+  // ("• August", #img214) — drop a short, punctuation-less trailing fragment.
+  while (lines.length > 1) {
+    const bare = (lines[lines.length - 1] || '').trim().replace(/^[-*•\s]+/, '');
+    if (bare === '') { lines.pop(); continue; }
+    if (bare.length < 60 && !/[.!?:%)"’”\]0-9]$/.test(bare)) { lines.pop(); break; }
+    break;
+  }
   let html = ''; let inList = false;
   const closeList = () => { if (inList) { html += '</ul>'; inList = false; } };
   for (const raw of lines) {
