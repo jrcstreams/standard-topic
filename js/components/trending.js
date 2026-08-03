@@ -143,6 +143,24 @@ export function cleanSummary(s) {
   return t.replace(/^\s*(summary|detail)\s*:\s*/i, '').replace(/\s+/g, ' ').trim();
 }
 
+// #img170: strip the "X is trending because…" boilerplate so cards read as a terse
+// reason ("Padres rejected a Yankees trade offer for him."). Covers the common
+// generated shapes ('"X" is trending due to…', 'The search term "x" is trending
+// because…'); capitalizes whatever remains. New summaries are generated terse at
+// the source (lib/insight-core prompt) — this cleans the already-cached ones.
+export function tersifySummary(s, query) {
+  let t = String(s || '').trim();
+  if (!t) return t;
+  const q = String(query || '').trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const lead = new RegExp(
+    `^(?:the\\s+)?(?:search\\s+term\\s+)?["'“”‘’]?${q ? `(?:${q})` : '[^"“”]{1,60}'}["'“”‘’]?\\s+is\\s+trending\\s*(?:right\\s+now\\s*)?(?:because(?:\\s+of)?|due\\s+to|after|following|amid|as|on\\s+account\\s+of)?\\s*[:,–—-]?\\s*`,
+    'i'
+  );
+  const stripped = t.replace(lead, '');
+  if (stripped !== t && stripped.length > 8) t = stripped.charAt(0).toUpperCase() + stripped.slice(1);
+  return t;
+}
+
 // Trend cards open one combined, grounded AI brief (see showTrendBrief).
 
 // Compact 2-row card: [category · trending-for] on top, term below. Clicking
@@ -169,7 +187,7 @@ function trendCardHTML(topic, idx, opts) {
             <span class="trend-card-acc" aria-hidden="true"><svg class="trend-acc-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg><svg class="trend-acc-x" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
           </span>
           ${meta ? `<span class="trend-card-meta">${escapeHTML(meta)}</span>` : ''}
-          ${topic.summary && cleanSummary(topic.summary) ? `<span class="trend-card-summary">${escapeHTML(cleanSummary(topic.summary))}</span>` : ''}
+          ${topic.summary && cleanSummary(topic.summary) ? `<span class="trend-card-summary">${escapeHTML(tersifySummary(cleanSummary(topic.summary), title))}</span>` : ''}
         </span>
         <span class="trend-card-chev trend-card-open" aria-hidden="true">${OPEN_ICON}</span>
       </button>
@@ -560,8 +578,9 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
     state.loading = true; renderShell();
     try {
       if (state.mode === 'now') {
-        const { topics } = await fetchTrending();
+        const { topics, fetched } = await fetchTrending();
         state.items = normNow(topics);
+        state.fetched = fetched || null;
       } else {
         const to = new Date().toISOString();
         const from = new Date(Date.now() - 7 * 864e5).toISOString();
@@ -576,13 +595,15 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
   }
 
   function headHTML() {
-    const ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>';
+    // Homepage header (#img168/169): "What's Trending", no icon chip, with the
+    // last-updated line right beneath.
+    const upd = state.fetched ? relativeTime(state.fetched) : '';
     return `
       <div class="trending-topics-head">
         <div class="trending-topics-titlerow">
-          <span class="trending-topics-logo">${ICON}</span>
-          <h3 class="trending-topics-title"><span>Trending</span></h3>
+          <h3 class="trending-topics-title"><span>What's Trending</span></h3>
         </div>
+        ${upd ? `<p class="trending-topics-updatedline">Updated ${escapeHTML(upd)}</p>` : ''}
       </div>`;
   }
 

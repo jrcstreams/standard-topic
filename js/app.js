@@ -2352,7 +2352,7 @@ function documentTitleFor(route) {
 function fitMainNav() {
   const inner = document.querySelector('.sticky-hero-inner');
   if (!inner) return;
-  inner.classList.remove('nav-stacked', 'nav-short-trending', 'nav-drop-prompts', 'nav-drop-home', 'nav-tiny-title');
+  inner.classList.remove('nav-stacked', 'nav-short-trending', 'nav-drop-prompts', 'nav-drop-home', 'nav-icon-search', 'nav-tiny-title');
   const fits = () => inner.scrollWidth <= inner.clientWidth + 1;
   // Buttons start HORIZONTAL (icon+label inline, left-grouped after the title). Break
   // to STACKED (icon over label, right-aligned) EARLY — before the horizontal row
@@ -2368,6 +2368,8 @@ function fitMainNav() {
   if (!fits()) inner.classList.add('nav-short-trending');
   if (!fits()) inner.classList.add('nav-drop-prompts');
   if (!fits()) inner.classList.add('nav-drop-home');
+  // Search sheds its label → magnifier icon pinned far right (#img167).
+  if (!fits()) inner.classList.add('nav-icon-search');
   if (!fits()) inner.classList.add('nav-tiny-title');
 }
 
@@ -2889,19 +2891,54 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         ${bodyTabsRow({ showSearchTrends: true })}
         <div class="home-cards">
           <div class="home-search-hero" id="home-search-hero"></div>
+          <div class="home-hero-art" aria-hidden="true">
+            <svg class="hh-art hh-art--wide" viewBox="0 0 460 340" fill="none" preserveAspectRatio="xMidYMid meet">
+              <path class="hh-line" d="M28 318 C 120 296, 96 216, 178 196 C 250 178, 268 130, 300 78"/>
+              <path class="hh-line" d="M300 78 C 336 118, 372 138, 394 200"/>
+              <path class="hh-line" d="M178 196 C 206 252, 300 268, 394 200 C 420 182, 434 150, 438 118"/>
+              <circle class="hh-dot" cx="28" cy="318" r="3.5"/>
+              <circle class="hh-dot" cx="252" cy="160" r="3"/>
+              <circle class="hh-dot" cx="438" cy="118" r="3.5"/>
+              <g class="hh-badge hh-badge--trend" transform="translate(300,78)">
+                <circle r="26" fill="#8b87f3"/>
+                <g transform="translate(-11,-11)" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 16 8.5 9.5 12.5 13.5 20 6"/><polyline points="14.5 6 20 6 20 11.5"/></g>
+              </g>
+              <g class="hh-badge hh-badge--zap" transform="translate(394,200)">
+                <circle r="23" fill="#27a06d"/>
+                <path transform="translate(-10,-11)" d="M11.3 1.8 2.7 12.2h7.5l-.9 7.9 8.7-10.4h-7.6z" fill="#fff"/>
+              </g>
+              <g class="hh-badge hh-badge--doc" transform="translate(178,196)">
+                <circle r="23" fill="#f2a33c"/>
+                <g transform="translate(-9.5,-11)" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 1.8h10.2a2 2 0 0 1 2 2v14.4a2 2 0 0 1-2 2H4.8a2 2 0 0 1-2-2V3.6a2 2 0 0 1 .2-1.8z"/><line x1="5.6" y1="6.4" x2="12.4" y2="6.4"/><line x1="5.6" y1="10.2" x2="12.4" y2="10.2"/><line x1="5.6" y1="14" x2="10" y2="14"/></g>
+              </g>
+            </svg>
+            <svg class="hh-art hh-art--mobile" viewBox="0 0 360 120" fill="none" preserveAspectRatio="xMidYMid meet">
+              <path class="hh-line" d="M10 96 C 60 40, 96 34, 130 62 C 158 86, 176 92, 204 70 C 228 52, 236 44, 258 40"/>
+              <path class="hh-line" d="M258 40 C 288 44, 306 66, 316 88"/>
+              <circle class="hh-dot" cx="10" cy="96" r="3"/>
+              <circle class="hh-dot" cx="204" cy="70" r="2.6"/>
+              <g class="hh-badge hh-badge--trend" transform="translate(96,44)">
+                <circle r="17" fill="#8b87f3"/>
+                <g transform="translate(-8,-8)" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="transform-origin:8px 8px"><polyline points="1.5 12 6 7.5 9 10.5 14.5 4.5"/><polyline points="10.5 4.5 14.5 4.5 14.5 8.5"/></g>
+              </g>
+              <g class="hh-badge hh-badge--zap" transform="translate(258,40)">
+                <circle r="16" fill="#27a06d"/>
+                <path transform="translate(-7,-8)" d="M8.2 1.3 2 8.9h5.4l-.7 5.8 6.3-7.6H7.6z" fill="#fff"/>
+              </g>
+              <g class="hh-badge hh-badge--doc" transform="translate(316,88)">
+                <circle r="16" fill="#f2a33c"/>
+                <g transform="translate(-6.5,-8)" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 1.3h7.4a1.6 1.6 0 0 1 1.6 1.6v10.2a1.6 1.6 0 0 1-1.6 1.6H3.6a1.6 1.6 0 0 1-1.6-1.6z"/><line x1="4" y1="4.6" x2="9" y2="4.6"/><line x1="4" y1="7.3" x2="9" y2="7.3"/><line x1="4" y1="10" x2="7.2" y2="10"/></g>
+              </g>
+            </svg>
+          </div>
           <nav class="home-featstrip" aria-label="Explore Standard Topic">
             <a href="#/" class="featstrip-item" data-explore-topics aria-label="Explore all topics">
-              <span class="featstrip-ic" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>
+              <span class="featstrip-ic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>
               <span class="featstrip-tx"><span class="featstrip-title">Explore Topics</span><span class="featstrip-sub">Browse 100 topic hubs</span></span>
               <span class="featstrip-arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
             </a>
-            <a href="#/" class="featstrip-item" data-explore-trending aria-label="See what's trending now">
-              <span class="featstrip-ic" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg></span>
-              <span class="featstrip-tx"><span class="featstrip-title">Trending Now</span><span class="featstrip-sub">See what's hot right now</span></span>
-              <span class="featstrip-arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
-            </a>
             <a href="#/prompt-generator" class="featstrip-item" data-explore-prompts aria-label="Open the prompt library">
-              <span class="featstrip-ic" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+              <span class="featstrip-ic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
               <span class="featstrip-tx"><span class="featstrip-title">Prompt Library</span><span class="featstrip-sub">Ready-made for every topic</span></span>
               <span class="featstrip-arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
             </a>
@@ -2929,11 +2966,6 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     container.querySelector('[data-explore-prompts]')?.addEventListener('click', (e) => {
       e.preventDefault();
       openPromptsNavDropdown();
-    });
-    // Trending strip item — opens the full Trending dropdown (#img108).
-    container.querySelector('[data-explore-trending]')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.dispatchEvent(new CustomEvent('open-trending-list'));
     });
   } else if (topic && !isCustom) {
     // Topic pages: ONE cohesive tabbed "Paths" package at every width. A second
@@ -4025,8 +4057,8 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
           ? `<h2 class="search-panel-title">Search</h2>
              <p class="search-panel-tagline">News, Resources and AI Knowledge</p>
              <p class="search-panel-herohint">Type a topic, term, or headline and we'll pull together the latest news, web sources, and AI insights.</p>`
-          : `<h2 class="search-panel-title">What do you want to know?</h2>
-             <p class="search-panel-tagline">News, resources &amp; AI insights on any topic.</p>`}
+          : `<h2 class="search-panel-title">Search. Discover. Stay&nbsp;Informed.</h2>
+             <p class="search-panel-tagline">Real news. AI insights. All in one place.</p>`}
       </div></div>
       <div class="search-panel-barrow">
         <form class="search-panel-form" role="search" autocomplete="off">

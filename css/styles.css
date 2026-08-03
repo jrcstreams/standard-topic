@@ -62,6 +62,10 @@
   --color-primary-dark: #0f1a2e;
   --color-primary-light: #3a4a63;
   --color-bg: #ffffff;
+  /* Page canvas — a soft off-white behind every page's content so white cards
+     read as raised surfaces (#img153). Components keep --color-bg for their own
+     white fills. */
+  --color-page: #f4f5f9;
   --color-bg-light: #f7f8fa;
   --color-bg-muted: #f0f4f8;
   /* Light cool-gray "surface" — the homepage search card and all takeover/modal
@@ -108,7 +112,7 @@ button, input, select, textarea, optgroup { font-family: inherit; font-size: inh
 body {
   font-family: var(--font-family);
   color: var(--color-text);
-  background: var(--color-bg);
+  background: var(--color-page);
   line-height: 1.6;
   /* Suppress the iOS double-tap-to-zoom delay on interactive
      elements site-wide. Pinch-zoom still works (we don't set
@@ -10641,31 +10645,34 @@ body.home-search.app-mode .topic-layout {
    600px cap constrains nothing but the resting title + bar. */
 /* Homepage hero — a spacey gradient "command card": a large display title over a
    warm, elevated search bar. Fills the main column (no 600px cap now). */
+/* Hero sits DIRECTLY on the off-white page — no card box (#img153/154). */
 .home-search-hero {
   /* NB: no overflow:hidden — the typeahead dropdown is absolutely positioned and
-     must be allowed to spill past the card's bottom edge (#77). The corner glow
-     is kept inside the rounded corners by giving the ::after its own radius. */
+     must be allowed to spill past the hero's bottom edge (#77). */
   position: relative;
-  /* Sit above the row-2 promo cards so the typeahead dropdown (which spills past
-     the hero's bottom edge into that row) paints OVER them instead of behind —
-     fixes the dropdown rendering under the promo buttons + the resulting hover
-     flicker as the cards intercepted pointer events. */
   z-index: 20;
-  /* A search card doesn't need the full container width on big screens — cap it and
-     centre it (comfortably wide, not full-width or microscopic). Full-width as the
-     viewport scales below the cap (#155/#207). */
   max-width: 1080px; margin: 0 auto;
-  /* Mobile (lower clamp bounds) was perfect; desktop maxed out too tall/wide — trim
-     the upper bounds, esp. vertical. */
-  padding: clamp(1.1rem, 0.7rem + 0.8vw, 1.25rem) clamp(1.4rem, 0.9rem + 1.4vw, 1.9rem) clamp(1.2rem, 0.8rem + 0.9vw, 1.4rem);
-  /* FLAT editorial card (#img616/#img617) — a soft SOLID blue-grey tint (no
-     gradient, no corner glow) so the hero doesn't read as bare white. */
-  background: #f3f6fb;
-  border: 1px solid #dde5f0;
-  border-radius: 20px;
-  box-shadow: 0 1px 2px rgba(15, 26, 46, 0.05);
+  padding: 0.6rem 0 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 .home-search-hero::after { content: none; }
+/* Decorative connected-lines art (#img154): dashed paths linking floating icon
+   badges — trends (purple), AI (green), news (amber). Pure decoration. */
+.home-hero-art { display: block; pointer-events: none; user-select: none; min-width: 0; }
+.hh-art { display: block; width: 100%; height: auto; }
+.hh-art--mobile { display: none; }
+.hh-line { stroke: #c5cde0; stroke-width: 1.7; stroke-dasharray: 1.5 7.5; stroke-linecap: round; fill: none; }
+.hh-dot { fill: #c5cde0; }
+.hh-badge { filter: drop-shadow(0 7px 14px rgba(15, 26, 46, 0.16)); }
+@media (prefers-reduced-motion: no-preference) {
+  .hh-badge { animation: hhFloat 7s ease-in-out infinite; }
+  .hh-badge--zap { animation-delay: -2.3s; }
+  .hh-badge--doc { animation-delay: -4.6s; }
+}
+@keyframes hhFloat { 0%, 100% { translate: 0 0; } 50% { translate: 0 -7px; } }
 .home-search-hero .search-panel { position: relative; z-index: 1; }
 /* Balanced hero spacing (#75): a tight title→tagline gap and a deliberate,
    equal-ish tagline→search-bar gap (was unbalanced — 16px above, 0 below). */
@@ -10710,11 +10717,9 @@ body.home-search.app-mode .topic-layout {
 /* The home search card no longer shows the topic/trend chips at ANY size. */
 body.home-search .home-search-hero .search-panel-starters { display: none; }
 @media (max-width: 640px) {
-  .home-search-hero { padding: 1.4rem 1.15rem 1.5rem; border-radius: 18px; }
-  /* One line on phones too (#7): size down so the full tagline never wraps.
-     Center the tagline on small screens (#37). */
+  .home-search-hero { padding: 0.9rem 0 0; }
   .home-search-hero .search-panel-hero-inner { text-align: center; }
-  .home-search-hero .search-panel-title { font-size: clamp(1rem, 4.6vw, 1.25rem); text-align: center; }
+  .home-search-hero .search-panel-title { font-size: clamp(1.45rem, 6.4vw, 1.8rem); text-align: center; }
   .home-search-hero .search-panel-input { height: 52px; font-size: 1rem; }
 }
 /* The bar fills the card (minus padding), matching how it fills the 600px
@@ -10784,43 +10789,36 @@ body.home-search #home-trending .trending-topics {
   border-color: var(--color-surface-border) !important;
 }
 
-/* Feature strip (#img108, Option D): one quiet promo bar under the search hero —
-   Explore Topics · Prompt Library · Trending Now as compact icon/title/sub rows
-   with a trailing arrow, replacing the two heavy navy promo cards (#img105/106). */
+/* Explore Topics / Prompt Library mini-cards (#img159/160): two separate WHITE
+   cards side by side in the hero area, stacking vertically as space shrinks. */
 .home-featstrip {
-  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
-  background: #f7f9fc; border: 1px solid #e3e9f2; border-radius: 16px;
-  overflow: hidden;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px;
+  background: none; border: none; border-radius: 0; overflow: visible;
 }
 .featstrip-item {
-  display: flex; align-items: center; gap: 0.75rem; min-width: 0;
-  padding: 1.05rem 1.1rem; text-decoration: none;
-  transition: background 0.13s ease;
+  display: flex; align-items: center; gap: 0.85rem; min-width: 0;
+  padding: 1.15rem 1.3rem; text-decoration: none;
+  background: #fff; border: 1px solid var(--color-surface-border); border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(15, 26, 46, 0.04);
+  transition: border-color 0.14s ease, box-shadow 0.14s ease, transform 0.14s ease;
 }
-.featstrip-item + .featstrip-item { border-left: 1px solid #e3e9f2; }
 @media (hover: hover) {
-  .featstrip-item:hover { background: #eff3fa; text-decoration: none; }
+  .featstrip-item:hover {
+    text-decoration: none; transform: translateY(-1px);
+    border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border));
+    box-shadow: 0 10px 24px -16px rgba(15, 26, 46, 0.3);
+  }
   .featstrip-item:hover .featstrip-arrow { color: #26375a; transform: translateX(3px); }
 }
 .featstrip-ic { flex: none; display: inline-flex; color: #26375a; }
 .featstrip-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.featstrip-title { font-family: var(--font-display); font-size: 0.98rem; font-weight: 700; letter-spacing: -0.012em; color: #1a2740; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.featstrip-sub { font-family: var(--font-family); font-size: 0.79rem; font-weight: 500; color: #5a6b86; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.featstrip-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; letter-spacing: -0.012em; color: #1a2740; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.featstrip-sub { font-family: var(--font-family); font-size: 0.8rem; font-weight: 500; color: #5a6b86; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .featstrip-arrow { flex: none; margin-left: auto; display: inline-flex; color: #8fa3c4; transition: transform 0.14s ease, color 0.14s ease; }
-/* Stacked home (<1024): lighter titles, and Trending Now leaves the strip — the
-   full Trending card sits right below it (#img127/128). Two items → two columns. */
-@media (max-width: 1023.98px) {
-  .featstrip-title { font-weight: 600; }
-  .featstrip-item[data-explore-trending] { display: none; }
-  .home-featstrip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-/* Stack to rows when even two-up gets cramped — condensed: no subtext, icon inline
-   with the title, tighter rows (#img117). */
+/* Stack to rows when two-up gets cramped (#img160). */
 @media (max-width: 820px) {
-  .home-featstrip { grid-template-columns: 1fr; }
-  .featstrip-item { padding: 0.78rem 1.15rem; }
-  .featstrip-item + .featstrip-item { border-left: none; border-top: 1px solid #e3e9f2; }
-  .featstrip-sub { display: none; }
+  .home-featstrip { grid-template-columns: 1fr; gap: 12px; }
+  .featstrip-item { padding: 0.95rem 1.15rem; }
 }
 @media (min-width: 1024px) {
   /* Two rows: the three cards span the FULL width across the top, then News Feed
@@ -10839,41 +10837,52 @@ body.home-search #home-trending .trending-topics {
        below (#img113). */
     row-gap: 3.6rem;
   }
-  /* Search spans the full width on top; the feature strip runs full width under it. */
+  /* Hero pushes LEFT with the connected-lines art on the right; the two
+     mini-cards run beneath, spanning both columns (#img154/159). */
   body.home-search .home-cards {
     grid-area: cards;
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "search" "strip";
-    gap: 1.5rem;
-    align-items: stretch;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    grid-template-areas: "search art" "strip strip";
+    gap: 1.6rem 2.5rem;
+    align-items: center;
     min-width: 0;
   }
   body.home-search #home-search-hero { grid-area: search; }
+  body.home-search .home-hero-art { grid-area: art; justify-self: end; align-self: center; width: 100%; max-width: 470px; }
   body.home-search .home-featstrip { grid-area: strip; }
   body.home-search .home-main { grid-area: main; display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
   body.home-search .home-side { grid-area: side; display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
   /* Reset the mobile-stacking `order` so everything lays out in source order. */
   body.home-search #home-search-hero,
   body.home-search .home-featstrip,
+  body.home-search .home-hero-art,
   body.home-search #section-newsfeed,
   body.home-search #home-trending { order: 0; }
-  /* Full-width centered search hero (no chips). Content capped + centered so the
-     bar isn't edge-to-edge across the whole row. */
-  /* The hero is a GRID ITEM spanning "search search"; auto side-margins would shrink
-     it to its content, so centre with justify-self + a min() width instead (#222/#231). */
-  body.home-search .home-search-hero { display: block; padding: 2rem 1.6rem; border-radius: 16px; text-align: center; width: min(100%, 820px); max-width: none; margin: 0; justify-self: center; }
-  body.home-search .home-search-hero .search-panel { max-width: 940px; margin: 0 auto; }
-  body.home-search .home-search-hero .search-panel-hero-inner { text-align: center; }
+  /* LEFT-ALIGNED hero (#img154): big display title, tagline, bar — no card box.
+     The art column carries the visual weight on the right. */
+  body.home-search .home-search-hero { display: block; padding: 0.4rem 0; border-radius: 0; text-align: left; width: 100%; max-width: none; margin: 0; justify-self: stretch; }
+  body.home-search .home-search-hero .search-panel { max-width: none; margin: 0; }
+  body.home-search .home-search-hero .search-panel-hero-inner { text-align: left; padding: 0 0 1.2rem; }
   body.home-search .home-search-hero .search-panel-title {
-    white-space: normal; text-align: center; font-size: 1.5rem; line-height: 1.18; margin: 0 auto 0.4rem;
+    white-space: normal; text-align: left;
+    font-size: clamp(1.9rem, 1.15rem + 1.9vw, 2.55rem); font-weight: 780;
+    letter-spacing: -0.032em; line-height: 1.12; color: #16233d; margin: 0 0 0.6rem;
   }
-  body.home-search .home-search-hero .search-panel-tagline { text-align: center; margin: 0 auto 1.2rem; font-size: 0.95rem; }
+  body.home-search .home-search-hero .search-panel-tagline { text-align: left; margin: 0 0 0.2rem; font-size: 1.04rem; color: #4a5a75; }
   body.home-search .home-search-hero .search-panel-input { height: 52px; font-size: 1rem; }
+  body.home-search .home-search-hero .search-panel-barrow { max-width: 620px; }
   /* Topic/trend chips dropped from the desktop search card. */
   body.home-search .home-search-hero .search-panel-starters { display: none; }
-  /* Feature strip caps to the search hero's width so the two read as one stack. */
-  body.home-search .home-featstrip { width: min(100%, 820px); justify-self: center; }
+  body.home-search .hh-art--wide { display: block; }
+  body.home-search .hh-art--mobile { display: none; }
+}
+/* Stacked (<1024): centered hero, then the mobile art band, then the mini-cards. */
+@media (max-width: 1023.98px) {
+  body.home-search .home-hero-art { order: 1; width: 100%; max-width: 440px; margin: -0.2rem auto 0; }
+  .hh-art--wide { display: none; }
+  .hh-art--mobile { display: block; }
+  body.home-search .home-search-hero .search-panel-title { font-size: clamp(1.5rem, 1.05rem + 2.4vw, 1.95rem); font-weight: 760; color: #16233d; letter-spacing: -0.028em; }
 }
 /* Cards size to content + the page scrolls. */
 body.home-search .layout-section,
@@ -11305,35 +11314,37 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-trigger:hove
 }
 body.home-search #home-trending .trend-card.is-expanded:hover::before { content: none !important; }
 body.home-search #home-trending .trend-card.is-expanded .trend-card-exp { padding-top: 12px; }
-/* Condensed stacked-home trending (#img118): title-only rows with a faint accordion
-   chevron — no summary, no meta, no View-AI-Insights link, no AI legend. The row
-   itself is the toggle; the Close AI Insights label returns while a brief is open. */
+/* ── "What's Trending" (#img168/169): navy header + updated line beneath; rows are
+   navy title + terse summary at EVERY width (no per-trend "Since Xh", no View AI
+   Insights link — the row itself toggles, chevron/X marks the state). ───────── */
+body.home-search #home-trending .trending-topics-title { font-size: 1.15rem; color: #1a2740; }
+.trending-topics-updatedline { margin: 3px 0 0; font-family: var(--font-family); font-size: 0.78rem; font-weight: 500; color: var(--color-text-muted); }
+body.home-search #home-trending .trend-card-title { color: #26375a !important; }
+.aii-nav-dd-trending .trend-card-title { color: #26375a !important; }
+body.home-search #home-trending .trend-card:not(.is-expanded) .trend-card-meta { display: none !important; }
+body.home-search #home-trending .trend-card-summary { display: block !important; }
+body.home-search #home-trending .trend-card:not(.is-expanded) .trend-card-actions { display: none !important; }
+body.home-search #home-trending .trend-card-acc { display: inline-flex; margin-right: 8px; }
+body.home-search #home-trending .trend-card-trigger,
+body.home-search #home-trending .trend-card-trigger:hover { padding: 14px 20px !important; }
+/* Navy filled "View more trending" per the mockup (#img169). */
+body.home-search #home-trending .trend-viewmore { background: #26375a; border-color: #26375a; color: #fff; }
+@media (hover: hover) { body.home-search #home-trending .trend-viewmore:hover { background: #1a2740; border-color: #1a2740; color: #fff; } }
+/* Stacked-home extras: hide the AI legend, tighter grid top. (Row content — navy
+   title + terse summary + chevron — is now the SAME at every width via the
+   What's-Trending rules earlier in this file.) */
 @media (max-width: 1023.98px) {
-  body.home-search #home-trending .trend-card-meta,
-  body.home-search #home-trending .trend-card-summary,
   body.home-search #home-trending .trend-legend-row { display: none !important; }
-  body.home-search #home-trending .trend-card:not(.is-expanded) .trend-card-actions { display: none !important; }
-  body.home-search #home-trending .trend-card-acc { display: inline-flex; }
-  body.home-search #home-trending .trend-card-head { width: 100%; }
-  body.home-search #home-trending .trend-card-title { padding-right: 10px; }
-  body.home-search #home-trending .trend-card.is-expanded .trend-card-acc { transform: rotate(180deg); color: #64748b; }
-  body.home-search #home-trending .trend-card-trigger,
-  body.home-search #home-trending .trend-card-trigger:hover { padding: 14px 20px !important; }
   body.home-search #home-trending .trend-card:first-child .trend-card-trigger { padding-top: 12px !important; }
   body.home-search #home-trending .trend-card-grid { padding-top: 2px !important; }
-  /* Lighter title-row weight once stacked (#img127) — 700 reads heavy without the
-     summary beneath it. */
-  body.home-search #home-trending .trend-card-title { font-weight: 600 !important; }
-  /* Full-height, hard-edged hover — highlight the row exactly BETWEEN its divider
-     ends (20px inset, matching the hairlines) instead of a floating rounded chip
-     or a band that overshoots the lines (#img135/136/146). */
-  body.home-search #home-trending .trend-card:hover::before { inset: 0 20px !important; border-radius: 0 !important; top: 0 !important; }
-  /* Pull the accordion marker in from the hover edge so it isn't riding it. */
-  body.home-search #home-trending .trend-card-acc { margin-right: 8px; }
-  /* Make the head span the row so the accordion marker truly right-aligns (#img135). */
-  body.home-search #home-trending .trend-card-main,
-  body.home-search #home-trending .trend-card-head { width: 100%; }
 }
+/* Row polish at EVERY width: full-width head (right-aligned marker), title clear
+   of the marker, weight 650, flat row hover matching the divider inset (#img146). */
+body.home-search #home-trending .trend-card-main,
+body.home-search #home-trending .trend-card-head { width: 100%; }
+body.home-search #home-trending .trend-card-acc { display: inline-flex; margin-right: 8px; }
+body.home-search #home-trending .trend-card-title { padding-right: 10px; font-weight: 650 !important; }
+body.home-search #home-trending .trend-card:hover::before { inset: 0 20px !important; border-radius: 0 !important; top: 0 !important; }
 /* In-between stacked width (641–1023.98): SIX trends in TWO columns instead of a
    3-row list (#img127). An expanded brief spans both columns. First-row cells both
    drop the tighter first-child top padding for an even grid. */
@@ -11396,25 +11407,25 @@ body.home-search #section-newsfeed .newsfeed-title-main {
    flush to the section edge. The header is NOT sticky on the homepage (the whole
    page scrolls as one). Overrides the earlier boxed-card treatment at both the
    desktop (≥900) and mobile card rules above. */
+/* Homepage news = ONE white container card, "Latest Coverage" header with a
+   quiet updated line, story ROWS with hairline separators inside (#img161). */
 body.home-search #section-newsfeed .newsfeed-card {
-  border: none !important; border-radius: 0 !important; background: none !important;
-  overflow: visible !important; box-shadow: none !important;
+  border: 1px solid var(--color-surface-border) !important; border-radius: 16px !important;
+  background: #fff !important;
+  overflow: hidden !important; box-shadow: none !important;
 }
 body.home-search #section-newsfeed .newsfeed-head {
   position: static !important;
-  margin: 0 0 6px !important; padding: 2px 2px 13px !important;
-  background: none !important; border-radius: 0 !important;
+  margin: 0 !important; padding: 16px 20px 12px !important;
+  background: #fff !important; border-radius: 0 !important;
   border-bottom: 1px solid var(--color-surface-border) !important;
 }
-/* Story rows sit flush (drop the boxed card's inner gutter) — a clean list. */
-body.home-search #section-newsfeed .newsfeed-card .newsfeed-scroll-wrap { padding: 0 0 6px !important; }
-body.home-search #section-newsfeed .news-list { padding: 2px 0 4px !important; }
-body.home-search #section-newsfeed .newsfeed-card .news-card-link,
-body.home-search #section-newsfeed .newsfeed-card .news-card-foot,
-body.home-search #section-newsfeed .newsfeed-card .news-share-panel-inner {
-  padding-left: 2px !important; padding-right: 2px !important;
-}
-body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 2px 12px !important; }
+body.home-search #section-newsfeed .newsfeed-card .newsfeed-scroll-wrap { padding: 2px 20px 4px !important; }
+body.home-search #section-newsfeed .newsfeed-card .news-share-panel-inner { padding-left: 2px !important; padding-right: 2px !important; }
+body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 4px 20px 14px !important; }
+/* "Latest Coverage" title — navy, no icon chip; sub sits right beneath. */
+body.home-search #section-newsfeed .newsfeed-head--home .newsfeed-title { font-size: 1.15rem; color: #1a2740; }
+.newsfeed-updated-sub { margin: 2px 0 0; font-family: var(--font-family); font-size: 0.78rem; font-weight: 500; color: var(--color-text-muted); }
 
 /* Compact 2-row card (category · trending-for, then term) with an attached
    quick-insights dropdown. The .trend-card is just a positioning wrapper. */
@@ -14810,10 +14821,20 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
    The active button still hovers like the others via the base .navbtn:hover. */
 .navbtn[aria-expanded="true"] { background: rgba(255,255,255,0.16); color: #fff; }
 @media (hover: hover) { .navbtn[aria-expanded="true"]:hover { background: rgba(255,255,255,0.24); color: #fff; } }
-.navbtn-ico { display: inline-flex; }
-.navbtn-ico svg { width: 21px; height: 21px; display: block; }
-.navbtn-label { font-size: 0.85rem; font-weight: 600; letter-spacing: -0.004em; white-space: nowrap; line-height: 1; }
+/* TEXT-ONLY main nav (#img166/167): no icons on any nav item at any width — the
+   single exception is Search when space forces it down to an icon (below). */
+.navbtn-ico { display: none; }
+.navbtn-ico svg { width: 20px; height: 20px; display: block; }
+.navbtn-label { font-size: 0.87rem; font-weight: 600; letter-spacing: -0.004em; white-space: nowrap; line-height: 1; }
 .nl-short { display: none; }
+/* Stacked fallback is just tighter text buttons now that icons are gone. */
+.sticky-hero-inner.nav-stacked .navbtn { flex-direction: row; min-width: 0; padding: 7px 10px; }
+.sticky-hero-inner.nav-stacked .navbtn-label { font-size: 0.8rem; }
+/* Deepest squeeze: Search sheds its label and becomes a magnifier icon pinned at
+   the far right of the nav (#img167). */
+.sticky-hero-inner.nav-icon-search #nav-search { order: 99; padding: 7px 9px; }
+.sticky-hero-inner.nav-icon-search #nav-search .navbtn-label { display: none; }
+.sticky-hero-inner.nav-icon-search #nav-search .navbtn-ico { display: inline-flex; }
 
 @media (max-width: 899.98px) {
   /* 561–899 uses the SAME single-row icons-after-title design as the wider screens
@@ -14911,51 +14932,63 @@ body.home-search #section-newsfeed .news-list {
   display: flex !important; flex-direction: column !important; grid-template-columns: none !important;
   gap: 12px !important; padding: 14px 0 6px !important;
 }
+/* ── News = continuous LIST ROWS with near-full-width separators (#img161/162):
+   per-story card boxes retired on home, topic pages, and custom-search results.
+   The row insets 4px inside the container's gutter so the hairline stops just
+   short of the edges. ─────────────────────────────────────────────────────── */
 .topic-band #section-newsfeed .news-card,
-body.home-search #section-newsfeed .news-card {
+body.home-search #section-newsfeed .news-card,
+.search-news-section .news-card {
   display: flex !important; flex-direction: column; margin: 0 !important;
-  border: 1px solid var(--color-surface-border) !important; border-radius: 14px !important;
-  background: #fff !important; box-shadow: 0 1px 2px rgba(15,23,42,.04) !important;
-  padding: 17px 18px !important; transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+  border: none !important; border-radius: 0 !important;
+  background: transparent !important; box-shadow: none !important;
+  padding: 16px 4px !important;
+  border-bottom: 1px solid #e9ecf2 !important;
+  transition: background .13s ease;
 }
-/* cards 1–2 had their top divider removed for the old row look — restore full border */
-.topic-band #section-newsfeed .news-list .news-card:nth-child(1),
-.topic-band #section-newsfeed .news-list .news-card:nth-child(2) { border-top: 1px solid var(--color-surface-border) !important; }
-@media (hover: hover) { .topic-band #section-newsfeed .news-card:hover, body.home-search #section-newsfeed .news-card:hover {
-  border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)) !important;
-  box-shadow: 0 12px 26px -16px rgba(15,23,42,.3) !important; transform: translateY(-1px);
-  background: #fff !important;
-} }
-/* Custom Search news results = the same bordered, spaced cards as the home/topic
-   feed (they weren't scoped to #section-newsfeed, so they rode against the top +
-   each other, #img225). */
-.search-news-section .news-list { display: flex !important; flex-direction: column !important; grid-template-columns: none !important; gap: 12px !important; padding: 14px 0 6px !important; }
-.search-news-section .news-card { display: flex !important; flex-direction: column; margin: 0 !important; border: 1px solid #d5dae2 !important; border-radius: 14px !important; background: #fff !important; box-shadow: 0 1px 2px rgba(15,23,42,.05) !important; padding: 16px 18px !important; cursor: pointer; transition: border-color .15s ease, box-shadow .15s ease; }
-@media (hover: hover) { .search-news-section .news-card:hover { border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)) !important; box-shadow: 0 12px 26px -16px rgba(15,23,42,.3) !important; } }
+.topic-band #section-newsfeed .news-list .news-card:last-child,
+body.home-search #section-newsfeed .news-list .news-card:last-child,
+.search-news-section .news-list .news-card:last-child { border-bottom: none !important; }
+@media (hover: hover) {
+  .topic-band #section-newsfeed .news-card:hover,
+  body.home-search #section-newsfeed .news-card:hover,
+  .search-news-section .news-card:hover {
+    background: color-mix(in srgb, var(--color-primary) 3.5%, transparent) !important;
+    border-color: #e9ecf2 !important; box-shadow: none !important; transform: none;
+  }
+}
+.search-news-section .news-list { display: flex !important; flex-direction: column !important; grid-template-columns: none !important; gap: 0 !important; padding: 6px 0 4px !important; }
+.search-news-section .news-card { cursor: pointer; }
 .search-news-section .news-card .news-card-link { padding: 0 !important; cursor: pointer; }
-.search-news-section .news-card .news-card-foot { margin-top: 13px !important; padding: 0 !important; border-top: none !important; }
 
 .topic-band #section-newsfeed .news-card .news-card-link,
 body.home-search #section-newsfeed .news-card .news-card-link { padding: 0 !important; }
+/* Meta line now sits directly UNDER the title, above the summary (#img163). */
 .topic-band #section-newsfeed .news-card .news-card-foot,
-body.home-search #section-newsfeed .news-card .news-card-foot {
-  margin-top: 13px !important; padding: 0 !important; border-top: none !important;
+body.home-search #section-newsfeed .news-card .news-card-foot,
+.search-news-section .news-card .news-card-foot {
+  margin-top: 7px !important; padding: 0 !important; border-top: none !important;
 }
 .topic-band #section-newsfeed .news-card-title,
 body.home-search #section-newsfeed .news-card-title { font-size: 1.02rem; }
 .topic-band #section-newsfeed .news-card-desc,
-body.home-search #section-newsfeed .news-card-desc { margin-top: 0.45rem; font-size: 0.88rem; }
-/* Cap the story blurb + headline to a comfortable reading measure so on wide
-   screens they wrap to a tidy two lines instead of stretching into one long line. */
+body.home-search #section-newsfeed .news-card-desc { font-size: 0.88rem; }
+/* Titles run the full row now (#img164) — only the summary keeps a reading cap. */
 .topic-band #section-newsfeed .news-card-desc,
 body.home-search #section-newsfeed .news-card-desc { max-width: 90ch; }
 .topic-band #section-newsfeed .news-card-title,
-body.home-search #section-newsfeed .news-card-title { max-width: 82ch; }
+body.home-search #section-newsfeed .news-card-title { max-width: none; }
 
-/* Homepage news feed uses the SAME bordered story cards as topic pages (#img45)
-   — the borderless-hairline treatment was reverted. The revamp399 bordered-card
-   rule above now applies unchallenged; just make sure the list is spaced. */
-body.home-search #section-newsfeed .news-list { display: flex !important; flex-direction: column; gap: 12px !important; padding: 14px 0 6px !important; }
+/* Body row (#img164): summary left, View Story / AI Insights pills right on wide
+   screens; stacks with the buttons side-by-side underneath on small (#img165). */
+.news-card-body { display: flex; align-items: center; gap: 18px; margin-top: 8px; min-width: 0; }
+.news-card-body .news-card-desc { flex: 1 1 auto; min-width: 0; margin: 0; }
+.news-card-body .news-card-actions { flex: none; margin: 0; }
+@media (max-width: 700px) {
+  .news-card-body { flex-direction: column; align-items: stretch; gap: 10px; }
+}
+
+body.home-search #section-newsfeed .news-list { display: flex !important; flex-direction: column; gap: 0 !important; padding: 0 !important; }
 
 /* ═══ News card actions + inline News Insights dropdown (revamp400, Phase 2b) ══
    The whole card is no longer a link — explicit View Story / AI Insights / Web

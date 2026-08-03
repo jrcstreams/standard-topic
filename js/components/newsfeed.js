@@ -732,11 +732,9 @@ export function newsCardHTML(item) {
   if (host && rel) metaParts.push(`<span class="news-card-meta-sep" aria-hidden="true">·</span>`);
   if (rel) metaParts.push(`<time class="news-card-time">${escapeHTML(rel)}</time>`);
 
-  // Layout (#10/#11/#12): title + summary span the FULL card width via a
-  // stretched link (its ::after covers the whole card, so clicking anywhere —
-  // including the meta margins — opens the story, with a full-width hover).
-  // The foot row carries source · time · share on the left and the AI Insights
-  // pill bottom-right; both sit above the stretched link so they stay clickable.
+  // Layout (#img163/164): title on top, then ONE meta line (source · time ·
+  // share), then a body row — summary left, View Story / AI Insights pills to
+  // its right on wide screens (stacking below on phones via CSS).
   return `
     <article class="news-card" data-title="${escapeAttr(title)}" data-desc="${escapeAttr(descText.slice(0, 500))}" data-url="${escapeAttr(url)}" data-date="${escapeAttr(pubDate)}">
       <a class="news-card-link"
@@ -744,7 +742,6 @@ export function newsCardHTML(item) {
          target="_blank"
          rel="noopener noreferrer">
         <h4 class="news-card-title">${escapeHTML(title)}</h4>
-        ${descText ? `<p class="news-card-desc">${escapeHTML(descText)}</p>` : ''}
       </a>
       <div class="news-card-foot">
         <div class="news-card-meta">
@@ -760,9 +757,12 @@ export function newsCardHTML(item) {
           </span>
         </div>
       </div>
-      <div class="news-card-actions">
-        ${url ? `<a class="news-act" href="${escapeAttr(safeUrl(url))}" target="_blank" rel="noopener noreferrer"><span>View Story</span>${NI_VIEW_SVG}</a>` : ''}
-        <button type="button" class="news-act news-act-ai" data-news-panel="ai" aria-expanded="false">${AI_SPARK_FILLED_SVG}<span class="news-act-ai-open">View AI Insights</span><span class="news-act-ai-close">Close AI Insights</span>${AI_CHEV_SVG}<svg class="news-act-ai-x" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <div class="news-card-body">
+        ${descText ? `<p class="news-card-desc">${escapeHTML(descText)}</p>` : ''}
+        <div class="news-card-actions">
+          ${url ? `<a class="news-act" href="${escapeAttr(safeUrl(url))}" target="_blank" rel="noopener noreferrer"><span>View Story</span>${NI_VIEW_SVG}</a>` : ''}
+          <button type="button" class="news-act news-act-ai" data-news-panel="ai" aria-expanded="false">${AI_SPARK_FILLED_SVG}<span class="news-act-ai-open">AI Insights</span><span class="news-act-ai-close">Close Insights</span>${AI_CHEV_SVG}<svg class="news-act-ai-x" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
       </div>
       <div class="news-panel" data-news-panel-body hidden></div>
     </article>
@@ -1011,9 +1011,17 @@ function startFeed(ctx) {
 export function renderNewsFeed(container, topic, isHome) {
   const slug = isHome ? 'home' : (topic && topic.slug);
   const label = isHome ? '' : ((topic && topic.name) || '');
-  // Header (revamp383): big "News Feed" title — NO icon (#316), near-black, no
-  // card-in-card, no search/sort controls.
-  const headHTML = `
+  // Header: topic pages keep "News Feed"; the homepage container reads
+  // "Latest Coverage" with a quiet updated-cadence line, no icon chip (#img161).
+  const headHTML = isHome
+    ? `
+    <div class="newsfeed-head section-card-head newsfeed-head--home">
+      <div class="newsfeed-headtext">
+        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">Latest Coverage</span></h3>
+        <p class="newsfeed-updated-sub">Updated throughout the day</p>
+      </div>
+    </div>`
+    : `
     <div class="newsfeed-head section-card-head">
       <div class="newsfeed-headtext">
         <h3 class="newsfeed-title section-card-title"><span class="newsfeed-logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><line x1="8" y1="8" x2="15" y2="8"/><line x1="8" y1="12" x2="15" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg></span><span class="newsfeed-title-main">News Feed</span></h3>
