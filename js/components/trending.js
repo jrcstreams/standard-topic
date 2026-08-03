@@ -131,7 +131,7 @@ function niStyleLoaderHTML() {
 
 // Google returns trend queries lowercase ("jalen brunson") — title-case them.
 function titleCase(s) {
-  return String(s || '').toLowerCase().replace(/\b([a-z])/g, (m, c) => c.toUpperCase());
+  return decodeTrendQuery(String(s || '')).toLowerCase().replace(/\b([a-z])/g, (m, c) => c.toUpperCase());
 }
 
 // Some older cached briefs leaked the raw "**SUMMARY:** … **DETAIL:** …"
@@ -151,14 +151,21 @@ export function cleanSummary(s) {
 export function tersifySummary(s, query) {
   let t = String(s || '').trim();
   if (!t) return t;
-  const q = String(query || '').trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const lead = new RegExp(
-    `^(?:the\\s+)?(?:search\\s+term\\s+)?["'“”‘’]?${q ? `(?:${q})` : '[^"“”]{1,60}'}["'“”‘’]?\\s+is\\s+trending\\s*(?:right\\s+now\\s*)?(?:because(?:\\s+of)?|due\\s+to|after|following|amid|as|on\\s+account\\s+of)?\\s*[:,–—-]?\\s*`,
-    'i'
-  );
+  // Any leading "<optional term / 'The search term'> is trending <connector>" —
+  // the term may be quoted, unquoted, absent, or entity-mangled, so match a lazy
+  // short window instead of the exact query.
+  const lead = /^(?:the\s+)?(?:search\s+term\s+)?["'“”‘’]?.{0,60}?["'“”‘’]?\s*is\s+trending\s*(?:right\s+now\s*)?(?:because(?:\s+of)?|due\s+to|after|following|amid|as|on\s+account\s+of)?\s*[:,–—-]?\s*/i;
   const stripped = t.replace(lead, '');
   if (stripped !== t && stripped.length > 8) t = stripped.charAt(0).toUpperCase() + stripped.slice(1);
   return t;
+}
+
+// Trend queries occasionally arrive with residual HTML entities from upstream
+// feeds ("emma d&apos;arcy" → "Emma D&Apos;Arcy" after title-casing, #img-prod).
+export function decodeTrendQuery(s) {
+  return String(s || '')
+    .replace(/&apos;/gi, "'").replace(/&#39;/g, "'")
+    .replace(/&quot;/gi, '"').replace(/&amp;/gi, '&');
 }
 
 // Trend cards open one combined, grounded AI brief (see showTrendBrief).
