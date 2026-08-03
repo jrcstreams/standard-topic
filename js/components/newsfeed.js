@@ -1017,7 +1017,7 @@ export function renderNewsFeed(container, topic, isHome) {
     ? `
     <div class="newsfeed-head section-card-head newsfeed-head--home">
       <div class="newsfeed-headtext">
-        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">Latest Coverage</span></h3>
+        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">Today's Top News</span></h3>
         <p class="newsfeed-updated-sub">Updated throughout the day</p>
       </div>
     </div>`

@@ -1375,7 +1375,7 @@ function renderLayout(route) {
   subHeader.innerHTML = '';
   const stayingInHomeDesktop = isHome && !isMobile && wasOnHomeDesktop;
   if (heroEl && !stayingInHomeDesktop) heroEl.innerHTML = '';
-  document.body.classList.remove('sticky-always', 'has-subnav', 'home-mode', 'show-subnav-tabs', 'app-mode', 'custom-mode', 'home-search');
+  document.body.classList.remove('sticky-always', 'has-subnav', 'home-mode', 'show-subnav-tabs', 'app-mode', 'custom-mode', 'home-search', 'home-subnav-on');
 
   // Always render the main sticky bar + the mobile bottom tab nav
   renderStickyHeroBar(siteHeader, route);
@@ -1445,6 +1445,7 @@ function renderLayout(route) {
       </div>
     `;
     wireSubnavPicker(subHeader);
+    setupHomeSubnavReveal();
 
     if (heroEl) heroEl.innerHTML = '';
 
@@ -2366,10 +2367,12 @@ function fitMainNav() {
   }
   if (!inner.classList.contains('nav-stacked') && !fits()) inner.classList.add('nav-stacked');
   if (!fits()) inner.classList.add('nav-short-trending');
+  // Search sheds its label → magnifier icon pinned far right BEFORE any item
+  // drops (#img197). A ≤1100px media rule handles the common case; this stage
+  // covers dynamic overflow at odd widths.
+  if (!fits()) inner.classList.add('nav-icon-search');
   if (!fits()) inner.classList.add('nav-drop-prompts');
   if (!fits()) inner.classList.add('nav-drop-home');
-  // Search sheds its label → magnifier icon pinned far right (#img167).
-  if (!fits()) inner.classList.add('nav-icon-search');
   if (!fits()) inner.classList.add('nav-tiny-title');
 }
 
@@ -2893,48 +2896,50 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           <div class="home-search-hero" id="home-search-hero"></div>
           <div class="home-hero-art" aria-hidden="true">
             <svg class="hh-art hh-art--wide" viewBox="0 0 460 340" fill="none" preserveAspectRatio="xMidYMid meet">
-              <path class="hh-line" d="M28 318 C 120 296, 96 216, 178 196 C 250 178, 268 130, 300 78"/>
-              <path class="hh-line" d="M300 78 C 336 118, 372 138, 394 200"/>
-              <path class="hh-line" d="M178 196 C 206 252, 300 268, 394 200 C 420 182, 434 150, 438 118"/>
-              <circle class="hh-dot" cx="28" cy="318" r="3.5"/>
-              <circle class="hh-dot" cx="252" cy="160" r="3"/>
-              <circle class="hh-dot" cx="438" cy="118" r="3.5"/>
-              <g class="hh-badge hh-badge--trend" transform="translate(300,78)">
+              <path class="hh-line" d="M-130 352 C -40 336, 70 300, 176 204"/>
+              <path class="hh-line" d="M176 204 C 210 150, 240 120, 296 84"/>
+              <path class="hh-line" d="M296 84 C 340 110, 372 140, 398 196"/>
+              <path class="hh-line" d="M398 196 C 420 240, 432 284, 414 336"/>
+              <circle class="hh-dot" cx="227.8" cy="137.3" r="3"/>
+              <circle class="hh-dot" cx="414" cy="336" r="3.5"/>
+              <g transform="translate(296,84)"><g class="hh-badge hh-badge--trend">
                 <circle r="26" fill="#8b87f3"/>
                 <g transform="translate(-11,-11)" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 16 8.5 9.5 12.5 13.5 20 6"/><polyline points="14.5 6 20 6 20 11.5"/></g>
-              </g>
-              <g class="hh-badge hh-badge--zap" transform="translate(394,200)">
+              </g></g>
+              <g transform="translate(398,196)"><g class="hh-badge hh-badge--zap">
                 <circle r="23" fill="#27a06d"/>
                 <path transform="translate(-10,-11)" d="M11.3 1.8 2.7 12.2h7.5l-.9 7.9 8.7-10.4h-7.6z" fill="#fff"/>
-              </g>
-              <g class="hh-badge hh-badge--doc" transform="translate(178,196)">
+              </g></g>
+              <g transform="translate(176,204)"><g class="hh-badge hh-badge--doc">
                 <circle r="23" fill="#f2a33c"/>
                 <g transform="translate(-9.5,-11)" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 1.8h10.2a2 2 0 0 1 2 2v14.4a2 2 0 0 1-2 2H4.8a2 2 0 0 1-2-2V3.6a2 2 0 0 1 .2-1.8z"/><line x1="5.6" y1="6.4" x2="12.4" y2="6.4"/><line x1="5.6" y1="10.2" x2="12.4" y2="10.2"/><line x1="5.6" y1="14" x2="10" y2="14"/></g>
-              </g>
+              </g></g>
             </svg>
-            <svg class="hh-art hh-art--mobile" viewBox="0 0 360 120" fill="none" preserveAspectRatio="xMidYMid meet">
-              <path class="hh-line" d="M10 96 C 60 40, 96 34, 130 62 C 158 86, 176 92, 204 70 C 228 52, 236 44, 258 40"/>
-              <path class="hh-line" d="M258 40 C 288 44, 306 66, 316 88"/>
-              <circle class="hh-dot" cx="10" cy="96" r="3"/>
-              <circle class="hh-dot" cx="204" cy="70" r="2.6"/>
-              <g class="hh-badge hh-badge--trend" transform="translate(96,44)">
+            <svg class="hh-art hh-art--mobile" viewBox="0 0 360 130" fill="none" preserveAspectRatio="xMidYMid meet">
+              <path class="hh-line" d="M-24 120 C 16 92, 50 66, 86 52"/>
+              <path class="hh-line" d="M86 52 C 140 30, 180 96, 238 44"/>
+              <path class="hh-line" d="M238 44 C 270 20, 300 60, 322 96"/>
+              <path class="hh-line" d="M322 96 C 340 118, 362 124, 388 118"/>
+              <circle class="hh-dot" cx="160.5" cy="59.3" r="2.8"/>
+              <circle class="hh-dot" cx="388" cy="118" r="2.8"/>
+              <g transform="translate(86,52)"><g class="hh-badge hh-badge--trend">
                 <circle r="17" fill="#8b87f3"/>
-                <g transform="translate(-8,-8)" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="transform-origin:8px 8px"><polyline points="1.5 12 6 7.5 9 10.5 14.5 4.5"/><polyline points="10.5 4.5 14.5 4.5 14.5 8.5"/></g>
-              </g>
-              <g class="hh-badge hh-badge--zap" transform="translate(258,40)">
+                <g transform="translate(-8,-8)" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5 12 6 7.5 9 10.5 14.5 4.5"/><polyline points="10.5 4.5 14.5 4.5 14.5 8.5"/></g>
+              </g></g>
+              <g transform="translate(238,44)"><g class="hh-badge hh-badge--zap">
                 <circle r="16" fill="#27a06d"/>
                 <path transform="translate(-7,-8)" d="M8.2 1.3 2 8.9h5.4l-.7 5.8 6.3-7.6H7.6z" fill="#fff"/>
-              </g>
-              <g class="hh-badge hh-badge--doc" transform="translate(316,88)">
+              </g></g>
+              <g transform="translate(322,96)"><g class="hh-badge hh-badge--doc">
                 <circle r="16" fill="#f2a33c"/>
                 <g transform="translate(-6.5,-8)" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 1.3h7.4a1.6 1.6 0 0 1 1.6 1.6v10.2a1.6 1.6 0 0 1-1.6 1.6H3.6a1.6 1.6 0 0 1-1.6-1.6z"/><line x1="4" y1="4.6" x2="9" y2="4.6"/><line x1="4" y1="7.3" x2="9" y2="7.3"/><line x1="4" y1="10" x2="7.2" y2="10"/></g>
-              </g>
+              </g></g>
             </svg>
           </div>
           <nav class="home-featstrip" aria-label="Explore Standard Topic">
             <a href="#/" class="featstrip-item" data-explore-topics aria-label="Explore all topics">
               <span class="featstrip-ic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>
-              <span class="featstrip-tx"><span class="featstrip-title">Explore Topics</span><span class="featstrip-sub">Browse 100 topic hubs</span></span>
+              <span class="featstrip-tx"><span class="featstrip-title">Explore Topics</span><span class="featstrip-sub">Browse 100+ topic hubs</span></span>
               <span class="featstrip-arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
             </a>
             <a href="#/prompt-generator" class="featstrip-item" data-explore-prompts aria-label="Open the prompt library">
@@ -4424,6 +4429,23 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     focus() { try { input.focus(); } catch (_) {} } };
   if (term && term.trim()) expand(term);
   return ctl;
+}
+
+// Homepage-only (#img193): the sticky subnav (Home | Browse Topics) stays hidden
+// until the user scrolls PAST the Explore Topics / Prompt Library mini-cards —
+// they carry the topic-picking promo up top, so the subnav would be duplicative.
+let homeSubnavRevealHandler = null;
+function setupHomeSubnavReveal() {
+  if (homeSubnavRevealHandler) { window.removeEventListener('scroll', homeSubnavRevealHandler); homeSubnavRevealHandler = null; }
+  document.body.classList.remove('home-subnav-on');
+  homeSubnavRevealHandler = () => {
+    const strip = document.querySelector('.home-featstrip');
+    if (!strip) return;
+    const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 60;
+    document.body.classList.toggle('home-subnav-on', strip.getBoundingClientRect().bottom <= navH + 4);
+  };
+  window.addEventListener('scroll', homeSubnavRevealHandler, { passive: true });
+  homeSubnavRevealHandler();
 }
 
 // Mobile homepage: fade the search hero as the user scrolls toward the
