@@ -3008,43 +3008,60 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         <div class="home-cards">
           <div class="home-search-hero" id="home-search-hero"></div>
           <div class="home-hero-art" aria-hidden="true">
-            <svg class="hh-art hh-art--wide" viewBox="0 0 460 340" fill="none" preserveAspectRatio="xMidYMid meet">
-              <path class="hh-line" d="M-130 352 C -40 336, 70 300, 176 204"/>
-              <path class="hh-line" d="M176 204 C 210 150, 240 120, 296 84"/>
-              <path class="hh-line" d="M296 84 C 340 110, 372 140, 398 196"/>
-              <path class="hh-line" d="M398 196 C 420 240, 432 284, 414 336"/>
-              <circle class="hh-dot" cx="227.8" cy="137.3" r="3"/>
-              <circle class="hh-dot" cx="414" cy="336" r="3.5"/>
-              <g transform="translate(296,84)"><g class="hh-badge hh-badge--trend">
-                <circle r="26" fill="#8b87f3"/>
+            <!-- The Standard Topic constellation: a navy ✦ hub (the site) with dashed
+                 spokes out to its three offerings — trends, AI insight, news — plus
+                 satellite topic dots on a partial orbit. Static by design. -->
+            <svg class="hh-art hh-art--wide" viewBox="0 0 400 320" fill="none" preserveAspectRatio="xMidYMid meet">
+              <path class="hh-orbit" d="M108 84 A 124 124 0 0 1 305 62"/>
+              <path class="hh-orbit" d="M330 226 A 124 124 0 0 1 156 268"/>
+              <path class="hh-line" d="M210 150 C 244 126, 272 108, 302 92"/>
+              <path class="hh-line" d="M210 150 C 252 172, 280 192, 306 216"/>
+              <path class="hh-line" d="M210 150 C 172 174, 140 194, 108 214"/>
+              <path class="hh-line" d="M210 150 C 190 116, 176 92, 166 64"/>
+              <circle class="hh-dot" cx="166" cy="64" r="5"/>
+              <circle class="hh-dot hh-dot--lite" cx="108" cy="84" r="3.4"/>
+              <circle class="hh-dot hh-dot--lite" cx="330" cy="226" r="3.4"/>
+              <circle class="hh-dot hh-dot--lite" cx="156" cy="268" r="3.4"/>
+              <g transform="translate(210,150)"><g class="hh-hub">
+                <circle r="31" fill="#26375a"/>
+                <path d="M0 -14.5 L3.9 -3.9 14.5 0 3.9 3.9 0 14.5 -3.9 3.9 -14.5 0 -3.9 -3.9 Z" fill="#fff"/>
+              </g></g>
+              <g transform="translate(302,92)"><g class="hh-badge hh-badge--trend">
+                <circle r="25" fill="#8b87f3"/>
                 <g transform="translate(-11,-11)" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 16 8.5 9.5 12.5 13.5 20 6"/><polyline points="14.5 6 20 6 20 11.5"/></g>
               </g></g>
-              <g transform="translate(398,196)"><g class="hh-badge hh-badge--zap">
-                <circle r="23" fill="#27a06d"/>
+              <g transform="translate(306,216)"><g class="hh-badge hh-badge--zap">
+                <circle r="22" fill="#27a06d"/>
                 <path transform="translate(-10,-11)" d="M11.3 1.8 2.7 12.2h7.5l-.9 7.9 8.7-10.4h-7.6z" fill="#fff"/>
               </g></g>
-              <g transform="translate(176,204)"><g class="hh-badge hh-badge--doc">
-                <circle r="23" fill="#f2a33c"/>
+              <g transform="translate(108,214)"><g class="hh-badge hh-badge--doc">
+                <circle r="22" fill="#f2a33c"/>
                 <g transform="translate(-9.5,-11)" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 1.8h10.2a2 2 0 0 1 2 2v14.4a2 2 0 0 1-2 2H4.8a2 2 0 0 1-2-2V3.6a2 2 0 0 1 .2-1.8z"/><line x1="5.6" y1="6.4" x2="12.4" y2="6.4"/><line x1="5.6" y1="10.2" x2="12.4" y2="10.2"/><line x1="5.6" y1="14" x2="10" y2="14"/></g>
               </g></g>
             </svg>
-            <svg class="hh-art hh-art--mobile" viewBox="0 0 360 130" fill="none" preserveAspectRatio="xMidYMid meet">
-              <path class="hh-line" d="M-24 120 C 16 92, 50 66, 86 52"/>
-              <path class="hh-line" d="M86 52 C 140 30, 180 96, 238 44"/>
-              <path class="hh-line" d="M238 44 C 270 20, 300 60, 322 96"/>
-              <path class="hh-line" d="M322 96 C 340 118, 362 124, 388 118"/>
-              <circle class="hh-dot" cx="160.5" cy="59.3" r="2.8"/>
-              <circle class="hh-dot" cx="388" cy="118" r="2.8"/>
-              <g transform="translate(86,52)"><g class="hh-badge hh-badge--trend">
+            <svg class="hh-art hh-art--mobile" viewBox="0 0 360 120" fill="none" preserveAspectRatio="xMidYMid meet">
+              <path class="hh-orbit" d="M96 22 A 110 110 0 0 1 268 26"/>
+              <path class="hh-line" d="M180 60 C 148 52, 116 46, 84 44"/>
+              <path class="hh-line" d="M180 60 C 214 50, 246 42, 276 38"/>
+              <path class="hh-line" d="M180 60 C 152 76, 124 88, 92 96"/>
+              <path class="hh-line" d="M180 60 C 212 74, 244 84, 278 90"/>
+              <circle class="hh-dot" cx="278" cy="90" r="4.4"/>
+              <circle class="hh-dot hh-dot--lite" cx="96" cy="22" r="3"/>
+              <circle class="hh-dot hh-dot--lite" cx="268" cy="26" r="3"/>
+              <g transform="translate(180,60)"><g class="hh-hub">
+                <circle r="24" fill="#26375a"/>
+                <path d="M0 -11.5 L3.1 -3.1 11.5 0 3.1 3.1 0 11.5 -3.1 3.1 -11.5 0 -3.1 -3.1 Z" fill="#fff"/>
+              </g></g>
+              <g transform="translate(84,44)"><g class="hh-badge hh-badge--trend">
                 <circle r="17" fill="#8b87f3"/>
                 <g transform="translate(-8,-8)" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5 12 6 7.5 9 10.5 14.5 4.5"/><polyline points="10.5 4.5 14.5 4.5 14.5 8.5"/></g>
               </g></g>
-              <g transform="translate(238,44)"><g class="hh-badge hh-badge--zap">
-                <circle r="16" fill="#27a06d"/>
+              <g transform="translate(276,38)"><g class="hh-badge hh-badge--zap">
+                <circle r="15" fill="#27a06d"/>
                 <path transform="translate(-7,-8)" d="M8.2 1.3 2 8.9h5.4l-.7 5.8 6.3-7.6H7.6z" fill="#fff"/>
               </g></g>
-              <g transform="translate(322,96)"><g class="hh-badge hh-badge--doc">
-                <circle r="16" fill="#f2a33c"/>
+              <g transform="translate(92,96)"><g class="hh-badge hh-badge--doc">
+                <circle r="15" fill="#f2a33c"/>
                 <g transform="translate(-6.5,-8)" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 1.3h7.4a1.6 1.6 0 0 1 1.6 1.6v10.2a1.6 1.6 0 0 1-1.6 1.6H3.6a1.6 1.6 0 0 1-1.6-1.6z"/><line x1="4" y1="4.6" x2="9" y2="4.6"/><line x1="4" y1="7.3" x2="9" y2="7.3"/><line x1="4" y1="10" x2="7.2" y2="10"/></g>
               </g></g>
             </svg>

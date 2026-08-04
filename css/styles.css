@@ -10670,15 +10670,11 @@ body.home-search.app-mode .topic-layout {
 .hh-art--mobile { display: none; }
 .hh-line { stroke: #c5cde0; stroke-width: 1.7; stroke-dasharray: 1.5 7.5; stroke-linecap: round; fill: none; }
 .hh-dot { fill: #c5cde0; }
-/* Gentle center-locked pulse — scaling around each badge's own center keeps the
-   icon EXACTLY on its path join at all times (#img181). */
-.hh-badge { filter: drop-shadow(0 7px 14px rgba(15, 26, 46, 0.16)); transform-box: fill-box; transform-origin: center; }
-@media (prefers-reduced-motion: no-preference) {
-  .hh-badge { animation: hhPulse 6s ease-in-out infinite; }
-  .hh-badge--zap { animation-delay: -2s; }
-  .hh-badge--doc { animation-delay: -4s; }
-}
-@keyframes hhPulse { 0%, 100% { scale: 1; } 50% { scale: 1.09; } }
+/* Fully static (#img223) — the constellation reads as a diagram, not a toy. */
+.hh-badge { filter: drop-shadow(0 6px 13px rgba(15, 26, 46, 0.16)); }
+.hh-hub { filter: drop-shadow(0 9px 18px rgba(22, 35, 61, 0.28)); }
+.hh-orbit { stroke: #d3dae8; stroke-width: 1.5; stroke-dasharray: 1.5 8; stroke-linecap: round; fill: none; }
+.hh-dot--lite { fill: #d3dae8; }
 .home-search-hero .search-panel { position: relative; z-index: 1; }
 /* Balanced hero spacing (#75): a tight title→tagline gap and a deliberate,
    equal-ish tagline→search-bar gap (was unbalanced — 16px above, 0 below). */
@@ -10855,7 +10851,7 @@ body.home-search #home-trending .trending-topics {
     min-width: 0;
   }
   body.home-search #home-search-hero { grid-area: search; }
-  body.home-search .home-hero-art { grid-area: art; justify-self: end; align-self: start; width: 100%; max-width: 470px; margin-top: 0.4rem; }
+  body.home-search .home-hero-art { grid-area: art; justify-self: end; align-self: center; width: 100%; max-width: 400px; margin-top: 0; }
   body.home-search .home-featstrip { grid-area: strip; }
   body.home-search .home-main { grid-area: main; display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
   body.home-search .home-side { grid-area: side; display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
@@ -10887,9 +10883,9 @@ body.home-search #home-trending .trending-topics {
    Bigger title/tagline through this range (#img194/195); the art band runs (near)
    full width with its lines bleeding past the edges, tucked closer to the search. */
 @media (max-width: 1023.98px) {
-  body.home-search .home-hero-art { order: 1; width: 100%; max-width: none; margin: -0.5rem 0 0; overflow: hidden; padding: 0.4rem 0; }
+  body.home-search .home-hero-art { order: 1; width: 100%; max-width: 470px; margin: -0.7rem auto 0; overflow: visible; padding: 0; }
   .hh-art--wide { display: none; }
-  .hh-art--mobile { display: block; max-width: 560px; margin: 0 auto; overflow: visible; }
+  .hh-art--mobile { display: block; overflow: visible; }
   body.home-search .home-search-hero .search-panel-title { font-size: clamp(1.7rem, 1.1rem + 3vw, 2.25rem); font-weight: 760; color: #16233d; letter-spacing: -0.028em; }
   body.home-search .home-search-hero .search-panel-tagline { font-size: 1.06rem; }
 }
