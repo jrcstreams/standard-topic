@@ -731,7 +731,19 @@ export function newsCardHTML(item) {
   // is handled by CSS line-clamp so the full text stays in the DOM.
   const tmp = document.createElement('div');
   tmp.innerHTML = descRaw;
-  const descText = (tmp.textContent || '').trim();
+  const descFull = (tmp.textContent || '').trim();
+  // #img245: end the preview at a SENTENCE boundary — run past the soft cap to
+  // finish the sentence unless that would be egregious; only then ellipsize.
+  const sentenceTrim = (t, soft = 150, hard = 300) => {
+    if (t.length <= soft) return t;
+    const ends = [];
+    const re = /[.!?](?:["'\u2019\u201d)\]]*)(?=\s|$)/g; let m;
+    while ((m = re.exec(t))) ends.push(m.index + m[0].length);
+    let cut = 0;
+    for (const e of ends) { if (e <= hard) cut = e; if (e >= soft && e <= hard) { cut = e; break; } if (e > hard) break; }
+    return cut >= 60 ? t.slice(0, cut).trim() : (t.slice(0, soft).trim() + '\u2026');
+  };
+  const descText = sentenceTrim(descFull);
 
   const metaParts = [];
   if (host) metaParts.push(url
@@ -744,7 +756,7 @@ export function newsCardHTML(item) {
   // share), then a body row — summary left, View Story / AI Insights pills to
   // its right on wide screens (stacking below on phones via CSS).
   return `
-    <article class="news-card" data-title="${escapeAttr(title)}" data-desc="${escapeAttr(descText.slice(0, 500))}" data-url="${escapeAttr(url)}" data-date="${escapeAttr(pubDate)}">
+    <article class="news-card" data-title="${escapeAttr(title)}" data-desc="${escapeAttr(descFull.slice(0, 500))}" data-url="${escapeAttr(url)}" data-date="${escapeAttr(pubDate)}">
       <a class="news-card-link"
          href="${escapeAttr(safeUrl(url))}"
          target="_blank"

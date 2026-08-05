@@ -2466,7 +2466,7 @@ function documentTitleFor(route) {
 function fitMainNav() {
   const inner = document.querySelector('.sticky-hero-inner');
   if (!inner) return;
-  inner.classList.remove('nav-stacked', 'nav-short-trending', 'nav-drop-prompts', 'nav-drop-home', 'nav-icon-search', 'nav-tiny-title');
+  inner.classList.remove('nav-stacked', 'nav-short-trending', 'nav-small-text', 'nav-drop-prompts', 'nav-drop-home', 'nav-icon-search', 'nav-tiny-title');
   const fits = () => inner.scrollWidth <= inner.clientWidth + 1;
   // Buttons start HORIZONTAL (icon+label inline, left-grouped after the title). Break
   // to STACKED (icon over label, right-aligned) EARLY — before the horizontal row
@@ -2480,12 +2480,12 @@ function fitMainNav() {
   }
   if (!inner.classList.contains('nav-stacked') && !fits()) inner.classList.add('nav-stacked');
   if (!fits()) inner.classList.add('nav-short-trending');
-  // Search sheds its label → magnifier icon pinned far right BEFORE any item
-  // drops (#img197). A ≤1100px media rule handles the common case; this stage
-  // covers dynamic overflow at odd widths.
+  // Squeeze order (#img235): smaller nav text → drop Home → Search collapses to
+  // its light icon button → drop Prompts → shrink the title.
+  if (!fits()) inner.classList.add('nav-small-text');
+  if (!fits()) inner.classList.add('nav-drop-home');
   if (!fits()) inner.classList.add('nav-icon-search');
   if (!fits()) inner.classList.add('nav-drop-prompts');
-  if (!fits()) inner.classList.add('nav-drop-home');
   if (!fits()) inner.classList.add('nav-tiny-title');
 }
 
@@ -2555,10 +2555,6 @@ function renderStickyHeroBar(container, route) {
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
           <span class="navbtn-label">Home</span>
         </a>
-        <button type="button" class="navbtn" id="nav-search" aria-label="Search">
-          <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-          <span class="navbtn-label">Search</span>
-        </button>
         <button type="button" class="navbtn" id="nav-topics" aria-label="Topics" aria-haspopup="dialog">
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>
           <span class="navbtn-label">Topics</span>
@@ -2570,6 +2566,10 @@ function renderStickyHeroBar(container, route) {
         <button type="button" class="navbtn" id="nav-prompts" aria-label="Prompts" aria-haspopup="dialog" aria-expanded="false">
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
           <span class="navbtn-label">Prompts</span>
+        </button>
+        <button type="button" class="navbtn" id="nav-search" aria-label="Search">
+          <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+          <span class="navbtn-label">Search</span>
         </button>
       </div>
     </div>
@@ -3007,72 +3007,33 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         ${bodyTabsRow({ showSearchTrends: true })}
         <div class="home-cards">
           <div class="home-search-hero" id="home-search-hero"></div>
-          <div class="home-hero-art" aria-hidden="true">
-            <!-- The Standard Topic constellation: a navy ✦ hub (the site) with dashed
-                 spokes out to its three offerings — trends, AI insight, news — plus
-                 satellite topic dots on a partial orbit. Static by design. -->
-            <svg class="hh-art hh-art--wide" viewBox="0 0 400 250" fill="none" preserveAspectRatio="xMidYMid meet">
-              <path class="hh-line" d="M205 125 C 244 100, 276 80, 312 60"/>
-              <path class="hh-line" d="M205 125 C 250 148, 284 166, 318 188"/>
-              <path class="hh-line" d="M205 125 C 168 144, 132 160, 98 176"/>
-              <g transform="translate(205,125)"><g class="hh-hub">
-                <circle r="31" fill="#26375a"/>
-                <g transform="translate(-11,-11)" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="0" y="0" width="9" height="9" rx="1.6"/><rect x="13" y="0" width="9" height="9" rx="1.6"/><rect x="0" y="13" width="9" height="9" rx="1.6"/><rect x="13" y="13" width="9" height="9" rx="1.6"/></g>
-              </g></g>
-              <g transform="translate(312,60)"><g class="hh-badge hh-badge--trend">
-                <circle r="24" fill="#8b87f3"/>
-                <g transform="translate(-11,-11)" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 16 8.5 9.5 12.5 13.5 20 6"/><polyline points="14.5 6 20 6 20 11.5"/></g>
-              </g></g>
-              <g transform="translate(318,188)"><g class="hh-badge hh-badge--zap">
-                <circle r="22" fill="#27a06d"/>
-                <path d="M0 -11 L3 -3 11 0 3 3 0 11 -3 3 -11 0 -3 -3 Z" fill="#fff"/>
-              </g></g>
-              <g transform="translate(98,176)"><g class="hh-badge hh-badge--doc">
-                <circle r="22" fill="#f2a33c"/>
-                <g transform="translate(-9.5,-11)" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 1.8h10.2a2 2 0 0 1 2 2v14.4a2 2 0 0 1-2 2H4.8a2 2 0 0 1-2-2V3.6a2 2 0 0 1 .2-1.8z"/><line x1="5.6" y1="6.4" x2="12.4" y2="6.4"/><line x1="5.6" y1="10.2" x2="12.4" y2="10.2"/><line x1="5.6" y1="14" x2="10" y2="14"/></g>
-              </g></g>
-            </svg>
-            <svg class="hh-art hh-art--mobile" viewBox="0 0 360 112" fill="none" preserveAspectRatio="xMidYMid meet">
-              <path class="hh-line" d="M180 52 C 148 46, 116 42, 86 40"/>
-              <path class="hh-line" d="M180 52 C 214 44, 244 38, 272 34"/>
-              <path class="hh-line" d="M180 52 C 152 68, 126 80, 98 88"/>
-              <g transform="translate(180,52)"><g class="hh-hub">
-                <circle r="23" fill="#26375a"/>
-                <g transform="translate(-8.5,-8.5)" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="0" y="0" width="7" height="7" rx="1.3"/><rect x="10" y="0" width="7" height="7" rx="1.3"/><rect x="0" y="10" width="7" height="7" rx="1.3"/><rect x="10" y="10" width="7" height="7" rx="1.3"/></g>
-              </g></g>
-              <g transform="translate(86,40)"><g class="hh-badge hh-badge--trend">
-                <circle r="16" fill="#8b87f3"/>
-                <g transform="translate(-8,-8)" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="1.5 12 6 7.5 9 10.5 14.5 4.5"/><polyline points="10.5 4.5 14.5 4.5 14.5 8.5"/></g>
-              </g></g>
-              <g transform="translate(272,34)"><g class="hh-badge hh-badge--zap">
-                <circle r="15" fill="#27a06d"/>
-                <path d="M0 -8 L2.2 -2.2 8 0 2.2 2.2 0 8 -2.2 2.2 -8 0 -2.2 -2.2 Z" fill="#fff"/>
-              </g></g>
-              <g transform="translate(98,88)"><g class="hh-badge hh-badge--doc">
-                <circle r="15" fill="#f2a33c"/>
-                <g transform="translate(-6.5,-8)" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 1.3h7.4a1.6 1.6 0 0 1 1.6 1.6v10.2a1.6 1.6 0 0 1-1.6 1.6H3.6a1.6 1.6 0 0 1-1.6-1.6z"/><line x1="4" y1="4.6" x2="9" y2="4.6"/><line x1="4" y1="7.3" x2="9" y2="7.3"/><line x1="4" y1="10" x2="7.2" y2="10"/></g>
-              </g></g>
-            </svg>
+          <div class="home-featstrip home-featstrip--rich" aria-label="Explore Standard Topic">
+            <div class="featstrip-item featstrip-item--rich">
+              <button type="button" class="featstrip-head" data-explore-topics aria-label="Explore all topics">
+                <span class="featstrip-ic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>
+                <span class="featstrip-tx"><span class="featstrip-title">Explore Topics</span><span class="featstrip-sub">Browse 100+ topic hubs</span></span>
+                <span class="featstrip-arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
+              </button>
+              <div class="featstrip-previews" data-fs-topics></div>
+            </div>
+            <div class="featstrip-item featstrip-item--rich">
+              <button type="button" class="featstrip-head" data-explore-prompts aria-label="Open the prompt library">
+                <span class="featstrip-ic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
+                <span class="featstrip-tx"><span class="featstrip-title">Prompt Library</span><span class="featstrip-sub">Ready-made for every topic</span></span>
+                <span class="featstrip-arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
+              </button>
+              <div class="featstrip-previews" data-fs-prompts></div>
+            </div>
           </div>
-          <nav class="home-featstrip" aria-label="Explore Standard Topic">
-            <a href="#/" class="featstrip-item" data-explore-topics aria-label="Explore all topics">
-              <span class="featstrip-ic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>
-              <span class="featstrip-tx"><span class="featstrip-title">Explore Topics</span><span class="featstrip-sub">Browse 100+ topic hubs</span></span>
-              <span class="featstrip-arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
-            </a>
-            <a href="#/prompt-generator" class="featstrip-item" data-explore-prompts aria-label="Open the prompt library">
-              <span class="featstrip-ic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
-              <span class="featstrip-tx"><span class="featstrip-title">Prompt Library</span><span class="featstrip-sub">Ready-made for every topic</span></span>
-              <span class="featstrip-arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
-            </a>
-          </nav>
         </div>
-        <div class="home-main">
-          <section class="layout-section" id="section-newsfeed"></section>
+        <div class="home-sections">
+          <div class="home-main">
+            <section class="layout-section" id="section-newsfeed"></section>
+          </div>
+          <aside class="home-side">
+            <section class="home-trending" id="home-trending"></section>
+          </aside>
         </div>
-        <aside class="home-side">
-          <section class="home-trending" id="home-trending"></section>
-        </aside>
       </div>
     `;
     homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });
@@ -3090,6 +3051,37 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       e.preventDefault();
       openPromptsNavDropdown();
     });
+    // Preview rows inside the two cards (#img231): featured topic chips + the
+    // first three Featured Prompts (same data file as the Prompt Library).
+    {
+      const tWrap = container.querySelector('[data-fs-topics]');
+      if (tWrap) {
+        let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 5); } catch (_) {}
+        tWrap.innerHTML = feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="fs-chip">${topicIconSVG(t.icon || 'globe', 'fs-chip-ic')}<span>${escapeHTML(t.name)}</span></a>`).join('');
+      }
+      const pWrap = container.querySelector('[data-fs-prompts]');
+      if (pWrap) {
+        fetchWithTimeout('/data/featured-prompts.json', { headers: { Accept: 'application/json' } })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((cfg) => {
+            if (!cfg || !Array.isArray(cfg.featured)) return;
+            const picks = [];
+            for (const f of cfg.featured) {
+              if (picks.length >= 3) break;
+              let sc = []; try { sc = getShortcutsForTopic(f.topic) || []; } catch (_) { continue; }
+              const sMatch = sc.find((x) => x && x.name === f.name);
+              const t = getTopicBySlug(f.topic);
+              if (sMatch && sMatch.prompt) picks.push({ s: sMatch, tn: t ? t.name : '' });
+            }
+            pWrap.innerHTML = picks.map((pk, i) => `<button type="button" class="fs-chip fs-chip--prompt" data-fs-prompt="${i}"><svg class="fs-chip-spark" viewBox="0 0 24 24" width="12" height="12" fill="#2563eb" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg><span>${escapeHTML(pk.s.name)}</span></button>`).join('');
+            pWrap.querySelectorAll('[data-fs-prompt]').forEach((b) => b.addEventListener('click', (e) => {
+              e.stopPropagation();
+              const pk = picks[Number(b.dataset.fsPrompt)]; if (!pk) return;
+              window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: pk.s.prompt, topicName: pk.tn, name: pk.s.name, count: 1 } }));
+            }));
+          }).catch(() => {});
+      }
+    }
   } else if (topic && !isCustom) {
     // Topic pages: ONE cohesive tabbed "Paths" package at every width. A second
     // subnav (tab strip) below the title — News · Catch Up · Deep Dive · 101 Info
