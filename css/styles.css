@@ -16137,39 +16137,32 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title),
 /* ── Insight sections as bordered CARDS (#img599). Stronger border + a soft shadow
    so each briefing reads as a discrete card and the tab feels less like one wall of
    text on load (#img59). ─────────────────────────────────────────────────────── */
+/* BRIEFING layout (#img262): each insight reads as a story — a headline, a quiet
+   provenance line, the prose, then a Sources toggle — with a hairline separating
+   consecutive stories. No card boxes. */
 .aii-bview-summary .im-msec {
-  background: #fff; border: 1px solid #d3dbe8; border-radius: 14px;
-  box-shadow: 0 2px 12px -8px rgba(15, 26, 46, 0.14);
-  padding: 20px 22px; margin: 0 0 18px;
+  background: none; border: none; border-radius: 0; box-shadow: none;
+  padding: 22px 2px; margin: 0;
+  border-bottom: 1px solid #e6ebf2;
 }
-/* Cards with a header band: the band + body carry the padding, so zero the shell
-   and clip it so the tinted header rounds into the top corners (#img4/#img7). */
-.aii-bview-summary .im-msec:has(.im-msec-header) { padding: 0; overflow: hidden; }
-.aii-bview-summary .im-msec:has(.im-msec-header):first-child { padding-top: 0; }
-/* HEADER zone — faint blue tint + a divider under it. Holds the headline title and
-   the AI-generated / updated provenance labels; everything below the divider is body. */
-/* Header content is vertically centred in the band: the title's own line-box leading
-   makes an equal 15/15 look top-heavy, so the padding is trimmed to 14/13 and the
-   title uses a tight line-height, balancing the space above the title against the
-   space below the labels down to the divider. */
-.im-msec-header { padding: 14px 22px 13px; background: #f4f7fc; border-bottom: 1px solid #e3e9f3; }
+.aii-bview-summary .im-msec:first-child { padding-top: 6px; }
+.aii-bview-summary .im-msec:last-child { border-bottom: none; }
+.aii-bview-summary .im-msec:has(.im-msec-header) { padding: 22px 2px; overflow: visible; }
+.aii-bview-summary .im-msec:has(.im-msec-header):first-child { padding-top: 6px; }
+/* Story headline — no tinted band; a strong navy display title. */
+.im-msec-header { padding: 0; background: none; border-bottom: none; margin: 0 0 4px; }
 .im-msec-header .im-msec-name {
-  margin: 0; font-family: var(--font-display); font-size: 1.12rem; font-weight: 700;
-  letter-spacing: -0.018em; line-height: 1.25; color: #26375a;
+  margin: 0; font-family: var(--font-display); font-size: 1.16rem; font-weight: 700;
+  letter-spacing: -0.018em; line-height: 1.28; color: #1a2740;
 }
-.im-msec-header .im-sec-aitag-row { margin: 10px 0 0 !important; }
-/* Provenance row moved INTO the card body (#img66): sits above the text with a
-   little separation, below the header band. */
-.im-sec-aitag-row--inbody { margin: 0 0 14px !important; }
-.im-msec-body { padding: 17px 22px 19px; }
-/* Body renders as one continuous block (no bold lead-in) — a readable slate for the
-   whole briefing, a touch softer than the near-black headline (#img11). */
-.aii-bview-summary .aii-sec-body { color: #47536a; }
-/* Mobile: scale the card headline down a smidge so long titles don't dominate. */
+/* Provenance line under the headline. */
+.im-sec-aitag-row--inbody { margin: 0 0 11px !important; }
+.im-msec-body { padding: 0; }
+/* Body prose — a readable slate. */
+.aii-bview-summary .aii-sec-body { color: #47536a; line-height: 1.6; }
 @media (max-width: 600px) {
-  .im-msec-header .im-msec-name { font-size: 1.12rem; }
-  .im-msec-header { padding: 13px 18px 12px; }
-  .im-msec-body { padding: 15px 18px 17px; }
+  .im-msec-header .im-msec-name { font-size: 1.08rem; }
+  .aii-bview-summary .im-msec { padding: 18px 2px; }
 }
 /* Show more is a quiet pill inside the body — reads as a deliberate control, not a
    bare link, and never underlines on hover. */

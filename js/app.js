@@ -1225,11 +1225,11 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
         // Intro text + separator dropped (#img74): the accordion headers carry the
         // explanation; a top spacer keeps breathing room below the subnav.
         const efHead = `<div class="aii-tabhead-spacer"></div>`;
-        // Grey-band section header matching the Prompts tab (.aii-secacc): title +
-        // subtext atop the clipped accordion card, open by default and collapsible.
-        const EF_CHEV = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+        // Section header matching Trending / Topics / Prompts (#img261): title +
+        // subtext over a hairline — NOT a grey collapsible band. The source-category
+        // accordions (rounded, clipped list) live directly beneath.
         const efBody = exploreFurtherHTML({ prompt: efPrompt, webTerm: topic.name, name: topic.name });
-        const efSec = `<details class="aii-secacc ef-secacc" open><summary class="aii-secacc-sum"><span class="aii-secacc-tx"><span class="aii-secacc-title">AI Models &amp; Web Sources</span><span class="aii-secacc-sub">External AI models plus web sources across search, social, video and fact-checking.</span></span><span class="aii-secacc-chev">${EF_CHEV}</span></summary><div class="aii-secacc-body">${efBody}</div></details>`;
+        const efSec = `<section class="aii-fi-sec"><div class="aii-fi-sechead"><h3 class="aii-fi-sectitle">Explore Further</h3><p class="aii-fi-secsub">Send ${escapeHTML(topic.name)} to an AI model, or open it across search, social, video and fact-checking sources.</p></div>${efBody}</section>`;
         host.innerHTML = efHead + efSec;
         wireExploreFurther(host);
         return;

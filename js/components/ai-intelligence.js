@@ -1055,19 +1055,19 @@ export function renderAIIntelligence(container, scope) {
     if (scope.sectionAccordions) {
       // Intro text + separator dropped (#img75) — spacer keeps the gap to the subnav.
       const head = `<div class="aii-tabhead-spacer"></div>`;
-      // Section accordion — grey band header (no icon), title + subtext + chevron;
-      // the nested prompt accordions live inside, indented. (No count badge, #img656.)
-      const secAcc = (title, sub, listHTML, open) => listHTML
-        ? `<details class="aii-secacc"${open ? ' open' : ''}><summary class="aii-secacc-sum"><span class="aii-secacc-tx"><span class="aii-secacc-title">${esc(title)}</span><span class="aii-secacc-sub">${esc(sub)}</span></span><span class="aii-secacc-chev">${CHEV}</span></summary><div class="aii-secacc-body">${listHTML}</div></details>`
+      // Section header matching Trending / Topics (#img257-259): title + subtext over
+      // a hairline — NOT a grey collapsible band. The individual prompts stay
+      // accordions (rounded, clipped list) inside each section.
+      const secHead = (title, sub, listHTML) => listHTML
+        ? `<section class="aii-fi-sec"><div class="aii-fi-sechead"><h3 class="aii-fi-sectitle">${esc(title)}</h3><p class="aii-fi-secsub">${esc(sub)}</p></div>${listHTML}</section>`
         : '';
       if (!specific.length || !evergreen.length) {
         const only = specific.length ? specific : evergreen;
         return head + (furtherInsightsHTML(only) || '<p class="aii-empty">No prompts available for this topic.</p>');
       }
-      // Both sections open by default (#img656).
       return head
-        + secAcc('Topic-Specific Prompts', `Ready-made prompts tuned to ${topicLabel}.`, furtherInsightsHTML(specific), true)
-        + secAcc('Evergreen Prompts', 'Timeless prompts that work across any topic.', furtherInsightsHTML(evergreen), true);
+        + secHead('Topic-Specific Prompts', `Ready-made prompts tuned to ${topicLabel}.`, furtherInsightsHTML(specific))
+        + secHead('Evergreen Prompts', 'Timeless prompts that work across any topic.', furtherInsightsHTML(evergreen));
     }
     // No section icons (revamp): headers are just title + subtext over a rule
     // slightly heavier than the site hairlines, so each reads as a clear divider.
