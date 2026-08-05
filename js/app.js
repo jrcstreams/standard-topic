@@ -815,44 +815,28 @@ function wirePromptsDropdown(panel, initialView) {
     root.innerHTML = `
       <div class="prompts-home">
         <div class="ph-hero">
-          <div class="ph-hero-tx">
-            <h2 class="ph-title">Ask better questions.</h2>
-            <p class="ph-sub">Expert-built prompts for 100+ topics, ready to run in ChatGPT, Claude, Gemini and more — or compose your own from scratch.</p>
-          </div>
-          <div class="ph-hero-art" aria-hidden="true">
-            <svg viewBox="0 0 220 150" fill="none">
-              <path class="ph-arc" d="M28 128 C 52 84, 92 62, 138 58"/>
-              <path class="ph-arc" d="M138 58 C 168 56, 190 72, 198 96"/>
-              <circle class="ph-node" cx="28" cy="128" r="3.4"/>
-              <circle class="ph-node" cx="198" cy="96" r="3.4"/>
-              <g transform="translate(138,58)"><g class="ph-chip">
-                <rect x="-30" y="-30" width="60" height="60" rx="16" fill="#26375a"/>
-                <path d="M0 -14 L3.6 -3.9 14 0 3.6 3.9 0 14 -3.6 3.9 -14 0 -3.6 -3.9 Z" fill="#fff"/>
-              </g></g>
-              <g transform="translate(64,96)"><circle r="14" fill="#8b87f3"/><path transform="translate(-6,-6.5)" d="M6.8 1.1 1.6 7.4h4.5l-.6 4.8 5.2-6.3H6.2z" fill="#fff"/></g>
-              <g transform="translate(190,40)"><circle r="11" fill="#f2a33c"/><g transform="translate(-5,-6)" stroke="#fff" stroke-width="1.5" stroke-linecap="round"><path d="M1.5 1h5.5a1.4 1.4 0 0 1 1.4 1.4v7.8a1.4 1.4 0 0 1-1.4 1.4H2.9a1.4 1.4 0 0 1-1.4-1.4z"/><line x1="3" y1="3.6" x2="7" y2="3.6"/><line x1="3" y1="5.9" x2="7" y2="5.9"/><line x1="3" y1="8.2" x2="5.6" y2="8.2"/></g></g>
-            </svg>
-          </div>
+          <h2 class="ph-title">Ask better questions.</h2>
+          <p class="ph-sub">Expert-built prompts for 100+ topics, ready to run in ChatGPT, Claude, Gemini and more.</p>
         </div>
-        <button type="button" class="featstrip-item ph-build" data-prompt-build>
-          <span class="featstrip-ic">${PROMPTS_BUILD_IC}</span>
-          <span class="featstrip-tx"><span class="featstrip-title">Build a Custom Prompt</span><span class="featstrip-sub">Compose your own — topics, scope, output style &amp; citations</span></span>
-          <span class="featstrip-arrow" aria-hidden="true">${AIIDD_ARROW}</span>
+        <button type="button" class="ph-build" data-prompt-build>
+          <span class="ph-build-ic">${PROMPTS_BUILD_IC}</span>
+          <span class="ph-build-tx"><span class="ph-build-title">Build a Custom Prompt</span><span class="ph-build-sub">Compose your own — topics, scope, output style &amp; citations</span></span>
+          <span class="ph-build-go" aria-hidden="true">${AIIDD_ARROW}</span>
         </button>
-        <div class="ph-lib">
-          <div class="ph-lib-head">
-            <div class="ph-lib-titles"><h3 class="ph-lib-title">Prompt Library</h3><p class="ph-lib-sub">Ready-made prompts across every topic.</p></div>
+        <section class="ph-featured" data-ph-featured hidden>
+          <div class="ph-sec-head"><h3 class="ph-sec-title">Featured Prompts</h3></div>
+          <div class="ph-feat-grid" data-ph-feat-grid></div>
+        </section>
+        <section class="ph-lib">
+          <div class="ph-sec-head ph-sec-head--toggle">
+            <h3 class="ph-sec-title">Browse by Topic</h3>
             <div class="ph-viewtoggle" role="tablist" aria-label="Library view">
               <button type="button" data-ph-view="cards" class="${view === 'cards' ? 'is-active' : ''}">Card View</button>
               <button type="button" data-ph-view="flat" class="${view === 'flat' ? 'is-active' : ''}">Flatten Topics</button>
             </div>
           </div>
-          <div class="ph-featured" data-ph-featured hidden>
-            <div class="ph-sec-label">${AI_SPARK_INLINE}<span>Featured Prompts</span></div>
-            <div class="ph-feat-grid" data-ph-feat-grid></div>
-          </div>
           <div class="ph-body" data-ph-body></div>
-        </div>
+        </section>
       </div>`;
     root.querySelector('[data-prompt-build]').addEventListener('click', showBuild);
 

@@ -15656,21 +15656,30 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 
 /* ═══ Prompts landing rebuild (#img216-220): hero + Build card + Prompt Library
    (Featured picks, Card View / Flatten Topics toggle). ═══════════════════════ */
-.prompts-home { padding: 4px 2px 30px; }
-.ph-hero { display: flex; align-items: center; gap: 2rem; padding: 6px 0 20px; }
-.ph-hero-tx { flex: 1 1 auto; min-width: 0; }
-.ph-title { margin: 0 0 0.5rem; font-family: var(--font-display); font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2rem); font-weight: 700; letter-spacing: -0.028em; color: #16233d; }
-.ph-sub { margin: 0; max-width: 46rem; font-size: 0.98rem; line-height: 1.55; color: #4a5a75; }
-.ph-hero-art { flex: none; width: 200px; }
-.ph-hero-art svg { display: block; width: 100%; height: auto; overflow: visible; }
-.ph-arc { stroke: #c5cde0; stroke-width: 1.6; stroke-dasharray: 1.5 7; stroke-linecap: round; fill: none; }
-.ph-node { fill: #c5cde0; }
-.ph-chip { filter: drop-shadow(0 6px 12px rgba(15, 26, 46, 0.18)); }
-@media (max-width: 720px) { .ph-hero { gap: 1rem; } .ph-hero-art { width: 130px; } }
-.prompts-home .ph-build { width: 100%; margin-bottom: 26px; text-align: left; cursor: pointer; }
-.ph-lib-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding-bottom: 12px; border-bottom: 1px solid #e4e8f0; margin-bottom: 16px; }
-.ph-lib-title { margin: 0; font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: #1a2740; letter-spacing: -0.015em; }
-.ph-lib-sub { margin: 3px 0 0; font-size: 0.8rem; font-weight: 500; color: var(--color-text-muted); }
+.prompts-home { padding: 2px 2px 30px; }
+/* Clean, quiet hero (#img250) — no graphic; just a title + one line of context. */
+.ph-hero { padding: 2px 0 22px; }
+.ph-title { margin: 0 0 0.4rem; font-family: var(--font-display); font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.05rem); font-weight: 700; letter-spacing: -0.028em; color: #16233d; }
+.ph-sub { margin: 0; max-width: 46rem; font-size: 1rem; line-height: 1.5; color: #55627a; }
+/* Build a Custom Prompt — a prominent, well-proportioned navy CTA (#img249). */
+.prompts-home .ph-build {
+  display: flex; align-items: center; gap: 1rem; width: 100%; margin-bottom: 30px;
+  padding: 1.05rem 1.35rem; text-align: left; cursor: pointer;
+  background: #26375a; border: none; border-radius: 15px;
+  box-shadow: 0 10px 26px -16px rgba(26, 39, 64, 0.55);
+  transition: background .14s ease, transform .14s ease, box-shadow .14s ease;
+}
+@media (hover: hover) { .prompts-home .ph-build:hover { background: #1f2d4d; transform: translateY(-1px); box-shadow: 0 16px 32px -18px rgba(26, 39, 64, 0.6); } }
+.ph-build-ic { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 11px; background: rgba(255,255,255,0.12); color: #fff; }
+.ph-build-ic svg { width: 21px; height: 21px; }
+.ph-build-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ph-build-title { font-family: var(--font-display); font-size: 1.08rem; font-weight: 700; color: #fff; letter-spacing: -0.012em; }
+.ph-build-sub { font-size: 0.84rem; font-weight: 500; color: #c3cee2; }
+.ph-build-go { flex: none; margin-left: auto; display: inline-flex; color: #aebcd6; transition: transform .14s ease, color .14s ease; }
+@media (hover: hover) { .prompts-home .ph-build:hover .ph-build-go { color: #fff; transform: translateX(3px); } }
+/* Section heads — one consistent style for Featured / Browse (#img251). */
+.ph-sec-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding-bottom: 11px; border-bottom: 1px solid #e4e8f0; margin-bottom: 16px; }
+.ph-sec-title { margin: 0; font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: #1a2740; letter-spacing: -0.015em; }
 /* Card View | Flatten Topics — quiet segmented toggle. */
 .ph-viewtoggle { display: inline-flex; gap: 4px; padding: 4px; background: #eef1f6; border: 1px solid #e2e6ee; border-radius: 10px; }
 .ph-viewtoggle button {
@@ -15680,8 +15689,7 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 }
 .ph-viewtoggle button.is-active { background: #fff; color: #26375a; box-shadow: 0 1px 2px rgba(15,23,42,.1); }
 /* Featured Prompts */
-.ph-featured { margin-bottom: 22px; }
-.ph-sec-label { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-display); font-size: 0.98rem; font-weight: 700; color: #26375a; margin-bottom: 12px; }
+.ph-featured { margin-bottom: 28px; }
 .ph-feat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 920px) { .ph-feat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .ph-feat-grid { grid-template-columns: 1fr; } }
