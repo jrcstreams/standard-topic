@@ -923,7 +923,10 @@ export function renderAIIntelligence(container, scope) {
     // Summary tab = the "Updated" stamp, then the AI-generated sections (full text).
     // Sources now render INLINE under the section they belong to (no more Sources
     // tab): attribute each headline to its best-matching section (#img443-448).
-    const items = builderNewsItems().filter((x) => x.title && x.meta && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(String(x.title).trim()));
+    // Keep domain-only grounding citations too (title === publisher, no meta) — a
+    // brief whose sources are all bare-domain citations was showing NO Sources at
+    // all (#img277). Require only a title now.
+    const items = builderNewsItems().filter((x) => x.title);
     const { buckets, unmatched } = attributeItemsToSections(items, list);
     const updatedLbl = bc.generatedAt ? `Updated ${relTime(bc.generatedAt)}` : '';
     // Each card: numbered header, a bold LEAD sentence (client-side, no extra API),

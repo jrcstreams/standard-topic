@@ -10626,7 +10626,7 @@ body.home-search.app-mode.sticky-always.has-subnav #content {
   position: static; height: auto; min-height: 0; overflow: visible;
   /* The subnav is HIDDEN until scrolled past the mini-cards (#img193), so the
      hero only clears the nav itself. */
-  padding: calc(var(--nav-h) + 1.15rem) 0 3rem;
+  padding: calc(var(--nav-h) + 0.5rem) 0 3rem;
 }
 /* One cohesive centered width for the whole homepage — matches the main nav
    (var(--max-width) + 2rem padding) so the body content lines up with the nav
@@ -10649,11 +10649,13 @@ body.home-search.app-mode .topic-layout {
    knowledge icons wash the right side of the search zone (#img231): static,
    ultra-light, behind everything. */
 .home-search-hero::before {
-  content: ''; position: absolute; inset: -1rem 0 -1.5rem; z-index: 0; pointer-events: none;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 620 260' fill='none' stroke='%23dfe5f0' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg stroke-width='3'%3E%3Ccircle cx='452' cy='108' r='54'/%3E%3Cline x1='492' y1='148' x2='534' y2='190'/%3E%3C/g%3E%3Cpath d='M576 24l6.5 18 18 6.5-18 6.5-6.5 18-6.5-18-18-6.5 18-6.5z'/%3E%3Cg%3E%3Crect x='268' y='166' width='60' height='74' rx='8'/%3E%3Cline x1='282' y1='188' x2='314' y2='188'/%3E%3Cline x1='282' y1='205' x2='314' y2='205'/%3E%3Cline x1='282' y1='222' x2='302' y2='222'/%3E%3C/g%3E%3Cg%3E%3Crect x='560' y='150' width='26' height='26' rx='5'/%3E%3Crect x='596' y='150' width='26' height='26' rx='5'/%3E%3Crect x='560' y='186' width='26' height='26' rx='5'/%3E%3Crect x='596' y='186' width='26' height='26' rx='5'/%3E%3C/g%3E%3C/svg%3E") right center / auto 100% no-repeat;
-  opacity: 0.7;
+  content: ''; position: absolute; top: 50%; right: 0; transform: translateY(-50%);
+  width: min(340px, 42%); height: 200px; z-index: 0; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 340 200' fill='none' stroke='%23c2cbdd' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='210' cy='92' r='46'/%3E%3Cline x1='244' y1='126' x2='286' y2='168'/%3E%3Cpath d='M300 26l5 14 14 5-14 5-5 14-5-14-14-5 14-5z' fill='%23c2cbdd' stroke='none'/%3E%3Cg%3E%3Crect x='96' y='120' width='52' height='64' rx='8'/%3E%3Cline x1='110' y1='140' x2='134' y2='140'/%3E%3Cline x1='110' y1='155' x2='134' y2='155'/%3E%3Cline x1='110' y1='170' x2='124' y2='170'/%3E%3C/g%3E%3Cg%3E%3Crect x='288' y='118' width='22' height='22' rx='5'/%3E%3Crect x='318' y='118' width='22' height='22' rx='5'/%3E%3Crect x='288' y='148' width='22' height='22' rx='5'/%3E%3Crect x='318' y='148' width='22' height='22' rx='5'/%3E%3C/g%3E%3C/svg%3E") right center / contain no-repeat;
+  opacity: 0.9;
 }
-@media (max-width: 760px) { .home-search-hero::before { opacity: 0.4; } }
+@media (max-width: 900px) { .home-search-hero::before { width: min(220px, 46%); height: 150px; opacity: 0.55; } }
+@media (max-width: 560px) { .home-search-hero::before { display: none; } }
 .home-search-hero {
   /* NB: no overflow:hidden — the typeahead dropdown is absolutely positioned and
      must be allowed to spill past the hero's bottom edge (#77). */
@@ -10841,9 +10843,13 @@ body.home-search #home-trending .trending-topics {
 .featstrip-sub { font-family: var(--font-family); font-size: 0.8rem; font-weight: 500; color: #5a6b86; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .featstrip-arrow { flex: none; margin-left: auto; display: inline-flex; color: #8fa3c4; transition: transform 0.14s ease, color 0.14s ease; }
 /* Stack to rows when two-up gets cramped (#img160). */
-@media (max-width: 820px) {
+@media (max-width: 900px) {
   .home-featstrip { grid-template-columns: 1fr; gap: 12px; }
-  .featstrip-item { padding: 0.95rem 1.15rem; }
+  .featstrip-item--rich .featstrip-head { padding: 0.9rem 1.05rem 0.75rem; }
+  /* Preview chips scroll on ONE row instead of wrapping into a tall block. */
+  .featstrip-previews { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 10px 1.05rem 0.9rem; }
+  .featstrip-previews::-webkit-scrollbar { display: none; }
+  .fs-chip { flex: none; }
 }
 @media (min-width: 1024px) {
   /* Two rows: the three cards span the FULL width across the top, then News Feed
@@ -10900,7 +10906,7 @@ body.home-search #home-trending .trending-topics {
   body.home-search .home-search-hero .search-panel-hero-inner { text-align: left; padding: 0 0 1.2rem; }
   body.home-search .home-search-hero .search-panel-title {
     white-space: normal; text-align: left;
-    font-size: clamp(2.15rem, 1.2rem + 2.3vw, 3rem); font-weight: 780;
+    font-size: clamp(1.85rem, 1.35rem + 1vw, 2.35rem); font-weight: 780;
     letter-spacing: -0.032em; line-height: 1.1; color: #16233d; margin: 0 0 0.65rem;
   }
   body.home-search .home-search-hero .search-panel-tagline { text-align: left; margin: 0 0 0.3rem; font-size: 1.14rem; color: #4a5a75; }
@@ -10914,7 +10920,7 @@ body.home-search #home-trending .trending-topics {
    full width with its lines bleeding past the edges, tucked closer to the search. */
 @media (max-width: 1023.98px) {
   body.home-search .home-search-hero .search-panel-title { font-size: clamp(1.95rem, 1.2rem + 3.6vw, 2.5rem); font-weight: 760; color: #16233d; letter-spacing: -0.028em; }
-  body.home-search .home-search-hero .search-panel-tagline { font-size: 1.14rem; }
+  body.home-search .home-search-hero .search-panel-tagline { font-size: 1rem; }
 }
 /* Cards size to content + the page scrolls. */
 body.home-search .layout-section,
@@ -11467,7 +11473,8 @@ body.home-search { background: #f3f4f8; }
    clearly (#img189/221). */
 body.app-mode:not(.home-search), body.custom-mode { background: #fff; }
 /* First story sits close under the topic tabs (#img221). */
-body.app-mode:not(.home-search) #section-newsfeed .news-list { padding-top: 2px !important; }
+body.app-mode:not(.home-search) #section-newsfeed .news-list { padding-top: 0 !important; }
+body.app-mode:not(.home-search) #section-newsfeed .news-card:first-child { padding-top: 10px !important; }
 
 /* Compact 2-row card (category · trending-for, then term) with an attached
    quick-insights dropdown. The .trend-card is just a positioning wrapper. */
@@ -12789,23 +12796,31 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* Topic Prompts tab: the first section header hugs the tab bar (#img631). */
 .topic-prompt-lib-host .aii-fi-sec:first-child { margin-top: 6px; }
 .topic-prompt-lib-host .aii-fi-sec:last-child, .topic-explore-host .aii-fi-sec:last-child { margin-bottom: 40px; }
-.aii-fi-sechead { padding: 0 2px 11px; margin-bottom: 14px; border-bottom: 1px solid #d3dae6; }
+.aii-fi-sechead { padding: 0 2px 4px; margin-bottom: 14px; border-bottom: none; }
 /* Standalone prompt list (custom search = no section header): give the first card
    room below the tab-bar separator (#img493). In a section, the header handles it. */
 .aii-fi { margin-top: 14px; }
 .aii-fi-sec .aii-fi { margin-top: 0; }
 /* Lighter than the page/main header (which is 800): a calm section label, not a
    heavy dense title (#img483-485). */
-.aii-fi-sectitle { margin: 0; font-family: var(--font-display); font-size: clamp(1.08rem, 1rem + 0.35vw, 1.22rem); font-weight: 600; letter-spacing: -0.004em; color: #33517f; }
+.aii-fi-sectitle { margin: 0; font-family: var(--font-display); font-size: clamp(1.3rem, 1.15rem + 0.6vw, 1.55rem); font-weight: 700; letter-spacing: -0.014em; color: #1a2740; }
 .aii-fi-secsub { margin: 3px 0 0; font-size: clamp(0.88rem, 0.84rem + 0.2vw, 0.95rem); line-height: 1.4; color: var(--color-text-muted); }
 /* Small phones: the prompt-group headers ran a bit large (#img633). */
 @media (max-width: 640px) {
-  .aii-fi-sectitle { font-size: 1rem; }
+  .aii-fi-sectitle { font-size: 1.22rem; }
   .aii-fi-secsub { font-size: 0.84rem; }
 }
 /* Each prompt is its own tappable CARD: small gap between cards, subtle rounded
    corners, hover lifts the border + a soft shadow, open state warms the border. */
 .aii-fi-acclist { display: flex; flex-direction: column; gap: 9px; }
+/* Topic Prompts tab: one clipped rounded container, borderless rows w/ hairlines
+   — connected like Explore Further (#img276). */
+.topic-prompt-lib-host .aii-fi-acclist { gap: 0; border: 1px solid #d7dee9; border-radius: 12px; overflow: hidden; }
+.topic-prompt-lib-host .aii-fi-acclist .aii-fi-acc { border: none; border-radius: 0; box-shadow: none; }
+.topic-prompt-lib-host .aii-fi-acclist .aii-fi-acc + .aii-fi-acc { border-top: 1px solid #eef1f6; }
+.topic-prompt-lib-host .aii-fi-acclist .aii-fi-acc.is-open { box-shadow: none; }
+.topic-prompt-lib-host .aii-fi-acclist .aii-fi-accsum { border-radius: 0; }
+.topic-prompt-lib-host .aii-fi-acclist .aii-fi-acc.is-open .aii-fi-accsum { border-radius: 0; }
 .aii-fi-acc { border: 1px solid #d7dee9; border-radius: 10px; background: #fff; transition: border-color .15s ease, box-shadow .15s ease; }
 @media (hover: hover) { .aii-fi-acc:hover { border-color: #ccd5e2; box-shadow: 0 2px 8px rgba(30, 45, 68, 0.06); } }
 .aii-fi-acc.is-open { border-color: color-mix(in srgb, var(--color-primary) 34%, var(--color-surface-border)); box-shadow: 0 3px 12px rgba(30, 45, 68, 0.07); }
@@ -14881,21 +14896,22 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
    becomes a light circle with a dark icon (#img235). */
 #nav-search.navbtn {
   background: rgba(255, 255, 255, 0.13); border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 999px; padding: 6px 15px; margin-left: 4px; gap: 7px;
+  border-radius: 999px; padding: 6px 15px; margin-left: 4px; gap: 7px; align-self: center;
 }
 #nav-search .navbtn-ico { display: inline-flex; }
 #nav-search .navbtn-ico svg { width: 15px; height: 15px; }
 @media (hover: hover) { #nav-search.navbtn:hover { background: rgba(255, 255, 255, 0.22); color: #fff; } }
-/* Squeeze stage: smaller nav text before anything drops. */
 .sticky-hero-inner.nav-small-text .navbtn-label { font-size: 0.8rem; }
-/* Deep squeeze: Search → light circular icon button, dark icon, far right. */
-.sticky-hero-inner.nav-icon-search #nav-search { padding: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.9); border-color: transparent; color: #1e2b48; }
-.sticky-hero-inner.nav-icon-search #nav-search .navbtn-label { display: none; }
-@media (hover: hover) { .sticky-hero-inner.nav-icon-search #nav-search:hover { background: #fff; color: #16233d; } }
-@media (max-width: 640px) {
-  #nav-search.navbtn { padding: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.9); border-color: transparent; color: #1e2b48; }
-  #nav-search .navbtn-label { display: none; }
+/* Collapsed Search = a FIXED 36px light circle (never stretches to the row
+   height, which turned it into a giant oval, #img267). Blue magnifier, no label. */
+.sticky-hero-inner.nav-icon-search #nav-search.navbtn {
+  width: 36px; height: 36px; min-width: 36px; padding: 0; gap: 0; border-radius: 50%;
+  align-self: center; flex: none; justify-content: center;
+  background: rgba(255, 255, 255, 0.94); border-color: transparent;
 }
+.sticky-hero-inner.nav-icon-search #nav-search .navbtn-label { display: none; }
+.sticky-hero-inner.nav-icon-search #nav-search .navbtn-ico svg { width: 17px; height: 17px; color: #1d4ed8; }
+@media (hover: hover) { .sticky-hero-inner.nav-icon-search #nav-search:hover { background: #fff; } }
 /* Homepage subnav deferral (#img193): hidden until the user scrolls past the
    Explore Topics / Prompt Library cards (JS toggles home-subnav-on). */
 body.home-search #sub-header.is-subnav { transform: translateY(-110%); opacity: 0; pointer-events: none; transition: transform 0.25s ease, opacity 0.18s ease; }
@@ -14995,7 +15011,9 @@ body.home-mode #sub-header.is-subnav .topic-banner { overflow: visible !importan
 .topic-band #section-newsfeed .news-list,
 body.home-search #section-newsfeed .news-list {
   display: flex !important; flex-direction: column !important; grid-template-columns: none !important;
-  gap: 12px !important; padding: 14px 0 6px !important;
+  /* Flush rows so each hover ties exactly to the hairline above/below — no 12px
+     gap between the divider and the next row's hover fill (#img278). */
+  gap: 0 !important; padding: 6px 0 6px !important;
 }
 /* ── News = continuous LIST ROWS with near-full-width separators (#img161/162):
    per-story card boxes retired on home, topic pages, and custom-search results.
