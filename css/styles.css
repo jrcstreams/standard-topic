@@ -15839,15 +15839,15 @@ button.aiidd-vlink { align-self: flex-start; }
      #img34). */
   .sticky-hero-inner .sticky-brand { margin: 0; display: flex; align-items: center; flex: none; }
   .sticky-hero-inner .sticky-title { font-size: 1.22rem; letter-spacing: -0.02em; line-height: 1.15; white-space: nowrap; }
-  /* Icons stay on the title's line, grouped to the right edge. */
+  /* Text-only nav row grouped to the right edge. */
   .sticky-hero-inner .sticky-actions.navbtns { order: 1; margin-left: auto !important; flex: none; }
-  /* Always stacked on phones (icon over label) — even before fitMainNav runs. */
-  .sticky-hero-inner .sticky-actions.navbtns .navbtn { flex-direction: column; gap: 4px; padding: 6px 7px; min-width: 52px; }
-  .sticky-hero-inner .sticky-actions.navbtns .navbtn-label { font-size: 0.87rem; }
-  /* Keep icons the SAME compact size as ≥561 — no jump bigger below 561 (#img32). */
-  .sticky-hero-inner .navbtn-ico svg { width: 18px; height: 18px; }
-  /* Keep every VISIBLE item's label — we drop items, not labels. */
-  .sticky-hero-inner .sticky-actions.navbtns .navbtn-label { display: block !important; }
+  .sticky-hero-inner .sticky-actions.navbtns .navbtn { flex-direction: row; gap: 6px; padding: 6px 9px; min-width: 0; }
+  .sticky-hero-inner .sticky-actions.navbtns .navbtn-label { font-size: 0.84rem; display: inline; }
+  /* Search is the ONLY icon on phones: a light circle, dark icon, no label. */
+  .sticky-hero-inner #nav-search.navbtn { flex-direction: row; padding: 8px; min-width: 0; border-radius: 50%; background: rgba(255,255,255,0.92); border-color: transparent; color: #1e2b48; }
+  .sticky-hero-inner #nav-search .navbtn-label { display: none !important; }
+  .sticky-hero-inner #nav-search .navbtn-ico { display: inline-flex; }
+  .sticky-hero-inner #nav-search .navbtn-ico svg { width: 17px; height: 17px; color: #1d4ed8; }
   .sticky-hero-inner .nav-search-mobile { display: none !important; }
   .sticky-hero-inner .sticky-page-name { display: none !important; }
 }
