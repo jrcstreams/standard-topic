@@ -371,7 +371,6 @@ body.custom-mode.sticky-always #content {
   .sticky-hero-inner .navbtn-ico svg { width: 18px; height: 18px; }
   /* Compact padding/label only in the STACKED fallback — horizontal buttons keep
      their roomier padding + readable inline label. */
-  .sticky-hero-inner.nav-stacked .navbtn { padding: 6px 10px; }
   .sticky-hero-inner.nav-stacked .navbtn-label { font-size: 0.87rem; }
 }
 
@@ -12095,6 +12094,7 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 /* Faint SOLID rule above Sources (dashed read as noise, #img615); the Related
    coverage section is nothing but sources, so no rule under its header at all. */
 .aii-sec-sources { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid #edf0f5; display: grid; gap: 4px; }
+.aii-bview-summary .aii-sec-sources--collapsible { margin: 12px 0 0; padding-top: 0; border-top: none; }
 #aii-msec-related .aii-sec-sources { border-top: none; margin-top: 6px; padding-top: 0; }
 .aii-sec-sources-label { font-family: var(--font-family); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #94a3b8; margin-bottom: 2px; }
 .aii-sec-src { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; padding: 5px 0; }
@@ -12788,6 +12788,7 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-fi-sec + .aii-fi-sec { margin-top: 24px; }
 /* Topic Prompts tab: the first section header hugs the tab bar (#img631). */
 .topic-prompt-lib-host .aii-fi-sec:first-child { margin-top: 6px; }
+.topic-prompt-lib-host .aii-fi-sec:last-child, .topic-explore-host .aii-fi-sec:last-child { margin-bottom: 40px; }
 .aii-fi-sechead { padding: 0 2px 11px; margin-bottom: 14px; border-bottom: 1px solid #d3dae6; }
 /* Standalone prompt list (custom search = no section header): give the first card
    room below the tab-bar separator (#img493). In a section, the header handles it. */
@@ -14848,7 +14849,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 }
 /* Stacked fallback — icon over a small label, RIGHT-aligned (skip any left-grouped
    intermediate so it jumps straight to this layout, #img77/#img78). */
-.sticky-hero-inner.nav-stacked .navbtn { flex-direction: column; gap: 4px; min-width: 52px; padding: 6px 9px; }
+/* nav-stacked retired (text-only nav) — kept as a no-op guard. */
 .sticky-hero-inner.nav-stacked .navbtn-label { font-size: 0.87rem; }
 .sticky-hero-inner.nav-stacked .sticky-actions.navbtns { margin-left: auto !important; }
 @media (hover: hover) { .navbtn:hover { background: rgba(255,255,255,0.12); color: #fff; text-decoration: none; } }
@@ -16150,7 +16151,7 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title),
 .aii-bview-summary .im-msec:has(.im-msec-header) { padding: 22px 2px; overflow: visible; }
 .aii-bview-summary .im-msec:has(.im-msec-header):first-child { padding-top: 6px; }
 /* Story headline — no tinted band; a strong navy display title. */
-.im-msec-header { padding: 0; background: none; border-bottom: none; margin: 0 0 4px; }
+.im-msec-header { padding: 0; background: none; border-bottom: none; margin: 0 0 11px; }
 .im-msec-header .im-msec-name {
   margin: 0; font-family: var(--font-display); font-size: 1.16rem; font-weight: 700;
   letter-spacing: -0.018em; line-height: 1.28; color: #1a2740;
@@ -16174,7 +16175,7 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title),
 @media (hover: hover) { .aii-bview-summary .im-msec-body .aii-sec-more:hover .aii-sec-more-tx { text-decoration: none; } }
 /* On the grey card the default light-grey AI tag vanished — a touch darker so it
    reads as a real label (#img611). */
-.aii-bview-summary .im-msec .im-sec-aitag { background: #e7ecf3; color: #4b586c; }
+.aii-bview-summary .im-msec .im-sec-aitag { background: #f2f4f8; color: #5a687f; }
 /* "Updated X ago" data pill beside the AI tag (#img621) — same shape, quieter. */
 .im-sec-aitag-row { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
 .im-sec-updated {
@@ -16182,7 +16183,7 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title),
   background: #eef1f6; color: #74839c; font-size: 0.7rem; font-weight: 600;
   letter-spacing: 0.01em; white-space: nowrap;
 }
-.aii-bview-summary .im-msec .im-sec-updated { background: #e7ecf3; color: #67768f; }
+.aii-bview-summary .im-msec .im-sec-updated { background: #f2f4f8; color: #7d8aa1; }
 /* "SOURCES" gets a touch more visual weight on the cards (#img612). */
 .aii-bview-summary .aii-sec-sources-label { color: #71809b; }
 .aii-bview-summary .im-msec:first-child { padding-top: 18px; }
@@ -16202,14 +16203,16 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title),
 /* Collapsible SOURCES — a quiet toggle chip; the list drops open below it.
    display:block (not the base grid) so the chip keeps its natural width instead of
    stretching full-width across the card (#img73). */
-.aii-sec-sources--collapsible { margin-top: 14px; display: block; }
+.aii-sec-sources--collapsible { margin-top: 12px; display: block; border-top: none; padding-top: 0; }
 .aii-sec-srctoggle {
-  display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px 6px 10px; border-radius: 999px;
-  border: 1px solid #dbe3f2; background: #f4f7fc; cursor: pointer; font-family: var(--font-family);
-  font-size: 0.78rem; font-weight: 600; color: #4b586c; transition: background .12s, border-color .12s, color .12s;
+  display: inline-flex; align-items: center; gap: 5px; padding: 3px 6px; border-radius: 7px;
+  border: none; background: none; cursor: pointer; font-family: var(--font-family);
+  font-size: 0.78rem; font-weight: 600; color: #5f6d85; transition: background .12s, color .12s;
 }
-@media (hover: hover) { .aii-sec-srctoggle:hover { background: #eaf0fb; border-color: #c9d5ea; color: #33517f; } }
-.aii-sec-srctoggle .ai-result-sub-ic svg { width: 14px; height: 14px; display: block; }
+@media (hover: hover) { .aii-sec-srctoggle:hover { background: #f1f4f9; color: #33517f; } }
+.aii-sec-srctoggle .ai-result-sub-ic { display: inline-flex; }
+.aii-sec-srctoggle .ai-result-sub-ic svg { width: 14px; height: 14px; display: block; color: #8b98af; }
+@media (hover: hover) { .aii-sec-srctoggle:hover .ai-result-sub-ic svg { color: #33517f; } }
 .aii-srctoggle-chev { display: inline-flex; transition: transform .18s ease; }
 .aii-srctoggle-chev svg { width: 14px; height: 14px; }
 .aii-sec-sources--collapsible[data-open="true"] .aii-srctoggle-chev { transform: rotate(180deg); }

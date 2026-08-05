@@ -2452,17 +2452,8 @@ function fitMainNav() {
   if (!inner) return;
   inner.classList.remove('nav-stacked', 'nav-short-trending', 'nav-small-text', 'nav-drop-prompts', 'nav-drop-home', 'nav-icon-search', 'nav-tiny-title');
   const fits = () => inner.scrollWidth <= inner.clientWidth + 1;
-  // Buttons start HORIZONTAL (icon+label inline, left-grouped after the title). Break
-  // to STACKED (icon over label, right-aligned) EARLY — before the horizontal row
-  // crowds the title — by stacking once the buttons come within BUFFER px of the
-  // container's right edge, not only at hard overflow (#img76).
-  const navbtns = inner.querySelector('.sticky-actions.navbtns');
-  if (navbtns) {
-    const cs = getComputedStyle(inner);
-    const innerRight = inner.getBoundingClientRect().right - (parseFloat(cs.paddingRight) || 0);
-    if (navbtns.getBoundingClientRect().right > innerRight - 44) inner.classList.add('nav-stacked');
-  }
-  if (!inner.classList.contains('nav-stacked') && !fits()) inner.classList.add('nav-stacked');
+  // Nav is text-only now (no icon-over-label stacking) — the squeeze stages below
+  // handle every width, ending with Search as a clean icon button (#img266 fix).
   if (!fits()) inner.classList.add('nav-short-trending');
   // Squeeze order (#img235): smaller nav text → drop Home → Search collapses to
   // its light icon button → drop Prompts → shrink the title.
