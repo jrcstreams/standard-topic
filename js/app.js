@@ -764,6 +764,8 @@ function wirePromptsDropdown(panel, initialView) {
     const t = panel.querySelector('.aii-nav-dd-title'); if (t) t.textContent = title;
     const s = panel.querySelector('.aii-nav-dd-sub'); if (s) s.textContent = sub;
   };
+  // The header action buttons only make sense on the landing view.
+  const setHeadBtns = (show) => { const b = panel.querySelector('.aii-nav-dd-headbtns'); if (b) b.style.display = show ? '' : 'none'; };
   const fades = () => [200, 700, 1500].forEach((d) => setTimeout(updateNavDdFades, d));
   // Back button lives ABOVE the view title (in the head), not below it in the body
   // (#img222/#img223/#img224). Pass null to remove it (the landing view).
@@ -812,12 +814,9 @@ function wirePromptsDropdown(panel, initialView) {
     setHead('Prompts', 'Ready-made prompts for every topic — or build your own.');
     setBack(null);
     const view = (localStorage.getItem('st_promptlib_view') === 'flat') ? 'flat' : 'cards';
+    setHeadBtns(true);
     root.innerHTML = `
       <div class="prompts-home">
-        <div class="ph-actions">
-          <button type="button" class="ph-headbtn ph-headbtn--primary" data-prompt-build>${PROMPTS_BUILD_IC}<span>Build a Custom Prompt</span></button>
-          <a href="#/search" class="ph-headbtn" data-prompt-search><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Custom Prompt Topic</span></a>
-        </div>
         <section class="ph-featured" data-ph-featured hidden>
           <div class="ph-sec-head"><h3 class="ph-sec-title">Featured Prompts</h3></div>
           <div class="ph-feat-grid" data-ph-feat-grid></div>
@@ -833,8 +832,6 @@ function wirePromptsDropdown(panel, initialView) {
           <div class="ph-body" data-ph-body></div>
         </section>
       </div>`;
-    root.querySelector('[data-prompt-build]').addEventListener('click', showBuild);
-    root.querySelector('[data-prompt-search]')?.addEventListener('click', (e) => { e.preventDefault(); openSearchFromNav(); });
 
     // Featured picks — data/featured-prompts.json (admin-editable), resolved
     // against the live shortcut assignments; missing names skip silently.
@@ -899,7 +896,7 @@ function wirePromptsDropdown(panel, initialView) {
   const showBuild = () => {
     destroyCtl();
     setHead('Build a Custom Prompt', 'Craft a knowledge prompt and send it to your AI model.');
-    setBack('Prompts Overview', showLanding);
+    setHeadBtns(false); setBack('Prompts Overview', showLanding);
     root.innerHTML = `<div class="pb-navdd-host" data-pb-host></div>`;
     loadPromptGen().then((m) => m.renderPromptGenerator(root.querySelector('[data-pb-host]'), { inline: true })).catch(() => {});
     syncViewHash('build');
@@ -909,7 +906,7 @@ function wirePromptsDropdown(panel, initialView) {
   const showLibrary = () => {
     destroyCtl();
     setHead('Prompt Library', 'Pick a topic to see its ready-made prompts.');
-    setBack('Prompts Overview', showLanding);
+    setHeadBtns(false); setBack('Prompts Overview', showLanding);
     root.innerHTML = `<div class="prompts-lib" data-lib>${promptLibTreeHTML()}</div>`;
     const lib = root.querySelector('[data-lib]');
     wireNavDdAccordions(lib);
@@ -921,6 +918,7 @@ function wirePromptsDropdown(panel, initialView) {
   const showTopicPrompts = (slug, name) => {
     destroyCtl();
     setHead(`${name} Prompts`, 'Ready-made prompts for this topic. Pick one to expand and copy it.');
+    setHeadBtns(false);
     // prompts-topic-host → CSS hides the mounted AI component's own chrome so ONLY
     // the clean prompt list shows.
     setBack('Prompt Library', showLibrary);
@@ -943,11 +941,18 @@ function wirePromptsDropdown(panel, initialView) {
   promptsDdShowView(initialView || null);
 }
 
+const PROMPTS_BUILD_HEAD_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="m16.5 3.5 4 4L7 21l-4 1 1-4z"/></svg>';
 function promptsNavDdCfg(view) {
   return {
     key: 'prompts', triggerId: 'nav-prompts', className: 'aii-nav-dd-prompts',
     title: 'Prompts', ariaLabel: 'Prompts',
-    subtitle: 'Build your own or browse the ready-made library.',
+    subtitle: 'Ready-made prompts for every topic — or build your own.',
+    // Head-action buttons live in the sticky dropdown header (#img304); both quiet
+    // grey pills. Only shown on the landing view (toggled in wirePromptsDropdown).
+    headButtons: [
+      { label: 'Build a Custom Prompt', href: '#/prompts/build', icon: PROMPTS_BUILD_HEAD_IC, onClick: () => { if (promptsDdShowView) promptsDdShowView('build'); } },
+      { label: 'Custom Prompt Topic', href: '#/search', icon: NAVDD_SEARCH_IC, onClick: () => { openSearchFromNav(); } },
+    ],
     contentHTML: '<div class="prompts-dd" data-prompts-root></div>',
     onClose: userCloseNavDropdown,
     wire: (panel) => wirePromptsDropdown(panel, view),

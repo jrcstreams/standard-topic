@@ -15762,10 +15762,10 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
   border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border));
   box-shadow: 0 10px 24px -16px rgba(15,26,46,.3);
 } }
-.ph-feat-topic { display: inline-flex; align-items: center; gap: 6px; font-size: 0.72rem; font-weight: 650; color: #5a6b86; text-transform: none; }
+.ph-feat-topic { display: inline-flex; align-items: center; gap: 6px; font-size: 0.74rem; font-weight: 600; color: #7a8aa3; text-transform: none; }
 .ph-feat-topic .ph-feat-topic-ic { display: inline-flex; }
-.ph-feat-topic .ph-feat-topic-ic svg { width: 14px; height: 14px; }
-.ph-feat-name { font-family: var(--font-display); font-size: 0.99rem; font-weight: 700; color: #1a2740; letter-spacing: -0.01em; }
+.ph-feat-topic .ph-feat-topic-ic svg { width: 14px; height: 14px; display: block; }
+.ph-feat-name { font-family: var(--font-display); font-size: 1rem; font-weight: 650; color: #1a2740; letter-spacing: -0.012em; }
 .ph-feat-desc { font-size: 0.8rem; line-height: 1.4; color: #5a6b86; }
 /* Topic preview cards */
 .ph-topic-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
@@ -15776,10 +15776,10 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
   background: #fff; border: 1px solid var(--color-surface-border); border-radius: 13px;
   box-shadow: 0 1px 2px rgba(15,26,46,.04);
 }
-.ph-card-head { display: flex; align-items: center; gap: 8px; padding-bottom: 8px; border-bottom: 1px solid #eef1f6; margin-bottom: 4px; }
+.ph-card-head { display: flex; align-items: center; gap: 9px; padding-bottom: 9px; border-bottom: 1px solid #eef1f6; margin-bottom: 5px; }
 .ph-card-ic { display: inline-flex; color: #26375a; }
 .ph-card-ic svg { width: 17px; height: 17px; }
-.ph-card-name { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: #1a2740; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ph-card-name { font-family: var(--font-display); font-size: 0.98rem; font-weight: 650; color: #1a2740; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ph-card-list { display: flex; flex-direction: column; }
 .ph-card-prompt {
   display: flex; align-items: center; gap: 7px; min-width: 0; width: 100%;
@@ -15787,7 +15787,7 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
   font-family: var(--font-family); font-size: 0.83rem; font-weight: 550; color: #33415c;
   transition: background .12s, color .12s;
 }
-.ph-card-prompt .ph-spark { flex: none; }
+.ph-card-prompt .ph-spark { flex: none; opacity: 0.85; align-self: center; }
 .ph-card-prompt span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (hover: hover) { .ph-card-prompt:hover { background: #f4f6fb; color: #1d4ed8; } }
 .ph-card-more {
@@ -15798,6 +15798,9 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 @media (hover: hover) { .ph-card-more:hover { color: #1d4ed8; } .ph-card-more:hover .aiidd-arrow { transform: translateX(2px); } }
 .ph-card-more .aiidd-arrow { transition: transform .14s; }
 
+.prompts-home .ph-body .prompts-lib { margin-top: -6px; }
+.prompts-home .ph-body .prompts-lib .aiidd-tree > .aiidd-parent:first-child { border-top: none; }
+.prompts-home .ph-body .prompts-lib .aiidd-tree > .aiidd-parent:first-child .aiidd-parent-head { padding-top: 6px; }
 /* Cleaner back control (#390) — a subtle pill; sits ABOVE the view title in the head. */
 .prompts-back {
   display: inline-flex; align-items: center; gap: 5px; margin: 0 0 16px; padding: 6px 12px 6px 9px;
