@@ -10433,10 +10433,11 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .search-panel-barrow { position: relative; padding: 0 0.2rem; }
 .search-panel-form { position: relative; display: flex; align-items: center; }
 .search-panel-icon { position: absolute; left: 0.65rem; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 34px; height: 34px; border: none; background: none; border-radius: 9px; color: var(--color-text-muted); cursor: pointer; padding: 0; z-index: 2; transition: background .12s, color .12s; }
-.search-panel-icon svg { width: 19px; height: 19px; }
+/* Fixed 19px glyph — the old `width:100%` rule below let the SVG fill the 34px
+   button, ballooning the magnifier on the search page (#img342). */
+.search-panel-icon svg { width: 19px !important; height: 19px !important; display: block; }
 @media (hover: hover) { .search-panel-icon:hover { background: #eef2f8; color: #1d4ed8; } }
 .search-panel-icon:active { background: #e5ebf5; }
-.search-panel-icon svg { width: 100%; height: 100%; display: block; }
 .search-panel-input {
   width: 100%; box-sizing: border-box; height: 46px; padding: 0 3rem 0 3rem;
   border: 1.5px solid #e2e6ee; border-radius: 999px; background: #fff;
@@ -10468,17 +10469,23 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 
 /* Suggestions dropdown. */
 .search-panel-suggest {
-  position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 30;
-  background: #fff; border: 1px solid #e4e8f0; border-radius: 14px;
-  box-shadow: 0 20px 44px -14px rgba(15, 23, 42, 0.3); overflow: hidden; padding: 0.35rem;
-  transform-origin: top center; animation: spSuggestIn .2s cubic-bezier(.22,.61,.21,1);
+  position: absolute; left: 0; right: 0; top: 100%; z-index: 30;
+  background: #fff; border: 1.5px solid #c3cee2; border-top: none;
+  border-radius: 0 0 16px 16px; overflow: hidden; padding: 6px;
+  box-shadow: 0 24px 44px -18px rgba(15, 23, 42, 0.32);
+  transform-origin: top center; animation: spSuggestIn .18s cubic-bezier(.22,.61,.21,1);
 }
-@keyframes spSuggestIn { from { opacity: 0; transform: translateY(-8px) scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes spSuggestIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 .search-panel-suggest[hidden] { display: none; }
+/* The input reads as the head of the dropdown: flat bottom corners + matching
+   border while suggestions are open, so the two form ONE connected element. */
+.search-panel-barrow:has(.search-panel-suggest:not([hidden])) .search-panel-input {
+  border-radius: 14px 14px 0 0; border-color: #c3cee2; border-width: 1.5px; border-bottom-color: #e7ebf3;
+}
 .search-panel-suggest-row { display: flex; align-items: baseline; gap: 0.5rem; width: 100%; text-align: left; padding: 0.55rem 0.7rem; background: none; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; color: var(--color-text); }
 .search-panel-suggest-row.is-active { background: #f1f4f9; }
 @media (hover: hover) { .search-panel-suggest-row:hover { background: #f1f4f9; } }
-.search-panel-suggest-name { font-size: 0.96rem; font-weight: 600; }
+.search-panel-suggest-name { font-size: 0.94rem; font-weight: 500; color: #33415c; }
 .search-panel-suggest-parent { font-size: 0.8rem; color: var(--color-text-muted); }
 .search-panel-suggest-row.is-custom .search-panel-suggest-name { font-weight: 600; color: var(--color-primary); }
 /* Trending typeahead rows (#77): a hot-trend glyph on the left + a "Trending ·
@@ -10662,12 +10669,7 @@ body.home-search.app-mode .topic-layout {
 /* Hero sits DIRECTLY on the off-white page — no card box (#img153/154). Faint
    knowledge icons wash the right side of the search zone (#img231): static,
    ultra-light, behind everything. */
-.home-search-hero::before {
-  content: ''; position: absolute; top: 50%; right: 0.5rem; transform: translateY(-50%);
-  width: min(300px, 40%); height: 200px; z-index: 0; pointer-events: none;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200' fill='none'%3E%3Cg stroke='%23b9c3da' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='150' cy='96' r='62'/%3E%3Cline x1='194' y1='140' x2='238' y2='184'/%3E%3C/g%3E%3Cg stroke='%23c7d0e2' stroke-width='3' stroke-linecap='round'%3E%3Cline x1='122' y1='80' x2='178' y2='80'/%3E%3Cline x1='122' y1='96' x2='178' y2='96'/%3E%3Cline x1='122' y1='112' x2='160' y2='112'/%3E%3C/g%3E%3Cpath d='M244 30l5.5 15 15 5.5-15 5.5-5.5 15-5.5-15-15-5.5 15-5.5z' fill='%23bcc6de'/%3E%3C/svg%3E") right center / contain no-repeat;
-  opacity: 0.9;
-}
+.home-search-hero::before { content: none; }
 @media (max-width: 900px) { .home-search-hero::before { width: min(200px, 42%); height: 150px; opacity: 0.5; } }
 @media (max-width: 560px) { .home-search-hero::before { display: block; width: 130px; height: 110px; opacity: 0.28; top: 3.4rem; transform: none; } }
 .home-search-hero {
@@ -10833,7 +10835,7 @@ body.home-search #home-trending .trending-topics {
   padding: 1.05rem 1.3rem 0.85rem; border: none; background: none; cursor: pointer; text-align: left;
 }
 @media (hover: hover) { .featstrip-item--rich .featstrip-head:hover .featstrip-arrow { color: #26375a; transform: translateX(3px); } }
-.featstrip-previews { display: flex; flex-wrap: nowrap; gap: 8px; padding: 2px 1.3rem 1.1rem; border-top: none; overflow: hidden; }
+.featstrip-previews { display: flex; flex-wrap: wrap; gap: 7px; padding: 2px 1.3rem 1.1rem; border-top: none; overflow: hidden; }
 .featstrip-previews .fs-chip { flex: none; }
 .fs-chip {
   display: inline-flex; align-items: center; gap: 6px; max-width: 100%; height: 34px; box-sizing: border-box;
@@ -10869,8 +10871,8 @@ body.home-search #home-trending .trending-topics {
 @media (max-width: 900px) {
   .home-featstrip { grid-template-columns: 1fr; gap: 12px; }
   .featstrip-item--rich .featstrip-head { padding: 0.9rem 1.05rem 0.75rem; }
-  .featstrip-previews { flex-wrap: nowrap; overflow: hidden; padding: 8px 1.05rem 0.9rem; }
-  .fs-chip { flex: none; }
+  .featstrip-previews { flex-wrap: wrap; overflow: hidden; padding: 9px 1.05rem 0.9rem; max-height: 5rem; }
+  .fs-chip { flex: none; font-size: 0.76rem; padding: 0 11px; height: 30px; }
 }
 @media (min-width: 1024px) {
   /* Two rows: the three cards span the FULL width across the top, then News Feed
@@ -15735,8 +15737,10 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .ph-headbtn--primary { background: #26375a; color: #fff; border-color: #26375a; }
 @media (hover: hover) { .ph-headbtn--primary:hover { background: #1f2d4d; border-color: #1f2d4d; transform: translateY(-1px); } }
 /* Section heads — one consistent style for Featured / Browse (#img251). */
-.ph-sec-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding-bottom: 11px; border-bottom: 1px solid #e4e8f0; margin-bottom: 16px; }
-.ph-sec-title { margin: 0; font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: #1a2740; letter-spacing: -0.015em; }
+.ph-sec-head { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding-bottom: 11px; border-bottom: 1px solid #e4e8f0; margin-bottom: 16px; }
+.ph-sec-head--toggle .ph-viewtoggle { margin-left: auto; }
+@media (max-width: 620px) { .ph-sec-head--toggle .ph-viewtoggle { margin-left: 0; } }
+.ph-sec-title { margin: 0; font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: #26375a; letter-spacing: -0.015em; }
 /* Card View | Flatten Topics — quiet segmented toggle. */
 .ph-viewtoggle { display: inline-flex; gap: 4px; padding: 4px; background: #eef1f6; border: 1px solid #e2e6ee; border-radius: 10px; }
 .ph-viewtoggle button {
@@ -15746,7 +15750,7 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 }
 .ph-viewtoggle button.is-active { background: #fff; color: #26375a; box-shadow: 0 1px 2px rgba(15,23,42,.1); }
 /* Featured Prompts */
-.ph-featured { margin-bottom: 28px; }
+.ph-featured { margin-bottom: 28px; margin-top: 6px; }
 .ph-feat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 920px) { .ph-feat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .ph-feat-grid { grid-template-columns: 1fr; } }
@@ -15762,9 +15766,10 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
   border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border));
   box-shadow: 0 10px 24px -16px rgba(15,26,46,.3);
 } }
-.ph-feat-topic { display: inline-flex; align-items: center; gap: 6px; font-size: 0.74rem; font-weight: 600; color: #7a8aa3; text-transform: none; }
-.ph-feat-topic .ph-feat-topic-ic { display: inline-flex; }
-.ph-feat-topic .ph-feat-topic-ic svg { width: 14px; height: 14px; display: block; }
+.ph-feat-namerow { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.ph-feat-namerow .ph-feat-topic-ic { flex: none; color: #5a6b86; }
+.ph-feat-namerow .ph-feat-topic-ic { display: inline-flex; }
+.ph-feat-namerow .ph-feat-topic-ic svg { width: 17px; height: 17px; display: block; }
 .ph-feat-name { font-family: var(--font-display); font-size: 1rem; font-weight: 650; color: #1a2740; letter-spacing: -0.012em; }
 .ph-feat-desc { font-size: 0.8rem; line-height: 1.4; color: #5a6b86; }
 /* Topic preview cards */
@@ -15903,10 +15908,10 @@ button.aiidd-vlink { align-self: flex-start; }
   .sticky-hero-inner .sticky-actions.navbtns .navbtn { flex-direction: row; gap: 6px; padding: 6px 9px; min-width: 0; }
   .sticky-hero-inner .sticky-actions.navbtns .navbtn-label { font-size: 0.84rem; display: inline; }
   /* Search is the ONLY icon on phones: a light circle, dark icon, no label. */
-  .sticky-hero-inner #nav-search.navbtn { flex-direction: row; width: 38px; height: 38px; min-width: 38px; padding: 0; gap: 0; justify-content: center; align-self: center; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); }
+  .sticky-hero-inner #nav-search.navbtn { flex-direction: row; width: 34px; height: 34px; min-width: 34px; padding: 0; gap: 0; justify-content: center; align-self: center; border-radius: 50%; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.22); }
   .sticky-hero-inner #nav-search .navbtn-label { display: none !important; }
-  .sticky-hero-inner #nav-search .navbtn-ico { display: inline-flex; color: rgba(255,255,255,0.85); }
-  .sticky-hero-inner #nav-search .navbtn-ico svg { width: 17px; height: 17px; }
+  .sticky-hero-inner #nav-search .navbtn-ico { display: inline-flex; color: #fff; }
+  .sticky-hero-inner #nav-search .navbtn-ico svg { width: 20px; height: 20px; stroke-width: 2.6; }
   .sticky-hero-inner .nav-search-mobile { display: none !important; }
   .sticky-hero-inner .sticky-page-name { display: none !important; }
 }
@@ -16462,12 +16467,14 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
    BOTH the Prompts (.aii-fi-acclist) and Explore Further (.xf-list) lists (#img67-69). */
 .search-aii-host .aii-fi-acclist,
 .search-aii-host .xf-list {
-  gap: 0; border: 1px solid #d7dee9; border-radius: 12px; overflow: hidden;
+  gap: 0; border: none; border-radius: 0; overflow: visible; border-top: 1px solid #e4e8f0;
 }
 .search-aii-host .aii-fi-acc,
 .search-aii-host .xf-acc { border: none !important; border-radius: 0 !important; box-shadow: none !important; }
-.search-aii-host .aii-fi-acc + .aii-fi-acc,
-.search-aii-host .xf-acc + .xf-acc { border-top: 1px solid #eef1f6 !important; }
+.search-aii-host .aii-fi-acc,
+.search-aii-host .xf-acc { border-bottom: 1px solid #eef1f6 !important; }
+.search-aii-host .aii-fi-acclist .aii-fi-acc:last-child,
+.search-aii-host .xf-list .xf-acc:last-child { border-bottom: none !important; }
 .search-aii-host .aii-fi-accsum,
 .search-aii-host .aii-fi-acc.is-open > .aii-fi-accsum,
 .search-aii-host .xf-sum,

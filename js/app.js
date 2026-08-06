@@ -89,33 +89,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     userCloseNavDropdown();
   });
 
-  // Stale-tab guard: a long-lived SPA tab never refetches assets on hash
-  // navigation, so deploys land invisibly and the tab keeps running old CSS/JS
-  // (the source of several "still broken" mysteries). Poll index.html for a newer
-  // asset version and surface a one-tap refresh pill when this tab is outdated.
-  // Version = the hashed bundle name (/dist/app.<hash>.js) post-B3.2, or the legacy
-  // /js/app.js?v=<ver> form if serving unbundled. Match either.
-  const _src = ((document.querySelector('script[type="module"]') || {}).src || '');
-  const runningV = _src.match(/app\.([A-Za-z0-9]{6,})\.js/)?.[1] || _src.match(/app\.js\?v=([\w-]+)/)?.[1];
-  const checkForNewVersion = async () => {
-    if (!runningV || document.getElementById('st-update-pill')) return;
-    try {
-      const res = await fetch('/index.html', { cache: 'no-store' });
-      if (!res.ok) return;
-      const _html = await res.text();
-      const v = _html.match(/dist\/app\.([A-Za-z0-9]{6,})\.js/)?.[1] || _html.match(/app\.js\?v=([\w-]+)/)?.[1];
-      if (v && v !== runningV) {
-        const b = document.createElement('button');
-        b.id = 'st-update-pill'; b.type = 'button';
-        b.textContent = 'Site updated — tap to refresh';
-        b.addEventListener('click', () => window.location.reload());
-        document.body.appendChild(b);
-      }
-    } catch (_) {}
-  };
-  setInterval(checkForNewVersion, 5 * 60 * 1000);
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) checkForNewVersion(); });
-  setTimeout(checkForNewVersion, 20 * 1000);
+  // (Removed the "Site updated — tap to refresh" pill per #img316 — it was
+  // intrusive. Returning visitors pick up new assets on their next full load.)
 
   // Touch: clear lingering focus visuals after a tap. A tapped button/link keeps
   // :focus styling until the NEXT tap, which reads as a "phantom pressed" control
@@ -823,7 +798,7 @@ function wirePromptsDropdown(panel, initialView) {
         </section>
         <section class="ph-lib">
           <div class="ph-sec-head ph-sec-head--toggle">
-            <h3 class="ph-sec-title">Browse by Topic</h3>
+            <h3 class="ph-sec-title">Prompts by Topic</h3>
             <div class="ph-viewtoggle" role="tablist" aria-label="Library view">
               <button type="button" data-ph-view="cards" class="${view === 'cards' ? 'is-active' : ''}">Card View</button>
               <button type="button" data-ph-view="flat" class="${view === 'flat' ? 'is-active' : ''}">Flatten Topics</button>
@@ -847,8 +822,7 @@ function wirePromptsDropdown(panel, initialView) {
           const s = sc.find((x) => x && x.name === f.name);
           if (!s || !s.prompt) return '';
           return `<button type="button" class="ph-feat-card" data-ph-feat="${idx}">
-            <span class="ph-feat-topic">${topicIconSVG(t.icon || 'globe', 'ph-feat-topic-ic')}<span>${escapeHTML(t.name)}</span></span>
-            <span class="ph-feat-name">${escapeHTML(s.name)}</span>
+            <span class="ph-feat-namerow">${topicIconSVG(t.icon || 'globe', 'ph-feat-topic-ic')}<span class="ph-feat-name">${escapeHTML(s.name)}</span></span>
             ${s.description ? `<span class="ph-feat-desc">${escapeHTML(s.description)}</span>` : ''}
           </button>`;
         }).join('');
@@ -3030,26 +3004,12 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // Preview rows inside the two cards (#img231): featured topic chips + the
     // first three Featured Prompts (same data file as the Prompt Library).
     {
-      // Show only the preview chips that FULLY fit the card width (up to 5) — no
-      // cutoff/scroll (#img312). Re-run on resize while the home card is mounted.
-      const fitFsChips = (wrap) => {
-        if (!wrap) return;
-        const chips = [...wrap.children];
-        chips.forEach((c) => { c.style.display = ''; });
-        const avail = wrap.clientWidth;
-        const gap = parseFloat(getComputedStyle(wrap).columnGap || getComputedStyle(wrap).gap) || 8;
-        let used = 0;
-        chips.forEach((c) => {
-          const w = c.getBoundingClientRect().width;
-          const next = used === 0 ? w : used + gap + w;
-          if (next <= avail + 0.5) { used = next; } else { c.style.display = 'none'; }
-        });
-      };
+      // Preview chips WRAP (CSS caps them to ~2 rows) so at least 3-5 show cleanly
+      // — no cutoff/scroll (#img319/349).
       const tWrap = container.querySelector('[data-fs-topics]');
       if (tWrap) {
         let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 5); } catch (_) {}
         tWrap.innerHTML = feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="fs-chip">${topicIconSVG(t.icon || 'globe', 'fs-chip-ic')}<span>${escapeHTML(t.name)}</span></a>`).join('');
-        requestAnimationFrame(() => fitFsChips(tWrap));
       }
       const pWrap = container.querySelector('[data-fs-prompts]');
       if (pWrap) {
@@ -4170,7 +4130,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
         ${isModal
           ? `<h2 class="search-panel-title">Search</h2>
              <p class="search-panel-tagline">News, Resources and AI Knowledge</p>
-             <p class="search-panel-herohint">Type a topic, term, or headline and we'll pull together the latest news, web sources, and AI insights.</p>`
+             <p class="search-panel-herohint">The latest news, sources &amp; AI insights on any topic.</p>`
           : `<h2 class="search-panel-title">Search. Discover. Stay&nbsp;Informed.</h2>
              <p class="search-panel-tagline">Real news. AI insights. All in one place.</p>`}
       </div></div>
