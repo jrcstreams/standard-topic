@@ -11495,7 +11495,6 @@ body.home-search { background: #f3f4f8; }
 body.app-mode:not(.home-search), body.custom-mode { background: #fff; }
 /* First story sits close under the topic tabs (#img221). */
 body.app-mode:not(.home-search) #section-newsfeed .news-list { padding-top: 0 !important; }
-body.app-mode:not(.home-search) #section-newsfeed .news-card:first-child { padding-top: 10px !important; }
 
 /* Compact 2-row card (category · trending-for, then term) with an attached
    quick-insights dropdown. The .trend-card is just a positioning wrapper. */
@@ -12822,9 +12821,9 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-fi-sec { margin-top: 22px; }
 .aii-fi-sec + .aii-fi-sec { margin-top: 24px; }
 /* Topic Prompts tab: the first section header hugs the tab bar (#img631). */
-.topic-prompt-lib-host .aii-fi-sec:first-child { margin-top: 6px; }
+.topic-prompt-lib-host .aii-fi-sec:first-child, .topic-explore-host .aii-fi-sec:first-child { margin-top: 2px; }
 .topic-prompt-lib-host .aii-fi-sec:last-child, .topic-explore-host .aii-fi-sec:last-child { margin-bottom: 40px; }
-.aii-fi-sechead { padding: 0 2px 4px; margin-bottom: 14px; border-bottom: none; }
+.aii-fi-sechead { padding: 0 2px 11px; margin-bottom: 8px; border-bottom: 1px solid #e4e8f0; }
 /* Standalone prompt list (custom search = no section header): give the first card
    room below the tab-bar separator (#img493). In a section, the header handles it. */
 .aii-fi { margin-top: 14px; }
@@ -12843,9 +12842,10 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-fi-acclist { display: flex; flex-direction: column; gap: 9px; }
 /* Topic Prompts tab: one clipped rounded container, borderless rows w/ hairlines
    — connected like Explore Further (#img276). */
-.topic-prompt-lib-host .aii-fi-acclist { gap: 0; border: 1px solid #d7dee9; border-radius: 12px; overflow: hidden; }
+.topic-prompt-lib-host .aii-fi-acclist { gap: 0; border: none; border-radius: 0; overflow: visible; }
 .topic-prompt-lib-host .aii-fi-acclist .aii-fi-acc { border: none; border-radius: 0; box-shadow: none; }
-.topic-prompt-lib-host .aii-fi-acclist .aii-fi-acc + .aii-fi-acc { border-top: 1px solid #eef1f6; }
+.topic-prompt-lib-host .aii-fi-acclist .aii-fi-acc { border-bottom: 1px solid #eef1f6; }
+.topic-prompt-lib-host .aii-fi-acclist .aii-fi-acc:last-child { border-bottom: none; }
 .topic-prompt-lib-host .aii-fi-acclist .aii-fi-acc.is-open { box-shadow: none; }
 .topic-prompt-lib-host .aii-fi-acclist .aii-fi-accsum { border-radius: 0; }
 .topic-prompt-lib-host .aii-fi-acclist .aii-fi-acc.is-open .aii-fi-accsum { border-radius: 0; }
@@ -15055,9 +15055,9 @@ body.home-mode #sub-header.is-subnav .topic-banner { overflow: visible !importan
 .topic-band #section-newsfeed .news-list,
 body.home-search #section-newsfeed .news-list {
   display: flex !important; flex-direction: column !important; grid-template-columns: none !important;
-  /* Flush rows so each hover ties exactly to the hairline above/below — no 12px
-     gap between the divider and the next row's hover fill (#img278). */
-  gap: 0 !important; padding: 6px 0 6px !important;
+  /* Flush rows so each hover ties exactly to the hairline above/below — no gap
+     between the divider and the next row's hover fill (#img278/301). */
+  gap: 0 !important; padding: 0 0 6px !important;
 }
 /* ── News = continuous LIST ROWS with near-full-width separators (#img161/162):
    per-story card boxes retired on home, topic pages, and custom-search results.
@@ -16242,7 +16242,7 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title),
 .aii-bview-summary .im-msec .im-sec-updated { background: #f2f4f8; color: #7d8aa1; }
 /* "SOURCES" gets a touch more visual weight on the cards (#img612). */
 .aii-bview-summary .aii-sec-sources-label { color: #71809b; }
-.aii-bview-summary .im-msec:first-child { padding-top: 18px; }
+.aii-bview-summary .im-msec:first-child { padding-top: 8px; }
 .aii-bview-summary .im-msec:last-child { border-bottom: 1px solid #d3dbe8; }
 .aii-bview-summary .im-msec .im-msec-ic { background: #eef2fb; border: 1px solid #dbe3f2; color: #33517f; }
 /* Numbered card marker (01, 02…) in the icon slot — rhythm/structure over repeated
@@ -16377,8 +16377,10 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
    Explore Further + Prompts lists below. */
 .topic-explore-host .xf-list,
 .ins-tabpanel[data-ins-panel="explore"] .xf-list {
-  gap: 0; border: 1px solid #d7dee9; border-radius: 12px; overflow: hidden;
+  gap: 0; border: none; border-radius: 0; overflow: visible;
 }
+.topic-explore-host .xf-acc { border-bottom: 1px solid #eef1f6 !important; }
+.topic-explore-host .xf-acc:last-child { border-bottom: none !important; }
 .topic-explore-host .xf-list { margin-top: 8px; }
 .topic-explore-host .xf-acc,
 .ins-tabpanel[data-ins-panel="explore"] .xf-acc { border: none !important; border-radius: 0 !important; box-shadow: none !important; }
@@ -16404,7 +16406,7 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 .aii-tabhead { padding: 12px 2px 12px; margin-bottom: 24px; border-bottom: 1px solid #e7ecf3; }
 /* Prompts + Explore Further dropped their intro text/separator (#img74/75) — this
    spacer preserves the gap between the tab subnav and the first accordion header. */
-.aii-tabhead-spacer { height: 20px; }
+.aii-tabhead-spacer { height: 6px; }
 /* Tight title line-height so the topic-name subheader sits CLOSE to the main
    header (the inherited 1.6 body leading was pushing it far down, #img654). */
 .aii-tabhead-title { margin: 0; font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: -0.022em; line-height: 1.12; color: var(--color-primary); }
