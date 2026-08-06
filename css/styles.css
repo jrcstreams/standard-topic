@@ -14938,20 +14938,26 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   text-align: left; font-size: 0.82rem !important; font-weight: 450 !important; color: rgba(255,255,255,0.55);
 }
+.nav-searchbar-ph .np-short { display: none; }
+/* Shorten the placeholder before the bar squeezes it (#img293). */
+@media (max-width: 1200px) {
+  .nav-searchbar-ph .np-full { display: none; }
+  .nav-searchbar-ph .np-short { display: inline; }
+}
 @media (hover: hover) { #nav-search.navbtn:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255,255,255,0.35); box-shadow: 0 2px 10px -4px rgba(0,0,0,0.3); } }
 @media (hover: hover) { #nav-search.navbtn:hover .nav-searchbar-ph { color: rgba(255,255,255,0.72); } }
 .sticky-hero-inner.nav-small-text .navbtn-label { font-size: 0.8rem; }
 /* Collapsed Search = a FIXED 36px light circle (never stretches to the row
    height, which turned it into a giant oval, #img267). Blue magnifier, no label. */
 .sticky-hero-inner.nav-icon-search #nav-search.navbtn {
-  width: 36px; height: 36px; min-width: 36px; padding: 0; gap: 0; border-radius: 50%;
-  align-self: center; flex: none; justify-content: center; margin-left: 6px;
-  background: rgba(255, 255, 255, 0.94); border-color: transparent;
+  width: 38px; height: 38px; min-width: 38px; padding: 0; gap: 0; border-radius: 50%;
+  align-self: center; flex: none; justify-content: center; margin-left: 8px;
+  background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
 }
 .sticky-hero-inner.nav-icon-search #nav-search .navbtn-label { display: none; }
-.sticky-hero-inner.nav-icon-search #nav-search .navbtn-ico { color: #1d4ed8; }
-.sticky-hero-inner.nav-icon-search #nav-search .navbtn-ico svg { width: 17px; height: 17px; color: #1d4ed8; }
-@media (hover: hover) { .sticky-hero-inner.nav-icon-search #nav-search:hover { background: #fff; } }
+.sticky-hero-inner.nav-icon-search #nav-search .navbtn-ico { color: rgba(255,255,255,0.85); }
+.sticky-hero-inner.nav-icon-search #nav-search .navbtn-ico svg { width: 17px; height: 17px; }
+@media (hover: hover) { .sticky-hero-inner.nav-icon-search #nav-search:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.35); } }
 /* Homepage subnav deferral (#img193): hidden until the user scrolls past the
    Explore Topics / Prompt Library cards (JS toggles home-subnav-on). */
 body.home-search #sub-header.is-subnav { transform: translateY(-110%); opacity: 0; pointer-events: none; transition: transform 0.25s ease, opacity 0.18s ease; }
@@ -15895,10 +15901,10 @@ button.aiidd-vlink { align-self: flex-start; }
   .sticky-hero-inner .sticky-actions.navbtns .navbtn { flex-direction: row; gap: 6px; padding: 6px 9px; min-width: 0; }
   .sticky-hero-inner .sticky-actions.navbtns .navbtn-label { font-size: 0.84rem; display: inline; }
   /* Search is the ONLY icon on phones: a light circle, dark icon, no label. */
-  .sticky-hero-inner #nav-search.navbtn { flex-direction: row; padding: 8px; min-width: 0; border-radius: 50%; background: rgba(255,255,255,0.92); border-color: transparent; color: #1e2b48; }
+  .sticky-hero-inner #nav-search.navbtn { flex-direction: row; width: 38px; height: 38px; min-width: 38px; padding: 0; gap: 0; justify-content: center; align-self: center; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); }
   .sticky-hero-inner #nav-search .navbtn-label { display: none !important; }
-  .sticky-hero-inner #nav-search .navbtn-ico { display: inline-flex; }
-  .sticky-hero-inner #nav-search .navbtn-ico svg { width: 17px; height: 17px; color: #1d4ed8; }
+  .sticky-hero-inner #nav-search .navbtn-ico { display: inline-flex; color: rgba(255,255,255,0.85); }
+  .sticky-hero-inner #nav-search .navbtn-ico svg { width: 17px; height: 17px; }
   .sticky-hero-inner .nav-search-mobile { display: none !important; }
   .sticky-hero-inner .sticky-page-name { display: none !important; }
 }
