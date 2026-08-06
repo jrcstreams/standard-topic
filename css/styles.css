@@ -10937,7 +10937,7 @@ body.home-search #home-trending .trending-topics {
   body.home-search .home-search-hero .search-panel-barrow { max-width: 620px; padding-left: 0; padding-right: 0; }
   /* Topic/trend chips dropped from the desktop search card. */
   body.home-search .home-search-hero .search-panel-starters { display: none; }
-  body.home-search   body.home-search }
+}
 /* Stacked (<1024): centered hero, then the mobile art band, then the mini-cards.
    Bigger title/tagline through this range (#img194/195); the art band runs (near)
    full width with its lines bleeding past the edges, tucked closer to the search. */
@@ -12825,18 +12825,18 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* Topic Prompts tab: the first section header hugs the tab bar (#img631). */
 .topic-prompt-lib-host .aii-fi-sec:first-child, .topic-explore-host .aii-fi-sec:first-child { margin-top: 2px; }
 .topic-prompt-lib-host .aii-fi-sec:last-child, .topic-explore-host .aii-fi-sec:last-child { margin-bottom: 40px; }
-.aii-fi-sechead { padding: 0 2px 11px; margin-bottom: 8px; border-bottom: 1px solid #e4e8f0; }
+.aii-fi-sechead { padding: 0 2px 9px; margin-bottom: 3px; border-bottom: 1px solid #e4e8f0; }
 /* Standalone prompt list (custom search = no section header): give the first card
    room below the tab-bar separator (#img493). In a section, the header handles it. */
 .aii-fi { margin-top: 14px; }
 .aii-fi-sec .aii-fi { margin-top: 0; }
 /* Lighter than the page/main header (which is 800): a calm section label, not a
    heavy dense title (#img483-485). */
-.aii-fi-sectitle { margin: 0; font-family: var(--font-display); font-size: clamp(1.3rem, 1.15rem + 0.6vw, 1.55rem); font-weight: 700; letter-spacing: -0.014em; color: #1a2740; }
+.aii-fi-sectitle { margin: 0; font-family: var(--font-display); font-size: clamp(1.22rem, 1.1rem + 0.5vw, 1.4rem); font-weight: 700; letter-spacing: -0.014em; color: #1a2740; }
 .aii-fi-secsub { margin: 3px 0 0; font-size: clamp(0.88rem, 0.84rem + 0.2vw, 0.95rem); line-height: 1.4; color: var(--color-text-muted); }
 /* Small phones: the prompt-group headers ran a bit large (#img633). */
 @media (max-width: 640px) {
-  .aii-fi-sectitle { font-size: 1.22rem; }
+  .aii-fi-sectitle { font-size: 1.16rem; }
   .aii-fi-secsub { font-size: 0.84rem; }
 }
 /* Each prompt is its own tappable CARD: small gap between cards, subtle rounded
@@ -15687,7 +15687,12 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
   margin: 0; font-family: var(--font-display); font-size: 1.4rem; font-weight: 700;
   color: #14213d; letter-spacing: -0.02em; line-height: 1.1;
 }
-.topic-tab-body { padding-top: 20px; min-height: 40vh; }
+.topic-tab-body { padding-top: 11px; min-height: 40vh; }
+/* First AI-Insights / News item hugs the tab strip — the section's own top padding
+   was stacking on the tab-body pad and pushing the first story down (#img322-324). */
+.topic-tab-body .im-msec:first-child,
+.topic-tab-body .aii-msec:first-child { padding-top: 4px !important; }
+.topic-aii-host .im-secs > .im-msec:first-child { padding-top: 4px !important; }
 
 /* Inside a tab: hide the mounted AI builder's own chrome + the news feed's own
    header (the sticky tab header replaces them); let content flow the page. */
@@ -16290,15 +16295,17 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title),
 /* Collapsible SOURCES — a quiet toggle chip; the list drops open below it.
    display:block (not the base grid) so the chip keeps its natural width instead of
    stretching full-width across the card (#img73). */
-.aii-sec-sources--collapsible { margin-top: 12px; display: block; border-top: none; padding-top: 0; }
+/* Sources hug the end of the brief text — no separator band, just a small quiet
+   toggle right under the final paragraph (#img325/326). */
+.aii-sec-sources--collapsible { margin-top: 4px; display: block; border-top: none; padding-top: 0; }
 .aii-sec-srctoggle {
-  display: inline-flex; align-items: center; gap: 5px; padding: 3px 6px; border-radius: 7px;
+  display: inline-flex; align-items: center; gap: 5px; padding: 3px 5px; border-radius: 7px;
   border: none; background: none; cursor: pointer; font-family: var(--font-family);
-  font-size: 0.78rem; font-weight: 600; color: #5f6d85; transition: background .12s, color .12s;
+  font-size: 0.76rem; font-weight: 600; color: #5f6d85; transition: background .12s, color .12s;
 }
 @media (hover: hover) { .aii-sec-srctoggle:hover { background: #f1f4f9; color: #33517f; } }
 .aii-sec-srctoggle .ai-result-sub-ic { display: inline-flex; }
-.aii-sec-srctoggle .ai-result-sub-ic svg { width: 14px; height: 14px; display: block; color: #8b98af; }
+.aii-sec-srctoggle .ai-result-sub-ic svg { width: 12px; height: 12px; display: block; color: #8b98af; }
 @media (hover: hover) { .aii-sec-srctoggle:hover .ai-result-sub-ic svg { color: #33517f; } }
 .aii-srctoggle-chev { display: inline-flex; transition: transform .18s ease; }
 .aii-srctoggle-chev svg { width: 14px; height: 14px; }
@@ -16437,7 +16444,10 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 .aii-tabhead { padding: 12px 2px 12px; margin-bottom: 24px; border-bottom: 1px solid #e7ecf3; }
 /* Prompts + Explore Further dropped their intro text/separator (#img74/75) — this
    spacer preserves the gap between the tab subnav and the first accordion header. */
-.aii-tabhead-spacer { height: 6px; }
+.aii-tabhead-spacer { height: 2px; }
+/* The first section header sits right under the tab strip — the spacer + the base
+   .aii-fi-sec 22px margin were stacking into a big gap (#img335). */
+.aii-tabhead-spacer + .aii-fi-sec { margin-top: 6px; }
 /* Tight title line-height so the topic-name subheader sits CLOSE to the main
    header (the inherited 1.6 body leading was pushing it far down, #img654). */
 .aii-tabhead-title { margin: 0; font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: -0.022em; line-height: 1.12; color: var(--color-primary); }
