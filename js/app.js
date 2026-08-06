@@ -814,15 +814,10 @@ function wirePromptsDropdown(panel, initialView) {
     const view = (localStorage.getItem('st_promptlib_view') === 'flat') ? 'flat' : 'cards';
     root.innerHTML = `
       <div class="prompts-home">
-        <div class="ph-hero">
-          <h2 class="ph-title">Ask better questions.</h2>
-          <p class="ph-sub">Expert-built prompts for 100+ topics, ready to run in ChatGPT, Claude, Gemini and more.</p>
+        <div class="ph-actions">
+          <button type="button" class="ph-headbtn ph-headbtn--primary" data-prompt-build>${PROMPTS_BUILD_IC}<span>Build a Custom Prompt</span></button>
+          <a href="#/search" class="ph-headbtn" data-prompt-search><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Custom Prompt Topic</span></a>
         </div>
-        <button type="button" class="ph-build" data-prompt-build>
-          <span class="ph-build-ic">${PROMPTS_BUILD_IC}</span>
-          <span class="ph-build-tx"><span class="ph-build-title">Build a Custom Prompt</span><span class="ph-build-sub">Compose your own — topics, scope, output style &amp; citations</span></span>
-          <span class="ph-build-go" aria-hidden="true">${AIIDD_ARROW}</span>
-        </button>
         <section class="ph-featured" data-ph-featured hidden>
           <div class="ph-sec-head"><h3 class="ph-sec-title">Featured Prompts</h3></div>
           <div class="ph-feat-grid" data-ph-feat-grid></div>
@@ -839,6 +834,7 @@ function wirePromptsDropdown(panel, initialView) {
         </section>
       </div>`;
     root.querySelector('[data-prompt-build]').addEventListener('click', showBuild);
+    root.querySelector('[data-prompt-search]')?.addEventListener('click', (e) => { e.preventDefault(); openSearchFromNav(); });
 
     // Featured picks — data/featured-prompts.json (admin-editable), resolved
     // against the live shortcut assignments; missing names skip silently.
@@ -2542,9 +2538,9 @@ function renderStickyHeroBar(container, route) {
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
           <span class="navbtn-label">Prompts</span>
         </button>
-        <button type="button" class="navbtn" id="nav-search" aria-label="Search">
+        <button type="button" class="navbtn nav-searchbar" id="nav-search" aria-label="Search">
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-          <span class="navbtn-label">Search</span>
+          <span class="navbtn-label nav-searchbar-ph">Search topics, headlines &amp; more…</span>
         </button>
       </div>
     </div>

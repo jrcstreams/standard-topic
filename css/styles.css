@@ -10650,9 +10650,9 @@ body.home-search.app-mode .topic-layout {
    ultra-light, behind everything. */
 .home-search-hero::before {
   content: ''; position: absolute; top: 50%; right: 0; transform: translateY(-50%);
-  width: min(340px, 42%); height: 200px; z-index: 0; pointer-events: none;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 340 200' fill='none' stroke='%23c2cbdd' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='210' cy='92' r='46'/%3E%3Cline x1='244' y1='126' x2='286' y2='168'/%3E%3Cpath d='M300 26l5 14 14 5-14 5-5 14-5-14-14-5 14-5z' fill='%23c2cbdd' stroke='none'/%3E%3Cg%3E%3Crect x='96' y='120' width='52' height='64' rx='8'/%3E%3Cline x1='110' y1='140' x2='134' y2='140'/%3E%3Cline x1='110' y1='155' x2='134' y2='155'/%3E%3Cline x1='110' y1='170' x2='124' y2='170'/%3E%3C/g%3E%3Cg%3E%3Crect x='288' y='118' width='22' height='22' rx='5'/%3E%3Crect x='318' y='118' width='22' height='22' rx='5'/%3E%3Crect x='288' y='148' width='22' height='22' rx='5'/%3E%3Crect x='318' y='148' width='22' height='22' rx='5'/%3E%3C/g%3E%3C/svg%3E") right center / contain no-repeat;
-  opacity: 0.9;
+  width: min(360px, 44%); height: 210px; z-index: 0; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 210' fill='none'%3E%3Cg stroke='%23cdd5e4' stroke-width='2.4' stroke-linecap='round'%3E%3Crect x='40' y='58' width='96' height='118' rx='12'/%3E%3Cline x1='58' y1='84' x2='118' y2='84'/%3E%3Cline x1='58' y1='104' x2='118' y2='104'/%3E%3Cline x1='58' y1='124' x2='100' y2='124'/%3E%3Cline x1='58' y1='144' x2='112' y2='144'/%3E%3C/g%3E%3Cg stroke='%23aab6d0' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='238' cy='96' r='58'/%3E%3Cline x1='279' y1='137' x2='320' y2='178'/%3E%3C/g%3E%3Cg stroke='%23bcc6dc' stroke-width='3' stroke-linecap='round'%3E%3Cline x1='214' y1='82' x2='262' y2='82'/%3E%3Cline x1='214' y1='96' x2='262' y2='96'/%3E%3Cline x1='214' y1='110' x2='246' y2='110'/%3E%3C/g%3E%3Cpath d='M312 30l6 16 16 6-16 6-6 16-6-16-16-6 16-6z' fill='%23b7c1d9'/%3E%3Ccircle cx='150' cy='40' r='3.4' fill='%23cdd5e4'/%3E%3C/svg%3E") right center / contain no-repeat;
+  opacity: 0.95;
 }
 @media (max-width: 900px) { .home-search-hero::before { width: min(220px, 46%); height: 150px; opacity: 0.55; } }
 @media (max-width: 560px) { .home-search-hero::before { display: none; } }
@@ -10817,7 +10817,9 @@ body.home-search #home-trending .trending-topics {
   padding: 1.05rem 1.3rem 0.85rem; border: none; background: none; cursor: pointer; text-align: left;
 }
 @media (hover: hover) { .featstrip-item--rich .featstrip-head:hover .featstrip-arrow { color: #26375a; transform: translateX(3px); } }
-.featstrip-previews { display: flex; flex-wrap: wrap; gap: 8px; padding: 2px 1.3rem 1.1rem; border-top: 1px solid #eef1f6; margin: 0 0; padding-top: 12px; }
+.featstrip-previews { display: flex; flex-wrap: nowrap; gap: 8px; padding: 12px 1.3rem 1.1rem; border-top: 1px solid #eef1f6; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 30px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 30px), transparent); }
+.featstrip-previews::-webkit-scrollbar { display: none; }
+.featstrip-previews .fs-chip { flex: none; }
 .fs-chip {
   display: inline-flex; align-items: center; gap: 6px; max-width: 100%;
   padding: 6px 12px; border-radius: 999px; border: 1px solid #dde3ee; background: #f7f9fc;
@@ -10846,8 +10848,13 @@ body.home-search #home-trending .trending-topics {
 @media (max-width: 900px) {
   .home-featstrip { grid-template-columns: 1fr; gap: 12px; }
   .featstrip-item--rich .featstrip-head { padding: 0.9rem 1.05rem 0.75rem; }
-  /* Preview chips scroll on ONE row instead of wrapping into a tall block. */
-  .featstrip-previews { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 10px 1.05rem 0.9rem; }
+  /* Preview chips scroll on ONE row; a right-edge fade signals "more →" instead of
+     a hard cutoff (#img284/285). */
+  .featstrip-previews {
+    flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 10px 1.05rem 0.9rem;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 34px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 34px), transparent);
+  }
   .featstrip-previews::-webkit-scrollbar { display: none; }
   .fs-chip { flex: none; }
 }
@@ -14901,22 +14908,32 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 /* Search is its OWN distinct button at the end of the nav group (#img234): a
    quiet glass pill with icon + label. Under squeeze it drops the label and
    becomes a light circle with a dark icon (#img235). */
+/* A real, professional SEARCH BAR in the nav (#img282): magnifier + placeholder,
+   responsive width, right-aligned. Clicking opens the full search dropdown. */
 #nav-search.navbtn {
-  background: rgba(255, 255, 255, 0.13); border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 999px; padding: 6px 15px; margin-left: 4px; gap: 7px; align-self: center;
+  display: flex; align-items: center; justify-content: flex-start; gap: 9px; align-self: center;
+  width: clamp(190px, 20vw, 300px); padding: 8px 16px; margin-left: 14px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.09); border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: background .14s, border-color .14s, box-shadow .14s;
 }
-#nav-search .navbtn-ico { display: inline-flex; }
-#nav-search .navbtn-ico svg { width: 15px; height: 15px; }
-@media (hover: hover) { #nav-search.navbtn:hover { background: rgba(255, 255, 255, 0.22); color: #fff; } }
+#nav-search .navbtn-ico { display: inline-flex; flex: none; color: rgba(255,255,255,0.62); }
+#nav-search .navbtn-ico svg { width: 16px; height: 16px; }
+.nav-searchbar-ph {
+  flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  text-align: left; font-size: 0.82rem !important; font-weight: 450 !important; color: rgba(255,255,255,0.55);
+}
+@media (hover: hover) { #nav-search.navbtn:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255,255,255,0.35); box-shadow: 0 2px 10px -4px rgba(0,0,0,0.3); } }
+@media (hover: hover) { #nav-search.navbtn:hover .nav-searchbar-ph { color: rgba(255,255,255,0.72); } }
 .sticky-hero-inner.nav-small-text .navbtn-label { font-size: 0.8rem; }
 /* Collapsed Search = a FIXED 36px light circle (never stretches to the row
    height, which turned it into a giant oval, #img267). Blue magnifier, no label. */
 .sticky-hero-inner.nav-icon-search #nav-search.navbtn {
   width: 36px; height: 36px; min-width: 36px; padding: 0; gap: 0; border-radius: 50%;
-  align-self: center; flex: none; justify-content: center;
+  align-self: center; flex: none; justify-content: center; margin-left: 6px;
   background: rgba(255, 255, 255, 0.94); border-color: transparent;
 }
 .sticky-hero-inner.nav-icon-search #nav-search .navbtn-label { display: none; }
+.sticky-hero-inner.nav-icon-search #nav-search .navbtn-ico { color: #1d4ed8; }
 .sticky-hero-inner.nav-icon-search #nav-search .navbtn-ico svg { width: 17px; height: 17px; color: #1d4ed8; }
 @media (hover: hover) { .sticky-hero-inner.nav-icon-search #nav-search:hover { background: #fff; } }
 /* Homepage subnav deferral (#img193): hidden until the user scrolls past the
@@ -14925,10 +14942,9 @@ body.home-search #sub-header.is-subnav { transform: translateY(-110%); opacity: 
 body.home-search.home-subnav-on #sub-header.is-subnav { transform: none; opacity: 1; pointer-events: auto; }
 
 @media (max-width: 899.98px) {
-  /* 561–899 uses the SAME single-row icons-after-title design as the wider screens
-     (see the ≥561 block above) — no separate tablet layout. Just the content-height
-     bookkeeping for the (removed) bottom bar lives here. */
-  /* Content no longer reserves space for the (removed) bottom bar. */
+  /* Hero sits closer to the nav on phones (#img286). */
+  html body.home-search.app-mode #content,
+  html body.home-search.app-mode.sticky-always.has-subnav #content { padding-top: calc(var(--nav-h) + 0.25rem) !important; }
   html body.home-search.app-mode.sticky-always.has-subnav #content,
   html body.home-search.app-mode #content { padding-bottom: 1.1rem !important; }
   body.app-mode.sticky-always.has-subnav:not(.home-search) #content,
@@ -15684,26 +15700,19 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 /* ═══ Prompts landing rebuild (#img216-220): hero + Build card + Prompt Library
    (Featured picks, Card View / Flatten Topics toggle). ═══════════════════════ */
 .prompts-home { padding: 2px 2px 30px; }
-/* Clean, quiet hero (#img250) — no graphic; just a title + one line of context. */
-.ph-hero { padding: 2px 0 22px; }
-.ph-title { margin: 0 0 0.4rem; font-family: var(--font-display); font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.05rem); font-weight: 700; letter-spacing: -0.028em; color: #16233d; }
-.ph-sub { margin: 0; max-width: 46rem; font-size: 1rem; line-height: 1.5; color: #55627a; }
-/* Build a Custom Prompt — a prominent, well-proportioned navy CTA (#img249). */
-.prompts-home .ph-build {
-  display: flex; align-items: center; gap: 1rem; width: 100%; margin-bottom: 30px;
-  padding: 1.05rem 1.35rem; text-align: left; cursor: pointer;
-  background: #26375a; border: none; border-radius: 15px;
-  box-shadow: 0 10px 26px -16px rgba(26, 39, 64, 0.55);
-  transition: background .14s ease, transform .14s ease, box-shadow .14s ease;
+/* Head-action pills right under the "Prompts" title (like the Topics landing's
+   Search Custom Topic button, #img280). */
+.ph-actions { display: flex; flex-wrap: wrap; gap: 10px; padding: 2px 0 22px; margin-bottom: 20px; border-bottom: 1px solid #e4e8f0; }
+.ph-headbtn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px;
+  font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; text-decoration: none; cursor: pointer;
+  background: #eef1f6; color: #26375a; border: 1px solid #dde3ee;
+  transition: background .13s, border-color .13s, transform .13s;
 }
-@media (hover: hover) { .prompts-home .ph-build:hover { background: #1f2d4d; transform: translateY(-1px); box-shadow: 0 16px 32px -18px rgba(26, 39, 64, 0.6); } }
-.ph-build-ic { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 11px; background: rgba(255,255,255,0.12); color: #fff; }
-.ph-build-ic svg { width: 21px; height: 21px; }
-.ph-build-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.ph-build-title { font-family: var(--font-display); font-size: 1.08rem; font-weight: 700; color: #fff; letter-spacing: -0.012em; }
-.ph-build-sub { font-size: 0.84rem; font-weight: 500; color: #c3cee2; }
-.ph-build-go { flex: none; margin-left: auto; display: inline-flex; color: #aebcd6; transition: transform .14s ease, color .14s ease; }
-@media (hover: hover) { .prompts-home .ph-build:hover .ph-build-go { color: #fff; transform: translateX(3px); } }
+.ph-headbtn svg { flex: none; }
+@media (hover: hover) { .ph-headbtn:hover { background: #e3e9f4; border-color: #ccd6e8; text-decoration: none; } }
+.ph-headbtn--primary { background: #26375a; color: #fff; border-color: #26375a; }
+@media (hover: hover) { .ph-headbtn--primary:hover { background: #1f2d4d; border-color: #1f2d4d; transform: translateY(-1px); } }
 /* Section heads — one consistent style for Featured / Browse (#img251). */
 .ph-sec-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding-bottom: 11px; border-bottom: 1px solid #e4e8f0; margin-bottom: 16px; }
 .ph-sec-title { margin: 0; font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: #1a2740; letter-spacing: -0.015em; }
