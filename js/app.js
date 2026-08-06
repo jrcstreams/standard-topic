@@ -3025,10 +3025,26 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // Preview rows inside the two cards (#img231): featured topic chips + the
     // first three Featured Prompts (same data file as the Prompt Library).
     {
+      // Show only the preview chips that FULLY fit the card width (up to 5) — no
+      // cutoff/scroll (#img312). Re-run on resize while the home card is mounted.
+      const fitFsChips = (wrap) => {
+        if (!wrap) return;
+        const chips = [...wrap.children];
+        chips.forEach((c) => { c.style.display = ''; });
+        const avail = wrap.clientWidth;
+        const gap = parseFloat(getComputedStyle(wrap).columnGap || getComputedStyle(wrap).gap) || 8;
+        let used = 0;
+        chips.forEach((c) => {
+          const w = c.getBoundingClientRect().width;
+          const next = used === 0 ? w : used + gap + w;
+          if (next <= avail + 0.5) { used = next; } else { c.style.display = 'none'; }
+        });
+      };
       const tWrap = container.querySelector('[data-fs-topics]');
       if (tWrap) {
         let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 5); } catch (_) {}
         tWrap.innerHTML = feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="fs-chip">${topicIconSVG(t.icon || 'globe', 'fs-chip-ic')}<span>${escapeHTML(t.name)}</span></a>`).join('');
+        requestAnimationFrame(() => fitFsChips(tWrap));
       }
       const pWrap = container.querySelector('[data-fs-prompts]');
       if (pWrap) {
@@ -3038,7 +3054,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
             if (!cfg || !Array.isArray(cfg.featured)) return;
             const picks = [];
             for (const f of cfg.featured) {
-              if (picks.length >= 3) break;
+              if (picks.length >= 5) break;
               let sc = []; try { sc = getShortcutsForTopic(f.topic) || []; } catch (_) { continue; }
               const sMatch = sc.find((x) => x && x.name === f.name);
               const t = getTopicBySlug(f.topic);
@@ -3050,7 +3066,14 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               const pk = picks[Number(b.dataset.fsPrompt)]; if (!pk) return;
               window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: pk.s.prompt, topicName: pk.tn, name: pk.s.name, count: 1 } }));
             }));
+            requestAnimationFrame(() => fitFsChips(pWrap));
           }).catch(() => {});
+      }
+      if (!window.__fsFitBound) {
+        window.__fsFitBound = true;
+        window.addEventListener('resize', () => requestAnimationFrame(() => {
+          document.querySelectorAll('.home-featstrip [data-fs-topics], .home-featstrip [data-fs-prompts]').forEach(fitFsChips);
+        }));
       }
     }
   } else if (topic && !isCustom) {

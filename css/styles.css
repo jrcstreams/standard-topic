@@ -10663,13 +10663,13 @@ body.home-search.app-mode .topic-layout {
    knowledge icons wash the right side of the search zone (#img231): static,
    ultra-light, behind everything. */
 .home-search-hero::before {
-  content: ''; position: absolute; top: 50%; right: 0; transform: translateY(-50%);
-  width: min(360px, 44%); height: 210px; z-index: 0; pointer-events: none;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 360 210' fill='none'%3E%3Cg stroke='%23cdd5e4' stroke-width='2.4' stroke-linecap='round'%3E%3Crect x='40' y='58' width='96' height='118' rx='12'/%3E%3Cline x1='58' y1='84' x2='118' y2='84'/%3E%3Cline x1='58' y1='104' x2='118' y2='104'/%3E%3Cline x1='58' y1='124' x2='100' y2='124'/%3E%3Cline x1='58' y1='144' x2='112' y2='144'/%3E%3C/g%3E%3Cg stroke='%23aab6d0' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='238' cy='96' r='58'/%3E%3Cline x1='279' y1='137' x2='320' y2='178'/%3E%3C/g%3E%3Cg stroke='%23bcc6dc' stroke-width='3' stroke-linecap='round'%3E%3Cline x1='214' y1='82' x2='262' y2='82'/%3E%3Cline x1='214' y1='96' x2='262' y2='96'/%3E%3Cline x1='214' y1='110' x2='246' y2='110'/%3E%3C/g%3E%3Cpath d='M312 30l6 16 16 6-16 6-6 16-6-16-16-6 16-6z' fill='%23b7c1d9'/%3E%3Ccircle cx='150' cy='40' r='3.4' fill='%23cdd5e4'/%3E%3C/svg%3E") right center / contain no-repeat;
-  opacity: 0.95;
+  content: ''; position: absolute; top: 50%; right: 0.5rem; transform: translateY(-50%);
+  width: min(300px, 40%); height: 200px; z-index: 0; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200' fill='none'%3E%3Cg stroke='%23b9c3da' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='150' cy='96' r='62'/%3E%3Cline x1='194' y1='140' x2='238' y2='184'/%3E%3C/g%3E%3Cg stroke='%23c7d0e2' stroke-width='3' stroke-linecap='round'%3E%3Cline x1='122' y1='80' x2='178' y2='80'/%3E%3Cline x1='122' y1='96' x2='178' y2='96'/%3E%3Cline x1='122' y1='112' x2='160' y2='112'/%3E%3C/g%3E%3Cpath d='M244 30l5.5 15 15 5.5-15 5.5-5.5 15-5.5-15-15-5.5 15-5.5z' fill='%23bcc6de'/%3E%3C/svg%3E") right center / contain no-repeat;
+  opacity: 0.9;
 }
-@media (max-width: 900px) { .home-search-hero::before { width: min(220px, 46%); height: 150px; opacity: 0.55; } }
-@media (max-width: 560px) { .home-search-hero::before { display: none; } }
+@media (max-width: 900px) { .home-search-hero::before { width: min(200px, 42%); height: 150px; opacity: 0.5; } }
+@media (max-width: 560px) { .home-search-hero::before { display: block; width: 130px; height: 110px; opacity: 0.28; top: 3.4rem; transform: none; } }
 .home-search-hero {
   /* NB: no overflow:hidden — the typeahead dropdown is absolutely positioned and
      must be allowed to spill past the hero's bottom edge (#77). */
@@ -10735,7 +10735,7 @@ body.home-search .home-search-hero .search-panel-starters { display: none; }
   .home-search-hero { padding: 0.9rem 0 0; }
   .home-search-hero .search-panel-hero-inner { text-align: center; }
   .home-search-hero .search-panel-title { font-size: clamp(1.45rem, 6.4vw, 1.8rem); text-align: center; }
-  .home-search-hero .search-panel-input { height: 52px; font-size: 1rem; }
+  .home-search-hero .search-panel-input { height: 48px; font-size: 0.98rem; }
 }
 /* The bar fills the card (minus padding), matching how it fills the 600px
    modal — so the bar width is identical in card and modal. */
@@ -10833,8 +10833,7 @@ body.home-search #home-trending .trending-topics {
   padding: 1.05rem 1.3rem 0.85rem; border: none; background: none; cursor: pointer; text-align: left;
 }
 @media (hover: hover) { .featstrip-item--rich .featstrip-head:hover .featstrip-arrow { color: #26375a; transform: translateX(3px); } }
-.featstrip-previews { display: flex; flex-wrap: nowrap; gap: 8px; padding: 2px 1.3rem 1.1rem; border-top: none; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 30px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 30px), transparent); }
-.featstrip-previews::-webkit-scrollbar { display: none; }
+.featstrip-previews { display: flex; flex-wrap: nowrap; gap: 8px; padding: 2px 1.3rem 1.1rem; border-top: none; overflow: hidden; }
 .featstrip-previews .fs-chip { flex: none; }
 .fs-chip {
   display: inline-flex; align-items: center; gap: 6px; max-width: 100%; height: 34px; box-sizing: border-box;
@@ -10870,14 +10869,7 @@ body.home-search #home-trending .trending-topics {
 @media (max-width: 900px) {
   .home-featstrip { grid-template-columns: 1fr; gap: 12px; }
   .featstrip-item--rich .featstrip-head { padding: 0.9rem 1.05rem 0.75rem; }
-  /* Preview chips scroll on ONE row; a right-edge fade signals "more →" instead of
-     a hard cutoff (#img284/285). */
-  .featstrip-previews {
-    flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 10px 1.05rem 0.9rem;
-    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 34px), transparent);
-    mask-image: linear-gradient(to right, #000 calc(100% - 34px), transparent);
-  }
-  .featstrip-previews::-webkit-scrollbar { display: none; }
+  .featstrip-previews { flex-wrap: nowrap; overflow: hidden; padding: 8px 1.05rem 0.9rem; }
   .fs-chip { flex: none; }
 }
 @media (min-width: 1024px) {
@@ -10930,7 +10922,7 @@ body.home-search #home-trending .trending-topics {
   body.home-search #home-trending { order: 0; }
   /* LEFT-ALIGNED hero (#img154): big display title, tagline, bar — no card box.
      The art column carries the visual weight on the right. */
-  body.home-search .home-search-hero { display: block; padding: 1.9rem 0 0.4rem; border-radius: 0; text-align: left; width: 100%; max-width: none; margin: 0; justify-self: stretch; }
+  body.home-search .home-search-hero { display: block; padding: 0.9rem 0 0.4rem; border-radius: 0; text-align: left; width: 100%; max-width: none; margin: 0; justify-self: stretch; }
   body.home-search .home-search-hero .search-panel { max-width: none; margin: 0; }
   body.home-search .home-search-hero .search-panel-hero-inner { text-align: left; padding: 0 0 1.2rem; }
   body.home-search .home-search-hero .search-panel-title {
@@ -10939,7 +10931,7 @@ body.home-search #home-trending .trending-topics {
     letter-spacing: -0.032em; line-height: 1.1; color: #16233d; margin: 0 0 0.65rem;
   }
   body.home-search .home-search-hero .search-panel-tagline { text-align: left; margin: 0 0 0.3rem; font-size: 1.14rem; color: #4a5a75; }
-  body.home-search .home-search-hero .search-panel-input { height: 52px; font-size: 1rem; }
+  body.home-search .home-search-hero .search-panel-input { height: 48px; font-size: 0.98rem; }
   body.home-search .home-search-hero .search-panel-barrow { max-width: 620px; padding-left: 0; padding-right: 0; }
   /* Topic/trend chips dropped from the desktop search card. */
   body.home-search .home-search-hero .search-panel-starters { display: none; }
@@ -10987,7 +10979,7 @@ body.home-search #topic-layout { margin-top: 0.4rem; }
      hero-inner padding-bottom only tightened to 0.2rem at ≥700, leaving 641–699
      with a visibly airier gap (#img584). */
   body.home-search .home-search-hero .search-panel-hero-inner { padding-bottom: 0.2rem; }
-  body.home-search .home-search-hero .search-panel-input { height: 52px; font-size: 1rem; }
+  body.home-search .home-search-hero .search-panel-input { height: 48px; font-size: 0.98rem; }
 }
 /* Only once the main nav breaks to two rows (≤640) does the search card go
    FULL-WIDTH, matching the Trending/News cards below it (#233/#234/#235). The
@@ -14934,7 +14926,7 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
    responsive width, right-aligned. Clicking opens the full search dropdown. */
 #nav-search.navbtn {
   display: flex; align-items: center; justify-content: flex-start; gap: 9px; align-self: center;
-  width: clamp(190px, 20vw, 300px); padding: 8px 16px; margin-left: 14px; border-radius: 999px;
+  width: clamp(190px, 20vw, 320px); padding: 8px 16px; margin-left: 14px; border-radius: 999px;
   background: rgba(255, 255, 255, 0.09); border: 1px solid rgba(255, 255, 255, 0.2);
   transition: background .14s, border-color .14s, box-shadow .14s;
 }
@@ -14945,8 +14937,9 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   text-align: left; font-size: 0.82rem !important; font-weight: 450 !important; color: rgba(255,255,255,0.55);
 }
 .nav-searchbar-ph .np-short { display: none; }
-/* Shorten the placeholder before the bar squeezes it (#img293). */
-@media (max-width: 1200px) {
+/* Swap to the short placeholder well BEFORE the full text would ellipse (#img297)
+   — the full label needs a wide bar, so switch at 1440px. */
+@media (max-width: 1440px) {
   .nav-searchbar-ph .np-full { display: none; }
   .nav-searchbar-ph .np-short { display: inline; }
 }
