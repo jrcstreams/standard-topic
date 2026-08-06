@@ -10470,17 +10470,24 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 /* Suggestions dropdown. */
 .search-panel-suggest {
   position: absolute; left: 0; right: 0; top: 100%; z-index: 30;
-  background: #fff; border: 1.5px solid #c3cee2; border-top: none;
+  background: #fff; border: 1.5px solid #d7e0ef; border-top: none;
   border-radius: 0 0 16px 16px; overflow: hidden; padding: 6px;
-  box-shadow: 0 24px 44px -18px rgba(15, 23, 42, 0.32);
-  transform-origin: top center; animation: spSuggestIn .18s cubic-bezier(.22,.61,.21,1);
+  box-shadow: 0 22px 40px -20px rgba(15, 23, 42, 0.26);
+  transform-origin: top center; animation: spSuggestIn .2s cubic-bezier(.22,.61,.21,1);
 }
-@keyframes spSuggestIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@keyframes spSuggestIn { from { opacity: 0; transform: translateY(-8px) scaleY(0.96); } to { opacity: 1; transform: none; } }
 .search-panel-suggest[hidden] { display: none; }
-/* The input reads as the head of the dropdown: flat bottom corners + matching
-   border while suggestions are open, so the two form ONE connected element. */
-.search-panel-barrow:has(.search-panel-suggest:not([hidden])) .search-panel-input {
-  border-radius: 14px 14px 0 0; border-color: #c3cee2; border-width: 1.5px; border-bottom-color: #eef1f6;
+/* The input reads as the head of the dropdown: flat bottom corners + one calm,
+   neutral border (no blue "active" focus ring or glow) so the two form ONE clean
+   connected element while suggestions are open (#img364-366/370). */
+.search-panel-barrow:has(.search-panel-suggest:not([hidden])) .search-panel-input,
+.search-panel-barrow:has(.search-panel-suggest:not([hidden])) .search-panel-input:focus {
+  border-radius: 14px 14px 0 0; border-color: #d7e0ef; border-width: 1.5px; border-bottom-color: #eef1f6;
+  box-shadow: none;
+}
+.home-search-hero .search-panel-barrow:has(.search-panel-suggest:not([hidden])) .search-panel-input,
+.home-search-hero .search-panel-barrow:has(.search-panel-suggest:not([hidden])) .search-panel-input:focus {
+  border-radius: 14px 14px 0 0; border-color: #d7e0ef; border-bottom-color: #eef1f6; box-shadow: none;
 }
 /* Drop the bar's bottom padding while the dropdown is open so the panel butts
    directly against the input — no floating gap between them (#img364-366). */
@@ -10524,7 +10531,9 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
   opacity: 0; transform: translateX(-2px); transition: opacity .14s ease, transform .14s ease, background .12s;
 }
 .search-panel-suggest-submit svg { flex: none; }
-.search-panel-suggest-row.is-custom .search-panel-suggest-name { color: #3a4a66; font-weight: 600; font-size: 0.98rem; }
+/* Differentiated from the typed input text — lighter weight + muted colour so it
+   reads as a suggested action, not a duplicate of what you typed (#img370). */
+.search-panel-suggest-row.is-custom .search-panel-suggest-name { color: #6b7a93; font-weight: 500; font-size: 0.9rem; }
 .search-panel-suggest-row.is-custom.is-active .search-panel-suggest-submit,
 .search-panel-suggest-row.is-custom:hover .search-panel-suggest-submit { opacity: 1; transform: none; }
 .search-panel-suggest-row.is-custom:hover .search-panel-suggest-submit { background: #26375a; color: #fff; }
