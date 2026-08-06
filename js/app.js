@@ -2983,7 +2983,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               <button type="button" class="featstrip-head" data-explore-topics aria-label="Explore all topics">
                 <span class="featstrip-ic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>
                 <span class="featstrip-tx"><span class="featstrip-title">Explore Topics</span><span class="featstrip-sub">Browse 100+ topic hubs</span></span>
-                <span class="featstrip-arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
+                <span class="featstrip-cta"><span>View all topics</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
               </button>
               <div class="featstrip-previews" data-fs-topics></div>
             </div>
@@ -2991,7 +2991,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               <button type="button" class="featstrip-head" data-explore-prompts aria-label="Open the prompt library">
                 <span class="featstrip-ic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
                 <span class="featstrip-tx"><span class="featstrip-title">Prompt Library</span><span class="featstrip-sub">Ready-made for every topic</span></span>
-                <span class="featstrip-arrow" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
+                <span class="featstrip-cta"><span>Access prompt library</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
               </button>
               <div class="featstrip-previews" data-fs-prompts></div>
             </div>
