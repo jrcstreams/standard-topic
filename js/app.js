@@ -4148,7 +4148,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       </div></div>
       <div class="search-panel-barrow">
         <form class="search-panel-form" role="search" autocomplete="off">
-          <span class="search-panel-icon" aria-hidden="true">${SEARCH_ICON_SVG}</span>
+          <button type="submit" class="search-panel-icon" aria-label="Search" title="Search">${SEARCH_ICON_SVG}</button>
           <input class="search-panel-input" type="search" placeholder="Search any topic, headline or question for insights…" aria-label="Search any topic" value="${escapeAttr(term)}">
           <button type="button" class="search-panel-copylink" aria-label="Copy a shareable link to this search" title="Copy link to this search">${LINK_ICON_SVG}</button>
           <button type="button" class="search-panel-clear" aria-label="Clear search" hidden>${X_ICON_SVG}</button>
@@ -4410,7 +4410,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       }
       // Custom "search this term" — a distinct ACTION row (divider above + primary
       // accent + leading search chip + trailing arrow), not another plain result.
-      return `<button type="button" class="search-panel-suggest-row is-custom" data-i="${i}" role="option"><span class="search-panel-suggest-ic search-panel-suggest-ic--go" aria-hidden="true">${SEARCH_ICON_SVG}</span><span class="search-panel-suggest-name">Search “${escapeHTML(it.term)}”</span><span class="search-panel-suggest-go" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span></button>`;
+      return `<button type="button" class="search-panel-suggest-row is-custom" data-i="${i}" role="option"><span class="search-panel-suggest-name">Search “${escapeHTML(it.term)}”</span><span class="search-panel-suggest-submit" aria-hidden="true"><span>Search</span><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span></button>`;
     }).join('');
     suggestEl.hidden = false;
     suggestEl.querySelectorAll('.search-panel-suggest-row').forEach(row => {
