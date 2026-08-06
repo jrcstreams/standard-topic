@@ -11407,6 +11407,9 @@ body.home-search #home-trending .trend-card-acc { display: inline-flex; margin-r
 body.home-search #home-trending .trend-card-title { padding-right: 10px; font-weight: 650 !important; }
 body.home-search #home-trending .trend-card:hover::before { content: none !important; }
 @media (hover: hover) { body.home-search #home-trending .trend-card:not(.is-expanded):hover { background: #f5f7fa; } }
+/* First card's hover fill reaches the header rule above it — the grid's small top
+   pad was leaving a sliver of white between the tint and the divider (#img320/321). */
+@media (hover: hover) { body.home-search #home-trending .trend-card:first-child:not(.is-expanded):hover { box-shadow: 0 -3px 0 0 #f5f7fa; } }
 /* In-between stacked width (641–1023.98): SIX trends in TWO columns instead of a
    3-row list (#img127). An expanded brief spans both columns. First-row cells both
    drop the tighter first-child top padding for an even grid. */
@@ -14037,8 +14040,9 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
    header) over a faint off-grey body. The collapsed summary is hidden to condense
    the top so the actions sit right under the meta line. ─────────────────────── */
 .topic-band #section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) {
-  background: #eef2f8 !important; border-radius: 12px; padding: 0 !important;
-  overflow: hidden; box-shadow: 0 0 0 1px #dfe6f0; border-top-color: transparent !important;
+  background: #eef2f8 !important; border-radius: 12px !important; padding: 0 !important;
+  overflow: hidden; box-shadow: 0 0 0 1px #d5deec; border-top-color: transparent !important;
+  margin-top: 6px !important; margin-bottom: 6px !important;
 }
 /* Neighbour above an open card keeps its divider off the container. */
 .topic-band #section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) + .news-card { border-top-color: transparent !important; }
