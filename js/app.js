@@ -3017,13 +3017,20 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           .then((r) => (r.ok ? r.json() : null))
           .then((cfg) => {
             if (!cfg || !Array.isArray(cfg.featured)) return;
+            // Show AT LEAST 3, UP TO 5 previews — but stop early so the chips stay a
+            // tidy ~2 rows. Chip widths vary a lot by name length, so budget by total
+            // characters rather than a fixed count (#img349/362).
             const picks = [];
+            let chars = 0;
             for (const f of cfg.featured) {
               if (picks.length >= 5) break;
               let sc = []; try { sc = getShortcutsForTopic(f.topic) || []; } catch (_) { continue; }
               const sMatch = sc.find((x) => x && x.name === f.name);
+              if (!(sMatch && sMatch.prompt)) continue;
+              if (picks.length >= 3 && chars + sMatch.name.length > 44) break;
               const t = getTopicBySlug(f.topic);
-              if (sMatch && sMatch.prompt) picks.push({ s: sMatch, tn: t ? t.name : '' });
+              picks.push({ s: sMatch, tn: t ? t.name : '' });
+              chars += sMatch.name.length;
             }
             pWrap.innerHTML = picks.map((pk, i) => `<button type="button" class="fs-chip fs-chip--prompt" data-fs-prompt="${i}"><svg class="fs-chip-spark" viewBox="0 0 24 24" width="12" height="12" fill="#2563eb" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg><span>${escapeHTML(pk.s.name)}</span></button>`).join('');
             pWrap.querySelectorAll('[data-fs-prompt]').forEach((b) => b.addEventListener('click', (e) => {
@@ -3031,14 +3038,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               const pk = picks[Number(b.dataset.fsPrompt)]; if (!pk) return;
               window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: pk.s.prompt, topicName: pk.tn, name: pk.s.name, count: 1 } }));
             }));
-            requestAnimationFrame(() => fitFsChips(pWrap));
           }).catch(() => {});
-      }
-      if (!window.__fsFitBound) {
-        window.__fsFitBound = true;
-        window.addEventListener('resize', () => requestAnimationFrame(() => {
-          document.querySelectorAll('.home-featstrip [data-fs-topics], .home-featstrip [data-fs-prompts]').forEach(fitFsChips);
-        }));
       }
     }
   } else if (topic && !isCustom) {
