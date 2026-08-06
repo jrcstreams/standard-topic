@@ -14032,6 +14032,28 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
   border-top: none;
 }
 
+/* ── News AI-Insights OPEN state (#img331-334): the open story reads as one
+   cohesive container — a darker header band (title + meta, like the trending
+   header) over a faint off-grey body. The collapsed summary is hidden to condense
+   the top so the actions sit right under the meta line. ─────────────────────── */
+.topic-band #section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) {
+  background: #eef2f8 !important; border-radius: 12px; padding: 0 !important;
+  overflow: hidden; box-shadow: 0 0 0 1px #dfe6f0; border-top-color: transparent !important;
+}
+/* Neighbour above an open card keeps its divider off the container. */
+.topic-band #section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) + .news-card { border-top-color: transparent !important; }
+@media (hover: hover) {
+  .topic-band #section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]):hover { background: #eef2f8 !important; }
+}
+/* Darker header band = title + meta on a tinted strip. */
+.topic-band #section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-link { background: #e2e8f3; padding: 13px 15px 0 !important; }
+.topic-band #section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-foot { background: #e2e8f3; margin-top: 9px !important; padding: 0 15px 12px !important; }
+/* Condense: drop the collapsed summary (the panel carries the full brief). */
+.topic-band #section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-desc { display: none !important; }
+/* Body + actions + panel on the faint off-grey, inset to match the header. */
+.topic-band #section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-body { padding: 11px 15px 0 !important; }
+.topic-band #section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-panel { padding: 0 15px 13px !important; }
+
 /* ── Topic page layout (revamp361): the WIDE 2-column (AI Insights sidebar left +
    News Feed main right) is handled by the #14 split block above (≥900, now
    activated by the .topic-main/.topic-side wrappers). Below 900 (bottom-nav) it
