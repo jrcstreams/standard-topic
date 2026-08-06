@@ -279,6 +279,14 @@ function wireTrendCardsInline(container) {
       }
       // Still the expanded card? (user may have collapsed while fetching)
       if (!card.classList.contains('is-expanded')) return;
+      // Keep the collapsed card summary CONSISTENT with the fresh brief (#img277):
+      // the stored snapshot one-liner can lag the regenerated brief (e.g. "sharks"
+      // vs the brief's "baseball league"). Overwrite it with the brief's summary.
+      try {
+        const fresh = tersifySummary(cleanSummary(data.summary || ''), card.dataset.query);
+        const sumEl = card.querySelector('.trend-card-summary');
+        if (fresh && fresh.length > 6 && sumEl) sumEl.textContent = fresh;
+      } catch (_) {}
       exp.innerHTML = `${renderTrendExpansionBody(term, data)}<div class="trend-exp-closefoot"><button type="button" class="trend-exp-closelink" data-trend-closefoot>${TREND_EXP_CLOSE}<span>Close</span></button></div>`;
       exp.querySelectorAll('.trend-exp-close, [data-trend-closefoot]').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); collapse(card); try { card.querySelector('.trend-card-trigger')?.scrollIntoView({ block: 'nearest' }); } catch (_) {} }));
       wireInsightTabs(exp);

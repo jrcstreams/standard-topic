@@ -11347,8 +11347,8 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-head { width
 body.home-search #home-trending .trend-card.is-expanded .trend-card-main { width: 100%; }
 body.home-search #home-trending .trend-card.is-expanded .trend-card-trigger,
 body.home-search #home-trending .trend-card.is-expanded .trend-card-trigger:hover {
-  background: transparent !important;
-  padding: 13px 14px 6px !important; border-radius: 0;
+  background: #e2e8f3 !important;
+  padding: 13px 14px 12px !important; border-radius: 0;
 }
 body.home-search #home-trending .trend-card.is-expanded:hover::before { content: none !important; }
 body.home-search #home-trending .trend-card.is-expanded .trend-card-exp { padding-top: 12px; }
@@ -11497,7 +11497,7 @@ body.app-mode:not(.home-search) #section-newsfeed .news-card:first-child { paddi
 }
 /* Home rail: the open card stays FLUSH with the closed rows — no container squeeze
    (#img204/205). */
-body.home-search #home-trending .trend-card.is-expanded { padding: 0 !important; margin: 0 !important; border: none !important; background: #f4f6fa !important; border-radius: 0 !important; }
+body.home-search #home-trending .trend-card.is-expanded { padding: 0 !important; margin: 0 !important; border: none !important; background: #eef2f8 !important; border-radius: 12px !important; overflow: hidden; box-shadow: 0 1px 0 #e2e8f2, 0 -1px 0 #e2e8f2; }
 /* The X closes it, so hide the header's expand arrow while open. */
 .trend-card.is-expanded .trend-card-open { display: none; }
 /* Inside the container the brief flows off the trend with a hairline separator. */
@@ -11507,7 +11507,7 @@ body.home-search #home-trending .trend-card.is-expanded { padding: 0 !important;
      the toggle link and the brief (#img605). */
   margin-top: 4px; padding: 5px 2px 4px;
   border: none; border-radius: 0; background: none;
-  animation: trendExpIn .2s ease;
+  animation: trendExpIn .3s cubic-bezier(.22,.61,.21,1);
   /* Never let the brief force the card wider than its column — the Summary/Explore/
      Sources control is fit-content and was overflowing the narrow homepage sidebar
      (#img282/#img283). */
@@ -11527,7 +11527,14 @@ body.home-search #home-trending .trend-card.is-expanded { padding: 0 !important;
    the pannable nav read as broken (#img148). */
 .trend-card-exp .ins-tabnav { max-width: 100%; flex-wrap: nowrap; gap: 6px; overflow: visible; }
 .trend-card-exp .ins-tab { padding: 4px 11px; font-size: 0.8rem; margin-bottom: 8px; }
-@keyframes trendExpIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@keyframes trendExpIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+/* Smooth OPEN reveal for the accordion bodies (prompt library + explore further)
+   so panels glide in instead of snapping. */
+.xf-acc[open] > .xf-panel { animation: acctnReveal .28s cubic-bezier(.22,.61,.21,1); }
+.aii-fi-acc.is-open .aii-emenu-host.is-open { animation: acctnReveal .28s cubic-bezier(.22,.61,.21,1); }
+@keyframes acctnReveal { from { opacity: 0; transform: translateY(-7px); } to { opacity: 1; transform: none; } }
+/* Chevron rotation on the accordions eases smoothly. */
+.aii-fi-acc-chev, .xf-sum .aii-chev, .trend-card-acc { transition: transform .26s cubic-bezier(.22,.61,.21,1), color .14s ease; }
 /* Close X pinned to the container's top-right, aligned with the trend header. */
 .trend-exp-close {
   position: absolute; top: 12px; right: 12px; width: 28px; height: 28px;
@@ -15160,8 +15167,8 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .news-panel { margin-top: 13px; border-top: 1px solid var(--color-surface-border); }
 /* No nested scroll: the AI insight flows inline as part of the news-feed's own
    scroll, so it reads as one cohesive story (not a scroll-box within a scroll-box). */
-.ni-inner { padding-top: 9px; animation: niReveal .22s ease; }
-@keyframes niReveal { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+.ni-inner { padding-top: 9px; animation: niReveal .3s cubic-bezier(.22,.61,.21,1); }
+@keyframes niReveal { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
 
 /* Brief sections */
 .ni-sec { padding: 2px 0 16px; }
@@ -15425,7 +15432,8 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 /* WHITE cards, same surface language as news cards (#img152). */
 .aii-nav-dd-trending .trend-card { border: 1px solid var(--color-surface-border); border-radius: 14px; background: #fff; padding: 14px 15px; display: flex; flex-direction: column; transition: border-color .14s, background .14s, box-shadow .14s; }
 @media (hover: hover) { .aii-nav-dd-trending .trend-card:not(.is-expanded):hover { background: #fff; border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-surface-border)); box-shadow: 0 4px 14px rgba(15, 26, 46, 0.07); } }
-.aii-nav-dd-trending .trend-card.is-expanded { background: #fff; border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); }
+.aii-nav-dd-trending .trend-card.is-expanded { background: #eef2f8; border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border)); }
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-trigger { background: #e2e8f3 !important; border-radius: 12px 12px 0 0; }
 .aii-nav-dd-trending .trend-card-trigger { background: transparent; padding: 0; cursor: pointer; }
 @media (hover: hover) { .aii-nav-dd-trending .trend-card-trigger:hover { background: transparent; padding: 0; cursor: pointer; } }
 .aii-nav-dd-trending .trend-card-chev { display: none; }
