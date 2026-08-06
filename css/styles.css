@@ -15492,6 +15492,29 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .aii-nav-dd-trending .trend-card-aibtn .trend-card-aibtn-spark,
 .aii-nav-dd-trending .trend-card-aibtn .trend-card-aibtn-xic { display: none !important; }
 
+/* ── Trending dropdown OPEN-state redesign (#img353-355/329/330): when a trend is
+   expanded the trigger is a clean tinted header (title · timeline · X) — no
+   duplicate collapsed summary, no "Close AI Insights" link (a full expanded
+   summary lives in the body); a faint rule separates the header from the tabs. */
+.aii-nav-dd-trending .trend-card.is-expanded { grid-column: 1 / -1; }
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-summary { display: none !important; }
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-actions { display: none !important; }
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-meta { display: block !important; margin-top: 2px; }
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-head { display: flex; align-items: center; width: 100%; }
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-acc { display: inline-flex; color: #5b6b8a; }
+@media (hover: hover) { .aii-nav-dd-trending .trend-card.is-expanded .trend-card-acc:hover { color: #26375a; } }
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-trigger,
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-trigger:hover { padding: 13px 15px 12px !important; background: #e7ecf5 !important; }
+/* Faint separator beneath the trend title/timeline, above the Summary/Explore/
+   Sources tabs (#img355). */
+.aii-nav-dd-trending .trend-card-exp .ins-tabnav { border-top: 1px solid #dbe2ee; }
+.aii-nav-dd-trending .trend-card-exp { padding: 0 15px 6px; }
+/* Bottom close = left-aligned, prominent X (#img354). */
+.trend-exp-closefoot { display: flex; justify-content: flex-start; padding: 6px 0 12px; }
+.trend-exp-closelink { display: inline-flex; align-items: center; gap: 6px; background: none; border: none; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #5b6b8a; padding: 4px 2px; }
+.trend-exp-closelink svg { width: 15px; height: 15px; stroke-width: 2.4; }
+@media (hover: hover) { .trend-exp-closelink:hover { color: #26375a; } }
+
 .aii-nav-dd-subbar { flex: 0 0 auto; padding: 10px 2px 4px; }
 .aii-nav-dd-subbar .tlm-controlbar { margin: 0; }
 /* Left-align the "Trend summaries are AI-generated" legend in the dropdown (#431). */
