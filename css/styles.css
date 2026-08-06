@@ -10759,7 +10759,7 @@ body.home-search .home-cards, body.home-search .home-main, body.home-search .hom
     padding: 1.6rem 0 2.6rem; margin-top: 0.6rem; margin-bottom: -1.5rem;
   }
   body.home-search .home-sections .home-side { order: 1; }
-  body.home-search .home-sections .home-main { order: 2; margin-top: 2rem; }
+  body.home-search .home-sections .home-main { order: 2; margin-top: 3.4rem; }
 }
 body.home-search #home-search-hero { order: 1; }
 body.home-search #home-trending    { order: 2; }
