@@ -10480,8 +10480,11 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 /* The input reads as the head of the dropdown: flat bottom corners + matching
    border while suggestions are open, so the two form ONE connected element. */
 .search-panel-barrow:has(.search-panel-suggest:not([hidden])) .search-panel-input {
-  border-radius: 14px 14px 0 0; border-color: #c3cee2; border-width: 1.5px; border-bottom-color: #e7ebf3;
+  border-radius: 14px 14px 0 0; border-color: #c3cee2; border-width: 1.5px; border-bottom-color: #eef1f6;
 }
+/* Drop the bar's bottom padding while the dropdown is open so the panel butts
+   directly against the input — no floating gap between them (#img364-366). */
+.search-panel-barrow:has(.search-panel-suggest:not([hidden])) { padding-bottom: 0; }
 .search-panel-suggest-row { display: flex; align-items: baseline; gap: 0.5rem; width: 100%; text-align: left; padding: 0.55rem 0.7rem; background: none; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; color: var(--color-text); }
 .search-panel-suggest-row.is-active { background: #f1f4f9; }
 @media (hover: hover) { .search-panel-suggest-row:hover { background: #f1f4f9; } }
@@ -10505,7 +10508,11 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 /* Custom "search this term" — a distinct ACTION at the foot of the list: a hairline
    divider sets it off from the results above, a primary search chip + arrow read it
    as "run a full search," not another result row. */
-.search-panel-suggest-row.is-custom { align-items: center; margin-top: 4px; padding: 0.6rem 0.7rem; border-top: 1px solid #eef1f6; border-radius: 8px; }
+.search-panel-suggest-row.is-custom { align-items: center; margin-top: 4px; padding: 0.6rem 0.7rem 0.6rem 2.6rem; border-top: 1px solid #eef1f6; border-radius: 8px; }
+/* When "Search <term>" is the only/first row (no typeahead results above it) the
+   divider + top margin drew a stray line above the preview text — drop them so it
+   sits clean right under the input (#img366). */
+.search-panel-suggest-row.is-custom:first-child { margin-top: 0; border-top: none; }
 .search-panel-suggest-row.is-custom.is-active { background: color-mix(in srgb, var(--color-primary) 7%, #fff); }
 @media (hover: hover) { .search-panel-suggest-row.is-custom:hover { background: color-mix(in srgb, var(--color-primary) 7%, #fff); } }
 .search-panel-suggest-row.is-custom .search-panel-suggest-name { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -10517,7 +10524,7 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
   opacity: 0; transform: translateX(-2px); transition: opacity .14s ease, transform .14s ease, background .12s;
 }
 .search-panel-suggest-submit svg { flex: none; }
-.search-panel-suggest-row.is-custom .search-panel-suggest-name { color: #3a4a66; font-weight: 600; }
+.search-panel-suggest-row.is-custom .search-panel-suggest-name { color: #3a4a66; font-weight: 600; font-size: 0.98rem; }
 .search-panel-suggest-row.is-custom.is-active .search-panel-suggest-submit,
 .search-panel-suggest-row.is-custom:hover .search-panel-suggest-submit { opacity: 1; transform: none; }
 .search-panel-suggest-row.is-custom:hover .search-panel-suggest-submit { background: #26375a; color: #fff; }
