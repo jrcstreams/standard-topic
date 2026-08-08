@@ -912,6 +912,25 @@ function wirePromptsDropdown(panel, initialView) {
   // Expose the view switcher for route changes while mounted, then show the
   // requested initial view (a #/prompts/build|library deep-link) or the landing.
   promptsDdShowView = (v) => { if (v === 'build') showBuild(); else if (v === 'library') showLibrary(); else showLanding(); };
+  // Drill straight to one topic's prompt list and expand a named prompt — the
+  // accordions mount async, so retry the match a few frames (#img372).
+  promptsDdOpenPrompt = (slug, name, promptName) => {
+    showTopicPrompts(slug, name);
+    const tryExpand = (attempt) => {
+      const sums = root.querySelectorAll('.aii-fi-accsum');
+      const match = [...sums].find((s) => {
+        const nm = s.querySelector('.aii-fi-acc-name');
+        return nm && nm.textContent.trim() === promptName;
+      });
+      if (match) {
+        if (match.getAttribute('aria-expanded') !== 'true') match.click();
+        requestAnimationFrame(() => { try { match.scrollIntoView({ block: 'nearest' }); } catch (_) {} });
+      } else if (attempt < 14) {
+        setTimeout(() => tryExpand(attempt + 1), 70);
+      }
+    };
+    tryExpand(0);
+  };
   promptsDdShowView(initialView || null);
 }
 
@@ -935,9 +954,23 @@ function promptsNavDdCfg(view) {
 // View switcher exposed while the Prompts dropdown is mounted, so a route change
 // (#/prompts ↔ /build ↔ /library, e.g. via back/forward) swaps views in place.
 let promptsDdShowView = null;
+// Set while the Prompts dropdown is mounted: drill straight to a topic's prompt
+// list and expand a specific prompt (used by the homepage featured-prompt chips).
+let promptsDdOpenPrompt = null;
 function openPromptsNavDropdown(view) {
   if (navDdOpen && navDdOpen.key === 'prompts') { if (promptsDdShowView) promptsDdShowView(view || null); return; }
   openNavDropdown(promptsNavDdCfg(view || null));
+}
+// Open the Prompt Library to a specific prompt (topic list → expand that prompt),
+// retrying until the dropdown has mounted and exposed its drill-in hook (#img372).
+function openPromptInLibrary(slug, name, promptName) {
+  const drill = (attempt) => {
+    if (promptsDdOpenPrompt) { promptsDdOpenPrompt(slug, name, promptName); return; }
+    if (attempt < 24) setTimeout(() => drill(attempt + 1), 60);
+  };
+  if (navDdOpen && navDdOpen.key === 'prompts') { drill(0); return; }
+  navigate('#/prompts/library');
+  drill(0);
 }
 // Route-driven toggle shared by the three deep-linkable dropdowns: open → close
 // (returning home if on the route); closed → navigate to the route (or open
@@ -2425,16 +2458,18 @@ function documentTitleFor(route) {
 function fitMainNav() {
   const inner = document.querySelector('.sticky-hero-inner');
   if (!inner) return;
-  inner.classList.remove('nav-stacked', 'nav-short-trending', 'nav-small-text', 'nav-drop-prompts', 'nav-drop-home', 'nav-icon-search', 'nav-tiny-title');
+  inner.classList.remove('nav-stacked', 'nav-short-trending', 'nav-small-text', 'nav-tiny-text', 'nav-drop-prompts', 'nav-drop-home', 'nav-icon-search', 'nav-tiny-title');
   const fits = () => inner.scrollWidth <= inner.clientWidth + 1;
   // Nav is text-only now (no icon-over-label stacking) — the squeeze stages below
   // handle every width, ending with Search as a clean icon button (#img266 fix).
   if (!fits()) inner.classList.add('nav-short-trending');
-  // Squeeze order (#img235): smaller nav text → drop Home → Search collapses to
-  // its light icon button → drop Prompts → shrink the title.
+  // Squeeze order (#img235/374): smaller nav text → drop Home → Search collapses to
+  // its light icon button → shrink the labels FURTHER (keep Topics/Trends/Prompts
+  // all visible as long as possible) → only then drop Prompts → shrink the title.
   if (!fits()) inner.classList.add('nav-small-text');
   if (!fits()) inner.classList.add('nav-drop-home');
   if (!fits()) inner.classList.add('nav-icon-search');
+  if (!fits()) inner.classList.add('nav-tiny-text');
   if (!fits()) inner.classList.add('nav-drop-prompts');
   if (!fits()) inner.classList.add('nav-tiny-title');
 }
@@ -3017,9 +3052,9 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           .then((r) => (r.ok ? r.json() : null))
           .then((cfg) => {
             if (!cfg || !Array.isArray(cfg.featured)) return;
-            // Show AT LEAST 3, UP TO 5 previews — but stop early so the chips stay a
-            // tidy ~2 rows. Chip widths vary a lot by name length, so budget by total
-            // characters rather than a fixed count (#img349/362).
+            // Show 4 previews so the card fills as two tidy rows (chips are smaller on
+            // mobile so two fit per row) — take up to 5 only if the extra is short
+            // enough not to spill past two rows (#img349/362/371).
             const picks = [];
             let chars = 0;
             for (const f of cfg.featured) {
@@ -3027,16 +3062,18 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               let sc = []; try { sc = getShortcutsForTopic(f.topic) || []; } catch (_) { continue; }
               const sMatch = sc.find((x) => x && x.name === f.name);
               if (!(sMatch && sMatch.prompt)) continue;
-              if (picks.length >= 3 && chars + sMatch.name.length > 44) break;
+              if (picks.length >= 4 && chars + sMatch.name.length > 80) break;
               const t = getTopicBySlug(f.topic);
-              picks.push({ s: sMatch, tn: t ? t.name : '' });
+              picks.push({ s: sMatch, tn: t ? t.name : '', slug: f.topic });
               chars += sMatch.name.length;
             }
             pWrap.innerHTML = picks.map((pk, i) => `<button type="button" class="fs-chip fs-chip--prompt" data-fs-prompt="${i}"><svg class="fs-chip-spark" viewBox="0 0 24 24" width="12" height="12" fill="#2563eb" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg><span>${escapeHTML(pk.s.name)}</span></button>`).join('');
             pWrap.querySelectorAll('[data-fs-prompt]').forEach((b) => b.addEventListener('click', (e) => {
               e.stopPropagation();
               const pk = picks[Number(b.dataset.fsPrompt)]; if (!pk) return;
-              window.dispatchEvent(new CustomEvent('open-prompt-modal', { detail: { basePrompt: pk.s.prompt, topicName: pk.tn, name: pk.s.name, count: 1 } }));
+              // Lead the user straight into the Prompt Library with this prompt open —
+              // NOT the Review & Submit modal (#img372).
+              openPromptInLibrary(pk.slug, pk.tn, pk.s.name);
             }));
           }).catch(() => {});
       }

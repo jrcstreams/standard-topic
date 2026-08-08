@@ -10887,8 +10887,11 @@ body.home-search #home-trending .trending-topics {
 @media (max-width: 900px) {
   .home-featstrip { grid-template-columns: 1fr; gap: 12px; }
   .featstrip-item--rich .featstrip-head { padding: 0.9rem 1.05rem 0.75rem; }
-  .featstrip-previews { flex-wrap: wrap; overflow: hidden; padding: 9px 1.05rem 0.9rem; max-height: 5rem; }
-  .fs-chip { flex: none; font-size: 0.76rem; padding: 0 11px; height: 30px; }
+  /* Real breathing room under the chips + smaller chips so 4 previews fill the box
+     as two tidy rows (no cut-off) (#img371). */
+  .featstrip-previews { flex-wrap: wrap; overflow: visible; padding: 8px 1.05rem 1.25rem; max-height: none; }
+  .fs-chip { flex: none; font-size: 0.75rem; padding: 0 10px; height: 28px; gap: 6px; }
+  .fs-chip svg, .fs-chip .fs-chip-ic svg, .fs-chip .fs-chip-spark { width: 13px; height: 13px; }
 }
 @media (min-width: 1024px) {
   /* Two rows: the three cards span the FULL width across the top, then News Feed
@@ -14998,16 +15001,22 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 @media (hover: hover) { #nav-search.navbtn:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255,255,255,0.35); box-shadow: 0 2px 10px -4px rgba(0,0,0,0.3); } }
 @media (hover: hover) { #nav-search.navbtn:hover .nav-searchbar-ph { color: rgba(255,255,255,0.72); } }
 .sticky-hero-inner.nav-small-text .navbtn-label { font-size: 0.8rem; }
+/* One more shrink BEFORE dropping Prompts — keep Topics/Trends/Prompts all
+   visible with smaller labels + tighter buttons for as long as they fit (#img374). */
+.sticky-hero-inner.nav-tiny-text .navbtn-label { font-size: 0.73rem; letter-spacing: -0.01em; }
+.sticky-hero-inner.nav-tiny-text .sticky-actions.navbtns .navbtn { padding: 6px 7px; }
+.sticky-hero-inner.nav-tiny-text .sticky-actions { gap: 0.3rem; }
+.sticky-hero-inner.nav-tiny-text.nav-icon-search #nav-search.navbtn { margin-left: 6px; }
 /* Collapsed Search = a FIXED 36px light circle (never stretches to the row
    height, which turned it into a giant oval, #img267). Blue magnifier, no label. */
 .sticky-hero-inner.nav-icon-search #nav-search.navbtn {
-  width: 38px; height: 38px; min-width: 38px; padding: 0; gap: 0; border-radius: 50%;
+  width: 44px; height: 38px; min-width: 44px; padding: 0; gap: 0; border-radius: 11px;
   align-self: center; flex: none; justify-content: center; margin-left: 8px;
   background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
 }
 .sticky-hero-inner.nav-icon-search #nav-search .navbtn-label { display: none; }
 .sticky-hero-inner.nav-icon-search #nav-search .navbtn-ico { color: rgba(255,255,255,0.85); }
-.sticky-hero-inner.nav-icon-search #nav-search .navbtn-ico svg { width: 17px; height: 17px; }
+.sticky-hero-inner.nav-icon-search #nav-search .navbtn-ico svg { width: 18px; height: 18px; stroke-width: 2; }
 @media (hover: hover) { .sticky-hero-inner.nav-icon-search #nav-search:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.35); } }
 /* Homepage subnav deferral (#img193): hidden until the user scrolls past the
    Explore Topics / Prompt Library cards (JS toggles home-subnav-on). */
@@ -15985,11 +15994,12 @@ button.aiidd-vlink { align-self: flex-start; }
   .sticky-hero-inner .sticky-actions.navbtns { order: 1; margin-left: auto !important; flex: none; }
   .sticky-hero-inner .sticky-actions.navbtns .navbtn { flex-direction: row; gap: 6px; padding: 6px 9px; min-width: 0; }
   .sticky-hero-inner .sticky-actions.navbtns .navbtn-label { font-size: 0.84rem; display: inline; }
-  /* Search is the ONLY icon on phones: a light circle, dark icon, no label. */
-  .sticky-hero-inner #nav-search.navbtn { flex-direction: row; width: 34px; height: 34px; min-width: 34px; padding: 0; gap: 0; justify-content: center; align-self: center; border-radius: 50%; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.22); }
+  /* Search on phones: a soft ROUNDED-RECTANGLE glass button with a clean, lighter
+     magnifier — not a heavy circle (#img373). */
+  .sticky-hero-inner #nav-search.navbtn { flex-direction: row; width: 42px; height: 34px; min-width: 42px; padding: 0; gap: 0; justify-content: center; align-self: center; border-radius: 11px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.22); }
   .sticky-hero-inner #nav-search .navbtn-label { display: none !important; }
   .sticky-hero-inner #nav-search .navbtn-ico { display: inline-flex; color: #fff; }
-  .sticky-hero-inner #nav-search .navbtn-ico svg { width: 20px; height: 20px; stroke-width: 2.6; }
+  .sticky-hero-inner #nav-search .navbtn-ico svg { width: 18px; height: 18px; stroke-width: 2; }
   .sticky-hero-inner .nav-search-mobile { display: none !important; }
   .sticky-hero-inner .sticky-page-name { display: none !important; }
 }
