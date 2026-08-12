@@ -109,6 +109,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   onRoute((route) => {
     // Per-route <title> (SEO 2a) — set before trackPageView so GA4 gets it too.
     try { document.title = documentTitleFor(route); } catch (_) {}
+    // Remember where we came from so sub-pages can offer a named "Back to …".
+    try { recordBackTarget(route); } catch (_) {}
     // Nav dropdowns are transient overlays — close on any navigation. EXCEPTION:
     // the Search dropdown IS route-driven (#/search, #/custom) and updates its
     // own URL as the term changes, so keep it open across search routes. The
@@ -590,13 +592,14 @@ function userCloseNavDropdown() {
     if (onPromptRoute) navigate('#/');
     return;
   }
-  // Topics / Trending / Prompts: route-driven the same way — closing while on the
-  // dropdown's own route returns home so the URL reflects the dismissal.
+  // Topics / Trending / Prompts are pages now — there's no ✕ to press, but Esc
+  // still needs an exit. Send it to the same place the "Back to …" bar points, so
+  // the keyboard and the visible affordance agree.
   if (navDdOpen && ['topics', 'trending', 'prompts'].includes(navDdOpen.key)) {
     const pfx = '#/' + navDdOpen.key;
     const onDdRoute = hash === pfx || hash.startsWith(pfx + '/');
     closeNavDropdown();
-    if (onDdRoute) navigate('#/');
+    if (onDdRoute) navigate(backTarget().hash);
     return;
   }
   closeNavDropdown();
@@ -612,8 +615,17 @@ function openNavDropdown(cfg) {
   navDdSuppressClose = false;
   panel.setAttribute('aria-label', cfg.ariaLabel || cfg.title || '');
   panel.className = 'aii-nav-dd' + (cfg.className ? ' ' + cfg.className : '');
+  // Topics / Trending / Prompts are PAGES, not overlays (revamp719): no ✕, no
+  // click-outside-to-dismiss — a "Back to …" bar takes the ✕'s place.
+  const asPage = ['topics', 'trending', 'prompts'].includes(cfg.key);
+  // The Prompt Builder is page-like too, so it gets the same way back — but it
+  // keeps its ✕ (it can be opened ON TOP of work you want to return to). The
+  // Search panel is a true overlay over whatever you were reading: no back bar.
+  const wantsBackBar = asPage || cfg.key === 'prompt';
+  const closeBtn = asPage ? '' : `<button type="button" class="aii-nav-dd-close" data-navdd-close aria-label="Close">${X_IC_NAVDD}</button>`;
+  const backBar = wantsBackBar ? backBarHTML() : '';
   const head = cfg.bareHead
-    ? `<div class="aii-nav-dd-head aii-nav-dd-head-bare"><button type="button" class="aii-nav-dd-close" data-navdd-close aria-label="Close">${X_IC_NAVDD}</button></div>`
+    ? `<div class="aii-nav-dd-head aii-nav-dd-head-bare">${closeBtn}</div>`
     : `<div class="aii-nav-dd-head">
         <div class="aii-nav-dd-titles">
           <div class="aii-nav-dd-title">${cfg.spark ? '<span class="aii-nav-dd-spark">✦</span> ' : ''}${escapeHTML(cfg.title || '')}</div>
@@ -623,10 +635,11 @@ function openNavDropdown(cfg) {
             : ''}
           ${cfg.headLink ? `<a href="${escapeAttr(cfg.headLink.href)}" class="aii-nav-dd-headlink" data-navdd-headlink><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>${escapeHTML(cfg.headLink.label)}</span></a>` : ''}
         </div>
-        <button type="button" class="aii-nav-dd-close" data-navdd-close aria-label="Close">${X_IC_NAVDD}</button>
+        ${closeBtn}
       </div>`;
   panel.innerHTML = `
     <div class="aii-nav-dd-inner">
+      ${backBar}
       ${head}
       ${cfg.subBarHTML ? `<div class="aii-nav-dd-subbar">${cfg.subBarHTML}</div>` : ''}
       <div class="aii-nav-dd-scrollwrap has-fade">
@@ -642,7 +655,9 @@ function openNavDropdown(cfg) {
       if (b && typeof b.onClick === 'function') el.addEventListener('click', (e) => { e.preventDefault(); b.onClick(); });
     });
   }
-  overlay.onclick = closeFn;
+  // Page-mode panels ignore overlay clicks — dismissing a page by clicking beside
+  // it is exactly the pseudo-page behavior we're removing.
+  overlay.onclick = asPage ? null : closeFn;
   const sc = panel.querySelector('[data-navdd-scroll]');
   if (sc) sc.addEventListener('scroll', updateNavDdFades, { passive: true });
   if (typeof cfg.wire === 'function') cfg.wire(panel);
@@ -1198,8 +1213,10 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
   const renderAI = () => {
     destroyRowCtls();
     body.innerHTML = `<div class="topic-ai-wrap">
-      <div class="aii-tabhead topic-ai-head">
-        <p class="aii-tabhead-tx">Ready-made prompts, AI briefings and model hand-offs for ${escapeHTML(topic.name)} — all in one place.</p>
+      <div class="aii-tabhead-spacer"></div>
+      <div class="aii-fi-sechead topic-ai-sechead">
+        <h3 class="aii-fi-sectitle">AI Insights</h3>
+        <p class="aii-fi-secsub">Ready-made prompts, AI briefings and model hand-offs for ${escapeHTML(topic.name)} — all in one place.</p>
       </div>
       <div class="topic-ai-acclist">${TOPIC_AI_ROWS.map((r) => `
         <div class="tai-acc" data-tai-row="${escapeAttr(r.key)}">
@@ -1661,6 +1678,7 @@ function renderLayout(route) {
             <span class="subnav-ident-ico">${iconSvg}</span>
             <span class="subnav-ident-name">${title}</span>
           </div>
+          ${backBarHTML()}
         </div>
       </div>
     `;
@@ -2435,6 +2453,38 @@ function trimStickyNav() {
 // theScore-style mobile top bar: the page label shown next to the back
 // button on sub-pages (topic / about / terms / prompt builder / search).
 // Empty string on home (the brand shows instead).
+// ── "Back to …" ──────────────────────────────────────────────────────────────
+// Sub-pages (Topics / Trending / Prompts / Search / Prompt Builder / About /
+// Terms) are real destinations, not overlays you dismiss — so each one offers a
+// named way back to the page you came FROM. We track the last route that was a
+// real page (home or a topic); anything else would just bounce the user between
+// two sub-pages. A cold deep-link has no history, so it falls back to Home.
+let backTargetRoute = null;
+// Routes that count as somewhere worth returning TO.
+function isBackworthyRoute(route) {
+  return !!route && (route.type === 'home' || route.type === 'topic');
+}
+function recordBackTarget(route) {
+  if (isBackworthyRoute(route)) {
+    backTargetRoute = route.type === 'home' ? { type: 'home' } : { type: 'topic', slug: route.slug };
+  }
+}
+// { label, hash } for the current back destination — always resolvable.
+function backTarget() {
+  if (backTargetRoute && backTargetRoute.type === 'topic') {
+    const t = getTopicBySlug(backTargetRoute.slug);
+    if (t) return { label: t.name, hash: `#/topic/${backTargetRoute.slug}` };
+  }
+  return { label: 'Home', hash: '#/' };
+}
+const BACKBAR_CHEV = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
+// The bar itself. `data-backbar` is wired globally (delegated) so any surface can
+// drop this in without its own handler.
+function backBarHTML() {
+  const t = backTarget();
+  return `<div class="page-backbar"><a href="${escapeAttr(t.hash)}" class="page-backbtn" data-backbar>${BACKBAR_CHEV}<span>Back to ${escapeHTML(t.label)}</span></a></div>`;
+}
+
 function pageLabelFor(route) {
   if (!route) return '';
   switch (route.type) {
@@ -3019,6 +3069,10 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         <div class="home-cards">
           <div class="home-search-hero" id="home-search-hero"></div>
           <div class="home-quicklinks" aria-label="Explore Standard Topic">
+            <div class="hq-labelrow">
+              <span class="hq-label">Popular</span>
+              <button type="button" class="hq-all" data-explore-topics>All topics<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></button>
+            </div>
             <div class="hq-topics" data-hq-topics></div>
             <p class="hq-prompts">Looking for pre-made prompts? <button type="button" class="hq-link" data-explore-prompts>Access our prompt library<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></button></p>
           </div>
@@ -3043,9 +3097,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       const tWrap = container.querySelector('[data-hq-topics]');
       if (tWrap) {
         let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 5); } catch (_) {}
-        tWrap.innerHTML = `<span class="hq-label">Popular</span>`
-          + feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="hq-chip">${topicIconSVG(t.icon || 'globe', 'hq-chip-ic')}<span>${escapeHTML(t.name)}</span></a>`).join('')
-          + `<button type="button" class="hq-all" data-explore-topics>All topics<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></button>`;
+        tWrap.innerHTML = feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="hq-chip">${topicIconSVG(t.icon || 'globe', 'hq-chip-ic')}<span>${escapeHTML(t.name)}</span></a>`).join('');
       }
     }
     // "All topics" — opens the full All-Topics dropdown so visitors can jump into a

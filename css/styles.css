@@ -6319,75 +6319,65 @@ body.app-mode .topic-layout {
    Each .pb-card is one of the picker groups (Topics, Output,
    Sources & Citations, Scope, Custom). Clicking opens .pb-modal
    with the relevant pickers inside. */
+/* Build a Custom Prompt = the SAME accordion language as the topic-page AI
+   Insights list (revamp719): one clipped bordered container, borderless rows
+   separated by hairlines, each row a numbered step — number → icon → title +
+   subtext → chevron. */
 .pb-card-grid {
-  display: grid;
-  /* 3-up at wide desktop widths, 2-up at laptop / smaller. The
-     280px minmax was packing 3 narrow cards into ~840px viewports
-     and forcing "Sources & Citations" / "Custom Instructions" to
-     ellipsize. Bumping the floor to 360px means each card has
-     enough room for its full label before the grid drops to 2-up.
-     Mobile media query below further drops it to 1-up. */
-  /* Single stacked column at every width — full-width sections, no 2/3-up grid
-     (#img424). Roomier gap between the accordions (#img101). */
-  grid-template-columns: 1fr;
-  gap: 1.05rem;
+  display: flex; flex-direction: column;
+  border: 1px solid var(--color-surface-border); border-radius: 14px;
+  background: #fff; overflow: hidden;
 }
 .pb-card {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  align-items: stretch;
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: 12px; row-gap: 0;
   width: 100%;
-  padding: 1rem 1.1rem 1.1rem; /* chevron now sits in the head row, no reserved gutter */
-  background: var(--color-bg);
-  border: 1px solid #e6e8ec;
-  border-radius: 14px;
+  padding: 15px 16px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #eef1f6;
+  border-radius: 0;
   text-align: left;
   cursor: pointer;
   font-family: inherit;
   color: inherit;
-  box-shadow: 0 1px 2px rgba(15, 26, 46, 0.03);
-  transition: border-color 0.14s, box-shadow 0.14s, transform 0.06s;
+  box-shadow: none;
+  transition: background .12s ease;
 }
-@media (hover: hover) { .pb-card:hover {
-  border-color: #c8d3e3;
-  box-shadow: 0 4px 14px rgba(15, 26, 46, 0.08);
-  transform: translateY(-1px);
-} }
-.pb-card:active { transform: translateY(0); }
-.pb-card.has-items { border-color: #c8d3e3; }
-
-/* Row 1: icon + title (+ optional Required tag) all inline. */
-.pb-card-head {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
+.pb-card:last-child { border-bottom: none; }
+@media (hover: hover) { .pb-card:hover { background: #f7f9fc; } }
+.pb-card.is-expanded { background: #f4f7fc; }
+@media (hover: hover) { .pb-card.is-expanded:hover { background: #f4f7fc; } }
+/* Step number — the build order, stated. */
+.pb-card-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; flex: none; margin-top: 1px;
+  border-radius: 999px; background: #eaeff8; color: #4a5c7d;
+  font-family: var(--font-family); font-size: 0.74rem; font-weight: 700; line-height: 1;
+  transition: background .12s ease, color .12s ease;
 }
+.pb-card.is-expanded .pb-card-num,
+.pb-card.has-items .pb-card-num { background: #2f4d9e; color: #fff; }
 .pb-card-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-  background: none;
-  color: #475569;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 21px; height: 21px; flex-shrink: 0; margin-top: 1px;
+  background: none; color: #6f83a6;
+  transition: color .12s ease;
 }
-.pb-card-icon svg { width: 19px; height: 19px; display: block; }
+.pb-card.is-expanded .pb-card-icon { color: #2f4d9e; }
+.pb-card-icon svg { width: 21px; height: 21px; display: block; }
+.pb-card-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pb-card-titlerow { display: flex; align-items: center; gap: 8px; min-width: 0; flex-wrap: wrap; }
 .pb-card-title {
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 0.98rem;
   font-weight: 700;
   letter-spacing: -0.012em;
-  color: #1e2d44;
-  line-height: 1.15;
-  /* flex: 0 1 auto lets the title sit at its content width so the
-     REQUIRED pill stays right next to it (instead of being pushed
-     to the row's right edge by a growing title). It can still
-     shrink + ellipsize if space gets tight at narrow widths. The
-     trailing Add pill uses margin-left: auto to claim the
-     right-end space. */
+  color: #26375a;
+  line-height: 1.25;
   flex: 0 1 auto;
   min-width: 0;
   white-space: nowrap;
@@ -6397,100 +6387,64 @@ body.app-mode .topic-layout {
 .pb-card-req {
   display: inline-flex;
   align-items: center;
-  /* More breathing room around the text + slightly taller pill so
-     it sits visually centered with the bold card title beside it. */
-  padding: 0.3rem 0.65rem;
+  flex: none;
+  padding: 0.22rem 0.5rem;
   background: color-mix(in srgb, var(--color-primary) 8%, #fff);
   color: var(--color-primary);
   border: 1px solid color-mix(in srgb, var(--color-primary) 16%, transparent);
   border-radius: 999px;
   font-family: var(--font-family);
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   line-height: 1;
-  /* Drop baseline alignment and ride the flex centerline instead. */
-  align-self: center;
+}
+/* The expanded picker spans the full row width, under the text column. */
+.pb-card-config { grid-column: 1 / -1; }
+@media (max-width: 560px) {
+  .pb-card { padding: 13px 13px; column-gap: 10px; }
+  .pb-card-num { width: 20px; height: 20px; font-size: 0.7rem; }
+  .pb-card-icon, .pb-card-icon svg { width: 19px; height: 19px; }
+  .pb-card-title { font-size: 0.92rem; }
 }
 /* Trailing action chip on every card — replaces the old chevron +
    separate "+ Add" CTA. Reads "Add +" when empty (clear call to
    action) or "Edit" when the card already has selections. Pill
    styling so it's visually obvious it's tappable. */
-.pb-card-action {
-  position: absolute;
-  top: 50%;
-  right: 1.1rem;
-  transform: translateY(-50%);
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  padding: 0.32rem 0.7rem;
-  background: rgba(44, 68, 103, 0.07);
-  color: #2c4467;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  font-family: var(--font-family);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.005em;
-  line-height: 1;
-  white-space: nowrap;
-  transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.06s;
-}
-/* Trailing chevron — replaces the Add+/Edit pill (#img424). Sits in the head row
-   (flex, margin-left auto) so it stays aligned with the title and does NOT float to
-   the vertical center of an expanded card (#img432-435). Rotates when open. */
 .pb-card-chev {
-  margin-left: auto;
   flex: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 24px;
   height: 24px;
-  color: #64748b;
+  margin-top: 1px;
+  color: #a8b4c9;
   transition: transform 0.16s ease, color 0.14s;
 }
 .pb-card-chev svg { width: 18px; height: 18px; display: block; }
 @media (hover: hover) { .pb-card:hover .pb-card-chev { color: #2c4467; } }
 .pb-card.is-expanded .pb-card-chev { transform: rotate(180deg); color: #2c4467; }
-.pb-card.has-items .pb-card-action {
-  background: var(--color-bg);
-  border-color: rgba(44, 68, 103, 0.22);
-  color: #2c4467;
-  font-size: 0.76rem;
-}
-@media (hover: hover) { .pb-card:hover .pb-card-action {
-  background: rgba(44, 68, 103, 0.13);
-  border-color: rgba(44, 68, 103, 0.22);
-  color: #1e2d44;
-} }
-@media (hover: hover) { .pb-card.has-items:hover .pb-card-action {
-  background: #f5f8fd;
-  border-color: rgba(44, 68, 103, 0.4);
-} }
 
-/* Row 2: description sub-text under the head — indented by icon width (20px) +
-   head gap (0.6rem) so it left-aligns with the TITLE, not the icon (#img102). */
+/* Subtext sits in the row's text column, directly under the title. */
 .pb-card-desc {
+  display: block;
   font-family: var(--font-family);
-  font-size: 0.84rem;
+  font-size: 0.8rem;
   color: var(--color-text-muted);
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 1.35;
   margin: 0;
-  padding-left: calc(20px + 0.6rem);
 }
-
-/* Row 3: chip summary or "+ Add" CTA — flush-left under the head. */
+/* The card's current selections, under the subtext. */
 .pb-card-summary {
   display: flex;
   flex-direction: column;
   gap: 4px;
   align-items: flex-start;
   padding-left: 0;
-  margin-top: 0.35rem;
+  margin-top: 0.4rem;
 }
 /* Labelled summary rows: "Primary topic(s): Banking" etc. (#img428/429). */
 .pb-card-sumrow { font-family: var(--font-family); font-size: 0.83rem; line-height: 1.45; color: #1e2d44; }
@@ -7078,13 +7032,11 @@ body.app-mode .topic-layout {
   /* No reserved right gutter — the chevron now lives in the head row (margin-left
      auto), so it sits neatly at the padding edge, centred on the title (#img12). */
   .pb-card { padding: 0.7rem 0.9rem 0.8rem 0.85rem; gap: 0.3rem; }
-  .pb-card-action { right: 0.85rem; }
   .pb-card-icon { width: 19px; height: 19px; }
   .pb-card-icon svg { width: 18px; height: 18px; }
   .pb-card-title { font-size: 0.92rem; }
   .pb-card-desc { font-size: 0.78rem; padding-left: 0; }
   .pb-card-summary { padding-left: 0; }
-  .pb-card-action { font-size: 0.72rem; padding: 0.25rem 0.55rem; }
   .pb-modal-card { max-height: 92vh; }
 }
 
@@ -10831,23 +10783,21 @@ body.home-search #home-trending .trending-topics {
   border-color: transparent !important;
 }
 
-/* Discreet search-area quicklinks (replacing the Explore Topics / Prompt Library
-   mini-cards): a single centered line of featured-topic pills, then a one-line
-   nudge to the Prompt Library. Deliberately light — this is an EXTENSION of the
-   search bar, not a section of its own. */
-.home-quicklinks { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; min-width: 0; }
-.hq-topics {
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
-  gap: 7px 8px; max-width: 100%;
-}
+/* Discreet search-area quicklinks: a "Popular" label row (label left, All topics
+   right), the featured-topic pills beneath it, then a one-line nudge to the Prompt
+   Library. Deliberately light — this is an EXTENSION of the search bar, not a
+   section of its own, so it shares the bar's width and left edge. */
+.home-quicklinks { display: flex; flex-direction: column; align-items: stretch; gap: 0.5rem; min-width: 0; text-align: left; }
+.hq-labelrow { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; min-width: 0; }
 .hq-label {
-  font-family: var(--font-family); font-size: 0.76rem; font-weight: 650;
-  letter-spacing: 0.02em; color: #8090aa; margin-right: 1px;
+  font-family: var(--font-family); font-size: 0.74rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: #8a98b0;
 }
+.hq-topics { display: flex; flex-wrap: wrap; align-items: center; gap: 7px 8px; max-width: 100%; }
 .hq-chip {
-  display: inline-flex; align-items: center; gap: 6px; max-width: 100%; height: 28px; box-sizing: border-box;
-  padding: 0 11px; border-radius: 999px; border: 1px solid #e3e8f1; background: #fbfcfe;
-  font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; color: #46566f;
+  display: inline-flex; align-items: center; gap: 6px; max-width: 100%; height: 30px; box-sizing: border-box;
+  padding: 0 12px; border-radius: 999px; border: 1px solid #e3e8f1; background: #fbfcfe;
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #46566f;
   text-decoration: none; cursor: pointer; white-space: nowrap;
   transition: background .12s, border-color .12s, color .12s;
 }
@@ -10858,18 +10808,20 @@ body.home-search #home-trending .trending-topics {
   .hq-chip:hover { background: #eef3fc; border-color: #c8d5ec; color: #1d4ed8; text-decoration: none; }
   .hq-chip:hover .hq-chip-ic { color: #1d4ed8; }
 }
-/* Text-only tail link into the full All-Topics dropdown — the entry point the
-   removed "View all topics" card used to carry. */
+/* Text-only tail link into the full All-Topics page — the entry point the removed
+   "View all topics" card used to carry. */
 .hq-all {
-  display: inline-flex; align-items: center; gap: 4px; height: 28px;
-  padding: 0 2px; border: none; background: none; cursor: pointer;
+  flex: none; display: inline-flex; align-items: center; gap: 4px;
+  padding: 0; border: none; background: none; cursor: pointer;
   font-family: var(--font-family); font-size: 0.78rem; font-weight: 650; color: #2f4d9e; white-space: nowrap;
   transition: color .12s;
 }
 .hq-all svg { flex: none; transition: transform .14s ease; }
 @media (hover: hover) { .hq-all:hover { color: #1d4ed8; } .hq-all:hover svg { transform: translateX(2px); } }
+/* Sits on its own line under the pills, separated by a hairline so it reads as a
+   distinct offer rather than a caption on the topic row. */
 .hq-prompts {
-  margin: 0; text-align: center;
+  margin: 0.15rem 0 0; padding-top: 0.6rem; border-top: 1px solid #e2e7f0;
   font-family: var(--font-family); font-size: 0.82rem; font-weight: 500; color: #6b7a93;
 }
 .hq-link {
@@ -10881,13 +10833,13 @@ body.home-search #home-trending .trending-topics {
 .hq-link svg { flex: none; transition: transform .14s ease; }
 @media (hover: hover) { .hq-link:hover { color: #1d4ed8; text-decoration: underline; } .hq-link:hover svg { transform: translateX(2px); } }
 @media (max-width: 560px) {
-  .home-quicklinks { gap: 0.55rem; }
+  .home-quicklinks { gap: 0.45rem; }
   .hq-topics { gap: 6px; }
-  .hq-chip { font-size: 0.74rem; height: 26px; padding: 0 9px; gap: 5px; }
+  .hq-chip { font-size: 0.75rem; height: 27px; padding: 0 10px; gap: 5px; }
   .hq-chip .hq-chip-ic svg { width: 12px; height: 12px; }
-  .hq-label { font-size: 0.72rem; }
-  .hq-all { font-size: 0.74rem; height: 26px; }
-  .hq-prompts { font-size: 0.78rem; }
+  .hq-label { font-size: 0.68rem; }
+  .hq-all { font-size: 0.74rem; }
+  .hq-prompts { font-size: 0.78rem; padding-top: 0.5rem; }
 }
 @media (min-width: 1024px) {
   /* Two rows: the three cards span the FULL width across the top, then News Feed
@@ -10899,10 +10851,10 @@ body.home-search #home-trending .trending-topics {
     grid-template-areas: "cards" "sections";
     align-items: start;
     column-gap: 1.5rem;
-    /* The promo mini-cards are gone — the quicklinks line is light enough that a
-       big gap here just leaves dead space between the search area and the
-       News/Trending band. Tightened to match. */
-    row-gap: 1.3rem;
+    /* Gap between the search zone and the News/Trending band. The quicklinks are
+       light, so this doesn't need the old promo-card gap — but it does need enough
+       air that the grey hero clearly ends before the white band starts. */
+    row-gap: 2.1rem;
   }
   /* News + Trending live on a FULL-BLEED WHITE band (#img236/237) — the intro
      zone above keeps the faint grey; the fold to white happens here. */
@@ -10938,7 +10890,9 @@ body.home-search #home-trending .trending-topics {
     min-width: 0;
   }
   body.home-search #home-search-hero { grid-area: search; }
-  body.home-search .home-quicklinks { grid-area: strip; }
+  /* Share the search bar's exact width and left edge (the bar is a 640px column
+     centred in the hero) so the quicklinks read as part of the search area. */
+  body.home-search .home-quicklinks { grid-area: strip; max-width: 640px; width: 100%; margin: 0 auto; }
   /* Reset the mobile-stacking `order` so everything lays out in source order. */
   body.home-search #home-search-hero,
   body.home-search .home-quicklinks,
@@ -10949,7 +10903,7 @@ body.home-search #home-trending .trending-topics {
      The art column carries the visual weight on the right. */
   /* CENTERED hero (#img363): title, tagline and the search bar are centered as a
      single column over the cards below. */
-  body.home-search .home-search-hero { display: block; padding: 1.15rem 0 0.35rem; border-radius: 0; text-align: center; width: 100%; max-width: none; margin: 0; justify-self: stretch; }
+  body.home-search .home-search-hero { display: block; padding: 0.25rem 0 0.35rem; border-radius: 0; text-align: center; width: 100%; max-width: none; margin: 0; justify-self: stretch; }
   body.home-search .home-search-hero .search-panel { max-width: none; margin: 0; }
   body.home-search .home-search-hero .search-panel-hero-inner { text-align: center; padding: 0 0 1.05rem; }
   body.home-search .home-search-hero .search-panel-title {
@@ -11404,7 +11358,6 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-exp { paddin
    navy title + terse summary at EVERY width (no per-trend "Since Xh", no View AI
    Insights link — the row itself toggles, chevron/X marks the state). ───────── */
 body.home-search #home-trending .trending-topics-title { font-size: 1.2rem; color: #1a2740; line-height: 1.15; }
-.trending-topics-updatedline { margin: 3px 0 0; font-family: var(--font-family); font-size: 0.78rem; font-weight: 500; color: var(--color-text-muted); }
 body.home-search #home-trending .trend-card-title { color: #26375a !important; }
 .aii-nav-dd-trending .trend-card-title { color: #26375a !important; }
 body.home-search #home-trending .trend-card:not(.is-expanded) .trend-card-meta { display: none !important; }
@@ -11521,9 +11474,11 @@ body.home-search #section-newsfeed .newsfeed-head {
 body.home-search #section-newsfeed .newsfeed-card .newsfeed-scroll-wrap { padding: 2px 0 4px !important; }
 body.home-search #section-newsfeed .newsfeed-card .news-share-panel-inner { padding-left: 2px !important; padding-right: 2px !important; }
 body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 6px 0 10px !important; }
-/* Matched section headers (#img183-186): same size, color, spacing on both. */
-body.home-search #section-newsfeed .newsfeed-head--home .newsfeed-title { font-size: 1.2rem; color: #1a2740; }
-.newsfeed-updated-sub { margin: 3px 0 0; font-family: var(--font-family); font-size: 0.78rem; font-weight: 500; color: var(--color-text-muted); }
+/* Today's Top News is the PRIMARY column head; What's Trending is deliberately a
+   notch quieter (see the trending rules below) so the rail reads as secondary.
+   Both heads now carry title-only — the "Updated …" sublines are gone, so the two
+   hairlines and first rows line up across the columns. */
+body.home-search #section-newsfeed .newsfeed-head--home .newsfeed-title { font-size: 1.24rem; color: #1a2740; }
 /* The page itself fades from the hero's off-white into a lighter near-white where
    the news/trending sections begin (#img187). */
 body.home-search { background: #f3f4f8; }
@@ -11603,7 +11558,6 @@ body.home-search #home-trending .trend-card.is-expanded { padding: 0 !important;
    the trailing gap before the next trend, and reads as the natural end (#img543). */
 /* Close sits right at the end of the brief — no separator line, minimal gap (#img547/548). */
 /* More separation from the accordion list above so Close isn't crammed (#img666). */
-.trend-exp-closefoot { display: flex; justify-content: center; margin-top: 0; padding-top: 16px; border-top: none; }
 /* The wrapper inherits .im-secs' global 2rem bottom padding, which shoved the
    footer Close ~32px below the last line of copy — kill it here (#img589). */
 .trend-card-exp .trend-exp.im-secs { padding-bottom: 4px; }
@@ -11620,9 +11574,6 @@ body.home-search #home-trending .trend-card.is-expanded { padding: 0 !important;
 .trend-card-exp .im-cov-title { font-size: 0.84rem; }
 .trend-card-exp .ins-tabpanel[data-ins-panel="sources"] .im-coverage-list .im-cov-row:first-child { padding-top: 0; }
 .trend-card-exp .ins-tabnav { margin-bottom: 10px; }
-.trend-exp-closelink { display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border: none; background: none; color: var(--color-text-muted); font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; cursor: pointer; border-radius: 8px; transition: color .14s ease, background .14s ease; }
-@media (hover: hover) { .trend-exp-closelink:hover { color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 6%, #fff); } }
-.trend-exp-closelink svg { width: 14px; height: 14px; flex: none; }
 .trend-exp-loading, .trend-exp-fail {
   /* flex-start + a single text span so the term ("Kellyanne Conway") stays part of
      one flowing sentence that wraps cleanly instead of splitting into its own
@@ -15571,10 +15522,6 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .aii-nav-dd-trending .trend-card-exp .ins-tabnav { border-top: 1px solid #dbe2ee; }
 .aii-nav-dd-trending .trend-card-exp { padding: 0 15px 6px; }
 /* Bottom close = left-aligned, prominent X (#img354). */
-.trend-exp-closefoot { display: flex; justify-content: flex-start; padding: 6px 0 12px; }
-.trend-exp-closelink { display: inline-flex; align-items: center; gap: 6px; background: none; border: none; cursor: pointer; font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #5b6b8a; padding: 4px 2px; }
-.trend-exp-closelink svg { width: 15px; height: 15px; stroke-width: 2.4; }
-@media (hover: hover) { .trend-exp-closelink:hover { color: #26375a; } }
 
 .aii-nav-dd-subbar { flex: 0 0 auto; padding: 10px 2px 4px; }
 .aii-nav-dd-subbar .tlm-controlbar { margin: 0; }
@@ -16713,7 +16660,6 @@ body.home-search #section-newsfeed .newsfeed-title-main { font-size: 1.2rem !imp
 }
 /* Hide the lingering Add/Edit pill once a card is expanded, and reclaim the right
    padding it reserved so the config + border use the full width (#img341/346/356). */
-.pb-inline .pb-card.is-expanded .pb-card-action { display: none !important; }
 .pb-inline .pb-card.is-expanded { padding-right: 1.1rem; overflow: visible; }
 .pb-cfg-ghost, .pb-cfg-cta {
   /* Smaller across the builder dropdowns (#img372). */
@@ -16851,20 +16797,30 @@ body.home-search #section-newsfeed .newsfeed-title-main { font-size: 1.2rem !imp
 .xf-leave-go { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; padding: 9px 16px; border: none; border-radius: 10px; background: #2563eb; color: #fff; cursor: pointer; font-family: var(--font-family); font-size: 0.88rem; font-weight: 650; }
 @media (hover: hover) { .xf-leave-go:hover { background: #1d4ed8; } }
 
-/* ═══ Homepage News Feed + Trending headers — align to the takeover-modal title
-   standard (.at-modal-title: 1.35rem / 700 / -0.025em / primary), keeping their navy
-   icon chips, so the two homepage columns read the same as All Topics / Prompts /
-   Trending modal headers. Appended last to win over the many earlier size overrides. */
+/* ═══ Homepage column headers — a deliberate HIERARCHY, not a match. Today's Top
+   News is the primary column (1.35rem / 700, takeover-modal title standard);
+   What's Trending is the secondary rail, so it takes the same display face a notch
+   smaller and lighter with a softer navy. Both are title-only now (the "Updated …"
+   sublines are gone), so their hairlines and first rows sit on the same baseline.
+   Appended last to win over the many earlier size overrides. */
 body.home-search #section-newsfeed .newsfeed-card .newsfeed-title,
-body.home-search #section-newsfeed .newsfeed-card .newsfeed-title-main,
-body.home-search #home-trending .trending-topics-title {
+body.home-search #section-newsfeed .newsfeed-card .newsfeed-title-main {
   font-size: 1.35rem !important; font-weight: 700 !important;
   letter-spacing: -0.025em !important; color: var(--color-primary) !important;
 }
+body.home-search #home-trending .trending-topics-title {
+  font-size: 1.06rem !important; font-weight: 650 !important;
+  letter-spacing: -0.012em !important; color: #3d4d6b !important;
+}
+/* Head boxes match so the rules under each title land on the same y. */
+body.home-search #home-trending .trending-topics-head,
+body.home-search #section-newsfeed .newsfeed-head {
+  padding: 2px 8px 12px !important; margin: 0 !important;
+}
 @media (max-width: 640px) {
   body.home-search #section-newsfeed .newsfeed-card .newsfeed-title,
-  body.home-search #section-newsfeed .newsfeed-card .newsfeed-title-main,
-  body.home-search #home-trending .trending-topics-title { font-size: 1.2rem !important; }
+  body.home-search #section-newsfeed .newsfeed-card .newsfeed-title-main { font-size: 1.2rem !important; }
+  body.home-search #home-trending .trending-topics-title { font-size: 1rem !important; }
 }
 
 /* ═══ Stale-tab update pill: shown when a long-lived tab is running assets older
@@ -16879,3 +16835,117 @@ body.home-search #home-trending .trending-topics-title {
 }
 @media (hover: hover) { #st-update-pill:hover { background: #2c3f61; } }
 @keyframes st-update-in { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+/* ═══ Trend expansion (revamp719) — no tab bar. The summary IS the body; Sources
+   and Explore Further hang off the bottom as quiet drawers that read as a
+   continuation of the brief; Close is the last thing, a real button. ═══════════ */
+.trend-exp-summary { min-width: 0; }
+.trend-exp-drawers { margin-top: 14px; border-top: 1px solid #e7ecf3; }
+.te-drawer { border-bottom: 1px solid #eef1f6; }
+.te-drawer:last-child { border-bottom: none; }
+.te-drawer > .te-drawer-sum {
+  display: flex; align-items: center; gap: 10px; width: 100%; box-sizing: border-box;
+  padding: 11px 2px; cursor: pointer; list-style: none;
+  font-family: var(--font-family); font-size: 0.86rem; font-weight: 650; color: #33455f;
+  transition: color .12s ease;
+}
+.te-drawer > .te-drawer-sum::-webkit-details-marker { display: none; }
+@media (hover: hover) { .te-drawer > .te-drawer-sum:hover { color: #1d4ed8; } }
+.te-drawer-ic { flex: none; display: inline-flex; color: #7d8ca6; }
+.te-drawer-ic svg { width: 17px; height: 17px; }
+@media (hover: hover) { .te-drawer > .te-drawer-sum:hover .te-drawer-ic { color: #1d4ed8; } }
+.te-drawer-title { min-width: 0; }
+.te-drawer-chev { flex: none; margin-left: auto; color: #a8b4c9; transition: transform .18s ease; }
+.te-drawer[open] > .te-drawer-sum .te-drawer-chev { transform: rotate(180deg); }
+.te-drawer[open] > .te-drawer-sum { color: #26375a; }
+.te-drawer-body { padding: 2px 0 14px; min-width: 0; }
+/* Close: a real, differentiated button — the deliberate end of the card. */
+.trend-exp-footer { display: flex; justify-content: flex-start; padding: 14px 0 4px; }
+.trend-exp-close {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 18px; border: 1px solid #d5deec; border-radius: 10px;
+  background: #eef2f9; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.84rem; font-weight: 650; color: #33455f;
+  transition: background .14s ease, border-color .14s ease, color .14s ease;
+}
+.trend-exp-close svg { flex: none; }
+@media (hover: hover) {
+  .trend-exp-close:hover { background: #e2e9f5; border-color: #bfcde4; color: #1a2740; }
+}
+
+/* ═══ "Back to …" bar (revamp719) — Topics / Trending / Prompts / Prompt Builder
+   and the static pages are real destinations, so each names its way back to the
+   page you came from instead of offering a ✕ that dismisses a pseudo-page.
+   Styled as the existing .prompts-back pill so the two read as one system. ════ */
+.page-backbar { display: flex; padding: 18px 2px 0; }
+.aii-nav-dd-inner > .page-backbar { padding: 20px 2px 0; }
+.page-backbtn {
+  display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px 6px 9px;
+  border: 1px solid var(--color-surface-border); background: #fff; cursor: pointer; border-radius: 999px;
+  font-family: var(--font-family); font-size: 0.83rem; font-weight: 600; color: #475569;
+  text-decoration: none; white-space: nowrap;
+  transition: background .14s ease, border-color .14s ease, color .14s ease;
+}
+.page-backbtn svg { flex: none; transition: transform .14s ease; }
+@media (hover: hover) {
+  .page-backbtn:hover {
+    background: color-mix(in srgb, #2563eb 6%, #fff);
+    border-color: color-mix(in srgb, #2563eb 30%, var(--color-surface-border));
+    color: #2563eb; text-decoration: none;
+  }
+  .page-backbtn:hover svg { transform: translateX(-2px); }
+}
+/* With the back bar above it, the panel head no longer needs its own big top pad. */
+.aii-nav-dd-inner > .page-backbar + .aii-nav-dd-head { padding-top: 14px; }
+/* Static pages (About / Terms): the bar rides in the grey identity band, pushed to
+   the right of the page name. */
+.topic-subnav-inner > .page-backbar { padding: 0; margin-left: auto; align-items: center; }
+.topic-subnav-inner > .page-backbar .page-backbtn { font-size: 0.8rem; padding: 5px 11px 5px 8px; }
+@media (max-width: 560px) {
+  .page-backbar { padding-top: 14px; }
+  .page-backbtn { font-size: 0.78rem; padding: 5px 10px 5px 8px; }
+  .topic-subnav-inner > .page-backbar .page-backbtn span { display: none; }
+}
+
+/* ═══ Web Resources ⟷ AI Insights parity (revamp719) — the two topic tabs draw
+   off each other: same section header, same clipped bordered accordion list,
+   same row anatomy (icon → title + subtext → chevron). ══════════════════════ */
+/* Web Resources rows now carry the category blurb as row SUBTEXT (it used to hide
+   inside the open panel), so a closed list explains itself like AI Insights does. */
+.xf-sum-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.xf-sum-desc {
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 500;
+  color: var(--color-text-muted, #64748b); line-height: 1.35;
+}
+/* Wrap the topic tab's list in the same single clipped frame the AI Insights
+   accordion uses, and give its rows the same padding/type. */
+.topic-explore-host .xf-list {
+  border: 1px solid var(--color-surface-border) !important;
+  border-radius: 14px !important;
+  background: #fff;
+  overflow: hidden !important;
+  margin: 4px 0 40px !important;
+}
+.topic-explore-host .xf-sum { padding: 15px 16px !important; gap: 12px !important; align-items: center; }
+.topic-explore-host .xf-sum-ic { width: 21px; height: 21px; color: #6f83a6; }
+.topic-explore-host .xf-sum-ic svg { width: 21px; height: 21px; }
+.topic-explore-host .xf-sum-name {
+  font-family: var(--font-display); font-size: 0.98rem !important; font-weight: 700;
+  letter-spacing: -0.012em; color: #26375a; line-height: 1.25;
+}
+.topic-explore-host .xf-acc[open] > .xf-sum { background: #f4f7fc !important; }
+.topic-explore-host .xf-acc[open] > .xf-sum .xf-sum-ic { color: #2f4d9e; }
+@media (hover: hover) { .topic-explore-host .xf-acc:not([open]) > .xf-sum:hover { background: #f7f9fc; } }
+.topic-explore-host .xf-panel { padding: 4px 16px 20px; }
+/* AI Insights borrows the Web Resources section header, so both tabs open the
+   same way: title, subtext, hairline, then the list. */
+.topic-ai-sechead { margin-bottom: 3px; }
+.topic-ai-wrap .aii-fi-sechead { padding: 0 2px 9px; border-bottom: 1px solid #e4e8f0; }
+@media (max-width: 560px) {
+  .topic-explore-host .xf-list { border-radius: 12px !important; margin-bottom: 32px !important; }
+  .topic-explore-host .xf-sum { padding: 13px 13px !important; gap: 10px !important; }
+  .topic-explore-host .xf-sum-ic, .topic-explore-host .xf-sum-ic svg { width: 19px; height: 19px; }
+  .topic-explore-host .xf-sum-name { font-size: 0.92rem !important; }
+  .xf-sum-desc { font-size: 0.76rem; }
+  .topic-explore-host .xf-panel { padding: 2px 12px 16px; }
+}

@@ -534,23 +534,27 @@ function pbSummaryRowHTML(g) {
 }
 
 function renderPbCardsHTML() {
-  return PB_CARDS.map(card => {
+  // Numbered STEPS in one clipped list, matching the topic-page AI Insights
+  // accordion (number → icon → title/subtext → chevron). The step number makes the
+  // build order explicit; only the cards the submit gate actually depends on carry
+  // a "Required" chip.
+  return PB_CARDS.map((card, i) => {
     const groups = pbCardSummaryGroups(card);
     const summaryHTML = groups.length
       ? `<div class="pb-card-summary">${groups.map(pbSummaryRowHTML).join('')}</div>`
       : '';
     const items = groups;
-    // Trailing chevron (no more "Add +/Edit" pill) — each card is a stacked,
-    // full-width section that expands in place; the chevron rotates open (#img424).
+    const req = card.required ? '<span class="pb-card-req">Required</span>' : '';
     return `
       <button type="button" class="pb-card${items.length ? ' has-items' : ''}" data-pb-card="${card.key}">
-        <div class="pb-card-head">
-          <span class="pb-card-icon" aria-hidden="true">${PB_ICONS[card.key] || ''}</span>
-          <span class="pb-card-title">${escapeHTML(card.label)}</span>
-          <span class="pb-card-chev" aria-hidden="true">${PB_CHEV}</span>
-        </div>
-        <p class="pb-card-desc">${escapeHTML(card.desc)}</p>
-        ${summaryHTML}
+        <span class="pb-card-num" aria-hidden="true">${i + 1}</span>
+        <span class="pb-card-icon" aria-hidden="true">${PB_ICONS[card.key] || ''}</span>
+        <span class="pb-card-tx">
+          <span class="pb-card-titlerow"><span class="pb-card-title">${escapeHTML(card.label)}</span>${req}</span>
+          <span class="pb-card-desc">${escapeHTML(card.desc)}</span>
+          ${summaryHTML}
+        </span>
+        <span class="pb-card-chev" aria-hidden="true">${PB_CHEV}</span>
       </button>
     `;
   }).join('');
@@ -704,7 +708,10 @@ function refreshModelCardSummary() {
     sum = document.createElement('div');
     sum.className = 'pb-card-summary';
     sum.innerHTML = html;
-    card.insertBefore(sum, card.querySelector('.pb-card-config') || null);
+    // Lives inside the text column (under the description), not as a direct child
+    // of the row — the row is a number/icon/text/chevron flex line.
+    const tx = card.querySelector('.pb-card-tx') || card;
+    tx.insertBefore(sum, tx.querySelector('.pb-card-config') || null);
   }
 }
 // "Choose Model" card body — the same pill-chip model chooser as the preview

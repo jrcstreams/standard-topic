@@ -6,7 +6,6 @@
 import { fetchTrending } from '../utils/trending.js';
 import { fetchWithTimeout } from '../utils/data.js';
 import { renderTrendExpansionBody } from './trend-expansion.js?v=20260717-revamp591';
-import { wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp574';
 import { wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
 import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp574';
 
@@ -180,9 +179,10 @@ function trendCardHTML(topic, idx, opts) {
   const cat = (topic.categories && topic.categories[0]) || '';
   const dur = durationLabel(topic.startedAt);
   const title = titleCase(topic.query);
-  // Line 2: either the live "Since X ago" or a caller-supplied label (the
-  // "Earlier" section passes "Was trending X ago").
-  const meta = opts.metaText != null ? opts.metaText : [cat, dur ? `Since ${dur} ago` : ''].filter(Boolean).join(' · ');
+  // Line 2: just the recency, e.g. "21h ago". The category was noise on a card
+  // that already names the trend, and the "Since" prefix added nothing (revamp719).
+  // The "Earlier" section still passes its own label ("Was trending X ago").
+  const meta = opts.metaText != null ? opts.metaText : (dur ? `${dur} ago` : '');
   const icon = opts.past ? TREND_PAST_ICON : TREND_CARD_ICON;
   return `
     <div class="trend-card${opts.past ? ' trend-card--past' : ''}" data-idx="${idx}" data-query="${escapeAttr(title)}" data-cat="${escapeAttr(cat)}" data-started="${escapeAttr(topic.startedAt || '')}" data-breakdown="${escapeAttr(JSON.stringify(Array.isArray(topic.trendBreakdown) ? topic.trendBreakdown.slice(0, 8) : []))}">
@@ -248,7 +248,6 @@ function wireTrendCards(container) {
   });
 }
 
-const TREND_EXP_CLOSE = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
 
 // Homepage variant (Phase 5): clicking a trend card EXPANDS its grounded brief
 // INLINE (accordion) instead of opening a modal. The expanded card spans the
@@ -287,9 +286,10 @@ function wireTrendCardsInline(container) {
         const sumEl = card.querySelector('.trend-card-summary');
         if (fresh && fresh.length > 6 && sumEl) sumEl.textContent = fresh;
       } catch (_) {}
-      exp.innerHTML = `${renderTrendExpansionBody(term, data)}<div class="trend-exp-closefoot"><button type="button" class="trend-exp-closelink" data-trend-closefoot>${TREND_EXP_CLOSE}<span>Close</span></button></div>`;
-      exp.querySelectorAll('.trend-exp-close, [data-trend-closefoot]').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); collapse(card); try { card.querySelector('.trend-card-trigger')?.scrollIntoView({ block: 'nearest' }); } catch (_) {} }));
-      wireInsightTabs(exp);
+      // The expansion body owns its own Close button now (last thing on the card,
+      // under the Sources / Explore Further drawers) — no separate close foot.
+      exp.innerHTML = renderTrendExpansionBody(term, data);
+      exp.querySelectorAll('[data-trend-close]').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); collapse(card); try { card.querySelector('.trend-card-trigger')?.scrollIntoView({ block: 'nearest' }); } catch (_) {} }));
       wireExploreFurther(exp);
     } catch (_) {
       exp.innerHTML = `<div class="trend-exp-fail"><span class="trend-exp-tx">Couldn't load this brief.</span> <button type="button" class="trend-exp-retry">Try again</button></div>`;
@@ -610,15 +610,14 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
   }
 
   function headHTML() {
-    // Homepage header (#img168/169): "What's Trending", no icon chip, with the
-    // last-updated line right beneath.
-    const upd = state.fetched ? relativeTime(state.fetched) : '';
+    // Homepage header (#img168/169): "What's Trending", no icon chip. The
+    // last-updated line is gone — it pushed this column's first row out of step
+    // with Today's Top News next to it, and the trends carry their own recency.
     return `
       <div class="trending-topics-head">
         <div class="trending-topics-titlerow">
           <h3 class="trending-topics-title"><span>What's Trending</span></h3>
         </div>
-        ${upd ? `<p class="trending-topics-updatedline">Updated ${escapeHTML(upd)}</p>` : ''}
       </div>`;
   }
 

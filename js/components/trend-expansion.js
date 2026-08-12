@@ -5,7 +5,6 @@
 import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260717-revamp591';
 import { renderTIAccordion, webSourceItem } from './ti-shortcuts.js';
 import { getExternalSearches, getExternalSearchCategories, getModels, safeUrl } from '../utils/data.js';
-import { insightTabsHTML } from '../utils/insight-tabs.js?v=20260706-revamp574';
 import { exploreFurtherHTML } from '../utils/explore-further.js?v=20260720-revamp609';
 
 // The Explore Further tab uses the shared clean-dropdown component (with the
@@ -148,19 +147,22 @@ export function renderTrendExpansionBody(term, brief) {
       if (!rest) break; detail = rest;
     }
   }
-  // Split into 3 TABS: Summary (default) / Explore Further / Sources. The reasoning
-  // one-liner (already on the trend card) is folded into the grounded summary.
+  // No tab bar (revamp719). The summary is the body; Sources and Explore Further
+  // hang off the bottom as quiet drawers so they read as a continuation of the
+  // brief rather than three peer destinations. Close is the last thing on the card.
   const summaryBody = detail || why;
   const AITAG = `<div class="im-sec-aitag-row"><span class="im-sec-aitag">${SPARK}<span>AI Generated Text</span></span></div>`;
   const summaryHTML = summaryBody ? `${AITAG}${renderBriefBody(summaryBody, null)}` : '<p class="ins-empty">No summary yet.</p>';
   const src = teSourcesHTML(b.headlines, b.sources);
-  const tabs = [
-    { key: 'summary', label: 'Summary', html: summaryHTML },
-    { key: 'explore', label: 'Explore Further', html: exploreListHTML(term) },
-  ];
-  if (src) tabs.push({ key: 'sources', label: 'Sources', html: src });
-  return `<div class="trend-exp im-secs">${insightTabsHTML(tabs, 'trend-exp-tabs')}</div>`;
+  const drawers = (src ? teDrawerHTML('sources', 'Sources', src) : '')
+    + teDrawerHTML('why', 'Explore Further', exploreListHTML(term));
+  return `<div class="trend-exp im-secs">
+    <div class="trend-exp-summary">${summaryHTML}</div>
+    <div class="trend-exp-drawers">${drawers}</div>
+    <div class="trend-exp-footer"><button type="button" class="trend-exp-close" data-trend-close>${TE_CLOSE_X}<span>Close</span></button></div>
+  </div>`;
 }
+const TE_CLOSE_X = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 
 // A clean collapsible drawer (Explore Further / Sources) — icon + title + chevron
 // summary, collapsed by default, matching the news/topic AI-insight drawers.
