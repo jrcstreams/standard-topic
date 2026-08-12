@@ -1052,6 +1052,13 @@ export function renderAIIntelligence(container, scope) {
     const specific = all.filter((s) => !s.evergreen);
     const evergreen = all.filter((s) => s.evergreen);
     const topicLabel = scope.label || scope.topic || 'this topic';
+    // scope.promptsOnly ('specific' | 'evergreen'): the host renders ONE of the two
+    // groups and supplies its own heading (the topic page's AI Insights accordion),
+    // so emit the bare prompt list with no section header.
+    if (scope.promptsOnly) {
+      const only = scope.promptsOnly === 'evergreen' ? evergreen : specific;
+      return furtherInsightsHTML(only) || '<p class="aii-empty">No prompts available for this topic.</p>';
+    }
     // Topic-page Prompts tab (scope.sectionAccordions): a page header + COLLAPSIBLE
     // section accordions holding the nested prompt list (#img650). Everywhere else
     // (nav-dropdown Prompt Library, custom search) keeps the flat static sections.

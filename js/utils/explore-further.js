@@ -161,13 +161,26 @@ const CAT_ICON = {
   __other: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg>',
 };
 
-// opts: { prompt, webTerm, name, openFirst, subDesc }
+// The "Explore with External AI Models" panel body WITHOUT its <details> wrapper —
+// for hosts that supply their own accordion header (the topic page's AI Insights
+// list). Wire it with wireExploreFurther() exactly like the full list.
+// opts: { prompt, name, subDesc }
+export function exploreAIModelsHTML(opts = {}) {
+  const { prompt = '', subDesc = '' } = opts;
+  if (!(getModels() || []).length) return '';
+  const efSub = subDesc || 'Send this prompt to ChatGPT, Claude, Gemini & more';
+  return `<div class="xf-panel" data-xf-emenu data-xf-prompt="${escAttr(prompt)}" data-xf-name="${escAttr(opts.name || '')}"><p class="xf-panel-desc">${esc(efSub)}</p>${emenuHomeHTML()}</div>`;
+}
+
+// opts: { prompt, webTerm, name, openFirst, subDesc, omitAI }
+// omitAI drops the "Explore with External AI Models" accordion — used where that
+// panel has been hoisted elsewhere (topic pages serve it from AI Insights now).
 export function exploreFurtherHTML(opts = {}) {
-  const { prompt = '', webTerm = '', openFirst = false, subDesc = '' } = opts;
+  const { prompt = '', webTerm = '', openFirst = false, subDesc = '', omitAI = false } = opts;
   // Context-specific tagline — "Send this prompt…" only fits the topic prompts;
   // trends/news/search feed a title or term to the model, not a preset prompt.
   const efSub = subDesc || 'Send this prompt to ChatGPT, Claude, Gemini & more';
-  const models = getModels() || [];
+  const models = omitAI ? [] : (getModels() || []);
   const aiAcc = models.length
     ? `<details class="xf-acc"${openFirst ? ' open' : ''}><summary class="xf-sum"><span class="xf-sum-ic">${SPARK}</span><span class="xf-sum-tx"><span class="xf-sum-name">Explore with External AI Models</span></span>${CHEV}</summary><div class="xf-panel" data-xf-emenu data-xf-prompt="${escAttr(prompt)}" data-xf-name="${escAttr(opts.name || '')}"><p class="xf-panel-desc">${esc(efSub)}</p>${emenuHomeHTML()}</div></details>`
     : '';

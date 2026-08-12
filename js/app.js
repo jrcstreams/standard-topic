@@ -18,7 +18,7 @@ import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } 
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
 import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260728-revamp667';
-import { exploreFurtherHTML, wireExploreFurther } from './utils/explore-further.js?v=20260720-revamp609';
+import { exploreFurtherHTML, exploreAIModelsHTML, wireExploreFurther } from './utils/explore-further.js?v=20260812-revamp718';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260717-revamp592';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
 import { initTrendingListModal } from './components/trending-list-modal.js?v=20260706-revamp574';
@@ -196,11 +196,12 @@ document.addEventListener('DOMContentLoaded', async () => {
           if (route.type === 'topic' && route.slug) {
             const activePtab = document.querySelector('#topic-paths-nav .ptab.is-active');
             if (activePtab && activePtab.dataset.ptab === 'ai') {
-              const sub = document.querySelector('.topic-ai-subnav .tai-tab.is-active');
-              pendingInlineAii = { slug: route.slug, group: (sub && sub.dataset.tai) || 'discover' };
+              // Re-open the same accordion row (if one was open) after the re-render.
+              const openAcc = document.querySelector('.topic-ai-acclist .tai-acc.is-open');
+              pendingInlineAii = { slug: route.slug, group: (openAcc && openAcc.dataset.taiRow) || 'ai' };
             } else if (activePtab && activePtab.dataset.ptab && activePtab.dataset.ptab !== 'news') {
-              // Prompts / Explore Further survive the breakpoint crossing too —
-              // only News Feed (the default) needs no seeding (#img626).
+              // Web Resources survives the breakpoint crossing too — only News Feed
+              // (the default) needs no seeding (#img626).
               pendingInlineAii = { slug: route.slug, group: activePtab.dataset.ptab };
             }
           }
@@ -501,24 +502,11 @@ function wireSubtopicsMore(root) {
   window.addEventListener('resize', () => requestAnimationFrame(fit), { passive: true });
 }
 
-// Phase 4: topic-page AI Insights sections open as INLINE dropdowns on the page
-// (no modal). Each path tile toggles a panel right under the tiles that mounts
-// the AI Insights builder for that section, with its own nav/topic-switcher
-// hidden (the page tiles ARE the nav). One open at a time.
-// The five AI Insights tracks, in display order — shared by the topic-page
-// tiles and the main-nav "AI Insights" topic-tree dropdown (Phase 3). The group
-// ids match the AI component's builder groups.
-const AII_NAV_GROUPS = [
-  { group: 'discover',       label: 'Catch Up' },
-  { group: 'topic-specific', label: 'Deep Dive' },
-  { group: 'learn',          label: '101 Info' },
-  { group: 'websearch',      label: 'Web Search' },
-  { group: 'external',       label: 'Prompts' },
-];
-
-// Deep-link into a topic page's inline AI section. If we're already on that
-// topic, open it in place (the inline wiring listens on the window); otherwise
-// stash the request and navigate — wireTopicAiiInline consumes it on render.
+// Deep-link into a topic page's AI Insights accordion. If we're already on that
+// topic, open it in place (wireTopicPathTabs listens on the window); otherwise
+// stash the request and navigate — the fresh render consumes it. The detail's
+// `group` may be an accordion row key, a builder group, or an L1 tab key;
+// selectTab() normalizes all three.
 let pendingInlineAii = null;
 function openTopicInsightInline(slug, group) {
   const cur = getCurrentRoute();
@@ -955,22 +943,12 @@ function promptsNavDdCfg(view) {
 // (#/prompts ↔ /build ↔ /library, e.g. via back/forward) swaps views in place.
 let promptsDdShowView = null;
 // Set while the Prompts dropdown is mounted: drill straight to a topic's prompt
-// list and expand a specific prompt (used by the homepage featured-prompt chips).
+// list and expand a specific prompt. Its homepage caller (the featured-prompt
+// chips) is gone; kept as the dropdown's public drill-in hook.
 let promptsDdOpenPrompt = null;
 function openPromptsNavDropdown(view) {
   if (navDdOpen && navDdOpen.key === 'prompts') { if (promptsDdShowView) promptsDdShowView(view || null); return; }
   openNavDropdown(promptsNavDdCfg(view || null));
-}
-// Open the Prompt Library to a specific prompt (topic list → expand that prompt),
-// retrying until the dropdown has mounted and exposed its drill-in hook (#img372).
-function openPromptInLibrary(slug, name, promptName) {
-  const drill = (attempt) => {
-    if (promptsDdOpenPrompt) { promptsDdOpenPrompt(slug, name, promptName); return; }
-    if (attempt < 24) setTimeout(() => drill(attempt + 1), 60);
-  };
-  if (navDdOpen && navDdOpen.key === 'prompts') { drill(0); return; }
-  navigate('#/prompts/library');
-  drill(0);
 }
 // Route-driven toggle shared by the three deep-linkable dropdowns: open → close
 // (returning home if on the route); closed → navigate to the route (or open
@@ -1106,25 +1084,48 @@ function userClosePromptBuilder() {
 const TOPIC_PATH_TABS = [
   { key: 'news', label: 'News Feed' },
   { key: 'ai',   label: 'AI Insights' },
-  { key: 'prompts', label: 'Prompts' },
-  { key: 'explore', label: 'Explore Further' },
+  { key: 'explore', label: 'Web Resources' },
 ];
-// Sub-options under "AI Insights" (Prompts moved out to its own top-level tab).
-const TOPIC_AI_GROUPS = [
-  { key: 'discover',       label: 'Catch Up' },
-  { key: 'topic-specific', label: 'Deep Dive' },
-  { key: 'learn',          label: '101 Info' },
+// The AI Insights tab is ONE accordion list gathering everything AI on a topic:
+// its ready-made prompts, the three generated briefs, and the hand-off to external
+// models (previously split across the AI Insights / Prompts / Explore Further
+// tabs). `kind` picks the mount strategy; `group` is the AI component's builder
+// group where one applies.
+const TOPIC_AI_ROWS = [
+  { key: 'topic-prompts', kind: 'prompts', group: 'external', promptsOnly: 'specific',
+    label: 'Topic-Specific Prompts', sub: 'Ready-made prompts tuned to this topic.', icon: 'topic-specific' },
+  { key: 'evergreen-prompts', kind: 'prompts', group: 'external', promptsOnly: 'evergreen',
+    label: 'Evergreen Prompts', sub: 'Timeless prompts that work across any topic.', icon: 'external' },
+  { key: 'catchup', kind: 'brief', group: 'discover',
+    label: 'AI Catch Up', sub: 'The latest news, moves and developments.', icon: 'discover' },
+  { key: 'deepdive', kind: 'brief', group: 'topic-specific',
+    label: 'AI Deep Dive', sub: 'Key developments in depth — the tradeoffs and what they mean.', icon: 'deepdive' },
+  { key: 'overview', kind: 'brief', group: 'learn',
+    label: 'AI 101 Overview', sub: 'Background, fundamentals and key context.', icon: 'learn' },
+  { key: 'models', kind: 'models',
+    label: 'Explore Topic with External AI Models', sub: 'Send this topic to ChatGPT, Claude, Gemini and more.', icon: 'models' },
 ];
-const TOPIC_AI_GROUP_KEYS = new Set(TOPIC_AI_GROUPS.map((g) => g.key));
+const TOPIC_AI_ROW_KEYS = new Set(TOPIC_AI_ROWS.map((r) => r.key));
+// Builder-group deep-links (nav dropdown, breakpoint re-render) → accordion row.
+const TOPIC_AI_GROUP_TO_ROW = { discover: 'catchup', 'topic-specific': 'deepdive', learn: 'overview', external: 'topic-prompts' };
+// Leading icons for the accordion rows.
+const TOPIC_AI_ICONS = {
+  discover: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polygon points="15.5 8.5 13.5 13.5 8.5 15.5 10.5 10.5"/></svg>',
+  deepdive: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>',
+  learn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 9L12 4 2 9l10 5 10-5z"/><path d="M6 11.5V16c0 1.7 2.7 3 6 3s6-1.3 6-3v-4.5"/></svg>',
+  'topic-specific': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+  external: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9 9 0 0 1 9 9 9 9 0 0 1-9 9"/><polyline points="12 21 8.5 17.5 12 14"/><line x1="12" y1="7.5" x2="12" y2="12"/><line x1="12" y1="12" x2="15.5" y2="14"/></svg>',
+  models: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="12" rx="3"/><line x1="12" y1="4" x2="12" y2="8"/><circle cx="12" cy="3" r="1.3"/><line x1="9" y1="13" x2="9" y2="15"/><line x1="15" y1="13" x2="15" y2="15"/></svg>',
+};
 
-// Wire the topic-page control subnav: News Feed → the news feed; AI Insights &
-// Resources → a second-level sub-strip (Catch Up / Deep Dive / 101 Info / Prompts),
-// each mounting that group's builder. Also drives deep-links from the nav dropdown.
+// Wire the topic-page control subnav: News Feed → the news feed; AI Insights →
+// the six-row accordion (prompts + briefs + external models); Web Resources → the
+// web-source explorer. Also drives deep-links from the nav dropdown.
 function wireTopicPathTabs(container, topic, descriptions, icons) {
   const nav = document.getElementById('topic-paths-nav');
   const body = container.querySelector('#topic-tab-body');
   if (!nav || !body) return;
-  let active = null; let ctl = null; let subGroup = 'discover';
+  let active = null; let ctl = null; let openRow = null;
 
   // L1 active indicator: a single underline BAR that slides between News Feed /
   // AI Insights / Prompt Library on selection (instead of a filled pill, #img598).
@@ -1140,11 +1141,11 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
     // Hug the WORD (a true text underline), not the row's bottom edge (#img602).
     ptabBar.style.top = `${act.offsetTop + act.offsetHeight - 4}px`;
   };
-  // Tight-fit fallback (#img625): when the four tabs overflow the row, first
+  // Tight-fit fallback (#img625): when the tabs overflow the row, first
   // drop the type a notch (.ptabs-compact), then shorten "News Feed"→"News",
-  // and worst-case "Explore Further"→"Explore". Fully reversible on resize.
-  const PTAB_FULL = { news: 'News Feed', explore: 'Explore Further' };
-  const PTAB_SHORT = { news: 'News', explore: 'Explore' };
+  // and worst-case "Web Resources"→"Resources". Fully reversible on resize.
+  const PTAB_FULL = { news: 'News Feed', explore: 'Web Resources' };
+  const PTAB_SHORT = { news: 'News', explore: 'Resources' };
   const fitPtabs = () => {
     nav.classList.remove('ptabs-compact');
     Object.keys(PTAB_FULL).forEach((k) => {
@@ -1161,51 +1162,92 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
   requestAnimationFrame(fitPtabs);
 
   const destroyCtl = () => { if (ctl && ctl.destroy) { try { ctl.destroy(); } catch (_) {} } ctl = null; };
-  const mountGroup = (subBody, gkey) => {
-    destroyCtl();
-    subBody.innerHTML = '';
-    let shortcuts = [];
-    try { shortcuts = getShortcutsForTopic(topic.slug) || []; } catch (_) {}
-    ctl = renderAIIntelligence(subBody, {
-      inModal: true, initialBuilder: true, initialGroup: gkey, lockTopic: true,
-      topic: topic.name, label: topic.name, descriptions, icons, shortcuts, topicKey: topic.slug,
-    });
+  // Live AI-component instances inside the accordion, keyed by row. Bodies mount
+  // LAZILY on first open and then stay mounted (hidden) — so re-opening a brief is
+  // instant and never re-fires /api/insight, and an open prompt stays open.
+  const rowCtls = {};
+  const destroyRowCtls = () => {
+    Object.keys(rowCtls).forEach((k) => { const c = rowCtls[k]; if (c && c.destroy) { try { c.destroy(); } catch (_) {} } delete rowCtls[k]; });
   };
+  // Fill a row's body the first time it opens.
+  const mountRow = (row, host) => {
+    if (host.dataset.mounted === '1') return;
+    host.dataset.mounted = '1';
+    try {
+      if (row.kind === 'models') {
+        const prompt = `Give me a thorough, current briefing on ${topic.name}. Be specific and cite sources.`;
+        host.innerHTML = exploreAIModelsHTML({ prompt, name: topic.name, subDesc: `Send ${topic.name} to ChatGPT, Claude, Gemini and more.` });
+        wireExploreFurther(host);
+        return;
+      }
+      let shortcuts = [];
+      try { shortcuts = getShortcutsForTopic(topic.slug) || []; } catch (_) {}
+      rowCtls[row.key] = renderAIIntelligence(host, {
+        inModal: true, initialBuilder: true, initialGroup: row.group, lockTopic: true,
+        promptsOnly: row.promptsOnly || null,
+        topic: topic.name, label: topic.name, descriptions, icons, shortcuts, topicKey: topic.slug,
+      });
+    } catch (err) {
+      console.error('AI Insights row mount failed', row.key, err);
+      host.dataset.mounted = '';
+      host.innerHTML = '<div class="aii-empty" style="padding:18px 4px;color:var(--color-text-muted);">Couldn’t load this section. Close and re-open it to retry.</div>';
+    }
+  };
+  // AI Insights = ONE accordion list. All rows closed on load; opening one closes
+  // whichever was open (a brief is a long read — two at once just buries them).
   const renderAI = () => {
+    destroyRowCtls();
     body.innerHTML = `<div class="topic-ai-wrap">
       <div class="aii-tabhead topic-ai-head">
-        <p class="aii-tabhead-tx">AI-generated briefings to get caught up, go deeper or start with the basics.</p>
+        <p class="aii-tabhead-tx">Ready-made prompts, AI briefings and model hand-offs for ${escapeHTML(topic.name)} — all in one place.</p>
       </div>
-      <nav class="topic-ai-subnav" role="tablist" aria-label="AI Insights sections">${TOPIC_AI_GROUPS.map((g) => `<button type="button" class="tai-tab${g.key === subGroup ? ' is-active' : ''}" role="tab" data-tai="${escapeAttr(g.key)}" aria-selected="${g.key === subGroup ? 'true' : 'false'}">${escapeHTML(g.label)}</button>`).join('')}</nav>
-      <div class="topic-ai-body" id="topic-ai-body"></div>
+      <div class="topic-ai-acclist">${TOPIC_AI_ROWS.map((r) => `
+        <div class="tai-acc" data-tai-row="${escapeAttr(r.key)}">
+          <button type="button" class="tai-accsum" aria-expanded="false">
+            <span class="tai-acc-ic" aria-hidden="true">${TOPIC_AI_ICONS[r.icon] || ''}</span>
+            <span class="tai-acc-tx"><span class="tai-acc-name">${escapeHTML(r.label)}</span><span class="tai-acc-sub">${escapeHTML(r.sub)}</span></span>
+            <span class="tai-acc-chev" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </button>
+          <div class="tai-acc-body" hidden></div>
+        </div>`).join('')}</div>
     </div>`;
-    const subBody = body.querySelector('#topic-ai-body');
-    const subNav = body.querySelector('.topic-ai-subnav');
-    // Sticky Catch Up row: the header scrolls away and the row pins on the way
-    // down; on the way back up it un-sticks natively as the header returns. Cast
-    // the drop shadow ONLY while stuck (header out of view) and fade it, so the
-    // transition in/out reads smooth rather than a hard snap (#img651).
-    const aiHead = body.querySelector('.topic-ai-head');
-    try { if (window.__aiHeadIO) window.__aiHeadIO.disconnect(); } catch (_) {}
-    const aiScroller = document.querySelector('#content');
-    if (aiHead && subNav && aiScroller && 'IntersectionObserver' in window) {
-      window.__aiHeadIO = new IntersectionObserver(([e]) => {
-        subNav.classList.toggle('is-stuck', e.intersectionRatio <= 0.01);
-      }, { root: aiScroller, threshold: [0, 0.01, 1] });
-      window.__aiHeadIO.observe(aiHead);
-    }
-    const selectSub = (gkey) => {
-      if (!TOPIC_AI_GROUP_KEYS.has(gkey)) gkey = 'discover';
-      subGroup = gkey;
-      subNav.querySelectorAll('.tai-tab').forEach((b) => { const on = b.dataset.tai === gkey; b.classList.toggle('is-active', on); b.setAttribute('aria-selected', String(on)); });
-      mountGroup(subBody, gkey);
-      requestAnimationFrame(() => { try { window.scrollTo({ top: 0 }); } catch (_) {} });
+    const accs = [...body.querySelectorAll('.tai-acc')];
+    const setRow = (key, on) => {
+      const acc = accs.find((a) => a.dataset.taiRow === key);
+      const row = TOPIC_AI_ROWS.find((r) => r.key === key);
+      if (!acc || !row) return;
+      const host = acc.querySelector('.tai-acc-body');
+      const btn = acc.querySelector('.tai-accsum');
+      if (on) mountRow(row, host);
+      host.hidden = !on;
+      acc.classList.toggle('is-open', on);
+      btn.setAttribute('aria-expanded', String(on));
     };
-    subNav.querySelectorAll('.tai-tab').forEach((b) => b.addEventListener('click', () => selectSub(b.dataset.tai)));
-    selectSub(subGroup);
+    const selectRow = (key, scroll) => {
+      if (!TOPIC_AI_ROW_KEYS.has(key)) return;
+      if (openRow === key) { setRow(key, false); openRow = null; return; }
+      if (openRow) setRow(openRow, false);
+      openRow = key;
+      setRow(key, true);
+      if (scroll !== false) {
+        // Bring the opened row's header to the top of the reading area rather than
+        // leaving the user staring at whatever was already on screen.
+        requestAnimationFrame(() => {
+          const acc = accs.find((a) => a.dataset.taiRow === key);
+          try { acc?.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (_) {}
+        });
+      }
+    };
+    accs.forEach((a) => a.querySelector('.tai-accsum')?.addEventListener('click', () => selectRow(a.dataset.taiRow)));
+    // A deep-link (nav dropdown / breakpoint re-render / #/topic/x/prompts) may have
+    // asked for a specific row; otherwise everything starts closed.
+    if (openRow) { const want = openRow; openRow = null; selectRow(want, false); }
   };
   const renderContent = (key) => {
     destroyCtl();
+    // Leaving AI Insights wipes its DOM — tear the mounted row instances down with
+    // it so their observers/timers don't outlive the nodes they were watching.
+    destroyRowCtls();
     body.innerHTML = '';
     try {
       if (key === 'news') {
@@ -1222,40 +1264,21 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
         return;
       }
       if (key === 'explore') {
-        // Explore Further is a first-class L1 tab now (#img619) — the shared
-        // AI-models + web-sources explorer, headed like the Prompt Library sections.
+        // Web Resources — the web-source explorer. "Explore with External AI Models"
+        // moved to the AI Insights accordion, so it's omitted here (omitAI).
         const host = document.createElement('div');
         host.className = 'topic-explore-host';
         body.appendChild(host);
-        const efPrompt = `Give me a thorough, current briefing on ${topic.name}. Be specific and cite sources.`;
-        // Page header (main = tab title, subheader = topic, subtext), matching the
-        // Prompts tab (#img650). Subtext rewritten without the em-dash.
         // Intro text + separator dropped (#img74): the accordion headers carry the
         // explanation; a top spacer keeps breathing room below the subnav.
         const efHead = `<div class="aii-tabhead-spacer"></div>`;
-        // Section header matching Trending / Topics / Prompts (#img261): title +
-        // subtext over a hairline — NOT a grey collapsible band. The source-category
-        // accordions (rounded, clipped list) live directly beneath.
-        const efBody = exploreFurtherHTML({ prompt: efPrompt, webTerm: topic.name, name: topic.name });
-        const efSec = `<section class="aii-fi-sec"><div class="aii-fi-sechead"><h3 class="aii-fi-sectitle">Explore Further</h3><p class="aii-fi-secsub">Send ${escapeHTML(topic.name)} to an AI model, or open it across search, social, video and fact-checking sources.</p></div>${efBody}</section>`;
+        // Section header matching Trending / Topics (#img261): title + subtext over a
+        // hairline — NOT a grey collapsible band. The source-category accordions
+        // (rounded, clipped list) live directly beneath.
+        const efBody = exploreFurtherHTML({ webTerm: topic.name, name: topic.name, omitAI: true });
+        const efSec = `<section class="aii-fi-sec"><div class="aii-fi-sechead"><h3 class="aii-fi-sectitle">Web Resources</h3><p class="aii-fi-secsub">Open ${escapeHTML(topic.name)} across search, social, video and fact-checking sources.</p></div>${efBody}</section>`;
         host.innerHTML = efHead + efSec;
         wireExploreFurther(host);
-        return;
-      }
-      if (key === 'prompts') {
-        // Prompt Library tab: the topic's ready-made prompts split into Topic-Specific
-        // + Evergreen accordions. Reuses the AI component's external (prompts) group;
-        // the host class hides its builder chrome so only the clean library shows.
-        const host = document.createElement('div');
-        host.className = 'topic-prompt-lib-host prompts-topic-host';
-        body.appendChild(host);
-        let shortcuts = [];
-        try { shortcuts = getShortcutsForTopic(topic.slug) || []; } catch (_) {}
-        ctl = renderAIIntelligence(host, {
-          inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
-          sectionAccordions: true,
-          topic: topic.name, label: topic.name, descriptions, icons, shortcuts, topicKey: topic.slug,
-        });
         return;
       }
       renderAI();
@@ -1267,11 +1290,12 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
     }
   };
   const selectTab = (key) => {
-    // Prompts moved to its own top-level tab — route the old 'external' group there.
-    if (key === 'external') key = 'prompts';
-    // A group key (from a deep-link) opens AI Insights on that sub-group.
-    else if (TOPIC_AI_GROUP_KEYS.has(key)) { subGroup = key; key = 'ai'; }
-    else if (key === 'websearch') { subGroup = 'discover'; key = 'ai'; }
+    // Deep-link keys: an accordion row id, or a legacy builder group / the retired
+    // 'prompts' tab — all now land on AI Insights with the matching row open.
+    if (TOPIC_AI_ROW_KEYS.has(key)) { openRow = key; key = 'ai'; }
+    else if (TOPIC_AI_GROUP_TO_ROW[key]) { openRow = TOPIC_AI_GROUP_TO_ROW[key]; key = 'ai'; }
+    else if (key === 'prompts') { openRow = 'topic-prompts'; key = 'ai'; }
+    else if (key === 'websearch') { openRow = null; key = 'explore'; }
     if (!TOPIC_PATH_TABS.some((t) => t.key === key)) key = 'news';
     nav.querySelectorAll('.ptab').forEach((b) => {
       const on = b.dataset.ptab === key;
@@ -1283,15 +1307,16 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
     // a prior render may have failed, leaving it blank.) Only skip the re-render
     // when the content is really there.
     const present = key === 'news' ? body.querySelector('#section-newsfeed')
-      : key === 'prompts' ? body.querySelector('.topic-prompt-lib-host')
       : key === 'explore' ? body.querySelector('.topic-explore-host')
       : body.querySelector('.topic-ai-wrap');
     const same = active === key;
     active = key;
     if (same && present) {
-      if (key === 'ai') {
-        const subNav = body.querySelector('.topic-ai-subnav');
-        if (subNav) { subNav.querySelectorAll('.tai-tab').forEach((b) => b.classList.toggle('is-active', b.dataset.tai === subGroup)); mountGroup(body.querySelector('#topic-ai-body'), subGroup); }
+      // Already on AI Insights: honour a deep-link asking for a specific row rather
+      // than re-rendering (which would drop every already-mounted row).
+      if (key === 'ai' && openRow) {
+        const want = openRow; openRow = null;
+        body.querySelector(`.tai-acc[data-tai-row="${want}"] .tai-accsum`)?.click();
       }
       return;
     }
@@ -1299,9 +1324,9 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
     requestAnimationFrame(() => { try { window.scrollTo({ top: 0 }); } catch (_) {} });
   };
   // Keep the URL in sync with the active L1 tab so each tab is deep-linkable:
-  // #/topic/{slug} (News Feed, the default) · /ai-insights · /prompts · /explore.
+  // #/topic/{slug} (News Feed, the default) · /ai-insights · /explore.
   // replaceState (no hashchange) so tab clicks don't re-render the page.
-  const TAB_URL_SEG = { ai: 'ai-insights', prompts: 'prompts', explore: 'explore' };
+  const TAB_URL_SEG = { ai: 'ai-insights', explore: 'explore' };
   const syncTabHash = (key) => {
     if (!(routeHash() || '').startsWith('#/topic/')) return;
     const seg = TAB_URL_SEG[key];
@@ -1318,13 +1343,14 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
   nav.querySelectorAll('.ptab').forEach((b) => b.addEventListener('click', () => selectTabAndSync(b.dataset.ptab)));
 
   // Deep-link from the AI Insights nav dropdown (same-page event + cross-page
-  // pending request) → open the matching sub-group.
+  // pending request) → open the matching accordion row.
   if (window.__aiiInlineHandler) window.removeEventListener('aii-inline-open', window.__aiiInlineHandler);
   window.__aiiInlineHandler = (e) => { if (e.detail && e.detail.slug === topic.slug) selectTabAndSync(e.detail.group); };
   window.addEventListener('aii-inline-open', window.__aiiInlineHandler);
 
-  // Initial tab: a URL deep-link (#/topic/{slug}/{ai-insights|prompts|explore})
-  // seeds it; a pending in-app deep-link (nav dropdown / breakpoint re-render) wins.
+  // Initial tab: a URL deep-link (#/topic/{slug}/{ai-insights|explore}) seeds it; a
+  // pending in-app deep-link (nav dropdown / breakpoint re-render) wins. The retired
+  // /prompts segment lands on AI Insights with the Topic-Specific Prompts row open.
   const URL_SEG_TAB = { 'ai-insights': 'ai', prompts: 'prompts', explore: 'explore' };
   let initial = 'news';
   const curRoute = getCurrentRoute();
@@ -2426,7 +2452,7 @@ function pageLabelFor(route) {
 // crawlers, browser tabs, shared links, and GA4 page_view (which reads
 // document.title) all get the right one instead of the static homepage title.
 const SITE_TITLE_SUFFIX = 'Standard Topic';
-const TOPIC_TAB_LABEL = { 'ai-insights': 'AI Insights', prompts: 'Prompts', explore: 'Explore Further' };
+const TOPIC_TAB_LABEL = { 'ai-insights': 'AI Insights', prompts: 'AI Insights', explore: 'Web Resources' };
 function documentTitleFor(route) {
   if (!route) return `${SITE_TITLE_SUFFIX} — News, Resources and AI Knowledge on Any Topic`;
   switch (route.type) {
@@ -2992,23 +3018,9 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         ${bodyTabsRow({ showSearchTrends: true })}
         <div class="home-cards">
           <div class="home-search-hero" id="home-search-hero"></div>
-          <div class="home-featstrip home-featstrip--rich" aria-label="Explore Standard Topic">
-            <div class="featstrip-item featstrip-item--rich">
-              <button type="button" class="featstrip-head" data-explore-topics aria-label="Explore all topics">
-                <span class="featstrip-ic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>
-                <span class="featstrip-tx"><span class="featstrip-title">Explore Topics</span><span class="featstrip-sub">Browse 100+ topic hubs</span></span>
-                <span class="featstrip-cta"><span>View all topics</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
-              </button>
-              <div class="featstrip-previews" data-fs-topics></div>
-            </div>
-            <div class="featstrip-item featstrip-item--rich">
-              <button type="button" class="featstrip-head" data-explore-prompts aria-label="Open the prompt library">
-                <span class="featstrip-ic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
-                <span class="featstrip-tx"><span class="featstrip-title">Prompt Library</span><span class="featstrip-sub">Ready-made for every topic</span></span>
-                <span class="featstrip-cta"><span>Access prompt library</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></span>
-              </button>
-              <div class="featstrip-previews" data-fs-prompts></div>
-            </div>
+          <div class="home-quicklinks" aria-label="Explore Standard Topic">
+            <div class="hq-topics" data-hq-topics></div>
+            <p class="hq-prompts">Looking for pre-made prompts? <button type="button" class="hq-link" data-explore-prompts>Access our prompt library<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></button></p>
           </div>
         </div>
         <div class="home-sections">
@@ -3024,60 +3036,30 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });
     // Trending is now the only sidebar card, so it can run much longer.
     renderTrendingHome(container.querySelector('#home-trending'), { limit: 14 });
-    // The Topics promo card (replaces the home AI Insights card, #424) — opens the
-    // full All-Topics dropdown so visitors can jump into a dedicated topic page.
+    // Discreet quicklinks under the search bar (replacing the two promo mini-cards):
+    // a row of featured-topic pills + "All topics", then a one-line nudge to the
+    // Prompt Library. Reads as an extension of the search area, not its own block.
+    {
+      const tWrap = container.querySelector('[data-hq-topics]');
+      if (tWrap) {
+        let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 5); } catch (_) {}
+        tWrap.innerHTML = `<span class="hq-label">Popular</span>`
+          + feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="hq-chip">${topicIconSVG(t.icon || 'globe', 'hq-chip-ic')}<span>${escapeHTML(t.name)}</span></a>`).join('')
+          + `<button type="button" class="hq-all" data-explore-topics>All topics<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></button>`;
+      }
+    }
+    // "All topics" — opens the full All-Topics dropdown so visitors can jump into a
+    // dedicated topic page.
     container.querySelector('[data-explore-topics]')?.addEventListener('click', (e) => {
       e.preventDefault();
       window.dispatchEvent(new CustomEvent('open-all-topics-modal'));
     });
-    // Prompts promo (#img15) — opens the Prompts dropdown (Build a Custom Prompt +
+    // Prompt Library nudge — opens the Prompts dropdown (Build a Custom Prompt +
     // Prompt Library) rather than jumping straight to the builder.
     container.querySelector('[data-explore-prompts]')?.addEventListener('click', (e) => {
       e.preventDefault();
       openPromptsNavDropdown();
     });
-    // Preview rows inside the two cards (#img231): featured topic chips + the
-    // first three Featured Prompts (same data file as the Prompt Library).
-    {
-      // Preview chips WRAP (CSS caps them to ~2 rows) so at least 3-5 show cleanly
-      // — no cutoff/scroll (#img319/349).
-      const tWrap = container.querySelector('[data-fs-topics]');
-      if (tWrap) {
-        let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 5); } catch (_) {}
-        tWrap.innerHTML = feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="fs-chip">${topicIconSVG(t.icon || 'globe', 'fs-chip-ic')}<span>${escapeHTML(t.name)}</span></a>`).join('');
-      }
-      const pWrap = container.querySelector('[data-fs-prompts]');
-      if (pWrap) {
-        fetchWithTimeout('/data/featured-prompts.json', { headers: { Accept: 'application/json' } })
-          .then((r) => (r.ok ? r.json() : null))
-          .then((cfg) => {
-            if (!cfg || !Array.isArray(cfg.featured)) return;
-            // Show 4 previews so the card fills as two tidy rows (chips are smaller on
-            // mobile so two fit per row) — take up to 5 only if the extra is short
-            // enough not to spill past two rows (#img349/362/371).
-            const picks = [];
-            let chars = 0;
-            for (const f of cfg.featured) {
-              if (picks.length >= 5) break;
-              let sc = []; try { sc = getShortcutsForTopic(f.topic) || []; } catch (_) { continue; }
-              const sMatch = sc.find((x) => x && x.name === f.name);
-              if (!(sMatch && sMatch.prompt)) continue;
-              if (picks.length >= 4 && chars + sMatch.name.length > 80) break;
-              const t = getTopicBySlug(f.topic);
-              picks.push({ s: sMatch, tn: t ? t.name : '', slug: f.topic });
-              chars += sMatch.name.length;
-            }
-            pWrap.innerHTML = picks.map((pk, i) => `<button type="button" class="fs-chip fs-chip--prompt" data-fs-prompt="${i}"><svg class="fs-chip-spark" viewBox="0 0 24 24" width="12" height="12" fill="#2563eb" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg><span>${escapeHTML(pk.s.name)}</span></button>`).join('');
-            pWrap.querySelectorAll('[data-fs-prompt]').forEach((b) => b.addEventListener('click', (e) => {
-              e.stopPropagation();
-              const pk = picks[Number(b.dataset.fsPrompt)]; if (!pk) return;
-              // Lead the user straight into the Prompt Library with this prompt open —
-              // NOT the Review & Submit modal (#img372).
-              openPromptInLibrary(pk.slug, pk.tn, pk.s.name);
-            }));
-          }).catch(() => {});
-      }
-    }
   } else if (topic && !isCustom) {
     // Topic pages: ONE cohesive tabbed "Paths" package at every width. A second
     // subnav (tab strip) below the title — News · Catch Up · Deep Dive · 101 Info
@@ -4538,14 +4520,15 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
 }
 
 // Homepage-only (#img193): the sticky subnav (Home | Browse Topics) stays hidden
-// until the user scrolls PAST the Explore Topics / Prompt Library mini-cards —
-// they carry the topic-picking promo up top, so the subnav would be duplicative.
+// until the user scrolls PAST the search-area quicklinks (featured topic pills +
+// the Prompt Library nudge) — they carry the topic-picking promo up top, so the
+// subnav would be duplicative until they're gone.
 let homeSubnavRevealHandler = null;
 function setupHomeSubnavReveal() {
   if (homeSubnavRevealHandler) { window.removeEventListener('scroll', homeSubnavRevealHandler); homeSubnavRevealHandler = null; }
   document.body.classList.remove('home-subnav-on');
   homeSubnavRevealHandler = () => {
-    const strip = document.querySelector('.home-featstrip');
+    const strip = document.querySelector('.home-quicklinks');
     if (!strip) return;
     const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 60;
     document.body.classList.toggle('home-subnav-on', strip.getBoundingClientRect().bottom <= navH + 4);

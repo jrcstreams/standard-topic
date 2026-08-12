@@ -10768,7 +10768,7 @@ body.home-search .home-search-hero .search-panel-starters { display: none; }
    sections stack in one flow, re-sequenced with `order` so Trending weaves
    between Search and AI (matching the mobile concept). */
 body.home-search .body-tabs { display: none !important; }
-body.home-search.app-mode .topic-layout.home-grid { display: flex; flex-direction: column; gap: 1.25rem; align-items: stretch; }
+body.home-search.app-mode .topic-layout.home-grid { display: flex; flex-direction: column; gap: 0.9rem; align-items: stretch; }
 body.home-search .home-cards, body.home-search .home-main, body.home-search .home-side { display: contents; }
 @media (max-width: 1023.98px) {
   body.home-search .home-sections {
@@ -10782,9 +10782,9 @@ body.home-search .home-cards, body.home-search .home-main, body.home-search .hom
 body.home-search #home-search-hero { order: 1; }
 body.home-search #home-trending    { order: 2; }
 body.home-search #section-newsfeed { order: 4; }
-/* Stacked mobile/tablet home: the feature strip rides directly under the search
-   hero (same order slot — source order places it after), items stacked. */
-body.home-search .home-featstrip { order: 1; }
+/* Stacked mobile/tablet home: the quicklinks line rides directly under the search
+   hero (same order slot — source order places it after). */
+body.home-search .home-quicklinks { order: 1; }
 @media (max-width: 1023.98px) {
   /* The longer trending list (14) is for the tall desktop right column; on mobile
      it sits between Search and AI Insights, so cap it to 6 to keep the scroll tight
@@ -10831,67 +10831,63 @@ body.home-search #home-trending .trending-topics {
   border-color: transparent !important;
 }
 
-/* Explore Topics / Prompt Library mini-cards (#img159/160): two separate WHITE
-   cards side by side in the hero area, stacking vertically as space shrinks. */
-.home-featstrip {
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px;
-  background: none; border: none; border-radius: 0; overflow: visible;
+/* Discreet search-area quicklinks (replacing the Explore Topics / Prompt Library
+   mini-cards): a single centered line of featured-topic pills, then a one-line
+   nudge to the Prompt Library. Deliberately light — this is an EXTENSION of the
+   search bar, not a section of its own. */
+.home-quicklinks { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; min-width: 0; }
+.hq-topics {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 7px 8px; max-width: 100%;
 }
-.featstrip-item {
-  display: flex; align-items: center; gap: 0.85rem; min-width: 0;
-  padding: 1.15rem 1.3rem; text-decoration: none;
-  background: #fff; border: 1px solid var(--color-surface-border); border-radius: 14px;
-  box-shadow: 0 1px 2px rgba(15, 26, 46, 0.04);
-  transition: border-color 0.14s ease, box-shadow 0.14s ease, transform 0.14s ease;
+.hq-label {
+  font-family: var(--font-family); font-size: 0.76rem; font-weight: 650;
+  letter-spacing: 0.02em; color: #8090aa; margin-right: 1px;
 }
-/* Rich cards (#img231): header row + a preview strip of tappable items. */
-.featstrip-item--rich { flex-direction: column; align-items: stretch; gap: 0; padding: 0; cursor: default; height: 100%; }
-.featstrip-item--rich .featstrip-head {
-  display: flex; align-items: center; gap: 0.85rem; width: 100%; min-width: 0;
-  padding: 1.05rem 1.3rem 0.85rem; border: none; background: none; cursor: pointer; text-align: left;
+.hq-chip {
+  display: inline-flex; align-items: center; gap: 6px; max-width: 100%; height: 28px; box-sizing: border-box;
+  padding: 0 11px; border-radius: 999px; border: 1px solid #e3e8f1; background: #fbfcfe;
+  font-family: var(--font-family); font-size: 0.78rem; font-weight: 600; color: #46566f;
+  text-decoration: none; cursor: pointer; white-space: nowrap;
+  transition: background .12s, border-color .12s, color .12s;
 }
-@media (hover: hover) { .featstrip-item--rich .featstrip-head:hover .featstrip-arrow { color: #26375a; transform: translateX(3px); } }
-.featstrip-previews { display: flex; flex-wrap: wrap; gap: 7px; padding: 2px 1.3rem 1.1rem; border-top: none; overflow: hidden; }
-.featstrip-previews .fs-chip { flex: none; }
-.fs-chip {
-  display: inline-flex; align-items: center; gap: 6px; max-width: 100%; height: 34px; box-sizing: border-box;
-  padding: 0 13px; border-radius: 999px; border: 1px solid #dde3ee; background: #f7f9fc;
-  font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #33415c;
-  text-decoration: none; cursor: pointer; transition: background .12s, border-color .12s, color .12s;
-}
-.fs-chip span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.fs-chip .fs-chip-ic { display: inline-flex; }
-.fs-chip .fs-chip-ic svg { width: 14px; height: 14px; }
-.fs-chip .fs-chip-spark { flex: none; }
-@media (hover: hover) { .fs-chip:hover { background: #eef2fb; border-color: #c8d3e8; color: #1d4ed8; text-decoration: none; } }
+.hq-chip span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hq-chip .hq-chip-ic { display: inline-flex; flex: none; color: #7d8ca6; transition: color .12s; }
+.hq-chip .hq-chip-ic svg { width: 13px; height: 13px; }
 @media (hover: hover) {
-  .featstrip-item:hover {
-    text-decoration: none; transform: translateY(-1px);
-    border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-surface-border));
-    box-shadow: 0 10px 24px -16px rgba(15, 26, 46, 0.3);
-  }
-  .featstrip-item:hover .featstrip-arrow { color: #26375a; transform: translateX(3px); }
+  .hq-chip:hover { background: #eef3fc; border-color: #c8d5ec; color: #1d4ed8; text-decoration: none; }
+  .hq-chip:hover .hq-chip-ic { color: #1d4ed8; }
 }
-.featstrip-ic { flex: none; display: inline-flex; color: #26375a; }
-.featstrip-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.featstrip-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; letter-spacing: -0.012em; color: #1a2740; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.featstrip-sub { font-family: var(--font-family); font-size: 0.8rem; font-weight: 500; color: #5a6b86; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.featstrip-arrow { flex: none; margin-left: auto; display: inline-flex; color: #8fa3c4; transition: transform 0.14s ease, color 0.14s ease; }
-/* Labeled action link on the right of the card header (#img294). */
-.featstrip-cta { flex: none; margin-left: auto; display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-family); font-size: 0.82rem; font-weight: 650; color: #2f4d9e; white-space: nowrap; transition: color .14s ease; }
-.featstrip-cta svg { flex: none; transition: transform .14s ease; }
-@media (hover: hover) { .featstrip-item--rich .featstrip-head:hover .featstrip-cta { color: #1d4ed8; } .featstrip-item--rich .featstrip-head:hover .featstrip-cta svg { transform: translateX(3px); } }
-/* Hide the label on the tightest widths — arrow-only. */
-@media (max-width: 480px) { .featstrip-cta span { display: none; } }
-/* Stack to rows when two-up gets cramped (#img160). */
-@media (max-width: 900px) {
-  .home-featstrip { grid-template-columns: 1fr; gap: 12px; }
-  .featstrip-item--rich .featstrip-head { padding: 0.9rem 1.05rem 0.75rem; }
-  /* Real breathing room under the chips + smaller chips so 4 previews fill the box
-     as two tidy rows (no cut-off) (#img371). */
-  .featstrip-previews { flex-wrap: wrap; overflow: visible; padding: 8px 1.05rem 1.25rem; max-height: none; }
-  .fs-chip { flex: none; font-size: 0.75rem; padding: 0 10px; height: 28px; gap: 6px; }
-  .fs-chip svg, .fs-chip .fs-chip-ic svg, .fs-chip .fs-chip-spark { width: 13px; height: 13px; }
+/* Text-only tail link into the full All-Topics dropdown — the entry point the
+   removed "View all topics" card used to carry. */
+.hq-all {
+  display: inline-flex; align-items: center; gap: 4px; height: 28px;
+  padding: 0 2px; border: none; background: none; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.78rem; font-weight: 650; color: #2f4d9e; white-space: nowrap;
+  transition: color .12s;
+}
+.hq-all svg { flex: none; transition: transform .14s ease; }
+@media (hover: hover) { .hq-all:hover { color: #1d4ed8; } .hq-all:hover svg { transform: translateX(2px); } }
+.hq-prompts {
+  margin: 0; text-align: center;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 500; color: #6b7a93;
+}
+.hq-link {
+  display: inline-flex; align-items: center; gap: 4px; vertical-align: baseline;
+  padding: 0; border: none; background: none; cursor: pointer;
+  font-family: inherit; font-size: inherit; font-weight: 650; color: #2f4d9e;
+  transition: color .12s;
+}
+.hq-link svg { flex: none; transition: transform .14s ease; }
+@media (hover: hover) { .hq-link:hover { color: #1d4ed8; text-decoration: underline; } .hq-link:hover svg { transform: translateX(2px); } }
+@media (max-width: 560px) {
+  .home-quicklinks { gap: 0.55rem; }
+  .hq-topics { gap: 6px; }
+  .hq-chip { font-size: 0.74rem; height: 26px; padding: 0 9px; gap: 5px; }
+  .hq-chip .hq-chip-ic svg { width: 12px; height: 12px; }
+  .hq-label { font-size: 0.72rem; }
+  .hq-all { font-size: 0.74rem; height: 26px; }
+  .hq-prompts { font-size: 0.78rem; }
 }
 @media (min-width: 1024px) {
   /* Two rows: the three cards span the FULL width across the top, then News Feed
@@ -10903,12 +10899,10 @@ body.home-search #home-trending .trending-topics {
     grid-template-areas: "cards" "sections";
     align-items: start;
     column-gap: 1.5rem;
-    /* Extra breathing room under the promo cards row before News Feed / Trending
-       (#img6) — the row-gap is the only thing separating the cards from the
-       content columns, so bump it well past the inter-card gap. */
-    /* Bumped again so the strip sits clearly apart from News Feed / Trending
-       below (#img113). */
-    row-gap: 2.6rem;
+    /* The promo mini-cards are gone — the quicklinks line is light enough that a
+       big gap here just leaves dead space between the search area and the
+       News/Trending band. Tightened to match. */
+    row-gap: 1.3rem;
   }
   /* News + Trending live on a FULL-BLEED WHITE band (#img236/237) — the intro
      zone above keeps the faint grey; the fold to white happens here. */
@@ -10917,27 +10911,37 @@ body.home-search #home-trending .trending-topics {
     display: grid; grid-template-columns: minmax(0, 1fr) 358px; column-gap: 1.5rem;
     align-items: start; min-width: 0;
     background: #fff; box-shadow: 0 0 0 100vmax #fff; clip-path: inset(0 -100vmax);
-    padding: 2.2rem 0 3rem;
+    padding: 1.7rem 0 3rem;
     margin-bottom: -3rem;
   }
   body.home-search .home-main { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
-  body.home-search .home-side { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
+  /* Trending rides its own soft panel so the two columns read as distinct surfaces
+     against the white News band. Desktop 2-col ONLY — below 1024px the column
+     flattens into the stacked flow, where a grey block would look arbitrary. */
+  body.home-search .home-side {
+    display: flex; flex-direction: column; gap: 1.5rem; min-width: 0;
+    background: #f6f8fb; border: 1px solid #e8edf5; border-radius: 16px;
+    padding: 0.5rem 1rem 0.35rem;
+  }
+  /* Hairlines need a touch more contrast against the tint than they do on white. */
+  body.home-search .home-side #home-trending .trending-topics-head { border-bottom-color: #dde4ef !important; }
+  body.home-search .home-side #home-trending .trend-card:not(:last-child)::after { background: #e2e8f2; }
   /* Search is THE hero (#img231): full-width zone, faint knowledge icons in the
-     background, preview mini-cards beneath. */
+     background, the discreet quicklinks line directly beneath. */
   body.home-search .home-cards {
     grid-area: cards;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas: "search" "strip";
-    gap: 2.1rem;
+    gap: 0.85rem;
     align-items: start;
     min-width: 0;
   }
   body.home-search #home-search-hero { grid-area: search; }
-  body.home-search .home-featstrip { grid-area: strip; }
+  body.home-search .home-quicklinks { grid-area: strip; }
   /* Reset the mobile-stacking `order` so everything lays out in source order. */
   body.home-search #home-search-hero,
-  body.home-search .home-featstrip,
+  body.home-search .home-quicklinks,
   body.home-search .home-sections,
   body.home-search #section-newsfeed,
   body.home-search #home-trending { order: 0; }
@@ -10945,9 +10949,9 @@ body.home-search #home-trending .trending-topics {
      The art column carries the visual weight on the right. */
   /* CENTERED hero (#img363): title, tagline and the search bar are centered as a
      single column over the cards below. */
-  body.home-search .home-search-hero { display: block; padding: 1.6rem 0 0.7rem; border-radius: 0; text-align: center; width: 100%; max-width: none; margin: 0; justify-self: stretch; }
+  body.home-search .home-search-hero { display: block; padding: 1.15rem 0 0.35rem; border-radius: 0; text-align: center; width: 100%; max-width: none; margin: 0; justify-self: stretch; }
   body.home-search .home-search-hero .search-panel { max-width: none; margin: 0; }
-  body.home-search .home-search-hero .search-panel-hero-inner { text-align: center; padding: 0 0 1.3rem; }
+  body.home-search .home-search-hero .search-panel-hero-inner { text-align: center; padding: 0 0 1.05rem; }
   body.home-search .home-search-hero .search-panel-title {
     white-space: normal; text-align: center;
     font-size: clamp(1.85rem, 1.35rem + 1vw, 2.35rem); font-weight: 780;
@@ -11409,9 +11413,16 @@ body.home-search #home-trending .trend-card:not(.is-expanded) .trend-card-action
 body.home-search #home-trending .trend-card-acc { display: inline-flex; margin-right: 8px; }
 body.home-search #home-trending .trend-card-trigger,
 body.home-search #home-trending .trend-card-trigger:hover { padding: 14px 14px !important; }
-/* Navy filled "View more trending" per the mockup (#img169). */
-body.home-search #home-trending .trend-viewmore { background: #eef1f6; border-color: #e2e6ee; color: #33415c; padding: 8px 18px; }
-@media (hover: hover) { body.home-search #home-trending .trend-viewmore:hover { background: #e4e9f2; border-color: #ccd6e8; color: #1a2740; } }
+/* "View more trending" is a quiet BLUE LINK, not a filled pill — it was taking up
+   more visual weight than the trends themselves. Left-aligned with the row
+   content rather than centered in its own block. */
+body.home-search #home-trending .trend-viewmore-row { justify-content: flex-start; margin-top: 2px; padding: 12px 0 18px 14px; }
+body.home-search #home-trending .trend-viewmore {
+  background: none; border: none; border-radius: 0; padding: 2px 0;
+  font-size: 0.82rem; font-weight: 650; color: #2563eb;
+}
+body.home-search #home-trending .trend-viewmore::after { color: inherit; }
+@media (hover: hover) { body.home-search #home-trending .trend-viewmore:hover { background: none; border: none; color: #1d4ed8; text-decoration: underline; gap: 9px; } }
 /* Stacked-home extras: hide the AI legend, tighter grid top. (Row content — navy
    title + terse summary + chevron — is now the SAME at every width via the
    What's-Trending rules earlier in this file.) */
@@ -12846,9 +12857,9 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
    LIGHTER rule below each header than before (#img492). */
 .aii-fi-sec { margin-top: 22px; }
 .aii-fi-sec + .aii-fi-sec { margin-top: 24px; }
-/* Topic Prompts tab: the first section header hugs the tab bar (#img631). */
-.topic-prompt-lib-host .aii-fi-sec:first-child, .topic-explore-host .aii-fi-sec:first-child { margin-top: 2px; }
-.topic-prompt-lib-host .aii-fi-sec:last-child, .topic-explore-host .aii-fi-sec:last-child { margin-bottom: 40px; }
+/* Web Resources tab: the first section header hugs the tab bar (#img631). */
+.topic-explore-host .aii-fi-sec:first-child { margin-top: 2px; }
+.topic-explore-host .aii-fi-sec:last-child { margin-bottom: 40px; }
 .aii-fi-sechead { padding: 0 2px 9px; margin-bottom: 3px; border-bottom: 1px solid #e4e8f0; }
 /* Standalone prompt list (custom search = no section header): give the first card
    room below the tab-bar separator (#img493). In a section, the header handles it. */
@@ -12866,15 +12877,6 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 /* Each prompt is its own tappable CARD: small gap between cards, subtle rounded
    corners, hover lifts the border + a soft shadow, open state warms the border. */
 .aii-fi-acclist { display: flex; flex-direction: column; gap: 9px; }
-/* Topic Prompts tab: one clipped rounded container, borderless rows w/ hairlines
-   — connected like Explore Further (#img276). */
-.topic-prompt-lib-host .aii-fi-acclist { gap: 0; border: none; border-radius: 0; overflow: visible; }
-.topic-prompt-lib-host .aii-fi-acclist .aii-fi-acc { border: none; border-radius: 0; box-shadow: none; }
-.topic-prompt-lib-host .aii-fi-acclist .aii-fi-acc { border-bottom: 1px solid #eef1f6; }
-.topic-prompt-lib-host .aii-fi-acclist .aii-fi-acc:last-child { border-bottom: none; }
-.topic-prompt-lib-host .aii-fi-acclist .aii-fi-acc.is-open { box-shadow: none; }
-.topic-prompt-lib-host .aii-fi-acclist .aii-fi-accsum { border-radius: 0; }
-.topic-prompt-lib-host .aii-fi-acclist .aii-fi-acc.is-open .aii-fi-accsum { border-radius: 0; }
 .aii-fi-acc { border: 1px solid #d7dee9; border-radius: 10px; background: #fff; transition: border-color .15s ease, box-shadow .15s ease; }
 @media (hover: hover) { .aii-fi-acc:hover { border-color: #ccd5e2; box-shadow: 0 2px 8px rgba(30, 45, 68, 0.06); } }
 .aii-fi-acc.is-open { border-color: color-mix(in srgb, var(--color-primary) 34%, var(--color-surface-border)); box-shadow: 0 3px 12px rgba(30, 45, 68, 0.07); }
@@ -15907,14 +15909,15 @@ button.aiidd-vall, button.aiidd-vlink { border: none; background: none; cursor: 
 button.aiidd-vlink { align-self: flex-start; }
 .prompts-dd .pb-navdd-host { width: 100%; max-width: 820px; margin: 0 auto; }
 
-/* Prompt Library → a topic's prompts: show ONLY the clean prompt list (#391).
-   Hide the mounted AI component's brand head, builder topbar (tabs), and any
-   card chrome so it isn't a whole AI-Insights panel inside the dropdown. */
-.prompts-topic-host .aii-head,
-.prompts-topic-host .aii-builder-topbar,
-.prompts-topic-host .aii-brand,
-.prompts-topic-host .aii-headsub { display: none !important; }
-.prompts-topic-host .aii { border: none !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; overflow: visible !important; height: auto !important; }
+/* Strip the mounted AI component's chrome (brand head, builder topbar, card box)
+   wherever it's embedded as plain content rather than as its own panel: the
+   nav-dropdown Prompt Library (#391) and every row of the topic page's AI
+   Insights accordion. */
+.prompts-topic-host .aii-head, .tai-acc-body .aii-head,
+.prompts-topic-host .aii-builder-topbar, .tai-acc-body .aii-builder-topbar,
+.prompts-topic-host .aii-brand, .tai-acc-body .aii-brand,
+.prompts-topic-host .aii-headsub, .tai-acc-body .aii-headsub { display: none !important; }
+.prompts-topic-host .aii, .tai-acc-body .aii { border: none !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; overflow: visible !important; height: auto !important; }
 /* The prompt list was centered in a reading-width column while the "… Prompts"
    header sat full-width left — left-align + full-width the whole list (#img425). */
 .prompts-topic-host,
@@ -15924,10 +15927,21 @@ button.aiidd-vlink { align-self: flex-start; }
 .prompts-topic-host .aii-content,
 .prompts-topic-host .aii-content--modal,
 .prompts-topic-host .aii-builder-secs,
-.prompts-topic-host .aii-pathlist { max-width: none !important; margin-left: 0 !important; margin-right: 0 !important; }
-.prompts-topic-host .aii-stage,
-.prompts-topic-host .aii-content--modal { padding: 0 !important; }
-.prompts-topic-host .aii-builder-secs { max-height: none !important; overflow: visible !important; padding: 0 !important; }
+.prompts-topic-host .aii-pathlist,
+.tai-acc-body,
+.tai-acc-body .aii,
+.tai-acc-body .aii-flow,
+.tai-acc-body .aii-stage,
+.tai-acc-body .aii-content,
+.tai-acc-body .aii-content--modal,
+.tai-acc-body .aii-builder-secs,
+.tai-acc-body .aii-pathlist { max-width: none !important; margin-left: 0 !important; margin-right: 0 !important; }
+.prompts-topic-host .aii-stage, .tai-acc-body .aii-stage,
+.prompts-topic-host .aii-content--modal, .tai-acc-body .aii-content--modal { padding: 0 !important; }
+/* Inside an accordion the brief must grow to its natural height — the component's
+   own scroll container would trap it in a nested scroller. */
+.prompts-topic-host .aii-builder-secs,
+.tai-acc-body .aii-builder-secs { max-height: none !important; overflow: visible !important; padding: 0 !important; }
 
 /* ═══ Prompt Builder inline in the dropdown (revamp437) ═══════════════════════
    "Build a Custom Prompt" now runs entirely INSIDE the Prompts dropdown: the
@@ -16181,71 +16195,64 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title),
    distinct shape from the underline tabs above (News Feed | AI Insights) and below
    (Summary | Explore | Sources) so the three nav levels read as a clear hierarchy
    instead of three identical tab rows (#img114). */
-/* Level 2 (Catch Up / Deep Dive / 101 Info / Prompts) = UNDERLINE tabs, left-
-   aligned at the container edge (no clip, #img146), with a PROMINENT (3px) active
-   underline — heavier than the level-3 view tabs below (#img148). */
-/* Pull the Catch Up row up tight under the News Feed | AI Insights control bar
-   (#img153). */
-/* Indented ~16px so "Catch Up" lines up with the "News Feed" pill TEXT above it
-   (the pill is inset by its rounded padding), and a smidge smaller (#img228). The
-   segmented Summary bar below is indented to match (see .aii-instabs). */
-/* margin-left (NOT padding-left) so the row's grey bottom-border starts at "Catch
-   Up", not 16px to the left of it (#img249/#img250/#img251). */
-/* Level 2 (Catch Up | Deep Dive | 101 Info) = the PILL row now (#img598): filled
-   blue pill on the active option, STICKY under the fixed headers while scrolling
-   AI Insights, with a faint separator drawing the line under it. */
-.topic-ai-subnav {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
-  /* NORMAL flow: content-width row with a PROMINENT content-width separator that
-     matches the header rules on the other tabs (#img653). Pills align at the
-     content-left edge (flush with the L1 tabs + cards). */
-  margin: 0;
-  /* Balanced vertical rhythm: the pill row sits centred between the subtext above
-     and the separator below (#img14). Same vertical padding as the stuck state so
-     the bar doesn't change height when it pins. */
-  padding: 12px 0 13px;
-  /* A matching faint separator ABOVE the pills too (between the subtext and the row),
-     so the pill row reads as a bracketed band (#img36). Hidden when pinned (the
-     subtext has scrolled away by then). */
-  border-top: 1px solid #e7ecf3;
-  border-bottom: 1px solid #e7ecf3;
-  position: sticky; top: 0; background: #fff; z-index: 30;
-  transition: box-shadow .2s ease, border-color .2s ease;
+/* ── Topic page › AI Insights = ONE accordion list ──────────────────────────
+   Six rows gathering everything AI for the topic: its ready-made prompts, the
+   three generated briefs, and the hand-off to external models. One open at a
+   time; a closed row is just an icon + title + one-line subtext, so the whole
+   menu is scannable at a glance before anything expands. */
+.topic-ai-acclist {
+  display: flex; flex-direction: column;
+  margin: 4px 0 40px;
+  border: 1px solid var(--color-surface-border); border-radius: 14px;
+  background: #fff; overflow: hidden;
 }
-/* STUCK: becomes the full-bleed sticky bar — the row + its faint separator run
-   ALL the way across, plus a soft drop shadow (the style kept from before,
-   #img651). Negative margins expand it; padding brings the pills back so they
-   don't move horizontally. */
-.topic-ai-subnav.is-stuck {
-  margin: 0 calc(50% - 50vw);
-  padding: 12px calc(50vw - 50%) 13px;
-  /* Pinned bar earns real prominence: a solid divider + a deeper drop shadow so it
-     reads as a floating toolbar over the scrolling content, not a faint hairline
-     (#img10). The top separator is dropped when pinned (no subtext above it). */
-  border-top-color: transparent;
-  border-bottom-color: #d0d8e4;
-  box-shadow: 0 8px 18px -10px rgba(15, 26, 46, 0.28);
+.tai-acc { border-bottom: 1px solid #eef1f6; min-width: 0; }
+.tai-acc:last-child { border-bottom: none; }
+.tai-accsum {
+  display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0;
+  padding: 15px 16px; border: none; background: none; cursor: pointer; text-align: left;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .12s ease;
 }
-.tai-tab { line-height: 1.2; }
-/* The body content (segmented Summary bar, "Updated", section titles, paragraphs)
-   sits 16px in so it shares Catch Up's left edge (which is inset to line up with
-   the News Feed pill text). Without this the whole insight column sat 16px left of
-   Catch Up (#img252/#img254). */
-/* Cards flush with the container edge (align with the L1 tabs + pill row,
-   #img623) + real air below the sticky bar (#img624). */
-.topic-ai-body { padding: 9px 0 0; }
-/* The Catch Up row now lives BELOW the AI Insights page header, so it SHOULD
-   travel up before pinning (that's the requested behavior, #img651) — no
-   negative-margin zero-travel hack anymore. */
-.tai-tab {
-  flex: none; padding: 5px 15px; margin: 0; border: 1px solid transparent; border-radius: 999px;
-  background: none; cursor: pointer; font-family: var(--font-family); font-size: clamp(0.8rem, 0.78rem + 0.15vw, 0.86rem); font-weight: 600;
-  color: var(--color-text-muted, #64748b); white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: background .12s, color .12s;
+@media (hover: hover) { .tai-accsum:hover { background: #f7f9fc; } }
+.tai-acc-ic { flex: none; display: inline-flex; color: #6f83a6; transition: color .12s ease; }
+.tai-acc-ic svg { width: 21px; height: 21px; }
+.tai-acc-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.tai-acc-name {
+  font-family: var(--font-display); font-size: 0.98rem; font-weight: 700;
+  letter-spacing: -0.012em; color: #26375a; line-height: 1.25;
 }
-@media (hover: hover) { .tai-tab:hover { color: #33517f; background: color-mix(in srgb, #33517f 9%, #fff); } }
-/* Active = the deep filled blue pill the L1 row used to carry (#img598). */
-.tai-tab.is-active { color: #fff; font-weight: 700; background: #33517f; border-color: #33517f; }
-@media (hover: hover) { .tai-tab.is-active:hover { color: #fff; font-weight: 700; background: #33517f; border-color: #33517f; } }
+.tai-acc-sub {
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 500;
+  color: var(--color-text-muted, #64748b); line-height: 1.35;
+}
+.tai-acc-chev { flex: none; display: inline-flex; color: #a8b4c9; transition: transform .18s ease, color .12s ease; }
+.tai-acc.is-open > .tai-accsum { background: #f4f7fc; }
+.tai-acc.is-open .tai-acc-ic { color: #2f4d9e; }
+.tai-acc.is-open .tai-acc-chev { transform: rotate(180deg); color: #6f83a6; }
+@media (hover: hover) { .tai-acc.is-open > .tai-accsum:hover { background: #f4f7fc; } }
+.tai-acc-body { padding: 4px 16px 20px; min-width: 0; }
+.tai-acc-body[hidden] { display: none; }
+/* The mounted AI component supplies its own spacing/top header; inside a row we
+   only need it flush to the row's padding. */
+.tai-acc-body .aii-tabhead-spacer, .tai-acc-body .aii-tabhead { display: none; }
+.tai-acc-body .aii { padding: 0; }
+/* Nested prompt accordions read as a plain divided list inside the row (they're
+   already one level deep — a second card border would look boxed-in-a-box). */
+.tai-acc-body .aii-fi-acclist { gap: 0; border: none; border-radius: 0; overflow: visible; }
+.tai-acc-body .aii-fi-acclist .aii-fi-acc { border: none; border-bottom: 1px solid #eef1f6; border-radius: 0; box-shadow: none; }
+.tai-acc-body .aii-fi-acclist .aii-fi-acc:last-child { border-bottom: none; }
+.tai-acc-body .aii-fi-acclist .aii-fi-accsum { border-radius: 0; }
+.tai-acc-body .aii-fi-acclist .aii-fi-acc.is-open { box-shadow: none; }
+.tai-acc-body .aii-fi-acclist .aii-fi-acc.is-open .aii-fi-accsum { border-radius: 0; }
+@media (max-width: 560px) {
+  .topic-ai-acclist { border-radius: 12px; margin-bottom: 32px; }
+  .tai-accsum { padding: 13px 13px; gap: 10px; }
+  .tai-acc-ic svg { width: 19px; height: 19px; }
+  .tai-acc-name { font-size: 0.92rem; }
+  .tai-acc-sub { font-size: 0.76rem; }
+  .tai-acc-body { padding: 2px 12px 16px; }
+}
 /* Level 3 (Summary / Explore Further / Sources) = the quietest tabs — lighter
    weight, a LIGHTER grey than the Catch Up row above, GREY (not blue) thin active
    underline, so it clearly sits below level 2 (#img148/#img152). Tucked close under
@@ -16588,17 +16595,18 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 /* Taller accordion rows + a bigger icon on BOTH tabs — the button title is the
    only line now (desc moved into the open panel), so center it with the icon and
    give the row more presence (#img643). */
-/* Prompt rows scoped to .prompts-topic-host so BOTH the topic Prompts tab AND the
-   nav-dropdown Prompt Library get the same treatment (#img663). */
+/* Prompt rows scoped so the topic AI Insights accordion AND the nav-dropdown
+   Prompt Library get the same treatment (#img663). */
 .prompts-topic-host .aii-fi-accsum,
+.tai-acc-body .aii-fi-accsum,
 .topic-explore-host .xf-sum,
 .ins-tabpanel[data-ins-panel="explore"] .xf-sum { padding-top: 15px; padding-bottom: 15px; align-items: center; }
-.prompts-topic-host .aii-fi-acc-ic { width: 28px; height: 28px; }
-.prompts-topic-host .aii-fi-acc-ic svg { width: 21px; height: 21px; }
-.prompts-topic-host .aii-fi-acc-name { font-size: 0.95rem; }
+.prompts-topic-host .aii-fi-acc-ic, .tai-acc-body .aii-fi-acc-ic { width: 28px; height: 28px; }
+.prompts-topic-host .aii-fi-acc-ic svg, .tai-acc-body .aii-fi-acc-ic svg { width: 21px; height: 21px; }
+.prompts-topic-host .aii-fi-acc-name, .tai-acc-body .aii-fi-acc-name { font-size: 0.95rem; }
 /* Prompt summary aligns exactly with the SIDE (left border) of the prompt-preview
    card + the Submit button below it — not the card's inner text (#img46). */
-.prompts-topic-host .aii-pc-desc { padding-left: 0; }
+.prompts-topic-host .aii-pc-desc, .tai-acc-body .aii-pc-desc { padding-left: 0; }
 /* Nav-dropdown Prompt Library has its own header (setHead), so hide the built-in
    page header the section-accordion mode adds (#img663). */
 .pb-navdd-host .aii-tabhead { display: none; }
@@ -16627,7 +16635,6 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
   .topic-subnav-controls .ptab { padding: 4px 2px 8px !important; font-size: 0.95rem; }
   .topic-subnav-inner .tsp-btn { padding: 0.92rem 0.15rem !important; }
   .topic-subnav-inner .tsp-btn-name { font-size: 1.18rem !important; }
-  .topic-ai-subnav { gap: 6px; }
 }
 
 /* Homepage "News Feed" header a bit bigger (#img44). */
