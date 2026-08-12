@@ -2549,7 +2549,17 @@ function fitMainNav() {
   const inner = document.querySelector('.sticky-hero-inner');
   if (!inner) return;
   inner.classList.remove('nav-stacked', 'nav-short-trending', 'nav-small-text', 'nav-tiny-text', 'nav-drop-prompts', 'nav-drop-home', 'nav-icon-search', 'nav-tiny-title');
-  const fits = () => inner.scrollWidth <= inner.clientWidth + 1;
+  // The search bar is pushed to the far right by a flexible nav group, which
+  // means the group absorbs slack and the row can never "overflow" — so every
+  // measurement below is taken with `.nav-measuring`, which un-flexes the group
+  // back to its natural content width. Without this the squeeze stages never
+  // fire and the nav silently crushes at narrow widths instead.
+  const fits = () => {
+    inner.classList.add('nav-measuring');
+    const ok = inner.scrollWidth <= inner.clientWidth + 1;
+    inner.classList.remove('nav-measuring');
+    return ok;
+  };
   // Nav is text-only now (no icon-over-label stacking) — the squeeze stages below
   // handle every width, ending with Search as a clean icon button (#img266 fix).
   if (!fits()) inner.classList.add('nav-short-trending');

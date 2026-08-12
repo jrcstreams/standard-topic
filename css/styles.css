@@ -17059,3 +17059,15 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-chev,
 .te-drawer-body .xf-panel { padding: 4px 13px 14px; }
 .trend-exp-footer { padding: 12px 0 2px; }
 .trend-exp-close { padding: 8px 15px; font-size: 0.8rem; }
+
+/* ═══ Main nav (revamp727) — the search bar sits hard RIGHT at every width. The
+   nav group grows to fill the row and the search button takes the slack, so the
+   links stay beside the brand while search anchors to the far edge. ═════════ */
+@media (min-width: 561px) {
+  .sticky-hero-inner .sticky-actions.navbtns { flex: 1 1 auto !important; min-width: 0; }
+  .sticky-hero-inner .navbtn.nav-searchbar { margin-left: auto; }
+}
+/* Measurement pass only (see fitMainNav): collapse the group back to its natural
+   content width so genuine overflow is detectable. */
+.sticky-hero-inner.nav-measuring .sticky-actions.navbtns { flex: 0 0 auto !important; }
+.sticky-hero-inner.nav-measuring .navbtn.nav-searchbar { margin-left: 0 !important; }
