@@ -16969,36 +16969,6 @@ body.home-search #home-trending .trending-topics-head .trend-legend-item .ai-spa
   body.home-search .hq-chips .hq-cta { font-size: 0.76rem; padding: 0 10px; }
 }
 
-/* ═══ Trend rows (revamp724) — three separated zones instead of one crowded
-   title line: the ↗ marker owns the top-right corner, the title runs flush-left
-   with the summary beneath it, and the open/close chevron drops to its own
-   centred line under the preview, above the row's separator. ═══════════════ */
-body.home-search #home-trending .trend-card-main,
-.aii-nav-dd-trending .trend-card-main { position: relative; display: block; width: 100%; }
-/* The marker sits in the corner, out of flow — so nothing indents the title. */
-body.home-search #home-trending .trend-card-icon,
-.aii-nav-dd-trending .trend-card-icon {
-  position: absolute; top: 0; right: 0; margin: 0;
-  display: inline-flex; line-height: 1; pointer-events: none;
-}
-/* Title and summary share one left edge; the title keeps clear of the marker. */
-body.home-search #home-trending .trend-card-head,
-.aii-nav-dd-trending .trend-card-head {
-  display: block !important; width: 100%; padding-right: 26px;
-}
-body.home-search #home-trending .trend-card-title,
-.aii-nav-dd-trending .trend-card-title { display: block; padding-right: 0 !important; }
-/* The affordance: its own centred line, clear of the text above it. */
-body.home-search #home-trending .trend-card-acc,
-.aii-nav-dd-trending .trend-card-acc {
-  display: flex !important; justify-content: center; align-items: center;
-  width: 100%; margin: 9px 0 0 !important; padding: 0;
-  color: #b6c0d2; transition: color .14s ease;
-}
-@media (hover: hover) {
-  body.home-search #home-trending .trend-card-trigger:hover .trend-card-acc,
-  .aii-nav-dd-trending .trend-card-trigger:hover .trend-card-acc { color: #64748b; }
-}
 
 /* ═══ News share popover (revamp724) — it opened UPWARD, covering the headline
    (the card's identity), and inherited card-inset padding overrides that
@@ -17015,3 +16985,77 @@ body.home-search #home-trending .trend-card-acc,
 .news-share-opt { padding: 7px 13px; font-size: 0.78rem; border-radius: 9px; }
 /* Near the right edge of a narrow column, flip the anchor so it stays on-screen. */
 @media (max-width: 560px) { .news-share-panel { left: -6px; } }
+
+/* ═══ Trend rows (revamp726) — the ↗ marker belongs to the SECTION HEADER, not
+   to every row; each row keeps one discreet chevron on its right edge. ═════ */
+body.home-search #home-trending .trending-topics-title,
+.aii-nav-dd-trending .trending-topics-title { display: inline-flex; align-items: center; gap: 8px; }
+.trending-topics-title-ic { display: inline-flex; align-items: center; color: #16a34a; }
+.trending-topics-title-ic svg { width: 17px; height: 17px; display: block; }
+
+body.home-search #home-trending .trend-card-main,
+.aii-nav-dd-trending .trend-card-main { position: relative; display: block; width: 100%; }
+/* Title + summary share one left edge; both keep clear of the chevron gutter. */
+body.home-search #home-trending .trend-card-head,
+.aii-nav-dd-trending .trend-card-head { display: block !important; width: 100%; padding-right: 26px; }
+body.home-search #home-trending .trend-card-title,
+.aii-nav-dd-trending .trend-card-title { display: block; padding-right: 0 !important; }
+body.home-search #home-trending .trend-card-summary,
+.aii-nav-dd-trending .trend-card-summary { padding-right: 26px; }
+/* One quiet chevron, vertically centred on the row's right edge. */
+body.home-search #home-trending .trend-card-acc,
+.aii-nav-dd-trending .trend-card-acc {
+  position: absolute; top: 50%; right: 0; transform: translateY(-50%);
+  display: inline-flex !important; align-items: center; justify-content: center;
+  width: auto; margin: 0 !important; padding: 0;
+  color: #c2ccdc; transition: color .14s ease;
+}
+body.home-search #home-trending .trend-card-acc svg,
+.aii-nav-dd-trending .trend-card-acc svg { width: 16px; height: 16px; }
+@media (hover: hover) {
+  body.home-search #home-trending .trend-card-trigger:hover .trend-card-acc,
+  .aii-nav-dd-trending .trend-card-trigger:hover .trend-card-acc { color: #64748b; }
+}
+
+/* ── Expanded trend: one close control (the button at the end), nothing else ── */
+body.home-search #home-trending .trend-card.is-expanded .trend-card-meta,
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-meta { display: none !important; }
+body.home-search #home-trending .trend-card.is-expanded .trend-card-acc,
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-acc { display: none !important; }
+body.home-search #home-trending .trend-card.is-expanded .trend-card-actions,
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-actions { display: none !important; }
+body.home-search #home-trending .trend-card.is-expanded .trend-card-chev,
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-chev { display: none !important; }
+
+/* AI provenance inside the brief reads exactly like the line under the section
+   header: filled sparkle + plain muted text. No pill. */
+.trend-exp-aitag {
+  display: inline-flex; align-items: center; gap: 6px; margin: 0 0 10px;
+  font-family: var(--font-family); font-size: 0.74rem; font-weight: 500;
+  color: var(--color-text-muted);
+}
+.trend-exp-aitag .ai-spark-mark svg { width: 12px; height: 12px; }
+
+/* Drawers: quieter and tighter — they trail the brief, they don't headline it. */
+.trend-exp-drawers { margin-top: 12px; }
+.te-drawer > .te-drawer-sum { padding: 10px 2px; font-size: 0.82rem; font-weight: 600; }
+.te-drawer-ic { display: none; }
+.te-drawer-chev { width: 15px; height: 15px; }
+.te-drawer-chev svg { width: 15px; height: 15px; }
+/* Explore Further inside a drawer uses the same clipped accordion list as the
+   topic page's Web Resources, at drawer scale. */
+.te-drawer-body .xf-list {
+  gap: 0; border: 1px solid var(--color-surface-border); border-radius: 12px;
+  background: #fff; overflow: hidden; margin: 2px 0 4px;
+}
+.te-drawer-body .xf-acc { border: none !important; border-radius: 0 !important; box-shadow: none !important; }
+.te-drawer-body .xf-acc + .xf-acc { border-top: 1px solid #eef1f6 !important; }
+.te-drawer-body .xf-sum { padding: 11px 13px !important; gap: 10px !important; align-items: center; border-radius: 0 !important; }
+.te-drawer-body .xf-sum-ic { width: 18px; height: 18px; color: #7d8ca6; }
+.te-drawer-body .xf-sum-ic svg { width: 18px; height: 18px; }
+.te-drawer-body .xf-sum-name { font-size: 0.85rem !important; font-weight: 650; color: #26375a; }
+.te-drawer-body .xf-sum-desc { font-size: 0.74rem; }
+.te-drawer-body .xf-acc[open] > .xf-sum { background: #f4f7fc !important; }
+.te-drawer-body .xf-panel { padding: 4px 13px 14px; }
+.trend-exp-footer { padding: 12px 0 2px; }
+.trend-exp-close { padding: 8px 15px; font-size: 0.8rem; }

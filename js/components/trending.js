@@ -183,12 +183,10 @@ function trendCardHTML(topic, idx, opts) {
   // that already names the trend, and the "Since" prefix added nothing (revamp719).
   // The "Earlier" section still passes its own label ("Was trending X ago").
   const meta = opts.metaText != null ? opts.metaText : (dur ? `${dur} ago` : '');
-  const icon = opts.past ? TREND_PAST_ICON : TREND_CARD_ICON;
   return `
     <div class="trend-card${opts.past ? ' trend-card--past' : ''}" data-idx="${idx}" data-query="${escapeAttr(title)}" data-cat="${escapeAttr(cat)}" data-started="${escapeAttr(topic.startedAt || '')}" data-breakdown="${escapeAttr(JSON.stringify(Array.isArray(topic.trendBreakdown) ? topic.trendBreakdown.slice(0, 8) : []))}">
       <button type="button" class="trend-card-trigger" aria-expanded="false" aria-label="Quick insights on ${escapeAttr(title)}">
         <span class="trend-card-main">
-          <span class="trend-card-icon" aria-hidden="true">${icon}</span>
           <span class="trend-card-head">
             <span class="trend-card-title">${escapeHTML(title)}</span>
           </span>
@@ -616,7 +614,7 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
     return `
       <div class="trending-topics-head">
         <div class="trending-topics-titlerow">
-          <h3 class="trending-topics-title"><span>What's Trending</span></h3>
+          <h3 class="trending-topics-title"><span>What's Trending</span><span class="trending-topics-title-ic" aria-hidden="true">${TREND_CARD_ICON}</span></h3>
         </div>
         ${trendLegendRow()}
       </div>`;

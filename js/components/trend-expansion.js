@@ -3,6 +3,7 @@
 // and the full grounded brief. Reuses the news/TI building blocks so the look
 // matches AI insights elsewhere.
 import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260717-revamp591';
+import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp574';
 import { renderTIAccordion, webSourceItem } from './ti-shortcuts.js';
 import { getExternalSearches, getExternalSearchCategories, getModels, safeUrl } from '../utils/data.js';
 import { exploreFurtherHTML } from '../utils/explore-further.js?v=20260720-revamp609';
@@ -151,7 +152,7 @@ export function renderTrendExpansionBody(term, brief) {
   // hang off the bottom as quiet drawers so they read as a continuation of the
   // brief rather than three peer destinations. Close is the last thing on the card.
   const summaryBody = detail || why;
-  const AITAG = `<div class="im-sec-aitag-row"><span class="im-sec-aitag">${SPARK}<span>AI Generated Text</span></span></div>`;
+  const AITAG = `<div class="trend-exp-aitag">${aiSparkInline()}<span>AI Generated Text</span></div>`;
   const summaryHTML = summaryBody ? `${AITAG}${renderBriefBody(summaryBody, null)}` : '<p class="ins-empty">No summary yet.</p>';
   const src = teSourcesHTML(b.headlines, b.sources);
   const drawers = (src ? teDrawerHTML('sources', 'Sources', src) : '')
