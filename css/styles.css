@@ -10605,7 +10605,7 @@ body.home-search.app-mode.sticky-always.has-subnav #content {
   /* The subnav is HIDDEN until scrolled past the quicklinks (#img193), so the hero
      only clears the nav itself — but it MUST clear it: the nav is fixed, so
      anything less than var(--nav-h) slides the title underneath it. */
-  padding: calc(var(--nav-h) + 1.2rem) 0 3rem;
+  padding: calc(var(--nav-h) + 2.4rem) 0 3rem;
 }
 /* One cohesive centered width for the whole homepage — matches the main nav
    (var(--max-width) + 2rem padding) so the body content lines up with the nav
@@ -10787,9 +10787,9 @@ body.home-search #home-trending .trending-topics {
 /* Shared CTA chip — same shape as the topic pills so "All topics" sits in the
    pill row as a peer, and the prompt-library link matches it a line below. */
 .hq-cta {
-  display: inline-flex; align-items: center; gap: 5px; height: 29px; box-sizing: border-box;
-  padding: 0 11px; border-radius: 999px; border: 1px solid #d5e0f5; background: #fff;
-  font-family: var(--font-family); font-size: 0.79rem; font-weight: 650; color: #2f4d9e;
+  display: inline-flex; align-items: center; gap: 5px; height: 27px; box-sizing: border-box;
+  padding: 0 11px; border-radius: 999px; border: 1px solid #dbe4f5; background: transparent;
+  font-family: var(--font-family); font-size: 0.775rem; font-weight: 650; color: #3d5da8;
   white-space: nowrap; cursor: pointer; text-decoration: none;
   transition: background .12s, border-color .12s, color .12s;
 }
@@ -10798,30 +10798,26 @@ body.home-search #home-trending .trending-topics {
   .hq-cta:hover { background: #eef3fc; border-color: #b9cbeb; color: #1d4ed8; text-decoration: none; }
   .hq-cta:hover svg { transform: translateX(2px); }
 }
-/* Prompt chips carry the AI sparkle rather than a topic icon. */
-.hq-chip--prompt .hq-chip-spark { flex: none; }
 
+
+/* Text-only, low-contrast pills — a quiet shortcut rail under the search bar,
+   not a row of badges competing with the hero. */
 .hq-chip {
-  display: inline-flex; align-items: center; gap: 6px; max-width: 100%; height: 29px; box-sizing: border-box;
-  padding: 0 11px; border-radius: 999px; border: 1px solid #e3e8f1; background: #fbfcfe;
-  font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #46566f;
+  display: inline-flex; align-items: center; max-width: 100%; height: 27px; box-sizing: border-box;
+  padding: 0 11px; border-radius: 999px; border: 1px solid #e5e9f1; background: transparent;
+  font-family: var(--font-family); font-size: 0.775rem; font-weight: 550; color: #5d6c85;
   text-decoration: none; cursor: pointer; white-space: nowrap;
   transition: background .12s, border-color .12s, color .12s;
 }
 .hq-chip span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.hq-chip .hq-chip-ic { display: inline-flex; flex: none; color: #7d8ca6; transition: color .12s; }
-.hq-chip .hq-chip-ic svg { width: 13px; height: 13px; }
 @media (hover: hover) {
-  .hq-chip:hover { background: #eef3fc; border-color: #c8d5ec; color: #1d4ed8; text-decoration: none; }
-  .hq-chip:hover .hq-chip-ic { color: #1d4ed8; }
+  .hq-chip:hover { background: #fff; border-color: #c8d5ec; color: #1d4ed8; text-decoration: none; }
 }
 @media (max-width: 560px) {
   .home-quicklinks { gap: 0.7rem; }
   .hq-chips { gap: 6px; }
-  .hq-chip { font-size: 0.75rem; height: 27px; padding: 0 10px; gap: 5px; }
-  .hq-chip .hq-chip-ic svg { width: 12px; height: 12px; }
+  .hq-chip, .hq-cta { font-size: 0.74rem; height: 26px; padding: 0 10px; }
   .hq-label { font-size: 0.68rem; }
-  .hq-cta { font-size: 0.75rem; height: 27px; padding: 0 10px; }
 }
 @media (min-width: 1024px) {
   /* Two rows: the three cards span the FULL width across the top, then News Feed
@@ -16956,7 +16952,7 @@ body.home-search #home-trending .trending-topics-head .trend-legend-item .ai-spa
    margins pulling the title back up into the nav. */
 @media (min-width: 1024px) {
   body.home-search.app-mode #content,
-  body.home-search.app-mode.sticky-always.has-subnav #content { padding-top: calc(var(--nav-h) + 1.2rem); }
+  body.home-search.app-mode.sticky-always.has-subnav #content { padding-top: calc(var(--nav-h) + 2.4rem); }
   body.home-search .home-search-hero { padding-top: 0; }
   body.home-search .home-search-hero .search-panel-hero { margin-top: 0; }
   body.home-search .home-search-hero .search-panel-hero-inner { padding-top: 0; margin-top: 0; }
@@ -16966,9 +16962,11 @@ body.home-search #home-trending .trending-topics-head .trend-legend-item .ai-spa
    so the topic chips run a notch tighter there. Popular Prompts wraps to two —
    its names are long — with the library button ending the last line. */
 @media (min-width: 1024px) {
-  body.home-search .hq-chips--topics { gap: 6px 6px; }
-  body.home-search .hq-chips--topics .hq-chip { font-size: 0.77rem; padding: 0 10px; gap: 5px; }
-  body.home-search .hq-chips--topics .hq-cta { font-size: 0.77rem; padding: 0 10px; }
+  /* Popular Topics is ONE line inside the search bar's column; Popular Prompts
+     wraps to at most TWO (the chip set is budgeted by width in app.js). */
+  body.home-search .hq-chips { gap: 6px; }
+  body.home-search .hq-chips .hq-chip,
+  body.home-search .hq-chips .hq-cta { font-size: 0.76rem; padding: 0 10px; }
 }
 
 /* ═══ Trend rows (revamp724) — three separated zones instead of one crowded

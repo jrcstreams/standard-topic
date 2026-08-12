@@ -3114,7 +3114,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       const tWrap = container.querySelector('[data-hq-topics]');
       if (tWrap) {
         let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 5); } catch (_) {}
-        tWrap.innerHTML = feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="hq-chip">${topicIconSVG(t.icon || 'globe', 'hq-chip-ic')}<span>${escapeHTML(t.name)}</span></a>`).join('')
+        tWrap.innerHTML = feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="hq-chip"><span>${escapeHTML(t.name)}</span></a>`).join('')
           + `<button type="button" class="hq-cta" data-explore-topics>All topics${HQ_ARROW}</button>`;
       }
       // Popular Prompts — the same featured set the Prompt Library leads with.
@@ -3128,17 +3128,26 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           .then((r) => (r.ok ? r.json() : null))
           .then((cfg) => {
             if (!cfg || !Array.isArray(cfg.featured)) return;
+            // Fit TWO lines on desktop. Prompt names vary a lot in length, so
+            // budget by estimated chip width (≈7px/char + padding) rather than a
+            // fixed count: two 620px lines, minus the library button's own slot.
+            const CHIP_W = (name) => name.length * 6.9 + 24;
+            const BUDGET = 620 * 2 - 160;
             const picks = [];
+            let used = 0;
             for (const f of cfg.featured) {
               if (picks.length >= 6) break;
               let sc = []; try { sc = getShortcutsForTopic(f.topic) || []; } catch (_) { continue; }
               const sMatch = sc.find((x) => x && x.name === f.name);
               if (!(sMatch && sMatch.prompt)) continue;
+              const w = CHIP_W(sMatch.name) + 8;
+              if (picks.length && used + w > BUDGET) continue;
               const t = getTopicBySlug(f.topic);
               picks.push({ s: sMatch, tn: t ? t.name : '', slug: f.topic });
+              used += w;
             }
             if (!picks.length) return;
-            pWrap.innerHTML = picks.map((pk, i) => `<button type="button" class="hq-chip hq-chip--prompt" data-hq-prompt="${i}"><svg class="hq-chip-spark" viewBox="0 0 24 24" width="12" height="12" fill="#2563eb" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg><span>${escapeHTML(pk.s.name)}</span></button>`).join('') + libBtn;
+            pWrap.innerHTML = picks.map((pk, i) => `<button type="button" class="hq-chip hq-chip--prompt" data-hq-prompt="${i}"><span>${escapeHTML(pk.s.name)}</span></button>`).join('') + libBtn;
             pWrap.querySelectorAll('[data-hq-prompt]').forEach((b) => b.addEventListener('click', (e) => {
               e.stopPropagation();
               const pk = picks[Number(b.dataset.hqPrompt)]; if (!pk) return;
