@@ -17064,10 +17064,17 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-chev,
    nav group grows to fill the row and the search button takes the slack, so the
    links stay beside the brand while search anchors to the far edge. ═════════ */
 @media (min-width: 561px) {
-  .sticky-hero-inner .sticky-actions.navbtns { flex: 1 1 auto !important; min-width: 0; }
-  .sticky-hero-inner .navbtn.nav-searchbar { margin-left: auto; }
+  /* flex-basis 0 (not auto) so the group is guaranteed to take ALL remaining
+     row width — with `auto` the group's content width won its own basis and the
+     slack stayed to its right, which is exactly what kept search off the edge. */
+  .sticky-hero-inner .sticky-actions.navbtns {
+    flex: 1 1 0% !important; min-width: 0; justify-content: flex-start;
+  }
+  .sticky-hero-inner .sticky-actions.navbtns .navbtn.nav-searchbar,
+  .sticky-hero-inner #nav-search.navbtn { margin-left: auto !important; }
 }
 /* Measurement pass only (see fitMainNav): collapse the group back to its natural
    content width so genuine overflow is detectable. */
 .sticky-hero-inner.nav-measuring .sticky-actions.navbtns { flex: 0 0 auto !important; }
-.sticky-hero-inner.nav-measuring .navbtn.nav-searchbar { margin-left: 0 !important; }
+.sticky-hero-inner.nav-measuring .sticky-actions.navbtns .navbtn.nav-searchbar,
+.sticky-hero-inner.nav-measuring #nav-search.navbtn { margin-left: 0 !important; }
