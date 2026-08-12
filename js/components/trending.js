@@ -610,14 +610,15 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
   }
 
   function headHTML() {
-    // Homepage header (#img168/169): "What's Trending", no icon chip. The
-    // last-updated line is gone — it pushed this column's first row out of step
-    // with Today's Top News next to it, and the trends carry their own recency.
+    // Homepage header: "What's Trending" + the AI-provenance line, both ABOVE the
+    // rule so the header is one block and the first trend sits directly under the
+    // separator. The last-updated line is gone (the trends carry their own recency).
     return `
       <div class="trending-topics-head">
         <div class="trending-topics-titlerow">
           <h3 class="trending-topics-title"><span>What's Trending</span></h3>
         </div>
+        ${trendLegendRow()}
       </div>`;
   }
 
@@ -651,7 +652,6 @@ export function renderTrendingHome(container, { limit = 12 } = {}) {
       <div class="trending-topics trending-home">
         ${headHTML()}
         ${controlsHTML()}
-        ${trendLegendRow()}
         <div class="trend-card-grid" id="trend-home-grid"></div>
         <div class="trend-viewmore-row">
           <button type="button" class="trend-viewmore" data-action="view-all-trending">View more trending</button>

@@ -327,11 +327,11 @@ ${u.body}`).join(`
         <div class="trending-topics-titlerow">
           <h3 class="trending-topics-title"><span>What's Trending</span></h3>
         </div>
+        ${Gi()}
       </div>`}function u(){return""}function h(){let g=e.querySelector("#trend-home-grid");if(!g)return;if(a.loading){g.innerHTML=Array.from({length:6},()=>'<div class="trend-card trend-card-skel"></div>').join("");return}let v=a.items;a.category!=="all"&&(v=v.filter(O=>O._cat===a.category));let H=new Set,S=[],q=[];for(let O of v){let A=O._cat||"";A&&H.has(A)?q.push(O):(H.add(A),S.push(O))}if(v=S.concat(q).slice(0,t),!v.length){g.innerHTML=`<p class="trending-empty">No trends ${a.mode==="over"?"in this window yet":"right now"}.</p>`;return}g.innerHTML=v.map((O,A)=>ga(O,A)).join(""),Di(g)}function y(){e.innerHTML=`
       <div class="trending-topics trending-home">
         ${p()}
         ${u()}
-        ${Gi()}
         <div class="trend-card-grid" id="trend-home-grid"></div>
         <div class="trend-viewmore-row">
           <button type="button" class="trend-viewmore" data-action="view-all-trending">View more trending</button>

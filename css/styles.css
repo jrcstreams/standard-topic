@@ -11276,7 +11276,7 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   /* Header band matches the News Feed card head — faint primary tint over a
      hairline (#img151). */
   body.home-search #home-trending .trending-topics-head { background: transparent !important; margin: 0 !important; padding: 0 8px 12px !important; border-bottom: 1px solid #e4e8f0 !important; }
-  body.home-search #home-trending .trend-legend-row { padding: 10px 0 2px !important; }
+  body.home-search #home-trending .trend-legend-row { padding: 5px 0 0 !important; }
   body.home-search #home-trending .trend-card-grid { grid-template-columns: 1fr; gap: 0; padding: 2px 0 8px !important; }
   /* Each trend is a row. Hover = a soft rounded highlight over the WHOLE row (incl the
      "View AI Insights" link), inset so it never rides the divider lines (#img544/545).
@@ -11380,7 +11380,7 @@ body.home-search #home-trending .trend-viewmore::after { color: inherit; }
    title + terse summary + chevron — is now the SAME at every width via the
    What's-Trending rules earlier in this file.) */
 @media (max-width: 1023.98px) {
-  body.home-search #home-trending .trend-legend-row { display: none !important; }
+  body.home-search #home-trending .trend-legend-row { padding: 4px 0 0 !important; }
   body.home-search #home-trending .trend-card:first-child .trend-card-trigger { padding-top: 12px !important; }
   body.home-search #home-trending .trend-card-grid { padding-top: 2px !important; }
 }
@@ -16808,19 +16808,24 @@ body.home-search #section-newsfeed .newsfeed-card .newsfeed-title-main {
   font-size: 1.35rem !important; font-weight: 700 !important;
   letter-spacing: -0.025em !important; color: var(--color-primary) !important;
 }
+/* Same display face, same navy, same weight as Today's Top News — the hierarchy
+   comes from SIZE alone. Draining the colour and weight (the previous attempt)
+   just made the rail's header look broken rather than secondary. */
 body.home-search #home-trending .trending-topics-title {
-  font-size: 1.06rem !important; font-weight: 650 !important;
-  letter-spacing: -0.012em !important; color: #3d4d6b !important;
+  font-size: 1.18rem !important; font-weight: 700 !important;
+  letter-spacing: -0.022em !important; color: var(--color-primary) !important;
+  line-height: 1.2 !important;
 }
-/* Head boxes match so the rules under each title land on the same y. */
+/* Both column heads: title, then (trending only) the AI-provenance line, then the
+   rule. Matching top padding puts the two titles on the same baseline. */
 body.home-search #home-trending .trending-topics-head,
 body.home-search #section-newsfeed .newsfeed-head {
-  padding: 2px 8px 12px !important; margin: 0 !important;
+  padding: 3px 8px 11px !important; margin: 0 !important;
 }
 @media (max-width: 640px) {
   body.home-search #section-newsfeed .newsfeed-card .newsfeed-title,
   body.home-search #section-newsfeed .newsfeed-card .newsfeed-title-main { font-size: 1.2rem !important; }
-  body.home-search #home-trending .trending-topics-title { font-size: 1rem !important; }
+  body.home-search #home-trending .trending-topics-title { font-size: 1.08rem !important; }
 }
 
 /* ═══ Stale-tab update pill: shown when a long-lived tab is running assets older
@@ -16949,3 +16954,20 @@ body.home-search #section-newsfeed .newsfeed-head {
   .xf-sum-desc { font-size: 0.76rem; }
   .topic-explore-host .xf-panel { padding: 2px 12px 16px; }
 }
+
+/* ═══ Homepage trending header (revamp720) — the AI-provenance line sits INSIDE
+   the header block, above the rule, as a plain caption. The grey pill made it
+   read as a separate widget floating between the title and the first trend. ══ */
+body.home-search #home-trending .trending-topics-head .trend-legend-row {
+  justify-content: flex-start; padding: 5px 0 0;
+}
+body.home-search #home-trending .trending-topics-head .trend-legend {
+  padding: 0; border: none; background: none; border-radius: 0;
+}
+body.home-search #home-trending .trending-topics-head .trend-legend-item {
+  font-size: 0.74rem; font-weight: 500; color: var(--color-text-muted);
+}
+body.home-search #home-trending .trending-topics-head .trend-legend-item .ai-spark-mark svg { width: 12px; height: 12px; }
+/* The rail's panel needs a little more top padding so its title doesn't hug the
+   rounded corner. */
+@media (min-width: 1024px) { body.home-search .home-side { padding-top: 0.85rem; } }
