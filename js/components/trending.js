@@ -188,13 +188,13 @@ function trendCardHTML(topic, idx, opts) {
     <div class="trend-card${opts.past ? ' trend-card--past' : ''}" data-idx="${idx}" data-query="${escapeAttr(title)}" data-cat="${escapeAttr(cat)}" data-started="${escapeAttr(topic.startedAt || '')}" data-breakdown="${escapeAttr(JSON.stringify(Array.isArray(topic.trendBreakdown) ? topic.trendBreakdown.slice(0, 8) : []))}">
       <button type="button" class="trend-card-trigger" aria-expanded="false" aria-label="Quick insights on ${escapeAttr(title)}">
         <span class="trend-card-main">
+          <span class="trend-card-icon" aria-hidden="true">${icon}</span>
           <span class="trend-card-head">
-            <span class="trend-card-icon" aria-hidden="true">${icon}</span>
             <span class="trend-card-title">${escapeHTML(title)}</span>
-            <span class="trend-card-acc" aria-hidden="true"><svg class="trend-acc-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg><svg class="trend-acc-x" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
           </span>
           ${meta ? `<span class="trend-card-meta">${escapeHTML(meta)}</span>` : ''}
           ${topic.summary && cleanSummary(topic.summary) ? `<span class="trend-card-summary">${escapeHTML(tersifySummary(cleanSummary(topic.summary), title))}</span>` : ''}
+          <span class="trend-card-acc" aria-hidden="true"><svg class="trend-acc-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg><svg class="trend-acc-x" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
         </span>
         <span class="trend-card-chev trend-card-open" aria-hidden="true">${OPEN_ICON}</span>
       </button>

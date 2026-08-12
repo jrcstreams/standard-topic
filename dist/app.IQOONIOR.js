@@ -281,13 +281,13 @@ ${u.body}`).join(`
     <div class="trend-card${a.past?" trend-card--past":""}" data-idx="${t}" data-query="${ga(i)}" data-cat="${ga(n)}" data-started="${ga(e.startedAt||"")}" data-breakdown="${ga(JSON.stringify(Array.isArray(e.trendBreakdown)?e.trendBreakdown.slice(0,8):[]))}">
       <button type="button" class="trend-card-trigger" aria-expanded="false" aria-label="Quick insights on ${ga(i)}">
         <span class="trend-card-main">
+          <span class="trend-card-icon" aria-hidden="true">${c}</span>
           <span class="trend-card-head">
-            <span class="trend-card-icon" aria-hidden="true">${c}</span>
             <span class="trend-card-title">${Ra(i)}</span>
-            <span class="trend-card-acc" aria-hidden="true"><svg class="trend-acc-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg><svg class="trend-acc-x" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
           </span>
           ${o?`<span class="trend-card-meta">${Ra(o)}</span>`:""}
           ${e.summary&&Rn(e.summary)?`<span class="trend-card-summary">${Ra(Di(Rn(e.summary),i))}</span>`:""}
+          <span class="trend-card-acc" aria-hidden="true"><svg class="trend-acc-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg><svg class="trend-acc-x" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
         </span>
         <span class="trend-card-chev trend-card-open" aria-hidden="true">${gc}</span>
       </button>
