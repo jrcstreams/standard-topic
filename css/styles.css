@@ -10613,9 +10613,10 @@ html:has(body.home-search), body.home-search { overflow: visible; height: auto; 
 body.home-search.app-mode #content,
 body.home-search.app-mode.sticky-always.has-subnav #content {
   position: static; height: auto; min-height: 0; overflow: visible;
-  /* The subnav is HIDDEN until scrolled past the mini-cards (#img193), so the
-     hero only clears the nav itself. */
-  padding: calc(var(--nav-h) + 0.5rem) 0 3rem;
+  /* The subnav is HIDDEN until scrolled past the quicklinks (#img193), so the hero
+     only clears the nav itself — and clears it TIGHTLY: the display title supplies
+     its own optical breathing room via line leading. */
+  padding: var(--nav-h) 0 3rem;
 }
 /* One cohesive centered width for the whole homepage — matches the main nav
    (var(--max-width) + 2rem padding) so the body content lines up with the nav
@@ -10903,9 +10904,9 @@ body.home-search #home-trending .trending-topics {
      The art column carries the visual weight on the right. */
   /* CENTERED hero (#img363): title, tagline and the search bar are centered as a
      single column over the cards below. */
-  body.home-search .home-search-hero { display: block; padding: 0.25rem 0 0.35rem; border-radius: 0; text-align: center; width: 100%; max-width: none; margin: 0; justify-self: stretch; }
+  body.home-search .home-search-hero { display: block; padding: 0 0 0.35rem; border-radius: 0; text-align: center; width: 100%; max-width: none; margin: 0; justify-self: stretch; }
   body.home-search .home-search-hero .search-panel { max-width: none; margin: 0; }
-  body.home-search .home-search-hero .search-panel-hero-inner { text-align: center; padding: 0 0 1.05rem; }
+  body.home-search .home-search-hero .search-panel-hero-inner { text-align: center; padding: 0 0 1.05rem; margin-top: -0.35rem; }
   body.home-search .home-search-hero .search-panel-title {
     white-space: normal; text-align: center;
     font-size: clamp(1.85rem, 1.35rem + 1vw, 2.35rem); font-weight: 780;
@@ -16971,3 +16972,23 @@ body.home-search #home-trending .trending-topics-head .trend-legend-item .ai-spa
 /* The rail's panel needs a little more top padding so its title doesn't hug the
    rounded corner. */
 @media (min-width: 1024px) { body.home-search .home-side { padding-top: 0.85rem; } }
+
+/* ═══ Trend rows (revamp721) — the ↗ icon and the accordion chevron align to the
+   FIRST line of the title, not to the middle of a wrapped two-line title. The
+   title is its own flex column, so a wrapped second line already runs under the
+   text rather than under the icon; only the vertical anchoring was wrong. ════ */
+body.home-search #home-trending .trend-card-head,
+.aii-nav-dd-trending .trend-card-head {
+  display: flex !important; align-items: flex-start !important; width: 100%;
+}
+body.home-search #home-trending .trend-card-icon,
+.aii-nav-dd-trending .trend-card-icon {
+  flex: none; vertical-align: baseline;
+  /* Nudge down so the arrow's optical centre lines up with the first line's
+     cap height rather than its line box. */
+  margin-top: 2px;
+}
+body.home-search #home-trending .trend-card-acc,
+.aii-nav-dd-trending .trend-card-acc { align-self: flex-start; margin-top: 3px; }
+body.home-search #home-trending .trend-card-title,
+.aii-nav-dd-trending .trend-card-title { flex: 1 1 auto; min-width: 0; }
