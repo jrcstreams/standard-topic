@@ -962,9 +962,19 @@ function promptsNavDdCfg(view) {
 // (#/prompts ↔ /build ↔ /library, e.g. via back/forward) swaps views in place.
 let promptsDdShowView = null;
 // Set while the Prompts dropdown is mounted: drill straight to a topic's prompt
-// list and expand a specific prompt. Its homepage caller (the featured-prompt
-// chips) is gone; kept as the dropdown's public drill-in hook.
+// list and expand a specific prompt (used by the homepage Popular Prompts chips).
 let promptsDdOpenPrompt = null;
+// Open the Prompt Library to a specific prompt (topic list → expand that prompt),
+// retrying until the dropdown has mounted and exposed its drill-in hook (#img372).
+function openPromptInLibrary(slug, name, promptName) {
+  const drill = (attempt) => {
+    if (promptsDdOpenPrompt) { promptsDdOpenPrompt(slug, name, promptName); return; }
+    if (attempt < 24) setTimeout(() => drill(attempt + 1), 60);
+  };
+  if (navDdOpen && navDdOpen.key === 'prompts') { drill(0); return; }
+  navigate('#/prompts/library');
+  drill(0);
+}
 function openPromptsNavDropdown(view) {
   if (navDdOpen && navDdOpen.key === 'prompts') { if (promptsDdShowView) promptsDdShowView(view || null); return; }
   openNavDropdown(promptsNavDdCfg(view || null));
@@ -3073,11 +3083,13 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         <div class="home-cards">
           <div class="home-search-hero" id="home-search-hero"></div>
           <div class="home-quicklinks" aria-label="Explore Standard Topic">
-            <span class="hq-label">Popular Topics</span>
-            <div class="hq-topics" data-hq-topics></div>
-            <div class="hq-promptrow">
-              <span class="hq-prompts">Looking for pre-made prompts?</span>
-              <button type="button" class="hq-cta" data-explore-prompts>Access our prompt library<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></button>
+            <div class="hq-group">
+              <span class="hq-label">Popular Topics</span>
+              <div class="hq-chips hq-chips--topics" data-hq-topics></div>
+            </div>
+            <div class="hq-group">
+              <span class="hq-label">Popular Prompts</span>
+              <div class="hq-chips hq-chips--prompts" data-hq-prompts></div>
             </div>
           </div>
         </div>
@@ -3098,11 +3110,44 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // a row of featured-topic pills + "All topics", then a one-line nudge to the
     // Prompt Library. Reads as an extension of the search area, not its own block.
     {
+      const HQ_ARROW = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>';
       const tWrap = container.querySelector('[data-hq-topics]');
       if (tWrap) {
         let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 5); } catch (_) {}
         tWrap.innerHTML = feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="hq-chip">${topicIconSVG(t.icon || 'globe', 'hq-chip-ic')}<span>${escapeHTML(t.name)}</span></a>`).join('')
-          + `<button type="button" class="hq-cta" data-explore-topics>All topics<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></button>`;
+          + `<button type="button" class="hq-cta" data-explore-topics>All topics${HQ_ARROW}</button>`;
+      }
+      // Popular Prompts — the same featured set the Prompt Library leads with.
+      // The chips render only once the data lands; the library button is there
+      // from the start so the row is never empty.
+      const pWrap = container.querySelector('[data-hq-prompts]');
+      if (pWrap) {
+        const libBtn = `<button type="button" class="hq-cta" data-explore-prompts>Access prompt library${HQ_ARROW}</button>`;
+        pWrap.innerHTML = libBtn;
+        fetchWithTimeout('/data/featured-prompts.json', { headers: { Accept: 'application/json' } })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((cfg) => {
+            if (!cfg || !Array.isArray(cfg.featured)) return;
+            const picks = [];
+            for (const f of cfg.featured) {
+              if (picks.length >= 6) break;
+              let sc = []; try { sc = getShortcutsForTopic(f.topic) || []; } catch (_) { continue; }
+              const sMatch = sc.find((x) => x && x.name === f.name);
+              if (!(sMatch && sMatch.prompt)) continue;
+              const t = getTopicBySlug(f.topic);
+              picks.push({ s: sMatch, tn: t ? t.name : '', slug: f.topic });
+            }
+            if (!picks.length) return;
+            pWrap.innerHTML = picks.map((pk, i) => `<button type="button" class="hq-chip hq-chip--prompt" data-hq-prompt="${i}"><svg class="hq-chip-spark" viewBox="0 0 24 24" width="12" height="12" fill="#2563eb" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg><span>${escapeHTML(pk.s.name)}</span></button>`).join('') + libBtn;
+            pWrap.querySelectorAll('[data-hq-prompt]').forEach((b) => b.addEventListener('click', (e) => {
+              e.stopPropagation();
+              const pk = picks[Number(b.dataset.hqPrompt)]; if (!pk) return;
+              openPromptInLibrary(pk.slug, pk.tn, pk.s.name);
+            }));
+            container.querySelector('[data-hq-prompts] [data-explore-prompts]')?.addEventListener('click', (e) => {
+              e.preventDefault(); openPromptsNavDropdown();
+            });
+          }).catch(() => {});
       }
     }
     // "All topics" — opens the full All-Topics dropdown so visitors can jump into a

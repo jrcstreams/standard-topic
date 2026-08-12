@@ -10603,9 +10603,9 @@ body.home-search.app-mode #content,
 body.home-search.app-mode.sticky-always.has-subnav #content {
   position: static; height: auto; min-height: 0; overflow: visible;
   /* The subnav is HIDDEN until scrolled past the quicklinks (#img193), so the hero
-     only clears the nav itself — and clears it TIGHTLY: the display title supplies
-     its own optical breathing room via line leading. */
-  padding: var(--nav-h) 0 3rem;
+     only clears the nav itself — but it MUST clear it: the nav is fixed, so
+     anything less than var(--nav-h) slides the title underneath it. */
+  padding: calc(var(--nav-h) + 1.2rem) 0 3rem;
 }
 /* One cohesive centered width for the whole homepage — matches the main nav
    (var(--max-width) + 2rem padding) so the body content lines up with the nav
@@ -10777,16 +10777,18 @@ body.home-search #home-trending .trending-topics {
    right), the featured-topic pills beneath it, then a one-line nudge to the Prompt
    Library. Deliberately light — this is an EXTENSION of the search bar, not a
    section of its own, so it shares the bar's width and left edge. */
-.home-quicklinks { display: flex; flex-direction: column; align-items: stretch; gap: 0.5rem; min-width: 0; text-align: left; }
+.home-quicklinks { display: flex; flex-direction: column; align-items: stretch; gap: 0.9rem; min-width: 0; text-align: left; }
+.hq-group { display: flex; flex-direction: column; gap: 0.4rem; min-width: 0; }
 .hq-label {
   font-family: var(--font-family); font-size: 0.74rem; font-weight: 700;
   letter-spacing: 0.06em; text-transform: uppercase; color: #8a98b0;
 }
+.hq-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 7px 8px; max-width: 100%; min-width: 0; }
 /* Shared CTA chip — same shape as the topic pills so "All topics" sits in the
    pill row as a peer, and the prompt-library link matches it a line below. */
 .hq-cta {
-  display: inline-flex; align-items: center; gap: 5px; height: 30px; box-sizing: border-box;
-  padding: 0 12px; border-radius: 999px; border: 1px solid #d5e0f5; background: #fff;
+  display: inline-flex; align-items: center; gap: 5px; height: 29px; box-sizing: border-box;
+  padding: 0 11px; border-radius: 999px; border: 1px solid #d5e0f5; background: #fff;
   font-family: var(--font-family); font-size: 0.79rem; font-weight: 650; color: #2f4d9e;
   white-space: nowrap; cursor: pointer; text-decoration: none;
   transition: background .12s, border-color .12s, color .12s;
@@ -10796,11 +10798,12 @@ body.home-search #home-trending .trending-topics {
   .hq-cta:hover { background: #eef3fc; border-color: #b9cbeb; color: #1d4ed8; text-decoration: none; }
   .hq-cta:hover svg { transform: translateX(2px); }
 }
-.hq-promptrow { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 10px; padding-top: 0.6rem; border-top: 1px solid #e2e7f0; margin-top: 0.15rem; }
-.hq-topics { display: flex; flex-wrap: wrap; align-items: center; gap: 7px 8px; max-width: 100%; }
+/* Prompt chips carry the AI sparkle rather than a topic icon. */
+.hq-chip--prompt .hq-chip-spark { flex: none; }
+
 .hq-chip {
-  display: inline-flex; align-items: center; gap: 6px; max-width: 100%; height: 30px; box-sizing: border-box;
-  padding: 0 12px; border-radius: 999px; border: 1px solid #e3e8f1; background: #fbfcfe;
+  display: inline-flex; align-items: center; gap: 6px; max-width: 100%; height: 29px; box-sizing: border-box;
+  padding: 0 11px; border-radius: 999px; border: 1px solid #e3e8f1; background: #fbfcfe;
   font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #46566f;
   text-decoration: none; cursor: pointer; white-space: nowrap;
   transition: background .12s, border-color .12s, color .12s;
@@ -10812,20 +10815,13 @@ body.home-search #home-trending .trending-topics {
   .hq-chip:hover { background: #eef3fc; border-color: #c8d5ec; color: #1d4ed8; text-decoration: none; }
   .hq-chip:hover .hq-chip-ic { color: #1d4ed8; }
 }
-/* The question that leads into the prompt-library chip. */
-.hq-prompts {
-  margin: 0;
-  font-family: var(--font-family); font-size: 0.82rem; font-weight: 500; color: #6b7a93;
-}
 @media (max-width: 560px) {
-  .home-quicklinks { gap: 0.45rem; }
-  .hq-topics { gap: 6px; }
+  .home-quicklinks { gap: 0.7rem; }
+  .hq-chips { gap: 6px; }
   .hq-chip { font-size: 0.75rem; height: 27px; padding: 0 10px; gap: 5px; }
   .hq-chip .hq-chip-ic svg { width: 12px; height: 12px; }
   .hq-label { font-size: 0.68rem; }
   .hq-cta { font-size: 0.75rem; height: 27px; padding: 0 10px; }
-  .hq-prompts { font-size: 0.78rem; }
-  .hq-promptrow { padding-top: 0.5rem; gap: 6px 8px; }
 }
 @media (min-width: 1024px) {
   /* Two rows: the three cards span the FULL width across the top, then News Feed
@@ -10891,7 +10887,7 @@ body.home-search #home-trending .trending-topics {
      single column over the cards below. */
   body.home-search .home-search-hero { display: block; padding: 0 0 0.35rem; border-radius: 0; text-align: center; width: 100%; max-width: none; margin: 0; justify-self: stretch; }
   body.home-search .home-search-hero .search-panel { max-width: none; margin: 0; }
-  body.home-search .home-search-hero .search-panel-hero-inner { text-align: center; padding: 0 0 1.05rem; margin-top: -0.35rem; }
+  body.home-search .home-search-hero .search-panel-hero-inner { text-align: center; padding: 0 0 1.05rem; }
   body.home-search .home-search-hero .search-panel-title {
     white-space: normal; text-align: center;
     font-size: clamp(1.85rem, 1.35rem + 1vw, 2.35rem); font-weight: 780;
@@ -16978,13 +16974,23 @@ body.home-search #home-trending .trend-card-acc,
 body.home-search #home-trending .trend-card-title,
 .aii-nav-dd-trending .trend-card-title { flex: 1 1 auto; min-width: 0; }
 
-/* ═══ Homepage hero top (revamp722) — second pass. The reserved band above the
-   title was the nav height PLUS the hero's own padding PLUS the display face's
-   line leading. Collapse the two we control and let the leading alone carry it. */
+/* ═══ Homepage hero top — the previous pass cut too far and the title tucked
+   under the fixed nav. The nav is fixed, so #content MUST reserve at least
+   var(--nav-h); this reserves that plus a deliberate, modest gap. No negative
+   margins pulling the title back up into the nav. */
 @media (min-width: 1024px) {
   body.home-search.app-mode #content,
-  body.home-search.app-mode.sticky-always.has-subnav #content { padding-top: var(--nav-h); }
+  body.home-search.app-mode.sticky-always.has-subnav #content { padding-top: calc(var(--nav-h) + 1.2rem); }
   body.home-search .home-search-hero { padding-top: 0; }
   body.home-search .home-search-hero .search-panel-hero { margin-top: 0; }
-  body.home-search .home-search-hero .search-panel-hero-inner { padding-top: 0; margin-top: -0.5rem; }
+  body.home-search .home-search-hero .search-panel-hero-inner { padding-top: 0; margin-top: 0; }
+}
+
+/* Desktop: Popular Topics must read as ONE line inside the search bar's column,
+   so the topic chips run a notch tighter there. Popular Prompts wraps to two —
+   its names are long — with the library button ending the last line. */
+@media (min-width: 1024px) {
+  body.home-search .hq-chips--topics { gap: 6px 6px; }
+  body.home-search .hq-chips--topics .hq-chip { font-size: 0.77rem; padding: 0 10px; gap: 5px; }
+  body.home-search .hq-chips--topics .hq-cta { font-size: 0.77rem; padding: 0 10px; }
 }
