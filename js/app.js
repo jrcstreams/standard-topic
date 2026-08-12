@@ -621,7 +621,7 @@ function openNavDropdown(cfg) {
   // The Prompt Builder is page-like too, so it gets the same way back — but it
   // keeps its ✕ (it can be opened ON TOP of work you want to return to). The
   // Search panel is a true overlay over whatever you were reading: no back bar.
-  const wantsBackBar = asPage || cfg.key === 'prompt';
+  const wantsBackBar = asPage;
   const closeBtn = asPage ? '' : `<button type="button" class="aii-nav-dd-close" data-navdd-close aria-label="Close">${X_IC_NAVDD}</button>`;
   const backBar = wantsBackBar ? backBarHTML() : '';
   const head = cfg.bareHead
@@ -751,6 +751,10 @@ function wirePromptsDropdown(panel, initialView) {
     const titles = panel.querySelector('.aii-nav-dd-titles');
     if (!titles) return;
     titles.querySelector('[data-prompts-back]')?.remove();
+    // A view-level back link REPLACES the page-level "Back to …" bar — two
+    // stacked back pills read as a bug rather than a hierarchy (#img26).
+    const pageBar = panel.querySelector('.page-backbar');
+    if (pageBar) pageBar.hidden = !!label;
     if (!label) return;
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'prompts-back'; b.setAttribute('data-prompts-back', '');
@@ -3069,12 +3073,12 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         <div class="home-cards">
           <div class="home-search-hero" id="home-search-hero"></div>
           <div class="home-quicklinks" aria-label="Explore Standard Topic">
-            <div class="hq-labelrow">
-              <span class="hq-label">Popular</span>
-              <button type="button" class="hq-all" data-explore-topics>All topics<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></button>
-            </div>
+            <span class="hq-label">Popular Topics</span>
             <div class="hq-topics" data-hq-topics></div>
-            <p class="hq-prompts">Looking for pre-made prompts? <button type="button" class="hq-link" data-explore-prompts>Access our prompt library<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></button></p>
+            <div class="hq-promptrow">
+              <span class="hq-prompts">Looking for pre-made prompts?</span>
+              <button type="button" class="hq-cta" data-explore-prompts>Access our prompt library<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></button>
+            </div>
           </div>
         </div>
         <div class="home-sections">
@@ -3097,7 +3101,8 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       const tWrap = container.querySelector('[data-hq-topics]');
       if (tWrap) {
         let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 5); } catch (_) {}
-        tWrap.innerHTML = feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="hq-chip">${topicIconSVG(t.icon || 'globe', 'hq-chip-ic')}<span>${escapeHTML(t.name)}</span></a>`).join('');
+        tWrap.innerHTML = feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="hq-chip">${topicIconSVG(t.icon || 'globe', 'hq-chip-ic')}<span>${escapeHTML(t.name)}</span></a>`).join('')
+          + `<button type="button" class="hq-cta" data-explore-topics>All topics<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></button>`;
       }
     }
     // "All topics" — opens the full All-Topics dropdown so visitors can jump into a

@@ -393,38 +393,6 @@ function removeTopic(key, value) {
 // Inline Lucide-style SVG icons. Stroke-only, currentColor — picks
 // up the navy in .pb-card-icon. Sized 22x22 via the wrapper.
 const PB_CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
-const PB_ICONS = {
-  model:
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-      '<path d="M12 3l2.2 6.3a2 2 0 0 0 1.3 1.3L21.8 12l-6.3 2.2a2 2 0 0 0-1.3 1.3L12 21l-2.2-6.3a2 2 0 0 0-1.3-1.3L2.2 12l6.3-2.2a2 2 0 0 0 1.3-1.3z"/>' +
-    '</svg>',
-  topics:
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-      '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>' +
-    '</svg>',
-  output:
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-      '<line x1="4" y1="6"  x2="20" y2="6"/>' +
-      '<line x1="4" y1="12" x2="14" y2="12"/>' +
-      '<line x1="4" y1="18" x2="18" y2="18"/>' +
-    '</svg>',
-  sources:
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-      '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>' +
-      '<path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>' +
-    '</svg>',
-  scope:
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-      '<circle cx="12" cy="12" r="10"/>' +
-      '<line x1="2" y1="12" x2="22" y2="12"/>' +
-      '<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>' +
-    '</svg>',
-  custom:
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-      '<path d="M12 20h9"/>' +
-      '<path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>' +
-    '</svg>',
-};
 
 // Action-bar glyphs (stroke, currentColor) — used on the 4 bottom buttons.
 const PB_ACT_ICONS = {
@@ -434,10 +402,10 @@ const PB_ACT_ICONS = {
   clear: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>',
 };
 
+// Build order: what the prompt is ABOUT first, how it should read next, and the
+// model it goes to LAST — it's a delivery setting (already defaulted), not the
+// first decision the user has to make.
 const PB_CARDS = [
-  { key: 'model',   label: 'Choose Model',
-    desc: 'The AI model this prompt will be sent to.',
-    fields: [] },
   { key: 'topics',  label: 'Topics',
     desc: 'What this prompt should focus on.',
     fields: ['primaryTopic', 'secondaryTopic'], required: true },
@@ -453,6 +421,9 @@ const PB_CARDS = [
   { key: 'custom',  label: 'Custom Instructions',
     desc: 'Framing, exclusions, extra detail.',
     fields: ['customizations'] },
+  { key: 'model',   label: 'Choose Model',
+    desc: 'The AI model this prompt will be sent to.',
+    fields: [] },
 ];
 
 function pbOptionLabel(fieldKey, valueKey) {
@@ -548,7 +519,6 @@ function renderPbCardsHTML() {
     return `
       <button type="button" class="pb-card${items.length ? ' has-items' : ''}" data-pb-card="${card.key}">
         <span class="pb-card-num" aria-hidden="true">${i + 1}</span>
-        <span class="pb-card-icon" aria-hidden="true">${PB_ICONS[card.key] || ''}</span>
         <span class="pb-card-tx">
           <span class="pb-card-titlerow"><span class="pb-card-title">${escapeHTML(card.label)}</span>${req}</span>
           <span class="pb-card-desc">${escapeHTML(card.desc)}</span>

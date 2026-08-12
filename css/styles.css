@@ -6331,7 +6331,7 @@ body.app-mode .topic-layout {
 .pb-card {
   position: relative;
   display: grid;
-  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: start;
   column-gap: 12px; row-gap: 0;
   width: 100%;
@@ -6361,14 +6361,6 @@ body.app-mode .topic-layout {
 }
 .pb-card.is-expanded .pb-card-num,
 .pb-card.has-items .pb-card-num { background: #2f4d9e; color: #fff; }
-.pb-card-icon {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 21px; height: 21px; flex-shrink: 0; margin-top: 1px;
-  background: none; color: #6f83a6;
-  transition: color .12s ease;
-}
-.pb-card.is-expanded .pb-card-icon { color: #2f4d9e; }
-.pb-card-icon svg { width: 21px; height: 21px; display: block; }
 .pb-card-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .pb-card-titlerow { display: flex; align-items: center; gap: 8px; min-width: 0; flex-wrap: wrap; }
 .pb-card-title {
@@ -6405,7 +6397,6 @@ body.app-mode .topic-layout {
 @media (max-width: 560px) {
   .pb-card { padding: 13px 13px; column-gap: 10px; }
   .pb-card-num { width: 20px; height: 20px; font-size: 0.7rem; }
-  .pb-card-icon, .pb-card-icon svg { width: 19px; height: 19px; }
   .pb-card-title { font-size: 0.92rem; }
 }
 /* Trailing action chip on every card — replaces the old chevron +
@@ -7032,8 +7023,6 @@ body.app-mode .topic-layout {
   /* No reserved right gutter — the chevron now lives in the head row (margin-left
      auto), so it sits neatly at the padding edge, centred on the title (#img12). */
   .pb-card { padding: 0.7rem 0.9rem 0.8rem 0.85rem; gap: 0.3rem; }
-  .pb-card-icon { width: 19px; height: 19px; }
-  .pb-card-icon svg { width: 18px; height: 18px; }
   .pb-card-title { font-size: 0.92rem; }
   .pb-card-desc { font-size: 0.78rem; padding-left: 0; }
   .pb-card-summary { padding-left: 0; }
@@ -10789,11 +10778,25 @@ body.home-search #home-trending .trending-topics {
    Library. Deliberately light — this is an EXTENSION of the search bar, not a
    section of its own, so it shares the bar's width and left edge. */
 .home-quicklinks { display: flex; flex-direction: column; align-items: stretch; gap: 0.5rem; min-width: 0; text-align: left; }
-.hq-labelrow { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; min-width: 0; }
 .hq-label {
   font-family: var(--font-family); font-size: 0.74rem; font-weight: 700;
   letter-spacing: 0.06em; text-transform: uppercase; color: #8a98b0;
 }
+/* Shared CTA chip — same shape as the topic pills so "All topics" sits in the
+   pill row as a peer, and the prompt-library link matches it a line below. */
+.hq-cta {
+  display: inline-flex; align-items: center; gap: 5px; height: 30px; box-sizing: border-box;
+  padding: 0 12px; border-radius: 999px; border: 1px solid #d5e0f5; background: #fff;
+  font-family: var(--font-family); font-size: 0.79rem; font-weight: 650; color: #2f4d9e;
+  white-space: nowrap; cursor: pointer; text-decoration: none;
+  transition: background .12s, border-color .12s, color .12s;
+}
+.hq-cta svg { flex: none; transition: transform .14s ease; }
+@media (hover: hover) {
+  .hq-cta:hover { background: #eef3fc; border-color: #b9cbeb; color: #1d4ed8; text-decoration: none; }
+  .hq-cta:hover svg { transform: translateX(2px); }
+}
+.hq-promptrow { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 10px; padding-top: 0.6rem; border-top: 1px solid #e2e7f0; margin-top: 0.15rem; }
 .hq-topics { display: flex; flex-wrap: wrap; align-items: center; gap: 7px 8px; max-width: 100%; }
 .hq-chip {
   display: inline-flex; align-items: center; gap: 6px; max-width: 100%; height: 30px; box-sizing: border-box;
@@ -10809,38 +10812,20 @@ body.home-search #home-trending .trending-topics {
   .hq-chip:hover { background: #eef3fc; border-color: #c8d5ec; color: #1d4ed8; text-decoration: none; }
   .hq-chip:hover .hq-chip-ic { color: #1d4ed8; }
 }
-/* Text-only tail link into the full All-Topics page — the entry point the removed
-   "View all topics" card used to carry. */
-.hq-all {
-  flex: none; display: inline-flex; align-items: center; gap: 4px;
-  padding: 0; border: none; background: none; cursor: pointer;
-  font-family: var(--font-family); font-size: 0.78rem; font-weight: 650; color: #2f4d9e; white-space: nowrap;
-  transition: color .12s;
-}
-.hq-all svg { flex: none; transition: transform .14s ease; }
-@media (hover: hover) { .hq-all:hover { color: #1d4ed8; } .hq-all:hover svg { transform: translateX(2px); } }
-/* Sits on its own line under the pills, separated by a hairline so it reads as a
-   distinct offer rather than a caption on the topic row. */
+/* The question that leads into the prompt-library chip. */
 .hq-prompts {
-  margin: 0.15rem 0 0; padding-top: 0.6rem; border-top: 1px solid #e2e7f0;
+  margin: 0;
   font-family: var(--font-family); font-size: 0.82rem; font-weight: 500; color: #6b7a93;
 }
-.hq-link {
-  display: inline-flex; align-items: center; gap: 4px; vertical-align: baseline;
-  padding: 0; border: none; background: none; cursor: pointer;
-  font-family: inherit; font-size: inherit; font-weight: 650; color: #2f4d9e;
-  transition: color .12s;
-}
-.hq-link svg { flex: none; transition: transform .14s ease; }
-@media (hover: hover) { .hq-link:hover { color: #1d4ed8; text-decoration: underline; } .hq-link:hover svg { transform: translateX(2px); } }
 @media (max-width: 560px) {
   .home-quicklinks { gap: 0.45rem; }
   .hq-topics { gap: 6px; }
   .hq-chip { font-size: 0.75rem; height: 27px; padding: 0 10px; gap: 5px; }
   .hq-chip .hq-chip-ic svg { width: 12px; height: 12px; }
   .hq-label { font-size: 0.68rem; }
-  .hq-all { font-size: 0.74rem; }
-  .hq-prompts { font-size: 0.78rem; padding-top: 0.5rem; }
+  .hq-cta { font-size: 0.75rem; height: 27px; padding: 0 10px; }
+  .hq-prompts { font-size: 0.78rem; }
+  .hq-promptrow { padding-top: 0.5rem; gap: 6px 8px; }
 }
 @media (min-width: 1024px) {
   /* Two rows: the three cards span the FULL width across the top, then News Feed
@@ -16992,3 +16977,14 @@ body.home-search #home-trending .trend-card-acc,
 .aii-nav-dd-trending .trend-card-acc { align-self: flex-start; margin-top: 3px; }
 body.home-search #home-trending .trend-card-title,
 .aii-nav-dd-trending .trend-card-title { flex: 1 1 auto; min-width: 0; }
+
+/* ═══ Homepage hero top (revamp722) — second pass. The reserved band above the
+   title was the nav height PLUS the hero's own padding PLUS the display face's
+   line leading. Collapse the two we control and let the leading alone carry it. */
+@media (min-width: 1024px) {
+  body.home-search.app-mode #content,
+  body.home-search.app-mode.sticky-always.has-subnav #content { padding-top: var(--nav-h); }
+  body.home-search .home-search-hero { padding-top: 0; }
+  body.home-search .home-search-hero .search-panel-hero { margin-top: 0; }
+  body.home-search .home-search-hero .search-panel-hero-inner { padding-top: 0; margin-top: -0.5rem; }
+}
