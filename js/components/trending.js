@@ -473,9 +473,9 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
     if (shown.length) html += `<div class="trend-card-grid">${shown.map((t, i) => trendCardHTML(t, i)).join('')}</div>`;
     // "Earlier" (terms that WERE trending, not now) flows in below the live grid —
     // but ONLY once "View more" is clicked, so it's never a standalone bottom bucket.
-    if (state.expanded && earlier.length) {
+    if (earlier.length) {
       html += `<div class="trend-earlier">
-        <div class="trend-earlier-head"><span class="trend-earlier-title">Earlier</span><span class="trend-earlier-sub">Recently trending, not right now</span></div>
+        <div class="trend-earlier-head"><h3 class="trend-earlier-title">Earlier</h3><p class="trend-earlier-sub">Recently trending, not right now</p></div>
         <div class="trend-card-grid">${earlier.map((t, i) => trendCardHTML(t, 5000 + i, { metaText: '', past: true })).join('')}</div>
       </div>`;
     }

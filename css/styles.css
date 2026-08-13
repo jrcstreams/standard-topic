@@ -17676,3 +17676,89 @@ body.app-mode:not(.home-search) #topic-tab-body {
 .trend-earlier-head { padding: 22px 14px 10px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .trend-earlier-title { font-family: var(--font-display); font-size: 1.06rem; font-weight: 800; color: #1a2740; }
 .trend-earlier-sub { font-family: var(--font-family); font-size: 0.82rem; color: var(--color-text-muted); }
+
+/* ═══════════════ revamp742 ═══════════════════════════════════════════════ */
+
+/* CRITICAL — topic pages were cut off under the fixed header. Dropping
+   position:fixed (revamp740) left `top` doing nothing and `padding: 0` intact,
+   so nothing reserved space for the nav + sub-header and the page started
+   underneath them. The reservation has to move from `top` into padding. */
+body.app-mode:not(.home-search) #content,
+body.app-mode.sticky-always.has-subnav:not(.home-search) #content {
+  top: auto !important; left: auto !important; right: auto !important; bottom: auto !important;
+  padding: calc(var(--nav-h) + var(--subnav-height, 66px) + 1rem) 0 3rem !important;
+}
+body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important; }
+@media (max-width: 560px) { body.app-mode:not(.home-search) .topic-layout { padding: 0 1rem 1rem !important; } }
+
+/* ── Trending page: rows sit clear of the sub-bar, and every row has a rule ── */
+.aii-nav-dd-trending .aii-nav-dd-scroll { padding-top: 10px; }
+.aii-nav-dd-trending .trend-card:last-child,
+.trend-earlier .trend-card:last-child { border-bottom: 1px solid #e9ecf2 !important; }
+/* The live grid was closing itself with an extra rule on top of the last row's. */
+.aii-nav-dd-trending .trend-card-grid { border-bottom: none !important; }
+.aii-nav-dd-trending .trend-card-grid + .trend-earlier { margin-top: 0; }
+/* "Earlier": title, subtext beneath it, then a rule — like every other section. */
+.trend-earlier-head {
+  display: block; padding: 30px 14px 10px; margin-bottom: 0;
+  border-bottom: 1.5px solid #d3d9e4;
+}
+.trend-earlier-title { display: block; margin: 0; font-family: var(--font-display); font-size: 1.16rem; font-weight: 800; letter-spacing: -0.018em; color: #1a2740; }
+.trend-earlier-sub { display: block; margin: 3px 0 0; font-family: var(--font-family); font-size: 0.84rem; color: var(--color-text-muted); }
+/* Condensed scroll state also sheds the sports toggle. */
+.aii-nav-dd.is-condensed .trend-controls-legend,
+.aii-nav-dd.is-condensed .aii-nav-dd-subbar { display: none !important; }
+
+/* ── News story open: the X gets its own row, View Story sits up with the meta ── */
+#section-newsfeed .news-card--open .news-act-ai,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai {
+  top: auto !important; bottom: auto !important;
+  margin-top: 34px;                         /* clear of the headline, on the meta row */
+}
+#section-newsfeed .news-card--open .news-card-body,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-body { padding-top: 4px !important; }
+#section-newsfeed .news-card--open .news-card-actions,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-actions { margin-top: 0 !important; padding-top: 0 !important; }
+
+/* ── Sources / Explore Further become "+" BUTTONS, not accordion bars ─────
+   Small, self-contained controls that expand downward. Full width on narrow
+   cards; a comfortable button width once there's room. */
+.trend-exp-drawers, .ni-inner .trend-exp-drawers {
+  border-top: 1px solid #e7ecf3; margin-top: 14px; padding-top: 12px;
+  display: flex; flex-direction: column; gap: 8px; align-items: flex-start;
+}
+.te-drawer { border: none !important; width: 100%; }
+.te-drawer > .te-drawer-sum {
+  display: inline-flex !important; align-items: center; gap: 8px;
+  width: 100%; max-width: 280px; box-sizing: border-box;
+  padding: 9px 14px !important; border: 1px solid #dfe5f0; border-radius: 10px;
+  background: #fff; cursor: pointer; list-style: none;
+  font-family: var(--font-family); font-size: 0.83rem !important; font-weight: 650 !important;
+  color: #33455f !important; justify-content: flex-start !important;
+  transition: background .14s ease, border-color .14s ease, color .14s ease;
+}
+@media (max-width: 480px) { .te-drawer > .te-drawer-sum { max-width: none; } }
+@media (hover: hover) { .te-drawer > .te-drawer-sum:hover { background: #f4f7fc; border-color: #cbd7ea; color: #26375a !important; } }
+.te-drawer[open] > .te-drawer-sum { background: #eef2f9; border-color: #cbd7ea; }
+.te-drawer-title { min-width: 0 !important; flex: 1; }
+/* Chevron becomes a + that turns into a − */
+.te-drawer-chev { position: relative; width: 14px; height: 14px; flex: none; }
+.te-drawer-chev svg { display: none; }
+.te-drawer-chev::before, .te-drawer-chev::after {
+  content: ''; position: absolute; left: 50%; top: 50%; background: currentColor; border-radius: 2px;
+  transform: translate(-50%, -50%); transition: opacity .18s ease, transform .22s ease;
+}
+.te-drawer-chev::before { width: 12px; height: 2px; }
+.te-drawer-chev::after  { width: 2px; height: 12px; }
+.te-drawer[open] > .te-drawer-sum .te-drawer-chev::after { opacity: 0; transform: translate(-50%, -50%) rotate(90deg); }
+.te-drawer-body { padding: 10px 0 4px !important; }
+/* Inside a drawer, the source lists use the same square connected treatment. */
+.te-drawer-body .xf-list {
+  border: none !important; border-radius: 0 !important; background: none !important;
+  overflow: visible !important; margin: 0 !important;
+}
+.te-drawer-body .xf-acc { border: none !important; border-bottom: 1px solid #eef1f6 !important; border-radius: 0 !important; }
+.te-drawer-body .xf-acc:last-child { border-bottom: none !important; }
+.te-drawer-body .xf-sum { padding: 11px 2px !important; border-radius: 0 !important; }
+.te-drawer-body .xf-acc[open] > .xf-sum { background: transparent !important; }
+.te-drawer-body .xf-panel { padding: 2px 2px 12px !important; }
