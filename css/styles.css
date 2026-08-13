@@ -18229,3 +18229,25 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
 /* The back bar sits above the hero rather than beside a close button. */
 .aii-nav-dd-search > .aii-nav-dd-inner > .page-backbar { padding: 18px 2px 0; }
 .aii-nav-dd-search .aii-nav-dd-head-bare { min-height: 0; padding-bottom: 0; }
+
+/* ═══════════════ revamp760 ═══════════════════════════════════════════════ */
+
+/* Prompt rows: vertical padding was doing the sizing, so the text sat wherever
+   the asymmetric padding left it and the fill didn't match the row box. Size the
+   row with min-height and centre the content in it — zero vertical padding means
+   nothing can push the text off-centre. */
+.pdir-topichost .aii-fi-acclist .aii-fi-acc,
+.tai-acc-body .aii-fi-acclist .aii-fi-acc { display: block; padding: 0 !important; margin: 0 !important; }
+.pdir-topichost .aii-fi-acclist .aii-fi-accsum,
+.tai-acc-body .aii-fi-acclist .aii-fi-accsum {
+  display: flex !important; align-items: center !important;
+  width: 100%; box-sizing: border-box;
+  min-height: 52px; padding: 0 12px !important; margin: 0 !important;
+  line-height: 1.3;
+}
+.pdir-topichost .aii-fi-acclist .aii-fi-acc-ic,
+.tai-acc-body .aii-fi-acclist .aii-fi-acc-ic { align-self: center; margin: 0 !important; }
+.pdir-topichost .aii-fi-acclist .aii-fi-acc-tx,
+.tai-acc-body .aii-fi-acclist .aii-fi-acc-tx { display: flex; align-items: center; min-height: 0; }
+.pdir-topichost .aii-fi-acclist .aii-fi-acc-chev,
+.tai-acc-body .aii-fi-acclist .aii-fi-acc-chev { align-self: center; margin-left: auto; }
