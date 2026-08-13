@@ -885,6 +885,7 @@ function wirePromptsDropdown(panel, initialView) {
               try {
                 dirCtls.push(renderAIIntelligence(host, {
                   inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
+                  singlePrompt: true,
                   topic: pk.topic.name, label: pk.topic.name,
                   descriptions, icons, shortcuts: [pk.sh], topicKey: pk.topic.slug,
                 }));
@@ -1246,6 +1247,7 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
     if (host.dataset.mounted === '1') return;
     host.dataset.mounted = '1';
     try {
+      if (row.kind === 'prompts') host.classList.add('tai-acc-body--prompts');
       if (row.kind === 'models') {
         const prompt = `Give me a thorough, current briefing on ${topic.name}. Be specific and cite sources.`;
         host.innerHTML = exploreAIModelsHTML({ prompt, name: topic.name, subDesc: `Send ${topic.name} to ChatGPT, Claude, Gemini and more.` });
@@ -1291,9 +1293,10 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
   // whichever was open (a brief is a long read — two at once just buries them).
   const renderAI = () => {
     destroyRowCtls();
-    body.innerHTML = `<div class="topic-ai-wrap">
+    body.innerHTML = `<div class="topic-ai-wrap topic-explore-host">
       <div class="aii-tabhead-spacer"></div>
-      <div class="aii-fi-sechead topic-ai-sechead">
+      <section class="aii-fi-sec">
+      <div class="aii-fi-sechead">
         <h3 class="aii-fi-sectitle">AI Insights</h3>
         <p class="aii-fi-secsub">Ready-made prompts, AI briefings and model hand-offs for ${escapeHTML(topic.name)} — all in one place.</p>
       </div>
@@ -1306,6 +1309,7 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
           </button>
           <div class="tai-acc-body" hidden></div>
         </div>`).join('')}</div>
+      </section>
     </div>`;
     const accs = [...body.querySelectorAll('.tai-acc')];
     const setRow = (key, on) => {

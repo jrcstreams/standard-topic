@@ -16873,7 +16873,6 @@ body.home-search #section-newsfeed .newsfeed-head {
 .topic-explore-host .xf-panel { padding: 4px 16px 20px; }
 /* AI Insights borrows the Web Resources section header, so both tabs open the
    same way: title, subtext, hairline, then the list. */
-.topic-ai-sechead { margin-bottom: 3px; }
 .topic-ai-wrap .aii-fi-sechead { padding: 0 2px 9px; border-bottom: 1px solid #e4e8f0; }
 @media (max-width: 560px) {
   .topic-explore-host .xf-list { border-radius: 12px !important; margin-bottom: 32px !important; }
@@ -17112,7 +17111,6 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-head,
 .topic-ai-acclist { margin-top: 20px; }
 .topic-explore-host .xf-list { margin-top: 20px !important; }
 /* AI Insights sat closer to the nav than Web Resources — match the roomier one. */
-.topic-ai-wrap .topic-ai-sechead { margin-top: 20px; }
 
 /* Step number lights up only while its accordion is OPEN. A card that merely
    carries a pre-filled default (Choose Model) shows a quiet completion check
@@ -17438,10 +17436,6 @@ body.home-search .home-search-hero .search-panel-hero-inner { padding-bottom: 1r
 .topic-explore-host .aii-fi-sechead { margin-bottom: 0 !important; }
 
 /* AI Insights and Web Resources start at the same distance from the nav. */
-.topic-ai-wrap > .aii-tabhead-spacer,
-.topic-explore-host > .aii-tabhead-spacer { height: 2px; }
-.topic-ai-wrap .topic-ai-sechead { margin-top: 22px !important; }
-.topic-explore-host .aii-fi-sec:first-child { margin-top: 22px !important; }
 
 /* ── AI Briefing: three briefs under one row ─────────────────────────────── */
 .tai-brief-part { margin-top: 22px; min-width: 0; }
@@ -17504,3 +17498,53 @@ body.home-search .home-search-hero .search-panel-hero-inner { padding-bottom: 1r
 .sticky-hero-inner.nav-micro-text .navbtn { padding-left: 7px !important; padding-right: 7px !important; }
 .sticky-hero-inner.nav-tiny-title .sticky-title { font-size: 0.98rem !important; }
 .sticky-hero-inner.nav-tiny-title .nav-hamburger { width: 17px; height: 13px; }
+
+/* ═══════════════ revamp739 ═══════════════════════════════════════════════ */
+
+/* AI Insights now shares .topic-explore-host, so it inherits Web Resources'
+   exact spacing from the sub-nav — the two can no longer drift apart. */
+.topic-ai-wrap.topic-explore-host .aii-fi-sec:first-child { margin-top: 22px !important; }
+.topic-ai-wrap .topic-ai-acclist { margin-top: 0 !important; }
+
+/* ── Lighter weights, clearer indentation ───────────────────────────────── */
+/* Parent rows (Featured, Prompts by Topic, AI Insights) were carrying display
+   700 — heavy for a list you scan. */
+.pdir-acc-name { font-weight: 600; }
+.pdir-acc--parent .pdir-acc-name { font-weight: 650; }
+.tai-acc-name { font-weight: 650; }
+/* The topic list sits indented under its section header rather than flush with it. */
+.pdir-group .pdir-list { margin-left: 18px; }
+@media (max-width: 560px) { .pdir-group .pdir-list { margin-left: 12px; } }
+/* Topic-Specific / Evergreen subsection headers: lighter, and indented from the
+   row that opened them. */
+.pdir-accbody .aii-fi-sectitle,
+.tai-acc-body .aii-fi-sectitle { font-size: 0.88rem !important; font-weight: 650 !important; color: #33455f; }
+.pdir-accbody .aii-fi-secsub,
+.tai-acc-body .aii-fi-secsub { font-size: 0.78rem; }
+.pdir-accbody .aii-fi-sec,
+.tai-acc-body--prompts .aii-fi-sec { margin-left: 16px; }
+@media (max-width: 560px) {
+  .pdir-accbody .aii-fi-sec,
+  .tai-acc-body--prompts .aii-fi-sec { margin-left: 10px; }
+}
+
+/* A single featured prompt renders its card directly — no nested accordion. */
+.aii-fi--single { margin-top: 4px; }
+.aii-fi--single .aii-emenu-host { display: block; }
+
+/* ── AI Briefing: readable structure instead of stacked chrome ───────────── */
+.tai-acc-body .tai-brief-part:first-child { margin-top: 4px; }
+.tai-brief-part { margin-left: 16px; }
+@media (max-width: 560px) { .tai-brief-part { margin-left: 10px; } }
+.tai-brief-title { font-size: 0.92rem; font-weight: 650; }
+.tai-brief-sub { font-size: 0.77rem; }
+/* Strip the per-brief builder chrome — the row header already names the brief. */
+.tai-brief-host .aii-ctlrow,
+.tai-brief-host .aii-brief-top,
+.tai-brief-host .aii-builder-topbar { display: none !important; }
+.tai-brief-host .aii-builder-secs { padding: 0 !important; }
+.tai-brief-host .im-msec-body .im-sec-aitag-row { margin-bottom: 8px; }
+.tai-brief-host .im-msec-body .aii-sec-body { font-size: 0.88rem; line-height: 1.62; }
+.tai-brief-host .im-msec-body .aii-sec-body p { margin: 0 0 0.7rem; }
+/* Loading + empty states inside a brief part shouldn't fill the row. */
+.tai-brief-host .aii-empty { padding: 10px 2px; font-size: 0.84rem; }

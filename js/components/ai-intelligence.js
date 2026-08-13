@@ -989,6 +989,18 @@ export function renderAIIntelligence(container, scope) {
         <div class="aii-fi-sechead aii-explore-sechead"><h3 class="aii-fi-sectitle">Explore Further</h3><p class="aii-fi-secsub">Send this to an AI model or explore the web's best sources on ${esc(scope.label || scope.topic || 'this topic')}.</p></div>
         ${exploreHTML}
       </div>`;
+    // The brief is injected here, AFTER wire() already ran on the shell — so the
+    // per-section controls have to be bound now or they're never bound at all.
+    wrap.querySelectorAll('.im-msec-toggle').forEach((b) => b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const sec = b.closest('.im-msec');
+      const body = sec && sec.querySelector('.im-msec-body');
+      if (!body) return;
+      const open = body.hidden;
+      body.hidden = !open;
+      sec.classList.toggle('is-open', open);
+      b.setAttribute('aria-expanded', String(open));
+    }));
     const ctlrow = wrap.querySelector('.aii-ctlrow');
     const vSummary = wrap.querySelector('.aii-bview-summary');
     const vExplore = wrap.querySelector('.aii-bview-explore');
@@ -1067,6 +1079,14 @@ export function renderAIIntelligence(container, scope) {
     // scope.promptsOnly ('specific' | 'evergreen'): the host renders ONE of the two
     // groups and supplies its own heading (the topic page's AI Insights accordion),
     // so emit the bare prompt list with no section header.
+    if (scope.singlePrompt) {
+      const one = all[0];
+      if (!one) return '<p class="aii-empty">No prompt available for this topic.</p>';
+      const fiPrompt = String(one.prompt || '').replace(/\{topic\}/gi, topicLabel);
+      return `<div class="aii-ext-block aii-fi aii-fi--single">
+        <div class="aii-emenu-host is-open" data-explore-prompt="${escAttr(fiPrompt)}" data-explore-name="${escAttr(one.name || '')}" data-explore-desc="${escAttr(one.description || '')}"></div>
+      </div>`;
+    }
     if (scope.promptsOnly) {
       const only = scope.promptsOnly === 'evergreen' ? evergreen : specific;
       return furtherInsightsHTML(only) || '<p class="aii-empty">No prompts available for this topic.</p>';
@@ -1127,6 +1147,14 @@ export function renderAIIntelligence(container, scope) {
   // Show-more toggles. (The discreet brief-head explore link is wired in wire().)
   function wireBuilderContent() {
     stage.querySelectorAll('.aii-fi-accsum').forEach((b) => b.addEventListener('click', () => toggleEmenu(b)));
+    // A single-prompt host renders already-open, so fill it rather than waiting
+    // for a toggle that has no header to come from.
+    stage.querySelectorAll('.aii-emenu-host.is-open:not([data-ready])').forEach((host) => {
+      const ctx = exploreCtxOf(host);
+      host.innerHTML = promptCardBodyHTML(ctx);
+      wirePromptCard(host, ctx);
+      host.dataset.ready = '1';
+    });
     stage.querySelectorAll('.im-msec-toggle').forEach((b) => b.addEventListener('click', () => {
       const sec = b.closest('.im-msec');
       const body = sec && sec.querySelector('.im-msec-body');
