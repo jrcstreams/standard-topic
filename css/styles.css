@@ -17341,3 +17341,40 @@ body.home-search #home-trending .trending-topics-title,
 /* Trending PAGE rows drop the per-trend age — the summary carries the recency
    and the column read as a wall of timestamps. The homepage rail keeps its own. */
 .aii-nav-dd-trending .trend-card:not(.is-expanded) .trend-card-meta { display: none !important; }
+
+/* ═══ Homepage hero column (revamp736) ═══════════════════════════════════════
+   The search bar and the quicklinks were two independent elements each carrying
+   their own max-width. Whenever one of the older width rules won on one of them
+   and not the other, they drifted apart — which is why alignment kept coming and
+   going with the viewport. The column is now STRUCTURAL: .home-cards IS the
+   column, and everything inside fills it, so they cannot disagree. ══════════ */
+body.home-search.app-mode .home-cards {
+  display: flex !important; flex-direction: column; align-items: stretch;
+  gap: 1.1rem;
+  width: 100%; max-width: 100%; margin: 0 auto; min-width: 0;
+}
+@media (min-width: 720px)  { body.home-search.app-mode .home-cards { max-width: 720px; } }
+@media (min-width: 1280px) { body.home-search.app-mode .home-cards { max-width: 820px; } }
+@media (min-width: 1600px) { body.home-search.app-mode .home-cards { max-width: 900px; } }
+
+/* Everything inside the column fills it — no inner element may set its own width. */
+body.home-search .home-cards > .home-search-hero,
+body.home-search .home-cards > .home-quicklinks,
+body.home-search .home-search-hero .search-panel,
+body.home-search .home-search-hero .search-panel-barrow {
+  width: 100% !important; max-width: none !important;
+  margin-left: 0 !important; margin-right: 0 !important;
+}
+/* The bar's own vertical padding was stacking with the column gap and the hero's
+   padding, producing that variable void above POPULAR TOPICS. */
+body.home-search .home-search-hero { padding-bottom: 0 !important; }
+body.home-search .home-search-hero .search-panel-barrow { padding-bottom: 0 !important; }
+body.home-search .home-search-hero .search-panel-hero-inner { padding-bottom: 1rem !important; }
+
+/* Title: a narrow clamp so it stays large without ballooning on the widest
+   screens or shrinking away on mid-size ones. */
+@media (min-width: 720px) {
+  body.home-search .home-search-hero .search-panel-title {
+    font-size: clamp(1.95rem, 1.4rem + 1.2vw, 2.4rem) !important;
+  }
+}
