@@ -18004,3 +18004,13 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 .pdir-topichost .aii-fi-acc-ic { width: 20px !important; height: 20px !important; }
 .pdir-topichost .aii-fi-acc-ic svg { width: 16px !important; height: 16px !important; }
 .pdir-topichost .aii-fi-acc-name { font-size: 0.83rem !important; font-weight: 600 !important; }
+
+/* Head actions sit hard right and drop to sit ON the section rule rather than
+   floating between the title and the subtext. */
+.aii-nav-dd .aii-nav-dd-titles { align-items: end; }
+.aii-nav-dd .aii-nav-dd-headbtns {
+  justify-self: end; align-self: end; margin-bottom: -18px; position: relative; z-index: 2;
+}
+@media (max-width: 720px) {
+  .aii-nav-dd .aii-nav-dd-headbtns { justify-self: start; margin-bottom: 0; }
+}
