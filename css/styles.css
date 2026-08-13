@@ -17686,7 +17686,7 @@ body.app-mode:not(.home-search) #topic-tab-body {
 body.app-mode:not(.home-search) #content,
 body.app-mode.sticky-always.has-subnav:not(.home-search) #content {
   top: auto !important; left: auto !important; right: auto !important; bottom: auto !important;
-  padding: calc(var(--nav-h) + var(--subnav-height, 66px) + 1rem) 0 3rem !important;
+  padding: calc(var(--nav-h) + var(--subnav-height, 66px) + 0.25rem) 0 3rem !important;
 }
 body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important; }
 @media (max-width: 560px) { body.app-mode:not(.home-search) .topic-layout { padding: 0 1rem 1rem !important; } }
