@@ -17916,6 +17916,8 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 /* Keep the AI-generated label and the section rule in the condensed state — only
    the back bar, the buttons and the subtitle were meant to go. */
 .aii-nav-dd.is-condensed .trend-controls-legend { display: flex !important; }
+/* Only the sports TOGGLE sheds on scroll — the AI-generated label stays. */
+.aii-nav-dd.is-condensed .trend-sports-toggle { display: none !important; }
 .aii-nav-dd.is-condensed .aii-nav-dd-subbar {
   display: block !important; border-bottom: 1.5px solid #d3d9e4;
 }
@@ -17923,10 +17925,18 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
   padding-bottom: 12px !important; border-bottom: 1.5px solid #d3d9e4; margin-bottom: 0;
 }
 /* Clear air between the sub-bar rule and the first trend. */
-.aii-nav-dd-trending .aii-nav-dd-scroll { padding-top: 18px !important; }
+.aii-nav-dd-trending .aii-nav-dd-scroll { padding-top: 6px !important; }
 /* The live grid's closing rule was doubling with the last row's. */
 .aii-nav-dd-trending .trend-card-grid { border-bottom: none !important; padding-bottom: 0 !important; }
 .aii-nav-dd-trending .trend-card:last-child { border-bottom: 1px solid #e9ecf2 !important; }
 /* Earlier: bigger title, lighter rows. */
 .trend-earlier-title { font-size: 1.3rem !important; }
 .trend-earlier .trend-card-title { font-weight: 600 !important; font-size: 0.96rem !important; }
+
+/* The AI label / sports toggle row needs air above the sub-bar rule so neither
+   sits on it. */
+.aii-nav-dd-trending .trend-controls-legend { padding-bottom: 4px; }
+/* Explore Further's nested category rows inside a drawer: square + connected. */
+.te-drawer[open] .xf-acc { border: none !important; border-bottom: 1px solid #eef1f6 !important; border-radius: 0 !important; box-shadow: none !important; }
+.te-drawer[open] .xf-acc:last-child { border-bottom: none !important; }
+.te-drawer[open] .xf-acc > .xf-sum { border-radius: 0 !important; background: transparent !important; }
