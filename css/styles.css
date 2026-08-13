@@ -18251,3 +18251,12 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
 .tai-acc-body .aii-fi-acclist .aii-fi-acc-tx { display: flex; align-items: center; min-height: 0; }
 .pdir-topichost .aii-fi-acclist .aii-fi-acc-chev,
 .tai-acc-body .aii-fi-acclist .aii-fi-acc-chev { align-self: center; margin-left: auto; }
+
+/* ═══════════════ revamp761 ═══════════════════════════════════════════════ */
+
+/* Parent topic rows lighter again, and an open card separates its header from
+   the topic grid with a rule plus real breathing room. */
+.pdir-card-name { font-weight: 600 !important; letter-spacing: -0.01em; }
+.pdir-card.is-open > .pdir-cardhead { border-bottom: 1px solid #e7ecf3; }
+.pdir-card.is-open .pdir-cardbody { padding-top: 16px !important; padding-bottom: 18px !important; }
+.pdir-card.is-open .pdir-grid { gap: 9px; }
