@@ -630,6 +630,10 @@ function openNavDropdown(cfg) {
         <div class="aii-nav-dd-titles">
           <div class="aii-nav-dd-title">${cfg.spark ? '<span class="aii-nav-dd-spark">✦</span> ' : ''}${escapeHTML(cfg.title || '')}</div>
           ${cfg.subtitle ? `<div class="aii-nav-dd-sub">${escapeHTML(cfg.subtitle)}</div>` : ''}
+          ${cfg.headSearch ? `<form class="navdd-headsearch" data-navdd-headsearch role="search">
+              <span class="navdd-headsearch-ic" aria-hidden="true">${NAVDD_SEARCH_IC}</span>
+              <input type="search" class="navdd-headsearch-input" placeholder="${escapeAttr(cfg.headSearch)}" aria-label="${escapeAttr(cfg.headSearch)}" autocomplete="off">
+            </form>` : ''}
           ${Array.isArray(cfg.headButtons) && cfg.headButtons.length
             ? `<div class="aii-nav-dd-headbtns">${cfg.headButtons.map((b, i) => `<a href="${escapeAttr(b.href || '#')}" class="aii-nav-dd-headbtn${b.primary ? ' is-primary' : ''}" data-navdd-headbtn="${i}">${b.icon || ''}<span>${escapeHTML(b.label)}</span></a>`).join('')}</div>`
             : ''}
@@ -648,6 +652,11 @@ function openNavDropdown(cfg) {
     </div>`;
   const closeFn = cfg.onClose || closeNavDropdown;
   panel.querySelector('[data-navdd-close]')?.addEventListener('click', closeFn);
+  panel.querySelector('[data-navdd-headsearch]')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const v = (e.currentTarget.querySelector('input')?.value || '').trim();
+    if (v) navigate(`#/custom/${encodeURIComponent(v)}`);
+  });
   // Head action buttons (e.g. Topics: Homepage · Search Custom Topic).
   if (Array.isArray(cfg.headButtons)) {
     panel.querySelectorAll('[data-navdd-headbtn]').forEach((el) => {
@@ -1129,9 +1138,7 @@ function topicsNavDdCfg() {
     subtitle: 'Browse every topic and its subtopics.',
     // One head button: Search Custom Topic (the Homepage button was dropped — the
     // brand/Home nav already covers it, #img77).
-    headButtons: [
-      { label: 'Search Custom Topic', href: '#/search', primary: true, icon: NAVDD_SEARCH_IC, onClick: () => { openSearchFromNav(); } },
-    ],
+    headSearch: 'Search any topic…',
     contentHTML: topicsTreeHTML(),
     onClose: userCloseNavDropdown,
     wire: (panel) => {
