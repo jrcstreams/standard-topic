@@ -703,23 +703,71 @@ const PROMPTS_BUILD_IC = '<svg viewBox="0 0 24 24" width="20" height="20" fill="
 const PROMPTS_LIB_IC = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>';
 const AI_SPARK_INLINE = '<svg class="ph-spark" viewBox="0 0 24 24" width="13" height="13" fill="#2563eb" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
 
-// Prompt Library topic tree — accordions whose rows SELECT a topic (show its
-// prompts inline) instead of navigating.
-function promptLibTreeHTML() {
+// ── "Prompts by Topic" as a DIRECTORY (revamp737) ────────────────────────────
+// One header per parent topic, then a flat list of accordions beneath it: the
+// parent itself first, then each of its subtopics. Opening a topic reveals that
+// topic's whole prompt set in place — a "Topic-Specific Prompts" section and an
+// "Evergreen Prompts" section, each prompt its own accordion holding the full
+// preview + model picker + submit. Nothing drills to another view: every prompt
+// Standard Topic offers can be run from this one page.
+const PDIR_CHEV = '<svg class="pdir-chev" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
+function promptDirectoryHTML() {
   const groups = getTopicsGroupedByParent() || [];
-  const row = (t, all) => `<button type="button" class="${all ? 'aiidd-vall' : 'aiidd-vlink'} prompts-lib-topic" data-lib-topic data-slug="${escapeAttr(t.slug)}" data-name="${escapeAttr(t.name)}"><span class="aiidd-vlink-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span><span class="aiidd-vlink-name">${all ? `All ${escapeHTML(t.name)}` : escapeHTML(t.name)}</span>${all ? AIIDD_CHEV_R : ''}</button>`;
-  const block = ({ parent, subtopics }) => {
-    const subs = subtopics || [];
-    return `<section class="aiidd-parent" data-open="false">
-      <button type="button" class="aiidd-parent-head" data-aiidd-toggle aria-expanded="false">
-        <span class="aiidd-parent-ic">${topicIconSVG(parent.icon || 'globe', 'tsp-ic-svg')}</span>
-        <span class="aiidd-parent-name">${escapeHTML(parent.name)}</span>
-        ${TSP_CHEV}
+  const countFor = (slug) => { try { return (getShortcutsForTopic(slug) || []).filter((x) => x && x.prompt).length; } catch (_) { return 0; } };
+  const row = (t, isParent) => {
+    const n = countFor(t.slug);
+    return `<div class="pdir-acc${isParent ? ' pdir-acc--parent' : ''}" data-pdir-topic data-slug="${escapeAttr(t.slug)}" data-name="${escapeAttr(t.name)}">
+      <button type="button" class="pdir-accsum" aria-expanded="false">
+        <span class="pdir-acc-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
+        <span class="pdir-acc-name">${escapeHTML(t.name)}</span>
+        ${n ? `<span class="pdir-acc-count">${n}</span>` : ''}
+        ${PDIR_CHEV}
       </button>
-      <div class="aiidd-parent-body"><div class="aiidd-vlist">${row(parent, true)}${subs.map((s) => row(s, false)).join('')}</div></div>
-    </section>`;
+      <div class="pdir-accbody" hidden></div>
+    </div>`;
   };
-  return `<div class="aiidd-tree">${groups.map(block).join('')}</div>`;
+  const block = ({ parent, subtopics }) => `<section class="pdir-group">
+      <h4 class="pdir-grouphead">${topicIconSVG(parent.icon || 'globe', 'pdir-grouphead-ic')}<span>${escapeHTML(parent.name)}</span></h4>
+      <div class="pdir-list">${row(parent, true)}${(subtopics || []).map((t) => row(t, false)).join('')}</div>
+    </section>`;
+  return `<div class="pdir">${groups.map(block).join('')}</div>`;
+}
+// Lazily mount each topic's prompt set the first time its row opens, then leave
+// it mounted so re-opening is instant. Rows toggle independently — this is a
+// directory to browse, not a single-selection picker.
+function wirePromptDirectory(root, ctls) {
+  root.querySelectorAll('.pdir-acc').forEach((acc) => {
+    const btn = acc.querySelector('.pdir-accsum');
+    const host = acc.querySelector('.pdir-accbody');
+    if (!btn || !host) return;
+    btn.addEventListener('click', () => {
+      const open = !acc.classList.contains('is-open');
+      if (open && host.dataset.mounted !== '1') {
+        host.dataset.mounted = '1';
+        host.className = 'pdir-accbody prompts-topic-host';
+        const slug = acc.dataset.slug; const name = acc.dataset.name;
+        let shortcuts = [];
+        try { shortcuts = getShortcutsForTopic(slug) || []; } catch (_) {}
+        const descriptions = {}; const icons = {};
+        shortcuts.forEach((sc) => { if (sc && sc.name) { descriptions[sc.name] = sc.description || ''; icons[sc.name] = sc.icon || ''; } });
+        try {
+          const c = renderAIIntelligence(host, {
+            inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
+            topic: name, label: name, descriptions, icons, shortcuts, topicKey: slug,
+          });
+          if (ctls) ctls.push(c);
+        } catch (err) {
+          console.error('prompt directory mount failed', acc.dataset.slug, err);
+          host.dataset.mounted = '';
+          host.innerHTML = '<p class="aii-empty">Couldn\u2019t load these prompts. Close and re-open to retry.</p>';
+        }
+      }
+      host.hidden = !open;
+      acc.classList.toggle('is-open', open);
+      btn.setAttribute('aria-expanded', String(open));
+      requestAnimationFrame(updateNavDdFades);
+    });
+  });
 }
 
 function wirePromptsDropdown(panel, initialView) {
@@ -734,7 +782,18 @@ function wirePromptsDropdown(panel, initialView) {
     if (h !== target) { try { replaceRoute(target); } catch (_) {} }
   };
   let ctl = null;
-  const destroyCtl = () => { if (ctl && ctl.destroy) { try { ctl.destroy(); } catch (_) {} } ctl = null; };
+  // Every AI-component instance the directory has mounted, so switching views
+  // tears them all down rather than leaking one per opened topic.
+  let dirCtls = [];
+  const destroyDirCtls = () => {
+    dirCtls.forEach((c) => { if (c && c.destroy) { try { c.destroy(); } catch (_) {} } });
+    dirCtls = [];
+  };
+  const destroyCtl = () => {
+    if (ctl && ctl.destroy) { try { ctl.destroy(); } catch (_) {} }
+    ctl = null;
+    destroyDirCtls();
+  };
   // The shell head IS the view header — update its title + subtitle per view so
   // there's no duplicate heading inside the body.
   const setHead = (title, sub) => {
@@ -779,29 +838,10 @@ function wirePromptsDropdown(panel, initialView) {
   };
 
   // Per-topic preview cards (Card View): icon + name, first 3 prompts, View all.
-  const topicCardsHTML = () => {
-    const groups = getTopicsGroupedByParent() || [];
-    const flat = [];
-    groups.forEach(({ parent, subtopics }) => { flat.push(parent, ...(subtopics || [])); });
-    const cards = flat.map((t) => {
-      let sc = []; try { sc = (getShortcutsForTopic(t.slug) || []).filter((s) => s && s.name && s.prompt); } catch (_) {}
-      if (!sc.length) return '';
-      const rows = sc.slice(0, 3).map((s, i) =>
-        `<button type="button" class="ph-card-prompt" data-ph-prompt data-slug="${escapeAttr(t.slug)}" data-i="${i}">${AI_SPARK_INLINE}<span>${escapeHTML(s.name)}</span></button>`).join('');
-      return `<div class="ph-topic-card">
-        <div class="ph-card-head"><span class="ph-card-ic">${topicIconSVG(t.icon || 'globe', 'tsp-ic-svg')}</span><span class="ph-card-name">${escapeHTML(t.name)}</span></div>
-        <div class="ph-card-list">${rows}</div>
-        <button type="button" class="ph-card-more" data-ph-more data-slug="${escapeAttr(t.slug)}" data-name="${escapeAttr(t.name)}">View all ${sc.length} prompts ${AIIDD_ARROW}</button>
-      </div>`;
-    }).join('');
-    return `<div class="ph-topic-grid">${cards}</div>`;
-  };
-
   const showLanding = () => {
     destroyCtl();
     setHead('Prompts', 'Ready-made prompts for every topic — or build your own.');
     setBack(null);
-    const view = (localStorage.getItem('st_promptlib_view') === 'flat') ? 'flat' : 'cards';
     setHeadBtns(true);
     root.innerHTML = `
       <div class="prompts-home">
@@ -810,12 +850,9 @@ function wirePromptsDropdown(panel, initialView) {
           <div class="ph-feat-grid" data-ph-feat-grid></div>
         </section>
         <section class="ph-lib">
-          <div class="ph-sec-head ph-sec-head--toggle">
+          <div class="ph-sec-head">
             <h3 class="ph-sec-title">Prompts by Topic</h3>
-            <div class="ph-viewtoggle" role="tablist" aria-label="Library view">
-              <button type="button" data-ph-view="cards" class="${view === 'cards' ? 'is-active' : ''}">Card View</button>
-              <button type="button" data-ph-view="flat" class="${view === 'flat' ? 'is-active' : ''}">Flatten Topics</button>
-            </div>
+            <p class="ph-sec-sub">Every topic and subtopic, with its full prompt set. Open one to run any prompt right here.</p>
           </div>
           <div class="ph-body" data-ph-body></div>
         </section>
@@ -851,31 +888,10 @@ function wirePromptsDropdown(panel, initialView) {
         requestAnimationFrame(updateNavDdFades);
       }).catch(() => {});
 
-    // Library body — Card View / Flatten Topics toggle (persisted).
+    // Library body — the topic directory.
     const body = root.querySelector('[data-ph-body]');
-    const renderView = (v) => {
-      if (v === 'flat') {
-        body.innerHTML = `<div class="prompts-lib" data-lib>${promptLibTreeHTML()}</div>`;
-        const lib = body.querySelector('[data-lib]');
-        wireNavDdAccordions(lib);
-        lib.querySelectorAll('[data-lib-topic]').forEach((b) => b.addEventListener('click', () => showTopicPrompts(b.dataset.slug, b.dataset.name)));
-      } else {
-        body.innerHTML = topicCardsHTML();
-        body.querySelectorAll('[data-ph-prompt]').forEach((b) => b.addEventListener('click', () => {
-          let sc = []; try { sc = (getShortcutsForTopic(b.dataset.slug) || []).filter((s) => s && s.name && s.prompt); } catch (_) {}
-          const t = getTopicBySlug(b.dataset.slug);
-          openShortcutPrompt(sc[Number(b.dataset.i)], t ? t.name : '');
-        }));
-        body.querySelectorAll('[data-ph-more]').forEach((b) => b.addEventListener('click', () => showTopicPrompts(b.dataset.slug, b.dataset.name)));
-      }
-      requestAnimationFrame(updateNavDdFades);
-    };
-    root.querySelectorAll('[data-ph-view]').forEach((b) => b.addEventListener('click', () => {
-      root.querySelectorAll('[data-ph-view]').forEach((x) => x.classList.toggle('is-active', x === b));
-      try { localStorage.setItem('st_promptlib_view', b.dataset.phView); } catch (_) {}
-      renderView(b.dataset.phView);
-    }));
-    renderView(view);
+    body.innerHTML = promptDirectoryHTML();
+    wirePromptDirectory(body, dirCtls);
     syncViewHash(null);
     requestAnimationFrame(updateNavDdFades);
   };
@@ -892,12 +908,10 @@ function wirePromptsDropdown(panel, initialView) {
 
   const showLibrary = () => {
     destroyCtl();
-    setHead('Prompt Library', 'Pick a topic to see its ready-made prompts.');
+    setHead('Prompt Library', 'Every topic and subtopic, with its full prompt set.');
     setHeadBtns(false); setBack('Prompts Overview', showLanding);
-    root.innerHTML = `<div class="prompts-lib" data-lib>${promptLibTreeHTML()}</div>`;
-    const lib = root.querySelector('[data-lib]');
-    wireNavDdAccordions(lib);
-    lib.querySelectorAll('[data-lib-topic]').forEach((b) => b.addEventListener('click', () => showTopicPrompts(b.dataset.slug, b.dataset.name)));
+    root.innerHTML = promptDirectoryHTML();
+    wirePromptDirectory(root, dirCtls);
     syncViewHash('library');
     requestAnimationFrame(updateNavDdFades);
   };

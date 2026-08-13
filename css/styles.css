@@ -15745,18 +15745,8 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .ph-headbtn--primary { background: #26375a; color: #fff; border-color: #26375a; }
 @media (hover: hover) { .ph-headbtn--primary:hover { background: #1f2d4d; border-color: #1f2d4d; transform: translateY(-1px); } }
 /* Section heads — one consistent style for Featured / Browse (#img251). */
-.ph-sec-head { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding-bottom: 11px; border-bottom: 1px solid #e4e8f0; margin-bottom: 16px; }
-.ph-sec-head--toggle .ph-viewtoggle { margin-left: auto; }
-@media (max-width: 620px) { .ph-sec-head--toggle .ph-viewtoggle { margin-left: 0; } }
+.ph-sec-head { display: block; padding-bottom: 11px; border-bottom: 1.5px solid #d3d9e4; margin-bottom: 18px; }
 .ph-sec-title { margin: 0; font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: #26375a; letter-spacing: -0.015em; }
-/* Card View | Flatten Topics — quiet segmented toggle. */
-.ph-viewtoggle { display: inline-flex; gap: 4px; padding: 4px; background: #eef1f6; border: 1px solid #e2e6ee; border-radius: 10px; }
-.ph-viewtoggle button {
-  border: none; background: none; cursor: pointer; border-radius: 7px; padding: 6px 13px;
-  font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #5a6b86;
-  transition: background .12s, color .12s;
-}
-.ph-viewtoggle button.is-active { background: #fff; color: #26375a; box-shadow: 0 1px 2px rgba(15,23,42,.1); }
 /* Featured Prompts */
 .ph-featured { margin-bottom: 28px; margin-top: 6px; }
 .ph-feat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
@@ -15781,39 +15771,6 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .ph-feat-name { font-family: var(--font-display); font-size: 1rem; font-weight: 650; color: #1a2740; letter-spacing: -0.012em; }
 .ph-feat-desc { font-size: 0.8rem; line-height: 1.4; color: #5a6b86; }
 /* Topic preview cards */
-.ph-topic-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-@media (max-width: 980px) { .ph-topic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 600px) { .ph-topic-grid { grid-template-columns: 1fr; } }
-.ph-topic-card {
-  display: flex; flex-direction: column; min-width: 0; padding: 13px 14px 10px;
-  background: #fff; border: 1px solid var(--color-surface-border); border-radius: 13px;
-  box-shadow: 0 1px 2px rgba(15,26,46,.04);
-}
-.ph-card-head { display: flex; align-items: center; gap: 9px; padding-bottom: 9px; border-bottom: 1px solid #eef1f6; margin-bottom: 5px; }
-.ph-card-ic { display: inline-flex; color: #26375a; }
-.ph-card-ic svg { width: 17px; height: 17px; }
-.ph-card-name { font-family: var(--font-display); font-size: 0.98rem; font-weight: 650; color: #1a2740; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ph-card-list { display: flex; flex-direction: column; }
-.ph-card-prompt {
-  display: flex; align-items: center; gap: 7px; min-width: 0; width: 100%;
-  padding: 7px 4px; border: none; background: none; cursor: pointer; text-align: left; border-radius: 7px;
-  font-family: var(--font-family); font-size: 0.83rem; font-weight: 550; color: #33415c;
-  transition: background .12s, color .12s;
-}
-.ph-card-prompt .ph-spark { flex: none; opacity: 0.85; align-self: center; }
-.ph-card-prompt span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-@media (hover: hover) { .ph-card-prompt:hover { background: #f4f6fb; color: #1d4ed8; } }
-.ph-card-more {
-  display: inline-flex; align-items: center; gap: 5px; align-self: flex-start;
-  margin-top: 6px; padding: 5px 4px; border: none; background: none; cursor: pointer;
-  font-family: var(--font-family); font-size: 0.78rem; font-weight: 650; color: #2f4d9e; border-radius: 6px;
-}
-@media (hover: hover) { .ph-card-more:hover { color: #1d4ed8; } .ph-card-more:hover .aiidd-arrow { transform: translateX(2px); } }
-.ph-card-more .aiidd-arrow { transition: transform .14s; }
-
-.prompts-home .ph-body .prompts-lib { margin-top: -6px; }
-.prompts-home .ph-body .prompts-lib .aiidd-tree > .aiidd-parent:first-child { border-top: none; }
-.prompts-home .ph-body .prompts-lib .aiidd-tree > .aiidd-parent:first-child .aiidd-parent-head { padding-top: 6px; }
 /* Cleaner back control (#390) — a subtle pill; sits ABOVE the view title in the head. */
 .prompts-back {
   display: inline-flex; align-items: center; gap: 5px; margin: 0 0 16px; padding: 6px 12px 6px 9px;
@@ -17377,4 +17334,83 @@ body.home-search .home-search-hero .search-panel-hero-inner { padding-bottom: 1r
   body.home-search .home-search-hero .search-panel-title {
     font-size: clamp(1.95rem, 1.4rem + 1.2vw, 2.4rem) !important;
   }
+}
+
+/* ═══ Prompts by Topic — a DIRECTORY (revamp737) ═════════════════════════════
+   Parent-topic headers, each followed by a flat list of accordions: the parent
+   first, then its subtopics. Opening one reveals that topic's whole prompt set
+   in place (Topic-Specific + Evergreen sections, each prompt its own accordion
+   with the full preview/submit), so the entire library is runnable from here. */
+.pdir { display: flex; flex-direction: column; gap: 2rem; }
+.pdir-group { min-width: 0; }
+.pdir-grouphead {
+  display: flex; align-items: center; gap: 9px; margin: 0 0 0.55rem; padding: 0 2px 10px;
+  border-bottom: 1.5px solid #d3d9e4;
+  font-family: var(--font-display); font-size: 1.16rem; font-weight: 800;
+  letter-spacing: -0.018em; color: #1a2740;
+}
+.pdir-grouphead-ic { flex: none; width: 20px; height: 20px; color: #6f83a6; }
+.pdir-grouphead-ic svg { width: 20px; height: 20px; display: block; }
+.pdir-list {
+  display: flex; flex-direction: column;
+  border: 1px solid var(--color-surface-border); border-radius: 14px;
+  background: #fff; overflow: hidden;
+}
+.pdir-acc { border-bottom: 1px solid #eef1f6; min-width: 0; }
+.pdir-acc:last-child { border-bottom: none; }
+.pdir-accsum {
+  display: flex; align-items: center; gap: 11px; width: 100%; min-width: 0;
+  padding: 13px 15px; border: none; background: none; cursor: pointer; text-align: left;
+  -webkit-tap-highlight-color: transparent; transition: background .12s ease;
+}
+@media (hover: hover) { .pdir-accsum:hover { background: #f7f9fc; } }
+.pdir-acc-ic { flex: none; display: inline-flex; color: #7d8ca6; transition: color .12s ease; }
+.pdir-acc-ic svg { width: 19px; height: 19px; display: block; }
+.pdir-acc-name {
+  min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-family: var(--font-display); font-size: 0.95rem; font-weight: 700;
+  letter-spacing: -0.01em; color: #26375a;
+}
+/* The parent's own row reads a shade stronger than its subtopics. */
+.pdir-acc--parent .pdir-acc-name { font-size: 0.99rem; }
+.pdir-acc-count {
+  flex: none; min-width: 22px; padding: 2px 7px; border-radius: 999px;
+  background: #eef1f6; color: #64748b;
+  font-family: var(--font-family); font-size: 0.7rem; font-weight: 700; text-align: center; line-height: 1.4;
+}
+.pdir-chev { flex: none; color: #a8b4c9; transition: transform .18s ease, color .12s ease; }
+.pdir-acc.is-open > .pdir-accsum { background: #f4f7fc; }
+@media (hover: hover) { .pdir-acc.is-open > .pdir-accsum:hover { background: #f4f7fc; } }
+.pdir-acc.is-open .pdir-acc-ic { color: #2f4d9e; }
+.pdir-acc.is-open .pdir-chev { transform: rotate(180deg); color: #6f83a6; }
+.pdir-acc.is-open .pdir-acc-count { background: #dfe7f6; color: #2f4d9e; }
+.pdir-accbody { padding: 2px 15px 18px; min-width: 0; }
+.pdir-accbody[hidden] { display: none !important; }
+/* The mounted prompt set: the two section headers sit tight to the row above,
+   and each prompt is a plain divided accordion rather than a boxed card. */
+.pdir-accbody .aii-tabhead, .pdir-accbody .aii-tabhead-spacer { display: none !important; }
+.pdir-accbody .aii-fi-sec { margin-top: 14px; }
+.pdir-accbody .aii-fi-sec:first-child { margin-top: 6px; }
+.pdir-accbody .aii-fi-sec:last-child { margin-bottom: 0; }
+.pdir-accbody .aii-fi-sechead { padding: 0 2px 7px; margin-bottom: 2px; border-bottom: 1px solid #e4e8f0; }
+.pdir-accbody .aii-fi-sectitle { font-size: 0.95rem; font-weight: 700; letter-spacing: -0.01em; }
+.pdir-accbody .aii-fi-secsub { font-size: 0.8rem; margin-top: 2px; }
+.pdir-accbody .aii-fi-acclist { gap: 0; border: none; border-radius: 0; overflow: visible; }
+.pdir-accbody .aii-fi-acclist .aii-fi-acc {
+  border: none; border-bottom: 1px solid #eef1f6; border-radius: 0; box-shadow: none;
+}
+.pdir-accbody .aii-fi-acclist .aii-fi-acc:last-child { border-bottom: none; }
+.pdir-accbody .aii-fi-acclist .aii-fi-accsum { border-radius: 0; padding-top: 12px; padding-bottom: 12px; }
+.pdir-accbody .aii-fi-acc-ic { width: 24px; height: 24px; }
+.pdir-accbody .aii-fi-acc-ic svg { width: 18px; height: 18px; }
+.pdir-accbody .aii-fi-acc-name { font-size: 0.89rem; }
+/* Section subtext for the Prompts page header. */
+.ph-sec-sub { margin: 3px 0 0; font-family: var(--font-family); font-size: 0.85rem; color: var(--color-text-muted); }
+@media (max-width: 560px) {
+  .pdir { gap: 1.5rem; }
+  .pdir-grouphead { font-size: 1.06rem; }
+  .pdir-accsum { padding: 12px 12px; gap: 9px; }
+  .pdir-acc-name { font-size: 0.9rem; }
+  .pdir-acc--parent .pdir-acc-name { font-size: 0.94rem; }
+  .pdir-accbody { padding: 2px 11px 15px; }
 }
