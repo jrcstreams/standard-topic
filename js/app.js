@@ -2597,7 +2597,17 @@ function backBarHTML() {
 function wireNavDdCondense(panel) {
   const sc = panel.querySelector('[data-navdd-scroll]');
   if (!sc) return;
-  const apply = () => panel.classList.toggle('is-condensed', sc.scrollTop > 12);
+  // Hysteresis: condensing removes header height, which pulls scrollTop back
+  // under a single threshold and un-condenses — that loop is the flicker on
+  // mobile. Separate enter/exit points break it.
+  let on = false;
+  const apply = () => {
+    const y = sc.scrollTop;
+    if (!on && y > 40) on = true;
+    else if (on && y < 6) on = false;
+    else return;
+    panel.classList.toggle('is-condensed', on);
+  };
   sc.addEventListener('scroll', apply, { passive: true });
   apply();
 }

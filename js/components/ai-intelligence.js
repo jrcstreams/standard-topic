@@ -1113,8 +1113,10 @@ export function renderAIIntelligence(container, scope) {
     }
     // No section icons (revamp): headers are just title + subtext over a rule
     // slightly heavier than the site hairlines, so each reads as a clear divider.
+    // Title only — the subtext under "Topic-Specific Prompts" / "Evergreen Prompts"
+    // restated what the title already said and pushed the list down (revamp740).
     const sec = (title, sub, listHTML) => listHTML
-      ? `<section class="aii-fi-sec"><div class="aii-fi-sechead"><h3 class="aii-fi-sectitle">${esc(title)}</h3><p class="aii-fi-secsub">${esc(sub)}</p></div>${listHTML}</section>`
+      ? `<section class="aii-fi-sec"><div class="aii-fi-sechead"><h3 class="aii-fi-sectitle">${esc(title)}</h3></div>${listHTML}</section>`
       : '';
     // With only ONE group (e.g. a custom search = all evergreen), the section label is
     // redundant — just show the accordions with no header/separator (#img486).

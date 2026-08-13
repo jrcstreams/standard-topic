@@ -17548,3 +17548,116 @@ body.home-search .home-search-hero .search-panel-hero-inner { padding-bottom: 1r
 .tai-brief-host .im-msec-body .aii-sec-body p { margin: 0 0 0.7rem; }
 /* Loading + empty states inside a brief part shouldn't fill the row. */
 .tai-brief-host .aii-empty { padding: 10px 2px; font-size: 0.84rem; }
+
+/* ═══════════════ revamp740 ═══════════════════════════════════════════════ */
+
+/* ── Stacked What's Trending ─────────────────────────────────────────────── */
+@media (max-width: 1023.98px) {
+  .trending-topics-title-ic svg { width: 24px; height: 24px; }
+  /* The link was drifting toward Today's Top News instead of closing its own
+     section — pull it up under the last trend and push the next section away. */
+  body.home-search #home-trending .trend-viewmore-row { padding: 12px 0 6px !important; }
+  body.home-search .home-sections .home-main { margin-top: 2.4rem !important; }
+}
+/* Sidebar: same — close to the last trend, which now carries a rule beneath it. */
+@media (min-width: 1024px) {
+  body.home-search .home-side #home-trending .trend-card:last-of-type { border-bottom: 1px solid #e2e8f2; }
+  body.home-search #home-trending .trend-viewmore-row { padding: 12px 0 8px !important; }
+}
+
+/* ── Trending page: first row sits on its rule ───────────────────────────── */
+.aii-nav-dd-trending .aii-nav-dd-subbar { padding-bottom: 0 !important; }
+.aii-nav-dd-trending .trend-card-grid { padding-top: 0 !important; margin-top: 0 !important; }
+.aii-nav-dd-trending .trend-card:first-child .trend-card-trigger { padding-top: 13px !important; }
+
+/* ── Condensed page header: smooth, and it takes the subtext with it ─────── */
+.aii-nav-dd .page-backbar,
+.aii-nav-dd .aii-nav-dd-headbtns,
+.aii-nav-dd .aii-nav-dd-sub {
+  overflow: hidden;
+  transition: max-height .26s cubic-bezier(.22,.61,.21,1), opacity .18s ease, margin .26s ease;
+  max-height: 120px; opacity: 1;
+}
+.aii-nav-dd.is-condensed .page-backbar,
+.aii-nav-dd.is-condensed .aii-nav-dd-headbtns,
+.aii-nav-dd.is-condensed .aii-nav-dd-sub {
+  max-height: 0 !important; opacity: 0 !important;
+  margin-top: 0 !important; margin-bottom: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important;
+  display: block !important;                       /* animate, don't snap */
+}
+.aii-nav-dd .aii-nav-dd-head { transition: padding .26s ease; }
+
+/* ── Prompt directory ───────────────────────────────────────────────────── */
+/* The parent's own row is a peer of its subtopics, not a second heading. */
+.pdir-acc--parent .pdir-acc-name { font-weight: 600; }
+/* Open/hover states span the full row width, matching the rule above them —
+   they were bleeding to the container edges past the list's own inset. */
+.pdir-acc { position: relative; }
+.pdir-accsum { padding-left: 10px !important; padding-right: 10px !important; }
+.pdir-accbody { padding-left: 10px !important; padding-right: 10px !important; }
+.pdir-acc.is-open > .pdir-accsum,
+.pdir-list .pdir-acc > .pdir-accsum { border-radius: 0 !important; }
+/* Prompt rows inside a topic: never round on hover, and match their section
+   header's size so the hierarchy reads top-down. */
+.pdir-accbody .aii-fi-acc,
+.pdir-accbody .aii-fi-accsum,
+.tai-acc-body .aii-fi-acc,
+.tai-acc-body .aii-fi-accsum { border-radius: 0 !important; }
+.pdir-accbody .aii-fi-acc-name,
+.tai-acc-body .aii-fi-acc-name { font-size: 0.88rem !important; font-weight: 600 !important; }
+.pdir-accbody .aii-fi-secsub,
+.tai-acc-body .aii-fi-secsub { display: none !important; }
+
+/* ── Trending hover: no blue wash ────────────────────────────────────────── */
+@media (min-width: 1024px) and (hover: hover) {
+  body.home-search .home-side #home-trending .trend-card:not(.is-expanded):hover .trend-card-title { color: #26375a !important; }
+  body.home-search .home-side #home-trending .trend-card:not(.is-expanded):hover .trend-card-acc { color: #64748b; }
+}
+@media (hover: hover) {
+  body.home-search #home-trending .trend-card:not(.is-expanded):hover .trend-card-title,
+  .aii-nav-dd-trending .trend-card:not(.is-expanded):hover .trend-card-title { color: #26375a !important; }
+}
+
+/* ── News story, open ────────────────────────────────────────────────────── */
+/* One continuous tinted head — the title and the source/time/share row had
+   different fills, which drew a hard line between them. */
+#section-newsfeed .news-card--open .news-card-link,
+#section-newsfeed .news-card--open .news-card-foot,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-link,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-foot {
+  background: transparent !important; border: none !important; box-shadow: none !important;
+}
+/* The corner control is an X only — the sparkle was riding alongside it. */
+#section-newsfeed .news-card--open .news-act-ai .news-ai-spark-filled,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai .news-ai-spark-filled { display: none !important; }
+#section-newsfeed .news-card--open .news-act-ai .news-act-ai-x,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai .news-act-ai-x { display: block !important; }
+/* Provenance line matches the filled treatment used everywhere else. */
+.ni-inner > .ni-aitag-row .ni-aitag svg { fill: #2563eb; stroke: none; width: 13px; height: 13px; }
+.ni-inner > .ni-aitag-row { margin: 2px 0 12px; }
+/* Sections read as one brief: no rules between them, tighter rhythm. */
+.ni-inner .ni-sec { border-top: none !important; border-bottom: none !important; margin: 0 0 16px !important; padding-top: 0 !important; }
+.ni-inner .ni-sec:last-of-type { margin-bottom: 4px !important; }
+.ni-inner .ni-sec-head { margin: 0 0 5px !important; padding: 0 !important; border: none !important; }
+
+/* ── Trend expanded: label sits up under the title ───────────────────────── */
+body.home-search #home-trending .trend-card.is-expanded .trend-card-exp,
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-exp { padding-top: 2px !important; }
+.trend-exp-aitag { margin: 0 0 7px !important; }
+
+/* ── Topic pages scroll like a PAGE, not a locked panel ───────────────────
+   app-mode pinned #content to the viewport height with its own overflow, so the
+   wheel scrolled an inner box while the document behind it stayed put — which is
+   the "scrolling behind the page" feel. Topic pages now scroll normally; the
+   sub-header stays fixed and condenses off the document's own scroll. */
+html:has(body.app-mode:not(.home-search)),
+body.app-mode:not(.home-search) { overflow: visible !important; height: auto !important; }
+body.app-mode:not(.home-search) #content {
+  height: auto !important; min-height: 0 !important;
+  overflow: visible !important; position: static !important;
+}
+body.app-mode:not(.home-search) .topic-layout,
+body.app-mode:not(.home-search) .topic-tabpanel,
+body.app-mode:not(.home-search) #topic-tab-body {
+  height: auto !important; min-height: 0 !important; overflow: visible !important;
+}
