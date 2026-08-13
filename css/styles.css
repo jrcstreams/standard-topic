@@ -18061,3 +18061,21 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 }
 /* Keep the AI line clear of the X. */
 .ni-inner > .ni-aitag-row { padding-right: 38px; }
+
+/* ═══════════════ revamp750 ═══════════════════════════════════════════════ */
+
+/* The sub-bar stuck at top: 0 like the head, so the head simply covered it and
+   its rule never appeared while scrolled. It now sticks BELOW the head, using
+   the head's live height (set from JS as the head condenses). */
+.aii-nav-dd .aii-nav-dd-subbar {
+  top: var(--navdd-head-h, 96px) !important; z-index: 4 !important;
+  border-bottom: 1px solid #e4e8f0 !important;
+}
+.aii-nav-dd .aii-nav-dd-head { z-index: 6; }
+/* Title → subtext gap was display-heading leading plus the sub's own margin. */
+.aii-nav-dd .aii-nav-dd-sub { margin-top: 1px !important; }
+.aii-nav-dd .aii-nav-dd-title { line-height: 1.15; }
+/* The live section's closing rule was doing the work of a section divider. */
+.aii-nav-dd-trending .trend-card:last-child { border-bottom: 1px solid #eef1f6 !important; }
+.trend-earlier-head { border-bottom: 1px solid #e4e8f0 !important; padding-top: 24px !important; }
+.trend-earlier-title { font-weight: 750 !important; }

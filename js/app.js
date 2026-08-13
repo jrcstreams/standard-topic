@@ -2699,11 +2699,20 @@ function wireNavDdCondense(panel) {
     if (delta) sc.scrollTop = Math.max(0, sc.scrollTop + delta);
     requestAnimationFrame(() => { busy = false; });
   };
+  // The sub-bar sticks BELOW the head, so it needs the head's live height — which
+  // changes when the head condenses.
+  const syncStickyTop = () => {
+    const h = panel.querySelector('.aii-nav-dd-head');
+    if (h) panel.style.setProperty('--navdd-head-h', `${Math.round(h.getBoundingClientRect().height)}px`);
+  };
   const apply = () => {
     const y = sc.scrollTop;
     if (!on && y > 48) setState(true);
     else if (on && y < 8) setState(false);
+    syncStickyTop();
   };
+  syncStickyTop();
+  window.addEventListener('resize', syncStickyTop, { passive: true });
   sc.addEventListener('scroll', apply, { passive: true });
   apply();
 }
