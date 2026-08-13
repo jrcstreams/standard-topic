@@ -1,11 +1,61 @@
 {
   "comment": "Featured Prompts shown at the top of the Prompt Library (nav > Prompts). Each entry references a topic slug + the exact shortcut NAME from that topic's assignments (shortcuts-directory/assignments). Edit order/entries here or via the admin panel's data-file editor.",
   "featured": [
-    { "topic": "world", "name": "Global Headlines" },
-    { "topic": "artificial-intelligence", "name": "Frontier AI Lab Watch" },
-    { "topic": "markets", "name": "US Markets Snapshot" },
-    { "topic": "economy", "name": "Economic Indicators Roundup" },
-    { "topic": "geopolitics", "name": "Global Geopolitical Hotspots Updates" },
-    { "topic": "cryptocurrency", "name": "Crypto Market Snapshot" }
+    {
+      "topic": "world",
+      "name": "Global Headlines"
+    },
+    {
+      "topic": "artificial-intelligence",
+      "name": "Frontier AI Lab Watch"
+    },
+    {
+      "topic": "markets",
+      "name": "US Markets Snapshot"
+    },
+    {
+      "topic": "economy",
+      "name": "Economic Indicators Roundup"
+    },
+    {
+      "topic": "geopolitics",
+      "name": "Global Geopolitical Hotspots Updates"
+    },
+    {
+      "topic": "cryptocurrency",
+      "name": "Crypto Market Snapshot"
+    },
+    {
+      "topic": "us-politics",
+      "name": "Polling and Public Opinion"
+    },
+    {
+      "topic": "technology",
+      "name": "Tech Industry Snapshot"
+    },
+    {
+      "topic": "climate-environment",
+      "name": "Climate and Environment Snapshot"
+    },
+    {
+      "topic": "sports",
+      "name": "Sports Snapshot"
+    },
+    {
+      "topic": "entertainment",
+      "name": "What to Watch, Listen To and Play This Week"
+    },
+    {
+      "topic": "science",
+      "name": "Recent Scientific Discoveries"
+    },
+    {
+      "topic": "cybersecurity",
+      "name": "Recent Major Breaches"
+    },
+    {
+      "topic": "energy-commodities",
+      "name": "Oil Market Snapshot"
+    }
   ]
 }

@@ -18159,3 +18159,36 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
   }
   .aii-nav-dd .aii-nav-dd-titles > .navdd-headsearch { width: min(360px, 100%) !important; }
 }
+
+/* ═══════════════ revamp756 ═══════════════════════════════════════════════ */
+
+/* Nav search is a SQUARE at every squeeze stage, not just the icon-only one —
+   at the narrow stages the label was hidden by a different rule, leaving the
+   labelled button's horizontal padding behind as a wide pill. */
+@media (max-width: 899.98px) {
+  .sticky-hero-inner #nav-search.navbtn {
+    width: 38px !important; height: 38px !important; min-width: 38px !important;
+    flex: 0 0 38px !important; padding: 0 !important; gap: 0 !important;
+    border-radius: 10px !important; justify-content: center; align-self: center;
+  }
+  .sticky-hero-inner #nav-search .navbtn-label { display: none !important; }
+}
+
+/* Search suggestions: the dropdown must sit INSIDE the bar's width, flush under
+   it — it was a wider box overhanging both edges, with a stray rule above the
+   "Search …" footer. */
+.search-panel-suggest {
+  left: 0 !important; right: 0 !important; width: 100% !important; box-sizing: border-box;
+  margin: 0 !important; border-radius: 0 0 14px 14px !important;
+  border-top: none !important;
+}
+.search-panel-suggest-foot,
+.search-panel-suggest .search-panel-suggest-all { border-top: 1px solid #eef1f6 !important; }
+.search-panel-suggest > :first-child { border-top: none !important; }
+
+/* View more trending sits close under the last trend, with real air before
+   Today's Top News. */
+body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !important; }
+@media (max-width: 1023.98px) {
+  body.home-search .home-sections .home-main { margin-top: 3rem !important; }
+}

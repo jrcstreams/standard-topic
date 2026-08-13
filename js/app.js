@@ -4746,7 +4746,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     activeIdx = -1;
     suggestEl.innerHTML = suggestItems.map((it, i) => {
       if (it.type === 'trend') {
-        return `<button type="button" class="search-panel-suggest-row is-trend" data-i="${i}" role="option"><span class="search-panel-suggest-ic" aria-hidden="true">${SP_TREND_ICON}</span><span class="search-panel-suggest-name">${escapeHTML(it.query)}</span><span class="search-panel-suggest-tag">Trending${it.category ? ` &middot; ${escapeHTML(it.category)}` : ''}</span></button>`;
+        return `<button type="button" class="search-panel-suggest-row is-trend" data-i="${i}" role="option"><span class="search-panel-suggest-ic" aria-hidden="true">${SP_TREND_ICON}</span><span class="search-panel-suggest-name">${escapeHTML(it.query)}</span><span class="search-panel-suggest-tag">Trending</span></button>`;
       }
       if (it.type === 'topic') {
         // Topic row: a grey icon chip on the left (matching the trend row) + a grey
