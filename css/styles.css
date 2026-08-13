@@ -17948,19 +17948,19 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
    over the list — the header area ate the gesture — and every header change
    resized that inner viewport, which is what kept shaking the list. The PANEL
    is the scroller now and the header sticks to its top. */
-.aii-nav-dd { overflow-y: auto !important; overflow-x: hidden; overscroll-behavior: contain; }
-.aii-nav-dd .aii-nav-dd-scrollwrap,
-.aii-nav-dd .aii-nav-dd-scroll {
+.aii-nav-dd:not(.aii-nav-dd-search):not(.aii-nav-dd-prompt) { overflow-y: auto !important; overflow-x: hidden; overscroll-behavior: contain; }
+.aii-nav-dd:not(.aii-nav-dd-search):not(.aii-nav-dd-prompt) .aii-nav-dd-scrollwrap,
+.aii-nav-dd:not(.aii-nav-dd-search):not(.aii-nav-dd-prompt) .aii-nav-dd-scroll {
   overflow: visible !important; height: auto !important; max-height: none !important; flex: none !important;
 }
-.aii-nav-dd .aii-nav-dd-inner { height: auto !important; min-height: 0 !important; display: block !important; }
-.aii-nav-dd .aii-nav-dd-head {
+.aii-nav-dd:not(.aii-nav-dd-search):not(.aii-nav-dd-prompt) .aii-nav-dd-inner { height: auto !important; min-height: 0 !important; display: block !important; }
+.aii-nav-dd:not(.aii-nav-dd-search):not(.aii-nav-dd-prompt) .aii-nav-dd-head {
   position: sticky; top: 0; z-index: 6; background: #fff;
 }
-.aii-nav-dd .aii-nav-dd-subbar { position: sticky; top: 0; z-index: 5; background: #fff; }
+.aii-nav-dd:not(.aii-nav-dd-search):not(.aii-nav-dd-prompt) .aii-nav-dd-subbar { position: sticky; top: 0; z-index: 5; background: #fff; }
 /* The fade overlays belonged to the inner scroller. */
-.aii-nav-dd .aii-nav-dd-scrollwrap::before,
-.aii-nav-dd .aii-nav-dd-scrollwrap::after { content: none !important; }
+.aii-nav-dd:not(.aii-nav-dd-search):not(.aii-nav-dd-prompt) .aii-nav-dd-scrollwrap::before,
+.aii-nav-dd:not(.aii-nav-dd-search):not(.aii-nav-dd-prompt) .aii-nav-dd-scrollwrap::after { content: none !important; }
 
 /* ── Featured cards ─────────────────────────────────────────────────────── */
 .ph-fcard { width: 236px; min-height: 132px; justify-content: flex-start; gap: 4px; padding: 14px 15px 12px; }
@@ -18009,7 +18009,7 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
    floating between the title and the subtext. */
 .aii-nav-dd .aii-nav-dd-titles { align-items: end; }
 .aii-nav-dd .aii-nav-dd-headbtns {
-  justify-self: end; align-self: end; margin-bottom: -18px; position: relative; z-index: 2;
+  justify-self: end; align-self: end; margin-bottom: 0; position: relative; z-index: 2;
 }
 @media (max-width: 720px) {
   .aii-nav-dd .aii-nav-dd-headbtns { justify-self: start; margin-bottom: 0; }
@@ -18087,7 +18087,19 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
    content, so "right aligned" only ever reached the end of a narrow box sitting
    beside the title. Make it fill the header row and the right column lands on
    the real right edge. */
-.aii-nav-dd .aii-nav-dd-head { display: flex; align-items: flex-start; }
-.aii-nav-dd .aii-nav-dd-titles { flex: 1 1 auto !important; width: 100%; min-width: 0; }
+.aii-nav-dd:not(.aii-nav-dd-search) .aii-nav-dd-head { display: flex; align-items: flex-start; }
+.aii-nav-dd:not(.aii-nav-dd-search) .aii-nav-dd-titles { flex: 1 1 auto !important; width: 100%; min-width: 0; }
 .aii-nav-dd .aii-nav-dd-headbtns,
 .aii-nav-dd .navdd-headsearch { justify-self: end !important; }
+
+/* ═══════════════ revamp752 ═══════════════════════════════════════════════ */
+
+/* Head actions: smaller, and clear of the section rule rather than straddling it. */
+.aii-nav-dd .aii-nav-dd-headbtn { padding: 6px 12px !important; font-size: 0.79rem !important; gap: 6px !important; }
+.aii-nav-dd .aii-nav-dd-headbtn svg { width: 13px !important; height: 13px !important; }
+.aii-nav-dd .navdd-headsearch { margin-bottom: 0 !important; width: min(300px, 40vw); }
+.aii-nav-dd .navdd-headsearch-input { height: 36px; font-size: 0.84rem; }
+/* Featured Prompts: more air above the card, less below it. */
+.prompts-home { gap: 1.5rem !important; }
+.prompts-home .ph-featured { margin-top: 0.7rem; }
+.prompts-home .ph-lib { margin-top: 0.2rem; }
