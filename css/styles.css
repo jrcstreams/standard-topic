@@ -17121,9 +17121,10 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-chev,
 body.home-search #home-trending .trend-card-grid { padding-top: 0 !important; }
 #section-newsfeed .news-list { padding-top: 0 !important; }
 @media (hover: hover) {
-  body.home-search #home-trending .trend-card:nth-child(-n+2):not(.is-expanded):hover { box-shadow: 0 -8px 0 0 #f5f7fa; }
-  body.home-search #section-newsfeed .news-list .news-card:first-child:not(:has(.news-act-ai[aria-expanded="true"])):hover { box-shadow: 0 -8px 0 0 rgba(15, 26, 46, 0.04); }
-  .topic-band #section-newsfeed .news-list .news-card:first-child:hover { box-shadow: 0 -8px 0 0 rgba(15, 26, 46, 0.04); }
+  body.home-search #home-trending .trend-card:hover,
+  body.home-search #home-trending .trend-card:first-child:not(.is-expanded):hover,
+  body.home-search #section-newsfeed .news-list .news-card:first-child:not(:has(.news-act-ai[aria-expanded="true"])):hover,
+  .topic-band #section-newsfeed .news-list .news-card:first-child:hover { box-shadow: none !important; }
 }
 
 /* ── Expanded trend: a clean ✕ in the top-right corner, nothing floating ──── */
@@ -17170,3 +17171,8 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-head,
 }
 .pb-card-done svg { display: block; }
 .pb-card { column-gap: 10px; }
+
+/* The in-view back link (Prompts → Build / Library) is the SAME component as the
+   page-level one, so it needs no pill of its own. */
+.page-backbar--inview { padding: 0 0 14px; }
+.prompts-back { display: none !important; }

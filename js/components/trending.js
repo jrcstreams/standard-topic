@@ -253,6 +253,7 @@ function wireTrendCards(container) {
 function wireTrendCardsInline(container) {
   const collapse = (card) => {
     card.classList.remove('is-expanded');
+    card.querySelector('.trend-card-actions')?.style.removeProperty('display');
     card.querySelector('.trend-card-trigger')?.setAttribute('aria-expanded', 'false');
     card.querySelector('[data-trend-ai]')?.setAttribute('aria-expanded', 'false');
     card.querySelector('.trend-card-exp')?.remove();
@@ -261,6 +262,7 @@ function wireTrendCardsInline(container) {
     container.querySelectorAll('.trend-card.is-expanded').forEach((c) => { if (c !== card) collapse(c); });
     const term = card.dataset.query || '';
     card.classList.add('is-expanded');
+    card.querySelector('.trend-card-actions')?.style.setProperty('display', 'none', 'important');
     card.querySelector('.trend-card-trigger')?.setAttribute('aria-expanded', 'true');
     card.querySelector('[data-trend-ai]')?.setAttribute('aria-expanded', 'true');
     let exp = card.querySelector('.trend-card-exp');

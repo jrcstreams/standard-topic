@@ -699,7 +699,6 @@ const NAVDD_SEARCH_IC = '<svg viewBox="0 0 24 24" width="15" height="15" fill="n
 // Two paths: "Build a Custom Prompt" (the prompt builder, inline) and "Prompt
 // Library" (pick a topic → its ready-made prompts). Replaces the AI Insights
 // nav dropdown — topic pages + custom search now cover AI Insights.
-const PROMPTS_BACK = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
 const PROMPTS_BUILD_IC = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
 const PROMPTS_LIB_IC = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>';
 const AI_SPARK_INLINE = '<svg class="ph-spark" viewBox="0 0 24 24" width="13" height="13" fill="#2563eb" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
@@ -752,15 +751,22 @@ function wirePromptsDropdown(panel, initialView) {
     if (!titles) return;
     titles.querySelector('[data-prompts-back]')?.remove();
     // A view-level back link REPLACES the page-level "Back to …" bar — two
-    // stacked back pills read as a bug rather than a hierarchy (#img26).
+    // stacked back links read as a bug rather than a hierarchy (#img26).
     const pageBar = panel.querySelector('.page-backbar');
     if (pageBar) pageBar.hidden = !!label;
     if (!label) return;
+    // Built from the SAME markup as backBarHTML so the two are indistinguishable
+    // — the view-level link used its own pill and chevron, which is why the back
+    // control looked different from page to page (#img62-66).
+    const wrap = document.createElement('div');
+    wrap.className = 'page-backbar page-backbar--inview';
+    wrap.setAttribute('data-prompts-back', '');
     const b = document.createElement('button');
-    b.type = 'button'; b.className = 'prompts-back'; b.setAttribute('data-prompts-back', '');
-    b.innerHTML = `${PROMPTS_BACK}<span>Back to ${escapeHTML(label)}</span>`;
+    b.type = 'button'; b.className = 'page-backbtn';
+    b.innerHTML = `${BACKBAR_CHEV}<span class="page-backbtn-tx">Back to <b>${escapeHTML(label)}</b></span>`;
     b.addEventListener('click', onClick);
-    titles.insertBefore(b, titles.firstChild);
+    wrap.appendChild(b);
+    titles.insertBefore(wrap, titles.firstChild);
   };
 
   // Fire a ready-made prompt (featured card or a topic-card preview row) in the
