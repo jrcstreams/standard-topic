@@ -171,3 +171,65 @@ const TE_DRAWER_CHEV = '<svg class="te-drawer-chev" viewBox="0 0 24 24" width="1
 function teDrawerHTML(iconKey, label, bodyHTML) {
   return `<details class="te-drawer"><summary class="te-drawer-sum"><span class="te-drawer-ic">${TE_SEC_ICON[iconKey] || TE_SEC_ICON.summary}</span><span class="te-drawer-title">${escapeHTML(label)}</span>${TE_DRAWER_CHEV}</summary><div class="te-drawer-body">${bodyHTML}</div></details>`;
 }
+
+
+// ── Drawer behaviour (revamp732) ─────────────────────────────────────────────
+// <details> opens instantly and the browser makes no attempt to keep the header
+// you clicked on screen — so opening "Explore Further" near the bottom of a long
+// brief dropped the user into the middle of the list with no context. Intercept
+// the toggle: animate the body open/closed, and keep the summary anchored.
+export function wireTrendDrawers(root) {
+  if (!root || root.dataset.teDrawersWired === '1') return;
+  root.dataset.teDrawersWired = '1';
+  const EASE = 'cubic-bezier(.22,.61,.21,1)';
+  // Only scroll when the header isn't already sitting in a comfortable band —
+  // an in-view header must never jump.
+  const keepInView = (el) => {
+    try {
+      const r = el.getBoundingClientRect();
+      const lo = 90;
+      const hi = Math.max(220, window.innerHeight * 0.45);
+      if (r.top >= lo && r.top <= hi) return;
+      el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    } catch (_) {}
+  };
+  root.addEventListener('click', (e) => {
+    const sum = e.target.closest('.te-drawer-sum');
+    if (sum && root.contains(sum)) {
+      const det = sum.closest('.te-drawer');
+      const body = det && det.querySelector('.te-drawer-body');
+      if (!det || !body) return;
+      e.preventDefault();
+      if (det.open) {
+        const h = body.scrollHeight;
+        body.style.overflow = 'hidden';
+        body.style.height = h + 'px';
+        requestAnimationFrame(() => {
+          body.style.transition = `height .24s ${EASE}, opacity .16s ease`;
+          body.style.height = '0px';
+          body.style.opacity = '0';
+        });
+        setTimeout(() => { det.open = false; body.removeAttribute('style'); }, 250);
+      } else {
+        det.open = true;
+        body.style.overflow = 'hidden';
+        body.style.height = '0px';
+        body.style.opacity = '0';
+        const h = body.scrollHeight;
+        requestAnimationFrame(() => {
+          body.style.transition = `height .28s ${EASE}, opacity .22s ease`;
+          body.style.height = h + 'px';
+          body.style.opacity = '1';
+        });
+        setTimeout(() => { body.removeAttribute('style'); }, 300);
+        // Anchor AFTER the open starts so the measurement reflects the new height.
+        requestAnimationFrame(() => keepInView(sum));
+      }
+      return;
+    }
+    // Nested source-category accordions inside Explore Further animate natively;
+    // they just need the same anchoring so the row you tapped stays put.
+    const xs = e.target.closest('.xf-sum');
+    if (xs && root.contains(xs)) setTimeout(() => keepInView(xs), 30);
+  });
+}

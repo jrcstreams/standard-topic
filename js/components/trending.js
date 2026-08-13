@@ -5,7 +5,7 @@
 // (no expand button) reusing the shared .scroll-fade indicators.
 import { fetchTrending } from '../utils/trending.js';
 import { fetchWithTimeout } from '../utils/data.js';
-import { renderTrendExpansionBody } from './trend-expansion.js?v=20260717-revamp591';
+import { renderTrendExpansionBody, wireTrendDrawers } from './trend-expansion.js?v=20260812-revamp732';
 import { wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
 import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp574';
 
@@ -291,6 +291,7 @@ function wireTrendCardsInline(container) {
       exp.innerHTML = renderTrendExpansionBody(term, data);
       exp.querySelectorAll('[data-trend-close]').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); collapse(card); try { card.querySelector('.trend-card-trigger')?.scrollIntoView({ block: 'nearest' }); } catch (_) {} }));
       wireExploreFurther(exp);
+      wireTrendDrawers(exp);
     } catch (_) {
       exp.innerHTML = `<div class="trend-exp-fail"><span class="trend-exp-tx">Couldn't load this brief.</span> <button type="button" class="trend-exp-retry">Try again</button></div>`;
       exp.querySelector('.trend-exp-retry')?.addEventListener('click', () => openCard(card));

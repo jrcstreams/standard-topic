@@ -17175,3 +17175,12 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-head,
    page-level one, so it needs no pill of its own. */
 .page-backbar--inview { padding: 0 0 14px; }
 .prompts-back { display: none !important; }
+
+/* Drawer bodies are height-animated from JS (wireTrendDrawers), so they must not
+   carry their own transition or a fixed padding that fights the measured height. */
+.te-drawer-body { will-change: height; }
+/* No focus ring on the drawer headers — a click left a blue box outlining the
+   whole row (#img71). Keyboard focus still shows via :focus-visible. */
+.te-drawer > .te-drawer-sum:focus { outline: none; }
+.te-drawer > .te-drawer-sum:focus-visible { outline: 2px solid #2563eb; outline-offset: -2px; border-radius: 6px; }
+.te-drawer-body .xf-sum:focus { outline: none; }
