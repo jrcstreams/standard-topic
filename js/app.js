@@ -711,55 +711,80 @@ const AI_SPARK_INLINE = '<svg class="ph-spark" viewBox="0 0 24 24" width="13" he
 // "Evergreen Prompts" section, each prompt its own accordion holding the full
 // preview + model picker + submit. Nothing drills to another view: every prompt
 // Standard Topic offers can be run from this one page.
+const PH_ARROW_L = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
+const PH_ARROW_R = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 const PDIR_CHEV = '<svg class="pdir-chev" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 function promptDirectoryHTML() {
   const groups = getTopicsGroupedByParent() || [];
-  const row = (t, isParent) => `<div class="pdir-acc${isParent ? ' pdir-acc--parent' : ''}" data-pdir-topic data-slug="${escapeAttr(t.slug)}" data-name="${escapeAttr(t.name)}">
-      <button type="button" class="pdir-accsum" aria-expanded="false">
-        <span class="pdir-acc-name">${escapeHTML(t.name)}</span>
+  const cell = (t) => `<button type="button" class="pdir-cell" data-pdir-topic data-slug="${escapeAttr(t.slug)}" data-name="${escapeAttr(t.name)}">
+      <span class="pdir-cell-name">${escapeHTML(t.name)}</span>${PDIR_CHEV_R}
+    </button>`;
+  const block = ({ parent, subtopics }) => `<section class="pdir-card" data-pdir-card>
+      <button type="button" class="pdir-cardhead" aria-expanded="false">
+        <span class="pdir-card-ic" aria-hidden="true">${topicIconSVG(parent.icon || 'globe', '')}</span>
+        <span class="pdir-card-tx">
+          <span class="pdir-card-name">${escapeHTML(parent.name)}</span>
+        </span>
         ${PDIR_CHEV}
       </button>
-      <div class="pdir-accbody" hidden></div>
-    </div>`;
-  const block = ({ parent, subtopics }) => `<section class="pdir-group">
-      <h4 class="pdir-grouphead">${topicIconSVG(parent.icon || 'globe', 'pdir-grouphead-ic')}<span>${escapeHTML(parent.name)}</span></h4>
-      <div class="pdir-list">${row(parent, true)}${(subtopics || []).map((t) => row(t, false)).join('')}</div>
+      <div class="pdir-cardbody" hidden>
+        <div class="pdir-grid">${cell(parent)}${(subtopics || []).map(cell).join('')}</div>
+      </div>
     </section>`;
   return `<div class="pdir">${groups.map(block).join('')}</div>`;
 }
-// Lazily mount each topic's prompt set the first time its row opens, then leave
-// it mounted so re-opening is instant. Rows toggle independently — this is a
-// directory to browse, not a single-selection picker.
+const PDIR_CHEV_R = '<svg class="pdir-cell-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>';
+
+// Parent cards open to a grid of their topics; picking one swaps that card's body
+// to that topic's full prompt set in place (with a way back), so the page never
+// navigates away from the directory.
 function wirePromptDirectory(root, ctls) {
-  root.querySelectorAll('.pdir-acc').forEach((acc) => {
-    const btn = acc.querySelector('.pdir-accsum');
-    const host = acc.querySelector('.pdir-accbody');
-    if (!btn || !host) return;
-    btn.addEventListener('click', () => {
-      const open = !acc.classList.contains('is-open');
-      if (open && host.dataset.mounted !== '1') {
-        host.dataset.mounted = '1';
-        host.className = 'pdir-accbody prompts-topic-host';
-        const slug = acc.dataset.slug; const name = acc.dataset.name;
-        let shortcuts = [];
-        try { shortcuts = getShortcutsForTopic(slug) || []; } catch (_) {}
-        const descriptions = {}; const icons = {};
-        shortcuts.forEach((sc) => { if (sc && sc.name) { descriptions[sc.name] = sc.description || ''; icons[sc.name] = sc.icon || ''; } });
-        try {
-          const c = renderAIIntelligence(host, {
-            inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
-            topic: name, label: name, descriptions, icons, shortcuts, topicKey: slug,
+  root.querySelectorAll('[data-pdir-card]').forEach((card) => {
+    const head = card.querySelector('.pdir-cardhead');
+    const bodyEl = card.querySelector('.pdir-cardbody');
+    if (!head || !bodyEl) return;
+    const gridHTML = bodyEl.innerHTML;
+    const wireCells = () => {
+      bodyEl.querySelectorAll('[data-pdir-topic]').forEach((cellBtn) => {
+        cellBtn.addEventListener('click', () => {
+          const slug = cellBtn.dataset.slug; const name = cellBtn.dataset.name;
+          bodyEl.classList.add('is-topic');
+          bodyEl.innerHTML = `<div class="pdir-topicview">
+            <button type="button" class="pdir-topicback">${BACKBAR_CHEV}<span>All ${escapeHTML(card.querySelector('.pdir-card-name').textContent)} topics</span></button>
+            <h4 class="pdir-topicname">${escapeHTML(name)}</h4>
+            <div class="pdir-topichost prompts-topic-host"></div>
+          </div>`;
+          const host = bodyEl.querySelector('.pdir-topichost');
+          let shortcuts = [];
+          try { shortcuts = getShortcutsForTopic(slug) || []; } catch (_) {}
+          const descriptions = {}; const icons = {};
+          shortcuts.forEach((sc) => { if (sc && sc.name) { descriptions[sc.name] = sc.description || ''; icons[sc.name] = sc.icon || ''; } });
+          try {
+            const c = renderAIIntelligence(host, {
+              inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
+              topic: name, label: name, descriptions, icons, shortcuts, topicKey: slug,
+            });
+            if (ctls) ctls.push(c);
+          } catch (err) {
+            console.error('prompt directory mount failed', slug, err);
+            host.innerHTML = '<p class="aii-empty">Couldn’t load these prompts.</p>';
+          }
+          bodyEl.querySelector('.pdir-topicback')?.addEventListener('click', () => {
+            bodyEl.classList.remove('is-topic');
+            bodyEl.innerHTML = gridHTML;
+            wireCells();
+            requestAnimationFrame(updateNavDdFades);
           });
-          if (ctls) ctls.push(c);
-        } catch (err) {
-          console.error('prompt directory mount failed', acc.dataset.slug, err);
-          host.dataset.mounted = '';
-          host.innerHTML = '<p class="aii-empty">Couldn\u2019t load these prompts. Close and re-open to retry.</p>';
-        }
-      }
-      host.hidden = !open;
-      acc.classList.toggle('is-open', open);
-      btn.setAttribute('aria-expanded', String(open));
+          requestAnimationFrame(updateNavDdFades);
+        });
+      });
+    };
+    wireCells();
+    head.addEventListener('click', () => {
+      const open = !card.classList.contains('is-open');
+      bodyEl.hidden = !open;
+      card.classList.toggle('is-open', open);
+      head.setAttribute('aria-expanded', String(open));
       requestAnimationFrame(updateNavDdFades);
     });
   });
@@ -831,29 +856,50 @@ function wirePromptsDropdown(panel, initialView) {
     root.innerHTML = `
       <div class="prompts-home">
         <section class="ph-featured" data-ph-featured hidden>
-          <div class="ph-sec-head"><h3 class="ph-sec-title">Featured Prompts</h3></div>
-          <div class="pdir-list" data-ph-feat-grid></div>
+          <div class="ph-sec-head ph-sec-head--row">
+            <div class="ph-sec-tx">
+              <h3 class="ph-sec-title">Featured Prompts</h3>
+              <p class="ph-sec-sub">Handpicked to get you started.</p>
+            </div>
+            <div class="ph-rail-nav">
+              <button type="button" class="ph-rail-btn" data-rail="-1" aria-label="Scroll left">${PH_ARROW_L}</button>
+              <button type="button" class="ph-rail-btn" data-rail="1" aria-label="Scroll right">${PH_ARROW_R}</button>
+            </div>
+          </div>
+          <div class="ph-rail" data-ph-rail></div>
         </section>
         <section class="ph-lib">
           <div class="ph-sec-head">
             <h3 class="ph-sec-title">Prompts by Topic</h3>
-            <p class="ph-sec-sub">Every topic and subtopic, with its full prompt set. Open one to run any prompt right here.</p>
+            <p class="ph-sec-sub">Explore by category. Open one to run any prompt right here.</p>
           </div>
           <div class="ph-body" data-ph-body></div>
         </section>
+        <section class="ph-cta">
+          <span class="ph-cta-ic" aria-hidden="true">${AI_SPARK_INLINE}</span>
+          <div class="ph-cta-tx">
+            <h4 class="ph-cta-title">Can't find what you're looking for?</h4>
+            <p class="ph-cta-sub">Build a prompt from scratch, or search any topic of your own.</p>
+          </div>
+          <div class="ph-cta-btns">
+            <button type="button" class="ph-cta-btn is-primary" data-cta-build>Build a Custom Prompt</button>
+            <button type="button" class="ph-cta-btn" data-cta-search>Search Custom Topic</button>
+          </div>
+        </section>
       </div>`;
 
-    // Featured picks — data/featured-prompts.json (admin-editable), resolved
-    // against the live shortcut assignments; missing names skip silently.
+    root.querySelector('[data-cta-build]')?.addEventListener('click', () => showBuild());
+    root.querySelector('[data-cta-search]')?.addEventListener('click', () => openSearchFromNav());
+
+    // ── Featured rail ──────────────────────────────────────────────────────
+    // A horizontally scrollable card row. Clicking a card turns THAT card into a
+    // focused prompt panel in place (with a way back) rather than navigating.
     fetchWithTimeout('/data/featured-prompts.json', { headers: { Accept: 'application/json' } })
       .then((r) => (r.ok ? r.json() : null))
       .then((cfg) => {
-        const wrap = root.querySelector('[data-ph-feat-grid]');
+        const rail = root.querySelector('[data-ph-rail]');
         const sec = root.querySelector('[data-ph-featured]');
-        if (!wrap || !sec || !cfg || !Array.isArray(cfg.featured)) return;
-        // Featured prompts are accordions, not cards — no icon, no subtext, and
-        // the whole prompt experience runs inside, exactly like the directory
-        // below it. The list connects straight to the section rule (revamp738).
+        if (!rail || !sec || !cfg || !Array.isArray(cfg.featured)) return;
         const picks = [];
         cfg.featured.forEach((f) => {
           const t = getTopicBySlug(f.topic); if (!t) return;
@@ -862,45 +908,55 @@ function wirePromptsDropdown(panel, initialView) {
           if (sh && sh.prompt) picks.push({ sh, topic: t });
         });
         if (!picks.length) return;
-        wrap.innerHTML = picks.map((pk, i) => `
-          <div class="pdir-acc" data-ph-feat="${i}">
-            <button type="button" class="pdir-accsum" aria-expanded="false">
-              <span class="pdir-acc-name">${escapeHTML(pk.sh.name)}</span>
-              ${PDIR_CHEV}
-            </button>
-            <div class="pdir-accbody" hidden></div>
-          </div>`).join('');
+        const railHTML = picks.map((pk, i) => `
+          <button type="button" class="ph-fcard" data-ph-feat="${i}">
+            <span class="ph-fcard-name">${escapeHTML(pk.sh.name)}</span>
+            <span class="ph-fcard-topic">${escapeHTML(pk.topic.name)}</span>
+          </button>`).join('');
+        rail.innerHTML = railHTML;
         sec.hidden = false;
-        wrap.querySelectorAll('[data-ph-feat]').forEach((acc) => {
-          const btn = acc.querySelector('.pdir-accsum');
-          const host = acc.querySelector('.pdir-accbody');
-          btn.addEventListener('click', () => {
-            const open = !acc.classList.contains('is-open');
-            if (open && host.dataset.mounted !== '1') {
-              host.dataset.mounted = '1';
-              host.className = 'pdir-accbody prompts-topic-host';
-              const pk = picks[Number(acc.dataset.phFeat)];
-              const descriptions = {}; const icons = {};
-              descriptions[pk.sh.name] = pk.sh.description || ''; icons[pk.sh.name] = pk.sh.icon || '';
-              try {
-                dirCtls.push(renderAIIntelligence(host, {
-                  inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
-                  singlePrompt: true,
-                  topic: pk.topic.name, label: pk.topic.name,
-                  descriptions, icons, shortcuts: [pk.sh], topicKey: pk.topic.slug,
-                }));
-              } catch (_) { host.dataset.mounted = ''; }
-            }
-            host.hidden = !open;
-            acc.classList.toggle('is-open', open);
-            btn.setAttribute('aria-expanded', String(open));
-            requestAnimationFrame(updateNavDdFades);
+        const railNav = sec.querySelector('.ph-rail-nav');
+        sec.querySelectorAll('[data-rail]').forEach((b) => b.addEventListener('click', () => {
+          rail.scrollBy({ left: Number(b.dataset.rail) * Math.max(240, rail.clientWidth * 0.8), behavior: 'smooth' });
+        }));
+        // Focus a single featured prompt inside the section, animated.
+        const focusPrompt = (i) => {
+          const pk = picks[i]; if (!pk) return;
+          if (railNav) railNav.hidden = true;
+          rail.classList.add('is-focus');
+          rail.innerHTML = `<div class="ph-focus">
+            <button type="button" class="ph-focus-back">${BACKBAR_CHEV}<span>All featured prompts</span></button>
+            <h4 class="ph-focus-name">${escapeHTML(pk.sh.name)}</h4>
+            <div class="ph-focus-host prompts-topic-host"></div>
+          </div>`;
+          const host = rail.querySelector('.ph-focus-host');
+          const descriptions = {}; const icons = {};
+          descriptions[pk.sh.name] = pk.sh.description || ''; icons[pk.sh.name] = pk.sh.icon || '';
+          try {
+            dirCtls.push(renderAIIntelligence(host, {
+              inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
+              singlePrompt: true,
+              topic: pk.topic.name, label: pk.topic.name,
+              descriptions, icons, shortcuts: [pk.sh], topicKey: pk.topic.slug,
+            }));
+          } catch (_) {}
+          rail.querySelector('.ph-focus-back')?.addEventListener('click', () => {
+            rail.classList.remove('is-focus');
+            if (railNav) railNav.hidden = false;
+            rail.innerHTML = railHTML;
+            wireRailCards();
           });
-        });
+          requestAnimationFrame(updateNavDdFades);
+        };
+        const wireRailCards = () => {
+          rail.querySelectorAll('[data-ph-feat]').forEach((b) =>
+            b.addEventListener('click', () => focusPrompt(Number(b.dataset.phFeat))));
+        };
+        wireRailCards();
         requestAnimationFrame(updateNavDdFades);
       }).catch(() => {});
 
-    // Library body — the topic directory.
+    // ── Prompts by Topic ───────────────────────────────────────────────────
     const body = root.querySelector('[data-ph-body]');
     body.innerHTML = promptDirectoryHTML();
     wirePromptDirectory(body, dirCtls);
@@ -2596,8 +2652,17 @@ function backBarHTML() {
 // user starts reading and return when they scroll back to the top.
 function wireNavDdCondense(panel) {
   const sc = panel.querySelector('[data-navdd-scroll]');
-  const head = panel.querySelector('.aii-nav-dd-inner');
-  if (!sc || !head) return;
+  // Measure ONLY the chrome that collapses. The previous version measured
+  // .aii-nav-dd-inner, which CONTAINS the scroller — so the "delta" was the whole
+  // panel's height, the compensation was garbage, and every scroll event yanked
+  // the list. That's the non-stop glitch.
+  const chrome = () => {
+    let h = 0;
+    panel.querySelectorAll(':scope > .aii-nav-dd-inner > .aii-nav-dd-head, :scope > .aii-nav-dd-inner > .aii-nav-dd-subbar, :scope > .aii-nav-dd-inner > .page-backbar')
+      .forEach((el) => { h += el.getBoundingClientRect().height; });
+    return h;
+  };
+  if (!sc) return;
   // The header sits OUTSIDE the scroller, so shrinking it makes the scroll
   // viewport taller — the browser keeps scrollTop, so every row jumps up by the
   // height we removed. Animating that height made it a continuous shudder.
@@ -2610,11 +2675,11 @@ function wireNavDdCondense(panel) {
   const setState = (next) => {
     if (next === on || busy) return;
     busy = true;
-    const before = head.getBoundingClientRect().height;
+    const before = chrome();
     on = next;
     panel.classList.toggle('is-condensed', on);
     // Force layout so the new height is real before we measure it.
-    const after = head.getBoundingClientRect().height;
+    const after = chrome();
     const delta = before - after;
     if (delta) sc.scrollTop = Math.max(0, sc.scrollTop + delta);
     requestAnimationFrame(() => { busy = false; });

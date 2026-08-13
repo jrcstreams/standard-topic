@@ -17762,3 +17762,171 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 .te-drawer-body .xf-sum { padding: 11px 2px !important; border-radius: 0 !important; }
 .te-drawer-body .xf-acc[open] > .xf-sum { background: transparent !important; }
 .te-drawer-body .xf-panel { padding: 2px 2px 12px !important; }
+
+/* ═══════════════ revamp743 ═══════════════════════════════════════════════ */
+
+/* The "+" button opened but its content spilled out beside it — the body was a
+   full-width sibling with no containment, so it read as loose text under a
+   button rather than the button's own contents. Open state: the whole drawer
+   becomes one bordered card, button on top, body inside the same frame. */
+.te-drawer[open] {
+  border: 1px solid #dfe5f0 !important; border-radius: 10px; background: #fff;
+  width: 100%; max-width: 100%;
+}
+.te-drawer[open] > .te-drawer-sum {
+  max-width: none !important; border: none !important; border-bottom: 1px solid #eef1f6 !important;
+  border-radius: 10px 10px 0 0; background: #f7f9fc !important;
+}
+.te-drawer[open] > .te-drawer-body { padding: 6px 14px 12px !important; }
+.te-drawer[open] .xf-list { margin: 0 !important; }
+/* Source rows inside a drawer stay inside the frame. */
+.te-drawer[open] .im-coverage-list,
+.te-drawer[open] .ai-ins-source-row { max-width: 100%; }
+
+/* ═══ Prompt Library redesign (revamp743) ═══════════════════════════════════ */
+
+/* Head: title + subtext left, the two actions right when there's room. */
+.prompts-dd ~ * .aii-nav-dd-titles, .aii-nav-dd-prompts .aii-nav-dd-titles { }
+.aii-nav-dd .aii-nav-dd-titles {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 6px 20px;
+}
+.aii-nav-dd .aii-nav-dd-title { grid-column: 1; grid-row: 1; }
+.aii-nav-dd .aii-nav-dd-sub { grid-column: 1; grid-row: 2; }
+.aii-nav-dd .aii-nav-dd-headbtns { grid-column: 2; grid-row: 1 / span 2; margin-top: 0; flex-wrap: nowrap; }
+.aii-nav-dd .page-backbar { grid-column: 1 / -1; grid-row: 0; }
+@media (max-width: 720px) {
+  .aii-nav-dd .aii-nav-dd-titles { grid-template-columns: minmax(0, 1fr); }
+  .aii-nav-dd .aii-nav-dd-headbtns { grid-column: 1; grid-row: auto; margin-top: 12px; flex-wrap: wrap; }
+}
+
+.prompts-home { display: flex; flex-direction: column; gap: 2.4rem; padding-bottom: 8px; }
+.ph-sec-head--row { display: flex !important; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.ph-sec-tx { min-width: 0; }
+
+/* ── Featured: a contained, horizontally scrollable rail ─────────────────── */
+.ph-featured {
+  border: 1px solid var(--color-surface-border); border-radius: 16px;
+  background: #fbfcfe; padding: 16px 16px 18px;
+}
+.ph-featured .ph-sec-head { border-bottom: none !important; padding-bottom: 10px !important; margin-bottom: 4px !important; }
+.ph-rail-nav { display: inline-flex; gap: 6px; flex: none; }
+.ph-rail-btn {
+  width: 30px; height: 30px; display: grid; place-items: center;
+  border: 1px solid #dfe5f0; border-radius: 999px; background: #fff; color: #5b6b8a; cursor: pointer;
+  transition: background .14s, border-color .14s, color .14s;
+}
+@media (hover: hover) { .ph-rail-btn:hover { background: #eef2f9; border-color: #cbd7ea; color: #26375a; } }
+.ph-rail {
+  display: flex; gap: 10px; overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x proximity; scrollbar-width: thin; padding: 4px 2px 6px;
+  scroll-behavior: smooth;
+}
+.ph-rail::-webkit-scrollbar { height: 6px; }
+.ph-rail::-webkit-scrollbar-thumb { background: #dfe5f0; border-radius: 999px; }
+.ph-fcard {
+  flex: 0 0 auto; width: 190px; min-height: 78px; scroll-snap-align: start;
+  display: flex; flex-direction: column; gap: 5px; align-items: flex-start; justify-content: center;
+  padding: 13px 14px; border: 1px solid var(--color-surface-border); border-radius: 12px;
+  background: #fff; cursor: pointer; text-align: left;
+  transition: border-color .14s, box-shadow .14s, transform .1s;
+}
+@media (hover: hover) { .ph-fcard:hover { border-color: #c8d5ec; box-shadow: 0 4px 14px -8px rgba(15,26,46,.25); transform: translateY(-1px); } }
+.ph-fcard-name { font-family: var(--font-display); font-size: 0.92rem; font-weight: 700; letter-spacing: -0.01em; color: #26375a; line-height: 1.25; }
+.ph-fcard-topic { font-family: var(--font-family); font-size: 0.76rem; font-weight: 550; color: var(--color-text-muted); }
+/* Focused single prompt, in place. */
+.ph-rail.is-focus { display: block; overflow: visible; animation: phFocusIn .24s cubic-bezier(.22,.61,.21,1); }
+@keyframes phFocusIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.ph-focus { min-width: 0; }
+.ph-focus-name { margin: 8px 0 4px; font-family: var(--font-display); font-size: 1.02rem; font-weight: 700; color: #26375a; }
+.ph-focus-back, .pdir-topicback {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 0;
+  border: none; background: none; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.83rem; font-weight: 500; color: #64748b;
+}
+.ph-focus-back svg, .pdir-topicback svg { color: #94a3b8; transition: transform .14s ease; }
+@media (hover: hover) {
+  .ph-focus-back:hover, .pdir-topicback:hover { color: #26375a; }
+  .ph-focus-back:hover svg, .pdir-topicback:hover svg { transform: translateX(-3px); }
+}
+
+/* ── Prompts by Topic: separated parent CARDS, closed by default ─────────── */
+.pdir { display: flex; flex-direction: column; gap: 10px; }
+.pdir-card {
+  border: 1px solid var(--color-surface-border); border-radius: 14px; background: #fff;
+  overflow: hidden; transition: border-color .14s, box-shadow .14s;
+}
+.pdir-card.is-open { border-color: #cbd7ea; box-shadow: 0 4px 18px -12px rgba(15,26,46,.25); }
+.pdir-cardhead {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  padding: 15px 17px; border: none; background: none; cursor: pointer; text-align: left;
+  transition: background .12s;
+}
+@media (hover: hover) { .pdir-cardhead:hover { background: #f7f9fc; } }
+.pdir-card-ic { flex: none; display: inline-flex; color: #6f83a6; }
+.pdir-card-ic svg { width: 21px; height: 21px; display: block; }
+.pdir-card-tx { flex: 1; min-width: 0; }
+.pdir-card-name { font-family: var(--font-display); font-size: 1.02rem; font-weight: 700; letter-spacing: -0.014em; color: #1a2740; }
+.pdir-card.is-open .pdir-chev { transform: rotate(180deg); }
+.pdir-card.is-open .pdir-card-ic { color: #2f4d9e; }
+.pdir-cardbody { padding: 4px 17px 17px; animation: phFocusIn .22s cubic-bezier(.22,.61,.21,1); }
+.pdir-cardbody[hidden] { display: none !important; }
+.pdir-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 900px) { .pdir-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .pdir-grid { grid-template-columns: 1fr; } }
+.pdir-cell {
+  display: flex; align-items: center; gap: 8px; min-width: 0; width: 100%;
+  padding: 11px 12px; border: 1px solid #e7ecf3; border-radius: 10px; background: #fff;
+  cursor: pointer; text-align: left; transition: background .12s, border-color .12s, color .12s;
+}
+@media (hover: hover) { .pdir-cell:hover { background: #f4f7fc; border-color: #cbd7ea; } }
+.pdir-cell-name {
+  flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; color: #33455f;
+}
+.pdir-cell-chev { flex: none; color: #a8b4c9; transition: transform .14s; }
+@media (hover: hover) { .pdir-cell:hover .pdir-cell-chev { transform: translateX(2px); color: #2f4d9e; } }
+.pdir-topicname { margin: 8px 0 2px; font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: #26375a; }
+
+/* ── Bottom CTA ─────────────────────────────────────────────────────────── */
+.ph-cta {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: 18px 20px; border: 1px solid var(--color-surface-border); border-radius: 16px;
+  background: #f7f9fc; margin-bottom: 8px;
+}
+.ph-cta-ic { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 999px; background: #eef2f9; }
+.ph-cta-ic svg { width: 18px; height: 18px; }
+.ph-cta-tx { flex: 1; min-width: 200px; }
+.ph-cta-title { margin: 0; font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: #1a2740; }
+.ph-cta-sub { margin: 3px 0 0; font-family: var(--font-family); font-size: 0.85rem; color: var(--color-text-muted); }
+.ph-cta-btns { display: flex; gap: 9px; flex-wrap: wrap; }
+.ph-cta-btn {
+  display: inline-flex; align-items: center; padding: 9px 16px; border-radius: 999px;
+  border: 1px solid #dde3ee; background: #fff; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.85rem; font-weight: 650; color: #33455f;
+  transition: background .14s, border-color .14s, color .14s;
+}
+.ph-cta-btn.is-primary { background: #26375a; border-color: #26375a; color: #fff; }
+@media (hover: hover) {
+  .ph-cta-btn:hover { background: #eef2f9; border-color: #cbd7ea; color: #1a2740; }
+  .ph-cta-btn.is-primary:hover { background: #1f2d4d; border-color: #1f2d4d; color: #fff; }
+}
+
+/* ═══════════════ revamp744 ═══════════════════════════════════════════════ */
+
+/* Keep the AI-generated label and the section rule in the condensed state — only
+   the back bar, the buttons and the subtitle were meant to go. */
+.aii-nav-dd.is-condensed .trend-controls-legend { display: flex !important; }
+.aii-nav-dd.is-condensed .aii-nav-dd-subbar {
+  display: block !important; border-bottom: 1.5px solid #d3d9e4;
+}
+.aii-nav-dd-trending .aii-nav-dd-subbar {
+  padding-bottom: 12px !important; border-bottom: 1.5px solid #d3d9e4; margin-bottom: 0;
+}
+/* Clear air between the sub-bar rule and the first trend. */
+.aii-nav-dd-trending .aii-nav-dd-scroll { padding-top: 18px !important; }
+/* The live grid's closing rule was doubling with the last row's. */
+.aii-nav-dd-trending .trend-card-grid { border-bottom: none !important; padding-bottom: 0 !important; }
+.aii-nav-dd-trending .trend-card:last-child { border-bottom: 1px solid #e9ecf2 !important; }
+/* Earlier: bigger title, lighter rows. */
+.trend-earlier-title { font-size: 1.3rem !important; }
+.trend-earlier .trend-card-title { font-weight: 600 !important; font-size: 0.96rem !important; }
