@@ -2469,34 +2469,56 @@ function trimStickyNav() {
 // Empty string on home (the brand shows instead).
 // ── "Back to …" ──────────────────────────────────────────────────────────────
 // Sub-pages (Topics / Trending / Prompts / Search / Prompt Builder / About /
-// Terms) are real destinations, not overlays you dismiss — so each one offers a
-// named way back to the page you came FROM. We track the last route that was a
-// real page (home or a topic); anything else would just bounce the user between
-// two sub-pages. A cold deep-link has no history, so it falls back to Home.
-let backTargetRoute = null;
-// Routes that count as somewhere worth returning TO.
-function isBackworthyRoute(route) {
-  return !!route && (route.type === 'home' || route.type === 'topic');
+// Terms) are real destinations, so each offers a named way back. We keep a small
+// navigation STACK rather than a single "last page": Science → Topics → Trending
+// reads "Back to Science", then "Back to Topics"; stepping back to Topics
+// restores "Back to Science". Going back pops instead of pushing, so the trail
+// never grows while the user retraces it.
+const NAV_STACK_MAX = 12;
+let navStack = [];
+// A stable identity + display label for any route we might return to.
+function navEntryFor(route) {
+  if (!route) return null;
+  switch (route.type) {
+    case 'home': return { key: 'home', label: 'Home', hash: '#/' };
+    case 'topic': {
+      const t = getTopicBySlug(route.slug);
+      return { key: 'topic:' + route.slug, label: t ? t.name : 'Topic', hash: `#/topic/${route.slug}` };
+    }
+    case 'topics': return { key: 'topics', label: 'Topics', hash: '#/topics' };
+    case 'trending': return { key: 'trending', label: 'Trending', hash: '#/trending' };
+    case 'prompts': return { key: 'prompts', label: 'Prompts', hash: '#/prompts' };
+    case 'prompt-generator': return { key: 'prompt-generator', label: 'Prompt Builder', hash: '#/prompt-generator' };
+    case 'search': return { key: 'search', label: 'Search', hash: '#/search' };
+    case 'custom': return { key: 'custom:' + (route.term || ''), label: 'Search', hash: `#/custom/${route.term || ''}` };
+    case 'about': return { key: 'about', label: 'About', hash: '#/about' };
+    case 'terms': return { key: 'terms', label: 'Terms', hash: '#/terms' };
+    default: return null;
+  }
 }
 function recordBackTarget(route) {
-  if (isBackworthyRoute(route)) {
-    backTargetRoute = route.type === 'home' ? { type: 'home' } : { type: 'topic', slug: route.slug };
-  }
+  const entry = navEntryFor(route);
+  if (!entry) return;
+  const top = navStack[navStack.length - 1];
+  if (top && top.key === entry.key) return;                 // same page, no-op
+  const prev = navStack[navStack.length - 2];
+  if (prev && prev.key === entry.key) { navStack.pop(); return; }  // stepped back
+  navStack.push(entry);
+  if (navStack.length > NAV_STACK_MAX) navStack.shift();
 }
-// { label, hash } for the current back destination — always resolvable.
+// { label, hash } for the current back destination — the entry BELOW the one
+// we're on. Always resolvable: a cold deep-link falls back to Home.
 function backTarget() {
-  if (backTargetRoute && backTargetRoute.type === 'topic') {
-    const t = getTopicBySlug(backTargetRoute.slug);
-    if (t) return { label: t.name, hash: `#/topic/${backTargetRoute.slug}` };
-  }
+  const prev = navStack[navStack.length - 2];
+  if (prev) return { label: prev.label, hash: prev.hash };
   return { label: 'Home', hash: '#/' };
 }
-const BACKBAR_CHEV = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
-// The bar itself. `data-backbar` is wired globally (delegated) so any surface can
-// drop this in without its own handler.
+const BACKBAR_CHEV = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
+// The bar itself — a text link, not a button. `data-backbar` marks it so any
+// surface can drop this in.
 function backBarHTML() {
   const t = backTarget();
-  return `<div class="page-backbar"><a href="${escapeAttr(t.hash)}" class="page-backbtn" data-backbar>${BACKBAR_CHEV}<span>Back to ${escapeHTML(t.label)}</span></a></div>`;
+  return `<div class="page-backbar"><a href="${escapeAttr(t.hash)}" class="page-backbtn" data-backbar>${BACKBAR_CHEV}<span class="page-backbtn-tx">Back to <b>${escapeHTML(t.label)}</b></span></a></div>`;
 }
 
 function pageLabelFor(route) {

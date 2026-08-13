@@ -11482,7 +11482,7 @@ body.app-mode:not(.home-search) #section-newsfeed .news-list { padding-top: 0 !i
 }
 /* Home rail: the open card stays FLUSH with the closed rows — no container squeeze
    (#img204/205). */
-body.home-search #home-trending .trend-card.is-expanded { padding: 0 !important; margin: 0 !important; border: none !important; background: #eef2f8 !important; border-radius: 12px !important; overflow: hidden; box-shadow: 0 1px 0 #e2e8f2, 0 -1px 0 #e2e8f2; }
+body.home-search #home-trending .trend-card.is-expanded { padding: 0 !important; margin: 0 !important; border: none !important; background: #eef2f8 !important; border-radius: 0 !important; overflow: visible; box-shadow: 0 1px 0 #e2e8f2, 0 -1px 0 #e2e8f2; }
 /* The X closes it, so hide the header's expand arrow while open. */
 .trend-card.is-expanded .trend-card-open { display: none; }
 /* Inside the container the brief flows off the trend with a hairline separator. */
@@ -15398,13 +15398,13 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
    (primary, deep blue). Sit as a pair under the subtitle. */
 .aii-nav-dd-headbtns { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin-top: 12px; }
 .aii-nav-dd-headbtn {
-  display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
-  font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; text-decoration: none;
-  border: 1px solid #d6ddea; background: #fff; color: #33517f;
+  display: inline-flex; align-items: center; gap: 7px; padding: 8px 15px; border-radius: 999px;
+  font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; text-decoration: none;
+  border: 1px solid #dde3ee; background: #eef1f6; color: #26375a;
   transition: background .14s ease, border-color .14s ease, color .14s ease;
 }
 .aii-nav-dd-headbtn svg { flex: none; width: 14px; height: 14px; }
-@media (hover: hover) { .aii-nav-dd-headbtn:hover { background: #f4f6fb; border-color: #c3cde0; color: #26375a; text-decoration: none; } }
+@media (hover: hover) { .aii-nav-dd-headbtn:hover { background: #e3e9f4; border-color: #ccd6e8; color: #1a2740; text-decoration: none; } }
 /* Filled + prominent, but a calmer, less-saturated navy so it doesn't shout next to
    the quiet Homepage button (#img58). */
 /* Grey to match the picker buttons (#img81/82) — no navy primary variant. */
@@ -17078,3 +17078,95 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-chev,
 .sticky-hero-inner.nav-measuring .sticky-actions.navbtns { flex: 0 0 auto !important; }
 .sticky-hero-inner.nav-measuring .sticky-actions.navbtns .navbtn.nav-searchbar,
 .sticky-hero-inner.nav-measuring #nav-search.navbtn { margin-left: 0 !important; }
+
+/* ═══════════════ revamp729 ═══════════════════════════════════════════════ */
+
+/* [hidden] must actually hide: .page-backbar sets display:flex, which was
+   overriding the UA [hidden] rule — that's why the Prompt Builder showed BOTH
+   its own back link and the page-level one (#img61). */
+.page-backbar[hidden] { display: none !important; }
+
+/* Back link: text, not a button. A chevron, "Back to", and the destination in
+   the display face — quiet at rest, blue on hover. */
+.page-backbar { padding: 20px 2px 0; }
+.aii-nav-dd-inner > .page-backbar { padding: 22px 2px 0; }
+.page-backbtn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 2px 0;
+  border: none; background: none; border-radius: 0; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.86rem; font-weight: 500;
+  color: #64748b; text-decoration: none; white-space: nowrap;
+  transition: color .14s ease;
+}
+.page-backbtn b { font-family: var(--font-display); font-weight: 700; color: #33455f; letter-spacing: -0.008em; transition: color .14s ease; }
+.page-backbtn svg { flex: none; color: #94a3b8; transition: transform .16s ease, color .14s ease; }
+@media (hover: hover) {
+  .page-backbtn:hover { color: #4b6bb8; text-decoration: none; }
+  .page-backbtn:hover b { color: #1d4ed8; }
+  .page-backbtn:hover svg { color: #1d4ed8; transform: translateX(-3px); }
+}
+.topic-subnav-inner > .page-backbar { padding: 0; margin-left: auto; align-items: center; }
+@media (max-width: 560px) { .page-backbar { padding-top: 14px; } .page-backbtn { font-size: 0.82rem; } }
+/* The old pill styling is retired — keep the inner "Back to Prompts Overview"
+   control on the same text language so the two never look like rival controls. */
+.prompts-back {
+  border: none !important; background: none !important; padding: 2px 0 !important;
+  margin: 0 0 14px !important; color: #64748b !important; font-weight: 500 !important;
+}
+@media (hover: hover) { .prompts-back:hover { background: none !important; color: #4b6bb8 !important; } }
+
+/* ── First row in a list must sit flush against the rule above it ───────────
+   The hover tint stopped a few px short of the section divider, reading as a
+   sliver of white above the first story/trend. Kill the list's top pad and
+   extend the tint far enough that no gap can survive. */
+body.home-search #home-trending .trend-card-grid { padding-top: 0 !important; }
+#section-newsfeed .news-list { padding-top: 0 !important; }
+@media (hover: hover) {
+  body.home-search #home-trending .trend-card:nth-child(-n+2):not(.is-expanded):hover { box-shadow: 0 -8px 0 0 #f5f7fa; }
+  body.home-search #section-newsfeed .news-list .news-card:first-child:not(:has(.news-act-ai[aria-expanded="true"])):hover { box-shadow: 0 -8px 0 0 rgba(15, 26, 46, 0.04); }
+  .topic-band #section-newsfeed .news-list .news-card:first-child:hover { box-shadow: 0 -8px 0 0 rgba(15, 26, 46, 0.04); }
+}
+
+/* ── Expanded trend: a clean ✕ in the top-right corner, nothing floating ──── */
+body.home-search #home-trending .trend-card.is-expanded .trend-card-acc,
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-acc {
+  display: inline-flex !important; position: absolute; top: -2px; right: 0; transform: none;
+  width: 28px; height: 28px; align-items: center; justify-content: center;
+  border-radius: 8px; color: #64748b; background: none;
+}
+@media (hover: hover) {
+  body.home-search #home-trending .trend-card.is-expanded .trend-card-acc:hover,
+  .aii-nav-dd-trending .trend-card.is-expanded .trend-card-acc:hover { background: rgba(15, 26, 46, 0.06); color: #26375a; }
+}
+body.home-search #home-trending .trend-card.is-expanded .trend-card-head,
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-head { padding-right: 34px; }
+
+/* ── Sources / Explore Further drawers: chevrons aligned with EACH OTHER, set
+   off the label, not stranded at the far right edge ──────────────────────── */
+.te-drawer > .te-drawer-sum { justify-content: flex-start; }
+.te-drawer-title { min-width: 132px; }
+.te-drawer-chev { margin-left: 0; }
+
+/* ── Section heads (AI Insights + Web Resources): a more definite rule with
+   real air beneath it before the accordion list ─────────────────────────── */
+.topic-ai-wrap .aii-fi-sechead,
+.topic-explore-host .aii-fi-sechead {
+  padding: 0 2px 14px; margin-bottom: 0;
+  border-bottom: 1.5px solid #d3d9e4;
+}
+.topic-ai-acclist { margin-top: 20px; }
+.topic-explore-host .xf-list { margin-top: 20px !important; }
+/* AI Insights sat closer to the nav than Web Resources — match the roomier one. */
+.topic-ai-wrap .topic-ai-sechead { margin-top: 20px; }
+
+/* Step number lights up only while its accordion is OPEN. A card that merely
+   carries a pre-filled default (Choose Model) shows a quiet completion check
+   beside the number instead of reading as "active" on load (#img59/60). */
+.pb-card.has-items .pb-card-num { background: #eaeff8; color: #4a5c7d; }
+.pb-card.is-expanded .pb-card-num { background: #2f4d9e; color: #fff; }
+.pb-card-done {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; flex: none; margin-top: 3px; margin-left: -6px;
+  color: #16a34a;
+}
+.pb-card-done svg { display: block; }
+.pb-card { column-gap: 10px; }

@@ -426,6 +426,18 @@ const PB_CARDS = [
     fields: [] },
 ];
 
+// A nested picker opens under the field you tapped. Scroll that FIELD to a
+// comfortable spot near the top of the viewport — and only when it's actually
+// out of view, so an already-visible field never jumps.
+function scrollFieldIntoView(el) {
+  if (!el) return;
+  try {
+    const r = el.getBoundingClientRect();
+    if (r.top >= 70 && r.top <= 220) return;
+    el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  } catch (_) {}
+}
+
 function pbOptionLabel(fieldKey, valueKey) {
   const field = pgData.fields?.find(f => f.key === fieldKey);
   if (!field?.options) return valueKey;
@@ -519,6 +531,7 @@ function renderPbCardsHTML() {
     return `
       <button type="button" class="pb-card${items.length ? ' has-items' : ''}" data-pb-card="${card.key}">
         <span class="pb-card-num" aria-hidden="true">${i + 1}</span>
+        ${items.length ? '<span class="pb-card-done" aria-label="Configured"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>' : ''}
         <span class="pb-card-tx">
           <span class="pb-card-titlerow"><span class="pb-card-title">${escapeHTML(card.label)}</span>${req}</span>
           <span class="pb-card-desc">${escapeHTML(card.desc)}</span>
@@ -773,7 +786,10 @@ function renderTopicsModalBody(body) {
       nested.className = 'pb-nested-picker';
       section.appendChild(nested);
       openAccordionTopicPicker(label, initial, apply, { container: nested, onClose: () => re() });
-      requestAnimationFrame(() => { try { nested.scrollIntoView({ block: 'nearest' }); } catch (_) {} });
+      // Keep the FIELD the user clicked in view. `nearest` on the (tall) picker
+      // scrolled its bottom edge into view, landing the user in the middle of the
+      // options with the field they tapped off-screen (#img57).
+      requestAnimationFrame(() => scrollFieldIntoView(section));
     } else {
       openAccordionTopicPicker(label, initial, apply);
     }
@@ -976,9 +992,10 @@ function openAccordionTopicPicker(label, initialSelected, onConfirm, opts) {
     if (nestedEl) {
       // Nested inline picker inside an expanded card — no chrome, live Done/Close.
       nestedEl.classList.add('pb-accordion-body', 'pb-nested-body');
-      nestedEl.innerHTML = `${ACC_INNER}<div class="pb-nested-foot"><button type="button" class="pb-nested-done">Done</button></div>`;
+      // No nested Done: the card's own Cancel/Done footer sits directly beneath
+      // this picker, and two Done buttons in a row read as a mistake (#img58).
+      nestedEl.innerHTML = ACC_INNER;
       bodyEl = nestedEl;
-      nestedEl.querySelector('.pb-nested-done').addEventListener('click', confirm);
     } else if (inline) {
       const body = pbInlineChrome({
         title: label, doneLabel: 'Done',
@@ -1891,7 +1908,7 @@ function populateChipGrid(host, fieldKey) {
       nested.className = 'pb-nested-picker';
       sec.appendChild(nested);
       openFieldPicker(fieldKey, opts, customMap, allowCustom, refresh, { container: nested, onClose: () => { nested.remove(); refresh(); } });
-      requestAnimationFrame(() => { try { nested.scrollIntoView({ block: 'nearest' }); } catch (_) {} });
+      requestAnimationFrame(() => scrollFieldIntoView(sec));
     } else {
       openFieldPicker(fieldKey, opts, customMap, allowCustom, refresh);
     }
@@ -2079,9 +2096,8 @@ function openFieldPicker(fieldKey, opts, customMap, allowCustom, onDone, mountOp
   function mountAndWire() {
     if (nestedEl) {
       nestedEl.classList.add('pb-accordion-body', 'pb-nested-body');
-      nestedEl.innerHTML = `${FP_INNER}<div class="pb-nested-foot"><button type="button" class="pb-nested-done">Done</button></div>`;
+      nestedEl.innerHTML = FP_INNER;
       bodyEl = nestedEl;
-      nestedEl.querySelector('.pb-nested-done').addEventListener('click', close);
     } else if (inline) {
       const body = pbInlineChrome({
         title: label, doneLabel: 'Done',
