@@ -18192,3 +18192,22 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
 @media (max-width: 1023.98px) {
   body.home-search .home-sections .home-main { margin-top: 3rem !important; }
 }
+
+/* ═══════════════ revamp757 ═══════════════════════════════════════════════ */
+
+/* Custom-search results: one rule that matters — under the Prompts/News/Explore
+   tabs. The bar's own bottom rule and the first accordion's top rule were
+   drawing two more lines around it. */
+.search-panel--modal[data-state="expanded"] .search-panel-barrow,
+.aii-nav-dd-search .search-panel-barrow { border-bottom: none !important; box-shadow: none !important; }
+.search-aii-host .aii-flatnav,
+.search-panel-results-inner .aii-flatnav {
+  border-bottom: 1.5px solid #d3d9e4 !important; margin-bottom: 0 !important; padding-bottom: 10px !important;
+}
+/* The list connects straight to that rule. */
+.search-aii-host .aii-fi-acclist,
+.search-panel-results-inner .aii-fi-acclist { margin-top: 0 !important; border-top: none !important; }
+.search-aii-host .aii-fi-acclist .aii-fi-acc:first-child,
+.search-panel-results-inner .aii-fi-acclist .aii-fi-acc:first-child { border-top: none !important; }
+.search-aii-host .aii-fi-sec,
+.search-panel-results-inner .aii-fi-sec { margin-top: 0 !important; }
