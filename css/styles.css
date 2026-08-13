@@ -18099,7 +18099,11 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 .aii-nav-dd .aii-nav-dd-headbtn svg { width: 13px !important; height: 13px !important; }
 .aii-nav-dd .navdd-headsearch { margin-bottom: 0 !important; width: min(300px, 40vw); }
 .aii-nav-dd .navdd-headsearch-input { height: 36px; font-size: 0.84rem; }
-/* Featured Prompts: more air above the card, less below it. */
-.prompts-home { gap: 1.5rem !important; }
-.prompts-home .ph-featured { margin-top: 0.7rem; }
-.prompts-home .ph-lib { margin-top: 0.2rem; }
+/* Featured Prompts card: real air between it and the title rule above, and a
+   much shorter drop to Prompts by Topic below. */
+.prompts-home { gap: 0 !important; }
+.prompts-home .ph-featured { margin: 1.6rem 0 1.5rem; }
+.prompts-home .ph-cta { margin-top: 2rem; }
+
+/* Parent topic rows: a shade lighter — they were carrying full display 700. */
+.pdir-card-name { font-weight: 650 !important; }
