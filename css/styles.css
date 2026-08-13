@@ -17940,3 +17940,67 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 .te-drawer[open] .xf-acc { border: none !important; border-bottom: 1px solid #eef1f6 !important; border-radius: 0 !important; box-shadow: none !important; }
 .te-drawer[open] .xf-acc:last-child { border-bottom: none !important; }
 .te-drawer[open] .xf-acc > .xf-sum { border-radius: 0 !important; background: transparent !important; }
+
+/* ═══════════════ revamp746 ═══════════════════════════════════════════════ */
+
+/* The page scrolls, not a box inside it. These panels had an inner scroller
+   (.aii-nav-dd-scroll) inside a fixed-height shell, so the wheel only worked
+   over the list — the header area ate the gesture — and every header change
+   resized that inner viewport, which is what kept shaking the list. The PANEL
+   is the scroller now and the header sticks to its top. */
+.aii-nav-dd { overflow-y: auto !important; overflow-x: hidden; overscroll-behavior: contain; }
+.aii-nav-dd .aii-nav-dd-scrollwrap,
+.aii-nav-dd .aii-nav-dd-scroll {
+  overflow: visible !important; height: auto !important; max-height: none !important; flex: none !important;
+}
+.aii-nav-dd .aii-nav-dd-inner { height: auto !important; min-height: 0 !important; display: block !important; }
+.aii-nav-dd .aii-nav-dd-head {
+  position: sticky; top: 0; z-index: 6; background: #fff;
+}
+.aii-nav-dd .aii-nav-dd-subbar { position: sticky; top: 0; z-index: 5; background: #fff; }
+/* The fade overlays belonged to the inner scroller. */
+.aii-nav-dd .aii-nav-dd-scrollwrap::before,
+.aii-nav-dd .aii-nav-dd-scrollwrap::after { content: none !important; }
+
+/* ── Featured cards ─────────────────────────────────────────────────────── */
+.ph-fcard { width: 236px; min-height: 132px; justify-content: flex-start; gap: 4px; padding: 14px 15px 12px; }
+.ph-fcard-topic {
+  font-family: var(--font-family); font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase; color: #8a98b0;
+}
+.ph-fcard-name { font-size: 0.95rem; line-height: 1.25; }
+.ph-fcard-desc {
+  font-family: var(--font-family); font-size: 0.78rem; font-weight: 500; line-height: 1.4;
+  color: var(--color-text-muted); margin-top: 2px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.ph-fcard-go {
+  display: inline-flex; align-items: center; gap: 4px; margin-top: auto; padding-top: 8px;
+  font-family: var(--font-family); font-size: 0.76rem; font-weight: 650; color: #3d5da8;
+}
+.ph-fcard-go svg { transition: transform .14s ease; }
+@media (hover: hover) { .ph-fcard:hover .ph-fcard-go svg { transform: translateX(3px); } }
+/* Focused prompt takes over the section — its header would be describing a view
+   that is no longer the featured list. */
+.ph-featured.is-focus .ph-sec-head { display: none !important; }
+.ph-featured.is-focus { padding-top: 14px; }
+
+/* ── Topic view: back first, then the topic itself ──────────────────────── */
+.pdir-card.is-topicview > .pdir-cardhead { display: none !important; }
+.pdir-card.is-topicview .pdir-cardbody { padding-top: 14px; }
+.pdir-topicname {
+  display: flex; align-items: center; gap: 8px;
+  margin: 10px 0 2px !important; font-size: 1.06rem !important;
+}
+.pdir-topicname-ic { flex: none; display: inline-flex; color: #2f4d9e; }
+.pdir-topicname-ic svg { width: 20px; height: 20px; display: block; }
+/* Prompt sections inside a topic run small — they're the third level down. */
+.pdir-topichost .aii-fi-sectitle { font-size: 0.78rem !important; font-weight: 700 !important; letter-spacing: 0.04em; text-transform: uppercase; color: #8a98b0 !important; }
+.pdir-topichost .aii-fi-sechead { padding-bottom: 6px !important; border-bottom: 1px solid #eef1f6 !important; }
+.pdir-topichost .aii-fi-sec { margin-top: 16px !important; }
+.pdir-topichost .aii-fi-acc { border: none !important; border-bottom: 1px solid #f0f3f8 !important; border-radius: 0 !important; box-shadow: none !important; }
+.pdir-topichost .aii-fi-acc:last-child { border-bottom: none !important; }
+.pdir-topichost .aii-fi-accsum { padding-top: 9px !important; padding-bottom: 9px !important; border-radius: 0 !important; }
+.pdir-topichost .aii-fi-acc-ic { width: 20px !important; height: 20px !important; }
+.pdir-topichost .aii-fi-acc-ic svg { width: 16px !important; height: 16px !important; }
+.pdir-topichost .aii-fi-acc-name { font-size: 0.83rem !important; font-weight: 600 !important; }

@@ -658,7 +658,7 @@ function openNavDropdown(cfg) {
   // Page-mode panels ignore overlay clicks — dismissing a page by clicking beside
   // it is exactly the pseudo-page behavior we're removing.
   overlay.onclick = asPage ? null : closeFn;
-  const sc = panel.querySelector('[data-navdd-scroll]');
+  const sc = panel;   // the PANEL scrolls now, not an inner div
   if (sc) sc.addEventListener('scroll', updateNavDdFades, { passive: true });
   wireNavDdCondense(panel);
   if (typeof cfg.wire === 'function') cfg.wire(panel);
@@ -749,9 +749,12 @@ function wirePromptDirectory(root, ctls) {
         cellBtn.addEventListener('click', () => {
           const slug = cellBtn.dataset.slug; const name = cellBtn.dataset.name;
           bodyEl.classList.add('is-topic');
+          const parentName = card.querySelector('.pdir-card-name').textContent;
+          let tIcon = ''; try { const tt = getTopicBySlug(slug); tIcon = topicIconSVG((tt && tt.icon) || 'globe', ''); } catch (_) {}
+          card.classList.add('is-topicview');
           bodyEl.innerHTML = `<div class="pdir-topicview">
-            <button type="button" class="pdir-topicback">${BACKBAR_CHEV}<span>All ${escapeHTML(card.querySelector('.pdir-card-name').textContent)} topics</span></button>
-            <h4 class="pdir-topicname">${escapeHTML(name)}</h4>
+            <button type="button" class="pdir-topicback">${BACKBAR_CHEV}<span>All ${escapeHTML(parentName)} topics</span></button>
+            <h4 class="pdir-topicname"><span class="pdir-topicname-ic" aria-hidden="true">${tIcon}</span><span>${escapeHTML(name)}</span></h4>
             <div class="pdir-topichost prompts-topic-host"></div>
           </div>`;
           const host = bodyEl.querySelector('.pdir-topichost');
@@ -771,6 +774,7 @@ function wirePromptDirectory(root, ctls) {
           }
           bodyEl.querySelector('.pdir-topicback')?.addEventListener('click', () => {
             bodyEl.classList.remove('is-topic');
+            card.classList.remove('is-topicview');
             bodyEl.innerHTML = gridHTML;
             wireCells();
             requestAnimationFrame(updateNavDdFades);
@@ -910,8 +914,10 @@ function wirePromptsDropdown(panel, initialView) {
         if (!picks.length) return;
         const railHTML = picks.map((pk, i) => `
           <button type="button" class="ph-fcard" data-ph-feat="${i}">
-            <span class="ph-fcard-name">${escapeHTML(pk.sh.name)}</span>
             <span class="ph-fcard-topic">${escapeHTML(pk.topic.name)}</span>
+            <span class="ph-fcard-name">${escapeHTML(pk.sh.name)}</span>
+            ${pk.sh.description ? `<span class="ph-fcard-desc">${escapeHTML(pk.sh.description)}</span>` : ''}
+            <span class="ph-fcard-go">Open prompt${PH_ARROW_R}</span>
           </button>`).join('');
         rail.innerHTML = railHTML;
         sec.hidden = false;
@@ -923,6 +929,7 @@ function wirePromptsDropdown(panel, initialView) {
         const focusPrompt = (i) => {
           const pk = picks[i]; if (!pk) return;
           if (railNav) railNav.hidden = true;
+          sec.classList.add('is-focus');
           rail.classList.add('is-focus');
           rail.innerHTML = `<div class="ph-focus">
             <button type="button" class="ph-focus-back">${BACKBAR_CHEV}<span>All featured prompts</span></button>
@@ -942,6 +949,7 @@ function wirePromptsDropdown(panel, initialView) {
           } catch (_) {}
           rail.querySelector('.ph-focus-back')?.addEventListener('click', () => {
             rail.classList.remove('is-focus');
+            sec.classList.remove('is-focus');
             if (railNav) railNav.hidden = false;
             rail.innerHTML = railHTML;
             wireRailCards();
