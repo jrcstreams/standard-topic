@@ -18107,3 +18107,41 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 
 /* Parent topic rows: a shade lighter — they were carrying full display 700. */
 .pdir-card-name { font-weight: 650 !important; }
+
+/* ═══════════════ revamp754 ═══════════════════════════════════════════════ */
+
+/* Wrapped head actions align LEFT — right-aligning them on their own row left a
+   ragged edge with nothing to align to. */
+@media (max-width: 900px) {
+  .aii-nav-dd .aii-nav-dd-headbtns {
+    grid-column: 1 !important; grid-row: auto !important;
+    justify-self: start !important; margin-top: 12px !important; flex-wrap: wrap;
+  }
+  .aii-nav-dd .navdd-headsearch {
+    grid-column: 1 !important; grid-row: auto !important;
+    justify-self: stretch !important; width: 100% !important; margin-top: 12px !important;
+  }
+}
+
+/* A focused featured prompt already sits on the card's tint — the emenu host's
+   own grey panel just drew a second box inside it. */
+.ph-focus-host .aii-emenu-host.is-open {
+  background: none !important; padding: 0 !important; margin-top: 4px !important;
+}
+
+/* Prompt rows: the hover/open fill spans the full row and the content is centred
+   in it — the row was padded asymmetrically, so the tint sat high and short. */
+.pdir-topichost .aii-fi-acc { padding: 0 !important; }
+.pdir-topichost .aii-fi-accsum {
+  display: flex; align-items: center; width: 100%;
+  padding: 12px 10px !important; margin: 0 !important; min-height: 46px;
+}
+@media (hover: hover) { .pdir-topichost .aii-fi-accsum:hover { background: #f7f9fc; } }
+.pdir-topichost .aii-fi-acc.is-open > .aii-fi-accsum { background: #f4f7fc; }
+.pdir-topichost .aii-emenu-host.is-open { margin-top: 0 !important; }
+
+/* Section rules: heavier under the label, and the last row keeps its divider so
+   the section closes the way it opened. */
+.pdir-topichost .aii-fi-sechead { border-bottom: 1.5px solid #d3d9e4 !important; }
+.pdir-topichost .aii-fi-acc:last-child,
+.tai-acc-body .aii-fi-acc:last-child { border-bottom: 1px solid #f0f3f8 !important; }
