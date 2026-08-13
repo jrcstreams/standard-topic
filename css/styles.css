@@ -11520,13 +11520,12 @@ body.home-search #home-trending .trend-card.is-expanded { padding: 0 !important;
 @keyframes acctnReveal { from { opacity: 0; transform: translateY(-7px); } to { opacity: 1; transform: none; } }
 /* Chevron rotation on the accordions eases smoothly. */
 .aii-fi-acc-chev, .xf-sum .aii-chev, .trend-card-acc { transition: transform .26s cubic-bezier(.22,.61,.21,1), color .14s ease; }
-/* Close X pinned to the container's top-right, aligned with the trend header. */
-.trend-exp-close {
-  position: absolute; top: 12px; right: 12px; width: 28px; height: 28px;
-  display: grid; place-items: center; border-radius: 8px;
-  border: 1px solid var(--color-surface-border); background: #fff; color: #475569; cursor: pointer; z-index: 2;
-}
-@media (hover: hover) { .trend-exp-close:hover { background: #eef2f7; color: #1e293b; } }
+/* (Retired) .trend-exp-close used to be a 28px X pinned to the container's
+   top-right. That element is gone — the top-right X is .trend-card-acc now — but
+   the rule stayed, and the new bottom "Close" BUTTON reuses the same class name,
+   so it inherited position:absolute/top/right and rendered as a clipped pill
+   floating off the card's edge. The pinning is removed here; the button's own
+   styling lives with the trend-expansion block below. */
 /* Discreet "Close" at the very bottom of a trend brief — mirrors the top X, fills
    the trailing gap before the next trend, and reads as the natural end (#img543). */
 /* Close sits right at the end of the brief — no separator line, minimal gap (#img547/548). */
