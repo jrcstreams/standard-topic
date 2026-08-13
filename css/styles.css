@@ -18211,3 +18211,21 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
 .search-panel-results-inner .aii-fi-acclist .aii-fi-acc:first-child { border-top: none !important; }
 .search-aii-host .aii-fi-sec,
 .search-panel-results-inner .aii-fi-sec { margin-top: 0 !important; }
+
+/* ═══════════════ revamp758 ═══════════════════════════════════════════════ */
+
+/* Search is a page too: no ✕, a back bar, and ONE scroll. It keeps its centred
+   hero while empty; once a search is running it scrolls like the other pages. */
+.aii-nav-dd-search { overflow-y: auto !important; overscroll-behavior: contain; }
+.aii-nav-dd-search .aii-nav-dd-inner { height: auto !important; min-height: 0 !important; }
+.aii-nav-dd-search:has(.search-panel[data-state="expanded"]) .aii-nav-dd-scrollwrap,
+.aii-nav-dd-search:has(.search-panel[data-state="expanded"]) .aii-nav-dd-scroll {
+  overflow: visible !important; height: auto !important; max-height: none !important; flex: none !important;
+}
+.aii-nav-dd-search:has(.search-panel[data-state="expanded"]) .search-panel-results,
+.aii-nav-dd-search:has(.search-panel[data-state="expanded"]) .search-panel-results-inner {
+  overflow: visible !important; max-height: none !important; height: auto !important;
+}
+/* The back bar sits above the hero rather than beside a close button. */
+.aii-nav-dd-search > .aii-nav-dd-inner > .page-backbar { padding: 18px 2px 0; }
+.aii-nav-dd-search .aii-nav-dd-head-bare { min-height: 0; padding-bottom: 0; }

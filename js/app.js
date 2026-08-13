@@ -617,7 +617,7 @@ function openNavDropdown(cfg) {
   panel.className = 'aii-nav-dd' + (cfg.className ? ' ' + cfg.className : '');
   // Topics / Trending / Prompts are PAGES, not overlays (revamp719): no ✕, no
   // click-outside-to-dismiss — a "Back to …" bar takes the ✕'s place.
-  const asPage = ['topics', 'trending', 'prompts'].includes(cfg.key);
+  const asPage = ['topics', 'trending', 'prompts', 'search'].includes(cfg.key);
   // The Prompt Builder is page-like too, so it gets the same way back — but it
   // keeps its ✕ (it can be opened ON TOP of work you want to return to). The
   // Search panel is a true overlay over whatever you were reading: no back bar.
