@@ -18145,3 +18145,17 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 .pdir-topichost .aii-fi-sechead { border-bottom: 1.5px solid #d3d9e4 !important; }
 .pdir-topichost .aii-fi-acc:last-child,
 .tai-acc-body .aii-fi-acc:last-child { border-bottom: 1px solid #f0f3f8 !important; }
+
+/* ═══════════════ revamp755 ═══════════════════════════════════════════════ */
+
+/* Once the search field drops to its own row it belongs on the LEFT edge with the
+   title, not floating right with nothing to align to. Raised specificity so it
+   beats the earlier right-align rule regardless of source order. */
+@media (max-width: 1100px) {
+  .aii-nav-dd .aii-nav-dd-titles > .navdd-headsearch,
+  .aii-nav-dd .aii-nav-dd-titles > .aii-nav-dd-headbtns {
+    grid-column: 1 / -1 !important; grid-row: auto !important;
+    justify-self: start !important; margin: 14px 0 4px !important;
+  }
+  .aii-nav-dd .aii-nav-dd-titles > .navdd-headsearch { width: min(360px, 100%) !important; }
+}
