@@ -184,13 +184,33 @@ export function wireTrendDrawers(root) {
   const EASE = 'cubic-bezier(.22,.61,.21,1)';
   // Only scroll when the header isn't already sitting in a comfortable band —
   // an in-view header must never jump.
+  // Scroll the drawer header to a comfortable band under the fixed nav. Uses an
+  // explicit scrollTo on the real scroll container rather than scrollIntoView,
+  // which resolves against every scrollable ancestor and overshot inside the
+  // trending panel.
+  const scrollerFor = (el) => {
+    let n = el.parentElement;
+    while (n && n !== document.body) {
+      const st = getComputedStyle(n);
+      if (/(auto|scroll)/.test(st.overflowY) && n.scrollHeight > n.clientHeight + 4) return n;
+      n = n.parentElement;
+    }
+    return null;
+  };
   const keepInView = (el) => {
     try {
+      const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 72;
+      const pad = navH + 18;
       const r = el.getBoundingClientRect();
-      const lo = 90;
-      const hi = Math.max(220, window.innerHeight * 0.45);
-      if (r.top >= lo && r.top <= hi) return;
-      el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      const hi = Math.max(pad + 140, window.innerHeight * 0.45);
+      if (r.top >= pad - 4 && r.top <= hi) return;      // already comfortable
+      const sc = scrollerFor(el);
+      if (sc) {
+        const sr = sc.getBoundingClientRect();
+        sc.scrollTo({ top: sc.scrollTop + (r.top - sr.top) - 14, behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: window.scrollY + r.top - pad, behavior: 'smooth' });
+      }
     } catch (_) {}
   };
   root.addEventListener('click', (e) => {
@@ -211,6 +231,11 @@ export function wireTrendDrawers(root) {
         });
         setTimeout(() => { det.open = false; body.removeAttribute('style'); }, 250);
       } else {
+        // Anchor BEFORE opening. The drawer body is inserted BELOW the summary, so
+        // the summary's own position doesn't move — scrolling first is stable.
+        // Scrolling after the open (the previous attempt) fought the browser's
+        // scroll anchoring as the body grew, which is what pushed the header off.
+        keepInView(sum);
         det.open = true;
         body.style.overflow = 'hidden';
         body.style.height = '0px';
@@ -221,15 +246,21 @@ export function wireTrendDrawers(root) {
           body.style.height = h + 'px';
           body.style.opacity = '1';
         });
-        setTimeout(() => { body.removeAttribute('style'); }, 300);
-        // Anchor AFTER the open starts so the measurement reflects the new height.
-        requestAnimationFrame(() => keepInView(sum));
+        setTimeout(() => {
+          body.removeAttribute('style');
+          // Re-assert once the growth has settled; a no-op if it never drifted.
+          keepInView(sum);
+        }, 310);
       }
       return;
     }
     // Nested source-category accordions inside Explore Further animate natively;
     // they just need the same anchoring so the row you tapped stays put.
     const xs = e.target.closest('.xf-sum');
-    if (xs && root.contains(xs)) setTimeout(() => keepInView(xs), 30);
+    if (xs && root.contains(xs)) {
+      const acc = xs.closest('.xf-acc');
+      if (acc && !acc.open) keepInView(xs);        // opening: anchor first
+      setTimeout(() => keepInView(xs), 320);        // then re-assert after it grows
+    }
   });
 }

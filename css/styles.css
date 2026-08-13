@@ -17184,3 +17184,7 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-head,
 .te-drawer > .te-drawer-sum:focus { outline: none; }
 .te-drawer > .te-drawer-sum:focus-visible { outline: 2px solid #2563eb; outline-offset: -2px; border-radius: 6px; }
 .te-drawer-body .xf-sum:focus { outline: none; }
+
+/* Stop the browser compensating scroll position as a drawer grows — that
+   anchoring is what dragged the header we just scrolled to back off screen. */
+.trend-card-exp, .trend-exp, .te-drawer-body { overflow-anchor: none; }
