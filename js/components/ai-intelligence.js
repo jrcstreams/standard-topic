@@ -156,6 +156,17 @@ function splitLead(body) {
   return { lead, rest: txt.slice(m[0].length).trim() };
 }
 function aiiMsec(id, name, inner) { return `<section class="im-msec" id="${id}" data-name="${escAttr(name)}">${inner}</section>`; }
+// Plain-text teaser of a section body for the preview-and-expand story rows
+// (previewSections): markdown stripped, whitespace collapsed, cut on a word.
+function previewText(body, max = 220) {
+  const t = String(body || '')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/[*_`>#]/g, '')
+    .replace(/^\s*[-•]\s*/gm, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return t.length > max ? `${t.slice(0, max).replace(/\s+\S*$/, '')}…` : t;
+}
 // Attribute the builder's source headlines to the section whose text they best
 // overlap — token match on the headline title vs each section's name + body. Purely
 // client-side (the headlines already ship with the insight), so the Sources tab can
@@ -939,6 +950,18 @@ export function renderAIIntelligence(container, scope) {
       // then a compact "N sources ⌄" dropdown toggle at the bottom.
       const upd = updatedLbl ? `<span class="im-sec-updated">${esc(updatedLbl)}</span>` : '';
       const provenance = `<div class="im-sec-aitag-row im-sec-aitag-row--inbody"><span class="im-sec-aitag">${LOGO}<span>AI Generated Text</span></span>${upd}</div>`;
+      // scope.previewSections (topic page's AI Brief, revamp762): each part is a
+      // STORY row — headline + a two-line teaser of the text, expanding in place
+      // to the full prose + sources. Provenance renders once per brief (.tai-prov)
+      // rather than per story.
+      if (scope.previewSections) {
+        const header = `<button type="button" class="im-msec-toggle tai-story-sum" aria-expanded="false">
+            <span class="tai-story-tx"><h3 class="im-msec-name">${esc(part.name)}</h3><span class="tai-story-prev">${esc(previewText(part.body))}</span></span>
+            <span class="tai-story-chev" aria-hidden="true">${CHEV}</span>
+          </button>`;
+        const body = `<div class="im-msec-body" hidden><div class="aii-sec-body">${renderBriefBody(part.body, null)}</div>${secSourcesHTML(buckets[i], true, true)}</div>`;
+        return `<section class="im-msec tai-story" id="aii-msec-${i}" data-name="${escAttr(part.name)}">${header + body}</section>`;
+      }
       // scope.collapsibleSections: each part becomes a content ROW you expand —
       // a plus/minus marker beside the headline, body hidden until opened. Used by
       // the topic page's AI Briefing, where three briefs share one accordion and a
@@ -968,7 +991,11 @@ export function renderAIIntelligence(container, scope) {
           ${secSourcesHTML(unmatched, true, false)}
         </section>`
       : '';
-    const summaryHTML = cards.join('') + relatedFlat;
+    // Preview mode: one quiet provenance line for the whole brief, above the rows.
+    const prov = scope.previewSections
+      ? `<div class="tai-prov"><span class="tai-prov-ai">${LOGO}<span>AI Generated</span></span>${updatedLbl ? `<span class="tai-prov-sep" aria-hidden="true">·</span><span class="tai-prov-upd">${esc(updatedLbl)}</span>` : ''}</div>`
+      : '';
+    const summaryHTML = prov + cards.join('') + relatedFlat;
     // Explore Further view = the shared clean-dropdown component (External AI Models
     // with Send-to / Direct Submit / Review, then web categories).
     const efP = explorePrompt();

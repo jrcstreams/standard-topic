@@ -18260,3 +18260,125 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
 .pdir-card.is-open > .pdir-cardhead { border-bottom: 1px solid #e7ecf3; }
 .pdir-card.is-open .pdir-cardbody { padding-top: 16px !important; padding-bottom: 18px !important; }
 .pdir-card.is-open .pdir-grid { gap: 9px; }
+
+/* ═══════════════ revamp762 ═══════════════════════════════════════════════ */
+
+/* ── AI Insights remade: the brief IS the page ────────────────────────────
+   Two compact resource accordions (AI Prompts / External AI Models) under a
+   tiny eyebrow, then "The AI Brief" — three always-open subsections (Catch Up
+   / Deep Dive / 101 Info) whose stories are preview-and-expand rows. */
+
+/* Per-subsection accent: blue = Catch Up, amber = Deep Dive, teal = 101 Info. */
+.tai-jump[data-group="discover"],       .tai-brief-part--flat[data-group="discover"]       { --tbp-accent: #2563eb; }
+.tai-jump[data-group="topic-specific"], .tai-brief-part--flat[data-group="topic-specific"] { --tbp-accent: #d97706; }
+.tai-jump[data-group="learn"],          .tai-brief-part--flat[data-group="learn"]          { --tbp-accent: #0d9488; }
+
+/* Eyebrow + compact single-line resource accordions. */
+.tai-tools { margin: 2px 0 30px; }
+.tai-tools-label {
+  margin: 0 0 8px; font-family: var(--font-family); font-size: 0.72rem;
+  font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #8a97ad;
+}
+.tai-acclist--mini { margin: 0; }
+.tai-acclist--mini .tai-accsum { padding: 11px 14px; gap: 10px; }
+.tai-acclist--mini .tai-acc-ic svg { width: 18px; height: 18px; }
+.tai-acclist--mini .tai-acc-name { font-size: 0.9rem; font-weight: 650; }
+.tai-acclist--mini .tai-acc-sub { display: none; }
+.tai-acclist--mini .tai-acc-chev svg { width: 16px; height: 16px; }
+.tai-acclist--mini .tai-acc-body { padding: 2px 14px 18px; }
+
+/* The AI Brief band: bold navy heading + jump chips over a STRONG navy rule —
+   the one heavy line on the page, so the brief reads as the main event. */
+.tai-brief { margin: 0 0 44px; }
+.tai-brief-bar {
+  display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 18px;
+  padding: 0 2px 12px; border-bottom: 2px solid #26375a;
+}
+.tai-brief-bartx { flex: 1 1 260px; min-width: 0; }
+.tai-brief-bartitle {
+  margin: 0; display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-display); font-size: 1.12rem; font-weight: 750;
+  letter-spacing: -0.016em; color: #26375a;
+}
+.tai-brief-spark { color: #2563eb; font-size: 0.9em; line-height: 1; }
+.tai-brief-barsub { margin: 3px 0 0; font-family: var(--font-family); font-size: 0.8rem; color: var(--color-text-muted); }
+.tai-jumps { display: flex; flex-wrap: wrap; gap: 7px; padding-bottom: 2px; }
+.tai-jump {
+  display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px;
+  border: 1px solid #dfe5ee; border-radius: 999px; background: #fff; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.77rem; font-weight: 600; color: #33455f;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color .13s ease, color .13s ease, background .13s ease;
+}
+@media (hover: hover) { .tai-jump:hover { border-color: #b9c6dd; color: #26375a; background: #f7f9fc; } }
+.tai-jump-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--tbp-accent, #2563eb); flex: none; }
+
+/* Subsection headers: accent-tinted icon chip + title + one-liner. */
+.tai-brief-part--flat { margin: 30px 0 0; margin-left: 0; scroll-margin-top: calc(var(--nav-h) + 18px); }
+.tai-brief-part--flat .tai-brief-head {
+  display: flex; align-items: center; gap: 11px;
+  padding: 0 2px 10px; border-bottom: 1px solid #e4e8f0;
+}
+.tai-brief-ic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 9px;
+  background: color-mix(in srgb, var(--tbp-accent, #2563eb) 10%, #fff);
+  color: var(--tbp-accent, #2563eb);
+}
+.tai-brief-ic svg { width: 18px; height: 18px; }
+.tai-brief-headtx { min-width: 0; }
+.tai-brief-part--flat .tai-brief-title { font-size: 1.02rem; font-weight: 700; letter-spacing: -0.014em; color: #1a2740; }
+.tai-brief-part--flat .tai-brief-sub { margin-top: 1px; font-size: 0.78rem; }
+
+/* Story rows: headline + a two-line teaser, expanding to the full prose. */
+.tai-brief-host .im-msec.tai-story { padding: 0; }
+.tai-story-sum {
+  display: flex; align-items: flex-start; gap: 12px; width: 100%;
+  padding: 13px 2px; border: none; background: none; cursor: pointer; text-align: left;
+  -webkit-tap-highlight-color: transparent;
+}
+.tai-story-tx { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+.tai-story-sum .im-msec-name {
+  margin: 0; font-family: var(--font-display); font-size: 0.96rem; font-weight: 650;
+  letter-spacing: -0.01em; color: #26375a; line-height: 1.35;
+}
+.tai-story-prev {
+  font-family: var(--font-family); font-size: 0.82rem; color: #71809b; line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.tai-story-chev { flex: none; display: inline-flex; color: #a8b4c9; margin-top: 4px; transition: transform .18s ease, color .12s ease; }
+.tai-story-chev svg { width: 16px; height: 16px; }
+.im-msec.is-open > .tai-story-sum .tai-story-chev { transform: rotate(180deg); color: #6f83a6; }
+.im-msec.is-open > .tai-story-sum .tai-story-prev { display: none; }
+@media (hover: hover) {
+  .tai-story-sum:hover .im-msec-name { color: #1d4ed8; }
+  .tai-story-sum:hover .tai-story-chev { color: #1d4ed8; }
+}
+.tai-brief-host .tai-story .im-msec-body { padding: 1px 2px 16px; }
+
+/* One quiet provenance line per brief, above its first story. */
+.tai-prov {
+  display: flex; align-items: center; gap: 7px; margin: 12px 2px 0;
+  font-family: var(--font-family); font-size: 0.72rem; font-weight: 600; color: #94a1b5;
+}
+.tai-prov-ai { display: inline-flex; align-items: center; gap: 5px; color: #7c8aa5; }
+.tai-prov-ai svg { width: 11px; height: 11px; }
+.tai-prov-sep { color: #c3cbd8; }
+
+/* Loading shimmer inside a subsection shouldn't balloon the part. */
+.tai-brief-host .aii-gen { margin: 14px 0 6px; }
+
+@media (max-width: 560px) {
+  .tai-tools { margin-bottom: 26px; }
+  .tai-acclist--mini .tai-accsum { padding: 10px 12px; }
+  .tai-acclist--mini .tai-acc-body { padding: 2px 12px 16px; }
+  .tai-brief-bartitle { font-size: 1.04rem; }
+  .tai-jump { padding: 4px 10px; font-size: 0.74rem; }
+  .tai-brief-part--flat { margin-top: 26px; }
+  .tai-brief-ic { width: 28px; height: 28px; border-radius: 8px; }
+  .tai-brief-ic svg { width: 16px; height: 16px; }
+  .tai-brief-part--flat .tai-brief-title { font-size: 0.95rem; }
+  .tai-story-sum { padding: 12px 2px; gap: 10px; }
+  .tai-story-sum .im-msec-name { font-size: 0.92rem; }
+  .tai-story-prev { font-size: 0.79rem; }
+}

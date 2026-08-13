@@ -17,7 +17,7 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
-import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260728-revamp667';
+import { renderAIIntelligence } from './components/ai-intelligence.js?v=20260813-revamp762';
 import { exploreFurtherHTML, exploreAIModelsHTML, wireExploreFurther } from './utils/explore-further.js?v=20260812-revamp718';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260717-revamp592';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
@@ -1224,29 +1224,28 @@ const TOPIC_PATH_TABS = [
 // tabs). `kind` picks the mount strategy; `group` is the AI component's builder
 // group where one applies.
 const TOPIC_AI_ROWS = [
-  { key: 'briefing', kind: 'briefing',
-    label: 'AI Briefing',
-    sub: 'Get caught up, go deeper, or start from the basics — generated for this topic.',
-    icon: 'discover' },
   { key: 'prompts', kind: 'prompts', group: 'external',
     label: 'AI Prompts',
     sub: 'Ready-made prompts for this topic, plus evergreen ones that work anywhere.',
     icon: 'topic-specific' },
   { key: 'models', kind: 'models',
-    label: 'Explore Topic with External AI Models',
+    label: 'Explore with External AI Models',
     sub: 'Send this topic to ChatGPT, Claude, Gemini and more.', icon: 'models' },
 ];
-// The three briefs that make up the AI Briefing row, in reading order.
+// The three subsections of the AI Brief, in reading order (revamp762: the brief
+// is no longer folded into an accordion — it renders open, front and center).
 const TOPIC_AI_BRIEF_PARTS = [
-  { group: 'discover',       label: 'Catch Up',     sub: 'The latest news, moves and developments.' },
-  { group: 'topic-specific', label: 'Deep Dive',    sub: 'The key developments in depth — tradeoffs and what they mean.' },
-  { group: 'learn',          label: '101 Overview', sub: 'Background, fundamentals and key context.' },
+  { group: 'discover',       label: 'Catch Up',  sub: 'The latest news, moves and developments.', icon: 'discover' },
+  { group: 'topic-specific', label: 'Deep Dive', sub: 'The key developments in depth — tradeoffs and what they mean.', icon: 'deepdive' },
+  { group: 'learn',          label: '101 Info',  sub: 'Background, fundamentals and key context.', icon: 'learn' },
 ];
 const TOPIC_AI_ROW_KEYS = new Set(TOPIC_AI_ROWS.map((r) => r.key));
-// Builder-group deep-links (nav dropdown, breakpoint re-render) → accordion row.
-const TOPIC_AI_GROUP_TO_ROW = { discover: 'briefing', 'topic-specific': 'briefing', learn: 'briefing', external: 'prompts' };
+const TOPIC_AI_BRIEF_GROUPS = new Set(TOPIC_AI_BRIEF_PARTS.map((p) => p.group));
+// Builder-group deep-links (nav dropdown, breakpoint re-render) → a resource
+// accordion, or a brief subsection to scroll to (the brief is always open).
+const TOPIC_AI_GROUP_TO_ROW = { discover: 'discover', 'topic-specific': 'topic-specific', learn: 'learn', external: 'prompts' };
 // Retired row ids still reachable from old links / in-app deep-links.
-const TOPIC_AI_ROW_ALIAS = { catchup: 'briefing', deepdive: 'briefing', overview: 'briefing', 'topic-prompts': 'prompts', 'evergreen-prompts': 'prompts' };
+const TOPIC_AI_ROW_ALIAS = { briefing: 'briefing', catchup: 'discover', deepdive: 'topic-specific', overview: 'learn', 'topic-prompts': 'prompts', 'evergreen-prompts': 'prompts' };
 // Leading icons for the accordion rows.
 const TOPIC_AI_ICONS = {
   discover: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polygon points="15.5 8.5 13.5 13.5 8.5 15.5 10.5 10.5"/></svg>',
@@ -1264,7 +1263,7 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
   const nav = document.getElementById('topic-paths-nav');
   const body = container.querySelector('#topic-tab-body');
   if (!nav || !body) return;
-  let active = null; let ctl = null; let openRow = null;
+  let active = null; let ctl = null; let openRow = null; let aiSelectRow = null;
 
   // L1 active indicator: a single underline BAR that slides between News Feed /
   // AI Insights / Prompt Library on selection (instead of a filled pill, #img598).
@@ -1327,28 +1326,6 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
       }
       let shortcuts = [];
       try { shortcuts = getShortcutsForTopic(topic.slug) || []; } catch (_) {}
-      // AI Briefing: the three briefs share one row, each under its own header,
-      // with their parts rendered as expandable content rows rather than a wall
-      // of prose (collapsibleSections).
-      if (row.kind === 'briefing') {
-        host.innerHTML = TOPIC_AI_BRIEF_PARTS.map((p) => `
-          <section class="tai-brief-part">
-            <div class="tai-brief-head">
-              <h4 class="tai-brief-title">${escapeHTML(p.label)}</h4>
-              <p class="tai-brief-sub">${escapeHTML(p.sub)}</p>
-            </div>
-            <div class="tai-brief-host" data-brief-group="${escapeAttr(p.group)}"></div>
-          </section>`).join('');
-        rowCtls[row.key] = [];
-        host.querySelectorAll('[data-brief-group]').forEach((h) => {
-          rowCtls[row.key].push(renderAIIntelligence(h, {
-            inModal: true, initialBuilder: true, initialGroup: h.dataset.briefGroup, lockTopic: true,
-            collapsibleSections: true,
-            topic: topic.name, label: topic.name, descriptions, icons, shortcuts, topicKey: topic.slug,
-          }));
-        });
-        return;
-      }
       rowCtls[row.key] = renderAIIntelligence(host, {
         inModal: true, initialBuilder: true, initialGroup: row.group, lockTopic: true,
         promptsOnly: row.promptsOnly || null,
@@ -1360,28 +1337,79 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
       host.innerHTML = '<div class="aii-empty" style="padding:18px 4px;color:var(--color-text-muted);">Couldn’t load this section. Close and re-open it to retry.</div>';
     }
   };
-  // AI Insights = ONE accordion list. All rows closed on load; opening one closes
-  // whichever was open (a brief is a long read — two at once just buries them).
+  // AI Insights (revamp762): the AI Brief IS the page. Two compact resource
+  // accordions (prompts / external models) sit under a small eyebrow at the top;
+  // below them "The AI Brief" renders OPEN — three auto-loaded subsections
+  // (Catch Up / Deep Dive / 101 Info), their stories preview-and-expand rows —
+  // so the brief is one tap away instead of three accordion levels deep.
   const renderAI = () => {
     destroyRowCtls();
+    const partHTML = (p) => `
+      <section class="tai-brief-part tai-brief-part--flat" data-group="${escapeAttr(p.group)}" id="tai-part-${escapeAttr(p.group)}">
+        <div class="tai-brief-head tai-brief-head--flat">
+          <span class="tai-brief-ic" aria-hidden="true">${TOPIC_AI_ICONS[p.icon] || ''}</span>
+          <div class="tai-brief-headtx">
+            <h4 class="tai-brief-title">${escapeHTML(p.label)}</h4>
+            <p class="tai-brief-sub">${escapeHTML(p.sub)}</p>
+          </div>
+        </div>
+        <div class="tai-brief-host" data-brief-group="${escapeAttr(p.group)}"></div>
+      </section>`;
     body.innerHTML = `<div class="topic-ai-wrap topic-explore-host">
       <div class="aii-tabhead-spacer"></div>
       <section class="aii-fi-sec">
       <div class="aii-fi-sechead">
         <h3 class="aii-fi-sectitle">AI Insights</h3>
-        <p class="aii-fi-secsub">Ready-made prompts, AI briefings and model hand-offs for ${escapeHTML(topic.name)} — all in one place.</p>
+        <p class="aii-fi-secsub">A generated brief on ${escapeHTML(topic.name)} — plus ready-made prompts and AI model hand-offs.</p>
       </div>
-      <div class="topic-ai-acclist">${TOPIC_AI_ROWS.map((r) => `
-        <div class="tai-acc" data-tai-row="${escapeAttr(r.key)}">
-          <button type="button" class="tai-accsum" aria-expanded="false">
-            <span class="tai-acc-ic" aria-hidden="true">${TOPIC_AI_ICONS[r.icon] || ''}</span>
-            <span class="tai-acc-tx"><span class="tai-acc-name">${escapeHTML(r.label)}</span><span class="tai-acc-sub">${escapeHTML(r.sub)}</span></span>
-            <span class="tai-acc-chev" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
-          </button>
-          <div class="tai-acc-body" hidden></div>
-        </div>`).join('')}</div>
+      <div class="tai-tools">
+        <div class="tai-tools-label">Resources</div>
+        <div class="topic-ai-acclist tai-acclist--mini">${TOPIC_AI_ROWS.map((r) => `
+          <div class="tai-acc tai-acc--mini" data-tai-row="${escapeAttr(r.key)}">
+            <button type="button" class="tai-accsum" aria-expanded="false">
+              <span class="tai-acc-ic" aria-hidden="true">${TOPIC_AI_ICONS[r.icon] || ''}</span>
+              <span class="tai-acc-tx"><span class="tai-acc-name">${escapeHTML(r.label)}</span></span>
+              <span class="tai-acc-chev" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+            </button>
+            <div class="tai-acc-body" hidden></div>
+          </div>`).join('')}</div>
+      </div>
+      <div class="tai-brief" id="tai-brief">
+        <div class="tai-brief-bar">
+          <div class="tai-brief-bartx">
+            <h4 class="tai-brief-bartitle"><span class="tai-brief-spark" aria-hidden="true">✦</span>The AI Brief</h4>
+            <p class="tai-brief-barsub">Three reads on ${escapeHTML(topic.name)}: catch up fast, go deep, or start from the basics.</p>
+          </div>
+          <nav class="tai-jumps" aria-label="Brief sections">${TOPIC_AI_BRIEF_PARTS.map((p) => `
+            <button type="button" class="tai-jump" data-jump="${escapeAttr(p.group)}" data-group="${escapeAttr(p.group)}"><span class="tai-jump-dot" aria-hidden="true"></span>${escapeHTML(p.label)}</button>`).join('')}</nav>
+        </div>
+        ${TOPIC_AI_BRIEF_PARTS.map(partHTML).join('')}
+      </div>
       </section>
     </div>`;
+    // Mount the three briefs immediately — the brief starts loading the moment the
+    // tab opens, no accordion click required.
+    try {
+      let shortcuts = [];
+      try { shortcuts = getShortcutsForTopic(topic.slug) || []; } catch (_) {}
+      rowCtls.brief = [];
+      body.querySelectorAll('.tai-brief-host[data-brief-group]').forEach((h) => {
+        rowCtls.brief.push(renderAIIntelligence(h, {
+          inModal: true, initialBuilder: true, initialGroup: h.dataset.briefGroup, lockTopic: true,
+          previewSections: true,
+          topic: topic.name, label: topic.name, descriptions, icons, shortcuts, topicKey: topic.slug,
+        }));
+      });
+    } catch (err) {
+      console.error('AI Brief mount failed', err);
+      const brief = body.querySelector('.tai-brief');
+      if (brief) brief.insertAdjacentHTML('beforeend', '<div class="aii-empty" style="padding:18px 4px;color:var(--color-text-muted);">Couldn’t load the brief. Tap the tab again to retry.</div>');
+    }
+    // Jump chips scroll to their subsection.
+    body.querySelectorAll('.tai-jump').forEach((b) => b.addEventListener('click', () => {
+      const el = body.querySelector(`#tai-part-${b.dataset.jump}`);
+      try { el?.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (_) {}
+    }));
     const accs = [...body.querySelectorAll('.tai-acc')];
     const setRow = (key, on) => {
       const acc = accs.find((a) => a.dataset.taiRow === key);
@@ -1395,6 +1423,14 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
       btn.setAttribute('aria-expanded', String(on));
     };
     const selectRow = (key, scroll) => {
+      // The brief is always open — a briefing deep-link just scrolls to it (or to
+      // the specific subsection when a builder group was asked for).
+      if (key === 'briefing' || TOPIC_AI_BRIEF_GROUPS.has(key)) {
+        if (scroll === false) return;
+        const el = body.querySelector(key === 'briefing' ? '.tai-brief' : `#tai-part-${key}`);
+        requestAnimationFrame(() => { try { el?.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (_) {} });
+        return;
+      }
       if (!TOPIC_AI_ROW_KEYS.has(key)) return;
       if (openRow === key) { setRow(key, false); openRow = null; return; }
       if (openRow) setRow(openRow, false);
@@ -1409,9 +1445,10 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
         });
       }
     };
+    aiSelectRow = selectRow;
     accs.forEach((a) => a.querySelector('.tai-accsum')?.addEventListener('click', () => selectRow(a.dataset.taiRow)));
     // A deep-link (nav dropdown / breakpoint re-render / #/topic/x/prompts) may have
-    // asked for a specific row; otherwise everything starts closed.
+    // asked for a specific row; otherwise the accordions start closed.
     if (openRow) { const want = openRow; openRow = null; selectRow(want, false); }
   };
   const renderContent = (key) => {
@@ -1484,11 +1521,12 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
     const same = active === key;
     active = key;
     if (same && present) {
-      // Already on AI Insights: honour a deep-link asking for a specific row rather
-      // than re-rendering (which would drop every already-mounted row).
+      // Already on AI Insights: honour a deep-link asking for a specific row or
+      // brief subsection rather than re-rendering (which would drop every
+      // already-mounted row).
       if (key === 'ai' && openRow) {
         const want = openRow; openRow = null;
-        body.querySelector(`.tai-acc[data-tai-row="${want}"] .tai-accsum`)?.click();
+        if (aiSelectRow) aiSelectRow(want, true);
       }
       return;
     }
