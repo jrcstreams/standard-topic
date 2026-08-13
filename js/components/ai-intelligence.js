@@ -939,6 +939,18 @@ export function renderAIIntelligence(container, scope) {
       // then a compact "N sources ⌄" dropdown toggle at the bottom.
       const upd = updatedLbl ? `<span class="im-sec-updated">${esc(updatedLbl)}</span>` : '';
       const provenance = `<div class="im-sec-aitag-row im-sec-aitag-row--inbody"><span class="im-sec-aitag">${LOGO}<span>AI Generated Text</span></span>${upd}</div>`;
+      // scope.collapsibleSections: each part becomes a content ROW you expand —
+      // a plus/minus marker beside the headline, body hidden until opened. Used by
+      // the topic page's AI Briefing, where three briefs share one accordion and a
+      // wall of open prose would bury the structure (revamp738).
+      if (scope.collapsibleSections) {
+        const header = `<button type="button" class="im-msec-toggle" aria-expanded="false">
+            <span class="im-msec-plus" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line class="im-plus-v" x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            <h3 class="im-msec-name">${esc(part.name)}</h3>
+          </button>`;
+        const body = `<div class="im-msec-body" hidden>${provenance}<div class="aii-sec-body">${renderBriefBody(part.body, null)}</div>${secSourcesHTML(buckets[i], true, true)}</div>`;
+        return aiiMsec(`aii-msec-${i}`, part.name, header + body);
+      }
       const header = `<header class="im-msec-header"><h3 class="im-msec-name">${esc(part.name)}</h3></header>`;
       const body = `<div class="im-msec-body">${provenance}<div class="aii-sec-body">${renderBriefBody(part.body, null)}</div>${secSourcesHTML(buckets[i], true, true)}</div>`;
       return aiiMsec(`aii-msec-${i}`, part.name, header + body);
@@ -1115,6 +1127,15 @@ export function renderAIIntelligence(container, scope) {
   // Show-more toggles. (The discreet brief-head explore link is wired in wire().)
   function wireBuilderContent() {
     stage.querySelectorAll('.aii-fi-accsum').forEach((b) => b.addEventListener('click', () => toggleEmenu(b)));
+    stage.querySelectorAll('.im-msec-toggle').forEach((b) => b.addEventListener('click', () => {
+      const sec = b.closest('.im-msec');
+      const body = sec && sec.querySelector('.im-msec-body');
+      if (!body) return;
+      const open = body.hidden;
+      body.hidden = !open;
+      sec.classList.toggle('is-open', open);
+      b.setAttribute('aria-expanded', String(open));
+    }));
     wireSectionClamps();
   }
   // Clamp long section bodies to a preview; show a "Show more / less" toggle only

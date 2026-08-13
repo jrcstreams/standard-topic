@@ -660,6 +660,7 @@ function openNavDropdown(cfg) {
   overlay.onclick = asPage ? null : closeFn;
   const sc = panel.querySelector('[data-navdd-scroll]');
   if (sc) sc.addEventListener('scroll', updateNavDdFades, { passive: true });
+  wireNavDdCondense(panel);
   if (typeof cfg.wire === 'function') cfg.wire(panel);
   panel.classList.add('is-open');
   overlay.classList.add('is-open');
@@ -713,19 +714,13 @@ const AI_SPARK_INLINE = '<svg class="ph-spark" viewBox="0 0 24 24" width="13" he
 const PDIR_CHEV = '<svg class="pdir-chev" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 function promptDirectoryHTML() {
   const groups = getTopicsGroupedByParent() || [];
-  const countFor = (slug) => { try { return (getShortcutsForTopic(slug) || []).filter((x) => x && x.prompt).length; } catch (_) { return 0; } };
-  const row = (t, isParent) => {
-    const n = countFor(t.slug);
-    return `<div class="pdir-acc${isParent ? ' pdir-acc--parent' : ''}" data-pdir-topic data-slug="${escapeAttr(t.slug)}" data-name="${escapeAttr(t.name)}">
+  const row = (t, isParent) => `<div class="pdir-acc${isParent ? ' pdir-acc--parent' : ''}" data-pdir-topic data-slug="${escapeAttr(t.slug)}" data-name="${escapeAttr(t.name)}">
       <button type="button" class="pdir-accsum" aria-expanded="false">
-        <span class="pdir-acc-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
         <span class="pdir-acc-name">${escapeHTML(t.name)}</span>
-        ${n ? `<span class="pdir-acc-count">${n}</span>` : ''}
         ${PDIR_CHEV}
       </button>
       <div class="pdir-accbody" hidden></div>
     </div>`;
-  };
   const block = ({ parent, subtopics }) => `<section class="pdir-group">
       <h4 class="pdir-grouphead">${topicIconSVG(parent.icon || 'globe', 'pdir-grouphead-ic')}<span>${escapeHTML(parent.name)}</span></h4>
       <div class="pdir-list">${row(parent, true)}${(subtopics || []).map((t) => row(t, false)).join('')}</div>
@@ -828,16 +823,6 @@ function wirePromptsDropdown(panel, initialView) {
     titles.insertBefore(wrap, titles.firstChild);
   };
 
-  // Fire a ready-made prompt (featured card or a topic-card preview row) in the
-  // prompt modal — same event path the rest of the site uses.
-  const openShortcutPrompt = (s, topicName) => {
-    if (!s || !s.prompt) return;
-    window.dispatchEvent(new CustomEvent('open-prompt-modal', {
-      detail: { basePrompt: s.prompt, topicName: topicName || '', name: s.name || 'Prompt', count: 1 },
-    }));
-  };
-
-  // Per-topic preview cards (Card View): icon + name, first 3 prompts, View all.
   const showLanding = () => {
     destroyCtl();
     setHead('Prompts', 'Ready-made prompts for every topic — or build your own.');
@@ -847,7 +832,7 @@ function wirePromptsDropdown(panel, initialView) {
       <div class="prompts-home">
         <section class="ph-featured" data-ph-featured hidden>
           <div class="ph-sec-head"><h3 class="ph-sec-title">Featured Prompts</h3></div>
-          <div class="ph-feat-grid" data-ph-feat-grid></div>
+          <div class="pdir-list" data-ph-feat-grid></div>
         </section>
         <section class="ph-lib">
           <div class="ph-sec-head">
@@ -866,25 +851,51 @@ function wirePromptsDropdown(panel, initialView) {
         const wrap = root.querySelector('[data-ph-feat-grid]');
         const sec = root.querySelector('[data-ph-featured]');
         if (!wrap || !sec || !cfg || !Array.isArray(cfg.featured)) return;
-        const cards = cfg.featured.map((f, idx) => {
-          const t = getTopicBySlug(f.topic); if (!t) return '';
-          let sc = []; try { sc = getShortcutsForTopic(f.topic) || []; } catch (_) { return ''; }
-          const s = sc.find((x) => x && x.name === f.name);
-          if (!s || !s.prompt) return '';
-          return `<button type="button" class="ph-feat-card" data-ph-feat="${idx}">
-            <span class="ph-feat-namerow">${topicIconSVG(t.icon || 'globe', 'ph-feat-topic-ic')}<span class="ph-feat-name">${escapeHTML(s.name)}</span></span>
-            ${s.description ? `<span class="ph-feat-desc">${escapeHTML(s.description)}</span>` : ''}
-          </button>`;
-        }).join('');
-        if (!cards) return;
-        wrap.innerHTML = cards;
+        // Featured prompts are accordions, not cards — no icon, no subtext, and
+        // the whole prompt experience runs inside, exactly like the directory
+        // below it. The list connects straight to the section rule (revamp738).
+        const picks = [];
+        cfg.featured.forEach((f) => {
+          const t = getTopicBySlug(f.topic); if (!t) return;
+          let sc = []; try { sc = getShortcutsForTopic(f.topic) || []; } catch (_) { return; }
+          const sh = sc.find((x) => x && x.name === f.name);
+          if (sh && sh.prompt) picks.push({ sh, topic: t });
+        });
+        if (!picks.length) return;
+        wrap.innerHTML = picks.map((pk, i) => `
+          <div class="pdir-acc" data-ph-feat="${i}">
+            <button type="button" class="pdir-accsum" aria-expanded="false">
+              <span class="pdir-acc-name">${escapeHTML(pk.sh.name)}</span>
+              ${PDIR_CHEV}
+            </button>
+            <div class="pdir-accbody" hidden></div>
+          </div>`).join('');
         sec.hidden = false;
-        wrap.querySelectorAll('[data-ph-feat]').forEach((b) => b.addEventListener('click', () => {
-          const f = cfg.featured[Number(b.dataset.phFeat)]; if (!f) return;
-          const t = getTopicBySlug(f.topic);
-          let sc = []; try { sc = getShortcutsForTopic(f.topic) || []; } catch (_) {}
-          openShortcutPrompt(sc.find((x) => x && x.name === f.name), t ? t.name : '');
-        }));
+        wrap.querySelectorAll('[data-ph-feat]').forEach((acc) => {
+          const btn = acc.querySelector('.pdir-accsum');
+          const host = acc.querySelector('.pdir-accbody');
+          btn.addEventListener('click', () => {
+            const open = !acc.classList.contains('is-open');
+            if (open && host.dataset.mounted !== '1') {
+              host.dataset.mounted = '1';
+              host.className = 'pdir-accbody prompts-topic-host';
+              const pk = picks[Number(acc.dataset.phFeat)];
+              const descriptions = {}; const icons = {};
+              descriptions[pk.sh.name] = pk.sh.description || ''; icons[pk.sh.name] = pk.sh.icon || '';
+              try {
+                dirCtls.push(renderAIIntelligence(host, {
+                  inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
+                  topic: pk.topic.name, label: pk.topic.name,
+                  descriptions, icons, shortcuts: [pk.sh], topicKey: pk.topic.slug,
+                }));
+              } catch (_) { host.dataset.mounted = ''; }
+            }
+            host.hidden = !open;
+            acc.classList.toggle('is-open', open);
+            btn.setAttribute('aria-expanded', String(open));
+            requestAnimationFrame(updateNavDdFades);
+          });
+        });
         requestAnimationFrame(updateNavDdFades);
       }).catch(() => {});
 
@@ -1141,22 +1152,29 @@ const TOPIC_PATH_TABS = [
 // tabs). `kind` picks the mount strategy; `group` is the AI component's builder
 // group where one applies.
 const TOPIC_AI_ROWS = [
-  { key: 'topic-prompts', kind: 'prompts', group: 'external', promptsOnly: 'specific',
-    label: 'Topic-Specific Prompts', sub: 'Ready-made prompts tuned to this topic.', icon: 'topic-specific' },
-  { key: 'evergreen-prompts', kind: 'prompts', group: 'external', promptsOnly: 'evergreen',
-    label: 'Evergreen Prompts', sub: 'Timeless prompts that work across any topic.', icon: 'external' },
-  { key: 'catchup', kind: 'brief', group: 'discover',
-    label: 'AI Catch Up', sub: 'The latest news, moves and developments.', icon: 'discover' },
-  { key: 'deepdive', kind: 'brief', group: 'topic-specific',
-    label: 'AI Deep Dive', sub: 'Key developments in depth — the tradeoffs and what they mean.', icon: 'deepdive' },
-  { key: 'overview', kind: 'brief', group: 'learn',
-    label: 'AI 101 Overview', sub: 'Background, fundamentals and key context.', icon: 'learn' },
+  { key: 'briefing', kind: 'briefing',
+    label: 'AI Briefing',
+    sub: 'Get caught up, go deeper, or start from the basics — generated for this topic.',
+    icon: 'discover' },
+  { key: 'prompts', kind: 'prompts', group: 'external',
+    label: 'AI Prompts',
+    sub: 'Ready-made prompts for this topic, plus evergreen ones that work anywhere.',
+    icon: 'topic-specific' },
   { key: 'models', kind: 'models',
-    label: 'Explore Topic with External AI Models', sub: 'Send this topic to ChatGPT, Claude, Gemini and more.', icon: 'models' },
+    label: 'Explore Topic with External AI Models',
+    sub: 'Send this topic to ChatGPT, Claude, Gemini and more.', icon: 'models' },
+];
+// The three briefs that make up the AI Briefing row, in reading order.
+const TOPIC_AI_BRIEF_PARTS = [
+  { group: 'discover',       label: 'Catch Up',     sub: 'The latest news, moves and developments.' },
+  { group: 'topic-specific', label: 'Deep Dive',    sub: 'The key developments in depth — tradeoffs and what they mean.' },
+  { group: 'learn',          label: '101 Overview', sub: 'Background, fundamentals and key context.' },
 ];
 const TOPIC_AI_ROW_KEYS = new Set(TOPIC_AI_ROWS.map((r) => r.key));
 // Builder-group deep-links (nav dropdown, breakpoint re-render) → accordion row.
-const TOPIC_AI_GROUP_TO_ROW = { discover: 'catchup', 'topic-specific': 'deepdive', learn: 'overview', external: 'topic-prompts' };
+const TOPIC_AI_GROUP_TO_ROW = { discover: 'briefing', 'topic-specific': 'briefing', learn: 'briefing', external: 'prompts' };
+// Retired row ids still reachable from old links / in-app deep-links.
+const TOPIC_AI_ROW_ALIAS = { catchup: 'briefing', deepdive: 'briefing', overview: 'briefing', 'topic-prompts': 'prompts', 'evergreen-prompts': 'prompts' };
 // Leading icons for the accordion rows.
 const TOPIC_AI_ICONS = {
   discover: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polygon points="15.5 8.5 13.5 13.5 8.5 15.5 10.5 10.5"/></svg>',
@@ -1216,7 +1234,12 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
   // instant and never re-fires /api/insight, and an open prompt stays open.
   const rowCtls = {};
   const destroyRowCtls = () => {
-    Object.keys(rowCtls).forEach((k) => { const c = rowCtls[k]; if (c && c.destroy) { try { c.destroy(); } catch (_) {} } delete rowCtls[k]; });
+    Object.keys(rowCtls).forEach((k) => {
+      const c = rowCtls[k];
+      const list = Array.isArray(c) ? c : [c];               // AI Briefing holds three
+      list.forEach((x) => { if (x && x.destroy) { try { x.destroy(); } catch (_) {} } });
+      delete rowCtls[k];
+    });
   };
   // Fill a row's body the first time it opens.
   const mountRow = (row, host) => {
@@ -1231,6 +1254,28 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
       }
       let shortcuts = [];
       try { shortcuts = getShortcutsForTopic(topic.slug) || []; } catch (_) {}
+      // AI Briefing: the three briefs share one row, each under its own header,
+      // with their parts rendered as expandable content rows rather than a wall
+      // of prose (collapsibleSections).
+      if (row.kind === 'briefing') {
+        host.innerHTML = TOPIC_AI_BRIEF_PARTS.map((p) => `
+          <section class="tai-brief-part">
+            <div class="tai-brief-head">
+              <h4 class="tai-brief-title">${escapeHTML(p.label)}</h4>
+              <p class="tai-brief-sub">${escapeHTML(p.sub)}</p>
+            </div>
+            <div class="tai-brief-host" data-brief-group="${escapeAttr(p.group)}"></div>
+          </section>`).join('');
+        rowCtls[row.key] = [];
+        host.querySelectorAll('[data-brief-group]').forEach((h) => {
+          rowCtls[row.key].push(renderAIIntelligence(h, {
+            inModal: true, initialBuilder: true, initialGroup: h.dataset.briefGroup, lockTopic: true,
+            collapsibleSections: true,
+            topic: topic.name, label: topic.name, descriptions, icons, shortcuts, topicKey: topic.slug,
+          }));
+        });
+        return;
+      }
       rowCtls[row.key] = renderAIIntelligence(host, {
         inModal: true, initialBuilder: true, initialGroup: row.group, lockTopic: true,
         promptsOnly: row.promptsOnly || null,
@@ -1343,7 +1388,8 @@ function wireTopicPathTabs(container, topic, descriptions, icons) {
   const selectTab = (key) => {
     // Deep-link keys: an accordion row id, or a legacy builder group / the retired
     // 'prompts' tab — all now land on AI Insights with the matching row open.
-    if (TOPIC_AI_ROW_KEYS.has(key)) { openRow = key; key = 'ai'; }
+    if (TOPIC_AI_ROW_ALIAS[key]) { openRow = TOPIC_AI_ROW_ALIAS[key]; key = 'ai'; }
+    else if (TOPIC_AI_ROW_KEYS.has(key)) { openRow = key; key = 'ai'; }
     else if (TOPIC_AI_GROUP_TO_ROW[key]) { openRow = TOPIC_AI_GROUP_TO_ROW[key]; key = 'ai'; }
     else if (key === 'prompts') { openRow = 'topic-prompts'; key = 'ai'; }
     else if (key === 'websearch') { openRow = null; key = 'explore'; }
@@ -2541,6 +2587,17 @@ function backBarHTML() {
   return `<div class="page-backbar"><a href="${escapeAttr(t.hash)}" class="page-backbtn" data-backbar>${BACKBAR_CHEV}<span class="page-backbtn-tx">Back to ${escapeHTML(t.label)}</span></a></div>`;
 }
 
+// Scrolling a nav-dropdown page condenses its header: the "Back to …" bar and the
+// head action buttons are resting-state chrome, so they fold away as soon as the
+// user starts reading and return when they scroll back to the top.
+function wireNavDdCondense(panel) {
+  const sc = panel.querySelector('[data-navdd-scroll]');
+  if (!sc) return;
+  const apply = () => panel.classList.toggle('is-condensed', sc.scrollTop > 12);
+  sc.addEventListener('scroll', apply, { passive: true });
+  apply();
+}
+
 function pageLabelFor(route) {
   if (!route) return '';
   switch (route.type) {
@@ -2602,18 +2659,17 @@ function fitMainNav() {
     inner.classList.remove('nav-measuring');
     return ok;
   };
-  // Nav is text-only now (no icon-over-label stacking) — the squeeze stages below
-  // handle every width, ending with Search as a clean icon button (#img266 fix).
+  // Squeeze order. Topics / Trending / Prompts are the three links that must
+  // survive — they are never dropped. We shed Home, collapse Search to its icon,
+  // then shrink the three labels in stages, and only as a last resort shrink the
+  // site title + hamburger to buy the labels more room (revamp738).
   if (!fits()) inner.classList.add('nav-short-trending');
-  // Squeeze order (#img235/374): smaller nav text → drop Home → Search collapses to
-  // its light icon button → shrink the labels FURTHER (keep Topics/Trends/Prompts
-  // all visible as long as possible) → only then drop Prompts → shrink the title.
   if (!fits()) inner.classList.add('nav-small-text');
   if (!fits()) inner.classList.add('nav-drop-home');
   if (!fits()) inner.classList.add('nav-icon-search');
   if (!fits()) inner.classList.add('nav-tiny-text');
-  if (!fits()) inner.classList.add('nav-drop-prompts');
   if (!fits()) inner.classList.add('nav-tiny-title');
+  if (!fits()) inner.classList.add('nav-micro-text');
 }
 
 function renderStickyHeroBar(container, route) {

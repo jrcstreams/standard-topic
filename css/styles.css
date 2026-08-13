@@ -17414,3 +17414,93 @@ body.home-search .home-search-hero .search-panel-hero-inner { padding-bottom: 1r
   .pdir-acc--parent .pdir-acc-name { font-size: 0.94rem; }
   .pdir-accbody { padding: 2px 11px 15px; }
 }
+
+/* ═══════════════ revamp738 ═══════════════════════════════════════════════ */
+
+/* ── SQUARE accordion lists, everywhere ──────────────────────────────────────
+   One shared treatment: no outer box, no radius. The list connects straight to
+   the section rule above it and the rows are separated by hairlines, so each
+   section reads as one continuous field instead of a card floating under a
+   heading. Applies to AI Insights, Web Resources, Prompts by Topic and Featured. */
+.topic-ai-acclist,
+.pdir-list,
+.topic-explore-host .xf-list {
+  border: none !important; border-radius: 0 !important; background: none !important;
+  overflow: visible !important;
+}
+.topic-ai-acclist { margin-top: 0; }
+.topic-explore-host .xf-list { margin-top: 0 !important; }
+.tai-acc, .pdir-acc, .topic-explore-host .xf-acc { border-bottom: 1px solid #e7ecf3 !important; }
+.tai-acc:last-child, .pdir-acc:last-child, .topic-explore-host .xf-acc:last-child { border-bottom: none !important; }
+.tai-accsum, .pdir-accsum, .topic-explore-host .xf-sum { border-radius: 0 !important; }
+/* Section rule + the first row sit flush, so the header reads as the list's top edge. */
+.topic-ai-wrap .aii-fi-sechead,
+.topic-explore-host .aii-fi-sechead { margin-bottom: 0 !important; }
+
+/* AI Insights and Web Resources start at the same distance from the nav. */
+.topic-ai-wrap > .aii-tabhead-spacer,
+.topic-explore-host > .aii-tabhead-spacer { height: 2px; }
+.topic-ai-wrap .topic-ai-sechead { margin-top: 22px !important; }
+.topic-explore-host .aii-fi-sec:first-child { margin-top: 22px !important; }
+
+/* ── AI Briefing: three briefs under one row ─────────────────────────────── */
+.tai-brief-part { margin-top: 22px; min-width: 0; }
+.tai-brief-part:first-child { margin-top: 8px; }
+.tai-brief-head { padding: 0 2px 8px; border-bottom: 1px solid #e4e8f0; }
+.tai-brief-title { margin: 0; font-family: var(--font-display); font-size: 0.98rem; font-weight: 700; letter-spacing: -0.012em; color: #26375a; }
+.tai-brief-sub { margin: 2px 0 0; font-family: var(--font-family); font-size: 0.8rem; color: var(--color-text-muted); }
+/* Brief parts read as CONTENT rows, not navigation: a plus marker, the headline,
+   and the prose folded away until asked for. */
+.tai-brief-host .im-msec { border: none !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; margin: 0 !important; border-bottom: 1px solid #f0f3f8 !important; }
+.tai-brief-host .im-msec:last-child { border-bottom: none !important; }
+.im-msec-toggle {
+  display: flex; align-items: flex-start; gap: 10px; width: 100%;
+  padding: 12px 2px; border: none; background: none; cursor: pointer; text-align: left;
+  -webkit-tap-highlight-color: transparent;
+}
+.im-msec-plus { flex: none; display: inline-flex; margin-top: 1px; color: #8fa0bd; transition: color .12s ease; }
+.im-msec-toggle .im-msec-name {
+  margin: 0; font-family: var(--font-display); font-size: 0.92rem; font-weight: 650;
+  letter-spacing: -0.008em; color: #33455f; line-height: 1.35;
+}
+@media (hover: hover) { .im-msec-toggle:hover .im-msec-name { color: #1d4ed8; } .im-msec-toggle:hover .im-msec-plus { color: #1d4ed8; } }
+.im-msec.is-open .im-msec-plus { color: #2f4d9e; }
+.im-msec.is-open .im-msec-plus .im-plus-v { opacity: 0; }          /* + becomes − */
+.im-msec-plus .im-plus-v { transition: opacity .16s ease; }
+.im-msec.is-open .im-msec-name { color: #26375a; }
+.tai-brief-host .im-msec-body { padding: 0 2px 14px 27px; }
+.tai-brief-host .im-msec-body[hidden] { display: none !important; }
+.tai-brief-host .aii-related-flat { display: none; }
+
+/* ── Prompts by Topic / Featured rows: no icons, no counts ───────────────── */
+.pdir-acc-ic, .pdir-acc-count { display: none !important; }
+.pdir-list { background: none; }
+.pdir-accsum { padding-left: 2px; padding-right: 2px; }
+.pdir-accbody { padding-left: 2px; padding-right: 2px; }
+@media (max-width: 560px) { .pdir-accsum, .pdir-accbody { padding-left: 2px; padding-right: 2px; } }
+.pdir-grouphead { margin-bottom: 0; }
+
+/* ── Condensed page header on scroll ─────────────────────────────────────── */
+.aii-nav-dd.is-condensed > .aii-nav-dd-inner > .page-backbar,
+.aii-nav-dd.is-condensed .aii-nav-dd-headbtns {
+  display: none !important;
+}
+.aii-nav-dd.is-condensed .aii-nav-dd-head { padding-top: 14px; padding-bottom: 10px; }
+
+/* ── Main-nav collapsed Search: a true SQUARE, inside the padding ────────── */
+.sticky-hero-inner.nav-icon-search #nav-search.navbtn {
+  width: 38px !important; height: 38px !important; min-width: 38px !important;
+  padding: 0 !important; gap: 0; border-radius: 10px;
+  align-self: center; flex: 0 0 38px !important; justify-content: center;
+  margin-left: auto !important; margin-right: 0 !important;
+}
+.sticky-hero-inner.nav-icon-search #nav-search .navbtn-ico { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+/* Nothing in the nav row may spill past the container's padding. */
+.sticky-hero-inner { overflow: hidden; }
+.sticky-hero-inner .sticky-actions.navbtns { overflow: visible; min-width: 0; }
+/* Topics / Trending / Prompts always survive; only their type shrinks. */
+.sticky-hero-inner.nav-drop-prompts #nav-prompts { display: inline-flex !important; }
+.sticky-hero-inner.nav-micro-text .navbtn-label { font-size: 0.76rem !important; }
+.sticky-hero-inner.nav-micro-text .navbtn { padding-left: 7px !important; padding-right: 7px !important; }
+.sticky-hero-inner.nav-tiny-title .sticky-title { font-size: 0.98rem !important; }
+.sticky-hero-inner.nav-tiny-title .nav-hamburger { width: 17px; height: 13px; }
