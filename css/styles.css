@@ -17096,12 +17096,11 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-chev,
   color: #64748b; text-decoration: none; white-space: nowrap;
   transition: color .14s ease;
 }
-.page-backbtn b { font-family: var(--font-display); font-weight: 700; color: #33455f; letter-spacing: -0.008em; transition: color .14s ease; }
+.page-backbtn b { font: inherit; font-weight: 500; color: inherit; letter-spacing: inherit; }
 .page-backbtn svg { flex: none; color: #94a3b8; transition: transform .16s ease, color .14s ease; }
 @media (hover: hover) {
-  .page-backbtn:hover { color: #4b6bb8; text-decoration: none; }
-  .page-backbtn:hover b { color: #1d4ed8; }
-  .page-backbtn:hover svg { color: #1d4ed8; transform: translateX(-3px); }
+  .page-backbtn:hover { color: #26375a; text-decoration: none; }
+  .page-backbtn:hover svg { color: #64748b; transform: translateX(-3px); }
 }
 .topic-subnav-inner > .page-backbar { padding: 0; margin-left: auto; align-items: center; }
 @media (max-width: 560px) { .page-backbar { padding-top: 14px; } .page-backbtn { font-size: 0.82rem; } }
@@ -17188,3 +17187,138 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-head,
 /* Stop the browser compensating scroll position as a drawer grows — that
    anchoring is what dragged the header we just scrolled to back off screen. */
 .trend-card-exp, .trend-exp, .te-drawer-body { overflow-anchor: none; }
+
+/* ═══════════════ revamp734 ═══════════════════════════════════════════════ */
+
+/* ── Drawer anchoring: scroll-margin-top is what makes scrollIntoView land the
+   header under the fixed nav, whatever the scroll container turns out to be.
+   Hand-rolled scrollTop math kept picking the wrong one. ─────────────────── */
+.te-drawer, .te-drawer-body .xf-acc, .ni-inner .xf-acc { scroll-margin-top: calc(var(--nav-h) + 18px); }
+
+/* Drawer labels carry a little more weight; the leading icon is gone. */
+.te-drawer > .te-drawer-sum { font-size: 0.88rem; font-weight: 700; color: #26375a; padding: 12px 2px; }
+.te-drawer-title { min-width: 132px; }
+
+/* ── Expanded trend: tighter head, centred + lighter Close ───────────────── */
+.trend-exp-aitag { margin: 0 0 8px; }
+body.home-search #home-trending .trend-card.is-expanded .trend-card-exp,
+.aii-nav-dd-trending .trend-card.is-expanded .trend-card-exp { padding-top: 8px; }
+.trend-exp-footer { display: flex; justify-content: center; padding: 14px 0 4px; }
+.trend-exp-close {
+  border: 1px solid #dfe5f0; background: #fff; color: #5b6b8a;
+  padding: 7px 16px; font-size: 0.8rem; font-weight: 600; border-radius: 999px;
+}
+@media (hover: hover) {
+  .trend-exp-close:hover { background: #f4f7fc; border-color: #cbd7ea; color: #26375a; }
+}
+
+/* ── Trending PAGE adopts the homepage's flat two-column rows ─────────────── */
+.aii-nav-dd-trending .trend-card-grid { gap: 0 !important; }
+.aii-nav-dd-trending .trend-card {
+  border: none !important; border-radius: 0 !important; background: none !important;
+  box-shadow: none !important; padding: 0 !important; position: relative;
+}
+.aii-nav-dd-trending .trend-card::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: #e9ecf2;
+}
+.aii-nav-dd-trending .trend-card-trigger { padding: 15px 14px !important; background: transparent !important; }
+@media (hover: hover) { .aii-nav-dd-trending .trend-card:not(.is-expanded):hover { background: #f5f7fa !important; } }
+.aii-nav-dd-trending .trend-card-actions { display: none !important; }
+.aii-nav-dd-trending .trend-card-chev { display: none !important; }
+.aii-nav-dd-trending .trend-card-title { font-size: 1rem !important; font-weight: 700 !important; color: #26375a !important; }
+.aii-nav-dd-trending .trend-card-meta { font-size: 0.72rem; font-weight: 600; color: #5b6679; }
+.aii-nav-dd-trending .trend-card-summary { color: #55617a; }
+.aii-nav-dd-trending .trend-card.is-expanded {
+  background: #eef2f8 !important; border-radius: 0 !important; box-shadow: 0 1px 0 #e2e8f2, 0 -1px 0 #e2e8f2;
+}
+
+/* ── News insight panel: flat, no tabs, one provenance line ──────────────── */
+#section-newsfeed .news-card--open,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) { border-radius: 0 !important; }
+.ni-tabs { display: none !important; }
+/* One AI line at the top of the brief, under the actions rule. */
+.ni-inner > .ni-aitag-row { margin: 0 0 10px; }
+.ni-inner .ni-aitag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: none; padding: 0; border-radius: 0;
+  font-family: var(--font-family); font-size: 0.74rem; font-weight: 500; color: var(--color-text-muted);
+}
+.ni-inner .ni-sec .ni-aitag-row { display: none !important; }
+.ni-sec-head { display: flex; align-items: center; gap: 0; margin: 0 0 6px; }
+.ni-sec-ic { display: none !important; }
+.ni-sec-name { margin: 0; font-family: var(--font-display); font-size: 1rem; font-weight: 700; letter-spacing: -0.012em; color: #26375a; }
+.ni-inner .trend-exp-drawers { margin-top: 16px; border-top: 1px solid #e7ecf3; }
+/* Open story: the X sits in the corner like a trend; View Story stays a button. */
+#section-newsfeed .news-card--open .news-act-ai,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai {
+  position: absolute; top: 12px; right: 12px; z-index: 3;
+  width: 30px; height: 30px; padding: 0; gap: 0;
+  border-radius: 8px; border: 1px solid transparent; background: none; color: #64748b;
+}
+#section-newsfeed .news-card--open .news-act-ai .news-act-ai-open,
+#section-newsfeed .news-card--open .news-act-ai .news-act-ai-close,
+#section-newsfeed .news-card--open .news-act-ai .ai-spark-filled,
+#section-newsfeed .news-card--open .news-act-ai .news-act-ai-chev,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai-open,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai-close,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai .ai-spark-filled,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai .news-act-ai-chev { display: none !important; }
+@media (hover: hover) {
+  #section-newsfeed .news-card--open .news-act-ai:hover { background: rgba(15, 26, 46, 0.06); color: #26375a; }
+}
+#section-newsfeed .news-card { position: relative; }
+
+/* ── "View more trending": centred, a touch bigger, real hover ───────────── */
+body.home-search #home-trending .trend-viewmore-row { justify-content: center; padding: 16px 0 20px; }
+body.home-search #home-trending .trend-viewmore {
+  font-size: 0.88rem; font-weight: 650; color: #2563eb; padding: 7px 14px; border-radius: 999px;
+}
+@media (hover: hover) {
+  body.home-search #home-trending .trend-viewmore:hover {
+    background: rgba(37, 99, 235, 0.09) !important; color: #1d4ed8; text-decoration: none;
+  }
+}
+
+/* ── Sidebar rows need a hover the eye can find on the grey rail ─────────── */
+@media (min-width: 1024px) and (hover: hover) {
+  body.home-search .home-side #home-trending .trend-card:not(.is-expanded):hover { background: #fff !important; }
+  body.home-search .home-side #home-trending .trend-card:not(.is-expanded):hover .trend-card-title { color: #1d4ed8 !important; }
+  body.home-search .home-side #home-trending .trend-card:not(.is-expanded):hover .trend-card-acc { color: #1d4ed8; transform: translateY(-50%) translateY(2px); }
+}
+
+/* ── What's Trending: marker BEFORE the words ────────────────────────────── */
+body.home-search #home-trending .trending-topics-title,
+.aii-nav-dd-trending .trending-topics-title { flex-direction: row-reverse; justify-content: flex-end; }
+
+/* ── Homepage hero: one consistent rhythm across widths ─────────────────── */
+@media (min-width: 1024px) {
+  /* The hero column IS the search bar's column — the quicklinks inherit it, so
+     they can never drift out of alignment with the input. */
+  body.home-search .home-search-hero .search-panel-barrow,
+  body.home-search .home-quicklinks { max-width: 760px; width: 100%; margin-left: auto; margin-right: auto; }
+  body.home-search .home-search-hero .search-panel-title {
+    font-size: clamp(2rem, 1.1rem + 2vw, 2.6rem);
+  }
+}
+@media (min-width: 1440px) {
+  body.home-search .home-search-hero .search-panel-barrow,
+  body.home-search .home-quicklinks { max-width: 880px; }
+}
+/* One gap to the nav at every width — the clamp above stops the title's own
+   height from swinging the whole block around. */
+@media (min-width: 641px) {
+  body.home-search.app-mode #content,
+  body.home-search.app-mode.sticky-always.has-subnav #content { padding-top: calc(var(--nav-h) + 2.4rem) !important; }
+}
+/* Quicklink group labels: a touch larger with more weight. */
+.hq-label { font-size: 0.8rem; font-weight: 800; letter-spacing: 0.055em; color: #7d8ba4; }
+@media (max-width: 560px) { .hq-label { font-size: 0.74rem; } }
+
+/* ── Stacked / mobile ───────────────────────────────────────────────────── */
+@media (max-width: 1023.98px) {
+  /* Both column heads read at the same size once they're stacked. */
+  body.home-search #home-trending .trending-topics-title {
+    font-size: 1.35rem !important; letter-spacing: -0.025em !important;
+  }
+  body.home-search #home-trending .trend-viewmore-row { justify-content: center; padding: 16px 0 28px; }
+}

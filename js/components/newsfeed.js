@@ -12,7 +12,7 @@
 
 import { getModels, getExternalSearches, getExternalSearchCategories, fetchWithTimeout, safeUrl } from '../utils/data.js';
 import { openModel, copyPrompt } from '../utils/ai-models.js';
-import { insightTabsHTML, wireInsightTabs } from '../utils/insight-tabs.js?v=20260706-revamp574';
+import { drawerHTML, wireDrawers } from '../utils/drawers.js?v=20260813-revamp734';
 import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
 
 function escapeHTML(str) {
@@ -505,10 +505,11 @@ function niSecIconKey(name) {
   if (/timeline/.test(n)) return 'timeline';
   return 'summary';
 }
+// Just the section name. The per-section icon and the repeated "AI Generated
+// Text" pill are gone — one provenance line heads the whole brief instead, which
+// tightens the flow considerably (revamp734).
 function niSecHead(name) {
-  const key = niSecIconKey(name);
-  return `<div class="ni-sec-head"><span class="ni-sec-ic">${NI_SEC_ICON[key] || NI_SEC_ICON.summary}</span><h4 class="ni-sec-name">${escapeHTML(name)}</h4></div>
-    <div class="ni-aitag-row"><span class="ni-aitag">${AI_SPARK_SVG}<span>AI Generated Text</span></span></div>`;
+  return `<div class="ni-sec-head"><h4 class="ni-sec-name">${escapeHTML(name)}</h4></div>`;
 }
 function niSourcesHTML(headlines, sources, origUrl) {
   // Reuse the shared .ai-ins-source-row styling (trends / topic AI Insights) so
@@ -654,14 +655,16 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
       // 3 TABS: Summary (the AI sections) / Explore Further (External AI Models +
       // web categories) / Sources.
       const sourcesInner = niSourcesListHTML(data.headlines, data.sources, d.url);
-      const tabs = [
-        { key: 'summary', label: 'Summary', html: secHTML },
-        { key: 'explore', label: 'Explore Further', html: exploreFurtherHTML({ prompt: newsStoryPrompt(card), webTerm: card.dataset.title || '', name: card.dataset.title || 'this story', subDesc: 'Dig deeper into this story with ChatGPT, Claude, Gemini & more' }) },
-      ];
-      if (sourcesInner) tabs.push({ key: 'sources', label: 'Sources', html: sourcesInner });
-      panel.innerHTML = `<div class="ni-inner ai-reveal">${insightTabsHTML(tabs, 'ni-tabs')}</div>${niCloseFootHTML()}`;
-      wireInsightTabs(panel.querySelector('.ni-inner'));
+      const explore = exploreFurtherHTML({ prompt: newsStoryPrompt(card), webTerm: card.dataset.title || '', name: card.dataset.title || 'this story', subDesc: 'Dig deeper into this story with ChatGPT, Claude, Gemini & more' });
+      const drawers = (sourcesInner ? drawerHTML('Sources', sourcesInner) : '')
+        + drawerHTML('Explore Further', explore);
+      panel.innerHTML = `<div class="ni-inner ai-reveal">
+        <div class="ni-aitag-row"><span class="ni-aitag">${AI_SPARK_SVG}<span>AI Generated Text</span></span></div>
+        ${secHTML}
+        <div class="trend-exp-drawers">${drawers}</div>
+      </div>${niCloseFootHTML()}`;
       wireExploreFurther(panel.querySelector('.ni-inner'));
+      wireDrawers(panel.querySelector('.ni-inner'));
       wireScrollFades(panel.querySelector('.ni-inner'));
       panel.querySelector('[data-ni-close]')?.addEventListener('click', () => {
         const c = panel.closest('.news-card');

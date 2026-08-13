@@ -763,7 +763,7 @@ function wirePromptsDropdown(panel, initialView) {
     wrap.setAttribute('data-prompts-back', '');
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'page-backbtn';
-    b.innerHTML = `${BACKBAR_CHEV}<span class="page-backbtn-tx">Back to <b>${escapeHTML(label)}</b></span>`;
+    b.innerHTML = `${BACKBAR_CHEV}<span class="page-backbtn-tx">Back to ${escapeHTML(label)}</span>`;
     b.addEventListener('click', onClick);
     wrap.appendChild(b);
     titles.insertBefore(wrap, titles.firstChild);
@@ -2524,7 +2524,7 @@ const BACKBAR_CHEV = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none
 // surface can drop this in.
 function backBarHTML() {
   const t = backTarget();
-  return `<div class="page-backbar"><a href="${escapeAttr(t.hash)}" class="page-backbtn" data-backbar>${BACKBAR_CHEV}<span class="page-backbtn-tx">Back to <b>${escapeHTML(t.label)}</b></span></a></div>`;
+  return `<div class="page-backbar"><a href="${escapeAttr(t.hash)}" class="page-backbtn" data-backbar>${BACKBAR_CHEV}<span class="page-backbtn-tx">Back to ${escapeHTML(t.label)}</span></a></div>`;
 }
 
 function pageLabelFor(route) {

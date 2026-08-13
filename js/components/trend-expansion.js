@@ -4,6 +4,8 @@
 // matches AI insights elsewhere.
 import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260717-revamp591';
 import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp574';
+import { drawerHTML, wireDrawers } from '../utils/drawers.js?v=20260813-revamp734';
+export { wireDrawers as wireTrendDrawers };
 import { renderTIAccordion, webSourceItem } from './ti-shortcuts.js';
 import { getExternalSearches, getExternalSearchCategories, getModels, safeUrl } from '../utils/data.js';
 import { exploreFurtherHTML } from '../utils/explore-further.js?v=20260720-revamp609';
@@ -155,8 +157,8 @@ export function renderTrendExpansionBody(term, brief) {
   const AITAG = `<div class="trend-exp-aitag">${aiSparkInline()}<span>AI Generated Text</span></div>`;
   const summaryHTML = summaryBody ? `${AITAG}${renderBriefBody(summaryBody, null)}` : '<p class="ins-empty">No summary yet.</p>';
   const src = teSourcesHTML(b.headlines, b.sources);
-  const drawers = (src ? teDrawerHTML('sources', 'Sources', src) : '')
-    + teDrawerHTML('why', 'Explore Further', exploreListHTML(term));
+  const drawers = (src ? drawerHTML('Sources', src) : '')
+    + drawerHTML('Explore Further', exploreListHTML(term));
   return `<div class="trend-exp im-secs">
     <div class="trend-exp-summary">${summaryHTML}</div>
     <div class="trend-exp-drawers">${drawers}</div>
@@ -165,102 +167,5 @@ export function renderTrendExpansionBody(term, brief) {
 }
 const TE_CLOSE_X = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 
-// A clean collapsible drawer (Explore Further / Sources) — icon + title + chevron
-// summary, collapsed by default, matching the news/topic AI-insight drawers.
-const TE_DRAWER_CHEV = '<svg class="te-drawer-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
-function teDrawerHTML(iconKey, label, bodyHTML) {
-  return `<details class="te-drawer"><summary class="te-drawer-sum"><span class="te-drawer-ic">${TE_SEC_ICON[iconKey] || TE_SEC_ICON.summary}</span><span class="te-drawer-title">${escapeHTML(label)}</span>${TE_DRAWER_CHEV}</summary><div class="te-drawer-body">${bodyHTML}</div></details>`;
-}
 
 
-// ── Drawer behaviour (revamp732) ─────────────────────────────────────────────
-// <details> opens instantly and the browser makes no attempt to keep the header
-// you clicked on screen — so opening "Explore Further" near the bottom of a long
-// brief dropped the user into the middle of the list with no context. Intercept
-// the toggle: animate the body open/closed, and keep the summary anchored.
-export function wireTrendDrawers(root) {
-  if (!root || root.dataset.teDrawersWired === '1') return;
-  root.dataset.teDrawersWired = '1';
-  const EASE = 'cubic-bezier(.22,.61,.21,1)';
-  // Only scroll when the header isn't already sitting in a comfortable band —
-  // an in-view header must never jump.
-  // Scroll the drawer header to a comfortable band under the fixed nav. Uses an
-  // explicit scrollTo on the real scroll container rather than scrollIntoView,
-  // which resolves against every scrollable ancestor and overshot inside the
-  // trending panel.
-  const scrollerFor = (el) => {
-    let n = el.parentElement;
-    while (n && n !== document.body) {
-      const st = getComputedStyle(n);
-      if (/(auto|scroll)/.test(st.overflowY) && n.scrollHeight > n.clientHeight + 4) return n;
-      n = n.parentElement;
-    }
-    return null;
-  };
-  const keepInView = (el) => {
-    try {
-      const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 72;
-      const pad = navH + 18;
-      const r = el.getBoundingClientRect();
-      const hi = Math.max(pad + 140, window.innerHeight * 0.45);
-      if (r.top >= pad - 4 && r.top <= hi) return;      // already comfortable
-      const sc = scrollerFor(el);
-      if (sc) {
-        const sr = sc.getBoundingClientRect();
-        sc.scrollTo({ top: sc.scrollTop + (r.top - sr.top) - 14, behavior: 'smooth' });
-      } else {
-        window.scrollTo({ top: window.scrollY + r.top - pad, behavior: 'smooth' });
-      }
-    } catch (_) {}
-  };
-  root.addEventListener('click', (e) => {
-    const sum = e.target.closest('.te-drawer-sum');
-    if (sum && root.contains(sum)) {
-      const det = sum.closest('.te-drawer');
-      const body = det && det.querySelector('.te-drawer-body');
-      if (!det || !body) return;
-      e.preventDefault();
-      if (det.open) {
-        const h = body.scrollHeight;
-        body.style.overflow = 'hidden';
-        body.style.height = h + 'px';
-        requestAnimationFrame(() => {
-          body.style.transition = `height .24s ${EASE}, opacity .16s ease`;
-          body.style.height = '0px';
-          body.style.opacity = '0';
-        });
-        setTimeout(() => { det.open = false; body.removeAttribute('style'); }, 250);
-      } else {
-        // Anchor BEFORE opening. The drawer body is inserted BELOW the summary, so
-        // the summary's own position doesn't move — scrolling first is stable.
-        // Scrolling after the open (the previous attempt) fought the browser's
-        // scroll anchoring as the body grew, which is what pushed the header off.
-        keepInView(sum);
-        det.open = true;
-        body.style.overflow = 'hidden';
-        body.style.height = '0px';
-        body.style.opacity = '0';
-        const h = body.scrollHeight;
-        requestAnimationFrame(() => {
-          body.style.transition = `height .28s ${EASE}, opacity .22s ease`;
-          body.style.height = h + 'px';
-          body.style.opacity = '1';
-        });
-        setTimeout(() => {
-          body.removeAttribute('style');
-          // Re-assert once the growth has settled; a no-op if it never drifted.
-          keepInView(sum);
-        }, 310);
-      }
-      return;
-    }
-    // Nested source-category accordions inside Explore Further animate natively;
-    // they just need the same anchoring so the row you tapped stays put.
-    const xs = e.target.closest('.xf-sum');
-    if (xs && root.contains(xs)) {
-      const acc = xs.closest('.xf-acc');
-      if (acc && !acc.open) keepInView(xs);        // opening: anchor first
-      setTimeout(() => keepInView(xs), 320);        // then re-assert after it grows
-    }
-  });
-}
