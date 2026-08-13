@@ -18079,3 +18079,15 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 .aii-nav-dd-trending .trend-card:last-child { border-bottom: 1px solid #eef1f6 !important; }
 .trend-earlier-head { border-bottom: 1px solid #e4e8f0 !important; padding-top: 24px !important; }
 .trend-earlier-title { font-weight: 750 !important; }
+
+/* ═══════════════ revamp751 ═══════════════════════════════════════════════ */
+
+/* The head actions and the topics search field are grid column 2 of
+   .aii-nav-dd-titles — but that block is a FLEX ITEM that was sizing to its own
+   content, so "right aligned" only ever reached the end of a narrow box sitting
+   beside the title. Make it fill the header row and the right column lands on
+   the real right edge. */
+.aii-nav-dd .aii-nav-dd-head { display: flex; align-items: flex-start; }
+.aii-nav-dd .aii-nav-dd-titles { flex: 1 1 auto !important; width: 100%; min-width: 0; }
+.aii-nav-dd .aii-nav-dd-headbtns,
+.aii-nav-dd .navdd-headsearch { justify-self: end !important; }
