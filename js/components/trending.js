@@ -476,7 +476,7 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
     if (state.expanded && earlier.length) {
       html += `<div class="trend-earlier">
         <div class="trend-earlier-head"><span class="trend-earlier-title">Earlier</span><span class="trend-earlier-sub">Recently trending, not right now</span></div>
-        <div class="trend-card-grid">${earlier.map((t, i) => trendCardHTML(t, 5000 + i, { metaText: t._meta, past: true })).join('')}</div>
+        <div class="trend-card-grid">${earlier.map((t, i) => trendCardHTML(t, 5000 + i, { metaText: '', past: true })).join('')}</div>
       </div>`;
     }
     // A single "View more" reveals the rest of the live set AND the Earlier section.

@@ -2596,17 +2596,33 @@ function backBarHTML() {
 // user starts reading and return when they scroll back to the top.
 function wireNavDdCondense(panel) {
   const sc = panel.querySelector('[data-navdd-scroll]');
-  if (!sc) return;
-  // Hysteresis: condensing removes header height, which pulls scrollTop back
-  // under a single threshold and un-condenses — that loop is the flicker on
-  // mobile. Separate enter/exit points break it.
+  const head = panel.querySelector('.aii-nav-dd-inner');
+  if (!sc || !head) return;
+  // The header sits OUTSIDE the scroller, so shrinking it makes the scroll
+  // viewport taller — the browser keeps scrollTop, so every row jumps up by the
+  // height we removed. Animating that height made it a continuous shudder.
+  //
+  // So: collapse in ONE frame (no height transition) and compensate scrollTop by
+  // the exact delta, which leaves the content visually still while the header
+  // changes. Hysteresis on top of that stops the two states chasing each other.
   let on = false;
+  let busy = false;
+  const setState = (next) => {
+    if (next === on || busy) return;
+    busy = true;
+    const before = head.getBoundingClientRect().height;
+    on = next;
+    panel.classList.toggle('is-condensed', on);
+    // Force layout so the new height is real before we measure it.
+    const after = head.getBoundingClientRect().height;
+    const delta = before - after;
+    if (delta) sc.scrollTop = Math.max(0, sc.scrollTop + delta);
+    requestAnimationFrame(() => { busy = false; });
+  };
   const apply = () => {
     const y = sc.scrollTop;
-    if (!on && y > 40) on = true;
-    else if (on && y < 6) on = false;
-    else return;
-    panel.classList.toggle('is-condensed', on);
+    if (!on && y > 48) setState(true);
+    else if (on && y < 8) setState(false);
   };
   sc.addEventListener('scroll', apply, { passive: true });
   apply();

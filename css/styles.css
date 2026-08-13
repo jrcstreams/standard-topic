@@ -17573,19 +17573,10 @@ body.home-search .home-search-hero .search-panel-hero-inner { padding-bottom: 1r
 /* ── Condensed page header: smooth, and it takes the subtext with it ─────── */
 .aii-nav-dd .page-backbar,
 .aii-nav-dd .aii-nav-dd-headbtns,
-.aii-nav-dd .aii-nav-dd-sub {
-  overflow: hidden;
-  transition: max-height .26s cubic-bezier(.22,.61,.21,1), opacity .18s ease, margin .26s ease;
-  max-height: 120px; opacity: 1;
-}
+.aii-nav-dd .aii-nav-dd-sub { transition: opacity .16s ease; opacity: 1; }
 .aii-nav-dd.is-condensed .page-backbar,
 .aii-nav-dd.is-condensed .aii-nav-dd-headbtns,
-.aii-nav-dd.is-condensed .aii-nav-dd-sub {
-  max-height: 0 !important; opacity: 0 !important;
-  margin-top: 0 !important; margin-bottom: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important;
-  display: block !important;                       /* animate, don't snap */
-}
-.aii-nav-dd .aii-nav-dd-head { transition: padding .26s ease; }
+.aii-nav-dd.is-condensed .aii-nav-dd-sub { display: none !important; }
 
 /* ── Prompt directory ───────────────────────────────────────────────────── */
 /* The parent's own row is a peer of its subtopics, not a second heading. */
@@ -17661,3 +17652,27 @@ body.app-mode:not(.home-search) .topic-tabpanel,
 body.app-mode:not(.home-search) #topic-tab-body {
   height: auto !important; min-height: 0 !important; overflow: visible !important;
 }
+
+/* ═══════════════ revamp741 ═══════════════════════════════════════════════ */
+
+/* Nothing in a nav-dropdown page may animate its own height — the header lives
+   outside the scroller, so any height change there moves every row underneath. */
+.aii-nav-dd .aii-nav-dd-head,
+.aii-nav-dd .aii-nav-dd-inner { transition: none !important; }
+/* The rows themselves must not shift on hover either: the hover fill was
+   overlapping the divider above, which reads as riding the separator. */
+.aii-nav-dd-trending .trend-card { border-bottom: 1px solid #e9ecf2 !important; }
+.aii-nav-dd-trending .trend-card::after { content: none !important; }
+.aii-nav-dd-trending .trend-card:last-child { border-bottom: none !important; }
+@media (hover: hover) {
+  .aii-nav-dd-trending .trend-card:not(.is-expanded):hover { background: #f7f9fc !important; }
+}
+/* "Earlier" rows list exactly like the live ones above them (the history table
+   stores no summary text, so they're title-only — but the row metrics match). */
+.trend-earlier .trend-card-trigger { padding: 15px 14px !important; }
+.trend-earlier .trend-card-title { font-size: 1rem !important; font-weight: 700 !important; color: #26375a !important; }
+.trend-earlier .trend-card { border-bottom: 1px solid #e9ecf2 !important; }
+.trend-earlier .trend-card:last-child { border-bottom: none !important; }
+.trend-earlier-head { padding: 22px 14px 10px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.trend-earlier-title { font-family: var(--font-display); font-size: 1.06rem; font-weight: 800; color: #1a2740; }
+.trend-earlier-sub { font-family: var(--font-family); font-size: 0.82rem; color: var(--color-text-muted); }
