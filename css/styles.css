@@ -18038,3 +18038,26 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 @media (max-width: 720px) {
   .navdd-headsearch { grid-column: 1; grid-row: auto; justify-self: stretch; width: 100%; margin: 12px 0 0; }
 }
+
+/* ═══════════════ revamp749 ═══════════════════════════════════════════════ */
+
+/* News insight X: trend-sized, and anchored BELOW the actions rule so it lands
+   on the "AI Generated Text" line rather than straddling the separator. */
+#section-newsfeed .news-card--open .news-card-actions,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-actions { position: relative; }
+#section-newsfeed .news-card--open .news-act-ai,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai {
+  position: absolute !important; right: 0 !important; left: auto !important;
+  top: 100% !important; bottom: auto !important; margin-top: 14px !important;
+  width: 28px !important; height: 28px !important; min-width: 0 !important;
+  padding: 0 !important; border-radius: 8px; border: none; background: none; color: #64748b;
+}
+#section-newsfeed .news-card--open .news-act-ai svg,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai svg {
+  width: 16px !important; height: 16px !important;
+}
+@media (hover: hover) {
+  #section-newsfeed .news-card--open .news-act-ai:hover { background: rgba(15,26,46,.06); color: #26375a; }
+}
+/* Keep the AI line clear of the X. */
+.ni-inner > .ni-aitag-row { padding-right: 38px; }
