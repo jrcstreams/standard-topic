@@ -17322,3 +17322,22 @@ body.home-search #home-trending .trending-topics-title,
   }
   body.home-search #home-trending .trend-viewmore-row { justify-content: center; padding: 16px 0 28px; }
 }
+
+/* ═══════════════ revamp735 ═══════════════════════════════════════════════ */
+
+/* Back link hover: the tint was hugging the glyphs. Give it real padding and a
+   soft rounded field so the hover reads as a target, not a highlighter stroke. */
+.page-backbtn {
+  padding: 7px 13px 7px 10px; margin-left: -10px; border-radius: 999px;
+  transition: color .14s ease, background .14s ease;
+}
+@media (hover: hover) {
+  .page-backbtn:hover { background: #f1f4f9; color: #26375a; }
+}
+.page-backbar { padding-top: 16px; }
+.aii-nav-dd-inner > .page-backbar { padding-top: 18px; }
+.page-backbar--inview { padding: 0 0 12px; }
+
+/* Trending PAGE rows drop the per-trend age — the summary carries the recency
+   and the column read as a wall of timestamps. The homepage rail keeps its own. */
+.aii-nav-dd-trending .trend-card:not(.is-expanded) .trend-card-meta { display: none !important; }

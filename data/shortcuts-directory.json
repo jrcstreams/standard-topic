@@ -28,7 +28,7 @@
       "id": "ai-latest-news",
       "name": "AI News and Developments",
       "icon": "ai-latest-news",
-      "prompt": "What's the latest news on the topic of: Artificial Intellience? Cover the most significant developments from the past week or so. For each: what happened, why it matters, and what to watch next. Skip noise and prioritize stories with real significance. Organize by significance, not chronology.",
+      "prompt": "What's the latest news on the topic of: Artificial Intelligence? Cover the most significant developments from the past week or so. For each: what happened, why it matters, and what to watch next. Skip noise and prioritize stories with real significance. Organize by significance, not chronology.",
       "description": "Recent updates worth knowing about",
       "group": "topic-specific"
     },
@@ -4392,7 +4392,7 @@
       "id": "the-cutting-edge",
       "name": "The Cutting Edge",
       "icon": "the-cutting-edge",
-      "prompt": "Where is the frontier in {topic} right now — the questions being actively worked on, the new approaches being tried, or the discoveries being made? Explain what's driving progress at the edge and what might come of it.",
+      "prompt": "Where is the frontier right now on the topic of: {topic}? Cover the questions being actively worked on, the new approaches being tried, or the discoveries being made. Explain what's driving progress at the edge and what might come of it.",
       "description": "Where the active work is happening now",
       "group": "discover",
       "evergreen": true
@@ -4401,7 +4401,7 @@
       "id": "recent-milestones",
       "name": "Recent Milestones",
       "icon": "recent-milestones",
-      "prompt": "What are the most notable recent milestones in {topic} — discoveries, achievements, releases, or events worth knowing about? For each, explain what happened and why it mattered, and note which will still matter a year from now.",
+      "prompt": "What are the most notable recent milestones on the topic of: {topic}? Cover discoveries, achievements, releases, or events worth knowing about. For each, explain what happened and why it mattered, and note which will still matter a year from now.",
       "description": "The notable moments of the last while",
       "group": "discover",
       "evergreen": true
@@ -4410,7 +4410,7 @@
       "id": "how-it-actually-works",
       "name": "How It Actually Works",
       "icon": "how-it-actually-works",
-      "prompt": "Walk me through how {topic} actually works — the real mechanics, steps, or moving parts, not just the surface description. Use a concrete example to make it tangible, and point out where people's intuitions usually go wrong.",
+      "prompt": "Walk me through how things actually work on the topic of: {topic}. Cover the real mechanics, steps, or moving parts, not just the surface description. Use concrete examples and call out the parts people most often get wrong.",
       "description": "The mechanics under the hood",
       "group": "learn",
       "evergreen": true
@@ -4419,7 +4419,7 @@
       "id": "frequently-asked-questions",
       "name": "Frequently Asked Questions",
       "icon": "frequently-asked-questions",
-      "prompt": "Answer the most common questions people have about {topic} — the things a curious newcomer would naturally ask. Give a clear, direct answer to each, and prioritize the questions whose answers are surprising or commonly gotten wrong.",
+      "prompt": "Answer the most common questions people have on the topic of: {topic}. Cover the things a curious newcomer would naturally ask, and answer each directly and concretely rather than in generalities.",
       "description": "The questions everyone asks",
       "group": "learn",
       "evergreen": true
@@ -4428,7 +4428,7 @@
       "id": "cheat-sheet",
       "name": "Cheat Sheet",
       "icon": "cheat-sheet",
-      "prompt": "Build me a quick-reference cheat sheet for {topic} — the key terms, facts, distinctions, and rules of thumb worth keeping at a glance. Keep it tight and scannable, and prioritize what I'd actually want to look up again.",
+      "prompt": "Build me a quick-reference cheat sheet for the topic of: {topic}. Cover the key terms, facts, distinctions, and rules of thumb worth having at hand, organised so I can scan it quickly.",
       "description": "The quick reference to keep handy",
       "group": "learn",
       "evergreen": true
@@ -4437,7 +4437,7 @@
       "id": "best-resources-to-go-deeper",
       "name": "Best Resources to Go Deeper",
       "icon": "best-resources-to-go-deeper",
-      "prompt": "Point me to the best resources for genuinely learning {topic} — standout books, courses, documentaries, sites, or guides. For each, say who it's best for and what it does better than the alternatives, and suggest a sensible order to take them in.",
+      "prompt": "Point me to the best resources for genuinely learning the topic of: {topic}. Cover standout books, courses, documentaries, sites, and communities. For each: what it is, who it suits, and why it's worth the time.",
       "description": "Where to learn this properly",
       "group": "learn",
       "evergreen": true
@@ -4446,7 +4446,7 @@
       "id": "why-it-matters",
       "name": "Why It Matters",
       "icon": "why-it-matters",
-      "prompt": "Make the case for why {topic} matters. Explain its significance — what it affects, what depends on it, and what we'd lose or misunderstand without it — and distinguish the reasons it genuinely matters from the reasons it's merely talked about.",
+      "prompt": "Make the case for why the topic of: {topic} matters. Explain its significance — what it affects, what depends on it, and what would change if it went differently. Be concrete rather than abstract.",
       "description": "The significance, plainly stated",
       "group": "analyze",
       "evergreen": true
@@ -4455,7 +4455,7 @@
       "id": "the-big-picture",
       "name": "The Big Picture",
       "icon": "the-big-picture",
-      "prompt": "Zoom out on {topic}: place it in its broader context — how it connects to other fields, events, and ideas — and trace the underlying forces that drive it (the causes, conditions, and incentives that make it what it is). Separate the factors that genuinely shape it from the noise, and show the larger story it is part of.",
+      "prompt": "Zoom out on the topic of: {topic}. Place it in its broader context — how it connects to other fields, events, and ideas — and explain what that wider view reveals that a narrow look would miss.",
       "description": "The wider context — and the forces driving it",
       "group": "analyze",
       "evergreen": true
@@ -4464,7 +4464,7 @@
       "id": "what-we-dont-know-yet",
       "name": "What We Don't Know Yet",
       "icon": "what-we-dont-know-yet",
-      "prompt": "What are the real open questions in {topic} — the things even informed people genuinely can't answer yet? Separate \"unknown because it's unsettled\" from \"unknown because no one's looked,\" and note which answers would change the most if we got them.",
+      "prompt": "What are the real open questions on the topic of: {topic} — the things even informed people genuinely can't answer yet? Separate honest uncertainty from active disagreement, and explain what it would take to settle each.",
       "description": "The genuine open questions",
       "group": "analyze",
       "evergreen": true
@@ -4473,7 +4473,7 @@
       "id": "strengths-and-limitations",
       "name": "Strengths and Limitations",
       "icon": "strengths-and-limitations",
-      "prompt": "Give me an honest assessment of {topic}'s strengths and limitations — where it works well, where it breaks down, and the tradeoffs involved. Avoid both boosterism and cynicism, and tell me what to keep in mind before relying on it.",
+      "prompt": "Give me an honest assessment of the strengths and limitations on the topic of: {topic}. Cover where it works well, where it breaks down, and what the tradeoffs are. Avoid boosterism and avoid cynicism.",
       "description": "What it does well and where it falls short",
       "group": "analyze",
       "evergreen": true

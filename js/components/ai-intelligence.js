@@ -1608,7 +1608,9 @@ export function renderAIIntelligence(container, scope) {
       return `<button type="button" class="aii-pc-menu-opt${on ? ' is-active' : ''}" role="menuitemradio" aria-checked="${on}" data-model-id="${escAttr(x.id)}"><span class="aii-pc-menu-check" aria-hidden="true">${ICON_CHECK_MINI}</span><span>${esc(x.name)}</span></button>`;
     }).join('');
     return `<div class="aii-pc">
-      ${ctx.desc ? `<p class="aii-pc-desc">${esc(ctx.desc)}</p>` : ''}
+      ${/* The one-line description repeated what the accordion title already said,
+            right above a prompt preview that states the same thing in full — so it
+            just pushed the preview down (revamp735). */ ''}
       <div class="aii-pc-prevwrap">
         <div class="aii-pc-prevhead">
           <span class="aii-pc-lbl">Prompt Preview</span>
