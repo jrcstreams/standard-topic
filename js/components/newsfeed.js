@@ -1037,18 +1037,20 @@ export function renderNewsFeed(container, topic, isHome) {
   // Header: both surfaces use the homepage's big display title. Topic pages add
   // a quiet topic-name kicker above it so the feed reads as that topic's front
   // page (revamp763).
+  // Brand-family icon chip (news red) shared by both heads (revamp764).
+  const NEWS_IC = '<span class="newsfeed-brandic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg></span>';
   const headHTML = isHome
     ? `
     <div class="newsfeed-head section-card-head newsfeed-head--home">
       <div class="newsfeed-headtext">
-        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">Today's Top News</span></h3>
+        <h3 class="newsfeed-title section-card-title">${NEWS_IC}<span class="newsfeed-title-main">Today's Top News</span></h3>
       </div>
     </div>`
     : `
     <div class="newsfeed-head section-card-head newsfeed-head--home newsfeed-head--topic">
       <div class="newsfeed-headtext">
         ${label ? `<span class="newsfeed-kicker">${escapeHTML(label)}</span>` : ''}
-        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">Today's Top News</span></h3>
+        <h3 class="newsfeed-title section-card-title">${NEWS_IC}<span class="newsfeed-title-main">Today's Top News</span></h3>
       </div>
     </div>`;
 

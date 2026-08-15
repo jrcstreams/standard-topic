@@ -7,7 +7,7 @@ import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js?v=20260716-revamp588';
 import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp574';
 import { renderSearchBar, initSearchOverlay } from './components/search-modal.js?v=20260728-revamp668';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260815-revamp763';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260815-revamp764';
 // prompt-generator (~127KB, Prompts flows only) is lazy-loaded via loadPromptGen() so it
 // splits out of the initial bundle — see B3.4. (prompt-builder-modal.js was a retired
 // no-op takeover; removed.)
@@ -17,7 +17,7 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
-import { renderAIIntelligence, renderDailyIntelligence, fetchDailyBrief } from './components/ai-intelligence.js?v=20260815-revamp763';
+import { renderAIIntelligence, renderDailyIntelligence, fetchDailyBrief } from './components/ai-intelligence.js?v=20260815-revamp764';
 import { exploreFurtherHTML, exploreAIModelsHTML, wireExploreFurther } from './utils/explore-further.js?v=20260812-revamp718';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260717-revamp592';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
@@ -75,10 +75,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Trending is a dropdown now: every "View more trending" / open-trending-list
   // (and the retired detail modal's "back") opens the Trending nav dropdown.
-  window.addEventListener('open-trending-list', (e) => openTrendingNavDropdown(e && e.detail && e.detail.expand));
+  // Route through navigate() so the back-target stack records the move — the
+  // dropdown opens from the #/trending route handler. Opening directly (old
+  // behavior) skipped recordBackTarget, which left "Back to …" pointing at the
+  // page BEFORE the one the user was actually on (revamp764). A pending var
+  // carries the expand request into the route-driven open.
+  window.addEventListener('open-trending-list', (e) => {
+    const ex = e && e.detail && e.detail.expand;
+    const cur = getCurrentRoute();
+    if (cur && cur.type === 'trending') { openTrendingNavDropdown(ex); return; }
+    pendingTrendingExpand = ex || null;
+    navigate('#/trending');
+  });
   // All Topics is a dropdown now: every open-all-topics-modal dispatch (picker
   // "All Topics", search) opens the single clean Topics nav dropdown.
-  window.addEventListener('open-all-topics-modal', () => openTopicsNavDropdown());
+  window.addEventListener('open-all-topics-modal', () => {
+    const cur = getCurrentRoute();
+    if (cur && cur.type === 'topics') openTopicsNavDropdown();
+    else navigate('#/topics');
+  });
 
   // Esc closes the open nav dropdown (search/prompt also reset their deep-link
   // route). Skip when the Review & Submit dropdown is stacked on top — it
@@ -109,8 +124,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   onRoute((route) => {
     // Per-route <title> (SEO 2a) — set before trackPageView so GA4 gets it too.
     try { document.title = documentTitleFor(route); } catch (_) {}
-    // Remember where we came from so sub-pages can offer a named "Back to …".
-    try { recordBackTarget(route); } catch (_) {}
+    // Remember where we came from so sub-pages can offer a named "Back to …",
+    // and keep an open panel's back bar in step with the fresh stack.
+    try { recordBackTarget(route); refreshNavDdBackbar(); } catch (_) {}
     // Nav dropdowns are transient overlays — close on any navigation. EXCEPTION:
     // the Search dropdown IS route-driven (#/search, #/custom) and updates its
     // own URL as the term changes, so keep it open across search routes. The
@@ -977,47 +993,43 @@ function wirePromptsDropdown(panel, initialView) {
     requestAnimationFrame(updateNavDdFades);
   };
 
-  const showTopicPrompts = (slug, name) => {
-    destroyCtl();
-    setHead(`${name} Prompts`, 'Ready-made prompts for this topic. Pick one to expand and copy it.');
-    setHeadBtns(false);
-    // prompts-topic-host → CSS hides the mounted AI component's own chrome so ONLY
-    // the clean prompt list shows.
-    setBack('Prompt Library', showLibrary);
-    root.innerHTML = `<div class="pb-navdd-host prompts-topic-host" data-pb-host></div>`;
-    let shortcuts = []; try { shortcuts = getShortcutsForTopic(slug) || []; } catch (_) {}
-    const descriptions = {}; const icons = {};
-    try { shortcuts.forEach((s) => { if (s && s.name) { descriptions[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } }); } catch (_) {}
-    const t = getTopicBySlug(slug); const label = t ? t.name : name;
-    ctl = renderAIIntelligence(root.querySelector('[data-pb-host]'), {
-      inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
-      sectionAccordions: true,
-      topic: label, label, descriptions, icons, shortcuts, topicKey: slug,
-    });
-    fades();
-  };
-
   // Expose the view switcher for route changes while mounted, then show the
   // requested initial view (a #/prompts/build|library deep-link) or the landing.
   promptsDdShowView = (v) => { if (v === 'build') showBuild(); else if (v === 'library') showLibrary(); else showLanding(); };
-  // Drill straight to one topic's prompt list and expand a named prompt — the
-  // accordions mount async, so retry the match a few frames (#img372).
+  // Drill INTO the Prompt Library (revamp764 — the retired dedicated
+  // single-topic view is gone): open the topic's parent card in the directory,
+  // open that topic's prompt set in place, then expand the named prompt. The
+  // pieces mount async, so each step retries a few frames (#img372).
   promptsDdOpenPrompt = (slug, name, promptName) => {
-    showTopicPrompts(slug, name);
-    const tryExpand = (attempt) => {
-      const sums = root.querySelectorAll('.aii-fi-accsum');
+    showLibrary();
+    const t = getTopicBySlug(slug);
+    const parent = t && t.parent ? (getTopicBySlug(t.parent) || t) : t;
+    const parentName = (parent && parent.name) || name;
+    const card = [...root.querySelectorAll('.pdir-card')].find((c) => {
+      const nm = c.querySelector('.pdir-card-name');
+      return nm && nm.textContent.trim() === parentName;
+    });
+    if (!card) return;
+    if (!card.classList.contains('is-open')) card.querySelector('.pdir-cardhead')?.click();
+    const expandPrompt = (attempt) => {
+      const sums = card.querySelectorAll('.pdir-topichost .aii-fi-accsum');
       const match = [...sums].find((s) => {
         const nm = s.querySelector('.aii-fi-acc-name');
         return nm && nm.textContent.trim() === promptName;
       });
       if (match) {
         if (match.getAttribute('aria-expanded') !== 'true') match.click();
-        requestAnimationFrame(() => { try { match.scrollIntoView({ block: 'nearest' }); } catch (_) {} });
+        requestAnimationFrame(() => { try { match.scrollIntoView({ block: 'center' }); } catch (_) {} });
       } else if (attempt < 14) {
-        setTimeout(() => tryExpand(attempt + 1), 70);
+        setTimeout(() => expandPrompt(attempt + 1), 70);
       }
     };
-    tryExpand(0);
+    const openTopic = (attempt) => {
+      const cell = card.querySelector(`[data-pdir-topic][data-slug="${slug}"]`);
+      if (cell) { cell.click(); expandPrompt(0); }
+      else if (attempt < 14) setTimeout(() => openTopic(attempt + 1), 70);
+    };
+    openTopic(0);
   };
   promptsDdShowView(initialView || null);
 }
@@ -1149,9 +1161,13 @@ function trendingNavDdCfg(expandQuery) {
 }
 function toggleTrendingNavDropdown() { navDdRouteToggle('trending', () => openTrendingNavDropdown()); }
 function openTrendingNavDropdown(expandQuery) {
+  // A route-driven open (no arg) consumes any expand request stashed by the
+  // open-trending-list handler before it navigated here.
+  if (!expandQuery && pendingTrendingExpand) { expandQuery = pendingTrendingExpand; pendingTrendingExpand = null; }
   if (navDdOpen && navDdOpen.key === 'trending' && !expandQuery) return;
   openNavDropdown(trendingNavDdCfg(expandQuery));
 }
+let pendingTrendingExpand = null;
 
 // ── Phase 6: the Prompt Builder dropdown ─────────────────────────────────────
 // Route-driven (#/prompt-generator), like Search: hosts the existing
@@ -1296,12 +1312,22 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
         </div>
         <h2 class="tdi-title">Today's ${escapeHTML(topic.name)} briefing</h2>
         <p class="tdi-summary" data-tdi-summary>One AI briefing, refreshed every day — catch up fast, go deep on the day's big story, and get the background that makes it all make sense.</p>
-        <div class="tdi-foot">
-          <span class="tdi-parts" aria-hidden="true">
-            <span class="tdi-part"><span class="tdi-dot tdi-dot--blue"></span>Catch Up</span>
-            <span class="tdi-part"><span class="tdi-dot tdi-dot--amber"></span>Deep Dive</span>
-            <span class="tdi-part"><span class="tdi-dot tdi-dot--teal"></span>101 Info</span>
+        <div class="tdi-secs" aria-hidden="true">
+          <span class="tdi-sec tdi-sec--blue">
+            <span class="tdi-sec-ic">${TOPIC_AI_ICONS.discover}</span>
+            <span class="tdi-sec-tx"><b>Catch Up</b><em>The developments that matter</em></span>
           </span>
+          <span class="tdi-sec tdi-sec--amber">
+            <span class="tdi-sec-ic">${TOPIC_AI_ICONS.websearch}</span>
+            <span class="tdi-sec-tx"><b>Deep Dive</b><em>The day's big story, in depth</em></span>
+          </span>
+          <span class="tdi-sec tdi-sec--teal">
+            <span class="tdi-sec-ic">${TOPIC_AI_ICONS.learn}</span>
+            <span class="tdi-sec-tx"><b>101 Info</b><em>Background that explains it</em></span>
+          </span>
+        </div>
+        <div class="tdi-foot">
+          <span class="tdi-meta"><span class="tdi-meta-spark" aria-hidden="true">✦</span>AI-generated · refreshed daily</span>
           <span class="tdi-cta">Read today's briefing${SUBPAGE_ARROW}</span>
         </div>
       </a>
@@ -2446,8 +2472,11 @@ function navEntryFor(route) {
     case 'trending': return { key: 'trending', label: 'Trending', hash: '#/trending' };
     case 'prompts': return { key: 'prompts', label: 'Prompts', hash: '#/prompts' };
     case 'prompt-generator': return { key: 'prompt-generator', label: 'Prompt Builder', hash: '#/prompt-generator' };
+    // Search and every /custom/{term} refinement share ONE identity — refining
+    // a search must not flood the stack with near-identical "Search" entries
+    // (recordBackTarget updates the stored hash in place instead).
     case 'search': return { key: 'search', label: 'Search', hash: '#/search' };
-    case 'custom': return { key: 'custom:' + (route.term || ''), label: 'Search', hash: `#/custom/${route.term || ''}` };
+    case 'custom': return { key: 'search', label: 'Search', hash: `#/custom/${route.term || ''}` };
     case 'about': return { key: 'about', label: 'About', hash: '#/about' };
     case 'terms': return { key: 'terms', label: 'Terms', hash: '#/terms' };
     default: return null;
@@ -2457,11 +2486,26 @@ function recordBackTarget(route) {
   const entry = navEntryFor(route);
   if (!entry) return;
   const top = navStack[navStack.length - 1];
-  if (top && top.key === entry.key) return;                 // same page, no-op
+  // Same page — keep the stored return hash current (e.g. /custom/{term}
+  // refinements update the one Search entry in place).
+  if (top && top.key === entry.key) { top.hash = entry.hash; return; }
   const prev = navStack[navStack.length - 2];
   if (prev && prev.key === entry.key) { navStack.pop(); return; }  // stepped back
   navStack.push(entry);
   if (navStack.length > NAV_STACK_MAX) navStack.shift();
+}
+// Live-refresh the open panel's "Back to …" bar. Route changes can fire while a
+// page-mode panel stays open (search term edits, prompts view swaps) — without
+// this the bar keeps whatever target it was born with.
+function refreshNavDdBackbar() {
+  const panel = document.getElementById('st-nav-panel');
+  if (!panel || !panel.classList.contains('is-open')) return;
+  const a = panel.querySelector('a.page-backbtn[data-backbar]');
+  if (!a) return;
+  const bt = backTarget();
+  try { a.setAttribute('href', bt.hash); } catch (_) {}
+  const tx = a.querySelector('.page-backbtn-tx');
+  if (tx) tx.textContent = `Back to ${bt.label}`;
 }
 // { label, hash } for the current back destination — the entry BELOW the one
 // we're on. Always resolvable: a cold deep-link falls back to Home.
@@ -2941,7 +2985,8 @@ function renderStickyHeroBar(container, route) {
   });
   navPanel.querySelector('#navmenu-prompts')?.addEventListener('click', () => {
     closeMenu();
-    openPromptsNavDropdown();
+    // navigate (not a direct open) so the back-target stack records the move.
+    navigate('#/prompts');
   });
   navPanel.querySelector('#navmenu-search')?.addEventListener('click', () => {
     closeMenu();
@@ -3137,18 +3182,24 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         </div>
         <div class="home-sections">
           <div class="home-featured" aria-label="Featured on Standard Topic">
-            <section class="hf-card" data-hf="topics">
+            <section class="hf-card hf-card--topics" data-hf="topics">
               <div class="hf-head">
-                <h3 class="hf-title">Featured Topics</h3>
-                <p class="hf-sub">Dedicated pages with live news, briefings and resources.</p>
+                <span class="hf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
+                <div class="hf-headtx">
+                  <h3 class="hf-title">Featured Topics</h3>
+                  <p class="hf-sub">Live news, briefings and resources.</p>
+                </div>
               </div>
               <div class="hf-chips" data-hq-topics></div>
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-topics>All topics${HQ_ARROW}</button></div>
             </section>
-            <section class="hf-card" data-hf="prompts">
+            <section class="hf-card hf-card--prompts" data-hf="prompts">
               <div class="hf-head">
-                <h3 class="hf-title">Featured Prompts</h3>
-                <p class="hf-sub">Ready-made prompts to run in the AI model of your choice.</p>
+                <span class="hf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg></span>
+                <div class="hf-headtx">
+                  <h3 class="hf-title">Featured Prompts</h3>
+                  <p class="hf-sub">Run them in any AI model.</p>
+                </div>
               </div>
               <div class="hf-chips" data-hq-prompts></div>
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Access prompt library${HQ_ARROW}</button></div>
@@ -3169,7 +3220,9 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     {
       const tWrap = container.querySelector('[data-hq-topics]');
       if (tWrap) {
-        let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 6); } catch (_) {}
+        // Render the full dozen; CSS visibility caps trim by viewport (6 on
+        // phones, 8 mid-range, all 12 on desktop where the card is wider).
+        let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 12); } catch (_) {}
         tWrap.innerHTML = feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="hq-chip"><span>${escapeHTML(t.name)}</span></a>`).join('');
       }
       // Featured Prompts — the same featured set the Prompt Library leads with.
@@ -3206,11 +3259,11 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       e.preventDefault();
       window.dispatchEvent(new CustomEvent('open-all-topics-modal'));
     });
-    // Prompt Library nudge — opens the Prompts dropdown (Build a Custom Prompt +
-    // Prompt Library) rather than jumping straight to the builder.
+    // Prompt Library nudge — routes to the Prompts page (navigate, not a direct
+    // open, so the back-target stack records the move).
     container.querySelector('[data-explore-prompts]')?.addEventListener('click', (e) => {
       e.preventDefault();
-      openPromptsNavDropdown();
+      navigate('#/prompts');
     });
   } else if (topic && !isCustom) {
     // Topic pages: ONE cohesive tabbed "Paths" package at every width. A second

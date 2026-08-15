@@ -2,7 +2,7 @@
 // "Web Explore" + "AI Explore" accordions (submit the term to engines/models),
 // and the full grounded brief. Reuses the news/TI building blocks so the look
 // matches AI insights elsewhere.
-import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260815-revamp763';
+import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260815-revamp764';
 import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp574';
 import { drawerHTML, wireDrawers } from '../utils/drawers.js?v=20260813-revamp734';
 export { wireDrawers as wireTrendDrawers };

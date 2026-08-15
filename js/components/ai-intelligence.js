@@ -4,7 +4,7 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260815-revamp763';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260815-revamp764';
 import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp574';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData, fetchWithTimeout, safeUrl } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
@@ -2158,11 +2158,13 @@ export function renderDailyIntelligence(container, scope) {
         <h2 class="di-title">${esc(name)}</h2>
         <p class="di-intro">One AI briefing, refreshed every day — catch up fast, go deep on the day's big story, and get the background that makes it make sense.</p>
         <div class="di-meta" data-di-meta></div>
+        <nav class="di-jumps" data-di-jumps aria-label="Briefing sections" hidden></nav>
       </header>
       <div class="di-body" data-di-body>${genLoaderHTML()}</div>
     </section>`;
   const body = container.querySelector('[data-di-body]');
   const meta = container.querySelector('[data-di-meta]');
+  const jumps = container.querySelector('[data-di-jumps]');
 
   const readRow = (x) => `<a class="di-read" href="${escAttr(safeUrl(x.uri))}" target="_blank" rel="noopener noreferrer"><span class="di-read-tx"><span class="di-read-title">${esc(x.title)}</span>${x.meta ? `<span class="di-read-meta">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`;
 
@@ -2182,10 +2184,11 @@ export function renderDailyIntelligence(container, scope) {
     let day = '';
     try { if (data.generatedAt) day = new Date(data.generatedAt).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); } catch (_) {}
     meta.innerHTML = `<span class="di-meta-ai">${LOGO}<span>AI Generated</span></span>${day ? `<span class="di-meta-sep" aria-hidden="true">·</span><span>${esc(day)}</span>` : ''}${upd ? `<span class="di-meta-sep" aria-hidden="true">·</span><span>Updated ${esc(upd)}</span>` : ''}`;
+    const secMeta = secs.map((p) => DI_SECTIONS.find((s) => s.match.test(p.name)) || null);
     body.innerHTML = secs.map((p, i) => {
-      const spec = DI_SECTIONS.find((s) => s.match.test(p.name)) || null;
+      const spec = secMeta[i];
       const reads = (buckets[i] || []).slice(0, 5);
-      return `<section class="di-sec di-sec--${spec ? spec.accent : 'blue'}">
+      return `<section class="di-sec di-sec--${spec ? spec.accent : 'blue'}" id="di-sec-${i}">
         <div class="di-sec-head">
           <span class="di-sec-ic" aria-hidden="true">${ICONS[spec ? spec.icon : '_'] || ICONS._}</span>
           <div class="di-sec-headtx">
@@ -2200,8 +2203,19 @@ export function renderDailyIntelligence(container, scope) {
         <div class="di-sec-head">
           <div class="di-sec-headtx"><h3 class="di-sec-title">More Coverage</h3><p class="di-sec-sub">Further recent stories on ${esc(name)}.</p></div>
         </div>
-        <div class="di-reads-list">${unmatched.slice(0, 6).map(readRow).join('')}</div>
+        <div class="di-reads-list di-reads-list--more">${unmatched.slice(0, 6).map(readRow).join('')}</div>
       </section>` : '');
+    // Jump chips — one per section, scrolls to it (shown only with 2+ sections).
+    if (jumps && secs.length > 1) {
+      jumps.innerHTML = secs.map((p, i) => {
+        const spec = secMeta[i];
+        return `<button type="button" class="di-jump di-jump--${spec ? spec.accent : 'blue'}" data-di-jump="${i}"><span class="di-jump-dot" aria-hidden="true"></span>${esc(spec ? spec.label : p.name)}</button>`;
+      }).join('');
+      jumps.hidden = false;
+      jumps.querySelectorAll('[data-di-jump]').forEach((b) => b.addEventListener('click', () => {
+        try { body.querySelector(`#di-sec-${b.dataset.diJump}`)?.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (_) {}
+      }));
+    }
   };
 
   fetchDailyBrief(scope.topic).then((data) => {

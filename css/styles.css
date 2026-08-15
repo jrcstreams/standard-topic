@@ -17963,7 +17963,19 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 .aii-nav-dd:not(.aii-nav-dd-search):not(.aii-nav-dd-prompt) .aii-nav-dd-scrollwrap::after { content: none !important; }
 
 /* ── Featured cards ─────────────────────────────────────────────────────── */
-.ph-fcard { width: 236px; min-height: 132px; justify-content: flex-start; gap: 4px; padding: 14px 15px 12px; }
+/* Natural-width cards (revamp764): each card sizes to its own text within a
+   sane band; the flex rail stretches them all to the tallest card's height so
+   the row stays even. Mobile (<560) stacks them vertically at full width with
+   natural heights — see below. */
+.ph-fcard { width: auto; min-width: 172px; max-width: 300px; min-height: 0; justify-content: flex-start; gap: 4px; padding: 13px 15px 11px; }
+.ph-rail:not(.is-focus) { align-items: stretch; }
+/* "Open prompt" pins to the card's bottom edge so the row's footers align. */
+.ph-fcard .ph-fcard-go { margin-top: auto; padding-top: 6px; }
+@media (max-width: 559.98px) {
+  .ph-rail:not(.is-focus) { flex-direction: column; overflow-x: visible; overflow-y: visible; scroll-snap-type: none; }
+  .ph-fcard { width: 100%; max-width: none; }
+  .ph-rail-nav { display: none; }
+}
 .ph-fcard-topic {
   font-family: var(--font-family); font-size: 0.68rem; font-weight: 700;
   letter-spacing: 0.07em; text-transform: uppercase; color: #8a98b0;
@@ -18389,9 +18401,12 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
    list, and a footer link out to the full directory — one consistent shape. */
 .home-featured {
   display: grid; grid-template-columns: 1fr; gap: 0.9rem; min-width: 0;
+  margin-bottom: 1.2rem;
 }
 @media (min-width: 720px) {
-  .home-featured { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.1rem; }
+  /* Topics get the wider column (60/40) — it carries more chips, so the two
+     cards land at roughly the same height. */
+  .home-featured { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 1.1rem; margin-bottom: 1.5rem; }
 }
 @media (min-width: 1024px) {
   /* Inside the desktop .home-sections grid (news col + trending col): span both. */
@@ -18399,25 +18414,43 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
 }
 .hf-card {
   display: flex; flex-direction: column; min-width: 0;
-  background: #fff; border: 1px solid #e4eaf3; border-radius: 16px;
-  padding: 1.05rem 1.15rem 0.85rem;
+  background: #fff; border: 1px solid #e4eaf3; border-radius: 14px;
+  padding: 0.85rem 1rem 0.6rem;
   box-shadow: 0 6px 18px -14px rgba(31, 49, 99, 0.18);
+  --hf-accent: #2563eb; --hf-tint: #eef3fc;
 }
-.hf-head { margin-bottom: 0.7rem; }
+.hf-card--prompts { --hf-accent: #4f46e5; --hf-tint: #eef0fc; }
+.hf-head { display: flex; align-items: center; gap: 10px; margin-bottom: 0.65rem; }
+.hf-ic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 8px; background: var(--hf-tint); color: var(--hf-accent);
+}
+.hf-ic svg { width: 16px; height: 16px; }
+.hf-headtx { min-width: 0; }
 .hf-title {
-  margin: 0 0 0.2rem; font-family: var(--font-display);
-  font-size: 1.04rem; font-weight: 800; letter-spacing: -0.018em; color: #1a2740;
+  margin: 0; font-family: var(--font-display);
+  font-size: 1rem; font-weight: 800; letter-spacing: -0.018em; color: #1a2740;
 }
-.hf-sub { margin: 0; font-family: var(--font-family); font-size: 0.8rem; color: #76829b; line-height: 1.4; }
-.hf-chips { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 7px 8px; min-width: 0; flex: 1 1 auto; }
-/* Chips read a touch stronger on the white card than the old grey-zone pills. */
+.hf-sub { margin: 1px 0 0; font-family: var(--font-family); font-size: 0.76rem; color: #76829b; line-height: 1.35; }
+.hf-chips { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 6px 7px; min-width: 0; flex: 1 1 auto; }
+/* Chips read a touch stronger on the white card than the old grey-zone pills,
+   and pick up the card's accent on hover. */
 .hf-card .hq-chip { border-color: #dbe3f0; background: #f8fafd; color: #45536e; }
 @media (hover: hover) {
-  .hf-card .hq-chip:hover { background: #fff; border-color: #b9cbeb; color: #1d4ed8; }
+  .hf-card .hq-chip:hover { background: #fff; border-color: color-mix(in srgb, var(--hf-accent) 40%, #fff); color: var(--hf-accent); }
+}
+/* Dynamic chip counts by viewport — the DOM holds the full set (12 topics /
+   6 prompts); narrower screens simply show fewer. */
+@media (max-width: 559.98px) {
+  .hf-card [data-hq-topics] .hq-chip:nth-child(n+7) { display: none; }
+  .hf-card [data-hq-prompts] .hq-chip:nth-child(n+5) { display: none; }
+}
+@media (min-width: 560px) and (max-width: 899.98px) {
+  .hf-card [data-hq-topics] .hq-chip:nth-child(n+9) { display: none; }
 }
 .hf-foot {
-  display: flex; justify-content: flex-end; margin-top: 0.85rem;
-  border-top: 1px solid #eef2f8; padding-top: 0.6rem;
+  display: flex; justify-content: flex-end; margin-top: 0.65rem;
+  border-top: 1px solid #eef2f8; padding-top: 0.45rem;
 }
 .hf-cta {
   display: inline-flex; align-items: center; gap: 5px;
@@ -18428,13 +18461,20 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
 }
 .hf-cta svg { flex: none; transition: transform .14s ease; }
 @media (hover: hover) {
-  .hf-cta:hover { color: #1d4ed8; }
+  .hf-cta:hover { color: var(--hf-accent); }
   .hf-cta:hover svg { transform: translateX(2px); }
 }
 @media (max-width: 560px) {
-  .hf-card { padding: 0.95rem 1rem 0.75rem; border-radius: 14px; }
+  .hf-card { padding: 0.8rem 0.9rem 0.55rem; }
   .hf-chips { gap: 6px; }
 }
+/* Brand-family icon chip on the news heads (news = red). */
+.newsfeed-brandic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 8px; background: #fdecec; color: #dc2626;
+  margin-right: 9px; align-self: center;
+}
+.newsfeed-brandic svg { width: 15px; height: 15px; }
 
 /* ═══ Topic pages without tabs (revamp763) ═══════════════════════════════════
    The News Feed / AI Insights / Web Resources tab strip is gone. The topic
@@ -18473,7 +18513,6 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
 }
 @media (hover: hover) {
   .tdi-card:hover { border-color: #b9cbeb; box-shadow: 0 16px 32px -20px rgba(31, 49, 99, 0.4); transform: translateY(-1px); text-decoration: none; }
-  .tdi-card:hover .tdi-cta { color: #1d4ed8; }
   .tdi-card:hover .tdi-cta svg { transform: translateX(2px); }
 }
 .tdi-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 0.7rem; }
@@ -18490,22 +18529,44 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
   letter-spacing: -0.022em; line-height: 1.18; color: #16233d;
 }
 .tdi-summary { margin: 0; font-family: var(--font-family); font-size: 0.92rem; line-height: 1.55; color: #42506b; max-width: 72ch; }
+/* Three section mini-tiles inside the card — a preview of the briefing's shape. */
+.tdi-secs { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 0.9rem; }
+@media (min-width: 680px) { .tdi-secs { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; } }
+.tdi-sec {
+  display: flex; align-items: center; gap: 9px; min-width: 0;
+  padding: 8px 11px; border-radius: 11px;
+  background: rgba(255, 255, 255, 0.72); border: 1px solid #dde6f4;
+  --tdi-accent: #2563eb; --tdi-tint: #eef3fc;
+}
+.tdi-sec--amber { --tdi-accent: #d97706; --tdi-tint: #fdf3e4; }
+.tdi-sec--teal  { --tdi-accent: #0d9488; --tdi-tint: #e5f5f3; }
+.tdi-sec-ic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 8px; background: var(--tdi-tint); color: var(--tdi-accent);
+}
+.tdi-sec-ic svg { width: 15px; height: 15px; }
+.tdi-sec-tx { display: flex; flex-direction: column; gap: 0; min-width: 0; }
+.tdi-sec-tx b { font-family: var(--font-family); font-size: 0.8rem; font-weight: 750; color: #1a2740; line-height: 1.3; }
+.tdi-sec-tx em { font-style: normal; font-family: var(--font-family); font-size: 0.71rem; color: #76829b; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tdi-foot {
   display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
   margin-top: 0.95rem; border-top: 1px solid #dbe4f3; padding-top: 0.75rem;
 }
-.tdi-parts { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-.tdi-part { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-family); font-size: 0.78rem; font-weight: 650; color: #4a5a75; white-space: nowrap; }
-.tdi-dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
-.tdi-dot--blue { background: #2563eb; }
-.tdi-dot--amber { background: #d97706; }
-.tdi-dot--teal { background: #0d9488; }
-.tdi-cta { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-family); font-size: 0.86rem; font-weight: 750; color: #2c4f9e; white-space: nowrap; }
+.tdi-meta { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-family); font-size: 0.74rem; font-weight: 600; color: #7c8aa5; }
+.tdi-meta-spark { color: #3d5da8; font-size: 0.8rem; line-height: 1; }
+/* CTA reads as a real button — the card's one clear action. */
+.tdi-cta {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 16px; border-radius: 999px; background: #1d3a6b; color: #fff;
+  font-family: var(--font-family); font-size: 0.84rem; font-weight: 700; white-space: nowrap;
+  transition: background .14s;
+}
 .tdi-cta svg { flex: none; transition: transform .14s ease; }
+@media (hover: hover) { .tdi-card:hover .tdi-cta { background: #16305c; } }
 
 /* ── Landing: gateway cards (Web Resources / AI Prompts) ─── */
-.topic-gateways { display: grid; grid-template-columns: 1fr; gap: 0.8rem; margin-top: 0.9rem; min-width: 0; }
-@media (min-width: 720px) { .topic-gateways { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; } }
+.topic-gateways { display: grid; grid-template-columns: 1fr; gap: 0.8rem; margin-top: 1.25rem; min-width: 0; }
+@media (min-width: 720px) { .topic-gateways { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.4rem; } }
 .tg-card {
   display: flex; align-items: center; gap: 12px; min-width: 0;
   padding: 0.85rem 1rem; border: 1px solid #e4eaf3; border-radius: 14px; background: #fff;
@@ -18527,7 +18588,7 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
 .tg-arrow { flex: none; margin-left: auto; color: #a8b4c9; transition: color .12s, transform .14s ease; }
 
 /* ── Landing: news feed under a homepage-style header ─── */
-.topic-home .topic-news-wrap { margin-top: 1.7rem; width: 100%; }
+.topic-home .topic-news-wrap { margin-top: 2.3rem; width: 100%; }
 .newsfeed-kicker {
   display: block; margin-bottom: 2px;
   font-family: var(--font-family); font-size: 0.72rem; font-weight: 750;
@@ -18580,11 +18641,32 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 .di-meta-ai { display: inline-flex; align-items: center; gap: 5px; color: #7c8aa5; }
 .di-meta-ai svg { width: 11px; height: 11px; }
 .di-meta-sep { color: #c3cbd8; }
-.di-body { display: flex; flex-direction: column; gap: 1.9rem; min-width: 0; }
-.di-sec { min-width: 0; --di-accent: #2563eb; --di-tint: #eef3fc; }
+/* Jump chips under the page head — one per section, accent-dotted. */
+.di-jumps { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 0.85rem; }
+.di-jump {
+  display: inline-flex; align-items: center; gap: 7px; padding: 5px 13px;
+  border: 1px solid #dde3ee; border-radius: 999px; background: #fff; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.78rem; font-weight: 650; color: #34405a;
+  transition: border-color .12s, color .12s, background .12s;
+  --di-accent: #2563eb;
+}
+.di-jump--amber { --di-accent: #d97706; }
+.di-jump--teal  { --di-accent: #0d9488; }
+.di-jump-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--di-accent); flex: none; }
+@media (hover: hover) { .di-jump:hover { border-color: color-mix(in srgb, var(--di-accent) 45%, #fff); color: var(--di-accent); background: #fbfcfe; } }
+.di-body { display: flex; flex-direction: column; gap: 1.3rem; min-width: 0; }
+/* Each section is its own card with a slim accent bar on top — the page reads
+   as three clear chapters instead of one continuous scroll. */
+.di-sec {
+  min-width: 0; --di-accent: #2563eb; --di-tint: #eef3fc;
+  background: #fff; border: 1px solid #e8edf5; border-radius: 14px;
+  border-top: 3px solid var(--di-accent);
+  padding: 1.05rem 1.2rem 1.1rem;
+  scroll-margin-top: calc(var(--nav-h, 60px) + var(--subnav-height, 96px) + 14px);
+}
 .di-sec--amber { --di-accent: #d97706; --di-tint: #fdf3e4; }
 .di-sec--teal  { --di-accent: #0d9488; --di-tint: #e5f5f3; }
-.di-sec-head { display: flex; align-items: center; gap: 11px; margin-bottom: 0.7rem; }
+.di-sec-head { display: flex; align-items: center; gap: 11px; margin-bottom: 0.8rem; padding-bottom: 0.75rem; border-bottom: 1px solid #eef2f8; }
 .di-sec-ic {
   flex: none; display: inline-flex; align-items: center; justify-content: center;
   width: 34px; height: 34px; border-radius: 9px; background: var(--di-tint); color: var(--di-accent);
@@ -18599,22 +18681,32 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 .di-sec-body { font-size: 0.92rem; line-height: 1.62; color: #34405a; }
 .di-sec-body p { margin: 0 0 0.8em; }
 .di-sec-body p:last-child { margin-bottom: 0; }
+.di-sec-body p strong { color: #16233d; }
+/* Catch Up: each bold-led development reads as its own accent-ruled item. */
+.di-sec--blue .di-sec-body p {
+  padding: 2px 0 2px 13px; border-left: 3px solid color-mix(in srgb, var(--di-accent) 32%, #fff);
+  margin-bottom: 0.85em;
+}
+/* 101 Info: each concept explainer sits on its own soft tinted panel. */
+.di-sec--teal .di-sec-body p {
+  background: color-mix(in srgb, var(--di-tint) 55%, #fff);
+  border: 1px solid color-mix(in srgb, var(--di-accent) 14%, #fff);
+  border-radius: 10px; padding: 10px 13px; margin-bottom: 9px;
+}
 /* Curated links — an OPEN, visible list (never buried in an accordion). */
-.di-reads { margin-top: 0.9rem; }
+.di-reads { margin-top: 1rem; }
 .di-reads-label {
   margin-bottom: 6px; font-family: var(--font-family); font-size: 0.7rem; font-weight: 750;
   letter-spacing: 0.07em; text-transform: uppercase; color: #8a98b0;
 }
-.di-reads-list {
-  display: flex; flex-direction: column;
-  border: 1px solid #e8edf5; border-radius: 12px; background: #fbfcfe; overflow: hidden;
-}
+.di-reads-list { display: grid; grid-template-columns: 1fr; gap: 7px; }
+@media (min-width: 900px) { .di-reads-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } }
 .di-read {
-  display: flex; align-items: center; gap: 10px; padding: 9px 12px;
-  text-decoration: none; transition: background .12s;
+  display: flex; align-items: center; gap: 10px; padding: 9px 12px; min-width: 0;
+  border: 1px solid #e8edf5; border-radius: 10px; background: #fbfcfe;
+  text-decoration: none; transition: background .12s, border-color .12s;
 }
-.di-read + .di-read { border-top: 1px solid #eef2f8; }
-@media (hover: hover) { .di-read:hover { background: #f2f6fd; text-decoration: none; } }
+@media (hover: hover) { .di-read:hover { background: #fff; border-color: color-mix(in srgb, var(--di-accent, #2563eb) 35%, #fff); text-decoration: none; } }
 .di-read-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .di-read-title {
   font-family: var(--font-family); font-size: 0.85rem; font-weight: 650; color: #2b3a58;
@@ -18622,10 +18714,33 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 }
 .di-read-meta { font-family: var(--font-family); font-size: 0.72rem; color: #94a1b5; }
 .di-read > svg { flex: none; margin-left: auto; color: #a8b4c9; }
-.di-sec--more { border-top: 1px solid #e4e8f0; padding-top: 1.3rem; }
+.di-sec--more { --di-accent: #8a98b0; border-top-color: #d3d9e4; }
+.di-sec--more .di-sec-head { border-bottom: none; padding-bottom: 0; margin-bottom: 0.55rem; }
 @media (max-width: 560px) {
   .di-head { padding-bottom: 0.9rem; margin-bottom: 1.1rem; }
   .di-body { gap: 1.5rem; }
   .di-sec-ic { width: 30px; height: 30px; }
   .di-sec-ic svg { width: 16px; height: 16px; }
 }
+
+/* ═══ Search page viewport repair + back-target polish (revamp764) ═══════════
+   revamp758 made Search a "page" but collapsed the panel to content height —
+   the home page peeked out below and took the scroll wheel. The panel now
+   pins to the full viewport (top nav → bottom) and is the ONE scroller in
+   both collapsed and expanded states. */
+.aii-nav-dd-search { bottom: 0; height: auto; max-height: none; }
+.aii-nav-dd-search .aii-nav-dd-inner { min-height: 100% !important; height: auto !important; }
+/* One scroll: no inner scrollers in either state (the :has(expanded) rules
+   above only covered the expanded state). */
+.aii-nav-dd-search .aii-nav-dd-scrollwrap,
+.aii-nav-dd-search .aii-nav-dd-scroll {
+  overflow: visible !important; height: auto !important; max-height: none !important; flex: none !important;
+}
+.aii-nav-dd-search .search-panel--modal { height: auto; min-height: 0; }
+.aii-nav-dd-search .search-panel-results,
+.aii-nav-dd-search .search-panel-results-inner {
+  overflow: visible !important; max-height: none !important; height: auto !important;
+}
+/* Back bar shares the content gutter (it sat 2px from the viewport edge). */
+.aii-nav-dd-search > .aii-nav-dd-inner > .page-backbar { padding: 18px 2rem 0; }
+@media (max-width: 640px) { .aii-nav-dd-search > .aii-nav-dd-inner > .page-backbar { padding: 16px 1rem 0; } }
