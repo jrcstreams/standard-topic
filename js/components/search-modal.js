@@ -8,7 +8,7 @@
 
 import { getTopicsGroupedByParent, getFeaturedTopics, searchTopics, fetchWithTimeout, safeUrl } from '../utils/data.js';
 import { topicIconSVG } from '../utils/topic-icons.js?v=20260716-revamp588';
-import { navigate } from '../utils/router.js?v=20260728-revamp667';
+import { navigate } from '../utils/router.js?v=20260815-revamp763';
 
 let overlayEl = null;
 let inputEl = null;

@@ -18382,3 +18382,250 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
   .tai-story-sum .im-msec-name { font-size: 0.92rem; }
   .tai-story-prev { font-size: 0.79rem; }
 }
+
+/* ═══ Featured Topics / Featured Prompts cards (revamp763) ═══════════════════
+   The grey hero zone now holds ONLY the search hero. The old quicklinks strip
+   became two proper cards at the top of the WHITE band: matching title, chip
+   list, and a footer link out to the full directory — one consistent shape. */
+.home-featured {
+  display: grid; grid-template-columns: 1fr; gap: 0.9rem; min-width: 0;
+}
+@media (min-width: 720px) {
+  .home-featured { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.1rem; }
+}
+@media (min-width: 1024px) {
+  /* Inside the desktop .home-sections grid (news col + trending col): span both. */
+  body.home-search .home-sections .home-featured { grid-column: 1 / -1; }
+}
+.hf-card {
+  display: flex; flex-direction: column; min-width: 0;
+  background: #fff; border: 1px solid #e4eaf3; border-radius: 16px;
+  padding: 1.05rem 1.15rem 0.85rem;
+  box-shadow: 0 6px 18px -14px rgba(31, 49, 99, 0.18);
+}
+.hf-head { margin-bottom: 0.7rem; }
+.hf-title {
+  margin: 0 0 0.2rem; font-family: var(--font-display);
+  font-size: 1.04rem; font-weight: 800; letter-spacing: -0.018em; color: #1a2740;
+}
+.hf-sub { margin: 0; font-family: var(--font-family); font-size: 0.8rem; color: #76829b; line-height: 1.4; }
+.hf-chips { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 7px 8px; min-width: 0; flex: 1 1 auto; }
+/* Chips read a touch stronger on the white card than the old grey-zone pills. */
+.hf-card .hq-chip { border-color: #dbe3f0; background: #f8fafd; color: #45536e; }
+@media (hover: hover) {
+  .hf-card .hq-chip:hover { background: #fff; border-color: #b9cbeb; color: #1d4ed8; }
+}
+.hf-foot {
+  display: flex; justify-content: flex-end; margin-top: 0.85rem;
+  border-top: 1px solid #eef2f8; padding-top: 0.6rem;
+}
+.hf-cta {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 2px; border: none; background: none;
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 700; color: #3d5da8;
+  white-space: nowrap; cursor: pointer; text-decoration: none;
+  transition: color .12s;
+}
+.hf-cta svg { flex: none; transition: transform .14s ease; }
+@media (hover: hover) {
+  .hf-cta:hover { color: #1d4ed8; }
+  .hf-cta:hover svg { transform: translateX(2px); }
+}
+@media (max-width: 560px) {
+  .hf-card { padding: 0.95rem 1rem 0.75rem; border-radius: 14px; }
+  .hf-chips { gap: 6px; }
+}
+
+/* ═══ Topic pages without tabs (revamp763) ═══════════════════════════════════
+   The News Feed / AI Insights / Web Resources tab strip is gone. The topic
+   LANDING = Daily Intelligence card + gateway cards + news feed; each former
+   tab is a flip sub-page with a sticky "Back to {Topic}" bar in the sub-header
+   where the tabs used to live. */
+
+/* Back bar — replaces .topic-paths-nav inside .topic-subnav-controls. */
+.topic-subnav-controls--back .topic-backbar-inner {
+  max-width: var(--max-width, 1280px); margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 8px 2rem;
+}
+@media (max-width: 640px) { .topic-subnav-controls--back .topic-backbar-inner { padding: 8px 1rem; } }
+.topic-backbar {
+  display: inline-flex; align-items: center; gap: 7px; min-width: 0;
+  font-family: var(--font-family); font-size: 0.86rem; font-weight: 700; color: #2c4f9e;
+  text-decoration: none; padding: 2px 0; transition: color .12s;
+}
+.topic-backbar svg { flex: none; }
+.topic-backbar span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (hover: hover) { .topic-backbar:hover { color: #1d4ed8; text-decoration: none; } }
+.topic-backbar-here {
+  flex: none; font-family: var(--font-family); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: #8a98b0;
+}
+
+/* ── Landing: Daily Intelligence card (the jewel) ─── */
+.topic-home { display: flex; flex-direction: column; min-width: 0; width: 100%; }
+.tdi-card {
+  display: block; position: relative; text-decoration: none;
+  border-radius: 18px; border: 1px solid #d5e0f4;
+  background: linear-gradient(135deg, #f7faff 0%, #eef3fc 55%, #e8effb 100%);
+  padding: 1.15rem 1.3rem 0.95rem; overflow: hidden;
+  transition: border-color .15s, box-shadow .15s, transform .15s;
+}
+@media (hover: hover) {
+  .tdi-card:hover { border-color: #b9cbeb; box-shadow: 0 16px 32px -20px rgba(31, 49, 99, 0.4); transform: translateY(-1px); text-decoration: none; }
+  .tdi-card:hover .tdi-cta { color: #1d4ed8; }
+  .tdi-card:hover .tdi-cta svg { transform: translateX(2px); }
+}
+.tdi-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 0.7rem; }
+.tdi-badge {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 999px;
+  background: #1d3a6b; color: #fff;
+  font-family: var(--font-family); font-size: 0.7rem; font-weight: 750; letter-spacing: 0.06em; text-transform: uppercase;
+}
+.tdi-spark { color: #8ab4ff; font-size: 0.8rem; line-height: 1; }
+.tdi-date { font-family: var(--font-family); font-size: 0.76rem; font-weight: 650; color: #5b6c8c; white-space: nowrap; }
+.tdi-title {
+  margin: 0 0 0.4rem; font-family: var(--font-display);
+  font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.6rem); font-weight: 800;
+  letter-spacing: -0.022em; line-height: 1.18; color: #16233d;
+}
+.tdi-summary { margin: 0; font-family: var(--font-family); font-size: 0.92rem; line-height: 1.55; color: #42506b; max-width: 72ch; }
+.tdi-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  margin-top: 0.95rem; border-top: 1px solid #dbe4f3; padding-top: 0.75rem;
+}
+.tdi-parts { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.tdi-part { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-family); font-size: 0.78rem; font-weight: 650; color: #4a5a75; white-space: nowrap; }
+.tdi-dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.tdi-dot--blue { background: #2563eb; }
+.tdi-dot--amber { background: #d97706; }
+.tdi-dot--teal { background: #0d9488; }
+.tdi-cta { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-family); font-size: 0.86rem; font-weight: 750; color: #2c4f9e; white-space: nowrap; }
+.tdi-cta svg { flex: none; transition: transform .14s ease; }
+
+/* ── Landing: gateway cards (Web Resources / AI Prompts) ─── */
+.topic-gateways { display: grid; grid-template-columns: 1fr; gap: 0.8rem; margin-top: 0.9rem; min-width: 0; }
+@media (min-width: 720px) { .topic-gateways { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; } }
+.tg-card {
+  display: flex; align-items: center; gap: 12px; min-width: 0;
+  padding: 0.85rem 1rem; border: 1px solid #e4eaf3; border-radius: 14px; background: #fff;
+  text-decoration: none; transition: border-color .15s, box-shadow .15s;
+}
+@media (hover: hover) {
+  .tg-card:hover { border-color: #b9cbeb; box-shadow: 0 10px 22px -16px rgba(31, 49, 99, 0.3); text-decoration: none; }
+  .tg-card:hover .tg-arrow { color: #1d4ed8; transform: translateX(2px); }
+  .tg-card:hover .tg-name { color: #1d4ed8; }
+}
+.tg-ic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; border-radius: 10px; background: #eef3fc; color: #2c4f9e;
+}
+.tg-ic svg { width: 19px; height: 19px; }
+.tg-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tg-name { font-family: var(--font-family); font-size: 0.95rem; font-weight: 750; color: #1a2740; transition: color .12s; }
+.tg-sub { font-family: var(--font-family); font-size: 0.78rem; color: #76829b; line-height: 1.4; }
+.tg-arrow { flex: none; margin-left: auto; color: #a8b4c9; transition: color .12s, transform .14s ease; }
+
+/* ── Landing: news feed under a homepage-style header ─── */
+.topic-home .topic-news-wrap { margin-top: 1.7rem; width: 100%; }
+.newsfeed-kicker {
+  display: block; margin-bottom: 2px;
+  font-family: var(--font-family); font-size: 0.72rem; font-weight: 750;
+  letter-spacing: 0.07em; text-transform: uppercase; color: #8a98b0;
+}
+/* The old topic pages hid the feed header (the tab already named the section);
+   the new landing needs it visible again — same look as the homepage head.
+   !important counters the legacy `#topic-tab-body #section-newsfeed
+   .newsfeed-head { display: none !important }` hider. */
+#topic-tab-body #section-newsfeed .newsfeed-head--topic,
+body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed .newsfeed-head--topic { display: block !important; position: static; margin: 0 0 2px; padding: 0 2px 12px; background: transparent; border-bottom: 1px solid #e4e8f0; }
+#topic-tab-body #section-newsfeed .newsfeed-head--topic .newsfeed-title,
+body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed .newsfeed-head--topic .newsfeed-title { display: flex !important; font-size: 1.24rem; color: #1a2740; border-bottom: none; background: transparent; padding: 0; margin: 0; min-height: 0; }
+
+/* Sub-page prompt rows: show each prompt's one-line description under its name. */
+.aii-fi-acc-desc {
+  display: block; font-family: var(--font-family); font-size: 0.78rem; font-weight: 400;
+  color: #76829b; line-height: 1.4; margin-top: 2px;
+}
+.tp-models { margin-top: 2.1rem; }
+
+@media (max-width: 560px) {
+  .tdi-card { padding: 1rem 1rem 0.85rem; border-radius: 16px; }
+  .tdi-parts { gap: 10px; }
+  .tdi-part { font-size: 0.74rem; }
+  .tg-card { padding: 0.8rem 0.85rem; }
+  .topic-home .topic-news-wrap { margin-top: 1.4rem; }
+}
+
+/* ═══ Daily Intelligence page (revamp763) ════════════════════════════════════ */
+.di-page { display: flex; flex-direction: column; min-width: 0; width: 100%; }
+.di-head { padding: 0 2px 1.1rem; border-bottom: 1.5px solid #d3d9e4; margin-bottom: 1.4rem; }
+.di-kicker {
+  display: inline-flex; align-items: center; gap: 7px; margin-bottom: 0.5rem;
+  padding: 4px 11px; border-radius: 999px; background: #1d3a6b; color: #fff;
+  font-family: var(--font-family); font-size: 0.7rem; font-weight: 750;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+.di-kicker-spark { color: #8ab4ff; font-size: 0.8rem; line-height: 1; }
+.di-title {
+  margin: 0 0 0.4rem; font-family: var(--font-display);
+  font-size: clamp(1.4rem, 1.15rem + 1vw, 1.85rem); font-weight: 800;
+  letter-spacing: -0.024em; line-height: 1.15; color: #16233d;
+}
+.di-intro { margin: 0; font-family: var(--font-family); font-size: 0.92rem; line-height: 1.55; color: #5b6c8c; max-width: 76ch; }
+.di-meta {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-top: 0.7rem;
+  font-family: var(--font-family); font-size: 0.74rem; font-weight: 600; color: #94a1b5;
+}
+.di-meta-ai { display: inline-flex; align-items: center; gap: 5px; color: #7c8aa5; }
+.di-meta-ai svg { width: 11px; height: 11px; }
+.di-meta-sep { color: #c3cbd8; }
+.di-body { display: flex; flex-direction: column; gap: 1.9rem; min-width: 0; }
+.di-sec { min-width: 0; --di-accent: #2563eb; --di-tint: #eef3fc; }
+.di-sec--amber { --di-accent: #d97706; --di-tint: #fdf3e4; }
+.di-sec--teal  { --di-accent: #0d9488; --di-tint: #e5f5f3; }
+.di-sec-head { display: flex; align-items: center; gap: 11px; margin-bottom: 0.7rem; }
+.di-sec-ic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 9px; background: var(--di-tint); color: var(--di-accent);
+}
+.di-sec-ic svg { width: 18px; height: 18px; }
+.di-sec-headtx { min-width: 0; }
+.di-sec-title {
+  margin: 0; font-family: var(--font-display); font-size: 1.08rem; font-weight: 800;
+  letter-spacing: -0.018em; color: #1a2740;
+}
+.di-sec-sub { margin: 1px 0 0; font-family: var(--font-family); font-size: 0.78rem; color: #76829b; line-height: 1.4; }
+.di-sec-body { font-size: 0.92rem; line-height: 1.62; color: #34405a; }
+.di-sec-body p { margin: 0 0 0.8em; }
+.di-sec-body p:last-child { margin-bottom: 0; }
+/* Curated links — an OPEN, visible list (never buried in an accordion). */
+.di-reads { margin-top: 0.9rem; }
+.di-reads-label {
+  margin-bottom: 6px; font-family: var(--font-family); font-size: 0.7rem; font-weight: 750;
+  letter-spacing: 0.07em; text-transform: uppercase; color: #8a98b0;
+}
+.di-reads-list {
+  display: flex; flex-direction: column;
+  border: 1px solid #e8edf5; border-radius: 12px; background: #fbfcfe; overflow: hidden;
+}
+.di-read {
+  display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+  text-decoration: none; transition: background .12s;
+}
+.di-read + .di-read { border-top: 1px solid #eef2f8; }
+@media (hover: hover) { .di-read:hover { background: #f2f6fd; text-decoration: none; } }
+.di-read-tx { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.di-read-title {
+  font-family: var(--font-family); font-size: 0.85rem; font-weight: 650; color: #2b3a58;
+  line-height: 1.35; overflow-wrap: anywhere;
+}
+.di-read-meta { font-family: var(--font-family); font-size: 0.72rem; color: #94a1b5; }
+.di-read > svg { flex: none; margin-left: auto; color: #a8b4c9; }
+.di-sec--more { border-top: 1px solid #e4e8f0; padding-top: 1.3rem; }
+@media (max-width: 560px) {
+  .di-head { padding-bottom: 0.9rem; margin-bottom: 1.1rem; }
+  .di-body { gap: 1.5rem; }
+  .di-sec-ic { width: 30px; height: 30px; }
+  .di-sec-ic svg { width: 16px; height: 16px; }
+}

@@ -128,9 +128,10 @@ function parseRoute(pathname) {
   }
 
   if (segments[0] === 'topic' && segments[1]) {
-    // L1 tab deep-links (/topic/{slug}/{tab}): ai-insights / prompts / explore open
-    // that tab directly; legacy segments (shortcuts/websources/related) still parse.
-    const TAB_SEGS = ['ai-insights', 'prompts', 'explore', 'shortcuts', 'websources', 'related'];
+    // Sub-page deep-links (/topic/{slug}/{page}): intelligence / prompts /
+    // websources are the current flip pages; legacy segments (ai-insights /
+    // explore / shortcuts / related) still parse and are aliased in app.js.
+    const TAB_SEGS = ['intelligence', 'ai-insights', 'prompts', 'explore', 'shortcuts', 'websources', 'related'];
     const tab = TAB_SEGS.includes(segments[2]) ? segments[2] : 'newsfeed';
     return { type: 'topic', slug: segments[1], tab };
   }

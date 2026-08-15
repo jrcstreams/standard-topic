@@ -8,13 +8,11 @@
 //   - Trends: the current snapshot's top terms without a 'brief'.
 //   - News: recent stories (48h, newest first) without a 'brief' — sub-budget
 //     NEWS_PER_RUN so news volume can't starve the rest.
-//   - Insight Builders: home + every topic × the 4 builder groups (stored under
-//     `<group>:b`); home hides Deep Dive. ~400 total.
+//   - Daily Intelligence: every topic × the combined 'daily' brief (stored
+//     under 'daily:b') — ~100 total, one generation per topic per day.
 //   Refresh (stalest first, via generateInsight refresh flag):
 //   - Builder windows from data/ai-paths.json (so cron + on-view agree):
-//     discover 24h (daily), topic-specific 168h (weekly), analyze 336h
-//     (biweekly), learn 720h (monthly). Windows are long on purpose: each
-//     refresh is a fresh grounded generation, the main Google-Search-quota cost.
+//     daily 24h. Legacy per-group builders refresh on-view only.
 //   - any lens row whose content lacks "## " sections (one-time migration of
 //     pre-overview prose briefs, learn included),
 //   - trend briefs still in the current US snapshot, older than 24h.
@@ -32,7 +30,6 @@
 const { getSql } = require('../../lib/db');
 const { withHealthcheck } = require('../../lib/healthcheck');
 const { generateInsight, groundingHeadroom } = require('../../lib/insight-core');
-const { AI_LENSES } = require('../../lib/shortcut-sections');
 const { effectiveWindowHours } = require('../../lib/ai-freshness');
 const topicsData = require('../../data/topics.json');
 
@@ -55,22 +52,21 @@ try {
   invalidateByTag = null;
 }
 
-// Every (topic, group) builder that should exist: each TOPIC × the Insight
-// Builder groups (discover/topic-specific/learn). AI insights are a TOPIC-PAGE
-// feature only — the home page has no AI-insight surface, so 'home' is NOT
-// generated. `insight` is the `<group>:b` cache key; `topic` is the topic NAME
-// the frontend passes; generateInsight keys by lower(topic).
+// Every builder that should exist. Since revamp763 the topic pages surface ONE
+// combined Daily Intelligence brief per topic (group 'daily', stored 'daily:b')
+// instead of the three per-group builders — a third of the generation cost. The
+// legacy discover/topic-specific/learn builders still generate + refresh
+// on-view (other surfaces may read them) but the cron no longer fills them.
+// AI insights are a TOPIC-PAGE feature only — 'home' is NOT generated.
+// `insight` is the `<group>:b` cache key; `topic` is the topic NAME the
+// frontend passes; generateInsight keys by lower(topic).
+const CRON_BUILDER_GROUPS = ['daily'];
 function overviewCandidates() {
-  const scopes = (topicsData.topics || [])
-    .filter((t) => t.slug && t.slug !== 'home')
-    .map((t) => t.slug);
   const out = [];
-  for (const scope of scopes) {
-    for (const group of AI_LENSES) {
-      const t = (topicsData.topics || []).find((x) => x.slug === scope);
-      const topic = t && t.name;
-      if (!topic) continue;
-      out.push({ topic, group, insight: `${group}${BUILDER_SUFFIX}` });
+  for (const t of (topicsData.topics || [])) {
+    if (!t.slug || t.slug === 'home' || !t.name) continue;
+    for (const group of CRON_BUILDER_GROUPS) {
+      out.push({ topic: t.name, group, insight: `${group}${BUILDER_SUFFIX}` });
     }
   }
   return out;
@@ -214,7 +210,7 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
                  burns a SerpAPI search per sweep forever (#serpburn). */
               AND ai.entity_type IN ('news','shortcut')
               AND (ai.entity_type <> 'news' OR ns.url IS NOT NULL)
-              AND (ai.entity_type <> 'shortcut' OR ai.insight LIKE '%:b')
+              AND (ai.entity_type <> 'shortcut' OR ai.insight = 'daily:b')
             ORDER BY ai.created_at ASC
             LIMIT $1`, [limit]);
       } catch (_) { return 0; }
@@ -297,12 +293,10 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
     //    The "content lacks '## '" arm migrates pre-overview prose briefs once.
     if ((which === 'all' || which === 'refresh') && budget > 0) {
       // Per-builder freshness windows (hours), from data/ai-paths.json so the
-      // cron and the on-view refresh agree: discover 24h, topic-specific 168h,
-      // learn 720h. Non-live classes ignore tier.
+      // cron and the on-view refresh agree: daily 24h. Non-live classes ignore
+      // tier. Legacy builder groups refresh on-view only (not here).
       const winFor = (g) => effectiveWindowHours(g, 3);
-      const wDiscover = winFor('discover');
-      const wTopic = winFor('topic-specific');
-      const wLearn = winFor('learn');
+      const wDaily = winFor('daily');
       // force=1 → re-ground every builder + current trend regardless of age
       // (flush after a prompt change). Otherwise only the stale ones, by window.
       const stale = force
@@ -318,9 +312,7 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
               LIMIT $1`, [budget])
         : await sql.query(
         `SELECT entity_type, entity_key, insight FROM ai_insights ai
-          WHERE (entity_type='shortcut' AND insight='discover:b'       AND created_at < now() - make_interval(hours => $2))
-             OR (entity_type='shortcut' AND insight='topic-specific:b' AND created_at < now() - make_interval(hours => $3))
-             OR (entity_type='shortcut' AND insight='learn:b'          AND created_at < now() - make_interval(hours => $4))
+          WHERE (entity_type='shortcut' AND insight='daily:b' AND created_at < now() - make_interval(hours => $2))
              OR (entity_type='trend' AND insight='brief'
                  AND created_at < now() - interval '24 hours'
                  AND EXISTS (
@@ -328,7 +320,7 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
                     WHERE ti.geo='US' AND lower(ti.query) = ai.entity_key
                       AND ti.snapshot_at = (SELECT max(snapshot_at) FROM trending_items WHERE geo='US')))
           ORDER BY created_at ASC
-          LIMIT $1`, [budget, wDiscover, wTopic, wLearn]);
+          LIMIT $1`, [budget, wDaily]);
       for (const r of stale) {
         if (budget <= 0 || !timeLeft()) break;
         let payload = null;
@@ -362,7 +354,7 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
           AND NOT EXISTS (SELECT 1 FROM ai_insights ai WHERE ai.entity_type='news' AND ai.entity_key=ns.url AND ai.insight='brief')`);
     const overviewHave = await sql.query(
       `SELECT count(*)::int AS n FROM ai_insights
-        WHERE entity_type='shortcut' AND insight LIKE '%:b'`);
+        WHERE entity_type='shortcut' AND insight='daily:b'`);
 
     return res.status(200).json({
       ok: true, trends, news, overviews, healed, refreshed,

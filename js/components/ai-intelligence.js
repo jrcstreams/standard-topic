@@ -4,14 +4,14 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260717-revamp591';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260815-revamp763';
 import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp574';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData, fetchWithTimeout, safeUrl } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
 import { assemblePrompt } from '../utils/prompt-assembly.js';
 import { REASONING_LEVELS } from '../utils/settings.js';
 import { renderIcon } from '../utils/icons.js';
-import { navigate } from '../utils/router.js?v=20260728-revamp667';
+import { navigate } from '../utils/router.js?v=20260815-revamp763';
 import { topicIconSVG } from '../utils/topic-icons.js?v=20260716-revamp588';
 import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
 
@@ -1088,7 +1088,7 @@ export function renderAIIntelligence(container, scope) {
       <div class="aii-fi-acc">
         <button type="button" class="aii-fi-accsum" aria-expanded="false">
           <span class="aii-fi-acc-ic" aria-hidden="true">${sectionIcon(s.name)}</span>
-          <span class="aii-fi-acc-tx"><span class="aii-fi-acc-name">${esc(s.name)}</span></span>
+          <span class="aii-fi-acc-tx"><span class="aii-fi-acc-name">${esc(s.name)}</span>${scope.promptsPage && s.description ? `<span class="aii-fi-acc-desc">${esc(s.description)}</span>` : ''}</span>
           <span class="aii-fi-acc-chev">${CHEV}</span>
         </button>
         <div class="aii-emenu-host" data-explore-prompt="${escAttr(fiPrompt(s))}" data-explore-name="${escAttr(s.name)}" data-explore-desc="${escAttr(s.description || '')}"></div>
@@ -2084,4 +2084,144 @@ export function renderAIIntelligence(container, scope) {
     container._aiiSectionHandler = null;
     container.innerHTML = '';
   } };
+}
+
+// ═══ Daily Intelligence (revamp763) ══════════════════════════════════════════
+// ONE combined daily briefing per topic (group 'daily' server-side): a teaser
+// summary for the landing card plus three sections — Catch Up / Deep Dive /
+// 101 Info — each with visible curated "Read further" links (no accordions).
+
+// topicName -> Promise<insight|null>. Shared by the landing card teaser and the
+// sub-page so tapping through never refetches.
+const dailyBriefCache = {};
+export function fetchDailyBrief(topicName, force = false) {
+  const key = String(topicName || '').toLowerCase();
+  if (!force && dailyBriefCache[key]) return dailyBriefCache[key];
+  const p = (async () => {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const res = await fetchWithTimeout('/api/insight', { timeoutMs: 60000, method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shortcut', topic: topicName, group: 'daily', builder: 1 }) });
+        const data = res.ok ? await res.json() : null;
+        if (data && data.content) return data;
+      } catch (_) {}
+      await new Promise((r) => setTimeout(r, 800 + attempt * 800));
+    }
+    return null;
+  })();
+  dailyBriefCache[key] = p;
+  p.then((d) => { if (!d) delete dailyBriefCache[key]; });
+  return p;
+}
+
+// The three briefing sections, matched against the generated "## ..." headers so
+// modest header drift still lands in the right visual slot.
+const DI_SECTIONS = [
+  { match: /catch|caught|happening|latest|now/i, label: 'Catch Up',  sub: 'The developments that matter right now.',          icon: 'discover',  accent: 'blue' },
+  { match: /deep|dive|analysis|big story/i,      label: 'Deep Dive', sub: "The day's most consequential story, in depth.",    icon: 'websearch', accent: 'amber' },
+  { match: /101|basics|background|primer|foundations|context/i, label: '101 Info', sub: 'The background that makes the news make sense.', icon: 'learn', accent: 'teal' },
+];
+
+// Module-level twin of the closure-bound dedupNewsRows: rich feed rows first,
+// grounding citations behind them, deduped by URL + normalized title.
+function diNewsRows(feed, cites, cap = 15) {
+  const list = (feed || []).concat(cites || []);
+  const seen = new Set(); const seenT = new Set(); const out = [];
+  for (const x of list) {
+    const uri = (x && (x.uri || x.url)) || ''; if (!uri) continue;
+    const ukey = uri.toLowerCase();
+    let title, meta;
+    if (x.source || x.date) {
+      let host = ''; try { host = new URL(uri).hostname.replace(/^www\./i, ''); } catch (_) {}
+      title = String(x.title || '').trim() || host;
+      meta = [(x.source || '').trim() || host, relTime(x.date)].filter(Boolean).join(' · ');
+    } else {
+      const dom = resolveSource({ title: x.title, uri }).domain || '';
+      title = String(x.title || '').trim(); if (!title || /^https?:/i.test(title)) title = dom;
+      meta = (dom && dom.toLowerCase() !== title.toLowerCase()) ? dom : '';
+    }
+    if (!title) continue;
+    const tkey = title.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    if (seen.has(ukey) || (tkey && seenT.has(tkey))) continue;
+    seen.add(ukey); if (tkey) seenT.add(tkey);
+    out.push({ uri, title, meta });
+    if (out.length >= cap) break;
+  }
+  return out;
+}
+
+export function renderDailyIntelligence(container, scope) {
+  const name = scope.label || scope.topic || '';
+  container.innerHTML = `
+    <section class="di-page">
+      <header class="di-head">
+        <div class="di-kicker"><span class="di-kicker-spark" aria-hidden="true">✦</span>Daily Intelligence</div>
+        <h2 class="di-title">${esc(name)}</h2>
+        <p class="di-intro">One AI briefing, refreshed every day — catch up fast, go deep on the day's big story, and get the background that makes it make sense.</p>
+        <div class="di-meta" data-di-meta></div>
+      </header>
+      <div class="di-body" data-di-body>${genLoaderHTML()}</div>
+    </section>`;
+  const body = container.querySelector('[data-di-body]');
+  const meta = container.querySelector('[data-di-meta]');
+
+  const readRow = (x) => `<a class="di-read" href="${escAttr(safeUrl(x.uri))}" target="_blank" rel="noopener noreferrer"><span class="di-read-tx"><span class="di-read-title">${esc(x.title)}</span>${x.meta ? `<span class="di-read-meta">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`;
+
+  const fill = (data) => {
+    const parts = splitSections(data.content);
+    const seenSec = new Set();
+    const list = parts.filter((p) => {
+      const n = String(p.name || '').toLowerCase().replace(/\s+/g, ' ').trim();
+      if (!n || seenSec.has(n) || !String(p.body || '').trim()) return false;
+      seenSec.add(n); return true;
+    });
+    const secs = list.length ? list : [{ name: 'Briefing', body: String(data.content) }];
+    const flat = (v) => (Array.isArray(v) ? v : Object.values(v || {}).flat());
+    const items = diNewsRows(flat(data.headlines), flat(data.sources)).filter((x) => x.title);
+    const { buckets, unmatched } = attributeItemsToSections(items, secs);
+    const upd = data.generatedAt ? relTime(data.generatedAt) : '';
+    let day = '';
+    try { if (data.generatedAt) day = new Date(data.generatedAt).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); } catch (_) {}
+    meta.innerHTML = `<span class="di-meta-ai">${LOGO}<span>AI Generated</span></span>${day ? `<span class="di-meta-sep" aria-hidden="true">·</span><span>${esc(day)}</span>` : ''}${upd ? `<span class="di-meta-sep" aria-hidden="true">·</span><span>Updated ${esc(upd)}</span>` : ''}`;
+    body.innerHTML = secs.map((p, i) => {
+      const spec = DI_SECTIONS.find((s) => s.match.test(p.name)) || null;
+      const reads = (buckets[i] || []).slice(0, 5);
+      return `<section class="di-sec di-sec--${spec ? spec.accent : 'blue'}">
+        <div class="di-sec-head">
+          <span class="di-sec-ic" aria-hidden="true">${ICONS[spec ? spec.icon : '_'] || ICONS._}</span>
+          <div class="di-sec-headtx">
+            <h3 class="di-sec-title">${esc(spec ? spec.label : p.name)}</h3>
+            ${spec ? `<p class="di-sec-sub">${esc(spec.sub)}</p>` : ''}
+          </div>
+        </div>
+        <div class="di-sec-body aii-sec-body">${renderBriefBody(p.body, null)}</div>
+        ${reads.length ? `<div class="di-reads"><div class="di-reads-label">Read further</div><div class="di-reads-list">${reads.map(readRow).join('')}</div></div>` : ''}
+      </section>`;
+    }).join('') + (unmatched.length ? `<section class="di-sec di-sec--more">
+        <div class="di-sec-head">
+          <div class="di-sec-headtx"><h3 class="di-sec-title">More Coverage</h3><p class="di-sec-sub">Further recent stories on ${esc(name)}.</p></div>
+        </div>
+        <div class="di-reads-list">${unmatched.slice(0, 6).map(readRow).join('')}</div>
+      </section>` : '');
+  };
+
+  fetchDailyBrief(scope.topic).then((data) => {
+    if (!container.isConnected) return;
+    if (!data) {
+      body.innerHTML = '<p class="aii-empty">Today’s briefing is being generated — check back in a minute.</p>';
+      return;
+    }
+    fill(data);
+    // The API serves a stale brief instantly and regenerates in the background —
+    // re-poll once so today's version swaps in without a reload.
+    const ageH = data.generatedAt ? (Date.now() - new Date(data.generatedAt).getTime()) / 36e5 : 0;
+    if (ageH > 24) {
+      setTimeout(() => {
+        fetchDailyBrief(scope.topic, true).then((d2) => {
+          if (d2 && d2.content && d2.generatedAt !== data.generatedAt && container.isConnected) fill(d2);
+        }).catch(() => {});
+      }, 30000);
+    }
+  }).catch(() => {
+    if (container.isConnected) body.innerHTML = '<p class="aii-empty">Couldn’t load today’s briefing. Refresh to retry.</p>';
+  });
 }

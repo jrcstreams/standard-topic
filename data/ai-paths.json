@@ -1,6 +1,13 @@
 {
   "paths": [
     {
+      "group": "daily",
+      "label": "Daily Intelligence",
+      "subtitle": "One combined daily briefing: Catch Up, Deep Dive, 101 Info.",
+      "order": 0,
+      "refreshClass": "daily"
+    },
+    {
       "group": "discover",
       "label": "Get Caught Up",
       "subtitle": "What's happening right now.",

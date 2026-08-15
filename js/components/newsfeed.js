@@ -1034,8 +1034,9 @@ function startFeed(ctx) {
 export function renderNewsFeed(container, topic, isHome) {
   const slug = isHome ? 'home' : (topic && topic.slug);
   const label = isHome ? '' : ((topic && topic.name) || '');
-  // Header: topic pages keep "News Feed"; the homepage container reads
-  // "Latest Coverage" with a quiet updated-cadence line, no icon chip (#img161).
+  // Header: both surfaces use the homepage's big display title. Topic pages add
+  // a quiet topic-name kicker above it so the feed reads as that topic's front
+  // page (revamp763).
   const headHTML = isHome
     ? `
     <div class="newsfeed-head section-card-head newsfeed-head--home">
@@ -1044,9 +1045,10 @@ export function renderNewsFeed(container, topic, isHome) {
       </div>
     </div>`
     : `
-    <div class="newsfeed-head section-card-head">
+    <div class="newsfeed-head section-card-head newsfeed-head--home newsfeed-head--topic">
       <div class="newsfeed-headtext">
-        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><line x1="8" y1="8" x2="15" y2="8"/><line x1="8" y1="12" x2="15" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg></span><span class="newsfeed-title-main">News Feed</span></h3>
+        ${label ? `<span class="newsfeed-kicker">${escapeHTML(label)}</span>` : ''}
+        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">Today's Top News</span></h3>
       </div>
     </div>`;
 
