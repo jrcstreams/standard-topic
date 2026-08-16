@@ -1308,16 +1308,11 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       <div class="aii-tabhead-spacer"></div>
       <div class="topic-top">
         <section class="topic-top-main">
-          <div class="tsec-head">
-            <span class="tsec-kicker">${escapeHTML(topic.name)}</span>
-            <h2 class="tsec-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true">✦</span>Daily Intelligence</h2>
-          </div>
           <a class="tdi-card tdi-card--v3" href="#/topic/${escapeAttr(topic.slug)}/intelligence" data-tdi>
+            <h2 class="tsec-title tdi-card-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true">✦</span>Daily Intelligence</h2>
+            <span class="tdi-date" data-tdi-date></span>
             <p class="tdi-summary" data-tdi-summary>Preparing today's briefing…</p>
-            <div class="tdi-row">
-              <span class="tdi-date" data-tdi-date></span>
-              <span class="tdi-go">Read today's briefing${SUBPAGE_ARROW}</span>
-            </div>
+            <span class="tdi-go">Read today's briefing${SUBPAGE_ARROW}</span>
           </a>
         </section>
         <div class="topic-gateways topic-gateways--side">

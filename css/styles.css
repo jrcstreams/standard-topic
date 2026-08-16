@@ -18778,15 +18778,17 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
   .topic-gateways--side { justify-content: flex-end; }
 }
 
-/* DI landing card v3 — summary + a left-aligned date · CTA row. */
-.tdi-card--v3 { padding: 1.05rem 1.2rem 0.95rem; margin-top: 0.9rem; display: block; }
-.tdi-card--v3 .tdi-summary { font-size: 0.95rem; }
-.tdi-row {
-  display: flex; align-items: center; justify-content: flex-start; gap: 14px; flex-wrap: wrap;
-  margin-top: 0.85rem; border-top: 1px solid #dbe4f3; padding-top: 0.7rem;
+/* DI landing card v3 — title + date INSIDE the card, summary, then a plain
+   CTA link (no separator rule). */
+.tdi-card--v3 { padding: 1.05rem 1.2rem 1rem; margin-top: 0; display: block; }
+.tdi-card--v3 .tdi-card-title { margin: 0 0 0.6rem; font-size: 1.18rem; }
+.tdi-card--v3 .tdi-date {
+  display: block; margin: 0 0 0.4rem;
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 750; color: #26375a;
 }
-.tdi-row .tdi-date { font-size: 0.82rem; font-weight: 750; color: #26375a; }
-.tdi-row .tdi-date:empty { display: none; }
+.tdi-card--v3 .tdi-date:empty { display: none; }
+.tdi-card--v3 .tdi-summary { font-size: 0.95rem; }
+.tdi-card--v3 .tdi-go { margin-top: 0.85rem; }
 .tdi-go { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-family); font-size: 0.84rem; font-weight: 750; color: #2c4f9e; white-space: nowrap; }
 .tdi-go svg { flex: none; transition: transform .14s ease; }
 @media (hover: hover) { .tdi-card--v3:hover .tdi-go { color: #1d4ed8; } .tdi-card--v3:hover .tdi-go svg { transform: translateX(2px); } }

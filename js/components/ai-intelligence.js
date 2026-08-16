@@ -2183,7 +2183,6 @@ export function renderDailyIntelligence(container, scope) {
   container.innerHTML = `
     <section class="di-page">
       <header class="di-head">
-        <span class="tsec-kicker">${esc(name)}</span>
         <h2 class="tsec-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true">✦</span>Daily Intelligence</h2>
         <div class="di-datebar" data-di-meta></div>
         <p class="di-lede" data-di-lede hidden></p>

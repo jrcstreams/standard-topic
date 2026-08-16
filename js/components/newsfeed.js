@@ -1049,7 +1049,6 @@ export function renderNewsFeed(container, topic, isHome) {
     : `
     <div class="newsfeed-head section-card-head newsfeed-head--home newsfeed-head--topic">
       <div class="newsfeed-headtext">
-        ${label ? `<span class="newsfeed-kicker">${escapeHTML(label)}</span>` : ''}
         <h3 class="newsfeed-title section-card-title">${NEWS_IC}<span class="newsfeed-title-main">News Feed</span></h3>
       </div>
     </div>`;
