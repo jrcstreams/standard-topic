@@ -1631,7 +1631,7 @@ function renderLayout(route) {
         const BACK_ARW = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>';
         return `<div class="topic-subnav-controls topic-subnav-controls--back">
           <div class="topic-backbar-inner">
-            <a class="topic-backbar" href="#/topic/${escapeAttr(topic.slug)}">${BACK_ARW}<span>Back to ${escapeHTML(topic.name)}</span></a>
+            <a class="topic-backbar" href="#/topic/${escapeAttr(topic.slug)}">${BACK_ARW}<span>Back to ${escapeHTML(topic.name)} page</span></a>
             <span class="topic-backbar-here">${escapeHTML(TOPIC_SUBPAGES[page].label)}</span>
           </div>
         </div>`;
