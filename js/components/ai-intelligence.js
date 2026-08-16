@@ -2161,11 +2161,17 @@ function splitBriefItems(body) {
   });
 }
 
-// Compact publisher label for an item's source chip.
+// Compact publisher label for an item's source chip. Prefer the DOMAIN — the
+// feed's source field often carries an author byline ("Dave Zangaro"), and the
+// publisher brand is what a reader scans for. Grounding citations may hide the
+// real host behind a redirect URL; fall back to the meta text there.
 function diSrcLabel(x) {
+  try {
+    const host = new URL(x.uri).hostname.replace(/^www\./i, '');
+    if (host && !/vertexaisearch|googleusercontent/i.test(host)) return host;
+  } catch (_) {}
   const pub = String(x.meta || '').split('·')[0].trim();
   if (pub) return pub;
-  try { return new URL(x.uri).hostname.replace(/^www\./i, ''); } catch (_) {}
   return String(x.title || '').slice(0, 24);
 }
 
