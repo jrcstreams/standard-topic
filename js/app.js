@@ -7,7 +7,7 @@ import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js?v=20260716-revamp588';
 import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp574';
 import { renderSearchBar, initSearchOverlay } from './components/search-modal.js?v=20260728-revamp668';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260815-revamp764';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260816-revamp765';
 // prompt-generator (~127KB, Prompts flows only) is lazy-loaded via loadPromptGen() so it
 // splits out of the initial bundle — see B3.4. (prompt-builder-modal.js was a retired
 // no-op takeover; removed.)
@@ -17,7 +17,7 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
-import { renderAIIntelligence, renderDailyIntelligence, fetchDailyBrief } from './components/ai-intelligence.js?v=20260815-revamp764';
+import { renderAIIntelligence, renderDailyIntelligence, fetchDailyBrief } from './components/ai-intelligence.js?v=20260816-revamp765';
 import { exploreFurtherHTML, exploreAIModelsHTML, wireExploreFurther } from './utils/explore-further.js?v=20260812-revamp718';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260717-revamp592';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
@@ -128,45 +128,46 @@ document.addEventListener('DOMContentLoaded', async () => {
     // and keep an open panel's back bar in step with the fresh stack.
     try { recordBackTarget(route); refreshNavDdBackbar(); } catch (_) {}
     // Nav dropdowns are transient overlays — close on any navigation. EXCEPTION:
-    // the Search dropdown IS route-driven (#/search, #/custom) and updates its
-    // own URL as the term changes, so keep it open across search routes. The
-    // Prompt Builder dropdown is likewise route-driven (#/prompt-generator) and
-    // may re-fire the route from a child picker — keep it too.
-    const keepSearch = (route.type === 'search' || route.type === 'custom') && navDdOpen && navDdOpen.key === 'search';
+    // the Prompt Builder dropdown is route-driven (#/prompt-generator) and may
+    // re-fire the route from a child picker — keep it. Topics / Trending /
+    // Prompts dropdowns are route-driven too (#/topics, #/trending,
+    // #/prompts[/view]) — keep each open across its own route.
     const keepPrompt = route.type === 'prompt-generator' && navDdOpen && navDdOpen.key === 'prompt';
-    // Topics / Trending / Prompts dropdowns are route-driven too (#/topics,
-    // #/trending, #/prompts[/view]) — keep each open across its own route (the
-    // Prompts dropdown re-fires the route as its view changes).
     const keepDd = navDdOpen && route.type === navDdOpen.key && ['topics', 'trending', 'prompts'].includes(route.type);
-    if (!keepSearch && !keepPrompt && !keepDd) closeNavDropdown();
-    // Search (#/search) and Custom (#/custom/{term}) routes don't render
-    // their own page — they open the Search modal over the home layout.
+    if (!keepPrompt && !keepDd) closeNavDropdown();
+    // Search (#/search) and Custom (#/custom/{term}) are REAL pages now
+    // (revamp765): they render in #content like any other route. Term changes
+    // re-fire the route while the page stays mounted — the live panel expands/
+    // collapses in place instead of remounting.
     const isSearchRoute = route.type === 'search' || route.type === 'custom';
     const isPromptRoute = route.type === 'prompt-generator';
     const isDdRoute = ['topics', 'trending', 'prompts'].includes(route.type);
     // These routes don't render their own page — they open a modal over home.
-    const isOverlayRoute = isSearchRoute || isPromptRoute || isDdRoute;
+    const isOverlayRoute = isPromptRoute || isDdRoute;
     const baseRoute = isOverlayRoute ? { type: 'home', slug: 'home', tab: 'newsfeed' } : route;
+    const baseKey = baseRoute.type === 'home' ? 'home'
+      : baseRoute.type === 'topic' ? 'topic:' + baseRoute.slug
+      : isSearchRoute ? 'searchpage'
+      : baseRoute.type;
 
-    // Only (re)render the underlying page when the base actually changes, so
-    // typing/clearing inside an open modal doesn't tear down home beneath it.
-    if (!(isOverlayRoute && lastBaseRouteKey === 'home')) {
+    // Only (re)render when the page actually changes, so typing inside the
+    // open prompts dropdown (or refining a search term) doesn't tear the page
+    // down beneath it.
+    const staySearch = isSearchRoute && lastBaseRouteKey === 'searchpage' && searchPageCtl;
+    if (!(isOverlayRoute && lastBaseRouteKey === 'home') && !staySearch) {
       renderLayout(baseRoute);
       renderPage(baseRoute);
-      lastBaseRouteKey = baseRoute.type === 'home' ? 'home'
-        : baseRoute.type === 'topic' ? 'topic:' + baseRoute.slug
-        : baseRoute.type;
+      lastBaseRouteKey = baseKey;
       requestAnimationFrame(() => {
         window.scrollTo(0, 0);
         setSubnavHeightVar();
       });
+    } else if (staySearch) {
+      // Same search page, new term → drive the live panel.
+      const t = route.type === 'custom' ? decodeURIComponent(route.term || '') : '';
+      try { if (t) searchPageCtl.expand(t); else searchPageCtl.collapse(); } catch (_) {}
     }
 
-    if (isSearchRoute) {
-      openSearchPageModal(route.type === 'custom' ? decodeURIComponent(route.term || '') : '');
-    } else {
-      closeSearchPageModal({ silent: true });
-    }
     if (isPromptRoute) openPromptBuilderNavDropdown(); else closePromptBuilderNavDropdown();
     // Route-driven nav dropdowns (stale ones were already closed above).
     if (route.type === 'topics') openTopicsNavDropdown();
@@ -208,11 +209,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (_) {}
         // Topic sub-pages live in the URL now (revamp763), so the re-render
         // naturally restores the page the user was on — no tab seeding needed.
-        // Search / Custom / Prompt are OVERLAY routes with no page of their own —
-        // rendering them directly as a page gives "Page not found" (#img211). Render
-        // the base (home) beneath, exactly like the main route handler, then re-open
-        // the overlay on top.
-        const isOverlay = ['search', 'custom', 'prompt-generator', 'topics', 'trending', 'prompts'].includes(route.type);
+        // Search/Custom are real pages too (revamp765) — they re-render like any
+        // route. Only the dropdown-backed routes still render home beneath and
+        // re-open the overlay on top.
+        const isOverlay = ['prompt-generator', 'topics', 'trending', 'prompts'].includes(route.type);
         const base = isOverlay ? { type: 'home', slug: 'home', tab: 'newsfeed' } : route;
         // Preserve an OPEN subnav topic-picker across the breakpoint crossing — the
         // full re-render rebuilds the sub-header, which silently closed it (#img75).
@@ -221,9 +221,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (pickerWasOpen) {
           requestAnimationFrame(() => document.querySelector('#sub-header .topic-subnav-picker .tsp-btn')?.click());
         }
-        if (route.type === 'search' || route.type === 'custom') {
-          openSearchPageModal(route.type === 'custom' ? decodeURIComponent(route.term || '') : '');
-        } else if (route.type === 'prompt-generator') {
+        if (route.type === 'prompt-generator') {
           openPromptBuilderNavDropdown();
         } else if (route.type === 'topics') {
           openTopicsNavDropdown();
@@ -609,7 +607,7 @@ function openNavDropdown(cfg) {
   panel.className = 'aii-nav-dd' + (cfg.className ? ' ' + cfg.className : '');
   // Topics / Trending / Prompts are PAGES, not overlays (revamp719): no ✕, no
   // click-outside-to-dismiss — a "Back to …" bar takes the ✕'s place.
-  const asPage = ['topics', 'trending', 'prompts', 'search'].includes(cfg.key);
+  const asPage = ['topics', 'trending', 'prompts'].includes(cfg.key);
   // The Prompt Builder is page-like too, so it gets the same way back — but it
   // keeps its ✕ (it can be opened ON TOP of work you want to return to). The
   // Search panel is a true overlay over whatever you were reading: no back bar.
@@ -1301,60 +1299,55 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       });
       return;
     }
-    // ── Landing page ─────────────────────────────────────────────────────────
-    // Daily Intelligence card (the jewel) → gateway cards → the news feed.
+    // ── Landing page (revamp765) ─────────────────────────────────────────────
+    // Daily Intelligence leads under a section header (topic kicker + title,
+    // matching the news head); on wide screens the Web Resources / AI Prompts
+    // gateways stack in a side column beside it. The news feed follows under
+    // its own "News Feed" head.
     body.innerHTML = `<div class="topic-home">
       <div class="aii-tabhead-spacer"></div>
-      <a class="tdi-card" href="#/topic/${escapeAttr(topic.slug)}/intelligence" data-tdi>
-        <div class="tdi-top">
-          <span class="tdi-badge"><span class="tdi-spark" aria-hidden="true">✦</span>Daily Intelligence</span>
-          <span class="tdi-date" data-tdi-date>Updated daily</span>
+      <div class="topic-top">
+        <section class="topic-top-main">
+          <div class="tsec-head">
+            <span class="tsec-kicker">${escapeHTML(topic.name)}</span>
+            <h2 class="tsec-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true">✦</span>Daily Intelligence</h2>
+          </div>
+          <a class="tdi-card tdi-card--v3" href="#/topic/${escapeAttr(topic.slug)}/intelligence" data-tdi>
+            <p class="tdi-summary" data-tdi-summary>Preparing today's briefing…</p>
+            <div class="tdi-row">
+              <span class="tdi-date" data-tdi-date></span>
+              <span class="tdi-go">Read today's briefing${SUBPAGE_ARROW}</span>
+            </div>
+          </a>
+        </section>
+        <div class="topic-gateways topic-gateways--side">
+          <a class="tg-card" href="#/topic/${escapeAttr(topic.slug)}/websources">
+            <span class="tg-ic" aria-hidden="true">${TOPIC_AI_ICONS.websearch}</span>
+            <span class="tg-tx"><span class="tg-name">Web Resources</span><span class="tg-sub">Open ${escapeHTML(topic.name)} across search, social, video and fact-checking sources.</span></span>
+            <span class="tg-arrow" aria-hidden="true">${SUBPAGE_ARROW}</span>
+          </a>
+          <a class="tg-card" href="#/topic/${escapeAttr(topic.slug)}/prompts">
+            <span class="tg-ic" aria-hidden="true">${TOPIC_AI_ICONS['topic-specific']}</span>
+            <span class="tg-tx"><span class="tg-name">AI Prompts</span><span class="tg-sub">Ready-made ${escapeHTML(topic.name)} prompts to run in any AI model.</span></span>
+            <span class="tg-arrow" aria-hidden="true">${SUBPAGE_ARROW}</span>
+          </a>
         </div>
-        <h2 class="tdi-title">Today's ${escapeHTML(topic.name)} briefing</h2>
-        <p class="tdi-summary" data-tdi-summary>One AI briefing, refreshed every day — catch up fast, go deep on the day's big story, and get the background that makes it all make sense.</p>
-        <div class="tdi-secs" aria-hidden="true">
-          <span class="tdi-sec tdi-sec--blue">
-            <span class="tdi-sec-ic">${TOPIC_AI_ICONS.discover}</span>
-            <span class="tdi-sec-tx"><b>Catch Up</b><em>The developments that matter</em></span>
-          </span>
-          <span class="tdi-sec tdi-sec--amber">
-            <span class="tdi-sec-ic">${TOPIC_AI_ICONS.websearch}</span>
-            <span class="tdi-sec-tx"><b>Deep Dive</b><em>The day's big story, in depth</em></span>
-          </span>
-          <span class="tdi-sec tdi-sec--teal">
-            <span class="tdi-sec-ic">${TOPIC_AI_ICONS.learn}</span>
-            <span class="tdi-sec-tx"><b>101 Info</b><em>Background that explains it</em></span>
-          </span>
-        </div>
-        <div class="tdi-foot">
-          <span class="tdi-meta"><span class="tdi-meta-spark" aria-hidden="true">✦</span>AI-generated · refreshed daily</span>
-          <span class="tdi-cta">Read today's briefing${SUBPAGE_ARROW}</span>
-        </div>
-      </a>
-      <div class="topic-gateways">
-        <a class="tg-card" href="#/topic/${escapeAttr(topic.slug)}/websources">
-          <span class="tg-ic" aria-hidden="true">${TOPIC_AI_ICONS.websearch}</span>
-          <span class="tg-tx"><span class="tg-name">Web Resources</span><span class="tg-sub">Open ${escapeHTML(topic.name)} across search, social, video and fact-checking sources.</span></span>
-          <span class="tg-arrow" aria-hidden="true">${SUBPAGE_ARROW}</span>
-        </a>
-        <a class="tg-card" href="#/topic/${escapeAttr(topic.slug)}/prompts">
-          <span class="tg-ic" aria-hidden="true">${TOPIC_AI_ICONS['topic-specific']}</span>
-          <span class="tg-tx"><span class="tg-name">AI Prompts</span><span class="tg-sub">Ready-made ${escapeHTML(topic.name)} prompts to run in any AI model.</span></span>
-          <span class="tg-arrow" aria-hidden="true">${SUBPAGE_ARROW}</span>
-        </a>
       </div>
       <div class="topic-news-wrap">
         <section id="section-newsfeed" class="layout-section"></section>
       </div>
     </div>`;
     renderNewsFeed(body.querySelector('#section-newsfeed'), topic, false);
-    // Fill the Daily Intelligence card's teaser + date once the brief lands. The
-    // fetch is cached (shared with the sub-page), so tapping through is instant.
+    // Fill the Daily Intelligence card's summary + date once the brief lands.
+    // The fetch is cached (shared with the sub-page), so tapping through is
+    // instant. The summary is ALWAYS the real one — it regenerates with the
+    // briefing every morning, so no evergreen fallback copy.
     fetchDailyBrief(topic.name).then((d) => {
       if (!d || !body.isConnected) return;
       const sEl = body.querySelector('[data-tdi-summary]');
       const dEl = body.querySelector('[data-tdi-date]');
       if (sEl && d.summary) sEl.textContent = d.summary;
+      else if (sEl && d.content) sEl.textContent = String(d.content).replace(/^##.+$/gm, '').replace(/\*\*/g, '').trim().split(/(?<=[.!?])\s/)[0] || '';
       if (dEl && d.generatedAt) {
         try { dEl.textContent = new Date(d.generatedAt).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }); } catch (_) {}
       }
@@ -1536,12 +1529,10 @@ function renderLayout(route) {
     document.body.classList.add('app-mode', 'home-search');
   }
 
-  // Custom-search pages scroll naturally (no app-mode lock) and carry
-  // no subnav — the page's own title + search bar pin to the top as a
-  // sticky bar instead. The custom-mode class lets CSS trim the
-  // content's top padding (which otherwise reserves room for a subnav
-  // that isn't there) and drive the sticky-bar offset.
-  if (route.type === 'custom') {
+  // Search + custom-search pages scroll naturally (no app-mode lock) and carry
+  // no subnav. The custom-mode class lets CSS trim the content's top padding
+  // (which otherwise reserves room for a subnav that isn't there).
+  if (route.type === 'custom' || route.type === 'search') {
     document.body.classList.add('custom-mode');
   }
 
@@ -4302,8 +4293,6 @@ function escapeAttr(str) {
 let lastBaseRouteKey = null;
 let searchModalOverlay = null;
 let searchModalPanel = null;
-let searchModalTerm = '';
-let searchPanelModalCtl = null;
 let homeSearchPanelCtl = null;
 
 const SEARCH_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
@@ -4758,84 +4747,46 @@ function setupHomeHeroFade(heroEl) {
   window.addEventListener('scroll', homeHeroScrollHandler, { passive: true });
 }
 
-// Phase 5: Search now lives in the shared full-width nav dropdown (not a
-// takeover). All the search logic + routes + deep-links are unchanged — only
-// the host element differs (the dropdown scroll area instead of the modal
-// panel). The dropdown's own overlay/Esc/close-all wiring handles dismissal.
-function initSearchPageModal() { /* no takeover to build — see openSearchPageModal */ }
+// Search is a REAL page now (revamp765) — #/search and #/custom render in
+// #content like any route. The old nav-dropdown overlay is gone; these small
+// shims keep the panel-internal call sites working.
+let searchPageCtl = null;
+function initSearchPageModal() { /* search renders as a page — see renderSearchPage */ }
 
-function isSearchModalOpen() {
-  const panel = document.getElementById('st-nav-panel');
-  return !!(panel && panel.classList.contains('is-open') && navDdOpen && navDdOpen.key === 'search');
-}
+// Legacy name, called from inside the search panel when a typeahead pick
+// navigates away — a page navigation replaces the page, nothing to close.
+function closeSearchPageModal() {}
 
-function openSearchPageModal(term) {
-  const t = (term || '').trim();
-  // Already open — expand/collapse the live panel in place (a term change from a
-  // submit routes through here) rather than rebuilding the whole dropdown.
-  if (isSearchModalOpen() && searchPanelModalCtl) {
-    if (t) searchPanelModalCtl.expand(t); else searchPanelModalCtl.collapse();
-    return;
-  }
-  searchModalTerm = t;
-  openNavDropdown({
-    key: 'search', triggerId: 'nav-search', bareHead: true, className: 'aii-nav-dd-search',
-    ariaLabel: 'Search any topic',
-    contentHTML: '<div class="search-navdd-host" data-search-host></div>',
-    onClose: userCloseSearchModal,
-    wire: (panel) => renderSearchModalBody(panel.querySelector('[data-search-host]'), t),
-  });
-}
-
-// Open Search RELIABLY from a nav click, regardless of the current hash. The
-// naive `navigate('#/search')` is a no-op when the hash is ALREADY a search/custom
-// route — which happens whenever you open Search, switch to another dropdown (that
-// closes the search panel but leaves the hash at #/search), then click Search
-// again. In that case no hashchange fires and the route handler never opens search.
-// So: if the hash already reads search/custom, open the panel directly; otherwise
-// navigate (which renders home underneath + opens search). Either path guarantees
-// the search modal opens on every click.
-function openSearchFromNav() {
-  if (isSearchModalOpen()) { userCloseSearchModal(); return; }
-  const h = routeHash() || '';
-  if (h === '#/search' || h === '#/custom' || h.startsWith('#/custom/')) {
-    openSearchPageModal(h.startsWith('#/custom/') ? decodeURIComponent(h.slice('#/custom/'.length)) : '');
-  } else {
-    navigate('#/search');
-  }
-}
-
-function closeSearchPageModal(opts = {}) {
-  if (!isSearchModalOpen()) return;
-  searchModalTerm = '';
-  searchPanelModalCtl = null;
-  closeNavDropdown();
-}
-
-// ✕ / overlay / Esc: close and, if we're on a #/search or #/custom deep-link,
-// return to home so the URL reflects the dismissed search.
+// Legacy name, called from the panel's close affordance: leave the search page.
 function userCloseSearchModal() {
-  const hash = routeHash() || '';
-  const onModalRoute = hash.startsWith('#/custom/') || hash === '#/search';
-  closeSearchPageModal();
-  if (onModalRoute) navigate('#/');
+  navigate(backTarget().hash || '#/');
 }
 
-function renderSearchModalBody(host, term) {
-  searchPanelModalCtl = renderSearchPanel(host, { mode: 'modal', term });
-  // Modal submit keeps the URL shareable; the openSearchPageModal guard makes
-  // the resulting route change expand the live panel rather than rebuild it.
-  searchPanelModalCtl.onExpand = (t) => {
+// Nav-triggered Search: on a search page already → leave it; else navigate in.
+function openSearchFromNav() {
+  const h = routeHash() || '';
+  if (h === '#/search' || h.startsWith('#/custom')) { userCloseSearchModal(); return; }
+  navigate('#/search');
+}
+
+// The search page body: back bar + the shared search panel (modal-mode markup:
+// hero fold + input + results) in normal page flow — one document scroll.
+function renderSearchPage(container, term) {
+  container.innerHTML = `<div class="search-page">
+    ${backBarHTML()}
+    <div class="search-page-host" data-search-host></div>
+  </div>`;
+  searchPageCtl = renderSearchPanel(container.querySelector('[data-search-host]'), { mode: 'modal', term });
+  // Submits keep the URL shareable; the route handler's staySearch guard makes
+  // the resulting route change drive THIS live panel rather than remounting.
+  searchPageCtl.onExpand = (t) => {
     const target = '#/custom/' + encodeURIComponent(t);
     if (routeHash() !== target) navigate(target);
   };
-  // Clearing inside the panel drops back to the empty-search route.
-  searchPanelModalCtl.onCollapse = () => {
+  searchPageCtl.onCollapse = () => {
     if ((routeHash() || '').startsWith('#/custom/')) navigate('#/search');
   };
-  // Refresh the shell scroll-fades as results paint; focus the empty search.
-  [200, 700, 1500].forEach((d) => setTimeout(updateNavDdFades, d));
-  if (!term || !term.trim()) setTimeout(() => { try { searchPanelModalCtl.focus(); } catch (_) {} }, 80);
+  if (!term || !term.trim()) setTimeout(() => { try { searchPageCtl.focus(); } catch (_) {} }, 80);
 }
 
 function renderPage(route) {
@@ -4864,14 +4815,8 @@ function renderPage(route) {
     return;
   }
 
-  if (route.type === 'custom') {
-    renderTopicLayout(content, {
-      topic: null,
-      route,
-      isHome: false,
-      isCustom: true,
-      customTerm: route.term,
-    });
+  if (route.type === 'search' || route.type === 'custom') {
+    renderSearchPage(content, route.type === 'custom' ? decodeURIComponent(route.term || '') : '');
     return;
   }
 

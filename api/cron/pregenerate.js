@@ -165,6 +165,56 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
     catch (_) { return false; }
   };
 
+  // type=daily — the MORNING WAVE (revamp765): every topic's Daily Intelligence
+  // regenerates in a fixed window each day (four staggered cron runs, 10:00–
+  // 11:00 UTC ≈ 6–7am ET), so all briefings "post" around the same time. Each
+  // run fills missing daily:b rows then refreshes the stalest ones older than
+  // 20h — already-refreshed rows are younger than that, so re-runs in the same
+  // wave skip them and the wave converges across runs. The regular 3-hourly
+  // refresh (26h window) + on-view refresh remain as fallbacks only.
+  if (which === 'daily') {
+    const sleepMs = 600;
+    const startedAtD = Date.now();
+    const timeLeftD = () => Date.now() - startedAtD < 230 * 1000;
+    try {
+      let filled = 0; let refreshed = 0; let budget = total;
+      const candidates = overviewCandidates();
+      const byKey = new Map(candidates.map((c) => [`${c.topic.toLowerCase()}|${c.insight}`, c]));
+      const existing = await sql.query(`SELECT entity_key, created_at FROM ai_insights WHERE entity_type='shortcut' AND insight='daily:b'`);
+      const haveAt = new Map(existing.map((r) => [r.entity_key, r.created_at]));
+      // 1. Fill topics with no daily brief at all.
+      for (const c of candidates) {
+        if (budget <= 0 || !timeLeftD()) break;
+        if (haveAt.has(c.topic.toLowerCase())) continue;
+        if (await call({ type: 'shortcut', topic: c.topic, group: 'daily', builder: 1 })) filled++;
+        budget--;
+        await sleep(sleepMs);
+      }
+      // 2. Refresh the stalest briefs older than 20h.
+      if (budget > 0 && timeLeftD()) {
+        const stale = await sql.query(
+          `SELECT entity_key FROM ai_insights
+            WHERE entity_type='shortcut' AND insight='daily:b'
+              AND created_at < now() - interval '20 hours'
+            ORDER BY created_at ASC LIMIT $1`, [budget]);
+        for (const r of stale) {
+          if (budget <= 0 || !timeLeftD()) break;
+          const c = byKey.get(`${r.entity_key}|daily:b`);
+          if (c && await call({ type: 'shortcut', topic: c.topic, group: 'daily', builder: 1, refresh: 1 })) refreshed++;
+          budget--;
+          await sleep(sleepMs);
+        }
+      }
+      const rem = await sql.query(
+        `SELECT count(*)::int AS n FROM ai_insights
+          WHERE entity_type='shortcut' AND insight='daily:b'
+            AND created_at < now() - interval '20 hours'`);
+      return res.status(200).json({ ok: true, type: 'daily', filled, refreshed, staleRemaining: rem[0].n });
+    } catch (e) {
+      return res.status(500).json({ error: String((e && e.message) || e) });
+    }
+  }
+
   // Wall-clock guard: grounded generations run ~10s each, so a large batch
   // would blow Vercel's 300s maxDuration and die with FUNCTION_INVOCATION_
   // TIMEOUT (losing the tail + the remaining-counts response). Stop issuing

@@ -1,64 +1,149 @@
 {
   "crons": [
-    { "path": "/api/cron/trending", "schedule": "0 11-23 * * *" },
-    { "path": "/api/cron/trending", "schedule": "0 0-3 * * *" },
-    { "path": "/api/cron/trending", "schedule": "0 5,7,9 * * *" },
-    { "path": "/api/cron/news", "schedule": "0 */6 * * *" },
-    { "path": "/api/cron/embed", "schedule": "30 */2 * * *" },
-    { "path": "/api/cron/pregenerate", "schedule": "15 */3 * * *" },
-    { "path": "/api/cron/pregenerate?type=news&n=20&newsMax=20", "schedule": "45 */3 * * *" }
+    {
+      "path": "/api/cron/trending",
+      "schedule": "0 11-23 * * *"
+    },
+    {
+      "path": "/api/cron/trending",
+      "schedule": "0 0-3 * * *"
+    },
+    {
+      "path": "/api/cron/trending",
+      "schedule": "0 5,7,9 * * *"
+    },
+    {
+      "path": "/api/cron/news",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/embed",
+      "schedule": "30 */2 * * *"
+    },
+    {
+      "path": "/api/cron/pregenerate?type=daily&n=40",
+      "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/cron/pregenerate?type=daily&n=40",
+      "schedule": "20 10 * * *"
+    },
+    {
+      "path": "/api/cron/pregenerate?type=daily&n=40",
+      "schedule": "40 10 * * *"
+    },
+    {
+      "path": "/api/cron/pregenerate?type=daily&n=40",
+      "schedule": "0 11 * * *"
+    },
+    {
+      "path": "/api/cron/pregenerate",
+      "schedule": "15 */3 * * *"
+    },
+    {
+      "path": "/api/cron/pregenerate?type=news&n=20&newsMax=20",
+      "schedule": "45 */3 * * *"
+    }
   ],
   "rewrites": [
-    { "source": "/topic/:slug", "destination": "/prerender/:slug.html" },
-    { "source": "/topic/:slug/:tab", "destination": "/prerender/:slug.html" },
-    { "source": "/((?!api/).*)", "destination": "/index.html" }
+    {
+      "source": "/topic/:slug",
+      "destination": "/prerender/:slug.html"
+    },
+    {
+      "source": "/topic/:slug/:tab",
+      "destination": "/prerender/:slug.html"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
   ],
   "functions": {
-    "api/cron/news.js": { "maxDuration": 300 },
-    "api/cron/trending.js": { "maxDuration": 60 },
-    "api/cron/embed.js": { "maxDuration": 120 },
-    "api/cron/pregenerate.js": { "maxDuration": 300 },
-    "api/trending.js": { "maxDuration": 120 },
-    "api/insight.js": { "maxDuration": 60 }
+    "api/cron/news.js": {
+      "maxDuration": 300
+    },
+    "api/cron/trending.js": {
+      "maxDuration": 60
+    },
+    "api/cron/embed.js": {
+      "maxDuration": 120
+    },
+    "api/cron/pregenerate.js": {
+      "maxDuration": 300
+    },
+    "api/trending.js": {
+      "maxDuration": 120
+    },
+    "api/insight.js": {
+      "maxDuration": 60
+    }
   },
   "headers": [
     {
       "source": "/dist/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
       "source": "/topic/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
       ]
     },
     {
       "source": "/css/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
       "source": "/assets/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
       "source": "/data/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=300, stale-while-revalidate=3600" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300, stale-while-revalidate=3600"
+        }
       ]
     },
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https: data:; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' https: data:; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'"
+        }
       ]
     }
   ]

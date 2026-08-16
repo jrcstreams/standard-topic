@@ -4,7 +4,7 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260815-revamp764';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260816-revamp765';
 import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp574';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData, fetchWithTimeout, safeUrl } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
@@ -2113,13 +2113,6 @@ export function fetchDailyBrief(topicName, force = false) {
   return p;
 }
 
-// The three briefing sections, matched against the generated "## ..." headers so
-// modest header drift still lands in the right visual slot.
-const DI_SECTIONS = [
-  { match: /catch|caught|happening|latest|now/i, label: 'Catch Up',  sub: 'The developments that matter right now.',          icon: 'discover',  accent: 'blue' },
-  { match: /deep|dive|analysis|big story/i,      label: 'Deep Dive', sub: "The day's most consequential story, in depth.",    icon: 'websearch', accent: 'amber' },
-  { match: /101|basics|background|primer|foundations|context/i, label: '101 Info', sub: 'The background that makes the news make sense.', icon: 'learn', accent: 'teal' },
-];
 
 // Module-level twin of the closure-bound dedupNewsRows: rich feed rows first,
 // grounding citations behind them, deduped by URL + normalized title.
@@ -2149,73 +2142,100 @@ function diNewsRows(feed, cites, cap = 15) {
   return out;
 }
 
+// Split the "## Briefings" body into individual items — each item is a
+// paragraph opening with a bolded mini-headline ("**EU clears the merger.**").
+function splitBriefItems(body) {
+  const groups = [];
+  let cur = null;
+  for (const raw of String(body || '').split('\n')) {
+    const line = raw.trim();
+    if (!line) continue;
+    if (/^\*\*/.test(line) || !cur) { if (cur) groups.push(cur); cur = { lines: [line] }; }
+    else cur.lines.push(line);
+  }
+  if (cur) groups.push(cur);
+  return groups.map((g) => {
+    const raw = g.lines.join('\n');
+    const m = raw.match(/^\*\*(.+?)\*\*/);
+    return { raw, lede: (m ? m[1] : g.lines[0]).replace(/[.:]\s*$/, ''), text: raw.replace(/\*\*/g, '') };
+  });
+}
+
+// Compact publisher label for an item's source chip.
+function diSrcLabel(x) {
+  const pub = String(x.meta || '').split('·')[0].trim();
+  if (pub) return pub;
+  try { return new URL(x.uri).hostname.replace(/^www\./i, ''); } catch (_) {}
+  return String(x.title || '').slice(0, 24);
+}
+
 export function renderDailyIntelligence(container, scope) {
   const name = scope.label || scope.topic || '';
+  // Header mirrors the topic-section lockup (kicker + icon-chip title), with the
+  // date/updated line PROMINENT under the title and the briefing's summary as
+  // the lede beneath it (revamp765).
   container.innerHTML = `
     <section class="di-page">
       <header class="di-head">
-        <div class="di-kicker"><span class="di-kicker-spark" aria-hidden="true">✦</span>Daily Intelligence</div>
-        <h2 class="di-title">${esc(name)}</h2>
-        <p class="di-intro">One AI briefing, refreshed every day — catch up fast, go deep on the day's big story, and get the background that makes it make sense.</p>
-        <div class="di-meta" data-di-meta></div>
-        <nav class="di-jumps" data-di-jumps aria-label="Briefing sections" hidden></nav>
+        <span class="tsec-kicker">${esc(name)}</span>
+        <h2 class="tsec-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true">✦</span>Daily Intelligence</h2>
+        <div class="di-datebar" data-di-meta></div>
+        <p class="di-lede" data-di-lede hidden></p>
       </header>
       <div class="di-body" data-di-body>${genLoaderHTML()}</div>
     </section>`;
   const body = container.querySelector('[data-di-body]');
   const meta = container.querySelector('[data-di-meta]');
-  const jumps = container.querySelector('[data-di-jumps]');
+  const lede = container.querySelector('[data-di-lede]');
 
   const readRow = (x) => `<a class="di-read" href="${escAttr(safeUrl(x.uri))}" target="_blank" rel="noopener noreferrer"><span class="di-read-tx"><span class="di-read-title">${esc(x.title)}</span>${x.meta ? `<span class="di-read-meta">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`;
+  const srcChips = (list) => {
+    const rows = (list || []).slice(0, 4);
+    if (!rows.length) return '';
+    return `<div class="dib-srcs"><span class="dib-srcs-label">Sources</span>${rows.map((x) => `<a class="dib-src" href="${escAttr(safeUrl(x.uri))}" target="_blank" rel="noopener noreferrer" title="${escAttr(x.title)}"><span>${esc(diSrcLabel(x))}</span>${EXT}</a>`).join('')}</div>`;
+  };
 
   const fill = (data) => {
-    const parts = splitSections(data.content);
-    const seenSec = new Set();
-    const list = parts.filter((p) => {
-      const n = String(p.name || '').toLowerCase().replace(/\s+/g, ' ').trim();
-      if (!n || seenSec.has(n) || !String(p.body || '').trim()) return false;
-      seenSec.add(n); return true;
-    });
-    const secs = list.length ? list : [{ name: 'Briefing', body: String(data.content) }];
-    const flat = (v) => (Array.isArray(v) ? v : Object.values(v || {}).flat());
-    const items = diNewsRows(flat(data.headlines), flat(data.sources)).filter((x) => x.title);
-    const { buckets, unmatched } = attributeItemsToSections(items, secs);
     const upd = data.generatedAt ? relTime(data.generatedAt) : '';
     let day = '';
     try { if (data.generatedAt) day = new Date(data.generatedAt).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); } catch (_) {}
-    meta.innerHTML = `<span class="di-meta-ai">${LOGO}<span>AI Generated</span></span>${day ? `<span class="di-meta-sep" aria-hidden="true">·</span><span>${esc(day)}</span>` : ''}${upd ? `<span class="di-meta-sep" aria-hidden="true">·</span><span>Updated ${esc(upd)}</span>` : ''}`;
-    const secMeta = secs.map((p) => DI_SECTIONS.find((s) => s.match.test(p.name)) || null);
-    body.innerHTML = secs.map((p, i) => {
-      const spec = secMeta[i];
-      const reads = (buckets[i] || []).slice(0, 5);
-      return `<section class="di-sec di-sec--${spec ? spec.accent : 'blue'}" id="di-sec-${i}">
-        <div class="di-sec-head">
-          <span class="di-sec-ic" aria-hidden="true">${ICONS[spec ? spec.icon : '_'] || ICONS._}</span>
-          <div class="di-sec-headtx">
-            <h3 class="di-sec-title">${esc(spec ? spec.label : p.name)}</h3>
-            ${spec ? `<p class="di-sec-sub">${esc(spec.sub)}</p>` : ''}
-          </div>
-        </div>
-        <div class="di-sec-body aii-sec-body">${renderBriefBody(p.body, null)}</div>
-        ${reads.length ? `<div class="di-reads"><div class="di-reads-label">Read further</div><div class="di-reads-list">${reads.map(readRow).join('')}</div></div>` : ''}
-      </section>`;
-    }).join('') + (unmatched.length ? `<section class="di-sec di-sec--more">
-        <div class="di-sec-head">
-          <div class="di-sec-headtx"><h3 class="di-sec-title">More Coverage</h3><p class="di-sec-sub">Further recent stories on ${esc(name)}.</p></div>
-        </div>
-        <div class="di-reads-list di-reads-list--more">${unmatched.slice(0, 6).map(readRow).join('')}</div>
-      </section>` : '');
-    // Jump chips — one per section, scrolls to it (shown only with 2+ sections).
-    if (jumps && secs.length > 1) {
-      jumps.innerHTML = secs.map((p, i) => {
-        const spec = secMeta[i];
-        return `<button type="button" class="di-jump di-jump--${spec ? spec.accent : 'blue'}" data-di-jump="${i}"><span class="di-jump-dot" aria-hidden="true"></span>${esc(spec ? spec.label : p.name)}</button>`;
-      }).join('');
-      jumps.hidden = false;
-      jumps.querySelectorAll('[data-di-jump]').forEach((b) => b.addEventListener('click', () => {
-        try { body.querySelector(`#di-sec-${b.dataset.diJump}`)?.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (_) {}
-      }));
+    meta.innerHTML = `${day ? `<span class="di-date-day">${esc(day)}</span>` : ''}${day && upd ? '<span class="di-date-sep" aria-hidden="true">·</span>' : ''}${upd ? `<span class="di-date-upd">Updated ${esc(upd)}</span>` : ''}`;
+    if (data.summary) { lede.textContent = data.summary; lede.hidden = false; }
+
+    // Overview + Briefings (revamp765 format). Older cached briefs (Catch Up /
+    // Deep Dive / 101 Info) degrade gracefully: everything that isn't the
+    // overview renders as briefing items.
+    const parts = splitSections(data.content);
+    let overview = ''; const briefChunks = [];
+    for (const p of parts) {
+      if (!overview && /overview|rundown/i.test(p.name)) overview = p.body;
+      else briefChunks.push(p.body);
     }
+    if (!parts.length) briefChunks.push(String(data.content || ''));
+    const items = splitBriefItems(briefChunks.join('\n\n'));
+
+    const flat = (v) => (Array.isArray(v) ? v : Object.values(v || {}).flat());
+    const rows = diNewsRows(flat(data.headlines), flat(data.sources), 20).filter((x) => x.title);
+    const pseudo = items.map((it) => ({ name: it.lede, body: it.text }));
+    const { buckets, unmatched } = attributeItemsToSections(rows, pseudo);
+
+    body.innerHTML = `
+      <div class="di-prov2">${LOGO}<span>AI Generated</span></div>
+      ${overview ? `<section class="di-ov">
+        <div class="di-eyebrow">Today's Overview</div>
+        <div class="di-ov-body aii-sec-body">${renderBriefBody(overview, null)}</div>
+      </section>` : ''}
+      ${items.length ? `<section class="di-briefs">
+        <div class="di-eyebrow">Briefings</div>
+        ${items.map((it, i) => `<article class="dib">
+          <div class="dib-body aii-sec-body">${renderBriefBody(it.raw, null)}</div>
+          ${srcChips(buckets[i])}
+        </article>`).join('')}
+      </section>` : ''}
+      ${unmatched.length ? `<section class="di-more">
+        <div class="di-eyebrow">More Coverage</div>
+        <div class="di-reads-list di-reads-list--more">${unmatched.slice(0, 6).map(readRow).join('')}</div>
+      </section>` : ''}`;
   };
 
   fetchDailyBrief(scope.topic).then((data) => {
@@ -2228,7 +2248,7 @@ export function renderDailyIntelligence(container, scope) {
     // The API serves a stale brief instantly and regenerates in the background —
     // re-poll once so today's version swaps in without a reload.
     const ageH = data.generatedAt ? (Date.now() - new Date(data.generatedAt).getTime()) / 36e5 : 0;
-    if (ageH > 24) {
+    if (ageH > 26) {
       setTimeout(() => {
         fetchDailyBrief(scope.topic, true).then((d2) => {
           if (d2 && d2.content && d2.generatedAt !== data.generatedAt && container.isConnected) fill(d2);

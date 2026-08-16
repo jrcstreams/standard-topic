@@ -18744,3 +18744,162 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 /* Back bar shares the content gutter (it sat 2px from the viewport edge). */
 .aii-nav-dd-search > .aii-nav-dd-inner > .page-backbar { padding: 18px 2rem 0; }
 @media (max-width: 640px) { .aii-nav-dd-search > .aii-nav-dd-inner > .page-backbar { padding: 16px 1rem 0; } }
+
+/* ═══ Daily Intelligence v3 + topic landing two-column top (revamp765) ═══════ */
+/* Shared topic-section header lockup — kicker + icon-chip title, matching the
+   news feed head so every topic-page section speaks one language. */
+.tsec-head { margin: 0 0 2px; padding: 0 2px 12px; border-bottom: 1px solid #e4e8f0; }
+.tsec-kicker {
+  display: block; margin-bottom: 2px;
+  font-family: var(--font-family); font-size: 0.72rem; font-weight: 750;
+  letter-spacing: 0.07em; text-transform: uppercase; color: #8a98b0;
+}
+.tsec-title {
+  display: flex; align-items: center; margin: 0;
+  font-family: var(--font-display); font-size: 1.24rem; font-weight: 800;
+  letter-spacing: -0.02em; color: #1a2740;
+}
+.tsec-ic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 8px; margin-right: 9px;
+  font-size: 0.95rem; line-height: 1;
+}
+.tsec-ic--di { background: #1d3a6b; color: #8ab4ff; }
+
+/* Landing top: DI (with header) left, gateway cards in a side column right. */
+.topic-top { display: flex; flex-direction: column; gap: 1.1rem; min-width: 0; }
+.topic-top-main { min-width: 0; }
+.topic-gateways--side { display: flex; flex-direction: column; gap: 0.8rem; margin-top: 0; }
+@media (min-width: 720px) and (max-width: 1023.98px) {
+  .topic-gateways--side { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+}
+@media (min-width: 1024px) {
+  .topic-top { display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 1.4rem; align-items: end; }
+  .topic-gateways--side { justify-content: flex-end; }
+}
+
+/* DI landing card v3 — summary + a left-aligned date · CTA row. */
+.tdi-card--v3 { padding: 1.05rem 1.2rem 0.95rem; margin-top: 0.9rem; display: block; }
+.tdi-card--v3 .tdi-summary { font-size: 0.95rem; }
+.tdi-row {
+  display: flex; align-items: center; justify-content: flex-start; gap: 14px; flex-wrap: wrap;
+  margin-top: 0.85rem; border-top: 1px solid #dbe4f3; padding-top: 0.7rem;
+}
+.tdi-row .tdi-date { font-size: 0.82rem; font-weight: 750; color: #26375a; }
+.tdi-row .tdi-date:empty { display: none; }
+.tdi-go { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-family); font-size: 0.84rem; font-weight: 750; color: #2c4f9e; white-space: nowrap; }
+.tdi-go svg { flex: none; transition: transform .14s ease; }
+@media (hover: hover) { .tdi-card--v3:hover .tdi-go { color: #1d4ed8; } .tdi-card--v3:hover .tdi-go svg { transform: translateX(2px); } }
+
+/* ── DI page v3 ─── */
+.di-head .tsec-head { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+.di-head { padding-bottom: 1rem; }
+.di-datebar {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 0.55rem;
+  font-family: var(--font-family); font-size: 0.95rem;
+}
+.di-datebar:empty { display: none; }
+.di-date-day { font-weight: 750; color: #26375a; }
+.di-date-sep { color: #c3cbd8; }
+.di-date-upd { font-weight: 600; color: #76829b; font-size: 0.85rem; }
+.di-lede {
+  margin: 0.6rem 0 0; font-family: var(--font-family);
+  font-size: 1.02rem; line-height: 1.55; color: #34405a; max-width: 78ch; font-weight: 550;
+}
+.di-prov2 {
+  display: inline-flex; align-items: center; gap: 6px; margin-bottom: 0.4rem;
+  font-family: var(--font-family); font-size: 0.72rem; font-weight: 650; color: #94a1b5;
+}
+.di-prov2 svg { width: 11px; height: 11px; }
+.di-body { gap: 1.6rem; }
+.di-eyebrow {
+  margin-bottom: 0.5rem; font-family: var(--font-family); font-size: 0.72rem; font-weight: 750;
+  letter-spacing: 0.07em; text-transform: uppercase; color: #8a98b0;
+}
+.di-ov { min-width: 0; }
+.di-ov-body { font-size: 0.96rem; line-height: 1.65; color: #2b3a58; }
+.di-ov-body p { margin: 0 0 0.8em; }
+.di-ov-body p:last-child { margin-bottom: 0; }
+.di-briefs { min-width: 0; }
+.dib { padding: 15px 0 14px; border-top: 1px solid #edf1f7; min-width: 0; }
+.dib:first-of-type { border-top: none; padding-top: 4px; }
+.dib-body { font-size: 0.93rem; line-height: 1.62; color: #34405a; }
+.dib-body p { margin: 0; }
+.dib-body p strong { color: #16233d; }
+/* Per-item source chips — right where the reader's interest is. */
+.dib-srcs { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.dib-srcs-label {
+  font-family: var(--font-family); font-size: 0.66rem; font-weight: 750;
+  letter-spacing: 0.07em; text-transform: uppercase; color: #a8b4c9; margin-right: 2px;
+}
+.dib-src {
+  display: inline-flex; align-items: center; gap: 4px; max-width: 220px;
+  padding: 3px 10px; border-radius: 999px; border: 1px solid #dfe6f2; background: #f8fafd;
+  font-family: var(--font-family); font-size: 0.74rem; font-weight: 650; color: #45536e;
+  text-decoration: none; transition: border-color .12s, color .12s, background .12s;
+}
+.dib-src span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dib-src svg { flex: none; width: 11px; height: 11px; color: #a8b4c9; }
+@media (hover: hover) { .dib-src:hover { background: #fff; border-color: #b9cbeb; color: #1d4ed8; text-decoration: none; } .dib-src:hover svg { color: #1d4ed8; } }
+.di-more { border-top: 1.5px solid #e4e8f0; padding-top: 1.2rem; min-width: 0; }
+@media (max-width: 560px) {
+  .di-lede { font-size: 0.95rem; }
+  .di-datebar { font-size: 0.88rem; }
+}
+
+/* ── Search as a real page (revamp765) ── */
+.search-page {
+  max-width: var(--max-width, 1280px); margin: 0 auto;
+  padding: 0 2rem 3rem; min-height: calc(100dvh - var(--nav-h, 60px));
+  display: flex; flex-direction: column; min-width: 0;
+}
+.search-page > .page-backbar { padding: 18px 2px 0; }
+.search-page .search-page-host { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; }
+.search-page .search-panel--modal { height: auto; min-height: 0; flex: 1 1 auto; }
+.search-page .search-panel-topfold { position: static; }
+.search-page .search-panel-results,
+.search-page .search-panel-results-inner { overflow: visible; max-height: none; height: auto; }
+@media (max-width: 640px) { .search-page { padding: 0 1rem 2.4rem; } }
+
+/* ── Trending page: hover highlight stays clear of the hairlines (revamp765) ──
+   The row hover used to paint the full row, butting into the separator above
+   (worst on the first row of each column). The highlight is now a rounded
+   inset layer, so it never touches the rules above/below. */
+@media (hover: hover) {
+  .aii-nav-dd-trending .trend-card:not(.is-expanded):hover { background: transparent !important; }
+  .aii-nav-dd-trending .trend-card:not(.is-expanded):hover::before {
+    content: ''; position: absolute; inset: 3px 0; border-radius: 10px;
+    background: #f5f7fa; z-index: 0;
+  }
+}
+.aii-nav-dd-trending .trend-card > * { position: relative; z-index: 1; }
+
+/* ── Topic-page news feed: two columns on wide screens (revamp765) ──────────
+   TOPIC PAGES ONLY (never home). Stories become equal-height cards — title and
+   description clamp so rows line up; back to the single-column divider list
+   below 1200px. */
+@media (min-width: 1200px) {
+  .topic-home .news-list {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px; align-items: stretch;
+  }
+  .topic-home .news-list .news-card {
+    display: flex; flex-direction: column; min-width: 0; position: relative;
+    border: 1px solid #e8edf5 !important; border-radius: 12px; background: #fff;
+    padding: 14px 16px 12px !important; margin: 0 !important;
+  }
+  .topic-home .news-list .news-card::after,
+  .topic-home .news-list .news-card::before { display: none !important; }
+  .topic-home .news-list .news-card .news-card-link { padding: 0 !important; }
+  .topic-home .news-list .news-card .news-card-title {
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    font-size: 1.05rem; line-height: 1.3;
+  }
+  .topic-home .news-list .news-card .news-card-foot { padding: 6px 0 0 !important; border: none !important; margin: 0 !important; }
+  .topic-home .news-list .news-card .news-card-body { display: flex; flex-direction: column; flex: 1 1 auto; padding: 0 !important; }
+  .topic-home .news-list .news-card .news-card-desc {
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    margin: 6px 0 0;
+  }
+  .topic-home .news-list .news-card .news-card-actions { margin-top: auto; padding: 12px 0 0; }
+}
