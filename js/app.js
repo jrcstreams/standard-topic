@@ -1358,9 +1358,12 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       </div>
     </div>`;
     // The page-title header carries the second topic picker (revamp774) and the
-    // overflow "More" for its related-topic links.
+    // overflow "More" for its related-topic links. wireTopicHeroCondense is what
+    // slides the subnav band back in once the header scrolls away — it had been
+    // dead code since the tabbed layout went away.
     wireSubnavPicker(body);
     wireSubtopicsMore(body);
+    wireTopicHeroCondense();
     renderNewsFeed(body.querySelector('#section-newsfeed'), topic, false);
     // Fill the Daily Intelligence card's summary + date once the brief lands.
     // The fetch is cached (shared with the sub-page), so tapping through is
