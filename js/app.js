@@ -317,10 +317,19 @@ function wireTopicHeroCondense() {
   if (topicHeroScrollHandler) document.removeEventListener('scroll', topicHeroScrollHandler, true);
   topicHeroScrollHandler = (e) => {
     const t = e.target;
-    if (!t || t.nodeType !== 1 || typeof t.closest !== 'function') return;
-    // Only react to scrolls inside the topic content area.
-    if (!t.closest('#content')) return;
-    const st = t.scrollTop || 0;
+    let st;
+    if (t === document || t === window || (t && t.nodeType === 9)) {
+      // The tab-less topic landing scrolls the DOCUMENT (the per-panel scrollers
+      // only existed in the tabbed layout), and a document scroll event's target
+      // is the document itself — not an element under #content. Without this the
+      // band never un-hides on the landing page (revamp774).
+      st = (document.scrollingElement || document.documentElement).scrollTop || 0;
+    } else {
+      if (!t || t.nodeType !== 1 || typeof t.closest !== 'function') return;
+      // Only react to scrolls inside the topic content area.
+      if (!t.closest('#content')) return;
+      st = t.scrollTop || 0;
+    }
     // Threshold: on desktop the sticky picker should only appear once the BODY
     // topic header (title + subtopics) has mostly scrolled away — so derive it
     // from that header's height. On mobile the header is display:none (height 0)
