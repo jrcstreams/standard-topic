@@ -19339,3 +19339,21 @@ body.sticky-always.has-subnav:has(.topic-home) #content {
   .te-drawer, .te-drawer--link { width: 100% !important; }
   .te-drawer > .te-drawer-sum { width: 100% !important; }
 }
+
+/* ═══ revamp778 ══════════════════════════════════════════════════════════════
+   The topic landing's top gap. The earlier attempts (775/776) never took: an
+   app-mode rule sets the whole `padding` shorthand with !important at
+   (1,4,1) — `padding: calc(var(--nav-h) + var(--subnav-height) + .25rem) 0 3rem`
+   — so the page kept reserving a hidden subnav's worth of space (132px) no
+   matter what padding-top we wrote. Beat it on both counts: !important, and
+   one class more specific. */
+body.app-mode.sticky-always.has-subnav:not(.home-search):has(.topic-home) #content,
+body.app-mode:not(.home-search):has(.topic-home) #content {
+  padding-top: calc(var(--nav-h) + 1.35rem) !important;
+}
+@media (max-width: 640px) {
+  body.app-mode.sticky-always.has-subnav:not(.home-search):has(.topic-home) #content,
+  body.app-mode:not(.home-search):has(.topic-home) #content {
+    padding-top: calc(var(--nav-h) + 1rem) !important;
+  }
+}
