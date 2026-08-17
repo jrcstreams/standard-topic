@@ -11373,7 +11373,7 @@ body.home-search #home-trending .trend-card:hover::before { content: none !impor
    3-row list (#img127). An expanded brief spans both columns. First-row cells both
    drop the tighter first-child top padding for an even grid. */
 @media (min-width: 641px) and (max-width: 1023.98px) {
-  body.home-search #home-trending .trend-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 6px; }
+  body.home-search #home-trending .trend-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 0; }
   body.home-search #home-trending .trend-card-grid .trend-card:nth-child(-n+6) { display: block; }
   body.home-search #home-trending .trend-card-grid .trend-card:nth-child(n+7) { display: none; }
   body.home-search #home-trending .trend-card:first-child .trend-card-trigger { padding-top: 14px !important; }
@@ -17184,7 +17184,7 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-exp,
 .aii-nav-dd-trending .trend-card-meta { font-size: 0.72rem; font-weight: 600; color: #5b6679; }
 .aii-nav-dd-trending .trend-card-summary { color: #55617a; }
 .aii-nav-dd-trending .trend-card.is-expanded {
-  background: #eef2f8 !important; border-radius: 0 !important; box-shadow: 0 1px 0 #e2e8f2, 0 -1px 0 #e2e8f2;
+  background: #eef2f8 !important; border-radius: 0 !important; box-shadow: 0 1px 0 #e2e8f2, 0 -1px 0 #eef2f8;
 }
 
 /* ── News insight panel: flat, no tabs, one provenance line ──────────────── */
@@ -18053,26 +18053,8 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 
 /* ═══════════════ revamp749 ═══════════════════════════════════════════════ */
 
-/* News insight X: trend-sized, and anchored BELOW the actions rule so it lands
-   on the "AI Generated Text" line rather than straddling the separator. */
-#section-newsfeed .news-card--open .news-card-actions,
-#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-actions { position: relative; }
-#section-newsfeed .news-card--open .news-act-ai,
-#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai {
-  position: absolute !important; right: 0 !important; left: auto !important;
-  top: 100% !important; bottom: auto !important; margin-top: 14px !important;
-  width: 28px !important; height: 28px !important; min-width: 0 !important;
-  padding: 0 !important; border-radius: 8px; border: none; background: none; color: #64748b;
-}
-#section-newsfeed .news-card--open .news-act-ai svg,
-#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai svg {
-  width: 16px !important; height: 16px !important;
-}
-@media (hover: hover) {
-  #section-newsfeed .news-card--open .news-act-ai:hover { background: rgba(15,26,46,.06); color: #26375a; }
-}
-/* Keep the AI line clear of the X. */
-.ni-inner > .ni-aitag-row { padding-right: 38px; }
+/* revamp749 floating close-X retired (revamp772): the open AI Insights
+   button keeps its normal look; the panel closes from the bottom Close. */
 
 /* ═══════════════ revamp750 ═══════════════════════════════════════════════ */
 
@@ -18420,7 +18402,7 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
   --hf-accent: #2563eb; --hf-tint: #eef3fc;
 }
 .hf-card--prompts { --hf-accent: #4f46e5; --hf-tint: #eef0fc; }
-.hf-head { display: flex; align-items: flex-start; gap: 9px; margin-bottom: 0.65rem; }
+.hf-head { display: flex; align-items: center; gap: 9px; margin-bottom: 0.4rem; }
 .hf-ic {
   flex: none; display: inline-flex; align-items: center; justify-content: center;
   width: 26px; height: 26px; border-radius: 7px; background: var(--hf-tint); color: var(--hf-accent);
@@ -18432,7 +18414,7 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
   margin: 0; font-family: var(--font-display);
   font-size: 1.12rem; font-weight: 800; letter-spacing: -0.018em; color: #1a2740; line-height: 1.25;
 }
-.hf-sub { margin: 1px 0 0; font-family: var(--font-family); font-size: 0.76rem; color: #76829b; line-height: 1.35; }
+.hf-sub { margin: 0 0 0.85rem; font-family: var(--font-family); font-size: 0.78rem; color: #76829b; line-height: 1.4; }
 .hf-chips { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 6px 7px; min-width: 0; flex: 1 1 auto; }
 /* Chips read a touch stronger on the white card than the old grey-zone pills,
    and pick up the card's accent on hover. */
@@ -18450,8 +18432,8 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
   .hf-card [data-hq-topics] .hq-chip:nth-child(n+9) { display: none; }
 }
 .hf-foot {
-  display: flex; justify-content: flex-start; margin-top: 0.75rem;
-  border-top: none; padding-top: 0;
+  display: flex; justify-content: flex-start; margin-top: 0.9rem;
+  border-top: none; padding: 0 2px 4px;
 }
 .hf-cta {
   display: inline-flex; align-items: center; gap: 5px;
@@ -18974,14 +18956,103 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 @media (min-width: 1024px) {
   .topic-band .topic-home #section-newsfeed .news-list { margin-top: 18px !important; }
 }
-/* Single-column list: the row hover paint no longer collides with the head
-   separator (rounded inset layer, same treatment as the trending rows). */
+
+}
+
+/* ═══ revamp772 ══════════════════════════════════════════════════════════════
+   Hero consistency · featured/gateway card polish · unified news heads ·
+   blended brief drawers · tighter news-insight body · full-bleed row hovers. */
+
+/* ── Home search hero: ONE spacing/type system at every width ── */
+body.home-search .home-search-hero { padding: 1.15rem 0 1.6rem !important; border-radius: 0 !important; width: 100% !important; max-width: none !important; margin: 0 !important; }
+body.home-search .home-search-hero .search-panel-hero-inner { padding: 0 0 0.7rem !important; text-align: center !important; }
+body.home-search .home-search-hero .search-panel-title {
+  white-space: normal !important; text-align: center !important;
+  font-size: clamp(1.7rem, 1.2rem + 2.1vw, 2.4rem) !important;
+  font-weight: 780 !important; letter-spacing: -0.03em !important; line-height: 1.12 !important;
+  color: #16233d !important; margin: 0 0 0.55rem !important;
+}
+body.home-search .home-search-hero .search-panel-tagline {
+  font-size: clamp(0.95rem, 0.88rem + 0.4vw, 1.12rem) !important;
+  margin: 0 auto !important; color: #4a5a75 !important; line-height: 1.4 !important;
+}
+body.home-search .home-search-hero .search-panel-barrow { padding: 0 !important; }
+body.home-search .home-search-hero .search-panel-input { height: 52px !important; font-size: 1rem !important; }
+
+/* ── Featured Topics/Prompts footer links: calm blue links, a touch bigger ── */
+.hf-cta { font-size: 0.88rem; font-weight: 750; }
+
+/* ── Topic gateway cards v2: icon+title row, sub, then a View link ── */
+.tg-card--v2 { display: flex; flex-direction: column; align-items: stretch; gap: 0; padding: 0.9rem 1.05rem 0.8rem; }
+.tg-card--v2 .tg-titlerow { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.tg-card--v2 .tg-ic { width: 26px; height: 26px; border-radius: 7px; }
+.tg-card--v2 .tg-ic svg { width: 14px; height: 14px; }
+.tg-card--v2 .tg-name { font-size: 0.98rem; }
+.tg-card--v2 .tg-sub { display: block; margin: 5px 0 0; }
+.tg-card--v2 .tg-link {
+  display: inline-flex; align-items: center; gap: 5px; margin-top: 9px;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 750; color: #3d5da8;
+  white-space: nowrap;
+}
+.tg-card--v2 .tg-link svg { flex: none; width: 13px; height: 13px; transition: transform .14s ease; }
+@media (hover: hover) {
+  .tg-card--v2:hover .tg-link { color: #1d4ed8; }
+  .tg-card--v2:hover .tg-link svg { transform: translateX(2px); }
+}
+/* In the stretched side column, the link pins to the card bottom. */
+@media (min-width: 1024px) { .tg-card--v2 .tg-link { margin-top: auto; padding-top: 9px; } }
+
+/* ── News heads: one title treatment everywhere, slightly weightier rule ── */
+#topic-tab-body #section-newsfeed .newsfeed-head--home .newsfeed-title,
+body.home-search #section-newsfeed .newsfeed-head--home .newsfeed-title,
+.newsfeed-head--home .newsfeed-title {
+  font-size: 1.24rem !important; font-weight: 800 !important; letter-spacing: -0.018em;
+}
+#topic-tab-body #section-newsfeed .newsfeed-head--topic,
+body.home-search #section-newsfeed .newsfeed-head { border-bottom: 2px solid #e0e5ee !important; }
+#topic-tab-body #section-newsfeed .newsfeed-head--topic { border-bottom: 2px solid #e0e5ee !important; }
+/* Mobile homepage: air between the trending link above and the news head. */
+@media (max-width: 1023.98px) {
+  body.home-search #section-newsfeed .newsfeed-head--home { margin-top: 16px !important; }
+}
+
+/* ── Daily Intelligence icon chip: crisp layered spark ── */
+.tsec-ic--di svg { width: 16px; height: 16px; display: block; }
+.tsec-ic--di { color: #9ec2ff; }
+
+/* ── Brief drawers (trends + news insights): blend into the tinted card ── */
+.trend-exp-drawers .te-drawer,
+.ni-inner ~ * .te-drawer, .ni-inner .te-drawer {
+  background: transparent !important; border: 1px solid rgba(38, 55, 90, 0.14) !important;
+  border-radius: 11px; box-shadow: none !important;
+}
+.te-drawer-sum { background: transparent !important; }
+@media (hover: hover) {
+  .trend-exp-drawers .te-drawer-sum:hover, .ni-inner .te-drawer-sum:hover { background: rgba(38, 55, 90, 0.05) !important; }
+}
+.te-drawer-ic { flex: none; display: inline-flex; align-items: center; color: #52678f; margin-right: 8px; }
+.te-drawer--link { display: block; text-decoration: none; }
+.te-drawer--link .te-drawer-sum { display: flex; align-items: center; cursor: pointer; }
+.te-drawer--link .te-drawer-go { transition: transform .14s ease; }
+@media (hover: hover) {
+  .te-drawer--link:hover { text-decoration: none; border-color: rgba(38, 55, 90, 0.28) !important; }
+  .te-drawer--link:hover .te-drawer-title { color: #1d4ed8; }
+  .te-drawer--link:hover .te-drawer-go { transform: translateX(2px); color: #1d4ed8; }
+}
+
+/* ── News insight body: tighter section rhythm ── */
+.ni-inner .ni-sec { margin: 0 0 10px !important; }
+.ni-inner .ni-sec-head { margin: 0 0 3px !important; }
+.ni-inner .ni-sec .ai-result-body p { margin: 0 0 0.55em; }
+.ni-inner .ni-sec .ai-result-body p:last-child { margin-bottom: 0; }
+.ni-inner .ni-sec .ai-result-list { margin: 0.2em 0 0.3em; }
+.ni-inner > .ni-aitag-row { margin: 2px 0 8px !important; padding-right: 0 !important; }
+
+/* ── Single-column topic news: full-bleed hover meeting the separators ── */
+@media (max-width: 1023.98px) {
+  .topic-band .topic-home #section-newsfeed .news-list { margin-top: 0 !important; }
+  .topic-band .topic-home #section-newsfeed .news-card:first-child .news-card-link { padding-top: 16px !important; }
+}
 @media (hover: hover) and (max-width: 1023.98px) {
-  .topic-band .topic-home #section-newsfeed .news-card { position: relative; }
-  .topic-band .topic-home #section-newsfeed .news-card:hover { background: transparent !important; }
-  .topic-band .topic-home #section-newsfeed .news-card:hover::before {
-    content: ''; position: absolute; inset: 3px 0; border-radius: 10px;
-    background: #f7f9fc; z-index: 0;
-  }
-  .topic-band .topic-home #section-newsfeed .news-card > * { position: relative; z-index: 1; }
+  .topic-band .topic-home #section-newsfeed .news-card:not(.news-card--open):hover { background: #f5f7fa !important; }
 }

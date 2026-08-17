@@ -4,7 +4,7 @@
 // (discover→Now, topic-specific→For This Topic, analyze→Analyze, learn→Learn);
 // its sections come from the single cached per-(topic,group) brief, so once a
 // path loads, hopping between its sections is instant.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260816-revamp765';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260817-revamp772';
 import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp574';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, getTopicsGroupedByParent, getShortcutsForTopic, getShortcutsDirectory, getSubmissionMethods, getPromptGenData, fetchWithTimeout, safeUrl } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';
@@ -2183,7 +2183,7 @@ export function renderDailyIntelligence(container, scope) {
   container.innerHTML = `
     <section class="di-page">
       <header class="di-head">
-        <h2 class="tsec-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true">✦</span>Daily Intelligence</h2>
+        <h2 class="tsec-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>Daily Intelligence</h2>
         <div class="di-datebar" data-di-meta></div>
         <p class="di-lede" data-di-lede hidden></p>
       </header>
@@ -2253,7 +2253,7 @@ export function renderDailyIntelligence(container, scope) {
     // The API serves a stale brief instantly and regenerates in the background —
     // re-poll once so today's version swaps in without a reload.
     const ageH = data.generatedAt ? (Date.now() - new Date(data.generatedAt).getTime()) / 36e5 : 0;
-    if (ageH > 26) {
+    if (ageH > 14) {
       setTimeout(() => {
         fetchDailyBrief(scope.topic, true).then((d2) => {
           if (d2 && d2.content && d2.generatedAt !== data.generatedAt && container.isConnected) fill(d2);

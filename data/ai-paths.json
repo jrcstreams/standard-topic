@@ -30,7 +30,7 @@
     }
   ],
   "windows": {
-    "daily": 26,
+    "daily": 14,
     "weekly": 168,
     "evergreen": 720,
     "live": {

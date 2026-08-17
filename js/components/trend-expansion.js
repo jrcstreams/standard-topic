@@ -2,9 +2,9 @@
 // "Web Explore" + "AI Explore" accordions (submit the term to engines/models),
 // and the full grounded brief. Reuses the news/TI building blocks so the look
 // matches AI insights elsewhere.
-import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260816-revamp765';
+import { renderBriefBody, resolveSource, sourceChip } from './newsfeed.js?v=20260817-revamp772';
 import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp574';
-import { drawerHTML, wireDrawers } from '../utils/drawers.js?v=20260813-revamp734';
+import { drawerHTML, drawerLinkHTML, wireDrawers, DRAWER_SEARCH_IC, DRAWER_SOURCES_IC } from '../utils/drawers.js?v=20260817-revamp772';
 export { wireDrawers as wireTrendDrawers };
 import { renderTIAccordion, webSourceItem } from './ti-shortcuts.js';
 import { getExternalSearches, getExternalSearchCategories, getModels, safeUrl } from '../utils/data.js';
@@ -156,9 +156,12 @@ export function renderTrendExpansionBody(term, brief) {
   const summaryBody = detail || why;
   const AITAG = `<div class="trend-exp-aitag">${aiSparkInline()}<span>AI Generated Text</span></div>`;
   const summaryHTML = summaryBody ? `${AITAG}${renderBriefBody(summaryBody, null)}` : '<p class="ins-empty">No summary yet.</p>';
+  // "Search this trend" leads — a direct jump to the search page with the trend
+  // as the query (the natural Explore Further). Sources follows as a quiet
+  // drawer that blends into the expansion's tint (revamp772).
   const src = teSourcesHTML(b.headlines, b.sources);
-  const drawers = (src ? drawerHTML('Sources', src) : '')
-    + drawerHTML('Explore Further', exploreListHTML(term));
+  const drawers = drawerLinkHTML('Search this trend', '#/custom/' + encodeURIComponent(term), DRAWER_SEARCH_IC)
+    + (src ? drawerHTML('Sources', src, DRAWER_SOURCES_IC) : '');
   return `<div class="trend-exp im-secs">
     <div class="trend-exp-summary">${summaryHTML}</div>
     <div class="trend-exp-drawers">${drawers}</div>

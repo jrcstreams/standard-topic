@@ -7,7 +7,7 @@ import { renderIcon, preloadIcons, getIconEmoji } from './utils/icons.js';
 import { topicIconSVG } from './utils/topic-icons.js?v=20260716-revamp588';
 import { getTopicDescription } from './utils/topic-descriptions.js?v=20260706-revamp574';
 import { renderSearchBar, initSearchOverlay } from './components/search-modal.js?v=20260728-revamp668';
-import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260816-revamp765';
+import { renderNewsFeed, renderBriefBody, listHTML as newsListHTML, wireNewsAI } from './components/newsfeed.js?v=20260817-revamp772';
 // prompt-generator (~127KB, Prompts flows only) is lazy-loaded via loadPromptGen() so it
 // splits out of the initial bundle — see B3.4. (prompt-builder-modal.js was a retired
 // no-op takeover; removed.)
@@ -17,7 +17,7 @@ import { fetchTrending } from './utils/trending.js';
 import { DEFAULT_GROUP_DEFS, groupShortcuts, renderTIAccordion, webSourceItem } from './components/ti-shortcuts.js';
 import { initTrendingDetailModal } from './components/trending-detail-modal.js?v=20260706-revamp574';
 import { initInsightModal } from './components/insight-modal.js?v=20260706-revamp574';
-import { renderAIIntelligence, renderDailyIntelligence, fetchDailyBrief } from './components/ai-intelligence.js?v=20260816-revamp765';
+import { renderAIIntelligence, renderDailyIntelligence, fetchDailyBrief } from './components/ai-intelligence.js?v=20260817-revamp772';
 import { exploreFurtherHTML, exploreAIModelsHTML, wireExploreFurther } from './utils/explore-further.js?v=20260812-revamp718';
 import { initAIIntelligenceModal } from './components/ai-intelligence-modal.js?v=20260717-revamp592';
 import { renderWebSources } from './components/websources.js?v=20260706-revamp574';
@@ -1309,22 +1309,22 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       <div class="topic-top">
         <section class="topic-top-main">
           <a class="tdi-card tdi-card--v3" href="#/topic/${escapeAttr(topic.slug)}/intelligence" data-tdi>
-            <h2 class="tsec-title tdi-card-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true">✦</span>Daily Intelligence</h2>
+            <h2 class="tsec-title tdi-card-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>Daily Intelligence</h2>
             <span class="tdi-date" data-tdi-date></span>
             <p class="tdi-summary" data-tdi-summary>Preparing today's briefing…</p>
             <span class="tdi-go">Read today's briefing${SUBPAGE_ARROW}</span>
           </a>
         </section>
         <div class="topic-gateways topic-gateways--side">
-          <a class="tg-card" href="#/topic/${escapeAttr(topic.slug)}/websources">
-            <span class="tg-ic" aria-hidden="true">${TOPIC_AI_ICONS.websearch}</span>
-            <span class="tg-tx"><span class="tg-name">Web Resources</span><span class="tg-sub">Open ${escapeHTML(topic.name)} across search, social, video and fact-checking sources.</span></span>
-            <span class="tg-arrow" aria-hidden="true">${SUBPAGE_ARROW}</span>
+          <a class="tg-card tg-card--v2" href="#/topic/${escapeAttr(topic.slug)}/websources">
+            <span class="tg-titlerow"><span class="tg-ic" aria-hidden="true">${TOPIC_AI_ICONS.websearch}</span><span class="tg-name">Web Resources</span></span>
+            <span class="tg-sub">Open ${escapeHTML(topic.name)} across search, social, video and fact-checking sources.</span>
+            <span class="tg-link">View web resources${SUBPAGE_ARROW}</span>
           </a>
-          <a class="tg-card" href="#/topic/${escapeAttr(topic.slug)}/prompts">
-            <span class="tg-ic" aria-hidden="true">${TOPIC_AI_ICONS['topic-specific']}</span>
-            <span class="tg-tx"><span class="tg-name">AI Prompts</span><span class="tg-sub">Ready-made ${escapeHTML(topic.name)} prompts to run in any AI model.</span></span>
-            <span class="tg-arrow" aria-hidden="true">${SUBPAGE_ARROW}</span>
+          <a class="tg-card tg-card--v2" href="#/topic/${escapeAttr(topic.slug)}/prompts">
+            <span class="tg-titlerow"><span class="tg-ic" aria-hidden="true">${TOPIC_AI_ICONS['topic-specific']}</span><span class="tg-name">AI Prompts</span></span>
+            <span class="tg-sub">Ready-made ${escapeHTML(topic.name)} prompts to run in any AI model.</span>
+            <span class="tg-link">View AI prompts${SUBPAGE_ARROW}</span>
           </a>
         </div>
       </div>
@@ -3173,9 +3173,9 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
                 <span class="hf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
                 <div class="hf-headtx">
                   <h3 class="hf-title">Featured Topics</h3>
-                  <p class="hf-sub">Live news, briefings and resources.</p>
                 </div>
               </div>
+              <p class="hf-sub">Live news, briefings and resources.</p>
               <div class="hf-chips" data-hq-topics></div>
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-topics>All topics${HQ_ARROW}</button></div>
             </section>
@@ -3184,9 +3184,9 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
                 <span class="hf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg></span>
                 <div class="hf-headtx">
                   <h3 class="hf-title">Featured Prompts</h3>
-                  <p class="hf-sub">Run them in any AI model.</p>
                 </div>
               </div>
+              <p class="hf-sub">Run them in any AI model.</p>
               <div class="hf-chips" data-hq-prompts></div>
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Access prompt library${HQ_ARROW}</button></div>
             </section>

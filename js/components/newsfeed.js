@@ -12,7 +12,7 @@
 
 import { getModels, getExternalSearches, getExternalSearchCategories, fetchWithTimeout, safeUrl } from '../utils/data.js';
 import { openModel, copyPrompt } from '../utils/ai-models.js';
-import { drawerHTML, wireDrawers } from '../utils/drawers.js?v=20260813-revamp734';
+import { drawerHTML, drawerLinkHTML, wireDrawers, DRAWER_SEARCH_IC, DRAWER_SOURCES_IC } from '../utils/drawers.js?v=20260817-revamp772';
 import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
 
 function escapeHTML(str) {
@@ -654,10 +654,11 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
         : `<section class="ni-sec">${niSecHead('Brief')}${renderBriefBody(data.content, null)}</section>`;
       // 3 TABS: Summary (the AI sections) / Explore Further (External AI Models +
       // web categories) / Sources.
+      // "Search this story further" leads — submits the story TITLE to the
+      // search page. Sources follows as a blended drawer (revamp772).
       const sourcesInner = niSourcesListHTML(data.headlines, data.sources, d.url);
-      const explore = exploreFurtherHTML({ prompt: newsStoryPrompt(card), webTerm: card.dataset.title || '', name: card.dataset.title || 'this story', subDesc: 'Dig deeper into this story with ChatGPT, Claude, Gemini & more' });
-      const drawers = (sourcesInner ? drawerHTML('Sources', sourcesInner) : '')
-        + drawerHTML('Explore Further', explore);
+      const drawers = drawerLinkHTML('Search this story further', '#/custom/' + encodeURIComponent(card.dataset.title || ''), DRAWER_SEARCH_IC)
+        + (sourcesInner ? drawerHTML('Sources', sourcesInner, DRAWER_SOURCES_IC) : '');
       panel.innerHTML = `<div class="ni-inner ai-reveal">
         <div class="ni-aitag-row"><span class="ni-aitag">${AI_SPARK_SVG}<span>AI Generated Text</span></span></div>
         ${secHTML}
@@ -1037,19 +1038,19 @@ export function renderNewsFeed(container, topic, isHome) {
   // Header: both surfaces use the homepage's big display title. Topic pages add
   // a quiet topic-name kicker above it so the feed reads as that topic's front
   // page (revamp763).
-  // Brand-family icon chip (news red) shared by both heads (revamp764).
-  const NEWS_IC = '<span class="newsfeed-brandic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg></span>';
+  // Plain text heads — the news icon chip is retired (revamp772); title size
+  // and weight unify across homepage + topic pages in CSS.
   const headHTML = isHome
     ? `
     <div class="newsfeed-head section-card-head newsfeed-head--home">
       <div class="newsfeed-headtext">
-        <h3 class="newsfeed-title section-card-title">${NEWS_IC}<span class="newsfeed-title-main">Today's Top News</span></h3>
+        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">Today's Top News</span></h3>
       </div>
     </div>`
     : `
     <div class="newsfeed-head section-card-head newsfeed-head--home newsfeed-head--topic">
       <div class="newsfeed-headtext">
-        <h3 class="newsfeed-title section-card-title">${NEWS_IC}<span class="newsfeed-title-main">News Feed</span></h3>
+        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">News Feed</span></h3>
       </div>
     </div>`;
 

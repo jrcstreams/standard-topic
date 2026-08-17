@@ -3,7 +3,7 @@
 // Renders a clean, centered modal (matching the search / topics modals) with the
 // AI brief, sources, and "Explore further with AI". Supports modal-over-modal
 // stacking: opening one from inside another keeps a "← Back to …" action.
-import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260816-revamp765';
+import { renderBriefBody, resolveSource } from './newsfeed.js?v=20260817-revamp772';
 import { aiProvenanceHTML } from '../utils/ai-provenance.js?v=20260706-revamp574';
 import { getModels, getModelById, getDefaultModelId, getExternalSearches, getExternalSearchCategories, fetchWithTimeout, safeUrl } from '../utils/data.js';
 import { openModel, copyPrompt, getPreferredModelId, setPreferredModelId } from '../utils/ai-models.js';

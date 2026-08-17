@@ -30,7 +30,6 @@
 const { getSql } = require('../../lib/db');
 const { withHealthcheck } = require('../../lib/healthcheck');
 const { generateInsight, groundingHeadroom } = require('../../lib/insight-core');
-const { effectiveWindowHours } = require('../../lib/ai-freshness');
 const topicsData = require('../../data/topics.json');
 
 // The Insight Builders are stored under a `<group>:b` insight key (see
@@ -166,10 +165,11 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
   };
 
   // type=daily — the MORNING WAVE (revamp765): every topic's Daily Intelligence
-  // regenerates in a fixed window each day (four staggered cron runs, 10:00–
-  // 11:00 UTC ≈ 6–7am ET), so all briefings "post" around the same time. Each
+  // regenerates in a fixed window each day (five staggered cron runs per wave,
+  // 12:00 UTC ≈ 8am ET and 00:00 UTC ≈ 8pm ET), so all briefings "post"
+  // around the same times. Each
   // run fills missing daily:b rows then refreshes the stalest ones older than
-  // 20h — already-refreshed rows are younger than that, so re-runs in the same
+  // 10h — already-refreshed rows are younger than that, so re-runs in the same
   // wave skip them and the wave converges across runs. The regular 3-hourly
   // refresh (26h window) + on-view refresh remain as fallbacks only.
   if (which === 'daily') {
@@ -195,7 +195,7 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
         const stale = await sql.query(
           `SELECT entity_key FROM ai_insights
             WHERE entity_type='shortcut' AND insight='daily:b'
-              AND created_at < now() - interval '20 hours'
+              AND created_at < now() - interval '10 hours'
             ORDER BY created_at ASC LIMIT $1`, [budget]);
         for (const r of stale) {
           if (budget <= 0 || !timeLeftD()) break;
@@ -208,7 +208,7 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
       const rem = await sql.query(
         `SELECT count(*)::int AS n FROM ai_insights
           WHERE entity_type='shortcut' AND insight='daily:b'
-            AND created_at < now() - interval '20 hours'`);
+            AND created_at < now() - interval '10 hours'`);
       return res.status(200).json({ ok: true, type: 'daily', filled, refreshed, staleRemaining: rem[0].n });
     } catch (e) {
       return res.status(500).json({ error: String((e && e.message) || e) });
@@ -345,8 +345,7 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
       // Per-builder freshness windows (hours), from data/ai-paths.json so the
       // cron and the on-view refresh agree: daily 24h. Non-live classes ignore
       // tier. Legacy builder groups refresh on-view only (not here).
-      const winFor = (g) => effectiveWindowHours(g, 3);
-      const wDaily = winFor('daily');
+
       // force=1 → re-ground every builder + current trend regardless of age
       // (flush after a prompt change). Otherwise only the stale ones, by window.
       const stale = force
@@ -362,15 +361,14 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
               LIMIT $1`, [budget])
         : await sql.query(
         `SELECT entity_type, entity_key, insight FROM ai_insights ai
-          WHERE (entity_type='shortcut' AND insight='daily:b' AND created_at < now() - make_interval(hours => $2))
-             OR (entity_type='trend' AND insight='brief'
+          WHERE (entity_type='trend' AND insight='brief'
                  AND created_at < now() - interval '24 hours'
                  AND EXISTS (
                    SELECT 1 FROM trending_items ti
                     WHERE ti.geo='US' AND lower(ti.query) = ai.entity_key
                       AND ti.snapshot_at = (SELECT max(snapshot_at) FROM trending_items WHERE geo='US')))
           ORDER BY created_at ASC
-          LIMIT $1`, [budget, wDaily]);
+          LIMIT $1`, [budget]);
       for (const r of stale) {
         if (budget <= 0 || !timeLeft()) break;
         let payload = null;
