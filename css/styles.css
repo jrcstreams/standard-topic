@@ -18420,16 +18420,17 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
   --hf-accent: #2563eb; --hf-tint: #eef3fc;
 }
 .hf-card--prompts { --hf-accent: #4f46e5; --hf-tint: #eef0fc; }
-.hf-head { display: flex; align-items: center; gap: 10px; margin-bottom: 0.65rem; }
+.hf-head { display: flex; align-items: flex-start; gap: 9px; margin-bottom: 0.65rem; }
 .hf-ic {
   flex: none; display: inline-flex; align-items: center; justify-content: center;
-  width: 30px; height: 30px; border-radius: 8px; background: var(--hf-tint); color: var(--hf-accent);
+  width: 26px; height: 26px; border-radius: 7px; background: var(--hf-tint); color: var(--hf-accent);
+  margin-top: 1px;
 }
-.hf-ic svg { width: 16px; height: 16px; }
+.hf-ic svg { width: 14px; height: 14px; }
 .hf-headtx { min-width: 0; }
 .hf-title {
   margin: 0; font-family: var(--font-display);
-  font-size: 1rem; font-weight: 800; letter-spacing: -0.018em; color: #1a2740;
+  font-size: 1.12rem; font-weight: 800; letter-spacing: -0.018em; color: #1a2740; line-height: 1.25;
 }
 .hf-sub { margin: 1px 0 0; font-family: var(--font-family); font-size: 0.76rem; color: #76829b; line-height: 1.35; }
 .hf-chips { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 6px 7px; min-width: 0; flex: 1 1 auto; }
@@ -18449,13 +18450,13 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
   .hf-card [data-hq-topics] .hq-chip:nth-child(n+9) { display: none; }
 }
 .hf-foot {
-  display: flex; justify-content: flex-end; margin-top: 0.65rem;
-  border-top: 1px solid #eef2f8; padding-top: 0.45rem;
+  display: flex; justify-content: flex-start; margin-top: 0.75rem;
+  border-top: none; padding-top: 0;
 }
 .hf-cta {
   display: inline-flex; align-items: center; gap: 5px;
   padding: 4px 2px; border: none; background: none;
-  font-family: var(--font-family); font-size: 0.8rem; font-weight: 700; color: #3d5da8;
+  font-family: var(--font-family); font-size: 0.86rem; font-weight: 700; color: #3d5da8;
   white-space: nowrap; cursor: pointer; text-decoration: none;
   transition: color .12s;
 }
@@ -18781,7 +18782,8 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 /* DI landing card v3 — title + date INSIDE the card, summary, then a plain
    CTA link (no separator rule). */
 .tdi-card--v3 { padding: 1.05rem 1.2rem 1rem; margin-top: 0; display: block; }
-.tdi-card--v3 .tdi-card-title { margin: 0 0 0.6rem; font-size: 1.28rem; }
+.tdi-card--v3 .tdi-card-title { margin: 0 0 0.6rem; font-size: 1.36rem; line-height: 1; align-items: center; }
+.tdi-card--v3 .tdi-card-title .tsec-ic { margin-top: 0; }
 .tdi-card--v3 .tdi-date {
   display: block; margin: 0 0 0.4rem;
   font-family: var(--font-family); font-size: 0.8rem; font-weight: 650; color: #26375a;
@@ -18937,7 +18939,8 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 [data-prompts-host] .aii-fi-acc .aii-emenu-host.is-open { border-radius: 0; }
 
 /* ── Topic landing two-column top: matched heights + air (revamp767) ── */
-.topic-home .topic-top { margin-top: 0.5rem; }
+.topic-home .topic-top { margin-top: 0.85rem; }
+@media (min-width: 1024px) { .topic-home .topic-top { margin-top: 1.2rem; } }
 .topic-top-main { display: flex; flex-direction: column; }
 .tdi-card--v3 { flex: 1 1 auto; display: flex; flex-direction: column; }
 .tdi-card--v3 .tdi-summary { flex: 1 1 auto; }
@@ -18950,16 +18953,17 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 }
 
 /* ═══ Topic news-feed polish (revamp768) ═════════════════════════════════════ */
-/* Head lockup: chip + title tight and vertically centered, calmer title size. */
-.newsfeed-head--topic .newsfeed-title {
-  display: flex !important; align-items: center !important; gap: 9px !important;
-  font-size: 1.24rem !important; line-height: 1.2;
+/* Head lockup (home + topic): chip + title tight and vertically centered. */
+.newsfeed-head--home .newsfeed-title {
+  display: flex !important; align-items: center !important; gap: 9px !important; line-height: 1.2;
 }
-.newsfeed-head--topic .newsfeed-brandic { margin-right: 0; width: 28px; height: 28px; }
-.newsfeed-head--topic .newsfeed-title-main { transform: none !important; line-height: 1.2; }
+.newsfeed-head--home .newsfeed-brandic { margin-right: 0; width: 28px; height: 28px; }
+.newsfeed-head--home .newsfeed-title-main { transform: none !important; line-height: 1.2; }
+/* Topic head: match the homepage weight, a smidge smaller. */
+.newsfeed-head--topic .newsfeed-title { font-size: 1.18rem !important; font-weight: 800 !important; }
 /* Air between the head rule and the first row of story cards in 2-col mode. */
 @media (min-width: 1200px) {
-  .topic-band .topic-home #section-newsfeed .news-list { margin-top: 12px !important; }
+  .topic-band .topic-home #section-newsfeed .news-list { margin-top: 18px !important; }
 }
 /* Single-column list: the row hover paint no longer collides with the head
    separator (rounded inset layer, same treatment as the trending rows). */
