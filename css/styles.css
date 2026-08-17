@@ -18881,8 +18881,9 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 /* ── Topic-page news feed: two columns on wide screens (revamp765) ──────────
    TOPIC PAGES ONLY (never home). Stories become equal-height cards — title and
    description clamp so rows line up; back to the single-column divider list
-   below 1200px. */
-@media (min-width: 1200px) {
+   only once the whole landing layout stacks (same 1024px break as the
+   Daily Intelligence / gateway columns). */
+@media (min-width: 1024px) {
   /* The base topic feed pins `.news-list { display:flex !important }` at ID+class
      specificity — match it and land later in the cascade. */
   .topic-band .topic-home #section-newsfeed .news-list {
@@ -18966,12 +18967,12 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 /* Topic head: match the homepage weight, a smidge smaller. */
 .newsfeed-head--topic .newsfeed-title { font-size: 1.18rem !important; font-weight: 800 !important; }
 /* Air between the head rule and the first row of story cards in 2-col mode. */
-@media (min-width: 1200px) {
+@media (min-width: 1024px) {
   .topic-band .topic-home #section-newsfeed .news-list { margin-top: 18px !important; }
 }
 /* Single-column list: the row hover paint no longer collides with the head
    separator (rounded inset layer, same treatment as the trending rows). */
-@media (hover: hover) and (max-width: 1199.98px) {
+@media (hover: hover) and (max-width: 1023.98px) {
   .topic-band .topic-home #section-newsfeed .news-card { position: relative; }
   .topic-band .topic-home #section-newsfeed .news-card:hover { background: transparent !important; }
   .topic-band .topic-home #section-newsfeed .news-card:hover::before {
