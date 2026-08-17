@@ -19146,3 +19146,93 @@ body.sticky-always.has-subnav:has(.topic-home) #content {
       above it. */
 .ni-inner .ni-sec { padding-bottom: 0 !important; margin: 0 0 12px !important; }
 .ni-inner .ni-sec-head { margin: 0 0 2px !important; }
+
+/* ═══ revamp776 ══════════════════════════════════════════════════════════════
+   Head spacing, trending page polish, topic-header rhythm, and a rebalanced
+   Daily Intelligence row. */
+
+/* ── Homepage news head sat tight against its rule; the topic pages' head has
+      the right breathing room, so match it (#img8/#img9). ── */
+body.home-search #section-newsfeed .newsfeed-head--home,
+.newsfeed-head--home { padding-bottom: 1rem !important; }
+
+/* ── Trending page ─────────────────────────────────────────────────────────
+      Stronger rules under the section titles, to the same 2px weight the news
+      heads carry (#img10). */
+.aii-nav-dd-trending .aii-nav-dd-subbar,
+.aii-nav-dd-trending .tlm-controlbar { border-bottom: 2px solid #e0e5ee !important; }
+.trend-earlier-head { border-bottom: 2px solid #e0e5ee !important; }
+
+/* Row hover MEETS the hairlines above and below rather than floating inside
+   them (revamp765's rounded inset is retired). The 1px bleed covers the
+   separator itself, so the first row in each column reaches the rule under the
+   controls (#img11-13). */
+@media (hover: hover) {
+  .aii-nav-dd-trending .trend-card:not(.is-expanded):hover { background: transparent !important; }
+  .aii-nav-dd-trending .trend-card:not(.is-expanded):hover::before {
+    content: ''; position: absolute; inset: -1px 0 -1px; border-radius: 0;
+    background: #f2f5f9; z-index: 0;
+  }
+}
+
+/* ── Topic header: closer to the nav, more air under the title, and the
+      related-topic separators become a faint hairline pipe rather than a dot
+      (#img14). The pipe fades at both ends so it reads as a rule, not a glyph. */
+body.sticky-always.has-subnav:has(.topic-home) #content {
+  padding-top: calc(var(--nav-h) + 0.75rem);
+}
+@media (max-width: 640px) {
+  body.sticky-always.has-subnav:has(.topic-home) #content {
+    padding-top: calc(var(--nav-h) + 0.6rem);
+  }
+}
+.tbh-title { margin-bottom: 1rem; }
+.tbh-subswrap { padding-top: 0.95rem; }
+.tbh-sub + .tbh-sub::before,
+.tbh-more::before {
+  content: ''; left: -0.5rem; top: 50%; transform: translateY(-50%);
+  width: 1px; height: 0.95em; background: linear-gradient(
+    to bottom, rgba(148, 163, 184, 0), #b9c4d6 24%, #b9c4d6 76%, rgba(148, 163, 184, 0));
+}
+
+/* ── Daily Intelligence row: a narrower card whose paragraph runs FURTHER, so
+      the gateway cards get the width back and lose height (#img16). ── */
+@media (min-width: 1024px) {
+  .topic-top { grid-template-columns: minmax(0, 1fr) 420px; }
+}
+.tdi-summary, .tdi-card--v3 .tdi-summary { max-width: none; }
+/* The CTA follows the paragraph instead of being pushed to the card's floor. */
+.tdi-card--v3 .tdi-summary { flex: 0 0 auto; }
+.tdi-card--v3 .tdi-go {
+  margin-top: 1.15rem; align-self: flex-start;
+  padding: 0.6rem 1.15rem; border-radius: 999px;
+  font-size: 0.95rem; font-weight: 700; gap: 9px;
+  background: #1e3a8a; color: #fff;
+  box-shadow: 0 1px 2px rgba(15, 26, 46, 0.14);
+  transition: background .14s ease, box-shadow .14s ease, transform .14s ease;
+}
+.tdi-card--v3 .tdi-go svg { width: 15px; height: 15px; }
+@media (hover: hover) {
+  .tdi-card--v3:hover .tdi-go {
+    background: #172554; color: #fff;
+    box-shadow: 0 3px 10px rgba(30, 58, 138, 0.26);
+  }
+  .tdi-card--v3:hover .tdi-go svg { transform: translateX(3px); }
+}
+
+/* ── Mobile: the topic news head can carry more weight, and the first story
+      shouldn't sit a mile under the rule with hover padding making up for it
+      (#img17/#img18/#img19). ── */
+@media (max-width: 899.98px) {
+  /* The inner .newsfeed-title-main span is what actually renders — sizing only
+     the outer .newsfeed-title leaves it at its own 1.16rem. */
+  #topic-tab-body #section-newsfeed .newsfeed-head--topic .newsfeed-title,
+  .newsfeed-head--topic .newsfeed-title,
+  #topic-tab-body #section-newsfeed .newsfeed-head--topic .newsfeed-title-main,
+  .newsfeed-head--topic .newsfeed-title-main { font-size: 1.3rem !important; }
+}
+@media (max-width: 1023.98px) {
+  .topic-band .topic-home #section-newsfeed .news-card:first-child .news-card-link {
+    padding-top: 9px !important;
+  }
+}

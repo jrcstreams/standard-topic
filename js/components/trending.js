@@ -475,7 +475,7 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
     // but ONLY once "View more" is clicked, so it's never a standalone bottom bucket.
     if (earlier.length) {
       html += `<div class="trend-earlier">
-        <div class="trend-earlier-head"><h3 class="trend-earlier-title">Earlier</h3><p class="trend-earlier-sub">Recently trending, not right now</p></div>
+        <div class="trend-earlier-head"><h3 class="trend-earlier-title">Trending Earlier</h3><p class="trend-earlier-sub">Recently trending, not right now</p></div>
         <div class="trend-card-grid">${earlier.map((t, i) => trendCardHTML(t, 5000 + i, { metaText: '', past: true })).join('')}</div>
       </div>`;
     }

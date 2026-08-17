@@ -1167,7 +1167,7 @@ function openTopicsNavDropdown() { if (!(navDdOpen && navDdOpen.key === 'topics'
 function trendingNavDdCfg(expandQuery) {
   return {
     key: 'trending', triggerId: 'nav-trending', className: 'aii-nav-dd-trending',
-    title: 'Trending', ariaLabel: 'Trending now',
+    title: 'Trending Now', ariaLabel: 'Trending now',
     subtitle: "What's being searched for right now.",
     subBarHTML: '<div class="tlm-controlbar" data-trend-controls></div>',
     contentHTML: '<div data-trend-grid></div>',
@@ -1343,12 +1343,12 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
         <div class="topic-gateways topic-gateways--side">
           <a class="tg-card tg-card--v2" href="#/topic/${escapeAttr(topic.slug)}/websources">
             <span class="tg-titlerow"><span class="tg-ic" aria-hidden="true">${TOPIC_AI_ICONS.websearch}</span><span class="tg-name">Web Resources</span></span>
-            <span class="tg-sub">Open ${escapeHTML(topic.name)} across search, social, video and fact-checking sources.</span>
+            <span class="tg-sub">Explore this topic across search, social and video.</span>
             <span class="tg-link">View web resources${SUBPAGE_ARROW}</span>
           </a>
           <a class="tg-card tg-card--v2" href="#/topic/${escapeAttr(topic.slug)}/prompts">
             <span class="tg-titlerow"><span class="tg-ic" aria-hidden="true">${TOPIC_AI_ICONS['topic-specific']}</span><span class="tg-name">AI Prompts</span></span>
-            <span class="tg-sub">Ready-made ${escapeHTML(topic.name)} prompts to run in any AI model.</span>
+            <span class="tg-sub">Ready-made prompts to run in any AI model.</span>
             <span class="tg-link">View AI prompts${SUBPAGE_ARROW}</span>
           </a>
         </div>
