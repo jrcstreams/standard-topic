@@ -2180,13 +2180,18 @@ export function renderDailyIntelligence(container, scope) {
   // Header mirrors the topic-section lockup (kicker + icon-chip title), with the
   // date/updated line PROMINENT under the title and the briefing's summary as
   // the lede beneath it (revamp765).
+  // inline (revamp777): the briefing renders INSIDE the landing card, which
+  // already carries the title, the date and the teaser — so the page header and
+  // the repeated summary lede are both dropped and the reader lands straight on
+  // the content.
+  const inline = !!scope.inline;
   container.innerHTML = `
-    <section class="di-page">
-      <header class="di-head">
+    <section class="di-page${inline ? ' di-page--inline' : ''}">
+      ${inline ? '' : `<header class="di-head">
         <h2 class="tsec-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>Daily Intelligence</h2>
         <div class="di-datebar" data-di-meta></div>
         <p class="di-lede" data-di-lede hidden></p>
-      </header>
+      </header>`}
       <div class="di-body" data-di-body>${genLoaderHTML()}</div>
     </section>`;
   const body = container.querySelector('[data-di-body]');
@@ -2204,8 +2209,8 @@ export function renderDailyIntelligence(container, scope) {
     const upd = data.generatedAt ? relTime(data.generatedAt) : '';
     let day = '';
     try { if (data.generatedAt) day = new Date(data.generatedAt).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); } catch (_) {}
-    meta.innerHTML = `${day ? `<span class="di-date-day">${esc(day)}</span>` : ''}${day && upd ? '<span class="di-date-sep" aria-hidden="true">·</span>' : ''}${upd ? `<span class="di-date-upd">Updated ${esc(upd)}</span>` : ''}`;
-    if (data.summary) { lede.textContent = data.summary; lede.hidden = false; }
+    if (meta) meta.innerHTML = `${day ? `<span class="di-date-day">${esc(day)}</span>` : ''}${day && upd ? '<span class="di-date-sep" aria-hidden="true">·</span>' : ''}${upd ? `<span class="di-date-upd">Updated ${esc(upd)}</span>` : ''}`;
+    if (lede && data.summary) { lede.textContent = data.summary; lede.hidden = false; }
 
     // Overview + Briefings (revamp765 format). Older cached briefs (Catch Up /
     // Deep Dive / 101 Info) degrade gracefully: everything that isn't the
@@ -2225,20 +2230,20 @@ export function renderDailyIntelligence(container, scope) {
     const { buckets, unmatched } = attributeItemsToSections(rows, pseudo);
 
     body.innerHTML = `
-      <div class="di-prov2">${LOGO}<span>AI Generated</span></div>
+      <div class="di-prov2">${LOGO}<span>Daily Intelligence text is AI-generated</span></div>
       ${overview ? `<section class="di-ov">
-        <div class="di-eyebrow">Today's Overview</div>
+        <h3 class="di-sectitle">Overview</h3>
         <div class="di-ov-body aii-sec-body">${renderBriefBody(overview, null)}</div>
       </section>` : ''}
       ${items.length ? `<section class="di-briefs">
-        <div class="di-eyebrow">Briefings</div>
+        <h3 class="di-sectitle">Briefings</h3>
         ${items.map((it, i) => `<article class="dib">
           <div class="dib-body aii-sec-body">${renderBriefBody(it.raw, null)}</div>
           ${srcChips(buckets[i])}
         </article>`).join('')}
       </section>` : ''}
       ${unmatched.length ? `<section class="di-more">
-        <div class="di-eyebrow">More Coverage</div>
+        <h3 class="di-sectitle">More Coverage</h3>
         <div class="di-reads-list di-reads-list--more">${unmatched.slice(0, 6).map(readRow).join('')}</div>
       </section>` : ''}`;
   };

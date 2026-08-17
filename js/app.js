@@ -1248,9 +1248,14 @@ const TOPIC_SUBPAGE_ALIAS = {
   explore: 'websources', websearch: 'websources',
   shortcuts: 'prompts', 'topic-prompts': 'prompts', 'evergreen-prompts': 'prompts', external: 'prompts',
 };
-function topicSubpageFor(tab) {
-  if (TOPIC_SUBPAGES[tab]) return tab;
-  return TOPIC_SUBPAGE_ALIAS[tab] || null;    // null → the landing page
+// revamp777: the topic sub-pages are RETIRED. Daily Intelligence and AI Prompts
+// expand inline on the landing page, and Web Resources is gone entirely (the
+// search page covers that job better — nobody searches a bare topic name on
+// YouTube). Every legacy sub-page URL now resolves to the landing; the router
+// rewrites the address so the old deep links keep working.
+function topicSubpageFor() { return null; }
+function isLegacyTopicSubpage(tab) {
+  return !!(tab && (TOPIC_SUBPAGES[tab] || TOPIC_SUBPAGE_ALIAS[tab]));
 }
 // Leading icons for the topic-page cards and rows.
 const TOPIC_AI_ICONS = {
@@ -1264,94 +1269,116 @@ const TOPIC_AI_ICONS = {
 };
 const SUBPAGE_ARROW = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>';
 
-// Render the body of a topic page: the landing (page = null) or one of the
-// flip sub-pages (intelligence / websources / prompts).
+// The two landing cards expand IN PLACE (revamp777). Only one is open at a
+// time — the open card takes the full width of the row and the other drops
+// beneath it, which is also exactly what the stacked mobile layout does.
+// Content is rendered lazily on first open, then kept.
+function wireTopicLandingCards(root, topic, ctx) {
+  const top = root.querySelector('.topic-top');
+  const cards = {
+    di: { btn: root.querySelector('[data-di-toggle]'), host: root.querySelector('[data-di-expand]'), sel: '.tdi-card', cls: 'is-di-open', loaded: false },
+    pr: { btn: root.querySelector('[data-pr-toggle]'), host: root.querySelector('[data-pr-expand]'), sel: '.tpr-card', cls: 'is-pr-open', loaded: false },
+  };
+
+  const setOpen = (key, on) => {
+    const c = cards[key];
+    if (!c || !c.btn || !c.host) return;
+    if (on) setOpen(key === 'di' ? 'pr' : 'di', false);      // one open card at a time
+    c.host.hidden = !on;
+    c.btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+    c.btn.closest(c.sel)?.classList.toggle('is-open', on);
+    if (top) top.classList.toggle(c.cls, on);
+    if (!on || c.loaded) return;
+    c.loaded = true;
+    if (key === 'di') {
+      // inline: the card already shows the title and date, so the briefing
+      // renders its body alone (no second header, no repeated summary).
+      renderDailyIntelligence(c.host, {
+        topic: topic.name, label: topic.name, slug: topic.slug, inline: true,
+      });
+    } else {
+      renderAIIntelligence(c.host, {
+        inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
+        promptsPage: true, topic: topic.name, label: topic.name,
+        descriptions: ctx.descriptions, icons: ctx.icons, shortcuts: ctx.shortcuts,
+        topicKey: topic.slug,
+      });
+    }
+  };
+
+  Object.keys(cards).forEach((key) => {
+    cards[key].btn?.addEventListener('click', () => {
+      setOpen(key, cards[key].btn.getAttribute('aria-expanded') !== 'true');
+    });
+  });
+
+  // A featured prompt opens the library and drills to that prompt's row.
+  root.querySelectorAll('[data-tpr-open]').forEach((b) => {
+    b.addEventListener('click', () => {
+      const name = b.getAttribute('data-tpr-open') || '';
+      setOpen('pr', true);
+      if (!name) return;
+      const find = () => {
+        const rows = [...cards.pr.host.querySelectorAll('.aii-fi-acc-name, .aii-fi-acc-title')];
+        const hit = rows.find((r) => (r.textContent || '').trim() === name.trim());
+        if (!hit) return false;
+        (hit.closest('button') || hit).click();
+        hit.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        return true;
+      };
+      [120, 420, 900].forEach((d) => setTimeout(() => { try { find(); } catch (_) {} }, d));
+    });
+  });
+}
+
+// Render the body of a topic page (revamp777: the landing is the only page).
 function renderTopicSubpage(container, topic, descriptions, icons, page) {
   const body = container.querySelector('#topic-tab-body');
   if (!body) return;
   let shortcuts = [];
   try { shortcuts = getShortcutsForTopic(topic.slug) || []; } catch (_) {}
   try {
-    if (page === 'websources') {
-      // Web Resources — the web-source explorer, now a full sub-page.
-      const efBody = exploreFurtherHTML({ webTerm: topic.name, name: topic.name, omitAI: true });
-      body.innerHTML = `<div class="topic-explore-host">
-        <div class="aii-tabhead-spacer"></div>
-        <section class="aii-fi-sec">
-          <div class="aii-fi-sechead"><h3 class="aii-fi-sectitle">Web Resources</h3><p class="aii-fi-secsub">Open ${escapeHTML(topic.name)} across search, social, video and fact-checking sources.</p></div>
-          ${efBody}
-        </section>
-      </div>`;
-      wireExploreFurther(body);
-      return;
-    }
-    if (page === 'prompts') {
-      // AI Prompts — the topic's ready-made prompt library (Topic-Specific +
-      // Evergreen), then the external-model hand-off, as a full sub-page.
-      body.innerHTML = `<div class="topic-ai-wrap topic-explore-host">
-        <div class="aii-tabhead-spacer"></div>
-        <section class="aii-fi-sec">
-          <div class="aii-fi-sechead"><h3 class="aii-fi-sectitle">AI Prompts</h3><p class="aii-fi-secsub">Ready-made prompts for ${escapeHTML(topic.name)} — preview each one, then run it in the AI model of your choice.</p></div>
-          <div data-prompts-host></div>
-          <div class="tp-models">
-            <div class="aii-fi-sechead"><h3 class="aii-fi-sectitle">Explore with External AI Models</h3><p class="aii-fi-secsub">Send ${escapeHTML(topic.name)} to ChatGPT, Claude, Gemini and more.</p></div>
-            <div data-models-host></div>
-          </div>
-        </section>
-      </div>`;
-      renderAIIntelligence(body.querySelector('[data-prompts-host]'), {
-        inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
-        promptsPage: true,
-        topic: topic.name, label: topic.name, descriptions, icons, shortcuts, topicKey: topic.slug,
-      });
-      const mHost = body.querySelector('[data-models-host]');
-      if (mHost) {
-        const prompt = `Give me a thorough, current briefing on ${topic.name}. Be specific and cite sources.`;
-        mHost.innerHTML = exploreAIModelsHTML({ prompt, name: topic.name, subDesc: `Send ${topic.name} to ChatGPT, Claude, Gemini and more.` });
-        wireExploreFurther(mHost);
-      }
-      return;
-    }
-    if (page === 'intelligence') {
-      // Daily Intelligence — the daily combined AI briefing sub-page.
-      body.innerHTML = `<div class="topic-ai-wrap topic-explore-host">
-        <div class="aii-tabhead-spacer"></div>
-        <div data-di-host></div>
-      </div>`;
-      renderDailyIntelligence(body.querySelector('[data-di-host]'), {
-        topic: topic.name, label: topic.name, slug: topic.slug,
-      });
-      return;
-    }
+    // revamp777: the websources / prompts / intelligence sub-page branches are
+    // gone — everything lives on the landing page below.
     // ── Landing page (revamp765) ─────────────────────────────────────────────
-    // Daily Intelligence leads under a section header (topic kicker + title,
-    // matching the news head); on wide screens the Web Resources / AI Prompts
-    // gateways stack in a side column beside it. The news feed follows under
-    // its own "News Feed" head.
+    // revamp777: two equal cards — Daily Intelligence and AI Prompts — sit side
+    // by side on wide screens and stack below 1024px. Either one EXPANDS IN
+    // PLACE: the opened card takes the full width and the other drops beneath
+    // it, so neither ever navigates away. The news feed follows under its own
+    // "News Feed" head.
+    const featuredPrompts = shortcuts.slice(0, 5);
     body.innerHTML = `<div class="topic-home">
       <div class="aii-tabhead-spacer"></div>
       ${topicBodyHeadHTML(topic)}
       <div class="topic-top">
         <section class="topic-top-main">
-          <a class="tdi-card tdi-card--v3" href="#/topic/${escapeAttr(topic.slug)}/intelligence" data-tdi>
+          <div class="tdi-card tdi-card--v3" data-tdi>
             <h2 class="tsec-title tdi-card-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>Daily Intelligence</h2>
             <span class="tdi-date" data-tdi-date></span>
             <p class="tdi-summary" data-tdi-summary>Preparing today's briefing…</p>
-            <span class="tdi-go">Read today's briefing${SUBPAGE_ARROW}</span>
-          </a>
+            <button type="button" class="tdi-go" data-di-toggle aria-expanded="false">
+              <span class="tdi-go-open">Read today's briefing</span>
+              <span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
+            </button>
+            <div class="tdi-expand" data-di-expand hidden></div>
+          </div>
         </section>
-        <div class="topic-gateways topic-gateways--side">
-          <a class="tg-card tg-card--v2" href="#/topic/${escapeAttr(topic.slug)}/websources">
-            <span class="tg-titlerow"><span class="tg-ic" aria-hidden="true">${TOPIC_AI_ICONS.websearch}</span><span class="tg-name">Web Resources</span></span>
-            <span class="tg-sub">Explore this topic across search, social and video.</span>
-            <span class="tg-link">View web resources${SUBPAGE_ARROW}</span>
-          </a>
-          <a class="tg-card tg-card--v2" href="#/topic/${escapeAttr(topic.slug)}/prompts">
-            <span class="tg-titlerow"><span class="tg-ic" aria-hidden="true">${TOPIC_AI_ICONS['topic-specific']}</span><span class="tg-name">AI Prompts</span></span>
-            <span class="tg-sub">Ready-made prompts to run in any AI model.</span>
-            <span class="tg-link">View AI prompts${SUBPAGE_ARROW}</span>
-          </a>
-        </div>
+        <section class="topic-top-side">
+          <div class="tpr-card" data-tpr>
+            <h2 class="tsec-title tpr-card-title"><span class="tsec-ic tsec-ic--pr" aria-hidden="true">${TOPIC_AI_ICONS['topic-specific']}</span>AI Prompts</h2>
+            <p class="tpr-sub">Ready-made prompts to run in any AI model.</p>
+            ${featuredPrompts.length ? `<ul class="tpr-list">${featuredPrompts.map((s) => `
+              <li class="tpr-row"><button type="button" class="tpr-row-btn" data-tpr-open="${escapeAttr(s.name || '')}">
+                <span class="tpr-row-name">${escapeHTML(s.name || '')}</span>
+                ${s.evergreen ? '<span class="tpr-row-tag">Evergreen</span>' : ''}
+              </button></li>`).join('')}</ul>` : ''}
+            <button type="button" class="tpr-go" data-pr-toggle aria-expanded="false">
+              <span class="tpr-go-open">View all ${shortcuts.length} prompts</span>
+              <span class="tpr-go-close">Hide prompts</span>${SUBPAGE_ARROW}
+            </button>
+            <div class="tpr-expand" data-pr-expand hidden></div>
+          </div>
+        </section>
       </div>
       <div class="topic-news-wrap">
         <section id="section-newsfeed" class="layout-section"></section>
@@ -1364,6 +1391,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
     wireSubnavPicker(body);
     wireSubtopicsMore(body);
     wireTopicHeroCondense();
+    wireTopicLandingCards(body, topic, { descriptions, icons, shortcuts });
     renderNewsFeed(body.querySelector('#section-newsfeed'), topic, false);
     // Fill the Daily Intelligence card's summary + date once the brief lands.
     // The fetch is cached (shared with the sub-page), so tapping through is
@@ -2624,10 +2652,10 @@ function documentTitleFor(route) {
     case 'topic': {
       const t = getTopicBySlug(route.slug);
       if (!t) return `${SITE_TITLE_SUFFIX}`;
-      const tab = TOPIC_TAB_LABEL[route.tab];
-      return tab
-        ? `${t.name} ${tab} — ${SITE_TITLE_SUFFIX}`
-        : `${t.name} — News, Resources & AI Insights | ${SITE_TITLE_SUFFIX}`;
+      // revamp777: sub-pages are retired — a legacy /prompts or /websources URL
+      // renders (and is rewritten to) the topic page, so it takes the topic's
+      // own title rather than the old tab-suffixed one.
+      return `${t.name} — News, Resources & AI Insights | ${SITE_TITLE_SUFFIX}`;
     }
     case 'custom': return route.term ? `${route.term} — Search | ${SITE_TITLE_SUFFIX}` : `Search | ${SITE_TITLE_SUFFIX}`;
     case 'search': return `Search | ${SITE_TITLE_SUFFIX}`;
@@ -3301,7 +3329,14 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     `;
     const descriptions = {}; const icons = {};
     try { (getShortcutsForTopic(topic.slug) || []).forEach((s) => { if (s && s.name) { descriptions[s.name] = s.description || ''; icons[s.name] = s.icon || ''; } }); } catch (_) {}
-    renderTopicSubpage(container, topic, descriptions, icons, topicSubpageFor(route && route.tab));
+    // Legacy /intelligence, /websources, /prompts links land on the topic page
+    // itself now — rewrite the address so the URL matches what's rendered.
+    if (route && isLegacyTopicSubpage(route.tab)) {
+      const clean = location.pathname.startsWith('/topic/')
+        ? `/topic/${topic.slug}` : `#/topic/${topic.slug}`;
+      try { history.replaceState(null, '', clean); } catch (_) {}
+    }
+    renderTopicSubpage(container, topic, descriptions, icons, null);
     return;
   } else {
     // Custom-search pages keep the stacked shortcuts + news layout.

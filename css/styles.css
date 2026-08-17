@@ -19236,3 +19236,106 @@ body.sticky-always.has-subnav:has(.topic-home) #content {
     padding-top: 9px !important;
   }
 }
+
+/* ═══ revamp777 ══════════════════════════════════════════════════════════════
+   Topic landing = two equal cards that expand IN PLACE. Web Resources and all
+   three sub-pages are retired; Daily Intelligence and AI Prompts each open to
+   full width with the other card dropping beneath. */
+
+/* ── The row: 50/50 on wide screens, stacked below 1024, equal heights ── */
+@media (min-width: 1024px) {
+  .topic-top {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    align-items: stretch !important; gap: 1.4rem !important;
+  }
+  /* An open card owns the row; the other falls to the next line. */
+  .topic-top.is-di-open, .topic-top.is-pr-open {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+.topic-top-main, .topic-top-side { min-width: 0; display: flex; flex-direction: column; }
+.topic-top-side > .tpr-card, .topic-top-main > .tdi-card { flex: 1 1 auto; }
+
+/* ── AI Prompts card: the same shape as Daily Intelligence, in white ── */
+.tpr-card {
+  display: flex; flex-direction: column; min-width: 0;
+  padding: 1.05rem 1.2rem 1rem; border-radius: 16px;
+  border: 1px solid var(--color-surface-border); background: #fff;
+}
+.tpr-card-title { margin: 0 0 0.6rem; font-size: 1.36rem; line-height: 1; align-items: center; }
+.tsec-ic--pr { background: color-mix(in srgb, #4f46e5 12%, #fff); color: #4f46e5; }
+.tsec-ic--pr svg { width: 16px; height: 16px; display: block; }
+.tpr-sub {
+  margin: 0 0 0.85rem; font-family: var(--font-family);
+  font-size: 0.92rem; line-height: 1.55; color: #42506b;
+}
+.tpr-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.tpr-row + .tpr-row { border-top: 1px solid #eef1f7; }
+.tpr-row-btn {
+  display: flex; align-items: center; gap: 8px; width: 100%; text-align: left;
+  padding: 0.55rem 0; border: 0; background: none; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.9rem; font-weight: 600; color: #26375a;
+  transition: color .14s ease;
+}
+.tpr-row-name { min-width: 0; }
+.tpr-row-tag {
+  flex: none; padding: 2px 7px; border-radius: 999px; background: #f1f4f9;
+  font-size: 0.64rem; font-weight: 750; letter-spacing: 0.05em;
+  text-transform: uppercase; color: #7c8aa3;
+}
+@media (hover: hover) { .tpr-row-btn:hover .tpr-row-name { color: #4f46e5; } }
+
+/* ── Both cards' CTA: one pill language ── */
+.tpr-go {
+  display: inline-flex; align-items: center; gap: 9px; align-self: flex-start;
+  margin-top: 1.05rem; padding: 0.6rem 1.15rem; border: 0; border-radius: 999px;
+  font-family: var(--font-family); font-size: 0.95rem; font-weight: 700;
+  background: #4338ca; color: #fff; cursor: pointer;
+  box-shadow: 0 1px 2px rgba(15, 26, 46, 0.14);
+  transition: background .14s ease, box-shadow .14s ease;
+}
+.tpr-go svg { flex: none; width: 15px; height: 15px; transition: transform .14s ease; }
+@media (hover: hover) {
+  .tpr-card:hover .tpr-go, .tpr-go:hover { background: #3730a3; }
+  .tpr-go:hover svg { transform: translateX(3px); }
+}
+/* The CTA label flips with the card's state. */
+.tdi-go-close, .tpr-go-close { display: none; }
+.tdi-card.is-open .tdi-go-open, .tpr-card.is-open .tpr-go-open { display: none; }
+.tdi-card.is-open .tdi-go-close, .tpr-card.is-open .tpr-go-close { display: inline; }
+.tdi-card.is-open .tdi-go svg, .tpr-card.is-open .tpr-go svg { transform: rotate(90deg); }
+/* Open Daily Intelligence drops its teaser — the full briefing replaces it. */
+.tdi-card.is-open .tdi-summary { display: none; }
+.tpr-card.is-open .tpr-list, .tpr-card.is-open .tpr-sub { display: none; }
+
+/* ── The expanded body sits under a rule, as its own band ── */
+.tdi-expand, .tpr-expand { margin-top: 1.15rem; border-top: 1.5px solid #d3d9e4; padding-top: 1rem; }
+.tdi-expand[hidden], .tpr-expand[hidden] { display: none; }
+.di-page--inline { display: block; }
+
+/* ── Briefing format: real section titles over rules, and FAINTER rules
+      between the individual stories (#img25-27) ── */
+.di-sectitle {
+  margin: 0 0 0.85rem; padding-bottom: 0.5rem;
+  border-bottom: 1.5px solid #d3d9e4;
+  font-family: var(--font-display); font-size: 1.24rem; font-weight: 800;
+  letter-spacing: -0.018em; color: #16233d; text-transform: none;
+}
+.dib { border-top: 1px solid #f0f3f8; }
+/* Provenance matches the blue-spark treatment used on every other AI surface. */
+.di-prov2 {
+  gap: 6px; margin-bottom: 0.85rem;
+  font-size: 0.74rem; font-weight: 500; color: var(--color-text-muted);
+}
+.di-prov2 svg { width: 13px; height: 13px; fill: #2563eb; }
+
+/* ── Sources / Search-this drawers: label next to its icon, and no
+      full-width slab on wide screens (#img29-31) ── */
+.te-drawer, .te-drawer--link { width: auto !important; }
+.te-drawer > .te-drawer-sum { width: auto !important; max-width: none !important; }
+.te-drawer-ic { margin-right: 0 !important; }
+.te-drawer-title { flex: 0 0 auto !important; min-width: 0 !important; }
+@media (max-width: 480px) {
+  .te-drawer, .te-drawer--link { width: 100% !important; }
+  .te-drawer > .te-drawer-sum { width: 100% !important; }
+}
