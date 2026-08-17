@@ -18897,6 +18897,10 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
   }
   .topic-band .topic-home #section-newsfeed .news-card::after,
   .topic-band .topic-home #section-newsfeed .news-card::before { display: none !important; }
+  /* A legacy flat-list rule strips border-top from the first two cards
+     (:nth-child(1)/(2)) at higher specificity — restore it for the grid. */
+  .topic-band .topic-home #section-newsfeed .news-list .news-card:nth-child(1),
+  .topic-band .topic-home #section-newsfeed .news-list .news-card:nth-child(2) { border-top: 1px solid #e8edf5 !important; }
   .topic-band .topic-home #section-newsfeed .news-card .news-card-link { padding: 0 !important; margin: 0 !important; width: 100%; }
   .topic-band .topic-home #section-newsfeed .news-card .news-card-title {
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
