@@ -18781,14 +18781,14 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 /* DI landing card v3 — title + date INSIDE the card, summary, then a plain
    CTA link (no separator rule). */
 .tdi-card--v3 { padding: 1.05rem 1.2rem 1rem; margin-top: 0; display: block; }
-.tdi-card--v3 .tdi-card-title { margin: 0 0 0.6rem; font-size: 1.18rem; }
+.tdi-card--v3 .tdi-card-title { margin: 0 0 0.6rem; font-size: 1.28rem; }
 .tdi-card--v3 .tdi-date {
   display: block; margin: 0 0 0.4rem;
-  font-family: var(--font-family); font-size: 0.8rem; font-weight: 750; color: #26375a;
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 650; color: #26375a;
 }
 .tdi-card--v3 .tdi-date:empty { display: none; }
-.tdi-card--v3 .tdi-summary { font-size: 0.95rem; }
-.tdi-card--v3 .tdi-go { margin-top: 0.85rem; }
+.tdi-card--v3 .tdi-summary { font-size: 0.92rem; }
+.tdi-card--v3 .tdi-go { margin-top: 0.85rem; font-size: 0.88rem; }
 .tdi-go { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-family); font-size: 0.84rem; font-weight: 750; color: #2c4f9e; white-space: nowrap; }
 .tdi-go svg { flex: none; transition: transform .14s ease; }
 @media (hover: hover) { .tdi-card--v3:hover .tdi-go { color: #1d4ed8; } .tdi-card--v3:hover .tdi-go svg { transform: translateX(2px); } }
@@ -18947,4 +18947,28 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
   .topic-top { align-items: stretch !important; gap: 1.75rem !important; }
   .topic-gateways--side { justify-content: stretch; }
   .topic-gateways--side .tg-card { flex: 1 1 0; }
+}
+
+/* ═══ Topic news-feed polish (revamp768) ═════════════════════════════════════ */
+/* Head lockup: chip + title tight and vertically centered, calmer title size. */
+.newsfeed-head--topic .newsfeed-title {
+  display: flex !important; align-items: center !important; gap: 9px !important;
+  font-size: 1.24rem !important; line-height: 1.2;
+}
+.newsfeed-head--topic .newsfeed-brandic { margin-right: 0; width: 28px; height: 28px; }
+.newsfeed-head--topic .newsfeed-title-main { transform: none !important; line-height: 1.2; }
+/* Air between the head rule and the first row of story cards in 2-col mode. */
+@media (min-width: 1200px) {
+  .topic-band .topic-home #section-newsfeed .news-list { margin-top: 12px !important; }
+}
+/* Single-column list: the row hover paint no longer collides with the head
+   separator (rounded inset layer, same treatment as the trending rows). */
+@media (hover: hover) and (max-width: 1199.98px) {
+  .topic-band .topic-home #section-newsfeed .news-card { position: relative; }
+  .topic-band .topic-home #section-newsfeed .news-card:hover { background: transparent !important; }
+  .topic-band .topic-home #section-newsfeed .news-card:hover::before {
+    content: ''; position: absolute; inset: 3px 0; border-radius: 10px;
+    background: #f7f9fc; z-index: 0;
+  }
+  .topic-band .topic-home #section-newsfeed .news-card > * { position: relative; z-index: 1; }
 }
