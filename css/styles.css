@@ -17203,24 +17203,10 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-exp,
 .ni-sec-ic { display: none !important; }
 .ni-sec-name { margin: 0; font-family: var(--font-display); font-size: 1rem; font-weight: 700; letter-spacing: -0.012em; color: #26375a; }
 .ni-inner .trend-exp-drawers { margin-top: 16px; border-top: 1px solid #e7ecf3; }
-/* Open story: the X sits in the corner like a trend; View Story stays a button. */
-#section-newsfeed .news-card--open .news-act-ai,
-#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai {
-  position: absolute; top: 12px; right: 12px; z-index: 3;
-  width: 30px; height: 30px; padding: 0; gap: 0;
-  border-radius: 8px; border: 1px solid transparent; background: none; color: #64748b;
-}
-#section-newsfeed .news-card--open .news-act-ai .news-act-ai-open,
-#section-newsfeed .news-card--open .news-act-ai .news-act-ai-close,
-#section-newsfeed .news-card--open .news-act-ai .ai-spark-filled,
-#section-newsfeed .news-card--open .news-act-ai .news-act-ai-chev,
-#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai-open,
-#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai-close,
-#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai .ai-spark-filled,
-#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai .news-act-ai-chev { display: none !important; }
-@media (hover: hover) {
-  #section-newsfeed .news-card--open .news-act-ai:hover { background: rgba(15, 26, 46, 0.06); color: #26375a; }
-}
+/* Open story: the AI Insights button keeps its normal inline pill (revamp773).
+   The corner-✕ treatment was landing on top of the "Generating AI Insights"
+   loader and the AI-Generated provenance line; the panel closes from the
+   bottom "Close AI Insights" button instead. */
 #section-newsfeed .news-card { position: relative; }
 
 /* ── "View more trending": centred, a touch bigger, real hover ───────────── */
@@ -17618,11 +17604,8 @@ body.home-search .home-search-hero .search-panel-hero-inner { padding-bottom: 1r
 #section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-foot {
   background: transparent !important; border: none !important; box-shadow: none !important;
 }
-/* The corner control is an X only — the sparkle was riding alongside it. */
-#section-newsfeed .news-card--open .news-act-ai .news-ai-spark-filled,
-#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai .news-ai-spark-filled { display: none !important; }
-#section-newsfeed .news-card--open .news-act-ai .news-act-ai-x,
-#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai .news-act-ai-x { display: block !important; }
+/* revamp773: the corner-✕ override is gone — the open pill keeps its sparkle,
+   its "Close Insights" label and the trailing ✕ glyph, all inline. */
 /* Provenance line matches the filled treatment used everywhere else. */
 .ni-inner > .ni-aitag-row .ni-aitag svg { fill: #2563eb; stroke: none; width: 13px; height: 13px; }
 .ni-inner > .ni-aitag-row { margin: 2px 0 12px; }
@@ -17709,12 +17692,9 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 .aii-nav-dd.is-condensed .trend-controls-legend,
 .aii-nav-dd.is-condensed .aii-nav-dd-subbar { display: none !important; }
 
-/* ── News story open: the X gets its own row, View Story sits up with the meta ── */
-#section-newsfeed .news-card--open .news-act-ai,
-#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-act-ai {
-  top: auto !important; bottom: auto !important;
-  margin-top: 34px;                         /* clear of the headline, on the meta row */
-}
+/* ── News story open: View Story sits up with the meta ─────────────────── */
+/* revamp773: the 34px drop belonged to the retired corner-✕; the open pill
+   now rides the actions row like the closed one. */
 #section-newsfeed .news-card--open .news-card-body,
 #section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-body { padding-top: 4px !important; }
 #section-newsfeed .news-card--open .news-card-actions,
