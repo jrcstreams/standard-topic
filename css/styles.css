@@ -19036,3 +19036,62 @@ body.home-search #section-newsfeed .newsfeed-head { border-bottom: 2px solid #e0
 @media (hover: hover) and (max-width: 1023.98px) {
   .topic-band .topic-home #section-newsfeed .news-card:not(.news-card--open):hover { background: #f5f7fa !important; }
 }
+
+/* ═══ revamp774 ══════════════════════════════════════════════════════════════
+   Topic landing leads with the page TITLE as its own section — the topic name
+   over a hairline with its related topics as quiet inline links beneath. The
+   sticky subnav band holds off until the reader scrolls past that header, so
+   the topic name is never on screen twice. Desktop only: below 900px the band
+   IS the control (.topic-bodyhead is display:none there, css ~14655).
+   `body:has(.topic-home)` scopes this to the landing — the sub-pages
+   (/intelligence, /websources, /prompts) keep their band + Back bar always. */
+@media (min-width: 900px) {
+  body.app-mode:not(.home-mode):has(.topic-home) #sub-header.is-subnav {
+    transition: opacity .18s ease, visibility .18s ease;
+  }
+  body.app-mode:not(.home-mode):not(.topic-hero-condensed):has(.topic-home) #sub-header.is-subnav {
+    opacity: 0; visibility: hidden; pointer-events: none;
+  }
+  .topic-bodyhead { margin: 0 0 1.7rem; }
+  /* The picker card belongs to THIS header, not the viewport — the base
+     .tsp-panelwrap is position:fixed because it was built for the fixed subnav
+     band, which dropped it over the page top here. Absolute inside the header
+     lets wireSubnavPicker's measured `top` (the .tbh-subs offset) land the card
+     exactly over the related-topics row. */
+  .topic-bodyhead .tsp-panelwrap { position: absolute; left: 0; right: 0; width: auto; }
+  .tbh-title {
+    margin: 0 0 0.72rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.85rem, 1.15rem + 1.6vw, 2.35rem);
+    font-weight: 800; letter-spacing: -0.028em; line-height: 1.1;
+    color: #1e3a8a;
+  }
+  /* Same hairline weight the News Feed head carries, so the page reads as one
+     system of section rules. */
+  /* Deliberately NOT position:relative — .tbh-subs must measure its offset
+     against .topic-bodyhead, which is what the panel is positioned inside. */
+  .tbh-subswrap { padding-top: 0.8rem; border-top: 1.5px solid #d3d9e4; }
+  .tbh-subs {
+    display: flex; flex-wrap: wrap; align-items: baseline;
+    gap: 0 0.9rem; max-height: 1.75em; overflow: hidden;
+  }
+  .tbh-sub, .tbh-more {
+    position: relative; line-height: 1.75;
+    font-family: var(--font-family); font-size: 0.92rem; font-weight: 550;
+    color: #4a5a75; text-decoration: none;
+  }
+  /* Dot separators live in the flex gap, so they never wrap onto their own line. */
+  .tbh-sub + .tbh-sub::before,
+  .tbh-more::before { content: "·"; position: absolute; left: -0.53rem; color: #a9b4c6; }
+  .tbh-more {
+    border: 0; padding: 0; background: none; cursor: pointer;
+    color: #1d4ed8; font-weight: 600;
+  }
+  @media (hover: hover) {
+    .tbh-sub:hover { color: #1d4ed8; }
+    .tbh-more:hover { text-decoration: underline; }
+  }
+  /* The picker card drops over the links row (wireSubnavPicker measures
+     .tbh-subs' offsetTop), so the row underneath it must not show through. */
+  .topic-bodyhead.is-open .tbh-subs { visibility: hidden; }
+}

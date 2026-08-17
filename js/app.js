@@ -448,22 +448,33 @@ function homeSubnavPickerHTML() {
     </div>`;
 }
 
-// Desktop body topic-header: the SAME compact subnav bar the mobile sticky
-// header uses — an icon + topic name + chevron in a soft bar, whose dropdown
-// holds the subtopics. No big title, no inline subtopic links (those live in the
-// dropdown). The path controls sit in their own row below.
+// Desktop body topic-header (revamp774): the topic name leads the landing page
+// as its own section — a real page title with the related topics as quiet inline
+// links beneath it, over a hairline. The sticky subnav band is hidden until the
+// reader scrolls past this (wireTopicHeroCondense derives its threshold from this
+// element's height), so the topic name is never on screen twice.
+//
+// "More" doubles as the picker's `.tsp-btn`: it appears only when the links
+// overflow one line (wireSubtopicsMore), and opens the same dropdown the subnav
+// band's "Change Topic" uses. Mobile keeps the band as the control — CSS hides
+// this header below 900px.
 function topicBodyHeadHTML(topic) {
+  const related = (getRelatedTopics(topic) || []).filter((t) => t && t.slug);
+  const links = related
+    .map((t) => `<a class="tbh-sub" href="#/topic/${escapeAttr(t.slug)}">${escapeHTML(t.name)}</a>`)
+    .join('');
   return `
-    <div class="topic-bodyhead topic-subnav-picker" data-topic-picker>
-      <button type="button" class="tsp-btn tbh-bar" aria-expanded="false" aria-controls="tsp-panel-body" aria-label="Change topic">
-        <span class="tsp-btn-lead">
-          <span class="tsp-btn-ico">${topicIconSVG(topic.icon || 'globe', 'tsp-ic-svg')}</span>
-          <span class="tsp-btn-name">${escapeHTML(topic.name)}</span>
-        </span>
-        ${TSP_CHEV}
-      </button>
+    <header class="topic-bodyhead topic-subnav-picker" data-topic-picker>
+      <h1 class="tbh-title">${escapeHTML(topic.name)}</h1>
+      <div class="tbh-subswrap">
+        <nav class="tbh-subs" aria-label="Related topics">
+          ${links}
+          <button type="button" class="tbh-more tsp-btn" data-tbh-more hidden
+                  aria-expanded="false" aria-controls="tsp-panel-body">More</button>
+        </nav>
+      </div>
       ${topicPickerPanelHTML(topic, 'tsp-panel-body')}
-    </div>`;
+    </header>`;
 }
 
 // Subtopics show inline under the title; "More" is an INLINE continuation of the
@@ -477,10 +488,14 @@ function wireSubtopicsMore(root) {
   const more = subs.querySelector('[data-tbh-more]');
   if (!more) return;
   const links = [...subs.querySelectorAll('.tbh-sub')];
-  more.addEventListener('click', (e) => {
-    e.stopPropagation();
-    picker.querySelector('.tsp-btn')?.click();
-  });
+  // When "More" IS the picker's trigger (revamp774) wireSubnavPicker already owns
+  // its click — re-firing .tsp-btn here would recurse into itself.
+  if (more !== picker.querySelector('.tsp-btn')) {
+    more.addEventListener('click', (e) => {
+      e.stopPropagation();
+      picker.querySelector('.tsp-btn')?.click();
+    });
+  }
   const fit = () => {
     links.forEach((l) => { l.style.display = ''; });
     more.hidden = true;
@@ -1306,6 +1321,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
     // its own "News Feed" head.
     body.innerHTML = `<div class="topic-home">
       <div class="aii-tabhead-spacer"></div>
+      ${topicBodyHeadHTML(topic)}
       <div class="topic-top">
         <section class="topic-top-main">
           <a class="tdi-card tdi-card--v3" href="#/topic/${escapeAttr(topic.slug)}/intelligence" data-tdi>
@@ -1332,6 +1348,10 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
         <section id="section-newsfeed" class="layout-section"></section>
       </div>
     </div>`;
+    // The page-title header carries the second topic picker (revamp774) and the
+    // overflow "More" for its related-topic links.
+    wireSubnavPicker(body);
+    wireSubtopicsMore(body);
     renderNewsFeed(body.querySelector('#section-newsfeed'), topic, false);
     // Fill the Daily Intelligence card's summary + date once the brief lands.
     // The fetch is cached (shared with the sub-page), so tapping through is
