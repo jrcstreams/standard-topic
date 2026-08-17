@@ -19041,51 +19041,68 @@ body.home-search #section-newsfeed .newsfeed-head { border-bottom: 2px solid #e0
    Topic landing leads with the page TITLE as its own section — the topic name
    over a hairline with its related topics as quiet inline links beneath. The
    sticky subnav band holds off until the reader scrolls past that header, so
-   the topic name is never on screen twice. Desktop only: below 900px the band
-   IS the control (.topic-bodyhead is display:none there, css ~14655).
+   the topic name is never on screen twice. This runs at EVERY width (revamp775
+   — John wants the title + related topics on phones too), so the band is a
+   scroll-triggered picker on the landing at all sizes.
    `body:has(.topic-home)` scopes this to the landing — the sub-pages
    (/intelligence, /websources, /prompts) keep their band + Back bar always. */
-@media (min-width: 900px) {
   body.app-mode:not(.home-mode):has(.topic-home) #sub-header.is-subnav {
     transition: opacity .18s ease, visibility .18s ease;
   }
   body.app-mode:not(.home-mode):not(.topic-hero-condensed):has(.topic-home) #sub-header.is-subnav {
     opacity: 0; visibility: hidden; pointer-events: none;
   }
-  .topic-bodyhead { margin: 0 0 1.7rem; }
+  /* Beats the <900 `.topic-bodyhead { display:none !important }` at css ~14655,
+     which belonged to the era when the band was the only topic identity. */
+  body:has(.topic-home) .topic-bodyhead { display: block !important; margin: 0 0 1.7rem; }
   /* The picker card belongs to THIS header, not the viewport — the base
      .tsp-panelwrap is position:fixed because it was built for the fixed subnav
      band, which dropped it over the page top here. Absolute inside the header
      lets wireSubnavPicker's measured `top` (the .tbh-subs offset) land the card
      exactly over the related-topics row. */
-  .topic-bodyhead .tsp-panelwrap { position: absolute; left: 0; right: 0; width: auto; }
+  .topic-bodyhead .tsp-panelwrap {
+    position: absolute; left: 0; right: 0; width: auto; top: 100%;
+  }
   .tbh-title {
     margin: 0 0 0.72rem;
     font-family: var(--font-display);
-    font-size: clamp(1.85rem, 1.15rem + 1.6vw, 2.35rem);
+    font-size: clamp(1.5rem, 1.02rem + 1.95vw, 2.35rem);
     font-weight: 800; letter-spacing: -0.028em; line-height: 1.1;
-    color: #1e3a8a;
+    color: #172554;
   }
   /* Same hairline weight the News Feed head carries, so the page reads as one
-     system of section rules. */
+     system of section rules — and a matching rule BELOW the links closes the
+     header off as its own band (#img3). */
   /* Deliberately NOT position:relative — .tbh-subs must measure its offset
      against .topic-bodyhead, which is what the panel is positioned inside. */
-  .tbh-subswrap { padding-top: 0.8rem; border-top: 1.5px solid #d3d9e4; }
+  .tbh-subswrap {
+    padding: 0.8rem 0;
+    border-top: 1.5px solid #d3d9e4;
+    border-bottom: 1.5px solid #d3d9e4;
+  }
   .tbh-subs {
     display: flex; flex-wrap: wrap; align-items: baseline;
     gap: 0 0.9rem; max-height: 1.75em; overflow: hidden;
   }
   .tbh-sub, .tbh-more {
     position: relative; line-height: 1.75;
-    font-family: var(--font-family); font-size: 0.92rem; font-weight: 550;
+    font-family: var(--font-family); font-weight: 550;
+    font-size: clamp(0.83rem, 0.78rem + 0.2vw, 0.92rem);
     color: #4a5a75; text-decoration: none;
   }
   /* Dot separators live in the flex gap, so they never wrap onto their own line. */
   .tbh-sub + .tbh-sub::before,
   .tbh-more::before { content: "·"; position: absolute; left: -0.53rem; color: #a9b4c6; }
+  /* "More" doubles as the picker's .tsp-btn, which is styled as the full-width
+     subnav bar button (display:flex; width:100% at css ~14665) — inside this
+     flex row that made it claim its own line and swallow every link behind it.
+     Neutralised back to an inline link. */
   .tbh-more {
-    border: 0; padding: 0; background: none; cursor: pointer;
-    color: #1d4ed8; font-weight: 600;
+    display: inline !important; width: auto !important; flex: 0 0 auto;
+    min-width: 0; min-height: 0; text-align: left;
+    border: 0 !important; padding: 0 !important; background: none !important;
+    box-shadow: none !important; border-radius: 0 !important;
+    cursor: pointer; color: #1d4ed8; font-weight: 600;
   }
   @media (hover: hover) {
     .tbh-sub:hover { color: #1d4ed8; }
@@ -19094,4 +19111,38 @@ body.home-search #section-newsfeed .newsfeed-head { border-bottom: 2px solid #e0
   /* The picker card drops over the links row (wireSubnavPicker measures
      .tbh-subs' offsetTop), so the row underneath it must not show through. */
   .topic-bodyhead.is-open .tbh-subs { visibility: hidden; }
+
+/* ═══ revamp775 ══════════════════════════════════════════════════════════════
+   Title/spacing polish, small-screen header, and a full-width news insight. */
+
+/* ── The landing's own top gap: the band is hidden on arrival, so the page
+      shouldn't reserve a band's worth of empty space above the title (#img2).
+      Specificity beats the base body.sticky-always.has-subnav rule at css ~244
+      without !important, since :has() carries .topic-home's weight. */
+body.sticky-always.has-subnav:has(.topic-home) #content {
+  padding-top: calc(var(--nav-h) + 1.5rem);
 }
+@media (max-width: 640px) {
+  body.sticky-always.has-subnav:has(.topic-home) #content {
+    padding-top: calc(var(--nav-h) + 1rem);
+  }
+}
+
+/* ── Homepage: the Featured cards were riding against Today's Top News and
+      What's Trending (#img5). */
+.home-featured { margin-bottom: 1.9rem; }
+@media (min-width: 720px) { .home-featured { margin-bottom: 2.5rem; } }
+
+/* ── An open AI insight owns the FULL row in the 2-col topic feed (#img6).
+      It was expanding inside its own column, which both cramped the brief and
+      stretched the untouched card beside it to match the new height. */
+.topic-band .topic-home #section-newsfeed .news-list .news-card--open,
+.topic-band .topic-home #section-newsfeed .news-list .news-card:has(.news-act-ai[aria-expanded="true"]) {
+  grid-column: 1 / -1 !important;
+}
+
+/* ── Brief sections read tighter (#img7): the 16px padding-bottom on .ni-sec
+      was stacking with its margin, so every heading sat ~26px off the text
+      above it. */
+.ni-inner .ni-sec { padding-bottom: 0 !important; margin: 0 0 12px !important; }
+.ni-inner .ni-sec-head { margin: 0 0 2px !important; }
