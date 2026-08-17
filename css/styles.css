@@ -18964,8 +18964,12 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 }
 .newsfeed-head--home .newsfeed-brandic { margin-right: 0; width: 28px; height: 28px; }
 .newsfeed-head--home .newsfeed-title-main { transform: none !important; line-height: 1.2; }
-/* Topic head: match the homepage weight, a smidge smaller. */
-.newsfeed-head--topic .newsfeed-title { font-size: 1.18rem !important; font-weight: 800 !important; }
+/* Topic head: match the other section titles' weight, a smidge smaller. The
+   ID-scoped selector beats the base .newsfeed-title rules that kept winning. */
+#topic-tab-body #section-newsfeed .newsfeed-head--topic .newsfeed-title,
+.newsfeed-head--topic .newsfeed-title { font-size: 1.12rem !important; font-weight: 800 !important; letter-spacing: -0.018em; }
+#topic-tab-body #section-newsfeed .newsfeed-head--topic .newsfeed-title-main,
+.newsfeed-head--topic .newsfeed-title-main { font-weight: 800 !important; }
 /* Air between the head rule and the first row of story cards in 2-col mode. */
 @media (min-width: 1024px) {
   .topic-band .topic-home #section-newsfeed .news-list { margin-top: 18px !important; }
