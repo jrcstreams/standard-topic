@@ -1333,7 +1333,9 @@ function wireTopicLandingCards(root, topic, ctx) {
     if (key === 'di') {
       // inline: the card already shows the title and date, so the briefing
       // renders its body alone (no second header, no repeated summary).
-      renderDailyIntelligence(inner, {
+      // Render into the host, not the wrapper — the wrapper also holds the
+      // bottom Close Briefing so it rides the same open/close animation.
+      renderDailyIntelligence(inner.querySelector('[data-di-host]') || inner, {
         topic: topic.name, label: topic.name, slug: topic.slug, inline: true,
       });
     } else {
@@ -1415,7 +1417,15 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
               <span class="tdi-go-open">Read today's briefing</span>
               <span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
             </button>
-            <div class="tdi-expand" data-di-expand><div class="tdi-expand-inner"></div></div>
+            <div class="tdi-expand" data-di-expand><div class="tdi-expand-inner">
+              <div data-di-host></div>
+              <div class="tdi-closefoot">
+                <button type="button" class="tdi-closefoot-btn" data-di-toggle>
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  <span>Close Briefing</span>
+                </button>
+              </div>
+            </div></div>
           </div>
         </section>
         <section class="topic-top-side">

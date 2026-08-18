@@ -19908,3 +19908,55 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
   background: color-mix(in srgb, #2563eb 6%, #fff);
   color: #55668c; font-weight: 550;
 }
+
+/* ═══ revamp789 ══════════════════════════════════════════════════════════════
+   Expanded-briefing header rhythm, and a proper close at the foot. */
+
+/* ── Close Briefing (header): a real button, not a chip (#img69). ── */
+.tdi-headclose {
+  gap: 8px; padding: 8px 15px;
+  font-size: clamp(0.79rem, 0.74rem + 0.2vw, 0.88rem);
+  font-weight: 620;
+}
+.tdi-headclose svg { width: 15px; height: 15px; }
+
+/* ── Header stack tightens: topic name up under the title, subtext up under
+      the topic name, and the AI chip keeps its ground when open. ── */
+.tdi-card.is-open .tdi-head { margin-bottom: 0.32rem; }
+.tdi-card.is-open .tdi-topicname { margin: 0 0 0.3rem; }
+.tdi-card.is-open .tdi-sub { margin-bottom: 0.5rem; }
+.tdi-card.is-open .tdi-cardprov {
+  background: color-mix(in srgb, #2563eb 6%, #fff);
+  border: 1px solid color-mix(in srgb, #2563eb 13%, transparent);
+  padding: 3px 10px 3px 8px; border-radius: 999px;
+}
+/* The panel's own rule sat directly under the edition stamp, which already
+   closes the header block. */
+.tdi-card.is-open .tdi-expand {
+  border-top-color: transparent !important;
+  margin-top: 0.55rem !important; padding-top: 0 !important;
+}
+
+/* ── Briefings: the section title's rule IS the first story's top rule
+      (#img70/71). revamp787's !important had overridden the :first-of-type
+      exception that used to handle this. ── */
+.di-briefs .dib:first-of-type { border-top: 0 !important; padding-top: 14px !important; }
+.di-briefs .di-sectitle { margin-bottom: 0; }
+
+/* ── More Coverage: tighter off the last briefing, closed with a rule, then
+      the bottom close (#img72). ── */
+.di-more { margin-top: -0.5rem; }
+.di-more .di-reads-list { padding-bottom: 1.15rem; border-bottom: 1px solid #dde4ef; }
+.tdi-closefoot { display: none; padding: 1.35rem 0 0.35rem; justify-content: center; }
+.tdi-card.is-open .tdi-closefoot { display: flex; }
+.tdi-closefoot-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 18px; border-radius: 999px; cursor: pointer;
+  border: 1px solid color-mix(in srgb, #172554 12%, transparent);
+  background: rgba(255, 255, 255, 0.6);
+  font-family: var(--font-family); font-size: 0.84rem; font-weight: 620; color: #55668c;
+  transition: background .14s ease, color .14s ease, border-color .14s ease;
+}
+@media (hover: hover) {
+  .tdi-closefoot-btn:hover { background: #fff; color: #172554; border-color: color-mix(in srgb, #172554 22%, transparent); }
+}
