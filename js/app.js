@@ -2676,8 +2676,14 @@ function wireNavDdCondense(panel) {
   // so [data-navdd-scroll] is absent and this bailed at the `if (!sc) return`
   // below — which is why the header never condensed on Prompts or Trending
   // (revamp795). Fall back to the page scroller.
+  // The element EXISTS but no longer scrolls — the page does. So don't pick by
+  // presence: read whichever is actually scrolled, and listen to both.
   const inner = panel.querySelector('[data-navdd-scroll]');
-  const sc = inner || document.scrollingElement || document.documentElement;
+  const doc = document.scrollingElement || document.documentElement;
+  const activeScroller = () => (inner && inner.scrollTop > 0 ? inner
+    : (doc.scrollTop > 0 ? doc : (inner && inner.scrollHeight > inner.clientHeight + 8 ? inner : doc)));
+  const sc = { get scrollTop() { return Math.max(inner ? inner.scrollTop : 0, doc.scrollTop); },
+               set scrollTop(v) { const t = activeScroller(); t.scrollTop = v; } };
   // Measure ONLY the chrome that collapses. The previous version measured
   // .aii-nav-dd-inner, which CONTAINS the scroller — so the "delta" was the whole
   // panel's height, the compensation was garbage, and every scroll event yanked
@@ -2724,7 +2730,8 @@ function wireNavDdCondense(panel) {
   };
   syncStickyTop();
   window.addEventListener('resize', syncStickyTop, { passive: true });
-  (inner || window).addEventListener('scroll', apply, { passive: true });
+  if (inner) inner.addEventListener('scroll', apply, { passive: true });
+  window.addEventListener('scroll', apply, { passive: true });
   apply();
 }
 
