@@ -20487,3 +20487,10 @@ body.home-search .home-search-hero { padding: 0.9rem 0 1.5rem !important; }
   justify-content: flex-start !important;
   padding: 1.5rem 1.5rem 2rem !important;
 }
+
+/* ── revamp804: the edition stamp drifted to the top of the title's band —
+      the header row's centring was being lost once the slot became a grid
+      (#img146). Pinned back to the title's centre line. ── */
+.tdi-head { align-items: center !important; }
+.tdi-headslot { align-self: center !important; }
+.tdi-headslot > * { align-self: center !important; }
