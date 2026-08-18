@@ -20238,3 +20238,43 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
       .aii-nav-dd:not(…):not(…) selector at (0,4,0), which outranked the
       condensed rule — hence a grey bar that never went grey. ── */
 .aii-nav-dd.is-condensed .aii-nav-dd-head { background: #eef1f7 !important; }
+
+/* ═══ revamp796 ══════════════════════════════════════════════════════════════
+   Prompt rows actually left-align, news feed's first story tucks up, and the
+   related-topics strip gets its leading rule. */
+
+/* ── The prompt name is centred because .aii-fi-acc-tx computes
+      align-items:center — with no description it's the only child, so the
+      cross-axis centring IS the horizontal centring. Every text-align fix I
+      wrote before was aimed at the wrong axis. ── */
+.aii-fi-acc-tx,
+.prompts-topic-host .aii-fi-acc-tx,
+.pdir-topichost .aii-fi-acc-tx,
+.tpr-expand .aii-fi-acc-tx {
+  align-items: flex-start !important;
+  text-align: left !important;
+}
+.aii-fi-acc-name, .aii-fi-acc-desc { text-align: left !important; width: 100%; }
+.aii-fi-accsum { justify-content: flex-start !important; }
+
+/* ── News feed: the first story sat clearly low of the head rule. Pull the
+      list up and let the row's own hover paint reach the line (#img111-113). ── */
+.topic-band .topic-home #section-newsfeed .news-list { margin-top: 10px !important; }
+.topic-band .topic-home #section-newsfeed .news-card:first-child .news-card-link,
+body.home-search #section-newsfeed .news-list .news-card:first-child .news-card-link {
+  padding-top: 12px !important;
+}
+@media (min-width: 1024px) {
+  .topic-band .topic-home #section-newsfeed .news-list { margin-top: 10px !important; }
+}
+
+/* ── Related topics (#img106/107): fainter rules, lighter and slightly smaller
+      names, and a LEADING pipe before the first term so it indents into the
+      row like the ones after it. ── */
+.tbh-subswrap { border-top-color: #dfe4ed; border-bottom-color: #dfe4ed; }
+.tbh-sub, .tbh-more { font-size: clamp(0.8rem, 0.76rem + 0.18vw, 0.88rem); font-weight: 500; }
+.tbh-subs { padding-left: 0.95rem; }
+.tbh-subs > .tbh-sub:first-child::before {
+  content: ''; position: absolute; left: -0.95rem; top: 50%; transform: translateY(-50%);
+  width: 1px; height: 1.35em; background: #d3dae6;
+}
