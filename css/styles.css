@@ -19638,3 +19638,13 @@ body.app-mode:not(.home-search):has(.topic-home) #content {
   #topic-tab-body #section-newsfeed .newsfeed-head--topic .newsfeed-title-main,
   .newsfeed-head--topic .newsfeed-title-main { font-size: 1.44rem !important; }
 }
+
+/* ── revamp785b: more air between the related topics, and the pipes lose the
+      gradient. Fading both ends tapered them to a point — they read as little
+      daggers rather than rules (#img48). Flat light grey, a touch taller. ── */
+.tbh-subs { gap: 0 1.85rem; }
+.tbh-sub + .tbh-sub::before,
+.tbh-more::before {
+  height: 1.35em; left: -0.95rem;
+  background: #d3dae6;
+}
