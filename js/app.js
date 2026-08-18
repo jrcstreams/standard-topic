@@ -776,7 +776,12 @@ function wirePromptDirectory(root, ctls) {
           let tIcon = ''; try { const tt = getTopicBySlug(slug); tIcon = topicIconSVG((tt && tt.icon) || 'globe', ''); } catch (_) {}
           card.classList.add('is-topicview');
           bodyEl.innerHTML = `<div class="pdir-topicview">
-            <button type="button" class="pdir-topicback">${BACKBAR_CHEV}<span>All ${escapeHTML(parentName)} topics</span></button>
+            <div class="pdir-topicbar">
+              <button type="button" class="pdir-topicback">${BACKBAR_CHEV}<span>Back to topics list</span></button>
+              <button type="button" class="pdir-topicclose" aria-label="Close ${escapeAttr(name)} prompts">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
             <h4 class="pdir-topicname"><span class="pdir-topicname-ic" aria-hidden="true">${tIcon}</span><span>${escapeHTML(name)}</span></h4>
             <div class="pdir-topichost prompts-topic-host"></div>
           </div>`;
@@ -795,6 +800,12 @@ function wirePromptDirectory(root, ctls) {
             console.error('prompt directory mount failed', slug, err);
             host.innerHTML = '<p class="aii-empty">Couldn’t load these prompts.</p>';
           }
+          // ✕ collapses the parent card outright, rather than stepping back to
+          // the topic grid the way the back link does.
+          bodyEl.querySelector('.pdir-topicclose')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (head.getAttribute('aria-expanded') === 'true') head.click();
+          });
           bodyEl.querySelector('.pdir-topicback')?.addEventListener('click', () => {
             bodyEl.classList.remove('is-topic');
             card.classList.remove('is-topicview');

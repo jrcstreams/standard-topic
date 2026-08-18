@@ -20278,3 +20278,49 @@ body.home-search #section-newsfeed .news-list .news-card:first-child .news-card-
   content: ''; position: absolute; left: -0.95rem; top: 50%; transform: translateY(-50%);
   width: 1px; height: 1.35em; background: #d3dae6;
 }
+
+/* ═══ revamp797 ══════════════════════════════════════════════════════════════
+   An open prompt reads as a place you're inside, and the topic list's header
+   gets a real back link + close. */
+
+/* ── The whole open prompt — header AND body — sits inside one faint blue
+      frame, so it reads as a container rather than a tinted strip (#img119). ── */
+.aii-fi-acc.is-open {
+  border: 1px solid color-mix(in srgb, #1e3a8a 26%, transparent) !important;
+  border-radius: 12px !important;
+  background: #f7f9fd !important;
+  box-shadow: 0 2px 10px -4px rgba(30, 58, 138, .16) !important;
+  overflow: hidden;
+}
+@media (min-width: 760px) {
+  /* Beats the flat hairline rows the two-up grid gives every other item. */
+  .aii-fi-acclist > .aii-fi-acc.is-open {
+    border: 1px solid color-mix(in srgb, #1e3a8a 26%, transparent) !important;
+    border-radius: 12px !important;
+    background: #f7f9fd !important;
+  }
+}
+.aii-fi-acc.is-open > .aii-fi-accsum { background: transparent !important; }
+/* The title carries the "you're in this prompt" weight. */
+.aii-fi-acc.is-open .aii-fi-acc-name {
+  font-size: 1.02rem; font-weight: 750; color: #16233d;
+}
+.aii-fi-acc.is-open .aii-fi-acc-ic { color: #1e3a8a; }
+
+/* ── Topic prompt list header (#img120/121): a general back link with a little
+      more weight, and a ✕ squared up with it on the right. ── */
+.pdir-topicbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-bottom: 2px;
+}
+.pdir-topicback { font-weight: 600 !important; }
+.pdir-topicclose {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 9px; cursor: pointer;
+  border: 1px solid color-mix(in srgb, #172554 11%, transparent);
+  background: rgba(255, 255, 255, 0.7); color: #55668c;
+  transition: background .14s ease, color .14s ease, border-color .14s ease;
+}
+@media (hover: hover) {
+  .pdir-topicclose:hover { background: #fff; color: #172554; border-color: color-mix(in srgb, #172554 22%, transparent); }
+}
