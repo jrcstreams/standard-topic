@@ -1339,7 +1339,7 @@ function wireTopicLandingCards(root, topic, ctx) {
         topic: topic.name, label: topic.name, slug: topic.slug, inline: true,
       });
     } else {
-      renderAIIntelligence(inner, {
+      renderAIIntelligence(inner.querySelector('[data-pr-host]') || inner, {
         inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
         promptsPage: true, topic: topic.name, label: topic.name,
         descriptions: ctx.descriptions, icons: ctx.icons, shortcuts: ctx.shortcuts,
@@ -1443,7 +1443,13 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
         </section>
         <section class="topic-top-side">
           <div class="tpr-card" data-tpr>
-            <h2 class="tsec-title tpr-card-title"><span class="tsec-ic tsec-ic--pr" aria-hidden="true">${TOPIC_AI_ICONS['topic-specific']}</span>AI Prompts</h2>
+            <div class="tpr-head">
+              <h2 class="tsec-title tpr-card-title"><span class="tsec-ic tsec-ic--pr" aria-hidden="true">${TOPIC_AI_ICONS['topic-specific']}</span>AI Prompts</h2>
+              <button type="button" class="tpr-headclose" data-pr-toggle aria-label="Close prompts">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <span>Close Prompts</span>
+              </button>
+            </div>
             <p class="tpr-sub">Ready-made prompts to run in any AI model.</p>
             ${featuredPrompts.length ? `<ul class="tpr-list">${featuredPrompts.map((s) => `
               <li class="tpr-row"><button type="button" class="tpr-row-btn" data-tpr-open="${escapeAttr(s.name || '')}">
@@ -1454,7 +1460,15 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
               <span class="tpr-go-open">View all ${shortcuts.length} prompts</span>
               <span class="tpr-go-close">Hide prompts</span>${SUBPAGE_ARROW}
             </button>
-            <div class="tpr-expand" data-pr-expand><div class="tpr-expand-inner"></div></div>
+            <div class="tpr-expand" data-pr-expand><div class="tpr-expand-inner">
+              <div data-pr-host></div>
+              <div class="tdi-closefoot tpr-closefoot">
+                <button type="button" class="tdi-closefoot-btn" data-pr-toggle>
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  <span>Close Prompts</span>
+                </button>
+              </div>
+            </div></div>
           </div>
         </section>
       </div>

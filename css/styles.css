@@ -20130,3 +20130,41 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
   background: rgba(255, 255, 255, 0.5) !important;
   margin: 0 0 0.6rem !important;
 }
+
+/* ═══ revamp793 ══════════════════════════════════════════════════════════════
+   AI Prompts closes like the briefing does, and the prompt list runs two-up
+   with an opened prompt taking the full row. */
+
+/* ── Close Prompts, header + foot, matching Daily Intelligence (#img85). ── */
+.tpr-head { display: flex; align-items: center; gap: 0.5rem 0.9rem; margin: 0 0 0.6rem; }
+.tpr-head .tpr-card-title { margin: 0; }
+.tpr-headclose {
+  display: none; align-items: center; gap: 8px; margin-left: auto;
+  padding: 8px 15px; border-radius: 999px; cursor: pointer;
+  border: 1px solid color-mix(in srgb, #172554 10%, transparent);
+  background: rgba(255, 255, 255, 0.55);
+  font-family: var(--font-family); font-weight: 620;
+  font-size: clamp(0.79rem, 0.74rem + 0.2vw, 0.88rem); color: #55668c;
+  transition: background .14s ease, color .14s ease, border-color .14s ease;
+}
+.tpr-headclose svg { flex: none; width: 15px; height: 15px; }
+@media (hover: hover) {
+  .tpr-headclose:hover { background: #fff; color: #172554; border-color: color-mix(in srgb, #172554 20%, transparent); }
+}
+.tpr-card.is-open .tpr-headclose { display: inline-flex; }
+/* The bottom pill is redundant once the header carries the close. */
+.tpr-card.is-open .tpr-go { display: none !important; }
+.tpr-closefoot { display: none; }
+.tpr-card.is-open .tpr-closefoot { display: flex; }
+
+/* ── The prompt list goes two-up wherever there's room; an OPEN prompt takes
+      the whole row so its body isn't squeezed into a column (#img88/89).
+      Applies everywhere the library renders — topic card and Prompts page. ── */
+@media (min-width: 760px) {
+  .aii-fi-acclist {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px 12px; align-items: start;
+  }
+  .aii-fi-acclist > .aii-fi-acc.is-open { grid-column: 1 / -1; }
+}
