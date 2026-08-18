@@ -19835,3 +19835,7 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
       separates them from the 400-weight body copy beneath, which was the
       point of adding weight in the first place. ── */
 .tdi-sub, .tpr-sub { font-weight: 540 !important; }
+
+/* ── revamp787e: prompt rows down a notch in size, and a hair in weight
+      (#img61). ── */
+.tpr-row-btn { font-size: 0.9rem !important; font-weight: 425 !important; }
