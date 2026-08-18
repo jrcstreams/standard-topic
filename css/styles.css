@@ -19659,3 +19659,74 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 @media (min-width: 880px) {
   .topic-home .topic-news-wrap { margin-top: 1.6rem !important; }
 }
+
+/* ═══ revamp786 ══════════════════════════════════════════════════════════════
+   The card expansion becomes a designed transition rather than a snap
+   (#img53). Four things move together, on one easing curve:
+
+     1. the panel unfurls as a 0fr → 1fr grid row, so it eases to whatever
+        height the content turns out to be — no measuring, and it keeps
+        easing as the fetched briefing replaces the loader;
+     2. its rule and padding fade in with the height, so the divider draws
+        itself rather than appearing fully formed;
+     3. the panel's contents lift in just behind the height, which reads as
+        the brief arriving rather than being revealed;
+     4. the teaser the panel replaces collapses out instead of vanishing,
+        so the card never jumps backwards before it grows.
+*/
+.tdi-expand, .tpr-expand {
+  display: grid; grid-template-rows: 0fr;
+  margin-top: 0 !important; padding-top: 0 !important;
+  border-top: 1.5px solid transparent !important;
+  transition:
+    grid-template-rows .46s cubic-bezier(.22, .61, .21, 1),
+    margin-top .46s cubic-bezier(.22, .61, .21, 1),
+    padding-top .46s cubic-bezier(.22, .61, .21, 1),
+    border-top-color .3s ease .1s;
+}
+.tdi-expand-inner, .tpr-expand-inner {
+  min-height: 0; overflow: hidden;
+  opacity: 0; transform: translateY(-7px);
+  transition: opacity .3s ease, transform .42s cubic-bezier(.22, .61, .21, 1);
+}
+.tdi-card.is-open .tdi-expand, .tpr-card.is-open .tpr-expand {
+  grid-template-rows: 1fr;
+  margin-top: 1.15rem !important; padding-top: 1rem !important;
+  border-top-color: #d3d9e4 !important;
+}
+.tdi-card.is-open .tdi-expand-inner, .tpr-card.is-open .tpr-expand-inner {
+  opacity: 1; transform: none;
+  transition-delay: .12s, .1s;
+}
+
+/* The teaser/list the panel supersedes collapses rather than snapping to
+   display:none, which used to shrink the card a beat before it grew. */
+.tdi-card--v3 .tdi-summary, .tdi-sub, .tpr-sub, .tpr-list {
+  overflow: hidden;
+  transition:
+    opacity .2s ease,
+    max-height .38s cubic-bezier(.22, .61, .21, 1),
+    margin .38s cubic-bezier(.22, .61, .21, 1);
+  max-height: 30em;
+}
+.tdi-card.is-open .tdi-summary, .tdi-card.is-open .tdi-sub,
+.tpr-card.is-open .tpr-sub, .tpr-card.is-open .tpr-list {
+  display: block; opacity: 0; max-height: 0;
+  margin-top: 0; margin-bottom: 0;
+}
+
+/* The card that gets displaced settles into its new row instead of
+   teleporting — the grid itself can't tween between track counts. */
+.topic-top.is-di-open .tpr-card, .topic-top.is-pr-open .tdi-card {
+  animation: tcardSettle .38s cubic-bezier(.22, .61, .21, 1) both;
+}
+@keyframes tcardSettle {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tdi-expand, .tpr-expand, .tdi-expand-inner, .tpr-expand-inner,
+  .tdi-card--v3 .tdi-summary, .tdi-sub, .tpr-sub, .tpr-list { transition: none !important; }
+  .topic-top.is-di-open .tpr-card, .topic-top.is-pr-open .tdi-card { animation: none !important; }
+}

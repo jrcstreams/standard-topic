@@ -1315,20 +1315,24 @@ function wireTopicLandingCards(root, topic, ctx) {
     const c = cards[key];
     if (!c || !c.btn || !c.host) return;
     if (on) setOpen(key === 'di' ? 'pr' : 'di', false);      // one open card at a time
-    c.host.hidden = !on;
+    // No `hidden` toggle — display:none can't be transitioned. The panel is a
+    // 0fr → 1fr grid row instead, so it eases open to whatever height the
+    // content turns out to be (including as the fetched briefing arrives).
+    const inner = c.host.firstElementChild;
     c.btn.setAttribute('aria-expanded', on ? 'true' : 'false');
     c.btn.closest(c.sel)?.classList.toggle('is-open', on);
     if (top) top.classList.toggle(c.cls, on);
-    if (!on || c.loaded) return;
+    try { if (inner) inner.inert = !on; } catch (_) {}
+    if (!on || c.loaded || !inner) return;
     c.loaded = true;
     if (key === 'di') {
       // inline: the card already shows the title and date, so the briefing
       // renders its body alone (no second header, no repeated summary).
-      renderDailyIntelligence(c.host, {
+      renderDailyIntelligence(inner, {
         topic: topic.name, label: topic.name, slug: topic.slug, inline: true,
       });
     } else {
-      renderAIIntelligence(c.host, {
+      renderAIIntelligence(inner, {
         inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
         promptsPage: true, topic: topic.name, label: topic.name,
         descriptions: ctx.descriptions, icons: ctx.icons, shortcuts: ctx.shortcuts,
@@ -1336,6 +1340,10 @@ function wireTopicLandingCards(root, topic, ctx) {
       });
     }
   };
+  // Collapsed panels start inert so their content is never tab-reachable.
+  Object.values(cards).forEach((c) => {
+    try { if (c.host?.firstElementChild) c.host.firstElementChild.inert = true; } catch (_) {}
+  });
 
   Object.keys(cards).forEach((key) => {
     cards[key].btn?.addEventListener('click', () => {
@@ -1351,6 +1359,7 @@ function wireTopicLandingCards(root, topic, ctx) {
       if (!name) return;
       const find = () => {
         const rows = [...cards.pr.host.querySelectorAll('.aii-fi-acc-name, .aii-fi-acc-title')];
+        if (!rows.length) return false;
         const hit = rows.find((r) => (r.textContent || '').trim() === name.trim());
         if (!hit) return false;
         (hit.closest('button') || hit).click();
@@ -1394,7 +1403,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
               <span class="tdi-go-open">Read today's briefing</span>
               <span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
             </button>
-            <div class="tdi-expand" data-di-expand hidden></div>
+            <div class="tdi-expand" data-di-expand><div class="tdi-expand-inner"></div></div>
           </div>
         </section>
         <section class="topic-top-side">
@@ -1410,7 +1419,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
               <span class="tpr-go-open">View all ${shortcuts.length} prompts</span>
               <span class="tpr-go-close">Hide prompts</span>${SUBPAGE_ARROW}
             </button>
-            <div class="tpr-expand" data-pr-expand hidden></div>
+            <div class="tpr-expand" data-pr-expand><div class="tpr-expand-inner"></div></div>
           </div>
         </section>
       </div>
