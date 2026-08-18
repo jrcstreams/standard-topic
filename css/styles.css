@@ -19826,3 +19826,7 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 .di-page--inline .di-prov2 { display: none; }
 .di-page--inline .di-body > .di-ov:first-child,
 .di-page--inline .di-ov { margin-top: 0; }
+
+/* ── revamp787c: the featured prompt rows still read bold for what they are —
+      a list of links, not headings (#img59). ── */
+.tpr-row-btn { font-weight: 450 !important; color: #3b4a66; }
