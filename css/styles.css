@@ -20494,3 +20494,11 @@ body.home-search .home-search-hero { padding: 0.9rem 0 1.5rem !important; }
 .tdi-head { align-items: center !important; }
 .tdi-headslot { align-self: center !important; }
 .tdi-headslot > * { align-self: center !important; }
+
+/* ── revamp804b: the stamp wrapped to its own line AND hung right (#img147).
+      revamp790's .tdi-headslot { margin-left:auto } reintroduced exactly the
+      bug 784 fixed — auto margins right-align a flex item even when it's alone
+      on a wrapped line. space-between on the row does it correctly: beside the
+      title when both fit, flush LEFT underneath when they don't. ── */
+.tdi-headslot { margin-left: 0 !important; }
+.tdi-head { justify-content: space-between !important; flex-wrap: wrap; }
