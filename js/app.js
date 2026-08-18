@@ -1159,12 +1159,30 @@ function topicsNavDdCfg() {
     subtitle: 'Browse every topic and its subtopics.',
     // One head button: Search Custom Topic (the Homepage button was dropped — the
     // brand/Home nav already covers it, #img77).
-    headSearch: 'Search any topic…',
+    // revamp809: the search field is replaced by a view toggle — Condensed
+    // (parents closed, the default) or Expanded (every subtopic list open).
+    headButtons: [
+      { label: 'Condensed View', href: '#', primary: true },
+      { label: 'Expanded View', href: '#' },
+    ],
     contentHTML: topicsTreeHTML(),
     onClose: userCloseNavDropdown,
     wire: (panel) => {
       wireNavDdAccordions(panel);
       panel.querySelectorAll('[data-aiidd-link]').forEach((a) => a.addEventListener('click', () => closeNavDropdown()));
+      const btns = [...panel.querySelectorAll('[data-navdd-headbtn]')];
+      const setView = (expanded) => {
+        panel.classList.toggle('is-topics-expanded', expanded);
+        // The accordions open on data-open, not a class (css ~15563).
+        panel.querySelectorAll('.aiidd-parent').forEach((sec) => {
+          sec.setAttribute('data-open', expanded ? 'true' : 'false');
+          const head = sec.querySelector('.aiidd-parent-head');
+          if (head) head.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        });
+        btns.forEach((b, i) => b.classList.toggle('is-primary', expanded ? i === 1 : i === 0));
+      };
+      btns.forEach((b, i) => b.addEventListener('click', (e) => { e.preventDefault(); setView(i === 1); }));
+      setView(false);
     },
   };
 }
@@ -1567,8 +1585,11 @@ function wireSubnavPicker(root) {
       if (on && isBodyHead && panelwrap) {
         // Anchor to the strip's TOP RULE (revamp788) — measuring .tbh-subs left
         // the panel floating a row below it, so its edges never met the subnav.
+        // revamp809: anchor at EVERY width. This was gated to >=900px, so on
+        // phones the panel fell back to CSS top:100% and opened below the
+        // strip with a dead band above it (#img175/176).
         const subs = picker.querySelector('.tbh-subswrap') || picker.querySelector('.tbh-subs');
-        if (subs && window.matchMedia('(min-width: 900px)').matches) panelwrap.style.top = subs.offsetTop + 'px';
+        if (subs) panelwrap.style.top = subs.offsetTop + 'px';
         else panelwrap.style.top = '';
       }
       picker.classList.toggle('is-open', on);
@@ -2898,7 +2919,7 @@ function renderStickyHeroBar(container, route) {
         </button>
         <button type="button" class="navbtn nav-searchbar" id="nav-search" aria-label="Search">
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-          <span class="navbtn-label nav-searchbar-ph"><span class="np-full">Search topics, headlines &amp; more…</span><span class="np-short">Search topics</span></span>
+          <span class="navbtn-label nav-searchbar-ph"><span class="np-full">Search any topic</span><span class="np-short">Search</span></span>
         </button>
       </div>
     </div>
