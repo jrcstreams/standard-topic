@@ -1008,8 +1008,8 @@ function wirePromptsDropdown(panel, initialView) {
 
   const showBuild = () => {
     destroyCtl();
-    setHead('Build a Custom Prompt', 'Craft a knowledge prompt and send it to your AI model.');
-    setHeadBtns(false); setBack('Prompts Overview', showLanding);
+    setHead('Build a Prompt', 'Craft a knowledge prompt and send it to your AI model.');
+    setHeadBtns(false); setBack('Back to Prompts', showLanding);
     root.innerHTML = `<div class="pb-navdd-host" data-pb-host></div>`;
     loadPromptGen().then((m) => m.renderPromptGenerator(root.querySelector('[data-pb-host]'), { inline: true })).catch(() => {});
     syncViewHash('build');
@@ -1019,7 +1019,7 @@ function wirePromptsDropdown(panel, initialView) {
   const showLibrary = () => {
     destroyCtl();
     setHead('Prompt Library', 'Every topic and subtopic, with its full prompt set.');
-    setHeadBtns(false); setBack('Prompts Overview', showLanding);
+    setHeadBtns(false); setBack('Back to Prompts', showLanding);
     root.innerHTML = promptDirectoryHTML();
     wirePromptDirectory(root, dirCtls);
     syncViewHash('library');
@@ -1178,7 +1178,7 @@ function openTopicsNavDropdown() { if (!(navDdOpen && navDdOpen.key === 'topics'
 function trendingNavDdCfg(expandQuery) {
   return {
     key: 'trending', triggerId: 'nav-trending', className: 'aii-nav-dd-trending',
-    title: 'Trending Now', ariaLabel: 'Trending now',
+    title: 'Trending', ariaLabel: 'Trending now',
     icon: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>',
     subtitle: "What's being searched for right now.",
     subBarHTML: '<div class="tlm-controlbar" data-trend-controls></div>',

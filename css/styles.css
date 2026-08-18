@@ -20377,3 +20377,55 @@ body.home-search #section-newsfeed .news-list .news-card:first-child .news-card-
   background: #fff;
   min-height: calc(100dvh - var(--nav-h));
 }
+
+/* ═══ revamp800 ══════════════════════════════════════════════════════════════
+   Build step 6, the build header order, the trending head, drawer buttons,
+   and the prompts category list. */
+
+/* ── Step 6: the ✓ goes to the RIGHT rather than adding a track on the left
+      and shoving the label across (#img129). Explicit columns so the check
+      can't reflow anything. ── */
+.pb-card.has-items {
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+}
+.pb-card.has-items > .pb-card-num  { grid-column: 1; }
+.pb-card.has-items > .pb-card-tx   { grid-column: 2; }
+.pb-card.has-items > .pb-card-done { grid-column: 3; justify-self: end; align-self: center; margin: 0 !important; }
+.pb-card.has-items > .pb-card-chev { grid-column: 4; }
+
+/* ── Build view: the back link sits ABOVE the title. ── */
+.aii-nav-dd-titles { display: flex; flex-direction: column; }
+.aii-nav-dd-titles [data-prompts-back] { order: -1; margin-bottom: 6px; }
+
+/* ── Trending head: the green mark rides the title at ALL times, and the
+      condensed bar sheds the subtext, the sports toggle and the AI legend
+      (#img125). ── */
+.aii-nav-dd-trending .navdd-headic { display: inline-flex !important; color: #16a34a; }
+.aii-nav-dd-trending .aii-nav-dd-title { display: inline-flex; align-items: center; gap: 9px; }
+.aii-nav-dd-trending.is-condensed .trend-controls-legend,
+.aii-nav-dd-trending.is-condensed .trend-sports-toggle,
+.aii-nav-dd-trending.is-condensed .tlm-controlbar,
+.aii-nav-dd-trending.is-condensed .aii-nav-dd-sub { display: none !important; }
+
+/* ── Trend drawers: both controls the same width, and an expanded Sources
+      wears a faintly darker header so it reads as a container (#img126-128). ── */
+.trend-exp-drawers .te-drawer > .te-drawer-sum { min-width: 190px; justify-content: flex-start !important; }
+.te-drawer[open] > .te-drawer-sum {
+  background: color-mix(in srgb, #172554 7%, transparent) !important;
+  border-color: color-mix(in srgb, #172554 14%, transparent) !important;
+  border-radius: 10px 10px 0 0;
+}
+.te-drawer[open] { border-radius: 10px; }
+
+/* ── Prompts category → a readable list, not a wall of buttons (#img114-116).
+      Same shape as the topic dropdown: hairline rows, columns that connect. ── */
+.pdir-grid { gap: 0 !important; }
+.pdir-cell {
+  border: 0 !important; border-radius: 0 !important; background: none !important;
+  border-bottom: 1px solid #eef1f6 !important;
+  padding: 11px 12px !important; justify-content: flex-start !important;
+}
+.pdir-cell-name { flex: 1 1 auto; text-align: left; }
+@media (hover: hover) {
+  .pdir-cell:hover { background: #f5f8fd !important; }
+}
