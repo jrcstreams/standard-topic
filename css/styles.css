@@ -20355,3 +20355,25 @@ body.home-search #section-newsfeed .news-list .news-card:first-child .news-card-
   font-size: 1.06rem; font-weight: 800; color: #1e3a8a;
 }
 .aii-nav-dd.is-condensed .navdd-headic svg { width: 18px; height: 18px; display: block; }
+
+/* ═══ revamp799 ══════════════════════════════════════════════════════════════
+   Build a Prompt: step 6's layout, and the page stops being see-through. */
+
+/* ── .pb-card is a THREE column grid (num | text | chev). A step that's been
+      configured renders a FOURTH child — the ✓ — so the text got pushed into
+      the chevron's auto track (shrink-wrapped hard right) and the chevron
+      wrapped to a second row. That's the "all over the place" step 6
+      (#img110/124): it's the only step carrying a check. ── */
+.pb-card.has-items { grid-template-columns: auto auto minmax(0, 1fr) auto; }
+.pb-card-done { margin-left: 0 !important; align-self: center; }
+
+/* ── The build view is a page, not a sheet: it covers the viewport and the
+      trending list behind it stops showing through (#img124). ── */
+.aii-nav-dd-prompts {
+  background: #fff !important;
+  min-height: calc(100dvh - var(--nav-h)) !important;
+}
+.aii-nav-dd-prompts > .aii-nav-dd-inner {
+  background: #fff;
+  min-height: calc(100dvh - var(--nav-h));
+}
