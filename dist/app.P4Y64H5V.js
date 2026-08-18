@@ -1455,8 +1455,7 @@ ${U}`,name:`${I.length} Selected Shortcuts`,iconKey:"",count:I.length}};e.queryS
       ${n?'<div class="search-panel-topfold">':""}
       <div class="search-panel-hero"><div class="search-panel-hero-inner">
         ${n?`<h2 class="search-panel-title">Search</h2>
-             <p class="search-panel-tagline">News, Resources and AI Knowledge</p>
-             <p class="search-panel-herohint">The latest news, sources &amp; AI insights on any topic.</p>`:`<h2 class="search-panel-title">Search. Discover. Stay&nbsp;Informed.</h2>
+             <p class="search-panel-herohint">The latest news and AI insights.</p>`:`<h2 class="search-panel-title">Search. Discover. Stay&nbsp;Informed.</h2>
              <p class="search-panel-tagline">Real news. AI insights. All in one place.</p>`}
       </div></div>
       <div class="search-panel-barrow">

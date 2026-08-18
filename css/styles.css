@@ -20713,3 +20713,36 @@ body.pagenav-on #sub-header.pagenav { opacity: 1; visibility: visible; }
 @media (max-width: 720px) {
   .nav-searchbar-ph .np-short { display: none !important; }
 }
+
+/* ═══ revamp812 ══════════════════════════════════════════════════════════════
+   The search page sits at the top and its subtext stops wrapping early. */
+
+/* The hero is a flex column with flex:1 + justify-content:center, which parks
+   the whole block mid-viewport (#img191). Pin it to the top — declared with
+   enough weight to survive the modal/inline variants. */
+.search-page .search-panel-hero,
+.search-panel--modal .search-panel-hero,
+.search-page-hero {
+  flex: 0 0 auto !important;
+  justify-content: flex-start !important;
+  padding-top: 1.1rem !important; padding-bottom: 1.4rem !important;
+}
+/* The subtext was breaking after four words because the hero column is clamped
+   far narrower than the search bar under it (#img192). Let it run to the bar's
+   width before wrapping. */
+.search-panel-herohint, .search-page-hero-sub {
+  max-width: min(34rem, 100%) !important;
+  margin-left: auto !important; margin-right: auto !important;
+  text-wrap: pretty;
+}
+.search-panel--modal .search-panel-hero-inner { max-width: min(34rem, 100%); width: 100%; }
+
+/* ── revamp812b: THE actual cause. .search-panel-topfold carries
+      `padding-top: max(44px, calc(50dvh - var(--nav-h)/2 - 165px))` in the
+      collapsed state — a deliberate centre-it-in-the-viewport calc, which
+      measured 234px on an 860px screen. Every flex rule I aimed at this was
+      irrelevant. On the search PAGE it gets a normal top offset. ── */
+.search-page .search-panel--modal[data-state="collapsed"] .search-panel-topfold {
+  padding-top: 1.5rem !important;
+  padding-bottom: 2rem !important;
+}
