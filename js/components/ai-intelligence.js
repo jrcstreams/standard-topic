@@ -1182,6 +1182,19 @@ export function renderAIIntelligence(container, scope) {
     host.classList.toggle('is-open', willOpen);
     btn.setAttribute('aria-expanded', String(willOpen));
     if (card) card.classList.toggle('is-open', willOpen);
+    // Closing a taller prompt above this one pulls the page up under the
+    // cursor, so bring the one just opened back into view once the layout
+    // settles (revamp795).
+    if (willOpen && card) {
+      requestAnimationFrame(() => setTimeout(() => {
+        try {
+          const r = card.getBoundingClientRect();
+          if (r.top < 70 || r.bottom > window.innerHeight) {
+            card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+          }
+        } catch (_) {}
+      }, 60));
+    }
   }
   // Wire the content area after a render: Further-Insights accordions + section
   // Show-more toggles. (The discreet brief-head explore link is wired in wire().)

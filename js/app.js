@@ -642,7 +642,7 @@ function openNavDropdown(cfg) {
     ? `<div class="aii-nav-dd-head aii-nav-dd-head-bare">${closeBtn}</div>`
     : `<div class="aii-nav-dd-head">
         <div class="aii-nav-dd-titles">
-          <div class="aii-nav-dd-title">${cfg.spark ? '<span class="aii-nav-dd-spark">✦</span> ' : ''}${escapeHTML(cfg.title || '')}</div>
+          <div class="aii-nav-dd-title">${cfg.icon ? `<span class="navdd-headic" aria-hidden="true">${cfg.icon}</span>` : ''}${cfg.spark ? '<span class="aii-nav-dd-spark">✦</span> ' : ''}${escapeHTML(cfg.title || '')}</div>
           ${cfg.subtitle ? `<div class="aii-nav-dd-sub">${escapeHTML(cfg.subtitle)}</div>` : ''}
           ${cfg.headSearch ? `<form class="navdd-headsearch" data-navdd-headsearch role="search">
               <span class="navdd-headsearch-ic" aria-hidden="true">${NAVDD_SEARCH_IC}</span>
@@ -1062,6 +1062,7 @@ function promptsNavDdCfg(view) {
     key: 'prompts', triggerId: 'nav-prompts', className: 'aii-nav-dd-prompts',
     title: 'Prompts', ariaLabel: 'Prompts',
     subtitle: 'Ready-made prompts for every topic — or build your own.',
+    icon: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
     // Head-action buttons live in the sticky dropdown header (#img304); both quiet
     // grey pills. Only shown on the landing view (toggled in wirePromptsDropdown).
     headButtons: [
@@ -1167,6 +1168,7 @@ function trendingNavDdCfg(expandQuery) {
   return {
     key: 'trending', triggerId: 'nav-trending', className: 'aii-nav-dd-trending',
     title: 'Trending Now', ariaLabel: 'Trending now',
+    icon: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>',
     subtitle: "What's being searched for right now.",
     subBarHTML: '<div class="tlm-controlbar" data-trend-controls></div>',
     contentHTML: '<div data-trend-grid></div>',
