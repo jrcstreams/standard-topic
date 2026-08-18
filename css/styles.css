@@ -19477,3 +19477,24 @@ body.app-mode:not(.home-search):has(.topic-home) #content {
 /* Taller pipes, re-centred in the wider gap. */
 .tbh-sub + .tbh-sub::before,
 .tbh-more::before { height: 1.15em; left: -0.7rem; }
+
+/* ═══ revamp782 ══════════════════════════════════════════════════════════════
+   The Daily Intelligence dateline: a masthead line, not a status indicator.
+   The pill, the uppercase label and the pulsing green dot are all retired
+   (#img37) — what's left is the edition's glyph, the date, the edition. */
+.tdi-card--v3 .tdi-date {
+  gap: 8px; padding: 0 !important; margin: 0 0 0.7rem !important;
+  border: 0 !important; background: none !important;
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.005em;
+}
+.tdi-stamp-dot, .tdi-stamp-lbl { display: none !important; }
+.tdi-stamp-ic { flex: none; display: inline-flex; }
+.tdi-stamp-ic svg { width: 14px; height: 14px; display: block; }
+.tdi-stamp-ic--morning { color: #d97706; }
+.tdi-stamp-ic--night { color: #4c5b86; }
+.tdi-stamp-val { font-weight: 700; color: #46557a; }
+.tdi-stamp-sep {
+  flex: none; width: 1px; height: 0.95em; border-radius: 0; background: linear-gradient(
+    to bottom, rgba(148, 163, 184, 0), #b9c4d6 24%, #b9c4d6 76%, rgba(148, 163, 184, 0));
+}
+.tdi-stamp-ed { font-weight: 700; color: #172554; }

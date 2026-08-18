@@ -1285,13 +1285,16 @@ function diEditionParts(iso) {
     };
   } catch (_) { return null; }
 }
-// Rendered as a transmission stamp — a live dot, the quiet label, then the
-// edition — rather than a sentence of muted text.
+// A masthead dateline, not a status light (revamp782): the edition's own glyph
+// — sun for the morning wave, moon for the night — then the date and the
+// edition name. No chrome, no pulsing dot.
+const DI_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M21.4 12h-2.2M4.8 12H2.6M18.6 5.4l-1.6 1.6M7 17l-1.6 1.6M18.6 18.6L17 17M7 7L5.4 5.4"/></svg>';
+const DI_MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.2 14.4A8.6 8.6 0 0 1 9.6 3.8a8.6 8.6 0 1 0 10.6 10.6z"/></svg>';
 function diEditionStampHTML(iso) {
   const p = diEditionParts(iso);
   if (!p) return '';
-  return `<span class="tdi-stamp-dot" aria-hidden="true"></span>`
-    + `<span class="tdi-stamp-lbl">Last updated</span>`
+  const night = /night/i.test(p.edition);
+  return `<span class="tdi-stamp-ic tdi-stamp-ic--${night ? 'night' : 'morning'}" aria-hidden="true">${night ? DI_MOON : DI_SUN}</span>`
     + `<span class="tdi-stamp-val">${escapeHTML(p.day)}</span>`
     + `<span class="tdi-stamp-sep" aria-hidden="true"></span>`
     + `<span class="tdi-stamp-ed">${escapeHTML(p.edition)}</span>`;
