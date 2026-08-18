@@ -1388,7 +1388,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
               <h2 class="tsec-title tdi-card-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>Daily Intelligence</h2>
               <span class="tdi-date" data-tdi-date></span>
             </div>
-            <p class="tdi-sub">An AI briefing on this topic, refreshed morning and night.</p>
+            <p class="tdi-sub">An AI-generated briefing on this topic, twice a day.</p>
             <p class="tdi-summary" data-tdi-summary>Preparing today's briefing…</p>
             <button type="button" class="tdi-go" data-di-toggle aria-expanded="false">
               <span class="tdi-go-open">Read today's briefing</span>

@@ -19582,3 +19582,29 @@ body.app-mode:not(.home-search):has(.topic-home) #content {
 .tdi-stamp-val { font-weight: 600; color: #74839d; }
 .tdi-stamp-sep { height: 0.85em; opacity: 0.75; }
 .tdi-stamp-ed { font-weight: 650; color: #4a5878; }
+
+/* ═══ revamp784 ══════════════════════════════════════════════════════════════
+   Card headers that survive narrow widths, and CTAs that stop shouting. */
+
+/* ── The stamp hung off the right edge when it wrapped (#img42): margin-left:
+      auto right-aligns a flex item even when it's alone on its own line.
+      space-between does the job properly — beside the title when both fit,
+      flush left underneath when they don't. ── */
+.tdi-head { justify-content: space-between; gap: 0.4rem 0.85rem; }
+.tdi-card--v3 .tdi-head .tdi-date { margin-left: 0 !important; }
+/* Card titles scale with the card, so the two stay on one line far longer. */
+.tdi-card--v3 .tdi-card-title, .tpr-card-title {
+  font-size: clamp(1.16rem, 1.02rem + 0.6vw, 1.36rem);
+}
+@media (max-width: 640px) {
+  .tdi-sub, .tpr-sub { font-size: 0.82rem !important; }
+}
+
+/* ── Both CTAs read heavy (#img43). Same colours — lighter type, smaller
+      glyph, less padding — so they sit rather than shout. ── */
+.tdi-card--v3 .tdi-go, .tpr-go {
+  font-size: 0.82rem !important; font-weight: 560 !important;
+  padding: 0.46rem 0.95rem !important; gap: 7px !important;
+  box-shadow: none !important;
+}
+.tdi-card--v3 .tdi-go svg, .tpr-go svg { width: 13px; height: 13px; }
