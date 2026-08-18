@@ -20478,3 +20478,12 @@ body.home-search .home-search-hero { padding: 0.9rem 0 1.5rem !important; }
   }
   body.home-search .home-search-hero { padding: 0.7rem 0 1.3rem !important; }
 }
+
+/* ── revamp802: the search block was centred in a full-viewport flex column
+      (flex:1 + justify-content:center), so it landed halfway down the page and
+      you had to hunt for it (#img137/139). It sits near the top now. ── */
+.search-page-hero {
+  flex: 0 0 auto !important;
+  justify-content: flex-start !important;
+  padding: 1.5rem 1.5rem 2rem !important;
+}
