@@ -19839,3 +19839,14 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 /* ── revamp787e: prompt rows down a notch in size, and a hair in weight
       (#img61). ── */
 .tpr-row-btn { font-size: 0.9rem !important; font-weight: 425 !important; }
+
+/* ── revamp787f: both CTAs sat at near-black fills, which made them the
+      loudest thing on a quiet card (#img62). Lifted to a mid navy and a mid
+      slate — still clearly the primary action on each card, and both still
+      well past AA against white text. ── */
+.tdi-card--v3 .tdi-go { background: #2e4a8a !important; }
+.tpr-card { --pr-accent: #4e5f79; }
+@media (hover: hover) {
+  .tdi-card--v3:hover .tdi-go, .tdi-card--v3 .tdi-go:hover { background: #243c73 !important; }
+  .tpr-card:hover .tpr-go, .tpr-go:hover { background: #3e4d63 !important; }
+}
