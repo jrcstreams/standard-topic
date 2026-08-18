@@ -20901,3 +20901,11 @@ body.home-search .home-search-hero { padding: 0 0 1.15rem !important; }
 .aii-nav-dd-trending.is-condensed .trend-sports-toggle,
 .aii-nav-dd-trending.is-condensed .tlm-controlbar { display: flex !important; }
 .aii-nav-dd-trending .navdd-headic { display: inline-flex !important; color: #16a34a; }
+
+/* ── revamp815b: the panel head is sticky (top:0, z-index 6) from the base
+      rule, so it pinned itself under the nav and covered the #sub-header bar
+      that's meant to be there. On these pages the bar is the sticky element
+      and the head is just the page's title block. ── */
+body.pagenav-mode .aii-nav-dd .aii-nav-dd-head {
+  position: static !important; z-index: auto !important;
+}
