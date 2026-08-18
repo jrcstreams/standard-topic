@@ -19855,3 +19855,44 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 .tbh-subs { gap: 0 2.4rem; }
 .tbh-sub + .tbh-sub::before,
 .tbh-more::before { left: -1.22rem; }
+
+/* ═══ revamp788 ══════════════════════════════════════════════════════════════
+   The topic-header picker connects to the related-topics strip instead of
+   floating below it, and its actions row becomes a proper header band. */
+
+/* ── The panel now lands ON the strip's top rule (JS measures .tbh-subswrap),
+      so square off that edge and carry the strip's own hairline across it —
+      the card reads as the strip opening, not a sheet hovering over it
+      (#img64/65/66). ── */
+.topic-bodyhead .tsp-panel {
+  border-radius: 0 0 14px 14px;
+  border-top: 1.5px solid #d3d9e4;
+  box-shadow: 0 18px 34px -18px rgba(15, 23, 42, .22), 0 6px 14px -10px rgba(15, 23, 42, .1);
+}
+.topic-bodyhead .tsp-panel.has-fade::before { border-radius: 0; }
+
+/* ── Actions row becomes a header BAND on its own ground, running the full
+      width of the panel rather than sitting inside its gutter (#img67). ── */
+.topic-bodyhead .tsp-panel-inner { padding-top: 0; }
+.topic-bodyhead .tsp-actions {
+  margin: 0 -2rem 14px; padding: 11px 2rem;
+  background: #f3f5f9;
+  border-bottom: 1px solid #e4e9f2;
+}
+@media (max-width: 640px) {
+  .topic-bodyhead .tsp-actions { margin-left: -1rem; margin-right: -1rem; padding-left: 1rem; padding-right: 1rem; }
+}
+/* On the sheet's own ground the chips need to read as controls, not tint. */
+.topic-bodyhead .tsp-actions .tsp-foot-btn {
+  background: #fff; border: 1px solid #dfe5f0;
+}
+@media (hover: hover) {
+  .topic-bodyhead .tsp-actions .tsp-foot-btn:hover { border-color: #c3cee2; background: #fff; }
+}
+.topic-bodyhead .tsp-actions .tsp-close--row {
+  background: #fff; border: 1px solid #dfe5f0; border-radius: 9px;
+}
+
+/* "Related Topics" is what this list actually is — the parent's name was
+   redundant with the page title right above it. */
+.tsp-group-label { font-size: 0.98rem; }

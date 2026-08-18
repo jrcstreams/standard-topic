@@ -391,7 +391,7 @@ function topicPickerPanelHTML(topic, panelId) {
             <button type="button" class="tsp-close tsp-close--row" data-tsp-close aria-label="Close">${X_IC}</button>
           </div>
           <div class="tsp-scroll">
-            <div class="tsp-group-label">${escapeHTML(parent.name)} Topics</div>
+            <div class="tsp-group-label">Related Topics</div>
             <div class="tsp-grid">${(() => {
               // ACTIVE page first, parent second (unless the parent IS active),
               // then the rest in their designated order (#img121).
@@ -1522,7 +1522,9 @@ function wireSubnavPicker(root) {
       // Desktop body header: drop the full-width card so it overlays (covers) the
       // inline subtopics row — measured BEFORE the open class hides that row.
       if (on && isBodyHead && panelwrap) {
-        const subs = picker.querySelector('.tbh-subs');
+        // Anchor to the strip's TOP RULE (revamp788) — measuring .tbh-subs left
+        // the panel floating a row below it, so its edges never met the subnav.
+        const subs = picker.querySelector('.tbh-subswrap') || picker.querySelector('.tbh-subs');
         if (subs && window.matchMedia('(min-width: 900px)').matches) panelwrap.style.top = subs.offsetTop + 'px';
         else panelwrap.style.top = '';
       }
