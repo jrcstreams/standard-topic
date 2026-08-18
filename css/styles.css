@@ -19425,7 +19425,9 @@ body.app-mode:not(.home-search):has(.topic-home) #content {
 /* ── "Last updated" reads as a transmission stamp: a live dot, a quiet label,
       the date, then the edition carrying the weight. ── */
 .tdi-card--v3 .tdi-date {
+  /* align-self, or the flex-column card stretches the pill edge to edge. */
   display: inline-flex; align-items: center; gap: 7px;
+  align-self: flex-start; width: auto; max-width: 100%;
   margin: 0 0 0.8rem; padding: 4px 11px 4px 9px;
   border-radius: 999px; border: 1px solid color-mix(in srgb, #172554 11%, transparent);
   background: color-mix(in srgb, #172554 5%, transparent);
