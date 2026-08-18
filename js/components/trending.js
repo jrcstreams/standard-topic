@@ -473,14 +473,10 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
     if (shown.length) html += `<div class="trend-card-grid">${shown.map((t, i) => trendCardHTML(t, i)).join('')}</div>`;
     // "Earlier" (terms that WERE trending, not now) flows in below the live grid —
     // but ONLY once "View more" is clicked, so it's never a standalone bottom bucket.
-    if (earlier.length) {
-      html += `<div class="trend-earlier">
-        <div class="trend-earlier-head"><h3 class="trend-earlier-title">Trending Earlier</h3><p class="trend-earlier-sub">Recently trending, not right now</p></div>
-        <div class="trend-card-grid">${earlier.map((t, i) => trendCardHTML(t, 5000 + i, { metaText: '', past: true })).join('')}</div>
-      </div>`;
-    }
+    // revamp794: "Trending Earlier" is retired — a page about what's trending
+    // NOW shouldn't carry a second list of what isn't.
     // A single "View more" reveals the rest of the live set AND the Earlier section.
-    const moreCount = hiddenLive + (state.expanded ? 0 : earlier.length);
+    const moreCount = hiddenLive;
     if (!state.expanded && moreCount > 0) {
       html += `<div class="trend-loadmore-row"><button type="button" class="trend-loadmore" data-loadmore>View more trends <span class="trend-loadmore-count">+${moreCount}</span></button></div>`;
     }

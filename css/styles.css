@@ -20173,3 +20173,31 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
       the closed card (#img93), kept in the expanded view (#img94). ── */
 .tdi-cardprov--inline { display: none !important; }
 .tdi-subrow { gap: 0; }
+
+/* ═══ revamp794 ══════════════════════════════════════════════════════════════
+   Prompt list alignment + connected columns, and darker briefing titles. */
+
+/* ── Prompt labels read left-aligned like every other list on the site
+      (#img95); they were centred, which fought the icon in the gutter. ── */
+.aii-fi-accsum { justify-content: flex-start !important; text-align: left !important; }
+.aii-fi-acc-tx, .aii-fi-acc-name { text-align: left !important; }
+
+/* ── Two-up prompt columns connect, the way the trending grid does (#img101):
+      hairline rows, no gap, and the open prompt takes the full row so no rule
+      is left dangling beside it (#img100). ── */
+@media (min-width: 760px) {
+  .aii-fi-acclist { gap: 0 !important; }
+  .aii-fi-acclist > .aii-fi-acc {
+    border: 0 !important; border-radius: 0 !important;
+    border-bottom: 1px solid #eef1f6 !important; background: none !important;
+    box-shadow: none !important;
+  }
+  .aii-fi-acclist > .aii-fi-acc.is-open {
+    grid-column: 1 / -1;
+    background: #f7f9fc !important;
+  }
+}
+
+/* ── Daily Intelligence briefing titles: darker blue, a touch larger than the
+      body they lead (#img99). ── */
+.dib-body p strong { color: #14306e; font-size: 1.03em; }

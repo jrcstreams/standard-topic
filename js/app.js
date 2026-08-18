@@ -1065,8 +1065,7 @@ function promptsNavDdCfg(view) {
     // Head-action buttons live in the sticky dropdown header (#img304); both quiet
     // grey pills. Only shown on the landing view (toggled in wirePromptsDropdown).
     headButtons: [
-      { label: 'Build a Custom Prompt', href: '#/prompts/build', icon: PROMPTS_BUILD_HEAD_IC, onClick: () => { if (promptsDdShowView) promptsDdShowView('build'); } },
-      { label: 'Prompts by Custom Search', href: '#/search', icon: NAVDD_SEARCH_IC, onClick: () => { openSearchFromNav(); } },
+      { label: 'Build Prompt', href: '#/prompts/build', icon: PROMPTS_BUILD_HEAD_IC, onClick: () => { if (promptsDdShowView) promptsDdShowView('build'); } },
     ],
     contentHTML: '<div class="prompts-dd" data-prompts-root></div>',
     onClose: userCloseNavDropdown,

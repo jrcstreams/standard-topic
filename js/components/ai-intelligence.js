@@ -1167,9 +1167,20 @@ export function renderAIIntelligence(container, scope) {
       wirePromptCard(host, ctx);
       host.dataset.ready = '1';
     }
+      // One prompt open at a time (revamp794): a second open prompt pushed the
+    // first one's body off-screen and left two half-read cards competing.
+    const card = btn.closest('.aii-fi-acc');
+    if (willOpen) {
+      const scope = btn.closest('.aii-fi-acclist') || document;
+      scope.querySelectorAll('.aii-fi-acc.is-open').forEach((other) => {
+        if (other === card) return;
+        other.classList.remove('is-open');
+        other.querySelector('.aii-fi-accsum')?.setAttribute('aria-expanded', 'false');
+        other.querySelector('.aii-emenu-host')?.classList.remove('is-open');
+      });
+    }
     host.classList.toggle('is-open', willOpen);
     btn.setAttribute('aria-expanded', String(willOpen));
-    const card = btn.closest('.aii-fi-acc');
     if (card) card.classList.toggle('is-open', willOpen);
   }
   // Wire the content area after a render: Further-Insights accordions + section
