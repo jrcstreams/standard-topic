@@ -19730,3 +19730,23 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
   .tdi-card--v3 .tdi-summary, .tdi-sub, .tpr-sub, .tpr-list { transition: none !important; }
   .topic-top.is-di-open .tpr-card, .topic-top.is-pr-open .tdi-card { animation: none !important; }
 }
+
+/* ── revamp786b: the card's teaser is AI text, so it says so — the same blue
+      spark and muted line the news insights and trend summaries carry. It
+      collapses with the rest of the teaser when the full brief opens, which
+      has its own provenance line. ── */
+.tdi-cardprov {
+  display: flex; align-items: center; gap: 6px;
+  margin: 0 0 0.55rem; overflow: hidden;
+  font-family: var(--font-family); font-size: 0.72rem; font-weight: 500;
+  color: var(--color-text-muted);
+  transition:
+    opacity .2s ease,
+    max-height .38s cubic-bezier(.22, .61, .21, 1),
+    margin .38s cubic-bezier(.22, .61, .21, 1);
+  max-height: 4em;
+}
+.tdi-cardprov-ic { flex: none; width: 12px; height: 12px; fill: #2563eb; display: block; }
+.tdi-card.is-open .tdi-cardprov {
+  opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0;
+}

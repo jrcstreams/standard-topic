@@ -1288,6 +1288,8 @@ function diEditionParts(iso) {
 // A masthead dateline, not a status light (revamp782): the edition's own glyph
 // — sun for the morning wave, moon for the night — then the date and the
 // edition name. No chrome, no pulsing dot.
+// The same filled spark every other AI surface uses for provenance.
+const DI_SPARK = '<svg class="tdi-cardprov-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
 const DI_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M21.4 12h-2.2M4.8 12H2.6M18.6 5.4l-1.6 1.6M7 17l-1.6 1.6M18.6 18.6L17 17M7 7L5.4 5.4"/></svg>';
 const DI_MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.2 14.4A8.6 8.6 0 0 1 9.6 3.8a8.6 8.6 0 1 0 10.6 10.6z"/></svg>';
 function diEditionStampHTML(iso) {
@@ -1397,7 +1399,8 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
               <h2 class="tsec-title tdi-card-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>Daily Intelligence</h2>
               <span class="tdi-date" data-tdi-date></span>
             </div>
-            <p class="tdi-sub">An AI-generated briefing on this topic, twice a day.</p>
+            <p class="tdi-sub">An AI-generated topic briefing, updated twice a day.</p>
+            <div class="tdi-cardprov">${DI_SPARK}<span>AI-generated text</span></div>
             <p class="tdi-summary" data-tdi-summary>Preparing today's briefing…</p>
             <button type="button" class="tdi-go" data-di-toggle aria-expanded="false">
               <span class="tdi-go-open">Read today's briefing</span>
