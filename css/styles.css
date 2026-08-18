@@ -19408,3 +19408,50 @@ body.app-mode:not(.home-search):has(.topic-home) #content {
   .tpr-row-btn:hover .tpr-row-name { color: var(--pr-accent); }
   .tpr-row-btn:hover .tpr-row-mark { background: var(--pr-accent); transform: scale(1.25); }
 }
+
+/* ═══ revamp780 ══════════════════════════════════════════════════════════════
+   Card subtexts carry weight, the Daily Intelligence stamp becomes a proper
+   transmission line, and the briefing button loses its browser border. */
+
+/* ── Subtexts: weightier and a step down in size, so the line under the title
+      is clearly a LABEL and not more body copy (the briefing summary below it
+      stays at 0.92rem/regular). ── */
+.tdi-sub, .tpr-sub {
+  font-size: 0.875rem !important; font-weight: 620 !important;
+  color: #3d4c68 !important; letter-spacing: -0.003em;
+}
+.tdi-card--v3 .tdi-summary { font-weight: 400; }
+
+/* ── "Last updated" reads as a transmission stamp: a live dot, a quiet label,
+      the date, then the edition carrying the weight. ── */
+.tdi-card--v3 .tdi-date {
+  display: inline-flex; align-items: center; gap: 7px;
+  margin: 0 0 0.8rem; padding: 4px 11px 4px 9px;
+  border-radius: 999px; border: 1px solid color-mix(in srgb, #172554 11%, transparent);
+  background: color-mix(in srgb, #172554 5%, transparent);
+  font-family: var(--font-family); font-size: 0.685rem; font-weight: 600;
+  letter-spacing: 0.02em; color: #6b7a94; white-space: nowrap;
+}
+.tdi-card--v3 .tdi-date:empty { display: none; }
+.tdi-stamp-dot {
+  flex: none; width: 6px; height: 6px; border-radius: 50%; background: #16a34a;
+  box-shadow: 0 0 0 3px color-mix(in srgb, #16a34a 16%, transparent);
+}
+.tdi-stamp-lbl { text-transform: uppercase; letter-spacing: 0.07em; font-weight: 700; color: #8492a9; }
+.tdi-stamp-val { font-weight: 700; color: #3d4c68; }
+.tdi-stamp-sep { flex: none; width: 3px; height: 3px; border-radius: 50%; background: #c2cbd9; }
+.tdi-stamp-ed { font-weight: 700; color: #172554; }
+
+/* ── The briefing pill kept the UA <button> border (it used to be a span) and
+      wasn't navy enough. Both fixed; focus still gets a real ring. ── */
+.tdi-card--v3 .tdi-go {
+  border: 0 !important; outline: none;
+  background: #172554 !important; color: #fff !important;
+  -webkit-appearance: none; appearance: none;
+}
+@media (hover: hover) {
+  .tdi-card--v3:hover .tdi-go, .tdi-card--v3 .tdi-go:hover { background: #0f1c40 !important; }
+}
+.tdi-card--v3 .tdi-go:focus-visible, .tpr-go:focus-visible {
+  outline: 2px solid #2563eb; outline-offset: 2px;
+}

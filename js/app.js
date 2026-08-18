@@ -1274,15 +1274,27 @@ const SUBPAGE_ARROW = '<svg width="14" height="14" viewBox="0 0 24 24" fill="non
 // cleanly — anything stamped between 4am and 4pm ET is that morning's edition,
 // everything else is the night's. Reads "Last Updated: August 17 (Morning
 // Edition)" so the card says WHICH briefing you're looking at, not just when.
-function diEditionLabel(iso) {
+function diEditionParts(iso) {
   try {
     const d = new Date(iso);
     const et = (opts) => new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', ...opts }).format(d);
     const hour = Number(et({ hour: 'numeric', hour12: false }));
-    const day = et({ month: 'long', day: 'numeric' });
-    const edition = hour >= 4 && hour < 16 ? 'Morning Edition' : 'Night Edition';
-    return `Last Updated: ${day} (${edition})`;
-  } catch (_) { return ''; }
+    return {
+      day: et({ month: 'short', day: 'numeric' }),
+      edition: hour >= 4 && hour < 16 ? 'Morning Edition' : 'Night Edition',
+    };
+  } catch (_) { return null; }
+}
+// Rendered as a transmission stamp — a live dot, the quiet label, then the
+// edition — rather than a sentence of muted text.
+function diEditionStampHTML(iso) {
+  const p = diEditionParts(iso);
+  if (!p) return '';
+  return `<span class="tdi-stamp-dot" aria-hidden="true"></span>`
+    + `<span class="tdi-stamp-lbl">Last updated</span>`
+    + `<span class="tdi-stamp-val">${escapeHTML(p.day)}</span>`
+    + `<span class="tdi-stamp-sep" aria-hidden="true"></span>`
+    + `<span class="tdi-stamp-ed">${escapeHTML(p.edition)}</span>`;
 }
 
 // The two landing cards expand IN PLACE (revamp777). Only one is open at a
@@ -1420,7 +1432,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       const dEl = body.querySelector('[data-tdi-date]');
       if (sEl && d.summary) sEl.textContent = d.summary;
       else if (sEl && d.content) sEl.textContent = String(d.content).replace(/^##.+$/gm, '').replace(/\*\*/g, '').trim().split(/(?<=[.!?])\s/)[0] || '';
-      if (dEl && d.generatedAt) dEl.textContent = diEditionLabel(d.generatedAt);
+      if (dEl && d.generatedAt) dEl.innerHTML = diEditionStampHTML(d.generatedAt);
     }).catch(() => {});
   } catch (err) {
     console.error('topic page render failed', err);
