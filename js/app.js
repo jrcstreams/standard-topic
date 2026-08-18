@@ -2672,7 +2672,12 @@ function backBarHTML() {
 // head action buttons are resting-state chrome, so they fold away as soon as the
 // user starts reading and return when they scroll back to the top.
 function wireNavDdCondense(panel) {
-  const sc = panel.querySelector('[data-navdd-scroll]');
+  // These pages used to scroll inside the panel. They scroll the DOCUMENT now,
+  // so [data-navdd-scroll] is absent and this bailed at the `if (!sc) return`
+  // below — which is why the header never condensed on Prompts or Trending
+  // (revamp795). Fall back to the page scroller.
+  const inner = panel.querySelector('[data-navdd-scroll]');
+  const sc = inner || document.scrollingElement || document.documentElement;
   // Measure ONLY the chrome that collapses. The previous version measured
   // .aii-nav-dd-inner, which CONTAINS the scroller — so the "delta" was the whole
   // panel's height, the compensation was garbage, and every scroll event yanked
@@ -2719,7 +2724,7 @@ function wireNavDdCondense(panel) {
   };
   syncStickyTop();
   window.addEventListener('resize', syncStickyTop, { passive: true });
-  sc.addEventListener('scroll', apply, { passive: true });
+  (inner || window).addEventListener('scroll', apply, { passive: true });
   apply();
 }
 
