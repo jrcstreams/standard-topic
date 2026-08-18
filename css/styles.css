@@ -20324,3 +20324,34 @@ body.home-search #section-newsfeed .news-list .news-card:first-child .news-card-
 @media (hover: hover) {
   .pdir-topicclose:hover { background: #fff; color: #172554; border-color: color-mix(in srgb, #172554 22%, transparent); }
 }
+
+/* ═══ revamp798 ══════════════════════════════════════════════════════════════
+   The condensed head IS the topic-page subnav: icon + name on the left, the
+   page's action right-aligned where "Change Topic" sits. revamp795 left the
+   action buttons hidden (an older rule hides .aii-nav-dd-headbtns when
+   condensed) and never laid the bar out as a row, so it collapsed to a bare
+   blue word on grey (#img122/123). */
+.aii-nav-dd.is-condensed .aii-nav-dd-head {
+  flex-direction: row !important; align-items: center !important;
+  justify-content: space-between !important; gap: 14px;
+}
+.aii-nav-dd.is-condensed .aii-nav-dd-titles {
+  flex: 0 1 auto !important; width: auto !important;
+  display: flex !important; flex-direction: row !important; align-items: center !important;
+}
+/* The action comes BACK in the condensed bar — right-aligned, compact. */
+.aii-nav-dd.is-condensed .aii-nav-dd-headbtns {
+  display: flex !important; margin-left: auto; flex: none; gap: 8px;
+}
+.aii-nav-dd.is-condensed .aii-nav-dd-headbtn {
+  padding: 6px 13px; font-size: 0.82rem;
+  background: #fff; border-color: #d7dfeb;
+}
+@media (hover: hover) {
+  .aii-nav-dd.is-condensed .aii-nav-dd-headbtn:hover { background: #f5f8fd; border-color: #c3cee2; }
+}
+/* Identity reads like the topic bar: icon + name, navy, nothing else. */
+.aii-nav-dd.is-condensed .aii-nav-dd-title {
+  font-size: 1.06rem; font-weight: 800; color: #1e3a8a;
+}
+.aii-nav-dd.is-condensed .navdd-headic svg { width: 18px; height: 18px; display: block; }
