@@ -62,6 +62,12 @@ try {
 const CRON_BUILDER_GROUPS = ['daily'];
 function overviewCandidates() {
   const out = [];
+  // revamp814: the HOMEPAGE briefing rides the same twice-daily wave as the
+  // topics — one cross-topic brief per edition, sampled across every parent
+  // (see builderHeadlines' home branch). ~60 extra calls a month.
+  for (const group of CRON_BUILDER_GROUPS) {
+    out.push({ topic: 'home', group, insight: `${group}${BUILDER_SUFFIX}` });
+  }
   for (const t of (topicsData.topics || [])) {
     if (!t.slug || t.slug === 'home' || !t.name) continue;
     for (const group of CRON_BUILDER_GROUPS) {

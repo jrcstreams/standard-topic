@@ -20781,3 +20781,60 @@ body.pagenav-on #sub-header.pagenav { opacity: 1; visibility: visible; }
   #nav-search.navbtn.nav-searchbar { padding: 6px !important; border-radius: 8px; }
   #nav-search.navbtn .navbtn-ico svg { width: 15px; height: 15px; }
 }
+
+/* ── revamp813: the Topics page sublists go multi-column when there's room,
+      matching the related-topics picker on the topic pages (#img196/197)
+      instead of one long single-file column. ── */
+@media (min-width: 700px) {
+  .aiidd-vlist {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0 18px; align-items: start;
+  }
+}
+
+/* ═══ revamp814 ══════════════════════════════════════════════════════════════
+   The homepage's three-card row: Featured Topics · Featured AI Prompts ·
+   Daily Intelligence. Single-column lists, five items each, tighter rows
+   (#img198/199). */
+@media (min-width: 1100px) {
+  body.home-search .home-sections .home-featured {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 1.1rem !important;
+  }
+}
+@media (min-width: 760px) and (max-width: 1099.98px) {
+  body.home-search .home-sections .home-featured {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  .hf-card--di { grid-column: 1 / -1; }
+}
+/* One column per card now that there are three of them, with the rows pulled
+   in — two columns of five made each card taller than it needed to be. */
+.hf-chips { grid-template-columns: 1fr !important; }
+.hq-row { padding: 0.42rem 0 0.42rem 2px; font-size: 0.88rem; }
+.hf-card { padding: 1rem 1.15rem 0.95rem; }
+.hf-title { font-size: clamp(1.02rem, 0.94rem + 0.4vw, 1.2rem); }
+.hf-foot { margin-top: 0.7rem; }
+
+/* The Daily Intelligence card sits in the row as a peer: navy-tinted like the
+   topic pages' version, and its own expand still takes the full width. */
+.hf-card--di {
+  --hf-accent: #2f4d9e;
+  padding: 0 !important; border: 0 !important; background: none !important;
+}
+.hf-card--di .tdi-card--home {
+  height: 100%; margin: 0;
+  border: 1px solid color-mix(in srgb, #2f4d9e 16%, transparent);
+  background: linear-gradient(180deg, #f2f5fc 0%, #eaf0fa 100%);
+}
+.tdi-card--home .tdi-summary { font-size: 0.88rem; }
+.tdi-card--home .tdi-sub { font-size: 0.82rem !important; }
+/* Open, the briefing needs the whole row rather than a third of it. */
+body.home-search .home-sections .home-featured:has(.tdi-card--home.is-open) {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+body.home-search .home-featured:has(.tdi-card--home.is-open) .hf-card--topics,
+body.home-search .home-featured:has(.tdi-card--home.is-open) .hf-card--prompts {
+  display: none;
+}

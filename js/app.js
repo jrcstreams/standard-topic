@@ -1334,6 +1334,41 @@ function diEditionStampHTML(iso) {
     + `<span class="tdi-stamp-ed">${escapeHTML(p.edition)}</span>`;
 }
 
+
+// revamp814: the homepage brief. Same card component and same open/close
+// behaviour as the topic pages; only the scope differs.
+function wireHomeDailyIntelligence(root) {
+  const card = root.querySelector('.tdi-card--home');
+  if (!card) return;
+  const host = card.querySelector('[data-di-expand]');
+  const inner = host?.firstElementChild;
+  const btns = [...card.querySelectorAll('[data-di-toggle]')];
+  if (!host || !inner || !btns.length) return;
+  let loaded = false;
+  try { inner.inert = true; } catch (_) {}
+  const setOpen = (on) => {
+    btns.forEach((b) => b.setAttribute('aria-expanded', on ? 'true' : 'false'));
+    card.classList.toggle('is-open', on);
+    try { inner.inert = !on; } catch (_) {}
+    if (!on || loaded) return;
+    loaded = true;
+    renderDailyIntelligence(inner.querySelector('[data-di-host]') || inner, {
+      topic: 'home', label: 'Today', slug: 'home', inline: true,
+    });
+  };
+  btns.forEach((b) => b.addEventListener('click', () => setOpen(b.getAttribute('aria-expanded') !== 'true')));
+  fetchDailyBrief('home').then((d) => {
+    if (!d || !card.isConnected) return;
+    const sEl = card.querySelector('[data-tdi-summary]');
+    if (sEl && d.summary) sEl.textContent = d.summary;
+    if (d.generatedAt) {
+      const stamp = diEditionStampHTML(d.generatedAt);
+      const a = card.querySelector('[data-tdi-date]'); if (a) a.innerHTML = stamp;
+      const b = card.querySelector('[data-tdi-date-lg]'); if (b) b.innerHTML = stamp;
+    }
+  }).catch(() => {});
+}
+
 // The two landing cards expand IN PLACE (revamp777). Only one is open at a
 // time — the open card takes the full width of the row and the other drops
 // beneath it, which is also exactly what the stacked mobile layout does.
@@ -3462,6 +3497,39 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               <div class="hf-chips" data-hq-prompts></div>
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Access prompt library${HQ_ARROW}</button></div>
             </section>
+          <section class="hf-card hf-card--di" aria-label="Daily Intelligence">
+            <div class="tdi-card tdi-card--v3 tdi-card--home" data-tdi>
+              <div class="tdi-head">
+                <h2 class="tsec-title tdi-card-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>Daily Intelligence</h2>
+                <span class="tdi-headslot">
+                  <span class="tdi-date" data-tdi-date></span>
+                  <button type="button" class="tdi-headclose" data-di-toggle aria-label="Close briefing">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    <span>Close Briefing</span>
+                  </button>
+                </span>
+              </div>
+              <div class="tdi-subrow">
+                <p class="tdi-sub">Two editions a day, across 100+ topics. AI-generated.</p>
+              </div>
+              <div class="tdi-date tdi-date--lg" data-tdi-date-lg></div>
+              <div class="tdi-cardprov tdi-cardprov--stack">${DI_SPARK}<span>AI-generated text</span></div>
+              <p class="tdi-summary" data-tdi-summary>Preparing today's briefing…</p>
+              <button type="button" class="tdi-go" data-di-toggle aria-expanded="false">
+                <span class="tdi-go-open">Read today's briefing</span>
+                <span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
+              </button>
+              <div class="tdi-expand" data-di-expand><div class="tdi-expand-inner">
+                <div data-di-host></div>
+                <div class="tdi-closefoot">
+                  <button type="button" class="tdi-closefoot-btn" data-di-toggle>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    <span>Close Briefing</span>
+                  </button>
+                </div>
+              </div></div>
+            </div>
+          </section>
           </div>
           <div class="home-main">
             <section class="layout-section" id="section-newsfeed"></section>
@@ -3475,12 +3543,16 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });
     // Trending is now the only sidebar card, so it can run much longer.
     renderTrendingHome(container.querySelector('#home-trending'), { limit: 14 });
+    // The homepage Daily Intelligence card (revamp814) uses the same component
+    // as the topic cards, so it inherits the stamp, the unfurl animation and
+    // both close controls. Its scope is 'home' — the cross-topic briefing.
+    wireHomeDailyIntelligence(container);
     {
       const tWrap = container.querySelector('[data-hq-topics]');
       if (tWrap) {
         // Render the full dozen; CSS visibility caps trim by viewport (6 on
         // phones, 8 mid-range, all 12 on desktop where the card is wider).
-        let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 12); } catch (_) {}
+        let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 5); } catch (_) {}
         tWrap.innerHTML = feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="hq-row"><span class="hq-row-mark" aria-hidden="true"></span><span class="hq-row-name">${escapeHTML(t.name)}</span></a>`).join('');
       }
       // Featured Prompts — the same featured set the Prompt Library leads with.
@@ -3494,7 +3566,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
             if (!cfg || !Array.isArray(cfg.featured)) return;
             const picks = [];
             for (const f of cfg.featured) {
-              if (picks.length >= 6) break;
+              if (picks.length >= 5) break;
               let sc = []; try { sc = getShortcutsForTopic(f.topic) || []; } catch (_) { continue; }
               const sMatch = sc.find((x) => x && x.name === f.name);
               if (!(sMatch && sMatch.prompt)) continue;
