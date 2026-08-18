@@ -20838,3 +20838,31 @@ body.home-search .home-featured:has(.tdi-card--home.is-open) .hf-card--topics,
 body.home-search .home-featured:has(.tdi-card--home.is-open) .hf-card--prompts {
   display: none;
 }
+
+/* ── revamp814b: the search button was clipping its label to "S…" at
+      mid widths (#img200/201). The placeholder span inherits
+      `flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis` from the
+      faux-input days — as a BUTTON it should size to its text, never ellipse.
+      Text now holds down to 900px, and the button scales with the nav's own
+      compact settings (#img202). ── */
+#nav-search.navbtn.nav-searchbar { flex: none !important; width: auto !important; max-width: none !important; }
+#nav-search.navbtn .nav-searchbar-ph {
+  flex: none !important; overflow: visible !important; text-overflow: clip !important;
+}
+@media (max-width: 1180px) { .nav-searchbar-ph .np-full { display: none !important; } .nav-searchbar-ph .np-mid { display: inline !important; } }
+@media (max-width: 1040px) { .nav-searchbar-ph .np-mid { display: none !important; } .nav-searchbar-ph .np-short { display: inline !important; } }
+@media (max-width: 900px) {
+  #nav-search.navbtn.nav-searchbar { padding: 7px !important; border-radius: 9px; }
+  #nav-search.navbtn .nav-searchbar-ph { display: none !important; }
+}
+/* Track the nav's compact modes so the button shrinks with its neighbours. */
+.sticky-hero-inner.nav-small-text #nav-search.navbtn .nav-searchbar-ph { font-size: 0.82rem !important; }
+.sticky-hero-inner.nav-small-text #nav-search.navbtn.nav-searchbar { padding: 7px 13px !important; }
+
+/* ── The hero block sits centred between the nav and the white band (#img203):
+      equal air above the title and below the input. ── */
+body.home-search.app-mode #content,
+body.home-search.app-mode.sticky-always.has-subnav #content {
+  padding-top: calc(var(--nav-h) + 1.75rem) !important;
+}
+body.home-search .home-search-hero { padding: 0 0 1.15rem !important; }
