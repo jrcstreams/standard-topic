@@ -116,6 +116,11 @@ function parseRoute(pathname) {
   // Nav-dropdown deep-links: Topics tree, Trending, and Prompts (landing, or a
   // specific view: /prompts/build · /prompts/library). Each opens its dropdown
   // over the home layout, exactly like /search.
+  // revamp818: the Daily Intelligence hub is a REAL page (its own route and
+  // renderer), not a dropdown over home.
+  if (segments[0] === 'intelligence') {
+    return { type: 'intelligence' };
+  }
   if (segments[0] === 'topics') {
     return { type: 'topics' };
   }

@@ -1335,6 +1335,70 @@ function diEditionStampHTML(iso) {
 }
 
 
+
+// revamp818: the Daily Intelligence hub — a REAL page (own route, own
+// renderer, normal scroll), not a dropdown over home. Three bands: what Daily
+// Intelligence is, today's cross-topic briefing, then every parent topic's
+// briefing as a card grid you can read straight down.
+function renderIntelligenceHub(container) {
+  let parents = [];
+  try { parents = (getParentTopics() || []).filter((t) => t && t.slug && t.slug !== 'home'); } catch (_) {}
+  container.innerHTML = `
+    <div class="dih">
+      <header class="dih-head">
+        <h1 class="dih-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>Daily Intelligence</h1>
+        <p class="dih-lede">Every day, twice a day, Standard Topic reads its own news feed across 100+ topics and writes a briefing on each — what actually happened, what it means, and the stories behind it. Below: today's cross-topic briefing, then every topic's own.</p>
+        <div class="tdi-cardprov dih-prov">${DI_SPARK}<span>AI-generated text</span></div>
+      </header>
+
+      <section class="dih-today">
+        <div class="dih-sechead"><h2 class="dih-sectitle">Today's Briefing</h2><span class="tdi-date dih-stamp" data-dih-stamp></span></div>
+        <div class="dih-today-card" data-dih-today></div>
+      </section>
+
+      <section class="dih-bytopic">
+        <div class="dih-sechead"><h2 class="dih-sectitle">By Topic</h2></div>
+        <div class="dih-grid">${parents.map((t) => `
+          <a class="dih-card" href="#/topic/${escapeAttr(t.slug)}">
+            <span class="dih-card-head">
+              <span class="dih-card-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
+              <span class="dih-card-name">${escapeHTML(t.name)}</span>
+            </span>
+            <span class="dih-card-sum" data-dih-sum="${escapeAttr(t.name)}">Loading today's briefing…</span>
+            <span class="dih-card-go">Read briefing${SUBPAGE_ARROW}</span>
+          </a>`).join('')}</div>
+      </section>
+    </div>`;
+
+  // Today's cross-topic brief renders inline, the same component the cards use.
+  const todayHost = container.querySelector('[data-dih-today]');
+  if (todayHost) {
+    renderDailyIntelligence(todayHost, { topic: 'home', label: 'Today', slug: 'home', inline: true });
+  }
+  fetchDailyBrief('home').then((d) => {
+    const st = container.querySelector('[data-dih-stamp]');
+    if (st && d && d.generatedAt) st.innerHTML = diEditionStampHTML(d.generatedAt);
+  }).catch(() => {});
+
+  // Each topic card fills with its own briefing summary. Sequential with a
+  // small gap so 14 parallel fetches don't hammer the API on page load.
+  (async () => {
+    for (const t of parents) {
+      if (!container.isConnected) return;
+      try {
+        const d = await fetchDailyBrief(t.name);
+        const el = container.querySelector(`[data-dih-sum="${CSS.escape(t.name)}"]`);
+        if (el && d && d.summary) el.textContent = d.summary;
+        else if (el) el.textContent = 'Briefing publishes with the next edition.';
+      } catch (_) {
+        const el = container.querySelector(`[data-dih-sum="${CSS.escape(t.name)}"]`);
+        if (el) el.textContent = 'Briefing publishes with the next edition.';
+      }
+      await new Promise((r) => setTimeout(r, 120));
+    }
+  })();
+}
+
 // revamp814: the homepage brief. Same card component and same open/close
 // behaviour as the topic pages; only the scope differs.
 function wireHomeDailyIntelligence(root) {
@@ -1864,6 +1928,23 @@ function renderLayout(route) {
     observeSubnavHeight();
     setupResponsiveNav();
     wireSubnavPicker(subHeader);
+  }
+
+  if (route.type === 'intelligence') {
+    document.body.classList.add('has-subnav');
+    subHeader.classList.add('is-subnav', 'static-page');
+    subHeader.innerHTML = `
+      <div class="topic-subnav-title">
+        <div class="topic-subnav-inner">
+          <div class="subnav-ident">
+            <span class="subnav-ident-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/></svg></span>
+            <span class="subnav-ident-name">Daily Intelligence</span>
+          </div>
+          ${backBarHTML()}
+        </div>
+      </div>`;
+    observeSubnavHeight();
+    return;
   }
 
   if (route.type === 'about' || route.type === 'terms') {
@@ -2908,6 +2989,7 @@ function documentTitleFor(route) {
     }
     case 'custom': return route.term ? `${route.term} — Search | ${SITE_TITLE_SUFFIX}` : `Search | ${SITE_TITLE_SUFFIX}`;
     case 'search': return `Search | ${SITE_TITLE_SUFFIX}`;
+    case 'intelligence': return `Daily Intelligence | ${SITE_TITLE_SUFFIX}`;
     case 'trending': return `Trending | ${SITE_TITLE_SUFFIX}`;
     case 'topics': return `All Topics | ${SITE_TITLE_SUFFIX}`;
     case 'prompts': return `Prompts | ${SITE_TITLE_SUFFIX}`;
@@ -5160,6 +5242,11 @@ function renderPage(route) {
       return;
     }
     renderTopicLayout(content, { topic, route, isHome: false });
+    return;
+  }
+
+  if (route.type === 'intelligence') {
+    renderIntelligenceHub(content);
     return;
   }
 
