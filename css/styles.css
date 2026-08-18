@@ -19819,3 +19819,10 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 @media (hover: hover) {
   .di-read:hover { background: rgba(255, 255, 255, 0.9) !important; }
 }
+
+/* ── revamp787b: inline, the card already carries the AI-generated label above
+      the edition stamp, so the brief's own provenance line is a duplicate —
+      and it was the only thing between the stamp and Overview. ── */
+.di-page--inline .di-prov2 { display: none; }
+.di-page--inline .di-body > .di-ov:first-child,
+.di-page--inline .di-ov { margin-top: 0; }
