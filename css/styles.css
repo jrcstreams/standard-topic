@@ -20746,3 +20746,38 @@ body.pagenav-on #sub-header.pagenav { opacity: 1; visibility: visible; }
   padding-top: 1.5rem !important;
   padding-bottom: 2rem !important;
 }
+
+/* ── revamp812c: the search button goes darker and heavier, and KEEPS its label
+      far longer (#img193/194). The label was disappearing early because the
+      responsive-nav rules hide .navbtn-label wholesale at mid widths — these
+      target the search button's own spans so that collapse can't take it. ── */
+#nav-search.navbtn.nav-searchbar {
+  background: #1d4ed8 !important; border-color: #1d4ed8 !important;
+}
+@media (hover: hover) {
+  #nav-search.navbtn.nav-searchbar:hover { background: #1e40af !important; border-color: #1e40af !important; }
+}
+#nav-search.navbtn .nav-searchbar-ph {
+  font-size: 0.88rem !important; font-weight: 700 !important; color: #fff !important;
+}
+#nav-search.navbtn .navbtn-ico svg { width: 18px; height: 18px; stroke-width: 2.6; }
+/* The label survives the nav's own label-collapse rules, and only the very
+   smallest screens fall back to the glyph. */
+#nav-search.navbtn .navbtn-label { display: inline !important; }
+@media (max-width: 560px) {
+  #nav-search.navbtn.nav-searchbar { padding: 8px; border-radius: 10px; }
+  #nav-search.navbtn .navbtn-label,
+  #nav-search.navbtn .nav-searchbar-ph { display: none !important; }
+}
+
+/* ── revamp812d: on phones the glyph-only button was sized for a desktop bar —
+      too big against the nav around it (#img195). Scale the box and the icon
+      down with the screen. ── */
+@media (max-width: 560px) {
+  #nav-search.navbtn.nav-searchbar { padding: 7px !important; border-radius: 9px; }
+  #nav-search.navbtn .navbtn-ico svg { width: 16px; height: 16px; }
+}
+@media (max-width: 420px) {
+  #nav-search.navbtn.nav-searchbar { padding: 6px !important; border-radius: 8px; }
+  #nav-search.navbtn .navbtn-ico svg { width: 15px; height: 15px; }
+}
