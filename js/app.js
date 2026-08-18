@@ -2995,7 +2995,7 @@ function renderStickyHeroBar(container, route) {
         </button>
         <button type="button" class="navbtn nav-searchbar" id="nav-search" aria-label="Search">
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-          <span class="navbtn-label nav-searchbar-ph"><span class="np-full">Search any topic</span><span class="np-short">Search</span></span>
+          <span class="navbtn-label nav-searchbar-ph"><span class="np-full">Search any topic</span><span class="np-mid">Search topics</span><span class="np-short">Search</span></span>
         </button>
       </div>
     </div>

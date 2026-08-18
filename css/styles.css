@@ -20641,3 +20641,75 @@ body.pagenav-on #sub-header.pagenav { opacity: 1; visibility: visible; }
 @media (hover: hover) {
   #sub-header.pagenav .pagenav-action:not(.is-on):hover { background: #f5f8fd; border-color: #c3cee2; text-decoration: none; }
 }
+
+/* ═══ revamp811 ══════════════════════════════════════════════════════════════
+   A blue nav search button, and the trending first row's hover reaching its
+   rule. */
+
+/* ── Nav search: a blue button with white text, stepping down through four
+      tiers as the bar narrows (#img186). ── */
+#nav-search.navbtn.nav-searchbar {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 16px; border-radius: 11px; width: auto; min-width: 0;
+  background: #2563eb !important;
+  border: 1px solid #2563eb !important;
+  transition: background .14s ease, border-color .14s ease;
+}
+@media (hover: hover) {
+  #nav-search.navbtn.nav-searchbar:hover { background: #1d4ed8 !important; border-color: #1d4ed8 !important; }
+}
+#nav-search.navbtn .nav-searchbar-ph,
+#nav-search.navbtn .navbtn-ico { color: #fff !important; }
+#nav-search.navbtn .nav-searchbar-ph {
+  font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; white-space: nowrap;
+}
+#nav-search.navbtn .navbtn-ico svg { width: 17px; height: 17px; }
+/* Four tiers: "Search any topic" → "Search topics" → "Search" → glyph only. */
+.nav-searchbar-ph .np-mid, .nav-searchbar-ph .np-short { display: none; }
+@media (max-width: 1180px) {
+  .nav-searchbar-ph .np-full { display: none; }
+  .nav-searchbar-ph .np-mid { display: inline; }
+}
+@media (max-width: 980px) {
+  .nav-searchbar-ph .np-mid { display: none; }
+  .nav-searchbar-ph .np-short { display: inline; }
+}
+@media (max-width: 720px) {
+  #nav-search.navbtn.nav-searchbar { padding: 8px; border-radius: 10px; }
+  #nav-search.navbtn .nav-searchbar-ph { display: none !important; }
+}
+
+/* ── Trending: the FIRST row's hover has to clear the control bar's 2px rule,
+      which a 1px bleed can't (#img185). Two-up above 640px means rows 1 and 2
+      are both first-row; below it, only the first. ── */
+@media (hover: hover) and (min-width: 641px) {
+  .aii-nav-dd-trending .trend-card-grid > .trend-card:nth-child(1):not(.is-expanded):hover::before,
+  .aii-nav-dd-trending .trend-card-grid > .trend-card:nth-child(2):not(.is-expanded):hover::before {
+    top: -3px;
+  }
+}
+@media (hover: hover) and (max-width: 640px) {
+  .aii-nav-dd-trending .trend-card-grid > .trend-card:nth-child(1):not(.is-expanded):hover::before { top: -3px; }
+}
+
+/* ── revamp811b: the "Back to …" bar sat well off the subnav, pushing the whole
+      page down with it (#img187). ── */
+.aii-nav-dd .page-backbar { padding-top: 10px !important; padding-bottom: 4px !important; }
+.search-page > .page-backbar { padding-top: 10px !important; }
+
+/* ── revamp811c: an older rule at css ~14922 hides .np-full below 1440px and
+      shows .np-short. With the new three-tier set that left ALL of them hidden
+      at 1440, so the button rendered icon-only on desktop. These win. ── */
+.nav-searchbar-ph .np-full { display: inline !important; }
+.nav-searchbar-ph .np-mid, .nav-searchbar-ph .np-short { display: none !important; }
+@media (max-width: 1180px) {
+  .nav-searchbar-ph .np-full { display: none !important; }
+  .nav-searchbar-ph .np-mid { display: inline !important; }
+}
+@media (max-width: 980px) {
+  .nav-searchbar-ph .np-mid { display: none !important; }
+  .nav-searchbar-ph .np-short { display: inline !important; }
+}
+@media (max-width: 720px) {
+  .nav-searchbar-ph .np-short { display: none !important; }
+}

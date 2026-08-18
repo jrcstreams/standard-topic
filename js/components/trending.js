@@ -467,7 +467,9 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
     const all = visible();
     const earlier = earlierVisible();
     if (!all.length && !earlier.length) { gridEl.innerHTML = '<p class="trending-empty">No trends in this category right now.</p>'; return; }
-    const shown = state.expanded ? all : all.slice(0, TLM_INITIAL);
+    // revamp811: show every live trend. Holding four back behind a button on a
+    // page whose whole job is "what's trending" was pointless (#img188).
+    const shown = all;
     const hiddenLive = all.length - shown.length;
     let html = '';
     if (shown.length) html += `<div class="trend-card-grid">${shown.map((t, i) => trendCardHTML(t, i)).join('')}</div>`;
@@ -476,7 +478,7 @@ export function renderTrendingModal(controlsEl, gridEl, opts = {}) {
     // revamp794: "Trending Earlier" is retired — a page about what's trending
     // NOW shouldn't carry a second list of what isn't.
     // A single "View more" reveals the rest of the live set AND the Earlier section.
-    const moreCount = hiddenLive;
+    const moreCount = 0;
     if (!state.expanded && moreCount > 0) {
       html += `<div class="trend-loadmore-row"><button type="button" class="trend-loadmore" data-loadmore>View more trends <span class="trend-loadmore-count">+${moreCount}</span></button></div>`;
     }
