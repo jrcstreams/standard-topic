@@ -1367,7 +1367,7 @@ ${w}`),g.length?g.join(`
                 </span>
               </div>
               <div class="tdi-subrow">
-                <p class="tdi-sub">Two editions a day, across 100+ topics. AI-generated.</p>
+                <p class="tdi-sub">An AI-generated briefing, with two editions daily across each of our 100+ topics.</p>
               </div>
               <div class="tdi-date tdi-date--lg" data-tdi-date-lg></div>
               <div class="tdi-cardprov tdi-cardprov--stack">${qs}<span>AI-generated text</span></div>
