@@ -20437,3 +20437,23 @@ body.home-search #section-newsfeed .news-list .news-card:first-child .news-card-
       states (beside the title when they fit, flush left when they don't). ── */
 .tdi-headslot { margin-left: 0 !important; align-self: center !important; }
 .tdi-head { justify-content: space-between !important; align-items: center !important; flex-wrap: wrap; }
+
+/* ── revamp806: home hero + trending spacing, measured on prod.
+      The hero block sat 44px under the nav but only 33px above the white
+      band — top-heavy, and further from the nav than it needed to be
+      (#img152/153). Pull the top in so the two ends match at ~30px.
+      Scoped to the home hero only — no shared #content rule beyond
+      home-search, which is what caused the last round of damage. */
+body.home-search.app-mode #content,
+body.home-search.app-mode.sticky-always.has-subnav #content {
+  padding-top: calc(var(--nav-h) + 1.5rem) !important;
+}
+@media (max-width: 1023.98px) {
+  body.home-search.app-mode #content,
+  body.home-search.app-mode.sticky-always.has-subnav #content {
+    padding-top: calc(var(--nav-h) + 1.2rem) !important;
+  }
+}
+/* What's Trending sat 55px off the Featured cards (#img154). */
+.home-featured { margin-bottom: 1.25rem !important; }
+@media (min-width: 720px) { .home-featured { margin-bottom: 1.5rem !important; } }
