@@ -19960,3 +19960,6 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 @media (hover: hover) {
   .tdi-closefoot-btn:hover { background: #fff; color: #172554; border-color: color-mix(in srgb, #172554 22%, transparent); }
 }
+
+/* ── revamp789b: topic title comes down again at the wide end (#img73). ── */
+.tbh-title { font-size: clamp(1.5rem, 1.05rem + 1.4vw, 1.92rem); }
