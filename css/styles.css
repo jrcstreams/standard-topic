@@ -19648,3 +19648,14 @@ body.app-mode:not(.home-search):has(.topic-home) #content {
   height: 1.35em; left: -0.95rem;
   background: #d3dae6;
 }
+
+/* ── revamp785c: tighten the landing's vertical rhythm (#img49/51/52). The
+      cards sat 46px under the related-topics rule (a 1.7rem header margin
+      stacked on a 1.2rem row margin) and the news feed sat 37px under the
+      cards. Mobile keeps its news-feed gap — only the gap ABOVE the cards
+      comes in there. ── */
+body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
+.topic-home .topic-top { margin-top: 0.75rem !important; }
+@media (min-width: 880px) {
+  .topic-home .topic-news-wrap { margin-top: 1.6rem !important; }
+}
