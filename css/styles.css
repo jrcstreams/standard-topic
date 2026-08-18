@@ -19562,3 +19562,23 @@ body.app-mode:not(.home-search):has(.topic-home) #content {
 .tpr-sub { margin-bottom: 0.45rem !important; }
 .tpr-list { margin-top: 0; }
 .tpr-row-btn { font-size: 0.95rem !important; font-weight: 500 !important; }
+
+/* ── revamp783b: the stamp was too loud (#img40/41). Smaller, softer ground,
+      and the date/edition contrast pulled way in — they were reading as two
+      different pieces of information instead of one line. The box also hugs
+      its text more tightly now, which is what fixes the optical alignment
+      against the title. ── */
+.tdi-card--v3 .tdi-head .tdi-date {
+  gap: 6px; padding: 3px 9px !important; border-radius: 8px;
+  border-color: color-mix(in srgb, #172554 7%, transparent) !important;
+  background: rgba(255, 255, 255, 0.5) !important;
+  box-shadow: none;
+  font-size: clamp(0.68rem, 0.645rem + 0.14vw, 0.75rem);
+  line-height: 1.5;
+}
+.tdi-stamp-ic svg { width: 0.95em; height: 0.95em; }
+.tdi-stamp-ic--morning { color: #c98a2e; }
+.tdi-stamp-ic--night { color: #7987b0; }
+.tdi-stamp-val { font-weight: 600; color: #74839d; }
+.tdi-stamp-sep { height: 0.85em; opacity: 0.75; }
+.tdi-stamp-ed { font-weight: 650; color: #4a5878; }
