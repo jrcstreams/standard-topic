@@ -1353,7 +1353,7 @@ function wireTopicLandingCards(root, topic, ctx) {
     } else {
       renderAIIntelligence(inner.querySelector('[data-pr-host]') || inner, {
         inModal: true, initialBuilder: true, initialGroup: 'external', lockTopic: true,
-        promptsPage: true, topic: topic.name, label: topic.name,
+        topic: topic.name, label: topic.name,
         descriptions: ctx.descriptions, icons: ctx.icons, shortcuts: ctx.shortcuts,
         topicKey: topic.slug,
       });
@@ -3352,7 +3352,6 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
                   <h3 class="hf-title">Featured Topics</h3>
                 </div>
               </div>
-              <p class="hf-sub">Live news, briefings and resources.</p>
               <div class="hf-chips" data-hq-topics></div>
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-topics>All topics${HQ_ARROW}</button></div>
             </section>
@@ -3360,10 +3359,9 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               <div class="hf-head">
                 <span class="hf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg></span>
                 <div class="hf-headtx">
-                  <h3 class="hf-title">Featured Prompts</h3>
+                  <h3 class="hf-title">Featured AI Prompts</h3>
                 </div>
               </div>
-              <p class="hf-sub">Run them in any AI model.</p>
               <div class="hf-chips" data-hq-prompts></div>
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Access prompt library${HQ_ARROW}</button></div>
             </section>
@@ -3386,7 +3384,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         // Render the full dozen; CSS visibility caps trim by viewport (6 on
         // phones, 8 mid-range, all 12 on desktop where the card is wider).
         let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 12); } catch (_) {}
-        tWrap.innerHTML = feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="hq-chip"><span>${escapeHTML(t.name)}</span></a>`).join('');
+        tWrap.innerHTML = feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="hq-row"><span class="hq-row-mark" aria-hidden="true"></span><span class="hq-row-name">${escapeHTML(t.name)}</span></a>`).join('');
       }
       // Featured Prompts — the same featured set the Prompt Library leads with.
       // The card shell (title + footer link) is there from the start; the chips
@@ -3407,7 +3405,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               picks.push({ s: sMatch, tn: t ? t.name : '', slug: f.topic });
             }
             if (!picks.length) return;
-            pWrap.innerHTML = picks.map((pk, i) => `<button type="button" class="hq-chip hq-chip--prompt" data-hq-prompt="${i}"><span>${escapeHTML(pk.s.name)}</span></button>`).join('');
+            pWrap.innerHTML = picks.map((pk, i) => `<button type="button" class="hq-row hq-row--prompt" data-hq-prompt="${i}"><span class="hq-row-mark" aria-hidden="true"></span><span class="hq-row-name">${escapeHTML(pk.s.name)}</span></button>`).join('');
             pWrap.querySelectorAll('[data-hq-prompt]').forEach((b) => b.addEventListener('click', (e) => {
               e.stopPropagation();
               const pk = picks[Number(b.dataset.hqPrompt)]; if (!pk) return;

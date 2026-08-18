@@ -20529,3 +20529,48 @@ body.home-search.app-mode.sticky-always.has-subnav #content {
   justify-content: flex-start !important;
   padding: 1.2rem 1.5rem 2rem !important;
 }
+
+/* ═══ revamp808 ══════════════════════════════════════════════════════════════
+   Homepage featured cards adopt the topic-page card language, and the related
+   topics gain weight. */
+
+/* ── Featured cards: subtexts gone, and the pills become the same dot-led rows
+      the topic-page AI Prompts card uses — two columns where there's room, one
+      when there isn't (#img170-173). ── */
+.hf-card .hf-sub { display: none !important; }
+.hf-chips {
+  display: grid !important; grid-template-columns: 1fr; gap: 0 !important;
+  align-content: start;
+}
+@media (min-width: 560px) { .hf-chips { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.25rem !important; } }
+.hq-row {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 0.5rem 0 0.5rem 2px; border: 0; background: none; cursor: pointer;
+  text-align: left; text-decoration: none;
+  font-family: var(--font-family); font-size: 0.9rem; font-weight: 450;
+  color: #3b4a66;
+  border-bottom: 1px solid #eef1f7;
+  transition: color .14s ease, transform .14s ease;
+}
+.hq-row-name { min-width: 0; }
+.hq-row-mark {
+  flex: none; width: 5px; height: 5px; border-radius: 50%;
+  background: color-mix(in srgb, var(--hf-accent, #2563eb) 55%, #fff);
+  transition: background .14s ease, transform .14s ease;
+}
+@media (hover: hover) {
+  .hq-row:hover { color: var(--hf-accent, #2563eb); transform: translateX(3px); text-decoration: none; }
+  .hq-row:hover .hq-row-mark { background: var(--hf-accent, #2563eb); transform: scale(1.25); }
+}
+
+/* Offsetting card colours, the way Daily Intelligence and AI Prompts differ on
+   a topic page — topics tinted, prompts white. */
+.hf-card--topics {
+  --hf-accent: #2f4d9e;
+  background: linear-gradient(180deg, #f2f5fc 0%, #eef2fa 100%);
+  border-color: color-mix(in srgb, #2f4d9e 14%, transparent);
+}
+.hf-card--prompts { --hf-accent: #4e5f79; background: #fff; }
+
+/* ── Related topics carry a little more weight (#img174). ── */
+.tbh-sub, .tbh-more { font-weight: 600; }
