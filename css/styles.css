@@ -20457,3 +20457,24 @@ body.pagenav-on #sub-header.pagenav { opacity: 1; visibility: visible; }
 #sub-header.pagenav .subnav-ident-ico.is-trend { color: #16a34a; }
 /* The page keeps its own top spacing — the bar overlays rather than pushing. */
 body.pagenav-mode #content { padding-top: calc(var(--nav-h) + 1.2rem) !important; }
+
+/* ── revamp801c: the bar is built after the underlying route's sub-header, so
+      it needs to outrank home-mode's styling. ── */
+#sub-header.pagenav .topic-subnav-inner { display: flex !important; align-items: center; gap: 14px; }
+#sub-header.pagenav .subnav-ident { display: flex !important; align-items: center; gap: 10px; }
+
+/* ── Home hero: the block sat low in its band at mid widths — a tall top
+      reservation with a short bottom (#img134-136). Even it out and bring the
+      whole thing closer to the nav. ── */
+body.home-search.app-mode #content,
+body.home-search.app-mode.sticky-always.has-subnav #content {
+  padding-top: calc(var(--nav-h) + 1.2rem) !important;
+}
+body.home-search .home-search-hero { padding: 0.9rem 0 1.5rem !important; }
+@media (max-width: 1023.98px) {
+  body.home-search.app-mode #content,
+  body.home-search.app-mode.sticky-always.has-subnav #content {
+    padding-top: calc(var(--nav-h) + 0.9rem) !important;
+  }
+  body.home-search .home-search-hero { padding: 0.7rem 0 1.3rem !important; }
+}

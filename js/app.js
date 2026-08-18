@@ -171,8 +171,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (isPromptRoute) openPromptBuilderNavDropdown(); else closePromptBuilderNavDropdown();
     // Route-driven nav dropdowns (stale ones were already closed above).
     if (route.type === 'topics') openTopicsNavDropdown();
-    else if (route.type === 'trending') openTrendingNavDropdown();
-    else if (route.type === 'prompts') openPromptsNavDropdown(route.view);
+    else if (route.type === 'trending') { openTrendingNavDropdown(); renderPageNavBar('trending'); }
+    else if (route.type === 'prompts') { openPromptsNavDropdown(route.view); renderPageNavBar('prompts'); }
 
     // Always refresh the bottom-nav active tab from the REAL route — overlay
     // routes (search/custom) skip renderLayout, so its internal call is missed.
@@ -1681,170 +1681,6 @@ function renderLayout(route) {
   document.body.classList.add('sticky-always');
   siteHeader.classList.add('is-revealed');
 
-  // revamp801: Prompts and Trending get the SAME sticky identity bar the topic
-  // pages use — the real #sub-header element, not the dropdown's own head,
-  // which is what I'd been restyling. It's hidden until the reader scrolls
-  // past the page's own title block, then slides in with the page name and
-  // its one action, exactly like "{Topic} | Change Topic".
-  if (route.type === 'prompts' || route.type === 'trending') {
-    const isPrompts = route.type === 'prompts';
-    document.body.classList.add('has-subnav', 'pagenav-mode');
-    subHeader.classList.add('is-subnav', 'static-page', 'pagenav');
-    const ic = isPrompts
-      ? '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>'
-      : '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>';
-    const action = isPrompts
-      ? `<a href="#/prompts/build" class="pagenav-action" data-pagenav-build>Build Prompt</a>`
-      : '';
-    subHeader.innerHTML = `
-      <div class="topic-subnav-title">
-        <div class="topic-subnav-inner">
-          <div class="subnav-ident">
-            <span class="subnav-ident-ico${isPrompts ? '' : ' is-trend'}">${ic}</span>
-            <span class="subnav-ident-name">${isPrompts ? 'Prompts' : 'Trending'}</span>
-          </div>
-          ${action}
-        </div>
-      </div>`;
-    observeSubnavHeight();
-    wirePageNavReveal();
-    return;
-  }
-
-
-  // App-mode: home / topic routes lock the page to viewport
-  // height so the two cards behave like an application panel rather
-  // than long-scroll content. Custom-search pages opt out — they
-  // scroll naturally so the in-page sticky search bar can pin to
-  // the top as the user scrolls past it.
-  if (route.type === 'topic') {
-    document.body.classList.add('app-mode');
-  }
-  // Home keeps the app-mode grid (section placement) but adds home-search,
-  // which unlocks scrolling so the search hero can sit on top.
-  if (route.type === 'home') {
-    document.body.classList.add('app-mode', 'home-search');
-  }
-
-  // Search + custom-search pages scroll naturally (no app-mode lock) and carry
-  // no subnav. The custom-mode class lets CSS trim the content's top padding
-  // (which otherwise reserves room for a subnav that isn't there).
-  if (route.type === 'custom' || route.type === 'search') {
-    document.body.classList.add('custom-mode');
-  }
-
-  // Title group: icon + name. Hamburger now lives permanently in the
-  // main nav next to the brand, so the subnav title is free to sit
-  // hard-left without competing with a menu trigger.
-  // When a kind label ("Topic") is present, the pill replaces the icon
-  // (icon dropped for topic pages); other title-subnav pages keep their icon.
-  const titleGroup = (iconKey, title, kindLabel = '') => `
-    <div class="topic-banner-titlegroup">
-      <div class="topic-banner-titleinner">
-        ${kindLabel
-          ? `<span class="topic-banner-kind">${escapeHTML(kindLabel)}</span>`
-          : topicIconSVG(iconKey, 'topic-banner-icon')}
-        <h1 class="topic-banner-title">${escapeHTML(title)}</h1>
-      </div>
-    </div>
-  `;
-
-  if (isHome) {
-    document.body.classList.add('home-mode', 'has-subnav');
-    // home-mode also on #sub-header so the many `#sub-header...:not(.home-mode)` topic
-    // rules (which check the class on the wrong element) correctly skip the home subnav.
-    subHeader.classList.add('is-subnav', 'home-mode');
-
-    // Homepage now uses the SAME dropdown picker as topic pages (#88) — a "Home"
-    // label whose dropdown lists the featured topics (replaces the old chip row).
-    subHeader.innerHTML = `
-      <div class="topic-banner">
-        <div class="topic-banner-row topic-banner-row--home-picker">
-          <div class="subnav-ident">
-            <span class="subnav-ident-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg></span>
-            <span class="subnav-ident-name">Home</span>
-          </div>
-          <span class="subnav-ident-sep" aria-hidden="true"></span>
-          ${homeSubnavPickerHTML()}
-        </div>
-      </div>
-    `;
-    wireSubnavPicker(subHeader);
-    setupHomeSubnavReveal();
-
-    if (heroEl) heroEl.innerHTML = '';
-
-    setupResponsiveNav();
-    wireSubnavCompactMeasure();
-    return;
-  }
-
-  // Prompt generator: title-only subnav.
-  if (route.type === 'prompt-generator') {
-    document.body.classList.add('has-subnav');
-    subHeader.classList.add('is-subnav');
-    subHeader.innerHTML = `
-      <div class="topic-banner">
-        <div class="topic-banner-row">
-          ${titleGroup('sparkles', 'Prompt Builder')}
-        </div>
-      </div>
-    `;
-    observeSubnavHeight();
-    wireSubnavCompactMeasure();
-    return;
-  }
-
-  // Topic pages get a subnav below the main nav. Custom-search
-  // pages no longer use the subnav — their search lives at the top
-  // of the page content instead so the input + dropdown can be
-  // a normal scrollable part of the page (no z-index / overflow
-  // gymnastics fighting with the subnav strip).
-  if (route.type === 'topic') {
-    document.body.classList.add('has-subnav');
-    subHeader.classList.add('is-subnav');
-
-    const topic = getTopicBySlug(route.slug);
-    if (!topic) return;
-    // The topic subnav is ONE cohesive sticky unit at every width (revamp440):
-    // the topic-name picker bar on top, then the path tabs (News · Catch Up · …)
-    // directly below it — both living in the fixed #sub-header so they read as a
-    // true subnav under the main nav (not a boxed section floating in the body).
-    // Two connected bars (revamp453): a GREY identity bar (topic icon + name +
-    // dropdown arrow — styled like the homepage bar) on top, then a WHITE control
-    // bar (News Feed | AI Insights) below it. The name-picker dropdown hangs off
-    // the grey bar and OVERLAYS the control bar (controls are lower in hierarchy).
-    subHeader.innerHTML = `
-      <div class="topic-subnav-title">
-        <div class="topic-subnav-inner">
-          <div class="subnav-ident">
-            <span class="subnav-ident-ico">${topicIconSVG(topic.icon || 'globe', '')}</span>
-            <span class="subnav-ident-name">${escapeHTML(topic.name)}</span>
-          </div>
-          <span class="subnav-ident-sep" aria-hidden="true"></span>
-          ${subnavPickerHTML(topic)}
-        </div>
-      </div>
-      ${(() => {
-        // Sub-pages get a sticky back bar where the tab strip used to live; the
-        // landing page needs no second bar at all (revamp763).
-        const page = topicSubpageFor(route.tab);
-        if (!page) return '';
-        const BACK_ARW = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>';
-        return `<div class="topic-subnav-controls topic-subnav-controls--back">
-          <div class="topic-backbar-inner">
-            <a class="topic-backbar" href="#/topic/${escapeAttr(topic.slug)}">${BACK_ARW}<span>Back to ${escapeHTML(topic.name)} page</span></a>
-            <span class="topic-backbar-here">${escapeHTML(TOPIC_SUBPAGES[page].label)}</span>
-          </div>
-        </div>`;
-      })()}
-    `;
-
-    observeSubnavHeight();
-    setupResponsiveNav();
-    wireSubnavPicker(subHeader);
-  }
-
   if (route.type === 'about' || route.type === 'terms') {
     document.body.classList.add('has-subnav');
     // static-page: opts the grey identity-bar styling in without app-mode's
@@ -2775,6 +2611,35 @@ function wireNavDdCondense(panel) {
   if (inner) inner.addEventListener('scroll', apply, { passive: true });
   window.addEventListener('scroll', apply, { passive: true });
   apply();
+}
+
+
+// revamp801c: the sub-header renderer runs for the route UNDERNEATH these
+// panels (home), so a branch in there never fired. Build the bar where the
+// panel actually opens instead.
+function renderPageNavBar(kind) {
+  const subHeader = document.getElementById('sub-header');
+  if (!subHeader) return;
+  const isPrompts = kind === 'prompts';
+  document.body.classList.add('has-subnav', 'pagenav-mode');
+  subHeader.className = 'is-subnav static-page pagenav';
+  const ic = isPrompts
+    ? '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>'
+    : '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>';
+  const action = isPrompts
+    ? '<a href="#/prompts/build" class="pagenav-action">Build Prompt</a>' : '';
+  subHeader.innerHTML = `
+    <div class="topic-subnav-title">
+      <div class="topic-subnav-inner">
+        <div class="subnav-ident">
+          <span class="subnav-ident-ico${isPrompts ? '' : ' is-trend'}">${ic}</span>
+          <span class="subnav-ident-name">${isPrompts ? 'Prompts' : 'Trending'}</span>
+        </div>
+        ${action}
+      </div>
+    </div>`;
+  try { observeSubnavHeight(); } catch (_) {}
+  wirePageNavReveal();
 }
 
 // The page-level sticky bar hides until its page title scrolls off, mirroring
