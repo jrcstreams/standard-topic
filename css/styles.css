@@ -19963,3 +19963,74 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 
 /* ── revamp789b: topic title comes down again at the wide end (#img73). ── */
 .tbh-title { font-size: clamp(1.5rem, 1.05rem + 1.4vw, 1.92rem); }
+
+/* ═══ revamp790 ══════════════════════════════════════════════════════════════
+   A quieter AI label, and an open/close that stops lurching. */
+
+/* ── The label reads as a tag, not a pill button (#img74): a slightly darker
+      ground than the card itself, squared off to a soft 6px. ── */
+.tdi-cardprov,
+.tdi-card.is-open .tdi-cardprov {
+  border-radius: 6px !important;
+  border: 0 !important;
+  background: color-mix(in srgb, #172554 6%, transparent) !important;
+  padding: 4px 9px 4px 8px !important;
+  color: #5b6a8b;
+}
+
+/* ── Expanded, the label belongs UNDER the edition stamp (#img76). Flex order
+      does it without moving the markup, which keeps both stamps filling from
+      the same place. ── */
+.tdi-card.is-open .tdi-head { order: 0; }
+.tdi-card.is-open .tdi-topicname { order: 1; }
+.tdi-card.is-open .tdi-sub { order: 2; }
+.tdi-card.is-open .tdi-date--lg { order: 3; }
+.tdi-card.is-open .tdi-cardprov { order: 4; margin-bottom: 0.1rem; }
+.tdi-card.is-open .tdi-summary { order: 5; }
+.tdi-card.is-open .tdi-go { order: 6; }
+.tdi-card.is-open .tdi-expand { order: 7; }
+
+/* ── THE JANK (#img75): opening swapped four things with `display`, which all
+      fired on frame 0 while the panel was easing open — the stamp vanished,
+      the close popped in, the big stamp appeared and the CTA disappeared, each
+      one shoving the rest. Every one of those is now a transition.
+
+      The stamp and the close share a single grid cell, so they cross-fade in
+      place and the header never reflows. ── */
+.tdi-headslot { display: grid; margin-left: auto; }
+.tdi-headslot > * { grid-area: 1 / 1; justify-self: end; align-self: center; }
+.tdi-headslot .tdi-date,
+.tdi-headslot .tdi-headclose {
+  transition: opacity .24s ease;
+}
+.tdi-headslot .tdi-headclose { display: inline-flex !important; opacity: 0; pointer-events: none; }
+.tdi-card.is-open .tdi-headslot .tdi-date { display: inline-flex !important; opacity: 0; pointer-events: none; }
+.tdi-card.is-open .tdi-headslot .tdi-headclose { opacity: 1; pointer-events: auto; transition-delay: .1s; }
+
+/* The big stamp grows in rather than appearing. */
+.tdi-date--lg {
+  display: inline-flex !important; align-self: flex-start; overflow: hidden;
+  max-height: 0; opacity: 0;
+  margin: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important;
+  border-color: transparent !important;
+  transition: max-height .4s cubic-bezier(.22,.61,.21,1), opacity .26s ease,
+              margin .4s cubic-bezier(.22,.61,.21,1), padding .4s cubic-bezier(.22,.61,.21,1);
+}
+.tdi-card.is-open .tdi-date--lg {
+  max-height: 4em; opacity: 1; transition-delay: 0s, .08s, 0s, 0s;
+  margin: 0.15rem 0 0.5rem !important; padding: 6px 13px !important;
+  border-color: color-mix(in srgb, #172554 9%, transparent) !important;
+}
+
+/* And the CTA collapses out instead of blinking out of existence. */
+.tdi-card--v3 .tdi-go {
+  overflow: hidden; max-height: 4em;
+  transition: background .14s ease, box-shadow .14s ease,
+              max-height .4s cubic-bezier(.22,.61,.21,1), opacity .22s ease,
+              margin .4s cubic-bezier(.22,.61,.21,1), padding .4s cubic-bezier(.22,.61,.21,1);
+}
+.tdi-card.is-open .tdi-go {
+  display: inline-flex !important; pointer-events: none;
+  max-height: 0; opacity: 0;
+  margin-top: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important;
+}

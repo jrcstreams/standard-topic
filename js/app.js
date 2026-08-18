@@ -1402,11 +1402,13 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
           <div class="tdi-card tdi-card--v3" data-tdi>
             <div class="tdi-head">
               <h2 class="tsec-title tdi-card-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>Daily Intelligence</h2>
-              <span class="tdi-date" data-tdi-date></span>
-              <button type="button" class="tdi-headclose" data-di-toggle aria-label="Close briefing">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                <span>Close Briefing</span>
-              </button>
+              <span class="tdi-headslot">
+                <span class="tdi-date" data-tdi-date></span>
+                <button type="button" class="tdi-headclose" data-di-toggle aria-label="Close briefing">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  <span>Close Briefing</span>
+                </button>
+              </span>
             </div>
             <div class="tdi-topicname">${escapeHTML(topic.name)}</div>
             <p class="tdi-sub">An AI-generated topic briefing, updated twice a day.</p>
