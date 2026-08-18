@@ -19510,3 +19510,55 @@ body.app-mode:not(.home-search):has(.topic-home) #content {
 .tdi-card--v3 .tdi-head .tdi-date {
   margin: 0 !important; position: relative; top: 1px;
 }
+
+/* ═══ revamp783 ══════════════════════════════════════════════════════════════
+   The edition stamp gets its own identity, the two cards hold their row
+   longer, and AI Prompts trades the green for the site's own ink. */
+
+/* ── Two columns down to 880px, not 1024 — the cards were stacking while there
+      was still plenty of room for both (#img39). ── */
+@media (min-width: 880px) {
+  .topic-top {
+    /* display too — the base .topic-top is a flex COLUMN, so setting only
+       grid-template-columns here did nothing until 1024 flipped it to grid. */
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    align-items: stretch !important; gap: 1.4rem !important;
+  }
+  .topic-top.is-di-open, .topic-top.is-pr-open {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+/* ── The dateline becomes a STAMP: right-aligned on the title's line, on its
+      own light ground, with the day/night glyph carrying the only colour and
+      the rest held in the card's navy (#img38). ── */
+.tdi-card--v3 .tdi-head .tdi-date {
+  margin-left: auto !important; top: 0 !important;
+  gap: 7px; padding: 5px 11px !important; border-radius: 9px;
+  border: 1px solid color-mix(in srgb, #172554 11%, transparent) !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  font-size: clamp(0.72rem, 0.655rem + 0.26vw, 0.83rem);
+  box-shadow: 0 1px 0 rgba(23, 37, 84, 0.03);
+}
+.tdi-stamp-ic svg { width: 1.05em; height: 1.05em; }
+.tdi-stamp-ic--morning { color: #d97706; }
+.tdi-stamp-ic--night { color: #5b6ea8; }
+.tdi-stamp-val { font-weight: 650; color: #55668c; }
+.tdi-stamp-sep { height: 1.05em; }
+.tdi-stamp-ed { font-weight: 750; color: #172554; letter-spacing: -0.004em; }
+
+/* ── AI Prompts: the teal read as a stray paint chip. Back to the site's ink —
+      a graphite slate that sits beside the navy briefing card instead of
+      fighting it, with the pen glyph left to carry the personality. ── */
+.tpr-card { --pr-accent: #334155; }
+@media (hover: hover) {
+  .tpr-card:hover .tpr-go, .tpr-go:hover { background: #1e293b !important; }
+}
+.tsec-ic--pr { background: color-mix(in srgb, #334155 9%, #fff); color: #334155; }
+
+/* ── The list sat too far off the subtext, and the rows read heavier than they
+      needed to: bigger, lighter. ── */
+.tpr-sub { margin-bottom: 0.45rem !important; }
+.tpr-list { margin-top: 0; }
+.tpr-row-btn { font-size: 0.95rem !important; font-weight: 500 !important; }
