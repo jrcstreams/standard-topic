@@ -19830,3 +19830,8 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 /* ── revamp787c: the featured prompt rows still read bold for what they are —
       a list of links, not headings (#img59). ── */
 .tpr-row-btn { font-weight: 450 !important; color: #3b4a66; }
+
+/* ── revamp787d: the card sublabels came out heavy at 620 (#img60). 540 still
+      separates them from the 400-weight body copy beneath, which was the
+      point of adding weight in the first place. ── */
+.tdi-sub, .tpr-sub { font-weight: 540 !important; }
