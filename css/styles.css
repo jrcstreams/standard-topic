@@ -20608,3 +20608,36 @@ body.home-search.app-mode.sticky-always.has-subnav #content {
   #nav-search.navbtn.nav-searchbar { padding: 8px; border-radius: 11px; }
   #nav-search.navbtn .nav-searchbar-ph { display: none !important; }
 }
+
+
+/* ═══ revamp810 ══════════════════════════════════════════════════════════════
+   The page-level sticky bar for Topics / Trending / Prompts. Deliberately NO
+   #content rule here — bundling one with revamp801 is what disturbed the
+   homepage and forced that rollback. This styles the bar and nothing else. */
+#sub-header.pagenav {
+  opacity: 0; visibility: hidden;
+  transition: opacity .18s ease, visibility .18s ease;
+}
+body.pagenav-on #sub-header.pagenav { opacity: 1; visibility: visible; }
+#sub-header.pagenav .topic-subnav-inner {
+  display: flex !important; align-items: center; gap: 14px;
+}
+#sub-header.pagenav .subnav-ident { display: flex !important; align-items: center; gap: 10px; }
+#sub-header.pagenav .subnav-ident-ico.is-trend { color: #16a34a; }
+#sub-header.pagenav .pagenav-actions { margin-left: auto; display: inline-flex; gap: 6px; }
+#sub-header.pagenav .pagenav-action {
+  flex: none; display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 14px; border-radius: 999px; cursor: pointer;
+  border: 1px solid #d7dfeb; background: #fff;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600;
+  color: #26375a; text-decoration: none;
+  transition: background .14s ease, border-color .14s ease, color .14s ease;
+}
+#sub-header.pagenav .pagenav-actions .pagenav-action { margin-left: 0; }
+#sub-header.pagenav a.pagenav-action { margin-left: auto; }
+#sub-header.pagenav .pagenav-action.is-on {
+  background: #26375a; border-color: #26375a; color: #fff;
+}
+@media (hover: hover) {
+  #sub-header.pagenav .pagenav-action:not(.is-on):hover { background: #f5f8fd; border-color: #c3cee2; text-decoration: none; }
+}

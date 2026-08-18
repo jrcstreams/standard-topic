@@ -170,9 +170,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (isPromptRoute) openPromptBuilderNavDropdown(); else closePromptBuilderNavDropdown();
     // Route-driven nav dropdowns (stale ones were already closed above).
-    if (route.type === 'topics') openTopicsNavDropdown();
-    else if (route.type === 'trending') openTrendingNavDropdown();
-    else if (route.type === 'prompts') openPromptsNavDropdown(route.view);
+    if (route.type === 'topics') { openTopicsNavDropdown(); renderPageNavBar('topics'); }
+    else if (route.type === 'trending') { openTrendingNavDropdown(); renderPageNavBar('trending'); }
+    else if (route.type === 'prompts') { openPromptsNavDropdown(route.view); renderPageNavBar('prompts'); }
 
     // Always refresh the bottom-nav active tab from the REAL route — overlay
     // routes (search/custom) skip renderLayout, so its internal call is missed.
@@ -1154,8 +1154,10 @@ function topicsTreeHTML() {
 }
 function topicsNavDdCfg() {
   return {
-    key: 'topics', triggerId: 'nav-topics',
+    key: 'topics', triggerId: 'nav-topics', className: 'aii-nav-dd-topics',
     title: 'Topics', ariaLabel: 'All topics',
+    // The glyph the condensed bar shows beside the name (revamp810).
+    icon: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
     subtitle: 'Browse every topic and its subtopics.',
     // One head button: Search Custom Topic (the Homepage button was dropped — the
     // brand/Home nav already covers it, #img77).
@@ -1686,7 +1688,7 @@ function renderLayout(route) {
   subHeader.innerHTML = '';
   const stayingInHomeDesktop = isHome && !isMobile && wasOnHomeDesktop;
   if (heroEl && !stayingInHomeDesktop) heroEl.innerHTML = '';
-  document.body.classList.remove('sticky-always', 'has-subnav', 'home-mode', 'show-subnav-tabs', 'app-mode', 'custom-mode', 'home-search', 'home-subnav-on');
+  document.body.classList.remove('sticky-always', 'has-subnav', 'home-mode', 'show-subnav-tabs', 'app-mode', 'custom-mode', 'home-search', 'home-subnav-on', 'pagenav-mode', 'pagenav-on');
 
   // Always render the main sticky bar + the mobile bottom tab nav
   renderStickyHeroBar(siteHeader, route);
@@ -2758,6 +2760,80 @@ function wireNavDdCondense(panel) {
   window.addEventListener('resize', syncStickyTop, { passive: true });
   if (inner) inner.addEventListener('scroll', apply, { passive: true });
   window.addEventListener('scroll', apply, { passive: true });
+  apply();
+}
+
+
+// revamp810: Topics / Trending / Prompts get the topic pages' actual sticky
+// bar — #sub-header, a full-bleed fixed element. Restyling each panel's own
+// in-flow head could never match it (the ground stops at the content gutters).
+//
+// This is a second run at revamp801, which I rolled back. What killed that one
+// was NOT the bar: it was a #content padding override bundled in with it, which
+// disturbed the homepage. This version touches the bar and nothing else.
+function renderPageNavBar(kind) {
+  const subHeader = document.getElementById('sub-header');
+  if (!subHeader) return;
+  const ICONS = {
+    topics: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+    trending: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>',
+    prompts: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+  };
+  const NAMES = { topics: 'Topics', trending: 'Trending', prompts: 'Prompts' };
+  const name = NAMES[kind] || '';
+  if (!name) return;
+  document.body.classList.add('has-subnav', 'pagenav-mode');
+  subHeader.className = 'is-subnav static-page pagenav';
+  const action = kind === 'prompts'
+    ? '<a href="#/prompts/build" class="pagenav-action">Build Prompt</a>'
+    : (kind === 'topics'
+      ? '<span class="pagenav-actions"><button type="button" class="pagenav-action is-on" data-pagenav-view="condensed">Condensed</button><button type="button" class="pagenav-action" data-pagenav-view="expanded">Expanded</button></span>'
+      : '');
+  subHeader.innerHTML = `
+    <div class="topic-subnav-title">
+      <div class="topic-subnav-inner">
+        <div class="subnav-ident">
+          <span class="subnav-ident-ico${kind === 'trending' ? ' is-trend' : ''}">${ICONS[kind]}</span>
+          <span class="subnav-ident-name">${name}</span>
+        </div>
+        ${action}
+      </div>
+    </div>`;
+  // The Topics bar drives the same view toggle its head carries.
+  subHeader.querySelectorAll('[data-pagenav-view]').forEach((b) => b.addEventListener('click', () => {
+    const want = b.dataset.pagenavView === 'expanded';
+    const panel = document.querySelector('.aii-nav-dd');
+    panel?.querySelectorAll('[data-navdd-headbtn]')[want ? 1 : 0]?.click();
+    subHeader.querySelectorAll('[data-pagenav-view]').forEach((x) => x.classList.toggle('is-on', x === b));
+  }));
+  try { observeSubnavHeight(); } catch (_) {}
+  wirePageNavReveal();
+}
+
+// Hidden until the page's own title block scrolls away, mirroring
+// body.topic-hero-condensed on the topic pages.
+let pageNavScrollHandler = null;
+function wirePageNavReveal() {
+  if (pageNavScrollHandler) {
+    window.removeEventListener('scroll', pageNavScrollHandler);
+    document.removeEventListener('scroll', pageNavScrollHandler, true);
+  }
+  // Don't assume WHAT scrolls. These panels have sometimes scrolled the
+  // document and sometimes an inner element, and every previous attempt at this
+  // bar (and at wireTopicHeroCondense, and at wireNavDdCondense) broke by
+  // picking one. Listen in the capture phase so element scrolls are caught too,
+  // and take whichever offset is largest.
+  const apply = (e) => {
+    const doc = document.scrollingElement || document.documentElement;
+    let y = Math.max(doc.scrollTop || 0, window.scrollY || 0);
+    const t = e && e.target;
+    if (t && t.nodeType === 1 && typeof t.scrollTop === 'number') y = Math.max(y, t.scrollTop);
+    document.body.classList.toggle('pagenav-on', y > 90);
+  };
+  pageNavScrollHandler = apply;
+  window.addEventListener('scroll', apply, { passive: true });
+  document.addEventListener('scroll', apply, { passive: true, capture: true });
+  document.body.classList.remove('pagenav-on');
   apply();
 }
 
