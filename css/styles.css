@@ -20909,3 +20909,54 @@ body.home-search .home-search-hero { padding: 0 0 1.15rem !important; }
 body.pagenav-mode .aii-nav-dd .aii-nav-dd-head {
   position: static !important; z-index: auto !important;
 }
+
+/* ═══ revamp816 ══════════════════════════════════════════════════════════════
+   Topics / Trending / Prompts stop being fixed overlays and become normal
+   scrolling pages, like the topic pages.
+
+   .aii-nav-dd is `position: fixed` with `max-height: calc(100dvh - nav-h)` and
+   its own inner scroller — it was built as a dropdown. That's why the page
+   never actually scrolled, why the #sub-header bar rendered behind it, and why
+   four attempts at a sticky subnav all failed: the bar was being painted
+   underneath a fixed sheet covering the viewport. */
+body.pagenav-mode .aii-nav-dd {
+  position: static !important;
+  max-height: none !important;
+  height: auto !important;
+  transform: none !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  box-shadow: none !important;
+  border-bottom: 0 !important;
+  z-index: auto !important;
+  overflow: visible !important;
+  background: transparent !important;
+}
+/* Its inner scroller becomes ordinary content — the PAGE scrolls now. */
+body.pagenav-mode .aii-nav-dd [data-navdd-scroll],
+body.pagenav-mode .aii-nav-dd .aii-nav-dd-scroll,
+body.pagenav-mode .aii-nav-dd .aii-nav-dd-inner,
+body.pagenav-mode .aii-nav-dd .aii-nav-dd-body {
+  max-height: none !important; height: auto !important; overflow: visible !important;
+}
+/* With the sheet gone, the bar can finally sit above the page. */
+body.pagenav-mode #sub-header.pagenav { z-index: 500; }
+
+/* ── revamp816b: Daily Intelligence leads the homepage row at every width
+      (#img210), and carries two actions — today's briefing, and the hub
+      (#img211). ── */
+.hf-card--di { order: -1; }
+.tdi-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.tdi-go--hub {
+  background: transparent !important;
+  border: 1px solid color-mix(in srgb, #172554 18%, transparent) !important;
+  color: #26375a !important; text-decoration: none;
+}
+@media (hover: hover) {
+  .tdi-go--hub:hover {
+    background: rgba(255, 255, 255, 0.75) !important;
+    border-color: color-mix(in srgb, #172554 30%, transparent) !important;
+    text-decoration: none; color: #172554 !important;
+  }
+}
+.tdi-card.is-open .tdi-actions { max-height: 0; opacity: 0; overflow: hidden; margin: 0; }

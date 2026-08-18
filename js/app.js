@@ -3515,10 +3515,13 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               <div class="tdi-date tdi-date--lg" data-tdi-date-lg></div>
               <div class="tdi-cardprov tdi-cardprov--stack">${DI_SPARK}<span>AI-generated text</span></div>
               <p class="tdi-summary" data-tdi-summary>Preparing today's briefing…</p>
-              <button type="button" class="tdi-go" data-di-toggle aria-expanded="false">
-                <span class="tdi-go-open">Read today's briefing</span>
-                <span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
-              </button>
+              <div class="tdi-actions">
+                <button type="button" class="tdi-go" data-di-toggle aria-expanded="false">
+                  <span class="tdi-go-open">Read today's briefing</span>
+                  <span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
+                </button>
+                <a class="tdi-go tdi-go--hub" href="#/intelligence">Daily Intelligence Hub${SUBPAGE_ARROW}</a>
+              </div>
               <div class="tdi-expand" data-di-expand><div class="tdi-expand-inner">
                 <div data-di-host></div>
                 <div class="tdi-closefoot">
