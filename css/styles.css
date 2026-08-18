@@ -19896,3 +19896,15 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 /* "Related Topics" is what this list actually is — the parent's name was
    redundant with the page title right above it. */
 .tsp-group-label { font-size: 0.98rem; }
+
+/* ── revamp788b: the AI-generated label gets its own ground so it reads as a
+      label rather than a stray line of body text (#img68). Tinted to the
+      spark's own blue, and hugging its text — the card is a flex column, so
+      it needs align-self or it stretches edge to edge. ── */
+.tdi-cardprov {
+  display: inline-flex; align-self: flex-start; width: auto;
+  padding: 3px 10px 3px 8px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, #2563eb 13%, transparent);
+  background: color-mix(in srgb, #2563eb 6%, #fff);
+  color: #55668c; font-weight: 550;
+}
