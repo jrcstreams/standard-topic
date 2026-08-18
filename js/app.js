@@ -1356,6 +1356,15 @@ function wireTopicLandingCards(root, topic, ctx) {
     cards[key].btns.forEach((b) => b.addEventListener('click', () => {
       setOpen(key, b.getAttribute('aria-expanded') !== 'true');
     }));
+    // A CLOSED card is one big target — the CTA was the only clickable thing on
+    // a card that already lit up on hover (revamp791). Open only: closing stays
+    // with the explicit ✕ so selecting text in the brief can't collapse it.
+    const card = cards[key].host?.closest(cards[key].sel);
+    card?.addEventListener('click', (e) => {
+      if (card.classList.contains('is-open')) return;
+      if (e.target.closest('button, a, input, select, textarea')) return;
+      setOpen(key, true);
+    });
   });
 
   // A featured prompt opens the library and drills to that prompt's row.

@@ -20034,3 +20034,35 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
   max-height: 0; opacity: 0;
   margin-top: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important;
 }
+
+/* ═══ revamp791 ══════════════════════════════════════════════════════════════
+   Affordances: a closed card looks clickable because it IS clickable, and
+   the CTAs answer the pointer with more than a shifting arrow (#img77). */
+
+.tdi-card:not(.is-open), .tpr-card:not(.is-open) { cursor: pointer; }
+/* Inside an open card the pointer goes back to normal — only the ✕ closes. */
+.tdi-card.is-open, .tpr-card.is-open { cursor: default; }
+
+/* The CTA lifts, deepens and casts a shadow, so hovering the card reads as
+   "this button is where it happens" rather than a nudged arrow. */
+.tdi-card--v3 .tdi-go, .tpr-go {
+  transform: translateY(0);
+  transition: background .16s ease, box-shadow .18s ease, transform .18s ease,
+              max-height .4s cubic-bezier(.22,.61,.21,1), opacity .22s ease,
+              margin .4s cubic-bezier(.22,.61,.21,1), padding .4s cubic-bezier(.22,.61,.21,1);
+}
+@media (hover: hover) {
+  .tdi-card:not(.is-open):hover .tdi-go, .tdi-card--v3 .tdi-go:hover {
+    background: #24407e !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px -6px rgba(23, 37, 84, .5), 0 2px 5px -2px rgba(23, 37, 84, .34) !important;
+  }
+  .tpr-card:not(.is-open):hover .tpr-go, .tpr-go:hover {
+    background: #3e4d63 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px -6px rgba(30, 41, 59, .48), 0 2px 5px -2px rgba(30, 41, 59, .3) !important;
+  }
+  .tdi-card:not(.is-open):hover .tdi-go svg, .tpr-card:not(.is-open):hover .tpr-go svg {
+    transform: translateX(3px);
+  }
+}
