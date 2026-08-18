@@ -20088,3 +20088,45 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
     box-shadow: 0 7px 18px -6px rgba(51, 65, 85, .5), 0 2px 6px -2px rgba(51, 65, 85, .34) !important;
   }
 }
+
+/* ═══ revamp792 ══════════════════════════════════════════════════════════════
+   Closed: the AI tag rides the sublabel's line. Open: no topic name, the
+   sublabel sits up under the title, and the stamp matches the closed card's
+   treatment. The tag renders in both places (like the two stamps) so DOM
+   order is already right in each state — the revamp790 flex-order shuffle
+   isn't needed and is retired below. */
+
+.tdi-subrow {
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: 0.3rem 0.7rem; margin: 0 0 0.55rem;
+}
+.tdi-subrow .tdi-sub { margin: 0 !important; }
+.tdi-cardprov--stack { display: none !important; }
+.tdi-card.is-open .tdi-cardprov--inline { display: none !important; }
+.tdi-card.is-open .tdi-cardprov--stack { display: inline-flex !important; margin: 0 0 0.2rem; }
+
+/* Open: the topic name is gone (the page title above already names it), so the
+   sublabel tucks straight under the lockup. */
+.tdi-topicname { display: none !important; }
+.tdi-card.is-open .tdi-head { margin-bottom: 0.45rem; }
+.tdi-card.is-open .tdi-subrow { margin-bottom: 0.6rem; }
+
+/* Order is natural again in both states. */
+.tdi-card.is-open .tdi-head,
+.tdi-card.is-open .tdi-sub,
+.tdi-card.is-open .tdi-date--lg,
+.tdi-card.is-open .tdi-cardprov,
+.tdi-card.is-open .tdi-summary,
+.tdi-card.is-open .tdi-go,
+.tdi-card.is-open .tdi-expand { order: 0; }
+
+/* The expanded stamp wears the same ground as the compact one — it had gone
+   bigger AND whiter, which read as a different component (#img81-83). */
+.tdi-card.is-open .tdi-date--lg {
+  font-size: 0.79rem;
+  padding: 4px 11px !important;
+  border-radius: 8px;
+  border-color: color-mix(in srgb, #172554 7%, transparent) !important;
+  background: rgba(255, 255, 255, 0.5) !important;
+  margin: 0 0 0.6rem !important;
+}

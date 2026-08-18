@@ -1419,10 +1419,12 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
                 </button>
               </span>
             </div>
-            <div class="tdi-topicname">${escapeHTML(topic.name)}</div>
-            <p class="tdi-sub">An AI-generated topic briefing, updated twice a day.</p>
-            <div class="tdi-cardprov">${DI_SPARK}<span>AI-generated text</span></div>
+            <div class="tdi-subrow">
+              <p class="tdi-sub">An AI-generated topic briefing, updated twice a day.</p>
+              <span class="tdi-cardprov tdi-cardprov--inline">${DI_SPARK}<span>AI-generated text</span></span>
+            </div>
             <div class="tdi-date tdi-date--lg" data-tdi-date-lg></div>
+            <div class="tdi-cardprov tdi-cardprov--stack">${DI_SPARK}<span>AI-generated text</span></div>
             <p class="tdi-summary" data-tdi-summary>Preparing today's briefing…</p>
             <button type="button" class="tdi-go" data-di-toggle aria-expanded="false">
               <span class="tdi-go-open">Read today's briefing</span>
