@@ -20866,3 +20866,38 @@ body.home-search.app-mode.sticky-always.has-subnav #content {
   padding-top: calc(var(--nav-h) + 1.75rem) !important;
 }
 body.home-search .home-search-hero { padding: 0 0 1.15rem !important; }
+
+/* ═══ revamp815 ══════════════════════════════════════════════════════════════
+   Retire the nav-dropdown's OWN condensed head. Since revamp810 these pages
+   carry the real #sub-header bar (icon + name + action, full-bleed, exactly
+   like the topic pages), so the in-flow head restyling from 795/798 is a
+   second, competing sticky bar — which is what showed up as a grey slab in
+   place of the page title on load (#img205) and as a half-styled bar
+   overlapping the list on scroll (#img207/208).
+
+   The head now just renders as the page's normal title block at every scroll
+   position; #sub-header does the sticky job (#img209). */
+.aii-nav-dd.is-condensed .aii-nav-dd-head {
+  position: static !important;
+  background: transparent !important;
+  border-bottom: 0 !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: normal !important;
+  padding-top: 22px !important; padding-bottom: 12px !important;
+  gap: 14px;
+}
+.aii-nav-dd.is-condensed .aii-nav-dd-head::before { content: none !important; }
+.aii-nav-dd.is-condensed .aii-nav-dd-titles {
+  flex: 1 1 auto !important; width: 100% !important;
+  flex-direction: column !important; align-items: flex-start !important;
+}
+.aii-nav-dd.is-condensed .aii-nav-dd-sub { display: block !important; }
+.aii-nav-dd.is-condensed .aii-nav-dd-headbtns { margin-left: 0; }
+.aii-nav-dd.is-condensed .navdd-headic { display: none !important; }
+.aii-nav-dd.is-condensed .aii-nav-dd-title { font-size: inherit; color: inherit; }
+/* Trending keeps its controls and legend at every scroll position. */
+.aii-nav-dd-trending.is-condensed .trend-controls-legend,
+.aii-nav-dd-trending.is-condensed .trend-sports-toggle,
+.aii-nav-dd-trending.is-condensed .tlm-controlbar { display: flex !important; }
+.aii-nav-dd-trending .navdd-headic { display: inline-flex !important; color: #16a34a; }
