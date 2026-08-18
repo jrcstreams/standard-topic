@@ -19498,3 +19498,15 @@ body.app-mode:not(.home-search):has(.topic-home) #content {
     to bottom, rgba(148, 163, 184, 0), #b9c4d6 24%, #b9c4d6 76%, rgba(148, 163, 184, 0));
 }
 .tdi-stamp-ed { font-weight: 700; color: #172554; }
+
+/* ── revamp782b: the dateline rides the title's line, which buys back a whole
+      row of card height. It wraps beneath on narrow cards rather than
+      squeezing the title. ── */
+.tdi-head {
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: 0.35rem 0.9rem; margin: 0 0 0.6rem;
+}
+.tdi-card--v3 .tdi-head .tdi-card-title { margin: 0; }
+.tdi-card--v3 .tdi-head .tdi-date {
+  margin: 0 !important; position: relative; top: 1px;
+}
