@@ -19357,3 +19357,54 @@ body.app-mode:not(.home-search):has(.topic-home) #content {
     padding-top: calc(var(--nav-h) + 1rem) !important;
   }
 }
+
+/* ═══ revamp779 ══════════════════════════════════════════════════════════════
+   Card CTAs, a Daily Intelligence subtext + edition line, and an AI Prompts
+   list that reads as a list of links rather than a stack of headings. */
+
+/* ── Both CTAs: a step down in size and weight (#img33) ── */
+.tdi-card--v3 .tdi-go, .tpr-go {
+  font-size: 0.86rem !important; font-weight: 620 !important;
+  padding: 0.52rem 1.02rem !important; gap: 8px !important;
+}
+.tdi-card--v3 .tdi-go svg, .tpr-go svg { width: 14px; height: 14px; }
+
+/* ── Daily Intelligence: a subtext to match AI Prompts, then the edition line ── */
+.tdi-sub {
+  margin: 0 0 0.7rem; font-family: var(--font-family);
+  font-size: 0.92rem; line-height: 1.55; color: #42506b;
+}
+.tdi-card--v3 .tdi-date {
+  display: block; margin: 0 0 0.5rem;
+  font-family: var(--font-family); font-size: 0.78rem; font-weight: 600;
+  letter-spacing: 0.005em; color: #6b7a94;
+}
+.tdi-card.is-open .tdi-sub { display: none; }
+
+/* ── AI Prompts: teal, not purple — it sits apart from the navy briefing card
+      without reading as a second "AI" accent (#img33) ── */
+.tpr-card { --pr-accent: #0f766e; }
+.tsec-ic--pr { background: color-mix(in srgb, var(--pr-accent) 12%, #fff); color: var(--pr-accent); }
+.tpr-go { background: var(--pr-accent) !important; }
+@media (hover: hover) {
+  .tpr-card:hover .tpr-go, .tpr-go:hover { background: #115e59 !important; }
+}
+
+/* Rows read as links: indented, each led by a small accent marker that slides
+   with the row on hover. Lighter and a touch smaller than before. */
+.tpr-row + .tpr-row { border-top: 1px solid #eef1f7; }
+.tpr-row-btn {
+  gap: 10px; padding: 0.5rem 0 0.5rem 2px;
+  font-size: 0.86rem !important; font-weight: 550 !important; color: #33455f;
+  transition: color .14s ease, transform .14s ease;
+}
+.tpr-row-mark {
+  flex: none; width: 5px; height: 5px; border-radius: 50%;
+  background: color-mix(in srgb, var(--pr-accent) 55%, #fff);
+  transition: background .14s ease, transform .14s ease;
+}
+@media (hover: hover) {
+  .tpr-row-btn:hover { transform: translateX(3px); color: var(--pr-accent); }
+  .tpr-row-btn:hover .tpr-row-name { color: var(--pr-accent); }
+  .tpr-row-btn:hover .tpr-row-mark { background: var(--pr-accent); transform: scale(1.25); }
+}

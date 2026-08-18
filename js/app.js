@@ -1269,6 +1269,22 @@ const TOPIC_AI_ICONS = {
 };
 const SUBPAGE_ARROW = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>';
 
+// Which of the day's two waves a briefing came from (revamp779). The crons run
+// at 12:00 UTC (8am ET) and 00:00 UTC (8pm ET), so an ET clock splits them
+// cleanly — anything stamped between 4am and 4pm ET is that morning's edition,
+// everything else is the night's. Reads "Last Updated: August 17 (Morning
+// Edition)" so the card says WHICH briefing you're looking at, not just when.
+function diEditionLabel(iso) {
+  try {
+    const d = new Date(iso);
+    const et = (opts) => new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', ...opts }).format(d);
+    const hour = Number(et({ hour: 'numeric', hour12: false }));
+    const day = et({ month: 'long', day: 'numeric' });
+    const edition = hour >= 4 && hour < 16 ? 'Morning Edition' : 'Night Edition';
+    return `Last Updated: ${day} (${edition})`;
+  } catch (_) { return ''; }
+}
+
 // The two landing cards expand IN PLACE (revamp777). Only one is open at a
 // time — the open card takes the full width of the row and the other drops
 // beneath it, which is also exactly what the stacked mobile layout does.
@@ -1346,7 +1362,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
     // PLACE: the opened card takes the full width and the other drops beneath
     // it, so neither ever navigates away. The news feed follows under its own
     // "News Feed" head.
-    const featuredPrompts = shortcuts.slice(0, 5);
+    const featuredPrompts = shortcuts.slice(0, 3);
     body.innerHTML = `<div class="topic-home">
       <div class="aii-tabhead-spacer"></div>
       ${topicBodyHeadHTML(topic)}
@@ -1354,6 +1370,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
         <section class="topic-top-main">
           <div class="tdi-card tdi-card--v3" data-tdi>
             <h2 class="tsec-title tdi-card-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>Daily Intelligence</h2>
+            <p class="tdi-sub">An AI briefing on this topic, refreshed morning and night.</p>
             <span class="tdi-date" data-tdi-date></span>
             <p class="tdi-summary" data-tdi-summary>Preparing today's briefing…</p>
             <button type="button" class="tdi-go" data-di-toggle aria-expanded="false">
@@ -1369,8 +1386,8 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
             <p class="tpr-sub">Ready-made prompts to run in any AI model.</p>
             ${featuredPrompts.length ? `<ul class="tpr-list">${featuredPrompts.map((s) => `
               <li class="tpr-row"><button type="button" class="tpr-row-btn" data-tpr-open="${escapeAttr(s.name || '')}">
+                <span class="tpr-row-mark" aria-hidden="true"></span>
                 <span class="tpr-row-name">${escapeHTML(s.name || '')}</span>
-                ${s.evergreen ? '<span class="tpr-row-tag">Evergreen</span>' : ''}
               </button></li>`).join('')}</ul>` : ''}
             <button type="button" class="tpr-go" data-pr-toggle aria-expanded="false">
               <span class="tpr-go-open">View all ${shortcuts.length} prompts</span>
@@ -1403,9 +1420,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       const dEl = body.querySelector('[data-tdi-date]');
       if (sEl && d.summary) sEl.textContent = d.summary;
       else if (sEl && d.content) sEl.textContent = String(d.content).replace(/^##.+$/gm, '').replace(/\*\*/g, '').trim().split(/(?<=[.!?])\s/)[0] || '';
-      if (dEl && d.generatedAt) {
-        try { dEl.textContent = new Date(d.generatedAt).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }); } catch (_) {}
-      }
+      if (dEl && d.generatedAt) dEl.textContent = diEditionLabel(d.generatedAt);
     }).catch(() => {});
   } catch (err) {
     console.error('topic page render failed', err);
