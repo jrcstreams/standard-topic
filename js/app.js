@@ -1814,6 +1814,35 @@ function renderLayout(route) {
     wireSubnavPicker(subHeader);
   }
 
+  // revamp801: Prompts and Trending get the SAME sticky identity bar the topic
+  // pages use — the real #sub-header element, not the dropdown's own head,
+  // which is what I'd been restyling. It's hidden until the reader scrolls
+  // past the page's own title block, then slides in with the page name and
+  // its one action, exactly like "{Topic} | Change Topic".
+  if (route.type === 'prompts' || route.type === 'trending') {
+    const isPrompts = route.type === 'prompts';
+    document.body.classList.add('has-subnav', 'pagenav-mode');
+    subHeader.classList.add('is-subnav', 'static-page', 'pagenav');
+    const ic = isPrompts
+      ? '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>'
+      : '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>';
+    const action = isPrompts
+      ? `<a href="#/prompts/build" class="pagenav-action" data-pagenav-build>Build Prompt</a>`
+      : '';
+    subHeader.innerHTML = `
+      <div class="topic-subnav-title">
+        <div class="topic-subnav-inner">
+          <div class="subnav-ident">
+            <span class="subnav-ident-ico${isPrompts ? '' : ' is-trend'}">${ic}</span>
+            <span class="subnav-ident-name">${isPrompts ? 'Prompts' : 'Trending'}</span>
+          </div>
+          ${action}
+        </div>
+      </div>`;
+    observeSubnavHeight();
+    wirePageNavReveal();
+  }
+
   if (route.type === 'about' || route.type === 'terms') {
     document.body.classList.add('has-subnav');
     // static-page: opts the grey identity-bar styling in without app-mode's
@@ -2743,6 +2772,22 @@ function wireNavDdCondense(panel) {
   window.addEventListener('resize', syncStickyTop, { passive: true });
   if (inner) inner.addEventListener('scroll', apply, { passive: true });
   window.addEventListener('scroll', apply, { passive: true });
+  apply();
+}
+
+// The page-level sticky bar hides until its page title scrolls off, mirroring
+// body.topic-hero-condensed on the topic pages (revamp801).
+let pageNavScrollHandler = null;
+function wirePageNavReveal() {
+  if (pageNavScrollHandler) window.removeEventListener('scroll', pageNavScrollHandler);
+  const apply = () => {
+    const doc = document.scrollingElement || document.documentElement;
+    const y = Math.max(doc.scrollTop || 0, window.scrollY || 0);
+    document.body.classList.toggle('pagenav-on', y > 90);
+  };
+  pageNavScrollHandler = apply;
+  window.addEventListener('scroll', apply, { passive: true });
+  document.body.classList.remove('pagenav-on');
   apply();
 }
 

@@ -20429,3 +20429,31 @@ body.home-search #section-newsfeed .news-list .news-card:first-child .news-card-
 @media (hover: hover) {
   .pdir-cell:hover { background: #f5f8fd !important; }
 }
+
+/* ═══ revamp801 ══════════════════════════════════════════════════════════════
+   Prompts and Trending get the topic pages' actual sticky subnav. I'd been
+   restyling the dropdown's own head all along — the grey bar on topic pages
+   is #sub-header, a separate fixed element, which is why none of it matched. */
+#sub-header.pagenav {
+  opacity: 0; visibility: hidden;
+  transition: opacity .18s ease, visibility .18s ease;
+}
+body.pagenav-on #sub-header.pagenav { opacity: 1; visibility: visible; }
+#sub-header.pagenav .topic-subnav-inner {
+  display: flex; align-items: center; gap: 14px;
+}
+#sub-header.pagenav .pagenav-action {
+  margin-left: auto; flex: none;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 14px; border-radius: 999px;
+  border: 1px solid #d7dfeb; background: #fff;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600;
+  color: #26375a; text-decoration: none;
+  transition: background .14s ease, border-color .14s ease;
+}
+@media (hover: hover) {
+  #sub-header.pagenav .pagenav-action:hover { background: #f5f8fd; border-color: #c3cee2; text-decoration: none; }
+}
+#sub-header.pagenav .subnav-ident-ico.is-trend { color: #16a34a; }
+/* The page keeps its own top spacing — the bar overlays rather than pushing. */
+body.pagenav-mode #content { padding-top: calc(var(--nav-h) + 1.2rem) !important; }
