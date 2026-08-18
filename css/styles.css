@@ -20066,3 +20066,25 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
     transform: translateX(3px);
   }
 }
+
+/* ── revamp791b: two reasons the CTA looked dead on hover (#img78).
+      1. cursor — these became <button>s in revamp777 and Chrome's UA sheet
+         gives buttons `cursor: default`, so the card's pointer never reached
+         them. It has to be set on the button itself.
+      2. the hover fill went DARKER on an already-dark navy, which is close to
+         invisible. It brightens now, which reads instantly. ── */
+.tdi-card--v3 .tdi-go, .tpr-go, .tdi-headclose, .tdi-closefoot-btn, .tpr-row-btn {
+  cursor: pointer !important;
+}
+@media (hover: hover) {
+  .tdi-card:not(.is-open):hover .tdi-go, .tdi-card--v3 .tdi-go:hover {
+    background: #3a5cab !important;
+    transform: translateY(-1px);
+    box-shadow: 0 7px 18px -6px rgba(30, 58, 138, .55), 0 2px 6px -2px rgba(30, 58, 138, .38) !important;
+  }
+  .tpr-card:not(.is-open):hover .tpr-go, .tpr-go:hover {
+    background: #62748f !important;
+    transform: translateY(-1px);
+    box-shadow: 0 7px 18px -6px rgba(51, 65, 85, .5), 0 2px 6px -2px rgba(51, 65, 85, .34) !important;
+  }
+}
