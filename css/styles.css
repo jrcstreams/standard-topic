@@ -20233,3 +20233,8 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
       which one you're inside (from the earlier #img90/92). ── */
 .pdir-acc.is-open > .pdir-accsum,
 .aii-fi-sec .pdir-acc.is-open > .pdir-accsum { background: #eef2f9 !important; }
+
+/* ── revamp795d: the sticky head's white ground is set by a
+      .aii-nav-dd:not(…):not(…) selector at (0,4,0), which outranked the
+      condensed rule — hence a grey bar that never went grey. ── */
+.aii-nav-dd.is-condensed .aii-nav-dd-head { background: #eef1f7 !important; }
