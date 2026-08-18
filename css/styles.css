@@ -20430,75 +20430,10 @@ body.home-search #section-newsfeed .news-list .news-card:first-child .news-card-
   .pdir-cell:hover { background: #f5f8fd !important; }
 }
 
-/* ═══ revamp801 ══════════════════════════════════════════════════════════════
-   Prompts and Trending get the topic pages' actual sticky subnav. I'd been
-   restyling the dropdown's own head all along — the grey bar on topic pages
-   is #sub-header, a separate fixed element, which is why none of it matched. */
-#sub-header.pagenav {
-  opacity: 0; visibility: hidden;
-  transition: opacity .18s ease, visibility .18s ease;
-}
-body.pagenav-on #sub-header.pagenav { opacity: 1; visibility: visible; }
-#sub-header.pagenav .topic-subnav-inner {
-  display: flex; align-items: center; gap: 14px;
-}
-#sub-header.pagenav .pagenav-action {
-  margin-left: auto; flex: none;
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 6px 14px; border-radius: 999px;
-  border: 1px solid #d7dfeb; background: #fff;
-  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600;
-  color: #26375a; text-decoration: none;
-  transition: background .14s ease, border-color .14s ease;
-}
-@media (hover: hover) {
-  #sub-header.pagenav .pagenav-action:hover { background: #f5f8fd; border-color: #c3cee2; text-decoration: none; }
-}
-#sub-header.pagenav .subnav-ident-ico.is-trend { color: #16a34a; }
-/* The page keeps its own top spacing — the bar overlays rather than pushing. */
-body.pagenav-mode #content { padding-top: calc(var(--nav-h) + 1.2rem) !important; }
-
-/* ── revamp801c: the bar is built after the underlying route's sub-header, so
-      it needs to outrank home-mode's styling. ── */
-#sub-header.pagenav .topic-subnav-inner { display: flex !important; align-items: center; gap: 14px; }
-#sub-header.pagenav .subnav-ident { display: flex !important; align-items: center; gap: 10px; }
-
-/* ── Home hero: the block sat low in its band at mid widths — a tall top
-      reservation with a short bottom (#img134-136). Even it out and bring the
-      whole thing closer to the nav. ── */
-body.home-search.app-mode #content,
-body.home-search.app-mode.sticky-always.has-subnav #content {
-  padding-top: calc(var(--nav-h) + 1.2rem) !important;
-}
-body.home-search .home-search-hero { padding: 0.9rem 0 1.5rem !important; }
-@media (max-width: 1023.98px) {
-  body.home-search.app-mode #content,
-  body.home-search.app-mode.sticky-always.has-subnav #content {
-    padding-top: calc(var(--nav-h) + 0.9rem) !important;
-  }
-  body.home-search .home-search-hero { padding: 0.7rem 0 1.3rem !important; }
-}
-
-/* ── revamp802: the search block was centred in a full-viewport flex column
-      (flex:1 + justify-content:center), so it landed halfway down the page and
-      you had to hunt for it (#img137/139). It sits near the top now. ── */
-.search-page-hero {
-  flex: 0 0 auto !important;
-  justify-content: flex-start !important;
-  padding: 1.5rem 1.5rem 2rem !important;
-}
-
-/* ── revamp804: the edition stamp drifted to the top of the title's band —
-      the header row's centring was being lost once the slot became a grid
-      (#img146). Pinned back to the title's centre line. ── */
-.tdi-head { align-items: center !important; }
-.tdi-headslot { align-self: center !important; }
-.tdi-headslot > * { align-self: center !important; }
-
-/* ── revamp804b: the stamp wrapped to its own line AND hung right (#img147).
-      revamp790's .tdi-headslot { margin-left:auto } reintroduced exactly the
-      bug 784 fixed — auto margins right-align a flex item even when it's alone
-      on a wrapped line. space-between on the row does it correctly: beside the
-      title when both fit, flush LEFT underneath when they don't. ── */
-.tdi-headslot { margin-left: 0 !important; }
-.tdi-head { justify-content: space-between !important; flex-wrap: wrap; }
+/* ── revamp805: the one fix worth keeping from the reverted run — the edition
+      stamp wrapped to its own line AND hung right, because revamp790 put
+      margin-left:auto on its slot. An auto margin right-aligns a flex item
+      even when it's alone on a wrapped line; space-between handles both
+      states (beside the title when they fit, flush left when they don't). ── */
+.tdi-headslot { margin-left: 0 !important; align-self: center !important; }
+.tdi-head { justify-content: space-between !important; align-items: center !important; flex-wrap: wrap; }
