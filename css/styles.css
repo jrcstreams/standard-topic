@@ -20457,3 +20457,75 @@ body.home-search.app-mode.sticky-always.has-subnav #content {
 /* What's Trending sat 55px off the Featured cards (#img154). */
 .home-featured { margin-bottom: 1.25rem !important; }
 @media (min-width: 720px) { .home-featured { margin-bottom: 1.5rem !important; } }
+
+/* ═══ revamp807 ══════════════════════════════════════════════════════════════
+   Related-topic pipes, the topic news grid range, the first story's gap, the
+   two-up cards at mid widths, and the Topics page head.
+   Every rule below is scoped to a page/component — nothing global, which is
+   what caused the damage two rounds ago. */
+
+/* ── 1. Pipes fainter, and NO pipe before the first term — it keeps the indent
+      so the row still reads as inset (#img155). ── */
+.tbh-sub + .tbh-sub::before,
+.tbh-more::before { background: #e3e8f0; }
+.tbh-subs > .tbh-sub:first-child::before { content: none !important; }
+
+/* ── 2. Topic news holds two columns until the cards above it stack (880px).
+      ADDITIVE: a new block for 880-1023 only, scoped to the topic landing —
+      the existing 1024+ block is untouched, and nothing here can reach the
+      homepage (which is what revamp803 broke). ── */
+@media (min-width: 880px) and (max-width: 1023.98px) {
+  .topic-band .topic-home #section-newsfeed .news-list {
+    display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 14px !important; align-items: stretch;
+  }
+  .topic-band .topic-home #section-newsfeed .news-card {
+    display: flex !important; flex-direction: column; align-items: stretch;
+    min-width: 0; position: relative; text-align: left;
+    border: 1px solid #e8edf5 !important; border-radius: 12px !important;
+    background: #fff; padding: 14px 16px 12px !important; margin: 0 !important;
+  }
+  .topic-band .topic-home #section-newsfeed .news-card::after,
+  .topic-band .topic-home #section-newsfeed .news-card::before { display: none !important; }
+}
+
+/* ── 3. Single-column: the first story sits right under the head rule, and its
+      hover reaches that rule instead of padding around a gap (#img157/158). ── */
+@media (max-width: 879.98px) {
+  .topic-band .topic-home #section-newsfeed .news-list { margin-top: 2px !important; }
+  .topic-band .topic-home #section-newsfeed .news-card:first-child .news-card-link {
+    padding-top: 7px !important;
+  }
+}
+
+/* ── 4. Two-up cards at mid widths: the title shrinks so the stamp stays on its
+      line, the subtext tucks up, and the preview text comes down (#img159/160). ── */
+@media (min-width: 880px) and (max-width: 1199.98px) {
+  .tdi-card--v3 .tdi-card-title, .tpr-card-title { font-size: 1.02rem !important; }
+  .tdi-card--v3 .tdi-head .tdi-date { font-size: 0.68rem !important; padding: 3px 7px !important; }
+  .tdi-card--v3 .tdi-head { margin-bottom: 0.35rem !important; }
+  .tdi-sub, .tpr-sub { font-size: 0.8rem !important; margin-bottom: 0.4rem !important; }
+  .tdi-card--v3 .tdi-summary { font-size: 0.85rem !important; }
+  .tpr-row-btn { font-size: 0.85rem !important; }
+  .tdi-card--v3, .tpr-card { padding: 0.9rem 1rem 0.85rem !important; }
+}
+
+/* ── 5. Topics page: tighter head, and a search field you can actually see
+      (#img162). ── */
+.aii-nav-dd-topics .aii-nav-dd-head { padding-bottom: 8px; }
+.aii-nav-dd-topics .aii-nav-dd-sub { margin-bottom: 6px; }
+.aii-nav-dd-topics .navdd-headsearch input,
+.aii-nav-dd-topics .navdd-headsearch-input {
+  border: 1px solid #c8d2e2 !important;
+  box-shadow: 0 1px 2px rgba(15, 26, 46, 0.04);
+}
+
+/* ── 6. The search block opens near the TOP, under the Back link — not centred
+      in the viewport (#img166-168). .search-page-hero is flex:1 with
+      justify-content:center inside a full-height column, which is what buries
+      it. (This shipped as revamp802 and was lost in the 805 rollback.) ── */
+.search-page-hero {
+  flex: 0 0 auto !important;
+  justify-content: flex-start !important;
+  padding: 1.2rem 1.5rem 2rem !important;
+}
