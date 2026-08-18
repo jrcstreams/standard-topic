@@ -18845,7 +18845,7 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
    description clamp so rows line up; back to the single-column divider list
    only once the whole landing layout stacks (same 1024px break as the
    Daily Intelligence / gateway columns). */
-@media (min-width: 1024px) {
+@media (min-width: 900px) {
   /* The base topic feed pins `.news-list { display:flex !important }` at ID+class
      specificity — match it and land later in the cascade. */
   .topic-band .topic-home #section-newsfeed .news-list {
@@ -19029,11 +19029,11 @@ body.home-search #section-newsfeed .newsfeed-head { border-bottom: 2px solid #e0
 .ni-inner > .ni-aitag-row { margin: 2px 0 8px !important; padding-right: 0 !important; }
 
 /* ── Single-column topic news: full-bleed hover meeting the separators ── */
-@media (max-width: 1023.98px) {
+@media (max-width: 899.98px) {
   .topic-band .topic-home #section-newsfeed .news-list { margin-top: 0 !important; }
   .topic-band .topic-home #section-newsfeed .news-card:first-child .news-card-link { padding-top: 16px !important; }
 }
-@media (hover: hover) and (max-width: 1023.98px) {
+@media (hover: hover) and (max-width: 899.98px) {
   .topic-band .topic-home #section-newsfeed .news-card:not(.news-card--open):hover { background: #f5f7fa !important; }
 }
 
