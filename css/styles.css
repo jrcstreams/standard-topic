@@ -19750,3 +19750,72 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 .tdi-card.is-open .tdi-cardprov {
   opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0;
 }
+
+/* ═══ revamp787 ══════════════════════════════════════════════════════════════
+   The OPEN Daily Intelligence card gets a proper masthead, and the briefing
+   body settles into the card instead of sitting on it. */
+
+/* ── Header: ✕ Close Briefing takes the stamp's place on the title line; the
+      topic name becomes a lighter subheader beneath it. ── */
+.tdi-headclose {
+  display: none; align-items: center; gap: 6px;
+  margin-left: auto; padding: 5px 11px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, #172554 10%, transparent);
+  background: rgba(255, 255, 255, 0.55); cursor: pointer;
+  font-family: var(--font-family); font-size: 0.76rem; font-weight: 600;
+  color: #55668c; transition: background .14s ease, color .14s ease, border-color .14s ease;
+}
+.tdi-headclose svg { flex: none; }
+@media (hover: hover) {
+  .tdi-headclose:hover { background: #fff; color: #172554; border-color: color-mix(in srgb, #172554 20%, transparent); }
+}
+.tdi-card.is-open .tdi-headclose { display: inline-flex; }
+/* Closed: the stamp leads. Open: the stamp moves down to lead the brief. */
+.tdi-card.is-open .tdi-head .tdi-date { display: none; }
+.tdi-card:not(.is-open) .tdi-headclose { display: none; }
+/* The bottom pill is redundant once the header carries the close. */
+.tdi-card.is-open .tdi-go { display: none; }
+
+.tdi-topicname {
+  overflow: hidden; max-height: 0; opacity: 0; margin: 0;
+  font-family: var(--font-display); font-size: 1.02rem; font-weight: 600;
+  letter-spacing: -0.012em; color: #55668c;
+  transition: opacity .24s ease .1s, max-height .38s cubic-bezier(.22,.61,.21,1), margin .38s cubic-bezier(.22,.61,.21,1);
+}
+.tdi-card.is-open .tdi-topicname { max-height: 3em; opacity: 1; margin: 0 0 0.55rem; }
+
+/* Open: the subtext and the AI label STAY (they lead the brief), and the
+   big stamp lands under them. */
+.tdi-card.is-open .tdi-sub,
+.tdi-card.is-open .tdi-cardprov { opacity: 1; max-height: 8em; margin-bottom: 0.55rem; }
+.tdi-date--lg { display: none !important; }
+.tdi-card.is-open .tdi-date--lg {
+  display: inline-flex !important;
+  margin: 0.15rem 0 0 !important; padding: 6px 13px !important;
+  font-size: 0.86rem; gap: 9px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, #172554 9%, transparent) !important;
+  background: rgba(255, 255, 255, 0.62) !important;
+}
+.tdi-date--lg .tdi-stamp-val { font-weight: 650; color: #56658a; }
+.tdi-date--lg .tdi-stamp-ed { font-weight: 750; color: #26375a; }
+
+/* ── Briefings: sources read as a labelled row, and the rules between stories
+      stop disappearing (#img57). ── */
+.dib-srcs-label { font-size: 0.74rem !important; color: #8d9ab2 !important; letter-spacing: 0.05em; }
+.dib { border-top: 1px solid #dfe6f1 !important; }
+/* Story titles in the topic blue — they were competing with the body at the
+   same near-black (#img58). */
+.dib-body p strong { color: #1e3a8a; }
+
+/* ── More Coverage: no rule above the section, a lighter one under its title,
+      and rows tinted INTO the card rather than punched out of it. ── */
+.di-more { border-top: 0 !important; padding-top: 0.2rem !important; }
+.di-more .di-sectitle { border-bottom-width: 1px; border-bottom-color: #dde4ef; }
+.di-read {
+  background: rgba(255, 255, 255, 0.45) !important;
+  border-color: color-mix(in srgb, #172554 8%, transparent) !important;
+}
+@media (hover: hover) {
+  .di-read:hover { background: rgba(255, 255, 255, 0.9) !important; }
+}

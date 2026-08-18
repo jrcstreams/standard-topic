@@ -1308,10 +1308,13 @@ function diEditionStampHTML(iso) {
 // Content is rendered lazily on first open, then kept.
 function wireTopicLandingCards(root, topic, ctx) {
   const top = root.querySelector('.topic-top');
+  // Daily Intelligence has TWO controls: the pill while it's closed, and the
+  // ✕ Close Briefing in the header once it's open (revamp787).
   const cards = {
-    di: { btn: root.querySelector('[data-di-toggle]'), host: root.querySelector('[data-di-expand]'), sel: '.tdi-card', cls: 'is-di-open', loaded: false },
-    pr: { btn: root.querySelector('[data-pr-toggle]'), host: root.querySelector('[data-pr-expand]'), sel: '.tpr-card', cls: 'is-pr-open', loaded: false },
+    di: { btns: [...root.querySelectorAll('[data-di-toggle]')], host: root.querySelector('[data-di-expand]'), sel: '.tdi-card', cls: 'is-di-open', loaded: false },
+    pr: { btns: [...root.querySelectorAll('[data-pr-toggle]')], host: root.querySelector('[data-pr-expand]'), sel: '.tpr-card', cls: 'is-pr-open', loaded: false },
   };
+  Object.values(cards).forEach((c) => { c.btn = c.btns[0]; });
 
   const setOpen = (key, on) => {
     const c = cards[key];
@@ -1321,8 +1324,8 @@ function wireTopicLandingCards(root, topic, ctx) {
     // 0fr → 1fr grid row instead, so it eases open to whatever height the
     // content turns out to be (including as the fetched briefing arrives).
     const inner = c.host.firstElementChild;
-    c.btn.setAttribute('aria-expanded', on ? 'true' : 'false');
-    c.btn.closest(c.sel)?.classList.toggle('is-open', on);
+    c.btns.forEach((b) => b.setAttribute('aria-expanded', on ? 'true' : 'false'));
+    c.host.closest(c.sel)?.classList.toggle('is-open', on);
     if (top) top.classList.toggle(c.cls, on);
     try { if (inner) inner.inert = !on; } catch (_) {}
     if (!on || c.loaded || !inner) return;
@@ -1348,9 +1351,9 @@ function wireTopicLandingCards(root, topic, ctx) {
   });
 
   Object.keys(cards).forEach((key) => {
-    cards[key].btn?.addEventListener('click', () => {
-      setOpen(key, cards[key].btn.getAttribute('aria-expanded') !== 'true');
-    });
+    cards[key].btns.forEach((b) => b.addEventListener('click', () => {
+      setOpen(key, b.getAttribute('aria-expanded') !== 'true');
+    }));
   });
 
   // A featured prompt opens the library and drills to that prompt's row.
@@ -1398,9 +1401,15 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
             <div class="tdi-head">
               <h2 class="tsec-title tdi-card-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>Daily Intelligence</h2>
               <span class="tdi-date" data-tdi-date></span>
+              <button type="button" class="tdi-headclose" data-di-toggle aria-label="Close briefing">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <span>Close Briefing</span>
+              </button>
             </div>
+            <div class="tdi-topicname">${escapeHTML(topic.name)}</div>
             <p class="tdi-sub">An AI-generated topic briefing, updated twice a day.</p>
             <div class="tdi-cardprov">${DI_SPARK}<span>AI-generated text</span></div>
+            <div class="tdi-date tdi-date--lg" data-tdi-date-lg></div>
             <p class="tdi-summary" data-tdi-summary>Preparing today's briefing…</p>
             <button type="button" class="tdi-go" data-di-toggle aria-expanded="false">
               <span class="tdi-go-open">Read today's briefing</span>
@@ -1449,7 +1458,14 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       const dEl = body.querySelector('[data-tdi-date]');
       if (sEl && d.summary) sEl.textContent = d.summary;
       else if (sEl && d.content) sEl.textContent = String(d.content).replace(/^##.+$/gm, '').replace(/\*\*/g, '').trim().split(/(?<=[.!?])\s/)[0] || '';
-      if (dEl && d.generatedAt) dEl.innerHTML = diEditionStampHTML(d.generatedAt);
+      // Two stamps, one datum: the compact one rides the title line while the
+      // card is closed; the larger one leads the brief when it's open.
+      if (d.generatedAt) {
+        const stamp = diEditionStampHTML(d.generatedAt);
+        if (dEl) dEl.innerHTML = stamp;
+        const dLg = body.querySelector('[data-tdi-date-lg]');
+        if (dLg) dLg.innerHTML = stamp;
+      }
     }).catch(() => {});
   } catch (err) {
     console.error('topic page render failed', err);
