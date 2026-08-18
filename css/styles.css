@@ -19608,3 +19608,33 @@ body.app-mode:not(.home-search):has(.topic-home) #content {
   box-shadow: none !important;
 }
 .tdi-card--v3 .tdi-go svg, .tpr-go svg { width: 13px; height: 13px; }
+
+/* ═══ revamp785 ══════════════════════════════════════════════════════════════
+   Small-screen type balance on the topic landing. */
+
+/* ── The two card titles ran large for the width they had (#img45/46): the
+      clamp floor comes down, and the icon chips shrink with them so the
+      lockup keeps its proportions. ── */
+.tdi-card--v3 .tdi-card-title, .tpr-card-title {
+  font-size: clamp(1.05rem, 0.93rem + 0.55vw, 1.36rem);
+}
+@media (max-width: 899.98px) {
+  .tdi-card--v3 .tdi-card-title .tsec-ic, .tpr-card-title .tsec-ic {
+    width: 25px; height: 25px; border-radius: 7px; margin-right: 8px;
+  }
+  .tsec-ic--di svg { width: 14px; height: 14px; }
+  .tsec-ic--pr svg { width: 14px; height: 14px; }
+}
+@media (max-width: 560px) {
+  .tdi-card--v3 .tdi-card-title .tsec-ic, .tpr-card-title .tsec-ic {
+    width: 23px; height: 23px; border-radius: 7px; margin-right: 7px;
+  }
+}
+
+/* ── News Feed head, on the other hand, was undersized on phones (#img47). ── */
+@media (max-width: 899.98px) {
+  #topic-tab-body #section-newsfeed .newsfeed-head--topic .newsfeed-title,
+  .newsfeed-head--topic .newsfeed-title,
+  #topic-tab-body #section-newsfeed .newsfeed-head--topic .newsfeed-title-main,
+  .newsfeed-head--topic .newsfeed-title-main { font-size: 1.44rem !important; }
+}
