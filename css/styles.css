@@ -19457,3 +19457,23 @@ body.app-mode:not(.home-search):has(.topic-home) #content {
 .tdi-card--v3 .tdi-go:focus-visible, .tpr-go:focus-visible {
   outline: 2px solid #2563eb; outline-offset: 2px;
 }
+
+/* ═══ revamp781 ══════════════════════════════════════════════════════════════
+   Topic title trimmed at desktop, and the related-topics strip re-spaced. */
+
+/* Title: a step down at the wide end of the clamp (#img36). */
+.tbh-title { font-size: clamp(1.5rem, 1.02rem + 1.6vw, 2.1rem); }
+
+/* The strip: more air BETWEEN the terms, less between the row and its rules,
+   and the row optically centred in the band. line-height drops to a real
+   single line so the padding is what centres it, rather than an inherited
+   1.75 line box doing it unevenly. */
+.tbh-subswrap { padding: 0.6rem 0; }
+.tbh-subs {
+  gap: 0 1.35rem; align-items: center;
+  max-height: 1.5em; line-height: 1.5;
+}
+.tbh-sub, .tbh-more { line-height: 1.5; }
+/* Taller pipes, re-centred in the wider gap. */
+.tbh-sub + .tbh-sub::before,
+.tbh-more::before { height: 1.15em; left: -0.7rem; }
