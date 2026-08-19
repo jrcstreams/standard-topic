@@ -21368,6 +21368,7 @@ body.home-search .home-sections { padding-top: 2rem !important; }
 }
 .dih-item-stamp {
   align-self: flex-start; margin: 0 !important; padding: 3px 8px !important;
+  display: inline-flex; align-items: center; gap: 6px;
   font-size: 0.64rem !important; border-radius: 7px;
   border: 1px solid color-mix(in srgb, #172554 8%, transparent) !important;
   background: rgba(255, 255, 255, 0.7) !important;
@@ -21416,3 +21417,11 @@ body.home-search .home-sections { padding-top: 2rem !important; }
 }
 .dih-brief-ic svg { width: 17px; height: 17px; display: block; }
 @media (prefers-reduced-motion: reduce) { .dih-brief { animation: none; } }
+
+/* ── revamp823 — hub pill spacing + brief-state head ──────────────────────── */
+/* The block's edition pill was inline, so its 1px divider collapsed and the
+   date ran straight into the edition name ("Aug 19Morning Edition"). */
+/* (the display:inline-flex/gap now lives on .dih-item-stamp above) */
+/* In brief state the card head's "12 briefings" counts something you are no
+   longer looking at — the back bar already carries the parent. */
+.dih-group.is-brief .dih-groupcount { display: none; }
