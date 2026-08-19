@@ -1026,7 +1026,7 @@ ${M}`),w.length?w.join(`
       </header>
 
       <section class="dih-today">
-        <div class="tdi-card tdi-card--v3 tdi-card--home dih-today-card tdi-card--hero2" data-tdi>${Ps({sublabel:"AI-generated briefings, twice a day for each of our 100+ topics.",hubLink:!1,topicLabel:"Cross-Topic"})}
+        <div class="tdi-card tdi-card--v3 tdi-card--home dih-today-card tdi-card--hero2" data-tdi>${Ps({sublabel:"AI-generated briefs, twice daily across 100+ topics.",hubLink:!1,topicLabel:"Cross-Topic"})}
         </div>
       </section>
 
@@ -1441,7 +1441,7 @@ ${M}`),w.length?w.join(`
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Access prompt library${u}</button></div>
             </section>
           <section class="hf-card hf-card--di" aria-label="Daily Intelligence">
-            <div class="tdi-card tdi-card--v3 tdi-card--home tdi-card--hero2" data-tdi>${Ps({sublabel:"AI-generated briefings, twice a day for each of our 100+ topics.",hubTagline:!0,topicLabel:"Cross-Topic"})}
+            <div class="tdi-card tdi-card--v3 tdi-card--home tdi-card--hero2" data-tdi>${Ps({sublabel:"AI-generated briefs, twice daily across 100+ topics.",hubTagline:!0,topicLabel:"Cross-Topic"})}
             </div>
           </section>
           </div>

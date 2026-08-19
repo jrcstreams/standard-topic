@@ -1461,7 +1461,7 @@ function renderIntelligenceHub(container) {
       </header>
 
       <section class="dih-today">
-        <div class="tdi-card tdi-card--v3 tdi-card--home dih-today-card tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'AI-generated briefings, twice a day for each of our 100+ topics.', hubLink: false, topicLabel: 'Cross-Topic' })}
+        <div class="tdi-card tdi-card--v3 tdi-card--home dih-today-card tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'AI-generated briefs, twice daily across 100+ topics.', hubLink: false, topicLabel: 'Cross-Topic' })}
         </div>
       </section>
 
@@ -3876,7 +3876,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Access prompt library${HQ_ARROW}</button></div>
             </section>
           <section class="hf-card hf-card--di" aria-label="Daily Intelligence">
-            <div class="tdi-card tdi-card--v3 tdi-card--home tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'AI-generated briefings, twice a day for each of our 100+ topics.', hubTagline: true, topicLabel: 'Cross-Topic' })}
+            <div class="tdi-card tdi-card--v3 tdi-card--home tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'AI-generated briefs, twice daily across 100+ topics.', hubTagline: true, topicLabel: 'Cross-Topic' })}
             </div>
           </section>
           </div>

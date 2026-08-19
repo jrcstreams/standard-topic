@@ -22071,3 +22071,8 @@ body.home-search .home-search-hero { padding: 0 0 clamp(0.7rem, 1.4vw, 1.4rem) !
 .sticky-hero-inner.nav-links-xs #nav-links .navbtn-label { font-size: 0.72rem; letter-spacing: -0.01em; }
 .sticky-hero-inner.nav-links-xs #nav-links .navbtn { padding: 5px 5px; }
 .sticky-hero-inner.nav-links-xs #nav-links { gap: 1px 3px; }
+
+
+/* revamp866 — edition pill vertically centered on the Today's Briefing title. */
+.tdi-card--hero2 .tdi-todayhead { align-items: center !important; }
+.tdi-card--hero2 .tdi-todayhead .tdi-date { align-self: center !important; }
