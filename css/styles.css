@@ -21702,3 +21702,26 @@ body.pagenav-mode.sticky-always #content { padding-top: calc(var(--nav-h) + 0.3r
   justify-content: center !important; gap: 4px;
 }
 .sticky-hero-inner.nav-wrap #nav-search { margin-left: auto; }
+
+/* ═══ revamp837 — homepage featured: DI its own row, Topics+Prompts a 2-col pair
+   (#img264-268) Daily Intelligence is always the first, full-width card.
+   Featured Topics and Featured AI Prompts sit BELOW it as a fixed two-column
+   pair — Topics wider (≈58/42) so it can list ten topics in two columns of
+   five, bullet + separator like the prompts list. They never fold into a column
+   with Daily Intelligence; they only stack (one column) at the narrow break. */
+body.home-search .home-sections .home-featured {
+  grid-template-columns: 1.4fr 1fr !important;
+  gap: 1.1rem !important;
+}
+.hf-card--di { grid-column: 1 / -1 !important; }
+@media (max-width: 700px) {
+  body.home-search .home-sections .home-featured { grid-template-columns: 1fr !important; }
+}
+/* Featured Topics lists in two columns (of five). Prompts stays single-column. */
+.hf-card--topics .hf-chips {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  column-gap: 1.6rem !important;
+}
+@media (max-width: 460px) {
+  .hf-card--topics .hf-chips { grid-template-columns: 1fr !important; }
+}

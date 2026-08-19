@@ -3888,7 +3888,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       if (tWrap) {
         // Render the full dozen; CSS visibility caps trim by viewport (6 on
         // phones, 8 mid-range, all 12 on desktop where the card is wider).
-        let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 5); } catch (_) {}
+        let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 10); } catch (_) {}
         tWrap.innerHTML = feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="hq-row"><span class="hq-row-mark" aria-hidden="true"></span><span class="hq-row-name">${escapeHTML(t.name)}</span></a>`).join('');
       }
       // Featured Prompts — the same featured set the Prompt Library leads with.
