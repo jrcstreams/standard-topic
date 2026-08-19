@@ -3258,6 +3258,16 @@ function fitMainNav() {
     // over the page (content padding + sticky subnav both offset by --nav-h).
     requestAnimationFrame(() => {
       if (!inner.classList.contains('nav-wrap')) return;
+      // Align the wrapped link row under the SITE TITLE (not the hamburger):
+      // measure the brand's left edge relative to the bar's content box and
+      // indent the row by that much (#img283).
+      const brand = inner.querySelector('.sticky-brand');
+      if (brand) {
+        const cs = getComputedStyle(inner);
+        const padL = parseFloat(cs.paddingLeft) || 0;
+        const indent = Math.max(0, Math.round(brand.getBoundingClientRect().left - inner.getBoundingClientRect().left - padL));
+        inner.style.setProperty('--nav-links-indent', indent + 'px');
+      }
       const h = Math.round(inner.getBoundingClientRect().height);
       if (h > 0) document.documentElement.style.setProperty('--nav-h', h + 'px');
     });
