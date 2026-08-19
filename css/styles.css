@@ -21811,3 +21811,11 @@ body.home-search .home-sections .home-featured {
   padding: 7px 14px !important; gap: 9px !important;
 }
 .tdi-card--home .tdi-head .tdi-date { font-size: 0.82rem !important; }
+
+/* ═══ revamp846 — heavier DI sublabel + tighter summary on home ═════════════
+   (#img300) The "An AI-generated briefing…" sublabel gains weight across the
+   homepage, hub and topic preview cards, and on the homepage card the summary
+   is pulled up closer beneath it. */
+.tdi-sub, .tpr-sub { font-weight: 620 !important; }
+.tdi-card--home .tdi-subrow { margin-bottom: 0.1rem !important; }
+.tdi-card--home .tdi-summary { margin-top: 0 !important; }
