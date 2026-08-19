@@ -212,7 +212,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     trackPageView(routeHash() || '#/', document.title);
   });
 
-  window.addEventListener('resize', setSubnavHeightVar, { passive: true });
+  let __snvTimer = null;
+  window.addEventListener('resize', () => { clearTimeout(__snvTimer); __snvTimer = setTimeout(setSubnavHeightVar, 90); }, { passive: true });
 
   initRouter();
 
@@ -3472,7 +3473,15 @@ function renderStickyHeroBar(container, route) {
 
   // Fit the nav to the row: drop items only when they'd actually overflow.
   if (!window.__navFitBound) {
-    window.addEventListener('resize', () => requestAnimationFrame(fitMainNav));
+    // Debounce: fitMainNav reads scrollWidth (forced reflow), toggles nav
+    // classes and mutates --nav-h — doing that on every resize frame during a
+    // drag reflows the whole page repeatedly and flickers. Run once the resize
+    // settles, plus one rAF for the initial snap (revamp869).
+    let navFitTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(navFitTimer);
+      navFitTimer = setTimeout(() => requestAnimationFrame(fitMainNav), 90);
+    }, { passive: true });
     window.__navFitBound = true;
   }
   requestAnimationFrame(fitMainNav);
