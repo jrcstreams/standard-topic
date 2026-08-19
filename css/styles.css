@@ -21880,3 +21880,24 @@ body.home-search .home-sections .home-featured {
   background: rgba(255, 255, 255, 0.72);
 }
 .tdi-card--homehero.is-open .tdi-todayhead { display: none !important; }
+
+/* ═══ revamp849 — hub subtopic blocks become their own cards ═════════════════
+   (#img306-308) Each subtopic preview is a faint-bordered card now, spaced from
+   its neighbours, rather than a hairline-separated block. The date/edition sits
+   a little closer to the summary. */
+.dih-items { gap: 12px !important; }
+@media (min-width: 760px) { .dih-items { column-gap: 14px !important; } }
+.dih-item {
+  border: 1px solid #e6ebf3 !important; border-radius: 12px;
+  background: #fbfcfe; padding: 0.85rem 1rem 0.95rem !important;
+  transition: background .14s ease, border-color .14s ease, box-shadow .14s ease;
+}
+.dih-item.is-lastrow { border-bottom: 1px solid #e6ebf3 !important; }
+@media (hover: hover) {
+  .dih-item:hover {
+    background: #f4f8fd; border-color: #cfd9ea !important;
+    box-shadow: 0 3px 12px -7px rgba(30, 45, 68, .22);
+  }
+}
+/* A touch less air between the stamp and the summary on these cards. */
+.dih-item-stamp { margin: 0.3rem 0 0.28rem !important; }
