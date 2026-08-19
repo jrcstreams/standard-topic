@@ -183,7 +183,7 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
     const startedAtD = Date.now();
     const timeLeftD = () => Date.now() - startedAtD < 230 * 1000;
     try {
-      let filled = 0; let refreshed = 0; let budget = total;
+      let filled = 0; let refreshed = 0; let orphans = 0; let budget = total;
       const candidates = overviewCandidates();
       const byKey = new Map(candidates.map((c) => [`${c.topic.toLowerCase()}|${c.insight}`, c]));
       const existing = await sql.query(`SELECT entity_key, created_at FROM ai_insights WHERE entity_type='shortcut' AND insight='daily:b'`);
@@ -206,7 +206,13 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
         for (const r of stale) {
           if (budget <= 0 || !timeLeftD()) break;
           const c = byKey.get(`${r.entity_key}|daily:b`);
-          if (c && await call({ type: 'shortcut', topic: c.topic, group: 'daily', builder: 1, refresh: 1 })) refreshed++;
+          // An entity_key with no matching topic name is an orphan — a topic
+          // that was renamed or removed. It can never be refreshed, so its
+          // created_at keeps receding and it sorts to the FRONT of this
+          // stalest-first queue on every single run, head-blocking the topics
+          // behind it. Skip it without spending a slot or a sleep (revamp827).
+          if (!c) { orphans++; continue; }
+          if (await call({ type: 'shortcut', topic: c.topic, group: 'daily', builder: 1, refresh: 1 })) refreshed++;
           budget--;
           await sleep(sleepMs);
         }
@@ -215,7 +221,7 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
         `SELECT count(*)::int AS n FROM ai_insights
           WHERE entity_type='shortcut' AND insight='daily:b'
             AND created_at < now() - interval '10 hours'`);
-      return res.status(200).json({ ok: true, type: 'daily', filled, refreshed, staleRemaining: rem[0].n });
+      return res.status(200).json({ ok: true, type: 'daily', filled, refreshed, orphans, staleRemaining: rem[0].n });
     } catch (e) {
       return res.status(500).json({ error: String((e && e.message) || e) });
     }

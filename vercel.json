@@ -67,6 +67,46 @@
     {
       "path": "/api/cron/pregenerate?type=news&n=20&newsMax=20",
       "schedule": "45 */3 * * *"
+    },
+    {
+      "path": "/api/cron/pregenerate?type=daily&n=40",
+      "schedule": "6 12 * * *"
+    },
+    {
+      "path": "/api/cron/pregenerate?type=daily&n=40",
+      "schedule": "18 12 * * *"
+    },
+    {
+      "path": "/api/cron/pregenerate?type=daily&n=40",
+      "schedule": "30 12 * * *"
+    },
+    {
+      "path": "/api/cron/pregenerate?type=daily&n=40",
+      "schedule": "42 12 * * *"
+    },
+    {
+      "path": "/api/cron/pregenerate?type=daily&n=40",
+      "schedule": "54 12 * * *"
+    },
+    {
+      "path": "/api/cron/pregenerate?type=daily&n=40",
+      "schedule": "6 0 * * *"
+    },
+    {
+      "path": "/api/cron/pregenerate?type=daily&n=40",
+      "schedule": "18 0 * * *"
+    },
+    {
+      "path": "/api/cron/pregenerate?type=daily&n=40",
+      "schedule": "30 0 * * *"
+    },
+    {
+      "path": "/api/cron/pregenerate?type=daily&n=40",
+      "schedule": "42 0 * * *"
+    },
+    {
+      "path": "/api/cron/pregenerate?type=daily&n=40",
+      "schedule": "54 0 * * *"
     }
   ],
   "rewrites": [
