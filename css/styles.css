@@ -21680,9 +21680,10 @@ body.pagenav-mode.sticky-always #content { padding-top: calc(var(--nav-h) + 0.3r
 }
 .sticky-hero-inner.nav-wrap .sticky-actions.navbtns#nav-links {
   order: 10 !important; flex: 0 0 100% !important; width: 100%;
-  margin: 0.75rem 0 0 !important;                    /* clear gap below row 1 */
+  margin: 0.7rem 0 0 !important;                     /* clear gap below row 1 */
   justify-content: center !important;               /* centered on the row (#img285) */
-  padding-left: 0;
+  padding-left: 0; padding-top: 0.6rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);   /* faint separator above (#img311) */
   flex-wrap: wrap; gap: 2px 10px;
 }
 /* Row 1 items share one vertical center — the Search pill lines up with the
