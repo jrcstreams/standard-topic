@@ -21149,3 +21149,91 @@ body.pagenav-mode.sticky-always #content { padding-top: calc(var(--nav-h) + 1.2r
 body.home-search .home-sections { padding-top: 2rem !important; }
 .home-featured { margin-bottom: 2.4rem !important; }
 @media (min-width: 720px) { .home-featured { margin-bottom: 2.8rem !important; } }
+
+/* ═══ revamp820 ══════════════════════════════════════════════════════════════
+   The hub, rebuilt: full-width body, a featured preview card, a topic legend,
+   and every parent's family as its own titled band. */
+
+/* Wider body, and type that scales together (#img236-238). */
+.dih { max-width: var(--max-width, 1280px); padding: 0 2rem 4rem; }
+@media (min-width: 1500px) { .dih { max-width: 1460px; } }
+@media (max-width: 640px) { .dih { padding: 0 1rem 3rem; } }
+.dih-head { padding: 0.2rem 0 1.6rem; }
+.dih-title { gap: 12px; font-size: clamp(1.6rem, 1.1rem + 1.9vw, 2.35rem); }
+.dih-title-ic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 1.55em; height: 1.55em; border-radius: 0.42em;
+  background: #1d3a6b; color: #9ec2ff;
+}
+.dih-title-ic svg { width: 0.86em; height: 0.86em; display: block; }
+.dih-lede { max-width: 92ch; font-size: clamp(0.95rem, 0.9rem + 0.3vw, 1.08rem); }
+
+/* ── Today's Briefing is the FEATURED card: a preview that expands, like the
+      topic cards, but given more presence (#img239/240). ── */
+.dih-today { margin-bottom: 2.6rem; }
+.dih-today-card {
+  border: 1px solid color-mix(in srgb, #2f4d9e 20%, transparent) !important;
+  background: linear-gradient(180deg, #f4f7fd 0%, #e9effa 100%) !important;
+  border-radius: 18px !important; padding: 1.35rem 1.5rem 1.4rem !important;
+  box-shadow: 0 2px 16px -8px rgba(30, 58, 138, .22);
+}
+.dih-today-card .tdi-card-title { font-size: clamp(1.2rem, 1.02rem + 0.7vw, 1.5rem) !important; }
+.dih-today-card .tdi-summary { font-size: 1rem; max-width: none; }
+/* Inside the expanded brief, the section titles sit BELOW the card's own
+   title, so they step down rather than competing with it. */
+.dih-today-card .di-sectitle { font-size: 1.12rem; }
+
+/* ── Legend: jump straight to a topic band (#img241/242). ── */
+.dih-legend {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  padding: 0 0 1.4rem; margin-bottom: 1.6rem;
+  border-bottom: 1.5px solid #d3d9e4;
+}
+.dih-legend-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 12px; border-radius: 999px;
+  border: 1px solid var(--color-surface-border); background: #fff;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600;
+  color: #33455f; text-decoration: none;
+  transition: border-color .14s ease, background .14s ease, color .14s ease;
+}
+.dih-legend-ic { display: inline-flex; color: #5a6b86; }
+.dih-legend-ic svg { width: 15px; height: 15px; display: block; }
+@media (hover: hover) {
+  .dih-legend-chip:hover { border-color: #b9c8e2; background: #f5f8fd; color: #1d4ed8; text-decoration: none; }
+  .dih-legend-chip:hover .dih-legend-ic { color: #1d4ed8; }
+}
+
+/* ── Each parent topic is its own band: a real section head, then the parent
+      and all its subtopics as cards. ── */
+.dih-group { margin-bottom: 2.8rem; scroll-margin-top: calc(var(--nav-h) + 70px); }
+.dih-grouphead {
+  display: flex; align-items: center; gap: 11px;
+  padding-bottom: 0.6rem; margin-bottom: 1.1rem;
+  border-bottom: 2px solid #e0e5ee;
+}
+.dih-groupic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 9px;
+  background: color-mix(in srgb, #2f4d9e 10%, #fff); color: #2f4d9e;
+}
+.dih-groupic svg { width: 17px; height: 17px; display: block; }
+.dih-grouptitle {
+  margin: 0; font-family: var(--font-display); font-size: 1.28rem; font-weight: 800;
+  letter-spacing: -0.02em; color: #16233d;
+}
+.dih-groupcount {
+  margin-left: auto; font-family: var(--font-family); font-size: 0.76rem;
+  font-weight: 650; letter-spacing: 0.03em; text-transform: uppercase; color: #94a1b5;
+}
+
+/* Cards carry their own edition stamp between the title and the summary. */
+.dih-card { gap: 7px; }
+.dih-card-stamp {
+  align-self: flex-start; margin: 0 !important;
+  padding: 3px 8px !important; font-size: 0.66rem !important;
+  border: 1px solid color-mix(in srgb, #172554 8%, transparent) !important;
+  background: rgba(255, 255, 255, 0.6) !important; border-radius: 7px;
+}
+.dih-card-stamp:empty { display: none; }
+.dih-card-go { text-decoration: none; }

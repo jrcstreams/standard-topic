@@ -1367,62 +1367,135 @@ function renderNavDdPage(container, cfg) {
 // Intelligence is, today's cross-topic briefing, then every parent topic's
 // briefing as a card grid you can read straight down.
 function renderIntelligenceHub(container) {
-  let parents = [];
-  try { parents = (getParentTopics() || []).filter((t) => t && t.slug && t.slug !== 'home'); } catch (_) {}
+  let groups = [];
+  try { groups = (getTopicsGroupedByParent() || []).filter((g) => g && g.parent && g.parent.slug !== 'home'); } catch (_) {}
+
+  const card = (t) => `
+    <article class="dih-card" data-dih-card="${escapeAttr(t.name)}">
+      <span class="dih-card-head">
+        <span class="dih-card-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
+        <span class="dih-card-name">${escapeHTML(t.name)}</span>
+      </span>
+      <span class="tdi-date dih-card-stamp" data-dih-stamp-for="${escapeAttr(t.name)}"></span>
+      <span class="dih-card-sum" data-dih-sum="${escapeAttr(t.name)}">Loading today's briefing…</span>
+      <a class="dih-card-go" href="#/topic/${escapeAttr(t.slug)}">Read briefing${SUBPAGE_ARROW}</a>
+    </article>`;
+
   container.innerHTML = `
     <div class="dih">
       <header class="dih-head">
-        <h1 class="dih-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>Daily Intelligence</h1>
+        <h1 class="dih-title"><span class="dih-title-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>Daily Intelligence</h1>
         <p class="dih-lede">Every day, twice a day, Standard Topic reads its own news feed across 100+ topics and writes a briefing on each — what actually happened, what it means, and the stories behind it. Below: today's cross-topic briefing, then every topic's own.</p>
         <div class="tdi-cardprov dih-prov">${DI_SPARK}<span>AI-generated text</span></div>
       </header>
 
       <section class="dih-today">
-        <div class="dih-sechead"><h2 class="dih-sectitle">Today's Briefing</h2><span class="tdi-date dih-stamp" data-dih-stamp></span></div>
-        <div class="dih-today-card" data-dih-today></div>
+        <div class="tdi-card tdi-card--v3 tdi-card--home dih-today-card" data-tdi>
+          <div class="tdi-head">
+            <h2 class="tsec-title tdi-card-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/></svg></span>Today's Briefing</h2>
+            <span class="tdi-headslot">
+              <span class="tdi-date" data-tdi-date></span>
+              <button type="button" class="tdi-headclose" data-di-toggle aria-label="Close briefing">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <span>Close Briefing</span>
+              </button>
+            </span>
+          </div>
+          <div class="tdi-subrow"><p class="tdi-sub">The day's cross-topic briefing, drawn evenly from every major topic.</p></div>
+          <p class="tdi-summary" data-tdi-summary>Preparing today's briefing…</p>
+          <div class="tdi-actions">
+            <button type="button" class="tdi-go" data-di-toggle aria-expanded="false">
+              <span class="tdi-go-open">Read today's briefing</span>
+              <span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
+            </button>
+          </div>
+          <div class="tdi-expand" data-di-expand><div class="tdi-expand-inner">
+            <div data-di-host></div>
+            <div class="tdi-closefoot">
+              <button type="button" class="tdi-closefoot-btn" data-di-toggle>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <span>Close Briefing</span>
+              </button>
+            </div>
+          </div></div>
+        </div>
       </section>
 
-      <section class="dih-bytopic">
-        <div class="dih-sechead"><h2 class="dih-sectitle">By Topic</h2></div>
-        <div class="dih-grid">${parents.map((t) => `
-          <a class="dih-card" href="#/topic/${escapeAttr(t.slug)}">
-            <span class="dih-card-head">
-              <span class="dih-card-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
-              <span class="dih-card-name">${escapeHTML(t.name)}</span>
-            </span>
-            <span class="dih-card-sum" data-dih-sum="${escapeAttr(t.name)}">Loading today's briefing…</span>
-            <span class="dih-card-go">Read briefing${SUBPAGE_ARROW}</span>
-          </a>`).join('')}</div>
-      </section>
+      <nav class="dih-legend" aria-label="Jump to a topic">
+        ${groups.map((g) => `<a class="dih-legend-chip" href="#dih-${escapeAttr(g.parent.slug)}"><span class="dih-legend-ic" aria-hidden="true">${topicIconSVG(g.parent.icon || 'globe', '')}</span>${escapeHTML(g.parent.name)}</a>`).join('')}
+      </nav>
+
+      <div class="dih-groups">
+        ${groups.map((g) => `
+          <section class="dih-group" id="dih-${escapeAttr(g.parent.slug)}">
+            <div class="dih-grouphead">
+              <span class="dih-groupic" aria-hidden="true">${topicIconSVG(g.parent.icon || 'globe', '')}</span>
+              <h2 class="dih-grouptitle">${escapeHTML(g.parent.name)}</h2>
+              <span class="dih-groupcount">${(g.subtopics || []).length + 1} briefings</span>
+            </div>
+            <div class="dih-grid">${[g.parent, ...(g.subtopics || [])].map(card).join('')}</div>
+          </section>`).join('')}
+      </div>
     </div>`;
 
-  // Today's cross-topic brief renders inline, the same component the cards use.
-  const todayHost = container.querySelector('[data-dih-today]');
-  if (todayHost) {
-    renderDailyIntelligence(todayHost, { topic: 'home', label: 'Today', slug: 'home', inline: true });
-  }
-  fetchDailyBrief('home').then((d) => {
-    const st = container.querySelector('[data-dih-stamp]');
-    if (st && d && d.generatedAt) st.innerHTML = diEditionStampHTML(d.generatedAt);
-  }).catch(() => {});
-
-  // Each topic card fills with its own briefing summary. Sequential with a
-  // small gap so 14 parallel fetches don't hammer the API on page load.
-  (async () => {
-    for (const t of parents) {
-      if (!container.isConnected) return;
-      try {
-        const d = await fetchDailyBrief(t.name);
-        const el = container.querySelector(`[data-dih-sum="${CSS.escape(t.name)}"]`);
-        if (el && d && d.summary) el.textContent = d.summary;
-        else if (el) el.textContent = 'Briefing publishes with the next edition.';
-      } catch (_) {
-        const el = container.querySelector(`[data-dih-sum="${CSS.escape(t.name)}"]`);
-        if (el) el.textContent = 'Briefing publishes with the next edition.';
+  // Today's briefing behaves like the topic cards: a preview that expands.
+  const todayCard = container.querySelector('.dih-today-card');
+  if (todayCard) {
+    const host = todayCard.querySelector('[data-di-expand]');
+    const inner = host?.firstElementChild;
+    const btns = [...todayCard.querySelectorAll('[data-di-toggle]')];
+    let loaded = false;
+    try { if (inner) inner.inert = true; } catch (_) {}
+    const setOpen = (on) => {
+      btns.forEach((b) => b.setAttribute('aria-expanded', on ? 'true' : 'false'));
+      todayCard.classList.toggle('is-open', on);
+      try { if (inner) inner.inert = !on; } catch (_) {}
+      if (!on || loaded || !inner) return;
+      loaded = true;
+      renderDailyIntelligence(inner.querySelector('[data-di-host]') || inner, {
+        topic: 'home', label: 'Today', slug: 'home', inline: true,
+      });
+    };
+    btns.forEach((b) => b.addEventListener('click', () => setOpen(b.getAttribute('aria-expanded') !== 'true')));
+    fetchDailyBrief('home').then((d) => {
+      if (!d || !todayCard.isConnected) return;
+      const sEl = todayCard.querySelector('[data-tdi-summary]');
+      if (sEl && d.summary) sEl.textContent = d.summary;
+      if (d.generatedAt) {
+        const st = todayCard.querySelector('[data-tdi-date]');
+        if (st) st.innerHTML = diEditionStampHTML(d.generatedAt);
       }
-      await new Promise((r) => setTimeout(r, 120));
+    }).catch(() => {});
+  }
+
+  // ~100 cards: fetch each topic's briefing only as its card comes into view,
+  // a few at a time. Loading them all up front would fire a hundred requests
+  // on page load for content most readers never scroll to.
+  const pending = new Set();
+  const fill = async (el) => {
+    const name = el.dataset.dihCard;
+    if (!name || pending.has(name)) return;
+    pending.add(name);
+    const sum = el.querySelector('[data-dih-sum]');
+    const stamp = el.querySelector('[data-dih-stamp-for]');
+    try {
+      const d = await fetchDailyBrief(name);
+      if (!el.isConnected) return;
+      if (sum) sum.textContent = (d && d.summary) ? d.summary : 'Briefing publishes with the next edition.';
+      if (stamp && d && d.generatedAt) stamp.innerHTML = diEditionStampHTML(d.generatedAt);
+    } catch (_) {
+      if (sum) sum.textContent = 'Briefing publishes with the next edition.';
     }
-  })();
+  };
+  const cards = [...container.querySelectorAll('[data-dih-card]')];
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) { io.unobserve(e.target); fill(e.target); } });
+    }, { rootMargin: '400px 0px' });
+    cards.forEach((c) => io.observe(c));
+  } else {
+    cards.forEach(fill);
+  }
 }
 
 // revamp814: the homepage brief. Same card component and same open/close
@@ -1957,8 +2030,10 @@ function renderLayout(route) {
   }
 
   if (route.type === 'intelligence') {
-    document.body.classList.add('has-subnav');
-    subHeader.classList.add('is-subnav', 'static-page');
+    // revamp820: hidden on arrival, sliding in as a sticky bar once the title
+    // block scrolls away — and no back link inside it.
+    document.body.classList.add('has-subnav', 'pagenav-mode');
+    subHeader.className = 'is-subnav static-page pagenav';
     subHeader.innerHTML = `
       <div class="topic-subnav-title">
         <div class="topic-subnav-inner">
@@ -1966,10 +2041,10 @@ function renderLayout(route) {
             <span class="subnav-ident-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/></svg></span>
             <span class="subnav-ident-name">Daily Intelligence</span>
           </div>
-          ${backBarHTML()}
         </div>
       </div>`;
     observeSubnavHeight();
+    wirePageNavReveal();
     return;
   }
 
