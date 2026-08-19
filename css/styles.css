@@ -21729,11 +21729,11 @@ body.home-search .home-sections .home-featured {
 }
 .dih-title { gap: 9px; font-size: clamp(1.5rem, 1.05rem + 1.4vw, 1.92rem) !important; }
 .dih-title-ic {
-  width: auto !important; height: auto !important;
-  background: none !important; border-radius: 0 !important;
-  color: #2f4d9e; display: inline-flex; align-items: center;
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 38px !important; height: 38px !important; border-radius: 10px !important;
+  background: #1d3a6b !important; color: #8ab4ff !important;
 }
-.dih-title-ic svg { width: 0.92em !important; height: 0.92em !important; display: block; }
+.dih-title-ic svg { width: 21px !important; height: 21px !important; display: block; }
 .dih-lede { margin: 0 !important; font-size: 0.98rem !important; color: #42506b; }
 
 /* Trending page icon bumped to match its title (baseline for the hub, #img272). */
@@ -21772,3 +21772,34 @@ body.home-search .home-sections .home-featured {
   }
   .tdi-card:not(.is-open) .tdi-date--reflow .tdi-stamp-sep { display: inline-block !important; }
 }
+
+/* ═══ revamp843 — hub reflow stamp + last-row separators ═════════════════════ */
+
+/* The reflow stamp (below the sublabel) a touch bigger, with clear air above
+   and below, its left edge flush with the text (#img288-290). */
+@media (max-width: 620px) {
+  .tdi-card:not(.is-open) .tdi-date--reflow {
+    margin: 0.2rem 0 0.9rem !important;
+    padding: 6px 12px !important; font-size: 0.82rem !important; margin-left: 0 !important;
+  }
+}
+
+/* The last row of topic blocks needs no bottom hairline — the card edge is the
+   divider (#img291). JS marks the bottom row (it varies with column count). */
+.dih-item.is-lastrow { border-bottom: 0 !important; }
+
+/* ═══ revamp844 — tighter page headers + hub back bar ════════════════════════ */
+
+/* Back link → title was too loose on Topics/Trending/Prompts (#img292-294). */
+.aii-nav-dd-pagelike .aii-nav-dd-inner > .page-backbar { padding-bottom: 0 !important; }
+.aii-nav-dd-pagelike .aii-nav-dd-inner > .page-backbar + .aii-nav-dd-head { padding-top: 7px !important; }
+
+/* Trending: the separator sat too far above the first trend in both layouts
+   (#img296-298). Pull the grid up under the sub-bar. */
+.ndp.aii-nav-dd-trending .aii-nav-dd-subbar { margin-bottom: 0.3rem !important; }
+.aii-nav-dd-trending .trend-card-grid { padding-top: 2px !important; }
+
+/* The hub gets the same "Back to …" bar as the other pages (#img295). */
+.dih > .page-backbar { padding: 20px 0 0 !important; }
+.dih > .page-backbar + .dih-head { padding-top: 6px !important; }
+@media (max-width: 640px) { .dih > .page-backbar { padding-top: 14px !important; } }

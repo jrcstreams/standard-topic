@@ -1412,6 +1412,7 @@ function renderIntelligenceHub(container) {
 
   container.innerHTML = `
     <div class="dih">
+      ${backBarHTML()}
       <header class="dih-head">
         <h1 class="dih-title"><span class="dih-title-ic" aria-hidden="true">${DI_SPARK_TWO}</span>Daily Intelligence</h1>
         <p class="dih-lede">An AI briefing on every topic, twice a day.</p>
@@ -1420,7 +1421,7 @@ function renderIntelligenceHub(container) {
       <section class="dih-today">
         <div class="tdi-card tdi-card--v3 tdi-card--home dih-today-card" data-tdi>
           <div class="tdi-head">
-            <h2 class="tsec-title tdi-card-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/></svg></span>Today's Briefing</h2>
+            <h2 class="tsec-title tdi-card-title">Today's Briefing</h2>
             <span class="tdi-headslot">
               <span class="tdi-date" data-tdi-date></span>
               <button type="button" class="tdi-headclose" data-di-toggle aria-label="Close briefing">
@@ -1579,6 +1580,26 @@ function renderIntelligenceHub(container) {
       try { group.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (_) {}
     }));
   });
+
+  // The topic blocks carry a bottom hairline as a row separator, but the LAST
+  // visual row shouldn't (the card edge divides it, #img291). Column count is
+  // responsive, so find the bottom row by offsetTop and mark it.
+  const markLastRows = () => {
+    container.querySelectorAll('[data-dih-group] .dih-items').forEach((list) => {
+      const items = [...list.children];
+      if (!items.length) return;
+      let maxTop = -1;
+      items.forEach((i) => { i.classList.remove('is-lastrow'); if (i.offsetTop > maxTop) maxTop = i.offsetTop; });
+      items.forEach((i) => { if (Math.abs(i.offsetTop - maxTop) < 2) i.classList.add('is-lastrow'); });
+    });
+  };
+  markLastRows();
+  if (!renderIntelligenceHub._lastRowBound) {
+    renderIntelligenceHub._lastRowBound = true;
+  }
+  let lrTimer = null;
+  const onResize = () => { clearTimeout(lrTimer); lrTimer = setTimeout(markLastRows, 120); };
+  window.addEventListener('resize', onResize, { passive: true });
 
   // ~100 summaries fetch lazily as their block scrolls into view — but a fast
   // scroll (or a legend jump past several sections) can bring dozens into range
