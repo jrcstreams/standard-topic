@@ -1568,16 +1568,33 @@ function renderIntelligenceHub(container) {
     }));
   });
 
-  // ~100 summaries fetch lazily as their block scrolls into view.
+  // ~100 summaries fetch lazily as their block scrolls into view — but a fast
+  // scroll (or a legend jump past several sections) can bring dozens into range
+  // at once, and firing them together earns a 403 from the API. Queue them
+  // behind a small concurrency gate so a burst becomes a trickle (revamp826).
   const pending = new Set();
-  const fill = async (el) => {
+  const queue = [];
+  let inFlight = 0;
+  const MAX_INFLIGHT = 4;
+  const pump = () => {
+    while (inFlight < MAX_INFLIGHT && queue.length) {
+      const job = queue.shift();
+      inFlight++;
+      job().finally(() => { inFlight--; pump(); });
+    }
+  };
+  const fill = (el) => {
     const name = el.dataset.dihItem;
     if (!name || pending.has(name)) return;
     pending.add(name);
+    queue.push(() => fillNow(el));
+    pump();
+  };
+  const fillNow = async (el) => {
     const sum = el.querySelector('[data-dih-sum]');
     const stamp = el.querySelector('[data-dih-stamp-for]');
     try {
-      const d = await fetchDailyBrief(name);
+      const d = await fetchDailyBrief(el.dataset.dihItem);
       if (!el.isConnected) return;
       if (sum) sum.textContent = (d && d.summary) ? d.summary : 'Briefing publishes with the next edition.';
       if (stamp && d && d.generatedAt) stamp.innerHTML = diEditionStampHTML(d.generatedAt);
