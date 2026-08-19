@@ -21493,3 +21493,70 @@ body.home-search .home-sections { padding-top: 2rem !important; }
   .aiidd-vall:hover { color: #2f4d9e !important; }
   .aiidd-vall:hover .aiidd-vall-chev { opacity: 1; }
 }
+
+/* ═══ revamp830 — condense the page header on Topics/Trending/Prompts ════════
+   (#img249-251) The whole header sat too far from where the sticky-nav band
+   appears: pull the back link toward the main nav, the title toward the back
+   link, keep the subtext tight to the title, and give the header a real
+   separator below it. Buttons live inside the head, so they stay ABOVE the
+   line. Trending already carries its own sub-bar separator, so it is exempt. */
+body.pagenav-mode.sticky-always #content { padding-top: calc(var(--nav-h) + 0.3rem) !important; }
+.aii-nav-dd-pagelike .aii-nav-dd-inner > .page-backbar { padding-top: 10px !important; }
+.aii-nav-dd-pagelike .aii-nav-dd-inner > .page-backbar + .aii-nav-dd-head { padding-top: 8px !important; }
+.aii-nav-dd-pagelike .aii-nav-dd-sub { margin-top: 2px !important; }
+.aii-nav-dd-pagelike:not(.aii-nav-dd-trending) .aii-nav-dd-head {
+  border-bottom: 1.5px solid #dde3ee !important;
+  padding-bottom: 14px !important;
+}
+
+/* ═══ revamp831 — expanded-accordion parent row + open header tint ═══════════
+   (#img252/253) In Expanded View the parent's own "All {Parent}" row was
+   bold and blue, standing above the subtopics beside it. Drop the "All"
+   prefix (done in markup) and give the row the SAME weight and colour as the
+   subtopics — it is a peer, distinguished only by its drill chevron. And when
+   a section is open, tint its clicked header the way an open prompt preview is
+   tinted, so the open one reads as active. */
+.aiidd-vall {
+  font-weight: 500 !important; color: #334155 !important; font-size: 0.94rem !important;
+}
+@media (hover: hover) { .aiidd-vall:hover { color: #2563eb !important; } }
+.aiidd-vall .aiidd-vall-chev { color: #b3c0d6; }
+.aiidd-parent[data-open="true"] .aiidd-parent-head {
+  background: #f2f5fa; border-radius: 10px;
+}
+
+/* ═══ revamp832 — homepage Daily Intelligence card: title, buttons, stamp ════ */
+
+/* Keep the edition glyph tight to the edition words in the horizontal layout. */
+.tdi-stamp-edwrap { display: inline-flex; align-items: center; gap: 5px; }
+
+/* Title was scaling on `vw` while the 40/30/30 grid changed the card's width at
+   each breakpoint — so it lurched up and down across sizes (#img256-258). Pin a
+   stable size on the home card, with a single step down on phones. */
+.tdi-card--home .tdi-card-title { font-size: 1.24rem !important; }
+@media (max-width: 560px) { .tdi-card--home .tdi-card-title { font-size: 1.12rem !important; } }
+/* Let a long title wrap under the pill rather than shove it off the top-right. */
+.tdi-card--home .tdi-card-title { min-width: 0; flex-wrap: wrap; }
+
+/* Both CTAs were oversized at every width (#img254). Bring them down. */
+.tdi-card--home .tdi-go,
+.tdi-card--home .tdi-go--hub {
+  padding: 0.42rem 0.9rem !important; min-height: 34px !important;
+  font-size: 0.8rem !important;
+}
+
+/* The date/edition pill read too small on wider screens — give the home card a
+   fixed, slightly larger face than the shared clamp. */
+.tdi-card--home .tdi-head .tdi-date { font-size: 0.8rem !important; }
+
+/* On phones the pill sits in the upper-right, its top aligned with the card
+   title, and stacks date OVER edition (#img254). */
+@media (max-width: 560px) {
+  .tdi-card--home .tdi-head { align-items: flex-start !important; flex-wrap: nowrap !important; }
+  .tdi-card--home .tdi-headslot { align-self: flex-start !important; }
+  .tdi-card--home .tdi-head .tdi-date {
+    flex-direction: column; align-items: flex-end; gap: 2px !important;
+    padding: 6px 10px !important; text-align: right;
+  }
+  .tdi-card--home .tdi-head .tdi-date .tdi-stamp-sep { display: none !important; }
+}

@@ -1153,7 +1153,7 @@ function topicsTreeHTML() {
     }
     // Clean vertical list: a prominent "All {Parent} ›" link, then each subtopic
     // on its own row. No count badge.
-    const links = `<a href="#/topic/${parent.slug}" class="aiidd-vall" data-aiidd-link><span class="aiidd-vlink-ic" aria-hidden="true">${topicIconSVG(parent.icon || 'globe', '')}</span><span class="aiidd-vlink-name">All ${escapeHTML(parent.name)}</span>${AIIDD_CHEV_R}</a>`
+    const links = `<a href="#/topic/${parent.slug}" class="aiidd-vall" data-aiidd-link><span class="aiidd-vlink-ic" aria-hidden="true">${topicIconSVG(parent.icon || 'globe', '')}</span><span class="aiidd-vlink-name">${escapeHTML(parent.name)}</span>${AIIDD_CHEV_R}</a>`
       + subs.map((s) => `<a href="#/topic/${s.slug}" class="aiidd-vlink" data-aiidd-link><span class="aiidd-vlink-ic" aria-hidden="true">${topicIconSVG(s.icon || 'globe', '')}</span><span class="aiidd-vlink-name">${escapeHTML(s.name)}</span></a>`).join('');
     return `<section class="aiidd-parent" data-open="false">
       <button type="button" class="aiidd-parent-head" data-aiidd-toggle aria-expanded="false">
@@ -1343,10 +1343,12 @@ function diEditionStampHTML(iso) {
   const p = diEditionParts(iso);
   if (!p) return '';
   const night = /night/i.test(p.edition);
-  return `<span class="tdi-stamp-ic tdi-stamp-ic--${night ? 'night' : 'morning'}" aria-hidden="true">${night ? DI_MOON : DI_SUN}</span>`
-    + `<span class="tdi-stamp-val">${escapeHTML(p.day)}</span>`
+  // The sun/moon glyph belongs to the EDITION, not the date (#img254) — so the
+  // day sits first, then a separator, then the glyph + edition kept together in
+  // one wrap (which lets the pill stack date-over-edition on narrow screens).
+  return `<span class="tdi-stamp-val">${escapeHTML(p.day)}</span>`
     + `<span class="tdi-stamp-sep" aria-hidden="true"></span>`
-    + `<span class="tdi-stamp-ed">${escapeHTML(p.edition)}</span>`;
+    + `<span class="tdi-stamp-edwrap"><span class="tdi-stamp-ic tdi-stamp-ic--${night ? 'night' : 'morning'}" aria-hidden="true">${night ? DI_MOON : DI_SUN}</span><span class="tdi-stamp-ed">${escapeHTML(p.edition)}</span></span>`;
 }
 
 
