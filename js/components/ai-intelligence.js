@@ -180,17 +180,34 @@ function attrTokens(s) {
 function attributeItemsToSections(items, sections) {
   const secToks = sections.map((p) => attrTokens((p.name || '') + ' ' + (p.body || '')));
   const buckets = sections.map(() => []);
-  const unmatched = [];
-  for (const it of items) {
+  // Score every headline against every section; keep its best match.
+  const scored = items.map((it) => {
     const t = attrTokens(it.title);
     let best = -1, bestScore = 0;
     for (let i = 0; i < secToks.length; i++) {
       let score = 0; t.forEach((w) => { if (secToks[i].has(w)) score++; });
       if (score > bestScore) { bestScore = score; best = i; }
     }
-    if (best >= 0 && bestScore >= 2) buckets[best].push(it); else unmatched.push(it);
+    return { it, best, score: bestScore };
+  });
+  // Pass 1 — confident matches (>=1 shared keyword) go to their best section.
+  // The daily briefs are WRITTEN FROM these news-feed headlines, so a single
+  // meaningful overlap is a real attribution, not noise (revamp850).
+  const leftover = [];
+  for (const s of scored) {
+    if (s.best >= 0 && s.score >= 1 && buckets[s.best].length < 4) buckets[s.best].push(s.it);
+    else leftover.push(s.it);
   }
-  return { buckets, unmatched };
+  // Pass 2 — every briefing carries real sources. Most briefs are generated
+  // without live Google citations (the day's grounding budget is usually spent
+  // by news before the daily wave runs), so without this backfill they'd show
+  // NO sources at all. Fill any thin section from the leftover pool — all of
+  // which are this topic's own current headlines.
+  let li = 0;
+  for (let i = 0; i < buckets.length && li < leftover.length; i++) {
+    while (buckets[i].length < 2 && li < leftover.length) buckets[i].push(leftover[li++]);
+  }
+  return { buckets, unmatched: leftover.slice(li) };
 }
 function secSourcesHTML(items, hideLabel, collapsible) {
   if (!items || !items.length) return '';
@@ -2266,10 +2283,7 @@ export function renderDailyIntelligence(container, scope) {
           ${srcChips(buckets[i])}
         </article>`).join('')}
       </section>` : ''}
-      ${unmatched.length ? `<section class="di-more">
-        <h3 class="di-sectitle">More Coverage</h3>
-        <div class="di-reads-list di-reads-list--more">${unmatched.slice(0, 6).map(readRow).join('')}</div>
-      </section>` : ''}`;
+`;
   };
 
   fetchDailyBrief(scope.topic).then((data) => {
