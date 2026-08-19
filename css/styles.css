@@ -21549,17 +21549,6 @@ body.pagenav-mode.sticky-always #content { padding-top: calc(var(--nav-h) + 0.3r
    fixed, slightly larger face than the shared clamp. */
 .tdi-card--home .tdi-head .tdi-date { font-size: 0.8rem !important; }
 
-/* On phones the pill sits in the upper-right, its top aligned with the card
-   title, and stacks date OVER edition (#img254). */
-@media (max-width: 560px) {
-  .tdi-card--home .tdi-head { align-items: flex-start !important; flex-wrap: nowrap !important; }
-  .tdi-card--home .tdi-headslot { align-self: flex-start !important; }
-  .tdi-card--home .tdi-head .tdi-date {
-    flex-direction: column; align-items: flex-end; gap: 2px !important;
-    padding: 6px 10px !important; text-align: right;
-  }
-  .tdi-card--home .tdi-head .tdi-date .tdi-stamp-sep { display: none !important; }
-}
 
 /* ═══ revamp833 — Featured Prompts: a clean list, not a scroll rail ══════════
    A straightforward multi-column list of featured prompts — prompt name, the
@@ -21632,16 +21621,6 @@ body.pagenav-mode.sticky-always #content { padding-top: calc(var(--nav-h) + 0.3r
    date on top, edition beneath at a slightly smaller size — with its top edge
    level with the card title. Applies to the topic-page briefing card too, not
    just the homepage one. */
-@media (max-width: 560px) {
-  .tdi-card--v3 .tdi-head { align-items: flex-start !important; flex-wrap: nowrap !important; }
-  .tdi-card--v3 .tdi-headslot { align-self: flex-start !important; }
-  .tdi-card--v3 .tdi-head .tdi-date {
-    flex-direction: column; align-items: flex-start !important; gap: 1px !important;
-    padding: 6px 10px !important; text-align: left;
-  }
-  .tdi-card--v3 .tdi-head .tdi-date .tdi-stamp-sep { display: none !important; }
-  .tdi-card--v3 .tdi-head .tdi-date .tdi-stamp-ed { font-size: 0.92em; }
-}
 
 /* The two homepage CTAs read at one size/weight and a touch lighter (#img269). */
 .tdi-card--home .tdi-go,
@@ -21733,4 +21712,60 @@ body.home-search .home-sections .home-featured {
 }
 @media (max-width: 460px) {
   .hf-card--topics .hf-chips { grid-template-columns: 1fr !important; }
+}
+
+/* ═══ revamp839 — Daily Intelligence Hub header + sections reformat ══════════
+   (#img270-282) The hub header matched the other pages' TITLE size already,
+   but its oversized icon chip and the AI label made it read huge. Make the
+   icon an inline glyph like the Trending page's (both bumped to match the
+   title), drop the chip, and add a separator below the header. */
+.dih-head {
+  padding: 0.2rem 0 1rem !important;
+  border-bottom: 1.5px solid #dde3ee;
+  margin-bottom: 1.6rem;
+}
+.dih-title { gap: 9px; font-size: clamp(1.5rem, 1.05rem + 1.4vw, 1.92rem) !important; }
+.dih-title-ic {
+  width: auto !important; height: auto !important;
+  background: none !important; border-radius: 0 !important;
+  color: #2f4d9e; display: inline-flex; align-items: center;
+}
+.dih-title-ic svg { width: 0.92em !important; height: 0.92em !important; display: block; }
+.dih-lede { margin: 0 !important; font-size: 0.98rem !important; color: #42506b; }
+
+/* Trending page icon bumped to match its title (baseline for the hub, #img272). */
+.ndp .navdd-headic svg { width: 0.92em; height: 0.92em; }
+
+/* "Daily Intelligence by Topic" section — a titled band above the legend. */
+.dih-bytopic-head { margin: 2.2rem 0 1rem; }
+.dih-bytopic-title {
+  margin: 0 0 0.3rem; font-family: var(--font-display); font-weight: 800;
+  letter-spacing: -0.02em; font-size: 1.5rem; color: #16233d;
+}
+.dih-bytopic-sub {
+  margin: 0; font-family: var(--font-family); font-size: 0.94rem; line-height: 1.55;
+  color: #55668c; max-width: 66ch;
+}
+
+/* Group section header no longer repeats the topic icon (#img281/282). */
+.dih-grouphead .dih-groupident { gap: 0; }
+
+
+/* ═══ revamp840 — date/edition never breaks two lines; it reflows below ══════
+   (#img277-279) The stamp stays a single line. It rides the title's line,
+   right-aligned, whenever it fits; when the title + stamp can't share a line it
+   moves DOWN — below the sublabel, above the summary — still on one line, not
+   wrapped into two. The reflow slot already sits between them in the markup. */
+.tdi-date--reflow { display: none !important; }
+.tdi-card--v3 .tdi-head { flex-wrap: nowrap; }
+@media (max-width: 620px) {
+  .tdi-card:not(.is-open) .tdi-headslot .tdi-date { display: none !important; }
+  .tdi-card:not(.is-open) .tdi-date--reflow {
+    display: inline-flex !important; align-items: center; gap: 7px;
+    margin: 0 0 0.7rem !important; padding: 5px 11px !important;
+    font-size: 0.78rem !important; border-radius: 9px;
+    border: 1px solid color-mix(in srgb, #172554 11%, transparent) !important;
+    background: rgba(255, 255, 255, 0.72) !important;
+  }
+  .tdi-card:not(.is-open) .tdi-date--reflow .tdi-stamp-sep { display: inline-block !important; }
 }

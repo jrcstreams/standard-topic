@@ -1341,6 +1341,7 @@ function diEditionParts(iso) {
 // — sun for the morning wave, moon for the night — then the date and the
 // edition name. No chrome, no pulsing dot.
 // The same filled spark every other AI surface uses for provenance.
+const DI_SPARK_TWO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg>';
 const DI_SPARK = '<svg class="tdi-cardprov-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
 const DI_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M21.4 12h-2.2M4.8 12H2.6M18.6 5.4l-1.6 1.6M7 17l-1.6 1.6M18.6 18.6L17 17M7 7L5.4 5.4"/></svg>';
 const DI_MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.2 14.4A8.6 8.6 0 0 1 9.6 3.8a8.6 8.6 0 1 0 10.6 10.6z"/></svg>';
@@ -1412,9 +1413,8 @@ function renderIntelligenceHub(container) {
   container.innerHTML = `
     <div class="dih">
       <header class="dih-head">
-        <h1 class="dih-title"><span class="dih-title-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>Daily Intelligence</h1>
+        <h1 class="dih-title"><span class="dih-title-ic" aria-hidden="true">${DI_SPARK_TWO}</span>Daily Intelligence</h1>
         <p class="dih-lede">An AI briefing on every topic, twice a day.</p>
-        <div class="tdi-cardprov dih-prov">${DI_SPARK}<span>AI-generated text</span></div>
       </header>
 
       <section class="dih-today">
@@ -1430,6 +1430,7 @@ function renderIntelligenceHub(container) {
             </span>
           </div>
           <div class="tdi-subrow"><p class="tdi-sub">The day's cross-topic briefing, drawn evenly from every major topic.</p></div>
+          <span class="tdi-date tdi-date--reflow" data-tdi-date-reflow></span>
           <p class="tdi-summary" data-tdi-summary>Preparing today's briefing…</p>
           <div class="tdi-actions">
             <button type="button" class="tdi-go" data-di-toggle aria-expanded="false">
@@ -1449,6 +1450,11 @@ function renderIntelligenceHub(container) {
         </div>
       </section>
 
+      <div class="dih-bytopic-head">
+        <h2 class="dih-bytopic-title">Daily Intelligence by Topic</h2>
+        <p class="dih-bytopic-sub">Every topic gets its own briefing, in two editions a day — browse them all here.</p>
+      </div>
+
       <nav class="dih-legend-wrap" aria-label="Jump to a topic">
         <h2 class="dih-legend-title">Jump to a section</h2>
         <div class="dih-legend">
@@ -1461,7 +1467,6 @@ function renderIntelligenceHub(container) {
           <section class="dih-group" id="dih-${escapeAttr(g.parent.slug)}" data-dih-group>
             <div class="dih-grouphead">
               <span class="dih-groupident">
-                <span class="dih-groupic" aria-hidden="true">${topicIconSVG(g.parent.icon || 'globe', '')}</span>
                 <h2 class="dih-grouptitle">${escapeHTML(g.parent.name)}</h2>
               </span>
             </div>
@@ -1535,8 +1540,8 @@ function renderIntelligenceHub(container) {
       const sEl = todayCard.querySelector('[data-tdi-summary]');
       if (sEl && d.summary) sEl.textContent = d.summary;
       if (d.generatedAt) {
-        const st = todayCard.querySelector('[data-tdi-date]');
-        if (st) st.innerHTML = diEditionStampHTML(d.generatedAt);
+        const stampHTML = diEditionStampHTML(d.generatedAt);
+        todayCard.querySelectorAll('[data-tdi-date], [data-tdi-date-reflow]').forEach((el) => { el.innerHTML = stampHTML; });
       }
     }).catch(() => {});
   }
@@ -1648,8 +1653,7 @@ function wireHomeDailyIntelligence(root) {
     if (sEl && d.summary) sEl.textContent = d.summary;
     if (d.generatedAt) {
       const stamp = diEditionStampHTML(d.generatedAt);
-      const a = card.querySelector('[data-tdi-date]'); if (a) a.innerHTML = stamp;
-      const b = card.querySelector('[data-tdi-date-lg]'); if (b) b.innerHTML = stamp;
+      card.querySelectorAll('[data-tdi-date], [data-tdi-date-reflow], [data-tdi-date-lg]').forEach((el) => { el.innerHTML = stamp; });
     }
   }).catch(() => {});
 }
@@ -1769,6 +1773,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
               <p class="tdi-sub">An AI-generated topic briefing, updated twice a day.</p>
               <span class="tdi-cardprov tdi-cardprov--inline">${DI_SPARK}<span>AI-generated text</span></span>
             </div>
+            <span class="tdi-date tdi-date--reflow" data-tdi-date-reflow></span>
             <div class="tdi-date tdi-date--lg" data-tdi-date-lg></div>
             <div class="tdi-cardprov tdi-cardprov--stack">${DI_SPARK}<span>AI-generated text</span></div>
             <p class="tdi-summary" data-tdi-summary>Preparing today's briefing…</p>
@@ -1845,9 +1850,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       // card is closed; the larger one leads the brief when it's open.
       if (d.generatedAt) {
         const stamp = diEditionStampHTML(d.generatedAt);
-        if (dEl) dEl.innerHTML = stamp;
-        const dLg = body.querySelector('[data-tdi-date-lg]');
-        if (dLg) dLg.innerHTML = stamp;
+        body.querySelectorAll('[data-tdi-date], [data-tdi-date-reflow], [data-tdi-date-lg]').forEach((el) => { el.innerHTML = stamp; });
       }
     }).catch(() => {});
   } catch (err) {
@@ -2160,7 +2163,7 @@ function renderLayout(route) {
       <div class="topic-subnav-title">
         <div class="topic-subnav-inner">
           <div class="subnav-ident">
-            <span class="subnav-ident-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/></svg></span>
+            <span class="subnav-ident-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>
             <span class="subnav-ident-name">Daily Intelligence</span>
           </div>
         </div>
@@ -3855,6 +3858,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               <div class="tdi-subrow">
                 <p class="tdi-sub">An AI-generated briefing, with two editions daily across each of our 100+ topics.</p>
               </div>
+              <span class="tdi-date tdi-date--reflow" data-tdi-date-reflow></span>
               <div class="tdi-date tdi-date--lg" data-tdi-date-lg></div>
               <div class="tdi-cardprov tdi-cardprov--stack">${DI_SPARK}<span>AI-generated text</span></div>
               <p class="tdi-summary" data-tdi-summary>Preparing today's briefing…</p>
