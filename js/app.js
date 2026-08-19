@@ -1487,9 +1487,20 @@ function renderIntelligenceHub(container) {
       const sub = document.getElementById('sub-header');
       // Count the sticky bar even when it is still hidden: any jump target sits
       // past the reveal threshold, so it WILL be there by the time we land.
-      const chrome = (nav ? nav.offsetHeight : 0) + (sub ? sub.offsetHeight : 0);
-      const y = window.scrollY + sec.getBoundingClientRect().top - chrome - 14;
-      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+      const chrome = () => (nav ? nav.offsetHeight : 0) + (sub ? sub.offsetHeight : 0);
+      const want = () => Math.max(0, window.scrollY + sec.getBoundingClientRect().top - chrome() - 14);
+      window.scrollTo({ top: want(), behavior: 'smooth' });
+      // The sections below fill their summaries lazily as they come into view,
+      // so the document grows WHILE the smooth scroll is running and the target
+      // slides out from under it. Re-aim until it stops moving.
+      let tries = 0;
+      const settle = () => {
+        if (++tries > 6) return;
+        const off = want() - window.scrollY;
+        if (Math.abs(off) > 6) window.scrollTo({ top: want(), behavior: 'smooth' });
+        setTimeout(settle, 260);
+      };
+      setTimeout(settle, 420);
     });
   });
 
