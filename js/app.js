@@ -900,12 +900,9 @@ function wirePromptsDropdown(panel, initialView) {
               <h3 class="ph-sec-title">Featured Prompts</h3>
               <p class="ph-sec-sub">Handpicked to get you started.</p>
             </div>
-            <div class="ph-rail-nav">
-              <button type="button" class="ph-rail-btn" data-rail="-1" aria-label="Scroll left">${PH_ARROW_L}</button>
-              <button type="button" class="ph-rail-btn" data-rail="1" aria-label="Scroll right">${PH_ARROW_R}</button>
-            </div>
           </div>
-          <div class="ph-rail" data-ph-rail></div>
+          <div class="ph-flist" data-ph-rail></div>
+          <button type="button" class="ph-flist-more" data-ph-more hidden></button>
         </section>
         <section class="ph-lib">
           <div class="ph-sec-head">
@@ -948,22 +945,30 @@ function wirePromptsDropdown(panel, initialView) {
         });
         if (!picks.length) return;
         const railHTML = picks.map((pk, i) => `
-          <button type="button" class="ph-fcard" data-ph-feat="${i}">
-            <span class="ph-fcard-topic">${escapeHTML(pk.topic.name)}</span>
-            <span class="ph-fcard-name">${escapeHTML(pk.sh.name)}</span>
-            ${pk.sh.description ? `<span class="ph-fcard-desc">${escapeHTML(pk.sh.description)}</span>` : ''}
-            <span class="ph-fcard-go">Open prompt${PH_ARROW_R}</span>
+          <button type="button" class="ph-fitem" data-ph-feat="${i}">
+            <span class="ph-fitem-name">${escapeHTML(pk.sh.name)}</span>
+            <span class="ph-fitem-topic">${escapeHTML(pk.topic.name)}</span>
+            <span class="ph-fitem-go" aria-hidden="true">${PH_ARROW_R}</span>
           </button>`).join('');
         rail.innerHTML = railHTML;
         sec.hidden = false;
-        const railNav = sec.querySelector('.ph-rail-nav');
-        sec.querySelectorAll('[data-rail]').forEach((b) => b.addEventListener('click', () => {
-          rail.scrollBy({ left: Number(b.dataset.rail) * Math.max(240, rail.clientWidth * 0.8), behavior: 'smooth' });
-        }));
+        const railNav = null;
+        // Collapsed on small screens: the list shows a few, then a clean
+        // "Show all" toggle reveals the rest (CSS caps the visible count).
+        const moreBtn = sec.querySelector('[data-ph-more]');
+        if (moreBtn) {
+          const CAP = 4;
+          if (picks.length > CAP) {
+            moreBtn.hidden = false;
+            const sync = () => { moreBtn.textContent = sec.classList.contains('is-expanded') ? 'Show fewer' : `Show all ${picks.length} featured prompts`; };
+            sync();
+            moreBtn.addEventListener('click', () => { sec.classList.toggle('is-expanded'); sync(); });
+          }
+        }
         // Focus a single featured prompt inside the section, animated.
         const focusPrompt = (i) => {
           const pk = picks[i]; if (!pk) return;
-          if (railNav) railNav.hidden = true;
+          if (moreBtn) moreBtn.hidden = true;
           sec.classList.add('is-focus');
           rail.classList.add('is-focus');
           rail.innerHTML = `<div class="ph-focus">
@@ -985,7 +990,7 @@ function wirePromptsDropdown(panel, initialView) {
           rail.querySelector('.ph-focus-back')?.addEventListener('click', () => {
             rail.classList.remove('is-focus');
             sec.classList.remove('is-focus');
-            if (railNav) railNav.hidden = false;
+            if (moreBtn && picks.length > 4) moreBtn.hidden = false;
             rail.innerHTML = railHTML;
             wireRailCards();
           });

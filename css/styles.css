@@ -21560,3 +21560,69 @@ body.pagenav-mode.sticky-always #content { padding-top: calc(var(--nav-h) + 0.3r
   }
   .tdi-card--home .tdi-head .tdi-date .tdi-stamp-sep { display: none !important; }
 }
+
+/* ═══ revamp833 — Featured Prompts: a clean list, not a scroll rail ══════════
+   A straightforward multi-column list of featured prompts — prompt name, the
+   topic it covers as a sublabel, hairline-separated — inside the same card. On
+   phones it caps to a few and offers a "Show all" toggle. */
+.ph-featured .ph-flist {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 2rem; margin-top: 4px;
+}
+@media (min-width: 1024px) { .ph-featured .ph-flist { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.ph-fitem {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center;
+  gap: 2px 10px; width: 100%; text-align: left; cursor: pointer;
+  padding: 0.7rem 2px; border: 0; border-bottom: 1px solid #eef1f7;
+  background: none; font-family: inherit; transition: background .13s ease;
+}
+.ph-fitem-name {
+  grid-column: 1; grid-row: 1; min-width: 0;
+  font-family: var(--font-display); font-size: 0.95rem; font-weight: 700;
+  letter-spacing: -0.01em; color: #26375a; line-height: 1.25; transition: color .13s ease;
+}
+.ph-fitem-topic {
+  grid-column: 1; grid-row: 2; min-width: 0;
+  font-family: var(--font-family); font-size: 0.76rem; font-weight: 550; color: var(--color-text-muted);
+}
+.ph-fitem-go {
+  grid-column: 2; grid-row: 1 / span 2; display: inline-flex; align-items: center;
+  color: #b3c0d6; transition: transform .13s ease, color .13s ease;
+}
+.ph-fitem-go svg { width: 15px; height: 15px; }
+@media (hover: hover) {
+  .ph-fitem:hover .ph-fitem-name { color: #1d4ed8; }
+  .ph-fitem:hover .ph-fitem-go { color: #1d4ed8; transform: translateX(3px); }
+}
+/* Focused single prompt replaces the list in place. */
+.ph-flist.is-focus { display: block; overflow: visible; animation: phFocusIn .24s cubic-bezier(.22,.61,.21,1); }
+
+/* Show-all toggle — only when the list is actually capped (phones). */
+.ph-flist-more {
+  display: none; margin-top: 0.9rem; align-items: center; gap: 6px;
+  padding: 0.5rem 1rem; border: 1px solid #dde3ee; border-radius: 999px;
+  background: #f4f6fb; color: #33436a; font-family: var(--font-family);
+  font-size: 0.82rem; font-weight: 600; cursor: pointer;
+}
+@media (hover: hover) { .ph-flist-more:hover { background: #eaeff8; } }
+@media (max-width: 620px) {
+  .ph-featured .ph-flist { grid-template-columns: 1fr; }
+  .ph-featured:not(.is-expanded) .ph-fitem:nth-child(n+5) { display: none; }
+  .ph-featured .ph-flist-more:not([hidden]) { display: inline-flex; }
+}
+
+/* ═══ revamp834 — DI card: independent button hover + tighter sub→summary ════
+   (#img260/262) The card isn't clickable, but hovering it filled BOTH CTAs at
+   once via the shared `.tdi-card--v3:hover .tdi-go` rules, and an individual
+   button hover did nothing distinct. Card-hover now leaves the buttons at rest;
+   only the button you're actually over darkens. */
+@media (hover: hover) {
+  .tdi-card--home:hover .tdi-go:not(:hover) { background: #1b2c5e !important; }
+  .tdi-card--home:hover .tdi-go--hub:not(:hover) { background: #3a5cab !important; }
+  .tdi-card--home .tdi-go:hover { background: #14204a !important; }
+  .tdi-card--home .tdi-go--hub:hover { background: #2e4a8a !important; }
+  .tdi-card--home:hover .tdi-go svg { transform: none; }
+  .tdi-card--home .tdi-go:hover svg { transform: translateX(2px); }
+}
+/* (#img263) The summary sat too far below the sublabel. */
+.tdi-card--home .tdi-subrow { margin-bottom: 0.32rem !important; }
