@@ -82,16 +82,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   // carries the expand request into the route-driven open.
   window.addEventListener('open-trending-list', (e) => {
     const ex = e && e.detail && e.detail.expand;
-    const cur = getCurrentRoute();
-    if (cur && cur.type === 'trending') { openTrendingNavDropdown(ex); return; }
     pendingTrendingExpand = ex || null;
+    const cur = getCurrentRoute();
+    if (cur && cur.type === 'trending') {
+      const c = document.getElementById('content');
+      if (c) renderNavDdPage(c, trendingNavDdCfg());
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
     navigate('#/trending');
   });
   // All Topics is a dropdown now: every open-all-topics-modal dispatch (picker
   // "All Topics", search) opens the single clean Topics nav dropdown.
   window.addEventListener('open-all-topics-modal', () => {
     const cur = getCurrentRoute();
-    if (cur && cur.type === 'topics') openTopicsNavDropdown();
+    if (cur && cur.type === 'topics') window.scrollTo({ top: 0, behavior: 'smooth' });
     else navigate('#/topics');
   });
 
@@ -1105,6 +1110,19 @@ function openPromptsNavDropdown(view) {
 // (returning home if on the route); closed → navigate to the route (or open
 // directly when the hash is already there, where navigate() would no-op).
 function navDdRouteToggle(key, openFn) {
+  // revamp824 — Topics / Trending / Prompts are REAL PAGES. This used to fall
+  // back to openFn() when you were already on the route, which re-opened the
+  // old fixed overlay ON TOP of the page: the same page rendered two different
+  // ways depending on how you got there, and the sticky subnav vanished behind
+  // the sheet. On-route is now a no-op (scroll home instead) — the overlay path
+  // is gone for these three.
+  if (['topics', 'trending', 'prompts'].includes(key)) {
+    const target = '#/' + key;
+    const h = routeHash() || '';
+    if (h === target || h.startsWith(target + '/')) window.scrollTo({ top: 0, behavior: 'smooth' });
+    else navigate(target);
+    return;
+  }
   if (navDdOpen && navDdOpen.key === key) { userCloseNavDropdown(); return; }
   const target = '#/' + key;
   const h = routeHash() || '';
@@ -1192,6 +1210,7 @@ function openTopicsNavDropdown() { if (!(navDdOpen && navDdOpen.key === 'topics'
 // expand their brief IN PLACE inside the dropdown (inline:true) — no detail
 // modal. "View more trending" everywhere routes here (open-trending-list).
 function trendingNavDdCfg(expandQuery) {
+  if (!expandQuery && pendingTrendingExpand) { expandQuery = pendingTrendingExpand; pendingTrendingExpand = null; }
   return {
     key: 'trending', triggerId: 'nav-trending', className: 'aii-nav-dd-trending',
     title: 'Trending', ariaLabel: 'Trending now',
@@ -1430,13 +1449,14 @@ function renderIntelligenceHub(container) {
         </div>
       </nav>
 
-      <div class="dih-groups">
+      <div class="dih-groups" data-dih-groups>
         ${groups.map((g) => `
           <section class="dih-group" id="dih-${escapeAttr(g.parent.slug)}" data-dih-group>
             <div class="dih-grouphead">
-              <span class="dih-groupic" aria-hidden="true">${topicIconSVG(g.parent.icon || 'globe', '')}</span>
-              <h2 class="dih-grouptitle">${escapeHTML(g.parent.name)}</h2>
-              <span class="dih-groupcount">${(g.subtopics || []).length + 1} briefings</span>
+              <span class="dih-groupident">
+                <span class="dih-groupic" aria-hidden="true">${topicIconSVG(g.parent.icon || 'globe', '')}</span>
+                <h2 class="dih-grouptitle">${escapeHTML(g.parent.name)}</h2>
+              </span>
             </div>
             <div class="dih-items">${[g.parent, ...(g.subtopics || [])].map(item).join('')}</div>
             <div class="dih-brief" data-dih-brief hidden>
@@ -1452,6 +1472,26 @@ function renderIntelligenceHub(container) {
           </section>`).join('')}
       </div>
     </div>`;
+
+  // revamp824 — the legend jumps for real. A bare "#dih-slug" anchor left the
+  // scroll to the browser, which puts the heading UNDER the fixed nav + sticky
+  // bar; and if that section is open on a briefing, the offset is stale by the
+  // time the layout settles. Measure the chrome and scroll it ourselves.
+  container.querySelectorAll('.dih-legend-chip').forEach((chip) => {
+    chip.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = (chip.getAttribute('href') || '').replace(/^#/, '');
+      const sec = id && container.querySelector('#' + CSS.escape(id));
+      if (!sec) return;
+      const nav = document.getElementById('site-header');
+      const sub = document.getElementById('sub-header');
+      // Count the sticky bar even when it is still hidden: any jump target sits
+      // past the reveal threshold, so it WILL be there by the time we land.
+      const chrome = (nav ? nav.offsetHeight : 0) + (sub ? sub.offsetHeight : 0);
+      const y = window.scrollY + sec.getBoundingClientRect().top - chrome - 14;
+      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+    });
+  });
 
   // Today's briefing: a preview that expands, same as the topic cards.
   const todayCard = container.querySelector('.dih-today-card');
@@ -3066,7 +3106,7 @@ function renderPageNavBar(kind) {
   // The Topics bar drives the same view toggle its head carries.
   subHeader.querySelectorAll('[data-pagenav-view]').forEach((b) => b.addEventListener('click', () => {
     const want = b.dataset.pagenavView === 'expanded';
-    const panel = document.querySelector('.aii-nav-dd');
+    const panel = document.querySelector('.aii-nav-dd-pagelike, .aii-nav-dd');
     panel?.querySelectorAll('[data-navdd-headbtn]')[want ? 1 : 0]?.click();
     subHeader.querySelectorAll('[data-pagenav-view]').forEach((x) => x.classList.toggle('is-on', x === b));
   }));

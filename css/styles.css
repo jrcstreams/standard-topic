@@ -21425,3 +21425,58 @@ body.home-search .home-sections { padding-top: 2rem !important; }
 /* In brief state the card head's "12 briefings" counts something you are no
    longer looking at — the back bar already carries the parent. */
 .dih-group.is-brief .dih-groupcount { display: none; }
+
+
+/* ── revamp824 — hub section headers, topics toggle, parent link ─────────── */
+
+/* The parent card's head reads as a header BLOCK now, not a line of text with a
+   rule under it (#img245): the icon + title sit in their own tinted, inset
+   container that spans the card's top. The "N briefings" count is gone. */
+.dih-group { padding-top: 0 !important; overflow: hidden; }
+.dih-grouphead {
+  display: flex; align-items: center;
+  margin: 0 -1.2rem 1rem !important; padding: 0.72rem 1.2rem !important;
+  border-bottom: 1px solid #e3e8f1 !important;
+  background: linear-gradient(180deg, #f4f7fc 0%, #eef3fa 100%);
+}
+.dih-groupident { display: inline-flex; align-items: center; gap: 11px; min-width: 0; }
+.dih-groupic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 9px;
+  background: #fff; color: #2f4d9e;
+  border: 1px solid color-mix(in srgb, #2f4d9e 15%, transparent);
+}
+.dih-grouptitle { margin: 0; font-size: 1.12rem; }
+.dih-group.is-brief .dih-grouphead {
+  background: linear-gradient(180deg, #eaf0fb 0%, #e2ebf8 100%);
+  border-bottom-color: color-mix(in srgb, #2f4d9e 20%, transparent) !important;
+}
+.dih-group > :not(.dih-grouphead) { margin-left: 0; margin-right: 0; }
+
+/* ── All Topics: one segmented toggle, not two loose pills (#img246) ── */
+.aii-nav-dd-topics .aii-nav-dd-headbtns,
+.aii-nav-dd-pagelike.aii-nav-dd-topics .aii-nav-dd-headbtns {
+  display: inline-flex; gap: 0; padding: 3px; border-radius: 999px;
+  background: #eef1f6; border: 1px solid #dde3ee; width: auto;
+}
+.aii-nav-dd-topics .aii-nav-dd-headbtn {
+  border: 0 !important; background: transparent !important; border-radius: 999px;
+  padding: 7px 15px; color: #6b7a95; box-shadow: none;
+}
+.aii-nav-dd-topics .aii-nav-dd-headbtn.is-primary {
+  background: #fff !important; color: #1b2a4a;
+  box-shadow: 0 1px 3px rgba(23, 37, 84, .12);
+}
+@media (hover: hover) {
+  .aii-nav-dd-topics .aii-nav-dd-headbtn:hover { background: rgba(255,255,255,.55) !important; color: #1b2a4a; }
+  .aii-nav-dd-topics .aii-nav-dd-headbtn.is-primary:hover { background: #fff !important; }
+}
+
+/* The "All {parent}" row is the parent's own page — a peer of the subtopics
+   beside it, not a call to action. Blue on hover only (#img246). */
+.aiidd-vall { color: #24324f !important; font-weight: 700; }
+.aiidd-vall .aiidd-vall-chev { opacity: 0; transition: opacity .14s ease; }
+@media (hover: hover) {
+  .aiidd-vall:hover { color: #2f4d9e !important; }
+  .aiidd-vall:hover .aiidd-vall-chev { opacity: 1; }
+}
