@@ -1817,7 +1817,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       ${topicBodyHeadHTML(topic)}
       <div class="topic-top">
         <section class="topic-top-main">
-          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'An AI-generated briefing on this topic, twice a day.', hubLink: true, topicLabel: topic.name })}
+          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'An AI-generated briefing on this topic, twice a day.', hubLink: false, topicLabel: topic.name })}
           </div>
         </section>
         <section class="topic-top-side">

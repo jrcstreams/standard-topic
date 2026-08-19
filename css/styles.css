@@ -21920,8 +21920,8 @@ body.home-search .home-sections .home-featured {
 }
 /* ── Header band ── */
 .tdi-card--hero2 .tdi-hero-head {
-  display: flex; flex-direction: column; gap: 0.22rem;
-  padding: 0.8rem 1.25rem; background: linear-gradient(180deg, #24386e 0%, #1c2f5c 100%);
+  display: flex; flex-direction: column; gap: 0.42rem;
+  padding: 0.9rem 1.25rem 0.95rem; background: linear-gradient(180deg, #24386e 0%, #1c2f5c 100%);
 }
 .tdi-card--hero2 .tdi-hero-titlerow {
   display: flex; align-items: center; gap: 4px 12px; flex-wrap: wrap;
@@ -21968,18 +21968,18 @@ body.home-search .home-sections .home-featured {
 }
 /* Edition pill — white container, right-aligned to the Today's Briefing title. */
 .tdi-card--hero2 .tdi-todayhead .tdi-date {
-  margin: 0 0 0 auto !important; display: inline-flex !important; align-items: center; gap: 9px;
-  padding: 6px 12px !important; border-radius: 9px !important; font-size: 0.8rem;
+  margin: 0 !important; display: inline-flex !important; align-items: center; gap: 6px;
+  padding: 3px 9px !important; border-radius: 8px !important; font-size: 0.72rem;
   border: 1px solid color-mix(in srgb, #172554 12%, transparent) !important; background: #fff !important;
   box-shadow: 0 1px 0 rgba(23, 37, 84, 0.03);
 }
 /* Topic data label — weighted prefix + a distinct, not-huge value; tight. */
 .tdi-card--hero2 .tdi-topiclabel { display: flex; align-items: baseline; gap: 6px; margin: 0 0 0.4rem; }
 .tdi-card--hero2 .tdi-topiclabel-k {
-  font-family: var(--font-family); font-size: 0.83rem; font-weight: 600; color: #6b7684;
+  font-family: var(--font-family); font-size: 0.83rem; font-weight: 750; color: #3f4a5c;
 }
 .tdi-card--hero2 .tdi-topiclabel-v {
-  font-family: var(--font-family); font-size: 0.83rem; font-weight: 700; color: #3f4a5c;
+  font-family: var(--font-family); font-size: 0.83rem; font-weight: 550; color: #6b7684;
 }
 .tdi-card--hero2 .tdi-summary { margin: 0 0 0.55rem !important; }
 .tdi-card--hero2 .tdi-actions { margin-top: 0 !important; }
