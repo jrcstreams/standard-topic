@@ -34,6 +34,29 @@ function loadPromptGen() {
   return _promptGenModule || (_promptGenModule = import('./components/prompt-generator.js'));
 }
 
+// revamp867 — self-heal a stale cached bundle. In-app (SPA) navigation never
+// re-fetches app.js, so an old tab can keep running an old build indefinitely.
+// On boot, compare the running app.js to the one the current index.html points
+// to; if they differ, reload once (guarded against loops).
+(function selfHealStaleBundle() {
+  try {
+    const running = [...document.scripts].map((x) => x.src).find((x) => /\/dist\/app\.[A-Za-z0-9]+\.js/.test(x));
+    if (!running) return;
+    fetch('/?_sh=' + Date.now(), { cache: 'no-store' })
+      .then((r) => r.text())
+      .then((html) => {
+        const m = html.match(/dist\/app\.[A-Za-z0-9]+\.js/);
+        if (!m) return;
+        const fresh = m[0];
+        if (running.indexOf(fresh) !== -1) return;                 // already current
+        if (sessionStorage.getItem('st-sh') === fresh) return;     // tried this build already
+        sessionStorage.setItem('st-sh', fresh);
+        location.reload();
+      })
+      .catch(() => {});
+  } catch (_) {}
+})();
+
 document.addEventListener('DOMContentLoaded', async () => {
   // Boot must never leave a silent blank page: if the core data fetches fail
   // (bad deploy, CDN hiccup, offline), show a minimal reload fallback instead.
@@ -1353,7 +1376,7 @@ function diHeroCardHTML(o) {
   const X_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   const headerTitle = o.headerTitle || 'Daily Intelligence';
   const topicRow = o.topicLabel ? `<div class="tdi-topiclabel"><span class="tdi-topiclabel-k">Topic:</span><span class="tdi-topiclabel-v">${escapeHTML(o.topicLabel)}</span></div>` : '';
-  const hubTag = o.hubTagline ? `<p class="tdi-hubline"><a href="#/intelligence">Access the Intelligence Hub${SUBPAGE_ARROW}</a></p>` : '';
+  const hubTag = o.hubTagline ? `<p class="tdi-hubline"><a href="#/intelligence">Access the Daily Intelligence Hub${SUBPAGE_ARROW}</a></p>` : '';
   return `
     <div class="tdi-hero-head">
       <div class="tdi-hero-titlerow">
