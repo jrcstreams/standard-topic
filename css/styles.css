@@ -21819,3 +21819,24 @@ body.home-search .home-sections .home-featured {
 .tdi-sub, .tpr-sub { font-weight: 620 !important; }
 .tdi-card--home .tdi-subrow { margin-bottom: 0.1rem !important; }
 .tdi-card--home .tdi-summary { margin-top: 0 !important; }
+/* The open-state "large" stamp was rendering (flex, 0-height) while the card was
+   closed, adding phantom space between the sublabel and the summary. */
+.tdi-card:not(.is-open) .tdi-date--lg { display: none !important; }
+
+/* ═══ revamp847 — date/edition rides right OF THE TITLE on preview cards ═════
+   (#img301) On the homepage, hub Today's Briefing and topic preview cards the
+   stamp now sits on the title's line, immediately to the right of the title
+   text — a direct correlation to it — rather than pinned to the card's right
+   edge or dropped below. The by-topic section blocks (.dih-item) are untouched;
+   their stamp stays below the name. */
+.tdi-card--v3 .tdi-head {
+  justify-content: flex-start !important; gap: 4px 12px !important;
+  flex-wrap: wrap; align-items: center;
+}
+.tdi-card--v3 .tdi-card-title { flex: 0 1 auto; }
+.tdi-card--v3 .tdi-head .tdi-headslot { margin-left: 0 !important; }
+.tdi-card--v3 .tdi-head .tdi-date { margin-left: 0 !important; }
+/* The stamp lives by the title at every width now — retire the below-sub reflow
+   for these cards, and keep the head stamp visible even on narrow screens. */
+.tdi-card--v3:not(.is-open) .tdi-date--reflow { display: none !important; }
+.tdi-card--v3:not(.is-open) .tdi-headslot .tdi-date { display: inline-flex !important; }
