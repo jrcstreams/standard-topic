@@ -21681,9 +21681,9 @@ body.pagenav-mode.sticky-always #content { padding-top: calc(var(--nav-h) + 0.3r
 .sticky-hero-inner.nav-wrap .sticky-actions.navbtns#nav-links {
   order: 10 !important; flex: 0 0 100% !important; width: 100%;
   margin: 0.75rem 0 0 !important;                    /* clear gap below row 1 */
-  justify-content: flex-start !important;           /* left-aligned, not centered */
-  padding-left: var(--nav-links-indent, 34px);      /* start under the site title */
-  flex-wrap: wrap; gap: 2px 6px;
+  justify-content: center !important;               /* centered on the row (#img285) */
+  padding-left: 0;
+  flex-wrap: wrap; gap: 2px 10px;
 }
 /* Row 1 items share one vertical center — the Search pill lines up with the
    site title at every width (#img284). */
