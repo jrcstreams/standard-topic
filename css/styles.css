@@ -21122,8 +21122,17 @@ body.home-search .home-search-hero .search-panel-tagline {
 .tdi-card--home .tdi-go { background: #1b2c5e !important; }
 
 /* ── Featured Topics rows were taller than the Prompts rows beside them
-      (#img231). Matched, with a touch more air on both. ── */
-.hf-card .hq-row { padding: 0.46rem 0 0.46rem 2px !important; }
+      (#img231, #img250). The whole gap was line-height: the topic rows are
+      <a> (inheriting the page's 1.6) while the prompt rows are <button> (UA
+      line-height: normal), so identical padding still rendered ~5px apart.
+      Pin ONE line-height on both, and give a touch more air than the prompt
+      rows had — landing above the old prompt spacing, well below the old topic
+      spacing. ── */
+.hf-card .hq-row {
+  padding: 0.52rem 0 0.52rem 2px !important;
+  line-height: 1.3 !important;
+}
+.hf-card .hq-row-name { line-height: 1.3 !important; }
 
 /* ── revamp819d: these are pages now — white ground, normal top spacing. ── */
 body.pagenav-mode #content, body.pagenav-mode { background: #fff !important; }
