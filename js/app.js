@@ -1352,27 +1352,25 @@ function diHeroCardHTML(o) {
   o = o || {};
   const X_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   const headerTitle = o.headerTitle || 'Daily Intelligence';
-  const bodyHead = o.todayHead !== false;   // false on the hub card (stamp rides the header title)
   const hubInline = o.hubLink ? `<a class="tdi-hublink" href="#/intelligence" data-hub-inline>View Intelligence Hub${SUBPAGE_ARROW}</a>` : '';
-  const hubBelow = o.hubLink ? `<a class="tdi-hublink tdi-hublink--below" href="#/intelligence" data-hub-below>View Intelligence Hub${SUBPAGE_ARROW}</a>` : '';
-  const topicRow = o.topicLabel ? `<div class="tdi-topiclabel"><span class="tdi-topiclabel-k">Topic</span><span class="tdi-topiclabel-v">${escapeHTML(o.topicLabel)}</span></div>` : '';
+  const topicRow = o.topicLabel ? `<div class="tdi-topiclabel"><span class="tdi-topiclabel-k">Topic:</span><span class="tdi-topiclabel-v">${escapeHTML(o.topicLabel)}</span></div>` : '';
   return `
     <div class="tdi-hero-head">
-      <span class="tdi-hero-ident">
-        <span class="tdi-hero-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
-        <h2 class="tdi-card-title">${escapeHTML(headerTitle)}</h2>
-      </span>
-      ${bodyHead ? '' : '<span class="tdi-date tdi-date--head" data-tdi-date></span>'}
-      ${hubInline}
-      <button type="button" class="tdi-headclose" data-di-toggle aria-label="Close briefing">${X_SVG}<span>Close Briefing</span></button>
+      <span class="tdi-hero-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
+      <div class="tdi-hero-htx">
+        <div class="tdi-hero-titlerow">
+          <h2 class="tdi-card-title">${escapeHTML(headerTitle)}</h2>
+          ${hubInline}
+          <button type="button" class="tdi-headclose" data-di-toggle aria-label="Close briefing">${X_SVG}<span>Close Briefing</span></button>
+        </div>
+        <p class="tdi-hero-sub">${escapeHTML(o.sublabel || '')}</p>
+      </div>
     </div>
     <div class="tdi-hero-body">
-      <p class="tdi-sub">${escapeHTML(o.sublabel || '')}</p>
-      ${hubBelow}
-      ${bodyHead ? `<div class="tdi-todayhead">
-        <h3 class="tdi-today-title">Today's Briefing</h3>
+      <div class="tdi-todayhead">
+        <h3 class="tdi-today-title">Today\u2019s Briefing</h3>
         <span class="tdi-date" data-tdi-date></span>
-      </div>` : ''}
+      </div>
       ${topicRow}
       <p class="tdi-summary" data-tdi-summary>Preparing today\u2019s briefing\u2026</p>
       <div class="tdi-actions">
@@ -1465,7 +1463,7 @@ function renderIntelligenceHub(container) {
       </header>
 
       <section class="dih-today">
-        <div class="tdi-card tdi-card--v3 tdi-card--home dih-today-card tdi-card--hero2" data-tdi>${diHeroCardHTML({ headerTitle: "Today's Briefing", todayHead: false, sublabel: 'AI-generated briefings, twice a day for each of our 100+ topics.', hubLink: false, topicLabel: 'Cross-Topic' })}
+        <div class="tdi-card tdi-card--v3 tdi-card--home dih-today-card tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'AI-generated briefings, twice a day for each of our 100+ topics.', hubLink: false, topicLabel: 'Cross-Topic' })}
         </div>
       </section>
 
@@ -1672,13 +1670,13 @@ function renderIntelligenceHub(container) {
 function fitDiHub(card) {
   if (!card) return;
   const apply = () => {
-    const head = card.querySelector('.tdi-hero-head');
-    const ident = card.querySelector('.tdi-hero-ident');
+    const row = card.querySelector('.tdi-hero-titlerow');
+    const title = card.querySelector('.tdi-card-title');
     const inline = card.querySelector('[data-hub-inline]');
-    if (!head || !ident || !inline) return;
+    if (!row || !title || !inline) return;
     card.classList.remove('di-hub-wrapped');
-    const need = ident.getBoundingClientRect().width + inline.getBoundingClientRect().width + 30;
-    card.classList.toggle('di-hub-wrapped', need > head.getBoundingClientRect().width + 1);
+    const need = title.getBoundingClientRect().width + inline.getBoundingClientRect().width + 24;
+    card.classList.toggle('di-hub-wrapped', need > row.getBoundingClientRect().width + 1);
   };
   requestAnimationFrame(apply);
   window.addEventListener('resize', () => requestAnimationFrame(apply), { passive: true });
