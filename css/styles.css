@@ -21964,9 +21964,9 @@ body.home-search .home-sections .home-featured {
 }
 /* Edition pill — white container, right-aligned to the Today's Briefing title. */
 .tdi-card--hero2 .tdi-todayhead .tdi-date {
-  margin-left: auto !important; display: inline-flex !important; align-items: center; gap: 9px;
-  padding: 6px 12px; border-radius: 9px; font-size: 0.8rem;
-  border: 1px solid color-mix(in srgb, #172554 11%, transparent); background: #fff;
+  margin: 0 0 0 auto !important; display: inline-flex !important; align-items: center; gap: 9px;
+  padding: 6px 12px !important; border-radius: 9px !important; font-size: 0.8rem;
+  border: 1px solid color-mix(in srgb, #172554 12%, transparent) !important; background: #fff !important;
   box-shadow: 0 1px 0 rgba(23, 37, 84, 0.03);
 }
 /* Topic data label — weighted prefix + a distinct, not-huge value; tight. */
