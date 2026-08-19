@@ -1608,12 +1608,12 @@ function renderIntelligenceHub(container) {
     });
   };
   markLastRows();
-  if (!renderIntelligenceHub._lastRowBound) {
-    renderIntelligenceHub._lastRowBound = true;
-  }
+  // Bind the resize handler ONCE (it re-reads the live DOM each fire), rather
+  // than stacking a new listener on every hub render (revamp860).
+  if (renderIntelligenceHub._lrHandler) window.removeEventListener('resize', renderIntelligenceHub._lrHandler);
   let lrTimer = null;
-  const onResize = () => { clearTimeout(lrTimer); lrTimer = setTimeout(markLastRows, 120); };
-  window.addEventListener('resize', onResize, { passive: true });
+  renderIntelligenceHub._lrHandler = () => { clearTimeout(lrTimer); lrTimer = setTimeout(() => { try { markLastRows(); } catch (_) {} }, 120); };
+  window.addEventListener('resize', renderIntelligenceHub._lrHandler, { passive: true });
 
   // ~100 summaries fetch lazily as their block scrolls into view — but a fast
   // scroll (or a legend jump past several sections) can bring dozens into range
@@ -1665,22 +1665,10 @@ function renderIntelligenceHub(container) {
 // The "View Intelligence Hub" access-link rides right of the DI title when it
 // fits; when the ident + link would overflow the header it drops below the
 // sublabel (revamp852). Measured, with a resize listener.
-function fitDiHub(card) {
-  if (!card) return;
-  const apply = () => {
-    const row = card.querySelector('.tdi-hero-titlerow');
-    const title = card.querySelector('.tdi-card-title');
-    const ic = card.querySelector('.tdi-hero-ic');
-    const inline = card.querySelector('[data-hub-inline]');
-    if (!row || !title || !inline) return;
-    card.classList.remove('di-hub-wrapped');
-    const icW = ic ? ic.getBoundingClientRect().width + 12 : 0;
-    const need = icW + title.getBoundingClientRect().width + inline.getBoundingClientRect().width + 24;
-    card.classList.toggle('di-hub-wrapped', need > row.getBoundingClientRect().width + 1);
-  };
-  requestAnimationFrame(apply);
-  window.addEventListener('resize', () => requestAnimationFrame(apply), { passive: true });
-}
+// revamp860: the hub link is a body button now, not a header link, so there is
+// nothing to fit — and this used to stack a resize listener on EVERY render,
+// which piled up across navigations into resize/scroll thrash (flicker). No-op.
+function fitDiHub() {}
 
 function wireHomeDailyIntelligence(root) {
   const card = root.querySelector('.tdi-card--home');
