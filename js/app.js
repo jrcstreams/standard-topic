@@ -1353,7 +1353,7 @@ function diHeroCardHTML(o) {
   const X_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   const headerTitle = o.headerTitle || 'Daily Intelligence';
   const topicRow = o.topicLabel ? `<div class="tdi-topiclabel"><span class="tdi-topiclabel-k">Topic:</span><span class="tdi-topiclabel-v">${escapeHTML(o.topicLabel)}</span></div>` : '';
-  const hubTag = o.hubTagline ? `<p class="tdi-hubline">Looking for more briefings? <a href="#/intelligence">Access the Intelligence Hub${SUBPAGE_ARROW}</a></p>` : '';
+  const hubTag = o.hubTagline ? `<p class="tdi-hubline"><a href="#/intelligence">Access the Intelligence Hub${SUBPAGE_ARROW}</a></p>` : '';
   return `
     <div class="tdi-hero-head">
       <div class="tdi-hero-titlerow">
@@ -3291,10 +3291,15 @@ function fitMainNav() {
       // most expendable label — to pull them back onto one row (#img312).
       const links = inner.querySelector('#nav-links');
       if (links) {
-        inner.classList.remove('nav-drop-home');
+        inner.classList.remove('nav-drop-home', 'nav-links-sm', 'nav-links-xs');
         const btn = links.querySelector('.navbtn');
         const oneLine = btn ? btn.offsetHeight : 0;
-        if (oneLine && links.offsetHeight > oneLine * 1.6) inner.classList.add('nav-drop-home');
+        const wraps = () => oneLine && links.offsetHeight > oneLine * 1.6;
+        // Drop "Home" first; if the links still wrap to a second line, shrink
+        // them in steps until they fit on one row (#img328).
+        if (wraps()) inner.classList.add('nav-drop-home');
+        if (wraps()) inner.classList.add('nav-links-sm');
+        if (wraps()) inner.classList.add('nav-links-xs');
       }
       const h = Math.round(inner.getBoundingClientRect().height);
       if (h > 0) document.documentElement.style.setProperty('--nav-h', h + 'px');

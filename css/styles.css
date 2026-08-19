@@ -22048,3 +22048,26 @@ body.home-search .home-search-hero { padding: 0 0 clamp(1.15rem, 2.3vw, 2.2rem) 
 
 /* Hub link now lives in the DI header under the sublabel. */
 .tdi-card--hero2 .tdi-hero-head .tdi-hubline { margin: 0.45rem 0 0 !important; font-size: 0.82rem; }
+
+
+/* ═══ revamp864 — search-hero proportions: smaller title cap, larger subtext,
+   tighter tag→input and less space below the input across screen sizes. ═══ */
+body.home-search .home-search-hero .search-panel-title {
+  font-size: clamp(1.45rem, 1.05rem + 1.9vw, 2rem) !important;
+}
+body.home-search .home-search-hero .search-panel-tagline {
+  font-size: clamp(0.95rem, 0.88rem + 0.35vw, 1.12rem) !important; color: #4a5a75 !important;
+}
+body.home-search .home-search-hero .search-panel-barrow {
+  padding: clamp(0.65rem, 1.3vw, 1rem) 0.2rem 0 !important;
+}
+body.home-search .home-search-hero { padding: 0 0 clamp(0.7rem, 1.4vw, 1.4rem) !important; }
+
+
+/* revamp865 — shrink the wrapped nav links (in steps) when they still wrap after
+   dropping Home, so they fit on one row instead of breaking to two (#img328). */
+.sticky-hero-inner.nav-links-sm #nav-links .navbtn-label { font-size: 0.8rem; }
+.sticky-hero-inner.nav-links-sm #nav-links .navbtn { padding: 6px 7px; }
+.sticky-hero-inner.nav-links-xs #nav-links .navbtn-label { font-size: 0.72rem; letter-spacing: -0.01em; }
+.sticky-hero-inner.nav-links-xs #nav-links .navbtn { padding: 5px 5px; }
+.sticky-hero-inner.nav-links-xs #nav-links { gap: 1px 3px; }
