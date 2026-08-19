@@ -972,6 +972,7 @@ ${M}`),w.length?w.join(`
         <button type="button" class="tdi-headclose" data-di-toggle aria-label="Close briefing">${t}<span>Close Briefing</span></button>
       </div>
       <p class="tdi-hero-sub">${P(e.sublabel||"")}</p>
+      ${s}
     </div>
     <div class="tdi-hero-body">
       <div class="tdi-todayhead">
@@ -985,7 +986,6 @@ ${M}`),w.length?w.join(`
           <span class="tdi-go-open">View briefing</span><span class="tdi-go-close">Hide briefing</span>${Ln}
         </button>
       </div>
-      ${s}
       <div class="tdi-expand" data-di-expand><div class="tdi-expand-inner">
         <div data-di-host></div>
         <div class="tdi-closefoot">
@@ -1423,6 +1423,7 @@ ${M}`),w.length?w.join(`
                 <span class="hf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
                 <div class="hf-headtx">
                   <h3 class="hf-title">Featured Topics</h3>
+                  <p class="hf-sub">A quick way into the topics we cover most.</p>
                 </div>
               </div>
               <div class="hf-chips" data-hq-topics></div>
@@ -1433,6 +1434,7 @@ ${M}`),w.length?w.join(`
                 <span class="hf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg></span>
                 <div class="hf-headtx">
                   <h3 class="hf-title">Featured AI Prompts</h3>
+                  <p class="hf-sub">Ready-made prompts to run in any AI model.</p>
                 </div>
               </div>
               <div class="hf-chips" data-hq-prompts></div>

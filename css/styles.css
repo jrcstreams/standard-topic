@@ -22038,3 +22038,13 @@ body.home-search .home-search-hero .search-panel-barrow {
 /* Bottom air below the input matches the top air above the title (the page's
    content offset supplies the top air; this supplies the bottom). */
 body.home-search .home-search-hero { padding: 0 0 clamp(1.15rem, 2.3vw, 2.2rem) !important; }
+
+/* ═══ revamp863 — featured card subtext + separator; hub link in DI header ════ */
+/* Show + style the featured card subtext (was hidden), with a separator under
+   the head aligned to the card's inner width. */
+.hf-card .hf-sub { display: block !important; margin: 0.15rem 0 0; font-family: var(--font-family); font-size: 0.82rem; line-height: 1.4; color: #66748c; }
+.hf-card .hf-head { align-items: flex-start; margin-bottom: 0.75rem; padding-bottom: 0.7rem; border-bottom: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent); }
+.hf-card .hf-ic { margin-top: 1px; }
+
+/* Hub link now lives in the DI header under the sublabel. */
+.tdi-card--hero2 .tdi-hero-head .tdi-hubline { margin: 0.45rem 0 0 !important; font-size: 0.82rem; }
