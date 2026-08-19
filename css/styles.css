@@ -21982,6 +21982,13 @@ body.home-search .home-sections .home-featured {
   font-family: var(--font-family); font-size: 0.83rem; font-weight: 550; color: #6b7684;
 }
 .tdi-card--hero2 .tdi-summary { margin: 0 0 0.55rem !important; }
+/* revamp859 — actions row can hold a second button (View Intelligence Hub) on
+   the homepage; the hub button is a lighter blue beside the navy View briefing. */
+.tdi-card--hero2 .tdi-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 0 !important; }
+.tdi-card--hero2 .tdi-go--hub {
+  background: #3a5cab !important; border: 0 !important; color: #fff !important; text-decoration: none;
+}
+@media (hover: hover) { .tdi-card--hero2 .tdi-go--hub:hover { background: #2e4a8a !important; color: #fff !important; } }
 .tdi-card--hero2 .tdi-actions { margin-top: 0 !important; }
 .tdi-card--hero2.is-open .tdi-todayhead,
 .tdi-card--hero2.is-open .tdi-topiclabel { display: none !important; }

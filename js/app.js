@@ -1352,14 +1352,13 @@ function diHeroCardHTML(o) {
   o = o || {};
   const X_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   const headerTitle = o.headerTitle || 'Daily Intelligence';
-  const hubInline = o.hubLink ? `<a class="tdi-hublink" href="#/intelligence" data-hub-inline>View Intelligence Hub${SUBPAGE_ARROW}</a>` : '';
   const topicRow = o.topicLabel ? `<div class="tdi-topiclabel"><span class="tdi-topiclabel-k">Topic:</span><span class="tdi-topiclabel-v">${escapeHTML(o.topicLabel)}</span></div>` : '';
+  const hubBtn = o.hubButton ? `<a class="tdi-go tdi-go--hub" href="#/intelligence">View Intelligence Hub${SUBPAGE_ARROW}</a>` : '';
   return `
     <div class="tdi-hero-head">
       <div class="tdi-hero-titlerow">
         <span class="tdi-hero-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
         <h2 class="tdi-card-title">${escapeHTML(headerTitle)}</h2>
-        ${hubInline}
         <button type="button" class="tdi-headclose" data-di-toggle aria-label="Close briefing">${X_SVG}<span>Close Briefing</span></button>
       </div>
       <p class="tdi-hero-sub">${escapeHTML(o.sublabel || '')}</p>
@@ -1375,6 +1374,7 @@ function diHeroCardHTML(o) {
         <button type="button" class="tdi-go tdi-go--brief" data-di-toggle aria-expanded="false">
           <span class="tdi-go-open">View briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
         </button>
+        ${hubBtn}
       </div>
       <div class="tdi-expand" data-di-expand><div class="tdi-expand-inner">
         <div data-di-host></div>
@@ -3881,7 +3881,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Access prompt library${HQ_ARROW}</button></div>
             </section>
           <section class="hf-card hf-card--di" aria-label="Daily Intelligence">
-            <div class="tdi-card tdi-card--v3 tdi-card--home tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'AI-generated briefings, twice a day for each of our 100+ topics.', hubLink: true, topicLabel: 'Cross-Topic' })}
+            <div class="tdi-card tdi-card--v3 tdi-card--home tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'AI-generated briefings, twice a day for each of our 100+ topics.', hubButton: true, topicLabel: 'Cross-Topic' })}
             </div>
           </section>
           </div>
