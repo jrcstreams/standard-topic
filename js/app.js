@@ -1356,15 +1356,13 @@ function diHeroCardHTML(o) {
   const topicRow = o.topicLabel ? `<div class="tdi-topiclabel"><span class="tdi-topiclabel-k">Topic:</span><span class="tdi-topiclabel-v">${escapeHTML(o.topicLabel)}</span></div>` : '';
   return `
     <div class="tdi-hero-head">
-      <span class="tdi-hero-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
-      <div class="tdi-hero-htx">
-        <div class="tdi-hero-titlerow">
-          <h2 class="tdi-card-title">${escapeHTML(headerTitle)}</h2>
-          ${hubInline}
-          <button type="button" class="tdi-headclose" data-di-toggle aria-label="Close briefing">${X_SVG}<span>Close Briefing</span></button>
-        </div>
-        <p class="tdi-hero-sub">${escapeHTML(o.sublabel || '')}</p>
+      <div class="tdi-hero-titlerow">
+        <span class="tdi-hero-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
+        <h2 class="tdi-card-title">${escapeHTML(headerTitle)}</h2>
+        ${hubInline}
+        <button type="button" class="tdi-headclose" data-di-toggle aria-label="Close briefing">${X_SVG}<span>Close Briefing</span></button>
       </div>
+      <p class="tdi-hero-sub">${escapeHTML(o.sublabel || '')}</p>
     </div>
     <div class="tdi-hero-body">
       <div class="tdi-todayhead">
@@ -1672,10 +1670,12 @@ function fitDiHub(card) {
   const apply = () => {
     const row = card.querySelector('.tdi-hero-titlerow');
     const title = card.querySelector('.tdi-card-title');
+    const ic = card.querySelector('.tdi-hero-ic');
     const inline = card.querySelector('[data-hub-inline]');
     if (!row || !title || !inline) return;
     card.classList.remove('di-hub-wrapped');
-    const need = title.getBoundingClientRect().width + inline.getBoundingClientRect().width + 24;
+    const icW = ic ? ic.getBoundingClientRect().width + 12 : 0;
+    const need = icW + title.getBoundingClientRect().width + inline.getBoundingClientRect().width + 24;
     card.classList.toggle('di-hub-wrapped', need > row.getBoundingClientRect().width + 1);
   };
   requestAnimationFrame(apply);
