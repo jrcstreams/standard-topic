@@ -21912,8 +21912,11 @@ body.home-search .home-sections .home-featured {
    — all with condensed spacing. Shared by home / topic pages / the hub. */
 .tdi-card--hero2 {
   padding: 0 !important; overflow: hidden; border-radius: 16px;
-  border: 1px solid color-mix(in srgb, #2f4d9e 15%, transparent) !important;
-  background: #eef2fb !important;
+  border: 0 !important; background: #eef2fb !important;
+  /* An OUTER 1px ring instead of a border, so the dark header band reaches the
+     card's edge full-width rather than being inset (which exposed a light
+     sliver on the sides, #img315/316). */
+  box-shadow: 0 0 0 1px color-mix(in srgb, #2f4d9e 14%, transparent);
 }
 /* ── Header band ── */
 .tdi-card--hero2 .tdi-hero-head {
@@ -21927,9 +21930,9 @@ body.home-search .home-sections .home-featured {
    filling most of the chip so it reads as a bold AI mark, not distant stars. */
 .tdi-card--hero2 .tdi-hero-ic {
   flex: none; display: inline-flex; align-items: center; justify-content: center;
-  width: 31px; height: 31px; border-radius: 8px; background: #fff; color: #3358c9;
+  width: 26px; height: 26px; border-radius: 7px; background: #fff; color: #3358c9;
 }
-.tdi-card--hero2 .tdi-hero-ic svg { width: 25px; height: 25px; display: block; }
+.tdi-card--hero2 .tdi-hero-ic svg { width: 20px; height: 20px; display: block; }
 .tdi-card--hero2 .tdi-hero-head .tdi-card-title {
   margin: 0; font-family: var(--font-display); font-size: 1.2rem; font-weight: 800;
   letter-spacing: -0.02em; color: #f4f7ff; white-space: nowrap; flex: 0 0 auto;
