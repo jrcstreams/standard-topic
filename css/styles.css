@@ -21902,3 +21902,81 @@ body.home-search .home-sections .home-featured {
 }
 /* A touch less air between the stamp and the summary on these cards. */
 .dih-item-stamp { margin: 0.3rem 0 0.28rem !important; }
+
+/* ═══ revamp852 — Daily Intelligence preview card: header band + body ════════
+   (#img309/310) A darker-blue header band carries the colour-flipped sparkle
+   icon and the title, with a "View Intelligence Hub" access-link riding right
+   of the title; the light body below holds the sublabel, the Today's Briefing
+   header + edition stamp, a "Topic: X" data label, the summary, and the
+   "View briefing" control. Applies on the homepage, topic pages and the hub. */
+.tdi-card--hero2 {
+  padding: 0 !important; overflow: hidden; border-radius: 16px;
+  border: 1px solid color-mix(in srgb, #2f4d9e 15%, transparent) !important;
+  background: #eef2fb !important;
+}
+/* ── Header band ── */
+.tdi-card--hero2 .tdi-hero-head {
+  display: flex; align-items: center; gap: 8px 16px; flex-wrap: nowrap;
+  padding: 0.8rem 1.25rem; background: linear-gradient(180deg, #24386e 0%, #1c2f5c 100%);
+}
+.tdi-card--hero2 .tdi-hero-ident { display: inline-flex; align-items: center; gap: 11px; min-width: 0; flex: 0 1 auto; }
+.tdi-card--hero2 .tdi-hero-ic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 9px; background: #9ec2ff; color: #1b2c5e;
+}
+.tdi-card--hero2 .tdi-hero-ic svg { width: 19px; height: 19px; display: block; }
+.tdi-card--hero2 .tdi-hero-head .tdi-card-title {
+  margin: 0; font-family: var(--font-display); font-size: 1.22rem; font-weight: 800;
+  letter-spacing: -0.02em; color: #f4f7ff; white-space: nowrap;
+}
+.tdi-card--hero2 .tdi-hero-ident { flex: 0 0 auto; }
+.tdi-card--hero2 .tdi-hero-head { min-width: 0; }
+/* Hub access-link (text link, not a button). */
+.tdi-card--hero2 .tdi-hublink {
+  margin-left: auto; flex: none; display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-family); font-size: 0.9rem; font-weight: 650;
+  color: #bcd3ff; text-decoration: none; white-space: nowrap;
+}
+.tdi-card--hero2 .tdi-hublink svg { width: 15px; height: 15px; transition: transform .14s ease; }
+@media (hover: hover) {
+  .tdi-card--hero2 .tdi-hero-head .tdi-hublink:hover { color: #fff; }
+  .tdi-card--hero2 .tdi-hero-head .tdi-hublink:hover svg { transform: translateX(3px); }
+}
+.tdi-card--hero2 .tdi-hublink--below { display: none !important; }
+.tdi-card--hero2.di-hub-wrapped .tdi-hero-head .tdi-hublink { display: none !important; }
+.tdi-card--hero2.di-hub-wrapped .tdi-hublink--below {
+  display: inline-flex !important; margin: 0 0 0.3rem !important; color: #2f4d9e;
+}
+@media (hover: hover) { .tdi-card--hero2 .tdi-hublink--below:hover { color: #1d4ed8; } }
+/* Head close only in the open state. */
+.tdi-card--hero2 .tdi-headclose { display: none !important; margin-left: auto; color: #cdd9f2; }
+.tdi-card--hero2.is-open .tdi-headclose { display: inline-flex !important; }
+.tdi-card--hero2.is-open .tdi-hero-head .tdi-hublink,
+.tdi-card--hero2.is-open .tdi-date--head { display: none !important; }
+/* Stamp in the header (hub card, no body Today's Briefing head). */
+.tdi-card--hero2 .tdi-date--head {
+  display: inline-flex !important; align-items: center; gap: 9px; margin-left: auto !important;
+  padding: 6px 12px; border-radius: 9px; font-size: 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.18); background: rgba(255, 255, 255, 0.1);
+}
+.tdi-card--hero2 .tdi-date--head .tdi-stamp-val { color: #cdd9f2; }
+.tdi-card--hero2 .tdi-date--head .tdi-stamp-ed { color: #fff; }
+.tdi-card--hero2 .tdi-date--head .tdi-stamp-sep { background: rgba(255, 255, 255, 0.4); }
+
+/* ── Body ── */
+.tdi-card--hero2 .tdi-hero-body { padding: 1.05rem 1.25rem 1.2rem; background: transparent; }
+.tdi-card--hero2 .tdi-sub { margin: 0 0 0.7rem !important; }
+.tdi-card--hero2 .tdi-todayhead { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 0.15rem; }
+.tdi-card--hero2 .tdi-today-title { margin: 0; font-family: var(--font-display); font-size: 1.04rem; font-weight: 750; letter-spacing: -0.01em; color: #16233d; }
+.tdi-card--hero2 .tdi-todayhead .tdi-date {
+  display: inline-flex !important; align-items: center; gap: 9px; margin: 0 !important;
+  padding: 6px 12px; border-radius: 9px; font-size: 0.8rem;
+  border: 1px solid color-mix(in srgb, #172554 11%, transparent); background: rgba(255, 255, 255, 0.72);
+}
+.tdi-card--hero2 .tdi-topiclabel { display: inline-flex; align-items: center; gap: 7px; margin: 0.45rem 0 0.6rem; }
+.tdi-card--hero2 .tdi-topiclabel-k { text-transform: uppercase; letter-spacing: 0.07em; font-weight: 700; font-size: 0.66rem; color: #8492a9; }
+.tdi-card--hero2 .tdi-topiclabel-v { font-family: var(--font-display); font-weight: 750; font-size: 0.9rem; color: #2f4d9e; }
+.tdi-card--hero2 .tdi-summary { margin: 0 0 0.9rem !important; }
+.tdi-card--hero2.is-open .tdi-todayhead,
+.tdi-card--hero2.is-open .tdi-topiclabel,
+.tdi-card--hero2.is-open .tdi-sub { display: none !important; }
