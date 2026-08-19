@@ -21304,3 +21304,115 @@ body.home-search .home-sections { padding-top: 2rem !important; }
 @media (prefers-reduced-motion: reduce) {
   .dih-card-expand, .dih-card-expand-inner { transition: none !important; }
 }
+
+/* ═══ revamp822 ══════════════════════════════════════════════════════════════
+   Each parent topic is a CARD; its topics are blocks inside it; clicking one
+   turns the card into that briefing. */
+
+/* Intro is short and scales down (#img243). */
+.dih-lede {
+  max-width: 60ch;
+  font-size: clamp(0.95rem, 0.9rem + 0.35vw, 1.14rem) !important;
+  margin-bottom: 0.85rem;
+}
+
+/* Legend gains a header, and lands below the sticky bar when jumped to. */
+.dih-legend-wrap { padding-bottom: 1.5rem; margin-bottom: 1.8rem; border-bottom: 1.5px solid #d3d9e4; }
+.dih-legend-title {
+  margin: 0 0 0.7rem; font-family: var(--font-family);
+  font-size: 0.74rem; font-weight: 750; letter-spacing: 0.09em;
+  text-transform: uppercase; color: #8a98b0;
+}
+.dih-legend { padding: 0; margin: 0; border: 0; }
+
+/* ── The parent card ── */
+.dih-group {
+  border: 1px solid var(--color-surface-border); border-radius: 16px;
+  background: #fff; padding: 1.1rem 1.2rem 1.15rem; margin-bottom: 1.15rem;
+  scroll-margin-top: calc(var(--nav-h) + 78px);
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+.dih-group.is-brief {
+  border-color: color-mix(in srgb, #2f4d9e 26%, transparent);
+  box-shadow: 0 3px 18px -8px rgba(30, 58, 138, .2);
+  background: linear-gradient(180deg, #f8fafd 0%, #f2f6fc 100%);
+}
+.dih-grouphead { margin-bottom: 0.95rem; padding-bottom: 0.65rem; border-bottom: 1.5px solid #e3e8f1; }
+
+/* ── Topics as BLOCKS, not cards: hairline-separated cells in a grid ── */
+.dih-items { display: grid; grid-template-columns: 1fr; gap: 0; }
+@media (min-width: 760px) { .dih-items { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.6rem; } }
+@media (min-width: 1200px) { .dih-items { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.dih-item {
+  display: flex; flex-direction: column; gap: 6px; align-items: flex-start;
+  width: 100%; text-align: left; cursor: pointer;
+  padding: 0.85rem 0.2rem; border: 0; border-bottom: 1px solid #eef1f7;
+  background: none; font-family: inherit; color: inherit;
+  transition: background .14s ease;
+}
+@media (hover: hover) {
+  .dih-item:hover { background: #f6f9fd; }
+  .dih-item:hover .dih-item-name { color: #1d4ed8; }
+  .dih-item:hover .dih-item-go svg { transform: translateX(3px); }
+}
+.dih-item-head { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.dih-item-ic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border-radius: 8px;
+  background: color-mix(in srgb, #2f4d9e 9%, #fff); color: #2f4d9e;
+}
+.dih-item-ic svg { width: 15px; height: 15px; display: block; }
+.dih-item-name {
+  font-family: var(--font-display); font-size: 0.98rem; font-weight: 750;
+  letter-spacing: -0.012em; color: #16233d; transition: color .14s ease;
+}
+.dih-item-stamp {
+  align-self: flex-start; margin: 0 !important; padding: 3px 8px !important;
+  font-size: 0.64rem !important; border-radius: 7px;
+  border: 1px solid color-mix(in srgb, #172554 8%, transparent) !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+}
+.dih-item-stamp:empty { display: none; }
+.dih-item-sum {
+  font-family: var(--font-family); font-size: 0.86rem; line-height: 1.55; color: #46557a;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.dih-item-go {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: auto; padding-top: 2px;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 650; color: #2c4f9e;
+}
+.dih-item-go svg { flex: none; width: 13px; height: 13px; transition: transform .14s ease; }
+
+/* ── Card in briefing state: the list gives way to the brief ── */
+.dih-group.is-brief .dih-items { display: none; }
+.dih-brief[hidden] { display: none; }
+.dih-brief { animation: dihBriefIn .34s cubic-bezier(.22, .61, .21, 1); }
+@keyframes dihBriefIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+.dih-brief-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 0.6rem; }
+.dih-brief-back {
+  display: inline-flex; align-items: center; gap: 7px; padding: 0; border: 0; background: none;
+  cursor: pointer; font-family: var(--font-family); font-size: 0.84rem; font-weight: 620; color: #55668c;
+}
+.dih-brief-close {
+  margin-left: auto; flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 9px; cursor: pointer;
+  border: 1px solid color-mix(in srgb, #172554 11%, transparent);
+  background: rgba(255, 255, 255, 0.75); color: #55668c;
+}
+@media (hover: hover) {
+  .dih-brief-back:hover { color: #172554; }
+  .dih-brief-close:hover { background: #fff; color: #172554; }
+}
+.dih-brief-title {
+  display: flex; align-items: center; gap: 10px; margin: 0 0 0.9rem;
+  padding-bottom: 0.6rem; border-bottom: 1.5px solid #d3d9e4;
+  font-family: var(--font-display); font-size: 1.24rem; font-weight: 800;
+  letter-spacing: -0.02em; color: #16233d;
+}
+.dih-brief-ic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 9px;
+  background: color-mix(in srgb, #2f4d9e 10%, #fff); color: #2f4d9e;
+}
+.dih-brief-ic svg { width: 17px; height: 17px; display: block; }
+@media (prefers-reduced-motion: reduce) { .dih-brief { animation: none; } }

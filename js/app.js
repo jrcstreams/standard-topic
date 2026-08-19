@@ -1370,39 +1370,24 @@ function renderIntelligenceHub(container) {
   let groups = [];
   try { groups = (getTopicsGroupedByParent() || []).filter((g) => g && g.parent && g.parent.slug !== 'home'); } catch (_) {}
 
-  // revamp821: a card opens its OWN briefing in place, full width.
-  const card = (t) => `
-    <article class="dih-card" data-dih-card="${escapeAttr(t.name)}" data-dih-slug="${escapeAttr(t.slug)}">
-      <span class="dih-card-head">
-        <span class="dih-card-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
-        <span class="dih-card-name">${escapeHTML(t.name)}</span>
-        <button type="button" class="dih-card-close" data-dih-toggle aria-label="Close ${escapeAttr(t.name)} briefing">
-          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          <span>Close</span>
-        </button>
+  // revamp822: topics are BLOCKS inside their parent's card, not cards of
+  // their own. Clicking one turns the whole parent card into that briefing.
+  const item = (t) => `
+    <button type="button" class="dih-item" data-dih-item="${escapeAttr(t.name)}" data-dih-slug="${escapeAttr(t.slug)}">
+      <span class="dih-item-head">
+        <span class="dih-item-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
+        <span class="dih-item-name">${escapeHTML(t.name)}</span>
       </span>
-      <span class="tdi-date dih-card-stamp" data-dih-stamp-for="${escapeAttr(t.name)}"></span>
-      <span class="dih-card-sum" data-dih-sum="${escapeAttr(t.name)}">Loading today's briefing…</span>
-      <button type="button" class="dih-card-go" data-dih-toggle aria-expanded="false">
-        <span class="dih-go-open">Read briefing</span>
-        <span class="dih-go-close">Hide briefing</span>${SUBPAGE_ARROW}
-      </button>
-      <div class="dih-card-expand" data-dih-expand><div class="dih-card-expand-inner">
-        <div data-dih-host></div>
-        <div class="tdi-closefoot">
-          <button type="button" class="tdi-closefoot-btn" data-dih-toggle>
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            <span>Close briefing</span>
-          </button>
-        </div>
-      </div></div>
-    </article>`;
+      <span class="tdi-date dih-item-stamp" data-dih-stamp-for="${escapeAttr(t.name)}"></span>
+      <span class="dih-item-sum" data-dih-sum="${escapeAttr(t.name)}">Loading today's briefing…</span>
+      <span class="dih-item-go">Read briefing${SUBPAGE_ARROW}</span>
+    </button>`;
 
   container.innerHTML = `
     <div class="dih">
       <header class="dih-head">
         <h1 class="dih-title"><span class="dih-title-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>Daily Intelligence</h1>
-        <p class="dih-lede">Every day, twice a day, Standard Topic reads its own news feed across 100+ topics and writes a briefing on each — what actually happened, what it means, and the stories behind it. Below: today's cross-topic briefing, then every topic's own.</p>
+        <p class="dih-lede">An AI briefing on every topic, twice a day.</p>
         <div class="tdi-cardprov dih-prov">${DI_SPARK}<span>AI-generated text</span></div>
       </header>
 
@@ -1438,24 +1423,37 @@ function renderIntelligenceHub(container) {
         </div>
       </section>
 
-      <nav class="dih-legend" aria-label="Jump to a topic">
-        ${groups.map((g) => `<a class="dih-legend-chip" href="#dih-${escapeAttr(g.parent.slug)}"><span class="dih-legend-ic" aria-hidden="true">${topicIconSVG(g.parent.icon || 'globe', '')}</span>${escapeHTML(g.parent.name)}</a>`).join('')}
+      <nav class="dih-legend-wrap" aria-label="Jump to a topic">
+        <h2 class="dih-legend-title">Jump to a section</h2>
+        <div class="dih-legend">
+          ${groups.map((g) => `<a class="dih-legend-chip" href="#dih-${escapeAttr(g.parent.slug)}"><span class="dih-legend-ic" aria-hidden="true">${topicIconSVG(g.parent.icon || 'globe', '')}</span>${escapeHTML(g.parent.name)}</a>`).join('')}
+        </div>
       </nav>
 
       <div class="dih-groups">
         ${groups.map((g) => `
-          <section class="dih-group" id="dih-${escapeAttr(g.parent.slug)}">
+          <section class="dih-group" id="dih-${escapeAttr(g.parent.slug)}" data-dih-group>
             <div class="dih-grouphead">
               <span class="dih-groupic" aria-hidden="true">${topicIconSVG(g.parent.icon || 'globe', '')}</span>
               <h2 class="dih-grouptitle">${escapeHTML(g.parent.name)}</h2>
               <span class="dih-groupcount">${(g.subtopics || []).length + 1} briefings</span>
             </div>
-            <div class="dih-grid">${[g.parent, ...(g.subtopics || [])].map(card).join('')}</div>
+            <div class="dih-items">${[g.parent, ...(g.subtopics || [])].map(item).join('')}</div>
+            <div class="dih-brief" data-dih-brief hidden>
+              <div class="dih-brief-bar">
+                <button type="button" class="dih-brief-back" data-dih-back>${BACKBAR_CHEV}<span>All ${escapeHTML(g.parent.name)} briefings</span></button>
+                <button type="button" class="dih-brief-close" data-dih-back aria-label="Close briefing">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+              <div class="dih-brief-title" data-dih-brief-title></div>
+              <div data-dih-host></div>
+            </div>
           </section>`).join('')}
       </div>
     </div>`;
 
-  // Today's briefing behaves like the topic cards: a preview that expands.
+  // Today's briefing: a preview that expands, same as the topic cards.
   const todayCard = container.querySelector('.dih-today-card');
   if (todayCard) {
     const host = todayCard.querySelector('[data-di-expand]');
@@ -1485,12 +1483,44 @@ function renderIntelligenceHub(container) {
     }).catch(() => {});
   }
 
-  // ~100 cards: fetch each topic's briefing only as its card comes into view,
-  // a few at a time. Loading them all up front would fire a hundred requests
-  // on page load for content most readers never scroll to.
+  // A parent card flips between its list of topics and one topic's briefing.
+  let openGroup = null;
+  const showList = (group) => {
+    group.classList.remove('is-brief');
+    const brief = group.querySelector('[data-dih-brief]');
+    if (brief) brief.hidden = true;
+    if (openGroup === group) openGroup = null;
+  };
+  container.querySelectorAll('[data-dih-group]').forEach((group) => {
+    const brief = group.querySelector('[data-dih-brief]');
+    const host = group.querySelector('[data-dih-host]');
+    const title = group.querySelector('[data-dih-brief-title]');
+    group.querySelectorAll('[data-dih-item]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (openGroup && openGroup !== group) showList(openGroup);
+        const name = btn.dataset.dihItem;
+        const slug = btn.dataset.dihSlug;
+        if (title) title.innerHTML = `<span class="dih-brief-ic" aria-hidden="true">${btn.querySelector('.dih-item-ic')?.innerHTML || ''}</span><span>${escapeHTML(name)}</span>`;
+        if (host) { host.innerHTML = ''; renderDailyIntelligence(host, { topic: name, label: name, slug, inline: true }); }
+        if (brief) brief.hidden = false;
+        group.classList.add('is-brief');
+        openGroup = group;
+        try {
+          const r = group.getBoundingClientRect();
+          if (r.top < 70 || r.top > window.innerHeight * 0.5) group.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        } catch (_) {}
+      });
+    });
+    group.querySelectorAll('[data-dih-back]').forEach((b) => b.addEventListener('click', () => {
+      showList(group);
+      try { group.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (_) {}
+    }));
+  });
+
+  // ~100 summaries fetch lazily as their block scrolls into view.
   const pending = new Set();
   const fill = async (el) => {
-    const name = el.dataset.dihCard;
+    const name = el.dataset.dihItem;
     if (!name || pending.has(name)) return;
     pending.add(name);
     const sum = el.querySelector('[data-dih-sum]');
@@ -1504,44 +1534,14 @@ function renderIntelligenceHub(container) {
       if (sum) sum.textContent = 'Briefing publishes with the next edition.';
     }
   };
-  // Each card expands its briefing in place, full width, one at a time.
-  let openCard = null;
-  const setCardOpen = (el, on) => {
-    const inner = el.querySelector('[data-dih-expand]')?.firstElementChild;
-    if (on && openCard && openCard !== el) setCardOpen(openCard, false);
-    el.classList.toggle('is-open', on);
-    el.querySelectorAll('[data-dih-toggle]').forEach((b) => b.setAttribute('aria-expanded', on ? 'true' : 'false'));
-    try { if (inner) inner.inert = !on; } catch (_) {}
-    openCard = on ? el : (openCard === el ? null : openCard);
-    if (!on || !inner || el.dataset.dihLoaded === '1') return;
-    el.dataset.dihLoaded = '1';
-    renderDailyIntelligence(inner.querySelector('[data-dih-host]') || inner, {
-      topic: el.dataset.dihCard, label: el.dataset.dihCard, slug: el.dataset.dihSlug, inline: true,
-    });
-    // Keep the card in view once the panel has taken its height.
-    setTimeout(() => {
-      try {
-        const r = el.getBoundingClientRect();
-        if (r.top < 80) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
-      } catch (_) {}
-    }, 360);
-  };
-  container.querySelectorAll('[data-dih-card]').forEach((el) => {
-    try { const i = el.querySelector('[data-dih-expand]')?.firstElementChild; if (i) i.inert = true; } catch (_) {}
-    el.querySelectorAll('[data-dih-toggle]').forEach((b) => b.addEventListener('click', (e) => {
-      e.stopPropagation();
-      setCardOpen(el, b.getAttribute('aria-expanded') !== 'true');
-    }));
-  });
-
-  const cards = [...container.querySelectorAll('[data-dih-card]')];
+  const items = [...container.querySelectorAll('[data-dih-item]')];
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => { if (e.isIntersecting) { io.unobserve(e.target); fill(e.target); } });
     }, { rootMargin: '400px 0px' });
-    cards.forEach((c) => io.observe(c));
+    items.forEach((c) => io.observe(c));
   } else {
-    cards.forEach(fill);
+    items.forEach(fill);
   }
 }
 
