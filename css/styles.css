@@ -22076,3 +22076,16 @@ body.home-search .home-search-hero { padding: 0 0 clamp(0.7rem, 1.4vw, 1.4rem) !
 /* revamp866 — edition pill vertically centered on the Today's Briefing title. */
 .tdi-card--hero2 .tdi-todayhead { align-items: center !important; }
 .tdi-card--hero2 .tdi-todayhead .tdi-date { align-self: center !important; }
+
+
+/* revamp868 — featured card head: subtext spans under icon+title; icon gets a
+   tinted chip background like the Daily Intelligence icon (#img331). */
+.hf-card .hf-head { flex-direction: column !important; align-items: stretch !important; }
+.hf-card .hf-headrow { display: flex; align-items: center; gap: 10px; }
+.hf-card .hf-sub { margin: 0.35rem 0 0 !important; }
+.hf-card .hf-ic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 8px; margin-top: 0 !important;
+  background: color-mix(in srgb, var(--hf-accent, #2f4d9e) 12%, #fff); color: var(--hf-accent, #2f4d9e);
+}
+.hf-card .hf-ic svg { width: 17px; height: 17px; }

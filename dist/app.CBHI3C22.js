@@ -1420,22 +1420,22 @@ ${M}`),w.length?w.join(`
           <div class="home-featured" aria-label="Featured on Standard Topic">
             <section class="hf-card hf-card--topics" data-hf="topics">
               <div class="hf-head">
-                <span class="hf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
-                <div class="hf-headtx">
+                <div class="hf-headrow">
+                  <span class="hf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
                   <h3 class="hf-title">Featured Topics</h3>
-                  <p class="hf-sub">A quick way into the topics we cover most.</p>
                 </div>
+                <p class="hf-sub">A quick way into the topics we cover most.</p>
               </div>
               <div class="hf-chips" data-hq-topics></div>
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-topics>All topics${u}</button></div>
             </section>
             <section class="hf-card hf-card--prompts" data-hf="prompts">
               <div class="hf-head">
-                <span class="hf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg></span>
-                <div class="hf-headtx">
+                <div class="hf-headrow">
+                  <span class="hf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg></span>
                   <h3 class="hf-title">Featured AI Prompts</h3>
-                  <p class="hf-sub">Ready-made prompts to run in any AI model.</p>
                 </div>
+                <p class="hf-sub">Ready-made prompts to run in any AI model.</p>
               </div>
               <div class="hf-chips" data-hq-prompts></div>
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Access prompt library${u}</button></div>
