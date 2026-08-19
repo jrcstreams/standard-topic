@@ -21626,3 +21626,79 @@ body.pagenav-mode.sticky-always #content { padding-top: calc(var(--nav-h) + 0.3r
 }
 /* (#img263) The summary sat too far below the sublabel. */
 .tdi-card--home .tdi-subrow { margin-bottom: 0.32rem !important; }
+
+/* ═══ revamp835 — DI stamp stacks left + lighter, matched CTAs ═══════════════
+   (#img269) In the stacked (phone) layout the pill now reads left-aligned —
+   date on top, edition beneath at a slightly smaller size — with its top edge
+   level with the card title. Applies to the topic-page briefing card too, not
+   just the homepage one. */
+@media (max-width: 560px) {
+  .tdi-card--v3 .tdi-head { align-items: flex-start !important; flex-wrap: nowrap !important; }
+  .tdi-card--v3 .tdi-headslot { align-self: flex-start !important; }
+  .tdi-card--v3 .tdi-head .tdi-date {
+    flex-direction: column; align-items: flex-start !important; gap: 1px !important;
+    padding: 6px 10px !important; text-align: left;
+  }
+  .tdi-card--v3 .tdi-head .tdi-date .tdi-stamp-sep { display: none !important; }
+  .tdi-card--v3 .tdi-head .tdi-date .tdi-stamp-ed { font-size: 0.92em; }
+}
+
+/* The two homepage CTAs read at one size/weight and a touch lighter (#img269). */
+.tdi-card--home .tdi-go,
+.tdi-card--home .tdi-go--hub {
+  font-size: 0.8rem !important; font-weight: 600 !important;
+}
+.tdi-card--home .tdi-go { background: #2b4079 !important; }
+.tdi-card--home .tdi-go--hub { background: #4767b0 !important; }
+@media (hover: hover) {
+  .tdi-card--home:hover .tdi-go:not(:hover) { background: #2b4079 !important; }
+  .tdi-card--home:hover .tdi-go--hub:not(:hover) { background: #4767b0 !important; }
+  .tdi-card--home .tdi-go:hover { background: #24356a !important; }
+  .tdi-card--home .tdi-go--hub:hover { background: #3a5798 !important; }
+}
+
+/* ═══ revamp836 — main nav: full-length links, Daily Intelligence, wrap row ══
+   (#img259) Every link (Home / Topics / Daily Intelligence / Trending /
+   Prompts) shows its full label at every width. When they can't share the
+   brand's row, fitMainNav adds .nav-wrap and the whole group drops to a clean
+   second row under the brand + Search. Search is a fixed button — icon +
+   "Search", a deeper (less bubbly) blue — that never collapses. */
+
+/* Search: always icon + label, deeper blue, at EVERY width (override the old
+   icon-only / label-swap rules). */
+#nav-search.navbtn.nav-searchbar {
+  background: #1e3a8a !important; border-color: #1e3a8a !important;
+  width: auto !important; height: auto !important; min-width: 0 !important;
+  padding: 8px 15px !important; border-radius: 999px !important;
+  gap: 8px !important; flex: none !important; justify-content: center !important;
+}
+@media (hover: hover) {
+  #nav-search.navbtn.nav-searchbar:hover { background: #1b3372 !important; border-color: #1b3372 !important; }
+}
+#nav-search.navbtn .navbtn-ico { display: inline-flex !important; flex: none; color: #fff !important; }
+#nav-search.navbtn .navbtn-ico svg { width: 16px !important; height: 16px !important; stroke-width: 2.4 !important; }
+#nav-search.navbtn .nav-searchbar-ph,
+#nav-search.navbtn .navbtn-label {
+  display: inline !important; width: auto !important; overflow: visible !important;
+  font-size: 0.85rem !important; font-weight: 650 !important; color: #fff !important;
+}
+
+/* Daily Intelligence collapses its label to "Intelligence" only in the wrap row
+   if truly needed; otherwise full. */
+.navbtn .nl-short { display: none; }
+.navbtn .nl-full { display: inline; }
+
+/* Layout: brand (+ hamburger) left, links after it, Search pinned right. */
+.sticky-hero-inner .sticky-actions.navbtns#nav-links {
+  order: 2 !important; margin-left: 1.4rem !important; margin-right: 0 !important; flex: 0 0 auto;
+}
+.sticky-hero-inner #nav-search { order: 3; margin-left: auto; align-self: center; }
+
+/* Second row: the link group drops beneath, centered; brand + Search stay up top. */
+.sticky-hero-inner.nav-wrap { flex-wrap: wrap; align-items: center; row-gap: 0; }
+.sticky-hero-inner.nav-wrap .sticky-actions.navbtns#nav-links {
+  order: 10 !important; flex: 0 0 100% !important; width: 100%;
+  margin: 0.5rem 0 0.15rem !important;
+  justify-content: center !important; gap: 4px;
+}
+.sticky-hero-inner.nav-wrap #nav-search { margin-left: auto; }

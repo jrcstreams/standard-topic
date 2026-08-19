@@ -3230,7 +3230,8 @@ function documentTitleFor(route) {
 function fitMainNav() {
   const inner = document.querySelector('.sticky-hero-inner');
   if (!inner) return;
-  inner.classList.remove('nav-stacked', 'nav-short-trending', 'nav-small-text', 'nav-tiny-text', 'nav-drop-prompts', 'nav-drop-home', 'nav-icon-search', 'nav-tiny-title');
+  inner.classList.remove('nav-wrap', 'nav-stacked', 'nav-short-trending', 'nav-small-text', 'nav-tiny-text', 'nav-drop-prompts', 'nav-drop-home', 'nav-icon-search', 'nav-tiny-title', 'nav-micro-text');
+  document.documentElement.style.removeProperty('--nav-h');
   // The search bar is pushed to the far right by a flexible nav group, which
   // means the group absorbs slack and the row can never "overflow" — so every
   // measurement below is taken with `.nav-measuring`, which un-flexes the group
@@ -3246,13 +3247,23 @@ function fitMainNav() {
   // survive — they are never dropped. We shed Home, collapse Search to its icon,
   // then shrink the three labels in stages, and only as a last resort shrink the
   // site title + hamburger to buy the labels more room (revamp738).
-  if (!fits()) inner.classList.add('nav-short-trending');
-  if (!fits()) inner.classList.add('nav-small-text');
-  if (!fits()) inner.classList.add('nav-drop-home');
-  if (!fits()) inner.classList.add('nav-icon-search');
-  if (!fits()) inner.classList.add('nav-tiny-text');
-  if (!fits()) inner.classList.add('nav-tiny-title');
-  if (!fits()) inner.classList.add('nav-micro-text');
+  // revamp836 — the links (Home / Topics / Daily Intelligence / Trending /
+  // Prompts) all stay full-length. When they can't fit on the brand's row, the
+  // whole link group drops to a clean second row beneath the brand + Search,
+  // rather than shrinking labels or dropping items. Search is never touched.
+  if (!fits()) {
+    inner.classList.add('nav-wrap');
+    // The two-row nav is taller than the single-row --nav-h, and the header is
+    // position:fixed — so publish its REAL height, or the second row would sit
+    // over the page (content padding + sticky subnav both offset by --nav-h).
+    requestAnimationFrame(() => {
+      if (!inner.classList.contains('nav-wrap')) return;
+      const h = Math.round(inner.getBoundingClientRect().height);
+      if (h > 0) document.documentElement.style.setProperty('--nav-h', h + 'px');
+    });
+  } else {
+    document.documentElement.style.removeProperty('--nav-h');
+  }
 }
 
 function renderStickyHeroBar(container, route) {
@@ -3316,7 +3327,7 @@ function renderStickyHeroBar(container, route) {
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
       </nav>
-      <div class="sticky-actions navbtns">
+      <div class="sticky-actions navbtns" id="nav-links">
         <a href="#/" class="navbtn" id="nav-home" aria-label="Home">
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
           <span class="navbtn-label">Home</span>
@@ -3325,19 +3336,23 @@ function renderStickyHeroBar(container, route) {
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>
           <span class="navbtn-label">Topics</span>
         </button>
+        <a href="#/intelligence" class="navbtn" id="nav-daily" aria-label="Daily Intelligence">
+          <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg></span>
+          <span class="navbtn-label"><span class="nl-full">Daily Intelligence</span><span class="nl-short">Intelligence</span></span>
+        </a>
         <button type="button" class="navbtn" id="nav-trending" aria-label="Trending">
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></span>
-          <span class="navbtn-label"><span class="nl-full">Trending</span><span class="nl-short">Trends</span></span>
+          <span class="navbtn-label">Trending</span>
         </button>
         <button type="button" class="navbtn" id="nav-prompts" aria-label="Prompts" aria-haspopup="dialog" aria-expanded="false">
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span>
           <span class="navbtn-label">Prompts</span>
         </button>
-        <button type="button" class="navbtn nav-searchbar" id="nav-search" aria-label="Search">
-          <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-          <span class="navbtn-label nav-searchbar-ph"><span class="np-full">Search any topic</span><span class="np-mid">Search topics</span><span class="np-short">Search</span></span>
-        </button>
       </div>
+      <button type="button" class="navbtn nav-searchbar" id="nav-search" aria-label="Search">
+        <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+        <span class="navbtn-label nav-searchbar-ph">Search</span>
+      </button>
     </div>
 
   `;
@@ -3363,6 +3378,9 @@ function renderStickyHeroBar(container, route) {
   // builder inline) and Prompt Library (pick a topic → its ready-made prompts).
   // (AI Insights is no longer a nav section — topic pages + custom search cover it.)
   document.getElementById('nav-prompts')?.addEventListener('click', (e) => { e.stopPropagation(); togglePromptsNavDropdown(); });
+
+  // Daily Intelligence — a plain link to the hub (router intercepts the href).
+  document.getElementById('nav-daily')?.addEventListener('click', () => { closeNavDropdown(); });
 
   // Trending — opens the full-width Trending dropdown (Phase 5 — replaces the
   // modal) with the live trend-card grid.
@@ -3464,6 +3482,16 @@ function renderStickyHeroBar(container, route) {
           <polyline points="13 6 19 12 13 18"/>
         </svg>
       </button>
+      <a href="#/intelligence" class="navmenu-quicklink navmenu-cta" id="navmenu-daily-link">
+        <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/>
+        </svg>
+        <span class="navmenu-cta-label">Daily Intelligence</span>
+        <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="13 6 19 12 13 18"/>
+        </svg>
+      </a>
       <button type="button" class="navmenu-quicklink navmenu-cta" id="navmenu-trending">
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <polyline points="3 17 9 11 13 15 21 7"/>
