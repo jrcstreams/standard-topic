@@ -21676,15 +21676,18 @@ body.pagenav-mode.sticky-always #content { padding-top: calc(var(--nav-h) + 0.3r
 /* Second row: the link group drops beneath, centered; brand + Search stay up top. */
 .sticky-hero-inner.nav-wrap {
   flex-wrap: wrap; align-items: center; row-gap: 0;
-  padding-top: 0.5rem !important; padding-bottom: 0.5rem !important;
+  padding-top: 0.85rem !important; padding-bottom: 0.9rem !important;
 }
 .sticky-hero-inner.nav-wrap .sticky-actions.navbtns#nav-links {
   order: 10 !important; flex: 0 0 100% !important; width: 100%;
-  margin: 0.45rem 0 0 !important;
+  margin: 0.75rem 0 0 !important;                    /* clear gap below row 1 */
   justify-content: flex-start !important;           /* left-aligned, not centered */
   padding-left: var(--nav-links-indent, 34px);      /* start under the site title */
   flex-wrap: wrap; gap: 2px 6px;
 }
+/* Row 1 items share one vertical center — the Search pill lines up with the
+   site title at every width (#img284). */
+.sticky-hero-inner.nav-wrap > * { align-self: center; }
 .sticky-hero-inner.nav-wrap #nav-links .navbtn { padding: 6px 10px; }
 .sticky-hero-inner.nav-wrap #nav-search { margin-left: auto; align-self: center; }
 /* Row 1 (hamburger · title · Search) sits centered with equal air top and bottom. */
