@@ -21018,3 +21018,134 @@ body.pagenav-mode .aii-nav-dd .aii-nav-dd-body {
   }
   .dih-card:hover .dih-card-go svg { transform: translateX(3px); }
 }
+
+/* ═══ revamp819 ══════════════════════════════════════════════════════════════
+   Hero type that fits one line, a search button sized like a button, and two
+   list fixes. */
+
+/* ── The hero title wrapped to two lines on phones and shouted at mid widths
+      (#img218/219/229). One clamp, tuned so ~32 characters clear a 375px
+      screen without dropping to a size you'd squint at. Title, tagline and
+      input keep one rhythm, and the block sits evenly between the nav and the
+      band's edge. ── */
+body.home-search .home-search-hero .search-panel-title {
+  font-size: clamp(1.3rem, 5.4vw, 2.4rem) !important;
+  line-height: 1.12 !important; white-space: nowrap !important;
+  margin: 0 0 0.5rem !important;
+}
+body.home-search .home-search-hero .search-panel-tagline {
+  font-size: clamp(0.86rem, 2.4vw, 1.12rem) !important;
+  margin: 0 0 0.9rem !important;
+}
+@media (max-width: 480px) {
+  body.home-search .home-search-hero .search-panel-barrow { margin-top: 0 !important; }
+}
+
+/* ── The mobile search button had shrunk to a chip you needed a magnifier to
+      find (#img219). It's a button: give it a real target and a legible
+      glyph at every size. ── */
+@media (max-width: 900px) {
+  #nav-search.navbtn.nav-searchbar {
+    padding: 0 !important; width: 42px; height: 42px; border-radius: 12px;
+    justify-content: center;
+  }
+  #nav-search.navbtn .navbtn-ico svg { width: 20px !important; height: 20px !important; }
+}
+@media (max-width: 480px) {
+  #nav-search.navbtn.nav-searchbar { width: 38px; height: 38px; border-radius: 11px; }
+  #nav-search.navbtn .navbtn-ico svg { width: 18px !important; height: 18px !important; }
+}
+
+/* ── Prompts-by-topic accordions match the Topics page: attached rows with
+      hairlines, not floating rounded cards (#img224-226). ── */
+.pdir .pdir-card {
+  border: 0 !important; border-radius: 0 !important; background: none !important;
+  box-shadow: none !important; margin: 0 !important;
+  border-bottom: 1px solid var(--color-surface-border) !important;
+}
+.pdir .pdir-card:last-child { border-bottom: 0 !important; }
+.pdir .pdir-cardhead { border-radius: 0 !important; padding: 1rem 0.5rem !important; }
+
+/* ── Topics dropdown: the parent "All {Topic}" row loses its stray chevron and
+      its blue default state — it's a destination, not the selected item
+      (#img227). ── */
+.tsp-parent-row .tsp-cell-chev,
+.aiidd-vlist .aiidd-link--parent svg:last-child,
+.aiidd-vlist .aiidd-link--all svg:last-child { display: none !important; }
+.aiidd-vlist .aiidd-link--parent,
+.aiidd-vlist .aiidd-link--all,
+.aiidd-vlist .aiidd-link:first-child { color: inherit !important; font-weight: 550 !important; }
+@media (hover: hover) {
+  .aiidd-vlist .aiidd-link:first-child:hover { color: #1d4ed8 !important; }
+}
+
+/* ── revamp819b: the page-mounted versions of Topics / Trending / Prompts.
+      Same markup as the dropdown shell, but in normal flow — no fixed
+      positioning, no inner scroller, no max-height. ── */
+.ndp { max-width: var(--max-width, 1280px); margin: 0 auto; min-width: 0; }
+.ndp .aii-nav-dd-inner { display: block; max-height: none; height: auto; overflow: visible; }
+.ndp .aii-nav-dd-scrollwrap, .ndp .aii-nav-dd-scroll {
+  max-height: none !important; height: auto !important; overflow: visible !important;
+}
+.ndp .aii-nav-dd-head {
+  position: static !important; background: transparent !important;
+  padding: 0.2rem 0 0.9rem; border-bottom: 0;
+}
+.ndp .aii-nav-dd-title {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-display); font-weight: 800; letter-spacing: -0.028em;
+  font-size: clamp(1.5rem, 1.05rem + 1.4vw, 1.92rem); color: #172554;
+}
+.ndp .navdd-headic { display: inline-flex !important; }
+.ndp .aii-nav-dd-sub { margin-top: 0.3rem; font-size: 0.98rem; color: #42506b; }
+.ndp .aii-nav-dd-headbtns { display: flex !important; margin-top: 0.85rem; gap: 8px; }
+.ndp .aii-nav-dd-subbar { border-bottom: 2px solid #e0e5ee; padding-bottom: 0.7rem; margin-bottom: 0.9rem; }
+
+/* ── revamp819c: the homepage Daily Intelligence card doesn't lift on hover —
+      the card isn't clickable, only its buttons are (#img230). The two actions
+      differentiate and match in height: the briefing is the primary navy, the
+      hub is a lighter blue. ── */
+.tdi-card--home { transition: none !important; }
+@media (hover: hover) { .tdi-card--home:hover { transform: none !important; box-shadow: none !important; } }
+.tdi-card--home .tdi-go,
+.tdi-card--home .tdi-go--hub {
+  padding: 0.62rem 1.15rem !important; min-height: 42px; line-height: 1.1;
+  display: inline-flex; align-items: center;
+}
+.tdi-card--home .tdi-go--hub {
+  background: #3a5cab !important; border: 0 !important; color: #fff !important;
+}
+@media (hover: hover) {
+  .tdi-card--home .tdi-go--hub:hover { background: #2e4a8a !important; color: #fff !important; }
+  .tdi-card--home .tdi-go:hover { background: #14204a !important; }
+}
+.tdi-card--home .tdi-go { background: #1b2c5e !important; }
+
+/* ── Featured Topics rows were taller than the Prompts rows beside them
+      (#img231). Matched, with a touch more air on both. ── */
+.hf-card .hq-row { padding: 0.46rem 0 0.46rem 2px !important; }
+
+/* ── revamp819d: these are pages now — white ground, normal top spacing. ── */
+body.pagenav-mode #content, body.pagenav-mode { background: #fff !important; }
+body.pagenav-mode.sticky-always #content { padding-top: calc(var(--nav-h) + 1.2rem) !important; }
+.ndp .page-backbar { padding: 0 0 10px !important; }
+
+/* ── revamp819e: the homepage card row breathes, and Daily Intelligence gets
+      the width its two actions need (#img232/233). 40/30/30 above 1100px so
+      the buttons sit side by side; the label shortens before it wraps. ── */
+@media (min-width: 1100px) {
+  body.home-search .home-sections .home-featured {
+    grid-template-columns: 1.35fr 1fr 1fr !important;
+    gap: 1.5rem !important;
+  }
+}
+.tdi-card--home .tdi-actions { flex-wrap: nowrap; }
+@media (max-width: 1320px) {
+  .tdi-card--home .tdi-go-open::after { content: "Today's briefing"; }
+  .tdi-card--home .tdi-go-open { font-size: 0; }
+  .tdi-card--home .tdi-go-open::after { font-size: 0.86rem; }
+}
+/* Air above and below the row, so it isn't riding the hero or the news. */
+body.home-search .home-sections { padding-top: 2rem !important; }
+.home-featured { margin-bottom: 2.4rem !important; }
+@media (min-width: 720px) { .home-featured { margin-bottom: 2.8rem !important; } }

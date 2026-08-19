@@ -141,14 +141,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     // collapses in place instead of remounting.
     const isSearchRoute = route.type === 'search' || route.type === 'custom';
     const isPromptRoute = route.type === 'prompt-generator';
-    const isDdRoute = ['topics', 'trending', 'prompts'].includes(route.type);
-    // These routes don't render their own page — they open a modal over home.
-    const isOverlayRoute = isPromptRoute || isDdRoute;
+    // revamp819: topics / trending / prompts render their OWN pages now, so
+    // they no longer map to home-with-an-overlay. Only the prompt builder is
+    // still an overlay route.
+    const isDdRoute = false;
+    const isOverlayRoute = isPromptRoute;
     const baseRoute = isOverlayRoute ? { type: 'home', slug: 'home', tab: 'newsfeed' } : route;
     const baseKey = baseRoute.type === 'home' ? 'home'
       : baseRoute.type === 'topic' ? 'topic:' + baseRoute.slug
       : isSearchRoute ? 'searchpage'
-      : baseRoute.type;
+      : baseRoute.type;   // topics/trending/prompts key off their own type now
 
     // Only (re)render when the page actually changes, so typing inside the
     // open prompts dropdown (or refining a search term) doesn't tear the page
@@ -170,9 +172,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (isPromptRoute) openPromptBuilderNavDropdown(); else closePromptBuilderNavDropdown();
     // Route-driven nav dropdowns (stale ones were already closed above).
-    if (route.type === 'topics') { openTopicsNavDropdown(); renderPageNavBar('topics'); }
-    else if (route.type === 'trending') { openTrendingNavDropdown(); renderPageNavBar('trending'); }
-    else if (route.type === 'prompts') { openPromptsNavDropdown(route.view); renderPageNavBar('prompts'); }
+    if (route.type === 'topics') renderPageNavBar('topics');
+    else if (route.type === 'trending') renderPageNavBar('trending');
+    else if (route.type === 'prompts') renderPageNavBar('prompts');
 
     // Always refresh the bottom-nav active tab from the REAL route — overlay
     // routes (search/custom) skip renderLayout, so its internal call is missed.
@@ -212,7 +214,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Search/Custom are real pages too (revamp765) — they re-render like any
         // route. Only the dropdown-backed routes still render home beneath and
         // re-open the overlay on top.
-        const isOverlay = ['prompt-generator', 'topics', 'trending', 'prompts'].includes(route.type);
+        const isOverlay = route.type === 'prompt-generator';
         const base = isOverlay ? { type: 'home', slug: 'home', tab: 'newsfeed' } : route;
         // Preserve an OPEN subnav topic-picker across the breakpoint crossing — the
         // full re-render rebuilds the sub-header, which silently closed it (#img75).
@@ -223,12 +225,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         if (route.type === 'prompt-generator') {
           openPromptBuilderNavDropdown();
-        } else if (route.type === 'topics') {
-          openTopicsNavDropdown();
-        } else if (route.type === 'trending') {
-          openTrendingNavDropdown();
-        } else if (route.type === 'prompts') {
-          openPromptsNavDropdown(route.view);
         }
         if (openNews) {
           // Re-open after the fresh news feed settles; then restore the active tab.
@@ -1335,6 +1331,36 @@ function diEditionStampHTML(iso) {
 }
 
 
+
+
+// revamp819: Topics / Trending / Prompts render as REAL PAGES. The nav-dd
+// shell is a fixed overlay with its own scroller — that is why their sticky
+// subnav could never sit above them and why the page never truly scrolled.
+// Same cfg, same contentHTML, same wire(): just mounted into #content.
+function renderNavDdPage(container, cfg) {
+  container.innerHTML = `
+    <div class="ndp aii-nav-dd-pagelike ${cfg.className || ''}">
+      <div class="aii-nav-dd-inner">
+        ${backBarHTML()}
+        <div class="aii-nav-dd-head">
+          <div class="aii-nav-dd-titles">
+            <div class="aii-nav-dd-title">${cfg.icon ? `<span class="navdd-headic" aria-hidden="true">${cfg.icon}</span>` : ''}${escapeHTML(cfg.title || '')}</div>
+            ${cfg.subtitle ? `<div class="aii-nav-dd-sub">${escapeHTML(cfg.subtitle)}</div>` : ''}
+            ${Array.isArray(cfg.headButtons) && cfg.headButtons.length
+              ? `<div class="aii-nav-dd-headbtns">${cfg.headButtons.map((b, i) => `<a href="${escapeAttr(b.href || '#')}" class="aii-nav-dd-headbtn${b.primary ? ' is-primary' : ''}" data-navdd-headbtn="${i}">${b.icon || ''}<span>${escapeHTML(b.label)}</span></a>`).join('')}</div>`
+              : ''}
+          </div>
+        </div>
+        ${cfg.subBarHTML ? `<div class="aii-nav-dd-subbar">${cfg.subBarHTML}</div>` : ''}
+        <div class="aii-nav-dd-scrollwrap">
+          <div class="aii-nav-dd-scroll">${cfg.contentHTML || ''}</div>
+        </div>
+      </div>
+    </div>`;
+  const root = container.querySelector('.ndp');
+  try { if (typeof cfg.wire === 'function') cfg.wire(root); } catch (err) { console.error('page wire failed', cfg.key, err); }
+  return root;
+}
 
 // revamp818: the Daily Intelligence hub — a REAL page (own route, own
 // renderer, normal scroll), not a dropdown over home. Three bands: what Daily
@@ -5249,6 +5275,10 @@ function renderPage(route) {
     renderIntelligenceHub(content);
     return;
   }
+
+  if (route.type === 'topics') { renderNavDdPage(content, topicsNavDdCfg()); return; }
+  if (route.type === 'trending') { renderNavDdPage(content, trendingNavDdCfg()); return; }
+  if (route.type === 'prompts') { renderNavDdPage(content, promptsNavDdCfg(route.view)); return; }
 
   if (route.type === 'search' || route.type === 'custom') {
     renderSearchPage(content, route.type === 'custom' ? decodeURIComponent(route.term || '') : '');
