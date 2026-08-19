@@ -21380,9 +21380,9 @@ body.home-search .home-sections { padding-top: 2rem !important; }
   letter-spacing: -0.012em; color: #16233d; transition: color .14s ease;
 }
 .dih-item-stamp {
-  align-self: flex-start; margin: 0 !important; padding: 3px 8px !important;
+  align-self: flex-start; margin: 0.32rem 0 0.42rem !important; padding: 4px 9px !important;
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 0.64rem !important; border-radius: 7px;
+  font-size: 0.66rem !important; border-radius: 7px;
   border: 1px solid color-mix(in srgb, #172554 8%, transparent) !important;
   background: rgba(255, 255, 255, 0.7) !important;
 }
@@ -21803,3 +21803,11 @@ body.home-search .home-sections .home-featured {
 .dih > .page-backbar { padding: 20px 0 0 !important; }
 .dih > .page-backbar + .dih-head { padding-top: 6px !important; }
 @media (max-width: 640px) { .dih > .page-backbar { padding-top: 14px !important; } }
+
+/* ═══ revamp845 — roomier head date/edition pill ════════════════════════════
+   (#img299) The stamp on the card head was cramped — give it more padding and
+   a wider internal gap so the date · glyph · edition can breathe. */
+.tdi-card--v3 .tdi-head .tdi-date {
+  padding: 7px 14px !important; gap: 9px !important;
+}
+.tdi-card--home .tdi-head .tdi-date { font-size: 0.82rem !important; }
