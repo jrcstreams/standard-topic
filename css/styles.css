@@ -21973,10 +21973,10 @@ body.home-search .home-sections .home-featured {
 /* Topic data label — weighted prefix + a distinct, not-huge value; tight. */
 .tdi-card--hero2 .tdi-topiclabel { display: flex; align-items: baseline; gap: 6px; margin: 0 0 0.4rem; }
 .tdi-card--hero2 .tdi-topiclabel-k {
-  font-family: var(--font-family); font-size: 0.83rem; font-weight: 600; color: #67748c;
+  font-family: var(--font-family); font-size: 0.83rem; font-weight: 600; color: #6b7684;
 }
 .tdi-card--hero2 .tdi-topiclabel-v {
-  font-family: var(--font-family); font-size: 0.83rem; font-weight: 700; color: #3a5cc8;
+  font-family: var(--font-family); font-size: 0.83rem; font-weight: 700; color: #3f4a5c;
 }
 .tdi-card--hero2 .tdi-summary { margin: 0 0 0.55rem !important; }
 .tdi-card--hero2 .tdi-actions { margin-top: 0 !important; }
