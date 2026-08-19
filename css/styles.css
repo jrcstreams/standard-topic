@@ -21840,3 +21840,43 @@ body.home-search .home-sections .home-featured {
    for these cards, and keep the head stamp visible even on narrow screens. */
 .tdi-card--v3:not(.is-open) .tdi-date--reflow { display: none !important; }
 .tdi-card--v3:not(.is-open) .tdi-headslot .tdi-date { display: inline-flex !important; }
+
+/* ═══ revamp848 — homepage Daily Intelligence card restructure ═══════════════
+   (#img304) Icon + title with a "View Intelligence Hub" button riding right of
+   the title (dropping below the sublabel when it can't fit); then the sublabel;
+   then a "Today's Briefing" sub-header with the date/edition to its right; the
+   summary; and a single "View briefing" button. */
+.tdi-card--homehero .tdi-head {
+  justify-content: space-between !important; gap: 6px 14px !important;
+  align-items: center; flex-wrap: nowrap;
+}
+.tdi-card--homehero .tdi-card-title { flex: 0 1 auto; min-width: 0; }
+.tdi-card--homehero .tdi-head-actions {
+  margin-left: auto; display: inline-flex; align-items: center; gap: 8px; flex: none;
+}
+.tdi-card--homehero .tdi-headclose { display: none !important; }
+.tdi-card--homehero.is-open .tdi-headclose { display: inline-flex !important; }
+.tdi-card--homehero.is-open .tdi-hub-inline { display: none !important; }
+
+/* The hub button relocates below the sublabel when the head can't hold it. */
+.tdi-card--homehero .tdi-hub-below { display: none !important; }
+.tdi-card--homehero.di-hub-wrapped .tdi-hub-inline { display: none !important; }
+.tdi-card--homehero.di-hub-wrapped .tdi-hub-below { display: inline-flex !important; margin: 0.55rem 0 0 !important; }
+.tdi-card--homehero.di-hub-wrapped.is-open .tdi-hub-below { display: none !important; }
+
+/* Today's Briefing sub-header + its date/edition pill. */
+.tdi-card--homehero .tdi-todayhead {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin: 0.95rem 0 0.4rem;
+}
+.tdi-card--homehero .tdi-today-title {
+  margin: 0; font-family: var(--font-display); font-size: 1.04rem; font-weight: 750;
+  letter-spacing: -0.01em; color: #16233d;
+}
+.tdi-card--homehero .tdi-todayhead .tdi-date {
+  display: inline-flex !important; align-items: center; gap: 9px; margin: 0 !important;
+  padding: 6px 13px; border-radius: 9px; font-size: 0.8rem;
+  border: 1px solid color-mix(in srgb, #172554 11%, transparent);
+  background: rgba(255, 255, 255, 0.72);
+}
+.tdi-card--homehero.is-open .tdi-todayhead { display: none !important; }

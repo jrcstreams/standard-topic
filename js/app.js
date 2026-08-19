@@ -1668,6 +1668,22 @@ function wireHomeDailyIntelligence(root) {
     });
   };
   btns.forEach((b) => b.addEventListener('click', () => setOpen(b.getAttribute('aria-expanded') !== 'true')));
+
+  // The "View Intelligence Hub" button rides right of the DI title when it fits;
+  // when the title + button would overflow the head it drops below the sublabel
+  // (revamp848). Measure and toggle a class.
+  const fitHub = () => {
+    const head = card.querySelector('.tdi-head');
+    const title = card.querySelector('.tdi-card-title');
+    const inline = card.querySelector('.tdi-hub-inline');
+    if (!head || !title || !inline) return;
+    card.classList.remove('di-hub-wrapped');
+    const need = title.getBoundingClientRect().width + inline.getBoundingClientRect().width + 26;
+    card.classList.toggle('di-hub-wrapped', need > head.getBoundingClientRect().width + 1);
+  };
+  requestAnimationFrame(fitHub);
+  window.addEventListener('resize', () => requestAnimationFrame(fitHub), { passive: true });
+
   fetchDailyBrief('home').then((d) => {
     if (!d || !card.isConnected) return;
     const sEl = card.querySelector('[data-tdi-summary]');
@@ -3865,11 +3881,11 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Access prompt library${HQ_ARROW}</button></div>
             </section>
           <section class="hf-card hf-card--di" aria-label="Daily Intelligence">
-            <div class="tdi-card tdi-card--v3 tdi-card--home" data-tdi>
+            <div class="tdi-card tdi-card--v3 tdi-card--home tdi-card--homehero" data-tdi>
               <div class="tdi-head">
                 <h2 class="tsec-title tdi-card-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>Daily Intelligence</h2>
-                <span class="tdi-headslot">
-                  <span class="tdi-date" data-tdi-date></span>
+                <span class="tdi-head-actions">
+                  <a class="tdi-go tdi-go--hub tdi-hub-inline" href="#/intelligence">View Intelligence Hub${SUBPAGE_ARROW}</a>
                   <button type="button" class="tdi-headclose" data-di-toggle aria-label="Close briefing">
                     <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     <span>Close Briefing</span>
@@ -3879,16 +3895,17 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               <div class="tdi-subrow">
                 <p class="tdi-sub">An AI-generated briefing, with two editions daily across each of our 100+ topics.</p>
               </div>
-              <span class="tdi-date tdi-date--reflow" data-tdi-date-reflow></span>
-              <div class="tdi-date tdi-date--lg" data-tdi-date-lg></div>
-              <div class="tdi-cardprov tdi-cardprov--stack">${DI_SPARK}<span>AI-generated text</span></div>
+              <a class="tdi-go tdi-go--hub tdi-hub-below" href="#/intelligence">View Intelligence Hub${SUBPAGE_ARROW}</a>
+              <div class="tdi-todayhead">
+                <h3 class="tdi-today-title">Today's Briefing</h3>
+                <span class="tdi-date" data-tdi-date></span>
+              </div>
               <p class="tdi-summary" data-tdi-summary>Preparing today's briefing…</p>
               <div class="tdi-actions">
-                <button type="button" class="tdi-go" data-di-toggle aria-expanded="false">
-                  <span class="tdi-go-open">Read today's briefing</span>
+                <button type="button" class="tdi-go tdi-go--brief" data-di-toggle aria-expanded="false">
+                  <span class="tdi-go-open">View briefing</span>
                   <span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
                 </button>
-                <a class="tdi-go tdi-go--hub" href="#/intelligence">Daily Intelligence Hub${SUBPAGE_ARROW}</a>
               </div>
               <div class="tdi-expand" data-di-expand><div class="tdi-expand-inner">
                 <div data-di-host></div>
