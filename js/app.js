@@ -1370,15 +1370,32 @@ function renderIntelligenceHub(container) {
   let groups = [];
   try { groups = (getTopicsGroupedByParent() || []).filter((g) => g && g.parent && g.parent.slug !== 'home'); } catch (_) {}
 
+  // revamp821: a card opens its OWN briefing in place, full width.
   const card = (t) => `
-    <article class="dih-card" data-dih-card="${escapeAttr(t.name)}">
+    <article class="dih-card" data-dih-card="${escapeAttr(t.name)}" data-dih-slug="${escapeAttr(t.slug)}">
       <span class="dih-card-head">
         <span class="dih-card-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
         <span class="dih-card-name">${escapeHTML(t.name)}</span>
+        <button type="button" class="dih-card-close" data-dih-toggle aria-label="Close ${escapeAttr(t.name)} briefing">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <span>Close</span>
+        </button>
       </span>
       <span class="tdi-date dih-card-stamp" data-dih-stamp-for="${escapeAttr(t.name)}"></span>
       <span class="dih-card-sum" data-dih-sum="${escapeAttr(t.name)}">Loading today's briefing…</span>
-      <a class="dih-card-go" href="#/topic/${escapeAttr(t.slug)}">Read briefing${SUBPAGE_ARROW}</a>
+      <button type="button" class="dih-card-go" data-dih-toggle aria-expanded="false">
+        <span class="dih-go-open">Read briefing</span>
+        <span class="dih-go-close">Hide briefing</span>${SUBPAGE_ARROW}
+      </button>
+      <div class="dih-card-expand" data-dih-expand><div class="dih-card-expand-inner">
+        <div data-dih-host></div>
+        <div class="tdi-closefoot">
+          <button type="button" class="tdi-closefoot-btn" data-dih-toggle>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <span>Close briefing</span>
+          </button>
+        </div>
+      </div></div>
     </article>`;
 
   container.innerHTML = `
@@ -1487,6 +1504,36 @@ function renderIntelligenceHub(container) {
       if (sum) sum.textContent = 'Briefing publishes with the next edition.';
     }
   };
+  // Each card expands its briefing in place, full width, one at a time.
+  let openCard = null;
+  const setCardOpen = (el, on) => {
+    const inner = el.querySelector('[data-dih-expand]')?.firstElementChild;
+    if (on && openCard && openCard !== el) setCardOpen(openCard, false);
+    el.classList.toggle('is-open', on);
+    el.querySelectorAll('[data-dih-toggle]').forEach((b) => b.setAttribute('aria-expanded', on ? 'true' : 'false'));
+    try { if (inner) inner.inert = !on; } catch (_) {}
+    openCard = on ? el : (openCard === el ? null : openCard);
+    if (!on || !inner || el.dataset.dihLoaded === '1') return;
+    el.dataset.dihLoaded = '1';
+    renderDailyIntelligence(inner.querySelector('[data-dih-host]') || inner, {
+      topic: el.dataset.dihCard, label: el.dataset.dihCard, slug: el.dataset.dihSlug, inline: true,
+    });
+    // Keep the card in view once the panel has taken its height.
+    setTimeout(() => {
+      try {
+        const r = el.getBoundingClientRect();
+        if (r.top < 80) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      } catch (_) {}
+    }, 360);
+  };
+  container.querySelectorAll('[data-dih-card]').forEach((el) => {
+    try { const i = el.querySelector('[data-dih-expand]')?.firstElementChild; if (i) i.inert = true; } catch (_) {}
+    el.querySelectorAll('[data-dih-toggle]').forEach((b) => b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setCardOpen(el, b.getAttribute('aria-expanded') !== 'true');
+    }));
+  });
+
   const cards = [...container.querySelectorAll('[data-dih-card]')];
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver((entries) => {

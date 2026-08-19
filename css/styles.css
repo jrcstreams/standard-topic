@@ -21237,3 +21237,70 @@ body.home-search .home-sections { padding-top: 2rem !important; }
 }
 .dih-card-stamp:empty { display: none; }
 .dih-card-go { text-decoration: none; }
+
+/* ═══ revamp821 ══════════════════════════════════════════════════════════════
+   A hub card opens its briefing in place — full width, on the same unfurl the
+   topic cards use. */
+.dih-card { position: relative; transition: border-color .18s ease, box-shadow .18s ease, background .18s ease; }
+.dih-card-head { position: relative; }
+
+/* The open card takes the whole row and reads as the focus of the band. */
+.dih-card.is-open {
+  grid-column: 1 / -1;
+  border-color: color-mix(in srgb, #2f4d9e 30%, transparent);
+  background: linear-gradient(180deg, #f6f9fd 0%, #eef3fb 100%);
+  box-shadow: 0 3px 18px -8px rgba(30, 58, 138, .22);
+}
+.dih-card.is-open .dih-card-sum { display: none; }
+.dih-card.is-open .dih-card-name { font-size: 1.12rem; }
+
+/* The panel unfurls from 0fr — no measuring, and it keeps easing as the
+   fetched briefing lands. */
+.dih-card-expand {
+  display: grid; grid-template-rows: 0fr;
+  margin-top: 0; padding-top: 0;
+  border-top: 1.5px solid transparent;
+  transition:
+    grid-template-rows .46s cubic-bezier(.22, .61, .21, 1),
+    margin-top .46s cubic-bezier(.22, .61, .21, 1),
+    padding-top .46s cubic-bezier(.22, .61, .21, 1),
+    border-top-color .3s ease .1s;
+}
+.dih-card-expand-inner {
+  min-height: 0; overflow: hidden;
+  opacity: 0; transform: translateY(-7px);
+  transition: opacity .3s ease, transform .42s cubic-bezier(.22, .61, .21, 1);
+}
+.dih-card.is-open .dih-card-expand {
+  grid-template-rows: 1fr; margin-top: 0.9rem; padding-top: 0.9rem;
+  border-top-color: #d3d9e4;
+}
+.dih-card.is-open .dih-card-expand-inner {
+  opacity: 1; transform: none; transition-delay: .12s, .1s;
+}
+
+/* Read → Hide on the CTA, and a ✕ in the card's own header while open. */
+.dih-go-close { display: none; }
+.dih-card.is-open .dih-go-open { display: none; }
+.dih-card.is-open .dih-go-close { display: inline; }
+.dih-card-go {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 0; background: none; padding: 0; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.84rem; font-weight: 650; color: #2c4f9e;
+}
+.dih-card-close {
+  display: none; align-items: center; gap: 6px; margin-left: auto; flex: none;
+  padding: 5px 10px; border-radius: 999px; cursor: pointer;
+  border: 1px solid color-mix(in srgb, #172554 11%, transparent);
+  background: rgba(255, 255, 255, 0.7);
+  font-family: var(--font-family); font-size: 0.74rem; font-weight: 620; color: #55668c;
+  transition: background .14s ease, color .14s ease, border-color .14s ease;
+}
+.dih-card.is-open .dih-card-close { display: inline-flex; }
+@media (hover: hover) {
+  .dih-card-close:hover { background: #fff; color: #172554; border-color: color-mix(in srgb, #172554 24%, transparent); }
+  .dih-card:not(.is-open):hover { border-color: color-mix(in srgb, #2f4d9e 34%, var(--color-surface-border)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dih-card-expand, .dih-card-expand-inner { transition: none !important; }
+}
