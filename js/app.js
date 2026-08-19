@@ -1353,7 +1353,7 @@ function diHeroCardHTML(o) {
   const X_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   const headerTitle = o.headerTitle || 'Daily Intelligence';
   const topicRow = o.topicLabel ? `<div class="tdi-topiclabel"><span class="tdi-topiclabel-k">Topic:</span><span class="tdi-topiclabel-v">${escapeHTML(o.topicLabel)}</span></div>` : '';
-  const hubBtn = o.hubButton ? `<a class="tdi-go tdi-go--hub" href="#/intelligence">View Intelligence Hub${SUBPAGE_ARROW}</a>` : '';
+  const hubTag = o.hubTagline ? `<p class="tdi-hubline">Looking for more briefings? <a href="#/intelligence">Access the Intelligence Hub${SUBPAGE_ARROW}</a></p>` : '';
   return `
     <div class="tdi-hero-head">
       <div class="tdi-hero-titlerow">
@@ -1374,8 +1374,8 @@ function diHeroCardHTML(o) {
         <button type="button" class="tdi-go tdi-go--brief" data-di-toggle aria-expanded="false">
           <span class="tdi-go-open">View briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
         </button>
-        ${hubBtn}
       </div>
+      ${hubTag}
       <div class="tdi-expand" data-di-expand><div class="tdi-expand-inner">
         <div data-di-host></div>
         <div class="tdi-closefoot">
@@ -3869,7 +3869,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Access prompt library${HQ_ARROW}</button></div>
             </section>
           <section class="hf-card hf-card--di" aria-label="Daily Intelligence">
-            <div class="tdi-card tdi-card--v3 tdi-card--home tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'AI-generated briefings, twice a day for each of our 100+ topics.', hubButton: true, topicLabel: 'Cross-Topic' })}
+            <div class="tdi-card tdi-card--v3 tdi-card--home tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'AI-generated briefings, twice a day for each of our 100+ topics.', hubTagline: true, topicLabel: 'Cross-Topic' })}
             </div>
           </section>
           </div>
@@ -3894,7 +3894,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
       if (tWrap) {
         // Render the full dozen; CSS visibility caps trim by viewport (6 on
         // phones, 8 mid-range, all 12 on desktop where the card is wider).
-        let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 10); } catch (_) {}
+        let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 12); } catch (_) {}
         tWrap.innerHTML = feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="hq-row"><span class="hq-row-mark" aria-hidden="true"></span><span class="hq-row-name">${escapeHTML(t.name)}</span></a>`).join('');
       }
       // Featured Prompts — the same featured set the Prompt Library leads with.

@@ -21992,3 +21992,32 @@ body.home-search .home-sections .home-featured {
 .tdi-card--hero2 .tdi-actions { margin-top: 0 !important; }
 .tdi-card--hero2.is-open .tdi-todayhead,
 .tdi-card--hero2.is-open .tdi-topiclabel { display: none !important; }
+
+/* ═══ revamp861 — DI header off-tone (not dark blue) + hub tagline + 3-col topics ═ */
+/* Header is a subtle off-tone of the card body with BLACK text, not dark blue. */
+.tdi-card--hero2 .tdi-hero-head {
+  background: #e4eaf5 !important;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent);
+}
+.tdi-card--hero2 .tdi-hero-head .tdi-card-title { color: #16233d !important; }
+.tdi-card--hero2 .tdi-hero-sub { color: #56658a !important; }
+.tdi-card--hero2 .tdi-hero-ic { background: #1d3a6b !important; color: #9ec2ff !important; }
+/* Hub tagline under the single "View briefing" button. */
+.tdi-card--hero2 .tdi-hubline {
+  margin: 0.75rem 0 0; font-family: var(--font-family); font-size: 0.85rem; color: #56658a;
+}
+.tdi-card--hero2 .tdi-hubline a {
+  color: #2f4d9e; font-weight: 650; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+}
+.tdi-card--hero2 .tdi-hubline a svg { width: 13px; height: 13px; }
+@media (hover: hover) { .tdi-card--hero2 .tdi-hubline a:hover { color: #1d4ed8; text-decoration: underline; } }
+.tdi-card--hero2.is-open .tdi-hubline { display: none; }
+
+/* Featured Topics: up to 3 columns on desktop, 2 on smaller, with a touch more
+   weight on each item so they stand out. */
+.hf-card--topics .hf-chips {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important; column-gap: 1.4rem !important;
+}
+@media (max-width: 900px) { .hf-card--topics .hf-chips { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } }
+@media (max-width: 380px) { .hf-card--topics .hf-chips { grid-template-columns: 1fr !important; } }
+.hf-card--topics .hq-row-name { font-weight: 550; }
