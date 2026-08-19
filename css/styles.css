@@ -22021,3 +22021,20 @@ body.home-search .home-sections .home-featured {
 @media (max-width: 900px) { .hf-card--topics .hf-chips { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } }
 @media (max-width: 380px) { .hf-card--topics .hf-chips { grid-template-columns: 1fr !important; } }
 .hf-card--topics .hq-row-name { font-weight: 550; }
+
+/* ═══ revamp862 — one definitive, even search-hero rhythm (overrides the pile
+   of accumulated body.home-search overrides). Air above the title == air below
+   the input; tidy even inner gaps; scales cleanly mobile→desktop. ═══ */
+body.home-search .home-search-hero { padding: 0 !important; }
+body.home-search .home-search-hero .search-panel-hero { margin: 0 !important; }
+body.home-search .home-search-hero .search-panel-hero-inner {
+  padding: 0.25rem 0 0 !important; margin: 0 !important; text-align: center !important;
+}
+body.home-search .home-search-hero .search-panel-title { margin: 0 auto clamp(0.6rem, 1.2vw, 0.95rem) !important; }
+body.home-search .home-search-hero .search-panel-tagline { margin: 0 auto !important; }
+body.home-search .home-search-hero .search-panel-barrow {
+  padding: clamp(0.9rem, 1.9vw, 1.4rem) 0.2rem 0 !important; margin: 0 !important;
+}
+/* Bottom air below the input matches the top air above the title (the page's
+   content offset supplies the top air; this supplies the bottom). */
+body.home-search .home-search-hero { padding: 0 0 clamp(1.15rem, 2.3vw, 2.2rem) !important; }
