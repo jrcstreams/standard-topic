@@ -22231,3 +22231,10 @@ body.home-search .home-search-hero .search-panel-hero-inner { padding-top: 0 !im
   .tdi-hero-body--split .tdi-hubcard-sub { flex: 1 1 100%; order: 3; }
   .tdi-hero-body--split .tdi-hubcard-go { margin: 0; padding: 0; }
 }
+
+/* ═══ revamp880 — homepage briefing button reads "Today's briefing" at ALL
+   widths. It was only swapped ≤1320px, so wide desktop still showed the
+   topic-page label "View briefing" (#img inconsistency). "View briefing" stays
+   the topic-page label. ═══ */
+.tdi-card--home .tdi-go .tdi-go-open { font-size: 0; }
+.tdi-card--home .tdi-go .tdi-go-open::after { content: "Today\2019s briefing"; font-size: 0.86rem; }
