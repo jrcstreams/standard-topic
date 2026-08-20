@@ -17312,7 +17312,7 @@ body.home-search .home-search-hero .search-panel-barrow {
 }
 /* The bar's own vertical padding was stacking with the column gap and the hero's
    padding, producing that variable void above POPULAR TOPICS. */
-body.home-search .home-search-hero { padding-bottom: clamp(1.4rem, 2vw, 2.35rem) !important; }
+body.home-search .home-search-hero { padding-bottom: clamp(1.35rem, 2.3vw, 2.3rem) !important; }
 body.home-search .home-search-hero .search-panel-barrow { padding-bottom: 0 !important; }
 body.home-search .home-search-hero .search-panel-hero-inner { padding-bottom: 1rem !important; }
 
@@ -22107,5 +22107,11 @@ body.home-search.app-mode .topic-layout.home-grid { gap: clamp(0.5rem, 1vw, 0.95
 .sticky-hero-inner.nav-icon-search #nav-search .navbtn-ico svg { width: 18px !important; height: 18px !important; }
 
 /* revamp872 — tighten the space below the search input closer to the top air. */
-body.home-search .home-search-hero { padding-bottom: clamp(1.4rem, 2vw, 2.35rem) !important; }
-body.home-search.app-mode .topic-layout.home-grid { gap: clamp(0.2rem, 0.35vw, 0.4rem) !important; }
+body.home-search .home-search-hero { padding-bottom: clamp(1.35rem, 2.3vw, 2.3rem) !important; }
+body.home-search.app-mode .topic-layout.home-grid { gap: 0 !important; }
+
+
+/* revamp875 — no extra white gap between the grey search band and the content;
+   the section starts right at the grey band bottom so grey-below-input == grey-
+   above-title. */
+body.home-search .home-sections, body.home-search .home-main { margin-top: 0 !important; padding-top: 0 !important; }
