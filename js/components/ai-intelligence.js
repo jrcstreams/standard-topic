@@ -2208,7 +2208,17 @@ function splitBriefItems(body) {
   return groups.map((g) => {
     const raw = g.lines.join('\n');
     const m = raw.match(/^\*\*(.+?)\*\*/);
-    return { raw, lede: (m ? m[1] : g.lines[0]).replace(/[.:]\s*$/, ''), text: raw.replace(/\*\*/g, '') };
+    // revamp894: `rest` is the body WITHOUT its leading bold lede, so the
+    // headline can render on its own line above the summary instead of running
+    // inline into it (which read as one continuous block of text).
+    const rest = m ? raw.slice(m[0].length).replace(/^\s*[—–-]\s*/, '').trim() : raw;
+    return {
+      raw,
+      lede: (m ? m[1] : g.lines[0]).replace(/[.:]\s*$/, ''),
+      rest,
+      hasLede: !!m,
+      text: raw.replace(/\*\*/g, ''),
+    };
   });
 }
 
@@ -2295,7 +2305,8 @@ export function renderDailyIntelligence(container, scope) {
       ${items.length ? `<section class="di-briefs">
         <h3 class="di-sectitle">Briefings</h3>
         ${items.map((it, i) => `<article class="dib">
-          <div class="dib-body aii-sec-body">${renderBriefBody(it.raw, null)}</div>
+          ${it.hasLede ? `<h4 class="dib-head">${esc(it.lede)}</h4>` : ''}
+          <div class="dib-body aii-sec-body">${renderBriefBody(it.hasLede ? it.rest : it.raw, null)}</div>
           ${srcChips(buckets[i])}
         </article>`).join('')}
       </section>` : ''}

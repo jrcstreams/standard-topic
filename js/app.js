@@ -1562,6 +1562,24 @@ function diHeroCardHTML(o) {
         ${hubCard}
       </div>
       <div class="tdi-expand" data-di-expand><div class="tdi-expand-inner">
+        <!-- revamp894: the collapsed card's identity (title, edition stamp,
+             topic) is hidden while open, which left the reader with no idea
+             what they were reading. Carry it into the open state, with an X to
+             close in the top-right. [data-tdi-date] is filled by the same
+             querySelectorAll that fills the collapsed stamp. -->
+        <div class="tdi-openhead">
+          <div class="tdi-openhead-main">
+            <span class="tdi-openhead-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
+            <div class="tdi-openhead-tx">
+              <h3 class="tdi-openhead-title">The Daily Read</h3>
+              <div class="tdi-openhead-meta">
+                <span class="tdi-date tdi-date--open" data-tdi-date></span>
+                ${o.topicLabel ? `<span class="tdi-openhead-topic"><span class="tdi-openhead-topic-k">Topic:</span>${escapeHTML(o.topicLabel)}</span>` : ''}
+              </div>
+            </div>
+          </div>
+          <button type="button" class="tdi-openx" data-di-toggle aria-label="Close briefing">${X_SVG}</button>
+        </div>
         <div data-di-host></div>
         <div class="tdi-closefoot">
           <button type="button" class="tdi-closefoot-btn" data-di-toggle>${X_SVG}<span>Close Briefing</span></button>

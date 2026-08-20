@@ -22533,3 +22533,65 @@ body.home-search .home-sections .home-featured { margin-top: clamp(1.1rem, 2.4vw
   .ph-build { padding: 0.95rem 1rem 1rem; }
   .ph-build-btn { margin-top: 0.7rem; }
 }
+
+/* ═══ revamp894 — expanded Daily Read: carry the card's identity in, and give
+   each briefing a real headline ══════════════════════════════════════════════
+
+   Opening the card hid the title, edition stamp and topic (they belong to the
+   collapsed preview), so the reader lost track of what they were reading. The
+   open state now restates all three, with an X to close in the top-right to
+   match the Close button at the foot. */
+
+.tdi-openhead {
+  display: none;                 /* only exists in the open state */
+  align-items: flex-start; justify-content: space-between; gap: 1rem;
+  margin: 0 0 1.1rem; padding-bottom: 0.85rem;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 13%, transparent);
+}
+.tdi-card--hero2.is-open .tdi-openhead { display: flex; }
+.tdi-openhead-main { display: flex; align-items: center; gap: 0.65rem; min-width: 0; }
+.tdi-openhead-ic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 8px; background: #1d3a6b; color: #9ec2ff;
+}
+.tdi-openhead-ic svg { width: 19px; height: 19px; }
+.tdi-openhead-tx { min-width: 0; }
+.tdi-openhead-title {
+  margin: 0; font-family: var(--font-display); font-size: 1.08rem; font-weight: 800;
+  letter-spacing: -0.018em; color: #16233d; line-height: 1.2;
+}
+.tdi-openhead-meta {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem 0.6rem; margin-top: 0.25rem;
+}
+.tdi-openhead-topic {
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 600; color: #46557a;
+}
+.tdi-openhead-topic-k { color: #8592ad; font-weight: 600; margin-right: 0.28rem; }
+/* The stamp reuses the collapsed pill's look at a slightly smaller scale. */
+.tdi-date--open { font-size: 0.76rem !important; }
+/* X close, top-right. */
+.tdi-openx {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--color-surface-border); background: #fff; color: #6f7d99;
+  transition: background .14s ease, color .14s ease, border-color .14s ease;
+}
+@media (hover: hover) {
+  .tdi-openx:hover { background: #eef2f9; color: #1a2740; border-color: #cbd7ea; }
+}
+
+/* ── Section titles: a step down. They were competing with the card title. ── */
+.di-sectitle {
+  font-size: 1.02rem !important; font-weight: 750 !important;
+  margin-bottom: 0.7rem !important; padding-bottom: 0.4rem !important;
+  border-bottom-width: 1px !important;
+}
+
+/* ── Briefing items: headline on its own line above the summary ── */
+.dib-head {
+  margin: 0 0 0.32rem;
+  font-family: var(--font-display); font-size: 0.99rem; font-weight: 750;
+  letter-spacing: -0.012em; line-height: 1.32; color: #16233d;
+}
+.dib { padding: 1rem 0 0.95rem; }
+.dib-body { color: #3c4863; }
