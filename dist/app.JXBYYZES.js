@@ -1029,17 +1029,18 @@ ${k}`),M.length?M.join(`
              close in the top-right. [data-tdi-date] is filled by the same
              querySelectorAll that fills the collapsed stamp. -->
         <div class="tdi-openhead">
-          <div class="tdi-openhead-main">
+          <!-- revamp916: icon + title share the top row (with the close X);
+               the topic standfirst and edition stamp sit BELOW it, aligned to
+               the icon's left edge rather than indented under the title. -->
+          <div class="tdi-openhead-top">
             <span class="tdi-openhead-ic" aria-hidden="true">${Sn}</span>
-            <div class="tdi-openhead-tx">
-              <h3 class="tdi-openhead-title">The Daily Read</h3>
-              ${e.topicLabel?`<div class="tdi-openhead-topic">${R(e.topicLabel)}</div>`:""}
-              <div class="tdi-openhead-meta">
-                <span class="tdi-date tdi-date--open" data-tdi-date></span>
-              </div>
-            </div>
+            <h3 class="tdi-openhead-title">The Daily Read</h3>
+            <button type="button" class="tdi-openx" data-di-toggle aria-label="Close briefing">${t}</button>
           </div>
-          <button type="button" class="tdi-openx" data-di-toggle aria-label="Close briefing">${t}</button>
+          ${e.topicLabel?`<div class="tdi-openhead-topic">${R(e.topicLabel)}</div>`:""}
+          <div class="tdi-openhead-meta">
+            <span class="tdi-date tdi-date--open" data-tdi-date></span>
+          </div>
         </div>
         <div data-di-host></div>
         <div class="tdi-closefoot">

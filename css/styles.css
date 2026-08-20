@@ -23186,3 +23186,63 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 .tdi-card--hero2 .tdi-actions { margin-top: 0.8rem !important; }
 /* The open state keeps its own header, so hide the preview stamp row there. */
 .tdi-card--hero2.is-open .tdi-stamprow { display: none !important; }
+
+/* ═══ revamp916 — expanded Daily Read header ═════════════════════════════════
+   Title + close pulled up to the card's top edge; topic and edition aligned to
+   the ICON's left edge (not indented under the title) and scaled up; the rule
+   tucked close under the stamp; and the AI-generated label made visible and
+   readable directly beneath that rule. */
+
+.tdi-card--hero2.is-open .tdi-hero-body { padding-top: 1rem !important; }
+.tdi-openhead {
+  display: block !important;
+  margin: 0 0 1rem !important;
+  padding-bottom: 0.7rem !important;
+}
+/* Row 1 — icon, title, close. */
+.tdi-openhead-top { display: flex; align-items: center; gap: 0.7rem; }
+.tdi-openhead-top .tdi-openhead-title { margin: 0; flex: 1 1 auto; }
+.tdi-openhead-top .tdi-openx { flex: none; margin-left: auto; }
+
+/* Rows 2/3 — flush to the card's left edge, a step larger. */
+.tdi-openhead-topic {
+  margin: 0.5rem 0 0 !important;
+  font-size: 0.84rem !important; letter-spacing: 0.085em !important;
+  color: #52618a !important;
+}
+.tdi-openhead-meta { margin: 0.45rem 0 0 !important; }
+
+/* Edition stamp keeps a container — light grey on a white card. */
+.tdi-date--open {
+  font-size: 0.84rem !important;
+  display: inline-flex !important; align-items: center; gap: 7px;
+  padding: 0.34rem 0.7rem !important;
+  border-radius: 8px !important;
+  background: #f1f4f9 !important;
+  border: 1px solid color-mix(in srgb, #2f4d9e 10%, transparent) !important;
+}
+
+/* AI-generated label — was hidden inline and tiny elsewhere. */
+.di-page--inline .di-prov2 { display: inline-flex !important; }
+.tdi-card--hero2.is-open .di-prov2,
+.dih-brief .di-prov2 {
+  font-size: 0.82rem !important; font-weight: 600 !important;
+  color: #5b6b8c !important; margin: 0 0 1rem !important;
+}
+.tdi-card--hero2.is-open .di-prov2 svg,
+.dih-brief .di-prov2 svg { width: 15px !important; height: 15px !important; }
+
+/* revamp916b — the stamp container was being zeroed by
+   `.tdi-card--v3 .tdi-date { background/border/padding: none !important }`,
+   which outranks a bare `.tdi-date--open`. Match that specificity. Also close
+   the gap between the stamp and the rule beneath it. */
+.tdi-card--v3 .tdi-date.tdi-date--open,
+.tdi-card--hero2 .tdi-date.tdi-date--open,
+.dih-brief .tdi-date.tdi-date--open {
+  background: #f1f4f9 !important;
+  border: 1px solid color-mix(in srgb, #2f4d9e 10%, transparent) !important;
+  padding: 0.34rem 0.7rem !important;
+  border-radius: 8px !important;
+}
+.tdi-openhead { padding-bottom: 0.3rem !important; }
+.tdi-openhead-meta { margin-bottom: 0 !important; }
