@@ -1108,7 +1108,6 @@ function wirePromptsDropdown(panel, initialView) {
         const railHTML = picks.map((pk, i) => `
           <button type="button" class="ph-fitem" data-ph-feat="${i}">
             <span class="ph-fitem-name">${escapeHTML(pk.sh.name)}</span>
-            <span class="ph-fitem-topic">${escapeHTML(pk.topic.name)}</span>
             <span class="ph-fitem-go" aria-hidden="true">${PH_ARROW_R}</span>
           </button>`).join('');
         rail.innerHTML = railHTML;
@@ -1121,7 +1120,7 @@ function wirePromptsDropdown(panel, initialView) {
           const CAP = 4;
           if (picks.length > CAP) {
             moreBtn.hidden = false;
-            const sync = () => { moreBtn.textContent = sec.classList.contains('is-expanded') ? 'Show fewer' : `Show all ${picks.length} featured prompts`; };
+            const sync = () => { moreBtn.textContent = sec.classList.contains('is-expanded') ? 'Show less' : 'Show more'; };
             sync();
             moreBtn.addEventListener('click', () => { sec.classList.toggle('is-expanded'); sync(); });
           }

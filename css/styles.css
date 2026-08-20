@@ -22969,3 +22969,42 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
    variant lives outside a card, so make it visible on its own. */
 .tdi-openhead--hub { display: flex !important; margin-top: 0.25rem; }
 .dih-brief-title { margin: 0 0 0.2rem !important; }
+
+/* ═══ revamp907 — Prompts page polish ════════════════════════════════════════
+   Featured rows lose the topic sublabel, so each row is a single line (or a
+   wrapped title) with the chevron aligned to its FIRST line rather than to the
+   block's centre. "Show all N featured prompts" becomes a compact "Show more"
+   with a +. Build card aligns its icon with the title, and the gap to Prompts
+   by Topic is opened up. */
+
+.ph-fitem-topic { display: none !important; }
+/* Chevron tracks the first line of a wrapping title. */
+.ph-fitem { align-items: start !important; }
+.ph-fitem-go {
+  grid-row: 1 !important; align-self: start !important;
+  margin-top: 0.12rem !important;
+}
+.ph-fitem-name { grid-row: 1 !important; }
+
+/* Compact expander with a + affordance. */
+.ph-flist-more {
+  gap: 0.4rem; padding: 0.42rem 0.9rem !important; font-size: 0.8rem !important;
+}
+.ph-flist-more::before { content: "+"; font-size: 0.95rem; line-height: 1; font-weight: 700; }
+.ph-featured.is-expanded .ph-flist-more::before { content: "\2212"; }   /* minus */
+
+/* Build card: icon inline with the title, like the promo card. */
+.ph-build { position: relative; }
+.ph-build-ic { position: absolute; top: 1.05rem; left: 1.1rem; }
+.ph-build-title {
+  margin: 0 0 0 2.55rem !important;
+  min-height: 32px; display: flex; align-items: center;
+}
+.ph-build-sub { margin-top: 0.55rem !important; }
+@media (max-width: 860px) {
+  .ph-build-ic { top: 0.95rem; left: 1rem; }
+}
+
+/* Air between the top row and Prompts by Topic. */
+.prompts-home .ph-top { margin-bottom: 0.9rem; }
+.prompts-home .ph-lib { margin-top: 1.4rem; }
