@@ -21153,11 +21153,8 @@ body.pagenav-mode.sticky-always #content { padding-top: calc(var(--nav-h) + 1.2r
   }
 }
 .tdi-card--home .tdi-actions { flex-wrap: nowrap; }
-@media (max-width: 1320px) {
-  .tdi-card--home .tdi-go-open::after { content: "Today's briefing"; }
-  .tdi-card--home .tdi-go-open { font-size: 0; }
-  .tdi-card--home .tdi-go-open::after { font-size: 0.86rem; }
-}
+/* revamp880: briefing button reads "Read Briefing" universally (base markup) —
+   no responsive label swap. */
 /* Air above and below the row, so it isn't riding the hero or the news. */
 body.home-search .home-sections { padding-top: 2rem !important; }
 .home-featured { margin-bottom: 2.4rem !important; }
@@ -22231,10 +22228,3 @@ body.home-search .home-search-hero .search-panel-hero-inner { padding-top: 0 !im
   .tdi-hero-body--split .tdi-hubcard-sub { flex: 1 1 100%; order: 3; }
   .tdi-hero-body--split .tdi-hubcard-go { margin: 0; padding: 0; }
 }
-
-/* ═══ revamp880 — homepage briefing button reads "Today's briefing" at ALL
-   widths. It was only swapped ≤1320px, so wide desktop still showed the
-   topic-page label "View briefing" (#img inconsistency). "View briefing" stays
-   the topic-page label. ═══ */
-.tdi-card--home .tdi-go .tdi-go-open { font-size: 0; }
-.tdi-card--home .tdi-go .tdi-go-open::after { content: "Today\2019s briefing"; font-size: 0.86rem; }

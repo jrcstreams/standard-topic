@@ -1409,7 +1409,7 @@ function diHeroCardHTML(o) {
           <p class="tdi-summary" data-tdi-summary>Preparing today\u2019s briefing\u2026</p>
           <div class="tdi-actions">
             <button type="button" class="tdi-go tdi-go--brief" data-di-toggle aria-expanded="false">
-              <span class="tdi-go-open">View briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
+              <span class="tdi-go-open">Read Briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
             </button>
           </div>
         </div>
