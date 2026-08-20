@@ -23055,3 +23055,59 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
     border-radius: 0 !important; padding: 0 !important; box-shadow: none !important;
   }
 }
+
+/* ═══ revamp909 — search title centring + Daily Read open-header alignment ═══
+
+   The search title wasn't centring because .search-panel-hero-inner was
+   shrink-to-fit (182px) inside a 760px bar — text-align:center had nothing to
+   centre within. Give it the bar's width and it lines up with the input. */
+.search-panel--modal .search-panel-hero,
+.search-panel--modal .search-panel-hero-inner {
+  width: 100% !important; justify-self: stretch !important;
+}
+.search-panel--modal .search-panel-title { width: 100% !important; }
+
+/* Expanded Daily Read: the icon was centred against the WHOLE text block
+   (title + topic + edition), which pushed it down beside the topic line. Align
+   it to the TITLE row and scale it back. */
+.tdi-openhead-main { align-items: flex-start !important; }
+.tdi-openhead-ic {
+  width: 26px !important; height: 26px !important;
+  border-radius: 7px !important; margin-top: 2px !important;
+}
+.tdi-openhead-ic svg { width: 16px !important; height: 16px !important; }
+
+/* ═══ revamp910 — prompt section headers, nested topic lists, first-row rules ═
+
+   Topic pages rendered "Topic-Specific Prompts" / "Evergreen Prompts" as large
+   display headings; the main Prompts section uses a small caps label. Bring the
+   topic page into line so the two read as the same component. */
+[data-prompts-host] .aii-fi-sectitle,
+.tai-acc-body .aii-fi-sectitle,
+.topic-prompts-host .aii-fi-sectitle {
+  font-family: var(--font-family) !important;
+  font-size: 0.74rem !important; font-weight: 700 !important;
+  letter-spacing: 0.09em !important; text-transform: uppercase !important;
+  color: #6f7d99 !important;
+}
+[data-prompts-host] .aii-fi-sechead,
+.tai-acc-body .aii-fi-sechead {
+  margin-bottom: 0.5rem !important; padding-bottom: 0.45rem !important;
+  border-bottom: 1px solid var(--color-surface-border) !important;
+}
+[data-prompts-host] .aii-fi-secsub,
+.tai-acc-body .aii-fi-secsub { display: none !important; }
+
+/* First prompt row meets the rule above it (both columns). */
+.aii-fi-acclist > .aii-fi-acc:first-child,
+.aii-fi-acclist > .aii-fi-acc:nth-child(2) { border-top: 0 !important; }
+
+/* ── Prompts by Topic: nested subtopic list ──
+   The rows were cramped against each other and against the parent head. */
+.pdir-acc.is-open > .pdir-accsum,
+.pdir-card.is-open > .pdir-cardhead {
+  background: #e8edf6 !important; border-radius: 0 !important;
+}
+.pdir-grid { gap: 0 1.6rem !important; padding-top: 0.35rem !important; }
+.pdir-grid > * { padding-top: 0.62rem !important; padding-bottom: 0.62rem !important; }
+.pdir-cardbody, .pdir-acc-body { padding-top: 0.5rem !important; }
