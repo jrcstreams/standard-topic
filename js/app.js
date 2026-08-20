@@ -1389,9 +1389,9 @@ function diHeroCardHTML(o) {
         <p class="tdi-hubcard-sub tdi-hubcard-sub--d">AI-generated briefings across 100+ topics, refreshed morning and night.</p>
         <p class="tdi-hubcard-sub tdi-hubcard-sub--m">AI-generated briefings across 100+ topics, refreshed morning and night.</p>
         <div class="tdi-hubcard-feats">
-          <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_SUN}</span><span class="tdi-hubfeat-tx">Morning &amp; Evening Editions</span></div>
-          <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_DOC}</span><span class="tdi-hubfeat-tx">100+ Topics Covered</span></div>
-          <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_AI}</span><span class="tdi-hubfeat-tx">AI-Powered Summaries</span></div>
+          <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_AI}</span><span class="tdi-hubfeat-tx">AI-generated</span></div>
+          <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_SUN}</span><span class="tdi-hubfeat-tx">Updates twice daily</span></div>
+          <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_DOC}</span><span class="tdi-hubfeat-tx">100+ topics</span></div>
         </div>
         <a class="tdi-hubcard-go tdi-hubcard-cta" href="#/intelligence">Explore the Daily Intelligence Hub${SUBPAGE_ARROW}</a>
       </aside>` : '';
