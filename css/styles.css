@@ -22089,3 +22089,9 @@ body.home-search .home-search-hero { padding: 0 0 clamp(0.7rem, 1.4vw, 1.4rem) !
   background: color-mix(in srgb, var(--hf-accent, #2f4d9e) 12%, #fff); color: var(--hf-accent, #2f4d9e);
 }
 .hf-card .hf-ic svg { width: 17px; height: 17px; }
+
+/* ═══ revamp870 — kill the oversized gap below the search input on wide screens.
+   Tighten the hero's bottom air and the grid gap so the content sits a
+   consistent, modest distance below the search bar at every width. */
+body.home-search .home-search-hero { padding-bottom: clamp(0.5rem, 0.9vw, 1rem) !important; }
+body.home-search.app-mode .topic-layout.home-grid { gap: clamp(0.5rem, 1vw, 0.95rem) !important; }
