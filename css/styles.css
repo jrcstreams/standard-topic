@@ -22450,3 +22450,86 @@ body.home-search .home-sections .home-featured { margin-top: clamp(1.1rem, 2.4vw
    match any single claim still belong to the briefing as a whole. */
 .di-briefsrc { margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid var(--color-surface-border, #e4eaf3); }
 .di-briefsrc .dib-srcs { margin-top: 0.55rem; }
+
+/* ═══ revamp893 — Prompts landing: Featured + Build as a two-column top row ═══
+   "Build a Prompt" moves out of the page header and becomes a compact card
+   sitting beside Featured Prompts. Featured takes the lion's share; Build only
+   needs enough room to read. DOM order is Featured → Build, so the mobile stack
+   lands in the requested order without any reordering hacks. */
+
+.ph-top {
+  display: grid;
+  grid-template-columns: minmax(0, 75fr) minmax(0, 25fr);
+  gap: 1.15rem;
+  align-items: start;
+}
+/* As the viewport narrows, give Build progressively more room so its text stays
+   readable, then stack before it gets squeezed. */
+@media (max-width: 1180px) { .ph-top { grid-template-columns: minmax(0, 70fr) minmax(0, 30fr); } }
+@media (max-width: 1000px) { .ph-top { grid-template-columns: minmax(0, 64fr) minmax(0, 36fr); } }
+@media (max-width: 860px)  { .ph-top { grid-template-columns: 1fr; gap: 1rem; } }
+
+/* Featured keeps its card shell; it just lives in a grid cell now. */
+.ph-top .ph-featured { margin: 0 !important; height: 100%; }
+
+/* The featured list is container-driven (auto-fit), not viewport-driven — the
+   card is ~75% width now, so a viewport media query would have mis-counted the
+   columns. It fills as many readable columns as the card can actually hold. */
+.ph-featured .ph-flist {
+  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)) !important;
+  gap: 0 1.9rem !important;
+}
+
+/* Prompt rows: lighter, cleaner. The names were display-face at 700 which read
+   as a stack of headlines rather than a scannable list. */
+.ph-fitem-name {
+  font-family: var(--font-family) !important;
+  font-size: 0.9rem !important; font-weight: 600 !important;
+  letter-spacing: 0 !important; color: #2b3a55 !important;
+}
+.ph-fitem-topic { font-size: 0.75rem !important; font-weight: 500 !important; }
+.ph-fitem { padding: 0.62rem 2px !important; }
+
+/* ── Build card ── */
+.ph-build {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;
+  padding: 1.05rem 1.1rem 1.15rem;
+  border: 1px solid var(--color-surface-border); border-radius: 16px;
+  background: #f4f7fc;
+  /* Hug the content — stretching to Featured's height left a large dead area
+     under the button. */
+  align-self: start;
+}
+.ph-build-ic {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 9px;
+  background: #fff; color: #2f4d9e;
+  box-shadow: 0 1px 3px rgba(22, 35, 61, 0.10);
+}
+.ph-build-ic svg { width: 16px; height: 16px; }
+.ph-build-title {
+  margin: 0.3rem 0 0; font-family: var(--font-display);
+  font-size: 1rem; font-weight: 700; letter-spacing: -0.015em; color: #26375a;
+}
+.ph-build-sub {
+  margin: 0; font-family: var(--font-family); font-size: 0.82rem;
+  line-height: 1.5; color: var(--color-text-muted);
+}
+.ph-build-btn {
+  margin-top: 0.85rem; padding: 0.5rem 0.95rem;
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  border-radius: 999px; border: 1.5px solid color-mix(in srgb, #2f4d9e 34%, transparent);
+  background: #fff; color: #2f4d9e;
+  font-family: var(--font-family); font-size: 0.84rem; font-weight: 620; cursor: pointer;
+  transition: background .14s ease, color .14s ease, border-color .14s ease;
+}
+.ph-build-btn svg { width: 14px; height: 14px; transition: transform .14s ease; }
+@media (hover: hover) {
+  .ph-build-btn:hover { background: #2f4d9e; border-color: #2f4d9e; color: #fff; }
+  .ph-build-btn:hover svg { transform: translateX(3px); }
+}
+/* Stacked: the card reads as a compact banner rather than a tall block. */
+@media (max-width: 860px) {
+  .ph-build { padding: 0.95rem 1rem 1rem; }
+  .ph-build-btn { margin-top: 0.7rem; }
+}

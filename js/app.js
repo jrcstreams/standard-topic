@@ -1042,6 +1042,7 @@ function wirePromptsDropdown(panel, initialView) {
     setHeadBtns(true);
     root.innerHTML = `
       <div class="prompts-home">
+        <div class="ph-top">
         <section class="ph-featured" data-ph-featured hidden>
           <div class="ph-sec-head ph-sec-head--row">
             <div class="ph-sec-tx">
@@ -1052,6 +1053,16 @@ function wirePromptsDropdown(panel, initialView) {
           <div class="ph-flist" data-ph-rail></div>
           <button type="button" class="ph-flist-more" data-ph-more hidden></button>
         </section>
+        <!-- revamp893: Build sits AFTER Featured in the DOM so mobile stacks in
+             the requested order (Featured, then Build). On desktop the .ph-top
+             grid places it in the narrow right column. -->
+        <aside class="ph-build">
+          <span class="ph-build-ic" aria-hidden="true">${PROMPTS_BUILD_HEAD_IC}</span>
+          <h3 class="ph-build-title">Build a Prompt</h3>
+          <p class="ph-build-sub">Start from scratch and shape a prompt around any topic.</p>
+          <button type="button" class="ph-build-btn" data-cta-build>Start building${PH_ARROW_R}</button>
+        </aside>
+        </div>
         <section class="ph-lib">
           <div class="ph-sec-head">
             <h3 class="ph-sec-title">Prompts by Topic</h3>
@@ -1072,7 +1083,9 @@ function wirePromptsDropdown(panel, initialView) {
         </section>
       </div>`;
 
-    root.querySelector('[data-cta-build]')?.addEventListener('click', () => showBuild());
+    // revamp893: there are two build triggers now (the top card + the closing
+    // CTA) — querySelector would only have wired the first.
+    root.querySelectorAll('[data-cta-build]').forEach((b) => b.addEventListener('click', () => showBuild()));
     root.querySelector('[data-cta-search]')?.addEventListener('click', () => openSearchFromNav());
 
     // ── Featured rail ──────────────────────────────────────────────────────
@@ -1228,11 +1241,9 @@ function promptsNavDdCfg(view) {
     title: 'Prompts', ariaLabel: 'Prompts',
     subtitle: 'Ready-made prompts for every topic — or build your own.',
     icon: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
-    // Head-action buttons live in the sticky dropdown header (#img304); both quiet
-    // grey pills. Only shown on the landing view (toggled in wirePromptsDropdown).
-    headButtons: [
-      { label: 'Build Prompt', href: '#/prompts/build', icon: PROMPTS_BUILD_HEAD_IC, onClick: () => { if (promptsDdShowView) promptsDdShowView('build'); } },
-    ],
+    // revamp893: "Build Prompt" is no longer a header action — it's a card at the
+    // top of the body, beside Featured Prompts (see showLanding).
+    headButtons: [],
     contentHTML: '<div class="prompts-dd" data-prompts-root></div>',
     onClose: userCloseNavDropdown,
     wire: (panel) => wirePromptsDropdown(panel, view),
