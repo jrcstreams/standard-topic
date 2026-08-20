@@ -22857,3 +22857,40 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
    started at the padding edge rather than at the rule. */
 #section-newsfeed .news-list .news-card:first-child .news-card-link { padding-top: 0.35rem !important; }
 .news-list .news-card:first-child { border-top: 0 !important; }
+
+/* ═══ revamp902 — open prompt accordion: match the site's accordion pattern ═══
+   The open state was a rounded, blue-tinted, shadowed frame — a different
+   visual language from every other accordion on the site. It now behaves like
+   Topics: a darker SQUARE header band that meets the rules around it, with a
+   plain body beneath. */
+.search-aii-host .aii-fi-acc.is-open,
+.aii-fi-acclist > .aii-fi-acc.is-open,
+.aii-fi-acc.is-open {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+/* Header band = the active state, squared. */
+.search-aii-host .aii-fi-acc.is-open > .aii-fi-accsum,
+.aii-fi-acc.is-open > .aii-fi-accsum {
+  background: #e8edf6 !important;
+  border-radius: 0 !important;
+}
+.search-aii-host .aii-fi-acc.is-open > .aii-fi-accsum .aii-fi-acc-name,
+.aii-fi-acc.is-open > .aii-fi-accsum .aii-fi-acc-name { color: #1b2b4d !important; }
+/* Body sits plainly under the band. */
+.search-aii-host .aii-fi-acc.is-open .aii-emenu-host,
+.aii-fi-acc.is-open .aii-emenu-host {
+  background: transparent !important; border-radius: 0 !important;
+}
+
+/* revamp903 — hub cards: the card title turned link-blue on hover (they're
+   anchors), which read as a text link inside a card that is already clickable.
+   Keep the card's own lift/border response; drop the blue on the title. */
+@media (hover: hover) {
+  .dih-card:hover .dih-card-name,
+  .dih-card:hover .dih-card-title { color: inherit !important; }
+  .dih-card:hover { text-decoration: none !important; }
+}
+.dih-card .dih-card-name, .dih-card .dih-card-title { transition: none !important; }
