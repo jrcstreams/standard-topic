@@ -22640,3 +22640,21 @@ body.home-search .home-sections .home-featured { margin-top: clamp(1.1rem, 2.4vw
 /* ── Standalone Daily Read (topic pages + the hub's Today card): no header band,
       so the body supplies the card's own padding. ── */
 .tdi-card--hero2 .tdi-hero-body:not(.tdi-hero-body--split) { padding: 1.15rem 1.3rem 1.25rem; }
+
+/* ═══ revamp896 — expanded Daily Read: restore the heading hierarchy ═════════
+   Overview / Briefings (1.02rem/750) and the story headlines (0.99rem/750) had
+   converged to nearly the same face, so the section headers stopped reading as
+   the level above. Section headers step back up; story headlines take a sliver
+   of weight off and move to a dark blue, so they're differentiated by COLOUR
+   rather than by competing on weight. */
+.di-sectitle {
+  font-size: 1.16rem !important; font-weight: 800 !important;
+  color: #16233d !important;
+  margin-bottom: 0.75rem !important; padding-bottom: 0.45rem !important;
+}
+.dib-head {
+  font-size: 0.95rem !important; font-weight: 680 !important;
+  color: #1e3a6b !important;            /* dark blue vs the near-black header */
+  letter-spacing: -0.008em !important;
+  margin-bottom: 0.3rem !important;
+}
