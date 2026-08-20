@@ -22115,3 +22115,10 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 0 !important; }
    the section starts right at the grey band bottom so grey-below-input == grey-
    above-title. */
 body.home-search .home-sections, body.home-search .home-main { margin-top: 0 !important; padding-top: 0 !important; }
+
+/* revamp876 — optical trim: the heavy display title has internal top-space in
+   its glyph box, so the VISIBLE title sits lower than its box top and the top
+   air reads bigger than the (measured-equal) bottom. Pull the title's line box
+   tight so the visible cap aligns, making top and bottom look even. */
+body.home-search .home-search-hero .search-panel-title { line-height: 1.02 !important; }
+body.home-search .home-search-hero .search-panel-hero-inner { padding-top: 0 !important; }
