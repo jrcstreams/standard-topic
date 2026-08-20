@@ -21369,7 +21369,9 @@ body.home-search .home-sections { padding-top: 2rem !important; }
 }
 @media (hover: hover) {
   .dih-item:hover { background: #f6f9fd; }
-  .dih-item:hover .dih-item-name { color: #1d4ed8; }
+  /* revamp915: no link-blue on the card title — the whole card is clickable,
+     so recolouring the title read as a text link inside it. */
+  .dih-item:hover .dih-item-name { color: inherit; }
   .dih-item:hover .dih-item-go svg { transform: translateX(3px); }
 }
 .dih-item-head { display: flex; align-items: center; gap: 9px; min-width: 0; }
@@ -23157,3 +23159,30 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
   margin-left: auto !important; margin-right: auto !important;
   text-align: center !important;
 }
+
+/* ═══ revamp915 — search tab rule, Daily Read preview card layout ════════════
+
+   The second line under Prompts / News / Web Resources came from
+   .aii-builder-topbar (the flatnav's PARENT), which earlier passes never
+   targeted — they only reset .aii-flatnav. Drop the parent's rule so the
+   accordion list's own top border is the single separator, and close the gap so
+   the tabs sit near it. */
+.search-aii-host .aii-builder-topbar {
+  border-bottom: 0 !important;
+  padding-bottom: 0 !important; margin-bottom: 0 !important;
+}
+.search-aii-host .aii-flatnav { margin-bottom: 0 !important; padding-bottom: 0 !important; }
+.search-aii-host .aii-fi-acclist,
+.search-aii-host .aii-fi-sec { margin-top: 0.55rem !important; }
+
+/* ── Daily Read preview cards, everywhere ──
+   Topic reads a step larger; the edition stamp moves under it (above the
+   summary) rather than riding beside the title; and the button tucks up to the
+   summary instead of floating away from it. */
+.tdi-card--hero2 .tdi-topiclabel { margin: 0.22rem 0 0 !important; }
+.tdi-card--hero2 .tdi-topiclabel-v { font-size: 0.82rem !important; letter-spacing: 0.075em !important; }
+.tdi-stamprow { display: flex; margin: 0.45rem 0 0; }
+.tdi-card--hero2 .tdi-summary { margin: 0.65rem 0 0 !important; }
+.tdi-card--hero2 .tdi-actions { margin-top: 0.8rem !important; }
+/* The open state keeps its own header, so hide the preview stamp row there. */
+.tdi-card--hero2.is-open .tdi-stamprow { display: none !important; }

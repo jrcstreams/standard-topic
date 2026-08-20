@@ -180,35 +180,50 @@ function attrTokens(s) {
 function attributeItemsToSections(items, sections) {
   const secToks = sections.map((p) => attrTokens((p.name || '') + ' ' + (p.body || '')));
   const buckets = sections.map(() => []);
-  // Score every headline against every section; keep its best match.
+
+  // revamp915 — attribute by DISTINCTIVENESS, not raw overlap.
+  //
+  // A source chip under a claim asserts "this article supports this statement",
+  // so the bar has to stay high (revamp892 fixed a Kyiv briefing citing a
+  // Pennsylvania school story). But a flat "2 shared words" rule was ALSO wrong
+  // in the other direction: it rejected real matches whose headline shares just
+  // one strong term with its story, which is why so many genuine sources ended
+  // up unattributed.
+  //
+  // Weight each shared token by how many sections contain it. A token unique to
+  // one story ("Kyiv", "Hormuz", "684.85") is real evidence; a token spread
+  // across most stories ("market", "today") is noise. One distinctive term now
+  // qualifies; a pile of generic ones still does not.
+  const df = new Map();                       // token -> how many sections use it
+  secToks.forEach((set) => set.forEach((w) => df.set(w, (df.get(w) || 0) + 1)));
+  const n = Math.max(1, sections.length);
+  const weight = (w) => {
+    const d = df.get(w) || 0;
+    if (d === 0) return 0;
+    if (d === 1) return 2;                    // unique to one story — strong
+    if (d <= Math.max(2, n * 0.34)) return 0.75;
+    return 0.15;                              // near-ubiquitous — near-worthless
+  };
+
   const scored = items.map((it) => {
     const t = attrTokens(it.title);
-    let best = -1, bestScore = 0;
+    let best = -1, bestScore = 0, runnerUp = 0;
     for (let i = 0; i < secToks.length; i++) {
-      let score = 0; t.forEach((w) => { if (secToks[i].has(w)) score++; });
-      if (score > bestScore) { bestScore = score; best = i; }
+      let score = 0;
+      t.forEach((w) => { if (secToks[i].has(w)) score += weight(w); });
+      if (score > bestScore) { runnerUp = bestScore; bestScore = score; best = i; }
+      else if (score > runnerUp) runnerUp = score;
     }
-    return { it, best, score: bestScore };
+    return { it, best, score: bestScore, runnerUp };
   });
-  // revamp892 — a source chip under a claim asserts "this article supports this
-  // statement". Two things made that assertion false:
-  //
-  //   1. The old threshold was a SINGLE shared token, which one common word
-  //      ("reportedly", "capital", "program") is enough to satisfy.
-  //   2. A backfill pass then topped up any thin section from the leftover pool
-  //      — headlines that had scored ZERO against it. That is how a briefing on
-  //      a missile strike in Kyiv ended up citing a Pennsylvania school district
-  //      story: it simply happened to be next in the queue.
-  //
-  // Both are gone. Attribution now requires REAL overlap (>=2 distinctive
-  // tokens), and nothing is ever attached to a claim it doesn't match. Showing
-  // no source is correct; showing a source that doesn't support the claim is
-  // not, and it's the kind of error that quietly destroys trust in every other
-  // citation on the page.
+
+  // Needs real evidence AND a clear winner: a source that matches several
+  // stories equally well isn't evidence for any one of them.
   const MIN_SCORE = 2;
   const leftover = [];
   for (const s of scored) {
-    if (s.best >= 0 && s.score >= MIN_SCORE && buckets[s.best].length < 4) buckets[s.best].push(s.it);
+    const decisive = s.score >= MIN_SCORE && s.score >= s.runnerUp * 1.5;
+    if (s.best >= 0 && decisive && buckets[s.best].length < 4) buckets[s.best].push(s.it);
     else leftover.push(s.it);
   }
   return { buckets, unmatched: leftover };
@@ -2302,11 +2317,6 @@ export function renderDailyIntelligence(container, scope) {
     const rows = diNewsRows(flat(data.headlines), flat(data.sources), 20).filter((x) => x.title);
     const pseudo = items.map((it) => ({ name: it.lede, body: it.text }));
     const { buckets, unmatched } = attributeItemsToSections(rows, pseudo);
-    // revamp892: real grounding citations that didn't match any single claim are
-    // still genuine sources FOR THE BRIEF — so list them once at the end rather
-    // than pinning them to an arbitrary claim they may not support. Feed
-    // headlines are deliberately excluded: they're topical reading, not sources.
-    const briefCites = unmatched.filter((x) => x.kind === 'cite');
 
     body.innerHTML = `
       <div class="di-prov2">${LOGO}<span>This daily read is AI-generated</span></div>
@@ -2321,10 +2331,6 @@ export function renderDailyIntelligence(container, scope) {
           <div class="dib-body aii-sec-body">${renderBriefBody(it.hasLede ? it.rest : it.raw, null)}</div>
           ${srcChips(buckets[i])}
         </article>`).join('')}
-      </section>` : ''}
-      ${briefCites.length ? `<section class="di-briefsrc">
-        <h3 class="di-sectitle">Sources for this briefing</h3>
-        ${srcChips(briefCites, null)}
       </section>` : ''}
 `;
   };

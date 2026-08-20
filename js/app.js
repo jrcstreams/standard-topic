@@ -1552,9 +1552,12 @@ function diHeroCardHTML(o) {
         <div class="tdi-briefcol">
           <div class="tdi-todayhead">
             <h3 class="tdi-today-title">The Daily Read</h3>
-            <span class="tdi-date" data-tdi-date></span>
           </div>
           ${topicRow}
+          <!-- revamp915: the edition stamp sits UNDER the topic standfirst,
+               above the summary — CSS order couldn't do this because the stamp
+               used to live inside .tdi-todayhead alongside the title. -->
+          <div class="tdi-stamprow"><span class="tdi-date" data-tdi-date></span></div>
           <p class="tdi-summary" data-tdi-summary>Preparing today\u2019s briefing\u2026</p>
           <div class="tdi-actions">
             <button type="button" class="tdi-go tdi-go--brief" data-di-toggle aria-expanded="false">
