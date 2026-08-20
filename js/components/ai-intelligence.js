@@ -190,24 +190,28 @@ function attributeItemsToSections(items, sections) {
     }
     return { it, best, score: bestScore };
   });
-  // Pass 1 — confident matches (>=1 shared keyword) go to their best section.
-  // The daily briefs are WRITTEN FROM these news-feed headlines, so a single
-  // meaningful overlap is a real attribution, not noise (revamp850).
+  // revamp892 — a source chip under a claim asserts "this article supports this
+  // statement". Two things made that assertion false:
+  //
+  //   1. The old threshold was a SINGLE shared token, which one common word
+  //      ("reportedly", "capital", "program") is enough to satisfy.
+  //   2. A backfill pass then topped up any thin section from the leftover pool
+  //      — headlines that had scored ZERO against it. That is how a briefing on
+  //      a missile strike in Kyiv ended up citing a Pennsylvania school district
+  //      story: it simply happened to be next in the queue.
+  //
+  // Both are gone. Attribution now requires REAL overlap (>=2 distinctive
+  // tokens), and nothing is ever attached to a claim it doesn't match. Showing
+  // no source is correct; showing a source that doesn't support the claim is
+  // not, and it's the kind of error that quietly destroys trust in every other
+  // citation on the page.
+  const MIN_SCORE = 2;
   const leftover = [];
   for (const s of scored) {
-    if (s.best >= 0 && s.score >= 1 && buckets[s.best].length < 4) buckets[s.best].push(s.it);
+    if (s.best >= 0 && s.score >= MIN_SCORE && buckets[s.best].length < 4) buckets[s.best].push(s.it);
     else leftover.push(s.it);
   }
-  // Pass 2 — every briefing carries real sources. Most briefs are generated
-  // without live Google citations (the day's grounding budget is usually spent
-  // by news before the daily wave runs), so without this backfill they'd show
-  // NO sources at all. Fill any thin section from the leftover pool — all of
-  // which are this topic's own current headlines.
-  let li = 0;
-  for (let i = 0; i < buckets.length && li < leftover.length; i++) {
-    while (buckets[i].length < 2 && li < leftover.length) buckets[i].push(leftover[li++]);
-  }
-  return { buckets, unmatched: leftover.slice(li) };
+  return { buckets, unmatched: leftover };
 }
 function secSourcesHTML(items, hideLabel, collapsible) {
   if (!items || !items.length) return '';
@@ -2158,9 +2162,15 @@ export function fetchDailyBrief(topicName, force = false) {
 // Module-level twin of the closure-bound dedupNewsRows: rich feed rows first,
 // grounding citations behind them, deduped by URL + normalized title.
 function diNewsRows(feed, cites, cap = 15) {
-  const list = (feed || []).concat(cites || []);
+  // revamp892: tag provenance. A grounding CITATION is a real source the model
+  // actually used; a news-feed HEADLINE is just a topical article that may or
+  // may not relate to a given claim. Merging them lost that distinction, which
+  // let feed headlines be presented as citations for claims they don't support.
+  const list = (feed || []).map((x) => ({ x, kind: 'feed' }))
+    .concat((cites || []).map((x) => ({ x, kind: 'cite' })));
   const seen = new Set(); const seenT = new Set(); const out = [];
-  for (const x of list) {
+  for (const entry of list) {
+    const x = entry.x; const kind = entry.kind;
     const uri = (x && (x.uri || x.url)) || ''; if (!uri) continue;
     const ukey = uri.toLowerCase();
     let title, meta;
@@ -2177,7 +2187,7 @@ function diNewsRows(feed, cites, cap = 15) {
     const tkey = title.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
     if (seen.has(ukey) || (tkey && seenT.has(tkey))) continue;
     seen.add(ukey); if (tkey) seenT.add(tkey);
-    out.push({ uri, title, meta });
+    out.push({ uri, title, meta, kind });
     if (out.length >= cap) break;
   }
   return out;
@@ -2240,10 +2250,11 @@ export function renderDailyIntelligence(container, scope) {
   const lede = container.querySelector('[data-di-lede]');
 
   const readRow = (x) => `<a class="di-read" href="${escAttr(safeUrl(x.uri))}" target="_blank" rel="noopener noreferrer"><span class="di-read-tx"><span class="di-read-title">${esc(x.title)}</span>${x.meta ? `<span class="di-read-meta">${esc(x.meta)}</span>` : ''}</span>${EXT}</a>`;
-  const srcChips = (list) => {
+  const srcChips = (list, label) => {
     const rows = (list || []).slice(0, 4);
     if (!rows.length) return '';
-    return `<div class="dib-srcs"><span class="dib-srcs-label">Sources</span>${rows.map((x) => `<a class="dib-src" href="${escAttr(safeUrl(x.uri))}" target="_blank" rel="noopener noreferrer" title="${escAttr(x.title)}"><span>${esc(diSrcLabel(x))}</span>${EXT}</a>`).join('')}</div>`;
+    const lbl = label === null ? '' : `<span class="dib-srcs-label">${esc(label || 'Sources')}</span>`;
+    return `<div class="dib-srcs">${lbl}${rows.map((x) => `<a class="dib-src" href="${escAttr(safeUrl(x.uri))}" target="_blank" rel="noopener noreferrer" title="${escAttr(x.title)}"><span>${esc(diSrcLabel(x))}</span>${EXT}</a>`).join('')}</div>`;
   };
 
   const fill = (data) => {
@@ -2269,6 +2280,11 @@ export function renderDailyIntelligence(container, scope) {
     const rows = diNewsRows(flat(data.headlines), flat(data.sources), 20).filter((x) => x.title);
     const pseudo = items.map((it) => ({ name: it.lede, body: it.text }));
     const { buckets, unmatched } = attributeItemsToSections(rows, pseudo);
+    // revamp892: real grounding citations that didn't match any single claim are
+    // still genuine sources FOR THE BRIEF — so list them once at the end rather
+    // than pinning them to an arbitrary claim they may not support. Feed
+    // headlines are deliberately excluded: they're topical reading, not sources.
+    const briefCites = unmatched.filter((x) => x.kind === 'cite');
 
     body.innerHTML = `
       <div class="di-prov2">${LOGO}<span>This daily read is AI-generated</span></div>
@@ -2282,6 +2298,10 @@ export function renderDailyIntelligence(container, scope) {
           <div class="dib-body aii-sec-body">${renderBriefBody(it.raw, null)}</div>
           ${srcChips(buckets[i])}
         </article>`).join('')}
+      </section>` : ''}
+      ${briefCites.length ? `<section class="di-briefsrc">
+        <h3 class="di-sectitle">Sources for this briefing</h3>
+        ${srcChips(briefCites, null)}
       </section>` : ''}
 `;
   };

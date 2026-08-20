@@ -22445,3 +22445,8 @@ body.home-search .home-sections .home-featured { margin-top: clamp(1.1rem, 2.4vw
     padding-bottom: 1.475rem !important;
   }
 }
+
+/* revamp892 — brief-level source list: real grounding citations that don't
+   match any single claim still belong to the briefing as a whole. */
+.di-briefsrc { margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid var(--color-surface-border, #e4eaf3); }
+.di-briefsrc .dib-srcs { margin-top: 0.55rem; }
