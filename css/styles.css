@@ -22228,3 +22228,38 @@ body.home-search .home-search-hero .search-panel-hero-inner { padding-top: 0 !im
   .tdi-hero-body--split .tdi-hubcard-sub { flex: 1 1 100%; order: 3; }
   .tdi-hero-body--split .tdi-hubcard-go { margin: 0; padding: 0; }
 }
+
+/* ═══ revamp881 — homepage polish: hero→briefing breathing room; DI card gets
+   a faint full border + split divider + a touch-darker promo sidebar; Featured
+   Topics goes white with tighter head→subtext spacing. ═══ */
+
+/* 1 — air between the search hero and the first content block (the briefing).
+   (revamp875 had zeroed the section gap.) */
+body.home-search .home-sections .home-featured { margin-top: clamp(1.1rem, 2.4vw, 2.1rem) !important; }
+
+/* 2 — DI card: a faint border around the whole card. */
+.hf-card--di .tdi-card--home.tdi-card--hero2 {
+  border: 1px solid color-mix(in srgb, #2f4d9e 15%, transparent) !important;
+  box-shadow: 0 6px 20px -16px rgba(31, 49, 99, 0.22) !important;
+}
+/* Faint divider on the briefing / promo split. */
+.tdi-hero-body--split .tdi-hubcard {
+  border-left: 1px solid color-mix(in srgb, #2f4d9e 15%, transparent);
+  background: #e7ecf7 !important;   /* a touch darker than the old #eef2fb */
+}
+@media (max-width: 720px) {
+  .tdi-hero-body--split .tdi-hubcard {
+    border-left: 0;
+    border-top: 1px solid color-mix(in srgb, #2f4d9e 15%, transparent);
+  }
+}
+
+/* 3 — Featured Topics goes white (was tinted), matching Featured AI Prompts. */
+.hf-card--topics {
+  background: #fff !important;
+  border-color: #e4eaf3 !important;
+}
+
+/* 4 — tighten the featured card head: subtext sits closer to the icon/title. */
+.hf-card .hf-sub { margin: 0.12rem 0 0 !important; }
+.hf-card .hf-head { margin-bottom: 0.6rem; padding-bottom: 0.55rem; }
