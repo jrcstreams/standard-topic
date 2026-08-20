@@ -22793,3 +22793,67 @@ body.home-search .home-sections .home-featured { margin-top: clamp(1.1rem, 2.4vw
 .di-sectitle { font-size: 1.1rem !important; font-weight: 720 !important; }
 /* The first item carried the section's own top border plus its own padding. */
 .di-briefs .dib:first-of-type { padding-top: 0.55rem !important; border-top: 0 !important; }
+
+/* ═══ revamp900 — search hero at tablet / narrow-desktop widths ══════════════
+   Between 641 and 1023px the title ran nearly edge-to-edge and the input was
+   tall enough to dominate the band. Smaller title, a shorter input, and more
+   air on BOTH sides — the top and bottom are bumped together so the even
+   rhythm established in revamp891 is preserved (A still == D). */
+@media (min-width: 641px) and (max-width: 1023.98px) {
+  body.home-search .home-search-hero .search-panel-title {
+    font-size: clamp(1.3rem, 0.95rem + 1.5vw, 1.68rem) !important;
+  }
+  body.home-search .home-search-hero .search-panel-tagline {
+    font-size: 0.95rem !important;
+  }
+  /* Shorter input — it was as tall as a touch target on a phone. */
+  body.home-search .home-search-hero .search-panel-input,
+  body.home-search .home-search-hero .search-panel-bar input {
+    padding-top: 0.72rem !important; padding-bottom: 0.72rem !important;
+    font-size: 0.95rem !important;
+  }
+  body.home-search .home-search-hero .search-panel-bar { min-height: 0 !important; }
+  /* Breathing room, both sides, equally. */
+  body.home-search .home-search-hero {
+    padding-top: 2.85rem !important;
+    padding-bottom: 3.05rem !important;
+  }
+}
+
+/* ═══ revamp901 — homepage card rhythm, stacked Featured Topics, first-row gaps
+
+   A recurring pattern: the FIRST item in a list carried its own top padding on
+   top of the section rule above it, so it floated away from that rule — and the
+   hover tint started below the rule, leaving a visible sliver. Fixed for the
+   news feed, Featured Prompts, Featured Topics and Trending. */
+
+/* ── Card rhythm: the cards were riding on each other at every width. ── */
+body.home-search .home-sections .home-featured { gap: 1.5rem !important; }
+@media (max-width: 900px) {
+  body.home-search .home-sections .home-featured { gap: 1.35rem !important; }
+}
+body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
+
+/* ── Featured Topics in the stacked (single-card) view ──
+   Two columns of three, or one column of five with a larger face — enough to be
+   useful without turning the card into a directory. */
+@media (max-width: 900px) {
+  .hf-card--topics .hf-chips { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .hf-card--topics .hf-chips > *:nth-child(n+7) { display: none !important; }
+}
+@media (max-width: 520px) {
+  .hf-card--topics .hf-chips { grid-template-columns: 1fr !important; }
+  .hf-card--topics .hf-chips > *:nth-child(n+6) { display: none !important; }
+  .hf-card--topics .hq-row { padding: 0.6rem 0 0.6rem 2px !important; }
+  .hf-card--topics .hq-row-name { font-size: 1rem !important; }
+}
+
+/* ── First row meets the rule above it ── */
+.hf-card .hf-chips > *:first-child,
+.hf-card .hf-chips > *:nth-child(2) { padding-top: 0.18rem !important; }
+.ph-featured .ph-flist > .ph-fitem:first-child { padding-top: 0.2rem !important; }
+
+/* News feed: first card sat ~1rem below the section rule, and its hover tint
+   started at the padding edge rather than at the rule. */
+#section-newsfeed .news-list .news-card:first-child .news-card-link { padding-top: 0.35rem !important; }
+.news-list .news-card:first-child { border-top: 0 !important; }
