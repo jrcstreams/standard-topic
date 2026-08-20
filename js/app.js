@@ -1784,7 +1784,28 @@ function renderIntelligenceHub(container) {
         if (openGroup && openGroup !== group) showList(openGroup);
         const name = btn.dataset.dihItem;
         const slug = btn.dataset.dihSlug;
-        if (title) title.innerHTML = `<span class="dih-brief-ic" aria-hidden="true">${btn.querySelector('.dih-item-ic')?.innerHTML || ''}</span><span>${escapeHTML(name)}</span>`;
+        // revamp906: use the SAME Daily Read header as every other surface —
+        // "The Daily Read", the topic as an all-caps standfirst, then the
+        // date/edition pill — instead of an oversized topic title + icon.
+        if (title) {
+          title.innerHTML = `
+            <div class="tdi-openhead tdi-openhead--hub">
+              <div class="tdi-openhead-main">
+                <span class="tdi-openhead-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
+                <div class="tdi-openhead-tx">
+                  <h3 class="tdi-openhead-title">The Daily Read</h3>
+                  <div class="tdi-openhead-topic">${escapeHTML(name)}</div>
+                  <div class="tdi-openhead-meta"><span class="tdi-date tdi-date--open" data-dih-stamp></span></div>
+                </div>
+              </div>
+            </div>`;
+          // fetchDailyBrief is promise-cached, so this rides the same request
+          // renderDailyIntelligence is already making.
+          fetchDailyBrief(name).then((d) => {
+            const slot = title.querySelector('[data-dih-stamp]');
+            if (slot && d && d.generatedAt) slot.innerHTML = diEditionStampHTML(d.generatedAt);
+          }).catch(() => {});
+        }
         if (host) { host.innerHTML = ''; renderDailyIntelligence(host, { topic: name, label: name, slug, inline: true }); }
         if (brief) brief.hidden = false;
         group.classList.add('is-brief');

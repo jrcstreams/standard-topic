@@ -22963,3 +22963,9 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 .search-panel--modal[data-state="expanded"] .search-panel-herohint {
   opacity: 1 !important; max-height: 90px !important; overflow: visible !important;
 }
+
+/* revamp906 — hub expanded briefing uses the shared Daily Read header.
+   .tdi-openhead is normally gated behind .tdi-card--hero2.is-open; this
+   variant lives outside a card, so make it visible on its own. */
+.tdi-openhead--hub { display: flex !important; margin-top: 0.25rem; }
+.dih-brief-title { margin: 0 0 0.2rem !important; }
