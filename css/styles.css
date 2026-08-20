@@ -22595,3 +22595,48 @@ body.home-search .home-sections .home-featured { margin-top: clamp(1.1rem, 2.4vw
 }
 .dib { padding: 1rem 0 0.95rem; }
 .dib-body { color: #3c4863; }
+
+/* ═══ revamp895 — promo card on stacked/mobile, and the standalone Daily Read ══
+
+   Stacked view: the icon chips read as clutter at that size and the CTA arrow
+   pinned in the corner was an easy-to-miss target. So on mobile the badges lose
+   their chips and become a compact text row, and the CTA becomes a plain link
+   under the summary. */
+
+/* Desktop keeps the full CTA; the mobile link is hidden. */
+.tdi-hubcard-cta--m { display: none; }
+
+@media (max-width: 720px) {
+  /* Corner arrow gone — replaced by a readable link under the summary. */
+  .tdi-hero-body--split .tdi-hubcard-cta { display: none !important; }
+  .tdi-hero-body--split .tdi-hubcard-cta--m {
+    display: inline-flex !important; position: static !important;
+    order: 3; align-items: center; gap: 0.35rem;
+    margin: 0.6rem 0 0 !important; padding: 0 !important; width: auto !important;
+    border: 0 !important; background: none !important;
+    font-family: var(--font-family); font-size: 0.85rem !important; font-weight: 650;
+    color: #2f4d9e !important; text-decoration: none;
+  }
+  .tdi-hero-body--split .tdi-hubcard-cta--m svg { width: 14px; height: 14px; }
+  .tdi-hero-body--split .tdi-hubcard-head { padding-right: 0 !important; }
+
+  /* Badges: drop the round chips, keep the facts as a light dot-separated row. */
+  .tdi-hubcard-feats {
+    order: 4;
+    display: flex !important; flex-wrap: wrap; align-items: center;
+    gap: 0.3rem 0.55rem !important;
+    margin-top: 0.7rem !important; padding-top: 0.7rem !important;
+    border-top: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent) !important;
+  }
+  .tdi-hubfeat { gap: 0; }
+  .tdi-hubfeat-ic { display: none !important; }
+  .tdi-hubfeat-tx { font-size: 0.72rem !important; font-weight: 550 !important; color: #5d6b88 !important; }
+  /* Dot separators between the facts. */
+  .tdi-hubfeat + .tdi-hubfeat::before {
+    content: "•"; margin-right: 0.55rem; color: #b3c0d6; font-size: 0.72rem;
+  }
+}
+
+/* ── Standalone Daily Read (topic pages + the hub's Today card): no header band,
+      so the body supplies the card's own padding. ── */
+.tdi-card--hero2 .tdi-hero-body:not(.tdi-hero-body--split) { padding: 1.15rem 1.3rem 1.25rem; }

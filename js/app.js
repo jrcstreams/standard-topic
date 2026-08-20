@@ -1519,7 +1519,7 @@ function diHeroCardHTML(o) {
   const hubCard = o.hubCard ? `<aside class="tdi-hubcard">
         <div class="tdi-hubcard-head">
           <span class="tdi-hubcard-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
-          <h4 class="tdi-hubcard-title">Your AI Daily Reads Hub</h4>
+          <h4 class="tdi-hubcard-title">The AI Daily Reads Hub</h4>
         </div>
         <p class="tdi-hubcard-sub tdi-hubcard-sub--d">AI-generated briefings across 100+ topics, refreshed morning and night.</p>
         <p class="tdi-hubcard-sub tdi-hubcard-sub--m">AI-generated briefings across 100+ topics, refreshed morning and night.</p>
@@ -1529,11 +1529,14 @@ function diHeroCardHTML(o) {
           <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_DOC}</span><span class="tdi-hubfeat-tx">100+ topics</span></div>
         </div>
         <a class="tdi-hubcard-go tdi-hubcard-cta" href="#/intelligence">Explore the AI Daily Reads Hub${SUBPAGE_ARROW}</a>
+        <!-- revamp895: stacked/mobile CTA — a plain link under the summary
+             instead of the arrow pinned in the corner. -->
+        <a class="tdi-hubcard-go tdi-hubcard-cta--m" href="#/intelligence">Access AI Daily Reads${SUBPAGE_ARROW}</a>
       </aside>` : '';
-  // Homepage split variant: the hub sidebar carries the "AI Daily Reads"
-  // identity, so the top header band is dropped (revamp879). Every other
-  // surface (topic pages, the hub) keeps its header.
-  const header = o.hubCard ? '' : `
+  // revamp895: the standalone card (topic pages + the hub's own Today card)
+  // drops the header band too — the card IS the Daily Read, so a separate
+  // "AI Daily Reads" title bar around it was redundant chrome.
+  const header = (o.hubCard || o.noHeader) ? '' : `
     <div class="tdi-hero-head">
       <div class="tdi-hero-titlerow">
         <span class="tdi-hero-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
@@ -1664,7 +1667,7 @@ function renderIntelligenceHub(container) {
       </header>
 
       <section class="dih-today">
-        <div class="tdi-card tdi-card--v3 tdi-card--home dih-today-card tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'AI-generated briefs, twice daily across 100+ topics.', hubLink: false, topicLabel: 'Cross-Topic' })}
+        <div class="tdi-card tdi-card--v3 tdi-card--home dih-today-card tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'AI-generated briefs, twice daily across 100+ topics.', hubLink: false, topicLabel: 'Cross-Topic', noHeader: true })}
         </div>
       </section>
 
@@ -2008,7 +2011,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       ${topicBodyHeadHTML(topic)}
       <div class="topic-top">
         <section class="topic-top-main">
-          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'An AI-generated briefing on this topic, twice a day.', hubLink: false, topicLabel: topic.name })}
+          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'An AI-generated briefing on this topic, twice a day.', hubLink: false, topicLabel: topic.name, noHeader: true })}
           </div>
         </section>
         <section class="topic-top-side">
