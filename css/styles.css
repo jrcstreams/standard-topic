@@ -22364,8 +22364,13 @@ body.home-search .home-sections .home-featured { margin-top: clamp(1.1rem, 2.4vw
   .tdi-card--hero2:not(.is-open) .tdi-hero-body--split { padding: 0 !important; }
   .tdi-card--hero2:not(.is-open) .tdi-bodygrid { display: flex; flex-direction: column; gap: 0.85rem; }
 
-  /* Card 1 — Today's Briefing (white). */
-  .tdi-card--hero2:not(.is-open) .tdi-briefcol {
+  /* Card 1 — Today's Briefing (white).
+     revamp913: scoped to the SPLIT variant. It was matching
+     `.tdi-card--hero2 .tdi-briefcol` generally, so the hub and topic-page cards
+     — which are already a card and have no promo rail to split from — drew this
+     box INSIDE themselves: a card within a card on every mobile surface. */
+  .tdi-hero-body--split .tdi-card--hero2:not(.is-open) .tdi-briefcol,
+  .tdi-card--hero2:not(.is-open) .tdi-hero-body--split .tdi-briefcol {
     background: #fff; border: 1px solid #e4eaf3; border-radius: 15px;
     box-shadow: 0 6px 20px -16px rgba(31, 49, 99, 0.22);
     padding: 1.15rem 1.25rem 1.2rem;
@@ -23139,3 +23144,16 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 .hf-card .hf-chips > *:first-child,
 .hf-card .hf-chips > *:nth-child(2) { padding-top: 0.42rem !important; }
 .hf-card .hf-chips { margin-top: -0.24rem !important; }
+
+/* revamp913 — search title centring, for real this time.
+   .search-panel-hero is display:grid with a CONTENT-SIZED column, so the inner
+   was 182px wide however much width/justify-self it was given — it was filling
+   its column, and the column was only as wide as the word "Search". Making the
+   hero a block and letting the inner span it puts text-align:center to work
+   across the same width as the input below. */
+.search-panel--modal .search-panel-hero { display: block !important; }
+.search-panel--modal .search-panel-hero-inner {
+  width: 100% !important; max-width: none !important;
+  margin-left: auto !important; margin-right: auto !important;
+  text-align: center !important;
+}

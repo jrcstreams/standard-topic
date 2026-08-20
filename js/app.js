@@ -203,6 +203,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (route.type === 'topics') renderPageNavBar('topics');
     else if (route.type === 'trending') renderPageNavBar('trending');
     else if (route.type === 'prompts') renderPageNavBar('prompts');
+    else if (route.type === 'search' || route.type === 'custom') renderPageNavBar('search');
 
     // Always refresh the bottom-nav active tab from the REAL route — overlay
     // routes (search/custom) skip renderLayout, so its internal call is missed.
@@ -3413,13 +3414,18 @@ function renderPageNavBar(kind) {
     topics: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
     trending: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>',
     prompts: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+    // revamp914: Search reuses this exact subnav — same grey sticky bar as
+    // Topics / Trending / Prompts, with a search glyph and one action.
+    search: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="20" y1="20" x2="16.2" y2="16.2"/></svg>',
   };
-  const NAMES = { topics: 'Topics', trending: 'Trending', prompts: 'Prompts' };
+  const NAMES = { topics: 'Topics', trending: 'Trending', prompts: 'Prompts', search: 'Search' };
   const name = NAMES[kind] || '';
   if (!name) return;
   document.body.classList.add('has-subnav', 'pagenav-mode');
   subHeader.className = 'is-subnav static-page pagenav';
-  const action = kind === 'prompts'
+  const action = kind === 'search'
+    ? '<button type="button" class="pagenav-action" data-pagenav-newsearch>Start New Search</button>'
+    : kind === 'prompts'
     ? '<a href="#/prompts/build" class="pagenav-action">Build Prompt</a>'
     : (kind === 'topics'
       ? '<span class="pagenav-actions"><button type="button" class="pagenav-action is-on" data-pagenav-view="condensed">Condensed</button><button type="button" class="pagenav-action" data-pagenav-view="expanded">Expanded</button></span>'
@@ -3441,6 +3447,16 @@ function renderPageNavBar(kind) {
     panel?.querySelectorAll('[data-navdd-headbtn]')[want ? 1 : 0]?.click();
     subHeader.querySelectorAll('[data-pagenav-view]').forEach((x) => x.classList.toggle('is-on', x === b));
   }));
+  // revamp914: "Start New Search" clears the field and returns to the empty
+  // search page, scrolled back to the input.
+  subHeader.querySelector('[data-pagenav-newsearch]')?.addEventListener('click', () => {
+    navigate('#/search');
+    requestAnimationFrame(() => {
+      const input = document.querySelector('.search-panel--modal .search-panel-input');
+      if (input) { input.value = ''; input.focus(); }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
   try { observeSubnavHeight(); } catch (_) {}
   wirePageNavReveal();
 }
