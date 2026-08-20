@@ -865,8 +865,16 @@ export function renderAIIntelligence(container, scope) {
     const tabs = builderTabs().map((x) => `<button type="button" class="aii-ftab${x.group === curGroup ? ' is-active' : ''}" role="tab" aria-selected="${x.group === curGroup}" data-tab-group="${escAttr(x.group)}">${esc(x.tab || x.label)}</button>`).join('');
     const navHTML = `<nav class="aii-flatnav" role="tablist">${tabs}</nav>`;
     // Centered topic switcher (caret opens the topic picker). Locked for custom search.
+    // revamp905: the search results header is a real page header — "Search
+    // Results" with the query as a weighted sub-line beneath it — rather than a
+    // small "Results for 'x'" label.
     const topicEl = scope.lockTopic
-      ? `<div class="aii-builder-topic aii-builder-topic--locked${scope.resultsFor ? ' aii-builder-topic--resultsfor' : ''}">${scope.resultsFor ? '<span class="aii-builder-resultsfor">Results for</span>' : ''}<span class="aii-builder-topic-tx">${scope.resultsFor ? `‘${esc(topicTitle)}’` : esc(topicTitle)}</span></div>`
+      ? (scope.resultsFor
+        ? `<div class="aii-builder-topic aii-builder-topic--locked aii-builder-topic--resultsfor">
+             <h2 class="aii-srhead">Search Results</h2>
+             <p class="aii-srsub">${esc(topicTitle)}</p>
+           </div>`
+        : `<div class="aii-builder-topic aii-builder-topic--locked"><span class="aii-builder-topic-tx">${esc(topicTitle)}</span></div>`)
       : `<button type="button" class="aii-builder-topic aii-builder-topic--btn" data-repick aria-label="Change topic"><span class="aii-builder-topic-tx">${esc(topicTitle)}</span><span class="aii-topic-caret" aria-hidden="true">${CHEV}</span></button>`;
     const viewLink = scope.topicKey ? `<button type="button" class="aii-view-topic" data-view-topic>View Topic Page${RIGHT_ARROW}</button>` : '';
     // No per-section intro card anymore — the nav supplies the section identity and

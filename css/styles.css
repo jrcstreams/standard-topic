@@ -94,7 +94,10 @@
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
-  --max-width: 1440px;
+  /* revamp904: 1440 -> 1760. On 1920+ monitors the old cap left ~240px of dead
+     gutter each side; 1760 uses that space while keeping text at a readable
+     measure. One token drives all 18 consumers, so every page moves together. */
+  --max-width: 1760px;
   --header-height: 60px;
   /* Main-nav (sticky hero) height. Desktop 64px; mobile shrinks it (#1) — every
      fixed-layout offset that reserves the nav reads this var instead of a literal
@@ -22894,3 +22897,69 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
   .dih-card:hover { text-decoration: none !important; }
 }
 .dih-card .dih-card-name, .dih-card .dih-card-title { transition: none !important; }
+
+/* ═══ revamp905 — search page: one stable layout, a real results header ══════
+
+   Before: the title/input started vertically centred (50dvh) and then ANIMATED
+   up and shrank once a term was entered, so the two states lived in different
+   places and the whole header moved under the user. Now the header sits in one
+   position, raised toward the top, and results simply appear beneath it. */
+
+/* Same padding in both states = no jump. Raised up rather than centred. */
+.search-panel--modal .search-panel-topfold,
+.search-panel--modal[data-state="collapsed"] .search-panel-topfold,
+.search-panel--modal[data-state="expanded"] .search-panel-topfold {
+  padding-top: 2.6rem !important;
+  padding-bottom: 1.6rem !important;
+  transition: none !important;
+}
+/* Title holds ONE size across states (it used to shrink 2.3rem -> 1.5rem). */
+.search-panel--modal .search-panel-title,
+.search-panel--modal[data-state="collapsed"] .search-panel-title,
+.search-panel--modal[data-state="expanded"] .search-panel-title {
+  font-size: clamp(1.6rem, 1.2rem + 1.3vw, 2rem) !important;
+  transition: none !important;
+}
+/* The hint stays put too — no melt-away reflow. */
+.search-panel--modal .search-panel-tagline,
+.search-panel--modal .search-panel-herohint { transition: none !important; }
+/* Drop the rule under the search bar. */
+.search-panel--modal[data-state="expanded"] .search-panel-topfold { border-bottom: 0 !important; }
+
+/* ── Results header ── */
+.aii-builder-topic--resultsfor {
+  display: block !important; text-align: left !important;
+  margin: 0 0 0.9rem !important; padding: 0 !important;
+  background: none !important; border: 0 !important;
+}
+.aii-srhead {
+  margin: 0; font-family: var(--font-display);
+  font-size: 1.55rem; font-weight: 800; letter-spacing: -0.02em; color: #16233d;
+}
+.aii-srsub {
+  margin: 0.28rem 0 0; font-family: var(--font-family);
+  font-size: 0.98rem; font-weight: 600; color: #55648a;
+}
+
+/* ── Tabs, then ONE strong rule that the accordions meet ── */
+.search-aii-host .aii-flatnav {
+  border-bottom: 0 !important; margin-bottom: 0 !important;
+}
+.search-aii-host .aii-flatnav + * { margin-top: 0 !important; }
+/* The single separator closing the header block. */
+.search-aii-host .aii-fi-acclist,
+.search-aii-host .aii-fi-sec {
+  border-top: 1.5px solid color-mix(in srgb, #2f4d9e 22%, transparent) !important;
+  margin-top: 0.9rem !important; padding-top: 0 !important;
+}
+/* First accordion row(s) meet that rule — in one or two columns. */
+.search-aii-host .aii-fi-acclist > .aii-fi-acc:first-child,
+.search-aii-host .aii-fi-acclist > .aii-fi-acc:nth-child(2) { border-top: 0 !important; }
+
+/* revamp905b — the hint/tagline still melted away in the expanded state
+   (opacity/max-height -> 0), which shifted the input and title even though
+   their own sizes were now fixed. Keep it present so nothing moves. */
+.search-panel--modal[data-state="expanded"] .search-panel-tagline,
+.search-panel--modal[data-state="expanded"] .search-panel-herohint {
+  opacity: 1 !important; max-height: 90px !important; overflow: visible !important;
+}
