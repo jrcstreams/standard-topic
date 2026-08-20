@@ -22402,3 +22402,46 @@ body.home-search .home-sections .home-featured { margin-top: clamp(1.1rem, 2.4vw
 @media (max-width: 470px) {
   .tdi-hubcard-feats { grid-template-columns: 1fr; gap: 0.45rem; }
 }
+
+/* ═══ revamp891 — search hero: make the top air a FIXED constant, like the
+   bottom, so grey-above-title == grey-below-input at EVERY width. ═════════════
+
+   Why it kept drifting: the space above the title was never owned by the hero.
+   It came from #content's padding-top, which is written as
+   calc(var(--nav-h) + <extra>) by several competing rules — and the `extra`
+   changes per breakpoint (+2.4rem at ≥641px, but a HIGHER-SPECIFICITY
+   `html body…` rule overrides it with +0.25rem at ≤899.98px). So below 900px
+   the top gap collapsed to ~23px while the bottom stayed pinned at 2.45rem.
+   Measured: 900px → A=38/D=39 (even); 700px → A=23/D=39 (16px off).
+
+   Fix: stop deriving the top air from the content offset. Pin #content to
+   exactly --nav-h, zero the grid's margin, and give the hero its own fixed
+   padding-top. Both edges are then constants and cannot drift apart.
+   (2.2rem + the title's ~4px internal cap leading ≈ the 2.45rem below.) */
+@media (min-width: 641px) {
+  html body.home-search.app-mode.sticky-always.has-subnav #content,
+  html body.home-search.app-mode.sticky-always #content {
+    padding-top: var(--nav-h) !important;
+  }
+  body.home-search.app-mode .topic-layout.home-grid { margin-top: 0 !important; }
+  /* .search-panel--inline carries its own breakpoint-dependent top padding
+     (0.55rem below 900px, 0 above) — another hidden contributor to the drift.
+     Zero it so the hero's padding-top is the ONLY thing above the title. */
+  body.home-search .home-search-hero .search-panel { padding-top: 0 !important; }
+  body.home-search .home-search-hero { padding-top: 2.2rem !important; }
+}
+
+/* revamp891b — same normalization on mobile, with a tighter constant so the
+   short viewport isn't wasted (both edges shrink together, staying even). */
+@media (max-width: 640.98px) {
+  html body.home-search.app-mode.sticky-always.has-subnav #content,
+  html body.home-search.app-mode.sticky-always #content {
+    padding-top: var(--nav-h) !important;
+  }
+  body.home-search.app-mode .topic-layout.home-grid { margin-top: 0 !important; }
+  body.home-search .home-search-hero .search-panel { padding-top: 0 !important; }
+  body.home-search .home-search-hero {
+    padding-top: 1.35rem !important;
+    padding-bottom: 1.475rem !important;
+  }
+}
