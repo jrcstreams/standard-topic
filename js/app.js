@@ -1378,13 +1378,21 @@ function diHeroCardHTML(o) {
   const headerTitle = o.headerTitle || 'Daily Intelligence';
   const topicRow = o.topicLabel ? `<div class="tdi-topiclabel"><span class="tdi-topiclabel-k">Topic:</span><span class="tdi-topiclabel-v">${escapeHTML(o.topicLabel)}</span></div>` : '';
   const hubTag = o.hubTagline ? `<p class="tdi-hubline"><a href="#/intelligence">Access the Daily Intelligence Hub${SUBPAGE_ARROW}</a></p>` : '';
+  const HUB_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.8v2M12 19.2v2M21.2 12h-2M4.8 12h-2M18.5 5.5l-1.4 1.4M6.9 17.1l-1.4 1.4M18.5 18.5l-1.4-1.4M6.9 6.9L5.5 5.5"/></svg>';
+  const HUB_DOC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3.5"/></svg>';
+  const HUB_AI = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6l1.85 5.25a3 3 0 0 0 1.8 1.8L20.9 11.5l-5.25 1.85a3 3 0 0 0-1.8 1.8L12 20.4l-1.85-5.25a3 3 0 0 0-1.8-1.8L3.1 11.5l5.25-1.85a3 3 0 0 0 1.8-1.8z"/></svg>';
   const hubCard = o.hubCard ? `<aside class="tdi-hubcard">
         <div class="tdi-hubcard-head">
           <span class="tdi-hubcard-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
-          <h4 class="tdi-hubcard-title">Access daily AI briefings on 100+ topics</h4>
+          <h4 class="tdi-hubcard-title">Unlock daily intelligence across 100+ topics</h4>
         </div>
-        <p class="tdi-hubcard-sub">AI-generated summaries refreshed twice daily \u2014 morning and night editions, all in one place.</p>
-        <a class="tdi-hubcard-go" href="#/intelligence">Explore the Hub${SUBPAGE_ARROW}</a>
+        <p class="tdi-hubcard-sub">AI-generated briefings, refreshed morning and night \u2014 so you're always informed, always ahead.</p>
+        <div class="tdi-hubcard-feats">
+          <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_SUN}</span><span class="tdi-hubfeat-tx">Morning &amp; Evening Editions</span></div>
+          <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_DOC}</span><span class="tdi-hubfeat-tx">100+ Topics Covered</span></div>
+          <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_AI}</span><span class="tdi-hubfeat-tx">AI-Powered Summaries</span></div>
+        </div>
+        <a class="tdi-hubcard-go tdi-hubcard-cta" href="#/intelligence">Explore the Daily Intelligence Hub${SUBPAGE_ARROW}</a>
       </aside>` : '';
   // Homepage split variant: the hub sidebar carries the "Daily Intelligence"
   // identity, so the top header band is dropped (revamp879). Every other

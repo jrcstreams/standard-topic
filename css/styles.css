@@ -22279,3 +22279,59 @@ body.home-search .home-sections .home-featured { margin-top: clamp(1.1rem, 2.4vw
   .tdi-hero-body--split .tdi-hubcard-go { order: 2; }
   .tdi-hero-body--split .tdi-hubcard-sub { order: 3; }
 }
+
+/* ═══ revamp884 — promo card richer layout (#img356): 2-line headline, subtext,
+   a divider, three feature badges, and a full-width outlined CTA button. ═══ */
+
+/* Headline reads as a dark navy-blue promo title over two lines. */
+.tdi-hero-body--split .tdi-hubcard-title {
+  color: #223559 !important; font-size: 1.06rem; font-weight: 750; line-height: 1.28;
+}
+.tdi-hero-body--split .tdi-hubcard-head { align-items: flex-start; gap: 0.65rem; }
+.tdi-hero-body--split .tdi-hubcard-ic { margin-top: 1px; }
+.tdi-hero-body--split .tdi-hubcard-sub { margin: 0.55rem 0 0; color: #5a6885 !important; line-height: 1.5; }
+
+/* Divider + three feature badges (icon in a soft round chip + a 2-line label). */
+.tdi-hubcard-feats {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.55rem;
+  margin-top: 0.95rem; padding-top: 0.95rem;
+  border-top: 1px solid color-mix(in srgb, #2f4d9e 14%, transparent);
+}
+.tdi-hubfeat { display: flex; align-items: center; gap: 0.45rem; min-width: 0; }
+.tdi-hubfeat-ic {
+  flex: none; width: 30px; height: 30px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #d9e2f5; color: #2f4d9e;
+}
+.tdi-hubfeat-ic svg { width: 15px; height: 15px; }
+.tdi-hubfeat-tx {
+  min-width: 0; font-family: var(--font-family); font-size: 0.72rem;
+  line-height: 1.22; font-weight: 600; color: #3f4c66;
+}
+
+/* Full-width outlined CTA pill. */
+.tdi-hero-body--split .tdi-hubcard-cta {
+  margin-top: 1.05rem; padding: 0.7rem 1rem;
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  width: 100%; border-radius: 999px;
+  border: 1.5px solid color-mix(in srgb, #2f4d9e 42%, transparent);
+  background: color-mix(in srgb, #2f4d9e 5%, #fff);
+  color: #2f4d9e !important; font-size: 0.9rem; font-weight: 680;
+}
+.tdi-hero-body--split .tdi-hubcard-cta svg { width: 15px; height: 15px; transition: transform .14s ease; }
+@media (hover: hover) {
+  .tdi-hero-body--split .tdi-hubcard-cta:hover {
+    background: #2f4d9e; color: #fff !important; border-color: #2f4d9e;
+  }
+  .tdi-hero-body--split .tdi-hubcard-cta:hover svg { transform: translateX(3px); }
+}
+
+/* Mobile footer: badges wrap comfortably, CTA stays full-width. */
+@media (max-width: 720px) {
+  .tdi-hubcard-feats { width: 100%; order: 3; margin-top: 0.8rem; padding-top: 0.8rem; }
+  .tdi-hero-body--split .tdi-hubcard-cta { order: 4; margin-top: 0.85rem; }
+  .tdi-hero-body--split .tdi-hubcard-sub { order: 2; }
+}
+@media (max-width: 480px) {
+  .tdi-hubcard-feats { grid-template-columns: 1fr; gap: 0.5rem; }
+}
