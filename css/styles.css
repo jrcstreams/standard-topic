@@ -22263,3 +22263,19 @@ body.home-search .home-sections .home-featured { margin-top: clamp(1.1rem, 2.4vw
 /* 4 — tighten the featured card head: subtext sits closer to the icon/title. */
 .hf-card .hf-sub { margin: 0.12rem 0 0 !important; }
 .hf-card .hf-head { margin-bottom: 0.6rem; padding-bottom: 0.55rem; }
+
+/* ═══ revamp883 — promo card: icon aligned inline with the title (headrow),
+   title recolored to a slightly-dark brand blue. ═══ */
+.tdi-hero-body--split .tdi-hubcard-head {
+  display: flex; align-items: center; gap: 0.6rem; width: 100%;
+}
+.tdi-hero-body--split .tdi-hubcard-ic { margin: 0; }
+.tdi-hero-body--split .tdi-hubcard-title {
+  margin: 0; color: #2f4d9e !important;
+}
+/* Mobile footer: headrow + link on the top row, subtext full-width below. */
+@media (max-width: 720px) {
+  .tdi-hero-body--split .tdi-hubcard-head { flex: 1 1 auto; width: auto; }
+  .tdi-hero-body--split .tdi-hubcard-go { order: 2; }
+  .tdi-hero-body--split .tdi-hubcard-sub { order: 3; }
+}
