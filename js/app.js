@@ -1794,14 +1794,12 @@ function renderIntelligenceHub(container) {
         if (title) {
           title.innerHTML = `
             <div class="tdi-openhead tdi-openhead--hub">
-              <div class="tdi-openhead-main">
+              <div class="tdi-openhead-top">
                 <span class="tdi-openhead-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
-                <div class="tdi-openhead-tx">
-                  <h3 class="tdi-openhead-title">The Daily Read</h3>
-                  <div class="tdi-openhead-topic">${escapeHTML(name)}</div>
-                  <div class="tdi-openhead-meta"><span class="tdi-date tdi-date--open" data-dih-stamp></span></div>
-                </div>
+                <h3 class="tdi-openhead-title">The Daily Read</h3>
               </div>
+              <div class="tdi-openhead-topic">${escapeHTML(name)}</div>
+              <div class="tdi-openhead-meta"><span class="tdi-date tdi-date--open" data-dih-stamp></span></div>
             </div>`;
           // fetchDailyBrief is promise-cached, so this rides the same request
           // renderDailyIntelligence is already making.

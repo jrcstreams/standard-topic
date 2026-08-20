@@ -22974,7 +22974,10 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 /* revamp906 — hub expanded briefing uses the shared Daily Read header.
    .tdi-openhead is normally gated behind .tdi-card--hero2.is-open; this
    variant lives outside a card, so make it visible on its own. */
-.tdi-openhead--hub { display: flex !important; margin-top: 0.25rem; }
+/* revamp919: the hub variant lives outside a card, so it needs to be shown on
+   its own — but as a BLOCK, matching the in-card header. It was flex, which
+   kept the old side-by-side layout and left the topic/stamp indented. */
+.tdi-openhead--hub { display: block !important; margin-top: 0.25rem; }
 .dih-brief-title { margin: 0 0 0.2rem !important; }
 
 /* ═══ revamp907 — Prompts page polish ════════════════════════════════════════
