@@ -23246,3 +23246,35 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 }
 .tdi-openhead { padding-bottom: 0.3rem !important; }
 .tdi-openhead-meta { margin-bottom: 0 !important; }
+
+/* ═══ revamp917 — expanded Daily Read: tighten top, badge the AI label ═══════ */
+
+/* Content starts nearer the card's top edge. The open state was stacking the
+   body's padding, the expand's own padding-top and the header's margin. */
+.tdi-card--hero2.is-open .tdi-hero-body { padding-top: 0.7rem !important; }
+.tdi-card--hero2.is-open .tdi-expand { padding-top: 0 !important; margin-top: 0 !important; }
+.tdi-card--hero2.is-open .tdi-briefcol { padding-top: 0 !important; }
+
+/* A touch more air between the topic standfirst and the edition stamp. */
+.tdi-openhead-meta { margin-top: 0.6rem !important; }
+/* Flush left with the topic label above it. */
+.tdi-openhead-meta,
+.tdi-openhead-topic { padding-left: 0 !important; margin-left: 0 !important; text-align: left !important; }
+.tdi-openhead-meta { display: flex !important; justify-content: flex-start !important; }
+
+/* AI-generated label sits in its own soft grey badge, close to the rule above
+   and to the Overview below (the gap under it was ~40px). */
+.tdi-card--hero2.is-open .di-prov2,
+.dih-brief .di-prov2 {
+  margin: 0.75rem 0 0.9rem !important;
+  padding: 0.4rem 0.75rem !important;
+  border-radius: 8px !important;
+  background: #f1f4f9 !important;
+  border: 1px solid color-mix(in srgb, #2f4d9e 9%, transparent) !important;
+  align-self: flex-start;
+}
+/* The Overview heading no longer needs its own top margin under that badge. */
+.tdi-card--hero2.is-open .di-ov .di-sectitle,
+.dih-brief .di-ov .di-sectitle { margin-top: 0 !important; }
+.tdi-card--hero2.is-open .di-body,
+.tdi-card--hero2.is-open .di-page { gap: 1.1rem !important; }
