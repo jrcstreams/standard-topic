@@ -1384,7 +1384,10 @@ function diHeroCardHTML(o) {
         <p class="tdi-hubcard-sub">Every topic\u2019s briefing, in two editions a day \u2014 browse them all in one place.</p>
         <a class="tdi-hubcard-go" href="#/intelligence">Explore the Hub${SUBPAGE_ARROW}</a>
       </aside>` : '';
-  return `
+  // Homepage split variant: the hub sidebar carries the "Daily Intelligence"
+  // identity, so the top header band is dropped (revamp879). Every other
+  // surface (topic pages, the hub) keeps its header.
+  const header = o.hubCard ? '' : `
     <div class="tdi-hero-head">
       <div class="tdi-hero-titlerow">
         <span class="tdi-hero-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
@@ -1393,7 +1396,8 @@ function diHeroCardHTML(o) {
       </div>
       <p class="tdi-hero-sub">${escapeHTML(o.sublabel || '')}</p>
       ${hubTag}
-    </div>
+    </div>`;
+  return `${header}
     <div class="tdi-hero-body${o.hubCard ? ' tdi-hero-body--split' : ''}">
       <div class="tdi-bodygrid">
         <div class="tdi-briefcol">

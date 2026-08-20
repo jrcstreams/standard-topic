@@ -969,7 +969,7 @@ ${M}`),w.length?w.join(`
         <h4 class="tdi-hubcard-title">Daily Intelligence Hub</h4>
         <p class="tdi-hubcard-sub">Every topic\u2019s briefing, in two editions a day \u2014 browse them all in one place.</p>
         <a class="tdi-hubcard-go" href="#/intelligence">Explore the Hub${Va}</a>
-      </aside>`:"";return`
+      </aside>`:"";return`${e.hubCard?"":`
     <div class="tdi-hero-head">
       <div class="tdi-hero-titlerow">
         <span class="tdi-hero-ic" aria-hidden="true">${Bs}</span>
@@ -978,7 +978,7 @@ ${M}`),w.length?w.join(`
       </div>
       <p class="tdi-hero-sub">${P(e.sublabel||"")}</p>
       ${s}
-    </div>
+    </div>`}
     <div class="tdi-hero-body${e.hubCard?" tdi-hero-body--split":""}">
       <div class="tdi-bodygrid">
         <div class="tdi-briefcol">

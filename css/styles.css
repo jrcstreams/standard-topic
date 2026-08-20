@@ -22160,3 +22160,74 @@ body.home-search .home-search-hero .search-panel-hero-inner { padding-top: 0 !im
   .tdi-hubcard-sub { flex: 1 1 100%; order: 3; }
   .tdi-hubcard-go { margin: 0; padding: 0; }
 }
+
+/* ═══ revamp879 — homepage DI card: header dropped, 65/35 split, full-height
+   grey hub sidebar (no header band, no image). The hub sidebar now carries the
+   "Daily Intelligence" identity, so the top header band is gone. Left panel
+   (65%) = Today's Briefing on a light card; right panel (35%) = a full-height,
+   edge-flush off-white sidebar promoting the Daily Intelligence Hub. Stacks on
+   mobile. #img348/349 layout (our own palette, not the reference's colors). */
+
+/* Card goes lighter/off-white; the sidebar keeps the old off-white grey. */
+.tdi-card--hero2:has(.tdi-hero-body--split) { background: #ffffff !important; }
+
+/* Body becomes the whole card — zero its padding so the two panels reach the
+   card's edges; each panel carries its own inner padding. */
+.tdi-hero-body--split { padding: 0 !important; }
+.tdi-hero-body--split .tdi-bodygrid {
+  grid-template-columns: minmax(0, 65fr) minmax(0, 35fr); gap: 0; align-items: stretch;
+}
+.tdi-hero-body--split .tdi-briefcol { padding: 1.15rem 1.35rem 1.25rem; min-width: 0; }
+
+/* ── Full-height off-white hub sidebar (flush to the card's right/top/bottom
+   edges; the card's radius + overflow:hidden clip its corners). ── */
+.tdi-hero-body--split .tdi-hubcard {
+  height: 100%; gap: 0.5rem;
+  padding: 1.2rem 1.3rem; border-radius: 0;
+  background: #eef2fb !important;
+  border-left: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent);
+  justify-content: flex-start;
+}
+.tdi-hero-body--split .tdi-hubcard-ic {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: #fff; color: #3358c9;
+  box-shadow: 0 1px 3px rgba(22, 35, 61, 0.12);
+}
+.tdi-hero-body--split .tdi-hubcard-ic svg { width: 21px; height: 21px; }
+.tdi-hero-body--split .tdi-hubcard-title {
+  margin: 0.35rem 0 0; font-size: 1.04rem; font-weight: 780; color: #16233d !important; letter-spacing: -0.01em;
+}
+.tdi-hero-body--split .tdi-hubcard-sub {
+  margin: 0; font-size: 0.83rem; line-height: 1.5; color: #56658a !important;
+}
+.tdi-hero-body--split .tdi-hubcard-go {
+  margin-top: auto; padding-top: 0.7rem; font-size: 0.87rem; font-weight: 650; color: #1d4ed8 !important;
+}
+@media (hover: hover) {
+  .tdi-hero-body--split .tdi-hubcard-go:hover { color: #16337c !important; }
+}
+
+/* ── Open state: the briefing takes the whole card. No header means no top
+   divider — suppress the expand's top border/margin and give the body its own
+   breathing room (the collapsed briefcol adds nothing). ── */
+.tdi-card--hero2.is-open .tdi-hero-body--split { padding: 1.1rem 1.35rem 1.25rem !important; }
+.tdi-card--hero2.is-open .tdi-hero-body--split .tdi-briefcol { padding: 0 !important; }
+.tdi-card--hero2.is-open .tdi-hero-body--split .tdi-expand {
+  margin-top: 0 !important; padding-top: 0 !important; border-top-color: transparent !important;
+}
+
+/* ── Mobile: stack — hub sidebar becomes a condensed rectangle below, spanning
+   full width flush to the card's bottom edge. ── */
+@media (max-width: 720px) {
+  .tdi-hero-body--split .tdi-bodygrid { grid-template-columns: 1fr; }
+  .tdi-hero-body--split .tdi-hubcard {
+    height: auto; flex-direction: row; align-items: center; flex-wrap: wrap;
+    gap: 0.35rem 0.75rem; padding: 0.9rem 1.1rem;
+    border-left: 0; border-top: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent);
+  }
+  .tdi-hero-body--split .tdi-hubcard-ic { width: 30px; height: 30px; }
+  .tdi-hero-body--split .tdi-hubcard-ic svg { width: 18px; height: 18px; }
+  .tdi-hero-body--split .tdi-hubcard-title { margin: 0; flex: 1 1 auto; }
+  .tdi-hero-body--split .tdi-hubcard-sub { flex: 1 1 100%; order: 3; }
+  .tdi-hero-body--split .tdi-hubcard-go { margin: 0; padding: 0; }
+}
