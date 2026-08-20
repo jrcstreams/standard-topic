@@ -22287,8 +22287,8 @@ body.home-search .home-sections .home-featured { margin-top: clamp(1.1rem, 2.4vw
 .tdi-hero-body--split .tdi-hubcard-title {
   color: #223559 !important; font-size: 1.06rem; font-weight: 750; line-height: 1.28;
 }
-.tdi-hero-body--split .tdi-hubcard-head { align-items: flex-start; gap: 0.65rem; }
-.tdi-hero-body--split .tdi-hubcard-ic { margin-top: 1px; }
+.tdi-hero-body--split .tdi-hubcard-head { align-items: center; gap: 0.65rem; }
+.tdi-hero-body--split .tdi-hubcard-ic { margin-top: 0; }
 .tdi-hero-body--split .tdi-hubcard-sub { margin: 0.55rem 0 0; color: #5a6885 !important; line-height: 1.5; }
 
 /* Divider + three feature badges (icon in a soft round chip + a 2-line label). */
