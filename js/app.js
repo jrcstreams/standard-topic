@@ -1511,15 +1511,16 @@ function diHeroCardHTML(o) {
   o = o || {};
   const X_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   const headerTitle = o.headerTitle || 'AI Daily Reads';
-  const topicRow = o.topicLabel ? `<div class="tdi-topiclabel"><span class="tdi-topiclabel-k">Topic:</span><span class="tdi-topiclabel-v">${escapeHTML(o.topicLabel)}</span></div>` : '';
+  // revamp898: no "Topic:" prefix — the name reads as an all-caps standfirst
+  // directly beneath The Daily Read title.
+  const topicRow = o.topicLabel ? `<div class="tdi-topiclabel"><span class="tdi-topiclabel-v">${escapeHTML(o.topicLabel)}</span></div>` : '';
   const hubTag = o.hubTagline ? `<p class="tdi-hubline"><a href="#/intelligence">Access the AI Daily Reads Hub${SUBPAGE_ARROW}</a></p>` : '';
   const HUB_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.8v2M12 19.2v2M21.2 12h-2M4.8 12h-2M18.5 5.5l-1.4 1.4M6.9 17.1l-1.4 1.4M18.5 18.5l-1.4-1.4M6.9 6.9L5.5 5.5"/></svg>';
   const HUB_DOC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3.5"/></svg>';
   const HUB_AI = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6l1.85 5.25a3 3 0 0 0 1.8 1.8L20.9 11.5l-5.25 1.85a3 3 0 0 0-1.8 1.8L12 20.4l-1.85-5.25a3 3 0 0 0-1.8-1.8L3.1 11.5l5.25-1.85a3 3 0 0 0 1.8-1.8z"/></svg>';
   const hubCard = o.hubCard ? `<aside class="tdi-hubcard">
         <div class="tdi-hubcard-head">
-          <span class="tdi-hubcard-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
-          <h4 class="tdi-hubcard-title">The AI Daily Reads Hub</h4>
+          <h4 class="tdi-hubcard-title">View more AI Daily Reads</h4>
         </div>
         <p class="tdi-hubcard-sub tdi-hubcard-sub--d">AI-generated briefings across 100+ topics, refreshed morning and night.</p>
         <p class="tdi-hubcard-sub tdi-hubcard-sub--m">AI-generated briefings across 100+ topics, refreshed morning and night.</p>
@@ -1528,10 +1529,9 @@ function diHeroCardHTML(o) {
           <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_SUN}</span><span class="tdi-hubfeat-tx">Updates twice daily</span></div>
           <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_DOC}</span><span class="tdi-hubfeat-tx">100+ topics</span></div>
         </div>
-        <a class="tdi-hubcard-go tdi-hubcard-cta" href="#/intelligence">Explore the AI Daily Reads Hub${SUBPAGE_ARROW}</a>
-        <!-- revamp895: stacked/mobile CTA — a plain link under the summary
-             instead of the arrow pinned in the corner. -->
-        <a class="tdi-hubcard-go tdi-hubcard-cta--m" href="#/intelligence">Access AI Daily Reads${SUBPAGE_ARROW}</a>
+        <!-- revamp897: ONE text link for every breakpoint — the desktop pill and
+             the separate mobile variant have collapsed into this. -->
+        <a class="tdi-hubcard-go tdi-hubcard-cta" href="#/intelligence">Access AI Daily Reads${SUBPAGE_ARROW}</a>
       </aside>` : '';
   // revamp895: the standalone card (topic pages + the hub's own Today card)
   // drops the header band too — the card IS the Daily Read, so a separate
@@ -1575,9 +1575,9 @@ function diHeroCardHTML(o) {
             <span class="tdi-openhead-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
             <div class="tdi-openhead-tx">
               <h3 class="tdi-openhead-title">The Daily Read</h3>
+              ${o.topicLabel ? `<div class="tdi-openhead-topic">${escapeHTML(o.topicLabel)}</div>` : ''}
               <div class="tdi-openhead-meta">
                 <span class="tdi-date tdi-date--open" data-tdi-date></span>
-                ${o.topicLabel ? `<span class="tdi-openhead-topic"><span class="tdi-openhead-topic-k">Topic:</span>${escapeHTML(o.topicLabel)}</span>` : ''}
               </div>
             </div>
           </div>

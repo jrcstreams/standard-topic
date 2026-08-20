@@ -22658,3 +22658,138 @@ body.home-search .home-sections .home-featured { margin-top: clamp(1.1rem, 2.4vw
   letter-spacing: -0.008em !important;
   margin-bottom: 0.3rem !important;
 }
+
+/* ═══ revamp897 — promo card as a quiet catch-line; more room for The Daily Read
+
+   The promo read like a mini product card (icon chip, bordered button) competing
+   with the briefing beside it. It's now a catch-line + supporting text + a plain
+   text link, and the split gives the actual content more of the card. */
+
+/* More room to the briefing side (was 50/50). */
+.tdi-hero-body--split .tdi-bodygrid { grid-template-columns: minmax(0, 62fr) minmax(0, 38fr); }
+
+/* The Daily Read heading steps up to match the promo's new scale. */
+.tdi-card--hero2 .tdi-today-title { font-size: 1.2rem !important; font-weight: 780 !important; }
+
+/* Drop the icon chip — the headline carries it. */
+.tdi-hero-body--split .tdi-hubcard-ic { display: none !important; }
+.tdi-hero-body--split .tdi-hubcard-head { gap: 0; padding-right: 0 !important; }
+
+/* Catch-line + supporting text. */
+.tdi-hero-body--split .tdi-hubcard-title {
+  font-size: 1.24rem !important; font-weight: 780 !important;
+  line-height: 1.24 !important; color: #1b2b4d !important; letter-spacing: -0.018em !important;
+}
+.tdi-hero-body--split .tdi-hubcard-sub {
+  font-size: 0.9rem !important; line-height: 1.5 !important;
+  margin-top: 0.5rem !important; color: #55648a !important;
+}
+
+/* Text link, not a button — at every width. */
+.tdi-hero-body--split .tdi-hubcard-cta {
+  display: inline-flex !important; position: static !important;
+  align-self: flex-start !important; width: auto !important;
+  margin: 0.75rem 0 0 !important; padding: 0 !important;
+  border: 0 !important; background: none !important; border-radius: 0 !important;
+  font-size: 0.9rem !important; font-weight: 680 !important;
+  color: #1d4ed8 !important; text-decoration: none;
+}
+.tdi-hero-body--split .tdi-hubcard-cta svg { width: 15px; height: 15px; }
+@media (hover: hover) {
+  .tdi-hero-body--split .tdi-hubcard-cta:hover { background: none !important; color: #16337c !important; text-decoration: underline; }
+}
+@media (max-width: 720px) {
+  .tdi-hero-body--split .tdi-hubcard-title { font-size: 1.12rem !important; }
+  .tdi-hero-body--split .tdi-hubcard-cta { margin-top: 0.6rem !important; }
+}
+
+/* ═══ revamp897b — Featured Topics: 2 columns × 5 when 3 would wrap ══════════
+   At mid widths the card is only ~half the row, so three columns forced
+   "Business & Finance" / "Health & Wellness" / "Climate & Environment" onto two
+   lines each — which also knocked the rows out of step with Featured AI Prompts
+   beside it. Three columns are now used only where they genuinely fit; below
+   that it's a clean 2 × 5 (10 items), matching the Prompts card's 5 rows. */
+@media (max-width: 1365.98px) {
+  .hf-card--topics .hf-chips { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .hf-card--topics .hf-chips > *:nth-child(n+11) { display: none !important; }
+}
+
+/* ═══ revamp898 — Daily Read identity, hub page chrome, Topics/Trending polish ═
+
+   1. Topic name is an all-caps standfirst under the title (no "Topic:" label).
+   2. Expanded header: icon centred against the title, caps topic, then the
+      date/edition pill, with a stronger rule closing the header block.
+   3. The AI Daily Reads page had a tinted wrapper AROUND the white card — two
+      nested cards. The wrapper's chrome is dropped so the card stands alone.
+   4. Page title/icon sized to match Topics / Trending.
+   5. Topics accordion: open row gets a darker, square head that meets the rule
+      above it.
+   6. Trending: the first card in each column now meets the rule above it, and
+      the hover tint survives a breakpoint change. */
+
+/* ── 1. Topic standfirst (collapsed card) ── */
+.tdi-card--hero2 .tdi-topiclabel { margin: 0.2rem 0 0.5rem !important; }
+.tdi-card--hero2 .tdi-topiclabel-v {
+  font-family: var(--font-family) !important;
+  font-size: 0.74rem !important; font-weight: 700 !important;
+  letter-spacing: 0.09em !important; text-transform: uppercase !important;
+  color: #5b6b8c !important;
+}
+
+/* ── 2. Expanded header ── */
+.tdi-openhead-main { align-items: center !important; gap: 0.75rem !important; }
+.tdi-openhead-ic { width: 34px !important; height: 34px !important; }
+.tdi-openhead-ic svg { width: 21px !important; height: 21px !important; }
+.tdi-openhead-title { font-size: 1.14rem !important; }
+.tdi-openhead-topic {
+  margin: 0.18rem 0 0.34rem;
+  font-family: var(--font-family); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.09em; text-transform: uppercase; color: #5b6b8c;
+}
+.tdi-openhead-meta { margin-top: 0 !important; }
+/* Stronger rule closing the header block. */
+.tdi-openhead {
+  padding-bottom: 1rem !important;
+  border-bottom: 1.5px solid color-mix(in srgb, #2f4d9e 22%, transparent) !important;
+}
+
+/* ── 3/4. AI Daily Reads hub page ── */
+/* The Today card sat inside a tinted, rounded, padded wrapper — a card in a
+   card. Strip the wrapper so the white bordered card reads on its own. */
+.dih-today {
+  background: none !important; border: 0 !important;
+  border-radius: 0 !important; padding: 0 !important;
+}
+.dih-today-card.tdi-card--hero2 {
+  background: #fff !important;
+  border: 1px solid var(--color-surface-border) !important;
+  box-shadow: 0 6px 20px -16px rgba(31, 49, 99, 0.22) !important;
+}
+/* Page title + icon scaled to the Topics / Trending pages. */
+.dih-title { font-size: 1.9rem !important; }
+.dih-title-ic { width: 30px !important; height: 30px !important; border-radius: 8px !important; }
+.dih-title-ic svg { width: 19px !important; height: 19px !important; }
+
+/* ── 5. Topics accordion: open head ── */
+.aiidd-parent[data-open="true"] > .aiidd-parent-head {
+  background: #e8edf6 !important;
+  border-radius: 0 !important;
+  /* Meet the rule above rather than floating inside it. */
+  margin-top: -1px; border-top: 1px solid transparent;
+}
+
+/* ── 6. Trending: first card meets the rule; hover survives resize ── */
+.aii-nav-dd-trending .trend-card-grid > .trend-card:first-child,
+.aii-nav-dd-trending .trend-card-grid > .trend-card:nth-child(2) {
+  border-top: 0 !important;
+}
+.aii-nav-dd-trending .trend-card-grid { padding-top: 0 !important; }
+.aii-nav-dd-trending .trend-card-grid > .trend-card { border-radius: 0 !important; }
+
+/* revamp899 — expanded Daily Read: clear three-step hierarchy.
+   The Daily Read (card title) > Overview/Briefings (sections) > story headlines.
+   Also pulls the first briefing up to the rule above it. */
+.tdi-openhead-title { font-size: 1.32rem !important; font-weight: 800 !important; }
+.di-sectitle { font-size: 1.1rem !important; font-weight: 720 !important; }
+/* The first item carried the section's own top border plus its own padding. */
+.di-briefs .dib:first-of-type { padding-top: 0.55rem !important; border-top: 0 !important; }
