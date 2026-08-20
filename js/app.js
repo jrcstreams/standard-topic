@@ -1384,10 +1384,10 @@ function diHeroCardHTML(o) {
   const hubCard = o.hubCard ? `<aside class="tdi-hubcard">
         <div class="tdi-hubcard-head">
           <span class="tdi-hubcard-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
-          <h4 class="tdi-hubcard-title">Unlock daily intelligence across 100+ topics</h4>
+          <h4 class="tdi-hubcard-title">Your Daily Intelligence Hub</h4>
         </div>
-        <p class="tdi-hubcard-sub tdi-hubcard-sub--d">AI-generated briefings, refreshed morning and night \u2014 so you're always informed, always ahead.</p>
-        <p class="tdi-hubcard-sub tdi-hubcard-sub--m">AI summaries refreshed twice daily \u2014 morning &amp; night editions.</p>
+        <p class="tdi-hubcard-sub tdi-hubcard-sub--d">AI-generated briefings across 100+ topics, refreshed morning and night.</p>
+        <p class="tdi-hubcard-sub tdi-hubcard-sub--m">AI-generated briefings across 100+ topics, refreshed morning and night.</p>
         <div class="tdi-hubcard-feats">
           <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_SUN}</span><span class="tdi-hubfeat-tx">Morning &amp; Evening Editions</span></div>
           <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_DOC}</span><span class="tdi-hubfeat-tx">100+ Topics Covered</span></div>
