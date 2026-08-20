@@ -23278,3 +23278,16 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 .dih-brief .di-ov .di-sectitle { margin-top: 0 !important; }
 .tdi-card--hero2.is-open .di-body,
 .tdi-card--hero2.is-open .di-page { gap: 1.1rem !important; }
+
+/* revamp917b — close the last two gaps: the card's top padding and the space
+   under the AI badge (the di-body flex gap was adding ~18px on top of the
+   badge's own margin). */
+.tdi-card--hero2.is-open .tdi-hero-body { padding-top: 0.35rem !important; }
+.tdi-card--hero2.is-open .tdi-openhead { margin-top: 0 !important; }
+.tdi-card--hero2.is-open .di-body,
+.tdi-card--hero2.is-open .di-page,
+.dih-brief .di-body { gap: 0.75rem !important; }
+.tdi-card--hero2.is-open .di-ov,
+.dih-brief .di-ov { margin-top: 0 !important; }
+.tdi-card--hero2.is-open .di-prov2,
+.dih-brief .di-prov2 { margin-bottom: 0.4rem !important; }
