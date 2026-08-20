@@ -23008,3 +23008,50 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 /* Air between the top row and Prompts by Topic. */
 .prompts-home .ph-top { margin-bottom: 0.9rem; }
 .prompts-home .ph-lib { margin-top: 1.4rem; }
+
+/* ═══ revamp908 — search page refinements + hub card highlight ═══════════════ */
+
+/* Raise the header block and pull the title close to the input (the hint under
+   the title is gone, so the pair reads as one unit). */
+.search-panel--modal .search-panel-topfold,
+.search-panel--modal[data-state="collapsed"] .search-panel-topfold,
+.search-panel--modal[data-state="expanded"] .search-panel-topfold {
+  padding-top: 1.5rem !important;
+  padding-bottom: 1.1rem !important;
+}
+.search-panel--modal .search-panel-hero-inner { padding-bottom: 0 !important; }
+.search-panel--modal .search-panel-title {
+  text-align: center !important; margin-bottom: 0.5rem !important;
+}
+.search-panel--modal .search-panel-barrow { padding-top: 0 !important; }
+
+/* Results header: smaller, dark blue. */
+.aii-srhead {
+  font-size: 1.2rem !important; font-weight: 780 !important;
+  color: #1e3a6b !important;
+}
+.aii-srsub { font-size: 0.9rem !important; margin-top: 0.2rem !important; }
+
+/* One rule under the tab row, not two. The list's own top border (revamp905)
+   is the separator, so the tab underline band is removed. */
+.search-aii-host .aii-flatnav { border-bottom: 0 !important; box-shadow: none !important; }
+.search-aii-host .aii-flatnav::after { display: none !important; }
+.search-aii-host .aii-fi-acclist,
+.search-aii-host .aii-fi-sec { margin-top: 0.75rem !important; }
+
+/* ── Hub cards: no blue highlight on the active/selected card ── */
+.dih-card.is-active, .dih-card[aria-expanded="true"], .dih-card:focus-visible,
+.dih-items .dih-card.is-open {
+  background: #fff !important;
+  border-color: var(--color-surface-border) !important;
+}
+.dih-card.is-active .dih-card-name, .dih-card[aria-expanded="true"] .dih-card-name,
+.dih-items .dih-card.is-open .dih-card-name { color: inherit !important; }
+
+/* ── Hub, mobile: the Today card had a wrapper card around it. ── */
+@media (max-width: 720px) {
+  .dih-today, .dih .dih-today {
+    background: none !important; border: 0 !important;
+    border-radius: 0 !important; padding: 0 !important; box-shadow: none !important;
+  }
+}

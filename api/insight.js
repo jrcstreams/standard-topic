@@ -58,7 +58,8 @@ module.exports = async function handler(req, res) {
     //       headroom today — otherwise it would just regenerate sourceless again
     //       and burn tokens. News matters most: it never refreshes by age, so
     //       without this a sourceless news brief stays that way forever.
-    if (out && out.cached && waitUntil
+    const cacheOnly = input.cacheOnly === 1 || input.cacheOnly === '1' || input.cacheOnly === true;
+    if (out && out.cached && waitUntil && !cacheOnly
         && (input.type === 'shortcut' || input.type === 'news' || input.type === 'trend')) {
       let doRefresh = false;
       if (input.type === 'shortcut' && out.generatedAt) {

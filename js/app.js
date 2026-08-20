@@ -1867,7 +1867,10 @@ function renderIntelligenceHub(container) {
     const sum = el.querySelector('[data-dih-sum]');
     const stamp = el.querySelector('[data-dih-stamp-for]');
     try {
-      const d = await fetchDailyBrief(el.dataset.dihItem);
+      // revamp908: the hub lazy-loads a card per topic. Reading CACHE-ONLY
+      // means scrolling the hub can never trigger paid generation — the crons
+      // stay the only writer. Cards with no brief yet show the pending note.
+      const d = await fetchDailyBrief(el.dataset.dihItem, false, true);
       if (!el.isConnected) return;
       if (sum) sum.textContent = (d && d.summary) ? d.summary : 'Briefing publishes with the next edition.';
       if (stamp && d && d.generatedAt) stamp.innerHTML = diEditionStampHTML(d.generatedAt);
@@ -5343,8 +5346,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       ${isModal ? '<div class="search-panel-topfold">' : ''}
       <div class="search-panel-hero"><div class="search-panel-hero-inner">
         ${isModal
-          ? `<h2 class="search-panel-title">Search</h2>
-             <p class="search-panel-herohint">The latest news and AI insights.</p>`
+          ? `<h2 class="search-panel-title">Search</h2>`
           : `<h2 class="search-panel-title">Search. Discover. Stay&nbsp;Informed.</h2>
              <p class="search-panel-tagline">Real news. AI insights. All in one place.</p>`}
       </div></div>
@@ -5458,7 +5460,7 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     // insights (Explore with External AI Models first, then the web categories),
     // replacing the old bare "Web Search" tab. Trending is no longer a tab (#img215).
     extraTabs.push({
-      group: 'explore', tab: 'Explore Further', subtitle: 'Send this to an AI model, or open it in web sources.', icon: SP_TREND_SEC_ICON,
+      group: 'explore', tab: 'Web Resources', subtitle: 'Send this to an AI model, or open it in web sources.', icon: SP_TREND_SEC_ICON,
       render: (wrap) => {
         wrap.innerHTML = `<div class="search-xf">${exploreFurtherHTML({ prompt: `Explain "${t}" and give me the latest, most important information on it. Be specific and cite sources.`, webTerm: t, name: t, subDesc: 'Explore this search with ChatGPT, Claude, Gemini & more' })}</div>`;
         try { wireExploreFurther(wrap.querySelector('.search-xf')); } catch (_) {}

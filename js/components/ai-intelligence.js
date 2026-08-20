@@ -2147,15 +2147,19 @@ export function renderAIIntelligence(container, scope) {
 // topicName -> Promise<insight|null>. Shared by the landing card teaser and the
 // sub-page so tapping through never refetches.
 const dailyBriefCache = {};
-export function fetchDailyBrief(topicName, force = false) {
+export function fetchDailyBrief(topicName, force = false, cacheOnly = false) {
   const key = String(topicName || '').toLowerCase();
   if (!force && dailyBriefCache[key]) return dailyBriefCache[key];
   const p = (async () => {
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
-        const res = await fetchWithTimeout('/api/insight', { timeoutMs: 60000, method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shortcut', topic: topicName, group: 'daily', builder: 1 }) });
+        const res = await fetchWithTimeout('/api/insight', { timeoutMs: 60000, method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'shortcut', topic: topicName, group: 'daily', builder: 1, ...(cacheOnly ? { cacheOnly: 1 } : {}) }) });
         const data = res.ok ? await res.json() : null;
         if (data && data.content) return data;
+        // revamp908: a cache-only MISS is a definitive answer ("not generated
+        // yet"), not a transient failure — retrying it three times just burns
+        // requests for a result that cannot change on this read path.
+        if (data && data.pending) return null;
       } catch (_) {}
       await new Promise((r) => setTimeout(r, 800 + attempt * 800));
     }
