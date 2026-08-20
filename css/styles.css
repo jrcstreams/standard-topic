@@ -4926,7 +4926,11 @@ body.app-mode .topic-layout {
     /* Bottom padding restores the breathing room the (now-hidden) section-tab bar
        used to provide under the Related pills. */
     padding: 0.85rem 1rem 0.9rem !important; background: #f3f5f9; min-height: 0;
-    transition: padding .18s ease;
+    /* revamp890: the padding transition was animating this band's HEIGHT, and
+       --subnav-height is republished by a ResizeObserver on every frame of that
+       animation — which re-runs #content's padding-top calc ~11 times in 180ms,
+       sliding the page under the user's finger. The condense is now instant
+       (same one-frame approach the nav dropdown deliberately uses). */
   }
   body.app-mode #sub-header.is-subnav:not(.home-mode) .topic-banner-row {
     display: grid !important;

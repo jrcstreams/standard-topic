@@ -212,16 +212,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     trackPageView(routeHash() || '#/', document.title);
   });
 
-  let __snvTimer = null;
-  window.addEventListener('resize', () => { clearTimeout(__snvTimer); __snvTimer = setTimeout(setSubnavHeightVar, 90); }, { passive: true });
+  // revamp890: was its own 90ms timer racing two other 90ms timers (the nav fit
+  // and the bus), each landing in a different rAF — so --subnav-height could be
+  // measured while --nav-h was mid-change. One bus = one settle pass, in order.
+  onResize('subnav-height', setSubnavHeightVar, 20);  // measures against --nav-h
 
   initRouter();
 
   // Re-render layout if the viewport crosses the mobile breakpoint
   // (home behaves differently on mobile vs desktop)
-  let lastMobile = window.matchMedia(MOBILE_QUERY).matches;
-  window.addEventListener('resize', () => {
-    const nowMobile = window.matchMedia(MOBILE_QUERY).matches;
+  // revamp890: this tore down and rebuilt #site-header / #sub-header / #content
+  // from inside an UNDEBOUNCED resize handler — dragging slowly across 640px
+  // fired a full re-render (and every re-bind under it) on frame after frame.
+  // matchMedia's change event fires exactly ONCE per crossing, which is the
+  // actual semantics wanted here.
+  const __mq = window.matchMedia(MOBILE_QUERY);
+  let lastMobile = __mq.matches;
+  const onBreakpointCross = () => {
+    const nowMobile = __mq.matches;
     if (nowMobile !== lastMobile) {
       lastMobile = nowMobile;
       const route = getCurrentRoute();
@@ -273,7 +281,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         requestAnimationFrame(setSubnavHeightVar);
       }
     }
-  }, { passive: true });
+  };
+  if (typeof __mq.addEventListener === 'function') __mq.addEventListener('change', onBreakpointCross);
+  else if (typeof __mq.addListener === 'function') __mq.addListener(onBreakpointCross);  // Safari <14
 });
 
 // Unified layout:
@@ -281,6 +291,68 @@ document.addEventListener('DOMContentLoaded', async () => {
 //  - Every other page: same sticky bar visible from page load (no scroll trigger)
 //    Content area gets top padding (via body.sticky-always) so it isn't hidden.
 let heroScrollHandler = null;
+
+// ─── revamp890: keyed resize/scroll bus ──────────────────────────────────────
+// Per-render code used to call window.addEventListener('resize', …) directly.
+// Because most of those callbacks were anonymous they could never be removed,
+// so every route change stacked another copy — ~3 per navigation. After a dozen
+// pages, dozens of measure-and-write handlers all fired on every resize frame,
+// which is what made the site progressively jitter and flash.
+//
+// Subscribing BY KEY makes re-registration replace the previous callback, so a
+// re-render can never accumulate. All subscribers are then run inside a SINGLE
+// debounced rAF, so a resize drag triggers one batched layout pass per settle
+// instead of N interleaved read/write cycles.
+const __resizeSubs = new Map();
+const __scrollSubs = new Map();
+let __resizeTimer = null;
+let __resizeQueued = false;
+
+function __runResizeSubs() {
+  __resizeQueued = false;
+  // Priority order matters: whatever publishes a CSS variable that others
+  // measure against must run first. --nav-h (main-nav-fit) feeds #sub-header's
+  // `top`, so the subnav height must be measured only after the nav settles.
+  const subs = [...__resizeSubs.entries()].sort((a, b) => a[1].__pri - b[1].__pri);
+  subs.forEach(([, fn]) => { try { fn(); } catch (_) {} });
+}
+
+// key: stable string id. fn: callback. Re-registering the same key replaces it.
+// pri: lower runs earlier (default 100).
+function onResize(key, fn, pri) {
+  fn.__pri = typeof pri === 'number' ? pri : 100;
+  __resizeSubs.set(key, fn);
+}
+function offResize(key) {
+  __resizeSubs.delete(key);
+}
+// Scroll subscribers run un-debounced (scroll must feel immediate) but are
+// batched into one rAF so multiple subscribers share a single frame.
+function onScroll(key, fn) {
+  __scrollSubs.set(key, fn);
+}
+function offScroll(key) {
+  __scrollSubs.delete(key);
+}
+
+let __scrollQueued = false;
+window.addEventListener('resize', () => {
+  clearTimeout(__resizeTimer);
+  __resizeTimer = setTimeout(() => {
+    if (__resizeQueued) return;
+    __resizeQueued = true;
+    requestAnimationFrame(__runResizeSubs);
+  }, 90);
+}, { passive: true });
+
+window.addEventListener('scroll', () => {
+  if (__scrollQueued || !__scrollSubs.size) return;
+  __scrollQueued = true;
+  requestAnimationFrame(() => {
+    __scrollQueued = false;
+    __scrollSubs.forEach((fn) => { try { fn(); } catch (_) {} });
+  });
+}, { passive: true });
 
 const MOBILE_QUERY = '(max-width: 640px)';
 
@@ -309,13 +381,25 @@ function setSubnavHeightVar() {
   const sub = document.getElementById('sub-header');
   if (!sub) return;
   const h = sub.offsetHeight;
-  if (h > 0) document.documentElement.style.setProperty('--subnav-height', `${h}px`);
+  // revamp890: skip redundant writes. Re-setting a custom property to the same
+  // value still invalidates style for every rule that consumes it.
+  // Also: `h > 0` alone meant that when the subnav is emptied (search/custom
+  // routes clear it), the PREVIOUS page's height stuck around and every
+  // calc(--nav-h + --subnav-height) reserved phantom space. Clear it instead.
+  if (h !== setSubnavHeightVar._h) {
+    setSubnavHeightVar._h = h;
+    if (h > 0) document.documentElement.style.setProperty('--subnav-height', `${h}px`);
+    else document.documentElement.style.removeProperty('--subnav-height');
+  }
   // The grey identity bar height (topic page). The name-picker dropdown hangs off
   // THIS bar's bottom so it overlays the (lower-hierarchy) control tabs. Falls back
   // to the whole subnav where there's no separate control bar (home).
   const title = sub.querySelector('.topic-subnav-title');
   const th = title ? title.offsetHeight : h;
-  if (th > 0) document.documentElement.style.setProperty('--subnav-title-h', `${th}px`);
+  if (th > 0 && th !== setSubnavHeightVar._th) {
+    setSubnavHeightVar._th = th;
+    document.documentElement.style.setProperty('--subnav-title-h', `${th}px`);
+  }
 }
 
 // Observe the subnav for any size change (CSS transitions, content
@@ -326,7 +410,16 @@ function observeSubnavHeight() {
   const sub = document.getElementById('sub-header');
   if (!sub || typeof ResizeObserver === 'undefined') return;
   if (subnavResizeObs) subnavResizeObs.disconnect();
-  subnavResizeObs = new ResizeObserver(() => setSubnavHeightVar());
+  // revamp890: the callback wrote --subnav-height, which drives #content's
+  // padding-top — resizing content, which could re-enter the observer. Batch
+  // into one rAF and skip no-op writes so the loop can't chase itself frame by
+  // frame (the topic-page shudder).
+  let roQueued = false;
+  subnavResizeObs = new ResizeObserver(() => {
+    if (roQueued) return;
+    roQueued = true;
+    requestAnimationFrame(() => { roQueued = false; setSubnavHeightVar(); });
+  });
   subnavResizeObs.observe(sub);
 }
 
@@ -338,8 +431,15 @@ function observeSubnavHeight() {
 // under body.topic-hero-condensed; --subnav-height (ResizeObserver) keeps the
 // content padding in lockstep as the band shrinks.
 let topicHeroScrollHandler = null;
+let __bodyHeadH = null;         // revamp890: cached .topic-bodyhead height
 function wireTopicHeroCondense() {
   if (topicHeroScrollHandler) document.removeEventListener('scroll', topicHeroScrollHandler, true);
+  __bodyHeadH = null;
+  // revamp890: the threshold derives from .topic-bodyhead's height, which was
+  // re-measured (offsetHeight = forced layout) on EVERY scroll event. It only
+  // changes on render/resize, so cache it and invalidate there instead.
+  onResize('topic-bodyhead-h', () => { __bodyHeadH = null; });
+  let queued = false;
   topicHeroScrollHandler = (e) => {
     const t = e.target;
     let st;
@@ -359,16 +459,33 @@ function wireTopicHeroCondense() {
     // topic header (title + subtopics) has mostly scrolled away — so derive it
     // from that header's height. On mobile the header is display:none (height 0)
     // so it falls back to the small hero-condense threshold.
-    const bh = document.querySelector('.topic-bodyhead');
-    const bhH = bh ? bh.offsetHeight : 0;
+    if (__bodyHeadH === null) {
+      const bh = document.querySelector('.topic-bodyhead');
+      __bodyHeadH = bh ? bh.offsetHeight : 0;
+    }
+    const bhH = __bodyHeadH;
     const onThresh = Math.max(36, bhH - 24);
     const offThresh = Math.max(12, bhH - 64);
     // Hysteresis so it doesn't flicker at the boundary.
     const condensed = document.body.classList.contains('topic-hero-condensed');
-    if (!condensed && st > onThresh) document.body.classList.add('topic-hero-condensed');
-    else if (condensed && st < offThresh) document.body.classList.remove('topic-hero-condensed');
+    const next = !condensed && st > onThresh ? true
+      : (condensed && st < offThresh ? false : null);
+    if (next === null) return;                     // no state change → no write
+    // revamp890: batch the class write into a frame. Toggling it inline from a
+    // capture-phase scroll handler resized the sticky band mid-scroll, which
+    // the --subnav-height ResizeObserver then chased frame-by-frame.
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      document.body.classList.toggle('topic-hero-condensed', next);
+    });
   };
-  document.addEventListener('scroll', topicHeroScrollHandler, true);
+  // revamp890: was `true` (a bare capture flag), which also made this listener
+  // NON-PASSIVE — a blocking scroll handler on document for every descendant
+  // scroll. Passive + capture keeps the behaviour without blocking the
+  // compositor.
+  document.addEventListener('scroll', topicHeroScrollHandler, { passive: true, capture: true });
   document.body.classList.remove('topic-hero-condensed');
 }
 
@@ -548,7 +665,7 @@ function wireSubtopicsMore(root) {
   };
   requestAnimationFrame(fit);
   setTimeout(fit, 250);
-  window.addEventListener('resize', () => requestAnimationFrame(fit), { passive: true });
+  onResize('subtopics-more', fit);   // revamp890: keyed — replaces on re-render
 }
 
 // Deep-link into a topic's sub-page (revamp763): sub-pages are real URLs now, so
@@ -707,7 +824,14 @@ function openNavDropdown(cfg) {
   // it is exactly the pseudo-page behavior we're removing.
   overlay.onclick = asPage ? null : closeFn;
   const sc = panel;   // the PANEL scrolls now, not an inner div
-  if (sc) sc.addEventListener('scroll', updateNavDdFades, { passive: true });
+  // revamp890: `panel` is a PERSISTENT element, so binding here on every
+  // dropdown open stacked a fresh listener each time (ten opens = ten fade
+  // recalcs per scroll event). Remove the previous binding before re-adding.
+  if (sc) {
+    if (sc.__ddFades) sc.removeEventListener('scroll', sc.__ddFades);
+    sc.__ddFades = updateNavDdFades;
+    sc.addEventListener('scroll', updateNavDdFades, { passive: true });
+  }
   wireNavDdCondense(panel);
   if (typeof cfg.wire === 'function') cfg.wire(panel);
   panel.classList.add('is-open');
@@ -1964,7 +2088,7 @@ function updatePickerFades(picker) {
 // Wire EVERY picker found in `root` (a topic page now has two — the desktop body
 // header + the subnav-band button; CSS shows one at a time per width/scroll).
 function wireSubnavPicker(root) {
-  root.querySelectorAll('[data-topic-picker]').forEach((picker) => {
+  root.querySelectorAll('[data-topic-picker]').forEach((picker, pickerIdx) => {
     const btn = picker.querySelector('.tsp-btn');
     if (!btn) return;
     const isBodyHead = picker.classList.contains('topic-bodyhead');
@@ -2010,7 +2134,11 @@ function wireSubnavPicker(root) {
         grid.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
       }
     };
-    window.addEventListener('resize', () => { if (picker.classList.contains('is-open')) requestAnimationFrame(fitGridCols); }, { passive: true });
+    // A topic page wires TWO pickers (body-head + subnav band), so the key must
+    // be per-picker — a shared key would let the second registration silently
+    // replace the first.
+    onResize(`subnav-picker-grid:${isBodyHead ? 'body' : 'subnav'}:${pickerIdx}`,
+      () => { if (picker.classList.contains('is-open')) fitGridCols(); });
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       setOpen(!picker.classList.contains('is-open'));
@@ -2284,17 +2412,36 @@ function initScrollFades() {
   const bot = document.createElement('div'); bot.className = 'pg-scroll-fade pg-scroll-fade-bottom';
   document.body.append(top, bot);
   const sub = document.getElementById('sub-header');
+  // revamp890: this ran on EVERY scroll event, on every page, interleaving a
+  // getBoundingClientRect read, a style.top write, a scrollHeight read and two
+  // class writes — two forced reflows per event. Now: the sub-header's bottom
+  // is only re-measured when the layout actually changes (resize / content
+  // resize), and the per-scroll path writes only when a fade flips.
+  let subBottom = 0;
+  let lastTopOn = null, lastBotOn = null;
+  const measure = () => {
+    subBottom = sub ? Math.max(0, Math.round(sub.getBoundingClientRect().bottom)) : 0;
+    top.style.top = subBottom + 'px';
+  };
   const update = () => {
-    const b = sub ? Math.max(0, Math.round(sub.getBoundingClientRect().bottom)) : 0;
-    top.style.top = b + 'px';
     const y = window.scrollY || 0;
     const max = document.documentElement.scrollHeight - window.innerHeight;
-    top.classList.toggle('is-on', y > 8);
-    bot.classList.toggle('is-on', max - y > 8);
+    const tOn = y > 8;
+    const bOn = max - y > 8;
+    if (tOn !== lastTopOn) { lastTopOn = tOn; top.classList.toggle('is-on', tOn); }
+    if (bOn !== lastBotOn) { lastBotOn = bOn; bot.classList.toggle('is-on', bOn); }
   };
-  window.addEventListener('scroll', update, { passive: true });
-  window.addEventListener('resize', update, { passive: true });
-  if (window.ResizeObserver) new ResizeObserver(update).observe(document.getElementById('content') || document.body);
+  onScroll('page-scroll-fades', update);
+  onResize('page-scroll-fades', () => { measure(); update(); });
+  if (window.ResizeObserver) {
+    let roQueued = false;
+    new ResizeObserver(() => {
+      if (roQueued) return;
+      roQueued = true;
+      requestAnimationFrame(() => { roQueued = false; measure(); update(); });
+    }).observe(document.getElementById('content') || document.body);
+  }
+  measure();
   update();
 }
 
@@ -2619,17 +2766,26 @@ function setupHomeStickyReveal(mainEl, subEl) {
   const computeThreshold = () => Math.max(0, (heroEl?.offsetHeight || 200) - 56);
   let threshold = computeThreshold();
 
+  // revamp890: only WRITE when the state actually flips. classList.toggle with
+  // an unchanged value still dirties style on some engines, and this ran on
+  // every scroll event — so the sticky hero/subnav were being re-resolved
+  // continuously while scrolling, which is what made them flash and stutter.
+  let lastPassed = null;
   heroScrollHandler = () => {
     // >= so that landing at exactly threshold (clean tab-switch position)
     // also counts as revealed
     const passed = window.scrollY >= threshold;
+    if (passed === lastPassed) return;
+    lastPassed = passed;
     mainEl.classList.toggle('is-revealed', passed);
     if (subEl) subEl.classList.toggle('with-mainnav', passed);
   };
   window.addEventListener('scroll', heroScrollHandler, { passive: true });
-  window.addEventListener('resize', () => {
+  onResize('home-sticky-threshold', () => {
     threshold = computeThreshold();
-  }, { passive: true });
+    lastPassed = null;          // re-evaluate against the new threshold
+    heroScrollHandler();
+  });
   heroScrollHandler();
 }
 
@@ -2710,7 +2866,6 @@ function wireChipStripScrollEnd() {
 // We detect wrap by comparing the title element's rendered height
 // against a single-line threshold — robust whether the title bumps
 // horizontally or breaks to a new line.
-let subnavCompactResizeHandler = null;
 let subnavCompactLastWidth = null;
 function wireSubnavCompactMeasure() {
   const titleGroupEl = document.querySelector('#sub-header.is-subnav .topic-banner-titlegroup');
@@ -2773,26 +2928,26 @@ function wireSubnavCompactMeasure() {
       }
     }
   };
-  if (subnavCompactResizeHandler) {
-    window.removeEventListener('resize', subnavCompactResizeHandler);
-  }
+  // revamp890: onto the keyed bus — re-registration replaces, so this can never
+  // accumulate across renders. (The width guard stays: it ignores height-only
+  // resizes, i.e. the mobile keyboard opening.)
   subnavCompactLastWidth = window.innerWidth;
-  subnavCompactResizeHandler = () => {
+  onResize('subnav-compact-measure', () => {
     if (window.innerWidth === subnavCompactLastWidth) return;
     subnavCompactLastWidth = window.innerWidth;
     measure();
-  };
-  window.addEventListener('resize', subnavCompactResizeHandler, { passive: true });
-  // Multiple measure passes: immediate, after a frame, after fonts
-  // load, and a 600ms safety net. Each is idempotent so re-running
-  // is cheap.
+  }, 40);
+  // revamp890: measure() strips its shrink classes, measures, then re-adds them.
+  // Running it at 250ms and 700ms meant real paints landed between those passes,
+  // so the subnav title visibly jumped to full size and shrank back TWICE after
+  // the page had settled. The only passes that can legitimately change the
+  // outcome are the first frame and fonts-ready (metrics change when the webfont
+  // swaps in) — the timeouts were duplicating work and causing the flash.
   measure();
   requestAnimationFrame(measure);
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(measure).catch(() => {});
   }
-  setTimeout(measure, 250);
-  setTimeout(measure, 700);
 }
 
 // on container size changes, after fonts load, and on full page load so
@@ -3024,9 +3179,12 @@ function trimStickyNav() {
 
   requestAnimationFrame(run);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => requestAnimationFrame(run));
-  if (stickyNavTrimHandler) window.removeEventListener('resize', stickyNavTrimHandler);
-  stickyNavTrimHandler = () => requestAnimationFrame(run);
-  window.addEventListener('resize', stickyNavTrimHandler, { passive: true });
+  // revamp890: this was the one resize path with NO debounce — it re-ran the
+  // whole write(display)/read(offsetWidth) trim loop on every resize FRAME,
+  // while fitMainNav ran at settle+90ms. The two share the same header row, so
+  // they fought each other: per-frame trimming against a nav whose stage
+  // classes changed only at settle. On the bus it runs once, after the fit.
+  onResize('sticky-nav-trim', run, 30);
 }
 
 // theScore-style mobile top bar: the page label shown next to the back
@@ -3150,6 +3308,7 @@ function wireNavDdCondense(panel) {
     const after = chrome();
     const delta = before - after;
     if (delta) sc.scrollTop = Math.max(0, sc.scrollTop + delta);
+    syncStickyTop();      // revamp890: only when the head actually changed size
     requestAnimationFrame(() => { busy = false; });
   };
   // The sub-bar sticks BELOW the head, so it needs the head's live height — which
@@ -3158,16 +3317,29 @@ function wireNavDdCondense(panel) {
     const h = panel.querySelector('.aii-nav-dd-head');
     if (h) panel.style.setProperty('--navdd-head-h', `${Math.round(h.getBoundingClientRect().height)}px`);
   };
+  // revamp890: `apply` used to call syncStickyTop() on EVERY scroll event — a
+  // getBoundingClientRect read followed by a CSS-var write that other rules
+  // consume as `top:`, i.e. a forced reflow per event. The head's height only
+  // changes when `is-condensed` actually flips (or on resize), so sync there
+  // instead of continuously.
   const apply = () => {
     const y = sc.scrollTop;
     if (!on && y > 48) setState(true);
     else if (on && y < 8) setState(false);
-    syncStickyTop();
   };
   syncStickyTop();
-  window.addEventListener('resize', syncStickyTop, { passive: true });
-  if (inner) inner.addEventListener('scroll', apply, { passive: true });
-  window.addEventListener('scroll', apply, { passive: true });
+  // revamp890: these listeners were added on EVERY dropdown open against a
+  // PERSISTENT panel element and never removed, so each open stacked another
+  // copy — by the tenth open, ten rect-reads + ten CSS-var writes ran per
+  // scroll event. Keyed subscriptions replace instead of accumulating, and the
+  // inner listener is removed before re-binding.
+  onResize('navdd-sticky-top', syncStickyTop);
+  if (inner) {
+    if (inner.__navddApply) inner.removeEventListener('scroll', inner.__navddApply);
+    inner.__navddApply = apply;
+    inner.addEventListener('scroll', apply, { passive: true });
+  }
+  onScroll('navdd-condense', apply);
   apply();
 }
 
@@ -3231,15 +3403,24 @@ function wirePageNavReveal() {
   // bar (and at wireTopicHeroCondense, and at wireNavDdCondense) broke by
   // picking one. Listen in the capture phase so element scrolls are caught too,
   // and take whichever offset is largest.
+  // revamp890: only write when the state actually flips. This toggled a class
+  // on <body> — invalidating style for the whole document — on every scroll
+  // event, and because the same function was bound to BOTH window (bubble) and
+  // document (capture) it ran twice per event.
+  let lastOn = null;
   const apply = (e) => {
     const doc = document.scrollingElement || document.documentElement;
     let y = Math.max(doc.scrollTop || 0, window.scrollY || 0);
     const t = e && e.target;
     if (t && t.nodeType === 1 && typeof t.scrollTop === 'number') y = Math.max(y, t.scrollTop);
-    document.body.classList.toggle('pagenav-on', y > 90);
+    const on = y > 90;
+    if (on === lastOn) return;
+    lastOn = on;
+    document.body.classList.toggle('pagenav-on', on);
   };
   pageNavScrollHandler = apply;
-  window.addEventListener('scroll', apply, { passive: true });
+  // Capture on document already sees window/document scrolls, so the separate
+  // window binding was pure duplication.
   document.addEventListener('scroll', apply, { passive: true, capture: true });
   document.body.classList.remove('pagenav-on');
   apply();
@@ -3299,8 +3480,21 @@ function documentTitleFor(route) {
 function fitMainNav() {
   const inner = document.querySelector('.sticky-hero-inner');
   if (!inner) return;
-  inner.classList.remove('nav-wrap', 'nav-stacked', 'nav-short-trending', 'nav-small-text', 'nav-tiny-text', 'nav-drop-prompts', 'nav-drop-home', 'nav-icon-search', 'nav-tiny-title', 'nav-micro-text');
-  document.documentElement.style.removeProperty('--nav-h');
+  // revamp890: this used to reset every nav class AND drop --nav-h before
+  // re-deriving them, so each resize event painted a wide/unstyled nav for a
+  // frame before snapping back — the visible header flash. It also wrote the
+  // class list ~9 times per resize. Now the whole ladder is resolved against a
+  // detached snapshot of the class list and committed ONCE, only if it differs
+  // from what's already applied.
+  const STAGE_CLASSES = ['nav-wrap', 'nav-stacked', 'nav-short-trending', 'nav-small-text', 'nav-tiny-text', 'nav-drop-prompts', 'nav-drop-home', 'nav-icon-search', 'nav-tiny-title', 'nav-micro-text'];
+  const before = STAGE_CLASSES.filter((c) => inner.classList.contains(c)).join(' ');
+  inner.classList.remove(...STAGE_CLASSES);
+  // NOTE: --nav-h is deliberately NOT cleared here. It used to be removed
+  // synchronously and only re-set inside the rAF below, so while the nav was
+  // wrapped the cascade fell back to :root's --nav-h for a frame — the fixed
+  // subnav (top: var(--nav-h)) and #content (padding-top: calc(--nav-h + …))
+  // both jumped ~40px and snapped back. It is now only ever overwritten with a
+  // real measured value, or cleared once we know we're single-row.
   // The search bar is pushed to the far right by a flexible nav group, which
   // means the group absorbs slack and the row can never "overflow" — so every
   // measurement below is taken with `.nav-measuring`, which un-flexes the group
@@ -3511,11 +3705,9 @@ function renderStickyHeroBar(container, route) {
     // classes and mutates --nav-h — doing that on every resize frame during a
     // drag reflows the whole page repeatedly and flickers. Run once the resize
     // settles, plus one rAF for the initial snap (revamp869).
-    let navFitTimer = null;
-    window.addEventListener('resize', () => {
-      clearTimeout(navFitTimer);
-      navFitTimer = setTimeout(() => requestAnimationFrame(fitMainNav), 90);
-    }, { passive: true });
+    // revamp890: onto the shared bus so the nav fit and the subnav-height
+    // measurement happen in one ordered settle pass instead of two racing ones.
+    onResize('main-nav-fit', fitMainNav, 10);   // publishes --nav-h first
     window.__navFitBound = true;
   }
   requestAnimationFrame(fitMainNav);
@@ -3661,7 +3853,12 @@ function renderStickyHeroBar(container, route) {
   if (scrollEl) {
     scrollEl.addEventListener('scroll', updateScrollOverflow, { passive: true });
     if (typeof ResizeObserver !== 'undefined') {
-      new ResizeObserver(updateScrollOverflow).observe(scrollEl);
+      // revamp890: renderStickyHeroBar runs on EVERY route change and rebuilds
+      // navPanel.innerHTML just above, so this observer used to be re-created
+      // per navigation while the old one stayed alive on a detached node.
+      if (window.__navmenuRO) window.__navmenuRO.disconnect();
+      window.__navmenuRO = new ResizeObserver(updateScrollOverflow);
+      window.__navmenuRO.observe(scrollEl);
     }
   }
 
@@ -3688,7 +3885,7 @@ function renderStickyHeroBar(container, route) {
       dst.style.letterSpacing = cs.letterSpacing;
     }
   };
-  window.addEventListener('resize', () => { if (navPanel.classList.contains('is-open')) syncNavmenuTitleSize(); }, { passive: true });
+  onResize('navmenu-title-size', () => { if (navPanel.classList.contains('is-open')) syncNavmenuTitleSize(); });
 
   const openMenu = () => { resetMenu(); syncNavmenuTitleSize(); navPanel.classList.add('is-open'); navOverlay.classList.add('is-open'); document.body.style.overflow = 'hidden'; requestAnimationFrame(updateScrollOverflow); };
 
@@ -5129,8 +5326,14 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
       : 'Search any topic, headline or question for insights…';
   }
   syncPlaceholder();
-  const onSpResize = () => { if (!document.contains(input)) { window.removeEventListener('resize', onSpResize); return; } syncPlaceholder(); };
-  window.addEventListener('resize', onSpResize);
+  // revamp890: was a raw (non-passive) listener that only unregistered on the
+  // NEXT resize after its input was detached — so every visit to a search
+  // surface left another live handler behind until the user happened to resize.
+  // Keyed: re-registration replaces, and a detached input drops the entry.
+  onResize('search-panel-placeholder', () => {
+    if (!document.contains(input)) { offResize('search-panel-placeholder'); return; }
+    syncPlaceholder();
+  });
   let currentTerm = '';
   let suggestItems = [];   // [{type:'topic'…} | {type:'trend', query, category} | {type:'custom', term}]
   let activeIdx = -1;
@@ -5473,15 +5676,28 @@ let homeSubnavRevealHandler = null;
 function setupHomeSubnavReveal() {
   if (homeSubnavRevealHandler) { window.removeEventListener('scroll', homeSubnavRevealHandler); homeSubnavRevealHandler = null; }
   document.body.classList.remove('home-subnav-on');
+  // revamp890: getComputedStyle(documentElement) is one of the most expensive
+  // forced style recalcs there is, and this called it on EVERY scroll event
+  // just to read --nav-h. --nav-h only changes on resize (fitMainNav), so cache
+  // it and refresh there. Also write only when the state flips.
+  let navH = 60;
+  let lastOn = null;
+  const readNavH = () => {
+    navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 60;
+  };
+  readNavH();
   homeSubnavRevealHandler = () => {
     // The hero (title + search bar) is the last thing in the grey zone now that
     // the quicklinks strip became the Featured cards on the white band.
     const strip = document.getElementById('home-search-hero');
     if (!strip) return;
-    const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 60;
-    document.body.classList.toggle('home-subnav-on', strip.getBoundingClientRect().bottom <= navH + 4);
+    const on = strip.getBoundingClientRect().bottom <= navH + 4;
+    if (on === lastOn) return;
+    lastOn = on;
+    document.body.classList.toggle('home-subnav-on', on);
   };
   window.addEventListener('scroll', homeSubnavRevealHandler, { passive: true });
+  onResize('home-subnav-navh', () => { readNavH(); lastOn = null; homeSubnavRevealHandler(); });
   homeSubnavRevealHandler();
 }
 
