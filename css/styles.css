@@ -22294,8 +22294,7 @@ body.home-search .home-sections .home-featured { margin-top: clamp(1.1rem, 2.4vw
 /* Divider + three feature badges (icon in a soft round chip + a 2-line label). */
 .tdi-hubcard-feats {
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.55rem;
-  margin-top: 0.95rem; padding-top: 0.95rem;
-  border-top: 1px solid color-mix(in srgb, #2f4d9e 14%, transparent);
+  margin-top: 0.9rem; padding-top: 0; border-top: 0;
 }
 .tdi-hubfeat { display: flex; align-items: center; gap: 0.45rem; min-width: 0; }
 .tdi-hubfeat-ic {
@@ -22311,14 +22310,14 @@ body.home-search .home-sections .home-featured { margin-top: clamp(1.1rem, 2.4vw
 
 /* Full-width outlined CTA pill. */
 .tdi-hero-body--split .tdi-hubcard-cta {
-  margin-top: 1.05rem; padding: 0.7rem 1rem;
-  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-  width: 100%; border-radius: 999px;
-  border: 1.5px solid color-mix(in srgb, #2f4d9e 42%, transparent);
-  background: color-mix(in srgb, #2f4d9e 5%, #fff);
-  color: #2f4d9e !important; font-size: 0.9rem; font-weight: 680;
+  margin-top: 0.9rem; padding: 0.48rem 1rem;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+  width: auto; align-self: flex-start; border-radius: 999px;
+  border: 1.5px solid color-mix(in srgb, #2f4d9e 34%, transparent);
+  background: color-mix(in srgb, #2f4d9e 4%, #fff);
+  color: #2f4d9e !important; font-size: 0.84rem; font-weight: 620;
 }
-.tdi-hero-body--split .tdi-hubcard-cta svg { width: 15px; height: 15px; transition: transform .14s ease; }
+.tdi-hero-body--split .tdi-hubcard-cta svg { width: 14px; height: 14px; transition: transform .14s ease; }
 @media (hover: hover) {
   .tdi-hero-body--split .tdi-hubcard-cta:hover {
     background: #2f4d9e; color: #fff !important; border-color: #2f4d9e;
