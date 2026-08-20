@@ -23111,3 +23111,19 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 .pdir-grid { gap: 0 1.6rem !important; padding-top: 0.35rem !important; }
 .pdir-grid > * { padding-top: 0.62rem !important; padding-bottom: 0.62rem !important; }
 .pdir-cardbody, .pdir-acc-body { padding-top: 0.5rem !important; }
+
+/* revamp911 — last nested row drops its rule (the next accordion's own top
+   border already separates them, so the two stacked hairlines read as a
+   double rule), and accordion heads centre their label vertically: the rows
+   carried more padding above the text than below. */
+.pdir-grid > *:last-child,
+.pdir-grid > *:nth-last-child(2):nth-child(3n+1),
+.pdir-grid > *:nth-last-child(3):nth-child(3n+1) { border-bottom: 0 !important; }
+.pdir-cardbody, .pdir-acc-body { padding-bottom: 0 !important; }
+
+.pdir-accsum, .pdir-cardhead, .aiidd-parent-head {
+  display: flex !important; align-items: center !important;
+  padding-top: 0.85rem !important; padding-bottom: 0.85rem !important;
+}
+.pdir-accsum > *, .pdir-cardhead > *, .aiidd-parent-head > * { align-self: center !important; }
+.pdir-acc-name, .pdir-card-name { line-height: 1.2 !important; }
