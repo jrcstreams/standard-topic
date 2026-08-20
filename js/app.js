@@ -1378,6 +1378,12 @@ function diHeroCardHTML(o) {
   const headerTitle = o.headerTitle || 'Daily Intelligence';
   const topicRow = o.topicLabel ? `<div class="tdi-topiclabel"><span class="tdi-topiclabel-k">Topic:</span><span class="tdi-topiclabel-v">${escapeHTML(o.topicLabel)}</span></div>` : '';
   const hubTag = o.hubTagline ? `<p class="tdi-hubline"><a href="#/intelligence">Access the Daily Intelligence Hub${SUBPAGE_ARROW}</a></p>` : '';
+  const hubCard = o.hubCard ? `<aside class="tdi-hubcard">
+        <span class="tdi-hubcard-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
+        <h4 class="tdi-hubcard-title">Daily Intelligence Hub</h4>
+        <p class="tdi-hubcard-sub">Every topic\u2019s briefing, in two editions a day \u2014 browse them all in one place.</p>
+        <a class="tdi-hubcard-go" href="#/intelligence">Explore the Hub${SUBPAGE_ARROW}</a>
+      </aside>` : '';
   return `
     <div class="tdi-hero-head">
       <div class="tdi-hero-titlerow">
@@ -1388,17 +1394,22 @@ function diHeroCardHTML(o) {
       <p class="tdi-hero-sub">${escapeHTML(o.sublabel || '')}</p>
       ${hubTag}
     </div>
-    <div class="tdi-hero-body">
-      <div class="tdi-todayhead">
-        <h3 class="tdi-today-title">Today\u2019s Briefing</h3>
-        <span class="tdi-date" data-tdi-date></span>
-      </div>
-      ${topicRow}
-      <p class="tdi-summary" data-tdi-summary>Preparing today\u2019s briefing\u2026</p>
-      <div class="tdi-actions">
-        <button type="button" class="tdi-go tdi-go--brief" data-di-toggle aria-expanded="false">
-          <span class="tdi-go-open">View briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
-        </button>
+    <div class="tdi-hero-body${o.hubCard ? ' tdi-hero-body--split' : ''}">
+      <div class="tdi-bodygrid">
+        <div class="tdi-briefcol">
+          <div class="tdi-todayhead">
+            <h3 class="tdi-today-title">Today\u2019s Briefing</h3>
+            <span class="tdi-date" data-tdi-date></span>
+          </div>
+          ${topicRow}
+          <p class="tdi-summary" data-tdi-summary>Preparing today\u2019s briefing\u2026</p>
+          <div class="tdi-actions">
+            <button type="button" class="tdi-go tdi-go--brief" data-di-toggle aria-expanded="false">
+              <span class="tdi-go-open">View briefing</span><span class="tdi-go-close">Hide briefing</span>${SUBPAGE_ARROW}
+            </button>
+          </div>
+        </div>
+        ${hubCard}
       </div>
       <div class="tdi-expand" data-di-expand><div class="tdi-expand-inner">
         <div data-di-host></div>
@@ -3916,7 +3927,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Access prompt library${HQ_ARROW}</button></div>
             </section>
           <section class="hf-card hf-card--di" aria-label="Daily Intelligence">
-            <div class="tdi-card tdi-card--v3 tdi-card--home tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'AI-generated briefs, twice daily across 100+ topics.', hubTagline: true, topicLabel: 'Cross-Topic' })}
+            <div class="tdi-card tdi-card--v3 tdi-card--home tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'AI-generated briefs, twice daily across 100+ topics.', hubCard: true, topicLabel: 'Cross-Topic' })}
             </div>
           </section>
           </div>

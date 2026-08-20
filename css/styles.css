@@ -22122,3 +22122,41 @@ body.home-search .home-sections, body.home-search .home-main { margin-top: 0 !im
    tight so the visible cap aligns, making top and bottom look even. */
 body.home-search .home-search-hero .search-panel-title { line-height: 1.02 !important; }
 body.home-search .home-search-hero .search-panel-hero-inner { padding-top: 0 !important; }
+
+/* ═══ revamp878 — DI card 60/40 split: Today's Briefing left, Hub card right ══
+   (#img345) On the homepage the body is a 60/40 grid — the briefing on the
+   left, a "card within the card" promoting the Daily Intelligence Hub on the
+   right. On mobile it stacks: the hub card becomes a condensed rectangle below
+   the briefing. */
+.tdi-hero-body--split .tdi-bodygrid {
+  display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 1.1rem; align-items: stretch;
+}
+@media (max-width: 720px) { .tdi-hero-body--split .tdi-bodygrid { grid-template-columns: 1fr; } }
+/* When the briefing is open it takes the whole card — hide the hub rail. */
+.tdi-card--hero2.is-open .tdi-bodygrid { display: block; }
+.tdi-card--hero2.is-open .tdi-hubcard { display: none; }
+
+.tdi-hubcard {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem;
+  padding: 1rem 1.05rem 1.05rem; border-radius: 13px;
+  background: linear-gradient(180deg, #24386e 0%, #1c2f5c 100%); color: #eaf0ff;
+}
+.tdi-hubcard-ic {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 9px; background: #fff; color: #3358c9;
+}
+.tdi-hubcard-ic svg { width: 20px; height: 20px; }
+.tdi-hubcard-title { margin: 0.3rem 0 0; font-family: var(--font-display); font-size: 1.02rem; font-weight: 750; color: #fff; }
+.tdi-hubcard-sub { margin: 0; font-family: var(--font-family); font-size: 0.83rem; line-height: 1.45; color: #b9c8e8; }
+.tdi-hubcard-go {
+  margin-top: auto; padding-top: 0.5rem; display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-family); font-size: 0.86rem; font-weight: 650; color: #bcd3ff; text-decoration: none;
+}
+.tdi-hubcard-go svg { width: 14px; height: 14px; transition: transform .14s ease; }
+@media (hover: hover) { .tdi-hubcard-go:hover { color: #fff; } .tdi-hubcard-go:hover svg { transform: translateX(3px); } }
+@media (max-width: 720px) {
+  .tdi-hubcard { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 0.4rem 0.7rem; padding: 0.8rem 0.9rem; }
+  .tdi-hubcard-title { margin: 0; flex: 1 1 auto; }
+  .tdi-hubcard-sub { flex: 1 1 100%; order: 3; }
+  .tdi-hubcard-go { margin: 0; padding: 0; }
+}
