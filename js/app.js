@@ -1380,8 +1380,8 @@ function diHeroCardHTML(o) {
   const hubTag = o.hubTagline ? `<p class="tdi-hubline"><a href="#/intelligence">Access the Daily Intelligence Hub${SUBPAGE_ARROW}</a></p>` : '';
   const hubCard = o.hubCard ? `<aside class="tdi-hubcard">
         <span class="tdi-hubcard-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
-        <h4 class="tdi-hubcard-title">Daily Intelligence Hub</h4>
-        <p class="tdi-hubcard-sub">Every topic\u2019s briefing, in two editions a day \u2014 browse them all in one place.</p>
+        <h4 class="tdi-hubcard-title">Access daily AI briefings on 100+ topics</h4>
+        <p class="tdi-hubcard-sub">AI-generated summaries refreshed twice daily \u2014 morning and night editions, all in one place.</p>
         <a class="tdi-hubcard-go" href="#/intelligence">Explore the Hub${SUBPAGE_ARROW}</a>
       </aside>` : '';
   // Homepage split variant: the hub sidebar carries the "Daily Intelligence"
