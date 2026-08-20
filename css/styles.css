@@ -22095,3 +22095,17 @@ body.home-search .home-search-hero { padding: 0 0 clamp(0.7rem, 1.4vw, 1.4rem) !
    consistent, modest distance below the search bar at every width. */
 body.home-search .home-search-hero { padding-bottom: clamp(0.5rem, 0.9vw, 1rem) !important; }
 body.home-search.app-mode .topic-layout.home-grid { gap: clamp(0.5rem, 1vw, 0.95rem) !important; }
+
+
+/* ═══ revamp871 — single-row nav escalation: icon-only search beats the
+   always-show-label rule so links keep the top row longer (#img333-335). ═══ */
+.sticky-hero-inner.nav-icon-search #nav-search .nav-searchbar-ph,
+.sticky-hero-inner.nav-icon-search #nav-search .navbtn-label { display: none !important; }
+.sticky-hero-inner.nav-icon-search #nav-search.navbtn.nav-searchbar {
+  width: 42px !important; padding: 0 !important; justify-content: center !important; gap: 0 !important;
+}
+.sticky-hero-inner.nav-icon-search #nav-search .navbtn-ico svg { width: 18px !important; height: 18px !important; }
+
+/* revamp872 — tighten the space below the search input closer to the top air. */
+body.home-search .home-search-hero { padding-bottom: clamp(0.3rem, 0.5vw, 0.6rem) !important; }
+body.home-search.app-mode .topic-layout.home-grid { gap: clamp(0.35rem, 0.6vw, 0.7rem) !important; }

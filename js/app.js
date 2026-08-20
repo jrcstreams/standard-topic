@@ -3294,7 +3294,15 @@ function fitMainNav() {
   // Prompts) all stay full-length. When they can't fit on the brand's row, the
   // whole link group drops to a clean second row beneath the brand + Search,
   // rather than shrinking labels or dropping items. Search is never touched.
+  // revamp871 — escalate on the SINGLE row first to keep links up top longest:
+  // 1) drop Home, 2) collapse Search to just its icon, 3) shrink the labels.
+  // Only when all three still don't fit do we wrap to a second row (re-adding
+  // Home there, dropping it again if that row itself wraps).
+  if (!fits()) inner.classList.add('nav-drop-home');
+  if (!fits()) inner.classList.add('nav-icon-search');
+  if (!fits()) inner.classList.add('nav-small-text');
   if (!fits()) {
+    inner.classList.remove('nav-drop-home', 'nav-icon-search', 'nav-small-text');
     inner.classList.add('nav-wrap');
     // The two-row nav is taller than the single-row --nav-h, and the header is
     // position:fixed — so publish its REAL height, or the second row would sit
