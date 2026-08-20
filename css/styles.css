@@ -23291,3 +23291,24 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 .dih-brief .di-ov { margin-top: 0 !important; }
 .tdi-card--hero2.is-open .di-prov2,
 .dih-brief .di-prov2 { margin-bottom: 0.4rem !important; }
+
+/* revamp918 — a little more lift on the open header, and the two badges stop
+   looking like the same chip twice. The edition stamp stays neutral grey (it's
+   metadata); the AI label picks up a faint blue wash and blue-tinted border to
+   match its sparkle and the AI treatment used elsewhere. */
+.tdi-card--hero2.is-open .tdi-hero-body { padding-top: 0.1rem !important; }
+.tdi-card--hero2.is-open .tdi-openhead-top { margin-top: 0 !important; }
+
+.tdi-card--hero2.is-open .di-prov2,
+.dih-brief .di-prov2 {
+  background: color-mix(in srgb, #2f4d9e 7%, #fff) !important;
+  border-color: color-mix(in srgb, #2f4d9e 18%, transparent) !important;
+  color: #3d5686 !important;
+}
+/* Edition stamp: keep it neutral so the two read as different kinds of label. */
+.tdi-card--v3 .tdi-date.tdi-date--open,
+.tdi-card--hero2 .tdi-date.tdi-date--open,
+.dih-brief .tdi-date.tdi-date--open {
+  background: #f4f6f9 !important;
+  border-color: color-mix(in srgb, #1f2937 9%, transparent) !important;
+}
