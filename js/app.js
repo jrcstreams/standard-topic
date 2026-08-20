@@ -1386,7 +1386,8 @@ function diHeroCardHTML(o) {
           <span class="tdi-hubcard-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
           <h4 class="tdi-hubcard-title">Unlock daily intelligence across 100+ topics</h4>
         </div>
-        <p class="tdi-hubcard-sub">AI-generated briefings, refreshed morning and night \u2014 so you're always informed, always ahead.</p>
+        <p class="tdi-hubcard-sub tdi-hubcard-sub--d">AI-generated briefings, refreshed morning and night \u2014 so you're always informed, always ahead.</p>
+        <p class="tdi-hubcard-sub tdi-hubcard-sub--m">AI summaries refreshed twice daily \u2014 morning &amp; night editions.</p>
         <div class="tdi-hubcard-feats">
           <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_SUN}</span><span class="tdi-hubfeat-tx">Morning &amp; Evening Editions</span></div>
           <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic">${HUB_DOC}</span><span class="tdi-hubfeat-tx">100+ Topics Covered</span></div>

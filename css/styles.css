@@ -22335,3 +22335,67 @@ body.home-search .home-sections .home-featured { margin-top: clamp(1.1rem, 2.4vw
 @media (max-width: 480px) {
   .tdi-hubcard-feats { grid-template-columns: 1fr; gap: 0.5rem; }
 }
+
+/* ═══ revamp885 — DESKTOP keeps the briefing + promo CONNECTED as one split
+   card but rebalances 65/35 → 50/50 so the promo has room for its badges + CTA.
+   MOBILE splits into two separate stacked cards, promo condensed (CTA collapses
+   to a header arrow, shorter subtext) per #img357. ═══ */
+
+/* Desktop: 50/50 split (was 65/35), giving the promo more room. */
+.tdi-hero-body--split .tdi-bodygrid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+
+/* Subtext variant toggle (long desktop / condensed mobile). */
+.tdi-hubcard-sub--m { display: none; }
+
+@media (max-width: 720px) {
+  .tdi-hubcard-sub--d { display: none; }
+  .tdi-hubcard-sub--m { display: block; }
+
+  /* Parent chrome dissolves in the closed preview; children become two cards. */
+  .hf-card--di .tdi-card--home.tdi-card--hero2:not(.is-open) {
+    background: transparent !important; border: 0 !important; box-shadow: none !important;
+  }
+  .tdi-card--hero2:not(.is-open) .tdi-hero-body--split { padding: 0 !important; }
+  .tdi-card--hero2:not(.is-open) .tdi-bodygrid { display: flex; flex-direction: column; gap: 0.85rem; }
+
+  /* Card 1 — Today's Briefing (white). */
+  .tdi-card--hero2:not(.is-open) .tdi-briefcol {
+    background: #fff; border: 1px solid #e4eaf3; border-radius: 15px;
+    box-shadow: 0 6px 20px -16px rgba(31, 49, 99, 0.22);
+    padding: 1.15rem 1.25rem 1.2rem;
+  }
+
+  /* Card 2 — condensed promo (grey rounded card). */
+  .tdi-hero-body--split .tdi-hubcard {
+    position: relative; height: auto;
+    flex-direction: column; align-items: stretch; gap: 0;
+    border: 1px solid color-mix(in srgb, #2f4d9e 14%, transparent) !important;
+    border-radius: 15px !important;
+    box-shadow: 0 6px 20px -16px rgba(31, 49, 99, 0.22);
+    padding: 1.05rem 1.15rem 1.1rem !important;
+  }
+  .tdi-hero-body--split .tdi-hubcard-head { padding-right: 2.2rem; width: 100%; }
+  .tdi-hero-body--split .tdi-hubcard-title { font-size: 1.02rem; margin: 0; }
+  .tdi-hero-body--split .tdi-hubcard-sub { order: 1; margin: 0.5rem 0 0 !important; font-size: 0.82rem; }
+  .tdi-hubcard-feats { order: 2; }
+
+  /* CTA collapses to an arrow pinned top-right of the promo card. */
+  .tdi-hero-body--split .tdi-hubcard-cta {
+    position: absolute; top: 1rem; right: 1.1rem; z-index: 1;
+    margin: 0 !important; padding: 0 !important; width: auto !important;
+    border: 0 !important; background: none !important; font-size: 0 !important;
+    color: #2f4d9e !important;
+  }
+  .tdi-hero-body--split .tdi-hubcard-cta svg { width: 20px; height: 20px; }
+  @media (hover: hover) {
+    .tdi-hero-body--split .tdi-hubcard-cta:hover { background: none !important; color: #16337c !important; }
+  }
+
+  /* Badges tightened. */
+  .tdi-hubcard-feats { margin-top: 0.85rem !important; padding-top: 0.85rem !important; gap: 0.5rem; }
+  .tdi-hubfeat-ic { width: 28px; height: 28px; }
+  .tdi-hubfeat-tx { font-size: 0.7rem; }
+}
+@media (max-width: 470px) {
+  .tdi-hubcard-feats { grid-template-columns: 1fr; gap: 0.45rem; }
+}

@@ -969,7 +969,8 @@ ${M}`),w.length?w.join(`
           <span class="tdi-hubcard-ic" aria-hidden="true">${Bs}</span>
           <h4 class="tdi-hubcard-title">Unlock daily intelligence across 100+ topics</h4>
         </div>
-        <p class="tdi-hubcard-sub">AI-generated briefings, refreshed morning and night \u2014 so you're always informed, always ahead.</p>
+        <p class="tdi-hubcard-sub tdi-hubcard-sub--d">AI-generated briefings, refreshed morning and night \u2014 so you're always informed, always ahead.</p>
+        <p class="tdi-hubcard-sub tdi-hubcard-sub--m">AI summaries refreshed twice daily \u2014 morning &amp; night editions.</p>
         <div class="tdi-hubcard-feats">
           <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.8v2M12 19.2v2M21.2 12h-2M4.8 12h-2M18.5 5.5l-1.4 1.4M6.9 17.1l-1.4 1.4M18.5 18.5l-1.4-1.4M6.9 6.9L5.5 5.5"/></svg></span><span class="tdi-hubfeat-tx">Morning &amp; Evening Editions</span></div>
           <div class="tdi-hubfeat"><span class="tdi-hubfeat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3.5"/></svg></span><span class="tdi-hubfeat-tx">100+ Topics Covered</span></div>
