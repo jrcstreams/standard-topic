@@ -24003,3 +24003,26 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 .aii-fi-sec + .aii-fi-sec, .aii-fi-sechead { margin-top: 0 !important; }
 .aii-fi-sechead { margin-bottom: 0.75rem !important; padding-bottom: 0.5rem !important; }
 .aii-fi-sec { margin-bottom: 1.35rem !important; }
+
+/* ═══ revamp943 — Prompts by Topic heads use the same TYPEFACE as All Topics ══
+   The geometry already matched exactly (52px head, 54px card, 10px row gap,
+   identical grid gap) — the difference was the face. All Topics renders its
+   label in Inter at 700; Prompts-by-Topic was using the General Sans display
+   face with -0.16px tracking, which at the same size and weight reads much
+   heavier and wider, and made the rows feel crammed even though the spacing was
+   the same. Matched face, tracking and colour. */
+.prompts-home .pdir-card-name,
+.ph-body .pdir-card-name,
+[data-prompts-host] .pdir-card-name {
+  font-family: var(--font-family) !important;
+  letter-spacing: normal !important;
+  color: rgb(30, 45, 68) !important;
+  line-height: 1.2 !important;
+}
+/* Same for the Briefings heads, which use the display face too. */
+.dih-grouptitle {
+  font-family: var(--font-family) !important;
+  letter-spacing: normal !important;
+  color: rgb(30, 45, 68) !important;
+  line-height: 1.2 !important;
+}
