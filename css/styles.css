@@ -23779,3 +23779,8 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
   padding-bottom: 0 !important;
   padding-top: 0 !important;
 }
+
+/* revamp936 — All Topics: the first accordion sat flush against the rule under
+   the view toggle. Now that the rows are cards rather than hairline rows, they
+   need to sit off that rule rather than butt into it. */
+.aiidd-tree { margin-top: 0.85rem !important; }
