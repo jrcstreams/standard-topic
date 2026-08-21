@@ -24136,3 +24136,20 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 .prompts-home .pdir-card-ic svg,
 .ph-body .pdir-card-ic svg,
 [data-prompts-host] .pdir-card-ic svg { width: 20px !important; height: 20px !important; }
+
+/* ═══ revamp946 — head full-bleed margin, and prompt cell indent ═════════════
+
+   BRIEFINGS HEAD: a legacy rule gave .dih-grouphead `margin: 0 -1.2rem` so it
+   could bleed past the old always-open section's padding. Now that the group is
+   a bordered card with zero padding, that negative margin drags the head 19px
+   off the card's left edge — visible on mobile as a band that neither starts nor
+   ends with its card. Measured: head 394px vs card 398px, sitting -17px left.
+   Zeroed so the head fills its card at every width. */
+.dih-group > .dih-grouphead { margin-left: 0 !important; margin-right: 0 !important; }
+
+/* PROMPT CELLS: All Topics indents its subtopic links so their icons sit 24px
+   from the card edge; the prompt cells were at 8px (body padding + border only),
+   which is what still read as "off" inside the body. */
+.prompts-home .pdir-cell,
+.ph-body .pdir-cell,
+[data-prompts-host] .pdir-cell { padding-left: 16px !important; }
