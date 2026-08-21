@@ -24105,3 +24105,34 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 .prompts-home .pdir-cell-name,
 .ph-body .pdir-cell-name,
 [data-prompts-host] .pdir-cell-name { line-height: 24px !important; }
+
+/* ═══ revamp945 — head icons match All Topics exactly ════════════════════════
+   Measured: All Topics renders a 20x20 svg in rgb(71,85,105), centred in its
+   26px box (offset 0 from the head's centre line). Prompts and Briefings were
+   drawing a 17x17 svg in a different ink, sitting 4px and 2px HIGH — their icon
+   wrapper is display:flex with align-items:normal, so the svg sat at the top of
+   the box instead of its middle. Grid + place-items:center centres it the way
+   the reference does. */
+.pdir-card-ic, .dih-group-ic {
+  display: grid !important;
+  place-items: center !important;
+  width: 26px !important; height: 26px !important;
+  color: rgb(71, 85, 105) !important;
+}
+.pdir-card-ic svg, .dih-group-ic svg {
+  width: 20px !important; height: 20px !important; display: block;
+}
+
+/* ── AI Briefings, open: room above the first card and between cards ── */
+.dih-groupbody { padding: 14px 14px 16px !important; }
+.dih-items { gap: 0.85rem !important; }
+
+/* revamp945b — revamp939 set `.prompts-home .pdir-card-ic svg { 17px }`, which
+   outranks the two-class rule above. Match its specificity. */
+.prompts-home .pdir-card-ic, .ph-body .pdir-card-ic, [data-prompts-host] .pdir-card-ic {
+  display: grid !important; place-items: center !important;
+  width: 26px !important; height: 26px !important; color: rgb(71, 85, 105) !important;
+}
+.prompts-home .pdir-card-ic svg,
+.ph-body .pdir-card-ic svg,
+[data-prompts-host] .pdir-card-ic svg { width: 20px !important; height: 20px !important; }
