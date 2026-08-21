@@ -23502,3 +23502,36 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 [data-prompts-host] .pdir > .pdir-card.is-open {
   background: #fafbfd !important;
 }
+
+/* ═══ revamp926 — drilled-in topic takes over the accordion header ═══════════
+   Picking a subtopic used to repeat its name inside the body under a "Back to
+   topics list" link, so the card showed two titles. The topic now becomes the
+   header itself, with a "Back to {parent}" link above the title in a header
+   that grows to fit — animated, so the takeover reads as one motion. */
+.pdir-headbar {
+  display: grid; grid-template-rows: 0fr;
+  overflow: hidden;
+  background: #e3e9f4;
+  border-radius: 12px 12px 0 0;
+  transition: grid-template-rows .24s cubic-bezier(.22,.61,.21,1);
+}
+.pdir-card.is-headback > .pdir-headbar { grid-template-rows: 1fr; }
+.pdir-headbar > * { min-height: 0; }
+.pdir-headback {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin: 0; padding: 0.7rem 1rem 0.1rem;
+  border: 0; background: none; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600;
+  color: #4a5a7d;
+}
+.pdir-headback svg { width: 14px; height: 14px; }
+@media (hover: hover) { .pdir-headback:hover { color: #1d4ed8; } }
+/* Header + bar read as one block while drilled in. */
+.pdir-card.is-topicview > .pdir-cardhead {
+  border-radius: 0 !important;
+  background: #e3e9f4 !important;
+}
+.pdir-card.is-topicview > .pdir-headbar + .pdir-cardhead { padding-top: 0.35rem; }
+/* The body no longer carries its own title/back bar. */
+.pdir-topicview > .pdir-topicbar,
+.pdir-topicview > .pdir-topicname { display: none !important; }

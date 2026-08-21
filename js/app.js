@@ -925,14 +925,27 @@ function wirePromptDirectory(root, ctls) {
           const parentName = card.querySelector('.pdir-card-name').textContent;
           let tIcon = ''; try { const tt = getTopicBySlug(slug); tIcon = topicIconSVG((tt && tt.icon) || 'globe', ''); } catch (_) {}
           card.classList.add('is-topicview');
+          // revamp926: the drilled-in topic TAKES OVER the card header — its
+          // name and icon replace the parent's, and a "Back to {parent}" link
+          // appears above the title in a header that grows to fit it. The body
+          // no longer repeats the name, so there's one title, not two.
+          const icEl = head.querySelector('.pdir-card-ic');
+          const nameEl = head.querySelector('.pdir-card-name');
+          if (!card.__headOrig) {
+            card.__headOrig = { ic: icEl ? icEl.innerHTML : '', name: nameEl ? nameEl.textContent : '' };
+          }
+          if (icEl && tIcon) icEl.innerHTML = tIcon;
+          if (nameEl) nameEl.textContent = name;
+          let headBar = card.querySelector('.pdir-headbar');
+          if (!headBar) {
+            headBar = document.createElement('div');
+            headBar.className = 'pdir-headbar';
+            card.insertBefore(headBar, head);
+          }
+          headBar.innerHTML = `<button type="button" class="pdir-headback">${BACKBAR_CHEV}<span>Back to ${escapeHTML(parentName)}</span></button>`;
+          // Next frame so the height transition has a start value to animate from.
+          requestAnimationFrame(() => card.classList.add('is-headback'));
           bodyEl.innerHTML = `<div class="pdir-topicview">
-            <div class="pdir-topicbar">
-              <button type="button" class="pdir-topicback">${BACKBAR_CHEV}<span>Back to topics list</span></button>
-              <button type="button" class="pdir-topicclose" aria-label="Close ${escapeAttr(name)} prompts">
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              </button>
-            </div>
-            <h4 class="pdir-topicname"><span class="pdir-topicname-ic" aria-hidden="true">${tIcon}</span><span>${escapeHTML(name)}</span></h4>
             <div class="pdir-topichost prompts-topic-host"></div>
           </div>`;
           const host = bodyEl.querySelector('.pdir-topichost');
@@ -952,11 +965,22 @@ function wirePromptDirectory(root, ctls) {
           }
           // ✕ collapses the parent card outright, rather than stepping back to
           // the topic grid the way the back link does.
-          bodyEl.querySelector('.pdir-topicclose')?.addEventListener('click', (e) => {
+          const restoreHead = () => {
+            card.classList.remove('is-headback');
+            const o = card.__headOrig;
+            if (o) {
+              const ic2 = head.querySelector('.pdir-card-ic');
+              const nm2 = head.querySelector('.pdir-card-name');
+              if (ic2) ic2.innerHTML = o.ic;
+              if (nm2) nm2.textContent = o.name;
+            }
+            // Let the header collapse before the bar leaves the DOM.
+            setTimeout(() => card.querySelector('.pdir-headbar')?.remove(), 240);
+          };
+          card.__restoreHead = restoreHead;
+          headBar.querySelector('.pdir-headback')?.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (head.getAttribute('aria-expanded') === 'true') head.click();
-          });
-          bodyEl.querySelector('.pdir-topicback')?.addEventListener('click', () => {
+            restoreHead();
             bodyEl.classList.remove('is-topic');
             card.classList.remove('is-topicview');
             bodyEl.innerHTML = gridHTML;
@@ -970,6 +994,15 @@ function wirePromptDirectory(root, ctls) {
     wireCells();
     head.addEventListener('click', () => {
       const open = !card.classList.contains('is-open');
+      // revamp926: collapsing while drilled in resets the header and the body
+      // back to the topic grid, so re-opening never shows a stale sub-topic.
+      if (!open && card.classList.contains('is-topicview')) {
+        if (card.__restoreHead) card.__restoreHead();
+        card.classList.remove('is-topicview');
+        bodyEl.classList.remove('is-topic');
+        bodyEl.innerHTML = gridHTML;
+        wireCells();
+      }
       bodyEl.hidden = !open;
       card.classList.toggle('is-open', open);
       head.setAttribute('aria-expanded', String(open));
