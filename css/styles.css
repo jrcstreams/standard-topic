@@ -23315,3 +23315,28 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
   background: #f4f6f9 !important;
   border-color: color-mix(in srgb, #1f2937 9%, transparent) !important;
 }
+
+/* ═══ revamp920 — search results: match the other pages' width, border the rows
+
+   #content already supplies the 32px page gutter, but .search-page added a
+   second one, so the results sat 68px narrower than Topics / Trending / Prompts
+   (1628 vs 1696 at a 1920 viewport). Drop the duplicate. */
+.search-page { padding-left: 0 !important; padding-right: 0 !important; }
+
+/* Accordions read as bordered rows rather than hairline-separated text. */
+.search-aii-host .aii-fi-acc {
+  border: 1px solid var(--color-surface-border) !important;
+  border-radius: 12px !important;
+  margin-bottom: 0.55rem !important;
+  background: #fff !important;
+  overflow: hidden;
+}
+/* The list's own separators would double up with the new borders. */
+.search-aii-host .aii-fi-acclist > .aii-fi-acc { border-top: 1px solid var(--color-surface-border) !important; }
+.search-aii-host .aii-fi-acclist { border-top: 0 !important; padding-top: 0.2rem !important; }
+.search-aii-host .aii-fi-acc > .aii-fi-accsum { border-bottom: 0 !important; }
+@media (hover: hover) {
+  .search-aii-host .aii-fi-acc:hover { border-color: color-mix(in srgb, #2f4d9e 26%, var(--color-surface-border)) !important; }
+}
+/* Open state keeps the square darker head from revamp902, inside the border. */
+.search-aii-host .aii-fi-acc.is-open { border-color: color-mix(in srgb, #2f4d9e 26%, var(--color-surface-border)) !important; }
