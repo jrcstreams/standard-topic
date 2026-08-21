@@ -23340,3 +23340,14 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 }
 /* Open state keeps the square darker head from revamp902, inside the border. */
 .search-aii-host .aii-fi-acc.is-open { border-color: color-mix(in srgb, #2f4d9e 26%, var(--color-surface-border)) !important; }
+
+/* revamp920b — the "first row meets the rule above it" overrides (revamp912/920)
+   zeroed border-top on the first two accordions. Now that the rows are bordered
+   cards with no list rule above them, those overrides just clip the top edge of
+   the first card. Restore it. */
+.search-aii-host .aii-fi-acclist > .aii-fi-acc:first-child,
+.search-aii-host .aii-fi-acclist > .aii-fi-acc:nth-child(2),
+.search-aii-host .aii-fi-acc:first-child,
+.search-aii-host .aii-fi-acc:nth-child(2) {
+  border-top: 1px solid var(--color-surface-border) !important;
+}
