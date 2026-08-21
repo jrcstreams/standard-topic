@@ -23651,3 +23651,9 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
+
+/* revamp932 — AI Briefings preview cards drop the edition too.
+   revamp922 hid the date but kept "Morning / Night Edition"; on a page where
+   every card carries the same edition it reads as repeated chrome, so the whole
+   stamp goes. The edition still appears in the expanded briefing header. */
+.dih-item .dih-item-stamp { display: none !important; }
