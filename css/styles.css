@@ -24153,3 +24153,76 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 .prompts-home .pdir-cell,
 .ph-body .pdir-cell,
 [data-prompts-host] .pdir-cell { padding-left: 16px !important; }
+
+/* revamp947 — Featured Briefings row. Reuses the group component, so it keeps
+   the lazy fill and open-a-briefing behaviour, but reads as a plain section
+   rather than a bordered accordion: no card chrome, its own header, and a
+   wider grid (up to four across) since it is full width. */
+.dih-group--featured {
+  border: 0 !important; border-radius: 0 !important;
+  background: none !important; overflow: visible !important;
+  margin: 0 0 2rem !important;
+}
+.dih-featuredhead { margin: 0 0 0.85rem; }
+.dih-group--featured > .dih-groupbody { padding: 0 !important; }
+.dih-group--featured .dih-items {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+  gap: 0.85rem !important;
+}
+
+/* revamp947b — `.dih-group.is-open` (two classes) outranked the single-class
+   featured rule, so the featured row kept the accordion's 2px card border. */
+.dih-group.dih-group--featured,
+.dih-group.dih-group--featured.is-open {
+  border: 0 !important; border-radius: 0 !important;
+  background: none !important; overflow: visible !important;
+  grid-column: auto !important;
+}
+.dih-group.dih-group--featured > .dih-groupbody { padding: 0 !important; }
+.dih-group.dih-group--featured .dih-items {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)) !important;
+}
+
+/* ═══ revamp948 — homepage Featured cards use the All Topics link style ══════
+   Scaled-down version of the subtopic links inside an All Topics accordion:
+   icon + name, no bullet mark, no row separators. Reference values (Inter
+   15.04px/500, rgb(51,65,85), 8px/9px padding, ~9.6px icon gap) stepped down a
+   touch since these sit in a smaller card. */
+.hf-card .hq-row {
+  display: flex !important; align-items: center !important;
+  gap: 9px !important;
+  padding: 7px 0 8px !important;
+  border-bottom: 0 !important;   /* separators removed */
+  background: none !important;
+}
+.hq-row-mark { display: none !important; }
+.hq-row-ic {
+  flex: none; display: grid; place-items: center;
+  width: 18px; height: 18px; color: rgb(71, 85, 105);
+}
+.hq-row-ic svg { width: 16px; height: 16px; display: block; }
+.hf-card .hq-row-name {
+  font-family: var(--font-family) !important;
+  font-size: 0.9rem !important; font-weight: 500 !important;
+  letter-spacing: normal !important; color: rgb(51, 65, 85) !important;
+  line-height: 1.35 !important;
+}
+@media (hover: hover) {
+  .hf-card .hq-row:hover .hq-row-name { color: #1d4ed8 !important; }
+  .hf-card .hq-row:hover .hq-row-ic { color: #1d4ed8; }
+}
+/* Prompt rows in the sibling card keep the same treatment minus the icon. */
+.hf-card .hq-row--prompt { padding-left: 27px !important; }
+
+/* revamp947c — cap the featured row at four columns. auto-fit was creating a
+   fifth empty track at wide widths, which left the four cards narrower than
+   they needed to be. */
+.dih-group.dih-group--featured .dih-items {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+@media (max-width: 1100px) {
+  .dih-group.dih-group--featured .dih-items { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+@media (max-width: 600px) {
+  .dih-group.dih-group--featured .dih-items { grid-template-columns: 1fr !important; }
+}

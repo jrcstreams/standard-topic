@@ -1690,6 +1690,14 @@ function renderIntelligenceHub(container) {
 
   // revamp822: topics are BLOCKS inside their parent's card, not cards of
   // their own. Clicking one turns the whole parent card into that briefing.
+  // Up to four featured topics lead the page. Falls back to the first parents
+  // when no featured set is configured.
+  const featuredBriefs = (() => {
+    let f = [];
+    try { f = (getFeaturedTopics() || []).slice(0, 4); } catch (_) {}
+    if (!f.length) f = (groups || []).slice(0, 4).map((g) => g.parent).filter(Boolean);
+    return f;
+  })();
   const item = (t) => `
     <button type="button" class="dih-item" data-dih-item="${escapeAttr(t.name)}" data-dih-slug="${escapeAttr(t.slug)}">
       <span class="dih-item-head">
@@ -1709,8 +1717,28 @@ function renderIntelligenceHub(container) {
         <p class="dih-lede">An AI briefing on every topic, twice a day.</p>
       </header>
 
-      <section class="dih-today">
-        <div class="tdi-card tdi-card--v3 tdi-card--home dih-today-card tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'AI-generated briefs, twice daily across 100+ topics.', hubLink: false, topicLabel: 'Cross-Topic', noHeader: true })}
+      <!-- revamp947: the lone Cross-Topic card is replaced by a Featured
+           Briefings row. It is a [data-dih-group] like every other section, so
+           the existing lazy-fill and open-a-briefing wiring applies unchanged —
+           it just renders permanently open with a plain header instead of a
+           toggle. -->
+      <section class="dih-group dih-group--featured is-open" data-dih-group>
+        <div class="dih-featuredhead">
+          <h2 class="dih-bytopic-title">Featured Briefings</h2>
+          <p class="dih-bytopic-sub">A few of today's briefings to start with.</p>
+        </div>
+        <div class="dih-groupbody">
+          <div class="dih-items">${featuredBriefs.map(item).join('')}</div>
+          <div class="dih-brief" data-dih-brief hidden>
+            <div class="dih-brief-bar">
+              <button type="button" class="dih-brief-back" data-dih-back>${BACKBAR_CHEV}<span>All featured briefings</span></button>
+              <button type="button" class="dih-brief-close" data-dih-back aria-label="Close briefing">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            <div class="dih-brief-title" data-dih-brief-title></div>
+            <div data-dih-host></div>
+          </div>
         </div>
       </section>
 
@@ -4299,7 +4327,9 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
         // Render the full dozen; CSS visibility caps trim by viewport (6 on
         // phones, 8 mid-range, all 12 on desktop where the card is wider).
         let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 12); } catch (_) {}
-        tWrap.innerHTML = feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="hq-row"><span class="hq-row-mark" aria-hidden="true"></span><span class="hq-row-name">${escapeHTML(t.name)}</span></a>`).join('');
+        // revamp948: topic ICON instead of a bullet mark, matching the
+        // subtopic links inside the All Topics accordion.
+        tWrap.innerHTML = feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="hq-row"><span class="hq-row-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span><span class="hq-row-name">${escapeHTML(t.name)}</span></a>`).join('');
       }
       // Featured Prompts — the same featured set the Prompt Library leads with.
       // The card shell (title + footer link) is there from the start; the chips
