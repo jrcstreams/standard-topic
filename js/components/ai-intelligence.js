@@ -1743,6 +1743,7 @@ export function renderAIIntelligence(container, scope) {
   // panel reusing the Review-Prompt regeneration logic).
   const ICON_SWAP = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg>';
   const ICON_CHECK_MINI = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+  const ICON_ARROW_R = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
   const ICON_PENCIL = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
   function pcNoteText(m) { return `Opens ${m ? m.name : 'the AI model'} in a new tab — the prompt auto-fills or is copied to your clipboard.`; }
   function promptCardBodyHTML(ctx) {
@@ -1753,25 +1754,16 @@ export function renderAIIntelligence(container, scope) {
       const on = !!(m && x.id === m.id);
       return `<button type="button" class="aii-pc-menu-opt${on ? ' is-active' : ''}" role="menuitemradio" aria-checked="${on}" data-model-id="${escAttr(x.id)}"><span class="aii-pc-menu-check" aria-hidden="true">${ICON_CHECK_MINI}</span><span>${esc(x.name)}</span></button>`;
     }).join('');
+    // revamp942 — card layout: a labelled prompt block with Edit beneath it,
+    // then a single footer bar carrying model / copy / settings on the left and
+    // the primary Run Prompt on the right. Previously the actions were a loose
+    // row above a settings drawer and a note line, which made the card read as
+    // three stacked strips rather than one panel.
     return `<div class="aii-pc">
-      ${/* The one-line description repeated what the accordion title already said,
-            right above a prompt preview that states the same thing in full — so it
-            just pushed the preview down (revamp735). */ ''}
       <div class="aii-pc-prevwrap">
-        <div class="aii-pc-prevhead">
-          <span class="aii-pc-lbl">Prompt Preview</span>
-          <button type="button" class="aii-pc-edit" data-pc-edit>${ICON_PENCIL}<span data-pc-edit-tx>Edit</span></button>
-        </div>
+        <span class="aii-pc-lbl">Prompt</span>
         <blockquote class="aii-pc-preview" data-pc-preview>${esc(ctx.prompt)}</blockquote>
-      </div>
-      <div class="aii-pc-actions">
-        <button type="button" class="aii-pc-submit" data-pc-submit${m ? '' : ' disabled'}>${ICON_SEND}<span>Submit Prompt</span></button>
-        <span class="aii-pc-modelwrap">
-          <button type="button" class="aii-pc-btn aii-pc-modelbtn" data-pc-model aria-haspopup="menu" aria-expanded="false">${SPARK_MINI}<span><span class="aii-pc-model-pre">Model: </span><span data-pc-mn>${esc(m ? m.name : 'AI')}</span></span><span class="aii-pc-btn-chev" aria-hidden="true">${CHEV}</span></button>
-          <div class="aii-pc-menu" data-pc-menu role="menu" aria-label="Choose AI model" hidden>${modelOpts}</div>
-        </span>
-        <button type="button" class="aii-pc-btn" data-pc-copy>${ICON_COPY_MINI}<span data-pc-copy-tx>Copy<span class="aii-pc-btn-word"> Prompt</span></span></button>
-        <button type="button" class="aii-pc-btn" data-pc-settings aria-expanded="false">${ICON_GEAR}<span>Settings</span></button>
+        <button type="button" class="aii-pc-edit" data-pc-edit>${ICON_PENCIL}<span data-pc-edit-tx>Edit</span></button>
       </div>
       <div class="aii-pc-set" data-pc-set hidden>
         <div class="aii-review-grid">
@@ -1781,7 +1773,15 @@ export function renderAIIntelligence(container, scope) {
         <label class="aii-review-fld"><span class="aii-review-flbl">Secondary topics</span><input type="text" class="aii-review-secondary" placeholder="e.g. trade policy"></label>
         <label class="aii-review-fld"><span class="aii-review-flbl">Custom instructions <span class="aii-review-flbl-note">— this submission only</span></span><textarea class="aii-review-custom" rows="2" placeholder="A one-off instruction for this prompt"></textarea></label>
       </div>
-      <p class="aii-pc-note" data-pc-note>${esc(pcNoteText(m))}</p>
+      <div class="aii-pc-foot">
+        <span class="aii-pc-modelwrap">
+          <button type="button" class="aii-pc-btn aii-pc-modelbtn" data-pc-model aria-haspopup="menu" aria-expanded="false">${SPARK_MINI}<span><span class="aii-pc-model-pre">Model: </span><span data-pc-mn>${esc(m ? m.name : 'AI')}</span></span><span class="aii-pc-btn-chev" aria-hidden="true">${CHEV}</span></button>
+          <div class="aii-pc-menu" data-pc-menu role="menu" aria-label="Choose AI model" hidden>${modelOpts}</div>
+        </span>
+        <button type="button" class="aii-pc-btn" data-pc-copy>${ICON_COPY_MINI}<span data-pc-copy-tx>Copy</span></button>
+        <button type="button" class="aii-pc-btn" data-pc-settings aria-expanded="false">${ICON_GEAR}<span>Settings</span></button>
+        <button type="button" class="aii-pc-submit" data-pc-submit${m ? '' : ' disabled'} title="${escAttr(pcNoteText(m))}"><span>Run Prompt</span>${ICON_ARROW_R}</button>
+      </div>
     </div>`;
   }
   // The preferred model is global — after a change, refresh EVERY built prompt
@@ -1791,6 +1791,8 @@ export function renderAIIntelligence(container, scope) {
     stage.querySelectorAll('.aii-pc').forEach((pc) => {
       pc.querySelectorAll('[data-pc-mn]').forEach((el) => { el.textContent = m ? m.name : 'AI'; });
       const note = pc.querySelector('[data-pc-note]'); if (note) note.textContent = pcNoteText(m);
+      // revamp942: the visible note became the Run Prompt tooltip.
+      const sbT = pc.querySelector('[data-pc-submit]'); if (sbT) sbT.title = pcNoteText(m);
       const sb = pc.querySelector('[data-pc-submit]'); if (sb) sb.disabled = !m;
       pc.querySelectorAll('.aii-pc-menu-opt').forEach((o) => {
         const on = !!(m && o.dataset.modelId === m.id);

@@ -23931,3 +23931,75 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 [data-prompts-host] .pdir-card.is-open .pdir-cardbody {
   padding: 4px 0 14px 6px !important;
 }
+
+/* ═══ revamp942 — expanded prompt card: one panel, not three strips ══════════
+   Layout per the wireframe: a labelled prompt block, "Edit" beneath it on the
+   left, then a single footer bar — model / copy / settings on the left, the
+   primary Run Prompt on the right. */
+
+.aii-pc { padding: 0 !important; }
+.aii-pc-prevwrap {
+  padding: 0.95rem 1rem 0.85rem !important;
+  border: 0 !important; border-radius: 0 !important; background: none !important;
+}
+.aii-pc-lbl {
+  display: block; margin-bottom: 0.45rem;
+  font-family: var(--font-family); font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: #8592ad;
+}
+.aii-pc-preview {
+  margin: 0 !important; padding: 0 !important;
+  border: 0 !important; background: none !important;
+  font-family: var(--font-family); font-size: 0.92rem; line-height: 1.6; color: #33415c;
+}
+.aii-pc-edit {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin: 0.7rem 0 0 !important; padding: 0 !important;
+  border: 0 !important; background: none !important; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #5b6b8c;
+}
+@media (hover: hover) { .aii-pc-edit:hover { color: #1d4ed8; } }
+
+/* Settings drawer sits between the prompt and the footer. */
+.aii-pc-set { padding: 0 1rem 0.9rem !important; }
+
+/* ── Footer bar ── */
+.aii-pc-foot {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  padding: 0.7rem 1rem;
+  border-top: 1px solid var(--color-surface-border);
+  background: #fbfcfe;
+}
+.aii-pc-foot .aii-pc-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 0.42rem 0.7rem; border-radius: 8px;
+  border: 1px solid transparent; background: none; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #4a5a7d;
+}
+@media (hover: hover) {
+  .aii-pc-foot .aii-pc-btn:hover { background: #eef2f9; color: #1b2b4d; }
+}
+/* Run Prompt is the primary and sits at the far right. */
+.aii-pc-foot .aii-pc-submit {
+  margin-left: auto; order: 9;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 0.5rem 1rem; border-radius: 999px; border: 0; cursor: pointer;
+  background: #2b4079; color: #fff;
+  font-family: var(--font-family); font-size: 0.85rem; font-weight: 650;
+}
+.aii-pc-foot .aii-pc-submit svg { transition: transform .14s ease; }
+@media (hover: hover) {
+  .aii-pc-foot .aii-pc-submit:hover { background: #1f3160; }
+  .aii-pc-foot .aii-pc-submit:hover svg { transform: translateX(3px); }
+}
+.aii-pc-foot .aii-pc-submit[disabled] { opacity: 0.5; cursor: not-allowed; }
+/* The model menu still anchors to its button. */
+.aii-pc-foot .aii-pc-modelwrap { position: relative; }
+@media (max-width: 560px) {
+  .aii-pc-foot .aii-pc-submit { margin-left: 0; width: 100%; justify-content: center; }
+}
+
+/* ── Section headers get room above their first accordion ── */
+.aii-fi-sec + .aii-fi-sec, .aii-fi-sechead { margin-top: 0 !important; }
+.aii-fi-sechead { margin-bottom: 0.75rem !important; padding-bottom: 0.5rem !important; }
+.aii-fi-sec { margin-bottom: 1.35rem !important; }
