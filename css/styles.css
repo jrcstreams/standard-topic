@@ -24226,3 +24226,53 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 @media (max-width: 600px) {
   .dih-group.dih-group--featured .dih-items { grid-template-columns: 1fr !important; }
 }
+
+/* ═══ revamp949 — Featured AI Briefings row + the open-briefing card ═════════ */
+
+/* Homepage row sits full width under the featured cards. */
+.home-featbriefs { margin: 0 0 2.2rem; }
+.fb-head { margin: 0 0 0.85rem; }
+.fb-items {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 0.85rem !important;
+}
+@media (max-width: 1100px) { .fb-items { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } }
+@media (max-width: 600px)  { .fb-items { grid-template-columns: 1fr !important; } }
+.fb-foot { margin-top: 0.9rem; }
+
+/* ── The opened briefing is a real bordered card ── */
+.fb-brief,
+.dih-group .dih-brief {
+  border: 1px solid var(--color-surface-border) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  padding: 0.9rem 1.15rem 1.25rem !important;
+  box-shadow: 0 6px 20px -16px rgba(31, 49, 99, 0.22);
+}
+/* Top line: small close link left, larger X right. */
+.fb-briefbar,
+.dih-group .dih-brief-bar {
+  display: flex !important; align-items: center; justify-content: space-between;
+  gap: 12px; margin: 0 0 0.35rem !important; padding: 0 !important;
+  border: 0 !important; background: none !important;
+}
+.fb-closelink {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 0; border: 0; background: none; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #5b6b8c;
+}
+@media (hover: hover) { .fb-closelink:hover { color: #1b2b4d; } }
+.fb-closex {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--color-surface-border); background: #fff; color: #6f7d99;
+}
+@media (hover: hover) { .fb-closex:hover { background: #eef2f9; color: #1a2740; border-color: #cbd7ea; } }
+
+/* ── Expanded header: topic, date and edition on ONE line ── */
+.tdi-openhead-meta {
+  display: flex !important; align-items: center !important;
+  flex-wrap: wrap; gap: 0.5rem 0.7rem !important;
+}
+.tdi-openhead-topic { margin: 0 !important; }

@@ -1621,8 +1621,8 @@ function diHeroCardHTML(o) {
             <h3 class="tdi-openhead-title">AI Briefing</h3>
             <button type="button" class="tdi-openx" data-di-toggle aria-label="Close briefing">${X_SVG}</button>
           </div>
-          ${o.topicLabel ? `<div class="tdi-openhead-topic">${escapeHTML(o.topicLabel)}</div>` : ''}
           <div class="tdi-openhead-meta">
+            ${o.topicLabel ? `<span class="tdi-openhead-topic">${escapeHTML(o.topicLabel)}</span>` : ''}
             <span class="tdi-date tdi-date--open" data-tdi-date></span>
           </div>
         </div>
@@ -1680,6 +1680,94 @@ function renderNavDdPage(container, cfg) {
   return root;
 }
 
+// ─── revamp949: Featured AI Briefings row ────────────────────────────────────
+// The same briefing cards the hub uses, mountable anywhere. Reads CACHE-ONLY so
+// rendering it can never trigger a paid generation (revamp908), and opens a
+// briefing in place inside a bordered card.
+function renderFeaturedBriefings(host, opts) {
+  if (!host) return;
+  const o = opts || {};
+  let picks = [];
+  try { picks = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 4); } catch (_) {}
+  if (!picks.length) return;
+  const X_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  const X_BIG = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  const card = (t) => `
+    <button type="button" class="dih-item" data-fb-item="${escapeAttr(t.name)}" data-fb-slug="${escapeAttr(t.slug)}">
+      <span class="dih-item-head">
+        <span class="dih-item-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
+        <span class="dih-item-name">${escapeHTML(t.name)}</span>
+      </span>
+      <span class="dih-item-sum" data-fb-sum>Loading your briefing…</span>
+      <span class="dih-item-go">Read briefing${SUBPAGE_ARROW}</span>
+    </button>`;
+  host.innerHTML = `
+    <div class="fb-head">
+      <h2 class="dih-bytopic-title">${escapeHTML(o.title || 'Featured AI Briefings')}</h2>
+      ${o.sub ? `<p class="dih-bytopic-sub">${escapeHTML(o.sub)}</p>` : ''}
+    </div>
+    <div class="dih-items fb-items">${picks.map(card).join('')}</div>
+    <div class="fb-brief" data-fb-brief hidden>
+      <div class="fb-briefbar">
+        <button type="button" class="fb-closelink" data-fb-close>${X_SVG}<span>Close Briefing</span></button>
+        <button type="button" class="fb-closex" data-fb-close aria-label="Close briefing">${X_BIG}</button>
+      </div>
+      <div class="fb-brieftitle" data-fb-brieftitle></div>
+      <div data-fb-host></div>
+    </div>
+    ${o.moreHref ? `<div class="fb-foot"><a class="hf-cta" href="${escapeAttr(o.moreHref)}">${escapeHTML(o.moreLabel || 'See all')}${SUBPAGE_ARROW}</a></div>` : ''}`;
+
+  // Summaries, cache-only.
+  host.querySelectorAll('[data-fb-item]').forEach((btn) => {
+    const name = btn.dataset.fbItem;
+    fetchDailyBrief(name, false, true).then((d) => {
+      if (!btn.isConnected) return;
+      const sum = btn.querySelector('[data-fb-sum]');
+      if (sum) sum.textContent = (d && d.summary) ? d.summary : 'Briefing publishes with the next edition.';
+    }).catch(() => {});
+  });
+
+  const list = host.querySelector('.fb-items');
+  const brief = host.querySelector('[data-fb-brief]');
+  const briefHost = host.querySelector('[data-fb-host]');
+  const briefTitle = host.querySelector('[data-fb-brieftitle]');
+  const foot = host.querySelector('.fb-foot');
+  const showList = () => {
+    brief.hidden = true; list.hidden = false;
+    if (foot) foot.hidden = false;
+    briefHost.innerHTML = '';
+    host.classList.remove('is-brief');
+  };
+  host.querySelectorAll('[data-fb-item]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const name = btn.dataset.fbItem, slug = btn.dataset.fbSlug;
+      let tIcon = ''; try { const tt = getTopicBySlug(slug); tIcon = topicIconSVG((tt && tt.icon) || 'globe', ''); } catch (_) {}
+      briefTitle.innerHTML = `
+        <div class="tdi-openhead tdi-openhead--hub">
+          <div class="tdi-openhead-top">
+            <span class="tdi-openhead-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
+            <h3 class="tdi-openhead-title">AI Briefing</h3>
+          </div>
+          <div class="tdi-openhead-meta">
+            <span class="tdi-openhead-topic">${escapeHTML(name)}</span>
+            <span class="tdi-date tdi-date--open" data-fb-stamp></span>
+          </div>
+        </div>`;
+      briefHost.innerHTML = '';
+      renderDailyIntelligence(briefHost, { topic: name, label: name, slug, inline: true });
+      fetchDailyBrief(name).then((d) => {
+        const slot = briefTitle.querySelector('[data-fb-stamp]');
+        if (slot && d && d.generatedAt) slot.innerHTML = diEditionStampHTML(d.generatedAt);
+      }).catch(() => {});
+      list.hidden = true; brief.hidden = false;
+      if (foot) foot.hidden = true;
+      host.classList.add('is-brief');
+      try { host.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (_) {}
+    });
+  });
+  host.querySelectorAll('[data-fb-close]').forEach((b) => b.addEventListener('click', showList));
+}
+
 // revamp818: the AI Briefings hub — a REAL page (own route, own
 // renderer, normal scroll), not a dropdown over home. Three bands: what Daily
 // Intelligence is, today's cross-topic briefing, then every parent topic's
@@ -1731,9 +1819,9 @@ function renderIntelligenceHub(container) {
           <div class="dih-items">${featuredBriefs.map(item).join('')}</div>
           <div class="dih-brief" data-dih-brief hidden>
             <div class="dih-brief-bar">
-              <button type="button" class="dih-brief-back" data-dih-back>${BACKBAR_CHEV}<span>All featured briefings</span></button>
-              <button type="button" class="dih-brief-close" data-dih-back aria-label="Close briefing">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <button type="button" class="dih-brief-back fb-closelink" data-dih-back><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span>Close Briefing</span></button>
+              <button type="button" class="dih-brief-close fb-closex" data-dih-back aria-label="Close briefing">
+                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             </div>
             <div class="dih-brief-title" data-dih-brief-title></div>
@@ -1764,10 +1852,12 @@ function renderIntelligenceHub(container) {
             <div class="dih-groupbody" hidden>
             <div class="dih-items">${[g.parent, ...(g.subtopics || [])].map(item).join('')}</div>
             <div class="dih-brief" data-dih-brief hidden>
+              <!-- revamp949: a close-link on the left and a larger X on the
+                   right, in place of the back link. -->
               <div class="dih-brief-bar">
-                <button type="button" class="dih-brief-back" data-dih-back>${BACKBAR_CHEV}<span>All ${escapeHTML(g.parent.name)} briefings</span></button>
-                <button type="button" class="dih-brief-close" data-dih-back aria-label="Close briefing">
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <button type="button" class="dih-brief-back fb-closelink" data-dih-back><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span>Close Briefing</span></button>
+                <button type="button" class="dih-brief-close fb-closex" data-dih-back aria-label="Close briefing">
+                  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
               </div>
               <div class="dih-brief-title" data-dih-brief-title></div>
@@ -1887,8 +1977,10 @@ function renderIntelligenceHub(container) {
                 <span class="tdi-openhead-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
                 <h3 class="tdi-openhead-title">AI Briefing</h3>
               </div>
-              <div class="tdi-openhead-topic">${escapeHTML(name)}</div>
-              <div class="tdi-openhead-meta"><span class="tdi-date tdi-date--open" data-dih-stamp></span></div>
+              <div class="tdi-openhead-meta">
+                <span class="tdi-openhead-topic">${escapeHTML(name)}</span>
+                <span class="tdi-date tdi-date--open" data-dih-stamp></span>
+              </div>
             </div>`;
           // fetchDailyBrief is promise-cached, so this rides the same request
           // renderDailyIntelligence is already making.
@@ -4300,11 +4392,11 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               <div class="hf-chips" data-hq-prompts></div>
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Access prompt library${HQ_ARROW}</button></div>
             </section>
-          <section class="hf-card hf-card--di" aria-label="AI Briefings">
-            <div class="tdi-card tdi-card--v3 tdi-card--home tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'AI-generated briefs, twice daily across 100+ topics.', hubCard: true, topicLabel: 'Cross-Topic' })}
-            </div>
-          </section>
           </div>
+          <!-- revamp949: the two-column briefing + promo card is replaced by a
+               Featured AI Briefings row using the SAME cards as the AI Briefings
+               page, mounted by renderFeaturedBriefings below. -->
+          <section class="home-featbriefs" data-home-featbriefs aria-label="Featured AI Briefings"></section>
           <div class="home-main">
             <section class="layout-section" id="section-newsfeed"></section>
           </div>
@@ -4317,10 +4409,13 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });
     // Trending is now the only sidebar card, so it can run much longer.
     renderTrendingHome(container.querySelector('#home-trending'), { limit: 14 });
-    // The homepage AI Briefings card (revamp814) uses the same component
-    // as the topic cards, so it inherits the stamp, the unfurl animation and
-    // both close controls. Its scope is 'home' — the cross-topic briefing.
-    wireHomeDailyIntelligence(container);
+    // revamp949: the homepage leads with a Featured AI Briefings row built from
+    // the same cards as the AI Briefings page.
+    renderFeaturedBriefings(container.querySelector('[data-home-featbriefs]'), {
+      title: 'Featured AI Briefings',
+      sub: 'AI-generated briefings, refreshed morning and night.',
+      moreHref: '#/intelligence', moreLabel: 'All AI Briefings',
+    });
     {
       const tWrap = container.querySelector('[data-hq-topics]');
       if (tWrap) {
