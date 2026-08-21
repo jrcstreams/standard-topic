@@ -23351,3 +23351,14 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 .search-aii-host .aii-fi-acc:nth-child(2) {
   border-top: 1px solid var(--color-surface-border) !important;
 }
+
+/* revamp921 — the results grid had column-gap: 0, so the two columns of bordered
+   accordions touched. Row spacing already comes from each card's margin-bottom;
+   this adds the matching horizontal gap. */
+.search-aii-host .aii-fi-acclist {
+  column-gap: 1.1rem !important;
+  row-gap: 0 !important;
+}
+@media (max-width: 760px) {
+  .search-aii-host .aii-fi-acclist { column-gap: 0 !important; }
+}
