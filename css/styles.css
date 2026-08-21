@@ -23535,3 +23535,18 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 /* The body no longer carries its own title/back bar. */
 .pdir-topicview > .pdir-topicbar,
 .pdir-topicview > .pdir-topicname { display: none !important; }
+
+/* ═══ revamp927 — search-result prompt rows match the prompt library ═════════
+   Measured side by side: the library row is 52px tall with a 13.28px label and
+   a 16px icon; the search rows were running 15.68px / 19px with 15px of
+   vertical padding, so the same list read noticeably chunkier on the search
+   page. Matched to the library so the two surfaces are one component. */
+.search-aii-host .aii-fi-acc > .aii-fi-accsum {
+  min-height: 52px !important;
+  padding: 0 0.9rem !important;
+  align-items: center !important;
+}
+.search-aii-host .aii-fi-acc-name { font-size: 0.83rem !important; font-weight: 600 !important; }
+.search-aii-host .aii-fi-acc-ic { width: 20px !important; height: 20px !important; }
+.search-aii-host .aii-fi-acc-ic svg { width: 16px !important; height: 16px !important; }
+.search-aii-host .aii-fi-acc-chev svg { width: 15px !important; height: 15px !important; }
