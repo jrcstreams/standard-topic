@@ -23877,3 +23877,57 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
    The page container now paints its own ground, independent of body state. */
 .ndp.aii-nav-dd-pagelike { background: #fff !important; }
 .dih { background: #fff !important; }
+
+/* ═══ revamp941 — Prompts by Topic expanded state matches All Topics ═════════
+   Reference (All Topics, measured): body padding 4px 0 14px 6px; an auto-column
+   grid with an 18px column gap; each link is icon + name at ~15px with
+   8px/9px vertical padding and NO border, background or chevron of its own.
+   Prompts-by-Topic was drawing bordered cells with hairline separators and a
+   chevron, in a fixed 3-column grid. */
+.prompts-home .pdir-cardbody,
+.ph-body .pdir-cardbody,
+[data-prompts-host] .pdir-cardbody { padding: 4px 0 14px 6px !important; }
+
+.prompts-home .pdir-grid,
+.ph-body .pdir-grid,
+[data-prompts-host] .pdir-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)) !important;
+  gap: 0 18px !important;
+}
+.prompts-home .pdir-cell,
+.ph-body .pdir-cell,
+[data-prompts-host] .pdir-cell {
+  display: flex !important; align-items: center !important;
+  gap: 10px !important;
+  padding: 8px 0 9px !important;
+  border: 0 !important; border-radius: 0 !important;
+  background: none !important;
+}
+@media (hover: hover) {
+  .prompts-home .pdir-cell:hover,
+  .ph-body .pdir-cell:hover { background: none !important; }
+  .prompts-home .pdir-cell:hover .pdir-cell-name,
+  .ph-body .pdir-cell:hover .pdir-cell-name { color: #1d4ed8 !important; }
+}
+.pdir-cell-ic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; color: #46557a;
+}
+.pdir-cell-ic svg { width: 17px; height: 17px; }
+.prompts-home .pdir-cell-name,
+.ph-body .pdir-cell-name {
+  font-size: 0.94rem !important; font-weight: 500 !important; color: #26375a !important;
+}
+/* Open head: same band as All Topics. */
+.prompts-home .pdir-card.is-open > .pdir-cardhead,
+.ph-body .pdir-card.is-open > .pdir-cardhead { background: #e3e9f4 !important; }
+
+/* revamp941b — `.pdir-card.is-open .pdir-cardbody { padding: 16px/18px }` is
+   higher-specificity than the base rule, so the open body kept its old padding.
+   Match the All Topics reference (4px 0 14px 6px). */
+.prompts-home .pdir-card.is-open .pdir-cardbody,
+.ph-body .pdir-card.is-open .pdir-cardbody,
+[data-prompts-host] .pdir-card.is-open .pdir-cardbody {
+  padding: 4px 0 14px 6px !important;
+}

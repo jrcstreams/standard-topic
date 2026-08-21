@@ -889,8 +889,11 @@ const PH_ARROW_R = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" 
 const PDIR_CHEV = '<svg class="pdir-chev" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 function promptDirectoryHTML() {
   const groups = getTopicsGroupedByParent() || [];
+  // revamp941: mirrors the All Topics subtopic link — icon + name, no chevron,
+  // no per-cell chrome — so the two directories read as one component.
   const cell = (t) => `<button type="button" class="pdir-cell" data-pdir-topic data-slug="${escapeAttr(t.slug)}" data-name="${escapeAttr(t.name)}">
-      <span class="pdir-cell-name">${escapeHTML(t.name)}</span>${PDIR_CHEV_R}
+      <span class="pdir-cell-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
+      <span class="pdir-cell-name">${escapeHTML(t.name)}</span>
     </button>`;
   const block = ({ parent, subtopics }) => `<section class="pdir-card" data-pdir-card>
       <button type="button" class="pdir-cardhead" aria-expanded="false">
