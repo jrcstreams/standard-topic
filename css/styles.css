@@ -23710,3 +23710,12 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 .dih-group.is-open > .dih-grouphead .pdir-chev { transform: rotate(180deg); }
 
 .dih-groupbody { padding: 0.2rem 0.9rem 0.9rem; }
+
+/* ═══ revamp934 — AI Briefings page uses the full content width ══════════════
+   .dih carried a hard `max-width: 1460px` above 1500px AND its own 2rem gutter
+   on top of #content's 32px, so the page rendered 1396px wide inside a 1760px
+   column — 364px narrower than Topics / Trending / Prompts. Same double-gutter
+   family as revamp920/931. */
+.dih { max-width: none !important; padding-left: 0 !important; padding-right: 0 !important; }
+@media (min-width: 1500px) { .dih { max-width: none !important; } }
+@media (max-width: 640px) { .dih { padding-left: 0 !important; padding-right: 0 !important; } }
