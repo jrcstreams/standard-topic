@@ -23482,3 +23482,11 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 /* revamp924b — pull the first subtopic row closer to the head above it. */
 .pdir-cardbody, .pdir-acc-body { padding-top: 0.1rem !important; }
 .pdir-grid > *:nth-child(-n+3) { padding-top: 0.4rem !important; }
+
+/* revamp925 — subtopic cells: the chevron sits with its label, not at the far
+   edge of the column. .pdir-cell-name was `flex: 1`, so it stretched to fill the
+   whole grid track and pushed the arrow to the right-hand edge, leaving a long
+   dead gap between the two. The name now takes only the width it needs. */
+.pdir-cell { justify-content: flex-start !important; gap: 6px !important; }
+.pdir-cell-name { flex: 0 1 auto !important; }
+.pdir-cell-chev { margin-left: 0 !important; }
