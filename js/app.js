@@ -1723,11 +1723,17 @@ function renderIntelligenceHub(container) {
       <div class="dih-groups" data-dih-groups>
         ${groups.map((g) => `
           <section class="dih-group" id="dih-${escapeAttr(g.parent.slug)}" data-dih-group>
-            <div class="dih-grouphead">
+            <!-- revamp933: parent groups are real accordions now — closed on
+                 load, bordered, two across, matching the accordion pattern used
+                 on Prompts and the search results. -->
+            <button type="button" class="dih-grouphead" data-dih-grouptoggle aria-expanded="false">
               <span class="dih-groupident">
+                <span class="dih-group-ic" aria-hidden="true">${topicIconSVG(g.parent.icon || 'globe', '')}</span>
                 <h2 class="dih-grouptitle">${escapeHTML(g.parent.name)}</h2>
               </span>
-            </div>
+              ${PDIR_CHEV}
+            </button>
+            <div class="dih-groupbody" hidden>
             <div class="dih-items">${[g.parent, ...(g.subtopics || [])].map(item).join('')}</div>
             <div class="dih-brief" data-dih-brief hidden>
               <div class="dih-brief-bar">
@@ -1739,6 +1745,7 @@ function renderIntelligenceHub(container) {
               <div class="dih-brief-title" data-dih-brief-title></div>
               <div data-dih-host></div>
             </div>
+            </div>
           </section>`).join('')}
       </div>
     </div>`;
@@ -1747,12 +1754,33 @@ function renderIntelligenceHub(container) {
   // scroll to the browser, which puts the heading UNDER the fixed nav + sticky
   // bar; and if that section is open on a briefing, the offset is stale by the
   // time the layout settles. Measure the chrome and scroll it ourselves.
+  // revamp933: parent groups open/close like every other accordion on the site.
+  // Closed on load, so the page opens as a scannable list of sections rather
+  // than ~100 briefing cards.
+  const setGroupOpen = (sec, open) => {
+    const head = sec.querySelector('[data-dih-grouptoggle]');
+    const body = sec.querySelector('.dih-groupbody');
+    if (!head || !body) return;
+    body.hidden = !open;
+    sec.classList.toggle('is-open', open);
+    head.setAttribute('aria-expanded', String(open));
+  };
+  container.querySelectorAll('[data-dih-grouptoggle]').forEach((head) => {
+    head.addEventListener('click', () => {
+      const sec = head.closest('[data-dih-group]');
+      setGroupOpen(sec, !sec.classList.contains('is-open'));
+    });
+  });
+
   container.querySelectorAll('.dih-legend-chip').forEach((chip) => {
     chip.addEventListener('click', (e) => {
       e.preventDefault();
       const id = (chip.getAttribute('href') || '').replace(/^#/, '');
       const sec = id && container.querySelector('#' + CSS.escape(id));
       if (!sec) return;
+      // Jumping to a section opens it — landing on a collapsed header would
+      // look like the jump had failed.
+      setGroupOpen(sec, true);
       const nav = document.getElementById('site-header');
       const sub = document.getElementById('sub-header');
       // Count the sticky bar even when it is still hidden: any jump target sits

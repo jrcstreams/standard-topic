@@ -23657,3 +23657,56 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
    every card carries the same edition it reads as repeated chrome, so the whole
    stamp goes. The edition still appears in the expanded briefing header. */
 .dih-item .dih-item-stamp { display: none !important; }
+
+/* ═══ revamp933 — AI Briefings by Topic: real accordions, two across ═════════
+   Every parent group used to render fully expanded, so the page loaded as ~100
+   briefing cards. They are now the same accordion pattern used on Prompts and
+   the search results: bordered cards, closed by default, two per row, with an
+   open section spanning the full width for its briefing grid. */
+.dih-groups {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem 1.1rem;
+  align-items: start;
+}
+@media (max-width: 900px) { .dih-groups { grid-template-columns: 1fr; } }
+
+.dih-group {
+  border: 1px solid #e8eaef !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  overflow: hidden;
+  align-self: start;
+  margin: 0 !important;
+}
+@media (hover: hover) {
+  .dih-group:not(.is-open):hover { border-color: color-mix(in srgb, #2f4d9e 26%, #e8eaef) !important; }
+}
+/* Open: full width for the briefing grid, darker head, thicker border. */
+.dih-group.is-open {
+  grid-column: 1 / -1;
+  border-width: 2px !important;
+  border-color: #98aad4 !important;
+}
+.dih-group.is-open > .dih-grouphead { background: #e3e9f4 !important; }
+
+/* Head reads like the other accordion heads. */
+.dih-grouphead {
+  display: flex !important; align-items: center; gap: 12px; width: 100%;
+  min-height: 52px; padding: 0 0.9rem !important;
+  border: 0; background: none; cursor: pointer; text-align: left;
+  border-radius: 0 !important;
+  transition: background .12s ease;
+}
+@media (hover: hover) { .dih-group:not(.is-open) > .dih-grouphead:hover { background: #f6f8fc; } }
+.dih-groupident { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1 1 auto; }
+.dih-group-ic { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; color: #2f4d9e; }
+.dih-group-ic svg { width: 16px; height: 16px; }
+.dih-grouptitle {
+  margin: 0 !important; font-family: var(--font-display);
+  font-size: 0.95rem !important; font-weight: 700 !important; color: #16233d;
+}
+.dih-grouphead .pdir-chev { flex: none; color: #8f9db6; transition: transform .18s ease; }
+.dih-group.is-open > .dih-grouphead .pdir-chev { transform: rotate(180deg); }
+
+.dih-groupbody { padding: 0.2rem 0.9rem 0.9rem; }
