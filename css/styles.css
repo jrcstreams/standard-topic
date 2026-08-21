@@ -23784,3 +23784,60 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
    the view toggle. Now that the rows are cards rather than hairline rows, they
    need to sit off that rule rather than butt into it. */
 .aiidd-tree { margin-top: 0.85rem !important; }
+
+/* ═══ revamp937 — Topics view toggle: compact, and beside the subtitle ═══════
+   Two large pills on their own row dominated the header. It is now a small
+   "List: Condensed | Expanded" control that rides on the subtitle's row:
+   right-aligned beside it on wide screens, and dropping to its own left-aligned
+   line when there isn't room. */
+.aii-nav-dd-topics .aii-nav-dd-titles {
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  column-gap: 1rem; row-gap: 0.4rem;
+}
+.aii-nav-dd-topics .aii-nav-dd-sub { margin-bottom: 0 !important; flex: 1 1 auto; }
+.aii-nav-dd-topics .aii-nav-dd-headbtns {
+  margin-top: 0 !important; flex: 0 0 auto; margin-left: auto;
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px; border-radius: 999px; background: #eef1f7;
+}
+.aii-nav-dd-headbtns-label {
+  padding: 0 0.3rem 0 0.55rem;
+  font-family: var(--font-family); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: #6f7d99;
+}
+.aii-nav-dd-topics .aii-nav-dd-headbtn {
+  padding: 4px 12px !important; border-radius: 999px !important;
+  font-size: 0.78rem !important; font-weight: 600 !important;
+  border: 0 !important; background: none !important; color: #5b6b8c !important;
+  min-height: 0 !important;
+}
+.aii-nav-dd-topics .aii-nav-dd-headbtn.is-primary {
+  background: #fff !important; color: #1b2b4d !important;
+  box-shadow: 0 1px 2px rgba(22, 35, 61, 0.10);
+}
+@media (hover: hover) {
+  .aii-nav-dd-topics .aii-nav-dd-headbtn:not(.is-primary):hover { color: #1b2b4d !important; }
+}
+/* Narrow: drop to its own line, left-aligned. */
+@media (max-width: 700px) {
+  .aii-nav-dd-topics .aii-nav-dd-sub { flex: 1 1 100%; }
+  .aii-nav-dd-topics .aii-nav-dd-headbtns { margin-left: 0; }
+}
+
+/* revamp937b — the titles block holds the H1, the subtitle AND the toggle, so
+   the H1 has to claim its own row before the subtitle and the control can share
+   the next one. Also covers the page-view's back-bar sitting in there. */
+.aii-nav-dd-topics .aii-nav-dd-titles > .aii-nav-dd-title,
+.aii-nav-dd-topics .aii-nav-dd-titles > h1,
+.aii-nav-dd-topics .aii-nav-dd-titles > .page-backbar { flex: 1 1 100% !important; }
+.aii-nav-dd-topics .aii-nav-dd-titles { align-items: center !important; }
+
+/* revamp937c — .aii-nav-dd-titles was shrink-to-fit (271px at a 1440 viewport),
+   so the flex row had nothing to spread across and the toggle wrapped even on
+   wide screens. Same trap as .search-panel-hero-inner in revamp913. */
+.aii-nav-dd-topics .aii-nav-dd-titles { width: 100% !important; }
+
+/* revamp937d — the titles block is flex-direction: column by default, so the
+   subtitle and toggle stacked no matter what flex values they carried. Switch
+   it to a wrapping row for this page. */
+.aii-nav-dd-topics .aii-nav-dd-titles { flex-direction: row !important; }

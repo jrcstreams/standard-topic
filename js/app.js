@@ -792,7 +792,7 @@ function openNavDropdown(cfg) {
               <input type="search" class="navdd-headsearch-input" placeholder="${escapeAttr(cfg.headSearch)}" aria-label="${escapeAttr(cfg.headSearch)}" autocomplete="off">
             </form>` : ''}
           ${Array.isArray(cfg.headButtons) && cfg.headButtons.length
-            ? `<div class="aii-nav-dd-headbtns">${cfg.headButtons.map((b, i) => `<a href="${escapeAttr(b.href || '#')}" class="aii-nav-dd-headbtn${b.primary ? ' is-primary' : ''}" data-navdd-headbtn="${i}">${b.icon || ''}<span>${escapeHTML(b.label)}</span></a>`).join('')}</div>`
+            ? `<div class="aii-nav-dd-headbtns">${cfg.headButtonsLabel ? `<span class="aii-nav-dd-headbtns-label">${escapeHTML(cfg.headButtonsLabel)}</span>` : ''}${cfg.headButtons.map((b, i) => `<a href="${escapeAttr(b.href || '#')}" class="aii-nav-dd-headbtn${b.primary ? ' is-primary' : ''}" data-navdd-headbtn="${i}">${b.icon || ''}<span>${escapeHTML(b.label)}</span></a>`).join('')}</div>`
             : ''}
           ${cfg.headLink ? `<a href="${escapeAttr(cfg.headLink.href)}" class="aii-nav-dd-headlink" data-navdd-headlink><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>${escapeHTML(cfg.headLink.label)}</span></a>` : ''}
         </div>
@@ -1374,9 +1374,12 @@ function topicsNavDdCfg() {
     // brand/Home nav already covers it, #img77).
     // revamp809: the search field is replaced by a view toggle — Condensed
     // (parents closed, the default) or Expanded (every subtopic list open).
+    // revamp937: a compact "List: Condensed | Expanded" control rather than two
+    // large pills — it rides beside the subtitle on wide screens.
+    headButtonsLabel: 'List:',
     headButtons: [
-      { label: 'Condensed View', href: '#', primary: true },
-      { label: 'Expanded View', href: '#' },
+      { label: 'Condensed', href: '#', primary: true },
+      { label: 'Expanded', href: '#' },
     ],
     contentHTML: topicsTreeHTML(),
     onClose: userCloseNavDropdown,
@@ -1659,7 +1662,7 @@ function renderNavDdPage(container, cfg) {
             <div class="aii-nav-dd-title">${cfg.icon ? `<span class="navdd-headic" aria-hidden="true">${cfg.icon}</span>` : ''}${escapeHTML(cfg.title || '')}</div>
             ${cfg.subtitle ? `<div class="aii-nav-dd-sub">${escapeHTML(cfg.subtitle)}</div>` : ''}
             ${Array.isArray(cfg.headButtons) && cfg.headButtons.length
-              ? `<div class="aii-nav-dd-headbtns">${cfg.headButtons.map((b, i) => `<a href="${escapeAttr(b.href || '#')}" class="aii-nav-dd-headbtn${b.primary ? ' is-primary' : ''}" data-navdd-headbtn="${i}">${b.icon || ''}<span>${escapeHTML(b.label)}</span></a>`).join('')}</div>`
+              ? `<div class="aii-nav-dd-headbtns">${cfg.headButtonsLabel ? `<span class="aii-nav-dd-headbtns-label">${escapeHTML(cfg.headButtonsLabel)}</span>` : ''}${cfg.headButtons.map((b, i) => `<a href="${escapeAttr(b.href || '#')}" class="aii-nav-dd-headbtn${b.primary ? ' is-primary' : ''}" data-navdd-headbtn="${i}">${b.icon || ''}<span>${escapeHTML(b.label)}</span></a>`).join('')}</div>`
               : ''}
           </div>
         </div>
@@ -1713,12 +1716,6 @@ function renderIntelligenceHub(container) {
         <p class="dih-bytopic-sub">Every topic gets its own briefing, in two editions a day — browse them all here.</p>
       </div>
 
-      <nav class="dih-legend-wrap" aria-label="Jump to a topic">
-        <h2 class="dih-legend-title">Jump to a section</h2>
-        <div class="dih-legend">
-          ${groups.map((g) => `<a class="dih-legend-chip" href="#dih-${escapeAttr(g.parent.slug)}"><span class="dih-legend-ic" aria-hidden="true">${topicIconSVG(g.parent.icon || 'globe', '')}</span>${escapeHTML(g.parent.name)}</a>`).join('')}
-        </div>
-      </nav>
 
       <div class="dih-groups" data-dih-groups>
         ${groups.map((g) => `
