@@ -23719,3 +23719,63 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 .dih { max-width: none !important; padding-left: 0 !important; padding-right: 0 !important; }
 @media (min-width: 1500px) { .dih { max-width: none !important; } }
 @media (max-width: 640px) { .dih { padding-left: 0 !important; padding-right: 0 !important; } }
+
+/* revamp934b — the closed accordion was showing an empty strip under its head:
+   .dih-group kept its legacy padding (0 1.2rem 1.15rem) from when it was a
+   plain always-open section, and the head kept a bottom divider that only made
+   sense with content beneath it. The body now supplies its own padding, and the
+   divider only appears when the section is open. */
+.dih-group { padding: 0 !important; }
+.dih-group > .dih-grouphead { border-bottom: 0 !important; }
+.dih-group.is-open > .dih-grouphead {
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 14%, transparent) !important;
+}
+
+/* ═══ revamp935 — All Topics accordions match the rest of the site ═══════════
+   The topic tree was hairline-separated rows in one frame. Same treatment as
+   Prompts / search / AI Briefings: bordered cards, two per row, with an open
+   section spanning the full width for its subtopic list. */
+.aiidd-tree {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem 1.1rem;
+  align-items: start;
+}
+@media (max-width: 900px) { .aiidd-tree { grid-template-columns: 1fr; } }
+
+.aiidd-parent {
+  border: 1px solid #e8eaef !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  overflow: hidden;
+  align-self: start;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+@media (hover: hover) {
+  .aiidd-parent[data-open="false"]:hover { border-color: color-mix(in srgb, #2f4d9e 26%, #e8eaef) !important; }
+}
+.aiidd-parent[data-open="true"] {
+  grid-column: 1 / -1;
+  border-width: 2px !important;
+  border-color: #98aad4 !important;
+}
+.aiidd-parent-head {
+  min-height: 52px; padding: 0 0.9rem !important;
+  border-bottom: 0 !important; border-radius: 0 !important;
+}
+.aiidd-parent[data-open="true"] > .aiidd-parent-head {
+  background: #e3e9f4 !important;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 14%, transparent) !important;
+}
+@media (hover: hover) {
+  .aiidd-parent[data-open="false"] > .aiidd-parent-head:hover { background: #f6f8fc !important; }
+}
+
+/* revamp934c — the head also kept a legacy margin-bottom/padding-bottom from
+   the old always-open section, which is what was left of the empty strip. */
+.dih-group > .dih-grouphead {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  padding-top: 0 !important;
+}
