@@ -1439,13 +1439,13 @@ function userClosePromptBuilder() {
 // Topic page: a TWO-item control subnav (revamp453). "AI Insights & Resources"
 // then reveals four sub-options in its own strip.
 // ── Topic sub-pages (revamp763) ──────────────────────────────────────────────
-// The tabbed topic page is gone. The topic LANDING hosts the AI Daily Reads
+// The tabbed topic page is gone. The topic LANDING hosts the AI Briefings
 // card, two gateway cards (Web Resources / AI Prompts) and the news feed; each
 // former tab is now a full flip SUB-PAGE at its own URL (/topic/{slug}/{page}),
 // reached by real navigation, with a sticky "Back to {Topic}" bar rendered in
 // the sub-header where the tab strip used to live.
 const TOPIC_SUBPAGES = {
-  intelligence: { label: 'AI Daily Reads' },
+  intelligence: { label: 'AI Briefings' },
   websources:   { label: 'Web Resources' },
   prompts:      { label: 'AI Prompts' },
 };
@@ -1459,7 +1459,7 @@ const TOPIC_SUBPAGE_ALIAS = {
   explore: 'websources', websearch: 'websources',
   shortcuts: 'prompts', 'topic-prompts': 'prompts', 'evergreen-prompts': 'prompts', external: 'prompts',
 };
-// revamp777: the topic sub-pages are RETIRED. AI Daily Reads and AI Prompts
+// revamp777: the topic sub-pages are RETIRED. AI Briefings and AI Prompts
 // expand inline on the landing page, and Web Resources is gone entirely (the
 // search page covers that job better — nobody searches a bare topic name on
 // YouTube). Every legacy sub-page URL now resolves to the landing; the router
@@ -1501,7 +1501,7 @@ function diEditionParts(iso) {
 // edition name. No chrome, no pulsing dot.
 // The same filled spark every other AI surface uses for provenance.
 const DI_SPARK_TWO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg>';
-// revamp852 — the AI Daily Reads preview card, shared by the homepage, the
+// revamp852 — the AI Briefings preview card, shared by the homepage, the
 // topic pages and the hub's Today's Briefing. A darker-blue header band carries
 // the (colour-flipped) sparkle icon + title, with an optional "View Intelligence
 // Hub" access-link riding right of the title; the light body below holds the
@@ -1510,17 +1510,17 @@ const DI_SPARK_TWO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="
 function diHeroCardHTML(o) {
   o = o || {};
   const X_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
-  const headerTitle = o.headerTitle || 'AI Daily Reads';
+  const headerTitle = o.headerTitle || 'AI Briefings';
   // revamp898: no "Topic:" prefix — the name reads as an all-caps standfirst
-  // directly beneath The Daily Read title.
+  // directly beneath AI Briefing title.
   const topicRow = o.topicLabel ? `<div class="tdi-topiclabel"><span class="tdi-topiclabel-v">${escapeHTML(o.topicLabel)}</span></div>` : '';
-  const hubTag = o.hubTagline ? `<p class="tdi-hubline"><a href="#/intelligence">Access the AI Daily Reads Hub${SUBPAGE_ARROW}</a></p>` : '';
+  const hubTag = o.hubTagline ? `<p class="tdi-hubline"><a href="#/intelligence">Access the AI Briefings Hub${SUBPAGE_ARROW}</a></p>` : '';
   const HUB_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.8v2M12 19.2v2M21.2 12h-2M4.8 12h-2M18.5 5.5l-1.4 1.4M6.9 17.1l-1.4 1.4M18.5 18.5l-1.4-1.4M6.9 6.9L5.5 5.5"/></svg>';
   const HUB_DOC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3.5"/></svg>';
   const HUB_AI = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6l1.85 5.25a3 3 0 0 0 1.8 1.8L20.9 11.5l-5.25 1.85a3 3 0 0 0-1.8 1.8L12 20.4l-1.85-5.25a3 3 0 0 0-1.8-1.8L3.1 11.5l5.25-1.85a3 3 0 0 0 1.8-1.8z"/></svg>';
   const hubCard = o.hubCard ? `<aside class="tdi-hubcard">
         <div class="tdi-hubcard-head">
-          <h4 class="tdi-hubcard-title">View more AI Daily Reads</h4>
+          <h4 class="tdi-hubcard-title">View more AI Briefings</h4>
         </div>
         <p class="tdi-hubcard-sub tdi-hubcard-sub--d">AI-generated briefings across 100+ topics, refreshed morning and night.</p>
         <p class="tdi-hubcard-sub tdi-hubcard-sub--m">AI-generated briefings across 100+ topics, refreshed morning and night.</p>
@@ -1531,11 +1531,11 @@ function diHeroCardHTML(o) {
         </div>
         <!-- revamp897: ONE text link for every breakpoint — the desktop pill and
              the separate mobile variant have collapsed into this. -->
-        <a class="tdi-hubcard-go tdi-hubcard-cta" href="#/intelligence">Access AI Daily Reads${SUBPAGE_ARROW}</a>
+        <a class="tdi-hubcard-go tdi-hubcard-cta" href="#/intelligence">Access AI Briefings${SUBPAGE_ARROW}</a>
       </aside>` : '';
   // revamp895: the standalone card (topic pages + the hub's own Today card)
   // drops the header band too — the card IS the Daily Read, so a separate
-  // "AI Daily Reads" title bar around it was redundant chrome.
+  // "AI Briefings" title bar around it was redundant chrome.
   const header = (o.hubCard || o.noHeader) ? '' : `
     <div class="tdi-hero-head">
       <div class="tdi-hero-titlerow">
@@ -1551,7 +1551,7 @@ function diHeroCardHTML(o) {
       <div class="tdi-bodygrid">
         <div class="tdi-briefcol">
           <div class="tdi-todayhead">
-            <h3 class="tdi-today-title">The Daily Read</h3>
+            <h3 class="tdi-today-title">AI Briefing</h3>
           </div>
           ${topicRow}
           <!-- revamp915: the edition stamp sits UNDER the topic standfirst,
@@ -1579,7 +1579,7 @@ function diHeroCardHTML(o) {
                the icon's left edge rather than indented under the title. -->
           <div class="tdi-openhead-top">
             <span class="tdi-openhead-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
-            <h3 class="tdi-openhead-title">The Daily Read</h3>
+            <h3 class="tdi-openhead-title">AI Briefing</h3>
             <button type="button" class="tdi-openx" data-di-toggle aria-label="Close briefing">${X_SVG}</button>
           </div>
           ${o.topicLabel ? `<div class="tdi-openhead-topic">${escapeHTML(o.topicLabel)}</div>` : ''}
@@ -1641,7 +1641,7 @@ function renderNavDdPage(container, cfg) {
   return root;
 }
 
-// revamp818: the AI Daily Reads hub — a REAL page (own route, own
+// revamp818: the AI Briefings hub — a REAL page (own route, own
 // renderer, normal scroll), not a dropdown over home. Three bands: what Daily
 // Intelligence is, today's cross-topic briefing, then every parent topic's
 // briefing as a card grid you can read straight down.
@@ -1658,7 +1658,7 @@ function renderIntelligenceHub(container) {
         <span class="dih-item-name">${escapeHTML(t.name)}</span>
       </span>
       <span class="tdi-date dih-item-stamp" data-dih-stamp-for="${escapeAttr(t.name)}"></span>
-      <span class="dih-item-sum" data-dih-sum="${escapeAttr(t.name)}">Loading your daily read…</span>
+      <span class="dih-item-sum" data-dih-sum="${escapeAttr(t.name)}">Loading your briefing…</span>
       <span class="dih-item-go">Read briefing${SUBPAGE_ARROW}</span>
     </button>`;
 
@@ -1666,7 +1666,7 @@ function renderIntelligenceHub(container) {
     <div class="dih">
       ${backBarHTML()}
       <header class="dih-head">
-        <h1 class="dih-title"><span class="dih-title-ic" aria-hidden="true">${DI_SPARK_TWO}</span>AI Daily Reads</h1>
+        <h1 class="dih-title"><span class="dih-title-ic" aria-hidden="true">${DI_SPARK_TWO}</span>AI Briefings</h1>
         <p class="dih-lede">An AI briefing on every topic, twice a day.</p>
       </header>
 
@@ -1676,7 +1676,7 @@ function renderIntelligenceHub(container) {
       </section>
 
       <div class="dih-bytopic-head">
-        <h2 class="dih-bytopic-title">AI Daily Reads by Topic</h2>
+        <h2 class="dih-bytopic-title">AI Briefings by Topic</h2>
         <p class="dih-bytopic-sub">Every topic gets its own briefing, in two editions a day — browse them all here.</p>
       </div>
 
@@ -1789,14 +1789,14 @@ function renderIntelligenceHub(container) {
         const name = btn.dataset.dihItem;
         const slug = btn.dataset.dihSlug;
         // revamp906: use the SAME Daily Read header as every other surface —
-        // "The Daily Read", the topic as an all-caps standfirst, then the
+        // "AI Briefing", the topic as an all-caps standfirst, then the
         // date/edition pill — instead of an oversized topic title + icon.
         if (title) {
           title.innerHTML = `
             <div class="tdi-openhead tdi-openhead--hub">
               <div class="tdi-openhead-top">
                 <span class="tdi-openhead-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
-                <h3 class="tdi-openhead-title">The Daily Read</h3>
+                <h3 class="tdi-openhead-title">AI Briefing</h3>
               </div>
               <div class="tdi-openhead-topic">${escapeHTML(name)}</div>
               <div class="tdi-openhead-meta"><span class="tdi-date tdi-date--open" data-dih-stamp></span></div>
@@ -1943,7 +1943,7 @@ function wireHomeDailyIntelligence(root) {
 function wireTopicLandingCards(root, topic, ctx) {
   const top = root.querySelector('.topic-top');
   fitDiHub(root.querySelector('.tdi-card'));
-  // AI Daily Reads has TWO controls: the pill while it's closed, and the
+  // AI Briefings has TWO controls: the pill while it's closed, and the
   // ✕ Close Briefing in the header once it's open (revamp787).
   const cards = {
     di: { btns: [...root.querySelectorAll('[data-di-toggle]')], host: root.querySelector('[data-di-expand]'), sel: '.tdi-card', cls: 'is-di-open', loaded: false },
@@ -2026,7 +2026,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
     // revamp777: the websources / prompts / intelligence sub-page branches are
     // gone — everything lives on the landing page below.
     // ── Landing page (revamp765) ─────────────────────────────────────────────
-    // revamp777: two equal cards — AI Daily Reads and AI Prompts — sit side
+    // revamp777: two equal cards — AI Briefings and AI Prompts — sit side
     // by side on wide screens and stack below 1024px. Either one EXPANDS IN
     // PLACE: the opened card takes the full width and the other drops beneath
     // it, so neither ever navigates away. The news feed follows under its own
@@ -2084,7 +2084,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
     wireTopicHeroCondense();
     wireTopicLandingCards(body, topic, { descriptions, icons, shortcuts });
     renderNewsFeed(body.querySelector('#section-newsfeed'), topic, false);
-    // Fill the AI Daily Reads card's summary + date once the brief lands.
+    // Fill the AI Briefings card's summary + date once the brief lands.
     // The fetch is cached (shared with the sub-page), so tapping through is
     // instant. The summary is ALWAYS the real one — it regenerates with the
     // briefing every morning, so no evergreen fallback copy.
@@ -2416,7 +2416,7 @@ function renderLayout(route) {
         <div class="topic-subnav-inner">
           <div class="subnav-ident">
             <span class="subnav-ident-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>
-            <span class="subnav-ident-name">AI Daily Reads</span>
+            <span class="subnav-ident-name">AI Briefings</span>
           </div>
         </div>
       </div>`;
@@ -3517,7 +3517,7 @@ function pageLabelFor(route) {
 // document.title) all get the right one instead of the static homepage title.
 const SITE_TITLE_SUFFIX = 'Standard Topic';
 const TOPIC_TAB_LABEL = {
-  intelligence: 'AI Daily Reads', 'ai-insights': 'AI Daily Reads',
+  intelligence: 'AI Briefings', 'ai-insights': 'AI Briefings',
   prompts: 'AI Prompts', shortcuts: 'AI Prompts',
   websources: 'Web Resources', explore: 'Web Resources',
 };
@@ -3535,7 +3535,7 @@ function documentTitleFor(route) {
     }
     case 'custom': return route.term ? `${route.term} — Search | ${SITE_TITLE_SUFFIX}` : `Search | ${SITE_TITLE_SUFFIX}`;
     case 'search': return `Search | ${SITE_TITLE_SUFFIX}`;
-    case 'intelligence': return `AI Daily Reads | ${SITE_TITLE_SUFFIX}`;
+    case 'intelligence': return `AI Briefings | ${SITE_TITLE_SUFFIX}`;
     case 'trending': return `Trending | ${SITE_TITLE_SUFFIX}`;
     case 'topics': return `All Topics | ${SITE_TITLE_SUFFIX}`;
     case 'prompts': return `Prompts | ${SITE_TITLE_SUFFIX}`;
@@ -3583,7 +3583,7 @@ function fitMainNav() {
   // survive — they are never dropped. We shed Home, collapse Search to its icon,
   // then shrink the three labels in stages, and only as a last resort shrink the
   // site title + hamburger to buy the labels more room (revamp738).
-  // revamp836 — the links (Home / Topics / AI Daily Reads / Trending /
+  // revamp836 — the links (Home / Topics / AI Briefings / Trending /
   // Prompts) all stay full-length. When they can't fit on the brand's row, the
   // whole link group drops to a clean second row beneath the brand + Search,
   // rather than shrinking labels or dropping items. Search is never touched.
@@ -3700,9 +3700,9 @@ function renderStickyHeroBar(container, route) {
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
           <span class="navbtn-label">Home</span>
         </a>
-        <a href="#/intelligence" class="navbtn" id="nav-daily" aria-label="AI Daily Reads">
+        <a href="#/intelligence" class="navbtn" id="nav-daily" aria-label="AI Briefings">
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg></span>
-          <span class="navbtn-label"><span class="nl-full">AI Daily Reads</span><span class="nl-short">Daily Reads</span></span>
+          <span class="navbtn-label"><span class="nl-full">AI Briefings</span><span class="nl-short">Briefings</span></span>
         </a>
         <button type="button" class="navbtn" id="nav-topics" aria-label="Topics" aria-haspopup="dialog">
           <span class="navbtn-ico"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.4"/><rect x="14" y="3" width="7" height="7" rx="1.4"/><rect x="3" y="14" width="7" height="7" rx="1.4"/><rect x="14" y="14" width="7" height="7" rx="1.4"/></svg></span>
@@ -3747,7 +3747,7 @@ function renderStickyHeroBar(container, route) {
   // (AI Insights is no longer a nav section — topic pages + custom search cover it.)
   document.getElementById('nav-prompts')?.addEventListener('click', (e) => { e.stopPropagation(); togglePromptsNavDropdown(); });
 
-  // AI Daily Reads — a plain link to the hub (router intercepts the href).
+  // AI Briefings — a plain link to the hub (router intercepts the href).
   document.getElementById('nav-daily')?.addEventListener('click', () => { closeNavDropdown(); });
 
   // Trending — opens the full-width Trending dropdown (Phase 5 — replaces the
@@ -3860,7 +3860,7 @@ function renderStickyHeroBar(container, route) {
         <svg class="navmenu-cta-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/>
         </svg>
-        <span class="navmenu-cta-label">AI Daily Reads</span>
+        <span class="navmenu-cta-label">AI Briefings</span>
         <svg class="navmenu-cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <line x1="5" y1="12" x2="19" y2="12"/>
           <polyline points="13 6 19 12 13 18"/>
@@ -4211,7 +4211,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               <div class="hf-chips" data-hq-prompts></div>
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Access prompt library${HQ_ARROW}</button></div>
             </section>
-          <section class="hf-card hf-card--di" aria-label="AI Daily Reads">
+          <section class="hf-card hf-card--di" aria-label="AI Briefings">
             <div class="tdi-card tdi-card--v3 tdi-card--home tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'AI-generated briefs, twice daily across 100+ topics.', hubCard: true, topicLabel: 'Cross-Topic' })}
             </div>
           </section>
@@ -4228,7 +4228,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });
     // Trending is now the only sidebar card, so it can run much longer.
     renderTrendingHome(container.querySelector('#home-trending'), { limit: 14 });
-    // The homepage AI Daily Reads card (revamp814) uses the same component
+    // The homepage AI Briefings card (revamp814) uses the same component
     // as the topic cards, so it inherits the stamp, the unfurl animation and
     // both close controls. Its scope is 'home' — the cross-topic briefing.
     wireHomeDailyIntelligence(container);

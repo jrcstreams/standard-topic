@@ -2,7 +2,7 @@
   "paths": [
     {
       "group": "daily",
-      "label": "AI Daily Reads",
+      "label": "AI Briefings",
       "subtitle": "One combined daily briefing: Catch Up, Deep Dive, 101 Info.",
       "order": 0,
       "refreshClass": "daily"

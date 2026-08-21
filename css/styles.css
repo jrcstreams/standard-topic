@@ -23362,3 +23362,11 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 @media (max-width: 760px) {
   .search-aii-host .aii-fi-acclist { column-gap: 0 !important; }
 }
+
+/* revamp922 — on the AI Briefings page the topic cards drop the DATE from their
+   stamp. Every card on that page carries the same day, so repeating it ~100
+   times is noise; the edition (morning / night) is the part that varies and is
+   worth keeping. */
+.dih-item .dih-item-stamp .tdi-stamp-val,
+.dih-item .dih-item-stamp .tdi-stamp-sep { display: none !important; }
+.dih-item .dih-item-stamp { padding-left: 0.6rem !important; }

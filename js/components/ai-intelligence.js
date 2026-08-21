@@ -2154,7 +2154,7 @@ export function renderAIIntelligence(container, scope) {
   } };
 }
 
-// ═══ AI Daily Reads (revamp763) ══════════════════════════════════════════
+// ═══ AI Briefings (revamp763) ══════════════════════════════════════════
 // ONE combined daily briefing per topic (group 'daily' server-side): a teaser
 // summary for the landing card plus three sections — Catch Up / Deep Dive /
 // 101 Info — each with visible curated "Read further" links (no accordions).
@@ -2276,7 +2276,7 @@ export function renderDailyIntelligence(container, scope) {
   container.innerHTML = `
     <section class="di-page${inline ? ' di-page--inline' : ''}">
       ${inline ? '' : `<header class="di-head">
-        <h2 class="tsec-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>AI Daily Reads</h2>
+        <h2 class="tsec-title"><span class="tsec-ic tsec-ic--di" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3l1.55 4.4a2 2 0 0 0 1.25 1.25L17.7 10.2l-4.4 1.55a2 2 0 0 0-1.25 1.25L10.5 17.4l-1.55-4.4a2 2 0 0 0-1.25-1.25L3.3 10.2l4.4-1.55a2 2 0 0 0 1.25-1.25z"/><path d="M17.8 14.6l.75 2.15 2.15.75-2.15.75-.75 2.15-.75-2.15-2.15-.75 2.15-.75z"/></svg></span>AI Briefings</h2>
         <div class="di-datebar" data-di-meta></div>
         <p class="di-lede" data-di-lede hidden></p>
       </header>`}
@@ -2319,7 +2319,7 @@ export function renderDailyIntelligence(container, scope) {
     const { buckets, unmatched } = attributeItemsToSections(rows, pseudo);
 
     body.innerHTML = `
-      <div class="di-prov2">${LOGO}<span>This daily read is AI-generated</span></div>
+      <div class="di-prov2">${LOGO}<span>This briefing is AI-generated</span></div>
       ${overview ? `<section class="di-ov">
         <h3 class="di-sectitle">Overview</h3>
         <div class="di-ov-body aii-sec-body">${renderBriefBody(overview, null)}</div>
@@ -2338,7 +2338,7 @@ export function renderDailyIntelligence(container, scope) {
   fetchDailyBrief(scope.topic).then((data) => {
     if (!container.isConnected) return;
     if (!data) {
-      body.innerHTML = '<p class="aii-empty">Your daily read is being generated — check back in a minute.</p>';
+      body.innerHTML = '<p class="aii-empty">Your briefing is being generated — check back in a minute.</p>';
       return;
     }
     fill(data);
@@ -2353,6 +2353,6 @@ export function renderDailyIntelligence(container, scope) {
       }, 30000);
     }
   }).catch(() => {
-    if (container.isConnected) body.innerHTML = '<p class="aii-empty">Couldn’t load your daily read. Refresh to retry.</p>';
+    if (container.isConnected) body.innerHTML = '<p class="aii-empty">Couldn’t load this briefing. Refresh to retry.</p>';
   });
 }
