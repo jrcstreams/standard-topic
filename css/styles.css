@@ -24026,3 +24026,82 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
   color: rgb(30, 45, 68) !important;
   line-height: 1.2 !important;
 }
+
+/* ═══ revamp944 — the All Topics accordion spec, applied verbatim ════════════
+   Extracted from All Topics (computed values, not eyeballed):
+     open card   border 2px rgb(152,170,212) · radius 12px · white · clip
+     open head   bg rgb(227,233,244) · 1px bottom rule · square · 52px · 0 14.4px
+     body        padding 4px 0 14px 6px · transparent
+     list        grid · auto columns · gap 0 18px
+     link        flex · gap 9.6px · padding 8px 0 9px · Inter 15.04px/500
+                 · color rgb(51,65,85) · no border/background · 41px tall
+     link icon   20px · rgb(51,65,85)
+   The subtopic links were inheriting the General Sans display face (the same
+   miss as the heads in revamp943) and a different ink. */
+
+/* ── Prompts by Topic ── */
+.prompts-home .pdir > .pdir-card.is-open,
+.ph-body .pdir > .pdir-card.is-open,
+[data-prompts-host] .pdir > .pdir-card.is-open {
+  border: 2px solid rgb(152, 170, 212) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  overflow: hidden;
+}
+.prompts-home .pdir-card.is-open > .pdir-cardhead,
+.ph-body .pdir-card.is-open > .pdir-cardhead,
+[data-prompts-host] .pdir-card.is-open > .pdir-cardhead {
+  background: rgb(227, 233, 244) !important;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 14%, transparent) !important;
+  border-radius: 0 !important;
+}
+.prompts-home .pdir-grid,
+.ph-body .pdir-grid,
+[data-prompts-host] .pdir-grid { gap: 0 18px !important; }
+
+.prompts-home .pdir-cell,
+.ph-body .pdir-cell,
+[data-prompts-host] .pdir-cell {
+  gap: 9.6px !important;
+  padding: 8px 0 9px !important;
+  font-family: var(--font-family) !important;
+}
+.prompts-home .pdir-cell-name,
+.ph-body .pdir-cell-name,
+[data-prompts-host] .pdir-cell-name {
+  font-family: var(--font-family) !important;
+  font-size: 15.04px !important;
+  font-weight: 500 !important;
+  letter-spacing: normal !important;
+  color: rgb(51, 65, 85) !important;
+}
+.pdir-cell-ic { width: 20px !important; height: 20px !important; color: rgb(51, 65, 85) !important; }
+@media (hover: hover) {
+  .prompts-home .pdir-cell:hover .pdir-cell-name,
+  .ph-body .pdir-cell:hover .pdir-cell-name { color: #1d4ed8 !important; }
+}
+
+/* ── AI Briefings: same card/head/body chrome. Its items stay briefing cards
+      (headline + summary + Read briefing), which is the point of that page —
+      only the surrounding accordion adopts the spec. ── */
+.dih-group.is-open {
+  border: 2px solid rgb(152, 170, 212) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  overflow: hidden;
+}
+.dih-group.is-open > .dih-grouphead {
+  background: rgb(227, 233, 244) !important;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 14%, transparent) !important;
+  border-radius: 0 !important;
+}
+.dih-groupbody { padding: 8px 14px 14px !important; }
+
+/* revamp944b — row height was 37px vs the reference 41px: the padding matched
+   but the line box didn't. Reference content box is 24px (15.04px text at ~1.6). */
+.prompts-home .pdir-cell,
+.ph-body .pdir-cell,
+[data-prompts-host] .pdir-cell { line-height: 24px !important; }
+.prompts-home .pdir-cell-name,
+.ph-body .pdir-cell-name,
+[data-prompts-host] .pdir-cell-name { line-height: 24px !important; }
