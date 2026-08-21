@@ -23841,3 +23841,39 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
    subtitle and toggle stacked no matter what flex values they carried. Switch
    it to a wrapping row for this page. */
 .aii-nav-dd-topics .aii-nav-dd-titles { flex-direction: row !important; }
+
+/* ═══ revamp939 — one accordion-head spec across Topics / Briefings / Prompts ══
+   All Topics is the reference: 52px head, 0 0.9rem padding, a 26px icon box,
+   ~11px to the label, 1rem/700 label. The Briefings head had `gap: 0` on its
+   ident (icon flush against the text) and a smaller icon; Prompts-by-Topic used
+   its own padding and type scale. Matched so the three read identically. */
+
+/* Briefings */
+.dih-grouphead .dih-groupident { gap: 11px !important; }
+.dih-group-ic { width: 26px !important; height: 26px !important; }
+.dih-group-ic svg { width: 17px !important; height: 17px !important; }
+.dih-grouptitle { font-size: 1rem !important; font-weight: 700 !important; }
+
+/* Prompts by Topic */
+.prompts-home .pdir > .pdir-card > .pdir-cardhead,
+.ph-body .pdir > .pdir-card > .pdir-cardhead,
+[data-prompts-host] .pdir > .pdir-card > .pdir-cardhead {
+  min-height: 52px !important;
+  padding: 0 0.9rem !important;
+  gap: 11px !important;
+}
+.prompts-home .pdir-card-ic,
+.ph-body .pdir-card-ic { width: 26px !important; height: 26px !important; }
+.prompts-home .pdir-card-ic svg,
+.ph-body .pdir-card-ic svg { width: 17px !important; height: 17px !important; }
+.prompts-home .pdir-card-name,
+.ph-body .pdir-card-name { font-size: 1rem !important; font-weight: 700 !important; }
+
+/* ═══ revamp940 — page-like views keep their white ground at every width ═════
+   On desktop <main> paints white, but the rules that do that are scoped to body
+   classes (app-mode / pagenav-mode) that the mobile layout drops. Below the
+   breakpoint main and #content go transparent and the grey <body> (#f4f5f9)
+   shows through — which is why the page turned grey only after a resize.
+   The page container now paints its own ground, independent of body state. */
+.ndp.aii-nav-dd-pagelike { background: #fff !important; }
+.dih { background: #fff !important; }
