@@ -23409,3 +23409,76 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
   grid-column: 1 / -1;
   border-color: color-mix(in srgb, #2f4d9e 26%, var(--color-surface-border)) !important;
 }
+
+/* ═══ revamp924 — open-accordion treatment + prompt library borders ══════════
+
+   An open accordion now reads as clearly active: a slightly darker body, a
+   thicker border, and the header band on top of it. Applies to the search
+   results, the prompt library, and Prompts by Topic. Note revamp902 had zeroed
+   border/background on .is-open, so these need to outrank it. */
+
+/* --- Open prompt accordions (search results + library) --- */
+.search-aii-host .aii-fi-acc.is-open,
+[data-prompts-host] .aii-fi-acc.is-open,
+.aii-fi-acclist > .aii-fi-acc.is-open {
+  border: 2px solid color-mix(in srgb, #2f4d9e 34%, transparent) !important;
+  border-radius: 12px !important;
+  background: #eef2f9 !important;
+  box-shadow: none !important;
+}
+.search-aii-host .aii-fi-acc.is-open > .aii-fi-accsum,
+[data-prompts-host] .aii-fi-acc.is-open > .aii-fi-accsum,
+.aii-fi-acclist > .aii-fi-acc.is-open > .aii-fi-accsum {
+  background: #e3e9f4 !important;
+}
+/* The body panel sits on the darker card, not its own white slab. */
+.search-aii-host .aii-fi-acc.is-open .aii-emenu-host,
+[data-prompts-host] .aii-fi-acc.is-open .aii-emenu-host {
+  background: transparent !important;
+}
+
+/* --- Prompt LIBRARY: give the rows the same bordered-card treatment --- */
+[data-prompts-host] .aii-fi-acclist,
+.aii-nav-dd-prompts .aii-fi-acclist {
+  column-gap: 1.1rem !important; row-gap: 0 !important;
+}
+[data-prompts-host] .aii-fi-acclist > .aii-fi-acc,
+.aii-nav-dd-prompts .aii-fi-acclist > .aii-fi-acc {
+  border: 1px solid var(--color-surface-border) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  margin-bottom: 0.55rem !important;
+  overflow: hidden;
+}
+@media (hover: hover) {
+  [data-prompts-host] .aii-fi-acclist > .aii-fi-acc:hover,
+  .aii-nav-dd-prompts .aii-fi-acclist > .aii-fi-acc:hover {
+    border-color: color-mix(in srgb, #2f4d9e 26%, var(--color-surface-border)) !important;
+  }
+}
+
+/* --- Prompts by Topic: open card gets the same active treatment --- */
+.prompts-home .pdir > .pdir-card.is-open,
+.ph-body .pdir > .pdir-card.is-open,
+[data-prompts-host] .pdir > .pdir-card.is-open {
+  border-width: 2px !important;
+  border-color: color-mix(in srgb, #2f4d9e 34%, transparent) !important;
+  background: #eef2f9 !important;
+}
+.prompts-home .pdir > .pdir-card.is-open > .pdir-cardhead,
+.ph-body .pdir > .pdir-card.is-open > .pdir-cardhead {
+  background: #e3e9f4 !important;
+}
+
+/* --- Nested subtopic cells: bigger label, tighter to the head above --- */
+.pdir-cell-name { font-size: 0.94rem !important; font-weight: 600 !important; }
+.pdir-grid { padding-top: 0 !important; }
+.pdir-cardbody, .pdir-acc-body { padding-top: 0.35rem !important; }
+/* First row of the two-column prompt lists sits closer to its section label. */
+[data-prompts-host] .aii-fi-acclist,
+.search-aii-host .aii-fi-acclist { padding-top: 0.15rem !important; }
+[data-prompts-host] .aii-fi-sechead { margin-bottom: 0.4rem !important; }
+
+/* revamp924b — pull the first subtopic row closer to the head above it. */
+.pdir-cardbody, .pdir-acc-body { padding-top: 0.1rem !important; }
+.pdir-grid > *:nth-child(-n+3) { padding-top: 0.4rem !important; }
