@@ -24276,3 +24276,16 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
   flex-wrap: wrap; gap: 0.5rem 0.7rem !important;
 }
 .tdi-openhead-topic { margin: 0 !important; }
+
+/* revamp950 — the Featured Briefings row sits inside its own card on both the
+   hub and the homepage, so it reads as a section rather than four cards floating
+   on the page background. */
+.home-featbriefs,
+.dih-group.dih-group--featured {
+  border: 1px solid var(--color-surface-border) !important;
+  border-radius: 16px !important;
+  background: #fff !important;
+  padding: 1.15rem 1.25rem 1.3rem !important;
+  box-shadow: 0 6px 20px -16px rgba(31, 49, 99, 0.18);
+}
+.dih-group.dih-group--featured { margin-bottom: 2rem !important; }
