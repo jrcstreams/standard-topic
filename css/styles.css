@@ -23550,3 +23550,93 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 .search-aii-host .aii-fi-acc-ic { width: 20px !important; height: 20px !important; }
 .search-aii-host .aii-fi-acc-ic svg { width: 16px !important; height: 16px !important; }
 .search-aii-host .aii-fi-acc-chev svg { width: 15px !important; height: 15px !important; }
+
+/* revamp928 — restore the card head while drilled in.
+   An older rule (`.pdir-card.is-topicview > .pdir-cardhead { display: none }`)
+   hid the head entirely, from when the BODY carried the title. revamp926 moved
+   the title back into the head, so hiding it left the drilled-in card showing
+   only a "Back to ..." link with no title at all. */
+.pdir-card.is-topicview > .pdir-cardhead {
+  display: flex !important;
+  border-radius: 0 !important;
+  background: #e3e9f4 !important;
+}
+.pdir-card.is-topicview .pdir-cardbody { padding-top: 8px !important; }
+
+/* ═══ revamp929 — prompt rows are bordered cards EVERYWHERE ══════════════════
+   .aii-fi-acclist is rendered from a single place (ai-intelligence.js:1141), so
+   the search page, the prompt library and the topic-page prompt section are the
+   same component. They had been styled per-surface, which meant each new
+   surface needed its own scoped rule and the topic page had been missed
+   entirely. This is now the component's own treatment: bordered cards, two
+   columns where there's room, matched sizing. */
+.aii-fi-acclist {
+  column-gap: 1.1rem !important;
+  row-gap: 0 !important;
+}
+.aii-fi-acclist > .aii-fi-acc {
+  border: 1px solid var(--color-surface-border) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  margin-bottom: 0.55rem !important;
+  overflow: hidden;
+}
+@media (hover: hover) {
+  .aii-fi-acclist > .aii-fi-acc:hover {
+    border-color: color-mix(in srgb, #2f4d9e 26%, var(--color-surface-border)) !important;
+  }
+}
+/* Consistent row metrics (previously only applied on the search page). */
+.aii-fi-acclist > .aii-fi-acc > .aii-fi-accsum {
+  min-height: 52px !important;
+  padding: 0 0.9rem !important;
+  align-items: center !important;
+}
+.aii-fi-acclist .aii-fi-acc-name { font-size: 0.83rem !important; font-weight: 600 !important; }
+.aii-fi-acclist .aii-fi-acc-ic { width: 20px !important; height: 20px !important; }
+.aii-fi-acclist .aii-fi-acc-ic svg { width: 16px !important; height: 16px !important; }
+/* Open state: darker head, light body, thicker border — as elsewhere. */
+.aii-fi-acclist > .aii-fi-acc.is-open {
+  border: 2px solid color-mix(in srgb, #2f4d9e 34%, transparent) !important;
+  background: #fafbfd !important;
+}
+.aii-fi-acclist > .aii-fi-acc.is-open > .aii-fi-accsum { background: #e3e9f4 !important; }
+
+/* revamp930 — explicit border colour (the var-based shorthand wasn't taking on
+   the topic-page surface) and white open bodies.
+   The active cue stays the darker head + thicker border; the body is plain white. */
+.aii-fi-acclist > .aii-fi-acc {
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-color: #e8eaef !important;
+}
+.aii-fi-acclist > .aii-fi-acc.is-open {
+  border-width: 2px !important;
+  border-style: solid !important;
+  border-color: #98aad4 !important;
+  background: #fff !important;
+}
+/* Open bodies go white across the prompt surfaces. */
+.search-aii-host .aii-fi-acc.is-open,
+[data-prompts-host] .aii-fi-acc.is-open,
+.prompts-home .pdir > .pdir-card.is-open,
+.ph-body .pdir > .pdir-card.is-open,
+[data-prompts-host] .pdir > .pdir-card.is-open { background: #fff !important; }
+
+/* revamp930b — retire the global "first row meets the rule" override.
+   revamp910/912 zeroed border-top on the first two rows so they'd sit flush
+   under a section rule. Now that every row is a bordered card, that rule only
+   clips the top edge of the first two cards — and because it is (0,3,0) with
+   !important it was silently beating the card border everywhere except the
+   search page, where revamp920b had already undone it. */
+.aii-fi-acclist > .aii-fi-acc:first-child,
+.aii-fi-acclist > .aii-fi-acc:nth-child(2) {
+  border-top-width: 1px !important;
+  border-top-style: solid !important;
+  border-top-color: #e8eaef !important;
+}
+.aii-fi-acclist > .aii-fi-acc.is-open:first-child,
+.aii-fi-acclist > .aii-fi-acc.is-open:nth-child(2) {
+  border-top-width: 2px !important;
+  border-top-color: #98aad4 !important;
+}
