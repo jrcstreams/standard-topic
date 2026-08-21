@@ -23640,3 +23640,14 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
   border-top-width: 2px !important;
   border-top-color: #98aad4 !important;
 }
+
+/* ═══ revamp931 — page-like views stop double-padding their gutter ═══════════
+   #content already supplies the 32px page gutter, but .aii-nav-dd-inner added a
+   second one, so Topics / Trending / Prompts rendered 64px narrower than the
+   page they sit in (1624 vs 1696 at a 1920 viewport). The search page had the
+   same bug via .search-page and was fixed in revamp920; this is the same fix
+   for the other three, so every page shares one gutter. */
+.aii-nav-dd-pagelike .aii-nav-dd-inner {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
