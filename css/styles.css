@@ -23370,3 +23370,42 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 .dih-item .dih-item-stamp .tdi-stamp-val,
 .dih-item .dih-item-stamp .tdi-stamp-sep { display: none !important; }
 .dih-item .dih-item-stamp { padding-left: 0.6rem !important; }
+
+/* ═══ revamp923 — Prompts by Topic: bordered cards in two columns ════════════
+   Matches the search-results treatment. The rows are .pdir-card sections inside
+   a .pdir container (NOT .pdir-list, which is the nested subtopic list). At full
+   width each row was a very long, very empty band; they are now individually
+   bordered cards in a two-column grid, and an OPEN card spans both columns so
+   its subtopic grid still gets the full width. */
+.prompts-home .pdir,
+.ph-body .pdir,
+[data-prompts-host] .pdir {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem 1.1rem;
+  align-items: start;
+}
+@media (max-width: 860px) {
+  .prompts-home .pdir, .ph-body .pdir, [data-prompts-host] .pdir { grid-template-columns: 1fr; }
+}
+.prompts-home .pdir > .pdir-card,
+.ph-body .pdir > .pdir-card,
+[data-prompts-host] .pdir > .pdir-card {
+  border: 1px solid var(--color-surface-border) !important;
+  border-radius: 12px !important;
+  background: #fff !important;
+  overflow: hidden;
+  align-self: start;
+}
+@media (hover: hover) {
+  .prompts-home .pdir > .pdir-card:hover,
+  .ph-body .pdir > .pdir-card:hover {
+    border-color: color-mix(in srgb, #2f4d9e 26%, var(--color-surface-border)) !important;
+  }
+}
+.prompts-home .pdir > .pdir-card.is-open,
+.ph-body .pdir > .pdir-card.is-open,
+[data-prompts-host] .pdir > .pdir-card.is-open {
+  grid-column: 1 / -1;
+  border-color: color-mix(in srgb, #2f4d9e 26%, var(--color-surface-border)) !important;
+}
