@@ -23490,3 +23490,15 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 .pdir-cell { justify-content: flex-start !important; gap: 6px !important; }
 .pdir-cell-name { flex: 0 1 auto !important; }
 .pdir-cell-chev { margin-left: 0 !important; }
+
+/* revamp925b — the open card BODY was too dark. The active cue lives in the
+   header band and the thicker border; the body only needs to be a shade off
+   white so the panel still reads as one unit. */
+.search-aii-host .aii-fi-acc.is-open,
+[data-prompts-host] .aii-fi-acc.is-open,
+.aii-fi-acclist > .aii-fi-acc.is-open,
+.prompts-home .pdir > .pdir-card.is-open,
+.ph-body .pdir > .pdir-card.is-open,
+[data-prompts-host] .pdir > .pdir-card.is-open {
+  background: #fafbfd !important;
+}
