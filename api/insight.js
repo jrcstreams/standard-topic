@@ -113,6 +113,7 @@ module.exports = async function handler(req, res) {
         return res.end();
       }
       if (out && out.error) { sse(res, 'error', { error: out.error }); return res.end(); }
+      if (out && out.unavailable) { sse(res, 'error', { error: 'unavailable', diag: out._diag || null }); return res.end(); }
       sse(res, 'done', out);
       res.end();
       // Runs AFTER end() so it can never delay first paint — but it DOES run,
