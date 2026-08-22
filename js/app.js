@@ -1701,10 +1701,16 @@ function renderFeaturedBriefings(host, opts) {
       <span class="dih-item-sum" data-fb-sum>Loading your briefing…</span>
       <span class="dih-item-go">Read briefing${SUBPAGE_ARROW}</span>
     </button>`;
+  // revamp951: header matches the Featured Topics / Prompts cards — icon chip,
+  // same title size, subtext beneath.
+  const FB_ICON = o.icon || DI_SPARK_TWO;
   host.innerHTML = `
-    <div class="fb-head">
-      <h2 class="dih-bytopic-title">${escapeHTML(o.title || 'Featured AI Briefings')}</h2>
-      ${o.sub ? `<p class="dih-bytopic-sub">${escapeHTML(o.sub)}</p>` : ''}
+    <div class="hf-head fb-head">
+      <div class="hf-headrow">
+        <span class="hf-ic" aria-hidden="true">${FB_ICON}</span>
+        <h3 class="hf-title">${escapeHTML(o.title || 'Featured AI Briefings')}</h3>
+      </div>
+      ${o.sub ? `<p class="hf-sub">${escapeHTML(o.sub)}</p>` : ''}
     </div>
     <div class="dih-items fb-items">${picks.map(card).join('')}</div>
     <div class="fb-brief" data-fb-brief hidden>
@@ -4369,6 +4375,10 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           <div class="home-search-hero" id="home-search-hero"></div>
         </div>
         <div class="home-sections">
+          <!-- revamp951: Featured AI Briefings leads the body, full width,
+               directly under the search band — Featured Topics and Prompts
+               follow beneath it. -->
+          <section class="home-featbriefs" data-home-featbriefs aria-label="Featured AI Briefings"></section>
           <div class="home-featured" aria-label="Featured on Standard Topic">
             <section class="hf-card hf-card--topics" data-hf="topics">
               <div class="hf-head">
@@ -4393,10 +4403,6 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Access prompt library${HQ_ARROW}</button></div>
             </section>
           </div>
-          <!-- revamp949: the two-column briefing + promo card is replaced by a
-               Featured AI Briefings row using the SAME cards as the AI Briefings
-               page, mounted by renderFeaturedBriefings below. -->
-          <section class="home-featbriefs" data-home-featbriefs aria-label="Featured AI Briefings"></section>
           <div class="home-main">
             <section class="layout-section" id="section-newsfeed"></section>
           </div>

@@ -24289,3 +24289,37 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
   box-shadow: 0 6px 20px -16px rgba(31, 49, 99, 0.18);
 }
 .dih-group.dih-group--featured { margin-bottom: 2rem !important; }
+
+/* revamp951 — Featured AI Briefings leads the homepage body, full width. It sits
+   inside .home-sections (a two-column grid), so it has to span both tracks the
+   way .home-featured does, or it drops into the news column. */
+body.home-search .home-sections .home-featbriefs {
+  grid-column: 1 / -1;
+  margin: 0 0 1.5rem !important;
+}
+/* Its header now uses the shared featured-card head, so drop the bespoke rule. */
+.fb-head { margin: 0 !important; }
+.home-featbriefs .fb-items { margin-top: 0.15rem; }
+
+/* revamp951b — the shared featured-card subtext rule is scoped to `.hf-card`,
+   which the briefings section is not, so it fell back to the smaller base size
+   (12.48px vs the 13.12px used by Featured Topics / Prompts). */
+.home-featbriefs .hf-sub,
+.dih-group--featured .hf-sub {
+  display: block !important;
+  margin: 0.15rem 0 0 !important;
+  font-family: var(--font-family) !important;
+  font-size: 0.82rem !important; line-height: 1.4 !important; color: #66748c !important;
+}
+.home-featbriefs .hf-head,
+.dih-group--featured .hf-head {
+  align-items: flex-start; margin-bottom: 0.9rem !important;
+  padding-bottom: 0.7rem !important;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent) !important;
+}
+
+/* revamp951c — icon chip to the same 30px box the other featured cards use. */
+.home-featbriefs .hf-ic, .dih-group--featured .hf-ic {
+  width: 30px !important; height: 30px !important;
+}
+.home-featbriefs .hf-ic svg, .dih-group--featured .hf-ic svg { width: 16px !important; height: 16px !important; }
