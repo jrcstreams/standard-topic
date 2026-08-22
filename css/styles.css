@@ -24421,3 +24421,28 @@ body.home-search .home-sections .home-featbriefs {
   padding-bottom: 0.9rem !important;
   border-bottom: 1px solid color-mix(in srgb, #2f4d9e 14%, transparent) !important;
 }
+
+/* ═══ revamp955 — cell icon centring, body top space, drilled-in padding ═════ */
+
+/* 1. The subtopic icon sat 3px high against its label: the wrapper was flex, so
+   the svg kept its inline baseline rather than being centred in the box. */
+.pdir-cell-ic {
+  display: grid !important; place-items: center !important;
+  width: 20px !important; height: 20px !important;
+}
+.pdir-cell-ic svg { display: block !important; width: 17px !important; height: 17px !important; }
+
+/* 2. A little more air between the accordion head and its first row, on both
+   the topic tree and the prompt directory (was 4px). */
+.prompts-home .pdir-card.is-open .pdir-cardbody,
+.ph-body .pdir-card.is-open .pdir-cardbody,
+[data-prompts-host] .pdir-card.is-open .pdir-cardbody { padding-top: 12px !important; }
+.aiidd-parent[data-open="true"] > .aiidd-parent-body { padding-top: 12px !important; }
+
+/* 3. Prompt library, drilled into a topic: the prompt accordions and their
+   section headers ran flush to the card's left/right edges. Give the host the
+   same inset the rest of the card uses, and space the sections apart. */
+.pdir-topichost { padding: 0.35rem 1rem 0.6rem !important; }
+.pdir-topichost .aii-fi-sec { margin-bottom: 1.5rem !important; }
+.pdir-topichost .aii-fi-sec:last-child { margin-bottom: 0.4rem !important; }
+.pdir-topichost .aii-fi-sechead { margin-bottom: 0.7rem !important; }
