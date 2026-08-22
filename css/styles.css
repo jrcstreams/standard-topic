@@ -24474,3 +24474,76 @@ body.home-search .home-sections .home-featbriefs {
 @media (max-width: 560px) {
   .aii-pc-foot .aii-pc-submit { width: 100%; justify-content: center; }
 }
+
+/* ═══ revamp958 — prompt controls: unclip the menu, anchor it, style the group ═
+
+   The model menu was being CLIPPED by the accordion card's overflow:hidden
+   (added in revamp929 so the head band's corners stayed square), which is why it
+   vanished behind the next card. The open card now allows overflow, and the menu
+   is anchored directly under its button. */
+.aii-fi-acclist > .aii-fi-acc.is-open,
+.pdir-card.is-open,
+.dih-group.is-open { overflow: visible !important; }
+/* The head keeps its square corners without relying on the clip. */
+.aii-fi-acclist > .aii-fi-acc.is-open > .aii-fi-accsum { border-radius: 11px 11px 0 0 !important; }
+
+/* ── Menu anchored to its button ── */
+.aii-pc-foot .aii-pc-modelwrap { position: relative !important; display: inline-flex; }
+.aii-pc-foot .aii-pc-menu {
+  position: absolute !important; top: calc(100% + 6px) !important; left: 0 !important;
+  right: auto !important; bottom: auto !important;
+  min-width: 100%; width: max-content; max-height: 320px; overflow-y: auto;
+  z-index: 60 !important;
+  padding: 6px !important;
+  border: 1px solid var(--color-surface-border) !important; border-radius: 12px !important;
+  background: #fff !important;
+  box-shadow: 0 14px 34px -18px rgba(15, 26, 46, 0.45) !important;
+}
+.aii-pc-foot .aii-pc-menu[hidden] { display: none !important; }
+.aii-pc-menu-opt {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  padding: 7px 10px; border: 0; border-radius: 8px; background: none; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.84rem; font-weight: 550; color: #33415c;
+  text-align: left;
+}
+@media (hover: hover) { .aii-pc-menu-opt:hover { background: #eef2f9; } }
+.aii-pc-menu-opt.is-active { background: #e8edf6; font-weight: 650; color: #1b2b4d; }
+.aii-pc-menu-check { display: inline-flex; width: 14px; color: #2f4d9e; opacity: 0; }
+.aii-pc-menu-opt.is-active .aii-pc-menu-check { opacity: 1; }
+
+/* ── The three controls read as buttons, not bare text ── */
+.aii-pc-foot .aii-pc-btn {
+  border: 1px solid var(--color-surface-border) !important;
+  background: #fff !important;
+}
+@media (hover: hover) {
+  .aii-pc-foot .aii-pc-btn:hover {
+    background: #eef2f9 !important; border-color: #cbd7ea !important; color: #1b2b4d !important;
+  }
+}
+.aii-pc-foot .aii-pc-btn[aria-expanded="true"] {
+  background: #e8edf6 !important; border-color: #b9c8e4 !important; color: #1b2b4d !important;
+}
+
+/* ── Settings drawer: a panel under the footer, with a clear way out ── */
+.aii-pc-set {
+  padding: 0.9rem 1rem 1rem !important;
+  border-top: 1px solid var(--color-surface-border);
+  background: #fbfcfe;
+}
+.aii-pc-sethead {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-bottom: 0.75rem;
+}
+.aii-pc-settitle {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: #5b6b8c;
+}
+.aii-pc-settitle svg { width: 14px; height: 14px; }
+.aii-pc-setdone {
+  padding: 0.35rem 0.85rem; border-radius: 999px; cursor: pointer;
+  border: 1px solid color-mix(in srgb, #2f4d9e 30%, transparent); background: #fff;
+  font-family: var(--font-family); font-size: 0.8rem; font-weight: 620; color: #2f4d9e;
+}
+@media (hover: hover) { .aii-pc-setdone:hover { background: #2f4d9e; color: #fff; } }
