@@ -4420,6 +4420,9 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     renderFeaturedBriefings(container.querySelector('[data-home-featbriefs]'), {
       title: 'Featured AI Briefings',
       sub: 'AI-generated briefings, refreshed morning and night.',
+      // A briefing page with a spark — reads at chip size, unlike the bare
+      // sparkle, and sits with the grid/wand marks on the cards below.
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.5 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-8"/><path d="M8 8h6M8 12h6M8 16h4"/><path d="M19.5 2.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z" fill="currentColor" stroke="none"/></svg>',
       moreHref: '#/intelligence', moreLabel: 'All AI Briefings',
     });
     {

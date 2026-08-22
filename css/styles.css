@@ -24344,3 +24344,19 @@ body.home-search .home-sections .home-featbriefs {
   background: #eef3fc !important; color: #2f4d9e !important;
   border-radius: 9px !important;
 }
+
+/* revamp952 — breathing room between the search band and the first section, and
+   make sure the icon chip actually paints (the --hf-tint fallback again). */
+body.home-search .home-sections .home-featbriefs { margin-top: 1.6rem !important; }
+/* Inherit the same accent/tint tokens the featured cards declare, so the chip
+   is the identical colour rather than a hand-picked near-match. */
+.home-featbriefs, .dih-group--featured { --hf-accent: #2f4d9e; --hf-tint: #eef3fc; }
+.home-featbriefs .hf-ic,
+.dih-group--featured .hf-ic {
+  display: grid !important; place-items: center !important;
+  background: color-mix(in srgb, var(--hf-accent) 12%, #fff) !important;
+  color: var(--hf-accent) !important;
+  border-radius: 9px !important; width: 30px !important; height: 30px !important;
+}
+.home-featbriefs .hf-ic svg,
+.dih-group--featured .hf-ic svg { width: 17px !important; height: 17px !important; }
