@@ -24667,3 +24667,37 @@ body.home-search .home-sections .home-featbriefs {
   grid-template-columns: repeat(auto-fit, minmax(268px, 1fr)) !important;
   gap: 0.15rem 1.6rem !important;
 }
+
+/* ═══ revamp962 — streaming AI briefs ═══════════════════════════════════════
+   News + trend briefs now paint as the model writes them instead of sitting
+   behind a spinner for the ~10s a grounded generation takes. Two things the
+   progressive state needs: prose styling for the trend preview (which renders
+   before the finished component exists), and a cue that text is still arriving
+   so a half-written brief doesn't read as a finished one. */
+.trend-exp-p {
+  margin: 0 0 0.7rem;
+  font-family: var(--font-family);
+  font-size: 0.93rem;
+  line-height: 1.62;
+  color: var(--color-text);
+}
+.trend-exp-p:last-child { margin-bottom: 0; }
+
+/* Caret trailing the last line while tokens are still landing. */
+.ni-streaming > :last-child::after,
+.ni-streaming .ni-sec:last-child :last-child::after {
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 3px;
+  vertical-align: -0.15em;
+  background: currentColor;
+  opacity: 0.5;
+  animation: niCaret 1s steps(2, start) infinite;
+}
+@keyframes niCaret { 0%, 100% { opacity: 0.5; } 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .ni-streaming > :last-child::after,
+  .ni-streaming .ni-sec:last-child :last-child::after { animation: none; }
+}

@@ -14,6 +14,7 @@ import { getModels, getExternalSearches, getExternalSearchCategories, fetchWithT
 import { openModel, copyPrompt } from '../utils/ai-models.js';
 import { drawerHTML, drawerLinkHTML, wireDrawers, DRAWER_SEARCH_IC, DRAWER_SOURCES_IC } from '../utils/drawers.js?v=20260817-revamp772';
 import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
+import { streamInsight } from '../utils/insight-stream.js?v=20260822-revamp962';
 
 function escapeHTML(str) {
   const div = document.createElement('div');
@@ -609,11 +610,25 @@ const NI_MAX_RETRIES = 2;
 // usually already generated + cached server-side, making the open feel instant
 // instead of waiting out a cold generation (#img507). Cleared on failure/empty so a
 // later attempt re-fetches; kept on success so re-opening is instant.
+// revamp962 — this now STREAMS. A cached brief still resolves in ~160ms, but a
+// miss is a live ~10s generation and the user used to watch a spinner for all of
+// it; text now lands within a second or two.
+//
+// Because the fetch can start on HOVER, tokens routinely arrive before any panel
+// exists to show them. So the stream accumulates into `card.__niText` and any
+// panel that opens mid-flight replays the buffer and subscribes to the rest via
+// `card.__niSubs`.
 function niFetchBrief(card) {
   if (card.__niBrief) return card.__niBrief;
   const d = { type: 'news', url: card.dataset.url || '', title: card.dataset.title || '', description: card.dataset.desc || '', date: card.dataset.date || '' };
-  const p = fetchWithTimeout('/api/insight', { timeoutMs: 60000, method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) })
-    .then((res) => (res.ok ? res.json() : null))
+  card.__niText = '';
+  card.__niSubs = new Set();
+  const push = () => card.__niSubs.forEach((fn) => { try { fn(card.__niText); } catch (_) {} });
+  const p = streamInsight(d, {
+    onToken: (t) => { card.__niText += t; push(); },
+    // Grounded attempt came back empty; an ungrounded retry is restarting.
+    onReset: () => { card.__niText = ''; push(); },
+  })
     .then((data) => { if (!(data && data.content)) card.__niBrief = null; return data; })
     .catch(() => { card.__niBrief = null; return null; });
   card.__niBrief = p;
@@ -643,9 +658,30 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
     }
     if (stillOpen()) showFail();
   };
+  // Paint answer text as it streams in. This replaces the loader the moment the
+  // first token lands, so a cold generation reads as "writing" rather than
+  // "hung". The finished render below then swaps in the full tabbed brief.
+  let painted = false;
+  const onPartial = (partial) => {
+    if (!stillOpen() || !partial) return;
+    painted = true;
+    const secs = niSplit(niNormalize(partial));
+    const body = secs.length
+      ? secs.map((s) => `<section class="ni-sec">${niSecHead(s.name)}${renderBriefBody(s.body, null)}</section>`).join('')
+      : `<section class="ni-sec">${niSecHead('Brief')}${renderBriefBody(partial, null)}</section>`;
+    panel.innerHTML = `<div class="ni-inner ni-streaming">${body}</div>`;
+  };
   try {
-    const data = await niFetchBrief(card);       // shared with hover/touch prefetch
-    const left = 500 - (Date.now() - t0); if (left > 0) await sleep(left);
+    const p = niFetchBrief(card);                // shared with hover/touch prefetch
+    if (card.__niSubs) {
+      card.__niSubs.add(onPartial);
+      if (card.__niText) onPartial(card.__niText);   // replay what arrived pre-open
+    }
+    let data;
+    try { data = await p; } finally { card.__niSubs?.delete(onPartial); }
+    // The 500ms floor exists to stop the loader flashing. Once text is on screen
+    // there's no loader to protect, so don't hold the finished brief back.
+    if (!painted) { const left = 500 - (Date.now() - t0); if (left > 0) await sleep(left); }
     if (!stillOpen()) return;                    // closed/switched mid-flight
     if (data && data.content) {
       const secs = niSplit(niNormalize(data.content));

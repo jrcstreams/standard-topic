@@ -8,6 +8,7 @@ import { fetchWithTimeout } from '../utils/data.js';
 import { renderTrendExpansionBody, wireTrendDrawers } from './trend-expansion.js?v=20260812-revamp732';
 import { wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
 import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp574';
+import { streamInsight } from '../utils/insight-stream.js?v=20260822-revamp962';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -269,8 +270,32 @@ function wireTrendCardsInline(container) {
     if (!exp) { exp = document.createElement('div'); exp.className = 'trend-card-exp'; card.appendChild(exp); }
     exp.innerHTML = `<div class="ni-inner">${niStyleLoaderHTML()}</div>`;
     try {
-      const res = await fetchWithTimeout('/api/insight', { timeoutMs: 60000, method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'trend', query: term }) });
-      const data = res.ok ? await res.json() : null;
+      // revamp962 — stream the brief. Only ~15% of live trends are pre-warmed,
+      // so most expansions were paying a full ~10s grounded generation behind a
+      // spinner. Now the prose appears as the model writes it.
+      //
+      // The wire format is "SUMMARY: …\nDETAIL: …"; the labels are stripped for
+      // the progressive view and the finished render replaces this wholesale.
+      const partialHTML = (raw) => {
+        const body = String(raw)
+          .replace(/[*_]+\s*(summary|detail)\s*[*_]*\s*:/gi, '$1:')
+          .replace(/^\s*summary:\s*/i, '')
+          .replace(/\s*detail:\s*/i, '\n')
+          .trim();
+        if (!body) return '';
+        return body.split(/\n+/).filter(Boolean)
+          .map((p) => `<p class="trend-exp-p">${escapeHTML(p)}</p>`).join('');
+      };
+      const onPartial = (raw) => {
+        if (!card.classList.contains('is-expanded')) return;
+        const html = partialHTML(raw);
+        if (html) exp.innerHTML = `<div class="ni-inner ni-streaming">${html}</div>`;
+      };
+      let acc = '';
+      const data = await streamInsight({ type: 'trend', query: term }, {
+        onToken: (t) => { acc += t; onPartial(acc); },
+        onReset: () => { acc = ''; },
+      }).catch(() => null);
       if (!data || data.unavailable || !data.content) {
         exp.innerHTML = `<div class="trend-exp-fail"><span class="trend-exp-tx">This brief is still being generated — check back shortly.</span> <button type="button" class="trend-exp-retry">Try again</button></div>`;
         exp.querySelector('.trend-exp-retry')?.addEventListener('click', () => openCard(card));
