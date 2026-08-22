@@ -594,8 +594,8 @@ function niSourcesListHTML(headlines, sources, origUrl) {
   const listHTML = rows.length ? `<div class="ai-ins-source-list">${rows.join('')}</div>` : '';
   return (orig || listHTML) ? `${orig}${listHTML}` : '';
 }
-function niLoaderHTML() {
-  return `<div class="ni-loader"><div class="ni-loader-head"><span class="ni-spark">${AI_SPARK_SVG}</span><span class="ni-loader-tx">Generating insights<span class="ni-dots" aria-hidden="true"></span></span></div><span class="ni-skel"></span><span class="ni-skel"></span><span class="ni-skel ni-skel-short"></span></div>`;
+function niLoaderHTML(label) {
+  return `<div class="ni-loader"><div class="ni-loader-head"><span class="ni-spark">${AI_SPARK_SVG}</span><span class="ni-loader-tx">${label || 'Generating insights'}<span class="ni-dots" aria-hidden="true"></span></span></div><span class="ni-skel"></span><span class="ni-skel"></span><span class="ni-skel ni-skel-short"></span></div>`;
 }
 function niFailHTML() {
   return `<div class="ni-fail"><p>AI insights unavailable right now.</p><button type="button" class="ni-retry" data-ni-retry>Try again</button></div>`;
@@ -623,11 +623,15 @@ function niFetchBrief(card) {
   const d = { type: 'news', url: card.dataset.url || '', title: card.dataset.title || '', description: card.dataset.desc || '', date: card.dataset.date || '' };
   card.__niText = '';
   card.__niSubs = new Set();
+  card.__niPhaseSubs = new Set();
+  card.__niPhase = '';
   const push = () => card.__niSubs.forEach((fn) => { try { fn(card.__niText); } catch (_) {} });
+  const pushPhase = () => card.__niPhaseSubs?.forEach((fn) => { try { fn(card.__niPhase); } catch (_) {} });
   const p = streamInsight(d, {
     onToken: (t) => { card.__niText += t; push(); },
     // Grounded attempt came back empty; an ungrounded retry is restarting.
     onReset: () => { card.__niText = ''; push(); },
+    onPhase: (ph) => { card.__niPhase = ph; pushPhase(); },
   })
     .then((data) => { if (!(data && data.content)) card.__niBrief = null; return data; })
     .catch(() => { card.__niBrief = null; return null; });
@@ -671,14 +675,22 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
       : `<section class="ni-sec">${niSecHead('Brief')}${renderBriefBody(partial, null)}</section>`;
     panel.innerHTML = `<div class="ni-inner ni-streaming">${body}</div>`;
   };
+  // A grounded brief spends its first several seconds searching before a single
+  // answer token exists. Say so, rather than showing an unchanging spinner.
+  const onPhase = (ph) => {
+    if (painted || !stillOpen()) return;
+    if (ph === 'thinking') panel.innerHTML = `<div class="ni-inner">${niLoaderHTML('Searching sources')}</div>`;
+  };
   try {
     const p = niFetchBrief(card);                // shared with hover/touch prefetch
     if (card.__niSubs) {
       card.__niSubs.add(onPartial);
+      card.__niPhaseSubs?.add(onPhase);
+      if (card.__niPhase) onPhase(card.__niPhase);
       if (card.__niText) onPartial(card.__niText);   // replay what arrived pre-open
     }
     let data;
-    try { data = await p; } finally { card.__niSubs?.delete(onPartial); }
+    try { data = await p; } finally { card.__niSubs?.delete(onPartial); card.__niPhaseSubs?.delete(onPhase); }
     // The 500ms floor exists to stop the loader flashing. Once text is on screen
     // there's no loader to protect, so don't hold the finished brief back.
     if (!painted) { const left = 500 - (Date.now() - t0); if (left > 0) await sleep(left); }

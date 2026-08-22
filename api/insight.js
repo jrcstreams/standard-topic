@@ -75,6 +75,7 @@ async function afterResponse(sql, input, out) {
 
 // SSE frame writer. Events:
 //   token — { t }        incremental answer text (generation only)
+//   phase — { phase }    'thinking' (searching sources) | 'writing'
 //   reset — {}           discard what's been painted; a retry is restarting
 //   done  — <payload>    the canonical result, identical to the JSON response
 //   error — { error }
@@ -107,6 +108,7 @@ module.exports = async function handler(req, res) {
         out = await generateInsight(sql, input, {
           onToken: (t) => sse(res, 'token', { t }),
           onReset: () => sse(res, 'reset', {}),
+          onPhase: (phase) => sse(res, 'phase', { phase }),
         });
       } catch (err) {
         sse(res, 'error', { error: 'Generation failed' });

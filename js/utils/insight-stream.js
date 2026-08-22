@@ -17,7 +17,7 @@
 const DEFAULT_STALL_MS = 45000;
 
 export function streamInsight(payload, opts = {}) {
-  const { onToken, onReset, stallMs = DEFAULT_STALL_MS, signal } = opts;
+  const { onToken, onReset, onPhase, stallMs = DEFAULT_STALL_MS, signal } = opts;
 
   return new Promise((resolve, reject) => {
     const ctl = new AbortController();
@@ -75,6 +75,10 @@ export function streamInsight(payload, opts = {}) {
             if (onToken && parsed && typeof parsed.t === 'string') {
               try { onToken(parsed.t); } catch (_) { /* a render fault must not kill the stream */ }
             }
+          } else if (event === 'phase') {
+            // 'thinking' = the model is searching sources and has produced no
+            // answer text yet; 'writing' = answer tokens are flowing.
+            if (onPhase && parsed && parsed.phase) { try { onPhase(parsed.phase); } catch (_) {} }
           } else if (event === 'reset') {
             // The grounded attempt came back empty and an ungrounded retry is
             // starting — throw away whatever has been painted so far.

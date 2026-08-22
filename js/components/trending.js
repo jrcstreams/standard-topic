@@ -125,8 +125,8 @@ const AI_CLOSE_X = `<svg class="trend-card-aibtn-xic" viewBox="0 0 24 24" width=
 // The SAME animated loader the news-card AI Insights use (twinkling sparkle +
 // animated dots + shimmer skeletons) — shared via the global .ni-loader CSS so
 // trending "generating insights" reads identically (#img520). No per-term text.
-function niStyleLoaderHTML() {
-  return `<div class="ni-loader"><div class="ni-loader-head"><span class="ni-spark">${AI_SPARK_SVG}</span><span class="ni-loader-tx">Generating insights<span class="ni-dots" aria-hidden="true"></span></span></div><span class="ni-skel"></span><span class="ni-skel"></span><span class="ni-skel ni-skel-short"></span></div>`;
+function niStyleLoaderHTML(label) {
+  return `<div class="ni-loader"><div class="ni-loader-head"><span class="ni-spark">${AI_SPARK_SVG}</span><span class="ni-loader-tx">${label || 'Generating insights'}<span class="ni-dots" aria-hidden="true"></span></span></div><span class="ni-skel"></span><span class="ni-skel"></span><span class="ni-skel ni-skel-short"></span></div>`;
 }
 
 // Google returns trend queries lowercase ("jalen brunson") — title-case them.
@@ -295,6 +295,12 @@ function wireTrendCardsInline(container) {
       const data = await streamInsight({ type: 'trend', query: term }, {
         onToken: (t) => { acc += t; onPartial(acc); },
         onReset: () => { acc = ''; },
+        // Grounded briefs search for several seconds before writing anything —
+        // name that phase instead of showing an unchanging spinner.
+        onPhase: (ph) => {
+          if (acc || !card.classList.contains('is-expanded')) return;
+          if (ph === 'thinking') exp.innerHTML = `<div class="ni-inner">${niStyleLoaderHTML('Searching sources')}</div>`;
+        },
       }).catch(() => null);
       if (!data || data.unavailable || !data.content) {
         exp.innerHTML = `<div class="trend-exp-fail"><span class="trend-exp-tx">This brief is still being generated — check back shortly.</span> <button type="button" class="trend-exp-retry">Try again</button></div>`;
