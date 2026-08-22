@@ -24547,3 +24547,123 @@ body.home-search .home-sections .home-featbriefs {
   font-family: var(--font-family); font-size: 0.8rem; font-weight: 620; color: #2f4d9e;
 }
 @media (hover: hover) { .aii-pc-setdone:hover { background: #2f4d9e; color: #fff; } }
+
+/* ═══ revamp959 — hub: featured card border, tighter to the rule, by-topic rule
+
+   BORDER: revamp947b zeroed the border on `.dih-group.dih-group--featured.is-open`
+   (three classes, !important) so the featured row would not look like an
+   accordion. revamp953b then tried to give it a card edge at two classes, which
+   loses the cascade — the section has been rendering border: 0 ever since.
+   Matched to three classes so the card edge actually lands. */
+.dih-group.dih-group--featured,
+.dih-group.dih-group--featured.is-open {
+  border: 1px solid color-mix(in srgb, #2f4d9e 20%, transparent) !important;
+  border-radius: 16px !important;
+  background: #fff !important;
+  box-shadow: 0 6px 20px -14px rgba(31, 49, 99, 0.20) !important;
+  margin-top: 0.9rem !important;
+}
+/* Closer to the rule under the page header. */
+.dih-head { padding-bottom: 0.9rem !important; margin-bottom: 0 !important; }
+
+/* "AI Briefings by Topic" gets a rule under its header block, like the cards. */
+.dih-bytopic-head {
+  padding-bottom: 0.7rem !important;
+  margin-bottom: 1rem !important;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 14%, transparent) !important;
+}
+
+/* revamp959b — Prompts page: drop the Featured card off the header rule, and
+   open the gap to Build a Prompt below it (they were nearly touching once the
+   top row stacked). */
+.prompts-home .ph-top { margin-top: 1.1rem !important; row-gap: 1.15rem !important; }
+@media (max-width: 860px) {
+  .prompts-home .ph-top { row-gap: 1.25rem !important; }
+}
+
+/* ═══ revamp960 — Featured Prompts: head matches the homepage cards, and the
+   prompt LIST gets a real listing treatment in both places (#img534/535).
+
+   The head had no icon, a loose title→subtext gap and no rule under it, so it
+   read as loose text rather than a card head. And the rows: on the homepage
+   `.hq-row--prompt` rendered an EMPTY mark plus a 27px fake indent (naked,
+   unaligned text next to the icon'd topic rows), while on the Prompts page each
+   row carried a hairline underline, which turned the section into a table.
+   Both now use the same row: prompt glyph + name (+ chevron where clickable). */
+
+/* ── Head: icon + title on one row, tight subtext, rule beneath ── */
+.ph-featured .ph-sec-head--card {
+  display: block !important;
+  padding-bottom: 0.55rem !important;
+  margin-bottom: 0.6rem !important;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent) !important;
+}
+.ph-featured .ph-sec-headrow {
+  display: flex; align-items: center; gap: 10px; min-width: 0;
+}
+.ph-featured .ph-sec-ic {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 8px;
+  background: color-mix(in srgb, #2f4d9e 12%, #fff); color: #2f4d9e;
+}
+.ph-featured .ph-sec-ic svg { width: 17px; height: 17px; display: block; }
+.ph-featured .ph-sec-head--card .ph-sec-title {
+  font-family: var(--font-display); font-size: 1.12rem; font-weight: 800;
+  letter-spacing: -0.018em; color: #1a2740; line-height: 1.25;
+}
+.ph-featured .ph-sec-head--card .ph-sec-sub {
+  margin: 0.12rem 0 0 !important;
+  font-family: var(--font-family); font-size: 0.82rem; line-height: 1.4; color: #66748c;
+}
+
+/* ── Rows: glyph + name, no separators ── */
+.ph-featured .ph-flist { margin-top: 0.15rem !important; row-gap: 0 !important; }
+.ph-featured .ph-fitem {
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 0 10px !important;
+  padding: 0.42rem 0.5rem 0.42rem 0.42rem !important;
+  margin: 0 -0.42rem !important;
+  border-bottom: 0 !important;
+  border-radius: 8px !important;
+  transition: background .13s ease, color .13s ease;
+}
+.ph-featured .ph-flist > .ph-fitem:first-child { padding-top: 0.42rem !important; }
+.ph-fitem-ic {
+  grid-column: 1; grid-row: 1; flex: none;
+  display: grid; place-items: center; width: 18px; height: 18px;
+  color: rgb(71, 85, 105); transition: color .13s ease;
+}
+.ph-fitem-ic svg { width: 16px; height: 16px; display: block; }
+.ph-fitem-ic .shortcut-icon { width: 16px; height: 16px; }
+.ph-featured .ph-fitem-name {
+  grid-column: 2 !important; grid-row: 1 !important;
+  font-size: 0.9rem !important; font-weight: 500 !important;
+  color: rgb(51, 65, 85) !important; line-height: 1.35 !important;
+}
+.ph-featured .ph-fitem-go {
+  grid-column: 3 !important; grid-row: 1 !important;
+  align-self: center !important; margin-top: 0 !important;
+  opacity: 0; transition: opacity .13s ease, transform .13s ease, color .13s ease;
+}
+@media (hover: hover) {
+  .ph-featured .ph-fitem:hover { background: color-mix(in srgb, #2f4d9e 6%, #fff) !important; }
+  .ph-featured .ph-fitem:hover .ph-fitem-name { color: #1d4ed8 !important; }
+  .ph-featured .ph-fitem:hover .ph-fitem-ic { color: #1d4ed8; }
+  .ph-featured .ph-fitem:hover .ph-fitem-go { opacity: 1; color: #1d4ed8; }
+}
+/* Touch has no hover, so the affordance has to be permanent there. */
+@media (hover: none) {
+  .ph-featured .ph-fitem-go { opacity: 1; }
+}
+
+/* ── Homepage: the prompt rows now carry an icon, so drop the fake indent ── */
+.hf-card .hq-row--prompt { padding-left: 0 !important; }
+.hq-row-ic .shortcut-icon { width: 16px; height: 16px; }
+
+/* revamp960b — four tracks squeezed the longer prompt names into three-line
+   blocks. Wider minimum track so the card settles at three readable columns. */
+.ph-featured .ph-flist {
+  grid-template-columns: repeat(auto-fit, minmax(268px, 1fr)) !important;
+  gap: 0.15rem 1.6rem !important;
+}

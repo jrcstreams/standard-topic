@@ -885,6 +885,21 @@ const AI_SPARK_INLINE = '<svg class="ph-spark" viewBox="0 0 24 24" width="13" he
 // preview + model picker + submit. Nothing drills to another view: every prompt
 // Standard Topic offers can be run from this one page.
 const PH_ARROW_L = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
+// revamp960: a featured prompt row carries the prompt's OWN registry icon, the
+// same way a featured topic row carries the topic icon — the two homepage cards
+// were listing topics with glyphs and prompts with nothing, which is what made
+// the prompt list read as naked indented text.
+const PROMPT_ROW_IC_FALLBACK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="m9 10 1.2 2.3L12.5 13l-2.3 1.2L9 16.5 7.8 14.2 5.5 13l2.3-.7z" fill="currentColor" stroke="none"/></svg>';
+function promptRowIconSVG(sh) {
+  try {
+    const key = sh && sh.icon;
+    if (key) { const svg = renderIcon(key, ''); if (svg && /^<svg/.test(svg)) return svg; }
+  } catch (_) {}
+  return PROMPT_ROW_IC_FALLBACK;
+}
+// The wand that marks the AI Prompts card on the homepage — reused as the
+// Featured Prompts head mark on the Prompts page so the two heads match.
+const PROMPTS_FEAT_HEAD_IC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg>';
 const PH_ARROW_R = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 const PDIR_CHEV = '<svg class="pdir-chev" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 function promptDirectoryHTML() {
@@ -1077,11 +1092,12 @@ function wirePromptsDropdown(panel, initialView) {
       <div class="prompts-home">
         <div class="ph-top">
         <section class="ph-featured" data-ph-featured hidden>
-          <div class="ph-sec-head ph-sec-head--row">
-            <div class="ph-sec-tx">
+          <div class="ph-sec-head ph-sec-head--card">
+            <div class="ph-sec-headrow">
+              <span class="ph-sec-ic" aria-hidden="true">${PROMPTS_FEAT_HEAD_IC}</span>
               <h3 class="ph-sec-title">Featured Prompts</h3>
-              <p class="ph-sec-sub">Handpicked to get you started.</p>
             </div>
+            <p class="ph-sec-sub">Handpicked to get you started.</p>
           </div>
           <div class="ph-flist" data-ph-rail></div>
           <button type="button" class="ph-flist-more" data-ph-more hidden></button>
@@ -1140,6 +1156,7 @@ function wirePromptsDropdown(panel, initialView) {
         if (!picks.length) return;
         const railHTML = picks.map((pk, i) => `
           <button type="button" class="ph-fitem" data-ph-feat="${i}">
+            <span class="ph-fitem-ic" aria-hidden="true">${promptRowIconSVG(pk.sh)}</span>
             <span class="ph-fitem-name">${escapeHTML(pk.sh.name)}</span>
             <span class="ph-fitem-go" aria-hidden="true">${PH_ARROW_R}</span>
           </button>`).join('');
@@ -4452,7 +4469,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               picks.push({ s: sMatch, tn: t ? t.name : '', slug: f.topic });
             }
             if (!picks.length) return;
-            pWrap.innerHTML = picks.map((pk, i) => `<button type="button" class="hq-row hq-row--prompt" data-hq-prompt="${i}"><span class="hq-row-mark" aria-hidden="true"></span><span class="hq-row-name">${escapeHTML(pk.s.name)}</span></button>`).join('');
+            pWrap.innerHTML = picks.map((pk, i) => `<button type="button" class="hq-row hq-row--prompt" data-hq-prompt="${i}"><span class="hq-row-ic" aria-hidden="true">${promptRowIconSVG(pk.s)}</span><span class="hq-row-name">${escapeHTML(pk.s.name)}</span></button>`).join('');
             pWrap.querySelectorAll('[data-hq-prompt]').forEach((b) => b.addEventListener('click', (e) => {
               e.stopPropagation();
               const pk = picks[Number(b.dataset.hqPrompt)]; if (!pk) return;
