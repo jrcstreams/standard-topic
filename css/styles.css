@@ -10553,9 +10553,7 @@ body.custom-mode .shortcuts-multi-submit-direct { flex: 0 0 auto; }
 .aii-nav-dd-search .aii-nav-dd-scroll { overflow-x: clip; overflow-clip-margin: 1500px; }
 .aii-nav-dd-search .aii-nav-dd-inner { padding-left: 0; padding-right: 0; padding-top: 0; position: relative; }
 .aii-nav-dd-search .aii-nav-dd-scroll { padding-left: 0; padding-right: 0; }
-.aii-nav-dd-search .search-navdd-host { padding-left: 2rem; padding-right: 2rem; }
 @media (max-width: 640px) {
-  .aii-nav-dd-search .search-navdd-host { padding-left: 1rem; padding-right: 1rem; }
   .search-panel--modal .search-panel-topfold { margin: 0 -1rem; padding-left: 1rem; padding-right: 1rem; }
 }
 .search-panel--modal .search-panel-hero { flex-shrink: 0; }
@@ -10737,7 +10735,6 @@ body.home-search #home-trending    { order: 2; }
 body.home-search #section-newsfeed { order: 4; }
 /* Stacked mobile/tablet home: the quicklinks line rides directly under the search
    hero (same order slot — source order places it after). */
-body.home-search .home-quicklinks { order: 1; }
 @media (max-width: 1023.98px) {
   /* The longer trending list (14) is for the tall desktop right column; on mobile
      it sits between Search and AI Insights, so cap it to 6 to keep the scroll tight
@@ -10788,48 +10785,12 @@ body.home-search #home-trending .trending-topics {
    right), the featured-topic pills beneath it, then a one-line nudge to the Prompt
    Library. Deliberately light — this is an EXTENSION of the search bar, not a
    section of its own, so it shares the bar's width and left edge. */
-.home-quicklinks { display: flex; flex-direction: column; align-items: stretch; gap: 0.9rem; min-width: 0; text-align: left; }
-.hq-group { display: flex; flex-direction: column; gap: 0.4rem; min-width: 0; }
-.hq-label {
-  font-family: var(--font-family); font-size: 0.74rem; font-weight: 700;
-  letter-spacing: 0.06em; text-transform: uppercase; color: #8a98b0;
-}
-.hq-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 7px 8px; max-width: 100%; min-width: 0; }
 /* Shared CTA chip — same shape as the topic pills so "All topics" sits in the
    pill row as a peer, and the prompt-library link matches it a line below. */
-.hq-cta {
-  display: inline-flex; align-items: center; gap: 5px; height: 27px; box-sizing: border-box;
-  padding: 0 11px; border-radius: 999px; border: 1px solid #dbe4f5; background: transparent;
-  font-family: var(--font-family); font-size: 0.775rem; font-weight: 650; color: #3d5da8;
-  white-space: nowrap; cursor: pointer; text-decoration: none;
-  transition: background .12s, border-color .12s, color .12s;
-}
-.hq-cta svg { flex: none; transition: transform .14s ease; }
-@media (hover: hover) {
-  .hq-cta:hover { background: #eef3fc; border-color: #b9cbeb; color: #1d4ed8; text-decoration: none; }
-  .hq-cta:hover svg { transform: translateX(2px); }
-}
 
 
 /* Text-only, low-contrast pills — a quiet shortcut rail under the search bar,
    not a row of badges competing with the hero. */
-.hq-chip {
-  display: inline-flex; align-items: center; max-width: 100%; height: 27px; box-sizing: border-box;
-  padding: 0 11px; border-radius: 999px; border: 1px solid #e5e9f1; background: transparent;
-  font-family: var(--font-family); font-size: 0.775rem; font-weight: 550; color: #5d6c85;
-  text-decoration: none; cursor: pointer; white-space: nowrap;
-  transition: background .12s, border-color .12s, color .12s;
-}
-.hq-chip span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-@media (hover: hover) {
-  .hq-chip:hover { background: #fff; border-color: #c8d5ec; color: #1d4ed8; text-decoration: none; }
-}
-@media (max-width: 560px) {
-  .home-quicklinks { gap: 0.7rem; }
-  .hq-chips { gap: 6px; }
-  .hq-chip, .hq-cta { font-size: 0.74rem; height: 26px; padding: 0 10px; }
-  .hq-label { font-size: 0.68rem; }
-}
 @media (min-width: 1024px) {
   /* Two rows: the three cards span the FULL width across the top, then News Feed
      (left) + Trending (right) below — so Trending starts at the News Feed row
@@ -10881,10 +10842,8 @@ body.home-search #home-trending .trending-topics {
   body.home-search #home-search-hero { grid-area: search; }
   /* Share the search bar's exact width and left edge (the bar is a 640px column
      centred in the hero) so the quicklinks read as part of the search area. */
-  body.home-search .home-quicklinks { grid-area: strip; max-width: 640px; width: 100%; margin: 0 auto; }
   /* Reset the mobile-stacking `order` so everything lays out in source order. */
   body.home-search #home-search-hero,
-  body.home-search .home-quicklinks,
   body.home-search .home-sections,
   body.home-search #section-newsfeed,
   body.home-search #home-trending { order: 0; }
@@ -11181,8 +11140,6 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   #section-newsfeed .newsfeed-card .newsfeed-placeholder { padding-left: 18px; padding-right: 18px; }
 }
 /* News Feed icon tile — matches the AI Intelligence / Trending header lockups. */
-.newsfeed-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
-.newsfeed-logo svg { width: 14px; height: 14px; }
 /* News Feed headtext is a plain block off-desktop (title + sub stack as before;
    filters fall below within the head). */
 /* Flex column EVERYWHERE (not just desktop) so the title→subtext gap actually
@@ -11394,25 +11351,21 @@ body.home-search #home-trending .trend-card:hover::before { content: none !impor
 /* News Feed section header on the homepage gets a matching icon chip (like the
    Trending logo) — desktop + mobile. Hidden everywhere else (topic pages keep
    their own plain header) (#img527). */
-.newsfeed-logo { display: none; }
 body.home-search #section-newsfeed .newsfeed-title { gap: 0.6rem; }
-body.home-search #section-newsfeed .newsfeed-logo { display: inline-flex; width: 26px; height: 26px; flex: none; align-items: center; justify-content: center; border-radius: 8px; background: var(--color-primary); color: #fff; }
 /* The News Feed glyph is a document that draws SMALL within its 24-unit viewBox,
    so at the SAME pixel size it reads visibly smaller/lighter than the Trending
    up-arrow (which fills its box). Bump the homepage News Feed icon a step and
    match the arrow's heavier stroke so the two section headers read at the same
    visual size (#img6/7). */
-body.home-search #section-newsfeed .newsfeed-logo svg { width: 16px; height: 16px; display: block; stroke-width: 2.4; }
 /* Desktop: bump BOTH homepage section headers (icon chip + title) to be more
    prominent — a clear step up, not huge (#img555). */
 @media (min-width: 1024px) {
   body.home-search #section-newsfeed .newsfeed-title, body.home-search #section-newsfeed .newsfeed-title-main,
   body.home-search #home-trending .trending-topics-title { font-size: 1.34rem !important; }
-  body.home-search #section-newsfeed .newsfeed-logo, body.home-search #home-trending .trending-topics-logo { width: 30px !important; height: 30px !important; border-radius: 9px !important; }
+  body.home-search #home-trending .trending-topics-logo { width: 30px !important; height: 30px !important; border-radius: 9px !important; }
   body.home-search #home-trending .trending-topics-logo svg { width: 16px !important; height: 16px !important; }
   /* News Feed glyph rendered a touch larger + heavier so the document icon
      matches the Trending arrow's visual size in the 30px chip (#img6/7). */
-  body.home-search #section-newsfeed .newsfeed-logo svg { width: 19px !important; height: 19px !important; stroke-width: 2.4 !important; }
 }
 /* Desktop Trending header font matches the News Feed header exactly (#img528/529). */
 body.home-search #home-trending .trending-topics-title { font-size: 1.2rem; font-weight: 700; color: #2d3748; letter-spacing: -0.015em; }
@@ -11522,7 +11475,6 @@ body.home-search #home-trending .trend-card.is-expanded { padding: 0 !important;
 /* Fit the Summary/Explore/Sources nav on ONE line in the narrow card by
    tightening it rather than wrapping to two rows (#img290). NOT scrollable —
    the pannable nav read as broken (#img148). */
-.trend-card-exp .ins-tabnav { max-width: 100%; flex-wrap: nowrap; gap: 6px; overflow: visible; }
 .trend-card-exp .ins-tab { padding: 4px 11px; font-size: 0.8rem; margin-bottom: 8px; }
 @keyframes trendExpIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
 /* Smooth OPEN reveal for the accordion bodies (prompt library + explore further)
@@ -11548,16 +11500,9 @@ body.home-search #home-trending .trend-card.is-expanded { padding: 0 !important;
 /* Explore Further INSIDE a trend expansion — flat connected rows matching the
    quiet expansion (the bordered white card read as a foreign object, #img141-143):
    no outer frame, hairline separators, compact titles/rows. */
-.trend-card-exp .ins-tabpanel[data-ins-panel="explore"] .xf-list { border: none; border-radius: 0; overflow: visible; }
-.trend-card-exp .ins-tabpanel[data-ins-panel="explore"] .xf-sum { padding: 10px 4px 10px 2px; }
-.trend-card-exp .ins-tabpanel[data-ins-panel="explore"] .xf-sum-name { font-size: 0.85rem; }
-.trend-card-exp .ins-tabpanel[data-ins-panel="explore"] .xf-sum-ic svg { width: 16px; height: 16px; }
-.trend-card-exp .ins-tabpanel[data-ins-panel="explore"] .xf-acc[open] > .xf-sum { border-radius: 8px 8px 0 0; }
 /* Sources tab in a trend expansion: smaller headline titles (the meta line is
    right-sized), and the first row hugs the tab nav (#img144/145). */
 .trend-card-exp .im-cov-title { font-size: 0.84rem; }
-.trend-card-exp .ins-tabpanel[data-ins-panel="sources"] .im-coverage-list .im-cov-row:first-child { padding-top: 0; }
-.trend-card-exp .ins-tabnav { margin-bottom: 10px; }
 .trend-exp-loading, .trend-exp-fail {
   /* flex-start + a single text span so the term ("Kellyanne Conway") stays part of
      one flowing sentence that wraps cleanly instead of splitting into its own
@@ -12267,10 +12212,6 @@ body.home-search .aii-launcher-cta .aii-promo--cta { gap: 8px; }
 body.home-search .aii-launcher-cta .aii-promo-headline { font-size: 1.12rem; line-height: 1.15; }
 body.home-search .aii-launcher-cta .aii-promo-line { font-size: 0.84rem; line-height: 1.4; }
 body.home-search .aii-launcher-cta .aii-promo-btn { margin: auto 0 0; padding: 8px 15px; font-size: 0.82rem; }
-body.home-search .home-promo-inner { padding: 1.25rem 1.3rem 1.2rem; }
-body.home-search .home-promo-title { font-size: 1.12rem; line-height: 1.18; margin-bottom: 0.3rem; }
-body.home-search .home-promo-text { font-size: 0.84rem; line-height: 1.4; margin-bottom: 0.7rem; }
-body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; box-shadow: 0 8px 18px -12px rgba(0,0,0,.5); }
 .aii-promo-btn svg { width: 15px; height: 15px; transition: transform .16s ease; }
 @media (hover: hover) { .aii-launcher-cta:hover .aii-promo-btn { transform: translateY(-1px); background: #33517f; } }
 @media (hover: hover) { .aii-launcher-cta:hover .aii-promo-btn svg { transform: translateX(3px); } }
@@ -12793,8 +12734,6 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .aii-fi-sec { margin-top: 22px; }
 .aii-fi-sec + .aii-fi-sec { margin-top: 24px; }
 /* Web Resources tab: the first section header hugs the tab bar (#img631). */
-.topic-explore-host .aii-fi-sec:first-child { margin-top: 2px; }
-.topic-explore-host .aii-fi-sec:last-child { margin-bottom: 40px; }
 .aii-fi-sechead { padding: 0 2px 9px; margin-bottom: 3px; border-bottom: 1px solid #e4e8f0; }
 /* Standalone prompt list (custom search = no section header): give the first card
    room below the tab-bar separator (#img493). In a section, the header handles it. */
@@ -13627,10 +13566,6 @@ body.home-search .home-promo-btn { padding: 0.5rem 0.9rem; font-size: 0.82rem; b
 .trend-legend-trend-ic { display: inline-flex; align-items: center; color: #475569; }
 /* "Earlier" — recently-trending (not live). Clearly separated from the live grid;
    past cards swap the green up-arrow for a muted clock so they don't read as live. */
-.trend-earlier { margin-top: 1.4rem; padding-top: 1.05rem; border-top: 1px solid var(--color-surface-border); }
-.trend-earlier-head { display: flex; align-items: baseline; gap: 0.55rem; flex-wrap: wrap; margin: 0 0 0.7rem; padding: 0 0.5rem; }
-.trend-earlier-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; letter-spacing: -0.01em; color: var(--color-text); }
-.trend-earlier-sub { font-size: 0.8rem; color: var(--color-text-muted); }
 .trend-card--past .trend-card-icon { color: var(--color-text-light); }
 .trend-legend-trend-ic svg { width: 12px; height: 12px; }
 
@@ -14124,13 +14059,11 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-shortcuts
    just a clean navy icon beside the label. Consistent across both sections; the
    topic TITLE outranks these via its larger display size, so the section title
    stays lighter/smaller. (The navy chip is kept only on the modal header.) */
-.topic-band #section-shortcuts .aii-logo,
-.topic-band #section-newsfeed .newsfeed-logo {
+.topic-band #section-shortcuts .aii-logo {
   width: 28px !important; height: 28px !important; border-radius: 8px !important;
   background: var(--color-primary) !important; color: #fff !important; box-shadow: none !important;
 }
-.topic-band #section-shortcuts .aii-logo svg,
-.topic-band #section-newsfeed .newsfeed-logo svg { width: 15px !important; height: 15px !important; color: #fff !important; }
+.topic-band #section-shortcuts .aii-logo svg { width: 15px !important; height: 15px !important; color: #fff !important; }
 .topic-band #section-shortcuts .aii-brand,
 .topic-band #section-newsfeed .newsfeed-title { font-weight: 600 !important; letter-spacing: -0.01em; }
 
@@ -14441,12 +14374,6 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   display: flex !important; flex-direction: row !important; align-items: center !important; gap: 0.65rem !important;
 }
 .topic-band #section-newsfeed .newsfeed-title { gap: 0.65rem !important; }
-.topic-band #section-newsfeed .newsfeed-logo {
-  display: inline-flex !important; align-items: center; justify-content: center; flex: none;
-  width: 34px !important; height: 34px !important; border-radius: 9px !important;
-  background: color-mix(in srgb, #2563eb 13%, #fff) !important; color: #2563eb !important; box-shadow: none !important;
-}
-.topic-band #section-newsfeed .newsfeed-logo svg { width: 18px !important; height: 18px !important; color: #2563eb !important; }
 .topic-band #section-newsfeed .newsfeed-title,
 .topic-band #section-newsfeed .newsfeed-title-main {
   display: flex !important; flex-direction: row !important; align-items: center !important;
@@ -14833,7 +14760,6 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
 .search-aii-host .aii-builder-topic--resultsfor .aii-builder-topic-tx { color: #33415c; font-weight: 550; }
 /* A touch more air between the tab nav's separator and the content beneath it —
    the prompt accordions were riding the line (#img140). */
-.search-aii-host .ins-tabnav { margin-bottom: 21px; }
 /* Prompt cards here use the SAME inset icon + padding as the topic-page Prompt
    Library so the icons/rows align cleanly inside each card (#img513/515). The card
    border sits flush with the header; the icon is inset like everywhere else. */
@@ -14928,13 +14854,8 @@ body.app-mode:not(.home-search) .topic-layout.topic-band:not(.is-custom) #sectio
   flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   text-align: left; font-size: 0.82rem !important; font-weight: 450 !important; color: rgba(255,255,255,0.55);
 }
-.nav-searchbar-ph .np-short { display: none; }
 /* Swap to the short placeholder well BEFORE the full text would ellipse (#img297)
    — the full label needs a wide bar, so switch at 1440px. */
-@media (max-width: 1440px) {
-  .nav-searchbar-ph .np-full { display: none; }
-  .nav-searchbar-ph .np-short { display: inline; }
-}
 @media (hover: hover) { #nav-search.navbtn:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255,255,255,0.35); box-shadow: 0 2px 10px -4px rgba(0,0,0,0.3); } }
 @media (hover: hover) { #nav-search.navbtn:hover .nav-searchbar-ph { color: rgba(255,255,255,0.72); } }
 .sticky-hero-inner.nav-small-text .navbtn-label { font-size: 0.8rem; }
@@ -15311,29 +15232,12 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 /* ═══ Topic-page AI Insights — inline section dropdowns (revamp402, Phase 4) ══
    A path tile opens its section's content inline under the tiles; the page tiles
    are the nav, so the mounted builder's own brand/nav/topic-switcher are hidden. */
-.aii-inline-panel[hidden] { display: none !important; }
-.aii-inline-panel { margin-top: 14px; border-top: 1px solid var(--color-surface-border); position: relative; }
 /* Accordion style (#94): the panel sits directly under its card as a connected
    dropdown body — a tinted, bordered box indented to read as "belongs to the
    card above it". */
-.topic-band #section-shortcuts .aii-inline-panel {
-  margin: -2px 0 4px; padding: 6px 14px 10px;
-  border: 1px solid color-mix(in srgb, var(--aii-accent, #2563eb) 32%, var(--color-surface-border));
-  border-top: none; border-radius: 0 0 12px 12px;
-  background: color-mix(in srgb, var(--aii-accent, #2563eb) 4%, #fff);
-}
 /* Active card squares its bottom corners so it fuses with the panel below. */
 .topic-band #section-shortcuts .aii-bcard.is-active { border-bottom-left-radius: 0 !important; border-bottom-right-radius: 0 !important; }
 /* Scoped with #section-shortcuts so it beats the launcher's own head-show rule. */
-.topic-band #section-shortcuts .aii-inline-panel .aii-head { display: none !important; }
-.topic-band #section-shortcuts .aii-inline-panel .aii-builder-topbar { display: none !important; }
-.aii-inline-panel .aii { border: none !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; overflow: visible !important; height: auto !important; }
-.aii-inline-panel .aii-stage,
-.aii-inline-panel .aii-content--modal { padding: 0 !important; }
-.aii-inline-panel .aii-builder-secs {
-  padding: 16px 2px 6px !important; max-height: min(66vh, calc(100dvh - 220px));
-  overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
-}
 /* Active tile while its section dropdown is open. */
 .topic-band #section-shortcuts .aii-bcard.is-active {
   border-color: color-mix(in srgb, var(--aii-accent, #2563eb) 55%, var(--color-surface-border)) !important;
@@ -15341,14 +15245,6 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 }
 .topic-band #section-shortcuts .aii-bcard.is-active .aii-bcard-name { color: var(--aii-accent, #2563eb); }
 /* Scroll fades (#89) for the inline section panel. */
-.aii-inline-panel.has-fade::before, .aii-inline-panel.has-fade::after {
-  content: ''; position: absolute; left: 1px; right: 1px; height: 30px; pointer-events: none;
-  opacity: 0; transition: opacity .16s ease; z-index: 4;
-}
-.aii-inline-panel.has-fade::before { top: 0; background: linear-gradient(#fff, rgba(255,255,255,0)); }
-.aii-inline-panel.has-fade::after { bottom: 0; background: linear-gradient(rgba(255,255,255,0), #fff); }
-.aii-inline-panel.has-fade.fade-top::before { opacity: 1; }
-.aii-inline-panel.has-fade.fade-bot::after { opacity: 1; }
 
 /* ── Phase 3: main-nav "AI Insights" topic-tree dropdown (revamp405) ──────────
    A full-width panel that drops in below the header. The header (z 100) stays
@@ -15439,7 +15335,6 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .aii-nav-dd-search .aii-nav-dd-scroll { max-height: calc(100dvh - var(--nav-h)); }
 /* Fill the shell column (left-aligned), matching the Topics/Trending dropdowns —
    NOT centered in a narrow 760px column (#img239/#img241/#img242). */
-.aii-nav-dd-search .search-navdd-host { width: 100%; max-width: none; margin: 0; }
 .aii-nav-dd-search .search-panel { width: 100%; }
 /* The panel's own corner-close is redundant with the shell's bare-head close. */
 .aii-nav-dd-search .search-panel-corner-close { display: none; }
@@ -15503,7 +15398,6 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
 .aii-nav-dd-trending .trend-card.is-expanded .trend-card-trigger:hover { padding: 13px 15px 12px !important; background: transparent !important; }
 /* Faint separator beneath the trend title/timeline, above the Summary/Explore/
    Sources tabs (#img355). */
-.aii-nav-dd-trending .trend-card-exp .ins-tabnav { border-top: 1px solid #dbe2ee; }
 .aii-nav-dd-trending .trend-card-exp { padding: 0 15px 6px; }
 /* Bottom close = left-aligned, prominent X (#img354). */
 
@@ -15633,24 +15527,12 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
    boxed segmented control. One row at every width: it spreads evenly on desktop
    and scrolls horizontally on phones. Active = blue label + blue underline.
    Sticky right below the title bar. (#img1-5) */
-.topic-tabbed .topic-paths-nav {
-  display: flex; gap: 2px; align-items: stretch;
-  margin: 0 0 4px; padding: 0 2px;
-  background: var(--color-bg, #fff);
-  border: none; border-bottom: 1px solid var(--color-surface-border);
-  border-radius: 0;
-  position: sticky; top: var(--subnav-height, 49px); z-index: 30;
-  overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none;
-}
-.topic-tabbed .topic-paths-nav::-webkit-scrollbar { display: none; }
 /* Phones: tabs keep their natural width and scroll if they overflow. */
 @media (max-width: 899.98px) {
-  .topic-tabbed .topic-paths-nav { margin-top: 0; }
   .ptab { flex: 0 0 auto; }
 }
 /* Desktop: spread the tabs evenly across the full width. */
 @media (min-width: 900px) {
-  .topic-tabbed .topic-paths-nav { overflow: visible; }
   .ptab { flex: 1 1 0; }
 }
 .ptab {
@@ -15684,7 +15566,6 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
    was stacking on the tab-body pad and pushing the first story down (#img322-324). */
 .topic-tab-body .im-msec:first-child,
 .topic-tab-body .aii-msec:first-child { padding-top: 4px !important; }
-.topic-aii-host .im-secs > .im-msec:first-child { padding-top: 4px !important; }
 
 /* Inside a tab: hide the mounted AI builder's own chrome + the news feed's own
    header (the sticky tab header replaces them); let content flow the page. */
@@ -15712,50 +15593,18 @@ body.home-search #section-newsfeed .news-list { display: flex !important; flex-d
    phones (#img43). */
 /* Two-choice picker: square-ish cards with stacked, centered content — side by
    side when there's room, stacked on mobile (#img532). */
-.prompts-landing { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 16px 2px 30px; margin: 0; }
-@media (min-width: 620px) { .prompts-landing { grid-template-columns: 1fr 1fr; } }
-.prompts-opt {
-  display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 11px;
-  /* Content-sized — the old 246px min-height stranded the CTA far below the
-     one-line description (#img610). Grid row stretch still equalizes the pair. */
-  width: 100%; text-align: left; padding: 24px 26px;
-  border: 1px solid var(--color-surface-border); border-radius: 16px;
-  background: #fff; cursor: pointer; transition: border-color .14s ease, box-shadow .14s ease, background .14s ease;
-}
-@media (hover: hover) { .prompts-opt:hover { border-color: color-mix(in srgb, #26375a 35%, var(--color-surface-border)); box-shadow: 0 10px 26px -14px rgba(26,39,64,.28); background: color-mix(in srgb, #26375a 2.5%, #fff); } }
 /* Stacked + LEFT-aligned: icon chip on top, then title, description, then CTA pinned
    to the bottom-left (#img559). */
 /* Icon chip: a soft blue-tinted gradient with a hairline ring so it reads as a
    crafted badge rather than a flat grey square (#img11). Deepens on card hover. */
-.prompts-opt-ic { flex: 0 0 auto; width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center; background: color-mix(in srgb, #26375a 8%, #fff); box-shadow: inset 0 0 0 1px rgba(38,55,90,.14); color: #26375a; margin-bottom: 4px; transition: box-shadow .14s ease, background .14s ease; }
-.prompts-opt-ic svg { width: 25px; height: 25px; }
-@media (hover: hover) { .prompts-opt:hover .prompts-opt-ic { background: color-mix(in srgb, #26375a 13%, #fff); box-shadow: inset 0 0 0 1px rgba(38,55,90,.24); } }
-.prompts-opt-name { font-size: 1.12rem; font-weight: 700; color: var(--color-primary, #14213d); letter-spacing: -0.018em; }
-.prompts-opt-desc { font-size: 0.88rem; color: var(--color-text-muted, #64748b); line-height: 1.45; }
-.prompts-opt-cta { margin-top: auto !important; }
 /* Navy pill CTA — the site's primary-button language (Submit Prompt), replacing the
    old bright-blue block (#img98). Deepens on card hover, arrow nudges right. */
-.prompts-opt-cta { display: inline-flex; align-items: center; gap: 7px; margin-top: 8px; padding: 8px 17px; border-radius: 999px; background: #26375a; color: #fff; font-size: 0.85rem; font-weight: 650; transition: background .14s ease; }
-.prompts-opt-cta svg { width: 15px; height: 15px; transition: transform .14s ease; }
-@media (hover: hover) { .prompts-opt:hover .prompts-opt-cta { background: #1a2740; } }
-@media (hover: hover) { .prompts-opt:hover .prompts-opt-cta svg { transform: translateX(2px); } }
 
 /* ═══ Prompts landing rebuild (#img216-220): hero + Build card + Prompt Library
    (Featured picks, Card View / Flatten Topics toggle). ═══════════════════════ */
 .prompts-home { padding: 2px 2px 30px; }
 /* Head-action pills right under the "Prompts" title (like the Topics landing's
    Search Custom Topic button, #img280). */
-.ph-actions { display: flex; flex-wrap: wrap; gap: 10px; padding: 2px 0 22px; margin-bottom: 20px; border-bottom: 1px solid #e4e8f0; }
-.ph-headbtn {
-  display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px;
-  font-family: var(--font-family); font-size: 0.86rem; font-weight: 600; text-decoration: none; cursor: pointer;
-  background: #eef1f6; color: #26375a; border: 1px solid #dde3ee;
-  transition: background .13s, border-color .13s, transform .13s;
-}
-.ph-headbtn svg { flex: none; }
-@media (hover: hover) { .ph-headbtn:hover { background: #e3e9f4; border-color: #ccd6e8; text-decoration: none; } }
-.ph-headbtn--primary { background: #26375a; color: #fff; border-color: #26375a; }
-@media (hover: hover) { .ph-headbtn--primary:hover { background: #1f2d4d; border-color: #1f2d4d; transform: translateY(-1px); } }
 /* Section heads — one consistent style for Featured / Browse (#img251). */
 .ph-sec-head { display: block; padding-bottom: 11px; border-bottom: 1.5px solid #d3d9e4; margin-bottom: 18px; }
 .ph-sec-title { margin: 0; font-family: var(--font-display); font-size: 1.16rem; font-weight: 700; color: #26375a; letter-spacing: -0.015em; }
@@ -15801,11 +15650,8 @@ button.aiidd-vlink { align-self: flex-start; }
    wherever it's embedded as plain content rather than as its own panel: the
    nav-dropdown Prompt Library (#391) and every row of the topic page's AI
    Insights accordion. */
-.prompts-topic-host .aii-head, .tai-acc-body .aii-head,
-.prompts-topic-host .aii-builder-topbar, .tai-acc-body .aii-builder-topbar,
-.prompts-topic-host .aii-brand, .tai-acc-body .aii-brand,
-.prompts-topic-host .aii-headsub, .tai-acc-body .aii-headsub { display: none !important; }
-.prompts-topic-host .aii, .tai-acc-body .aii { border: none !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; overflow: visible !important; height: auto !important; }
+.prompts-topic-host .aii-head, .prompts-topic-host .aii-builder-topbar, .prompts-topic-host .aii-brand, .prompts-topic-host .aii-headsub { display: none !important; }
+.prompts-topic-host .aii { border: none !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; overflow: visible !important; height: auto !important; }
 /* The prompt list was centered in a reading-width column while the "… Prompts"
    header sat full-width left — left-align + full-width the whole list (#img425). */
 .prompts-topic-host,
@@ -15815,21 +15661,11 @@ button.aiidd-vlink { align-self: flex-start; }
 .prompts-topic-host .aii-content,
 .prompts-topic-host .aii-content--modal,
 .prompts-topic-host .aii-builder-secs,
-.prompts-topic-host .aii-pathlist,
-.tai-acc-body,
-.tai-acc-body .aii,
-.tai-acc-body .aii-flow,
-.tai-acc-body .aii-stage,
-.tai-acc-body .aii-content,
-.tai-acc-body .aii-content--modal,
-.tai-acc-body .aii-builder-secs,
-.tai-acc-body .aii-pathlist { max-width: none !important; margin-left: 0 !important; margin-right: 0 !important; }
-.prompts-topic-host .aii-stage, .tai-acc-body .aii-stage,
-.prompts-topic-host .aii-content--modal, .tai-acc-body .aii-content--modal { padding: 0 !important; }
+.prompts-topic-host .aii-pathlist { max-width: none !important; margin-left: 0 !important; margin-right: 0 !important; }
+.prompts-topic-host .aii-stage, .prompts-topic-host .aii-content--modal { padding: 0 !important; }
 /* Inside an accordion the brief must grow to its natural height — the component's
    own scroll container would trap it in a nested scroller. */
-.prompts-topic-host .aii-builder-secs,
-.tai-acc-body .aii-builder-secs { max-height: none !important; overflow: visible !important; padding: 0 !important; }
+.prompts-topic-host .aii-builder-secs { max-height: none !important; overflow: visible !important; padding: 0 !important; }
 
 /* ═══ Prompt Builder inline in the dropdown (revamp437) ═══════════════════════
    "Build a Custom Prompt" now runs entirely INSIDE the Prompts dropdown: the
@@ -15968,14 +15804,6 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title),
 }
 /* "Change Topic" — a quiet text link + chevron on the right of the identity bar;
    opens the same topic picker dropdown as the name button (#img517). */
-.topic-change-btn {
-  flex: none; display: inline-flex; align-items: center; gap: 4px; padding: 6px 2px;
-  border: none; background: none; cursor: pointer; white-space: nowrap;
-  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600; color: #5a6b86;
-  -webkit-tap-highlight-color: transparent; transition: color .14s ease;
-}
-@media (hover: hover) { .topic-change-btn:hover { color: #26375a; } }
-.topic-change-btn .tcb-chev { flex: none; color: currentColor; transition: transform .26s cubic-bezier(.4,0,.2,1); }
 /* Rotate the Change-Topic chevron while the picker is open. */
 .topic-subnav-title:has(.topic-subnav-picker.is-open) .topic-change-btn .tcb-chev { transform: rotate(180deg); }
 /* The main nav breaks its icons onto their own row at ≤560. At that point drop the
@@ -16016,27 +15844,16 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title),
      flush on it (#img105). */
   border-bottom: 1px solid var(--color-surface-border);
 }
-.topic-subnav-controls .topic-paths-nav {
-  max-width: var(--max-width, 1280px); margin: 0 auto !important;
-  display: flex !important; gap: 8px; align-items: center;
-  padding: 12px 2rem !important;
-  border: none !important; border-radius: 0 !important; background: none !important;
-  position: static !important; overflow: visible !important;
-}
 /* Match the nav/content 1rem switch at ≤640 (was ≤560) so the News Feed / AI
    Insights pills line up with the topic name + news cards (#img327). */
 /* Level 1 (News Feed | AI Insights | Prompt Library) = UNDERLINE tabs (#img598):
    plain text with a single sliding indicator bar (.ptab-underline, positioned by
    JS) that animates between tabs on selection. */
-.topic-subnav-controls .topic-paths-nav { position: relative !important; flex-wrap: nowrap !important; gap: 26px; padding: 8px 2rem 9px !important; }
 /* Tight-fit fallback (#img625): JS adds .ptabs-compact when the four tabs
    overflow, dropping the type a notch (labels shorten in JS if still tight). */
-.topic-paths-nav.ptabs-compact { gap: 16px !important; }
-.topic-paths-nav.ptabs-compact .ptab { font-size: 0.85rem !important; }
 /* Match the content's 1rem side padding on small screens — the 2rem base was
    shoving the tab row right of the topic title/cards (#img622). Placed AFTER
    the base rule so it actually wins the !important cascade. */
-@media (max-width: 640px) { .topic-subnav-controls .topic-paths-nav { padding: 8px 1rem 9px !important; } }
 .topic-subnav-controls .ptab {
   flex: 0 0 auto; width: auto; padding: 4px 2px 8px !important; margin: 0 !important;
   border: none !important; border-radius: 0 !important;
@@ -16058,11 +15875,6 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title),
   color: #26375a !important; font-weight: 600 !important; background: none !important;
 } }
 /* The sliding indicator — hugs the active WORD (top set by JS), slides on switch. */
-.topic-paths-nav .ptab-underline {
-  position: absolute; top: 0; left: 0; width: 0; height: 2.5px;
-  border-radius: 2px; background: #33517f;
-  transition: left .28s cubic-bezier(.4, 0, .2, 1), width .28s cubic-bezier(.4, 0, .2, 1);
-}
 
 /* Picker dropdown hangs off the GREY bar bottom (overlays the control bar). */
 .topic-subnav-inner .tsp-panelwrap { left: 0 !important; right: 0 !important; width: 100% !important; top: calc(var(--nav-h) + var(--subnav-title-h, 60px)) !important; z-index: 70 !important; }
@@ -16088,59 +15900,10 @@ body.app-mode:not(.home-mode) #sub-header.is-subnav:has(.topic-subnav-title),
    three generated briefs, and the hand-off to external models. One open at a
    time; a closed row is just an icon + title + one-line subtext, so the whole
    menu is scannable at a glance before anything expands. */
-.topic-ai-acclist {
-  display: flex; flex-direction: column;
-  margin: 4px 0 40px;
-  border: 1px solid var(--color-surface-border); border-radius: 14px;
-  background: #fff; overflow: hidden;
-}
-.tai-acc { border-bottom: 1px solid #eef1f6; min-width: 0; }
-.tai-acc:last-child { border-bottom: none; }
-.tai-accsum {
-  display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0;
-  padding: 15px 16px; border: none; background: none; cursor: pointer; text-align: left;
-  -webkit-tap-highlight-color: transparent;
-  transition: background .12s ease;
-}
-@media (hover: hover) { .tai-accsum:hover { background: #f7f9fc; } }
-.tai-acc-ic { flex: none; display: inline-flex; color: #6f83a6; transition: color .12s ease; }
-.tai-acc-ic svg { width: 21px; height: 21px; }
-.tai-acc-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
-.tai-acc-name {
-  font-family: var(--font-display); font-size: 0.98rem; font-weight: 700;
-  letter-spacing: -0.012em; color: #26375a; line-height: 1.25;
-}
-.tai-acc-sub {
-  font-family: var(--font-family); font-size: 0.8rem; font-weight: 500;
-  color: var(--color-text-muted, #64748b); line-height: 1.35;
-}
-.tai-acc-chev { flex: none; display: inline-flex; color: #a8b4c9; transition: transform .18s ease, color .12s ease; }
-.tai-acc.is-open > .tai-accsum { background: #f4f7fc; }
-.tai-acc.is-open .tai-acc-ic { color: #2f4d9e; }
-.tai-acc.is-open .tai-acc-chev { transform: rotate(180deg); color: #6f83a6; }
-@media (hover: hover) { .tai-acc.is-open > .tai-accsum:hover { background: #f4f7fc; } }
-.tai-acc-body { padding: 4px 16px 20px; min-width: 0; }
-.tai-acc-body[hidden] { display: none; }
 /* The mounted AI component supplies its own spacing/top header; inside a row we
    only need it flush to the row's padding. */
-.tai-acc-body .aii-tabhead-spacer, .tai-acc-body .aii-tabhead { display: none; }
-.tai-acc-body .aii { padding: 0; }
 /* Nested prompt accordions read as a plain divided list inside the row (they're
    already one level deep — a second card border would look boxed-in-a-box). */
-.tai-acc-body .aii-fi-acclist { gap: 0; border: none; border-radius: 0; overflow: visible; }
-.tai-acc-body .aii-fi-acclist .aii-fi-acc { border: none; border-bottom: 1px solid #eef1f6; border-radius: 0; box-shadow: none; }
-.tai-acc-body .aii-fi-acclist .aii-fi-acc:last-child { border-bottom: none; }
-.tai-acc-body .aii-fi-acclist .aii-fi-accsum { border-radius: 0; }
-.tai-acc-body .aii-fi-acclist .aii-fi-acc.is-open { box-shadow: none; }
-.tai-acc-body .aii-fi-acclist .aii-fi-acc.is-open .aii-fi-accsum { border-radius: 0; }
-@media (max-width: 560px) {
-  .topic-ai-acclist { border-radius: 12px; margin-bottom: 32px; }
-  .tai-accsum { padding: 13px 13px; gap: 10px; }
-  .tai-acc-ic svg { width: 19px; height: 19px; }
-  .tai-acc-name { font-size: 0.92rem; }
-  .tai-acc-sub { font-size: 0.76rem; }
-  .tai-acc-body { padding: 2px 12px 16px; }
-}
 /* Level 3 (Summary / Explore Further / Sources) = the quietest tabs — lighter
    weight, a LIGHTER grey than the Catch Up row above, GREY (not blue) thin active
    underline, so it clearly sits below level 2 (#img148/#img152). Tucked close under
@@ -16358,7 +16121,6 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 /* ── Topic-page Explore Further: ONE connected flat list (#img641) — square
    corners, rows share hairlines, hanging directly off the L1 subnav. Dropdown
    behavior unchanged. ─────────────────────────────────────────────────────── */
-.topic-explore-host { padding: 0; }
 /* Connected list, a touch more air below the header separator (#img657). The
    OUTER corners round on the first accordion's TOP and the last accordion's
    BOTTOM directly (each .xf-acc already has overflow:hidden, so the border +
@@ -16371,23 +16133,9 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
    cleanly, so open rows can stay perfectly square with NO corner artifacts — the fix
    the per-item radius approach never nailed (#img67-69). Same for the custom-search
    Explore Further + Prompts lists below. */
-.topic-explore-host .xf-list,
-.ins-tabpanel[data-ins-panel="explore"] .xf-list {
-  gap: 0; border: none; border-radius: 0; overflow: visible;
-}
-.topic-explore-host .xf-acc { border-bottom: 1px solid #eef1f6 !important; }
-.topic-explore-host .xf-acc:last-child { border-bottom: none !important; }
-.topic-explore-host .xf-list { margin-top: 8px; }
-.topic-explore-host .xf-acc,
-.ins-tabpanel[data-ins-panel="explore"] .xf-acc { border: none !important; border-radius: 0 !important; box-shadow: none !important; }
-.topic-explore-host .xf-acc + .xf-acc,
-.ins-tabpanel[data-ins-panel="explore"] .xf-acc + .xf-acc { border-top: 1px solid #eef1f6 !important; }
-.topic-explore-host .xf-acc[open] > .xf-sum,
-.ins-tabpanel[data-ins-panel="explore"] .xf-acc[open] > .xf-sum { border-radius: 0 !important; }
 /* Explore Further wrapped in the Prompts-style grey-band section header: the
    .aii-secacc card supplies the single frame, so the inner .xf-list drops its own
    border/radius/margin and just contributes the flush accordion rows (#img). */
-.topic-explore-host .ef-secacc .xf-list { border: none; border-radius: 0; margin-top: 0; }
 /* ── Topic-page PAGE HEADER (main title / topic subheader / subtext) matching the
    Search-dropdown header — shared by all four L1 tabs (#img650/#img651). More top
    gap from the subnav; subheader a touch bigger + tighter to the title; subtext
@@ -16417,7 +16165,6 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
    carries the separator, not the header). */
 /* Tight bottom padding pulls the Catch Up row UP close to the subtext in the
    load state (#img655); the row's own padding (its sticky height) is untouched. */
-.topic-ai-head { padding-bottom: 12px; margin-bottom: 0; border-bottom: none; }
 /* News tab: full-width column so the header stacks above the news content
    (#topic-tab-body is a flex row, #img652). */
 /* News Feed has no page header now (#img670) — a small top pad keeps the first
@@ -16425,35 +16172,13 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 .topic-news-wrap { width: 100%; min-width: 0; display: flex; flex-direction: column; padding-top: 6px; }
 /* ── Section ACCORDIONS (Topic-Specific / Evergreen): a grey-band header (no icon)
    that collapses the nested prompt list (#img650). */
-.aii-secacc { border: 1px solid #d7dee9; border-radius: 12px; overflow: hidden; margin-bottom: 18px; background: #fff; }
-.aii-secacc-sum { display: flex; align-items: center; gap: 12px; padding: 13px 16px; background: #f4f6f9; cursor: pointer; list-style: none; -webkit-tap-highlight-color: transparent; transition: background .12s ease; }
-.aii-secacc-sum::-webkit-details-marker { display: none; }
-@media (hover: hover) { .aii-secacc-sum:hover { background: #eef2f7; } }
-.aii-secacc[open] > .aii-secacc-sum { border-bottom: 1px solid #e6ebf2; }
-.aii-secacc-tx { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.aii-secacc-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; letter-spacing: -0.006em; color: #33517f; }
-.aii-secacc-sub { font-size: 0.86rem; line-height: 1.4; color: var(--color-text-muted); }
-.aii-secacc-chev { flex: none; display: inline-flex; color: var(--color-text-light); transition: transform .2s ease; }
-.aii-secacc-chev svg { width: 17px; height: 17px; }
-.aii-secacc[open] > .aii-secacc-sum .aii-secacc-chev { transform: rotate(180deg); }
-.aii-secacc-body .aii-ext-block { margin: 0; }
 /* Nested prompt accordions inside a section: flush (no side borders, just row
    dividers), with the icon+title indented so they read as nested items (#img650). */
-.aii-secacc-body .aii-fi-acclist { gap: 0; }
-.aii-secacc-body .aii-fi-acc { border: none; border-top: 1px solid #eef1f6; border-radius: 0; }
-.aii-secacc-body .aii-fi-acc:first-child { border-top: none; }
-@media (hover: hover) { .aii-secacc-body .aii-fi-acc:hover { box-shadow: none; background: none; } }
-.aii-secacc-body .aii-fi-accsum { padding-left: 26px; border-radius: 0; }
 /* Open prompt row reads clearly ACTIVE: a blue-tinted header with a blue name,
    icon + chevron, so the expanded one stands out from the collapsed rows (#img39).
    SQUARE corners — the flush section-list rows shouldn't round when open (the 10px
    from the generic .is-open rule left a curved corner artifact, #img44). */
-.aii-secacc-body .aii-fi-acc.is-open > .aii-fi-accsum { background: #eaf0fb; border-radius: 0; }
-.aii-secacc-body .aii-fi-acc.is-open > .aii-fi-accsum .aii-fi-acc-name,
-.aii-secacc-body .aii-fi-acc.is-open > .aii-fi-accsum .aii-fi-acc-ic,
-.aii-secacc-body .aii-fi-acc.is-open > .aii-fi-accsum .aii-fi-acc-chev { color: #2f4d9e; }
 /* The prompt-card panel inside a nested accordion keeps the same indent. */
-.aii-secacc-body .aii-emenu-host { padding-left: 12px; }
 /* ── Custom-search results: same CLIPPED-container flat list as the topic tabs, for
    BOTH the Prompts (.aii-fi-acclist) and Explore Further (.xf-list) lists (#img67-69). */
 .search-aii-host .aii-fi-acclist,
@@ -16485,27 +16210,20 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
    give the row more presence (#img643). */
 /* Prompt rows scoped so the topic AI Insights accordion AND the nav-dropdown
    Prompt Library get the same treatment (#img663). */
-.prompts-topic-host .aii-fi-accsum,
-.tai-acc-body .aii-fi-accsum,
-.topic-explore-host .xf-sum,
-.ins-tabpanel[data-ins-panel="explore"] .xf-sum { padding-top: 15px; padding-bottom: 15px; align-items: center; }
-.prompts-topic-host .aii-fi-acc-ic, .tai-acc-body .aii-fi-acc-ic { width: 28px; height: 28px; }
-.prompts-topic-host .aii-fi-acc-ic svg, .tai-acc-body .aii-fi-acc-ic svg { width: 21px; height: 21px; }
-.prompts-topic-host .aii-fi-acc-name, .tai-acc-body .aii-fi-acc-name { font-size: 0.95rem; }
+.prompts-topic-host .aii-fi-accsum { padding-top: 15px; padding-bottom: 15px; align-items: center; }
+.prompts-topic-host .aii-fi-acc-ic { width: 28px; height: 28px; }
+.prompts-topic-host .aii-fi-acc-ic svg { width: 21px; height: 21px; }
+.prompts-topic-host .aii-fi-acc-name { font-size: 0.95rem; }
 /* Prompt summary aligns exactly with the SIDE (left border) of the prompt-preview
    card + the Submit button below it — not the card's inner text (#img46). */
-.prompts-topic-host .aii-pc-desc, .tai-acc-body .aii-pc-desc { padding-left: 0; }
+.prompts-topic-host .aii-pc-desc { padding-left: 0; }
 /* Nav-dropdown Prompt Library has its own header (setHead), so hide the built-in
    page header the section-accordion mode adds (#img663). */
 .pb-navdd-host .aii-tabhead { display: none; }
 /* With the header hidden, add space between the dropdown separator and the first
    section accordion (#img665). */
-.pb-navdd-host .aii-tabhead + .aii-secacc { margin-top: 18px; }
 /* The builder content sits 4px inside the dropdown separator (scroll padding);
    pull the section accordions out to full width so they align with it (#img665). */
-.pb-navdd-host .aii-secacc { margin-left: -4px; margin-right: -4px; }
-.topic-explore-host .xf-sum-ic svg { width: 21px; height: 21px; }
-.topic-explore-host .xf-sum-name { font-size: 0.95rem; }
 /* Description that moved OUT of the accordion button INTO the open panel, sitting
    above the prompt preview / source list (#img643). A touch darker + 500 weight
    so it reads as a real panel descriptor, not a faint aside (#img658). */
@@ -16519,7 +16237,6 @@ body.app-mode .topic-layout.topic-tabbed { padding-top: 0.4rem; }
 .xf-web-panel .xf-panel-desc { margin: 0; padding: 13px 12px; }
 /* Phones: same subnav spacing as desktop (#img117/#img118). */
 @media (max-width: 899.98px) {
-  .topic-subnav-controls .topic-paths-nav { gap: 20px; }
   .topic-subnav-controls .ptab { padding: 4px 2px 8px !important; font-size: 0.95rem; }
   .topic-subnav-inner .tsp-btn { padding: 0.92rem 0.15rem !important; }
   .topic-subnav-inner .tsp-btn-name { font-size: 1.18rem !important; }
@@ -16633,19 +16350,11 @@ body.home-search #section-newsfeed .newsfeed-title-main { font-size: 1.2rem !imp
 
 /* ═══ Shared insight tabs (revamp452) — Summary / Explore Further / Sources ════
    Used by the trending expansion, news-story AI Insights, and topic AI Insights. */
-.ins-tabs { display: block; width: 100%; }
 /* Summary / Explore Further / Sources as ONE UNDERLINE TAB NAV (#img119) — the
    old pill-in-track segmented control read as buttons stacked on buttons. A
    hairline runs the full width; the active tab carries a heavier navy underline.
    Applies everywhere the shared insight tabs render (trend expansion, news-story
    AI Insights, topic AI Insights). */
-.ins-tabnav {
-  display: flex; width: 100%; gap: 8px; margin: 0 0 14px;
-  background: none; border: none; border-radius: 0; padding: 0;
-  border-bottom: 1px solid #e5e9f0;
-  overflow-x: auto; scrollbar-width: none;
-}
-.ins-tabnav::-webkit-scrollbar { display: none; }
 .ins-tab {
   flex: 0 0 auto; padding: 5px 13px; border: none; border-radius: 999px;
   position: relative; margin-bottom: 9px;
@@ -16865,34 +16574,11 @@ body.home-search #section-newsfeed .newsfeed-head {
 }
 /* Wrap the topic tab's list in the same single clipped frame the AI Insights
    accordion uses, and give its rows the same padding/type. */
-.topic-explore-host .xf-list {
-  border: 1px solid var(--color-surface-border) !important;
-  border-radius: 14px !important;
-  background: #fff;
-  overflow: hidden !important;
-  margin: 4px 0 40px !important;
-}
-.topic-explore-host .xf-sum { padding: 15px 16px !important; gap: 12px !important; align-items: center; }
-.topic-explore-host .xf-sum-ic { width: 21px; height: 21px; color: #6f83a6; }
-.topic-explore-host .xf-sum-ic svg { width: 21px; height: 21px; }
-.topic-explore-host .xf-sum-name {
-  font-family: var(--font-display); font-size: 0.98rem !important; font-weight: 700;
-  letter-spacing: -0.012em; color: #26375a; line-height: 1.25;
-}
-.topic-explore-host .xf-acc[open] > .xf-sum { background: #f4f7fc !important; }
-.topic-explore-host .xf-acc[open] > .xf-sum .xf-sum-ic { color: #2f4d9e; }
 @media (hover: hover) { .topic-explore-host .xf-acc:not([open]) > .xf-sum:hover { background: #f7f9fc; } }
-.topic-explore-host .xf-panel { padding: 4px 16px 20px; }
 /* AI Insights borrows the Web Resources section header, so both tabs open the
    same way: title, subtext, hairline, then the list. */
-.topic-ai-wrap .aii-fi-sechead { padding: 0 2px 9px; border-bottom: 1px solid #e4e8f0; }
 @media (max-width: 560px) {
-  .topic-explore-host .xf-list { border-radius: 12px !important; margin-bottom: 32px !important; }
-  .topic-explore-host .xf-sum { padding: 13px 13px !important; gap: 10px !important; }
-  .topic-explore-host .xf-sum-ic, .topic-explore-host .xf-sum-ic svg { width: 19px; height: 19px; }
-  .topic-explore-host .xf-sum-name { font-size: 0.92rem !important; }
   .xf-sum-desc { font-size: 0.76rem; }
-  .topic-explore-host .xf-panel { padding: 2px 12px 16px; }
 }
 
 /* ═══ Homepage trending header (revamp720) — the AI-provenance line sits INSIDE
@@ -16931,9 +16617,6 @@ body.home-search #home-trending .trending-topics-head .trend-legend-item .ai-spa
 @media (min-width: 1024px) {
   /* Popular Topics is ONE line inside the search bar's column; Popular Prompts
      wraps to at most TWO (the chip set is budgeted by width in app.js). */
-  body.home-search .hq-chips { gap: 6px; }
-  body.home-search .hq-chips .hq-chip,
-  body.home-search .hq-chips .hq-cta { font-size: 0.76rem; padding: 0 10px; }
 }
 
 
@@ -17115,13 +16798,6 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-head,
 
 /* ── Section heads (AI Insights + Web Resources): a more definite rule with
    real air beneath it before the accordion list ─────────────────────────── */
-.topic-ai-wrap .aii-fi-sechead,
-.topic-explore-host .aii-fi-sechead {
-  padding: 0 2px 14px; margin-bottom: 0;
-  border-bottom: 1.5px solid #d3d9e4;
-}
-.topic-ai-acclist { margin-top: 20px; }
-.topic-explore-host .xf-list { margin-top: 20px !important; }
 /* AI Insights sat closer to the nav than Web Resources — match the roomier one. */
 
 /* Step number lights up only while its accordion is OPEN. A card that merely
@@ -17202,7 +16878,6 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-exp,
 /* ── News insight panel: flat, no tabs, one provenance line ──────────────── */
 #section-newsfeed .news-card--open,
 #section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) { border-radius: 0 !important; }
-.ni-tabs { display: none !important; }
 /* One AI line at the top of the brief, under the actions rule. */
 .ni-inner > .ni-aitag-row { margin: 0 0 10px; }
 .ni-inner .ni-aitag {
@@ -17247,15 +16922,13 @@ body.home-search #home-trending .trending-topics-title,
 @media (min-width: 1024px) {
   /* The hero column IS the search bar's column — the quicklinks inherit it, so
      they can never drift out of alignment with the input. */
-  body.home-search .home-search-hero .search-panel-barrow,
-  body.home-search .home-quicklinks { max-width: 760px; width: 100%; margin-left: auto; margin-right: auto; }
+  body.home-search .home-search-hero .search-panel-barrow { max-width: 760px; width: 100%; margin-left: auto; margin-right: auto; }
   body.home-search .home-search-hero .search-panel-title {
     font-size: clamp(2rem, 1.1rem + 2vw, 2.6rem);
   }
 }
 @media (min-width: 1440px) {
-  body.home-search .home-search-hero .search-panel-barrow,
-  body.home-search .home-quicklinks { max-width: 880px; }
+  body.home-search .home-search-hero .search-panel-barrow { max-width: 880px; }
 }
 /* One gap to the nav at every width — the clamp above stops the title's own
    height from swinging the whole block around. */
@@ -17264,8 +16937,6 @@ body.home-search #home-trending .trending-topics-title,
   body.home-search.app-mode.sticky-always.has-subnav #content { padding-top: calc(var(--nav-h) + 2.4rem) !important; }
 }
 /* Quicklink group labels: a touch larger with more weight. */
-.hq-label { font-size: 0.8rem; font-weight: 800; letter-spacing: 0.055em; color: #7d8ba4; }
-@media (max-width: 560px) { .hq-label { font-size: 0.74rem; } }
 
 /* ── Stacked / mobile ───────────────────────────────────────────────────── */
 @media (max-width: 1023.98px) {
@@ -17312,7 +16983,6 @@ body.home-search.app-mode .home-cards {
 
 /* Everything inside the column fills it — no inner element may set its own width. */
 body.home-search .home-cards > .home-search-hero,
-body.home-search .home-cards > .home-quicklinks,
 body.home-search .home-search-hero .search-panel,
 body.home-search .home-search-hero .search-panel-barrow {
   width: 100% !important; max-width: none !important;
@@ -17338,77 +17008,14 @@ body.home-search .home-search-hero .search-panel-hero-inner { padding-bottom: 1r
    in place (Topic-Specific + Evergreen sections, each prompt its own accordion
    with the full preview/submit), so the entire library is runnable from here. */
 .pdir { display: flex; flex-direction: column; gap: 2rem; }
-.pdir-group { min-width: 0; }
-.pdir-grouphead {
-  display: flex; align-items: center; gap: 9px; margin: 0 0 0.55rem; padding: 0 2px 10px;
-  border-bottom: 1.5px solid #d3d9e4;
-  font-family: var(--font-display); font-size: 1.16rem; font-weight: 800;
-  letter-spacing: -0.018em; color: #1a2740;
-}
-.pdir-grouphead-ic { flex: none; width: 20px; height: 20px; color: #6f83a6; }
-.pdir-grouphead-ic svg { width: 20px; height: 20px; display: block; }
-.pdir-list {
-  display: flex; flex-direction: column;
-  border: 1px solid var(--color-surface-border); border-radius: 14px;
-  background: #fff; overflow: hidden;
-}
-.pdir-acc { border-bottom: 1px solid #eef1f6; min-width: 0; }
-.pdir-acc:last-child { border-bottom: none; }
-.pdir-accsum {
-  display: flex; align-items: center; gap: 11px; width: 100%; min-width: 0;
-  padding: 13px 15px; border: none; background: none; cursor: pointer; text-align: left;
-  -webkit-tap-highlight-color: transparent; transition: background .12s ease;
-}
-@media (hover: hover) { .pdir-accsum:hover { background: #f7f9fc; } }
-.pdir-acc-ic { flex: none; display: inline-flex; color: #7d8ca6; transition: color .12s ease; }
-.pdir-acc-ic svg { width: 19px; height: 19px; display: block; }
-.pdir-acc-name {
-  min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  font-family: var(--font-display); font-size: 0.95rem; font-weight: 700;
-  letter-spacing: -0.01em; color: #26375a;
-}
 /* The parent's own row reads a shade stronger than its subtopics. */
-.pdir-acc--parent .pdir-acc-name { font-size: 0.99rem; }
-.pdir-acc-count {
-  flex: none; min-width: 22px; padding: 2px 7px; border-radius: 999px;
-  background: #eef1f6; color: #64748b;
-  font-family: var(--font-family); font-size: 0.7rem; font-weight: 700; text-align: center; line-height: 1.4;
-}
 .pdir-chev { flex: none; color: #a8b4c9; transition: transform .18s ease, color .12s ease; }
-.pdir-acc.is-open > .pdir-accsum { background: #f4f7fc; }
-@media (hover: hover) { .pdir-acc.is-open > .pdir-accsum:hover { background: #f4f7fc; } }
-.pdir-acc.is-open .pdir-acc-ic { color: #2f4d9e; }
-.pdir-acc.is-open .pdir-chev { transform: rotate(180deg); color: #6f83a6; }
-.pdir-acc.is-open .pdir-acc-count { background: #dfe7f6; color: #2f4d9e; }
-.pdir-accbody { padding: 2px 15px 18px; min-width: 0; }
-.pdir-accbody[hidden] { display: none !important; }
 /* The mounted prompt set: the two section headers sit tight to the row above,
    and each prompt is a plain divided accordion rather than a boxed card. */
-.pdir-accbody .aii-tabhead, .pdir-accbody .aii-tabhead-spacer { display: none !important; }
-.pdir-accbody .aii-fi-sec { margin-top: 14px; }
-.pdir-accbody .aii-fi-sec:first-child { margin-top: 6px; }
-.pdir-accbody .aii-fi-sec:last-child { margin-bottom: 0; }
-.pdir-accbody .aii-fi-sechead { padding: 0 2px 7px; margin-bottom: 2px; border-bottom: 1px solid #e4e8f0; }
-.pdir-accbody .aii-fi-sectitle { font-size: 0.95rem; font-weight: 700; letter-spacing: -0.01em; }
-.pdir-accbody .aii-fi-secsub { font-size: 0.8rem; margin-top: 2px; }
-.pdir-accbody .aii-fi-acclist { gap: 0; border: none; border-radius: 0; overflow: visible; }
-.pdir-accbody .aii-fi-acclist .aii-fi-acc {
-  border: none; border-bottom: 1px solid #eef1f6; border-radius: 0; box-shadow: none;
-}
-.pdir-accbody .aii-fi-acclist .aii-fi-acc:last-child { border-bottom: none; }
-.pdir-accbody .aii-fi-acclist .aii-fi-accsum { border-radius: 0; padding-top: 12px; padding-bottom: 12px; }
-.pdir-accbody .aii-fi-acc-ic { width: 24px; height: 24px; }
-.pdir-accbody .aii-fi-acc-ic svg { width: 18px; height: 18px; }
-.pdir-accbody .aii-fi-acc-name { font-size: 0.89rem; }
 /* Section subtext for the Prompts page header. */
 .ph-sec-sub { margin: 3px 0 0; font-family: var(--font-family); font-size: 0.85rem; color: var(--color-text-muted); }
 @media (max-width: 560px) {
   .pdir { gap: 1.5rem; }
-  .pdir-grouphead { font-size: 1.06rem; }
-  .pdir-accsum { padding: 12px 12px; gap: 9px; }
-  .pdir-acc-name { font-size: 0.9rem; }
-  .pdir-acc--parent .pdir-acc-name { font-size: 0.94rem; }
-  .pdir-accbody { padding: 2px 11px 15px; }
 }
 
 /* ═══════════════ revamp738 ═══════════════════════════════════════════════ */
@@ -17418,33 +17025,13 @@ body.home-search .home-search-hero .search-panel-hero-inner { padding-bottom: 1r
    the section rule above it and the rows are separated by hairlines, so each
    section reads as one continuous field instead of a card floating under a
    heading. Applies to AI Insights, Web Resources, Prompts by Topic and Featured. */
-.topic-ai-acclist,
-.pdir-list,
-.topic-explore-host .xf-list {
-  border: none !important; border-radius: 0 !important; background: none !important;
-  overflow: visible !important;
-}
-.topic-ai-acclist { margin-top: 0; }
-.topic-explore-host .xf-list { margin-top: 0 !important; }
-.tai-acc, .pdir-acc, .topic-explore-host .xf-acc { border-bottom: 1px solid #e7ecf3 !important; }
-.tai-acc:last-child, .pdir-acc:last-child, .topic-explore-host .xf-acc:last-child { border-bottom: none !important; }
-.tai-accsum, .pdir-accsum, .topic-explore-host .xf-sum { border-radius: 0 !important; }
 /* Section rule + the first row sit flush, so the header reads as the list's top edge. */
-.topic-ai-wrap .aii-fi-sechead,
-.topic-explore-host .aii-fi-sechead { margin-bottom: 0 !important; }
 
 /* AI Insights and Web Resources start at the same distance from the nav. */
 
 /* ── AI Briefing: three briefs under one row ─────────────────────────────── */
-.tai-brief-part { margin-top: 22px; min-width: 0; }
-.tai-brief-part:first-child { margin-top: 8px; }
-.tai-brief-head { padding: 0 2px 8px; border-bottom: 1px solid #e4e8f0; }
-.tai-brief-title { margin: 0; font-family: var(--font-display); font-size: 0.98rem; font-weight: 700; letter-spacing: -0.012em; color: #26375a; }
-.tai-brief-sub { margin: 2px 0 0; font-family: var(--font-family); font-size: 0.8rem; color: var(--color-text-muted); }
 /* Brief parts read as CONTENT rows, not navigation: a plus marker, the headline,
    and the prose folded away until asked for. */
-.tai-brief-host .im-msec { border: none !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; margin: 0 !important; border-bottom: 1px solid #f0f3f8 !important; }
-.tai-brief-host .im-msec:last-child { border-bottom: none !important; }
 .im-msec-toggle {
   display: flex; align-items: flex-start; gap: 10px; width: 100%;
   padding: 12px 2px; border: none; background: none; cursor: pointer; text-align: left;
@@ -17460,17 +17047,8 @@ body.home-search .home-search-hero .search-panel-hero-inner { padding-bottom: 1r
 .im-msec.is-open .im-msec-plus .im-plus-v { opacity: 0; }          /* + becomes − */
 .im-msec-plus .im-plus-v { transition: opacity .16s ease; }
 .im-msec.is-open .im-msec-name { color: #26375a; }
-.tai-brief-host .im-msec-body { padding: 0 2px 14px 27px; }
-.tai-brief-host .im-msec-body[hidden] { display: none !important; }
-.tai-brief-host .aii-related-flat { display: none; }
 
 /* ── Prompts by Topic / Featured rows: no icons, no counts ───────────────── */
-.pdir-acc-ic, .pdir-acc-count { display: none !important; }
-.pdir-list { background: none; }
-.pdir-accsum { padding-left: 2px; padding-right: 2px; }
-.pdir-accbody { padding-left: 2px; padding-right: 2px; }
-@media (max-width: 560px) { .pdir-accsum, .pdir-accbody { padding-left: 2px; padding-right: 2px; } }
-.pdir-grouphead { margin-bottom: 0; }
 
 /* ── Condensed page header on scroll ─────────────────────────────────────── */
 .aii-nav-dd.is-condensed > .aii-nav-dd-inner > .page-backbar,
@@ -17501,51 +17079,21 @@ body.home-search .home-search-hero .search-panel-hero-inner { padding-bottom: 1r
 
 /* AI Insights now shares .topic-explore-host, so it inherits Web Resources'
    exact spacing from the sub-nav — the two can no longer drift apart. */
-.topic-ai-wrap.topic-explore-host .aii-fi-sec:first-child { margin-top: 22px !important; }
-.topic-ai-wrap .topic-ai-acclist { margin-top: 0 !important; }
 
 /* ── Lighter weights, clearer indentation ───────────────────────────────── */
 /* Parent rows (Featured, Prompts by Topic, AI Insights) were carrying display
    700 — heavy for a list you scan. */
-.pdir-acc-name { font-weight: 600; }
-.pdir-acc--parent .pdir-acc-name { font-weight: 650; }
-.tai-acc-name { font-weight: 650; }
 /* The topic list sits indented under its section header rather than flush with it. */
-.pdir-group .pdir-list { margin-left: 18px; }
-@media (max-width: 560px) { .pdir-group .pdir-list { margin-left: 12px; } }
 /* Topic-Specific / Evergreen subsection headers: lighter, and indented from the
    row that opened them. */
-.pdir-accbody .aii-fi-sectitle,
-.tai-acc-body .aii-fi-sectitle { font-size: 0.88rem !important; font-weight: 650 !important; color: #33455f; }
-.pdir-accbody .aii-fi-secsub,
-.tai-acc-body .aii-fi-secsub { font-size: 0.78rem; }
-.pdir-accbody .aii-fi-sec,
-.tai-acc-body--prompts .aii-fi-sec { margin-left: 16px; }
-@media (max-width: 560px) {
-  .pdir-accbody .aii-fi-sec,
-  .tai-acc-body--prompts .aii-fi-sec { margin-left: 10px; }
-}
 
 /* A single featured prompt renders its card directly — no nested accordion. */
 .aii-fi--single { margin-top: 4px; }
 .aii-fi--single .aii-emenu-host { display: block; }
 
 /* ── AI Briefing: readable structure instead of stacked chrome ───────────── */
-.tai-acc-body .tai-brief-part:first-child { margin-top: 4px; }
-.tai-brief-part { margin-left: 16px; }
-@media (max-width: 560px) { .tai-brief-part { margin-left: 10px; } }
-.tai-brief-title { font-size: 0.92rem; font-weight: 650; }
-.tai-brief-sub { font-size: 0.77rem; }
 /* Strip the per-brief builder chrome — the row header already names the brief. */
-.tai-brief-host .aii-ctlrow,
-.tai-brief-host .aii-brief-top,
-.tai-brief-host .aii-builder-topbar { display: none !important; }
-.tai-brief-host .aii-builder-secs { padding: 0 !important; }
-.tai-brief-host .im-msec-body .im-sec-aitag-row { margin-bottom: 8px; }
-.tai-brief-host .im-msec-body .aii-sec-body { font-size: 0.88rem; line-height: 1.62; }
-.tai-brief-host .im-msec-body .aii-sec-body p { margin: 0 0 0.7rem; }
 /* Loading + empty states inside a brief part shouldn't fill the row. */
-.tai-brief-host .aii-empty { padding: 10px 2px; font-size: 0.84rem; }
 
 /* ═══════════════ revamp740 ═══════════════════════════════════════════════ */
 
@@ -17578,24 +17126,10 @@ body.home-search .home-search-hero .search-panel-hero-inner { padding-bottom: 1r
 
 /* ── Prompt directory ───────────────────────────────────────────────────── */
 /* The parent's own row is a peer of its subtopics, not a second heading. */
-.pdir-acc--parent .pdir-acc-name { font-weight: 600; }
 /* Open/hover states span the full row width, matching the rule above them —
    they were bleeding to the container edges past the list's own inset. */
-.pdir-acc { position: relative; }
-.pdir-accsum { padding-left: 10px !important; padding-right: 10px !important; }
-.pdir-accbody { padding-left: 10px !important; padding-right: 10px !important; }
-.pdir-acc.is-open > .pdir-accsum,
-.pdir-list .pdir-acc > .pdir-accsum { border-radius: 0 !important; }
 /* Prompt rows inside a topic: never round on hover, and match their section
    header's size so the hierarchy reads top-down. */
-.pdir-accbody .aii-fi-acc,
-.pdir-accbody .aii-fi-accsum,
-.tai-acc-body .aii-fi-acc,
-.tai-acc-body .aii-fi-accsum { border-radius: 0 !important; }
-.pdir-accbody .aii-fi-acc-name,
-.tai-acc-body .aii-fi-acc-name { font-size: 0.88rem !important; font-weight: 600 !important; }
-.pdir-accbody .aii-fi-secsub,
-.tai-acc-body .aii-fi-secsub { display: none !important; }
 
 /* ── Trending hover: no blue wash ────────────────────────────────────────── */
 @media (min-width: 1024px) and (hover: hover) {
@@ -17664,13 +17198,6 @@ body.app-mode:not(.home-search) #topic-tab-body {
 }
 /* "Earlier" rows list exactly like the live ones above them (the history table
    stores no summary text, so they're title-only — but the row metrics match). */
-.trend-earlier .trend-card-trigger { padding: 15px 14px !important; }
-.trend-earlier .trend-card-title { font-size: 1rem !important; font-weight: 700 !important; color: #26375a !important; }
-.trend-earlier .trend-card { border-bottom: 1px solid #e9ecf2 !important; }
-.trend-earlier .trend-card:last-child { border-bottom: none !important; }
-.trend-earlier-head { padding: 22px 14px 10px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-.trend-earlier-title { font-family: var(--font-display); font-size: 1.06rem; font-weight: 800; color: #1a2740; }
-.trend-earlier-sub { font-family: var(--font-family); font-size: 0.82rem; color: var(--color-text-muted); }
 
 /* ═══════════════ revamp742 ═══════════════════════════════════════════════ */
 
@@ -17688,18 +17215,10 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 
 /* ── Trending page: rows sit clear of the sub-bar, and every row has a rule ── */
 .aii-nav-dd-trending .aii-nav-dd-scroll { padding-top: 10px; }
-.aii-nav-dd-trending .trend-card:last-child,
-.trend-earlier .trend-card:last-child { border-bottom: 1px solid #e9ecf2 !important; }
+.aii-nav-dd-trending .trend-card:last-child { border-bottom: 1px solid #e9ecf2 !important; }
 /* The live grid was closing itself with an extra rule on top of the last row's. */
 .aii-nav-dd-trending .trend-card-grid { border-bottom: none !important; }
-.aii-nav-dd-trending .trend-card-grid + .trend-earlier { margin-top: 0; }
 /* "Earlier": title, subtext beneath it, then a rule — like every other section. */
-.trend-earlier-head {
-  display: block; padding: 30px 14px 10px; margin-bottom: 0;
-  border-bottom: 1.5px solid #d3d9e4;
-}
-.trend-earlier-title { display: block; margin: 0; font-family: var(--font-display); font-size: 1.16rem; font-weight: 800; letter-spacing: -0.018em; color: #1a2740; }
-.trend-earlier-sub { display: block; margin: 3px 0 0; font-family: var(--font-family); font-size: 0.84rem; color: var(--color-text-muted); }
 /* Condensed scroll state also sheds the sports toggle. */
 .aii-nav-dd.is-condensed .trend-controls-legend,
 .aii-nav-dd.is-condensed .aii-nav-dd-subbar { display: none !important; }
@@ -17815,30 +17334,20 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 }
 .ph-rail::-webkit-scrollbar { height: 6px; }
 .ph-rail::-webkit-scrollbar-thumb { background: #dfe5f0; border-radius: 999px; }
-.ph-fcard {
-  flex: 0 0 auto; width: 190px; min-height: 78px; scroll-snap-align: start;
-  display: flex; flex-direction: column; gap: 5px; align-items: flex-start; justify-content: center;
-  padding: 13px 14px; border: 1px solid var(--color-surface-border); border-radius: 12px;
-  background: #fff; cursor: pointer; text-align: left;
-  transition: border-color .14s, box-shadow .14s, transform .1s;
-}
-@media (hover: hover) { .ph-fcard:hover { border-color: #c8d5ec; box-shadow: 0 4px 14px -8px rgba(15,26,46,.25); transform: translateY(-1px); } }
-.ph-fcard-name { font-family: var(--font-display); font-size: 0.92rem; font-weight: 700; letter-spacing: -0.01em; color: #26375a; line-height: 1.25; }
-.ph-fcard-topic { font-family: var(--font-family); font-size: 0.76rem; font-weight: 550; color: var(--color-text-muted); }
 /* Focused single prompt, in place. */
 .ph-rail.is-focus { display: block; overflow: visible; animation: phFocusIn .24s cubic-bezier(.22,.61,.21,1); }
 @keyframes phFocusIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .ph-focus { min-width: 0; }
 .ph-focus-name { margin: 8px 0 4px; font-family: var(--font-display); font-size: 1.02rem; font-weight: 700; color: #26375a; }
-.ph-focus-back, .pdir-topicback {
+.ph-focus-back {
   display: inline-flex; align-items: center; gap: 6px; padding: 4px 0;
   border: none; background: none; cursor: pointer;
   font-family: var(--font-family); font-size: 0.83rem; font-weight: 500; color: #64748b;
 }
-.ph-focus-back svg, .pdir-topicback svg { color: #94a3b8; transition: transform .14s ease; }
+.ph-focus-back svg { color: #94a3b8; transition: transform .14s ease; }
 @media (hover: hover) {
-  .ph-focus-back:hover, .pdir-topicback:hover { color: #26375a; }
-  .ph-focus-back:hover svg, .pdir-topicback:hover svg { transform: translateX(-3px); }
+  .ph-focus-back:hover { color: #26375a; }
+  .ph-focus-back:hover svg { transform: translateX(-3px); }
 }
 
 /* ── Prompts by Topic: separated parent CARDS, closed by default ─────────── */
@@ -17877,7 +17386,6 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 }
 .pdir-cell-chev { flex: none; color: #a8b4c9; transition: transform .14s; }
 @media (hover: hover) { .pdir-cell:hover .pdir-cell-chev { transform: translateX(2px); color: #2f4d9e; } }
-.pdir-topicname { margin: 8px 0 2px; font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: #26375a; }
 
 /* ── Bottom CTA ─────────────────────────────────────────────────────────── */
 .ph-cta {
@@ -17922,8 +17430,6 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 .aii-nav-dd-trending .trend-card-grid { border-bottom: none !important; padding-bottom: 0 !important; }
 .aii-nav-dd-trending .trend-card:last-child { border-bottom: 1px solid #e9ecf2 !important; }
 /* Earlier: bigger title, lighter rows. */
-.trend-earlier-title { font-size: 1.3rem !important; }
-.trend-earlier .trend-card-title { font-weight: 600 !important; font-size: 0.96rem !important; }
 
 /* The AI label / sports toggle row needs air above the sub-bar rule so neither
    sits on it. */
@@ -17959,31 +17465,12 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
    sane band; the flex rail stretches them all to the tallest card's height so
    the row stays even. Mobile (<560) stacks them vertically at full width with
    natural heights — see below. */
-.ph-fcard { width: auto; min-width: 172px; max-width: 300px; min-height: 0; justify-content: flex-start; gap: 4px; padding: 13px 15px 11px; }
 .ph-rail:not(.is-focus) { align-items: stretch; }
 /* "Open prompt" pins to the card's bottom edge so the row's footers align. */
-.ph-fcard .ph-fcard-go { margin-top: auto; padding-top: 6px; }
 @media (max-width: 559.98px) {
   .ph-rail:not(.is-focus) { flex-direction: column; overflow-x: visible; overflow-y: visible; scroll-snap-type: none; }
-  .ph-fcard { width: 100%; max-width: none; }
   .ph-rail-nav { display: none; }
 }
-.ph-fcard-topic {
-  font-family: var(--font-family); font-size: 0.68rem; font-weight: 700;
-  letter-spacing: 0.07em; text-transform: uppercase; color: #8a98b0;
-}
-.ph-fcard-name { font-size: 0.95rem; line-height: 1.25; }
-.ph-fcard-desc {
-  font-family: var(--font-family); font-size: 0.78rem; font-weight: 500; line-height: 1.4;
-  color: var(--color-text-muted); margin-top: 2px;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-}
-.ph-fcard-go {
-  display: inline-flex; align-items: center; gap: 4px; margin-top: auto; padding-top: 8px;
-  font-family: var(--font-family); font-size: 0.76rem; font-weight: 650; color: #3d5da8;
-}
-.ph-fcard-go svg { transition: transform .14s ease; }
-@media (hover: hover) { .ph-fcard:hover .ph-fcard-go svg { transform: translateX(3px); } }
 /* Focused prompt takes over the section — its header would be describing a view
    that is no longer the featured list. */
 .ph-featured.is-focus .ph-sec-head { display: none !important; }
@@ -17992,12 +17479,6 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 /* ── Topic view: back first, then the topic itself ──────────────────────── */
 .pdir-card.is-topicview > .pdir-cardhead { display: none !important; }
 .pdir-card.is-topicview .pdir-cardbody { padding-top: 14px; }
-.pdir-topicname {
-  display: flex; align-items: center; gap: 8px;
-  margin: 10px 0 2px !important; font-size: 1.06rem !important;
-}
-.pdir-topicname-ic { flex: none; display: inline-flex; color: #2f4d9e; }
-.pdir-topicname-ic svg { width: 20px; height: 20px; display: block; }
 /* Prompt sections inside a topic run small — they're the third level down. */
 .pdir-topichost .aii-fi-sectitle { font-size: 0.78rem !important; font-weight: 700 !important; letter-spacing: 0.04em; text-transform: uppercase; color: #8a98b0 !important; }
 .pdir-topichost .aii-fi-sechead { padding-bottom: 6px !important; border-bottom: 1px solid #eef1f6 !important; }
@@ -18063,8 +17544,6 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 .aii-nav-dd .aii-nav-dd-title { line-height: 1.15; }
 /* The live section's closing rule was doing the work of a section divider. */
 .aii-nav-dd-trending .trend-card:last-child { border-bottom: 1px solid #eef1f6 !important; }
-.trend-earlier-head { border-bottom: 1px solid #e4e8f0 !important; padding-top: 24px !important; }
-.trend-earlier-title { font-weight: 750 !important; }
 
 /* ═══════════════ revamp751 ═══════════════════════════════════════════════ */
 
@@ -18129,8 +17608,7 @@ body.app-mode:not(.home-search) .topic-layout { padding: 0 2rem 1rem !important;
 /* Section rules: heavier under the label, and the last row keeps its divider so
    the section closes the way it opened. */
 .pdir-topichost .aii-fi-sechead { border-bottom: 1.5px solid #d3d9e4 !important; }
-.pdir-topichost .aii-fi-acc:last-child,
-.tai-acc-body .aii-fi-acc:last-child { border-bottom: 1px solid #f0f3f8 !important; }
+.pdir-topichost .aii-fi-acc:last-child { border-bottom: 1px solid #f0f3f8 !important; }
 
 /* ═══════════════ revamp755 ═══════════════════════════════════════════════ */
 
@@ -18222,21 +17700,16 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
    the asymmetric padding left it and the fill didn't match the row box. Size the
    row with min-height and centre the content in it — zero vertical padding means
    nothing can push the text off-centre. */
-.pdir-topichost .aii-fi-acclist .aii-fi-acc,
-.tai-acc-body .aii-fi-acclist .aii-fi-acc { display: block; padding: 0 !important; margin: 0 !important; }
-.pdir-topichost .aii-fi-acclist .aii-fi-accsum,
-.tai-acc-body .aii-fi-acclist .aii-fi-accsum {
+.pdir-topichost .aii-fi-acclist .aii-fi-acc { display: block; padding: 0 !important; margin: 0 !important; }
+.pdir-topichost .aii-fi-acclist .aii-fi-accsum {
   display: flex !important; align-items: center !important;
   width: 100%; box-sizing: border-box;
   min-height: 52px; padding: 0 12px !important; margin: 0 !important;
   line-height: 1.3;
 }
-.pdir-topichost .aii-fi-acclist .aii-fi-acc-ic,
-.tai-acc-body .aii-fi-acclist .aii-fi-acc-ic { align-self: center; margin: 0 !important; }
-.pdir-topichost .aii-fi-acclist .aii-fi-acc-tx,
-.tai-acc-body .aii-fi-acclist .aii-fi-acc-tx { display: flex; align-items: center; min-height: 0; }
-.pdir-topichost .aii-fi-acclist .aii-fi-acc-chev,
-.tai-acc-body .aii-fi-acclist .aii-fi-acc-chev { align-self: center; margin-left: auto; }
+.pdir-topichost .aii-fi-acclist .aii-fi-acc-ic { align-self: center; margin: 0 !important; }
+.pdir-topichost .aii-fi-acclist .aii-fi-acc-tx { display: flex; align-items: center; min-height: 0; }
+.pdir-topichost .aii-fi-acclist .aii-fi-acc-chev { align-self: center; margin-left: auto; }
 
 /* ═══════════════ revamp761 ═══════════════════════════════════════════════ */
 
@@ -18255,69 +17728,15 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
    / Deep Dive / 101 Info) whose stories are preview-and-expand rows. */
 
 /* Per-subsection accent: blue = Catch Up, amber = Deep Dive, teal = 101 Info. */
-.tai-jump[data-group="discover"],       .tai-brief-part--flat[data-group="discover"]       { --tbp-accent: #2563eb; }
-.tai-jump[data-group="topic-specific"], .tai-brief-part--flat[data-group="topic-specific"] { --tbp-accent: #d97706; }
-.tai-jump[data-group="learn"],          .tai-brief-part--flat[data-group="learn"]          { --tbp-accent: #0d9488; }
 
 /* Eyebrow + compact single-line resource accordions. */
-.tai-tools { margin: 2px 0 30px; }
-.tai-tools-label {
-  margin: 0 0 8px; font-family: var(--font-family); font-size: 0.72rem;
-  font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #8a97ad;
-}
-.tai-acclist--mini { margin: 0; }
-.tai-acclist--mini .tai-accsum { padding: 11px 14px; gap: 10px; }
-.tai-acclist--mini .tai-acc-ic svg { width: 18px; height: 18px; }
-.tai-acclist--mini .tai-acc-name { font-size: 0.9rem; font-weight: 650; }
-.tai-acclist--mini .tai-acc-sub { display: none; }
-.tai-acclist--mini .tai-acc-chev svg { width: 16px; height: 16px; }
-.tai-acclist--mini .tai-acc-body { padding: 2px 14px 18px; }
 
 /* The AI Brief band: bold navy heading + jump chips over a STRONG navy rule —
    the one heavy line on the page, so the brief reads as the main event. */
-.tai-brief { margin: 0 0 44px; }
-.tai-brief-bar {
-  display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 18px;
-  padding: 0 2px 12px; border-bottom: 2px solid #26375a;
-}
-.tai-brief-bartx { flex: 1 1 260px; min-width: 0; }
-.tai-brief-bartitle {
-  margin: 0; display: flex; align-items: center; gap: 8px;
-  font-family: var(--font-display); font-size: 1.12rem; font-weight: 750;
-  letter-spacing: -0.016em; color: #26375a;
-}
-.tai-brief-spark { color: #2563eb; font-size: 0.9em; line-height: 1; }
-.tai-brief-barsub { margin: 3px 0 0; font-family: var(--font-family); font-size: 0.8rem; color: var(--color-text-muted); }
-.tai-jumps { display: flex; flex-wrap: wrap; gap: 7px; padding-bottom: 2px; }
-.tai-jump {
-  display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px;
-  border: 1px solid #dfe5ee; border-radius: 999px; background: #fff; cursor: pointer;
-  font-family: var(--font-family); font-size: 0.77rem; font-weight: 600; color: #33455f;
-  -webkit-tap-highlight-color: transparent;
-  transition: border-color .13s ease, color .13s ease, background .13s ease;
-}
-@media (hover: hover) { .tai-jump:hover { border-color: #b9c6dd; color: #26375a; background: #f7f9fc; } }
-.tai-jump-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--tbp-accent, #2563eb); flex: none; }
 
 /* Subsection headers: accent-tinted icon chip + title + one-liner. */
-.tai-brief-part--flat { margin: 30px 0 0; margin-left: 0; scroll-margin-top: calc(var(--nav-h) + 18px); }
-.tai-brief-part--flat .tai-brief-head {
-  display: flex; align-items: center; gap: 11px;
-  padding: 0 2px 10px; border-bottom: 1px solid #e4e8f0;
-}
-.tai-brief-ic {
-  flex: none; display: inline-flex; align-items: center; justify-content: center;
-  width: 32px; height: 32px; border-radius: 9px;
-  background: color-mix(in srgb, var(--tbp-accent, #2563eb) 10%, #fff);
-  color: var(--tbp-accent, #2563eb);
-}
-.tai-brief-ic svg { width: 18px; height: 18px; }
-.tai-brief-headtx { min-width: 0; }
-.tai-brief-part--flat .tai-brief-title { font-size: 1.02rem; font-weight: 700; letter-spacing: -0.014em; color: #1a2740; }
-.tai-brief-part--flat .tai-brief-sub { margin-top: 1px; font-size: 0.78rem; }
 
 /* Story rows: headline + a two-line teaser, expanding to the full prose. */
-.tai-brief-host .im-msec.tai-story { padding: 0; }
 .tai-story-sum {
   display: flex; align-items: flex-start; gap: 12px; width: 100%;
   padding: 13px 2px; border: none; background: none; cursor: pointer; text-align: left;
@@ -18340,7 +17759,6 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
   .tai-story-sum:hover .im-msec-name { color: #1d4ed8; }
   .tai-story-sum:hover .tai-story-chev { color: #1d4ed8; }
 }
-.tai-brief-host .tai-story .im-msec-body { padding: 1px 2px 16px; }
 
 /* One quiet provenance line per brief, above its first story. */
 .tai-prov {
@@ -18352,18 +17770,8 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
 .tai-prov-sep { color: #c3cbd8; }
 
 /* Loading shimmer inside a subsection shouldn't balloon the part. */
-.tai-brief-host .aii-gen { margin: 14px 0 6px; }
 
 @media (max-width: 560px) {
-  .tai-tools { margin-bottom: 26px; }
-  .tai-acclist--mini .tai-accsum { padding: 10px 12px; }
-  .tai-acclist--mini .tai-acc-body { padding: 2px 12px 16px; }
-  .tai-brief-bartitle { font-size: 1.04rem; }
-  .tai-jump { padding: 4px 10px; font-size: 0.74rem; }
-  .tai-brief-part--flat { margin-top: 26px; }
-  .tai-brief-ic { width: 28px; height: 28px; border-radius: 8px; }
-  .tai-brief-ic svg { width: 16px; height: 16px; }
-  .tai-brief-part--flat .tai-brief-title { font-size: 0.95rem; }
   .tai-story-sum { padding: 12px 2px; gap: 10px; }
   .tai-story-sum .im-msec-name { font-size: 0.92rem; }
   .tai-story-prev { font-size: 0.79rem; }
@@ -18401,7 +17809,6 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
   margin-top: 1px;
 }
 .hf-ic svg { width: 14px; height: 14px; }
-.hf-headtx { min-width: 0; }
 .hf-title {
   margin: 0; font-family: var(--font-display);
   font-size: 1.12rem; font-weight: 800; letter-spacing: -0.018em; color: #1a2740; line-height: 1.25;
@@ -18410,19 +17817,8 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
 .hf-chips { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 6px 7px; min-width: 0; flex: 1 1 auto; }
 /* Chips read a touch stronger on the white card than the old grey-zone pills,
    and pick up the card's accent on hover. */
-.hf-card .hq-chip { border-color: #dbe3f0; background: #f8fafd; color: #45536e; }
-@media (hover: hover) {
-  .hf-card .hq-chip:hover { background: #fff; border-color: color-mix(in srgb, var(--hf-accent) 40%, #fff); color: var(--hf-accent); }
-}
 /* Dynamic chip counts by viewport — the DOM holds the full set (12 topics /
    6 prompts); narrower screens simply show fewer. */
-@media (max-width: 559.98px) {
-  .hf-card [data-hq-topics] .hq-chip:nth-child(n+7) { display: none; }
-  .hf-card [data-hq-prompts] .hq-chip:nth-child(n+5) { display: none; }
-}
-@media (min-width: 560px) and (max-width: 899.98px) {
-  .hf-card [data-hq-topics] .hq-chip:nth-child(n+9) { display: none; }
-}
 .hf-foot {
   display: flex; justify-content: flex-start; margin-top: 0.9rem;
   border-top: none; padding: 0 2px 4px;
@@ -18444,12 +17840,6 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
   .hf-chips { gap: 6px; }
 }
 /* Brand-family icon chip on the news heads (news = red). */
-.newsfeed-brandic {
-  flex: none; display: inline-flex; align-items: center; justify-content: center;
-  width: 28px; height: 28px; border-radius: 8px; background: #fdecec; color: #dc2626;
-  margin-right: 9px; align-self: center;
-}
-.newsfeed-brandic svg { width: 15px; height: 15px; }
 
 /* ═══ Topic pages without tabs (revamp763) ═══════════════════════════════════
    The News Feed / AI Insights / Web Resources tab strip is gone. The topic
@@ -18488,87 +17878,17 @@ body.home-search #home-trending .trend-viewmore-row { padding: 10px 0 6px !impor
 }
 @media (hover: hover) {
   .tdi-card:hover { border-color: #b9cbeb; box-shadow: 0 16px 32px -20px rgba(31, 49, 99, 0.4); transform: translateY(-1px); text-decoration: none; }
-  .tdi-card:hover .tdi-cta svg { transform: translateX(2px); }
 }
 .tdi-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 0.7rem; }
-.tdi-badge {
-  display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 999px;
-  background: #1d3a6b; color: #fff;
-  font-family: var(--font-family); font-size: 0.7rem; font-weight: 750; letter-spacing: 0.06em; text-transform: uppercase;
-}
-.tdi-spark { color: #8ab4ff; font-size: 0.8rem; line-height: 1; }
 .tdi-date { font-family: var(--font-family); font-size: 0.76rem; font-weight: 650; color: #5b6c8c; white-space: nowrap; }
-.tdi-title {
-  margin: 0 0 0.4rem; font-family: var(--font-display);
-  font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.6rem); font-weight: 800;
-  letter-spacing: -0.022em; line-height: 1.18; color: #16233d;
-}
 .tdi-summary { margin: 0; font-family: var(--font-family); font-size: 0.92rem; line-height: 1.55; color: #42506b; max-width: 72ch; }
 /* Three section mini-tiles inside the card — a preview of the briefing's shape. */
-.tdi-secs { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 0.9rem; }
-@media (min-width: 680px) { .tdi-secs { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; } }
-.tdi-sec {
-  display: flex; align-items: center; gap: 9px; min-width: 0;
-  padding: 8px 11px; border-radius: 11px;
-  background: rgba(255, 255, 255, 0.72); border: 1px solid #dde6f4;
-  --tdi-accent: #2563eb; --tdi-tint: #eef3fc;
-}
-.tdi-sec--amber { --tdi-accent: #d97706; --tdi-tint: #fdf3e4; }
-.tdi-sec--teal  { --tdi-accent: #0d9488; --tdi-tint: #e5f5f3; }
-.tdi-sec-ic {
-  flex: none; display: inline-flex; align-items: center; justify-content: center;
-  width: 28px; height: 28px; border-radius: 8px; background: var(--tdi-tint); color: var(--tdi-accent);
-}
-.tdi-sec-ic svg { width: 15px; height: 15px; }
-.tdi-sec-tx { display: flex; flex-direction: column; gap: 0; min-width: 0; }
-.tdi-sec-tx b { font-family: var(--font-family); font-size: 0.8rem; font-weight: 750; color: #1a2740; line-height: 1.3; }
-.tdi-sec-tx em { font-style: normal; font-family: var(--font-family); font-size: 0.71rem; color: #76829b; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.tdi-foot {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
-  margin-top: 0.95rem; border-top: 1px solid #dbe4f3; padding-top: 0.75rem;
-}
-.tdi-meta { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-family); font-size: 0.74rem; font-weight: 600; color: #7c8aa5; }
-.tdi-meta-spark { color: #3d5da8; font-size: 0.8rem; line-height: 1; }
 /* CTA reads as a real button — the card's one clear action. */
-.tdi-cta {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 8px 16px; border-radius: 999px; background: #1d3a6b; color: #fff;
-  font-family: var(--font-family); font-size: 0.84rem; font-weight: 700; white-space: nowrap;
-  transition: background .14s;
-}
-.tdi-cta svg { flex: none; transition: transform .14s ease; }
-@media (hover: hover) { .tdi-card:hover .tdi-cta { background: #16305c; } }
 
 /* ── Landing: gateway cards (Web Resources / AI Prompts) ─── */
-.topic-gateways { display: grid; grid-template-columns: 1fr; gap: 0.8rem; margin-top: 1.25rem; min-width: 0; }
-@media (min-width: 720px) { .topic-gateways { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.4rem; } }
-.tg-card {
-  display: flex; align-items: center; gap: 12px; min-width: 0;
-  padding: 0.85rem 1rem; border: 1px solid #e4eaf3; border-radius: 14px; background: #fff;
-  text-decoration: none; transition: border-color .15s, box-shadow .15s;
-}
-@media (hover: hover) {
-  .tg-card:hover { border-color: #b9cbeb; box-shadow: 0 10px 22px -16px rgba(31, 49, 99, 0.3); text-decoration: none; }
-  .tg-card:hover .tg-arrow { color: #1d4ed8; transform: translateX(2px); }
-  .tg-card:hover .tg-name { color: #1d4ed8; }
-}
-.tg-ic {
-  flex: none; display: inline-flex; align-items: center; justify-content: center;
-  width: 38px; height: 38px; border-radius: 10px; background: #eef3fc; color: #2c4f9e;
-}
-.tg-ic svg { width: 19px; height: 19px; }
-.tg-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.tg-name { font-family: var(--font-family); font-size: 0.95rem; font-weight: 750; color: #1a2740; transition: color .12s; }
-.tg-sub { font-family: var(--font-family); font-size: 0.78rem; color: #76829b; line-height: 1.4; }
-.tg-arrow { flex: none; margin-left: auto; color: #a8b4c9; transition: color .12s, transform .14s ease; }
 
 /* ── Landing: news feed under a homepage-style header ─── */
 .topic-home .topic-news-wrap { margin-top: 2.3rem; width: 100%; }
-.newsfeed-kicker {
-  display: block; margin-bottom: 2px;
-  font-family: var(--font-family); font-size: 0.72rem; font-weight: 750;
-  letter-spacing: 0.07em; text-transform: uppercase; color: #8a98b0;
-}
 /* The old topic pages hid the feed header (the tab already named the section);
    the new landing needs it visible again — same look as the homepage head.
    !important counters the legacy `#topic-tab-body #section-newsfeed
@@ -18583,32 +17903,15 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
   display: block; font-family: var(--font-family); font-size: 0.78rem; font-weight: 400;
   color: #76829b; line-height: 1.4; margin-top: 2px;
 }
-.tp-models { margin-top: 2.1rem; }
 
 @media (max-width: 560px) {
   .tdi-card { padding: 1rem 1rem 0.85rem; border-radius: 16px; }
-  .tdi-parts { gap: 10px; }
-  .tdi-part { font-size: 0.74rem; }
-  .tg-card { padding: 0.8rem 0.85rem; }
   .topic-home .topic-news-wrap { margin-top: 1.4rem; }
 }
 
 /* ═══ Daily Intelligence page (revamp763) ════════════════════════════════════ */
 .di-page { display: flex; flex-direction: column; min-width: 0; width: 100%; }
 .di-head { padding: 0 2px 1.1rem; border-bottom: 1.5px solid #d3d9e4; margin-bottom: 1.4rem; }
-.di-kicker {
-  display: inline-flex; align-items: center; gap: 7px; margin-bottom: 0.5rem;
-  padding: 4px 11px; border-radius: 999px; background: #1d3a6b; color: #fff;
-  font-family: var(--font-family); font-size: 0.7rem; font-weight: 750;
-  letter-spacing: 0.06em; text-transform: uppercase;
-}
-.di-kicker-spark { color: #8ab4ff; font-size: 0.8rem; line-height: 1; }
-.di-title {
-  margin: 0 0 0.4rem; font-family: var(--font-display);
-  font-size: clamp(1.4rem, 1.15rem + 1vw, 1.85rem); font-weight: 800;
-  letter-spacing: -0.024em; line-height: 1.15; color: #16233d;
-}
-.di-intro { margin: 0; font-family: var(--font-family); font-size: 0.92rem; line-height: 1.55; color: #5b6c8c; max-width: 76ch; }
 .di-meta {
   display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-top: 0.7rem;
   font-family: var(--font-family); font-size: 0.74rem; font-weight: 600; color: #94a1b5;
@@ -18617,18 +17920,6 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 .di-meta-ai svg { width: 11px; height: 11px; }
 .di-meta-sep { color: #c3cbd8; }
 /* Jump chips under the page head — one per section, accent-dotted. */
-.di-jumps { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 0.85rem; }
-.di-jump {
-  display: inline-flex; align-items: center; gap: 7px; padding: 5px 13px;
-  border: 1px solid #dde3ee; border-radius: 999px; background: #fff; cursor: pointer;
-  font-family: var(--font-family); font-size: 0.78rem; font-weight: 650; color: #34405a;
-  transition: border-color .12s, color .12s, background .12s;
-  --di-accent: #2563eb;
-}
-.di-jump--amber { --di-accent: #d97706; }
-.di-jump--teal  { --di-accent: #0d9488; }
-.di-jump-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--di-accent); flex: none; }
-@media (hover: hover) { .di-jump:hover { border-color: color-mix(in srgb, var(--di-accent) 45%, #fff); color: var(--di-accent); background: #fbfcfe; } }
 .di-body { display: flex; flex-direction: column; gap: 1.3rem; min-width: 0; }
 /* Each section is its own card with a slim accent bar on top — the page reads
    as three clear chapters instead of one continuous scroll. */
@@ -18669,13 +17960,6 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
   border-radius: 10px; padding: 10px 13px; margin-bottom: 9px;
 }
 /* Curated links — an OPEN, visible list (never buried in an accordion). */
-.di-reads { margin-top: 1rem; }
-.di-reads-label {
-  margin-bottom: 6px; font-family: var(--font-family); font-size: 0.7rem; font-weight: 750;
-  letter-spacing: 0.07em; text-transform: uppercase; color: #8a98b0;
-}
-.di-reads-list { display: grid; grid-template-columns: 1fr; gap: 7px; }
-@media (min-width: 900px) { .di-reads-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } }
 .di-read {
   display: flex; align-items: center; gap: 10px; padding: 9px 12px; min-width: 0;
   border: 1px solid #e8edf5; border-radius: 10px; background: #fbfcfe;
@@ -18723,12 +18007,6 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 /* ═══ Daily Intelligence v3 + topic landing two-column top (revamp765) ═══════ */
 /* Shared topic-section header lockup — kicker + icon-chip title, matching the
    news feed head so every topic-page section speaks one language. */
-.tsec-head { margin: 0 0 2px; padding: 0 2px 12px; border-bottom: 1px solid #e4e8f0; }
-.tsec-kicker {
-  display: block; margin-bottom: 2px;
-  font-family: var(--font-family); font-size: 0.72rem; font-weight: 750;
-  letter-spacing: 0.07em; text-transform: uppercase; color: #8a98b0;
-}
 .tsec-title {
   display: flex; align-items: center; margin: 0;
   font-family: var(--font-display); font-size: 1.24rem; font-weight: 800;
@@ -18744,13 +18022,8 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 /* Landing top: DI (with header) left, gateway cards in a side column right. */
 .topic-top { display: flex; flex-direction: column; gap: 1.1rem; min-width: 0; }
 .topic-top-main { min-width: 0; }
-.topic-gateways--side { display: flex; flex-direction: column; gap: 0.8rem; margin-top: 0; }
-@media (min-width: 720px) and (max-width: 1023.98px) {
-  .topic-gateways--side { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
-}
 @media (min-width: 1024px) {
   .topic-top { display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 1.4rem; align-items: end; }
-  .topic-gateways--side { justify-content: flex-end; }
 }
 
 /* DI landing card v3 — title + date INSIDE the card, summary, then a plain
@@ -18770,7 +18043,6 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 @media (hover: hover) { .tdi-card--v3:hover .tdi-go { color: #1d4ed8; } .tdi-card--v3:hover .tdi-go svg { transform: translateX(2px); } }
 
 /* ── DI page v3 ─── */
-.di-head .tsec-head { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
 .di-head { padding-bottom: 1rem; }
 .di-datebar {
   display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 0.55rem;
@@ -18790,10 +18062,6 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 }
 .di-prov2 svg { width: 11px; height: 11px; }
 .di-body { gap: 1.6rem; }
-.di-eyebrow {
-  margin-bottom: 0.5rem; font-family: var(--font-family); font-size: 0.72rem; font-weight: 750;
-  letter-spacing: 0.07em; text-transform: uppercase; color: #8a98b0;
-}
 .di-ov { min-width: 0; }
 .di-ov-body { font-size: 0.96rem; line-height: 1.65; color: #2b3a58; }
 .di-ov-body p { margin: 0 0 0.8em; }
@@ -18819,7 +18087,6 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 .dib-src span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dib-src svg { flex: none; width: 11px; height: 11px; color: #a8b4c9; }
 @media (hover: hover) { .dib-src:hover { background: #fff; border-color: #b9cbeb; color: #1d4ed8; text-decoration: none; } .dib-src:hover svg { color: #1d4ed8; } }
-.di-more { border-top: 1.5px solid #e4e8f0; padding-top: 1.2rem; min-width: 0; }
 @media (max-width: 560px) {
   .di-lede { font-size: 0.95rem; }
   .di-datebar { font-size: 0.88rem; }
@@ -18927,8 +18194,6 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
   /* Both columns stretch to the same height: the DI card fills its column and
      each gateway card grows equally, so card top/bottom edges align. */
   .topic-top { align-items: stretch !important; gap: 1.75rem !important; }
-  .topic-gateways--side { justify-content: stretch; }
-  .topic-gateways--side .tg-card { flex: 1 1 0; }
 }
 
 /* ═══ Topic news-feed polish (revamp768) ═════════════════════════════════════ */
@@ -18936,7 +18201,6 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
 .newsfeed-head--home .newsfeed-title {
   display: flex !important; align-items: center !important; gap: 9px !important; line-height: 1.2;
 }
-.newsfeed-head--home .newsfeed-brandic { margin-right: 0; width: 28px; height: 28px; }
 .newsfeed-head--home .newsfeed-title-main { transform: none !important; line-height: 1.2; }
 /* Topic head: match the other section titles' weight, a smidge smaller. The
    ID-scoped selector beats the base .newsfeed-title rules that kept winning. */
@@ -18974,24 +18238,7 @@ body.home-search .home-search-hero .search-panel-input { height: 52px !important
 .hf-cta { font-size: 0.88rem; font-weight: 750; }
 
 /* ── Topic gateway cards v2: icon+title row, sub, then a View link ── */
-.tg-card--v2 { display: flex; flex-direction: column; align-items: stretch; gap: 0; padding: 0.9rem 1.05rem 0.8rem; }
-.tg-card--v2 .tg-titlerow { display: flex; align-items: center; gap: 8px; min-width: 0; }
-.tg-card--v2 .tg-ic { width: 26px; height: 26px; border-radius: 7px; }
-.tg-card--v2 .tg-ic svg { width: 14px; height: 14px; }
-.tg-card--v2 .tg-name { font-size: 0.98rem; }
-.tg-card--v2 .tg-sub { display: block; margin: 5px 0 0; }
-.tg-card--v2 .tg-link {
-  display: inline-flex; align-items: center; gap: 5px; margin-top: 9px;
-  font-family: var(--font-family); font-size: 0.82rem; font-weight: 750; color: #3d5da8;
-  white-space: nowrap;
-}
-.tg-card--v2 .tg-link svg { flex: none; width: 13px; height: 13px; transition: transform .14s ease; }
-@media (hover: hover) {
-  .tg-card--v2:hover .tg-link { color: #1d4ed8; }
-  .tg-card--v2:hover .tg-link svg { transform: translateX(2px); }
-}
 /* In the stretched side column, the link pins to the card bottom. */
-@media (min-width: 1024px) { .tg-card--v2 .tg-link { margin-top: auto; padding-top: 9px; } }
 
 /* ── News heads: one title treatment everywhere, slightly weightier rule ── */
 #topic-tab-body #section-newsfeed .newsfeed-head--home .newsfeed-title,
@@ -19172,7 +18419,6 @@ body.home-search #section-newsfeed .newsfeed-head--home,
       heads carry (#img10). */
 .aii-nav-dd-trending .aii-nav-dd-subbar,
 .aii-nav-dd-trending .tlm-controlbar { border-bottom: 2px solid #e0e5ee !important; }
-.trend-earlier-head { border-bottom: 2px solid #e0e5ee !important; }
 
 /* Row hover MEETS the hairlines above and below rather than floating inside
    them (revamp765's rounded inset is retired). The 1px bleed covers the
@@ -19381,16 +18627,11 @@ body.app-mode:not(.home-search):has(.topic-home) #content {
 .tdi-card--v3 .tdi-go svg, .tpr-go svg { width: 14px; height: 14px; }
 
 /* ── Daily Intelligence: a subtext to match AI Prompts, then the edition line ── */
-.tdi-sub {
-  margin: 0 0 0.7rem; font-family: var(--font-family);
-  font-size: 0.92rem; line-height: 1.55; color: #42506b;
-}
 .tdi-card--v3 .tdi-date {
   display: block; margin: 0 0 0.5rem;
   font-family: var(--font-family); font-size: 0.78rem; font-weight: 600;
   letter-spacing: 0.005em; color: #6b7a94;
 }
-.tdi-card.is-open .tdi-sub { display: none; }
 
 /* ── AI Prompts: teal, not purple — it sits apart from the navy briefing card
       without reading as a second "AI" accent (#img33) ── */
@@ -19427,7 +18668,7 @@ body.app-mode:not(.home-search):has(.topic-home) #content {
 /* ── Subtexts: weightier and a step down in size, so the line under the title
       is clearly a LABEL and not more body copy (the briefing summary below it
       stays at 0.92rem/regular). ── */
-.tdi-sub, .tpr-sub {
+.tpr-sub {
   font-size: 0.875rem !important; font-weight: 620 !important;
   color: #3d4c68 !important; letter-spacing: -0.003em;
 }
@@ -19608,7 +18849,7 @@ body.app-mode:not(.home-search):has(.topic-home) #content {
   font-size: clamp(1.16rem, 1.02rem + 0.6vw, 1.36rem);
 }
 @media (max-width: 640px) {
-  .tdi-sub, .tpr-sub { font-size: 0.82rem !important; }
+  .tpr-sub { font-size: 0.82rem !important; }
 }
 
 /* ── Both CTAs read heavy (#img43). Same colours — lighter type, smaller
@@ -19712,7 +18953,7 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 
 /* The teaser/list the panel supersedes collapses rather than snapping to
    display:none, which used to shrink the card a beat before it grew. */
-.tdi-card--v3 .tdi-summary, .tdi-sub, .tpr-sub, .tpr-list {
+.tdi-card--v3 .tdi-summary, .tpr-sub, .tpr-list {
   overflow: hidden;
   transition:
     opacity .2s ease,
@@ -19720,8 +18961,7 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
     margin .38s cubic-bezier(.22, .61, .21, 1);
   max-height: 30em;
 }
-.tdi-card.is-open .tdi-summary, .tdi-card.is-open .tdi-sub,
-.tpr-card.is-open .tpr-sub, .tpr-card.is-open .tpr-list {
+.tdi-card.is-open .tdi-summary, .tpr-card.is-open .tpr-sub, .tpr-card.is-open .tpr-list {
   display: block; opacity: 0; max-height: 0;
   margin-top: 0; margin-bottom: 0;
 }
@@ -19737,8 +18977,7 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tdi-expand, .tpr-expand, .tdi-expand-inner, .tpr-expand-inner,
-  .tdi-card--v3 .tdi-summary, .tdi-sub, .tpr-sub, .tpr-list { transition: none !important; }
+  .tdi-expand, .tpr-expand, .tdi-expand-inner, .tpr-expand-inner, .tdi-card--v3 .tdi-summary, .tpr-sub, .tpr-list { transition: none !important; }
   .topic-top.is-di-open .tpr-card, .topic-top.is-pr-open .tdi-card { animation: none !important; }
 }
 
@@ -19746,21 +18985,6 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
       spark and muted line the news insights and trend summaries carry. It
       collapses with the rest of the teaser when the full brief opens, which
       has its own provenance line. ── */
-.tdi-cardprov {
-  display: flex; align-items: center; gap: 6px;
-  margin: 0 0 0.55rem; overflow: hidden;
-  font-family: var(--font-family); font-size: 0.72rem; font-weight: 500;
-  color: var(--color-text-muted);
-  transition:
-    opacity .2s ease,
-    max-height .38s cubic-bezier(.22, .61, .21, 1),
-    margin .38s cubic-bezier(.22, .61, .21, 1);
-  max-height: 4em;
-}
-.tdi-cardprov-ic { flex: none; width: 12px; height: 12px; fill: #2563eb; display: block; }
-.tdi-card.is-open .tdi-cardprov {
-  opacity: 0; max-height: 0; margin-top: 0; margin-bottom: 0;
-}
 
 /* ═══ revamp787 ══════════════════════════════════════════════════════════════
    The OPEN Daily Intelligence card gets a proper masthead, and the briefing
@@ -19787,18 +19011,8 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 /* The bottom pill is redundant once the header carries the close. */
 .tdi-card.is-open .tdi-go { display: none; }
 
-.tdi-topicname {
-  overflow: hidden; max-height: 0; opacity: 0; margin: 0;
-  font-family: var(--font-display); font-size: 1.02rem; font-weight: 600;
-  letter-spacing: -0.012em; color: #55668c;
-  transition: opacity .24s ease .1s, max-height .38s cubic-bezier(.22,.61,.21,1), margin .38s cubic-bezier(.22,.61,.21,1);
-}
-.tdi-card.is-open .tdi-topicname { max-height: 3em; opacity: 1; margin: 0 0 0.55rem; }
-
 /* Open: the subtext and the AI label STAY (they lead the brief), and the
    big stamp lands under them. */
-.tdi-card.is-open .tdi-sub,
-.tdi-card.is-open .tdi-cardprov { opacity: 1; max-height: 8em; margin-bottom: 0.55rem; }
 .tdi-date--lg { display: none !important; }
 .tdi-card.is-open .tdi-date--lg {
   display: inline-flex !important;
@@ -19821,8 +19035,6 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 
 /* ── More Coverage: no rule above the section, a lighter one under its title,
       and rows tinted INTO the card rather than punched out of it. ── */
-.di-more { border-top: 0 !important; padding-top: 0.2rem !important; }
-.di-more .di-sectitle { border-bottom-width: 1px; border-bottom-color: #dde4ef; }
 .di-read {
   background: rgba(255, 255, 255, 0.45) !important;
   border-color: color-mix(in srgb, #172554 8%, transparent) !important;
@@ -19845,7 +19057,7 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 /* ── revamp787d: the card sublabels came out heavy at 620 (#img60). 540 still
       separates them from the 400-weight body copy beneath, which was the
       point of adding weight in the first place. ── */
-.tdi-sub, .tpr-sub { font-weight: 540 !important; }
+.tpr-sub { font-weight: 540 !important; }
 
 /* ── revamp787e: prompt rows down a notch in size, and a hair in weight
       (#img61). ── */
@@ -19912,13 +19124,6 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
       label rather than a stray line of body text (#img68). Tinted to the
       spark's own blue, and hugging its text — the card is a flex column, so
       it needs align-self or it stretches edge to edge. ── */
-.tdi-cardprov {
-  display: inline-flex; align-self: flex-start; width: auto;
-  padding: 3px 10px 3px 8px; border-radius: 999px;
-  border: 1px solid color-mix(in srgb, #2563eb 13%, transparent);
-  background: color-mix(in srgb, #2563eb 6%, #fff);
-  color: #55668c; font-weight: 550;
-}
 
 /* ═══ revamp789 ══════════════════════════════════════════════════════════════
    Expanded-briefing header rhythm, and a proper close at the foot. */
@@ -19934,13 +19139,6 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 /* ── Header stack tightens: topic name up under the title, subtext up under
       the topic name, and the AI chip keeps its ground when open. ── */
 .tdi-card.is-open .tdi-head { margin-bottom: 0.32rem; }
-.tdi-card.is-open .tdi-topicname { margin: 0 0 0.3rem; }
-.tdi-card.is-open .tdi-sub { margin-bottom: 0.5rem; }
-.tdi-card.is-open .tdi-cardprov {
-  background: color-mix(in srgb, #2563eb 6%, #fff);
-  border: 1px solid color-mix(in srgb, #2563eb 13%, transparent);
-  padding: 3px 10px 3px 8px; border-radius: 999px;
-}
 /* The panel's own rule sat directly under the edition stamp, which already
    closes the header block. */
 .tdi-card.is-open .tdi-expand {
@@ -19956,8 +19154,6 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 
 /* ── More Coverage: tighter off the last briefing, closed with a rule, then
       the bottom close (#img72). ── */
-.di-more { margin-top: -0.5rem; }
-.di-more .di-reads-list { padding-bottom: 1.15rem; border-bottom: 1px solid #dde4ef; }
 .tdi-closefoot { display: none; padding: 1.35rem 0 0.35rem; justify-content: center; }
 .tdi-card.is-open .tdi-closefoot { display: flex; }
 .tdi-closefoot-btn {
@@ -19980,23 +19176,12 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 
 /* ── The label reads as a tag, not a pill button (#img74): a slightly darker
       ground than the card itself, squared off to a soft 6px. ── */
-.tdi-cardprov,
-.tdi-card.is-open .tdi-cardprov {
-  border-radius: 6px !important;
-  border: 0 !important;
-  background: color-mix(in srgb, #172554 6%, transparent) !important;
-  padding: 4px 9px 4px 8px !important;
-  color: #5b6a8b;
-}
 
 /* ── Expanded, the label belongs UNDER the edition stamp (#img76). Flex order
       does it without moving the markup, which keeps both stamps filling from
       the same place. ── */
 .tdi-card.is-open .tdi-head { order: 0; }
-.tdi-card.is-open .tdi-topicname { order: 1; }
-.tdi-card.is-open .tdi-sub { order: 2; }
 .tdi-card.is-open .tdi-date--lg { order: 3; }
-.tdi-card.is-open .tdi-cardprov { order: 4; margin-bottom: 0.1rem; }
 .tdi-card.is-open .tdi-summary { order: 5; }
 .tdi-card.is-open .tdi-go { order: 6; }
 .tdi-card.is-open .tdi-expand { order: 7; }
@@ -20008,15 +19193,6 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 
       The stamp and the close share a single grid cell, so they cross-fade in
       place and the header never reflows. ── */
-.tdi-headslot { display: grid; margin-left: auto; }
-.tdi-headslot > * { grid-area: 1 / 1; justify-self: end; align-self: center; }
-.tdi-headslot .tdi-date,
-.tdi-headslot .tdi-headclose {
-  transition: opacity .24s ease;
-}
-.tdi-headslot .tdi-headclose { display: inline-flex !important; opacity: 0; pointer-events: none; }
-.tdi-card.is-open .tdi-headslot .tdi-date { display: inline-flex !important; opacity: 0; pointer-events: none; }
-.tdi-card.is-open .tdi-headslot .tdi-headclose { opacity: 1; pointer-events: auto; transition-delay: .1s; }
 
 /* The big stamp grows in rather than appearing. */
 .tdi-date--lg {
@@ -20107,26 +19283,13 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
    order is already right in each state — the revamp790 flex-order shuffle
    isn't needed and is retired below. */
 
-.tdi-subrow {
-  display: flex; align-items: center; flex-wrap: wrap;
-  gap: 0.3rem 0.7rem; margin: 0 0 0.55rem;
-}
-.tdi-subrow .tdi-sub { margin: 0 !important; }
-.tdi-cardprov--stack { display: none !important; }
-.tdi-card.is-open .tdi-cardprov--inline { display: none !important; }
-.tdi-card.is-open .tdi-cardprov--stack { display: inline-flex !important; margin: 0 0 0.2rem; }
-
 /* Open: the topic name is gone (the page title above already names it), so the
    sublabel tucks straight under the lockup. */
-.tdi-topicname { display: none !important; }
 .tdi-card.is-open .tdi-head { margin-bottom: 0.45rem; }
-.tdi-card.is-open .tdi-subrow { margin-bottom: 0.6rem; }
 
 /* Order is natural again in both states. */
 .tdi-card.is-open .tdi-head,
-.tdi-card.is-open .tdi-sub,
 .tdi-card.is-open .tdi-date--lg,
-.tdi-card.is-open .tdi-cardprov,
 .tdi-card.is-open .tdi-summary,
 .tdi-card.is-open .tdi-go,
 .tdi-card.is-open .tdi-expand { order: 0; }
@@ -20182,8 +19345,6 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 
 /* ── revamp793b: the AI tag belongs to the brief, not the teaser — hidden on
       the closed card (#img93), kept in the expanded view (#img94). ── */
-.tdi-cardprov--inline { display: none !important; }
-.tdi-subrow { gap: 0; }
 
 /* ═══ revamp794 ══════════════════════════════════════════════════════════════
    Prompt list alignment + connected columns, and darker briefing titles. */
@@ -20242,8 +19403,6 @@ body:has(.topic-home) .topic-bodyhead { margin-bottom: 1rem; }
 
 /* ── Prompt library: an OPEN topic accordion tints its header, so it's obvious
       which one you're inside (from the earlier #img90/92). ── */
-.pdir-acc.is-open > .pdir-accsum,
-.aii-fi-sec .pdir-acc.is-open > .pdir-accsum { background: #eef2f9 !important; }
 
 /* ── revamp795d: the sticky head's white ground is set by a
       .aii-nav-dd:not(…):not(…) selector at (0,4,0), which outranked the
@@ -20320,21 +19479,6 @@ body.home-search #section-newsfeed .news-list .news-card:first-child .news-card-
 
 /* ── Topic prompt list header (#img120/121): a general back link with a little
       more weight, and a ✕ squared up with it on the right. ── */
-.pdir-topicbar {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 12px; margin-bottom: 2px;
-}
-.pdir-topicback { font-weight: 600 !important; }
-.pdir-topicclose {
-  flex: none; display: inline-flex; align-items: center; justify-content: center;
-  width: 30px; height: 30px; border-radius: 9px; cursor: pointer;
-  border: 1px solid color-mix(in srgb, #172554 11%, transparent);
-  background: rgba(255, 255, 255, 0.7); color: #55668c;
-  transition: background .14s ease, color .14s ease, border-color .14s ease;
-}
-@media (hover: hover) {
-  .pdir-topicclose:hover { background: #fff; color: #172554; border-color: color-mix(in srgb, #172554 22%, transparent); }
-}
 
 /* ═══ revamp798 ══════════════════════════════════════════════════════════════
    The condensed head IS the topic-page subnav: icon + name on the left, the
@@ -20446,7 +19590,6 @@ body.home-search #section-newsfeed .news-list .news-card:first-child .news-card-
       margin-left:auto on its slot. An auto margin right-aligns a flex item
       even when it's alone on a wrapped line; space-between handles both
       states (beside the title when they fit, flush left when they don't). ── */
-.tdi-headslot { margin-left: 0 !important; align-self: center !important; }
 .tdi-head { justify-content: space-between !important; align-items: center !important; flex-wrap: wrap; }
 
 /* ── revamp806: home hero + trending spacing, measured on prod.
@@ -20515,7 +19658,7 @@ body.home-search.app-mode.sticky-always.has-subnav #content {
   .tdi-card--v3 .tdi-card-title, .tpr-card-title { font-size: 1.02rem !important; }
   .tdi-card--v3 .tdi-head .tdi-date { font-size: 0.68rem !important; padding: 3px 7px !important; }
   .tdi-card--v3 .tdi-head { margin-bottom: 0.35rem !important; }
-  .tdi-sub, .tpr-sub { font-size: 0.8rem !important; margin-bottom: 0.4rem !important; }
+  .tpr-sub { font-size: 0.8rem !important; margin-bottom: 0.4rem !important; }
   .tdi-card--v3 .tdi-summary { font-size: 0.85rem !important; }
   .tpr-row-btn { font-size: 0.85rem !important; }
   .tdi-card--v3, .tpr-card { padding: 0.9rem 1rem 0.85rem !important; }
@@ -20676,15 +19819,6 @@ body.pagenav-on #sub-header.pagenav { opacity: 1; visibility: visible; }
 }
 #nav-search.navbtn .navbtn-ico svg { width: 17px; height: 17px; }
 /* Four tiers: "Search any topic" → "Search topics" → "Search" → glyph only. */
-.nav-searchbar-ph .np-mid, .nav-searchbar-ph .np-short { display: none; }
-@media (max-width: 1180px) {
-  .nav-searchbar-ph .np-full { display: none; }
-  .nav-searchbar-ph .np-mid { display: inline; }
-}
-@media (max-width: 980px) {
-  .nav-searchbar-ph .np-mid { display: none; }
-  .nav-searchbar-ph .np-short { display: inline; }
-}
 @media (max-width: 720px) {
   #nav-search.navbtn.nav-searchbar { padding: 8px; border-radius: 10px; }
   #nav-search.navbtn .nav-searchbar-ph { display: none !important; }
@@ -20711,19 +19845,6 @@ body.pagenav-on #sub-header.pagenav { opacity: 1; visibility: visible; }
 /* ── revamp811c: an older rule at css ~14922 hides .np-full below 1440px and
       shows .np-short. With the new three-tier set that left ALL of them hidden
       at 1440, so the button rendered icon-only on desktop. These win. ── */
-.nav-searchbar-ph .np-full { display: inline !important; }
-.nav-searchbar-ph .np-mid, .nav-searchbar-ph .np-short { display: none !important; }
-@media (max-width: 1180px) {
-  .nav-searchbar-ph .np-full { display: none !important; }
-  .nav-searchbar-ph .np-mid { display: inline !important; }
-}
-@media (max-width: 980px) {
-  .nav-searchbar-ph .np-mid { display: none !important; }
-  .nav-searchbar-ph .np-short { display: inline !important; }
-}
-@media (max-width: 720px) {
-  .nav-searchbar-ph .np-short { display: none !important; }
-}
 
 /* ═══ revamp812 ══════════════════════════════════════════════════════════════
    The search page sits at the top and its subtext stops wrapping early. */
@@ -20840,7 +19961,6 @@ body.pagenav-on #sub-header.pagenav { opacity: 1; visibility: visible; }
   background: linear-gradient(180deg, #f2f5fc 0%, #eaf0fa 100%);
 }
 .tdi-card--home .tdi-summary { font-size: 0.88rem; }
-.tdi-card--home .tdi-sub { font-size: 0.82rem !important; }
 /* Open, the briefing needs the whole row rather than a third of it. */
 body.home-search .home-sections .home-featured:has(.tdi-card--home.is-open) {
   grid-template-columns: minmax(0, 1fr) !important;
@@ -20860,8 +19980,6 @@ body.home-search .home-featured:has(.tdi-card--home.is-open) .hf-card--prompts {
 #nav-search.navbtn .nav-searchbar-ph {
   flex: none !important; overflow: visible !important; text-overflow: clip !important;
 }
-@media (max-width: 1180px) { .nav-searchbar-ph .np-full { display: none !important; } .nav-searchbar-ph .np-mid { display: inline !important; } }
-@media (max-width: 1040px) { .nav-searchbar-ph .np-mid { display: none !important; } .nav-searchbar-ph .np-short { display: inline !important; } }
 @media (max-width: 900px) {
   #nav-search.navbtn.nav-searchbar { padding: 7px !important; border-radius: 9px; }
   #nav-search.navbtn .nav-searchbar-ph { display: none !important; }
@@ -20972,16 +20090,6 @@ body.pagenav-mode .aii-nav-dd .aii-nav-dd-body {
   margin: 0 0 0.8rem; max-width: 62ch;
   font-family: var(--font-family); font-size: 0.98rem; line-height: 1.6; color: #42506b;
 }
-.dih-prov { margin: 0; }
-.dih-sechead {
-  display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap;
-  padding-bottom: 0.55rem; margin-bottom: 1rem;
-  border-bottom: 1.5px solid #d3d9e4;
-}
-.dih-sectitle {
-  margin: 0; font-family: var(--font-display); font-size: 1.24rem; font-weight: 800;
-  letter-spacing: -0.018em; color: #16233d;
-}
 .dih-stamp { margin: 0 0 0 auto !important; }
 .dih-today { margin-bottom: 2.4rem; }
 .dih-today-card {
@@ -20991,44 +20099,6 @@ body.pagenav-mode .aii-nav-dd .aii-nav-dd-body {
 }
 
 /* By-topic grid: responsive cards, each carrying that topic's own summary. */
-.dih-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-@media (min-width: 700px) { .dih-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 1080px) { .dih-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-.dih-card {
-  display: flex; flex-direction: column; gap: 8px; min-width: 0;
-  padding: 1rem 1.1rem 0.95rem; border-radius: 14px;
-  border: 1px solid var(--color-surface-border); background: #fff;
-  text-decoration: none; color: inherit;
-  transition: border-color .14s ease, box-shadow .14s ease, transform .14s ease;
-}
-.dih-card-head { display: flex; align-items: center; gap: 9px; min-width: 0; }
-.dih-card-ic {
-  flex: none; display: inline-flex; align-items: center; justify-content: center;
-  width: 28px; height: 28px; border-radius: 8px;
-  background: color-mix(in srgb, #2f4d9e 10%, #fff); color: #2f4d9e;
-}
-.dih-card-ic svg { width: 16px; height: 16px; display: block; }
-.dih-card-name {
-  font-family: var(--font-display); font-size: 1.02rem; font-weight: 750;
-  letter-spacing: -0.014em; color: #16233d; min-width: 0;
-}
-.dih-card-sum {
-  font-family: var(--font-family); font-size: 0.88rem; line-height: 1.55; color: #46557a;
-  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
-}
-.dih-card-go {
-  display: inline-flex; align-items: center; gap: 6px; margin-top: auto; padding-top: 4px;
-  font-family: var(--font-family); font-size: 0.84rem; font-weight: 650; color: #2c4f9e;
-}
-.dih-card-go svg { flex: none; width: 13px; height: 13px; transition: transform .14s ease; }
-@media (hover: hover) {
-  .dih-card:hover {
-    border-color: color-mix(in srgb, #2f4d9e 34%, var(--color-surface-border));
-    box-shadow: 0 4px 14px -6px rgba(30, 58, 138, .2); transform: translateY(-1px);
-    text-decoration: none;
-  }
-  .dih-card:hover .dih-card-go svg { transform: translateX(3px); }
-}
 
 /* ═══ revamp819 ══════════════════════════════════════════════════════════════
    Hero type that fits one line, a search button sized like a button, and two
@@ -21229,97 +20299,25 @@ body.home-search .home-sections { padding-top: 2rem !important; }
   padding-bottom: 0.6rem; margin-bottom: 1.1rem;
   border-bottom: 2px solid #e0e5ee;
 }
-.dih-groupic {
-  flex: none; display: inline-flex; align-items: center; justify-content: center;
-  width: 30px; height: 30px; border-radius: 9px;
-  background: color-mix(in srgb, #2f4d9e 10%, #fff); color: #2f4d9e;
-}
-.dih-groupic svg { width: 17px; height: 17px; display: block; }
 .dih-grouptitle {
   margin: 0; font-family: var(--font-display); font-size: 1.28rem; font-weight: 800;
   letter-spacing: -0.02em; color: #16233d;
 }
-.dih-groupcount {
-  margin-left: auto; font-family: var(--font-family); font-size: 0.76rem;
-  font-weight: 650; letter-spacing: 0.03em; text-transform: uppercase; color: #94a1b5;
-}
 
 /* Cards carry their own edition stamp between the title and the summary. */
-.dih-card { gap: 7px; }
-.dih-card-stamp {
-  align-self: flex-start; margin: 0 !important;
-  padding: 3px 8px !important; font-size: 0.66rem !important;
-  border: 1px solid color-mix(in srgb, #172554 8%, transparent) !important;
-  background: rgba(255, 255, 255, 0.6) !important; border-radius: 7px;
-}
-.dih-card-stamp:empty { display: none; }
-.dih-card-go { text-decoration: none; }
 
 /* ═══ revamp821 ══════════════════════════════════════════════════════════════
    A hub card opens its briefing in place — full width, on the same unfurl the
    topic cards use. */
-.dih-card { position: relative; transition: border-color .18s ease, box-shadow .18s ease, background .18s ease; }
-.dih-card-head { position: relative; }
 
 /* The open card takes the whole row and reads as the focus of the band. */
-.dih-card.is-open {
-  grid-column: 1 / -1;
-  border-color: color-mix(in srgb, #2f4d9e 30%, transparent);
-  background: linear-gradient(180deg, #f6f9fd 0%, #eef3fb 100%);
-  box-shadow: 0 3px 18px -8px rgba(30, 58, 138, .22);
-}
-.dih-card.is-open .dih-card-sum { display: none; }
-.dih-card.is-open .dih-card-name { font-size: 1.12rem; }
 
 /* The panel unfurls from 0fr — no measuring, and it keeps easing as the
    fetched briefing lands. */
-.dih-card-expand {
-  display: grid; grid-template-rows: 0fr;
-  margin-top: 0; padding-top: 0;
-  border-top: 1.5px solid transparent;
-  transition:
-    grid-template-rows .46s cubic-bezier(.22, .61, .21, 1),
-    margin-top .46s cubic-bezier(.22, .61, .21, 1),
-    padding-top .46s cubic-bezier(.22, .61, .21, 1),
-    border-top-color .3s ease .1s;
-}
-.dih-card-expand-inner {
-  min-height: 0; overflow: hidden;
-  opacity: 0; transform: translateY(-7px);
-  transition: opacity .3s ease, transform .42s cubic-bezier(.22, .61, .21, 1);
-}
-.dih-card.is-open .dih-card-expand {
-  grid-template-rows: 1fr; margin-top: 0.9rem; padding-top: 0.9rem;
-  border-top-color: #d3d9e4;
-}
-.dih-card.is-open .dih-card-expand-inner {
-  opacity: 1; transform: none; transition-delay: .12s, .1s;
-}
 
 /* Read → Hide on the CTA, and a ✕ in the card's own header while open. */
-.dih-go-close { display: none; }
-.dih-card.is-open .dih-go-open { display: none; }
-.dih-card.is-open .dih-go-close { display: inline; }
-.dih-card-go {
-  display: inline-flex; align-items: center; gap: 6px;
-  border: 0; background: none; padding: 0; cursor: pointer;
-  font-family: var(--font-family); font-size: 0.84rem; font-weight: 650; color: #2c4f9e;
-}
-.dih-card-close {
-  display: none; align-items: center; gap: 6px; margin-left: auto; flex: none;
-  padding: 5px 10px; border-radius: 999px; cursor: pointer;
-  border: 1px solid color-mix(in srgb, #172554 11%, transparent);
-  background: rgba(255, 255, 255, 0.7);
-  font-family: var(--font-family); font-size: 0.74rem; font-weight: 620; color: #55668c;
-  transition: background .14s ease, color .14s ease, border-color .14s ease;
-}
-.dih-card.is-open .dih-card-close { display: inline-flex; }
 @media (hover: hover) {
-  .dih-card-close:hover { background: #fff; color: #172554; border-color: color-mix(in srgb, #172554 24%, transparent); }
   .dih-card:not(.is-open):hover { border-color: color-mix(in srgb, #2f4d9e 34%, var(--color-surface-border)); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .dih-card-expand, .dih-card-expand-inner { transition: none !important; }
 }
 
 /* ═══ revamp822 ══════════════════════════════════════════════════════════════
@@ -21443,7 +20441,6 @@ body.home-search .home-sections { padding-top: 2rem !important; }
 /* (the display:inline-flex/gap now lives on .dih-item-stamp above) */
 /* In brief state the card head's "12 briefings" counts something you are no
    longer looking at — the back bar already carries the parent. */
-.dih-group.is-brief .dih-groupcount { display: none; }
 
 
 /* ── revamp824 — hub section headers, topics toggle, parent link ─────────── */
@@ -21459,12 +20456,6 @@ body.home-search .home-sections { padding-top: 2rem !important; }
   background: linear-gradient(180deg, #f4f7fc 0%, #eef3fa 100%);
 }
 .dih-groupident { display: inline-flex; align-items: center; gap: 11px; min-width: 0; }
-.dih-groupic {
-  flex: none; display: inline-flex; align-items: center; justify-content: center;
-  width: 30px; height: 30px; border-radius: 9px;
-  background: #fff; color: #2f4d9e;
-  border: 1px solid color-mix(in srgb, #2f4d9e 15%, transparent);
-}
 .dih-grouptitle { margin: 0; font-size: 1.12rem; }
 .dih-group.is-brief .dih-grouphead {
   background: linear-gradient(180deg, #eaf0fb 0%, #e2ebf8 100%);
@@ -21620,7 +20611,6 @@ body.pagenav-mode.sticky-always #content { padding-top: calc(var(--nav-h) + 0.3r
   .tdi-card--home .tdi-go:hover svg { transform: translateX(2px); }
 }
 /* (#img263) The summary sat too far below the sublabel. */
-.tdi-card--home .tdi-subrow { margin-bottom: 0.32rem !important; }
 
 /* ═══ revamp835 — DI stamp stacks left + lighter, matched CTAs ═══════════════
    (#img269) In the stacked (phone) layout the pill now reads left-aligned —
@@ -21823,8 +20813,7 @@ body.home-search .home-sections .home-featured {
    (#img300) The "An AI-generated briefing…" sublabel gains weight across the
    homepage, hub and topic preview cards, and on the homepage card the summary
    is pulled up closer beneath it. */
-.tdi-sub, .tpr-sub { font-weight: 620 !important; }
-.tdi-card--home .tdi-subrow { margin-bottom: 0.1rem !important; }
+.tpr-sub { font-weight: 620 !important; }
 .tdi-card--home .tdi-summary { margin-top: 0 !important; }
 /* The open-state "large" stamp was rendering (flex, 0-height) while the card was
    closed, adding phantom space between the sublabel and the summary. */
@@ -21841,7 +20830,6 @@ body.home-search .home-sections .home-featured {
   flex-wrap: wrap; align-items: center;
 }
 .tdi-card--v3 .tdi-card-title { flex: 0 1 auto; }
-.tdi-card--v3 .tdi-head .tdi-headslot { margin-left: 0 !important; }
 .tdi-card--v3 .tdi-head .tdi-date { margin-left: 0 !important; }
 /* The stamp lives by the title at every width now — retire the below-sub reflow
    for these cards, and keep the head stamp visible even on narrow screens. */
@@ -21948,20 +20936,9 @@ body.home-search .home-sections .home-featured {
   line-height: 1.4; font-weight: 500; color: #b9c8e8;
 }
 /* Hub access-link — off the right of the title, right-aligned. */
-.tdi-card--hero2 .tdi-hublink {
-  margin-left: auto; flex: none; display: inline-flex; align-items: center; gap: 6px;
-  font-family: var(--font-family); font-size: 0.88rem; font-weight: 650;
-  color: #bcd3ff; text-decoration: none; white-space: nowrap;
-}
-.tdi-card--hero2 .tdi-hublink svg { width: 15px; height: 15px; transition: transform .14s ease; }
-@media (hover: hover) {
-  .tdi-card--hero2 .tdi-hublink:hover { color: #fff; }
-  .tdi-card--hero2 .tdi-hublink:hover svg { transform: translateX(3px); }
-}
 /* Close (open state) rides where the hub link was. */
 .tdi-card--hero2 .tdi-headclose { display: none !important; margin-left: auto; color: #cdd9f2; }
 .tdi-card--hero2.is-open .tdi-headclose { display: inline-flex !important; }
-.tdi-card--hero2.is-open .tdi-hublink { display: none !important; }
 
 /* ── Body ── */
 .tdi-card--hero2 .tdi-hero-body { padding: 0.95rem 1.25rem 1.1rem; background: transparent; }
@@ -22458,8 +21435,6 @@ body.home-search .home-sections .home-featured { margin-top: clamp(1.1rem, 2.4vw
 
 /* revamp892 — brief-level source list: real grounding citations that don't
    match any single claim still belong to the briefing as a whole. */
-.di-briefsrc { margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid var(--color-surface-border, #e4eaf3); }
-.di-briefsrc .dib-srcs { margin-top: 0.55rem; }
 
 /* ═══ revamp893 — Prompts landing: Featured + Build as a two-column top row ═══
    "Build a Prompt" moves out of the page header and becomes a compact card
@@ -22898,12 +21873,6 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 /* revamp903 — hub cards: the card title turned link-blue on hover (they're
    anchors), which read as a text link inside a card that is already clickable.
    Keep the card's own lift/border response; drop the blue on the title. */
-@media (hover: hover) {
-  .dih-card:hover .dih-card-name,
-  .dih-card:hover .dih-card-title { color: inherit !important; }
-  .dih-card:hover { text-decoration: none !important; }
-}
-.dih-card .dih-card-name, .dih-card .dih-card-title { transition: none !important; }
 
 /* ═══ revamp905 — search page: one stable layout, a real results header ══════
 
@@ -23050,13 +22019,6 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 .search-aii-host .aii-fi-sec { margin-top: 0.75rem !important; }
 
 /* ── Hub cards: no blue highlight on the active/selected card ── */
-.dih-card.is-active, .dih-card[aria-expanded="true"], .dih-card:focus-visible,
-.dih-items .dih-card.is-open {
-  background: #fff !important;
-  border-color: var(--color-surface-border) !important;
-}
-.dih-card.is-active .dih-card-name, .dih-card[aria-expanded="true"] .dih-card-name,
-.dih-items .dih-card.is-open .dih-card-name { color: inherit !important; }
 
 /* ── Hub, mobile: the Today card had a wrapper card around it. ── */
 @media (max-width: 720px) {
@@ -23093,20 +22055,17 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
    display headings; the main Prompts section uses a small caps label. Bring the
    topic page into line so the two read as the same component. */
 [data-prompts-host] .aii-fi-sectitle,
-.tai-acc-body .aii-fi-sectitle,
 .topic-prompts-host .aii-fi-sectitle {
   font-family: var(--font-family) !important;
   font-size: 0.74rem !important; font-weight: 700 !important;
   letter-spacing: 0.09em !important; text-transform: uppercase !important;
   color: #6f7d99 !important;
 }
-[data-prompts-host] .aii-fi-sechead,
-.tai-acc-body .aii-fi-sechead {
+[data-prompts-host] .aii-fi-sechead {
   margin-bottom: 0.5rem !important; padding-bottom: 0.45rem !important;
   border-bottom: 1px solid var(--color-surface-border) !important;
 }
-[data-prompts-host] .aii-fi-secsub,
-.tai-acc-body .aii-fi-secsub { display: none !important; }
+[data-prompts-host] .aii-fi-secsub { display: none !important; }
 
 /* First prompt row meets the rule above it (both columns). */
 .aii-fi-acclist > .aii-fi-acc:first-child,
@@ -23114,13 +22073,12 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 
 /* ── Prompts by Topic: nested subtopic list ──
    The rows were cramped against each other and against the parent head. */
-.pdir-acc.is-open > .pdir-accsum,
 .pdir-card.is-open > .pdir-cardhead {
   background: #e8edf6 !important; border-radius: 0 !important;
 }
 .pdir-grid { gap: 0 1.6rem !important; padding-top: 0.35rem !important; }
 .pdir-grid > * { padding-top: 0.62rem !important; padding-bottom: 0.62rem !important; }
-.pdir-cardbody, .pdir-acc-body { padding-top: 0.5rem !important; }
+.pdir-cardbody { padding-top: 0.5rem !important; }
 
 /* revamp911 — last nested row drops its rule (the next accordion's own top
    border already separates them, so the two stacked hairlines read as a
@@ -23129,14 +22087,14 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 .pdir-grid > *:last-child,
 .pdir-grid > *:nth-last-child(2):nth-child(3n+1),
 .pdir-grid > *:nth-last-child(3):nth-child(3n+1) { border-bottom: 0 !important; }
-.pdir-cardbody, .pdir-acc-body { padding-bottom: 0 !important; }
+.pdir-cardbody { padding-bottom: 0 !important; }
 
-.pdir-accsum, .pdir-cardhead, .aiidd-parent-head {
+.pdir-cardhead, .aiidd-parent-head {
   display: flex !important; align-items: center !important;
   padding-top: 0.85rem !important; padding-bottom: 0.85rem !important;
 }
-.pdir-accsum > *, .pdir-cardhead > *, .aiidd-parent-head > * { align-self: center !important; }
-.pdir-acc-name, .pdir-card-name { line-height: 1.2 !important; }
+.pdir-cardhead > *, .aiidd-parent-head > * { align-self: center !important; }
+.pdir-card-name { line-height: 1.2 !important; }
 
 /* revamp912 — first featured row alignment.
    revamp907 gave only :first-child reduced top padding to pull it up to the
@@ -23473,14 +22431,14 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 /* --- Nested subtopic cells: bigger label, tighter to the head above --- */
 .pdir-cell-name { font-size: 0.94rem !important; font-weight: 600 !important; }
 .pdir-grid { padding-top: 0 !important; }
-.pdir-cardbody, .pdir-acc-body { padding-top: 0.35rem !important; }
+.pdir-cardbody { padding-top: 0.35rem !important; }
 /* First row of the two-column prompt lists sits closer to its section label. */
 [data-prompts-host] .aii-fi-acclist,
 .search-aii-host .aii-fi-acclist { padding-top: 0.15rem !important; }
 [data-prompts-host] .aii-fi-sechead { margin-bottom: 0.4rem !important; }
 
 /* revamp924b — pull the first subtopic row closer to the head above it. */
-.pdir-cardbody, .pdir-acc-body { padding-top: 0.1rem !important; }
+.pdir-cardbody { padding-top: 0.1rem !important; }
 .pdir-grid > *:nth-child(-n+3) { padding-top: 0.4rem !important; }
 
 /* revamp925 — subtopic cells: the chevron sits with its label, not at the far
@@ -23517,15 +22475,6 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 }
 .pdir-card.is-headback > .pdir-headbar { grid-template-rows: 1fr; }
 .pdir-headbar > * { min-height: 0; }
-.pdir-headback {
-  display: inline-flex; align-items: center; gap: 6px;
-  margin: 0; padding: 0.7rem 1rem 0.1rem;
-  border: 0; background: none; cursor: pointer;
-  font-family: var(--font-family); font-size: 0.82rem; font-weight: 600;
-  color: #4a5a7d;
-}
-.pdir-headback svg { width: 14px; height: 14px; }
-@media (hover: hover) { .pdir-headback:hover { color: #1d4ed8; } }
 /* Header + bar read as one block while drilled in. */
 .pdir-card.is-topicview > .pdir-cardhead {
   border-radius: 0 !important;
@@ -23533,8 +22482,6 @@ body.home-search.app-mode .topic-layout.home-grid { gap: 1.6rem !important; }
 }
 .pdir-card.is-topicview > .pdir-headbar + .pdir-cardhead { padding-top: 0.35rem; }
 /* The body no longer carries its own title/back bar. */
-.pdir-topicview > .pdir-topicbar,
-.pdir-topicview > .pdir-topicname { display: none !important; }
 
 /* ═══ revamp927 — search-result prompt rows match the prompt library ═════════
    Measured side by side: the library row is 52px tall with a 13.28px label and

@@ -1,13 +1,35 @@
-// Dead-CSS purge tool (B4.5). Removes CSS whose class-prefix never appears in the
-// built bundle + index.html (= never applied to any element → dead). Keeps :not/:has/:is/:where
-// rules (dead-absence can flip their logic) and only-literal class names (validated: no computed
-// prefixes). Run: npm run bundle first (needs dist/), then: node scripts/purge-dead-css.js → writes
+// Dead-CSS purge tool (B4.5). Removes CSS whose class-prefix never appears in any
+// shipped artifact (= never applied to any element → dead). Keeps :not/:has/:is/:where
+// rules (dead-absence can flip their logic) and only-literal class names.
+// Run: npm run bundle first (needs dist/), then: node scripts/purge-dead-css.js → writes
 // css/styles.css.purged; review + mv over css/styles.css, rebuild, visual-regress. Requires postcss (devDep).
+//
+// ⚠ THE HAYSTACK MUST COVER EVERY SHIPPED ARTIFACT (revamp967). The original
+// version searched only dist/app.*.js + index.html, which by this point would
+// have wrongly purged 53 class prefixes:
+//   • the whole wiz-* / pb-* Prompt Builder, because revamp669f code-split
+//     prompt-generator into a LAZY CHUNK (dist/chunk.*.js) — not app.*.js;
+//   • prerender-seo, which only ever appears in the 99 prerender/*.html pages;
+//   • pm-*, search-featured/parent/subtopic, sidebar-shortcut, shortcut-name.
+// If code-splitting or a new HTML entry point is added later, add it here too.
+//
+// Verified safe to omit: admin.html (self-styled, references no site CSS) and
+// api/ + lib/ (emit no class names).
+//
+// Computed class names: checked at revamp967. Every dynamic case is
+// `class="literal-prefix${…}"`, so the 2-token prefix is still a literal in the
+// bundle. The genuinely computed `section-${tabId}` is a getElementById on an
+// ID, not a class. State toggles are `is-*`/`has-*`, covered by SKIP.
 const fs = require('fs');
+const path = require('path');
 const postcss = require('postcss');
 const CSS = 'css/styles.css';
-const BUNDLE = fs.readdirSync('dist').find(f => /^app\..*\.js$/.test(f));
-const hay = fs.readFileSync('dist/'+BUNDLE,'utf8') + fs.readFileSync('index.html','utf8');
+const parts = [];
+for (const f of fs.readdirSync('dist')) if (/\.js$/.test(f)) parts.push(fs.readFileSync(path.join('dist', f), 'utf8'));
+for (const f of ['index.html', '404.html']) if (fs.existsSync(f)) parts.push(fs.readFileSync(f, 'utf8'));
+if (fs.existsSync('prerender')) for (const f of fs.readdirSync('prerender')) if (f.endsWith('.html')) parts.push(fs.readFileSync(path.join('prerender', f), 'utf8'));
+const hay = parts.join('\n');
+console.log('haystack: ' + parts.length + ' files, ' + (hay.length/1024/1024).toFixed(1) + 'MB');
 const css = fs.readFileSync(CSS,'utf8');
 
 // --- compute dead 2-token prefixes: hyphenated class whose 2-token prefix never appears in bundle+html ---
