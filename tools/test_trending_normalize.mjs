@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import { normalizeTrending } from '../js/utils/trending-normalize.js';
+import { normalizeTrending } from '../lib/trending-normalize.js';
 
 // Two geos, one duplicate query (case-insensitive) → deduped, capped, ISO timestamp.
 const us = { trending_searches: [

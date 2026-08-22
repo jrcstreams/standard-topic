@@ -17,7 +17,7 @@
 // 500 — { error: "Server misconfiguration" }    (SERPAPI_API_KEY missing)
 // 502 — { error: "Upstream trends unavailable" } (SerpAPI non-2xx / network)
 
-const { normalizeTrending } = require('../js/utils/trending-normalize.js');
+const { normalizeTrending } = require('../lib/trending-normalize');
 const { getSql } = require('../lib/db');
 const { generateInsight } = require('../lib/insight-core');
 

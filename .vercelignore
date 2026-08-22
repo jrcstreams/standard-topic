@@ -17,3 +17,24 @@ db/
 tools/
 scripts/
 test/
+
+# ── Build INPUTS, never served (revamp964) ───────────────────────────────
+# index.html and 404.html reference /dist/ only; the bundle is built locally
+# by `npm run bundle` and committed, and package.json deliberately has no
+# `build` script (Vercel auto-runs that name — see the July incident). So the
+# raw sources below were being uploaded and publicly served on every deploy
+# while no browser ever requested them: ~2.4MB of unminified, commented source.
+#
+# ⚠ js/ is only safe to exclude because NOTHING in api/ or lib/ requires from
+# it. Deleting a js/ file on the assumption it was dead frontend code already
+# took /api/trending down once (it require()d js/utils/trending-normalize.js,
+# now correctly in lib/). If you ever add a backend require from js/, move the
+# module to lib/ instead of removing this line.
+css/
+js/
+
+# Source SVGs for the shortcut icon registry. renderIcon() emits inline SVG
+# from js/utils/shortcut-icons-registry.js, so these files are compile-time
+# input to tools/build_shortcut_registry.py and are never fetched at runtime
+# (js/utils/icons.js still declares ICON_PATH, which is dead).
+assets/shortcut-icons/
