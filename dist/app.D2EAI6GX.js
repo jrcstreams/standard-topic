@@ -1037,7 +1037,7 @@ ${k}`),w.length?w.join(`
           <button type="button" class="tdi-closefoot-btn" data-di-toggle>${t}<span>Close Briefing</span></button>
         </div>
       </div></div>
-    </div>`}var Ad='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M21.4 12h-2.2M4.8 12H2.6M18.6 5.4l-1.6 1.6M7 17l-1.6 1.6M18.6 18.6L17 17M7 7L5.4 5.4"/></svg>',Hd='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.2 14.4A8.6 8.6 0 0 1 9.6 3.8a8.6 8.6 0 1 0 10.6 10.6z"/></svg>';function za(e){let t=$d(e);if(!t)return"";let a=/night/i.test(t.edition);return`<span class="tdi-stamp-val">${z(t.day)}</span><span class="tdi-stamp-sep" aria-hidden="true"></span><span class="tdi-stamp-edwrap"><span class="tdi-stamp-ic tdi-stamp-ic--${a?"night":"morning"}" aria-hidden="true">${a?Hd:Ad}</span><span class="tdi-stamp-ed">${z(t.edition)}</span></span>`}function xn(e,t){e.innerHTML=`
+    </div>`}var Ad='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M21.4 12h-2.2M4.8 12H2.6M18.6 5.4l-1.6 1.6M7 17l-1.6 1.6M18.6 18.6L17 17M7 7L5.4 5.4"/></svg>',Hd='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.2 14.4A8.6 8.6 0 0 1 9.6 3.8a8.6 8.6 0 1 0 10.6 10.6z"/></svg>';function za(e){let t=$d(e);if(!t)return"";let a=/night/i.test(t.edition);return`<span class="tdi-stamp-val">${z(t.day)}</span><span class="tdi-stamp-sep" aria-hidden="true"></span><span class="tdi-stamp-edwrap"><span class="tdi-stamp-ed">${z(t.edition)}</span><span class="tdi-stamp-ic tdi-stamp-ic--${a?"night":"morning"}" aria-hidden="true">${a?Hd:Ad}</span></span>`}function xn(e,t){e.innerHTML=`
     <div class="ndp aii-nav-dd-pagelike ${t.className||""}">
       <div class="aii-nav-dd-inner">
         ${Ra()}
@@ -1539,23 +1539,23 @@ ${k}`),w.length?w.join(`
               <div class="hf-head">
                 <div class="hf-headrow">
                   <span class="hf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
-                  <h3 class="hf-title">Featured Topics</h3>
+                  <h3 class="hf-title">Topics</h3>
                 </div>
                 <p class="hf-sub">A quick way into the topics we cover most.</p>
               </div>
               <div class="hf-chips" data-hq-topics></div>
-              <div class="hf-foot"><button type="button" class="hf-cta" data-explore-topics>All topics${d}</button></div>
+              <div class="hf-foot"><button type="button" class="hf-cta" data-explore-topics>Access 100+ topic pages${d}</button></div>
             </section>
             <section class="hf-card hf-card--prompts" data-hf="prompts">
               <div class="hf-head">
                 <div class="hf-headrow">
                   <span class="hf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg></span>
-                  <h3 class="hf-title">Featured AI Prompts</h3>
+                  <h3 class="hf-title">AI Prompts</h3>
                 </div>
                 <p class="hf-sub">Ready-made prompts to run in any AI model.</p>
               </div>
               <div class="hf-chips" data-hq-prompts></div>
-              <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Access prompt library${d}</button></div>
+              <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Access library of 2500+ prompts${d}</button></div>
             </section>
           </div>
           <div class="home-main">
@@ -1566,7 +1566,7 @@ ${k}`),w.length?w.join(`
           </aside>
         </div>
       </div>
-    `,n0=xo(e.querySelector("#home-search-hero"),{mode:"inline"}),rr(e.querySelector("#home-trending"),{limit:14}),Cd(e.querySelector("[data-home-featbriefs]"),{title:"Featured AI Briefings",sub:"AI-generated briefings, refreshed morning and night.",icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.5 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-8"/><path d="M8 8h6M8 12h6M8 16h4"/><path d="M19.5 2.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z" fill="currentColor" stroke="none"/></svg>',moreHref:"#/intelligence",moreLabel:"All AI Briefings"});{let p=e.querySelector("[data-hq-topics]");if(p){let v=[];try{v=(nt()||[]).filter(y=>y&&y.slug&&y.slug!=="home").slice(0,12)}catch{}p.innerHTML=v.map(y=>`<a href="#/topic/${K(y.slug)}" class="hq-row"><span class="hq-row-ic" aria-hidden="true">${he(y.icon||"globe","")}</span><span class="hq-row-name">${z(y.name)}</span></a>`).join("")}let u=e.querySelector("[data-hq-prompts]");u&&le("/data/featured-prompts.json",{headers:{Accept:"application/json"}}).then(v=>v.ok?v.json():null).then(v=>{if(!v||!Array.isArray(v.featured))return;let y=[];for(let m of v.featured){if(y.length>=5)break;let M=[];try{M=Re(m.topic)||[]}catch{continue}let H=M.find(x=>x&&x.name===m.name);if(!(H&&H.prompt))continue;let q=we(m.topic);y.push({s:H,tn:q?q.name:"",slug:m.topic})}y.length&&(u.innerHTML=y.map((m,M)=>`<button type="button" class="hq-row hq-row--prompt" data-hq-prompt="${M}"><span class="hq-row-mark" aria-hidden="true"></span><span class="hq-row-name">${z(m.s.name)}</span></button>`).join(""),u.querySelectorAll("[data-hq-prompt]").forEach(m=>m.addEventListener("click",M=>{M.stopPropagation();let H=y[Number(m.dataset.hqPrompt)];H&&ud(H.slug,H.tn,H.s.name)})))}).catch(()=>{})}e.querySelector("[data-explore-topics]")?.addEventListener("click",p=>{p.preventDefault(),window.dispatchEvent(new CustomEvent("open-all-topics-modal"))}),e.querySelector("[data-explore-prompts]")?.addEventListener("click",p=>{p.preventDefault(),ie("#/prompts")})}else if(t&&!s){e.innerHTML=`
+    `,n0=xo(e.querySelector("#home-search-hero"),{mode:"inline"}),rr(e.querySelector("#home-trending"),{limit:14}),Cd(e.querySelector("[data-home-featbriefs]"),{title:"AI Briefings",sub:"AI-generated briefings, refreshed morning and night.",icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.5 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-8"/><path d="M8 8h6M8 12h6M8 16h4"/><path d="M19.5 2.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z" fill="currentColor" stroke="none"/></svg>',moreHref:"#/intelligence",moreLabel:"Access 200+ daily AI briefings"});{let p=e.querySelector("[data-hq-topics]");if(p){let v=[];try{v=(nt()||[]).filter(y=>y&&y.slug&&y.slug!=="home").slice(0,12)}catch{}p.innerHTML=v.map(y=>`<a href="#/topic/${K(y.slug)}" class="hq-row"><span class="hq-row-ic" aria-hidden="true">${he(y.icon||"globe","")}</span><span class="hq-row-name">${z(y.name)}</span></a>`).join("")}let u=e.querySelector("[data-hq-prompts]");u&&le("/data/featured-prompts.json",{headers:{Accept:"application/json"}}).then(v=>v.ok?v.json():null).then(v=>{if(!v||!Array.isArray(v.featured))return;let y=[];for(let m of v.featured){if(y.length>=5)break;let M=[];try{M=Re(m.topic)||[]}catch{continue}let H=M.find(x=>x&&x.name===m.name);if(!(H&&H.prompt))continue;let q=we(m.topic);y.push({s:H,tn:q?q.name:"",slug:m.topic})}y.length&&(u.innerHTML=y.map((m,M)=>`<button type="button" class="hq-row hq-row--prompt" data-hq-prompt="${M}"><span class="hq-row-mark" aria-hidden="true"></span><span class="hq-row-name">${z(m.s.name)}</span></button>`).join(""),u.querySelectorAll("[data-hq-prompt]").forEach(m=>m.addEventListener("click",M=>{M.stopPropagation();let H=y[Number(m.dataset.hqPrompt)];H&&ud(H.slug,H.tn,H.s.name)})))}).catch(()=>{})}e.querySelector("[data-explore-topics]")?.addEventListener("click",p=>{p.preventDefault(),window.dispatchEvent(new CustomEvent("open-all-topics-modal"))}),e.querySelector("[data-explore-prompts]")?.addEventListener("click",p=>{p.preventDefault(),ie("#/prompts")})}else if(t&&!s){e.innerHTML=`
       <div class="topic-layout topic-band topic-tabbed" id="topic-layout">
         <div class="topic-tabpanel" role="tabpanel">
           <div class="topic-tab-body layout-section" id="topic-tab-body"></div>

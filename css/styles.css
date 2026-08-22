@@ -24360,3 +24360,64 @@ body.home-search .home-sections .home-featbriefs { margin-top: 1.6rem !important
 }
 .home-featbriefs .hf-ic svg,
 .dih-group--featured .hf-ic svg { width: 17px !important; height: 17px !important; }
+
+/* revamp953 — the three homepage feature cards get a more prominent edge. The
+   1px hairline at ~9% was nearly invisible against the white band, so the cards
+   read as floating text rather than panels. */
+body.home-search .home-featured .hf-card,
+body.home-search .home-sections .home-featbriefs {
+  border: 1px solid color-mix(in srgb, #2f4d9e 20%, transparent) !important;
+  box-shadow: 0 6px 20px -14px rgba(31, 49, 99, 0.20) !important;
+}
+
+/* revamp953b — the hub's Featured Briefings section gets the same prominent
+   card edge as the homepage cards. */
+.dih-group.dih-group--featured {
+  border: 1px solid color-mix(in srgb, #2f4d9e 20%, transparent) !important;
+  box-shadow: 0 6px 20px -14px rgba(31, 49, 99, 0.20) !important;
+}
+
+/* ═══ revamp954 — expanded header: the stamp is inline text, not a pill ══════
+   In the open briefing the date/edition sat in its own bordered chip beside the
+   all-caps topic, so one line carried two different treatments. It now renders
+   as plain text in the same face, size, tracking and ink as the topic label,
+   with the sun/moon glyph trailing the edition. The collapsed preview card
+   keeps its pill. */
+.tdi-openhead-meta .tdi-date.tdi-date--open,
+.tdi-card--v3 .tdi-date.tdi-date--open,
+.tdi-card--hero2 .tdi-date.tdi-date--open,
+.dih-brief .tdi-date.tdi-date--open {
+  background: none !important; border: 0 !important;
+  padding: 0 !important; border-radius: 0 !important;
+  font-family: var(--font-family) !important;
+  font-size: 0.84rem !important; font-weight: 700 !important;
+  letter-spacing: 0.085em !important; text-transform: uppercase !important;
+  color: #52618a !important;
+}
+/* Separator between the topic and the stamp. */
+.tdi-openhead-meta .tdi-openhead-topic + .tdi-date--open::before {
+  content: ""; display: inline-block; width: 1px; height: 0.85em;
+  margin-right: 0.7rem; vertical-align: -0.1em;
+  background: color-mix(in srgb, #2f4d9e 22%, transparent);
+}
+.tdi-date--open .tdi-stamp-edwrap { display: inline-flex; align-items: center; gap: 6px; }
+.tdi-date--open .tdi-stamp-ic svg { width: 14px; height: 14px; }
+.tdi-date--open .tdi-stamp-ic--morning { color: #c98a2e; }
+.tdi-date--open .tdi-stamp-ic--night { color: #5b6b8c; }
+
+/* revamp954b — drop the short rule under the topic/date row. .tdi-openhead
+   carries its own border-bottom, and in the brief variants its box only spans
+   its content, so it drew a stub line above the full-width rule that already
+   closes the header. One rule is enough. */
+.dih-brief .tdi-openhead,
+.fb-brief .tdi-openhead,
+.tdi-openhead--hub {
+  border-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+.dih-brief-title, .fb-brieftitle {
+  border-bottom: 0 !important;
+  margin-bottom: 0.9rem !important;
+  padding-bottom: 0.9rem !important;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 14%, transparent) !important;
+}

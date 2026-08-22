@@ -1643,9 +1643,11 @@ function diEditionStampHTML(iso) {
   // The sun/moon glyph belongs to the EDITION, not the date (#img254) — so the
   // day sits first, then a separator, then the glyph + edition kept together in
   // one wrap (which lets the pill stack date-over-edition on narrow screens).
+  // revamp954: the sun/moon glyph TRAILS its edition text, so the row reads
+  // "Aug 22 · Morning Edition ☀" rather than leading with the icon.
   return `<span class="tdi-stamp-val">${escapeHTML(p.day)}</span>`
     + `<span class="tdi-stamp-sep" aria-hidden="true"></span>`
-    + `<span class="tdi-stamp-edwrap"><span class="tdi-stamp-ic tdi-stamp-ic--${night ? 'night' : 'morning'}" aria-hidden="true">${night ? DI_MOON : DI_SUN}</span><span class="tdi-stamp-ed">${escapeHTML(p.edition)}</span></span>`;
+    + `<span class="tdi-stamp-edwrap"><span class="tdi-stamp-ed">${escapeHTML(p.edition)}</span><span class="tdi-stamp-ic tdi-stamp-ic--${night ? 'night' : 'morning'}" aria-hidden="true">${night ? DI_MOON : DI_SUN}</span></span>`;
 }
 
 
@@ -4384,23 +4386,23 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               <div class="hf-head">
                 <div class="hf-headrow">
                   <span class="hf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
-                  <h3 class="hf-title">Featured Topics</h3>
+                  <h3 class="hf-title">Topics</h3>
                 </div>
                 <p class="hf-sub">A quick way into the topics we cover most.</p>
               </div>
               <div class="hf-chips" data-hq-topics></div>
-              <div class="hf-foot"><button type="button" class="hf-cta" data-explore-topics>All topics${HQ_ARROW}</button></div>
+              <div class="hf-foot"><button type="button" class="hf-cta" data-explore-topics>Access 100+ topic pages${HQ_ARROW}</button></div>
             </section>
             <section class="hf-card hf-card--prompts" data-hf="prompts">
               <div class="hf-head">
                 <div class="hf-headrow">
                   <span class="hf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg></span>
-                  <h3 class="hf-title">Featured AI Prompts</h3>
+                  <h3 class="hf-title">AI Prompts</h3>
                 </div>
                 <p class="hf-sub">Ready-made prompts to run in any AI model.</p>
               </div>
               <div class="hf-chips" data-hq-prompts></div>
-              <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Access prompt library${HQ_ARROW}</button></div>
+              <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Access library of 2500+ prompts${HQ_ARROW}</button></div>
             </section>
           </div>
           <div class="home-main">
@@ -4418,12 +4420,12 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // revamp949: the homepage leads with a Featured AI Briefings row built from
     // the same cards as the AI Briefings page.
     renderFeaturedBriefings(container.querySelector('[data-home-featbriefs]'), {
-      title: 'Featured AI Briefings',
+      title: 'AI Briefings',
       sub: 'AI-generated briefings, refreshed morning and night.',
       // A briefing page with a spark — reads at chip size, unlike the bare
       // sparkle, and sits with the grid/wand marks on the cards below.
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.5 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-8"/><path d="M8 8h6M8 12h6M8 16h4"/><path d="M19.5 2.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z" fill="currentColor" stroke="none"/></svg>',
-      moreHref: '#/intelligence', moreLabel: 'All AI Briefings',
+      moreHref: '#/intelligence', moreLabel: 'Access 200+ daily AI briefings',
     });
     {
       const tWrap = container.querySelector('[data-hq-topics]');
