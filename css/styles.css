@@ -24323,3 +24323,16 @@ body.home-search .home-sections .home-featbriefs {
   width: 30px !important; height: 30px !important;
 }
 .home-featbriefs .hf-ic svg, .dih-group--featured .hf-ic svg { width: 16px !important; height: 16px !important; }
+
+/* revamp951d — `.hf-card .hf-head { flex-direction: column }` (revamp863) is
+   scoped to .hf-card, so this section inherited the BASE row layout: icon and
+   subtext side by side with the title underneath. Give it the same column head. */
+.home-featbriefs .hf-head,
+.dih-group--featured .hf-head {
+  display: flex !important; flex-direction: column !important; align-items: stretch !important;
+  gap: 0 !important;
+}
+.home-featbriefs .hf-headrow,
+.dih-group--featured .hf-headrow {
+  display: flex !important; align-items: center !important; gap: 10px !important;
+}
