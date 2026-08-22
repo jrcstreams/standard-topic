@@ -122,6 +122,7 @@ module.exports = async function handler(req, res) {
       generatedAt: new Date().toISOString(),
     });
   } catch (err) {
-    return res.status(500).json({ error: String((err && err.message) || err) });
+    console.error('[ai-usage]', (err && err.message) || err);
+    return res.status(500).json({ error: 'Usage unavailable' });
   }
 };

@@ -68,6 +68,7 @@ module.exports = async function handler(req, res) {
     res.setHeader('Cache-Control', CACHE_HEADER);
     return res.status(200).json({ topic: topic.slug, count: stories.length, q: q || null, stories, nextBefore });
   } catch (err) {
-    return res.status(500).json({ error: String((err && err.message) || err) });
+    console.error('[news/topic]', (err && err.message) || err);
+    return res.status(500).json({ error: 'News unavailable' });
   }
 };

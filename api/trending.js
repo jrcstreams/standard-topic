@@ -19,7 +19,14 @@
 
 const { normalizeTrending } = require('../lib/trending-normalize');
 const { getSql } = require('../lib/db');
-const { generateInsight } = require('../lib/insight-core');
+const { generateInsight, publicBudgetLeft, bumpSurface } = require('../lib/insight-core');
+
+// The heal below is reachable from an UNAUTHENTICATED request, and ?cb=<random>
+// bypasses the edge cache entirely, so it needs a ceiling of its own (revamp966).
+// Since revamp963 warms the current snapshot on an hourly cron, this path is now
+// a safety net rather than the primary filler — a tight cap costs nothing in
+// practice and stops an abused endpoint draining the day's shared AI budget.
+const HEAL_DAILY_CAP = parseInt(process.env.AI_TREND_HEAL_CAP || '60', 10);
 
 // Background scheduling + cache busting. Lazy/guarded so module load never
 // crashes where @vercel/functions is absent (local/tests) — heal just no-ops.
@@ -151,9 +158,10 @@ module.exports = async function handler(req, res) {
         waitUntil((async () => {
           let made = 0;
           for (const item of healList) {
+            if (!(await publicBudgetLeft(sql, 'heal:trending', HEAL_DAILY_CAP))) break;
             try {
               const r = await generateInsight(sql, { type: 'trend', query: item.query, refresh: item.refresh });
-              if (r && r.cached === false && r.summary) made += 1;
+              if (r && r.cached === false && r.summary) { made += 1; await bumpSurface(sql, 'heal:trending'); }
             } catch (_) { /* retried on a later refresh */ }
             await sleep(600);
           }

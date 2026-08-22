@@ -132,6 +132,7 @@ module.exports = async function handler(req, res) {
     );
     return send(res, { geo, snapshotAt, items });
   } catch (err) {
-    return res.status(500).json({ error: String((err && err.message) || err) });
+    console.error('[trending-history]', (err && err.message) || err);
+    return res.status(500).json({ error: 'History unavailable' });
   }
 };

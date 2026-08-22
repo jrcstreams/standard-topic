@@ -132,6 +132,7 @@ module.exports = async function handler(req, res) {
     await afterResponse(sql, input, out);
     return res.status(200).json(out);
   } catch (err) {
-    return res.status(500).json({ error: String((err && err.message) || err) });
+    console.error('[insight]', (err && err.message) || err);
+    return res.status(500).json({ error: 'Insight unavailable' });
   }
 };

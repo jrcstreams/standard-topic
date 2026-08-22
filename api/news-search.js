@@ -17,6 +17,33 @@
 
 const { getSql } = require('../lib/db');
 const { embedQuery, toVector } = require('../lib/gemini');
+const { publicBudgetLeft, bumpSurface } = require('../lib/insight-core');
+
+// This endpoint is UNAUTHENTICATED and embeds every distinct query, so it is a
+// paid call any stranger can trigger. Two brakes (revamp966):
+//
+//  1. A per-instance LRU. Query embeddings are deterministic for a given
+//     string and never change, so re-embedding "ukraine" is pure waste. Also
+//     removes ~500ms from a repeat search (measured: 698ms with the embed vs
+//     ~160ms without).
+//  2. A daily cap on NEW embeddings, counted on its own ai_usage_surface row so
+//     an abused search box cannot drain the shared AI budget out from under the
+//     briefs. Past the cap the query degrades to keyword-only — which still
+//     returns good results, just without semantic recall.
+const EMBED_CACHE = new Map();
+const EMBED_CACHE_MAX = 500;
+const EMBED_DAILY_CAP = parseInt(process.env.AI_SEARCH_EMBED_CAP || '400', 10);
+
+function cacheGet(k) {
+  if (!EMBED_CACHE.has(k)) return undefined;
+  const v = EMBED_CACHE.get(k);
+  EMBED_CACHE.delete(k); EMBED_CACHE.set(k, v);   // refresh recency
+  return v;
+}
+function cacheSet(k, v) {
+  EMBED_CACHE.set(k, v);
+  if (EMBED_CACHE.size > EMBED_CACHE_MAX) EMBED_CACHE.delete(EMBED_CACHE.keys().next().value);
+}
 
 const CACHE_HEADER = 'public, s-maxage=120, stale-while-revalidate=3600';
 const COLS = `n.id, n.url, n.title, n.description, n.source_name, n.source_url,
@@ -61,7 +88,15 @@ module.exports = async function handler(req, res) {
 
     let vector = [];
     let qvec = null;
-    try { qvec = await embedQuery(q); } catch (_) { qvec = null; }
+    const ck = q.toLowerCase();
+    const cached = cacheGet(ck);
+    if (cached !== undefined) {
+      qvec = cached;
+    } else if (await publicBudgetLeft(sql, 'embed:search', EMBED_DAILY_CAP)) {
+      try { qvec = await embedQuery(q); } catch (_) { qvec = null; }
+      if (qvec) { cacheSet(ck, qvec); await bumpSurface(sql, 'embed:search'); }
+    }
+    // qvec stays null past the cap or on failure → keyword-only below.
     // Semantic results need a real anchor. cap = how far a hit may be to show
     // at all; gate = the best hit must be at least this close, else the query
     // has no genuine coverage (e.g. "drake"/"ohtani") and we drop ALL vector
@@ -108,6 +143,7 @@ module.exports = async function handler(req, res) {
     }
     return res.status(200).json(body);
   } catch (err) {
-    return res.status(500).json({ error: String((err && err.message) || err) });
+    console.error('[news-search]', (err && err.message) || err);
+    return res.status(500).json({ error: 'Search unavailable' });
   }
 };

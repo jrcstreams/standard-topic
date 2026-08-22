@@ -45,6 +45,7 @@
 // The only thing that returns non-200 is rejected auth or malformed
 // requests we'd genuinely want rss.app to surface as failures.
 
+const crypto = require('crypto');
 const topicsData = require('../../data/topics.json');
 
 let invalidateByTag;
@@ -98,8 +99,12 @@ module.exports = async function handler(req, res) {
   if (!expected) {
     return res.status(500).json({ error: 'Server misconfiguration' });
   }
+  // Constant-time compare so the token can't be probed a character at a time.
+  // Lengths are compared first because timingSafeEqual throws on a mismatch.
   const provided = req.query?.token;
-  if (!provided || provided !== expected) {
+  const a = Buffer.from(String(provided || ''));
+  const b = Buffer.from(String(expected));
+  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
