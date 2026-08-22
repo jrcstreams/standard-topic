@@ -24336,3 +24336,11 @@ body.home-search .home-sections .home-featbriefs {
 .dih-group--featured .hf-headrow {
   display: flex !important; align-items: center !important; gap: 10px !important;
 }
+
+/* revamp951e — `.hf-ic` fills from `--hf-tint`, which is declared on `.hf-card`.
+   Outside that class the var is undefined, so the chip rendered with no
+   background — a bare sparkle next to a filled chip on the cards below it. */
+.home-featbriefs .hf-ic, .dih-group--featured .hf-ic {
+  background: #eef3fc !important; color: #2f4d9e !important;
+  border-radius: 9px !important;
+}
