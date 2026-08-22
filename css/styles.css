@@ -11228,8 +11228,9 @@ body.home-search.app-mode .topic-layout .search-panel-results .shortcuts-scroll-
   body.home-search #section-newsfeed .newsfeed-card .newsfeed-foot { padding: 0 0 12px; }
   /* Story content was flush to the card edge (0 horizontal padding) on the
      homepage card → cramped. Inset it to line up with the header (15px). */
-  body.home-search #section-newsfeed .newsfeed-card .news-card-link,
-  body.home-search #section-newsfeed .newsfeed-card .news-card-foot,
+  /* NOTE (revamp961): a rule for .news-card-link / .news-card-foot was written
+     here with a trailing comma and NO declaration block, so it never applied.
+     Removed rather than guessed at — the inset it describes was never live. */
 }
 
 /* Trend "View AI Insights" button — the mobile affordance; hidden on desktop where
@@ -18948,7 +18949,6 @@ body.app-mode:not(.home-search) .topic-layout:not(.is-custom) #section-newsfeed 
   .topic-band .topic-home #section-newsfeed .news-list { margin-top: 18px !important; }
 }
 
-}
 
 /* ═══ revamp772 ══════════════════════════════════════════════════════════════
    Hero consistency · featured/gateway card polish · unified news heads ·
