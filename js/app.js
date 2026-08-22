@@ -939,16 +939,13 @@ function wirePromptDirectory(root, ctls) {
           }
           if (icEl && tIcon) icEl.innerHTML = tIcon;
           if (nameEl) nameEl.textContent = name;
-          let headBar = card.querySelector('.pdir-headbar');
-          if (!headBar) {
-            headBar = document.createElement('div');
-            headBar.className = 'pdir-headbar';
-            card.insertBefore(headBar, head);
-          }
-          headBar.innerHTML = `<button type="button" class="pdir-headback">${BACKBAR_CHEV}<span>Back to ${escapeHTML(parentName)}</span></button>`;
-          // Next frame so the height transition has a start value to animate from.
-          requestAnimationFrame(() => card.classList.add('is-headback'));
+          // revamp956: the back link lives in the BODY, above the section
+          // headers — not in the header band, where it competed with the topic
+          // title it had just replaced.
+          card.querySelector('.pdir-headbar')?.remove();
+          card.classList.remove('is-headback');
           bodyEl.innerHTML = `<div class="pdir-topicview">
+            <button type="button" class="pdir-bodyback">${BACKBAR_CHEV}<span>Back to ${escapeHTML(parentName)}</span></button>
             <div class="pdir-topichost prompts-topic-host"></div>
           </div>`;
           const host = bodyEl.querySelector('.pdir-topichost');
@@ -977,11 +974,10 @@ function wirePromptDirectory(root, ctls) {
               if (ic2) ic2.innerHTML = o.ic;
               if (nm2) nm2.textContent = o.name;
             }
-            // Let the header collapse before the bar leaves the DOM.
-            setTimeout(() => card.querySelector('.pdir-headbar')?.remove(), 240);
+            card.querySelector('.pdir-headbar')?.remove();
           };
           card.__restoreHead = restoreHead;
-          headBar.querySelector('.pdir-headback')?.addEventListener('click', (e) => {
+          bodyEl.querySelector('.pdir-bodyback')?.addEventListener('click', (e) => {
             e.stopPropagation();
             restoreHead();
             bodyEl.classList.remove('is-topic');

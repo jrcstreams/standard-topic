@@ -24446,3 +24446,31 @@ body.home-search .home-sections .home-featbriefs {
 .pdir-topichost .aii-fi-sec { margin-bottom: 1.5rem !important; }
 .pdir-topichost .aii-fi-sec:last-child { margin-bottom: 0.4rem !important; }
 .pdir-topichost .aii-fi-sechead { margin-bottom: 0.7rem !important; }
+
+/* revamp956 — the drilled-in back link now sits at the top of the BODY, above
+   the section headers, rather than in the header band where it sat above the
+   topic title it had just replaced. */
+.pdir-bodyback {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin: 0 0 0.85rem; padding: 0;
+  border: 0; background: none; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; color: #4a5a7d;
+}
+.pdir-bodyback svg { width: 14px; height: 14px; }
+@media (hover: hover) { .pdir-bodyback:hover { color: #1d4ed8; } }
+.pdir-topicview { display: flex; flex-direction: column; }
+/* The header band no longer grows for a back row. */
+.pdir-headbar { display: none !important; }
+
+/* revamp957 — prompt card: tighten top/bottom, and Run Prompt joins the group.
+   The prompt sat a long way below the accordion head with a matching gap under
+   Edit; both are trimmed. Run Prompt was pinned to the far right, adrift from
+   the controls it belongs with — it now sits directly after Settings, and wraps
+   onto its own line when there isn't room. */
+.aii-pc-prevwrap { padding: 0.7rem 1rem 0.6rem !important; }
+.aii-pc-edit { margin-top: 0.55rem !important; }
+.aii-pc-foot { padding: 0.6rem 1rem !important; }
+.aii-pc-foot .aii-pc-submit { margin-left: 0 !important; order: 0 !important; }
+@media (max-width: 560px) {
+  .aii-pc-foot .aii-pc-submit { width: 100%; justify-content: center; }
+}
