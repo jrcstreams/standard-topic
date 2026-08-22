@@ -2,7 +2,17 @@
 registry. Output mirrors js/utils/topic-icons.js — an ICONS object
 keyed by filename-stem mapping to the SVG inner content. This lets
 the renderer inline the SVG directly into the DOM, where currentColor
-resolves correctly to the parent's CSS color."""
+resolves correctly to the parent's CSS color.
+
+HISTORY (revamp965): despite the "do not hand-edit" banner this script
+writes, 221 topic-specific icon overrides had been appended by hand to the
+generated file (revamp547). A JS object literal takes the LAST value for a
+duplicate key, so those overrides were what actually rendered — and running
+this script would have silently discarded all 221 with nothing to catch it.
+They have since been written back into their source .svg files, so the file
+is genuinely generated again and this script is safe to run. Keep it that
+way: to change an icon, edit its .svg and re-run this — never append to the
+generated module. The guard below fails loudly if hand edits reappear."""
 
 import os, re, json
 
@@ -27,6 +37,25 @@ for fn in sorted(os.listdir(SRC_DIR)):
     # Collapse whitespace runs.
     inner = re.sub(r"\s+", " ", inner)
     icons[key] = inner
+
+# Detect hand edits in the file we are about to overwrite (see HISTORY above)
+# and abort BEFORE opening it for writing — a guard that fires after the write
+# has already destroyed what it was guarding.
+prev_dupes = []
+if os.path.exists(OUT):
+    prev = open(OUT).read()
+    seen = set()
+    for k in re.findall(r'^"([a-z0-9-]+)":', prev, flags=re.M):
+        if k in seen:
+            prev_dupes.append(k)
+        seen.add(k)
+if prev_dupes:
+    raise SystemExit(
+        f"REFUSED: {OUT} contains {len(prev_dupes)} duplicate key(s) — it has been "
+        f"hand-edited and those later entries are what actually render. Regenerating "
+        f"would discard them.\nFirst few: {prev_dupes[:5]}\n"
+        f"Fix: write each override's value into its assets/shortcut-icons/<key>.svg, "
+        f"then re-run. (See the revamp965 note at the top of this file.)")
 
 with open(OUT, "w") as f:
     f.write("// AUTO-GENERATED from assets/shortcut-icons/*.svg — do not hand-edit.\n")
