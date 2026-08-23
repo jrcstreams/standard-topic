@@ -23791,3 +23791,19 @@ body.home-search .home-sections .home-featbriefs {
 .ni-inner .ni-sec .ai-result-body,
 .ni-inner .ni-sec .ai-result-body p,
 .ni-inner .ni-sec .ai-result-body li { font-size: 0.815rem !important; }
+
+/* ═══ revamp971 — Timeline / bullet lists in the AI brief (#img540) ════════
+   The list had no per-item spacing at all (browser defaults), so multi-line
+   entries ran straight into the next date and the column read as one block.
+   And the model's "**August 11, 2026:**" came through at <strong>'s default
+   700, which made the dates heavier than the section head above them. */
+
+/* Air between items — enough to separate a wrapped entry from the next one,
+   without the list drifting apart. */
+.ni-inner .ni-sec .ai-result-body ul { margin: 0 0 0.55em; padding-left: 1.15em; }
+.ni-inner .ni-sec .ai-result-body li { margin-bottom: 0.5em !important; line-height: 1.55 !important; }
+.ni-inner .ni-sec .ai-result-body li:last-child { margin-bottom: 0 !important; }
+
+/* Date labels: a step lighter, so they read as labels rather than out-weighing
+   the underlined section head. */
+.ni-inner .ni-sec .ai-result-body strong { font-weight: 600 !important; }
