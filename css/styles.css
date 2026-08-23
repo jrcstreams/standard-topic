@@ -23666,3 +23666,98 @@ body.home-search .home-sections .home-featbriefs {
 }
 
 }
+
+/* ═══ revamp969 — AI Insights panel: header, tighter actions, calmer type ════
+   (#img536/537) Five things:
+     · the two card buttons sat too far off the source/time/share row
+     · the panel had no title of its own above the "AI Generated Text" tag
+     · section heads (What Happened / Takeaways / …) were too large
+     · heads + body wanted a deeper blue
+     · the Search / Sources drawers stacked full-width instead of pairing up  */
+
+/* ── Buttons closer to the meta row ──
+   The 21px gap wasn't the actions' own margin (an open card already zeroes
+   that) — it was 12px of .news-card-foot bottom padding plus 9px of
+   .news-card-body offset stacked underneath the source/time/share row. */
+.news-card .news-card-foot { padding-bottom: 6px !important; }
+.news-card .news-card-body { margin-top: 2px !important; padding-top: 2px !important; }
+/* The OPEN card re-sets both with a `padding` shorthand at higher specificity
+   (#section-newsfeed .news-card:has(…)), so the same selector shape is needed
+   to reach it — a plain .news-card rule loses regardless of !important. */
+#section-newsfeed .news-card--open .news-card-foot,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-foot {
+  padding-bottom: 6px !important;
+}
+#section-newsfeed .news-card--open .news-card-body,
+#section-newsfeed .news-card:has(.news-act-ai[aria-expanded="true"]) .news-card-body {
+  margin-top: 2px !important; padding-top: 2px !important;
+}
+
+/* ── Panel title, above the AI-generated tag ── */
+.ni-panelhead {
+  display: flex; align-items: center;
+  margin: 0 0 2px;
+}
+.ni-paneltitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 750;
+  letter-spacing: -0.014em;
+  color: #172554;
+  line-height: 1.3;
+}
+/* The tag now sits under a real title, so it needs less air above it. */
+.ni-inner > .ni-aitag-row { margin: 0 0 10px !important; }
+
+/* ── Section heads: smaller, and a deeper blue ── */
+.ni-inner .ni-sec-name,
+.ni-sec-name {
+  font-size: 0.88rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.008em !important;
+  color: #172554 !important;
+}
+.ni-inner .ni-sec-head { margin: 0 0 4px !important; }
+
+/* ── Body copy: pulled toward the same blue family, still easy to read at
+      length (a saturated blue would fight the headings). ── */
+.ni-inner .ni-sec .ai-result-body,
+.ni-inner .ni-sec .ai-result-body p,
+.ni-inner .ni-sec .ai-result-body li { color: #2c3c5e !important; }
+
+/* ── Drawers: pair them up instead of stacking full-width slabs ── */
+/* !important because `.ni-inner .trend-exp-drawers` (two classes) already sets
+   flex-direction: column and would otherwise win. */
+.trend-exp-drawers {
+  display: flex !important; flex-direction: row !important;
+  flex-wrap: wrap !important; align-items: flex-start !important; gap: 8px !important;
+}
+/* Side by side, each only as wide as it needs — Sources is the shorter label,
+   so it gets the smaller pill. The 190px equaliser only applies when stacked. */
+.trend-exp-drawers > .te-drawer > .te-drawer-sum { min-width: 0 !important; }
+.trend-exp-drawers > .te-drawer > .te-drawer-sum,
+.trend-exp-drawers > .te-drawer--link > .te-drawer-sum {
+  padding: 8px 13px !important;
+  font-size: 0.8rem !important;
+}
+.trend-exp-drawers .te-drawer-ic svg { width: 14px; height: 14px; }
+/* An OPEN drawer needs the full row for its body. */
+.trend-exp-drawers > .te-drawer[open] { flex: 1 0 100%; }
+
+/* Stacked: equal width, and the trailing arrow/chevron pinned to the same spot
+   on both so they line up down the edge. */
+@media (max-width: 560px) {
+  .trend-exp-drawers { flex-direction: column !important; align-items: stretch !important; }
+  .trend-exp-drawers > .te-drawer,
+  .trend-exp-drawers > .te-drawer--link { width: 100% !important; }
+  .trend-exp-drawers > .te-drawer > .te-drawer-sum { width: 100% !important; }
+  .trend-exp-drawers .te-drawer-go,
+  .trend-exp-drawers .te-drawer-chev { margin-left: auto !important; }
+}
+
+/* revamp969b — the panel grows as text streams in; browser scroll anchoring
+   would compensate for that by shifting the viewport, which is the other half
+   of "clicking a story drops you into paragraph three". Exclude the panel from
+   anchor selection so growth never moves the page. */
+.news-panel, .news-panel .ni-inner, .trend-card-exp { overflow-anchor: none; }

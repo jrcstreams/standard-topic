@@ -386,12 +386,40 @@ export function wireNewsAI(root) {
       if (!panel) return;
       const kind = btn.dataset.newsPanel;                       // 'ai' | 'web'
       const sameOpen = !panel.hidden && panel.dataset.kind === kind;
+      // Closing another card's panel removes its height. If that card sits ABOVE
+      // this one, everything below shifts up and the click reads as the page
+      // scrolling away under you — you end up looking at the middle of the brief
+      // instead of its start. Measure this card before and after, and correct the
+      // scroll by the difference so it stays exactly where the user clicked it.
+      const topBefore = card.getBoundingClientRect().top;
+      // Pin the clicked card in place. Two things move it: closing another
+      // card's panel (removing height above it), and this card's own open-state
+      // padding. Correct AFTER both have been applied, or the residual shows up
+      // as the page still creeping under the click.
+      const pin = () => {
+        const drift = card.getBoundingClientRect().top - topBefore;
+        if (!drift) return;
+        try {
+          // The feed sometimes scrolls inside a wrapper rather than the window
+          // (topic layouts use .newsfeed-scroll-wrap) — correct whichever one
+          // actually scrolls.
+          let sc = card.parentElement;
+          while (sc && sc !== document.body) {
+            const st = getComputedStyle(sc).overflowY;
+            if ((st === 'auto' || st === 'scroll') && sc.scrollHeight > sc.clientHeight) break;
+            sc = sc.parentElement;
+          }
+          if (sc && sc !== document.body) sc.scrollTop += drift;
+          else window.scrollBy(0, drift);
+        } catch (_) {}
+      };
       closeNewsPanels(root);                                    // only one open at a time
-      if (sameOpen) return;                                     // clicking the open one closes it
+      if (sameOpen) { pin(); return; }                          // clicking the open one closes it
       panel.dataset.kind = kind;
       panel.hidden = false;
       card.classList.add('news-card--open');
       btn.setAttribute('aria-expanded', 'true');
+      pin();
       if (kind === 'ai') renderNewsBriefInto(panel, card);
       else renderNewsWebInto(panel, card);
     });
@@ -699,8 +727,12 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
   };
   const ensureRenderer = () => {
     if (renderer) return renderer;
-    panel.innerHTML = '<div class="ni-inner ni-streaming"></div>';
-    renderer = createStreamRenderer(panel.querySelector('.ni-inner'), parseBrief);
+    // Same head as the finished panel, so nothing appears or moves at handover.
+    panel.innerHTML = '<div class="ni-inner ni-streaming">'
+      + '<div class="ni-panelhead"><h4 class="ni-paneltitle">AI Insights</h4></div>'
+      + '<div class="ni-aitag-row"><span class="ni-aitag">' + AI_SPARK_SVG + '<span>AI Generated Text</span></span></div>'
+      + '<div class="ni-streambody"></div></div>';
+    renderer = createStreamRenderer(panel.querySelector('.ni-streambody'), parseBrief);
     return renderer;
   };
   const onPartial = (partial) => {
@@ -748,6 +780,7 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
       const drawers = drawerLinkHTML('Search this story further', '#/custom/' + encodeURIComponent(card.dataset.title || ''), DRAWER_SEARCH_IC)
         + (sourcesInner ? drawerHTML('Sources', sourcesInner, DRAWER_SOURCES_IC) : '');
       panel.innerHTML = `<div class="ni-inner ai-reveal">
+        <div class="ni-panelhead"><h4 class="ni-paneltitle">AI Insights</h4></div>
         <div class="ni-aitag-row"><span class="ni-aitag">${AI_SPARK_SVG}<span>AI Generated Text</span></span></div>
         ${secHTML}
         <div class="trend-exp-drawers">${drawers}</div>
