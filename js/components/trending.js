@@ -9,6 +9,7 @@ import { renderTrendExpansionBody, wireTrendDrawers } from './trend-expansion.js
 import { wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
 import { aiSparkInline } from '../utils/ai-provenance.js?v=20260706-revamp574';
 import { streamInsight } from '../utils/insight-stream.js?v=20260822-revamp962';
+import { createStreamRenderer } from '../utils/stream-render.js?v=20260822-revamp968';
 
 function escapeHTML(str) { const d = document.createElement('div'); d.textContent = str ?? ''; return d.innerHTML; }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
@@ -276,25 +277,33 @@ function wireTrendCardsInline(container) {
       //
       // The wire format is "SUMMARY: …\nDETAIL: …"; the labels are stripped for
       // the progressive view and the finished render replaces this wholesale.
-      const partialHTML = (raw) => {
-        const body = String(raw)
-          .replace(/[*_]+\s*(summary|detail)\s*[*_]*\s*:/gi, '$1:')
-          .replace(/^\s*summary:\s*/i, '')
-          .replace(/\s*detail:\s*/i, '\n')
-          .trim();
-        if (!body) return '';
+      // revamp968: paragraphs are keyed blocks reconciled in place, so settled
+      // prose holds still and only the sentence being written updates.
+      const stripLabels = (raw) => String(raw)
+        .replace(/[*_]+\s*(summary|detail)\s*[*_]*\s*:/gi, '$1:')
+        .replace(/^\s*summary:\s*/i, '')
+        .replace(/\s*detail:\s*/i, '\n')
+        .trim();
+      const parseTrend = (raw) => {
+        const body = stripLabels(raw);
+        if (!body) return [];
         return body.split(/\n+/).filter(Boolean)
-          .map((p) => `<p class="trend-exp-p">${escapeHTML(p)}</p>`).join('');
+          .map((p, i) => ({ key: 'p' + i, html: `<p class="trend-exp-p">${escapeHTML(p)}</p>` }));
       };
+      let renderer = null;
       const onPartial = (raw) => {
         if (!card.classList.contains('is-expanded')) return;
-        const html = partialHTML(raw);
-        if (html) exp.innerHTML = `<div class="ni-inner ni-streaming">${html}</div>`;
+        if (!stripLabels(raw)) return;
+        if (!renderer) {
+          exp.innerHTML = '<div class="ni-inner ni-streaming"></div>';
+          renderer = createStreamRenderer(exp.querySelector('.ni-inner'), parseTrend);
+        }
+        renderer.push(raw);
       };
       let acc = '';
       const data = await streamInsight({ type: 'trend', query: term }, {
         onToken: (t) => { acc += t; onPartial(acc); },
-        onReset: () => { acc = ''; },
+        onReset: () => { acc = ''; renderer?.reset(); },
         // Grounded briefs search for several seconds before writing anything —
         // name that phase instead of showing an unchanging spinner.
         onPhase: (ph) => {
@@ -302,6 +311,11 @@ function wireTrendCardsInline(container) {
           if (ph === 'thinking') exp.innerHTML = `<div class="ni-inner">${niStyleLoaderHTML('Searching sources')}</div>`;
         },
       }).catch(() => null);
+      if (renderer) {
+        renderer.finish();
+        await new Promise((r) => setTimeout(r, 160));
+        renderer.destroy();
+      }
       if (!data || data.unavailable || !data.content) {
         exp.innerHTML = `<div class="trend-exp-fail"><span class="trend-exp-tx">This brief is still being generated — check back shortly.</span> <button type="button" class="trend-exp-retry">Try again</button></div>`;
         exp.querySelector('.trend-exp-retry')?.addEventListener('click', () => openCard(card));

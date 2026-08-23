@@ -15,6 +15,7 @@ import { openModel, copyPrompt } from '../utils/ai-models.js';
 import { drawerHTML, drawerLinkHTML, wireDrawers, DRAWER_SEARCH_IC, DRAWER_SOURCES_IC } from '../utils/drawers.js?v=20260817-revamp772';
 import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
 import { streamInsight } from '../utils/insight-stream.js?v=20260822-revamp962';
+import { createStreamRenderer, groupBlockLines } from '../utils/stream-render.js?v=20260822-revamp968';
 
 function escapeHTML(str) {
   const div = document.createElement('div');
@@ -137,7 +138,10 @@ export function renderBriefBody(content, sources, opts = {}) {
   const lines = String(content || '').split('\n');
   // Cached briefs generated under the old token cap can end in a cut-off bullet
   // ("• August", #img214) — drop a short, punctuation-less trailing fragment.
-  while (lines.length > 1) {
+  // opts.noTrim skips this WHILE STREAMING: mid-generation every last line is a
+  // fragment by definition, and trimming it would hide the sentence currently
+  // being written until it completed — the exact stutter we're removing.
+  while (!opts.noTrim && lines.length > 1) {
     const bare = (lines[lines.length - 1] || '').trim().replace(/^[-*•\s]+/, '');
     if (bare === '') { lines.pop(); continue; }
     if (bare.length < 60 && !/[.!?:%)"’”\]0-9]$/.test(bare)) { lines.pop(); break; }
@@ -662,18 +666,47 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
     }
     if (stillOpen()) showFail();
   };
-  // Paint answer text as it streams in. This replaces the loader the moment the
-  // first token lands, so a cold generation reads as "writing" rather than
-  // "hung". The finished render below then swaps in the full tabbed brief.
+  // Paint answer text as it streams in, so a cold generation reads as "writing"
+  // rather than "hung". The finished render below then swaps in the full tabbed
+  // brief.
+  //
+  // revamp968: this goes through createStreamRenderer rather than rewriting
+  // innerHTML per frame. Text is parsed into KEYED BLOCKS — a heading, a
+  // paragraph, a run of bullets — and only the block that actually changed is
+  // touched, which while streaming is just the last one. Settled paragraphs are
+  // never rebuilt, so they hold still and each new block eases in instead of
+  // the whole panel being thrown away and reassembled twelve times.
   let painted = false;
+  let renderer = null;
+  // Parse revealed text into the same blocks the finished brief uses, so the
+  // handover at the end is visually continuous.
+  const parseBrief = (text) => {
+    const secs = niSplit(niNormalize(text));
+    const blocks = [];
+    if (!secs.length) {
+      groupBlockLines(text).forEach((g, j) => {
+        blocks.push({ key: 'g' + j, html: renderBriefBody(g, null, { noTrim: true }) });
+      });
+      return blocks;
+    }
+    secs.forEach((sec, i) => {
+      blocks.push({ key: 's' + i + ':h', html: niSecHead(sec.name) });
+      groupBlockLines(sec.body).forEach((g, j) => {
+        blocks.push({ key: 's' + i + ':g' + j, html: renderBriefBody(g, null, { noTrim: true }) });
+      });
+    });
+    return blocks;
+  };
+  const ensureRenderer = () => {
+    if (renderer) return renderer;
+    panel.innerHTML = '<div class="ni-inner ni-streaming"></div>';
+    renderer = createStreamRenderer(panel.querySelector('.ni-inner'), parseBrief);
+    return renderer;
+  };
   const onPartial = (partial) => {
     if (!stillOpen() || !partial) return;
     painted = true;
-    const secs = niSplit(niNormalize(partial));
-    const body = secs.length
-      ? secs.map((s) => `<section class="ni-sec">${niSecHead(s.name)}${renderBriefBody(s.body, null)}</section>`).join('')
-      : `<section class="ni-sec">${niSecHead('Brief')}${renderBriefBody(partial, null)}</section>`;
-    panel.innerHTML = `<div class="ni-inner ni-streaming">${body}</div>`;
+    ensureRenderer().push(partial);
   };
   // A grounded brief spends its first several seconds searching before a single
   // answer token exists. Say so, rather than showing an unchanging spinner.
@@ -691,6 +724,13 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
     }
     let data;
     try { data = await p; } finally { card.__niSubs?.delete(onPartial); card.__niPhaseSubs?.delete(onPhase); }
+    // Let the paced reveal catch up before the finished brief replaces it —
+    // otherwise the last sentence is still animating in when it's swapped out.
+    if (renderer) {
+      renderer.finish();
+      await new Promise((r) => setTimeout(r, 160));
+      renderer.destroy();
+    }
     // The 500ms floor exists to stop the loader flashing. Once text is on screen
     // there's no loader to protect, so don't hold the finished brief back.
     if (!painted) { const left = 500 - (Date.now() - t0); if (left > 0) await sleep(left); }

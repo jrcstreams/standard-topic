@@ -23615,12 +23615,12 @@ body.home-search .home-sections .home-featbriefs {
   gap: 0.15rem 1.6rem !important;
 }
 
-/* ═══ revamp962 — streaming AI briefs ═══════════════════════════════════════
-   News + trend briefs now paint as the model writes them instead of sitting
-   behind a spinner for the ~10s a grounded generation takes. Two things the
-   progressive state needs: prose styling for the trend preview (which renders
-   before the finished component exists), and a cue that text is still arriving
-   so a half-written brief doesn't read as a finished one. */
+/* ═══ revamp968 — smooth streamed generation ════════════════════════════════
+   Replaces the revamp962 treatment, which hung a caret off :last-child of a
+   tree that was being rebuilt wholesale every frame. The renderer now owns
+   keyed blocks, so the animation can attach to real elements: settled prose
+   holds still, each new block eases up, and the caret rides the tail. */
+
 .trend-exp-p {
   margin: 0 0 0.7rem;
   font-family: var(--font-family);
@@ -23630,21 +23630,39 @@ body.home-search .home-sections .home-featbriefs {
 }
 .trend-exp-p:last-child { margin-bottom: 0; }
 
-/* Caret trailing the last line while tokens are still landing. */
-.ni-streaming > :last-child::after,
-.ni-streaming .ni-sec:last-child :last-child::after {
+/* The stream host: a settled block never re-renders, so nothing below it jumps. */
+.sr-host { display: block; }
+.sr-block { display: block; }
+.sr-block > *:first-child { margin-top: 0; }
+
+/* New block arriving. Short and small — a long or large movement reads as the
+   layout thrashing, which is what this replaces. */
+@keyframes srEnter {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: none; }
+}
+.sr-block.sr-enter { animation: srEnter .2s cubic-bezier(.22,.61,.21,1) both; }
+
+/* Caret on the block currently being written. */
+.sr-block.sr-tail > *:last-child::after,
+.sr-block.sr-tail::after {
   content: "";
   display: inline-block;
-  width: 2px;
-  height: 1em;
+  width: 2px; height: 1em;
   margin-left: 3px;
   vertical-align: -0.15em;
   background: currentColor;
-  opacity: 0.5;
-  animation: niCaret 1s steps(2, start) infinite;
+  opacity: .45;
+  animation: srCaret 1s steps(2, start) infinite;
 }
-@keyframes niCaret { 0%, 100% { opacity: 0.5; } 50% { opacity: 0; } }
+/* Only ONE caret — the inner one wins when the block has element children. */
+.sr-block.sr-tail:has(> *)::after { content: none; }
+@keyframes srCaret { 0%, 100% { opacity: .45; } 50% { opacity: 0; } }
+
 @media (prefers-reduced-motion: reduce) {
-  .ni-streaming > :last-child::after,
-  .ni-streaming .ni-sec:last-child :last-child::after { animation: none; }
+  .sr-block.sr-enter { animation: none; }
+  .sr-block.sr-tail > *:last-child::after,
+  .sr-block.sr-tail::after { animation: none; }
+}
+
 }
