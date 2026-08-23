@@ -65,14 +65,36 @@ export function createStreamRenderer(host, parse) {
     if (!done && rendered.length) rendered[rendered.length - 1].el.classList.add('sr-tail');
   };
 
+  // Never stop the reveal part-way through a markdown heading. A half-revealed
+  // "##" doesn't parse as a heading yet, so the text below it belongs to the
+  // PREVIOUS section — and the moment the "### " completes, a new section forms
+  // and every block index after it shifts. That showed up on production as the
+  // block count oscillating 9 -> 8 -> 9 with a node being recreated. Holding the
+  // cursor at the line start until the whole heading has arrived keeps section
+  // boundaries stable, and headings appear as a unit, which also looks better.
+  const safeCut = (n) => {
+    if (n >= target.length) return n;
+    const lineStart = target.lastIndexOf('\n', n - 1) + 1;
+    const partial = target.slice(lineStart, n);
+    if (!/^#{1,4}[^\n]*$/.test(partial)) return n;      // not inside a heading
+    const nlEnd = target.indexOf('\n', lineStart);
+    // The whole heading has arrived — reveal it atomically rather than a
+    // character at a time, which both keeps sections stable and looks better.
+    if (nlEnd !== -1) return nlEnd + 1;
+    return lineStart;                                   // still incoming — wait
+  };
+
   const tick = () => {
     raf = null;
     if (shown < target.length) {
       const remaining = target.length - shown;
-      // Proportional drain: fast on a burst, gentle on the last few characters.
-      // ~1/6 per frame clears a 250-char burst in about a sixth of a second.
-      const step = REDUCED ? remaining : Math.max(3, Math.ceil(remaining / 6));
-      shown = Math.min(target.length, shown + step);
+      // Proportional drain, but capped. Uncapped, the first burst after the long
+      // grounding phase arrives with ~700 characters buffered and dumps ~116 in
+      // a single frame — the slab effect this exists to remove. 40/frame is
+      // ~2,400 chars/sec, far above the ~330/sec the model actually produces, so
+      // it stays ahead of the stream while still reading as writing.
+      const step = REDUCED ? remaining : Math.min(40, Math.max(3, Math.ceil(remaining / 6)));
+      shown = Math.max(shown, safeCut(Math.min(target.length, shown + step)));
       paint();
     }
     if (shown < target.length) raf = requestAnimationFrame(tick);
