@@ -23761,3 +23761,33 @@ body.home-search .home-sections .home-featbriefs {
    of "clicking a story drops you into paragraph three". Exclude the panel from
    anchor selection so growth never moves the page. */
 .news-panel, .news-panel .ni-inner, .trend-card-exp { overflow-anchor: none; }
+
+/* ═══ revamp970 — AI Insights panel type scale (#img539) ═══════════════════
+   Widen the gap between the panel title and the section heads: the title leads,
+   the section heads step down and lighten to underlined labels, and the body
+   drops a touch so a long brief reads as prose rather than a stack of headings. */
+
+/* Panel title: the one thing that gets bigger. */
+.ni-paneltitle { font-size: 1.15rem !important; letter-spacing: -0.02em !important; }
+.ni-panelhead { margin-bottom: 3px !important; }
+
+/* Section heads: smaller, lighter, underlined. The underline sits on the words
+   (not a full-width rule) and is offset + hairline so it reads as a label
+   rather than a link. */
+.ni-inner .ni-sec-name,
+.ni-sec-name {
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.004em !important;
+  text-decoration: underline !important;
+  text-decoration-thickness: 1px !important;
+  text-underline-offset: 3px !important;
+  text-decoration-color: color-mix(in srgb, #172554 35%, transparent) !important;
+}
+/* Underline needs a little more air beneath it before the copy starts. */
+.ni-inner .ni-sec-head { margin: 0 0 7px !important; }
+
+/* Body copy: a touch smaller. */
+.ni-inner .ni-sec .ai-result-body,
+.ni-inner .ni-sec .ai-result-body p,
+.ni-inner .ni-sec .ai-result-body li { font-size: 0.815rem !important; }
