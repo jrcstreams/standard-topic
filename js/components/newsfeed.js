@@ -74,7 +74,6 @@ const AI_SPARK_SVG = '<svg class="news-ai-spark" viewBox="0 0 24 24" width="13" 
 const AI_CHEV_SVG = '<svg class="news-ai-chev" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 // The stronger FILLED blue sparkle (matches the AI Insights mark used elsewhere)
 // — the AI Insights action uses this instead of a fully-blue button.
-const AI_SPARK_FILLED_SVG = '<svg class="news-ai-spark-filled" viewBox="0 0 24 24" width="14" height="14" fill="#2563eb" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
 const SHARE_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
 const LINK_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
 // Renders a brief's body: "### Section" subheaders, "- "/"• " bullets, and
@@ -729,7 +728,6 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
     if (renderer) return renderer;
     // Same head as the finished panel, so nothing appears or moves at handover.
     panel.innerHTML = '<div class="ni-inner ni-streaming">'
-      + '<div class="ni-panelhead"><h4 class="ni-paneltitle">AI Insights</h4></div>'
       + '<div class="ni-aitag-row"><span class="ni-aitag">' + AI_SPARK_SVG + '<span>AI Generated Text</span></span></div>'
       + '<div class="ni-streambody"></div></div>';
     renderer = createStreamRenderer(panel.querySelector('.ni-streambody'), parseBrief);
@@ -780,7 +778,6 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
       const drawers = drawerLinkHTML('Search this story further', '#/custom/' + encodeURIComponent(card.dataset.title || ''), DRAWER_SEARCH_IC)
         + (sourcesInner ? drawerHTML('Sources', sourcesInner, DRAWER_SOURCES_IC) : '');
       panel.innerHTML = `<div class="ni-inner ai-reveal">
-        <div class="ni-panelhead"><h4 class="ni-paneltitle">AI Insights</h4></div>
         <div class="ni-aitag-row"><span class="ni-aitag">${AI_SPARK_SVG}<span>AI Generated Text</span></span></div>
         ${secHTML}
         <div class="trend-exp-drawers">${drawers}</div>
@@ -905,8 +902,8 @@ export function newsCardHTML(item) {
       <div class="news-card-body">
         ${descText ? `<p class="news-card-desc">${escapeHTML(descText)}</p>` : ''}
         <div class="news-card-actions">
+          <button type="button" class="news-act news-act-ai" data-news-panel="ai" aria-expanded="false"><span class="news-act-ai-open">View AI Insights</span><span class="news-act-ai-close">Close AI Insights</span>${AI_CHEV_SVG}<svg class="news-act-ai-x" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
           ${url ? `<a class="news-act" href="${escapeAttr(safeUrl(url))}" target="_blank" rel="noopener noreferrer"><span>View Story</span>${NI_VIEW_SVG}</a>` : ''}
-          <button type="button" class="news-act news-act-ai" data-news-panel="ai" aria-expanded="false">${AI_SPARK_FILLED_SVG}<span class="news-act-ai-open">AI Insights</span><span class="news-act-ai-close">Close Insights</span>${AI_CHEV_SVG}<svg class="news-act-ai-x" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
       </div>
       <div class="news-panel" data-news-panel-body hidden></div>
