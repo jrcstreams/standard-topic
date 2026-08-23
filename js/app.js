@@ -4443,9 +4443,10 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     {
       const tWrap = container.querySelector('[data-hq-topics]');
       if (tWrap) {
-        // Render the full dozen; CSS visibility caps trim by viewport (6 on
-        // phones, 8 mid-range, all 12 on desktop where the card is wider).
-        let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 12); } catch (_) {}
+        // Render 15 so the three-column layout (>=1366px) fills 5 per column,
+        // matching the Prompts card's five rows. CSS visibility caps trim by
+        // viewport below that: 12 in two columns, 6 on phones, 5 when narrow.
+        let feats = []; try { feats = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 15); } catch (_) {}
         // revamp948: topic ICON instead of a bullet mark, matching the
         // subtopic links inside the All Topics accordion.
         tWrap.innerHTML = feats.map((t) => `<a href="#/topic/${escapeAttr(t.slug)}" class="hq-row"><span class="hq-row-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span><span class="hq-row-name">${escapeHTML(t.name)}</span></a>`).join('');

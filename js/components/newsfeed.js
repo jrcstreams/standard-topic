@@ -599,13 +599,24 @@ function niExploreListHTML(card) {
   return `<div class="ni-web ins-explore">${aiAcc}${catAccs}</div>`;
 }
 // Sources tab body (news) — just the rows (the "Sources" label is the tab).
-function niSourcesListHTML(headlines, sources, origUrl) {
-  // "View original article" is a blue LINK at the top, then the cited sources as a
-  // clean formatted list beneath it (#img407). Headlines/sources may carry `url`
-  // OR `uri` — normalise so they aren't dropped (that was the "no sources" bug).
+function niSourcesListHTML(headlines, sources, origUrl, origTitle) {
+  // revamp974: the story itself now LEADS the list in the same row style as the
+  // cited sources. It used to be a blue "View original article" link floating
+  // above them, which read as a different kind of thing entirely (#img549).
+  // Headlines/sources may carry `url` OR `uri` — normalise so they aren't
+  // dropped (that was the "no sources" bug).
   const rows = [];
   const list = (Array.isArray(headlines) && headlines.length ? headlines : (sources || []));
   const seen = new Set();
+  if (origUrl) {
+    const r0 = resolveSource({ uri: origUrl, title: origTitle });
+    const t0 = (origTitle || '').trim() || r0.label;
+    if (t0) {
+      seen.add(t0.toLowerCase());          // never list the story twice
+      const meta0 = ['Original article', r0.domain || ''].filter(Boolean).join(' · ');
+      rows.push(`<a class="aii-sec-src aii-sec-src--orig" href="${escapeAttr(safeUrl(origUrl))}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(t0)}"><span class="aii-sec-src-tx"><span class="aii-sec-src-title">${escapeHTML(t0)}</span><span class="aii-sec-src-host">${escapeHTML(meta0)}</span></span>${ARROW_SM}</a>`);
+    }
+  }
   for (const s of list) {
     const uri = s.uri || s.url || '';
     if (!uri) continue;
@@ -621,9 +632,7 @@ function niSourcesListHTML(headlines, sources, origUrl) {
     const meta = [s.source || r.domain || '', s.date ? relativeTime(s.date) : ''].filter(Boolean).join(' · ');
     rows.push(`<a class="aii-sec-src" href="${escapeAttr(safeUrl(uri))}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(title)}"><span class="aii-sec-src-tx"><span class="aii-sec-src-title">${escapeHTML(title)}</span>${meta ? `<span class="aii-sec-src-host">${escapeHTML(meta)}</span>` : ''}</span>${ARROW_SM}</a>`);
   }
-  const orig = origUrl ? `<a class="ni-source-orig" href="${escapeAttr(safeUrl(origUrl))}" target="_blank" rel="noopener noreferrer">View original article ${ARROW_SM}</a>` : '';
-  const listHTML = rows.length ? `<div class="ai-ins-source-list">${rows.join('')}</div>` : '';
-  return (orig || listHTML) ? `${orig}${listHTML}` : '';
+  return rows.length ? `<div class="ai-ins-source-list">${rows.join('')}</div>` : '';
 }
 function niLoaderHTML(label) {
   return `<div class="ni-loader"><div class="ni-loader-head"><span class="ni-spark">${AI_SPARK_SVG}</span><span class="ni-loader-tx">${label || 'Generating insights'}<span class="ni-dots" aria-hidden="true"></span></span></div><span class="ni-skel"></span><span class="ni-skel"></span><span class="ni-skel ni-skel-short"></span></div>`;
@@ -774,7 +783,7 @@ async function renderNewsBriefInto(panel, card, attempt = 0) {
       // web categories) / Sources.
       // "Search this story further" leads — submits the story TITLE to the
       // search page. Sources follows as a blended drawer (revamp772).
-      const sourcesInner = niSourcesListHTML(data.headlines, data.sources, d.url);
+      const sourcesInner = niSourcesListHTML(data.headlines, data.sources, d.url, d.title);
       const drawers = drawerLinkHTML('Search this story further', '#/custom/' + encodeURIComponent(card.dataset.title || ''), DRAWER_SEARCH_IC)
         + (sourcesInner ? drawerHTML('Sources', sourcesInner, DRAWER_SOURCES_IC) : '');
       panel.innerHTML = `<div class="ni-inner ai-reveal">

@@ -12036,9 +12036,6 @@ body.home-mode #sub-header.is-subnav .topic-banner {
 @media (hover: hover) { .ai-ins-source-row:hover { border-color: var(--color-primary); color: var(--color-primary); } }
 .ai-ins-source-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 /* "View original article" — a blue link above the news source list (#img407). */
-.ni-source-orig { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 12px; font-family: var(--font-family); font-size: 0.85rem; font-weight: 600; color: #2563eb; text-decoration: none; }
-@media (hover: hover) { .ni-source-orig:hover { text-decoration: underline; text-underline-offset: 2px; } }
-.ni-source-orig svg { width: 13px; height: 13px; flex: none; }
 .ai-ins-source-row > svg { flex: none; color: var(--color-text-light); }
 /* Inline per-section sources on the topic AI Insights (replaces the Sources tab) —
    a small labelled list under each section's body (#img443-448). */
@@ -23830,3 +23827,44 @@ body.home-search .home-sections .home-featbriefs {
   color: var(--color-text-muted) !important;
 }
 .dih-brief .di-prov2 svg { width: 12px !important; height: 12px !important; }
+
+/* ═══ revamp974 — Sources drawer (#img548/549) ═════════════════════════════
+   Two things. The open drawer's tinted summary bar kept the pill width it has
+   when closed (width:auto, set so the closed drawers don't become full-width
+   slabs), so the dark header only covered part of the top edge. And the
+   original-article link sat above the cited sources as a blue link — a
+   different kind of object from the list it introduced. */
+
+/* Open: the header spans the drawer it belongs to. */
+.trend-exp-drawers > .te-drawer[open] > .te-drawer-sum {
+  width: 100% !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+}
+/* Keep the chevron pinned right once the bar is full width. */
+.trend-exp-drawers > .te-drawer[open] > .te-drawer-sum .te-drawer-chev { margin-left: auto !important; }
+
+/* The story now leads the source list in the list's own row style. Only the
+   "Original article ·" meta marks it out — no separate colour or weight, so it
+   reads as the first item rather than a link above the list. */
+.aii-sec-src--orig .aii-sec-src-host { color: #52678f; font-weight: 550; }
+
+/* ═══ revamp975 — homepage cards + news feed lead-in ═══════════════════════ */
+
+/* Topics: three columns only kick in at >=1366px, and 12 items filled them
+   4-deep against the Prompts card's 5 rows. 15 items makes it 5 per column so
+   the two cards match; narrower widths keep their existing counts (#img551). */
+.hf-card--topics .hf-chips > :nth-child(n+16) { display: none !important; }
+@media (max-width: 1365.98px) {
+  .hf-card--topics .hf-chips > :nth-child(n+13) { display: none !important; }
+}
+
+/* The first story sat 29px below the section rule — 2px wrapper + 15px card +
+   12px link padding. Every card carries that to separate it from the one above,
+   but the first card has the rule doing that job already (#img550).
+   The 15px comes from an #section-newsfeed rule with !important, so the same
+   selector shape is needed to reach it. */
+.topic-band #section-newsfeed .news-list > .news-card:first-child,
+body.home-search #section-newsfeed .news-list > .news-card:first-child,
+.search-news-section .news-list > .news-card:first-child,
+.news-list > .news-card:first-child { padding-top: 3px !important; }
