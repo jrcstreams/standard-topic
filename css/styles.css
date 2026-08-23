@@ -23807,3 +23807,42 @@ body.home-search .home-sections .home-featbriefs {
 /* Date labels: a step lighter, so they read as labels rather than out-weighing
    the underlined section head. */
 .ni-inner .ni-sec .ai-result-body strong { font-weight: 600 !important; }
+
+/* ═══ revamp972 — expanded AI Briefing head + separators (#img541/542) ══════
+   The topic / date / edition line was assembled from three parts that had
+   drifted apart: World at 700 / rgb(82,97,138) / +1.14px tracking, Aug 22 at
+   600 / rgb(116,131,157), and Night Edition at 650 / rgb(74,88,120) with
+   NEGATIVE tracking. Three weights, three colours, two letter-spacings on one
+   line — which is exactly why it read as inconsistent. One treatment now. */
+
+.dih-brief .tdi-openhead-meta,
+.dih-brief .tdi-openhead-meta .tdi-openhead-topic,
+.dih-brief .tdi-openhead-meta .tdi-date,
+.dih-brief .tdi-openhead-meta .tdi-stamp-val,
+.dih-brief .tdi-openhead-meta .tdi-stamp-edwrap,
+.dih-brief .tdi-openhead-meta .tdi-stamp-ed {
+  font-weight: 650 !important;
+  color: #52618a !important;
+  letter-spacing: 0.085em !important;
+}
+/* Even gaps around both dividers, so the line reads as one rhythm. */
+.dih-brief .tdi-openhead-meta { display: flex; align-items: center; gap: 9px; }
+.dih-brief .tdi-openhead-meta .tdi-date { display: inline-flex; align-items: center; gap: 9px; }
+.dih-brief .tdi-openhead-meta .tdi-stamp-ic { margin-left: 2px; }
+
+/* ── Separators: one faint weight everywhere in this panel ── */
+.dih-brief .dih-brief-title,
+.dih-brief .di-sectitle {
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 10%, transparent) !important;
+}
+
+/* ── "This briefing is AI-generated": a quiet caption, not a chip ── */
+.dih-brief .di-prov2 {
+  background: none !important;
+  border: 0 !important;              /* also drops the extra rule beneath it */
+  padding: 0 !important;
+  border-radius: 0 !important;
+  font-size: 0.76rem !important;
+  color: var(--color-text-muted) !important;
+}
+.dih-brief .di-prov2 svg { width: 12px !important; height: 12px !important; }
