@@ -1812,6 +1812,44 @@ function renderFeaturedBriefings(host, opts) {
   // revamp951: header matches the Featured Topics / Prompts cards — icon chip,
   // same title size, subtext beneath.
   const FB_ICON = o.icon || DI_SPARK_TWO;
+
+  // revamp982 — HERO layout (homepage): the site's own daily briefing leads as a
+  // large card carrying the morning/evening art, with four topic briefings
+  // beside it. Per the spec the topic cards NAVIGATE to their topic page; only
+  // the lead briefing opens inline here.
+  if (o.hero) {
+    const topicCard = (t) => `
+      <a class="hb-card" href="#/topic/${escapeAttr(t.slug)}">
+        <span class="hb-card-head">
+          <span class="hb-card-ic" aria-hidden="true">${topicIconSVG(t.icon || 'globe', '')}</span>
+          <span class="hb-card-name">${escapeHTML(t.name)}</span>
+        </span>
+        <span class="hb-card-desc">${escapeHTML(getTopicDescription(t.slug) || '')}</span>
+        <span class="hb-card-go">Read${SUBPAGE_ARROW}</span>
+      </a>`;
+    host.innerHTML = `
+      <div class="hb-head">
+        <span class="hb-head-ic" aria-hidden="true">${FB_ICON}</span>
+        <h3 class="hb-title">${escapeHTML(o.title || "Today's AI Briefing")}</h3>
+        ${o.moreHref ? `<a class="hb-all" href="${escapeAttr(o.moreHref)}">${escapeHTML(o.moreLabel || 'Explore all briefings')}${SUBPAGE_ARROW}</a>` : ''}
+      </div>
+      <div class="hb-grid">
+        <div class="hb-hero" data-home-briefing>
+          <div class="tdi-card tdi-card--v3 tdi-card--hero2 tdi-card--home">${diHeroCardHTML({
+            noHeader: true, hubLink: false, art: true, topicLabel: 'Standard Topic',
+            sublabel: 'Your daily briefing across every topic we cover.',
+          })}</div>
+        </div>
+        <div class="hb-cards">${picks.map(topicCard).join('')}</div>
+      </div>`;
+    wireHomeDailyIntelligence(host);
+    // The art follows the edition once the brief lands.
+    fetchDailyBrief('home', false, true).then((d) => {
+      if (d && d.generatedAt && host.isConnected) applyBriefArt(host, d.generatedAt);
+    }).catch(() => {});
+    return;
+  }
+
   host.innerHTML = `
     <div class="hf-head fb-head">
       <div class="hf-headrow">
@@ -4529,12 +4567,12 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     // revamp949: the homepage leads with a Featured AI Briefings row built from
     // the same cards as the AI Briefings page.
     renderFeaturedBriefings(container.querySelector('[data-home-featbriefs]'), {
-      title: 'AI Briefings',
-      sub: 'AI-generated briefings, refreshed morning and night.',
+      hero: true,
+      title: "Today's AI Briefing",
       // A briefing page with a spark — reads at chip size, unlike the bare
       // sparkle, and sits with the grid/wand marks on the cards below.
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.5 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-8"/><path d="M8 8h6M8 12h6M8 16h4"/><path d="M19.5 2.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z" fill="currentColor" stroke="none"/></svg>',
-      moreHref: '#/intelligence', moreLabel: 'Access 200+ daily AI briefings',
+      moreHref: '#/intelligence', moreLabel: 'Explore all briefings (200+)',
     });
     {
       const tWrap = container.querySelector('[data-hq-topics]');
