@@ -62,7 +62,13 @@ async function afterResponse(sql, input, out) {
   if (!(out && out.cached && waitUntil && !cacheOnly
       && (input.type === 'shortcut' || input.type === 'news' || input.type === 'trend'))) return;
   let doRefresh = false;
-  if (input.type === 'shortcut' && out.generatedAt) {
+  // The combined Daily Intelligence brief ('daily' group) is owned outright by
+  // the twice-daily cron waves — exactly two generations per topic per day, at
+  // fixed times. An age-based refresh here would fire at some arbitrary hour,
+  // reset that topic's clock, and desynchronise it from the wave, which is how
+  // topics ended up a full edition behind (#revamp990). Other builder groups
+  // aren't on a wave and still refresh on view.
+  if (input.type === 'shortcut' && input.group !== 'daily' && out.generatedAt) {
     const ageH = (Date.now() - new Date(out.generatedAt).getTime()) / 36e5;
     const windowH = effectiveWindowHours(input.group, tierForTopic(input.topic));
     if (Number.isFinite(ageH) && ageH >= windowH) doRefresh = true;

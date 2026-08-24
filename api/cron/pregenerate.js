@@ -9,10 +9,13 @@
 //   - News: recent stories (48h, newest first) without a 'brief' — sub-budget
 //     NEWS_PER_RUN so news volume can't starve the rest.
 //   - Daily Intelligence: every topic × the combined 'daily' brief (stored
-//     under 'daily:b') — ~100 total, one generation per topic per day.
+//     under 'daily:b') — ~100 topics on two fixed waves a day (?type=daily,
+//     DAILY_WAVE_HOURS_UTC), so exactly two generations per topic per day.
 //   Refresh (stalest first, via generateInsight refresh flag):
-//   - Builder windows from data/ai-paths.json (so cron + on-view agree):
-//     daily 24h. Legacy per-group builders refresh on-view only.
+//   - daily:b is refreshed ONLY by its waves — see dailyWaveStart. It is
+//     deliberately excluded from the age-window refresh below and from the
+//     on-view refresh in /api/insight, so nothing can knock a topic off its
+//     wave. Legacy per-group builders still refresh on-view only.
 //   - any lens row whose content lacks "## " sections (one-time migration of
 //     pre-overview prose briefs, learn included),
 //   - trend briefs still in the current US snapshot, older than 24h.
@@ -42,6 +45,26 @@ const NEWS_PER_RUN = 10;
 // heal only runs while there's grounding headroom — see runHeal below.
 const HEAL_PER_RUN = 12;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// The two fixed daily-briefing waves, in UTC hours. 12:00 UTC ≈ 8am ET and
+// 23:00 UTC ≈ 7pm ET, which lands each edition on the right side of the
+// 16:00-ET Morning/Night boundary the masthead uses (diEditionParts).
+//
+// dailyWaveStart() returns the start of whichever wave most recently began.
+// Every daily run compares brief timestamps against it — that single
+// comparison is the entire scheduling rule, so a topic is either in this wave
+// or already done by it, with nothing in between to guess at.
+const DAILY_WAVE_HOURS_UTC = [12, 23];
+function dailyWaveStart(now = new Date()) {
+  const midnight = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  const h = now.getUTCHours();
+  for (let i = DAILY_WAVE_HOURS_UTC.length - 1; i >= 0; i--) {
+    if (h >= DAILY_WAVE_HOURS_UTC[i]) return new Date(midnight + DAILY_WAVE_HOURS_UTC[i] * 36e5);
+  }
+  // Before the day's first wave → the previous day's last wave is current.
+  const last = DAILY_WAVE_HOURS_UTC[DAILY_WAVE_HOURS_UTC.length - 1];
+  return new Date(midnight - (24 - last) * 36e5);
+}
 
 let invalidateByTag;
 try {
@@ -170,15 +193,28 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
     catch (_) { return false; }
   };
 
-  // type=daily — the MORNING WAVE (revamp765): every topic's Daily Intelligence
-  // regenerates in a fixed window each day (five staggered cron runs per wave,
-  // 12:00 UTC ≈ 8am ET and 00:00 UTC ≈ 8pm ET), so all briefings "post"
-  // around the same times. Each
-  // run fills missing daily:b rows then refreshes the stalest ones older than
-  // 10h — already-refreshed rows are younger than that, so re-runs in the same
-  // wave skip them and the wave converges across runs. The regular 3-hourly
-  // refresh (26h window) + on-view refresh remain as fallbacks only.
+  // type=daily — the DAILY WAVES. Every topic's Daily Intelligence regenerates
+  // twice a day at fixed UTC times (DAILY_WAVE_HOURS_UTC), spread over ten
+  // staggered cron runs per wave so all briefings "post" around the same two
+  // times.
+  //
+  // Wave membership is decided by the CLOCK, not by how stale a row is: a run
+  // refreshes every topic whose brief predates the current wave's start. That
+  // is the whole rule.
+  //
+  //   · already done by an earlier run in THIS wave → created_at >= waveStart
+  //     → skipped, so the wave converges across its ten runs.
+  //   · regenerated off-wave (an on-view refresh) → created_at < waveStart
+  //     → still refreshed, so it cannot fall out of the wave.
+  //
+  // The previous gate was `created_at < now() - interval '10 hours'`, which
+  // conflated those two cases: any topic regenerated in the ten hours BEFORE a
+  // wave read as "fresh enough" and was skipped by every run in it. Politics
+  // was regenerated on-view at 03:00 UTC and missed the 12:00 wave by seven
+  // minutes, then served a 20-hour-old brief — stamped with the wrong edition
+  // — for the rest of the day (#revamp990).
   if (which === 'daily') {
+    const waveStartISO = dailyWaveStart().toISOString();
     const sleepMs = 600;
     const startedAtD = Date.now();
     const timeLeftD = () => Date.now() - startedAtD < 230 * 1000;
@@ -196,13 +232,13 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
         budget--;
         await sleep(sleepMs);
       }
-      // 2. Refresh the stalest briefs older than 20h.
+      // 2. Refresh every brief that predates this wave, stalest first.
       if (budget > 0 && timeLeftD()) {
         const stale = await sql.query(
           `SELECT entity_key FROM ai_insights
             WHERE entity_type='shortcut' AND insight='daily:b'
-              AND created_at < now() - interval '10 hours'
-            ORDER BY created_at ASC LIMIT $1`, [budget]);
+              AND created_at < $1
+            ORDER BY created_at ASC LIMIT $2`, [waveStartISO, budget]);
         for (const r of stale) {
           if (budget <= 0 || !timeLeftD()) break;
           const c = byKey.get(`${r.entity_key}|daily:b`);
@@ -220,8 +256,11 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
       const rem = await sql.query(
         `SELECT count(*)::int AS n FROM ai_insights
           WHERE entity_type='shortcut' AND insight='daily:b'
-            AND created_at < now() - interval '10 hours'`);
-      return res.status(200).json({ ok: true, type: 'daily', filled, refreshed, orphans, staleRemaining: rem[0].n });
+            AND created_at < $1`, [waveStartISO]);
+      return res.status(200).json({
+        ok: true, type: 'daily', wave: waveStartISO,
+        filled, refreshed, orphans, staleRemaining: rem[0].n,
+      });
     } catch (e) {
       return res.status(500).json({ error: String((e && e.message) || e) });
     }
