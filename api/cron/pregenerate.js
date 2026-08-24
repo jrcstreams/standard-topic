@@ -10,7 +10,7 @@
 //     NEWS_PER_RUN so news volume can't starve the rest.
 //   - Daily Intelligence: every topic × the combined 'daily' brief (stored
 //     under 'daily:b') — ~100 topics on two fixed waves a day (?type=daily,
-//     DAILY_WAVE_HOURS_UTC), so exactly two generations per topic per day.
+//     6am + 6pm ET), so exactly two generations per topic per day.
 //   Refresh (stalest first, via generateInsight refresh flag):
 //   - daily:b is refreshed ONLY by its waves — see dailyWaveStart. It is
 //     deliberately excluded from the age-window refresh below and from the
@@ -46,24 +46,47 @@ const NEWS_PER_RUN = 10;
 const HEAL_PER_RUN = 12;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// The two fixed daily-briefing waves, in UTC hours. 12:00 UTC ≈ 8am ET and
-// 23:00 UTC ≈ 7pm ET, which lands each edition on the right side of the
-// 16:00-ET Morning/Night boundary the masthead uses (diEditionParts).
+// The two fixed daily-briefing waves, in AMERICA/NEW_YORK wall-clock hours:
+// 6am and 6pm ET, every day, year-round.
 //
-// dailyWaveStart() returns the start of whichever wave most recently began.
-// Every daily run compares brief timestamps against it — that single
-// comparison is the entire scheduling rule, so a topic is either in this wave
-// or already done by it, with nothing in between to guess at.
-const DAILY_WAVE_HOURS_UTC = [12, 23];
-function dailyWaveStart(now = new Date()) {
-  const midnight = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-  const h = now.getUTCHours();
-  for (let i = DAILY_WAVE_HOURS_UTC.length - 1; i >= 0; i--) {
-    if (h >= DAILY_WAVE_HOURS_UTC[i]) return new Date(midnight + DAILY_WAVE_HOURS_UTC[i] * 36e5);
+// Vercel crons are UTC-only and have no DST awareness, so vercel.json registers
+// BOTH candidate UTC hours for each wave (10:00 + 11:00 for the morning, 22:00
+// + 23:00 for the evening). Exactly one of each pair is 6am/6pm in New York on
+// any given date; the other returns immediately as a no-op. That keeps the
+// waves pinned to the clock John reads without a DST table to maintain.
+//
+// dailyWaveStart() returns the instant the current wave began. Every daily run
+// refreshes each topic whose brief predates it — that single comparison is the
+// entire scheduling rule, so a topic is either in this wave or already done by
+// it, with nothing in between to guess at.
+const DAILY_WAVE_HOURS_ET = [6, 18];
+const ET_FMT = new Intl.DateTimeFormat('en-US', {
+  timeZone: 'America/New_York', hour12: false,
+  year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit',
+});
+function etParts(d) {
+  const p = Object.fromEntries(ET_FMT.formatToParts(d).map((x) => [x.type, x.value]));
+  return { y: +p.year, m: +p.month, d: +p.day, h: +p.hour % 24 };
+}
+// The UTC instant of a given ET wall-clock date+hour. Two correction passes
+// settle the zone offset (one is enough except across a DST transition).
+function etInstant(y, m, d, h) {
+  const want = Date.UTC(y, m - 1, d, h);
+  let ts = want;
+  for (let i = 0; i < 2; i++) {
+    const p = etParts(new Date(ts));
+    ts += want - Date.UTC(p.y, p.m - 1, p.d, p.h);
   }
-  // Before the day's first wave → the previous day's last wave is current.
-  const last = DAILY_WAVE_HOURS_UTC[DAILY_WAVE_HOURS_UTC.length - 1];
-  return new Date(midnight - (24 - last) * 36e5);
+  return new Date(ts);
+}
+function dailyWaveStart(now = new Date()) {
+  const p = etParts(now);
+  for (let i = DAILY_WAVE_HOURS_ET.length - 1; i >= 0; i--) {
+    if (p.h >= DAILY_WAVE_HOURS_ET[i]) return etInstant(p.y, p.m, p.d, DAILY_WAVE_HOURS_ET[i]);
+  }
+  // Before the day's first wave → the previous ET day's last wave is current.
+  const q = etParts(new Date(now.getTime() - 24 * 36e5));
+  return etInstant(q.y, q.m, q.d, DAILY_WAVE_HOURS_ET[DAILY_WAVE_HOURS_ET.length - 1]);
 }
 
 let invalidateByTag;
@@ -194,7 +217,7 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
   };
 
   // type=daily — the DAILY WAVES. Every topic's Daily Intelligence regenerates
-  // twice a day at fixed UTC times (DAILY_WAVE_HOURS_UTC), spread over ten
+  // twice a day at 6am and 6pm ET, spread over six
   // staggered cron runs per wave so all briefings "post" around the same two
   // times.
   //
@@ -214,6 +237,12 @@ module.exports = withHealthcheck('HC_PING_PREGENERATE', async function handler(r
   // minutes, then served a 20-hour-old brief — stamped with the wrong edition
   // — for the rest of the day (#revamp990).
   if (which === 'daily') {
+    // vercel.json registers both DST candidates for each wave; only the run
+    // that is actually 6am/6pm in New York does any work.
+    const etHour = etParts(new Date()).h;
+    if (!DAILY_WAVE_HOURS_ET.includes(etHour)) {
+      return res.status(200).json({ ok: true, type: 'daily', skipped: 'off-wave-hour', etHour });
+    }
     const waveStartISO = dailyWaveStart().toISOString();
     const sleepMs = 600;
     const startedAtD = Date.now();
