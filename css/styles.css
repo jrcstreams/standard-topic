@@ -23665,7 +23665,6 @@ body.home-search .home-sections .home-featbriefs {
   .sr-block.sr-tail::after { animation: none; }
 }
 
-}
 
 /* ═══ revamp969 — AI Insights panel: header, tighter actions, calmer type ════
    (#img536/537) Five things:
@@ -24571,3 +24570,60 @@ body.home-search .home-search-hero .search-panel-starters.sp-quick { display: fl
 .news-act-ai-spark { display: inline-flex; align-items: center; color: #2563eb; }
 .news-act-ai-spark svg { width: 14px; height: 14px; display: block; }
 .news-act-ai[aria-expanded="true"] .news-act-ai-spark { display: none; }
+
+/* ============================================================
+   revamp989 — topic-page polish (#img594, #img595/596, #img597/599/600)
+   ============================================================ */
+
+/* 1. Row dividers were doubling. The generic `.tpr-row + .tpr-row` adds a
+      border-top while the topic-page rule adds a border-bottom, so every
+      interior gap drew two hairlines and read heavier than the list's own
+      top/bottom rules. Keep the border-bottom; drop the inherited top. */
+.topic-top-side .tpr-row + .tpr-row { border-top: 0 !important; }
+
+/* 2. Each row is a link, so it ends in an arrow like the rest of the site.
+      The mobile rail stacks into tiles, where a trailing arrow makes no
+      sense, so it only rides the desktop list. */
+.topic-top-side .tpr-row-go {
+  flex: none; margin-left: auto; display: inline-flex; align-items: center;
+  color: color-mix(in srgb, #2f4d9e 34%, transparent);
+  transition: color .13s ease, transform .16s ease;
+}
+.topic-top-side .tpr-row-go svg { width: 13px; height: 13px; display: block; }
+@media (hover: hover) {
+  .topic-top-side .tpr-row-btn:hover .tpr-row-go { color: #1d4ed8; transform: translateX(2px); }
+}
+@media (max-width: 1023px) { .topic-top-side .tpr-row-go { display: none; } }
+
+/* 3. "View all tools" is a text link, not a button. It was still inheriting
+      the .tpr-card pill treatment — which fires on CARD hover, not link
+      hover, so a grey slab appeared under the text the moment the pointer
+      entered the card. Neutralise background, shadow and lift in every
+      state; the only hover response is the link colour and the arrow. */
+.topic-top-side .tpr-go,
+.topic-top-side .tpr-go:hover,
+.topic-top-side .tpr-card:hover .tpr-go,
+.topic-top-side .tpr-card:not(.is-open):hover .tpr-go,
+.topic-top-side .tpr-card:hover .tpr-go:not(:hover) {
+  background: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+  border-radius: 0 !important;
+}
+@media (hover: hover) {
+  .topic-top-side .tpr-go:hover { color: #1d4ed8 !important; text-decoration: none !important; }
+  .topic-top-side .tpr-go:hover svg { transform: translateX(2px); }
+}
+
+/* 4. Latest News, topic pages: the first story carried a reduced top pad
+      (3px) left over from the homepage feed. In a two-column grid that
+      applies to the left card only, so its headline sat 11px above its
+      neighbour's AND ran up against the section rule. Give it the same
+      14px every other card has — columns align, and the rule gets air. */
+.topic-band .topic-home #section-newsfeed .news-list > .news-card:first-child {
+  padding-top: 14px !important;
+}
+.topic-band .topic-home #section-newsfeed .news-list > .news-card:first-child .news-card-link {
+  padding-top: 0 !important;
+}

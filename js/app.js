@@ -1619,8 +1619,8 @@ function diHeroCardHTML(o) {
   return `${header}
     <div class="tdi-hero-body${o.hubCard ? ' tdi-hero-body--split' : ''}">
       ${o.art ? `<div class="tdi-art" data-tdi-art aria-hidden="true"><img class="tdi-art-img" data-tdi-art-img
-          src="/assets/briefing/morning-1280.webp"
-          srcset="/assets/briefing/morning-800.webp 800w, /assets/briefing/morning-1280.webp 1280w"
+          src="/assets/briefing/morning-1280.webp?v=2"
+          srcset="/assets/briefing/morning-800.webp?v=2 800w, /assets/briefing/morning-1280.webp?v=2 1280w"
           sizes="(max-width: 1023px) 100vw, 640px" alt="" decoding="async" loading="lazy"></div>` : ''}
       <div class="tdi-bodygrid">
         <div class="tdi-briefcol">
@@ -1698,8 +1698,8 @@ function applyBriefArt(root, iso) {
   const night = parts ? /night|evening/i.test(parts.edition || '') : false;
   const name = night ? 'evening' : 'morning';
   root.querySelectorAll('[data-tdi-art-img]').forEach((img) => {
-    img.src = `/assets/briefing/${name}-1280.webp`;
-    img.srcset = `/assets/briefing/${name}-800.webp 800w, /assets/briefing/${name}-1280.webp 1280w`;
+    img.src = `/assets/briefing/${name}-1280.webp?v=2`;
+    img.srcset = `/assets/briefing/${name}-800.webp?v=2 800w, /assets/briefing/${name}-1280.webp?v=2 1280w`;
   });
   root.querySelectorAll('.tdi-card').forEach((c) => c.classList.toggle('is-evening', night));
   root.querySelectorAll('[data-tdi-eyebrow-tx]').forEach((el) => {
@@ -2407,6 +2407,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
               <li class="tpr-row"><button type="button" class="tpr-row-btn" data-tpr-open="${escapeAttr(s.name || '')}">
                 <span class="tpr-row-ic" aria-hidden="true">${promptRowIconSVG(s)}</span>
                 <span class="tpr-row-name">${escapeHTML(s.name || '')}</span>
+                <span class="tpr-row-go" aria-hidden="true">${SUBPAGE_ARROW}</span>
               </button></li>`).join('')}</ul>` : ''}
             <button type="button" class="tpr-go" data-pr-toggle aria-expanded="false">
               <span class="tpr-go-open">View all tools</span>
