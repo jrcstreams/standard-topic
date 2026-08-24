@@ -17170,7 +17170,10 @@ body.home-search #home-trending .trend-card.is-expanded .trend-card-exp,
 html:has(body.app-mode:not(.home-search)),
 body.app-mode:not(.home-search) { overflow: visible !important; height: auto !important; }
 body.app-mode:not(.home-search) #content {
-  height: auto !important; min-height: 0 !important;
+  /* The clip was max-height: 1.5em (24px), not height — a leftover from the
+     inline-link row. wireSubtopicsMore still keeps it to one line by hiding
+     trailing pills, so this only stops them being cut off vertically. */
+  height: auto !important; min-height: 0 !important; max-height: none !important;
   overflow: visible !important; position: static !important;
 }
 body.app-mode:not(.home-search) .topic-layout,
@@ -23932,4 +23935,96 @@ body.home-search .home-search-hero .search-panel-starters.sp-quick { display: fl
   .search-panel-starters.sp-quick { gap: 6px; margin-top: 0.7rem; }
   .sp-ql { height: 31px; padding: 0 11px; font-size: 0.8rem; gap: 6px; }
   .sp-ql-ic svg { width: 14px; height: 14px; }
+}
+
+/* ═══ revamp979 — topic page header: bigger title, subtext, pill subtopics ══
+   (#img563/564) The title area leads the page properly now, the one-line topic
+   description shows on every width (it was mobile-only), the subtopics are
+   pill buttons led by an Overview pill, and mobile gains a "‹ Topics" back
+   link above the title. */
+
+/* Show the body header on mobile too — it was display:none below 900px, where
+   the sticky band was the only control. Beats the two existing !important
+   hide rules by matching their shape. */
+@media (max-width: 899.98px) {
+  .topic-band .topic-bodyhead,
+  body:has(.topic-home) .topic-bodyhead,
+  .topic-bodyhead { display: block !important; }
+}
+
+.topic-bodyhead { padding-top: 2px; }
+
+/* ── "‹ Topics" back link — mobile only ── */
+.tbh-back {
+  display: none; align-items: center; gap: 5px;
+  margin: 0 0 10px; padding: 0;
+  font-family: var(--font-family); font-size: 0.9rem; font-weight: 600;
+  color: #2c4f9e; text-decoration: none !important;
+}
+.tbh-back svg { flex: none; }
+@media (max-width: 899.98px) { .tbh-back { display: inline-flex; } }
+
+/* ── Title + subtext ── */
+.topic-bodyhead .tbh-title {
+  font-size: clamp(2rem, 1.35rem + 2.4vw, 3.1rem) !important;
+  line-height: 1.04 !important;
+  letter-spacing: -0.035em !important;
+  margin: 0 0 0.5rem !important;
+}
+.tbh-desc {
+  margin: 0 0 1.15rem;
+  max-width: 56ch;
+  font-family: var(--font-family);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+/* ── Subtopics as pills ── */
+/* The row was a 24px-tall, overflow:hidden single line of inline links, and the
+   wrap carried a 1.5px rule — so 36px pills were clipped by both. The pills ARE
+   the divider now, so the rule goes and the row grows to fit. */
+.topic-bodyhead .tbh-subswrap {
+  border-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 1.5rem;
+  overflow: visible !important;
+}
+.topic-bodyhead .tbh-subs {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  /* The clip was MAX-height: 1.5em (24px), not height — a leftover from the
+     inline-link row, which is why overriding `height` alone did nothing.
+     wireSubtopicsMore still holds the row to one line by hiding trailing
+     pills; this only stops them being cut off vertically. */
+  height: auto !important; min-height: 0 !important; max-height: none !important;
+  overflow: visible !important;
+  border: 0 !important; padding: 0 !important;
+}
+.topic-bodyhead .tbh-sub,
+.topic-bodyhead .tbh-more {
+  display: inline-flex; align-items: center; gap: 6px; flex: none;
+  height: 36px; padding: 0 16px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, #2f4d9e 15%, transparent);
+  background: #fff; color: #33436a; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.87rem; font-weight: 550;
+  line-height: 1; white-space: nowrap; text-decoration: none !important;
+  transition: border-color .14s ease, color .14s ease, background .14s ease;
+}
+.topic-bodyhead .tbh-sub.is-active {
+  background: #2c4f9e; border-color: #2c4f9e; color: #fff; font-weight: 600;
+}
+.tbh-more-chev { display: inline-flex; opacity: .75; }
+@media (hover: hover) {
+  .topic-bodyhead .tbh-sub:not(.is-active):hover,
+  .topic-bodyhead .tbh-more:hover {
+    border-color: color-mix(in srgb, #1d4ed8 34%, transparent); color: #1d4ed8;
+  }
+}
+.topic-bodyhead .tbh-sub:focus-visible,
+.topic-bodyhead .tbh-more:focus-visible { outline: 2px solid #1d4ed8; outline-offset: 2px; }
+
+@media (max-width: 620px) {
+  .tbh-desc { font-size: 0.94rem; margin-bottom: 0.95rem; }
+  .topic-bodyhead .tbh-sub,
+  .topic-bodyhead .tbh-more { height: 33px; padding: 0 13px; font-size: 0.83rem; }
 }

@@ -38,3 +38,8 @@ js/
 # input to tools/build_shortcut_registry.py and are never fetched at runtime
 # (js/utils/icons.js still declares ICON_PATH, which is dead).
 assets/shortcut-icons/
+
+# Full-res briefing art. Source only — the site serves the sized WebP variants
+# in assets/briefing/ (~12-32KB each vs ~1.5MB for these).
+assets/morning-briefing.png
+assets/evening-briefing.png

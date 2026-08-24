@@ -612,17 +612,29 @@ function homeSubnavPickerHTML() {
 // this header below 900px.
 function topicBodyHeadHTML(topic) {
   const related = (getRelatedTopics(topic) || []).filter((t) => t && t.slug);
-  const links = related
-    .map((t) => `<a class="tbh-sub" href="#/topic/${escapeAttr(t.slug)}">${escapeHTML(t.name)}</a>`)
-    .join('');
+  const desc = getTopicDescription(topic.slug) || '';
+  // revamp979: the subtopics are PILL BUTTONS now, led by an "Overview" pill.
+  // On a subtopic page Overview points at the parent hub (the useful
+  // destination — you're already on the subtopic); on a parent it points at
+  // itself and reads as the active state.
+  const hub = topic.parent ? (getTopicBySlug(topic.parent) || topic) : topic;
+  const onHub = hub.slug === topic.slug;
+  const pills = [
+    `<a class="tbh-sub tbh-sub--overview${onHub ? ' is-active' : ''}" href="#/topic/${escapeAttr(hub.slug)}"${onHub ? ' aria-current="page"' : ''}>Overview</a>`,
+  ].concat(related
+    .filter((t) => t.slug !== hub.slug)
+    .map((t) => `<a class="tbh-sub${t.slug === topic.slug ? ' is-active' : ''}" href="#/topic/${escapeAttr(t.slug)}"${t.slug === topic.slug ? ' aria-current="page"' : ''}>${escapeHTML(t.name)}</a>`)
+  ).join('');
   return `
     <header class="topic-bodyhead topic-subnav-picker" data-topic-picker>
+      <a class="tbh-back" href="#/topics">${TBH_BACK_CHEV}<span>Topics</span></a>
       <h1 class="tbh-title">${escapeHTML(topic.name)}</h1>
+      ${desc ? `<p class="tbh-desc">${escapeHTML(desc)}</p>` : ''}
       <div class="tbh-subswrap">
-        <nav class="tbh-subs" aria-label="Related topics">
-          ${links}
+        <nav class="tbh-subs" aria-label="Subtopics">
+          ${pills}
           <button type="button" class="tbh-more tsp-btn" data-tbh-more hidden
-                  aria-expanded="false" aria-controls="tsp-panel-body">More</button>
+                  aria-expanded="false" aria-controls="tsp-panel-body">More<span class="tbh-more-chev" aria-hidden="true">${TBH_MORE_CHEV}</span></button>
         </nav>
       </div>
       ${topicPickerPanelHTML(topic, 'tsp-panel-body')}
@@ -903,6 +915,9 @@ const PROMPTS_FEAT_HEAD_IC = '<svg viewBox="0 0 24 24" fill="none" stroke="curre
 // Quick-link glyphs under the homepage search bar (revamp978).
 const QL_BRIEF_IC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.5 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-8"/><path d="M8 8h6M8 12h6M8 16h4"/><path d="M19.5 2.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z" fill="currentColor" stroke="none"/></svg>';
 const QL_TREND_IC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>';
+// Topic-page header controls (revamp979).
+const TBH_BACK_CHEV = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>';
+const TBH_MORE_CHEV = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
 const PH_ARROW_R = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 const PDIR_CHEV = '<svg class="pdir-chev" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 function promptDirectoryHTML() {
