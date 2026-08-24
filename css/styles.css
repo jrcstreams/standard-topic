@@ -24445,3 +24445,77 @@ body.home-search .home-search-hero .search-panel-starters.sp-quick { display: fl
 
 /* The bottom Latest News feed spans both homepage columns. */
 .home-latest { grid-column: 1 / -1; min-width: 0; margin-top: 2.6rem; }
+
+/* ═══ revamp987 — AI Briefing card: tighter hierarchy, mug always in frame ══
+   (#img580-586) Eyebrow → headline → one meta line, so the card reads top-down
+   and loses height. Text is allowed further right, as it already is on mobile,
+   which lets the AI Research Tools card sit at a more even height beside it. */
+
+/* Keep the RIGHT of the art in frame at every width — the mug lives there, and
+   object-fit: cover was centring the crop and pushing it out of view. */
+.tdi-art-img { object-position: right center !important; }
+
+/* Text may run further right; the art narrows to suit. */
+.topic-home .tdi-card--hero2 .tdi-briefcol,
+.hb-hero .tdi-card .tdi-briefcol { max-width: 66% !important; }
+.topic-home .tdi-card--hero2 .tdi-art,
+.hb-hero .tdi-card .tdi-art { width: 48%; }
+
+/* ── Eyebrow: glyph + "Today's / Tonight's Briefing" ── */
+.tdi-eyebrow {
+  display: inline-flex; align-items: center; gap: 7px;
+  margin: 0 0 7px;
+  font-family: var(--font-family); font-size: 0.76rem; font-weight: 700;
+  letter-spacing: 0.09em; text-transform: uppercase; color: #b0700f;
+}
+.tdi-eyebrow-ic { display: inline-flex; }
+.tdi-eyebrow-ic svg { width: 15px; height: 15px; display: block; }
+.is-evening .tdi-eyebrow { color: #9fb2dd; }
+
+/* ── Headline ── */
+.tdi-card--hero2 .tdi-today-title {
+  font-size: clamp(1.15rem, 1rem + 0.6vw, 1.5rem) !important;
+  line-height: 1.15 !important; letter-spacing: -0.022em !important;
+  margin: 0 0 6px !important;
+}
+
+/* ── One meta line: TOPIC · date · edition ── */
+.tdi-metarow {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  margin: 0 0 11px;
+}
+/* All meta parts share one line-height and carry no stray margins, or the
+   topic label sits ~7px below the date and the row grows for no reason. */
+.tdi-metarow .tdi-topiclabel--inline,
+.tdi-metarow .tdi-date,
+.tdi-metarow .tdi-stamp-val,
+.tdi-metarow .tdi-stamp-edwrap,
+.tdi-metarow .tdi-stamp-ed { line-height: 1.2 !important; margin: 0 !important; padding: 0 !important; }
+.tdi-topiclabel--inline {
+  display: inline-flex; align-items: center;
+  font-family: var(--font-family); font-size: 0.76rem; font-weight: 700;
+  letter-spacing: 0.085em; text-transform: uppercase; color: #52618a;
+}
+.tdi-meta-sep { width: 1px; height: 11px; background: currentColor; opacity: .28; }
+.tdi-metarow .tdi-date { display: inline-flex; align-items: center; gap: 8px; }
+.tdi-metarow .tdi-stamp-val,
+.tdi-metarow .tdi-stamp-ed {
+  font-family: var(--font-family); font-size: 0.76rem; font-weight: 650;
+  letter-spacing: 0.085em; text-transform: uppercase; color: #52618a;
+}
+/* The eyebrow already carries the sun/moon, so the meta line drops it. */
+.tdi-metarow .tdi-stamp-ic { display: none !important; }
+.is-evening .tdi-topiclabel--inline,
+.is-evening .tdi-metarow .tdi-stamp-val,
+.is-evening .tdi-metarow .tdi-stamp-ed { color: #a9b8d8 !important; }
+
+/* Tighter summary + action so the card loses the extra height. */
+.tdi-card--hero2 .tdi-summary { margin: 0 0 13px !important; }
+.tdi-card--hero2 .tdi-actions { margin-top: 0 !important; }
+
+@media (max-width: 1023px) {
+  .topic-home .tdi-card--hero2 .tdi-briefcol,
+  .hb-hero .tdi-card .tdi-briefcol { max-width: none !important; }
+  .topic-home .tdi-card--hero2 .tdi-art,
+  .hb-hero .tdi-card .tdi-art { width: 100%; }
+}

@@ -1624,6 +1624,22 @@ function diHeroCardHTML(o) {
           sizes="(max-width: 1023px) 100vw, 640px" alt="" decoding="async" loading="lazy"></div>` : ''}
       <div class="tdi-bodygrid">
         <div class="tdi-briefcol">
+          ${o.art ? `
+          <!-- revamp987: with the art variant the hierarchy is eyebrow →
+               headline → one meta line, so the card reads top-down and gets
+               shorter. The eyebrow's wording and glyph follow the edition and
+               are filled by applyBriefArt(). -->
+          <div class="tdi-eyebrow" data-tdi-eyebrow>
+            <span class="tdi-eyebrow-ic" data-tdi-eyebrow-ic aria-hidden="true">${DI_SUN}</span>
+            <span class="tdi-eyebrow-tx" data-tdi-eyebrow-tx>Today\u2019s Briefing</span>
+          </div>
+          <div class="tdi-todayhead">
+            <h3 class="tdi-today-title">Your 5-minute AI briefing</h3>
+          </div>
+          <div class="tdi-metarow">
+            ${o.topicLabel ? `<span class="tdi-topiclabel tdi-topiclabel--inline">${escapeHTML(o.topicLabel)}</span><span class="tdi-meta-sep" aria-hidden="true"></span>` : ''}
+            <span class="tdi-date" data-tdi-date></span>
+          </div>` : `
           <div class="tdi-todayhead">
             <h3 class="tdi-today-title">AI Briefing</h3>
           </div>
@@ -1631,7 +1647,7 @@ function diHeroCardHTML(o) {
           <!-- revamp915: the edition stamp sits UNDER the topic standfirst,
                above the summary — CSS order couldn't do this because the stamp
                used to live inside .tdi-todayhead alongside the title. -->
-          <div class="tdi-stamprow"><span class="tdi-date" data-tdi-date></span></div>
+          <div class="tdi-stamprow"><span class="tdi-date" data-tdi-date></span></div>`}
           <p class="tdi-summary" data-tdi-summary>Preparing today\u2019s briefing\u2026</p>
           <div class="tdi-actions">
             <button type="button" class="tdi-go tdi-go--brief" data-di-toggle aria-expanded="false">
@@ -1686,6 +1702,10 @@ function applyBriefArt(root, iso) {
     img.srcset = `/assets/briefing/${name}-800.webp 800w, /assets/briefing/${name}-1280.webp 1280w`;
   });
   root.querySelectorAll('.tdi-card').forEach((c) => c.classList.toggle('is-evening', night));
+  root.querySelectorAll('[data-tdi-eyebrow-tx]').forEach((el) => {
+    el.textContent = night ? '\u2018Tonight\u2019s Briefing'.slice(1) : 'Today\u2019s Briefing';
+  });
+  root.querySelectorAll('[data-tdi-eyebrow-ic]').forEach((el) => { el.innerHTML = night ? DI_MOON : DI_SUN; });
 }
 
 function diEditionStampHTML(iso) {
