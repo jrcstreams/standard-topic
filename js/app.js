@@ -900,6 +900,9 @@ function promptRowIconSVG(sh) {
 // The wand that marks the AI Prompts card on the homepage — reused as the
 // Featured Prompts head mark on the Prompts page so the two heads match.
 const PROMPTS_FEAT_HEAD_IC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg>';
+// Quick-link glyphs under the homepage search bar (revamp978).
+const QL_BRIEF_IC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.5 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-8"/><path d="M8 8h6M8 12h6M8 16h4"/><path d="M19.5 2.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z" fill="currentColor" stroke="none"/></svg>';
+const QL_TREND_IC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>';
 const PH_ARROW_R = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>';
 const PDIR_CHEV = '<svg class="pdir-chev" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
 function promptDirectoryHTML() {
@@ -5695,33 +5698,74 @@ function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
     fillStarterChips();
   }).catch(() => {});
 
-  // Inline (home) starter chips under the bar — two quick-launch groups so the
-  // card is an actionable launchpad: a few POPULAR topics (link to the topic page)
-  // and a few TRENDING terms (run the search). Re-run once live trends land.
+  // Quick links under the search bar (revamp978). Replaces the old two-group
+  // starter chips. Fixed set in PRIORITY order — the row trims from the END as
+  // width runs out, so the first three (Today's Briefing, Trending, World) are
+  // the ones that always survive.
+  const QUICK_LINKS = [
+    { key: 'briefing', label: "Today's Briefing", icon: QL_BRIEF_IC },
+    { key: 'trending', label: 'Trending',         icon: QL_TREND_IC },
+    { key: 'topic',    label: 'World',            slug: 'world' },
+    { key: 'topic',    label: 'Politics',         slug: 'politics' },
+    { key: 'topic',    label: 'AI',               slug: 'artificial-intelligence' },
+    { key: 'topic',    label: 'Science',          slug: 'science' },
+    { key: 'topic',    label: 'Markets',          slug: 'markets' },
+  ];
+  const QL_MIN_VISIBLE = 3;
+
   function fillStarterChips() {
     if (isModal) return;
     const wrap = panelEl.querySelector('.search-panel-starters');
     if (!wrap) return;
-    let topics = [];
-    try { topics = (getFeaturedTopics() || []).filter((t) => t && t.slug && t.slug !== 'home').slice(0, 5); } catch (_) {}
-    const trends = (trendSuggest || []).slice(0, 4);
-    if (!topics.length && !trends.length) { wrap.hidden = true; return; }
-    const group = (label, chips) => `<div class="sp-starter-group"><span class="sp-starter-label">${label}</span><div class="sp-starter-chips">${chips}</div></div>`;
-    const topicChips = topics.map((t) => `<a class="sp-chip" href="#/topic/${escapeAttr(t.slug)}">${escapeHTML(t.name)}</a>`).join('');
-    const trendChips = trends.map((t) => `<button type="button" class="sp-chip sp-chip--trend" data-q="${escapeAttr(t.query)}">${SP_TREND_ICON}<span>${escapeHTML(t.query)}</span></button>`).join('');
-    wrap.innerHTML = (topics.length ? group('Popular topics', topicChips) : '')
-      + (trends.length ? group('Trending now', trendChips) : '');
+    wrap.classList.add('sp-quick');
+    wrap.innerHTML = QUICK_LINKS.map((l) => {
+      const ic = l.slug ? topicIconSVG(((getTopicBySlug(l.slug) || {}).icon) || 'globe', '') : l.icon;
+      const inner = `<span class="sp-ql-ic" aria-hidden="true">${ic}</span><span class="sp-ql-tx">${escapeHTML(l.label)}</span>`;
+      return l.slug
+        ? `<a class="sp-ql" href="#/topic/${escapeAttr(l.slug)}" data-ql>${inner}</a>`
+        : `<button type="button" class="sp-ql" data-ql data-ql-act="${escapeAttr(l.key)}">${inner}</button>`;
+    }).join('');
     wrap.hidden = false;
-    // A trend chip opens that trend's insight modal (NOT a search of the card) —
-    // same as clicking it in the Trending list (full trend list as Prev/Next nav).
-    wrap.querySelectorAll('.sp-chip--trend').forEach((b) => b.addEventListener('click', () => {
-      const list = (trendTopicsRaw || []).map((t) => ({ type: 'trend', query: spTitleCase(t.query), category: (t.categories && t.categories[0]) || '', startedAt: t.startedAt || '', trendBreakdown: Array.isArray(t.trendBreakdown) ? t.trendBreakdown.slice(0, 8) : [] }));
-      let index = list.findIndex((e) => e.query === b.dataset.q);
-      if (index < 0) { if (!list.length) return; index = 0; }
-      window.dispatchEvent(new CustomEvent('open-insight-modal', { detail: { ...list[index], nav: { list, index, backLabel: 'View All Trending', backEvent: 'open-trending-list', itemKind: 'trend' } } }));
-    }));
+
+    wrap.querySelector('[data-ql-act="trending"]')?.addEventListener('click', () => navigate('#/trending'));
+    // Today's Briefing opens the homepage briefing once that section exists
+    // (phase 3); until then it falls through to the briefings hub.
+    wrap.querySelector('[data-ql-act="briefing"]')?.addEventListener('click', () => {
+      const el = document.querySelector('[data-home-briefing]');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        el.querySelector('[data-home-brief-open]')?.click();
+        return;
+      }
+      navigate('#/intelligence');
+    });
+    // Measure after layout settles — fonts and the row's own width aren't
+    // final on the same frame the markup lands.
+    requestAnimationFrame(() => fitQuickLinks(wrap));
+  }
+
+  // Hide trailing links that don't fit on one row, never dropping below three.
+  // Measured rather than breakpoint-guessed, because the label widths differ.
+  function fitQuickLinks(wrap) {
+    const items = [...wrap.querySelectorAll('[data-ql]')];
+    if (!items.length) return;
+    items.forEach((el) => { el.hidden = false; });
+    const avail = wrap.clientWidth;
+    if (!avail) return;
+    const gap = parseFloat(getComputedStyle(wrap).columnGap || '8') || 8;
+    let used = 0;
+    items.forEach((el, i) => {
+      const w = el.getBoundingClientRect().width;
+      const next = used + w + (i ? gap : 0);
+      if (i >= QL_MIN_VISIBLE && next > avail) { el.hidden = true; return; }
+      used = next;
+    });
   }
   fillStarterChips();
+  onResize('home-quicklinks', () => {
+    const w = panelEl.querySelector('.search-panel-starters');
+    if (w && !isModal) fitQuickLinks(w);
+  }, 60);
 
   // The custom-search results card — the SAME pill-tab shell as the AI Insights
   // modal, but NO on-demand AI generation. Tabs: External Insights (the curated

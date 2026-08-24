@@ -23876,3 +23876,60 @@ body.home-search #section-newsfeed .news-list > .news-card:first-child,
    fits the longest sampled summary whole. The card grows two lines; the
    "Read briefing" link is margin-top:auto so it stays pinned to the bottom. */
 .dih-item-sum { -webkit-line-clamp: 5 !important; }
+
+/* ═══ revamp978 — homepage hero: lighter band + quick links ════════════════
+   Phase 1 of the homepage rebuild (#img558). Headline, tagline and the search
+   placeholder are deliberately unchanged. */
+
+/* The band is painted by <body> (content below sits on white), so lightening
+   the hero means lightening that — #f3f4f8 -> #f7f8fb. */
+body.home-search { background: #f7f8fb; }
+
+/* ── Quick links row ── */
+/* The old starter chips were hidden on the homepage hero by
+   `body.home-search .home-search-hero .search-panel-starters` (3 classes), so
+   the quick links need to out-specify it. Still hidden while the search panel
+   is expanded — the results take that space. */
+body.home-search .home-search-hero .search-panel-starters.sp-quick { display: flex !important; }
+.search-panel--inline[data-state="expanded"] .search-panel-starters.sp-quick { display: none !important; }
+
+.search-panel-starters.sp-quick {
+  /* The base .search-panel-starters is a COLUMN (it stacked two labelled chip
+     groups). The quick links are a single row, so this must be reset or they
+     stack and the fit logic measures full-width items. */
+  display: flex; flex-direction: row !important; flex-wrap: nowrap; justify-content: center;
+  align-items: center; gap: 8px; width: 100%;
+  padding: 0; margin: 0.85rem 0 0; overflow: hidden;
+}
+.sp-ql {
+  /* Fixed height so the <a> topic pills and the <button> action pills match —
+     the topic icons render taller than the inline glyphs and were making the
+     row uneven (37.5px vs 32px). */
+  display: inline-flex; align-items: center; gap: 7px; flex: none;
+  height: 34px; line-height: 1; padding: 0 14px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, #2f4d9e 14%, transparent);
+  background: #fff; color: #33436a; cursor: pointer;
+  font-family: var(--font-family); font-size: 0.84rem; font-weight: 550;
+  text-decoration: none !important; white-space: nowrap;
+  transition: border-color .14s ease, color .14s ease, background .14s ease;
+}
+/* An explicit `display` on .sp-ql beats the [hidden] attribute the fit logic
+   sets, so the trimmed links stayed on screen. This restores it. */
+.sp-ql[hidden] { display: none !important; }
+.sp-ql-ic { flex: none; display: inline-flex; color: #5b6b93; }
+.sp-ql-ic svg { width: 15px; height: 15px; display: block; }
+.sp-ql-tx { white-space: nowrap; }
+/* The first link is the primary action, so it carries the accent. */
+.sp-ql[data-ql-act="briefing"] { color: #1d4ed8; border-color: color-mix(in srgb, #1d4ed8 26%, transparent); }
+.sp-ql[data-ql-act="briefing"] .sp-ql-ic { color: #1d4ed8; }
+@media (hover: hover) {
+  .sp-ql:hover { border-color: color-mix(in srgb, #1d4ed8 34%, transparent); color: #1d4ed8; background: #fff; }
+  .sp-ql:hover .sp-ql-ic { color: #1d4ed8; }
+}
+.sp-ql:focus-visible { outline: 2px solid #1d4ed8; outline-offset: 2px; }
+
+@media (max-width: 520px) {
+  .search-panel-starters.sp-quick { gap: 6px; margin-top: 0.7rem; }
+  .sp-ql { height: 31px; padding: 0 11px; font-size: 0.8rem; gap: 6px; }
+  .sp-ql-ic svg { width: 14px; height: 14px; }
+}
