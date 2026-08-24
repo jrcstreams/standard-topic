@@ -20,14 +20,21 @@ import { createStreamRenderer, groupBlockLines } from '../utils/stream-render.js
 // Homepage Latest News tabs (revamp984). "All" is the cross-topic home feed;
 // the rest switch the feed to that topic. "More topics" links to /topics rather
 // than being another tab.
+// No "All" — the bottom feed defaults to World. Ordered by priority; the row
+// trims from the END to fit, so wider screens simply show more of them.
 const HOME_TABS = [
-  { slug: '', label: 'All' },
   { slug: 'world', label: 'World' },
   { slug: 'politics', label: 'Politics' },
   { slug: 'artificial-intelligence', label: 'AI' },
   { slug: 'science', label: 'Science' },
   { slug: 'markets', label: 'Markets' },
+  { slug: 'technology', label: 'Technology' },
+  { slug: 'sports', label: 'Sports' },
+  { slug: 'health-wellness', label: 'Health' },
+  { slug: 'entertainment', label: 'Entertainment' },
 ];
+const NF_TABS_MIN = 3;
+const NF_ARROW = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>';
 
 // Homepage feed opens at four stories, then reveals six at a time (revamp981).
 // Declared at module top: they're read from a function defined earlier in this
@@ -1193,10 +1200,49 @@ function startFeed(ctx) {
   loadLive();
 }
 
-export function renderNewsFeed(container, topic, isHome, activeTab = '') {
+// Hide trailing tabs that don't fit one row, never below three, so wider
+// screens simply show more of them. Measured, because label widths differ.
+function fitNewsTabs(container) {
+  const wrap = container.querySelector('.nf-tabs');
+  if (!wrap) return;
+  const fit = () => {
+    const tabs = [...wrap.querySelectorAll('[data-nf-tab]')];
+    const more = wrap.querySelector('.nf-more--tabs');
+    if (!tabs.length) return;
+    tabs.forEach((el) => { el.hidden = false; });
+    const avail = wrap.clientWidth;
+    if (!avail) return;
+    const gap = parseFloat(getComputedStyle(wrap).columnGap || '6') || 6;
+    const moreW = more && getComputedStyle(more).display !== 'none' ? more.getBoundingClientRect().width + gap : 0;
+    let used = moreW;
+    tabs.forEach((el, i) => {
+      const next = used + el.getBoundingClientRect().width + (i ? gap : 0);
+      // Never hide the ACTIVE tab — the reader would lose their place.
+      if (i >= NF_TABS_MIN && next > avail && !el.classList.contains('is-active')) { el.hidden = true; return; }
+      used = next;
+    });
+  };
+  requestAnimationFrame(fit);
+  onNewsTabsResize(fit);
+}
+let __nfTabsFit = null;
+function onNewsTabsResize(fn) {
+  __nfTabsFit = fn;
+  if (onNewsTabsResize.wired) return;
+  onNewsTabsResize.wired = true;
+  let raf = 0;
+  window.addEventListener('resize', () => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => { raf = 0; try { __nfTabsFit && __nfTabsFit(); } catch (_) {} });
+  }, { passive: true });
+}
+
+export function renderNewsFeed(container, topic, isHome, activeTab = '', variant = 'home') {
   // On the homepage the active tab chooses the feed; isHome stays true so the
   // head (and its tabs) keep rendering rather than falling back to the topic head.
-  const slug = isHome ? (activeTab || 'home') : (topic && topic.slug);
+  // The bottom feed defaults to World; the top one is the cross-topic home feed.
+  const curTab = variant === 'latest' ? (activeTab || 'world') : activeTab;
+  const slug = isHome ? (curTab || 'home') : (topic && topic.slug);
   const label = isHome ? '' : ((topic && topic.name) || '');
   // Header: both surfaces use the homepage's big display title. Topic pages add
   // a quiet topic-name kicker above it so the feed reads as that topic's front
@@ -1205,14 +1251,18 @@ export function renderNewsFeed(container, topic, isHome, activeTab = '') {
   // and weight unify across homepage + topic pages in CSS.
   const headHTML = isHome
     ? `
-    <div class="newsfeed-head section-card-head newsfeed-head--home">
-      <div class="newsfeed-headtext">
-        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">Today's News</span></h3>
+    <div class="newsfeed-head section-card-head newsfeed-head--home${variant === 'latest' ? ' newsfeed-head--latest' : ''}">
+      <div class="newsfeed-headrow">
+        <div class="newsfeed-headtext">
+          <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">${variant === 'latest' ? 'Latest News' : "Today's News"}</span></h3>
+        </div>
+        ${variant === 'latest' ? `<a class="nf-more nf-more--head" href="#/topics">More topics${NF_ARROW}</a>` : ''}
       </div>
+      ${variant === 'latest' ? `
       <div class="nf-tabs" role="tablist" aria-label="Filter news by topic">
-        ${HOME_TABS.map((t) => `<button type="button" class="nf-tab${t.slug === activeTab ? ' is-active' : ''}" role="tab" aria-selected="${t.slug === activeTab ? 'true' : 'false'}" data-nf-tab="${t.slug}">${t.label}</button>`).join('')}
-        <a class="nf-tab nf-tab--more" href="#/topics">More topics</a>
-      </div>
+        ${HOME_TABS.map((t) => `<button type="button" class="nf-tab${t.slug === curTab ? ' is-active' : ''}" role="tab" aria-selected="${t.slug === curTab ? 'true' : 'false'}" data-nf-tab="${t.slug}">${t.label}</button>`).join('')}
+        <a class="nf-more nf-more--tabs" href="#/topics">More topics${NF_ARROW}</a>
+      </div>` : ''}
     </div>`
     : `
     <div class="newsfeed-head section-card-head newsfeed-head--home newsfeed-head--topic">
@@ -1240,10 +1290,12 @@ export function renderNewsFeed(container, topic, isHome, activeTab = '') {
   container.querySelectorAll('[data-nf-tab]').forEach((b) => {
     b.addEventListener('click', () => {
       const next = b.dataset.nfTab || '';
-      if (next === activeTab) return;
-      renderNewsFeed(container, topic, isHome, next);
+      if (next === curTab) return;
+      renderNewsFeed(container, topic, isHome, next, variant);
     });
   });
+
+  if (variant === 'latest') fitNewsTabs(container);
 
   startFeed({ card, scrollWrap, foot, slug, label, isHome });
 }

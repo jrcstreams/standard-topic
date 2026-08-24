@@ -2376,7 +2376,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
         <section class="topic-top-side">
           <div class="tpr-card" data-tpr>
             <div class="tpr-head">
-              <h2 class="tsec-title tpr-card-title"><span class="tsec-ic tsec-ic--pr" aria-hidden="true">${TOPIC_AI_ICONS['topic-specific']}</span>AI Research Tools</h2>
+              <h2 class="tsec-title tpr-card-title"><span class="tsec-ic tsec-ic--pr" aria-hidden="true">${DI_SPARK_TWO}</span>AI Research Tools</h2>
               <button type="button" class="tpr-headclose" data-pr-toggle aria-label="Close prompts">
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 <span>Close Prompts</span>
@@ -2385,11 +2385,11 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
             <p class="tpr-sub">Ready-made tools to research this topic.</p>
             ${featuredPrompts.length ? `<ul class="tpr-list">${featuredPrompts.map((s) => `
               <li class="tpr-row"><button type="button" class="tpr-row-btn" data-tpr-open="${escapeAttr(s.name || '')}">
-                <span class="tpr-row-mark" aria-hidden="true"></span>
+                <span class="tpr-row-ic" aria-hidden="true">${promptRowIconSVG(s)}</span>
                 <span class="tpr-row-name">${escapeHTML(s.name || '')}</span>
               </button></li>`).join('')}</ul>` : ''}
             <button type="button" class="tpr-go" data-pr-toggle aria-expanded="false">
-              <span class="tpr-go-open">View all ${shortcuts.length} tools</span>
+              <span class="tpr-go-open">View all tools</span>
               <span class="tpr-go-close">Hide tools</span>${SUBPAGE_ARROW}
             </button>
             <div class="tpr-expand" data-pr-expand><div class="tpr-expand-inner">
@@ -4522,11 +4522,18 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
           <div class="home-search-hero" id="home-search-hero"></div>
         </div>
         <div class="home-sections">
-          <!-- revamp951: Featured AI Briefings leads the body, full width,
-               directly under the search band — Featured Topics and Prompts
-               follow beneath it. -->
-          <section class="home-featbriefs" data-home-featbriefs aria-label="Featured AI Briefings"></section>
-          <div class="home-featured" aria-label="Featured on Standard Topic">
+          <!-- revamp985: Today's News + Trending lead as the two columns; the
+               AI Briefing / Explore Topics / AI Research Tools trio follows
+               inside ONE tinted band so they stop reading as cards-in-cards. -->
+          <div class="home-main">
+            <section class="layout-section" id="section-newsfeed"></section>
+          </div>
+          <aside class="home-side">
+            <section class="home-trending" id="home-trending"></section>
+          </aside>
+          <div class="home-band">
+          <section class="home-featbriefs" data-home-featbriefs aria-label="Today's AI Briefing"></section>
+          <div class="home-featured" aria-label="Explore">
             <section class="hf-card hf-card--topics hf-card--labelled" data-hf="topics">
               <div class="hb-head hf-labelhead">
                 <h3 class="hb-title">Explore Topics</h3>
@@ -4544,12 +4551,8 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Browse all prompts${HQ_ARROW}</button></div>
             </section>
           </div>
-          <div class="home-main">
-            <section class="layout-section" id="section-newsfeed"></section>
           </div>
-          <aside class="home-side">
-            <section class="home-trending" id="home-trending"></section>
-          </aside>
+          <section class="layout-section home-latest" id="section-latestnews"></section>
         </div>
       </div>
     `;
@@ -4598,7 +4601,7 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
               picks.push({ s: sMatch, tn: t ? t.name : '', slug: f.topic });
             }
             if (!picks.length) return;
-            pWrap.innerHTML = picks.map((pk, i) => `<button type="button" class="hq-row hq-row--prompt" data-hq-prompt="${i}"><span class="hq-row-ic" aria-hidden="true">${promptRowIconSVG(pk.s)}</span><span class="hq-row-name">${escapeHTML(pk.s.name)}</span></button>`).join('');
+            pWrap.innerHTML = picks.map((pk, i) => `<button type="button" class="hq-row hq-row--prompt" data-hq-prompt="${i}"><span class="hq-row-ic" aria-hidden="true">${promptRowIconSVG(pk.s)}</span><span class="hq-row-tx"><span class="hq-row-name">${escapeHTML(pk.s.name)}</span>${pk.s.description ? `<span class="hq-row-desc">${escapeHTML(pk.s.description)}</span>` : ''}</span></button>`).join('');
             pWrap.querySelectorAll('[data-hq-prompt]').forEach((b) => b.addEventListener('click', (e) => {
               e.stopPropagation();
               const pk = picks[Number(b.dataset.hqPrompt)]; if (!pk) return;
@@ -4670,6 +4673,12 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
   // Insights component as a tab. (renderWebSources is still used elsewhere.)
   if (feedSection) {
     renderNewsFeed(feedSection, topic, isHome);
+    // revamp986: the bottom Latest News feed is a SECOND instance with topic
+    // tabs, defaulting to World. The top feed stays the cross-topic one.
+    if (isHome) {
+      const latest = container.querySelector('#section-latestnews');
+      if (latest) renderNewsFeed(latest, topic, true, 'world', 'latest');
+    }
   }
 
   // Wire mobile tab pills (no-op when the pills aren't rendered, e.g.
