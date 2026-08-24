@@ -617,14 +617,14 @@ function topicBodyHeadHTML(topic) {
   // On a subtopic page Overview points at the parent hub (the useful
   // destination — you're already on the subtopic); on a parent it points at
   // itself and reads as the active state.
-  const hub = topic.parent ? (getTopicBySlug(topic.parent) || topic) : topic;
-  const onHub = hub.slug === topic.slug;
+  // Overview is THIS page's overview, so it's always the active pill. The
+  // parent hub is then the first link after it (#img590).
+  const parent = topic.parent ? getTopicBySlug(topic.parent) : null;
+  const rest = related.filter((t) => t.slug !== topic.slug && (!parent || t.slug !== parent.slug));
+  const ordered = parent ? [parent].concat(rest) : rest;
   const pills = [
-    `<a class="tbh-sub tbh-sub--overview${onHub ? ' is-active' : ''}" href="#/topic/${escapeAttr(hub.slug)}"${onHub ? ' aria-current="page"' : ''}>Overview</a>`,
-  ].concat(related
-    .filter((t) => t.slug !== hub.slug)
-    .map((t) => `<a class="tbh-sub${t.slug === topic.slug ? ' is-active' : ''}" href="#/topic/${escapeAttr(t.slug)}"${t.slug === topic.slug ? ' aria-current="page"' : ''}>${escapeHTML(t.name)}</a>`)
-  ).join('');
+    `<a class="tbh-sub tbh-sub--overview is-active" href="#/topic/${escapeAttr(topic.slug)}" aria-current="page">Overview</a>`,
+  ].concat(ordered.map((t) => `<a class="tbh-sub" href="#/topic/${escapeAttr(t.slug)}">${escapeHTML(t.name)}</a>`)).join('');
   return `
     <header class="topic-bodyhead topic-subnav-picker" data-topic-picker>
       <a class="tbh-back" href="#/topics">${TBH_BACK_CHEV}<span>Topics</span></a>

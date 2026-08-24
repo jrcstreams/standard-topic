@@ -24519,3 +24519,55 @@ body.home-search .home-search-hero .search-panel-starters.sp-quick { display: fl
   .topic-home .tdi-card--hero2 .tdi-art,
   .hb-hero .tdi-card .tdi-art { width: 100%; }
 }
+
+/* ═══ revamp988 — topic head + research tools + insights button ════════════ */
+
+/* 1. Topic title was topping out too large (#img587). */
+.topic-bodyhead .tbh-title {
+  font-size: clamp(1.85rem, 1.3rem + 1.7vw, 2.45rem) !important;
+}
+
+/* 2. Kill the leftover pipe dividers. They were drawn by
+      `.tbh-sub + .tbh-sub::before` for the old inline-link row and now render
+      as a stray vertical line INSIDE each pill (#img589/590). */
+.topic-bodyhead .tbh-sub::before,
+.topic-bodyhead .tbh-sub::after,
+.topic-bodyhead .tbh-more::before,
+.topic-bodyhead .tbh-more::after { content: none !important; display: none !important; }
+
+/* 3. AI Research Tools head mark: solid dark chip with a white sparkle, so it
+      reads as the section's mark and not another row icon (#img587). */
+.topic-top-side .tsec-ic--pr {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 8px;
+  background: #1e2f5c !important; color: #fff !important;
+}
+.topic-top-side .tsec-ic--pr svg {
+  width: 15px; height: 15px; fill: #fff; stroke: #fff;
+}
+
+/* 4. Row separators: fainter, and the list is closed top and bottom. */
+.topic-top-side .tpr-list {
+  border-top: 1px solid color-mix(in srgb, #2f4d9e 6%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 6%, transparent);
+}
+.topic-top-side .tpr-row { border-bottom-color: color-mix(in srgb, #2f4d9e 5%, transparent) !important; }
+
+/* 5. "View all tools" — a proper link hover instead of the inherited button
+      treatment, which was picking up a pill background. */
+.topic-top-side .tpr-go {
+  border-radius: 6px; transition: color .13s ease;
+}
+@media (hover: hover) {
+  .topic-top-side .tpr-go:hover {
+    background: none !important; color: #1d4ed8 !important; text-decoration: none !important;
+  }
+  .topic-top-side .tpr-go:hover svg { transform: translateX(2px); }
+}
+.topic-top-side .tpr-go svg { transition: transform .14s ease; }
+
+/* 6. The sparkle leads the closed "View AI Insights" button; the open state
+      keeps the X it already had. */
+.news-act-ai-spark { display: inline-flex; align-items: center; color: #2563eb; }
+.news-act-ai-spark svg { width: 14px; height: 14px; display: block; }
+.news-act-ai[aria-expanded="true"] .news-act-ai-spark { display: none; }

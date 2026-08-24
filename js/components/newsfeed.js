@@ -34,6 +34,9 @@ const HOME_TABS = [
   { slug: 'entertainment', label: 'Entertainment' },
 ];
 const NF_TABS_MIN = 3;
+// Sparkle on the CLOSED "View AI Insights" button (revamp988). The open state
+// still swaps to the X — this is the leading mark, not the close affordance.
+const AI_SPARK_BTN = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2.2l1.9 5.4a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-1.9-5.85a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
 const NF_ARROW = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>';
 
 // Homepage feed opens at four stories, then reveals six at a time (revamp981).
@@ -938,7 +941,7 @@ export function newsCardHTML(item) {
       <div class="news-card-body">
         ${descText ? `<p class="news-card-desc">${escapeHTML(descText)}</p>` : ''}
         <div class="news-card-actions">
-          <button type="button" class="news-act news-act-ai" data-news-panel="ai" aria-expanded="false"><span class="news-act-ai-open">View AI Insights</span><span class="news-act-ai-close">Close AI Insights</span>${AI_CHEV_SVG}<svg class="news-act-ai-x" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          <button type="button" class="news-act news-act-ai" data-news-panel="ai" aria-expanded="false"><span class="news-act-ai-spark" aria-hidden="true">${AI_SPARK_BTN}</span><span class="news-act-ai-open">View AI Insights</span><span class="news-act-ai-close">Close AI Insights</span>${AI_CHEV_SVG}<svg class="news-act-ai-x" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
           ${url ? `<a class="news-act" href="${escapeAttr(safeUrl(url))}" target="_blank" rel="noopener noreferrer"><span>View Story</span>${NI_VIEW_SVG}</a>` : ''}
         </div>
       </div>
