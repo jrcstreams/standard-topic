@@ -4523,7 +4523,9 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
     `;
     homeSearchPanelCtl = renderSearchPanel(container.querySelector('#home-search-hero'), { mode: 'inline' });
     // Trending is now the only sidebar card, so it can run much longer.
-    renderTrendingHome(container.querySelector('#home-trending'), { limit: 14 });
+    // revamp981: a shorter sidebar list — "View more trending" carries the rest
+    // through to the trending page rather than the sidebar being the whole list.
+    renderTrendingHome(container.querySelector('#home-trending'), { limit: 6 });
     // revamp949: the homepage leads with a Featured AI Briefings row built from
     // the same cards as the AI Briefings page.
     renderFeaturedBriefings(container.querySelector('[data-home-featbriefs]'), {

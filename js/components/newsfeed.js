@@ -17,6 +17,14 @@ import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further
 import { streamInsight } from '../utils/insight-stream.js?v=20260822-revamp962';
 import { createStreamRenderer, groupBlockLines } from '../utils/stream-render.js?v=20260822-revamp968';
 
+// Homepage feed opens at four stories, then reveals six at a time (revamp981).
+// Declared at module top: they're read from a function defined earlier in this
+// file than renderNewsFeed, so declaring them beside it put the read inside
+// const's temporal dead zone — a ReferenceError the feed's try/catch swallowed
+// into "News feed temporarily unavailable".
+const HOME_OPEN_COUNT = 4;
+const HOME_REVEAL_STEP = 6;
+
 function escapeHTML(str) {
   const div = document.createElement('div');
   div.textContent = str ?? '';
@@ -976,7 +984,7 @@ async function fetchArchive(slug, { q = '', before = '', limit = 30 } = {}) {
 }
 
 function startFeed(ctx) {
-  const { card, scrollWrap, foot, slug, label } = ctx;
+  const { card, scrollWrap, foot, slug, label, isHome } = ctx;
   const els = {
     search: card.querySelector('.nf-search'),
     sort: card.querySelector('.nf-sort'),
@@ -985,6 +993,9 @@ function startFeed(ctx) {
     q: '', time: 'all', source: 'all', sort: 'newest',
     stories: [], urls: new Set(), exhausted: false, loading: false,
     liveCache: null, noFeed: false,
+    // How many of the loaded stories the homepage is currently showing. Topic
+    // pages ignore this and render the lot.
+    shown: HOME_OPEN_COUNT,
   };
 
   function addStories(arr) {
@@ -1012,6 +1023,16 @@ function startFeed(ctx) {
 
   function renderFoot() {
     if (state.noFeed) { foot.innerHTML = ''; return; }
+    // revamp981: the homepage opens with a short list and reveals more IN PLACE
+    // (pushing the rest of the page down) before ever fetching older stories.
+    if (isHome && state.shown < visible().length) {
+      foot.innerHTML = `<button type="button" class="newsfeed-loadmore" data-reveal-more>View more news</button>`;
+      foot.querySelector('[data-reveal-more]')?.addEventListener('click', () => {
+        state.shown += HOME_REVEAL_STEP;
+        renderList();
+      });
+      return;
+    }
     if (state.exhausted) {
       foot.innerHTML = state.stories.length ? `<p class="newsfeed-end">You've reached the end of the archive.</p>` : '';
       return;
@@ -1031,7 +1052,8 @@ function startFeed(ctx) {
     if (!vis.length) {
       scrollWrap.innerHTML = `<div class="news-empty"><p>${state.q ? 'No stories match your search.' : 'No stories match these filters.'}</p></div>`;
     } else {
-      scrollWrap.innerHTML = `<div class="news-list">${vis.map(newsCardHTML).join('')}</div>`;
+      const shown = isHome ? vis.slice(0, state.shown) : vis;
+      scrollWrap.innerHTML = `<div class="news-list">${shown.map(newsCardHTML).join('')}</div>`;
       wireNewsAI(scrollWrap);
     }
     // Foot (Load more / end-of-archive) lives at the END of the scroll content,
@@ -1171,7 +1193,7 @@ export function renderNewsFeed(container, topic, isHome) {
     ? `
     <div class="newsfeed-head section-card-head newsfeed-head--home">
       <div class="newsfeed-headtext">
-        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">Today's Top News</span></h3>
+        <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">Today's News</span></h3>
       </div>
     </div>`
     : `
@@ -1195,5 +1217,5 @@ export function renderNewsFeed(container, topic, isHome) {
     scrollWrap.innerHTML = `<div class="news-error"><p>News feed unavailable.</p></div>`;
     return;
   }
-  startFeed({ card, scrollWrap, foot, slug, label });
+  startFeed({ card, scrollWrap, foot, slug, label, isHome });
 }
