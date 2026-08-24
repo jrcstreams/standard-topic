@@ -1699,6 +1699,35 @@ function renderNavDdPage(container, cfg) {
 // The same briefing cards the hub uses, mountable anywhere. Reads CACHE-ONLY so
 // rendering it can never trigger a paid generation (revamp908), and opens a
 // briefing in place inside a bordered card.
+// Fill a line-clamped preview so it ends on a COMPLETE SENTENCE (revamp976).
+// The full summary was being set and left to `-webkit-line-clamp: 3`, which cuts
+// wherever the third line runs out — mid-clause, and often right before the part
+// that carried the point ("…while Beijing defends its economic…").
+//
+// Measure rather than guess at a character budget: set the text, and if the box
+// is actually clamping, add sentences back one at a time and stop at the last
+// one that still fits. A single sentence too long to fit keeps the ellipsis —
+// there's nothing cleaner to fall back to.
+function setClampedSummary(el, text) {
+  if (!el) return;
+  const full = String(text || '');
+  el.textContent = full;
+  // Not laid out yet (hidden card, zero height) — leave the clamp to handle it.
+  if (!el.clientHeight) return;
+  const fits = () => el.scrollHeight <= el.clientHeight + 1;
+  if (fits()) return;
+  const parts = full.split(/(?<=[.!?])\s+/).filter(Boolean);
+  if (parts.length <= 1) return;
+  let out = '';
+  for (const part of parts) {
+    const next = out ? out + ' ' + part : part;
+    el.textContent = next;
+    if (!fits()) break;
+    out = next;
+  }
+  el.textContent = out || full;
+}
+
 function renderFeaturedBriefings(host, opts) {
   if (!host) return;
   const o = opts || {};
@@ -1744,7 +1773,7 @@ function renderFeaturedBriefings(host, opts) {
     fetchDailyBrief(name, false, true).then((d) => {
       if (!btn.isConnected) return;
       const sum = btn.querySelector('[data-fb-sum]');
-      if (sum) sum.textContent = (d && d.summary) ? d.summary : 'Briefing publishes with the next edition.';
+      if (sum) setClampedSummary(sum, (d && d.summary) ? d.summary : 'Briefing publishes with the next edition.');
     }).catch(() => {});
   });
 
@@ -2077,7 +2106,7 @@ function renderIntelligenceHub(container) {
       // stay the only writer. Cards with no brief yet show the pending note.
       const d = await fetchDailyBrief(el.dataset.dihItem, false, true);
       if (!el.isConnected) return;
-      if (sum) sum.textContent = (d && d.summary) ? d.summary : 'Briefing publishes with the next edition.';
+      if (sum) setClampedSummary(sum, (d && d.summary) ? d.summary : 'Briefing publishes with the next edition.');
       if (stamp && d && d.generatedAt) stamp.innerHTML = diEditionStampHTML(d.generatedAt);
     } catch (_) {
       if (sum) sum.textContent = 'Briefing publishes with the next edition.';
