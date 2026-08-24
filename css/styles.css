@@ -23868,3 +23868,11 @@ body.home-search .home-sections .home-featbriefs {
 body.home-search #section-newsfeed .news-list > .news-card:first-child,
 .search-news-section .news-list > .news-card:first-child,
 .news-list > .news-card:first-child { padding-top: 3px !important; }
+
+/* revamp977 — briefing preview clamp 3 -> 5 lines (#img552).
+   Measured across 10 topics: every daily summary is ONE sentence of 169-226
+   characters, and this box fits ~50 per line, so three lines held about 150 —
+   a quarter of the text was hidden behind an ellipsis on every card. Five lines
+   fits the longest sampled summary whole. The card grows two lines; the
+   "Read briefing" link is margin-top:auto so it stays pinned to the bottom. */
+.dih-item-sum { -webkit-line-clamp: 5 !important; }

@@ -1700,24 +1700,49 @@ function renderNavDdPage(container, cfg) {
 // rendering it can never trigger a paid generation (revamp908), and opens a
 // briefing in place inside a bordered card.
 // Fill a line-clamped preview so it ends on a COMPLETE SENTENCE (revamp976).
-// The full summary was being set and left to `-webkit-line-clamp: 3`, which cuts
-// wherever the third line runs out — mid-clause, and often right before the part
-// that carried the point ("…while Beijing defends its economic…").
 //
-// Measure rather than guess at a character budget: set the text, and if the box
-// is actually clamping, add sentences back one at a time and stop at the last
-// one that still fits. A single sentence too long to fit keeps the ellipsis —
-// there's nothing cleaner to fall back to.
+// The real problem turned out to be the clamp, not the cut: every daily summary
+// sampled was a SINGLE sentence of 169-226 characters, and the 3-line box holds
+// about 150 — so roughly a quarter of every one was hidden. The clamp is now 5
+// lines (revamp977 CSS), which fits them whole.
+//
+// This stays as a backstop for a summary that still overflows: add sentences
+// back one at a time and keep the last that fits. It no-ops on single-sentence
+// text, which is the normal case.
+//
+// Splitting is deliberately conservative. A naive /(?<=[.!?])\s+/ split treats
+// "U.S." as a sentence end and truncated Business & Finance to "Escalating
+// trade tensions between the U.S." on production. A boundary now requires a
+// following capital AND must not sit after a dotted acronym or a known
+// abbreviation.
+const SENTENCE_ABBR = /\b(?:Mr|Mrs|Ms|Dr|Prof|Sen|Rep|Gov|Gen|Lt|Sgt|St|Jr|Sr|Inc|Ltd|Co|Corp|vs|etc|al|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept|Sep|Oct|Nov|Dec|No|Vol|Fig|Est)\.$/;
+function splitSentences(text) {
+  const out = [];
+  const re = /[.!?]+(?=\s)/g;
+  let last = 0; let m;
+  while ((m = re.exec(text))) {
+    const end = m.index + m[0].length;
+    const before = text.slice(Math.max(0, end - 30), end);
+    const after = text.slice(end).replace(/^\s+/, '');
+    if (!/^["'\u201c\u2018(]?[A-Z]/.test(after)) continue;   // next must open a sentence
+    if (/(?:\b[A-Z]\.){1,}$/.test(before)) continue;         // U.S. / A.B.C.
+    if (SENTENCE_ABBR.test(before)) continue;                // Aug. / Inc. / Dr.
+    out.push(text.slice(last, end).trim());
+    last = end;
+  }
+  const tail = text.slice(last).trim();
+  if (tail) out.push(tail);
+  return out.filter(Boolean);
+}
 function setClampedSummary(el, text) {
   if (!el) return;
   const full = String(text || '');
   el.textContent = full;
-  // Not laid out yet (hidden card, zero height) — leave the clamp to handle it.
-  if (!el.clientHeight) return;
+  if (!el.clientHeight) return;                 // not laid out — leave it to CSS
   const fits = () => el.scrollHeight <= el.clientHeight + 1;
   if (fits()) return;
-  const parts = full.split(/(?<=[.!?])\s+/).filter(Boolean);
-  if (parts.length <= 1) return;
+  const parts = splitSentences(full);
+  if (parts.length <= 1) return;                // one sentence — nothing to trim to
   let out = '';
   for (const part of parts) {
     const next = out ? out + ' ' + part : part;
