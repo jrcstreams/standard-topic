@@ -1618,6 +1618,10 @@ function diHeroCardHTML(o) {
     </div>`;
   return `${header}
     <div class="tdi-hero-body${o.hubCard ? ' tdi-hero-body--split' : ''}">
+      ${o.art ? `<div class="tdi-art" data-tdi-art aria-hidden="true"><img class="tdi-art-img" data-tdi-art-img
+          src="/assets/briefing/morning-1280.webp"
+          srcset="/assets/briefing/morning-800.webp 800w, /assets/briefing/morning-1280.webp 1280w"
+          sizes="(max-width: 1023px) 100vw, 640px" alt="" decoding="async" loading="lazy"></div>` : ''}
       <div class="tdi-bodygrid">
         <div class="tdi-briefcol">
           <div class="tdi-todayhead">
@@ -1667,6 +1671,23 @@ function diHeroCardHTML(o) {
 const DI_SPARK = '<svg class="tdi-cardprov-ic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2l2.1 5.95a3 3 0 0 0 1.85 1.85L21.8 12l-5.95 2.1a3 3 0 0 0-1.85 1.85L12 21.8l-2.1-5.95a3 3 0 0 0-1.85-1.85L2.2 12l5.95-2.1a3 3 0 0 0 1.85-1.85z"/></svg>';
 const DI_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M21.4 12h-2.2M4.8 12H2.6M18.6 5.4l-1.6 1.6M7 17l-1.6 1.6M18.6 18.6L17 17M7 7L5.4 5.4"/></svg>';
 const DI_MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.2 14.4A8.6 8.6 0 0 1 9.6 3.8a8.6 8.6 0 1 0 10.6 10.6z"/></svg>';
+// Morning/evening briefing art (revamp980). The edition isn't known until the
+// brief lands, so the card renders with the morning art and swaps if it turns
+// out to be the night edition. The two images are lit very differently — the
+// morning one fades to near-white on the left, the evening one is dark navy —
+// so the card also flips its text colour via .is-evening.
+function applyBriefArt(root, iso) {
+  if (!root || !iso) return;
+  const parts = typeof diEditionParts === 'function' ? diEditionParts(iso) : null;
+  const night = parts ? /night|evening/i.test(parts.edition || '') : false;
+  const name = night ? 'evening' : 'morning';
+  root.querySelectorAll('[data-tdi-art-img]').forEach((img) => {
+    img.src = `/assets/briefing/${name}-1280.webp`;
+    img.srcset = `/assets/briefing/${name}-800.webp 800w, /assets/briefing/${name}-1280.webp 1280w`;
+  });
+  root.querySelectorAll('.tdi-card').forEach((c) => c.classList.toggle('is-evening', night));
+}
+
 function diEditionStampHTML(iso) {
   const p = diEditionParts(iso);
   if (!p) return '';
@@ -2311,27 +2332,27 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       ${topicBodyHeadHTML(topic)}
       <div class="topic-top">
         <section class="topic-top-main">
-          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'An AI-generated briefing on this topic, twice a day.', hubLink: false, topicLabel: topic.name, noHeader: true })}
+          <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'An AI-generated briefing on this topic, twice a day.', hubLink: false, topicLabel: topic.name, noHeader: true, art: true })}
           </div>
         </section>
         <section class="topic-top-side">
           <div class="tpr-card" data-tpr>
             <div class="tpr-head">
-              <h2 class="tsec-title tpr-card-title"><span class="tsec-ic tsec-ic--pr" aria-hidden="true">${TOPIC_AI_ICONS['topic-specific']}</span>AI Prompts</h2>
+              <h2 class="tsec-title tpr-card-title"><span class="tsec-ic tsec-ic--pr" aria-hidden="true">${TOPIC_AI_ICONS['topic-specific']}</span>AI Research Tools</h2>
               <button type="button" class="tpr-headclose" data-pr-toggle aria-label="Close prompts">
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 <span>Close Prompts</span>
               </button>
             </div>
-            <p class="tpr-sub">Ready-made prompts to run in any AI model.</p>
+            <p class="tpr-sub">Ready-made tools to research this topic.</p>
             ${featuredPrompts.length ? `<ul class="tpr-list">${featuredPrompts.map((s) => `
               <li class="tpr-row"><button type="button" class="tpr-row-btn" data-tpr-open="${escapeAttr(s.name || '')}">
                 <span class="tpr-row-mark" aria-hidden="true"></span>
                 <span class="tpr-row-name">${escapeHTML(s.name || '')}</span>
               </button></li>`).join('')}</ul>` : ''}
             <button type="button" class="tpr-go" data-pr-toggle aria-expanded="false">
-              <span class="tpr-go-open">View all ${shortcuts.length} prompts</span>
-              <span class="tpr-go-close">Hide prompts</span>${SUBPAGE_ARROW}
+              <span class="tpr-go-open">View all ${shortcuts.length} tools</span>
+              <span class="tpr-go-close">Hide tools</span>${SUBPAGE_ARROW}
             </button>
             <div class="tpr-expand" data-pr-expand><div class="tpr-expand-inner">
               <div data-pr-host></div>
@@ -2373,6 +2394,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       if (d.generatedAt) {
         const stamp = diEditionStampHTML(d.generatedAt);
         body.querySelectorAll('[data-tdi-date], [data-tdi-date-reflow], [data-tdi-date-lg]').forEach((el) => { el.innerHTML = stamp; });
+        applyBriefArt(body, d.generatedAt);
       }
     }).catch(() => {});
   } catch (err) {

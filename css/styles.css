@@ -24028,3 +24028,86 @@ body.home-search .home-search-hero .search-panel-starters.sp-quick { display: fl
   .topic-bodyhead .tbh-sub,
   .topic-bodyhead .tbh-more { height: 33px; padding: 0 13px; font-size: 0.83rem; }
 }
+
+/* ═══ revamp980 — topic page: briefing art + AI Research Tools ═════════════
+   (#img565/569) The two-column top already existed; this gives the left card
+   its morning/evening art and restyles the right one as a research-tools
+   panel. */
+
+/* ── Briefing art ── */
+.topic-home .tdi-card--hero2 { position: relative; overflow: hidden; }
+.tdi-art {
+  position: absolute; inset: 0 0 0 auto;
+  width: 56%; pointer-events: none; z-index: 0;
+}
+.tdi-art-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Fade the art out toward the text so the copy never sits on busy pixels.
+   The morning image is already near-white at its left edge and the evening one
+   near-black, so each card masks toward its own ground rather than a fixed
+   colour. */
+.tdi-art::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, var(--tdi-art-ground, #eef2fa) 0%, color-mix(in srgb, var(--tdi-art-ground, #eef2fa) 55%, transparent) 42%, transparent 78%);
+}
+/* The art is a sibling INSIDE .tdi-hero-body, so lifting only the card's direct
+   children left the copy underneath it — the summary was being cut off at the
+   art's left edge. Lift the content wrappers themselves. */
+.topic-home .tdi-card--hero2 .tdi-bodygrid,
+.topic-home .tdi-card--hero2 .tdi-briefcol,
+.topic-home .tdi-card--hero2 .tdi-expand { position: relative; z-index: 2; }
+.topic-home .tdi-card--hero2 .tdi-briefcol { max-width: 50%; }
+
+/* Evening: dark art, so the card inverts. */
+.topic-home .tdi-card--hero2.is-evening { --tdi-art-ground: #101a33; background: #101a33 !important; }
+.topic-home .tdi-card--hero2.is-evening .tdi-today-title,
+.topic-home .tdi-card--hero2.is-evening .tdi-summary { color: #eef2fa !important; }
+.topic-home .tdi-card--hero2.is-evening .tdi-topiclabel,
+.topic-home .tdi-card--hero2.is-evening .tdi-date,
+.topic-home .tdi-card--hero2.is-evening .tdi-stamp-val,
+.topic-home .tdi-card--hero2.is-evening .tdi-stamp-ed { color: #a9b8d8 !important; }
+
+@media (max-width: 1023px) {
+  .tdi-art { width: 100%; opacity: .55; }
+  .tdi-art::after {
+    background: linear-gradient(180deg, var(--tdi-art-ground, #eef2fa) 0%, color-mix(in srgb, var(--tdi-art-ground, #eef2fa) 45%, transparent) 60%, transparent 100%);
+  }
+  .topic-home .tdi-card--hero2 .tdi-briefcol { max-width: none; }
+}
+
+/* ── AI Research Tools (the prompts card, relabelled) ── */
+.topic-top-side .tpr-card { display: flex; flex-direction: column; }
+.topic-top-side .tpr-card-title {
+  font-family: var(--font-family) !important;
+  font-size: 0.78rem !important; font-weight: 700 !important;
+  letter-spacing: 0.09em !important; text-transform: uppercase !important;
+  color: #172554 !important;
+}
+.topic-top-side .tpr-sub {
+  font-weight: 400 !important; color: var(--color-text-muted) !important;
+  font-size: 0.88rem !important; margin: 0 0 0.9rem !important;
+}
+
+/* Mobile: the tools become a horizontal scroll rail of tiles (#img569). */
+@media (max-width: 1023px) {
+  .topic-top-side .tpr-list {
+    display: flex !important; gap: 10px; overflow-x: auto; overflow-y: hidden;
+    scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+    margin: 0 0 0.9rem !important; padding: 2px 2px 6px !important;
+    scrollbar-width: none;
+  }
+  .topic-top-side .tpr-list::-webkit-scrollbar { display: none; }
+  .topic-top-side .tpr-row {
+    flex: 0 0 auto; width: 128px; scroll-snap-align: start;
+    border: 1px solid color-mix(in srgb, #2f4d9e 14%, transparent);
+    border-radius: 12px; background: #fff;
+  }
+  .topic-top-side .tpr-row-btn {
+    flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; height: 100%; min-height: 92px; padding: 12px 10px; text-align: center;
+  }
+  .topic-top-side .tpr-row-mark { display: none; }
+  .topic-top-side .tpr-row-name {
+    font-size: 0.8rem; line-height: 1.3; white-space: normal;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  }
+}
