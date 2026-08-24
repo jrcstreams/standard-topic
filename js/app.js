@@ -4527,27 +4527,21 @@ function renderTopicLayout(container, { topic, route, isHome, isCustom = false, 
                follow beneath it. -->
           <section class="home-featbriefs" data-home-featbriefs aria-label="Featured AI Briefings"></section>
           <div class="home-featured" aria-label="Featured on Standard Topic">
-            <section class="hf-card hf-card--topics" data-hf="topics">
-              <div class="hf-head">
-                <div class="hf-headrow">
-                  <span class="hf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
-                  <h3 class="hf-title">Topics</h3>
-                </div>
-                <p class="hf-sub">A quick way into the topics we cover most.</p>
+            <section class="hf-card hf-card--topics hf-card--labelled" data-hf="topics">
+              <div class="hb-head hf-labelhead">
+                <h3 class="hb-title">Explore Topics</h3>
+                <a class="hb-all" href="#/topics">Browse 100+ topic pages${SUBPAGE_ARROW}</a>
               </div>
               <div class="hf-chips" data-hq-topics></div>
-              <div class="hf-foot"><button type="button" class="hf-cta" data-explore-topics>Access 100+ topic pages${HQ_ARROW}</button></div>
+              <div class="hf-foot"><button type="button" class="hf-cta" data-explore-topics>View all topics${HQ_ARROW}</button></div>
             </section>
-            <section class="hf-card hf-card--prompts" data-hf="prompts">
-              <div class="hf-head">
-                <div class="hf-headrow">
-                  <span class="hf-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg></span>
-                  <h3 class="hf-title">AI Prompts</h3>
-                </div>
-                <p class="hf-sub">Ready-made prompts to run in any AI model.</p>
+            <section class="hf-card hf-card--prompts hf-card--labelled" data-hf="prompts">
+              <div class="hb-head hf-labelhead">
+                <h3 class="hb-title">AI Research Tools</h3>
+                <a class="hb-all" href="#/prompts">Access 2,500+ prompts${SUBPAGE_ARROW}</a>
               </div>
               <div class="hf-chips" data-hq-prompts></div>
-              <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Access library of 2500+ prompts${HQ_ARROW}</button></div>
+              <div class="hf-foot"><button type="button" class="hf-cta" data-explore-prompts>Browse all prompts${HQ_ARROW}</button></div>
             </section>
           </div>
           <div class="home-main">
@@ -5701,6 +5695,12 @@ function spRel(iso) {
 function spTitleCase(s) { return String(s || '').toLowerCase().replace(/\b([a-z])/g, (m, c) => c.toUpperCase()); }
 // Trending-row mark (line graph) — shared by the search-results Trending tab.
 const SP_TREND_ICON = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="15 7 21 7 21 13"/></svg>';
+
+// Footer year, stamped at runtime so it never goes stale (revamp983).
+try {
+  const el = document.getElementById('st-footer-copy');
+  if (el) el.textContent = `\u00a9 ${new Date().getFullYear()} Standard Topic. All rights reserved.`;
+} catch (_) {}
 
 function renderSearchPanel(container, { mode = 'inline', term = '' } = {}) {
   const isModal = mode === 'modal';

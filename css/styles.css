@@ -24199,3 +24199,103 @@ body.home-search .home-search-hero .search-panel-starters.sp-quick { display: fl
   .hb-cards { grid-template-columns: 1fr; }
   .hb-all { font-size: 0.8rem; }
 }
+
+/* ═══ revamp983 — site footer (#img562) ════════════════════════════════════
+   Only pages that exist are linked — no placeholder Blog/Careers/Press. */
+
+.st-footer {
+  margin-top: 56px;
+  border-top: 1px solid color-mix(in srgb, #2f4d9e 11%, transparent);
+  background: #fff;
+}
+.st-footer-inner {
+  max-width: var(--max-width); margin: 0 auto;
+  padding: 40px 2rem 30px;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 32px;
+}
+.st-footer-brand { min-width: 0; }
+.st-footer-logo {
+  display: inline-block; margin-bottom: 10px;
+  font-family: var(--font-display); font-size: 1.12rem; font-weight: 800;
+  letter-spacing: -0.02em; color: #101a33; text-decoration: none !important;
+}
+.st-footer-tag {
+  margin: 0; font-family: var(--font-family); font-size: 0.88rem;
+  line-height: 1.5; color: var(--color-text-muted);
+}
+.st-footer-cols {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px;
+}
+.st-footer-col { display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+.st-footer-h {
+  margin: 0 0 3px; font-family: var(--font-family);
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: #172554;
+}
+.st-footer-col a {
+  font-family: var(--font-family); font-size: 0.875rem; color: #4a5468;
+  text-decoration: none !important; width: fit-content;
+  transition: color .13s ease;
+}
+@media (hover: hover) { .st-footer-col a:hover { color: #1d4ed8; } }
+.st-footer-col a:focus-visible { outline: 2px solid #1d4ed8; outline-offset: 2px; border-radius: 3px; }
+
+.st-footer-base {
+  max-width: var(--max-width); margin: 0 auto;
+  padding: 16px 2rem 34px;
+  border-top: 1px solid color-mix(in srgb, #2f4d9e 8%, transparent);
+  font-family: var(--font-family); font-size: 0.8rem; color: var(--color-text-muted);
+}
+
+@media (max-width: 860px) {
+  .st-footer-inner { grid-template-columns: 1fr; gap: 26px; padding: 32px 1.15rem 24px; }
+  .st-footer-base { padding: 14px 1.15rem 28px; }
+}
+@media (max-width: 520px) {
+  .st-footer-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+}
+
+/* revamp983b — Explore Topics / AI Research Tools take the label head from the
+   mockup (#img561): uppercase label left, destination link top-right, and the
+   "view all" stays at the foot. */
+.hf-card--labelled .hf-labelhead {
+  margin: 0 0 12px;
+  padding-bottom: 11px;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 11%, transparent);
+}
+.hf-card--labelled .hb-all { font-size: 0.82rem; }
+@media (max-width: 520px) {
+  .hf-card--labelled .hf-labelhead { flex-wrap: wrap; gap: 6px; }
+  .hf-card--labelled .hb-all { margin-left: 0; }
+}
+
+/* revamp984 — homepage Latest News tabs (#img570/571). "More topics" is a link
+   out to /topics rather than another tab. */
+.newsfeed-head--home { flex-wrap: wrap; gap: 10px 16px; }
+.nf-tabs {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+  margin-left: auto;
+}
+.nf-tab {
+  display: inline-flex; align-items: center; height: 30px; padding: 0 12px;
+  border-radius: 999px; border: 1px solid transparent; background: none;
+  color: var(--color-text-muted); cursor: pointer;
+  font-family: var(--font-family); font-size: 0.83rem; font-weight: 550;
+  line-height: 1; white-space: nowrap; text-decoration: none !important;
+  transition: background .13s ease, color .13s ease, border-color .13s ease;
+}
+.nf-tab.is-active { background: #2c4f9e; color: #fff; font-weight: 600; }
+.nf-tab--more { border-color: color-mix(in srgb, #2f4d9e 16%, transparent); color: #2c4f9e; }
+@media (hover: hover) {
+  .nf-tab:not(.is-active):hover { color: #1d4ed8; background: color-mix(in srgb, #1d4ed8 7%, transparent); }
+}
+.nf-tab:focus-visible { outline: 2px solid #1d4ed8; outline-offset: 2px; }
+
+@media (max-width: 700px) {
+  .nf-tabs {
+    margin-left: 0; width: 100%; flex-wrap: nowrap;
+    overflow-x: auto; scrollbar-width: none; padding-bottom: 2px;
+  }
+  .nf-tabs::-webkit-scrollbar { display: none; }
+  .nf-tab { flex: none; height: 29px; padding: 0 11px; font-size: 0.8rem; }
+}

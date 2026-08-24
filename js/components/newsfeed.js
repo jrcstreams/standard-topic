@@ -10,12 +10,24 @@
 // newsCardHTML/wireNewsAI/listHTML are exported so the Search modal can reuse
 // the exact same card + AI-insight behavior for archive results.
 
-import { getModels, getExternalSearches, getExternalSearchCategories, fetchWithTimeout, safeUrl } from '../utils/data.js';
+import { getModels, getExternalSearches, getExternalSearchCategories, fetchWithTimeout, safeUrl, getTopicBySlug } from '../utils/data.js';
 import { openModel, copyPrompt } from '../utils/ai-models.js';
 import { drawerHTML, drawerLinkHTML, wireDrawers, DRAWER_SEARCH_IC, DRAWER_SOURCES_IC } from '../utils/drawers.js?v=20260817-revamp772';
 import { exploreFurtherHTML, wireExploreFurther } from '../utils/explore-further.js?v=20260720-revamp609';
 import { streamInsight } from '../utils/insight-stream.js?v=20260822-revamp962';
 import { createStreamRenderer, groupBlockLines } from '../utils/stream-render.js?v=20260822-revamp968';
+
+// Homepage Latest News tabs (revamp984). "All" is the cross-topic home feed;
+// the rest switch the feed to that topic. "More topics" links to /topics rather
+// than being another tab.
+const HOME_TABS = [
+  { slug: '', label: 'All' },
+  { slug: 'world', label: 'World' },
+  { slug: 'politics', label: 'Politics' },
+  { slug: 'artificial-intelligence', label: 'AI' },
+  { slug: 'science', label: 'Science' },
+  { slug: 'markets', label: 'Markets' },
+];
 
 // Homepage feed opens at four stories, then reveals six at a time (revamp981).
 // Declared at module top: they're read from a function defined earlier in this
@@ -1181,8 +1193,10 @@ function startFeed(ctx) {
   loadLive();
 }
 
-export function renderNewsFeed(container, topic, isHome) {
-  const slug = isHome ? 'home' : (topic && topic.slug);
+export function renderNewsFeed(container, topic, isHome, activeTab = '') {
+  // On the homepage the active tab chooses the feed; isHome stays true so the
+  // head (and its tabs) keep rendering rather than falling back to the topic head.
+  const slug = isHome ? (activeTab || 'home') : (topic && topic.slug);
   const label = isHome ? '' : ((topic && topic.name) || '');
   // Header: both surfaces use the homepage's big display title. Topic pages add
   // a quiet topic-name kicker above it so the feed reads as that topic's front
@@ -1194,6 +1208,10 @@ export function renderNewsFeed(container, topic, isHome) {
     <div class="newsfeed-head section-card-head newsfeed-head--home">
       <div class="newsfeed-headtext">
         <h3 class="newsfeed-title section-card-title"><span class="newsfeed-title-main">Today's News</span></h3>
+      </div>
+      <div class="nf-tabs" role="tablist" aria-label="Filter news by topic">
+        ${HOME_TABS.map((t) => `<button type="button" class="nf-tab${t.slug === activeTab ? ' is-active' : ''}" role="tab" aria-selected="${t.slug === activeTab ? 'true' : 'false'}" data-nf-tab="${t.slug}">${t.label}</button>`).join('')}
+        <a class="nf-tab nf-tab--more" href="#/topics">More topics</a>
       </div>
     </div>`
     : `
@@ -1217,5 +1235,15 @@ export function renderNewsFeed(container, topic, isHome) {
     scrollWrap.innerHTML = `<div class="news-error"><p>News feed unavailable.</p></div>`;
     return;
   }
+  // Tab switch: re-render the feed against the chosen topic. A full re-render is
+  // the honest reset here — filters, paging and the reveal count all start over.
+  container.querySelectorAll('[data-nf-tab]').forEach((b) => {
+    b.addEventListener('click', () => {
+      const next = b.dataset.nfTab || '';
+      if (next === activeTab) return;
+      renderNewsFeed(container, topic, isHome, next);
+    });
+  });
+
   startFeed({ card, scrollWrap, foot, slug, label, isHome });
 }
