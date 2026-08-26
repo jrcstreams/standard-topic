@@ -25032,7 +25032,13 @@ body .topic-bodyhead--hero,
   .topic-bodyhead--hero {
     --bleed: 16px;
     padding-top: 0.9rem; padding-bottom: 0.9rem;
-    background-size: auto 100%;
+    /* At phone width the band is short enough that `auto 100%` puts the globe
+       right under the description. The baked-in ramp is calibrated for a wide
+       band, so add a scrim over the left two-thirds to keep the copy clean. */
+    background-image: linear-gradient(100deg, #fcfdff 30%, rgba(252, 253, 255, 0) 76%), var(--tbh-art);
+    background-size: auto, auto 100%;
+    background-position: left center, right center;
+    background-repeat: no-repeat, no-repeat;
   }
 }
 
