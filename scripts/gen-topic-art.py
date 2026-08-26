@@ -24,7 +24,7 @@ import numpy as np
 import cairosvg
 from PIL import Image, ImageDraw, ImageFilter
 
-W, H, SS = 1600, 400, 3
+W, H, SS = 1600, 300, 3
 OUT = 'assets/hero/topics'
 
 # One brand palette for every topic (familiarity over per-family colour).
@@ -52,12 +52,16 @@ def render(slug, inner, seed):
     d = ImageDraw.Draw(img)
 
     # ── Halftone the icon ──
+    # The band renders much shorter than this canvas and `cover` scales the
+    # image to the band's WIDTH, so anything outside the central ~55% of the
+    # canvas height gets cropped. The motif is sized to survive that: half the
+    # canvas height, dead centre.
     mpx = 960
     mask = np.array(icon_mask(inner, mpx), dtype=np.float32) / 255.0
-    icon_h = int(h * 0.78)                      # icon box height on canvas
-    cx, cy = int(w * 0.775), int(h * 0.52)
-    pitch = 16 * SS                             # grid pitch on canvas
-    cells = icon_h // pitch
+    icon_h = int(h * 0.50)                      # crop-safe icon box height
+    cx, cy = int(w * 0.79), int(h * 0.50)
+    cells = 22                                  # halftone resolution
+    pitch = icon_h // cells
     cell_m = mpx / cells                        # matching pitch on the mask
     x0, y0 = cx - icon_h // 2, cy - icon_h // 2
     for gy in range(cells):

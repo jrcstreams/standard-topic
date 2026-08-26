@@ -883,7 +883,7 @@ ${x}`),M.length?M.join(`
           </div>
         </div>
       </div>
-    </div>`}function Ld(e){return`/assets/hero/topics/${e&&e.slug||"world"}.webp`}function $d(e){let t=(yi(e)||[]).filter(o=>o&&o.slug),a=as(e.slug)||"",n=e.parent?ke(e.parent):null,s=t.filter(o=>o.slug!==e.slug&&(!n||o.slug!==n.slug)),i=n?[n].concat(s):s,r=[`<a class="tbh-sub tbh-sub--overview is-active" href="#/topic/${K(e.slug)}" aria-current="page">Overview</a>`].concat(i.map(o=>`<a class="tbh-sub" href="#/topic/${K(o.slug)}">${R(o.name)}</a>`)).join("");return`
+    </div>`}function Ld(e){return`/assets/hero/topics/${e&&e.slug||"world"}.webp?v=2`}function $d(e){let t=(yi(e)||[]).filter(o=>o&&o.slug),a=as(e.slug)||"",n=e.parent?ke(e.parent):null,s=t.filter(o=>o.slug!==e.slug&&(!n||o.slug!==n.slug)),i=n?[n].concat(s):s,r=[`<a class="tbh-sub tbh-sub--overview is-active" href="#/topic/${K(e.slug)}" aria-current="page">Overview</a>`].concat(i.map(o=>`<a class="tbh-sub" href="#/topic/${K(o.slug)}">${R(o.name)}</a>`)).join("");return`
     <header class="topic-bodyhead topic-bodyhead--hero topic-subnav-picker" data-topic-picker
             style="--tbh-art: url('${K(Ld(e))}')">
       <a class="tbh-back" href="#/topics">${Rd}<span>Topics</span></a>

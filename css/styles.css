@@ -25168,3 +25168,11 @@ body.home-search #section-newsfeed .news-list > .news-card:nth-child(2) {
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .ph-fitem-go { display: none; }
 }
+
+/* revamp997b — the OPEN briefing card is a reading surface: the background
+   art fades out and the card's own meta line goes (the masthead inside the
+   brief repeats it — the leftover copy rendered as an orphan "| AUG 26"
+   because the topic label half of the row hides first). */
+.tdi-card.is-open .tdi-art { opacity: 0; transition: opacity .25s ease; }
+.tdi-card .tdi-art { transition: opacity .25s ease; }
+.tdi-card.is-open .tdi-metarow { display: none !important; }

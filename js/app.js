@@ -615,7 +615,7 @@ function homeSubnavPickerHTML() {
 // from topics.json + topic-icons.js, so slug -> file is total by
 // construction; rerun the generator when a topic or icon changes).
 function topicHeroArt(topic) {
-  return `/assets/hero/topics/${(topic && topic.slug) || 'world'}.webp`;
+  return `/assets/hero/topics/${(topic && topic.slug) || 'world'}.webp?v=2`;
 }
 
 function topicBodyHeadHTML(topic) {
