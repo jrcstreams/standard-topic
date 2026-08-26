@@ -24982,3 +24982,55 @@ body.home-search .topic-layout .home-sections .home-side { padding-top: 1.2rem !
   transition: background .16s ease, width .16s ease;
 }
 .tpr-dot.is-active { width: 18px; background: #2c4f9e; }
+
+/* ============================================================
+   revamp996 — topic pages get the AI Briefings header band
+   ============================================================ */
+
+/* The head, its description and the subtopic pills all sit on one banded
+   surface carrying that topic family's generated art, which is what removes
+   the need for the rule that used to separate the header from the content
+   (#img622). Art resolves from the topic's PARENT slug, so all ~100 topic
+   pages are covered by 14 files.
+
+   --bleed is the content-column-to-viewport-edge measure used by the sticky
+   search bar and the AI Briefings band, so the three line up. */
+.topic-bodyhead--hero {
+  --bleed: max(32px, calc((100vw - 1440px) / 2 + 32px));
+  margin-left: calc(-1 * var(--bleed));
+  margin-right: calc(-1 * var(--bleed));
+  padding: 1.15rem var(--bleed) 1.1rem;
+  background: var(--tbh-art) right center / cover no-repeat;
+}
+/* The separator is the whole point of the band going away (#img622): the
+   pills are inside the tint now, so nothing has to be drawn to divide them
+   from the title above. */
+.topic-bodyhead--hero .tbh-subswrap {
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  padding-top: 0.9rem !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+.topic-bodyhead--hero .tbh-title { margin-bottom: 0.35rem; }
+.topic-bodyhead--hero .tbh-desc { margin-bottom: 0; }
+
+/* The dropdown hangs off the band's bottom edge; keep its inner content on
+   the page column rather than the bled width. */
+.topic-bodyhead--hero .tsp-panel-inner {
+  max-width: calc(1440px - 4rem);
+  padding-left: 0; padding-right: 0;
+}
+.topic-bodyhead--hero .tsp-actions { margin-left: 0; margin-right: 0; padding-left: 0; padding-right: 0; }
+
+@media (max-width: 768px) {
+  .topic-bodyhead--hero {
+    --bleed: 16px;
+    padding-top: 0.9rem; padding-bottom: 0.9rem;
+    background-size: auto 100%;
+  }
+}
+
+/* The band supplies the separation, so the content below only needs air. */
+.topic-home .topic-top { margin-top: 1.15rem !important; }
+@media (min-width: 1024px) { .topic-home .topic-top { margin-top: 1.4rem !important; } }

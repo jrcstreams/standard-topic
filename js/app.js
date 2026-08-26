@@ -610,6 +610,20 @@ function homeSubnavPickerHTML() {
 // overflow one line (wireSubtopicsMore), and opens the same dropdown the subnav
 // band's "Change Topic" uses. Mobile keeps the band as the control — CSS hides
 // this header below 900px.
+// Every parent topic has a generated hero graphic at /assets/hero/<slug>.webp
+// (scripts/gen-hero-art.py), so a topic page resolves its art from its parent
+// and needs no lookup table. The Set is a guard: a topic whose parent was
+// renamed would otherwise request a 404'd background.
+const HERO_ART_SLUGS = new Set([
+  'world', 'politics', 'business-finance', 'technology', 'science',
+  'health-wellness', 'climate-environment', 'sports', 'entertainment',
+  'arts-culture', 'lifestyle', 'media', 'education', 'ideas-opinion-more',
+]);
+function topicHeroArt(topic) {
+  const slug = (topic && (topic.parent || topic.slug)) || '';
+  return `/assets/hero/${HERO_ART_SLUGS.has(slug) ? slug : 'world'}.webp`;
+}
+
 function topicBodyHeadHTML(topic) {
   const related = (getRelatedTopics(topic) || []).filter((t) => t && t.slug);
   const desc = getTopicDescription(topic.slug) || '';
@@ -626,7 +640,8 @@ function topicBodyHeadHTML(topic) {
     `<a class="tbh-sub tbh-sub--overview is-active" href="#/topic/${escapeAttr(topic.slug)}" aria-current="page">Overview</a>`,
   ].concat(ordered.map((t) => `<a class="tbh-sub" href="#/topic/${escapeAttr(t.slug)}">${escapeHTML(t.name)}</a>`)).join('');
   return `
-    <header class="topic-bodyhead topic-subnav-picker" data-topic-picker>
+    <header class="topic-bodyhead topic-bodyhead--hero topic-subnav-picker" data-topic-picker
+            style="--tbh-art: url('${escapeAttr(topicHeroArt(topic))}')">
       <a class="tbh-back" href="#/topics">${TBH_BACK_CHEV}<span>Topics</span></a>
       <h1 class="tbh-title">${escapeHTML(topic.name)}</h1>
       ${desc ? `<p class="tbh-desc">${escapeHTML(desc)}</p>` : ''}
