@@ -24755,3 +24755,15 @@ body.home-search .home-search-hero .search-panel-starters.sp-quick { display: fl
 @media (min-width: 880px) {
   .topic-top-side .tpr-row:nth-child(n + 5) { display: none; }
 }
+
+/* revamp993b — the last 2.2px between the two eyebrows was the glyphs: 15px
+   sun vs 18px sparkle, so the taller one built a taller line box and pulled
+   its text off the other's baseline. One glyph size, one line box. */
+.tdi-eyebrow, .topic-top-side .tpr-card-title {
+  min-height: 20px; align-items: center;
+}
+.tdi-eyebrow-ic svg,
+.topic-top-side .tsec-ic--pr svg { width: 16px !important; height: 16px !important; }
+.tdi-eyebrow-ic, .topic-top-side .tsec-ic--pr {
+  display: inline-flex; align-items: center; height: 16px;
+}
