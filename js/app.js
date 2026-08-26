@@ -1971,11 +1971,15 @@ function renderIntelligenceHub(container) {
 
   container.innerHTML = `
     <div class="dih">
-      ${backBarHTML()}
-      <header class="dih-head">
-        <h1 class="dih-title"><span class="dih-title-ic" aria-hidden="true">${DI_SPARK_TWO}</span>AI Briefings</h1>
-        <p class="dih-lede">An AI briefing on every topic, twice a day.</p>
-      </header>
+      <div class="dih-hero">
+        <div class="dih-hero-in">
+          ${backBarHTML()}
+          <header class="dih-head">
+            <h1 class="dih-title"><span class="dih-title-ic" aria-hidden="true">${DI_SPARK_TWO}</span>AI Briefings</h1>
+            <p class="dih-lede">An AI briefing on every topic, twice a day.</p>
+          </header>
+        </div>
+      </div>
 
       <!-- revamp947: the lone Cross-Topic card is replaced by a Featured
            Briefings row. It is a [data-dih-group] like every other section, so
@@ -2038,6 +2042,15 @@ function renderIntelligenceHub(container) {
             </div>
           </section>`).join('')}
       </div>
+
+      <aside class="dih-foot">
+        <span class="dih-foot-ic" aria-hidden="true">${DI_SPARK_TWO}</span>
+        <div class="dih-foot-tx">
+          <p class="dih-foot-title">New briefings every morning and evening.</p>
+          <p class="dih-foot-sub">Stay informed with AI-powered insights across every topic.</p>
+        </div>
+        <a class="dih-foot-cta" href="#/topics">Explore all topics${SUBPAGE_ARROW}</a>
+      </aside>
     </div>`;
 
   // revamp824 — the legend jumps for real. A bare "#dih-slug" anchor left the

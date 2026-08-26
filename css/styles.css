@@ -24767,3 +24767,114 @@ body.home-search .home-search-hero .search-panel-starters.sp-quick { display: fl
 .tdi-eyebrow-ic, .topic-top-side .tsec-ic--pr {
   display: inline-flex; align-items: center; height: 16px;
 }
+
+/* ============================================================
+   revamp994 — AI Briefings page: hero band, snap rail, foot card
+   (#img614, 616, 618, 619, 620, 621)
+   ============================================================ */
+
+/* ── The header becomes a full-bleed band carrying the generated art ──
+   The art is 1600x440 with the band's own gradient baked in, so it needs
+   nothing here but `cover` and a right anchor: the ramp fades to page white
+   on the left, which is where the title and lede sit. --bleed is the same
+   content-column-to-viewport-edge measure the sticky search bar uses. */
+.dih-hero {
+  --bleed: max(32px, calc((100vw - 1440px) / 2 + 32px));
+  margin: 0 calc(-1 * var(--bleed)) 1.75rem;
+  padding: 0 var(--bleed) 1.6rem;
+  background: url("/assets/hero/briefings.webp") right center / cover no-repeat;
+}
+.dih-hero-in { min-height: 168px; display: flex; flex-direction: column; }
+.dih-hero .page-backbar { margin-bottom: 0.35rem; }
+.dih-hero .dih-head { border-bottom: 0 !important; padding-bottom: 0 !important; margin-bottom: 0 !important; }
+.dih-hero .dih-title { margin-bottom: 0.3rem; }
+.dih-hero .dih-lede { margin: 0; }
+@media (min-width: 1024px) {
+  .dih-hero { padding-bottom: 2rem; }
+  .dih-hero-in { min-height: 196px; justify-content: center; }
+}
+/* The band keeps its art on phones too (#img618) — pushed further right so
+   the globe still reads at narrow widths rather than being cropped away. */
+@media (max-width: 768px) {
+  .dih-hero {
+    --bleed: 16px;
+    margin-bottom: 1.3rem; padding-bottom: 1.15rem;
+    background-position: 78% center; background-size: 190% auto;
+  }
+  .dih-hero-in { min-height: 0; }
+}
+
+/* ── Featured Briefings: a snap rail once the grid stops earning its keep ──
+   Cards were tall and narrow at these widths. Wider cards, a 3-line summary
+   cap, and x-mandatory snapping so a flick travels several cards and still
+   settles with one squarely in view (#img619). */
+@media (max-width: 1100px) {
+  .dih-group.dih-group--featured .dih-items {
+    display: flex !important; grid-template-columns: none !important;
+    gap: 12px; overflow-x: auto; overflow-y: hidden;
+    scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+    scroll-padding-left: 2px; padding: 2px 2px 10px; margin: 0;
+    scrollbar-width: none;
+  }
+  .dih-group.dih-group--featured .dih-items::-webkit-scrollbar { display: none; }
+  .dih-group.dih-group--featured .dih-item {
+    flex: 0 0 auto; width: min(340px, 82%); scroll-snap-align: start;
+    border: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent);
+    border-radius: 14px; background: #fff; padding: 0.95rem 1rem;
+  }
+  .dih-group.dih-group--featured .dih-item-sum {
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* ── Closing card: icon + copy on the left, the action on the right ──
+   On desktop it is one row with the button held at the end, not stacked
+   under centred text (#img620/621). */
+.dih-foot {
+  display: grid; grid-template-columns: auto 1fr; gap: 12px 14px;
+  align-items: center; margin: 2rem 0 0.5rem;
+  padding: 1.15rem 1.25rem; border-radius: 16px;
+  border: 1px solid color-mix(in srgb, #2f4d9e 10%, transparent);
+  background: color-mix(in srgb, #2f4d9e 4%, #fff);
+}
+.dih-foot-ic { display: inline-flex; align-items: center; color: #2c4f9e; }
+.dih-foot-ic svg { width: 22px; height: 22px; fill: currentColor; }
+.dih-foot-tx { min-width: 0; }
+.dih-foot-title {
+  margin: 0 0 2px; font-family: var(--font-family);
+  font-size: 0.98rem; font-weight: 700; color: #14204a;
+}
+.dih-foot-sub { margin: 0; font-size: 0.88rem; color: #5b6b8c; line-height: 1.35; }
+.dih-foot-cta {
+  grid-column: 1 / -1; justify-self: stretch;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 0.62rem 1.15rem; border-radius: 999px;
+  background: #1e3a8a; color: #fff !important; text-decoration: none !important;
+  font-family: var(--font-family); font-size: 0.9rem; font-weight: 650;
+  transition: background .14s ease, transform .16s ease, box-shadow .18s ease;
+}
+.dih-foot-cta svg { width: 15px; height: 15px; }
+@media (hover: hover) {
+  .dih-foot-cta:hover {
+    background: #16307a; transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(30, 58, 138, .22);
+  }
+}
+@media (min-width: 700px) {
+  .dih-foot { grid-template-columns: auto 1fr auto; padding: 1.2rem 1.5rem; }
+  .dih-foot-cta { grid-column: auto; justify-self: end; white-space: nowrap; }
+}
+
+/* revamp994b — the two card eyebrows go up a step (#img631/632). They still
+   share one type style and one 22px line box, so growing them keeps the
+   baselines locked to each other. */
+.tdi-eyebrow,
+.topic-top-side .tpr-card-title {
+  font-size: 0.86rem !important;
+  letter-spacing: 0.085em !important;
+  min-height: 22px;
+}
+.tdi-eyebrow-ic svg,
+.topic-top-side .tsec-ic--pr svg { width: 18px !important; height: 18px !important; }
+.tdi-eyebrow-ic, .topic-top-side .tsec-ic--pr { height: 18px; }
