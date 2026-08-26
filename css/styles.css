@@ -24693,3 +24693,65 @@ body.home-search .home-search-hero .search-panel-starters.sp-quick { display: fl
   .topic-top-side .tpr-row-btn { text-align: center !important; align-items: center !important; }
   .topic-top-side .tpr-row-name { text-align: center !important; width: 100%; }
 }
+
+/* ============================================================
+   revamp993 — topic-page header + card polish (#img623, 625-629)
+   ============================================================ */
+
+/* 1. Subtopic pills: hover was a border-colour swap and nothing else, which
+      on a white pill against a white page is close to no feedback at all
+      (#img623). Give it a tinted fill, a real border and a small lift. */
+@media (hover: hover) {
+  .topic-bodyhead .tbh-sub:not(.is-active):hover {
+    background: color-mix(in srgb, #2f4d9e 9%, #fff) !important;
+    border-color: color-mix(in srgb, #2f4d9e 42%, transparent) !important;
+    color: #1b3d8f !important;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(30, 58, 138, .13);
+  }
+  .topic-bodyhead .tbh-m:hover {
+    color: #1b3d8f !important;
+    background: color-mix(in srgb, #2f4d9e 9%, #fff) !important;
+  }
+}
+.topic-bodyhead .tbh-sub {
+  transition: background .14s ease, border-color .14s ease, color .14s ease,
+              transform .16s ease, box-shadow .18s ease;
+}
+
+/* 2. TOPIC | DATE | EDITION is one line with even spacing, not a row that
+      wraps the moment the column narrows (#img625/626). The row is allowed
+      past the brief column's 66% cap — the art is fully faded there. */
+.tdi-metarow {
+  flex-wrap: nowrap !important;
+  white-space: nowrap;
+  max-width: none !important;
+  gap: 9px !important;
+}
+.tdi-metarow .tdi-date { gap: 9px !important; }
+/* Both separators are the same rule, so the pipe after the topic matches the
+   one after the date instead of each carrying its own height/opacity. */
+.tdi-meta-sep,
+.tdi-metarow .tdi-stamp-sep {
+  flex: none; display: inline-block;
+  width: 1px; height: 10px; border-radius: 1px;
+  background: currentColor; opacity: .3;
+}
+
+/* 3. The two card eyebrows are one type style, set on one baseline (#img629). */
+.tdi-eyebrow,
+.topic-top-side .tpr-card-title {
+  font-size: 0.78rem !important;
+  letter-spacing: 0.09em !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+}
+.topic-top-main .tdi-hero-body,
+.topic-top-side .tpr-card { padding-top: 1.15rem !important; }
+.tdi-eyebrow { margin-top: 0 !important; }
+.topic-top-side .tpr-head { margin-top: 0 !important; }
+
+/* 4. Four tools in the desktop card; the phone rail scrolls all six. */
+@media (min-width: 880px) {
+  .topic-top-side .tpr-row:nth-child(n + 5) { display: none; }
+}

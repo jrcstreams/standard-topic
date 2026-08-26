@@ -2384,7 +2384,9 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
     // PLACE: the opened card takes the full width and the other drops beneath
     // it, so neither ever navigates away. The news feed follows under its own
     // "News Feed" head.
-    const featuredPrompts = shortcuts.slice(0, 3);
+    // Six are rendered; CSS shows four in the desktop card and lets the phone
+    // rail scroll through the rest (#img627/628).
+    const featuredPrompts = shortcuts.slice(0, 6);
     body.innerHTML = `<div class="topic-home">
       <div class="aii-tabhead-spacer"></div>
       ${topicBodyHeadHTML(topic)}
