@@ -25155,8 +25155,11 @@ body.home-search #section-newsfeed .news-list > .news-card:nth-child(2) {
       icon chip leading, in place of the single-file rows. ── */
 @media (max-width: 639px) {
   .ph-featured .ph-flist {
-    display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+    /* the desktop auto-fit rule carries !important, so this must too or it
+       computes to one column at phone width */
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
   }
   .ph-fitem {
     flex-direction: column; align-items: flex-start; gap: 8px;
