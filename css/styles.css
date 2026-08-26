@@ -24995,10 +24995,14 @@ body.home-search .topic-layout .home-sections .home-side { padding-top: 1.2rem !
 
    --bleed is the content-column-to-viewport-edge measure used by the sticky
    search bar and the AI Briefings band, so the three line up. */
+/* `body:has(.topic-home) .topic-bodyhead` already sets margin at 0,3,0, so the
+   bleed has to be written at least that strong or the band silently renders at
+   content width. */
+body .topic-bodyhead--hero,
 .topic-bodyhead--hero {
   --bleed: max(32px, calc((100vw - 1440px) / 2 + 32px));
-  margin-left: calc(-1 * var(--bleed));
-  margin-right: calc(-1 * var(--bleed));
+  margin-left: calc(-1 * var(--bleed)) !important;
+  margin-right: calc(-1 * var(--bleed)) !important;
   padding: 1.15rem var(--bleed) 1.1rem;
   background: var(--tbh-art) right center / cover no-repeat;
 }
@@ -25024,6 +25028,7 @@ body.home-search .topic-layout .home-sections .home-side { padding-top: 1.2rem !
 .topic-bodyhead--hero .tsp-actions { margin-left: 0; margin-right: 0; padding-left: 0; padding-right: 0; }
 
 @media (max-width: 768px) {
+  body .topic-bodyhead--hero,
   .topic-bodyhead--hero {
     --bleed: 16px;
     padding-top: 0.9rem; padding-bottom: 0.9rem;
