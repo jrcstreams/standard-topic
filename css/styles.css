@@ -24889,12 +24889,24 @@ body.home-search .home-search-hero .search-panel-starters.sp-quick { display: fl
    block, so "centred" means matching the space above the headline to the
    space below the quick links — which includes the gap under the hero
    element, not just its own padding. */
-body.home-search .home-search-hero { padding-top: 3.1rem; }
-@media (max-width: 900px) { body.home-search .home-search-hero { padding-top: 1.6rem; } }
+/* Fifteen rules already set padding on .home-search-hero, six of them with
+   !important, so this has to out-specify the lot rather than add a sixteenth
+   voice to the argument. #home-search-hero + the ancestor chain does it. */
+body.home-search .topic-layout .home-cards #home-search-hero {
+  padding-top: 3.25rem !important;
+  padding-bottom: 1.7rem !important;
+}
+@media (max-width: 900px) {
+  body.home-search .topic-layout .home-cards #home-search-hero {
+    padding-top: 1.7rem !important; padding-bottom: 1.1rem !important;
+  }
+}
 
-/* ── Today's News / What's Trending were hard against the band (#img633) ── */
-body.home-search .home-main,
-body.home-search .home-side { padding-top: 1.15rem; }
+/* ── Today's News / What's Trending were hard against the band (#img633).
+      .home-main is pinned to padding-top: 0 !important elsewhere, so this
+      needs both the extra ancestor and its own !important. ── */
+body.home-search .topic-layout .home-sections .home-main,
+body.home-search .topic-layout .home-sections .home-side { padding-top: 1.2rem !important; }
 
 /* ── Latest News head: rules run the full page width, and the rule under the
       tab row doubles as the first story's top edge (#img634) ── */
