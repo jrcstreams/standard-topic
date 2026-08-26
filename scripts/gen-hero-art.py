@@ -15,24 +15,28 @@ band needs nothing from CSS but `background: url() right center / cover`.
 import math, os, random
 from PIL import Image, ImageDraw, ImageFilter
 
-W, H, SS = 1600, 440, 3          # output size; SS = supersample factor
-CX, CY, R = 0.735, 0.52, 0.62    # globe centre (fraction of W/H) and radius (of H)
+W, H, SS = 1600, 400, 3          # output size; SS = supersample factor
+# Globe centre (fraction of W/H) and radius (of H). The band renders far
+# shorter than this canvas and uses `cover`, so a globe sized to the full
+# height gets cropped top and bottom and stops reading as a sphere at all —
+# it just looks like a dot field. Keep it well inside the frame.
+CX, CY, R = 0.755, 0.50, 0.52
 
 BAND_LEFT = (252, 253, 255)      # the ramp's left end: effectively page white
 
 # family -> (dot rgb, arc rgb, glow rgb, band tint at the right edge)
 PALETTES = {
-    'briefings':((84, 108, 206), (118, 140, 224), (152, 172, 246), (226, 232, 250)),
-    'world':    ((88, 112, 208), (120, 142, 224), (150, 170, 245), (228, 234, 250)),
-    'business': ((72, 96, 168),  (104, 126, 190), (140, 160, 220), (228, 234, 246)),
-    'tech':     ((96, 104, 216), (126, 132, 232), (158, 164, 248), (230, 231, 251)),
-    'science':  ((60, 140, 168), (92, 166, 190),  (130, 196, 216), (224, 238, 245)),
-    'health':   ((70, 148, 150), (104, 176, 178), (142, 204, 206), (224, 240, 240)),
-    'climate':  ((64, 146, 132), (98, 174, 160),  (136, 202, 190), (223, 240, 236)),
-    'sports':   ((186, 122, 66), (208, 148, 92),  (232, 180, 130), (248, 238, 228)),
-    'culture':  ((136, 96, 190), (162, 124, 212), (192, 158, 234), (238, 231, 248)),
-    'media':    ((110, 100, 186), (138, 128, 206), (170, 162, 232), (233, 232, 249)),
-    'lifestyle':((160, 106, 150), (186, 134, 176), (212, 168, 204), (245, 233, 242)),
+    'briefings':((78, 102, 200), (112, 134, 220), (150, 170, 246), (214, 222, 248)),
+    'world':    ((82, 106, 202), (114, 136, 220), (148, 168, 244), (215, 224, 248)),
+    'business': ((66, 90, 162),  (98, 120, 186),  (138, 158, 218), (216, 224, 243)),
+    'tech':     ((90, 98, 210),  (120, 126, 228), (156, 162, 246), (219, 220, 249)),
+    'science':  ((52, 132, 162), (84, 158, 184),  (128, 194, 214), (211, 232, 242)),
+    'health':   ((62, 140, 142), (96, 168, 170),  (140, 202, 204), (211, 234, 234)),
+    'climate':  ((56, 138, 124), (90, 166, 152),  (134, 200, 188), (210, 234, 229)),
+    'sports':   ((178, 114, 58), (200, 140, 84),  (230, 178, 128), (246, 231, 216)),
+    'culture':  ((128, 88, 182), (154, 116, 204), (190, 156, 232), (232, 222, 246)),
+    'media':    ((102, 92, 178), (130, 120, 198), (168, 160, 230), (224, 222, 247)),
+    'lifestyle':((152, 98, 142), (178, 126, 168), (210, 166, 202), (241, 224, 236)),
 }
 
 def globe_points(seed):
@@ -41,7 +45,7 @@ def globe_points(seed):
     tilt = math.radians(16)
     spin = rnd.uniform(0, math.tau)
     pts = []
-    for lat_d in range(-78, 79, 7):
+    for lat_d in range(-78, 79, 6):
         lat = math.radians(lat_d)
         # even angular spacing -> fewer dots near the poles, like a real lattice
         n = max(4, int(round(46 * math.cos(lat))))
@@ -87,33 +91,33 @@ def render(family, seed, out_dir='assets/hero'):
             u = 1 - t
             pt = (u * u * a[0] + 2 * u * t * ctrl[0] + t * t * b[0],
                   u * u * a[1] + 2 * u * t * ctrl[1] + t * t * b[1])
-            ad.line([prev, pt], fill=arc_c + (58,), width=max(1, SS))
+            ad.line([prev, pt], fill=arc_c + (95,), width=max(1, SS))
             prev = pt
     img.alpha_composite(arcs)
 
     # Globe dots — nearer dots read slightly larger and brighter.
     for x, y, z in scr:
         rad = (1.05 + 1.15 * z) * SS
-        al = int(52 + 128 * z)
+        al = int(95 + 150 * z)
         d.ellipse([x - rad, y - rad, x + rad, y + rad], fill=dot_c + (al,))
 
     # Loose scatter above/right of the globe, thinning outward.
-    for _ in range(150):
+    for _ in range(120):
         ang, dist = rnd.uniform(0, math.tau), rnd.uniform(1.02, 1.55)
         x, y = cx + math.cos(ang) * r * dist, cy - abs(math.sin(ang)) * r * dist * 0.8
         if not (0 < x < w and 0 < y < h):
             continue
         rad = rnd.uniform(0.8, 1.9) * SS
-        d.ellipse([x - rad, y - rad, x + rad, y + rad], fill=dot_c + (int(rnd.uniform(28, 84)),))
+        d.ellipse([x - rad, y - rad, x + rad, y + rad], fill=dot_c + (int(rnd.uniform(45, 120)),))
 
     # A few soft glows for depth.
     glow = Image.new('RGBA', (w, h), (0, 0, 0, 0))
     gd = ImageDraw.Draw(glow)
-    for _ in range(7):
+    for _ in range(5):
         p = rnd.choice(scr)
-        rad = rnd.uniform(10, 22) * SS
-        gd.ellipse([p[0] - rad, p[1] - rad, p[0] + rad, p[1] + rad], fill=glow_c + (72,))
-    img.alpha_composite(glow.filter(ImageFilter.GaussianBlur(14 * SS)))
+        rad = rnd.uniform(6, 12) * SS
+        gd.ellipse([p[0] - rad, p[1] - rad, p[0] + rad, p[1] + rad], fill=glow_c + (46,))
+    img.alpha_composite(glow.filter(ImageFilter.GaussianBlur(9 * SS)))
 
     img = img.resize((W, H), Image.LANCZOS)
 

@@ -645,6 +645,44 @@ function topicBodyHeadHTML(topic) {
 // links that appears ONLY when some subtopics don't fit one line (then trailing
 // links are hidden so "More" sits right after the last visible one). Clicking it
 // opens the full topic picker. No-op on mobile (the body header is display:none).
+// A paged scroll indicator for the phone tools rail (#img640). One dot per
+// page of tiles, so a clipped rail reads as "there is more, here is where you
+// are" instead of just looking cut off. Dots are also targets — tapping one
+// pages the rail. Rebuilt on resize because the page count is derived from the
+// rail's own width, which changes with the breakpoint.
+function wireRailDots(list) {
+  if (!list || list.dataset.railDots) return;
+  list.dataset.railDots = '1';
+  const dots = document.createElement('div');
+  dots.className = 'tpr-dots';
+  list.insertAdjacentElement('afterend', dots);
+  let pages = 0;
+  const mark = () => {
+    if (!pages) return;
+    const max = Math.max(1, list.scrollWidth - list.clientWidth);
+    const i = Math.min(pages - 1, Math.round((list.scrollLeft / max) * (pages - 1)));
+    Array.prototype.forEach.call(dots.children, (d, k) => d.classList.toggle('is-active', k === i));
+  };
+  const build = () => {
+    const scrollable = list.scrollWidth - list.clientWidth > 4;
+    dots.classList.toggle('is-on', scrollable);
+    if (!scrollable) { dots.innerHTML = ''; pages = 0; return; }
+    const n = Math.max(2, Math.ceil(list.scrollWidth / Math.max(1, list.clientWidth)));
+    if (n !== pages) {
+      pages = n;
+      dots.innerHTML = Array.from({ length: n }, (_, i) =>
+        `<button type="button" class="tpr-dot" aria-label="Tools page ${i + 1}"></button>`).join('');
+      Array.prototype.forEach.call(dots.children, (d, i) => d.addEventListener('click', () => {
+        list.scrollTo({ left: i * list.clientWidth, behavior: 'smooth' });
+      }));
+    }
+    mark();
+  };
+  list.addEventListener('scroll', mark, { passive: true });
+  if (typeof ResizeObserver === 'function') new ResizeObserver(build).observe(list);
+  build();
+}
+
 function wireSubtopicsMore(root) {
   const subs = root.querySelector('.tbh-subs');
   const picker = root.querySelector('[data-topic-picker]');
@@ -2451,6 +2489,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
     // dead code since the tabbed layout went away.
     wireSubnavPicker(body);
     wireSubtopicsMore(body);
+    wireRailDots(body.querySelector('.topic-top-side .tpr-list'));
     wireTopicHeroCondense();
     wireTopicLandingCards(body, topic, { descriptions, icons, shortcuts });
     renderNewsFeed(body.querySelector('#section-newsfeed'), topic, false);

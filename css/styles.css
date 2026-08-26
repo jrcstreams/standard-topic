@@ -24799,7 +24799,7 @@ body.home-search .home-search-hero .search-panel-starters.sp-quick { display: fl
   .dih-hero {
     --bleed: 16px;
     margin-bottom: 1.3rem; padding-bottom: 1.15rem;
-    background-position: 78% center; background-size: 190% auto;
+    background-position: right center; background-size: auto 100%;
   }
   .dih-hero-in { min-height: 0; }
 }
@@ -24878,3 +24878,95 @@ body.home-search .home-search-hero .search-panel-starters.sp-quick { display: fl
 .tdi-eyebrow-ic svg,
 .topic-top-side .tsec-ic--pr svg { width: 18px !important; height: 18px !important; }
 .tdi-eyebrow-ic, .topic-top-side .tsec-ic--pr { height: 18px; }
+
+/* ============================================================
+   revamp995 — homepage band + topic subnav + tools rail
+   (#img630, 633, 634, 635-637, 638/639, 640)
+   ============================================================ */
+
+/* ── Homepage hero sits centred in its grey band (#img630) ──
+   The band is the body tint showing between the nav and the white content
+   block, so "centred" means matching the space above the headline to the
+   space below the quick links — which includes the gap under the hero
+   element, not just its own padding. */
+body.home-search .home-search-hero { padding-top: 3.1rem; }
+@media (max-width: 900px) { body.home-search .home-search-hero { padding-top: 1.6rem; } }
+
+/* ── Today's News / What's Trending were hard against the band (#img633) ── */
+body.home-search .home-main,
+body.home-search .home-side { padding-top: 1.15rem; }
+
+/* ── Latest News head: rules run the full page width, and the rule under the
+      tab row doubles as the first story's top edge (#img634) ── */
+#section-latestnews, .home-latest {
+  --bleed: max(32px, calc((100vw - 1440px) / 2 + 32px));
+}
+.home-latest .newsfeed-head--latest,
+.home-latest .newsfeed-headrow,
+.home-latest .newsfeed-tabs {
+  margin-left: calc(-1 * var(--bleed)); margin-right: calc(-1 * var(--bleed));
+  padding-left: var(--bleed); padding-right: var(--bleed);
+}
+.home-latest .newsfeed-tabs {
+  padding-bottom: 12px;
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 13%, transparent);
+}
+/* That rule IS the first story's top border, so the card must not draw one. */
+.home-latest .news-list > .news-card:first-child { border-top: 0 !important; }
+@media (max-width: 768px) { #section-latestnews, .home-latest { --bleed: 16px; } }
+
+/* ── Subtopic "More": spacing that matches the pills, and a chevron that sits
+      with its label rather than drifting off it (#img635) ── */
+.topic-bodyhead .tbh-more {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-left: 4px; padding: 0.42rem 0.55rem; border-radius: 999px;
+  font-size: 0.94rem; font-weight: 600; line-height: 1;
+}
+.topic-bodyhead .tbh-more-chev { display: inline-flex; align-items: center; }
+.topic-bodyhead .tbh-more-chev svg { width: 14px; height: 14px; display: block; }
+
+/* ── The dropdown gets a real edge on every side (#img636/637) ──
+      It was a shadow and nothing else, so against white content the panel had
+      no boundary at all — the grey actions row in particular ran to the edge
+      with no sides. */
+.topic-bodyhead .tsp-panel {
+  border: 1px solid color-mix(in srgb, #2f4d9e 20%, transparent) !important;
+  border-top: 0 !important;
+  border-radius: 0 0 14px 14px;
+  box-shadow: 0 26px 46px -22px rgba(15, 23, 42, .30),
+              0 10px 18px -12px rgba(15, 23, 42, .14) !important;
+}
+.topic-bodyhead .tsp-actions {
+  border-bottom: 1px solid color-mix(in srgb, #2f4d9e 15%, transparent);
+  margin-left: -2rem; margin-right: -2rem;
+  padding-left: 2rem; padding-right: 2rem;
+}
+@media (max-width: 640px) {
+  .topic-bodyhead .tsp-actions { margin-left: -1rem; margin-right: -1rem; padding-left: 1rem; padding-right: 1rem; }
+}
+
+/* ── Topic Latest News: the first story needed more air under the rule than
+      the 10px it had (#img638/639) ── */
+.topic-band .topic-home #section-newsfeed .news-list { margin-top: 20px !important; }
+
+/* ── Tools rail on small screens: tiles that fit their label, and a scroll
+      indicator so the rail reads as paged rather than clipped (#img640) ── */
+@media (max-width: 879px) {
+  .topic-top-side .tpr-row { width: 124px; }
+  .topic-top-side .tpr-row-btn { min-height: 96px; padding: 12px 8px; }
+  .topic-top-side .tpr-row-name {
+    font-size: 0.78rem; line-height: 1.25;
+    -webkit-line-clamp: 3; hyphens: auto;
+  }
+}
+.tpr-dots {
+  display: none; gap: 6px; justify-content: center;
+  margin: 2px 0 0.9rem; padding: 0;
+}
+.tpr-dots.is-on { display: flex; }
+.tpr-dot {
+  width: 6px; height: 6px; border-radius: 999px; padding: 0; border: 0;
+  background: color-mix(in srgb, #2f4d9e 22%, transparent);
+  transition: background .16s ease, width .16s ease;
+}
+.tpr-dot.is-active { width: 18px; background: #2c4f9e; }
