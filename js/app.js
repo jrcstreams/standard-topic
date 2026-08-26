@@ -610,18 +610,12 @@ function homeSubnavPickerHTML() {
 // overflow one line (wireSubtopicsMore), and opens the same dropdown the subnav
 // band's "Change Topic" uses. Mobile keeps the band as the control — CSS hides
 // this header below 900px.
-// Every parent topic has a generated hero graphic at /assets/hero/<slug>.webp
-// (scripts/gen-hero-art.py), so a topic page resolves its art from its parent
-// and needs no lookup table. The Set is a guard: a topic whose parent was
-// renamed would otherwise request a 404'd background.
-const HERO_ART_SLUGS = new Set([
-  'world', 'politics', 'business-finance', 'technology', 'science',
-  'health-wellness', 'climate-environment', 'sports', 'entertainment',
-  'arts-culture', 'lifestyle', 'media', 'education', 'ideas-opinion-more',
-]);
+// Every topic has its own generated hero graphic — its icon rendered as a
+// halftone in the one site palette (scripts/gen-topic-art.py builds all 99
+// from topics.json + topic-icons.js, so slug -> file is total by
+// construction; rerun the generator when a topic or icon changes).
 function topicHeroArt(topic) {
-  const slug = (topic && (topic.parent || topic.slug)) || '';
-  return `/assets/hero/${HERO_ART_SLUGS.has(slug) ? slug : 'world'}.webp`;
+  return `/assets/hero/topics/${(topic && topic.slug) || 'world'}.webp`;
 }
 
 function topicBodyHeadHTML(topic) {
@@ -1672,8 +1666,8 @@ function diHeroCardHTML(o) {
   return `${header}
     <div class="tdi-hero-body${o.hubCard ? ' tdi-hero-body--split' : ''}">
       ${o.art ? `<div class="tdi-art" data-tdi-art aria-hidden="true"><img class="tdi-art-img" data-tdi-art-img
-          src="/assets/briefing/morning-1280.webp?v=2"
-          srcset="/assets/briefing/morning-800.webp?v=2 800w, /assets/briefing/morning-1280.webp?v=2 1280w"
+          src="/assets/briefing/morning-1280.webp?v=3"
+          srcset="/assets/briefing/morning-800.webp?v=3 800w, /assets/briefing/morning-1280.webp?v=3 1280w"
           sizes="(max-width: 1023px) 100vw, 640px" alt="" decoding="async" loading="lazy"></div>` : ''}
       <div class="tdi-bodygrid">
         <div class="tdi-briefcol">
@@ -1751,8 +1745,8 @@ function applyBriefArt(root, iso) {
   const night = parts ? /night|evening/i.test(parts.edition || '') : false;
   const name = night ? 'evening' : 'morning';
   root.querySelectorAll('[data-tdi-art-img]').forEach((img) => {
-    img.src = `/assets/briefing/${name}-1280.webp?v=2`;
-    img.srcset = `/assets/briefing/${name}-800.webp?v=2 800w, /assets/briefing/${name}-1280.webp?v=2 1280w`;
+    img.src = `/assets/briefing/${name}-1280.webp?v=3`;
+    img.srcset = `/assets/briefing/${name}-800.webp?v=3 800w, /assets/briefing/${name}-1280.webp?v=3 1280w`;
   });
   root.querySelectorAll('.tdi-card').forEach((c) => c.classList.toggle('is-evening', night));
   root.querySelectorAll('[data-tdi-eyebrow-tx]').forEach((el) => {
