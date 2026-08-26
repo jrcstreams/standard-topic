@@ -24086,8 +24086,12 @@ body.home-search .home-search-hero .search-panel-starters.sp-quick { display: fl
   font-size: 0.88rem !important; margin: 0 0 0.9rem !important;
 }
 
-/* Mobile: the tools become a horizontal scroll rail of tiles (#img569). */
-@media (max-width: 1023px) {
+/* Mobile: the tools become a horizontal scroll rail of tiles (#img569).
+   879, not 1023: .topic-top goes two-column at 880 (revamp783), so a 1023
+   cutoff left ~150px of widths where the card was still a narrow second
+   column wearing rail styling — tiles stacked in a stripe with dead space
+   beside them (#img611/612, revamp992). */
+@media (max-width: 879px) {
   .topic-top-side .tpr-list {
     display: flex !important; gap: 10px; overflow-x: auto; overflow-y: hidden;
     scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
@@ -24407,7 +24411,7 @@ body.home-search .home-search-hero .search-panel-starters.sp-quick { display: fl
 .topic-top-side .tpr-go svg { width: 14px; height: 14px; }
 @media (hover: hover) { .topic-top-side .tpr-go:hover { color: #1d4ed8 !important; } }
 /* The mobile scroll rail keeps its tile treatment. */
-@media (max-width: 1023px) {
+@media (max-width: 879px) {
   .topic-top-side .tpr-row { border-bottom: 0; }
   .topic-top-side .tpr-row-btn { flex-direction: column; margin: 0; }
 }
@@ -24627,3 +24631,57 @@ body.home-search .home-search-hero .search-panel-starters.sp-quick { display: fl
 .topic-band .topic-home #section-newsfeed .news-list > .news-card:first-child .news-card-link {
   padding-top: 0 !important;
 }
+
+/* ============================================================
+   revamp992 — topic-page AI Research Tools (#img607-613)
+   ============================================================ */
+
+/* 1. The header mark is the sparkle itself, not a sparkle boxed in a navy
+      chip. The chip read as a blocky app-icon sitting above a list of much
+      lighter row icons; bare, it reads as a label mark (#img607 -> #img608). */
+.topic-top-side .tsec-ic--pr {
+  width: auto !important; height: auto !important;
+  background: none !important; border-radius: 0 !important;
+  color: #2c4f9e !important;
+}
+.topic-top-side .tsec-ic--pr svg {
+  width: 18px !important; height: 18px !important;
+  fill: currentColor !important; stroke: none !important;
+}
+
+/* 2. The cards sat 52px below the subtopic row — a full section's worth of
+      air for what is the same block of content (#img609). */
+.topic-bodyhead .tbh-subswrap { margin-bottom: 0.7rem !important; }
+.topic-home .topic-top { margin-top: 0.4rem !important; }
+@media (min-width: 1024px) { .topic-home .topic-top { margin-top: 0.5rem !important; } }
+
+/* 3. "View all tools" was landing ~18px off the card's bottom edge, tighter
+      than the gap above it (#img610). */
+.topic-top-side .tpr-card { padding-bottom: 1.75rem !important; }
+
+/* 4. The rail runs ACROSS. `.tpr-list` is a flex COLUMN by default, and the
+      rail block never reset the axis — which is why the tiles came out as a
+      vertical stripe instead of a scrolling row (#img612). */
+@media (max-width: 879px) {
+  .topic-top-side .tpr-list { flex-direction: row !important; align-items: stretch; }
+  .topic-top-side .tpr-row { width: 112px; }
+  .topic-top-side .tpr-row-btn { min-height: 88px; padding: 11px 9px; }
+  .topic-top-side .tpr-row-ic { width: 30px; height: 30px; }
+  .topic-top-side .tpr-row-ic svg,
+  .topic-top-side .tpr-row-ic .shortcut-icon { width: 16px; height: 16px; }
+
+  /* 5. Phone head lockup (#img613): mark + label on the left, "View all" on
+        the same line at the right, and no subtitle — the tiles explain
+        themselves and the vertical space is better spent on them. */
+  .topic-top-side .tpr-card { position: relative; padding-bottom: 1.15rem !important; }
+  .topic-top-side .tpr-sub { display: none !important; }
+  .topic-top-side .tpr-card:not(.is-open) .tpr-go {
+    position: absolute; top: 1.05rem; right: 1.2rem;
+    margin: 0 !important; font-size: 0.85rem;
+  }
+  .topic-top-side .tpr-card:not(.is-open) .tpr-go svg { display: none; }
+  .topic-top-side .tpr-card:not(.is-open) .tpr-go-open { display: none; }
+  .topic-top-side .tpr-card:not(.is-open) .tpr-go-short { display: inline; }
+}
+/* The short label is phone-only; every wider layout keeps the full wording. */
+.tpr-go-short { display: none; }

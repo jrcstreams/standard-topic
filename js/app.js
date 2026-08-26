@@ -2411,6 +2411,7 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
               </button></li>`).join('')}</ul>` : ''}
             <button type="button" class="tpr-go" data-pr-toggle aria-expanded="false">
               <span class="tpr-go-open">View all tools</span>
+              <span class="tpr-go-short">View all</span>
               <span class="tpr-go-close">Hide tools</span>${SUBPAGE_ARROW}
             </button>
             <div class="tpr-expand" data-pr-expand><div class="tpr-expand-inner">
