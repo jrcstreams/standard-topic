@@ -25442,11 +25442,13 @@ body.home-search:not(.nav-docked) .home-pagehead { padding-top: 0.4rem; }
    to 56px, the top bar compresses to match (fitMainNav republishes --nav-h
    from the measured height, so subnav/dropdown offsets follow), and the
    "Home" page title rides the same vertical center as the brand. */
+body.nav-docked { --nav-h: 56px; }
 body.nav-docked .navmenu-head { min-height: 56px; }
+body.nav-docked #site-header.is-sticky-hero { height: 56px; }
 body.nav-docked .sticky-hero-inner {
-  padding-top: 0.5rem !important;
-  padding-bottom: 0.5rem !important;
-  min-height: 0 !important;
+  height: 56px; min-height: 0 !important;
+  padding-top: 0 !important; padding-bottom: 0 !important;
+  display: flex; align-items: center;
 }
 body.nav-docked.home-search .home-pagehead { padding-top: 0.45rem; }
 body.nav-docked.home-search .home-pagetitle { line-height: 1.1; }
