@@ -25604,15 +25604,14 @@ body.home-search #content { padding-top: calc(var(--nav-h) + 56px + 18px) !impor
 }
 
 /* ============================================================
-   revamp1005 — topic pages: plain header, homepage-style columns,
-   tabbed below; the collapsed-view chrome gap closes
+   revamp1009 — the topic-view region, consolidated.
+   Layout mode keys on CONTENT width via two JS body classes
+   (updateTopicViewMode): tnews-1col under 1160 content px,
+   tt-on (tabbed) under 900 content px. Viewport media queries
+   remain only where the physical scroll container changes.
    ============================================================ */
 
-/* ── The 14px gap under the collapsed-view nav: fitMainNav publishes the
-      MEASURED inner height to --nav-h, and .nav-wrap's padding rules beat
-      the plain-selector reset while the inner isn't border-box — so 56px
-      + padding published as 70 and every bar below slid down. Pin the box
-      model at nav-wrap specificity. ── */
+/* ── 56px chrome contract (fitMainNav publishes the measured height). ── */
 #site-header .sticky-hero-inner,
 #site-header .sticky-hero-inner.nav-wrap {
   box-sizing: border-box !important;
@@ -25621,8 +25620,7 @@ body.home-search #content { padding-top: calc(var(--nav-h) + 56px + 18px) !impor
   row-gap: 0 !important;
 }
 
-/* ── Topic header, plain: icon chip + title + sentence. The art band is
-      retired — no bleed, no background, ordinary flow. ── */
+/* ── Topic header, plain: icon chip + title + sentence. ── */
 .topic-bodyhead { padding-top: 1.05rem; }
 .tbh-titlerow { display: flex; align-items: center; gap: 12px; }
 .tbh-titleic {
@@ -25638,289 +25636,271 @@ body.home-search #content { padding-top: calc(var(--nav-h) + 56px + 18px) !impor
 }
 .tbh-titlerow + .tbh-desc { margin-top: 0.5rem; }
 
-/* ── Wide screens: homepage-style columns — news left, briefing + tools
-      stacked right. The .topic-top wrapper simply becomes the right rail. ── */
-@media (min-width: 1200px) {
-  .topic-band .topic-home {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 384px;
-    gap: 0 2rem; align-items: start;
-  }
-  .topic-band .topic-home > .aii-tabhead-spacer { grid-column: 1 / -1; grid-row: 1; }
-  .topic-band .topic-home > .topic-bodyhead { grid-column: 1 / -1; grid-row: 2; }
-  .topic-band .topic-home > .topic-viewtabs { display: none; }
-  .topic-band .topic-home > .topic-news-wrap { grid-column: 1; grid-row: 4; min-width: 0; }
-  .topic-band .topic-home > .topic-top {
-    grid-column: 2; grid-row: 4;
-    display: flex !important; grid-template-columns: none !important;
-    flex-direction: column; gap: 18px;
-    margin-top: 0 !important;
-  }
-  /* Cards expand IN the rail, pushing the sibling down — the open card no
-     longer takes the full row. */
-  .topic-band .topic-home .topic-top.is-di-open,
-  .topic-band .topic-home .topic-top.is-pr-open {
-    display: flex !important; grid-template-columns: none !important;
-  }
-  .topic-band .topic-home .topic-top.is-di-open .tpr-card,
-  .topic-band .topic-home .topic-top.is-pr-open .tdi-card { animation: none; }
-  /* The rail briefing card mirrors the homepage one: full-width copy, meta
-     row may wrap. */
-  .topic-band .topic-home .tdi-card--hero2 .tdi-briefcol { max-width: 100% !important; }
-  .topic-band .topic-home .tdi-metarow { flex-wrap: wrap !important; white-space: normal !important; }
-  .topic-band .topic-home #section-newsfeed .news-list { margin-top: 12px !important; }
+/* ── Columns whenever NOT tabbed: news left, briefing + tools rail right. ── */
+body:not(.tt-on) .topic-band .topic-home {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 384px;
+  gap: 0 2rem; align-items: start;
 }
+body:not(.tt-on) .topic-band .topic-home > .aii-tabhead-spacer { grid-column: 1 / -1; grid-row: 1; }
+body:not(.tt-on) .topic-band .topic-home > .topic-bodyhead { grid-column: 1 / -1; grid-row: 2; }
+body:not(.tt-on) .topic-band .topic-home > .topic-viewtabs { display: none; }
+body:not(.tt-on) .topic-band .topic-home > .topic-news-wrap { grid-column: 1; grid-row: 4; min-width: 0; }
+body:not(.tt-on) .topic-band .topic-home > .topic-top {
+  grid-column: 2; grid-row: 4;
+  display: flex !important; grid-template-columns: none !important;
+  flex-direction: column; gap: 12px;
+  margin-top: 0 !important;
+}
+body:not(.tt-on) .topic-band .topic-home .topic-top.is-di-open,
+body:not(.tt-on) .topic-band .topic-home .topic-top.is-pr-open {
+  display: flex !important; grid-template-columns: none !important;
+}
+body:not(.tt-on) .topic-band .topic-home .topic-top.is-di-open .tpr-card,
+body:not(.tt-on) .topic-band .topic-home .topic-top.is-pr-open .tdi-card { animation: none; }
+body:not(.tt-on) .topic-band .topic-home .tdi-card--hero2 .tdi-briefcol { max-width: 100% !important; }
+body:not(.tt-on) .topic-band .topic-home .tdi-metarow { flex-wrap: wrap !important; white-space: normal !important; }
+body:not(.tt-on) .topic-band .topic-home #section-newsfeed .news-list { margin-top: 12px !important; }
 
-/* ── Below 1200: TABBED. One section at a time — News Feed (default),
-      Today's Briefing, AI Prompts — picked from a pill row under the head. ── */
+/* ── Section heads (#img721-724): "Latest News" a step smaller, the rail's
+      "AI Briefing" / "AI Research Tools" identical and top-aligned with it —
+      one shared treatment. The in-card heads they replace go. ── */
+body:not(.tt-on) .topic-band .topic-home .newsfeed-title,
+.trail-head {
+  font-family: var(--font-display, var(--font-family));
+  font-size: 1.24rem !important; font-weight: 750 !important;
+  letter-spacing: -0.012em; color: #14204a;
+  margin: 0 !important; line-height: 1.25 !important;
+}
+.trail-head { display: block; padding-bottom: 12px; border-bottom: 2px solid #e0e5ee; margin-bottom: 12px !important; }
+body:not(.tt-on) .topic-band .topic-home .newsfeed-head { padding-top: 0 !important; margin-top: 0 !important; }
+body.tt-on .trail-head { display: none !important; }
+/* The rail cards lose their internal heads: the eyebrow leaves the briefing
+   card, and the tools card's title/sub leave when it's closed. */
+body:not(.tt-on) .topic-band .topic-home .tdi-card .tdi-eyebrow { display: none !important; }
+body:not(.tt-on) .topic-band .topic-home .tpr-card:not(.is-open) .tpr-head,
+body:not(.tt-on) .topic-band .topic-home .tpr-card:not(.is-open) .tpr-sub { display: none !important; }
+body:not(.tt-on) .topic-band .topic-home .tpr-card { padding-top: 0.4rem !important; }
+
+/* ── The tools list is a plain list, not a card of chrome (#img726): no card
+      box, no pager dots, group labels for Topic-Specific / Evergreen. ── */
+.topic-band .topic-home .tpr-card { border: 0 !important; background: none !important; box-shadow: none !important; padding-left: 0 !important; padding-right: 0 !important; }
+.topic-band .topic-home .tpr-dots { display: none !important; }
+.topic-band .topic-home .tpr-list { border-top: 0 !important; border-bottom: 0 !important; }
+.tpr-grouplabel {
+  list-style: none;
+  padding: 14px 0 6px;
+  font-family: var(--font-family); font-size: 0.78rem; font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase; color: #6b7a92;
+}
+.tpr-list > .tpr-grouplabel:first-child { padding-top: 2px; }
+/* Every prompt row shows; with the whole list present the foot is redundant. */
+.topic-top-side .tpr-row:nth-child(n + 5) { display: block !important; }
+body:not(.tt-on) .topic-band .topic-home .tpr-card:not(.is-open) .tpr-go { display: none !important; }
+
+/* ── The view tabs: quiet underline style (#img727), not a heavy pill. ── */
 .topic-viewtabs {
-  display: flex; align-items: center; gap: 6px;
+  display: flex; align-items: center; gap: 22px;
   margin: 0.9rem 0 0.2rem;
-  padding: 0 0 12px;
+  padding: 0 0 0;
   border-bottom: 1px solid color-mix(in srgb, #2f4d9e 12%, transparent);
 }
 .tvt {
+  position: relative;
   border: 0; background: none; cursor: pointer;
-  padding: 8px 15px; border-radius: 999px;
-  font-family: var(--font-family); font-size: 0.92rem; font-weight: 600;
-  color: #5b6b8c; transition: background .14s ease, color .14s ease;
+  padding: 9px 2px 11px; border-radius: 0;
+  font-family: var(--font-family); font-size: 0.93rem; font-weight: 600;
+  color: #5b6b8c; transition: color .14s ease;
 }
-.tvt.is-active { background: #1e3a8a; color: #fff; }
-@media (hover: hover) {
-  .tvt:not(.is-active):hover { background: color-mix(in srgb, #2f4d9e 8%, #fff); color: #14204a; }
+.tvt::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -1px;
+  height: 3px; border-radius: 3px 3px 0 0; background: transparent;
+  transition: background .14s ease;
 }
-@media (max-width: 1199.98px) {
-  /* default view = news: the card rail hides entirely */
-  .topic-band .topic-home:not(.tview-brief):not(.tview-tools) > .topic-top { display: none !important; }
-  /* briefing view: only the briefing column */
-  .topic-band .topic-home.tview-brief > .topic-news-wrap { display: none !important; }
-  .topic-band .topic-home.tview-brief .topic-top-side { display: none !important; }
-  /* tools view: only the tools column */
-  .topic-band .topic-home.tview-tools > .topic-news-wrap { display: none !important; }
-  .topic-band .topic-home.tview-tools .topic-top-main { display: none !important; }
-  .topic-band .topic-home.tview-brief > .topic-top,
-  .topic-band .topic-home.tview-tools > .topic-top {
-    display: flex !important; grid-template-columns: none !important;
-    flex-direction: column; margin-top: 0.9rem !important;
-  }
+.tvt.is-active { background: none; color: #14204a; }
+.tvt.is-active::after { background: #1e3a8a; }
+@media (hover: hover) { .tvt:not(.is-active):hover { color: #14204a; background: none; } }
+
+/* ── Change Topic rides the right edge of the grey topic bar. ── */
+#sub-header.is-subnav .topic-subnav-inner { display: flex; align-items: center; }
+#sub-header.is-subnav .topic-subnav-inner > .topic-subnav-picker,
+#sub-header.is-subnav .topic-subnav-inner > .tsp-btn { margin-left: auto !important; }
+#sub-header.is-subnav .topic-subnav-inner > .subnav-ident-sep { display: none !important; }
+
+/* ── One-column news band (1160 > content ≥ 900). ── */
+body.tnews-1col .topic-band #section-newsfeed .news-list { grid-template-columns: 1fr !important; }
+
+/* ═════════════════ TABBED MODE (body.tt-on) ═════════════════ */
+
+/* Which section shows. */
+body.tt-on .topic-band .topic-home:not(.tview-brief):not(.tview-tools) > .topic-top { display: none !important; }
+body.tt-on .topic-band .topic-home.tview-brief > .topic-news-wrap { display: none !important; }
+body.tt-on .topic-band .topic-home.tview-brief .topic-top-side { display: none !important; }
+body.tt-on .topic-band .topic-home.tview-tools > .topic-news-wrap { display: none !important; }
+body.tt-on .topic-band .topic-home.tview-tools .topic-top-main { display: none !important; }
+body.tt-on .topic-band .topic-home.tview-brief > .topic-top,
+body.tt-on .topic-band .topic-home.tview-tools > .topic-top {
+  display: flex !important; grid-template-columns: none !important;
+  flex-direction: column; margin-top: 0.8rem !important;
 }
 
-/* ============================================================
-   revamp1006 — tabbed topic widths: the grey nav is the identity,
-   the tabs are its attached second row; tabs land INSIDE their
-   content; the rail lists every prompt
-   ============================================================ */
-
-/* Wide rail: every prompt row shows (the old four-row cap goes), and with
-   the whole list present the "View all tools" foot is redundant. */
-@media (min-width: 880px) {
-  .topic-top-side .tpr-row:nth-child(n + 5) { display: block !important; }
+/* Chrome: the grey subnav is always on and owns identity; the body head goes. */
+body.tt-on.app-mode:not(.home-mode) #sub-header.is-subnav {
+  opacity: 1 !important; visibility: visible !important;
+  transform: none !important; pointer-events: auto !important;
 }
-@media (min-width: 1200px) {
-  .topic-band .topic-home .tpr-card:not(.is-open) .tpr-go { display: none !important; }
+body.tt-on .topic-band .topic-home > .topic-bodyhead { display: none !important; }
+body.tt-on .topic-band .topic-home > .aii-tabhead-spacer { display: none; }
+html body.tt-on.app-mode.sticky-always.has-subnav:not(.home-search):has(.topic-home) #content,
+html body.tt-on.app-mode.sticky-always.has-subnav:has(.topic-home) #content {
+  padding-top: calc(var(--nav-h) + var(--subnav-height, 58px)) !important;
 }
+body.tt-on.app-mode .topic-band.topic-layout { padding-top: 0 !important; }
+#sub-header.is-subnav .topic-subnav-inner { padding-top: 12px !important; padding-bottom: 12px !important; }
 
-@media (max-width: 1199.98px) {
-  /* ── The grey subnav is ALWAYS on at tab widths — it replaces the in-body
-        title block entirely (its Change Topic control covers the related
-        topics that used to be pills). ── */
-  body.app-mode:not(.home-mode) #sub-header.is-subnav {
-    opacity: 1 !important; visibility: visible !important;
-    transform: none !important; pointer-events: auto !important;
-  }
-  .topic-band .topic-home > .topic-bodyhead { display: none !important; }
-
-  /* Content starts right under the two bars — the tabs row is the first
-     thing in it and reads as the subnav's attached second row. */
-  html body.app-mode.sticky-always.has-subnav #content,
-  body.app-mode #content {
-    padding-top: calc(var(--nav-h) + var(--subnav-height, 58px)) !important;
-  }
-  .topic-band .topic-home > .aii-tabhead-spacer { display: none; }
-
-  /* ── Sticky tabs: pinned under the subnav, full-bleed, a lighter grey so it
-        reads as a subsection of the band above it. ── */
-  .topic-band .topic-viewtabs {
-    position: sticky;
-    top: calc(var(--nav-h) + var(--subnav-height, 58px));
-    z-index: 60;
-    background: #f8f9fc;
-    margin: 0 -2rem;
-    padding: 9px 2rem 9px;
-    border-bottom: 1px solid #e5e9f2;
-  }
-  /* ── Briefing tab is a READING view: no topic label (the subnav says it),
-        the date + edition masthead stays. ── */
-  .tview-brief .tdi-topiclabel,
-  .tview-brief .tdi-topiclabel--inline { display: none !important; }
-  /* ── Prompts tab: the library's big section headers condense. ── */
-  .tview-tools [data-pr-expand] h2,
-  .tview-tools [data-pr-expand] h3,
-  .tview-tools [data-pr-expand] .aii-fi-sec-title { font-size: 0.98rem !important; }
-  .tview-tools [data-pr-expand] .aii-fi-sec { margin-top: 14px !important; }
+/* Sticky tabs attached under the subnav. */
+body.tt-on .topic-band .topic-viewtabs {
+  position: sticky;
+  top: calc(var(--nav-h) + var(--subnav-height, 58px));
+  z-index: 60;
+  background: #f8f9fc;
+  margin: 0 -2rem !important;
+  padding: 2px 2rem 0;
+  border-bottom: 1px solid #e5e9f2;
 }
-@media (max-width: 640px) {
-  .topic-band .topic-viewtabs { margin: 0 -1rem; padding-left: 1rem; padding-right: 1rem; }
-}
-
-/* ============================================================
-   revamp1007 — tab views shed their inner chrome; warm-grey search
-   (#img705-711)
-   ============================================================ */
-
-@media (max-width: 1199.98px) {
-  /* The active tab IS the section label — the in-section heads go. */
-  .topic-band .topic-home:not(.tview-brief):not(.tview-tools) #section-newsfeed .newsfeed-head { display: none !important; }
-  .topic-band .topic-home:not(.tview-brief):not(.tview-tools) #section-newsfeed .news-list { margin-top: 6px !important; }
-  .tview-tools .tpr-head { display: none !important; }
-  .tview-tools .tpr-card.is-open [data-pr-expand] { margin-top: 0 !important; }
-
-  /* The briefing reads full width in its tab. */
-  .tview-brief .topic-top,
-  .tview-brief .topic-top-main,
-  .tview-brief .tdi-card { width: 100% !important; max-width: none !important; }
-  .tview-brief .topic-top { margin-top: 0.8rem !important; }
-  .tview-tools .topic-top { margin-top: 0.8rem !important; }
-
-  /* No dismissal chrome in a tab — the tabs are how you leave. The X and the
-     bottom Close controls only mean something in the column/rail world. */
-  .tview-brief .tdi-headclose,
-  .tview-brief .tdi-closefoot { display: none !important; }
-  .tview-tools .tpr-headclose,
-  .tview-tools .tpr-closefoot,
-  .tview-tools .tdi-closefoot.tpr-closefoot { display: none !important; }
-}
-
-/* ── Search controls go warm grey: light ground, dark ink, gently squared.
-      One treatment for the sidebar input and the nav Search button. ── */
-.navmenu-searchrow {
-  background: #f1f0ed !important;
-  border: 1px solid #ddd9d0 !important;
-  border-radius: 10px !important;
-  color: #4a5570 !important;
-  box-shadow: none;
-}
-.navmenu-searchrow:focus-within {
-  border-color: #b9c2da !important;
-  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.10) !important;
-}
-.navmenu-searchinput { color: #1c2a4a !important; }
-.navmenu-searchinput::placeholder { color: #78809a !important; }
-
-#nav-search.navbtn.nav-searchbar {
-  background: #f1f0ed !important;
-  border: 1px solid #ddd9d0 !important;
-  border-radius: 10px !important;
-}
-@media (hover: hover) {
-  #nav-search.navbtn.nav-searchbar:hover { background: #eae8e3 !important; border-color: #d0ccc2 !important; }
-}
-#nav-search.navbtn .navbtn-ico { color: #33415e !important; }
-#nav-search.navbtn .nav-searchbar-ph,
-#nav-search.navbtn .navbtn-label { color: #33415e !important; }
-@media (max-width: 640px) {
-  .sticky-hero-inner #nav-search.navbtn { background: #f1f0ed; border-color: #ddd9d0; border-radius: 10px; }
-  .sticky-hero-inner #nav-search .navbtn-ico { color: #33415e; }
-}
-
-/* revamp1007b — the tab bar attaches for real (#img712/713). Three losses:
-   the head-hider lost to a TWO-id selector, the content pad lost to a
-   :has(.topic-home) selector, and the layout's own top padding held the
-   tabs 26px off the subnav. */
-@media (max-width: 1199.98px) {
-  #topic-tab-body .topic-home:not(.tview-brief):not(.tview-tools) #section-newsfeed .newsfeed-head,
-  .topic-band .topic-home:not(.tview-brief):not(.tview-tools) #section-newsfeed .newsfeed-head {
-    display: none !important;
-  }
-  html body.app-mode.sticky-always.has-subnav:not(.home-search):has(.topic-home) #content,
-  html body.app-mode.sticky-always.has-subnav #content,
-  html body.app-mode #content {
-    padding-top: calc(var(--nav-h) + var(--subnav-height, 58px)) !important;
-  }
-  /* Tabs sit flush under the subnav: the layout's top pad goes, the tabs
-     row carries its own inner air instead. */
-  body.app-mode .topic-band.topic-layout { padding-top: 0 !important; }
-  .topic-band .topic-viewtabs { margin-top: 0 !important; }
-  /* The bar itself matches the 56px chrome. */
-  #sub-header.is-subnav .topic-subnav-inner { padding-top: 12px !important; padding-bottom: 12px !important; }
-}
-
-/* revamp1007c — below 900 #content is the scroll container, and sticky
-   offsets resolve against its padding box: top:109 pushed the at-rest tabs
-   to 218, while top:0 would pin them UNDER the fixed bars when scrolled.
-   No single sticky value serves both states, so at these widths the tabs
-   are fixed under the bars and the content pad reserves their row. */
 @media (max-width: 899.98px) {
-  .topic-band .topic-viewtabs {
+  /* Below 900 #content is the scroll container and sticky offsets resolve
+     against its padding box — the tabs go fixed and the pad reserves them. */
+  body.tt-on .topic-band .topic-viewtabs {
     position: fixed;
     top: calc(var(--nav-h) + var(--subnav-height, 53px));
     left: 0; right: 0;
     margin: 0 !important;
-    z-index: 60;
+    padding: 2px 1rem 0;
   }
-  html body.app-mode.sticky-always.has-subnav:not(.home-search):has(.topic-home) #content,
-  html body.app-mode.sticky-always.has-subnav:has(.topic-home) #content {
-    padding-top: calc(var(--nav-h) + var(--subnav-height, 53px) + 53px) !important;
+  html body.tt-on.app-mode.sticky-always.has-subnav:not(.home-search):has(.topic-home) #content,
+  html body.tt-on.app-mode.sticky-always.has-subnav:has(.topic-home) #content {
+    padding-top: calc(var(--nav-h) + var(--subnav-height, 53px) + 46px) !important;
   }
 }
 
-/* ============================================================
-   revamp1008 — tab-view polish (#img714-720): news attaches, the
-   briefing reads as a plain document with one masthead line
-   ============================================================ */
-@media (max-width: 1199.98px) {
-  /* News sits right under the tabs, and the first card keeps the same
-     border every other card has (a global first-child border-kill was
-     clipping its top edge in the card grid). */
-  .topic-band .topic-home > .topic-news-wrap { margin-top: 10px !important; }
-  .topic-band .topic-home #section-newsfeed .news-list { margin-top: 0 !important; }
-  .topic-band .topic-home #section-newsfeed .news-list > .news-card:first-child {
-    border-top: 1px solid #e8edf5 !important;   /* the exact sibling-card colour */
-    padding-top: 12px !important;
-  }
+/* News tab: the head goes (the tab is the label); first card keeps its border. */
+body.tt-on #topic-tab-body .topic-home:not(.tview-brief):not(.tview-tools) #section-newsfeed .newsfeed-head,
+body.tt-on .topic-band .topic-home:not(.tview-brief):not(.tview-tools) #section-newsfeed .newsfeed-head { display: none !important; }
+body.tt-on .topic-band .topic-home > .topic-news-wrap { margin-top: 10px !important; }
+body.tt-on .topic-band .topic-home #section-newsfeed .news-list { margin-top: 0 !important; }
+body.tt-on .topic-band .topic-home #section-newsfeed .news-list > .news-card:first-child {
+  border-top: 1px solid #e8edf5 !important;
+  padding-top: 12px !important;
+}
 
-  /* ── Briefing tab: ONE masthead line — TOPIC | DATE | EDITION. The card's
-        teaser column (orange eyebrow etc.) and the "AI Briefing" head row
-        both go; the tab already names the section. ── */
-  /* The expand lives INSIDE .tdi-hero-body, so hide only the teaser parts —
-     hiding the wrapper swallowed the whole briefing. */
-  .tview-brief .tdi-card.is-open .tdi-bodygrid,
-  .tview-brief .tdi-card.is-open .tdi-art { display: none !important; }
-  .tview-brief .tdi-openhead > *:not(.tdi-openhead-meta) { display: none !important; }
-  .tview-brief .tdi-openhead { margin-bottom: 0 !important; border-bottom: 0 !important; }
-  .tview-brief .tdi-openhead-meta { border-bottom: 0 !important; }
-  .tview-brief .tdi-openhead-meta::after,
-  .tview-brief .tdi-openhead::after { display: none !important; }
-  /* One type treatment for every part of the masthead, evenly piped. */
-  .tview-brief .tdi-openhead-meta,
-  .tview-brief .tdi-openhead-meta * {
-    font-weight: 650 !important; color: #52618a !important;
-    letter-spacing: 0.08em !important;
-  }
-  .tview-brief .tdi-openhead-meta { display: flex; align-items: center; gap: 10px !important; }
-  .tview-brief .tdi-openhead-meta .tdi-stamp-sep,
-  .tview-brief .tdi-openhead-meta .tdi-meta-sep {
-    width: 1px !important; height: 11px !important; opacity: .35 !important;
-    margin: 0 !important; background: currentColor !important;
-  }
-  .tview-brief .tdi-openhead-meta > *:first-child.tdi-stamp-sep { display: none !important; }
+/* Briefing tab: a document. One masthead line, no card chrome, no dismissal. */
+body.tt-on .tview-brief .tdi-topiclabel,
+body.tt-on .tview-brief .tdi-topiclabel--inline { display: none !important; }
+body.tt-on .tview-brief .topic-top,
+body.tt-on .tview-brief .topic-top-main,
+body.tt-on .tview-brief .tdi-card { width: 100% !important; max-width: none !important; }
+body.tt-on .tview-brief .tdi-headclose,
+body.tt-on .tview-brief .tdi-closefoot { display: none !important; }
+body.tt-on .tview-brief .tdi-card.is-open .tdi-bodygrid,
+body.tt-on .tview-brief .tdi-card.is-open .tdi-art { display: none !important; }
+body.tt-on .tview-brief .tdi-openhead > *:not(.tdi-openhead-meta) { display: none !important; }
+body.tt-on .tview-brief .tdi-openhead { margin-bottom: 0 !important; border-bottom: 0 !important; }
+body.tt-on .tview-brief .tdi-openhead-meta,
+body.tt-on .tview-brief .tdi-openhead-meta * {
+  font-family: var(--font-family) !important;
+  font-size: 0.8rem !important; line-height: 1.2 !important;
+  font-weight: 700 !important; color: #52618a !important;
+  letter-spacing: 0.08em !important; text-transform: uppercase !important;
+  margin: 0 !important; padding: 0 !important;
+}
+body.tt-on .tview-brief .tdi-openhead-meta {
+  display: flex !important; align-items: center !important; gap: 10px !important;
+  border-bottom: 0 !important;
+}
+body.tt-on .tview-brief .tdi-openhead-meta .tdi-stamp-edwrap,
+body.tt-on .tview-brief .tdi-openhead-meta .tdi-date { display: inline-flex !important; align-items: center !important; gap: 10px !important; }
+body.tt-on .tview-brief .tdi-openhead-meta .tdi-stamp-sep,
+body.tt-on .tview-brief .tdi-openhead-meta .tdi-meta-sep {
+  display: inline-block !important;
+  width: 1px !important; height: 11px !important; opacity: .35 !important;
+  margin: 0 !important; padding: 0 !important;
+  background: currentColor !important; border-radius: 0 !important;
+}
+body.tt-on .tview-brief .tdi-openhead-meta > .tdi-stamp-sep:first-child { display: none !important; }
+body.tt-on .tview-brief .tdi-openhead-meta::after,
+body.tt-on .tview-brief .tdi-openhead::after { display: none !important; }
+body.tt-on .tview-brief .tdi-card,
+body.tt-on .tview-brief .tdi-card.is-open {
+  background: #fff !important; border: 0 !important;
+  box-shadow: none !important; border-radius: 0 !important;
+}
+body.tt-on .tview-brief .tdi-expand-inner { padding-left: 0 !important; padding-right: 0 !important; }
+body.tt-on .tview-brief .tdi-card .di-prov2,
+body.tt-on .tview-brief [data-di-host] .di-prov2,
+body.tt-on .tview-brief .di-prov2 {
+  background: none !important; border: 0 !important; border-radius: 0 !important;
+  border-top: 1px solid #e5e9f2 !important;
+  padding: 12px 0 0 !important; margin: 10px 0 0 !important;
+  font-size: 0.8rem !important; color: #6b7a92 !important;
+}
 
-  /* ── The briefing is a document, not a card: no tinted ground, no border,
-        content on the page itself. ── */
-  .tview-brief .tdi-card,
-  .tview-brief .tdi-card.is-open {
-    background: #fff !important; border: 0 !important;
-    box-shadow: none !important; border-radius: 0 !important;
-  }
-  .tview-brief .tdi-expand-inner { padding-left: 0 !important; padding-right: 0 !important; }
+/* Prompts tab: the library sits on the page — no wrapping card, no head. */
+body.tt-on .tview-tools .tpr-head { display: none !important; }
+body.tt-on .tview-tools .topic-top { margin-top: 0.8rem !important; }
+body.tt-on .tview-tools .tpr-card,
+body.tt-on .tview-tools .tpr-card.is-open {
+  border: 0 !important; background: none !important; box-shadow: none !important;
+  padding: 0 !important; border-radius: 0 !important;
+}
+body.tt-on .tview-tools .tpr-expand { border-top: 0 !important; }
+body.tt-on .tview-tools .tpr-expand-inner { padding: 0 !important; }
+body.tt-on .tview-tools .tpr-card.is-open [data-pr-expand] { margin-top: 0 !important; }
+body.tt-on .tview-tools .tpr-headclose,
+body.tt-on .tview-tools .tpr-closefoot,
+body.tt-on .tview-tools .tdi-closefoot.tpr-closefoot { display: none !important; }
+body.tt-on .tview-tools [data-pr-expand] h2,
+body.tt-on .tview-tools [data-pr-expand] h3,
+body.tt-on .tview-tools [data-pr-expand] .aii-fi-sec-title { font-size: 0.98rem !important; }
+body.tt-on .tview-tools [data-pr-expand] .aii-fi-sec { margin-top: 14px !important; }
 
-  /* ── Provenance: a quiet line under a hairline, not a boxed chip. ── */
-  .tview-brief .tdi-card .di-prov2,
-  .tview-brief [data-di-host] .di-prov2,
-  .tview-brief .di-prov2 {
-    background: none !important; border: 0 !important; border-radius: 0 !important;
-    border-top: 1px solid #e5e9f2 !important;
-    padding: 10px 0 0 !important; margin: 4px 0 0 !important;
-    font-size: 0.8rem !important; color: #6b7a92 !important;
-  }
+/* ── Pagenav pages (Prompts/Trending/Topics/Search): content clears the
+      always-on grey bar instead of sliding under it (#img731-733), and the
+      bar matches the 56px chrome. ── */
+#sub-header.pagenav .topic-subnav-title { padding-top: 0 !important; padding-bottom: 0 !important; }
+#sub-header.pagenav { min-height: 56px; display: flex; align-items: center; }
+#sub-header.pagenav .topic-subnav-title { width: 100%; }
+body.pagenav-mode #content {
+  padding-top: calc(var(--nav-h) + 56px + 22px) !important;
+}
+
+/* ── Search controls: grey ground (a step darker than the chrome), dark
+      navy ink, gently squared (#img725). ── */
+.navmenu-searchrow {
+  background: #e9ebf0 !important;
+  border: 1px solid #d8dbe3 !important;
+  border-radius: 10px !important;
+  color: #1e3a8a !important;
+  box-shadow: none;
+}
+.navmenu-searchrow:focus-within {
+  border-color: #aebadb !important;
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.10) !important;
+}
+.navmenu-searchinput { color: #1c2a4a !important; }
+.navmenu-searchinput::placeholder { color: #4d5f8f !important; }
+#nav-search.navbtn.nav-searchbar {
+  background: #e9ebf0 !important;
+  border: 1px solid #d8dbe3 !important;
+  border-radius: 10px !important;
+}
+@media (hover: hover) {
+  #nav-search.navbtn.nav-searchbar:hover { background: #e0e3ea !important; border-color: #c9cedb !important; }
+}
+#nav-search.navbtn .navbtn-ico { color: #1e3a8a !important; }
+#nav-search.navbtn .nav-searchbar-ph,
+#nav-search.navbtn .navbtn-label { color: #1e3a8a !important; }
+@media (max-width: 640px) {
+  .sticky-hero-inner #nav-search.navbtn { background: #e9ebf0; border-color: #d8dbe3; border-radius: 10px; }
+  .sticky-hero-inner #nav-search .navbtn-ico { color: #1e3a8a; }
 }

@@ -2476,15 +2476,17 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
       ${topicBodyHeadHTML(topic)}
       <div class="topic-viewtabs" data-topic-viewtabs role="tablist" aria-label="Topic sections">
         <button type="button" class="tvt is-active" role="tab" aria-selected="true" data-tview="news">News Feed</button>
-        <button type="button" class="tvt" role="tab" aria-selected="false" data-tview="brief">Today's Briefing</button>
+        <button type="button" class="tvt" role="tab" aria-selected="false" data-tview="brief">AI Briefing</button>
         <button type="button" class="tvt" role="tab" aria-selected="false" data-tview="tools">AI Prompts</button>
       </div>
       <div class="topic-top">
         <section class="topic-top-main">
+          <h3 class="trail-head">AI Briefing</h3>
           <div class="tdi-card tdi-card--v3 tdi-card--hero2" data-tdi>${diHeroCardHTML({ sublabel: 'An AI-generated briefing on this topic, twice a day.', hubLink: false, topicLabel: topic.name, noHeader: true, art: true })}
           </div>
         </section>
         <section class="topic-top-side">
+          <h3 class="trail-head">AI Research Tools</h3>
           <div class="tpr-card" data-tpr>
             <div class="tpr-head">
               <h2 class="tsec-title tpr-card-title"><span class="tsec-ic tsec-ic--pr" aria-hidden="true">${DI_SPARK_TWO}</span>AI Research Tools</h2>
@@ -2494,12 +2496,18 @@ function renderTopicSubpage(container, topic, descriptions, icons, page) {
               </button>
             </div>
             <p class="tpr-sub">Ready-made tools to research this topic.</p>
-            ${featuredPrompts.length ? `<ul class="tpr-list">${featuredPrompts.map((s) => `
-              <li class="tpr-row"><button type="button" class="tpr-row-btn" data-tpr-open="${escapeAttr(s.name || '')}">
-                <span class="tpr-row-ic" aria-hidden="true">${promptRowIconSVG(s)}</span>
-                <span class="tpr-row-name">${escapeHTML(s.name || '')}</span>
+            ${featuredPrompts.length ? `<ul class="tpr-list">${(() => {
+              const row = (sc) => `
+              <li class="tpr-row"><button type="button" class="tpr-row-btn" data-tpr-open="${escapeAttr(sc.name || '')}">
+                <span class="tpr-row-ic" aria-hidden="true">${promptRowIconSVG(sc)}</span>
+                <span class="tpr-row-name">${escapeHTML(sc.name || '')}</span>
                 <span class="tpr-row-go" aria-hidden="true">${SUBPAGE_ARROW}</span>
-              </button></li>`).join('')}</ul>` : ''}
+              </button></li>`;
+              const ts = featuredPrompts.filter((x) => !x.evergreen);
+              const ev = featuredPrompts.filter((x) => x.evergreen);
+              return (ts.length ? `<li class="tpr-grouplabel">Topic-Specific Prompts</li>` + ts.map(row).join('') : '')
+                   + (ev.length ? `<li class="tpr-grouplabel">Evergreen Prompts</li>` + ev.map(row).join('') : '');
+            })()}</ul>` : ''}
             <button type="button" class="tpr-go" data-pr-toggle aria-expanded="false">
               <span class="tpr-go-open">View all tools</span>
               <span class="tpr-go-short">View all</span>
@@ -2751,6 +2759,8 @@ function renderLayout(route) {
 
   // Always render the main sticky bar + the mobile bottom tab nav
   renderStickyHeroBar(siteHeader, route);
+  if (!window.__ttModeBound) { window.__ttModeBound = true; onResize('topic-view-mode', updateTopicViewMode, 5); }
+  updateTopicViewMode();
   renderBottomNav(route);
 
   // All pages: main nav always fixed + visible.
@@ -4115,6 +4125,20 @@ function fitMainNav() {
   }
 }
 
+
+// revamp1009 — the topic page's layout mode keys on CONTENT width, not the
+// viewport: a collapsed sidebar at 1100px has room for the two-column layout
+// that a docked sidebar at the same viewport does not. Two thresholds:
+//   < 1160 content px → the news grid drops to one column (tnews-1col)
+//   <  900 content px → the whole page goes tabbed (tt-on)
+function updateTopicViewMode() {
+  const docked = document.body.classList.contains('nav-docked');
+  const sbw = docked ? (window.innerWidth <= 1280 ? 264 : 320) : 0;
+  const cw = window.innerWidth - sbw;
+  document.body.classList.toggle('tt-on', cw < 900);
+  document.body.classList.toggle('tnews-1col', cw < 1160);
+}
+
 function renderStickyHeroBar(container, route) {
   const featured = getFeaturedTopics();
   const NAVMENU_CHEV = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>';
@@ -4409,6 +4433,7 @@ function renderStickyHeroBar(container, route) {
       navOverlay.classList.remove('is-open');
       document.body.style.overflow = '';
     }
+    updateTopicViewMode();
     // Layout under the panel changes width — let the fitters re-measure.
     try { window.dispatchEvent(new Event('resize')); } catch (_) {}
   };
