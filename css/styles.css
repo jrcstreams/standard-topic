@@ -25882,7 +25882,10 @@ body.home-search #content { padding-top: calc(var(--nav-h) + 56px + 18px) !impor
   /* ── Briefing tab: ONE masthead line — TOPIC | DATE | EDITION. The card's
         teaser column (orange eyebrow etc.) and the "AI Briefing" head row
         both go; the tab already names the section. ── */
-  .tview-brief .tdi-card.is-open .tdi-hero-body { display: none !important; }
+  /* The expand lives INSIDE .tdi-hero-body, so hide only the teaser parts —
+     hiding the wrapper swallowed the whole briefing. */
+  .tview-brief .tdi-card.is-open .tdi-bodygrid,
+  .tview-brief .tdi-card.is-open .tdi-art { display: none !important; }
   .tview-brief .tdi-openhead > *:not(.tdi-openhead-meta) { display: none !important; }
   .tview-brief .tdi-openhead { margin-bottom: 0 !important; }
   /* One type treatment for every part of the masthead, evenly piped. */
